@@ -284,6 +284,17 @@ proc vtkFreeSurferReadersGDFInit {} {
 }
 
 #-------------------------------------------------------------------------------
+# .PROC vtkFreeSurferReadersExit
+# Cleans up any vtk variables that were declared globally, called on exit from the C++ module that sourced it.
+# .ARGS
+# .END
+#-------------------------------------------------------------------------------
+proc vtkFreeSurferReadersExit {} {
+    if {$::vtkFreeSurferReaders(gbLibLoaded)} {
+        catch "vtkFreeSurferReaders(gdfReader) Delete"
+    }
+}
+#-------------------------------------------------------------------------------
 # .PROC vtkFreeSurferReadersGDFPlotBuildWindow
 # Creates the window for plotting into.
 # vtkFreeSurferReaders(gGDF) - information gleaned from the header file.
