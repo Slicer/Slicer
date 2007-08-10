@@ -284,7 +284,7 @@ if { $::GETBUILDTEST(test-type) != "Continuous" } {
 cd $::SLICER_HOME/Libs
 if { [file exists SIGN] } {
   cd SIGN
-  runcmd echo t | svn switch $::SIGN_TAG
+  runcmd echo t | svn --username ivs --password ivs switch $::SIGN_TAG
 } else {
   runcmd echo t | svn --username ivs --password ivs checkout $::SIGN_TAG SIGN
 }
@@ -292,7 +292,7 @@ if { [file exists SIGN] } {
 cd $::SLICER_HOME/Applications
 if { [file exists SIGN] } {
   cd SIGN
-  runcmd echo t | svn switch $::SIGN_APP_TAG
+  runcmd echo t | svn --username ivs --password ivs switch $::SIGN_APP_TAG
 } else {
   runcmd echo t | svn --username ivs --password ivs checkout $::SIGN_APP_TAG SIGN
 }
@@ -354,6 +354,8 @@ cd $::SLICER_BUILD
 runcmd $::CMAKE \
         -G$::GENERATOR \
         -DMAKECOMMAND:STRING=$::MAKE \
+        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
         -DTEEM_DIR:FILEPATH=$SLICER_LIB/teem-build \
@@ -364,7 +366,7 @@ runcmd $::CMAKE \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
         -DUSE_TEEM=ON \
-        -DUSE_PYTHON=OFF \
+        -DUSE_PYTHON=ON \
         -DPYTHON_INCLUDE_PATH:PATH=$::SLICER_LIB/python-build/include/python2.5 \
         -DPYTHON_LIBRARY:FILEPATH=$::SLICER_LIB/python-build/lib/libpython2.5$::GETBUILDTEST(shared-lib-extension) \
         -DUSE_IGSTK=$::IGSTK \
