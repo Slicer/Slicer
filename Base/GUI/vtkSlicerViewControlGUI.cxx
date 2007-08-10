@@ -854,7 +854,7 @@ void vtkSlicerViewControlGUI::ResetNavigationCamera ( )
 void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
                                           unsigned long event, void *callData )
 {
-  vtkMRMLSliceNode *snode;
+
   // Right now this class contains state variables that will be moved
   // to a vtkMRMLViewNode in the next iteration.
 
