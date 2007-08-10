@@ -1458,6 +1458,22 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set ApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]");
     slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::ApplicationLogic GetMRMLScene]");
 
+#ifndef QDEC_DEBUG
+    if ( appGUI->GetViewerWidget() &&
+         appGUI->GetViewerWidget()->GetMainViewer() &&
+         appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor() &&
+         appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle() )
+      {
+      // set up the qdec module with a pointer to the interactor style so it can get pick events
+      qdecModuleGUI->SetViewerWidget(appGUI->GetViewerWidget());
+      qdecModuleGUI->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
+      }
+    else
+      {
+      std::cerr << "Unable to set up the QDEC Module GUI with a pointer to the interactor style." << std::endl;
+      }
+#endif
+
 
 #ifndef CLIMODULES_DEBUG
     mit = moduleNames.begin();
