@@ -376,6 +376,12 @@ void vtkSlicerApplicationGUI::ProcessAddDataCommand()
   this->GetApplication()->Script("::Loader::ShowDialog");
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessAddVolumeCommand()
+{
+  this->GetApplication()->Script("::LoadVolume::ShowDialog");
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessCloseSceneCommand()
@@ -737,6 +743,10 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->MainSlicerWindow->GetFileMenu()->SetItemAccelerator ( i, "Ctrl-A");
             this->MainSlicerWindow->GetFileMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
+            i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
+                      this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
+                                      "Add Volume...", this, "ProcessAddVolumeCommand");
+
             i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                "Save", this, "ProcessSaveSceneAsCommand");
             this->MainSlicerWindow->GetFileMenu()->SetItemAccelerator ( i, "Ctrl-S");
@@ -769,18 +779,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             
             this->GetMainSlicerWindow()->GetEditMenu()->InsertSeparator (this->GetMainSlicerWindow()->GetEditMenu()->GetNumberOfItems());
             i = this->MainSlicerWindow->GetEditMenu()->AddCommand ( "Edit Box", NULL, "::EditBox::ShowDialog" );
-            //
-            // Note: adding "space" as the accelerator means that when you try to type a space
-            // into an entry box inside the slicer main window the edit box pops up
-            //  -- this could be fixed by adding the following tcl code to the vtkKWEntry
-            //
-            //   bind $w <KeyPress> "::tk::CancelRepeat ; ::tk::EntryInsert %W %A; break"
-            //
-            // so that single-character accelerators can be used.
-            //
-            // for now, rather than just live with the popup, use F1
-            //
-            this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "F1");
+            this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "space");
             this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
 #ifdef USE_PYTHON

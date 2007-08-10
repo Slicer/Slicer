@@ -156,6 +156,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void ProcessLoadSceneCommand();
     void ProcessImportSceneCommand();
     void ProcessAddDataCommand();
+    void ProcessAddVolumeCommand();
     void ProcessSaveSceneAsCommand();
     void ProcessCloseSceneCommand();
     

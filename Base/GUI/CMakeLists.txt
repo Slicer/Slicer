@@ -201,7 +201,9 @@ SET(TCLFILES
   pkgIndex.tcl SliceViewerInteractor.tcl
   SWidget.tcl SliceSWidget.tcl SeedSWidget.tcl CsysSWidget.tcl
   FiducialsSWidget.tcl GridSWidget.tcl CrosshairSWidget.tcl
-  RegionsSWidget.tcl Slicer2Import.tcl Loader.tcl MRMLWatcher.tcl
+  RegionsSWidget.tcl Slicer2Import.tcl 
+  Loader.tcl LoadVolume.tcl
+  MRMLWatcher.tcl
 )
 
 FOREACH(tclfile ${TCLFILES})
