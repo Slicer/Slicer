@@ -642,22 +642,22 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
                    this->ColorCodeButton->GetWidgetName ( ));
     this->Script ("pack %s -side bottom -expand 1 -fill x", 
                   this->ContainerFrame->GetWidgetName());
-    this->Script("grid columnconfigure %s 0 -weight 1", 
+    this->Script("grid columnconfigure %s 0 -weight 0", 
                  this->ContainerFrame->GetWidgetName());
     this->Script("grid columnconfigure %s 1 -weight 1", 
                  this->ContainerFrame->GetWidgetName());
-    this->Script("grid columnconfigure %s 2 -weight 1", 
+    this->Script("grid columnconfigure %s 2 -weight 0", 
                  this->ContainerFrame->GetWidgetName());
     this->Script("grid columnconfigure %s 3 -weight 1", 
                  this->ContainerFrame->GetWidgetName());
 
     
-    this->Script("grid %s %s %s %s -sticky ew",
+    this->Script("grid %s %s %s %s -sticky ew -padx 1",
                  this->OrientationMenuButton->GetWidgetName (),
                  this->OrientationSelector->GetWidgetName(),
                  this->ForegroundMenuButton->GetWidgetName(),
                  this->ForegroundSelector->GetWidgetName());
-    this->Script("grid %s %s %s %s -sticky ew", 
+    this->Script("grid %s %s %s %s -sticky ew -padx 1", 
                  this->LabelMenuButton->GetWidgetName(),
                  this->LabelSelector->GetWidgetName(),
                  this->BackgroundMenuButton->GetWidgetName(),
