@@ -478,10 +478,21 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
         if (strcmp(nodeName, "") != 0)
           {
           vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: got picked node " << nodeName << " with point id = " << pointID);
+          double *pickedRAS;
+          double RAS[3];
+          RAS[0] = RAS[1] = RAS[2] = 0.0;
+          pickedRAS = this->GetViewerWidget()->GetPickedRAS();
+          if (pickedRAS)
+            {
+            RAS[0] = pickedRAS[0];
+            RAS[1] = pickedRAS[1];
+            RAS[2] = pickedRAS[2];
+            vtkWarningMacro("Got picked RAS = " << RAS[0] << ", " << RAS[1] << ", " << RAS[2]);
+            }
           vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
           if (app)
             {
-            std::string plotReturn = app->Script("vtkFreeSurferReadersPlotPlotData %d %s", pointID, nodeName);
+            std::string plotReturn = app->Script("vtkFreeSurferReadersPlotPlotData %d %s %g %g %g", pointID, nodeName, RAS[0], RAS[1], RAS[2]);
             vtkDebugMacro("Plot call return value = " << plotReturn.c_str());
             // swallow the pick
             if (this->GUICallbackCommand != NULL)
