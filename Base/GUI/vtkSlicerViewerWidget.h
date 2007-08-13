@@ -220,26 +220,29 @@ protected:
     this->AddHierarchiyObservers();
     };
 
-  vtkMRMLDisplayNode* GetDisplayNode(vtkMRMLDisplayableNode *model);
 
-  void SetModelDisplayProperty(vtkMRMLDisplayableNode *model,  vtkActor *actor);
+  void SetModelDisplayProperty(vtkMRMLDisplayableNode *model);
 
-  int GetDisplayedModelsVisibility(vtkMRMLDisplayableNode *model);
+  int GetDisplayedModelsVisibility(vtkMRMLDisplayNode *model);
+
+  void RemoveDisplayable(vtkMRMLDisplayableNode* model);
 
 
   //BTX
+
+  std::vector< vtkMRMLDisplayNode* > GetDisplayNode(vtkMRMLDisplayableNode *model);
   void RemoveDispalyedID(std::string &id);
 
-  std::map<std::string, vtkActor *> DisplayedModelActors;
-
-  std::map<std::string, vtkMRMLDisplayableNode *> DisplayedModelNodes;
-
-  std::map<std::string, int> DisplayedModelsClipState;
-  std::map<std::string, int> DisplayedModelsVisibility;
+  std::map<std::string, vtkActor *> DisplayedActors;
+  std::map<std::string, vtkMRMLDisplayNode *> DisplayedNodes;
+  std::map<std::string, int> DisplayedClipState;
+  std::map<std::string, int> DisplayedVisibility;
+  std::map<std::string, vtkMRMLDisplayableNode *> DisplayableNodes;
 
   std::vector<vtkFollower *> AxisLabelActors;
 
   std::map<std::string, int>  RegisteredModelHierarchies;
+
   //ETX
 
   vtkActor *BoxAxisActor;

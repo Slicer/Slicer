@@ -47,6 +47,7 @@ vtkSlicerModelDisplayWidget::vtkSlicerModelDisplayWidget ( )
     this->OpacityScale = NULL;
     this->SurfaceMaterialPropertyWidget = NULL;
     this->ProcessingMRMLEvent = 0;
+    this->ProcessingWidgetEvent = 0;
 
     this->UpdatingMRML = 0;
     this->UpdatingWidget = 0;
@@ -156,7 +157,14 @@ void vtkSlicerModelDisplayWidget::SetModelNode ( vtkMRMLModelNode *node )
 void vtkSlicerModelDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
-
+  if (this->ProcessingMRMLEvent != 0 || this->ProcessingWidgetEvent != 0)
+    {
+    vtkDebugMacro("ProcessMRMLEvents already processing " << this->ProcessingMRMLEvent);
+    return;
+    }
+  
+  this->ProcessingWidgetEvent = event;
+ 
   if (this->ModelDisplayNode != NULL && 
     !(vtkKWSurfaceMaterialPropertyWidget::SafeDownCast(caller) == this->SurfaceMaterialPropertyWidget && event == this->SurfaceMaterialPropertyWidget->GetPropertyChangedEvent()) &&
     !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangingEvent) &&
@@ -169,6 +177,9 @@ void vtkSlicerModelDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
     }
   
   this->UpdateMRML();
+
+  this->ProcessingWidgetEvent = 0;
+
 }
 
 
@@ -237,7 +248,7 @@ void vtkSlicerModelDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
     {
     return;
     }
-  if (this->ProcessingMRMLEvent != 0 )
+  if (this->ProcessingMRMLEvent != 0 || this->ProcessingWidgetEvent != 0)
     {
     vtkDebugMacro("ProcessMRMLEvents already processing " << this->ProcessingMRMLEvent);
     return;

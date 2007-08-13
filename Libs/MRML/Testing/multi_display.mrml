@@ -1,0 +1,12 @@
+<MRML>
+<ModelStorage
+ id="vtkMRMLModelStorageNode1" name=""  hideFromEditors="true" fileName="TestData/cube.vtk" ></ModelStorage>
+<Model
+ id="vtkMRMLModelNode4" name="cube.vtk"  hideFromEditors="false"
+ storageNodeRef="vtkMRMLModelStorageNode1"
+ displayNodeRef="vtkMRMLModelDisplayNode1 vtkMRMLModelDisplayNode2" ></Model>
+<ModelDisplay
+ id="vtkMRMLModelDisplayNode1" name=""  hideFromEditors="true"  color="0.8 0.1 0.1" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100"></ModelDisplay>
+<ModelDisplay
+ id="vtkMRMLModelDisplayNode2" name=""  hideFromEditors="true"  color="0.1 0.1 0.8" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100"></ModelDisplay>
+</MRML>

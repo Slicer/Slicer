@@ -100,6 +100,7 @@ public:
   // Description:
   // Set this when processing an event, since repopulate the scalars menu
   int ProcessingMRMLEvent;
+  int ProcessingWidgetEvent;
 
   int UpdatingMRML;
   int UpdatingWidget;

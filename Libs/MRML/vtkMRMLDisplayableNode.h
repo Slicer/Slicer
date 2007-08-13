@@ -77,11 +77,36 @@ public:
   // Description:
   // String ID of the display MRML node
   void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
-  vtkGetStringMacro(DisplayNodeID);
+  void AddAndObserveDisplayNodeID(const char *DisplayNodeID);
+  void SetAndObserveNthDisplayNodeID(int n, const char *DisplayNodeID);
+
+  int GetNumberOfDisplayNodes()
+    {
+    return this->DisplayNodeIDs.size();
+    };
+
+  const char *GetNthDisplayNodeID(int n)
+  {
+      if (n < 0 || n >= (int)this->DisplayNodeIDs.size())
+      {
+          return NULL;
+      }
+      return this->DisplayNodeIDs[n].c_str();
+  };
+
+  const char *GetDisplayNodeID()
+    {
+    return this->GetNthDisplayNodeID(0);
+    };
 
   // Description:
   // Get associated display MRML node
-  vtkMRMLDisplayNode* GetDisplayNode();
+  vtkMRMLDisplayNode* GetNthDisplayNode(int n);
+
+  vtkMRMLDisplayNode* GetDisplayNode()
+    {
+    return this->GetNthDisplayNode(0);
+    };
     
   // Description:
   // Set and observe poly data for this model
@@ -120,7 +145,10 @@ public:
   vtkMRMLDisplayableNode(const vtkMRMLDisplayableNode&);
   void operator=(const vtkMRMLDisplayableNode&);
 
-  vtkSetReferenceStringMacro(DisplayNodeID);
+  void SetDisplayNodeID(const char* id) ;
+  void SetNthDisplayNodeID(int n, const char* id);
+  void AddDisplayNodeID(const char* id);
+  void AddAndObseveDisplayNode(vtkMRMLDisplayNode *dnode);
 
   vtkSetObjectMacro(PolyData, vtkPolyData);
 
@@ -128,10 +156,12 @@ public:
   // Data
   vtkPolyData *PolyData;
   
-  char *DisplayNodeID;
   char *StorageNodeID;
-
-  vtkMRMLDisplayNode *DisplayNode;
+//BTX
+  std::vector<std::string> DisplayNodeIDs;
+ 
+  std::vector<vtkMRMLDisplayNode *> DisplayNodes;
+//ETX
 };
 
 #endif
