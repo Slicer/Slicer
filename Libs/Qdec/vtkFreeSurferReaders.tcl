@@ -291,9 +291,7 @@ proc vtkFreeSurferReadersGDFInit {} {
 #-------------------------------------------------------------------------------
 proc vtkFreeSurferReadersExit {} {
     global vtkFreeSurferReaders
-    if {$vtkFreeSurferReaders(gbLibLoaded)} {
-        catch "vtkFreeSurferReaders(gdfReader) Delete"
-    }
+    catch "vtkFreeSurferReaders(gdfReader) Delete"
 }
 #-------------------------------------------------------------------------------
 # .PROC vtkFreeSurferReadersGDFPlotBuildWindow
