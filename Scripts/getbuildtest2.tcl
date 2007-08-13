@@ -366,7 +366,7 @@ runcmd $::CMAKE \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
         -DUSE_TEEM=ON \
-        -DUSE_PYTHON=ON \
+        -DUSE_PYTHON=OFF \
         -DPYTHON_INCLUDE_PATH:PATH=$::SLICER_LIB/python-build/include/python2.5 \
         -DPYTHON_LIBRARY:FILEPATH=$::SLICER_LIB/python-build/lib/libpython2.5$::GETBUILDTEST(shared-lib-extension) \
         -DUSE_IGSTK=$::IGSTK \

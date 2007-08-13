@@ -340,7 +340,7 @@ if { ![file exists $::IWIDGETS_TEST_FILE] || $::GENLIB(update) } {
 # Get and build blt
 #
 
-if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
+if { 0 && ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB/tcl
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/blt blt
@@ -352,8 +352,8 @@ if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
         cd $SLICER_LIB/tcl/blt
         runcmd ./configure --with-tcl=$SLICER_LIB/tcl/tcl/unix --with-tk=$SLICER_LIB/tcl-build --prefix=$SLICER_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --with-cflags=-fno-common
 
-        eval runcmd $::MAKE
-        eval runcmd $::MAKE install
+        eval runcmd $::SERIAL_MAKE
+        eval runcmd $::SERIAL_MAKE install
     } else {
         cd $SLICER_LIB/tcl/blt
         runcmd ./configure --with-tcl=$SLICER_LIB/tcl/tcl/unix --with-tk=$SLICER_LIB/tcl-build --prefix=$SLICER_LIB/tcl-build
@@ -401,7 +401,11 @@ if { ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
         # can't do Windows
     } else {
         if { $isDarwin } {
-            set ::env(DYLD_LIBRARY_PATH) $SLICER_LIB/python-build/lib:$::env(DYLD_LIBRARY_PATH)
+            if { [info exists ::env(DYLD_LIBRARY_PATH)] } {
+              set ::env(DYLD_LIBRARY_PATH) $SLICER_LIB/python-build/lib:$::env(DYLD_LIBRARY_PATH)
+            } else {
+              set ::env(DYLD_LIBRARY_PATH) $SLICER_LIB/python-build/lib
+            }
         } else {
             if { [info exists ::env(LD_LIBRARY_PATH)] } {
                 set ::env(LD_LIBRARY_PATH) $SLICER_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
@@ -852,7 +856,7 @@ if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
 #
 #
 
-if { ![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update) } {
+if { !$isDarwin && ![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd echo t | $::SVN co https://ariser.uio.no/svn/navitrack/trunk NaviTrack
@@ -964,7 +968,7 @@ if { ![file exists $::CMAKE] || \
          ![file exists $::TK_TEST_FILE] || \
          ![file exists $::ITCL_TEST_FILE] || \
          ![file exists $::IWIDGETS_TEST_FILE] || \
-         ![file exists $::BLT_TEST_FILE] || \
+         (0 && ![file exists $::BLT_TEST_FILE]) || \
          ![file exists $::VTK_TEST_FILE] || \
          ![file exists $::ITK_TEST_FILE]  } {
     puts "Not all packages compiled; check errors and run genlib.tcl again."
