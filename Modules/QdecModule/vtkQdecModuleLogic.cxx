@@ -331,21 +331,11 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
       }
     }
 
-  // read the plot file
+  // read the plot file name
   string fnFSGD =  results->GetFsgdFile();
   vtkDebugMacro( "FSGD plot file: " << fnFSGD.c_str() );
 
-  // read the file
-  /*
-  vtkGDFReader *gdfReader = vtkGDFReader::New();
-  gdfReader->ReadHeader(fnFSGD.c_str(), 1);
-  string dataFileName = gdfReader->GetDataFileName();
-  vtkDebugMacro("FSGD file read in, y.mgh data file name = " << dataFileName.c_str());
-  
-  // don't load the data file, it's loaded in the tcl code and associated with the model there
-  gdfReader->Delete();
-  */
-
+/*
   // set the default to be the curv file for now
   if (modelNode)
     {
@@ -356,6 +346,7 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
       modelNode->GetDisplayNode()->SetAndObserveColorNodeID("vtkMRMLFreeSurferProceduralColorNodeGreenRed");
       }
     }
+*/
 
   if (!this->GetTclScriptLoaded())
     {
