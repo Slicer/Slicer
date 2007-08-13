@@ -1248,6 +1248,9 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( qdecModuleGUI );
     qdecModuleGUI->BuildGUI ( );
     qdecModuleGUI->AddGUIObservers ( );
+    // add the pointer to the viewer widget, for observing pick events
+    qdecModuleGUI->SetViewerWidget(appGUI->GetViewerWidget());
+    qdecModuleGUI->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
 #endif
 
     //
