@@ -1148,7 +1148,7 @@ std::vector< vtkMRMLDisplayNode* > vtkSlicerViewerWidget::GetDisplayNode(vtkMRML
       int ndnodes = model->GetNumberOfDisplayNodes();
       for (int i=0; i<ndnodes; i++)
         {
-        dnode = model->GetDisplayNode();
+        dnode = model->GetNthDisplayNode(i);
         if (dnode)
           {
           dnodes.push_back(dnode);

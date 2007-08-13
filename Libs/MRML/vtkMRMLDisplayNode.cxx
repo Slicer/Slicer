@@ -19,6 +19,7 @@ Version:   $Revision: 1.3 $
 #include "vtkCallbackCommand.h"
 
 #include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
 
 
@@ -325,6 +326,27 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent<< "ActiveScalarName: " <<
     (this->ActiveScalarName ? this->ActiveScalarName : "(none)") << "\n";
 }
+
+//----------------------------------------------------------------------------
+vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
+{
+    int numNodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLDisplayableNode");
+    for (int i=0; i<numNodes; i++)
+      {
+      vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(this->Scene->GetNthNodeByClass(i, "vtkMRMLDisplayableNode"));
+      int ndnodes = model->GetNumberOfDisplayNodes();
+      for (int k=0; k<ndnodes; k++)
+        {
+        const char *id = model->GetNthDisplayNodeID(k);
+        if (id && !strcmp(id, this->GetID()))
+          {
+          return model;
+          }
+        }
+      }
+    return NULL;
+}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::SetAndObserveTextureImageData(vtkImageData *ImageData)

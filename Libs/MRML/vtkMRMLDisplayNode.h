@@ -23,13 +23,14 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
-#include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLColorNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
+
+class vtkMRMLDisplayableNode;
 
 class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
 {
@@ -47,6 +48,10 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   // Description:
   // Gets ImageData converted from the real data in the node
   virtual vtkImageData* GetImageData() {return NULL;};
+
+  // Description:
+  // Gets associated dispayable node 
+  virtual vtkMRMLDisplayableNode* GetDisplayableNode();
 
   // Description:
   // Update the pipeline based on this node attributes
