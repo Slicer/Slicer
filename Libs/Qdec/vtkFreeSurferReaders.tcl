@@ -745,31 +745,41 @@ proc vtkFreeSurferReadersPlotParseHeader { ifnHeader } {
 # .ARGS
 # int iID the id of the vertex to plot
 # int dID the id of the data file to plot, can be found in $::vtkFreeSurferReaders(gGDF,dataID). If a string, is treated as the model name, found in vtkFreeSurferReaders(plot,modelID) linked with it's data id, and converted to an int
-# vector RAS the x,y,z of the vertex, optional
+# float x the x of the vertex, optional
+# float y the y of the vertex, optional
+# float z the z of the vertex, optional
 # .END
 #-------------------------------------------------------------------------------
-proc vtkFreeSurferReadersPlotPlotData { iID dID {RAS {0.0 0.0 0.0}} } {
+proc vtkFreeSurferReadersPlotPlotData { iID dID {x 0.0} {y 0.0} {z 0.0} } {
     global vtkFreeSurferReaders
 
+    if {[info exists vtkFreeSurferReaders(verbose)] == 0} {
+        set vtkFreeSurferReaders(verbose) 0
+    }
     if {$::vtkFreeSurferReaders(verbose)} {
         puts "vtkFreeSurferReadersPlotPlotData: iID = $iID, dID = $dID"
     }
     # figure out if the dID is an int or a text string
     if { [string is integer $dID] == 0} {
         # find the model id 
-        if {$::vtkFreeSurferReaders(verbose)} {
-            puts "vtkFreeSurferReadersPlotPlotData: trying to link data id $dID with an integer value from $vtkFreeSurferReaders(plot,modelID)"
-        }
-        foreach {dataID modelID} $vtkFreeSurferReaders(plot,modelID) {
+        if {[info exists vtkFreeSurferReaders(plot,modelID)]} {
             if {$::vtkFreeSurferReaders(verbose)} {
-                puts "Checking data id $dataID and modelID $modelID"
+                puts "vtkFreeSurferReadersPlotPlotData: trying to link data id $dID with an integer value from $vtkFreeSurferReaders(plot,modelID)"
             }
-            if {$modelID == $dID} {
-                set dID $dataID
+            foreach {dataID modelID} $vtkFreeSurferReaders(plot,modelID) {
                 if {$::vtkFreeSurferReaders(verbose)} {
-                    puts "Found data id $dID for model $modelID"
+                    puts "Checking data id $dataID and modelID $modelID"
+                }
+                if {$modelID == $dID} {
+                    set dID $dataID
+                    if {$::vtkFreeSurferReaders(verbose)} {
+                        puts "Found data id $dID for model $modelID"
+                    }
                 }
             }
+        } else {
+            puts "vtkFreeSurferReadersPlotPlotData: data not initialised for model $dID yet."
+            return
         }
     }
     # Don't plot if the window isn't built or we don't have data.
@@ -787,12 +797,9 @@ proc vtkFreeSurferReadersPlotPlotData { iID dID {RAS {0.0 0.0 0.0}} } {
 
     # update the info label variable
     # set vtkFreeSurferReaders(gPlot,$dID,state,info) "Vertex number $iID"
-    if {$RAS == {0.0 0.0 0.0}} {
+    if {$x == 0.0 && $y == 0.0 && $z == 0.0} {
         vtkFreeSurferReadersPlotSetInfo $dID "Vertex number $iID"
-    } else {
-        set x [lindex $RAS 0]
-        set y [lindex $RAS 1] 
-        set z [lindex $RAS 2]
+    } else {       
         vtkFreeSurferReadersPlotSetInfo $dID "($x, $y, $z) Vertex number $iID"
     }
 
