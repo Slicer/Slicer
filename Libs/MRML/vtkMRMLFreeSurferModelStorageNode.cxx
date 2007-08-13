@@ -279,6 +279,8 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
          extension == std::string(".smoothwm") ||
          extension == std::string(".pial") ) 
       {
+      vtkDebugMacro("Reading in a freesurfer surface file, extension = " << extension.c_str());
+
       //read in a free surfer file
       // -- create normals and triangle strips also
       vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
@@ -711,7 +713,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     else 
       {
-      vtkErrorMacro("Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
+      vtkErrorMacro("MRML FreeSurfer ModelStorage Node: Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
       return 0;
       }
     }
