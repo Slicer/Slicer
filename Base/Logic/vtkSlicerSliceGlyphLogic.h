@@ -91,6 +91,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceGlyphLogic : public vtkSlicerLo
   vtkGetObjectMacro (Reslice, vtkImageReslice);
 
   // Description:
+  // The glyph logic 
+  vtkGetObjectMacro (SlicerGlyphLogic, vtkSlicerGlyphLogic);
+
+  // Description:
   // The image map that applies the lookup table
   vtkGetObjectMacro (LookupTable, vtkScalarsToColors);
 
