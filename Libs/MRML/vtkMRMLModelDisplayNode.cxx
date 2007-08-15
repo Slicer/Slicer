@@ -48,4 +48,18 @@ vtkMRMLNode* vtkMRMLModelDisplayNode::CreateNodeInstance()
   return new vtkMRMLModelDisplayNode;
 }
 
+//-----------------------------------------------------------------------------
+vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
+{
+  this->PolyData = NULL;
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLModelDisplayNode::~vtkMRMLModelDisplayNode()
+{
+  if ( this->PolyData)
+    {
+    this->PolyData->Delete();
+    }
+}
 

@@ -669,6 +669,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         {
         this->UpdateClipSlicesFormMRML();
         this->UpdateModifiedModel(modelNode);
+        //this->Render();
         this->RequestRender( );
         }
       if (updateMRML)
@@ -994,7 +995,8 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
     {
     actor = (*ait).second;
     std::map<std::string, int>::iterator cit = this->DisplayedClipState.find(modelDisplayNode->GetID());
-    if (modelDisplayNode && cit != this->DisplayedClipState.end() && cit->second == modelDisplayNode->GetClipping())
+    if (modelDisplayNode && cit != this->DisplayedClipState.end() && cit->second == modelDisplayNode->GetClipping() && 
+        this->DisplayedVisibility[modelDisplayNode->GetID()] == modelDisplayNode->GetVisibility())
       {
       this->DisplayedVisibility[modelDisplayNode->GetID()] = modelDisplayNode->GetVisibility();
       return;
@@ -1010,15 +1012,29 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
     }
 
   vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
+
+  vtkPolyData *poly = modelDisplayNode->GetPolyData();
+  // hierarchy display nodes may not have poly data pointer
+  if (poly == NULL)
+    {
+    poly = model->GetPolyData();
+    }
+#ifdef _DEBUG
+    if (model->GetPolyData() != modelDisplayNode->GetPolyData())
+      {
+      std::cerr << "HERE1";
+      }
+#endif
+
   if (clipper)
     {
-    clipper->SetInput ( model->GetPolyData() );
+    clipper->SetInput ( poly );
     clipper->Update();
     mapper->SetInput ( clipper->GetOutput() );
     }
   else
     {
-    mapper->SetInput ( model->GetPolyData() );
+    mapper->SetInput ( poly );
     }
 
  

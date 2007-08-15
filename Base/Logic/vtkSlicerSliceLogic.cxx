@@ -848,6 +848,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     // create display node and set texture
     this->SliceModelDisplayNode = vtkMRMLModelDisplayNode::New();
     this->SliceModelDisplayNode->SetScene(this->GetMRMLScene());
+    this->SliceModelDisplayNode->SetPolyData(this->SliceModelNode->GetPolyData());
     this->SliceModelDisplayNode->SetVisibility(0);
     this->SliceModelDisplayNode->SetOpacity(1);
     this->SliceModelDisplayNode->SetColor(1,1,1);

@@ -19,6 +19,7 @@ Version:   $Revision: 1.3 $
 #include "vtkCallbackCommand.h"
 
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
 
 
@@ -68,7 +69,26 @@ vtkMRMLModelNode::~vtkMRMLModelNode()
 {
 }
 
-
+//-----------------------------------------------------------
+void vtkMRMLModelNode::UpdateScene(vtkMRMLScene *scene)
+{
+  Superclass::UpdateScene(scene);
+  int nnodes = this->GetNumberOfDisplayNodes();
+  for (int n=0; n<nnodes; n++)
+    {
+    vtkMRMLNode *mnode = scene->GetNodeByID(this->GetNthDisplayNodeID(n));
+    if (mnode) 
+      {
+      vtkMRMLModelDisplayNode *node  = dynamic_cast < vtkMRMLModelDisplayNode *>(mnode);
+      if (node)
+        {
+        // set input/output to/from display pipeline
+        node->SetPolyData(this->GetPolyData());
+        //this->SetAndObservePolyData(node->GetPolyData());
+        }
+      }
+    }
+}
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 {

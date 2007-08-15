@@ -1,0 +1,36 @@
+<MRML>
+<Selection
+ id="vtkMRMLSelectionNode1" name="vtkMRMLSelectionNode1"  hideFromEditors="true"  selectable="true" activeVolumeID="NULL" activeLabelVolumeID="NULL" activeFiducialListID="NULL" activeROIListID="NULL" activeCameraID="NULL" activeViewID="NULL" ></Selection>
+<Interaction
+ id="vtkMRMLInteractionNode1" name="vtkMRMLInteractionNode1"  hideFromEditors="true"  selectable="true"  currentInteractionMode="ViewTransform" lastInteractionMode="ViewTransform"></Interaction>
+<View
+ id="vtkMRMLViewNode1" name="vtkMRMLViewNode1"  hideFromEditors="true"  selectable="true"  active="false" fieldOfView="200" letterSize="0.05" boxVisible="true" fiducialsVisible="true" fiducialLabelsVisible="true" axisLabelsVisible="true" backgroundColor="0.70196 0.70196 0.90588" animationMode="Off" viewAxisMode="LookFrom" spinDegrees="2" spinMs="5" spinDirection="YawLeft" rotateDegrees="5" rockLength="200" rockCount="0" stereoType="NoStereo" renderMode="Perspective"></View>
+<Camera
+ id="vtkMRMLCameraNode1" name="Camera1"  hideFromEditors="true"  selectable="true"  position="0 159.315 0" focalPoint="0 0 0" viewUp="0 0 1" parallelProjection="false" parallelScale="1" active="false"></Camera>
+<Slice
+ id="filevtkMRMLSliceNode3" name="redCoronal"  hideFromEditors="true"  selectable="true" fieldOfView="291.992 269.531 250" dimensions="299 276 1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Red" orientation="Axial"  sliceVisibility="false"></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode1" name="fileCompred"  hideFromEditors="true"  selectable="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Red" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
+<Slice
+ id="filevtkMRMLSliceNode1" name="yellowAxial"  hideFromEditors="true"  selectable="true" fieldOfView="291.992 269.531 250" dimensions="299 276 1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Yellow" orientation="Axial"  sliceVisibility="false"></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode2" name="fileCompyellow"  hideFromEditors="true"  selectable="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Yellow" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
+<Slice
+ id="filevtkMRMLSliceNode2" name="greenSagittal"  hideFromEditors="true"  selectable="true" fieldOfView="292.969 269.531 250" dimensions="300 276 1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Green" orientation="Axial"  sliceVisibility="false"></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode3" name="fileCompgreen"  hideFromEditors="true"  selectable="true" backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Green" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal" ></SliceComposite>
+<ClipModels
+ id="vtkMRMLClipModelsNode1" name="vtkMRMLClipModelsNode1"  hideFromEditors="true"  selectable="true"  clipType="0" redSliceClipState="0" yellowSliceClipState="0" greenSliceClipState="0"></ClipModels>
+<ModelStorage
+ id="vtkMRMLModelStorageNode1" name="vtkMRMLModelStorageNode1"  hideFromEditors="true"  selectable="true" fileName="TestData/sphere.vtk" useCompression="1" ></ModelStorage>
+<ModelDisplay
+ id="vtkMRMLModelDisplayNode1" name="vtkMRMLModelDisplayNode1"  hideFromEditors="true"  selectable="true"  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100"></ModelDisplay>
+<Model
+ id="vtkMRMLModelNode1" name="sphere.vtk"  hideFromEditors="false"  selectable="true" displayNodeRef="vtkMRMLModelDisplayNode1" storageNodeRef="vtkMRMLModelStorageNode1" ></Model>
+<ModelHierarchy
+ id="vtkMRMLModelHierarchyNode1" name="vtkMRMLModelHierarchyNode1"  hideFromEditors="true"  selectable="true" displayNodeRef="vtkMRMLModelDisplayNode2"  expanded="false" ></ModelHierarchy>
+<ModelDisplay
+ id="vtkMRMLModelDisplayNode2" name="vtkMRMLModelDisplayNode2"  hideFromEditors="true"  selectable="true"  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="false" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100" activeScalarName=""></ModelDisplay>
+<ModelHierarchy
+ id="vtkMRMLModelHierarchyNode2" name="vtkMRMLModelHierarchyNode2"  hideFromEditors="true"  selectable="false" parentNodeRef="vtkMRMLModelHierarchyNode1" modelNodeRef="vtkMRMLModelNode1"  expanded="true" ></ModelHierarchy>
+</MRML>

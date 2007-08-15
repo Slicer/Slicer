@@ -48,12 +48,18 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "ModelDisplay";};
 
+  // Description:
+  // Set and observe poly data for this model
+  vtkGetObjectMacro(PolyData, vtkPolyData);
+  vtkSetObjectMacro(PolyData, vtkPolyData);
 
 protected:
-  vtkMRMLModelDisplayNode(){};
-  ~vtkMRMLModelDisplayNode(){};
+  vtkMRMLModelDisplayNode();
+  ~vtkMRMLModelDisplayNode();
   vtkMRMLModelDisplayNode(const vtkMRMLModelDisplayNode&);
   void operator=(const vtkMRMLModelDisplayNode&);
+
+  vtkPolyData *PolyData;
 };
 
 #endif

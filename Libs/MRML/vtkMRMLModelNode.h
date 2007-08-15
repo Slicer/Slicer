@@ -52,6 +52,8 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Model";};
 
+  void UpdateScene(vtkMRMLScene *scene);
+
   // Description:
   // Get associated model display MRML node
   vtkMRMLModelDisplayNode* GetModelDisplayNode() 
