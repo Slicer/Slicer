@@ -972,6 +972,7 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateModifiedModel(vtkMRMLDisplayableNode *model)
 {
+  this->UpdateModelHierarchyDisplay(model);
   this->UpdateModel(model);
   this->SetModelDisplayProperty(model);
 }
@@ -995,8 +996,7 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
     {
     actor = (*ait).second;
     std::map<std::string, int>::iterator cit = this->DisplayedClipState.find(modelDisplayNode->GetID());
-    if (modelDisplayNode && cit != this->DisplayedClipState.end() && cit->second == modelDisplayNode->GetClipping() && 
-        this->DisplayedVisibility[modelDisplayNode->GetID()] == modelDisplayNode->GetVisibility())
+    if (modelDisplayNode && cit != this->DisplayedClipState.end() && cit->second == modelDisplayNode->GetClipping() )
       {
       this->DisplayedVisibility[modelDisplayNode->GetID()] = modelDisplayNode->GetVisibility();
       return;
@@ -1139,6 +1139,61 @@ void vtkSlicerViewerWidget::AddHierarchiyObservers()
 }
 
 //----------------------------
+void vtkSlicerViewerWidget::UpdateModelHierarchyVisibility(vtkMRMLModelHierarchyNode* mhnode, int visibility )
+{
+  vtkMRMLDisplayNode* dnode = mhnode->GetDisplayNode();
+  if (dnode)
+    {
+    std::map<std::string, vtkActor *>::iterator iter = this->DisplayedActors.find(dnode->GetID());
+    if (iter != this->DisplayedActors.end())
+      {
+      vtkActor *actor = iter->second;
+      actor->SetVisibility(visibility);
+      this->DisplayedVisibility[dnode->GetID()] = visibility;
+      }
+    }
+}
+
+//----------------------------
+void vtkSlicerViewerWidget::UpdateModelHierarchyDisplay(vtkMRMLDisplayableNode *model)
+{
+  if (model)
+    {
+    vtkMRMLModelHierarchyNode* mhnode = this->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
+    mhnode = this->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
+
+    if (mhnode) 
+      {
+      // turn off visibility of this node
+      int ndnodes = model->GetNumberOfDisplayNodes();
+      for (int i=0; i<ndnodes; i++)
+        {
+        vtkMRMLDisplayNode *dnode = model->GetNthDisplayNode(i);
+        if (dnode)
+          {
+          std::map<std::string, vtkActor *>::iterator iter = this->DisplayedActors.find(dnode->GetID());
+          if (iter != this->DisplayedActors.end())
+            {
+            vtkActor *actor = iter->second;
+            actor->SetVisibility(0);
+            this->DisplayedVisibility[dnode->GetID()] = 0;
+            }
+          }
+        }
+
+      // turn off visibility for hierarchy nodes in the tree
+      vtkMRMLModelHierarchyNode *parent = mhnode;
+      do 
+        {
+        this->UpdateModelHierarchyVisibility(parent, 0);
+        parent = vtkMRMLModelHierarchyNode::SafeDownCast(parent->GetParentNode());
+        }
+      while (parent != NULL);
+      }
+    }
+}
+
+//----------------------------
 std::vector< vtkMRMLDisplayNode* > vtkSlicerViewerWidget::GetDisplayNode(vtkMRMLDisplayableNode *model)
 {
   std::vector< vtkMRMLDisplayNode* > dnodes;
@@ -1146,14 +1201,15 @@ std::vector< vtkMRMLDisplayNode* > vtkSlicerViewerWidget::GetDisplayNode(vtkMRML
   if (this->ModelHierarchiesPresent)
     {
     vtkMRMLModelHierarchyNode* mhnode = NULL;
+    vtkMRMLModelHierarchyNode* phnode = NULL;
     mhnode = this->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
     if (mhnode) 
       {
-      mhnode = mhnode->GetUnExpandedParentNode();
+      phnode = mhnode->GetUnExpandedParentNode();
       }
-    if (mhnode) 
+    if (phnode) 
       {
-      dnode = mhnode->GetDisplayNode();
+      dnode = phnode->GetDisplayNode();
       if (dnode)
         {
         dnodes.push_back(dnode);

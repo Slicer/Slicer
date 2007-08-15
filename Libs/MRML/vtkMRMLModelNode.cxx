@@ -89,6 +89,29 @@ void vtkMRMLModelNode::UpdateScene(vtkMRMLScene *scene)
       }
     }
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
+                                           unsigned long event, 
+                                           void *callData )
+{
+
+  if (this->PolyData == vtkPolyData::SafeDownCast(caller) &&
+    event ==  vtkCommand::ModifiedEvent)
+    {
+    for (unsigned int i=0; i<this->DisplayNodes.size(); i++)
+      {
+      vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast(this->GetNthDisplayNode(i));
+      if (dnode != NULL)
+        {
+        dnode->SetPolyData(this->GetPolyData());
+        }
+      }
+  }
+  Superclass::ProcessMRMLEvents(caller, event, callData);
+  return;
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 {

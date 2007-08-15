@@ -36,6 +36,7 @@
 
 class vtkMRMLDisplayableNode;
 class vtkMRMLDisplayNode;
+class vtkMRMLModelHierarchyNode;
 class vtkSlicerModelHierarchyLogic;
 class vtkPolyData;
 class vtkCellArray;
@@ -219,7 +220,8 @@ protected:
     this->CheckModelHierarchies();
     this->AddHierarchiyObservers();
     };
-
+  void UpdateModelHierarchyVisibility(vtkMRMLModelHierarchyNode* mhnode, int visibility );
+  void UpdateModelHierarchyDisplay(vtkMRMLDisplayableNode *model);
 
   void SetModelDisplayProperty(vtkMRMLDisplayableNode *model);
 
