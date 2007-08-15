@@ -256,8 +256,24 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     // sliceLogic contains the pipeline that create viewer's input, so
     // assume we need to set the image data and render
     vtkSlicerSliceViewer *sliceViewer = this->GetSliceViewer( );
+    sliceViewer->ChangeLayout( snode->GetLayoutGridRows(), snode->GetLayoutGridColumns() );
+
     vtkKWRenderWidget *rw = sliceViewer->GetRenderWidget ();
-    sliceViewer->GetImageMapper()->SetInput ( sliceLogic->GetImageData( ) );
+    //sliceViewer->GetImageMapper()->SetInput ( sliceLogic->GetImageData( ) );
+
+//     if ( sliceLogic->GetImageData() != NULL )
+//       {
+//       double spacing[3];
+//       spacing[0] = 10.;
+//       spacing[1] = 10.;
+//       spacing[2] = 10.;
+
+//       sliceLogic->GetImageData()->SetSpacing( spacing );
+//       sliceLogic->UpdateImageData();
+//       }
+
+    sliceViewer->SetImageData( sliceLogic->GetImageData() );
+    
   
 /*
     sliceLogic->GetPolyDataCollection( );

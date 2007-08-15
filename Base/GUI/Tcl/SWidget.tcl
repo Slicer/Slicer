@@ -75,7 +75,7 @@ if { [itcl::find class SWidget] == "" } {
 
     # parts of the sliceGUI saved for easy access
     variable _renderWidget ""
-    variable _renderer ""
+    #variable _renderer ""
     variable _interactor ""
     variable _annotation ""
     variable _sliceNode ""
@@ -85,7 +85,7 @@ if { [itcl::find class SWidget] == "" } {
     # methods
     method rasToXY {rasPoint} {}
     method xyToRAS {xyPoint} {}
-    method queryLayers { x y } {}
+    method queryLayers { x y z } {}
     method getLayers {} {return [array get _layers]}
     method getObjects {} {return [array get o]}
     method processEvent {} {}
@@ -129,7 +129,10 @@ if { [itcl::find class SWidget] == "" } {
 #
 itcl::configbody SWidget::sliceGUI {
   set _renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
-  set _renderer [$_renderWidget GetRenderer]
+    
+  #set numberOfRenderers
+
+  #set _renderer [$_renderWidget GetRenderer]
   set _interactor [$_renderWidget GetRenderWindowInteractor]
   set _annotation [$_renderWidget GetCornerAnnotation]
   set _sliceNode [[$sliceGUI GetLogic] GetSliceNode]
@@ -152,7 +155,7 @@ itcl::body SWidget::xyToRAS { xyPoint } {
   return [lrange $rast 0 2]
 }
 
-itcl::body SWidget::queryLayers { x y } {
+itcl::body SWidget::queryLayers { x y z } {
   # 
   # get the logic, node, image, ijk coords, and pixel for each layer
   # - store these in a layers array for easy access
@@ -170,7 +173,7 @@ itcl::body SWidget::queryLayers { x y } {
     } else {
       set _layers($layer,image) [$_layers($layer,node) GetImageData]
       set _layers($layer,xyToIJK) [[$_layers($layer,logic) GetXYToIJKTransform] GetMatrix]
-      foreach {i j k l} [$_layers($layer,xyToIJK) MultiplyPoint $x $y 0 1] {}
+      foreach {i j k l} [$_layers($layer,xyToIJK) MultiplyPoint $x $y $z 1] {}
       foreach v {i j k} { ;# cast to integer
         if { ![string is double [set $v]] } {
           set _layers($layer,$v) 0

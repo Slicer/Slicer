@@ -7,6 +7,7 @@
 #include "vtkRenderer.h"
 #include "vtkViewport.h"
 #include "vtkRenderWindowInteractor.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkSlicerSliceViewer.h"
 #include "vtkSlicerApplication.h"
@@ -19,6 +20,8 @@
 #include "vtkImageMapper.h"
 #include "vtkPolyDataMapper2D.h"
 #include "vtkActor2D.h"
+#include "vtkActor2DCollection.h"
+#include "vtkMapper2D.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSliceViewer );
@@ -36,8 +39,13 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
     this->ImageMapper->SetColorWindow(255);
     this->ImageMapper->SetColorLevel(127.5);
 
+    this->ImageMapperVec.push_back( ImageMapper );
+
     this->Actor2D = vtkActor2D::New();
     this->Actor2D->SetMapper( this->ImageMapper );
+
+    this->LayoutGridRows = 1;
+    this->LayoutGridColumns = 1;
 
     this->ActorCollection = vtkActor2DCollection::New();
     this->PolyDataCollection = vtkPolyDataCollection::New();
@@ -53,12 +61,25 @@ vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
       {
         if ( this->RenderWidget )
           {
-            this->RenderWidget->GetRenderer()->RemoveActor2D ( this->Actor2D);
+          int numberOfRenderers = this->RenderWidget->GetNumberOfRenderers();
+          for ( int i=0; i<numberOfRenderers; i++ )
+            {
+            this->RenderWidget->GetNthRenderer( i )->RemoveActor2D( this->Actor2D );
+            }
           }
         this->Actor2D->SetMapper ( NULL );
         this->Actor2D->Delete ( );
         this->Actor2D = NULL;
       }
+
+    int numberMappers = this->ImageMapperVec.size();
+    for ( int i=0; i<numberMappers; i++ )
+      {
+      this->ImageMapperVec[i]->Delete();
+      this->ImageMapperVec[i] = NULL;
+      }
+
+    this->ImageMapperVec.clear();
 
     if ( this->ImageMapper )
       {
@@ -81,13 +102,18 @@ vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
       this->RenderWidget->Delete ( );
       this->RenderWidget = NULL;
     }
+
+    this->RenderWidget->RemoveAllRenderers();
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSliceViewer::SetCoordinatedPolyDataAndLookUpTableCollections( vtkPolyDataCollection* newPolyDataCollection, vtkCollection* newLookupTableCollection ){
+void vtkSlicerSliceViewer::SetCoordinatedPolyDataAndLookUpTableCollections( vtkPolyDataCollection* newPolyDataCollection, 
+                                                                            vtkCollection* newLookupTableCollection ){
   if ( newPolyDataCollection->GetNumberOfItems() == newLookupTableCollection->GetNumberOfItems() )
   {
-      //All the actors that contain PolyDatas NOT INCLUDED in the newPolyDataCollection collection are removed from the polyDataMapper, actor and renderer collections and deleted
+      //All the actors that contain PolyDatas NOT INCLUDED in the
+      //newPolyDataCollection collection are removed from the
+      //polyDataMapper, actor and renderer collections and deleted
       for(int i=this->PolyDataCollection->GetNumberOfItems()-1; i>=0 ; i-- ){
         vtkActor2D* actor = vtkActor2D::SafeDownCast( this->ActorCollection->GetItemAsObject(i) );
         vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(actor->GetMapper());
@@ -104,7 +130,8 @@ void vtkSlicerSliceViewer::SetCoordinatedPolyDataAndLookUpTableCollections( vtkP
         
       }
   
-      //All the actors that contain PolyDatas NOT INCLUDED in the PolyDataCollection collection are added to the polyDataMapper, actor and renderer collections
+      //All the actors that contain PolyDatas NOT INCLUDED in the
+      //PolyDataCollection collection are added to the polyDataMapper, actor and renderer collections
       for(int i=newPolyDataCollection->GetNumberOfItems()-1; i>=0 ; i-- ){
         vtkPolyData* polyData = vtkPolyData::SafeDownCast(newPolyDataCollection->GetItemAsObject(i));
   if (polyData==NULL)
@@ -162,6 +189,7 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
     
     //---
     // Create a render widget
+    //
     this->RenderWidget->SetParent ( this->GetParent( ) );
     this->RenderWidget->Create();
     this->RenderWidget->SetWidth ( app->GetMainLayout()->GetSliceViewerMinDim() );
@@ -169,12 +197,7 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
     this->RenderWidget->CornerAnnotationVisibilityOn();
     this->RenderWidget->SetBorderWidth(2);
     this->RenderWidget->SetReliefToGroove ( );
-
-    //---
     this->RenderWidget->GetRenderer()->AddActor2D( this->Actor2D );
-
-    // need to set up the RenderWidget events to modify the slice node
-
 }
 
 //---------------------------------------------------------------------------
@@ -202,4 +225,112 @@ void vtkSlicerSliceViewer::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
   // widgets?
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
+{
+  if (( numberRows != LayoutGridRows )||( numberColumns != LayoutGridColumns ))
+    {
+    vtkImageData *imageData = 0;
+
+    if (ImageMapperVec.size() > 0)
+      {
+      imageData = ImageMapperVec[0]->GetInput();
+      }
+
+    this->LayoutGridRows    = numberRows;
+    this->LayoutGridColumns = numberColumns;
+
+    //-------
+    // Remove all the mappers.
+    // 
+    this->ImageMapperVec.clear();
+
+    //-------
+    // Remove all current renderers.
+    //
+    this->RenderWidget->RemoveAllRenderers();
+
+    //-------
+    // Add new renderers.  First, define the width and height of each
+    // renderer within the window.
+    //
+    float viewportWidth  = 1.0/float(numberColumns);
+    float viewportHeight = 1.0/float(numberRows);
+
+    float xMin;
+    float yMin;
+
+    int inc = 0;
+
+    vtkCamera *cam;
+    yMin = 0.0;
+    for ( int r=0; r<numberRows; r++ )
+      {
+      xMin = 0.0;
+      for ( int c=0; c<numberColumns; c++ )
+        {
+        vtkSmartPointer< vtkImageMapper > mapper = vtkImageMapper::New();
+          mapper->SetColorWindow(255);
+          mapper->SetColorLevel(127.5);
+
+        this->ImageMapperVec.push_back( mapper );
+
+        vtkSmartPointer< vtkActor2D > actor2D = vtkActor2D::New();
+          actor2D->SetMapper( mapper );
+
+        vtkSmartPointer< vtkRenderer > renderer = vtkRenderer::New();
+        //renderer->SetBackground( (xMin+viewportWidth), (yMin+viewportHeight), 0.0 );
+          renderer->SetBackground( 0.0, 0.0, 0.0 );
+          renderer->SetViewport( xMin, yMin, (xMin+viewportWidth), (yMin+viewportHeight) );
+          renderer->AddActor2D( actor2D );
+
+        this->RenderWidget->AddRenderer( renderer );
+
+        //-------
+        // First renderer, grab a handle to the camera to share
+        // amongst the rest of the renderers
+        //
+        if (r==0 && c==0)
+          {
+          cam = renderer->GetActiveCamera();
+          if (cam)
+            {
+            cam->ParallelProjectionOn();
+            }
+          }
+        else
+          {
+          renderer->SetActiveCamera(cam);
+          }
+        xMin += viewportWidth;
+        inc++;
+        }
+      yMin += viewportHeight;
+      }
+    
+    this->SetImageData(imageData);
+    }
+}
+
+
+void vtkSlicerSliceViewer::SetImageData( vtkImageData* imageData )
+{
+  //-------
+  // Arrange the renderers left to right, top to bottom (instead of
+  // left to right, bottom to right, as is the convention with VTK.
+  //
+  int inc = 0;
+  for ( int r=(this->LayoutGridRows-1); r>=0; r--)
+    {
+    for ( int c=0; c<this->LayoutGridColumns; c++ )
+      {
+      this->ImageMapperVec[inc]->SetInput( imageData );
+      this->ImageMapperVec[inc]->SetZSlice( r*this->LayoutGridColumns+c );
+
+      inc++;
+      }
+    }
+}
+
 

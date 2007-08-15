@@ -142,6 +142,23 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
     return this->GetSingletonTag();
   }
 
+  void SetLayoutGrid( int rows, int columns ) {
+    if (( rows != LayoutGridRows ) || ( columns != LayoutGridColumns ))
+      {
+        this->LayoutGridRows = rows;
+        this->LayoutGridColumns = columns;        
+        this->Dimensions[2] = rows*columns;
+
+        this->Modified();
+      }
+  };
+
+  vtkGetMacro (LayoutGridRows, int);
+  vtkSetMacro (LayoutGridRows, int);
+
+  vtkGetMacro (LayoutGridColumns, int);
+  vtkSetMacro (LayoutGridColumns, int);
+
   // Description:
   // Set the SliceToRAS matrix according to the position and orientation of the locator:
   // N(x, y, z) - the direction vector of the locator
@@ -175,6 +192,9 @@ protected:
   double FieldOfView[3];
   unsigned int Dimensions[3];
   char *OrientationString;
+
+  int LayoutGridRows;
+  int LayoutGridColumns;
 
 };
 

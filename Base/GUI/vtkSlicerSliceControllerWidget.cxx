@@ -532,10 +532,6 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LightboxButton->GetMenu()->AddRadioButton ( "customized view");    
     this->LightboxButton->GetMenu()->AddSeparator ( );
     this->LightboxButton->GetMenu()->AddCommand ("close");
-
-    this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "2x2 view");
-    this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "3x3 view");
-    this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "6x6 view");
     this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "customized view" );
             
     //--- Pop-up frame for custom NXM lightbox configuration
@@ -1368,6 +1364,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       else
         {
         // apply this reformat to only this slice MRML
+        this->SliceNode->SetLayoutGrid( 1, 1 );
         }
       }
     else if ( !strcmp ( this->LightboxButton->GetValue(), "2x2 view") )
@@ -1379,6 +1376,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       else
         {
         // apply this reformat to only this slice MRML
+        this->SliceNode->SetLayoutGrid( 2, 2 );
         }
       }
     else if  ( !strcmp ( this->LightboxButton->GetValue(), "3x3 view" ) )
@@ -1390,6 +1388,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       else
         {
         // apply this reformat to only this slice MRML
+        this->SliceNode->SetLayoutGrid( 3, 3 );
         }
       }
     else if ( !strcmp ( this->LightboxButton->GetValue (), "6x6 view") )
@@ -1401,6 +1400,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       else
         {
         // apply this reformat to only this slice MRML
+        this->SliceNode->SetLayoutGrid( 6, 6 );
         }
       }
     else if ( !strcmp ( this->LightboxButton->GetValue (), "customized view") )
@@ -1421,10 +1421,9 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     else
       {
       // apply this reformat to only this slice MRML
+      this->SliceNode->SetLayoutGrid( numHPanes, numVPanes );
       }
     }
-
-
   
   //
   // Scales starting to move? save state for undo.

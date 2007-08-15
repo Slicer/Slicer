@@ -89,7 +89,7 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->Reslice->SetOptimization(1);
   this->Reslice->SetOutputOrigin( 0, 0, 0 );
   this->Reslice->SetOutputSpacing( 1, 1, 1 );
-  this->Reslice->SetOutputDimensionality( 2 );
+  this->Reslice->SetOutputDimensionality( 3 );
   
 
   this->ResliceThreshold->ThresholdBetween(1, 0); // i.e. everything is Out
