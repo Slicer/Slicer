@@ -132,7 +132,7 @@ int main( int argc, char * argv[] )
   for( unsigned int i = 0; i < ImageDimension; i++ )
     {
     boundingBox[2*i] = vnl_math_max(0,(int)(boundingBox[2*i]-boundingBoxPadding));
-    boundingBox[2*i+1] = vnl_math_min(imageSize[i]-1,boundingBox[2*i+1]+boundingBoxPadding);
+    boundingBox[2*i+1] = vnl_math_min((int)(imageSize[i]-1),(int)(boundingBox[2*i+1]+boundingBoxPadding));
     regionIndex[i] = boundingBox[2*i];
     regionSize[i] = boundingBox[2*i+1]-boundingBox[2*i]+1;
     }
