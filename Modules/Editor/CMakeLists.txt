@@ -22,7 +22,7 @@ FILE(MAKE_DIRECTORY ${Editor_DIR})
 SET(TCLFILES
   pkgIndex.tcl
   Editor.tcl EditorNode.tcl EditorLogic.tcl EditorGUI.tcl
-  Box.tcl EditBox.tcl ColorBox.tcl
+  Box.tcl EditBox.tcl EditColor.tcl ColorBox.tcl
   PaintSWidget.tcl DrawSWidget.tcl
   EffectSWidget.tcl
   SaveIslandEffect.tcl ThresholdEffect.tcl RemoveIslandsEffect.tcl

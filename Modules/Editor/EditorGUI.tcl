@@ -244,15 +244,44 @@ proc EditorBuildGUI {this} {
   $::Editor($this,paintRange) SetBalloonHelpString "In threshold mode, the label will only be set if the background value is within this range."
   # don't pack this, it gets conditionally packed below
 
+
+  #
+  # Tool Frame
+  #
+  set ::Editor($this,toolsFrame) [vtkSlicerModuleCollapsibleFrame New]
+  $::Editor($this,toolsFrame) SetParent $pageWidget
+  $::Editor($this,toolsFrame) Create
+  $::Editor($this,toolsFrame) SetLabelText "Tools"
+  pack [$::Editor($this,toolsFrame) GetWidgetName] \
+    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+
+  set ::Editor($this,toolsEditFrame) [vtkKWFrame New]
+  $::Editor($this,toolsEditFrame) SetParent [$::Editor($this,toolsFrame) GetFrame]
+  $::Editor($this,toolsEditFrame) Create
+  pack [$::Editor($this,toolsEditFrame) GetWidgetName] \
+    -side right -anchor ne -padx 2 -pady 2
+
+  set ::Editor($this,toolsColorFrame) [vtkKWFrame New]
+  $::Editor($this,toolsColorFrame) SetParent [$::Editor($this,toolsFrame) GetFrame]
+  $::Editor($this,toolsColorFrame) Create
+  pack [$::Editor($this,toolsColorFrame) GetWidgetName] \
+    -side top -anchor nw -fill x -padx 2 -pady 2
+  
+  set ::Editor($this,editColor) [::EditColor #auto]
+  $::Editor($this,editColor) configure -frame $::Editor($this,toolsColorFrame)
+  $::Editor($this,editColor) create
+  set ::Editor($this,editBox) [::EditBox #auto]
+  $::Editor($this,editBox) configure -frame $::Editor($this,toolsEditFrame)
+  $::Editor($this,editBox) create
+
   #
   # Tool Options
   #
-  set ::Editor($this,optionsFrame) [vtkSlicerModuleCollapsibleFrame New]
-  $::Editor($this,optionsFrame) SetParent $pageWidget
+  set ::Editor($this,optionsFrame) [vtkKWFrame New]
+  $::Editor($this,optionsFrame) SetParent $::Editor($this,toolsFrame)
   $::Editor($this,optionsFrame) Create
-  $::Editor($this,optionsFrame) SetLabelText "Effect Options"
   pack [$::Editor($this,optionsFrame) GetWidgetName] \
-    -side top -anchor nw -fill x -padx 2 -pady 2 -in [$pageWidget GetWidgetName]
+    -side top -anchor nw -fill x -padx 2 -pady 2 
 
   #
   # Rebuild Button
@@ -287,7 +316,7 @@ proc EditorBuildGUI {this} {
 }
 
 proc EditorAddGUIObservers {this} {
-  $this AddObserverByNumber $::Editor($this,rebuildButton) 10000 
+  # $this AddObserverByNumber $::Editor($this,rebuildButton) 10000 
   $this AddObserverByNumber $::Editor($this,volumesCreate) 10000 
   $this AddObserverByNumber [$::Editor($this,paintEnable) GetWidget] 10000 
   $this AddObserverByNumber $::Editor($this,paintDraw) 10000 

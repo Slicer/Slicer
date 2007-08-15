@@ -26,16 +26,19 @@ namespace eval Box {
   proc ShowDialog { class } {
 
     set boxes [itcl::find objects -class $class]
-    if { $boxes != "" } {
-      set box [lindex $boxes 0]
-      $box centerOnPointer
-      $box update
-      $box show
-    } else {
-      set box [$class #auto]
-      $box configure -mode "popup"
-      $box create
-    }
+    foreach box $boxes {
+      array set o [$box objects]
+      if { [info exists o(toplevel)] } {
+        $box centerOnPointer
+        $box update
+        $box show
+        return
+      }
+    } 
+    # only get here if no toplevel box exists yet
+    set box [$class #auto]
+    $box configure -mode "popup"
+    $box create
   }
 }
 
@@ -48,6 +51,7 @@ if { [itcl::find class Box] == "" } {
   itcl::class Box {
 
     constructor  { {frame ""} } {
+      $this configure -frame $frame
     }
 
     destructor {
@@ -182,6 +186,12 @@ itcl::body Box::create { } {
 }
 
 itcl::body Box::centerOnPointer { {xy ""} } {
+
+
+  if { ![info exists o(toplevel)] } {
+    # box is not a toplevel, don't bother centering
+    return
+  }
 
   # find the pointer (or used passed coord)
   if { $xy != "" } {

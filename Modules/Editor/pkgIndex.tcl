@@ -6,6 +6,7 @@ package ifneeded Editor 3.0 [list
   source [file join $dir EditorGUI.tcl]
   source [file join $dir Box.tcl]
   source [file join $dir EditBox.tcl]
+  source [file join $dir EditColor.tcl]
   source [file join $dir ColorBox.tcl]
   source [file join $dir PaintSWidget.tcl]
   source [file join $dir DrawSWidget.tcl]

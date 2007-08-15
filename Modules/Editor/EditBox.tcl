@@ -41,8 +41,8 @@ if { [itcl::find class EditBox] == "" } {
     variable _effects ;# array of effects (icons plus classes to invoke)
 
     # methods
-    method create {} {}
-    method createButtonRow {effects} {}
+    method create { } {}
+    method createButtonRow {parent effects} {}
     method findEffects { {path ""} } {}
     method selectEffect {effect} {}
     method processEvents {caller} {}
@@ -135,11 +135,11 @@ itcl::body EditBox::findEffects { {path ""} } {
 # create a row of the edit box given a list of 
 # effect names (items in _effects(list)
 #
-itcl::body EditBox::createButtonRow {effects} {
+itcl::body EditBox::createButtonRow {parent effects} {
 
   set name [vtkNew vtkKWFrame]
   set o($name,buttonFrame) $name
-  $o($name,buttonFrame) SetParent $o(toplevel)
+  $o($name,buttonFrame) SetParent $parent
   $o($name,buttonFrame) Create
   pack [$o($name,buttonFrame) GetWidgetName] -side top -anchor nw -fill x
 
@@ -185,43 +185,52 @@ itcl::body EditBox::createButtonRow {effects} {
 itcl::body EditBox::create { } {
 
   if { $frame != "" } {
-    error "packing in existing frame not yet supported"
+    set parent $frame
+  } else {
+
+    #
+    # make the toplevel 
+    #
+    set o(toplevel) [vtkNew vtkKWTopLevel]
+    $o(toplevel) SetApplication $::slicer3::Application
+    $o(toplevel) SetTitle "Edit Box"
+    $o(toplevel) Create
+
+    # delete this instance when the window is closed
+    wm protocol [$o(toplevel) GetWidgetName] \
+      WM_DELETE_WINDOW "$this hide"
+    bind [$o(toplevel) GetWidgetName] <Key-space> "$this hide; focus [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]"
+    bind [$o(toplevel) GetWidgetName] <Key-F1> "$this hide; focus [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]"
+    bind [$o(toplevel) GetWidgetName] <Key-Escape> "$this selectEffect DefaultTool; $this hide"
+
+    set parent $o(toplevel)
+
   }
 
+
   $this findEffects
-
-  #
-  # make the toplevel 
-  #
-  set o(toplevel) [vtkNew vtkKWTopLevel]
-  $o(toplevel) SetApplication $::slicer3::Application
-  $o(toplevel) SetTitle "Edit Box"
-  $o(toplevel) Create
-
-  # delete this instance when the window is closed
-  wm protocol [$o(toplevel) GetWidgetName] \
-    WM_DELETE_WINDOW "$this hide"
-  bind [$o(toplevel) GetWidgetName] <Key-space> "$this hide; focus [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]"
-  bind [$o(toplevel) GetWidgetName] <Key-F1> "$this hide; focus [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]"
-  bind [$o(toplevel) GetWidgetName] <Key-Escape> "$this selectEffect DefaultTool; $this hide"
 
   #
   # the buttons
   #
 
-  $this createButtonRow {DefaultTool SnapToGridOn ChooseColor SlurpColor}
-  $this createButtonRow {LabelOpacity ToggleLabelOutline LabelVisibilityOn}
-  $this createButtonRow {PaintLabel ThresholdPaintLabel FreehandDrawLabel ThresholdBucket}
-  $this createButtonRow {EraseLabel ImplicitEllipse ImplicitRectangle ImplicitCube}
-  $this createButtonRow {IdentifyIslands ChangeIsland RemoveIslands SaveIsland}
-  $this createButtonRow {ErodeLabel DilateLabel Threshold ChangeLabel}
-  $this createButtonRow {InterpolateLabels MakeModel Watershed ConnectedComponents}
-  $this createButtonRow {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
-  $this createButtonRow {GoToEditorModule PinOpen}
+  $this createButtonRow $parent {DefaultTool SnapToGridOn ChooseColor SlurpColor}
+  $this createButtonRow $parent {LabelOpacity ToggleLabelOutline LabelVisibilityOn}
+  $this createButtonRow $parent {PaintLabel ThresholdPaintLabel FreehandDrawLabel ThresholdBucket}
+  $this createButtonRow $parent {EraseLabel ImplicitEllipse ImplicitRectangle ImplicitCube}
+  $this createButtonRow $parent {IdentifyIslands ChangeIsland RemoveIslands SaveIsland}
+  $this createButtonRow $parent {ErodeLabel DilateLabel Threshold ChangeLabel}
+  $this createButtonRow $parent {InterpolateLabels MakeModel Watershed ConnectedComponents}
+  $this createButtonRow $parent {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
+  $this createButtonRow $parent {GoToEditorModule PinOpen}
  
   $this setMode $mode
 
-  $o(toplevel) Display
+  if { $frame != "" } {
+    # nothing, calling code will pack the frame
+  } else {
+    $o(toplevel) Display
+  }
 }
 
 #
