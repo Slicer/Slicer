@@ -53,12 +53,16 @@ vtkMRMLNode* vtkMRMLScriptedModuleNode::CreateNodeInstance()
 vtkMRMLScriptedModuleNode::vtkMRMLScriptedModuleNode()
 {
   this->Value = NULL;
+  this->ParameterList = NULL;
   this->ModuleName = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLScriptedModuleNode::~vtkMRMLScriptedModuleNode()
 {
+  this->SetValue(NULL);
+  this->SetParameterList(NULL);
+
   if (this->Value)
     {
     delete [] this->Value;
@@ -207,3 +211,18 @@ vtkMRMLScriptedModuleNode
 }
 
 
+//----------------------------------------------------------------------------
+void
+vtkMRMLScriptedModuleNode
+::RequestParameterList()
+{
+  std::string list("");
+
+  std::map<std::string, std::string>::iterator iter;
+
+  for (iter=this->Parameters.begin(); iter != this->Parameters.end(); iter++)
+    {
+    list += "\"" + iter->first + "\" \"" + iter->second + "\" ";
+    }
+  this->SetParameterList (list.c_str());
+}
