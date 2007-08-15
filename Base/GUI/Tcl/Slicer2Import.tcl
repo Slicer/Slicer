@@ -29,6 +29,7 @@ proc ImportSlicer2Scene {sceneFile} {
   set ::S2(transformIDStack) ""
   set ::S2(fiducialListNode) ""
   set ::S2_HParent_ID ""
+  array unset ::S2_Model_ID ""
 
   ImportElement $root
 
@@ -331,6 +332,16 @@ proc ImportNodeModel {node} {
   set mnode [$logic AddModel $fileName]
   set dnode [$mnode GetDisplayNode]
 
+  if { ![info exists n(id)] } {
+    # model node has no id, so create one
+    # - try to get a high number that isn't already used
+    for {set i 1000} {$i < 1000000} {incr i} {
+      if { [lsearch [array names ::S2_Model_ID] $i] == -1 } {
+        set n(id) $i
+        break
+      }
+    }
+  }
   set ::S2_Model_ID($n(id)) [$mnode GetID]
 
   if { [info exists n(visibility)] } {
@@ -342,17 +353,34 @@ proc ImportNodeModel {node} {
   }
 
   if { [info exists n(color)] } {
-      set cnode [$::slicer3::MRMLScene GetNodeByID vtkMRMLColorTableNodeSPLBrainAtlas]
+
+    if { [string tolower $n(color)] == "skin" } {
+      # workaround slicer2 ethnocentrism
+      set n(color) "peach"
+    }
+
+    set cnode [vtkMRMLColorTableNode New]
+    foreach colorType "SPLBrainAtlas Labels" {
+
+      $cnode SetTypeTo$colorType
+      puts "looking for $n(color) in $colorType node $cnode"
       set saveColor 0
       for {set i 0} {$i < [$cnode GetNumberOfColors]} {incr i} {
-          if {[$cnode GetColorName $i] == $n(color)} {
-              eval $dnode SetColor [lrange [[$cnode GetLookupTable] GetTableValue $i] 0 2]
-              set saveColor 1
-          }
+        set name [$cnode GetColorName $i]
+        if {[string tolower $name] == [string tolower $n(color)]} {
+          eval $dnode SetColor [lrange [[$cnode GetLookupTable] GetTableValue $i] 0 2]
+          set saveColor 1
+          puts " found color $i $name"
+          break
+        }
       } 
       if {$saveColor == 0} {
-          $dnode SetAttribute colorid $n(color)
+        $dnode SetAttribute colorid $n(color)
+      } else {
+        break
       }
+    }
+    $cnode Delete
   }
 }
 
