@@ -111,12 +111,11 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
     case typeN: \
     {\
       typedef itk::Vector<type, 3>    VectorPixelType;\
-      typedef itk::VectorImage<VectorPixelType,3> image2##typeN;\
+      typedef itk::VectorImage<type,3> image2##typeN;\
       typedef itk::ImageSource<image2##typeN> FilterType; \
       FilterType::Pointer filter; \
       typedef itk::ImageFileReader<\
-        image2##typeN, \
-          itk::DefaultConvertPixelTraits < VectorPixelType > > ReaderType##typeN; \
+        image2##typeN > ReaderType##typeN; \
       ReaderType##typeN::Pointer reader2##typeN = ReaderType##typeN::New();\
       reader2##typeN->SetFileName(this->FileNames[0].c_str()); \
       if (this->UseNativeCoordinateOrientation) \
@@ -134,7 +133,7 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
         filter = orient2##typeN; \
         } \
        filter->UpdateLargestPossibleRegion();\
-      itk::ImportImageContainer<unsigned long, VectorPixelType>::Pointer PixelContainer2##typeN;\
+      itk::ImportImageContainer<unsigned long, type >::Pointer PixelContainer2##typeN;\
       PixelContainer2##typeN = filter->GetOutput()->GetPixelContainer();\
       void *ptr = static_cast<void *> (PixelContainer2##typeN->GetBufferPointer());\
       (dynamic_cast<vtkImageData *>( output))->GetPointData()->GetScalars()->SetVoidArray(ptr, PixelContainer2##typeN->Size(), 0);\
