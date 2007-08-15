@@ -79,10 +79,11 @@ int main( int argc, char * argv[] )
   itk::PluginFilterWatcher AntiAliasWatcher(antiAliasFilter, "Anti Alias Image Filter", CLPProcessInformation, 2.0/3.0, 0.0);
   itk::PluginFilterWatcher GaussianWatcher(gaussianFilter, "Gaussian Image Filter", CLPProcessInformation, 1.0/3.0, 2.0/3.0);
 
-  reader->SetFileName (inputVolume.c_str());
-  std::cout << "Updating reader..." << std::endl;
-  reader->Update();
+  try
+    {
 
+  reader->SetFileName (inputVolume.c_str());
+  reader->Update();
 
   // Choose a label to smooth.  All others will be ignored.  
   // If the chosen label is greater than the largest label in the
@@ -113,7 +114,6 @@ int main( int argc, char * argv[] )
   inputThresholder->SetLowerThreshold( labelToSmooth );
   inputThresholder->SetUpperThreshold( labelToSmooth );
   inputThresholder->ReleaseDataFlagOn();
-  std::cout << "Updating inputThresholder..." << std::endl;
   inputThresholder->Update();
 
   // Find the bounding box of the desired label.
@@ -155,7 +155,6 @@ int main( int argc, char * argv[] )
   antiAliasFilter->SetNumberOfIterations( numberOfIterations );
   antiAliasFilter->SetNumberOfLayers( numberOfLayers );
   antiAliasFilter->ReleaseDataFlagOn();
-  std::cout << "Updating antiAliasFilter..." << std::endl;
   antiAliasFilter->Update();
   
   antiAliasImage = antiAliasFilter->GetOutput();
@@ -165,7 +164,6 @@ int main( int argc, char * argv[] )
   gaussianFilter->SetInput( antiAliasImage );
   gaussianFilter->SetVariance( gaussianSigma * gaussianSigma );
   gaussianFilter->ReleaseDataFlagOn();
-  std::cout << "Updating gaussianFilter..." << std::endl;
   gaussianFilter->Update();
 
   outputThresholder->SetInput( gaussianFilter->GetOutput() );
@@ -173,7 +171,6 @@ int main( int argc, char * argv[] )
   outputThresholder->SetInsideValue( 1 );
   outputThresholder->SetOutsideValue( 0 );
   outputThresholder->ReleaseDataFlagOn();
-  std::cout << "Updating outputThresholder..." << std::endl;
   outputThresholder->Update();
 
   // Paste the smoothed result back into the original thresholded
@@ -186,13 +183,27 @@ int main( int argc, char * argv[] )
   paster->SetSourceRegion( outputThresholder->GetOutput()->GetRequestedRegion() );
   paster->SetDestinationIndex( regionIndex );
   paster->ReleaseDataFlagOn();
-  std::cout << "Updating paster..." << std::endl;
   paster->Update();
 
   writer->SetInput( paster->GetOutput() );
   writer->SetFileName( outputVolume.c_str() );
-  std::cout << "Updating writer..." << std::endl;
   writer->Update();
+
+
+    }
+  catch( itk::ExceptionObject & exc ) 
+    { 
+    std::cout << "ExceptionObject caught !" << std::endl; 
+    std::cout << exc << std::endl; 
+    return EXIT_FAILURE;
+    } 
+  catch(std::exception & exc)
+    {
+    std::cout << "ExceptionObject caught !" << std::endl; 
+    std::cout << exc.what() << std::endl; 
+    return EXIT_FAILURE;
+    }
+
 
   return EXIT_SUCCESS;
 }
