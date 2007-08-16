@@ -630,6 +630,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->OffsetScale->RangeVisibilityOff ( );
     this->OffsetScale->SetEntryWidth(8);
     this->OffsetScale->SetLabelPositionToLeft();
+
             
     //
     // Pack everyone up
@@ -1692,6 +1693,30 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   //
   vtkKWMenuButton *mb = this->OrientationSelector->GetWidget()->GetWidget();
   mb->SetValue( this->SliceNode->GetOrientationString() );
+
+  //
+  // Make the Balloon help hint about which way scrolling works.
+  //
+  if ( !(strcmp(this->SliceNode->GetOrientationString(), "Axial")))
+    {
+    // Orientation is Axial: I <----> S
+    this->OffsetScale->GetScale()->SetBalloonHelpString ( "I <-----> S" );
+    }
+  else if ( !(strcmp(this->SliceNode->GetOrientationString(), "Sagittal")))
+    {
+    // Orientation is Sagittal: R <----> L  
+    this->OffsetScale->GetScale()->SetBalloonHelpString ( "R <-----> L" );
+    }
+  else if ( !(strcmp(this->SliceNode->GetOrientationString(), "Coronal")))
+    {
+    // Orientation is Coronal: P <----> A
+    this->OffsetScale->GetScale()->SetBalloonHelpString ( "P <-----> A" );
+    }
+  else
+    {
+    // Orientation is Oblique: make tooltip null
+    this->OffsetScale->GetScale()->SetBalloonHelpString ( "" ) ;
+    }
 
   //
   // Set the scale increments to match the z spacing (rotated
