@@ -267,6 +267,8 @@ proc EditorBuildGUI {this} {
   pack [$::Editor($this,toolsColorFrame) GetWidgetName] \
     -side top -anchor nw -fill x -padx 2 -pady 2
   
+  # create the edit box and the color picker - note these aren't kwwidgets
+  #  but helper classes that create kwwidgets in the given frame
   set ::Editor($this,editColor) [::EditColor #auto]
   $::Editor($this,editColor) configure -frame $::Editor($this,toolsColorFrame)
   $::Editor($this,editColor) create
@@ -278,10 +280,11 @@ proc EditorBuildGUI {this} {
   # Tool Options
   #
   set ::Editor($this,optionsFrame) [vtkKWFrame New]
-  $::Editor($this,optionsFrame) SetParent $::Editor($this,toolsFrame)
+  $::Editor($this,optionsFrame) SetParent [$::Editor($this,toolsFrame) GetFrame]
+  $::Editor($this,optionsFrame) SetBorderWidth 1
   $::Editor($this,optionsFrame) Create
   pack [$::Editor($this,optionsFrame) GetWidgetName] \
-    -side top -anchor nw -fill x -padx 2 -pady 2 
+    -side left -anchor nw -fill both -padx 2 -pady 2 
 
   #
   # Rebuild Button
@@ -518,7 +521,7 @@ proc EditorSetPaintThresholdState {this onOff} {
 }
 
 proc EditorGetOptionsFrame {this} {
-  return [$::Editor($this,optionsFrame) GetFrame]
+  return $::Editor($this,optionsFrame)
 }
 
 proc EditorSelectModule {} {
