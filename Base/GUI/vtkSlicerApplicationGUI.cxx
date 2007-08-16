@@ -1622,23 +1622,25 @@ void vtkSlicerApplicationGUI::PackOneUpSliceView ( const char * whichSlice )
         this->MainSliceGUI0->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));
         this->MainSliceGUI1->PackGUI ( NULL );
         this->MainSliceGUI2->PackGUI ( NULL );
+      layout->SetCurrentViewArrangement ( vtkSlicerGUILayout::SlicerLayoutOneUpRedSliceView );
         }
       else if ( !strcmp ( whichSlice, "Yellow" ) )
         {
         this->MainSliceGUI0->PackGUI ( NULL);
         this->MainSliceGUI1->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));
         this->MainSliceGUI2->PackGUI ( NULL );
+      layout->SetCurrentViewArrangement ( vtkSlicerGUILayout::SlicerLayoutOneUpYellowSliceView );
         }
       else if ( !strcmp ( whichSlice, "Green" ) )
         {
         this->MainSliceGUI0->PackGUI ( NULL );
         this->MainSliceGUI1->PackGUI ( NULL );
         this->MainSliceGUI2->PackGUI ( this->MainSlicerWindow->GetViewFrame ( ));
+      layout->SetCurrentViewArrangement ( vtkSlicerGUILayout::SlicerLayoutOneUpGreenSliceView );
         }
 
 //      this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
       this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
-      layout->SetCurrentViewArrangement ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView );
     }
 }
 
