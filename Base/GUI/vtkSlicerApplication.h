@@ -79,6 +79,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     virtual void InstallTheme ( vtkKWTheme *theme );
 
   // Description:
+  // methods to access registry from wrapped languages
+  int HasRegistry(const char *key);
+  void RequestRegistry(const char *key);
+  const char *GetRegistryHolder();
+  void SetRegistry(const char *key, char *value);
+
+  // Description:
   // Save/Retrieve the application settings to/from registry.
   // Do not call that method before the application name is known and the
   // proper registry level set (if any).
@@ -222,6 +229,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ApplicationFontSize [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ApplicationFontFamily [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+
+  char RegistryHolder [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
 
   int LoadCommandLineModules;
   int EnableDaemon;

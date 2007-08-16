@@ -508,11 +508,17 @@ itcl::body Loader::chooseDirectory {} {
   $dialog ChooseDirectoryOn
   $dialog SetParent $o(toplevel)
   $dialog Create
+  $dialog RetrieveLastPathFromRegistry "OpenPath"
   $dialog Invoke
   set dir ""
   if { [[$dialog GetFileNames] GetNumberOfValues] } {
     set dir [[$dialog GetFileNames] GetValue 0]
   }
+
+  if { $dir != "" } {
+    $dialog SaveLastPathToRegistry "OpenPath"
+  }
+
   $dialog Delete
   
   return $dir
@@ -520,10 +526,12 @@ itcl::body Loader::chooseDirectory {} {
 
 itcl::body Loader::getOpenFile {} {
 
+
   set dialog [vtkKWFileBrowserDialog New]
   $dialog MultipleSelectionOn
   $dialog SetParent $o(toplevel)
   $dialog Create
+  $dialog RetrieveLastPathFromRegistry "OpenPath"
   $dialog Invoke
 
   set files ""
@@ -532,8 +540,12 @@ itcl::body Loader::getOpenFile {} {
   for {set i 0} {$i < $namesSize} {incr i} {
     lappend files [$names GetValue $i]
   }
-  $dialog Delete
   
+  if { $files != "" } {
+    $dialog SaveLastPathToRegistry "OpenPath"
+  }
+
+  $dialog Delete
   return $files
 }
 
@@ -1067,5 +1079,7 @@ set ::_fixed_zip_code {
         ::close $fd
     }
 }
+
+set _dummy {} ;# to avoid printing the zip code above when sourcing this file
 
 

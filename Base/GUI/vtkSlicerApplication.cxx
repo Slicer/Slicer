@@ -388,6 +388,37 @@ int vtkSlicerApplication::StartApplication ( ) {
 }
 
 //----------------------------------------------------------------------------
+//  access to registry values
+
+int vtkSlicerApplication::HasRegistry(const char *key)
+{
+  return this->HasRegistryValue( 2, "RunTime", key);
+}
+
+void vtkSlicerApplication::RequestRegistry(const char *key)
+{
+  if (this->HasRegistryValue( 2, "RunTime", key))
+    {
+    this->GetRegistryValue( 2, "RunTime", key, this->RegistryHolder);
+    }
+  else
+    {
+    *this->RegistryHolder = '\0';
+    }
+}
+
+const char *vtkSlicerApplication::GetRegistryHolder()
+{
+  return this->RegistryHolder;
+}
+
+void vtkSlicerApplication::SetRegistry(const char *key, char *value)
+{
+  this->SetRegistryValue(2, "RunTime", key, value);
+}
+
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
 {
   // Make a good guess before we read from the registry.  Default to a

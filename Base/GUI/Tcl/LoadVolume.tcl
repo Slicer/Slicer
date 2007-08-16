@@ -119,6 +119,11 @@ itcl::body LoadVolume::constructor {} {
   set o(browser) [vtkNew vtkKWFileBrowserWidget]
   $o(browser) SetParent $o(topFrame)
   $o(browser) Create
+
+  $::slicer3::Application RequestRegistry "OpenPath"
+  set path [$::slicer3::Application GetRegistryHolder]
+  $o(browser) OpenDirectory $path
+
   set fileTable [$o(browser) GetFileListTable]
   $fileTable SetSelectionModeToSingle
   set tag [$fileTable AddObserver AnyEvent "$this processEvents $o(browser)"]
@@ -256,6 +261,8 @@ itcl::body LoadVolume::apply { } {
       $selNode SetReferenceActiveVolumeID [$node GetID]
     }
     $::slicer3::ApplicationLogic PropagateVolumeSelection
+
+    $::slicer3::Application SetRegistry "OpenPath" [file dirname $fileName]
   }
 }
 
