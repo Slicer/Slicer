@@ -50,6 +50,9 @@ this->DefaultSliceGUIFrameWidth = 300;
   this->Default3DViewerHeight = 0;
   this->DefaultMainViewerWidth = 0;
   this->SliceViewerMinDim = 10;
+  this->SliceControllerResolutionThreshold = 1200;
+  this->SliceViewerWidthThreshold = 260;
+
 }
 
 

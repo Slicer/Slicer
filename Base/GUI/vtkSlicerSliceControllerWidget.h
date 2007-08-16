@@ -45,6 +45,7 @@ public:
   vtkGetObjectMacro ( ViewConfigureIcons, vtkSlicerToolbarIcons );
   vtkGetObjectMacro ( SliceControlIcons, vtkSlicerSlicesControlIcons);
   vtkGetObjectMacro ( ScaleFrame, vtkKWFrame );
+  vtkGetObjectMacro ( IconFrame, vtkKWFrame );
   vtkGetObjectMacro ( LabelOpacityButton, vtkKWPushButton );
   vtkGetObjectMacro ( LabelOpacityScale, vtkKWScaleWithEntry );
   vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );
@@ -175,6 +176,7 @@ protected:
   vtkSlicerToolbarIcons *ViewConfigureIcons;
   vtkSlicerSlicesControlIcons *SliceControlIcons;
   vtkKWFrame *ScaleFrame;
+  vtkKWFrame *IconFrame;
   vtkKWPushButton *ColorCodeButton;
   vtkKWPushButton *FitToWindowButton;
   vtkKWMenuButton *VolumeDisplayMenuButton;

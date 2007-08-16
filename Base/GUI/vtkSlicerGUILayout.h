@@ -83,6 +83,19 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     vtkSetMacro ( DefaultViewControlFrameHeight, int );
     vtkGetMacro ( SliceViewerMinDim, int );
     vtkSetMacro ( SliceViewerMinDim, int );
+    // Description:
+    // If the screen resolution is less than this number
+    // (default is 1200 pixels) when a SliceControllerWidget
+    // is first created, then the SliceControllerWidget
+    // will be packed differently to allow all of its widgets
+    // to be displayed and usable.
+    vtkGetMacro ( SliceControllerResolutionThreshold, int );
+    // Description:
+    // If the SliceViewer width is greater than this number
+    // of pixels (default 260) when the overall layout
+    // is *adjusted*, then the SliceControllerWidgets will
+    // be packed differently to save space.
+    vtkGetMacro ( SliceViewerWidthThreshold, int );
 
     virtual void InitializeLayoutDimensions ( );
     virtual void InitializeMainSlicerWindowSize ( );
@@ -121,7 +134,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     // Description:
     // Minimum size for the Slice Windows
     int SliceViewerMinDim;
-    
+    int SliceControllerResolutionThreshold;
+    int SliceViewerWidthThreshold;
+
  private:
     vtkSlicerGUILayout ( const vtkSlicerGUILayout& ); // Not implemented
     void operator = ( const vtkSlicerGUILayout& ); // Not implemented

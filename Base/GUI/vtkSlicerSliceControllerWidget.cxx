@@ -9,6 +9,7 @@
 #include "vtkSlicerSlicesControlGUI.h"
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerTheme.h"
+#include "vtkSlicerGUILayout.h"
 
 #include "vtkKWWidget.h"
 #include "vtkKWScaleWithEntry.h"
@@ -55,6 +56,7 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->SliceCompositeNode = NULL;
   this->SliceLogic = NULL;
   this->ScaleFrame = NULL;
+  this->IconFrame = NULL;
   this->ColorCodeButton = NULL;
   this->SliceControlIcons = NULL;
   this->ContainerFrame = NULL;
@@ -211,6 +213,13 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
     this->ScaleFrame->Delete ( );
     this->ScaleFrame = NULL;
     }
+  if ( this->IconFrame )
+    {
+    this->IconFrame->SetParent(NULL);
+    this->IconFrame->Delete ( );
+    this->IconFrame = NULL;
+    }
+
   if ( this->ColorCodeButton )
     {
     this->ColorCodeButton->SetParent(NULL);
@@ -318,6 +327,9 @@ void vtkSlicerSliceControllerWidget::ApplyColorCode ( double *c )
 void vtkSlicerSliceControllerWidget::CreateWidget ( ) 
 {
 
+  int screenWidthThreshold;
+  int viewerWidthThreshold;
+  
     if ( !this->MRMLScene ) {
         vtkErrorMacro ( << " MRML Scene must be set before creating widgets.");
         return;
@@ -349,6 +361,28 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->ContainerFrame->Create ( );
 
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+    vtkSlicerApplicationGUI *appGUI;
+    vtkSlicerGUILayout *layout;
+    //
+    // if screen resolution is below a certain threshold,
+    // need to pack the slice controller differently so
+    // that all widgets will be displayed and usable.
+    //
+    if ( app )
+      {
+      layout = app->GetMainLayout();
+      appGUI = app->GetApplicationGUI();
+      }
+    if ( layout )
+      {
+      screenWidthThreshold = layout ->GetSliceControllerResolutionThreshold();
+      viewerWidthThreshold = layout->GetSliceViewerWidthThreshold();
+      }
+    else
+      {
+      screenWidthThreshold = 1200;
+      viewerWidthThreshold = 260;
+      }
 
     //
     // Foreground, Background, Label and Orientation MenuButtons + Menus
@@ -451,18 +485,52 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelSelector->GetWidget()->GetWidget()->SetWidth(10);
 
     //
-    // Create the frame to contain scale and visibility toggle
+    // Create the frame to contain scale and icons
     //
     this->ScaleFrame = vtkKWFrame::New ();
     this->ScaleFrame->SetParent ( this->ContainerFrame );
     this->ScaleFrame->Create ( );
+    //
+    // Create a frame to contain just the icons, if
+    // slicer window is too small to pack the scale
+    // and icons in the same row of the controller.
+    this->IconFrame = vtkKWFrame::New ();
+    this->IconFrame->SetParent ( this->ContainerFrame );
+    this->IconFrame->Create ( );
+
+    //
+    // icons we need...
+    this->VisibilityIcons = vtkSlicerVisibilityIcons::New ( );
+    this->ViewConfigureIcons = vtkSlicerToolbarIcons::New ( );
+    //
+
+    
+    //
+    // tailor layout of gui packing for window size.
+    //
+    // TODO: once applicationsettings can save the slicer window
+    // width, use this instead of screen resolution.
+    // screenwidth = appGUI->GetMainSlicerWindow()->GetWidth();
+    // FOR NOW: use screen resolution:
+    const char *str = this->Script ("winfo screenwidth .");
+    int screenwidth = atoi (str);
+
+    this->LinkButton = vtkKWPushButton::New ( );
+    this->LinkButton->SetParent ( this->ContainerFrame );
+    this->VisibilityToggle = vtkKWPushButton::New ( );
+    this->VisibilityToggle->SetParent ( this->ContainerFrame );      
+    this->FitToWindowButton = vtkKWPushButton::New ( );
+    this->FitToWindowButton->SetParent ( this->ContainerFrame );
+    this->VolumeDisplayMenuButton = vtkKWMenuButton::New ( );
+    this->VolumeDisplayMenuButton->SetParent ( this->ContainerFrame );
+    this->LightboxButton = vtkKWMenuButton::New();
+    this->LightboxButton->SetParent ( this->ContainerFrame );
+    this->LabelOpacityButton = vtkKWPushButton::New ( );
+    this->LabelOpacityButton->SetParent (this->ContainerFrame );
 
     //
     // Create a button to toggle the slice visibility in the main viewer and icons for it
     //
-    this->VisibilityIcons = vtkSlicerVisibilityIcons::New ( );
-    this->VisibilityToggle = vtkKWPushButton::New ( );
-    this->VisibilityToggle->SetParent ( this->ScaleFrame );
     this->VisibilityToggle->Create ( );
     this->VisibilityToggle->SetReliefToFlat ( );
     this->VisibilityToggle->SetOverReliefToNone ( );
@@ -473,8 +541,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     //
     // Create a button to toggle the slice visibility in the main viewer and icons for it
     //
-    this->LinkButton = vtkKWPushButton::New ( );
-    this->LinkButton->SetParent ( this->ScaleFrame );
+
     this->LinkButton->Create ( );
     this->LinkButton->SetReliefToFlat ( );
     this->LinkButton->SetOverReliefToNone ( );
@@ -485,21 +552,18 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     //
     // Create a button to fit the view to the window
     //
-    this->FitToWindowButton = vtkKWPushButton::New ( );
-    this->FitToWindowButton->SetParent ( this->ScaleFrame );
+
     this->FitToWindowButton->Create ( );
     this->FitToWindowButton->SetReliefToFlat ( );
     this->FitToWindowButton->SetOverReliefToNone ( );
     this->FitToWindowButton->SetBorderWidth ( 0 );
     this->FitToWindowButton->SetImageToIcon ( this->SliceControlIcons->GetFitToWindowIcon ( ));    
     this->FitToWindowButton->SetBalloonHelpString ( "Adjusts the Slice Viewer's field of view to match the extent of current background volume.");
-// adjust the node's field of view to match the extent of current background volume
 
     //
     // Create a menubutton that navigates to Volumes->Display
     // 
-    this->VolumeDisplayMenuButton = vtkKWMenuButton::New ( );
-    this->VolumeDisplayMenuButton->SetParent ( this->ScaleFrame );
+
     this->VolumeDisplayMenuButton->Create ( );
     this->VolumeDisplayMenuButton->SetBorderWidth ( 0 );
     this->VolumeDisplayMenuButton->IndicatorVisibilityOff ( );
@@ -508,18 +572,13 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->VolumeDisplayMenuButton->GetMenu()->AddRadioButton ( "Foreground volume" );
     this->VolumeDisplayMenuButton->GetMenu()->AddRadioButton ( "Background volume" );
     this->VolumeDisplayMenuButton->GetMenu()->AddRadioButton ( "Label map" );
-//    this->VolumeDisplayMenuButton->GetMenu()->SetItemStateToDisabled ("Foreground volume");
-//    this->VolumeDisplayMenuButton->GetMenu()->SetItemStateToDisabled ("Background volume");
-//    this->VolumeDisplayMenuButton->GetMenu()->SetItemStateToDisabled ("Label map");
     this->VolumeDisplayMenuButton->GetMenu()->AddSeparator();
     this->VolumeDisplayMenuButton->GetMenu()->AddCommand ( "close" );
 
     //
     // Create a lightbox menubutton that allows viewer to be reconfigured
     //
-    this->ViewConfigureIcons = vtkSlicerToolbarIcons::New ( );
-    this->LightboxButton = vtkKWMenuButton::New();
-    this->LightboxButton->SetParent ( this->ScaleFrame );
+
     this->LightboxButton->Create();
     this->LightboxButton->SetBorderWidth ( 0 );
     this->LightboxButton->IndicatorVisibilityOff ( );
@@ -612,8 +671,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelOpacityScale->GetScale()->ValueVisibilityOff ( );
     this->LabelOpacityScale->SetValue ( 1.0 );
     this->Script ( "pack %s -side left -anchor w -padx 1 -pady 3 -expand n", this->LabelOpacityScale->GetWidgetName ( ) );
-    this->LabelOpacityButton = vtkKWPushButton::New ( );
-    this->LabelOpacityButton->SetParent (this->ScaleFrame );
+
     this->LabelOpacityButton->Create ( );
     this->LabelOpacityButton->SetBorderWidth ( 0 );
     this->LabelOpacityButton->SetImageToIcon ( this->SliceControlIcons->GetLabelOpacityIcon() );
@@ -630,7 +688,6 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->OffsetScale->RangeVisibilityOff ( );
     this->OffsetScale->SetEntryWidth(8);
     this->OffsetScale->SetLabelPositionToLeft();
-
             
     //
     // Pack everyone up
@@ -659,23 +716,59 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
                  this->LabelSelector->GetWidgetName(),
                  this->BackgroundMenuButton->GetWidgetName(),
                  this->BackgroundSelector->GetWidgetName());
-    this->Script ( "grid %s -sticky ew -columnspan 4", 
-                   this->ScaleFrame->GetWidgetName ( ) );
 
-    this->Script ("pack %s -side left -expand n -padx 1", 
-                  this->LinkButton->GetWidgetName ( ) );
-    this->Script ("pack %s -side left -expand n -padx 1", 
-                  this->VisibilityToggle->GetWidgetName ( ) );
-    this->Script ("pack %s -side left -expand n -padx 1", 
-                  this->FitToWindowButton->GetWidgetName ( ) );
-    this->Script ("pack %s -side left -expand n -padx 1", 
-                  this->LabelOpacityButton->GetWidgetName ( ) );
-    this->Script ("pack %s -side left -expand n -padx 1", 
-                  this->VolumeDisplayMenuButton->GetWidgetName ( ) );    
-    this->Script ("pack %s -side left -expand n -padx 1", 
-                  this->LightboxButton->GetWidgetName ( ) );    
-    this->Script("pack %s -side left -fill x -expand y", 
-                 this->OffsetScale->GetWidgetName());
+    if ( screenwidth <= screenWidthThreshold)
+      {
+      this->Script ( "grid %s -sticky ew -columnspan 4", this->IconFrame->GetWidgetName ( ) );
+      this->Script ( "grid %s -sticky ew -columnspan 4", this->ScaleFrame->GetWidgetName ( ) );
+      this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->LinkButton->GetWidgetName ( ),
+                    this->IconFrame->GetWidgetName());
+    this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->VisibilityToggle->GetWidgetName ( ),
+                  this->IconFrame->GetWidgetName());
+    this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->FitToWindowButton->GetWidgetName ( ),
+                  this->IconFrame->GetWidgetName());
+    this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->LabelOpacityButton->GetWidgetName ( ),
+                  this->IconFrame->GetWidgetName());
+    this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->VolumeDisplayMenuButton->GetWidgetName ( ),
+                  this->IconFrame->GetWidgetName());    
+    this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->LightboxButton->GetWidgetName ( ),
+                  this->IconFrame->GetWidgetName());    
+    this->Script("pack %s -side left -fill x -expand y -in %s", 
+                 this->OffsetScale->GetWidgetName(),
+                 this->ScaleFrame->GetWidgetName());
+      }
+    else
+      {
+      this->Script ( "grid %s -sticky ew -columnspan 4", this->ScaleFrame->GetWidgetName ( ) );
+    this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->LinkButton->GetWidgetName ( ),
+                  this->ScaleFrame->GetWidgetName());
+    this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->VisibilityToggle->GetWidgetName ( ),
+                  this->ScaleFrame->GetWidgetName());
+    this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->FitToWindowButton->GetWidgetName ( ),
+                  this->ScaleFrame->GetWidgetName());
+    this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->LabelOpacityButton->GetWidgetName ( ),
+                  this->ScaleFrame->GetWidgetName());
+    this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->VolumeDisplayMenuButton->GetWidgetName ( ),
+                  this->ScaleFrame->GetWidgetName());    
+    this->Script ("pack %s -side left -expand n -padx 1 -in %s", 
+                  this->LightboxButton->GetWidgetName ( ),
+                  this->ScaleFrame->GetWidgetName());    
+    this->Script("pack %s -side left -fill x -expand y -in %s", 
+                 this->OffsetScale->GetWidgetName(),
+                 this->ScaleFrame->GetWidgetName());
+      }
+
 
 
     // we want to get rid of the labels in the node selector widgets.
