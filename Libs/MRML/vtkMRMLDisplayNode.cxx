@@ -118,6 +118,7 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
     of << indent << " activeScalarName=\"" << this->ActiveScalarName << "\"";
     }
 
+  of << " ";
 }
 
 //----------------------------------------------------------------------------
