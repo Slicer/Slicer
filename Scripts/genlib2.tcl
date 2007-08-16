@@ -340,7 +340,7 @@ if { ![file exists $::IWIDGETS_TEST_FILE] || $::GENLIB(update) } {
 # Get and build blt
 #
 
-if { 0 && ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
+if { !$isDarwin  && (![file exists $::BLT_TEST_FILE] || $::GENLIB(update)) } {
     cd $SLICER_LIB/tcl
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/blt blt
@@ -856,7 +856,7 @@ if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
 #
 #
 
-if { !$isDarwin && ![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update) } {
+if { ![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd echo t | $::SVN co https://ariser.uio.no/svn/navitrack/trunk NaviTrack
