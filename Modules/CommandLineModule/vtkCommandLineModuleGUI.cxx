@@ -1406,6 +1406,10 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         vtkKWLoadSaveButtonWithLabel *tparameter
           = vtkKWLoadSaveButtonWithLabel::New();
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
+        if ((*pit).GetMultiple() == "true")
+          {
+          tparameter->GetWidget()->GetLoadSaveDialog()->MultipleSelectionOn();
+          }
         tparameter->Create();
         if ((*pit).GetChannel() == "output")
           {
