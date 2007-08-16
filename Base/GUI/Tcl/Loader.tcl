@@ -223,8 +223,8 @@ itcl::body Loader::constructor { {root ""} } {
   set o(addFile) [vtkNew vtkKWPushButton]
   $o(addFile) SetParent $o(buttonFrame)
   $o(addFile) Create
-  $o(addFile) SetText "Add File"
-  $o(addFile) SetBalloonHelpString "Add a file to the list of files to load"
+  $o(addFile) SetText "Add File(s)"
+  $o(addFile) SetBalloonHelpString "Add a file or multiple files to the list of files to load"
   set tag [$o(addFile) AddObserver ModifiedEvent "$this processEvents $o(addFile)"]
   lappend _observerRecords [list $o(addFile) $tag]
   $o(addFile) SetCommand $o(addFile) Modified
@@ -520,7 +520,8 @@ itcl::body Loader::chooseDirectory {} {
 
 itcl::body Loader::getOpenFile {} {
 
-  set dialog [vtkKWLoadSaveDialog New]
+  set dialog [vtkKWFileBrowserDialog New]
+  $dialog MultipleSelectionOn
   $dialog SetParent $o(toplevel)
   $dialog Create
   $dialog Invoke
