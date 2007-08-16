@@ -318,6 +318,7 @@ itcl::body EffectSWidget::postApply {} {
     "all" {
       set node [$logic GetVolumeNode]
       $node SetAndObserveImageData $_outputLabel
+      $node SetModifiedSinceRead 1
     }
     "visible" {
       # TODO: need to use vtkImageSlicePaint to insert visible

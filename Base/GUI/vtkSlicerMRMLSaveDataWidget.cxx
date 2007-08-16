@@ -118,9 +118,19 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
     const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
     if (fileName)
       {
+      // add a .mrml if needed
+      vtksys_stl::string fileNameString(fileName);
+      if ( fileNameString.find(".mrml",0) == vtksys_stl::string::npos ||
+           fileNameString.find(".mrml",0) != fileNameString.length() - 5 )
+        {
+        fileNameString = fileNameString + vtksys_stl::string(".mrml");
+        //this->SaveSceneButton->GetWidget()->SetFileName(fileNameString.c_str());
+        }
+
+      // save the file name in the label text and set the data directory
       this->SaveSceneCheckBox->SetEnabled(1);
       this->SaveSceneCheckBox->Select();
-      this->SaveSceneButton->SetLabelText(fileName);
+      this->SaveSceneButton->SetLabelText(fileNameString.c_str());
       if (this->DataDirectoryName == NULL) 
         {
         vtksys_stl::string dir =  vtksys::SystemTools::GetParentDirectory(fileName);   
@@ -232,7 +242,10 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLSaveDataWidget::SaveScene()
 {
-  const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
+  // get filename from label text (not file browser), 
+  // since this has a .mrml added if the user didn't 
+  // add it manually
+  const char *fileName = this->SaveSceneButton->GetLabelText();
 
   if (fileName && this->GetMRMLScene()) 
     {
