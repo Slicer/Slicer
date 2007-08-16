@@ -75,7 +75,7 @@ if { [itcl::find class SWidget] == "" } {
 
     # parts of the sliceGUI saved for easy access
     variable _renderWidget ""
-    #variable _renderer ""
+    variable _renderer ""
     variable _interactor ""
     variable _annotation ""
     variable _sliceNode ""
@@ -85,7 +85,7 @@ if { [itcl::find class SWidget] == "" } {
     # methods
     method rasToXY {rasPoint} {}
     method xyToRAS {xyPoint} {}
-    method queryLayers { x y z } {}
+    method queryLayers { x y {z 0} } {}
     method getLayers {} {return [array get _layers]}
     method getObjects {} {return [array get o]}
     method processEvent {} {}
@@ -155,7 +155,7 @@ itcl::body SWidget::xyToRAS { xyPoint } {
   return [lrange $rast 0 2]
 }
 
-itcl::body SWidget::queryLayers { x y z } {
+itcl::body SWidget::queryLayers { x y {z 0} } {
   # 
   # get the logic, node, image, ijk coords, and pixel for each layer
   # - store these in a layers array for easy access
