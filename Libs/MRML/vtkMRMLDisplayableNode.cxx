@@ -130,9 +130,11 @@ void vtkMRMLDisplayableNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
   vtkMRMLDisplayableNode *node = (vtkMRMLDisplayableNode *) anode;
-  for (unsigned int i=0; i<this->DisplayNodeIDs.size(); i++)
+  this->SetAndObserveDisplayNodeID(NULL);
+  int ndnodes = node->GetNumberOfDisplayNodes();
+  for (int i=0; i<ndnodes; i++)
     {
-    this->SetNthDisplayNodeID(i, node->DisplayNodeIDs[i].c_str());
+    this->SetAndObserveNthDisplayNodeID(i, node->DisplayNodeIDs[i].c_str());
     }
 
   if (node->PolyData)
