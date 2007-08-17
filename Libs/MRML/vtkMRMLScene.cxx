@@ -840,7 +840,7 @@ void vtkMRMLScene::RemoveNodeReferences(vtkMRMLNode *n)
   for( i=0; i<nnodes; i++)
     {
     vtkMRMLNode *node = this->ReferencingNodes[i];
-    if (node && node->GetID() && strcmp(node->GetID(), n->GetID())) 
+    if (node && node->GetID() && n->GetID() && strcmp(node->GetID(), n->GetID())) 
       {
       referencedIDs.push_back(this->ReferencedIDs[i]);
       referencingNodes.push_back(this->ReferencingNodes[i]);
