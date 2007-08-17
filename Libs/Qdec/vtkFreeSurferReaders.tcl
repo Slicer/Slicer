@@ -782,23 +782,38 @@ proc vtkFreeSurferReadersPlotPlotData { iID dID {x 0.0} {y 0.0} {z 0.0} } {
     }
     # Don't plot if the window isn't built or we don't have data.
     if { ![info exists vtkFreeSurferReaders(gWidgets,$dID,bWindowBuilt)] ||
-         ![info exists vtkFreeSurferReaders(gGDF,$dID,bReadHeader)] ||
-         !$vtkFreeSurferReaders(gWidgets,$dID,bWindowBuilt) || 
+         !$vtkFreeSurferReaders(gWidgets,$dID,bWindowBuilt) } {
+        if {$::vtkFreeSurferReaders(verbose)} {
+            puts "vtkFreeSurferReadersPlotPlotData: the plot window isn't built yet for $dID"
+        }
+        return "Plot window wasn't built yet for id $dID"
+    }
+    if { ![info exists vtkFreeSurferReaders(gGDF,$dID,bReadHeader)] ||
          !$vtkFreeSurferReaders(gGDF,$dID,bReadHeader) } {
         if {$::vtkFreeSurferReaders(verbose)} {
-            puts "vtkFreeSurferReadersPlotPlotData: the window isn't built or we don't have data"
+            puts "vtkFreeSurferReadersPlotPlotData: no data for data id $dID"
         }
-        return
+        return "No data for id $dID"
     }
 
     if {$::vtkFreeSurferReaders(verbose)} { puts "\nvtkFreeSurferReadersPlotPlotData iID = $iID, dID = $dID" }
 
     # update the info label variable
-    # set vtkFreeSurferReaders(gPlot,$dID,state,info) "Vertex number $iID"
     if {$x == 0.0 && $y == 0.0 && $z == 0.0} {
-        vtkFreeSurferReadersPlotSetInfo $dID "Vertex number $iID"
+        # nothing was passed in, do we have a saved xyz?
+        if { ![info exists vtkFreeSurferReaders(gPlot,$iID,state,XYZ)]} {
+            vtkFreeSurferReadersPlotSetInfo $dID "Vertex number $iID"
+        } else {
+            # use the saved xyz for this vertex
+            vtkFreeSurferReadersPlotSetInfo $dID "$vtkFreeSurferReaders(gPlot,$iID,state,XYZ) Vertex number $iID"
+        }
     } else {       
         vtkFreeSurferReadersPlotSetInfo $dID "($x, $y, $z) Vertex number $iID"
+        if { ![info exists vtkFreeSurferReaders(gPlot,$iID,state,XYZ)] ||
+             $vtkFreeSurferReaders(gPlot,$iID,state,XYZ) != "($x, $y, $z)"} {
+            # save the RAS 
+            set vtkFreeSurferReaders(gPlot,$iID,state,XYZ) "($x, $y, $z)"
+        }
     }
 
     set gw $vtkFreeSurferReaders(gWidgets,$dID,gwPlot)
