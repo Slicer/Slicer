@@ -39,9 +39,10 @@ vtkSlicerGUILayout::vtkSlicerGUILayout ( )
   this->DefaultSlicerWindowHeight = 0;
 
   // set the slice windows to be a default size
+  this->StandardSliceGUIFrameHeight = 350;
   this->DefaultSliceGUIFrameHeight = 350;
-this->DefaultSliceGUIFrameWidth = 300;
-//this->DefaultSliceGUIFrameWidth = 320;
+  this->DefaultSliceGUIFrameWidth = 300;
+
 
   this->DefaultTopFrameHeight = 0;
   this->DefaultModuleControlPanelHeight = 0;
@@ -65,42 +66,73 @@ vtkSlicerGUILayout::~vtkSlicerGUILayout ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerGUILayout::InitializeLayoutDimensions ( )
+void vtkSlicerGUILayout::InitializeLayoutDimensions ( int width, int height, int sliceHeight )
 {
+  int useDefaultLayout = 1;
+  
   // Five layout choices: Default, 3D only, lightbox, tabbed-viewer, and 4-up.
   // Dimensions for these are computed here.
   int h, w;
-    
-  // Look for registry values here.
-  
-  // Size of the shared Module GUI Control frame
-  h = this->DefaultGUIPanelHeight -
-    ( this->GetDefaultTopFrameHeight() +
-      this->GetDefaultSlicesControlFrameHeight() +
-      this->GetDefaultViewControlFrameHeight() );
-  this->SetDefaultModuleControlPanelHeight ( h );
-
-  // Size of the main viewer.
-  h = this->GetDefaultGUIPanelHeight ( );
-  this->SetDefault3DViewerHeight ( h - this->GetDefaultSliceGUIFrameHeight () );
-  w = 3 * this->GetDefaultSliceGUIFrameWidth ( );
-  this->SetDefaultMainViewerWidth ( w );
-
-  this->SetDefaultQuadrantHeight ( h / 2 );
-  this->SetDefaultQuadrantWidth ( w / 2 );
-
   // make room for window chrome, menubar, toolbar, statusbar, etc.;
   // have to play with these buffers.
   int hbuf = 10;
   int vbuf = 60;
-  
-  h = this->GetDefaultGUIPanelHeight ( ) + vbuf;
-  w = (3 * this->GetDefaultSliceGUIFrameWidth() ) + this->GetDefaultGUIPanelWidth() + hbuf;
-  this->SetDefaultSlicerWindowWidth ( w );
-  this->SetDefaultSlicerWindowHeight ( h );
-
+    
   // make a minimum size for slice viewers (RenderWidget Size)
   this->SetSliceViewerMinDim ( 10 );
+  
+  // If there window size was stored in the registry,
+  // use that information to construct the layout.
+  if ( width!=0 || height!=0 )
+    {
+    useDefaultLayout = 0;
+
+    this->SetDefaultSlicerWindowWidth ( width );
+    this->SetDefaultSlicerWindowHeight ( height );
+
+    this->DefaultGUIPanelHeight = (height  -  vbuf);
+    this->DefaultSliceGUIFrameWidth = (int)((width - ( this->GetDefaultGUIPanelWidth() + hbuf ))/3.0);
+    this->DefaultSliceGUIFrameHeight = sliceHeight;
+    if ( this->GetDefaultSliceGUIFrameWidth() < this->GetSliceViewerMinDim() )
+      {
+      useDefaultLayout = 1;
+      }
+    this->DefaultModuleControlPanelHeight = this->GetDefaultGUIPanelHeight() -
+      ( this->GetDefaultTopFrameHeight() +
+        this->GetDefaultSlicesControlFrameHeight() +
+        this->GetDefaultViewControlFrameHeight() );
+    }
+
+  if ( useDefaultLayout )
+    {
+    // If there's no window size information in the Application Registry
+    // or the window is unmanagably small.
+    // Use this default layout.
+
+    // Size of the shared Module GUI Control frame
+    h = this->DefaultGUIPanelHeight -
+      ( this->GetDefaultTopFrameHeight() +
+        this->GetDefaultSlicesControlFrameHeight() +
+        this->GetDefaultViewControlFrameHeight() );
+    this->SetDefaultModuleControlPanelHeight ( h );
+
+    // Size of the main viewer.
+    h = this->GetDefaultGUIPanelHeight ( );
+    this->SetDefault3DViewerHeight ( h - this->GetDefaultSliceGUIFrameHeight () );
+    w = 3 * this->GetDefaultSliceGUIFrameWidth ( );
+    this->SetDefaultMainViewerWidth ( w );
+
+    this->SetDefaultQuadrantHeight ( h / 2 );
+    this->SetDefaultQuadrantWidth ( w / 2 );
+  
+    h = this->GetDefaultGUIPanelHeight ( ) + vbuf;
+    w = (3 * this->GetDefaultSliceGUIFrameWidth() ) + this->GetDefaultGUIPanelWidth() + hbuf;
+    this->SetDefaultSlicerWindowWidth ( w );
+    this->SetDefaultSlicerWindowHeight ( h );
+    }
+
+
+
 }
 
 

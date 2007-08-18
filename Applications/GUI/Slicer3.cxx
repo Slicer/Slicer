@@ -800,6 +800,7 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->SetApplication ( slicerApp );
     appGUI->SetAndObserveApplicationLogic ( appLogic );
     appGUI->SetAndObserveMRMLScene ( scene );
+
     // set fonts from registry before building GUI...
 /*
     if ( appGUI->GetMainSlicerWindow()->GetApplicationSettingsInterface() )
@@ -807,6 +808,8 @@ int Slicer3_main(int argc, char *argv[])
       slicerApp->GetSlicerTheme()->InstallFonts();
       }
 */
+    slicerApp->SaveUserInterfaceGeometryOn();
+
     appGUI->BuildGUI ( );
     appGUI->AddGUIObservers ( );
     slicerApp->SetApplicationGUI ( appGUI );
@@ -1773,7 +1776,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->GetModuleGUICollection ( )->RemoveAllItems ( );
     slicerApp->GetTheme()->SetApplication( NULL );
     slicerApp->SetTheme( NULL );
-
+    
     // ------------------------------
     // EXIT 
     slicerApp->Exit();

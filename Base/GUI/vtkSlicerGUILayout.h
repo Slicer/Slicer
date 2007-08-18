@@ -61,6 +61,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     vtkSetMacro ( DefaultMainViewerWidth, int);
     vtkGetMacro ( Default3DViewerHeight, int);
     vtkSetMacro ( Default3DViewerHeight, int);
+    vtkGetMacro (StandardSliceGUIFrameHeight, int );
+    vtkSetMacro (StandardSliceGUIFrameHeight, int );
     vtkGetMacro ( DefaultSliceGUIFrameHeight, int);
     vtkSetMacro ( DefaultSliceGUIFrameHeight, int);
     vtkGetMacro ( DefaultSliceGUIFrameWidth, int);
@@ -97,7 +99,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     // be packed differently to save space.
     vtkGetMacro ( SliceViewerWidthThreshold, int );
 
-    virtual void InitializeLayoutDimensions ( );
+    virtual void InitializeLayoutDimensions ( int width, int height, int sliceHeight);
     virtual void InitializeMainSlicerWindowSize ( );
     virtual void ConfigureMainSlicerWindowPanels ( );
 
@@ -117,6 +119,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     int DefaultSlicerWindowWidth;
     int Default3DViewerHeight;
     int DefaultMainViewerWidth;
+    int StandardSliceGUIFrameHeight;
     int DefaultSliceGUIFrameHeight;
     int DefaultSliceGUIFrameWidth;
     int DefaultGUIPanelHeight;

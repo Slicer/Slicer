@@ -44,6 +44,7 @@
 #include "vtkKWUserInterfaceManagerNotebook.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkKWToolbarSet.h"
+#include "vtkKWMessageDialog.h"
 
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerApplication.h"
@@ -646,7 +647,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
         // Set a pointer to the MainSlicerWindow in vtkSlicerGUILayout, and
         // Set default sizes for all main frames (UIpanel and viewers) in GUI
         layout->SetMainSlicerWindow ( this->MainSlicerWindow );
-        layout->InitializeLayoutDimensions ( );
+        layout->InitializeLayoutDimensions ( app->GetApplicationWindowWidth(),
+                                             app->GetApplicationWindowHeight(),
+                                             app->GetApplicationSlicesFrameHeight());
 
         if ( this->MainSlicerWindow != NULL ) {
 
@@ -715,7 +718,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             // Build 3DViewer and Slice Viewers
 
 #ifndef SLICEVIEWER_DEBUG
-            this->BuildMainViewer ( vtkSlicerGUILayout::SlicerLayoutDefaultView );
+            // restore view layout from application registry...
+            this->BuildMainViewer ( app->GetApplicationLayoutType());
+//            this->BuildMainViewer (vtkSlicerGUILayout::SlicerLayoutDefaultView );
 #endif
 
             // after SliceGUIs are created, the ViewControlGUI
@@ -1264,13 +1269,32 @@ void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( )
   if ( this->GetApplication() != NULL )
     {
       vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    this->MainSlicerWindow->Display ( );
-    int w = this->MainSlicerWindow->GetWidth ( );
-    int h = this->MainSlicerWindow->GetHeight ( );
-    int vh = app->GetMainLayout()->GetDefault3DViewerHeight();
-    int sh = app->GetMainLayout()->GetDefaultSliceGUIFrameHeight();
-    int sfh = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1Size();
-    int sf2h = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame2Size();
+      
+      // pop up a warning dialog here if the computer's
+      // display resolution in x is less than 1000 pixels.
+      const char *wstr = app->Script ("winfo screenwidth .");
+      const char *hstr = app->Script ("winfo screenheight .");
+      int screenwidth = atoi (wstr);
+      int screenheight = atoi ( hstr );
+      if (screenwidth < 1000 )
+        {
+        vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+        message->SetParent ( this->MainSlicerWindow );
+        message->SetStyleToMessage();
+        message->SetText ("Slicer requires a horizontal screen resolution of at least 1024 pixels to display it's user interface. Some GUI elements may not be visible.");
+        message->Create();
+        message->Invoke();
+        message->Delete();
+        }
+      
+      this->MainSlicerWindow->Display ( );
+
+      int w = this->MainSlicerWindow->GetWidth ( );
+      int h = this->MainSlicerWindow->GetHeight ( );
+      int vh = app->GetMainLayout()->GetDefault3DViewerHeight();
+      int sh = app->GetMainLayout()->GetDefaultSliceGUIFrameHeight();
+      int sfh = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1Size();
+      int sf2h = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame2Size();
     }
 }
 
@@ -1371,14 +1395,7 @@ void vtkSlicerApplicationGUI::CreateMain3DViewer ( int arrangementType )
       //
       this->ViewerWidget = vtkSlicerViewerWidget::New ( );
       this->ViewerWidget->SetApplication( app );
-      if ( arrangementType == vtkSlicerGUILayout::SlicerLayoutFourUpView )
-        {
-        this->ViewerWidget->SetParent ( this->GetGridFrame1 ( ) );
-        }
-      else
-        {
-        this->ViewerWidget->SetParent(this->MainSlicerWindow->GetViewPanelFrame());
-        }
+      this->ViewerWidget->SetParent(this->MainSlicerWindow->GetViewPanelFrame());
 
       // add events
       vtkIntArray *events = vtkIntArray::New();
@@ -1432,6 +1449,15 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
         case vtkSlicerGUILayout::SlicerLayoutOneUp3DView:
           this->PackOneUp3DView ( );
           break;
+        case vtkSlicerGUILayout::SlicerLayoutOneUpRedSliceView:
+          this->PackOneUpSliceView ("Red");
+          break;
+        case vtkSlicerGUILayout::SlicerLayoutOneUpYellowSliceView:
+          this->PackOneUpSliceView ("Yellow");
+          break;
+        case vtkSlicerGUILayout::SlicerLayoutOneUpGreenSliceView:
+          this->PackOneUpSliceView ("Green");
+          break;
         case vtkSlicerGUILayout::SlicerLayoutOneUpSliceView:
           this->PackOneUpSliceView ( whichSlice );
           break;
@@ -1445,6 +1471,7 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
           this->PackLightboxView ( );
           break;
         default:
+          this->PackConventionalView ( );
           break;
         }
     }
@@ -1555,6 +1582,7 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
 
       // Expose the main panel frame and secondary panel frame.
+
 //      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
       this->MainSlicerWindow->SetSecondaryPanelVisibility ( 1 );
 
@@ -1574,7 +1602,14 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
       
       this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
       layout->SetCurrentViewArrangement ( vtkSlicerGUILayout::SlicerLayoutDefaultView );
-      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( layout->GetDefaultSliceGUIFrameHeight () );
+      if ( layout->GetDefaultSliceGUIFrameHeight() > 0 )
+        {
+        this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( layout->GetDefaultSliceGUIFrameHeight () );
+        }
+      else
+        {
+        this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( layout->GetStandardSliceGUIFrameHeight () );
+        }
     }
 }
 
@@ -1691,7 +1726,14 @@ void vtkSlicerApplicationGUI::PackTabbed3DView ( )
       vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
       vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
-      this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( layout->GetDefaultSliceGUIFrameHeight() );      
+      if ( layout->GetDefaultSliceGUIFrameHeight() > 0 )
+        {
+        this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( layout->GetDefaultSliceGUIFrameHeight() );
+        }
+      else
+        {
+        this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( layout->GetStandardSliceGUIFrameHeight() );
+        }
 //      this->MainSlicerWindow->SetMainPanelVisibility ( 1 );
       this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
 

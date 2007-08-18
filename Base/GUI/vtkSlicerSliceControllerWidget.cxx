@@ -510,7 +510,6 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     //
     // TODO: once applicationsettings can save the slicer window
     // width, use this instead of screen resolution.
-    // screenwidth = appGUI->GetMainSlicerWindow()->GetWidth();
     // FOR NOW: use screen resolution:
     const char *str = this->Script ("winfo screenwidth .");
     int screenwidth = atoi (str);
@@ -717,7 +716,14 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
                  this->BackgroundMenuButton->GetWidgetName(),
                  this->BackgroundSelector->GetWidgetName());
 
-    if ( screenwidth <= screenWidthThreshold)
+    //
+    // Pack the icons and slider on different rows
+    // if the overall screen resolution is tiny, or if
+    // the window is sized too small to display them
+    // on a single row. If resolution is there, put them
+    // on the same row to save vertical space for imagedata.
+    //
+    if ( (screenwidth <= screenWidthThreshold) || (app->GetApplicationWindowWidth() < screenWidthThreshold) )
       {
       this->Script ( "grid %s -sticky ew -columnspan 4", this->IconFrame->GetWidgetName ( ) );
       this->Script ( "grid %s -sticky ew -columnspan 4", this->ScaleFrame->GetWidgetName ( ) );

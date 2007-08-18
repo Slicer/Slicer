@@ -103,6 +103,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *EnableDaemonRegKey;
   static const char *ApplicationFontFamilyRegKey;
   static const char *ApplicationFontSizeRegKey;
+  static const char *ApplicationWindowWidthRegKey;
+  static const char *ApplicationWindowHeightRegKey;
+  static const char *ApplicationSlicesFrameHeightRegKey;
+  static const char *ApplicationLayoutTypeRegKey;
   //ETX
 
 
@@ -135,6 +139,27 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Set/Get a directory for temporary file storage
   void SetTemporaryDirectory(const char *path);
   const char* GetTemporaryDirectory() const;
+
+  // Description:
+  // Set/Get the application window size
+  // for saving in the registry.
+  void SetApplicationWindowSize (int width, int height );
+  vtkGetMacro (ApplicationWindowWidth, int);
+  vtkSetMacro (ApplicationWindowWidth, int);
+  vtkGetMacro (ApplicationWindowHeight, int);
+  vtkSetMacro (ApplicationWindowHeight, int);
+
+  // Description:
+  // Saves the application window size for registry setting
+  void SaveApplicationWindowConfiguration ( );
+
+  // Description:
+  // Set/Get the application layout for saving in
+  // the registry.
+  vtkGetMacro (ApplicationSlicesFrameHeight, int );
+  vtkSetMacro (ApplicationSlicesFrameHeight, int );
+  vtkGetMacro (ApplicationLayoutType, int );
+  vtkSetMacro (ApplicationLayoutType, int );
 
   // Description:
   // Set/Get if command line modules should be loaded
@@ -229,6 +254,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ApplicationFontSize [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ApplicationFontFamily [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  
+  int ApplicationWindowWidth;
+  int ApplicationWindowHeight;
+  int ApplicationSlicesFrameHeight;
+  int ApplicationLayoutType;
 
   char RegistryHolder [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
 
