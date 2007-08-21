@@ -232,7 +232,7 @@ itcl::body LoadVolume::destructor {} {
 
 #
 # load the items from the list box
-# into slicer - ignore unselected rows
+# into slicer 
 #
 itcl::body LoadVolume::apply { } {
 
