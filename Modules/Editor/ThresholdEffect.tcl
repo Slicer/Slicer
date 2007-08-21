@@ -84,7 +84,7 @@ itcl::body ThresholdEffect::apply {} {
   set thresh [vtkImageThreshold New]
   $thresh SetInput [$this getInputBackground]
   eval $thresh ThresholdBetween $range
-  $thresh SetInValue [EditorGetPaintLabel $::Editor(singleton)]
+  $thresh SetInValue [EditorGetPaintLabel]
   $thresh SetOutValue 0
   $thresh SetOutput [$this getOutputLabel]
   $this setProgressFilter $thresh "Threshold"
@@ -146,7 +146,7 @@ itcl::body ThresholdEffect::preview {} {
 itcl::body ThresholdEffect::setAnimationState { p } {
 
   if { [info exists o(lut)] } {
-    set amt [expr 0.5 + 0.25 * (1 + cos(6.2831852 * ($p - floor($p)))) ]
+    set amt [expr 0.2 + 0.75 * (1 + cos(6.2831852 * ($p - floor($p)))) ]
     set color [$o(lut) GetTableValue 1]
     eval $o(lut) SetTableValue 1 [lreplace $color 3 3 $amt]
   }

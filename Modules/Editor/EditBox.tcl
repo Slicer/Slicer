@@ -239,6 +239,7 @@ itcl::body EditBox::create { } {
 itcl::body EditBox::selectEffect { effect } {
 
   $this statusText "Selecting $effect"
+  EditorSetActiveToolLabel $effect
   EffectSWidget::RemoveAll
 
   # mouse tool changes cursor, and dismisses popup/menu

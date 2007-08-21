@@ -33,9 +33,10 @@ if { [itcl::find class EffectSWidget] == "" } {
     destructor {}
 
     public variable scope "all"
-    public variable animationSteps "20"
+    public variable animationSteps "5"
     public variable animationDelay "100"
 
+    variable _renderer ""
     variable _startPosition "0 0 0"
     variable _currentPosition "0 0 0"
     variable _cursorActors ""
@@ -97,6 +98,7 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
 
 itcl::body EffectSWidget::destructor {} {
 
+
   $this animateCursor off
   $this tearDownOptions
 
@@ -124,6 +126,7 @@ itcl::body EffectSWidget::destructor {} {
     foreach a $_cursorActors {
       $_renderer RemoveActor2D $a
     }
+    [$sliceGUI GetSliceViewer] RequestRender
   }
 }
 
@@ -151,8 +154,9 @@ itcl::body EffectSWidget::createCursor {} {
 
   lappend _cursorActors $o(cursorActor)
 
+  set _renderer [$_renderWidget GetRenderer]
   foreach actor $_cursorActors {
-    [$_renderWidget GetRenderer] AddActor2D $o(cursorActor)
+    $_renderer AddActor2D $o(cursorActor)
   }
 
   $o(cursorActor) VisibilityOff
@@ -210,12 +214,15 @@ itcl::body EffectSWidget::animateCursor { {onOff "on"} } {
     }
     $this setAnimationState 1
     set _cursorAnimationState 0
+    [$sliceGUI GetSliceViewer] Render
     return
   }
 
   set p [expr $_cursorAnimationState / (1.0 * $animationSteps)]
 
   $this setAnimationState $p
+
+  # force a render
   #[$sliceGUI GetSliceViewer] RequestRender
   [$sliceGUI GetSliceViewer] Render
 

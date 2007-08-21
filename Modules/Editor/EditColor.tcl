@@ -30,7 +30,6 @@ namespace eval EditColor {
     set c [EditColor #auto $t]
     $c configure -frame $t
     $c create
-    puts [$c objects]
     $t Display
   }
 }
@@ -49,13 +48,13 @@ if { [itcl::find class EditColor] == "" } {
     inherit Box
 
     public variable selectCommand ""
-    public variable colorNode ""
 
     # methods
     method create {} {}
     method processEvents {caller} {}
+    method updateGUI {label} {}
+    method updateParameterNode {} {}
     method getColorNode {} {}
-
   }
 }
 
@@ -77,6 +76,7 @@ itcl::body EditColor::create { } {
   $o(colorSpin) SetLabelText "Label"
   $o(colorSpin) Create
   [$o(colorSpin) GetWidget] SetWidth 3
+  [$o(colorSpin) GetWidget] SetValue 0
 
   set o(colorOption) [vtkNew vtkKWMenuButton]
   $o(colorOption) SetParent $frame
@@ -87,14 +87,13 @@ itcl::body EditColor::create { } {
   $o(colorPatch) Create
   $o(colorPatch) SetWidth 15
   $o(colorPatch) SetHeight 15
-  $o(colorPatch) SetBackgroundColor 1 0 .5
+  $o(colorPatch) SetBackgroundColor 0 0 0
   $o(colorPatch) SetBorderWidth 2
+  $o(colorPatch) SetBorderWidth SetReliefToSolid
 
-  #set node [$this getColorNode]
-
+  # TODO: don't pack this until it's integrated better: [$o(colorOption) GetWidgetName]
   pack \
     [$o(colorSpin) GetWidgetName] \
-    [$o(colorOption) GetWidgetName] \
     [$o(colorPatch) GetWidgetName] \
     -side left -anchor e -fill x -padx 2 -pady 2 
 
@@ -103,6 +102,25 @@ itcl::body EditColor::create { } {
     set tag [$object AddObserver AnyEvent "$this processEvents $object"]
     lappend _observerRecords [list $object $tag]
   }
+
+  #
+  # observe the scene to know when to get the parameter node
+  #
+  set scene $::slicer3::MRMLScene
+  set tag [$scene AddObserver ModifiedEvent "$this updateParameterNode"]
+  lappend _observerRecords [list $scene $tag]
+}
+
+#
+# update the parameter node when the scene changes
+#
+itcl::body EditColor::updateParameterNode { } {
+  #
+  # observe the scene to know when to get the parameter node
+  #
+  set node [EditorGetParameterNode]
+  set tag [$node AddObserver ModifiedEvent "$this processEvents $node"]
+  lappend _observerRecords [list $node $tag]
 }
 
 #
@@ -112,10 +130,33 @@ itcl::body EditColor::create { } {
 #
 itcl::body EditColor::processEvents { caller } {
 
-  puts "got event from $caller"
-  return
+  set node [EditorGetParameterNode]
+  if { $caller == $node } {
+    $this updateGUI [EditorGetPaintLabel]
+    return
+  }
 
-  if { $caller == $o(colorSpin) } {
+  if { $caller == [$o(colorSpin) GetWidget] } {
+    EditorSetPaintLabel [[$o(colorSpin) GetWidget] GetValue]
+  }
+
+}
+
+#
+# update the GUI for the given label
+#
+itcl::body EditColor::updateGUI {label} {
+
+  [$o(colorSpin) GetWidget] SetValue $label
+
+
+  # TODO: 
+  # $o(colorOption) udpate the selection
+
+  set colorNode [$this getColorNode]
+  if { $colorNode != "" } {
+    set lut [$colorNode GetLookupTable]
+    eval $o(colorPatch) SetBackgroundColor [lrange [$lut GetTableValue $label] 0 2]
   }
 }
 
@@ -123,10 +164,15 @@ itcl::body EditColor::processEvents { caller } {
 # get the color node for the label map in the Red slice
 #
 itcl::body EditColor::getColorNode {} {
-  set logic [[$::slicer3::ApplicationGUI GetMainSliceLogic0] GetLabelLayer]
-  set volumeDisplayNode [$logic GetVolumeDisplayNode]
-  if { $volumeDisplayNode == "" } {
-    return ""
+  set sliceLogic [$::slicer3::ApplicationGUI GetMainSliceLogic0]
+  if { $sliceLogic != "" } {
+    set logic [$sliceLogic GetLabelLayer]
+    if { $logic != "" } {
+      set volumeDisplayNode [$logic GetVolumeDisplayNode]
+      if { $volumeDisplayNode != "" } {
+        return [$volumeDisplayNode GetColorNode]
+      }
+    }
   }
-  return [$volumeDisplayNode GetColorNode]
+  return ""
 }

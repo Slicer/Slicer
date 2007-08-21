@@ -81,7 +81,7 @@ itcl::body ChangeLabelEffect::apply {} {
   }
 
   set change [vtkImageLabelChange New]
-  $change SetOutputLabel [EditorGetPaintLabel $::Editor(singleton)]
+  $change SetOutputLabel [EditorGetPaintLabel]
   $change SetInput [$this getInputLabel]
   $change SetOutput [$this getOutputLabel]
   $change SetInputLabel $in
@@ -113,7 +113,7 @@ itcl::body ChangeLabelEffect::buildOptions {} {
   $o(colorOut) SetParent [$this getOptionsFrame]
   $o(colorOut) Create
   $o(colorOut) SetLabelText "Output Color"
-  [$o(colorOut) GetWidget] SetValue [EditorGetPaintLabel $::Editor(singleton)]
+  [$o(colorOut) GetWidget] SetValue [EditorGetPaintLabel]
   $o(colorOut) SetBalloonHelpString "Set the new label value."
   pack [$o(colorOut) GetWidgetName] \
     -anchor e -padx 2 -pady 2 

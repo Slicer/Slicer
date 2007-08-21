@@ -90,6 +90,7 @@ itcl::body ColorBox::create { } {
 
   } else {
 
+    # TODO: this doesn't pay attention tot he color!
     set o(colors) [vtkNew vtkSlicerColorDisplayWidget]
     $o(colors) SetParent $o(toplevel)
     $o(colors) SetMRMLScene $::slicer3::MRMLScene
