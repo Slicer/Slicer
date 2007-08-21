@@ -112,9 +112,7 @@ void vtkMRMLScriptedModuleNode::ReadXMLAttributes(const char** atts)
 
     if ( !strcmp(attName, "ModuleName") )
       {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->ModuleName;
+      this->SetModuleName( attValue );
       }
     else
       {
@@ -207,7 +205,16 @@ vtkMRMLScriptedModuleNode
 {
   std::string sname(name);
   const std::string *svaluep = this->GetParameter(sname);
-  this->SetValue (svaluep->c_str());
+  this->SetDisableModifiedEvent(1);
+  if ( svaluep )
+    {
+    this->SetValue (svaluep->c_str());
+    }
+  else
+    {
+    this->SetValue ("");
+    }
+  this->SetDisableModifiedEvent(0);
 }
 
 
