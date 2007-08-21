@@ -27,6 +27,8 @@ SET(LIB_SRCS
   vtkSlicerImageCloseUp2D.cxx
   vtkSlicerImageCrossHair2D.cxx
   vtkSlicerLogoIcons.cxx
+  vtkSlicerHelpIcons.cxx
+  vtkSlicerPopUpHelpWidget.cxx
   vtkSlicerBaseAcknowledgementLogoIcons.cxx
   vtkSlicerVisibilityIcons.cxx
   vtkSlicerModuleNavigationIcons.cxx
