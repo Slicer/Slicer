@@ -33,8 +33,9 @@ if { [itcl::find class EffectSWidget] == "" } {
     destructor {}
 
     public variable scope "all"
-    public variable animationSteps "5"
-    public variable animationDelay "100"
+    public variable animationSteps "20"
+    public variable animationDelay "75"
+    public variable exitCommand ""
 
     variable _renderer ""
     variable _startPosition "0 0 0"
@@ -98,7 +99,6 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
 
 itcl::body EffectSWidget::destructor {} {
 
-
   $this animateCursor off
   $this tearDownOptions
 
@@ -128,6 +128,11 @@ itcl::body EffectSWidget::destructor {} {
     }
     [$sliceGUI GetSliceViewer] RequestRender
   }
+
+  if { $exitCommand != "" } {
+    eval $exitCommand
+  }
+
 }
 
 itcl::configbody EffectSWidget::scope {

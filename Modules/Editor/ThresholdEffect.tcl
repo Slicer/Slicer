@@ -167,7 +167,7 @@ itcl::body ThresholdEffect::buildOptions { } {
   set o(range) [vtkNew vtkKWRange]
   $o(range) SetParent [$this getOptionsFrame]
   $o(range) Create
-  $o(range) SetLabelText "Min/Max for Threshold Paint"
+  $o(range) SetLabelText "Threshold Range"
   $o(range) SetWholeRange 0 2000
   $o(range) SetReliefToGroove
   $o(range) SetBalloonHelpString "Set the range of the background values that should be labeled."
@@ -222,7 +222,7 @@ itcl::body ThresholdEffect::buildOptions { } {
   #
   set tag [$o(range) AddObserver AnyEvent "after idle $this previewOptions"]
   lappend _observerRecords "$o(range) $tag"
-  set tag [$o(apply) AddObserver AnyEvent "$this applyOptions"]
+  set tag [$o(apply) AddObserver AnyEvent "$this applyOptions; after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(apply) $tag"
   set tag [$o(useForPainting) AddObserver AnyEvent "$this setPaintThreshold"]
   lappend _observerRecords "$o(useForPainting) $tag"

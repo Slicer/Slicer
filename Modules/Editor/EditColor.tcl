@@ -89,7 +89,7 @@ itcl::body EditColor::create { } {
   $o(colorPatch) SetHeight 15
   $o(colorPatch) SetBackgroundColor 0 0 0
   $o(colorPatch) SetBorderWidth 2
-  $o(colorPatch) SetBorderWidth SetReliefToSolid
+  $o(colorPatch) SetReliefToSolid
 
   # TODO: don't pack this until it's integrated better: [$o(colorOption) GetWidgetName]
   pack \

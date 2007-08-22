@@ -495,6 +495,7 @@ proc EditorGetParameterNode {} {
 
 proc EditorSetActiveToolLabel {name} {
   [$::Editor($::Editor(singleton),toolsActiveTool) GetWidget] SetText $name
+  [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText $name
 }
 
 proc EditorGetPaintLabel {} {
