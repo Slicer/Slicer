@@ -262,15 +262,8 @@ void vtkSlicerPopUpHelpWidget::CreateWidget ( )
     this->HelpTitle->SetParent ( this->HelpWindow );
     this->HelpTitle->Create();
     this->HelpTitle->SetJustificationToCenter();
-    
-    // configure
-    if ( color )
-      {
-      // try a little styling here;
-      // TODO: move to theme if good.
-      this->HelpTitle->SetBackgroundColor ( color->LightestGrey );
-      this->HelpTitle->SetHeight ( 2 );
-      }
+    this->HelpTitle->SetHeight ( 2 );    
+
     // pack all but HelpButton, which gets packed into another widget.
     this->Script ("grid %s -row 0 -column 0 -sticky ew -padx 0 -pady 0", this->HelpTitle->GetWidgetName() );
     this->Script ("grid %s -row 1 -column 0 -sticky news -padx 2 -pady 1", this->HelpText->GetWidgetName() );
