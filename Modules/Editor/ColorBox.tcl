@@ -123,7 +123,7 @@ itcl::body ColorBox::processEvents { caller } {
     if { $selectCommand != "" } {
       eval $selectCommand
     } else {
-      EditorSetPaintLabel $::Editor(singleton) [$o(colors) GetSelectedColorIndex]
+      EditorSetPaintLabel [$o(colors) GetSelectedColorIndex]
     }
     $this hide
   }

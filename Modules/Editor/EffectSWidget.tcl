@@ -34,7 +34,7 @@ if { [itcl::find class EffectSWidget] == "" } {
 
     public variable scope "all"
     public variable animationSteps "20"
-    public variable animationDelay "75"
+    public variable animationDelay "100"
     public variable exitCommand ""
 
     variable _renderer ""

@@ -14,6 +14,7 @@ proc EditorAddQuickModel { sliceLogic } {
   set layerLogic [$sliceLogic GetLabelLayer]
   set volumeNode [$layerLogic GetVolumeNode]
   if { $volumeNode == "" } {
+    puts "cannot make quick model - no volume node for $layerLogic in $sliceLogic"
     return
   }
   set imageData [$volumeNode GetImageData]

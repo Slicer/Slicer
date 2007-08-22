@@ -90,8 +90,11 @@ itcl::body EditColor::create { } {
   $o(colorPatch) SetBackgroundColor 0 0 0
   $o(colorPatch) SetBorderWidth 2
   $o(colorPatch) SetReliefToSolid
+  # TODO: can't get events from Canvas through kww, need to access tk directly
+  bind [$o(colorPatch) GetWidgetName] <1> "::Box::ShowDialog ColorBox"
 
   # TODO: don't pack this until it's integrated better: [$o(colorOption) GetWidgetName]
+
   pack \
     [$o(colorSpin) GetWidgetName] \
     [$o(colorPatch) GetWidgetName] \

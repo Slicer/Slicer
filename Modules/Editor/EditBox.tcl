@@ -250,17 +250,21 @@ itcl::body EditBox::selectEffect { effect } {
   switch $effect {
     "DefaultTool" {
       # do nothing - this will reset cursor mode
+      EditorSetActiveToolLabel DefaultTool
     }
     "PinOpen" {
       $this togglePin
+      EditorSetActiveToolLabel DefaultTool
     }
     "GoToEditorModule" {
       EditorSelectModule
+      EditorSetActiveToolLabel DefaultTool
     }
     "MakeModel" {
       #TODO: invoke the real modelmaker.  Figure out which label map to use (each slice
       # could have a different label layer -- for now use the red one...
       EditorTestQuickModel
+      EditorSetActiveToolLabel DefaultTool
     }
     default {
 
