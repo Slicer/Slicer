@@ -27,17 +27,15 @@
  
 
 #
-# if SLICER_HOME not set, find it relative to the location of this script
+# SLICER_HOME: , find it relative to the location of this script
 # -- when run by the launcher, this variable will be set already
 # -- this environment variable can be relied on by slicer code to know "where it lives"
 #    e.g. the build or install dir, so resources and other files can be found
 #
-if { ![info exists ::SLICER_HOME] } {
-  set wd [pwd]
-  cd [file dirname [file dirname [info script]]]
-  set ::SLICER_HOME [pwd]
-  cd $wd
-}
+set wd [pwd]
+cd [file dirname [file dirname [info script]]]
+set ::SLICER_HOME [pwd]
+cd $wd
 set ::env(SLICER_HOME) $::SLICER_HOME
 
 if { [string match -nocase "windows*" $::tcl_platform(os)] } {
