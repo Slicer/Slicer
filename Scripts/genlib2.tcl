@@ -920,6 +920,83 @@ if { ![file exists $::dcmtk_TEST_FILE] || $::GENLIB(update) } {
 }
 
 
+################################################################################
+# Get and build BatchMake
+#
+#
+
+if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
+    cd $SLICER_LIB
+
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/BatchMake BatchMake
+
+    file mkdir $SLICER_LIB/BatchMake-build
+    cd $SLICER_LIB/BatchMake-build
+
+    runcmd $::CMAKE \
+        -G$GENERATOR \
+        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
+        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+        -DBUILD_SHARED_LIBS:BOOL=ON \
+        -DBUILD_TESTING:BOOL=OFF \
+        -DUSE_FLTK:BOOL=OFF \
+        -DDASHBOARD_SUPPORT:BOOL=ON \
+        -DGRID_SUPPORT:BOOL=ON \
+        -DUSE_SPLASHSCREEN:BOOL=ON \
+        -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
+        ../BatchMake
+
+    if {$isWindows} {
+        if { $MSVC6 } {
+            runcmd $::MAKE BatchMake.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
+        } else {
+            runcmd $::MAKE BatchMake.SLN /build  $::VTK_BUILD_TYPE
+        }
+    } else {
+        eval runcmd $::MAKE
+    }
+}
+
+
+
+
+################################################################################
+# Get and build LIBCURL (cmcurl)
+#
+#
+
+if { ![file exists $::LIBCURL_TEST_FILE] || $::GENLIB(update) } {
+    cd $SLICER_LIB
+
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/cmcurl cmcurl
+
+    file mkdir $SLICER_LIB/cmcurl-build
+    cd $SLICER_LIB/cmcurl-build
+
+    runcmd $::CMAKE \
+        -G$GENERATOR \
+        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
+        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+        -DBUILD_SHARED_LIBS:BOOL=OFF \
+        -DBUILD_TESTING:BOOL=OFF \
+        ../cmcurl
+
+    if {$isWindows} {
+        if { $MSVC6 } {
+            runcmd $::MAKE LIBCURL.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
+        } else {
+            runcmd $::MAKE LIBCURL.SLN /build  $::VTK_BUILD_TYPE
+        }
+    } else {
+        eval runcmd $::MAKE
+    }
+}
+
+
 
 # Are all the test files present and accounted for?  If not, return error code
 
@@ -931,6 +1008,12 @@ if { ![file exists $::TEEM_TEST_FILE] } {
 }
 if { ![file exists $::IGSTK_TEST_FILE] } {
     puts "IGSTK test file $::IGSTK_TEST_FILE not found."
+}
+if { ![file exists $::BatchMake_TEST_FILE] } {
+    puts "BatchMake test file $::BatchMake_TEST_FILE not found."
+}
+if { ![file exists $::LIBCURL_TEST_FILE] } {
+    puts "LIBCURL test file $::LIBCURL_TEST_FILE not found."
 }
 if { ![file exists $::TCL_TEST_FILE] } {
     puts "Tcl test file $::TCL_TEST_FILE not found."
@@ -964,6 +1047,8 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
 # check for both regular and alternate sandbox file for linux builds
 if { ![file exists $::CMAKE] || \
          ![file exists $::TEEM_TEST_FILE] || \
+         ![file exists $::BatchMake_TEST_FILE] || \
+         ![file exists $::LIBCURL_TEST_FILE] || \
          ![file exists $::TCL_TEST_FILE] || \
          ![file exists $::TK_TEST_FILE] || \
          ![file exists $::ITCL_TEST_FILE] || \

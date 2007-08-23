@@ -377,6 +377,10 @@ runcmd $::CMAKE \
         -DNAVITRACK_INCLUDE_DIR:FILEPATH=$SLICER_LIB/NaviTrack/include \
         -DNAVITRACK_BINARY_DIR:FILEPATH=$SLICER_LIB/NaviTrack-build/$VTK_BUILD_SUBDIR/ \
         -Ddcmtk_SOURCE_DIR:FILEPATH=$SLICER_LIB/dcmtk \
+        -DBatchMake_DIR:FILEPATH=$SLICER_LIB/BatchMake-build \
+        -DUSE_BatchMake=ON \
+        -DLIBCURL_DIR:FILEPATH=$SLICER_LIB/cmcurl-build \
+        -DUSE_MIDAS=ON \
         $SLICER_HOME
 
 if { $isWindows } {

@@ -90,6 +90,8 @@ set ::SANDBOX_TAG "http://svn.na-mic.org/svn/NAMICSandBox/branches/Slicer-2-6"
 set ::NAVITRACK_TAG "https://ariser.uio.no/svn/navitrack/trunk"
 set ::SIGN_TAG "https://ariser.uio.no/svn/sign/branches/stable-2.0/libs/SIGN"
 set ::SIGN_APP_TAG "https://ariser.uio.no/svn/sign/branches/stable-2.0/Applications"
+set ::BatchMake_TAG "HEAD"
+set ::LIBCURL_TAG "HEAD"
 
 # Set library, binary, etc. paths...
 
@@ -129,6 +131,10 @@ set ::XVNC_EXECUTABLE " "
 set ::IGSTK_DIR $::SLICER_LIB/IGSTK-build
 set ::NaviTrack_DIR $::SLICER_LIB/NaviTrack-build
 set ::dcmtk_DIR $::SLICER_LIB/dcmtk-build
+set ::BatchMake_SRC_DIR $::SLICER_LIB/BatchMake
+set ::BatchMake_BUILD_DIR $::SLICER_LIB/BatchMake-build
+set ::LIBCURL_SRC_DIR $::SLICER_LIB/cmcurl
+set ::LIBCURL_BUILD_DIR $::SLICER_LIB/cmcurl-build
 
 
 
@@ -171,7 +177,6 @@ switch $::tcl_platform(os) {
     "SunOS" -
     "Darwin" {
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
-
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitclstub3.2.a
@@ -194,6 +199,8 @@ switch $::tcl_platform(os) {
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.$shared_lib_ext
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/libNaviTrack.$shared_lib_ext
         set ::dcmtk_TEST_FILE $::dcmtk_DIR/dcmnet/libsrc/libdcmnet.a
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake.exe
+        set ::LIBCURL_TEST_FILE $::LIBCURL_BUILD_DIR/bin/cmcurl.a
 
     }
     "Linux" {
@@ -221,6 +228,8 @@ switch $::tcl_platform(os) {
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.so
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/libNaviTrack.$shared_lib_ext
         set ::dcmtk_TEST_FILE $::dcmtk_DIR/dcmnet/libsrc/libdcmnet.a
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake.exe
+        set ::LIBCURL_TEST_FILE $::LIBCURL_BUILD_DIR/bin/cmcurl.a
 
     }
     "Windows NT" {
@@ -255,7 +264,9 @@ switch $::tcl_platform(os) {
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/$::VTK_BUILD_TYPE/ITKCommon.dll
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/$::VTK_BUILD_TYPE/IGSTK.lib
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/$::VTK_BUILD_TYPE//libNaviTrack.lib
-        set ::dcmtk_TEST_FILE $::dcmtk_DIR/bin::$VTK_BUILD_TYPE/libdcmdata.a
+        set ::dcmtk_TEST_FILE $::dcmtk_DIR/bin/$::VTK_BUILD_TYPE/libdcmdata.lib
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/$::VTK_BUILD_TYPE/BatchMake.exe
+        set ::LIBCURL_TEST_FILE $::LIBCURL_BUILD_DIR/bin/$::VTK_BUILD_TYPE/cmcurl.lib
 
     }
     default {
