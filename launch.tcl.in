@@ -163,6 +163,7 @@ proc launch_ParseArgs {argv} {
 
   set ::LAUNCH(showSplash) 1
   set ::LAUNCH(launchCommand) ""
+  set ::LAUNCH(detatch) 0
 
   # 
   # look for launcher-specific arguments
@@ -171,6 +172,8 @@ proc launch_ParseArgs {argv} {
   #  --launch-script <script.tcl>
   #    (this is a special case that runs the script
   #     in this interp and then exits)
+  #
+  #  --detach to run the command without monitoring the stdio
   #
   # and obey --no-splash, but don't swallow it (pass it on to slicer)
   #
@@ -197,14 +200,22 @@ proc launch_ParseArgs {argv} {
     }
   }
 
-  # check for the no splash argument
+  # check for the arguments
+  set newargs ""
   foreach arg $::argv {
     switch -- $arg {
       "--no-splash" {
           set ::LAUNCH(showSplash) 0
       }
+      "--detach" {
+        set ::LAUNCH(detach) 1
+      }
+      default {
+        lappend newargs $arg
+      }
     }
   }
+  set ::argv $newargs
 }
 
 proc launch_InitEnvironment {} {
@@ -454,6 +465,12 @@ proc launch_RunProgram {} {
 
     set ::errorInfo ""  ;# reset error info so we are sure to get errors from the 
                          # launch and not leftovers from previous 'catch' calls
+
+    # detach mode: start the executable and then go away
+    if { $::LAUNCH(detach) } {
+        exec $::LAUNCH(launchCommand) $::argv &
+        exit
+    }
 
     if {$::env(BUILD) == $::WINDOWS} {
         set fp [open "| \"$::LAUNCH(launchCommand)\" $::argv" r]
