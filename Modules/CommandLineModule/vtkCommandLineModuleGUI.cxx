@@ -52,11 +52,62 @@ Version:   $Revision$
 #include "vtkKWTextWithScrollbars.h"
 #include "vtkKWMessage.h"
 #include "vtkKWProgressGauge.h"
+#include "vtkStringArray.h"
 
 #include "itkNumericTraits.h"
 
 // Private implementaton of an std::map
 class ModuleWidgetMap : public std::map<std::string, vtkSmartPointer<vtkKWCoreWidget> > {};
+
+
+
+// Split a comma separated list of file names.  A filename can itsefl
+// contain a comma.  So we neeed to split on commas that are not
+// within quoted strings.
+void
+splitFilenames (std::string &text, vtkStringArray *words)
+{
+  int n = text.length();
+  int start, stop, startq, stopq;
+  bool quoted;
+  std::string comma(",");
+  std::string quote("\"");
+  start = text.find_first_not_of(comma);
+  while ((start >= 0) && (start < n))
+    {
+    // find any quotes
+    quoted = false;
+    startq = text.find_first_of(quote, start);
+    stopq = text.find_first_of(quote, startq+1);
+
+    stop = text.find_first_of(comma, start);
+    if ((stop < 0) || (stop > n)) stop = n;
+
+    if (startq != std::string::npos && stopq != std::string::npos)
+      {
+      // start and end quotes found in the string, check if comma was
+      // within the quotes, if so keep searching for next comma
+      // outside of quotes
+      while (startq < stop && stop < stopq && stop != n)
+        {
+        quoted = true;
+        stop = text.find_first_of(comma, stop+1);
+        if ((stop < 0) || (stop > n)) stop = n;
+        }
+      }
+
+    if (!quoted)
+      {
+      words->InsertNextValue(text.substr(start, stop - start).c_str());
+      }
+    else
+      {
+      words->InsertNextValue(text.substr(start+1, stop - start - 2).c_str());
+      }
+    start = text.find_first_not_of(comma, stop+1);
+    }
+}
+
 
 //------------------------------------------------------------------------------
 vtkCommandLineModuleGUI* vtkCommandLineModuleGUI::New()
@@ -505,9 +556,49 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
       }
     else if (lsb)
       {
-      if (lsb->GetWidget()->GetFileName())
+      int numberOfFiles
+        = lsb->GetWidget()->GetLoadSaveDialog()->GetNumberOfFileNames();
+      if (numberOfFiles > 0)
         {
-        n->SetParameterAsString((*wit).first, lsb->GetWidget()->GetFileName());
+        // build a comma separated list of file names
+        std::string names;
+        for (int i=0; i < numberOfFiles; ++i)
+          {
+          // get a filename
+          std::string n
+            = lsb->GetWidget()->GetLoadSaveDialog()->GetNthFileName(i);
+
+          // quote it as needed (if filename contains a comma and it
+          // is not already quoted, then quote it.
+          int s1, len;
+          len = n.length();
+          s1 = n.find_first_of(",");
+          if (s1 > 0 && s1 < len)
+            {
+            // filename contains a comma
+            int q1, qn;
+            q1 = n.find_first_of("\"");
+            qn = n.find_last_of("\"");
+            if (q1 != 0 && qn != len-1)
+              {
+              // first and last character in name are not quotes, so
+              // quote
+              n = std::string("\"") + n + "\"";
+              }
+            }
+
+          // add it to the list
+          names = names + n;
+          if (i < numberOfFiles-1)  // comma after all but last
+            {
+            names = names + ",";
+            }
+          }
+        //vtkWarningMacro(<< "Selected filenames: " << names);
+        n->SetParameterAsString((*wit).first, names);
+
+        // set the filenames as the selected filenames for next time
+        lsb->GetWidget()->GetLoadSaveDialog()->SetInitialSelectedFileNames( lsb->GetWidget()->GetLoadSaveDialog()->GetFileNames() );
         }
       }
     else if (rbs)
@@ -542,7 +633,7 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
   }
 
   this->InUpdateGUI = true;
-
+  // vtkWarningMacro(<<"UpdateGUI()");
   // std::cout << "UpdateGUI()" << std::endl;
   vtkMRMLCommandLineModuleNode* n = this->GetCommandLineModuleNode();
   std::string statusString;
@@ -706,7 +797,10 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
             }
           else if (lsb)
             {
-            lsb->GetWidget()->GetLoadSaveDialog()->SetInitialFileName(value.c_str());
+            vtkSmartPointer<vtkStringArray> names = vtkStringArray::New();
+            splitFilenames(value, names);
+            //vtkWarningMacro(<<"Filenames being set: " << value);
+            lsb->GetWidget()->GetLoadSaveDialog()->SetInitialSelectedFileNames(names);
             }
           else if (rbs)
             {
@@ -1425,13 +1519,16 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           {
           tparameter->GetWidget()->GetLoadSaveDialog()->SaveDialogOn();
           }
-        if ((*pit).GetMultiple() == "true")
+        if ( (*pit).GetMultiple() == "true" )
           {
           tparameter->GetWidget()->GetLoadSaveDialog()->MultipleSelectionOn();
           }
         tparameter->Create();
         tparameter->SetLabelText( (*pit).GetLabel().c_str() );
-        tparameter->GetWidget()->GetLoadSaveDialog()->SetInitialFileName( (*pit).GetDefault().c_str() );
+
+        vtkSmartPointer<vtkStringArray> names = vtkStringArray::New();
+        splitFilenames((*pit).GetDefault(), names);
+        tparameter->GetWidget()->GetLoadSaveDialog()->SetInitialSelectedFileNames( names );
         if ((*pit).GetFileExtensions().size() != 0)
           {
           std::string extensionVector;
