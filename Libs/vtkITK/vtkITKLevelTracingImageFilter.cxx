@@ -45,11 +45,13 @@ PURPOSE.  See the above copyright notice for more information.
 vtkCxxRevisionMacro(vtkITKLevelTracingImageFilter, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkITKLevelTracingImageFilter);
 
+#if defined(VTK_TYPE_USE___INT64)
 const __int64 itk::NumericTraits<__int64>::Zero = 0;
 const __int64 itk::NumericTraits<__int64>::One = 1;
 
 const unsigned __int64 itk::NumericTraits<unsigned __int64>::Zero = 0ui64;
 const unsigned __int64 itk::NumericTraits<unsigned __int64>::One = 1ui64;
+#endif
 
 // Description:
 // Construct object with initial range (0,1) and single contour value
