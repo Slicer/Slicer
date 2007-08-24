@@ -372,7 +372,7 @@ if { ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
     file mkdir $SLICER_LIB/python-build
     cd $SLICER_LIB/python
 
-    runcmd $::SVN co http://svn.python.org/projects/python/branches/release25-maint
+    runcmd $::SVN co $::PYTHON_TAG
 
     if { $isWindows } {
         # can't do Windows
@@ -388,14 +388,14 @@ if { ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
 # Get and build numpy and scipy
 #
 
-if { ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
+if { 0 && ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
 
     set ::env(PYTHONHOME)        $SLICER_LIB/python-build
     cd $SLICER_LIB/python
 
     # do numpy
 
-    runcmd $::SVN co http://svn.scipy.org/svn/numpy/trunk numpy
+    runcmd $::SVN co $::NUMPY_TAG numpy
 
     if { $isWindows } {
         # can't do Windows
@@ -420,11 +420,14 @@ if { ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
 
     # do scipy
 
-    cd $SLICER_LIB/python
-    runcmd $::SVN co http://svn.scipy.org/svn/scipy/trunk scipy
+    # TODO: need to have a way to build the blas library...
+    if 0 {
+      cd $SLICER_LIB/python
+      runcmd $::SVN co $::SCIPY_TAG scipy
 
-    cd $SLICER_LIB/python/scipy
-    #runcmd $SLICER_LIB/python-build/bin/python ./setup.py install
+      cd $SLICER_LIB/python/scipy
+      runcmd $SLICER_LIB/python-build/bin/python ./setup.py install
+    }
 }
 
 ################################################################################
@@ -856,7 +859,7 @@ if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
 #
 #
 
-if { ![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update) } {
+if { 0 && ![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd echo t | $::SVN co https://ariser.uio.no/svn/navitrack/trunk NaviTrack
@@ -925,7 +928,7 @@ if { ![file exists $::dcmtk_TEST_FILE] || $::GENLIB(update) } {
 #
 #
 
-if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
+if { 0 && (![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update)) } {
     cd $SLICER_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/BatchMake BatchMake
@@ -1047,8 +1050,8 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
 # check for both regular and alternate sandbox file for linux builds
 if { ![file exists $::CMAKE] || \
          ![file exists $::TEEM_TEST_FILE] || \
-         ![file exists $::BatchMake_TEST_FILE] || \
-         ![file exists $::LIBCURL_TEST_FILE] || \
+         (0 && ![file exists $::BatchMake_TEST_FILE]) || \
+         (0 && ![file exists $::LIBCURL_TEST_FILE]) || \
          ![file exists $::TCL_TEST_FILE] || \
          ![file exists $::TK_TEST_FILE] || \
          ![file exists $::ITCL_TEST_FILE] || \
