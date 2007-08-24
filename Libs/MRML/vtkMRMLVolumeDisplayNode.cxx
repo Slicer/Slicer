@@ -111,46 +111,46 @@ void vtkMRMLVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   {
   std::stringstream ss;
   ss << this->Window;
-  of << indent << "window=\"" << ss.str() << "\" ";
+  of << indent << " window=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->Level;
-  of << indent << "level=\"" << ss.str() << "\" ";
+  of << indent << " level=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->UpperThreshold;
-  of << indent << "upperThreshold=\"" << ss.str() << "\" ";
+  of << indent << " upperThreshold=\"" << ss.str() << "\"";
   }
   {    
   std::stringstream ss;
   ss << this->LowerThreshold;
-  of << indent << "lowerThreshold=\"" << ss.str() << "\" ";
+  of << indent << " lowerThreshold=\"" << ss.str() << "\"";
   }
   {   
   std::stringstream ss;
   ss << this->Interpolate;
-  of << indent << "interpolate=\"" << ss.str() << "\" ";
+  of << indent << " interpolate=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->AutoWindowLevel;
-  of << indent << "autoWindowLevel=\"" << ss.str() << "\" ";
+  of << indent << " autoWindowLevel=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->ApplyThreshold;
-  of << indent << "applyThreshold=\"" << ss.str() << "\" ";
+  of << indent << " applyThreshold=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->AutoThreshold;
-  of << indent << "autoThreshold=\"" << ss.str() << "\" ";
+  of << indent << " autoThreshold=\"" << ss.str() << "\"";
   }
   if (this->ColorNodeID != NULL) 
     {
-    of << indent << "colorNodeRef=\"" << this->ColorNodeID << "\" ";
+    of << indent << " colorNodeRef=\"" << this->ColorNodeID << "\"";
     }
 
 }

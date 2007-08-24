@@ -89,7 +89,7 @@ void vtkMRMLSnapshotClipNode::WriteXML(ostream& of, int nIndent)
       ss << " ";
       }
     }
-    of << indent << "sceneSnapshotIDs=\"" << ss.str().c_str() << "\" ";
+    of << indent << " sceneSnapshotIDs=\"" << ss.str().c_str() << "\"";
 
 }
 

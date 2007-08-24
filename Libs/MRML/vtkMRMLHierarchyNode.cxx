@@ -54,7 +54,7 @@ void vtkMRMLHierarchyNode::WriteXML(ostream& of, int nIndent)
 
   if (this->ParentNodeID != NULL) 
     {
-    of << indent << "parentNodeRef=\"" << this->ParentNodeID << "\" ";
+    of << indent << " parentNodeRef=\"" << this->ParentNodeID << "\"";
     }
 }
 

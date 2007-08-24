@@ -352,21 +352,21 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  of << indent << "fieldOfView=\"" << 
+  of << indent << " fieldOfView=\"" << 
         this->FieldOfView[0] << " " <<
         this->FieldOfView[1] << " " <<
-        this->FieldOfView[2] << "\" ";
+        this->FieldOfView[2] << "\"";
 
-  of << indent << "dimensions=\"" << 
+  of << indent << " dimensions=\"" << 
         this->Dimensions[0] << " " <<
         this->Dimensions[1] << " " <<
-        this->Dimensions[2] << "\" ";
+        this->Dimensions[2] << "\"";
 
-  of << indent << "layoutGridRows=\"" << 
-        this->LayoutGridRows << "\" ";
+  of << indent << " layoutGridRows=\"" << 
+        this->LayoutGridRows << "\"";
 
-  of << indent << "layoutGridColumns=\"" << 
-        this->LayoutGridColumns << "\" ";
+  of << indent << " layoutGridColumns=\"" << 
+        this->LayoutGridColumns << "\"";
 
   std::stringstream ss;
   int j;
@@ -381,9 +381,9 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
         }
       }
     }
-  of << indent << "sliceToRAS=\"" << ss.str().c_str() << "\" ";
-  of << indent << "layoutName=\"" << this->GetLayoutName() << "\" ";
-  of << indent << "orientation=\"" << this->OrientationString << "\" ";
+  of << indent << " sliceToRAS=\"" << ss.str().c_str() << "\"";
+  of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
+  of << indent << " orientation=\"" << this->OrientationString << "\"";
   of << indent << " sliceVisibility=\"" << (this->SliceVisible ? "true" : "false") << "\"";
 
 

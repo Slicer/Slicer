@@ -94,7 +94,7 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
         ss << " ";
         }
       }
-    of << indent << "matrixTransformToParent=\"" << ss.str() << "\" ";
+    of << indent << " matrixTransformToParent=\"" << ss.str() << "\"";
     }
 
 }

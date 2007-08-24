@@ -63,13 +63,13 @@ void vtkMRMLDisplayableNode::WriteXML(ostream& of, int nIndent)
     }
   if (this->DisplayNodeIDs.size() > 0) 
     {
-    of << indent << "displayNodeRef=\"" << ss.str().c_str() << "\" ";
+    of << indent << " displayNodeRef=\"" << ss.str().c_str() << "\"";
     }
 
 
   if (this->StorageNodeID != NULL) 
     {
-    of << indent << "storageNodeRef=\"" << this->StorageNodeID << "\" ";
+    of << indent << " storageNodeRef=\"" << this->StorageNodeID << "\"";
     }
 }
 

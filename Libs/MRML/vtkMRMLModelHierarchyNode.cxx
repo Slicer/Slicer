@@ -81,14 +81,14 @@ void vtkMRMLModelHierarchyNode::WriteXML(ostream& of, int nIndent)
 
    if (this->ModelNodeID != NULL) 
     {
-    of << indent << "modelNodeRef=\"" << this->ModelNodeID << "\" ";
+    of << indent << " modelNodeRef=\"" << this->ModelNodeID << "\"";
     }
   if (this->DisplayNodeID != NULL) 
     {
-    of << indent << "displayNodeRef=\"" << this->DisplayNodeID << "\" ";
+    of << indent << " displayNodeRef=\"" << this->DisplayNodeID << "\"";
     }
 
-  of << indent << " expanded=\"" << (this->Expanded ? "true" : "false") << "\" ";
+  of << indent << " expanded=\"" << (this->Expanded ? "true" : "false") << "\"";
 }
 
 //----------------------------------------------------------------------------

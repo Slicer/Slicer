@@ -85,9 +85,9 @@ void vtkMRMLTensorVolumeNode::WriteXML(ostream& of, int nIndent)
         }
       }
     }
-    of << indent << "measurementFrame=\"" << ss.str() << "\" ";
+    of << indent << " measurementFrame=\"" << ss.str() << "\"";
 
-   of << indent << "order=\"" << Order << "\"";
+   of << indent << " order=\"" << Order << "\"";
 }
 
 //----------------------------------------------------------------------------

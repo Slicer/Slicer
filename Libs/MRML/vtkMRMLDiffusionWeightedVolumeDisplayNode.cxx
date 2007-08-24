@@ -72,7 +72,7 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::WriteXML(ostream& of, int nInden
 
   std::stringstream ss;
   ss << this->DiffusionComponent;
-  of << indent << "diffusionComponent=\"" << ss.str() << "\" ";
+  of << indent << " diffusionComponent=\"" << ss.str() << "\"";
 }
 
 //----------------------------------------------------------------------------

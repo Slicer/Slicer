@@ -76,7 +76,7 @@ void vtkMRMLNRRDStorageNode::WriteXML(ostream& of, int nIndent)
 
   std::stringstream ss;
   ss << this->CenterImage;
-  of << indent << "centerImage=\"" << ss.str() << "\" ";
+  of << indent << " centerImage=\"" << ss.str() << "\"";
 
 }
 

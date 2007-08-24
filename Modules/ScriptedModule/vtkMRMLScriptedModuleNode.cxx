@@ -87,14 +87,14 @@ void vtkMRMLScriptedModuleNode::WriteXML(ostream& of, int nIndent)
 
   if (this->ModuleName != NULL)
     {
-    of << "ModuleName = '" << this->ModuleName << "' ";
+    of << " ModuleName =\"" << this->ModuleName << "\""; 
     }
 
   std::map<std::string, std::string>::iterator iter;
 
   for (iter=this->Parameters.begin(); iter != this->Parameters.end(); iter++)
     {
-    of << iter->first << "= '" << iter->second << "' ";
+    of << " " << iter->first << "= \"" << iter->second << "\"";
     }
 }
 

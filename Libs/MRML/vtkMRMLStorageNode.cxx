@@ -46,12 +46,12 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
 
   if (this->FileName != NULL) 
     {
-    of << indent << "fileName=\"" << vtkMRMLNode::URLEncodeString(this->FileName) << "\" ";
+    of << indent << " fileName=\"" << vtkMRMLNode::URLEncodeString(this->FileName) << "\"";
     }
   {
   std::stringstream ss;
   ss << this->UseCompression;
-  of << indent << "useCompression=\"" << ss.str() << "\" ";
+  of << indent << " useCompression=\"" << ss.str() << "\"";
   }
 
 }

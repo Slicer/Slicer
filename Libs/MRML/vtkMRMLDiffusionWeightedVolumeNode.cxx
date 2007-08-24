@@ -94,7 +94,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::WriteXML(ostream& of, int nIndent)
         }
       }
     }
-    of << indent << "MeasurementFrameMatrix=\"" << ss.str() << "\" ";
+    of << indent << " measurementFrameMatrix=\"" << ss.str() << "\"";
 
   ss.clear();
   
@@ -106,7 +106,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::WriteXML(ostream& of, int nIndent)
       }
     }
   
-  of << indent << "gradients=\"" << ss.str() << "\" ";
+  of << indent << " gradients=\"" << ss.str() << "\"";
   
   ss.clear();
   
@@ -114,7 +114,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::WriteXML(ostream& of, int nIndent)
     {
     ss << this->BValues->GetValue(g) << " ";
     }
-  of << indent << "bValues=\"" << ss.str() << "\" ";
+  of << indent << " bValues=\"" << ss.str() << "\"";
 
 }
 
@@ -131,7 +131,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::ReadXMLAttributes(const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
 
-    if (!strcmp(attName, "MeasurementFrameMatrix"))
+    if (!strcmp(attName, "measurementFrameMatrix"))
       {
       std::stringstream ss;
       double val;

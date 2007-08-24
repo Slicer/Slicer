@@ -172,17 +172,17 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
   if (this->ID != NULL) 
     {
-    of << indent << " id=\"" << this->ID << "\" ";
+    of << indent << " id=\"" << this->ID << "\"";
     }
   if (this->Name != NULL) 
     {
-    of << indent << "name=\"" << this->Name << "\" ";
+    of << indent << " name=\"" << this->Name << "\"";
     }
   if (this->Description != NULL) 
     {
-    of << indent << "description=\"" << this->Description << "\" ";
+    of << indent << " description=\"" << this->Description << "\"";
     }
-  of << indent << " hideFromEditors=\"" << (this->HideFromEditors ? "true" : "false") << "\" ";
+  of << indent << " hideFromEditors=\"" << (this->HideFromEditors ? "true" : "false") << "\"";
 
   of << indent << " selectable=\"" << (this->Selectable ? "true" : "false") << "\" ";
 

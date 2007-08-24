@@ -117,7 +117,7 @@ void vtkMRMLFreeSurferModelStorageNode::WriteXML(ostream& of, int indent)
   Superclass::WriteXML(of, indent);
   if (this->SurfaceFileName != NULL)
     {
-    of << " surfaceFileName=\"" << vtkMRMLNode::URLEncodeString(this->SurfaceFileName) << "\" ";    
+    of << " surfaceFileName=\"" << vtkMRMLNode::URLEncodeString(this->SurfaceFileName) << "\"";    
     }
   
   if (this->GetNumberOfOverlayFiles() > 0)

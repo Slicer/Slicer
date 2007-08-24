@@ -173,7 +173,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::WriteXML(ostream& of, int nIndent)
   {
   std::stringstream ss;
   ss << this->CenterImage;
-  of << indent << "centerImage=\"" << ss.str() << "\" ";
+  of << indent << " centerImage=\"" << ss.str() << "\"";
   }
   if (this->FileDimensions)
     {
@@ -190,22 +190,22 @@ void vtkMRMLVolumeHeaderlessStorageNode::WriteXML(ostream& of, int nIndent)
   {
   std::stringstream ss;
   ss << this->FileLittleEndian;
-  of << indent << "fileLittleEndian=\"" << ss.str() << "\" ";
+  of << indent << " fileLittleEndian=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->FileScalarType;
-  of << indent << "fileScalarType=\"" << ss.str() << "\" ";
+  of << indent << " fileScalarType=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->FileScanOrder;
-  of << indent << "fileScanOrder=\"" << ss.str() << "\" ";
+  of << indent << " fileScanOrder=\"" << ss.str() << "\"";
   }
   {
   std::stringstream ss;
   ss << this->FileNumberOfScalarComponents;
-  of << indent << "fileNumberOfScalarComponents=\"" << ss.str() << "\" ";
+  of << indent << " fileNumberOfScalarComponents=\"" << ss.str() << "\"";
   }
 }
 

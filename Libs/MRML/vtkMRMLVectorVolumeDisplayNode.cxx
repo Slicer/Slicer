@@ -75,11 +75,11 @@ void vtkMRMLVectorVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 
   ss.clear();
   ss << this->ScalarMode;
-  of << indent << "scalarMode=\"" << ss.str() << "\" ";
+  of << indent << " scalarMode=\"" << ss.str() << "\"";
 
   ss.clear();
   ss << this->GlyphMode;
-  of << indent << "glyphMode=\"" << ss.str() << "\" ";
+  of << indent << " glyphMode=\"" << ss.str() << "\"";
 }
 
 //----------------------------------------------------------------------------

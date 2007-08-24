@@ -79,24 +79,24 @@ void vtkMRMLGradientAnisotropicDiffusionFilterNode::WriteXML(ostream& of, int nI
   {
     std::stringstream ss;
     ss << this->Conductance;
-    of << indent << "Conductance='" << ss.str() << "' ";
+    of << indent << " Conductance=\"" << ss.str() << "\"";
   }
   {
     std::stringstream ss;
     ss << this->NumberOfIterations;
-    of << indent << "NumberOfIterations='" << ss.str() << "' ";
+    of << indent << " NumberOfIterations=\"" << ss.str() << "\"";
   }
   {
     std::stringstream ss;
     ss << this->TimeStep;
-    of << indent << "TimeStep='" << ss.str() << "' ";
+    of << indent << " TimeStep=\"" << ss.str() << "\"";
   }
   {
     std::stringstream ss;
     if ( this->InputVolumeRef )
       {
       ss << this->InputVolumeRef;
-      of << indent << "InputVolumeRef='" << ss.str() << "' ";
+      of << indent << " InputVolumeRef=\"" << ss.str() << "\"";
      }
   }
   {
@@ -104,7 +104,7 @@ void vtkMRMLGradientAnisotropicDiffusionFilterNode::WriteXML(ostream& of, int nI
     if ( this->OutputVolumeRef )
       {
       ss << this->OutputVolumeRef;
-      of << indent << "OutputVolumeRef='" << ss.str() << "' ";
+      of << indent << " OutputVolumeRef=\"" << ss.str() << "\"";
       }
   }
 }
