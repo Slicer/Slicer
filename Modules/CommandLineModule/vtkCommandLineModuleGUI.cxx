@@ -568,25 +568,28 @@ void vtkCommandLineModuleGUI::UpdateMRML ()
           std::string n
             = lsb->GetWidget()->GetLoadSaveDialog()->GetNthFileName(i);
 
-          // quote it as needed (if filename contains a comma and it
-          // is not already quoted, then quote it.
-          int s1, len;
-          len = n.length();
-          s1 = n.find_first_of(",");
-          if (s1 > 0 && s1 < len)
+          // quote it as needed (if multiple filenames and a filename
+          // contains a comma and is not already quoted, then quote it)
+          if (lsb->GetWidget()->GetLoadSaveDialog()->GetMultipleSelection())
             {
-            // filename contains a comma
-            int q1, qn;
-            q1 = n.find_first_of("\"");
-            qn = n.find_last_of("\"");
-            if (q1 != 0 && qn != len-1)
+            int s1, len;
+            len = n.length();
+            s1 = n.find_first_of(",");
+            if (s1 > 0 && s1 < len)
               {
-              // first and last character in name are not quotes, so
-              // quote
-              n = std::string("\"") + n + "\"";
+              // filename contains a comma
+              int q1, qn;
+              q1 = n.find_first_of("\"");
+              qn = n.find_last_of("\"");
+              if (q1 != 0 && qn != len-1)
+                {
+                // first and last character in name are not quotes, so
+                // quote
+                n = std::string("\"") + n + "\"";
+                }
               }
             }
-
+          
           // add it to the list
           names = names + n;
           if (i < numberOfFiles-1)  // comma after all but last

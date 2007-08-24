@@ -139,6 +139,10 @@ void GeneratePost(std::ofstream &);
 /* Generate a function to split a string into a vector of strings. */
 void GenerateSplitString(std::ofstream &);
 
+/* Generate a function to split a string into a vector of filenames
+ * (which can contain commas in the name). */
+void GenerateSplitFilenames(std::ofstream &);
+
 /* Generate the code that echos the XML file that describes the
  * command line arguments.
  */
@@ -228,6 +232,7 @@ main(int argc, char *argv[])
   GeneratePluginEntryPoints(sout, logoFiles);
   GeneratePluginDataSymbols(sout, logoFiles, InputXML);
   GenerateSplitString(sout);
+  GenerateSplitFilenames(sout);
   GeneratePluginProcedures(sout, logoFiles);
   GenerateLOGO(sout, logoFiles);
   GenerateXML(sout);
@@ -278,6 +283,49 @@ void GenerateSplitString(std::ofstream &sout)
   sout << "    if ((stop < 0) || (stop > n)) stop = n;" << std::endl;
   sout << "    words.push_back(text.substr(start, stop - start));" << std::endl;
   sout << "    start = text.find_first_not_of(separators, stop+1);" << std::endl;
+  sout << "    }" << std::endl;
+  sout << "}" << std::endl;
+  sout << std::endl;
+}
+
+void GenerateSplitFilenames(std::ofstream &sout)
+{
+  sout << "void" << std::endl;
+  sout << "splitFilenames (std::string &text," << std::endl;
+  sout << "             std::vector<std::string> &words)" << std::endl;
+  sout << "{" << std::endl;
+  sout << "  int n = text.length();" << std::endl;
+  sout << "  int start, stop, startq, stopq;" << std::endl;
+  sout << "  bool quoted;" << std::endl;
+  sout << "  std::string comma(\",\");" << std::endl;
+  sout << "  std::string quote(\"\\\"\");" << std::endl;
+  sout << "  start = text.find_first_not_of(comma);" << std::endl;
+  sout << "  while ((start >= 0) && (start < n))" << std::endl;
+  sout << "    {" << std::endl;
+  sout << "    quoted = false;" << std::endl;
+  sout << "    startq = text.find_first_of(quote, start);" << std::endl;
+  sout << "    stopq = text.find_first_of(quote, startq+1);" << std::endl;
+  sout << "    stop = text.find_first_of(comma, start);" << std::endl;
+  sout << "    if ((stop < 0) || (stop > n)) stop = n;" << std::endl;
+  sout << "    if (startq != std::string::npos && stopq != std::string::npos)"
+       << std::endl;
+  sout << "      {" << std::endl;
+  sout << "      while (startq < stop && stop < stopq && stop != n)" << std::endl;
+  sout << "         {" << std::endl;
+  sout << "         quoted = true;" << std::endl;
+  sout << "         stop = text.find_first_of(comma, stop+1);" << std::endl;
+  sout << "         if ((stop < 0) || (stop > n)) stop = n;" << std::endl;
+  sout << "         }" << std::endl;
+  sout << "      }" << std::endl;
+  sout << "    if (!quoted)" << std::endl;
+  sout << "      {" << std::endl;
+  sout << "      words.push_back(text.substr(start, stop - start));" << std::endl;
+  sout << "      }" << std::endl;
+  sout << "    else" << std::endl;
+  sout << "      {" << std::endl;
+  sout << "      words.push_back(text.substr(start+1, stop - start-2));" << std::endl;
+  sout << "      }" << std::endl;
+  sout << "    start = text.find_first_not_of(comma, stop+1);" << std::endl;
   sout << "    }" << std::endl;
   sout << "}" << std::endl;
   sout << std::endl;
@@ -491,8 +539,15 @@ void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
         sout << "std::cout << \"" << pit->GetName() << "[\" << _i << \"]: \";" << EOL << std::endl;
         sout << "std::vector<std::string> words;" << EOL << std::endl;
         sout << "words.clear();" << EOL << std::endl;
-        sout << "      std::string sep(\",\");" << EOL << std::endl;
-        sout << "splitString(" << pit->GetName() << "Temp[_i], sep, words);" << EOL << std::endl;
+        if ((*pit).GetTag() == "file")
+          {
+          sout << "splitFilenames(" << pit->GetName() << "Temp[_i], words);" << EOL << std::endl;
+          }
+        else
+          {
+          sout << "      std::string sep(\",\");" << EOL << std::endl;
+          sout << "splitString(" << pit->GetName() << "Temp[_i], sep, words);" << EOL << std::endl;
+          }
         sout << "for (unsigned int _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
         sout << "{" << EOL << std::endl;
         sout << "std::cout <<  words[_j] << \" \";" << EOL << std::endl;
@@ -936,13 +991,25 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
              << EOL << std::endl;
         sout << "      std::string sep(\",\");"
              << EOL << std::endl;
-        sout << "      splitString(" 
-             << pit->GetName()
-             << "Temp"
-             << ", "
-             << "sep, "
-             << "words);"
-             << EOL << std::endl;
+        if ((*pit).GetTag() == "file")
+          {
+          sout << "      splitFilenames(" 
+               << pit->GetName()
+               << "Temp"
+               << ", "
+               << "words);"
+               << EOL << std::endl;
+          }
+        else
+          {
+          sout << "      splitString(" 
+               << pit->GetName()
+               << "Temp"
+               << ", "
+               << "sep, "
+               << "words);"
+               << EOL << std::endl;
+          }
         sout << "      for (unsigned int _j = 0; _j < words.size(); _j++)"
              << EOL << std::endl;
         sout << "        {"
@@ -966,8 +1033,15 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         sout << "        std::vector<std::string> words;" << EOL << std::endl;
         sout << "        std::vector<" << pit->GetArgType() << "> elements;" << EOL << std::endl;
         sout << "        words.clear();" << EOL << std::endl;
-        sout << "      std::string sep(\",\");" << EOL << std::endl;
-        sout << "        splitString(" << pit->GetName() << "Temp[_i], sep, words);" << EOL << std::endl;
+        if ((*pit).GetTag() == "file")
+          {
+          sout << "        splitFilenames(" << pit->GetName() << "Temp[_i], words);" << EOL << std::endl;
+          }
+        else
+          {
+          sout << "      std::string sep(\",\");" << EOL << std::endl;
+          sout << "        splitString(" << pit->GetName() << "Temp[_i], sep, words);" << EOL << std::endl;
+          }
         if (IsVectorOfVectors(*pit))
           {
           sout << "        for (unsigned int _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
