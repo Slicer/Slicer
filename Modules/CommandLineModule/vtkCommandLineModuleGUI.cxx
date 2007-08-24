@@ -65,22 +65,22 @@ class ModuleWidgetMap : public std::map<std::string, vtkSmartPointer<vtkKWCoreWi
 // contain a comma.  So we neeed to split on commas that are not
 // within quoted strings.
 void
-splitFilenames (std::string &text, vtkStringArray *words)
+splitFilenames (std::string *text, vtkStringArray *words)
 {
-  int n = text.length();
+  int n = (*text).length();
   int start, stop, startq, stopq;
   bool quoted;
   std::string comma(",");
   std::string quote("\"");
-  start = text.find_first_not_of(comma);
+  start = (*text).find_first_not_of(comma);
   while ((start >= 0) && (start < n))
     {
     // find any quotes
     quoted = false;
-    startq = text.find_first_of(quote, start);
-    stopq = text.find_first_of(quote, startq+1);
+    startq = (*text).find_first_of(quote, start);
+    stopq = (*text).find_first_of(quote, startq+1);
 
-    stop = text.find_first_of(comma, start);
+    stop = (*text).find_first_of(comma, start);
     if ((stop < 0) || (stop > n)) stop = n;
 
     if (startq != std::string::npos && stopq != std::string::npos)
@@ -91,20 +91,20 @@ splitFilenames (std::string &text, vtkStringArray *words)
       while (startq < stop && stop < stopq && stop != n)
         {
         quoted = true;
-        stop = text.find_first_of(comma, stop+1);
+        stop = (*text).find_first_of(comma, stop+1);
         if ((stop < 0) || (stop > n)) stop = n;
         }
       }
 
     if (!quoted)
       {
-      words->InsertNextValue(text.substr(start, stop - start).c_str());
+      words->InsertNextValue((*text).substr(start, stop - start).c_str());
       }
     else
       {
-      words->InsertNextValue(text.substr(start+1, stop - start - 2).c_str());
+      words->InsertNextValue((*text).substr(start+1, stop - start - 2).c_str());
       }
-    start = text.find_first_not_of(comma, stop+1);
+    start = (*text).find_first_not_of(comma, stop+1);
     }
 }
 
@@ -798,7 +798,7 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
           else if (lsb)
             {
             vtkSmartPointer<vtkStringArray> names = vtkStringArray::New();
-            splitFilenames(value, names);
+            splitFilenames(&value, names);
             //vtkWarningMacro(<<"Filenames being set: " << value);
             lsb->GetWidget()->GetLoadSaveDialog()->SetInitialSelectedFileNames(names);
             }
@@ -1527,7 +1527,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         tparameter->SetLabelText( (*pit).GetLabel().c_str() );
 
         vtkSmartPointer<vtkStringArray> names = vtkStringArray::New();
-        splitFilenames((*pit).GetDefault(), names);
+        splitFilenames(&(*pit).GetDefault(), names);
         tparameter->GetWidget()->GetLoadSaveDialog()->SetInitialSelectedFileNames( names );
         if ((*pit).GetFileExtensions().size() != 0)
           {
