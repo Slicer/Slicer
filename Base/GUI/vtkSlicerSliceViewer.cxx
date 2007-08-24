@@ -73,7 +73,7 @@ vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
       }
 
     int numberMappers = this->ImageMapperVec.size();
-    for ( int i=0; i<numberMappers; i++ )
+    for ( int i=1; i<numberMappers; i++ )  // start at 1 to skip this->ImageMapper
       {
       this->ImageMapperVec[i]->Delete();
       this->ImageMapperVec[i] = NULL;
@@ -97,13 +97,15 @@ vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
       this->ActorCollection = NULL;
       }
 
+    this->RenderWidget->RemoveAllRenderers();
+
     if ( this->RenderWidget ) {
       this->RenderWidget->SetParent ( NULL );
       this->RenderWidget->Delete ( );
       this->RenderWidget = NULL;
     }
 
-    this->RenderWidget->RemoveAllRenderers();
+
 }
 
 //---------------------------------------------------------------------------
