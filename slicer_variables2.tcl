@@ -90,8 +90,12 @@ set ::SANDBOX_TAG "http://svn.na-mic.org/svn/NAMICSandBox/branches/Slicer-2-6"
 set ::NAVITRACK_TAG "https://ariser.uio.no/svn/navitrack/trunk"
 set ::SIGN_TAG "https://ariser.uio.no/svn/sign/branches/stable-2.0/libs/SIGN"
 set ::SIGN_APP_TAG "https://ariser.uio.no/svn/sign/branches/stable-2.0/Applications"
+set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release25-maint"
+set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/trunk"
+set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
 set ::BatchMake_TAG "HEAD"
 set ::LIBCURL_TAG "HEAD"
+
 
 # Set library, binary, etc. paths...
 
