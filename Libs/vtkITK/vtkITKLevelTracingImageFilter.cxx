@@ -20,8 +20,6 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkFloatArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include "vtkMath.h"
-#include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkStructuredPoints.h"
