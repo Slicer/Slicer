@@ -163,7 +163,7 @@ proc launch_ParseArgs {argv} {
 
   set ::LAUNCH(showSplash) 1
   set ::LAUNCH(launchCommand) ""
-  set ::LAUNCH(detatch) 0
+  set ::LAUNCH(detach) 0
 
   # 
   # look for launcher-specific arguments
