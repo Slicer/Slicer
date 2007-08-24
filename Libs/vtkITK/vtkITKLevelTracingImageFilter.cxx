@@ -40,6 +40,14 @@ const unsigned __int64 itk::NumericTraits<unsigned __int64>::Zero = 0ui64;
 const unsigned __int64 itk::NumericTraits<unsigned __int64>::One = 1ui64;
 #endif
 
+#if defined(VTK_TYPE_USE_LONG_LONG)
+const long long itk::NumericTraits<long long>::Zero = 0;
+const long long itk::NumericTraits<long long>::One = 1;
+
+const unsigned long long itk::NumericTraits<unsigned long long>::Zero = 0;
+const unsigned long long itk::NumericTraits<unsigned long long>::One = 1;
+#endif
+
 // Description:
 // Construct object with initial range (0,1) and single contour value
 // of 0.0. ComputeNormal is on, ComputeGradients is off and ComputeScalars is on.
