@@ -27,4 +27,6 @@ for {set j 0} {$j < $outerloops} {incr j} {
   }
 }
 
+$::slicer3::ApplicationGUI RepackMainViewer 5 ""
+
 exit 0
