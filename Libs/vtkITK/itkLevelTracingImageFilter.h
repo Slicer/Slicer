@@ -62,8 +62,6 @@ public:
   typedef ChainCodePath<ImageDimension> ChainCodePathType;
   typedef typename ChainCodePathType::Pointer ChainCodePathPointer;
 
-  //ChainCodePathType::Pointer ChainCodePathPointer = ChainCodePathType::New();
-
   typedef typename ChainCodePathType::OffsetType OffsetType;
 
   /** Smart Pointer type to a DataObject. */

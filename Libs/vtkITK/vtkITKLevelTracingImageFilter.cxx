@@ -17,30 +17,19 @@ PURPOSE.  See the above copyright notice for more information.
 #include "itkLevelTracingImageFilter.h"
 
 #include "vtkCellArray.h"
-#include "vtkCharArray.h"
-#include "vtkDoubleArray.h"
 #include "vtkFloatArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include "vtkIntArray.h"
-#include "vtkLongArray.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
-#include "vtkShortArray.h"
 #include "vtkStructuredPoints.h"
-#include "vtkUnsignedCharArray.h"
-#include "vtkUnsignedIntArray.h"
-#include "vtkUnsignedLongArray.h"
-#include "vtkUnsignedShortArray.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 
 #include "itkImage.h"
 #include "itkExtractImageFilter.h"
 #include "itkChainCodePath.h"
-
-#include "itkImageFileWriter.h"
 
 vtkCxxRevisionMacro(vtkITKLevelTracingImageFilter, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkITKLevelTracingImageFilter);
@@ -79,14 +68,14 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
 
   // Wrap scalars into an ITK image
   typedef itk::Image<T, 3> ImageType;
-  ImageType::Pointer image = ImageType::New();
+  typename ImageType::Pointer image = ImageType::New();
   image->GetPixelContainer()->SetImportPointer(scalars, dims[0]*dims[1]*dims[2], false);
   image->SetOrigin( origin );
   image->SetSpacing( spacing );
 
-  ImageType::RegionType region;
-  ImageType::IndexType index;
-  ImageType::SizeType size;
+  typename ImageType::RegionType region;
+  typename ImageType::IndexType index;
+  typename ImageType::SizeType size;
   index[0] = extent[0];   
   index[1] = extent[2];
   index[2] = extent[4];
@@ -100,12 +89,12 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
   // Extract the 2D slice to process
   typedef itk::Image<T,2> Image2DType;
   typedef itk::ExtractImageFilter<ImageType, Image2DType> ExtractType;
-  ExtractType::Pointer extract = ExtractType::New();
+  typename ExtractType::Pointer extract = ExtractType::New();
 
-  typedef ExtractType::InputImageRegionType ExtractionRegionType;
+  typedef typename ExtractType::InputImageRegionType ExtractionRegionType;
   ExtractionRegionType extractRegion;
-  ExtractionRegionType::IndexType extractIndex;
-  ExtractionRegionType::SizeType extractSize;
+  typename ExtractionRegionType::IndexType extractIndex;
+  typename ExtractionRegionType::SizeType extractSize;
 
   extractIndex = index;
   extractSize = size;
@@ -113,7 +102,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
 
   // Trace the level curve using itk::LevelTracingImageFilter
   typedef itk::LevelTracingImageFilter<Image2DType, Image2DType> LevelTracingType;
-  LevelTracingType::Pointer tracing = LevelTracingType::New();
+  typename LevelTracingType::Pointer tracing = LevelTracingType::New();
 
   itk::Index<2> seed2D = {{0,0}};
   switch(plane)
@@ -153,7 +142,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
 
   chain = tracing->GetPathOutput();
 
-  Image2DType::IndexType chainTemp = chain->GetStart();
+  typename Image2DType::IndexType chainTemp = chain->GetStart();
   OffsetType offset;
 
   const unsigned int numberChain = chain->NumberOfSteps();
@@ -161,7 +150,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
   ptIds = new vtkIdType [numberChain];
 
   unsigned int i=0;
-  ImageType::IndexType chain3D;
+  typename ImageType::IndexType chain3D;
 
   do
   {

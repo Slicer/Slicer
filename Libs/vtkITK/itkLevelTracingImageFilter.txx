@@ -169,7 +169,7 @@ LevelTracingImageFilter<TInputImage, TOutputImage>
   m_Min = 0;
   m_Max = 0;
   
-  ChainCodePathType::Pointer chainCode = ChainCodePathType::New();
+  typename ChainCodePathType::Pointer chainCode = ChainCodePathType::New();
   this->ProcessObject::SetNthOutput(1, chainCode.GetPointer());
   chainCode->Initialize();
   
@@ -274,7 +274,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   ChainCodePathPointer outputPath = this->GetPathOutput();
   
     
-  InputImageType::RegionType region = inputImage->GetBufferedRegion();
+  typename InputImageType::RegionType region = inputImage->GetBufferedRegion();
 
   // We may move the seed point to the boundary if it is off by a pixel
   m_MovedSeed = false;
