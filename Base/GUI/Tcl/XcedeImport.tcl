@@ -16,6 +16,12 @@
 #  puts "done"
 #}
 
+# TO DO: fix this!
+# NOTE: right now, transforms, from outer-most to inner most,
+# must be listed in the xcede file first.
+# Any models to which overlays are applied must be listed
+# prior to the overlays themselves.
+
 #------------------------------------------------------------------------------
 # main entry point...
 #------------------------------------------------------------------------------
@@ -180,7 +186,7 @@ proc XcedeCatalogImportAnEntry {element} {
     
     #--- finally, create the node
     set handler XcedeCatalogImportEntry$nodeType
-
+    
     if { [info command $handler] == "" } {
         set err [$::slicer3::MRMLScene GetErrorMessagePointer]
         $::slicer3::MRMLScene SetErrorMessage "$err\nno handler for $nodeType"
@@ -205,11 +211,6 @@ proc XcedeCatalogImportEntryVolume {node} {
         return
     }
 
-    #--- get just filename for naming the volume
-    set splituri [ file split $n(uri) ]
-    set i [ llength $splituri ]
-    set fname [ lindex $splituri [ expr $i-1 ] ]
-
     set centered 1
     set labelmap 0
     if { [info exists n(labelmap) ] } {
@@ -217,17 +218,36 @@ proc XcedeCatalogImportEntryVolume {node} {
     }
     
     set logic [$::slicer3::VolumesGUI GetLogic]
-    set volumeNode [$logic AddArchetypeVolume $n(uri) $centered $labelmap $fname ]
+    if { $logic == "" } {
+        puts "XcedeCatalogImportEntryVolume: Unable to access Volumes Logic. $n(uri) not imported."
+        return
+    }
+    set volumeNode [$logic AddArchetypeVolume $n(uri) $centered $labelmap $n(name) ]
+    if { $volumeNode == "" } {
+        puts "XcedeCatalogImportEntryVolume: Unable to add Volume Node for $n(uri)."
+        return
+    }
     set volumeNodeID [$volumeNode GetID]
-    set volumeNode [$::slicer3::MRMLScene GetNodeByID $volumeNodeID]
 
+    #--- try using xcede differently than the slicer2 xform descrption
     # use the current top of stack (might be "" if empty, but that's okay)
     set transformID [lindex $::XcedeCatalog(transformIDStack) end]
     $volumeNode SetAndObserveTransformNodeID $transformID
 
+    #--- if volume has a transform attribute, move the node into that transform
+    if { [ info exists n(transform) ] } {
+        #--- apply the transform to this model.
+        set tid $::XcedeCatalog_MrmlID($n(transform))
+        $volumeNode SetAndObserveTransformNodeID $tid
+    }
+
     set volumeDisplayNode [$volumeNode GetDisplayNode]
+    if { $volumeDisplayNode == ""  } {
+        puts "XcedeCatalogImportEntryVolume: Unable to access Volume Display Node for  $n(uri). Volume display not configured."
+        return
+    }
     $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeGrey"
-    set logic [$::slicer3::VolumesGUI GetLogic]
+    #set logic [$::slicer3::VolumesGUI GetLogic]
     $logic SetActiveVolumeNode $volumeNode
 
     [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveVolumeID [$volumeNode GetID]
@@ -241,23 +261,150 @@ proc XcedeCatalogImportEntryModel {node} {
 
     #--- ditch if there's no file in the uri
     if { ! [info exists n(uri) ] } {
-        puts "XcedeCatalogImportEntryModel: no uri specified for node $n(uri)"
+        puts "XcedeCatalogImportEntryModel: no uri specified for node $n(uri). No model imported."
         return
     }
 
-    #--- get just filename for naming the model
-    set splituri [ file split $n(uri) ]
-    set i [ llength $splituri ]
-    set fname [ lindex $splituri [ expr $i-1 ] ]
-
     set logic [$::slicer3::ModelsGUI GetLogic]
+    if {$logic == "" } {
+        puts "XcedeCatalogImportEntryModel: couldn't retrieve Models Logic. Model $n(name) not imported."
+        return
+    }
     set mnode [$logic AddModel $n(uri)]
-    set dnode [$mnode GetDisplayNode]
+    if { $mnode == "" } {
+        puts "XcedeCatalogImportEntryModel: couldn't created Model Node. Model $n(name) not imported."
+        return
+    }
 
     #--- need this to associate scalar overlays with the actual model node
     set ::XcedeCatalog_MrmlID($n(ID)) [$mnode GetID]
+
     puts "model MRMLID is $::XcedeCatalog_MrmlID($n(ID))"
+
+    #--- if this has a transform attribute, move the node into that transform
+    if { [ info exists n(transform) ] } {
+        #--- apply the transform to this model.
+        set tid $::XcedeCatalog_MrmlID($n(transform))
+        $mnode SetAndObserveTransformNodeID $tid
+    }
+    
+    
 }
+
+
+#------------------------------------------------------------------------------
+# helper function adds new transform node to mrml scene
+# and returns the node id
+#------------------------------------------------------------------------------
+proc XcedeCatalogImportCreateIdentityTransformNode { name } {
+
+    set tnode [$::slicer3::MRMLScene CreateNodeByClass vtkMRMLLinearTransformNode ]
+    $tnode SetScene $::slicer3::MRMLScene
+    $tnode SetName $name
+    $::slicer3::MRMLScene AddNode $tnode
+    set tid [ $tnode GetID ]
+    return $tid
+
+}
+    
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+proc XcedeCatalogImportSetMatrixFromURI { id filename }    {
+
+    set tnode [ $::slicer3::MRMLScene GetNodeByID $id ]
+    if { $tnode == "" } {
+        puts "XcedeCatalogImportSetMatrixFromURI: transform ID=$id not found in scene. No elements set."
+        return
+    }
+
+    set matrix [ $tnode GetMatrixTransformToParent ]
+    if { $matrix == "" } {
+        puts "XcedeCatalogImportSetMatrixFromURI: matrix for transform ID=$id not found. No elements set."
+        return
+    }
+    
+    #--- if filename contains ".register.dat" then we know
+    set check [ string first "register.dat" $filename ]
+    if { $check < 0 } {
+        puts "XcedeCatalogImportSetMatrixFromURI: $filename is unknown filetype, No elements set."
+        return
+    }
+
+    #--- open file and read 
+    set fid [ open $filename r ]
+    set row 0
+    set col 0
+    while { ! [ eof $fid ] } {
+        gets $fid line
+        puts "$line"
+        set llen [ llength $line ]
+        #--- grab only lines that have matrix elements
+        if { $llen == 4 } {
+            set element [ expr [ lindex $line 0 ] ]
+            $matrix SetElement $row $col $element
+            incr col
+            set element [ expr [ lindex $line 1 ] ]
+            $matrix SetElement $row $col $element
+            incr col
+            set element [ expr [ lindex $line 2 ] ]
+            $matrix SetElement $row $col $element
+            incr col
+            set element [ expr [ lindex $line 3 ] ]
+            $matrix SetElement $row $col $element
+            incr row
+            set col 0
+        }
+    }
+
+}
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+proc XcedeCatalogImportEntryTransform {node} {
+  upvar $node n
+
+    #--- ditch if there's no file in the uri
+    if { ! [info exists n(uri) ] } {
+        puts "XcedeCatalogImportEntryTransform: no uri specified for node $n(uri). No transform imported."
+        return
+    }
+
+    #--- add the node
+    set tid [ XcedeCatalogImportCreateIdentityTransformNode $n(name) ]
+    if { $tid == "" } {
+        puts "XcedeCatalogImportEntryTransform: unable to add Transform Node. No transform imported."
+        return
+    }
+
+    #--- read the uri and translate matrix element values into place.
+    XcedeCatalogImportSetMatrixFromURI $tid $n(uri)    
+
+    #--- if this has a transform attribute, move the node into that transform
+
+    if { [ info exists n(transform) ] } {
+        #--- apply the transform to this model.
+        set tnode [ $::slicer3::MRMLSceneGetNodeByID $tid ]
+        if { $tnode != "" } {
+            set ptid $::XcedeCatalog_MrmlID($n(transform))
+            $tnode SetAndObserveTransformNodeID $ptid
+        }
+    }
+
+    #--- need this to associate transformable datasets to this xform
+    puts "Setting ::XcedeCatalog_MrmlID($n(ID)) to be $tid."
+    set ::XcedeCatalog_MrmlID($n(ID)) $tid
+    puts "transform MRMLID is $::XcedeCatalog_MrmlID($n(ID))"
+
+    #--- this is for help with FIPS registration correction
+    if { $n(name) == "anat2exf" } {
+        set ::XcedeCatalog_MrmlID(anat2exf) $tid
+    }
+
+}
+
+
+
+
+
 
 
 
@@ -269,27 +416,36 @@ proc XcedeCatalogImportEntryOverlay {node} {
     #--- not really a node, per se...
     #--- ditch if there's no file in the uri
     if { ! [info exists n(uri) ] } {
-        puts "XcedeCatalogImportEntryOverlay: no uri specified for node $n(name)"
+        puts "XcedeCatalogImportEntryOverlay: no uri specified for node $n(name). No overlay imported."
         return
     }
 
-    #--- get just filename for naming the model
-    set splituri [ file split $n(uri) ]
-    set i [ llength $splituri ]
-    set fname [ lindex $splituri [ expr $i-1 ] ]
-
     #--- what model node should these scalars be applied to?
     if { ![info exists n(modelID) ] } {
-        puts "XcedeCatalogImportEntryOverlay: no model ID specified for overlay $n(uri)"
+        puts "XcedeCatalogImportEntryOverlay: no model ID specified for overlay $n(uri). No overlay imported."
         return
     }
 
     #--- get Slicer's ID for this model, and then get model node
+    if { ! [ info exists ::XcedeCatalog_MrmlID($n(modelID)) ] } {
+        puts "XcedeCatalogImportEntryOverlay: Model MRML Node ID= $::XcedeCatalog_MrmlID($n(modelID)) not found yet in scene. No overlay imported."
+        return 
+    }
+
     set mid $::XcedeCatalog_MrmlID($n(modelID))
     puts "Applying overlay to MRMLID=$mid"
     set mnode [$::slicer3::MRMLScene GetNodeByID $mid]
-    set logic [$::slicer3::ModelsGUI GetLogic]
+    if { $mnode == "" } {
+        puts "XcedeCatalogImportEntryOverlay: Model MRML Node corresponding to ID=$mid not found. No overlay imported."
+        return
+    }
 
+    set logic [$::slicer3::ModelsGUI GetLogic]
+    if { $logic == "" } {
+        puts "XcedeCatalogImportEntryOverlay: cannot access Models Logic class. No overlay imported."
+        return
+    }
+         
     #--- add the scalar to the node
     $logic AddScalar $n(uri) $mnode 
 }
@@ -341,5 +497,72 @@ proc XcedeCatalogImportFormatCheck { format } {
     }  else {
         return "Unknown"
     }
+
+}
+
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+proc XcedeCatalogImportAddFIPSHelperMatrices { } {
+}
+
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+proc XcedeCatalogImportApplyFIPSHelperMatrices { } {
+
+
+    set flipTid [ XcedeCatalogImportCreateIdentityTransformNode flipY ]
+    set flipnode [ $::slicer3::MRMLScene GetNodeByID $flipTid ]
+    #$flipnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(anat2exf)
+    set ::XcedeCatalog_MrmlID(flipYTransform) $flipTid
+    set matrix [ $flipnode GetMatrixTransformToParent ]
+    #--- matrix that flips in Y
+    $matrix SetElement 0 0 1.0
+    $matrix SetElement 0 1 0.0
+    $matrix SetElement 0 2 0.0
+    $matrix SetElement 0 3 0.0
+
+    $matrix SetElement 1 0 0.0
+    $matrix SetElement 1 1 -1.0
+    $matrix SetElement 1 2 0.0
+    $matrix SetElement 1 3 0.0
+
+    $matrix SetElement 2 0 0.0
+    $matrix SetElement 2 1 0.0
+    $matrix SetElement 2 2 1.0
+    $matrix SetElement 2 3 0.0
+
+    $matrix SetElement 3 0 0.0
+    $matrix SetElement 3 1 0.0
+    $matrix SetElement 3 2 0.0
+    $matrix SetElement 3 3 1.0
+
+    
+    set rotX90Tid  [ XcedeCatalogImportCreateIdentityTransformNode rotX90 ]
+    set rotnode [ $::slicer3::MRMLScene GetNodeByID $rotX90Tid ]
+    set ::XcedeCatalog_MrmlID(rotX90Transform) $rotX90Tid
+    $rotnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(flipYTransform)
+    set matrix [ $rotnode GetMatrixTransformToParent ]
+    #--- matrix that rots around X by 90 degrees
+    $matrix SetElement 0 0 1.0
+    $matrix SetElement 0 1 0.0
+    $matrix SetElement 0 2 0.0
+    $matrix SetElement 0 3 0.0
+
+    $matrix SetElement 1 0 0.0
+    $matrix SetElement 1 1 0.0
+    $matrix SetElement 1 2 1.0
+    $matrix SetElement 1 3 0.0
+
+    $matrix SetElement 2 0 0.0
+    $matrix SetElement 2 1 -1.0
+    $matrix SetElement 2 2 0.0
+    $matrix SetElement 2 3 0.0
+
+    $matrix SetElement 3 0 0.0
+    $matrix SetElement 3 1 0.0
+    $matrix SetElement 3 2 0.0
+    $matrix SetElement 3 3 1.0
 
 }
