@@ -179,7 +179,7 @@ proc XcedeCatalogImportAnEntry {element} {
     }
     
     #--- finally, create the node
-    set handler XcedeCatalogImportNode$nodeType
+    set handler XcedeCatalogImportEntry$nodeType
 
     if { [info command $handler] == "" } {
         set err [$::slicer3::MRMLScene GetErrorMessagePointer]
@@ -192,33 +192,16 @@ proc XcedeCatalogImportAnEntry {element} {
 }
 
 
-#------------------------------------------------------------------------------
-# handler procs for each type of node
-#------------------------------------------------------------------------------
-proc XcedeCatalogImportNodeXCEDE {node} {
-  # no op, just a marker
-}
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportOverlay {node} {
-    upvar $node n
-
-    
-}
-
-
-
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-proc XcedeCatalogImportNodeVolume {node} {
+proc XcedeCatalogImportEntryVolume {node} {
   upvar $node n
 
 
     #--- ditch if there's no file in the uri
     if { ![info exists n(uri) ] } {
-        puts "XcedeCatalogImportNodeVolume: no uri specified for node $n(uri)"
+        puts "XcedeCatalogImportEntryVolume: no uri specified for node $n(uri)"
         return
     }
 
@@ -253,12 +236,12 @@ proc XcedeCatalogImportNodeVolume {node} {
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportNodeModel {node} {
+proc XcedeCatalogImportEntryModel {node} {
   upvar $node n
 
     #--- ditch if there's no file in the uri
     if { ! [info exists n(uri) ] } {
-        puts "XcedeCatalogImportNodeModel: no uri specified for node $n(uri)"
+        puts "XcedeCatalogImportEntryModel: no uri specified for node $n(uri)"
         return
     }
 
@@ -280,13 +263,13 @@ proc XcedeCatalogImportNodeModel {node} {
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportNodeOverlay {node} {
+proc XcedeCatalogImportEntryOverlay {node} {
   upvar $node n
 
     #--- not really a node, per se...
     #--- ditch if there's no file in the uri
     if { ! [info exists n(uri) ] } {
-        puts "XcedeCatalogImportNodeOverlay: no uri specified for node $n(name)"
+        puts "XcedeCatalogImportEntryOverlay: no uri specified for node $n(name)"
         return
     }
 
@@ -297,7 +280,7 @@ proc XcedeCatalogImportNodeOverlay {node} {
 
     #--- what model node should these scalars be applied to?
     if { ![info exists n(modelID) ] } {
-        puts "XcedeCatalogImportNodeOverlay: no model ID specified for overlay $n(uri)"
+        puts "XcedeCatalogImportEntryOverlay: no model ID specified for overlay $n(uri)"
         return
     }
 
