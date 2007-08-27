@@ -1019,12 +1019,6 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
     {
     poly = model->GetPolyData();
     }
-#ifdef _DEBUG
-    if (model->GetPolyData() != modelDisplayNode->GetPolyData())
-      {
-      std::cerr << "HERE1";
-      }
-#endif
 
   if (clipper)
     {
