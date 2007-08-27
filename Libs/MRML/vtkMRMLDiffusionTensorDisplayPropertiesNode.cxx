@@ -351,7 +351,8 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
 
     case Superquadrics:
       {
-      vtkErrorMacro("vtkMRMLDiffusionTensorDisplayPropertiesNode: Superquadric glyph source not handled yet.");
+      // TODO: this should be fleshed out
+      vtkDebugMacro("vtkMRMLDiffusionTensorDisplayPropertiesNode: Superquadric glyph source not handled yet.");
       // Here do nothing, the superquadric must be created specifically for each tensor
       }
 
