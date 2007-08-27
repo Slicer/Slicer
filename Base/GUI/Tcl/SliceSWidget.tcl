@@ -412,7 +412,7 @@ itcl::body SliceSWidget::processEvent { } {
           $this incrementSlice
         }
         "space" {
-          ::EditBox::ShowDialog
+          ::Box::ShowDialog EditBox
         }
         "c" {
           ::Box::ShowDialog ColorBox

@@ -76,7 +76,7 @@ itcl::body EditColor::create { } {
   $o(colorSpin) SetLabelText "Label"
   $o(colorSpin) Create
   [$o(colorSpin) GetWidget] SetWidth 3
-  [$o(colorSpin) GetWidget] SetValue 0
+  [$o(colorSpin) GetWidget] SetValue [EditorGetPaintLabel]
 
   set o(colorOption) [vtkNew vtkKWMenuButton]
   $o(colorOption) SetParent $frame
@@ -112,6 +112,8 @@ itcl::body EditColor::create { } {
   set scene $::slicer3::MRMLScene
   set tag [$scene AddObserver ModifiedEvent "$this updateParameterNode"]
   lappend _observerRecords [list $scene $tag]
+
+  $this updateGUI [EditorGetPaintLabel]
 }
 
 #
