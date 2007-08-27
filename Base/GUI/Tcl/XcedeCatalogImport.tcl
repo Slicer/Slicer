@@ -63,10 +63,6 @@ proc XcedeCatalogImport {xcedeFile} {
   set ::XcedeCatalog_HParent_ID ""
   XcedeCatalogImportGetElement $root "Overlay"
   
-  #--- recursively import things until the data
-  #--- in the catalog is converted into a scene.
-  #XcedeCatalogImportGetElementOld $root
-
   #--- clean up.
   $parser Delete
   $::slicer3::MRMLScene SetErrorCode 0
@@ -122,10 +118,10 @@ proc XcedeCatalogImportGetEntryOfType {element type } {
 
     #--- is this a catalog entry that contains a file or reference?
     set elementType [$element GetName]
-    puts "..."
+    puts ""
     puts "Got element $elementType..."
     if { $elementType != "entry" && $elementType != "Entry" } {
-        puts "$elementType is not a catalog entry. Getting next element..."
+        #--- only process catalog entry tags
         return 
     }
     
@@ -135,7 +131,6 @@ proc XcedeCatalogImportGetEntryOfType {element type } {
         set attName [$element GetAttributeName $i]
         set node($attName) [$element GetAttributeValue $i]
         puts "node($attName) = $node($attName)"
-        
     } 
 
     #--- get the file format
@@ -150,24 +145,23 @@ proc XcedeCatalogImportGetEntryOfType {element type } {
         }
     }
     if { $gotformat == 0 } {
-        puts "description for entry contains no format information. Not trying to import."
+        puts "description for entry contains no format information. Cannot import as $type."
         return
     }
     #--- what kind of node is it?
     puts "data format is $node($formatAttName)"
     set nodeType [ XcedeCatalogImportGetNodeType $node($formatAttName) ]
     if { $nodeType == "Unknown" } {
-        puts "$node($formatAttName) is an unsupported format. Not trying to import anything."
+        puts "$node($formatAttName) is an unsupported format. Cannot import as $type."
         return
     }
     #--- make sure the file is a supported format
     puts "data format is $node($formatAttName)"
     set fileformat [ XcedeCatalogImportFormatCheck $node($formatAttName) ]
     if { $fileformat == 0 } {
-        puts "$node($formatAttName) is an unsupported format. Not trying to import anything."
+        puts "$node($formatAttName) is an unsupported format. Cannot import as $type."
         return
     }
-    
     if { $nodeType != $type } {
         #--- element is of a different type that what we're
         #--- looking for in this pass.
@@ -227,153 +221,6 @@ proc XcedeCatalogImportGetEntryOfType {element type } {
     # call the handler for this element
     $handler node
 }
-
-
-
-#------------------------------------------------------------------------------
-# recursive routine to import all elements and their
-# nested parts
-#------------------------------------------------------------------------------
-proc XcedeCatalogImportGetElementOld {element} {
-  # save current parent locally
-  set parent $::XcedeCatalog_HParent_ID
-
-  # import this element if it contains an entry
-  XcedeCatalogImportGetEntryOld $element
-  
-  #---TODO: probably don't need this...
-  # leave a place holder in case we are a group (transform) node
-  lappend ::XcedeCatalog(transformIDStack) "NestingMarker"
-
-  # process all the sub nodes, which may include a sequence of matrices
-  # and/or nested transforms
-  set nNested [$element GetNumberOfNestedElements]
-  for {set i 0} {$i < $nNested} {incr i} {
-    set nestElement [$element GetNestedElement $i]
-    XcedeCatalogImportGetElementOld $nestElement
-  }
-
-  #---TODO: probably don't need this...
-  # strip away any accumulated transform ids
-  while { $::XcedeCatalog(transformIDStack) != "" && [lindex $::XcedeCatalog(transformIDStack) end] != "NestingMarker" } {
-    set ::XcedeCatalog(transformIDStack) [lrange $::XcedeCatalog(transformIDStack) 0 end-1]
-  }
-  # strip away the nesting marker
-  set ::XcedeCatalog(transformIDStack) [lrange $::XcedeCatalog(transformIDStack) 0 end-1]
-
-  # restore parent locally
-  set ::XcedeCatalog_HParent_ID $parent
-}
-
-
-
-
-#------------------------------------------------------------------------------
-# if the element should be converted to a node,
-# parse the attributes of a node into a tcl array
-# and then invoke the type-specific handler
-#------------------------------------------------------------------------------
-proc XcedeCatalogImportGetEntryOld {element} {
-
-    #--- is this a catalog entry that contains a file or reference?
-    set elementType [$element GetName]
-    puts "..."
-    puts "Got element $elementType..."
-    if { $elementType != "entry" && $elementType != "Entry" } {
-        puts "$elementType is not a catalog entry. Getting next element..."
-        return 
-    }
-
-    set nAtts [$element GetNumberOfAttributes]
-    for {set i 0} {$i < $nAtts} {incr i} {
-        set attName [$element GetAttributeName $i]
-        set node($attName) [$element GetAttributeValue $i]
-        puts "node($attName) = $node($attName)"
-        
-    } 
-
-    #--- make sure the entry has a "uri" attribute by searching
-    #--- all attributes to find one with a name that matches "uri"
-    set hasuri 0
-    set uriAttName ""
-    for {set i 0} {$i < $nAtts} {incr i} {
-        set attName [$element GetAttributeName $i]
-        if { $attName == "uri" || $attName == "URI" } {
-            #--- mark as found and capture its case (upper or lower)
-            set hasuri 1
-            set uriAttName $attName
-        }
-    }
-    
-    if { $hasuri == 0 } {
-        puts "can't find an attribute called URI in $element"
-        return
-    }
-    
-    
-    #--- strip off the entry's relative path, and add the 
-    #--- absolute path of the Xcede file to it.
-    set fname [ file normalize $node($uriAttName) ]
-    set plist [ file split $fname ]
-    set len [ llength $plist ]
-    set fname [ lindex $plist [ expr $len - 1 ] ]
-    set node($uriAttName) $::XcedeCatalog_Dir/$fname
-    
-    #--- make sure the uri exists
-    set node($uriAttName) [ file normalize $node($uriAttName) ]
-    if {![ file exists $node($uriAttName) ] } {
-        puts "can't find file $node($uriAttName)."
-        return
-    }
-
-    #--- make sure the uri is a file (and not a directory)
-    if { ![file isfile $node($uriAttName) ] } {
-        puts "$node($uriAttName) doesn't appear to be a file. Not trying to import."
-        return
-    }
-
-    #--- get the file format
-    set gotformat 0
-    set formatAttName ""
-    for {set i 0} {$i < $nAtts} {incr i} {
-        set attName [$element GetAttributeName $i]
-        if { $attName == "format" || $attName == "Format" } {
-            #--- mark as found and capture its case (upper or lower)
-            set gotformat 1
-            set formatAttName $attName
-        }
-    }
-    if { $gotformat == 0 } {
-        puts "description for entry contains no format information. Not trying to import."
-        return
-    }
-    #--- make sure the file is a supported format
-    puts "data format is $node($formatAttName)"
-    set fileformat [ XcedeCatalogImportFormatCheck $node($formatAttName) ]
-    if { $fileformat == 0 } {
-        puts "$node($formatAttName) is an unsupported format. Not trying to import anything."
-        return
-    }
-    #---what kind of node is it?
-    set nodeType [ XcedeCatalogImportGetNodeType $node($formatAttName) ]
-    if { $nodeType == "Unknown" } {
-        puts "$node($formatAttName) is an unsupported format. Not trying to import anything."
-        return
-    }
-
-    #--- finally, create the node
-    set handler XcedeCatalogImportEntry$nodeType
-    
-    if { [info command $handler] == "" } {
-        set err [$::slicer3::MRMLScene GetErrorMessagePointer]
-        $::slicer3::MRMLScene SetErrorMessage "$err\nno handler for $nodeType"
-        $::slicer3::MRMLScene SetErrorCode 1
-    }
-
-    # call the handler for this element
-    $handler node
-}
-
 
 
 #------------------------------------------------------------------------------
