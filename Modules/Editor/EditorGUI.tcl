@@ -438,6 +438,18 @@ proc EditorUpdateSWidgets {this} {
 
 
 # get the editor parameter node, or create one if it doesn't exist
+proc EditorCreateParameterNode {} {
+  set node [vtkMRMLScriptedModuleNode New]
+  $node SetModuleName "Editor"
+
+  # set node defaults
+  $node SetParameter label 1
+
+  $::slicer3::MRMLScene AddNode $node
+  $node Delete
+}
+
+# get the editor parameter node, or create one if it doesn't exist
 proc EditorGetParameterNode {} {
 
   set node ""
@@ -451,20 +463,8 @@ proc EditorGetParameterNode {} {
   }
 
   if { $node == "" } {
-    set node [vtkMRMLScriptedModuleNode New]
-    $node SetModuleName "Editor"
-
-    # set node defaults
-    $node SetParameter label 1
-
-    $::slicer3::MRMLScene AddNode $node
-
-    # use a dummy node to unregister rather than calling Delete
-    # because Delete will remove the node from the interpreter even though
-    # the reference count is non-zero
-    set dummy [vtkImageData New]
-    $node UnRegister $dummy
-    $dummy Delete
+    EditorCreateParameterNode
+    set node [EditorGetParameterNode]
   }
 
   return $node
