@@ -28,25 +28,10 @@ PURPOSE.  See the above copyright notice for more information.
 #include "itkImage.h"
 #include "itkExtractImageFilter.h"
 #include "itkChainCodePath.h"
+#include "itkNumericTraits.h"
 
 vtkCxxRevisionMacro(vtkITKLevelTracingImageFilter, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkITKLevelTracingImageFilter);
-
-#if defined(VTK_TYPE_USE___INT64)
-const __int64 itk::NumericTraits<__int64>::Zero = 0;
-const __int64 itk::NumericTraits<__int64>::One = 1;
-
-const unsigned __int64 itk::NumericTraits<unsigned __int64>::Zero = 0ui64;
-const unsigned __int64 itk::NumericTraits<unsigned __int64>::One = 1ui64;
-#endif
-
-#if defined(VTK_TYPE_USE_LONG_LONG)
-const long long itk::NumericTraits<long long>::Zero = 0;
-const long long itk::NumericTraits<long long>::One = 1;
-
-const unsigned long long itk::NumericTraits<unsigned long long>::Zero = 0;
-const unsigned long long itk::NumericTraits<unsigned long long>::One = 1;
-#endif
 
 // Description:
 // Construct object with initial range (0,1) and single contour value
