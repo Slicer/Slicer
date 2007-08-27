@@ -18,6 +18,7 @@
 #include "vtkPoints.h"
 
 #include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLTransformNode.h"
 
 #include "vtkSlicerSliceLogic.h"
 
@@ -26,6 +27,14 @@
 
 vtkCxxRevisionMacro(vtkSlicerSliceLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerSliceLogic);
+
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
 
 //----------------------------------------------------------------------------
 vtkSlicerSliceLogic::vtkSlicerSliceLogic()
@@ -944,6 +953,14 @@ void vtkSlicerSliceLogic::GetBackgroundRASBox(double rasDimensions[3], double ra
   doubleDimensions[2] = dimensions[2] - 1;
   doubleDimensions[3] = 0;
   backgroundNode->GetIJKToRASMatrix (ijkToRAS);
+  vtkMRMLTransformNode *transformNode = backgroundNode->GetParentTransformNode();
+  if ( transformNode )
+    {
+    vtkMatrix4x4 *rasToRAS = vtkMatrix4x4::New();
+    transformNode->GetMatrixTransformToWorld(rasToRAS);
+    vtkMatrix4x4::Multiply4x4 (ijkToRAS, rasToRAS, ijkToRAS);
+    rasToRAS->Delete();
+    }
   ijkToRAS->MultiplyPoint( doubleDimensions, rasHDimensions );
   doubleDimensions[0] = (dimensions[0]-1)/2.;
   doubleDimensions[1] = (dimensions[1]-1)/2.;
@@ -1101,12 +1118,12 @@ void vtkSlicerSliceLogic::GetBackgroundSliceBounds(double sliceBounds[6])
   rasToSlice->Delete();
 
   // ignore homogeneous coordinate
-  sliceBounds[0] = sliceHMin[0];
-  sliceBounds[1] = sliceHMax[0];
-  sliceBounds[2] = sliceHMin[1];
-  sliceBounds[3] = sliceHMax[1];
-  sliceBounds[4] = sliceHMin[2];
-  sliceBounds[5] = sliceHMax[2];
+  sliceBounds[0] = min(sliceHMin[0],sliceHMax[0]);
+  sliceBounds[1] = max(sliceHMin[0],sliceHMax[0]);
+  sliceBounds[2] = min(sliceHMin[1],sliceHMax[1]);
+  sliceBounds[3] = max(sliceHMin[1],sliceHMax[1]);
+  sliceBounds[4] = min(sliceHMin[2],sliceHMax[2]);
+  sliceBounds[5] = max(sliceHMin[2],sliceHMax[2]);
 }
 
 // adjust the node's field of view to match the extent of current background volume
