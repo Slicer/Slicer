@@ -72,7 +72,11 @@ namespace eval Loader {
     if { $node == "" } {
       error "Could not open $archetype"
     } else {
-      $selNode SetReferenceActiveVolumeID [$node GetID]
+      if { $labelMap } {
+        $selNode SetReferenceActiveLabelVolumeID [$node GetID]
+      } else {
+        $selNode SetReferenceActiveVolumeID [$node GetID]
+      }
       $::slicer3::ApplicationLogic PropagateVolumeSelection
     }
   }

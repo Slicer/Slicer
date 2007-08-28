@@ -453,7 +453,14 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
       this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
       if (volumeNode)
         {
-        this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( volumeNode->GetID() );
+        if (labelMap)
+          {
+          this->ApplicationLogic->GetSelectionNode()->SetActiveLabelVolumeID( volumeNode->GetID() );
+          } 
+        else
+          {
+          this->ApplicationLogic->GetSelectionNode()->SetActiveVolumeID( volumeNode->GetID() );
+          } 
         this->ApplicationLogic->PropagateVolumeSelection();
         this->VolumeSelectorWidget->SetSelected( volumeNode );
         this->VolumeDisplayWidget->SetVolumeNode(volumeNode);
