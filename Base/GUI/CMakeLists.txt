@@ -112,6 +112,9 @@ INCLUDE_DIRECTORIES(
   ${MRML_BINARY_DIR}
   ${VTKITK_SOURCE_DIR}/Libs/vtkITK
   ${VTK_INCLUDE_DIR}
+  ${TEEM_INCLUDE_DIR}
+  ${vtkTeem_SOURCE_DIR}
+  ${vtkTeem_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
   ${FreeSurfer_SOURCE_DIR}

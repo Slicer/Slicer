@@ -39,10 +39,7 @@
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkSlicerTask.h"
-
-#ifdef USE_TEEM
 #include "vtkMRMLNRRDStorageNode.h"
-#endif
 
 #ifdef linux 
 #include "unistd.h"
@@ -749,11 +746,9 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       //
       // Need to maintain the original coordinate frame established by 
       // the images sent to the execution model 
-#if USE_TEEM
       vtkMRMLNRRDStorageNode *nin = vtkMRMLNRRDStorageNode::New();
       nin->SetCenterImage(0);
       in = nin;
-#endif
       if (dtvnd)
         {
         disp = vtkMRMLDiffusionTensorVolumeDisplayNode::New();

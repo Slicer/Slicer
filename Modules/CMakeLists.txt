@@ -14,17 +14,9 @@ SUBDIRS(
   Python
   #Meshing
   QdecModule
+  Tractography
 )
 
-
-# enable tractography if teem is present
-IF( TEEM_FOUND )
-  SUBDIRS(
-    Tractography
-   )
-  # set up teem variable for compiling if needed
-  ADD_DEFINITIONS(-DUSE_TEEM)
-ENDIF( TEEM_FOUND )
 
 IF (Slicer3_BUILD_TESTING)
     SUBDIRS( Testing )

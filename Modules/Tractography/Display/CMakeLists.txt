@@ -90,13 +90,9 @@ TARGET_LINK_LIBRARIES(SlicerTractographyDisplay
   ITKBasicFilters
   ITKIO
   ITKDICOMParser
+  vtkTeem
   ${KWWidgets_LIBRARIES}
    )
-
-IF( TEEM_FOUND )
-  ADD_DEFINITIONS(-DUSE_TEEM)
-  TARGET_LINK_LIBRARIES(SlicerTractographyDisplay vtkTeem)
-ENDIF( TEEM_FOUND )
 
 IF (USE_PYTHON)
   ADD_DEFINITIONS(-DUSE_PYTHON)

@@ -38,10 +38,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
-
-#ifdef USE_TEEM // If we have NRRD support
 #include "vtkMRMLNRRDStorageNode.h"
-#endif
 
 #include "itksys/Process.h"
 #include "itksys/SystemTools.hxx"
@@ -508,12 +505,8 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       }
     else if (dtvnd || dwvnd)
       {
-#ifdef USE_TEEM
       // for now, always write out the diffusion tensor nodes
       out = vtkMRMLNRRDStorageNode::New();
-#else
-      vtkErrorMacro ( "Slicer3 was not complied with TEEM support, export of diffusion tensor nodes disabled" );
-#endif
       }
     else if (fbnd)
       {

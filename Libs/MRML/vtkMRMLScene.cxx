@@ -54,10 +54,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLUnstructuredGridNode.h"
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
 #include "vtkMRMLUnstructuredGridStorageNode.h"
-
-#ifdef USE_TEEM
 #include "vtkMRMLNRRDStorageNode.h"
-#endif
 
 
 //------------------------------------------------------------------------------
@@ -219,12 +216,9 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass ( unstgs );
   unstgs->Delete();
 
-
-#ifdef USE_TEEM
   vtkMRMLNRRDStorageNode *nrrd = vtkMRMLNRRDStorageNode::New();
   this->RegisterNodeClass ( nrrd );
   nrrd->Delete();
-#endif
 
 }
 

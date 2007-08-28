@@ -96,11 +96,7 @@ extern "C" {
 #define REALTIMEIMAGING_DEBUG
 #define MRABLATION_DEBUG
 //#define NEURONAV_DEBUG
-#ifndef USE_TEEM
-#define TRACTOGRAPHY_DEBUG
-#else
 //#define TRACTOGRAPHY_DEBUG
-#endif
 #define QDEC_DEBUG
 
 #ifndef TRACTOGRAPHY_DEBUG

@@ -99,14 +99,8 @@ TARGET_LINK_LIBRARIES(SlicerBaseLogic
   vtkHybridTCL
   ${OPENTRACKER_LIB}
   FreeSurfer
+  vtkTeem
   )
-
-IF( TEEM_FOUND )
-  ADD_DEFINITIONS(-DUSE_TEEM)
-  TARGET_LINK_LIBRARIES(SlicerBaseLogic
-    vtkTeem
-  )
-ENDIF( TEEM_FOUND )
 
 
 # --------------------------------------------------------------------------

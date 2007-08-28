@@ -334,7 +334,6 @@ runcmd $::CMAKE \
         -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
-        -DUSE_TEEM=ON \
         -DUSE_IGSTK=$::IGSTK \
         -DUSE_NAVITRACK=$::NAVITRACK \
         -DNAVITRACK_LIB_DIR:FILEPATH=$::NAVITRACK_LIB_DIR \

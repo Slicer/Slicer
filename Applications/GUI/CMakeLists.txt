@@ -175,13 +175,8 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     ${KWWidgets_LIBRARIES}
     Qdec
     QdecModule
-)
-
-IF(USE_TEEM)
-  TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     SlicerTractographyDisplay
-    )
-ENDIF(USE_TEEM)
+)
 
 IF(USE_PYTHON AND PYTHON_LIBRARIES)
   ADD_DEFINITIONS(-DUSE_PYTHON)
@@ -233,11 +228,6 @@ KWWidgets_INSTALL_TCL_TK_SUPPORT_FILES("/lib")
 INCLUDE(${Slicer3_SOURCE_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
 
 GENERATECLP(${SRC} Slicer3.xml)
-
-# set up teem variable in order to enable tractography if teem is present
-IF( TEEM_FOUND )
-  ADD_DEFINITIONS(-DUSE_TEEM)
-ENDIF( TEEM_FOUND )
 
 #
 # Command line parsing tests

@@ -26,9 +26,7 @@
 
 #include "vtkPointData.h"
 
-#ifdef USE_TEEM
-  #include "vtkDiffusionTensorMathematics.h"
-#endif
+#include "vtkDiffusionTensorMathematics.h"
 
 vtkCxxRevisionMacro(vtkSlicerSliceGlyphLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerSliceGlyphLogic);
@@ -51,11 +49,7 @@ vtkSlicerSliceGlyphLogic::vtkSlicerSliceGlyphLogic()
 
   // Create the components for the DTI layer pipeline
   this->DTIReslice = vtkImageReslice::New();
-  #ifdef USE_TEEM
-    this->DTIMathematics = vtkDiffusionTensorMathematics::New();
-  #else
-    this->DTIMathematics = NULL;
-  #endif 
+  this->DTIMathematics = vtkDiffusionTensorMathematics::New();
   // Set parameters that won't change based on input
   this->DTIReslice->SetBackgroundColor(128, 0, 0, 0); // only first two are used
   this->DTIReslice->AutoCropOutputOff();
@@ -132,12 +126,10 @@ vtkSlicerSliceGlyphLogic::~vtkSlicerSliceGlyphLogic()
     {
     this->DWIExtractComponent->Delete();
     }
-#ifdef USE_TEEM
   if (this->DTIMathematics)
     {
     this->DTIMathematics->Delete();
     }
-#endif
   if (this->LookupTable)
     {
     this->LookupTable->Delete();
@@ -185,9 +177,7 @@ void vtkSlicerSliceGlyphLogic::ProcessMRMLEvents(vtkObject * caller,
       {
       if (dtiVDN->GetDiffusionTensorDisplayPropertiesNode())
         {
-#if USE_TEEM        
         this->DTIMathematics->SetOperation(dtiVDN->GetDiffusionTensorDisplayPropertiesNode()->GetScalarInvariant());
-#endif
         }
       }
     else
@@ -519,8 +509,6 @@ void vtkSlicerSliceGlyphLogic::DiffusionWeightedVolumeNodeUpdateTransforms()
 void vtkSlicerSliceGlyphLogic::DiffusionTensorVolumeNodeUpdateTransforms()
 {
 
-#ifdef USE_TEEM
-
   double window = 0;
   double level = 0;
   int interpolate = 0;
@@ -565,8 +553,6 @@ void vtkSlicerSliceGlyphLogic::DiffusionTensorVolumeNodeUpdateTransforms()
   //Set the right transformations
   this->DTIReslice->SetResliceTransform(this->XYToIJKTransform );
   this->Reslice->SetResliceTransform(this->XYToIJKTransform); 
-
-#endif
 
 }
 //----------------------------------------------------------------------------

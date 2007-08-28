@@ -86,13 +86,9 @@ TARGET_LINK_LIBRARIES(SlicerTractographySeeding
   vtkImagingTCL
   vtkFilteringTCL
   vtkIOTCL
+  vtkTeem
   ${KWWidgets_LIBRARIES}
    )
-
-IF( TEEM_FOUND )
-  ADD_DEFINITIONS(-DUSE_TEEM)
-  TARGET_LINK_LIBRARIES(SlicerTractographySeeding vtkTeem)
-ENDIF( TEEM_FOUND )
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
@@ -124,33 +120,30 @@ ENDIF(Slicer3_SOURCE_DIR)
 
 INCLUDE_DIRECTORIES(${CLI_SOURCE_DIR})
 
-IF( TEEM_FOUND )
-  SET (CLP Seeding)
-  SET (${CLP}_SOURCE ${CLP}.cxx)
-  GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
-  ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-  TARGET_LINK_LIBRARIES(${CLP}
-    vtkImaging vtkIO vtkCommon
-    ModuleDescriptionParser vtkTeem
-    ITKBasicFilters MRML
-    SlicerTractographySeeding
-  )
-  LINK_DIRECTORIES(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR} ${SLICER3_LIB_INSTALL_DIR})
-  ADD_DEFINITIONS(-DUSE_TEEM)
-  INCLUDE_DIRECTORIES( ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR}
-      ${vtkTeem_SOURCE_DIR} ${vtkTeem_BINARY_DIR} 
-      ${SlicerTractographySeeding_SOURCE_DIR} ${SlicerTractographySeeding_BINARY_DIR}
-   )
+SET (CLP Seeding)
+SET (${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES(${CLP}
+  vtkImaging vtkIO vtkCommon
+  ModuleDescriptionParser vtkTeem
+  ITKBasicFilters MRML
+  SlicerTractographySeeding
+)
+LINK_DIRECTORIES(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR} ${SLICER3_LIB_INSTALL_DIR})
+INCLUDE_DIRECTORIES( ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR}
+    ${vtkTeem_SOURCE_DIR} ${vtkTeem_BINARY_DIR} 
+    ${SlicerTractographySeeding_SOURCE_DIR} ${SlicerTractographySeeding_BINARY_DIR}
+ )
 
-  IF (Slicer3_SOURCE_DIR)
-    SET(TARGETS
-     ${CLP}
-  )
-    FOREACH (target ${TARGETS})
-      INSTALL (TARGETS ${target}
-      RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins
-      LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins)
-    ENDFOREACH(target)
- 
-  ENDIF (Slicer3_SOURCE_DIR) 
-ENDIF (TEEM_FOUND)     
+IF (Slicer3_SOURCE_DIR)
+  SET(TARGETS
+   ${CLP}
+)
+  FOREACH (target ${TARGETS})
+    INSTALL (TARGETS ${target}
+    RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins
+    LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins)
+  ENDFOREACH(target)
+
+ENDIF (Slicer3_SOURCE_DIR) 

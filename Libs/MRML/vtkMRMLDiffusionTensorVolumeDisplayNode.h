@@ -28,9 +28,7 @@
 #include "vtkMRMLVolumeGlyphDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
-#ifdef USE_TEEM
 #include "vtkDiffusionTensorGlyph.h"
-#endif
 
 
 class vtkImageData;
@@ -112,9 +110,7 @@ protected:
 
   vtkSetReferenceStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
-#ifdef USE_TEEM
   vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
-#endif
 };
 
 #endif

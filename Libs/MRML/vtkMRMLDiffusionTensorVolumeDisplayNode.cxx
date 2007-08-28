@@ -54,13 +54,11 @@ vtkMRMLNode* vtkMRMLDiffusionTensorVolumeDisplayNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
-#ifdef USE_TEEM
  this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
  vtkSphereSource *sphere = vtkSphereSource::New();
  sphere->Update();
  this->DiffusionTensorGlyphFilter->SetSource( sphere->GetOutput() );
  sphere->Delete();
-#endif
 
  this->VisualizationMode = 0;
  this->DiffusionTensorDisplayPropertiesNode = NULL;
@@ -71,9 +69,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode
 vtkMRMLDiffusionTensorVolumeDisplayNode::~vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
   this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL); 
-#ifdef USE_TEEM
   this->DiffusionTensorGlyphFilter->Delete();
-#endif
 }
 
 
@@ -171,7 +167,6 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateReferences()
 //-----------------------------------------------------------
 vtkPolyData* vtkMRMLDiffusionTensorVolumeDisplayNode::ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* imageData )
 {
-#ifdef USE_TEEM
   if ( true || this->GetVisualizationMode()==this->visModeGlyph || this->GetVisualizationMode()==this->visModeBoth )
   {
     vtkErrorMacro("Showing Tensor Glyph from data");
@@ -197,9 +192,6 @@ vtkPolyData* vtkMRMLDiffusionTensorVolumeDisplayNode::ExecuteGlyphPipeLineAndGet
   } else {
     return NULL;
   }
-#else
-  return NULL;
-#endif
 }
 
 //----------------------------------------------------------------------------
