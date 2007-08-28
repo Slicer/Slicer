@@ -1052,7 +1052,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->EditorToolboxIconButton->SetBorderWidth ( 0 );
   this->EditorToolboxIconButton->SetOverReliefToNone ( );
   this->EditorToolboxIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetEditorToolboxIcon ( ) );
-  this->EditorToolboxIconButton->SetBalloonHelpString ( "EditBox (or use keyboard F1)");        
+  this->EditorToolboxIconButton->SetBalloonHelpString ( "EditBox (or use keyboard 'space')");        
   mtb->AddWidget ( this->EditorToolboxIconButton );
 
   // editor module icon
