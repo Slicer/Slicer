@@ -489,10 +489,21 @@ proc EditorSetPaintLabel {index} {
 }
 
 proc EditorGetPaintColor {this} {
-  set node [$::Editor($this,colorsColor) GetColorNode]
-  set lut [$node GetLookupTable]
-  set index [EditorGetPaintLabel]
-  return [$lut GetTableValue $index]
+
+  set sliceLogic [$::slicer3::ApplicationGUI GetMainSliceLogic0]
+  if { $sliceLogic != "" } {
+    set logic [$sliceLogic GetLabelLayer]
+    if { $logic != "" } {
+      set volumeDisplayNode [$logic GetVolumeDisplayNode]
+      if { $volumeDisplayNode != "" } {
+        set node [$volumeDisplayNode GetColorNode]
+        set lut [$node GetLookupTable]
+        set index [EditorGetPaintLabel]
+        return [$lut GetTableValue $index]
+      }
+    }
+  }
+  return "0 0 0 0"
 }
 
 proc EditorGetPaintThreshold {this} {

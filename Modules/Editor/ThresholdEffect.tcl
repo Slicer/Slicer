@@ -167,8 +167,7 @@ itcl::body ThresholdEffect::buildOptions { } {
   set o(range) [vtkNew vtkKWRange]
   $o(range) SetParent [$this getOptionsFrame]
   $o(range) Create
-  $o(range) SetLabelText "Threshold Range"
-  $o(range) SetWholeRange 0 2000
+  $o(range) SetLabelText "Range"
   $o(range) SetReliefToGroove
   $o(range) SetBalloonHelpString "Set the range of the background values that should be labeled."
 
