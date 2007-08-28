@@ -650,7 +650,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
 
 //----------------------------------------------------------------------------
 // This method computes the increments from the MemoryOrder and the extent.
-void vtkDiffusionTensorMathematics::ComputeTensorIncrements(vtkImageData *imageData, int incr[3])
+void vtkDiffusionTensorMathematics::ComputeTensorIncrements(vtkImageData *imageData, vtkIdType incr[3])
 {
   int idx;
   // make sure we have data before computing incrments to traverse it

@@ -242,7 +242,7 @@ public:
   //Description
   //Wrap function to teem eigen solver
   static int TeemEigenSolver(double **m, double *w, double **v);
-  void ComputeTensorIncrements(vtkImageData *imageData, int incr[3]);
+  void ComputeTensorIncrements(vtkImageData *imageData, vtkIdType incr[3]);
 
 protected:
   vtkDiffusionTensorMathematics();
