@@ -389,7 +389,7 @@ char * vtkSlicerColorLogic::GetDefaultProceduralColorNodeID(const char *name)
 {
   char *id;
   std::string idStr = std::string("vtkMRMLProceduralColorNode") + std::string(name);
-  id = new char[idStr.length()];
+  id = new char[idStr.length() + 1];
   strcpy(id, idStr.c_str());
   return id;
 }

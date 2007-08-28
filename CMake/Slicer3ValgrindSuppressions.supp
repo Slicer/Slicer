@@ -21,7 +21,10 @@
 #
 # add --leak-check=full to get report on leaks (not a useful as the VTK leak tool)
 # 
-
+#
+# vi map command to copy suppressions from slicerval to this file 
+# when they are both open with a split pane (not to re-escape controls)
+#  map ; y%^Ww:$^Ma^M^[p^Ww
 #
 # Memory leak suppressions
 #
@@ -449,4 +452,241 @@
    fun:_ZN16vtkKWApplication8SetThemeEP10vtkKWTheme
    fun:_Z12Slicer3_mainiPPc
    fun:__libc_start_main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:strlen
+   fun:fillin_rpath
+   fun:_dl_init_paths
+   fun:dl_main
+   fun:_dl_sysdep_start
+   fun:_dl_start
+   obj:/lib64/ld-2.6.so
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_dl_relocate_object
+   fun:dl_main
+   fun:_dl_sysdep_start
+   fun:_dl_start
+   obj:/lib64/ld-2.6.so
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_dl_relocate_object
+   fun:dl_main
+   fun:_dl_sysdep_start
+   fun:_dl_start
+   obj:/lib64/ld-2.6.so
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_dl_relocate_object
+   fun:dl_main
+   fun:_dl_sysdep_start
+   fun:_dl_start
+   obj:/lib64/ld-2.6.so
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_dl_relocate_object
+   fun:dl_main
+   fun:_dl_sysdep_start
+   fun:_dl_start
+   obj:/lib64/ld-2.6.so
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_dl_relocate_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   fun:TclpDlopen
+   fun:Tcl_FSLoadFile
+   fun:Tcl_LoadObjCmd
+   fun:TclEvalObjvInternal
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_dl_relocate_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   fun:TclpDlopen
+   fun:Tcl_FSLoadFile
+   fun:Tcl_LoadObjCmd
+   fun:TclEvalObjvInternal
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_dl_relocate_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   fun:TclpDlopen
+   fun:Tcl_FSLoadFile
+   fun:Tcl_LoadObjCmd
+   fun:TclEvalObjvInternal
+}
+{
+   <insert a suppression name here>
+   Memcheck:Param
+   write(buf)
+   obj:/lib64/libpthread-2.6.so
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN25vtkSlicerImageCrossHair2D13SetShowCursorEi
+   fun:_ZN25vtkSlicerImageCrossHair2D12ShowCursorOnEv
+   fun:_ZN25vtkSlicerImageCrossHair2DC1Ev
+   fun:_ZN25vtkSlicerImageCrossHair2D3NewEv
+   fun:_ZN23vtkSlicerViewControlGUI8BuildGUIEP10vtkKWFrame
+   fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
+   fun:_Z12Slicer3_mainiPPc
+   fun:main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN25vtkSlicerImageCrossHair2D17SetIntersectCrossEi
+   fun:_ZN25vtkSlicerImageCrossHair2D17IntersectCrossOffEv
+   fun:_ZN25vtkSlicerImageCrossHair2DC1Ev
+   fun:_ZN25vtkSlicerImageCrossHair2D3NewEv
+   fun:_ZN23vtkSlicerViewControlGUI8BuildGUIEP10vtkKWFrame
+   fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
+   fun:_Z12Slicer3_mainiPPc
+   fun:main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN25vtkSlicerImageCrossHair2D11SetBullsEyeEi
+   fun:_ZN25vtkSlicerImageCrossHair2D11BullsEyeOffEv
+   fun:_ZN25vtkSlicerImageCrossHair2DC1Ev
+   fun:_ZN25vtkSlicerImageCrossHair2D3NewEv
+   fun:_ZN23vtkSlicerViewControlGUI8BuildGUIEP10vtkKWFrame
+   fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
+   fun:_Z12Slicer3_mainiPPc
+   fun:main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN25vtkSlicerImageCrossHair2D17SetIntersectCrossEi
+   fun:_ZN25vtkSlicerImageCrossHair2D17IntersectCrossOffEv
+   fun:_ZN23vtkSlicerViewControlGUI8BuildGUIEP10vtkKWFrame
+   fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
+   fun:_Z12Slicer3_mainiPPc
+   fun:main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN21vtkSlicerViewerWidget12SetPickedRASEPd
+   fun:_ZN21vtkSlicerViewerWidget9ResetPickEv
+   fun:_ZN21vtkSlicerViewerWidgetC1Ev
+   fun:_ZN21vtkSlicerViewerWidget3NewEv
+   fun:_ZN23vtkSlicerApplicationGUI18CreateMain3DViewerEi
+   fun:_ZN23vtkSlicerApplicationGUI15BuildMainViewerEi
+   fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
+   fun:_Z12Slicer3_mainiPPc
+   fun:main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN21vtkSlicerViewerWidget16SetPickedPointIDEx
+   fun:_ZN21vtkSlicerViewerWidget9ResetPickEv
+   fun:_ZN21vtkSlicerViewerWidgetC1Ev
+   fun:_ZN21vtkSlicerViewerWidget3NewEv
+   fun:_ZN23vtkSlicerApplicationGUI18CreateMain3DViewerEi
+   fun:_ZN23vtkSlicerApplicationGUI15BuildMainViewerEi
+   fun:_ZN23vtkSlicerApplicationGUI8BuildGUIEv
+   fun:_Z12Slicer3_mainiPPc
+   fun:main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Param
+   write(buf)
+   obj:/lib64/libpthread-2.6.so
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:Tcl_CreateHashEntry
+   fun:Tk_GetColorByValue
+   fun:TkpGetShadows
+   fun:Tk_3DVerticalBevel
+   fun:Tk_Draw3DRectangle
+   fun:TkpDrawFrame
+   fun:TclServiceIdle
+   fun:Tcl_DoOneEvent
+   fun:MapFrame
+   fun:TclServiceIdle
+   fun:Tcl_DoOneEvent
+   fun:MapFrame
+}
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:Tcl_CreateHashEntry
+   fun:Tk_GetColorByValue
+   fun:TkpGetShadows
+   fun:Tk_3DVerticalBevel
+   fun:Tk_Draw3DRectangle
+   fun:TkpDrawFrame
+   fun:TclServiceIdle
+   fun:Tcl_DoOneEvent
+   fun:Tk_UpdateObjCmd
+   fun:TclEvalObjvInternal
+   fun:Tcl_EvalEx
+   fun:Tcl_Eval
+}
+{
+   <insert a suppression name here>
+   Memcheck:Param
+   write(buf)
+   obj:/lib64/libpthread-2.6.so
 }

@@ -67,6 +67,7 @@ vtkSlicerSlicesControlGUI::vtkSlicerSlicesControlGUI ( )
   this->EntryUpdatePending = 0;
   this->SceneClosing = false;
   this->ProcessingMRMLEvent = 0;
+  this->SliceInteracting = 0;
 
 }
 

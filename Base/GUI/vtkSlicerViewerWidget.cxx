@@ -91,6 +91,10 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->CellPicker = vtkCellPicker::New();
   this->PointPicker = vtkPointPicker::New();
   this->ResetPick();
+
+  this->PickedCellID = 0;
+  this->PickedPointID = 0;
+
 }
 
 
