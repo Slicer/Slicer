@@ -749,6 +749,7 @@ void vtkSlicerIGTDemoGUI::MakeLocator()
     cylinder->SetRadius(1.5);
     cylinder->SetHeight(100);
     this->LocatorModelNode->SetAndObservePolyData(cylinder->GetOutput());
+    this->LocatorModelDisplayNode->SetPolyData(this->LocatorModelNode->GetPolydata());
     this->Modified();  
 
     // modelNode->Delete();

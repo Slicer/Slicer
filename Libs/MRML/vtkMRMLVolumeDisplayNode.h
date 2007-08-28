@@ -137,6 +137,10 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
   // Description:
   // set gray colormap
   void SetDefaultColorMap(int isLabelMap);
+
+  // Description:
+  // Associated ImageData
+  vtkGetObjectMacro(ImageData, vtkImageData);
  
 protected:
   vtkMRMLVolumeDisplayNode();
@@ -161,6 +165,8 @@ protected:
   int AutoWindowLevel;
   int ApplyThreshold;
   int AutoThreshold;
+
+  vtkImageData  *ImageData;
 
 };
 

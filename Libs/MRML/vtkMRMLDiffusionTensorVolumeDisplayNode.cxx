@@ -182,11 +182,13 @@ vtkPolyData* vtkMRMLDiffusionTensorVolumeDisplayNode::ExecuteGlyphPipeLineAndGet
             // TO DO: implement max # ellipsoids, random sampling features
    this->DiffusionTensorGlyphFilter->SetResolution(2);
           
-    this->DiffusionTensorGlyphFilter->SetSource( this->GetDiffusionTensorDisplayPropertiesNode()->GetGlyphSource()   );
-  //  this->DiffusionTensorGlyphFilter->SetScaleFactor( this->GetDiffusionTensorDisplayPropertiesNode()->GetGlyphScaleFactor()  );
+   if (this->GetDiffusionTensorDisplayPropertiesNode())
+     {
+     this->DiffusionTensorGlyphFilter->SetSource( this->GetDiffusionTensorDisplayPropertiesNode()->GetGlyphSource()   );
+     }
+
+    //this->DiffusionTensorGlyphFilter->SetScaleFactor( this->GetDiffusionTensorDisplayPropertiesNode()->GetGlyphScaleFactor()  );
     this->DiffusionTensorGlyphFilter->SetScaleFactor(100);
-
-
 
     this->DiffusionTensorGlyphFilter->ColorGlyphsByFractionalAnisotropy( );
     this->DiffusionTensorGlyphFilter->Update ( );

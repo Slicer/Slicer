@@ -533,9 +533,16 @@ void vtkSlicerSliceLayerLogic::DiffusionTensorVolumeNodeUpdateTransforms()
     applyThreshold = dtiVolumeDisplayNode->GetApplyThreshold();
     lowerThreshold = dtiVolumeDisplayNode->GetLowerThreshold();
     upperThreshold = dtiVolumeDisplayNode->GetUpperThreshold();
+
+    if (dtiVolumeDisplayNode->GetDiffusionTensorDisplayPropertiesNode())
+      {
+#if USE_TEEM        
+      this->DTIMathematics->SetOperation(dtiVolumeDisplayNode->GetDiffusionTensorDisplayPropertiesNode()->GetScalarInvariant());
+#endif
+      }
     }
 
-    this->DTIMathematics->Update();
+   //this->DTIMathematics->Update();
    cout<<"DTIMathematics Number Scalar components: "<<this->DTIMathematics->GetOutput()->GetNumberOfScalarComponents()<<endl;
   //this->DTIMathematics->GetOutput()->SetNumberOfScalarComponents(1);
   this->ScalarSlicePipeline(this->DTIMathematics->GetOutput(),0,window,level,interpolate, lookupTable, applyThreshold,lowerThreshold,upperThreshold);

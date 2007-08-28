@@ -280,7 +280,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
     vtkMRMLFiberBundleDisplayNode * fiberBundleDisplayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(this->FiberBundleNode->GetDisplayNode());
     if (fiberBundleDisplayNode != NULL)
       {
-
+      this->LineModelDisplayNode->SetPolyData(this->LineModelNode->GetPolyData());
       //vtkDebugMacro("Updating line model according to FB display node");
 
       this->LineModelDisplayNode->SetVisibility( fiberBundleDisplayNode->GetVisibility ( ) );
@@ -381,7 +381,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTubeModel ( )
       tubeFilter->Update ( );
       this->TubeModelNode->SetAndObservePolyData(tubeFilter->GetOutput( ) );
       tubeFilter->Delete ( );
-
+      this->TubeModelDisplayNode->SetPolyData(this->TubeModelNode->GetPolyData());
       //this->TubeModelDisplayNode->GetColorModeForFiberTubes();
       // set display properties according to the tensor-specific display properties node
       vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetFiberTubeDTDisplayPropertiesNode( );
@@ -588,6 +588,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
           vtkErrorMacro("set and observe PD _________________-------------------___________");
           // this did not change the polydata originally
           this->GlyphModelNode->SetAndObservePolyData( this->DiffusionTensorGlyphFilter->GetOutput( ) );
+          this->GlyphModelDisplayNode->SetPolyData(this->GlyphModelNode->GetPolyData());
           vtkErrorMacro("DONE set and observe PD _________________-------------------___________");
           
           // try sending modified event to see if pd updates

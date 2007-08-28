@@ -935,6 +935,7 @@ int main(int argc, char * argv[])
           std::cerr << "ERROR: unable to add the storage node to the model scene" << endl;
           }        
         vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::New();
+        dnode->SetPolyData(mnode->GetPolyData());
         dnode->SetColor(0.5, 0.5, 0.5);
         double *rgba;
         if (colorNode != NULL)

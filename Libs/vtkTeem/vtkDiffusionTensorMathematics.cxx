@@ -21,8 +21,10 @@
 #ifndef M_SQRT2
 #define M_SQRT2    1.41421356237309504880168872421      /* sqrt(2) */
 #endif
-
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkImageData.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkDiffusionTensorMathematics.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
@@ -82,14 +84,22 @@ vtkDiffusionTensorMathematics::vtkDiffusionTensorMathematics()
  }
 
 //----------------------------------------------------------------------------
-// 
-void vtkDiffusionTensorMathematics::ExecuteInformation(vtkImageData **inDatas, 
-                         vtkImageData *outData)
+int vtkDiffusionTensorMathematics::RequestInformation (
+  vtkInformation * vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-  int ext[6];
+  // get the info objects
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  //vtkInformation *inInfo2 = inputVector[1]->GetInformationObject(0);
+
+  int ext[6], ext2[6], idx;
+
+  inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),ext);
+ 
   //int ext[6], *ext2, idx;
 
-  inDatas[0]->GetWholeExtent(ext);
   
   // We want the whole extent of the tensors, and should
   // allocate the matching size image data.
@@ -97,26 +107,38 @@ void vtkDiffusionTensorMathematics::ExecuteInformation(vtkImageData **inDatas,
     ext[0] << " " << ext[1] << " " << ext[2] << " " <<
     ext[3] << " " << ext[4] << " " << ext[5]);
 
+ 
   // We always want to output float, unless it is color
-  outData->SetScalarType(VTK_FLOAT);
-  outData->SetNumberOfScalarComponents(1);
-
   if (this->Operation == VTK_TENS_COLOR_ORIENTATION)
     {
     // output color (RGBA)
-    outData->SetNumberOfScalarComponents(4);
-    outData->SetScalarType(VTK_UNSIGNED_CHAR);
+    vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_UNSIGNED_CHAR, 4);
     }
-  if (this->Operation == VTK_TENS_COLOR_MODE) 
+  else if (this->Operation == VTK_TENS_COLOR_MODE) 
     {
     // output color (RGBA)
-    outData->SetNumberOfScalarComponents(4);
-    outData->SetScalarType(VTK_UNSIGNED_CHAR);
+    vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_UNSIGNED_CHAR, 4);
     }
-
-  outData->SetWholeExtent(ext);
+  else {
+    vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_FLOAT, 1);
+    }
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),ext,6);
+  return 1;
 }
 
+
+
+//----------------------------------------------------------------------------
+int vtkDiffusionTensorMathematics::FillInputPortInformation(
+  int port, vtkInformation* info)
+{
+  if (port == 1)
+    {
+    info->Set(vtkAlgorithm::INPUT_IS_OPTIONAL(), 1);
+    }
+  info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
+  return 1;
+}
 
 
 
@@ -367,9 +389,9 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   in1Data->GetContinuousIncrements(outExt, inIncX, inIncY, inIncZ);
 
   //Initialize ptId to walk through tensor volume
-  vtkIdType *inInc;
+  vtkIdType inInc[3];
   int *inFullUpdateExt;
-  inInc = in1Data->GetIncrements();
+  self->ComputeTensorIncrements(in1Data, inInc);
   inFullUpdateExt = in1Data->GetExtent(); //We are only working over the update extent
   inPtId = ((outExt[0] - inFullUpdateExt[0]) * inInc[0]
      + (outExt[2] - inFullUpdateExt[2]) * inInc[1]
@@ -627,31 +649,50 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
 }
 
 //----------------------------------------------------------------------------
+// This method computes the increments from the MemoryOrder and the extent.
+void vtkDiffusionTensorMathematics::ComputeTensorIncrements(vtkImageData *imageData, int incr[3])
+{
+  int idx;
+  // make sure we have data before computing incrments to traverse it
+  if (!imageData->GetPointData()->GetTensors())
+    {
+    return;
+    }
+  vtkIdType inc = imageData->GetPointData()->GetTensors()->GetNumberOfComponents();
+  const int* extent = imageData->GetExtent();
+
+  for (idx = 0; idx < 3; ++idx)
+    {
+    //incr[idx] = inc;
+    incr[idx] = 1;
+    inc *= (extent[idx*2+1] - extent[idx*2] + 1);
+    }
+}
+
+//----------------------------------------------------------------------------
 // This method is passed a input and output datas, and executes the filter
 // algorithm to fill the output from the inputs.
 // It just executes a switch statement to call the correct function for
 // the datas data types.
-void vtkDiffusionTensorMathematics::ThreadedExecute(vtkImageData **inData, 
-                      vtkImageData *outData,
-                      int outExt[6], int id)
+void vtkDiffusionTensorMathematics::ThreadedRequestData(
+  vtkInformation * vtkNotUsed( request ),
+  vtkInformationVector ** vtkNotUsed( inputVector ),
+  vtkInformationVector * vtkNotUsed( outputVector ),
+  vtkImageData ***inData,
+  vtkImageData **outData,
+  int outExt[6], int id)
 {
   void *outPtr;
-  
-  vtkDebugMacro(<< "Execute: inData = " << inData 
-        << ", outData = " << outData);
-  
 
-  if (inData[0] == NULL)
+  if (inData[0][0] == NULL)
     {
       vtkErrorMacro(<< "Input " << 0 << " must be specified.");
       return;
     }
+  outPtr = outData[0]->GetScalarPointerForExtent(outExt);
 
-
-  outPtr = outData->GetScalarPointerForExtent(outExt);
-  
   // single input only for now
-  vtkDebugMacro ("In Threaded Execute. scalar type is " << inData[0]->GetScalarType() << "op is: " << this->Operation);
+  vtkDebugMacro ("In Threaded Execute. scalar type is " << inData[0][0]->GetScalarType() << "op is: " << this->Operation);
 
   switch (this->GetOperation()) 
     {
@@ -662,14 +703,14 @@ void vtkDiffusionTensorMathematics::ThreadedExecute(vtkImageData **inData,
     case VTK_TENS_D33:
     case VTK_TENS_TRACE:
     case VTK_TENS_DETERMINANT:
-      switch (outData->GetScalarType())
+      switch (outData[0]->GetScalarType())
       {
       // we set the output data scalar type depending on the op
       // already.  And we only access the input tensors
       // which are float.  So this switch statement on output
       // scalar type is sufficient.
       vtkTemplateMacro6(vtkDiffusionTensorMathematicsExecute1,
-                this,inData[0], outData, 
+                this,inData[0][0], outData[0], 
                 (VTK_TT *)(outPtr), outExt, id);
       default:
         vtkErrorMacro(<< "Execute: Unknown ScalarType");
@@ -697,10 +738,10 @@ void vtkDiffusionTensorMathematics::ThreadedExecute(vtkImageData **inData,
     case VTK_TENS_COLOR_MODE:
     case VTK_TENS_PARALLEL_DIFFUSIVITY:
     case VTK_TENS_PERPENDICULAR_DIFFUSIVITY:
-      switch (outData->GetScalarType())
+      switch (outData[0]->GetScalarType())
       {
         vtkTemplateMacro6(vtkDiffusionTensorMathematicsExecute1Eigen,
-                this,inData[0], outData, 
+                this,inData[0][0], outData[0], 
                 (VTK_TT *)(outPtr), outExt, id);
         default:
         vtkErrorMacro(<< "Execute: Unknown ScalarType");

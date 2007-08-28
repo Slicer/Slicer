@@ -94,8 +94,8 @@ int main( int argc, const char * argv[] )
   // 3. Set up ROI based on Cl mask
   //Create Cl mask
   vtkDiffusionTensorMathematics *math = vtkDiffusionTensorMathematics::New();
-  math->SetInput1(reader->GetOutput());
-  math->SetInput2(reader->GetOutput());
+  math->SetInput(0, reader->GetOutput());
+  math->SetInput(1, reader->GetOutput());
   math->SetOperationToLinearMeasure();
   math->Update();
   

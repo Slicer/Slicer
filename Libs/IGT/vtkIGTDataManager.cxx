@@ -79,6 +79,8 @@ const char *vtkIGTDataManager::RegisterStream(int streamType)
             apd->Update();
 
             modelNode->SetAndObservePolyData(apd->GetOutput());
+            dispNode->SetPolyData(modelNode->GetPolyData());
+            
             this->Modified();  
             this->MRMLScene->Modified();
 

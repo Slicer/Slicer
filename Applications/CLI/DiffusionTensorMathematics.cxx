@@ -37,8 +37,8 @@ int main( int argc, const char * argv[] )
     }
   vtkDiffusionTensorMathematics *math = vtkDiffusionTensorMathematics::New();
 
-  math->SetInput1(reader->GetOutput());
-  math->SetInput2(reader->GetOutput());
+  math->SetInput(0, reader->GetOutput());
+  math->SetInput(1, reader->GetOutput());
 
 
   if (operation == std::string("Trace"))

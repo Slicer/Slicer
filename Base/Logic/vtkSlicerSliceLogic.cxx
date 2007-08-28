@@ -733,13 +733,13 @@ void vtkSlicerSliceLogic::UpdatePipeline()
     PolyDataCollection->RemoveAllItems();
     LookupTableCollection->RemoveAllItems();
 
-
+    /* ++++ Remove Glyphs for now untill they work correctly
     if ( this->BackgroundGlyphLayer && this->BackgroundGlyphLayer->GetPolyData() )
     {
       if (this->BackgroundGlyphLayer->GetPolyData())
         PolyDataCollection->AddItem(this->BackgroundGlyphLayer->GetPolyData());
       if (this->BackgroundGlyphLayer->GetLookupTable()) 
-  LookupTableCollection->AddItem(this->BackgroundGlyphLayer->GetLookupTable());
+        LookupTableCollection->AddItem(this->BackgroundGlyphLayer->GetLookupTable());
     }
 
 
@@ -750,6 +750,7 @@ void vtkSlicerSliceLogic::UpdatePipeline()
       if (this->ForegroundGlyphLayer->GetLookupTable())
         LookupTableCollection->AddItem(this->ForegroundGlyphLayer->GetLookupTable());
     }
+    ---- Remove Glyphs for now untill they work correctly */
 
 
 
