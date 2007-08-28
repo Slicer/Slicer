@@ -389,7 +389,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   in1Data->GetContinuousIncrements(outExt, inIncX, inIncY, inIncZ);
 
   //Initialize ptId to walk through tensor volume
-  vtkIdType inInc[3];
+  int inInc[3];
   int *inFullUpdateExt;
   self->ComputeTensorIncrements(in1Data, inInc);
   inFullUpdateExt = in1Data->GetExtent(); //We are only working over the update extent
