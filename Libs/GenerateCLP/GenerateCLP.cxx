@@ -270,8 +270,8 @@ void GeneratePre(std::ofstream &sout, ModuleDescription &module, int argc, char 
 void GenerateSplitString(std::ofstream &sout)
 {
   sout << "void" << std::endl;
-  sout << "splitString (std::string &text," << std::endl;
-  sout << "             std::string &separators," << std::endl;
+  sout << "splitString (const std::string &text," << std::endl;
+  sout << "             const std::string &separators," << std::endl;
   sout << "             std::vector<std::string> &words)" << std::endl;
   sout << "{" << std::endl;
   sout << "  int n = text.length();" << std::endl;
@@ -291,8 +291,8 @@ void GenerateSplitString(std::ofstream &sout)
 void GenerateSplitFilenames(std::ofstream &sout)
 {
   sout << "void" << std::endl;
-  sout << "splitFilenames (std::string &text," << std::endl;
-  sout << "             std::vector<std::string> &words)" << std::endl;
+  sout << "splitFilenames (const std::string &text," << std::endl;
+  sout << "                std::vector<std::string> &words)" << std::endl;
   sout << "{" << std::endl;
   sout << "  int n = text.length();" << std::endl;
   sout << "  int start, stop, startq, stopq;" << std::endl;
