@@ -109,11 +109,10 @@ itcl::body LevelTracingEffect::preview {} {
     set o(ijkToXY) [vtkNew vtkTransform]
     $o(ijkToXY) Inverse
     set o(xyPoints) [vtkNew vtkPoints]
-    set o(tracingPolyData) [vtkNew vtkPolyData]
     set o(tracingMapper) [vtkNew vtkPolyDataMapper2D]
     set o(tracingActor) [vtkNew vtkActor2D]
     $o(tracingActor) SetMapper $o(tracingMapper)
-    $o(tracingMapper) SetInput $o(tracingPolyData)
+    $o(tracingMapper) SetInput [$o(tracingFilter) GetOutput]
     [$_renderWidget GetRenderer] AddActor2D $o(tracingActor)
     lappend _actors $o(tracingActor)
   }
@@ -131,29 +130,30 @@ itcl::body LevelTracingEffect::preview {} {
   if { $k0 == $k1 } { $o(tracingFilter) SetPlaneToIJ; puts ij }
 
   $o(tracingFilter) Update
+  set polyData [$o(tracingFilter) GetOutput]
 
 
   puts "-------- ijk points "
 
-  set points [$o(tracingPolyData) GetPoints]
-  set pts [$o(tracingPolyData) GetNumberOfPoints]
+  set points [$polyData GetPoints]
+  set pts [$polyData GetNumberOfPoints]
   for {set p 0} {$p < $pts} {incr p} {
     set pt [$points GetPoint $p]
     puts -nonewline "$pt   "
   }
   puts ""
 
+  return
+
   $o(xyPoints) Reset
   $o(ijkToXY) SetMatrix $_layers(background,xyToIJK)
   $o(ijkToXY) TransformPoints $points $o(xyPoints)
   [$o(tracingPolyData) GetPoints] DeepCopy $o(xyPoints)
 
-
-
   puts "-------- xy points "
 
-  set points [$o(tracingPolyData) GetPoints]
-  set pts [$o(tracingPolyData) GetNumberOfPoints]
+  set points $o(xyPoints)
+  set pts [$points GetNumberOfPoints]
   for {set p 0} {$p < $pts} {incr p} {
     set pt [$points GetPoint $p]
     puts -nonewline "$pt   "
