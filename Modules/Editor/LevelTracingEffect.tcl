@@ -106,14 +106,18 @@ itcl::body LevelTracingEffect::preview {} {
 
   if { ![info exists o(ijkToXY)] } {
     set o(tracingFilter) [vtkNew vtkITKLevelTracingImageFilter]
+    set o(ijkToXY) [vtkNew vtkTransform]
+    $o(ijkToXY) Inverse
+    set o(tracingTransformFilter) [vtkNew vtkTransformPolyDataFilter]
     set o(tracingPolyData) [vtkNew vtkPolyData]
     set o(tracingMapper) [vtkNew vtkPolyDataMapper2D]
     set o(tracingActor) [vtkNew vtkActor2D]
     $o(tracingActor) SetMapper $o(tracingMapper)
-    $o(tracingMapper) SetInput $o(tracingPolyData)
+    $o(tracingTransformFilter) SetInput $o(tracingPolyData)
+    $o(tracingTransformFilter) SetTransform $o(ijkToXY)
+    $o(tracingMapper) SetInput [$o(tracingTransformFilter) GetOutput]
     [$_renderWidget GetRenderer] AddActor2D $o(tracingActor)
     lappend _actors $o(tracingActor)
-    set o(ijkToXY) [vtkNew vtkTransform]
   }
 
   set $o(tracingFilter) [vtkITKLevelTracingImageFilter New]
@@ -132,11 +136,6 @@ itcl::body LevelTracingEffect::preview {} {
   $o(tracingFilter) Update
 
   $o(ijkToXY) SetMatrix $_layers(background,xyToIJK)
-  $o(ijkToXY) Inverse
-  set points [$o(tracingPolyData) GetPoints]
-  $o(ijkToXY) TransformPoints $points $points
-  $o(tracingPolyData) Modified
-
 
   puts [$o(tracingPolyData) GetNumberOfPoints]
 
