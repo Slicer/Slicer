@@ -133,11 +133,31 @@ itcl::body LevelTracingEffect::preview {} {
   if { $j0 == $j1 } { $o(tracingFilter) SetPlaneToIK; puts ik }
   if { $k0 == $k1 } { $o(tracingFilter) SetPlaneToIJ; puts ij }
 
-  $o(tracingFilter) Update
-
   $o(ijkToXY) SetMatrix $_layers(background,xyToIJK)
+  $o(tracingTransformFilter) Update
 
-  puts [$o(tracingPolyData) GetNumberOfPoints]
+
+  puts "-------- ijk points "
+
+  set points [$o(tracingPolyData) GetPoints]
+  set pts [$o(tracingPolyData) GetNumberOfPoints]
+  for {set p 0} {$p < $pts} {incr p} {
+    set pt [$points GetPoint $p]
+    puts -nonewline "$pt   "
+  }
+  puts "\n"
+
+
+  puts "-------- xy points "
+
+  set points [[$o(tracingTransformFilter) GetOutput] GetPoints]
+  set pts [[$o(tracingTransformFilter) GetOutput] GetNumberOfPoints]
+  for {set p 0} {$p < $pts} {incr p} {
+    set pt [$points GetPoint $p]
+    puts -nonewline "$pt   "
+  }
+  puts "\n\n"
+
 
 }
   
