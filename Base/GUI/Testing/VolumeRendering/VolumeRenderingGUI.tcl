@@ -100,6 +100,16 @@ proc VolumeRenderingBuildGUI {this} {
     $::VR($this,buttonLoadNode) SetBalloonHelpString "Load selected for Volume Rendering"
     pack [$::VR($this,buttonLoadNode) GetWidgetName] -side top -anchor e -padx 2 -pady 2
 
+    #Button to make all Models invisible
+    set ::VR($this,buttonAllModelsInvisible) [vtkKWPushButton New]
+    puts "buttonLoadNode: $::VR($this,buttonAllModelsInvisible)"
+    $::VR($this,buttonAllModelsInvisible) SetParent [$::VR($this,cFrameVolumes) GetFrame]
+    $::VR($this,buttonAllModelsInvisible) Create
+    $::VR($this,buttonAllModelsInvisible) SetText "AllModelsInvisible"
+    $::VR($this,buttonAllModelsInvisible) SetBalloonHelpString "Make all models invisible"
+    pack [$::VR($this,buttonAllModelsInvisible) GetWidgetName] -side top -anchor e -padx 0 -pady 2
+    
+
     #GetInstance of RenderWidget
     set ::VR($this,renderWidget) [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
     puts "renderWidget: $::VR($this,renderWidget)"
@@ -121,6 +131,7 @@ puts "Enter"
 }
 proc VolumeRenderingAddGUIObservers {this} {
     $this AddObserverByNumber $::VR($this,buttonLoadNode) 10000
+    $this AddObserverByNumber $::VR($this,buttonAllModelsInvisible) 10000
     puts "Observer Added VolumeRendering"
 }
 
@@ -139,6 +150,7 @@ proc VolumeRenderingProcessLogicEvents {this caller event} {
 
 proc VolumeRenderingProcessGUIEvents {this caller event} {
      puts "VolumeRenderingEvents: event = $event, callerID = $caller"
+    #Load selected volume
     if { $caller == $::VR($this,buttonLoadNode) } {
         switch $event {
             "10000" {
@@ -147,8 +159,26 @@ proc VolumeRenderingProcessGUIEvents {this caller event} {
             } ;#Switch inner
         } ;#Switch
 
-    } ;#if
+    } elseif {$caller == $::VR($this,buttonAllModelsInvisible)} {
+        switch $event {
+            "10000" {
+                puts "Make all models invisible"
+                allModelsInvisible $this
+            } ;#Switch inner
+        } ;#Switch
+    } ;#elif
     puts "Events processed"
+} ;#procedure
+proc allModelsInvisible {this} {
+    set scene [$::slicer3::ApplicationLogic GetMRMLScene]
+    set count [$scene GetNumberOfNodesByClass "vtkMRMLModelNode"]
+    set index 0
+
+    while {$index<$count} {
+        set node [[$scene GetNthNodeByClass $index "vtkMRMLModelNode"] GetModelDisplayNode]
+        $node VisibilityOff 
+        incr index
+    }
 }
 proc buttonLoadNode {this} {
 puts "Begin buttonLoadNode"
@@ -208,7 +238,8 @@ puts "Begin buttonLoadNode"
                         #Colors
                         set color [$lookupRGB GetColor $index]
                         puts "$color"
-                        $colorTransferFunction AddRGBPoint $index [lindex $color 0] [lindex $color 1] [lindex $color 2]
+                        $colorTransferFunction AddRGBPoint [expr $index + .01] [lindex $color 0] [lindex $color 1] [lindex $color 2]
+                        $colorTransferFunction AddRGBPoint [expr $index + .99] [lindex $color 0] [lindex $color 1] [lindex $color 2]
                         
                         puts "Color at $index finished"
                     }
