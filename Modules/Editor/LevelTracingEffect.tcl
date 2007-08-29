@@ -105,14 +105,21 @@ itcl::body LevelTracingEffect::preview {} {
   $this queryLayers $x $y
 
   if { ![info exists o(ijkToXY)] } {
+
     set o(tracingFilter) [vtkNew vtkITKLevelTracingImageFilter]
+
     set o(ijkToXY) [vtkNew vtkTransform]
-    $o(ijkToXY) Inverse
     set o(xyPoints) [vtkNew vtkPoints]
+
+    set o(tracingPolyData) [vtkNew vtkPolyData]
     set o(tracingMapper) [vtkNew vtkPolyDataMapper2D]
     set o(tracingActor) [vtkNew vtkActor2D]
     $o(tracingActor) SetMapper $o(tracingMapper)
-    $o(tracingMapper) SetInput [$o(tracingFilter) GetOutput]
+    $o(tracingMapper) SetScalarVisibility 0
+    $o(tracingMapper) SetInput $o(tracingPolyData)
+    set property [$o(tracingActor) GetProperty]
+    $property SetColor 1 1 0
+    $property SetLineWidth 1
     [$_renderWidget GetRenderer] AddActor2D $o(tracingActor)
     lappend _actors $o(tracingActor)
   }
@@ -125,40 +132,21 @@ itcl::body LevelTracingEffect::preview {} {
   foreach {i0 j0 k0 l0} [$_layers(background,xyToIJK) MultiplyPoint $x $y 0 1] {}
   set x1 [expr $x + 1]; set y1 [expr $y + 1]
   foreach {i1 j1 k1 l1} [$_layers(background,xyToIJK) MultiplyPoint $x1 $y1 0 1] {}
-  if { $i0 == $i1 } { $o(tracingFilter) SetPlaneToJK; puts jk }
-  if { $j0 == $j1 } { $o(tracingFilter) SetPlaneToIK; puts ik }
-  if { $k0 == $k1 } { $o(tracingFilter) SetPlaneToIJ; puts ij }
+  if { $i0 == $i1 } { $o(tracingFilter) SetPlaneToJK }
+  if { $j0 == $j1 } { $o(tracingFilter) SetPlaneToIK }
+  if { $k0 == $k1 } { $o(tracingFilter) SetPlaneToIJ }
 
   $o(tracingFilter) Update
   set polyData [$o(tracingFilter) GetOutput]
-
-
-  puts "-------- ijk points "
-
-  set points [$polyData GetPoints]
-  set pts [$polyData GetNumberOfPoints]
-  for {set p 0} {$p < $pts} {incr p} {
-    set pt [$points GetPoint $p]
-    puts -nonewline "$pt   "
-  }
-  puts ""
-
-  return
-
+  
   $o(xyPoints) Reset
   $o(ijkToXY) SetMatrix $_layers(background,xyToIJK)
-  $o(ijkToXY) TransformPoints $points $o(xyPoints)
+  $o(ijkToXY) Inverse
+  $o(ijkToXY) TransformPoints [$polyData GetPoints] $o(xyPoints)
+
+  $o(tracingPolyData) DeepCopy $polyData
   [$o(tracingPolyData) GetPoints] DeepCopy $o(xyPoints)
-
-  puts "-------- xy points "
-
-  set points $o(xyPoints)
-  set pts [$points GetNumberOfPoints]
-  for {set p 0} {$p < $pts} {incr p} {
-    set pt [$points GetPoint $p]
-    puts -nonewline "$pt   "
-  }
-  puts "\n"
+  [$polyData GetPointData] Initialize
 }
   
 itcl::body LevelTracingEffect::buildOptions {} {
