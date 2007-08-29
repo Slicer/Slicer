@@ -67,6 +67,7 @@ for {set i 0} {$i < $argc} {incr i} {
         }
         "--release" {
             set ::GETBUILDTEST(release) "--release"
+            set ::VTK_BUILD_TYPE "Release"
         }
         "-t" -
         "--test-type" {
