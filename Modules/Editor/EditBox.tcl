@@ -71,7 +71,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     ImplicitCube ImplicitEllipse ImplicitRectangle 
     FreehandDrawLabel EraseLabel RemoveIslands ConnectedComponents 
     ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor PaintLabel
-    DefaultTool
+    DefaultTool LevelTracing
   }
 
   # effects that operate from the menu
@@ -220,7 +220,7 @@ itcl::body EditBox::create { } {
   $this createButtonRow $parent {EraseLabel ImplicitEllipse ImplicitRectangle ImplicitCube}
   $this createButtonRow $parent {IdentifyIslands ChangeIsland RemoveIslands SaveIsland}
   $this createButtonRow $parent {ErodeLabel DilateLabel Threshold ChangeLabel}
-  $this createButtonRow $parent {InterpolateLabels MakeModel Watershed ConnectedComponents}
+  $this createButtonRow $parent {InterpolateLabels MakeModel Watershed LevelTracing}
   $this createButtonRow $parent {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
   $this createButtonRow $parent {GoToEditorModule PinOpen}
  

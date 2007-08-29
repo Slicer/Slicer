@@ -291,9 +291,8 @@ proc EditorBuildGUI {this} {
   set ::Editor($this,optionsSpacer) [vtkKWLabel New]
   $::Editor($this,optionsSpacer) SetParent $::Editor($this,optionsFrame)
   $::Editor($this,optionsSpacer) Create
-  $::Editor($this,optionsSpacer) SetHeight 1
   pack [$::Editor($this,optionsSpacer) GetWidgetName] \
-    -side top -anchor nw -fill both -expand true -padx 2 -pady 2 
+    -fill both -expand true 
 
 }
 

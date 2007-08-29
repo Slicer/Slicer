@@ -141,13 +141,13 @@ itcl::body ThresholdEffect::preview {} {
 }
 
 #
-# p will be 0 to 1 loop
+# p will be a floating point number 
 #
 itcl::body ThresholdEffect::setAnimationState { p } {
 
   if { [info exists o(lut)] } {
-    set amt [expr 0.2 + 0.75 * (1 + cos(6.2831852 * ($p - floor($p)))) ]
-    set color [$o(lut) GetTableValue 1]
+    set amt [expr 0.5 + 0.25 * (1 + cos(6.2831852 * ($p - floor($p)))) ]
+    set color [::EditorGetPaintColor $::Editor(singleton)]
     eval $o(lut) SetTableValue 1 [lreplace $color 3 3 $amt]
   }
 }
