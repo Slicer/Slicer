@@ -11,6 +11,8 @@
 #include "vtkObject.h"
 #include "vtkMRMLScene.h"
 
+#include <string>
+
 
 #define IGT_MATRIX_STREAM 0
 #define IGT_IMAGE_STREAM 1
@@ -57,6 +59,9 @@ private:
     //MRML scene passed from the Module instantiating this class
     vtkMRMLScene *MRMLScene;
     static int index;
+    //BTX
+    std::string StreamID;
+    //ETX
 
 };
 

@@ -9,7 +9,6 @@
 #include "vtkAppendPolyData.h"
 
 
-#include <string>
 
 
 vtkStandardNewMacro(vtkIGTDataManager);
@@ -31,7 +30,8 @@ vtkIGTDataManager::~vtkIGTDataManager()
 
 const char *vtkIGTDataManager::RegisterStream(int streamType)
 {
-    std::string id("");
+
+    this->StreamID = "";
 
     // streamType: 0 - matrix; 1 - image 
     switch (streamType) {
@@ -60,7 +60,7 @@ const char *vtkIGTDataManager::RegisterStream(int streamType)
             modelNode->SetScene(this->MRMLScene);
             modelNode->SetAndObserveDisplayNodeID(dispNode->GetID());  
             modelNode->SetAndObserveTransformNodeID(transform->GetID());  
-            id = std::string(modelNode->GetID());
+            this->StreamID = std::string(modelNode->GetID());
 
             // Cylinder represents the locator stick
             vtkCylinderSource *cylinder = vtkCylinderSource::New();
@@ -99,7 +99,7 @@ const char *vtkIGTDataManager::RegisterStream(int streamType)
             break;
     }
 
-    return id.c_str();
+    return this->StreamID.c_str();
 }
 
 
