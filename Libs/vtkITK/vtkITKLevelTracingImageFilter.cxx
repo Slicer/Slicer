@@ -140,6 +140,12 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
   OffsetType offset;
 
   const unsigned int numberChain = chain->NumberOfSteps();
+
+  if ( numberChain == 0 )
+    {
+    return;
+    }
+
   vtkIdType * ptIds;
   ptIds = new vtkIdType [numberChain];
 
