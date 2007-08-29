@@ -108,21 +108,18 @@ itcl::body LevelTracingEffect::preview {} {
     set o(tracingFilter) [vtkNew vtkITKLevelTracingImageFilter]
     set o(ijkToXY) [vtkNew vtkTransform]
     $o(ijkToXY) Inverse
-    set o(tracingTransformFilter) [vtkNew vtkTransformPolyDataFilter]
+    set o(xyPoints) [vtkNew vtkPoints]
     set o(tracingPolyData) [vtkNew vtkPolyData]
     set o(tracingMapper) [vtkNew vtkPolyDataMapper2D]
     set o(tracingActor) [vtkNew vtkActor2D]
     $o(tracingActor) SetMapper $o(tracingMapper)
-    $o(tracingTransformFilter) SetInput $o(tracingPolyData)
-    $o(tracingTransformFilter) SetTransform $o(ijkToXY)
-    $o(tracingMapper) SetInput [$o(tracingTransformFilter) GetOutput]
+    $o(tracingMapper) SetInput $o(tracingPolyData)
     [$_renderWidget GetRenderer] AddActor2D $o(tracingActor)
     lappend _actors $o(tracingActor)
   }
 
   set $o(tracingFilter) [vtkITKLevelTracingImageFilter New]
   $o(tracingFilter) SetInput [$this getInputBackground]
-  $o(tracingFilter) SetOutput $o(tracingPolyData)
   $o(tracingFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
 
   # figure out which plane to use
@@ -133,8 +130,7 @@ itcl::body LevelTracingEffect::preview {} {
   if { $j0 == $j1 } { $o(tracingFilter) SetPlaneToIK; puts ik }
   if { $k0 == $k1 } { $o(tracingFilter) SetPlaneToIJ; puts ij }
 
-  $o(ijkToXY) SetMatrix $_layers(background,xyToIJK)
-  $o(tracingTransformFilter) Update
+  $o(tracingFilter) Update
 
 
   puts "-------- ijk points "
@@ -145,20 +141,24 @@ itcl::body LevelTracingEffect::preview {} {
     set pt [$points GetPoint $p]
     puts -nonewline "$pt   "
   }
-  puts "\n"
+  puts ""
+
+  $o(xyPoints) Reset
+  $o(ijkToXY) SetMatrix $_layers(background,xyToIJK)
+  $o(ijkToXY) TransformPoints $points $o(xyPoints)
+  [$o(tracingPolyData) GetPoints] DeepCopy $o(xyPoints)
+
 
 
   puts "-------- xy points "
 
-  set points [[$o(tracingTransformFilter) GetOutput] GetPoints]
-  set pts [[$o(tracingTransformFilter) GetOutput] GetNumberOfPoints]
+  set points [$o(tracingPolyData) GetPoints]
+  set pts [$o(tracingPolyData) GetNumberOfPoints]
   for {set p 0} {$p < $pts} {incr p} {
     set pt [$points GetPoint $p]
     puts -nonewline "$pt   "
   }
-  puts "\n\n"
-
-
+  puts "\n"
 }
   
 itcl::body LevelTracingEffect::buildOptions {} {
