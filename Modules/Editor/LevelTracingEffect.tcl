@@ -73,13 +73,13 @@ itcl::body LevelTracingEffect::processEvent { } {
     }
     "EnterEvent" {
       $o(cursorActor) VisibilityOn
-      if { [info exists $o(tracingActor)] } {
+      if { [info exists o(tracingActor)] } {
        $o(tracingActor) VisibilityOn
       }
     }
     "LeaveEvent" {
       $o(cursorActor) VisibilityOff
-      if { [info exists $o(tracingActor)] } {
+      if { [info exists o(tracingActor)] } {
        $o(tracingActor) VisibilityOff
       }
     }
