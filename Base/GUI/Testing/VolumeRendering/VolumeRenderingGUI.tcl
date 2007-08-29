@@ -1,4 +1,4 @@
-﻿#
+#
 # Editor GUI Procs
 #
 global this
