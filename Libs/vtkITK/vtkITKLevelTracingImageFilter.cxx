@@ -41,6 +41,8 @@ vtkITKLevelTracingImageFilter::vtkITKLevelTracingImageFilter()
   this->Seed[0] = 0;
   this->Seed[1] = 0;
   this->Seed[2] = 0;
+
+  this->Plane = 2;  // Default to XY plane
 }
 
 vtkITKLevelTracingImageFilter::~vtkITKLevelTracingImageFilter()
@@ -98,17 +100,17 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
   itk::Index<2> seed2D = {{0,0}};
   switch(plane)
   {
-  case 0: //YZ plane
+  case 0: //JK plane
     seed2D[0] = seed[1];
     seed2D[1] = seed[2];
     extractSize[0] = 0;
     break;
-  case 1:  //XZ plane
+  case 1:  //IK plane
     seed2D[0] = seed[0];
     seed2D[1] = seed[2];
     extractSize[1] = 0;
     break;
-  case 2:  // XY plane (axials)
+  case 2:  //IJ plane (axials)
     seed2D[0] = seed[0];
     seed2D[1] = seed[1];
     extractSize[2] = 0;
@@ -124,7 +126,8 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
   tracing->SetInput( extract->GetOutput() );
   tracing->Update();
 
-  // Convert chain code output to points and polys (remember to put them on the right slice: XY, XZ, YZ)
+  // Convert chain code output to points and polys (remember to put
+  // them on the right slice: IJ, IK, JK)
   // Also put the scalars in...
 
   typedef itk::ChainCodePath<2> ChainCodePathType;
@@ -147,17 +150,17 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
   {
     switch( plane )
     {
-    case 0:  //YZ plane
+    case 0:  //JK plane
       chain3D[0] = seed[0];
       chain3D[1] = chainTemp[0] ;
       chain3D[2] = chainTemp[1] ;
       break;
-    case 1:  //XZ plane
+    case 1:  //IK plane
       chain3D[1] = seed[1];
       chain3D[0] = chainTemp[0] ;
       chain3D[2] = chainTemp[1] ;
       break;
-    case 2:  //XY plane
+    case 2:  //IJ plane
       chain3D[2] = seed[2];
       chain3D[0] = chainTemp[0] ;
       chain3D[1] = chainTemp[1] ;
@@ -305,5 +308,16 @@ void vtkITKLevelTracingImageFilter::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "Seed point location: [" << Seed[0] << "," << Seed[1] << "," << Seed[2] << "]"
     << std::endl;
-
+  os << indent << "Plane: ";
+  switch (Plane)
+    {
+    case 2: os << "IJ" << std::endl;
+      break;
+    case 1: os << "IK" << std::endl;
+      break;
+    case 0: os << "JK" << std::endl;
+      break;
+    default: os << "(unknown)" << std::endl;
+      break;
+    }
 }

@@ -41,13 +41,13 @@ public:
   vtkSetVector3Macro(Seed, int);
   vtkGetVector3Macro(Seed, int);
 
-  // Method to set the plane (XY=2, XZ=1, YZ=0)
+  // Method to set the plane (IJ=2, IK=1, JK=0)
   vtkSetMacro(Plane, int);
   vtkGetMacro(Plane, int);
 
-  void SetPlaneToXY() {this->SetPlane(2);}
-  void SetPlaneToXZ() {this->SetPlane(1);}
-  void SetPlaneToYZ() {this->SetPlane(0);}
+  void SetPlaneToIJ() {this->SetPlane(2);}
+  void SetPlaneToIK() {this->SetPlane(1);}
+  void SetPlaneToJK() {this->SetPlane(0);}
 
 protected:
   vtkITKLevelTracingImageFilter();
