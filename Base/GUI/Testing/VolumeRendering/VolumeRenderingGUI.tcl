@@ -145,6 +145,22 @@ proc VolumeRenderingBuildGUI {this} {
     $::VR($this,buttonOpacity) SetBalloonHelpString "Change Opacity"
     $::VR($this,buttonOpacity) EnabledOff
     pack [$::VR($this,buttonOpacity) GetWidgetName] -side top -anchor nw -padx 0 -pady 2
+    
+    set ::VR($this,buttonMIP) [vtkKWPushButton New]
+    puts "buttonMIP: $::VR($this,buttonMIP)"
+    $::VR($this,buttonMIP) SetParent [$::VR($this,cFrameVolumes) GetFrame]
+    $::VR($this,buttonMIP) Create
+    $::VR($this,buttonMIP) SetText "USE MIP"
+    $::VR($this,buttonMIP) SetBalloonHelpString "USE MIP"
+    pack [$::VR($this,buttonMIP) GetWidgetName] -side top -anchor nw -padx 0 -pady 2
+    
+    set ::VR($this,buttonThreeD) [vtkKWPushButton New]
+    puts "buttonThreeD: $::VR($this,buttonThreeD)"
+    $::VR($this,buttonThreeD) SetParent [$::VR($this,cFrameVolumes) GetFrame]
+    $::VR($this,buttonThreeD) Create
+    $::VR($this,buttonThreeD) SetText "USE 3D"
+    $::VR($this,buttonThreeD) SetBalloonHelpString "USE 3D"
+    pack [$::VR($this,buttonThreeD) GetWidgetName] -side top -anchor nw -padx 0 -pady 2
     puts "End VolumeRendering BuildGui"
 
 }
@@ -155,6 +171,8 @@ proc VolumeRenderingAddGUIObservers {this} {
     $this AddObserverByNumber $::VR($this,buttonLoadNode) 10000
     $this AddObserverByNumber $::VR($this,buttonAllModelsInvisible) 10000
     $this AddObserverByNumber $::VR($this,buttonOpacity) 10000
+    $this AddObserverByNumber $::VR($this,buttonMIP) 10000
+    $this AddObserverByNumber $::VR($this,buttonThreeD) 10000
     puts "Observer Added VolumeRendering"
 }
 
@@ -192,6 +210,17 @@ proc VolumeRenderingProcessGUIEvents {this caller event} {
     } elseif {$caller == $::VR($this,buttonOpacity)} {
         puts "update opacity"
         UpdateOpacity $this
+    } elseif {$caller == $::VR($this,buttonMIP)} {
+        puts "use MIP"
+            set ::VR($this,volumeMapper) [vtkFixedPointVolumeRayCastMapper New]
+            $::VR($this,volumeMapper) SetInput $::VR($this,aImageData)
+            $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
+    } elseif {$caller == $::VR($this,buttonThreeD)} {
+        puts "use 3D"
+            set ::VR($this,volumeMapper) [vtkVolumeTextureMapper3D New]
+            $::VR($this,volumeMapper) SetInput $::VR($this,aImageData)
+            $::VR($this,volumeMapper) SetSampleDistance 0.1
+            $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
     }
     puts "Events processed"
 } ;#procedure
@@ -333,22 +362,19 @@ proc buttonLoadNode {this} {
 
         puts "334"
         #Switch here for MIP and Normal Mode
-        if 0 {
-        set volumeMapperFunction [vtkVolumeRayCastMIPFunction New]
-        $volumeMapperFunction SetMaximizeMethodToOpacity
-        set volumeMapper [vtkVolumeRayCastMapper New]
-        $volumeMapper SetInputConnection [$reader GetOutputPort]
-        $volumeMapper SetVolumeRayCastFunction $volumeMapperFunction
-        }
-        if 1 {
-        set volumeMapper [vtkVolumeTextureMapper3D New]
-            $volumeMapper SetInput $reader
-            $volumeMapper SetSampleDistance 0.1
-        }
+
+                        set ::VR($this,volumeMapperA) [vtkVolumeTextureMapper3D New]
+            $::VR($this,volumeMapperA) SetInput $::VR($this,aImageData)
+            $::VR($this,volumeMapperA) SetSampleDistance 0.1
+            set ::VR($this,volumeMapperB) [vtkFixedPointVolumeRayCastMapper New]
+            $::VR($this,volumeMapperB) SetInput $::VR($this,aImageData)
             puts "348"
-        set ::VR($this,volume) [vtkVolume New]
-        $::VR($this,volume) SetMapper $volumeMapper
-        $::VR($this,volume) SetProperty $volumeProperty
+        #set ::VR($this,volume) [vtkVolume New]
+        #$::VR($this,volume) SetMapper $::VR($this,volumeMapper)
+        set ::VR($this,volume) [vtkLODProp3D New]
+        $::VR($this,volume) AddLOD $::VR($this,volumeMapperA) $volumeProperty 0.0
+        $::VR($this,volume) AddLOD $::VR($this,volumeMapperB) $volumeProperty 0.0
+        #$::VR($this,volume) SetProperty $volumeProperty
         set matrix [vtkMatrix4x4 New]
         puts "after setMatrix"
         puts "after cast"
