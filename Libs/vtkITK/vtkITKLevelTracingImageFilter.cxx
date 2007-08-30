@@ -106,16 +106,19 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
     seed2D[0] = seed[1];
     seed2D[1] = seed[2];
     extractSize[0] = 0;
+    extractIndex[0] = seed[0];
     break;
   case 1:  //IK plane
     seed2D[0] = seed[0];
     seed2D[1] = seed[2];
     extractSize[1] = 0;
+    extractIndex[1] = seed[1];
     break;
   case 2:  //IJ plane (axials)
     seed2D[0] = seed[0];
     seed2D[1] = seed[1];
     extractSize[2] = 0;
+    extractIndex[2] = seed[2];
     break;
   }
 
