@@ -306,7 +306,7 @@ int vtkITKLevelTracingImageFilter::RequestData(
   output->SetPoints(newPts);
   newPts->Delete();
 
-  output->SetPolys(newPolys);
+  output->SetLines(newPolys);
   newPolys->Delete();
 
   if (newScalars)
