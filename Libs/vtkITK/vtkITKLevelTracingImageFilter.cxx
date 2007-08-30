@@ -55,7 +55,6 @@ vtkITKLevelTracingImageFilter::~vtkITKLevelTracingImageFilter()
 template <class T>
 void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
                              int dims[3], int extent[6], double origin[3], double spacing[3],
-                             vtkDataArray *newScalars,
                              vtkPoints *newPoints,
                              vtkCellArray *newPolys,
                              int seed[3], int plane)
@@ -212,7 +211,6 @@ int vtkITKLevelTracingImageFilter::RequestData(
 
   vtkPoints *newPts;
   vtkCellArray *newPolys;
-  vtkFloatArray *newScalars;
   vtkPointData *pd;
   vtkDataArray *inScalars;
   int dims[3], extent[6];
@@ -258,9 +256,6 @@ int vtkITKLevelTracingImageFilter::RequestData(
   newPolys = vtkCellArray::New();
   newPolys->Allocate(newPolys->EstimateSize(estimatedSize,2));
 
-  newScalars = vtkFloatArray::New();
-  newScalars->Allocate(estimatedSize,estimatedSize/2);
-
   if (inScalars->GetNumberOfComponents() == 1 )
   {
     void* scalars = inScalars->GetVoidPointer(0);
@@ -269,7 +264,7 @@ int vtkITKLevelTracingImageFilter::RequestData(
       vtkTemplateMacro(
         vtkITKLevelTracingTrace(this, static_cast<VTK_TT*>(scalars),
         dims,extent,origin,spacing,
-        newScalars,newPts,newPolys,this->Seed, this->Plane
+        newPts,newPolys,this->Seed, this->Plane
         )
         );
     } //switch
@@ -292,7 +287,7 @@ int vtkITKLevelTracingImageFilter::RequestData(
 
     vtkITKLevelTracingTrace(this,
                             (unsigned char *)grayScalars->GetVoidPointer(0),
-                            dims, extent, origin, spacing, newScalars,
+                            dims, extent, origin, spacing, 
                             newPts, newPolys, this->Seed, this->Plane);
     }
   else
@@ -311,13 +306,6 @@ int vtkITKLevelTracingImageFilter::RequestData(
 
   output->SetLines(newPolys);
   newPolys->Delete();
-
-  if (newScalars)
-  {
-    int idx = output->GetPointData()->AddArray(newScalars);
-    output->GetPointData()->SetActiveAttribute(idx, vtkDataSetAttributes::SCALARS);
-    newScalars->Delete();
-  }
 
   output->Squeeze();
   return 1;
