@@ -18,12 +18,14 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "vtkCellArray.h"
 #include "vtkFloatArray.h"
+#include "vtkUnsignedCharArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkStructuredPoints.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
+#include "vtkSmartPointer.h"
 
 #include "itkImage.h"
 #include "itkExtractImageFilter.h"
@@ -269,11 +271,31 @@ int vtkITKLevelTracingImageFilter::RequestData(
         );
     } //switch
   }
+  else if (inScalars->GetNumberOfComponents() == 3) 
+    {
+    // RGB - convert for now...
+    vtkSmartPointer<vtkUnsignedCharArray> grayScalars
+      = vtkUnsignedCharArray::New();
+    double in[3];
+    unsigned char out;
+    for (vtkIdType i=0; i < inScalars->GetNumberOfTuples(); ++i)
+      {
+      inScalars->GetTuple(i, in);
 
-  else //multiple components - have to convert
-  {
-    vtkErrorMacro(<< "Can only trace scalar images.");
-  }
+      out = static_cast<unsigned char>((2125.0 * in[0] +  7154.0 * in[1] +  0721.0 * in[2]) / 10000.0);
+
+      grayScalars->InsertNextTupleValue(&out);
+      }
+
+    vtkITKLevelTracingTrace(this,
+                            (unsigned char *)grayScalars->GetVoidPointer(0),
+                            dims, extent, origin, spacing, newScalars,
+                            newPts, newPolys, this->Seed, this->Plane);
+    }
+  else
+    {
+    vtkErrorMacro(<< "Can only trace scalar and RGB images.");
+    }
 
   vtkDebugMacro(<<"Created: " 
     << newPts->GetNumberOfPoints() << " points. " );
