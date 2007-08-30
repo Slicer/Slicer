@@ -363,18 +363,15 @@ proc buttonLoadNode {this} {
         puts "334"
         #Switch here for MIP and Normal Mode
 
-                        set ::VR($this,volumeMapperA) [vtkVolumeTextureMapper3D New]
-            $::VR($this,volumeMapperA) SetInput $::VR($this,aImageData)
-            $::VR($this,volumeMapperA) SetSampleDistance 0.1
-            set ::VR($this,volumeMapperB) [vtkFixedPointVolumeRayCastMapper New]
-            $::VR($this,volumeMapperB) SetInput $::VR($this,aImageData)
+       #set volumeMapperFunction [vtkVolumeRayCastMIPFunction New]
+            #$volumeMapperFunction SetMaximizeMethodToScalarValue
+            set ::VR($this,volumeMapper) [vtkFixedPointVolumeRayCastMapper New]
+            $::VR($this,volumeMapper) SetInput $::VR($this,aImageData)
+           #$::VR($this,volumeMapper) SetVolumeRayCastFunction $volumeMapperFunction
             puts "348"
-        #set ::VR($this,volume) [vtkVolume New]
-        #$::VR($this,volume) SetMapper $::VR($this,volumeMapper)
-        set ::VR($this,volume) [vtkLODProp3D New]
-        $::VR($this,volume) AddLOD $::VR($this,volumeMapperA) $volumeProperty 0.0
-        $::VR($this,volume) AddLOD $::VR($this,volumeMapperB) $volumeProperty 0.0
-        #$::VR($this,volume) SetProperty $volumeProperty
+        set ::VR($this,volume) [vtkVolume New]
+        $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
+        $::VR($this,volume) SetProperty $volumeProperty
         set matrix [vtkMatrix4x4 New]
         puts "after setMatrix"
         puts "after cast"
