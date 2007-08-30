@@ -118,7 +118,10 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
     // now get out the labeltext key
     ss >> keyName;
     // now get the label text value
-    ss >> this->LabelText;
+    ss >> keyName;
+    this->SetLabelText(keyName);
+
+
     vtkDebugMacro("ReadXMLString: got label text " << this->LabelText);
 
     // get the xyz key
