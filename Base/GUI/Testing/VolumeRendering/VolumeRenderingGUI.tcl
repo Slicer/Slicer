@@ -162,7 +162,35 @@ proc VolumeRenderingBuildGUI {this} {
     $::VR($this,buttonThreeD) SetBalloonHelpString "USE 3D"
     pack [$::VR($this,buttonThreeD) GetWidgetName] -side top -anchor nw -padx 0 -pady 2
     puts "End VolumeRendering BuildGui"
+    
+        set ::VR($this,buttonTwoD) [vtkKWPushButton New]
+    puts "buttonThreeD: $::VR($this,buttonThreeD)"
+    $::VR($this,buttonTwoD) SetParent [$::VR($this,cFrameVolumes) GetFrame]
+    $::VR($this,buttonTwoD) Create
+    $::VR($this,buttonTwoD) SetText "USE 2D"
+    $::VR($this,buttonTwoD) SetBalloonHelpString "USE 2D"
+    pack [$::VR($this,buttonTwoD) GetWidgetName] -side top -anchor nw -padx 0 -pady 2
 
+    
+    set ::VR($this,presetSelector) [vtkKWVolumePropertyPresetSelector New]
+    puts "preset Selector"
+    $::VR($this,presetSelector) SetParent [$::VR($this,cFrameVolumes) GetFrame]
+    $::VR($this,presetSelector) Create
+    pack [$::VR($this,presetSelector) GetWidgetName] -side top -anchor nw -padx 0 -pady 2
+    
+    
+    set ::VR($this,presetMapping) [vtkKWMenuButtonWithLabel New]
+    puts " preset Mapping"
+    $::VR($this,presetMapping) SetParent [$::VR($this,cFrameVolumes) GetFrame]
+    $::VR($this,presetMapping) Create
+    $::VR($this,presetMapping) SetLabelText "Preset Mapping for CT"
+    [[$::VR($this,presetMapping) GetWidget] GetMenu] AddRadioButton "Bone"
+    [[$::VR($this,presetMapping) GetWidget] GetMenu] AddRadioButton "Vessels"
+    [[$::VR($this,presetMapping) GetWidget] GetMenu] AddRadioButton "Bone and Vessels"
+    [[$::VR($this,presetMapping) GetWidget] GetMenu] AddRadioButton "T1"
+    
+    pack [$::VR($this,presetMapping) GetWidgetName] -side top -anchor nw -padx 0 -pady 2
+        puts "End VolumeRendering BuildGui"
 }
 proc VolumeRenderingEnter {this} {
 puts "Enter"
@@ -173,6 +201,8 @@ proc VolumeRenderingAddGUIObservers {this} {
     $this AddObserverByNumber $::VR($this,buttonOpacity) 10000
     $this AddObserverByNumber $::VR($this,buttonMIP) 10000
     $this AddObserverByNumber $::VR($this,buttonThreeD) 10000
+    $this AddObserverByNumber $::VR($this,buttonTwoD) 10000
+    $this AddObserverByNumber  [[$::VR($this,presetMapping) GetWidget] GetMenu] 10005
     puts "Observer Added VolumeRendering"
 }
 
@@ -219,9 +249,49 @@ proc VolumeRenderingProcessGUIEvents {this caller event} {
         puts "use 3D"
             set ::VR($this,volumeMapper) [vtkVolumeTextureMapper3D New]
             $::VR($this,volumeMapper) SetInput $::VR($this,aImageData)
-            $::VR($this,volumeMapper) SetSampleDistance 0.1
+            $::VR($this,volumeMapper) SetSampleDistance 1
             $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
-    }
+    }  elseif {$caller == $::VR($this,buttonTwoD)} {
+            set ::VR($this,converter) [vtkImageShiftScale New]
+            $::VR($this,converter) SetOutputScalarTypeToUnsignedShort 
+            $::VR($this,converter) SetInput $::VR($this,aImageData)
+            set ::VR($this,volumeMapper) [vtkVolumeTextureMapper2D New]
+            $::VR($this,volumeMapper) SetInput [$::VR($this,converter) GetOutput]
+            $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
+        puts "use 2d"
+    } elseif {$caller==[[$::VR($this,presetMapping) GetWidget] GetMenu]} {
+        puts "something in the menu"
+        switch [[$::VR($this,presetMapping) GetWidget] GetValue] {
+            "Bone" {
+                puts "Bone"
+                $::VR($this,opacityTransferFunction) RemoveAllPoints
+                $::VR($this,opacityTransferFunction) AddPoint [lindex [$::VR($this,pfed_hist) GetRange] 0] 0.0
+                $::VR($this,opacityTransferFunction) AddPoint 1200 0.0
+                $::VR($this,opacityTransferFunction) AddPoint 1300 0.2
+                $::VR($this,opacityTransferFunction) AddPoint [lindex [$::VR($this,pfed_hist) GetRange] 1] 0.2
+                [$::VR($this,vpw) GetScalarOpacityFunctionEditor] Update
+                $::VR($this,colorTransferFunction) RemoveAllPoints
+                $::VR($this,colorTransferFunction) AddRGBPoint [lindex [$::VR($this,pfed_hist) GetRange] 0] .3 .3 1
+                $::VR($this,colorTransferFunction) AddRGBPoint 30 .3 .3 1
+                $::VR($this,colorTransferFunction) AddRGBPoint 1000 .3 1 .3
+                $::VR($this,colorTransferFunction) AddRGBPoint 1200 1 .3 .3
+                $::VR($this,colorTransferFunction) AddRGBPoint 2200 1 1 0
+                $::VR($this,colorTransferFunction) AddRGBPoint [lindex [$::VR($this,pfed_hist) GetRange] 1] 1 1 0
+                [$::VR($this,vpw) GetScalarColorFunctionEditor] Update
+                
+            }
+            "Vessels" {
+            puts "Vessels"
+            }
+            "Bone and Vessels" {
+            puts "Bone and Vessels"
+            }
+            "T1" {
+            puts "T1"
+            }
+        } ;#switch
+    
+    } ;#elseif
     puts "Events processed"
 } ;#procedure
 proc allModelsInvisible {this} {
@@ -255,20 +325,19 @@ proc buttonLoadNode {this} {
     } else { ;#There is something selected
         puts "DATA $::VR($this,aMRMLNODE)"
         set ::VR($this,aImageData) [$::VR($this,aMRMLNODE) GetImageData]
-        set reader  $::VR($this,aImageData)
         puts "278"
         
         
         #Build Histogram and mapping functions
         set ::VR($this,pfed_hist) [vtkKWHistogram New]
         puts "pfed_hist: $$::VR($this,pfed_hist)"
-        $::VR($this,pfed_hist) BuildHistogram [[$reader GetPointData] GetScalars] 0
+        $::VR($this,pfed_hist) BuildHistogram [[$::VR($this,aImageData) GetPointData] GetScalars] 0
         
         set ::VR($this,opacityTransferFunction) [vtkPiecewiseFunction New]
         puts "opacityTransferFunction: $::VR($this,opacityTransferFunction)"
         
-        set colorTransferFunction [vtkColorTransferFunction New]
-        puts "colorTransferFunction: $colorTransferFunction"
+        set ::VR($this,colorTransferFunction) [vtkColorTransferFunction New]
+        puts "colorTransferFunction: $::VR($this,colorTransferFunction)"
         
         if {[$::VR($this,aMRMLNODE) GetLabelMap] == 1} {
             puts "volume is labelmap"
@@ -302,8 +371,8 @@ proc buttonLoadNode {this} {
                         #Colors
                         set color [$lookupRGB GetColor $index]
                         #puts "$color"
-                        $colorTransferFunction AddRGBPoint [expr $index + .01] [lindex $color 0] [lindex $color 1] [lindex $color 2]
-                        $colorTransferFunction AddRGBPoint [expr $index + .99] [lindex $color 0] [lindex $color 1] [lindex $color 2]
+                        $::VR($this,colorTransferFunction) AddRGBPoint [expr $index + .01] [lindex $color 0] [lindex $color 1] [lindex $color 2]
+                        $::VR($this,colorTransferFunction) AddRGBPoint [expr $index + .99] [lindex $color 0] [lindex $color 1] [lindex $color 2]
                         
                         #puts "Color at $index finished"
                     } ;#if
@@ -315,7 +384,7 @@ proc buttonLoadNode {this} {
             $::VR($this,opacityScale) EnabledOff
             # 2tresholds
             set treshold1  [expr [$::VR($this,pfed_hist) GetTotalOccurence]/20.]
-            set treshold2 [expr [$::VR($this,pfed_hist) GetTotalOccurence]/10.]
+            set treshold2 [expr [$::VR($this,pfed_hist) GetTotalOccurence]/2]
 
             #counters for loop
             set indexTreshold1 10
@@ -336,51 +405,48 @@ proc buttonLoadNode {this} {
             $::VR($this,opacityTransferFunction) AddPoint  $indexTreshold1  0.0    
             $::VR($this,opacityTransferFunction) AddPoint  $indexTreshold2  0.2
             $::VR($this,opacityTransferFunction) AddPoint [lindex [$::VR($this,pfed_hist) GetRange] 1] .2
-            $colorTransferFunction AddRGBPoint      [lindex [$::VR($this,pfed_hist) GetRange] 0] 0.3 0.3 1.0
-            $colorTransferFunction AddRGBPoint      [expr [lindex [$::VR($this,pfed_hist) GetRange] 1] * 0.25] 0.3 0.3 1.0
-            $colorTransferFunction AddRGBPoint      [expr [lindex [$::VR($this,pfed_hist) GetRange] 1] * 0.5] 0.3 1.0 0.3
-            $colorTransferFunction AddRGBPoint    [expr [lindex [$::VR($this,pfed_hist) GetRange] 1] * 0.75] 1.0 0.3 0.3
-            $colorTransferFunction AddRGBPoint     [lindex [$::VR($this,pfed_hist) GetRange] 1] 1    .3    .3
+            $::VR($this,colorTransferFunction) AddRGBPoint      [lindex [$::VR($this,pfed_hist) GetRange] 0] 0.3 0.3 1.0
+            $::VR($this,colorTransferFunction) AddRGBPoint      [expr [lindex [$::VR($this,pfed_hist) GetRange] 1] * 0.25] 0.3 0.3 1.0
+            $::VR($this,colorTransferFunction) AddRGBPoint      [expr [lindex [$::VR($this,pfed_hist) GetRange] 1] * 0.5] 0.3 1.0 0.3
+            $::VR($this,colorTransferFunction) AddRGBPoint    [expr [lindex [$::VR($this,pfed_hist) GetRange] 1] * 0.75] 1.0 0.3 0.3
+            $::VR($this,colorTransferFunction) AddRGBPoint     [lindex [$::VR($this,pfed_hist) GetRange] 1] 1    .3    .3
         } ;#else
             
 
-        
-          #set gradientOpacityTransferFunction [vtkPiecewiseFunction New]
-        #puts "gradientOpacityTransferFunction: $gradientOpacityTransferFunction"
-        #$gradientOpacityTransferFunction AddPoint 1    1
-            #$gradientOpacityTransferFunction AddPoint  41   0.0
-            #$gradientOpacityTransferFunction AddPoint  45  1
-         #   $gradientOpacityTransferFunction AddPoint 145    1
-
-        set volumeProperty [vtkVolumeProperty New]
-        puts "volumeProperty: $volumeProperty"
-            $volumeProperty SetScalarOpacity $::VR($this,opacityTransferFunction)
-            $volumeProperty SetColor $colorTransferFunction
-            #$volumeProperty SetGradientOpacity $gradientOpacityTransferFunction
-            $volumeProperty SetInterpolationTypeToNearest
-            $volumeProperty ShadeOff
+        set ::VR($this,volumeProperty) [vtkVolumeProperty New]
+        puts "volumeProperty: $::VR($this,volumeProperty)"
+            $::VR($this,volumeProperty) SetScalarOpacity $::VR($this,opacityTransferFunction)
+            $::VR($this,volumeProperty) SetColor $::VR($this,colorTransferFunction)
+            #$::VR($this,volumeProperty) SetGradientOpacity $gradientOpacityTransferFunction
+            $::VR($this,volumeProperty) SetInterpolationTypeToNearest
+            $::VR($this,volumeProperty) ShadeOff
+        $::VR($this,presetSelector) SetPresetVolumeProperty 0 $::VR($this,volumeProperty)
 
         puts "334"
         #Switch here for MIP and Normal Mode
-
-       #set volumeMapperFunction [vtkVolumeRayCastMIPFunction New]
-            #$volumeMapperFunction SetMaximizeMethodToScalarValue
+        if 0 {
             set ::VR($this,volumeMapper) [vtkFixedPointVolumeRayCastMapper New]
             $::VR($this,volumeMapper) SetInput $::VR($this,aImageData)
-           #$::VR($this,volumeMapper) SetVolumeRayCastFunction $volumeMapperFunction
+            }
+            
+        if 1 {
+            set ::VR($this,volumeMapper) [vtkVolumeTextureMapper3D New]
+            $::VR($this,volumeMapper) SetInput $::VR($this,aImageData)
+            $::VR($this,volumeMapper) SetSampleDistance 1
+        }
             puts "348"
         set ::VR($this,volume) [vtkVolume New]
         $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
-        $::VR($this,volume) SetProperty $volumeProperty
-        set matrix [vtkMatrix4x4 New]
+        $::VR($this,volume) SetProperty $::VR($this,volumeProperty)
+        set ::VR($this,matrix) [vtkMatrix4x4 New]
         puts "after setMatrix"
         puts "after cast"
-        $::VR($this,aMRMLNODE) GetIJKToRASMatrix $matrix
+        $::VR($this,aMRMLNODE) GetIJKToRASMatrix $::VR($this,matrix)
         puts "after get"
-        $::VR($this,volume) PokeMatrix $matrix
+        $::VR($this,volume) PokeMatrix $::VR($this,matrix)
         puts "PokeMatrix"
         #Add data to vtkKWVolumePropertyWidget
-        $::VR($this,vpw) SetVolumeProperty $volumeProperty
+        $::VR($this,vpw) SetVolumeProperty $::VR($this,volumeProperty)
         $::VR($this,vpw) ComponentWeightsVisibilityOff
         #$::VR($this,vpw) Update
 
