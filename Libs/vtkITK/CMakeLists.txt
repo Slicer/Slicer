@@ -31,6 +31,7 @@ SET(vtkITK_SRCS
     vtkITKImageToImageFilterSS.h
     vtkITKGradientAnisotropicDiffusionImageFilter.cxx
     vtkITKLevelTracingImageFilter.cxx
+    vtkITKWandImageFilter.cxx
 )
 
 # Abstract/pure virtual classes

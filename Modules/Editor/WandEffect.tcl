@@ -5,7 +5,7 @@ package require Itcl
 #
 if {0} { ;# comment
 
-  LevelTracingEffect an editor effect
+  WandEffect an editor effect
 
 
 # TODO : 
@@ -17,14 +17,14 @@ if {0} { ;# comment
 #
 #########################################################
 # ------------------------------------------------------------------
-#                             LevelTracingEffect
+#                             WandEffect
 # ------------------------------------------------------------------
 #
 # The class definition - define if needed (not when re-sourcing)
 #
-if { [itcl::find class LevelTracingEffect] == "" } {
+if { [itcl::find class WandEffect] == "" } {
 
-  itcl::class LevelTracingEffect {
+  itcl::class WandEffect {
 
     inherit EffectSWidget
 
@@ -43,17 +43,17 @@ if { [itcl::find class LevelTracingEffect] == "" } {
 # ------------------------------------------------------------------
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
-itcl::body LevelTracingEffect::constructor {sliceGUI} {
+itcl::body WandEffect::constructor {sliceGUI} {
 }
 
-itcl::body LevelTracingEffect::destructor {} {
+itcl::body WandEffect::destructor {} {
 }
 
 # ------------------------------------------------------------------
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body LevelTracingEffect::processEvent { } {
+itcl::body WandEffect::processEvent { } {
 
   if { [$this preProcessEvent] } {
     # superclass processed the event, so we don't
@@ -73,14 +73,14 @@ itcl::body LevelTracingEffect::processEvent { } {
     }
     "EnterEvent" {
       $o(cursorActor) VisibilityOn
-      if { [info exists o(tracingActor)] } {
-       $o(tracingActor) VisibilityOn
+      if { [info exists o(wandActor)] } {
+       $o(wandActor) VisibilityOn
       }
     }
     "LeaveEvent" {
       $o(cursorActor) VisibilityOff
-      if { [info exists o(tracingActor)] } {
-       $o(tracingActor) VisibilityOff
+      if { [info exists o(wandActor)] } {
+       $o(wandActor) VisibilityOff
       }
     }
   }
@@ -89,7 +89,7 @@ itcl::body LevelTracingEffect::processEvent { } {
   [$sliceGUI GetSliceViewer] RequestRender
 }
 
-itcl::body LevelTracingEffect::apply {} {
+itcl::body WandEffect::apply {} {
 
   if { [$this getInputLabel] == "" || [$this getOutputLabel] == "" } {
     $this flashCursor 3
@@ -99,57 +99,43 @@ itcl::body LevelTracingEffect::apply {} {
   $this postApply
 }
 
-itcl::body LevelTracingEffect::preview {} {
+itcl::body WandEffect::preview {} {
 
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
 
   if { ![info exists o(ijkToXY)] } {
 
-    set o(tracingFilter) [vtkNew vtkITKLevelTracingImageFilter]
+    set o(wandFilter) [vtkNew vtkITKWandImageFilter]
 
-    set o(ijkToXY) [vtkNew vtkTransform]
-    set o(xyPoints) [vtkNew vtkPoints]
-
-    set o(tracingPolyData) [vtkNew vtkPolyData]
-    set o(tracingMapper) [vtkNew vtkPolyDataMapper2D]
-    set o(tracingActor) [vtkNew vtkActor2D]
-    $o(tracingActor) SetMapper $o(tracingMapper)
-    $o(tracingMapper) SetScalarVisibility 0
-    $o(tracingMapper) SetInput $o(tracingPolyData)
-    set property [$o(tracingActor) GetProperty]
+    set o(wandMapper) [vtkNew vtkImageMapper]
+    set o(wandActor) [vtkNew vtkActor2D]
+    $o(wandActor) SetMapper $o(wandMapper)
+    set property [$o(wandActor) GetProperty]
     $property SetColor 1 1 0
-    $property SetLineWidth 1
-    [$_renderWidget GetRenderer] AddActor2D $o(tracingActor)
-    lappend _actors $o(tracingActor)
+    [$_renderWidget GetRenderer] AddActor2D $o(wandActor)
+    lappend _actors $o(wandActor)
   }
 
-  set $o(tracingFilter) [vtkITKLevelTracingImageFilter New]
-  $o(tracingFilter) SetInput [$this getInputBackground]
-  $o(tracingFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
+  set $o(wandFilter) [vtkITKWandImageFilter New]
+  $o(wandFilter) SetInput [$this getInputBackground]
+  $o(wandFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
 
   # figure out which plane to use
   foreach {i0 j0 k0 l0} [$_layers(background,xyToIJK) MultiplyPoint $x $y 0 1] {}
   set x1 [expr $x + 1]; set y1 [expr $y + 1]
   foreach {i1 j1 k1 l1} [$_layers(background,xyToIJK) MultiplyPoint $x1 $y1 0 1] {}
-  if { $i0 == $i1 } { $o(tracingFilter) SetPlaneToJK }
-  if { $j0 == $j1 } { $o(tracingFilter) SetPlaneToIK }
-  if { $k0 == $k1 } { $o(tracingFilter) SetPlaneToIJ }
+  if { $i0 == $i1 } { $o(wandFilter) SetPlaneToJK }
+  if { $j0 == $j1 } { $o(wandFilter) SetPlaneToIK }
+  if { $k0 == $k1 } { $o(wandFilter) SetPlaneToIJ }
 
-  $o(tracingFilter) Update
-  set polyData [$o(tracingFilter) GetOutput]
-  
-  $o(xyPoints) Reset
-  $o(ijkToXY) SetMatrix $_layers(background,xyToIJK)
-  $o(ijkToXY) Inverse
-  $o(ijkToXY) TransformPoints [$polyData GetPoints] $o(xyPoints)
+  $o(wandFilter) Update
+  set image [$o(wandFilter) GetOutput]
 
-  $o(tracingPolyData) DeepCopy $polyData
-  [$o(tracingPolyData) GetPoints] DeepCopy $o(xyPoints)
-#  [$polyData GetPointData] Initialize
+  $o(wandMapper) SetInput $image
 }
   
-itcl::body LevelTracingEffect::buildOptions {} {
+itcl::body WandEffect::buildOptions {} {
 
   #
   # a cancel button
@@ -158,7 +144,7 @@ itcl::body LevelTracingEffect::buildOptions {} {
   $o(cancel) SetParent [$this getOptionsFrame]
   $o(cancel) Create
   $o(cancel) SetText "Cancel"
-  $o(cancel) SetBalloonHelpString "Cancel level tracing without applying to label map."
+  $o(cancel) SetBalloonHelpString "Cancel wand without applying to label map."
   pack [$o(cancel) GetWidgetName] \
     -side right -anchor e -padx 2 -pady 2 
 
@@ -174,7 +160,7 @@ itcl::body LevelTracingEffect::buildOptions {} {
   }
 }
 
-itcl::body LevelTracingEffect::tearDownOptions { } {
+itcl::body WandEffect::tearDownOptions { } {
   foreach w "cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""

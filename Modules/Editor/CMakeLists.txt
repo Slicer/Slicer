@@ -27,6 +27,7 @@ SET(TCLFILES
   EffectSWidget.tcl
   SaveIslandEffect.tcl ThresholdEffect.tcl RemoveIslandsEffect.tcl
   LevelTracingEffect.tcl
+  WandEffect.tcl
   ChangeIslandEffect.tcl ChangeLabelEffect.tcl
 )
 
@@ -48,6 +49,7 @@ ChangeLabel.png ChangeLabelDisabled.png ChangeLabelSelected.png
 ChooseColor.png ChooseColorDisabled.png ChooseColorSelected.png
 ConnectedComponents.png ConnectedComponentsDisabled.png ConnectedComponentsSelected.png
 LevelTracing.png LevelTracingDisabled.png LevelTracingSelected.png
+Wand.png WandDisabled.png WandSelected.png
 DeleteFiducials.png DeleteFiducialsDisabled.png DeleteFiducialsSelected.png
 RemoveIslands.png RemoveIslandsDisabled.png RemoveIslandsSelected.png
 DilateLabel.png DilateLabelDisabled.png DilateLabelSelected.png

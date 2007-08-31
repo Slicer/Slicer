@@ -71,7 +71,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     ImplicitCube ImplicitEllipse ImplicitRectangle 
     FreehandDrawLabel EraseLabel RemoveIslands ConnectedComponents 
     ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor PaintLabel
-    DefaultTool LevelTracing
+    DefaultTool LevelTracing Wand
   }
 
   # effects that operate from the menu
@@ -215,16 +215,16 @@ itcl::body EditBox::create { } {
   #
 
   $this createButtonRow $parent {DefaultTool SnapToGridOn ChooseColor SlurpColor}
-  $this createButtonRow $parent {LabelOpacity ToggleLabelOutline LabelVisibilityOn}
+  $this createButtonRow $parent {LabelOpacity ToggleLabelOutline LabelVisibilityOn Wand}
   $this createButtonRow $parent {PaintLabel ThresholdPaintLabel FreehandDrawLabel ThresholdBucket}
   $this createButtonRow $parent {EraseLabel ImplicitEllipse ImplicitRectangle ImplicitCube}
   $this createButtonRow $parent {IdentifyIslands ChangeIsland RemoveIslands SaveIsland}
   $this createButtonRow $parent {ErodeLabel DilateLabel Threshold ChangeLabel}
   $this createButtonRow $parent {InterpolateLabels MakeModel Watershed LevelTracing}
   $this createButtonRow $parent {PreviousFiducial NextFiducial FiducialVisibilityOn DeleteFiducials}
-  $this createButtonRow $parent {GoToEditorModule PinOpen}
+  $this createButtonRow $parent {GoToEditorModule PinOpen }
  
-  $this setMode $mode
+  $this setMode $mode 
 
   if { $frame != "" } {
     # nothing, calling code will pack the frame

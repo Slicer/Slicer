@@ -17,4 +17,5 @@ package ifneeded Editor 3.0 [list
   source [file join $dir ThresholdEffect.tcl]
   source [file join $dir RemoveIslandsEffect.tcl]
   source [file join $dir LevelTracingEffect.tcl]
+  source [file join $dir WandEffect.tcl]
 ]
