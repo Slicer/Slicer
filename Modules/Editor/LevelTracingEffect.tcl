@@ -105,7 +105,6 @@ itcl::body LevelTracingEffect::preview {} {
   $this queryLayers $x $y
 
   if { ![info exists o(ijkToXY)] } {
-
     set o(tracingFilter) [vtkNew vtkITKLevelTracingImageFilter]
 
     set o(ijkToXY) [vtkNew vtkTransform]
@@ -115,7 +114,6 @@ itcl::body LevelTracingEffect::preview {} {
     set o(tracingMapper) [vtkNew vtkPolyDataMapper2D]
     set o(tracingActor) [vtkNew vtkActor2D]
     $o(tracingActor) SetMapper $o(tracingMapper)
-    $o(tracingMapper) SetScalarVisibility 0
     $o(tracingMapper) SetInput $o(tracingPolyData)
     set property [$o(tracingActor) GetProperty]
     $property SetColor 1 1 0
@@ -124,7 +122,6 @@ itcl::body LevelTracingEffect::preview {} {
     lappend _actors $o(tracingActor)
   }
 
-  set $o(tracingFilter) [vtkITKLevelTracingImageFilter New]
   $o(tracingFilter) SetInput [$this getInputBackground]
   $o(tracingFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
 
@@ -146,7 +143,6 @@ itcl::body LevelTracingEffect::preview {} {
 
   $o(tracingPolyData) DeepCopy $polyData
   [$o(tracingPolyData) GetPoints] DeepCopy $o(xyPoints)
-#  [$polyData GetPointData] Initialize
 }
   
 itcl::body LevelTracingEffect::buildOptions {} {

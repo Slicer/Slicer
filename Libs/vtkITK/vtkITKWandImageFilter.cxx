@@ -85,6 +85,11 @@ void vtkITKWand(vtkITKWandImageFilter *self, T* scalars,
   ind[1] = seed[1];
   ind[2] = seed[2];
 
+  if (!image->GetRequestedRegion().IsInside( ind ))
+    {
+    return;
+    }
+  
   T threshold = image->GetPixel(ind);
 
   // Extract the 2D slice to process
@@ -136,7 +141,7 @@ void vtkITKWand(vtkITKWandImageFilter *self, T* scalars,
   wand->SetSeed(seed2D);
   wand->SetLower(threshold - static_cast<T>(delta));
   wand->SetUpper(threshold + static_cast<T>(delta));
-  wand->SetReplaceValue(255);
+  wand->SetReplaceValue(1);
 
   wand->SetInput( extract->GetOutput() );
   wand->Update();
@@ -232,6 +237,8 @@ int vtkITKWandImageFilter::RequestData(
     // RGB - convert for now...
     vtkSmartPointer<vtkUnsignedCharArray> grayScalars
       = vtkUnsignedCharArray::New();
+    grayScalars->SetNumberOfTuples( inScalars->GetNumberOfTuples() );
+    
     double in[3];
     unsigned char out;
     for (vtkIdType i=0; i < inScalars->GetNumberOfTuples(); ++i)
@@ -240,7 +247,7 @@ int vtkITKWandImageFilter::RequestData(
 
       out = static_cast<unsigned char>((2125.0 * in[0] +  7154.0 * in[1] +  0721.0 * in[2]) / 10000.0);
 
-      grayScalars->InsertNextTupleValue(&out);
+      grayScalars->SetTupleValue(i, &out);
       }
 
     double *range, delta;

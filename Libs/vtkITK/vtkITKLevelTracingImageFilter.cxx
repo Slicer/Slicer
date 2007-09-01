@@ -274,6 +274,8 @@ int vtkITKLevelTracingImageFilter::RequestData(
     // RGB - convert for now...
     vtkSmartPointer<vtkUnsignedCharArray> grayScalars
       = vtkUnsignedCharArray::New();
+    grayScalars->SetNumberOfTuples( inScalars->GetNumberOfTuples() );
+      
     double in[3];
     unsigned char out;
     for (vtkIdType i=0; i < inScalars->GetNumberOfTuples(); ++i)
@@ -282,7 +284,7 @@ int vtkITKLevelTracingImageFilter::RequestData(
 
       out = static_cast<unsigned char>((2125.0 * in[0] +  7154.0 * in[1] +  0721.0 * in[2]) / 10000.0);
 
-      grayScalars->InsertNextTupleValue(&out);
+      grayScalars->SetTupleValue(i, &out);
       }
 
     vtkITKLevelTracingTrace(this,

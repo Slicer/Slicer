@@ -249,7 +249,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
     }
   else
     {
-    itkWarningMacro(<< "Seed point " << m_Seed << " is outside the image.");
+    //itkWarningMacro(<< "Seed point " << m_Seed << " is outside the image.");
     }
 }
 
