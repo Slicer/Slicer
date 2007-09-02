@@ -132,6 +132,7 @@ itcl::body FiducialsSWidget::processEvent { caller } {
 
   if { $caller == $sliceGUI } {
     set event [$sliceGUI GetCurrentGUIEvent] 
+    set capture 1
     switch $event {
       "KeyPressEvent" {
 
@@ -166,8 +167,15 @@ itcl::body FiducialsSWidget::processEvent { caller } {
               }
             }
           }
+          default {
+            set capture 0
+          }
         }
       }
+    }
+    if { $capture } {
+      $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+      $sliceGUI SetGUICommandAbortFlag 1
     }
   }
 

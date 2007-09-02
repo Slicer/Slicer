@@ -106,7 +106,7 @@ if { [itcl::find class Loader] == "" } {
     variable o ;# array of the objects for this widget, for convenient access
     variable col ;# array of the column indices for easy (and readable) access
 
-    variable _volumeExtensions ".hdr .nhdr .nrrd .mhd .mha .vti .mgz"
+    variable _volumeExtensions ".hdr .nhdr .nrrd .mhd .mha .vti .nii .mgz"
     variable _modelExtensions ".vtk .vtp"
     variable _observerRecords ""
     variable _cleanupDirs ""

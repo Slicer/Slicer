@@ -650,9 +650,6 @@ proc EditorCreateLabelVolume {this} {
   $selectionNode SetReferenceActiveLabelVolumeID [$labelNode GetID]
   [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
 
-  # update the color node to show the label volume's display node's color node
-  $::Editor($this,colorsColor) SetColorNode [[$labelNode GetDisplayNode] GetColorNode]
-
   $labelNode Delete
 
   # update the editor range to be the full range of the background image

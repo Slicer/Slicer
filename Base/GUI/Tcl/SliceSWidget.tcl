@@ -393,8 +393,7 @@ itcl::body SliceSWidget::processEvent { } {
     "TimerEvent" { }
     "CharEvent" - 
     "KeyPressEvent" { 
-      $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
-      $sliceGUI SetGUICommandAbortFlag 1
+      set capture 1
       switch [$_interactor GetKeySym] {
         "v" {
           $_sliceNode SetSliceVisible [expr ![$_sliceNode GetSliceVisible]]
@@ -418,23 +417,15 @@ itcl::body SliceSWidget::processEvent { } {
           ::Box::ShowDialog ColorBox
         }
         default {
-          puts "[$_interactor GetKeyCode], [$_interactor GetKeySym]"
+          set capture 0
         }
+      }
+      if { $capture } {
+        $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+        $sliceGUI SetGUICommandAbortFlag 1
       }
     }
     "KeyReleaseEvent" { 
-    }
-    "CharEvent" {
-      if { 0 } { 
-        puts -nonewline "char event [$_interactor GetKeyCode]"
-        if { [$_interactor GetControlKey] } {
-          puts -nonewline " with control"
-        }
-        if { [$_interactor GetShiftKey] } {
-          puts -nonewline " with shift"
-        }
-        puts ""
-      }
     }
     "FocusInEvent" {
       $o(focusActor) VisibilityOn

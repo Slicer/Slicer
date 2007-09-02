@@ -26,9 +26,9 @@ if { [itcl::find class LevelTracingEffect] == "" } {
 
   itcl::class LevelTracingEffect {
 
-    inherit EffectSWidget
+    inherit Labeler
 
-    constructor {sliceGUI} {EffectSWidget::constructor $sliceGUI} {}
+    constructor {sliceGUI} {Labeler::constructor $sliceGUI} {}
     destructor {}
 
     # methods
@@ -96,7 +96,8 @@ itcl::body LevelTracingEffect::apply {} {
     return
   }
 
-  $this postApply
+  $this applyMaskImage $o(tracingPolyData)
+
 }
 
 itcl::body LevelTracingEffect::preview {} {
@@ -116,7 +117,7 @@ itcl::body LevelTracingEffect::preview {} {
     $o(tracingActor) SetMapper $o(tracingMapper)
     $o(tracingMapper) SetInput $o(tracingPolyData)
     set property [$o(tracingActor) GetProperty]
-    $property SetColor 1 1 0
+    $property SetColor [expr 107/255.] [expr 190/255.] [expr 99/255.]
     $property SetLineWidth 1
     [$_renderWidget GetRenderer] AddActor2D $o(tracingActor)
     lappend _actors $o(tracingActor)
@@ -147,6 +148,7 @@ itcl::body LevelTracingEffect::preview {} {
   
 itcl::body LevelTracingEffect::buildOptions {} {
 
+
   #
   # a cancel button
   #
@@ -157,6 +159,18 @@ itcl::body LevelTracingEffect::buildOptions {} {
   $o(cancel) SetBalloonHelpString "Cancel level tracing without applying to label map."
   pack [$o(cancel) GetWidgetName] \
     -side right -anchor e -padx 2 -pady 2 
+
+  #
+  # a help button
+  #
+  set o(help) [vtkNew vtkSlicerPopUpHelpWidget]
+  $o(help) SetParent [$this getOptionsFrame]
+  $o(help) Create
+  $o(help) SetHelpTitle "Level Tracing"
+  $o(help) SetHelpText "Use this tool to track around similar intensity levels."
+  $o(help) SetBalloonHelpString "Bring up help window."
+  pack [$o(help) GetWidgetName] \
+    -side right -anchor sw -padx 2 -pady 2 
 
   #
   # event observers - TODO: if there were a way to make these more specific, I would...
@@ -171,7 +185,7 @@ itcl::body LevelTracingEffect::buildOptions {} {
 }
 
 itcl::body LevelTracingEffect::tearDownOptions { } {
-  foreach w "cancel" {
+  foreach w "help cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 

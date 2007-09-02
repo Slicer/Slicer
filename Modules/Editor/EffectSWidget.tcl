@@ -126,6 +126,9 @@ itcl::body EffectSWidget::destructor {} {
     foreach a $_cursorActors {
       $_renderer RemoveActor2D $a
     }
+    foreach a $_actors {
+      $_renderer RemoveActor2D $a
+    }
     [$sliceGUI GetSliceViewer] RequestRender
   }
 
@@ -270,6 +273,22 @@ itcl::body EffectSWidget::preProcessEvent { } {
     $this positionCursor
     [$sliceGUI GetSliceViewer] RequestRender
     return 1
+  }
+
+  set event [$sliceGUI GetCurrentGUIEvent] 
+
+  switch $event {
+    "KeyPressEvent" {
+      switch [$_interactor GetKeySym] {
+        "Escape" {
+          after idle ::EffectSWidget::RemoveAll
+          return 1
+        }
+        default {
+          puts [$_interactor GetKeySym]
+        }
+      }
+    }
   }
 
   return 0
