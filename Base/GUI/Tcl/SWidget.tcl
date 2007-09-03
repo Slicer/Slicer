@@ -88,7 +88,7 @@ if { [itcl::find class SWidget] == "" } {
     method queryLayers { x y {z 0} } {}
     method getLayers {} {return [array get _layers]}
     method getObjects {} {return [array get o]}
-    method processEvent {} {}
+    method processEvent {{caller ""} {event ""}} {}
     method pick {} {}
     method highlight {} {}
     method place {x y z} {}

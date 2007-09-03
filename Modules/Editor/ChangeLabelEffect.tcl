@@ -35,7 +35,7 @@ if { [itcl::find class ChangeLabelEffect] == "" } {
     destructor {}
 
     # methods
-    method processEvent {} {}
+    method processEvent {{caller ""} {event ""}} {}
     method preview {} {}
     method apply {} {}
     method buildOptions {} {}
@@ -57,9 +57,9 @@ itcl::body ChangeLabelEffect::destructor {} {
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body ChangeLabelEffect::processEvent { } {
+itcl::body ChangeLabelEffect::processEvent { {caller ""} {event ""} } {
 
-  if { [$this preProcessEvent] } {
+  if { [$this preProcessEvent $caller $event] } {
     # superclass processed the event, so we don't
     return
   }

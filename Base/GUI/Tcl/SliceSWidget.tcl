@@ -40,7 +40,7 @@ if { [itcl::find class SliceSWidget] == "" } {
 
     # methods
     method resizeSliceNode {} {}
-    method processEvent {} {}
+    method processEvent {{caller ""} {event ""}} {}
     method updateAnnotation {x y r a s} {}
     method incrementSlice {} {}
     method decrementSlice {} {}
@@ -184,7 +184,7 @@ itcl::body SliceSWidget::resizeSliceNode {} {
 #
 # handle interactor events
 #
-itcl::body SliceSWidget::processEvent { } {
+itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 

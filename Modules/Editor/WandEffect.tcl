@@ -32,7 +32,7 @@ if { [itcl::find class WandEffect] == "" } {
     destructor {}
 
     # methods
-    method processEvent {} {}
+    method processEvent {{caller ""} {event ""}} {}
     method preview {} {}
     method apply {} {}
     method buildOptions {} {}
@@ -53,9 +53,9 @@ itcl::body WandEffect::destructor {} {
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body WandEffect::processEvent { } {
+itcl::body WandEffect::processEvent { {caller ""} {event ""} } {
 
-  if { [$this preProcessEvent] } {
+  if { [$this preProcessEvent $caller $event] } {
     # superclass processed the event, so we don't
     return
   }

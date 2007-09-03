@@ -35,7 +35,7 @@ if { [itcl::find class ThresholdEffect] == "" } {
     public variable label "1"
 
     # methods
-    method processEvent {} {}
+    method processEvent {{caller ""} {event ""}} {}
     method preview {} {}
     method apply {} {}
     method positionCursor {} {}
@@ -63,9 +63,9 @@ itcl::body ThresholdEffect::destructor {} {
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body ThresholdEffect::processEvent { } {
+itcl::body ThresholdEffect::processEvent { {caller ""} {event ""} } {
 
-  if { [$this preProcessEvent] } {
+  if { [$this preProcessEvent $caller $event] } {
     # superclass processed the event, so we don't
     return
   }

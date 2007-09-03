@@ -45,7 +45,7 @@ if { [itcl::find class EditBox] == "" } {
     method createButtonRow {parent effects} {}
     method findEffects { {path ""} } {}
     method selectEffect {effect} {}
-    method processEvents {caller} {}
+    method processEvent {{caller ""} {event ""}} {}
 
     method effects {} {return [array get _effects]}
   }
@@ -162,7 +162,7 @@ itcl::body EditBox::createButtonRow {parent effects} {
     #
     # TODO: would prefer to use the events for consistency, but apparently
     # there is no way to observe the InvokedEvent from wrapped languages
-    #set tag [$pushButton AddObserver ModifiedEvent "$this processEvents $pushButton"]
+    #set tag [$pushButton AddObserver ModifiedEvent "$this processEvent $pushButton"]
     #lappend _observerRecords [list $pushButton $tag]
     #$pushButton SetCommand $pushButton Modified
     ## AND there is no way to pass a script to the command
@@ -312,7 +312,7 @@ itcl::body EditBox::selectEffect { effect } {
 # -basically just map button events onto methods
 # - not used due to KWWidgets limitations
 #
-itcl::body EditBox::processEvents { caller } {
+itcl::body EditBox::processEvent { {caller ""} {event ""} } {
 
 }
 

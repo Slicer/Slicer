@@ -30,7 +30,7 @@ if { [itcl::find class RegionsSWidget] == "" } {
     variable _roiListObserverTagPairs ""
 
     # methods
-    method processEvent { caller } {}
+    method processEvent {{caller ""} {event ""}} {}
     method seedMovedCallback {seed roiListNode roiIndex} {}
     method seedMovingCallback {seed roiListNode roiIndex} {}
     method addROIListObserver {roiListNode} {}
@@ -115,7 +115,7 @@ itcl::body RegionsSWidget::destructor {} {
 # - create SeedSWidgets for any Regions that are close enough to slice
 #
 
-itcl::body RegionsSWidget::processEvent { caller } {
+itcl::body RegionsSWidget::processEvent { {caller ""} {event ""} } {
 
     if { [info command $caller] == ""} {
         return

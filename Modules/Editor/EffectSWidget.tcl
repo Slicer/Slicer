@@ -47,8 +47,8 @@ if { [itcl::find class EffectSWidget] == "" } {
     variable _cursorAnimationState 0
 
     # methods
-    method processEvent {} {}
-    method preProcessEvent {} {}
+    method processEvent {{caller ""} {event ""}} {}
+    method preProcessEvent {{caller ""} {event ""}} {}
     method positionCursor {} {}
     method createCursor {} {}
     method setCursor {imageData} { $o(cursorMapper) SetInput $imageData }
@@ -257,7 +257,7 @@ itcl::body EffectSWidget::setAnimationState { p } {
 # the superclass, otherwise returns 0 and the
 # subclass should do normal processing
 #
-itcl::body EffectSWidget::preProcessEvent { } {
+itcl::body EffectSWidget::preProcessEvent { {caller ""} {event ""} } {
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
@@ -371,7 +371,7 @@ itcl::body EffectSWidget::preview {} {
 }
 
 
-itcl::body EffectSWidget::processEvent { } {
+itcl::body EffectSWidget::processEvent { {caller ""} {event ""} } {
   # to be overridden by subclass
   # - should include call to superclass preProcessEvent
   #   to handle 'friendly' interaction with other SWidgets

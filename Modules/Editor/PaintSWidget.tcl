@@ -46,7 +46,7 @@ if { [itcl::find class PaintSWidget] == "" } {
     variable _feedbackActors ""
 
     # methods
-    method processEvent {} {}
+    method processEvent {{caller ""} {event ""}} {}
     method positionActors {} {}
     method highlight {} {}
     method createGlyph { {polyData ""} } {}
@@ -189,7 +189,7 @@ itcl::body PaintSWidget::highlight { } {
   }
 }
 
-itcl::body PaintSWidget::processEvent { } {
+itcl::body PaintSWidget::processEvent { {caller ""} {event ""} } {
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 

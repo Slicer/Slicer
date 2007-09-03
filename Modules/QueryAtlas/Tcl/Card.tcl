@@ -141,7 +141,7 @@ if { [itcl::find class Card] == "" } {
 
     # methods
     method getObjects {} {return [array get o]}
-    method processEvent {caller event} {}
+    method processEvent {{caller ""} {event ""}} {}
     method removeActors {} {}
     method addActors {} {}
     method updateActors {} {}
@@ -247,7 +247,7 @@ itcl::body Card::destructor {} {
 
 }
 
-itcl::body Card::processEvent { caller event } {
+itcl::body Card::processEvent { {caller ""} {event ""} } {
 
   if { [info command $caller] == ""} {
       return

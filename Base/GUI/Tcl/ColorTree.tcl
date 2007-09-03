@@ -66,7 +66,7 @@ if { [itcl::find class ColorTree] == "" } {
     # methods
     method clear {} {}
     method expand {item} {}
-    method processEvents {caller} {}
+    method processEvent {{caller ""} {event ""}} {}
     method errorDialog {errorText} {}
     method status {message} {}
 
@@ -233,7 +233,7 @@ itcl::body ColorTree::expand {item} {
 # handle gui events
 # -basically just map button events onto methods
 #
-itcl::body ColorTree::processEvents { caller } {
+itcl::body ColorTree::processEvent { {caller ""} {event ""} } {
 
   if { $caller == $o(addDir) } {
     # TODO: switch to kwwidgets directory browser

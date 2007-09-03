@@ -62,7 +62,7 @@ if { [itcl::find class LoadVolume] == "" } {
     variable _observerRecords ""
 
     # methods
-    method processEvents {caller} {}
+    method processEvent {{caller ""} {event ""}} {}
     method apply {} {}
     method status { message } {}
     method errorDialog {errorText} {}
@@ -126,7 +126,7 @@ itcl::body LoadVolume::constructor {} {
 
   set fileTable [$o(browser) GetFileListTable]
   $fileTable SetSelectionModeToSingle
-  set tag [$fileTable AddObserver AnyEvent "$this processEvents $o(browser)"]
+  set tag [$fileTable AddObserver AnyEvent "$this processEvent $o(browser)"]
   lappend _observerRecords [list $fileTable $tag]
 
   #
@@ -193,7 +193,7 @@ itcl::body LoadVolume::constructor {} {
   $o(apply) Create
   $o(apply) SetText "Apply"
   $o(apply) SetBalloonHelpString "Load the listed files into slicer"
-  set tag [$o(apply) AddObserver ModifiedEvent "$this processEvents $o(apply)"]
+  set tag [$o(apply) AddObserver ModifiedEvent "$this processEvent $o(apply)"]
   lappend _observerRecords [list $o(apply) $tag]
   $o(apply) SetCommand $o(apply) Modified
 
@@ -202,7 +202,7 @@ itcl::body LoadVolume::constructor {} {
   $o(cancel) Create
   $o(cancel) SetText "Cancel"
   $o(cancel) SetBalloonHelpString "Close window without loading files"
-  set tag [$o(cancel) AddObserver ModifiedEvent "$this processEvents $o(cancel)"]
+  set tag [$o(cancel) AddObserver ModifiedEvent "$this processEvent $o(cancel)"]
   lappend _observerRecords [list $o(cancel) $tag]
   $o(cancel) SetCommand $o(cancel) Modified
 
@@ -271,7 +271,7 @@ itcl::body LoadVolume::apply { } {
 # handle gui events
 # -basically just map button events onto methods
 #
-itcl::body LoadVolume::processEvents { caller } {
+itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
 
   if { $caller == $o(apply) } {
     $this apply

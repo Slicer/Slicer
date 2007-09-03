@@ -33,7 +33,7 @@ if { [itcl::find class CsysSWidget] == "" } {
     variable _radius 15
 
     # methods
-    method processEvent {} {}
+    method processEvent {{caller ""} {event ""}} {}
     method createGlyph { {polyData ""} } {}
     method positionActors {} {}
     method highlight {} {}
@@ -333,7 +333,7 @@ itcl::body CsysSWidget::highlight { } {
 
 }
 
-itcl::body CsysSWidget::processEvent { } {
+itcl::body CsysSWidget::processEvent { {caller ""} {event ""} } {
 
 
   set grabID [$sliceGUI GetGrabID]

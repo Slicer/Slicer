@@ -30,7 +30,7 @@ if { [itcl::find class GridSWidget] == "" } {
     public variable cutoff "5"  ;# don't show grid if it's less than 'cutoff' screen pixels
 
     # methods
-    method processEvent { {caller ""} } {}
+    method processEvent {{caller ""} {event ""}} {}
     method updateGrid { } {}
     method resetGrid { } {}
     method addGridLine { startPoint endPoint } {}
@@ -113,7 +113,7 @@ itcl::body GridSWidget::destructor {} {
 #
 # handle interactor events
 #
-itcl::body GridSWidget::processEvent { {caller ""} } {
+itcl::body GridSWidget::processEvent { {caller ""} {event ""} } {
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 

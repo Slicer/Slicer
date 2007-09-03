@@ -35,7 +35,7 @@ if { [itcl::find class MRMLWatcher] == "" } {
     variable _observerRecords ""
 
     # methods
-    method processEvents {caller} {}
+    method processEvent {{caller ""} {event ""}} {}
     method removeObservers {} {}
     method refresh {} {}
   }
@@ -61,10 +61,10 @@ itcl::configbody MRMLWatcher::scene {
   $this removeObservers
   if { $scene != "" } {
     lappend _observerRecords [$scene AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-    lappend _observerRecords [$scene AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvents $scene"]
+    lappend _observerRecords [$scene AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $scene"]
   }
 
-  $this processEvents $scene
+  $this processEvent $scene
 }
 
 # remove entries from the list box
@@ -83,7 +83,7 @@ itcl::body MRMLWatcher::removeObservers { } {
 # handle gui events
 # -basically just map button events onto methods
 #
-itcl::body MRMLWatcher::processEvents { caller } {
+itcl::body MRMLWatcher::processEvent { {caller ""} {event ""} } {
 
   if { $verbose } {
     puts "$this: [clock seconds] processing event from $caller"

@@ -76,7 +76,7 @@ if { [itcl::find class Box] == "" } {
     method hide {} {}
     method setMode {mode} {}
     method togglePin {} {}
-    method processEvents {caller} {}
+    method processEvent {{caller ""} {event ""}} {}
     method errorDialog {errorText} {}
 
     method objects {} {return [array get o]}
@@ -253,7 +253,7 @@ itcl::body Box::togglePin {} {
 # handle gui events
 # -basically just map button events onto methods
 #
-itcl::body Box::processEvents { caller } {
+itcl::body Box::processEvent { {caller ""} {event ""} } {
 
   puts "unknown event from $caller"
 }

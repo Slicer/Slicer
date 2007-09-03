@@ -42,7 +42,7 @@ if { [itcl::find class DrawSWidget] == "" } {
     variable _lastInsertSlice ""
 
     # methods
-    method processEvent { {caller ""} } {}
+    method processEvent {{caller ""} {event ""}} {}
     method positionActors {} {}
     method makeMaskImage {} {}
     method apply {} {}
@@ -389,7 +389,7 @@ itcl::body DrawSWidget::positionActors { } {
   $o(polyData) Modified
 }
 
-itcl::body DrawSWidget::processEvent { {caller ""} } {
+itcl::body DrawSWidget::processEvent { {caller ""} {event ""} } {
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 

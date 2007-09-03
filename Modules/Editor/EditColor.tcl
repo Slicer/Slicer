@@ -51,7 +51,7 @@ if { [itcl::find class EditColor] == "" } {
 
     # methods
     method create {} {}
-    method processEvents {caller} {}
+    method processEvent {{caller ""} {event ""}} {}
     method updateGUI {label} {}
     method updateParameterNode {} {}
     method getColorNode {} {}
@@ -102,7 +102,7 @@ itcl::body EditColor::create { } {
 
   # TODO: need to listen for AnyEvent because there's no we to specify specific events
   foreach object [list [$o(colorSpin) GetWidget] $o(colorOption)] {
-    set tag [$object AddObserver AnyEvent "$this processEvents $object"]
+    set tag [$object AddObserver AnyEvent "$this processEvent $object"]
     lappend _observerRecords [list $object $tag]
   }
 
@@ -124,7 +124,7 @@ itcl::body EditColor::updateParameterNode { } {
   # observe the scene to know when to get the parameter node
   #
   set node [EditorGetParameterNode]
-  set tag [$node AddObserver ModifiedEvent "$this processEvents $node"]
+  set tag [$node AddObserver ModifiedEvent "$this processEvent $node"]
   lappend _observerRecords [list $node $tag]
 }
 
@@ -133,7 +133,7 @@ itcl::body EditColor::updateParameterNode { } {
 # -basically just map button events onto methods
 # - not used due to KWWidgets limitations
 #
-itcl::body EditColor::processEvents { caller } {
+itcl::body EditColor::processEvent { {caller ""} {event ""} } {
 
   set node [EditorGetParameterNode]
   if { $caller == $node } {

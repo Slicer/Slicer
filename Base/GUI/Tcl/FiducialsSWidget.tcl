@@ -32,7 +32,7 @@ if { [itcl::find class FiducialsSWidget] == "" } {
     variable _jumpFiducialIndex 0
 
     # methods
-    method processEvent { caller } {}
+    method processEvent {{caller ""} {event ""}} {}
     method seedMovedCallback {seed fidListNode fidIndex} {}
     method seedMovingCallback {seed fidListNode fidIndex} {}
     method addFiducialListObserver {fidListNode} {}
@@ -117,7 +117,7 @@ itcl::body FiducialsSWidget::destructor {} {
 # - create SeedSWidgets for any Fiducials that are close enough to slice
 #
 
-itcl::body FiducialsSWidget::processEvent { caller } {
+itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
 
     if { [info command $caller] == ""} {
         return

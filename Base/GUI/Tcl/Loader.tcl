@@ -115,7 +115,7 @@ if { [itcl::find class Loader] == "" } {
     method clear {} {}
     method add {paths} {}
     method addRow { path type } {}
-    method processEvents {caller} {}
+    method processEvent {{caller ""} {event ""}} {}
     method apply {} {}
     method errorDialog {errorText} {}
     method status {message} {}
@@ -220,7 +220,7 @@ itcl::body Loader::constructor { {root ""} } {
   $o(addDir) Create
   $o(addDir) SetText "Add Directory"
   $o(addDir) SetBalloonHelpString "Add all contents of a directory to the list of files to load"
-  set tag [$o(addDir) AddObserver ModifiedEvent "$this processEvents $o(addDir)"]
+  set tag [$o(addDir) AddObserver ModifiedEvent "$this processEvent $o(addDir)"]
   lappend _observerRecords [list $o(addDir) $tag]
   $o(addDir) SetCommand $o(addDir) Modified
 
@@ -229,7 +229,7 @@ itcl::body Loader::constructor { {root ""} } {
   $o(addFile) Create
   $o(addFile) SetText "Add File(s)"
   $o(addFile) SetBalloonHelpString "Add a file or multiple files to the list of files to load"
-  set tag [$o(addFile) AddObserver ModifiedEvent "$this processEvents $o(addFile)"]
+  set tag [$o(addFile) AddObserver ModifiedEvent "$this processEvent $o(addFile)"]
   lappend _observerRecords [list $o(addFile) $tag]
   $o(addFile) SetCommand $o(addFile) Modified
 
@@ -238,7 +238,7 @@ itcl::body Loader::constructor { {root ""} } {
   $o(apply) Create
   $o(apply) SetText "Apply"
   $o(apply) SetBalloonHelpString "Load the listed files into slicer"
-  set tag [$o(apply) AddObserver ModifiedEvent "$this processEvents $o(apply)"]
+  set tag [$o(apply) AddObserver ModifiedEvent "$this processEvent $o(apply)"]
   lappend _observerRecords [list $o(apply) $tag]
   $o(apply) SetCommand $o(apply) Modified
 
@@ -247,7 +247,7 @@ itcl::body Loader::constructor { {root ""} } {
   $o(cancel) Create
   $o(cancel) SetText "Cancel"
   $o(cancel) SetBalloonHelpString "Close window without loading files"
-  set tag [$o(cancel) AddObserver ModifiedEvent "$this processEvents $o(cancel)"]
+  set tag [$o(cancel) AddObserver ModifiedEvent "$this processEvent $o(cancel)"]
   lappend _observerRecords [list $o(cancel) $tag]
   $o(cancel) SetCommand $o(cancel) Modified
 
@@ -471,7 +471,7 @@ itcl::body Loader::apply { } {
 # handle gui events
 # -basically just map button events onto methods
 #
-itcl::body Loader::processEvents { caller } {
+itcl::body Loader::processEvent { {caller ""} {event ""} } {
 
   if { $caller == $o(addDir) } {
     # TODO: switch to kwwidgets directory browser

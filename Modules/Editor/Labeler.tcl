@@ -49,12 +49,11 @@ if { [itcl::find class Labeler] == "" } {
     public variable drawOver 1
     public variable polygonDebugViewer 0
 
-    variable _lastEventPoint ""
-    variable _lastInsertSlice ""
-
     # methods
     method makeMaskImage {polyData} {}
     method applyMaskImage {polyData} {}
+    method buildOptions {} {}
+    method tearDownOptions {} {}
   }
 }
 
@@ -279,3 +278,61 @@ itcl::body Labeler::applyMaskImage {polyData} {
 
   return
 }
+
+itcl::body Labeler::buildOptions { } {
+  
+  set o(paintOver) [vtkKWCheckButtonWithLabel New]
+  $o(paintOver) SetParent [$this getOptionsFrame]
+  $o(paintOver) Create
+  $o(paintOver) SetLabelText "Paint Over: "
+  $o(paintOver) SetBalloonHelpString "Allow effect to overwrite non-zero labels."
+  pack [$o(paintOver) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 
+
+  set o(paintThreshold) [vtkKWCheckButtonWithLabel New]
+  $o(paintThreshold) SetParent [$this getOptionsFrame]
+  $o(paintThreshold) Create
+  $o(paintThreshold) SetLabelText "Threshold Painting: "
+  $o(paintThreshold) SetBalloonHelpString "Enable/Disable threshold mode for labeling."
+  pack [$o(paintThreshold) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 
+
+  set o(paintRange) [vtkKWRange New]
+  $o(paintRange) SetParent [$this getOptionsFrame]
+  $o(paintRange) Create
+  $o(paintRange) SetLabelText "Min/Max for Threshold Labeling"
+  $o(paintRange) SetWholeRange 0 2000
+  $o(paintRange) SetRange 50 2000
+  $o(paintRange) SetReliefToGroove
+  $o(paintRange) SetBalloonHelpString "In threshold mode, the label will only be set if the background value is within this range."
+  # don't pack this, it gets conditionally packed below
+
+  #
+  # event observers - TODO: if there were a way to make these more specific, I would...
+  #
+  set tag [$o(range) AddObserver AnyEvent "after idle $this previewOptions"]
+  lappend _observerRecords "$o(range) $tag"
+  set tag [$o(apply) AddObserver AnyEvent "$this applyOptions; after idle ::EffectSWidget::RemoveAll"]
+  lappend _observerRecords "$o(apply) $tag"
+  set tag [$o(useForPainting) AddObserver AnyEvent "$this setPaintThreshold"]
+  lappend _observerRecords "$o(useForPainting) $tag"
+  set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
+  lappend _observerRecords "$o(cancel) $tag"
+
+  if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
+    $this errorDialog "Need to have background and label layers to use threshold"
+    after idle ::EffectSWidget::RemoveAll
+  }
+}
+
+itcl::body Labeler::tearDownOptions { } {
+  if { [info exists o(paintOver)] } {
+    foreach w "paintOver paintThreshold paintRange" {
+      if { [info exists o($w)] } {
+        $o($w) SetParent ""
+        pack forget [$o($w) GetWidgetName] 
+      }
+    }
+  }
+}
+

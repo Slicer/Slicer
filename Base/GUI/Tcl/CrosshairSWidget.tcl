@@ -32,7 +32,7 @@ if { [itcl::find class CrosshairSWidget] == "" } {
     variable _compositeNode
 
     # methods
-    method processEvent { {caller ""} } {}
+    method processEvent {{caller ""} {event ""}} {}
     method updateCrosshair { } {}
     method resetCrosshair { } {}
     method addCrosshairLine { startPoint endPoint } {}
@@ -127,7 +127,7 @@ itcl::configbody CrosshairSWidget::rgba {
 #
 # handle interactor events
 #
-itcl::body CrosshairSWidget::processEvent { {caller ""} } {
+itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 

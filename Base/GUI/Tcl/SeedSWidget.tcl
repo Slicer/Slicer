@@ -46,7 +46,7 @@ if { [itcl::find class SeedSWidget] == "" } {
     variable _currentPosition "0 0 0"
 
     # methods
-    method processEvent {} {}
+    method processEvent {{caller ""} {event ""}} {}
     method positionActors {} {}
     method pick {} {}
     method place {x y z} {}
@@ -255,7 +255,7 @@ itcl::body SeedSWidget::highlight { } {
   }
 }
 
-itcl::body SeedSWidget::processEvent { } {
+itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 

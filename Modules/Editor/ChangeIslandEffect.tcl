@@ -32,7 +32,7 @@ if { [itcl::find class ChangeIslandEffect] == "" } {
     destructor {}
 
     # methods
-    method processEvent {} {}
+    method processEvent {{caller ""} {event ""}} {}
     method preview {} {}
     method apply {} {}
     method buildOptions {} {}
@@ -54,9 +54,9 @@ itcl::body ChangeIslandEffect::destructor {} {
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body ChangeIslandEffect::processEvent { } {
+itcl::body ChangeIslandEffect::processEvent { {caller ""} {event ""} } {
 
-  if { [$this preProcessEvent] } {
+  if { [$this preProcessEvent $caler $event] } {
     # superclass processed the event, so we don't
     return
   }

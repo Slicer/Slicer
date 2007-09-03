@@ -44,7 +44,7 @@ if { [itcl::find class ColorBox] == "" } {
     # methods
     method create {} {}
     method update {} {}
-    method processEvents {caller} {}
+    method processEvent {{caller ""} {event ""}} {}
     method getColorNode {} {}
 
   }
@@ -85,7 +85,7 @@ itcl::body ColorBox::create { } {
     $o(colors) SetText "Cannot display colors.\nNo label layer is selected."
     $o(colors) Create
 
-    set tag [$o(colors) AddObserver AnyEvent "$this processEvents $o(colors)"]
+    set tag [$o(colors) AddObserver AnyEvent "$this processEvent $o(colors)"]
     lappend _observerRecords [list $o(colors) $tag]
 
   } else {
@@ -100,7 +100,7 @@ itcl::body ColorBox::create { } {
     $o(colors) SetColorNode [$::slicer3::MRMLScene GetNodeByID [$colorNode GetTypeAsIDString]]
     $colorNode Delete
 
-    set tag [$o(colors) AddObserver AnyEvent "$this processEvents $o(colors)"]
+    set tag [$o(colors) AddObserver AnyEvent "$this processEvent $o(colors)"]
     lappend _observerRecords [list $o(colors) $tag]
   }
   pack [$o(colors) GetWidgetName] \
@@ -117,7 +117,7 @@ itcl::body ColorBox::create { } {
 # -basically just map button events onto methods
 # - not used due to KWWidgets limitations
 #
-itcl::body ColorBox::processEvents { caller } {
+itcl::body ColorBox::processEvent { {caller ""} {event ""} } {
 
   if { $caller == $o(colors) } {
     if { $selectCommand != "" } {
