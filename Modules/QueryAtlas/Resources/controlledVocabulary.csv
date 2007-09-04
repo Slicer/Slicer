@@ -1,0 +1,475 @@
+Status,ID,Review,Mapped to parent structure,FreeSurfer,Hemisphere,TissueClass,BIRN_String,BIRN_ID,BIRN_Title,BIRN_URI,NeuroNames_ID,NeuroNames_String,UMLS_CID,UMLS_CN,FMA_ID,FMA_String
+,0,,,Unknown,,,,,,,,,,,,
+,1,,,Left-Cerebral-Exterior,Either 'l' or 'r',Either 'gray' or 'wm',Superficial_features_of_cerebral_cortex,birnOrgAnatomy_273,Superficial features of cerebral cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_273,,,,,,
+,2,,,Left-Cerebral-White-Matter,,,Cerebral_white_matter,birnOrgAnatomy_201,Cerebral white matter,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_201,171,CEREBRAL WHITE MATTER,C0152295,,,
+,3,,,Left-Cerebral-Cortex,,,Cerebral_cortex,birnOrgAnatomy_064,Cerebral cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_064,20,CEREBRAL CORTEX,C0007776,,,
+,4,,,Left-Lateral-Ventricle,,,Lateral_ventricle,birnOrgAnatomy_014,Lateral ventricle,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_014,,,C0152279,,,
+UMLS?,5,,,Left-Inf-Lat-Vent,,,Inferior_horn_of_the_lateral_ventricle,birnOrgAnatomy_018,Inferior horn of the lateral ventricle,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_018,,,C0152283,,,
+,6,,,Left-Cerebellum-Exterior,,,Cerebellum,birnOrgAnatomy_063,Cerebellum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_063,640,CEREBELLUM,C0007765,,,
+,7,,,Left-Cerebellum-White-Matter,,,Cerebellar_white_matter,birnOrgAnatomy_101,Cerebellar white matter,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_101,688,CEREBELLAR WHITE MATTER,C0152381,,,
+,8,,,Left-Cerebellum-Cortex,,,Cerebellar_cortex,birnOrgAnatomy_100,Cerebellar cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_100,644,CEREBELLAR CORTEX,,,,
+,9,,,Left-Thalamus,,,Thalamus,birnOrgAnatomy_093,Thalamus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_093,283,THALAMUS,C0039729,,,
+,10,,,Left-Thalamus-Proper,,,Thalamus,birnOrgAnatomy_093,Thalamus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_093,283,THALAMUS,C0039729,,,
+,11,,,Left-Caudate,,,Caudate_nucleus,birnOrgAnatomy_229,Caudate nucleus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_229,208,CAUDATE NUCLEUS,C0007461,,,
+,12,,,Left-Putamen,,,Putamen,birnOrgAnatomy_837,Putamen,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_837,212,putamen,,,,
+,13,,,Left-Pallidum,,,Globus_pallidus,birnOrgAnatomy_236,Globus pallidus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_236,213,GLOBUS PALLIDUS,C0017651,,,
+UMLS?,14,,,3rd-Ventricle,,,Third_ventricle,birnOrgAnatomy_760,Third ventricle,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_760,,,C0149555,,,
+,15,,,4th-Ventricle,,,Fourth_ventricle,birnOrgAnatomy_013,Fourth ventricle,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_013,,,
+,16,,,Brain-Stem,,,Brainstem,birnOrgAnatomy_062,Brainstem,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_062,,,C0006121
+?,17,,,Left-Hippocampus,,,Hippocampal_formation,birnOrgAnatomy_071,Hippocampal formation,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_071,159,HIPPOCAMPAL FORMATION,C0175202
+,18,,,Left-Amygdala,,,Amygdala,birnOrgAnatomy_237,Amygdala,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_237,219,AMYGDALA,C0002708
+,19,,,Left-Insula,,,Insula,birnOrgAnatomy_214,Insula,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_214,93,INSULA,C0021640
+,20,,,Left-Operculum,,,Opercular_part_of_inferior_frontal_gyrus,birnOrgAnatomy_552,Opercular part of inferior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_552,69,opercular part of inferior frontal gyrus (H),C0262296
+?,21,,,Line-1,,,,,,,,,
+,22,,,Line-2,,,,,,,,,
+,23,,,Line-3,,,,,,,,,
+,24,,,CSF,,,,,,,,,
+,25,,,Left-Lesion,,,,,,,,,
+O,26,,,Left-Accumbens-area,,,Nucleus_accumbens,birnOrgAnatomy_080,Nucleus accumbens,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_080,259,nucleus accumbens,
+,27,,,Left-Substancia-Nigra,,,Substantia_nigra,birnOrgAnatomy_152,Substantia nigra,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_152,527,SUBSTANTIA NIGRA,C0038590
+?,28,,,Left-VentralDC,,,,,,,,,
+,29,,,Left-undetermined,,,,,,,,,
+,30,,,Left-vessel,,,,,,,,,
+
+,31,,,Left-choroid-plexus,,,,,,,,,
+?,32,,,Left-F3orb,,,Orbital_part_of_inferior_frontal_gyrus,birnOrgAnatomy_553,Orbital part of inferior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_553,70,orbital part of inferior frontal gyrus (H),C0262300
+,33,,,Left-lOg,,,Lateral_orbital_gyrus,birnOrgAnatomy_560,Lateral orbital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_560,74,lateral orbital gyrus,C0262268
+S,34,,,Left-aOg,,,Orbital_gyri_complex,birnOrgAnatomy_555,Orbital gyri complex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_555,73,ORBITAL GYRI,C0152301
+,35,,,Left-mOg,,,Medial_orbital_gyrus,birnOrgAnatomy_561,Medial orbital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_561,75,medial orbital gyrus,C0175179
+,36,,,Left-pOg,,,Posterior_orbital_gyrus,birnOrgAnatomy_562,Posterior orbital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_562,-1761421113,posterior orbital gyrus (H),C0458323
+,37,,,Left-Stellate,,,,,,,,,
+,38,,,Left-Porg,,,Posterior_orbital_gyrus,birnOrgAnatomy_562,Posterior orbital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_562,-1761421113,posterior orbital gyrus (H),C0458323
+S,39,,,Left-Aorg,,,Orbital_gyri_complex,birnOrgAnatomy_555,Orbital gyri complex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_555,73,ORBITAL GYRI,C0152301
+,40,,,Right-Cerebral-Exterior,,,Superficial_features_of_cerebral_cortex,birnOrgAnatomy_273,Superficial features of cerebral cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_273,,,
+,41,,,Right-Cerebral-White-Matter,,,Cerebral_white_matter,birnOrgAnatomy_201,Cerebral white matter,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_201,171,CEREBRAL WHITE MATTER,C0152295
+,42,,,Right-Cerebral-Cortex,,,Cerebral_cortex,birnOrgAnatomy_064,Cerebral cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_064,20,CEREBRAL CORTEX,C0007776
+,43,,,Right-Lateral-Ventricle,,,Lateral_ventricle,birnOrgAnatomy_014,Lateral ventricle,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_014,,,C0152279
+,44,,,Right-Inf-Lat-Vent,,,Inferior_horn_of_the_lateral_ventricle,birnOrgAnatomy_018,Inferior horn of the lateral ventricle,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_018,,,C0152283
+,45,,,Right-Cerebellum-Exterior,,,Cerebellum,birnOrgAnatomy_063,Cerebellum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_063,640,CEREBELLUM,C0007765
+,46,,,Right-Cerebellum-White-Matter,,,Cerebellar_white_matter,birnOrgAnatomy_101,Cerebellar white matter,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_101,688,CEREBELLAR WHITE MATTER,C0152381
+,47,,,Right-Cerebellum-Cortex,,,Cerebellar_cortex,birnOrgAnatomy_100,Cerebellar cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_100,644,CEREBELLAR CORTEX,
+,48,,,Right-Thalamus,,,Thalamus,birnOrgAnatomy_093,Thalamus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_093,283,THALAMUS,C0039729
+,49,,,Right-Thalamus-Proper,,,Thalamus,birnOrgAnatomy_093,Thalamus,http:/
+/www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_093,283,THALAMUS,C0039729
+,50,,,Right-Caudate,,,Caudate_nucleus,birnOrgAnatomy_229,Caudate nucleus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_229,208,CAUDATE NUCLEUS,C0007461
+,51,,,Right-Putamen,,,Putamen,birnOrgAnatomy_837,Putamen,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_837,212,putamen,
+,52,,,Right-Pallidum,,,Globus_pallidus,birnOrgAnatomy_236,Globus pallidus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_236,213,GLOBUS PALLIDUS,C0017651
+?,53,,,Right-Hippocampus,,,Hippocampal_formation,birnOrgAnatomy_071,Hippocampal formation,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_071,159,HIPPOCAMPAL FORMATION,C0175202
+,54,,,Right-Amygdala,,,Amygdala,birnOrgAnatomy_237,Amygdala,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_237,219,AMYGDALA,C0002708
+,55,,,Right-Insula,,,Insula,birnOrgAnatomy_214,Insula,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_214,93,INSULA,C0021640
+,56,,,Right-Operculum,,,Opercular_part_of_inferior_frontal_gyrus,birnOrgAnatomy_552,Opercular part of inferior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_552,69,opercular part of inferior frontal gyrus (H),C0262296
+,57,,,Right-Lesion,,,,,,,,,
+,58,,,Right-Accumbens-area,,,Nucleus_accumbens,birnOrgAnatomy_080,Nucleus accumbens,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_080,259,nucleus accumbens,
+,59,,,Right-Substancia-Nigra,,,Substantia_nigra,birnOrgAnatomy_152,Substantia nigra,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_152,527,SUBSTANTIA NIGRA,C0038590
+,60,,,Right-VentralDC,,,,,,,,,
+,61,,,Right-undetermined,,,,,,,,,
+,62,,,Right-vessel,,,,,,,,,
+,63,,,Right-choroid-plexus,,,,,,,,,
+,64,,,Right-F3orb,,,Orbital_part_of_inferior_frontal_gyrus,birnOrgAnatomy_553,Orbital part of inferior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_553,70,orbital part of inferior frontal gyrus (H),C0262300
+,65,,,Right-lOg,,,Lateral_orbital_gyrus,birnOrgAnatomy_560,Lateral orbital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_560,74,lateral orbital gyrus,C0262268
+S,66,,,Right-aOg,,,Orbital_gyri_complex,birnOrgAnatomy_555,Orbital gyri complex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_555,73,ORBITAL GYRI,C0152301
+,67,,,Right-mOg,,,Medial_orbital_gyrus,birnOrgAnatomy_561,Medial orbital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_561,75,medial orbital gyrus,C0175179
+,68,,,Right-pOg,,,Posterior_orbital_gyrus,birnOrgAnatomy_562,Posterior orbital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_562,-1761421113,posterior orbital gyrus (H),C0458323
+,69,,,Right-Stellate,,,,,,,,,
+,70,,,Right-Porg,,,Posterior_orbital_gyrus,birnOrgAnatomy_562,Posterior orbital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_562,-1761421113,posterior orbital gyrus (H),C0458323
+S,71,,,Right-Aorg,,,Orbital_gyri_complex,birnOrgAnatomy_555,Orbital gyri complex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_555,73,ORBITAL GYRI,C0152301
+S,72,,,5th-Ventricle,,,Septal_pellucidum,birnOrgAnatomy_189,Septal pellucidum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_189,238,SEPTUM PELLUCIDUM,C0036700
+?,73,,,Left-Interior,,,,,,,,,
+,74,,,Right-Interior,,,,,,,,,
+,75,,,Left-Lateral-Ventricles,,,Lateral_ventricle,birnOrgAnatomy_014,Lateral ventricle,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_014,,,C0152279
+,76,,,Right-Lateral-Ventricles,,,Lateral_ventricle,birnOrgAnatomy_014,Lateral ventricle,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_014,,,C0152279
+,77,,,WM-hypointensities,,,,,,,,,
+,78,,,Left-WM-hypointensities,,,,,,,,,
+,79,,,Right-WM-hypointensities,,,,,,,,,
+,80,,,non-WM-hypointensities,,,,,,,,,
+,81,,,Left-non-WM-hypointensities,,,,,,,,,
+,82,,,Right-non-WM-hypointensities,,,,,,,,,
+,83,,,Left-F1,,,Superior_frontal_gyrus,birnOrgAnatomy_580,Superior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_580,65,superior frontal gyrus,C0152296
+,84,,,Right-F1,,,Superior_frontal_gyrus,birnOrgAnatomy_580,Superior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_580,65,superior frontal gyrus,C0152296
+,85,,,Optic-Chiasm,,,Optic_chiasm,birnOrgAnatomy_750,Optic chiasm,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_750,442,optic chiasm,C0029126
+,86,,,Corpus_Callosum,,,Corpus_callosum,birnOrgAnatomy_719,Corpus callosum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_719,,,C0010090
+,96,,,Left-Amygdala-Anterior,,,Amygdala,birnOrgAnatomy_237,Amygdala,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_237,219,AMYGDALA,C0002708
+,97,,,Right-Amygdala-Anterior,,,Amygdala,birnOrgAnatomy_237,Amygdala,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_237,219,AMYGDALA,C0002708
+,98,,,Dura,,,,,,,,,
+,100,,,Left-wm-intensity-abnormality,,,,,,,,,
+,101,,,Left-caudate-intensity-abnormality,,,,,,,,,
+,102,,,Left-putamen-intensity-abnormality,,,,,,,,,
+,103,,,Left-accumbens-intensity-abnormality,,,,,,,,,
+,104,,,Left-pallidum-intensity-abnormality,,,,,,,,,
+,105,,,Left-amygdala-intensity-abnormality
+,106,,,Left-hippocampus-intensity-abnormali
+,107,,,Left-thalamus-intensity-abnormality
+,108,,,Left-VDC-intensity-abnormality
+,109,,,Right-wm-intensity-abnormality
+,110,,,Right-caudate-intensity-abnormality
+,111,,,Right-putamen-intensity-abnormality
+,112,,,Right-accumbens-intensity-abnormalit
+,113,,,Right-pallidum-intensity-abnormality
+,114,,,Right-amygdala-intensity-abnormality
+,115,,,Right-hippocampus-intensity-abnormal
+,116,,,Right-thalamus-intensity-abnormality
+,117,,,Right-VDC-intensity-abnormality
+,118,,,Epidermis
+,119,,,Conn-Tissue
+,120,,,SC-Fat/Muscle
+,121,,,Cranium,,,,,,,,,
+,122,,,CSF-SA,,,,,,,,,
+,123,,,Muscle,,,,,,,,,
+,124,,,Ear,,,,,,,,,
+,125,,,Adipose,,,,,,,,,
+,126,,,Spinal-Cord,,,Spinal_cord_as_organ,,,,,,
+,127,,,Soft-Tissue,,,,,,,,,
+?,128,,,Nerve,,,,,,,,,
+,129,,,Bone,,,,,,,,,
+,130,,,Air,,,,,,,,,
+,131,,,Orbital-Fat,,,,,,,,,
+,132,,,Tongue,,,,,,,,,
+,133,,,Nasal-Structures,,,,,,,,,
+,134,,,Globe,,,Regional_part_of_eye,birnOrgAnatomy_057,Regional part of eye,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_057,,,
+,135,,,Teeth,,,,,,,,,
+,136,,,Left-Caudate/Putamen,,,Neostriatum,birnOrgAnatomy_079,Neostriatum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_079,207,STRIATUM,C0162512
+,137,,,Right-Caudate/Putamen,,,Neostriatum,birnOrgAnatomy_079,Neostriatum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_079,207,STRIATUM,C0162512
+,138,,,Left-Claustrum,,,Claustrum,birnOrgAnatomy_463,Claustrum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_463,234,claustrum,C0008910
+,139,,,Right-Claustrum,,,Claustrum,birnOrgAnatomy_463,Claustrum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_463,234,claustrum,C0008910
+,140,,,Cornea,,,,,,,,,
+,142,,,Diploe,,,,,,,,,
+,143,,,Vitreous-Humor,,,,,,,,,
+,144,,,Lens,,,,,,,,,
+,145,,,Aqueous-Humor,,,,,,,,,
+,146,,,Outer-Table,,,,,,,,,
+,147,,,Inner-Table,,,,,,,,,
+,148,,,Periosteum,,,,,,,,,
+,149,,,Endosteum,,,,,,,,,
+?,150,,,R/C/S,,,,,,,,,
+,151,,,Iris,,,,,,,,,
+,152,,,SC-Adipose/Muscle,,,,,,,,,
+,153,,,SC-Tissue,,,,,,,,,
+,154,,,Orbital-Adipose,,,,,,,,,
+
+
+,193,,,Left-hippocampal_fissure,,,,,,,,,
+S,194,,,Left-CADG-head,,,Hippocampal_formation,birnOrgAnatomy_071,Hippocampal formation,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_071,159,HIPPOCAMPAL FORMATION,C0175202
+,195,,,Left-subiculum,,,Subiculum,birnOrgAnatomy_131,Subiculum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_131,,,
+,196,,,Left-fimbria,,,Fimbria,birnOrgAnatomy_356,Fimbria,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_356,169,fimbria of hippocampus,C0152315
+,197,,,Right-hippocampal_fissure,,,,,,,,,
+S,198,,,Right-CADG-head,,,Hippocampal_formation,birnOrgAnatomy_071,Hippocampal formation,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_071,159,HIPPOCAMPAL FORMATION,C0175202
+,199,,,Right-subiculum,,,Subiculum,birnOrgAnatomy_131,Subiculum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_131,,,
+,200,,,Right-fimbria,,,Fimbria,birnOrgAnatomy_356,Fimbria,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_356,169,fimbria of hippocampus,C0152315
+,201,,,alveus,,,Alveus,birnOrgAnatomy_721,Alveus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_721,168,alveus,C0228247
+?,202,,,perforant_pathway,,,,,,,,,
+,203,,,parasubiculum,,,,,,,,,
+,204,,,presubiculum,,,Presubiculum,birnOrgAnatomy_341,Presubiculum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_341,149,presubiculum,C0175194
+,205,,,subiculum,,,Subiculum,birnOrgAnatomy_131,Subiculum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_131,,,
+,206,,,CA1,,,CA1,birnOrgAnatomy_126,CA1,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_126,165,CA1 field,C0694598
+,207,,,CA2,,,CA2,birnOrgAnatomy_362,CA2,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_362,166,CA2 field,C0694599
+,208,,,CA3,,,CA3,birnOrgAnatomy_127,CA3,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_127,167,CA3 field,C0694600
+,209,,,CA4,,,Hilus_of_dentate_gyrus,birnOrgAnatomy_359,Hilus of dentate gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_359,163,hilus of dentate gyrus,C1134421
+S,210,,,GC-DG,,,Dentate_gyrus,birnOrgAnatomy_123,Dentate gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_123,,,
+?,211,,,HATA,,,,,,,,,
+,212,,,fimbria,,,Fimbria,birnOrgAnatomy_356,Fimbria,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_356,169,fimbria of hippocampus,C0152315
+,213,,,lateral_ventricle,,,Lateral_ventricle,birnOrgAnatomy_014,Lateral ventricle,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_014,,,C0152279
+,214,,,molecular_layer_HP,,,Hippocampal_molecular_layer,birnOrgAnatomy_128,Hippocampal molecular layer,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_128,,,
+,215,,,hippocampal_fissure,,,,,,,,,
+,216,,,entorhinal_cortex,,,Entorhinal_cortex,birnOrgAnatomy_067,Entorhinal cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_067,150,entorhinal area,C0175196
+,217,,,molecular_layer_subiculum,,,Subiculum,birnOrgAnatomy_131,Subiculum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_131,,,
+,218,,,Amygdala,,,Amygdala,birnOrgAnatomy_237,Amygdala,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_237,219,AMYGDALA,C0002708
+,219,,,Cerebral_White_Matter,,,Cerebral_white_matter,birnOrgAnatomy_201,Cerebral white matter,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_201,171,CEREBRAL WHITE MATTER,C0152295
+,220,,,Cerebral_Cortex,,,Cerebral_cortex,birnOrgAnatomy_064,Cerebral cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_064,20,CEREBRAL CORTEX,C0007776
+,221,,,Inf_Lat_Vent,,,Inferior_horn_of_the_lateral_ventricle,birnOrgAnatomy_018,Inferior horn of the lateral ventricle,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_018,,,C0152283
+?,222,,,Ectorhinal,,,Fusiform_gyrus,birnOrgAnatomy_314,Fusiform gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_314,121,fusiform gyrus,C0152313
+,222,,,Perirhinal,,,Parahippocampal_gyrus,birnOrgAnatomy_252,Parahippocampal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_252,146,PARAHIPPOCAMPAL GYRUS,C0228249
+,223,,,Cerebral_White_Matter_Edge,,,,,,,,,
+,224,,,fMRI_Background,,,,,,,,,
+
+
+,# lymph node and vascular labels,,,,,,,,,,,,
+,331,,,Aorta,,,,,,,,,
+,332,,,Left-Common-IliacA,,,,,,,,,
+,333,,,Right-Common-IliacA,,,,,,,,,
+,334,,,Left-External-IliacA,,,,,,,,,
+,335,,,Right-External-IliacA,,,,,,,,,
+,336,,,Left-Internal-IliacA,,,,,,,,,
+,337,,,Right-Internal-IliacA,,,,,,,,,
+,338,,,Left-Lateral-SacralA,,,,,,,,,
+,339,,,Right-Lateral-SacralA,,,,,,,,,
+,340,,,Left-ObturatorA
+,341,,,Right-ObturatorA
+,342,,,Left-Internal-PudendalA
+,343,,,Right-Internal-PudendalA
+,344,,,Left-UmbilicalA
+,345,,,Right-UmbilicalA
+,346,,,Left-Inf-RectalA
+,347,,,Right-Inf-RectalA
+,348,,,Left-Common-IliacV
+,349,,,Right-Common-IliacV
+,350,,,Left-External-IliacV
+,351,,,Right-External-IliacV
+,352,,,Left-Internal-IliacV
+,353,,,Right-Internal-IliacV
+,354,,,Left-ObturatorV
+,355,,,Right-ObturatorV
+,356,,,Left-Internal-PudendalV,,,,,,,,,
+,357,,,Right-Internal-PudendalV,,,,,,,,,
+,358,,,Pos-Lymph,,,,,,,,,
+,359,,,Neg-Lymph,,,,,,,,,
+
+,400,,,V1,,,Calcarine_sulcus,birnOrgAnatomy_276,Calcarine sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_276,,,
+,401,,,V2,,,Occipital_gyrus,birnOrgAnatomy_632,Occipital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_632,134,occipital gyrus (M),C1110642
+,402,,,BA44,,,Frontal_operculum,birnOrgAnatomy_589,Frontal operculum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_589,39,frontal operculum,C0149547
+,403,,,BA45,,,Triangular_part_of_inferior_frontal_gyrus,birnOrgAnatomy_554,Triangular part of inferior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_554,68,triangular part of inferior frontal gyrus (H),C0262350
+,404,,,BA4a,,,Precentral_gyrus,birnOrgAnatomy_579,Precentral gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_579,71,precentral gyrus,C0152299
+,405,,,BA4p,,,Precentral_gyrus,birnOrgAnatomy_579,Precentral gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_579,71,precentral gyrus,C0152299
+,406,,,BA6,,,Precentral_gyrus,birnOrgAnatomy_579,Precentral gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_579,71,precentral gyrus,C0152299
+,407,,,BA2,,,Postcentral_gyrus,birnOrgAnatomy_619,Postcentral gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_619,87,postcentral gyrus,C0152302
+?,408,,,BAun1,,,Postcentral_gyrus,birnOrgAnatomy_619,Postcentral gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_619,87,postcentral gyrus,C0152302
+,409,,,BAun2,,,Postcentral_gyrus,birnOrgAnatomy_619,Postcentral gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_619,87,postcentral gyrus,C0152302
+
+,# Below is the color table for the cortical labels of the seg volume,,,,,,,,,
+,# created by mri_aparc2aseg in which the aseg cortex label is replaced,,,,,,,,,
+,# by the labels in the aparc. It also supports wm labels that will,,,,,,,,,
+,"# eventually be created by mri_aparc2aseg. Otherwise, the aseg labels",,,,,,,,,
+,# do not change from above. The cortical lables are the same as in,,,,,,,,,
+,"# colortable_desikan_killiany.txt, except that left hemisphere has",,,,,,,,,
+,# 1000 added to the index and the right has 2000 added.  The label,,,,,,,,,
+,# names are also prepended with ctx-lh or ctx-rh. The white matter,,,,,,,,,
+,"# labels are the same as in colortable_desikan_killiany.txt, except",,,,,,,,,
+,# that left hemisphere has 3000 added to the index and the right has,,,,,,,,,
+,# 4000 added. The label names are also prepended with wm-lh or wm-rh.,,,,,,,,,
+,# Centrum semiovale is also labled with 5001 (left) and 5002 (right).,,,,,,,,,
+,# Even further below is the color table for aparc.a2005s.,,,,,,,,,
+
+,1000,,,ctx-lh-unknown,,,,,,
+,1001,,,ctx-lh-bankssts,,,Banks_of_superior_temporal_sulcus,birnOrgAnatomy_331,Banks of superior temporal sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_331
+,1002,,,ctx-lh-caudalanteriorcingulate,,,Caudal_anterior_cingulate_cortex,birnOrgAnatomy_546,Caudal anterior cingulate cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_546,,,
+,1003,,,ctx-lh-caudalmiddlefrontal,,,Caudal_middle_frontal_gyrus,birnOrgAnatomy_574,Caudal middle frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_574,,,
+,1004,,,ctx-lh-corpuscallosum,,,Corpus_callosum,birnOrgAnatomy_719,Corpus callosum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_719,,,C0010090
+,1005,,,ctx-lh-cuneus,,,Cuneus_cortex,birnOrgAnatomy_628,Cuneus cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_628,139,cuneus,C0152307
+,1006,,,ctx-lh-entorhinal,,,Entorhinal_cortex,birnOrgAnatomy_067,Entorhinal cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_067,150,entorhinal area,C0175196
+,1007,,,ctx-lh-fusiform,,,Fusiform_gyrus,birnOrgAnatomy_314,Fusiform gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_314,121,fusiform gyrus,C0152313
+,1008,,,ctx-lh-inferiorparietal,,,Inferior_parietal_cortex,birnOrgAnatomy_616,Inferior parietal cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_616,89,INFERIOR PARIETAL LOBULE,C0152304
+,1009,,,ctx-lh-inferiortemporal,,,Inferior_temporal_gyrus,birnOrgAnatomy_319,Inferior temporal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_319,120,inferior temporal gyrus,
+,1010,,,ctx-lh-isthmuscingulate,,,Isthmus_of_cingulate_cortex,birnOrgAnatomy_543,Isthmus of cingulate cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_543,,,
+,1011,,,ctx-lh-lateraloccipital,,,Lateral_occipital_cortex,birnOrgAnatomy_630,Lateral occipital cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_630,137,lateral occipital gyrus (H),C0228228
+,1012,,,ctx-lh-lateralorbitofrontal,,,Lateral_orbital_frontal_cortex,birnOrgAnatomy_565,Lateral orbital frontal cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_565,,,
+,1013,,,ctx-lh-lingual,,,Lingual_gyrus,birnOrgAnatomy_631,Lingual gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_631,140,lingual gyrus,C0152308
+,1014,,,ctx-lh-medialorbitofrontal,,,Medial_orbital_frontal_cortex,birnOrgAnatomy_566,Medial orbital frontal cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_566,37,FRONTAL LOBE,C0016733
+,1015,,,ctx-lh-middletemporal,,,Middle_temporal_gyrus,birnOrgAnatomy_316,Middle temporal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_316,119,middle temporal gyrus,C0152310
+,1016,,,ctx-lh-parahippocampal,,,Parahippocampal_gyrus,birnOrgAnatomy_252,Parahippocampal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_252,146,PARAHIPPOCAMPAL GYRUS,C0228249
+?,1017,,,ctx-lh-paracentral,,,Paracentral_sulcus,birnOrgAnatomy_602,Paracentral sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_602,51,paracentral sulcus (H),C0228204
+?,1018,,,ctx-lh-parsopercularis,,,Frontal_operculum,birnOrgAnatomy_589,Frontal operculum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_589,39,frontal operculum,C0149547
+,1019,,,ctx-lh-parsorbitalis,,,Orbital_operculum,birnOrgAnatomy_600,Orbital operculum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_600,40,orbital operculum,C0694580
+,1020,,,ctx-lh-parstriangularis,,,Triangular_part_of_inferior_frontal_gyrus,birnOrgAnatomy_554,Triangular part of inferior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_554,68,triangular part of inferior frontal gyrus (H),C0262350
+,1021,,,ctx-lh-pericalcarine,,,Pericalcarine_cortex,birnOrgAnatomy_618,Pericalcarine cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_618,,,
+,1022,,,ctx-lh-postcentral,,,Postcentral_gyrus,birnOrgAnatomy_619,Postcentral gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_619,87,postcentral gyrus,C0152302
+,1023,,,ctx-lh-posteriorcingulate,,,Posterior_cingulate_cortex,birnOrgAnatomy_544,Posterior cingulate cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_544,,,
+,1024,,,ctx-lh-precentral,,,Precentral_gyrus,birnOrgAnatomy_579,Precentral gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_579,71,precentral gyrus,C0152299
+,1025,,,ctx-lh-precuneus,,,Precuneus_cortex,birnOrgAnatomy_620,Precuneus cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_620,92,precuneus,C0152306
+,1026,,,ctx-lh-rostralanteriorcingulate,,,Rostral_anterior_cingulate_cortex,birnOrgAnatomy_547,Rostral anterior cingulate cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_547,,,
+,1027,,,ctx-lh-rostralmiddlefrontal,,,Rostral_middle_frontal_gyrus,birnOrgAnatomy_573,Rostral middle frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_573,,,
+,1028,,,ctx-lh-superiorfrontal,,,Superior_frontal_gyrus,birnOrgAnatomy_580,Superior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_580,65,superior frontal gyrus,C0152296
+,1029,,,ctx-lh-superiorparietal,,,Superior_parietal_cortex,birnOrgAnatomy_621,Superior parietal cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_621,88,superior parietal lobule,C0152303
+,1030,,,ctx-lh-superiortemporal,,,Superior_temporal_gyrus,birnOrgAnatomy_315,Superior temporal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_315,118,superior temporal gyrus,C0152309
+,1031,,,ctx-lh-supramarginal,,,Supramarginal_gyrus,birnOrgAnatomy_625,Supramarginal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_625,90,supramarginal gyrus,C0228214
+,1032,,,ctx-lh-frontalpole,,,Frontal_pole,birnOrgAnatomy_590,Frontal pole,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_590,38,frontal pole,C0149546
+,1033,,,ctx-lh-temporalpole,,,Temporal_pole,birnOrgAnatomy_329,Temporal pole,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_329,108,temporal pole,
+,1034,,,ctx-lh-transversetemporal,,,Transverse_temporal_cortex,birnOrgAnatomy_529,Transverse temporal cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_529
+
+,2000,,,ctx-rh-unknown,,,,,,
+,2001,,,ctx-rh-bankssts,,,,,,
+,2002,,,ctx-rh-caudalanteriorcingulate,,,,,,
+,2003,,,ctx-rh-caudalmiddlefrontal,,,,,,
+,2004,,,ctx-rh-corpuscallosum,,,,,,
+,2005,,,ctx-rh-cuneus,,,,,,
+,2006,,,ctx-rh-entorhinal,,,,,,
+,2007,,,ctx-rh-fusiform,,,,,,
+,2008,,,ctx-rh-inferiorparietal,,,,,,
+,2009,,,ctx-rh-inferiortemporal,,,,,,
+,2010,,,ctx-rh-isthmuscingulate,,,,,,
+,2011,,,ctx-rh-lateraloccipital,,,,,,
+,2012,,,ctx-rh-lateralorbitofrontal,,,,,,
+,2013,,,ctx-rh-lingual,,,,,,
+,2014,,,ctx-rh-medialorbitofrontal
+,2015,,,ctx-rh-middletemporal
+,2016,,,ctx-rh-parahippocampal
+,2017,,,ctx-rh-paracentral
+,2018,,,ctx-rh-parsopercularis
+,2019,,,ctx-rh-parsorbitalis
+,2020,,,ctx-rh-parstriangularis
+,2021,,,ctx-rh-pericalcarine
+,2022,,,ctx-rh-postcentral
+,2023,,,ctx-rh-posteriorcingulate
+,2024,,,ctx-rh-precentral
+,2025,,,ctx-rh-precuneus
+,2026,,,ctx-rh-rostralanteriorcingulate
+,2027,,,ctx-rh-rostralmiddlefrontal
+,2028,,,ctx-rh-superiorfrontal
+,2029,,,ctx-rh-superiorparietal
+,2030,,,ctx-rh-superiortemporal
+,2031,,,ctx-rh-supramarginal
+,2032,,,ctx-rh-frontalpole
+,2033,,,ctx-rh-temporalpole
+,2034,,,ctx-rh-transversetemporal
+
+,3000,,,wm-lh-unknown
+,3001,,,wm-lh-bankssts
+,3002,,,wm-lh-caudalanteriorcingulate
+,3003,,,wm-lh-caudalmiddlefrontal
+,3004,,,wm-lh-corpuscallosum
+,3005,,,wm-lh-cuneus
+,3006,,,wm-lh-entorhinal
+,3007,,,wm-lh-fusiform
+,3008,,,wm-lh-inferiorparietal
+,3009,,,wm-lh-inferiortemporal
+,3010,,,wm-lh-isthmuscingulate
+,3011,,,wm-lh-lateraloccipital
+,3012,,,wm-lh-lateralorbitofrontal
+,3013,,,wm-lh-lingual
+,3014,,,wm-lh-medialorbitofrontal
+,3015,,,wm-lh-middletemporal
+,3016,,,wm-lh-parahippocampal
+,3017,,,wm-lh-paracentral
+,3018,,,wm-lh-parsopercularis
+,3019,,,wm-lh-parsorbitalis
+,3020,,,wm-lh-parstriangularis
+,3021,,,wm-lh-pericalcarine
+,3022,,,wm-lh-postcentral
+,3023,,,wm-lh-posteriorcingulate
+,3024,,,wm-lh-precentral
+,3025,,,wm-lh-precuneus
+,3026,,,wm-lh-rostralanteriorcingulate
+,3027,,,wm-lh-rostralmiddlefrontal
+,3028,,,wm-lh-superiorfrontal
+,3029,,,wm-lh-superiorparietal
+,3030,,,wm-lh-superiortemporal
+,3031,,,wm-lh-supramarginal
+,3032,,,wm-lh-frontalpole
+,3033,,,wm-lh-temporalpole
+,3034,,,wm-lh-transversetemporal
+,4000,,,wm-rh-unknown
+,4001,,,wm-rh-bankssts
+,4002,,,wm-rh-caudalanteriorcingulate
+,4003,,,wm-rh-caudalmiddlefrontal
+,4004,,,wm-rh-corpuscallosum
+,4005,,,wm-rh-cuneus
+,4006,,,wm-rh-entorhinal
+,4007,,,wm-rh-fusiform
+,4008,,,wm-rh-inferiorparietal
+,4009,,,wm-rh-inferiortemporal
+,4010,,,wm-rh-isthmuscingulate
+,4011,,,wm-rh-lateraloccipital
+,4012,,,wm-rh-lateralorbitofrontal
+,4013,,,wm-rh-lingual
+,4014,,,wm-rh-medialorbitofrontal
+,4015,,,wm-rh-middletemporal
+,4016,,,wm-rh-parahippocampal
+,4017,,,wm-rh-paracentral
+,4018,,,wm-rh-parsopercularis
+,4019,,,wm-rh-parsorbitalis
+,4020,,,wm-rh-parstriangularis
+,4021,,,wm-rh-pericalcarine
+,4022,,,wm-rh-postcentral
+,4023,,,wm-rh-posteriorcingulate
+,4024,,,wm-rh-precentral
+,4025,,,wm-rh-precuneus
+,4026,,,wm-rh-rostralanteriorcingulate
+,4027,,,wm-rh-rostralmiddlefrontal
+,4028,,,wm-rh-superiorfrontal
+,4029,,,wm-rh-superiorparietal
+,4030,,,wm-rh-superiortemporal
+,4031,,,wm-rh-supramarginal
+,4032,,,wm-rh-frontalpole
+,4033,,,wm-rh-temporalpole
+,4034,,,wm-rh-transversetemporal
+,5001,,,wm-lh-centrum-semiovale
+,5002,,,wm-rh-centrum-semiovale
+
+,# Below is the color table for the cortical labels of the seg volume,,,
+,# created by mri_aparc2aseg (with --a2005 flag) in which the aseg,,,,,,,,,,,,
+,# cortex label is replaced by the labels in the aparc.a2005. The,,,,,,,,,,,,
+,"# cortical lables are the same as in Simple_surface_labels2005.txt,",,,,,,,,,,,,
+,# except that left hemisphere has 1100 added to the index and the,,,,,,,,,,,,
+,# right has 2100 added.  The label names are also prepended with,,,,,,,,,,,,
+,# ctx-lh or ctx-rh.,,,,,,,,,,,,
+
+,1100,,,ctx-lh-Unknown,,,,,,,,,
+,1101,,,ctx-lh-Corpus_callosum,,,Corpus_callosum ,birnOrgAnatomy_719,Corpus callosum,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_719,,,C0010090
+?,1102,,,ctx-lh-G_and_S_Insula_ONLY_AVERAGE,,,Insula ,birnOrgAnatomy_214,Insula,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_214,93,INSULA,C0021640
+,1103,,,ctx-lh-G_cingulate-Isthmus,,,Isthmus_of_cingulate_gyrus ,birnOrgAnatomy_537,Isthmus of cingulate gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_537,145,isthmus of cingulate gyrus,C0175192
+,1104,,,ctx-lh-G_cingulate-Main_part,,,Cingulate_gyrus ,birnOrgAnatomy_251,Cingulate gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_251,141,CINGULATE GYRUS,C0018427
+,1105,,,ctx-lh-G_cuneus,,,Cuneus_cortex ,birnOrgAnatomy_628,Cuneus cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_628,139,cuneus,C0152307
+,1106,,,ctx-lh-G_frontal_inf-Opercular_part,,,Opercular_part_of_inferior_frontal_gyrus ,birnOrgAnatomy_552,Opercular part of inferior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_552,69,opercular part of inferior frontal gyrus (H),C0262296
+,1107,,,ctx-lh-G_frontal_inf-Orbital_part,,,Orbital_part_of_inferior_frontal_gyrus ,birnOrgAnatomy_553,Orbital part of inferior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_553,70,orbital part of inferior frontal gyrus (H),C0262300
+,1108,,,ctx-lh-G_frontal_inf-Triangular_part,,,Triangular_part_of_inferior_frontal_gyrus ,birnOrgAnatomy_554,Triangular part of inferior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_554,68,triangular part of inferior frontal gyrus (H),C0262350
+,1109,,,ctx-lh-G_frontal_middle,,,Middle_frontal_gyrus ,birnOrgAnatomy_578,Middle frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_578,66,middle frontal gyrus,C0152297
+,1110,,,ctx-lh-G_frontal_superior,,,Superior_frontal_gyrus ,birnOrgAnatomy_580,Superior frontal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_580,65,superior frontal gyrus,C0152296
+S,1111,,,ctx-lh-G_frontomarginal,,,Lateral_orbital_gyrus,birnOrgAnatomy_560,Lateral orbital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_560,74,lateral orbital gyrus,C0262268
+S,1112,,,ctx-lh-G_insular_long,,,Insula ,birnOrgAnatomy_214,Insula,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_214,93,INSULA,C0021640
+S,1113,,,ctx-lh-G_insular_short,,,Insula ,birnOrgAnatomy_214,Insula,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_214,93,INSULA,C0021640
+,1114,,,ctx-lh-G_and_S_occipital_inferior,,,Inferior_occipital_gyrus ,birnOrgAnatomy_629,Inferior occipital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_629,138,inferior occipital gyrus (M),C1110643
+S,1115,,,ctx-lh-G_occipital_middle,,,Occipital_gyrus,birnOrgAnatomy_632,Occipital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_632,134,occipital gyrus (M),C1110642
+,1116,,,ctx-lh-G_occipital_superior,,,Superior_occipital_gyrus ,birnOrgAnatomy_633,Superior occipital gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_633,136,superior occipital gyrus (H),C0228230
+,1117,,,ctx-lh-G_occipit-temp_lat-Or_fusiform,,,Fusiform_gyrus ,birnOrgAnatomy_314,Fusiform gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_314,121,fusiform gyrus,C0152313
+,1118,,,ctx-lh-G_occipit-temp_med-Lingual_part,,,Lingual_gyrus ,birnOrgAnatomy_631,Lingual gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_631,140,lingual gyrus,C0152308
+,1119,,,ctx-lh-G_occipit-temp_med-Parahippocampal_part,,,Parahippocampal_gyrus ,birnOrgAnatomy_252,Parahippocampal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_252,146,PARAHIPPOCAMPAL GYRUS,C0228249
+,1120,,,ctx-lh-G_orbital,,,Orbital_gyri_complex ,birnOrgAnatomy_555,Orbital gyri complex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_555,73,ORBITAL GYRI,C0152301
+,1121,,,ctx-lh-G_paracentral,,,,,,,,,
+,1122,,,ctx-lh-G_parietal_inferior-Angular_part,,,Angular_gyrus ,birnOrgAnatomy_624,Angular gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_624,91,angular gyrus,C0152305
+,1123,,,ctx-lh-G_parietal_inferior-Supramarginal_part,,,Supramarginal_gyrus ,birnOrgAnatomy_625,Supramarginal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_625,90,supramarginal gyrus,C0228214
+,1124,,,ctx-lh-G_parietal_superior,,,Superior_parietal_cortex ,birnOrgAnatomy_621,Superior parietal cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_621,88,superior parietal lobule,C0152303
+,1125,,,ctx-lh-G_postcentral,,,Postcentral_gyrus ,birnOrgAnatomy_619,Postcentral gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_619,87,postcentral gyrus,C0152302
+,1126,,,ctx-lh-G_precentral,,,Precentral_gyrus ,birnOrgAnatomy_579,Precentral gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_579,71,precentral gyrus,C0152299
+,1127,,,ctx-lh-G_precuneus,,,Precuneus_cortex ,birnOrgAnatomy_620,Precuneus cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_620,92,precuneus,C0152306
+,1128,,,ctx-lh-G_rectus,,,Gyrus_rectus ,birnOrgAnatomy_576,Gyrus rectus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_576,76,gyrus rectus,C0152300
+,1129,,,ctx-lh-G_subcallosal,,,Subcallosal_area,birnOrgAnatomy_210,Subcallosal area,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_210,260,subcallosal area,C0228282
+,1130,,,ctx-lh-G_subcentral,,,,,,,,,
+,1131,,,ctx-lh-G_temporal_inferior,,,Inferior_temporal_gyrus ,birnOrgAnatomy_319,Inferior temporal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_319,120,inferior temporal gyrus,
+,1132,,,ctx-lh-G_temporal_middle,,,Middle_temporal_gyrus ,birnOrgAnatomy_316,Middle temporal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_316,119,middle temporal gyrus,C0152310
+,1133,,,ctx-lh-G_temp_sup-G_temp_transv_and_interm_S,,,Banks_of_superior_temporal_sulcus,birnOrgAnatomy_331,Banks of superior temporal sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_331,,,
+S,1134,,,ctx-lh-G_temp_sup-Lateral_aspect,,,Superior_temporal_gyrus,birnOrgAnatomy_315,Superior temporal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_315,118,superior temporal gyrus,C0152309
+S,1135,,,ctx-lh-G_temp_sup-Planum_polare,,,Superior_temporal_gyrus,birnOrgAnatomy_315,Superior temporal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_315,118,superior temporal gyrus,C0152309
+S,1136,,,ctx-lh-G_temp_sup-Planum_tempolare,,,Superior_temporal_gyrus,birnOrgAnatomy_315,Superior temporal gyrus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_315,118,superior temporal gyrus,C0152309
+,1137,,,ctx-lh-G_and_S_transverse_frontopolar,,,Transverse_frontopolar_gyri_complex ,birnOrgAnatomy_567,Transverse frontopolar gyri complex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_567,962901580,TRANSVERSE FRONTOPOLAR GYRI (H),
+,1138,,,ctx-lh-Lat_Fissure-ant_sgt-ramus_horizontal,,,Anterior_horizontal_limb_of_lateral_sulcus,birnOrgAnatomy_585,Anterior horizontal limb of lateral sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_585,50,anterior horizontal limb of lateral sulcus (H),C0262190
+,1139,,,ctx-lh-Lat_Fissure-ant_sgt-ramus_vertical,,,Anterior_ascending_limb_of_lateral_sulcus,birnOrgAnatomy_584,Anterior ascending limb of lateral sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_584,49,anterior ascending limb of lateral sulcus (H),C0262186
+S,1140,,,ctx-lh-Lat_Fissure-post_sgt,,,Lateral_sulcus,birnOrgAnatomy_305,Lateral sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_305,,,C0228187
+?,1141,,,ctx-lh-Medial_wall,,,,,,,,,
+,1142,,,ctx-lh-Pole_occipital,,,,,,,,,
+,1143,,,ctx-lh-Pole_temporal,,,Temporal_pole ,birnOrgAnatomy_329,Temporal pole,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_329,108,temporal pole,
+,1144,,,ctx-lh-S_calcarine,,,Calcarine_sulcus ,birnOrgAnatomy_276,Calcarine sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_276,,,
+?,1145,,,ctx-lh-S_central,,,,,,,,,
+S,1146,,,ctx-lh-S_central_insula,,,Insula ,birnOrgAnatomy_214,Insula,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_214,93,INSULA,C0021640
+,1147,,,ctx-lh-S_cingulate-Main_part_and_Intracingulate,,,Cingulate_sulcus ,birnOrgAnatomy_302,Cingulate sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_302,,,C0228189
+S,1148,,,ctx-lh-S_cingulate-Marginalis_part,,,Cingulate_sulcus ,birnOrgAnatomy_302,Cingulate sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_302,,,C0228189
+S,1149,,,ctx-lh-S_circular_insula_anterior,,,Circular_sulcus_of_insula ,birnOrgAnatomy_303,Circular sulcus of insula,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_303,,,C0228258
+S,1150,,,ctx-lh-S_circular_insula_inferior,,,Circular_sulcus_of_insula ,birnOrgAnatomy_303,Circular sulcus of insula,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_303,,,C0228258
+S,1151,,,ctx-lh-S_circular_insula_superior,,,Circular_sulcus_of_insula ,birnOrgAnatomy_303,Circular sulcus of insula,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_303,,,C0228258
+?,1152,,,ctx-lh-S_collateral_transverse_ant,,,Collateral_sulcus ,birnOrgAnatomy_304,Collateral sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_304,,,C0228226
+,1153,,,ctx-lh-S_collateral_transverse_post,,,Collateral_sulcus ,birnOrgAnatomy_304,Collateral sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_304,,,C0228226
+,1154,,,ctx-lh-S_frontal_inferior,,,Inferior_frontal_sulcus ,birnOrgAnatomy_592,Inferior frontal sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_592,44,inferior frontal sulcus (H),
+,1155,,,ctx-lh-S_frontal_middle,,,Middle_frontal_sulcus ,birnOrgAnatomy_598,Middle frontal sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_598,43,middle frontal sulcus (H),C0228199
+,1156,,,ctx-lh-S_frontal_superior,,,Superior_frontal_sulcus ,birnOrgAnatomy_608,Superior frontal sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_608,42,superior frontal sulcus (H),C0228198
+,1157,,,ctx-lh-S_frontomarginal,,,,,,,,,
+,1158,,,ctx-lh-S_intermedius_primus-Jensen,,,,,,,,,
+,1159,,,ctx-lh-S_intraparietal-and_Parietal_transverse,,,,,,,,,
+S,1160,,,ctx-lh-S_occipital_anterior,,,Inferior_temporal_sulcus,birnOrgAnatomy_836,Inferior temporal sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_836,112,inferior temporal sulcus (H),C0228242
+,1161,,,ctx-lh-S_occipital_middle_and_Lunatus,,,,,,,,,
+,1162,,,ctx-lh-S_occipital_superior_and_transversalis,,,,,,,,,
+S,1163,,,ctx-lh-S_occipito-temporal_lateral,,,Occipitotemporal_sulcus,birnOrgAnatomy_307,Occipitotemporal sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_307,,,C0228245
+S,1164,,,ctx-lh-S_occipito-temporal_medial_and_S_Lingual,,,Occipitotemporal_sulcus,birnOrgAnatomy_307,Occipitotemporal sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_307,,,C0228245
+,1165,,,ctx-lh-S_orbital-H_shapped,,,Orbital_sulcus ,birnOrgAnatomy_601,Orbital sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_601,61,orbital sulcus (H),C0228206
+,1166,,,ctx-lh-S_orbital_lateral,,,Lateral_orbital_sulcus ,birnOrgAnatomy_596,Lateral orbital sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_596,63,lateral orbital sulcus,
+?,1167,,,ctx-lh-S_orbital_medial-Or_olfactory,,,Olfactory_sulcus ,birnOrgAnatomy_599,Olfactory sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_599,60,olfactory sulcus,C0228205
+,1168,,,ctx-lh-S_paracentral,,,Paracentral_sulcus ,birnOrgAnatomy_602,Paracentral sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_602,51,paracentral sulcus (H),C0228204
+,1169,,,ctx-lh-S_parieto_occipital,,,Parieto-occipital_sulcus ,birnOrgAnatomy_308,Parieto-occipital sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_308,,,C0228191
+,1170,,,ctx-lh-S_pericallosal,,,,,,,,,
+,1171,,,ctx-lh-S_postcentral,,,,,,,,,
+,1172,,,ctx-lh-S_precentral-Inferior-part,,,Inferior_precentral_sulcus ,birnOrgAnatomy_593,Inferior precentral sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_593,53,inferior precentral sulcus (H),C0262257
+,1173,,,ctx-lh-S_precentral-Superior-part,,,Superior_precentral_sulcus ,birnOrgAnatomy_609,Superior precentral sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_609,52,superior precentral sulcus,C0262338
+,1174,,,ctx-lh-S_subcentral_ant,,,Anterior_subcentral_sulcus ,birnOrgAnatomy_586,Anterior subcentral sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_586,54,anterior subcentral sulcus,
+,1175,,,ctx-lh-S_subcentral_post,,,,,,,,,
+,1176,,,ctx-lh-S_suborbital,,,Superior_rostral_sulcus,birnOrgAnatomy_611,Superior rostral sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_611,56,superior rostral sulcus (H),C0694583
+,1177,,,ctx-lh-S_subparietal,,,,,,,,,
+,1178,,,ctx-lh-S_supracingulate,,,,,,,,,
+,1179,,,ctx-lh-S_temporal_inferior,,,Inferior_temporal_sulcus ,birnOrgAnatomy_836,Inferior temporal sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_836,112,inferior temporal sulcus (H),C0228242
+,1180,,,ctx-lh-S_temporal_superior,,,Superior_temporal_sulcus ,birnOrgAnatomy_321,Superior temporal sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_321,111,superior temporal sulcus,C0228237
+,1181,,,ctx-lh-S_temporal_transverse,,,Transverse_temporal_sulcus ,birnOrgAnatomy_328,Transverse temporal sulcus,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_328,110,transverse temporal sulcus (H),C0228239
