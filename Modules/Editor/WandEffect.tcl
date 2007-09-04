@@ -101,25 +101,21 @@ itcl::body WandEffect::apply {} {
 
 itcl::body WandEffect::preview {} {
 
+  # 
+  # get the event position to use as a seed
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
 
-  if { ![info exists o(ijkToXY)] } {
-
+  #
+  # create pipeline as needed
+  if { ![info exists o(wandFilter)] } {
     set o(wandFilter) [vtkNew vtkITKWandImageFilter]
-
-    set o(wandMapper) [vtkNew vtkImageMapper]
-    set o(wandActor) [vtkNew vtkActor2D]
-    $o(wandActor) SetMapper $o(wandMapper)
-    set property [$o(wandActor) GetProperty]
-    $property SetColor 1 1 0
-    [$_renderWidget GetRenderer] AddActor2D $o(wandActor)
-    lappend _actors $o(wandActor)
   }
 
-  set $o(wandFilter) [vtkITKWandImageFilter New]
   $o(wandFilter) SetInput [$this getInputBackground]
   $o(wandFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
+  set percent [$o(percentage) GetValue]
+  $o(wandFilter) SetDynamicRangePercentage $percent
 
   # figure out which plane to use
   foreach {i0 j0 k0 l0} [$_layers(background,xyToIJK) MultiplyPoint $x $y 0 1] {}
@@ -130,12 +126,25 @@ itcl::body WandEffect::preview {} {
   if { $k0 == $k1 } { $o(wandFilter) SetPlaneToIJ }
 
   $o(wandFilter) Update
-  set image [$o(wandFilter) GetOutput]
 
-  $o(wandMapper) SetInput $image
+  $_layers(label,node) SetAndObserveImageData [$o(wandFilter) GetOutput] 
 }
   
 itcl::body WandEffect::buildOptions {} {
+  #
+  # a slider to set the percentage of the dynamic range
+  #
+  set o(percentage) [vtkNew vtkKWScaleWithEntry]
+  $o(percentage) SetParent [$this getOptionsFrame]
+  $o(percentage) PopupModeOn
+  $o(percentage) SetResolution 0.01
+  $o(percentage) Create
+  $o(percentage) SetRange 0.0 1.0
+  $o(percentage) SetValue 0.1
+  $o(percentage) SetLabelText "Dynamic range percentage"
+  $o(percentage) SetBalloonHelpString "Set the percentage of the dynamic range to group with the seed (default 0.1)."
+  pack [$o(percentage) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 
 
   #
   # a cancel button
@@ -151,17 +160,19 @@ itcl::body WandEffect::buildOptions {} {
   #
   # event observers - TODO: if there were a way to make these more specific, I would...
   #
+#  set tag [$o(percentage) AddObserver AnyEvent "after idle $this previewOptions"]
+#  lappend _observerRecords "$o(percentage) $tag"
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
 
   if { [$this getInputBackground] == "" || [$this getOutputLabel] == "" } {
-    $this errorDialog "Background and Label map needed for Threshold"
+    $this errorDialog "Background and Label map needed for wand"
     after idle ::EffectSWidget::RemoveAll
   }
 }
 
 itcl::body WandEffect::tearDownOptions { } {
-  foreach w "cancel" {
+  foreach w "percentage cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 
