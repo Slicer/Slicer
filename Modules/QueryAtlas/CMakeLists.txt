@@ -4,10 +4,13 @@ PROJECT(QueryAtlas)
 # Sources
 
 SET(QueryAtlas_SRCS
+  vtkQueryAtlasIcons.cxx        
   vtkQueryAtlasLogic.cxx
   vtkQueryAtlasGUI.cxx
   vtkMRMLQueryAtlasNode.cxx
-
+  vtkQueryAtlasCollaboratorIcons.cxx
+  vtkQueryAtlasUseSearchTermWidget.cxx  
+  vtkQueryAtlasSearchTermWidget.cxx  
   # cards and related classes
   vtkBIRNCard.cxx
   vtkBIRNCardManager.cxx

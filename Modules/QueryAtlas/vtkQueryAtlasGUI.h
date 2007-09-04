@@ -11,6 +11,8 @@
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkQueryAtlasLogic.h"
+#include "vtkQueryAtlasCollaboratorIcons.h"
+#include "vtkQueryAtlasIcons.h"
 
 class vtkKWPushButton;
 class vtkKWMultiColumnListWithScrollbars;
@@ -20,8 +22,12 @@ class vtkKWFrame;
 class vtkKWLabel;
 class vtkKWCheckButton;
 class vtkKWEntry;
+class vtkKWEntryWithLabel;
+class vtkKWLoadSaveButtonWithLabel;
 class vtkKWListBox;
 class vtkKWListBoxWithScrollbars;
+class vtkQueryAtlasUseSearchTermWidget;
+class vtkQueryAtlasSearchTermWidget;
 
 // Description:
 // This class implements Slicer's QueryAtlas GUI
@@ -40,13 +46,21 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( Logic, vtkQueryAtlasLogic);
 
-    // Load scene frame and widgets
-    vtkGetObjectMacro ( LoadSceneButton, vtkKWPushButton );
+    // Description:
+    // Get container for logos of all collaborators
+    vtkGetObjectMacro ( CollaboratorIcons, vtkQueryAtlasCollaboratorIcons );
+
+    // Description:
+    // Get container for module icons
+    vtkGetObjectMacro ( QueryAtlasIcons, vtkQueryAtlasIcons );
+    
+    // Annotation Options frame and widgets
+    vtkGetObjectMacro (AnnotationVisibilityButton, vtkKWPushButton );
+    vtkGetObjectMacro (AnnotationNomenclatureMenuButton, vtkKWMenuButton );
+    vtkGetMacro ( AnnotationVisibility, int );
 
     // Querybuilder frame top widgets
-    vtkGetObjectMacro (GeneButton, vtkKWPushButton );
-    vtkGetObjectMacro (MiscButton, vtkKWPushButton );
-    vtkGetObjectMacro (CellButton, vtkKWPushButton );
+    vtkGetObjectMacro (SubStructureButton, vtkKWPushButton );
     vtkGetObjectMacro (StructureButton, vtkKWPushButton );
     vtkGetObjectMacro (PopulationButton, vtkKWPushButton );
     vtkGetObjectMacro (SpeciesButton, vtkKWPushButton );
@@ -66,65 +80,71 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro (HandednessMenuButton, vtkKWMenuButtonWithLabel );
     vtkGetObjectMacro (GenderMenuButton, vtkKWMenuButtonWithLabel );
     vtkGetObjectMacro (AgeMenuButton, vtkKWMenuButtonWithLabel );
-    vtkGetObjectMacro (DiagnosticsMenuButton, vtkKWMenuButtonWithLabel );
+    vtkGetObjectMacro (AddDiagnosisEntry, vtkKWEntryWithLabel );
     
     // structure panel
     vtkGetObjectMacro (StructureFrame, vtkKWFrame );
     vtkGetObjectMacro ( StructureMenuButton, vtkKWMenuButtonWithLabel );
-    vtkGetObjectMacro ( StructureClearAllButton, vtkKWPushButton );
-    vtkGetObjectMacro ( StructureUseAllButton, vtkKWPushButton );
-    vtkGetObjectMacro ( StructureUseNoneButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( StructureAddTermButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( StructureClearTermButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( StructureMultiColumnList, vtkKWMultiColumnListWithScrollbars );
+    vtkGetObjectMacro ( StructureListWidget, vtkQueryAtlasUseSearchTermWidget );
 
     // cell panel
-    vtkGetObjectMacro (CellFrame, vtkKWFrame);
-    vtkGetObjectMacro ( CellClearAllButton, vtkKWPushButton );
-    vtkGetObjectMacro ( CellUseAllButton, vtkKWPushButton );
-    vtkGetObjectMacro ( CellUseNoneButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( CellAddTermButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( CellClearTermButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( CellMultiColumnList, vtkKWMultiColumnListWithScrollbars );
+    vtkGetObjectMacro ( SubStructureListWidget, vtkQueryAtlasUseSearchTermWidget );
+    vtkGetObjectMacro (SubStructureFrame, vtkKWFrame);
 
-    // protein panel
-    vtkGetObjectMacro (MiscFrame, vtkKWFrame );
-    vtkGetObjectMacro ( MiscClearAllButton, vtkKWPushButton );
-    vtkGetObjectMacro ( MiscUseAllButton, vtkKWPushButton );
-    vtkGetObjectMacro ( MiscUseNoneButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( MiscAddTermButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( MiscClearTermButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( MiscMultiColumnList, vtkKWMultiColumnListWithScrollbars );
-
-    // genes panel
-    vtkGetObjectMacro (GeneFrame, vtkKWFrame );
-    vtkGetObjectMacro ( GeneClearAllButton, vtkKWPushButton );
-    vtkGetObjectMacro ( GeneUseAllButton, vtkKWPushButton );
-    vtkGetObjectMacro ( GeneUseNoneButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( GeneAddTermButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( GeneClearTermButton, vtkKWPushButton );    
-    vtkGetObjectMacro ( GeneMultiColumnList, vtkKWMultiColumnListWithScrollbars );
-
-    // querymaker panel
+    // search panel
     vtkGetObjectMacro ( DatabasesMenuButton, vtkKWMenuButton );
     vtkGetObjectMacro ( SearchButton, vtkKWPushButton );
-    
-    //hierarchies panel
-    vtkGetObjectMacro ( SPLHierarchyButton, vtkKWPushButton );
-    vtkGetObjectMacro ( BIRNLexHierarchyButton, vtkKWPushButton );
-    vtkGetObjectMacro ( HierarchySearchTermEntry, vtkKWEntry );
-    vtkGetObjectMacro ( HierarchySearchButton, vtkKWPushButton );
+    vtkGetObjectMacro (ResultsWithAnyButton, vtkKWRadioButton);
+    vtkGetObjectMacro (ResultsWithAllButton, vtkKWRadioButton);
+    vtkGetObjectMacro (ResultsWithExactButton, vtkKWRadioButton);
 
+    //hierarchies panel
+    vtkGetObjectMacro ( LocalSearchTermEntry, vtkKWEntry );
+    vtkGetObjectMacro ( SynonymsMenuButton, vtkKWMenuButton );
+    vtkGetObjectMacro ( BIRNLexEntry, vtkKWEntry );
+    vtkGetObjectMacro (BIRNLexIDEntry, vtkKWEntry );
+    vtkGetObjectMacro ( NeuroNamesEntry, vtkKWEntry );
+    vtkGetObjectMacro ( NeuroNamesIDEntry, vtkKWEntry );
+    vtkGetObjectMacro ( UMLSCIDEntry, vtkKWEntry );
+
+    vtkGetObjectMacro ( AddLocalTermButton, vtkKWPushButton );
+    vtkGetObjectMacro ( AddSynonymButton, vtkKWPushButton );
+    vtkGetObjectMacro ( AddBIRNLexStringButton, vtkKWPushButton );
+    vtkGetObjectMacro ( AddBIRNLexIDButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( AddNeuroNamesStringButton, vtkKWPushButton );
+    vtkGetObjectMacro ( AddNeuroNamesIDButton, vtkKWPushButton );    
+    vtkGetObjectMacro ( AddUMLSCIDButton, vtkKWPushButton );
+
+    vtkGetObjectMacro ( BIRNLexHierarchyButton, vtkKWPushButton );
+    vtkGetObjectMacro ( NeuroNamesHierarchyButton, vtkKWPushButton );
+    vtkGetObjectMacro ( UMLSHierarchyButton, vtkKWPushButton );
+    vtkGetObjectMacro ( SavedTerms, vtkQueryAtlasSearchTermWidget );
+
+    // results frame?
     vtkGetObjectMacro ( CurrentResultsList, vtkKWListBoxWithScrollbars );
     vtkGetObjectMacro ( DeleteCurrentResultButton, vtkKWPushButton );
     vtkGetObjectMacro ( DeleteAllCurrentResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( SaveCurrentResultsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( SaveCurrentSelectedResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( PastResultsList, vtkKWListBoxWithScrollbars );    
     vtkGetObjectMacro ( DeletePastResultButton, vtkKWPushButton );
     vtkGetObjectMacro ( DeleteAllPastResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( SavePastResultsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( LoadURIsButton, vtkKWPushButton );
     
     vtkGetMacro ( NumberOfColumns, int );
+
+    // load frame
+    vtkGetObjectMacro (FSbrainSelector, vtkSlicerNodeSelectorWidget );
+    vtkGetObjectMacro (FSoverlaySelector, vtkSlicerNodeSelectorWidget );
+    vtkGetObjectMacro (FStransformSelector, vtkSlicerNodeSelectorWidget );
+    vtkGetObjectMacro (FSmodelSelector, vtkSlicerNodeSelectorWidget );
+    vtkGetObjectMacro (QdecModelSelector, vtkSlicerNodeSelectorWidget );
+
+    vtkGetObjectMacro (FIPSFSButton, vtkKWPushButton );
+    vtkGetObjectMacro (QdecButton, vtkKWPushButton );
+    vtkGetObjectMacro (FIPSFSFrame, vtkKWFrame );
+    vtkGetObjectMacro (QdecFrame, vtkKWFrame );
     
     void SetModuleLogic ( vtkQueryAtlasLogic *logic )
     { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
@@ -134,19 +154,37 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Description:
     // This method builds the QueryAtlas module GUI
     virtual void BuildGUI ( ) ;
+    virtual void BuildHelpAndAcknowledgementGUI ( );
+    virtual void BuildLoadAndConvertGUI ( );
+    virtual void BuildAnnotationOptionsGUI ( );
+    virtual void BuildOntologyGUI ( );
+    virtual void BuildQueryGUI ( );
+    virtual void BuildSearchGUI ( );
+    virtual void BuildResultsManagerGUI ( );
+    virtual void BuildDisplayAndNavigationGUI ( );
+    
     // Description:
     // Helper methods for building the complicated GUI
+
+    virtual void UnpackLoaderContextFrames ( );
+    virtual void PackLoaderContextFrame ( vtkKWFrame *f );
+    virtual void BuildLoaderContextButtons ( vtkKWFrame *parent );
+    virtual void ColorCodeLoaderContextButtons ( vtkKWPushButton *b );
+    virtual void BuildLoaderContextFrames ( vtkKWFrame *parent );
+
+    virtual void BuildFreeSurferFIPSFrame( );
+    virtual void BuildQdecFrame();
+
     virtual void UnpackQueryBuilderContextFrames ( );
     virtual void PackQueryBuilderContextFrame ( vtkKWFrame *f );
     virtual void BuildQueryBuilderContextButtons ( vtkKWFrame *parent );
     virtual void ColorCodeContextButtons ( vtkKWPushButton *b );
     virtual void BuildQueryBuilderContextFrames ( vtkKWFrame *parent );
+
     virtual void BuildSpeciesFrame();
     virtual void BuildPopulationFrame();
     virtual void BuildStructureFrame ( );
-    virtual void BuildCellFrame();
-    virtual void BuildMiscFrame();
-    virtual void BuildGeneFrame();
+    virtual void BuildSubStructureFrame();
     virtual void BuildDiagnosisMenu( vtkKWMenu *m );
     virtual void BuildDatabasesMenu( vtkKWMenu *m );
                                     
@@ -185,20 +223,49 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Module logic and mrml pointers
     vtkQueryAtlasLogic *Logic;
 
-    // load scene
-    vtkKWPushButton *LoadSceneButton;
+    vtkQueryAtlasCollaboratorIcons *CollaboratorIcons;
+    vtkQueryAtlasIcons *QueryAtlasIcons;
+    
+    // load / configure frame
+    vtkSlicerNodeSelectorWidget *FSbrainSelector;
+    vtkSlicerNodeSelectorWidget *FSoverlaySelector;
+    vtkSlicerNodeSelectorWidget *FSmodelSelector;
+    vtkSlicerNodeSelectorWidget *FStransformSelector;
+    vtkSlicerNodeSelectorWidget *QdecModelSelector;
+    
+    vtkKWPushButton *FIPSFSButton;
+    vtkKWPushButton *QdecButton;
+    vtkKWFrame *FIPSFSFrame;
+    vtkKWFrame *QdecFrame;
 
-    // hierarchies frame
-    vtkKWPushButton *SPLHierarchyButton;
+    // Annotation Options frame and widgets
+    vtkKWPushButton *AnnotationVisibilityButton;
+    vtkKWMenuButton *AnnotationNomenclatureMenuButton;
+    
+    // ontology frame
+    vtkKWEntry *LocalSearchTermEntry;
+    vtkKWMenuButton *SynonymsMenuButton;
+    vtkKWEntry *BIRNLexEntry;
+    vtkKWEntry *BIRNLexIDEntry;
+    vtkKWEntry *NeuroNamesEntry;
+    vtkKWEntry *NeuroNamesIDEntry;
+    vtkKWEntry *UMLSCIDEntry;
+    vtkKWPushButton *AddLocalTermButton;
+    vtkKWPushButton *AddSynonymButton;
+    vtkKWPushButton *AddBIRNLexStringButton;
+    vtkKWPushButton *AddBIRNLexIDButton;
+    vtkKWPushButton *AddNeuroNamesStringButton;
+    vtkKWPushButton *AddNeuroNamesIDButton;
+    vtkKWPushButton *AddUMLSCIDButton;    
     vtkKWPushButton *BIRNLexHierarchyButton;
-    vtkKWEntry *HierarchySearchTermEntry;
-    vtkKWPushButton *HierarchySearchButton;
+    vtkKWPushButton *NeuroNamesHierarchyButton;
+    vtkKWPushButton *UMLSHierarchyButton;
+    vtkQueryAtlasSearchTermWidget *SavedTerms;
+    
     int NumberOfColumns;
     
     // querybuilder
-    vtkKWPushButton *GeneButton;
-    vtkKWPushButton *MiscButton;
-    vtkKWPushButton *CellButton;
+    vtkKWPushButton *SubStructureButton;
     vtkKWPushButton *StructureButton;
     vtkKWPushButton *PopulationButton;
     vtkKWPushButton *SpeciesButton;
@@ -207,6 +274,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // species frame
     vtkKWFrame *SpeciesFrame;
     vtkKWLabel *SpeciesLabel;
+    vtkKWCheckButton *SpeciesNoneButton;
     vtkKWCheckButton *SpeciesHumanButton;
     vtkKWCheckButton *SpeciesMouseButton;
     vtkKWCheckButton *SpeciesMacaqueButton;
@@ -217,59 +285,41 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWMenuButtonWithLabel *GenderMenuButton;
     vtkKWMenuButtonWithLabel *HandednessMenuButton;
     vtkKWMenuButtonWithLabel *AgeMenuButton;
-    vtkKWMenuButtonWithLabel *DiagnosticsMenuButton;
+    vtkKWEntryWithLabel *AddDiagnosisEntry;
 
     // structure frame
     vtkKWFrame *StructureFrame;
     vtkKWMenuButtonWithLabel *StructureMenuButton;
-    vtkKWMultiColumnListWithScrollbars *StructureMultiColumnList;
-    vtkKWPushButton *StructureClearAllButton;
-    vtkKWPushButton *StructureUseAllButton;
-    vtkKWPushButton *StructureUseNoneButton;
-    vtkKWPushButton *StructureAddTermButton;
-    vtkKWPushButton *StructureClearTermButton;
+    vtkQueryAtlasUseSearchTermWidget *StructureListWidget;
 
-    // querymaker
+    // search
     vtkKWPushButton *SearchButton;
     vtkKWMenuButton *DatabasesMenuButton;
-
+    vtkKWRadioButton *ResultsWithAnyButton;
+    vtkKWRadioButton *ResultsWithAllButton;
+    vtkKWRadioButton *ResultsWithExactButton;
+    
     // results frame
     vtkKWListBoxWithScrollbars *CurrentResultsList;
     vtkKWPushButton *DeleteCurrentResultButton;
     vtkKWPushButton *DeleteAllCurrentResultsButton;
     vtkKWPushButton *SaveCurrentResultsButton;
+    vtkKWPushButton *SaveCurrentSelectedResultsButton;
     vtkKWListBoxWithScrollbars *PastResultsList;
     vtkKWPushButton *DeletePastResultButton;
     vtkKWPushButton *DeleteAllPastResultsButton;
     vtkKWPushButton *SavePastResultsButton;
 
+    vtkKWPushButton *LoadURIsButton;
+
     // cell frame
-    vtkKWFrame *CellFrame;
-    vtkKWMultiColumnListWithScrollbars *CellMultiColumnList;
-    vtkKWPushButton *CellClearAllButton;
-    vtkKWPushButton *CellUseAllButton;
-    vtkKWPushButton *CellUseNoneButton;
-    vtkKWPushButton *CellAddTermButton;
-    vtkKWPushButton *CellClearTermButton;
+    vtkKWFrame *SubStructureFrame;
+    vtkQueryAtlasUseSearchTermWidget *SubStructureListWidget;
 
-    // misc frame
-    vtkKWFrame *MiscFrame;
-    vtkKWMultiColumnListWithScrollbars *MiscMultiColumnList;
-    vtkKWPushButton *MiscClearAllButton;
-    vtkKWPushButton *MiscUseAllButton;
-    vtkKWPushButton *MiscUseNoneButton;
-    vtkKWPushButton *MiscAddTermButton;
-    vtkKWPushButton *MiscClearTermButton;
-
-    // gene grame
-    vtkKWFrame *GeneFrame;
-    vtkKWMultiColumnListWithScrollbars *GeneMultiColumnList;
-    vtkKWPushButton *GeneClearAllButton;
-    vtkKWPushButton *GeneUseAllButton;
-    vtkKWPushButton *GeneUseNoneButton;
-    vtkKWPushButton *GeneAddTermButton;
-    vtkKWPushButton *GeneClearTermButton;
-
+    void OpenBIRNLexBrowser();
+    void OpenNeuroNamesBrowser();
+    void OpenUMLSBrowser();
+    
     //BTX
     // Description:
     // The column orders in the list box
@@ -278,6 +328,19 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
       {
         SelectionColumn = 0,
         SearchTermColumn = 1,
+      };
+    //ETX
+
+    // DUMP ALL STATE HERE FOR NOW.
+    // move all this to MRML Node
+    int AnnotationVisibility;
+    int SearchOption;
+    //BTX
+    enum
+      {
+        And = 0,
+        Or = 1,
+        Quote = 2
       };
     //ETX
 

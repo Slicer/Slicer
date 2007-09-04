@@ -14,15 +14,28 @@
 #include "vtkKWMultiColumnList.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
 #include "vtkKWEntry.h"
+#include "vtkKWEntryWithLabel.h"
 #include "vtkKWListBox.h"
 #include "vtkKWListBoxWithScrollbars.h"
+#include "vtkKWLoadSaveButtonWithLabel.h"
+#include "vtkKWLoadSaveButton.h"
 
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerVisibilityIcons.h"
+#include "vtkSlicerToolbarIcons.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
+#include "vtkSlicerSliceControllerWidget.h"
+#include "vtkSlicerSliceGUI.h"
+#include "vtkSlicerToolbarGUI.h"
 #include "vtkQueryAtlasGUI.h"
+#include "vtkQueryAtlasUseSearchTermWidget.h"
+#include "vtkQueryAtlasSearchTermWidget.h"
+#include "vtkSlicerPopUpHelpWidget.h"
+
+// for path manipulation
+#include "itksys/SystemTools.hxx"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkQueryAtlasGUI );
@@ -42,65 +55,71 @@ vtkCxxRevisionMacro ( vtkQueryAtlasGUI, "$Revision: 1.0 $");
 vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
 {
     this->Logic = NULL;
-    this->LoadSceneButton = NULL;
 
-    this->GeneButton = NULL;
-    this->MiscButton = NULL;
-    this->CellButton = NULL;
+    this->CollaboratorIcons = NULL;
+    this->QueryAtlasIcons = NULL;
+    this->AnnotationVisibility = 1;
+    
+    //---
+    // master category switch
+    //---
+    this->SubStructureButton = NULL;
     this->StructureButton = NULL;
     this->PopulationButton = NULL;
     this->SpeciesButton = NULL;
     this->SwitchQueryFrame = NULL;
 
-    this->GeneFrame = NULL;
-    this->GeneUseAllButton = NULL;
-    this->GeneUseNoneButton = NULL;
-    this->GeneClearAllButton = NULL;
-    this->GeneAddTermButton = NULL;
-    this->GeneClearTermButton = NULL;    
-    this->GeneMultiColumnList = NULL;
-    
-    this->CellFrame = NULL;
-    this->CellUseAllButton = NULL;
-    this->CellUseNoneButton = NULL;
-    this->CellClearAllButton = NULL;
-    this->CellAddTermButton = NULL;
-    this->CellClearTermButton = NULL;    
-    this->CellMultiColumnList = NULL;
+    //---
+    // query builder substructure frame
+    //---    
+    this->SubStructureFrame = NULL;
+    this->SubStructureListWidget = NULL;
 
-    this->MiscFrame = NULL;
-    this->MiscUseAllButton = NULL;
-    this->MiscUseNoneButton = NULL;
-    this->MiscClearAllButton = NULL;
-    this->MiscAddTermButton = NULL;
-    this->MiscClearTermButton = NULL;    
-    this->MiscMultiColumnList = NULL;
-
+    //---
+    // query builder species frame
+    //---    
     this->SpeciesFrame = NULL;
     this->SpeciesLabel = NULL;
+    this->SpeciesNoneButton = NULL;
     this->SpeciesHumanButton = NULL;
     this->SpeciesMouseButton = NULL;
     this->SpeciesMacaqueButton = NULL;
 
+    //---
+    // query builder popuation frame
+    //---
     this->PopulationFrame = NULL;
     this->DiagnosisMenuButton = NULL;
     this->GenderMenuButton = NULL;
     this->HandednessMenuButton = NULL;
     this->AgeMenuButton = NULL;
-    this->DiagnosticsMenuButton = NULL;
+    this->AddDiagnosisEntry = NULL;
 
+    //---
+    // query builder structure frame
+    //---
     this->StructureFrame = NULL;
     this->StructureMenuButton = NULL;
-    this->StructureUseAllButton = NULL;
-    this->StructureUseNoneButton = NULL;
-    this->StructureClearAllButton = NULL;
-    this->StructureAddTermButton = NULL;
-    this->StructureClearTermButton = NULL;    
-    this->StructureMultiColumnList = NULL;
+    this->StructureListWidget = NULL;
 
+    //---
+    // annotation frame
+    //---    
+    this->AnnotationVisibilityButton = NULL;
+    this->AnnotationNomenclatureMenuButton = NULL;
+    
+    //---
+    // search frame
+    //---    
     this->SearchButton = NULL;
     this->DatabasesMenuButton = NULL;
+    this->ResultsWithAnyButton = NULL;
+    this->ResultsWithAllButton = NULL;
+    this->ResultsWithExactButton = NULL;    
 
+    //---
+    // results frame
+    //---
     this->CurrentResultsList = NULL;
     this->PastResultsList = NULL;
     this->DeleteAllCurrentResultsButton = NULL;
@@ -108,15 +127,46 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->DeleteAllPastResultsButton = NULL;
     this->DeletePastResultButton = NULL;
     this->SaveCurrentResultsButton = NULL;
+    this->SaveCurrentSelectedResultsButton = NULL;
     this->SavePastResultsButton = NULL;
+    this->LoadURIsButton = NULL;
 
     this->NumberOfColumns = 2;
 
-    this->SPLHierarchyButton = NULL;
+    //---
+    // ontology frame
+    //---
+    this->LocalSearchTermEntry = NULL;
+    this->SynonymsMenuButton = NULL;
+    this->BIRNLexEntry = NULL;
+    this->BIRNLexIDEntry = NULL;
+    this->NeuroNamesEntry = NULL;
+    this->NeuroNamesIDEntry = NULL;
+    this->UMLSCIDEntry = NULL;
+    this->AddLocalTermButton = NULL;
+    this->AddSynonymButton = NULL;
+    this->AddBIRNLexStringButton = NULL;
+    this->AddBIRNLexIDButton = NULL;
+    this->AddNeuroNamesStringButton = NULL;
+    this->AddNeuroNamesIDButton = NULL;
+    this->AddUMLSCIDButton = NULL;
     this->BIRNLexHierarchyButton = NULL;
-    this->HierarchySearchTermEntry = NULL;
-    this->HierarchySearchButton = NULL;
-    //this->DebugOn();
+    this->NeuroNamesHierarchyButton = NULL;
+    this->UMLSHierarchyButton = NULL;
+    this->SavedTerms = NULL;
+
+    //---
+    // load frame
+    //---    
+    this->FIPSFSButton = NULL;
+    this->FIPSFSFrame = NULL;
+    this->QdecButton = NULL;
+    this->QdecFrame = NULL;
+    this->FSbrainSelector = NULL;
+    this->FSoverlaySelector = NULL;
+    this->FSmodelSelector = NULL;
+    this->FStransformSelector = NULL;
+    this->QdecModelSelector = NULL;
 }
 
 
@@ -125,29 +175,108 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 {
 
     this->SetModuleLogic ( NULL );
-    if ( this->LoadSceneButton )
+    //---
+    // help and acknowledgment frame
+    //---
+    if ( this->CollaboratorIcons )
       {
-      this->LoadSceneButton->SetParent ( NULL );
-      this->LoadSceneButton->Delete ( );
-      this->LoadSceneButton = NULL;
+      this->CollaboratorIcons->Delete();
+      this->CollaboratorIcons = NULL;
       }
-    if ( this->GeneButton )
+    if ( this->QueryAtlasIcons )
       {
-      this->GeneButton->SetParent ( NULL );
-      this->GeneButton->Delete();
-      this->GeneButton = NULL;      
+      this->QueryAtlasIcons->Delete();
+      this->QueryAtlasIcons = NULL;
       }
-    if ( this->CellButton )
+
+    //---
+    // load frame
+    //---
+    if ( this->FIPSFSButton )
       {
-      this->CellButton->SetParent ( NULL );
-      this->CellButton->Delete();
-      this->CellButton = NULL;   
+      this->FIPSFSButton->SetParent ( NULL );
+      this->FIPSFSButton->Delete();
+      this->FIPSFSButton = NULL;
       }
-    if ( this->MiscButton )
+    if ( this->FIPSFSFrame )
       {
-      this->MiscButton->SetParent ( NULL );
-      this->MiscButton->Delete();      
-      this->MiscButton = NULL;
+      this->FIPSFSFrame->SetParent ( NULL );
+      this->FIPSFSFrame->Delete();
+      this->FIPSFSFrame = NULL;      
+      }
+    if ( this->QdecButton )
+      {
+      this->QdecButton->SetParent ( NULL );
+      this->QdecButton->Delete();      
+      this->QdecButton = NULL;      
+      }
+    if ( this->QdecFrame )
+      {
+      this->QdecFrame->SetParent ( NULL );
+      this->QdecFrame->Delete();
+      this->QdecFrame = NULL;      
+      }
+    if ( this->FSbrainSelector )
+      {
+      this->FSbrainSelector->SetParent ( NULL );
+      this->FSbrainSelector->Delete();
+      this->FSbrainSelector = NULL;
+      }
+    if ( this->FSoverlaySelector )
+      {
+      this->FSoverlaySelector->SetParent ( NULL );
+      this->FSoverlaySelector->Delete();
+      this->FSoverlaySelector = NULL;
+      }
+    if ( this->FSmodelSelector )
+      {
+      this->FSmodelSelector->SetParent ( NULL );
+      this->FSmodelSelector->Delete();
+      this->FSmodelSelector = NULL;
+      }
+    if ( this->FStransformSelector )
+      {
+      this->FStransformSelector->SetParent ( NULL );
+      this->FStransformSelector->Delete();
+      this->FStransformSelector = NULL;
+      }
+    if ( this->QdecModelSelector )
+      {
+      this->QdecModelSelector->SetParent ( NULL );
+      this->QdecModelSelector->Delete();
+      this->QdecModelSelector = NULL;
+      }
+
+    //---
+    // annotation frame
+    //---
+    if ( this->AnnotationVisibilityButton )
+      {
+      this->AnnotationVisibilityButton->SetParent ( NULL );
+      this->AnnotationVisibilityButton->Delete();
+      this->AnnotationVisibilityButton = NULL;
+      }
+    if ( this->AnnotationNomenclatureMenuButton )
+      {
+      this->AnnotationNomenclatureMenuButton->SetParent ( NULL );
+      this->AnnotationNomenclatureMenuButton->Delete();
+      this->AnnotationNomenclatureMenuButton = NULL;      
+      }
+    
+    //---
+    // query builder frame
+    //---
+    if ( this->SwitchQueryFrame)
+      {
+      this->SwitchQueryFrame->SetParent ( NULL );
+      this->SwitchQueryFrame->Delete();
+      this->SwitchQueryFrame = NULL;
+      }
+    if ( this->SubStructureButton )
+      {
+      this->SubStructureButton->SetParent ( NULL );
+      this->SubStructureButton->Delete();
+      this->SubStructureButton = NULL;   
       }
     if ( this->StructureButton )
       {
@@ -160,6 +289,16 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->PopulationButton->SetParent ( NULL );
       this->PopulationButton->Delete();
       this->PopulationButton = NULL;      
+      }
+
+    //---
+    // query builder population panel
+    //---
+    if ( this->PopulationFrame )
+      {
+      this->PopulationFrame->SetParent ( NULL );
+      this->PopulationFrame->Delete();
+      this->PopulationFrame = NULL;
       }
     if ( this->DiagnosisMenuButton )
       {
@@ -185,11 +324,20 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->AgeMenuButton->Delete();
       this->AgeMenuButton  = NULL;
       }
-    if ( this->DiagnosticsMenuButton )
+    if ( this->AddDiagnosisEntry )
       {
-      this->DiagnosticsMenuButton->SetParent ( NULL );
-      this->DiagnosticsMenuButton->Delete();
-      this->DiagnosticsMenuButton = NULL;
+      this->AddDiagnosisEntry->SetParent ( NULL );
+      this->AddDiagnosisEntry->Delete();
+      this->AddDiagnosisEntry = NULL;
+      }
+    //---
+    // query builder species panel
+    //---
+    if ( this->SpeciesFrame)
+      {
+      this->SpeciesFrame->SetParent ( NULL );
+      this->SpeciesFrame->Delete();
+      this->SpeciesFrame = NULL;
       }
     if ( this->SpeciesButton )
       {
@@ -202,6 +350,12 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->SpeciesLabel->SetParent ( NULL );
       this->SpeciesLabel->Delete();
       this->SpeciesLabel = NULL;
+      }
+    if ( this->SpeciesNoneButton )
+      {
+      this->SpeciesNoneButton->SetParent ( NULL );
+      this->SpeciesNoneButton->Delete();
+      this->SpeciesNoneButton = NULL;      
       }
     if ( this->SpeciesHumanButton )
       {
@@ -221,121 +375,16 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->SpeciesMacaqueButton->Delete();
       this->SpeciesMacaqueButton = NULL;
       }
-    if ( this->SwitchQueryFrame)
-      {
-      this->SwitchQueryFrame->SetParent ( NULL );
-      this->SwitchQueryFrame->Delete();
-      this->SwitchQueryFrame = NULL;
-      }
 
-    if ( this->SpeciesFrame)
-      {
-      this->SpeciesFrame->SetParent ( NULL );
-      this->SpeciesFrame->Delete();
-      this->SpeciesFrame = NULL;
-      }
-    if ( this->PopulationFrame )
-      {
-      this->PopulationFrame->SetParent ( NULL );
-      this->PopulationFrame->Delete();
-      this->PopulationFrame = NULL;
-      }
-    if ( this->StructureFrame )
-      {
-      this->StructureFrame->SetParent ( NULL );
-      this->StructureFrame->Delete();
-      this->StructureFrame = NULL;      
-      }
-    if ( this->CellFrame )
-      {
-      this->CellFrame->SetParent ( NULL );
-      this->CellFrame->Delete();
-      this->CellFrame = NULL;      
-      }
-    if ( this->MiscFrame)
-      {
-      this->MiscFrame->SetParent ( NULL );
-      this->MiscFrame->Delete();
-      this->MiscFrame = NULL;
-      }
-    if ( this->GeneFrame)
-      {
-      this->GeneFrame->SetParent ( NULL );
-      this->GeneFrame->Delete();
-      this->GeneFrame = NULL;
-      }
+
+    //---
+    // search panel
+    //---
     if ( this->SearchButton )
       {
       this->SearchButton->SetParent ( NULL );
       this->SearchButton->Delete ( );
       this->SearchButton = NULL;
-      }
-    if ( this->StructureClearAllButton )
-      {
-      this->StructureClearAllButton->SetParent ( NULL );
-      this->StructureClearAllButton->Delete ( );
-      this->StructureClearAllButton = NULL;
-      }
-    if ( this->StructureAddTermButton )
-      {
-      this->StructureAddTermButton->SetParent ( NULL );
-      this->StructureAddTermButton->Delete ( );
-      this->StructureAddTermButton = NULL;
-      }
-    if ( this->StructureClearTermButton )
-      {
-      this->StructureClearTermButton->SetParent ( NULL );
-      this->StructureClearTermButton->Delete ( );
-      this->StructureClearTermButton = NULL;
-      }
-
-    if ( this->StructureUseAllButton )
-      {
-      this->StructureUseAllButton->SetParent ( NULL );
-      this->StructureUseAllButton->Delete ( );
-      this->StructureUseAllButton = NULL;
-      }
-    if ( this->StructureUseNoneButton )
-      {
-      this->StructureUseNoneButton->SetParent ( NULL );
-      this->StructureUseNoneButton->Delete ( );
-      this->StructureUseNoneButton = NULL;
-      }
-    if ( this->StructureMenuButton)
-      {
-      this->StructureMenuButton->SetParent ( NULL );
-      this->StructureMenuButton->Delete();
-      this->StructureMenuButton = NULL;
-      }
-    if ( this->HierarchySearchTermEntry )
-      {
-      this->HierarchySearchTermEntry->SetParent ( NULL );
-      this->HierarchySearchTermEntry->Delete();
-      this->HierarchySearchTermEntry = NULL;
-      }
-    if ( this->HierarchySearchButton )
-      {
-      this->HierarchySearchButton->SetParent ( NULL);
-      this->HierarchySearchButton->Delete();
-      this->HierarchySearchButton = NULL;
-      }
-    if ( this->SPLHierarchyButton )
-      {
-      this->SPLHierarchyButton->SetParent ( NULL );
-      this->SPLHierarchyButton->Delete();
-      this->SPLHierarchyButton = NULL;
-      }
-    if ( this->BIRNLexHierarchyButton )
-      {
-      this->BIRNLexHierarchyButton->SetParent ( NULL );
-      this->BIRNLexHierarchyButton->Delete();
-      this->BIRNLexHierarchyButton= NULL;
-      }
-    if ( this->StructureMultiColumnList )
-      {
-      this->StructureMultiColumnList->SetParent ( NULL );
-      this->StructureMultiColumnList->Delete ( );
-      this->StructureMultiColumnList = NULL;
       }
     if ( this->DatabasesMenuButton )
       {
@@ -343,7 +392,166 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->DatabasesMenuButton->Delete ( );
       this->DatabasesMenuButton = NULL;      
       }
+    if ( this->ResultsWithAnyButton )
+      {
+      this->ResultsWithAnyButton->SetParent ( NULL );
+      this->ResultsWithAnyButton->Delete();
+      this->ResultsWithAnyButton = NULL;
+      }
+    if ( this->ResultsWithAllButton )
+      {
+      this->ResultsWithAllButton->SetParent ( NULL );
+      this->ResultsWithAllButton->Delete();
+      this->ResultsWithAllButton = NULL;      
+      }
+    if ( this->ResultsWithExactButton )
+      {
+      this->ResultsWithExactButton->SetParent ( NULL );
+      this->ResultsWithExactButton->Delete();
+      this->ResultsWithExactButton = NULL;      
+      }
 
+    //---
+    // query builder structure panel
+    //---
+    if ( this->StructureFrame )
+      {
+      this->StructureFrame->SetParent ( NULL );
+      this->StructureFrame->Delete();
+      this->StructureFrame = NULL;      
+      }
+    if ( this->StructureMenuButton)
+      {
+      this->StructureMenuButton->SetParent ( NULL );
+      this->StructureMenuButton->Delete();
+      this->StructureMenuButton = NULL;
+      }
+
+    //---
+    // ontology frame
+    //---
+    if ( this->LocalSearchTermEntry )
+      {
+      this->LocalSearchTermEntry->SetParent ( NULL );
+      this->LocalSearchTermEntry->Delete();
+      this->LocalSearchTermEntry = NULL;
+      }
+    if ( this->SynonymsMenuButton )
+      {
+      this->SynonymsMenuButton->SetParent ( NULL );
+      this->SynonymsMenuButton->Delete();
+      this->SynonymsMenuButton = NULL;      
+      }
+    if ( this->BIRNLexEntry )
+      {
+      this->BIRNLexEntry->SetParent ( NULL );
+      this->BIRNLexEntry->Delete();
+      this->BIRNLexEntry = NULL;      
+      }
+    if ( this->BIRNLexIDEntry )
+      {
+      this->BIRNLexIDEntry->SetParent ( NULL );
+      this->BIRNLexIDEntry->Delete();
+      this->BIRNLexIDEntry = NULL;      
+      }
+    if ( this->NeuroNamesEntry )
+      {
+      this->NeuroNamesEntry->SetParent ( NULL );
+      this->NeuroNamesEntry->Delete ( );
+      this->NeuroNamesEntry = NULL;      
+      }
+    if ( this->NeuroNamesIDEntry )
+      {
+      this->NeuroNamesIDEntry->SetParent ( NULL );
+      this->NeuroNamesIDEntry->Delete ( );
+      this->NeuroNamesIDEntry = NULL;      
+      }
+    if ( this->UMLSCIDEntry )
+      {
+      this->UMLSCIDEntry->SetParent ( NULL );
+      this->UMLSCIDEntry->Delete ( );
+      this->UMLSCIDEntry = NULL;      
+      }
+    if ( this->AddLocalTermButton )
+      {
+      this->AddLocalTermButton->SetParent ( NULL );
+      this->AddLocalTermButton->Delete ( );
+      this->AddLocalTermButton = NULL;      
+      }
+    if ( this->AddSynonymButton )
+      {
+      this->AddSynonymButton->SetParent ( NULL );
+      this->AddSynonymButton->Delete ();
+      this->AddSynonymButton = NULL;      
+      }
+    if ( this->AddBIRNLexStringButton )
+      {
+      this->AddBIRNLexStringButton->SetParent ( NULL );
+      this->AddBIRNLexStringButton->Delete ( );
+      this->AddBIRNLexStringButton = NULL;      
+      }
+    if ( this->AddBIRNLexIDButton)
+      {
+      this->AddBIRNLexIDButton->SetParent ( NULL );
+      this->AddBIRNLexIDButton->Delete ( );
+      this->AddBIRNLexIDButton = NULL;      
+      }
+    if ( this->AddNeuroNamesStringButton )
+      {
+      this->AddNeuroNamesStringButton->SetParent ( NULL );
+      this->AddNeuroNamesStringButton->Delete ();
+      this->AddNeuroNamesStringButton = NULL;      
+      }
+    if ( this->AddNeuroNamesIDButton )
+      {    //---
+      this->AddNeuroNamesIDButton->SetParent ( NULL );
+      this->AddNeuroNamesIDButton->Delete ( );
+      this->AddNeuroNamesIDButton = NULL;      
+      }
+    if ( this->AddUMLSCIDButton )
+      {
+      this->AddUMLSCIDButton->SetParent ( NULL );
+      this->AddUMLSCIDButton->Delete ();
+      this->AddUMLSCIDButton = NULL;      
+      }
+    if ( this->NeuroNamesHierarchyButton)
+      {
+      this->NeuroNamesHierarchyButton->SetParent ( NULL );
+      this->NeuroNamesHierarchyButton->Delete();
+      this->NeuroNamesHierarchyButton = NULL;      
+      }
+    if ( this->BIRNLexHierarchyButton )
+      {
+      this->BIRNLexHierarchyButton->SetParent ( NULL );
+      this->BIRNLexHierarchyButton->Delete();
+      this->BIRNLexHierarchyButton= NULL;
+      }
+    if ( this->UMLSHierarchyButton )
+      {
+      this->UMLSHierarchyButton->SetParent ( NULL );
+      this->UMLSHierarchyButton->Delete();
+      this->UMLSHierarchyButton= NULL;
+      }
+    if ( this->SavedTerms )
+      {
+      this->SavedTerms->SetParent ( NULL );
+      this->SavedTerms->Delete();
+      this->SavedTerms = NULL;
+      }
+
+    //---
+    // query builder structure panel
+    //---
+    if ( this->StructureListWidget )
+      {
+      this->StructureListWidget->SetParent ( NULL );
+      this->StructureListWidget->Delete ( );
+      this->StructureListWidget = NULL;
+      }
+
+    //---
+    // results panel
+    //---
     if ( this->CurrentResultsList )
       {
       this->CurrentResultsList->SetParent(NULL);
@@ -386,124 +594,60 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->SaveCurrentResultsButton->Delete();
       this->SaveCurrentResultsButton = NULL;
       }
+    if ( this->SaveCurrentSelectedResultsButton )
+      {
+      this->SaveCurrentSelectedResultsButton->SetParent(NULL);
+      this->SaveCurrentSelectedResultsButton->Delete();
+      this->SaveCurrentSelectedResultsButton = NULL;
+      }
+
     if ( this->SavePastResultsButton )
       {
       this->SavePastResultsButton->SetParent(NULL);
       this->SavePastResultsButton->Delete();
       this->SavePastResultsButton = NULL;
       }
-
-    if ( this->CellMultiColumnList )
+    if ( this->LoadURIsButton )
       {
-      this->CellMultiColumnList->SetParent(NULL);
-      this->CellMultiColumnList->Delete();
-      this->CellMultiColumnList = NULL;
-      }
-    if ( this->CellClearAllButton )
-      {
-      this->CellClearAllButton->SetParent(NULL);
-      this->CellClearAllButton->Delete();
-      this->CellClearAllButton  = NULL;
-      }
-    if ( this->CellUseAllButton )
-      {
-      this->CellUseAllButton->SetParent(NULL);
-      this->CellUseAllButton->Delete();
-      this->CellUseAllButton  = NULL;
-      }
-    if ( this->CellUseNoneButton )
-      {
-      this->CellUseNoneButton->SetParent(NULL);
-      this->CellUseNoneButton->Delete();
-      this->CellUseNoneButton  = NULL;
-      }
-    if ( this->CellAddTermButton )
-      {
-      this->CellAddTermButton->SetParent(NULL);
-      this->CellAddTermButton->Delete();
-      this->CellAddTermButton  = NULL;
-      }
-    if ( this->CellClearTermButton )
-      {
-      this->CellClearTermButton->SetParent(NULL);
-      this->CellClearTermButton->Delete();
-      this->CellClearTermButton  = NULL;
-      }
-    
-    if ( this->GeneMultiColumnList )
-      {
-      this->GeneMultiColumnList->SetParent(NULL);
-      this->GeneMultiColumnList->Delete();
-      this->GeneMultiColumnList = NULL;
-      }
-    if ( this->GeneClearAllButton )
-      {
-      this->GeneClearAllButton->SetParent(NULL);
-      this->GeneClearAllButton->Delete();
-      this->GeneClearAllButton  = NULL;
-      }
-    if ( this->GeneUseAllButton )
-      {
-      this->GeneUseAllButton->SetParent(NULL);
-      this->GeneUseAllButton->Delete();
-      this->GeneUseAllButton  = NULL;
-      }
-    if ( this->GeneUseNoneButton )
-      {
-      this->GeneUseNoneButton->SetParent(NULL);
-      this->GeneUseNoneButton->Delete();
-      this->GeneUseNoneButton  = NULL;
-      }
-    if ( this->GeneAddTermButton )
-      {
-      this->GeneAddTermButton->SetParent(NULL);
-      this->GeneAddTermButton->Delete();
-      this->GeneAddTermButton  = NULL;
-      }
-    if ( this->GeneClearTermButton )
-      {
-      this->GeneClearTermButton->SetParent(NULL);
-      this->GeneClearTermButton->Delete();
-      this->GeneClearTermButton  = NULL;
+      this->LoadURIsButton->SetParent ( NULL );
+      this->LoadURIsButton->Create();
+      this->LoadURIsButton = NULL;
       }
 
-    if ( this->MiscMultiColumnList )
+    //---
+    // query builder substructure panel
+    //---
+    if ( this->SubStructureFrame )
       {
-      this->MiscMultiColumnList->SetParent(NULL);
-      this->MiscMultiColumnList->Delete();
-      this->MiscMultiColumnList = NULL;
+      this->SubStructureFrame->SetParent ( NULL );
+      this->SubStructureFrame->Delete();
+      this->SubStructureFrame = NULL;      
       }
-    if ( this->MiscClearAllButton )
+    if ( this->SubStructureListWidget )
       {
-      this->MiscClearAllButton->SetParent(NULL);
-      this->MiscClearAllButton->Delete();
-      this->MiscClearAllButton  = NULL;
+      this->SubStructureListWidget->SetParent ( NULL );
+      this->SubStructureListWidget->Delete();
+      this->SubStructureListWidget = NULL;      
       }
-    if ( this->MiscUseAllButton )
-      {
-      this->MiscUseAllButton->SetParent(NULL);
-      this->MiscUseAllButton->Delete();
-      this->MiscUseAllButton  = NULL;
-      }
-    if ( this->MiscUseNoneButton )
-      {
-      this->MiscUseNoneButton->SetParent(NULL);
-      this->MiscUseNoneButton->Delete();
-      this->MiscUseNoneButton  = NULL;
-      }
-    if ( this->MiscAddTermButton )
-      {
-      this->MiscAddTermButton->SetParent(NULL);
-      this->MiscAddTermButton->Delete();
-      this->MiscAddTermButton  = NULL;
-      }
-    if ( this->MiscClearTermButton )
-      {
-      this->MiscClearTermButton->SetParent(NULL);
-      this->MiscClearTermButton->Delete();
-      this->MiscClearTermButton  = NULL;
-      }
+}
 
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::OpenBIRNLexBrowser()
+{
+  this->Script ( "QueryAtlasLaunchBirnLexHierarchy" );
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::OpenNeuroNamesBrowser()
+{
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::OpenUMLSBrowser()
+{
 }
 
 
@@ -515,8 +659,43 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "QueryAtlasGUI: " << this->GetClassName ( ) << "\n";
     os << indent << "Logic: " << this->GetLogic ( ) << "\n";
 
-    // print widgets?
-    os << indent << "LoadSceneButton" << this->GetLoadSceneButton ( ) << "\n";
+    //---
+    // load frame
+    //---
+    os << indent << "FSbrainSelector: " << this->GetFSbrainSelector ( ) << "\n";    
+    os << indent << "FSoverlaySelector: " << this->GetFSoverlaySelector ( ) << "\n";    
+    os << indent << "FSmodelSelector: " << this->GetFSmodelSelector ( ) << "\n";    
+    os << indent << "FStransformSelector: " << this->GetFStransformSelector ( ) << "\n";    
+    os << indent << "QdecModelSelector: " << this->GetQdecModelSelector ( ) << "\n";    
+
+    //---
+    // ontology frame
+    //---
+    os << indent << "LoadSearchTermEntry" << this->GetLocalSearchTermEntry ( ) << "\n";    
+    os << indent << "SynonymsMenuButton" << this->GetSynonymsMenuButton ( ) << "\n";    
+    os << indent << "BIRNLexEntry" << this->GetBIRNLexEntry ( ) << "\n";    
+    os << indent << "BIRNLexIDEntry" << this->GetBIRNLexIDEntry ( ) << "\n";    
+    os << indent << "NeuroNamesEntry" << this->GetNeuroNamesEntry ( ) << "\n";    
+    os << indent << "NeuroNamesIDEntry" << this->GetNeuroNamesIDEntry ( ) << "\n";    
+    os << indent << "UMLSCIDEntry" << this->GetUMLSCIDEntry ( ) << "\n";    
+    os << indent << "AddLocalTermButton" << this->GetAddLocalTermButton ( ) << "\n";    
+    os << indent << "AddSynonymButton" << this->GetAddSynonymButton ( ) << "\n";    
+    os << indent << "AddBIRNLexStringButton" << this->GetAddBIRNLexStringButton ( ) << "\n";    
+    os << indent << "AddBIRNLexIDButton" << this->GetAddBIRNLexIDButton ( ) << "\n";    
+    os << indent << "AddNeuroNamesStringButton" << this->GetAddNeuroNamesStringButton ( ) << "\n";    
+    os << indent << "AddNeuroNamesIDButton" << this->GetAddNeuroNamesIDButton ( ) << "\n";    
+    os << indent << "AddUMLSCIDButton" << this->GetAddUMLSCIDButton ( ) << "\n";    
+    os << indent << "BIRNLexHierarchyButton" << this->GetBIRNLexHierarchyButton ( ) << "\n";    
+    os << indent << "NeuroNamesHierarchyButton" << this->GetNeuroNamesHierarchyButton ( ) << "\n";    
+    os << indent << "UMLSHierarchyButton" << this->GetUMLSHierarchyButton ( ) << "\n";    
+    os << indent << "SavedTerms" << this->GetSavedTerms() << "\n";
+    os << indent << "AddDiagnosisEntry" << this->GetAddDiagnosisEntry() << "\n";
+    os << indent << "ResultsWithExactButton" <<  this->GetResultsWithExactButton() << "\n";
+    os << indent << "ResultsWithAnyButton" <<  this->GetResultsWithAnyButton() << "\n";
+    os << indent << "ResultsWithAllButton" <<  this->GetResultsWithAllButton() << "\n";
+    //---
+    // TODO: finish this method!
+    //---
 }
 
 
@@ -526,57 +705,49 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 {
   vtkDebugMacro("vtkQueryAtlasGUI: RemoveGUIObservers\n");
 
-  this->LoadSceneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->FIPSFSButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->QdecButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->StructureButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->StructureClearAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->StructureAddTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->StructureClearTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->StructureUseAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->StructureUseNoneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->StructureListWidget->GetClearAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->StructureListWidget->GetAddNewButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->StructureListWidget->GetClearSelectedButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->StructureListWidget->GetUseAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->StructureListWidget->GetUseNoneButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->GeneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GeneClearAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GeneAddTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GeneClearTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->GeneUseAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GeneUseNoneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
-  this->MiscButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->MiscClearAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->MiscAddTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->MiscClearTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->MiscUseAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->MiscUseNoneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
-  this->CellButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CellClearAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CellAddTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CellClearTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->CellUseAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CellUseNoneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureListWidget->GetClearAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureListWidget->GetAddNewButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureListWidget->GetClearSelectedButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->SubStructureListWidget->GetUseAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureListWidget->GetUseNoneButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->SpeciesButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SpeciesNoneButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesHumanButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesMouseButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesMacaqueButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+  this->AnnotationVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->BIRNLexHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->HierarchySearchButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->HierarchySearchTermEntry->RemoveObservers(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->NeuroNamesHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->BIRNLexHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LocalSearchTermEntry->RemoveObservers(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->PopulationButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DiagnosisMenuButton->GetWidget()->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->HandednessMenuButton->GetWidget()->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GenderMenuButton->GetWidget()->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AgeMenuButton->GetWidget()->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->DiagnosticsMenuButton->GetWidget()->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->AddDiagnosisEntry->GetWidget()->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->DatabasesMenuButton->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
   this->SearchButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->SaveCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SaveCurrentSelectedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SavePastResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LoadURIsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeletePastResultButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllPastResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteCurrentResultButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -590,57 +761,50 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 void vtkQueryAtlasGUI::AddGUIObservers ( )
 {
   vtkDebugMacro("vtkQueryAtlasGUI: AddGUIObservers\n");
-  this->LoadSceneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->FIPSFSButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->QdecButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->StructureButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->StructureClearAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->StructureAddTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->StructureClearTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->StructureUseAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->StructureUseNoneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->StructureListWidget->GetClearAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->StructureListWidget->GetAddNewButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->StructureListWidget->GetClearSelectedButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->StructureListWidget->GetUseAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->StructureListWidget->GetUseNoneButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->GeneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GeneClearAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GeneAddTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GeneClearTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->GeneUseAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GeneUseNoneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
-  this->MiscButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->MiscClearAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->MiscAddTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->MiscClearTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->MiscUseAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->MiscUseNoneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
-  this->CellButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CellClearAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CellAddTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CellClearTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->CellUseAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CellUseNoneButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureListWidget->GetClearAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureListWidget->GetAddNewButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureListWidget->GetClearSelectedButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->SubStructureListWidget->GetUseAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureListWidget->GetUseNoneButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->SpeciesButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SpeciesNoneButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesHumanButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesMouseButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesMacaqueButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+  this->AnnotationVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
   this->BIRNLexHierarchyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->HierarchySearchButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->HierarchySearchTermEntry->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->NeuroNamesHierarchyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->BIRNLexHierarchyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LocalSearchTermEntry->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->PopulationButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DiagnosisMenuButton->GetWidget()->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->HandednessMenuButton->GetWidget()->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GenderMenuButton->GetWidget()->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AgeMenuButton->GetWidget()->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->DiagnosticsMenuButton->GetWidget()->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->AddDiagnosisEntry->GetWidget()->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->DatabasesMenuButton->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
   this->SearchButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->SaveCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SaveCurrentSelectedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SavePastResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LoadURIsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeletePastResultButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllPastResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteCurrentResultButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -661,31 +825,66 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
   vtkKWCheckButton *c = vtkKWCheckButton::SafeDownCast ( caller );
   vtkKWListBox *lb = vtkKWListBox::SafeDownCast ( caller );
+  vtkKWEntry *e  = vtkKWEntry::SafeDownCast ( caller);
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+
   const char *context;
   int index;
   
-  if ( (b == this->LoadSceneButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  if ( (e == this->AddDiagnosisEntry->GetWidget() ) && ( event == vtkKWEntry::EntryValueChangedEvent ))
     {
-    this->Script ( "source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasInit");
+    }
+  else if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
     }
   else if ( (b == this->BIRNLexHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    this->Script ( "source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasLaunchBirnLexHierarchy" );
-    }
-  else if ( (b == this->HierarchySearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    //--- get last clicked (or typed) structure from the HierarchySearchTermEntry
-    const char *structureLabel =  this->HierarchySearchTermEntry->GetValue();
+    //--- TODO: check to see if BIRNLexBrowser is open.
+    
+    //--- Will open if it's not alreay open.
+    this->OpenBIRNLexBrowser();
+    //--- get last clicked (or typed) structure from the LocalSearchTermEntry
+    const char *structureLabel =  this->LocalSearchTermEntry->GetValue();
     if ( !strcmp (structureLabel, "" ))
       {
       structureLabel = "BIRNLex_subset";
       }
-    this->Script ( "source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasSendHierarchyCommand  %s", structureLabel );
+    this->Script ( "QueryAtlasSendHierarchyCommand  %s", structureLabel );
     }
-
   else if ( (b == this->SearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     this->Script ( "QueryAtlasFormURLsForTargets");
+    }
+  else if ( (b == this->AnnotationVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    if ( this->AnnotationVisibility == 1 )
+      {
+      // turn off automatic annotations in the main viewer
+      vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
+      this->AnnotationVisibilityButton->SetImageToIcon ( i );
+      this->AnnotationVisibility = 0;
+     //      this->Script ( "" );
+      }
+    else
+      {
+      // turn on automatic annotations in main viewer
+      vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
+      this->AnnotationVisibilityButton->SetImageToIcon ( i );
+      this->AnnotationVisibility = 1;
+     //      this->Script ( "" );
+      }
+    }
+  else if ( (b == this->FIPSFSButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    this->UnpackLoaderContextFrames();
+    this->PackLoaderContextFrame ( this->FIPSFSFrame );
+    this->ColorCodeLoaderContextButtons ( this->FIPSFSButton );
+    }
+  else if ( (b == this->QdecButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    this->UnpackLoaderContextFrames();
+    this->PackLoaderContextFrame ( this->QdecFrame );
+    this->ColorCodeLoaderContextButtons ( this->QdecButton );
     }
   else if ( (b == this->StructureButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -693,122 +892,60 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     this->PackQueryBuilderContextFrame ( this->StructureFrame );
     this->ColorCodeContextButtons ( this->StructureButton );
     }
-  else if ( (b == this->StructureClearAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->StructureListWidget->GetClearAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     context = "structure";
     this->DeleteAllSearchTerms( context );
     }
-  else if ( (b == this->StructureAddTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->StructureListWidget->GetAddNewButton()) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     context = "structure";
     this->AddNewSearchTerm( context );
     }
-  else if ( (b == this->StructureClearTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->StructureListWidget->GetClearSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     context = "structure";
     this->DeleteSelectedSearchTerms (context );
     }
-  else if ( (b == this->StructureUseAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->StructureListWidget->GetUseAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     context = "structure";
     this->SelectAllSearchTerms ( context );
     }
-  else if ( (b == this->StructureUseNoneButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->StructureListWidget->GetUseNoneButton()) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     context = "structure";
     this->DeselectAllSearchTerms ( context );
     }  
-  else if ( (b == this->MiscButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->SubStructureButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     this->UnpackQueryBuilderContextFrames();
-    this->PackQueryBuilderContextFrame ( this->MiscFrame);
-    this->ColorCodeContextButtons ( this->MiscButton );
+    this->PackQueryBuilderContextFrame ( this->SubStructureFrame);    
+    this->ColorCodeContextButtons ( this->SubStructureButton );
     }
-  else if ( (b == this->MiscClearAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->SubStructureListWidget->GetClearAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    context = "misc";
+    context = "substructure";
     this->DeleteAllSearchTerms( context );
     }
-  else if ( (b == this->MiscAddTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->SubStructureListWidget->GetAddNewButton()) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    context = "misc";
+    context = "substructure";
     this->AddNewSearchTerm( context );
     }
-  else if ( (b == this->MiscClearTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->SubStructureListWidget->GetClearSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    context = "misc";
+    context = "substructure";
     this->DeleteSelectedSearchTerms (context );
     }
-  else if ( (b == this->MiscUseAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->SubStructureListWidget->GetUseAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    context = "misc";
+    context = "substructure";
     this->SelectAllSearchTerms ( context );
     }
-  else if ( (b == this->MiscUseNoneButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ( (b == this->SubStructureListWidget->GetUseNoneButton()) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    context = "misc";
-    this->DeselectAllSearchTerms ( context );
-    }  
-  else if ( (b == this->GeneButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->UnpackQueryBuilderContextFrames();
-    this->PackQueryBuilderContextFrame ( this->GeneFrame);
-    this->ColorCodeContextButtons ( this->GeneButton );
-    }
-  else if ( (b == this->GeneClearAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "gene";
-    this->DeleteAllSearchTerms( context );
-    }
-  else if ( (b == this->GeneAddTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "gene";
-    this->AddNewSearchTerm( context );
-    }
-  else if ( (b == this->GeneClearTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "gene";
-    this->DeleteSelectedSearchTerms (context );
-    }
-  else if ( (b == this->GeneUseAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "gene";
-    this->SelectAllSearchTerms ( context );
-    }
-  else if ( (b == this->GeneUseNoneButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "gene";
-    this->DeselectAllSearchTerms ( context );
-    }  
-  else if ( (b == this->CellButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->UnpackQueryBuilderContextFrames();
-    this->PackQueryBuilderContextFrame ( this->CellFrame);    
-    this->ColorCodeContextButtons ( this->CellButton );
-    }
-  else if ( (b == this->CellClearAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "cell";
-    this->DeleteAllSearchTerms( context );
-    }
-  else if ( (b == this->CellAddTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "cell";
-    this->AddNewSearchTerm( context );
-    }
-  else if ( (b == this->CellClearTermButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "cell";
-    this->DeleteSelectedSearchTerms (context );
-    }
-  else if ( (b == this->CellUseAllButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "cell";
-    this->SelectAllSearchTerms ( context );
-    }
-  else if ( (b == this->CellUseNoneButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "cell";
+    context = "substructure";
     this->DeselectAllSearchTerms ( context );
     }  
   else if ( (b == this->PopulationButton) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -839,6 +976,10 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     this->Script ( "QueryAtlasBundleSearchResults");
     }
+  else if ( (b == this->SaveCurrentSelectedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+//    this->Script ( "QueryAtlasBundleSearchResults");
+    }
   else if ( (b == this->DeletePastResultButton ) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     index = this->PastResultsList->GetWidget()->GetSelectionIndex();
@@ -854,6 +995,10 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   else if ( (b == this->SavePastResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     this->Script( "QueryAtlasSaveLinkBundlesToFile");
+    }
+  else if ( (b == this->LoadURIsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+//    this->Script(""); load links from a file and put in bottom list.
     }
   if ((lb = this->CurrentResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
     {
@@ -875,7 +1020,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   else if (( m== this->AgeMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
     {
     }
-  else if (( m== this->DiagnosticsMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+  if ((c == this->SpeciesNoneButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent))
     {
     }
   if ((c == this->SpeciesHumanButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent))
@@ -893,16 +1038,12 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::ColorCodeContextButtons ( vtkKWPushButton *b )
 {
-  this->MiscButton->SetBackgroundColor ( _br, _bg, _bb );
-  this->GeneButton->SetBackgroundColor ( _br, _bg, _bb );
-  this->CellButton->SetBackgroundColor ( _br, _bg, _bb );
+  this->SubStructureButton->SetBackgroundColor ( _br, _bg, _bb );
   this->StructureButton->SetBackgroundColor ( _br, _bg, _bb );
   this->PopulationButton->SetBackgroundColor ( _br, _bg, _bb );
   this->SpeciesButton->SetBackgroundColor ( _br, _bg, _bb );
 
-  this->MiscButton->SetForegroundColor ( _fr, _fg, _fb );
-  this->GeneButton->SetForegroundColor ( _fr, _fg, _fb );
-  this->CellButton->SetForegroundColor ( _fr, _fg, _fb );
+  this->SubStructureButton->SetForegroundColor ( _fr, _fg, _fb );
   this->StructureButton->SetForegroundColor ( _fr, _fg, _fb );
   this->PopulationButton->SetForegroundColor ( _fr, _fg, _fb );
   this->SpeciesButton->SetForegroundColor ( _fr, _fg, _fb );
@@ -956,31 +1097,492 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     // create a page
     this->UIPanel->AddPage ( "QueryAtlas", "QueryAtlas", NULL );
 
-    const char *help = "The Query Atlas module allows interactive Google, Wikipedia, queries from within the 3D anatomical display.";
-    const char *about = "This work was supported by BIRN, NA-MIC, NAC, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
+    const char *help = "The (Generation 1) Query Atlas module allows interactive Google, Wikipedia, queries from within the 3D anatomical display.";
+    const char *about = "This research was supported by Grant 5 MOI RR 000827 to the FIRST BIRN and Grant 1 U24 RR021992 to the FBIRN Biomedical Informatics Research Network (BIRN, http://www.nbirn.net), that is funded by the National Center for Research Resources (NCRR) at the National Institutes of Health (NIH). This work was also supported by NA-MIC, NAC, NCIGT. NeuroNames ontology and URI resources are provided courtesy of BrainInfo, Neuroscience Division, National Primate Research Center, University of Washington (http://www.braininfo.org).                                                                                                                                                                                      ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
+    this->QueryAtlasIcons = vtkQueryAtlasIcons::New();
     this->BuildHelpAndAboutFrame ( page, help, about );
+    this->BuildHelpAndAcknowledgementGUI ( );
+    this->BuildLoadAndConvertGUI ( );
+    this->BuildAnnotationOptionsGUI ( );
+    this->BuildOntologyGUI ( );
+    this->BuildQueryGUI ( );
+    this->BuildSearchGUI ( );
+    this->BuildResultsManagerGUI ( );
+    this->BuildDisplayAndNavigationGUI ( );
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildHelpAndAcknowledgementGUI ( )
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+
+    vtkKWLabel *abirn = vtkKWLabel::New();
+    abirn->SetParent ( this->GetLogoFrame() );
+    abirn->Create();
+    abirn->SetImageToIcon ( this->GetAcknowledgementIcons()->GetBIRNLogo() );
+
+    vtkKWLabel *anac = vtkKWLabel::New();
+    anac->SetParent ( this->GetLogoFrame() );
+    anac->Create();
+    anac->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNACLogo() );
+
+    vtkKWLabel *anamic = vtkKWLabel::New();
+    anamic->SetParent ( this->GetLogoFrame() );
+    anamic->Create();
+    anamic->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNAMICLogo() );
+
+    vtkKWLabel *aigt = vtkKWLabel::New();
+    aigt->SetParent ( this->GetLogoFrame() );
+    aigt->Create();
+    aigt->SetImageToIcon ( this->GetAcknowledgementIcons()->GetNCIGTLogo() );
+
+    this->CollaboratorIcons = vtkQueryAtlasCollaboratorIcons::New();
+
+    vtkKWLabel *abi = vtkKWLabel::New();
+    abi->SetParent ( this->GetLogoFrame() );
+    abi->Create();
+    abi->SetImageToIcon ( this->GetCollaboratorIcons()->GetBrainInfoLogo() );
     
-    // ---
-    // LOAD FRAME            
-    vtkSlicerModuleCollapsibleFrame *loadFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    loadFrame->SetParent ( page );
-    loadFrame->Create ( );
-    loadFrame->SetLabelText ("Load 3D Query Scene");
-    loadFrame->ExpandFrame ( );
+    app->Script ("grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky w",  abirn->GetWidgetName());
+    app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky w", anamic->GetWidgetName());
+    app->Script ("grid %s -row 0 -column 2 -padx 2 -pady 2 -sticky w",  anac->GetWidgetName());
+    app->Script ("grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky w",  aigt->GetWidgetName());                 
+    app->Script ("grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  abi->GetWidgetName());                 
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildLoadAndConvertGUI ( )
+{
+
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
+
+    //---
+    // LOAD AND CONVERSION FRAME 
+    //---
+    vtkSlicerModuleCollapsibleFrame *convertFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    convertFrame->SetParent ( page );
+    convertFrame->Create ( );
+    convertFrame->SetLabelText ("Load & Configure");
+//    convertFrame->ExpandFrame ( );
+    convertFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  loadFrame->GetWidgetName(),
+                  convertFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
+
+    this->BuildLoaderContextButtons ( convertFrame->GetFrame() );
     
-    // add button to load a scene. this is wrong widget, but for now let it sit.
-    this->LoadSceneButton = vtkKWPushButton::New ( );
-    this->LoadSceneButton->SetParent ( loadFrame->GetFrame() );
-    this->LoadSceneButton->Create();
-    this->LoadSceneButton->SetText ( "LoadScene" );
-    this->LoadSceneButton->SetBalloonHelpString ( "Select all search terms for use");
-    app->Script ( "pack %s -side top -padx 3 -pady 3", this->LoadSceneButton->GetWidgetName() );
+    vtkKWFrame *switcher = vtkKWFrame::New();
+    switcher->SetParent ( convertFrame->GetFrame() );
+    switcher->Create();
+    
+    this->BuildLoaderContextFrames ( switcher );
+    this->BuildFreeSurferFIPSFrame ( );
+    this->BuildQdecFrame ( );
+    this->PackLoaderContextFrame ( this->FIPSFSFrame );
+    app->Script ( "pack %s -side top -fill x -expand 1", switcher->GetWidgetName() );
+    this->ColorCodeLoaderContextButtons ( this->FIPSFSButton );
+    switcher->Delete();
+    convertFrame->Delete();
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
+{
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  
+    this->FSbrainSelector = vtkSlicerNodeSelectorWidget::New() ;
+    this->FSbrainSelector->SetParent ( this->FIPSFSFrame );
+    this->FSbrainSelector->Create ( );
+    this->FSbrainSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->FSbrainSelector->SetMRMLScene(this->GetMRMLScene());
+    this->FSbrainSelector->SetBorderWidth(2);
+    this->FSbrainSelector->SetPadX(2);
+    this->FSbrainSelector->SetPadY(2);
+    this->FSbrainSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->FSbrainSelector->GetWidget()->GetWidget()->SetWidth(24);
+    this->FSbrainSelector->GetLabel()->SetWidth(20);
+    this->FSbrainSelector->SetLabelText( "FreeSurfer anatomical: ");
+    this->FSbrainSelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                   this->FSbrainSelector->GetWidgetName());
+
+    this->FSoverlaySelector = vtkSlicerNodeSelectorWidget::New() ;
+    this->FSoverlaySelector->SetParent ( this->FIPSFSFrame );
+    this->FSoverlaySelector->Create ( );
+    this->FSoverlaySelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->FSoverlaySelector->SetMRMLScene(this->GetMRMLScene());
+    this->FSoverlaySelector->SetBorderWidth(2);
+    this->FSoverlaySelector->SetPadX(2);
+    this->FSoverlaySelector->SetPadY(2);
+    this->FSoverlaySelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->FSoverlaySelector->GetWidget()->GetWidget()->SetWidth(24);
+    this->FSoverlaySelector->GetLabel()->SetWidth(20);
+    this->FSoverlaySelector->SetLabelText( "Statistical volume: ");
+    this->FSoverlaySelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                  this->FSoverlaySelector->GetWidgetName());
 
 
+    this->FSmodelSelector = vtkSlicerNodeSelectorWidget::New() ;
+    this->FSmodelSelector->SetParent ( this->FIPSFSFrame );
+    this->FSmodelSelector->Create ( );
+    this->FSmodelSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->FSmodelSelector->SetMRMLScene(this->GetMRMLScene());
+    this->FSmodelSelector->SetBorderWidth(2);
+    this->FSmodelSelector->SetPadX(2);
+    this->FSmodelSelector->SetPadY(2);
+    this->FSmodelSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->FSmodelSelector->GetWidget()->GetWidget()->SetWidth(24);
+    this->FSmodelSelector->GetLabel()->SetWidth(20);
+    this->FSmodelSelector->SetLabelText( "Annotated model: ");
+    this->FSmodelSelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                  this->FSmodelSelector->GetWidgetName());
+
+    this->FStransformSelector = vtkSlicerNodeSelectorWidget::New() ;
+    this->FStransformSelector->SetParent ( this->FIPSFSFrame );
+    this->FStransformSelector->Create ( );
+    this->FStransformSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->FStransformSelector->SetMRMLScene(this->GetMRMLScene());
+    this->FStransformSelector->SetBorderWidth(2);
+    this->FStransformSelector->SetPadX(2);
+    this->FStransformSelector->SetPadY(2);
+    this->FStransformSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->FStransformSelector->GetWidget()->GetWidget()->SetWidth(24);
+    this->FStransformSelector->GetLabel()->SetWidth(20);
+    this->FStransformSelector->SetLabelText( "Registration transform: ");
+    this->FStransformSelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                  this->FStransformSelector->GetWidgetName());
+
+
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildQdecFrame ( )
+{
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  
+
+    this->QdecModelSelector = vtkSlicerNodeSelectorWidget::New() ;
+    this->QdecModelSelector->SetParent ( this->QdecFrame );
+    this->QdecModelSelector->Create ( );
+    this->QdecModelSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->QdecModelSelector->SetMRMLScene(this->GetMRMLScene());
+    this->QdecModelSelector->SetBorderWidth(2);
+    this->QdecModelSelector->SetPadX(2);
+    this->QdecModelSelector->SetPadY(2);
+    this->QdecModelSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->QdecModelSelector->GetWidget()->GetWidget()->SetWidth(24);
+    this->QdecModelSelector->GetLabel()->SetWidth(20);
+    this->QdecModelSelector->SetLabelText( "Annotated model: ");
+    this->QdecModelSelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                  this->QdecModelSelector->GetWidgetName());
+
+    //get uri from model, load annotations from a relative path??
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
+    // -------------------------------------------------------------------------------------------------
+    // ---
+    // ANNOTATION OPTIONS FRAME
+
+    // ---
+    // -------------------------------------------------------------------------------------------------
+    vtkSlicerModuleCollapsibleFrame *annotationFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    annotationFrame->SetParent ( page );
+    annotationFrame->Create ();
+    annotationFrame->SetLabelText ( "Annotation Options" );
+    annotationFrame->CollapseFrame ( );
+
+    this->AnnotationVisibilityButton = vtkKWPushButton::New();
+    this->AnnotationVisibilityButton->SetParent ( annotationFrame->GetFrame() );
+    this->AnnotationVisibilityButton->Create();
+    // get the icon this way; don't seem to admit baseGUI scope.
+    // TODO: move common icons up into applicationGUI for easy access.
+    vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
+    this->AnnotationVisibilityButton->SetImageToIcon ( i );
+    this->AnnotationVisibilityButton->SetBorderWidth ( 0 );
+    this->AnnotationVisibilityButton->SetReliefToFlat();    
+    this->AnnotationVisibilityButton->SetBalloonHelpString ( "Toggle annotation visibility." );
+
+    vtkKWLabel *l = vtkKWLabel::New();
+    l->SetParent ( annotationFrame->GetFrame() );
+    l->Create ( );
+    l->SetText ( "term set: " );
+    
+    this->AnnotationNomenclatureMenuButton = vtkKWMenuButton::New();
+    this->AnnotationNomenclatureMenuButton->SetParent ( annotationFrame->GetFrame() );
+    this->AnnotationNomenclatureMenuButton->Create();
+    this->AnnotationNomenclatureMenuButton->SetWidth ( 30 );
+    this->AnnotationNomenclatureMenuButton->GetMenu()->AddRadioButton ("local identifier");
+    this->AnnotationNomenclatureMenuButton->GetMenu()->AddRadioButton ("BIRNLex String");
+    this->AnnotationNomenclatureMenuButton->GetMenu()->AddRadioButton ("NeuroNames String");
+    this->AnnotationNomenclatureMenuButton->GetMenu()->AddRadioButton ("UMLS CID");
+    this->AnnotationNomenclatureMenuButton->GetMenu()->AddSeparator();
+    this->AnnotationNomenclatureMenuButton->GetMenu()->AddCommand ( "close" );    
+    this->AnnotationNomenclatureMenuButton->GetMenu()->SelectItem ("local identifier");
+
+    app->Script ( "pack %s %s %s -side left -anchor nw  -expand n -padx 2 -pady 2",
+                  l->GetWidgetName(),
+                  this->AnnotationNomenclatureMenuButton->GetWidgetName(),
+                  this->AnnotationVisibilityButton->GetWidgetName() );
+    
+    app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 4 -pady 2 -in %s",
+                  annotationFrame->GetWidgetName(), 
+                  this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
+
+    l->Delete();
+    annotationFrame->Delete();
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildOntologyGUI ( )
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
+    // -------------------------------------------------------------------------------------------------
+    // ---
+    // HIERARCHY SEARCH FRAME
+    // ---
+    // -------------------------------------------------------------------------------------------------
+    vtkSlicerModuleCollapsibleFrame *hierarchyFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    hierarchyFrame->SetParent ( page );
+    hierarchyFrame->Create ( );
+    hierarchyFrame->SetLabelText ("Ontology Mapping");
+    hierarchyFrame->CollapseFrame ( );
+
+    // first row (local terms)
+    vtkKWLabel *localLabel = vtkKWLabel::New();
+    localLabel->SetParent ( hierarchyFrame->GetFrame() );
+    localLabel->Create();
+    localLabel->SetText ("local term: ");
+    this->LocalSearchTermEntry = vtkKWEntry::New();
+    this->LocalSearchTermEntry->SetParent ( hierarchyFrame->GetFrame() );
+    this->LocalSearchTermEntry->Create();
+    this->LocalSearchTermEntry->SetValue ("");
+    this->AddLocalTermButton = vtkKWPushButton::New();
+    this->AddLocalTermButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->AddLocalTermButton->Create();
+    this->AddLocalTermButton->SetImageToIcon ( this->QueryAtlasIcons->GetAddIcon() );
+    this->AddLocalTermButton->SetBorderWidth ( 0 );
+    this->AddLocalTermButton->SetReliefToFlat();
+    this->AddLocalTermButton->SetBalloonHelpString ("Save this term for building queries.");
+    
+    // second row (synonyms)
+    vtkKWLabel *synLabel = vtkKWLabel::New();
+    synLabel->SetParent ( hierarchyFrame->GetFrame() );
+    synLabel->Create();
+    synLabel->SetText ("synonyms: ");
+    this->SynonymsMenuButton = vtkKWMenuButton::New();
+    this->SynonymsMenuButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->SynonymsMenuButton->Create();
+    this->SynonymsMenuButton->IndicatorVisibilityOn();
+    this->AddSynonymButton = vtkKWPushButton::New();
+    this->AddSynonymButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->AddSynonymButton->Create();
+    this->AddSynonymButton->SetImageToIcon ( this->QueryAtlasIcons->GetAddIcon() );
+    this->AddSynonymButton->SetBorderWidth ( 0 );
+    this->AddSynonymButton->SetReliefToFlat();
+    this->AddSynonymButton->SetBalloonHelpString ("Save this term for building queries.");
+
+    // third row (BIRNLex)
+    vtkKWLabel *birnLabel = vtkKWLabel::New();
+    birnLabel->SetParent ( hierarchyFrame->GetFrame() );
+    birnLabel->Create();
+    birnLabel->SetText ("BIRNLex: ");
+    this->BIRNLexEntry = vtkKWEntry::New();
+    this->BIRNLexEntry->SetParent ( hierarchyFrame->GetFrame() );
+    this->BIRNLexEntry->Create();
+    this->BIRNLexEntry->SetValue ("");
+    this->AddBIRNLexStringButton = vtkKWPushButton::New();
+    this->AddBIRNLexStringButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->AddBIRNLexStringButton->Create();
+    this->AddBIRNLexStringButton->SetImageToIcon ( this->QueryAtlasIcons->GetAddIcon() );
+    this->AddBIRNLexStringButton->SetBorderWidth(0);
+    this->AddBIRNLexStringButton->SetReliefToFlat();
+    this->AddBIRNLexStringButton->SetBalloonHelpString ("Save this term for building queries.");
+    this->BIRNLexHierarchyButton = vtkKWPushButton::New();
+    this->BIRNLexHierarchyButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->BIRNLexHierarchyButton->Create();
+    this->BIRNLexHierarchyButton->SetImageToIcon ( this->QueryAtlasIcons->GetOntologyBrowserIcon() );
+    this->BIRNLexHierarchyButton->SetBorderWidth ( 0 );
+    this->BIRNLexHierarchyButton->SetReliefToFlat ( );
+    this->BIRNLexHierarchyButton->SetBalloonHelpString ("Launch ontology browser.");
+
+    // forthrow (BIRNLex ID )
+    vtkKWLabel *birnidLabel = vtkKWLabel::New();
+    birnidLabel->SetParent ( hierarchyFrame->GetFrame() );
+    birnidLabel->Create();
+    birnidLabel->SetText ("BIRNLex ID: ");
+    this->BIRNLexIDEntry = vtkKWEntry::New();
+    this->BIRNLexIDEntry->SetParent ( hierarchyFrame->GetFrame() );
+    this->BIRNLexIDEntry->Create();
+    this->BIRNLexIDEntry->SetValue("");
+    this->AddBIRNLexIDButton = vtkKWPushButton::New();
+    this->AddBIRNLexIDButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->AddBIRNLexIDButton->Create();
+    this->AddBIRNLexIDButton->SetImageToIcon ( this->QueryAtlasIcons->GetAddIcon() );
+    this->AddBIRNLexIDButton->SetBorderWidth ( 0 );
+    this->AddBIRNLexIDButton->SetReliefToFlat ( );
+    this->AddBIRNLexIDButton->SetBalloonHelpString ("Save this term for building queries.");
+
+    // fifth row (NeuroNames)
+    vtkKWLabel *nnLabel = vtkKWLabel::New();
+    nnLabel->SetParent ( hierarchyFrame->GetFrame() );
+    nnLabel->Create();
+    nnLabel->SetText ("NeuroNames: ");
+    this->NeuroNamesEntry = vtkKWEntry::New();
+    this->NeuroNamesEntry->SetParent ( hierarchyFrame->GetFrame() );
+    this->NeuroNamesEntry->Create();
+    this->NeuroNamesEntry->SetValue ("");
+    this->AddNeuroNamesStringButton = vtkKWPushButton::New();
+    this->AddNeuroNamesStringButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->AddNeuroNamesStringButton->Create();
+    this->AddNeuroNamesStringButton->SetImageToIcon ( this->QueryAtlasIcons->GetAddIcon() );
+    this->AddNeuroNamesStringButton->SetBorderWidth (0 );
+    this->AddNeuroNamesStringButton->SetReliefToFlat( );
+    this->AddNeuroNamesStringButton->SetBalloonHelpString ("Save this term for building queries.");
+    this->NeuroNamesHierarchyButton = vtkKWPushButton::New();
+    this->NeuroNamesHierarchyButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->NeuroNamesHierarchyButton->Create();
+    this->NeuroNamesHierarchyButton->SetImageToIcon ( this->QueryAtlasIcons->GetOntologyBrowserDisabledIcon() );
+    this->NeuroNamesHierarchyButton->SetBorderWidth ( 0 );
+    this->NeuroNamesHierarchyButton->SetReliefToFlat();
+    this->NeuroNamesHierarchyButton->SetBalloonHelpString ("Launch ontology browser.");
+
+    // sixth row (NeuroNames ID)
+    vtkKWLabel *nnidLabel = vtkKWLabel::New();    
+    nnidLabel->SetParent ( hierarchyFrame->GetFrame() );
+    nnidLabel->Create();
+    nnidLabel->SetText ("NeuroNames ID: ");
+    this->NeuroNamesIDEntry = vtkKWEntry::New();
+    this->NeuroNamesIDEntry->SetParent ( hierarchyFrame->GetFrame() );
+    this->NeuroNamesIDEntry->Create();
+    this->NeuroNamesIDEntry->SetValue ("");
+    this->AddNeuroNamesIDButton = vtkKWPushButton::New();
+    this->AddNeuroNamesIDButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->AddNeuroNamesIDButton->Create();
+    this->AddNeuroNamesIDButton->SetImageToIcon ( this->QueryAtlasIcons->GetAddIcon() );
+    this->AddNeuroNamesIDButton->SetBorderWidth(0);
+    this->AddNeuroNamesIDButton->SetReliefToFlat();
+    this->AddNeuroNamesIDButton->SetBalloonHelpString ("Save this term for building queries.");
+    // seventh row (UMLS)
+    vtkKWLabel *umlsLabel = vtkKWLabel::New();
+    umlsLabel->SetParent ( hierarchyFrame->GetFrame() );
+    umlsLabel->Create();
+    umlsLabel->SetText ("UMLS CID: ");
+    this->UMLSCIDEntry = vtkKWEntry::New();
+    this->UMLSCIDEntry->SetParent ( hierarchyFrame->GetFrame() );
+    this->UMLSCIDEntry->Create();
+    this->UMLSCIDEntry->SetValue ("");
+    this->AddUMLSCIDButton = vtkKWPushButton::New();
+    this->AddUMLSCIDButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->AddUMLSCIDButton->Create();
+    this->AddUMLSCIDButton->SetImageToIcon ( this->QueryAtlasIcons->GetAddIcon() );
+    this->AddUMLSCIDButton->SetBorderWidth(0);
+    this->AddUMLSCIDButton->SetReliefToFlat();
+    this->AddUMLSCIDButton->SetBalloonHelpString ("Save this term for building queries.");
+    this->UMLSHierarchyButton = vtkKWPushButton::New();
+    this->UMLSHierarchyButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->UMLSHierarchyButton->Create();
+    this->UMLSHierarchyButton->SetImageToIcon ( this->QueryAtlasIcons->GetOntologyBrowserDisabledIcon() );
+    this->UMLSHierarchyButton->SetBorderWidth ( 0 );
+    this->UMLSHierarchyButton->SetReliefToFlat();
+    this->UMLSHierarchyButton->SetBalloonHelpString ("Launch ontology browser.");
+    
+    // eighth row (listbox saved terms)
+    vtkKWLabel *termsLabel = vtkKWLabel::New();
+    termsLabel->SetParent (hierarchyFrame->GetFrame() );
+    termsLabel->Create();
+    termsLabel->SetText ( "(structure) ");
+    
+    vtkKWFrame *f = vtkKWFrame::New();
+    f->SetParent ( hierarchyFrame->GetFrame() );
+    f->Create();
+    
+    this->SavedTerms = vtkQueryAtlasSearchTermWidget::New();
+    this->SavedTerms->SetParent ( f );
+    this->SavedTerms->Create();
+//    int i = this->SavedTerms->GetMultiColumnList()->GetWidget()->GetColumnIndexWithName ( "Search terms" );
+//    this->SavedTerms->GetMultiColumnList()->GetWidget()->SetColumnName ( i, "Saved terms");
+    this->SavedTerms->GetMultiColumnList()->GetWidget()->SetHeight(3);
+    
+    //---
+    // grid and pack up
+    //---
+    app->Script ( "grid columnconfigure %s 0 -weight 0", hierarchyFrame->GetFrame()->GetWidgetName() );
+    app->Script ( "grid columnconfigure %s 1 -weight 1", hierarchyFrame->GetFrame()->GetWidgetName() );
+    app->Script ( "grid columnconfigure %s 2 -weight 0", hierarchyFrame->GetFrame()->GetWidgetName() );
+    app->Script ( "grid columnconfigure %s 3 -weight 0", hierarchyFrame->GetFrame()->GetWidgetName() );
+
+    app->Script ( "grid %s -row 0 -column 0 -sticky e -padx 0 -pady 1", localLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 1 -column 0 -sticky e -padx 0 -pady 1", synLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 2 -column 0 -sticky e -padx 0 -pady 1", birnLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 3 -column 0 -sticky e -padx 0 -pady 1", birnidLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 4 -column 0 -sticky e -padx 0 -pady 1", nnLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 5 -column 0 -sticky e -padx 0 -pady 1", nnidLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 6 -column 0 -sticky e -padx 0 -pady 1", umlsLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 7 -column 0 -sticky ne -padx 0 -pady 1", termsLabel->GetWidgetName() );
+
+    app->Script ( "grid %s -row 0 -column 1 -sticky ew -padx 2 -pady 1", this->LocalSearchTermEntry->GetWidgetName() );
+    app->Script ( "grid %s -row 1 -column 1 -sticky ew -padx 2 -pady 1", this->SynonymsMenuButton->GetWidgetName() );
+    app->Script ( "grid %s -row 2 -column 1 -sticky ew -padx 2 -pady 1", this->BIRNLexEntry->GetWidgetName() );
+    app->Script ( "grid %s -row 3 -column 1 -sticky ew -padx 2 -pady 1", this->BIRNLexIDEntry->GetWidgetName() );
+    app->Script ( "grid %s -row 4 -column 1 -sticky ew -padx 2 -pady 1", this->NeuroNamesEntry->GetWidgetName() );
+    app->Script ( "grid %s -row 5 -column 1 -sticky ew -padx 2 -pady 1", this->NeuroNamesIDEntry->GetWidgetName() );
+    app->Script ( "grid %s -row 6 -column 1 -sticky ew -padx 2 -pady 1", this->UMLSCIDEntry->GetWidgetName() );
+    app->Script ( "grid %s -row 7 -column 1 -sticky ew -columnspan 2 -padx 2 -pady 1", f->GetWidgetName() );
+    app->Script ( "pack %s -side top -fill x -expand true -padx 0 -pady 0", this->SavedTerms->GetWidgetName() );
+    f->Delete();
+    
+    app->Script ( "grid %s -row 0 -column 2 -padx 2 -pady 1", this->AddLocalTermButton->GetWidgetName() );
+    app->Script ( "grid %s -row 1 -column 2 -padx 2 -pady 1", this->AddSynonymButton->GetWidgetName() );
+    app->Script ( "grid %s -row 2 -column 2 -padx 2 -pady 1", this->AddBIRNLexStringButton->GetWidgetName() );
+    app->Script ( "grid %s -row 3 -column 2 -padx 2 -pady 1", this->AddBIRNLexIDButton->GetWidgetName() );
+    app->Script ( "grid %s -row 4 -column 2 -padx 2 -pady 1", this->AddNeuroNamesStringButton->GetWidgetName() );
+    app->Script ( "grid %s -row 5 -column 2 -padx 2 -pady 1", this->AddNeuroNamesIDButton->GetWidgetName() );
+    app->Script ( "grid %s -row 6 -column 2 -padx 2 -pady 1", this->AddUMLSCIDButton->GetWidgetName() );
+
+    app->Script ( "grid %s -row 2 -column 3 -padx 2 -pady 1", this->BIRNLexHierarchyButton->GetWidgetName() );
+    app->Script ( "grid %s -row 4 -column 3 -padx 2 -pady 1", this->NeuroNamesHierarchyButton->GetWidgetName() );
+    app->Script ( "grid %s -row 6 -column 3 -padx 2 -pady 1", this->UMLSHierarchyButton->GetWidgetName() );
+
+    app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 2 -pady 2 -in %s",
+                  hierarchyFrame->GetWidgetName(), 
+                  this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
+
+
+    //---
+    // clean up.
+    //---
+    localLabel->Delete();
+    synLabel->Delete();
+    birnLabel->Delete();
+    birnidLabel->Delete();
+    nnLabel->Delete();
+    nnidLabel->Delete();
+    umlsLabel->Delete();
+    termsLabel->Delete();
+    hierarchyFrame->Delete();
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildQueryGUI ( )
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
     // -------------------------------------------------------------------------------------------------
     // ---
     // BUILD QUERY FRAME
@@ -1008,63 +1610,26 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     this->BuildSpeciesFrame();
     this->BuildPopulationFrame();
     this->BuildStructureFrame();
-    this->BuildCellFrame();
-    this->BuildMiscFrame();
-    this->BuildGeneFrame();
+    this->BuildSubStructureFrame();
     this->PackQueryBuilderContextFrame ( this->StructureFrame );
     app->Script ( "pack %s -side top -fill x -expand 1", this->SwitchQueryFrame->GetWidgetName() );
 //    this->Script ( "place %s -relx 0 -rely 0 -anchor nw", this->SwitchQueryFrame->GetWidgetName());
     this->ColorCodeContextButtons ( this->StructureButton );
-    
+    queryFrame->Delete();
+
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildSearchGUI ( )
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
+
     // -------------------------------------------------------------------------------------------------
-    // ---
-    // HIERARCHY FRAME
-    // ---
-    // -------------------------------------------------------------------------------------------------
-    vtkSlicerModuleCollapsibleFrame *hierarchyFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    hierarchyFrame->SetParent ( page );
-    hierarchyFrame->Create ( );
-    hierarchyFrame->SetLabelText ("Hierarchy Search Options");
-    hierarchyFrame->CollapseFrame ( );
-
-    this->BIRNLexHierarchyButton = vtkKWPushButton::New();
-    this->BIRNLexHierarchyButton->SetParent ( hierarchyFrame->GetFrame() );
-    this->BIRNLexHierarchyButton->Create();
-    this->BIRNLexHierarchyButton->SetWidth ( 30 );
-    this->BIRNLexHierarchyButton->SetText ( "Launch BIRNLex viewer");
-    this->BIRNLexHierarchyButton->SetBalloonHelpString ("browse for this term in BIRNLex.");
-
-    vtkKWLabel *hl = vtkKWLabel::New();
-    hl->SetParent ( hierarchyFrame->GetFrame() );
-    hl->Create();
-    hl->SetText ("term: ");
-    this->HierarchySearchTermEntry = vtkKWEntry::New();
-    this->HierarchySearchTermEntry->SetParent ( hierarchyFrame->GetFrame() );
-    this->HierarchySearchTermEntry->Create();
-    this->HierarchySearchTermEntry->SetWidth (28);
-    this->HierarchySearchTermEntry->SetValue ("");
-    this->HierarchySearchButton = vtkKWPushButton::New();
-    this->HierarchySearchButton->SetParent ( hierarchyFrame->GetFrame() );
-    this->HierarchySearchButton->Create();
-    this->HierarchySearchButton->SetWidth ( 30 );
-    this->HierarchySearchButton->SetText ("view in hierarchy >>");
-
-    app->Script ("grid %s -row 0 -columnspan 2 -sticky w -pady 2", 
-                  this->BIRNLexHierarchyButton->GetWidgetName ( ));
-    app->Script ("grid %s -row 1 -column 0 -sticky w -padx 0 -pady 2",
-                 hl->GetWidgetName() );
-    app->Script ("grid %s -row 1 -column 1 -sticky w -padx 2 -pady 2",
-                 this->HierarchySearchTermEntry->GetWidgetName() );
-    app->Script ("grid %s -row 2 -columnspan 2 -sticky w -pady 2",
-                 this->HierarchySearchButton->GetWidgetName() );
-
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  hierarchyFrame->GetWidgetName(),
-                  this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
-    hl->Delete();
-
     // ---
     // SEARCH FRAME
+    // ---
+    // -------------------------------------------------------------------------------------------------
     vtkSlicerModuleCollapsibleFrame *searchFrame = vtkSlicerModuleCollapsibleFrame::New();
     searchFrame->SetParent ( page);
     searchFrame->Create();
@@ -1073,6 +1638,45 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   searchFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
+
+    vtkKWFrame *f = vtkKWFrame::New();
+    f->SetParent ( searchFrame->GetFrame() );
+    f->Create();
+    this->ResultsWithAnyButton = vtkKWRadioButton::New();
+    this->ResultsWithAnyButton->SetParent ( f );
+    this->ResultsWithAnyButton->Create();
+    this->ResultsWithAnyButton->SetImageToIcon ( this->QueryAtlasIcons->GetWithAnyIcon() );
+    this->ResultsWithAnyButton->SetSelectImageToIcon ( this->QueryAtlasIcons->GetWithAnySelectedIcon() );
+    this->ResultsWithAnyButton->SetBorderWidth ( 0 );
+    this->ResultsWithAnyButton->SetReliefToFlat ( );
+    this->ResultsWithAnyButton->SetSelectedState ( 1 );
+    this->ResultsWithAnyButton->IndicatorVisibilityOff();
+    this->ResultsWithAnyButton->SetValueAsInt ( vtkQueryAtlasGUI::Or );
+    this->ResultsWithAnyButton->SetBalloonHelpString ( "Search for results that include any of the search terms." );
+
+    this->ResultsWithAllButton = vtkKWRadioButton::New();
+    this->ResultsWithAllButton->SetParent ( f );
+    this->ResultsWithAllButton->Create();
+    this->ResultsWithAllButton->SetImageToIcon ( this->QueryAtlasIcons->GetWithAllIcon() );
+    this->ResultsWithAllButton->SetImageToIcon ( this->QueryAtlasIcons->GetWithAllDisabledIcon() );
+    this->ResultsWithAllButton->SetBorderWidth ( 0 );
+    this->ResultsWithAllButton->SetReliefToFlat ( );
+    this->ResultsWithAllButton->SetStateToDisabled();
+    this->ResultsWithAllButton->SetValueAsInt ( vtkQueryAtlasGUI::And );
+    this->ResultsWithAllButton->SetVariableName ( this->ResultsWithAnyButton->GetVariableName() );
+    this->ResultsWithAllButton->SetBalloonHelpString ( "Search for results that include all of the search terms (disabled)." );
+
+    this->ResultsWithExactButton = vtkKWRadioButton::New();
+    this->ResultsWithExactButton->SetParent ( f );
+    this->ResultsWithExactButton->Create();
+    this->ResultsWithExactButton->SetImageToIcon ( this->QueryAtlasIcons->GetWithExactIcon() );
+    this->ResultsWithExactButton->SetImageToIcon ( this->QueryAtlasIcons->GetWithExactDisabledIcon() );
+    this->ResultsWithExactButton->SetBorderWidth ( 0 );
+    this->ResultsWithExactButton->SetReliefToFlat ( );
+    this->ResultsWithExactButton->SetStateToDisabled();
+    this->ResultsWithExactButton->SetValueAsInt ( vtkQueryAtlasGUI::Quote );
+    this->ResultsWithExactButton->SetVariableName ( this->ResultsWithAnyButton->GetVariableName() );
+    this->ResultsWithExactButton->SetBalloonHelpString ( "Search for results that include any of the exact search term (disabled)." );
 
     vtkKWLabel *sl = vtkKWLabel::New();
     sl->SetParent ( searchFrame->GetFrame() );
@@ -1084,20 +1688,39 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     this->DatabasesMenuButton->SetWidth (25);    
     this->BuildDatabasesMenu(this->DatabasesMenuButton->GetMenu() );
     this->SearchButton = vtkKWPushButton::New();
-    this->SearchButton->SetParent ( searchFrame->GetFrame() );
+    this->SearchButton->SetParent ( f );
     this->SearchButton->Create();
-    this->SearchButton->SetWidth ( 27);
-    this->SearchButton->SetText ("search >>");
+    this->SearchButton->SetImageToIcon ( this->QueryAtlasIcons->GetSearchIcon() );
+    this->SearchButton->SetBorderWidth ( 0 );
+    this->SearchButton->SetReliefToFlat();
+    this->SearchButton->SetBalloonHelpString ( "Perform a search" );
+    app->Script ( "pack %s %s %s %s -side left -anchor w -padx 2 -pady 2",
+                  this->ResultsWithAnyButton->GetWidgetName(),
+                  this->ResultsWithAllButton->GetWidgetName(),
+                  this->ResultsWithExactButton->GetWidgetName(),
+                  this->SearchButton->GetWidgetName() );
     app->Script ("grid %s -row 0 -column 0 -padx 0 -pady 2 -sticky w",
                  sl->GetWidgetName() );
     app->Script ("grid %s -row 0 -column 1 -padx 0 -pady 2 -sticky w",
                  this->DatabasesMenuButton->GetWidgetName() );    
     app->Script ("grid %s -row 1 -column 1 -padx 0 -pady 2 -sticky w",
-                 this->SearchButton->GetWidgetName() );    
-    sl->Delete();
+                 f->GetWidgetName() );
 
+    f->Delete();
+    sl->Delete();
+    searchFrame->Delete();
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildResultsManagerGUI ()
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
+    // -------------------------------------------------------------------------------------------------
     // ---
-    // RESULTS FRAME
+    // QUERY RESULTS MANAGER FRAME
+    // ---
+    // -------------------------------------------------------------------------------------------------
     vtkSlicerModuleCollapsibleFrame *resultsFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     resultsFrame->SetParent ( page );
     resultsFrame->Create ( );
@@ -1117,7 +1740,7 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     curL->SetParent ( topcurF );
     curL->Create();
     curL->SetWidth ( 45 );
-    curL->SetText ( "Results of current search" );
+    curL->SetText ( "Latest search results" );
     curL->SetBackgroundColor ( _br, _bg, _bb);
     this->CurrentResultsList = vtkKWListBoxWithScrollbars::New();
     this->CurrentResultsList->SetParent ( topcurF );
@@ -1126,18 +1749,39 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     this->CurrentResultsList->GetWidget()->SetHeight (4 );
     this->CurrentResultsList->HorizontalScrollbarVisibilityOn();
     this->CurrentResultsList->VerticalScrollbarVisibilityOn();
+
     this->DeleteCurrentResultButton = vtkKWPushButton::New();
     this->DeleteCurrentResultButton->SetParent (curF);
     this->DeleteCurrentResultButton->Create();
-    this->DeleteCurrentResultButton->SetText ( "Delete selected");
+    this->DeleteCurrentResultButton->SetImageToIcon ( this->QueryAtlasIcons->GetClearSelectedIcon() );
+    this->DeleteCurrentResultButton->SetBorderWidth ( 0 );
+    this->DeleteCurrentResultButton->SetReliefToFlat();    
+    this->DeleteCurrentResultButton->SetBalloonHelpString ( "Delete selected results");
+
     this->DeleteAllCurrentResultsButton = vtkKWPushButton::New();
     this->DeleteAllCurrentResultsButton->SetParent (curF);
     this->DeleteAllCurrentResultsButton->Create();
-    this->DeleteAllCurrentResultsButton->SetText("Delete all");
+    this->DeleteAllCurrentResultsButton->SetImageToIcon ( this->QueryAtlasIcons->GetClearAllIcon() );
+    this->DeleteAllCurrentResultsButton->SetBorderWidth ( 0 );
+    this->DeleteAllCurrentResultsButton->SetReliefToFlat();    
+    this->DeleteAllCurrentResultsButton->SetBalloonHelpString ("Delete all results ");
+
     this->SaveCurrentResultsButton = vtkKWPushButton::New();
     this->SaveCurrentResultsButton->SetParent (curF);
-    this->SaveCurrentResultsButton->Create();    
-    this->SaveCurrentResultsButton->SetText ("Reserve all");
+    this->SaveCurrentResultsButton->Create();
+    this->SaveCurrentResultsButton->SetImageToIcon ( this->QueryAtlasIcons->GetReserveURIsIcon() );
+    this->SaveCurrentResultsButton->SetBorderWidth ( 0 );
+    this->SaveCurrentResultsButton->SetReliefToFlat();    
+    this->SaveCurrentResultsButton->SetBalloonHelpString ("Reserve all results");
+
+    this->SaveCurrentSelectedResultsButton = vtkKWPushButton::New();
+    this->SaveCurrentSelectedResultsButton->SetParent (curF);
+    this->SaveCurrentSelectedResultsButton->Create();
+    this->SaveCurrentSelectedResultsButton->SetImageToIcon ( this->QueryAtlasIcons->GetReserveSelectedURIsIcon() );
+    this->SaveCurrentSelectedResultsButton->SetBorderWidth ( 0 );
+    this->SaveCurrentSelectedResultsButton->SetReliefToFlat();    
+    this->SaveCurrentSelectedResultsButton->SetBalloonHelpString ("Reserve selected results");
+
 
     vtkKWFrame *pastF = vtkKWFrame::New();
     pastF->SetParent ( resultsFrame->GetFrame() );
@@ -1149,7 +1793,7 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     pastL->SetParent ( toppastF );
     pastL->Create();
     pastL->SetWidth ( 45 );
-    pastL->SetText ( "Reserved search result bundles" );
+    pastL->SetText ( "Reserved search results" );
     pastL->SetBackgroundColor ( 0.85, 0.85, 0.95 );
     this->PastResultsList = vtkKWListBoxWithScrollbars::New();
     this->PastResultsList->SetParent ( toppastF );
@@ -1158,42 +1802,66 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     this->PastResultsList->GetWidget()->SetHeight ( 4 );
     this->PastResultsList->HorizontalScrollbarVisibilityOn();
     this->PastResultsList->VerticalScrollbarVisibilityOn();
+
     this->DeletePastResultButton = vtkKWPushButton::New();
     this->DeletePastResultButton->SetParent (pastF);
     this->DeletePastResultButton->Create();
-    this->DeletePastResultButton->SetText ("Delete selected");
+    this->DeletePastResultButton->SetImageToIcon ( this->QueryAtlasIcons->GetClearSelectedIcon ( ) );
+    this->DeletePastResultButton->SetBorderWidth ( 0 );
+    this->DeletePastResultButton->SetReliefToFlat ( );    
+    this->DeletePastResultButton->SetBalloonHelpString ("Delete selected");
+
     this->DeleteAllPastResultsButton = vtkKWPushButton::New();
     this->DeleteAllPastResultsButton->SetParent (pastF);
     this->DeleteAllPastResultsButton->Create();
-    this->DeleteAllPastResultsButton->SetText ("Delete all");
+    this->DeleteAllPastResultsButton->SetImageToIcon ( this->QueryAtlasIcons->GetClearAllIcon (  ) );
+    this->DeleteAllPastResultsButton->SetBorderWidth ( 0 );
+    this->DeleteAllPastResultsButton->SetReliefToFlat();    
+    this->DeleteAllPastResultsButton->SetBalloonHelpString ("Delete all");
+
     this->SavePastResultsButton = vtkKWPushButton::New();
     this->SavePastResultsButton->SetParent (pastF);
     this->SavePastResultsButton->Create();    
-    this->SavePastResultsButton->SetText ("Save to file");
+    this->SavePastResultsButton->SetImageToIcon (  app->GetApplicationGUI()->GetApplicationToolbar()->GetSlicerToolbarIcons()->GetSaveSceneIcon() );   
+    this->SavePastResultsButton->SetBorderWidth ( 0 );
+    this->SavePastResultsButton->SetReliefToFlat();    
+    this->SavePastResultsButton->SetBalloonHelpString ("Save links to file");
+
+    this->LoadURIsButton = vtkKWPushButton::New();
+    this->LoadURIsButton->SetParent ( pastF);
+    this->LoadURIsButton->Create();
+    this->LoadURIsButton->SetImageToIcon ( app->GetApplicationGUI()->GetApplicationToolbar()->GetSlicerToolbarIcons()->GetLoadSceneIcon() );   
+    this->LoadURIsButton->SetBorderWidth(0);
+    this->LoadURIsButton->SetReliefToFlat ( );
+    this->LoadURIsButton->SetBalloonHelpString ( "Load links from file" );
 
     app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand 1", topcurF->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", curL->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 0 -fill both -expand 1", this->CurrentResultsList->GetWidgetName() );
 
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", curF->GetWidgetName() );
-    app->Script ("grid %s -row 0 -column 0 -sticky ew -pady 4", this->DeleteCurrentResultButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 1 -sticky ew -pady 4 -padx 4", this->DeleteAllCurrentResultsButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 2 -sticky ew -pady 4", this->SaveCurrentResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 0 -sticky ew -pady 4 -padx 3", this->DeleteCurrentResultButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 1 -sticky ew -pady 4 -padx 3", this->DeleteAllCurrentResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 2 -sticky ew -pady 4 -padx 3", this->SaveCurrentSelectedResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 3 -sticky ew -pady 4 -padx 3", this->SaveCurrentResultsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 0 -weight 1", this->DeleteCurrentResultButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 1 -weight 1", this->DeleteAllCurrentResultsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 2 -weight 1", this->SaveCurrentResultsButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 3 -weight 1", this->SaveCurrentSelectedResultsButton->GetWidgetName() );    
 
     app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand 1", toppastF->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", pastL->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 0 -fill both -expand 1", this->PastResultsList->GetWidgetName() );
 
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", pastF->GetWidgetName() );
-    app->Script ("grid %s -row 0 -column 0 -sticky ew -pady 4", this->DeletePastResultButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 1 -sticky ew -pady 4 -padx 4", this->DeleteAllPastResultsButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 2 -sticky ew -pady 4", this->SavePastResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 0 -sticky ew -pady 4 -padx 3", this->LoadURIsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 1 -sticky ew -pady 4 -padx 3", this->SavePastResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 2 -sticky ew -pady 4 -padx 3", this->DeletePastResultButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 3 -sticky ew -pady 4 -padx 3", this->DeleteAllPastResultsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 0 -weight 1", this->DeletePastResultButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 1 -weight 1", this->DeleteAllPastResultsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 2 -weight 1", this->SavePastResultsButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 3 -weight 1", this->LoadURIsButton->GetWidgetName() );    
 
     curL->Delete();
     pastL->Delete();
@@ -1201,26 +1869,35 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     toppastF->Delete();
     curF->Delete();
     pastF->Delete();
+    resultsFrame->Delete();
 
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildDisplayAndNavigationGUI ( )
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
+    // -------------------------------------------------------------------------------------------------
     // ---
-    // DISPLAY FRAME
+    // 3D DISPLAY AND NAVIGATION FRAME
+    // ---
+    // -------------------------------------------------------------------------------------------------
     vtkSlicerModuleCollapsibleFrame *displayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     displayFrame->SetParent ( page );
     displayFrame->Create ( );
     displayFrame->SetLabelText ("3D Display & Navigation");
     displayFrame->CollapseFrame ( );
+    // for now supress this frame.
+    /*
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   displayFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
-
-    
-    // deleting frame widgets
-    displayFrame->Delete ( );
-    resultsFrame->Delete ( );
-    searchFrame->Delete();
-    queryFrame->Delete ( );
-    hierarchyFrame->Delete();
-    loadFrame->Delete ( );
+    */
+     // ---
+    // Source tcl files
+    app->Script ( "source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasInit");
+    displayFrame->Delete();
 }
 
 
@@ -1238,87 +1915,14 @@ void vtkQueryAtlasGUI::BuildStructureFrame()
     // that accomplished? maybe a better way. Just delete rows with
     // radio button selected? (select for use and for deletion?)
     // grrr. i don't yet understand how this widget works.
-    this->StructureMultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
-    this->StructureMultiColumnList->SetParent ( this->StructureFrame );
-    this->StructureMultiColumnList->Create ( );
-//    this->StructureMultiColumnList->SetBalloonHelpString ("Use the 'Add new term' button to create a new row in this widget and then click in the 'Search term' column to enter your new search term. Select or disable the term's use in your search by selecting the checkbox next to it. The space for one search term is created by default." );
-    this->StructureMultiColumnList->SetWidth(0);
-    this->StructureMultiColumnList->SetHeight(3);
-    this->StructureMultiColumnList->GetWidget()->SetSelectionTypeToCell ( );
-    this->StructureMultiColumnList->GetWidget()->MovableRowsOff ( );
-    this->StructureMultiColumnList->GetWidget()->MovableColumnsOff ( );
-
-    this->StructureMultiColumnList->GetWidget()->AddColumn ( "Use");
-    this->StructureMultiColumnList->GetWidget()->AddColumn ( "Structure search terms" );
-
-//    this->StructureMultiColumnList->GetWidget()->ColumnEditableOn ( this->SelectionColumn );
-    this->StructureMultiColumnList->GetWidget()->SetColumnWidth (this->SelectionColumn, 5);
-    this->StructureMultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( this->SelectionColumn );
-    this->StructureMultiColumnList->GetWidget()->SetColumnResizable ( this->SelectionColumn, 0 );
-
-    this->StructureMultiColumnList->GetWidget()->ColumnEditableOn ( this->SearchTermColumn );
-    this->StructureMultiColumnList->GetWidget()->SetColumnWidth (this->SearchTermColumn, 42);
-    this->StructureMultiColumnList->GetWidget()->SetColumnAlignmentToLeft (this->SearchTermColumn );
-    this->StructureMultiColumnList->GetWidget()->SetColumnResizable ( this->SearchTermColumn, 0 );
-    app->Script ( "pack %s -side top -fill x -expand true", this->StructureMultiColumnList->GetWidgetName() );
-
-    // add and pack bottom button frame
-    vtkKWFrame *bbframe = vtkKWFrame::New ( );
-    bbframe->SetParent ( this->StructureFrame );
-    bbframe->Create ( );
-    app->Script ( "pack %s -side top -fill x -expand n",  bbframe->GetWidgetName() );
-
-    // add search, clear, select all, select none buttons
-    this->StructureUseAllButton = vtkKWPushButton::New ( );
-    this->StructureUseAllButton->SetParent ( bbframe );
-    this->StructureUseAllButton->Create();
-    this->StructureUseAllButton->SetWidth ( 12 );
-    this->StructureUseAllButton->SetText ( "Use all" );
-    this->StructureUseAllButton->SetBalloonHelpString ( "Marck all search terms for use");
-
-    this->StructureUseNoneButton = vtkKWPushButton::New ( );
-    this->StructureUseNoneButton->SetParent ( bbframe );
-    this->StructureUseNoneButton->Create();
-    this->StructureUseNoneButton->SetWidth ( 12 );
-    this->StructureUseNoneButton->SetText ( "Use none" );
-    this->StructureUseNoneButton->SetBalloonHelpString ( "Unmark all search terms.");
-
-    this->StructureClearAllButton = vtkKWPushButton::New ( );
-    this->StructureClearAllButton->SetParent ( bbframe );
-    this->StructureClearAllButton->Create();
-    this->StructureClearAllButton->SetWidth ( 12 );
-    this->StructureClearAllButton->SetText ( "Clear all" );
-    this->StructureClearAllButton->SetBalloonHelpString ( "Clear all search terms" );
-
-    // add search terms and delete highlighted search terms buttons
-    this->StructureAddTermButton = vtkKWPushButton::New ( );
-    this->StructureAddTermButton->SetParent ( bbframe );
-    this->StructureAddTermButton->Create();
-    this->StructureAddTermButton->SetWidth ( 12 );
-    this->StructureAddTermButton->SetText ( "Add new" );
-    this->StructureAddTermButton->SetBalloonHelpString ( "Add a new search term" );
-    
-    this->StructureClearTermButton = vtkKWPushButton::New ( );
-    this->StructureClearTermButton->SetParent ( bbframe );
-    this->StructureClearTermButton->Create();
-    this->StructureClearTermButton->SetWidth ( 12 );
-    this->StructureClearTermButton->SetText ( "Clear selected" );
-    this->StructureClearTermButton->SetBalloonHelpString ( "Delete highlighted search terms" );
-
-    // grid buttons into place
-    app->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2",
-                  this->StructureAddTermButton->GetWidgetName() );
-    app->Script ( "grid %s -row 0 -column 1 -sticky e -padx 2  -pady 2",
-                  this->StructureUseAllButton->GetWidgetName() );
-    app->Script ( "grid %s -row 0 -column 2 -sticky w -padx 2 -pady 2",
-                  this->StructureUseNoneButton->GetWidgetName() );
-    
-    app->Script ( "grid %s -row 1 -column 1 -sticky e -padx 2 -pady 2",
-                  this->StructureClearTermButton->GetWidgetName());
-    app->Script ( "grid %s -row 1 -column 2 -sticky w -padx 2 -pady 2",
-                  this->StructureClearAllButton->GetWidgetName() );
-    bbframe->Delete ( );
+    this->StructureListWidget = vtkQueryAtlasUseSearchTermWidget::New ( );
+    this->StructureListWidget->SetParent ( this->StructureFrame );
+    this->StructureListWidget->Create ( );
+//    int i = this->StructureListWidget->GetMultiColumnList()->GetWidget()->GetColumnIndexWithName ( "Search terms" );
+//    this->StructureListWidget->GetMultiColumnList()->GetWidget()->SetColumnName ( i, "Structure terms");
+    app->Script ( "pack %s -side top -fill x -expand true", this->StructureListWidget->GetWidgetName() );
 }
+
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildSpeciesFrame()
@@ -1330,11 +1934,17 @@ void vtkQueryAtlasGUI::BuildSpeciesFrame()
     this->SpeciesLabel->Create();
     this->SpeciesLabel->SetText( "species to include: ");
     
+    this->SpeciesNoneButton = vtkKWCheckButton::New();
+    this->SpeciesNoneButton->SetParent ( this->SpeciesFrame);
+    this->SpeciesNoneButton->Create();
+    this->SpeciesNoneButton->SetText ("don't specify");
+    this->SpeciesNoneButton->SetSelectedState ( 1 );
+    
     this->SpeciesHumanButton = vtkKWCheckButton::New();
     this->SpeciesHumanButton->SetParent ( this->SpeciesFrame);
     this->SpeciesHumanButton->Create();
     this->SpeciesHumanButton->SetText ("human");
-    this->SpeciesHumanButton->SetSelectedState ( 1 );
+    this->SpeciesHumanButton->SetSelectedState ( 0 );
     
     this->SpeciesMouseButton = vtkKWCheckButton::New();
     this->SpeciesMouseButton->SetParent ( this->SpeciesFrame );
@@ -1349,9 +1959,10 @@ void vtkQueryAtlasGUI::BuildSpeciesFrame()
     this->SpeciesMacaqueButton->SetSelectedState ( 0 );
 
     app->Script ( "grid %s -row 0 -column 0 -sticky w", this->SpeciesLabel->GetWidgetName() );
-    app->Script ( "grid %s -row 0 -column 1 -sticky w", this->SpeciesHumanButton->GetWidgetName() );
-    app->Script ( "grid %s -row 1 -column 1 -sticky w", this->SpeciesMouseButton->GetWidgetName() );
-    app->Script ( "grid %s -row 2 -column 1 -sticky w", this->SpeciesMacaqueButton->GetWidgetName() );
+    app->Script ( "grid %s -row 0 -column 1 -sticky w", this->SpeciesNoneButton->GetWidgetName() );
+    app->Script ( "grid %s -row 1 -column 1 -sticky w", this->SpeciesHumanButton->GetWidgetName() );
+    app->Script ( "grid %s -row 2 -column 1 -sticky w", this->SpeciesMouseButton->GetWidgetName() );
+    app->Script ( "grid %s -row 3 -column 1 -sticky w", this->SpeciesMacaqueButton->GetWidgetName() );
     
 }
 
@@ -1366,19 +1977,27 @@ void vtkQueryAtlasGUI::BuildPopulationFrame()
     this->DiagnosisMenuButton->Create ();
     this->DiagnosisMenuButton->SetLabelText ( "diagnoses: ");
     this->DiagnosisMenuButton->SetLabelPositionToLeft ( );
-    this->DiagnosisMenuButton->GetLabel()->SetWidth (10);
-    this->DiagnosisMenuButton->GetWidget()->SetWidth (30);
+    this->DiagnosisMenuButton->GetLabel()->SetWidth (12);
+    this->DiagnosisMenuButton->GetWidget()->SetWidth (28);
     this->BuildDiagnosisMenu ( this->DiagnosisMenuButton->GetWidget()->GetMenu() );
     this->DiagnosisMenuButton->GetWidget()->GetMenu()->AddSeparator();
-    this->DiagnosisMenuButton->GetWidget()->GetMenu()->AddCommand ( "close" );    
+    this->DiagnosisMenuButton->GetWidget()->GetMenu()->AddCommand ( "close" );
+
+    this->AddDiagnosisEntry = vtkKWEntryWithLabel::New();
+    this->AddDiagnosisEntry->SetParent ( this->PopulationFrame );
+    this->AddDiagnosisEntry->Create();
+    this->AddDiagnosisEntry->SetLabelText ( "add diagnosis: " );
+    this->AddDiagnosisEntry->SetLabelPositionToLeft ( );
+    this->AddDiagnosisEntry->GetLabel()->SetWidth(12);
+    this->AddDiagnosisEntry->GetWidget()->SetWidth (35 );
 
     this->GenderMenuButton = vtkKWMenuButtonWithLabel::New();
     this->GenderMenuButton->SetParent ( this->PopulationFrame );
     this->GenderMenuButton->Create ();
     this->GenderMenuButton->SetLabelText ( "gender: ");
-    this->GenderMenuButton->GetWidget()->SetWidth (30);
+    this->GenderMenuButton->GetWidget()->SetWidth (28);
     this->GenderMenuButton->SetLabelPositionToLeft ( );
-    this->GenderMenuButton->GetLabel()->SetWidth ( 10);
+    this->GenderMenuButton->GetLabel()->SetWidth ( 12);
     this->GenderMenuButton->GetWidget()->GetMenu()->AddRadioButton ("n/a");
     this->GenderMenuButton->GetWidget()->GetMenu()->SelectItem ("n/a");
     this->GenderMenuButton->GetWidget()->GetMenu()->AddRadioButton ("M");
@@ -1391,8 +2010,8 @@ void vtkQueryAtlasGUI::BuildPopulationFrame()
     this->HandednessMenuButton->SetParent ( this->PopulationFrame );
     this->HandednessMenuButton->Create ();
     this->HandednessMenuButton->SetLabelText ( "handedness: ");
-    this->HandednessMenuButton->GetWidget()->SetWidth (30);
-    this->HandednessMenuButton->GetLabel()->SetWidth (10);
+    this->HandednessMenuButton->GetWidget()->SetWidth (28);
+    this->HandednessMenuButton->GetLabel()->SetWidth (12);
     this->HandednessMenuButton->SetLabelPositionToLeft ( );
     this->HandednessMenuButton->GetWidget()->GetMenu()->AddRadioButton ("n/a");
     this->HandednessMenuButton->GetWidget()->GetMenu()->SelectItem ("n/a");
@@ -1406,307 +2025,128 @@ void vtkQueryAtlasGUI::BuildPopulationFrame()
     this->AgeMenuButton->SetParent ( this->PopulationFrame );
     this->AgeMenuButton->Create ();
     this->AgeMenuButton->SetLabelText ( "age ranges: ");
-    this->AgeMenuButton->GetWidget()->SetWidth (30);
-    this->AgeMenuButton->GetLabel()->SetWidth (10);
+    this->AgeMenuButton->GetWidget()->SetWidth (28);
+    this->AgeMenuButton->GetLabel()->SetWidth (12);
     this->AgeMenuButton->SetLabelPositionToLeft ( );
     this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("n/a");
     this->AgeMenuButton->GetWidget()->GetMenu()->SelectItem ("n/a");
-    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("0-10");
-    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("10-20");
-    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("20-30");
-    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("30-40");
-    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("40-50");
-    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("50-60");
-    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("60-70");
-    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("70-80");
-    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("80-90");
-    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("90-100");
-    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton (">100");
+    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("neonate");
+    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("infant");
+    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("child");
+    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("adolescent");
+    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("adult");
+    this->AgeMenuButton->GetWidget()->GetMenu()->AddRadioButton ("elderly");
     this->AgeMenuButton->GetWidget()->GetMenu()->AddSeparator();
     this->AgeMenuButton->GetWidget()->GetMenu()->AddCommand ( "close");    
 
-    this->DiagnosticsMenuButton = vtkKWMenuButtonWithLabel::New();
-    this->DiagnosticsMenuButton->SetParent ( this->PopulationFrame );
-    this->DiagnosticsMenuButton->Create ();
-    this->DiagnosticsMenuButton->SetLabelText ( "diagnostics: ");
-    this->DiagnosticsMenuButton->GetWidget()->SetWidth (30);
-    this->DiagnosticsMenuButton->GetLabel()->SetWidth (10);
-    this->DiagnosticsMenuButton->SetLabelPositionToLeft ( );
-    this->DiagnosticsMenuButton->GetWidget()->GetMenu()->AddRadioButton ("none");
-    this->DiagnosticsMenuButton->GetWidget()->GetMenu()->SelectItem ( "none");
-    this->DiagnosticsMenuButton->GetWidget()->GetMenu()->AddSeparator();
-    this->DiagnosticsMenuButton->GetWidget()->GetMenu()->AddCommand ( "close");
-
     app->Script ( "pack %s %s %s %s %s -side top -padx 5 -pady 2 -anchor nw",
                   this->DiagnosisMenuButton->GetWidgetName(),
+                  this->AddDiagnosisEntry->GetWidgetName(),
                   this->GenderMenuButton->GetWidgetName (),
                   this->HandednessMenuButton->GetWidgetName(),
-                  this->AgeMenuButton->GetWidgetName(),
-                  this->DiagnosticsMenuButton->GetWidgetName() );
+                  this->AgeMenuButton->GetWidgetName());
+}
 
+
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::UnpackLoaderContextFrames ( )
+{
+    this->Script ( "pack forget %s", this->FIPSFSFrame->GetWidgetName() );
+    this->Script ( "pack forget %s", this->QdecFrame->GetWidgetName() );
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::PackLoaderContextFrame ( vtkKWFrame *f )
+{
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  app->Script ( "pack %s -side top -anchor nw -expand 0 -fill x -padx 2 -pady 0", f->GetWidgetName( ));
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildLoaderContextButtons ( vtkKWFrame *parent )
+{
+  vtkKWFrame *f = vtkKWFrame::New();
+  f->SetParent ( parent );
+  f->Create();
+  this->Script ("pack %s -side top -anchor nw -fill x -expand n", f->GetWidgetName() );
+
+  this->FIPSFSButton = vtkKWPushButton::New();
+  this->FIPSFSButton->SetParent ( f );
+  this->FIPSFSButton->Create();
+  this->FIPSFSButton->SetWidth ( 12 );
+  this->FIPSFSButton->SetText ( "FIPS+FreeSurfer" );
+
+  this->QdecButton = vtkKWPushButton::New();
+  this->QdecButton->SetParent ( f );
+  this->QdecButton->Create();
+  this->QdecButton->SetWidth ( 12 );
+  this->QdecButton->SetText ( "Qdec");
+
+  this->Script ( "pack %s %s -anchor nw -side left -fill none -padx 2 -pady 2",
+                 this->FIPSFSButton->GetWidgetName(),
+                 this->QdecButton->GetWidgetName() );
+
+  vtkSlicerPopUpHelpWidget *helpy = vtkSlicerPopUpHelpWidget::New();
+  helpy->SetParent ( f  );
+  helpy->Create ( );
+  helpy->SetHelpText (" This is some sample help text. This is some more sample help text. Not so very helpful yet." );
+  helpy->SetHelpTitle ( "Testing Popup Help" );
+  this->Script ( "pack %s -side right -anchor ne -padx 2 -pady 2 -ipady 10", helpy->GetWidgetName() );
+  helpy->Delete();
+
+  f->Delete();
 }
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::BuildCellFrame()
+void vtkQueryAtlasGUI::BuildLoaderContextFrames ( vtkKWFrame *parent )
 {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-
-    // add multi-column list box for search terms
-    this->CellMultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
-    this->CellMultiColumnList->SetParent ( this->CellFrame );
-    this->CellMultiColumnList->Create ( );
-    this->CellMultiColumnList->SetWidth(0);
-    this->CellMultiColumnList->SetHeight(3);
-    this->CellMultiColumnList->GetWidget()->SetSelectionTypeToCell ( );
-    this->CellMultiColumnList->GetWidget()->MovableRowsOff ( );
-    this->CellMultiColumnList->GetWidget()->MovableColumnsOff ( );
-
-    this->CellMultiColumnList->GetWidget()->AddColumn ( "Use");
-    this->CellMultiColumnList->GetWidget()->AddColumn ( "Cell search terms" );
-
-    this->CellMultiColumnList->GetWidget()->SetColumnWidth (this->SelectionColumn, 5);
-    this->CellMultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( this->SelectionColumn );
-    this->CellMultiColumnList->GetWidget()->SetColumnResizable ( this->SelectionColumn, 0 );
-
-    this->CellMultiColumnList->GetWidget()->ColumnEditableOn ( this->SearchTermColumn );
-    this->CellMultiColumnList->GetWidget()->SetColumnWidth (this->SearchTermColumn, 42);
-    this->CellMultiColumnList->GetWidget()->SetColumnAlignmentToLeft (this->SearchTermColumn );
-    this->CellMultiColumnList->GetWidget()->SetColumnResizable ( this->SearchTermColumn, 0 );
-    app->Script ( "pack %s -side top -fill x -expand true", this->CellMultiColumnList->GetWidgetName() );
-
-    // add and pack bottom button frame
-    vtkKWFrame *bbframe = vtkKWFrame::New ( );
-    bbframe->SetParent ( this->CellFrame );
-    bbframe->Create ( );
-    app->Script ( "pack %s -side top -fill x -expand n",  bbframe->GetWidgetName() );
-
-    // add search, clear, select all, select none buttons
-    this->CellUseAllButton = vtkKWPushButton::New ( );
-    this->CellUseAllButton->SetParent ( bbframe );
-    this->CellUseAllButton->Create();
-    this->CellUseAllButton->SetWidth ( 12 );
-    this->CellUseAllButton->SetText ( "Use all" );
-    this->CellUseAllButton->SetBalloonHelpString ( "Marck all search terms for use");
-
-    this->CellUseNoneButton = vtkKWPushButton::New ( );
-    this->CellUseNoneButton->SetParent ( bbframe );
-    this->CellUseNoneButton->Create();
-    this->CellUseNoneButton->SetWidth ( 12 );
-    this->CellUseNoneButton->SetText ( "Use none" );
-    this->CellUseNoneButton->SetBalloonHelpString ( "Unmark all search terms.");
-
-    this->CellClearAllButton = vtkKWPushButton::New ( );
-    this->CellClearAllButton->SetParent ( bbframe );
-    this->CellClearAllButton->Create();
-    this->CellClearAllButton->SetWidth ( 12 );
-    this->CellClearAllButton->SetText ( "Clear all" );
-    this->CellClearAllButton->SetBalloonHelpString ( "Clear all search terms" );
-
-    // add search terms and delete highlighted search terms buttons
-    this->CellAddTermButton = vtkKWPushButton::New ( );
-    this->CellAddTermButton->SetParent ( bbframe );
-    this->CellAddTermButton->Create();
-    this->CellAddTermButton->SetWidth ( 12 );
-    this->CellAddTermButton->SetText ( "Add new" );
-    this->CellAddTermButton->SetBalloonHelpString ( "Add a new search term" );
     
-    this->CellClearTermButton = vtkKWPushButton::New ( );
-    this->CellClearTermButton->SetParent ( bbframe );
-    this->CellClearTermButton->Create();
-    this->CellClearTermButton->SetWidth ( 12 );
-    this->CellClearTermButton->SetText ( "Clear selected" );
-    this->CellClearTermButton->SetBalloonHelpString ( "Delete highlighted search terms" );
-
-    // grid buttons into place
-    app->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2",
-                  this->CellAddTermButton->GetWidgetName() );
-    app->Script ( "grid %s -row 0 -column 1 -sticky e -padx 2  -pady 2",
-                  this->CellUseAllButton->GetWidgetName() );
-    app->Script ( "grid %s -row 0 -column 2 -sticky w -padx 2 -pady 2",
-                  this->CellUseNoneButton->GetWidgetName() );
+    this->FIPSFSFrame = vtkKWFrame::New();
+    this->FIPSFSFrame->SetParent ( parent );
+    this->FIPSFSFrame->Create();
+    this->FIPSFSFrame->SetReliefToGroove();
     
-    app->Script ( "grid %s -row 1 -column 1 -sticky e -padx 2 -pady 2",
-                  this->CellClearTermButton->GetWidgetName());
-    app->Script ( "grid %s -row 1 -column 2 -sticky w -padx 2 -pady 2",
-                  this->CellClearAllButton->GetWidgetName() );
-    bbframe->Delete ( );
-
+    this->QdecFrame = vtkKWFrame::New();
+    this->QdecFrame->SetParent ( parent );
+    this->QdecFrame->Create();
+    this->QdecFrame->SetReliefToGroove();
 }
 
 
+
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::BuildMiscFrame()
+void vtkQueryAtlasGUI::ColorCodeLoaderContextButtons ( vtkKWPushButton *b )
 {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  this->FIPSFSButton->SetBackgroundColor ( _br, _bg, _bb );
+  this->QdecButton->SetBackgroundColor ( _br, _bg, _bb );
 
-    // add multi-column list box for search terms
-    this->MiscMultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
-    this->MiscMultiColumnList->SetParent ( this->MiscFrame );
-    this->MiscMultiColumnList->Create ( );
-    this->MiscMultiColumnList->SetWidth(0);
-    this->MiscMultiColumnList->SetHeight(3);
-    this->MiscMultiColumnList->GetWidget()->SetSelectionTypeToCell ( );
-    this->MiscMultiColumnList->GetWidget()->MovableRowsOff ( );
-    this->MiscMultiColumnList->GetWidget()->MovableColumnsOff ( );
+  this->FIPSFSButton->SetForegroundColor ( _fr, _fg, _fb );
+  this->QdecButton->SetForegroundColor ( _fr, _fg, _fb );
 
-    this->MiscMultiColumnList->GetWidget()->AddColumn ( "Use");
-    this->MiscMultiColumnList->GetWidget()->AddColumn ( "Miscellaneous search terms" );
-
-    this->MiscMultiColumnList->GetWidget()->SetColumnWidth (this->SelectionColumn, 5);
-    this->MiscMultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( this->SelectionColumn );
-    this->MiscMultiColumnList->GetWidget()->SetColumnResizable ( this->SelectionColumn, 0 );
-
-    this->MiscMultiColumnList->GetWidget()->ColumnEditableOn ( this->SearchTermColumn );
-    this->MiscMultiColumnList->GetWidget()->SetColumnWidth (this->SearchTermColumn, 42);
-    this->MiscMultiColumnList->GetWidget()->SetColumnAlignmentToLeft (this->SearchTermColumn );
-    this->MiscMultiColumnList->GetWidget()->SetColumnResizable ( this->SearchTermColumn, 0 );
-    app->Script ( "pack %s -side top -fill x -expand true", this->MiscMultiColumnList->GetWidgetName() );
-
-    // add and pack bottom button frame
-    vtkKWFrame *bbframe = vtkKWFrame::New ( );
-    bbframe->SetParent ( this->MiscFrame );
-    bbframe->Create ( );
-    app->Script ( "pack %s -side top -fill x -expand n",  bbframe->GetWidgetName() );
-
-    // add search, clear, select all, select none buttons
-    this->MiscUseAllButton = vtkKWPushButton::New ( );
-    this->MiscUseAllButton->SetParent ( bbframe );
-    this->MiscUseAllButton->Create();
-    this->MiscUseAllButton->SetWidth ( 12 );
-    this->MiscUseAllButton->SetText ( "Use all" );
-    this->MiscUseAllButton->SetBalloonHelpString ( "Marck all search terms for use");
-
-    this->MiscUseNoneButton = vtkKWPushButton::New ( );
-    this->MiscUseNoneButton->SetParent ( bbframe );
-    this->MiscUseNoneButton->Create();
-    this->MiscUseNoneButton->SetWidth ( 12 );
-    this->MiscUseNoneButton->SetText ( "Use none" );
-    this->MiscUseNoneButton->SetBalloonHelpString ( "Unmark all search terms.");
-
-    this->MiscClearAllButton = vtkKWPushButton::New ( );
-    this->MiscClearAllButton->SetParent ( bbframe );
-    this->MiscClearAllButton->Create();
-    this->MiscClearAllButton->SetWidth ( 12 );
-    this->MiscClearAllButton->SetText ( "Clear all" );
-    this->MiscClearAllButton->SetBalloonHelpString ( "Clear all search terms" );
-
-    // add search terms and delete highlighted search terms buttons
-    this->MiscAddTermButton = vtkKWPushButton::New ( );
-    this->MiscAddTermButton->SetParent ( bbframe );
-    this->MiscAddTermButton->Create();
-    this->MiscAddTermButton->SetWidth ( 12 );
-    this->MiscAddTermButton->SetText ( "Add new" );
-    this->MiscAddTermButton->SetBalloonHelpString ( "Add a new search term" );
-    
-    this->MiscClearTermButton = vtkKWPushButton::New ( );
-    this->MiscClearTermButton->SetParent ( bbframe );
-    this->MiscClearTermButton->Create();
-    this->MiscClearTermButton->SetWidth ( 12 );
-    this->MiscClearTermButton->SetText ( "Clear selected" );
-    this->MiscClearTermButton->SetBalloonHelpString ( "Delete highlighted search terms" );
-
-    // grid buttons into place
-    app->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2",
-                  this->MiscAddTermButton->GetWidgetName() );
-    app->Script ( "grid %s -row 0 -column 1 -sticky e -padx 2  -pady 2",
-                  this->MiscUseAllButton->GetWidgetName() );
-    app->Script ( "grid %s -row 0 -column 2 -sticky w -padx 2 -pady 2",
-                  this->MiscUseNoneButton->GetWidgetName() );
-    
-    app->Script ( "grid %s -row 1 -column 1 -sticky e -padx 2 -pady 2",
-                  this->MiscClearTermButton->GetWidgetName());
-    app->Script ( "grid %s -row 1 -column 2 -sticky w -padx 2 -pady 2",
-                  this->MiscClearAllButton->GetWidgetName() );
-    bbframe->Delete ( );
-
+  b->SetBackgroundColor (1.0, 1.0, 1.0);
+  b->SetForegroundColor (0.0, 0.0, 0.0);
 }
 
 
+
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::BuildGeneFrame()
+void vtkQueryAtlasGUI::BuildSubStructureFrame()
 {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
     // add multi-column list box for search terms
-    this->GeneMultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
-    this->GeneMultiColumnList->SetParent ( this->GeneFrame );
-    this->GeneMultiColumnList->Create ( );
-    this->GeneMultiColumnList->SetWidth(0);
-    this->GeneMultiColumnList->SetHeight(3);
-    this->GeneMultiColumnList->GetWidget()->SetSelectionTypeToCell ( );
-    this->GeneMultiColumnList->GetWidget()->MovableRowsOff ( );
-    this->GeneMultiColumnList->GetWidget()->MovableColumnsOff ( );
 
-    this->GeneMultiColumnList->GetWidget()->AddColumn ( "Use");
-    this->GeneMultiColumnList->GetWidget()->AddColumn ( "Gene search terms" );
-
-    this->GeneMultiColumnList->GetWidget()->SetColumnWidth (this->SelectionColumn, 5);
-    this->GeneMultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( this->SelectionColumn );
-    this->GeneMultiColumnList->GetWidget()->SetColumnResizable ( this->SelectionColumn, 0 );
-
-    this->GeneMultiColumnList->GetWidget()->ColumnEditableOn ( this->SearchTermColumn );
-    this->GeneMultiColumnList->GetWidget()->SetColumnWidth (this->SearchTermColumn, 42);
-    this->GeneMultiColumnList->GetWidget()->SetColumnAlignmentToLeft (this->SearchTermColumn );
-    this->GeneMultiColumnList->GetWidget()->SetColumnResizable ( this->SearchTermColumn, 0 );
-    app->Script ( "pack %s -side top -fill x -expand true", this->GeneMultiColumnList->GetWidgetName() );
-
-    // add and pack bottom button frame
-    vtkKWFrame *bbframe = vtkKWFrame::New ( );
-    bbframe->SetParent ( this->GeneFrame );
-    bbframe->Create ( );
-    app->Script ( "pack %s -side top -fill x -expand n",  bbframe->GetWidgetName() );
-
-    // add search, clear, select all, select none buttons
-    this->GeneUseAllButton = vtkKWPushButton::New ( );
-    this->GeneUseAllButton->SetParent ( bbframe );
-    this->GeneUseAllButton->Create();
-    this->GeneUseAllButton->SetWidth ( 12 );
-    this->GeneUseAllButton->SetText ( "Use all" );
-    this->GeneUseAllButton->SetBalloonHelpString ( "Marck all search terms for use");
-
-    this->GeneUseNoneButton = vtkKWPushButton::New ( );
-    this->GeneUseNoneButton->SetParent ( bbframe );
-    this->GeneUseNoneButton->Create();
-    this->GeneUseNoneButton->SetWidth ( 12 );
-    this->GeneUseNoneButton->SetText ( "Use none" );
-    this->GeneUseNoneButton->SetBalloonHelpString ( "Unmark all search terms.");
-
-    this->GeneClearAllButton = vtkKWPushButton::New ( );
-    this->GeneClearAllButton->SetParent ( bbframe );
-    this->GeneClearAllButton->Create();
-    this->GeneClearAllButton->SetWidth ( 12 );
-    this->GeneClearAllButton->SetText ( "Clear all" );
-    this->GeneClearAllButton->SetBalloonHelpString ( "Clear all search terms" );
-
-    // add search terms and delete highlighted search terms buttons
-    this->GeneAddTermButton = vtkKWPushButton::New ( );
-    this->GeneAddTermButton->SetParent ( bbframe );
-    this->GeneAddTermButton->Create();
-    this->GeneAddTermButton->SetWidth ( 12 );
-    this->GeneAddTermButton->SetText ( "Add new" );
-    this->GeneAddTermButton->SetBalloonHelpString ( "Add a new search term" );
-    
-    this->GeneClearTermButton = vtkKWPushButton::New ( );
-    this->GeneClearTermButton->SetParent ( bbframe );
-    this->GeneClearTermButton->Create();
-    this->GeneClearTermButton->SetWidth ( 12 );
-    this->GeneClearTermButton->SetText ( "Clear selected" );
-    this->GeneClearTermButton->SetBalloonHelpString ( "Delete highlighted search terms" );
-
-    // grid buttons into place
-    app->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 2",
-                  this->GeneAddTermButton->GetWidgetName() );
-    app->Script ( "grid %s -row 0 -column 1 -sticky e -padx 2  -pady 2",
-                  this->GeneUseAllButton->GetWidgetName() );
-    app->Script ( "grid %s -row 0 -column 2 -sticky w -padx 2 -pady 2",
-                  this->GeneUseNoneButton->GetWidgetName() );
-    
-    app->Script ( "grid %s -row 1 -column 1 -sticky e -padx 2 -pady 2",
-                  this->GeneClearTermButton->GetWidgetName());
-    app->Script ( "grid %s -row 1 -column 2 -sticky w -padx 2 -pady 2",
-                  this->GeneClearAllButton->GetWidgetName() );
-    bbframe->Delete ( );
+    this->SubStructureListWidget = vtkQueryAtlasUseSearchTermWidget::New();
+    this->SubStructureListWidget->SetParent ( this->SubStructureFrame );
+    this->SubStructureListWidget->Create ( );
+    this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->SetHeight(3);
+//    int i = this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->GetColumnIndexWithName ( "Search terms" );
+//    this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->SetColumnName ( i, "Other search terms");
+    app->Script ( "pack %s -side top -fill x -expand true", this->SubStructureListWidget->GetWidgetName() );
 
 }
 
@@ -1714,9 +2154,7 @@ void vtkQueryAtlasGUI::BuildGeneFrame()
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::UnpackQueryBuilderContextFrames ( )
 {
-    this->Script ( "pack forget %s", this->GeneFrame->GetWidgetName() );
-    this->Script ( "pack forget %s", this->MiscFrame->GetWidgetName() );
-    this->Script ( "pack forget %s", this->CellFrame->GetWidgetName() );
+    this->Script ( "pack forget %s", this->SubStructureFrame->GetWidgetName() );
     this->Script ( "pack forget %s", this->StructureFrame->GetWidgetName() );
     this->Script ( "pack forget %s", this->PopulationFrame->GetWidgetName() );
     this->Script ( "pack forget %s", this->SpeciesFrame->GetWidgetName() );
@@ -1746,17 +2184,10 @@ void vtkQueryAtlasGUI::BuildQueryBuilderContextFrames ( vtkKWFrame *parent )
     this->SpeciesFrame->SetParent ( parent );
     this->SpeciesFrame->Create();
 
-    this->CellFrame = vtkKWFrame::New();
-    this->CellFrame->SetParent ( parent );
-    this->CellFrame->Create();
+    this->SubStructureFrame = vtkKWFrame::New();
+    this->SubStructureFrame->SetParent ( parent );
+    this->SubStructureFrame->Create();
 
-    this->MiscFrame = vtkKWFrame::New();
-    this->MiscFrame->SetParent ( parent );
-    this->MiscFrame->Create();
-
-    this->GeneFrame = vtkKWFrame::New();
-    this->GeneFrame->SetParent ( parent );
-    this->GeneFrame->Create();
 }
 
 
@@ -1769,46 +2200,35 @@ void vtkQueryAtlasGUI::BuildQueryBuilderContextButtons ( vtkKWFrame *parent )
   f->Create();
   this->Script ("pack %s -side top -anchor nw -fill none", f->GetWidgetName() );
 
-  this->MiscButton = vtkKWPushButton::New();
-  this->MiscButton->SetParent ( f );
-  this->MiscButton->Create();
-  this->MiscButton->SetWidth ( 6 );
-  this->MiscButton->SetText ( "misc" );
-
-  this->GeneButton = vtkKWPushButton::New();
-  this->GeneButton->SetParent( f );
-  this->GeneButton->Create();
-  this->GeneButton->SetWidth (6 );
-  this->GeneButton->SetText ( "gene" );
-    
-  this->CellButton = vtkKWPushButton::New();
-  this->CellButton->SetParent ( f );
-  this->CellButton->Create();
-  this->CellButton->SetWidth ( 6 );
-  this->CellButton->SetText ( "cell ");
+  // for now this will be the "other" term repository...
+  // when we flesh this out with multiscale categories,
+  // 
+  this->SubStructureButton = vtkKWPushButton::New();
+  this->SubStructureButton->SetParent ( f );
+  this->SubStructureButton->Create();
+  this->SubStructureButton->SetWidth ( 10 );
+  this->SubStructureButton->SetText ( "other");
     
   this->StructureButton = vtkKWPushButton::New();
   this->StructureButton->SetParent ( f );
   this->StructureButton->Create();
-  this->StructureButton->SetWidth ( 6 );
-  this->StructureButton->SetText ( "brain");
+  this->StructureButton->SetWidth ( 10);
+  this->StructureButton->SetText ( "structure");
     
   this->PopulationButton = vtkKWPushButton::New();
   this->PopulationButton->SetParent ( f );
   this->PopulationButton->Create();
-  this->PopulationButton->SetWidth ( 6 );
+  this->PopulationButton->SetWidth ( 10 );
   this->PopulationButton->SetText ( "group");
     
   this->SpeciesButton = vtkKWPushButton::New();
   this->SpeciesButton->SetParent ( f );
   this->SpeciesButton->Create();
-  this->SpeciesButton->SetWidth ( 6 );
+  this->SpeciesButton->SetWidth ( 10 );
   this->SpeciesButton->SetText ( "species");    
 
-  this->Script ( "pack %s %s %s %s %s %s -anchor nw -side left -fill none -padx 2 -pady 2",
-                 this->MiscButton->GetWidgetName(),
-                 this->GeneButton->GetWidgetName(),
-                 this->CellButton->GetWidgetName(),
+  this->Script ( "pack %s %s %s %s -anchor nw -side left -fill none -padx 2 -pady 2",
+                 this->SubStructureButton->GetWidgetName(),
                  this->StructureButton->GetWidgetName(),
                  this->PopulationButton->GetWidgetName(),
                  this->SpeciesButton->GetWidgetName() );
@@ -1840,10 +2260,13 @@ void vtkQueryAtlasGUI::BuildDatabasesMenu ( vtkKWMenu *m )
   m->AddSeparator();
   m->AddRadioButton ("PubMed");
   m->AddRadioButton ("JNeurosci");
-  m->AddRadioButton ("IBVD");
-  m->AddRadioButton ("Metasearch");
+  m->AddRadioButton ("PLoS");
   m->AddSeparator();
+  m->AddRadioButton ("Metasearch");
   m->AddRadioButton ("Entrez");
+  m->AddSeparator();
+  m->AddRadioButton ("IBVD");
+  m->AddRadioButton ("BrainInfo");
   m->AddSeparator();
   m->AddCommand ( "close");
 }
@@ -1878,35 +2301,19 @@ void vtkQueryAtlasGUI::SelectAllSearchTerms ( const char *c )
   
   if ( !(strcmp (c, "structure") ))
     {
-      numrows = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
+      numrows = this->StructureListWidget->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
       for ( i = 0; i < numrows; i++ )
         {
-        this->StructureMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
+        this->StructureListWidget->GetMultiColumnList()->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
         }
     }
-  else if ( !(strcmp (c, "cell")))
+  else if ( !(strcmp (c, "substructure")))
     {
-    numrows = this->CellMultiColumnList->GetWidget()->GetNumberOfRows();
+    numrows = this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
     for ( i = 0; i < numrows; i++ )
       {
-      this->CellMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
+      this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
       }
-    }
-  else if ( !(strcmp (c, "gene")))
-    {
-      numrows = this->GeneMultiColumnList->GetWidget()->GetNumberOfRows();
-      for ( i = 0; i < numrows; i++ )
-        {
-        this->GeneMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
-        }
-    }
-  else if ( !(strcmp(c, "misc")))
-    {
-      numrows = this->MiscMultiColumnList->GetWidget()->GetNumberOfRows();
-      for ( i = 0; i < numrows; i++ )
-        {
-        this->MiscMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "1" );
-        }
     }
 }
 
@@ -1919,34 +2326,18 @@ void vtkQueryAtlasGUI::DeselectAllSearchTerms ( const char *c)
 
   if ( !(strcmp(c, "structure")))
     {
-      numrows = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
+      numrows = this->StructureListWidget->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
       for ( i = 0; i < numrows; i++ )
         {
-        this->StructureMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
+        this->StructureListWidget->GetMultiColumnList()->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
         }
     }
-  else if ( !(strcmp(c, "cell")))
+  else if ( !(strcmp(c, "substructure")))
     {
-      numrows = this->CellMultiColumnList->GetWidget()->GetNumberOfRows();
+      numrows = this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
       for ( i = 0; i < numrows; i++ )
         {
-        this->CellMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
-        }
-    }
-  else if ( !(strcmp(c, "gene")))
-    {
-      numrows = this->GeneMultiColumnList->GetWidget()->GetNumberOfRows();
-      for ( i = 0; i < numrows; i++ )
-        {
-        this->GeneMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
-        }
-    }
-  else if ( !(strcmp(c, "misc")))
-    {
-      numrows = this->MiscMultiColumnList->GetWidget()->GetNumberOfRows();
-      for ( i = 0; i < numrows; i++ )
-        {
-        this->MiscMultiColumnList->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
+        this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->SetCellText ( i, this->SelectionColumn, "0" );
         }
     }
 }
@@ -1961,23 +2352,13 @@ void vtkQueryAtlasGUI::DeleteAllSearchTerms ( const char *c)
 
   if ( !(strcmp(c, "structure")))
     {
-      numrows = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
-      this->StructureMultiColumnList->GetWidget()->DeleteAllRows();
+      numrows = this->StructureListWidget->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+      this->StructureListWidget->GetMultiColumnList()->GetWidget()->DeleteAllRows();
     }
-  else if ( !(strcmp(c, "cell")))
+  else if ( !(strcmp(c, "substructure")))
     {
-      numrows = this->CellMultiColumnList->GetWidget()->GetNumberOfRows();
-      this->CellMultiColumnList->GetWidget()->DeleteAllRows();
-    }
-  else if ( !(strcmp(c, "gene")))
-    {
-      numrows = this->GeneMultiColumnList->GetWidget()->GetNumberOfRows();
-      this->GeneMultiColumnList->GetWidget()->DeleteAllRows();
-    }
-  else if ( !(strcmp(c, "misc")))
-    {
-      numrows = this->MiscMultiColumnList->GetWidget()->GetNumberOfRows();
-      this->MiscMultiColumnList->GetWidget()->DeleteAllRows();
+      numrows = this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+      this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->DeleteAllRows();
     }
 }
 
@@ -1987,11 +2368,11 @@ void vtkQueryAtlasGUI::DeleteAllSearchTerms ( const char *c)
 void vtkQueryAtlasGUI::AddNewStructureSearchTerm ( const char *term )
 {
   vtkDebugMacro("vtkQueryAtlasGUI: ProcessGUIEvent: Adding New SearchTerms event. \n");
-  int i = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
-  this->StructureMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
-  this->StructureMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
-  this->StructureMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
-  this->StructureMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
+  int i = this->StructureListWidget->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  this->StructureListWidget->GetMultiColumnList()->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
+  this->StructureListWidget->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
+  this->StructureListWidget->GetMultiColumnList()->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
+  this->StructureListWidget->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
 }
 
 
@@ -2003,35 +2384,19 @@ void vtkQueryAtlasGUI::AddNewSearchTerm ( const char *c)
   int i;
   if ( !(strcmp(c, "structure")))
     {
-      i = this->StructureMultiColumnList->GetWidget()->GetNumberOfRows();
-      this->StructureMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
-      this->StructureMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
-      this->StructureMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
-      this->StructureMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
+      i = this->StructureListWidget->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+      this->StructureListWidget->GetMultiColumnList()->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
+      this->StructureListWidget->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
+      this->StructureListWidget->GetMultiColumnList()->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
+      this->StructureListWidget->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
     }
-  else if ( !(strcmp(c, "cell")))
+  else if ( !(strcmp(c, "substructure")))
     {
-      i = this->CellMultiColumnList->GetWidget()->GetNumberOfRows();
-      this->CellMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
-      this->CellMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
-      this->CellMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
-      this->CellMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
-    }
-  else if ( !(strcmp(c, "gene")))
-    {
-      i = this->GeneMultiColumnList->GetWidget()->GetNumberOfRows();
-      this->GeneMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
-      this->GeneMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
-      this->GeneMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
-      this->GeneMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
-    }
-  else if ( !(strcmp(c, "misc")))
-    {
-      i = this->MiscMultiColumnList->GetWidget()->GetNumberOfRows();
-      this->MiscMultiColumnList->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
-      this->MiscMultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
-      this->MiscMultiColumnList->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
-      this->MiscMultiColumnList->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
+      i = this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+      this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->InsertCellTextAsInt ( i, this->SelectionColumn, 0 );
+      this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton (i, this->SelectionColumn );
+      this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->InsertCellText (i, this->SearchTermColumn, "edit search term here" );
+      this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry (this->SearchTermColumn);
     }
 }
 
@@ -2045,11 +2410,11 @@ void vtkQueryAtlasGUI::DeleteSelectedSearchTerms ( const char *c)
   // get the row that was last selected and remove by index
   if ( !(strcmp(c, "structure")))
     {
-      numRows = this->StructureMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+      numRows = this->StructureListWidget->GetMultiColumnList()->GetWidget()->GetNumberOfSelectedRows();
       if (numRows == 1)
         {
-        this->StructureMultiColumnList->GetWidget()->GetSelectedRows(row);
-        this->StructureMultiColumnList->GetWidget()->DeleteRow ( row[0] );
+        this->StructureListWidget->GetMultiColumnList()->GetWidget()->GetSelectedRows(row);
+        this->StructureListWidget->GetMultiColumnList()->GetWidget()->DeleteRow ( row[0] );
         }
       else
         {
@@ -2057,41 +2422,13 @@ void vtkQueryAtlasGUI::DeleteSelectedSearchTerms ( const char *c)
         return;
         }
     }
-  else if ( !(strcmp(c, "cell")))
+  else if ( !(strcmp(c, "substructure")))
     {
-      numRows = this->CellMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
+      numRows = this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->GetNumberOfSelectedRows();
       if (numRows == 1)
         {
-        this->CellMultiColumnList->GetWidget()->GetSelectedRows(row);
-        this->CellMultiColumnList->GetWidget()->DeleteRow ( row[0] );
-        }
-      else
-        {
-        vtkErrorMacro (<< "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
-        return;
-        }
-    }
-  else if ( !(strcmp(c, "gene")))
-    {
-      numRows = this->GeneMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
-      if (numRows == 1)
-        {
-        this->GeneMultiColumnList->GetWidget()->GetSelectedRows(row);
-        this->GeneMultiColumnList->GetWidget()->DeleteRow ( row[0] );
-        }
-      else
-        {
-        vtkErrorMacro (<< "Selected rows (" << numRows << ") not 1, just pick one to delete for now\n");
-        return;
-        }
-    }
-  else if ( !(strcmp(c, "misc")))
-    {
-      numRows = this->MiscMultiColumnList->GetWidget()->GetNumberOfSelectedRows();
-      if (numRows == 1)
-        {
-        this->MiscMultiColumnList->GetWidget()->GetSelectedRows(row);
-        this->MiscMultiColumnList->GetWidget()->DeleteRow ( row[0] );
+        this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->GetSelectedRows(row);
+        this->SubStructureListWidget->GetMultiColumnList()->GetWidget()->DeleteRow ( row[0] );
         }
       else
         {
