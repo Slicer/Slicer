@@ -928,7 +928,7 @@ if { ![file exists $::dcmtk_TEST_FILE] || $::GENLIB(update) } {
 #
 #
 
-if { 0 && (![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update)) } {
+if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/BatchMake BatchMake
@@ -1050,8 +1050,8 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
 # check for both regular and alternate sandbox file for linux builds
 if { ![file exists $::CMAKE] || \
          ![file exists $::TEEM_TEST_FILE] || \
-         (0 && ![file exists $::BatchMake_TEST_FILE]) || \
-         (0 && ![file exists $::LIBCURL_TEST_FILE]) || \
+         ![file exists $::BatchMake_TEST_FILE] || \
+         ![file exists $::LIBCURL_TEST_FILE] || \
          ![file exists $::TCL_TEST_FILE] || \
          ![file exists $::TK_TEST_FILE] || \
          ![file exists $::ITCL_TEST_FILE] || \
