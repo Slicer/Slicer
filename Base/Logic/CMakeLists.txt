@@ -31,6 +31,7 @@ SET(SlicerBaseLogic_SRCS
   vtkImageLabelChange.cxx 
   vtkImageErode.cxx 
   vtkImageNeighborhoodFilter.cxx
+  vtkFreeSurferRASToSlicerRASMatrixGenerator.cxx
 )
 
 # Abstract/pure virtual classes
