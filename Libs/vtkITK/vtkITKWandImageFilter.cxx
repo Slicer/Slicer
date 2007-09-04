@@ -146,16 +146,45 @@ void vtkITKWand(vtkITKWandImageFilter *self, T* scalars,
   wand->SetInput( extract->GetOutput() );
   wand->Update();
 
-  // Copy the output
+  // Copy to the output, need to put the output image back in the
+  // right slice
+  typedef itk::Image<unsigned char, 3> OutputImageType;
+  typename OutputImageType::Pointer output = OutputImageType::New();
+  output->GetPixelContainer()->SetImportPointer(oscalars, dims[0]*dims[1]*dims[2], false);
+  output->SetOrigin( origin );
+  output->SetSpacing( spacing );
+  output->SetRegions(region);
+  output->FillBuffer(0);
+
+  ExtractionRegionType pasteRegion;
+  typename ExtractionRegionType::SizeType pasteSize;
+
+  pasteRegion = extractRegion;
+  pasteSize = pasteRegion.GetSize();
+  switch(plane)
+    {
+    case 0: // JK plane
+      pasteSize[0] = 1;
+      break;
+    case 1: // IK plane
+      pasteSize[1] = 1;
+      break;
+    case 2: // IJ plane
+      pasteSize[2] = 1;
+      break;
+    }
+  pasteRegion.SetSize( pasteSize );
+
+  itk::ImageRegionIterator<OutputImageType>
+    outIt(output, pasteRegion);
   itk::ImageRegionIterator<SegmentImage2DType>
     inIt(wand->GetOutput(), wand->GetOutput()->GetBufferedRegion());
-  unsigned char *oit = oscalars;
 
   while (!inIt.IsAtEnd())
     {
-    *oit = inIt.Get();
+    outIt.Set(inIt.Get());
     ++inIt;
-    ++oit;
+    ++outIt;
     }
 }
 
