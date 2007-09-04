@@ -9,10 +9,8 @@ proc QueryAtlasFormURLForGoogle_Testing { } {
     set structure [QueryAtlasGetStructureTerms ]
     set diagnosis [QueryAtlasGetDiagnosisTerms ]
     set gender [QueryAtlasGetGenderTerms ]
-    set misc [QueryAtlasGetMiscTerms ]
     set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetHistologyTerms ]
-    set genes [ QueryAtlasGetGeneTerms ]
+    set cells [QueryAtlasGetSubStructureTerms ]
     set target [ QueryAtlasGetSearchTargets ]
 
     unset -nocomplain ::QA(url,Google) 
@@ -119,10 +117,8 @@ proc QueryAtlasFormURLForGoogle { } {
     set structure [QueryAtlasGetStructureTerms ]
     set diagnosis [QueryAtlasGetDiagnosisTerms ]
     set gender [QueryAtlasGetGenderTerms ]
-    set misc [QueryAtlasGetMiscTerms ]
     set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetHistologyTerms ]
-    set genes [ QueryAtlasGetGeneTerms ]
+    set cells [QueryAtlasGetSubStructureTerms ]
     set target [ QueryAtlasGetSearchTargets ]
 
     set ::QA(url,Google) ""
@@ -149,10 +145,8 @@ proc QueryAtlasFormURLForWikipedia { } {
     set structure [QueryAtlasGetStructureTerms ]
     set diagnosis [QueryAtlasGetDiagnosisTerms ]
     set gender [QueryAtlasGetGenderTerms ]
-    set misc [QueryAtlasGetMiscTerms ]
     set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetHistologyTerms ]
-    set genes [ QueryAtlasGetGeneTerms ]
+    set cells [QueryAtlasGetSubStructureTerms ]
     set target [ QueryAtlasGetSearchTargets ]
 
     set ::QA(url,Wikipedia) ""
@@ -186,10 +180,8 @@ proc QueryAtlasFormURLForIBVD { } {
     set structure [QueryAtlasGetStructureTerms ]
     set diagnosis [QueryAtlasGetDiagnosisTerms ]
     set gender [QueryAtlasGetGenderTerms ]
-    set misc [QueryAtlasGetMiscTerms ]
     set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetHistologyTerms ]
-    set genes [ QueryAtlasGetGeneTerms ]
+    set cells [QueryAtlasGetSubStructureTerms ]
     set target [ QueryAtlasGetSearchTargets ]
 
     unset  -nocomplain ::QA(url,IBVD) 
@@ -226,10 +218,8 @@ proc QueryAtlasFormURLForPubMed { } {
     set structure [QueryAtlasGetStructureTerms ]
     set diagnosis [QueryAtlasGetDiagnosisTerms ]
     set gender [QueryAtlasGetGenderTerms ]
-    set misc [QueryAtlasGetMiscTerms ]
     set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetHistologyTerms ]
-    set genes [ QueryAtlasGetGeneTerms ]
+    set cells [QueryAtlasGetSubStructureTerms ]
     set target [ QueryAtlasGetSearchTargets ]
 
     #--- TODO:
@@ -249,10 +239,8 @@ proc QueryAtlasFormURLForJNeurosci { } {
     set structure [QueryAtlasGetStructureTerms ]
     set diagnosis [QueryAtlasGetDiagnosisTerms ]
     set gender [QueryAtlasGetGenderTerms ]
-    set misc [QueryAtlasGetMiscTerms ]
     set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetHistologyTerms ]
-    set genes [ QueryAtlasGetGeneTerms ]
+    set cells [QueryAtlasGetSubStructureTerms ]
     set target [ QueryAtlasGetSearchTargets ]
 
     #--- TODO:
@@ -274,10 +262,8 @@ proc QueryAtlasFormURLForMetasearch { } {
     set structure [QueryAtlasGetStructureTerms ]
     set diagnosis [QueryAtlasGetDiagnosisTerms ]
     set gender [QueryAtlasGetGenderTerms ]
-    set misc [QueryAtlasGetMiscTerms ]
     set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetHistologyTerms ]
-    set genes [ QueryAtlasGetGeneTerms ]
+    set cells [QueryAtlasGetSubStructureTerms ]
     set target [ QueryAtlasGetSearchTargets ]
 
     unset -nocomplain ::QA(url,Metasearch) 
@@ -294,10 +280,8 @@ proc QueryAtlasFormURLForBraininfo { } {
     set structure [QueryAtlasGetStructureTerms ]
     set diagnosis [QueryAtlasGetDiagnosisTerms ]
     set gender [QueryAtlasGetGenderTerms ]
-    set misc [QueryAtlasGetMiscTerms ]
     set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetHistologyTerms ]
-    set genes [ QueryAtlasGetGeneTerms ]
+    set cells [QueryAtlasGetSubStructureTerms ]
     set target [ QueryAtlasGetSearchTargets ]
 
     #--- TODO: just take first structure term.
@@ -319,10 +303,8 @@ proc QueryAtlasFormURLsForEntrez { } {
     set structure [QueryAtlasGetStructureTerms ]
     set diagnosis [QueryAtlasGetDiagnosisTerms ]
     set gender [QueryAtlasGetGenderTerms ]
-    set misc [QueryAtlasGetMiscTerms ]
     set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetHistologyTerms ]
-    set genes [ QueryAtlasGetGeneTerms ]
+    set cells [QueryAtlasGetSubStructureTerms ]
     set target [ QueryAtlasGetSearchTargets ]
 
     unset -nocomplain ::QA(url,EntrezCounts ) 
@@ -407,10 +389,8 @@ proc QueryAtlasFormURLsForTargets { } {
     set structure [QueryAtlasGetStructureTerms ]
     set diagnosis [QueryAtlasGetDiagnosisTerms ]
     set gender [QueryAtlasGetGenderTerms ]
-    set misc [QueryAtlasGetMiscTerms ]
     set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetHistologyTerms ]
-    set genes [ QueryAtlasGetGeneTerms ]
+    set cells [QueryAtlasGetSubStructureTerms ]
     set target [ QueryAtlasGetSearchTargets ]
     
     #--- Form urls for each Search Target requested.
