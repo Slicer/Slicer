@@ -88,7 +88,7 @@ extern "C" {
 //#define GAD_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
-//#define QUERYATLAS_DEBUG
+#define QUERYATLAS_DEBUG
 //#define COLORS_DEBUG
 //#define FIDUCIALS_DEBUG
 //#define CAMERA_DEBUG
