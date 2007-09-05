@@ -81,6 +81,20 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerLogic
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );  
 
+  // Description:
+  // Computes matrix we need to register
+  // V1Node to V2Node given the
+  // "register.dat" matrix from tkregister2 (FreeSurfer)
+  void TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix( vtkMRMLVolumeNode *V1Node,
+                             vtkMRMLVolumeNode *V2Node,
+                             vtkMatrix4x4 *FSRegistrationMatrix,
+                             vtkMatrix4x4 *ResultsMatrix);
+  // Description:
+  // Convenience method to compute
+  // a volume's Vox2RAS-tkreg Matrix
+  void ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode *VNode,
+                                   vtkMatrix4x4 *M );
+
 protected:
   vtkSlicerVolumesLogic();
   virtual ~vtkSlicerVolumesLogic();
