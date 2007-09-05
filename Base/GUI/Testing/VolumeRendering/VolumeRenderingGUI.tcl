@@ -112,6 +112,8 @@ proc VolumeRenderingBuildGUI {this} {
 
     #GetInstance of RenderWidget
     set ::VR($this,renderWidget) [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+    set ::VR($this,renWin) [$::VR($this,renderWidget) GetRenderWindow]
+    #    $::VR($this,renWin) AddObserver AbortCheckEvent {TkCheckAbort}
     puts "renderWidget: $::VR($this,renderWidget)"
     # Create a volume property widget
     set ::VR($this,vpw) [vtkKWVolumePropertyWidget New]
@@ -203,6 +205,8 @@ proc VolumeRenderingAddGUIObservers {this} {
     $this AddObserverByNumber $::VR($this,buttonThreeD) 10000
     $this AddObserverByNumber $::VR($this,buttonTwoD) 10000
     $this AddObserverByNumber  [[$::VR($this,presetMapping) GetWidget] GetMenu] 10005
+    [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow] AddObserver AbortCheckEvent {TkCheckAbort}
+
     puts "Observer Added VolumeRendering"
 }
 
@@ -253,7 +257,7 @@ proc VolumeRenderingProcessGUIEvents {this caller event} {
             $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
     }  elseif {$caller == $::VR($this,buttonTwoD)} {
             set ::VR($this,converter) [vtkImageShiftScale New]
-            $::VR($this,converter) SetOutputScalarTypeToUnsignedShort 
+            $::VR($this,converter) SetOutputscalarTypeToUnsignedShort 
             $::VR($this,converter) SetInput $::VR($this,aImageData)
             set ::VR($this,volumeMapper) [vtkVolumeTextureMapper2D New]
             $::VR($this,volumeMapper) SetInput [$::VR($this,converter) GetOutput]
@@ -353,9 +357,11 @@ proc buttonLoadNode {this} {
             
             set lowerRange [lindex [$::VR($this,pfed_hist) GetRange] 0]
             set upperRange [lindex [$::VR($this,pfed_hist) GetRange] 1]
-            set index 1
+            set index [expr {$lowerRange + 1}]
             set opacity .2
             set countTreshold 10
+            #$::VR($this,opacityTransferFunction) AddPoint $lowerRange 0
+            #$::VR($this,opacityTransferFunction) AddPoint $upperRange $opacity
             if 1 {
                 while {$index<$upperRange} {
                     if {[$::VR($this,pfed_hist) GetOccurenceAtValue $index]>$countTreshold} {
@@ -375,7 +381,7 @@ proc buttonLoadNode {this} {
                         $::VR($this,colorTransferFunction) AddRGBPoint [expr $index + .99] [lindex $color 0] [lindex $color 1] [lindex $color 2]
                         
                         #puts "Color at $index finished"
-                    } ;#if
+                    } 
                     incr index
                 } ;#while
             } ;#if
@@ -392,14 +398,14 @@ proc buttonLoadNode {this} {
             set indexTreshold2 10
             set totalTreshold2 0
 
-            while {$totalTreshold1<$treshold1} {
-            incr totalTreshold1 [$::VR($this,pfed_hist) GetOccurenceAtValue $indexTreshold1]
-            incr indexTreshold1 
-            }
-            while {$totalTreshold2<$treshold2} {
-            incr totalTreshold2 [$::VR($this,pfed_hist) GetOccurenceAtValue $indexTreshold2]
-            incr indexTreshold2 
-            }
+            #while {$totalTreshold1<$treshold1} {
+            #incr totalTreshold1 [$::VR($this,pfed_hist) GetOccurenceAtValue $indexTreshold1]
+            #incr indexTreshold1 
+            #}
+            #while {$totalTreshold2<$treshold2} {
+            #incr totalTreshold2 [$::VR($this,pfed_hist) GetOccurenceAtValue $indexTreshold2]
+            #incr indexTreshold2 
+            #}
             
             $::VR($this,opacityTransferFunction) AddPoint [lindex [$::VR($this,pfed_hist) GetRange] 0] .0
             $::VR($this,opacityTransferFunction) AddPoint  $indexTreshold1  0.0    
@@ -432,7 +438,7 @@ proc buttonLoadNode {this} {
         if 1 {
             set ::VR($this,volumeMapper) [vtkVolumeTextureMapper3D New]
             $::VR($this,volumeMapper) SetInput $::VR($this,aImageData)
-            $::VR($this,volumeMapper) SetSampleDistance 1
+            $::VR($this,volumeMapper) SetSampleDistance 0.1
         }
             puts "348"
         set ::VR($this,volume) [vtkVolume New]
@@ -508,5 +514,15 @@ proc VRDebug {this output} {
         puts "$output"
     }
 }
+
+proc TkCheckAbort {} {
+set renWin [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow]
+    set foo [$renWin GetEventPending]
+    if {$foo != 0} {
+    puts "Abort"
+    $renWin SetAbortRender 1
+    } 
+}
+#    renWin AddObserver AbortCheckEvent {TkCheckAbort}
 
 
