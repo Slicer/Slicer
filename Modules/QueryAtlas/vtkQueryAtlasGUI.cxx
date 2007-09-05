@@ -37,6 +37,14 @@
 // for path manipulation
 #include "itksys/SystemTools.hxx"
 
+
+#define SEARCH_FRAME
+#define QUERY_FRAME
+#define RESULTS_FRAME
+#define LOAD_FRAME
+#define ANNO_FRAME
+#define ONTOLOGY_FRAME
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkQueryAtlasGUI );
 vtkCxxRevisionMacro ( vtkQueryAtlasGUI, "$Revision: 1.0 $");
@@ -61,6 +69,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->AnnotationVisibility = 1;
     this->ModelVisibility = 1;
     
+#ifdef QUERY_FRAME
     //---
     // master category switch
     //---
@@ -102,26 +111,32 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->StructureFrame = NULL;
     this->StructureMenuButton = NULL;
     this->StructureListWidget = NULL;
+#endif
 
     //---
     // annotation frame
     //---    
+#ifdef ANNO_FRAME
     this->AnnotationVisibilityButton = NULL;
     this->AnnotationNomenclatureMenuButton = NULL;
     this->ModelVisibilityButton = NULL;
+#endif
     
     //---
     // search frame
     //---    
+#ifdef SEARCH_FRAME
     this->SearchButton = NULL;
     this->DatabasesMenuButton = NULL;
     this->ResultsWithAnyButton = NULL;
     this->ResultsWithAllButton = NULL;
     this->ResultsWithExactButton = NULL;    
+#endif
 
     //---
     // results frame
     //---
+#ifdef RESULTS_FRAME
     this->CurrentResultsList = NULL;
     this->PastResultsList = NULL;
     this->DeleteAllCurrentResultsButton = NULL;
@@ -132,12 +147,13 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->SaveCurrentSelectedResultsButton = NULL;
     this->SavePastResultsButton = NULL;
     this->LoadURIsButton = NULL;
-
+#endif
     this->NumberOfColumns = 2;
 
     //---
     // ontology frame
     //---
+#ifdef ONTOLOGY_FRAME
     this->LocalSearchTermEntry = NULL;
     this->SynonymsMenuButton = NULL;
     this->BIRNLexEntry = NULL;
@@ -156,10 +172,12 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->NeuroNamesHierarchyButton = NULL;
     this->UMLSHierarchyButton = NULL;
     this->SavedTerms = NULL;
+#endif
 
     //---
     // load frame
     //---    
+#ifdef LOAD_FRAME
     this->FIPSFSButton = NULL;
     this->FIPSFSFrame = NULL;
     this->QdecButton = NULL;
@@ -169,6 +187,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->FSmodelSelector = NULL;
     this->FStransformSelector = NULL;
     this->QdecModelSelector = NULL;
+#endif
 }
 
 
@@ -191,9 +210,11 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->QueryAtlasIcons = NULL;
       }
 
+
     //---
     // load frame
     //---
+#ifdef LOAD_FRAME
     if ( this->FIPSFSButton )
       {
       this->FIPSFSButton->SetParent ( NULL );
@@ -248,10 +269,13 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->QdecModelSelector->Delete();
       this->QdecModelSelector = NULL;
       }
+#endif
+
 
     //---
     // annotation frame
     //---
+#ifdef ANNO_FRAME
     if ( this->ModelVisibilityButton )
       {
       this->ModelVisibilityButton->SetParent ( NULL );
@@ -270,10 +294,12 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->AnnotationNomenclatureMenuButton->Delete();
       this->AnnotationNomenclatureMenuButton = NULL;      
       }
+#endif
     
     //---
     // query builder frame
     //---
+#ifdef QUERY_FRAME
     if ( this->SwitchQueryFrame)
       {
       this->SwitchQueryFrame->SetParent ( NULL );
@@ -298,7 +324,6 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->PopulationButton->Delete();
       this->PopulationButton = NULL;      
       }
-
     //---
     // query builder population panel
     //---
@@ -383,11 +408,52 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->SpeciesMacaqueButton->Delete();
       this->SpeciesMacaqueButton = NULL;
       }
+    //---
+    // query builder structure panel
+    //---
+    if ( this->StructureFrame )
+      {
+      this->StructureFrame->SetParent ( NULL );
+      this->StructureFrame->Delete();
+      this->StructureFrame = NULL;      
+      }
+    if ( this->StructureMenuButton)
+      {
+      this->StructureMenuButton->SetParent ( NULL );
+      this->StructureMenuButton->Delete();
+      this->StructureMenuButton = NULL;
+      }
+    //---
+    // query builder structure panel
+    //---
+    if ( this->StructureListWidget )
+      {
+      this->StructureListWidget->SetParent ( NULL );
+      this->StructureListWidget->Delete ( );
+      this->StructureListWidget = NULL;
+      }
+    //---
+    // query builder substructure panel
+    //---
+    if ( this->SubStructureFrame )
+      {
+      this->SubStructureFrame->SetParent ( NULL );
+      this->SubStructureFrame->Delete();
+      this->SubStructureFrame = NULL;      
+      }
+    if ( this->SubStructureListWidget )
+      {
+      this->SubStructureListWidget->SetParent ( NULL );
+      this->SubStructureListWidget->Delete();
+      this->SubStructureListWidget = NULL;      
+      }
 
+#endif
 
     //---
     // search panel
     //---
+#ifdef SEARCH_FRAME
     if ( this->SearchButton )
       {
       this->SearchButton->SetParent ( NULL );
@@ -418,26 +484,13 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->ResultsWithExactButton->Delete();
       this->ResultsWithExactButton = NULL;      
       }
+#endif
 
-    //---
-    // query builder structure panel
-    //---
-    if ( this->StructureFrame )
-      {
-      this->StructureFrame->SetParent ( NULL );
-      this->StructureFrame->Delete();
-      this->StructureFrame = NULL;      
-      }
-    if ( this->StructureMenuButton)
-      {
-      this->StructureMenuButton->SetParent ( NULL );
-      this->StructureMenuButton->Delete();
-      this->StructureMenuButton = NULL;
-      }
 
     //---
     // ontology frame
     //---
+#ifdef ONTOLOGY_FRAME
     if ( this->LocalSearchTermEntry )
       {
       this->LocalSearchTermEntry->SetParent ( NULL );
@@ -546,20 +599,13 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->SavedTerms->Delete();
       this->SavedTerms = NULL;
       }
+#endif
 
-    //---
-    // query builder structure panel
-    //---
-    if ( this->StructureListWidget )
-      {
-      this->StructureListWidget->SetParent ( NULL );
-      this->StructureListWidget->Delete ( );
-      this->StructureListWidget = NULL;
-      }
 
     //---
     // results panel
     //---
+#ifdef RESULTS_FRAME
     if ( this->CurrentResultsList )
       {
       this->CurrentResultsList->SetParent(NULL);
@@ -608,7 +654,6 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->SaveCurrentSelectedResultsButton->Delete();
       this->SaveCurrentSelectedResultsButton = NULL;
       }
-
     if ( this->SavePastResultsButton )
       {
       this->SavePastResultsButton->SetParent(NULL);
@@ -618,25 +663,11 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
     if ( this->LoadURIsButton )
       {
       this->LoadURIsButton->SetParent ( NULL );
-      this->LoadURIsButton->Create();
+      this->LoadURIsButton->Delete();
       this->LoadURIsButton = NULL;
       }
-
-    //---
-    // query builder substructure panel
-    //---
-    if ( this->SubStructureFrame )
-      {
-      this->SubStructureFrame->SetParent ( NULL );
-      this->SubStructureFrame->Delete();
-      this->SubStructureFrame = NULL;      
-      }
-    if ( this->SubStructureListWidget )
-      {
-      this->SubStructureListWidget->SetParent ( NULL );
-      this->SubStructureListWidget->Delete();
-      this->SubStructureListWidget = NULL;      
-      }
+#endif
+    
 }
 
 
@@ -670,15 +701,18 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
     //---
     // load frame
     //---
+#ifdef LOAD_FRAME
     os << indent << "FSbrainSelector: " << this->GetFSbrainSelector ( ) << "\n";    
     os << indent << "FSoverlaySelector: " << this->GetFSoverlaySelector ( ) << "\n";    
     os << indent << "FSmodelSelector: " << this->GetFSmodelSelector ( ) << "\n";    
     os << indent << "FStransformSelector: " << this->GetFStransformSelector ( ) << "\n";    
     os << indent << "QdecModelSelector: " << this->GetQdecModelSelector ( ) << "\n";    
-
+#endif
+    
     //---
     // ontology frame
     //---
+#ifdef ONTOLOGY_FRAME
     os << indent << "LoadSearchTermEntry" << this->GetLocalSearchTermEntry ( ) << "\n";    
     os << indent << "SynonymsMenuButton" << this->GetSynonymsMenuButton ( ) << "\n";    
     os << indent << "BIRNLexEntry" << this->GetBIRNLexEntry ( ) << "\n";    
@@ -701,6 +735,8 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "ResultsWithExactButton" <<  this->GetResultsWithExactButton() << "\n";
     os << indent << "ResultsWithAnyButton" <<  this->GetResultsWithAnyButton() << "\n";
     os << indent << "ResultsWithAllButton" <<  this->GetResultsWithAllButton() << "\n";
+#endif
+    
     //---
     // TODO: finish this method!
     //---
@@ -711,11 +747,12 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 {
+  if ( 0 ) {
   vtkDebugMacro("vtkQueryAtlasGUI: RemoveGUIObservers\n");
 
   this->FIPSFSButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->QdecButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-
+  
   this->StructureButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->GetClearAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->GetAddNewButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -764,12 +801,14 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->DeleteAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CurrentResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 //  this->PastResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  }
 }
 
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::AddGUIObservers ( )
 {
+  if ( 0 ) {
   vtkDebugMacro("vtkQueryAtlasGUI: AddGUIObservers\n");
   this->FIPSFSButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->QdecButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -822,6 +861,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->DeleteAllCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CurrentResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 //  this->PastResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  }
   
 }
 
@@ -1069,6 +1109,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::ColorCodeContextButtons ( vtkKWPushButton *b )
 {
+#ifdef QUERY_FRAME
   this->SubStructureButton->SetBackgroundColor ( _br, _bg, _bb );
   this->StructureButton->SetBackgroundColor ( _br, _bg, _bb );
   this->PopulationButton->SetBackgroundColor ( _br, _bg, _bb );
@@ -1081,6 +1122,7 @@ void vtkQueryAtlasGUI::ColorCodeContextButtons ( vtkKWPushButton *b )
 
   b->SetBackgroundColor (1.0, 1.0, 1.0);
   b->SetForegroundColor (0.0, 0.0, 0.0);
+#endif
 }
 
 
@@ -1133,19 +1175,31 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
     this->QueryAtlasIcons = vtkQueryAtlasIcons::New();
     this->BuildHelpAndAboutFrame ( page, help, about );
-    this->BuildHelpAndAcknowledgementGUI ( );
+    this->BuildAcknowledgementPanel ( );
+#ifdef LOAD_FRAME
     this->BuildLoadAndConvertGUI ( );
+#endif
+#ifdef ANNO_FRAME
     this->BuildAnnotationOptionsGUI ( );
+#endif
+#ifdef ONTOLOGY_FRAME
     this->BuildOntologyGUI ( );
+#endif
+#ifdef QUERY_FRAME
     this->BuildQueryGUI ( );
+#endif
+#ifdef SEARCH_FRAME
     this->BuildSearchGUI ( );
+#endif
+#ifdef RESULTS_FRAME
     this->BuildResultsManagerGUI ( );
-    this->BuildDisplayAndNavigationGUI ( );
+#endif
+//    this->BuildDisplayAndNavigationGUI ( );
 }
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::BuildHelpAndAcknowledgementGUI ( )
+void vtkQueryAtlasGUI::BuildAcknowledgementPanel ( )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
 
@@ -1181,7 +1235,13 @@ void vtkQueryAtlasGUI::BuildHelpAndAcknowledgementGUI ( )
     app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky w", anamic->GetWidgetName());
     app->Script ("grid %s -row 0 -column 2 -padx 2 -pady 2 -sticky w",  anac->GetWidgetName());
     app->Script ("grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky w",  aigt->GetWidgetName());                 
-    app->Script ("grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  abi->GetWidgetName());                 
+    app->Script ("grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  abi->GetWidgetName());
+
+    abirn->Delete();
+    anac->Delete();
+    anamic->Delete();
+    aigt->Delete();
+    abi->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -1804,6 +1864,7 @@ void vtkQueryAtlasGUI::BuildResultsManagerGUI ()
     curL->SetWidth ( 45 );
     curL->SetText ( "Latest search results" );
     curL->SetBackgroundColor ( _br, _bg, _bb);
+
     this->CurrentResultsList = vtkKWListBoxWithScrollbars::New();
     this->CurrentResultsList->SetParent ( topcurF );
     this->CurrentResultsList->Create();
@@ -1857,6 +1918,7 @@ void vtkQueryAtlasGUI::BuildResultsManagerGUI ()
     pastL->SetWidth ( 45 );
     pastL->SetText ( "Reserved search results" );
     pastL->SetBackgroundColor ( 0.85, 0.85, 0.95 );
+
     this->PastResultsList = vtkKWListBoxWithScrollbars::New();
     this->PastResultsList->SetParent ( toppastF );
     this->PastResultsList->Create();
@@ -1873,6 +1935,7 @@ void vtkQueryAtlasGUI::BuildResultsManagerGUI ()
     this->DeletePastResultButton->SetReliefToFlat ( );    
     this->DeletePastResultButton->SetBalloonHelpString ("Delete selected");
 
+
     this->DeleteAllPastResultsButton = vtkKWPushButton::New();
     this->DeleteAllPastResultsButton->SetParent (pastF);
     this->DeleteAllPastResultsButton->Create();
@@ -1888,6 +1951,7 @@ void vtkQueryAtlasGUI::BuildResultsManagerGUI ()
     this->SavePastResultsButton->SetBorderWidth ( 0 );
     this->SavePastResultsButton->SetReliefToFlat();    
     this->SavePastResultsButton->SetBalloonHelpString ("Save links to file");
+
 
     this->LoadURIsButton = vtkKWPushButton::New();
     this->LoadURIsButton->SetParent ( pastF);
@@ -1928,8 +1992,8 @@ void vtkQueryAtlasGUI::BuildResultsManagerGUI ()
     curL->Delete();
     pastL->Delete();
     topcurF->Delete();
-    toppastF->Delete();
     curF->Delete();
+    toppastF->Delete();
     pastF->Delete();
     resultsFrame->Delete();
 
