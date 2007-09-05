@@ -31,11 +31,14 @@ if { [itcl::find class WandEffect] == "" } {
     constructor {sliceGUI} {EffectSWidget::constructor $sliceGUI} {}
     destructor {}
 
+    public variable percentage "0.1"
+
     # methods
     method processEvent {{caller ""} {event ""}} {}
     method preview {} {}
     method apply {} {}
     method buildOptions {} {}
+    method setOptions {} {}
     method tearDownOptions {} {}
   }
 }
@@ -114,8 +117,7 @@ itcl::body WandEffect::preview {} {
 
   $o(wandFilter) SetInput [$this getInputBackground]
   $o(wandFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
-  set percent [$o(percentage) GetValue]
-  $o(wandFilter) SetDynamicRangePercentage $percent
+  $o(wandFilter) SetDynamicRangePercentage $percentage
 
   # figure out which plane to use
   foreach {i0 j0 k0 l0} [$_layers(background,xyToIJK) MultiplyPoint $x $y 0 1] {}
@@ -125,9 +127,9 @@ itcl::body WandEffect::preview {} {
   if { $j0 == $j1 } { $o(wandFilter) SetPlaneToIK }
   if { $k0 == $k1 } { $o(wandFilter) SetPlaneToIJ }
 
-  $o(wandFilter) Update
-
   $_layers(label,node) SetAndObserveImageData [$o(wandFilter) GetOutput] 
+
+  $o(wandFilter) Update
 }
   
 itcl::body WandEffect::buildOptions {} {
@@ -138,9 +140,10 @@ itcl::body WandEffect::buildOptions {} {
   $o(percentage) SetParent [$this getOptionsFrame]
   $o(percentage) PopupModeOn
   $o(percentage) SetResolution 0.01
+  $o(percentage) SetLabelPositionToTop
   $o(percentage) Create
   $o(percentage) SetRange 0.0 1.0
-  $o(percentage) SetValue 0.1
+  $o(percentage) SetValue $percentage
   $o(percentage) SetLabelText "Dynamic range percentage"
   $o(percentage) SetBalloonHelpString "Set the percentage of the dynamic range to group with the seed (default 0.1)."
   pack [$o(percentage) GetWidgetName] \
@@ -160,14 +163,20 @@ itcl::body WandEffect::buildOptions {} {
   #
   # event observers - TODO: if there were a way to make these more specific, I would...
   #
-#  set tag [$o(percentage) AddObserver AnyEvent "after idle $this previewOptions"]
-#  lappend _observerRecords "$o(percentage) $tag"
+  set tag [$o(percentage) AddObserver AnyEvent "after idle $this setOptions"]
+  lappend _observerRecords "$o(percentage) $tag"
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
 
   if { [$this getInputBackground] == "" || [$this getOutputLabel] == "" } {
     $this errorDialog "Background and Label map needed for wand"
     after idle ::EffectSWidget::RemoveAll
+  }
+}
+
+itcl::body WandEffect::setOptions { } {
+  foreach we [itcl::find objects -class WandEffect] {
+    $we configure -percentage [$o(percentage) GetValue]
   }
 }
 
