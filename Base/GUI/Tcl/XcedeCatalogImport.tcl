@@ -1,94 +1,87 @@
 
 #
-# test of importing data wrapped in xcede 2.0 xml
+# test of importing data wrapped in xcede 2.0 CATALOG xml
 # vtk xml data parser mechanism
 #
 
 #######
-#
-# for debugging - run the command when the script is read...
-#
-#after idle {
-#  puts -nonewline "importing..."
-#  XcedeCatalogImport c:/cygwin/home/wjp/data/fBIRN-AHM2007/fBIRN-AHM2007.xcede
-#  set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
-#  [$viewer GetMainViewer] Reset
-#  puts "done"
-#}
 
 
 #------------------------------------------------------------------------------
 # main entry point...
 #------------------------------------------------------------------------------
-proc XcedeCatalogImport {xcedeFile} {
+proc XcedeCatalogImport { xcedeFile } {
 
-  #--- create a parser and parse the file
-  set parser [vtkXMLDataParser New]
-  $parser SetFileName $xcedeFile
-  $parser Parse
+    #--- create a parser and parse the file
+    set parser [vtkXMLDataParser New]
+    $parser SetFileName $xcedeFile
+    $parser Parse
 
-  #--- display to progress guage and status bar.
-  set ::XcedeCatalog_mainWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
-  set ::XcedeCatalog_progressGauge [$::XcedeCatalog_mainWindow GetProgressGauge]
-  $::XcedeCatalog_progressGauge SetValue 0
-  $::XcedeCatalog_mainWindow SetStatusText "Parsing $xcedeFile"
-  
+    #--- display to progress guage and status bar.
+    set ::XcedeCatalog_mainWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+    set ::XcedeCatalog_progressGauge [$::XcedeCatalog_mainWindow GetProgressGauge]
+    $::XcedeCatalog_progressGauge SetValue 0
+    $::XcedeCatalog_mainWindow SetStatusText "Parsing $xcedeFile"
 
-  #--- get the XCEDE root
-  set root [$parser GetRootElement]
+    #--- get the XCEDE root
+    set root [$parser GetRootElement]
 
-  #--- get the directory of the normalized xcede file.
-  set ::XcedeCatalog_Dir [file dirname [file normalize $xcedeFile]]
-  puts "reading file $xcedeFile from $::XcedeCatalog_Dir"
+    #--- get the directory of the normalized xcede file.
+    set ::XcedeCatalog_Dir [file dirname [file normalize $xcedeFile]]
+    puts "Reading file $xcedeFile from $::XcedeCatalog_Dir..."
 
-  set ::XcedeCatalog(transformIDStack) ""
-  set ::XcedeCatalog_HParent_ID ""
-  set ::XcedeCatalog_ModelMrmlID ""
-  set ::XcedeCatalogFSVolumeNodeIDs ""
-  set ::XcedeCatalogFSModelNodeIDs ""
-  set ::XcedeCatalog_MrmlID(anat2exf) ""
-  set ::XcedeCatalog_NumberOfElements 0
-  set ::XcedeCatalog_WhichElement 0
-  set ::XcedeCatalog_AnnotationFiles ""
+    #--- initialize some globals
+    set ::XcedeCatalog(transformIDStack) ""
+    set ::XcedeCatalog_HParent_ID ""
+    set ::XcedeCatalog_ModelMrmlID ""
+    set ::XcedeCatalog_MrmlID(anat2exf) ""
+    set ::XcedeCatalog_MrmlID(FSBrain) ""
+    set ::XcedeCatalog_MrmlID(ExampleFunc) ""
+    set ::XcedeCatalog_MrmlID(StatisticsToBrainXform) ""
+    set ::XcedeCatalog_MrmlID(StatFileList) ""
+    set ::XcedeCatalog_AnnotationFiles ""
+    set ::XcedeCatalog_NumberOfElements 0
+    set ::XcedeCatalog_WhichElement 0
+    set ::XcedeCatalog_RAS2RASTransformCreated 0
+    array unset ::XcedeCatalog_MrmlID ""
+    set ::XcedeCatalog(transformIDStack) ""
+    set ::XcedeCatalog_HParent_ID ""
+    
+    #--- recursively import cataloged datasets 
+    XcedeCatalogImportGetNumberOfElements $root
 
-  unset -nocomplain ::XcedeCatalog_MrmlID(flipYTransform) 
-  unset -nocomplain ::XcedeCatalog_MrmlID(rotX90Transform) 
-  array unset ::XcedeCatalog_MrmlID ""
+    #--- recursively import cataloged datasets 
+    set ::XcedeCatalog(transformIDStack) ""
+    set ::XcedeCatalog_HParent_ID ""
+    set root [$parser GetRootElement]
+    XcedeCatalogImportGetElement $root
 
-  #--- recursively import cataloged datasets 
-  set ::XcedeCatalog(transformIDStack) ""
-  set ::XcedeCatalog_HParent_ID ""
-  
-  XcedeCatalogImportGetNumberOfElements $root
-  puts "File has $::XcedeCatalog_NumberOfElements elements"
+    #--- if the catalog includes a brain.mgz, example_func.nii and
+    #--- anat2exf.dat, we assume this is a FreeSurfer/FIPS catalog
+    #--- and convert FreeSurfer tkRegister2's registration matrix
+    #--- to a Slicer RAS2RAS registration matrix. 
+    XcedeCatalogImportComputeFIPS2SlicerTransformCorrection
 
-  #--- recursively import cataloged datasets 
-  set ::XcedeCatalog(transformIDStack) ""
-  set ::XcedeCatalog_HParent_ID ""
-  set root [$parser GetRootElement]
-  XcedeCatalogImportGetElement $root
+    #--- if the Correction transform node is created,
+    #--- place all statistics volumes inside that.
+    XcedeCatalogImportApplyFIPS2SlicerTransformCorrection
+    
+    #--- reset the feedback things
+    $::XcedeCatalog_progressGauge SetValue 0
+    $::XcedeCatalog_mainWindow SetStatusText ""
+    
+    #--- update main viewer and slice viewers.
+    $::slicer3::MRMLScene Modified
+    [$::slicer3::ApplicationGUI GetViewerWidget ] RequestRender
+    [ [$::slicer3::ApplicationGUI GetMainSliceGUI0 ] GetSliceViewer ]  RequestRender
+    [ [$::slicer3::ApplicationGUI GetMainSliceGUI1 ] GetSliceViewer ]  RequestRender
+    [ [$::slicer3::ApplicationGUI GetMainSliceGUI2 ] GetSliceViewer ]  RequestRender
+    
+    #--- clean up.
+    $parser Delete
+    $::slicer3::MRMLScene SetErrorCode 0
+    puts "...done reading $xcedeFile."
 
-  #--- assume a that fips analysis data is included
-  #--- and we need to register freesurfer datasets
-  #  if { $::XcedeCatalog_MrmlID(anat2exf) != "" } {
-  #      if { $::XcedeCatalogFSVolumeNodeIDs != "" || $::XcedeCatalogFSModelNodeIDs != "" } {
-  #         XcedeCatalogApplyFIPStoSlicerCorrection
-  #      }
-
-  }
-  $::XcedeCatalog_progressGauge SetValue 0
-  
-  #-- update main viewer and slice viewers.
-  [$::slicer3::ApplicationGUI GetViewerWidget ] RequestRender
-  [ [$::slicer3::ApplicationGUI GetMainSliceGUI0 ] GetSliceViewer ]  RequestRender
-  [ [$::slicer3::ApplicationGUI GetMainSliceGUI1 ] GetSliceViewer ]  RequestRender
-  [ [$::slicer3::ApplicationGUI GetMainSliceGUI2 ] GetSliceViewer ]  RequestRender
-  $::slicer3::MRMLScene Modified
-  
-  #--- clean up.
-  $parser Delete
-  $::slicer3::MRMLScene SetErrorCode 0
-  $::XcedeCatalog_mainWindow SetStatusText ""
 }
 
 
@@ -103,7 +96,7 @@ proc XcedeCatalogImportGetNumberOfElements { element } {
   incr ::XcedeCatalog_NumberOfElements
 
   #---TODO: probably don't need this...
-  # leave a place holder in case we are a group (transform) node
+  # leave a place holder in case we are a group node
   lappend ::XcedeCatalog(transformIDStack) "NestingMarker"
 
   # process all the sub nodes, which may include a sequence of matrices
@@ -148,7 +141,7 @@ proc XcedeCatalogImportGetElement { element } {
   XcedeCatalogImportGetEntry $element 
   
   #---TODO: probably don't need this...
-  # leave a place holder in case we are a group (transform) node
+  # leave a place holder in case we are a group node
   lappend ::XcedeCatalog(transformIDStack) "NestingMarker"
 
   # process all the sub nodes, which may include a sequence of matrices
@@ -184,8 +177,6 @@ proc XcedeCatalogImportGetEntry {element } {
 
     #--- is this a catalog entry that contains a file or reference?
     set elementType [$element GetName]
-    puts ""
-    puts "Got element $elementType..."
     if { $elementType != "entry" && $elementType != "Entry" } {
         #--- only process catalog entry tags
         return 
@@ -196,7 +187,6 @@ proc XcedeCatalogImportGetEntry {element } {
     for {set i 0} {$i < $nAtts} {incr i} {
         set attName [$element GetAttributeName $i]
         set node($attName) [$element GetAttributeValue $i]
-        puts "node($attName) = $node($attName)"
     } 
 
     
@@ -257,14 +247,12 @@ proc XcedeCatalogImportGetEntry {element } {
         return
     }
     #--- what kind of node is it?
-    puts "data format is $node($formatAttName)"
     set nodeType [ XcedeCatalogImportGetNodeType $node($formatAttName) ]
     if { $nodeType == "Unknown" } {
         puts "$node($formatAttName) is an unsupported format. Cannot import entry."
         return
     }
     #--- make sure the file is a supported format
-    puts "data format is $node($formatAttName)"
     set fileformat [ XcedeCatalogImportFormatCheck $node($formatAttName) ]
     if { $fileformat == 0 } {
         puts "$node($formatAttName) is an unsupported format. Cannot import entry."
@@ -357,12 +345,32 @@ proc XcedeCatalogImportEntryVolume {node} {
 
     #set logic [$::slicer3::VolumesGUI GetLogic]
     $logic SetActiveVolumeNode $volumeNode
-
-    #--- keep track of all volumes loaded.
-    if { [ string first "FreeSurfer" $n(format) ] >= 0 } {
-        lappend ::XcedeCatalogFSVolumeNodeIDs $volumeNodeID
-    }
                               
+    #--- If volume freesurfer brain.mgz, set a global
+    #--- This global is used as a reference volume for any
+    #--- potential functional or statistical volumes
+    #--- that may need to be registered to the brain
+    #--- image via the anat2exf.register.dat xform.
+    if { [ string first "brain.mgz" $n(uri) ] >= 0 } {
+        set ::XcedeCatalog_MrmlID(FSBrain) $volumeNodeID
+    }
+
+    #--- If volume is an example_func image (used for
+    #--- registration with the anatomical), set a global.
+    if { [ string first "example_func" $n(uri) ] >= 0 } {
+        set ::XcedeCatalog_MrmlID(ExampleFunc) $volumeNodeID
+    }
+
+    #--- If volume is a statistics volume, add to a
+    #--- global list: these volumes will be put inside
+    #--- a transform to register them to brain.mgz
+    #--- if that transform is created.
+    #--- this is weak; need a better test.
+    if { [ string first "stat" $n(uri) ] >= 0 } {
+        lappend ::XcedeCatalog_MrmlID(StatFileList) $volumeNodeID
+    }
+    
+
     [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveVolumeID [$volumeNode GetID]
     [$::slicer3::VolumesGUI GetApplicationLogic] PropagateVolumeSelection
 }
@@ -410,12 +418,6 @@ proc XcedeCatalogImportEntryModel {node} {
     } else {
         puts "Warning: Xcede catalogs for slicer should contain a single model to which scalar overlays will be associated. This xcede file contains multiple models: all scalar overlays will be associated with the first model."
     }
-
-    #--- keep track of all freesurfer models loaded
-    if { [ string first "FreeSurfer" $n(format) ] >= 0 } {
-        lappend ::XcedeCatalogFSModelNodeIDs [$mnode GetID ]
-    }
-    puts "model MRMLID is $::XcedeCatalog_ModelMrmlID"
     
 }
 
@@ -464,7 +466,6 @@ proc XcedeCatalogImportSetMatrixFromURI { id filename }    {
     set col 0
     while { ! [ eof $fid ] } {
         gets $fid line
-        puts "$line"
         set llen [ llength $line ]
         #--- grab only lines that have matrix elements
         if { $llen == 4 } {
@@ -513,9 +514,7 @@ proc XcedeCatalogImportEntryTransform {node} {
     XcedeCatalogImportSetMatrixFromURI $tid $n(uri)    
 
     #--- need this to associate transformable datasets to this xform
-    puts "Setting ::XcedeCatalog_MrmlID($n(ID)) to be $tid."
     set ::XcedeCatalog_MrmlID($n(ID)) $tid
-    puts "transform MRMLID is $::XcedeCatalog_MrmlID($n(ID))"
 
     #--- this is for help with FIPS registration correction
     if { $n(name) == "anat2exf" } {
@@ -550,7 +549,6 @@ proc XcedeCatalogImportEntryOverlay {node} {
     }
 
     set mid $::XcedeCatalog_ModelMrmlID
-    puts "Applying overlay to MRMLID=$mid"
     set mnode [$::slicer3::MRMLScene GetNodeByID $mid]
     if { $mnode == "" } {
         puts "XcedeCatalogImportEntryOverlay: Model MRML Node corresponding to ID=$mid not found. No overlay imported."
@@ -659,152 +657,84 @@ proc XcedeCatalogImportFormatCheck { format } {
 
 
 
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-proc  XcedeCatalogApplyFIPStoSlicerCorrection { } {
+proc XcedeCatalogImportComputeFIPS2SlicerTransformCorrection { } {
 
-    #--- find all the freesurfer nodes
-    puts "Applying FIPS-To-Slicer Registration correction..."
-    set vlen [ llength $::XcedeCatalogFSVolumeNodeIDs]
-    set mlen [ llength $::XcedeCatalogFSModelNodeIDs]
-
-    #--- add the flipY and rotateX matrices
-    XcedeCatalogImportAddFIPS2SlicerHelperMatrices 
-
-    #--- if helper matrices were added, nest the volume and model data
-    #--- into the transform hierarchy.
-    if { [ info exists ::XcedeCatalog_MrmlID(rotX90Transform) ] } {
-        for { set i 0 } { $i < $vlen } { incr i } {
-            set id [ lindex $::XcedeCatalogFSVolumeNodeIDs $i ]
-            set node [$::slicer3::MRMLScene GetNodeByID $id ]
-            $node SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(rotX90Transform)
-            $node Modified
-        }
-        for { set i 0 } { $i < $mlen } { incr i } {
-            set id [ lindex $::XcedeCatalogFSModelNodeIDs $i ]
-            set node [$::slicer3::MRMLScene GetNodeByID $id ]
-            $node SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(rotX90Transform)
-            $node Modified
-        }
+    if { $::XcedeCatalog_MrmlID(anat2exf) == "" } {
+        return
     }
-    if { [ info exists ::XcedeCatalog_MrmlID(flipYTransform) ] } {
-        set rotnode [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(rotX90Transform) ]
-        set flipnode [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(flipYTransform) ]
-        $rotnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(flipYTransform)
-        $rotnode Modified
-        $flipnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(anat2exf)
-        $flipnode Modified
+    if { $::XcedeCatalog_MrmlID(FSBrain) == "" } {
+        return
     }
-    puts "...done."
+    if { $::XcedeCatalog_MrmlID(ExampleFunc) == "" } {
+        return
+    }
+
+    #--- find a brain.mgz, an example_func.nii, and an anat2exf.register.dat.
+    $::XcedeCatalog_mainWindow SetStatusText "Computing corrected registration matrix."
+    #--- get required nodes from scene
+    set v1 [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(FSBrain) ]
+    set v2 [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(ExampleFunc) ]
+
+    set anat2exfT [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(anat2exf) ]
+
+    #--- get FSregistration matrix from node
+    set anat2exf [ $anat2exfT GetMatrixTransformToParent ]
+
+    #--- create a new node to hold the transform
+    set ras2rasT [ $::slicer3::MRMLScene CreateNodeByClass vtkMRMLLinearTransformNode ]
+    $ras2rasT SetScene $::slicer3::MRMLScene
+    $ras2rasT SetName StatisticsToBrainXform
+    $::slicer3::MRMLScene AddNode $ras2rasT
+
+    set ::XcedeCatalog_MrmlID(StatisticsToBrainXform) [ $ras2rasT GetID ]
+
+    #--- get access to methods we need thru logic
+    set volumesLogic [ $::slicer3::VolumesGUI GetLogic ]
+
+    #--- compute some matrices.
+    set mat [ vtkMatrix4x4 New]
+    $volumesLogic ComputeTkRegVox2RASMatrix $v1 $mat
+    $volumesLogic TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix $v1 $v2 $anat2exf $mat
+
+    #--- this inverse will register statistics to the brain.mgz
+    $mat Invert
+
+    #--- now have matrix. put it in transform.
+    [ $ras2rasT GetMatrixTransformToParent ] DeepCopy $mat
+
+    #--- ok -- now manually put your volume in the ras2rasT transform node.
+    $mat Delete
+
+
+    #--- mark the transform as created 
+    set ::XcedeCatalog_RAS2RASTransformCreated 1
+
 }
 
+
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportAddFIPS2SlicerHelperMatrices { } {
-
-
-    set flipTid [ XcedeCatalogImportCreateIdentityTransformNode flipY ]
-    set flipnode [ $::slicer3::MRMLScene GetNodeByID $flipTid ]
-    set ::XcedeCatalog_MrmlID(flipYTransform) $flipTid
-    set matrix [ $flipnode GetMatrixTransformToParent ]
-    #--- matrix that flips in Y
-    $matrix SetElement 0 0 1.0
-    $matrix SetElement 0 1 0.0
-    $matrix SetElement 0 2 0.0
-    $matrix SetElement 0 3 0.0
-
-    $matrix SetElement 1 0 0.0
-    $matrix SetElement 1 1 -1.0
-    $matrix SetElement 1 2 0.0
-    $matrix SetElement 1 3 0.0
-
-    $matrix SetElement 2 0 0.0
-    $matrix SetElement 2 1 0.0
-    $matrix SetElement 2 2 1.0
-    $matrix SetElement 2 3 0.0
-
-    $matrix SetElement 3 0 0.0
-    $matrix SetElement 3 1 0.0
-    $matrix SetElement 3 2 0.0
-    $matrix SetElement 3 3 1.0
-
-    set flip2Tid [ XcedeCatalogImportCreateIdentityTransformNode flipY2 ]
-    set flipnode [ $::slicer3::MRMLScene GetNodeByID $flip2Tid ]
-    set ::XcedeCatalog_MrmlID(flipY2Transform) $flip2Tid
-    set matrix [ $flipnode GetMatrixTransformToParent ]
-    #--- matrix that flips in Y
-    $matrix SetElement 0 0 1.0
-    $matrix SetElement 0 1 0.0
-    $matrix SetElement 0 2 0.0
-    $matrix SetElement 0 3 0.0
-
-    $matrix SetElement 1 0 0.0
-    $matrix SetElement 1 1 -1.0
-    $matrix SetElement 1 2 0.0
-    $matrix SetElement 1 3 0.0
-
-    $matrix SetElement 2 0 0.0
-    $matrix SetElement 2 1 0.0
-    $matrix SetElement 2 2 1.0
-    $matrix SetElement 2 3 0.0
-
-    $matrix SetElement 3 0 0.0
-    $matrix SetElement 3 1 0.0
-    $matrix SetElement 3 2 0.0
-    $matrix SetElement 3 3 1.0
-
+proc XcedeCatalogImportApplyFIPS2SlicerTransformCorrection { } {
     
-    set rotX90Tid  [ XcedeCatalogImportCreateIdentityTransformNode rotX90 ]
-    set rotnode [ $::slicer3::MRMLScene GetNodeByID $rotX90Tid ]
-    set ::XcedeCatalog_MrmlID(rotX90Transform) $rotX90Tid
-    set matrix [ $rotnode GetMatrixTransformToParent ]
-    #--- matrix that rots around X by 90 degrees
-    $matrix SetElement 0 0 1.0
-    $matrix SetElement 0 1 0.0
-    $matrix SetElement 0 2 0.0
-    $matrix SetElement 0 3 0.0
-
-    $matrix SetElement 1 0 0.0
-    $matrix SetElement 1 1 0.0
-    $matrix SetElement 1 2 1.0
-    $matrix SetElement 1 3 0.0
-
-    $matrix SetElement 2 0 0.0
-    $matrix SetElement 2 1 -1.0
-    $matrix SetElement 2 2 0.0
-    $matrix SetElement 2 3 0.0
-
-    $matrix SetElement 3 0 0.0
-    $matrix SetElement 3 1 0.0
-    $matrix SetElement 3 2 0.0
-    $matrix SetElement 3 3 1.0
-
-    set rotX902Tid  [ XcedeCatalogImportCreateIdentityTransformNode rotX902 ]
-    set rotnode [ $::slicer3::MRMLScene GetNodeByID $rotX902Tid ]
-    set ::XcedeCatalog_MrmlID(rotX902Transform) $rotX902Tid
-    set matrix [ $rotnode GetMatrixTransformToParent ]
-    #--- matrix that rots around X by 90 degrees
-    $matrix SetElement 0 0 1.0
-    $matrix SetElement 0 1 0.0
-    $matrix SetElement 0 2 0.0
-    $matrix SetElement 0 3 0.0
-
-    $matrix SetElement 1 0 0.0
-    $matrix SetElement 1 1 0.0
-    $matrix SetElement 1 2 11.0
-    $matrix SetElement 1 3 0.0
-
-    $matrix SetElement 2 0 0.0
-    $matrix SetElement 2 1 -1.0
-    $matrix SetElement 2 2 0.0
-    $matrix SetElement 2 3 0.0
-
-    $matrix SetElement 3 0 0.0
-    $matrix SetElement 3 1 0.0
-    $matrix SetElement 3 2 0.0
-    $matrix SetElement 3 3 1.0
-
+    if { $::XcedeCatalog_RAS2RASTransformCreated == 1 } {
+        $::XcedeCatalog_mainWindow SetStatusText "Applying registration matrix to statistics volumes"
+        #--- move all the detected stats files under the new registration xform
+        foreach id  $::XcedeCatalog_MrmlID(StatFileList) {
+            set vnode [ $::slicer3::MRMLScene GetNodeByID $id ]
+            $vnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(StatisticsToBrainXform) 
+            $vnode Modified
+        }
+        #--- move the example func also into the new registration xform
+        set vnode [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(ExampleFunc) ]
+        $vnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(StatisticsToBrainXform) 
+        $vnode Modified        
+    }
 }
+
 
 
 #------------------------------------------------------------------------------
