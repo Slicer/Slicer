@@ -120,10 +120,10 @@ proc VolumeRenderingBuildGUI {this} {
     puts "vtkKWVolumePropertyWidget: $::VR($this,vpw)"
     $::VR($this,vpw) SetParent [$::VR($this,cFrameVolumes) GetFrame]
     $::VR($this,vpw) ComponentWeightsVisibilityOff
-    $::VR($this,vpw) SetWindowLevel 128 128
+    $::VR($this,vpw) SetWindowLevel 130        100
     $::VR($this,vpw) Create
     #No Observer:performance!
-    #$::VR($this,vpw) AddObserver AnyEvent "$::VR($this,renderWidget) Render"
+    #
     pack [$::VR($this,vpw) GetWidgetName] -side top -anchor nw -expand y -padx 2 -pady 2
     
     #Scale for opacity
@@ -173,6 +173,14 @@ proc VolumeRenderingBuildGUI {this} {
     $::VR($this,buttonTwoD) SetBalloonHelpString "USE 2D"
     pack [$::VR($this,buttonTwoD) GetWidgetName] -side top -anchor nw -padx 0 -pady 2
 
+set ::VR($this,cropping) [vtkKWPushButton New]
+    puts "buttonThreeD: $::VR($this,buttonThreeD)"
+    $::VR($this,cropping) SetParent [$::VR($this,cFrameVolumes) GetFrame]
+    $::VR($this,cropping) Create
+    $::VR($this,cropping) SetText "cropping"
+    $::VR($this,cropping) SetBalloonHelpString "cropping"
+    pack [$::VR($this,cropping) GetWidgetName] -side top -anchor nw -padx 0 -pady 2
+
     
     set ::VR($this,presetSelector) [vtkKWVolumePropertyPresetSelector New]
     puts "preset Selector"
@@ -204,9 +212,16 @@ proc VolumeRenderingAddGUIObservers {this} {
     $this AddObserverByNumber $::VR($this,buttonMIP) 10000
     $this AddObserverByNumber $::VR($this,buttonThreeD) 10000
     $this AddObserverByNumber $::VR($this,buttonTwoD) 10000
+        $this AddObserverByNumber $::VR($this,cropping) 10000
     $this AddObserverByNumber  [[$::VR($this,presetMapping) GetWidget] GetMenu] 10005
     [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow] AddObserver AbortCheckEvent {TkCheckAbort}
+    $::VR($this,vpw) AddObserver AnyEvent {
+        puts "Abort because of Event Outside Renderer" 
+[[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow] SetAbortRender 1
+}
+$::VR($this,vpw) AddObserver AnyEvent "$::VR($this,renderWidget) Render"
 
+ 
     puts "Observer Added VolumeRendering"
 }
 
@@ -257,7 +272,7 @@ proc VolumeRenderingProcessGUIEvents {this caller event} {
             $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
     }  elseif {$caller == $::VR($this,buttonTwoD)} {
             set ::VR($this,converter) [vtkImageShiftScale New]
-            $::VR($this,converter) SetOutputscalarTypeToUnsignedShort 
+            $::VR($this,converter) SetOutputScalarTypeToUnsignedShort 
             $::VR($this,converter) SetInput $::VR($this,aImageData)
             set ::VR($this,volumeMapper) [vtkVolumeTextureMapper2D New]
             $::VR($this,volumeMapper) SetInput [$::VR($this,converter) GetOutput]
@@ -295,6 +310,23 @@ proc VolumeRenderingProcessGUIEvents {this caller event} {
             }
         } ;#switch
     
+    } elseif {$caller == $::VR($this,cropping)} {
+        puts "cropping"
+        set scene [$::slicer3::ApplicationLogic GetMRMLScene]
+        set roiCount [$scene GetNumberOfNodesByClass "vtkMRMLROIListNode"]
+        if {$roiCount>0} {
+        set roiList [$scene GetNthNodeByClass 0 "vtkMRMLROIListNode"]
+        set radius [$roiList GetNthROIRadiusXYZ 0]
+        set center [$roiList GetNthROIXYZ 0]
+
+        
+        $::VR($this,volumeMapper) CroppingOn
+        $::VR($this,volumeMapper) SetCroppingRegionPlanes [expr {[lindex $center 0]-[lindex $radius 0]}] [expr {[lindex $center 0]+[lindex $radius 0]}] [expr {[lindex $center 1]-[lindex $radius 1]}] [expr {[lindex $center 1]+[lindex $radius 1]}] [expr {[lindex $center 2]-[lindex $radius 2]}] [expr {[lindex $center 2]-[lindex $radius 2]}]
+            $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
+        puts "cropping on processed"
+        }
+
+       
     } ;#elseif
     puts "Events processed"
 } ;#procedure
@@ -357,7 +389,7 @@ proc buttonLoadNode {this} {
             
             set lowerRange [lindex [$::VR($this,pfed_hist) GetRange] 0]
             set upperRange [lindex [$::VR($this,pfed_hist) GetRange] 1]
-            set index [expr {$lowerRange + 1}]
+            set index 1
             set opacity .2
             set countTreshold 10
             #$::VR($this,opacityTransferFunction) AddPoint $lowerRange 0
@@ -436,11 +468,16 @@ proc buttonLoadNode {this} {
             }
             
         if 1 {
+          set ::VR($this,converter) [vtkImageShiftScale New]
+            $::VR($this,converter) SetOutputScalarTypeToUnsignedChar 
+            $::VR($this,converter) SetInput $::VR($this,aImageData)
             set ::VR($this,volumeMapper) [vtkVolumeTextureMapper3D New]
-            $::VR($this,volumeMapper) SetInput $::VR($this,aImageData)
+            $::VR($this,volumeMapper) SetInput [$::VR($this,converter) GetOutput]
             $::VR($this,volumeMapper) SetSampleDistance 0.1
+                
         }
             puts "348"
+        $::VR($this,volumeMapper) AddObserver ProgressEvent {puts "progress:"}
         set ::VR($this,volume) [vtkVolume New]
         $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
         $::VR($this,volume) SetProperty $::VR($this,volumeProperty)
@@ -458,6 +495,7 @@ proc buttonLoadNode {this} {
 
         #Add property to RenderWidget
         $::VR($this,renderWidget) AddViewProp $::VR($this,volume)
+    $::VR($this,renderWidget) AddObserver ProgressEvent {puts "progress: widget"}
         #Add Histograms to Widget
         [$::VR($this,vpw) GetScalarOpacityFunctionEditor]  SetHistogram $::VR($this,pfed_hist)
         [$::VR($this,vpw) GetScalarColorFunctionEditor] SetHistogram $::VR($this,pfed_hist)
