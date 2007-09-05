@@ -146,46 +146,9 @@ void vtkITKWand(vtkITKWandImageFilter *self, T* scalars,
   wand->SetInput( extract->GetOutput() );
   wand->Update();
 
-  // Copy to the output, need to put the output image back in the
-  // right slice
-  typedef itk::Image<unsigned char, 3> OutputImageType;
-  typename OutputImageType::Pointer output = OutputImageType::New();
-  output->GetPixelContainer()->SetImportPointer(oscalars, dims[0]*dims[1]*dims[2], false);
-  output->SetOrigin( origin );
-  output->SetSpacing( spacing );
-  output->SetRegions(region);
-  output->FillBuffer(0);
-
-  ExtractionRegionType pasteRegion;
-  typename ExtractionRegionType::SizeType pasteSize;
-
-  pasteRegion = extractRegion;
-  pasteSize = pasteRegion.GetSize();
-  switch(plane)
-    {
-    case 0: // JK plane
-      pasteSize[0] = 1;
-      break;
-    case 1: // IK plane
-      pasteSize[1] = 1;
-      break;
-    case 2: // IJ plane
-      pasteSize[2] = 1;
-      break;
-    }
-  pasteRegion.SetSize( pasteSize );
-
-  itk::ImageRegionIterator<OutputImageType>
-    outIt(output, pasteRegion);
-  itk::ImageRegionIterator<SegmentImage2DType>
-    inIt(wand->GetOutput(), wand->GetOutput()->GetBufferedRegion());
-
-  while (!inIt.IsAtEnd())
-    {
-    outIt.Set(inIt.Get());
-    ++inIt;
-    ++outIt;
-    }
+  // Copy to the output
+  memcpy(oscalars, wand->GetOutput()->GetBufferPointer(),
+         wand->GetOutput()->GetBufferedRegion().GetNumberOfPixels());
 }
 
 
@@ -302,6 +265,53 @@ int vtkITKWandImageFilter::FillInputPortInformation(int, vtkInformation *info)
   return 1;
 }
 
+
+int vtkITKWandImageFilter::RequestUpdateExtent (
+  vtkInformation * vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  // get the info objects
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+
+  int outExt[6], inExt[6];
+  outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), outExt);
+
+  // Determine the input update extent from the output update extent
+  switch (this->Plane)
+    {
+    case 2: // IJ
+      inExt[0] = outExt[0];
+      inExt[1] = outExt[1];
+      inExt[2] = outExt[2];
+      inExt[3] = outExt[3];
+      inExt[4] = outExt[4];
+      inExt[5] = outExt[5];
+      break;
+    case 1: // IK
+      inExt[0] = outExt[0];
+      inExt[1] = outExt[1];
+      inExt[2] = outExt[4];
+      inExt[3] = outExt[5];
+      inExt[4] = outExt[2];
+      inExt[5] = outExt[3];
+      break;
+    case 0: // JK
+      inExt[0] = outExt[4];
+      inExt[1] = outExt[5];
+      inExt[2] = outExt[0];
+      inExt[3] = outExt[1];
+      inExt[4] = outExt[2];
+      inExt[5] = outExt[3];
+      break;
+    }
+
+  inInfo->Set(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), inExt, 6);
+
+  return 1;
+}
+
 int vtkITKWandImageFilter::RequestInformation(
   vtkInformation *request,
   vtkInformationVector **inputVector,
@@ -310,8 +320,64 @@ int vtkITKWandImageFilter::RequestInformation(
   this->Superclass::RequestInformation(request, inputVector, outputVector);
 
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_UNSIGNED_CHAR, 1);
 
+  // set the whole extent based on the plane of extraction
+  int wholeExtent[6], outWholeExtent[6];
+  double spacing[3], outSpacing[3];
+  double origin[3], outOrigin[3];
+
+  inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),wholeExtent);
+  inInfo->Get(vtkDataObject::SPACING(), spacing);
+  inInfo->Get(vtkDataObject::ORIGIN(), origin);
+
+  switch (this->Plane)
+    {
+    case 2: // IJ
+      outSpacing[0] = spacing[0]; outSpacing[1] = spacing[1];
+      outSpacing[2] = spacing[2];
+      outOrigin[0] = origin[0]; outOrigin[1] = origin[1];
+      outOrigin[2] = origin[2];
+      outWholeExtent[0] = wholeExtent[0];
+      outWholeExtent[1] = wholeExtent[1];
+      outWholeExtent[2] = wholeExtent[2];
+      outWholeExtent[3] = wholeExtent[3];
+      outWholeExtent[4] = this->Seed[2];
+      outWholeExtent[5] = this->Seed[2]; 
+      break;
+    case 1: // IK
+      outSpacing[0] = spacing[0]; outSpacing[1] = spacing[2];
+      outSpacing[2] = spacing[1];
+      outOrigin[0] = origin[0]; outOrigin[1] = origin[2];
+      outOrigin[2] = origin[1];
+      outWholeExtent[0] = wholeExtent[0];
+      outWholeExtent[1] = wholeExtent[1];
+      outWholeExtent[2] = wholeExtent[4];
+      outWholeExtent[3] = wholeExtent[5];
+      outWholeExtent[4] = this->Seed[1];
+      outWholeExtent[5] = this->Seed[1];
+      break;
+    case 0: // JK
+      outSpacing[0] = spacing[1]; outSpacing[1] = spacing[2];
+      outSpacing[2] = spacing[0];
+      outOrigin[0] = origin[1]; outOrigin[1] = origin[2];
+      outOrigin[2] = origin[0];
+      outWholeExtent[0] = wholeExtent[2];
+      outWholeExtent[1] = wholeExtent[3];
+      outWholeExtent[2] = wholeExtent[4];
+      outWholeExtent[3] = wholeExtent[4];
+      outWholeExtent[4] = this->Seed[0];
+      outWholeExtent[5] = this->Seed[0];
+      break;
+    }
+
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
+               outWholeExtent, 6);
+  outInfo->Set(vtkDataObject::SPACING(), outSpacing, 3);
+  outInfo->Set(vtkDataObject::ORIGIN(), outOrigin, 3);
+  
   return 1;
 }
 
