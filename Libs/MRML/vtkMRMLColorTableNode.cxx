@@ -732,7 +732,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->Names.resize(this->GetLookupTable()->GetNumberOfTableValues());
       
       this->SetColorName(0, "Black");
-      this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 1.0);
+      this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 0.0);
 
       this->SetColorName(1, "jake");
       this->GetLookupTable()->SetTableValue(1, 0.2, 0.5, 0.8, 1.0);
@@ -823,11 +823,11 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->Names.resize(this->GetLookupTable()->GetNumberOfTableValues());
       
       this->SetColorName(0, "Black");
-      this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 1.0);
+      this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 0.0);
       // add in the slicer2 colours first, they may get over written by the
       // custom colours
-            this->SetColorName(0, "Black");
-      this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 1.0);
+      this->SetColorName(0, "Black");
+      this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 0.0);
 
       this->SetColorName(1, "jake");
       this->GetLookupTable()->SetTableValue(1, 0.2, 0.5, 0.8, 1.0);
