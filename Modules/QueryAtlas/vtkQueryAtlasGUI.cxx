@@ -59,6 +59,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->CollaboratorIcons = NULL;
     this->QueryAtlasIcons = NULL;
     this->AnnotationVisibility = 1;
+    this->ModelVisibility = 1;
     
     //---
     // master category switch
@@ -107,6 +108,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     //---    
     this->AnnotationVisibilityButton = NULL;
     this->AnnotationNomenclatureMenuButton = NULL;
+    this->ModelVisibilityButton = NULL;
     
     //---
     // search frame
@@ -250,6 +252,12 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
     //---
     // annotation frame
     //---
+    if ( this->ModelVisibilityButton )
+      {
+      this->ModelVisibilityButton->SetParent ( NULL );
+      this->ModelVisibilityButton->Delete();
+      this->ModelVisibilityButton = NULL;
+      }
     if ( this->AnnotationVisibilityButton )
       {
       this->AnnotationVisibilityButton->SetParent ( NULL );
@@ -728,7 +736,9 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->SpeciesMouseButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesMacaqueButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+  this->ModelVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
   this->BIRNLexHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NeuroNamesHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->BIRNLexHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -784,6 +794,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->SpeciesMouseButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesMacaqueButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+  this->ModelVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->BIRNLexHierarchyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -874,6 +885,26 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
      //      this->Script ( "" );
       }
     }
+  else if ( (b == this->ModelVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    if ( this->ModelVisibility == 1 )
+      {
+      // turn off automatic annotations in the main viewer
+      vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
+      this->ModelVisibilityButton->SetImageToIcon ( i );
+      this->ModelVisibility = 0;
+     //      this->Script ( "" );
+      }
+    else
+      {
+      // turn on automatic annotations in main viewer
+      vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
+      this->ModelVisibilityButton->SetImageToIcon ( i );
+      this->ModelVisibility = 1;
+     //      this->Script ( "" );
+      }
+    }
+
   else if ( (b == this->FIPSFSButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     this->UnpackLoaderContextFrames();
@@ -1203,8 +1234,8 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->FSbrainSelector->SetPadX(2);
     this->FSbrainSelector->SetPadY(2);
     this->FSbrainSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->FSbrainSelector->GetWidget()->GetWidget()->SetWidth(24);
-    this->FSbrainSelector->GetLabel()->SetWidth(20);
+    this->FSbrainSelector->GetWidget()->GetWidget()->SetWidth(20);
+    this->FSbrainSelector->GetLabel()->SetWidth(18);
     this->FSbrainSelector->SetLabelText( "FreeSurfer anatomical: ");
     this->FSbrainSelector->SetBalloonHelpString("select a volume from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
@@ -1219,8 +1250,8 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->FSoverlaySelector->SetPadX(2);
     this->FSoverlaySelector->SetPadY(2);
     this->FSoverlaySelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->FSoverlaySelector->GetWidget()->GetWidget()->SetWidth(24);
-    this->FSoverlaySelector->GetLabel()->SetWidth(20);
+    this->FSoverlaySelector->GetWidget()->GetWidget()->SetWidth(20);
+    this->FSoverlaySelector->GetLabel()->SetWidth(18);
     this->FSoverlaySelector->SetLabelText( "Statistical volume: ");
     this->FSoverlaySelector->SetBalloonHelpString("select a volume from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
@@ -1236,8 +1267,8 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->FSmodelSelector->SetPadX(2);
     this->FSmodelSelector->SetPadY(2);
     this->FSmodelSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->FSmodelSelector->GetWidget()->GetWidget()->SetWidth(24);
-    this->FSmodelSelector->GetLabel()->SetWidth(20);
+    this->FSmodelSelector->GetWidget()->GetWidget()->SetWidth(20);
+    this->FSmodelSelector->GetLabel()->SetWidth(18);
     this->FSmodelSelector->SetLabelText( "Annotated model: ");
     this->FSmodelSelector->SetBalloonHelpString("select a volume from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
@@ -1252,8 +1283,8 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->FStransformSelector->SetPadX(2);
     this->FStransformSelector->SetPadY(2);
     this->FStransformSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->FStransformSelector->GetWidget()->GetWidget()->SetWidth(24);
-    this->FStransformSelector->GetLabel()->SetWidth(20);
+    this->FStransformSelector->GetWidget()->GetWidget()->SetWidth(20);
+    this->FStransformSelector->GetLabel()->SetWidth(18);
     this->FStransformSelector->SetLabelText( "Registration transform: ");
     this->FStransformSelector->SetBalloonHelpString("select a volume from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
@@ -1277,8 +1308,8 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->QdecModelSelector->SetPadX(2);
     this->QdecModelSelector->SetPadY(2);
     this->QdecModelSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->QdecModelSelector->GetWidget()->GetWidget()->SetWidth(24);
-    this->QdecModelSelector->GetLabel()->SetWidth(20);
+    this->QdecModelSelector->GetWidget()->GetWidget()->SetWidth(20);
+    this->QdecModelSelector->GetLabel()->SetWidth(18);
     this->QdecModelSelector->SetLabelText( "Annotated model: ");
     this->QdecModelSelector->SetBalloonHelpString("select a volume from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
@@ -1303,8 +1334,13 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     vtkSlicerModuleCollapsibleFrame *annotationFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     annotationFrame->SetParent ( page );
     annotationFrame->Create ();
-    annotationFrame->SetLabelText ( "Annotation Options" );
+    annotationFrame->SetLabelText ( "Annotation & Display Options" );
     annotationFrame->CollapseFrame ( );
+
+    vtkKWLabel *annoLabel = vtkKWLabel::New();
+    annoLabel->SetParent ( annotationFrame->GetFrame() );
+    annoLabel->Create();
+    annoLabel->SetText ("annotation visibility: " );
 
     this->AnnotationVisibilityButton = vtkKWPushButton::New();
     this->AnnotationVisibilityButton->SetParent ( annotationFrame->GetFrame() );
@@ -1317,15 +1353,31 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     this->AnnotationVisibilityButton->SetReliefToFlat();    
     this->AnnotationVisibilityButton->SetBalloonHelpString ( "Toggle annotation visibility." );
 
+    vtkKWLabel *modelLabel = vtkKWLabel::New();
+    modelLabel->SetParent ( annotationFrame->GetFrame() );
+    modelLabel->Create();
+    modelLabel->SetText ("model visibility: " );
+
+    this->ModelVisibilityButton = vtkKWPushButton::New();
+    this->ModelVisibilityButton->SetParent ( annotationFrame->GetFrame() );
+    this->ModelVisibilityButton->Create();
+    // get the icon this way; don't seem to admit baseGUI scope.
+    // TODO: move common icons up into applicationGUI for easy access.
+    i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
+    this->ModelVisibilityButton->SetImageToIcon ( i );
+    this->ModelVisibilityButton->SetBorderWidth ( 0 );
+    this->ModelVisibilityButton->SetReliefToFlat();    
+    this->ModelVisibilityButton->SetBalloonHelpString ( "Toggle model visibility." );
+
     vtkKWLabel *l = vtkKWLabel::New();
     l->SetParent ( annotationFrame->GetFrame() );
     l->Create ( );
     l->SetText ( "term set: " );
-    
+
     this->AnnotationNomenclatureMenuButton = vtkKWMenuButton::New();
     this->AnnotationNomenclatureMenuButton->SetParent ( annotationFrame->GetFrame() );
     this->AnnotationNomenclatureMenuButton->Create();
-    this->AnnotationNomenclatureMenuButton->SetWidth ( 30 );
+    this->AnnotationNomenclatureMenuButton->SetWidth ( 25 );
     this->AnnotationNomenclatureMenuButton->GetMenu()->AddRadioButton ("local identifier");
     this->AnnotationNomenclatureMenuButton->GetMenu()->AddRadioButton ("BIRNLex String");
     this->AnnotationNomenclatureMenuButton->GetMenu()->AddRadioButton ("NeuroNames String");
@@ -1334,16 +1386,26 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     this->AnnotationNomenclatureMenuButton->GetMenu()->AddCommand ( "close" );    
     this->AnnotationNomenclatureMenuButton->GetMenu()->SelectItem ("local identifier");
 
-    app->Script ( "pack %s %s %s -side left -anchor nw  -expand n -padx 2 -pady 2",
-                  l->GetWidgetName(),
-                  this->AnnotationNomenclatureMenuButton->GetWidgetName(),
+    app->Script ( "grid %s -row 0 -column 0 -sticky nse -padx 2 -pady 2",
+                  l->GetWidgetName() );
+    app->Script ( "grid %s -row 0 -column 1 -sticky wns -padx 2 -pady 2",
+                  this->AnnotationNomenclatureMenuButton->GetWidgetName() );
+    app->Script ( "grid %s -row 1 -column 0 -sticky ens -padx 2 -pady 2",
+                  annoLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 1 -column 1  -sticky wns -padx 2 -pady 2",
                   this->AnnotationVisibilityButton->GetWidgetName() );
-    
+    app->Script ( "grid %s -row 2 -column 0   -sticky ens -padx 2 -pady 2",
+                  modelLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 2 -column 1   -sticky wns -padx 2 -pady 2",
+                  this->ModelVisibilityButton->GetWidgetName() );
+
     app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 4 -pady 2 -in %s",
                   annotationFrame->GetWidgetName(), 
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
 
     l->Delete();
+    annoLabel->Delete();
+    modelLabel->Delete();
     annotationFrame->Delete();
 }
 
@@ -2109,11 +2171,13 @@ void vtkQueryAtlasGUI::BuildLoaderContextFrames ( vtkKWFrame *parent )
     this->FIPSFSFrame->SetParent ( parent );
     this->FIPSFSFrame->Create();
     this->FIPSFSFrame->SetReliefToGroove();
+    this->FIPSFSFrame->SetBorderWidth ( 1 );
     
     this->QdecFrame = vtkKWFrame::New();
     this->QdecFrame->SetParent ( parent );
     this->QdecFrame->Create();
     this->QdecFrame->SetReliefToGroove();
+    this->QdecFrame->SetBorderWidth ( 1 );
 }
 
 

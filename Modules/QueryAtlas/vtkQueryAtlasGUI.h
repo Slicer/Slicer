@@ -55,9 +55,11 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( QueryAtlasIcons, vtkQueryAtlasIcons );
     
     // Annotation Options frame and widgets
+    vtkGetObjectMacro (ModelVisibilityButton, vtkKWPushButton );
     vtkGetObjectMacro (AnnotationVisibilityButton, vtkKWPushButton );
     vtkGetObjectMacro (AnnotationNomenclatureMenuButton, vtkKWMenuButton );
     vtkGetMacro ( AnnotationVisibility, int );
+    vtkGetMacro ( ModelVisibility, int );
 
     // Querybuilder frame top widgets
     vtkGetObjectMacro (SubStructureButton, vtkKWPushButton );
@@ -240,6 +242,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     // Annotation Options frame and widgets
     vtkKWPushButton *AnnotationVisibilityButton;
+    vtkKWPushButton *ModelVisibilityButton;
     vtkKWMenuButton *AnnotationNomenclatureMenuButton;
     
     // ontology frame
@@ -334,6 +337,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // DUMP ALL STATE HERE FOR NOW.
     // move all this to MRML Node
     int AnnotationVisibility;
+    int ModelVisibility;
     int SearchOption;
     //BTX
     enum
