@@ -393,36 +393,37 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "TimerEvent" { }
     "CharEvent" - 
     "KeyPressEvent" { 
-      set capture 1
-      switch [$_interactor GetKeySym] {
-        "v" {
-          $_sliceNode SetSliceVisible [expr ![$_sliceNode GetSliceVisible]]
-        }
-        "r" {
-          # use c++ version of calculation
-          [$sliceGUI GetLogic] FitSliceToBackground $w $h
-          $_sliceNode UpdateMatrices
-          $sliceGUI SetGUICommandAbortFlag 1
-        }
-        "b" - "Left" - "Down" {
-          $this decrementSlice
-        }
-        "f" - "Right" - "Up" {
-          $this incrementSlice
-        }
-        "space" {
-          ::Box::ShowDialog EditBox
-        }
-        "c" {
-          ::Box::ShowDialog ColorBox
-        }
-        default {
-          set capture 0
-        }
-      }
-      if { $capture } {
+      set key [$_interactor GetKeySym]
+      if { [lsearch "v r b f space c Up Down Left Right" $key] != -1 } {
         $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
         $sliceGUI SetGUICommandAbortFlag 1
+        switch [$_interactor GetKeySym] {
+          "v" {
+            $_sliceNode SetSliceVisible [expr ![$_sliceNode GetSliceVisible]]
+          }
+          "r" {
+            # use c++ version of calculation
+            [$sliceGUI GetLogic] FitSliceToBackground $w $h
+            $_sliceNode UpdateMatrices
+          }
+          "b" - "Left" - "Down" {
+            $this decrementSlice
+          }
+          "f" - "Right" - "Up" {
+            $this incrementSlice
+          }
+          "space" {
+            ::Box::ShowDialog EditBox
+          }
+          "c" {
+            ::Box::ShowDialog ColorBox
+          }
+          default {
+            set capture 0
+          }
+        }
+      } else {
+        # puts "slice ignoring $key"
       }
     }
     "KeyReleaseEvent" { 

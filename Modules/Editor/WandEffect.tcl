@@ -39,6 +39,7 @@ if { [itcl::find class WandEffect] == "" } {
     method apply {} {}
     method buildOptions {} {}
     method setOptions {} {}
+    method updateParameters {} {}
     method tearDownOptions {} {}
   }
 }
@@ -73,6 +74,27 @@ itcl::body WandEffect::processEvent { {caller ""} {event ""} } {
     }
     "MouseMoveEvent" {
       $this preview
+    }
+    "KeyPressEvent" { 
+      set key [$_interactor GetKeySym]
+      if { [lsearch "minus equal plus" $key] != -1 } {
+        $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+        $sliceGUI SetGUICommandAbortFlag 1
+        switch [$_interactor GetKeySym] {
+          "minus" {
+            set node [EditorGetParameterNode]
+            set percentage [$node GetParameter "Wand,percentage"] 
+            $node SetParameter "Wand,percentage" [expr $percentage - 0.01]
+          }
+          "equal" - "plus" {
+            set node [EditorGetParameterNode]
+            set percentage [$node GetParameter "Wand,percentage"] 
+            $node SetParameter "Wand,percentage" [expr $percentage + 0.01]
+          }
+        }
+      } else {
+        # puts "wand ignoring $key"
+      }
     }
     "EnterEvent" {
       $o(cursorActor) VisibilityOn
@@ -128,7 +150,9 @@ itcl::body WandEffect::preview {} {
   if { $k0 == $k1 } { $o(wandFilter) SetPlaneToIJ }
 
   $_layers(label,node) SetAndObserveImageData [$o(wandFilter) GetOutput] 
+  $_layers(label,node) Modified
 
+  $this setProgressFilter $o(wandFilter) "Magic Wand Connected Components"
   $o(wandFilter) Update
 }
   
@@ -145,7 +169,7 @@ itcl::body WandEffect::buildOptions {} {
   $o(percentage) SetRange 0.0 1.0
   $o(percentage) SetValue $percentage
   $o(percentage) SetLabelText "Dynamic range percentage"
-  $o(percentage) SetBalloonHelpString "Set the percentage of the dynamic range to group with the seed (default 0.1)."
+  $o(percentage) SetBalloonHelpString "Set the percentage of the dynamic range to group with the seed (default 0.1).\n\nUse the + and - keys in the slice windows to change interactively."
   pack [$o(percentage) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
 
@@ -175,9 +199,35 @@ itcl::body WandEffect::buildOptions {} {
 }
 
 itcl::body WandEffect::setOptions { } {
-  foreach we [itcl::find objects -class WandEffect] {
-    $we configure -percentage [$o(percentage) GetValue]
+  #
+  # set the node to the current value of the GUI
+  # - this will be saved/restored with the scene
+  # - all instances of the effect are observing the node,
+  #   so changes will propogate automatically
+  #
+  set node [EditorGetParameterNode]
+  $node SetParameter "Wand,percentage" [$o(percentage) GetValue]
+}
+
+itcl::body WandEffect::updateParameters { } {
+  #
+  # get the parameter from the node
+  # - set default value if it doesn't exist
+  #
+  set node [EditorGetParameterNode]
+  set percentage [$node GetParameter "Wand,percentage"] 
+  if { $percentage == "" } {
+    set percentage 0.1
+    $node SetParameter "Wand,percentage" $percentage
   }
+
+  # set the GUI and effect parameters to match node
+  # (only if this is the instance that "owns" the GUI
+  $this configure -percentage $percentage
+  if { [info exists o(percentage)] } {
+    $o(percentage) SetValue $percentage
+  }
+  $this preview
 }
 
 itcl::body WandEffect::tearDownOptions { } {

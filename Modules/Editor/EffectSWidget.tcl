@@ -63,6 +63,7 @@ if { [itcl::find class EffectSWidget] == "" } {
     method tearDownOptions {} {}
     method previewOptions {} {}
     method applyOptions {} {}
+    method updateParameters {} {}
     method flashCursor { {repeat 1} {delay 50} } {}
     method animateCursor { {onOff "on"} } {}
     method setAnimationState { p } {}
@@ -88,13 +89,18 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
 
   set _guiObserverTags ""
   lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  foreach event "LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent EnterEvent LeaveEvent" {
+  foreach event "LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent KeyPressEvent EnterEvent LeaveEvent" {
     lappend _guiObserverTags \
               [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent"]
   }
+
   set node [[$sliceGUI GetLogic] GetSliceNode]
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
+
+  set node [EditorGetParameterNode]
+  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
 }
 
 itcl::body EffectSWidget::destructor {} {
@@ -281,18 +287,33 @@ itcl::body EffectSWidget::preProcessEvent { {caller ""} {event ""} } {
     return 1
   }
 
+  #
+  # if the caller was the parameter node, invoke the subclass's 
+  # updateParameters method which will copy the parameters into the 
+  # GUI and into the configuration options of the effect
+  #
+  if { $caller == [EditorGetParameterNode] } {
+    $this updateParameters
+    return 1
+  }
+
+
   set event [$sliceGUI GetCurrentGUIEvent] 
 
   switch $event {
     "KeyPressEvent" {
-      switch [$_interactor GetKeySym] {
-        "Escape" {
-          after idle ::EffectSWidget::RemoveAll
-          return 1
+      set key [$_interactor GetKeySym]
+      if { [lsearch "Escape" $key] != -1 } {
+        $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+        $sliceGUI SetGUICommandAbortFlag 1
+        switch [$_interactor GetKeySym] {
+          "Escape" {
+            after idle ::EffectSWidget::RemoveAll
+            return 1
+          }
         }
-        default {
-          puts [$_interactor GetKeySym]
-        }
+      } else {
+        # puts "effect ignoring $key"
       }
     }
   }

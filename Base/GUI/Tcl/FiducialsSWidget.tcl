@@ -132,50 +132,48 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
 
   if { $caller == $sliceGUI } {
     set event [$sliceGUI GetCurrentGUIEvent] 
-    set capture 1
     switch $event {
-      "KeyPressEvent" {
+      "KeyPressEvent" { 
+        set key [$_interactor GetKeySym]
+        if { [lsearch "grave quoteleft " $key] != -1 } {
+          $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+          $sliceGUI SetGUICommandAbortFlag 1
+          puts "fiducial eating $key"
+          switch [$_interactor GetKeySym] {
+            "grave" -
+            "quoteleft" {
+              # this is the 'backtick' key in the upper left of the 
+              # keyboard - it seems to have different names on windows vs X
+              #
+              # increment the fiducial
+              # index so we will cycle through.
+              #
+              set scene [$sliceGUI GetMRMLScene]
+              set jumpRAS [::FiducialsSWidget::GetNthFiducialRAS $scene $_jumpFiducialIndex]
+              # handle wrap around if needed
+              if { $jumpRAS == "" } {
+                set jumpRAS [::FiducialsSWidget::GetNthFiducialRAS $scene 0]
+                set _jumpFiducialIndex 1
+              } else {
+                incr _jumpFiducialIndex
+              }
 
-        $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
-        switch [$_interactor GetKeySym] {
-          "grave" -
-          "quoteleft" {
-            # this is the 'backtick' key in the upper left of the 
-            # keyboard - it seems to have different names on windows vs X
-            #
-            # increment the fiducial
-            # index so we will cycle through.
-            #
-            set scene [$sliceGUI GetMRMLScene]
-            set jumpRAS [::FiducialsSWidget::GetNthFiducialRAS $scene $_jumpFiducialIndex]
-            # handle wrap around if needed
-            if { $jumpRAS == "" } {
-              set jumpRAS [::FiducialsSWidget::GetNthFiducialRAS $scene 0]
-              set _jumpFiducialIndex 1
-            } else {
-              incr _jumpFiducialIndex
-            }
-
-            # now jump the slice(s)
-            # - if the slice is linked, then jump all slices to it
-            if { $jumpRAS != "" } {
-              set node [[$sliceGUI GetLogic] GetSliceNode]
-              eval $node JumpSlice $jumpRAS
-              set compositeNode [[$sliceGUI GetLogic] GetSliceCompositeNode]
-              if { [$compositeNode GetLinkedControl] || [$_interactor GetControlKey] } {
-                eval $node JumpAllSlices $jumpRAS
+              # now jump the slice(s)
+              # - if the slice is linked, then jump all slices to it
+              if { $jumpRAS != "" } {
+                set node [[$sliceGUI GetLogic] GetSliceNode]
+                eval $node JumpSlice $jumpRAS
+                set compositeNode [[$sliceGUI GetLogic] GetSliceCompositeNode]
+                if { [$compositeNode GetLinkedControl] || [$_interactor GetControlKey] } {
+                  eval $node JumpAllSlices $jumpRAS
+                }
               }
             }
-          }
-          default {
-            set capture 0
+          } else {
+            # puts "fiducial ignoring $key"
           }
         }
       }
-    }
-    if { $capture } {
-      $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
-      $sliceGUI SetGUICommandAbortFlag 1
     }
   }
 
