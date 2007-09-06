@@ -1394,6 +1394,17 @@ endElement(void *userData, const char *element)
     trimLeadingAndTrailing(temp);
     parameter->SetStep(temp);
     }
+  else if(name != "executable")
+    {
+    std::string error("ModuleDescriptionParser Error: Unrecognized element" + name + std::string("> was found."));
+    if (ps->ErrorDescription.size() == 0)
+      {
+      ps->ErrorDescription = error;
+      ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+      ps->Error = true;
+      }
+    } 
+
   if (!ps->OpenTags.empty())
     {
     ps->OpenTags.pop();
