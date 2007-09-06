@@ -8,20 +8,37 @@ proc QueryAtlasInit { } {
     source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasControlledVocabulary.tcl
     source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/Card.tcl
     source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/CardFan.tcl
+    QueryAtlasInitializeGlobals
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+# 
+# 
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasInitializeGlobals { } {
 
     #--- initialize globals
     set ::QA(linkBundleCount) 0
-    set ::QA(SceneLoaded) 0
 
+    set ::QA(SceneLoaded) 0
     set ::QA(annotations) ""
     set ::QA(modelNodeID) ""
+    set ::QA(modelDisplayNodeID) ""
     set ::QA(labelMap) ""
     set ::QA(CurrentRASPoint) ""
     set ::QA(brain,volumeNodeID) ""
     set ::QA(statvol,volumeNodeID) ""
     set ::QA(label,volumeNodeID) ""
-}
 
+    set ::QA(ontologyHost ) "localhost"
+    set ::QA(ontologyPort) 3334
+    set ::QA(ontologyViewerPID) ""
+    set ::QA(ontologyLaunched) 0
+
+    set ::QA(annotationVisibility) 1
+}
 
 
 
@@ -52,27 +69,108 @@ proc QueryAtlasMessagDialog { str } {
 #--- looks in the various node names for clues.
 #--- makes no changes if it can't find a dataset.
 #----------------------------------------------------------------------------------------------------
+proc QueryAtlasTryConfigure { } {
+
+    set found [ QueryAtlasAutoConfigureLayers ]
+    if {!found } {
+        QueryAtlasMessageDialog "Couldn't auto-detect model and label map. Please use selectors to specify."
+        return
+    }
+    set found [ QueryAtlasAddAnnotations  ]
+    if { !found } {
+        QueryAtlasMessageDialog "Couldn't find annotations for the selected model or label map. This scene may not support interactive annotations."
+        return
+    }
+
+    QueryAtlasAutoWinLevThreshStats
+    QueryAtlasInitializePicker 
+    QueryAtlasRenderView
+    QueryAtlasUpdateCursor
+    set ::QA(CurrentRASPoint) "0 0 0"
+    set ::QA(SceneLoaded) 1
+}
+
+#----------------------------------------------------------------------------------------------------
+# --- applies some display parameters to volumes that could be statistics...
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasAutoWinLevThreshStats { } {
+    set numVnodes  [ $::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLVolumeNode" ]
+    set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
+    
+    for { set i 0 } { $i < $numVnodes } { incr i } {
+        #--- get names of all volume nodes in scene
+        set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLVolumeNode" ]
+        if { $node != "" } {
+            set name [ $node GetName ]
+        }
+        set t [ string first "stat" $name ]
+        if {$t >= 0 } {
+            set gotstats 1
+            set ::QA(statvol,volumeNodeID) [ $node GetID ]
+
+            #--- TODO: choose ballpark window level and threshold for stats.
+            set vnode [ $::slicer3::MRMLScene GetNodeByID $::QA(statvol,volumeNodeID) ]
+            set volumeDisplayNode [ $vnode GetDisplayNode ]
+
+            #--- set these guys manually...
+            $volumeDisplayNode SetAutoThreshold 0
+            $volumeDisplayNode SetAutoWindowLevel 0
+
+            if { 0 } {
+            set window [ $volumeDisplayNode GetWindow ]
+            set level [ $volumeDisplayNode GetLevel ]
+            set upperT [$volumeDisplayNode GetUpperThreshold]
+            set lowerT [$volumeDisplayNode GetLowerThreshold]
+            #--- set window... hmmm.
+            $volumeDisplayNode SetWindow [ expr $window / 2.5 ]
+            set window [ $volumeDisplayNode GetWindow ]
+            $volumeDisplayNode SetLevel [ expr $upperT - ( $window / 2.0 ) ]
+            #--- set lower threshold
+            set lowerT [ expr $upperT - (( $upperT - $lowerT ) / 2.5 ) ]
+            $volumeDisplayNode SetLowerThreshold $lowerT
+            $volumeDisplayNode SetLowerThreshold $upperT
+            #--- apply the settings
+            $volumeDisplayNode SetApplyThreshold 1
+            $volumeDisplayNode SetAutoThreshold 0
+            }
+
+        }
+    }
+    
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#--- tries to put a brain in the background,
+#--- a label map in the label layer and
+#--- a statistics volume in the foreground.
+#--- looks in the various node names for clues.
+#--- makes no changes if it can't find a dataset.
+#----------------------------------------------------------------------------------------------------
 proc QueryAtlasAutoConfigureLayers { } {
 
     #--- look in volume nodes for "brain", for "aseg" and for "stat"
     #--- put the first of each found in appropriate layer,
     #--- and if none found, leave layers as they are.
     #--- TODO: build this out for other queriable datasets.
-    set numnodes  [ $::slicer3::MRMLScene GetNumberofNodesByClass "vtkMRMLVolumeNode" ]
+    #--- TODO: apply good window, level and threshold values here.
+    set numVnodes  [ $::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLVolumeNode" ]
     set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
+    set numMnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode"]
 
     set gotbrain 0
     set gotlabels 0
     set gotstats 0
-    for { set i 0 } { $i < $numnodes } { incr i } {
+    set gotmodel 0
+    for { set i 0 } { $i < $numVnodes } { incr i } {
         #--- get names of all volume nodes in scene
         set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLVolumeNode" ]
         if { $node != "" } {
             set name [ $node GetName ]
         }
         #--- now check on name
-        if { !gotbrain } {
-            set t [ string first "brain" name ]
+        if { ! $gotbrain } {
+            set t [ string first "brain" $name ]
             if { $t >= 0 } {
                 set gotbrain 1
                 set ::QA(brain,volumeNodeID) [ $node GetID ]
@@ -81,10 +179,11 @@ proc QueryAtlasAutoConfigureLayers { } {
                     set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
                     $cnode SetReferenceBackgroundVolumeID $::QA(brain,volumeNodeID)
                 }
+                #--- TODO: Set auto threshold on.
             }
         }
-        if { !gotlables } {
-            set t [ string first "aseg" name ]
+        if { ! $gotlabels } {
+            set t [ string first "aseg" $name ]
             if { $t >= 0 } {
                 set gotlabels 1
                 set ::QA(label,volumeNodeID) [ $node GetID ]
@@ -94,10 +193,13 @@ proc QueryAtlasAutoConfigureLayers { } {
                     $cnode SetReferenceLabelVolumeID $::QA(label,volumeNodeID)
                     $cnode SetLabelOpacity 0.5
                 }
+                #-- if we found it, set the aseg node selector in the GUI
+                set as [$::slicer3::QueryAtlasGUI GetFSasegSelector]
+                $as SetSelected $node
             }
         }
-        if { !gotstats } {
-            set t [ string first "stat" name ]
+        if { ! $gotstats } {
+            set t [ string first "stat" $name ]
             if {$t >= 0 } {
                 set gotstats 1
                 set ::QA(statvol,volumeNodeID) [ $node GetID ]
@@ -110,228 +212,75 @@ proc QueryAtlasAutoConfigureLayers { } {
             }
         }
     }
-}
-
-
-
-
-#----------------------------------------------------------------------------------------------------
-#--- For now, all annotation files are associated (as scalar overlays) with a model.
-#--- marks the dataset from which to retrieve annotationsp
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasSetAnnotatedDataset { id } {
-
-    #--- For now, this is going to be a model node.
-    #--- Access to node types will be constrained through
-    #--- the GUI, but we'll double-constrain here just in
-    #--- case someone uses the tcl command api.
-    #--- TODO: allow volumes to have per-voxel annotations too!
-    
-    set node [ $::slicer3::MRMLScene GetNodeByID $id ]
-    if { ! [ $node IsA "vtkMRMLModelNode" ] } {
-        set dialog [ vtkKWMessageDialog New ]
-        $dialog SetParent [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
-        $dialog SetStyleToMessage
-        $dialog SetText "Only annotated models are supported at this time. Please select a  model."
-        $dialog Create
-        $dialog Invoke
-        $dialog Delete
-        return
-    }
-    set ::QA(modelNodeID) [$::slicer3::MRMLScene GetNodeByID $id ]
-    puts "set annotated dataset."
-}
-
-
-
-
-#--- DO NOT NEED THIS.
-#----------------------------------------------------------------------------------------------------
-#--- looks to see if Xcede remembers reading an annot file.
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasUpdateAnnotationFileFromXcede { } {
-
-    #--- xcedecatalogimport keeps a list of files that are likely freesurfer annotations.
-    if  { $::QA(annotations) == "" } {
-        if { $::XcedeCatalog_AnnotationFiles != "" }  {
-            set ::QA(annotations) [ $lindex $::XcedeCatalog_AnnotationFiles 0 ]
+    for { set i 0 } { $i < $numMnodes } { incr i } {
+        #--- get names of all volume nodes in scene
+        set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLModelNode" ]
+        if { $node != "" } {
+            set name [ $node GetName ]
         }
-    }
-}
-
-
-
-#--- DO NOT NEED THIS.
-#----------------------------------------------------------------------------------------------------
-#--- looks to see if the MRMLStorageNode was used to read an annot file
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasUpdateAnnotationFileFromModelStorageNode {snode } {
-
-    #--- the storage node will contain the name of the last overlay loaded.
-    #--- So the annot file should be loaded last... until we keep some info around.
-    
-    if  { $::QA(annotations) == "" } {
-        set fname [ $snode GetFileName ]
-        if {  $fname != "" }  {
-            if { [ string first "annot" $fname ] >= 0 } {
-                set ::QA(annotations) $fname
+        if {! $gotmodel } {
+            set t [ string first "lh.pial" $name ]
+            if {$t >= 0 } {
+                set gotmodel 1
+                set ::QA(modelNodeID) [ $node GetID ]
+                set ::QA(modelDisplayNodeID) [ $node GetDisplayNodeID ]
+                #-- if we found it, set the model node selector in the GUI
+                set ms [$::slicer3::QueryAtlasGUI GetFSmodelSelector]
+                $ms SetSelected $node
+            }
+        }
+        if {! $gotmodel } {
+            set t [ string first "rh.pial" $name ]
+            if {$t >= 0 } {
+                set gotmodel 1
+                set ::QA(modelNodeID) [ $node GetID ]
+                set ::QA(modelDisplayNodeID) [ $node GetDisplayNodeID ]
+                #-- if we found it, set the model node selector in the GUI
+                set ms [$::slicer3::QueryAtlasGUI GetFSmodelSelector]
+                $ms SetSelected $node
             }
         }
     }
+
+    #--- if we couldn't find model or labels return 0
+    #--- These are necessary for generating annotations
+    if { (! $gotmodel) || (! $gotlabels)  } {
+        return 0
+    } else {
+        return 1
+    }
 }
 
 
 
+
+
 #----------------------------------------------------------------------------------------------------
-#--- gets the annotations to use for interactive display
+#--- gets the label map to use for interactive display
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasGetAnnotations { } {
+proc QueryAtlasGetLabels { } {
 
-    puts "getting annotations for chosen model"
-
-    #--- CHECK: find the dataset (currenlty a model) in the scene for which
-    #--- annotations exist. If none are chosen, return
-    if {$::QA(modelNodeID) == "" } {
-        QueryAtlasMessagDialog "Please select an annotated model."
+    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+    set as [$::slicer3::QueryAtlasGUI GetFSasegSelector]
+    set vnode [ $as GetSelected ]
+    if { $vnode == "" } {
+        QueryAtlasMessageDialog "Use this menubutton to choose a label map."
         return
     }
+    set ::QA(label,volumeNodeID) [ $vnode GetID ]
 
-    puts "checking to see if an appropriate overlay exists for this model."
-
-    #--- CHECK: get all scalar overlays for this model.
-    #--- Do we want point scalars and cell scalars?
-    set mnode [ $::slicer3::MRMLScene GetNodeByID $::QA(modelNodeID) ]
-    set pointData  [ [ $mnode GetPolyData ] GetPointData ]
-    set cellData  [ [ $mnode GetPolyData ] GetCellData ]
+    #--- now put label map in label layer.
+    #--- put in label layer
+    for { set j 0 } { $j < $numCnodes } { incr j } {
+        set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
+        $cnode SetReferenceLabelVolumeID $::QA(label,volumeNodeID)
+        $cnode SetLabelOpacity 0.5
+    }
     
-    if { $pointData  != "" } {
-        set numPointScalars  [ $pointData GetNumberOfArrays ]
-    } else {
-        set numPointScalars 0
-    }
-    if { $cellData != "" } {
-        set numCellScalars [ $cellData GetNumberOfArrays ]
-    } else {
-        set numCellScalars 0
-    }
-    if { $pointData == "" && $cellData == "" } {
-        QueryAtlasMessagDialog "No appropriate overlay data was found for this model. Please load an annotation file for model [$mnode GetName] through the Models GUI (use the Load (FreeSurfer) Overlay option)."
-        return
-    }
-    puts "got $numPointScalars point scalars and $numCellScalars cell scalars for model $::QA(modelNodeID)"
-    
-    
-    #--- CHECK: if the liist doesn't contain a scalaroverlay with "labels" in its name
-    #--- then pop up a message giving the opportunity to load one.
-    #--- TODO: support other annotation scalars (non-FreeSurfer) 
-    set gotannot 0
-    for { set i 0 } { $i < $numPointScalars } { incr i } {
-        set overlayName [ [ [ [ $mnode GetPolyData ] GetPointData ] GetArray $i ] GetName ]
-        set tt [ string first "labels" $overlayName ]
-        if { $tt >=0 } {
-            set gotannot 1
-            break
-        }
-    }
-    #--- keep looking if necessary
-    if { !gotannot } {
-        for { set i 0 } { $i < $numCellScalars } { incr i } {
-            set overlayName [ [ [ [ $mnode GetPolyData ] GetCellData ] GetArray $i ] GetName ]
-            set tt [ string first "labels" $overlayName ]
-            if { $tt >=0 } {
-                set gotannot 1
-                 break
-            }
-        }
-    }
-    if { !gotannot } {
-        QueryAtlasMessagDialog "No appropriate annotation files were found. Please load an annotation file for model [$mnode GetName] through the Models GUI (use the Load (FreeSurfer) Overlay option)."
-        return
-    }
-
-    #--- ok if we've gotten here, then we have a model and
-    #--- associated annotation.
-    
-    set displayNodeID [$::QA(modelNodeID) GetDisplayNodeID]
-    set displayNode [$::slicer3::MRMLScene GetNodeByID $displayNodeID]
-
-#------------------------------------------------------------------------------------------------------------------
-    QueryAtlasBuildAnnotationColorMapping
-#    number of colors
-#    color names
-#    and color table names
-#------------------------------------------------------------------------------------------------------------------
-    set fssar [vtkFSSurfaceAnnotationReader New]
-
-    $fssar SetFileName $fileName
-    $fssar SetOutput $scalars
-    $fssar SetColorTableOutput [$lutNode GetLookupTable]
-    # try reading an internal colour table first
-    $fssar UseExternalColorTableFileOff
-
-    set retval [$fssar ReadFSAnnotation]
-
-    array unset _labels
-    if {$retval == 6} {
-        error "ERROR: no internal colour table, using default"
-        # use the default colour node
-        [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferSurfaceLabelsColorNodeID]
-        set lutNode [[$modelNode GetDisplayNode] GetColorNode]
-        # get the names 
-        for {set i 0} {$i < [$lutNode GetNumberOfColors]} {incr i} {
-            set _labels($i) [$lutNode GetColorName $i]
-        }
-    } else {
-        # get the colour names from the reader       
-        array set _labels [$fssar GetColorTableNames]        
-    }
-    array unset ::vtkFreeSurferReadersLabels_$::QA(modelNodeID)
-    array set ::vtkFreeSurferReadersLabels_$::QA(modelNodeID) [array get _labels]
-
-#------------------------------------------------------------------------------------------------------------------
-
-    # print them out
-    set ::QA(labelMap) [array get _labels]
-
-    set entries [lsort -integer [array names _labels]]
-
-    # set the look up table
-    $mapper SetLookupTable [$lutNode GetLookupTable]
-    
-    
-
-    # make the scalars visible
-    $mapper SetScalarRange  [lindex $entries 0] [lindex $entries end]
-    $mapper SetScalarVisibility 1
-
-    [$modelNode GetDisplayNode] SetScalarRange [lindex $entries 0] [lindex $entries end]
-
-    $lutNode Delete
-    $fssar Delete
-    [$viewer GetMainViewer] Reset
-
-
-
-    
-
-  #
-  # read the freesurfer labels for the aseg+aparc
-  #
-  set lutFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/FreeSurferColorLUT.txt
-  if { [file exists $lutFile] } {
-    set fp [open $lutFile "r"]
-    while { ![eof $fp] } {
-      gets $fp line
-      if { [scan $line "%d %s %d %d %d" label name r g b] == 5 } {
-        set ::QAFS($label,name) $name
-        set ::QAFS($label,rgb) "$r $g $b"
-      }
-    }
-    close $fp
-  } else {
-    puts stderr "Error!  No lut file $lutFile found..."
-  }
 }
+
+
+
 
 
 #----------------------------------------------------------------------------------------------------
@@ -374,6 +323,9 @@ proc QueryAtlasLoad { {filename ""} } {
     set ::QA(CurrentRASPoint) "0 0 0"
     set ::QA(SceneLoaded) 1
 }
+
+
+
 
 
 #----------------------------------------------------------------------------------------------------
@@ -613,108 +565,127 @@ proc QueryAtlasAddVolumes {} {
 #--- use the freesurfer annotation code to put 
 #--- label scalars onto the model
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasAddAnnotations { file } {
-
+proc QueryAtlasAddAnnotations { } {
     
-  set fileName [file dirname $::QA(annotations)]/../label/lh.aparc.annot
+    #set fileName [file dirname $::QA(annotations)]/../label/lh.aparc.annot
 
-  # get the model out of the scene
-  set modelNode [$::slicer3::MRMLScene GetNodeByID $::QA(modelNodeID)]
-  set displayNodeID [$modelNode GetDisplayNodeID]
-  set displayNode [$::slicer3::MRMLScene GetNodeByID $displayNodeID]
-  set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
-  $viewer UpdateFromMRML
-  set actor [$viewer GetActorByID [$modelNode GetID]]
-  set mapper [$actor GetMapper]
-
-  if [file exists $fileName] {
-
-    set polydata [$modelNode GetPolyData]
-    set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
-    [$modelNode GetDisplayNode] SetActiveScalarName "labels"
-    [$modelNode GetDisplayNode] SetScalarVisibility 1
-
-    if { $scalaridx == "-1" } {
-        set scalars [vtkIntArray New]
-        $scalars SetName "labels"
-        [$polydata GetPointData] AddArray $scalars
-        [$polydata GetPointData] SetActiveScalars "labels"
-        $scalars Delete
-    } 
-    set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
-    set scalars [[$polydata GetPointData] GetArray $scalaridx]
-
-    set lutNode [vtkMRMLColorTableNode New]
-    $lutNode SetTypeToUser
-    $::slicer3::MRMLScene AddNode $lutNode
-    [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$lutNode GetID]
-
-    set fssar [vtkFSSurfaceAnnotationReader New]
-
-    $fssar SetFileName $fileName
-    $fssar SetOutput $scalars
-    $fssar SetColorTableOutput [$lutNode GetLookupTable]
-    # try reading an internal colour table first
-    $fssar UseExternalColorTableFileOff
-
-    set retval [$fssar ReadFSAnnotation]
-
-    array unset _labels
-    if {$retval == 6} {
-        error "ERROR: no internal colour table, using default"
-        # use the default colour node
-        [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferSurfaceLabelsColorNodeID]
-        set lutNode [[$modelNode GetDisplayNode] GetColorNode]
-        # get the names 
-        for {set i 0} {$i < [$lutNode GetNumberOfColors]} {incr i} {
-            set _labels($i) [$lutNode GetColorName $i]
+    if { $::QA(modelNodeID) != "" } {
+        #--- get the model out of the scene
+        set modelNode [$::slicer3::MRMLScene GetNodeByID $::QA(modelNodeID)]
+        set displayNodeID [$modelNode GetDisplayNodeID]
+        set displayNode [$::slicer3::MRMLScene GetNodeByID $displayNodeID]
+        set storageNode [ $modelNode GetStorageNode ]
+        set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
+        $viewer UpdateFromMRML
+        #set actor [ $viewer GetActorByID [$modelNode GetID] ]
+        set actor [ $viewer GetActorByID $displayNodeID ]
+        if { $actor == "" } {
+            puts "can't find model as actor"
+            return
         }
+        set mapper [$actor GetMapper]
+
+        #--- get name of label file
+        set fileName [$storageNode GetFileName ]
+        if { [ string first "aparc.annot" $fileName ] < 0 } {
+            QueryAtlasMessageDialog "No appropriate annotation file is found for [$modelNode GetName]. Try selecting an annotated model, or loading the scalar overlay for this model again."
+            return
+        }
+
+        if { [file exists $fileName] } {
+            set polydata [$modelNode GetPolyData]
+            set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
+            [$modelNode GetDisplayNode] SetActiveScalarName "labels"
+            [$modelNode GetDisplayNode] SetScalarVisibility 1
+
+            if { $scalaridx == "-1" } {
+                set scalars [vtkIntArray New]
+                $scalars SetName "labels"
+                [$polydata GetPointData] AddArray $scalars
+                [$polydata GetPointData] SetActiveScalars "labels"
+                $scalars Delete
+            } 
+            set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
+            set scalars [[$polydata GetPointData] GetArray $scalaridx]
+
+            set lutNode [vtkMRMLColorTableNode New]
+            $lutNode SetTypeToUser
+            $::slicer3::MRMLScene AddNode $lutNode
+            [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$lutNode GetID]
+
+            set fssar [vtkFSSurfaceAnnotationReader New]
+
+            $fssar SetFileName $fileName
+            $fssar SetOutput $scalars
+            $fssar SetColorTableOutput [$lutNode GetLookupTable]
+            # try reading an internal colour table first
+            $fssar UseExternalColorTableFileOff
+
+            set retval [$fssar ReadFSAnnotation]
+
+            array unset _labels
+            if {$retval == 6} {
+                error "ERROR: no internal colour table, using default"
+                # use the default colour node
+                [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferSurfaceLabelsColorNodeID]
+                set lutNode [[$modelNode GetDisplayNode] GetColorNode]
+                # get the names 
+                for {set i 0} {$i < [$lutNode GetNumberOfColors]} {incr i} {
+                    set _labels($i) [$lutNode GetColorName $i]
+                }
+            } else {
+                # get the colour names from the reader       
+                array set _labels [$fssar GetColorTableNames]        
+            }
+            array unset ::vtkFreeSurferReadersLabels_$::QA(modelNodeID)
+            array set ::vtkFreeSurferReadersLabels_$::QA(modelNodeID) [array get _labels]
+
+            # print them out
+            set ::QA(labelMap) [array get _labels]
+
+            set entries [lsort -integer [array names _labels]]
+
+            # set the look up table
+            $mapper SetLookupTable [$lutNode GetLookupTable]
+
+            # make the scalars visible
+            $mapper SetScalarRange  [lindex $entries 0] [lindex $entries end]
+            $mapper SetScalarVisibility 1
+
+            [$modelNode GetDisplayNode] SetScalarRange [lindex $entries 0] [lindex $entries end]
+
+            $lutNode Delete
+            $fssar Delete
+            [$viewer GetMainViewer] Reset
+        } else {
+            return 0
+        }
+
+        #
+        # read the freesurfer labels for the aseg+aparc
+        #
+        set lutFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/FreeSurferColorLUT.txt
+        if { [file exists $lutFile] } {
+            set fp [open $lutFile "r"]
+            while { ![eof $fp] } {
+                gets $fp line
+                if { [scan $line "%d %s %d %d %d" label name r g b] == 5 } {
+                    set ::QAFS($label,name) $name
+                    set ::QAFS($label,rgb) "$r $g $b"
+                    puts "$name -- $r $g $b"
+                }
+            }
+            close $fp
+        } else {
+            QueryAtlasMessageDialog "Color lookup table $lutFile not found."
+        }
+        return 1
     } else {
-        # get the colour names from the reader       
-        array set _labels [$fssar GetColorTableNames]        
+        return 0
     }
-    array unset ::vtkFreeSurferReadersLabels_$::QA(modelNodeID)
-    array set ::vtkFreeSurferReadersLabels_$::QA(modelNodeID) [array get _labels]
-    # print them out
-    set ::QA(labelMap) [array get _labels]
-
-    set entries [lsort -integer [array names _labels]]
-
-    # set the look up table
-    $mapper SetLookupTable [$lutNode GetLookupTable]
-    
-    
-
-    # make the scalars visible
-    $mapper SetScalarRange  [lindex $entries 0] [lindex $entries end]
-    $mapper SetScalarVisibility 1
-
-    [$modelNode GetDisplayNode] SetScalarRange [lindex $entries 0] [lindex $entries end]
-
-    $lutNode Delete
-    $fssar Delete
-    [$viewer GetMainViewer] Reset
-  }
-
-  #
-  # read the freesurfer labels for the aseg+aparc
-  #
-  set lutFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/FreeSurferColorLUT.txt
-  if { [file exists $lutFile] } {
-    set fp [open $lutFile "r"]
-    while { ![eof $fp] } {
-      gets $fp line
-      if { [scan $line "%d %s %d %d %d" label name r g b] == 5 } {
-        set ::QAFS($label,name) $name
-        set ::QAFS($label,rgb) "$r $g $b"
-      }
-    }
-    close $fp
-  } else {
-    puts stderr "Error!  No lut file $lutFile found..."
-  }
-
 }
+
+
 
 #----------------------------------------------------------------------------------------------------
 #--- convert a number to an RGBA 
@@ -1030,7 +1001,8 @@ proc QueryAtlasPickCallback {} {
   set renderWindow [$renderWidget GetRenderWindow]
   set interactor [$renderWidget GetRenderWindowInteractor] 
   set renderer [$renderWidget GetRenderer]
-  set actor [$viewer GetActorByID $::QA(modelNodeID)]
+#  set actor [$viewer GetActorByID $::QA(modelNodeID)]
+  set actor [$viewer GetActorByID $::QA(modelDisplayNodeID)]
 
   # if the window size has changed, re-render
   set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
@@ -1058,7 +1030,11 @@ proc QueryAtlasPickCallback {} {
     } else {
       set mrmlID [$viewer GetIDByActor $prop]
       if { $mrmlID != "" } {
-        set ::QA(currentHit) "Model"
+          if { $mrmlID == $::QA(modelNodeID) } {
+              set ::QA(currentHit) "QueryActor"
+          } else {
+              set ::QA(currentHit) "SliceModel"
+          }
       } 
     }
   } 
@@ -1068,52 +1044,67 @@ proc QueryAtlasPickCallback {} {
   #
   #---- did we hit a slice model?
   set pointLabels ""
-  if { $::QA(currentHit) == "Model" } {
+  if { $::QA(currentHit) == "SliceModel" } {
       set node [$::slicer3::MRMLScene GetNodeByID $mrmlID]
-      if { $node != "" && [$node GetDescription] != "" } {
-        array set nodes [$node GetDescription]
-        set nodes(sliceNode) [$::slicer3::MRMLScene GetNodeByID $nodes(SliceID)]
-        set nodes(compositeNode) [$::slicer3::MRMLScene GetNodeByID $nodes(CompositeID)]
 
-        set propCollection [$::QA(cellPicker) GetPickList]
-        $propCollection RemoveAllItems
-        $propCollection AddItem [$::QA(propPicker) GetViewProp]
-        $::QA(cellPicker) PickFromListOn
-        $::QA(cellPicker) Pick $x $y 0 $renderer
-        set cellID [$::QA(cellPicker) GetCellId]
-        set pCoords [$::QA(cellPicker) GetPCoords]
-        if { $cellID != -1 } {
-          set polyData [[$prop GetMapper] GetInput]
-          set cell [$polyData GetCell $cellID]
-          
-          #--- this gets the RAS point we're pointing to.
-          set rasPoint [QueryAtlasPCoordsToWorld $cell $pCoords]
-          set ::QA(CurrentRASPoint) $rasPoint
 
-          set labelID [$nodes(compositeNode) GetLabelVolumeID]
-          set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
-          set rasToIJK [vtkMatrix4x4 New]
-          $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
-          set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
-          set imageData [$nodes(labelNode) GetImageData]
-          foreach var {i j k} val $ijk {
-            set $var [expr int(round($val))]
+      #--- WJPTEST 
+      #--- this is now a display node.
+      #--- must get the mrml node to which it belongs....
+      set numMnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode"]
+      for { set zz 0 } { $zz < $numMnodes } { incr zz } {
+          set testnode [ $::slicer3::MRMLScene GetNthNodeByClass $zz "vtkMRMLModelNode" ]          
+          set testdisplayID [ $testnode GetDisplayNodeID ]
+          if { $testdisplayID == $mrmlID } {
+              set node $testnode
           }
-          set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
-          if { [info exists ::QAFS($labelValue,name)] } {
-              if { $::QAFS($labelValue,name) == "Unknown" } {
-                  set ::QA(currentHit) "QueryActor"
-              } else {
-                  set pointLabels "$::QAFS($labelValue,name)"
-              }
-          } else {
-            set pointLabels "label: $labelValue (no name available), ijk $ijk"
-          }
-          $rasToIJK Delete
-        }
       }
 
-    }
+      
+      if { $node != "" && [$node GetDescription] != "" } {
+          array set nodes [$node GetDescription]
+          set nodes(sliceNode) [$::slicer3::MRMLScene GetNodeByID $nodes(SliceID)]
+          set nodes(compositeNode) [$::slicer3::MRMLScene GetNodeByID $nodes(CompositeID)]
+
+          set propCollection [$::QA(cellPicker) GetPickList]
+          $propCollection RemoveAllItems
+          $propCollection AddItem [$::QA(propPicker) GetViewProp]
+          $::QA(cellPicker) PickFromListOn
+          $::QA(cellPicker) Pick $x $y 0 $renderer
+          set cellID [$::QA(cellPicker) GetCellId]
+          set pCoords [$::QA(cellPicker) GetPCoords]
+          if { $cellID != -1 } {
+              set polyData [[$prop GetMapper] GetInput]
+              set cell [$polyData GetCell $cellID]
+              
+              #--- this gets the RAS point we're pointing to.
+              set rasPoint [QueryAtlasPCoordsToWorld $cell $pCoords]
+              set ::QA(CurrentRASPoint) $rasPoint
+
+              set labelID [$nodes(compositeNode) GetLabelVolumeID]
+              set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
+              set rasToIJK [vtkMatrix4x4 New]
+              $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
+              set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
+              set imageData [$nodes(labelNode) GetImageData]
+              foreach var {i j k} val $ijk {
+                  set $var [expr int(round($val))]
+              }
+              set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
+              if { [info exists ::QAFS($labelValue,name)] } {
+                  if { $::QAFS($labelValue,name) == "Unknown" } {
+                      set ::QA(currentHit) "QueryActor"
+                  } else {
+                      set pointLabels "$::QAFS($labelValue,name)"
+                  }
+              } else {
+                  set pointLabels "label: $labelValue (no name available), ijk $ijk"
+              }
+              $rasToIJK Delete
+          }
+      }
+
+  }
 
   #--- did we hit an anatomical model?
   if { $::QA(currentHit) == "QueryActor" } {
@@ -1212,19 +1203,42 @@ proc QueryAtlasPickCallback {} {
 
 
 #----------------------------------------------------------------------------------------------------
+#--- master switch to turn off annotations in main viewer
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetAnnotationsInvisible { } {
+    set ::QA(annotationVisibility) 0
+}
+
+#----------------------------------------------------------------------------------------------------
+#--- master switch to turn on annotations in main viewer
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetAnnotationsVisibile { } {
+    set ::QA(annotationVisibility) 1
+}
+
+
+#----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasCursorVisibility { onoff } {
 
   if { $onoff == "on" } {
-    $::QA(cursor,actor) SetVisibility 1
+      #--- allows a master "switch" to turn off annotations
+      #--- by default, they are on.
+      if { $::QA(annotationVisibility) } {
+           $::QA(cursor,actor) SetVisibility 1
+      } else {
+           $::QA(cursor,actor) SetVisibility 0
+      }
   } else {
     $::QA(cursor,actor) SetVisibility 0
   }
   set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
   $viewer RequestRender
-
 }
+
+
+
 
 #----------------------------------------------------------------------------------------------------
 #--- Generate the text label
@@ -1248,14 +1262,16 @@ proc QueryAtlasUpdateCursor {} {
   }
 
   if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] } {
-    $::QA(cursor,actor) SetInput $::QA(lastLabels) 
+      $::QA(cursor,actor) SetInput $::QA(lastLabels) 
       #--- position the text label just higher than the cursor
-    foreach {x y} $::QA(lastWindowXY) {}
-    set y [expr $y + 15]
-    $::QA(cursor,actor) SetPosition $x $y
-    $viewer RequestRender
+      foreach {x y} $::QA(lastWindowXY) {}
+      set y [expr $y + 15]
+      $::QA(cursor,actor) SetPosition $x $y
+      $viewer RequestRender
   } 
 }
+
+
 
 #----------------------------------------------------------------------------------------------------
 #---
@@ -1312,7 +1328,7 @@ proc QueryAtlasMenuCreate { state } {
 
           $qaMenu insert end checkbutton -label "Use Search Terms" -variable ::QA(menu,useTerms)
           $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddStructureTerms"
-          $qaMenu insert end command -label "Remove All Search Terms" -command "QueryAtlasRemoveStructureTerms"
+          $qaMenu insert end command -label "Remove All Structure Search Terms" -command "QueryAtlasRemoveStructureTerms"
 
           $qaMenu insert end command -label $::QA(lastLabels) -command ""
           $qaMenu insert end separator
@@ -1548,7 +1564,7 @@ proc QueryAtlasQuery { site } {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasLaunchBirnLexHierarchy {} {
+proc QueryAtlasLaunchOntologyBrowser { ontology } {
 
     set already_running [ QueryAtlasBirnLexViewerCheck ]
     if { already_running } {
@@ -1556,22 +1572,27 @@ proc QueryAtlasLaunchBirnLexHierarchy {} {
     }
     
     #--- start it up
-    set ::QA(birnlexHost) "localhost"
-    set ::QA(birnlexPort) 3334
-    set ::QA(birnlexViewerPID ) ""
+    set ::QA(ontologyHost) "localhost"
+    set ::QA(ontologyPort) 3334
+    set ::QA(ontologyViewerPID ) ""
     
-    if { [ info exists ::QA(SceneLoaded) ] } {
-        if { $::QA(SceneLoaded) } {
-            if { [file exists $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlexvis.jar] &&
-                 [file exists $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlex-demo.simple ] } {
-                set ::QA(birnlexViewerPID) [ exec java -jar $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlexvis.jar -h $::QA(birnlexHost) -p $::QA(birnlexPort) -t SlicerBIRNLex $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlex-demo.simple & ]
-                if { $::QA(birnlexViewerPID) == "" } {
-                    puts "QueryAtlasLaunchBirnLexHierarchy: could not start BIRNLex Viewer."
-                } else {
-                    set ::QA(birnlexLaunched) 1
+    #--- launch the viewer with a dataset
+    if { $ontology == "BIRN" } {
+        if { [ info exists ::QA(SceneLoaded) ] } {
+            if { $::QA(SceneLoaded) } {
+                if { [file exists $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlexvis.jar] &&
+                     [file exists $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlex-demo.simple ] } {
+                    set ::QA(ontologyViewerPID) [ exec java -jar $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlexvis.jar -h $::QA(ontologyHost) -p $::QA(ontologyPort) -t SlicerBIRNLex $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlex-demo.simple & ]
+                    if { $::QA(ontologyViewerPID) == "" } {
+                        puts "QueryAtlasLaunchBirnLexHierarchy: could not start BIRNLex Viewer."
+                    } else {
+                        set ::QA(ontologyLaunched) 1
+                    }
                 }
             }
         }
+    } else if { $ontology == "NN" } {
+
     }
 }
 
@@ -1584,15 +1605,16 @@ proc QueryAtlasBirnLexViewerCheck { } {
     set running 0
 
     set str ""
-    if { [ info exists ::QA(birnlexViewerPID) ] } {
+    if { [ info exists ::QA(ontologyViewerPID) ] } {
         #--- check to see if the PID still exists
-        catch { set str [ exec ps -ef | grep birnlexvis | grep $::QA(birnlexViewerPID) ] }
+        catch { set str [ exec ps -ef | grep birnlexvis | grep $::QA(ontologyViewerPID) ] }
         if { $str != "" } {
             set running 1
         }
     }
     return $running
 }
+
 
 
 #----------------------------------------------------------------------------------------------------
@@ -1602,7 +1624,7 @@ proc QueryAtlasSendHierarchyCommand { args } {
 
     regsub -all -- " " $args "-" label
 
-    if { [info exists ::QA(birnlexLaunched)] } {
+    if { [info exists ::QA(ontologyLaunched)] } {
         #--- get command from Hierarchy frame widget
         set result ""
         
@@ -1614,8 +1636,8 @@ proc QueryAtlasSendHierarchyCommand { args } {
         }
         if { $newLabel != "" } {
             #--- make search reqest to birnlexviz demo if port/host are defined
-            if { [ info exists ::QA(birnlexHost) ] && [ info exists ::QA(birnlexPort) ] } {
-                set ::QA(socket) [ socket $::QA(birnlexHost) $::QA(birnlexPort) ]
+            if { [ info exists ::QA(ontologyHost) ] && [ info exists ::QA(ontologyPort) ] } {
+                set ::QA(socket) [ socket $::QA(ontologyHost) $::QA(ontologyPort) ]
 
                 #--- for now just put -- don't read from stdin
                 puts $::QA(socket) $newLabel

@@ -137,9 +137,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetMacro ( NumberOfColumns, int );
 
     // load frame
-    vtkGetObjectMacro (FSbrainSelector, vtkSlicerNodeSelectorWidget );
-    vtkGetObjectMacro (FSoverlaySelector, vtkSlicerNodeSelectorWidget );
-    vtkGetObjectMacro (FStransformSelector, vtkSlicerNodeSelectorWidget );
+    vtkGetObjectMacro (FSasegSelector, vtkSlicerNodeSelectorWidget );
     vtkGetObjectMacro (FSmodelSelector, vtkSlicerNodeSelectorWidget );
     vtkGetObjectMacro (QdecModelSelector, vtkSlicerNodeSelectorWidget );
 
@@ -229,10 +227,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkQueryAtlasIcons *QueryAtlasIcons;
     
     // load / configure frame
-    vtkSlicerNodeSelectorWidget *FSbrainSelector;
-    vtkSlicerNodeSelectorWidget *FSoverlaySelector;
+    vtkSlicerNodeSelectorWidget *FSasegSelector;
     vtkSlicerNodeSelectorWidget *FSmodelSelector;
-    vtkSlicerNodeSelectorWidget *FStransformSelector;
     vtkSlicerNodeSelectorWidget *QdecModelSelector;
     
     vtkKWPushButton *FIPSFSButton;

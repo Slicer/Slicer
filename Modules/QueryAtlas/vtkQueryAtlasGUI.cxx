@@ -182,10 +182,8 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->FIPSFSFrame = NULL;
     this->QdecButton = NULL;
     this->QdecFrame = NULL;
-    this->FSbrainSelector = NULL;
-    this->FSoverlaySelector = NULL;
+    this->FSasegSelector = NULL;
     this->FSmodelSelector = NULL;
-    this->FStransformSelector = NULL;
     this->QdecModelSelector = NULL;
 #endif
 }
@@ -195,6 +193,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
 vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 {
 
+  this->SetAndObserveMRMLScene ( NULL );
     this->SetModuleLogic ( NULL );
     //---
     // help and acknowledgment frame
@@ -239,29 +238,17 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->QdecFrame->Delete();
       this->QdecFrame = NULL;      
       }
-    if ( this->FSbrainSelector )
+    if ( this->FSasegSelector )
       {
-      this->FSbrainSelector->SetParent ( NULL );
-      this->FSbrainSelector->Delete();
-      this->FSbrainSelector = NULL;
-      }
-    if ( this->FSoverlaySelector )
-      {
-      this->FSoverlaySelector->SetParent ( NULL );
-      this->FSoverlaySelector->Delete();
-      this->FSoverlaySelector = NULL;
+      this->FSasegSelector->SetParent ( NULL );
+      this->FSasegSelector->Delete();
+      this->FSasegSelector = NULL;
       }
     if ( this->FSmodelSelector )
       {
       this->FSmodelSelector->SetParent ( NULL );
       this->FSmodelSelector->Delete();
       this->FSmodelSelector = NULL;
-      }
-    if ( this->FStransformSelector )
-      {
-      this->FStransformSelector->SetParent ( NULL );
-      this->FStransformSelector->Delete();
-      this->FStransformSelector = NULL;
       }
     if ( this->QdecModelSelector )
       {
@@ -674,13 +661,14 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::OpenBIRNLexBrowser()
 {
-  this->Script ( "QueryAtlasLaunchBirnLexHierarchy" );
+  this->Script ( "QueryAtlasLaunchOntologyBrowser BIRN" );
 }
 
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::OpenNeuroNamesBrowser()
 {
+  this->Script ( "QueryAtlasLaunchOntologyBrowser NN" );
 }
 
 
@@ -702,10 +690,8 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
     // load frame
     //---
 #ifdef LOAD_FRAME
-    os << indent << "FSbrainSelector: " << this->GetFSbrainSelector ( ) << "\n";    
-    os << indent << "FSoverlaySelector: " << this->GetFSoverlaySelector ( ) << "\n";    
+    os << indent << "FSasegSelector: " << this->GetFSasegSelector ( ) << "\n";    
     os << indent << "FSmodelSelector: " << this->GetFSmodelSelector ( ) << "\n";    
-    os << indent << "FStransformSelector: " << this->GetFStransformSelector ( ) << "\n";    
     os << indent << "QdecModelSelector: " << this->GetQdecModelSelector ( ) << "\n";    
 #endif
     
@@ -747,11 +733,12 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 {
-  if ( 0 ) {
   vtkDebugMacro("vtkQueryAtlasGUI: RemoveGUIObservers\n");
 
   this->FIPSFSButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->QdecButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FSasegSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FSmodelSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   
   this->StructureButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->GetClearAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -801,17 +788,18 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->DeleteAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CurrentResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 //  this->PastResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  }
+
 }
 
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::AddGUIObservers ( )
 {
-  if ( 0 ) {
   vtkDebugMacro("vtkQueryAtlasGUI: AddGUIObservers\n");
   this->FIPSFSButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->QdecButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FSasegSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FSmodelSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->StructureButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->GetClearAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -861,7 +849,6 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->DeleteAllCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CurrentResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 //  this->PastResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  }
   
 }
 
@@ -877,15 +864,55 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWCheckButton *c = vtkKWCheckButton::SafeDownCast ( caller );
   vtkKWListBox *lb = vtkKWListBox::SafeDownCast ( caller );
   vtkKWEntry *e  = vtkKWEntry::SafeDownCast ( caller);
+  vtkSlicerNodeSelectorWidget *sel = vtkSlicerNodeSelectorWidget::SafeDownCast ( caller );
+
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
   const char *context;
-  int index;
+  int index, nnodes, i;
   
-  if ( (e == this->AddDiagnosisEntry->GetWidget() ) && ( event == vtkKWEntry::EntryValueChangedEvent ))
+  if ((sel == this->FSasegSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
     {
+    // tcl script that selects the label map to use
+    /*
+    nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSliceCompositeNode" );
+    for ( i = 0; i < nnodes; i++ )
+      {
+      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
+                                                       this->GetMRMLScene()->GetNthNodeByClass ( i, "vtkMRMLSliceCompositeNode") );
+      if ( cnode != NULL && this->FSasegSelector->GetSelected() != NULL )
+        {
+        cnode->SetLabelVolumeID ( this->FSasegSelector->GetSelected()->GetID() );
+        }
+      else if ( cnode != NULL )
+        {
+        cnode->SetLabelVolumeID ( NULL );
+        }
+      }
+    */
+   this->Script ( "QueryAtlasGetLabels" );
     }
-  else if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
+  else if ((sel == this->FSmodelSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
+    {
+    // tcl script that sets the annotated model.
+    this->Script ( "QueryAtlasGetAnnotations" );
+    }
+
+  
+  //---
+  //--- Process All Entry events
+  //---
+  if ( this->AddDiagnosisEntry )
+    {
+    if ( (e == this->AddDiagnosisEntry->GetWidget() ) && ( event == vtkKWEntry::EntryValueChangedEvent ))
+      {
+      }
+    }
+
+  //---
+  //--- Process All PushButton events
+  //---
+  if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     }
   else if ( (b == this->BIRNLexHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -914,7 +941,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
       this->AnnotationVisibilityButton->SetImageToIcon ( i );
       this->AnnotationVisibility = 0;
-     //      this->Script ( "" );
+      this->Script ( "QueryAtlasSetAnnotationsInvisible" );
       }
     else
       {
@@ -922,7 +949,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
       this->AnnotationVisibilityButton->SetImageToIcon ( i );
       this->AnnotationVisibility = 1;
-     //      this->Script ( "" );
+     this->Script ( "QueryAtlasSetAnnotationsVisible" );
       }
     }
   else if ( (b == this->ModelVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -944,7 +971,6 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
      //      this->Script ( "" );
       }
     }
-
   else if ( (b == this->FIPSFSButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     this->UnpackLoaderContextFrames();
@@ -963,62 +989,12 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     this->PackQueryBuilderContextFrame ( this->StructureFrame );
     this->ColorCodeContextButtons ( this->StructureButton );
     }
-  else if ( (b == this->StructureListWidget->GetClearAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "structure";
-    this->DeleteAllSearchTerms( context );
-    }
-  else if ( (b == this->StructureListWidget->GetAddNewButton()) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "structure";
-    this->AddNewSearchTerm( context );
-    }
-  else if ( (b == this->StructureListWidget->GetClearSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "structure";
-    this->DeleteSelectedSearchTerms (context );
-    }
-  else if ( (b == this->StructureListWidget->GetUseAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "structure";
-    this->SelectAllSearchTerms ( context );
-    }
-  else if ( (b == this->StructureListWidget->GetUseNoneButton()) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "structure";
-    this->DeselectAllSearchTerms ( context );
-    }  
   else if ( (b == this->SubStructureButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     this->UnpackQueryBuilderContextFrames();
     this->PackQueryBuilderContextFrame ( this->SubStructureFrame);    
     this->ColorCodeContextButtons ( this->SubStructureButton );
     }
-  else if ( (b == this->SubStructureListWidget->GetClearAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "substructure";
-    this->DeleteAllSearchTerms( context );
-    }
-  else if ( (b == this->SubStructureListWidget->GetAddNewButton()) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "substructure";
-    this->AddNewSearchTerm( context );
-    }
-  else if ( (b == this->SubStructureListWidget->GetClearSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "substructure";
-    this->DeleteSelectedSearchTerms (context );
-    }
-  else if ( (b == this->SubStructureListWidget->GetUseAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "substructure";
-    this->SelectAllSearchTerms ( context );
-    }
-  else if ( (b == this->SubStructureListWidget->GetUseNoneButton()) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    context = "substructure";
-    this->DeselectAllSearchTerms ( context );
-    }  
   else if ( (b == this->PopulationButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     this->UnpackQueryBuilderContextFrames();
@@ -1071,25 +1047,111 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     {
 //    this->Script(""); load links from a file and put in bottom list.
     }
-  if ((lb = this->CurrentResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
+
+  //---
+  //--- Process all these search term widget events
+  //---
+  if ( this->StructureListWidget )
     {
-    this->Script ("QueryAtlasOpenLink");
+    if ( (b == this->StructureListWidget->GetClearAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "structure";
+      this->DeleteAllSearchTerms( context );
+      }
+    else if ( (b == this->StructureListWidget->GetAddNewButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "structure";
+      this->AddNewSearchTerm( context );
+      }
+    else if ( (b == this->StructureListWidget->GetClearSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "structure";
+      this->DeleteSelectedSearchTerms (context );
+      }
+    else if ( (b == this->StructureListWidget->GetUseAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "structure";
+      this->SelectAllSearchTerms ( context );
+      }
+    else if ( (b == this->StructureListWidget->GetUseNoneButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "structure";
+      this->DeselectAllSearchTerms ( context );
+      }
     }
-  else if ((lb = this->PastResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
+  if ( this->SubStructureListWidget )
     {
+    if ( (b == this->SubStructureListWidget->GetClearAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "substructure";
+      this->DeleteAllSearchTerms( context );
+      }
+    else if ( (b == this->SubStructureListWidget->GetAddNewButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "substructure";
+      this->AddNewSearchTerm( context );
+      }
+    else if ( (b == this->SubStructureListWidget->GetClearSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "substructure";
+      this->DeleteSelectedSearchTerms (context );
+      }
+    else if ( (b == this->SubStructureListWidget->GetUseAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "substructure";
+      this->SelectAllSearchTerms ( context );
+      }
+    else if ( (b == this->SubStructureListWidget->GetUseNoneButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "substructure";
+      this->DeselectAllSearchTerms ( context );
+      }  
     }
-  // no need to do anything here; we'll just get the widget values with tcl.
-  if (( m== this->DiagnosisMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+
+  //---
+  //--- Process list widgets
+  //---
+  if ( this->CurrentResultsList )
     {
+    if ((lb = this->CurrentResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
+      {
+      this->Script ("QueryAtlasOpenLink");
+      }
     }
-  else if (( m== this->GenderMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+  if ( this->PastResultsList )
     {
+    if ((lb = this->PastResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
+      {
+      }
     }
-  else if (( m== this->HandednessMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+
+  //---
+  //--- Process menu selections
+  //---
+  // no need to do anything here; we'll just grab the widget values when we need them with tcl
+  if ( this->DiagnosisMenuButton )
     {
+    if (( m== this->DiagnosisMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+      {
+      }
     }
-  else if (( m== this->AgeMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+  if ( this->GenderMenuButton )
     {
+    if (( m== this->GenderMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+      {
+      }
+    }
+  if ( this->HandednessMenuButton )
+    {
+    if (( m== this->HandednessMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+      {
+      }
+    }
+  if ( this->AgeMenuButton )
+    {
+    if (( m== this->AgeMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+      {
+      }
     }
   if ((c == this->SpeciesNoneButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent))
     {
@@ -1195,6 +1257,12 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     this->BuildResultsManagerGUI ( );
 #endif
 //    this->BuildDisplayAndNavigationGUI ( );
+    // ---
+    // Source main tcl files.
+    // (QueryAtlasInit sources other required tcl files)
+    // ---
+    app->Script ( "source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasInit");
+
 }
 
 
@@ -1285,43 +1353,26 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   
-    this->FSbrainSelector = vtkSlicerNodeSelectorWidget::New() ;
-    this->FSbrainSelector->SetParent ( this->FIPSFSFrame );
-    this->FSbrainSelector->Create ( );
-    this->FSbrainSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
-    this->FSbrainSelector->SetMRMLScene(this->GetMRMLScene());
-    this->FSbrainSelector->SetBorderWidth(2);
-    this->FSbrainSelector->SetPadX(2);
-    this->FSbrainSelector->SetPadY(2);
-    this->FSbrainSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->FSbrainSelector->GetWidget()->GetWidget()->SetWidth(20);
-    this->FSbrainSelector->GetLabel()->SetWidth(18);
-    this->FSbrainSelector->SetLabelText( "FreeSurfer anatomical: ");
-    this->FSbrainSelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->FSasegSelector = vtkSlicerNodeSelectorWidget::New() ;
+    this->FSasegSelector->SetParent ( this->FIPSFSFrame );
+    this->FSasegSelector->Create ( );
+    this->FSasegSelector->SetNodeClass("vtkMRMLVolumeNode", "LabelMap", "1", NULL);
+    this->FSasegSelector->SetMRMLScene(this->GetMRMLScene());
+    this->FSasegSelector->SetBorderWidth(2);
+    this->FSasegSelector->SetPadX(2);
+    this->FSasegSelector->SetPadY(2);
+    this->FSasegSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->FSasegSelector->GetWidget()->GetWidget()->SetWidth(20);
+    this->FSasegSelector->GetLabel()->SetWidth(18);
+    this->FSasegSelector->SetLabelText( "FreeSurfer aparc+aseg: ");
+    this->FSasegSelector->SetBalloonHelpString("select a volume from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                   this->FSbrainSelector->GetWidgetName());
-
-    this->FSoverlaySelector = vtkSlicerNodeSelectorWidget::New() ;
-    this->FSoverlaySelector->SetParent ( this->FIPSFSFrame );
-    this->FSoverlaySelector->Create ( );
-    this->FSoverlaySelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
-    this->FSoverlaySelector->SetMRMLScene(this->GetMRMLScene());
-    this->FSoverlaySelector->SetBorderWidth(2);
-    this->FSoverlaySelector->SetPadX(2);
-    this->FSoverlaySelector->SetPadY(2);
-    this->FSoverlaySelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->FSoverlaySelector->GetWidget()->GetWidget()->SetWidth(20);
-    this->FSoverlaySelector->GetLabel()->SetWidth(18);
-    this->FSoverlaySelector->SetLabelText( "Statistical volume: ");
-    this->FSoverlaySelector->SetBalloonHelpString("select a volume from the current  scene.");
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                  this->FSoverlaySelector->GetWidgetName());
-
+                   this->FSasegSelector->GetWidgetName());
 
     this->FSmodelSelector = vtkSlicerNodeSelectorWidget::New() ;
     this->FSmodelSelector->SetParent ( this->FIPSFSFrame );
     this->FSmodelSelector->Create ( );
-    this->FSmodelSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->FSmodelSelector->SetNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
     this->FSmodelSelector->SetMRMLScene(this->GetMRMLScene());
     this->FSmodelSelector->SetBorderWidth(2);
     this->FSmodelSelector->SetPadX(2);
@@ -1334,23 +1385,16 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->FSmodelSelector->GetWidgetName());
 
-    this->FStransformSelector = vtkSlicerNodeSelectorWidget::New() ;
-    this->FStransformSelector->SetParent ( this->FIPSFSFrame );
-    this->FStransformSelector->Create ( );
-    this->FStransformSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
-    this->FStransformSelector->SetMRMLScene(this->GetMRMLScene());
-    this->FStransformSelector->SetBorderWidth(2);
-    this->FStransformSelector->SetPadX(2);
-    this->FStransformSelector->SetPadY(2);
-    this->FStransformSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->FStransformSelector->GetWidget()->GetWidget()->SetWidth(20);
-    this->FStransformSelector->GetLabel()->SetWidth(18);
-    this->FStransformSelector->SetLabelText( "Registration transform: ");
-    this->FStransformSelector->SetBalloonHelpString("select a volume from the current  scene.");
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                  this->FStransformSelector->GetWidgetName());
+    vtkSlicerPopUpHelpWidget *helpy = vtkSlicerPopUpHelpWidget::New();
+    helpy->SetParent ( this->FIPSFSFrame );
+    helpy->Create ( );
+    helpy->SetHelpText (" This is some sample help text. This is some more sample help text. Not so very helpful yet." );
+    helpy->SetHelpTitle ( "Testing Popup Help" );
+    this->Script ( "pack %s -side top -anchor nw -padx 2 -pady 2", helpy->GetWidgetName() );
+    helpy->Delete();
 
-
+    this->ProcessGUIEvents ( this->FSmodelSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
+    this->ProcessGUIEvents ( this->FSasegSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
 }
 
 //---------------------------------------------------------------------------
@@ -1374,6 +1418,15 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->QdecModelSelector->SetBalloonHelpString("select a volume from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->QdecModelSelector->GetWidgetName());
+
+    vtkSlicerPopUpHelpWidget *helpy = vtkSlicerPopUpHelpWidget::New();
+    helpy->SetParent ( this->QdecFrame );
+    helpy->Create ( );
+    helpy->SetHelpText (" This is some sample help text. This is some more sample help text. Not so very helpful yet." );
+    helpy->SetHelpTitle ( "Testing Popup Help" );
+    this->Script ( "pack %s -side top -anchor nw -padx 2 -pady 2", helpy->GetWidgetName() );
+    helpy->Delete();
+
 
     //get uri from model, load annotations from a relative path??
 
@@ -2020,9 +2073,6 @@ void vtkQueryAtlasGUI::BuildDisplayAndNavigationGUI ( )
                   displayFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
     */
-     // ---
-    // Source tcl files
-    app->Script ( "source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasInit");
     displayFrame->Delete();
 }
 
@@ -2214,13 +2264,6 @@ void vtkQueryAtlasGUI::BuildLoaderContextButtons ( vtkKWFrame *parent )
                  this->FIPSFSButton->GetWidgetName(),
                  this->QdecButton->GetWidgetName() );
 
-  vtkSlicerPopUpHelpWidget *helpy = vtkSlicerPopUpHelpWidget::New();
-  helpy->SetParent ( f  );
-  helpy->Create ( );
-  helpy->SetHelpText (" This is some sample help text. This is some more sample help text. Not so very helpful yet." );
-  helpy->SetHelpTitle ( "Testing Popup Help" );
-  this->Script ( "pack %s -side right -anchor ne -padx 2 -pady 2 -ipady 10", helpy->GetWidgetName() );
-  helpy->Delete();
 
   f->Delete();
 }
