@@ -203,9 +203,8 @@ switch $::tcl_platform(os) {
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.$shared_lib_ext
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/libNaviTrack.$shared_lib_ext
         set ::dcmtk_TEST_FILE $::dcmtk_DIR/dcmnet/libsrc/libdcmnet.a
-        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake.exe
-        set ::LIBCURL_TEST_FILE $::LIBCURL_BUILD_DIR/bin/cmcurl.a
-
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
+        set ::LIBCURL_TEST_FILE $::LIBCURL_BUILD_DIR/bin/libcmcurl.a
     }
     "Linux" {
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
@@ -232,8 +231,8 @@ switch $::tcl_platform(os) {
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.so
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/libNaviTrack.$shared_lib_ext
         set ::dcmtk_TEST_FILE $::dcmtk_DIR/dcmnet/libsrc/libdcmnet.a
-        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake.exe
-        set ::LIBCURL_TEST_FILE $::LIBCURL_BUILD_DIR/bin/cmcurl.a
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
+        set ::LIBCURL_TEST_FILE $::LIBCURL_BUILD_DIR/bin/libcmcurl.a
 
     }
     "Windows NT" {
