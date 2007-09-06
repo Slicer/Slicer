@@ -120,7 +120,7 @@ proc VolumeRenderingBuildGUI {this} {
     puts "vtkKWVolumePropertyWidget: $::VR($this,vpw)"
     $::VR($this,vpw) SetParent [$::VR($this,cFrameVolumes) GetFrame]
     $::VR($this,vpw) ComponentWeightsVisibilityOff
-    $::VR($this,vpw) SetWindowLevel 130        100
+    $::VR($this,vpw) SetWindowLevel 130    100
     $::VR($this,vpw) Create
     #No Observer:performance!
     #
@@ -212,11 +212,11 @@ proc VolumeRenderingAddGUIObservers {this} {
     $this AddObserverByNumber $::VR($this,buttonMIP) 10000
     $this AddObserverByNumber $::VR($this,buttonThreeD) 10000
     $this AddObserverByNumber $::VR($this,buttonTwoD) 10000
-        $this AddObserverByNumber $::VR($this,cropping) 10000
+    $this AddObserverByNumber $::VR($this,cropping) 10000
     $this AddObserverByNumber  [[$::VR($this,presetMapping) GetWidget] GetMenu] 10005
     [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow] AddObserver AbortCheckEvent {TkCheckAbort}
     $::VR($this,vpw) AddObserver AnyEvent {
-        puts "Abort because of Event Outside Renderer" 
+    puts "Abort because of Event Outside Renderer" 
 [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow] SetAbortRender 1
 }
 $::VR($this,vpw) AddObserver AnyEvent "$::VR($this,renderWidget) Render"
@@ -311,20 +311,35 @@ proc VolumeRenderingProcessGUIEvents {this caller event} {
         } ;#switch
     
     } elseif {$caller == $::VR($this,cropping)} {
-        puts "cropping"
-        set scene [$::slicer3::ApplicationLogic GetMRMLScene]
-        set roiCount [$scene GetNumberOfNodesByClass "vtkMRMLROIListNode"]
-        if {$roiCount>0} {
-        set roiList [$scene GetNthNodeByClass 0 "vtkMRMLROIListNode"]
-        set radius [$roiList GetNthROIRadiusXYZ 0]
-        set center [$roiList GetNthROIXYZ 0]
-
-        
-        $::VR($this,volumeMapper) CroppingOn
-        $::VR($this,volumeMapper) SetCroppingRegionPlanes [expr {[lindex $center 0]-[lindex $radius 0]}] [expr {[lindex $center 0]+[lindex $radius 0]}] [expr {[lindex $center 1]-[lindex $radius 1]}] [expr {[lindex $center 1]+[lindex $radius 1]}] [expr {[lindex $center 2]-[lindex $radius 2]}] [expr {[lindex $center 2]-[lindex $radius 2]}]
+    puts "cropping"
+    set scene [$::slicer3::ApplicationLogic GetMRMLScene]
+    set roiCount [$scene GetNumberOfNodesByClass "vtkMRMLROIListNode"]
+    if {$roiCount>0} {
+    set roiList [$scene GetNthNodeByClass 0 "vtkMRMLROIListNode"]
+    
+    if 0 {
+set radius [$roiList GetNthROIRadiusIJK 0]
+set center [$roiList GetNthROIIJK 0]
+    set  pointA [[$::VR($this,matrix) Transpose] MultiplyPoint [expr {[lindex $center 0]-[lindex $radius 0]}] [expr {[lindex $center 1]-[lindex $radius 1]}] [expr {[lindex $center 2]-[lindex $radius 2]}] 0]
+    set  pointB [[$::VR($this,matrix) Transpose] MultiplyPoint [expr {[lindex $center 0]+[lindex $radius 0]}] [expr {[lindex $center 1]+[lindex $radius 1]}] [expr {[lindex $center 2]+[lindex $radius 2]}] 0]
+$::VR($this,volumeMapper) CroppingOn
+    $::VR($this,volumeMapper) SetCroppingRegionPlanes [lindex $pointA 0] [lindex $pointB 0] [lindex $pointA 1] [lindex $pointB 1] [lindex $pointA 2] [lindex $pointB 2]
             $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
-        puts "cropping on processed"
-        }
+} 
+if 1 {
+#Attention at the moment factor 10 for the radius
+set radius [$roiList GetNthROIRadiusIJK 0]
+set center [$roiList GetNthROIIJK 0]
+$::VR($this,volumeMapper) CroppingOn
+    $::VR($this,volumeMapper) SetCroppingRegionPlanes [expr {[lindex $center 0]-[expr 10 * [lindex $radius 0]]}] [expr {[lindex $center 0]+[expr 10 * [lindex $radius 0]]}] [expr {[lindex $center 1]-[expr 10 * [lindex $radius 1]]}] [expr {[lindex $center 1]+[expr 10 * [lindex $radius 1]]}] [expr {[lindex $center 2]-[expr 10 * [lindex $radius 2]]}] [expr {[lindex $center 2]+[expr 10 * [lindex $radius 2]]}]  
+            $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
+}
+    
+
+    
+    
+    puts "cropping on processed"
+    }
 
        
     } ;#elseif
@@ -468,16 +483,16 @@ proc buttonLoadNode {this} {
             }
             
         if 1 {
-          set ::VR($this,converter) [vtkImageShiftScale New]
+      set ::VR($this,converter) [vtkImageShiftScale New]
             $::VR($this,converter) SetOutputScalarTypeToUnsignedChar 
             $::VR($this,converter) SetInput $::VR($this,aImageData)
             set ::VR($this,volumeMapper) [vtkVolumeTextureMapper3D New]
             $::VR($this,volumeMapper) SetInput [$::VR($this,converter) GetOutput]
             $::VR($this,volumeMapper) SetSampleDistance 0.1
-                
+        
         }
             puts "348"
-        $::VR($this,volumeMapper) AddObserver ProgressEvent {puts "progress:"}
+    $::VR($this,volumeMapper) AddObserver ProgressEvent {puts "progress:"}
         set ::VR($this,volume) [vtkVolume New]
         $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
         $::VR($this,volume) SetProperty $::VR($this,volumeProperty)
