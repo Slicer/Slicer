@@ -310,14 +310,8 @@ itcl::body Labeler::buildOptions { } {
   #
   # event observers - TODO: if there were a way to make these more specific, I would...
   #
-  set tag [$o(range) AddObserver AnyEvent "after idle $this previewOptions"]
-  lappend _observerRecords "$o(range) $tag"
-  set tag [$o(apply) AddObserver AnyEvent "$this applyOptions; after idle ::EffectSWidget::RemoveAll"]
-  lappend _observerRecords "$o(apply) $tag"
-  set tag [$o(useForPainting) AddObserver AnyEvent "$this setPaintThreshold"]
-  lappend _observerRecords "$o(useForPainting) $tag"
-  set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
-  lappend _observerRecords "$o(cancel) $tag"
+  set tag [$o(paintRange) AddObserver AnyEvent "after idle $this previewOptions"]
+  lappend _observerRecords "$o(paintRange) $tag"
 
   if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
     $this errorDialog "Need to have background and label layers to use threshold"

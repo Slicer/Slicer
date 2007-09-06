@@ -26,9 +26,9 @@ if { [itcl::find class WandEffect] == "" } {
 
   itcl::class WandEffect {
 
-    inherit EffectSWidget
+    inherit Labeler
 
-    constructor {sliceGUI} {EffectSWidget::constructor $sliceGUI} {}
+    constructor {sliceGUI} {Labeler::constructor $sliceGUI} {}
     destructor {}
 
     public variable percentage "0.1"
@@ -149,14 +149,18 @@ itcl::body WandEffect::preview {} {
   if { $j0 == $j1 } { $o(wandFilter) SetPlaneToIK }
   if { $k0 == $k1 } { $o(wandFilter) SetPlaneToIJ }
 
-  $_layers(label,node) SetAndObserveImageData [$o(wandFilter) GetOutput] 
-  $_layers(label,node) Modified
+  #$_layers(label,node) SetAndObserveImageData [$o(wandFilter) GetOutput] 
+  #$_layers(label,node) Modified
 
   $this setProgressFilter $o(wandFilter) "Magic Wand Connected Components"
   $o(wandFilter) Update
 }
   
 itcl::body WandEffect::buildOptions {} {
+
+  # call superclass version of buildOptions
+  chain
+
   #
   # a slider to set the percentage of the dynamic range
   #
@@ -231,6 +235,10 @@ itcl::body WandEffect::updateParameters { } {
 }
 
 itcl::body WandEffect::tearDownOptions { } {
+
+  # call superclass version of tearDownOptions
+  chain
+
   foreach w "percentage cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
