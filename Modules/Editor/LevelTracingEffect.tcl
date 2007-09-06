@@ -96,7 +96,19 @@ itcl::body LevelTracingEffect::apply {} {
     return
   }
 
-  $this applyMaskImage $o(tracingPolyData)
+#  $this applyMaskImage $o(tracingPolyData)
+
+  if { ![info exists o(tracing3DFilter)] } {
+    set o(tracing3DFilter) [vtkNew vtkITKLevelTracing3DImageFilter]
+  }
+
+  $o(tracing3DFilter) SetInput [$this getInputBackground]
+  $o(tracing3DFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
+
+  $_layers(label,node) SetAndObserveImageData [$o(tracing3DFilter) GetOutput] 
+  $_layers(label,node) Modified
+
+  $o(tracing3DFilter) Update
 
 }
 

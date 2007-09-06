@@ -31,6 +31,7 @@ SET(vtkITK_SRCS
     vtkITKImageToImageFilterSS.h
     vtkITKGradientAnisotropicDiffusionImageFilter.cxx
     vtkITKLevelTracingImageFilter.cxx
+    vtkITKLevelTracing3DImageFilter.cxx
     vtkITKWandImageFilter.cxx
 )
 
