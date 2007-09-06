@@ -4,7 +4,7 @@
   <title>NAMIC Command Line Processing Code Generator</title>
   <description>Generates C++ code that will parse command lines</description>
   <version>1.0</version>
-  <documentationurl></documentationurl>
+  <documentation-url></documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 

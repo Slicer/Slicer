@@ -6,7 +6,7 @@
   Generates a map of connectivity probabilities from a DWI volume.
   </description>
   <version>1.0</version>
-  <documentationurl></documentationurl>
+  <documentation-url></documentation-url>
   <license></license>
   <contributor>Tri Ngo</contributor>
 

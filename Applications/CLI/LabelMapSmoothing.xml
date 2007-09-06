@@ -12,7 +12,7 @@ this filter runs an anti-alising algorithm followed by a Gaussian
 smoothing algorithm.  The output is a smoothed label map.  
   </description>
   <version>1.0</version>
-  <documentationurl></documentationurl>
+  <documentation-url></documentation-url>
   <license></license>
   <contributor>Dirk Padfield, Josh Cates, Ross Whitaker</contributor>
 <acknowledgements>

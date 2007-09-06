@@ -13,7 +13,7 @@ threshold using the Otsu threshold algorthm, applies that theshold to
 the input image and runs a connected component algortihm.
   </description>
   <version>1.0</version>
-  <documentationurl></documentationurl>
+  <documentation-url></documentation-url>
   <license></license>
   <contributor>Bill Lorensen</contributor>
 <acknowledgements>
