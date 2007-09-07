@@ -366,7 +366,7 @@ if { !$isDarwin  && (![file exists $::BLT_TEST_FILE] || $::GENLIB(update)) } {
 # Get and build python
 #
 
-if { ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
+if { 0 && ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
 
     file mkdir $SLICER_LIB/python
     file mkdir $SLICER_LIB/python-build
@@ -414,20 +414,25 @@ if { 0 && ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
             }
         }
         cd $SLICER_LIB/python/numpy
+        set ::env(ATLAS) None
+        set ::env(BLAS) None
+        set ::env(LAPACK) None
+        runcmd $SLICER_LIB/python-build/bin/python ./setup.py install
+
+        # do scipy
+
+        # TODO: need to have a way to build the blas library...
+        cd $SLICER_LIB/python
+        runcmd $::SVN co $::SCIPY_TAG scipy
+
+        cd $SLICER_LIB/python/scipy
+        set ::env(ATLAS) None
+        set ::env(BLAS) None
+        set ::env(LAPACK) None
         runcmd $SLICER_LIB/python-build/bin/python ./setup.py install
     }
 
 
-    # do scipy
-
-    # TODO: need to have a way to build the blas library...
-    if 0 {
-      cd $SLICER_LIB/python
-      runcmd $::SVN co $::SCIPY_TAG scipy
-
-      cd $SLICER_LIB/python/scipy
-      runcmd $SLICER_LIB/python-build/bin/python ./setup.py install
-    }
 }
 
 ################################################################################
