@@ -374,8 +374,6 @@ proc XcedeCatalogImportEntryVolume {node} {
     [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveVolumeID [$volumeNode GetID]
     [$::slicer3::VolumesGUI GetApplicationLogic] PropagateVolumeSelection
 
-    #--- clean up
-    $volumeNode Delete
 }
 
 #------------------------------------------------------------------------------
@@ -422,9 +420,6 @@ proc XcedeCatalogImportEntryModel {node} {
         puts "Warning: Xcede catalogs for slicer should contain a single model to which scalar overlays will be associated. This xcede file contains multiple models: all scalar overlays will be associated with the first model."
     }
 
-    #--- clean up
-    $mnode Delete
-    
 }
 
 
@@ -506,38 +501,33 @@ proc XcedeCatalogImportEntryTransform {node} {
         return
     }
 
+    #--- if filename contains ".register.dat" then we know what to do
+    set check [ string first "register.dat" $n(uri) ]
+    if { $check < 0 } {
+        puts "XcedeCatalogImportSetMatrixFromURI: $filename is unknown filetype, No transform imported."
+        tk_messageBox -message "XcedeCatalogImportSetMatrixFromURI: $filename is unknown filetype, No transform imported."
+        return
+    } 
+
+
     #--- add the node
-    set tnode [$::slicer3::MRMLScene CreateNodeByClass vtkMRMLLinearTransformNode ]
-    $tnode SetScene $::slicer3::MRMLScene
+    set tnode [ vtkMRMLLinearTransformNode New ]
     $tnode SetName $n(name)
     $::slicer3::MRMLScene AddNode $tnode
     set tid [ $tnode GetID ]
 
     if { $tid == "" } {
         puts "XcedeCatalogImportEntryTransform: unable to add Transform Node. No transform imported."
+       tk_messageBox -message "XcedeCatalogImportEntryTransform: unable to add Transform Node. No transform imported."
         return
     }
 
     if { [info exists n(description) ] } {
-        set tnode [$::slicer3::MRMLScene GetNodeByID $tid ]
         $tnode SetDescription $n(description)
     }
-    
-    #--- read the uri and translate matrix element values into place.
-    set matrix [ $tnode GetMatrixTransformToParent ]
-    if { $matrix == "" } {
-        puts "XcedeCatalogImportSetMatrixFromURI: matrix for transform ID=$id not found. No elements set."
-        return
-    }
-    
-    #--- if filename contains ".register.dat" then we know what to do
-    set check [ string first "register.dat" $n(uri) ]
-    if { $check < 0 } {
-        puts "XcedeCatalogImportSetMatrixFromURI: $filename is unknown filetype, No elements set."
-        return
-    } 
 
     #--- open register.dat file and read 
+    set matrix [ vtkMatrix4x4 New ]
     set fid [ open $n(uri) r ]
     set row 0
     set col 0
@@ -563,12 +553,23 @@ proc XcedeCatalogImportEntryTransform {node} {
     }
     close $fid
     
+    #--- read the uri and translate matrix element values into place.
+    set M [ $tnode GetMatrixTransformToParent ]
+    if { $M == "" } {
+        puts "XcedeCatalogImportSetMatrixFromURI: matrix for transform ID=$id not found. No elements set."
+       tk_messageBox -message "XcedeCatalogImportSetMatrixFromURI: matrix for transform ID=$id not found. No elements set."
+        return
+    }
+
+    $M DeepCopy $matrix
+    $matrix Delete
+    $tnode Delete
+    
     #--- this is for help with FIPS registration correction
     if { $n(name) == "anat2exf" } {
         set ::XcedeCatalog_MrmlID(anat2exf) $tid
     }
 
-    $tnode Delete
 }
 
 
@@ -732,8 +733,7 @@ proc XcedeCatalogImportComputeFIPS2SlicerTransformCorrection { } {
     set anat2exf [ $anat2exfT GetMatrixTransformToParent ]
 
     #--- create a new node to hold the transform
-    set ras2rasT [ $::slicer3::MRMLScene CreateNodeByClass vtkMRMLLinearTransformNode ]
-    $ras2rasT SetScene $::slicer3::MRMLScene
+    set ras2rasT [ vtkMRMLLinearTransformNode New ]
     $ras2rasT SetName StatisticsToBrainXform
     $::slicer3::MRMLScene AddNode $ras2rasT
 
