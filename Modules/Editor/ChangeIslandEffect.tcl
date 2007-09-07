@@ -56,7 +56,7 @@ itcl::body ChangeIslandEffect::destructor {} {
 
 itcl::body ChangeIslandEffect::processEvent { {caller ""} {event ""} } {
 
-  if { [$this preProcessEvent $caler $event] } {
+  if { [$this preProcessEvent $caller $event] } {
     # superclass processed the event, so we don't
     return
   }
@@ -94,7 +94,7 @@ itcl::body ChangeIslandEffect::apply {} {
   set conn [vtkImageConnectivity New]
   $conn SetFunctionToChangeIsland
   $conn SetSeed $_layers(label,i) $_layers(label,j) $_layers(label,k) 
-  $conn SetOutputLabel [EditorGetPaintLabel $::Editor(singleton)]
+  $conn SetOutputLabel [EditorGetPaintLabel]
   $conn SetInput [$this getInputLabel]
   $conn SetOutput [$this getOutputLabel]
 

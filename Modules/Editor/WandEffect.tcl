@@ -154,6 +154,8 @@ itcl::body WandEffect::preview {} {
 
   $this setProgressFilter $o(wandFilter) "Magic Wand Connected Components"
   $o(wandFilter) Update
+
+  puts [[ $o(wandFilter) GetOutput] Print]
 }
   
 itcl::body WandEffect::buildOptions {} {
@@ -200,6 +202,8 @@ itcl::body WandEffect::buildOptions {} {
     $this errorDialog "Background and Label map needed for wand"
     after idle ::EffectSWidget::RemoveAll
   }
+
+  $this updateParameters
 }
 
 itcl::body WandEffect::setOptions { } {
@@ -209,6 +213,7 @@ itcl::body WandEffect::setOptions { } {
   # - all instances of the effect are observing the node,
   #   so changes will propogate automatically
   #
+  chain
   set node [EditorGetParameterNode]
   $node SetParameter "Wand,percentage" [$o(percentage) GetValue]
 }
@@ -218,6 +223,7 @@ itcl::body WandEffect::updateParameters { } {
   # get the parameter from the node
   # - set default value if it doesn't exist
   #
+  chain
   set node [EditorGetParameterNode]
   set percentage [$node GetParameter "Wand,percentage"] 
   if { $percentage == "" } {

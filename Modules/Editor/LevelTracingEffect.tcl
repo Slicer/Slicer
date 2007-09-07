@@ -35,6 +35,7 @@ if { [itcl::find class LevelTracingEffect] == "" } {
     method processEvent {{caller ""} {event ""}} {}
     method preview {} {}
     method apply {} {}
+    method apply3D {} {}
     method buildOptions {} {}
     method tearDownOptions {} {}
   }
@@ -60,6 +61,8 @@ itcl::body LevelTracingEffect::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  chain $caller $event
+
   set event [$sliceGUI GetCurrentGUIEvent] 
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
@@ -70,6 +73,20 @@ itcl::body LevelTracingEffect::processEvent { {caller ""} {event ""} } {
     }
     "MouseMoveEvent" {
       $this preview
+    }
+    "KeyPressEvent" { 
+      set key [$_interactor GetKeySym]
+      if { [lsearch "3" $key] != -1 } {
+        $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+        $sliceGUI SetGUICommandAbortFlag 1
+        switch [$_interactor GetKeySym] {
+          "3" {
+            $this apply3D
+          }
+        }
+      } else {
+        # puts "wand ignoring $key"
+      }
     }
     "EnterEvent" {
       $o(cursorActor) VisibilityOn
@@ -96,7 +113,12 @@ itcl::body LevelTracingEffect::apply {} {
     return
   }
 
-#  $this applyMaskImage $o(tracingPolyData)
+  $this applyPolyMask $o(tracingPolyData)
+
+}
+
+
+itcl::body LevelTracingEffect::apply3D {} {
 
   if { ![info exists o(tracing3DFilter)] } {
     set o(tracing3DFilter) [vtkNew vtkITKLevelTracing3DImageFilter]
@@ -109,8 +131,8 @@ itcl::body LevelTracingEffect::apply {} {
   $_layers(label,node) Modified
 
   $o(tracing3DFilter) Update
-
 }
+
 
 itcl::body LevelTracingEffect::preview {} {
 
@@ -160,6 +182,8 @@ itcl::body LevelTracingEffect::preview {} {
   
 itcl::body LevelTracingEffect::buildOptions {} {
 
+  # call superclass version of buildOptions
+  chain
 
   #
   # a cancel button
@@ -194,9 +218,15 @@ itcl::body LevelTracingEffect::buildOptions {} {
     $this errorDialog "Background and Label map needed for Threshold"
     after idle ::EffectSWidget::RemoveAll
   }
+
+  $this updateParameters
 }
 
 itcl::body LevelTracingEffect::tearDownOptions { } {
+
+  # call superclass version of tearDownOptions
+  chain
+
   foreach w "help cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""

@@ -67,7 +67,7 @@ itcl::body EditBox::findEffects { {path ""} } {
 
   # effects that change the mouse cursor
   set _effects(list,mouseTools) {
-    ChangeIsland ChooseColor 
+    ChangeIsland ChooseColor GoToEditorModule 
     ImplicitCube ImplicitEllipse ImplicitRectangle 
     FreehandDrawLabel EraseLabel RemoveIslands ConnectedComponents 
     ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor PaintLabel

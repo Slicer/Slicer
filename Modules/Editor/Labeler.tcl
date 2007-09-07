@@ -6,7 +6,7 @@ package require Itcl
 if {0} { ;# comment
 
   Labeler is an abstract superclass for slicer Editor effects that
-  use an outliner to draw
+  use an outliner or applies a label map to a slice
 
   SWidget
   ^
@@ -43,17 +43,22 @@ if { [itcl::find class Labeler] == "" } {
     constructor {sliceGUI} {EffectSWidget::constructor $sliceGUI} {}
     destructor {}
 
-    public variable thresholdPaint 0
-    public variable thresholdMin 1
-    public variable thresholdMax 1
-    public variable drawOver 1
+    public variable paintThreshold 0
+    public variable paintThresholdMin 1
+    public variable paintThresholdMax 1
+    public variable paintOver 1
     public variable polygonDebugViewer 0
 
     # methods
+    method processEvent {{caller ""} {event ""}} {}
     method makeMaskImage {polyData} {}
-    method applyMaskImage {polyData} {}
+    method applyPolyMask {polyData} {}
+    method applyImageMask { maskIJKToRAS mask bounds } {}
     method buildOptions {} {}
     method tearDownOptions {} {}
+    method setOptions {} {}
+    method updateParameters {} {}
+
   }
 }
 
@@ -70,6 +75,21 @@ itcl::body Labeler::destructor {} {
 # ------------------------------------------------------------------
 #                             METHODS
 # ------------------------------------------------------------------
+
+itcl::body Labeler::processEvent { {caller ""} {event ""} } {
+  
+  chain $caller $event
+
+  if { $caller != "" && [$caller IsA "vtkKWWidget"] } {
+    $this setOptions
+  }
+
+  if { $caller != "" && [$caller IsA "vtkMRMLNode"] } {
+    $this updateParameters
+  }
+
+}
+
 
 itcl::body Labeler::makeMaskImage {polyData} {
 
@@ -170,7 +190,7 @@ itcl::body Labeler::makeMaskImage {polyData} {
 }
 
     
-itcl::body Labeler::applyMaskImage {polyData} {
+itcl::body Labeler::applyPolyMask {polyData} {
 
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
@@ -190,12 +210,21 @@ itcl::body Labeler::applyMaskImage {polyData} {
   set maskResult [$this makeMaskImage $polyData]
   foreach {maskIJKToRAS mask} $maskResult {}
 
+  [$polyData GetPoints] Modified
+  set bounds [$polyData GetBounds]
+
+  $this applyImageMask $maskIJKToRAS $mask $bounds
+
+}
+
+
+itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
+
   #
   # at this point, the mask vtkImageData contains a rasterized
   # version of the polygon and now needs to be added to the label
   # image
   #
-
 
   #
   # get the brush bounding box in ijk coordinates
@@ -204,8 +233,6 @@ itcl::body Labeler::applyMaskImage {polyData} {
   # - clamp the bounds to the dimensions of the label image
   #
 
-  [$polyData GetPoints] Modified
-  set bounds [$polyData GetBounds]
   foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
   set xyToIJK [[$_layers(label,logic) GetXYToIJKTransform] GetMatrix]
   set tlIJK [$xyToIJK MultiplyPoint $xlo $yhi 0 1]
@@ -260,9 +287,9 @@ itcl::body Labeler::applyMaskImage {polyData} {
   $painter SetBottomLeft $bl(i) $bl(j) $bl(k)
   $painter SetBottomRight $br(i) $br(j) $br(k)
   $painter SetPaintLabel [EditorGetPaintLabel]
-  $painter SetPaintOver $drawOver
-  $painter SetThresholdPaint $thresholdPaint
-  $painter SetThresholdPaintRange $thresholdMin $thresholdMax
+  $painter SetPaintOver $paintOver
+  $painter SetThresholdPaint $paintThreshold
+  $painter SetThresholdPaintRange $paintThresholdMin $paintThresholdMax
 
   $painter Paint
 
@@ -300,23 +327,23 @@ itcl::body Labeler::buildOptions { } {
   set o(paintRange) [vtkKWRange New]
   $o(paintRange) SetParent [$this getOptionsFrame]
   $o(paintRange) Create
-  $o(paintRange) SetLabelText "Min/Max for Threshold Labeling"
+  $o(paintRange) SetLabelText "Threshold Range"
   $o(paintRange) SetWholeRange 0 2000
   $o(paintRange) SetRange 50 2000
   $o(paintRange) SetReliefToGroove
   $o(paintRange) SetBalloonHelpString "In threshold mode, the label will only be set if the background value is within this range."
-  # don't pack this, it gets conditionally packed below
+  pack [$o(paintRange) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 
 
   #
   # event observers - TODO: if there were a way to make these more specific, I would...
   #
-  set tag [$o(paintRange) AddObserver AnyEvent "after idle $this previewOptions"]
+  set tag [[$o(paintOver) GetWidget] AddObserver AnyEvent "$this processEvent $o(paintOver)"]
+  lappend _observerRecords "$o(paintOver) $tag"
+  set tag [[$o(paintThreshold) GetWidget] AddObserver AnyEvent "$this processEvent $o(paintThreshold)"]
+  lappend _observerRecords "$o(paintThreshold) $tag"
+  set tag [$o(paintRange) AddObserver AnyEvent "$this processEvent $o(paintRange)"]
   lappend _observerRecords "$o(paintRange) $tag"
-
-  if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
-    $this errorDialog "Need to have background and label layers to use threshold"
-    after idle ::EffectSWidget::RemoveAll
-  }
 }
 
 itcl::body Labeler::tearDownOptions { } {
@@ -330,3 +357,65 @@ itcl::body Labeler::tearDownOptions { } {
   }
 }
 
+itcl::body Labeler::setOptions { } {
+  #
+  # set the node to the current value of the GUI
+  # - this will be saved/restored with the scene
+  # - all instances of the effect are observing the node,
+  #   so changes will propogate automatically
+  #
+  chain
+  set node [EditorGetParameterNode]
+  $this configure -paintOver [[$o(paintOver) GetWidget] GetSelectedState]
+  $node SetParameter "Labeler,paintOver" $paintOver
+  $this configure -paintThreshold [[$o(paintThreshold) GetWidget] GetSelectedState]
+  $node SetParameter "Labeler,paintThreshold" $paintThreshold
+  foreach {Min Max} [$o(paintRange) GetRange] {}
+  $this configure -paintThresholdMin $Min
+  $node SetParameter "Labeler,paintThresholdMin" $Min
+  $this configure -paintThresholdMax $Max
+  $node SetParameter "Labeler,paintThresholdMax" $Max
+}
+
+itcl::body Labeler::updateParameters { } {
+  #
+  # get the parameter from the node
+  # - set default value if it doesn't exist
+  #
+  chain
+  set node [EditorGetParameterNode]
+  foreach {param default} {
+    paintOver 1
+    paintThreshold 0
+    paintThresholdMin 0
+    paintThresholdMax 1000
+  } {
+    set pvalue [$node GetParameter "Labeler,$param"] 
+    if { $pvalue == "" } {
+      $node SetParameter "Labeler,$param" $default
+    }
+  }
+
+  # set the GUI and effect parameters to match node
+  # (only if this is the instance that "owns" the GUI
+  puts [$node Print]
+  set paintOver [$node GetParameter "Labeler,paintOver"]
+  puts "got $paintOver from $node GetParameter Labeler,paintOver"
+  $this configure -paintOver $paintOver
+  if { [info exists o(paintOver)] } {
+    [$o(paintOver) GetWidget] SetSelectedState $paintOver
+  }
+  set paintThreshold [$node GetParameter "Labeler,paintThreshold"]
+  $this configure -paintThreshold $paintThreshold
+  if { [info exists o(paintThreshold)] } {
+    [$o(paintThreshold) GetWidget] SetSelectedState $paintThreshold
+  }
+  set paintThresholdMin [$node GetParameter "Labeler,paintThresholdMin"]
+  $this configure -paintThresholdMin $paintThresholdMin
+  set paintThresholdMax [$node GetParameter "Labeler,paintThresholdMax"]
+  $this configure -paintThresholdMax $paintThresholdMax
+  if { [info exists o(paintRange)] } {
+    $o(paintRange) SetRange $paintThresholdMin $paintThresholdMax
+    $o(paintRange) SetEnabled $paintThreshold
+  }
+}

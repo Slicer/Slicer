@@ -101,6 +101,7 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
   set node [EditorGetParameterNode]
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
   lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "puts node"]
 }
 
 itcl::body EffectSWidget::destructor {} {
