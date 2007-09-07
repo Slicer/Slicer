@@ -366,7 +366,7 @@ if { !$isDarwin  && (![file exists $::BLT_TEST_FILE] || $::GENLIB(update)) } {
 # Get and build python
 #
 
-if { 0 && ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
+if { ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
 
     file mkdir $SLICER_LIB/python
     file mkdir $SLICER_LIB/python-build
@@ -388,7 +388,7 @@ if { 0 && ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
 # Get and build numpy and scipy
 #
 
-if { 0 && ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
+if { 0 &&  ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
 
     set ::env(PYTHONHOME)        $SLICER_LIB/python-build
     cd $SLICER_LIB/python
@@ -429,7 +429,8 @@ if { 0 && ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
         set ::env(ATLAS) None
         set ::env(BLAS) None
         set ::env(LAPACK) None
-        runcmd $SLICER_LIB/python-build/bin/python ./setup.py install
+        # skip scipy for now until we find a BLAS to link against
+        # runcmd $SLICER_LIB/python-build/bin/python ./setup.py install
     }
 
 
