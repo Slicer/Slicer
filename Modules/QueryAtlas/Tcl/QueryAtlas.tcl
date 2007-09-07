@@ -11,7 +11,21 @@ proc QueryAtlasInit { } {
     QueryAtlasInitializeGlobals
 }
 
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasTearDown { } {
 
+    #--- Delete things.
+    if { [info exists ::QA(cursor,actor) } {
+        $::QA(cursor,actor) Delete();
+    }
+    #--- set the model and label selectors to be NULL
+    set as [$::slicer3::QueryAtlasGUI GetFSasegSelector]
+    $as SetSelected ""
+    set ms [$::slicer3::QueryAtlasGUI GetFSmodelSelector]
+    $ms SetSelected ""
+}
 
 #----------------------------------------------------------------------------------------------------
 # 
@@ -32,13 +46,38 @@ proc QueryAtlasInitializeGlobals { } {
     set ::QA(statvol,volumeNodeID) ""
     set ::QA(label,volumeNodeID) ""
 
-    set ::QA(ontologyHost ) "localhost"
+    set ::QA(ontologyHost) "localhost"
     set ::QA(ontologyPort) 3334
     set ::QA(ontologyViewerPID) ""
     set ::QA(ontologyLaunched) 0
 
     set ::QA(annotationVisibility) 1
+    set ::QA(statsDisplayCompleted) 0
+
 }
+
+
+
+
+#----------------------------------------------------------------------------------------------------
+# If a MRML node has been deleted,
+# check to see if it's the model or label map.
+# and do the right thing, whatever that turns
+# out to be.
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasNodeRemovedUpdate { } {
+    
+}
+
+#----------------------------------------------------------------------------------------------------
+# If a MRML node has been added,
+# check to see if it's a model or label map.
+# we might need...
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasNodeAddedUpdate { } {
+    
+}
+
 
 
 
@@ -46,7 +85,7 @@ proc QueryAtlasInitializeGlobals { } {
 # pops up a message when there's a problem
 # str is a text string containing the message
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasMessagDialog { str } {
+proc QueryAtlasMessageDialog { str } {
 
     #--- convenience method for displaying popup message dialog.
         set dialog [ vtkKWMessageDialog New ]
@@ -60,35 +99,118 @@ proc QueryAtlasMessagDialog { str } {
 
 
 
-
-
 #----------------------------------------------------------------------------------------------------
-#--- tries to put a brain in the background,
-#--- a label map in the label layer and
-#--- a statistics volume in the foreground.
-#--- looks in the various node names for clues.
-#--- makes no changes if it can't find a dataset.
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasTryConfigure { } {
+proc QueryAtlasSetAnnotatedModel { } {
 
-    set found [ QueryAtlasAutoConfigureLayers ]
-    if {!found } {
-        QueryAtlasMessageDialog "Couldn't auto-detect model and label map. Please use selectors to specify."
+    set ms [$::slicer3::QueryAtlasGUI GetFSmodelSelector]
+    set node [ $ms GetSelected ]
+    if { $node == NULL } {
         return
     }
-    set found [ QueryAtlasAddAnnotations  ]
-    if { !found } {
-        QueryAtlasMessageDialog "Couldn't find annotations for the selected model or label map. This scene may not support interactive annotations."
-        return
+    
+    set gotmodel 0
+    set name ""
+
+    set name [ $node GetName ]
+    set t [ string first "lh.pial" $name ]
+    if {$t >= 0 } {
+        set gotmodel 1
+        set ::QA(modelNodeID) [ $node GetID ]
+        set ::QA(modelDisplayNodeID) [ $node GetDisplayNodeID ]
+    }
+    set t [ string first "rh.pial" $name ]
+    if {$t >= 0 } {
+        set gotmodel 1
+        set ::QA(modelNodeID) [ $node GetID ]
+        set ::QA(modelDisplayNodeID) [ $node GetDisplayNodeID ]
     }
 
-    QueryAtlasAutoWinLevThreshStats
-    QueryAtlasInitializePicker 
-    QueryAtlasRenderView
-    QueryAtlasUpdateCursor
-    set ::QA(CurrentRASPoint) "0 0 0"
-    set ::QA(SceneLoaded) 1
+    if { ! $gotmodel } {
+        QueryAtlasMessageDialog "Selected volume should be a FreeSurfer lh.pial or rh.pial file."
+        set ::QA(modelNodeID) ""
+        set ::QA(modelDisplayNodeID) ""
+    }
+    
 }
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetAnnotatedLabelMap { } {
+
+    set vs [$::slicer3::QueryAtlasGUI GetFSasegSelector]
+    set node [ $vs GetSelected ]
+
+    if { $node == "" } {
+        return
+    }
+
+    set gotlabels 0
+    set name ""
+    set name [ $node GetName ]
+    set t [ string first "aseg" $name ]
+    if { $t >= 0 } {
+        set gotlabels 1
+        set ::QA(label,volumeNodeID) [ $node GetID ]
+        #--- put in label layer
+        for { set j 0 } { $j < $numCnodes } { incr j } {
+            set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
+            $cnode SetReferenceLabelVolumeID $::QA(label,volumeNodeID)
+            $cnode SetLabelOpacity 0.4
+        }
+    }
+
+    if { ! $gotlabels } {
+        QueryAtlasMessageDialog "Selected volume should be a FreeSurfer aparc+aseg file."
+        set ::QA(label,volumeNodeID) ""
+    }
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetBrainAndStats { } {
+
+    set vs [$::slicer3::QueryAtlasGUI GetFSbrainSelector]
+    set node [ $vs GetSelected ]
+    if { $node == "" } {
+        return
+    }
+
+    set gotbrain 0
+    set name ""
+    set name [ $node GetName ]
+    #--- now check on name
+    set t [ string first "brain" $name ]
+    if { $t >= 0 } {
+        set gotbrain 1
+        set ::QA(brain,volumeNodeID) [ $node GetID ]
+        #--- put in background
+        for { set j 0 } { $j < $numCnodes } { incr j } {
+            set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
+            $cnode SetReferenceBackgroundVolumeID $::QA(brain,volumeNodeID)
+        }
+        #--- Set auto threshold on.
+        set dnode [ $node GetDisplayNode ]
+        $dnode SetAutoThreshold 1
+    }
+    
+    if { ! $gotbrain } {
+        QueryAtlasMessageDialog "Selected volume should be a FreeSurfer brain.mgz file."
+        set ::QA(brain,volumeNodeID) ""
+    } else {
+        #--- auto win/lev/thresh stats files if
+        #--- haven't already.
+        if { ! $::QA(statsDisplayCompleted) } {
+            QueryAtlasAutoWinLevThreshStats
+        }
+        #--- and put one of the stat files in the FG?
+    }
+}
+
+
+
 
 #----------------------------------------------------------------------------------------------------
 # --- applies some display parameters to volumes that could be statistics...
@@ -136,11 +258,16 @@ proc QueryAtlasAutoWinLevThreshStats { } {
 
         }
     }
-    
+
+    #--- do this once per loaded dataset
+    set ::QA(statsDisplayCompleted) 1    
 }
 
 
+
+
 #----------------------------------------------------------------------------------------------------
+#--- don't use this: too magic. Select nodes from GUI.
 #--- tries to put a brain in the background,
 #--- a label map in the label layer and
 #--- a statistics volume in the foreground.
@@ -282,52 +409,6 @@ proc QueryAtlasGetLabels { } {
 
 
 
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasLoad { {filename ""} } {
-
-    # find the data
-    set ::QA(annotations) ""
-    set ::QA(linkBundleCount) 0
-    set ::QA(SceneLoaded) 0
-    
-    if { $filename != "" } {
-        set ::QA(annotations) $filename
-    } else {
-        set candidates {
-            c:/cygwin/home/wjp/data/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
-            /workspace/pieper/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
-            /projects/birn/data/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
-            i:/fBIRN-AHM2006/fbph2-000670986943/surf/lh.pial
-            c:/data/fBIRN-AHM2006/fbph2-000648622547/surf/lh.pial
-            /projects/birn/freesurfer/data/bert/surf/lh.pial
-        }
-        foreach c $candidates {
-            if { [file exists $c] } {
-                set ::QA(annotations) $c
-                set ::QA(directory) [file dirname [file dirname $::QA(annotations)]]
-                break
-            }
-        }
-    }
-
-    QueryAtlasAddBIRNLogo
-    QueryAtlasAddModel
-    QueryAtlasAddVolumes
-    QueryAtlasAddAnnotations 
-    QueryAtlasInitializePicker 
-    QueryAtlasRenderView
-    QueryAtlasUpdateCursor
-    set ::QA(CurrentRASPoint) "0 0 0"
-    set ::QA(SceneLoaded) 1
-}
-
-
-
-
-
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
@@ -437,127 +518,27 @@ proc QueryAtlasAddBIRNLogo {} {
 
 
 
+
 #----------------------------------------------------------------------------------------------------
-#--- Add the model with the filename to the scene
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasAddModel {} {
+proc QueryAtlasSetUp { } {
 
-  # load the data
-  set modelNode [vtkMRMLModelNode New]
-  set modelStorageNode [vtkMRMLFreeSurferModelStorageNode New]
-  set modelDisplayNode [vtkMRMLModelDisplayNode New]
+    #--- only do this if a model and labelmap are provided
+    if { $::QA(modelNodeID) == "" || $::QA(label,volumeNodeID) == "" || $::QA(modelDisplayNodeID) == "" } {
+        QueryAtlasMessageDialog "Please select an annotated model and labelmap to begin."
+        return
+    }
 
-  $modelStorageNode SetFileName $::QA(annotations)
-  $modelStorageNode SetUseStripper 0
-
-  if { [$modelStorageNode ReadData $modelNode] != 0 } {
-    $modelNode SetName [file tail $::QA(annotations)]
-
-    $modelNode SetScene $::slicer3::MRMLScene
-    $modelStorageNode SetScene $::slicer3::MRMLScene
-    $modelDisplayNode SetScene $::slicer3::MRMLScene
-
-    $::slicer3::MRMLScene AddNode $modelStorageNode
-    $::slicer3::MRMLScene AddNode $modelDisplayNode
-
-    $modelNode SetReferenceStorageNodeID [$modelStorageNode GetID]
-    $modelNode SetAndObserveDisplayNodeID [$modelDisplayNode GetID]
-
-    $::slicer3::MRMLScene AddNode $modelNode
-    set ::QA(modelNodeID) [$modelNode GetID]
-  } else {
-    puts stderr "Can't read model $::QA(annotations)"
-  }
-
-  $modelNode Delete
-  $modelStorageNode Delete
-  $modelDisplayNode Delete
+    #--- perform once per scene.
+    if { ! $::QA(SceneLoaded) } {
+        QueryAtlasInitializePicker 
+        QueryAtlasRenderView
+        QueryAtlasUpdateCursor
+        set ::QA(CurrentRASPoint) "0 0 0"
+        set ::QA(SceneLoaded) 1
+    }
 }
 
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasAddVolumes {} {
-
-  set volumesLogic [$::slicer3::VolumesGUI GetLogic]
-  set colorLogic [$::slicer3::ColorGUI GetLogic]
-  set centered 1
-
-  #
-  # add the brain image
-  #
-  set fileName $::QA(directory)/mri/brain.mgz
-
-  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0 brain]
-
-  set ::QA(brain,volumeNodeID) [$volumeNode GetID]
-
-  set volumeDisplayNode [$volumeNode GetDisplayNode]
-
-  $volumeDisplayNode SetAndObserveColorNodeID [$colorLogic GetDefaultVolumeColorNodeID]
-
-  $volumeDisplayNode SetWindow 216
-  $volumeDisplayNode SetLevel 108
-  $volumeDisplayNode SetUpperThreshold 216
-  $volumeDisplayNode SetLowerThreshold 30.99
-  $volumeDisplayNode SetApplyThreshold 1
-  $volumeDisplayNode SetAutoThreshold 0
-
-  #
-  # add the function image
-  # - requires translation to correct space
-  #
-  #--- hardcoded transform!
-  #---TODO: get this from data
-  set transformNode [vtkMRMLLinearTransformNode New]
-  set matrix [$transformNode GetMatrixTransformToParent]
-  $matrix Identity
-  $matrix SetElement 0 3  6
-  $matrix SetElement 1 3  13
-  $matrix SetElement 2 3  13
-  $::slicer3::MRMLScene AddNode $transformNode
-
-
-  set fileName [file dirname $::QA(directory)]/sirp-hp65-stc-to7-gam.feat/stats/zstat8.nii
-
-  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 0 zstat8]
-  $volumeNode SetAndObserveTransformNodeID [$transformNode GetID]
-  set ::QA(statvol,volumeNodeID) [$volumeNode GetID]
-  set volumeDisplayNode [$volumeNode GetDisplayNode]
-  $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeIron"
-  $volumeDisplayNode SetWindow 3.3
-  $volumeDisplayNode SetLevel 3
-  $volumeDisplayNode SetUpperThreshold 6.8
-  $volumeDisplayNode SetLowerThreshold 1.34
-  $volumeDisplayNode SetApplyThreshold 1
-
-
-  #
-  # add the segmentation image
-  #
-
-
-  set fileName $::QA(directory)/mri/aparc+aseg.mgz
-  set volumeNode [$volumesLogic AddArchetypeVolume $fileName $centered 1 aparc+aseg]
-  set ::QA(label,volumeNodeID) [$volumeNode GetID]
-
-  set volumeDisplayNode [$volumeNode GetDisplayNode]
-
-  $volumeDisplayNode SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferLabelMapColorNodeID]
-
-  #
-  # make brain be background, functional foreground, and segmentation be label map
-  #
-  set nNodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
-  for { set i 0 } { $i < $nNodes } { incr i } {
-    set cnode [$::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLSliceCompositeNode"]
-    $cnode SetReferenceBackgroundVolumeID $::QA(brain,volumeNodeID)
-    $cnode SetReferenceForegroundVolumeID $::QA(statvol,volumeNodeID)
-    $cnode SetReferenceLabelVolumeID $::QA(label,volumeNodeID)
-    $cnode SetForegroundOpacity 1
-    $cnode SetLabelOpacity 0.5
-  }
-}
 
 
 

@@ -139,12 +139,18 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // load frame
     vtkGetObjectMacro (FSasegSelector, vtkSlicerNodeSelectorWidget );
     vtkGetObjectMacro (FSmodelSelector, vtkSlicerNodeSelectorWidget );
+    vtkGetObjectMacro (FSbrainSelector, vtkSlicerNodeSelectorWidget );
+    vtkGetObjectMacro (FSgoButton, vtkKWPushButton );
     vtkGetObjectMacro (QdecModelSelector, vtkSlicerNodeSelectorWidget );
+    vtkGetObjectMacro (QdecScalarSelector, vtkSlicerNodeSelectorWidget );
+    vtkGetObjectMacro (QdecGoButton, vtkKWPushButton);
 
     vtkGetObjectMacro (FIPSFSButton, vtkKWPushButton );
     vtkGetObjectMacro (QdecButton, vtkKWPushButton );
     vtkGetObjectMacro (FIPSFSFrame, vtkKWFrame );
     vtkGetObjectMacro (QdecFrame, vtkKWFrame );
+
+    vtkGetMacro (ProcessingMRMLEvent, int);
     
     void SetModuleLogic ( vtkQueryAtlasLogic *logic )
     { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
@@ -226,10 +232,15 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkQueryAtlasCollaboratorIcons *CollaboratorIcons;
     vtkQueryAtlasIcons *QueryAtlasIcons;
     
+    int ProcessingMRMLEvent;
     // load / configure frame
     vtkSlicerNodeSelectorWidget *FSasegSelector;
     vtkSlicerNodeSelectorWidget *FSmodelSelector;
+    vtkSlicerNodeSelectorWidget *FSbrainSelector;
+    vtkKWPushButton *FSgoButton;
     vtkSlicerNodeSelectorWidget *QdecModelSelector;
+    vtkSlicerNodeSelectorWidget *QdecScalarSelector;
+    vtkKWPushButton *QdecGoButton;
     
     vtkKWPushButton *FIPSFSButton;
     vtkKWPushButton *QdecButton;
@@ -318,6 +329,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     void OpenBIRNLexBrowser();
     void OpenNeuroNamesBrowser();
     void OpenUMLSBrowser();
+
+    bool SceneClosing;
     
     //BTX
     // Description:

@@ -68,6 +68,8 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->QueryAtlasIcons = NULL;
     this->AnnotationVisibility = 1;
     this->ModelVisibility = 1;
+    this->ProcessingMRMLEvent = 0;
+    this->SceneClosing = false;
     
 #ifdef QUERY_FRAME
     //---
@@ -184,7 +186,11 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->QdecFrame = NULL;
     this->FSasegSelector = NULL;
     this->FSmodelSelector = NULL;
+    this->FSbrainSelector = NULL;
+    this->FSgoButton = NULL;
     this->QdecModelSelector = NULL;
+    this->QdecScalarSelector = NULL;
+    this->QdecGoButton = NULL;
 #endif
 }
 
@@ -238,6 +244,24 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->QdecFrame->Delete();
       this->QdecFrame = NULL;      
       }
+    if ( this->FSgoButton )
+      {
+      this->FSgoButton->SetParent ( NULL );
+      this->FSgoButton->Delete();
+      this->FSgoButton = NULL;
+      }
+    if ( this->QdecGoButton )
+      {
+      this->QdecGoButton->SetParent ( NULL );
+      this->QdecGoButton->Delete();
+      this->QdecGoButton = NULL;
+      }
+    if ( this->FSbrainSelector )
+      {
+      this->FSbrainSelector->SetParent ( NULL );
+      this->FSbrainSelector->Delete();
+      this->FSbrainSelector = NULL;
+      }
     if ( this->FSasegSelector )
       {
       this->FSasegSelector->SetParent ( NULL );
@@ -255,6 +279,12 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->QdecModelSelector->SetParent ( NULL );
       this->QdecModelSelector->Delete();
       this->QdecModelSelector = NULL;
+      }
+    if ( this->QdecScalarSelector )
+      {
+      this->QdecScalarSelector->SetParent ( NULL );
+      this->QdecScalarSelector->Delete();
+      this->QdecScalarSelector = NULL;
       }
 #endif
 
@@ -692,7 +722,11 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
 #ifdef LOAD_FRAME
     os << indent << "FSasegSelector: " << this->GetFSasegSelector ( ) << "\n";    
     os << indent << "FSmodelSelector: " << this->GetFSmodelSelector ( ) << "\n";    
+    os << indent << "FSbrainSelector: " << this->GetFSbrainSelector ( ) << "\n";    
+    os << indent << "FSgoButton: " << this->GetFSgoButton() << "\n";
+    os << indent << "QdecGoButton: " << this->GetQdecGoButton() << "\n";
     os << indent << "QdecModelSelector: " << this->GetQdecModelSelector ( ) << "\n";    
+    os << indent << "QdecScalarSelector: " << this->GetQdecScalarSelector ( ) << "\n";    
 #endif
     
     //---
@@ -738,7 +772,12 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->FIPSFSButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->QdecButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSasegSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FSbrainSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FSgoButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->QdecGoButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FSmodelSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->QdecModelSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->QdecScalarSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   
   this->StructureButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->GetClearAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -799,7 +838,12 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->FIPSFSButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->QdecButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSasegSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FSbrainSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSmodelSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FSgoButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->QdecGoButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->QdecModelSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->QdecScalarSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->StructureButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->GetClearAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -870,32 +914,32 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
 
   const char *context;
   int index, nnodes, i;
+  vtkMRMLNode *node;
+
   
   if ((sel == this->FSasegSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
     {
-    // tcl script that selects the label map to use
-    /*
-    nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSliceCompositeNode" );
-    for ( i = 0; i < nnodes; i++ )
+    node = sel->GetSelected();
+    if ( node != NULL )
       {
-      cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-                                                       this->GetMRMLScene()->GetNthNodeByClass ( i, "vtkMRMLSliceCompositeNode") );
-      if ( cnode != NULL && this->FSasegSelector->GetSelected() != NULL )
-        {
-        cnode->SetLabelVolumeID ( this->FSasegSelector->GetSelected()->GetID() );
-        }
-      else if ( cnode != NULL )
-        {
-        cnode->SetLabelVolumeID ( NULL );
-        }
+      this->Script ( "QueryAtlasSetAnnotatedLabelMap" );
       }
-    */
-   this->Script ( "QueryAtlasGetLabels" );
     }
   else if ((sel == this->FSmodelSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
     {
-    // tcl script that sets the annotated model.
-    this->Script ( "QueryAtlasGetAnnotations" );
+    node = sel->GetSelected();
+    if ( node != NULL )
+      {
+      this->Script ( "QueryAtlasSetAnnotatedModel" );
+      }
+    }
+  else if ((sel == this->FSbrainSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
+    {
+    node = sel->GetSelected();
+    if ( node != NULL )
+      {
+      this->Script ( "QueryAtlasSetBrainAndStats" );
+      }
     }
 
   
@@ -913,6 +957,13 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   //--- Process All PushButton events
   //---
   if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    }
+  else if ( (b == this->FSgoButton) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    this->Script ( "QueryAtlasSetUp" );
+    }
+  else if ( (b == this->QdecGoButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     }
   else if ( (b == this->BIRNLexHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -1115,7 +1166,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     if ((lb = this->CurrentResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
       {
-      this->Script ("QueryAtlasOpenLink");
+//      this->Script ("QueryAtlasOpenLink");
       }
     }
   if ( this->PastResultsList )
@@ -1199,6 +1250,40 @@ void vtkQueryAtlasGUI::ProcessLogicEvents ( vtkObject *caller,
 void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
                                              unsigned long event, void *callData )
 {    
+ if (this->ProcessingMRMLEvent != 0 )
+    {
+    return;
+    }
+  this->ProcessingMRMLEvent = event;
+  vtkDebugMacro("processing event " << event);
+   
+  // has a node been added?
+  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
+       && (event == vtkMRMLScene::NodeAddedEvent ) )
+    {
+    this->Script ( "QueryAtlasNodeAddedUpdate" );
+    }
+  // has a node been deleted?
+  if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
+       && (event == vtkMRMLScene::NodeRemovedEvent ) )
+    {
+    //this->UpdateFromMRML();
+    // check to see if the model or labels have been deleted.
+    this->Script ("QueryAtlasNodeRemovedUpdate" );
+    }
+  
+  // is the scene closing?
+  if (event == vtkMRMLScene::SceneCloseEvent )
+    {
+    this->SceneClosing = true;
+    // reset globals.
+    this->Script ("QueryAtlasTearDown; QueryAtlasInit");
+    }
+  else 
+    {
+    this->SceneClosing = false;
+    }
+  
 }
 
 
@@ -1325,10 +1410,9 @@ void vtkQueryAtlasGUI::BuildLoadAndConvertGUI ( )
     vtkSlicerModuleCollapsibleFrame *convertFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     convertFrame->SetParent ( page );
     convertFrame->Create ( );
-    convertFrame->SetLabelText ("Load & Configure");
-//    convertFrame->ExpandFrame ( );
-    convertFrame->CollapseFrame ( );
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+    convertFrame->SetLabelText ("Configure");
+    convertFrame->ExpandFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 4 -in %s",
                   convertFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
 
@@ -1342,7 +1426,8 @@ void vtkQueryAtlasGUI::BuildLoadAndConvertGUI ( )
     this->BuildFreeSurferFIPSFrame ( );
     this->BuildQdecFrame ( );
     this->PackLoaderContextFrame ( this->FIPSFSFrame );
-    app->Script ( "pack %s -side top -fill x -expand 1", switcher->GetWidgetName() );
+    app->Script ( "pack %s -side top -fill x -expand 1 -pady 0", switcher->GetWidgetName() );
+
     this->ColorCodeLoaderContextButtons ( this->FIPSFSButton );
     switcher->Delete();
     convertFrame->Delete();
@@ -1353,6 +1438,22 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   
+    this->FSbrainSelector = vtkSlicerNodeSelectorWidget::New() ;
+    this->FSbrainSelector->SetParent ( this->FIPSFSFrame );
+    this->FSbrainSelector->Create ( );
+    this->FSbrainSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->FSbrainSelector->SetMRMLScene(this->GetMRMLScene());
+    this->FSbrainSelector->SetBorderWidth(2);
+    this->FSbrainSelector->SetPadX(2);
+    this->FSbrainSelector->SetPadY(2);
+    this->FSbrainSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->FSbrainSelector->GetWidget()->GetWidget()->SetWidth(20);
+    this->FSbrainSelector->GetLabel()->SetWidth(18);
+    this->FSbrainSelector->SetLabelText( "Anatomical volume: ");
+    this->FSbrainSelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                   this->FSbrainSelector->GetWidgetName());
+
     this->FSasegSelector = vtkSlicerNodeSelectorWidget::New() ;
     this->FSasegSelector->SetParent ( this->FIPSFSFrame );
     this->FSasegSelector->Create ( );
@@ -1364,7 +1465,7 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->FSasegSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
     this->FSasegSelector->GetWidget()->GetWidget()->SetWidth(20);
     this->FSasegSelector->GetLabel()->SetWidth(18);
-    this->FSasegSelector->SetLabelText( "FreeSurfer aparc+aseg: ");
+    this->FSasegSelector->SetLabelText( "Annotated labelmap: ");
     this->FSasegSelector->SetBalloonHelpString("select a volume from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                    this->FSasegSelector->GetWidgetName());
@@ -1385,14 +1486,24 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->FSmodelSelector->GetWidgetName());
 
+    this->FSgoButton = vtkKWPushButton::New();
+    this->FSgoButton->SetParent ( this->FIPSFSFrame );
+    this->FSgoButton->Create();
+    this->FSgoButton->SetText ("Set up query scene");
+    this->FSgoButton->SetWidth ( 20 );
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                  this->FSgoButton->GetWidgetName());
+    
     vtkSlicerPopUpHelpWidget *helpy = vtkSlicerPopUpHelpWidget::New();
     helpy->SetParent ( this->FIPSFSFrame );
     helpy->Create ( );
     helpy->SetHelpText (" This is some sample help text. This is some more sample help text. Not so very helpful yet." );
     helpy->SetHelpTitle ( "Testing Popup Help" );
-    this->Script ( "pack %s -side top -anchor nw -padx 2 -pady 2", helpy->GetWidgetName() );
+    this->Script ( "pack %s -side top -anchor c -padx 2 -pady 6", helpy->GetWidgetName() );
     helpy->Delete();
 
+    
+    this->ProcessGUIEvents ( this->FSbrainSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
     this->ProcessGUIEvents ( this->FSmodelSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
     this->ProcessGUIEvents ( this->FSasegSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
 }
@@ -1406,7 +1517,7 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->QdecModelSelector = vtkSlicerNodeSelectorWidget::New() ;
     this->QdecModelSelector->SetParent ( this->QdecFrame );
     this->QdecModelSelector->Create ( );
-    this->QdecModelSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->QdecModelSelector->SetNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
     this->QdecModelSelector->SetMRMLScene(this->GetMRMLScene());
     this->QdecModelSelector->SetBorderWidth(2);
     this->QdecModelSelector->SetPadX(2);
@@ -1419,12 +1530,36 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->QdecModelSelector->GetWidgetName());
 
+    this->QdecScalarSelector = vtkSlicerNodeSelectorWidget::New() ;
+    this->QdecScalarSelector->SetParent ( this->QdecFrame );
+    this->QdecScalarSelector->Create ( );
+    this->QdecScalarSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->QdecScalarSelector->SetMRMLScene(this->GetMRMLScene());
+    this->QdecScalarSelector->SetBorderWidth(2);
+    this->QdecScalarSelector->SetPadX(2);
+    this->QdecScalarSelector->SetPadY(2);
+    this->QdecScalarSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->QdecScalarSelector->GetWidget()->GetWidget()->SetWidth(20);
+    this->QdecScalarSelector->GetLabel()->SetWidth(18);
+    this->QdecScalarSelector->SetLabelText( "Scalar overlay: ");
+    this->QdecScalarSelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                  this->QdecScalarSelector->GetWidgetName());
+
+    this->QdecGoButton = vtkKWPushButton::New();
+    this->QdecGoButton->SetParent ( this->QdecFrame );
+    this->QdecGoButton->Create();
+    this->QdecGoButton->SetText ("Set up query scene");
+    this->QdecGoButton->SetWidth ( 20 );
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                   this->QdecGoButton->GetWidgetName());
+
     vtkSlicerPopUpHelpWidget *helpy = vtkSlicerPopUpHelpWidget::New();
     helpy->SetParent ( this->QdecFrame );
     helpy->Create ( );
     helpy->SetHelpText (" This is some sample help text. This is some more sample help text. Not so very helpful yet." );
     helpy->SetHelpTitle ( "Testing Popup Help" );
-    this->Script ( "pack %s -side top -anchor nw -padx 2 -pady 2", helpy->GetWidgetName() );
+    this->Script ( "pack %s -side top -anchor c -padx 2 -pady 6", helpy->GetWidgetName() );
     helpy->Delete();
 
 
@@ -2260,7 +2395,7 @@ void vtkQueryAtlasGUI::BuildLoaderContextButtons ( vtkKWFrame *parent )
   this->QdecButton->SetWidth ( 12 );
   this->QdecButton->SetText ( "Qdec");
 
-  this->Script ( "pack %s %s -anchor nw -side left -fill none -padx 2 -pady 2",
+  this->Script ( "pack %s %s -anchor nw -side left -fill none -padx 2 -pady 0",
                  this->FIPSFSButton->GetWidgetName(),
                  this->QdecButton->GetWidgetName() );
 
