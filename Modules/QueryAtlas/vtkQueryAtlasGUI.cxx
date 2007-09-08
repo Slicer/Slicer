@@ -187,6 +187,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->FSasegSelector = NULL;
     this->FSmodelSelector = NULL;
     this->FSbrainSelector = NULL;
+    this->FSstatsSelector = NULL;
     this->FSgoButton = NULL;
     this->QdecModelSelector = NULL;
     this->QdecScalarSelector = NULL;
@@ -255,6 +256,12 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->QdecGoButton->SetParent ( NULL );
       this->QdecGoButton->Delete();
       this->QdecGoButton = NULL;
+      }
+    if ( this->FSstatsSelector )
+      {
+      this->FSstatsSelector->SetParent ( NULL );
+      this->FSstatsSelector->Delete();
+      this->FSstatsSelector = NULL;
       }
     if ( this->FSbrainSelector )
       {
@@ -723,6 +730,7 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "FSasegSelector: " << this->GetFSasegSelector ( ) << "\n";    
     os << indent << "FSmodelSelector: " << this->GetFSmodelSelector ( ) << "\n";    
     os << indent << "FSbrainSelector: " << this->GetFSbrainSelector ( ) << "\n";    
+    os << indent << "FSstatsSelector: " << this->GetFSstatsSelector ( ) << "\n";    
     os << indent << "FSgoButton: " << this->GetFSgoButton() << "\n";
     os << indent << "QdecGoButton: " << this->GetQdecGoButton() << "\n";
     os << indent << "QdecModelSelector: " << this->GetQdecModelSelector ( ) << "\n";    
@@ -773,6 +781,7 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->QdecButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSasegSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSbrainSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FSstatsSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSgoButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->QdecGoButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FSmodelSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -826,7 +835,15 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->DeleteCurrentResultButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CurrentResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->PastResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  //  this->PastResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+ //--MRML
+  if (this->MRMLScene)
+      {
+        this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->GUICallbackCommand);
+        this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->GUICallbackCommand);
+        this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GUICallbackCommand);
+      }
 
 }
 
@@ -839,6 +856,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->QdecButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSasegSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSbrainSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FSstatsSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSmodelSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSgoButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->QdecGoButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -892,8 +910,25 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->DeleteCurrentResultButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CurrentResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->PastResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  //  this->PastResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
+ //--MRML
+  if (this->MRMLScene)
+      {
+      if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->GUICallbackCommand) != 1)
+        {
+        this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->GUICallbackCommand);
+        }
+      if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->GUICallbackCommand) != 1)
+        {
+        this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->GUICallbackCommand);
+        }
+      if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GUICallbackCommand) != 1)
+        {
+        this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GUICallbackCommand);
+        }
+      }
+
 }
 
 
@@ -917,6 +952,30 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkMRMLNode *node;
 
   
+  //MRML
+  if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
+      vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
+      event == vtkMRMLScene::NodeRemovedEvent)
+    {
+    // check to see if the model or labels have been deleted.
+    this->Script ("QueryAtlasNodeRemovedUpdate" );
+    }
+  if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
+      vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
+      event == vtkMRMLScene::NodeAddedEvent)
+    {
+    this->Script ( "QueryAtlasNodeAddedUpdate" );
+    }
+  if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
+      vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
+      event == vtkMRMLScene::SceneCloseEvent)
+    {
+    this->SceneClosing = true;
+    // reset globals.
+    this->Script ("QueryAtlasTearDown; QueryAtlasInit");
+    }
+
+  
   if ((sel == this->FSasegSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
     {
     node = sel->GetSelected();
@@ -938,7 +997,15 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     node = sel->GetSelected();
     if ( node != NULL )
       {
-      this->Script ( "QueryAtlasSetBrainAndStats" );
+      this->Script ( "QueryAtlasSetAnatomical" );
+      }
+    }
+  else if ((sel == this->FSstatsSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
+    {
+    node = sel->GetSelected();
+    if ( node != NULL )
+      {
+      this->Script ( "QueryAtlasSetStatistics" );
       }
     }
 
@@ -1450,7 +1517,7 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->FSbrainSelector->GetWidget()->GetWidget()->SetWidth(20);
     this->FSbrainSelector->GetLabel()->SetWidth(18);
     this->FSbrainSelector->SetLabelText( "Anatomical volume: ");
-    this->FSbrainSelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->FSbrainSelector->SetBalloonHelpString("select a volume (FreeSurfer brain.mgz) from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                    this->FSbrainSelector->GetWidgetName());
 
@@ -1466,7 +1533,7 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->FSasegSelector->GetWidget()->GetWidget()->SetWidth(20);
     this->FSasegSelector->GetLabel()->SetWidth(18);
     this->FSasegSelector->SetLabelText( "Annotated labelmap: ");
-    this->FSasegSelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->FSasegSelector->SetBalloonHelpString("select an annotated label map (FreeSurfer aparc+aseg) from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                    this->FSasegSelector->GetWidgetName());
 
@@ -1482,9 +1549,25 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->FSmodelSelector->GetWidget()->GetWidget()->SetWidth(20);
     this->FSmodelSelector->GetLabel()->SetWidth(18);
     this->FSmodelSelector->SetLabelText( "Annotated model: ");
-    this->FSmodelSelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->FSmodelSelector->SetBalloonHelpString("select an annotated model (FreeSurfer lh.pial) from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->FSmodelSelector->GetWidgetName());
+
+    this->FSstatsSelector = vtkSlicerNodeSelectorWidget::New() ;
+    this->FSstatsSelector->SetParent ( this->FIPSFSFrame );
+    this->FSstatsSelector->Create ( );
+    this->FSstatsSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
+    this->FSstatsSelector->SetMRMLScene(this->GetMRMLScene());
+    this->FSstatsSelector->SetBorderWidth(2);
+    this->FSstatsSelector->SetPadX(2);
+    this->FSstatsSelector->SetPadY(2);
+    this->FSstatsSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
+    this->FSstatsSelector->GetWidget()->GetWidget()->SetWidth(20);
+    this->FSstatsSelector->GetLabel()->SetWidth(18);
+    this->FSstatsSelector->SetLabelText( "Statistics: ");
+    this->FSstatsSelector->SetBalloonHelpString("select a statistical overlay volume from the current  scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                  this->FSstatsSelector->GetWidgetName());
 
     this->FSgoButton = vtkKWPushButton::New();
     this->FSgoButton->SetParent ( this->FIPSFSFrame );
@@ -1502,10 +1585,10 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->Script ( "pack %s -side top -anchor c -padx 2 -pady 6", helpy->GetWidgetName() );
     helpy->Delete();
 
-    
     this->ProcessGUIEvents ( this->FSbrainSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
     this->ProcessGUIEvents ( this->FSmodelSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
     this->ProcessGUIEvents ( this->FSasegSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
+    this->ProcessGUIEvents ( this->FSstatsSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
 }
 
 //---------------------------------------------------------------------------
@@ -1620,7 +1703,7 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     vtkKWLabel *l = vtkKWLabel::New();
     l->SetParent ( annotationFrame->GetFrame() );
     l->Create ( );
-    l->SetText ( "term set: " );
+    l->SetText ( "annotation term set: " );
 
     this->AnnotationNomenclatureMenuButton = vtkKWMenuButton::New();
     this->AnnotationNomenclatureMenuButton->SetParent ( annotationFrame->GetFrame() );
@@ -1729,7 +1812,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->BIRNLexHierarchyButton->SetImageToIcon ( this->QueryAtlasIcons->GetOntologyBrowserIcon() );
     this->BIRNLexHierarchyButton->SetBorderWidth ( 0 );
     this->BIRNLexHierarchyButton->SetReliefToFlat ( );
-    this->BIRNLexHierarchyButton->SetBalloonHelpString ("Launch ontology browser.");
+    this->BIRNLexHierarchyButton->SetBalloonHelpString ("View in BIRNLex ontology browser.");
 
     // forthrow (BIRNLex ID )
     vtkKWLabel *birnidLabel = vtkKWLabel::New();
@@ -1767,10 +1850,10 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->NeuroNamesHierarchyButton = vtkKWPushButton::New();
     this->NeuroNamesHierarchyButton->SetParent ( hierarchyFrame->GetFrame() );
     this->NeuroNamesHierarchyButton->Create();
-    this->NeuroNamesHierarchyButton->SetImageToIcon ( this->QueryAtlasIcons->GetOntologyBrowserDisabledIcon() );
+    this->NeuroNamesHierarchyButton->SetImageToIcon ( this->QueryAtlasIcons->GetOntologyBrowserIcon() );
     this->NeuroNamesHierarchyButton->SetBorderWidth ( 0 );
     this->NeuroNamesHierarchyButton->SetReliefToFlat();
-    this->NeuroNamesHierarchyButton->SetBalloonHelpString ("Launch ontology browser.");
+    this->NeuroNamesHierarchyButton->SetBalloonHelpString ("View in NeuroNames ontology browser.");
 
     // sixth row (NeuroNames ID)
     vtkKWLabel *nnidLabel = vtkKWLabel::New();    
@@ -1810,7 +1893,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->UMLSHierarchyButton->SetImageToIcon ( this->QueryAtlasIcons->GetOntologyBrowserDisabledIcon() );
     this->UMLSHierarchyButton->SetBorderWidth ( 0 );
     this->UMLSHierarchyButton->SetReliefToFlat();
-    this->UMLSHierarchyButton->SetBalloonHelpString ("Launch ontology browser.");
+    this->UMLSHierarchyButton->SetBalloonHelpString ("View in UMLS ontology browser.");
     
     // eighth row (listbox saved terms)
     vtkKWLabel *termsLabel = vtkKWLabel::New();

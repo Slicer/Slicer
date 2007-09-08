@@ -49,10 +49,10 @@ proc QueryAtlasInitializeGlobals { } {
     set ::QA(ontologyHost) "localhost"
     set ::QA(ontologyPort) 3334
     set ::QA(ontologyViewerPID) ""
-    set ::QA(ontologyLaunched) 0
+    set ::QA(ontologyBrowserRunning) 0
 
     set ::QA(annotationVisibility) 1
-    set ::QA(statsDisplayCompleted) 0
+    set ::QA(statsAutoWinLevThreshCompleted) 0
 
 }
 
@@ -103,9 +103,10 @@ proc QueryAtlasMessageDialog { str } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetAnnotatedModel { } {
 
+    puts "setting annotated model"
     set ms [$::slicer3::QueryAtlasGUI GetFSmodelSelector]
     set node [ $ms GetSelected ]
-    if { $node == NULL } {
+    if { $node == "" } {
         return
     }
     
@@ -131,6 +132,8 @@ proc QueryAtlasSetAnnotatedModel { } {
         set ::QA(modelNodeID) ""
         set ::QA(modelDisplayNodeID) ""
     }
+    puts "model Node = $::QA(modelNodeID)"
+    puts "model display Node = $::QA(modelDisplayNodeID)"
     
 }
 
@@ -138,6 +141,7 @@ proc QueryAtlasSetAnnotatedModel { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetAnnotatedLabelMap { } {
 
+    puts "setting annotated label map"
     set vs [$::slicer3::QueryAtlasGUI GetFSasegSelector]
     set node [ $vs GetSelected ]
 
@@ -153,6 +157,7 @@ proc QueryAtlasSetAnnotatedLabelMap { } {
         set gotlabels 1
         set ::QA(label,volumeNodeID) [ $node GetID ]
         #--- put in label layer
+        set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]        
         for { set j 0 } { $j < $numCnodes } { incr j } {
             set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
             $cnode SetReferenceLabelVolumeID $::QA(label,volumeNodeID)
@@ -164,14 +169,16 @@ proc QueryAtlasSetAnnotatedLabelMap { } {
         QueryAtlasMessageDialog "Selected volume should be a FreeSurfer aparc+aseg file."
         set ::QA(label,volumeNodeID) ""
     }
+    puts "labelmap = $::QA(label,volumeNodeID)"
 }
 
 
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasSetBrainAndStats { } {
+proc QueryAtlasSetAnatomical { } {
 
+    puts "setting brain"
     set vs [$::slicer3::QueryAtlasGUI GetFSbrainSelector]
     set node [ $vs GetSelected ]
     if { $node == "" } {
@@ -187,6 +194,7 @@ proc QueryAtlasSetBrainAndStats { } {
         set gotbrain 1
         set ::QA(brain,volumeNodeID) [ $node GetID ]
         #--- put in background
+        set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]        
         for { set j 0 } { $j < $numCnodes } { incr j } {
             set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
             $cnode SetReferenceBackgroundVolumeID $::QA(brain,volumeNodeID)
@@ -199,14 +207,43 @@ proc QueryAtlasSetBrainAndStats { } {
     if { ! $gotbrain } {
         QueryAtlasMessageDialog "Selected volume should be a FreeSurfer brain.mgz file."
         set ::QA(brain,volumeNodeID) ""
-    } else {
-        #--- auto win/lev/thresh stats files if
-        #--- haven't already.
-        if { ! $::QA(statsDisplayCompleted) } {
-            QueryAtlasAutoWinLevThreshStats
-        }
-        #--- and put one of the stat files in the FG?
+
     }
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetStatistics { } {
+
+    puts "setting stats"
+    set vs [$::slicer3::QueryAtlasGUI GetFSstatsSelector]
+    set node [ $vs GetSelected ]
+    if { $node == "" } {
+        return
+    }
+
+    set gotstats 0
+    set name ""
+    set name [ $node GetName ]
+    #--- now check on name
+    set t [ string first "stat" $name ]
+    if { $t >= 0 } {
+        set gotstats 1
+        QueryAtlasAutoWinLevThreshStats
+        set ::QA(statvol,volumeNodeID) [ $node GetID ]
+        #--- put in background
+        set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]        
+        for { set j 0 } { $j < $numCnodes } { incr j } {
+            set cnode [$::slicer3::MRMLScene GetNthNodeByClass $j "vtkMRMLSliceCompositeNode"]
+            $cnode SetReferenceForegroundVolumeID $::QA(statvol,volumeNodeID)
+            $cnode SetForegroundOpacity 1
+        }
+    }
+    
+    if { ! $gotstats } {
+        set ::QA(brain,volumeNodeID) ""
+    } 
 }
 
 
@@ -219,48 +256,48 @@ proc QueryAtlasAutoWinLevThreshStats { } {
     set numVnodes  [ $::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLVolumeNode" ]
     set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
     
-    for { set i 0 } { $i < $numVnodes } { incr i } {
-        #--- get names of all volume nodes in scene
-        set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLVolumeNode" ]
-        if { $node != "" } {
-            set name [ $node GetName ]
-        }
-        set t [ string first "stat" $name ]
-        if {$t >= 0 } {
-            set gotstats 1
-            set ::QA(statvol,volumeNodeID) [ $node GetID ]
-
-            #--- TODO: choose ballpark window level and threshold for stats.
-            set vnode [ $::slicer3::MRMLScene GetNodeByID $::QA(statvol,volumeNodeID) ]
-            set volumeDisplayNode [ $vnode GetDisplayNode ]
-
-            #--- set these guys manually...
-            $volumeDisplayNode SetAutoThreshold 0
-            $volumeDisplayNode SetAutoWindowLevel 0
-
-            if { 0 } {
-            set window [ $volumeDisplayNode GetWindow ]
-            set level [ $volumeDisplayNode GetLevel ]
-            set upperT [$volumeDisplayNode GetUpperThreshold]
-            set lowerT [$volumeDisplayNode GetLowerThreshold]
-            #--- set window... hmmm.
-            $volumeDisplayNode SetWindow [ expr $window / 2.5 ]
-            set window [ $volumeDisplayNode GetWindow ]
-            $volumeDisplayNode SetLevel [ expr $upperT - ( $window / 2.0 ) ]
-            #--- set lower threshold
-            set lowerT [ expr $upperT - (( $upperT - $lowerT ) / 2.5 ) ]
-            $volumeDisplayNode SetLowerThreshold $lowerT
-            $volumeDisplayNode SetLowerThreshold $upperT
-            #--- apply the settings
-            $volumeDisplayNode SetApplyThreshold 1
-            $volumeDisplayNode SetAutoThreshold 0
+    if { $::QA(statsAutoWinLevThreshCompleted) == 0 } {
+        for { set i 0 } { $i < $numVnodes } { incr i } {
+            #--- get names of all volume nodes in scene
+            set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLVolumeNode" ]
+            if { $node != "" } {
+                set name [ $node GetName ]
             }
+            set t [ string first "stat" $name ]
+            if {$t >= 0 } {
+                set gotstats 1
+                set ::QA(statvol,volumeNodeID) [ $node GetID ]
 
+                #--- TODO: choose ballpark window level and threshold for stats.
+                set vnode [ $::slicer3::MRMLScene GetNodeByID $::QA(statvol,volumeNodeID) ]
+                set volumeDisplayNode [ $vnode GetDisplayNode ]
+
+                #--- set these guys manually...
+                $volumeDisplayNode SetAutoThreshold 0
+                $volumeDisplayNode SetAutoWindowLevel 0
+
+                set window [ $volumeDisplayNode GetWindow ]
+                set level [ $volumeDisplayNode GetLevel ]
+                set upperT [$volumeDisplayNode GetUpperThreshold]
+                set lowerT [$volumeDisplayNode GetLowerThreshold]
+                #--- set window... hmmm.
+                $volumeDisplayNode SetWindow [ expr $window / 2.6 ]
+                set window [ $volumeDisplayNode GetWindow ]
+                $volumeDisplayNode SetLevel [ expr $upperT - ( $window / 2.0 ) ]
+                #--- set lower threshold
+                set lowerT [ expr $upperT - (( $upperT - $lowerT ) / 2.5 ) ]
+                $volumeDisplayNode SetLowerThreshold $lowerT
+                $volumeDisplayNode SetUpperThreshold $upperT
+                #--- apply the settings
+                $volumeDisplayNode SetApplyThreshold 1
+                $volumeDisplayNode SetAutoThreshold 0
+
+            }
         }
-    }
 
-    #--- do this once per loaded dataset
-    set ::QA(statsDisplayCompleted) 1    
+        #--- do this once per loaded dataset
+        set ::QA(statsAutoWinLevThreshCompleted) 1
+    }
 }
 
 
@@ -531,6 +568,7 @@ proc QueryAtlasSetUp { } {
 
     #--- perform once per scene.
     if { ! $::QA(SceneLoaded) } {
+        QueryAtlasAddAnnotations
         QueryAtlasInitializePicker 
         QueryAtlasRenderView
         QueryAtlasUpdateCursor
@@ -1548,32 +1586,34 @@ proc QueryAtlasQuery { site } {
 proc QueryAtlasLaunchOntologyBrowser { ontology } {
 
     set already_running [ QueryAtlasBirnLexViewerCheck ]
-    if { already_running } {
+    if { $already_running } {
         return
     }
     
+    if { ! $::QA(SceneLoaded) } {
+        QueryAtlasMessageDialog "Scene must be loaded and configured first."
+        return
+    }
+
     #--- start it up
     set ::QA(ontologyHost) "localhost"
     set ::QA(ontologyPort) 3334
-    set ::QA(ontologyViewerPID ) ""
+    set ::QA(ontologyViewerPID) ""
     
     #--- launch the viewer with a dataset
     if { $ontology == "BIRN" } {
-        if { [ info exists ::QA(SceneLoaded) ] } {
-            if { $::QA(SceneLoaded) } {
-                if { [file exists $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlexvis.jar] &&
-                     [file exists $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlex-demo.simple ] } {
-                    set ::QA(ontologyViewerPID) [ exec java -jar $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlexvis.jar -h $::QA(ontologyHost) -p $::QA(ontologyPort) -t SlicerBIRNLex $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlex-demo.simple & ]
-                    if { $::QA(ontologyViewerPID) == "" } {
-                        puts "QueryAtlasLaunchBirnLexHierarchy: could not start BIRNLex Viewer."
-                    } else {
-                        set ::QA(ontologyLaunched) 1
-                    }
-                }
+        set check1 [ file exists $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlexvis.jar ]
+        set check2 [ file exists $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlex-demo.simple ] 
+        if { $check1 && $check2 } {
+            #--- launch and get PID
+            set ::QA(ontologyViewerPID) [ exec java -jar $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlexvis.jar -h $::QA(ontologyHost) -p $::QA(ontologyPort) -t SlicerBIRNLex $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Java/birnlex-demo.simple & ]
+            if { $::QA(ontologyViewerPID) == "" } {
+                puts "QueryAtlasLaunchBirnLexHierarchy: could not start BIRNLex Viewer."
+            } else {
+                set ::QA(ontologyBrowserRunning) 1
             }
         }
-    } else if { $ontology == "NN" } {
-
+    } elseif { $ontology == "NN" } {
     }
 }
 
@@ -1605,7 +1645,7 @@ proc QueryAtlasSendHierarchyCommand { args } {
 
     regsub -all -- " " $args "-" label
 
-    if { [info exists ::QA(ontologyLaunched)] } {
+    if { [info exists ::QA(ontologyBrowserRunning)] } {
         #--- get command from Hierarchy frame widget
         set result ""
         
