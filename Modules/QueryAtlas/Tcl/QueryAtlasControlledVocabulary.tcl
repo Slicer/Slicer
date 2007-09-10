@@ -52,7 +52,87 @@ proc QueryAtlasMappedToBIRNLexParentCheck {  } {
 }
 
 
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasParseNeuroNamesSynonyms { } {
+    #--- start fresh
+    if { [ info exists ::QA(Synonyms) ] } {
+        unset -nocomplain ::QA(Synonyms)
+    }
+    set ::QA(Synonyms) ""
 
+    if { [catch "package require csv"] } {
+        puts "Can't parse controlled vocabulary without package csv"
+        return 
+    }
+
+    #--- The controlled vocabulary must be a CSV file
+    set synonyms "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Resources/NN2002-2-synonyms.csv"
+
+    #--- get number of columns each entry should have
+    set fp [ open $synonyms r ]
+    gets $fp line
+    set sline [ ::csv::split $line ]
+    set numCols [ llength $sline ]
+    close $fp
+    
+    set fp [ open $synonyms r ]
+    #--- parse the file into a list of lists called $::QA(Synonyms)
+    while { ! [eof $fp ] } {
+        gets $fp line
+        set sline [ ::csv::split $line ]
+        puts "$sline"
+        set len [ llength $sline ]
+        #--- if the line is the wrong length, blow it off
+        if { $len == $numCols } {
+            lappend ::QA(Synonyms) $sline
+        } 
+    }
+    close $fp
+
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasParseBrainInfoURIs { } {
+    #--- start fresh
+    if { [ info exists ::QA(BrainInfoURIs) ] } {
+        unset -nocomplain ::QA(BrainInfoURIs)
+    }
+    set ::QA(BrainInfoURIs) ""
+
+    if { [catch "package require csv"] } {
+        puts "Can't parse controlled vocabulary without package csv"
+        return 
+    }
+
+    #--- The controlled vocabulary must be a CSV file
+    set uris "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Resources/NN2002-3-BrainInfoURI.csv"
+
+    #--- get number of columns each entry should have
+    set fp [ open $uris r ]
+    gets $fp line
+    set sline [ ::csv::split $line ]
+    set numCols [ llength $sline ]
+    close $fp
+    
+    set fp [ open $uris r ]
+    #--- parse the file into a list of lists called $::QA(Synonyms)
+    while { ! [eof $fp ] } {
+        gets $fp line
+        set sline [ ::csv::split $line ]
+        set len [ llength $sline ]
+        #--- if the line is the wrong length, blow it off
+        if { $len == $numCols } {
+            lappend ::QA(BrainInfoURIs) $sline
+        } 
+    }
+    close $fp
+
+}
 
 #----------------------------------------------------------------------------------------------------
 #---
@@ -98,16 +178,141 @@ proc QueryAtlasParseControlledVocabulary { } {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetBrainInfoURI { term } {
+    #--- if there's no controlled vocabulary parsed out, return.
+    if { ![ info exists ::QA(BrainInfoURIs) ] } {
+        return ""
+    }
+    if { $::QA(BrainInfoURIs) == "" } {
+        return ""
+    }
+
+    set NNID [ QueryAtlasMapTerm $term "FreeSurfer" "NN_ID" ]
+    puts "NNID = $NNID"
+
+    #--- FIND the columns in the controlled vocabulary
+    #--- that map to target and source TermSets
+    set targetColName "BrainInfo URL"
+    set targetColNum -1
+    set line [ lindex $::QA(BrainInfoURIs) 0 ]
+    set len [ llength $line ]
+    for { set i 0 } { $i < $len } { incr i } {
+        set col [ lindex $line $i ]
+       if { $col == $targetColName } {
+            set targetColNum $i
+        }
+    }
+    if {$targetColNum > 0 } {
+        #--- now march thru ::QA(BrainInfoURIs) down the source Column to find term
+        set numRows [ llength $::QA(BrainInfoURIs) ]
+        for { set i 0 } { $i < $numRows } { incr i } {
+            set row [ lindex $::QA(BrainInfoURIs) $i ]
+            set getT [ lindex $row 0 ]
+            if { $getT == $NNID } {
+                set targetT [ lindex $row $targetColNum ]
+                return $targetT
+            }
+        }
+    }
+
+    #--- well, nothing in the table.
+    return ""
+
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetSynonyms { term } {
+
+    #--- if there's no controlled vocabulary parsed out, return.
+    if { ![ info exists ::QA(Synonyms) ] } {
+        return ""
+    }
+    if { $::QA(Synonyms) == "" } {
+        return ""
+    }
+    
+    set NNterm [ QueryAtlasMapTerm $term "FreeSurfer" "NN_String" ]
+    puts "NNterm = $NNterm"
+
+    #--- FIND the columns in the controlled vocabulary
+    #--- that map to target and source TermSets
+    set targetColName "Hierarchy Lookup"
+    set target1ColNum -1
+    set line [ lindex $::QA(Synonyms) 0 ]
+    set len [ llength $line ]
+    for { set i 0 } { $i < $len } { incr i } {
+        set col [ lindex $line $i ]
+       if { $col == $targetColName } {
+            set target1ColNum $i
+        }
+    }
+    set targetColName "Species"
+    set target2ColNum -1
+    set line [ lindex $::QA(Synonyms) 0 ]
+    set len [ llength $line ]
+    for { set i 0 } { $i < $len } { incr i } {
+        set col [ lindex $line $i ]
+       if { $col == $targetColName } {
+            set target2ColNum $i
+        }
+    }
+    
+    set targetColName "Synonym"
+    set target3ColNum -1
+    set line [ lindex $::QA(Synonyms) 0 ]
+    set len [ llength $line ]
+    for { set i 0 } { $i < $len } { incr i } {
+        set col [ lindex $line $i ]
+       if { $col == $targetColName } {
+            set target3ColNum $i
+        }
+    }
+
+    set synonyms ""
+    if { ($target1ColNum > 0) && ($target2ColNum > 0) && ($target3ColNum > 0) } {
+        #--- now march thru ::QA(Synonyms) down the
+        #--- Hierarchy Lookup column, checking the species column
+        #--- and find all synonyms
+        set numRows [ llength $::QA(Synonyms) ]
+        for { set i 0 } { $i < $numRows } { incr i } {
+            set row [ lindex $::QA(Synonyms) $i ]
+            #--- get the Heirarchy look up term in this row
+            set termT [ lindex $row $target1ColNum ]
+            #--- get the species entry in this row
+            set speciesT [lindex $row $target2ColNum ]
+            #--- if the Hierarchy Lookup term matches the NNterm
+            #--- and the term applies to humans, add the synonym
+            if { $termT == $NNterm && $speciesT == "human" } {
+                set syn [ lindex $row $target3ColNum ]
+                puts "$syn"
+                lappend targetTerms $syn
+            }
+        }
+    }
+
+    #--- return the list of lists, each is a synonym
+    return $synonyms
+
+
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
 proc QueryAtlasMapTerm { term sourceTermSet targetTermSet } {
 
     #--- if there's no controlled vocabulary parsed out, return.
     if { ![ info exists ::QA(CV) ] } {
         puts "Can't map term: no controlled vocabulary exists."
-        return
+        return ""
     }
     if { $::QA(CV) == "" } {
         puts "Can't map term: no controlled vocabulary exists."
-        return
+        return ""
     }
 
     #--- make sure sets of terms are valid

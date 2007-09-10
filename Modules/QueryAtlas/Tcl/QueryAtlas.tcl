@@ -610,6 +610,8 @@ proc QueryAtlasSetUp { } {
         QueryAtlasUpdateCursor
         puts "Parsing Controlled Vocabulary"
         QueryAtlasParseControlledVocabulary
+        QueryAtlasParseNeuroNamesSynonyms
+        QueryAtlasParseBrainInfoURIs
         set ::QA(CurrentRASPoint) "0 0 0"
         set ::QA(SceneLoaded) 1
     }
