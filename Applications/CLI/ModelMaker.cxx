@@ -177,7 +177,7 @@ int main(int argc, char * argv[])
       if (debug)
         {
         char waiting;
-        std::cout << "Press a key and hit return: ";
+        std::cout << "Press a key and hit return: " << std::endl;
         std::cin >> waiting;
         }
       return EXIT_FAILURE;
@@ -356,7 +356,7 @@ int main(int argc, char * argv[])
           {          
           // check the max value in the input label map against number of
           // colours in the default colour label nodes
-          // should be 20, or 714 if it's the SPL atlas
+          // should be 257, or 714 if it's the SPL atlas
           int numDefaultLabelMapColor = 
             vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()))->GetLookupTable()->GetNumberOfColors();
           // should be 5003, may have failed if it couldn't read in the file
@@ -1197,13 +1197,6 @@ int main(int argc, char * argv[])
       modelScene->Delete();
       modelScene = NULL;
       }
-    if (debug)
-      {
-      char waiting;
-      std::cout << "Press a key and hit return: ";
-      std::cin >> waiting;
-      }
-    // return
     return EXIT_SUCCESS;
 }
 
