@@ -36,6 +36,7 @@
 
 #include "itksys/SystemTools.hxx"
 #include <queue>
+#include "vtkKWMessageDialog.h"
 
 const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
@@ -775,6 +776,64 @@ void vtkSlicerApplication::SetTemporaryDirectory(const char* path)
 //----------------------------------------------------------------------------
 const char* vtkSlicerApplication::GetTemporaryDirectory() const
 {
+  if (this->TemporaryDirectory)
+    {
+    // does the path exist?
+    if (!itksys::SystemTools::MakeDirectory(this->TemporaryDirectory))
+      {
+      // error making sure that the dir exists
+      std::cout << "vtkSlicerApplication::GetTemporaryDirectory: Unable to make temporary directory: " << this->TemporaryDirectory << "\n\tYou can change the Temporary Directory under View->Application Settings->Module Settings." << std::endl;
+      // pop up a window if we've got something to set for the parent
+      if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
+        {
+        std::string msg = std::string("ERROR\nUnable to make temporary directory: ") + std::string(this->TemporaryDirectory) + std::string("\nYou can change the Temporary Directory under View->Application Settings->Module Settings.");
+        vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+        message->SetParent(this->ApplicationGUI->GetViewerWidget());
+        message->SetOptions(vtkKWMessageDialog::ErrorIcon);
+        message->SetIcon();
+        message->SetStyleToCancel();
+        message->SetText(msg.c_str());
+        message->Create();
+        message->Invoke();
+        message->Delete();
+        }
+      }
+    else
+      {
+      // check that can write to it
+      std::vector<std::string> tempPath;
+      tempPath.push_back("");
+      // no slash between first two elements
+      tempPath.push_back(this->TemporaryDirectory);
+      tempPath.push_back("testWrite.txt");
+      std::string tempFile = itksys::SystemTools::JoinPath(tempPath);
+      FILE *fp = fopen(tempFile.c_str(), "w");
+      if (!fp)
+        {
+        std::cerr << "WARNING: Unable to write files in TemporaryDirectory: " << this->TemporaryDirectory << std::endl;
+        // pop up a window if we've got something to set for the parent
+        if (this->ApplicationGUI && this->ApplicationGUI->GetViewerWidget())
+          {
+          std::string msg = std::string("WARNING\nUnable to write files in TemporaryDirectory:\n") + std::string(this->TemporaryDirectory);
+          vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+          message->SetParent(this->ApplicationGUI->GetViewerWidget());
+          message->SetOptions(vtkKWMessageDialog::ErrorIcon);
+          message->SetIcon();
+          message->SetStyleToCancel();
+          message->SetText(msg.c_str());
+          message->Create();
+          message->Invoke();
+          message->Delete();
+          }
+        }
+      else
+        {
+        fclose(fp);
+        // delete it
+        remove(tempFile.c_str());
+        }
+      }
+    }
   return this->TemporaryDirectory;
 }
 
