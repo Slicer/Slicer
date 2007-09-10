@@ -3,12 +3,17 @@
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasInit { } {
 
+    puts "In QueryAtlasInit"
     #--- source files we need.
-    source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasWeb.tcl
-    source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasControlledVocabulary.tcl
-    source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/Card.tcl
-    source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/CardFan.tcl
+
+    source "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl";
+    source "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasWeb.tcl";
+    source "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasControlledVocabulary.tcl";
+    source "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/Card.tcl";
+    source "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/CardFan.tcl";
+
     QueryAtlasInitializeGlobals
+
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -16,10 +21,33 @@ proc QueryAtlasInit { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasTearDown { } {
 
+    puts "Tearing down Query objects"
     #--- Delete things.
-    if { [info exists ::QA(cursor,actor) } {
-        $::QA(cursor,actor) Delete();
+    if { [info exists ::QA(cursor,mapper)] } {
+        $::QA(cursor,mapper) Delete
     }
+    if { [info exists ::QA(cursor,actor)] } {
+        $::QA(cursor,actor) Delete
+    }
+    if { [ info exists ::QA(propPicker)  ] } {
+        $::QA(propPicker) Delete
+    }
+    if { [ info exists ::QA(cellPicker)  ] } {
+        $::QA(cellPicker) Delete
+    }
+    if { [ info exists ::QA(polyData)  ] } {
+        $::QA(polyData) Delete
+    }
+    if { [ info exists ::QA(mapper)  ] } {
+        $::QA(mapper) Delete
+    }
+    if { [ info exists ::QA(actor)  ] } {
+        $::QA(actor) Delete
+    }
+    if { [ info exists ::QA(windowToImage)  ] } {
+        $::QA(windowToImage) Delete
+    }
+
     #--- set the model and label selectors to be NULL
     set as [$::slicer3::QueryAtlasGUI GetFSasegSelector]
     $as SetSelected ""
@@ -33,6 +61,7 @@ proc QueryAtlasTearDown { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasInitializeGlobals { } {
 
+    puts "Initializing globals"
     #--- initialize globals
     set ::QA(linkBundleCount) 0
 
@@ -51,7 +80,9 @@ proc QueryAtlasInitializeGlobals { } {
     set ::QA(ontologyViewerPID) ""
     set ::QA(ontologyBrowserRunning) 0
 
+    set ::QA(annotationTermSet) "local"
     set ::QA(annotationVisibility) 1
+
     set ::QA(statsAutoWinLevThreshCompleted) 0
 
 }
@@ -560,6 +591,7 @@ proc QueryAtlasAddBIRNLogo {} {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetUp { } {
 
+    puts "Setting up...."
     #--- only do this if a model and labelmap are provided
     if { $::QA(modelNodeID) == "" || $::QA(label,volumeNodeID) == "" || $::QA(modelDisplayNodeID) == "" } {
         QueryAtlasMessageDialog "Please select an annotated model and labelmap to begin."
@@ -568,10 +600,16 @@ proc QueryAtlasSetUp { } {
 
     #--- perform once per scene.
     if { ! $::QA(SceneLoaded) } {
+        puts "Adding annotations"
         QueryAtlasAddAnnotations
+        puts "Initializing Picker"
         QueryAtlasInitializePicker 
+        puts "Rendering View"
         QueryAtlasRenderView
+        puts "Updating Cursor"
         QueryAtlasUpdateCursor
+        puts "Parsing Controlled Vocabulary"
+        QueryAtlasParseControlledVocabulary
         set ::QA(CurrentRASPoint) "0 0 0"
         set ::QA(SceneLoaded) 1
     }
@@ -706,6 +744,9 @@ proc QueryAtlasAddAnnotations { } {
 
 
 
+
+
+
 #----------------------------------------------------------------------------------------------------
 #--- convert a number to an RGBA 
 #--- : A is always 255 (on transp)
@@ -791,6 +832,7 @@ proc QueryAtlasInitializePicker {} {
 
   set ::QA(cellData) $cellData
   set ::QA(numberOfCells) $numberOfCells
+  $cellNumberColors Delete
 
   set scalarNames {"CellNumberColors" "Opaque Colors"}
   foreach scalarName $scalarNames {
@@ -831,6 +873,8 @@ proc QueryAtlasInitializePicker {} {
 
   $renderer AddActor $::QA(actor)
   $::QA(actor) SetVisibility 1
+
+
 }
 
 
@@ -883,6 +927,11 @@ proc QueryAtlasRenderView {} {
   $renderWindow SetSwapBuffers 1
   QueryAtlasRestoreRenderState $renderer $renderState
   $renderWidget Render
+
+  #--- need to let go of the RenderWindow to avoid a crash on
+  #--- ApplicationGUI->ViewerWidget->Delete()
+  #--- Why it crashes instead of generating leaks I'm not sure.
+  $::QA(windowToImage) SetInput ""
 
 }
 
@@ -1194,31 +1243,77 @@ proc QueryAtlasPickCallback {} {
   #---Before modifying freesurfer labelname,
   # get UMLS, Neuronames, BIRNLex mapping.
   #---  
-  set ::QA(BirnLexLabel) [ QueryAtlasFreeSurferLabelsToBirnLexLabels $pointLabels ]
-    
-  #--- Now filter the freesurfer label name:
-  # Modify label text to remove freesurfer-specific
-  # name conventions (underbars, lh, rh, etc.)
-  #---
-  regsub -all -- "-" $pointLabels " " pointLabels
-  regsub -all "ctx" $pointLabels "Cortex" pointLabels
-  regsub -all "rh" $pointLabels "Right" pointLabels
-  regsub -all "lh" $pointLabels "Left" pointLabels
-
-  #
-  # update the label
-  #
+  set ::QA(annoLabel) [ QueryAtlasTranslateLabel  $pointLabels ]
   if { ![info exists ::QA(lastLabels)] } {
     set ::QA(lastLabels) ""
   }
   
-  if { $pointLabels != $::QA(lastLabels) } {
-    set ::QA(lastLabels) $pointLabels 
+  if { $::QA(annoLabel) != $::QA(lastLabels) } {
+    set ::QA(lastLabels) $::QA(annoLabel)
   }
 
   QueryAtlasUpdateCursor
 }
 
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetQueryModelInvisible { } {
+
+    if { $::QA(modelDisplayNodeID) != "" } {
+        set node [ $::slicer3::MRMLScene GetNodeByID $::QA(modelDisplayNodeID) ]
+        $node SetVisibility 0
+    }
+}
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetQueryModelVisible { } {
+    
+    if { $::QA(modelDisplayNodeID) != "" } {
+        set node [ $::slicer3::MRMLScene GetNodeByID $::QA(modelDisplayNodeID) ]
+        $node SetVisibility 1
+    }
+}
+
+
+proc QueryAtlasPing { } {
+    puts "ping"
+}
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetAnnotationTermSet { termset } {
+    set ::QA(annotationTermSet) $termset
+}
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasTranslateLabel  { label } {
+    
+    if {$::QA(annotationTermSet) == "local" } {
+        #set newlabel [ QueryAtlasVocabularyMapper $label "FreeSurfer" "FreeSurfer" ]
+        set newlabel [ QueryAtlasMapTerm $label "FreeSurfer" "FreeSurfer" ]
+    } elseif { $::QA(annotationTermSet) == "BIRNLex" } {
+        #set newlabel [ QueryAtlasVocabularyMapper $label "FreeSurfer" "BIRN_String" ]
+        set newlabel [ QueryAtlasMapTerm $label "FreeSurfer" "BIRN_String" ]
+    } elseif { $::QA(annotationTermSet) == "NeuroNames" } {
+        #set newlabel [ QueryAtlasVocabularyMapper $label "FreeSurfer" "NN_String" ]
+        set newlabel [ QueryAtlasMapTerm $label "FreeSurfer" "NN_String" ]
+    } elseif { $::QA(annotationTermSet) == "UMLS" } {
+        #set newlabel [ QueryAtlasVocabularyMapper $label "FreeSurfer" "UMLS_CID" ]
+        set newlabel [ QueryAtlasMapTerm $label "FreeSurfer" "UMLS_CID" ]
+    } else {
+        #--- assume to go local to local
+        #set newlabel [ QueryAtlasVocabularyMapper $label "FreeSurfer" "FreeSurfer" ]
+        set newlabel [ QueryAtlasMapTerm $label "FreeSurfer" "FreeSurfer" ]
+    }
+    return $newlabel
+               
+}
 
 
 #----------------------------------------------------------------------------------------------------
@@ -1231,7 +1326,7 @@ proc QueryAtlasSetAnnotationsInvisible { } {
 #----------------------------------------------------------------------------------------------------
 #--- master switch to turn on annotations in main viewer
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasSetAnnotationsVisibile { } {
+proc QueryAtlasSetAnnotationsVisible { } {
     set ::QA(annotationVisibility) 1
 }
 
@@ -1281,7 +1376,8 @@ proc QueryAtlasUpdateCursor {} {
   }
 
   if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] } {
-      $::QA(cursor,actor) SetInput $::QA(lastLabels) 
+      $::QA(cursor,mapper) SetInput $::QA(lastLabels) 
+#      $::QA(cursor,actor) SetInput $::QA(lastLabels) 
       #--- position the text label just higher than the cursor
       foreach {x y} $::QA(lastWindowXY) {}
       set y [expr $y + 15]
@@ -1328,8 +1424,11 @@ proc QueryAtlasMenuCreate { state } {
           [$renderWidget GetRenderer] AddActor $a
           eval $a SetPosition $::QA(CurrentRASPoint)
           $a SetScale 5 5 5
+          #--- tidy up from debug
+          #s Delete
+          #m Delete
+          #a Delete
         }
-
 
         set ::QA(menuRAS) $::QA(CurrentRASPoint)
 
@@ -1346,8 +1445,8 @@ proc QueryAtlasMenuCreate { state } {
           # bring up a search menu
 
           $qaMenu insert end checkbutton -label "Use Search Terms" -variable ::QA(menu,useTerms)
-          $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddStructureTerms"
-          $qaMenu insert end command -label "Remove All Structure Search Terms" -command "QueryAtlasRemoveStructureTerms"
+          $qaMenu insert end command -label "Add to search terms" -command "QueryAtlasAddStructureTerms"
+          $qaMenu insert end command -label "Clear all structure search terms" -command "QueryAtlasRemoveStructureTerms"
 
           $qaMenu insert end command -label $::QA(lastLabels) -command ""
           $qaMenu insert end separator
@@ -1356,6 +1455,7 @@ proc QueryAtlasMenuCreate { state } {
           $qaMenu insert end command -label "PubMed..." -command "QueryAtlasQuery pubmed"
           $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasQuery jneurosci"
           $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery ibvd"
+          $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery braininfo"
           $qaMenu insert end command -label "MetaSearch..." -command "QueryAtlasQuery metasearch"
         }
         
@@ -1364,6 +1464,7 @@ proc QueryAtlasMenuCreate { state } {
       }
     }
   }
+
 }
 
 
@@ -1517,6 +1618,16 @@ proc QueryAtlasAddStructureTerms {} {
 
 
 #----------------------------------------------------------------------------------------------------
+#--- 
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSelectTermSet { termset } {
+
+
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasQuery { site } {
@@ -1551,6 +1662,8 @@ proc QueryAtlasQuery { site } {
         "jneurosci" {
             $::slicer3::Application OpenLink \
                 http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$terms
+        }
+        "braininfo" {
         }
         "ibvd" {
             regsub -all "Left\+" $terms "" terms ;# TODO ivbd has a different way of handling side

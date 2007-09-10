@@ -1,3 +1,5 @@
+package require csv
+
 #----------------------------------------------------------------------------------------------------
 #--- label is the term in the sourceTermSet; targetTermSet contains the translation 
 #----------------------------------------------------------------------------------------------------
@@ -17,31 +19,18 @@ proc QueryAtlasValidSystemCheck { termSet } {
     #--- what systems are valid?
     set candidates { FreeSurfer
         freesurfer
-        BIRN
-        birn
         BIRN_String
         birn_string
         BIRN_ID
         birn_id
         BIRN_URI
         birn_uri
-        NeuroNames_ID
-        neuronames_id
-        NeuroNames_String
-        neuronames_string
-        neuronames
+        NN_ID
+        NN_id
+        NN_String
+        NN_string
         UMLS_CID
-        umls_cid
-        UMLS_CN
-        UMLS_cn
-        UMLS
-        umls
-        FMA_ID
-        fma_id
-        FMA_String
-        fma_string
-        FMA
-        fma }
+        umls_cid }
 
     foreach c $candidates {
         if { $termSet == $c } {
@@ -54,14 +43,6 @@ proc QueryAtlasValidSystemCheck { termSet } {
 
 }
 
-#----------------------------------------------------------------------------------------------------
-#--- counts the number of times character c appears in string str
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasCharacterCount { c str  } {
-    #--- try this.
-    set count [ regexp -all $c $str ]
-    return $count
-}
 
 #----------------------------------------------------------------------------------------------------
 #--- returns 1 if entry is mapped to its parent structure
@@ -72,33 +53,63 @@ proc QueryAtlasMappedToBIRNLexParentCheck {  } {
 
 
 
-#----------------------------------------------------------------------------------------------------
-#--- returns index of Nth occurrance of character c in string str
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasGetIndexOfCharInstance { c str N } {
 
-    set len [ string length $str ]
-    set count 0
-    for { set i 0 } { $i < $N } { incr i } {
-        set index [ string first $c $str ]
-        if { $index < $len } {
-            incr index
-            set count [ expr $count + $index ]
-            set str [ string range $str $index end ]
-            set len [ string length $str ]
-        } else {
-            break
-        }
-    }  
-    return $count
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasParseControlledVocabulary { } {
+
+    
+    #--- start fresh
+    if { [ info exists ::QA(CV) ] } {
+        unset -nocomplain ::QA(CV)
+    }
+    set ::QA(CV) ""
+
+    if { [catch "package require csv"] } {
+        puts "Can't parse controlled vocabulary without package csv"
+        return 
+    }
+
+    #--- The controlled vocabulary must be a CSV file
+    set controlledVocabulary "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Resources/controlledVocabulary_new.csv"
+
+    #--- get number of columns each entry should have
+    set fp [ open $controlledVocabulary r ]
+    gets $fp line
+    set sline [ ::csv::split $line ]
+    set numCols [ llength $sline ]
+    close $fp
+    
+    set fp [ open $controlledVocabulary r ]
+    #--- parse the file into a list of lists called $::QA(CV)
+    while { ! [eof $fp ] } {
+        gets $fp line
+        set sline [ ::csv::split $line ]
+        set len [ llength $sline ]
+        #--- if the line is the wrong length, blow it off
+        if { $len == $numCols } {
+            lappend ::QA(CV) $sline
+        } 
+    }
+    close $fp
 }
 
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasMapTerm { term sourceTermSet targetTermSet } {
 
-#----------------------------------------------------------------------------------------------------
-#--- label is the term in the sourceTermSet; targetTermSet contains the translation 
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasVocabularyMapper { term sourceTermSet targetTermSet } {
-    
+    #--- if there's no controlled vocabulary parsed out, return.
+    if { ![ info exists ::QA(CV) ] } {
+        puts "Can't map term: no controlled vocabulary exists."
+        return
+    }
+    if { $::QA(CV) == "" } {
+        puts "Can't map term: no controlled vocabulary exists."
+        return
+    }
+
     #--- make sure sets of terms are valid
     set check [ QueryAtlasValidSystemCheck $sourceTermSet ]
     if { $check == 0 } {
@@ -111,67 +122,48 @@ proc QueryAtlasVocabularyMapper { term sourceTermSet targetTermSet } {
         return ""
     }
 
-    #--- The controlled vocabulary must be a CSV file
-    set controlledVocabulary "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Resources/controlledVocabulary.csv"
-    set fp [ open $controlledVocabulary r ]
+    #-- if we're just grabbing the freesurfer term, condition a little
+    #-- to get rid of ugly underscores, dashes, etc.
+    if { $sourceTermSet == "FreeSurfer" && $targetTermSet == "FreeSurfer" } {
+        regsub -all -- "-" $term " " term
+        regsub -all "ctx" $term "Cortex" term
+        regsub -all "rh" $term "Right" term
+        regsub -all "lh" $term "Left" term
+        return $term
+    }
 
-    #--- FIND the columns in the controlled vocabulary that map to target and source
-    while { ! [eof $fp ] } {
-        gets $fp line
-        #--- FIND the terms
-        set iTarget [ string first $targetTermSet $line ]
-        set iSource [ string first $sourceTermSet $line ]
-
-        if { $iTarget >= 0 && $iSource >= 0 } {
-
-            #--- FIND how many commas between line start and index of term
-            set tmp [ string range $line 0 [ expr $iTarget - 1 ] ]
-            set targetColumn [ QueryAtlasCharacterCount "," $tmp ]
-
-            set tmp [ string range $line 0 [ expr $iSource - 1 ] ]
-            set sourceColumn [ QueryAtlasCharacterCount "," $tmp ]
+    #--- FIND the columns in the controlled vocabulary
+    #--- that map to target and source TermSets
+    set sourceCol -1
+    set targetCol -1
+    set line [ lindex $::QA(CV) 0 ]
+    set len [ llength $line ]
+    for { set i 0 } { $i < $len } { incr i } {
+        set col [ lindex $line $i ]
+        if { $col == $sourceTermSet } {
+            set sourceCol $i
+        } elseif { $col == $targetTermSet } {
+            set targetCol $i
         }
-
-        if { $targetColumn >= 0 && $sourceColumn >= 0 } {
-            break
+    }
+    if { ($sourceCol > 0) && ($targetCol > 0) } {
+        #--- now march thru ::QA(CV) down the source Column to find term
+        set numRows [ llength $::QA(CV) ]
+        for { set i 0 } { $i < $numRows } { incr i } {
+            set row [ lindex $::QA(CV) $i ]
+            set sourceT [ lindex $row $sourceCol ]
+            if { $sourceT == $term } {
+                set targetT [ lindex $row $targetCol ]
+                return $targetT
+            }
         }
     }
 
-    if { $targetColumn  < 0 || $sourceColumn < 0 } {
-        if { $targetColumn < 0 } {
-            puts "QueryAtlasVocabularyMapper: Can't find $targetTermSet in the controlled vocabulary."
-        } elseif { $sourceColumn < 0 } {
-            puts "QueryAtlasVocabularyMapper: Can't find $sourceTermSet in the controlled vocabulary."
-        }
-        return ""
-    }
-    
-    #--- continue reading the file to find the term
-    set retTerm ""
-    set mapped 0
-    while { ! [eof $fp ] } {
-
-        gets $fp line
-        
-        #--- is the source term in this line?
-        set found [ string first $term $line ] 
-        if { $found >= 0 } {
-
-            #-- FIND the character index of the target translation
-            set termIndex [ QueryAtlasGetIndexOfCharInstance  "," $line $targetColumn ]
-
-            set zz [ string range $line $termIndex end ]
-            set zzi [ string first "," $zz ]
-            set retTerm [ string range $zz 0 [ expr $zzi - 1 ] ]
-
-            break
-        }
-    }
-    close $fp
-    puts "Translation = $retTerm."
-    return $retTerm
-
+    #--- well, nothing in the table.
+    return ""
 }
+
+
 
 
 #----------------------------------------------------------------------------------------------------

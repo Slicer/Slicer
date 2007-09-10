@@ -120,7 +120,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     //---    
 #ifdef ANNO_FRAME
     this->AnnotationVisibilityButton = NULL;
-    this->AnnotationNomenclatureMenuButton = NULL;
+    this->AnnotationTermSetMenuButton = NULL;
     this->ModelVisibilityButton = NULL;
 #endif
     
@@ -199,6 +199,9 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
 //---------------------------------------------------------------------------
 vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 {
+
+  vtkDebugMacro("vtkQueryAtlasGUI: Tearing down Tcl callbacks \n");
+  this->Script ( "QueryAtlasTearDown" );
 
   this->SetAndObserveMRMLScene ( NULL );
     this->SetModuleLogic ( NULL );
@@ -312,11 +315,11 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->AnnotationVisibilityButton->Delete();
       this->AnnotationVisibilityButton = NULL;
       }
-    if ( this->AnnotationNomenclatureMenuButton )
+    if ( this->AnnotationTermSetMenuButton )
       {
-      this->AnnotationNomenclatureMenuButton->SetParent ( NULL );
-      this->AnnotationNomenclatureMenuButton->Delete();
-      this->AnnotationNomenclatureMenuButton = NULL;      
+      this->AnnotationTermSetMenuButton->SetParent ( NULL );
+      this->AnnotationTermSetMenuButton->Delete();
+      this->AnnotationTermSetMenuButton = NULL;      
       }
 #endif
     
@@ -810,6 +813,7 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 
   this->ModelVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->AnnotationTermSetMenuButton->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->BIRNLexHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NeuroNamesHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -885,6 +889,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
 
   this->ModelVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->AnnotationTermSetMenuButton->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->BIRNLexHierarchyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NeuroNamesHierarchyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -946,9 +951,8 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkSlicerNodeSelectorWidget *sel = vtkSlicerNodeSelectorWidget::SafeDownCast ( caller );
 
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-
   const char *context;
-  int index, nnodes, i;
+  int index;
   vtkMRMLNode *node;
 
   
@@ -958,7 +962,25 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       event == vtkMRMLScene::NodeRemovedEvent)
     {
     // check to see if the model or labels have been deleted.
-    this->Script ("QueryAtlasNodeRemovedUpdate" );
+    //--- check to see if the lh.pial has been deleted
+    //--- and clean up if so.
+    vtkMRMLModelNode *node;
+    int n = this->MRMLScene->GetNumberOfNodesByClass( "vtkMRMLModelNode");
+    for ( int i=0; i < n; i++ )
+      {
+      node = vtkMRMLModelNode::SafeDownCast ( this->MRMLScene->GetNthNodeByClass ( i, "vtkMRMLModelNode") );
+      if ( (!strcmp ( node->GetName(), "lh.pial")) ||  (! strcmp ( node->GetName(), "lh.inflated")) )
+        {
+        // ok, query model for either qdec or fips/freesurfer is still here;
+        // no op
+        }
+      else
+        {
+        this->Script ( "QueryAtlasTearDown; QueryAtlasInitializeGlobasl");
+        this->Script ("QueryAtlasNodeRemovedUpdate" );
+        break;
+        }
+      }
     }
   if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
       vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
@@ -970,9 +992,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
       event == vtkMRMLScene::SceneCloseEvent)
     {
-    this->SceneClosing = true;
-    // reset globals.
-    this->Script ("QueryAtlasTearDown; QueryAtlasInit");
+    //
     }
 
   
@@ -1078,7 +1098,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
       this->ModelVisibilityButton->SetImageToIcon ( i );
       this->ModelVisibility = 0;
-     //      this->Script ( "" );
+      this->Script ( "QueryAtlasSetQueryModelInvisible" );
       }
     else
       {
@@ -1086,7 +1106,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
       this->ModelVisibilityButton->SetImageToIcon ( i );
       this->ModelVisibility = 1;
-     //      this->Script ( "" );
+      this->Script ( "QueryAtlasSetQueryModelVisible" );
       }
     }
   else if ( (b == this->FIPSFSButton) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -1243,10 +1263,34 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     }
 
+
   //---
   //--- Process menu selections
   //---
   // no need to do anything here; we'll just grab the widget values when we need them with tcl
+  if ( this->AnnotationTermSetMenuButton )
+    {
+    if (( m== this->AnnotationTermSetMenuButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+      {
+      const char *val = this->AnnotationTermSetMenuButton->GetValue();
+      if ( !strcmp( val, "local identifier" ) )
+        {
+        this->Script ( "QueryAtlasSetAnnotationTermSet local" );
+        }
+      else if (!strcmp( val, "BIRNLex String" ) )
+        {
+        this->Script ( "QueryAtlasSetAnnotationTermSet BIRNLex" );
+        }
+      else if (!strcmp( val, "NeuroNames String" ) )
+        {
+        this->Script ( "QueryAtlasSetAnnotationTermSet NeuroNames" );
+        }
+      else if (!strcmp( val, "UMLS CID" ) )
+        {
+        this->Script ( "QueryAtlasSetAnnotationTermSet UMLS" );
+        }
+      }
+    }
   if ( this->DiagnosisMenuButton )
     {
     if (( m== this->DiagnosisMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
@@ -1271,6 +1315,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       }
     }
+  
   if ((c == this->SpeciesNoneButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent))
     {
     }
@@ -1336,7 +1381,24 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
     {
     //this->UpdateFromMRML();
     // check to see if the model or labels have been deleted.
-    this->Script ("QueryAtlasNodeRemovedUpdate" );
+    //--- check to see if the lh.pial has been deleted
+    //--- and clean up if so.
+    vtkMRMLModelNode *node;
+    int n = this->MRMLScene->GetNumberOfNodesByClass( "vtkMRMLModelNode");
+    for ( int i=0; i < n; i++ )
+      {
+      node = vtkMRMLModelNode::SafeDownCast ( this->MRMLScene->GetNthNodeByClass ( i, "vtkMRMLModelNode") );
+      if ( (!strcmp ( node->GetName(), "lh.pial")) ||  (! strcmp ( node->GetName(), "lh.inflated")) )
+        {
+        //ok, query model is still here; no op
+        }
+      else
+        {
+        this->Script ( "QueryAtlasTearDown; QueryAtlasInitializeGlobasl");
+        this->Script ("QueryAtlasNodeRemovedUpdate" );
+        break;
+        }
+      }
     }
   
   // is the scene closing?
@@ -1344,7 +1406,7 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->SceneClosing = true;
     // reset globals.
-    this->Script ("QueryAtlasTearDown; QueryAtlasInit");
+    this->Script ("QueryAtlasTearDown; QueryAtlasInitializeGlobals");
     }
   else 
     {
@@ -1409,12 +1471,37 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     this->BuildResultsManagerGUI ( );
 #endif
 //    this->BuildDisplayAndNavigationGUI ( );
+      /*
     // ---
     // Source main tcl files.
     // (QueryAtlasInit sources other required tcl files)
     // ---
-    app->Script ( "source $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl; QueryAtlasInit");
+     vtksys_stl::string slicerHome;
+    if (!vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome))
+      {
+      vtkDebugMacro("Can't find SLICER_HOME env var. Can't source tcl scripts.");
+      }
+    else
+      {
+      // launch scripts
 
+      std::string tclScript = slicerHome + "/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl";
+      app->Script ( "source %s", tclScript.c_str() );
+      tclScript = slicerHome + "/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasWeb.tcl";
+      app->Script ( "source %s", tclScript.c_str() );
+      tclScript = slicerHome + "/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasControlledVocabulary.tcl";
+      app->Script ( "source %s", tclScript.c_str() );
+      tclScript = slicerHome + "/../Slicer3/Modules/QueryAtlas/Tcl/Card.tcl";
+      app->Script ( "source %s", tclScript.c_str() );
+      tclScript = slicerHome + "/../Slicer3/Modules/QueryAtlas/Tcl/CardFan.tcl";
+      app->Script ( "source %s", tclScript.c_str() );
+
+      // run init proc
+      this->Script ( "QueryAtlasInit" );
+      }
+      */
+      this->Script ( "source $env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl" );
+      this->Script ( "QueryAtlasInit" );
 }
 
 
@@ -1705,22 +1792,22 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     l->Create ( );
     l->SetText ( "annotation term set: " );
 
-    this->AnnotationNomenclatureMenuButton = vtkKWMenuButton::New();
-    this->AnnotationNomenclatureMenuButton->SetParent ( annotationFrame->GetFrame() );
-    this->AnnotationNomenclatureMenuButton->Create();
-    this->AnnotationNomenclatureMenuButton->SetWidth ( 25 );
-    this->AnnotationNomenclatureMenuButton->GetMenu()->AddRadioButton ("local identifier");
-    this->AnnotationNomenclatureMenuButton->GetMenu()->AddRadioButton ("BIRNLex String");
-    this->AnnotationNomenclatureMenuButton->GetMenu()->AddRadioButton ("NeuroNames String");
-    this->AnnotationNomenclatureMenuButton->GetMenu()->AddRadioButton ("UMLS CID");
-    this->AnnotationNomenclatureMenuButton->GetMenu()->AddSeparator();
-    this->AnnotationNomenclatureMenuButton->GetMenu()->AddCommand ( "close" );    
-    this->AnnotationNomenclatureMenuButton->GetMenu()->SelectItem ("local identifier");
+    this->AnnotationTermSetMenuButton = vtkKWMenuButton::New();
+    this->AnnotationTermSetMenuButton->SetParent ( annotationFrame->GetFrame() );
+    this->AnnotationTermSetMenuButton->Create();
+    this->AnnotationTermSetMenuButton->SetWidth ( 25 );
+    this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("local identifier");
+    this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("BIRNLex String");
+    this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("NeuroNames String");
+    this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("UMLS CID");
+    this->AnnotationTermSetMenuButton->GetMenu()->AddSeparator();
+    this->AnnotationTermSetMenuButton->GetMenu()->AddCommand ( "close" );    
+    this->AnnotationTermSetMenuButton->GetMenu()->SelectItem ("local identifier");
 
     app->Script ( "grid %s -row 0 -column 0 -sticky nse -padx 2 -pady 2",
                   l->GetWidgetName() );
     app->Script ( "grid %s -row 0 -column 1 -sticky wns -padx 2 -pady 2",
-                  this->AnnotationNomenclatureMenuButton->GetWidgetName() );
+                  this->AnnotationTermSetMenuButton->GetWidgetName() );
     app->Script ( "grid %s -row 1 -column 0 -sticky ens -padx 2 -pady 2",
                   annoLabel->GetWidgetName() );
     app->Script ( "grid %s -row 1 -column 1  -sticky wns -padx 2 -pady 2",
