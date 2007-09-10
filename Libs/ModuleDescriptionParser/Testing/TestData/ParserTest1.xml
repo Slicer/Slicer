@@ -41,7 +41,7 @@
 
     <boolean>
       <name>InitializeTransform</name>
-      <shortflag>-u</shortflag>
+      <flag>-u</flag>
       <longflag>--noinitializetransform</longflag>
       <description>Calculate initial transform</description>
       <label>Initialize TransformSpatial Samples</label>

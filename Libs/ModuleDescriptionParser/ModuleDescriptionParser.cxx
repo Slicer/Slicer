@@ -1396,7 +1396,7 @@ endElement(void *userData, const char *element)
     }
   else if(name != "executable")
     {
-    std::string error("ModuleDescriptionParser Error: Unrecognized element" + name + std::string("> was found."));
+    std::string error("ModuleDescriptionParser Error: Unrecognized element <" + name + std::string("> was found."));
     if (ps->ErrorDescription.size() == 0)
       {
       ps->ErrorDescription = error;
