@@ -38,6 +38,7 @@ public:
   // Callbacks for the Module application settings. Internal, do not use.
 
   virtual void ModulePathCallback(char *);
+  virtual void ModuleCachePathCallback(char *);
   virtual void HomeModuleCallback(char *name);
   virtual void TemporaryDirectoryCallback();
   virtual void LoadCommandLineModulesCallback(int state);
@@ -67,6 +68,7 @@ private:
   vtkKWFrameWithLabel *FontSettingsFrame;
   vtkKWEntryWithLabel *HomeModuleEntry;
   vtkKWEntryWithLabel *ModulePathEntry;
+  vtkKWEntryWithLabel *ModuleCachePathEntry;
   vtkKWLoadSaveButtonWithLabel *TemporaryDirectoryButton;
   vtkKWRadioButtonSet *FontSizeButtons;
   vtkKWRadioButtonSet *FontFamilyButtons;

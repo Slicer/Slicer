@@ -39,6 +39,7 @@
 #include "vtkKWMessageDialog.h"
 
 const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
+const char *vtkSlicerApplication::ModuleCachePathRegKey = "ModuleCachePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
 const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
 const char *vtkSlicerApplication::HomeModuleRegKey = "HomeModule";
@@ -180,6 +181,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->ConfirmDelete, "");
     
     strcpy(this->ModulePath, "");
+    strcpy(this->ModuleCachePath, "");
     strcpy ( this->HomeModule, "");
     this->LoadCommandLineModules = 1;
     this->EnableDaemon = 0;
@@ -521,6 +523,14 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     }
 
   if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::ModuleCachePathRegKey))
+    {
+    this->GetRegistryValue(
+      2, "RunTime", vtkSlicerApplication::ModuleCachePathRegKey,
+      this->ModuleCachePath);
+    }
+
+  if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::TemporaryDirectoryRegKey))
     {
     this->GetRegistryValue(
@@ -617,6 +627,10 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
     2, "RunTime", vtkSlicerApplication::ModulePathRegKey, "%s", 
     this->ModulePath);
 
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::ModuleCachePathRegKey, "%s", 
+    this->ModuleCachePath);
+  
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::TemporaryDirectoryRegKey, "%s", 
     this->TemporaryDirectory);
@@ -757,6 +771,26 @@ void vtkSlicerApplication::SetModulePath(const char* path)
 const char* vtkSlicerApplication::GetModulePath() const
 {
   return this->ModulePath;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetModuleCachePath(const char* path)
+{
+  if (path)
+    {
+    if (strcmp(this->ModuleCachePath, path) != 0
+        && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->ModuleCachePath, path);
+      this->Modified();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetModuleCachePath() const
+{
+  return this->ModuleCachePath;
 }
 
 //----------------------------------------------------------------------------

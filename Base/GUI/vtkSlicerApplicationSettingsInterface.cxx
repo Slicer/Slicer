@@ -34,6 +34,7 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->FontSettingsFrame = NULL;
   this->ModuleSettingsFrame = NULL;
   this->ModulePathEntry = NULL;
+  this->ModuleCachePathEntry = NULL;
   this->HomeModuleEntry = NULL;
   this->TemporaryDirectoryButton = NULL;
   this->LoadCommandLineModulesCheckButton = NULL;
@@ -86,6 +87,12 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     this->ModulePathEntry = 0;
     }
 
+  if (this->ModuleCachePathEntry)
+    {
+    this->ModuleCachePathEntry->Delete();
+    this->ModuleCachePathEntry = 0;
+    }
+  
   if (this->HomeModuleEntry)
     {
     this->HomeModuleEntry->Delete();
@@ -381,6 +388,24 @@ void vtkSlicerApplicationSettingsInterface::Create()
          << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
 
   // --------------------------------------------------------------
+  // Module settings : Module CachePath
+
+  if (!this->ModuleCachePathEntry)
+    {
+    this->ModuleCachePathEntry = vtkKWEntryWithLabel::New();
+    }
+
+  this->ModuleCachePathEntry->SetParent(frame);
+  this->ModuleCachePathEntry->Create();
+  this->ModuleCachePathEntry->SetLabelText("Module Cache Path:");
+  this->ModuleCachePathEntry->SetLabelWidth(label_width);
+  this->ModuleCachePathEntry->GetWidget()->SetCommand(this, "ModuleCachePathCallback");
+  this->ModuleCachePathEntry->SetBalloonHelpString("Cache directory for modules.");
+
+  tk_cmd << "pack " << this->ModuleCachePathEntry->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
+  
+  // --------------------------------------------------------------
   // Module settings : TemporaryDirectory
 
   if (!this->TemporaryDirectoryButton)
@@ -561,6 +586,19 @@ void vtkSlicerApplicationSettingsInterface::ModulePathCallback(char *path)
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::ModuleCachePathCallback(char *path)
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
+    {
+    // Store the setting in the application object
+    app->SetModuleCachePath(path);
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::TemporaryDirectoryCallback()
 {
   vtkSlicerApplication *app
@@ -605,6 +643,10 @@ void vtkSlicerApplicationSettingsInterface::Update()
     if (this->ModulePathEntry)
       {
       this->ModulePathEntry->GetWidget()->SetValue(app->GetModulePath());
+      }
+    if (this->ModuleCachePathEntry)
+      {
+      this->ModuleCachePathEntry->GetWidget()->SetValue(app->GetModuleCachePath());
       }
     if ( this->FontSizeButtons )
       {

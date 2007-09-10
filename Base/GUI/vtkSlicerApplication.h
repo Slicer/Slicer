@@ -97,6 +97,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   //BTX
   static const char *ConfirmDeleteRegKey;
   static const char *ModulePathRegKey;
+  static const char *ModuleCachePathRegKey;
   static const char *TemporaryDirectoryRegKey;
   static const char *HomeModuleRegKey;
   static const char *LoadCommandLineModulesRegKey;
@@ -130,6 +131,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   void SetModulePath(const char *path);
   const char* GetModulePath() const;
 
+  // Description:
+  // Set/Get the cache path for modules.
+  void SetModuleCachePath(const char *path);
+  const char* GetModuleCachePath() const;
+  
   // Description:
   // Set/Get a user's home module.
   void SetHomeModule (const char *name);
@@ -250,6 +256,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   
   char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char ModuleCachePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char TemporaryDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ApplicationFontSize [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
