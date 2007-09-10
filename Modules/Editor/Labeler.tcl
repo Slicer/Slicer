@@ -190,6 +190,11 @@ itcl::body Labeler::makeMaskImage {polyData} {
 }
 
     
+#
+# rasterize a polyData (closed list of points) 
+# into the label map layer
+# - points are specified in current XY space
+#
 itcl::body Labeler::applyPolyMask {polyData} {
 
   foreach {x y} [$_interactor GetEventPosition] {}
@@ -218,6 +223,12 @@ itcl::body Labeler::applyPolyMask {polyData} {
 }
 
 
+#
+# apply a pre-rasterized image to the current label layer
+# - maskIJKToRAS tells the mapping from image pixels to RAS
+# - mask is a vtkImageData
+# - bounds are the xy extents of the mask (zlo and zhi ignored)
+#
 itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
 
   #
@@ -240,6 +251,7 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   set blIJK [$xyToIJK MultiplyPoint $xlo $ylo 0 1]
   set brIJK [$xyToIJK MultiplyPoint $xhi $ylo 0 1]
 
+  # do the clamping
   set dims [$_layers(label,image) GetDimensions]
   foreach v {i j k} c [lrange $tlIJK 0 2] d $dims {
     set tl($v) [expr int(round($c))]
