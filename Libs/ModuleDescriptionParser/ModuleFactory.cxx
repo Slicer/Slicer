@@ -15,6 +15,7 @@
 #include "itksys/Directory.hxx"
 #include "itksys/SystemTools.hxx"
 #include "itksys/Process.h"
+#include "itksys/Base64.h"
 
 #include "ModuleFactory.h"
 #include "ModuleDescriptionParser.h"
@@ -23,6 +24,7 @@
 #include <set>
 #include <map>
 #include <sstream>
+#include <fstream>
 #include <cctype>
 #include <algorithm>
 #include <deque>
@@ -173,21 +175,47 @@ typedef unsigned char * (*ModuleLogoFunction)(int *width, int *height, int *pixe
 class ModuleDescriptionMap : public std::map<std::string, ModuleDescription> {};
 class ModuleFileMap : public std::set<std::string> {};
 
+// Private datastructures for module cache.
+//
+//
+
+// cache entry for a module
+struct ModuleCacheEntry
+{
+  std::string Location;        // complete path to a file
+  unsigned int ModifiedTime;    // file's modified time
+  std::string Type;            // SharedObjectModule, CommandLineModule, PythonModule, NotAModule
+//  std::string Title;           // name of the module
+  std::string XMLDescription;  // Module description
+  int LogoWidth;
+  int LogoHeight;
+  int LogoPixelSize;
+  unsigned long LogoLength;
+  std::string Logo;
+};
+
+// map from a filename to cache entry
+class ModuleCache : public std::map<std::string, ModuleCacheEntry> {};
+
+
 // ---
 
 ModuleFactory::ModuleFactory()
 {
   this->Name = "Application";
+  this->InternalCache = new ModuleCache;
   this->InternalMap = new ModuleDescriptionMap;
   this->InternalFileMap = new ModuleFileMap;
   this->WarningMessageCallback = 0;
   this->ErrorMessageCallback = 0;
   this->InformationMessageCallback = 0;
   this->ModuleDiscoveryMessageCallback = 0;
+  this->CacheModified = false;
 }
 
 ModuleFactory::~ModuleFactory()
 {
+  delete this->InternalCache;
   delete this->InternalMap;
   delete this->InternalFileMap;
 }
@@ -317,6 +345,9 @@ void
 ModuleFactory
 ::Scan()
 {
+  // Load the module cache information
+  this->LoadModuleCache();
+  
   // Scan for shared object modules first since they will be higher
   // performance than command line module
   int numberOfShared, numberOfExecutables, numberOfPeekedExecutables, numberOfPython = 0;
@@ -328,6 +359,10 @@ ModuleFactory
   numberOfPython = this->ScanForPythonModulesByLoading();
 #endif
 
+  // Store the module cache information
+  this->SaveModuleCache();
+
+  
   if (numberOfShared + numberOfExecutables + numberOfPeekedExecutables + numberOfPython == 0)
     {
     this->WarningMessage( ("No plugin modules found. Check your module search path and your " + this->Name + " installation.").c_str() );
@@ -374,6 +409,7 @@ ModuleFactory
 
     for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
       {
+      bool isAPlugin = true;
       const char *filename = directory.GetFile(ii);
       
       // skip any directories
@@ -401,6 +437,24 @@ ModuleFactory
             }
 
 
+          // determine the modified time of the module
+          long int libraryModifiedTime
+            = itksys::SystemTools::ModifiedTime(fullLibraryPath.c_str());
+
+          // early exit if we can find the module in the cache
+          int cached
+            = this->GetModuleFromCache( fullLibraryPath, libraryModifiedTime,
+                                        "SharedObjectModule", information);
+          if ( cached != 0 )
+            {
+            if ( cached == 1 )
+              {
+              numberFound++; // found in the cache and is a module
+              }
+            // whatever, it was in the cache, so we can safely skip it.
+            continue;
+            }
+          
           itksys::DynamicLoader::LibraryHandle lib
             = itksys::DynamicLoader::OpenLibrary(fullLibraryPath.c_str());
           if ( lib )
@@ -506,6 +560,31 @@ ModuleFactory
                   // Store the module in the list
                   (*this->InternalMap)[module.GetTitle()] =  module ;
 
+                  if (logoImage)
+                    {
+                    // construct a module logo and set it on the module
+                    ModuleLogo mLogo;
+                    mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
+                                   *logoPixelSize, *logoLength, 0);
+                    (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                    }
+                  else if (logoFunction)
+                    {                  
+                    int width, height, pixelSize;
+                    unsigned long bufferLength;
+                    
+                    // call the logo function to get the pixels and information
+                    unsigned char *logo = (*logoFunction)(&width, &height,
+                                                          &pixelSize,
+                                                          &bufferLength);
+                    
+                    // construct a module logo and set it on the module
+                    ModuleLogo mLogo;
+                    mLogo.SetLogo( logo, width, height, pixelSize,
+                                   bufferLength, 0);
+                    (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                    }
+                  
                   information << "A module named \"" << module.GetTitle()
                               << "\" has been discovered at "
                               << module.GetLocation() << "("
@@ -527,35 +606,42 @@ ModuleFactory
                             << "    Keeping first module." << std::endl;
                   }
 
-                if (logoImage)
+                // Put the module in the cache
+                ModuleCacheEntry entry;
+                entry.Location = fullLibraryPath;
+                entry.ModifiedTime = libraryModifiedTime;
+                entry.Type = "SharedObjectModule";
+                entry.XMLDescription = xml;
+                
+                if (module.GetLogo().GetLogo())
                   {
-                  // construct a module logo and set it on the module
-                  ModuleLogo mLogo;
-                  mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
-                                 *logoPixelSize, *logoLength, 0);
-                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                  entry.LogoWidth = module.GetLogo().GetWidth();
+                  entry.LogoHeight = module.GetLogo().GetHeight();
+                  entry.LogoPixelSize = module.GetLogo().GetPixelSize();
+                  entry.LogoLength = module.GetLogo().GetBufferLength();
+                  entry.Logo = std::string((char *)module.GetLogo().GetLogo());
                   }
-                else if (logoFunction)
-                  {                  
-                  int width, height, pixelSize;
-                  unsigned long bufferLength;
-                  
-                  // call the logo function to get the pixels and information
-                  unsigned char *logo = (*logoFunction)(&width, &height,
-                                                        &pixelSize,
-                                                        &bufferLength);
-                  
-                  // construct a module logo and set it on the module
-                  ModuleLogo mLogo;
-                  mLogo.SetLogo( logo, width, height, pixelSize,
-                                 bufferLength, 0);
-                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                else
+                  {
+                  entry.LogoWidth = 0;
+                  entry.LogoHeight = 0;
+                  entry.LogoPixelSize = 0;
+                  entry.LogoLength = 0;
+                  entry.Logo = "None";
                   }
+                
+                (*this->InternalCache)[entry.Location] = entry;
+                this->CacheModified = true;
                 }
               else
                 {
                 // not a plugin, no xml description, close the library
                 itksys::DynamicLoader::CloseLibrary(lib);
+
+                isAPlugin = false;
+                information << filename
+                            << " is not a plugin (no XML description)."
+                            << std::endl;
                 }
               }
             else
@@ -567,7 +653,30 @@ ModuleFactory
 
               // not a plugin, doesn't have the symbols, close the library
               itksys::DynamicLoader::CloseLibrary(lib);
+
+              isAPlugin = false;
+              information << filename
+                          << " is not a plugin (no entry points)."
+                          << std::endl;
               }
+            }
+          
+          if (!isAPlugin)
+            {
+            // put information in the cache
+            ModuleCacheEntry entry;
+            entry.Location = fullLibraryPath;
+            entry.ModifiedTime = libraryModifiedTime;
+            entry.Type = "NotAModule";
+            entry.XMLDescription = "None";
+            entry.LogoWidth = 0;
+            entry.LogoHeight = 0;
+            entry.LogoPixelSize = 0;
+            entry.LogoLength = 0;
+            entry.Logo = "None";
+            
+            (*this->InternalCache)[entry.Location] = entry;
+            this->CacheModified = true;
             }
           }
         }
@@ -628,6 +737,7 @@ ModuleFactory
 
     for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
       {
+      bool isAPlugin = true;
       const char *filename = directory.GetFile(ii);
       
       // skip any directories
@@ -637,7 +747,7 @@ ModuleFactory
         if ( NameIsExecutable(filename) )
           {
           numberTested++;
-          //std::cout << "Testing " << filename << " as a plugin:" << std::endl;
+          //std::cout << "Testing " << filename << " as a plugin:" <<std::endl;
           std::string commandName = std::string(directory.GetPath())
             + "/" + filename;
 
@@ -649,6 +759,24 @@ ModuleFactory
             // file was already discovered as a module
             information << "Module already discovered at " << commandName
                         << std::endl;
+            continue;
+            }
+
+          // determine the modified time of the module
+          long int commandModifiedTime
+            = itksys::SystemTools::ModifiedTime(commandName.c_str());
+
+          // early exit if we can find the module in the cache
+          int cached
+            = this->GetModuleFromCache( commandName, commandModifiedTime,
+                                        "CommandLineModule", information);
+          if ( cached != 0 )
+            {
+            if ( cached == 1 )
+              {
+              numberFound++; // found in the cache and is a module
+              }
+            // whatever, it was in the cache, so we can safely skip it.
             continue;
             }
 
@@ -743,6 +871,7 @@ ModuleFactory
                   // Store the module in the list
                   (*this->InternalMap)[module.GetTitle()] =  module ;
 
+                  
                   information << "A module named \"" << module.GetTitle()
                               << "\" has been discovered at "
                               << module.GetLocation() 
@@ -765,36 +894,82 @@ ModuleFactory
                               << std::endl
                               << "    Keeping first module." << std::endl;
                   }
+
+                // Put the module in the cache
+                ModuleCacheEntry entry;
+                entry.Location = commandName;
+                entry.ModifiedTime = commandModifiedTime;
+                entry.Type = "CommandLineModule";
+                entry.XMLDescription = stdoutbuffer;
+                
+                if (module.GetLogo().GetLogo())
+                  {
+                  entry.LogoWidth = module.GetLogo().GetWidth();
+                  entry.LogoHeight = module.GetLogo().GetHeight();
+                  entry.LogoPixelSize = module.GetLogo().GetPixelSize();
+                  entry.LogoLength = module.GetLogo().GetBufferLength();
+                  entry.Logo = std::string((char *)module.GetLogo().GetLogo());
+                  }
+                else
+                  {
+                  entry.LogoWidth = 0;
+                  entry.LogoHeight = 0;
+                  entry.LogoPixelSize = 0;
+                  entry.LogoLength = 0;
+                  entry.Logo = "None";
+                  }
+                
+                (*this->InternalCache)[entry.Location] = entry;
+                this->CacheModified = true;
                 }
               else
                 {
-//               std::cout << "\t" << filename << " is not a plugin." << std::endl
-//                         << "\t" << filename << " did not generate an xml description." << std::endl;
+                isAPlugin = false;
+                information << filename << " is not a plugin (did not generate an XML description)." << std::endl;
                 }
               }
             else
               {
-//             std::cout << "\t" << filename << " is not a plugin." << std::endl
-//                       << "\t" << filename << " exited with errors." << std::endl;
+              isAPlugin = false;
+              information << filename << " is not a plugin (exited with errors)." << std::endl;
               }
             }
           else if (result == itksysProcess_State_Expired)
             {
-//           std::cout << "\t" << filename << " is not a plugin." << std::endl
-//                     << "\t" << filename << " timeout exceeded." << std::endl;
+            isAPlugin = false;
+            information << filename << " is not a plugin (timeout exceeded)." << std::endl;
             }
           else
             {
-//           std::cout << "\t" << filename << " is not a plugin." << std::endl
-//                     << "\t" << filename << " did not exit cleanly." << std::endl;
+            isAPlugin = false;
+            information << filename << " is not a plugin (did not exit cleanly)." << std::endl;
             }
 
+
+          if (!isAPlugin)
+            {
+            // put information in the cache
+            ModuleCacheEntry entry;
+            entry.Location = commandName;
+            entry.ModifiedTime = commandModifiedTime;
+            entry.Type = "NotAModule";
+            entry.XMLDescription = "None";
+            entry.LogoWidth = 0;
+            entry.LogoHeight = 0;
+            entry.LogoPixelSize = 0;
+            entry.LogoLength = 0;
+            entry.Logo = "None";
+            
+            (*this->InternalCache)[entry.Location] = entry;
+            this->CacheModified = true;
+            }
+          
           // clean up
           itksysProcess_Delete(process);
           }
         }
       }
-    this->InformationMessage( information.str().c_str() );    
+    this->InformationMessage( information.str().c_str() );
     }
   t1 = itksys::SystemTools::GetTime();
 
@@ -878,6 +1053,24 @@ ModuleFactory
             continue;
             }
 
+          // determine the modified time of the module
+          long int commandModifiedTime
+            = itksys::SystemTools::ModifiedTime(fullExecutablePath.c_str());
+
+          // early exit if we can find the module in the cache
+          int cached
+            = this->GetModuleFromCache( fullExecutablePath,commandModifiedTime,
+                                        "CommandLineModule", information);
+          if ( cached != 0 )
+            {
+            if ( cached == 1 )
+              {
+              numberFound++; // found in the cache and is a module
+              }
+            // whatever, it was in the cache, so we can safely skip it.
+            continue;
+            }
+
           itksys::DynamicLoader::LibraryHandle lib
             = itksys::DynamicLoader::OpenLibrary(fullExecutablePath.c_str());
 
@@ -931,6 +1124,15 @@ ModuleFactory
                 ModuleDescriptionParser parser;
                 parser.Parse(xml, module);
 
+                if (logoImage)
+                  {
+                  // construct a module logo and set it on the module
+                  ModuleLogo mLogo;
+                  mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
+                                 *logoPixelSize, *logoLength, 0);
+                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                  }
+
                 // Check to make sure the module is not already in the
                 // list
                 ModuleDescriptionMap::iterator mit
@@ -945,7 +1147,7 @@ ModuleFactory
                   {
                   // Store the module in the list
                   (*this->InternalMap)[module.GetTitle()] =  module ;
-                  
+
                   information << "A module named \"" << module.GetTitle()
                               << "\" has been discovered at "
                               << module.GetLocation()
@@ -968,14 +1170,32 @@ ModuleFactory
                             << "    Keeping first module." << std::endl;
                   }
 
-                if (logoImage)
+                // Put the module in the cache
+                ModuleCacheEntry entry;
+                entry.Location = fullExecutablePath;
+                entry.ModifiedTime = commandModifiedTime;
+                entry.Type = "CommandLineModule";
+                entry.XMLDescription = xml;
+                
+                if (module.GetLogo().GetLogo())
                   {
-                  // construct a module logo and set it on the module
-                  ModuleLogo mLogo;
-                  mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
-                                 *logoPixelSize, *logoLength, 0);
-                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                  entry.LogoWidth = module.GetLogo().GetWidth();
+                  entry.LogoHeight = module.GetLogo().GetHeight();
+                  entry.LogoPixelSize = module.GetLogo().GetPixelSize();
+                  entry.LogoLength = module.GetLogo().GetBufferLength();
+                  entry.Logo = std::string((char *)module.GetLogo().GetLogo());
                   }
+                else
+                  {
+                  entry.LogoWidth = 0;
+                  entry.LogoHeight = 0;
+                  entry.LogoPixelSize = 0;
+                  entry.LogoLength = 0;
+                  entry.Logo = "None";
+                  }
+                
+                (*this->InternalCache)[entry.Location] = entry;
+                this->CacheModified = true;
                 }
               }
             itksys::DynamicLoader::CloseLibrary(lib);
@@ -1074,6 +1294,24 @@ ModuleFactory
             continue;
             }
 
+          // determine the modified time of the module
+          long int commandModifiedTime
+            = itksys::SystemTools::ModifiedTime(fullExecutablePath.c_str());
+
+          // early exit if we can find the module in the cache
+          int cached
+            = this->GetModuleFromCache( fullExecutablePath,commandModifiedTime,
+                                        "CommandLineModule", information);
+          if ( cached != 0 )
+            {
+            if ( cached == 1 )
+              {
+              numberFound++; // found in the cache and is a module
+              }
+            // whatever, it was in the cache, so we can safely skip it.
+            continue;
+            }
+
           BinaryFileDescriptor myBFD;
           bool opened = myBFD.Open(fullExecutablePath.c_str());
 
@@ -1127,6 +1365,15 @@ ModuleFactory
                 ModuleDescriptionParser parser;
                 parser.Parse(xml, module);
 
+                if (logoImage)
+                  {
+                  // construct a module logo and set it on the module
+                  ModuleLogo mLogo;
+                  mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
+                                 *logoPixelSize, *logoLength, 0);
+                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                  }
+
                 // Check to make sure the module is not already in the
                 // list
                 ModuleDescriptionMap::iterator mit
@@ -1141,7 +1388,7 @@ ModuleFactory
                   {
                   // Store the module in the list
                   (*this->InternalMap)[module.GetTitle()] =  module ;
-                  
+
                   information << "A module named \"" << module.GetTitle()
                               << "\" has been discovered at "
                               << module.GetLocation()
@@ -1164,14 +1411,32 @@ ModuleFactory
                             << "    Keeping first module." << std::endl;
                   }
 
-                if (logoImage)
+                // Put the module in the cache
+                ModuleCacheEntry entry;
+                entry.Location = fullExecutablePath;
+                entry.ModifiedTime = commandModifiedTime;
+                entry.Type = "CommandLineModule";
+                entry.XMLDescription = xml;
+                
+                if (module.GetLogo().GetLogo())
                   {
-                  // construct a module logo and set it on the module
-                  ModuleLogo mLogo;
-                  mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
-                                 *logoPixelSize, *logoLength, 0);
-                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                  entry.LogoWidth = module.GetLogo().GetWidth();
+                  entry.LogoHeight = module.GetLogo().GetHeight();
+                  entry.LogoPixelSize = module.GetLogo().GetPixelSize();
+                  entry.LogoLength = module.GetLogo().GetBufferLength();
+                  entry.Logo = std::string((char *)module.GetLogo().GetLogo());
                   }
+                else
+                  {
+                  entry.LogoWidth = 0;
+                  entry.LogoHeight = 0;
+                  entry.LogoPixelSize = 0;
+                  entry.LogoLength = 0;
+                  entry.Logo = "None";
+                  }
+                
+                (*this->InternalCache)[entry.Location] = entry;
+                this->CacheModified = true;
                 }
               }
             myBFD.Close();
@@ -1504,4 +1769,355 @@ ModuleFactory
   this->InformationMessage( information.str().c_str() );
 #endif
   return numberFound;
+}
+
+
+void
+ModuleFactory
+::LoadModuleCache()
+{
+  std::stringstream information;
+  if (this->CachePath == "")
+    {
+    information << "No module cache path set." << std::endl;
+    
+    // emit the message
+    this->WarningMessage( information.str().c_str() );
+    return;
+    }
+  else
+    {
+    information << "Loading module cache."
+                << std::endl;
+    
+    // put code here to write the cache
+    std::ifstream cache( (this->CachePath + "/ModuleCache.csv").c_str() );
+    
+    if (cache)
+      {
+      ModuleCacheEntry entry;
+      std::string line, comma(",");
+
+      unsigned long lineNumber = 0;
+      while (!cache.eof())
+        {
+        std::vector<std::string> words;
+
+        lineNumber++;
+        std::getline(cache, line);
+        splitString(line, comma, words);
+
+        if (words.size() == 9)
+          {
+          entry.Location = words[0];
+          entry.ModifiedTime = atoi(words[1].c_str());
+          
+          // trim the Type of leading whitespace
+          std::string::size_type pos;
+          pos = words[2].find_first_not_of(" \t\r\n");
+          if (pos != std::string::npos)
+            {
+            words[2].erase(0, pos);
+            }
+          entry.Type = words[2];
+          
+          // trim the XMLDescription of leading whitespace
+          pos = words[3].find_first_not_of(" \t\r\n");
+          if (pos != std::string::npos)
+            {
+            words[3].erase(0, pos);
+            }
+          
+          // convert XML Description from Base64
+          if (words[3] != "None")
+            {
+            unsigned char *bin = new unsigned char[words[3].size()];
+            unsigned int decodedLengthActual = itksysBase64_Decode(
+              (const unsigned char *) words[3].c_str(),
+              0,
+              (unsigned char *) bin,
+              words[3].size());
+            
+            entry.XMLDescription =
+              std::string((char *)bin, decodedLengthActual) ; 
+            
+            delete []bin;
+            }
+          else
+            {
+            entry.XMLDescription = words[3];
+            }
+
+          entry.LogoWidth = atoi(words[4].c_str());
+          entry.LogoHeight = atoi(words[5].c_str());
+          entry.LogoPixelSize = atoi(words[6].c_str());
+          entry.LogoLength = atoi(words[7].c_str());
+
+          // trim the Logo of leading whitespace
+          pos = words[8].find_first_not_of(" \t\r\n");
+          if (pos != std::string::npos)
+            {
+            words[8].erase(0, pos);
+            }
+
+          if (words[8] != "None")
+            {
+            unsigned char *bin = new unsigned char[words[8].size()];
+            unsigned int decodedLengthActual = itksysBase64_Decode(
+              (const unsigned char *) words[8].c_str(),
+              0,
+              (unsigned char *) bin,
+              words[8].size());
+            
+            entry.Logo =
+              std::string((char *)bin, decodedLengthActual) ; 
+            
+            delete []bin;
+            }
+          else
+            {
+            entry.Logo = words[8];
+            }
+          
+          (*this->InternalCache)[entry.Location] = entry;
+            
+          information << "Found cache entry for " << entry.Location
+                      << std::endl;
+            
+          }
+        else
+          {
+          if (words.size() > 0)
+            {
+            information << "Invalid cache entry for " << words[0] << std::endl;
+            }
+          else
+            {
+            information << "Invalid cache line at line " << lineNumber
+                        << std::endl;
+            }
+          }
+        }
+      
+      // emit the message
+      this->InformationMessage( information.str().c_str() );
+      
+      return;
+      }
+    else
+      {
+      information << "Cannot read cache "
+                  << this->CachePath + "/ModuleCache.csv"
+                  << std::endl;
+      
+      // emit the message
+      this->WarningMessage( information.str().c_str() );
+      return;
+      }
+    }
+}
+
+void
+ModuleFactory
+::SaveModuleCache()
+{
+  if (this->CacheModified)
+    {
+    std::stringstream information;
+    if (this->CachePath == "")
+      {
+      information << "New modules discovered but no cache path set."
+                  << std::endl;
+
+      // emit the message
+      this->WarningMessage( information.str().c_str() );
+      return;
+      }
+    else
+      {
+      information << "New modules discovered, updating module cache."
+                  << std::endl;
+
+      // put code here to write the cache
+      std::ofstream cache( (this->CachePath + "/ModuleCache.csv").c_str() );
+      
+      if (cache)
+        {
+        ModuleCache::iterator cit;
+        for (cit = this->InternalCache->begin();
+             cit != this->InternalCache->end(); ++cit)
+          {
+          cache << (*cit).second.Location << ", "
+                << (*cit).second.ModifiedTime << ", "
+                << (*cit).second.Type << ", ";
+            
+          if ((*cit).second.XMLDescription != "None")
+            {
+            int encodedLengthEstimate = 2*(*cit).second.XMLDescription.size();
+            encodedLengthEstimate = ((encodedLengthEstimate / 4) + 1) * 4;
+
+            char *bin = new char[encodedLengthEstimate];
+            int encodedLengthActual = itksysBase64_Encode(
+              (const unsigned char *) (*cit).second.XMLDescription.c_str(),
+              (*cit).second.XMLDescription.size(),
+              (unsigned char *) bin,
+              0);
+            std::string encodedDescription(bin, encodedLengthActual);
+            delete []bin;
+            
+            cache << encodedDescription << ", ";
+            }
+          else
+            {
+            cache << "None, ";
+            }
+
+          if ((*cit).second.Logo != "None" && (*cit).second.Logo != "")
+            {
+            cache << (*cit).second.LogoWidth << ", "
+                  << (*cit).second.LogoHeight << ", "
+                  << (*cit).second.LogoPixelSize << ", "
+                  << (*cit).second.LogoLength << ", ";
+
+            int encodedLengthEstimate = 2 * (*cit).second.Logo.size();
+            encodedLengthEstimate = ((encodedLengthEstimate / 4) + 1) * 4;
+
+            char *bin = new char[encodedLengthEstimate];
+            int encodedLengthActual = itksysBase64_Encode(
+              (const unsigned char *) (*cit).second.Logo.c_str(),
+              (*cit).second.Logo.size(),
+              (unsigned char *) bin,
+              0);
+            std::string encodedLogo(bin, encodedLengthActual);
+            delete []bin;
+            
+            cache << encodedLogo << std::endl;
+            }
+          else
+            {
+            // width, height, pixel size, logo length, logo
+            cache << "0, 0, 0, 0, None" << std::endl;
+            }
+          }
+
+        // emit the message
+        this->InformationMessage( information.str().c_str() );
+
+        return;
+        }
+      else
+        {
+        information << "Cannot write to cache path "
+                    << this->CachePath + "/ModuleCache.csv"
+                    << std::endl;
+
+        // emit the message
+        this->WarningMessage( information.str().c_str() );
+        return;
+        }
+      }
+    }
+}
+
+int
+ModuleFactory
+::GetModuleFromCache(const std::string &commandName,
+                     long int commandModifiedTime,
+                     const std::string & type,
+                     std::stringstream &stream)
+{
+  int returnval = 0;
+  
+  // check whether we have this file in our cache
+  ModuleCache::iterator cit = this->InternalCache->find(commandName);
+  if (cit != this->InternalCache->end())
+    {
+    // is the cache entry the same type of module?
+    if ((*cit).second.Type == type)
+      {
+      // module is in the cache, check the timestamp
+      if (commandModifiedTime == (*cit).second.ModifiedTime)
+        {
+        // can safely use the cached verion
+        this->InternalFileMap->insert( commandName );
+                
+        ModuleDescription module;
+        module.SetType( (*cit).second.Type );
+        if (type == "CommandLineModule")
+          {
+          module.SetTarget( commandName );
+          }
+        else
+          {
+          module.SetTarget( "Unknown" );
+          }
+        module.SetLocation( commandName );
+
+        if ((*cit).second.Logo != "None")
+          {
+          ModuleLogo logo;
+          logo.SetLogo( (unsigned char *)
+                        (*cit).second.Logo.c_str(),
+                        (*cit).second.LogoWidth,
+                        (*cit).second.LogoHeight,
+                        (*cit).second.LogoPixelSize,
+                        (*cit).second.LogoLength, 0 );
+          module.SetLogo( logo );
+          }
+                
+        ModuleDescriptionParser parser;
+        parser.Parse((*cit).second.XMLDescription, module);
+
+        // Check to make sure the module is not already in the list
+        ModuleDescriptionMap::iterator mit
+          = this->InternalMap->find(module.GetTitle());
+
+        std::string splash_msg("Discovered ");
+        splash_msg +=  module.GetTitle();
+        splash_msg += " Module (cache)...";
+        this->ModuleDiscoveryMessage(splash_msg.c_str());
+              
+        if (mit == this->InternalMap->end())
+          {
+          // Store the module in the list
+          (*this->InternalMap)[module.GetTitle()] =  module ;
+                  
+          stream << "A module named \"" << module.GetTitle()
+                 << "\" has been loaded from the cache for "
+                 << module.GetLocation() 
+                 << "(" << module.GetTarget() << ")"
+                 << std::endl;
+          }
+        else
+          {
+          stream << "A module named \"" << module.GetTitle()
+                 << "\" has already been discovered." << std::endl
+                 << "    First discovered at "
+                 << (*mit).second.GetLocation()
+                 << "(" << (*mit).second.GetTarget() << ")"
+                 << std::endl
+                 << "    Then discovered in the cache at "
+                 << module.GetLocation()
+                 << "(" << module.GetTarget() << ")"
+                 << std::endl
+                 << "    Keeping first module." << std::endl;
+          }
+                
+        returnval = 1;
+        }
+      }
+    else if ((*cit).second.Type == "NotAModule")
+      {
+      // last time we saw this file, it was not a module,
+      // check the modified times to see if we need to recheck
+      if (commandModifiedTime == (*cit).second.ModifiedTime)
+        {
+        // can safely skip the file
+        stream << commandName << " is not a plugin (cache)." << std::endl;
+        returnval = 2;
+        }
+      }
+    }
+
+  return returnval;
 }

@@ -73,6 +73,7 @@ extern "C" {
 #endif
 
 #include <vtksys/SystemTools.hxx>
+#include <vtksys/Directory.hxx>
 #include <vtksys/stl/string>
 
 // for data prov
@@ -1301,7 +1302,7 @@ int Slicer3_main(int argc, char *argv[])
         defaultPackageDir += "/" + intDir;
         }
     
-      // get the path of that the user has configured
+      // get the path that the user has configured
       if (slicerApp->GetModulePath())
         {
         userPackagePath = slicerApp->GetModulePath();
@@ -1311,10 +1312,71 @@ int Slicer3_main(int argc, char *argv[])
       // installation or build tree) to the user path
       packagePath = userPackagePath + delim + defaultPackageDir;
 
+      std::string cachePath;
+      std::string defaultCachePath;
+      std::string userCachePath;
+
+      // define a default cache for module information
+      defaultCachePath = slicerBinDir + "/../lib/Slicer3/PluginsCache";
+      if (hasIntDir)
+        {
+        defaultCachePath += "/" + intDir;
+        }
+      
+      // get the cache path that the user has configured
+      if (slicerApp->GetModuleCachePath())
+        {
+        userCachePath = slicerApp->GetModuleCachePath();
+        }
+
+      // if user cache path is set and we can write to it, use it.
+      // if user cache path is not set or we cannot write to it, try
+      // the default cache path.
+      // if we cannot write to the default cache path, then warn and
+      // don't use a cache.
+      vtksys::Directory directory;
+      if (userCachePath != "")
+        {
+        if (!vtksys::SystemTools::FileExists(userCachePath.c_str()))
+          {
+          vtksys::SystemTools::MakeDirectory(userCachePath.c_str());
+          }
+        if (vtksys::SystemTools::FileExists(userCachePath.c_str())
+            && vtksys::SystemTools::FileIsDirectory(userCachePath.c_str()))
+          {
+          std::ofstream tst((userCachePath + "/tstCache.txt").c_str());
+          if (tst)
+            {
+            cachePath = userCachePath;
+            }
+          }
+        }
+      if (cachePath == "")
+        {
+        if (!vtksys::SystemTools::FileExists(defaultCachePath.c_str()))
+          {
+          vtksys::SystemTools::MakeDirectory(defaultCachePath.c_str());
+          }
+        if (vtksys::SystemTools::FileExists(defaultCachePath.c_str())
+            && vtksys::SystemTools::FileIsDirectory(defaultCachePath.c_str()))
+          {
+          std::ofstream tst((defaultCachePath + "/tstCache.txt").c_str());
+          if (tst)
+            {
+            cachePath = defaultCachePath;
+            }
+          }
+        }
+      if (cachePath == "")
+        {
+        std::cout << "Module cache disabled. Slicer application directory may not be writable, a user level cache directory may not be set, or the user level cache directory may not be writable." << std::endl;
+        }
+
       // Search for modules
       ModuleFactory moduleFactory;
       moduleFactory.SetName("Slicer");
       moduleFactory.SetSearchPath( packagePath );
+      moduleFactory.SetCachePath( cachePath );
       moduleFactory.SetWarningMessageCallback( WarningMessage );
       moduleFactory.SetErrorMessageCallback( ErrorMessage );
       moduleFactory.SetInformationMessageCallback( InformationMessage );
@@ -1475,7 +1537,6 @@ int Slicer3_main(int argc, char *argv[])
       std::cerr << "Unable to set up the QDEC Module GUI with a pointer to the interactor style." << std::endl;
       }
 #endif
-
 
 #ifndef CLIMODULES_DEBUG
     mit = moduleNames.begin();

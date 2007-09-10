@@ -22,6 +22,7 @@
 
 class ModuleDescriptionMap;
 class ModuleFileMap;
+class ModuleCache;
 
 class ModuleDescriptionParser_EXPORT ModuleFactory
 {
@@ -45,6 +46,14 @@ public:
 
   // Get the module search path.
   const std::string& GetSearchPath() const { return SearchPath; }
+
+  // Set the cache path for modules (both command line modules and
+  // shared object modules). The cache is an area where information on
+  // a mocule is cached between sessions.
+  void SetCachePath(const std::string& path) { CachePath = path; }
+
+  // Get the module cache path.
+  const std::string& GetCachePath() const { return CachePath; }
   
   // Scan for modules in the module search path.  This will locate
   // command line modules as well as shared object modules.
@@ -77,6 +86,22 @@ public:
   
   
 protected:
+  // Load the module cache.
+  virtual void LoadModuleCache();
+
+  // Save the module cache.
+  virtual void SaveModuleCache();
+
+  // Get the module description from the cache. Returns 0 if module
+  // was not found in the cache.  Returns 1 if module found in the
+  // cache and used.  Returns 2 if module found in the cache but not
+  // used because it was not a module. commandName is the full path to
+  // the module file being tested.
+  virtual int GetModuleFromCache(const std::string &commandName,
+                                 long int commandModifiedTime,
+                                 const std::string & type,
+                                 std::stringstream &stream);
+  
   // Scan for shared object modules (i.e. DLL) in the module search
   // path. Modules can either have global symbols or entry points to
   // describe the module and logos. Returns the number of modules
@@ -107,14 +132,17 @@ protected:
   void InformationMessage( const char *);
   void ModuleDiscoveryMessage( const char *);
   
-  
+  ModuleCache *InternalCache;
   ModuleDescriptionMap *InternalMap;
   ModuleFileMap *InternalFileMap;
 
+  bool CacheModified;
+  
 private:
 
   std::string Name;
   std::string SearchPath;
+  std::string CachePath;
 
   CallbackFunctionType WarningMessageCallback;
   CallbackFunctionType ErrorMessageCallback;
