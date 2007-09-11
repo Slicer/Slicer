@@ -1292,6 +1292,7 @@ void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( )
         vtkKWMessageDialog *message = vtkKWMessageDialog::New();
         message->SetParent ( this->MainSlicerWindow );
         message->SetStyleToMessage();
+        message->SetDialogName("WarningScreenResolution");
         message->SetText ("Slicer requires a horizontal screen resolution of at least 1024 pixels to display it's user interface. Some GUI elements may not be visible.");
         message->Create();
         message->Invoke();
