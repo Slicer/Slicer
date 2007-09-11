@@ -58,6 +58,8 @@ vtkMRMLColorNode::vtkMRMLColorNode()
 
   this->NoName = NULL;
   this->SetNoName("(none)");
+
+  this->NamesInitialised = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -161,6 +163,8 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
 
   // copy names
   this->Names = node->Names;
+  
+  this->NamesInitialised = node->NamesInitialised;
 }
 
 //----------------------------------------------------------------------------
@@ -177,6 +181,8 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "NoName = " <<
     (this->NoName ? this->NoName : "(not set)") <<  "\n";
+
+  os << indent << "Names array initialised: " << (this->GetNamesInitialised() ? "true" : "false") << "\n";
   
   if (this->Names.size() > 0)
     {
@@ -281,22 +287,27 @@ void vtkMRMLColorNode::SetNamesFromColors()
 //---------------------------------------------------------------------------
 const char *vtkMRMLColorNode::GetColorName(int ind)
 {
-  if (ind < (int)this->Names.size() && ind >= 0)
-    {
-    if (strcmp(this->Names[ind].c_str(), "") == 0)
+    if (!this->GetNamesInitialised())
       {
-      return this->NoName;
+      this->SetNamesFromColors();
+      }
+    
+    if (ind < (int)this->Names.size() && ind >= 0)
+      {
+      if (strcmp(this->Names[ind].c_str(), "") == 0)
+        {
+        return this->NoName;
+        }
+      else
+        {
+        return this->Names[ind].c_str();
+        }
       }
     else
       {
-      return this->Names[ind].c_str();
+      vtkDebugMacro("vtkMRMLColorNode::GetColorName: index " << ind << " is out of range 0 - " << this->Names.size());
+      return "invalid";
       }
-    }
-  else
-    {
-    vtkDebugMacro("vtkMRMLColorNode::GetColorName: index " << ind << " is out of range 0 - " << this->Names.size());
-    return "invalid";
-    }
 }
 
 //---------------------------------------------------------------------------

@@ -154,6 +154,7 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
         this->LookupTable->SetTableValue(index, r, g, b, a);
         this->SetColorNameWithSpaces(index, name.c_str(), "_");
         }
+      this->NamesInitialisedOn();
       }
       else if (!strcmp(attName, "type")) 
       {
@@ -263,6 +264,7 @@ int vtkMRMLColorTableNode::ReadFile ()
       this->LookupTable->SetTableValue(id, r, g, b, a);
       this->SetColorName(id, name.c_str());
       }
+    this->NamesInitialisedOn();
     }
   else
     {
@@ -589,7 +591,8 @@ void vtkMRMLColorTableNode::SetType(int type)
       // as a default, set the table range to 255
       this->GetLookupTable()->SetTableRange(0, 255);
       }
-    
+
+    // delay setting names from colours until asked for one
     if (this->Type == this->Grey)
       {
       // from vtkSlicerSliceLayerLogic.cxx
@@ -807,7 +810,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->SetColorName(301, "fMRI-pos");
       this->GetLookupTable()->SetTableValue(301, 1.0, 1.0, 0.0, 1.0);
       */
-      
+      this->NamesInitialisedOn();
       }
     else if (this->Type == this->SPLBrainAtlas)
       {
@@ -1104,6 +1107,9 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->SetColorName(523, "L VPM"); this->GetLookupTable()->SetTableValue(523, 0.882812, 0.65625, 0.410156, 1.0);
       this->SetColorName(524, "R VPL"); this->GetLookupTable()->SetTableValue(524, 0.9, 0.5, 0.5, 1.0);
       this->SetColorName(525, "L VPL"); this->GetLookupTable()->SetTableValue(525, 1, 0.35, 0.45, 1.0);
+
+      // names are now initialised
+      this->NamesInitialisedOn();
       }
     else if (this->Type == this->Random)
       {
@@ -1171,6 +1177,7 @@ void vtkMRMLColorTableNode::SetNamesFromColors()
     vtkDebugMacro("SetNamesFromColors: " << i << " Name = " << ss.str().c_str());
     this->SetColorName(i, ss.str().c_str());
     }
+  this->NamesInitialisedOn();
 }
 
 //---------------------------------------------------------------------------

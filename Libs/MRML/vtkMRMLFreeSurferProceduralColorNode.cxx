@@ -179,6 +179,7 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
 //        this->LookupTable->SetTableValue(index, r, g, b, a);
           this->SetColorNameWithSpaces(index, name.c_str(), "_");
           }
+        this->NamesInitialisedOn();
         }      
       else
         {
@@ -568,6 +569,7 @@ void vtkMRMLFreeSurferProceduralColorNode::SetNamesFromColors()
     vtkDebugMacro("SetNamesFromColors: " << i << " Name = " << ss.str().c_str());
     this->SetColorName(i, ss.str().c_str());
     }
+  this->NamesInitialisedOn();
 }
 
 //---------------------------------------------------------------------------

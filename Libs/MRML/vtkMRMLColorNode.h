@@ -130,6 +130,12 @@ public:
   // get/set the string used for an unnamed colour
   vtkGetStringMacro(NoName);
   vtkSetStringMacro(NoName);
+
+  // Description:
+  // Get/Set for the flag on names array having been initalised
+  vtkGetMacro(NamesInitialised, int);
+  vtkSetMacro(NamesInitialised, int);
+  vtkBooleanMacro(NamesInitialised, int);
   
 protected:
   vtkMRMLColorNode();
@@ -159,6 +165,10 @@ protected:
   // Description:
   // the string used for an unnamed colour
   char *NoName;
+
+  // Description:
+  // Have the colour names been set? Used to do lazy copy of the Names array.
+  int NamesInitialised;
 };
 
 #endif
