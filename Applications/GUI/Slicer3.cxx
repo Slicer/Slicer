@@ -1547,9 +1547,10 @@ int Slicer3_main(int argc, char *argv[])
       {
       vtkSlicerModuleGUI *module;
       module = slicerApp->GetModuleGUIByName( (*mit).c_str() );
-
-      name = module->GetTclName();
-
+      if (module) 
+        {
+        name = module->GetTclName();
+        }
       std::string title = *mit;
       std::transform(
         title.begin(), title.end(), title.begin(), SpacesToUnderscores());

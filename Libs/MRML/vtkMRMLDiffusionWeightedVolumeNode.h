@@ -26,6 +26,7 @@
 
 
 #include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 
 class vtkImageData;
 class vtkDoubleArray;
@@ -83,6 +84,12 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLVolumeN
   void SetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
   void GetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
  
+  // Description:
+  // Associated display MRML node
+  virtual vtkMRMLDiffusionWeightedVolumeDisplayNode* GetDiffusionWeightedVolumeDisplayNode()
+  {
+    return vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+  }
 
 
 protected:

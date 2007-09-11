@@ -19,7 +19,7 @@
 <Volume id="vtkMRMLScalarVolumeNode1" name="brain.mgz"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1" displayNodeRef="vtkMRMLVolumeDisplayNode1" ijkToRASDirections="-1   2.07772e-009   -5.68018e-009 3.53245e-009   -2.55854e-009   1 -1.35817e-009 -1 8.70083e-009 " spacing="1 1 1" origin="127.5 -127.5 127.5" labelMap="0" ></Volume>
 
 <VolumeArchetypeStorage id="vtkMRMLVolumeArchetypeStorageNode2" name=""  hideFromEditors="true" fileName="TestData/moving.nrrd" centerImage="1" ></VolumeArchetypeStorage>
-<VolumeDisplay id="vtkMRMLVolumeDisplayNode2" name=""  hideFromEditors="true" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" ></VolumeDisplay>
+<LabelMapVolumeDisplay id="vtkMRMLVolumeDisplayNode2" name=""  hideFromEditors="true" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" ></VolumeDisplay>
 <Volume id="vtkMRMLScalarVolumeNode2" name="aparc+aseg.mgz"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode2" displayNodeRef="vtkMRMLVolumeDisplayNode2" ijkToRASDirections="-1   2.07772e-009   -5.68018e-009 3.53245e-009   -2.55854e-009   1 -1.35817e-009 -1 8.70083e-009 " spacing="1 1 1" origin="127.5 -127.5 127.5" labelMap="1" ></Volume>
 
 <LinearTransform id="vtkMRMLLinearTransformNode1" name="RLrotation1" hideFromEditors="false" matrixTransformToParent="1 0 0 0 0 0 -1 0 0 -1 0 0 0 0 0 1"></LinearTransform>

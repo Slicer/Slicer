@@ -799,25 +799,27 @@ void vtkSlicerSliceControllerWidget::UpdateLayerMenus()
     {
     if ( this->SliceLogic->GetBackgroundLayer() )
       {
-      if ( this->SliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode() )
+      vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->SliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode());
+      if ( displayNode )
         {
-        interp = this->SliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode()->GetInterpolate();
+        interp = displayNode->GetInterpolate();
         if ( interp != this->BackgroundMenuButton->GetMenu()->GetItemSelectedState ( "interpolation" ) )
           {
           this->BackgroundMenuButton->GetMenu()->SetItemSelectedState ( "interpolation",
-                                                                        this->SliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode()->GetInterpolate() );
+                                                                        displayNode->GetInterpolate() );
           }
         }
       }
     if ( this->SliceLogic->GetForegroundLayer() )
       {
-      if ( this->SliceLogic->GetForegroundLayer()->GetVolumeDisplayNode() )
+      vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->SliceLogic->GetForegroundLayer()->GetVolumeDisplayNode());
+      if ( displayNode )
         {
-        interp = this->SliceLogic->GetForegroundLayer()->GetVolumeDisplayNode()->GetInterpolate();
+        interp = displayNode->GetInterpolate();
         if ( interp != this->ForegroundMenuButton->GetMenu()->GetItemSelectedState ( "interpolation" ) )
           {
           this->ForegroundMenuButton->GetMenu()->SetItemSelectedState ( "interpolation",
-                                                                        this->SliceLogic->GetForegroundLayer()->GetVolumeDisplayNode()->GetInterpolate() );
+                                                                        displayNode->GetInterpolate() );
           }
         }
       }
@@ -1335,13 +1337,15 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       {
       if ( this->SliceLogic->GetForegroundLayer() )
         {
-        if ( this->SliceLogic->GetForegroundLayer()->GetVolumeDisplayNode() )
+        vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->SliceLogic->GetForegroundLayer()->GetVolumeDisplayNode());
+
+        if ( displayNode )
           {
-          if ( interp != this->SliceLogic->GetForegroundLayer()->GetVolumeDisplayNode()->GetInterpolate() )
+          if ( interp != displayNode->GetInterpolate() )
             {
             // save state for undo and modify the node's value to match GUI
             this->MRMLScene->SaveStateForUndo ( this->SliceLogic->GetForegroundLayer()->GetVolumeDisplayNode() );
-            this->SliceLogic->GetForegroundLayer()->GetVolumeDisplayNode()->SetInterpolate ( interp );
+            displayNode->SetInterpolate ( interp );
             // need this to propagate change thru to the VolumeDisplayWidget's GUI
             if ( this->SliceLogic->GetForegroundLayer()->GetVolumeNode() )
               {
@@ -1366,12 +1370,13 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
             {
             if  ( sgui->GetLogic()->GetForegroundLayer() )
               {
-              if ( sgui->GetLogic()->GetForegroundLayer()->GetVolumeDisplayNode() )
+              vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sgui->GetLogic()->GetForegroundLayer()->GetVolumeDisplayNode());
+              if ( displayNode )
                 {
-                if ( interp != sgui->GetLogic()->GetForegroundLayer()->GetVolumeDisplayNode()->GetInterpolate() )
+                if ( interp != displayNode->GetInterpolate() )
                   {
-                  this->MRMLScene->SaveStateForUndo ( sgui->GetLogic()->GetForegroundLayer()->GetVolumeDisplayNode() );
-                  sgui->GetLogic()->GetForegroundLayer()->GetVolumeDisplayNode()->SetInterpolate ( interp );
+                  this->MRMLScene->SaveStateForUndo ( displayNode );
+                  displayNode->SetInterpolate ( interp );
                   // need this to propagate change thru to the VolumeDisplayWidget's GUI
                   if ( sgui->GetLogic()->GetForegroundLayer()->GetVolumeNode() )
                     {
@@ -1398,13 +1403,14 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       {
       if ( this->SliceLogic->GetBackgroundLayer() )
         {
-        if ( this->SliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode() )
+        vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->SliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode());
+        if ( displayNode )
           {
-          if ( interp != this->SliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode()->GetInterpolate() )
+          if ( interp != displayNode->GetInterpolate() )
             {
             // save state for undo and modify the node's value to match GUI
-            this->MRMLScene->SaveStateForUndo ( this->SliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode() );
-            this->SliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode()->SetInterpolate ( interp );
+            this->MRMLScene->SaveStateForUndo ( displayNode );
+            displayNode->SetInterpolate ( interp );
             // need this to propagate change thru to the VolumeDisplayWidget's GUI
             if ( this->SliceLogic->GetBackgroundLayer()->GetVolumeNode() )
               {
@@ -1429,12 +1435,13 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
             {
             if  ( sgui->GetLogic()->GetBackgroundLayer() )
               {
-              if ( sgui->GetLogic()->GetBackgroundLayer()->GetVolumeDisplayNode() )
+              vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sgui->GetLogic()->GetBackgroundLayer()->GetVolumeDisplayNode());
+              if ( displayNode )
                 {
-                if ( interp != sgui->GetLogic()->GetBackgroundLayer()->GetVolumeDisplayNode()->GetInterpolate() )
+                if ( interp != displayNode->GetInterpolate() )
                   {
-                  this->MRMLScene->SaveStateForUndo ( sgui->GetLogic()->GetBackgroundLayer()->GetVolumeDisplayNode() );
-                  sgui->GetLogic()->GetBackgroundLayer()->GetVolumeDisplayNode()->SetInterpolate ( interp );
+                  this->MRMLScene->SaveStateForUndo ( displayNode );
+                  displayNode->SetInterpolate ( interp );
                   // need this to propagate change thru to the VolumeDisplayWidget's GUI
                   if ( sgui->GetLogic()->GetBackgroundLayer()->GetVolumeNode() )
                     {

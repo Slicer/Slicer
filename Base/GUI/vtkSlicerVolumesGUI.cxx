@@ -48,6 +48,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     this->VolumeHeaderWidget = NULL;
     this->VolumeDisplayWidget = NULL;
     this->scalarVDW = NULL;
+    this->labelVDW = NULL;
     this->dwiVDW = NULL;
     this->dtiVDW = NULL;
 
@@ -59,6 +60,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     this->SaveFrame = NULL;
 
     this->ScalarDisplayFrame = NULL;
+    this->LabelMapDisplayFrame = NULL;
     this->DWIDisplayFrame = NULL;
     this->DTIDisplayFrame = NULL;
     this->VolumeDisplayFrame = NULL;
@@ -141,6 +143,11 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->NameEntry->SetParent(NULL );
     this->NameEntry->Delete ( );
     }
+  if (this->labelVDW)
+    {
+    this->labelVDW->SetParent(NULL );
+    this->labelVDW->Delete ( );
+    }
   if (this->scalarVDW)
     {
     this->scalarVDW->SetParent(NULL );
@@ -155,6 +162,11 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     {
     this->dtiVDW->SetParent(NULL );
     this->dtiVDW->Delete ( );
+    }
+  if (this->LabelMapDisplayFrame)
+    {
+    this->LabelMapDisplayFrame->SetParent(NULL );
+    this->LabelMapDisplayFrame->Delete( );
     }
   if (this->ScalarDisplayFrame)
     {
@@ -608,12 +620,20 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
     
     if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
       {
-      if (this->VolumeDisplayWidget != scalarVDW)
+      vtkMRMLScalarVolumeNode *svol = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
+      if (!svol->GetLabelMap() && this->VolumeDisplayWidget != scalarVDW)
         {
         this->VolumeDisplayWidget->TearDownWidget();
         tearDown = 1;
         this->VolumeDisplayWidget = this->scalarVDW;
         this->VolumeDisplayFrame = this->ScalarDisplayFrame;
+        }
+      else if (svol->GetLabelMap() && this->VolumeDisplayWidget != labelVDW)
+        {
+        this->VolumeDisplayWidget->TearDownWidget();
+        tearDown = 1;
+        this->VolumeDisplayWidget = this->labelVDW;
+        this->VolumeDisplayFrame = this->LabelMapDisplayFrame;
         }
       }
     else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
@@ -843,6 +863,12 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->Script( "pack %s -in %s",
                   this->ScalarDisplayFrame->GetWidgetName(),this->DisplayFrame->GetFrame()->GetWidgetName());
 
+    this->LabelMapDisplayFrame = vtkKWFrame::New();
+    this->LabelMapDisplayFrame->SetParent( this->DisplayFrame->GetFrame() );
+    this->LabelMapDisplayFrame->Create( );
+    this->Script( "pack %s -in %s",
+                  this->LabelMapDisplayFrame->GetWidgetName(),this->DisplayFrame->GetFrame()->GetWidgetName());
+
     this->DWIDisplayFrame = vtkKWFrame::New();
     this->DWIDisplayFrame->SetParent( this->DisplayFrame->GetFrame() );
     this->DWIDisplayFrame->Create( );
@@ -857,20 +883,26 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 
 
     // Assign a scalar display widget by default.
+    this->labelVDW = vtkSlicerLabelMapVolumeDisplayWidget::New ( );
     this->scalarVDW = vtkSlicerScalarVolumeDisplayWidget::New ( );
     this->dwiVDW = vtkSlicerDiffusionWeightedVolumeDisplayWidget::New( );
     this->dtiVDW = vtkSlicerDiffusionTensorVolumeDisplayWidget::New( );
+    this->labelVDW->SetParent( this->LabelMapDisplayFrame );
     this->scalarVDW->SetParent( this->ScalarDisplayFrame );
     this->dwiVDW->SetParent( this->DWIDisplayFrame );
     this->dtiVDW->SetParent( this->DTIDisplayFrame );
     // set the mrml scene before calling create so that the node selectors can
     // be initialised properly
+    this->labelVDW->SetMRMLScene(this->GetMRMLScene());
     this->scalarVDW->SetMRMLScene(this->GetMRMLScene());
     this->dwiVDW->SetMRMLScene(this->GetMRMLScene());
     this->dtiVDW->SetMRMLScene(this->GetMRMLScene());
+    this->labelVDW->Create();
     this->scalarVDW->Create();
     this->dwiVDW->Create();
     this->dtiVDW->Create();
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                 labelVDW->GetWidgetName(), this->LabelMapDisplayFrame->GetWidgetName());
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                  scalarVDW->GetWidgetName(), this->ScalarDisplayFrame->GetWidgetName());
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",

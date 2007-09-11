@@ -65,7 +65,7 @@ if { 1 } {
   if { 1 } {
 
     set volumeNode [vtkNew vtkMRMLScalarVolumeNode]
-    set displayNode [vtkNew vtkMRMLVolumeDisplayNode]
+    set displayNode [vtkNew vtkMRMLScalarVolumeDisplayNode]
     set storageNode [vtkNew vtkMRMLVolumeArchetypeStorageNode]
 
     $volumeNode SetScene $scene

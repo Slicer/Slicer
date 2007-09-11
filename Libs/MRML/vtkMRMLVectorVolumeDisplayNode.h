@@ -95,6 +95,8 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLVolumeGlyph
   };
 
   virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* ) {return NULL;};
+
+  virtual void SetDefaultColorMap() {};
   
 protected:
   vtkMRMLVectorVolumeDisplayNode();

@@ -63,7 +63,7 @@ virtual void Set##name (const char* _arg) \
     this->name = NULL; \
     } \
   this->Modified(); \
-  if (this->name) \
+  if (this->Scene && this->name) \
     { \
     this->Scene->AddReferencedNodeID(this->name, this); \
     } \

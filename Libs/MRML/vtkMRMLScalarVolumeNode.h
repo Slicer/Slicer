@@ -26,6 +26,7 @@
 
 
 #include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 
 class vtkImageData;
 
@@ -67,6 +68,12 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   // Make a 'None' volume node with blank image data
   static void CreateNoneNode(vtkMRMLScene *scene);
 
+  // Description:
+  // Associated display MRML node
+  virtual vtkMRMLScalarVolumeDisplayNode* GetScalarVolumeDisplayNode()
+  {
+    return vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+  }
 
 protected:
   vtkMRMLScalarVolumeNode();

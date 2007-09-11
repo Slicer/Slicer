@@ -57,7 +57,7 @@
  id="vtkMRMLScalarVolumeNode6" name="atlasWhitematterReg.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode6" displayNodeRef="vtkMRMLVolumeDisplayNode6" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="0.9375 0.9375 1.5" origin="-119.531 -92.25 119.531" labelMap="0" ></Volume>
 <VolumeArchetypeStorage
  id="vtkMRMLVolumeArchetypeStorageNode7" name="vtkMRMLVolumeArchetypeStorageNode7"  hideFromEditors="true" fileName="VolumeData/segmentationResult.mhd" centerImage="1" ></VolumeArchetypeStorage>
-<VolumeDisplay
+<LabelMapVolumeDisplay
  id="vtkMRMLVolumeDisplayNode7" name="vtkMRMLVolumeDisplayNode7"  hideFromEditors="true" window="6" level="5" upperThreshold="8" lowerThreshold="0" interpolate="1" autoWindowLevel="1" applyThreshold="0" autoThreshold="0" colorNodeRef="vtkMRMLColorTableNodeLabels" ></VolumeDisplay>
 <Volume
  id="vtkMRMLScalarVolumeNode7" name="segmentationResult.mhd"  hideFromEditors="false" storageNodeRef="vtkMRMLVolumeArchetypeStorageNode7" displayNodeRef="vtkMRMLVolumeDisplayNode7" ijkToRASDirections="1   0   0 -0   0   1 0 -1 0 " spacing="0.9375 0.9375 1.5" origin="-119.531 -92.25 119.531" labelMap="1" ></Volume>

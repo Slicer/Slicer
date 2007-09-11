@@ -22,7 +22,11 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkDiffusionTensorGlyph.h"
+
 #include "vtkSphereSource.h"
+
+#include "vtkDiffusionTensorMathematics.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode* vtkMRMLDiffusionTensorVolumeDisplayNode::New()
@@ -54,6 +58,10 @@ vtkMRMLNode* vtkMRMLDiffusionTensorVolumeDisplayNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
+ this->DTIMathematics = vtkDiffusionTensorMathematics::New();
+ this->Threshold->SetInput( this->DTIMathematics->GetOutput());
+ this->MapToWindowLevelColors->SetInput( this->DTIMathematics->GetOutput());
+
  this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
  vtkSphereSource *sphere = vtkSphereSource::New();
  sphere->Update();
@@ -68,6 +76,8 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode::~vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
+  this->DTIMathematics->Delete();
+
   this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL); 
   this->DiffusionTensorGlyphFilter->Delete();
 }
@@ -235,3 +245,19 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLDiffusionTensorVolumeDisplay
   return node;
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionTensorVolumeDisplayNode::SetImageData(vtkImageData *imageData)
+{
+  this->DTIMathematics->SetInput(0, imageData);
+  this->DTIMathematics->SetInput(1, imageData);
+}
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
+{
+  if (this->GetDiffusionTensorDisplayPropertiesNode())
+    {
+    this->DTIMathematics->SetOperation(this->GetDiffusionTensorDisplayPropertiesNode()->
+                                   GetScalarInvariant());
+    }
+  Superclass::UpdateImageDataPipeline();
+}

@@ -36,7 +36,8 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
-#include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
@@ -143,9 +144,13 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( astoren );
   astoren->Delete();
   
-  vtkMRMLVolumeDisplayNode *vdisn = vtkMRMLVolumeDisplayNode::New(); 
+  vtkMRMLScalarVolumeDisplayNode *vdisn = vtkMRMLScalarVolumeDisplayNode::New(); 
   this->RegisterNodeClass( vdisn );
   vdisn->Delete();
+
+  vtkMRMLLabelMapVolumeDisplayNode *lmdisn = vtkMRMLLabelMapVolumeDisplayNode::New(); 
+  this->RegisterNodeClass( lmdisn );
+  lmdisn->Delete();
 
   vtkMRMLColorNode *vcn = vtkMRMLColorNode::New();
   this->RegisterNodeClass ( vcn );

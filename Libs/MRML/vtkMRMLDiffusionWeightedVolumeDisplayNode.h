@@ -25,20 +25,21 @@
 #define __vtkMRMLDiffusionWeightedVolumeDisplayNode_h
 
 #include "vtkMRML.h"
-#include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLColorNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkImageData.h"
+#include "vtkImageExtractComponents.h"
 
 class vtkImageData;
 
-class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
+class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRMLScalarVolumeDisplayNode
 {
   public:
   static vtkMRMLDiffusionWeightedVolumeDisplayNode *New();
-  vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeDisplayNode,vtkMRMLVolumeDisplayNode);
+  vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeDisplayNode,vtkMRMLScalarVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -59,6 +60,19 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "DiffusionWeightedVolumeDisplay";};
 
+    // Description:
+  // Sets vtkImageData to be converted to displayable vtkImageData
+  virtual void SetImageData(vtkImageData *imageData)
+    {
+    this->ExtractComponent->SetInput( imageData);
+    };
+
+  virtual void UpdateImageDataPipeline()
+    {
+    this->ExtractComponent->SetComponents(this->GetDiffusionComponent());
+    Superclass::UpdateImageDataPipeline();
+    };
+
   //--------------------------------------------------------------------------
   // Display Information
   //--------------------------------------------------------------------------
@@ -75,6 +89,9 @@ protected:
   void operator=(const vtkMRMLDiffusionWeightedVolumeDisplayNode&);
 
   int DiffusionComponent;
+
+  vtkImageExtractComponents *ExtractComponent;
+
 
 };
 

@@ -57,6 +57,7 @@ vtkMRMLNode* vtkMRMLDiffusionTensorDisplayPropertiesNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayPropertiesNode()
 {
+
   // Default display is FA (often used) and line glyphs (quickest to render)
   this->ScalarInvariant = this->FractionalAnisotropy;
   this->GlyphGeometry = this->Lines;
@@ -92,7 +93,6 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayProper
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode::~vtkMRMLDiffusionTensorDisplayPropertiesNode()
 {
-
   if ( this->GlyphSource != NULL )
     {
     this->GlyphSource->Delete();

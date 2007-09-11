@@ -20,6 +20,7 @@
 
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 
 #include "vtkLandmarkTransform.h"
 #include "vtkCylinderSource.h"
@@ -63,7 +64,7 @@ vtkRealTimeImagingLogic::vtkRealTimeImagingLogic()
 
 vtkMRMLVolumeNode* vtkRealTimeImagingLogic::AddRealTimeVolumeNode (const char* volname)
 {
-  vtkMRMLVolumeDisplayNode *displayNode = vtkMRMLVolumeDisplayNode::New();
+  vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::New();
   scalarNode = vtkMRMLScalarVolumeNode::New();
   vtkImageData *newvolume=vtkImageData::New();
 

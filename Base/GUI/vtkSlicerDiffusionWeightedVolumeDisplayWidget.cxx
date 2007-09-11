@@ -227,7 +227,7 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessWidgetEvents ( vtkObj
     if (this->InterpolateButton == vtkKWCheckButton::SafeDownCast(caller) && 
         event == vtkKWCheckButton::SelectedStateChangedEvent)
       {
-      vtkMRMLVolumeDisplayNode *displayNode = this->GetVolumeDisplayNode();
+      vtkMRMLDiffusionWeightedVolumeDisplayNode *displayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
       if (displayNode != NULL)
         {
         displayNode->SetInterpolate( this->InterpolateButton->GetSelectedState() );
@@ -239,7 +239,7 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessWidgetEvents ( vtkObj
   if ( (editor == this->WindowLevelThresholdEditor && 
         event == vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent) )
     {
-    vtkMRMLNode *displayNode = this->GetVolumeDisplayNode();
+    vtkMRMLDiffusionWeightedVolumeDisplayNode *displayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
     if (displayNode != NULL)
       {
       this->MRMLScene->SaveStateForUndo(displayNode);
@@ -275,13 +275,13 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessMRMLEvents ( vtkObjec
     {
     this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
     this->DiffusionSelectorWidget->GetScale()->SetRange(0,volumeNode->GetImageData()->GetNumberOfScalarComponents()-1);
-
+    vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
     //--- check the interpolation which may have been modified from the SliceGUI
-    if ( this->GetVolumeDisplayNode() && this->InterpolateButton )
+    if ( displayNode && this->InterpolateButton )
       {
-      if (this->GetVolumeDisplayNode()->GetInterpolate() != this->InterpolateButton->GetSelectedState() )
+      if (displayNode->GetInterpolate() != this->InterpolateButton->GetSelectedState() )
         {
-        this->InterpolateButton->SetSelectedState( GetVolumeDisplayNode()->GetInterpolate()  );
+        this->InterpolateButton->SetSelectedState( displayNode->GetInterpolate()  );
         }
       }
     //--- end check interpolation.

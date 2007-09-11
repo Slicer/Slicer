@@ -34,6 +34,8 @@
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -712,8 +714,14 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         = vtkMRMLVolumeArchetypeStorageNode::New();
       vin->SetCenterImage(0);
       in = vin;
-      
-      disp = vtkMRMLVolumeDisplayNode::New();
+      if (svnd->GetLabelMap()) 
+        {
+        disp = vtkMRMLLabelMapVolumeDisplayNode::New();
+        }
+      else
+        {
+        disp = vtkMRMLScalarVolumeDisplayNode::New();
+        }
       }
     else if (dtvnd || dwvnd)
       {
@@ -805,11 +813,20 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       disp->SetScene( this->MRMLScene );
       disp = this->MRMLScene->AddNode( disp );
       int isLabelMap = 0;
+      vtkMRMLVolumeDisplayNode *displayNode = NULL;
       if (svnd)
         {
         isLabelMap = svnd->GetLabelMap();
+        if (isLabelMap)
+          {
+          displayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(disp);
+          }
+        else
+          {
+          displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
+          }
+
         }
-      vtkMRMLVolumeDisplayNode *displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(disp);
       if (displayNode)
         {
         //  int isLabelMap = svnd->GetLabelMap();            

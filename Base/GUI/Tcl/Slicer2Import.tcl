@@ -255,9 +255,10 @@ proc ImportNodeVolume {node} {
 
       if { [info exists n(labelMap)] && ($n(labelMap) == "yes"  || $n(labelMap) == "true") } {
           $volumeNode SetLabelMap 1
+          set volumeDisplayNode [vtkMRMLLabelMapVolumeDisplayNode New]
+      } else {
+          set volumeDisplayNode [vtkMRMLScalarVolumeDisplayNode New]
       }
-
-      set volumeDisplayNode [vtkMRMLVolumeDisplayNode New]
 
       #
       # add nodes to the scene

@@ -4,6 +4,7 @@
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkEMSegmentLogic.h"
 #include "vtkEMSegmentMRMLManager.h"
 #include "vtkMRMLEMSSegmenterNode.h"
@@ -30,7 +31,7 @@ AddNewScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
                             int labelMap, 
                             const char* volname)
 {
-  vtkMRMLVolumeDisplayNode *displayNode  = vtkMRMLVolumeDisplayNode::New();
+  vtkMRMLScalarVolumeDisplayNode *displayNode  = vtkMRMLScalarVolumeDisplayNode::New();
   vtkMRMLScalarVolumeNode  *scalarNode   = vtkMRMLScalarVolumeNode::New();
   scalarNode->SetLabelMap(labelMap);
   vtkMRMLVolumeNode        *volumeNode   = scalarNode;
@@ -89,7 +90,7 @@ AddScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
                          const char* volname)
 {
   vtkMRMLVolumeNode        *volumeNode   = NULL;
-  vtkMRMLVolumeDisplayNode *displayNode  = NULL;
+  vtkMRMLScalarVolumeDisplayNode *displayNode  = NULL;
   vtkMRMLScalarVolumeNode  *scalarNode   = vtkMRMLScalarVolumeNode::New();
 
   // i/o mechanism
@@ -101,7 +102,7 @@ AddScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
   // try to read the image
   if (storageNode->ReadData(scalarNode))
     {
-    displayNode = vtkMRMLVolumeDisplayNode::New();
+    displayNode = vtkMRMLScalarVolumeDisplayNode::New();
     scalarNode->SetLabelMap(labelMap);
     volumeNode  = scalarNode;
     }

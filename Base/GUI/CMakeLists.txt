@@ -69,6 +69,7 @@ SET(LIB_SRCS
   vtkKWScriptedWidget.cxx
   vtkKWWindowLevelThresholdEditor.cxx
   vtkSlicerVolumeDisplayWidget.cxx
+  vtkSlicerLabelMapVolumeDisplayWidget.cxx
   vtkSlicerScalarVolumeDisplayWidget.cxx
   vtkSlicerDiffusionWeightedVolumeDisplayWidget.cxx
   vtkSlicerDiffusionTensorVolumeDisplayWidget.cxx

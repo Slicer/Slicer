@@ -55,12 +55,16 @@ vtkMRMLDiffusionWeightedVolumeDisplayNode::vtkMRMLDiffusionWeightedVolumeDisplay
 {
   // Strings
   this->DiffusionComponent = 0;
+  this->ExtractComponent = vtkImageExtractComponents::New();
+  this->Threshold->SetInput( this->ExtractComponent->GetOutput());
+  this->MapToWindowLevelColors->SetInput( this->ExtractComponent->GetOutput());
+
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeDisplayNode::~vtkMRMLDiffusionWeightedVolumeDisplayNode()
 {
-
+  this->ExtractComponent->Delete();
 }
 
 //----------------------------------------------------------------------------

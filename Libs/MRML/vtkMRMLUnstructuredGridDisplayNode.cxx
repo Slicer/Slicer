@@ -57,8 +57,6 @@ vtkMRMLUnstructuredGridDisplayNode::vtkMRMLUnstructuredGridDisplayNode()
   this->ShrinkPolyData->SetInput( this->GeometryFilter->GetOutput());
   this->ShrinkFactor = 0.5;
   this->ShrinkPolyData->SetShrinkFactor(this->ShrinkFactor);
-
-  this->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
 }
 
 
@@ -132,11 +130,6 @@ void vtkMRMLUnstructuredGridDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, 
                                            void *callData )
 {
-  if (caller == this &&
-      event ==  vtkCommand::ModifiedEvent)
-    {
-    this->UpdatePolyDataPipeline();
-    }
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
 }

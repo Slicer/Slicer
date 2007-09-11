@@ -294,7 +294,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
     if (this->InterpolateButton == vtkKWCheckButton::SafeDownCast(caller) && 
         event == vtkKWCheckButton::SelectedStateChangedEvent)
       {
-      vtkMRMLVolumeDisplayNode *displayNode = this->GetVolumeDisplayNode();
+      vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
       if (displayNode != NULL)
         {
         displayNode->SetInterpolate( this->InterpolateButton->GetSelectedState() );
@@ -335,11 +335,12 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject 
     this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
 
     //--- check the interpolation which may have been modified from the SliceGUI
-    if ( this->GetVolumeDisplayNode() && this->InterpolateButton )
+    vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
+    if (displayNode && this->InterpolateButton )
       {
-      if (this->GetVolumeDisplayNode()->GetInterpolate() != this->InterpolateButton->GetSelectedState() )
+      if (displayNode->GetInterpolate() != this->InterpolateButton->GetSelectedState() )
         {
-        this->InterpolateButton->SetSelectedState( this->GetVolumeDisplayNode()->GetInterpolate()  );
+        this->InterpolateButton->SetSelectedState( displayNode->GetInterpolate()  );
         }
       }
     //--- end check interpolation

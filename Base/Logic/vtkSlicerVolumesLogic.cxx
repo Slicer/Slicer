@@ -31,7 +31,8 @@
 
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
@@ -88,6 +89,9 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
   vtkMRMLVolumeNode *volumeNode = NULL;
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
 
+  vtkMRMLScalarVolumeDisplayNode *sdisplayNode = NULL;
+  vtkMRMLVectorVolumeDisplayNode *vdisplayNode = NULL;
+
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
   vtkMRMLVectorVolumeNode *vectorNode = vtkMRMLVectorVolumeNode::New();
 
@@ -100,13 +104,22 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
 
  if (storageNode->ReadData(scalarNode))
     {
-    displayNode = vtkMRMLVolumeDisplayNode::New();
+    if (labelMap) 
+      {
+      displayNode = vtkMRMLLabelMapVolumeDisplayNode::New();
+      }
+    else
+      {
+      sdisplayNode = vtkMRMLScalarVolumeDisplayNode::New();
+      displayNode = sdisplayNode;
+     }
     scalarNode->SetLabelMap(labelMap);
     volumeNode = scalarNode;
     }
   else if (storageNode->ReadData(vectorNode))
     {
-    displayNode = vtkMRMLVectorVolumeDisplayNode::New();
+    vdisplayNode = vtkMRMLVectorVolumeDisplayNode::New();
+    displayNode = vdisplayNode;
     volumeNode = vectorNode;
     }
 
@@ -130,15 +143,18 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
     volumeNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
     displayNode->SetScene(this->GetMRMLScene());
-  
-    //should we give the user the chance to modify this?.
-    double range[2];
-    vtkDebugMacro("Set basic display info");
-    volumeNode->GetImageData()->GetScalarRange(range);
-    displayNode->SetLowerThreshold(range[0]);
-    displayNode->SetUpperThreshold(range[1]);
-    displayNode->SetWindow(range[1] - range[0]);
-    displayNode->SetLevel(0.5 * (range[1] + range[0]) );
+
+    vtkMRMLScalarVolumeDisplayNode *sdn = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
+    if (sdn)
+      {
+      double range[2];
+      vtkDebugMacro("Set basic display info");
+      volumeNode->GetImageData()->GetScalarRange(range);
+      sdn->SetLowerThreshold(range[0]);
+      sdn->SetUpperThreshold(range[1]);
+      sdn->SetWindow(range[1] - range[0]);
+      sdn->SetLevel(0.5 * (range[1] + range[0]) );
+      }
 
     vtkDebugMacro("Adding node..");
     this->GetMRMLScene()->AddNode(storageNode);  
@@ -193,6 +209,11 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
   vtkMRMLDiffusionTensorDisplayPropertiesNode *displayPropertiesNode = NULL;
 
+  vtkMRMLDiffusionTensorVolumeDisplayNode *dtdisplayNode = NULL;
+  vtkMRMLDiffusionWeightedVolumeDisplayNode *dwdisplayNode = NULL;
+  vtkMRMLVectorVolumeDisplayNode *vdisplayNode = NULL;
+  vtkMRMLScalarVolumeDisplayNode *sdisplayNode = NULL;
+
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
   vtkMRMLVectorVolumeNode *vectorNode = vtkMRMLVectorVolumeNode::New();
   vtkMRMLDiffusionTensorVolumeNode *tensorNode = vtkMRMLDiffusionTensorVolumeNode::New();
@@ -217,7 +238,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   if (storageNode1->ReadData(dwiNode))
     {
     vtkDebugMacro("DWI HAS BEEN READ");
-    displayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
+    dwdisplayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
+    displayNode = dwdisplayNode;
     // Give a chance to set/update displayNode
     volumeNode =  dwiNode;
     storageNode = storageNode1;
@@ -226,7 +248,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   else if (storageNode1->ReadData(tensorNode))
     {
     vtkDebugMacro("Tensor HAS BEEN READ");
-    displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+    dtdisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+    displayNode = dtdisplayNode;
     displayPropertiesNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
     volumeNode = tensorNode;
     storageNode = storageNode1;
@@ -234,21 +257,31 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   else if (storageNode1->ReadData(vectorNode))
     {
     vtkDebugMacro("Vector HAS BEEN READ WITH NRRD READER");
-    displayNode = vtkMRMLVectorVolumeDisplayNode::New();
+    vdisplayNode = vtkMRMLVectorVolumeDisplayNode::New();
+    displayNode = vdisplayNode;
     volumeNode = vectorNode;
     storageNode = storageNode1;
     }
   else if (storageNode2->ReadData(vectorNode) && vectorNode->GetImageData()->GetNumberOfScalarComponents() == 3)
     {
     vtkDebugMacro("Vector HAS BEEN READ WITH ARCHTYPE READER");
-    displayNode = vtkMRMLVectorVolumeDisplayNode::New();
+    vdisplayNode = vtkMRMLVectorVolumeDisplayNode::New();
+    displayNode = vdisplayNode;
     volumeNode = vectorNode;
     storageNode = storageNode2;
     }
   else if (storageNode2->ReadData(scalarNode))
     {
     vtkDebugMacro("Scalar HAS BEEN READ WITH ARCHTYPE READER");
-    displayNode = vtkMRMLVolumeDisplayNode::New();
+    if (labelMap) 
+      {
+      displayNode = vtkMRMLLabelMapVolumeDisplayNode::New();
+      }
+    else
+      {
+      sdisplayNode = vtkMRMLScalarVolumeDisplayNode::New();
+      displayNode = sdisplayNode;
+      }
     scalarNode->SetLabelMap(labelMap);
     volumeNode = scalarNode;
     storageNode = storageNode2;
@@ -281,14 +314,17 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
       }
   
     //should we give the user the chance to modify this?.
-    double range[2];
-    vtkDebugMacro("Set basic display info");
-    volumeNode->GetImageData()->GetScalarRange(range);
-    displayNode->SetLowerThreshold(range[0]);
-    displayNode->SetUpperThreshold(range[1]);
-    displayNode->SetWindow(range[1] - range[0]);
-    displayNode->SetLevel(0.5 * (range[1] + range[0]) );
-
+    vtkMRMLScalarVolumeDisplayNode *sdn = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
+    if (sdn)
+      {
+      double range[2];
+      vtkDebugMacro("Set basic display info");
+      volumeNode->GetImageData()->GetScalarRange(range);
+      sdn->SetLowerThreshold(range[0]);
+      sdn->SetUpperThreshold(range[1]);
+      sdn->SetWindow(range[1] - range[0]);
+      sdn->SetLevel(0.5 * (range[1] + range[0]) );
+      }
     vtkDebugMacro("Adding node..");
     this->GetMRMLScene()->AddNode(storageNode);
     this->GetMRMLScene()->AddNode(displayNode);
@@ -422,7 +458,7 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
     }
 
   // create a display node
-  vtkMRMLVolumeDisplayNode *labelDisplayNode  = vtkMRMLVolumeDisplayNode::New();
+  vtkMRMLLabelMapVolumeDisplayNode *labelDisplayNode  = vtkMRMLLabelMapVolumeDisplayNode::New();
 
   scene->AddNode(labelDisplayNode);
 
@@ -470,8 +506,8 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, char *name)
     }
 
   // clone the display node
-  vtkMRMLVolumeDisplayNode *clonedDisplayNode = 
-    vtkMRMLVolumeDisplayNode::New();
+  vtkMRMLScalarVolumeDisplayNode *clonedDisplayNode = 
+    vtkMRMLScalarVolumeDisplayNode::New();
   clonedDisplayNode->CopyWithScene(volumeNode->GetDisplayNode());
   scene->AddNode(clonedDisplayNode);
 

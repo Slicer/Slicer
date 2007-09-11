@@ -26,6 +26,7 @@
 
 
 #include "vtkMRMLDiffusionImageVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 
 class vtkDoubleArray;
 
@@ -78,6 +79,13 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusion
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
  
+  // Description:
+  // Associated display MRML node
+  virtual vtkMRMLDiffusionTensorVolumeDisplayNode* GetDiffusionTensorVolumeDisplayNode()
+  {
+    return vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+  }
+
 
 protected:
   vtkMRMLDiffusionTensorVolumeNode();

@@ -57,6 +57,10 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->ColorNode = NULL;
 
   this->ActiveScalarName = NULL;
+
+  // add observer to process visulization pipeline
+  this->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+
 }
 
 //----------------------------------------------------------------------------
@@ -416,7 +420,14 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (this->TextureImageData == vtkImageData::SafeDownCast(caller) &&
+  if (caller == this &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->UpdatePolyDataPipeline();
+    this->UpdateImageDataPipeline();
+    return;
+    }
+  else if (this->TextureImageData == vtkImageData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);

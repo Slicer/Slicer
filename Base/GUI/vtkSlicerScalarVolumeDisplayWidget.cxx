@@ -9,6 +9,7 @@
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 
 // to get at the colour logic to set a default color node
 #include "vtkKWApplication.h"
@@ -123,7 +124,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
   if (editor == this->WindowLevelThresholdEditor && 
         event == vtkKWWindowLevelThresholdEditor::ValueChangedEvent)
     {
-    vtkMRMLVolumeDisplayNode *displayNode = this->GetVolumeDisplayNode();
+    vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
 
     // 
     // check the volume -- if it doesn't yet have a display node,
@@ -140,7 +141,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
           }
         else 
           {
-          displayNode = vtkMRMLVolumeDisplayNode::New ();
+          displayNode = vtkMRMLScalarVolumeDisplayNode::New ();
           displayNode->SetScene(this->MRMLScene);
           this->MRMLScene->AddNode (displayNode);
           displayNode->Delete();
@@ -225,7 +226,7 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller
     if (this->InterpolateButton == vtkKWCheckButton::SafeDownCast(caller) && 
         event == vtkKWCheckButton::SelectedStateChangedEvent)
       {
-      vtkMRMLVolumeDisplayNode *displayNode = this->GetVolumeDisplayNode();
+      vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
       if (displayNode != NULL)
         {
         displayNode->SetInterpolate( this->InterpolateButton->GetSelectedState() );
@@ -264,11 +265,12 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
       this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
       }
     // check the interpolation which may have been modified from the SliceGUI
-    if (this->GetVolumeDisplayNode() && this->InterpolateButton )
+    vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
+    if (displayNode && this->InterpolateButton )
       {
-      if (this->GetVolumeDisplayNode()->GetInterpolate() != this->InterpolateButton->GetSelectedState() )
+      if (displayNode->GetInterpolate() != this->InterpolateButton->GetSelectedState() )
         {
-        this->InterpolateButton->SetSelectedState( this->GetVolumeDisplayNode()->GetInterpolate()  );
+        this->InterpolateButton->SetSelectedState( displayNode->GetInterpolate()  );
         }
       }
     }
@@ -303,7 +305,7 @@ void vtkSlicerScalarVolumeDisplayWidget::UpdateWidgetFromMRML ()
       this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
       }
     }  
-  vtkMRMLVolumeDisplayNode *displayNode = this->GetVolumeDisplayNode();
+  vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
   
   if (displayNode != NULL && this->WindowLevelThresholdEditor) 
     {

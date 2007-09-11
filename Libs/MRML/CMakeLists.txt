@@ -27,6 +27,8 @@ SET(MRML_SRCS
         vtkMRMLVolumeArchetypeStorageNode.cxx
         vtkMRMLVolumeHeaderlessStorageNode.cxx
         vtkMRMLVolumeDisplayNode.cxx
+        vtkMRMLScalarVolumeDisplayNode.cxx
+        vtkMRMLLabelMapVolumeDisplayNode.cxx
         vtkMRMLVolumeGlyphDisplayNode.cxx
         vtkMRMLTransformableNode.cxx
         vtkMRMLTransformNode.cxx
@@ -85,6 +87,7 @@ SET_SOURCE_FILES_PROPERTIES(
   vtkMRMLTransformNode.cxx
   vtkMRMLDisplayNode.cxx
   vtkMRMLDisplayableNode.cxx
+  vtkMRMLVolumeDisplayNode.cxx
   ABSTRACT
   )
 

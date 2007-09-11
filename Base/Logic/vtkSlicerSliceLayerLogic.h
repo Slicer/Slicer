@@ -143,15 +143,27 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   // Description:
   // Get the output of the pipeline for this layer
   vtkImageData *GetImageData () { 
+    if ( this->GetVolumeNode() == NULL || this->GetVolumeDisplayNode() == NULL) 
+      {
+      return NULL;
+      } 
+    else
+      {
+      return this->GetVolumeDisplayNode()->GetImageData();
+      }
+    /**
     if ( this->GetVolumeNode() == NULL ) 
       {
       return NULL;
       } 
     else
       {
-      return (this->GetAppendComponents()->GetOutput()); 
-      }
+      return (this->GetAppendComponents()->GetOutput());
+      **/
+
   };
+
+  void UpdateImageDisplay();
 
   // Description:
   // provide the virtual method that updates this Logic based
@@ -192,6 +204,7 @@ protected:
   // the MRML Nodes that define this Logic's parameters
   vtkMRMLVolumeNode *VolumeNode;
   vtkMRMLVolumeDisplayNode *VolumeDisplayNode;
+  vtkMRMLVolumeDisplayNode *VolumeDisplayNodeObserved;
   vtkMRMLSliceNode *SliceNode;
 
   // Description:
