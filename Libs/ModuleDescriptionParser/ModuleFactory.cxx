@@ -552,7 +552,7 @@ ModuleFactory
 
                 std::string splash_msg("Discovered ");
                 splash_msg +=  module.GetTitle();
-                splash_msg += " Module...";
+                splash_msg += " Module (adding to cache)...";
                 this->ModuleDiscoveryMessage(splash_msg.c_str());
                 
                 if (mit == this->InternalMap->end())
@@ -859,7 +859,7 @@ ModuleFactory
 
                 std::string splash_msg("Discovered ");
                 splash_msg +=  module.GetTitle();
-                splash_msg += " Module...";
+                splash_msg += " Module (adding to cache)...";
                 this->ModuleDiscoveryMessage(splash_msg.c_str());
               
                 if (mit == this->InternalMap->end())
@@ -1140,7 +1140,7 @@ ModuleFactory
 
                 std::string splash_msg("Discovered ");
                 splash_msg +=  module.GetTitle();
-                splash_msg += " Module...";
+                splash_msg += " Module (adding to cache)...";
                 this->ModuleDiscoveryMessage(splash_msg.c_str());
                 
                 if (mit == this->InternalMap->end())
@@ -1381,7 +1381,7 @@ ModuleFactory
 
                 std::string splash_msg("Discovered ");
                 splash_msg +=  module.GetTitle();
-                splash_msg += " Module...";
+                splash_msg += " Module (adding to cache)...";
                 this->ModuleDiscoveryMessage(splash_msg.c_str());
                 
                 if (mit == this->InternalMap->end())
@@ -1658,6 +1658,23 @@ ModuleFactory
             continue;
             }
 
+          // determine the modified time of the module
+          long int moduleModifiedTime
+            = itksys::SystemTools::ModifiedTime(fullLibraryPath.c_str());
+
+          // early exit if we can find the module in the cache
+          int cached
+            = this->GetModuleFromCache( fullLibraryPath, moduleModifiedTime,
+                                        "PythonModule", information);
+          if ( cached != 0 )
+            {
+            if ( cached == 1 )
+              {
+              numberFound++; // found in the cache and is a module
+              }
+            // whatever, it was in the cache, so we can safely skip it.
+            continue;
+            }
 
           // Add the current path, if it doesn't exist, try to load the xml
           // for the module
@@ -1725,7 +1742,7 @@ ModuleFactory
 
             std::string splash_msg("Discovered ");
             splash_msg +=  module.GetTitle();
-            splash_msg += " Module...";
+            splash_msg += " Module (adding to cache)...";
             this->ModuleDiscoveryMessage(splash_msg.c_str());
                 
             if (mit == this->InternalMap->end())
@@ -1753,6 +1770,34 @@ ModuleFactory
                           << std::endl
                           << "    Keeping first module." << std::endl;
               }
+            
+            // Put the module in the cache
+            ModuleCacheEntry entry;
+            entry.Location = fullLibraryPath;
+            entry.ModifiedTime = moduleModifiedTime;
+            entry.Type = "PythonModule";
+            entry.XMLDescription = xml;
+            
+            if (module.GetLogo().GetLogo())
+              {
+              entry.LogoWidth = module.GetLogo().GetWidth();
+              entry.LogoHeight = module.GetLogo().GetHeight();
+              entry.LogoPixelSize = module.GetLogo().GetPixelSize();
+              entry.LogoLength = module.GetLogo().GetBufferLength();
+              entry.Logo = std::string((char *)module.GetLogo().GetLogo());
+              }
+            else
+              {
+              entry.LogoWidth = 0;
+              entry.LogoHeight = 0;
+              entry.LogoPixelSize = 0;
+              entry.LogoLength = 0;
+              entry.Logo = "None";
+              }
+            
+            (*this->InternalCache)[entry.Location] = entry;
+            this->CacheModified = true;
+            
             }
           }
         }
@@ -2047,6 +2092,12 @@ ModuleFactory
           {
           module.SetTarget( commandName );
           }
+        else if (type == "PythonModule")
+          {
+          std::string moduleName
+            = itksys::SystemTools::GetFilenameWithoutExtension( commandName );
+          module.SetTarget( moduleName );
+          }
         else
           {
           module.SetTarget( "Unknown" );
@@ -2074,7 +2125,7 @@ ModuleFactory
 
         std::string splash_msg("Discovered ");
         splash_msg +=  module.GetTitle();
-        splash_msg += " Module (cache)...";
+        splash_msg += " Module (in cache)...";
         this->ModuleDiscoveryMessage(splash_msg.c_str());
               
         if (mit == this->InternalMap->end())
