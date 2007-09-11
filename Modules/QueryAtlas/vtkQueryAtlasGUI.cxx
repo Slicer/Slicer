@@ -1047,12 +1047,12 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   else if ( (e == this->BIRNLexEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
     {
     this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
-                  this->BIRNLexEntry->GetValue(), "BIRNLex" );
+                  this->BIRNLexEntry->GetValue(), "BIRN_String" );
     }
   else if ( (e == this->BIRNLexIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
     {
     this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
-                  this->BIRNLexIDEntry->GetValue(), "BIRNID" );
+                  this->BIRNLexIDEntry->GetValue(), "BIRN_ID" );
     }
   else if ( (e == this->NeuroNamesEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
     {
@@ -1062,12 +1062,12 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   else if ( (e == this->NeuroNamesIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
     {
     this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
-                  this->NeuroNamesIDEntry->GetValue(), "NNID" );
+                  this->NeuroNamesIDEntry->GetValue(), "NN_ID" );
     }
   else if ( (e == this->UMLSCIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
     {
     this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
-                  this->UMLSCIDEntry->GetValue(), "UMLS" );
+                  this->UMLSCIDEntry->GetValue(), "UMLS_CID" );
     }
 
   //---

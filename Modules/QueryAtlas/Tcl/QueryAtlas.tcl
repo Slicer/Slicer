@@ -600,22 +600,42 @@ proc QueryAtlasSetUp { } {
         return
     }
 
+    #--- set up progress guage
+    set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+    set prog [ $win GetProgressGauge ]
+    $prog SetValue 0
+    $win SetStatusText "Setting up query scene..."
+
     #--- perform once per scene.
     if { ! $::QA(SceneLoaded) } {
-        puts "Adding annotations"
+        $win SetStatusText "Adding annotations..."
+        $prog SetValue [ expr 100 * 1.0 / 8.0 ]
         QueryAtlasAddAnnotations
-        puts "Initializing Picker"
+        $win SetStatusText "Initializing picker..."
+        $prog SetValue [ expr 100 * 2.0 / 8.0 ]
         QueryAtlasInitializePicker 
-        puts "Rendering View"
+        $win SetStatusText "Rendering view..."
+        $prog SetValue [ expr 100 * 3.0 / 8.0 ]
         QueryAtlasRenderView
-        puts "Updating Cursor"
+        $win SetStatusText "Adding query cursor..."
+        $prog SetValue [ expr 100 * 4.0 / 8.0 ]
         QueryAtlasUpdateCursor
-        puts "Parsing Controlled Vocabulary"
+        $win SetStatusText "Parsing controlled vocabulary..."
+        $prog SetValue [ expr 100 * 5.0 / 8.0 ]
         QueryAtlasParseControlledVocabulary
+        $win SetStatusText "Parsing NeuroNames Synonyms..."
+        $prog SetValue [ expr 100 * 6.0 / 8.0 ]
         QueryAtlasParseNeuroNamesSynonyms
+        $win SetStatusText "Parsing precompiled URIs..."
+        $prog SetValue [ expr 100 * 7.0 / 8.0 ]
         QueryAtlasParseBrainInfoURIs
         set ::QA(CurrentRASPoint) "0 0 0"
+        $prog SetValue [ expr 100 * 8.0 / 8.0 ]
         set ::QA(SceneLoaded) 1
+
+        #--- clear progress
+        $win SetStatusText ""
+        $prog SetValue 0
     }
 }
 
