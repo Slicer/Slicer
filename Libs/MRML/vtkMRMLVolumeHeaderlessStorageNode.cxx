@@ -409,7 +409,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
       }
       catch (...)
       {
-      vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
+      vtkErrorMacro("vtkMRMLVolumeHeaderlessStorageNode: Cannot read file");
       reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
       reader->Delete();
       image->Delete();
@@ -419,7 +419,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     if (reader->GetOutput() == NULL) 
       {
-      vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
+      vtkErrorMacro("vtkMRMLVolumeHeaderlessStorageNode: Cannot read file");
       reader->Delete();
       image->Delete();
       appender->Delete();
@@ -453,7 +453,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
 
   if (ici->GetOutput() == NULL)
     {
-    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
+    vtkErrorMacro("vtkMRMLVolumeHeaderlessStorageNode: Cannot read file");
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     reader->Delete();
     image->Delete();
