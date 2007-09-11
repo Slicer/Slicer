@@ -37,6 +37,7 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->ModuleCachePathEntry = NULL;
   this->HomeModuleEntry = NULL;
   this->TemporaryDirectoryButton = NULL;
+  this->BrowserSelectButton = NULL;
   this->LoadCommandLineModulesCheckButton = NULL;
   this->EnableDaemonCheckButton = NULL;
   this->FontSizeButtons = NULL;
@@ -99,6 +100,12 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     this->HomeModuleEntry = 0;
     }
 
+  if ( this->BrowserSelectButton )
+    {
+    this->BrowserSelectButton->Delete();
+    this->BrowserSelectButton = 0;
+    }
+  
   if (this->TemporaryDirectoryButton)
     {
     this->TemporaryDirectoryButton->Delete();
@@ -192,6 +199,33 @@ void vtkSlicerApplicationSettingsInterface::Create()
 
   tk_cmd << "pack " << this->EnableDaemonCheckButton->GetWidgetName()
          << "  -side top -anchor w -expand no -fill none" << endl;
+
+  // --------------------------------------------------------------
+  // Slicer interface settings : Browser Select
+  
+  if (!this->BrowserSelectButton)
+    {
+    this->BrowserSelectButton = vtkKWLoadSaveButtonWithLabel::New();
+    }
+
+  this->BrowserSelectButton->SetParent(frame);
+  this->BrowserSelectButton->Create();
+  this->BrowserSelectButton->SetLabelText("Set Firefox browser:");
+  this->BrowserSelectButton->SetLabelWidth(15);
+  this->BrowserSelectButton->GetWidget()->TrimPathFromFileNameOff();
+  this->BrowserSelectButton->GetWidget()
+    ->SetCommand(this, "BrowserSelectCallback");
+  this->BrowserSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->ChooseDirectoryOff();
+  this->BrowserSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->SaveDialogOff();
+  this->BrowserSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->SetTitle("Select Firefox web browser");
+  this->BrowserSelectButton->SetBalloonHelpString(
+    "Select the firefox browser for Slicer modules that use the web.");
+
+  tk_cmd << "pack " << this->BrowserSelectButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -padx 2 -pady 2" << endl;
 
   // --------------------------------------------------------------
   // Slicer interface settings : Font settings frame
@@ -599,6 +633,20 @@ void vtkSlicerApplicationSettingsInterface::ModuleCachePathCallback(char *path)
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::BrowserSelectCallback()
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
+    {
+    // Store the setting in the application object
+    app->SetWebBrowser(this->BrowserSelectButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
+    }
+}
+
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::TemporaryDirectoryCallback()
 {
   vtkSlicerApplication *app
@@ -688,6 +736,10 @@ void vtkSlicerApplicationSettingsInterface::Update()
         ->SetText(app->GetTemporaryDirectory());
       this->TemporaryDirectoryButton->GetWidget()
         ->GetLoadSaveDialog()->SetLastPath(app->GetTemporaryDirectory());
+      }
+    if (this->BrowserSelectButton)
+      {
+      this->BrowserSelectButton->GetWidget()->SetText(app->GetWebBrowser());
       }
     }
 }

@@ -41,6 +41,7 @@ public:
   virtual void ModuleCachePathCallback(char *);
   virtual void HomeModuleCallback(char *name);
   virtual void TemporaryDirectoryCallback();
+  virtual void BrowserSelectCallback();
   virtual void LoadCommandLineModulesCallback(int state);
   virtual void EnableDaemonCallback(int state);
 
@@ -70,6 +71,7 @@ private:
   vtkKWEntryWithLabel *ModulePathEntry;
   vtkKWEntryWithLabel *ModuleCachePathEntry;
   vtkKWLoadSaveButtonWithLabel *TemporaryDirectoryButton;
+  vtkKWLoadSaveButtonWithLabel *BrowserSelectButton;
   vtkKWRadioButtonSet *FontSizeButtons;
   vtkKWRadioButtonSet *FontFamilyButtons;
   vtkKWCheckButton  *LoadCommandLineModulesCheckButton;

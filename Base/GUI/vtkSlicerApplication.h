@@ -99,6 +99,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *ModulePathRegKey;
   static const char *ModuleCachePathRegKey;
   static const char *TemporaryDirectoryRegKey;
+  static const char *WebBrowserRegKey;
   static const char *HomeModuleRegKey;
   static const char *LoadCommandLineModulesRegKey;
   static const char *EnableDaemonRegKey;
@@ -140,6 +141,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Set/Get a user's home module.
   void SetHomeModule (const char *name);
   const char *GetHomeModule() const;
+  
+  // Description:
+  // Set/Get an executable firefox browser for modules that need one.
+  void SetWebBrowser ( const char *browser);
+  const char* GetWebBrowser () const;
   
   // Description:
   // Set/Get a directory for temporary file storage
@@ -257,6 +263,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModuleCachePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char WebBrowser [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
   char TemporaryDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ApplicationFontSize [vtkKWRegistryHelper::RegistryKeyValueSizeMax];

@@ -41,6 +41,7 @@
 const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
 const char *vtkSlicerApplication::ModuleCachePathRegKey = "ModuleCachePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
+const char *vtkSlicerApplication::WebBrowserRegKey = "WebBrowser";
 const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
 const char *vtkSlicerApplication::HomeModuleRegKey = "HomeModule";
 const char *vtkSlicerApplication::LoadCommandLineModulesRegKey = "LoadCommandLineModules";
@@ -452,6 +453,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   strcpy(this->TemporaryDirectory, "/tmp");
 #endif
 
+
   // Tk does not understand Windows short path names, so convert to
   // long path names and unix slashes
   std::string temporaryDirectory = this->TemporaryDirectory;
@@ -495,6 +497,25 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
                     << this->TemporaryDirectory);
     }
 
+
+  //--- web browser
+  // start with no browser...
+  strcpy(this->WebBrowser, "");
+  // Tk does not understand Windows short path names, so convert to
+  // long path names and unix slashes
+  std::string webBrowser = this->WebBrowser;
+/*
+  webBrowser 
+    = itksys::SystemTools::GetActualCaseForPath(webBrowser.c_str());
+  itksys::SystemTools::ConvertToUnixSlashes( webBrowser );
+    strcpy(this->WebBrowser, webBrowser.c_str());
+  if (webBrowser.size() > vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+    {
+    vtkWarningMacro("Path to firefox: " << this->WebBrowser
+                    << " is too long to be stored in the registry."
+                    << " You will have to set the browser location each time you launch Slicer to use modules that require it.");
+    }
+*/  
     
   Superclass::RestoreApplicationSettingsFromRegistry();
 
@@ -536,6 +557,14 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     this->GetRegistryValue(
       2, "RunTime", vtkSlicerApplication::TemporaryDirectoryRegKey,
       this->TemporaryDirectory);
+    }
+
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::WebBrowserRegKey))
+    {
+    this->GetRegistryValue(
+      2, "RunTime", vtkSlicerApplication::WebBrowserRegKey,
+      this->WebBrowser);
     }
 
   if (this->HasRegistryValue(
@@ -634,6 +663,10 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::TemporaryDirectoryRegKey, "%s", 
     this->TemporaryDirectory);
+
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::WebBrowserRegKey, "%s", 
+    this->WebBrowser);
 
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey, "%d", 
@@ -791,6 +824,28 @@ void vtkSlicerApplication::SetModuleCachePath(const char* path)
 const char* vtkSlicerApplication::GetModuleCachePath() const
 {
   return this->ModuleCachePath;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetWebBrowser(const char* path)
+{
+  if (path)
+    {
+    if (strcmp(this->WebBrowser, path) != 0
+        && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->WebBrowser, path);
+      this->Modified();
+      }
+    }
+
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetWebBrowser() const
+{
+  // should check if this is an executable file...
+  return this->WebBrowser;
 }
 
 //----------------------------------------------------------------------------
