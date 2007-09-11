@@ -110,8 +110,8 @@ NameIsSharedLibrary(const char* name)
 inline bool 
 NameIsExecutable(const char* name)
 {
-  static const char* standardExtensions[] = {".bat", ".com", ".sh", ".csh", ".tcsh", ".pl", ".tcl", ".py", ".m"};
-  std::deque<std::string> extensions(standardExtensions, standardExtensions+9);
+  static const char* standardExtensions[] = {".bat", ".com", ".sh", ".csh", ".tcsh", ".pl", ".tcl", ".m"};
+  std::deque<std::string> extensions(standardExtensions, standardExtensions+8);
 
 
   bool hasDefaultExtension = false;
