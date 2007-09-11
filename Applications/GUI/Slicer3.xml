@@ -38,6 +38,22 @@
       </boolean>
 
       <boolean>
+      <name>NoModuleCache</name>
+      <longflag>--no_module_cache</longflag>
+      <description>Disables the loading of Command Line Modules from the cache</description>
+      <default>false</default>
+      <label>Command Line Modules Caching On/Off</label>
+      </boolean>
+
+      <boolean>
+      <name>ClearModuleCache</name>
+      <longflag>--clear_module_cache</longflag>
+      <description>Clear the module cache file</description>
+      <default>false</default>
+      <label>Delete the Command Line Module Cache On/Off</label>
+      </boolean>
+
+      <boolean>
       <name>Daemon</name>
       <longflag>--daemon</longflag>
       <description>Turns on the Slicer Daemon (open listening socket port)</description>

@@ -1367,9 +1367,26 @@ int Slicer3_main(int argc, char *argv[])
             }
           }
         }
+      if (ClearModuleCache)
+        {
+        std::string cacheFile = cachePath + "/ModuleCache.csv";
+        vtksys::SystemTools::RemoveFile(cacheFile.c_str());
+        }
+      if (NoModuleCache)
+        {
+        cachePath = "";
+        }
       if (cachePath == "")
         {
-        std::cout << "Module cache disabled. Slicer application directory may not be writable, a user level cache directory may not be set, or the user level cache directory may not be writable." << std::endl;
+        if (NoModuleCache)
+          {
+          std::cout << "Module cache disabled by command line argument."
+                    << std::endl;
+          }
+        else
+          {
+          std::cout << "Module cache disabled. Slicer application directory may not be writable, a user level cache directory may not be set, or the user level cache directory may not be writable." << std::endl;
+          }
         }
 
       // Search for modules
@@ -1420,23 +1437,6 @@ int Slicer3_main(int argc, char *argv[])
         commandLineModuleGUI->GetUIPanel()->Create ( );
         slicerApp->AddModuleGUI ( commandLineModuleGUI );
 
-        ++mit;
-        }
-      // -- Build the factory discovered modules gui and observers
-      mit = moduleNames.begin();
-      while ( mit != moduleNames.end() )
-        {
-        std::string progress_msg("Initializing ");
-        progress_msg +=  (*mit) ;
-        progress_msg += " Module...";
-        slicerApp->SplashMessage(progress_msg.c_str());
-
-        vtkSlicerModuleGUI *module;
-        module = slicerApp->GetModuleGUIByName( (*mit).c_str() );
-/*
-        module->BuildGUI();
-        module->AddGUIObservers();
-*/
         ++mit;
         }
       }
