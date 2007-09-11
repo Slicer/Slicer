@@ -82,7 +82,9 @@ proc QueryAtlasInitializeGlobals { } {
 
     set ::QA(annotationTermSet) "local"
     set ::QA(annotationVisibility) 1
-
+    set ::QA(localLabel) ""
+    set ::QA(lastLabels) ""
+    
     set ::QA(statsAutoWinLevThreshCompleted) 0
 
 }
@@ -1242,16 +1244,20 @@ proc QueryAtlasPickCallback {} {
   }
 
 
+  #---keep raw local label here
+  set ::QA(localLabel) $pointLabels
+
   #---Before modifying freesurfer labelname,
   # get UMLS, Neuronames, BIRNLex mapping.
   #---  
-  set ::QA(annoLabel) [ QueryAtlasTranslateLabel  $pointLabels ]
+  set transLabel [ QueryAtlasTranslateLabel  $pointLabels ]
   if { ![info exists ::QA(lastLabels)] } {
     set ::QA(lastLabels) ""
   }
+
   
-  if { $::QA(annoLabel) != $::QA(lastLabels) } {
-    set ::QA(lastLabels) $::QA(annoLabel)
+  if { $transLabel != $::QA(lastLabels) } {
+    set ::QA(lastLabels) $transLabel
   }
 
   QueryAtlasUpdateCursor
@@ -1444,12 +1450,10 @@ proc QueryAtlasMenuCreate { state } {
           set topic [file root [$::QA(currentCard) cget -text]]
           $qaMenu insert end command -label "Browse $topic" -command "$::slicer3::Application OpenLink $::QA(url,EntrezLinks)"
         } else {
-          # bring up a search menu
-
+          #--- bring up a search menu
           $qaMenu insert end checkbutton -label "Use Search Terms" -variable ::QA(menu,useTerms)
-          $qaMenu insert end command -label "Add to search terms" -command "QueryAtlasAddStructureTerms"
-          $qaMenu insert end command -label "Clear all structure search terms" -command "QueryAtlasRemoveStructureTerms"
-
+          $qaMenu insert end command -label "Select structure term" -command "QueryAtlasSetStructureTerm"
+          $qaMenu insert end command -label "Add to search terms" -command "QueryAtlasAddSavedTerms"
           $qaMenu insert end command -label $::QA(lastLabels) -command ""
           $qaMenu insert end separator
           $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
@@ -1457,7 +1461,7 @@ proc QueryAtlasMenuCreate { state } {
           $qaMenu insert end command -label "PubMed..." -command "QueryAtlasQuery pubmed"
           $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasQuery jneurosci"
           $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery ibvd"
-          $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery braininfo"
+          $qaMenu insert end command -label "BrainInfo..." -command "QueryAtlasQuery braininfo"
           $qaMenu insert end command -label "MetaSearch..." -command "QueryAtlasQuery metasearch"
         }
         
@@ -1467,6 +1471,13 @@ proc QueryAtlasMenuCreate { state } {
     }
   }
 
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetStructureTerm { } {
+    [ $::slicer3::QueryAtlasGUI GetLocalSearchTermEntry ] SetValue $::QA(localLabel) 
 }
 
 
@@ -1599,13 +1610,29 @@ proc QueryAtlasGetSearchTargets { } {
 
 
 #----------------------------------------------------------------------------------------------------
+#--- adds a term into the ontology panel's listbox
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasAddSavedTerms {} {
+
+    #--- add term to listbox.
+  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+  set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
+
+  set i [$mcl GetNumberOfRows]
+  $mcl SetCellTextAsInt $i 0 1
+  $mcl SetCellText $i 1 $::QA(lastLabels)
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasAddStructureTerms {} {
 
     #--- add term to listbox.
   $::slicer3::ApplicationGUI SelectModule QueryAtlas
-  set mcl [[$::slicer3::QueryAtlasGUI GetStructureMultiColumnList] GetWidget]
+  set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
 
   set i [$mcl GetNumberOfRows]
   $::slicer3::QueryAtlasGUI AddNewStructureSearchTerm $::QA(lastLabels)

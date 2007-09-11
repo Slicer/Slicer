@@ -221,7 +221,6 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void DeselectAllSearchTerms ( const char *context );
     virtual void DeleteAllSearchTerms ( const char *context);
 
-    
 
  protected:
     vtkQueryAtlasGUI ( );

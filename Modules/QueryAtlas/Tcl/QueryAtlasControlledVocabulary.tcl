@@ -82,7 +82,6 @@ proc QueryAtlasParseNeuroNamesSynonyms { } {
     while { ! [eof $fp ] } {
         gets $fp line
         set sline [ ::csv::split $line ]
-        puts "$sline"
         set len [ llength $sline ]
         #--- if the line is the wrong length, blow it off
         if { $len == $numCols } {
@@ -366,6 +365,249 @@ proc QueryAtlasMapTerm { term sourceTermSet targetTermSet } {
 
     #--- well, nothing in the table.
     return ""
+}
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasUpdateSynonymsMenu { term } {
+
+        QueryAtlasGetSynonyms $term
+        set m [ [ $::slicer3::QueryAtlasGUI GetSynonymsMenuButton ] GetMenu ]
+
+        #--- clear menu
+        $m DeleteAllItems
+
+        #--- build menu
+        set len [ llength $::QA(Synonyms) ]
+        for { set i 0 } { $i < $len } { incr i } {
+        #--- add new menuitems
+            set item [ lindex $::QA(Synonyms) $i ]
+           $m AddRadioButton $item
+        }
+        $m AddSeparator
+        $m AddCommand "close"
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasPopulateOntologyInformation { term infoType } {
+
+    if { $infoType == "local" } {
+        #--- BIRN String
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "BIRN_String" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetBIRNLexEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetBIRNLexEntry] SetValue $val
+        }
+        #--- update synonyms
+        QueryAtlasUpdateSynonymsMenu $term
+        
+        #--- BIRN ID
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "BIRN_ID" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetBIRNLexIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetBIRNLexIDEntry] SetValue $val
+        }
+        #--- NN String
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "NN_String" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetNeuroNamesEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetNeuroNamesEntry] SetValue $val
+        }
+        #--- NN ID
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "NN_ID" ]
+        set curval  [ [$::slicer3::QueryAtlasGUI GetNeuroNamesIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetNeuroNamesIDEntry] SetValue $val
+        }
+        #--- UMLS
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "UMLS_CID" ]                
+        set curval  [ [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] SetValue $val
+        }
+    } elseif { $infoType == "BIRNLex" } {
+        #---
+        #--- local String
+        set val [ QueryAtlasMapTerm $term "BIRN_String" "FreeSurfer" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetLocalSearchTermEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetLocalSearchTermEntry] SetValue $val
+        }
+        #--- update synonyms
+        QueryAtlasUpdateSynonymsMenu $val
+        
+        #--- BIRN ID
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "BIRN_ID" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetBIRNLexIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetBIRNLexIDEntry] SetValue $val
+        }
+        #--- NN String
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "NN_String" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetNeuroNamesEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetNeuroNamesEntry] SetValue $val
+        }
+        #--- NN ID
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "NN_ID" ]
+        set curval  [ [$::slicer3::QueryAtlasGUI GetNeuroNamesIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetNeuroNamesIDEntry] SetValue $val
+        }
+        #--- UMLS
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "UMLS_CID" ]                
+        set curval  [ [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] SetValue $val
+        }
+
+
+    } elseif { $infoType == "BIRNID" } {
+        #--- local String
+        set val [ QueryAtlasMapTerm $term "BIRN_String" "FreeSurfer" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetLocalSearchTermEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetLocalSearchTermEntry] SetValue $val
+        }
+        #--- update synonyms
+        QueryAtlasUpdateSynonymsMenu $val        
+        
+        #--- BIRN String
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "BIRN_String" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetBIRNLexEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetBIRNLexEntry] SetValue $val
+        }
+        #--- NN String
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "NN_String" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetNeuroNamesEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetNeuroNamesEntry] SetValue $val
+        }
+        #--- NN ID
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "NN_ID" ]
+        set curval  [ [$::slicer3::QueryAtlasGUI GetNeuroNamesIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetNeuroNamesIDEntry] SetValue $val
+        }
+        #--- UMLS
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "UMLS_CID" ]                
+        set curval  [ [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] SetValue $val
+        }
+        #--- update synonyms
+
+    } elseif { $infoType == "NN" } {
+        #--- local String
+        set val [ QueryAtlasMapTerm $term "BIRN_String" "FreeSurfer" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetLocalSearchTermEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetLocalSearchTermEntry] SetValue $val
+        }
+        #--- update synonyms
+        QueryAtlasUpdateSynonymsMenu $val        
+
+        #--- BIRN String
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "BIRN_String" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetBIRNLexEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetBIRNLexEntry] SetValue $val
+        }
+        #--- BIRN ID
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "BIRN_ID" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetBIRNLexIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetBIRNLexIDEntry] SetValue $val
+        }
+        #--- NN ID
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "NN_ID" ]
+        set curval  [ [$::slicer3::QueryAtlasGUI GetNeuroNamesIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetNeuroNamesIDEntry] SetValue $val
+        }
+        #--- UMLS
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "UMLS_CID" ]                
+        set curval  [ [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] SetValue $val
+        }
+        #--- update synonyms
+
+    } elseif { $infoType == "NNID" } {
+        #--- local String
+        set val [ QueryAtlasMapTerm $term "BIRN_String" "FreeSurfer" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetLocalSearchTermEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetLocalSearchTermEntry] SetValue $val
+        }
+        #--- update synonyms
+        QueryAtlasUpdateSynonymsMenu $val
+        
+        #--- BIRN String
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "BIRN_String" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetBIRNLexEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetBIRNLexEntry] SetValue $val
+        }
+        #--- BIRN ID
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "BIRN_ID" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetBIRNLexIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetBIRNLexIDEntry] SetValue $val
+        }
+        #--- NN String
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "NN_String" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetNeuroNamesEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetNeuroNamesEntry] SetValue $val
+        }
+        #--- UMLS
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "UMLS_CID" ]                
+        set curval  [ [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] SetValue $val
+        }
+        #--- update synonyms
+
+    } elseif { $infoType == "UMLS" } {
+        #--- local String
+        set val [ QueryAtlasMapTerm $term "BIRN_String" "FreeSurfer" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetLocalSearchTermEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetLocalSearchTermEntry] SetValue $val
+        }
+        #--- update synonyms
+        QueryAtlasUpdateSynonymsMenu $val
+
+        #--- BIRN String
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "BIRN_String" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetBIRNLexEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetBIRNLexEntry] SetValue $val
+        }
+        #--- BIRN ID
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "BIRN_ID" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetBIRNLexIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetBIRNLexIDEntry] SetValue $val
+        }
+        #--- NN String
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "NN_String" ]        
+        set curval  [ [$::slicer3::QueryAtlasGUI GetNeuroNamesEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetNeuroNamesEntry] SetValue $val
+        }
+        #--- NN ID
+        set val [ QueryAtlasMapTerm $term "FreeSurfer" "NN_ID" ]
+        set curval  [ [$::slicer3::QueryAtlasGUI GetNeuroNamesIDEntry] GetValue ]
+        if { $val != $curval } {
+            [$::slicer3::QueryAtlasGUI GetNeuroNamesIDEntry] SetValue $val
+        }
+        #--- update synonyms
+    }
 }
 
 

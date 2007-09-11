@@ -1039,6 +1039,36 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       }
     }
+  if ( (e == this->LocalSearchTermEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
+    {
+    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
+                  this->LocalSearchTermEntry->GetValue(), "local" );
+    }
+  else if ( (e == this->BIRNLexEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
+    {
+    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
+                  this->BIRNLexEntry->GetValue(), "BIRNLex" );
+    }
+  else if ( (e == this->BIRNLexIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
+    {
+    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
+                  this->BIRNLexIDEntry->GetValue(), "BIRNID" );
+    }
+  else if ( (e == this->NeuroNamesEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
+    {
+    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
+                  this->NeuroNamesEntry->GetValue(), "NN" );
+    }
+  else if ( (e == this->NeuroNamesIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
+    {
+    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
+                  this->NeuroNamesIDEntry->GetValue(), "NNID" );
+    }
+  else if ( (e == this->UMLSCIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
+    {
+    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
+                  this->UMLSCIDEntry->GetValue(), "UMLS" );
+    }
 
   //---
   //--- Process All PushButton events
@@ -1826,6 +1856,8 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     modelLabel->Delete();
     annotationFrame->Delete();
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildOntologyGUI ( )
