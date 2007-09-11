@@ -110,8 +110,8 @@ NameIsSharedLibrary(const char* name)
 inline bool 
 NameIsExecutable(const char* name)
 {
-  static const char* standardExtensions[] = {".bat", ".com", ".sh", ".csh", ".tcsh", ".pl", ".tcl", ".m"};
-  std::deque<std::string> extensions(standardExtensions, standardExtensions+8);
+  static const char* standardExtensions[] = {".bat", ".com", ".sh", ".csh", ".tcsh", ".pl", ".py", ".tcl", ".m"};
+  std::deque<std::string> extensions(standardExtensions, standardExtensions+9);
 
 
   bool hasDefaultExtension = false;
@@ -350,7 +350,7 @@ ModuleFactory
   
   // Scan for shared object modules first since they will be higher
   // performance than command line module
-  int numberOfShared, numberOfExecutables, numberOfPeekedExecutables, numberOfPython = 0;
+  int numberOfShared, numberOfExecutables, numberOfPeekedExecutables, numberOfPython = 0, numberOfOtherFiles;
 
   numberOfShared = this->ScanForSharedObjectModules();
   numberOfPeekedExecutables = this->ScanForCommandLineModulesByPeeking();
@@ -359,6 +359,8 @@ ModuleFactory
   numberOfPython = this->ScanForPythonModulesByLoading();
 #endif
 
+  numberOfOtherFiles = this->ScanForNotAModuleFiles();
+  
   // Store the module cache information
   this->SaveModuleCache();
 
@@ -367,6 +369,99 @@ ModuleFactory
     {
     this->WarningMessage( ("No plugin modules found. Check your module search path and your " + this->Name + " installation.").c_str() );
     }
+}
+
+long
+ModuleFactory
+::ScanForNotAModuleFiles()
+{
+  // Any file that was not found to be a module will be put in the
+  // cache at the end as NotAModule
+  
+  
+  // self-describing shared object modules live in a prescribed path
+  // and have a prescribed symbol.
+  if (this->SearchPath == "")
+    {
+    this->WarningMessage( "Empty module search path." );
+    return 0;
+    }
+  
+  std::vector<std::string> modulePaths;
+#ifdef _WIN32
+  std::string delim(";");
+#else
+  std::string delim(":");
+#endif
+  splitString(this->SearchPath, delim, modulePaths);
+
+  std::vector<std::string>::const_iterator pit;
+  long numberTested = 0;
+  long numberFound = 0;
+  double t0, t1;
+  
+  t0 = itksys::SystemTools::GetTime();  
+  for (pit = modulePaths.begin(); pit != modulePaths.end(); ++pit)
+    {
+    std::stringstream information;
+  
+    information << "Searching " << *pit
+                << " for files that are not modules." << std::endl;
+    
+    itksys::Directory directory;
+    directory.Load( (*pit).c_str() );
+
+    for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
+      {
+      bool isAPlugin = true;
+      const char *filename = directory.GetFile(ii);
+      
+      // skip any directories
+      if (!itksys::SystemTools::FileIsDirectory(filename))
+        {
+        numberTested++;
+        
+        std::string fullFilename = std::string(directory.GetPath())
+          + "/" + filename;
+
+        // check cache for entry
+        ModuleCache::iterator cit = this->InternalCache->find(fullFilename);
+        if (cit == this->InternalCache->end())
+          {
+          // filename was not found, in the cache, put it in as
+          // NotAModule
+          numberFound++;
+          
+          long int fileModifiedTime
+            = itksys::SystemTools::ModifiedTime(fullFilename.c_str());
+          
+          ModuleCacheEntry entry;
+          entry.Location = fullFilename;
+          entry.ModifiedTime = fileModifiedTime;
+          entry.Type = "NotAModule";
+          entry.XMLDescription = "None";
+          entry.LogoWidth = 0;
+          entry.LogoHeight = 0;
+          entry.LogoPixelSize = 0;
+          entry.LogoLength = 0;
+          entry.Logo = "None";
+          
+          (*this->InternalCache)[entry.Location] = entry;
+          this->CacheModified = true;
+          }
+        }
+      }
+    }
+  t1 = itksys::SystemTools::GetTime();
+  
+  std::stringstream information;
+  information << "Tested " << numberTested << " files. Found "
+              << numberFound << " files which were not plugins " << t1 - t0
+              << " seconds." << std::endl;
+  
+  this->InformationMessage( information.str().c_str() );
+
+  return numberFound;
 }
 
 long
@@ -660,24 +755,6 @@ ModuleFactory
                           << std::endl;
               }
             }
-          
-          if (!isAPlugin)
-            {
-            // put information in the cache
-            ModuleCacheEntry entry;
-            entry.Location = fullLibraryPath;
-            entry.ModifiedTime = libraryModifiedTime;
-            entry.Type = "NotAModule";
-            entry.XMLDescription = "None";
-            entry.LogoWidth = 0;
-            entry.LogoHeight = 0;
-            entry.LogoPixelSize = 0;
-            entry.LogoLength = 0;
-            entry.Logo = "None";
-            
-            (*this->InternalCache)[entry.Location] = entry;
-            this->CacheModified = true;
-            }
           }
         }
       }
@@ -945,25 +1022,6 @@ ModuleFactory
             information << filename << " is not a plugin (did not exit cleanly)." << std::endl;
             }
 
-
-          if (!isAPlugin)
-            {
-            // put information in the cache
-            ModuleCacheEntry entry;
-            entry.Location = commandName;
-            entry.ModifiedTime = commandModifiedTime;
-            entry.Type = "NotAModule";
-            entry.XMLDescription = "None";
-            entry.LogoWidth = 0;
-            entry.LogoHeight = 0;
-            entry.LogoPixelSize = 0;
-            entry.LogoLength = 0;
-            entry.Logo = "None";
-            
-            (*this->InternalCache)[entry.Location] = entry;
-            this->CacheModified = true;
-            }
-          
           // clean up
           itksysProcess_Delete(process);
           }
