@@ -1107,9 +1107,12 @@ int Slicer3_main(int argc, char *argv[])
     sliceLogic2->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);
     sliceLogic2->SetAndObserveMRMLSceneEvents ( scene, events );
     events->Delete();
-    appLogic->GetSlices()->AddItem(sliceLogic0);
-    appLogic->GetSlices()->AddItem(sliceLogic1);
-    appLogic->GetSlices()->AddItem(sliceLogic2);
+    if (appLogic->GetSlices())
+      {
+      appLogic->GetSlices()->AddItem(sliceLogic0);
+      appLogic->GetSlices()->AddItem(sliceLogic1);
+      appLogic->GetSlices()->AddItem(sliceLogic2);
+      }
 
 #ifndef SLICES_DEBUG
     vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
