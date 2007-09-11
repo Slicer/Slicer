@@ -137,9 +137,9 @@ class ReadDataQueue : public std::queue<ReadDataRequest> {} ;
 //----------------------------------------------------------------------------
 vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
-    this->Views = NULL;
-    this->Slices = NULL;
-    this->Modules = NULL;
+    this->Views = vtkCollection::New();
+    this->Slices = vtkCollection::New();
+    this->Modules = vtkCollection::New();
     this->ActiveSlice = NULL;
     this->SelectionNode = NULL;
     this->InteractionNode = NULL;
@@ -311,6 +311,15 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection()
     cnode->SetBackgroundVolumeID( ID );
     cnode->SetLabelVolumeID( labelID );
     }
+
+  int nitems = this->GetSlices()->GetNumberOfItems();
+  for (i = 0; i < nitems; i++)
+    {
+    vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::SafeDownCast(this->GetSlices()->GetItemAsObject(i));
+    vtkMRMLSliceNode *sliceNode = sliceLogic->GetSliceNode();
+    unsigned int *dims = sliceNode->GetDimensions();
+    sliceLogic->FitSliceToBackground(dims[0], dims[1]);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -324,40 +333,6 @@ void vtkSlicerApplicationLogic::PropagateFiducialListSelection()
 
   // set the Fiducials GUI to show the active list? it's watching the node for
   // now
-}
-
-//----------------------------------------------------------------------------
-// Create a new Slice with it's associated class instances
-vtkSlicerSliceLogic *vtkSlicerApplicationLogic::CreateSlice ()
-{
-    // Create the logic instances
-    vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::New();
-    vtkSlicerSliceLayerLogic *bg = vtkSlicerSliceLayerLogic::New();
-    vtkSlicerSliceLayerLogic *fg = vtkSlicerSliceLayerLogic::New();
-
-    // Create the mrml nodes to store state
-    vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::New();
-    vtkMRMLSliceNode *sliceNode1 = vtkMRMLSliceNode::SafeDownCast(this->MRMLScene->AddNode(sliceNode));
-
-    // Configure the logic
-    sliceLogic->SetBackgroundLayer(bg);
-    sliceLogic->SetForegroundLayer(fg);
-    sliceLogic->SetSliceNode(sliceNode1);
-
-    // Update internal state
-    this->Slices->AddItem(sliceLogic);
-    this->SetActiveSlice(sliceLogic);
-
-    // Since they were New(), they should be Deleted(). If it crashes
-    // then something is not ref-counted properly and should be fixed
-    // (otherwise you are just leaking)
-
-    sliceLogic->Delete();
-    bg->Delete();
-    fg->Delete();
-    sliceNode->Delete();
-
-    return (sliceLogic);
 }
 
 //----------------------------------------------------------------------------

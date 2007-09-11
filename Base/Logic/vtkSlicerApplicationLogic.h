@@ -148,10 +148,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   // (display it in the Fiducials GUI)
   void PropagateFiducialListSelection();
   
-  // Description:
-  // Create a new Slice with it's associated class instances
-  vtkSlicerSliceLogic *CreateSlice ();
-
   ///// Modules
   // Description:
   // Modules are additional pieces of Slicer functionality
