@@ -187,20 +187,25 @@ void vtkSlicerViewerInteractorStyle::OnLeftButtonDown()
         int y = this->Interactor->GetEventPosition()[1];
         vtkDebugMacro("MousePut: got x = " << x << ", y = " << y << " (raw y = " << rawY << ")\n");
         // throw a pick event, let observers deal with it        
-        this->InvokeEvent(vtkSlicerViewerInteractorStyle::PickEvent, this->Interactor->GetEventPosition());
-        if (0)
-          {
-          if (this->GetViewerWidget() != NULL)
-            {
-            this->GetViewerWidget()->Pick(x, y);
-            }
-          }
+        this->InvokeEvent(vtkSlicerViewerInteractorStyle::PickEvent, this->Interactor->GetEventPosition());       
         }
       else if (mouseInteractionMode == vtkMRMLInteractionNode::PickManipulate)
         {
         // deal with select mode
         // throw a select region event
         this->InvokeEvent(vtkSlicerViewerInteractorStyle::SelectRegionEvent);
+
+        // TODO: expand the mouse interaction modes and events to support
+        // picking everything needed
+#ifndef QDEC_DEBUG
+        // for the Qdec module, throw a plot event that won't clash with the
+        // fiducials module looking for a pick event
+        int x = this->Interactor->GetEventPosition()[0];
+        int rawY = this->Interactor->GetEventPosition()[1];
+        this->Interactor->SetEventPositionFlipY(x, rawY);
+        int y = this->Interactor->GetEventPosition()[1];
+        this->InvokeEvent(vtkSlicerViewerInteractorStyle::PlotEvent, this->Interactor->GetEventPosition());
+#endif
         }
       }
     }

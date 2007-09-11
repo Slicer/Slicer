@@ -100,6 +100,7 @@ public:
       PickEvent,
       PlaceEvent,
       SelectRegionEvent,
+      PlotEvent,
   };
   //ETX
     
