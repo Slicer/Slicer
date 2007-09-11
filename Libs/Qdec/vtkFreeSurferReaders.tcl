@@ -2011,7 +2011,7 @@ proc vtkFreeSurferReadersPlotApply { mid } {
         if {[file extension $datafilename] == ".mgz" ||
             [file extension $datafilename] == ".mgh"} {
             catch "reader Delete"
-            vtkITKArchetypeImageSeriesVectorReader reader
+            vtkITKArchetypeImageSeriesVectorReaderFile reader
             reader SetArchetype $datafilename
             reader SetOutputScalarTypeToNative
             reader SetDesiredCoordinateOrientationToNative

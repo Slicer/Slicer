@@ -4,7 +4,8 @@
 #include <string.h>
 
 #include <itksys/SystemTools.hxx>
-#include <vtkITKArchetypeImageSeriesVectorReader.h>
+#include <vtkITKArchetypeImageSeriesVectorReaderFile.h>
+#include <vtkITKArchetypeImageSeriesVectorReaderSeries.h>
 #include <vtkImageData.h>
 
 int main(int argc, char *argv[])
@@ -16,7 +17,7 @@ int main(int argc, char *argv[])
     }
   std::cout << "Trying to read file '" << argv[1] << "'" << std::endl;
 
-  vtkITKArchetypeImageSeriesVectorReader *vectorReader = vtkITKArchetypeImageSeriesVectorReader::New();
+  vtkITKArchetypeImageSeriesVectorReaderFile *vectorReader = vtkITKArchetypeImageSeriesVectorReaderFile::New();
   vectorReader->SetArchetype(argv[1]);
   vectorReader->SetOutputScalarTypeToNative();
   vectorReader->SetDesiredCoordinateOrientationToNative();
@@ -46,7 +47,7 @@ int main(int argc, char *argv[])
     vectorReader->Delete();
     return 1;
     }
-
+  
   std::cout << "Deleting vector reader" << std::endl;
   
   vectorReader->Delete();

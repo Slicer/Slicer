@@ -19,7 +19,8 @@ SET(vtkITK_SRCS
     vtkITKNumericTraits.cxx
     vtkITKArchetypeImageSeriesReader.cxx
     vtkITKArchetypeImageSeriesScalarReader.cxx
-    vtkITKArchetypeImageSeriesVectorReader.cxx
+    vtkITKArchetypeImageSeriesVectorReaderFile.cxx
+    vtkITKArchetypeImageSeriesVectorReaderSeries.cxx
     vtkITKImageWriter.cxx
     vtkITKImageToImageFilter.h
     vtkITKImageToImageFilter2DFF.h

@@ -30,7 +30,8 @@ Version:   $Revision: 1.6 $
 #include "vtkPointData.h"
 #include "vtkITKArchetypeImageSeriesReader.h"
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
-#include "vtkITKArchetypeImageSeriesVectorReader.h"
+#include "vtkITKArchetypeImageSeriesVectorReaderFile.h"
+#include "vtkITKArchetypeImageSeriesVectorReaderSeries.h"
 #include "vtkITKImageWriter.h"
 
 //------------------------------------------------------------------------------
@@ -154,7 +155,8 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
     {
     volNode = dynamic_cast <vtkMRMLVectorVolumeNode *> (refNode);
-    reader = vtkITKArchetypeImageSeriesVectorReader::New();
+    // TODO: deal with series of vectors
+    reader = vtkITKArchetypeImageSeriesVectorReaderFile::New();
     }
 
   reader->AddObserver( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
