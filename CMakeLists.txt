@@ -199,13 +199,21 @@ SET(tclap_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 # Subdirectories
 #
 
-SUBDIRS(
-    Libs
-    Base
-    Modules
-    Applications
-)
+OPTION(BUILD_CLI "Build Slicer3 CLI Plugins" ON)
+MARK_AS_ADVANCED(BUILD_CLI)
 
+OPTION(BUILD_MODULES "Build Slicer3 Modules" ON)
+MARK_AS_ADVANCED(BUILD_MODULES)
+
+SUBDIRS(
+  Libs
+  Base
+  Applications
+  )
+
+IF(BUILD_MODULES)
+  SUBDIRS(Modules)
+ENDIF(BUILD_MODULES)
 
 IF (Slicer3_BUILD_TESTING)
     SUBDIRS( Testing )

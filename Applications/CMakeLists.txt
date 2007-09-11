@@ -1,11 +1,13 @@
 PROJECT( Applications )
 
+IF(BUILD_CLI)
+  SUBDIRS(CLI)
+ENDIF(BUILD_CLI)
+
 SUBDIRS(
-  CLI
   GUI
   #SIGN
 )
-
 
 IF (Slicer3_BUILD_TESTING)
     SUBDIRS( Testing )

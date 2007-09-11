@@ -112,9 +112,17 @@ SET(dir_list
   ${IGSTK_INCLUDE_DIRS}
   )
 
+IF(BUILD_MODULES)
+  ADD_DEFINITIONS(-DBUILD_MODULES)
+ENDIF(BUILD_MODULES)
+
+IF(BUILD_CLI)
+  ADD_DEFINITIONS(-DBUILD_CLI)
+ENDIF(BUILD_CLI)
+
 IF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
   SET(dir_list ${dir_list} ${PYTHON_INCLUDE_PATH})
-  SET_SOURCE_FILES_PROPERTIES(Slicer3.cxx PROPERTIES COMPILE_FLAGS -DUSE_PYTHON)
+  ADD_DEFINITIONS(-DUSE_PYTHON)
 ENDIF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
 
 INCLUDE_DIRECTORIES(${dir_list})
@@ -158,25 +166,30 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     SlicerBaseGUI
     MRML
     IGT
+    ModuleDescriptionParser
+    vtkITK
+    ITKCommon 
+    ITKIO
+    ${KWWidgets_LIBRARIES}
+    Qdec
+)
+
+IF(BUILD_MODULES)
+  TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     GradientAnisotropicDiffusionFilter
     EMSegment
- #   RealTimeImaging
- #   MRAblation
+    #   RealTimeImaging
+    #   MRAblation
     NeuroNav
     QueryAtlas
     CommandLineModule
     ScriptedModule
     SlicerDaemon
-    ModuleDescriptionParser
-    vtkITK
-    ITKCommon 
-    ITKIO
     ${WFENGINE_LINK_LIB}
-    ${KWWidgets_LIBRARIES}
-    Qdec
     QdecModule
     SlicerTractographyDisplay
-)
+    )
+ENDIF(BUILD_MODULES)
 
 IF(USE_PYTHON AND PYTHON_LIBRARIES)
   ADD_DEFINITIONS(-DUSE_PYTHON)
