@@ -21,6 +21,7 @@ class vtkQueryAtlasIcons : public vtkSlicerIcons
     vtkGetObjectMacro ( UseAllIcon, vtkKWIcon );
     vtkGetObjectMacro ( UseNoneIcon, vtkKWIcon );
     vtkGetObjectMacro ( ClearAllIcon, vtkKWIcon );
+    vtkGetObjectMacro ( DeselectAllIcon, vtkKWIcon );
     vtkGetObjectMacro ( ClearSelectedIcon, vtkKWIcon );    
     vtkGetObjectMacro ( WithAnyIcon, vtkKWIcon );    
     vtkGetObjectMacro ( WithAllIcon, vtkKWIcon );    
@@ -47,6 +48,7 @@ class vtkQueryAtlasIcons : public vtkSlicerIcons
     vtkKWIcon *UseAllIcon;
     vtkKWIcon *UseNoneIcon;
     vtkKWIcon *ClearSelectedIcon;
+    vtkKWIcon *DeselectAllIcon;
     vtkKWIcon *ClearAllIcon;
     vtkKWIcon *WithAnyIcon;
     vtkKWIcon *WithAllIcon;

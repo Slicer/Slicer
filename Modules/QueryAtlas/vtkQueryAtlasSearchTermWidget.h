@@ -20,8 +20,10 @@ public:
   // Description:
   // Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( AddNewButton, vtkKWPushButton);
+  vtkGetObjectMacro ( DeselectAllButton, vtkKWPushButton );
   vtkGetObjectMacro ( ClearAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( ClearSelectedButton, vtkKWPushButton);
+  vtkGetObjectMacro ( ReserveTermsButton, vtkKWPushButton);
   vtkGetObjectMacro ( MultiColumnList, vtkKWMultiColumnListWithScrollbars );
   vtkGetObjectMacro ( QueryAtlasIcons, vtkQueryAtlasIcons );
   vtkGetObjectMacro ( ContainerFrame, vtkKWFrame );
@@ -42,6 +44,9 @@ public:
   // Description:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
+  // Description:
+  // adds observers on widgets in the class
+  virtual void AddWidgetObservers ( );
 
   // Description:
   // add observers on color node
@@ -57,8 +62,10 @@ public:
   virtual ~vtkQueryAtlasSearchTermWidget();
 
   vtkKWPushButton *AddNewButton;
+  vtkKWPushButton *DeselectAllButton;
   vtkKWPushButton *ClearAllButton;
   vtkKWPushButton *ClearSelectedButton;
+  vtkKWPushButton *ReserveTermsButton;
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
   vtkQueryAtlasIcons *QueryAtlasIcons;
   vtkKWFrame *ContainerFrame;

@@ -26,6 +26,7 @@ vtkQueryAtlasUseSearchTermWidget::vtkQueryAtlasUseSearchTermWidget ( )
     this->AddNewButton = NULL;
     this->UseAllButton = NULL;
     this->UseNoneButton = NULL;
+    this->DeselectAllButton = NULL;
     this->ClearAllButton = NULL;
     this->ClearSelectedButton = NULL;
     this->QueryAtlasIcons = NULL;
@@ -64,6 +65,12 @@ vtkQueryAtlasUseSearchTermWidget::~vtkQueryAtlasUseSearchTermWidget ( )
     this->UseNoneButton->SetParent ( NULL );
     this->UseNoneButton->Delete();
     this->UseNoneButton = NULL;    
+    }
+  if ( this->DeselectAllButton )
+    {
+    this->DeselectAllButton->SetParent ( NULL );
+    this->DeselectAllButton->Delete();
+    this->DeselectAllButton = NULL;
     }
   if ( this->ClearAllButton )
     {
@@ -115,6 +122,7 @@ void vtkQueryAtlasUseSearchTermWidget::PrintSelf ( ostream& os, vtkIndent indent
     os << indent << "UseNoneButton: " << this->GetUseNoneButton() << "\n";
     os << indent << "ClearSelectedButton: " << this->GetClearSelectedButton() << "\n";
     os << indent << "ClearAllButton: " << this->GetClearAllButton() << "\n";
+    os << indent << "DeselectAllButton: " << this->GetDeselectAllButton() << "\n";
     // print widgets?
 
 
@@ -163,15 +171,13 @@ void vtkQueryAtlasUseSearchTermWidget::UpdateMRML()
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasUseSearchTermWidget::RemoveWidgetObservers ( ) {
-
   // in case these havn't been removed elsewhere...
-  this->MultiColumnList->GetWidget()->RemoveObservers(vtkKWMultiColumnList::SelectionChangedEvent,
-                                                      (vtkCommand *)this->GUICallbackCommand);
-  this->AddNewButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->UseAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->UseNoneButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ClearSelectedButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ClearAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasUseSearchTermWidget::AddWidgetObservers ( ) {
+  // 
 }
 
 
@@ -271,12 +277,20 @@ void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
   this->ClearAllButton->SetImageToIcon ( this->QueryAtlasIcons->GetClearAllIcon() );
   this->ClearAllButton->SetBalloonHelpString ( "Delete all terms in list" );
 
+  this->DeselectAllButton = vtkKWPushButton::New();
+  this->DeselectAllButton->SetParent (bFrame);
+  this->DeselectAllButton->Create();
+  this->DeselectAllButton->SetBorderWidth ( 0 );
+  this->DeselectAllButton->SetReliefToFlat();  
+  this->DeselectAllButton->SetImageToIcon ( this->QueryAtlasIcons->GetDeselectAllIcon() );
+  this->DeselectAllButton->SetBalloonHelpString ( "Deselect all terms in list" );
 
-  app->Script ("pack %s %s %s %s %s -side right -anchor c -expand n -padx 3 -pady 2",
+  app->Script ("pack %s %s %s %s %s %s -side right -anchor c -expand n -padx 3 -pady 2",
                this->ClearAllButton->GetWidgetName() ,
                this->ClearSelectedButton->GetWidgetName(),
                this->UseNoneButton->GetWidgetName(),
                this->UseAllButton->GetWidgetName(),
+               this->DeselectAllButton->GetWidgetName(),
                this->AddNewButton->GetWidgetName());
   bFrame->Delete();
 

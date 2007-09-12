@@ -24,6 +24,7 @@ public:
   vtkGetObjectMacro ( AddNewButton, vtkKWPushButton);
   vtkGetObjectMacro ( UseAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( UseNoneButton, vtkKWPushButton);
+  vtkGetObjectMacro ( DeselectAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( ClearAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( ClearSelectedButton, vtkKWPushButton);
   vtkGetObjectMacro ( MultiColumnList, vtkKWMultiColumnListWithScrollbars );
@@ -49,6 +50,9 @@ public:
   // Description:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
+  // Description:
+  // adds observers on widgets in the class
+  virtual void AddWidgetObservers ( );
 
   // Description:
   // add observers on color node
@@ -66,6 +70,7 @@ public:
   vtkKWPushButton *AddNewButton;
   vtkKWPushButton *UseAllButton;
   vtkKWPushButton *UseNoneButton;
+  vtkKWPushButton *DeselectAllButton;
   vtkKWPushButton *ClearAllButton;
   vtkKWPushButton *ClearSelectedButton;
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;

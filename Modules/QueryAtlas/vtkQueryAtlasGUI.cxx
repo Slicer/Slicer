@@ -794,7 +794,9 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->SavedTerms->RemoveWidgetObservers();
 
   this->StructureButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
   this->StructureListWidget->GetClearAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->StructureListWidget->GetDeselectAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->GetAddNewButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->GetClearSelectedButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->StructureListWidget->GetUseAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -802,6 +804,7 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 
   this->SubStructureButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SubStructureListWidget->GetClearAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureListWidget->GetDeselectAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->SubStructureListWidget->GetAddNewButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SubStructureListWidget->GetClearSelectedButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->SubStructureListWidget->GetUseAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -874,6 +877,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
 
   this->StructureButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->GetClearAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->StructureListWidget->GetDeselectAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->StructureListWidget->GetAddNewButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->GetClearSelectedButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->StructureListWidget->GetUseAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -881,6 +885,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
 
   this->SubStructureButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SubStructureListWidget->GetClearAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SubStructureListWidget->GetDeselectAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->SubStructureListWidget->GetAddNewButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SubStructureListWidget->GetClearSelectedButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->SubStructureListWidget->GetUseAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1045,37 +1050,56 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       }
     }
+/*
   if ( (e == this->LocalSearchTermEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
     {
-    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
-                  this->LocalSearchTermEntry->GetValue(), "local" );
+    if ( this->LocalSearchTermEntry->GetValue() )
+      {
+    this->Script ("QueryAtlasPopulateOntologyInformation %s local",
+                  this->LocalSearchTermEntry->GetValue() );
+      }
     }
   else if ( (e == this->BIRNLexEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
     {
-    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
-                  this->BIRNLexEntry->GetValue(), "BIRN_String" );
+    if (this->BIRNLexEntry->GetValue() )
+      {
+    this->Script ("QueryAtlasPopulateOntologyInformation %s BIRN_String",
+                  this->BIRNLexEntry->GetValue() );
+      }
     }
   else if ( (e == this->BIRNLexIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
     {
-    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
-                  this->BIRNLexIDEntry->GetValue(), "BIRN_ID" );
+    if ( this->BIRNLexIDEntry->GetValue() )
+      {
+    this->Script ("QueryAtlasPopulateOntologyInformation %s BIRN_ID",
+                  this->BIRNLexIDEntry->GetValue() );
+      }
     }
   else if ( (e == this->NeuroNamesEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
     {
-    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
-                  this->NeuroNamesEntry->GetValue(), "NN" );
+    if (this->NeuroNamesEntry->GetValue() )
+      {
+    this->Script ("QueryAtlasPopulateOntologyInformation %s NN",
+                  this->NeuroNamesEntry->GetValue() );
+      }
     }
   else if ( (e == this->NeuroNamesIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
     {
-    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
-                  this->NeuroNamesIDEntry->GetValue(), "NN_ID" );
+    if ( this->NeuroNamesIDEntry->GetValue() )
+      {
+      this->Script ("QueryAtlasPopulateOntologyInformation %s NN_ID",
+                  this->NeuroNamesIDEntry->GetValue() );
+      }
     }
   else if ( (e == this->UMLSCIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
     {
-    this->Script ("QueryAtlasPopulateOntologyInformation %s %s",
-                  this->UMLSCIDEntry->GetValue(), "UMLS_CID" );
+    if ( this->UMLSCIDEntry->GetValue() )
+      {
+      this->Script ("QueryAtlasPopulateOntologyInformation %s UMLS_CID",
+                  this->UMLSCIDEntry->GetValue() );
+      }
     }
-
+*/
   //---
   //--- Process All PushButton events
   //---
@@ -1232,6 +1256,11 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       context = "structure";
       this->DeleteAllSearchTerms( context );
       }
+    else if ( (b == this->StructureListWidget->GetDeselectAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "structure";
+      //?
+      }
     else if ( (b == this->StructureListWidget->GetAddNewButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
       context = "structure";
@@ -1259,6 +1288,11 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       context = "substructure";
       this->DeleteAllSearchTerms( context );
+      }
+    else if ( (b == this->SubStructureListWidget->GetDeselectAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      context = "substructure";
+      // ?
       }
     else if ( (b == this->SubStructureListWidget->GetAddNewButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
