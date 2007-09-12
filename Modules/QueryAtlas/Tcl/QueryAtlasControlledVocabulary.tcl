@@ -251,64 +251,66 @@ proc QueryAtlasGetSynonyms { term termType } {
     
     set NNterm [ QueryAtlasMapTerm $term $termType "NN_String" ]
 
-    #--- FIND the columns in the controlled vocabulary
-    #--- that map to target and source TermSets
-    set targetColName "Hierarchy Lookup"
-    set target1ColNum -1
-    set line [ lindex $::QA(Synonyms) 0 ]
-    set len [ llength $line ]
-    for { set i 0 } { $i < $len } { incr i } {
-        set col [ lindex $line $i ]
-       if { $col == $targetColName } {
-            set target1ColNum $i
-        }
-    }
-    set targetColName "Species"
-    set target2ColNum -1
-    set line [ lindex $::QA(Synonyms) 0 ]
-    set len [ llength $line ]
-    for { set i 0 } { $i < $len } { incr i } {
-        set col [ lindex $line $i ]
-       if { $col == $targetColName } {
-            set target2ColNum $i
-        }
-    }
-    
-    set targetColName "Synonym"
-    set target3ColNum -1
-    set line [ lindex $::QA(Synonyms) 0 ]
-    set len [ llength $line ]
-    for { set i 0 } { $i < $len } { incr i } {
-        set col [ lindex $line $i ]
-       if { $col == $targetColName } {
-            set target3ColNum $i
-        }
-    }
-
-    set targetTerms ""
-    if { ($target1ColNum > 0) && ($target2ColNum > 0) && ($target3ColNum > 0) } {
-        #--- now march thru ::QA(Synonyms) down the
-        #--- Hierarchy Lookup column, checking the species column
-        #--- and find all synonyms
-        set numRows [ llength $::QA(Synonyms) ]
-        for { set i 0 } { $i < $numRows } { incr i } {
-            set row [ lindex $::QA(Synonyms) $i ]
-            #--- get the Heirarchy look up term in this row
-            set termT [ lindex $row $target1ColNum ]
-            #--- get the species entry in this row
-            set speciesT [lindex $row $target2ColNum ]
-            #--- if the Hierarchy Lookup term matches the NNterm
-            #--- and the term applies to humans, add the synonym
-            if { $termT == $NNterm && $speciesT == "human" } {
-                set syn [ lindex $row $target3ColNum ]
-                lappend targetTerms $syn
+    if { $NNterm != "" } {
+        #--- FIND the columns in the controlled vocabulary
+        #--- that map to target and source TermSets
+        set targetColName "Hierarchy Lookup"
+        set target1ColNum -1
+        set line [ lindex $::QA(Synonyms) 0 ]
+        set len [ llength $line ]
+        for { set i 0 } { $i < $len } { incr i } {
+            set col [ lindex $line $i ]
+            if { $col == $targetColName } {
+                set target1ColNum $i
             }
         }
+        set targetColName "Species"
+        set target2ColNum -1
+        set line [ lindex $::QA(Synonyms) 0 ]
+        set len [ llength $line ]
+        for { set i 0 } { $i < $len } { incr i } {
+            set col [ lindex $line $i ]
+            if { $col == $targetColName } {
+                set target2ColNum $i
+            }
+        }
+        
+        set targetColName "Synonym"
+        set target3ColNum -1
+        set line [ lindex $::QA(Synonyms) 0 ]
+        set len [ llength $line ]
+        for { set i 0 } { $i < $len } { incr i } {
+            set col [ lindex $line $i ]
+            if { $col == $targetColName } {
+                set target3ColNum $i
+            }
+        }
+
+        set targetTerms ""
+        if { ($target1ColNum > 0) && ($target2ColNum > 0) && ($target3ColNum > 0) } {
+            #--- now march thru ::QA(Synonyms) down the
+            #--- Hierarchy Lookup column, checking the species column
+            #--- and find all synonyms
+            set numRows [ llength $::QA(Synonyms) ]
+            for { set i 0 } { $i < $numRows } { incr i } {
+                set row [ lindex $::QA(Synonyms) $i ]
+                #--- get the Heirarchy look up term in this row
+                set termT [ lindex $row $target1ColNum ]
+                #--- get the species entry in this row
+                set speciesT [lindex $row $target2ColNum ]
+                #--- if the Hierarchy Lookup term matches the NNterm
+                #--- and the term applies to humans, add the synonym
+                if { $termT == $NNterm && $speciesT == "human" } {
+                    set syn [ lindex $row $target3ColNum ]
+                    lappend targetTerms $syn
+                }
+            }
+        }
+
+        #--- return the list of lists, each is a synonym
+        return $targetTerms
     }
-
-    #--- return the list of lists, each is a synonym
-    return $targetTerms
-
+    return ""
 
 }
 
@@ -397,21 +399,24 @@ proc QueryAtlasUpdateSynonymsMenu { term termType } {
 
     set synonyms [QueryAtlasGetSynonyms $term $termType ]
     set mb [ $::slicer3::QueryAtlasGUI GetSynonymsMenuButton ]
+    $mb SetValue ""
     set m [ $mb GetMenu ]
 
     #--- clear menu
     $m DeleteAllItems
 
+    if { $synonyms != ""  } {
         #--- build menu
-    set len [ llength $synonyms ]
-    for { set i 0 } { $i < $len } { incr i } {
-        #--- add new menuitems
-        set item [ lindex $synonyms $i ]
-        $m AddRadioButton $item
+        set len [ llength $synonyms ]
+        for { set i 0 } { $i < $len } { incr i } {
+            #--- add new menuitems
+            set item [ lindex $synonyms $i ]
+            $m AddRadioButton $item
+        }
+        $m AddSeparator
+        $m AddCommand "close"
+        $m SelectItem 0
     }
-    $m AddSeparator
-    $m AddCommand "close"
-    $m SelectItem 0
 }
 
 
