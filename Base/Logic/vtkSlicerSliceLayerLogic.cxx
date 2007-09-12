@@ -46,6 +46,11 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 
   this->UseReslice = 1;
 
+  this->AssignAttributeTensorsFromScalars= vtkAssignAttribute::New();
+  this->AssignAttributeScalarsFromTensors= vtkAssignAttribute::New();
+  this->AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
+  this->AssignAttributeScalarsFromTensors->Assign(vtkDataSetAttributes::SCALARS, vtkDataSetAttributes::TENSORS, vtkAssignAttribute::POINT_DATA);
+
   // Create the parts for the scalar layer pipeline
   this->Slice = vtkImageSlice::New();
   this->Reslice = vtkImageResliceMask::New();
@@ -125,7 +130,7 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
     {
     vtkSetAndObserveMRMLNodeMacro( this->VolumeDisplayNodeObserved , NULL );
     }
-  
+
   this->SetSliceNode(NULL);
   this->SetVolumeNode(NULL);
   this->XYToIJKTransform->Delete();
@@ -153,10 +158,14 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
   this->ResliceAlphaCast->Delete();
   this->AlphaLogic->Delete();
 
-  if (this->VolumeDisplayNode)
+  this->AssignAttributeTensorsFromScalars->Delete();
+  this->AssignAttributeScalarsFromTensors->Delete();
+   
+  if ( this->VolumeDisplayNode)
     {
     this->VolumeDisplayNode->Delete();
     }
+
 }
 
 //----------------------------------------------------------------------------
@@ -254,7 +263,23 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
       // TODO: this is a hack
       vtkErrorMacro("UpdateNodeReferences: Volume Node " << this->VolumeNode->GetID() << " doesn't have a display node, adding one.");
       int isLabelMap =0;
-      if (vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNode))
+      if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeNode))
+        {
+        dtdisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+        displayNode= dtdisplayNode;
+        propNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+        }
+      else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(this->VolumeNode))
+        {
+        dwdisplayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
+        displayNode= dwdisplayNode;
+        }
+      else if (vtkMRMLVectorVolumeNode::SafeDownCast(this->VolumeNode))
+        {
+        vdisplayNode = vtkMRMLVectorVolumeDisplayNode::New();
+        displayNode= vdisplayNode;
+        }
+      else if (vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNode))
         {
         isLabelMap = vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNode)->GetLabelMap();
         if (isLabelMap) 
@@ -267,22 +292,6 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
          displayNode = sdisplayNode;
          }
 
-        }
-      else if (vtkMRMLVectorVolumeNode::SafeDownCast(this->VolumeNode))
-        {
-        vdisplayNode = vtkMRMLVectorVolumeDisplayNode::New();
-        displayNode= vdisplayNode;
-        }
-      else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(this->VolumeNode))
-        {
-        dwdisplayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
-        displayNode= dwdisplayNode;
-        }
-      else if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeNode))
-        {
-        dtdisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
-        displayNode= dtdisplayNode;
-        propNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
         }
       displayNode->SetScene(this->MRMLScene);
       this->MRMLScene->AddNode(displayNode);
@@ -312,17 +321,27 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
     vtkDebugMacro("vtkSlicerSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == NULL ? "null" : "valid") << endl);
     if ( displayNode )
       {
-      if (this->VolumeDisplayNode == NULL)
+      if (this->VolumeDisplayNode != NULL)
         {
-        this->VolumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(displayNode->CreateNodeInstance());
-        this->VolumeDisplayNode->SetScene(displayNode->GetScene());
+        this->VolumeDisplayNode->Delete();
         }
+      this->VolumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(displayNode->CreateNodeInstance());
+      this->VolumeDisplayNode->SetScene(displayNode->GetScene());
+        
       this->VolumeDisplayNode->Copy(displayNode);
       vtkSetAndObserveMRMLNodeMacro(this->VolumeDisplayNodeObserved, displayNode);
       }
-    else if (this->VolumeDisplayNodeObserved)
+    else 
       {
-      this->VolumeDisplayNodeObserved = NULL;
+      if (this->VolumeDisplayNodeObserved)
+        {
+        vtkSetAndObserveMRMLNodeMacro(this->VolumeDisplayNodeObserved, NULL);
+        }
+      if (this->VolumeDisplayNode)
+        {
+        this->VolumeDisplayNode->Delete();
+        this->VolumeDisplayNode = NULL;
+        }
       }
 }
 
@@ -476,20 +495,41 @@ void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
     this->Slice->SetInterpolationModeToLinear();
     this->Reslice->SetInterpolationModeToLinear();
     }
-  if (volumeNode)
+
+   vtkImageData *slicedImageData;
+
+  // for tensors reassign scalar data
+  if ( volumeNode && volumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
     {
-    this->Slice->SetInput( volumeNode->GetImageData()); 
-    this->Reslice->SetInput( volumeNode->GetImageData()); 
+    this->AssignAttributeTensorsFromScalars->SetInput(volumeNode->GetImageData());
+    this->AssignAttributeTensorsFromScalars->Update();
+    vtkImageData* InterchangedImage =  vtkImageData::SafeDownCast(this->AssignAttributeTensorsFromScalars->GetOutput());
+    InterchangedImage->SetNumberOfScalarComponents(9);
+
+    this->Reslice->SetInput( InterchangedImage );
+    this->Reslice->Update();
+
+    //Fixing horrible bug of the vtkSetAttributes Filter it doesn't copy attributes without name
+    this->Reslice->GetOutput()->GetPointData()->GetScalars()->SetName(volumeNode->GetImageData()->GetPointData()->GetTensors()->GetName());
+
+    this->AssignAttributeScalarsFromTensors->SetInput(this->Reslice->GetOutput() );
+    this->AssignAttributeScalarsFromTensors->Update();
+    slicedImageData = vtkImageData::SafeDownCast(this->AssignAttributeScalarsFromTensors->GetOutput());
+    } 
+  else if (volumeNode) 
+    {
+    this->Reslice->SetInput( volumeNode->GetImageData());
+    slicedImageData = this->Reslice->GetOutput();
     }
+
   if (volumeDisplayNode)
     {
-    volumeDisplayNode->SetImageData(this->Reslice->GetOutput());
+    volumeDisplayNode->SetImageData(slicedImageData);
     volumeDisplayNode->SetBackgroundImageData(this->Reslice->GetBackgroundMask());
     }
 
   if (scalrVolumeDisplayNode && scalrVolumeDisplayNode->GetInterpolate() == 0  )
     {
-    this->Slice->SetInterpolationModeToNearestNeighbor();
     this->Reslice->SetInterpolationModeToNearestNeighbor();
     }
 

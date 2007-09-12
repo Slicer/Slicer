@@ -45,6 +45,7 @@
 #include "vtkImageReslice.h"
 #include "vtkImageSlice.h"
 #include "vtkImageMapToColors.h"
+#include "vtkAssignAttribute.h"
 
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
@@ -228,6 +229,9 @@ protected:
 
   vtkImageReslice *DTIReslice;
   vtkDiffusionTensorMathematics *DTIMathematics;
+
+  vtkAssignAttribute* AssignAttributeTensorsFromScalars;
+  vtkAssignAttribute* AssignAttributeScalarsFromTensors;
 
   // TODO: make this a vtkAbstractTransform for non-linear
   vtkTransform *XYToIJKTransform;
