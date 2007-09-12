@@ -1639,8 +1639,7 @@ proc QueryAtlasAddSavedTerms {} {
   set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
 
   set i [$mcl GetNumberOfRows]
-  $mcl SetCellTextAsInt $i 0 1
-  $mcl SetCellText $i 1 $::QA(lastLabels)
+  $mcl SetCellText [ expr $i - 1 ] 0 $::QA(lastLabels)
 }
 
 

@@ -39,6 +39,15 @@ public:
   // Method that gets all terms in the multicolumn list
   virtual void GetSearchTermsToUse ( );
 
+  virtual void CheckAllSearchTerms ( );
+  virtual void UncheckAllSearchTerms ( );
+  virtual void DeselectAllSearchTerms ( );
+  virtual void DeleteAllSearchTerms ( );
+  virtual void AddNewSearchTerm ( const char *term);
+  virtual void DeleteSelectedSearchTerms ( );
+  virtual void GetNumberOfSearchTermsToUse( );
+  virtual void GetNthSearchTermToUse ( );
+  
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );

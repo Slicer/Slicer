@@ -56,7 +56,10 @@ public:
   // remove observers on color node
   virtual void RemoveMRMLObservers ( );
 
-  
+  // Description:
+  // adds a term to the list box.
+  virtual void AddTerm ( const char *term );
+
  protected:
   vtkQueryAtlasSearchTermWidget();
   virtual ~vtkQueryAtlasSearchTermWidget();

@@ -134,6 +134,35 @@ void vtkQueryAtlasUseSearchTermWidget::PrintSelf ( ostream& os, vtkIndent indent
 void vtkQueryAtlasUseSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
+  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
+  
+  if ( this->IsCreated() )
+    {
+    if ( (b == this->GetClearAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->DeleteAllSearchTerms( );
+      }
+    else if ( (b == this->GetDeselectAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->DeselectAllSearchTerms ( );
+      }
+    else if ( (b == this->GetAddNewButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->AddNewSearchTerm( "" );
+      }
+    else if ( (b == this->GetClearSelectedButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->DeleteSelectedSearchTerms ();
+      }
+    else if ( (b == this->GetUseAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->CheckAllSearchTerms ( );
+      }
+    else if ( (b == this->GetUseNoneButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->UncheckAllSearchTerms ( );
+      }
+    }
   this->UpdateMRML();
 } 
 
@@ -171,14 +200,28 @@ void vtkQueryAtlasUseSearchTermWidget::UpdateMRML()
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasUseSearchTermWidget::RemoveWidgetObservers ( ) {
-  // in case these havn't been removed elsewhere...
+
+  this->GetClearAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetDeselectAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetAddNewButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetClearSelectedButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->GetUseAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetUseNoneButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 }
 
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasUseSearchTermWidget::AddWidgetObservers ( ) {
-  // 
+  this->GetClearAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetDeselectAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->GetAddNewButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetClearSelectedButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->GetUseAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetUseNoneButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
+
+
 
 
 //---------------------------------------------------------------------------
@@ -211,24 +254,25 @@ void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
   this->MultiColumnList->Create ( );
   this->MultiColumnList->GetWidget()->SetWidth(0);
   this->MultiColumnList->GetWidget()->SetHeight(3);
-  this->MultiColumnList->GetWidget()->SetSelectionTypeToCell ( );
+  this->MultiColumnList->GetWidget()->SetSelectionTypeToRow ( );
+  this->MultiColumnList->GetWidget()->SetSelectionModeToMultiple ( );
   this->MultiColumnList->GetWidget()->MovableRowsOff ( );
   this->MultiColumnList->GetWidget()->MovableColumnsOff ( );
 
   this->MultiColumnList->GetWidget()->AddColumn ( "Use");
   this->MultiColumnList->GetWidget()->AddColumn ( "Search terms" );
 
-  this->MultiColumnList->GetWidget()->SetColumnWidth (this->UseSelectionColumn, 4);
-  this->MultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( this->UseSelectionColumn );
-  this->MultiColumnList->GetWidget()->ColumnResizableOff ( this->UseSelectionColumn);
-  this->MultiColumnList->GetWidget()->ColumnStretchableOff ( this->UseSelectionColumn );
-  this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( this->UseSelectionColumn );
+  this->MultiColumnList->GetWidget()->SetColumnWidth (0, 4);
+  this->MultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( 0 );
+  this->MultiColumnList->GetWidget()->ColumnResizableOff ( 0);
+  this->MultiColumnList->GetWidget()->ColumnStretchableOff ( 0 );
+  this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( 0 );
     
-  this->MultiColumnList->GetWidget()->ColumnEditableOn ( this->SearchTermColumn );
-  this->MultiColumnList->GetWidget()->SetColumnWidth (this->SearchTermColumn, 42);
-  this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft (this->SearchTermColumn );
-  this->MultiColumnList->GetWidget()->ColumnResizableOff ( this->SearchTermColumn );
-  this->MultiColumnList->GetWidget()->ColumnStretchableOn ( this->SearchTermColumn );
+  this->MultiColumnList->GetWidget()->ColumnEditableOn ( 1 );
+  this->MultiColumnList->GetWidget()->SetColumnWidth (1, 42);
+  this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft (1 );
+  this->MultiColumnList->GetWidget()->ColumnResizableOff ( 1 );
+  this->MultiColumnList->GetWidget()->ColumnStretchableOn ( 1 );
   app->Script ( "pack %s -side top -fill x -expand true", this->MultiColumnList->GetWidgetName() );
 
   // frame for the buttons
@@ -297,5 +341,110 @@ void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
 }
 
 
+//---------------------------------------------------------------------------
+void vtkQueryAtlasUseSearchTermWidget::GetNumberOfSearchTermsToUse ( )
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasUseSearchTermWidget::GetNthSearchTermToUse ( )
+{
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasUseSearchTermWidget::CheckAllSearchTerms ( )
+{
+  int i;
+  int numrows;
+  
+  numrows = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  for ( i = 0; i < numrows; i++ )
+    {
+    this->GetMultiColumnList()->GetWidget()->SetCellTextAsInt ( i, 0, 1 );
+    this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton (i, 0 );
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasUseSearchTermWidget::UncheckAllSearchTerms ( )
+{
+  int i;
+  int numrows;
+
+  numrows = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  for ( i = 0; i < numrows; i++ )
+    {
+    this->GetMultiColumnList()->GetWidget()->SetCellTextAsInt ( i, 0, 0 );
+    this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton (i, 0 );
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasUseSearchTermWidget::DeselectAllSearchTerms ( )
+{
+
+  this->GetMultiColumnList()->GetWidget()->ClearSelection();
+
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasUseSearchTermWidget::DeleteAllSearchTerms ( )
+{
+  this->GetMultiColumnList()->GetWidget()->DeleteAllRows();
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasUseSearchTermWidget::AddNewSearchTerm ( const char *term )
+{
+  // default search terms in list
+  int i, unique;
+
+  unique = 1;
+  // check to see if term is unique before adding it
+  int n = this->MultiColumnList->GetWidget()->GetNumberOfRows();
+  for ( i=0; i<n; i++ )
+    {
+    if ( !strcmp (this->MultiColumnList->GetWidget()->GetCellText(i, 0), term ) )
+      {
+      unique = 0;
+      }
+    }
+  if ( !strcmp (term, "") )
+    {
+    term = "<new term>";
+    }
+  if ( unique )
+    {
+  i = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
+  this->GetMultiColumnList()->GetWidget()->InsertCellTextAsInt ( i, 0, 0 );
+  this->GetMultiColumnList()->GetWidget()->SetCellBackgroundColor (i, 0, 1.0, 1.0, 1.0);
+  this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton (i, 0 );
+  this->GetMultiColumnList()->GetWidget()->InsertCellText (i, 1, term );
+  this->GetMultiColumnList()->GetWidget()->SetCellBackgroundColor (i, 1, 1.0, 1.0, 1.0);
+  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry (1);
+    }
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasUseSearchTermWidget::DeleteSelectedSearchTerms ( )
+{
+  int i, numRows;
+  int row[100];
+  // get the row that was last selected and remove by index
+
+  numRows = this->MultiColumnList->GetWidget()->GetSelectedRows ( row );
+  while (numRows != 0 )
+    {
+    this->GetMultiColumnList()->GetWidget()->DeleteRow ( row[0] );    
+    numRows = this->MultiColumnList->GetWidget()->GetSelectedRows ( row );
+    }
+}
 
 

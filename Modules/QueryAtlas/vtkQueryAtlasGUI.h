@@ -62,7 +62,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetMacro ( ModelVisibility, int );
 
     // Querybuilder frame top widgets
-    vtkGetObjectMacro (SubStructureButton, vtkKWPushButton );
+    vtkGetObjectMacro (OtherButton, vtkKWPushButton );
     vtkGetObjectMacro (StructureButton, vtkKWPushButton );
     vtkGetObjectMacro (PopulationButton, vtkKWPushButton );
     vtkGetObjectMacro (SpeciesButton, vtkKWPushButton );
@@ -90,8 +90,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( StructureListWidget, vtkQueryAtlasUseSearchTermWidget );
 
     // cell panel
-    vtkGetObjectMacro ( SubStructureListWidget, vtkQueryAtlasUseSearchTermWidget );
-    vtkGetObjectMacro (SubStructureFrame, vtkKWFrame);
+    vtkGetObjectMacro ( OtherListWidget, vtkQueryAtlasUseSearchTermWidget );
+    vtkGetObjectMacro (OtherFrame, vtkKWFrame);
 
     // search panel
     vtkGetObjectMacro ( DatabasesMenuButton, vtkKWMenuButton );
@@ -191,8 +191,9 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void BuildSpeciesFrame();
     virtual void BuildPopulationFrame();
     virtual void BuildStructureFrame ( );
-    virtual void BuildSubStructureFrame();
+    virtual void BuildOtherFrame();
     virtual void BuildDiagnosisMenu( vtkKWMenu *m );
+    virtual void AddToDiagnosisMenu( vtkKWMenu *m, const char *diagnosis );
     virtual void BuildDatabasesMenu( vtkKWMenu *m );
                                     
     // Description:
@@ -211,16 +212,6 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Methods describe behavior at module enter and exit.
     virtual void Enter ( );
     virtual void Exit ( );
-
-    // Description:
-    // Methods to add and delete search terms.
-    virtual void AddNewStructureSearchTerm ( const char *term );
-    virtual void AddNewSearchTerm ( const char *context );
-    virtual void DeleteSelectedSearchTerms ( const char *context );
-    virtual void SelectAllSearchTerms ( const char *context );
-    virtual void DeselectAllSearchTerms ( const char *context );
-    virtual void DeleteAllSearchTerms ( const char *context);
-
 
  protected:
     vtkQueryAtlasGUI ( );
@@ -276,7 +267,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     int NumberOfColumns;
     
     // querybuilder
-    vtkKWPushButton *SubStructureButton;
+    vtkKWPushButton *OtherButton;
     vtkKWPushButton *StructureButton;
     vtkKWPushButton *PopulationButton;
     vtkKWPushButton *SpeciesButton;
@@ -324,8 +315,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWPushButton *LoadURIsButton;
 
     // cell frame
-    vtkKWFrame *SubStructureFrame;
-    vtkQueryAtlasUseSearchTermWidget *SubStructureListWidget;
+    vtkKWFrame *OtherFrame;
+    vtkQueryAtlasUseSearchTermWidget *OtherListWidget;
 
     void OpenBIRNLexBrowser();
     void OpenNeuroNamesBrowser();
