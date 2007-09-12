@@ -197,48 +197,6 @@ static const unsigned char image_WithAnySelected[] =
   "eNpjYKAU/CcXDDbtPoQAQe0Ttp7FhQa/dgr9jieoB7/20Xgnz+8DkmG/fv2KS83fv3+/f/"
   "8OJHFppwQAAIfAgxE=";
 
-/* 
- * Resource generated for file:
- *    WithExact.png (zlib, base64) (image file)
- */
-static const unsigned int  image_WithExact_width          = 21;
-static const unsigned int  image_WithExact_height         = 21;
-static const unsigned int  image_WithExact_pixel_size     = 3;
-static const unsigned long image_WithExact_length         = 140;
-static const unsigned long image_WithExact_decoded_length = 1323;
-
-static const unsigned char image_WithExact[] = 
-  "eNrbtGnT////N1FAUgIoMYGKtjMwMABJH0IArhJTL0T7hK1ncSGIdkwTyNOO7He44wlqh9"
-  "uFGXrE+B1PyKMpICiLaTvx2mlh+6jfyfP7gOT3r1+/4lLz9+/f79+/A0k8JpBNAgDt8U75";
-
-/* 
- * Resource generated for file:
- *    WithExactDisabled.png (zlib, base64) (image file)
- */
-static const unsigned int  image_WithExactDisabled_width          = 21;
-static const unsigned int  image_WithExactDisabled_height         = 21;
-static const unsigned int  image_WithExactDisabled_pixel_size     = 3;
-static const unsigned long image_WithExactDisabled_length         = 148;
-static const unsigned long image_WithExactDisabled_decoded_length = 1323;
-
-static const unsigned char image_WithExactDisabled[] = 
-  "eNrbtGnT////N1FAPiMXQEwgWzsVbS8uLgaS0wgBuEpk2+EiQAWHcAOIdrh6uO3kaUf2O9"
-  "zxBLXD7cIMeWL8jifk0RSgATRZrLYTr50Wto/6nTy/D0h+f/ToES41T58+ffz4MZDEZTsl"
-  "JADUDkfQ";
-
-/* 
- * Resource generated for file:
- *    WithExactSelected.png (zlib, base64) (image file)
- */
-static const unsigned int  image_WithExactSelected_width          = 21;
-static const unsigned int  image_WithExactSelected_height         = 21;
-static const unsigned int  image_WithExactSelected_pixel_size     = 3;
-static const unsigned long image_WithExactSelected_length         = 120;
-static const unsigned long image_WithExactSelected_decoded_length = 1323;
-
-static const unsigned char image_WithExactSelected[] = 
-  "eNpjYKAU/CcXDB7tEIYPIQBXiawdLgJUMGHrWVwIoh2unlrakR1PUDum4+GAGL/jCXk0BW"
-  "hg8Gsf9Tt5fh+QDPv161dcav7+/fv9+3cgiUs7JQAA8d6D8g==";
 
 /* 
  * Resource generated for file:
@@ -286,4 +244,61 @@ static const unsigned char image_ReserveSelectedURIs[] =
   "eNpjYKAU/CcXDBLtPoQAQe14bIHIXvxwlRLtDGtE9r06TIl2IHrz8y15fgfqZV8nHXw8Aa"
   "v2CVvP4kJw7TGnMrnWy828t5A87cWX6ryORAhvUoOYQKr2xDO5QNun3JlDnt95NygAbadF"
   "yBOjfeeLfWTH+/G3p2mU5gc2w379+hWXmr9//37//h1I4tJOCQAAENJqrg==";
+
+/* 
+ * Resource generated for file:
+ *    DeselectAll.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_DeselectAll_width          = 21;
+static const unsigned int  image_DeselectAll_height         = 21;
+static const unsigned int  image_DeselectAll_pixel_size     = 3;
+static const unsigned long image_DeselectAll_length         = 76;
+static const unsigned long image_DeselectAll_decoded_length = 1323;
+
+static const unsigned char image_DeselectAll[] = 
+  "eNpjYKAU/CcXDDbtPoQAQe14rBv82kf9Pup3Uv0+IBn269evuNT8/fv3+/fvQBKXdkoAAM"
+  "uqtKM=";
+
+/* 
+ * Resource generated for file:
+ *    WithExact.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_WithExact_width          = 21;
+static const unsigned int  image_WithExact_height         = 21;
+static const unsigned int  image_WithExact_pixel_size     = 3;
+static const unsigned long image_WithExact_length         = 140;
+static const unsigned long image_WithExact_decoded_length = 1323;
+
+static const unsigned char image_WithExact[] = 
+  "eNrbtGnT////N1FAUgIoMYGKtjMwMABJH0IArhJTL0T7hK1ncSGIdkwTyNOO7He44wlqh9"
+  "uFGXrE+B1PyKMpICiLaTvx2mlh+6jfyfP7gOT3r1+/4lLz9+/f79+/A0k8JpBNAgDt8U75";
+
+/* 
+ * Resource generated for file:
+ *    WithExactDisabled.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_WithExactDisabled_width          = 21;
+static const unsigned int  image_WithExactDisabled_height         = 21;
+static const unsigned int  image_WithExactDisabled_pixel_size     = 3;
+static const unsigned long image_WithExactDisabled_length         = 148;
+static const unsigned long image_WithExactDisabled_decoded_length = 1323;
+
+static const unsigned char image_WithExactDisabled[] = 
+  "eNrbtGnT////N1FAPiMXQEwgWzsVbS8uLgaS0wgBuEpk2+EiQAWHcAOIdrh6uO3kaUf2O9"
+  "zxBLXD7cIMeWL8jifk0RSgATRZrLYTr50Wto/6nTy/D0h+f/ToES41T58+ffz4MZDEZTsl"
+  "JADUDkfQ";
+
+/* 
+ * Resource generated for file:
+ *    WithExactSelected.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_WithExactSelected_width          = 21;
+static const unsigned int  image_WithExactSelected_height         = 21;
+static const unsigned int  image_WithExactSelected_pixel_size     = 3;
+static const unsigned long image_WithExactSelected_length         = 120;
+static const unsigned long image_WithExactSelected_decoded_length = 1323;
+
+static const unsigned char image_WithExactSelected[] = 
+  "eNpjYKAU/CcXDB7tEIYPIQBXiawdLgJUMGHrWVwIoh2unlrakR1PUDum4+GAGL/jCXk0BW"
+  "hg8Gsf9Tt5fh+QDPv161dcav7+/fv9+3cgiUs7JQAA8d6D8g==";
 
