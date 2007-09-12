@@ -45,8 +45,13 @@ public:
   virtual void DeleteAllSearchTerms ( );
   virtual void AddNewSearchTerm ( const char *term);
   virtual void DeleteSelectedSearchTerms ( );
-  virtual void GetNumberOfSearchTermsToUse( );
-  virtual void GetNthSearchTermToUse ( );
+
+  virtual int GetNumberOfSearchTermsToUse( ) {
+  return useTerms.size();
+  }
+  virtual const char *GetNthSearchTermToUse ( int ind ) {
+  return useTerms[ind].c_str();
+  }
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -85,6 +90,10 @@ public:
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
   vtkQueryAtlasIcons *QueryAtlasIcons;
   vtkKWFrame *ContainerFrame;
+
+  //BTX
+  std::vector<std::string> useTerms;
+  //ETX
   
   // Description:
   // Create the widget.

@@ -165,9 +165,9 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void BuildLoadAndConvertGUI ( );
     virtual void BuildAnnotationOptionsGUI ( );
     virtual void BuildOntologyGUI ( );
-    virtual void BuildQueryGUI ( );
-    virtual void BuildSearchGUI ( );
-    virtual void BuildResultsManagerGUI ( );
+    virtual void BuildSearchTermGUI ( );
+    virtual void BuildQueriesGUI ( );
+    virtual void BuildQueryManagerGUI ( );
     virtual void BuildDisplayAndNavigationGUI ( );
     
     // Description:
@@ -266,7 +266,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     
     int NumberOfColumns;
     
-    // querybuilder
+    // searchterm builder
     vtkKWPushButton *OtherButton;
     vtkKWPushButton *StructureButton;
     vtkKWPushButton *PopulationButton;
@@ -294,7 +294,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWMenuButtonWithLabel *StructureMenuButton;
     vtkQueryAtlasUseSearchTermWidget *StructureListWidget;
 
-    // search
+    // querybuilder
     vtkKWPushButton *SearchButton;
     vtkKWMenuButton *DatabasesMenuButton;
     vtkKWRadioButton *ResultsWithAnyButton;

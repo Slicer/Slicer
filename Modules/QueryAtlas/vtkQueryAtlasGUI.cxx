@@ -38,8 +38,8 @@
 #include "itksys/SystemTools.hxx"
 
 
-#define SEARCH_FRAME
-#define QUERY_FRAME
+#define QUERIES_FRAME
+#define SEARCHTERM_FRAME
 #define RESULTS_FRAME
 #define LOAD_FRAME
 #define ANNO_FRAME
@@ -71,7 +71,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->ProcessingMRMLEvent = 0;
     this->SceneClosing = false;
     
-#ifdef QUERY_FRAME
+#ifdef SEARCHTERM_FRAME
     //---
     // master category switch
     //---
@@ -82,13 +82,13 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->SwitchQueryFrame = NULL;
 
     //---
-    // query builder substructure frame
+    // search term other frame
     //---    
     this->OtherFrame = NULL;
     this->OtherListWidget = NULL;
 
     //---
-    // query builder species frame
+    // search term species frame
     //---    
     this->SpeciesFrame = NULL;
     this->SpeciesLabel = NULL;
@@ -98,7 +98,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->SpeciesMacaqueButton = NULL;
 
     //---
-    // query builder popuation frame
+    // search term population frame
     //---
     this->PopulationFrame = NULL;
     this->DiagnosisMenuButton = NULL;
@@ -108,7 +108,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->AddDiagnosisEntry = NULL;
 
     //---
-    // query builder structure frame
+    // search term structure frame
     //---
     this->StructureFrame = NULL;
     this->StructureMenuButton = NULL;
@@ -125,9 +125,9 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
 #endif
     
     //---
-    // search frame
+    // query frame
     //---    
-#ifdef SEARCH_FRAME
+#ifdef QUERIES_FRAME
     this->SearchButton = NULL;
     this->DatabasesMenuButton = NULL;
     this->ResultsWithAnyButton = NULL;
@@ -324,9 +324,9 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 #endif
     
     //---
-    // query builder frame
+    // search term frame
     //---
-#ifdef QUERY_FRAME
+#ifdef SEARCHTERM_FRAME
     if ( this->SwitchQueryFrame)
       {
       this->SwitchQueryFrame->SetParent ( NULL );
@@ -352,7 +352,7 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->PopulationButton = NULL;      
       }
     //---
-    // query builder population panel
+    // search term population panel
     //---
     if ( this->PopulationFrame )
       {
@@ -391,7 +391,7 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->AddDiagnosisEntry = NULL;
       }
     //---
-    // query builder species panel
+    // search term species panel
     //---
     if ( this->SpeciesFrame)
       {
@@ -436,7 +436,7 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->SpeciesMacaqueButton = NULL;
       }
     //---
-    // query builder structure panel
+    // search term structure panel
     //---
     if ( this->StructureFrame )
       {
@@ -451,7 +451,7 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->StructureMenuButton = NULL;
       }
     //---
-    // query builder structure panel
+    // search term structure panel
     //---
     if ( this->StructureListWidget )
       {
@@ -460,7 +460,7 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->StructureListWidget = NULL;
       }
     //---
-    // query builder substructure panel
+    // search term substructure panel
     //---
     if ( this->OtherFrame )
       {
@@ -478,9 +478,9 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 #endif
 
     //---
-    // search panel
+    // query panel
     //---
-#ifdef SEARCH_FRAME
+#ifdef QUERIES_FRAME
     if ( this->SearchButton )
       {
       this->SearchButton->SetParent ( NULL );
@@ -1384,7 +1384,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::ColorCodeContextButtons ( vtkKWPushButton *b )
 {
-#ifdef QUERY_FRAME
+#ifdef SEARCHTERM_FRAME
   this->OtherButton->SetBackgroundColor ( _br, _bg, _bb );
   this->StructureButton->SetBackgroundColor ( _br, _bg, _bb );
   this->PopulationButton->SetBackgroundColor ( _br, _bg, _bb );
@@ -1511,14 +1511,14 @@ void vtkQueryAtlasGUI::BuildGUI ( )
 #ifdef ONTOLOGY_FRAME
     this->BuildOntologyGUI ( );
 #endif
-#ifdef QUERY_FRAME
-    this->BuildQueryGUI ( );
+#ifdef SEARCHTERM_FRAME
+    this->BuildSearchTermGUI ( );
 #endif
-#ifdef SEARCH_FRAME
-    this->BuildSearchGUI ( );
+#ifdef QUERIES_FRAME
+    this->BuildQueriesGUI ( );
 #endif
 #ifdef RESULTS_FRAME
-    this->BuildResultsManagerGUI ( );
+    this->BuildQueryManagerGUI ( );
 #endif
 //    this->BuildDisplayAndNavigationGUI ( );
       /*
@@ -1886,7 +1886,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
     // -------------------------------------------------------------------------------------------------
     // ---
-    // HIERARCHY SEARCH FRAME
+    // ONTOLOGY SEARCH FRAME
     // ---
     // -------------------------------------------------------------------------------------------------
     vtkSlicerModuleCollapsibleFrame *hierarchyFrame = vtkSlicerModuleCollapsibleFrame::New ( );
@@ -2111,19 +2111,19 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::BuildQueryGUI ( )
+void vtkQueryAtlasGUI::BuildSearchTermGUI ( )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
     // -------------------------------------------------------------------------------------------------
     // ---
-    // BUILD QUERY FRAME
+    // BUILD SEARCH TERMS FRAME
     // ---
     // -------------------------------------------------------------------------------------------------
     vtkSlicerModuleCollapsibleFrame *queryFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     queryFrame->SetParent ( page );
     queryFrame->Create ( );
-    queryFrame->SetLabelText ("Query Builder");
+    queryFrame->SetLabelText ("Search Terms");
     queryFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   queryFrame->GetWidgetName(),
@@ -2152,20 +2152,20 @@ void vtkQueryAtlasGUI::BuildQueryGUI ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::BuildSearchGUI ( )
+void vtkQueryAtlasGUI::BuildQueriesGUI ( )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
 
     // -------------------------------------------------------------------------------------------------
     // ---
-    // SEARCH FRAME
+    // BUILD QUERIES FRAME
     // ---
     // -------------------------------------------------------------------------------------------------
     vtkSlicerModuleCollapsibleFrame *searchFrame = vtkSlicerModuleCollapsibleFrame::New();
     searchFrame->SetParent ( page);
     searchFrame->Create();
-    searchFrame->SetLabelText ("Search");
+    searchFrame->SetLabelText ("Build Queries");
     searchFrame->CollapseFrame();
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   searchFrame->GetWidgetName(),
@@ -2208,7 +2208,7 @@ void vtkQueryAtlasGUI::BuildSearchGUI ( )
     this->ResultsWithExactButton->SetStateToDisabled();
     this->ResultsWithExactButton->SetValueAsInt ( vtkQueryAtlasGUI::Quote );
     this->ResultsWithExactButton->SetVariableName ( this->ResultsWithAnyButton->GetVariableName() );
-    this->ResultsWithExactButton->SetBalloonHelpString ( "Search for results that include any of the exact search term (disabled)." );
+    this->ResultsWithExactButton->SetBalloonHelpString ( "Search for results that include the exact search terms (disabled)." );
 
     vtkKWLabel *sl = vtkKWLabel::New();
     sl->SetParent ( searchFrame->GetFrame() );
@@ -2244,7 +2244,7 @@ void vtkQueryAtlasGUI::BuildSearchGUI ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::BuildResultsManagerGUI ()
+void vtkQueryAtlasGUI::BuildQueryManagerGUI ()
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
@@ -2256,7 +2256,7 @@ void vtkQueryAtlasGUI::BuildResultsManagerGUI ()
     vtkSlicerModuleCollapsibleFrame *resultsFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     resultsFrame->SetParent ( page );
     resultsFrame->Create ( );
-    resultsFrame->SetLabelText ("Query Results Manager");
+    resultsFrame->SetLabelText ("Query Manager");
     resultsFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   resultsFrame->GetWidgetName(),

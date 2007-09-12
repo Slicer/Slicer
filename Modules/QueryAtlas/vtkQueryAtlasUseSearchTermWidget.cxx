@@ -341,16 +341,6 @@ void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
 }
 
 
-//---------------------------------------------------------------------------
-void vtkQueryAtlasUseSearchTermWidget::GetNumberOfSearchTermsToUse ( )
-{
-}
-
-//---------------------------------------------------------------------------
-void vtkQueryAtlasUseSearchTermWidget::GetNthSearchTermToUse ( )
-{
-}
-
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasUseSearchTermWidget::CheckAllSearchTerms ( )
