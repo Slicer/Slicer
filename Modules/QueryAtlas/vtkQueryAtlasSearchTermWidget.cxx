@@ -151,7 +151,7 @@ void vtkQueryAtlasSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
 
   vtkKWMultiColumnList *ml = vtkKWMultiColumnList::SafeDownCast ( caller );
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller);
-  int i, row[100];
+  int row[100];
   int numRows;
   
   if ( ( b == this->AddNewButton ) && (event == vtkKWPushButton::InvokedEvent ))
@@ -178,6 +178,7 @@ void vtkQueryAtlasSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
     }
   else if ( ( b == this->ReserveTermsButton ) && (event == vtkKWPushButton::InvokedEvent ))
     {
+    this->ReserveTerms ( );
     }
 
   this->UpdateMRML();
@@ -338,4 +339,20 @@ void vtkQueryAtlasSearchTermWidget::CreateWidget ( )
 }
 
 
+//---------------------------------------------------------------------------
+void vtkQueryAtlasSearchTermWidget::ReserveTerms ( )
+{
+  // for all selected terms
+  int i, row[100];
+  const char *term;
+  
+  this->reservedTerms.clear();
+  int numRows = this->MultiColumnList->GetWidget()->GetSelectedRows ( row );
+  for ( i=0; i<numRows; i++ )
+    {
+    term = this->GetMultiColumnList()->GetWidget()->GetCellText ( row[i], 0 );
+    this->reservedTerms.push_back ( std::string(term) );
+    }
+  this->InvokeEvent ( vtkQueryAtlasSearchTermWidget::ReservedTermsEvent );
+}
 

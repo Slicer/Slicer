@@ -409,7 +409,7 @@ void vtkQueryAtlasUseSearchTermWidget::AddNewSearchTerm ( const char *term )
   int n = this->MultiColumnList->GetWidget()->GetNumberOfRows();
   for ( i=0; i<n; i++ )
     {
-    if ( !strcmp (this->MultiColumnList->GetWidget()->GetCellText(i, 0), term ) )
+    if ( !strcmp (this->MultiColumnList->GetWidget()->GetCellText(i, 1), term ) )
       {
       unique = 0;
       }
@@ -435,7 +435,7 @@ void vtkQueryAtlasUseSearchTermWidget::AddNewSearchTerm ( const char *term )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasUseSearchTermWidget::DeleteSelectedSearchTerms ( )
 {
-  int i, numRows;
+  int numRows;
   int row[100];
   // get the row that was last selected and remove by index
 

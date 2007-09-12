@@ -60,6 +60,29 @@ public:
   // adds a term to the list box.
   virtual void AddTerm ( const char *term );
 
+  // Description:
+  // reserves listbox terms for searching.
+  virtual void ReserveTerms ( );
+
+  // Description:
+  // Gets the number of reserved terms
+  virtual int GetNumberOfReservedTerms() {
+    return reservedTerms.size();
+  }
+
+  // Description:
+  // Gets the Nth Reserved Term
+  virtual const char *GetNthReservedTerm ( int ind ) {
+    return reservedTerms[ind].c_str();
+  };
+
+  //BTX
+  enum
+    {
+      ReservedTermsEvent = 30000
+    };
+  //ETX
+
  protected:
   vtkQueryAtlasSearchTermWidget();
   virtual ~vtkQueryAtlasSearchTermWidget();
@@ -72,6 +95,9 @@ public:
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
   vtkQueryAtlasIcons *QueryAtlasIcons;
   vtkKWFrame *ContainerFrame;
+  //BTX
+  std::vector<std::string> reservedTerms;
+  //ETX
   
   // Description:
   // Create the widget.
@@ -86,8 +112,8 @@ public:
   // Description:
   // Called when the selected row changes, just update the label, called from UpdateWidget
   void UpdateSelectedColor();
-  
   int NumberOfColumns;
+  
 
   vtkQueryAtlasSearchTermWidget(const vtkQueryAtlasSearchTermWidget&); // Not implemented
   void operator=(const vtkQueryAtlasSearchTermWidget&); // Not Implemented

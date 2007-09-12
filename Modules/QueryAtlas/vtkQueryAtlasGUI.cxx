@@ -799,6 +799,7 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->AddNeuroNamesIDButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->AddUMLSCIDButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->SavedTerms->RemoveWidgetObservers();
+  this->SavedTerms->RemoveObservers(vtkQueryAtlasSearchTermWidget::ReservedTermsEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->StructureButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->RemoveWidgetObservers();
@@ -874,7 +875,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->AddNeuroNamesIDButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->AddUMLSCIDButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->SavedTerms->AddWidgetObservers();
-
+  this->SavedTerms->AddObserver(vtkQueryAtlasSearchTermWidget::ReservedTermsEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->StructureButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->StructureListWidget->AddWidgetObservers();
@@ -948,11 +949,24 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWListBox *lb = vtkKWListBox::SafeDownCast ( caller );
   vtkKWEntry *e  = vtkKWEntry::SafeDownCast ( caller);
   vtkSlicerNodeSelectorWidget *sel = vtkSlicerNodeSelectorWidget::SafeDownCast ( caller );
+  vtkQueryAtlasSearchTermWidget *stw = vtkQueryAtlasSearchTermWidget::SafeDownCast (caller );
 
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   int index;
   vtkMRMLNode *node;
   
+  if ( (stw = this->SavedTerms) && (event == vtkQueryAtlasSearchTermWidget::ReservedTermsEvent ))
+    {
+    // test
+    int num = this->SavedTerms->GetNumberOfReservedTerms();
+    const char *term;
+    for (int i=0; i<num; i++)
+      {
+      term = this->SavedTerms->GetNthReservedTerm ( i );
+      this->StructureListWidget->AddNewSearchTerm ( term );
+      }
+    }
+
   //MRML
   if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
       vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
