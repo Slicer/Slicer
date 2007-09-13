@@ -543,6 +543,12 @@ int Slicer3_main(int argc, char *argv[])
       }
 #endif
 
+    char cmd[2048];
+
+    // Make sure SLICER_HOME is available
+
+    sprintf(cmd, "set ::env(SLICER_HOME) {%s};", slicerHome.c_str());
+    Slicer3_Tcl_Eval(interp, cmd);
   
     // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10 
     vtkKWWidget::UseClassNameInWidgetNameOn();
@@ -557,7 +563,6 @@ int Slicer3_main(int argc, char *argv[])
       {
       one_up = "/..";
       }
-    char cmd[2048];
     sprintf(cmd, "                                                   \
       set ::SLICER_BIN [file dirname [info nameofexecutable]];       \
       if { $::tcl_platform(platform) == \"windows\"} {               \
