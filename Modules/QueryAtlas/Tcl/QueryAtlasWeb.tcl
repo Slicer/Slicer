@@ -1,12 +1,85 @@
 
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasWriteFirefoxBookmarkFile { } {
+proc QueryAtlasWriteFirefoxBookmarkFile { bmfile } {
+    
+    #--- strip off filename
+    set flist [ file split $bmfile ]
+    set llen [ llength $flist ]
+    set title [ lindex $flist [ expr $llen-1 ] ]
+    set i [ string first "." $title ]
+    set title [ string range $title 0 [expr $i-1] ]
+    
+    #--- open file for writing
+    set fp [open $bmfile "w"]
+
+    #--- write header
+    set line "<!DOCTYPE NETSCAPE-Bookmark-file-1>"
+    puts $fp $line
+    set line "<!-- This is an automatically generated file."
+    puts $fp $line
+    set line "     It will be read and overwritten."
+    puts $fp $line
+    set line "     DO NOT EDIT! -->"
+    puts $fp $line
+    set line "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">"
+    puts $fp $line
+
+    #--- write title
+    set line "<TITLE>$title</TITLE>"
+    puts $fp $line
+    set line "<H1>$title</H1>"
+    puts $fp $line
+    set line "<DT><H3>$title</H3>"
+    puts $fp $line
+    set line "   <DL><p>"
+    puts $fp $line
+
+    #--- now put in links
+    set rl [ [ $::slicer3::QueryAtlasGUI GetAccumulatedResultsList ] GetWidget ]
+    set num [ $rl GetNumberOfItems ]
+    for { set i 0 } { $i < $num } { incr i } {
+        set link [ $rl GetItem $i ]
+        set line "        <DT><A HREF=\"$link\" > QueryAtlas link $i </A>"
+        puts "adding $line"
+        puts $fp $line
+    }
+
+    #--- close up
+    set line "  </DL><p> "
+    puts $fp $line
+    close $fp
 }
+
+
+
 
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasLoadFirefoxBookmarkFile { } {
+proc QueryAtlasLoadFirefoxBookmarkFile { bmfile } {
 
+    #--- open file for writing
+    set fp [open $bmfile "r"]
+    while { ![eof $fp] } {
+        gets $fp line
+        #--- throw away until we find an HREF
+        set tst [ string first "HREF=" $line ]
+        if { $tst >=0 } {
+            #--- get links
+            set tmpstr [ string range $line [ expr $tst + 5] end ]
+            set tst [ string first ">" $tmpstr ]
+            set tmpstr [ string range $tmpstr 0 [expr $tst -1 ] ]
+            #--- trim off any leading or trailing white space or quotes
+            set tmpstr [ string trimleft $tmpstr ]
+            set tmpstr [ string trimleft $tmpstr "\"" ]
+            set tmpstr [ string trimright $tmpstr ]
+            set tmpstr [ string trimright $tmpstr "\"" ]
+            #--- load them into accumulated results frame
+            set rl [ [ $::slicer3::QueryAtlasGUI GetAccumulatedResultsList ] GetWidget ]
+            $rl AppendUnique $tmpstr
+        }
+    }
 }
+
+
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
@@ -756,7 +829,7 @@ proc QueryAtlasBundleSearchResults { } {
         set url [ $clb GetItem $j ]
         lappend ::QA($i,linkBundle) $url
     }
-    set plb [[$::slicer3::QueryAtlasGUI GetPastResultsList ] GetWidget]        
+    set plb [[$::slicer3::QueryAtlasGUI GetAccumulatedResultsList ] GetWidget]        
     $plb AppendUnique "$i: Reserved Link Bundle"
 }
 
@@ -771,7 +844,7 @@ proc QueryAtlasSaveLinkBundlesToFile { } {
     set ::QA(linkBundleFile) [ open $::QA(linkBundleFileName) w+ ]
     #--- expand each bundle in the list and write them line by line to file
 
-    set plb [[$::slicer3::QueryAtlasGUI GetPastResultsList ] GetWidget]
+    set plb [[$::slicer3::QueryAtlasGUI GetAccumulatedResultsList ] GetWidget]
     set num [ $plb GetNumberOfItems ]
     for { set j 0 } { $j < $num } { incr j } {    
         #--- get each bundle
