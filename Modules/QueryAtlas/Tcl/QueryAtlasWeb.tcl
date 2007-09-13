@@ -181,6 +181,15 @@ proc QueryAtlasAddEntryTermToSavedTerms { terms } {
 }
 
 
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasQueryBrainInfo { url } {
+    if { $url != "" } {
+        QueryAtlasOpenLink $url
+    }
+}
+
 
 #----------------------------------------------------------------------------------------------------
 #---
@@ -201,42 +210,43 @@ proc QueryAtlasQuery { site } {
 
     switch $site {
         "google" {
-            $::slicer3::Application OpenLink http://www.google.com/search?q=$terms
+            QueryAtlasOpenLink "http://www.google.com/search?q=$terms"
         }
         "wikipedia" {
-            $::slicer3::Application OpenLink http://www.google.com/search?q=$terms+site:en.wikipedia.org
+            QueryAtlasOpenLink "http://www.google.com/search?q=$terms+site:en.wikipedia.org"
         }
         "pubmed" {
-            $::slicer3::Application OpenLink \
-                http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&db=PubMed&term=$terms
+            QueryAtlasOpenLink "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&db=PubMed&term=$terms"
         }
         "jneurosci" {
-            $::slicer3::Application OpenLink \
-                http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$terms
+            QueryAtlasOpenLink "http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$terms"
         }
         "braininfo" {
+            set url [ QueryAtlasGetBrainInfoURI $::QA(lastLabels) ]
+            QueryAtlasQueryBrainInfo $url
         }
-        "ibvd" {
+        "ibvd form" {
             regsub -all "Left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
             regsub -all "left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
             regsub -all "Right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
             regsub -all "right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
             regsub -all "\\+" $terms "," commaterms
-
-            if { 0 } {
-                set terms "human,normal,$commaterms"
-                set url http://www.cma.mgh.harvard.edu/ibvd/search.php?f_submission=true&f_free=$commaterms
-            } else {
-                #--- this gets us the plot for a diagnosis context.
-                #--- set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms&diagnosis=$dterms
-                set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms
-                
-            }
-            $::slicer3::Application OpenLink $url
+            set terms "human,normal,$commaterms"
+            set url http://www.cma.mgh.harvard.edu/ibvd/search.php?f_submission=true&f_free=$commaterms
+            QueryAtlasOpenLink $url
+        }
+        "ibvd: howbig?" {
+            regsub -all "Left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+            regsub -all "left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+            regsub -all "Right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+            regsub -all "right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+            regsub -all "\\+" $terms "," commaterms
+            #--- set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms&diagnosis=$dterms
+            set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms
+            QueryAtlasOpenLink $url
         }
         "metasearch" {
-            $::slicer3::Application OpenLink \
-                https://loci.ucsd.edu/qametasearch/query.do?query=$terms
+            QueryAtlasOpenLink "https://loci.ucsd.edu/qametasearch/query.do?query=$terms"
         }
     }
 }

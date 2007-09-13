@@ -1475,7 +1475,8 @@ proc QueryAtlasMenuCreate { state } {
           $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasQuery wikipedia"
           $qaMenu insert end command -label "PubMed..." -command "QueryAtlasQuery pubmed"
           $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasQuery jneurosci"
-          $qaMenu insert end command -label "IBVD..." -command "QueryAtlasQuery ibvd"
+          $qaMenu insert end command -label "IBVD form..." -command "QueryAtlasQuery \"ibvd form\""
+          $qaMenu insert end command -label "IBVD howbig?..." -command "QueryAtlasQuery \"ibvd: howbig?\""
           $qaMenu insert end command -label "BrainInfo..." -command "QueryAtlasQuery braininfo"
           $qaMenu insert end command -label "MetaSearch..." -command "QueryAtlasQuery metasearch"
         }
