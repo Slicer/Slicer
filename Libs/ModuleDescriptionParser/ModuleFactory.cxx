@@ -1188,7 +1188,7 @@ ModuleFactory
                   ModuleLogo mLogo;
                   mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
                                  *logoPixelSize, *logoLength, 0);
-                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                  module.SetLogo(mLogo);
                   }
 
                 // Check to make sure the module is not already in the
@@ -1429,7 +1429,7 @@ ModuleFactory
                   ModuleLogo mLogo;
                   mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
                                  *logoPixelSize, *logoLength, 0);
-                  (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                  module.SetLogo(mLogo);
                   }
 
                 // Check to make sure the module is not already in the
