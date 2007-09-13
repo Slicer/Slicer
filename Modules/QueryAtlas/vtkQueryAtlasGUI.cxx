@@ -647,17 +647,17 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->PastResultsList->Delete();
       this->PastResultsList = NULL;
       }
-    if ( this->DeleteAllCurrentResultsButton )
+    if ( this->DeselectAllCurrentResultsButton )
       {
-      this->DeleteAllCurrentResultsButton->SetParent ( NULL );      
-      this->DeleteAllCurrentResultsButton->Delete();
-      this->DeleteAllCurrentResultsButton = NULL;      
+      this->DeselectAllCurrentResultsButton->SetParent ( NULL );      
+      this->DeselectAllCurrentResultsButton->Delete();
+      this->DeselectAllCurrentResultsButton = NULL;      
       }
-    if ( this->DeleteAllPastResultsButton )
+    if ( this->DeselectAllPastResultsButton )
       {
-      this->DeleteAllPastResultsButton->SetParent ( NULL );      
-      this->DeleteAllPastResultsButton->Delete();
-      this->DeleteAllPastResultsButton = NULL;      
+      this->DeselectAllPastResultsButton->SetParent ( NULL );      
+      this->DeselectAllPastResultsButton->Delete();
+      this->DeselectAllPastResultsButton = NULL;      
       }
     if ( this->DeleteCurrentResultButton )
       {
