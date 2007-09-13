@@ -24,6 +24,8 @@
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkImageData.h"
 
+// does not acctually read an image from disk, this is intended for
+// creating an image that you will later want to write to
 vtkMRMLVolumeNode*
 AddNewScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
                             const char* filename, 
@@ -671,13 +673,14 @@ int main(int argc, char** argv)
       }
     else
       {
-
       if (!emMRMLManager->GetAtlasNode())
         {
-        throw std::runtime_error("ERROR: parameters must already contain an atlas node if you wish to speficy atlas volumes.");
+        throw std::runtime_error("ERROR: parameters must already "
+                                 "contain an atlas node if you wish "
+                                 "to speficy atlas volumes.");
         }
       vtkMRMLEMSAtlasNode* oldAtlasNode = emMRMLManager->GetAtlasNode();
-        
+      
       try 
         {
         if (verbose) 
@@ -685,6 +688,8 @@ int main(int argc, char** argv)
 
         // create atlas node
         vtkMRMLEMSAtlasNode* atlasNode = vtkMRMLEMSAtlasNode::New();
+        atlasNode->SetNumberOfTrainingSamples
+          (oldAtlasNode->GetNumberOfTrainingSamples());
         mrmlScene->AddNode(atlasNode);        
 
         // connect atlas node to segmenter
@@ -923,6 +928,15 @@ int main(int argc, char** argv)
       std::cerr << "Unknown error detected.  Comparison failed." << std::endl;
       segmentationSucceeded = false;
       }
+    }
+
+  //
+  // write the final mrml scene file
+  if (!resultMRMLSceneFileName.empty())
+    {
+    if (verbose) std::cerr << "Writing mrml scene...";
+    mrmlScene->Commit(resultMRMLSceneFileName.c_str());
+    if (verbose) std::cerr << "DONE" << std::endl;
     }
 
   //

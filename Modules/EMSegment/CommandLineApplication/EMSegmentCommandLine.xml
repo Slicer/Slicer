@@ -120,6 +120,14 @@
       <channel>output</channel>
     </file>
 
+    <file>
+      <name>resultMRMLSceneFileName</name>
+      <longflag>resultMRMLSceneFileName</longflag>
+      <description>Write out the MRML scene after command line substitutions have been made.</description>
+      <label>Output MRML scene filename.</label>
+      <channel>output</channel>
+    </file>
+
     <boolean>
       <name>disableCompression</name>
       <longflag>disableCompression</longflag>
