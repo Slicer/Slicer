@@ -50,6 +50,22 @@ proc QueryAtlasValidSystemCheck { termSet } {
 
 
 #----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasFilterLocalTerms { terms } {
+
+    regsub -all "/" $terms "+" terms
+    regsub -all -- "-" $terms "+" terms
+    regsub -all -- " " $terms "+" terms
+    regsub -all "ctx" $terms "cortex" terms
+    regsub -all "rh" $terms "right+hemisphere" terms
+    regsub -all "lh" $terms "left+hemisphere" terms
+    return $terms
+
+}
+
+
+#----------------------------------------------------------------------------------------------------
 # Descrciption:
 # Returns 1 if entry is mapped to its parent structure
 # in the controlled vocabulary

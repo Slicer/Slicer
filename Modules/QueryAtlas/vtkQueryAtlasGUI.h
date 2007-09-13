@@ -218,6 +218,17 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Get terms from the other panel
     virtual void GetOtherTerms ( );
 
+    // Description:
+    // Opens a url in browser when
+    // the current results listbox
+    // item is double-clicked
+    virtual void OpenLinkFromCurrentList ( );
+    // Description:
+    // Opens a url in browser when
+    // the accumulated results listbox
+    // item is double-clicked
+    virtual void OpenLinkFromAccumulatedList ( );
+    
     //BTX
     std::vector<std::string> DiagnosisTerms;
     std::vector<std::string> SpeciesTerms;

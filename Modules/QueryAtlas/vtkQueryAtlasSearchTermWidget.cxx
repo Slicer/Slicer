@@ -130,16 +130,11 @@ void vtkQueryAtlasSearchTermWidget::AddTerm ( const char *term )
       }
     }
     if ( !strcmp (term, "") )
-    {
-    term = "<new term>";
-    }
-  if ( unique )
-    {
-    this->MultiColumnList->GetWidget()->AddRow();
-    n = this->MultiColumnList->GetWidget()->GetNumberOfRows();
-    this->MultiColumnList->GetWidget()->SetCellText((n-1), 0, term );
-    this->MultiColumnList->GetWidget()->SetCellBackgroundColor ((n-1), 0, 1.0, 1.0, 1.0);
-    }
+      {
+      term = "<new term>";
+      }
+    // change to this script to get good string filtering in tcl
+    this->Script ( "QueryAtlasAddEntryTermToSavedTerms %s", term );
 }
 
 
@@ -157,7 +152,7 @@ void vtkQueryAtlasSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
   if ( ( b == this->AddNewButton ) && (event == vtkKWPushButton::InvokedEvent ))
     {
     // add a new search term.
-    AddTerm ( "");
+    this->AddTerm ( "");
     }
   else if ( ( b == this->ClearSelectedButton ) && (event == vtkKWPushButton::InvokedEvent ))
     {

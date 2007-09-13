@@ -82,126 +82,22 @@ proc QueryAtlasLoadFirefoxBookmarkFile { bmfile } {
 
 
 #----------------------------------------------------------------------------------------------------
+proc QueryAtlasOpenLink { url } {
+
+    set browser [ $::slicer3::Application GetWebBrowser ]
+    exec $browser -new-tab $url
+}
+
+
+
+
+#----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetStructureTerm { } {
     [ $::slicer3::QueryAtlasGUI GetLocalSearchTermEntry ] SetValue $::QA(localLabel) 
 }
 
 
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasRemoveStructureTerms {} {
-
-  $::slicer3::ApplicationGUI SelectModule QueryAtlas
-  set mcl [[$::slicer3::QueryAtlasGUI GetStructureMultiColumnList] GetWidget]
-
-  $mcl DeleteAllRows
-}
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasGetStructureTerms {} {
-
-#  $::slicer3::ApplicationGUI SelectModule QueryAtlas
-#  set mcl [[$::slicer3::QueryAtlasGUI GetStructureMultiColumnList] GetWidget]
-
-#  set terms ""
-#  set n [$mcl GetNumberOfRows]
-#  for {set i 0} {$i < $n} {incr i} {
-#    # TODO: figure out the mcl checkbutton access
-#    if { 1 || [$mcl GetCellTextAsInt $i 0] } {
-#      set term [$mcl GetCellText $i 1]
-#        if { ![string match "edit*" $term] && ($term != "") } {
-#              set terms "$terms+[$mcl GetCellText $i 1]"
-#        }
-#    }
-#  }
-#  set terms [ string trimleft $terms "+"]
-#  return $terms
-}
-
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasGetSubStructureTerms {} {
-
-  $::slicer3::ApplicationGUI SelectModule QueryAtlas
-  set mcl [[$::slicer3::QueryAtlasGUI GetCellMultiColumnList] GetWidget]
-
-  set terms ""
-  set n [$mcl GetNumberOfRows]
-  for {set i 0} {$i < $n} {incr i} {
-    # TODO: figure out the mcl checkbutton access
-    if { 1 || [$mcl GetCellTextAsInt $i 0] } {
-      set term [$mcl GetCellText $i 1]
-      if { ![string match "edit*" $term] } {
-        set terms "$terms+[$mcl GetCellText $i 1]"
-      }
-    }
-  }
-  set terms [ string trimleft $terms "+"]
-  return $terms
-}
-
-
-
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasGetDiagnosisTerms { } {
-    $::slicer3::ApplicationGUI SelectModule QueryAtlas
-    set terms ""
-    set mb [[$::slicer3::QueryAtlasGUI GetDiagnosisMenuButton] GetWidget]
-    set terms [ $mb GetValue ]
-    return $terms
-}
-
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasGetGenderTerms { } {
-    $::slicer3::ApplicationGUI SelectModule QueryAtlas
-    set terms ""
-    set mb [[$::slicer3::QueryAtlasGUI GetGenderMenuButton] GetWidget]
-    set terms [ $mb GetValue ]
-    return $terms
-}
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasGetSpeciesTerms { } {
-    $::slicer3::ApplicationGUI SelectModule QueryAtlas
-    set terms ""
-    set cb_h [$::slicer3::QueryAtlasGUI GetSpeciesHumanButton]
-    set cb_ms [$::slicer3::QueryAtlasGUI GetSpeciesMouseButton]
-    set cb_mq [$::slicer3::QueryAtlasGUI GetSpeciesMacaqueButton]
-    
-    set human [ $cb_h GetSelectedState ]
-    set mouse [ $cb_ms GetSelectedState ]
-    set macaque [ $cb_mq GetSelectedState ]
-
-    if { $human } {
-        set terms "human"
-    }
-    if { $mouse } {
-        set terms "$terms+mouse"
-    }
-    if { $macaque } {
-        set terms "$terms+macaque"
-    }
-    return $terms
-}
 
 #----------------------------------------------------------------------------------------------------
 #---
@@ -219,44 +115,68 @@ proc QueryAtlasGetSearchTargets { } {
 #----------------------------------------------------------------------------------------------------
 #--- adds a term into the ontology panel's listbox
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasAddSavedTerms {} {
+proc QueryAtlasAddToSavedTerms {} {
 
     #--- add term to listbox.
-  $::slicer3::ApplicationGUI SelectModule QueryAtlas
-  set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
+    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+    set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
 
-  set i [$mcl GetNumberOfRows]
-  $mcl SetCellText [ expr $i - 1 ] 0 $::QA(lastLabels)
+    puts "prefiltered terms are $::QA(lastLabels)"
+    #--- filter terms for friendlier viewing
+    set terms [ QueryAtlasFilterLocalTerms $::QA(lastLabels) ]
+    
+    set n [$mcl GetNumberOfRows]
+    #--- check for uniqueness
+    set unique 1
+    for { set i 0 } { $i < $n } { incr i } {
+        set str [ $mcl GetCellText $i 0 ]
+        if { $terms == $str } {
+            set unique 0
+            break
+        }
+    }
+    puts "$terms uniqueness is $unique"
+
+    if { $unique } {
+        #--- add new row
+        $mcl AddRow
+        set n [$mcl GetNumberOfRows]
+        puts "numrows = $n"
+        $mcl SetCellText [ expr $n - 1 ] 0 $terms
+        $mcl SetCellBackgroundColor [ expr $n - 1 ] 1.0 1.0 1.0
+    }
+
 }
 
 
-
 #----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasAddStructureTerms {} {
+proc QueryAtlasAddEntryTermToSavedTerms { terms } {
 
     #--- add term to listbox.
-  $::slicer3::ApplicationGUI SelectModule QueryAtlas
-  set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
+    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+    set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
 
-  set i [$mcl GetNumberOfRows]
-  $::slicer3::QueryAtlasGUI AddNewStructureSearchTerm $::QA(lastLabels)
-  $mcl SetCellTextAsInt $i 0 1
-  $mcl SetCellText $i 1 $::QA(lastLabels)
+    #--- filter terms for friendlier viewing
+    set terms [ QueryAtlasFilterLocalTerms $terms ]
+    
+    set n [$mcl GetNumberOfRows]
+    #--- check for uniqueness
+    set unique 1
+    for { set i 0 } { $i < $n } { incr i } {
+        set str [ $mcl GetCellText $i 0 ]
+        if { $terms == $str } {
+            set unique 0
+            break
+        }
+    }
 
-  #--- set hierarchy entry with most recently selected term
-  set h_entry [$::slicer3::QueryAtlasGUI GetHierarchySearchTermEntry]
-  $h_entry SetValue $::QA(lastLabels)
-  
-}
-
-
-#----------------------------------------------------------------------------------------------------
-#--- 
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasSelectTermSet { termset } {
-
+    if { $unique } {
+        #--- add new row
+        $mcl AddRow
+        set n [$mcl GetNumberOfRows]
+        $mcl SetCellText [ expr $n - 1 ] 0 $terms
+        $mcl SetCellBackgroundColor [ expr $n - 1 ] 0 1.0 1.0 1.0
+    }
 
 }
 
@@ -271,10 +191,6 @@ proc QueryAtlasQuery { site } {
         set terms ""
     } else {
         set terms $::QA(lastLabels)
-    }
-
-    if { $::QA(menu,useTerms) } {
-        set terms "$terms+[QueryAtlasGetStructureTerms]"
     }
 
     regsub -all "/" $terms "+" terms
@@ -794,74 +710,8 @@ proc QueryAtlasPopulateSearchResultsBox { } {
 }
 
 
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasOpenLink { } {
-
-    set lb [[$::slicer3::QueryAtlasGUI GetCurrentResultsList ] GetWidget]
-    set index [ $lb GetSelectionIndex ]
-    if { $index >= 0 } {
-        set name [ $lb GetItem $index ]
-        # is this a url?
-        set tst [ string first "http" $name ]
-        if { $tst >= 0 } {
-            $::slicer3::Application OpenLink $name
-            $lb SetSelectState $index 0
-        }
-    }
-}
 
 
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasBundleSearchResults { } {
-
-    incr ::QA(linkBundleCount) 
-    set i $::QA(linkBundleCount)
-    unset -nocomplain ::QA($i,linkBundle)
-    
-    set clb [[$::slicer3::QueryAtlasGUI GetCurrentResultsList ] GetWidget]    
-    set num [ $clb GetNumberOfItems ]
-    for { set j 0 } { $j < $num } { incr j } {
-        set url [ $clb GetItem $j ]
-        lappend ::QA($i,linkBundle) $url
-    }
-    set plb [[$::slicer3::QueryAtlasGUI GetAccumulatedResultsList ] GetWidget]        
-    $plb AppendUnique "$i: Reserved Link Bundle"
-}
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasSaveLinkBundlesToFile { } {
-
-    set ::QA(linkBundleFileName) "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/tmp/QA.links"
-    puts "saving to $::QA(linkBundleFileName)..."
-    set ::QA(linkBundleFile) [ open $::QA(linkBundleFileName) w+ ]
-    #--- expand each bundle in the list and write them line by line to file
-
-    set plb [[$::slicer3::QueryAtlasGUI GetAccumulatedResultsList ] GetWidget]
-    set num [ $plb GetNumberOfItems ]
-    for { set j 0 } { $j < $num } { incr j } {    
-        #--- get each bundle
-        set bundle [ $plb GetItem $j ]
-        set index [ string first ":" $bundle ]
-        set b [ string range $bundle 0 [ expr $index - 1]]
-
-        #--- find length of each bundle
-        set len [ llength $::QA($b,linkBundle) ]
-        for { set i 0 } { $i < $len } { incr i } {
-            set url [ lindex $::QA($b,linkBundle) $i ]
-            puts $::QA(linkBundleFile) $url
-        }
-    }
-    close $::QA(linkBundleFile)
-    puts "...done."
-}
 
 
 #----------------------------------------------------------------------------------------------------

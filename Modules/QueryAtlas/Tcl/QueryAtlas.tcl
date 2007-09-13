@@ -1426,10 +1426,6 @@ proc QueryAtlasMenuCreate { state } {
   set position [$interactor GetEventPosition]
   set ::QA(cardRASAnchor) $::QA(CurrentRASPoint)
 
-  if { ![info exists ::QA(menu,useTerms)] } {
-    set ::QA(menu,useTerms) 1
-  }
-
   #
   # save the event position when the menu action started (when the right mouse
   # button was pressed) and only post the menu if the position is the same.  
@@ -1471,9 +1467,8 @@ proc QueryAtlasMenuCreate { state } {
           $qaMenu insert end command -label "Browse $topic" -command "$::slicer3::Application OpenLink $::QA(url,EntrezLinks)"
         } else {
           #--- bring up a search menu
-          $qaMenu insert end checkbutton -label "Use Search Terms" -variable ::QA(menu,useTerms)
           $qaMenu insert end command -label "Select structure term" -command "QueryAtlasSetStructureTerm"
-          $qaMenu insert end command -label "Add to search terms" -command "QueryAtlasAddSavedTerms"
+          $qaMenu insert end command -label "Add to search terms" -command "QueryAtlasAddToSavedTerms"
           $qaMenu insert end command -label $::QA(lastLabels) -command ""
           $qaMenu insert end separator
           $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
@@ -1492,6 +1487,7 @@ proc QueryAtlasMenuCreate { state } {
   }
 
 }
+
 
 
 

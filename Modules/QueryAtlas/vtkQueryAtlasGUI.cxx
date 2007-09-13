@@ -1343,28 +1343,6 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     this->Script( "QueryAtlasLoadFirefoxBookmarkFile doodle");
     }
 
-  //---
-  //--- Process all these search term widget events
-  //---
-
-
-  //---
-  //--- Process list widgets
-  //---
-  if ( this->CurrentResultsList )
-    {
-    if ((lb = this->CurrentResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
-      {
-//      this->Script ("QueryAtlasOpenLink");
-      }
-    }
-  if ( this->AccumulatedResultsList )
-    {
-    if ((lb = this->AccumulatedResultsList->GetWidget()) && (event == vtkKWListBox::ListBoxSelectionChangedEvent ))
-      {
-      }
-    }
-
 
   //---
   //--- Process menu selections
@@ -2295,6 +2273,32 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     searchFrame->Delete();
 }
 
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::OpenLinkFromCurrentList ( )
+{
+  const char *url;
+  
+    url = this->CurrentResultsList->GetWidget()->GetSelection();
+    //--- open in browser
+    this->Script ( "QueryAtlasOpenLink $url" );
+
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::OpenLinkFromAccumulatedList ( )
+{
+  const char *url;
+  
+    url = this->AccumulatedResultsList->GetWidget()->GetSelection();
+    //--- open in browser
+    this->Script ( "QueryAtlasOpenLink $url" );
+
+}
+
+
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildQueryManagerGUI ()
 {
@@ -2335,6 +2339,7 @@ void vtkQueryAtlasGUI::BuildQueryManagerGUI ()
     this->CurrentResultsList->GetWidget()->SetHeight (4 );
     this->CurrentResultsList->HorizontalScrollbarVisibilityOn();
     this->CurrentResultsList->VerticalScrollbarVisibilityOn();
+    this->CurrentResultsList->GetWidget()->SetDoubleClickCommand (this, "OpenLinkFromCurrentList" );
 
     this->DeselectAllCurrentResultsButton = vtkKWPushButton::New();
     this->DeselectAllCurrentResultsButton->SetParent (curF);
@@ -2398,6 +2403,7 @@ void vtkQueryAtlasGUI::BuildQueryManagerGUI ()
     this->AccumulatedResultsList->GetWidget()->SetHeight ( 4 );
     this->AccumulatedResultsList->HorizontalScrollbarVisibilityOn();
     this->AccumulatedResultsList->VerticalScrollbarVisibilityOn();
+    this->AccumulatedResultsList->GetWidget()->SetDoubleClickCommand (this, "OpenLinkFromAccumulatedList");
 
     this->DeleteAccumulatedResultButton = vtkKWPushButton::New();
     this->DeleteAccumulatedResultButton->SetParent (pastF);
