@@ -519,3 +519,78 @@ proc QueryAtlasPopulateOntologyInformation { term infoType } {
 
 
 
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasFreeSurferLabelsToBirnLexLabels { label } {
+    
+    set retLabel ""
+    
+    set labelTable "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/FreeSurferLabels2BirnLexLabels.txt"
+
+    set fp [ open $labelTable r ]
+
+    while { ! [eof $fp ] } {
+        gets $fp line
+        set tst [ string first $label $line ]
+        if  { $tst > 0 } {
+            #--- get second term in line
+            set retLabel [ lindex $line 1 ]
+            #--- get rid of underscores
+            regsub -all -- "_" $retLabel " " retLabel
+            break
+        }
+    }
+    close $fp
+    return $retLabel
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasDisplayDefaultBIRNPaths { FSw, FIPSw} {
+
+    set ::QueryAtlas(fipsDir) $::env(FIPSHOME)
+    set ::QueryAtlas(fsSubjectDir) $::env(SUBJECTSHOME)
+
+    FSw SetText $::QueryAtlas(fsSubjectDir)
+    FIPSw SetText $::QueryAtlas(fipsDir)
+
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasTrimDirectoryPath { str } {
+
+    #--- get a dir path
+    #--- remove trailing "/" slashes
+    set tmp [ string trim $str "/" ]
+    
+    #--- keep all chars up to and including the first "/"
+    set index [ string first "/" $tmp ]
+    if { $index >= 0 } {
+        set front [ string range $tmp 0 $index ]
+    } else {
+        set front ""
+    }
+    
+    #--- keep all chars after and including the last "/"
+    set index2 [ string last "/" $tmp ]
+    #--- if there's only one slash in path, don't trim
+    if { $index2 == $index1 } {
+        set trimpath $str
+    } else {
+        if { $index2 >= 0 } {
+            set back [ string range $tmp $index end ]
+            #--- fill the middle with "..."
+            set trimpath "$front...$back"
+        } else {
+            set trimpath "$front..."
+        }
+    }
+}
+

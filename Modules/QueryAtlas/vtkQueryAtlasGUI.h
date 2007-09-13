@@ -23,6 +23,7 @@ class vtkKWLabel;
 class vtkKWCheckButton;
 class vtkKWEntry;
 class vtkKWEntryWithLabel;
+class vtkKWLoadSaveButton;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkKWListBox;
 class vtkKWListBoxWithScrollbars;
@@ -72,9 +73,10 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // species panel
     vtkGetObjectMacro (SpeciesFrame, vtkKWFrame);
     vtkGetObjectMacro (SpeciesLabel, vtkKWLabel);
-    vtkGetObjectMacro (SpeciesHumanButton, vtkKWCheckButton );
-    vtkGetObjectMacro (SpeciesMouseButton, vtkKWCheckButton);
-    vtkGetObjectMacro (SpeciesMacaqueButton, vtkKWCheckButton );
+    vtkGetObjectMacro (SpeciesNoneButton, vtkKWRadioButton );
+    vtkGetObjectMacro (SpeciesHumanButton, vtkKWRadioButton );
+    vtkGetObjectMacro (SpeciesMouseButton, vtkKWRadioButton);
+    vtkGetObjectMacro (SpeciesMacaqueButton, vtkKWRadioButton );
     
     // population panel
     vtkGetObjectMacro (PopulationFrame, vtkKWFrame );
@@ -128,6 +130,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( DeleteAllCurrentResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( SaveCurrentResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( SaveCurrentSelectedResultsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( DeselectAllCurrentResultsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( DeselectAllPastResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( PastResultsList, vtkKWListBoxWithScrollbars );    
     vtkGetObjectMacro ( DeletePastResultButton, vtkKWPushButton );
     vtkGetObjectMacro ( DeleteAllPastResultsButton, vtkKWPushButton );
@@ -200,6 +204,26 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Add/Remove observers on widgets in the GUI
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
+
+    // Description:
+    // Get terms from the Diagosis panel
+    virtual void GetDiagnosisTerms ( );
+    // Description:
+    // Get terms from the species panel
+    virtual void GetSpeciesTerms ( );
+    // Description:
+    // Get terms from the structure panel
+    virtual void GetStructureTerms ( );
+    // Description:
+    // Get terms from the other panel
+    virtual void GetOtherTerms ( );
+
+    //BTX
+    std::vector<std::string> DiagnosisTerms;
+    std::vector<std::string> SpeciesTerms;
+    std::vector<std::string> StructureTerms;
+    std::vector<std::string> OtherTerms;
+    //ETX
 
     // Description:
     // Class's mediator methods for processing events invoked by
@@ -276,10 +300,10 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // species frame
     vtkKWFrame *SpeciesFrame;
     vtkKWLabel *SpeciesLabel;
-    vtkKWCheckButton *SpeciesNoneButton;
-    vtkKWCheckButton *SpeciesHumanButton;
-    vtkKWCheckButton *SpeciesMouseButton;
-    vtkKWCheckButton *SpeciesMacaqueButton;
+    vtkKWRadioButton *SpeciesNoneButton;
+    vtkKWRadioButton *SpeciesHumanButton;
+    vtkKWRadioButton *SpeciesMouseButton;
+    vtkKWRadioButton *SpeciesMacaqueButton;
 
     // population frame
     vtkKWFrame *PopulationFrame;
@@ -307,11 +331,13 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWPushButton *DeleteAllCurrentResultsButton;
     vtkKWPushButton *SaveCurrentResultsButton;
     vtkKWPushButton *SaveCurrentSelectedResultsButton;
+    vtkKWPushButton *DeselectAllCurrentResultsButton;
+    vtkKWPushButton *DeselectAllPastResultsButton;
     vtkKWListBoxWithScrollbars *PastResultsList;
     vtkKWPushButton *DeletePastResultButton;
     vtkKWPushButton *DeleteAllPastResultsButton;
-    vtkKWPushButton *SavePastResultsButton;
 
+    vtkKWPushButton *SavePastResultsButton;
     vtkKWPushButton *LoadURIsButton;
 
     // cell frame

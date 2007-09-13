@@ -1,4 +1,258 @@
 
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasWriteFirefoxBookmarkFile { } {
+}
+
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasLoadFirefoxBookmarkFile { } {
+
+}
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetStructureTerm { } {
+    [ $::slicer3::QueryAtlasGUI GetLocalSearchTermEntry ] SetValue $::QA(localLabel) 
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasRemoveStructureTerms {} {
+
+  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+  set mcl [[$::slicer3::QueryAtlasGUI GetStructureMultiColumnList] GetWidget]
+
+  $mcl DeleteAllRows
+}
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetStructureTerms {} {
+
+#  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+#  set mcl [[$::slicer3::QueryAtlasGUI GetStructureMultiColumnList] GetWidget]
+
+#  set terms ""
+#  set n [$mcl GetNumberOfRows]
+#  for {set i 0} {$i < $n} {incr i} {
+#    # TODO: figure out the mcl checkbutton access
+#    if { 1 || [$mcl GetCellTextAsInt $i 0] } {
+#      set term [$mcl GetCellText $i 1]
+#        if { ![string match "edit*" $term] && ($term != "") } {
+#              set terms "$terms+[$mcl GetCellText $i 1]"
+#        }
+#    }
+#  }
+#  set terms [ string trimleft $terms "+"]
+#  return $terms
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetSubStructureTerms {} {
+
+  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+  set mcl [[$::slicer3::QueryAtlasGUI GetCellMultiColumnList] GetWidget]
+
+  set terms ""
+  set n [$mcl GetNumberOfRows]
+  for {set i 0} {$i < $n} {incr i} {
+    # TODO: figure out the mcl checkbutton access
+    if { 1 || [$mcl GetCellTextAsInt $i 0] } {
+      set term [$mcl GetCellText $i 1]
+      if { ![string match "edit*" $term] } {
+        set terms "$terms+[$mcl GetCellText $i 1]"
+      }
+    }
+  }
+  set terms [ string trimleft $terms "+"]
+  return $terms
+}
+
+
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetDiagnosisTerms { } {
+    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+    set terms ""
+    set mb [[$::slicer3::QueryAtlasGUI GetDiagnosisMenuButton] GetWidget]
+    set terms [ $mb GetValue ]
+    return $terms
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetGenderTerms { } {
+    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+    set terms ""
+    set mb [[$::slicer3::QueryAtlasGUI GetGenderMenuButton] GetWidget]
+    set terms [ $mb GetValue ]
+    return $terms
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetSpeciesTerms { } {
+    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+    set terms ""
+    set cb_h [$::slicer3::QueryAtlasGUI GetSpeciesHumanButton]
+    set cb_ms [$::slicer3::QueryAtlasGUI GetSpeciesMouseButton]
+    set cb_mq [$::slicer3::QueryAtlasGUI GetSpeciesMacaqueButton]
+    
+    set human [ $cb_h GetSelectedState ]
+    set mouse [ $cb_ms GetSelectedState ]
+    set macaque [ $cb_mq GetSelectedState ]
+
+    if { $human } {
+        set terms "human"
+    }
+    if { $mouse } {
+        set terms "$terms+mouse"
+    }
+    if { $macaque } {
+        set terms "$terms+macaque"
+    }
+    return $terms
+}
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetSearchTargets { } {
+
+    set mb [$::slicer3::QueryAtlasGUI GetDatabasesMenuButton ]
+    set target ""
+    set target [ $mb GetValue ]
+    return $target
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#--- adds a term into the ontology panel's listbox
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasAddSavedTerms {} {
+
+    #--- add term to listbox.
+  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+  set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
+
+  set i [$mcl GetNumberOfRows]
+  $mcl SetCellText [ expr $i - 1 ] 0 $::QA(lastLabels)
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasAddStructureTerms {} {
+
+    #--- add term to listbox.
+  $::slicer3::ApplicationGUI SelectModule QueryAtlas
+  set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
+
+  set i [$mcl GetNumberOfRows]
+  $::slicer3::QueryAtlasGUI AddNewStructureSearchTerm $::QA(lastLabels)
+  $mcl SetCellTextAsInt $i 0 1
+  $mcl SetCellText $i 1 $::QA(lastLabels)
+
+  #--- set hierarchy entry with most recently selected term
+  set h_entry [$::slicer3::QueryAtlasGUI GetHierarchySearchTermEntry]
+  $h_entry SetValue $::QA(lastLabels)
+  
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#--- 
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSelectTermSet { termset } {
+
+
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasQuery { site } {
+
+    if { $::QA(lastLabels) == "background" || $::QA(lastLabels) == "Unknown" } {
+        set terms ""
+    } else {
+        set terms $::QA(lastLabels)
+    }
+
+    if { $::QA(menu,useTerms) } {
+        set terms "$terms+[QueryAtlasGetStructureTerms]"
+    }
+
+    regsub -all "/" $terms "+" terms
+    regsub -all -- "-" $terms "+" terms
+    regsub -all "ctx" $terms "cortex" terms
+    regsub -all "rh" $terms "right+hemisphere" terms
+    regsub -all "lh" $terms "left+hemisphere" terms
+
+    switch $site {
+        "google" {
+            $::slicer3::Application OpenLink http://www.google.com/search?q=$terms
+        }
+        "wikipedia" {
+            $::slicer3::Application OpenLink http://www.google.com/search?q=$terms+site:en.wikipedia.org
+        }
+        "pubmed" {
+            $::slicer3::Application OpenLink \
+                http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&db=PubMed&term=$terms
+        }
+        "jneurosci" {
+            $::slicer3::Application OpenLink \
+                http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$terms
+        }
+        "braininfo" {
+        }
+        "ibvd" {
+            regsub -all "Left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+            regsub -all "left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+            regsub -all "Right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+            regsub -all "right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
+            regsub -all "\\+" $terms "," commaterms
+
+            if { 0 } {
+                set terms "human,normal,$commaterms"
+                set url http://www.cma.mgh.harvard.edu/ibvd/search.php?f_submission=true&f_free=$commaterms
+            } else {
+                #--- this gets us the plot for a diagnosis context.
+                #--- set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms&diagnosis=$dterms
+                set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms
+                
+            }
+            $::slicer3::Application OpenLink $url
+        }
+        "metasearch" {
+            $::slicer3::Application OpenLink \
+                https://loci.ucsd.edu/qametasearch/query.do?query=$terms
+        }
+    }
+}
+
+
 
 #----------------------------------------------------------------------------------------------------
 #---
