@@ -117,24 +117,13 @@ void vtkQueryAtlasSearchTermWidget::GetAllSearchTerms ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasSearchTermWidget::AddTerm ( const char *term )
 {
-  int n, i;
-  int unique = 1;
   
-  // check to see if term is unique before adding it
-  n = this->MultiColumnList->GetWidget()->GetNumberOfRows();
-  for ( i=0; i<n; i++ )
+  if ( !strcmp (term, "" ) )
     {
-    if ( !strcmp (this->MultiColumnList->GetWidget()->GetCellText(i, 0), term ) )
-      {
-      unique = 0;
-      }
+    term = "<new>";
     }
-    if ( !strcmp (term, "") )
-      {
-      term = "<new term>";
-      }
-    // change to this script to get good string filtering in tcl
-    this->Script ( "QueryAtlasAddEntryTermToSavedTerms %s", term );
+  // change to this script to get good string filtering in tcl
+  this->Script ( "QueryAtlasAddEntryTermToSavedTerms %s", term );
 }
 
 
@@ -152,7 +141,7 @@ void vtkQueryAtlasSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
   if ( ( b == this->AddNewButton ) && (event == vtkKWPushButton::InvokedEvent ))
     {
     // add a new search term.
-    this->AddTerm ( "");
+    this->AddTerm ("<new>");
     }
   else if ( ( b == this->ClearSelectedButton ) && (event == vtkKWPushButton::InvokedEvent ))
     {

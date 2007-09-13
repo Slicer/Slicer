@@ -406,7 +406,7 @@ void vtkQueryAtlasUseSearchTermWidget::AddNewSearchTerm ( const char *term )
     }
   if ( !strcmp (term, "") )
     {
-    term = "<new term>";
+    term = "<new>";
     }
   if ( unique )
     {

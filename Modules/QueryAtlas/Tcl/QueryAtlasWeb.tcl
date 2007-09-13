@@ -135,15 +135,13 @@ proc QueryAtlasAddToSavedTerms {} {
             break
         }
     }
-    puts "$terms uniqueness is $unique"
 
     if { $unique } {
         #--- add new row
         $mcl AddRow
         set n [$mcl GetNumberOfRows]
-        puts "numrows = $n"
         $mcl SetCellText [ expr $n - 1 ] 0 $terms
-        $mcl SetCellBackgroundColor [ expr $n - 1 ] 1.0 1.0 1.0
+        $mcl SetCellBackgroundColor [ expr $n - 1 ] 0 1.0 1.0 1.0
     }
 
 }
@@ -156,8 +154,10 @@ proc QueryAtlasAddEntryTermToSavedTerms { terms } {
     $::slicer3::ApplicationGUI SelectModule QueryAtlas
     set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
 
-    #--- filter terms for friendlier viewing
-    set terms [ QueryAtlasFilterLocalTerms $terms ]
+    #--- filter local terms for friendlier viewing
+    if { $terms != "<new>" } {
+        set terms [ QueryAtlasFilterLocalTerms $terms ]
+    }
     
     set n [$mcl GetNumberOfRows]
     #--- check for uniqueness
@@ -170,7 +170,7 @@ proc QueryAtlasAddEntryTermToSavedTerms { terms } {
         }
     }
 
-    if { $unique } {
+    if { $unique || ($terms == "<new>") } {
         #--- add new row
         $mcl AddRow
         set n [$mcl GetNumberOfRows]
