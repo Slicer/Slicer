@@ -493,6 +493,9 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
   this->SetOrientationString(node->GetOrientationString());
 
+  this->LayoutGridColumns = node->LayoutGridColumns;
+  this->LayoutGridRows = node->LayoutGridRows;
+  
   int i;
   for(i=0; i<3; i++) 
     {
@@ -500,6 +503,7 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
     this->Dimensions[i] = node->Dimensions[i];
     }
   this->UpdateMatrices();
+
 }
 
 //----------------------------------------------------------------------------
@@ -519,6 +523,8 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << " " << this->Dimensions[idx];
   }
   os << "\n";
+
+  os << indent << "Layout grid: " << this->LayoutGridRows << "x" << this->LayoutGridColumns << "\n";
 
   os << indent << "SliceVisible: " <<
     (this->SliceVisible ? "not null" : "(none)") << "\n";
