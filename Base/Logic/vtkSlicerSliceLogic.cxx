@@ -1196,6 +1196,7 @@ void vtkSlicerSliceLogic::FitSliceToBackground(int width, int height)
   sliceToRAS->SetElement(1, 3, rasCenter[1]);
   sliceToRAS->SetElement(2, 3, rasCenter[2]);
   sliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS);
+  sliceNode->UpdateMatrices( );
   sliceToRAS->Delete();
 
 }
