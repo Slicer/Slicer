@@ -652,16 +652,14 @@ ModuleFactory
                 
                 if (mit == this->InternalMap->end())
                   {
-                  // Store the module in the list
-                  (*this->InternalMap)[module.GetTitle()] =  module ;
-
+                  // get the logo and put it on the module
                   if (logoImage)
                     {
                     // construct a module logo and set it on the module
                     ModuleLogo mLogo;
                     mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
                                    *logoPixelSize, *logoLength, 0);
-                    (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                    module.SetLogo(mLogo);
                     }
                   else if (logoFunction)
                     {                  
@@ -677,8 +675,11 @@ ModuleFactory
                     ModuleLogo mLogo;
                     mLogo.SetLogo( logo, width, height, pixelSize,
                                    bufferLength, 0);
-                    (*this->InternalMap)[module.GetTitle()].SetLogo(mLogo);
+                    module.SetLogo(mLogo);
                     }
+
+                  // Store the module in the list
+                  (*this->InternalMap)[module.GetTitle()] =  module ;
                   
                   information << "A module named \"" << module.GetTitle()
                               << "\" has been discovered at "
@@ -708,7 +709,7 @@ ModuleFactory
                 entry.Type = "SharedObjectModule";
                 entry.XMLDescription = xml;
                 
-                if (module.GetLogo().GetLogo())
+                if (module.GetLogo().GetBufferLength() != 0)
                   {
                   entry.LogoWidth = module.GetLogo().GetWidth();
                   entry.LogoHeight = module.GetLogo().GetHeight();
@@ -979,7 +980,7 @@ ModuleFactory
                 entry.Type = "CommandLineModule";
                 entry.XMLDescription = stdoutbuffer;
                 
-                if (module.GetLogo().GetLogo())
+                if (module.GetLogo().GetBufferLength() != 0)
                   {
                   entry.LogoWidth = module.GetLogo().GetWidth();
                   entry.LogoHeight = module.GetLogo().GetHeight();
@@ -1235,7 +1236,7 @@ ModuleFactory
                 entry.Type = "CommandLineModule";
                 entry.XMLDescription = xml;
                 
-                if (module.GetLogo().GetLogo())
+                if (module.GetLogo().GetBufferLength() != 0)
                   {
                   entry.LogoWidth = module.GetLogo().GetWidth();
                   entry.LogoHeight = module.GetLogo().GetHeight();
@@ -1476,7 +1477,7 @@ ModuleFactory
                 entry.Type = "CommandLineModule";
                 entry.XMLDescription = xml;
                 
-                if (module.GetLogo().GetLogo())
+                if (module.GetLogo().GetBufferLength() != 0)
                   {
                   entry.LogoWidth = module.GetLogo().GetWidth();
                   entry.LogoHeight = module.GetLogo().GetHeight();
@@ -1836,7 +1837,7 @@ ModuleFactory
             entry.Type = "PythonModule";
             entry.XMLDescription = xml;
             
-            if (module.GetLogo().GetLogo())
+            if (module.GetLogo().GetBufferLength() != 0)
               {
               entry.LogoWidth = module.GetLogo().GetWidth();
               entry.LogoHeight = module.GetLogo().GetHeight();
