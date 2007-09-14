@@ -31,7 +31,7 @@ Version:   $Revision: 1.2 $
 vtkMRMLScalarVolumeDisplayNode* vtkMRMLScalarVolumeDisplayNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeDisplayNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScalarVolumeDisplayNode");
   if(ret)
     {
     return (vtkMRMLScalarVolumeDisplayNode*)ret;
@@ -45,7 +45,7 @@ vtkMRMLScalarVolumeDisplayNode* vtkMRMLScalarVolumeDisplayNode::New()
 vtkMRMLNode* vtkMRMLScalarVolumeDisplayNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeDisplayNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLScalarVolumeDisplayNode");
   if(ret)
     {
     return (vtkMRMLScalarVolumeDisplayNode*)ret;

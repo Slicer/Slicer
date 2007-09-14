@@ -31,7 +31,7 @@ Version:   $Revision: 1.2 $
 vtkMRMLLabelMapVolumeDisplayNode* vtkMRMLLabelMapVolumeDisplayNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeDisplayNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLLabelMapVolumeDisplayNode");
   if(ret)
     {
     return (vtkMRMLLabelMapVolumeDisplayNode*)ret;
@@ -45,7 +45,7 @@ vtkMRMLLabelMapVolumeDisplayNode* vtkMRMLLabelMapVolumeDisplayNode::New()
 vtkMRMLNode* vtkMRMLLabelMapVolumeDisplayNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeDisplayNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLLabelMapVolumeDisplayNode");
   if(ret)
     {
     return (vtkMRMLLabelMapVolumeDisplayNode*)ret;
