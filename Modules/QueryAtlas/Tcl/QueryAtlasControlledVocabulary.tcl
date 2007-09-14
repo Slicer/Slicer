@@ -56,6 +56,7 @@ proc QueryAtlasFilterLocalTerms { terms } {
 
     regsub -all "/" $terms "+" terms
     regsub -all -- "-" $terms "+" terms
+    regsub -all -- "_" $terms "+" terms
     regsub -all -- " " $terms "+" terms
     regsub -all "ctx" $terms "cortex" terms
     regsub -all "rh" $terms "right+hemisphere" terms

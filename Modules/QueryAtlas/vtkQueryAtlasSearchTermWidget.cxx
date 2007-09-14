@@ -122,8 +122,10 @@ void vtkQueryAtlasSearchTermWidget::AddTerm ( const char *term )
     {
     term = "<new>";
     }
+  // replace any white space with a "-"
+  
   // change to this script to get good string filtering in tcl
-  this->Script ( "QueryAtlasAddEntryTermToSavedTerms %s", term );
+  this->Script ( "QueryAtlasAddEntryTermToSavedTerms \"%s\"", term );
 }
 
 

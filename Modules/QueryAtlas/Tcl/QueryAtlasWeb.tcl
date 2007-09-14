@@ -1,6 +1,6 @@
 
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasWriteFirefoxBookmarkFile { bmfile } {
+proc QueryAtlasWriteFirefoxBookmarkFile {bmfile } {
     
     #--- strip off filename
     set flist [ file split $bmfile ]
@@ -54,7 +54,7 @@ proc QueryAtlasWriteFirefoxBookmarkFile { bmfile } {
 
 
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasLoadFirefoxBookmarkFile { bmfile } {
+proc QueryAtlasLoadFirefoxBookmarkFile {bmfile } {
 
     #--- open file for writing
     set fp [open $bmfile "r"]
@@ -252,141 +252,187 @@ proc QueryAtlasQuery { site } {
 }
 
 
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetStructureTerms { } {
+
+
+    set w [ $::slicer3::QueryAtlasGUI GetStructureListWidget ]
+    set ww [ [$w GetMultiColumnList ] GetWidget ]
+
+    set terms ""
+    set ::QA(StructureTerms) ""
+    set numrows [ $ww GetNumberOfRows ]
+    for { set i 0 } { $i < $numrows } { incr i } {
+        # check select state
+        #--- if term is selected for use:
+        set term [ $ww GetCellText $i 1 ]
+        append terms $term
+        append terms "+"
+    }
+    set terms [ string trimright $terms "+" ]
+    set ::QA(StructureTerms) $terms
+}
+
 
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasFormURLForGoogle_Testing { } {
+proc QueryAtlasGetOtherTerms { } {
+    set w [ $::slicer3::QueryAtlasGUI GetOtherListWidget ]
+    set ww [ [$w GetMultiColumnList ] GetWidget ]
 
-    #--- get things from GUI:
-    set structure [QueryAtlasGetStructureTerms ]
-    set diagnosis [QueryAtlasGetDiagnosisTerms ]
-    set gender [QueryAtlasGetGenderTerms ]
-    set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetSubStructureTerms ]
-    set target [ QueryAtlasGetSearchTargets ]
-
-    unset -nocomplain ::QA(url,Google) 
-    set url "http://www.google.com/search?hl-en&q="
-    #--- for google, put each term in each list in quotes.
-
-    #--- structure first how many "+" are there?
-    set multiTerms [ string first "+" $structure ]
-    if { !($multiTerms < 0) } {
-        set tmp ""
-        set newStructure ""
-        set start 0
-        set i [ string first "+" $structure ]
-        while { $i > 0 } {
-            set tmp [ string range $structure $start $i ]
-            set newStructure "$newStructure+\"$tmp\""
-            set start $i
-            set i [ string first "+" $structure ]
-        }
-        #--- remove the leading "+"
-        set newStructure [ string range $newStructure 1 end ]
-    } else {
-        set newStructure $structure
+    set terms ""
+    set ::QA(OtherTerms) ""
+    set numrows [ $ww GetNumberOfRows ]
+    for { set i 0 } { $i < $numrows } { incr i } {
+        # check select state
+        #--- if term is selected for use:
+        set term [ $ww GetCellText $i 1 ]
+        append terms $term
+        append terms "+"
     }
-    #--- cell next
-    set multiTerms [ string first "+" $cells ]
-    if { !($multiTerms < 0) } {
-        set tmp ""
-        set newCells ""
-        set start 0
-        set i [ string first "+" $cells ]
-        while { $i > 0 } {
-            set tmp [ string range $cells $start $i ]
-            set newCells "$newCells+\"$tmp\""
-            set start $i
-            set i [ string first "+" $cells ]
-        }
-        #--- remove the leading "+"
-        set newCells [ string range $newCells 1 end ]
-    } else {
-        set newCells $cells
-    }
-    #--- genes next
-    set multiTerms [ string first "+" $genes ]
-    if { !($multiTerms < 0) } {
-        set tmp ""
-        set newGenes ""
-        set start 0
-        set i [ string first "+" $genes ]
-        while { $i > 0 } {
-            set tmp [ string range $genes $start $i ]
-            set newGenes "$newGenes+\"$tmp\""
-            set start $i
-            set i [ string first "+" $genes ]
-        }
-        #--- remove the leading "+"
-        set newGenes [ string range $newGenes 1 end ]
-    } else {
-        set newGenes $genes
-    }
-    #--- misc next
-    set multiTerms [ string first "+" $misc ]
-    if { !($multiTerms < 0) } {
-        set tmp ""
-        set newMisc ""
-        set start 0
-        set i [ string first "+" $misc ]
-        while { $i > 0 } {
-            set tmp [ string range $misc $start $i ]
-            set newMisc "$newMisc+\"$tmp\""
-            set start $i
-            set i [ string first "+" $misc ]
-        }
-        #--- remove the leading "+"
-        set newMisc [ string range $newMisc 1 end ]
-    } else {
-        set newMisc $misc
-    }
-    #--- make something reasonable for gender
-    if {$gender =="M" } {
-        set newGender "male"
-    } elseif {$gender == "F" } {
-        set newGender "female"
-    } elseif {$gender == "mixed" } {
-        set newGender "\"mixed gender\""
-    } elseif {$gender == "n/a" } {
-        set newGender ""
-    }
-    append url "$newStructure+$newMisc+$newCells+$newGenes"
-    if { $newGender != "" } {
-        append url "+$newGender"
-    }
-
-    #--- make something reasonable for diagnosis
-    if { $diagnosis != "normal" } {
-        append url "+\"$diagnosis\""
-    }
-    append url "&btnG=Google+Search"
-    set ::QA(url,Google) $url
+    set terms [ string trimright $terms "+" ]
+    set ::QA(OtherTerms) $terms
 }
 
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetPopulationTerms { } {
+
+    set terms ""
+    set ::QA(PopulationTerms) ""
+
+    set m $::slicer3::QueryAtlasGUI
+    set termD [[[ $m GetDiagnosisMenuButton ] GetWidget ] GetValue ]
+    if { $termD != "" && $termD != "n/a" && $termD != "Normal"} {
+        append terms $termD
+        append terms "+"
+    }
+
+    set termG [[[ $m GetGenderMenuButton ] GetWidget ] GetValue ]    
+    if { $termG != "" && $termG != "n/a" } {
+        append terms $termG
+        append terms "+"
+    }
+
+    set termA [[[ $m GetAgeMenuButton ] GetWidget ] GetValue ]    
+    if { $termA != "" && $termA != "n/a" } {
+        append terms $termA
+        append terms "+"
+    }
+
+    set termH [[[ $m GetHandednessMenuButton ] GetWidget ] GetValue ]    
+    if { $termH != "" && $termH != "n/a" } {
+        append terms $termH
+    }
+    set terms [ string trimright $terms "+" ]
+    set ::QA(PopulationTerms) $terms
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetSpeciesTerms { } {
+
+    set ::QA(speciesTerms) ""
+    set b  [$::slicer3::QueryAtlasGUI GetSpeciesNoneButton ]
+    set species [$b GetVariableValue ]
+    if { $species == "human" || $species == "mouse" || $species == "macaque" } {
+        set ::QA(SpeciesTerms) $species
+    }
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasAppendStructureTerms { terms } {
+    
+    QueryAtlasGetStructureTerms
+    if { [ info exists ::QA(StructureTerms) ]  } {
+        if { $terms != "" } {
+            append terms "+"
+        }
+        append terms $::QA(StructureTerms)
+    }
+    return $terms
+}
+
+    
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasAppendPopulationTerms { terms } {
+
+    QueryAtlasGetPopulationTerms
+    if { [ info exists ::QA(PopulationTerms) ]  } {
+        if { $terms != "" && $terms != "n/a" } {
+            append terms "+"
+        }
+        append terms $::QA(PopulationTerms)        
+    }
+    return $terms
+}
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasAppendSpeciesTerms { terms } {
+
+    QueryAtlasGetSpeciesTerms
+    if { [ info exists ::QA(SpeciesTerms) ]  } {
+        if { $terms != "" } {
+            append terms "+"
+        }
+        append terms $::QA(SpeciesTerms)        
+    }
+    return $terms
+}
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasAppendOtherTerms { terms } {
+
+    QueryAtlasGetOtherTerms
+    if { [ info exists ::QA(OtherTerms) ]  } {
+        if { $terms != "" } {
+            append terms "+"
+        }
+        append terms $::QA(OtherTerms)        
+    }
+    return $terms
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
 proc QueryAtlasFormURLForGoogle { } {
     #--- get things from GUI:
-    set structure [QueryAtlasGetStructureTerms ]
-    set diagnosis [QueryAtlasGetDiagnosisTerms ]
-    set gender [QueryAtlasGetGenderTerms ]
-    set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetSubStructureTerms ]
+
+    set terms ""
+    set terms [ QueryAtlasAppendStructureTerms $terms ]
+    set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    set terms [ QueryAtlasAppendSpeciesTerms $terms ] 
+    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    set terms [ string trimright $terms "+" ]
+    puts "$terms"
+    #--- now terms contains all.
     set target [ QueryAtlasGetSearchTargets ]
 
     set ::QA(url,Google) ""
     set url "http://www.google.com/search?hl-en&q="
-    #--- get only the first structure from the structurelist
-    set i [ string first "+" $structure ]
-    if { $i > 0 } {
-        #--- found a "+", so grab all chars up to it
-        set singleStructure [ string range $structure 0 [ expr $i - 1 ] ]
-    } else {
-        set singleStructure $structure
-    }
-    append url "$singleStructure"
+    append url $terms
     append url "&btnG=Google+Search"
     set ::QA(url,Google) $url
+    puts "$::QA(url,Google)"
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -395,11 +441,13 @@ proc QueryAtlasFormURLForGoogle { } {
 proc QueryAtlasFormURLForWikipedia { } {
 
     #--- get things from GUI:
-    set structure [QueryAtlasGetStructureTerms ]
-    set diagnosis [QueryAtlasGetDiagnosisTerms ]
-    set gender [QueryAtlasGetGenderTerms ]
-    set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetSubStructureTerms ]
+    set terms ""
+    set terms [ QueryAtlasAppendStructureTerms $terms ]
+    set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    set terms [ string trimright $terms "+" ]
+    #--- now terms contains all.
     set target [ QueryAtlasGetSearchTargets ]
 
     set ::QA(url,Wikipedia) ""
@@ -430,11 +478,13 @@ proc QueryAtlasFormURLForWikipedia { } {
 proc QueryAtlasFormURLForIBVD { } {
 
     #--- get things from GUI:
-    set structure [QueryAtlasGetStructureTerms ]
-    set diagnosis [QueryAtlasGetDiagnosisTerms ]
-    set gender [QueryAtlasGetGenderTerms ]
-    set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetSubStructureTerms ]
+    set terms ""
+    set terms [ QueryAtlasAppendStructureTerms $terms ]
+#    set terms [ QueryAtlasAppendPopulationTerms $terms ]
+#    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+#    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    set terms [ string trimright $terms "+" ]
+    #--- now terms contains all.
     set target [ QueryAtlasGetSearchTargets ]
 
     unset  -nocomplain ::QA(url,IBVD) 
@@ -468,11 +518,13 @@ proc QueryAtlasFormURLForIBVD { } {
 proc QueryAtlasFormURLForPubMed { } {
 
     #--- get things from GUI:
-    set structure [QueryAtlasGetStructureTerms ]
-    set diagnosis [QueryAtlasGetDiagnosisTerms ]
-    set gender [QueryAtlasGetGenderTerms ]
-    set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetSubStructureTerms ]
+    set terms ""
+    set terms [ QueryAtlasAppendStructureTerms $terms ]
+    set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    set terms [ string trimright $terms "+" ]    
+    #--- now terms contains all.
     set target [ QueryAtlasGetSearchTargets ]
 
     #--- TODO:
@@ -488,12 +540,15 @@ proc QueryAtlasFormURLForPubMed { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasFormURLForJNeurosci { } {
 
+
     #--- get things from GUI:
-    set structure [QueryAtlasGetStructureTerms ]
-    set diagnosis [QueryAtlasGetDiagnosisTerms ]
-    set gender [QueryAtlasGetGenderTerms ]
-    set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetSubStructureTerms ]
+    set terms ""
+    set terms [ QueryAtlasAppendStructureTerms $terms ]
+    set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    set terms [ string trimright $terms "+" ]    
+    #--- now terms contains all.
     set target [ QueryAtlasGetSearchTargets ]
 
     #--- TODO:
@@ -512,11 +567,13 @@ proc QueryAtlasFormURLForJNeurosci { } {
 proc QueryAtlasFormURLForMetasearch { } {
 
     #--- get things from GUI:
-    set structure [QueryAtlasGetStructureTerms ]
-    set diagnosis [QueryAtlasGetDiagnosisTerms ]
-    set gender [QueryAtlasGetGenderTerms ]
-    set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetSubStructureTerms ]
+    set terms ""
+    set terms [ QueryAtlasAppendStructureTerms $terms ]
+    set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    set terms [ string trimright $terms "+" ]    
+    #--- now terms contains all.
     set target [ QueryAtlasGetSearchTargets ]
 
     unset -nocomplain ::QA(url,Metasearch) 
@@ -530,11 +587,13 @@ proc QueryAtlasFormURLForMetasearch { } {
 proc QueryAtlasFormURLForBraininfo { } {
 
     #--- get things from GUI:
-    set structure [QueryAtlasGetStructureTerms ]
-    set diagnosis [QueryAtlasGetDiagnosisTerms ]
-    set gender [QueryAtlasGetGenderTerms ]
-    set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetSubStructureTerms ]
+    set terms ""
+    set terms [ QueryAtlasAppendStructureTerms $terms ]
+#    set terms [ QueryAtlasAppendPopulationTerms $terms ]
+#    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+#    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    set terms [ string trimright $terms "+" ]    
+    #--- now terms contains all.
     set target [ QueryAtlasGetSearchTargets ]
 
     #--- TODO: just take first structure term.
@@ -553,11 +612,13 @@ proc QueryAtlasFormURLForBraininfo { } {
 proc QueryAtlasFormURLsForEntrez { } {
 
     #--- get things from GUI:
-    set structure [QueryAtlasGetStructureTerms ]
-    set diagnosis [QueryAtlasGetDiagnosisTerms ]
-    set gender [QueryAtlasGetGenderTerms ]
-    set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetSubStructureTerms ]
+    set terms ""
+    set terms [ QueryAtlasAppendStructureTerms $terms ]
+   set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    set terms [ string trimright $terms "+" ]    
+    #--- now terms contains all.
     set target [ QueryAtlasGetSearchTargets ]
 
     unset -nocomplain ::QA(url,EntrezCounts ) 
@@ -638,18 +699,20 @@ proc QueryAtlasFormURLsForEntrez { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasFormURLsForTargets { } {
 
-    #--- get things from GUI:
-    set structure [QueryAtlasGetStructureTerms ]
-    set diagnosis [QueryAtlasGetDiagnosisTerms ]
-    set gender [QueryAtlasGetGenderTerms ]
-    set species [QueryAtlasGetSpeciesTerms ]
-    set cells [QueryAtlasGetSubStructureTerms ]
+#    set terms ""
+#    QueryAtlasAppendStructureTerms $terms
+#    QueryAtlasAppendPopulationTerms $terms
+#    QueryAtlasAppendSpeciesTerms $terms
+#    QueryAtlasAppendOtherTerms $terms
+#--- now terms contains all.
+
+
     set target [ QueryAtlasGetSearchTargets ]
     
     #--- Form urls for each Search Target requested.
     #--- PubMed
     if { ($target == "PubMed") } {
-        QueryAtlasFormURLForPubMed
+        QueryAtlasFormURLForPubMed 
         puts "$::QA(url,PubMed)"
     }
     #--- J Neurosci

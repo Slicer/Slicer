@@ -17,8 +17,8 @@
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWListBox.h"
 #include "vtkKWListBoxWithScrollbars.h"
-#include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveButton.h"
+#include "vtkKWLoadSaveButtonWithLabel.h"
 
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerApplication.h"
@@ -841,15 +841,14 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->AgeMenuButton->GetWidget()->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AddDiagnosisEntry->GetWidget()->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->DatabasesMenuButton->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
   this->SearchButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->DeselectAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeselectAllAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentSelectedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SaveAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->LoadURIsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->SaveAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->LoadURIsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAccumulatedResultButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteCurrentResultButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -919,15 +918,14 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->AgeMenuButton->GetWidget()->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AddDiagnosisEntry->GetWidget()->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->DatabasesMenuButton->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
   this->SearchButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
-  this->DeselectAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->DeselectAllAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->DeselectAllCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->DeselectAllAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentSelectedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SaveAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->LoadURIsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->SaveAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->LoadURIsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAccumulatedResultButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteCurrentResultButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1334,14 +1332,14 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     this->AccumulatedResultsList->GetWidget()->DeleteAll();
     }
-  else if ( (b == this->SaveAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->Script( "QueryAtlasWriteFirefoxBookmarkFile doodle");
-    }
-  else if ( (b == this->LoadURIsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->Script( "QueryAtlasLoadFirefoxBookmarkFile doodle");
-    }
+//  else if ( (b == this->SaveAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+//    {
+//    this->Script( "QueryAtlasWriteFirefoxBookmarkFile");
+//    }
+//  else if ( (b == this->LoadURIsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+//    {
+//    this->Script( "QueryAtlasLoadFirefoxBookmarkFile");
+//    }
 
 
   //---
@@ -1410,6 +1408,29 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     }
     return;
 }
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::WriteBookmarksFile ()
+{
+  // get file from dialog
+  const char *filen;
+  filen = this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->GetFileName();
+  this->Script( "QueryAtlasWriteFirefoxBookmarkFile $s", filen );
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::LoadBookmarksFile ()
+{
+  // get file from dialog
+  const char *filen;
+  filen = this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->GetFileName();
+  this->Script( "QueryAtlasLoadFirefoxBookmarkFile %s", filen );
+}
+
+
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::ColorCodeContextButtons ( vtkKWPushButton *b )
@@ -1644,7 +1665,7 @@ void vtkQueryAtlasGUI::BuildLoadAndConvertGUI ( )
     vtkSlicerModuleCollapsibleFrame *convertFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     convertFrame->SetParent ( page );
     convertFrame->Create ( );
-    convertFrame->SetLabelText ("Configure");
+    convertFrame->SetLabelText ("Scene Setup");
     convertFrame->ExpandFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 4 -in %s",
                   convertFrame->GetWidgetName(),
@@ -2208,7 +2229,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->ResultsWithAnyButton->SetParent ( f );
     this->ResultsWithAnyButton->Create();
     this->ResultsWithAnyButton->SetImageToIcon ( this->QueryAtlasIcons->GetWithAnyIcon() );
-    this->ResultsWithAnyButton->SetSelectImageToIcon ( this->QueryAtlasIcons->GetWithAnySelectedIcon() );
+    this->ResultsWithAnyButton->SetSelectImageToIcon ( this->QueryAtlasIcons->GetWithAnyDisabledIcon() );
     this->ResultsWithAnyButton->SetBorderWidth ( 0 );
     this->ResultsWithAnyButton->SetReliefToFlat ( );
     this->ResultsWithAnyButton->SetSelectedState ( 1 );
@@ -2281,7 +2302,7 @@ void vtkQueryAtlasGUI::OpenLinkFromCurrentList ( )
   
     url = this->CurrentResultsList->GetWidget()->GetSelection();
     //--- open in browser
-    this->Script ( "QueryAtlasOpenLink $url" );
+    this->Script ( "QueryAtlasOpenLink %s", url);
 
 }
 
@@ -2294,7 +2315,7 @@ void vtkQueryAtlasGUI::OpenLinkFromAccumulatedList ( )
   
     url = this->AccumulatedResultsList->GetWidget()->GetSelection();
     //--- open in browser
-    this->Script ( "QueryAtlasOpenLink $url" );
+    this->Script ( "QueryAtlasOpenLink %s", url );
 
 }
 
@@ -2429,22 +2450,31 @@ void vtkQueryAtlasGUI::BuildQueryManagerGUI ()
     this->DeleteAllAccumulatedResultsButton->SetReliefToFlat();    
     this->DeleteAllAccumulatedResultsButton->SetBalloonHelpString ("Delete all");
 
-    this->SaveAccumulatedResultsButton = vtkKWPushButton::New();
+    this->SaveAccumulatedResultsButton = vtkKWLoadSaveButton::New();
     this->SaveAccumulatedResultsButton->SetParent (pastF);
     this->SaveAccumulatedResultsButton->Create();    
     this->SaveAccumulatedResultsButton->SetImageToIcon (  app->GetApplicationGUI()->GetApplicationToolbar()->GetSlicerToolbarIcons()->GetSaveSceneIcon() );   
     this->SaveAccumulatedResultsButton->SetBorderWidth ( 0 );
     this->SaveAccumulatedResultsButton->SetReliefToFlat();    
     this->SaveAccumulatedResultsButton->SetBalloonHelpString ("Save links to file");
+    this->SaveAccumulatedResultsButton->SetCommand ( this, "WriteBookmarksFile" );
+    this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->SetTitle("Save Firefox bookmarks file");
+    this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->ChooseDirectoryOff();
+    this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->SaveDialogOn();
+    this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->SetFileTypes ( "*.html");
 
-
-    this->LoadURIsButton = vtkKWPushButton::New();
+    this->LoadURIsButton = vtkKWLoadSaveButton::New();
     this->LoadURIsButton->SetParent ( pastF);
     this->LoadURIsButton->Create();
     this->LoadURIsButton->SetImageToIcon ( app->GetApplicationGUI()->GetApplicationToolbar()->GetSlicerToolbarIcons()->GetLoadSceneIcon() );   
     this->LoadURIsButton->SetBorderWidth(0);
     this->LoadURIsButton->SetReliefToFlat ( );
     this->LoadURIsButton->SetBalloonHelpString ( "Load links from file" );
+    this->LoadURIsButton->SetCommand ( this, "LoadBookmarksFile" );
+    this->LoadURIsButton->GetLoadSaveDialog()->SetTitle("Load Firefox bookmarks file");
+    this->LoadURIsButton->GetLoadSaveDialog()->ChooseDirectoryOff();
+    this->LoadURIsButton->GetLoadSaveDialog()->SaveDialogOff();
+    this->LoadURIsButton->GetLoadSaveDialog()->SetFileTypes ( "*.html");
 
     app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand 1", topcurF->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", curL->GetWidgetName() );
@@ -2941,6 +2971,7 @@ void vtkQueryAtlasGUI::GetStructureTerms ( )
 {
 
   this->StructureTerms.clear();
+  // this counts the number of selected items instead of the number of CHECKED items
   int num = this->StructureListWidget->GetNumberOfSearchTermsToUse();
   for ( int i = 0; i < num; i++ )
     {

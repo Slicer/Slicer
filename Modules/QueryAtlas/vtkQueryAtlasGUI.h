@@ -135,8 +135,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( AccumulatedResultsList, vtkKWListBoxWithScrollbars );    
     vtkGetObjectMacro ( DeleteAccumulatedResultButton, vtkKWPushButton );
     vtkGetObjectMacro ( DeleteAllAccumulatedResultsButton, vtkKWPushButton );
-    vtkGetObjectMacro ( SaveAccumulatedResultsButton, vtkKWPushButton );
-    vtkGetObjectMacro ( LoadURIsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( SaveAccumulatedResultsButton, vtkKWLoadSaveButton );
+    vtkGetObjectMacro ( LoadURIsButton, vtkKWLoadSaveButton );
     
     vtkGetMacro ( NumberOfColumns, int );
 
@@ -348,13 +348,15 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWPushButton *DeleteAccumulatedResultButton;
     vtkKWPushButton *DeleteAllAccumulatedResultsButton;
 
-    vtkKWPushButton *SaveAccumulatedResultsButton;
-    vtkKWPushButton *LoadURIsButton;
+    vtkKWLoadSaveButton *SaveAccumulatedResultsButton;
+    vtkKWLoadSaveButton *LoadURIsButton;
 
     // cell frame
     vtkKWFrame *OtherFrame;
     vtkQueryAtlasUseSearchTermWidget *OtherListWidget;
 
+    void WriteBookmarksFile();
+    void LoadBookmarksFile();
     void OpenBIRNLexBrowser();
     void OpenNeuroNamesBrowser();
     void OpenUMLSBrowser();
