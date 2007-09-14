@@ -1964,24 +1964,7 @@ ModuleFactory
             words[8].erase(0, pos);
             }
 
-          if (words[8] != "None")
-            {
-            unsigned char *bin = new unsigned char[words[8].size()];
-            unsigned int decodedLengthActual = itksysBase64_Decode(
-              (const unsigned char *) words[8].c_str(),
-              0,
-              (unsigned char *) bin,
-              words[8].size());
-            
-            entry.Logo =
-              std::string((char *)bin, decodedLengthActual) ; 
-            
-            delete []bin;
-            }
-          else
-            {
-            entry.Logo = words[8];
-            }
+          entry.Logo = words[8];
           
           (*this->InternalCache)[entry.Location] = entry;
             
@@ -2081,21 +2064,8 @@ ModuleFactory
             cache << (*cit).second.LogoWidth << ", "
                   << (*cit).second.LogoHeight << ", "
                   << (*cit).second.LogoPixelSize << ", "
-                  << (*cit).second.LogoLength << ", ";
-
-            int encodedLengthEstimate = 2 * (*cit).second.Logo.size();
-            encodedLengthEstimate = ((encodedLengthEstimate / 4) + 1) * 4;
-
-            char *bin = new char[encodedLengthEstimate];
-            int encodedLengthActual = itksysBase64_Encode(
-              (const unsigned char *) (*cit).second.Logo.c_str(),
-              (*cit).second.Logo.size(),
-              (unsigned char *) bin,
-              0);
-            std::string encodedLogo(bin, encodedLengthActual);
-            delete []bin;
-            
-            cache << encodedLogo << std::endl;
+                  << (*cit).second.LogoLength << ", "
+                  << (*cit).second.Logo << std::endl;
             }
           else
             {
