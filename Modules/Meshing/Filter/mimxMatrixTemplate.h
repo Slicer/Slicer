@@ -128,12 +128,12 @@ template < class T > void CMatrix < T >::Release ()     // similar to the destru
 }
 
 // =============== member functions ===========================================
-template < class T > int CMatrix < T >::GetRows () const const
+template < class T > int CMatrix < T >::GetRows () const 
 {
   return (nRows);
 }
 
-template < class T > int CMatrix < T >::GetColumns () const const
+template < class T > int CMatrix < T >::GetColumns () const
 {
   return (nColumns);
 }
@@ -217,7 +217,7 @@ T >::operator= (const CMatrix & matarg)
 // ==================== Error Handler ========================
 template < class T >
   void CMatrix < T >::ErrorHandler (int nErrorCode, int nR,
-                                    int nC) const const
+                                    int nC) const
 {
   int errorLevel = FATAL;
 
