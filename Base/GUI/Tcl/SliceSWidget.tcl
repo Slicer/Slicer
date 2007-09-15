@@ -225,10 +225,18 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
   }
 
+  # To support the LightBox, the event locations sometimes need to be
+  # relative to a renderer (or viewport or pane of the lightbox).
+  # Currently, these are relative to the viewport of the "start" action. 
+  # We may need to change this in some cases to be relative to an "active" 
+  # viewport.
+
+
   #
   # get the event position and make it relative to a renderer
   #
   foreach {windowx windowy} [$_interactor GetEventPosition] {}
+  foreach {lastwindowx lastwindowy} [$_interactor GetLastEventPosition] {}
   set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
 
 
@@ -265,6 +273,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       # - first update the annotation
       # - then handle modifying the view
       #
+      $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
 
       $this updateAnnotation $x $y $r $a $s
 
@@ -315,6 +324,34 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             }
             $sliceGUI SetGUICommandAbortFlag 1
           }
+          "Rotate" {
+            #
+            # Rotate
+            # TODO: move calculation to vtkSlicerSliceLogic
+            set dx [expr $windowx - $lastwindowx]
+            set dy [expr $windowy - $lastwindowy]
+
+            set dazimuth   [expr 20.0 / $w]
+            set delevation [expr 20.0 / $h]
+
+            set rx [expr $dx * $dazimuth * 10.0]
+            set ry [expr $dy * $delevation * 10.0]
+
+            # puts "rx = $rx"
+
+            set tfm [$this vtkNew vtkTransform]
+            $tfm PreMultiply
+            $tfm Identity
+            $tfm SetMatrix [$_sliceNode GetSliceToRAS] 
+            $tfm RotateX $ry
+            $tfm RotateY $rx
+
+            [$_sliceNode GetSliceToRAS] DeepCopy [$tfm GetMatrix]
+            $tfm Delete
+
+            $_sliceNode UpdateMatrices
+            $sliceGUI SetGUICommandAbortFlag 1
+           }
           default {
             # need to render to show the annotation
             [$sliceGUI GetSliceViewer] RequestRender
@@ -324,7 +361,11 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
 
     "RightButtonPressEvent" {
-      set _actionState "Zoom"
+        if { [$_sliceNode GetOrientationString] == "Reformat" && [$_interactor GetControlKey] } {
+        set _actionState "Rotate"
+      } else {
+        set _actionState "Zoom"
+      }
       set _actionStartXY "$x $y"
       set _actionStartWindowXY "$windowx $windowy"
       set _actionStartViewportOrigin "$rox $roy"

@@ -449,6 +449,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     mb->GetMenu()->AddRadioButton ( "Axial" );
     mb->GetMenu()->AddRadioButton ( "Sagittal" );
     mb->GetMenu()->AddRadioButton ( "Coronal" );
+    mb->GetMenu()->AddRadioButton ( "Reformat" );
     mb->SetValue ("Axial");    
 
     // Foreground, Background, and Label selections
@@ -886,6 +887,23 @@ void vtkSlicerSliceControllerWidget::UpdateOrientation ( int link )
     else
       {
       this->SliceNode->SetOrientationToCoronal();
+      }
+    }
+  if ( !strcmp (mb->GetValue(), "Reformat") )   
+    {
+    if ( link )
+      {
+      nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSliceNode");          
+      for ( i=0; i<nnodes; i++)
+        {
+        snode = vtkMRMLSliceNode::SafeDownCast (
+                                                this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceNode"));
+        snode->SetOrientationToReformat();
+        }
+      }
+    else
+      {
+      this->SliceNode->SetOrientationToReformat();
       }
     }
 

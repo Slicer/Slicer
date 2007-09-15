@@ -77,6 +77,10 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   void SetOrientationToSagittal();
   void SetOrientationToCoronal();
 
+  // Description:
+  // General 'reformat' view that allows for multiplanar reformat
+  void SetOrientationToReformat();
+  
   // Description
   // A description of the current orientation
   vtkGetStringMacro (OrientationString);

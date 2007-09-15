@@ -108,6 +108,16 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
 
 
 //----------------------------------------------------------------------------
+void vtkMRMLSliceNode::SetOrientationToReformat()
+{
+    // Don't need to do anything.  Leave the matrices where they were
+    // so the reformat starts where you were.
+
+    this->SetOrientationString( "Reformat" );
+}
+
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToAxial()
 {
     this->SliceToRAS->Identity();
