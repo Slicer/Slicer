@@ -25,14 +25,14 @@ ENABLE_TESTING()
 
 
 ADD_EXECUTABLE(vtkRebinMaterialPropertyTest vtkRebinMaterialPropertyTest.cxx)
-TARGET_LINK_LIBRARIES(vtkRebinMaterialPropertyTest MimxMeshFilter
+TARGET_LINK_LIBRARIES(vtkRebinMaterialPropertyTest mimxFilter
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon 
                       ITKIO ITKBasicFilters ITKCommon itkvnl_algo itkvnl)
 ADD_TEST(vtkRebinMaterialPropertyTest ${EXECUTABLE_OUTPUT_PATH}/vtkRebinMaterialPropertyTest)
 
 
 ADD_EXECUTABLE(itkImageToVtkUnstructuredGridTest itkImageToVtkUnstructuredGridTest.cxx)
-TARGET_LINK_LIBRARIES(itkImageToVtkUnstructuredGridTest MimxMeshFilter 
+TARGET_LINK_LIBRARIES(itkImageToVtkUnstructuredGridTest mimxFilter 
                       vtkHybrid vtkRendering vtkGraphics vtkImaging vtkIO vtkFiltering vtkCommon 
                       ITKIO ITKBasicFilters ITKCommon itkvnl_algo itkvnl)
 ADD_TEST(itkImageToVtkUnstructuredGridTest ${EXECUTABLE_OUTPUT_PATH}/itkImageToVtkUnstructuredGridTest)

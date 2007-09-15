@@ -48,7 +48,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "vtkPolyDataAlgorithm.h"
 
-class vtkSmoothPoints;
+class vtkMimxSmoothPoints;
 
 class VTK_MIMXFILTER_EXPORT vtkMimxConstrainedSmoothPolyDataFilter : public vtkPolyDataAlgorithm
 {
@@ -143,7 +143,7 @@ protected:
   int GenerateErrorScalars;
   int GenerateErrorVectors;
 
-  vtkSmoothPoints *SmoothPoints;
+  vtkMimxSmoothPoints *SmoothPoints;
 private:
   vtkMimxConstrainedSmoothPolyDataFilter(const vtkMimxConstrainedSmoothPolyDataFilter&);  // Not implemented.
   void operator=(const vtkMimxConstrainedSmoothPolyDataFilter&);  // Not implemented.

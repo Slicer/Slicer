@@ -45,16 +45,16 @@ vtkStandardNewMacro(vtkMimxConstrainedSmoothPolyDataFilter);
 
 // The following code defines a helper class for performing mesh smoothing
 // across the surface of another mesh.
-typedef struct _vtkSmoothPoint {
+typedef struct _vtkMimxSmoothPoint {
     vtkIdType     cellId;  // cell
     int     subId;   // cell sub id
     double   p[3];    // parametric coords in cell 
-} vtkSmoothPoint;
+} vtkMimxSmoothPoint;
 
-class vtkSmoothPoints { //;prevent man page generation
+class vtkMimxSmoothPoints { //;prevent man page generation
 public:
-  vtkSmoothPoints();
-  ~vtkSmoothPoints()
+  vtkMimxSmoothPoints();
+  ~vtkMimxSmoothPoints()
     {
     if (this->Array)
       {
@@ -62,8 +62,8 @@ public:
       }
     };
   vtkIdType GetNumberOfPoints() {return this->MaxId + 1;};
-  vtkSmoothPoint *GetSmoothPoint(vtkIdType i) {return this->Array + i;};
-  vtkSmoothPoint *InsertSmoothPoint(vtkIdType ptId) 
+  vtkMimxSmoothPoint *GetSmoothPoint(vtkIdType i) {return this->Array + i;};
+  vtkMimxSmoothPoint *InsertSmoothPoint(vtkIdType ptId) 
     {
     if ( ptId >= this->Size )
       {
@@ -75,26 +75,26 @@ public:
       }
     return this->Array + ptId;
     }
-  vtkSmoothPoint *Resize(vtkIdType sz); //reallocates data
+  vtkMimxSmoothPoint *Resize(vtkIdType sz); //reallocates data
   void Reset() {this->MaxId = -1;};
 
-  vtkSmoothPoint *Array;  // pointer to data
+  vtkMimxSmoothPoint *Array;  // pointer to data
   vtkIdType MaxId;              // maximum index inserted thus far
   vtkIdType Size;               // allocated size of data
   vtkIdType Extend;             // grow array by this amount
 };
 
-vtkSmoothPoints::vtkSmoothPoints()
+vtkMimxSmoothPoints::vtkMimxSmoothPoints()
 {
   this->MaxId = -1; 
-  this->Array = new vtkSmoothPoint[1000];
+  this->Array = new vtkMimxSmoothPoint[1000];
   this->Size = 1000;
   this->Extend = 5000;
 }
 
-vtkSmoothPoint *vtkSmoothPoints::Resize(vtkIdType sz)
+vtkMimxSmoothPoint *vtkMimxSmoothPoints::Resize(vtkIdType sz)
 {
-  vtkSmoothPoint *newArray;
+  vtkMimxSmoothPoint *newArray;
   vtkIdType newSize;
 
   if (sz >= this->Size)
@@ -107,10 +107,10 @@ vtkSmoothPoint *vtkSmoothPoints::Resize(vtkIdType sz)
     newSize = sz;
     }
 
-  newArray = new vtkSmoothPoint[newSize];
+  newArray = new vtkMimxSmoothPoint[newSize];
 
   memcpy(newArray, this->Array,
-         (sz < this->Size ? sz : this->Size) * sizeof(vtkSmoothPoint));
+         (sz < this->Size ? sz : this->Size) * sizeof(vtkMimxSmoothPoint));
 
   this->Size = newSize;
   delete [] this->Array;
@@ -539,8 +539,8 @@ int vtkMimxConstrainedSmoothPolyDataFilter::RequestData(
   // constrained to the surface of the mesh object).
   if ( source )
     {
-    this->SmoothPoints = new vtkSmoothPoints;
-    vtkSmoothPoint *sPtr;
+    this->SmoothPoints = new vtkMimxSmoothPoints;
+    vtkMimxSmoothPoint *sPtr;
     cellLocator = vtkCellLocator::New();
     w = new double[input->GetMaxCellSize()];
     
@@ -622,7 +622,7 @@ int vtkMimxConstrainedSmoothPolyDataFilter::RequestData(
         // Constrain point to surface
         if ( source ) 
           {
-          vtkSmoothPoint *sPtr = this->SmoothPoints->GetSmoothPoint(i);
+          vtkMimxSmoothPoint *sPtr = this->SmoothPoints->GetSmoothPoint(i);
           vtkCell *cell=NULL;
 
           if ( sPtr->cellId >= 0 ) //in cell

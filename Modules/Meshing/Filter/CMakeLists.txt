@@ -46,8 +46,8 @@ SET ( FILTER_SRCS
     vtkMimxButterflyMeshFromBounds.cxx
     vtkMimxGenerateIntervertebralDisc.cxx
     vtkMimxUnstructuredToStructuredGrid.cxx
-    #vtkMimxRebinMaterialProperty.cxx
-    #vtkMimxMeshSeed.cxx
+    vtkMimxRebinMaterialProperty.cxx
+    vtkMimxMeshSeed.cxx
     vtkMimxBoundingBoxFromBounds.cxx
 )
 
@@ -65,7 +65,6 @@ TARGET_LINK_LIBRARIES(mimxFilter
   vtkIOTCL
   vtkRendering
   ${KWWidgets_LIBRARIES} 
-  mimxCommon
   )
 
 IF(BUILD_SHARED_LIBS)

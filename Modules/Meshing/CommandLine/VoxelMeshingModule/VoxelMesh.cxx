@@ -61,8 +61,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include <itkPluginFilterWatcher.h>
 
 
-#include <vtkRebinMaterialProperty.h>
-#include <itkImageToVtkUnstructuredGridFilter.h>
+#include <vtkMimxRebinMaterialProperty.h>
+#include <itkMimxImageToVtkUnstructuredGridFilter.h>
 #include <vtkAbaqusFileWriter.h>
 #include "VoxelMeshCLP.h"
 
@@ -165,7 +165,7 @@ int main( int argc, char * argv[] )
     }
 
   /** Now Generate the Mesh */
-  typedef itk::ImageToVtkUnstructuredGridFilter< ImageType, 
+  typedef itk::MimxImageToVtkUnstructuredGridFilter< ImageType, 
                                          ImageType> ImageToMeshFilterType;
 
   ImageToMeshFilterType::Pointer imageToHexMeshFilter = 
@@ -192,7 +192,7 @@ int main( int argc, char * argv[] )
   /* Rebin Mesh Material Properties */
   if ( numberOfBins != 0 || ! histogramBinFilename.empty() )
   {
-    vtkRebinMaterialProperty *rebinMeshMaterialProperties = vtkRebinMaterialProperty::New();
+    vtkMimxRebinMaterialProperty *rebinMeshMaterialProperties = vtkMimxRebinMaterialProperty::New();
     vtkPluginFilterWatcher watchRebinFilter(rebinMeshMaterialProperties, 
                                             "Rebin Material Properties", 
                                             CLPProcessInformation, 

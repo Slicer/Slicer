@@ -64,8 +64,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include <vtkFieldData.h>
 
 // MIMX Meshing Classes
-#include <vtkRebinMaterialProperty.h>
-#include <itkImageToVtkUnstructuredGridFilter.h>
+#include <vtkMimxRebinMaterialProperty.h>
+#include <itkMimxImageToVtkUnstructuredGridFilter.h>
 
 
 
@@ -123,7 +123,7 @@ int main( int argc, char * argv[] )
   //std::cerr << "Set Image Values" << std::endl;
     
   /** Now Generate the Mesh */
-  typedef itk::ImageToVtkUnstructuredGridFilter< InputImageType, 
+  typedef itk::MimxImageToVtkUnstructuredGridFilter< InputImageType, 
                                  InputImageType> ImageToMeshFilterType;
 
   ImageToMeshFilterType::Pointer imageToHexMeshFilter = 
@@ -142,7 +142,7 @@ int main( int argc, char * argv[] )
     }
   catch ( itk::ExceptionObject & ex )
     {
-    std::cerr << "Error: ImageToVtkUnstructuredGridFilter - Test 1 Failed" << std::endl;
+    std::cerr << "Error: MimxImageToVtkUnstructuredGridFilter - Test 1 Failed" << std::endl;
     std::cerr << ex.GetDescription() << std::endl;
     return EXIT_FAILURE;
     }
@@ -275,7 +275,7 @@ int main( int argc, char * argv[] )
     }
   catch ( itk::ExceptionObject & ex )
     {
-    std::cerr << "Error: ImageToVtkUnstructuredGridFilter - Test 2 failed" << std::endl;
+    std::cerr << "Error: MimxImageToVtkUnstructuredGridFilter - Test 2 failed" << std::endl;
     std::cerr << ex.GetDescription() << std::endl;
     return EXIT_FAILURE;
     }
@@ -370,7 +370,7 @@ int main( int argc, char * argv[] )
     }
   catch ( itk::ExceptionObject & ex )
     {
-    std::cerr << "Error: ImageToVtkUnstructuredGridFilter - Test 3 Failed" << std::endl;
+    std::cerr << "Error: MimxImageToVtkUnstructuredGridFilter - Test 3 Failed" << std::endl;
     std::cerr << ex.GetDescription() << std::endl;
     return EXIT_FAILURE;
     }

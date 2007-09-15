@@ -1,7 +1,7 @@
 /*=========================================================================
 
 Program:   MIMX Meshing Toolkit
-Module:    $RCSfile: vtkRebinMaterialPropertyTest.cxx,v $
+Module:    $RCSfile: vtkMimxRebinMaterialPropertyTest.cxx,v $
 Language:  C++
 Date:      $Date: 2007/04/09 03:00:35 $
 Version:   $Revision: 1.2 $
@@ -65,8 +65,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include <vtkUnstructuredGridWriter.h>
 
 // MIMX Meshing Classes
-#include <vtkRebinMaterialProperty.h>
-#include <itkImageToVtkUnstructuredGridFilter.h>
+#include <vtkMimxRebinMaterialProperty.h>
+#include <itkMimxImageToVtkUnstructuredGridFilter.h>
 
 
 double matProp(signed short value)
@@ -123,7 +123,7 @@ int main( int argc, char * argv[] )
   // std::cerr << "Set Image Values" << std::endl;
     
   /** Now Generate the Mesh */
-  typedef itk::ImageToVtkUnstructuredGridFilter< InputImageType, 
+  typedef itk::MimxImageToVtkUnstructuredGridFilter< InputImageType, 
                                  InputImageType> ImageToMeshFilterType;
 
   ImageToMeshFilterType::Pointer imageToHexMeshFilter = 
@@ -183,7 +183,7 @@ int main( int argc, char * argv[] )
   vtkTable *materialTable = vtkTable::New();
   materialTable->AddColumn( histogramArray );
   
-  vtkRebinMaterialProperty *rebinFilter = vtkRebinMaterialProperty::New();
+  vtkMimxRebinMaterialProperty *rebinFilter = vtkMimxRebinMaterialProperty::New();
   rebinFilter->SetInput( grid );
   rebinFilter->SetNumberOfHistogramBins( 16 );
   rebinFilter->SetPropertyTable( materialTable );
@@ -279,7 +279,7 @@ int main( int argc, char * argv[] )
   
 
   /*********************** Test 2 - Compute Table Internally ***********************/
-  vtkRebinMaterialProperty *rebinFilter2 = vtkRebinMaterialProperty::New();
+  vtkMimxRebinMaterialProperty *rebinFilter2 = vtkMimxRebinMaterialProperty::New();
   rebinFilter2->SetInput( grid );
   rebinFilter2->SetNumberOfHistogramBins(15);
   rebinFilter2->SetComputeMaxBin( false );
@@ -370,7 +370,7 @@ int main( int argc, char * argv[] )
   
 
   /**************** Test 3 - Compute Table Given Lower Bound **************/
-  vtkRebinMaterialProperty *rebinFilter3 = vtkRebinMaterialProperty::New();
+  vtkMimxRebinMaterialProperty *rebinFilter3 = vtkMimxRebinMaterialProperty::New();
   rebinFilter3->SetInput( grid );
   rebinFilter3->SetNumberOfHistogramBins(9);
   rebinFilter3->SetBinLowerBound( 300.0 );
@@ -429,7 +429,7 @@ int main( int argc, char * argv[] )
     }
   
   /************* Test 4 - Compute Table Given Upper Bound ***************/
-  vtkRebinMaterialProperty *rebinFilter4 = vtkRebinMaterialProperty::New();
+  vtkMimxRebinMaterialProperty *rebinFilter4 = vtkMimxRebinMaterialProperty::New();
   rebinFilter4->SetInput( grid );
   rebinFilter4->SetNumberOfHistogramBins( 12 );
   rebinFilter4->SetBinUpperBound( 3500.0 );

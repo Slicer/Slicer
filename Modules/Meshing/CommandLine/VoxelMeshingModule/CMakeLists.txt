@@ -25,7 +25,7 @@ SET (VoxelMeshModule_SOURCE
 GENERATECLP( VoxelMeshModule_SOURCE VoxelMesh.xml ${VoxelMeshModule_SOURCE_DIR}/Resources/mimxLogo.h )
 ADD_EXECUTABLE ( VoxelMeshModule ${VoxelMeshModule_SOURCE} )
 TARGET_LINK_LIBRARIES ( VoxelMeshModule 
-  MimxMeshFilter
+  mimxFilter
   MimxMeshIO
   ITKCommon 
   ITKBasicFilters 
@@ -38,7 +38,7 @@ TARGET_LINK_LIBRARIES ( VoxelMeshModule
 ADD_LIBRARY(VoxelMeshModuleLib SHARED ${VoxelMeshModule_SOURCE})
 SET_TARGET_PROPERTIES (VoxelMeshModuleLib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 TARGET_LINK_LIBRARIES (VoxelMeshModuleLib ITKIO 
-  MimxMeshFilter
+  mimxFilter
   MimxMeshIO
   ITKCommon 
   ITKBasicFilters 
