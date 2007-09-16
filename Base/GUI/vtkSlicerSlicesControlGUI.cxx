@@ -790,11 +790,9 @@ void vtkSlicerSlicesControlGUI::FitFOVToBackground( double fov, int viewer )
         }
       
       // we want to compute the slice dimensions of the
-      // user-specified fov.
-      double absSliceDimensions;
-      // user specified FOV in mm units (RAS)
-      absSliceDimensions = fabs(sliceDimensions[2]);
-      sliceNode->SetFieldOfView(fovh, fovv, absSliceDimensions );
+      // user-specified fov (note that the slice node's z field of
+      // view is NOT changed)
+      sliceNode->SetFieldOfView(fovh, fovv, sliceNode->GetFieldOfView()[2] );
 
       vtkMatrix4x4 *sliceToRAS = vtkMatrix4x4::New();
       sliceToRAS->DeepCopy(sliceNode->GetSliceToRAS());

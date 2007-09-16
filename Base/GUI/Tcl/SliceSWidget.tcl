@@ -151,6 +151,8 @@ itcl::body SliceSWidget::destructor {} {
 # make sure the size of the slice matches the window size of the widget
 #
 itcl::body SliceSWidget::resizeSliceNode {} {
+#  puts "[$_sliceNode Print]"
+
   if { $_layers(background,node) != "" } {
     set logic [$sliceGUI GetLogic]
     set sliceSpacing [$logic GetBackgroundSliceSpacing]
@@ -158,8 +160,14 @@ itcl::body SliceSWidget::resizeSliceNode {} {
     $this configure -sliceStep [lindex $sliceSpacing 2]
   }
 
-  set renderer [$_renderWidget GetRenderer]
-  foreach {w h} [$renderer GetSize] {}
+  foreach {windowx windowy} [$_interactor GetEventPosition] {}
+  # We should really use the pokedrenderer's size for these calculations.
+  # However, viewerports in the LightBox can differ in size by a pixel.  So 
+  # set the image size based on the size of renderer zero.
+  #
+  ###set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
+  set pokedRenderer [$_renderWidget GetRenderer]  
+  foreach {w h} [$pokedRenderer GetSize] {}
 
   foreach {nodeW nodeH nodeD} [$_sliceNode GetDimensions] {}
   if { $w == $nodeW && $h == $nodeH } {
@@ -238,6 +246,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   foreach {windowx windowy} [$_interactor GetEventPosition] {}
   foreach {lastwindowx lastwindowy} [$_interactor GetLastEventPosition] {}
   set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
+  set renderer0 [$_renderWidget GetRenderer]
 
 
   # figure out which slice corresponds to the viewer
@@ -250,7 +259,12 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
   set z [expr (floor($ty*$numRows)*$numCols + floor($tx*$numCols))]
 
-  foreach {w h} [$pokedRenderer GetSize] {}
+  # We should really use the pokedrenderer's size for these calculations.
+  # However, viewerports in the LightBox can differ in size by a pixel.  So 
+  # set the image size based on the size of renderer zero.
+  #
+  ###foreach {w h} [$pokedRenderer GetSize] {}
+  foreach {w h} [$renderer0 GetSize] {}
   foreach {rox roy} [$pokedRenderer GetOrigin] {}
   set x [expr $windowx - $rox]
   set y [expr $windowy - $roy]
@@ -264,6 +278,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   # check that the window size is correct for the node and resize if needed
   #
   $this resizeSliceNode
+
 
   switch $event {
 
@@ -309,7 +324,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             # TODO: move calculation to vtkSlicerSliceLogic
             set deltay [expr $windowy - [lindex $_actionStartWindowXY 1]]
 
-            set percent [expr ($h + $deltay) / (1.0 * $h)]
+            set percent [expr ($windowh + $deltay) / (1.0 * $windowh)]
 
             # the factor operation is so 'z' isn't changed and the 
             # slider can still move through the full range
@@ -319,7 +334,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
                 lappend newFOV [expr $f * $factor]
               }
               eval $_sliceNode SetFieldOfView $newFOV
- 
+
               $_sliceNode UpdateMatrices
             }
             $sliceGUI SetGUICommandAbortFlag 1
@@ -373,6 +388,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $sliceGUI SetGrabID $this
       $sliceGUI SetGUICommandAbortFlag 1
       set _actionStartFOV [$_sliceNode GetFieldOfView]
+
       $::slicer3::MRMLScene SaveStateForUndo $_sliceNode
     }
     "RightButtonReleaseEvent" { 

@@ -147,21 +147,50 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   }
 
   void SetLayoutGrid( int rows, int columns ) {
-    if (( rows != LayoutGridRows ) || ( columns != LayoutGridColumns ))
+    if (( rows != this->LayoutGridRows )
+        || ( columns != this->LayoutGridColumns ))
       {
-        this->LayoutGridRows = rows;
-        this->LayoutGridColumns = columns;        
+        this->Dimensions[0] = int( this->Dimensions[0]
+                                 * (this->LayoutGridColumns/(double) columns));
+        this->Dimensions[1] = int( this->Dimensions[1]
+                                   * (this->LayoutGridRows / (double) rows));
         this->Dimensions[2] = rows*columns;
 
+        this->LayoutGridRows = rows;
+        this->LayoutGridColumns = columns;        
+
+        this->UpdateMatrices();
         this->Modified();
       }
   };
 
   vtkGetMacro (LayoutGridRows, int);
-  vtkSetMacro (LayoutGridRows, int);
+  virtual void SetLayoutGridRows(int rows) {
+    if ( rows != this->LayoutGridRows )
+      {
+      this->Dimensions[1] = int( this->Dimensions[1]
+                                 * (this->LayoutGridRows / (double) rows));
+      this->Dimensions[2] = rows*this->LayoutGridColumns;
+      this->LayoutGridRows = rows;
+
+      this->UpdateMatrices();
+      this->Modified();
+      }
+  }
 
   vtkGetMacro (LayoutGridColumns, int);
-  vtkSetMacro (LayoutGridColumns, int);
+  virtual void SetLayoutGridColumns(int cols) {
+    if ( cols != this->LayoutGridColumns )
+      {
+      this->Dimensions[0] = int( this->Dimensions[0]
+                                 * (this->LayoutGridColumns / (double) cols));
+      this->Dimensions[2] = this->LayoutGridRows*cols;
+      this->LayoutGridColumns = cols;
+
+      this->UpdateMatrices();
+      this->Modified();
+      }
+  }
 
   // Description:
   // Set the SliceToRAS matrix according to the position and orientation of the locator:
