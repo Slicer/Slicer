@@ -448,7 +448,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText ""
     }
     "TimerEvent" { }
-    "CharEvent" - 
     "KeyPressEvent" { 
       set key [$_interactor GetKeySym]
       if { [lsearch "v r b f space c Up Down Left Right" $key] != -1 } {
