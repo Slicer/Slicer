@@ -591,7 +591,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LightboxButton->GetMenu()->AddRadioButton ( "customized view");    
     this->LightboxButton->GetMenu()->AddSeparator ( );
     this->LightboxButton->GetMenu()->AddCommand ("close");
-    this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "customized view" );
+    //this->LightboxButton->GetMenu()->SetItemStateToDisabled ( "customized view" );
             
     //--- Pop-up frame for custom NXM lightbox configuration
     this->LightboxTopLevel = vtkKWTopLevel::New ( );
@@ -1482,7 +1482,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     //
     if ( !strcmp ( this->LightboxButton->GetValue(), "1x1 view") )
       {
-      if ( link && sgui )
+      if ( false && link && sgui )
         {
         // apply this reformat to all slice MRML
         }
@@ -1494,7 +1494,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else if ( !strcmp ( this->LightboxButton->GetValue(), "2x2 view") )
       {
-      if ( link && sgui )
+      if ( false && link && sgui )
         {
         // apply this reformat to all slice MRMLs
         }
@@ -1506,7 +1506,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else if  ( !strcmp ( this->LightboxButton->GetValue(), "3x3 view" ) )
       {
-      if ( link && sgui )
+      if ( false && link && sgui )
         {
         // apply this reformat to all slice MRMLs
         }
@@ -1518,7 +1518,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       }
     else if ( !strcmp ( this->LightboxButton->GetValue (), "6x6 view") )
       {
-      if ( link && sgui )
+      if ( false && link && sgui )
         {
         // apply this reformat to all slice MRMLs
         }
@@ -1539,7 +1539,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     {
     numHPanes = this->LightboxWidthEntry->GetValueAsInt();
     numVPanes = this->LightboxHeightEntry->GetValueAsInt();
-    if ( link && sgui )
+    if ( false && link && sgui )
       {
       // apply this reformat to all slice MRMLs
       }
