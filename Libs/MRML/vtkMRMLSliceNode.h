@@ -97,7 +97,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
       this->FieldOfView[1] = y;
       this->FieldOfView[2] = z;
       this->UpdateMatrices();
-      this->Modified();
       }
   }
 
@@ -160,7 +159,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
         this->LayoutGridColumns = columns;        
 
         this->UpdateMatrices();
-        this->Modified();
       }
   };
 
@@ -174,7 +172,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
       this->LayoutGridRows = rows;
 
       this->UpdateMatrices();
-      this->Modified();
       }
   }
 
@@ -188,7 +185,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
       this->LayoutGridColumns = cols;
 
       this->UpdateMatrices();
-      this->Modified();
       }
   }
 
