@@ -118,7 +118,8 @@ int QdecGlmFit::Run ( QdecGlmDesign* iGlmDesign )
 //     throw runtime_error( "command failed: " + ssCommand.str() );
 //   free( sCommand );
 
-  if( rRun == 0 ) {
+  if( rRun == 0 )
+    {
 
     //
     // Concatenate the output.
@@ -130,31 +131,31 @@ int QdecGlmFit::Run ( QdecGlmDesign* iGlmDesign )
     // First check if the output files exist. Add the filenames to a vector.
     if( iGlmDesign->GetProgressUpdateGUI() )
       {
-    iGlmDesign->GetProgressUpdateGUI()->UpdateProgressMessage
-      ( "Finding output..." );
-    iGlmDesign->GetProgressUpdateGUI()->UpdateProgressPercent( 80 );
+      iGlmDesign->GetProgressUpdateGUI()->UpdateProgressMessage
+        ( "Finding output..." );
+      iGlmDesign->GetProgressUpdateGUI()->UpdateProgressPercent( 80 );
       }
     vector< string > contrastNames = iGlmDesign->GetContrastNames();
     vector< string > lfnSigFiles;
     for ( unsigned int i=0; i < iGlmDesign->GetContrastNames().size(); i++ )
       {
-    string sigFile = iGlmDesign->GetWorkingDir();
-    sigFile += "/";
-    sigFile += contrastNames[i];
-    sigFile += "/sig.mgh";
-    
-    // Check if it exists and is readable.
-    QdecUtilities::AssertFileIsReadable( sigFile.c_str() );
-    
-    lfnSigFiles.push_back( sigFile );
+      string sigFile = iGlmDesign->GetWorkingDir();
+      sigFile += "/";
+      sigFile += contrastNames[i];
+      sigFile += "/sig.mgh";
+      
+      // Check if it exists and is readable.
+      QdecUtilities::AssertFileIsReadable( sigFile.c_str() );
+      
+      lfnSigFiles.push_back( sigFile );
       }
     
     // Go through and concatenate copy all the volumes.
     if( iGlmDesign->GetProgressUpdateGUI() )
       {
-    iGlmDesign->GetProgressUpdateGUI()->UpdateProgressMessage
-      ( "Concatenating output scalars..." );
-    iGlmDesign->GetProgressUpdateGUI()->UpdateProgressPercent( 90 );
+      iGlmDesign->GetProgressUpdateGUI()->UpdateProgressMessage
+        ( "Concatenating output scalars..." );
+      iGlmDesign->GetProgressUpdateGUI()->UpdateProgressPercent( 90 );
       }
     
     // form output filename
@@ -167,7 +168,7 @@ int QdecGlmFit::Run ( QdecGlmDesign* iGlmDesign )
     // subject inputs...
     for ( unsigned int i=0; i < lfnSigFiles.size(); i++ )
       {
-    ssCommand2 << lfnSigFiles[i] << " ";
+      ssCommand2 << lfnSigFiles[i] << " ";
       }
     // and the output filename...
     ssCommand2 << "--o " << fnContrastsOutput;
@@ -201,10 +202,9 @@ int QdecGlmFit::Run ( QdecGlmDesign* iGlmDesign )
     
     if( iGlmDesign->GetProgressUpdateGUI() )
       {
-    iGlmDesign->GetProgressUpdateGUI()->EndActionWithProgress();
+      iGlmDesign->GetProgressUpdateGUI()->EndActionWithProgress();
       }
-
-  } 
+    }
   else 
     {
     // =======================================================================
@@ -264,8 +264,65 @@ int QdecGlmFit::Run ( QdecGlmDesign* iGlmDesign )
     
     // =======================================================================
     }
+return 0;
+}
 
+// load in results that were already computed
+int QdecGlmFit::Load(QdecGlmDesign* iGlmDesign)
+{
+  if (iGlmDesign == NULL)
+    {
+    return -1;
+    }
+  else
+    {
+    fprintf(stdout, "QdecGlmFit::Load: glm desing working dir = %s\n",iGlmDesign->GetWorkingDir().c_str());
+    }
+  
+  // Build a list of contrast files.
+  vector< string > contrastNames = iGlmDesign->GetContrastNames();
+  vector< string > lfnSigFiles;
+  for ( unsigned int i=0; i < iGlmDesign->GetContrastNames().size(); i++ )
+    {
+    string sigFile = iGlmDesign->GetWorkingDir();
+    sigFile += "/";
+    sigFile += contrastNames[i];
+    sigFile += "/sig.mgh";
+    
+    // Check if it exists and is readable.
+    QdecUtilities::AssertFileIsReadable( sigFile.c_str() );
+    
+    lfnSigFiles.push_back( sigFile );
+    }
+  
+  // form output filename
+  string fnContrastsOutput;
+  fnContrastsOutput = iGlmDesign->GetWorkingDir();
+  fnContrastsOutput += "/contrasts.sig.mgh";
+  
+  // Other data names.
+  string fnResidualErrorStdDevFile = iGlmDesign->GetWorkingDir();
+  fnResidualErrorStdDevFile += "/rstd.mgh";
+  string fnRegressionCoefficientsFile = iGlmDesign->GetWorkingDir();
+  fnRegressionCoefficientsFile += "/beta.mgh";
+  string fnFsgdFile = iGlmDesign->GetWorkingDir();
+  fnFsgdFile += "/y.fsgd";
 
+  // Make the results.
+  QdecGlmFitResults* glmFitResults = 
+    new QdecGlmFitResults( iGlmDesign, 
+                           lfnSigFiles, 
+                           fnContrastsOutput,
+                           fnResidualErrorStdDevFile,
+                           fnRegressionCoefficientsFile,
+                           fnFsgdFile );
+  
+  // Check it.
+  assert( glmFitResults );
+  
+  // Make it ours.
+  this->mGlmFitResults = glmFitResults;
+  
   return 0;
 }
 

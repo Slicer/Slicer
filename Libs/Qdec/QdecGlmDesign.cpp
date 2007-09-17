@@ -34,10 +34,10 @@
 
 #include <sstream>
 #include <stdexcept>
+#include <fstream>
 
 #include "QdecGlmDesign.h"
 #include "QdecUtilities.h"
-
 
 // Constructors/Destructors
 //
@@ -637,6 +637,39 @@ int QdecGlmDesign::WriteFsgdFile ( )
 }
 
 
+
+
+/**
+ * Reads an FSGD File into the given design
+ * @return int
+ */
+int QdecGlmDesign::ReadFsgdFile ( const char* fileName )
+{
+  if (fileName == NULL)
+    {
+    fprintf(stdout, "ReadFsgdFile: fileName is null!\n");
+    return 1;
+    }
+
+  // delete any prior loaded data
+  while (mDiscreteFactors.size() != 0)
+  {
+    mDiscreteFactors.pop_back();
+  }
+  while (mContinuousFactors.size() != 0)
+  {
+    mContinuousFactors.pop_back();
+  }
+  while (mContrasts.size() != 0)
+  {
+    delete mContrasts.back();
+    mContrasts.pop_back();
+  }
+
+  fprintf(stderr, "ReadFsgdFile: Not implemented yet! Did NOT read %s\n", fileName);
+  return (1);
+//  return(0);
+}
 
 /**
  * Creates Contrast objects based on the selected factors.

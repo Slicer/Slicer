@@ -63,6 +63,13 @@ public:
    */
   int Run (QdecGlmDesign* iGlmDesign );
 
+   /**
+   * @return int
+   * @param  iGlmDesign
+   */
+  int Load (QdecGlmDesign* iGlmDesign );
+
+  
 
   /**
    * @return QdecGlmFitResults

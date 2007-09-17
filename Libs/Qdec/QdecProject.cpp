@@ -249,6 +249,22 @@ int QdecProject::CreateGlmDesign ( const char* isName,
                                     iProgressUpdateGUI );
 }
 
+/**
+ * @return int
+ */
+int QdecProject::LoadGlmDesign(const char *fileName)
+{
+    int retval = this->mGlmDesign->ReadFsgdFile(fileName);
+    if (retval != 0)
+      {
+      return retval;
+      }
+    
+    // init the mGlmFitter
+    retval = this->mGlmFitter->Load( this->mGlmDesign );
+    
+    return retval;
+}
 
 /**
  * @return int

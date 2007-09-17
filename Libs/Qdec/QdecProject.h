@@ -196,6 +196,10 @@ public:
    */
   int RunGlmFit ( );
 
+  /**
+   * @return int
+   */
+  int LoadGlmDesign(const char *fileName);
 
   /**
    * @return QdecGlmFitResults

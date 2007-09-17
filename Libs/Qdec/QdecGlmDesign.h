@@ -193,6 +193,12 @@ public:
    */
   ProgressUpdateGUI* GetProgressUpdateGUI ( );
 
+  /**
+   * Sets FsgdFileName and reads in the values into the current design
+   * @return int
+   */
+  int ReadFsgdFile (const char* fsgdFile );
+
 private:
 
   // private attributes
@@ -258,7 +264,6 @@ private:
    * @return int
    */
   int WriteFsgdFile ( );
-
 
   /**
    * Creates Contrast objects based on the selected factors.
