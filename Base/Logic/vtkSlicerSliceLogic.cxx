@@ -1153,11 +1153,10 @@ void vtkSlicerSliceLogic::FitSliceToBackground(int width, int height)
   double sliceDimensions[3], sliceCenter[3];
   this->GetBackgroundSliceDimensions (sliceDimensions, sliceCenter);
 
-  double absSliceDimensions[4];
   double fitX, fitY, fitZ, displayX, displayY;
-  displayX = fitX = absSliceDimensions[0] = fabs(sliceDimensions[0]);
-  displayY = fitY = absSliceDimensions[1] = fabs(sliceDimensions[1]);
-  fitZ = absSliceDimensions[2] = fabs(sliceDimensions[2]);
+  displayX = fitX = fabs(sliceDimensions[0]);
+  displayY = fitY = fabs(sliceDimensions[1]);
+  fitZ = this->GetBackgroundSliceSpacing()[2] * sliceNode->GetDimensions()[2];
 
 
   // fit fov to min dimension of window

@@ -89,32 +89,13 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   // Description:
   // Size of the slice plane in millimeters
   vtkGetVector3Macro (FieldOfView, double);
-  void SetFieldOfView (double x, double y, double z) 
-  {
-    if ( x != this->FieldOfView[0] || y != this->FieldOfView[1] || z != this->FieldOfView[2] )
-      {
-      this->FieldOfView[0] = x;
-      this->FieldOfView[1] = y;
-      this->FieldOfView[2] = z;
-      this->UpdateMatrices();
-      }
-  }
-
+  void SetFieldOfView (double x, double y, double z);
 
   // Description:
   // Number of samples in each direction
   // -- note that the spacing is implicitly FieldOfView / Dimensions
   vtkGetVector3Macro (Dimensions, unsigned int);
-  void SetDimensions (unsigned int x, unsigned int y, unsigned int z) 
-  {
-    if ( x != this->Dimensions[0] || y != this->Dimensions[1] || z != this->Dimensions[2] )
-      {
-      this->Dimensions[0] = x;
-      this->Dimensions[1] = y;
-      this->Dimensions[2] = z;
-      this->UpdateMatrices();
-      }
-  }
+  void SetDimensions (unsigned int x, unsigned int y, unsigned int z);
 
   // Description:
   // Matrix mapping from XY pixel coordinates on an image window 
@@ -145,49 +126,21 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
     return this->GetSingletonTag();
   }
 
-  void SetLayoutGrid( int rows, int columns ) {
-    if (( rows != this->LayoutGridRows )
-        || ( columns != this->LayoutGridColumns ))
-      {
-        this->Dimensions[0] = int( this->Dimensions[0]
-                                 * (this->LayoutGridColumns/(double) columns));
-        this->Dimensions[1] = int( this->Dimensions[1]
-                                   * (this->LayoutGridRows / (double) rows));
-        this->Dimensions[2] = rows*columns;
+  // Description:
+  // Set the number of rows and columns to use in a LightBox display
+  // of the node
+  void SetLayoutGrid( int rows, int columns );
 
-        this->LayoutGridRows = rows;
-        this->LayoutGridColumns = columns;        
-
-        this->UpdateMatrices();
-      }
-  };
-
+  // Description:
+  // Set/Get the number of rows to use ina LightBox display
   vtkGetMacro (LayoutGridRows, int);
-  virtual void SetLayoutGridRows(int rows) {
-    if ( rows != this->LayoutGridRows )
-      {
-      this->Dimensions[1] = int( this->Dimensions[1]
-                                 * (this->LayoutGridRows / (double) rows));
-      this->Dimensions[2] = rows*this->LayoutGridColumns;
-      this->LayoutGridRows = rows;
-
-      this->UpdateMatrices();
-      }
-  }
-
+  virtual void SetLayoutGridRows(int rows);
+  
+  // Description:
+  // Set/Get the number of columns to use ina LightBox display
   vtkGetMacro (LayoutGridColumns, int);
-  virtual void SetLayoutGridColumns(int cols) {
-    if ( cols != this->LayoutGridColumns )
-      {
-      this->Dimensions[0] = int( this->Dimensions[0]
-                                 * (this->LayoutGridColumns / (double) cols));
-      this->Dimensions[2] = this->LayoutGridRows*cols;
-      this->LayoutGridColumns = cols;
-
-      this->UpdateMatrices();
-      }
-  }
-
+  virtual void SetLayoutGridColumns(int cols);
+  
   // Description:
   // Set the SliceToRAS matrix according to the position and orientation of the locator:
   // N(x, y, z) - the direction vector of the locator

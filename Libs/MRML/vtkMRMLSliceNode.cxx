@@ -597,3 +597,87 @@ void vtkMRMLSliceNode::JumpAllSlices(double r, double a, double s)
       }
     }
 }
+
+void vtkMRMLSliceNode::SetFieldOfView(double x, double y, double z)
+{
+  if ( x != this->FieldOfView[0] || y != this->FieldOfView[1]
+       || z != this->FieldOfView[2] )
+    {
+    this->FieldOfView[0] = x;
+    this->FieldOfView[1] = y;
+    this->FieldOfView[2] = z;
+    this->UpdateMatrices();
+    }
+}
+
+void vtkMRMLSliceNode::SetDimensions(unsigned int x, unsigned int y,
+                                     unsigned int z)
+{
+  if ( x != this->Dimensions[0] || y != this->Dimensions[1]
+       || z != this->Dimensions[2] )
+    {
+    this->Dimensions[0] = x;
+    this->Dimensions[1] = y;
+    this->Dimensions[2] = z;
+    this->UpdateMatrices();
+    }
+}
+
+void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
+{
+  if (( rows != this->LayoutGridRows )
+      || ( columns != this->LayoutGridColumns ))
+    {
+    this->Dimensions[0] = int( this->Dimensions[0]
+                               * (this->LayoutGridColumns/(double) columns));
+    this->Dimensions[1] = int( this->Dimensions[1]
+                               * (this->LayoutGridRows / (double) rows));
+    this->Dimensions[2] = rows*columns;
+    
+    // keep the same pixel spacing in z, i.e. update FieldOfView[2]
+    this->FieldOfView[2]
+      *= (rows*columns
+          / (double)(this->LayoutGridRows*this->LayoutGridColumns));
+    
+    this->LayoutGridRows = rows;
+    this->LayoutGridColumns = columns;        
+    
+    this->UpdateMatrices();
+    }
+}
+
+void vtkMRMLSliceNode::SetLayoutGridRows(int rows)
+{
+  if ( rows != this->LayoutGridRows )
+    {
+    this->Dimensions[1] = int( this->Dimensions[1]
+                               * (this->LayoutGridRows / (double) rows));
+    this->Dimensions[2] = rows*this->LayoutGridColumns;
+    
+    // keep the same pixel spacing in z, i.e. update FieldOfView[2]
+    this->FieldOfView[2] *= (rows / (double)this->LayoutGridRows);
+    
+    this->LayoutGridRows = rows;
+    
+    this->UpdateMatrices();
+    }
+}
+
+void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
+{
+  if ( cols != this->LayoutGridColumns )
+    {
+    this->Dimensions[0] = int( this->Dimensions[0]
+                               * (this->LayoutGridColumns / (double) cols));
+    this->Dimensions[2] = this->LayoutGridRows*cols;
+    
+    // keep the same pixel spacing in z, i.e. update FieldOfView[2]
+    this->FieldOfView[2] *= (cols / (double)this->LayoutGridColumns);
+    
+    this->LayoutGridColumns = cols;
+    
+    this->UpdateMatrices();
+    }
+}
+  
+  
