@@ -251,8 +251,8 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
   # figure out which slice corresponds to the viewer
   foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
-  set numRows [[$sliceGUI GetSliceViewer] GetLayoutGridRows]
-  set numCols [[$sliceGUI GetSliceViewer] GetLayoutGridColumns]
+  set numRows [$_sliceNode GetLayoutGridRows]
+  set numCols [$_sliceNode GetLayoutGridColumns]
 
   set tx [expr $windowx / double($windoww)]
   set ty [expr ($windowh - $windowy) / double($windowh)]
