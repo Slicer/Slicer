@@ -288,8 +288,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       # - first update the annotation
       # - then handle modifying the view
       #
-      $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
-
       $this updateAnnotation $x $y $r $a $s
 
       if { [$_interactor GetShiftKey] } {
@@ -317,6 +315,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             [$_sliceNode GetSliceToRAS] DeepCopy $o(scratchMatrix)
             $_sliceNode UpdateMatrices
             $sliceGUI SetGUICommandAbortFlag 1
+            $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
           }
           "Zoom" {
             #
@@ -338,6 +337,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
               $_sliceNode UpdateMatrices
             }
             $sliceGUI SetGUICommandAbortFlag 1
+            $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
           }
           "Rotate" {
             #
@@ -366,6 +366,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
             $_sliceNode UpdateMatrices
             $sliceGUI SetGUICommandAbortFlag 1
+            $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
            }
           default {
             # need to render to show the annotation
