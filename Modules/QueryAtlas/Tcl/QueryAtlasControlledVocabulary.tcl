@@ -182,7 +182,7 @@ proc QueryAtlasParseControlledVocabulary { } {
     }
 
     #--- The controlled vocabulary must be a CSV file
-    set controlledVocabulary "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Resources/controlledVocabulary_new.csv"
+    set controlledVocabulary "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Resources/controlledVocabulary.csv"
 
     #--- get number of columns each entry should have
     set fp [ open $controlledVocabulary r ]
