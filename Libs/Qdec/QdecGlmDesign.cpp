@@ -1080,10 +1080,19 @@ int QdecGlmDesign::WriteYdataFile ( )
             << ".mgh";
 
     // Check to it exists and is readable.
-    QdecUtilities::AssertFileIsReadable( fnInput.str() );
+    try
+      {
+      QdecUtilities::AssertFileIsReadable( fnInput.str() );
 
-    // Add it to our list.
-    lfnInputs.push_back( fnInput.str() );
+      // Add it to our list.
+      lfnInputs.push_back( fnInput.str() );
+      }
+    catch (...)
+      {
+      string fname = fnInput.str();
+      fprintf(stderr, "ERROR: cannot read input file %s, this analysis may not have been performed\n", fname.c_str());
+      return 1;
+      }
   }
 
   if ( lfnInputs.size() < 1 )
