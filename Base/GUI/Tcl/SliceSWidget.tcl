@@ -300,6 +300,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             #
             # Translate
             # TODO: move calculation to vtkSlicerSliceLogic
+            $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
             set tx [expr $windowx - [lindex $_actionStartViewportOrigin 0]]
             set ty [expr $windowy - [lindex $_actionStartViewportOrigin 1]]
             
@@ -321,6 +322,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             #
             # Zoom
             # TODO: move calculation to vtkSlicerSliceLogic
+            $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
             set deltay [expr $windowy - [lindex $_actionStartWindowXY 1]]
 
             set percent [expr ($windowh + $deltay) / (1.0 * $windowh)]
@@ -337,12 +339,12 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
               $_sliceNode UpdateMatrices
             }
             $sliceGUI SetGUICommandAbortFlag 1
-            $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
           }
           "Rotate" {
             #
             # Rotate
             # TODO: move calculation to vtkSlicerSliceLogic
+            $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
             set dx [expr $windowx - $lastwindowx]
             set dy [expr $windowy - $lastwindowy]
 
@@ -366,7 +368,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
             $_sliceNode UpdateMatrices
             $sliceGUI SetGUICommandAbortFlag 1
-            $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
            }
           default {
             # need to render to show the annotation
