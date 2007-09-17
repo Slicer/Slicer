@@ -29,7 +29,7 @@ Version:   $Revision: 1.2 $
 // for loading the outputs of the GLM processing
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerModelsLogic.h"
-#include "vtkGDFReader.h"
+//#include "vtkGDFReader.h"
 
 vtkQdecModuleLogic* vtkQdecModuleLogic::New()
 {
@@ -63,6 +63,9 @@ vtkQdecModuleLogic::vtkQdecModuleLogic()
       vtkDebugMacro("Found SLICER_HOME env var, using plot tcl script path = " << this->GetPlotTclScript());
       }
     this->TclScriptLoaded = 0;
+    this->NumberOfQuestions = 0;
+    this->QuestionScalars.clear();
+    this->ModelNode = NULL;
 }
 
 
@@ -79,13 +82,30 @@ vtkQdecModuleLogic::~vtkQdecModuleLogic()
     delete [] this->PlotTclScript;
     this->PlotTclScript = NULL;
     }
-
+  this->QuestionScalars.clear();
+  vtkSetMRMLNodeMacro ( this->ModelNode, NULL );
 }
 
 //----------------------------------------------------------------------------
 void vtkQdecModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+  if (this->PlotTclScript)
+    {
+    os << indent << "Plotting tcl script = " << this->PlotTclScript << endl;
+    }
+
+  os << indent << "List of GLM fit questions: " << endl;
+  std::map<std::string, std::string >::iterator iter;
+  for (iter = this->QuestionScalars.begin();
+       iter != this->QuestionScalars.end(); iter++)    
+    {
+    os << indent << "Question " << iter->first << " scalar file = " << iter->second << endl;
+    }
+  os << indent << "ModelNode: " << this->GetModelNode ( ) << "\n";
+  if (this->GetModelNode() != NULL)
+    {
+    this->GetModelNode()->PrintSelf(os, indent.GetNextIndent());
+    }
 }
 
 
@@ -137,6 +157,29 @@ void vtkQdecModuleLogic::SetSubjectsDirectory(const char *fileName)
   else
     {
     vtkErrorMacro("SetSubjectsDirectory: QDEC project null, can't set subjects dir");
+    }
+}
+
+//----------------------------------------------------------------------------
+int vtkQdecModuleLogic::LoadGlmDesign(const char *fileName)
+{
+  if (this->QDECProject)
+    {
+    int err = this->QDECProject->LoadGlmDesign(fileName);
+    if (err == 0)
+      {
+      // success, now can load the results
+      return 0;
+      }
+    else
+      {
+      vtkErrorMacro("LoadGlmDesign: error creating the qdec project glm design from file " << fileName);
+      return -1;
+      }
+    }
+  else
+    {
+    return -1;
     }
 }
 
@@ -193,7 +236,7 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
     this->QDECProject->GetGlmFitResults();
   if (results == NULL)
     {
-    vtkErrorMacro("LoadPlotData: results are null.");
+    vtkErrorMacro("LoadResults: results are null.");
     return -1;
     }
   vtkDebugMacro("Got the GLM Fit results from the QDEC project");
@@ -215,10 +258,13 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
     if (modelNode == NULL)
       {
       vtkErrorMacro("Unable to load average surface file " << fnSurface.c_str());
+      this->SetMRMLNode(NULL);
       }
     else
       {
       vtkDebugMacro("Loaded average surface file " << fnSurface.c_str());
+      // save the id for later setting of the active scalars
+      this->SetAndObserveMRMLNode(modelNode);
       }
     }
   else
@@ -256,6 +302,9 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
   vector<string> lContrastQuestions = results->GetContrastQuestions();
   vector<string> lfnContrastSigs = results->GetContrastSigFiles();
   assert( lContrastQuestions.size() == lfnContrastSigs.size() );
+
+  this->SetNumberOfQuestions(lContrastQuestions.size());
+  this->QuestionScalars.clear();
   
   // Go through and get our sig files and questions.
   vector<string>::iterator fn;
@@ -309,6 +358,14 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
             }
           vtkDebugMacro("Compositing curv '" << curvArrayName.c_str() << "' with sig array '" << sigArrayName.c_str() << "'");
           modelNode->CompositeScalars(curvArrayName.c_str(), sigArrayName.c_str(), 2, 5, 1, 1, 0);
+          // save the scalar name with the question
+          std::stringstream ss;
+          ss << curvArrayName;
+          ss << "+";
+          ss << sigArrayName;
+          std::string composedName = std::string(ss.str());
+          this->QuestionScalars[lContrastQuestions[nContrast]] = composedName;
+          vtkWarningMacro("Saved the composed scalar name " << composedName.c_str() << " for the contrast question " << lContrastQuestions[nContrast].c_str());
           }
         }
       }
@@ -347,7 +404,7 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
       }
     }
 */
-
+    
   if (!this->GetTclScriptLoaded())
     {
       vtkWarningMacro("Loading tcl script: " << this->GetPlotTclScript());
@@ -368,46 +425,49 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
 
   return 0;
 }
+  
 
 //----------------------------------------------------------------------------
-int vtkQdecModuleLogic::LoadPlotData(const char *fileName)
+  std::string vtkQdecModuleLogic::GetQuestion(int num)
 {
-  if (!QDECProject)
+  std::string question = "";
+  QdecGlmFitResults* results =
+    this->QDECProject->GetGlmFitResults();
+  if (results == NULL)
     {
-    return -1;
+    vtkErrorMacro("GetQuestion: results are null.");
+    return question;
+    }
+  vtkDebugMacro("Got the GLM Fit results from the QDEC project");
+
+  if (num < 0 ||
+      num > this->GetNumberOfQuestions())
+    {
+    vtkErrorMacro("GetQuestion: requested question index " << num << " is out of range 0 - " << this->GetNumberOfQuestions());
+    return question;
     }
   
-  // The fsgd file to plot.
-  string fnFSGD;
-  if (fileName == NULL)
-    {
-    // Make sure we got the results.
-    QdecGlmFitResults* results =
-      this->QDECProject->GetGlmFitResults();
-    if (results == NULL)
-      {
-      vtkErrorMacro("LoadPlotData: results are null.");
-      return -1;
-      }
-    vtkDebugMacro("Got the GLM Fit results from the QDEC project");
-    fnFSGD = results->GetFsgdFile();
-    }
-  else
-    {
-    fnFSGD = string(fileName);
-    }
-  vtkDebugMacro( "FSGD plot file: " << fnFSGD.c_str() );
-    
+  question = results->GetContrastQuestions()[num];
+  vtkDebugMacro("GetQuestion: returning question " << question.c_str());
+  return question;
+}
 
-  // read the file
-  vtkGDFReader *gdfReader = vtkGDFReader::New();
-  gdfReader->ReadHeader(fnFSGD.c_str(), 1);
-  string dataFileName = gdfReader->GetDataFileName();
-  vtkDebugMacro("FSGD file read in, y.mgh data file name = " << dataFileName.c_str());
-  
-  // load the data file, associating it with the model
-  // - done in LoadResults
+//----------------------------------------------------------------------------
+std::string vtkQdecModuleLogic::GetQuestionScalarName(const char * question)
+{
+  std::string scalarName = string("unknown");
 
-  gdfReader->Delete();
-  return 0;
+  if (question == NULL)
+    {
+    vtkErrorMacro("GetQuestionScalarName: question string is null");
+    }
+  vtkDebugMacro("GetQuestionScalarName: trying to find question in contrast questions array: '" << question << "'");
+
+  std::map<std::string, std::string >::iterator iter;
+  iter = this->QuestionScalars.find(std::string(question));
+  if (iter != this->QuestionScalars.end())
+    {
+    scalarName = iter->second;
+    }
+  return scalarName;
 }

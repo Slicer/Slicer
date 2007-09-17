@@ -78,6 +78,7 @@ vtkQdecModuleGUI::vtkQdecModuleGUI()
   this->NAMICLabel = NULL;
   this->SubjectsDirectoryButton = NULL;
   this->LoadTableButton = NULL;
+  this->LoadResultsButton = NULL;
   this->DesignEntry = NULL;
   this->DiscreteFactorsListBox = NULL;
   this->ContinuousFactorsListBox = NULL;
@@ -89,6 +90,8 @@ vtkQdecModuleGUI::vtkQdecModuleGUI()
   this->HemisphereMenu = NULL;
   this->SmoothnessLabel = NULL;
   this->SmoothnessMenu = NULL;
+  this->QuestionLabel = NULL;
+  this->QuestionMenu = NULL;
   this->Logic = NULL;
 
   // for picking
@@ -132,6 +135,13 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
     this->LoadTableButton = NULL;
     }
 
+  if ( this->LoadResultsButton )
+    {
+    this->LoadResultsButton->SetParent(NULL);
+    this->LoadResultsButton->Delete();
+    this->LoadResultsButton = NULL;
+    }
+  
   if ( this->DesignEntry )
     {
     this->DesignEntry->SetParent(NULL);
@@ -195,7 +205,7 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
     this->HemisphereMenu = NULL;
     }
 
-    if ( this->SmoothnessLabel )
+   if ( this->SmoothnessLabel )
     {
     this->SmoothnessLabel->SetParent ( NULL );
     this->SmoothnessLabel->Delete();
@@ -207,6 +217,20 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
     this->SmoothnessMenu->SetParent ( NULL );
     this->SmoothnessMenu->Delete();
     this->SmoothnessMenu = NULL;
+    }
+
+   if ( this->QuestionLabel )
+    {
+    this->QuestionLabel->SetParent ( NULL );
+    this->QuestionLabel->Delete();
+    this->QuestionLabel = NULL;
+    }
+
+   if ( this->QuestionMenu )
+    {
+    this->QuestionMenu->SetParent ( NULL );
+    this->QuestionMenu->Delete();
+    this->QuestionMenu = NULL;
     }
    
    this->SetViewerWidget(NULL);   
@@ -260,6 +284,11 @@ void vtkQdecModuleGUI::TearDownGUI ( )
 void vtkQdecModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "vtkQdecModuleGUI" << endl;
+  os << indent << "vtkQdecModuleLogic: " << this->GetLogic() << endl;
+  if (this->GetLogic() != NULL)
+    {
+    this->GetLogic()->PrintSelf(os, indent.GetNextIndent());
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -267,8 +296,11 @@ void vtkQdecModuleGUI::AddGUIObservers ( )
 {
   this->SubjectsDirectoryButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->LoadTableButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  
+  this->LoadResultsButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
+  this->QuestionMenu->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 }
 
 
@@ -286,7 +318,17 @@ void vtkQdecModuleGUI::RemoveGUIObservers ( )
     this->LoadTableButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
 
+  if (this->LoadResultsButton)
+    {
+    this->LoadResultsButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
+
   this->ApplyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+
+  if (this->QuestionMenu)
+    {
+    this->QuestionMenu->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -305,6 +347,10 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
                                            void *callData ) 
 {
+
+  
+  this->DebugOn();
+
   
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
 
@@ -365,7 +411,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkDebugMacro("Measure = " << this->MeasureMenu->GetValue());
     vtkDebugMacro("Hemisphere = " << this->HemisphereMenu->GetValue());
     vtkDebugMacro("Smoothness = " << this->SmoothnessMenu->GetValue());
-
+    
     // now pass it into the QDEC project to create a design
     int err = this->GetLogic()->CreateGlmDesign(this->DesignEntry->GetWidget()->GetValue(),
                                                 dis1.c_str(), dis2.c_str(), cont1.c_str(), cont2.c_str(),
@@ -397,6 +443,18 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     if (this->GetLogic()->LoadResults(modelsLogic, this->GetApplication()) != 0)
       {
       vtkErrorMacro("Unable to load results of GLM fit processing");
+      }
+    else
+      {
+      // clear out the questions menu
+      this->QuestionMenu->GetMenu()->DeleteAllItems();
+      // update the questions menu
+
+      int numQuestions = this->GetLogic()->GetNumberOfQuestions();
+      for (unsigned int i = 0; i < numQuestions; i++)
+        {
+        this->QuestionMenu->GetMenu()->AddRadioButton(this->GetLogic()->GetQuestion(i).c_str());
+        }
       }
     if (this->GetDebug())
       {
@@ -457,12 +515,63 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     return;
     }
 
+  if (filebrowse == this->LoadResultsButton->GetWidget()  && event == vtkKWPushButton::InvokedEvent )
+    {
+    // If a table file has been selected for loading...
+    const char *fileName = this->LoadResultsButton->GetWidget()->GetFileName();
+    if (!fileName || strcmp(fileName,"") == 0)
+      {
+      vtkDebugMacro("Empty filename");
+      this->LoadResultsButton->GetWidget()->SetText ("None");
+      return;
+      }
+    vtkDebugMacro("Trying to load file " << fileName);
+    if (this->GetLogic()->LoadGlmDesign(fileName) == -1)
+      {
+      // failure
+      vtkErrorMacro("Error loading table file " << fileName);
+      this->LoadResultsButton->GetWidget()->SetText ("None");
+      }
+    else
+      {
+      filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: was able to load file " << fileName);
+      
+      
+      this->UpdateGUI();
+
+      // load the results
+      vtkWarningMacro("Reading results that were listed in file " << fileName);
+      // get the models logic to use to load the models and scalars (can't access it in the Logic class)
+      vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models"))->GetLogic();
+      if (this->GetLogic()->LoadResults(modelsLogic, this->GetApplication()) != 0)
+        {
+        vtkErrorMacro("Unable to load results of precomputed GLM fit processing from file " << fileName);
+        }
+      else
+        {
+        // clear out the questions menu
+        this->QuestionMenu->GetMenu()->DeleteAllItems();
+        // update the questions menu
+        
+        int numQuestions = this->GetLogic()->GetNumberOfQuestions();
+        for (unsigned int i = 0; i < numQuestions; i++)
+          {
+          this->QuestionMenu->GetMenu()->AddRadioButton(this->GetLogic()->GetQuestion(i).c_str());
+          }
+        }
+      
+      }
+    return;
+    }
+  
   // check for pick events
-  if (event == vtkSlicerViewerInteractorStyle::PickEvent &&
+  if (event == vtkSlicerViewerInteractorStyle::PlotEvent &&
       vtkSlicerViewerInteractorStyle::SafeDownCast(caller) != NULL &&
       callData != NULL)
     {
-    vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: Pick event!\n");
+    this->DebugOn();
+    vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: Plot event!\n");
     // do the pick
     int x = ((int *)callData)[0];
     int y = ((int *)callData)[1];
@@ -487,7 +596,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
             RAS[0] = pickedRAS[0];
             RAS[1] = pickedRAS[1];
             RAS[2] = pickedRAS[2];
-            vtkWarningMacro("Got picked RAS = " << RAS[0] << ", " << RAS[1] << ", " << RAS[2]);
+            vtkDebugMacro("Got picked RAS = " << RAS[0] << ", " << RAS[1] << ", " << RAS[2]);
             }
           vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
           if (app)
@@ -505,6 +614,10 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
               vtkErrorMacro("Unable to get the gui call back command that calls process widget events, event = " << event << " is not swallowed here");
               }
             }
+          else
+            {
+            vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: no application to use to call plot data.");
+            }
           }
         else
           {
@@ -520,8 +633,36 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: invalid pick");
       }
+    this->DebugOff();
     return;
     }
+  
+  // changing the scalar overlay when the contrast question menu is invoked
+  vtkKWMenu *m = vtkKWMenu::SafeDownCast ( caller );
+  if (m == this->QuestionMenu->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent)
+    {
+    vtkDebugMacro("Got question menu update: " << this->QuestionMenu->GetValue());
+    if (strcmp(this->QuestionMenu->GetValue(), "None") != 0 &&
+        this->GetLogic())
+      {
+      std::string scalarName = this->GetLogic()->GetQuestionScalarName(this->QuestionMenu->GetValue());
+      vtkDebugMacro("Got question scalar name from logic: " << scalarName.c_str());
+      // trigger display change on the model
+      if (this->GetLogic()->GetModelNode() != NULL)
+        {
+        this->GetLogic()->GetModelNode()->SetActiveScalars(scalarName.c_str(), NULL);
+        // the color node has the same id as the scalar array name to facilitate
+        // this pairing
+        this->GetLogic()->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(scalarName.c_str());
+        }
+      else
+        {
+        vtkErrorMacro("Qdec Module Logic has no record of a model node, can't switch scalars");
+        }
+      }
+    }
+  this->DebugOff();
+  
 }
 
 //---------------------------------------------------------------------------
@@ -721,6 +862,17 @@ void vtkQdecModuleGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor nw -padx 2 -pady 4", 
               this->LoadTableButton->GetWidgetName());
 
+  // Load precomputed results
+  this->LoadResultsButton = vtkKWLoadSaveButtonWithLabel::New();
+  this->LoadResultsButton->SetParent ( subjectsFrame->GetFrame() );
+  this->LoadResultsButton->Create ( );
+  this->LoadResultsButton->SetLabelText ("Load Results Data File:");
+  this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open FSGD file");
+  this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
+  this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {All} {.*} } { {Data} {.fsgd} }");
+  app->Script("pack %s -side top -anchor nw -padx 2 -pady 4", 
+              this->LoadResultsButton->GetWidgetName());
+
    // add the multicolumn list to show the data table
   this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
   this->MultiColumnList->SetParent ( subjectsFrame->GetFrame() );
@@ -868,15 +1020,47 @@ void vtkQdecModuleGUI::BuildGUI ( )
               designFrame->GetFrame()->GetWidgetName());
   
 
+  // ---
+  // Display Frame
+  vtkSlicerModuleCollapsibleFrame *displayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+  displayFrame->SetParent ( page );
+  displayFrame->Create ( );
+  displayFrame->SetLabelText ("Display");
+  displayFrame->ExpandFrame ( );
+  app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                displayFrame->GetWidgetName(),
+                this->UIPanel->GetPageWidget("QdecModule")->GetWidgetName());
+
+  // provide a set of radio boxes that will be populated from the Logic's
+  // calculated overlays
+  this->QuestionLabel = vtkKWLabel::New();
+  this->QuestionLabel->SetParent(displayFrame->GetFrame());
+  this->QuestionLabel->Create();
+  this->QuestionLabel->SetText("Question: ");
+  this->QuestionLabel->SetJustificationToRight();
+  app->Script( "grid %s -column 0 -row 1 -sticky ne -in %s",
+               this->QuestionLabel->GetWidgetName(),
+               displayFrame->GetFrame()->GetWidgetName());
+
+  this->QuestionMenu = vtkKWMenuButton::New();
+  this->QuestionMenu->SetParent(displayFrame->GetFrame());
+  this->QuestionMenu->Create();
+  this->QuestionMenu->GetMenu()->AddRadioButton( "None" );
+  this->QuestionMenu->SetValue( "None" );
+  this->Script( "grid %s -column 1 -row 1 -sticky nw -in %s",
+                this->QuestionMenu->GetWidgetName(),
+                displayFrame->GetFrame()->GetWidgetName());
+  
   measuresFrame->Delete();
   designFrame->Delete();
   subjectsFrame->Delete();
-
+  displayFrame->Delete();
+  
 
   // for plotting
   if (!this->GetLogic()->GetTclScriptLoaded())
     {
-      const char *tclScript = this->GetLogic()->GetPlotTclScript(); //"Libs/Qdec/vtkFreeSurferReaders.tcl";
+      const char *tclScript = this->GetLogic()->GetPlotTclScript();
       vtkWarningMacro("Loading: " << tclScript);
       if (app->LoadScript(tclScript) == 0)
         {
@@ -925,9 +1109,9 @@ void vtkQdecModuleGUI::SetInteractorStyle( vtkSlicerViewerInteractorStyle *inter
   // note: currently the GUICallbackCommand calls ProcessGUIEvents
   // remove observers
   if (this->InteractorStyle != NULL &&
-      this->InteractorStyle->HasObserver(vtkSlicerViewerInteractorStyle::PickEvent, this->GUICallbackCommand) == 1)
+      this->InteractorStyle->HasObserver(vtkSlicerViewerInteractorStyle::PlotEvent, this->GUICallbackCommand) == 1)
     {
-    this->InteractorStyle->RemoveObservers(vtkSlicerViewerInteractorStyle::PickEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->InteractorStyle->RemoveObservers(vtkSlicerViewerInteractorStyle::PlotEvent, (vtkCommand *)this->GUICallbackCommand);
     }
   
   this->InteractorStyle = interactorStyle;
@@ -936,6 +1120,6 @@ void vtkQdecModuleGUI::SetInteractorStyle( vtkSlicerViewerInteractorStyle *inter
   if (this->InteractorStyle)
     {
     vtkDebugMacro("vtkQdecModuleGUI::SetInteractorStyle: Adding observer on interactor style");
-    this->InteractorStyle->AddObserver(vtkSlicerViewerInteractorStyle::PickEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->InteractorStyle->AddObserver(vtkSlicerViewerInteractorStyle::PlotEvent, (vtkCommand *)this->GUICallbackCommand);
     }
 }

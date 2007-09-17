@@ -92,6 +92,7 @@ public:
   // Description:
   // Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( LoadTableButton, vtkKWLoadSaveButtonWithLabel );
+  vtkGetObjectMacro ( LoadResultsButton, vtkKWLoadSaveButtonWithLabel );
   vtkGetObjectMacro ( ContinuousFactorsListBox, vtkKWListBoxWithScrollbarsWithLabel );
   vtkGetObjectMacro ( DiscreteFactorsListBox, vtkKWListBoxWithScrollbarsWithLabel );
 
@@ -131,13 +132,16 @@ protected:
   // Description:
   // GUI elements
   vtkKWLabel *NAMICLabel;
+  vtkKWLoadSaveButtonWithLabel* SubjectsDirectoryButton;
   vtkKWLoadSaveButtonWithLabel* LoadTableButton;
+  vtkKWLoadSaveButtonWithLabel* LoadResultsButton;
+  vtkKWEntryWithLabel *DesignEntry;
   vtkKWListBoxWithScrollbarsWithLabel *DiscreteFactorsListBox;
   vtkKWListBoxWithScrollbarsWithLabel *ContinuousFactorsListBox;
   vtkKWPushButton* ApplyButton;
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
-  vtkKWLoadSaveButtonWithLabel* SubjectsDirectoryButton;
-  vtkKWEntryWithLabel *DesignEntry;
+  
+  
   vtkKWLabel *MeasureLabel;
   vtkKWMenuButton *MeasureMenu;
 
@@ -156,8 +160,13 @@ protected:
   vtkSlicerViewerWidget *ViewerWidget;
 
   // Description:
-  // A poitner to the interactor style, useful for picking
+  // A pointer to the interactor style, useful for picking
   vtkSlicerViewerInteractorStyle *InteractorStyle;
+
+  // Description:
+  // A menu populated by display overlay options
+  vtkKWLabel *QuestionLabel;
+  vtkKWMenuButton *QuestionMenu;
 };
 
 #endif
