@@ -423,10 +423,12 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "MouseWheelForwardEvent" { 
       $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
       $this incrementSlice 
+      $this updateAnnotation $x $y $r $a $s
     }
     "MouseWheelBackwardEvent" {
       $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
       $this decrementSlice 
+      $this updateAnnotation $x $y $r $a $s
     }
     "ExposeEvent" { }
     "ConfigureEvent" {
@@ -458,9 +460,11 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           }
           "b" - "Left" - "Down" {
             $this decrementSlice
+            $this updateAnnotation $x $y $r $a $s
           }
           "f" - "Right" - "Up" {
             $this incrementSlice
+            $this updateAnnotation $x $y $r $a $s
           }
           "space" {
             ::Box::ShowDialog EditBox
