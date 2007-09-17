@@ -146,8 +146,9 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro (FSbrainSelector, vtkSlicerNodeSelectorWidget );
     vtkGetObjectMacro (FSstatsSelector, vtkSlicerNodeSelectorWidget );    
     vtkGetObjectMacro (FSgoButton, vtkKWPushButton );
-    vtkGetObjectMacro (QdecModelSelector, vtkSlicerNodeSelectorWidget );
-    vtkGetObjectMacro (QdecScalarSelector, vtkSlicerNodeSelectorWidget );
+    vtkGetObjectMacro (QdecGetResultsButton, vtkKWLoadSaveButtonWithLabel );
+    vtkGetObjectMacro (QdecModelSelector, vtkSlicerNodeSelectorWidget );    
+    vtkGetObjectMacro (QdecScalarSelector, vtkKWMenuButtonWithLabel );
     vtkGetObjectMacro (QdecGoButton, vtkKWPushButton);
 
     vtkGetObjectMacro (FIPSFSButton, vtkKWPushButton );
@@ -171,7 +172,6 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void BuildOntologyGUI ( );
     virtual void BuildSearchTermGUI ( );
     virtual void BuildQueriesGUI ( );
-    virtual void BuildQueryManagerGUI ( );
     virtual void BuildDisplayAndNavigationGUI ( );
     
     // Description:
@@ -248,6 +248,11 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void Enter ( );
     virtual void Exit ( );
 
+    // Description:
+    // methods for writing and reading bookmark files
+    void WriteBookmarksCallback();
+    void LoadBookmarksCallback();
+
  protected:
     vtkQueryAtlasGUI ( );
     virtual ~vtkQueryAtlasGUI ( );
@@ -265,8 +270,9 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkSlicerNodeSelectorWidget *FSbrainSelector;
     vtkSlicerNodeSelectorWidget *FSstatsSelector;
     vtkKWPushButton *FSgoButton;
+    vtkKWLoadSaveButtonWithLabel *QdecGetResultsButton;
+    vtkKWMenuButtonWithLabel *QdecScalarSelector;
     vtkSlicerNodeSelectorWidget *QdecModelSelector;
-    vtkSlicerNodeSelectorWidget *QdecScalarSelector;
     vtkKWPushButton *QdecGoButton;
     
     vtkKWPushButton *FIPSFSButton;
@@ -355,8 +361,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWFrame *OtherFrame;
     vtkQueryAtlasUseSearchTermWidget *OtherListWidget;
 
-    void WriteBookmarksFile();
-    void LoadBookmarksFile();
+
     void OpenBIRNLexBrowser();
     void OpenNeuroNamesBrowser();
     void OpenUMLSBrowser();

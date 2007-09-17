@@ -85,7 +85,7 @@ proc QueryAtlasLoadFirefoxBookmarkFile {bmfile } {
 proc QueryAtlasOpenLink { url } {
 
     set browser [ $::slicer3::Application GetWebBrowser ]
-    exec $browser -new-tab $url
+    exec $browser -new-tab $url &
 }
 
 
@@ -186,7 +186,7 @@ proc QueryAtlasAddEntryTermToSavedTerms { terms } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasQueryBrainInfo { url } {
     if { $url != "" } {
-        QueryAtlasOpenLink $url
+        QueryAtlasOpenLink $url 
     }
 }
 
@@ -210,7 +210,7 @@ proc QueryAtlasQuery { site } {
 
     switch $site {
         "google" {
-            QueryAtlasOpenLink "http://www.google.com/search?q=$terms"
+            QueryAtlasOpenLink "http://www.google.com/search?q=$terms" 
         }
         "wikipedia" {
             QueryAtlasOpenLink "http://www.google.com/search?q=$terms+site:en.wikipedia.org"

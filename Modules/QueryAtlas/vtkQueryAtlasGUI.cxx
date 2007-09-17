@@ -191,8 +191,9 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->FSbrainSelector = NULL;
     this->FSstatsSelector = NULL;
     this->FSgoButton = NULL;
-    this->QdecModelSelector = NULL;
+    this->QdecGetResultsButton = NULL;
     this->QdecScalarSelector = NULL;
+    this->QdecModelSelector = NULL;
     this->QdecGoButton = NULL;
 #endif
 }
@@ -285,6 +286,12 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->FSmodelSelector->SetParent ( NULL );
       this->FSmodelSelector->Delete();
       this->FSmodelSelector = NULL;
+      }
+    if ( this->QdecGetResultsButton )
+      {
+      this->QdecGetResultsButton->SetParent ( NULL );
+      this->QdecGetResultsButton->Delete();
+      this->QdecGetResultsButton = NULL;
       }
     if ( this->QdecModelSelector )
       {
@@ -750,8 +757,9 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "FSstatsSelector: " << this->GetFSstatsSelector ( ) << "\n";    
     os << indent << "FSgoButton: " << this->GetFSgoButton() << "\n";
     os << indent << "QdecGoButton: " << this->GetQdecGoButton() << "\n";
-    os << indent << "QdecModelSelector: " << this->GetQdecModelSelector ( ) << "\n";    
+    os << indent << "QdecGetResultsButton: " << this->GetQdecGetResultsButton ( ) << "\n";    
     os << indent << "QdecScalarSelector: " << this->GetQdecScalarSelector ( ) << "\n";    
+    os << indent << "QdecModelSelector: " << this->GetQdecModelSelector ( ) << "\n";    
 #endif
     
     //---
@@ -802,8 +810,8 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->FSgoButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->QdecGoButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FSmodelSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->QdecScalarSelector->GetWidget()->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->QdecModelSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->QdecScalarSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   
   this->AddLocalTermButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->AddSynonymButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -842,7 +850,8 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->AddDiagnosisEntry->GetWidget()->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->SearchButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  
+
+#ifdef RESULTS_FRAME
   this->DeselectAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeselectAllAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -855,7 +864,8 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->DeleteAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CurrentResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   //  this->AccumulatedResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+#endif
+  
  //--MRML
   if (this->MRMLScene)
       {
@@ -879,8 +889,8 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->FSmodelSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSgoButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->QdecGoButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->QdecScalarSelector->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->QdecModelSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->QdecScalarSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->AddLocalTermButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->AddSynonymButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -920,6 +930,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
 
   this->SearchButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
+#ifdef RESULTS_FRAME
   this->DeselectAllCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeselectAllAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -932,6 +943,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->DeleteAllCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->CurrentResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   //  this->AccumulatedResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+#endif
   
  //--MRML
   if (this->MRMLScene)
@@ -1140,10 +1152,11 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     }
   else if ( (b == this->FSgoButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    this->Script ( "QueryAtlasSetUp" );
+    this->Script ( "QueryAtlasFipsFreeSurferSetUp" );
     }
   else if ( (b == this->QdecGoButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
+    this->Script ( "QueryAtlasQdecSetUp");
     }
   else if ( (b == this->BIRNLexHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -1411,22 +1424,29 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::WriteBookmarksFile ()
+void vtkQueryAtlasGUI::WriteBookmarksCallback ()
 {
   // get file from dialog
   const char *filen;
+  
   filen = this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->GetFileName();
-  this->Script( "QueryAtlasWriteFirefoxBookmarkFile $s", filen );
+  std::string str = std::string(filen);
+  itksys::SystemTools::ConvertToUnixSlashes( str );
+  filen = str.c_str();
+  this->Script( "QueryAtlasWriteFirefoxBookmarkFile %s", filen );
 }
 
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::LoadBookmarksFile ()
+void vtkQueryAtlasGUI::LoadBookmarksCallback ()
 {
   // get file from dialog
   const char *filen;
   filen = this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->GetFileName();
+  std::string str = std::string(filen);
+  itksys::SystemTools::ConvertToUnixSlashes( str );
+  filen = str.c_str();
   this->Script( "QueryAtlasLoadFirefoxBookmarkFile %s", filen );
 }
 
@@ -1568,9 +1588,6 @@ void vtkQueryAtlasGUI::BuildGUI ( )
 #ifdef QUERIES_FRAME
     this->BuildQueriesGUI ( );
 #endif
-#ifdef RESULTS_FRAME
-    this->BuildQueryManagerGUI ( );
-#endif
 //    this->BuildDisplayAndNavigationGUI ( );
       /*
     // ---
@@ -1693,6 +1710,21 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   
+  vtkKWLabel *l = vtkKWLabel::New();
+  l->SetParent ( this->FIPSFSFrame);
+  l->Create();
+  l->SetText("");
+  this->Script ( "pack %s -side top -anchor c -padx 2", l->GetWidgetName() );
+  l->Delete();  
+
+    vtkSlicerPopUpHelpWidget *helpy = vtkSlicerPopUpHelpWidget::New();
+    helpy->SetParent ( this->FIPSFSFrame );
+    helpy->Create ( );
+    helpy->SetHelpText (" This is some sample help text. This is some more sample help text. Not so very helpful yet." );
+    helpy->SetHelpTitle ( "Testing Popup Help" );
+    this->Script ( "pack %s -side top -anchor c -padx 2 -pady 6", helpy->GetWidgetName() );
+    helpy->Delete();
+
     this->FSbrainSelector = vtkSlicerNodeSelectorWidget::New() ;
     this->FSbrainSelector->SetParent ( this->FIPSFSFrame );
     this->FSbrainSelector->Create ( );
@@ -1765,13 +1797,6 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->FSgoButton->GetWidgetName());
     
-    vtkSlicerPopUpHelpWidget *helpy = vtkSlicerPopUpHelpWidget::New();
-    helpy->SetParent ( this->FIPSFSFrame );
-    helpy->Create ( );
-    helpy->SetHelpText (" This is some sample help text. This is some more sample help text. Not so very helpful yet." );
-    helpy->SetHelpTitle ( "Testing Popup Help" );
-    this->Script ( "pack %s -side top -anchor c -padx 2 -pady 6", helpy->GetWidgetName() );
-    helpy->Delete();
 
     this->ProcessGUIEvents ( this->FSbrainSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
     this->ProcessGUIEvents ( this->FSmodelSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
@@ -1784,6 +1809,38 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   
+  vtkKWLabel *l = vtkKWLabel::New();
+  l->SetParent ( this->QdecFrame);
+  l->Create();
+  l->SetText("");
+  this->Script ( "pack %s -side top -anchor c -padx 2", l->GetWidgetName() );
+  l->Delete();  
+
+    vtkSlicerPopUpHelpWidget *helpy = vtkSlicerPopUpHelpWidget::New();
+    helpy->SetParent ( this->QdecFrame );
+    helpy->Create ( );
+    helpy->SetHelpText (" This is some sample help text. This is some more sample help text. Not so very helpful yet." );
+    helpy->SetHelpTitle ( "Testing Popup Help" );
+    this->Script ( "pack %s -side top -anchor c -padx 2 -pady 6", helpy->GetWidgetName() );
+    helpy->Delete();
+
+    this->QdecGetResultsButton = vtkKWLoadSaveButtonWithLabel::New() ;
+    this->QdecGetResultsButton->SetParent ( this->QdecFrame );
+    this->QdecGetResultsButton->Create();
+    this->QdecGetResultsButton->GetWidget()->SetImageToIcon ( app->GetApplicationGUI()->GetApplicationToolbar()->GetSlicerToolbarIcons()->GetLoadSceneIcon() );   
+    this->QdecGetResultsButton->GetWidget()->SetBorderWidth(0);
+    this->QdecGetResultsButton->GetWidget()->SetReliefToFlat ( );
+    this->QdecGetResultsButton->SetBalloonHelpString ( "Load Qdec results" );
+    //this->QdecGetResultsButton->GetWidget()->SetCommand ( this, "" );
+    this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Load Qdec results");
+    this->QdecGetResultsButton->GetLabel()->SetText( "Qdec results: ");
+    this->QdecGetResultsButton->GetLabel()->SetWidth ( 14 );
+    this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
+    this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOff();
+    //this->QdecGetResultsButton->GetLoadSaveDialog()->SetFileTypes ( "");
+    this->QdecGetResultsButton->SetBalloonHelpString("Load all results from previous Qdec analysis if not already present in the scene.");
+    this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 2",
+                  this->QdecGetResultsButton->GetWidgetName());
 
     this->QdecModelSelector = vtkSlicerNodeSelectorWidget::New() ;
     this->QdecModelSelector->SetParent ( this->QdecFrame );
@@ -1795,25 +1852,23 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->QdecModelSelector->SetPadY(2);
     this->QdecModelSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
     this->QdecModelSelector->GetWidget()->GetWidget()->SetWidth(20);
-    this->QdecModelSelector->GetLabel()->SetWidth(18);
+    this->QdecModelSelector->GetLabel()->SetWidth(14);
     this->QdecModelSelector->SetLabelText( "Annotated model: ");
-    this->QdecModelSelector->SetBalloonHelpString("select a volume from the current  scene.");
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+    this->QdecModelSelector->SetBalloonHelpString("select an annotated model (FreeSurfer inflated.pial) from the current  scene.");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 4",
                   this->QdecModelSelector->GetWidgetName());
 
-    this->QdecScalarSelector = vtkSlicerNodeSelectorWidget::New() ;
+
+    this->QdecScalarSelector = vtkKWMenuButtonWithLabel::New();
     this->QdecScalarSelector->SetParent ( this->QdecFrame );
     this->QdecScalarSelector->Create ( );
-    this->QdecScalarSelector->SetNodeClass("vtkMRMLVolumeNode", NULL, NULL, NULL);
-    this->QdecScalarSelector->SetMRMLScene(this->GetMRMLScene());
     this->QdecScalarSelector->SetBorderWidth(2);
     this->QdecScalarSelector->SetPadX(2);
     this->QdecScalarSelector->SetPadY(2);
-    this->QdecScalarSelector->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->QdecScalarSelector->GetWidget()->GetWidget()->SetWidth(20);
-    this->QdecScalarSelector->GetLabel()->SetWidth(18);
-    this->QdecScalarSelector->SetLabelText( "Scalar overlay: ");
-    this->QdecScalarSelector->SetBalloonHelpString("select a volume from the current  scene.");
+    this->QdecScalarSelector->GetWidget()->SetWidth(20);
+    this->QdecScalarSelector->GetLabel()->SetWidth(14);
+    this->QdecScalarSelector->GetLabel()->SetText( "Select overlay: ");
+    this->QdecScalarSelector->SetBalloonHelpString("select a scalar overlay for this model.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                   this->QdecScalarSelector->GetWidgetName());
 
@@ -1825,13 +1880,6 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                    this->QdecGoButton->GetWidgetName());
 
-    vtkSlicerPopUpHelpWidget *helpy = vtkSlicerPopUpHelpWidget::New();
-    helpy->SetParent ( this->QdecFrame );
-    helpy->Create ( );
-    helpy->SetHelpText (" This is some sample help text. This is some more sample help text. Not so very helpful yet." );
-    helpy->SetHelpTitle ( "Testing Popup Help" );
-    this->Script ( "pack %s -side top -anchor c -padx 2 -pady 6", helpy->GetWidgetName() );
-    helpy->Delete();
 
 
     //get uri from model, load annotations from a relative path??
@@ -2222,6 +2270,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
                   searchFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
 
+    /*
     vtkKWFrame *f = vtkKWFrame::New();
     f->SetParent ( searchFrame->GetFrame() );
     f->Create();
@@ -2260,6 +2309,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->ResultsWithExactButton->SetValueAsInt ( vtkQueryAtlasGUI::Quote );
     this->ResultsWithExactButton->SetVariableName ( this->ResultsWithAnyButton->GetVariableName() );
     this->ResultsWithExactButton->SetBalloonHelpString ( "Search for results that include the exact search terms (disabled)." );
+    */
 
     vtkKWLabel *sl = vtkKWLabel::New();
     sl->SetParent ( searchFrame->GetFrame() );
@@ -2268,82 +2318,48 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->DatabasesMenuButton = vtkKWMenuButton::New();
     this->DatabasesMenuButton->SetParent ( searchFrame->GetFrame() );
     this->DatabasesMenuButton->Create();
-    this->DatabasesMenuButton->SetWidth (25);    
+    this->DatabasesMenuButton->SetWidth (24);    
     this->BuildDatabasesMenu(this->DatabasesMenuButton->GetMenu() );
     this->SearchButton = vtkKWPushButton::New();
-    this->SearchButton->SetParent ( f );
+//    this->SearchButton->SetParent ( f );
+    this->SearchButton->SetParent ( searchFrame->GetFrame() );
     this->SearchButton->Create();
     this->SearchButton->SetImageToIcon ( this->QueryAtlasIcons->GetSearchIcon() );
     this->SearchButton->SetBorderWidth ( 0 );
     this->SearchButton->SetReliefToFlat();
     this->SearchButton->SetBalloonHelpString ( "Perform a search" );
+/*
     app->Script ( "pack %s %s %s %s -side left -anchor w -padx 2 -pady 2",
                   this->ResultsWithAnyButton->GetWidgetName(),
                   this->ResultsWithAllButton->GetWidgetName(),
                   this->ResultsWithExactButton->GetWidgetName(),
                   this->SearchButton->GetWidgetName() );
+*/
     app->Script ("grid %s -row 0 -column 0 -padx 0 -pady 2 -sticky w",
                  sl->GetWidgetName() );
     app->Script ("grid %s -row 0 -column 1 -padx 0 -pady 2 -sticky w",
                  this->DatabasesMenuButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 2 -padx 2 -pady 2 -sticky w",
+                 this->SearchButton->GetWidgetName() );
+/*
     app->Script ("grid %s -row 1 -column 1 -padx 0 -pady 2 -sticky w",
                  f->GetWidgetName() );
-
-    f->Delete();
-    sl->Delete();
-    searchFrame->Delete();
-}
+*/
 
 
-//---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::OpenLinkFromCurrentList ( )
-{
-  const char *url;
-  
-    url = this->CurrentResultsList->GetWidget()->GetSelection();
-    //--- open in browser
-    this->Script ( "QueryAtlasOpenLink %s", url);
-
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::OpenLinkFromAccumulatedList ( )
-{
-  const char *url;
-  
-    url = this->AccumulatedResultsList->GetWidget()->GetSelection();
-    //--- open in browser
-    this->Script ( "QueryAtlasOpenLink %s", url );
-
-}
-
-
-//---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::BuildQueryManagerGUI ()
-{
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
-  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
-    // -------------------------------------------------------------------------------------------------
     // ---
     // QUERY RESULTS MANAGER FRAME
     // ---
-    // -------------------------------------------------------------------------------------------------
-    vtkSlicerModuleCollapsibleFrame *resultsFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    resultsFrame->SetParent ( page );
-    resultsFrame->Create ( );
-    resultsFrame->SetLabelText ("Query Manager");
-    resultsFrame->CollapseFrame ( );
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  resultsFrame->GetWidgetName(),
-                  this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
+
+    vtkKWFrame *managerFrame = vtkKWFrame::New();
+    managerFrame->SetParent ( searchFrame->GetFrame() );
+    managerFrame->Create();
 
     vtkKWFrame *curF = vtkKWFrame::New();
-    curF->SetParent ( resultsFrame->GetFrame() );
+    curF->SetParent ( managerFrame );
     curF->Create();
     vtkKWFrame *topcurF = vtkKWFrame::New();
-    topcurF->SetParent ( resultsFrame->GetFrame() );
+    topcurF->SetParent ( managerFrame );
     topcurF->Create();
     vtkKWLabel *curL = vtkKWLabel::New();
     curL->SetParent ( topcurF );
@@ -2404,10 +2420,10 @@ void vtkQueryAtlasGUI::BuildQueryManagerGUI ()
 
 
     vtkKWFrame *pastF = vtkKWFrame::New();
-    pastF->SetParent ( resultsFrame->GetFrame() );
+    pastF->SetParent ( managerFrame );
     pastF->Create();
     vtkKWFrame *toppastF = vtkKWFrame::New();
-    toppastF->SetParent ( resultsFrame->GetFrame() );
+    toppastF->SetParent ( managerFrame );
     toppastF->Create();
     vtkKWLabel *pastL = vtkKWLabel::New();
     pastL->SetParent ( toppastF );
@@ -2457,7 +2473,7 @@ void vtkQueryAtlasGUI::BuildQueryManagerGUI ()
     this->SaveAccumulatedResultsButton->SetBorderWidth ( 0 );
     this->SaveAccumulatedResultsButton->SetReliefToFlat();    
     this->SaveAccumulatedResultsButton->SetBalloonHelpString ("Save links to file");
-    this->SaveAccumulatedResultsButton->SetCommand ( this, "WriteBookmarksFile" );
+    this->SaveAccumulatedResultsButton->SetCommand ( this, "WriteBookmarksCallback" );
     this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->SetTitle("Save Firefox bookmarks file");
     this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->ChooseDirectoryOff();
     this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->SaveDialogOn();
@@ -2470,11 +2486,13 @@ void vtkQueryAtlasGUI::BuildQueryManagerGUI ()
     this->LoadURIsButton->SetBorderWidth(0);
     this->LoadURIsButton->SetReliefToFlat ( );
     this->LoadURIsButton->SetBalloonHelpString ( "Load links from file" );
-    this->LoadURIsButton->SetCommand ( this, "LoadBookmarksFile" );
+    this->LoadURIsButton->SetCommand ( this, "LoadBookmarksCallback" );
     this->LoadURIsButton->GetLoadSaveDialog()->SetTitle("Load Firefox bookmarks file");
     this->LoadURIsButton->GetLoadSaveDialog()->ChooseDirectoryOff();
     this->LoadURIsButton->GetLoadSaveDialog()->SaveDialogOff();
     this->LoadURIsButton->GetLoadSaveDialog()->SetFileTypes ( "*.html");
+
+    app->Script ( "grid %s -row 1 -column 0 -columnspan 3 -pady 4 -padx 3", managerFrame->GetWidgetName() ); 
 
     app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand 1", topcurF->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", curL->GetWidgetName() );
@@ -2514,9 +2532,39 @@ void vtkQueryAtlasGUI::BuildQueryManagerGUI ()
     curF->Delete();
     toppastF->Delete();
     pastF->Delete();
-    resultsFrame->Delete();
+    managerFrame->Delete();
+
+//    f->Delete();
+    sl->Delete();
+    searchFrame->Delete();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::OpenLinkFromCurrentList ( )
+{
+  const char *url;
+  
+    url = this->CurrentResultsList->GetWidget()->GetSelection();
+    //--- open in browser
+    this->Script ( "QueryAtlasOpenLink %s", url);
 
 }
+
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::OpenLinkFromAccumulatedList ( )
+{
+  const char *url;
+  
+    url = this->AccumulatedResultsList->GetWidget()->GetSelection();
+    //--- open in browser
+    this->Script ( "QueryAtlasOpenLink %s", url );
+
+}
+
+
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildDisplayAndNavigationGUI ( )

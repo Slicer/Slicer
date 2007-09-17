@@ -591,7 +591,69 @@ proc QueryAtlasAddBIRNLogo {} {
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasSetUp { } {
+proc QueryAtlasQdecSetUp { } {
+
+    #--- comment out until built.
+    if { 0 } {    
+    
+    puts "Setting up Qdec query scene...."
+    #--- get qdec results pathname
+    #--- construct path to lh.aparc.annot from that path
+    #--- according to FreeSurfer conventions.
+    set ::QA(annotations) ""
+
+    #--- only do this if a model and labelmap are provided
+    if { $::QA(modelNodeID) == "" || $::QA(modelDisplayNodeID) == "" || $::QA(annotations) == "" } {
+        QueryAtlasMessageDialog "Please select an annotated model and labelmap to begin."
+        return
+    }
+
+    #--- set up progress guage
+    set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+    set prog [ $win GetProgressGauge ]
+    $prog SetValue 0
+    $win SetStatusText "Setting up query scene..."
+
+    #--- perform once per scene.
+    if { ! $::QA(SceneLoaded) } {
+        $win SetStatusText "Adding annotations..."
+        $prog SetValue [ expr 100 * 1.0 / 8.0 ]
+        QueryAtlasAddAnnotations
+        $win SetStatusText "Initializing picker..."
+        $prog SetValue [ expr 100 * 2.0 / 8.0 ]
+        QueryAtlasInitializePicker 
+        $win SetStatusText "Rendering view..."
+        $prog SetValue [ expr 100 * 3.0 / 8.0 ]
+        QueryAtlasRenderView
+        $win SetStatusText "Adding query cursor..."
+        $prog SetValue [ expr 100 * 4.0 / 8.0 ]
+        QueryAtlasUpdateCursor
+        $win SetStatusText "Parsing controlled vocabulary..."
+        $prog SetValue [ expr 100 * 5.0 / 8.0 ]
+        QueryAtlasParseControlledVocabulary
+        $win SetStatusText "Parsing NeuroNames Synonyms..."
+        $prog SetValue [ expr 100 * 6.0 / 8.0 ]
+        QueryAtlasParseNeuroNamesSynonyms
+        $win SetStatusText "Parsing precompiled URIs..."
+        $prog SetValue [ expr 100 * 7.0 / 8.0 ]
+        QueryAtlasParseBrainInfoURIs
+        set ::QA(CurrentRASPoint) "0 0 0"
+        $prog SetValue [ expr 100 * 8.0 / 8.0 ]
+        set ::QA(SceneLoaded) 1
+
+        #--- clear progress
+        $win SetStatusText ""
+        $prog SetValue 0
+    }
+}
+
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasFipsFreeSurferSetUp { } {
 
     puts "Setting up...."
     #--- only do this if a model and labelmap are provided
@@ -648,8 +710,6 @@ proc QueryAtlasSetUp { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasAddAnnotations { } {
     
-    #set fileName [file dirname $::QA(annotations)]/../label/lh.aparc.annot
-
     if { $::QA(modelNodeID) != "" } {
         #--- get the model out of the scene
         set modelNode [$::slicer3::MRMLScene GetNodeByID $::QA(modelNodeID)]
@@ -666,11 +726,24 @@ proc QueryAtlasAddAnnotations { } {
         }
         set mapper [$actor GetMapper]
 
-        #--- get name of label file
+        #--- Find the file that contains surface labels.
         set fileName [$storageNode GetFileName ]
         if { [ string first "aparc.annot" $fileName ] < 0 } {
-            QueryAtlasMessageDialog "No appropriate annotation file is found for [$modelNode GetName]. Try selecting an annotated model, or loading the scalar overlay for this model again."
-            return
+            #--- no annot file loaded for model yet.
+            #--- Try looking at global $::QA(annotations)
+            if { $::QA(annotations) != "" } {
+                set logic [$::slicer3::ModelsGUI GetLogic]
+                if { $logic != "" } {
+                    #--- add the scalar to the node
+                    $logic AddScalar $::QA(annotations) $modelNode
+                } else {
+                    QueryAtlasMessageDialog "No appropriate annotation file is found for [$modelNode GetName]."
+                    return
+                }
+            } else {
+                QueryAtlasMessageDialog "No appropriate annotation file is found for [$modelNode GetName]."
+                return
+            }
         }
 
         if { [file exists $fileName] } {
