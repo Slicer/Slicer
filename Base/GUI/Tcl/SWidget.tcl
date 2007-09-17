@@ -85,6 +85,7 @@ if { [itcl::find class SWidget] == "" } {
     # methods
     method rasToXY {rasPoint} {}
     method xyToRAS {xyPoint} {}
+    method xyToXYZ { x y } {}
     method queryLayers { x y {z 0} } {}
     method getLayers {} {return [array get _layers]}
     method getObjects {} {return [array get o]}
@@ -153,6 +154,27 @@ itcl::body SWidget::rasToXY { rasPoint } {
 itcl::body SWidget::xyToRAS { xyPoint } {
   set rast [eval [$_sliceNode GetXYToRAS] MultiplyPoint $xyPoint 0 1]
   return [lrange $rast 0 2]
+}
+
+# return xyz for a given x y.  THe input xy is a position in the
+# window, the returned xyz is a position in a viewport, with z
+# corresonding to a slice in the slice volume
+itcl::body SWidget::xyToXYZ { wx wy } {
+  foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
+  set numRows [$_sliceNode GetLayoutGridRows]
+  set numCols [$_sliceNode GetLayoutGridColumns]
+
+  set tx [expr $wx / double($windoww)]
+  set ty [expr ($windowh - $wy) / double($windowh)]
+
+  set z [expr (floor($ty*$numRows)*$numCols + floor($tx*$numCols))]
+  
+  set pokedRenderer [$_interactor FindPokedRenderer $wx $wy]
+  foreach {rox roy} [$pokedRenderer GetOrigin] {}
+  set x [expr $wx - $rox]
+  set y [expr $wy - $roy]
+
+  return "$x $y $z"
 }
 
 itcl::body SWidget::queryLayers { x y {z 0} } {

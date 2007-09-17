@@ -241,33 +241,25 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
 
   #
-  # get the event position and make it relative to a renderer
+  # get the event position and make it relative to a renderer/viewport
   #
   foreach {windowx windowy} [$_interactor GetEventPosition] {}
   foreach {lastwindowx lastwindowy} [$_interactor GetLastEventPosition] {}
+  foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
+
   set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
   set renderer0 [$_renderWidget GetRenderer]
 
-
-  # figure out which slice corresponds to the viewer
-  foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
-  set numRows [$_sliceNode GetLayoutGridRows]
-  set numCols [$_sliceNode GetLayoutGridColumns]
-
-  set tx [expr $windowx / double($windoww)]
-  set ty [expr ($windowh - $windowy) / double($windowh)]
-
-  set z [expr (floor($ty*$numRows)*$numCols + floor($tx*$numCols))]
+  foreach {x y z} [$this xyToXYZ $windowx $windowy] {}
 
   # We should really use the pokedrenderer's size for these calculations.
-  # However, viewerports in the LightBox can differ in size by a pixel.  So 
+  # However, viewports in the LightBox can differ in size by a pixel.  So 
   # set the image size based on the size of renderer zero.
   #
   ###foreach {w h} [$pokedRenderer GetSize] {}
   foreach {w h} [$renderer0 GetSize] {}
   foreach {rox roy} [$pokedRenderer GetOrigin] {}
-  set x [expr $windowx - $rox]
-  set y [expr $windowy - $roy]
+
   $this queryLayers $x $y $z
   set xyToRAS [$_sliceNode GetXYToRAS]
   set ras [$xyToRAS MultiplyPoint $x $y $z 1]
