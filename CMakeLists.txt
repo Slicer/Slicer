@@ -111,7 +111,7 @@ INCLUDE(${TEEM_USE_FILE})
 #
 # BatchMake
 #
-OPTION(USE_BatchMake "Build Slicer3 with BatchMake support." ON)
+OPTION(USE_BatchMake "Build Slicer3 with BatchMake support." OFF)
 IF(USE_BatchMake)
   FIND_PACKAGE(BatchMake REQUIRED)
   INCLUDE(${BatchMake_USE_FILE})
@@ -120,7 +120,7 @@ ENDIF(USE_BatchMake)
 #
 # MIDAS
 #
-OPTION(USE_MIDAS "Build Slicer3 with MIDAS support." ON)
+OPTION(USE_MIDAS "Build Slicer3 with MIDAS support." OFF)
 
 
 #
