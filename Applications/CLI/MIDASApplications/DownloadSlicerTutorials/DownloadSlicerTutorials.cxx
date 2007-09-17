@@ -9,6 +9,7 @@
 #include <math.h>
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "DownloadSlicerTutorialsCLP.h"
 
 // our file stream
@@ -71,7 +72,7 @@ bool openInBrowser(char * url)
   #if WIN32
     ShellExecute(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
   #else
-    vector<const char*> browsers;
+    std::vector<const char*> browsers;
     browsers.push_back("gnome-open");
     browsers.push_back("exo-open");
     browsers.push_back("kfmclient openURL");
@@ -91,7 +92,7 @@ bool openInBrowser(char * url)
       {
       int success = -1;
       itksysProcess* gp = itksysProcess_New();
-      vector<const char*> cmd;
+      std::vector<const char*> cmd;
       cmd.push_back(browsers[i]);
       cmd.push_back(url);
       cmd.push_back(0);
