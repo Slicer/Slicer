@@ -326,9 +326,8 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
         this->VolumeDisplayNode->Delete();
         }
       this->VolumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(displayNode->CreateNodeInstance());
-      this->VolumeDisplayNode->SetScene(displayNode->GetScene());
-        
       this->VolumeDisplayNode->Copy(displayNode);
+      this->VolumeDisplayNode->SetScene(displayNode->GetScene());
       vtkSetAndObserveMRMLNodeMacro(this->VolumeDisplayNodeObserved, displayNode);
       }
     else 

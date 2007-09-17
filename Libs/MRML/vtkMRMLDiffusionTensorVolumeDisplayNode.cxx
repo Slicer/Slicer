@@ -113,7 +113,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::ReadXMLAttributes(const char** att
     if (!strcmp(attName, "diffusionTensorDisplayPropertiesNodeID"))
       {
       this->SetDiffusionTensorDisplayPropertiesNodeID(attValue);
-      this->Scene->AddReferencedNodeID(this->DiffusionTensorDisplayPropertiesNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->DiffusionTensorDisplayPropertiesNodeID, this);
       }
     }
 }
