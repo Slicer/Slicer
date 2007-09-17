@@ -32,6 +32,7 @@ int main( int argc, const char * argv[] )
 
   PARSE_ARGS;
 
+  // Read in ROI volume inputs
   vtkNRRDReader *readerROI_A = vtkNRRDReader::New();
   readerROI_A->SetFileName(InputROI_A.c_str());
   readerROI_A->Update();
@@ -42,14 +43,15 @@ int main( int argc, const char * argv[] )
   //  return EXIT_FAILURE;
   //  }
 
+  // Read in fiber bundle input to be selected.
   vtkXMLPolyDataReader *readerPD = vtkXMLPolyDataReader::New();
   readerPD->SetFileName(InputFibers.c_str());
   readerPD->Update();
 
-    
+  // These probe filters will sample the ROI volume(s) at each point on the fibers.
   vtkProbeFilter *probe = vtkProbeFilter::New();
   
-  //1. Probe's source is region of interest volume
+  //1. Probe's source (volume to sample) is region of interest volume
   probe->SetSource(readerROI_A->GetOutput());
   
   //2. Set up matrices to put fibers into ijk space of volume
@@ -80,7 +82,8 @@ int main( int argc, const char * argv[] )
   //4. Probe's input data is polydata (fibers)
   probe->SetInput( transformer->GetOutput() );
 
-  //5. Do the probing
+  //5. Do the probing. The output of probe is new polydata with scalars
+  // from the probing.
   probe->Update();
 
   //6. Transform the model back into original space
@@ -91,6 +94,20 @@ int main( int argc, const char * argv[] )
   transformer2->SetTransform( trans2 );
   transformer2->SetInput( probe->GetOutput() );
   transformer2->Update();
+
+  
+  // TO DO
+  // Select the fibers based on the scalars from the probing.  The ROI has
+  // some positive values (say for example the value 20).  When this is
+  // probed there will be various numbers on the polyline's scalars.  The
+  // probe can't do nearest neighbor interpolation so if these values are
+  // nonzero assume the fiber has passed near enough to an ROI voxel.
+  // The quick way was to check the scalar range of the polydata but here a loop
+  // is needed to go through the scalars belonging to each line.
+  
+  // TO DO
+  // Handle multiple ROIs and also AND/NOT Boolean operations.
+  
   
   //7. Save the output
   vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
