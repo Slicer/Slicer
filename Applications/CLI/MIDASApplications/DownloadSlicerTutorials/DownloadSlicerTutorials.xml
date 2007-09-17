@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Data Access</category>
+  <title>MIDAS Data and Slicer Tutorials</title>
+  <description> Allows the user to browse data and download Slicer tutorials to their computer from MIDAS (http://www.insight-journal.org/midas).  Tutorials typically consist of .zip files that contain the tutorials at PowerPoint presentations as well as demonstration data. </description>
+  <version>0.1.0.$Revision: 1.1 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Patrick Reynolds and Stephen Aylward</contributor>
+  <acknowledgements> This work is part of the following projects and grants: (1) National Library of Medicine's Work Assignment 9 for Insight Toolkit Maintenance, MIDAS subproject. (2) BWH Neuroimage Analysis Center (NAC). (3) National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. </acknowledgements>
+  <parameters>
+    <label>Browse Data</label>
+    <description>Select the data to browse using your Web browser</description>
+    <boolean>
+      <name>namic</name>
+      <label>Browse NAMIC data over the Web</label>
+      <longflag>namic</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>nlm</name>
+      <label>Browse NLM/MIDAS data over the Web</label>
+      <longflag>nlm</longflag>
+      <default>false</default>
+    </boolean>
+  </parameters>
+  <parameters>
+    <label>Download Tutorials</label>
+    <description>Place a check next to the tutorials you would like to download</description>
+    <boolean>
+      <name>dl01</name>
+      <label>EM Segment Tutorial Data</label>
+      <longflag>dl01</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>dl02</name>
+      <label>Data Loading and Visualization</label>
+      <longflag>dl02</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>dl03</name>
+      <label>Manual Segmentation</label>
+      <longflag>dl03</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>dl04</name>
+      <label>Level-Set Segmentation</label>
+      <longflag>dl04</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>dl05</name>
+      <label>Diffusion Tensor Imaging Analysis</label>
+      <longflag>dl05</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>dl06</name>
+      <label>Functional Magnetic Resonance Imaging Analysis</label>
+      <longflag>dl06</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>dl07</name>
+      <label>FreeSurfer Reader</label>
+      <longflag>dl07</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>dl08</name>
+      <label>Data Saving</label>
+      <longflag>dl08</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>dl09</name>
+      <label>Nrrd File Format</label>
+      <longflag>dl09</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>dl10</name>
+      <label>Nrrd to Dicom Conversion</label>
+      <longflag>dl10</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>dl11</name>
+      <label>Automatic Brain Segmentation</label>
+      <longflag>dl11</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>dl12</name>
+      <label>Registration</label>
+      <longflag>dl12</longflag>
+      <default>false</default>
+    </boolean>
+  </parameters>
+  <parameters>
+    <label>Download Directory</label>
+    <description>Enter the directory where you'd like the checked tutorials to be downloaded</description>
+    <directory>
+      <name>dir</name>
+      <longflag>dir</longflag>
+      <default>.</default>
+    </directory>
+  </parameters>
+</executable>

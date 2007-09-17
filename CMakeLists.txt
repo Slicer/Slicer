@@ -109,6 +109,21 @@ INCLUDE(${TEEM_USE_FILE})
 
 
 #
+# BatchMake
+#
+OPTION(USE_BatchMake "Build Slicer3 with BatchMake support." ON)
+IF(USE_BatchMake)
+  FIND_PACKAGE(BatchMake REQUIRED)
+  INCLUDE(${BatchMake_USE_FILE})
+ENDIF(USE_BatchMake)
+
+#
+# MIDAS
+#
+OPTION(USE_MIDAS "Build Slicer3 with MIDAS support." ON)
+
+
+#
 # NaviTrack 
 #
 OPTION(USE_NAVITRACK "Build Slicer3 with NaviTrack support." OFF)
@@ -153,7 +168,8 @@ ENDIF(USE_IGSTK)
 
 INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
 KWWidgets_GENERATE_SETUP_PATHS_SCRIPTS(
-  "${EXECUTABLE_OUTPUT_PATH}" "Slicer3SetupPaths" "${TEEM_DIR}/bin")
+  "${EXECUTABLE_OUTPUT_PATH}" "Slicer3SetupPaths" "${TEEM_DIR}/bin"
+  "${BatchMake_DIR}/bin")
   
 
 # VTK 5.0 does not have VTK_CMAKE_DIR
