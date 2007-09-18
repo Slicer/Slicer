@@ -1228,6 +1228,18 @@ int Slicer3_main(int argc, char *argv[])
 
 #ifndef QUERYATLAS_DEBUG
     slicerApp->SplashMessage("Initializing Query Atlas Module...");
+
+    //--- Incorporate the tcl QueryAtlas components
+    std::string qaTclCommand = "set ::QA_PACKAGE {};";
+    qaTclCommand += "set dir [ glob \"" + slicerBinDir + "/../"
+      SLICER_INSTALL_LIBRARIES_DIR "/Modules/Packages/QueryAtlas/Tcl\" ]; ";
+    qaTclCommand += "  if { [ file exists $dir/pkgIndex.tcl ] } {";
+    qaTclCommand += "    lappend ::QA_PACKAGE [ file tail $dir ];";
+    qaTclCommand += "    lappend ::auto_path $dir;";
+    qaTclCommand += "    package require $::QA_PACKAGE;";
+    qaTclCommand += "  }";
+    Slicer3_Tcl_Eval( interp, qaTclCommand.c_str() );
+
     //--- Query Atlas Module
     vtkQueryAtlasGUI *queryAtlasGUI = vtkQueryAtlasGUI::New ( );
     vtkQueryAtlasLogic *queryAtlasLogic  = vtkQueryAtlasLogic::New ( );
@@ -1237,6 +1249,7 @@ int Slicer3_main(int argc, char *argv[])
     queryAtlasGUI->SetApplication ( slicerApp );
     queryAtlasGUI->SetApplicationLogic ( appLogic );
     queryAtlasGUI->SetApplicationGUI ( appGUI );
+    queryAtlasGUI->SetAndObserveMRMLScene ( scene );
     queryAtlasGUI->SetGUIName( "QueryAtlas" );
     queryAtlasGUI->GetUIPanel()->SetName ( queryAtlasGUI->GetGUIName ( ) );
     queryAtlasGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );

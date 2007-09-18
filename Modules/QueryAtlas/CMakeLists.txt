@@ -1,5 +1,40 @@
 PROJECT(QueryAtlas)
 
+
+#
+# install the tcl package for the Module
+# - make the module packages build directory if needed
+# - make this module's package directory
+# - copy over the tcl package files to the build directory
+#
+
+SET (Package_DIR ${SLICER_LIBRARIES_DIR}/Modules/Packages)
+IF (NOT EXISTS ${Package_DIR})
+  FILE(MAKE_DIRECTORY ${Package_DIR})
+ENDIF (NOT EXISTS ${Package_DIR})
+
+SET(QueryAtlas_DIR ${Package_DIR}/QueryAtlas)
+#
+# copy over the tcl files
+#
+FILE(MAKE_DIRECTORY ${QueryAtlas_DIR})
+SET(TCLFILES
+  ./Tcl/pkgIndex.tcl
+  ./Tcl/Card.tcl ./Tcl/CardFan.tcl ./Tcl/QueryAtlas.tcl
+  ./Tcl/QueryAtlasControlledVocabulary.tcl
+  ./Tcl/QueryAtlasWeb.tcl
+)
+
+FOREACH(tclfile ${TCLFILES})
+  CONFIGURE_FILE(
+    ${Slicer3_SOURCE_DIR}/Modules/QueryAtlas/${tclfile}
+    ${QueryAtlas_DIR}/${tclfile}
+    COPYONLY
+  )
+ENDFOREACH(tclfile)
+
+
+
 # --------------------------------------------------------------------------
 # Sources
 
@@ -119,3 +154,6 @@ CONFIGURE_FILE(
   ${QueryAtlas_SOURCE_DIR}/vtkQueryAtlasConfigure.h.in 
   ${QueryAtlas_BINARY_DIR}/vtkQueryAtlasConfigure.h
 )
+
+
+
