@@ -24,6 +24,7 @@
 #include "vtkKWTkUtilities.h"
 #include "vtkKWIcon.h"
 
+#include "vtkRenderer.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkSlicerSliceControllerWidget );
@@ -1105,18 +1106,24 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
       sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
       while ( sgui != NULL )
         {
-        int w, h;
+//        int w, h;
         //w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
         //h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
-        sscanf(
-          this->Script("winfo width %s", 
-              sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
-          "%d", &w);
-        sscanf(
-          this->Script("winfo height %s", 
-              sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
-          "%d", &h);
-        sgui->GetLogic()->FitSliceToBackground ( w, h );
+        //
+//         sscanf(
+//           this->Script("winfo width %s", 
+//               sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+//           "%d", &w);
+//         sscanf(
+//           this->Script("winfo height %s", 
+//               sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+//           "%d", &h);
+//        sgui->GetLogic()->FitSliceToBackground ( w, h );
+        //
+        // Fit to the size of viewport 0 (for the LightBox)
+        int *rSize = sgui->GetSliceViewer()->GetRenderWidget()
+          ->GetRenderer()->GetSize();
+        sgui->GetLogic()->FitSliceToBackground ( rSize[0], rSize[1] );
         sgui->GetSliceNode()->UpdateMatrices( );
         appGUI->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
         sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
@@ -1126,21 +1133,27 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
       {
       this->MRMLScene->SaveStateForUndo ( this->SliceNode );
 
-      int w, h;
+//      int w, h;
       // gives bogus values:
       //w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
       //h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
 
-      sscanf(
-        this->Script("winfo width %s", 
-            sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
-        "%d", &w);
-      sscanf(
-        this->Script("winfo height %s", 
-            sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
-        "%d", &h);
+//       sscanf(
+//         this->Script("winfo width %s", 
+//             sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+//         "%d", &w);
+//       sscanf(
+//         this->Script("winfo height %s", 
+//             sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+//         "%d", &h);
 
-      sgui->GetLogic()->FitSliceToBackground ( w, h );
+//       sgui->GetLogic()->FitSliceToBackground ( w, h );
+
+      //
+      // Fit to the size of viewport 0 (for the LightBox)
+      int *rSize = sgui->GetSliceViewer()->GetRenderWidget()
+        ->GetRenderer()->GetSize();
+      sgui->GetLogic()->FitSliceToBackground ( rSize[0], rSize[1] );
       this->SliceNode->UpdateMatrices( );
       appGUI->GetSlicesControlGUI()->RequestFOVEntriesUpdate();      
       }
@@ -1839,7 +1852,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   else
     {
     // Orientation is Oblique: make tooltip null
-    this->OffsetScale->GetScale()->SetBalloonHelpString ( "" ) ;
+    this->OffsetScale->GetScale()->SetBalloonHelpString ( "Oblique" ) ;
     }
 
   //
@@ -1853,14 +1866,12 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   this->Script ("%s configure -digits 20", 
                 this->OffsetScale->GetScale()->GetWidgetName());
 
-
   //
   // Set the scale range to match the field of view
   //
   double sliceBounds[6];
   this->SliceLogic->GetBackgroundSliceBounds(sliceBounds);
 
-  double fovover2 = this->SliceNode->GetFieldOfView()[2] / 2.;
   double newMin = sliceBounds[4];
   double newMax = sliceBounds[5];
   double min, max;
