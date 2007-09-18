@@ -206,7 +206,7 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
   vtkDebugMacro("vtkQueryAtlasGUI: Tearing down Tcl callbacks \n");
   this->Script ( "QueryAtlasTearDown" );
 
-  this->SetAndObserveMRMLScene ( NULL );
+  this->RemoveMRMLObservers ( );
     this->SetModuleLogic ( NULL );
     //---
     // help and acknowledgment frame
@@ -866,6 +866,7 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   //  this->AccumulatedResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 #endif
   
+/*
  //--MRML
   if (this->MRMLScene)
       {
@@ -873,6 +874,7 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
         this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->GUICallbackCommand);
         this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GUICallbackCommand);
       }
+*/
 
 }
 
@@ -945,6 +947,8 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   //  this->AccumulatedResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 #endif
   
+
+/*
  //--MRML
   if (this->MRMLScene)
       {
@@ -961,7 +965,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
         this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GUICallbackCommand);
         }
       }
-
+*/
 }
 
 
@@ -994,6 +998,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     }
 
+/*
   //MRML
   if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
       vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
@@ -1032,7 +1037,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     //
     }
-
+*/
   
   if ((sel == this->FSasegSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
     {
@@ -1488,13 +1493,15 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
   this->ProcessingMRMLEvent = event;
   vtkDebugMacro("processing event " << event);
    
-  // has a node been added?
+
+  //--- has a node been added?
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
        && (event == vtkMRMLScene::NodeAddedEvent ) )
     {
     this->Script ( "QueryAtlasNodeAddedUpdate" );
     }
-  // has a node been deleted?
+
+  //--- has a node been deleted?
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
        && (event == vtkMRMLScene::NodeRemovedEvent ) )
     {
@@ -1520,7 +1527,7 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
       }
     }
   
-  // is the scene closing?
+  //--- is the scene closing?
   if (event == vtkMRMLScene::SceneCloseEvent )
     {
     this->SceneClosing = true;
@@ -1547,7 +1554,16 @@ void vtkQueryAtlasGUI::Exit ( )
     vtkDebugMacro("vtkQueryAtlasGUI: Exit\n");
 }
 
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::AddMRMLObservers()
+{
+}
 
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::RemoveMRMLObservers()
+{
+  this->SetAndObserveMRMLScene ( NULL );
+}
 
 
 //---------------------------------------------------------------------------
@@ -1557,6 +1573,7 @@ void vtkQueryAtlasGUI::BuildGUI ( )
   // Define your help text here.
 
 
+    
     // ---
     // MODULE GUI FRAME 
     // configure a page for a model loading UI for now.

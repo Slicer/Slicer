@@ -1243,20 +1243,25 @@ int Slicer3_main(int argc, char *argv[])
     //--- Query Atlas Module
     vtkQueryAtlasGUI *queryAtlasGUI = vtkQueryAtlasGUI::New ( );
     vtkQueryAtlasLogic *queryAtlasLogic  = vtkQueryAtlasLogic::New ( );
-    queryAtlasLogic->SetAndObserveMRMLScene ( scene );
     queryAtlasLogic->SetApplicationLogic ( appLogic );
-    queryAtlasLogic->SetMRMLScene(scene);
     queryAtlasGUI->SetApplication ( slicerApp );
     queryAtlasGUI->SetApplicationLogic ( appLogic );
     queryAtlasGUI->SetApplicationGUI ( appGUI );
-    queryAtlasGUI->SetAndObserveMRMLScene ( scene );
     queryAtlasGUI->SetGUIName( "QueryAtlas" );
     queryAtlasGUI->GetUIPanel()->SetName ( queryAtlasGUI->GetGUIName ( ) );
     queryAtlasGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     queryAtlasGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( queryAtlasGUI );
+    // add mrml observers
+    vtkIntArray *qaEvents = vtkIntArray::New();
+    qaEvents->InsertNextValue ( vtkMRMLScene::SceneCloseEvent );
+    qaEvents->InsertNextValue ( vtkMRMLScene::NodeAddedEvent );
+    qaEvents->InsertNextValue ( vtkMRMLScene::NodeRemovedEvent );
+    queryAtlasGUI->SetAndObserveMRMLSceneEvents (scene, qaEvents );
+    qaEvents->Delete();
     queryAtlasGUI->BuildGUI ( );
     queryAtlasGUI->AddGUIObservers ( );
+
 #endif
     
 #if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)

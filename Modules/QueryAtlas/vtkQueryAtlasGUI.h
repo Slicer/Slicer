@@ -206,6 +206,11 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void RemoveGUIObservers ( );
 
     // Description:
+    // Add/Remove observers on MRML
+    virtual void AddMRMLObservers ( );
+    virtual void RemoveMRMLObservers ( );
+    
+    // Description:
     // Get terms from the Diagosis panel
     virtual void GetDiagnosisTerms ( );
     // Description:
