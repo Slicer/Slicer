@@ -1500,9 +1500,8 @@ proc QueryAtlasUpdateCursor {} {
       $renderer AddActor2D $::QA(cursor,actor)
   }
 
-  if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] } {
+  if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] && [info exists ::QA(cursor,mapper)] } {
       $::QA(cursor,mapper) SetInput $::QA(lastLabels) 
-#      $::QA(cursor,actor) SetInput $::QA(lastLabels) 
       #--- position the text label just higher than the cursor
       foreach {x y} $::QA(lastWindowXY) {}
       set y [expr $y + 15]
