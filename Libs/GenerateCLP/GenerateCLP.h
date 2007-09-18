@@ -49,7 +49,7 @@ char *GetXMLModuleDescription()
   xml += "  <title>NAMIC Command Line Processing Code Generator</title>\n";
   xml += "  <description>Generates C++ code that will parse command lines</description>\n";
   xml += "  <version>1.0</version>\n";
-  xml += "  <documentationurl></documentationurl>\n";
+  xml += "  <documentation-url></documentation-url>\n";
   xml += "  <license></license>\n";
   xml += "  <contributor>Bill Lorensen</contributor>\n";
   xml += "\n";

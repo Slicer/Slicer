@@ -6,7 +6,7 @@ std::cout << "  <category>utility</category>" << std::endl;
 std::cout << "  <title>NAMIC Command Line Processing Code Generator</title>" << std::endl;
 std::cout << "  <description>Generates C++ code that will parse command lines</description>" << std::endl;
 std::cout << "  <version>1.0</version>" << std::endl;
-std::cout << "  <documentationurl></documentationurl>" << std::endl;
+std::cout << "  <documentation-url></documentation-url>" << std::endl;
 std::cout << "  <license></license>" << std::endl;
 std::cout << "  <contributor>Bill Lorensen</contributor>" << std::endl;
 std::cout << "" << std::endl;

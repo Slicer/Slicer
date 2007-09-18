@@ -1467,6 +1467,8 @@ ModuleDescriptionParser::Parse( const std::string& xml, ModuleDescription& descr
       std::cerr << parserState.ErrorDescription
                 << " at line "
                 <<  parserState.ErrorLine
+                << " while parsing "
+                << xml
                 << std::endl;
       status = 1;
       }
