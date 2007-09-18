@@ -334,18 +334,16 @@ proc XcedeCatalogImportEntryVolume {node} {
         } else {
             $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeGrey"
         }
-        puts "XXXX setting win-lev-thresh"
-        
         #$volumeDisplayNode SetAutoWindowLevel 0
         #$volumeDisplayNode SetAutoThreshold 0
-        
-        puts "XXXX set win-lev-thresh"
         
     } else {
         #--- assume this is a greyscale volume
         $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeGrey"
-        $volumeDisplayNode SetAutoWindowLevel 1
-        $volumeDisplayNode SetAutoThreshold 1      
+        if { $labelmap == 0 } {
+            $volumeDisplayNode SetAutoWindowLevel 1
+            $volumeDisplayNode SetAutoThreshold 1
+        }
     }
 
     #set logic [$::slicer3::VolumesGUI GetLogic]
