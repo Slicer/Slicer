@@ -1532,13 +1532,14 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->SceneClosing = true;
     // reset globals.
-    this->Script ("QueryAtlasTearDown; QueryAtlasInitializeGlobals");
+    this->Script ("QueryAtlasTearDown" );
+    this->Script("QueryAtlasInitializeGlobals");
     }
   else 
     {
     this->SceneClosing = false;
     }
-  
+  this->ProcessingMRMLEvent = 0;
 }
 
 

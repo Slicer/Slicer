@@ -19,16 +19,7 @@ proc QueryAtlasInit { } {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasTearDown { } {
-
-    puts "Tearing down Query objects"
-    #--- Delete things.
-    if { [info exists ::QA(cursor,mapper)] } {
-        $::QA(cursor,mapper) Delete
-    }
-    if { [info exists ::QA(cursor,actor)] } {
-        $::QA(cursor,actor) Delete
-    }
+proc QueryAtlasTearDownPicker { } {
     if { [ info exists ::QA(propPicker)  ] } {
         $::QA(propPicker) Delete
     }
@@ -47,6 +38,32 @@ proc QueryAtlasTearDown { } {
     if { [ info exists ::QA(windowToImage)  ] } {
         $::QA(windowToImage) Delete
     }
+
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasTearDownAnnoCursor { } {
+
+    if { [info exists ::QA(cursor,mapper)] } {
+        $::QA(cursor,mapper) Delete
+    }
+    if { [info exists ::QA(cursor,actor)] } {
+        $::QA(cursor,actor) Delete
+    }
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasTearDown { } {
+
+    #--- Delete things.
+    QueryAtlasTearDownAnnoCursor
+    QueryAtlasTearDownPicker
 
     #--- set the model and label selectors to be NULL
     set as [$::slicer3::QueryAtlasGUI GetFSasegSelector]
@@ -668,32 +685,39 @@ proc QueryAtlasFipsFreeSurferSetUp { } {
         $win SetStatusText "Adding annotations..."
         $prog SetValue [ expr 100 * 1.0 / 8.0 ]
         QueryAtlasAddAnnotations
+
         $win SetStatusText "Initializing picker..."
         $prog SetValue [ expr 100 * 2.0 / 8.0 ]
         QueryAtlasInitializePicker 
+
         $win SetStatusText "Rendering view..."
         $prog SetValue [ expr 100 * 3.0 / 8.0 ]
         QueryAtlasRenderView
+
         $win SetStatusText "Adding query cursor..."
         $prog SetValue [ expr 100 * 4.0 / 8.0 ]
         QueryAtlasUpdateCursor
+
         $win SetStatusText "Parsing controlled vocabulary..."
         $prog SetValue [ expr 100 * 5.0 / 8.0 ]
         QueryAtlasParseControlledVocabulary
+
         $win SetStatusText "Parsing NeuroNames Synonyms..."
         $prog SetValue [ expr 100 * 6.0 / 8.0 ]
         QueryAtlasParseNeuroNamesSynonyms
+
         $win SetStatusText "Parsing precompiled URIs..."
         $prog SetValue [ expr 100 * 7.0 / 8.0 ]
         QueryAtlasParseBrainInfoURIs
+
         set ::QA(CurrentRASPoint) "0 0 0"
         $prog SetValue [ expr 100 * 8.0 / 8.0 ]
         set ::QA(SceneLoaded) 1
-
-        #--- clear progress
-        $win SetStatusText ""
-        $prog SetValue 0
     }
+
+    #--- clear progress
+    $win SetStatusText ""
+    $prog SetValue 0
 }
 
 
@@ -836,9 +860,6 @@ proc QueryAtlasAddAnnotations { } {
 
 
 
-
-
-
 #----------------------------------------------------------------------------------------------------
 #--- convert a number to an RGBA 
 #--- : A is always 255 (on transp)
@@ -877,8 +898,10 @@ proc QueryAtlasInitializePicker {} {
   # and a pickRenderer and picker to find the actual world space pick point
   # under the mouse for a slice plane
   #
-  set ::QA(propPicker) [vtkPropPicker New]
-  set ::QA(cellPicker) [vtkCellPicker New]
+
+    QueryAtlasTearDownPicker
+    set ::QA(propPicker) [vtkPropPicker New]
+    set ::QA(cellPicker) [vtkCellPicker New]
 
   #
   # get the polydata for the model
@@ -1147,11 +1170,12 @@ proc QueryAtlasPickCallback {} {
     return
   }
 
-  if { [$::QA(cursor,actor) GetVisibility] == 0 } {
-    # if the cursor isn't on, don't bother to calculate labels
-    return
+  if { [ info exists ::QA(cursor,actor) ] } {
+      if { [$::QA(cursor,actor) GetVisibility] == 0 } {
+          # if the cursor isn't on, don't bother to calculate labels
+          return
+      }
   }
-
 
   #
   # get access to the standard view parts
@@ -1436,12 +1460,18 @@ proc QueryAtlasCursorVisibility { onoff } {
       #--- allows a master "switch" to turn off annotations
       #--- by default, they are on.
       if { $::QA(annotationVisibility) } {
-           $::QA(cursor,actor) SetVisibility 1
+          if { [ info exists ::QA(cursor,actor) ] } {
+              $::QA(cursor,actor) SetVisibility 1
+          }
       } else {
-           $::QA(cursor,actor) SetVisibility 0
+          if { [ info exists ::QA(cursor,actor) ] } {
+              $::QA(cursor,actor) SetVisibility 0
+          }
       }
   } else {
-    $::QA(cursor,actor) SetVisibility 0
+      if { [ info exists ::QA(cursor,actor) ] } {
+          $::QA(cursor,actor) SetVisibility 0
+      }
   }
   set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
   $viewer RequestRender
@@ -1456,19 +1486,18 @@ proc QueryAtlasCursorVisibility { onoff } {
 proc QueryAtlasUpdateCursor {} {
 
   set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
+
   if { ![info exists ::QA(cursor,actor)] } {
+      set ::QA(cursor,actor) [vtkTextActor New]
+      set ::QA(cursor,mapper) [vtkTextMapper New]
+      $::QA(cursor,actor) SetMapper $::QA(cursor,mapper)
+      [$::QA(cursor,actor) GetTextProperty] ShadowOn
+      [$::QA(cursor,actor) GetTextProperty] SetFontSize 20
+      [$::QA(cursor,actor) GetTextProperty] SetFontFamilyToTimes
 
-    set ::QA(cursor,actor) [vtkTextActor New]
-    set ::QA(cursor,mapper) [vtkTextMapper New]
-    $::QA(cursor,actor) SetMapper $::QA(cursor,mapper)
-    [$::QA(cursor,actor) GetTextProperty] ShadowOn
-    [$::QA(cursor,actor) GetTextProperty] SetFontSize 20
-    [$::QA(cursor,actor) GetTextProperty] SetFontFamilyToTimes
-
-    set renderWidget [$viewer GetMainViewer]
-    set renderer [$renderWidget GetRenderer]
-    $renderer AddActor2D $::QA(cursor,actor)
-
+      set renderWidget [$viewer GetMainViewer]
+      set renderer [$renderWidget GetRenderer]
+      $renderer AddActor2D $::QA(cursor,actor)
   }
 
   if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] } {
