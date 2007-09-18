@@ -178,6 +178,9 @@ void vtkSlicerTheme::Install ( )
     odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar:Frame", "SetBorderWidth", 0 );
     odb->AddEntryAsInt ( "vtkKWFrameWithScrollbar:Frame", "SetHighlightThickness", 0 );
     odb->AddEntry ( "vtkKWFrameWithScrollbar:Frame", "SetRelief", "sunken" );
+
+    // Slicer FavoritesFrame inside FileBrowser (ignore system default places; use application-relevant places).
+    odb->AddEntryAsInt ( "vtkKWFileBrowserWidget:FavoriteDirectoriesFrame", "SetUseSystemDefaultPlaces", 0 );
     
     // Slicer subtle decoration Frames inside ApplicationGUI
     odb->AddEntryAsDouble3 ( "vtkSlicerApplicationGUI:DropShadowFrame", "SetBackgroundColor",
