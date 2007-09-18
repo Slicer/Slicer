@@ -327,15 +327,20 @@ proc XcedeCatalogImportEntryVolume {node} {
         $volumeDisplayNode SetAutoWindowLevel 0
         #$volumeDisplayNode SetThresholdType 1
     } elseif { [ string first "aseg" $n(uri) ] >= 0 } {
-        #--- this is likely a label map volume
+        #--- this is likely a freesurfer label map volume
         set colorLogic [ $::slicer3::ColorGUI GetLogic ]
         if { $colorLogic != "" } {
             $volumeDisplayNode SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferLabelMapColorNodeID ]
         } else {
             $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeGrey"
         }
-        $volumeDisplayNode SetAutoWindowLevel 0
-        $volumeDisplayNode SetAutoThreshold 0
+        puts "XXXX setting win-lev-thresh"
+        
+        #$volumeDisplayNode SetAutoWindowLevel 0
+        #$volumeDisplayNode SetAutoThreshold 0
+        
+        puts "XXXX set win-lev-thresh"
+        
     } else {
         #--- assume this is a greyscale volume
         $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeGrey"
@@ -586,30 +591,31 @@ proc XcedeCatalogImportEntryOverlay {node} {
 
     #--- not really a node, per se...
     #--- ditch if there's no file in the uri
+
     if { ! [info exists n(uri) ] } {
         puts "XcedeCatalogImportEntryOverlay: no uri specified for node $n(name). No overlay imported."
         return
     }
-
     #--- what model node should these scalars be applied to?
     if { ![info exists ::XcedeCatalog_ModelMrmlID ] } {
         puts "XcedeCatalogImportEntryOverlay: no model ID specified for overlay $n(uri). No overlay imported."
         return
     }
-
+    
     set mid $::XcedeCatalog_ModelMrmlID
     set mnode [$::slicer3::MRMLScene GetNodeByID $mid]
+
     if { $mnode == "" } {
         puts "XcedeCatalogImportEntryOverlay: Model MRML Node corresponding to ID=$mid not found. No overlay imported."
         return
     }
-
+    
     set logic [$::slicer3::ModelsGUI GetLogic]
     if { $logic == "" } {
         puts "XcedeCatalogImportEntryOverlay: cannot access Models Logic class. No overlay imported."
         return
     }
-         
+    
     #--- add the scalar to the node
     $logic AddScalar $n(uri) $mnode 
 
