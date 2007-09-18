@@ -260,15 +260,13 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
     float viewportWidth  = 1.0/float(numberColumns);
     float viewportHeight = 1.0/float(numberRows);
 
-    float xMin;
-    float yMin;
-
-    int inc = 0;
-
+    // arrange the renderers from top to bottom and left to right
     vtkCamera *cam;
-    yMin = 0.0;
+    float xMin, yMin;
+    bool first = true;
     for ( int r=0; r<numberRows; r++ )
       {
+      yMin = (numberRows - 1 - r) * viewportHeight;
       xMin = 0.0;
       for ( int c=0; c<numberColumns; c++ )
         {
@@ -282,7 +280,6 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
           actor2D->SetMapper( mapper );
 
         vtkSmartPointer< vtkRenderer > renderer = vtkRenderer::New();
-        //renderer->SetBackground( (xMin+viewportWidth), (yMin+viewportHeight), 0.0 );
           renderer->SetBackground( 0.0, 0.0, 0.0 );
           renderer->SetViewport( xMin, yMin, (xMin+viewportWidth), (yMin+viewportHeight) );
           renderer->AddActor2D( actor2D );
@@ -293,8 +290,9 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
         // First renderer, grab a handle to the camera to share
         // amongst the rest of the renderers
         //
-        if (r==0 && c==0)
+        if (first)
           {
+          first = false;
           cam = renderer->GetActiveCamera();
           if (cam)
             {
@@ -306,9 +304,7 @@ void vtkSlicerSliceViewer::ChangeLayout( int numberRows, int numberColumns )
           renderer->SetActiveCamera(cam);
           }
         xMin += viewportWidth;
-        inc++;
         }
-      yMin += viewportHeight;
       }
     
     this->SetImageData(imageData);
@@ -323,7 +319,7 @@ void vtkSlicerSliceViewer::SetImageData( vtkImageData* imageData )
   // left to right, bottom to right, as is the convention with VTK.
   //
   int inc = 0;
-  for ( int r=(this->LayoutGridRows-1); r>=0; r--)
+  for ( int r=0; r<this->LayoutGridRows; r++)
     {
     for ( int c=0; c<this->LayoutGridColumns; c++ )
       {

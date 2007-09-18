@@ -239,15 +239,15 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
     }
 
     #
-    # make the fiducial visible if within 1mm of the slice
+    # make the fiducial visible if within half a slicewidth of the slice
     # - place a seed widget and keep track for later deletion
     #
     set nFids [$fidListNode GetNumberOfFiducials]
     for {set f 0} {$f < $nFids} {incr f} {
       foreach {r a s} [$fidListNode GetNthFiducialXYZ $f] {}
-      set slice [eval $rasToSlice MultiplyPoint $r $a $s 1]
-      set z [lindex $slice 2]
-      if { [expr abs($z)] <= 1 } {
+      set xyz [$this rasToXYZ "$r $a $s"]
+      foreach {x y z} $xyz {}
+      if { $z >= -0.5 && $z < [expr 0.5+[lindex [$node GetDimensions] 2]-1]} {
         set seedSWidget [SeedSWidget #auto $sliceGUI]
         $seedSWidget place $r $a $s
         $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $fidListNode $f"

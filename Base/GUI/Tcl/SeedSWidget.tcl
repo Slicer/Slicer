@@ -42,7 +42,7 @@ if { [itcl::find class SeedSWidget] == "" } {
     public variable text ""
     public variable textScale "1"
 
-    variable _startOffset "0 0"
+    variable _startOffset "0 0 0"
     variable _currentPosition "0 0 0"
 
     # methods
@@ -63,7 +63,6 @@ if { [itcl::find class SeedSWidget] == "" } {
 itcl::body SeedSWidget::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
-  set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
  
   set o(glyph) [$this createGlyph]
   set o(glyphTransform) [vtkNew vtkTransform]
@@ -74,14 +73,15 @@ itcl::body SeedSWidget::constructor {sliceGUI} {
   set o(actor) [vtkNew vtkActor2D]
   $o(mapper) SetInput [$o(glyphTransformFilter) GetOutput]
   $o(actor) SetMapper $o(mapper)
-  [$renderWidget GetRenderer] AddActor2D $o(actor)
+  set _renderer [$_renderWidget GetRenderer]
+  $_renderer AddActor2D $o(actor)
   lappend _actors $o(actor)
 
   set o(textActor) [vtkNew vtkTextActor]
-  [$renderWidget GetRenderer] AddActor2D $o(textActor)
+  $_renderer AddActor2D $o(textActor)
   set textProperty [$o(textActor) GetTextProperty]
   $textProperty ShadowOn
-  lappend _actors $o(actor)
+  lappend _actors $o(textActor)
 
   set _startPosition "0 0 0"
   set _currentPosition "0 0 0"
@@ -194,14 +194,12 @@ itcl::body SeedSWidget::createGlyph { {type "StarBurst"} } {
 
 itcl::body SeedSWidget::pick {} {
 
-  set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
-  set interactor [$renderWidget GetRenderWindowInteractor]
-
-  foreach {x y} [$this rasToXY $_currentPosition] {}
-  foreach {ex ey} [$interactor GetEventPosition] {}
+  foreach {x y z} [$this rasToXYZ $_currentPosition] {}
+  foreach {wx wy} [$_interactor GetEventPosition] {}
+  foreach {ex ey ez} [$this dcToXYZ $wx $wy] {}
   if { [expr abs($ex - $x) < 15] && [expr abs($ey - $y) < 15] } {
     set _pickState "over"
-    set _startOffset [list [expr $x - $ex] [expr $y - $ey]] 
+    set _startOffset [list [expr $x - $ex] [expr $y - $ey] [expr $z - $ez]]
   } else {
     set _pickState "outside"
   }
@@ -214,12 +212,28 @@ itcl::body SeedSWidget::place {x y z} {
 
 itcl::body SeedSWidget::positionActors { } {
 
-  set xyzw [$this rasToXY $_currentPosition]
+  set xyzw [$this rasToXYZ $_currentPosition]
   foreach {x y z w} $xyzw {}
   $o(actor) SetPosition $x $y
   set x [expr $x + $scale]
   set y [expr $y + $scale]
   $o(textActor) SetPosition $x $y
+
+  set k [expr int($z + 0.5)]
+
+  if { [info command $_renderer] != ""} {
+    $_renderer RemoveActor2D $o(actor)
+    $_renderer RemoveActor2D $o(textActor)
+  }
+
+  if { $k >= 0 && $k < [$_renderWidget GetNumberOfRenderers] } {
+    set _renderer [$_renderWidget GetNthRenderer $k]
+    if { [info command $_renderer] != ""} {
+      $_renderer AddActor2D $o(actor)
+      $_renderer AddActor2D $o(textActor)
+    } else {
+    }
+  }
 }
 
 itcl::body SeedSWidget::highlight { } {
@@ -299,10 +313,11 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
         "MouseMoveEvent" {
           switch $_actionState {
             "dragging" {
-              foreach {ex ey} [$_interactor GetEventPosition] {}
-              foreach {dx dy} $_startOffset {}
-              set newxy [list [expr $ex + $dx] [expr $ey + $dy]]
-              set _currentPosition [$this xyToRAS $newxy]
+              foreach {wx wy} [$_interactor GetEventPosition] {}
+              foreach {ex ey ez} [$this dcToXYZ $wx $wy] {}
+              foreach {dx dy dz} $_startOffset {}
+              set newxyz [list [expr $ex + $dx] [expr $ey + $dy] [expr $ez + $dz]]
+              set _currentPosition [$this xyzToRAS $newxyz]
               eval $movingCommand
             }
             default {

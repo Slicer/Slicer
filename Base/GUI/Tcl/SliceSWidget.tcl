@@ -248,7 +248,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
   set renderer0 [$_renderWidget GetRenderer]
 
-  foreach {x y z} [$this xyToXYZ $windowx $windowy] {}
+  foreach {x y z} [$this dcToXYZ $windowx $windowy] {}
 
   # We should really use the pokedrenderer's size for these calculations.
   # However, viewports in the LightBox can differ in size by a pixel.  So 
