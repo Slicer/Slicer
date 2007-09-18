@@ -1841,8 +1841,8 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     }
   else if ( !(strcmp(this->SliceNode->GetOrientationString(), "Sagittal")))
     {
-    // Orientation is Sagittal: R <----> L  
-    this->OffsetScale->GetScale()->SetBalloonHelpString ( "R <-----> L" );
+    // Orientation is Sagittal: L <----> R
+    this->OffsetScale->GetScale()->SetBalloonHelpString ( "L <-----> R" );
     }
   else if ( !(strcmp(this->SliceNode->GetOrientationString(), "Coronal")))
     {
