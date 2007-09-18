@@ -15,6 +15,7 @@ SUBDIRS(
   #Meshing
   QdecModule
   Tractography
+  VolumeRendering
 )
 
 

@@ -35,6 +35,7 @@
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerApplicationSettingsInterface.h"
 
+
 #include "vtkSlicerConfigure.h" // for VTKSLICER_CONFIGURATION_TYPES
 
 #include "ModuleFactory.h"
@@ -144,6 +145,12 @@ extern "C" {
 #if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
 #include "vtkQueryAtlasLogic.h"
 #include "vtkQueryAtlasGUI.h"
+#endif
+
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+#include "vtkMRMLVolumeRenderingDisplayNode.h"
+#include "vtkVolumeRenderingModuleGUI.h"
+#include "vtkVolumeRenderingModuleLogic.h"
 #endif
 //
 // note: always write to cout rather than cerr so log messages will
@@ -1309,6 +1316,29 @@ int Slicer3_main(int argc, char *argv[])
     qdecModuleGUI->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
 #endif
 
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+    slicerApp->SplashMessage("Initializing Volume Rendering Module...");
+    //VolumeRenderingModule
+    vtkVolumeRenderingModuleGUI *vrModuleGUI = vtkVolumeRenderingModuleGUI::New ( );
+    vtkVolumeRenderingModuleLogic *vrModuleLogic  = vtkVolumeRenderingModuleLogic::New ( );
+    vrModuleGUI->SetAndObserveMRMLScene ( scene );
+    vrModuleGUI->SetApplicationLogic ( appLogic );
+    vrModuleGUI->SetMRMLScene(scene);
+    vrModuleGUI->SetAndObserveModuleLogic(vrModuleLogic);
+    vrModuleGUI->SetApplication ( slicerApp );
+    vrModuleGUI->SetApplicationLogic ( appLogic );
+    vrModuleGUI->SetApplicationGUI ( appGUI );
+    vrModuleGUI->SetGUIName( "VolumeRenderingModule" );
+    vrModuleGUI->GetUIPanel()->SetName ( vrModuleGUI->GetGUIName ( ) );
+    vrModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    vrModuleGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( vrModuleGUI );
+    vrModuleGUI->BuildGUI ( );
+    vrModuleGUI->AddGUIObservers ( );
+    // add the pointer to the viewer widget, for observing pick events
+    vrModuleGUI->SetViewerWidget(appGUI->GetViewerWidget());
+    vrModuleGUI->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
+#endif
 #if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
     //
     // --- SlicerDaemon Module
