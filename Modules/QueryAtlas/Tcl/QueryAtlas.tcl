@@ -136,7 +136,6 @@ proc QueryAtlasMessageDialog { str } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetAnnotatedModel { } {
 
-    puts "setting annotated model"
     set ms [$::slicer3::QueryAtlasGUI GetFSmodelSelector]
     set node [ $ms GetSelected ]
     if { $node == "" } {
@@ -161,7 +160,7 @@ proc QueryAtlasSetAnnotatedModel { } {
     }
 
     if { ! $gotmodel } {
-        QueryAtlasMessageDialog "Selected volume should be a FreeSurfer lh.pial or rh.pial file."
+        #QueryAtlasMessageDialog "Selected volume should be a FreeSurfer lh.pial or rh.pial file."
         set ::QA(modelNodeID) ""
         set ::QA(modelDisplayNodeID) ""
     }
@@ -174,7 +173,6 @@ proc QueryAtlasSetAnnotatedModel { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetAnnotatedLabelMap { } {
 
-    puts "setting annotated label map"
     set vs [$::slicer3::QueryAtlasGUI GetFSasegSelector]
     set node [ $vs GetSelected ]
 
@@ -199,10 +197,9 @@ proc QueryAtlasSetAnnotatedLabelMap { } {
     }
 
     if { ! $gotlabels } {
-        QueryAtlasMessageDialog "Selected volume should be a FreeSurfer aparc+aseg file."
+        #QueryAtlasMessageDialog "Selected volume should be a FreeSurfer aparc+aseg file."
         set ::QA(label,volumeNodeID) ""
     }
-    puts "labelmap = $::QA(label,volumeNodeID)"
 }
 
 
@@ -211,7 +208,6 @@ proc QueryAtlasSetAnnotatedLabelMap { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetAnatomical { } {
 
-    puts "setting brain"
     set vs [$::slicer3::QueryAtlasGUI GetFSbrainSelector]
     set node [ $vs GetSelected ]
     if { $node == "" } {
@@ -238,7 +234,7 @@ proc QueryAtlasSetAnatomical { } {
     }
     
     if { ! $gotbrain } {
-        QueryAtlasMessageDialog "Selected volume should be a FreeSurfer brain.mgz file."
+        #QueryAtlasMessageDialog "Selected volume should be a FreeSurfer brain.mgz file."
         set ::QA(brain,volumeNodeID) ""
 
     }
@@ -249,7 +245,6 @@ proc QueryAtlasSetAnatomical { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetStatistics { } {
 
-    puts "setting stats"
     set vs [$::slicer3::QueryAtlasGUI GetFSstatsSelector]
     set node [ $vs GetSelected ]
     if { $node == "" } {
