@@ -170,22 +170,20 @@ itcl::body SliceSWidget::resizeSliceNode {} {
   foreach {w h} [$pokedRenderer GetSize] {}
 
   foreach {nodeW nodeH nodeD} [$_sliceNode GetDimensions] {}
-  if { $w == $nodeW && $h == $nodeH } {
+  foreach {nodefovx nodefovy nodefovz} [$_sliceNode GetFieldOfView] {}
+  if { $w == $nodeW && $h == $nodeH && $sliceStep == [expr $nodefovz / (1. * $nodeD)]} {
     return
   }
 
   if { $w == "10" && $h == "10" } {
     puts "ignoring bogus resize"
   } else {
-    set oldFOV [$_sliceNode GetFieldOfView]
-    set oldDim [$_sliceNode GetDimensions]
-    set oldPixelSize0 [expr [lindex $oldFOV 0] / (1. * [lindex $oldDim 0])]
-    set oldPixelSize1 [expr [lindex $oldFOV 1] / (1. * [lindex $oldDim 1])]
+    set oldPixelSize0 [expr $nodefovx / (1. * $nodeW)]
+    set oldPixelSize1 [expr $nodefovy / (1. * $nodeH)]
     set oldPixelSize2 $sliceStep  
-    $_sliceNode SetDimensions $w $h [lindex $oldDim 2]    
+    $_sliceNode SetDimensions $w $h $nodeD
     $_sliceNode SetFieldOfView \
-        [expr $oldPixelSize0 * $w] [expr $oldPixelSize1 * $h] [expr [lindex $oldDim 2]*$oldPixelSize2]
-
+        [expr $oldPixelSize0 * $w] [expr $oldPixelSize1 * $h] [expr $oldPixelSize2 * $nodeD]
   }
 }
 
