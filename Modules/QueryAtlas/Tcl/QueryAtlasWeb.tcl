@@ -39,7 +39,7 @@ proc QueryAtlasWriteFirefoxBookmarkFile {bmfile } {
     set num [ $rl GetNumberOfItems ]
     for { set i 0 } { $i < $num } { incr i } {
         set link [ $rl GetItem $i ]
-        set line "        <DT><A HREF=\"$link\" > QueryAtlas link $i </A>"
+        set line "        <DT><A HREF=\"$link\" > Slicer3:QueryAtlas link $i </A>"
         puts "adding $line"
         puts $fp $line
     }

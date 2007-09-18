@@ -1430,10 +1430,9 @@ void vtkQueryAtlasGUI::WriteBookmarksCallback ()
   const char *filen;
   
   filen = this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->GetFileName();
-  std::string str = std::string(filen);
-  itksys::SystemTools::ConvertToUnixSlashes( str );
-  filen = str.c_str();
-  this->Script( "QueryAtlasWriteFirefoxBookmarkFile %s", filen );
+  itksys::SystemTools::ConvertToUnixOutputPath( filen );
+  this->Script( "QueryAtlasWriteFirefoxBookmarkFile \"%s\"", filen );
+  this->SaveAccumulatedResultsButton->SetText ( "" );
 }
 
 
@@ -1443,11 +1442,10 @@ void vtkQueryAtlasGUI::LoadBookmarksCallback ()
 {
   // get file from dialog
   const char *filen;
-  filen = this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->GetFileName();
-  std::string str = std::string(filen);
-  itksys::SystemTools::ConvertToUnixSlashes( str );
-  filen = str.c_str();
-  this->Script( "QueryAtlasLoadFirefoxBookmarkFile %s", filen );
+  filen = this->LoadURIsButton->GetLoadSaveDialog()->GetFileName();
+  itksys::SystemTools::ConvertToUnixOutputPath( filen );
+  this->Script( "QueryAtlasLoadFirefoxBookmarkFile \"%s\"", filen );
+  this->LoadURIsButton->SetText ( "" );
 }
 
 

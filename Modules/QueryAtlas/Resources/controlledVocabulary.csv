@@ -1,4 +1,4 @@
-ID,Review,Mapped to parent structure,FreeSurfer,Hemisphere,TissueClass,Birn_String,Birn_ID,Birn_Title,Birn_URI,NN_ID,NN_String,UMLS_CID,UMLS_CN
+ID,Review,Mapped to parent structure,FreeSurfer,Hemisphere,TissueClass,BIRN_String,BIRN_ID,BIRN_Title,BIRN_URI,NN_ID,NN_String,UMLS_CID,UMLS_CN
 0,,,Unknown,,,,,,,,,,
 1,,,Left-Cerebral-Exterior,L,,Superficial_features_of_cerebral_cortex,birnOrgAnatomy_273,Superficial features of cerebral cortex,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_273,,,,
 2,,,Left-Cerebral-White-Matter,L,wm,Cerebral_white_matter,birnOrgAnatomy_201,Cerebral white matter,http://www.nbirn.net/birnlex/1.2/BIRNLex-OrganismalAnatomy.owl#birnOrgAnatomy_201,171,CEREBRAL WHITE MATTER,C0152295,Cerebral white matter structure
