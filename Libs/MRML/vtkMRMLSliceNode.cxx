@@ -625,9 +625,15 @@ void vtkMRMLSliceNode::SetDimensions(unsigned int x, unsigned int y,
 
 void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
 {
+  // Much of this code looks more like application logic than data
+  // code. Should the adjustments to Dimensions and FieldOfView be
+  // pulled out the SetLayoutGrid*() methods and put in the logic/gui
+  // level? 
   if (( rows != this->LayoutGridRows )
       || ( columns != this->LayoutGridColumns ))
     {
+    // A change in the LightBox layout changes the dimensions of the
+    // slice and the FieldOfView in Z
     this->Dimensions[0] = int( this->Dimensions[0]
                                * (this->LayoutGridColumns/(double) columns));
     this->Dimensions[1] = int( this->Dimensions[1]
@@ -638,7 +644,8 @@ void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
     this->FieldOfView[2]
       *= (rows*columns
           / (double)(this->LayoutGridRows*this->LayoutGridColumns));
-    
+
+    // cache the layout
     this->LayoutGridRows = rows;
     this->LayoutGridColumns = columns;        
     
@@ -648,8 +655,14 @@ void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
 
 void vtkMRMLSliceNode::SetLayoutGridRows(int rows)
 {
+  // Much of this code looks more like application logic than data
+  // code. Should the adjustments to Dimensions and FieldOfView be
+  // pulled out the SetLayoutGrid*() methods and put in the logic/gui
+  // level? 
   if ( rows != this->LayoutGridRows )
     {
+    // A change in the LightBox layout changes the dimensions of the
+    // slice and the FieldOfView in Z
     this->Dimensions[1] = int( this->Dimensions[1]
                                * (this->LayoutGridRows / (double) rows));
     this->Dimensions[2] = rows*this->LayoutGridColumns;
@@ -657,6 +670,7 @@ void vtkMRMLSliceNode::SetLayoutGridRows(int rows)
     // keep the same pixel spacing in z, i.e. update FieldOfView[2]
     this->FieldOfView[2] *= (rows / (double)this->LayoutGridRows);
     
+    // cache the layout
     this->LayoutGridRows = rows;
     
     this->UpdateMatrices();
@@ -665,8 +679,14 @@ void vtkMRMLSliceNode::SetLayoutGridRows(int rows)
 
 void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
 {
+  // Much of this code looks more like application logic than data
+  // code. Should the adjustments to Dimensions and FieldOfView be
+  // pulled out the SetLayoutGrid*() methods and put in the logic/gui
+  // level? 
   if ( cols != this->LayoutGridColumns )
     {
+    // A change in the LightBox layout changes the dimensions of the
+    // slice and the FieldOfView in Z
     this->Dimensions[0] = int( this->Dimensions[0]
                                * (this->LayoutGridColumns / (double) cols));
     this->Dimensions[2] = this->LayoutGridRows*cols;
@@ -674,6 +694,7 @@ void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
     // keep the same pixel spacing in z, i.e. update FieldOfView[2]
     this->FieldOfView[2] *= (cols / (double)this->LayoutGridColumns);
     
+    // cache the layout
     this->LayoutGridColumns = cols;
     
     this->UpdateMatrices();
