@@ -24,6 +24,7 @@ vtkSlicerImageCloseUp2D::vtkSlicerImageCloseUp2D()
 {
     this->X = 0;
     this->Y = 0;
+    this->Z = 0;
     this->HalfWidth = 0;
     this->HalfHeight = 0;
     this->Magnification = 1;
@@ -64,6 +65,7 @@ static void vtkSlicerImageCloseUp2DExecute(vtkSlicerImageCloseUp2D *self,
                      int outExt[6], int id)
 {
     int idxX, maxX, inRowLength, idxY, maxY;
+    long inSliceSize;
     vtkIdType outIncX, outIncY, outIncZ;
     int scalarSize, numComps, inX, inY, inMaxX, inMaxY;
     T *ptr;
@@ -81,6 +83,8 @@ static void vtkSlicerImageCloseUp2DExecute(vtkSlicerImageCloseUp2D *self,
     maxY = outExt[3];
     scalarSize = numComps*sizeof(T);
 
+    inSliceSize = (inMaxY+1)*inRowLength;
+    
     // Get increments to march through data 
     outData->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
 
@@ -94,7 +98,8 @@ static void vtkSlicerImageCloseUp2DExecute(vtkSlicerImageCloseUp2D *self,
 
             if (inX >= 0 && inX <= inMaxX && inY >= 0 && inY <= inMaxY)
             {
-                ptr = &inPtr[inY*inRowLength + inX*numComps];
+                ptr = &inPtr[self->Z*inSliceSize
+                             + inY*inRowLength + inX*numComps];
                 memcpy(outPtr, ptr, scalarSize);
             }
             else {
@@ -125,10 +130,10 @@ void vtkSlicerImageCloseUp2D::ThreadedExecute(vtkImageData *inData,
   
     // Ensure intput is 2D
     inData->GetWholeExtent(ext);
-    if (ext[5] != ext[4]) {
-        vtkErrorMacro("ExecuteImageInformation: Input must be 2D.");
-        return;
-    }
+//     if (ext[5] != ext[4]) {
+//         vtkErrorMacro("ExecuteImageInformation: Input must be 2D.");
+//         return;
+//     }
 
     switch (inData->GetScalarType())
     {

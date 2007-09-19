@@ -34,6 +34,7 @@ class vtkKWTopLevel;
 class vtkKWRenderWidget;
 
 class vtkSlicerApplicationGUI;
+class vtkSlicerSliceGUI;
 class vtkKWScale;
 class vtkKWScaleWithEntry;
 class vtkKWPushButton;
@@ -371,6 +372,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   virtual void PackNavigationWidget ( );
   virtual void PackZoomWidget ( ) ;
 
+  // Description:
+  // Convert an xy device coordinate into an XYZ coordinate in a slice
+  // node (where xy is now relative to a viewport (lightbox) and z is a slice).
+  virtual void DeviceCoordinatesToXYZ(vtkSlicerSliceGUI *sgui,
+                                      int x, int y, int xyz[3] );
+  
  protected:
   vtkSlicerViewControlGUI ( );
   virtual ~vtkSlicerViewControlGUI ( );

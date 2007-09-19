@@ -1438,6 +1438,27 @@ void vtkSlicerViewControlGUI::MainViewSetStereo ( )
 }
 
 
+void vtkSlicerViewControlGUI::DeviceCoordinatesToXYZ(vtkSlicerSliceGUI *sgui, int x, int y, int xyz[3] )
+{
+  vtkMRMLSliceNode *snode = sgui->GetSliceNode();
+  
+  vtkRenderWindowInteractor *iren
+    = sgui->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
+  int *windowSize = iren->GetRenderWindow()->GetSize();
+
+  double tx = x / (double) windowSize[0];
+  double ty = (windowSize[1] - y) / (double) windowSize[1];
+  
+  vtkRenderer *ren = iren->FindPokedRenderer(x, y);
+  int *origin = ren->GetOrigin();
+
+  xyz[0] = x - origin[0];
+  xyz[1] = y - origin[1];
+  xyz[2] = floor(ty*snode->GetLayoutGridRows())*snode->GetLayoutGridColumns()
+    + floor(tx*snode->GetLayoutGridColumns());
+}
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorStyle *istyle )
 {
@@ -1459,8 +1480,12 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
             y = this->RedSliceEvents->GetLastPos ()[1];
             if ( x > 0 && y > 0 )
               {
-              this->SliceMagnifier->SetX ( x );
-              this->SliceMagnifier->SetY ( y );
+              int xyz[3];
+              this->DeviceCoordinatesToXYZ(appGUI->GetMainSliceGUI0(),
+                                           x, y, xyz);
+              this->SliceMagnifier->SetX ( xyz[0] );
+              this->SliceMagnifier->SetY ( xyz[1] );
+              this->SliceMagnifier->SetZ ( xyz[2] );
               this->SliceMagnifier->SetInput ( appGUI->GetMainSliceGUI0()->GetLogic()->GetImageData());
               this->SliceMagnifierCursor->SetInput ( this->SliceMagnifier->GetOutput());
               this->SliceMagnifierMapper->SetInput ( this->SliceMagnifierCursor->GetOutput() );
@@ -1483,8 +1508,14 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
             // configure zoom
             x = this->RedSliceEvents->GetLastPos ()[0];
             y = this->RedSliceEvents->GetLastPos ()[1];
-            this->SliceMagnifier->SetX ( x );
-            this->SliceMagnifier->SetY ( y );
+
+            int xyz[3];
+            this->DeviceCoordinatesToXYZ(appGUI->GetMainSliceGUI0(),
+                                           x, y, xyz);
+            this->SliceMagnifier->SetX ( xyz[0] );
+            this->SliceMagnifier->SetY ( xyz[1] );
+            this->SliceMagnifier->SetZ ( xyz[2] );
+
             this->SliceMagnifier->SetInput ( appGUI->GetMainSliceGUI0()->GetLogic()->GetImageData());
             this->RequestZoomRender();
             }
@@ -1505,8 +1536,12 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
             y = this->YellowSliceEvents->GetLastPos ()[1];
             if ( x > 0 && y > 0 )
               {
-              this->SliceMagnifier->SetX ( x );
-              this->SliceMagnifier->SetY ( y );
+              int xyz[3];
+              this->DeviceCoordinatesToXYZ(appGUI->GetMainSliceGUI1(),
+                                           x, y, xyz);
+              this->SliceMagnifier->SetX ( xyz[0] );
+              this->SliceMagnifier->SetY ( xyz[1] );
+              this->SliceMagnifier->SetZ ( xyz[2] );
               this->SliceMagnifier->SetInput ( appGUI->GetMainSliceGUI1()->GetLogic()->GetImageData());
               this->SliceMagnifierCursor->SetInput ( this->SliceMagnifier->GetOutput());
               this->SliceMagnifierMapper->SetInput ( this->SliceMagnifierCursor->GetOutput() );
@@ -1529,8 +1564,14 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
             // configure zoom
             x = this->YellowSliceEvents->GetLastPos ()[0];
             y = this->YellowSliceEvents->GetLastPos ()[1];
-            this->SliceMagnifier->SetX ( x );
-            this->SliceMagnifier->SetY ( y );
+
+            int xyz[3];
+            this->DeviceCoordinatesToXYZ(appGUI->GetMainSliceGUI1(),
+                                           x, y, xyz);
+            this->SliceMagnifier->SetX ( xyz[0] );
+            this->SliceMagnifier->SetY ( xyz[1] );
+            this->SliceMagnifier->SetZ ( xyz[2] );
+
             this->SliceMagnifier->SetInput (appGUI->GetMainSliceGUI1()->GetLogic()->GetImageData());
             this->RequestZoomRender();
             }
@@ -1550,8 +1591,12 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
             y = this->GreenSliceEvents->GetLastPos ()[1];
             if ( x > 0 && y > 0 )
               {
-              this->SliceMagnifier->SetX ( x );
-              this->SliceMagnifier->SetY ( y );
+              int xyz[3];
+              this->DeviceCoordinatesToXYZ(appGUI->GetMainSliceGUI2(),
+                                           x, y, xyz);
+              this->SliceMagnifier->SetX ( xyz[0] );
+              this->SliceMagnifier->SetY ( xyz[1] );
+              this->SliceMagnifier->SetZ ( xyz[2] );
               this->SliceMagnifier->SetInput ( appGUI->GetMainSliceGUI2()->GetLogic()->GetImageData());
               this->SliceMagnifierCursor->SetInput ( this->SliceMagnifier->GetOutput());
               this->SliceMagnifierMapper->SetInput ( this->SliceMagnifierCursor->GetOutput() );
@@ -1574,8 +1619,14 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
             // configure zoom
             x = this->GreenSliceEvents->GetLastPos ()[0];
             y = this->GreenSliceEvents->GetLastPos ()[1];
-            this->SliceMagnifier->SetX ( x );
-            this->SliceMagnifier->SetY ( y );
+
+            int xyz[3];
+            this->DeviceCoordinatesToXYZ(appGUI->GetMainSliceGUI2(),
+                                           x, y, xyz);
+            this->SliceMagnifier->SetX ( xyz[0] );
+            this->SliceMagnifier->SetY ( xyz[1] );
+            this->SliceMagnifier->SetZ ( xyz[2] );
+
             this->SliceMagnifier->SetInput (appGUI->GetMainSliceGUI2()->GetLogic()->GetImageData());
             this->RequestZoomRender();
             }

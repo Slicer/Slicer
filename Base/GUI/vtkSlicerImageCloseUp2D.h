@@ -19,6 +19,7 @@ public:
   // The half-length is set to the same value.
   vtkSetMacro(X, int);
   vtkSetMacro(Y, int);
+  vtkSetMacro(Z, int);
   vtkSetMacro(HalfWidth, int);
   vtkSetMacro (HalfHeight, int);
   vtkSetMacro(Magnification, int);
@@ -28,6 +29,7 @@ public:
   int HalfHeight;
   int X;
   int Y;
+  int Z;
 
 protected:
   vtkSlicerImageCloseUp2D();
