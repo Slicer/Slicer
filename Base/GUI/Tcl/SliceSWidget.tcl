@@ -153,6 +153,8 @@ itcl::body SliceSWidget::destructor {} {
 itcl::body SliceSWidget::resizeSliceNode {} {
 #  puts "[$_sliceNode Print]"
 
+  set epsilon 1.0e-6
+
   if { $_layers(background,node) != "" } {
     set logic [$sliceGUI GetLogic]
     set sliceSpacing [$logic GetBackgroundSliceSpacing]
@@ -160,6 +162,7 @@ itcl::body SliceSWidget::resizeSliceNode {} {
     $this configure -sliceStep [lindex $sliceSpacing 2]
   }
 
+  foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
   foreach {windowx windowy} [$_interactor GetEventPosition] {}
   # We should really use the pokedrenderer's size for these calculations.
   # However, viewerports in the LightBox can differ in size by a pixel.  So 
@@ -171,11 +174,11 @@ itcl::body SliceSWidget::resizeSliceNode {} {
 
   foreach {nodeW nodeH nodeD} [$_sliceNode GetDimensions] {}
   foreach {nodefovx nodefovy nodefovz} [$_sliceNode GetFieldOfView] {}
-  if { $w == $nodeW && $h == $nodeH && $sliceStep == [expr $nodefovz / (1. * $nodeD)]} {
+  if { $w == $nodeW && $h == $nodeH && [expr abs($sliceStep - ($nodefovz / (1. * $nodeD)))] < $epsilon} {
     return
   }
 
-  if { $w == "10" && $h == "10" } {
+  if { $windoww == "10" && $windowh == "10" } {
     puts "ignoring bogus resize"
   } else {
     set oldPixelSize0 [expr $nodefovx / (1. * $nodeW)]
