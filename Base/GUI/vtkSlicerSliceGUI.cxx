@@ -368,6 +368,11 @@ void vtkSlicerSliceGUI::BuildGUI ( vtkKWFrame *f, double *c )
       this->SliceViewer->SetApplication ( app );
       this->SliceViewer->SetParent ( this->SliceGUIFrame );
       this->SliceViewer->Create (  );
+
+      this->SliceGUIFrame
+        ->SetConfigurationOptionAsInt("-highlightthickness", 2);
+      this->SliceGUIFrame
+        ->SetConfigurationOptionAsColor("-highlightcolor", c[0], c[1], c[2]);
     }
 }
 
