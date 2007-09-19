@@ -102,7 +102,7 @@ IF(BUILD_TESTING)
 ENDIF(BUILD_TESTING)
 
 CONFIGURE_FILE(
-  ${VolumeRenderingModule_SOURCE_DIR}/VolumeRenderingModuleConfigure.h.in 
-  ${VolumeRenderingModule_BINARY_DIR}/VolumeRenderingModuleConfigure.h
+  ${VolumeRenderingModule_SOURCE_DIR}/vtkVolumeRenderingModuleConfigure.h.in 
+  ${VolumeRenderingModule_BINARY_DIR}/vtkVolumeRenderingModuleConfigure.h
 )
 ENDIF(VOLUMERENDERINGMODULE)

@@ -1,5 +1,8 @@
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLNode.h"
+#include <iostream>
+#include <sstream>
+#include <string>
 
 
 vtkMRMLVolumeRenderingDisplayNode* vtkMRMLVolumeRenderingDisplayNode::New()
@@ -26,62 +29,62 @@ vtkMRMLNode* vtkMRMLVolumeRenderingDisplayNode::CreateNodeInstance(void)
         return new vtkMRMLVolumeRenderingDisplayNode;
 }
 
-vtkMRMLVolumeRenderingDisplayNode::vtkVolumeRenderingDisplayNode(void)
+vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode(void)
 {        
 }
 
-vtkMRMLVolumeRenderingDisplayNode::~vtkVolumeRenderingDisplayNode(void)
+vtkMRMLVolumeRenderingDisplayNode::~vtkMRMLVolumeRenderingDisplayNode(void)
 {
 }
 void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
 {
-  // Write all attributes not equal to their defaults
-  
-  Superclass::WriteXML(of, nIndent);
-  
-  vtkIndent indent(nIndent);
-  
-  of << " type=\"" << this->GetType() << "\"";
+  //// Write all attributes not equal to their defaults
+  //
+  //Superclass::WriteXML(of, nIndent);
+  //
+  //vtkIndent indent(nIndent);
+  //
+  //of << " type=\"" << this->GetType() << "\"";
 
-  if (this->FileName != NULL)
-    {
-    of << " filename=\"" << this->FileName << "\"";
-    }
+  //if (this->FileName != NULL)
+  //  {
+  //  of << " filename=\"" << this->FileName << "\"";
+  //  }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)
 {
 
-  Superclass::ReadXMLAttributes(atts);
+  //Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL) 
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "name"))
-      {
-      this->SetName(attValue);
-      }
-    else if (!strcmp(attName, "type")) 
-      {
-      int type;
-      std::stringstream ss;
-      ss << attValue;
-      ss >> type;
-      this->SetType(type);
-      }
-    else if (!strcmp(attName, "filename"))
-      {
-      this->SetFileName(attValue);
-      // read in the file with the colours
-      std::cout << "Reading file " << this->FileName << endl;
-      this->ReadFile();
-      }
-    }
-  vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
+  //const char* attName;
+  //const char* attValue;
+  //while (*atts != NULL) 
+  //  {
+  //  attName = *(atts++);
+  //  attValue = *(atts++);
+  //  if (!strcmp(attName, "name"))
+  //    {
+  //    this->SetName(attValue);
+  //    }
+  //  else if (!strcmp(attName, "type")) 
+  //    {
+  //    int type;
+  //    std::stringstream ss;
+  //    ss << attValue;
+  //    ss >> type;
+  //    this->SetType(type);
+  //    }
+  //  else if (!strcmp(attName, "filename"))
+  //    {
+  //    this->SetFileName(attValue);
+  //    // read in the file with the colours
+  //    std::cout << "Reading file " << this->FileName << endl;
+  //    this->ReadFile();
+  //    }
+  //  }
+  //vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
 }
 
 //----------------------------------------------------------------------------
@@ -97,28 +100,28 @@ int vtkMRMLVolumeRenderingDisplayNode::ReadFile ()
 void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLColorNode *node = (vtkMRMLColorNode *) anode;
+  //vtkMRMLColorNode *node = (vtkMRMLColorNode *) anode;
 
-  if (node->Type != -1)
-    {
-    // not using SetType, as that will basically recreate a new color node,
-    // very slow
-    this->Type = node->Type;
-    }
-  this->SetFileName(node->FileName);
-  this->SetNoName(node->NoName);
+  //if (node->Type != -1)
+  //  {
+  //  // not using SetType, as that will basically recreate a new color node,
+  //  // very slow
+  //  this->Type = node->Type;
+  //  }
+  //this->SetFileName(node->FileName);
+  //this->SetNoName(node->NoName);
 
-  // copy names
-  this->Names = node->Names;
-  
-  this->NamesInitialised = node->NamesInitialised;
+  //// copy names
+  //this->Names = node->Names;
+  //
+  //this->NamesInitialised = node->NamesInitialised;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
-  Superclass::PrintSelf(os,indent);
+ /* Superclass::PrintSelf(os,indent);
 
   os << indent << "Name: " <<
       (this->Name ? this->Name : "(none)") << "\n";
@@ -138,7 +141,7 @@ void vtkMRMLVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
       {
       os << indent << indent << i << " " << this->GetColorName(i) << endl;
       }
-    }
+    }*/
 }
 
 //-----------------------------------------------------------
@@ -202,25 +205,35 @@ const char * vtkMRMLVolumeRenderingDisplayNode::GetTypeAsString()
   return "(unknown)";
 }
 
-//---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayNode::SetType(int type)
+int vtkMRMLVolumeRenderingDisplayNode::getPiecewiseFunctionString(vtkPiecewiseFunction* function, char* result)
 {
-  if (this->Type == type)
+    std::ostringstream resultStream;
+    double anfang=0;
+    double ende=500;
+    int size=(ende-anfang)*10;
+    double* resultArray=new double[size];
+    double* it;
+    function->GetTable(anfang,ende,size,resultArray);
+    it=resultArray;
+    for(int i=0;i<size;i++)
     {
-    vtkDebugMacro("SetType: type is already set to " << type);
-    return;
+        resultStream<<&it<<"\t";
+        it++;
     }
+    char* p = new char[resultStream.str().length()+1];
+    resultStream.str().copy(p,std::string::npos);
+    p[resultStream.str().length()]=0;
+    return (resultStream.str().length()+1);
+    result=p;
     
-  this->Type = type;
-
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type);
-
-  // subclass should over ride this and define colours according to the node
-  // type
-  
-  // invoke a modified event
-  this->Modified();
-    
-  // invoke a type  modified event
-  this->InvokeEvent(vtkMRMLColorNode::TypeModifiedEvent);
 }
+void  vtkMRMLVolumeRenderingDisplayNode::getColorTransferFunctionString(vtkColorTransferFunction* function, char* result)
+{
+}
+void vtkMRMLVolumeRenderingDisplayNode::GetPiecewiseFunctionFromString(char* string,vtkPiecewiseFunction* result)
+{
+}
+void vtkMRMLVolumeRenderingDisplayNode::GetColorTransferFunction(char* string, vtkColorTransferFunction* result)
+{
+}
+

@@ -1,9 +1,17 @@
-#pragma once
+#ifndef __vtkLabelMapColorTransferFunction_h
+#define __vtkLabelMapColorTransferFunction_h
 
-class vtkLabelMapColorTransferFunction
+#include "vtkVolumeRenderingModule.h"
+#include "vtkColorTransferFunction.h"
+
+class VTK_VOLUMERENDERINGMODULE_EXPORT vtkLabelMapColorTransferFunction :public vtkColorTransferFunction
 {
 public:
-    vtkLabelMapColorTransferFunction(void);
+    static vtkLabelMapColorTransferFunction *New();
+    //void PrintSelf(ostream& os, vtkIndent indent);
+    
 public:
+    vtkLabelMapColorTransferFunction(void);
     ~vtkLabelMapColorTransferFunction(void);
 };
+#endif

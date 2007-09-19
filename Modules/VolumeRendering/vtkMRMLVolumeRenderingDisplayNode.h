@@ -2,24 +2,37 @@
 #define __vtkMRMLVolumeRenderingDisplayNode_h
 
 #include "vtkMRML.h"
-#include "vtkMRMLNode.h"
+#include "vtkMRMLDisplayNode.h"
+#include "vtkVolumeRenderingModule.h"
 #include "vtkVolumeProperty.h"
+#include "vtkPiecewiseFunction.h"
+#include "vtkColorTransferFunction.h"
+#include <string>
 //#include "vtkVolumeTextureMapper3D.h"
 #include "vtkVolumeMapper.h"
 // .NAME vtkMRMLVolumeRenderingDisplayNode - MRML node to represent Volume Rendering information
 // .SECTION Description
-class VTK_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode : public vtkMRMLNode
+class VTK_VOLUMERENDERINGMODULE_EXPORT vtkMRMLVolumeRenderingDisplayNode : public vtkMRMLDisplayNode
 {
 public:
+    static int getPiecewiseFunctionString(vtkPiecewiseFunction* function, char* result);
+    static void getColorTransferFunctionString(vtkColorTransferFunction* function, char* result);
+    static void GetPiecewiseFunctionFromString(char* string,vtkPiecewiseFunction* result);
+    static void GetColorTransferFunction(char* string, vtkColorTransferFunction* result);
     static vtkMRMLVolumeRenderingDisplayNode *New();
+    vtkTypeMacro(vtkMRMLVolumeRenderingDisplayNode,vtkMRMLNode);
     void PrintSelf(ostream& os, vtkIndent indent);
     
 
     vtkGetObjectMacro(mapper,vtkVolumeMapper);
     vtkSetObjectMacro(mapper,vtkVolumeMapper);
 
-    vtkGetObjectMacro(property,vtkVolumeProperty);
-    vtkSetObjectMacro(property,vtkVolumeProperty);
+    vtkGetObjectMacro(volumeProperty,vtkVolumeProperty);
+    vtkSetObjectMacro(volumeProperty,vtkVolumeProperty);
+
+    vtkSetMacro(pipelineInitialized,int);
+    vtkGetMacro(pipelineInitialized,int);
+    vtkBooleanMacro(pipelineInitialized,int);
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
@@ -81,12 +94,11 @@ protected:
     ~vtkMRMLVolumeRenderingDisplayNode(void);
   vtkMRMLVolumeRenderingDisplayNode(const vtkMRMLVolumeRenderingDisplayNode&);
   void operator=(const vtkMRMLVolumeRenderingDisplayNode&);
-  vtkVolumeProperty* property;
+  vtkVolumeProperty* volumeProperty;
   vtkVolumeMapper* mapper;
+  int pipelineInitialized;//0=no,1=Yes
 
 
-  // Description:
-  //Own Methods
 };
 
 #endif

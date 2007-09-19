@@ -1324,7 +1324,7 @@ int Slicer3_main(int argc, char *argv[])
     vrModuleGUI->SetAndObserveMRMLScene ( scene );
     vrModuleGUI->SetApplicationLogic ( appLogic );
     vrModuleGUI->SetMRMLScene(scene);
-    vrModuleGUI->SetAndObserveModuleLogic(vrModuleLogic);
+    //vrModuleGUI->SetLogic(vrModuleLogic);
     vrModuleGUI->SetApplication ( slicerApp );
     vrModuleGUI->SetApplicationLogic ( appLogic );
     vrModuleGUI->SetApplicationGUI ( appGUI );

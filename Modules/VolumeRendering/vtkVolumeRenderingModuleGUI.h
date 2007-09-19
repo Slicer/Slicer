@@ -15,10 +15,12 @@
 #define __vtkVolumeRenderingModuleGUI_h
 
 #include "vtkSlicerModuleGUI.h"
-#include "vtkVolumeRenderingWin32Header.h"
+#include "vtkVolumeRenderingModule.h"
 #include "vtkVolumeRenderingModuleLogic.h"
 
-class VTK_VRMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI
+#include "vtkMRMLVolumeRenderingDisplayNode.h"
+
+class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI
 {
 public:
 
@@ -29,13 +31,7 @@ public:
 
    // Description: Get/Set module logic
   vtkGetObjectMacro (Logic, vtkVolumeRenderingModuleLogic);
-  
-  void SetModuleLogic ( vtkVolumeRenderingModuleLogic *logic )
-  { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
-   
-  void SetAndObserveModuleLogic ( vtkVolumeRenderingModuleLogic *logic )
-  { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
-  
+  vtkSetObjectMacro ( Logic, vtkVolumeRenderingModuleLogic);
   // Description:
   // Create widgets
   virtual void BuildGUI ( );
@@ -121,6 +117,17 @@ protected:
   // Description:
   // A poitner to the interactor style, useful for picking
   vtkSlicerViewerInteractorStyle *InteractorStyle;
+
+
+
+  //OWN GUI Elements
+
+  //Frame Testing
+  vtkKWPushButton *testingPB;
+
+
+  //Other members
+  vtkMRMLVolumeRenderingDisplayNode  *currentNode;
 };
 
 #endif
