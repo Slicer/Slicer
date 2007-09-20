@@ -19,6 +19,7 @@
 #include "vtkVolumeRenderingModuleLogic.h"
 
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
+#include "vtkSlicerNodeSelectorWidget.h"
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI
 {
@@ -31,7 +32,11 @@ public:
 
    // Description: Get/Set module logic
   vtkGetObjectMacro (Logic, vtkVolumeRenderingModuleLogic);
-  vtkSetObjectMacro ( Logic, vtkVolumeRenderingModuleLogic);
+  virtual void SetLogic(vtkVolumeRenderingModuleLogic *log)
+  {
+      this->Logic=log;
+  }
+  //vtkSetObjectMacro (Logic, vtkVolumeRenderingModuleLogic);
   // Description:
   // Create widgets
   virtual void BuildGUI ( );
@@ -123,11 +128,14 @@ protected:
   //OWN GUI Elements
 
   //Frame Testing
-  vtkKWPushButton *testingPB;
+  vtkKWPushButton *PB_Testing;
+  vtkKWPushButton *PB_LoadImageData;
+  vtkSlicerNodeSelectorWidget *NS_ImageData;
 
 
   //Other members
   vtkMRMLVolumeRenderingDisplayNode  *currentNode;
+  
 };
 
 #endif

@@ -1,5 +1,7 @@
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLNode.h"
+#include "vtkVolumeTextureMapper3D.h"
+#include "vtkPiecewiseFunction.h"
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -30,7 +32,10 @@ vtkMRMLNode* vtkMRMLVolumeRenderingDisplayNode::CreateNodeInstance(void)
 }
 
 vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode(void)
-{        
+{   
+    Buffer=NULL;
+    this->DebugOn();
+
 }
 
 vtkMRMLVolumeRenderingDisplayNode::~vtkMRMLVolumeRenderingDisplayNode(void)
@@ -205,26 +210,34 @@ const char * vtkMRMLVolumeRenderingDisplayNode::GetTypeAsString()
   return "(unknown)";
 }
 
-int vtkMRMLVolumeRenderingDisplayNode::getPiecewiseFunctionString(vtkPiecewiseFunction* function, char* result)
+char* vtkMRMLVolumeRenderingDisplayNode::getPiecewiseFunctionString(vtkPiecewiseFunction* function)
 {
     std::ostringstream resultStream;
-    double anfang=0;
-    double ende=500;
+    double* range=function->GetRange();
+    double anfang=*range;
+    range++;
+    double ende=*range;
     int size=(ende-anfang)*10;
     double* resultArray=new double[size];
     double* it;
     function->GetTable(anfang,ende,size,resultArray);
+    resultStream<<"vtkPiecewiseFunction\t"<<anfang<<"\t"<<ende<<"\t"<<size<<"\t";
     it=resultArray;
     for(int i=0;i<size;i++)
     {
-        resultStream<<&it<<"\t";
+        resultStream<<*it<<"\t";
         it++;
     }
-    char* p = new char[resultStream.str().length()+1];
-    resultStream.str().copy(p,std::string::npos);
-    p[resultStream.str().length()]=0;
-    return (resultStream.str().length()+1);
-    result=p;
+    //return resultStream.str().c_str();
+    //Delete existing buffer
+    if(Buffer)
+    {
+        delete []Buffer;
+    }
+    this->Buffer= new char[resultStream.str().length()+1];
+    resultStream.str().copy(this->Buffer,std::string::npos);
+    this->Buffer[resultStream.str().length()]=0;
+    return this->Buffer;
     
 }
 void  vtkMRMLVolumeRenderingDisplayNode::getColorTransferFunctionString(vtkColorTransferFunction* function, char* result)
@@ -235,5 +248,21 @@ void vtkMRMLVolumeRenderingDisplayNode::GetPiecewiseFunctionFromString(char* str
 }
 void vtkMRMLVolumeRenderingDisplayNode::GetColorTransferFunction(char* string, vtkColorTransferFunction* result)
 {
+}
+
+void vtkMRMLVolumeRenderingDisplayNode::InitializePipeline(vtkMRMLDisplayNode *node)
+{
+
+    //Instantiate mapper and volumeProperty with "default objects"
+    this->Mapper=vtkVolumeTextureMapper3D::New();
+    this->Mapper->SetInput(node->GetImageData());
+    this->VolumeProperty=vtkVolumeProperty::New();
+    this->VolumeProperty->SetScalarOpacity(vtkPiecewiseFunction::New());
+    this->VolumeProperty->SetGradientOpacity(vtkPiecewiseFunction::New());
+    this->VolumeProperty->SetColor(vtkColorTransferFunction::New());
+    this->PipelineInitializedOn();
+    /*set ::VR($this,pfed_hist) [vtkKWHistogram New]
+        puts "pfed_hist: $$::VR($this,pfed_hist)"
+        $::VR($this,pfed_hist) BuildHistogram [[$::VR($this,aImageData) GetPointData] GetScalars] 0*/
 }
 

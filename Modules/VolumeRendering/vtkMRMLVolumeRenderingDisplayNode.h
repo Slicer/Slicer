@@ -7,6 +7,7 @@
 #include "vtkVolumeProperty.h"
 #include "vtkPiecewiseFunction.h"
 #include "vtkColorTransferFunction.h"
+
 #include <string>
 //#include "vtkVolumeTextureMapper3D.h"
 #include "vtkVolumeMapper.h"
@@ -15,24 +16,26 @@
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkMRMLVolumeRenderingDisplayNode : public vtkMRMLDisplayNode
 {
 public:
-    static int getPiecewiseFunctionString(vtkPiecewiseFunction* function, char* result);
-    static void getColorTransferFunctionString(vtkColorTransferFunction* function, char* result);
-    static void GetPiecewiseFunctionFromString(char* string,vtkPiecewiseFunction* result);
-    static void GetColorTransferFunction(char* string, vtkColorTransferFunction* result);
+    
+    char* getPiecewiseFunctionString(vtkPiecewiseFunction* function);//, char* result);
+    void getColorTransferFunctionString(vtkColorTransferFunction* function, char* result);
+    void GetPiecewiseFunctionFromString(char* string,vtkPiecewiseFunction* result);
+    void GetColorTransferFunction(char* string, vtkColorTransferFunction* result);
+    void InitializePipeline(vtkMRMLDisplayNode *node);
     static vtkMRMLVolumeRenderingDisplayNode *New();
     vtkTypeMacro(vtkMRMLVolumeRenderingDisplayNode,vtkMRMLNode);
     void PrintSelf(ostream& os, vtkIndent indent);
     
 
-    vtkGetObjectMacro(mapper,vtkVolumeMapper);
-    vtkSetObjectMacro(mapper,vtkVolumeMapper);
+    vtkGetObjectMacro(Mapper,vtkVolumeMapper);
+    vtkSetObjectMacro(Mapper,vtkVolumeMapper);
 
-    vtkGetObjectMacro(volumeProperty,vtkVolumeProperty);
-    vtkSetObjectMacro(volumeProperty,vtkVolumeProperty);
+    vtkGetObjectMacro(VolumeProperty,vtkVolumeProperty);
+    vtkSetObjectMacro(VolumeProperty,vtkVolumeProperty);
 
-    vtkSetMacro(pipelineInitialized,int);
-    vtkGetMacro(pipelineInitialized,int);
-    vtkBooleanMacro(pipelineInitialized,int);
+    vtkSetMacro(PipelineInitialized,int);
+    vtkGetMacro(PipelineInitialized,int);
+    vtkBooleanMacro(PipelineInitialized,int);
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
@@ -90,13 +93,15 @@ public:
   //Own Methods
   
 protected:
+    //Buffer vor char return
+  char* Buffer;
   vtkMRMLVolumeRenderingDisplayNode(void);
     ~vtkMRMLVolumeRenderingDisplayNode(void);
   vtkMRMLVolumeRenderingDisplayNode(const vtkMRMLVolumeRenderingDisplayNode&);
   void operator=(const vtkMRMLVolumeRenderingDisplayNode&);
-  vtkVolumeProperty* volumeProperty;
-  vtkVolumeMapper* mapper;
-  int pipelineInitialized;//0=no,1=Yes
+  vtkVolumeProperty* VolumeProperty;
+  vtkVolumeMapper* Mapper;
+  int PipelineInitialized;//0=no,1=Yes
 
 
 };

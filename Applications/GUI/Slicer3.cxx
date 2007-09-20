@@ -1321,10 +1321,10 @@ int Slicer3_main(int argc, char *argv[])
     //VolumeRenderingModule
     vtkVolumeRenderingModuleGUI *vrModuleGUI = vtkVolumeRenderingModuleGUI::New ( );
     vtkVolumeRenderingModuleLogic *vrModuleLogic  = vtkVolumeRenderingModuleLogic::New ( );
-    vrModuleGUI->SetAndObserveMRMLScene ( scene );
-    vrModuleGUI->SetApplicationLogic ( appLogic );
-    vrModuleGUI->SetMRMLScene(scene);
-    //vrModuleGUI->SetLogic(vrModuleLogic);
+    vrModuleLogic->SetAndObserveMRMLScene ( scene );
+    vrModuleLogic->SetApplicationLogic ( appLogic );
+    vrModuleLogic->SetMRMLScene(scene);
+    vrModuleGUI->SetLogic(vrModuleLogic);
     vrModuleGUI->SetApplication ( slicerApp );
     vrModuleGUI->SetApplicationLogic ( appLogic );
     vrModuleGUI->SetApplicationGUI ( appGUI );
