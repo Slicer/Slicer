@@ -13,7 +13,9 @@
 #include "vtkSlicerGUILayout.h"
 #include "vtkSlicerViewerInteractorStyle.h"
 
+#include "vtkProp3D.h"
 #include "vtkActor.h"
+#include "vtkImageActor.h"
 #include "vtkFollower.h"
 #include "vtkProperty.h"
 #include "vtkTexture.h"
@@ -156,7 +158,7 @@ vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
 
   // release the DisplayedModelActors
   /*
-    std::map< const char *, vtkActor * >::iterator dmIter;
+    std::map< const char *, vtkProp3D * >::iterator dmIter;
   for (dmIter = this->DisplayedModelActors.begin();
        dmIter != this->DisplayedModelActors.end();
        dmIter++)
@@ -995,17 +997,28 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
   for (unsigned int i=0; i<displayNodes.size(); i++)
   {
   vtkMRMLDisplayNode *modelDisplayNode = displayNodes[i];
-  vtkActor* actor = NULL;
-  std::map<std::string, vtkActor *>::iterator ait;
+  vtkProp3D* prop = NULL;
+  std::map<std::string, vtkProp3D *>::iterator ait;
 
   ait = this->DisplayedActors.find(modelDisplayNode->GetID());
   if (ait == this->DisplayedActors.end() )
     {
-    actor = vtkActor::New();
+    vtkPolyData *polyData = modelDisplayNode->GetPolyData();
+    if ( polyData )
+      {
+      if ( polyData->GetNumberOfCells() == 1 )
+        {
+        prop = vtkImageActor::New();
+        }
+      }
+    if ( !prop )
+      {
+      prop = vtkActor::New();
+      }
     }
   else
     {
-    actor = (*ait).second;
+    prop = (*ait).second;
     std::map<std::string, int>::iterator cit = this->DisplayedClipState.find(modelDisplayNode->GetID());
     if (modelDisplayNode && cit != this->DisplayedClipState.end() && cit->second == modelDisplayNode->GetClipping() )
       {
@@ -1014,42 +1027,46 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
       }
     }
 
+  vtkActor *actor;
   vtkClipPolyData *clipper = NULL;
-  if (this->ClippingOn && modelDisplayNode != NULL && modelDisplayNode->GetClipping())
+  if ( actor = vtkActor::SafeDownCast(prop) )
     {
-    clipper = vtkClipPolyData::New();
-    clipper->SetClipFunction(this->SlicePlanes);
-    clipper->SetValue( 0.0);
-    }
+    if (this->ClippingOn && modelDisplayNode != NULL && modelDisplayNode->GetClipping())
+      {
+      clipper = vtkClipPolyData::New();
+      clipper->SetClipFunction(this->SlicePlanes);
+      clipper->SetValue( 0.0);
+      }
 
-  vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
+    vtkPolyDataMapper *mapper = vtkPolyDataMapper::New ();
 
-  vtkPolyData *poly = modelDisplayNode->GetPolyData();
-  // hierarchy display nodes may not have poly data pointer
-  if (poly == NULL)
-    {
-    poly = model->GetPolyData();
-    }
+    vtkPolyData *poly = modelDisplayNode->GetPolyData();
+    // hierarchy display nodes may not have poly data pointer
+    if (poly == NULL)
+      {
+      poly = model->GetPolyData();
+      }
 
-  if (clipper)
-    {
-    clipper->SetInput ( poly );
-    clipper->Update();
-    mapper->SetInput ( clipper->GetOutput() );
-    }
-  else
-    {
-    mapper->SetInput ( poly );
-    }
+    if (clipper)
+      {
+      clipper->SetInput ( poly );
+      clipper->Update();
+      mapper->SetInput ( clipper->GetOutput() );
+      }
+    else
+      {
+      mapper->SetInput ( poly );
+      }
 
- 
-  actor->SetMapper( mapper );
-  mapper->Delete();
+   
+    actor->SetMapper( mapper );
+    mapper->Delete();
+    }
 
   if (ait == this->DisplayedActors.end())
     {
-    this->MainViewer->AddViewProp( actor );
-    this->DisplayedActors[modelDisplayNode->GetID()] = actor;
+    this->MainViewer->AddViewProp( prop );
+    this->DisplayedActors[modelDisplayNode->GetID()] = prop;
     this->DisplayedNodes[std::string(modelDisplayNode->GetID())] = modelDisplayNode;
     if (modelDisplayNode)
       {
@@ -1059,7 +1076,7 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
       {
       this->DisplayedVisibility[modelDisplayNode->GetID()] = 1;
       }
-    actor->Delete();
+    prop->Delete();
     }
 
   if (clipper)
@@ -1149,10 +1166,10 @@ void vtkSlicerViewerWidget::UpdateModelHierarchyVisibility(vtkMRMLModelHierarchy
   vtkMRMLDisplayNode* dnode = mhnode->GetDisplayNode();
   if (dnode)
     {
-    std::map<std::string, vtkActor *>::iterator iter = this->DisplayedActors.find(dnode->GetID());
+    std::map<std::string, vtkProp3D *>::iterator iter = this->DisplayedActors.find(dnode->GetID());
     if (iter != this->DisplayedActors.end())
       {
-      vtkActor *actor = iter->second;
+      vtkProp3D *actor = iter->second;
       actor->SetVisibility(visibility);
       this->DisplayedVisibility[dnode->GetID()] = visibility;
       }
@@ -1176,10 +1193,10 @@ void vtkSlicerViewerWidget::UpdateModelHierarchyDisplay(vtkMRMLDisplayableNode *
         vtkMRMLDisplayNode *dnode = model->GetNthDisplayNode(i);
         if (dnode)
           {
-          std::map<std::string, vtkActor *>::iterator iter = this->DisplayedActors.find(dnode->GetID());
+          std::map<std::string, vtkProp3D *>::iterator iter = this->DisplayedActors.find(dnode->GetID());
           if (iter != this->DisplayedActors.end())
             {
-            vtkActor *actor = iter->second;
+            vtkProp3D *actor = iter->second;
             actor->SetVisibility(0);
             this->DisplayedVisibility[dnode->GetID()] = 0;
             }
@@ -1278,7 +1295,7 @@ void vtkSlicerViewerWidget::Render()
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveModelProps()
 {
-  std::map<std::string, vtkActor *>::iterator iter;
+  std::map<std::string, vtkProp3D *>::iterator iter;
   std::map<std::string, int>::iterator clipIter;
   std::vector<std::string> removedIDs;
   for(iter=this->DisplayedActors.begin(); iter != this->DisplayedActors.end(); iter++) 
@@ -1323,7 +1340,7 @@ void vtkSlicerViewerWidget::RemoveModelProps()
 void vtkSlicerViewerWidget::RemoveDisplayable(vtkMRMLDisplayableNode* model)
 {
   int ndnodes = model->GetNumberOfDisplayNodes();
-  std::map<std::string, vtkActor *>::iterator iter;
+  std::map<std::string, vtkProp3D *>::iterator iter;
   std::vector<std::string> removedIDs;
   for (int i=0; i<ndnodes; i++)
     {
@@ -1442,69 +1459,86 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
  
   std::vector<vtkMRMLDisplayNode *> dnodes = this->GetDisplayNode(model);
   for (unsigned int i=0; i<dnodes.size(); i++)
-  {
-  vtkMRMLDisplayNode *dnode = dnodes[i];
-  if (dnode != NULL)
     {
-    vtkActor *actor = this->DisplayedActors[ dnode->GetID() ];
-    actor->SetUserMatrix(transformToWorld);
-
-    actor->SetVisibility(dnode->GetVisibility());
-    this->DisplayedVisibility[dnode->GetID()] = dnode->GetVisibility();
-
-    actor->GetMapper()->SetScalarVisibility(dnode->GetScalarVisibility());
-    // if the scalars are visible, set active scalars, try to get the lookup
-    // table
-    if (dnode->GetScalarVisibility())
+    vtkMRMLDisplayNode *dnode = dnodes[i];
+    if (dnode != NULL)
       {
-      if (dnode->GetColorNode() != NULL)
+      vtkProp3D *prop = this->DisplayedActors[ dnode->GetID() ];
+      vtkActor *actor = vtkActor::SafeDownCast(prop);
+      vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
+      prop->SetUserMatrix(transformToWorld);
+
+      prop->SetVisibility(dnode->GetVisibility());
+      this->DisplayedVisibility[dnode->GetID()] = dnode->GetVisibility();
+
+      if (actor)
         {
-        if (dnode->GetColorNode()->GetLookupTable() != NULL)
-        {
-        actor->GetMapper()->SetLookupTable(dnode->GetColorNode()->GetLookupTable());
-        }
-        else if (dnode->GetColorNode()->IsA("vtkMRMLProceduralColorNode") &&
-                 vtkMRMLProceduralColorNode::SafeDownCast(dnode->GetColorNode())->GetColorTransferFunction() != NULL)
+        actor->GetMapper()->SetScalarVisibility(dnode->GetScalarVisibility());
+        // if the scalars are visible, set active scalars, try to get the lookup
+        // table
+        if (dnode->GetScalarVisibility())
           {
-          actor->GetMapper()->SetLookupTable((vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(dnode->GetColorNode())->GetColorTransferFunction()));
+          if (dnode->GetColorNode() != NULL)
+            {
+            if (dnode->GetColorNode()->GetLookupTable() != NULL)
+            {
+            actor->GetMapper()->SetLookupTable(dnode->GetColorNode()->GetLookupTable());
+            }
+            else if (dnode->GetColorNode()->IsA("vtkMRMLProceduralColorNode") &&
+                     vtkMRMLProceduralColorNode::SafeDownCast(dnode->GetColorNode())->GetColorTransferFunction() != NULL)
+              {
+              actor->GetMapper()->SetLookupTable((vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(dnode->GetColorNode())->GetColorTransferFunction()));
+              }
+            }
+          
+          if (dnode->GetActiveScalarName() != NULL)
+            {
+            vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(model);
+            if (mnode)
+              {
+              mnode->SetActiveScalars(dnode->GetActiveScalarName(), "Scalars");
+              }
+            }
+          // set the scalar range
+          actor->GetMapper()->SetScalarRange(dnode->GetScalarRange());
+          }
+        
+        actor->GetProperty()->SetColor(dnode->GetColor());
+        actor->GetProperty()->SetOpacity(dnode->GetOpacity());
+        actor->GetProperty()->SetAmbient(dnode->GetAmbient());
+        actor->GetProperty()->SetDiffuse(dnode->GetDiffuse());
+        actor->GetProperty()->SetSpecular(dnode->GetSpecular());
+        actor->GetProperty()->SetSpecularPower(dnode->GetPower());
+        if (dnode->GetTextureImageData() != NULL)
+          {
+          if (actor->GetTexture() == NULL)
+            {
+            vtkTexture *texture = vtkTexture::New();
+            texture->SetInterpolate(1);
+            actor->SetTexture(texture);
+            texture->Delete();
+            }
+          actor->GetTexture()->SetInput(dnode->GetTextureImageData());
+          }
+        else
+          {
+          actor->SetTexture(NULL);
           }
         }
-      
-      if (dnode->GetActiveScalarName() != NULL)
+      else if (imageActor)
         {
-        vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(model);
-        if (mnode)
+        if (dnode->GetTextureImageData() != NULL)
           {
-          mnode->SetActiveScalars(dnode->GetActiveScalarName(), "Scalars");
+          imageActor->SetInput(dnode->GetTextureImageData());
           }
+        else
+          {
+          imageActor->SetInput(NULL);
+          }
+        imageActor->SetDisplayExtent(-1, 0, 0, 0, 0, 0);
         }
-      // set the scalar range
-      actor->GetMapper()->SetScalarRange(dnode->GetScalarRange());
-      }
-    
-    actor->GetProperty()->SetColor(dnode->GetColor());
-    actor->GetProperty()->SetOpacity(dnode->GetOpacity());
-    actor->GetProperty()->SetAmbient(dnode->GetAmbient());
-    actor->GetProperty()->SetDiffuse(dnode->GetDiffuse());
-    actor->GetProperty()->SetSpecular(dnode->GetSpecular());
-    actor->GetProperty()->SetSpecularPower(dnode->GetPower());
-    if (dnode->GetTextureImageData() != NULL)
-      {
-      if (actor->GetTexture() == NULL)
-        {
-        vtkTexture *texture = vtkTexture::New();
-        texture->SetInterpolate(1);
-        actor->SetTexture(texture);
-        texture->Delete();
-        }
-      actor->GetTexture()->SetInput(dnode->GetTextureImageData());
-      }
-    else
-      {
-      actor->SetTexture(NULL);
       }
     }
-  }
   transformToWorld->Delete();
 
 }
@@ -1513,7 +1547,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
 //---------------------------------------------------------------------------
   // Description:
   // return the current actor corresponding to a give MRML ID
-vtkActor *
+vtkProp3D *
 vtkSlicerViewerWidget::GetActorByID (const char *id)
 {
   if ( !id )
@@ -1521,7 +1555,7 @@ vtkSlicerViewerWidget::GetActorByID (const char *id)
     return (NULL);
     }
 
-  std::map<std::string, vtkActor *>::iterator iter;
+  std::map<std::string, vtkProp3D *>::iterator iter;
   // search for matching string (can't use find, since it would look for 
   // matching pointer not matching content)
   for(iter=this->DisplayedActors.begin(); iter != this->DisplayedActors.end(); iter++) 
@@ -1538,14 +1572,14 @@ vtkSlicerViewerWidget::GetActorByID (const char *id)
   // Description:
   // return the ID for the given actor 
 const char *
-vtkSlicerViewerWidget::GetIDByActor (vtkActor *actor)
+vtkSlicerViewerWidget::GetIDByActor (vtkProp3D *actor)
 {
   if ( !actor )
     {
     return (NULL);
     }
 
-  std::map<std::string, vtkActor *>::iterator iter;
+  std::map<std::string, vtkProp3D *>::iterator iter;
   for(iter=this->DisplayedActors.begin(); iter != this->DisplayedActors.end(); iter++) 
     {
     if ( iter->second && ( iter->second == actor ) )

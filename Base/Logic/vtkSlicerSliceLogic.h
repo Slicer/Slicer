@@ -47,6 +47,7 @@
 
 class vtkImageData;
 class vtkMRMLModelDisplayNode;
+class vtkMRMLLinearTransformNode;
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic 
 {
@@ -114,6 +115,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // Description:
   // Model slice plane 
   vtkGetObjectMacro (SliceModelNode, vtkMRMLModelNode);
+
+  // Description:
+  // Model slice plane display props
+  vtkGetObjectMacro (SliceModelDisplayNode, vtkMRMLModelDisplayNode);
+
+  // Description:
+  // Model slice plane transform from xy to RAS
+  vtkGetObjectMacro (SliceModelTransformNode, vtkMRMLLinearTransformNode);
 
   // Description:
   // The compositing filter
@@ -256,6 +265,7 @@ protected:
 
   vtkMRMLModelNode *SliceModelNode;
   vtkMRMLModelDisplayNode *SliceModelDisplayNode;
+  vtkMRMLLinearTransformNode *SliceModelTransformNode;
   double SliceSpacing[3];
 
 };

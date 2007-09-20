@@ -19,6 +19,7 @@
 
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 
 #include "vtkSlicerSliceLogic.h"
 
@@ -54,6 +55,7 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->SetForegroundOpacity(this->ForegroundOpacity);
   this->SetLabelOpacity(this->LabelOpacity);
   this->SliceModelNode = NULL;
+  this->SliceModelTransformNode = NULL;
   this->Name = NULL;
   this->SliceModelDisplayNode = NULL;
   this->ImageData = vtkImageData::New();
@@ -328,10 +330,17 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
       && this->MRMLScene->GetNodeByID( this->SliceModelNode->GetID() ) != NULL && 
         this->SliceModelNode->GetPolyData() != NULL )
     {
+
+
     vtkPoints *points = this->SliceModelNode->GetPolyData()->GetPoints();
     unsigned int *dims = this->SliceNode->GetDimensions();
     vtkMatrix4x4 *xyToRAS = this->SliceNode->GetXYToRAS();
 
+    // set the transform for the slice model for use by an image actor in the viewer
+    this->SliceModelTransformNode->GetMatrixTransformToParent()->DeepCopy( xyToRAS );
+
+    // set the plane corner point for use in a model (deprecated)
+    // TODO: remove this block
     double inPt[4]={0,0,0,1};
     double outPt[4];
     double *outPt3 = outPt;
@@ -829,6 +838,11 @@ void vtkSlicerSliceLogic::DeleteSliceModel()
     this->SliceModelDisplayNode->Delete();
     this->SliceModelDisplayNode = NULL;
     }
+  if (this->SliceModelTransformNode != NULL)
+    {
+    this->SliceModelTransformNode->Delete();
+    this->SliceModelTransformNode = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -867,29 +881,25 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
     this->SliceModelDisplayNode->SetSaveWithScene(0);
 
-    std::stringstream ss;
-    char name[256];
-    ss << this->Name << " Volume Slice";
-    ss.getline(name,256);
-    this->SliceModelNode->SetName(name);
+    std::string name = std::string(this->Name) + " Volume Slice";
+    this->SliceModelNode->SetName (name.c_str());
 
-
-    this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
+    // make the xy to RAS transform
+    this->SliceModelTransformNode = vtkMRMLLinearTransformNode::New();
+    this->SliceModelTransformNode->SetScene(this->GetMRMLScene());
+    this->SliceModelTransformNode->SetHideFromEditors(1);
+    this->SliceModelTransformNode->SetSelectable(0);
+    this->SliceModelTransformNode->SetSaveWithScene(0);
   }
 
   if (this->SliceModelNode != NULL && this->MRMLScene->GetNodeByID( this->GetSliceModelNode()->GetID() ) == NULL )
     {
-    vtkIntArray *events = vtkIntArray::New();
-    //this->GetMRMLEvents(this->GetMRMLScene(), events);
-    //this->SetMRMLScene(this->GetMRMLScene());
     this->MRMLScene->AddNodeNoNotify(this->SliceModelDisplayNode);
+    this->MRMLScene->AddNodeNoNotify(this->SliceModelTransformNode);
     this->MRMLScene->AddNode(this->SliceModelNode);
     this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
-    //this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
-    events->Delete();
-    //this->SliceModelNode->Delete();
-    //this->SliceModelDisplayNode->Delete();
+    this->SliceModelNode->SetAndObserveTransformNodeID(this->SliceModelTransformNode->GetID());
     }
 
   // update the description to refer back to the slice and composite nodes

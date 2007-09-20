@@ -40,6 +40,7 @@ class vtkMRMLModelHierarchyNode;
 class vtkSlicerModelHierarchyLogic;
 class vtkPolyData;
 class vtkCellArray;
+class vtkProp3D;
 class vtkActor;
 class vtkActorText;
 class vtkFollower;
@@ -106,11 +107,11 @@ public:
 
   // Description:
   // return the current model actor corresponding to a give MRML ID
-  vtkActor *GetActorByID (const char *id);
+  vtkProp3D *GetActorByID (const char *id);
 
   // Description:
-  // return the current node ID corresponding to a given vtkActor
-  const char *GetIDByActor (vtkActor *actor);
+  // return the current node ID corresponding to a given vtkProp3D
+  const char *GetIDByActor (vtkProp3D *actor);
   
   // Description: 
   // Post a request for a render -- won't be done until the system is
@@ -235,7 +236,7 @@ protected:
   std::vector< vtkMRMLDisplayNode* > GetDisplayNode(vtkMRMLDisplayableNode *model);
   void RemoveDispalyedID(std::string &id);
 
-  std::map<std::string, vtkActor *> DisplayedActors;
+  std::map<std::string, vtkProp3D *> DisplayedActors;
   std::map<std::string, vtkMRMLDisplayNode *> DisplayedNodes;
   std::map<std::string, int> DisplayedClipState;
   std::map<std::string, int> DisplayedVisibility;
