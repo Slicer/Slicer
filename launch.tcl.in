@@ -220,27 +220,12 @@ proc launch_ParseArgs {argv} {
 
 proc launch_InitEnvironment {} {
 
-    # if it is an empty string or doesn't exist, set the LD_LIBRARY_PATH 
-    if { ![info exists ::env(LD_LIBRARY_PATH)] ||
-            $::env(LD_LIBRARY_PATH) == "" } {
-        set ::env(LD_LIBRARY_PATH) " "
+  foreach var {LD_LIBRARY_PATH TCLLIBPATH DYLD_LIBRARY_PATH PATH} {
+    # if it is an empty string or doesn't exist, set the environment variable
+    if { ![info exists ::env($var)] || $::env($var) == "" } {
+        set ::env($var) " "
     }
-
-    # if it is an empty string or doesn't exist, set the TCLLIBPATH 
-    if {[catch {
-        if {$::env(TCLLIBPATH) == ""} { 
-            set ::env(TCLLIBPATH) " " 
-        }} ex]} {
-        set ::env(TCLLIBPATH) " " 
-    }
-
-    # if it is an empty string or doesn't exist, set the DYLD_LIBRARY_PATH 
-    if { ($::env(BUILD) == $::DARWIN || $::env(BUILD) == $::DARWIN_X86) && [catch {
-        if {$::env(DYLD_LIBRARY_PATH) == ""} { 
-            set ::env(DYLD_LIBRARY_PATH) " " 
-        }} ex]} {
-        set ::env(DYLD_LIBRARY_PATH) " "
-    }
+  }
 }
 
 
@@ -262,6 +247,7 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(SLICER_BIN_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(PATH) "$::env(PATH):$::env(TEEM_DIR)"
         } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
             # add vtk, slicer, and tcl bins
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -270,6 +256,7 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(SLICER_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(PATH) $::env(PATH):$::env(TEEM_DIR)
         } elseif {$::env(BUILD) == $::WINDOWS} {
             # add vtk, slicer, and tcl bins
             set ::env(Path) $::env(VTK_BIN_DIR)\;$::env(Path)
@@ -288,25 +275,14 @@ proc launch_SetPaths {} {
 
     #
     # add the default search locations for tcl packages
-    #  (window has special tcl packages depending on build type)
     #
-    if {$::env(BUILD) == $::SOLARIS || 
-        $::env(BUILD) == $::LINUX ||
-        $::env(BUILD) == $::LINUX_64 ||
-        $::env(BUILD) == $::DARWIN_X86 ||
-        $::env(BUILD) == $::DARWIN} {
-            set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
-            set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
-    } elseif {$::env(BUILD) == $::WINDOWS} {
-        set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl/$::BUILD_SUBDIR $::env(TCLLIBPATH)"
-        set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl/$::BUILD_SUBDIR $::env(TCLLIBPATH)"
-    } else {
-        puts stderr "TCLLIBPATH: Invalid build $::env(BUILD)"
-        exit
-    }
-
-    # same for all platforms
+    set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
+    set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(SLICER_HOME)/Base/Wrapping/Tcl/vtkSlicerBase $::env(TCLLIBPATH)"
+    set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itcl3.2 $::env(TCLLIBPATH)"
+    set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itk3.2 $::env(TCLLIBPATH)"
+    set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/iwidgets4.0.1 $::env(TCLLIBPATH)"
+    set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/blt2.4 $::env(TCLLIBPATH)"
 }
 
 #
