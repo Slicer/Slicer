@@ -410,8 +410,13 @@ proc XcedeCatalogImportEntryModel {node} {
         return
     }
 
+    #--- set name and description
     if { [info exists n(description) ] } {
         $mnode SetDescription $n(description)
+    }
+
+    if { [info exists n(name) ] } {
+        $mnode SetName $n(name)
     }
 
     #--- we assume catalogs will contain a single LH model

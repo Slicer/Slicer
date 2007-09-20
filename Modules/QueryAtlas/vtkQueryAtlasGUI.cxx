@@ -1154,6 +1154,14 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   //---
   if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
+    this->OpenBIRNLexBrowser();
+    //--- get last clicked (or typed) structure from the LocalSearchTermEntry
+    const char *structureLabel =  this->NeuroNamesEntry->GetValue();
+    if ( !strcmp (structureLabel, "" ))
+      {
+      structureLabel = "brain";
+      }
+    this->Script ( "QueryAtlasSendHierarchyCommand  \"%s\" NN", structureLabel  );
     }
   else if ( (b == this->FSgoButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -1165,17 +1173,14 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     }
   else if ( (b == this->BIRNLexHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
     {
-    //--- TODO: check to see if BIRNLexBrowser is open.
-    
-    //--- Will open if it's not alreay open.
     this->OpenBIRNLexBrowser();
     //--- get last clicked (or typed) structure from the LocalSearchTermEntry
     const char *structureLabel =  this->LocalSearchTermEntry->GetValue();
     if ( !strcmp (structureLabel, "" ))
       {
-      structureLabel = "BIRNLex_subset";
+      structureLabel = "brain";
       }
-    this->Script ( "QueryAtlasSendHierarchyCommand  %s", structureLabel );
+    this->Script ( "QueryAtlasSendHierarchyCommand  \"%s\" BIRN", structureLabel  );
     }
   else if ( (b == this->AddLocalTermButton ) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -1611,37 +1616,6 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     this->BuildQueriesGUI ( );
 #endif
 //    this->BuildDisplayAndNavigationGUI ( );
-      /*
-    // ---
-    // Source main tcl files.
-    // (QueryAtlasInit sources other required tcl files)
-    // ---
-     vtksys_stl::string slicerHome;
-    if (!vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome))
-      {
-      vtkDebugMacro("Can't find SLICER_HOME env var. Can't source tcl scripts.");
-      }
-    else
-      {
-      // launch scripts
-
-      std::string tclScript = slicerHome + "/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl";
-      app->Script ( "source %s", tclScript.c_str() );
-      tclScript = slicerHome + "/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasWeb.tcl";
-      app->Script ( "source %s", tclScript.c_str() );
-      tclScript = slicerHome + "/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlasControlledVocabulary.tcl";
-      app->Script ( "source %s", tclScript.c_str() );
-      tclScript = slicerHome + "/../Slicer3/Modules/QueryAtlas/Tcl/Card.tcl";
-      app->Script ( "source %s", tclScript.c_str() );
-      tclScript = slicerHome + "/../Slicer3/Modules/QueryAtlas/Tcl/CardFan.tcl";
-      app->Script ( "source %s", tclScript.c_str() );
-
-      // run init proc
-      this->Script ( "QueryAtlasInit" );
-      }
-      */
-      this->Script ( "source $env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Tcl/QueryAtlas.tcl" );
-      this->Script ( "QueryAtlasInit" );
 }
 
 
