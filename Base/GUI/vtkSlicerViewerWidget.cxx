@@ -837,6 +837,13 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   this->ViewerFrame = vtkKWFrame::New ( );
   this->ViewerFrame->SetParent ( this->GetParent ( ) );
   this->ViewerFrame->Create ( );
+
+  //double *c = slicerStyle->GetHighLightColor();
+  double c[3] = { 0.4, 0.0, 0.6 };
+  this->ViewerFrame->SetConfigurationOptionAsInt("-highlightthickness", 2);
+  this->ViewerFrame->SetConfigurationOptionAsColor("-highlightcolor",
+                                                   c[0], c[1], c[2]);
+
   
   this->MainViewer = vtkKWRenderWidget::New ( );  
   this->MainViewer->SetParent (this->ViewerFrame );
