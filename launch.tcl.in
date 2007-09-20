@@ -478,6 +478,7 @@ proc launch_RunProgram {} {
 
     set codeString [lindex $::saved_errorCode 0]
     switch $codeString {
+      "" -
       "NONE" { 
         set code 0 
       }
@@ -490,7 +491,7 @@ proc launch_RunProgram {} {
       }
       default {
         set code -1
-        set result "Exceptional errorCode: $::saved_errorCode\n$::saved_errorInfo"
+        set result "Exceptional errorCode: $::saved_errorCode, $::saved_errorCode\n$::saved_errorInfo"
       }
     }
 
