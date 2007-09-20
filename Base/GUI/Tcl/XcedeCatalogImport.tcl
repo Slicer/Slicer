@@ -33,7 +33,8 @@ proc XcedeCatalogImport { xcedeFile } {
     #--- initialize some globals
     set ::XcedeCatalog(transformIDStack) ""
     set ::XcedeCatalog_HParent_ID ""
-    set ::XcedeCatalog_ModelMrmlID ""
+    set ::XcedeCatalogMrmlID(LHmodel) ""
+    set ::XcedeCatalogMrmlID(RHmodel) ""
     set ::XcedeCatalog_MrmlID(anat2exf) ""
     set ::XcedeCatalog_MrmlID(FSBrain) ""
     set ::XcedeCatalog_MrmlID(ExampleFunc) ""
@@ -269,6 +270,7 @@ proc XcedeCatalogImportGetEntry {element } {
     }
 
     # call the handler for this element
+    puts "importing $nodeType"
     $handler node
 }
 
@@ -412,16 +414,27 @@ proc XcedeCatalogImportEntryModel {node} {
         $mnode SetDescription $n(description)
     }
 
-    #--- we assume catalogs will contain a single model
-    #--- with which all overlays will be associated.
-    #--- If more models are included in the catalog, then
-    #--- the FIRST model loaded is the one scalars are
-    #--- associated with.
-    if { $::XcedeCatalog_ModelMrmlID == "" } {
-        set ::XcedeCatalog_ModelMrmlID [ $mnode GetID ]
-    } else {
-        puts "Warning: Xcede catalogs for slicer should contain a single model to which scalar overlays will be associated. This xcede file contains multiple models: all scalar overlays will be associated with the first model."
+    #--- we assume catalogs will contain a single LH model
+    #--- with which all LHoverlays will be associated.
+    #--- and/or a single RH model with which RH overlays are associated.
+    #--- left hemisphere models
+    if { [ string first "lh." $n(uri) ] >= 0 } {
+        if { $::XcedeCatalogMrmlID(LHmodel) == "" } {
+            set ::XcedeCatalogMrmlID(LHmodel) [ $mnode GetID ]
+        } else {
+            puts "Warning: Xcede catalogs for slicer should contain at single LH model to which LH scalar overlays will be associated. This xcede file appears to contain multiple left hemisphere models: all scalar overlays will be associated with the first LH model."
+        }
     }
+    #--- right hemisphere models
+    if { [ string first "rh." $n(uri) ] >= 0 } {
+        if { $::XcedeCatalogMrmlID(RHmodel) == "" } {
+            set ::XcedeCatalogMrmlID(RHmodel) [ $mnode GetID ]
+        } else {
+            puts "Warning: Xcede catalogs for slicer should contain at single RH model to which RH scalar overlays will be associated. This xcede file appears to contain multiple right hemisphere models: all scalar overlays will be associated with the first RH model."
+        }
+
+    }
+
 
 }
 
@@ -589,19 +602,33 @@ proc XcedeCatalogImportEntryOverlay {node} {
 
     #--- not really a node, per se...
     #--- ditch if there's no file in the uri
-
+    
     if { ! [info exists n(uri) ] } {
         puts "XcedeCatalogImportEntryOverlay: no uri specified for node $n(name). No overlay imported."
         return
     }
+
     #--- what model node should these scalars be applied to?
-    if { ![info exists ::XcedeCatalog_ModelMrmlID ] } {
-        puts "XcedeCatalogImportEntryOverlay: no model ID specified for overlay $n(uri). No overlay imported."
-        return
+    if { [ string first "lh." $n(uri) ] >= 0 } {
+        if { ![info exists ::XcedeCatalogMrmlID(LHmodel) ] } {
+            puts "XcedeCatalogImportEntryOverlay: no model ID specified for overlay $n(uri). No overlay imported."
+            return
+        }
+        set mid $::XcedeCatalogMrmlID(LHmodel)
+        set mnode [$::slicer3::MRMLScene GetNodeByID $mid]
     }
-    
-    set mid $::XcedeCatalog_ModelMrmlID
-    set mnode [$::slicer3::MRMLScene GetNodeByID $mid]
+
+
+
+    if { [ string first "rh." $n(uri) ] >= 0 } {
+        if { ![info exists ::XcedeCatalogMrmlID(RHmodel) ] } {
+            puts "XcedeCatalogImportEntryOverlay: no model ID specified for overlay $n(uri). No overlay imported."
+            return
+        }
+        set mid $::XcedeCatalogMrmlID(RHmodel)
+        set mnode [$::slicer3::MRMLScene GetNodeByID $mid]
+    }
+
 
     if { $mnode == "" } {
         puts "XcedeCatalogImportEntryOverlay: Model MRML Node corresponding to ID=$mid not found. No overlay imported."
@@ -621,7 +648,6 @@ proc XcedeCatalogImportEntryOverlay {node} {
     if { [ string first "annot" $n(uri) ] >= 0 } {
         lappend ::XcedeCatalog_AnnotationFiles $n(uri)
     }
-
 }
 
 
