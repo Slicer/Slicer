@@ -580,11 +580,14 @@ proc EditorProcessMRMLEvents {this callerID event} {
 
         # is it the one we're showing?
         if { $displayNode != "" } {
-            if { [$displayNode GetColorNodeID] != [[$::Editor($this,colorsColor) GetColorNode] GetID] } {
-                if { [$this GetDebug] } {
-                    puts "Resetting the color node"
+            if {0} {
+                # deprecated, Editor(x,colorsColor) no longer used
+                if { [$displayNode GetColorNodeID] != [[$::Editor($this,colorsColor) GetColorNode] GetID] } {
+                    if { [$this GetDebug] } {
+                        puts "Resetting the color node"
+                    }
+                    $::Editor($this,colorsColor) SetColorNode [$displayNode GetColorNode]
                 }
-                $::Editor($this,colorsColor) SetColorNode [$displayNode GetColorNode]
             }
             # add an observer on the volume node for display modified events
             if { [$this GetDebug] } {
@@ -607,11 +610,14 @@ proc EditorProcessMRMLEvents {this callerID event} {
         if { [$this GetDebug] } {
             puts "... caller is label volume, got a display modified event, display node = $displayNode"
         }
-        if { $displayNode != "" && [$displayNode GetColorNodeID] != [[$::Editor($this,colorsColor) GetColorNode] GetID] } {
-            if { [$this GetDebug] } {
-                puts "...resetting the color node"
+        if {0} {
+            # deprecated, not using colorsColor
+            if { $displayNode != "" && [$displayNode GetColorNodeID] != [[$::Editor($this,colorsColor) GetColorNode] GetID] } {
+                if { [$this GetDebug] } {
+                    puts "...resetting the color node"
+                }
+                $::Editor($this,colorsColor) SetColorNode [$displayNode GetColorNode]
             }
-            $::Editor($this,colorsColor) SetColorNode [$displayNode GetColorNode]
         }
         return
     }
