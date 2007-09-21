@@ -135,6 +135,22 @@ static const unsigned char image_WithAllSelected[] =
   "eNpjYKAU/CcXDDbtPoQAQe0Ttp7FhQa/9lG/j/qdVL8PSIb9+vUrLjV///79/v07kMSlnR"
   "IAAGXLakg=";
 
+
+/* 
+ * Resource generated for file:
+ *    SelectAll.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SelectAll_width          = 21;
+static const unsigned int  image_SelectAll_height         = 21;
+static const unsigned int  image_SelectAll_pixel_size     = 3;
+static const unsigned long image_SelectAll_length         = 80;
+static const unsigned long image_SelectAll_decoded_length = 1323;
+
+static const unsigned char image_SelectAll[] = 
+  "eNpjYKAU/CcXDDbtPoQAQe0Ttp7FhQa/9lG/j/qdVL8PSIb9+vUrLjV///79/v07kMSlnR"
+  "IAAGXLakg=";
+
+
 /* 
  * Resource generated for file:
  *    WithAny.png (zlib, base64) (image file)
