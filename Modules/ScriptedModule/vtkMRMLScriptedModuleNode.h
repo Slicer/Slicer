@@ -66,6 +66,9 @@ class VTK_SCRIPTED_EXPORT vtkMRMLScriptedModuleNode : public vtkMRMLNode
   const char *GetParameter(const char *name);
   vtkSetStringMacro(Value);
   vtkGetStringMacro(Value);
+  // Description:
+  // Parameter List is a space separated keyword/value pair string.
+  // Note: you must call RequestParameterList first to update the value
   void RequestParameterList();
   vtkGetStringMacro(ParameterList);
 
