@@ -1,5 +1,40 @@
 /* 
  * Resource generated for file:
+ *    SelectOverlay.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SelectOverlay_width          = 21;
+static const unsigned int  image_SelectOverlay_height         = 21;
+static const unsigned int  image_SelectOverlay_pixel_size     = 3;
+static const unsigned long image_SelectOverlay_length         = 248;
+static const unsigned long image_SelectOverlay_decoded_length = 1323;
+
+static const unsigned char image_SelectOverlay[] = 
+  "eNpjYKAU/CcXYGonaNcP3NpB7Kec+BGaegj3y//fyHrlpBkxEbIJr/5/RbMdTXvNURYgAj"
+  "K8umYAEZp2NNvRnI1fO9wENO1Y3YzVF7i0A1lABGK0MAARkLHfcx8QgUQWMQARTbVT4vj/"
+  "5xiIQoS0g2xBA0BLcWsXEBBA046WvPFrh7CRbUPXjgQwkw21chwm+P4bRBoZWQJRWloahE"
+  "GG7UZGRjNnznR1dSXJdjQTSHU8Qb9TAgDgEZNN";
+
+
+/* 
+ * Resource generated for file:
+ *    SetUp.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SetUp_width          = 21;
+static const unsigned int  image_SetUp_height         = 21;
+static const unsigned int  image_SetUp_pixel_size     = 3;
+static const unsigned long image_SetUp_length         = 344;
+static const unsigned long image_SetUp_decoded_length = 1323;
+
+static const unsigned char image_SetUp[] = 
+  "eNpjYKAU/CcXDE7tj59+7591Lzhxj617F5AEsoEiECk98yz82hetfmLj1mHl0oKMgCLzVz"
+  "w2tMgFsvFoB+qFqK/pvHn+ykegCJAEsh18JgEFQ5MP4NEOdCHE3j2HXyOb+fvPP33zLKAh"
+  "QIRHO9CPEHvRvAMU9ItaR1B7fefZnJLFt+9/RdOLhnBpv3L93bkLDz5/+YM1moDiQFmgGl"
+  "za8VgEBM9f/Zi3+PDqTffwaId4EOhTNL1AMHf5Y6DX1mx5RlA7MJyBoY2sFxgXkNiHpx+s"
+  "2iExC4xltHiH+AWYKvAkWqACYLoCpi6sqQ5NL6Z2eHrGk+YHf4YlSTslAADoAJJ9";
+
+
+/* 
+ * Resource generated for file:
  *    AddIcon.png (zlib, base64) (image file)
  */
 static const unsigned int  image_AddIcon_width          = 21;
