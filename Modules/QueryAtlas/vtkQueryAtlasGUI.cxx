@@ -1828,7 +1828,7 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->QdecGoButton->GetWidget()->SetReliefToFlat();
     this->QdecGoButton->GetLabel()->SetText("Set up annotations: ");
     this->QdecGoButton->GetLabel()->SetWidth ( 18 );
-    this->QdecGoButton->SetBalloonHelpString ("Create interactive annotations for models"
+    this->QdecGoButton->SetBalloonHelpString ("Create interactive annotations for models");
     this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 2",
                    this->QdecGoButton->GetWidgetName());
 
