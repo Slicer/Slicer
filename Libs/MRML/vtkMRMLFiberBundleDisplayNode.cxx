@@ -87,6 +87,9 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
   this->FiberTubeDTDisplayPropertiesNodeID = NULL;
   this->FiberGlyphDTDisplayPropertiesNodeID = NULL;
 
+  this->DTDisplayPropertiesNode = NULL;
+  this->DTDisplayPropertiesNodeID = NULL;
+
 }
 
 //----------------------------------------------------------------------------
@@ -110,6 +113,8 @@ vtkMRMLFiberBundleDisplayNode::~vtkMRMLFiberBundleDisplayNode()
   this->SetAndObserveFiberLineDTDisplayPropertiesNodeID(NULL);
   this->SetAndObserveFiberTubeDTDisplayPropertiesNodeID(NULL);
   this->SetAndObserveFiberGlyphDTDisplayPropertiesNodeID(NULL);
+
+  this->SetAndObserveDTDisplayPropertiesNodeID(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -471,6 +476,38 @@ void vtkMRMLFiberBundleDisplayNode::SetAndObserveFiberGlyphDTDisplayPropertiesNo
 
   // Observe the node using the pointer.
   vtkSetAndObserveMRMLObjectMacro ( this->FiberGlyphDTDisplayPropertiesNode , cnode );
+
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLFiberBundleDisplayNode::GetDTDisplayPropertiesNode ( )
+{
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* node = NULL;
+
+  // Find the node corresponding to the ID we have saved.
+  if  ( this->GetScene ( ) && this->GetDTDisplayPropertiesNodeID ( ) )
+    {
+    vtkMRMLNode* cnode = this->GetScene ( ) -> GetNodeByID ( this->DTDisplayPropertiesNodeID );
+    node = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast ( cnode );
+    }
+
+  return node;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiberBundleDisplayNode::SetAndObserveDTDisplayPropertiesNodeID ( const char *ID )
+{
+  // Stop observing any old node
+  vtkSetAndObserveMRMLObjectMacro ( this->DTDisplayPropertiesNode, NULL );
+
+  // Set the ID. This is the "ground truth" reference to the node.
+  this->SetDTDisplayPropertiesNodeID ( ID );
+
+  // Get the node corresponding to the ID. This pointer is only to observe the object.
+  vtkMRMLNode *cnode = this->GetDTDisplayPropertiesNode ( );
+
+  // Observe the node using the pointer.
+  vtkSetAndObserveMRMLObjectMacro ( this->DTDisplayPropertiesNode , cnode );
 
 }
 

@@ -122,9 +122,49 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   //ETX
 
   //--------------------------------------------------------------------------
-  // Display Information: ColorMode for lines
+  // Display Information: ColorMode for ALL nodes
   //--------------------------------------------------------------------------
 
+ // Description:
+  // Color mode for glyphs. The color modes are mutually exclusive.
+  vtkGetMacro ( ColorMode, int );
+  vtkSetMacro ( ColorMode, int );
+ 
+  // Description:
+  // Color by solid color (for example the whole fiber bundle red. blue, etc.)
+  void SetColorModeToSolid ( ) {
+    this->SetColorMode ( this->colorModeSolid );
+  };
+
+  // Description:
+  // Color according to the tensors using various scalar invariants.
+  void SetColorModeToScalar ( ) {
+    this->SetColorMode ( this->colorModeScalar );
+  };
+
+  // Description:
+  // Color according to the tensors using a function of scalar invariants along the tract.
+  // This enables coloring by average FA, for example.
+  void SetColorModeToFunctionOfScalar ( ) {
+    this->SetColorMode ( this->colorModeFunctionOfScalar );
+  };
+
+  // Description:
+  // Use to color by the active cell scalars.  This is intended to support
+  // external processing of fibers, for example to label each with the distance
+  // of that fiber from an fMRI activation.  Then by making that information
+  // the active cell scalar field, this will allow coloring by that information.
+  // TO DO: make sure this information can be saved with the tract, save name of
+  // active scalar field if needed.
+  void SetColorModeToUseCellScalars ( ) {
+    this->SetColorMode ( this->colorModeUseCellScalars );
+  };
+
+
+
+  //--------------------------------------------------------------------------
+  // Display Information: ColorMode for lines
+  //--------------------------------------------------------------------------
   // Description:
   // Color mode for lines. The color modes are mutually exclusive.
   vtkGetMacro ( ColorModeForFiberLines, int );
@@ -319,6 +359,20 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   vtkGetStringMacro(FiberGlyphDTDisplayPropertiesNodeID);
 
   // TO DO: Add updating of reference IDs
+ 
+  // Node reference to ALL DT nodes
+
+  // Description:
+  // Get diffusion tensor display MRML object for fiber glyph.
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetDTDisplayPropertiesNode ( );
+
+  // Description:
+  // Set diffusion tensor display MRML object for fiber glyph.
+  void SetAndObserveDTDisplayPropertiesNodeID ( const char *ID );
+
+  // Description:
+  // Get ID of diffusion tensor display MRML object for fiber glyph.
+  vtkGetStringMacro(DTDisplayPropertiesNodeID);
 
  protected:
   vtkMRMLFiberBundleDisplayNode ( );
@@ -338,6 +392,15 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   vtkSetReferenceStringMacro(FiberLineDTDisplayPropertiesNodeID);
   vtkSetReferenceStringMacro(FiberTubeDTDisplayPropertiesNodeID);
   vtkSetReferenceStringMacro(FiberGlyphDTDisplayPropertiesNodeID);
+
+
+  // ALL MRML nodes
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *DTDisplayPropertiesNode;
+  char *DTDisplayPropertiesNodeID;
+
+  vtkSetReferenceStringMacro(DTDisplayPropertiesNodeID);
+
+
 
   // Numbers
   double FiberLineOpacity;
@@ -359,6 +422,8 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
 
   int TwoDimensionalVisibility;
 
+  // Enumerated
+  int ColorMode;
 
   // Arrays
   //double ScalarRange[2];

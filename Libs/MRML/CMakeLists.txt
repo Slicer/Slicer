@@ -56,6 +56,9 @@ SET(MRML_SRCS
         vtkMRMLVectorVolumeDisplayNode.cxx
         vtkMRMLFiberBundleNode.cxx
         vtkMRMLFiberBundleDisplayNode.cxx
+        vtkMRMLFiberBundleGlyphDisplayNode.cxx
+        vtkMRMLFiberBundleTubeDisplayNode.cxx
+        vtkMRMLFiberBundleLineDisplayNode.cxx
         vtkMRMLFiberBundleStorageNode.cxx
         vtkMRMLHierarchyNode.cxx
         vtkMRMLModelHierarchyNode.cxx
