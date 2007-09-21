@@ -2,6 +2,7 @@
 #include "vtkMRMLNode.h"
 #include "vtkVolumeTextureMapper3D.h"
 #include "vtkPiecewiseFunction.h"
+#include <vector>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -213,41 +214,113 @@ const char * vtkMRMLVolumeRenderingDisplayNode::GetTypeAsString()
 char* vtkMRMLVolumeRenderingDisplayNode::getPiecewiseFunctionString(vtkPiecewiseFunction* function)
 {
     std::ostringstream resultStream;
-    double* range=function->GetRange();
-    double anfang=*range;
-    range++;
-    double ende=*range;
-    int size=(ende-anfang)*10;
-    double* resultArray=new double[size];
-    double* it;
-    function->GetTable(anfang,ende,size,resultArray);
-    resultStream<<"vtkPiecewiseFunction\t"<<anfang<<"\t"<<ende<<"\t"<<size<<"\t";
-    it=resultArray;
-    for(int i=0;i<size;i++)
+    int arraysize=function->GetSize()*2;
+    double *data=function->GetDataPointer();
+    double *it=data;
+    //write header
+    resultStream<<"vtkPiecewiseFunction#"<<arraysize;
+    for (int i=0;i<arraysize;i++)
     {
-        resultStream<<*it<<"\t";
+        resultStream<<"#"<<*it;
         it++;
+
     }
-    //return resultStream.str().c_str();
     //Delete existing buffer
     if(Buffer)
     {
         delete []Buffer;
     }
+    //Convert to char
     this->Buffer= new char[resultStream.str().length()+1];
     resultStream.str().copy(this->Buffer,std::string::npos);
     this->Buffer[resultStream.str().length()]=0;
     return this->Buffer;
     
 }
-void  vtkMRMLVolumeRenderingDisplayNode::getColorTransferFunctionString(vtkColorTransferFunction* function, char* result)
+char*  vtkMRMLVolumeRenderingDisplayNode::getColorTransferFunctionString(vtkColorTransferFunction* function)
 {
+    //maybe size*4
+    std::ostringstream resultStream;
+    int arraysize=function->GetSize()*4;
+    double *data=function->GetDataPointer();
+    double *it=data;
+    //write header
+    resultStream<<"vtkColorTransferFunction "<<arraysize<<"#";
+    for (int i=0;i<arraysize;i++)
+    {
+        resultStream<<*it<<"#";
+        it++;
+
+    }
+    //Delete existing buffer
+    if(Buffer)
+    {
+        delete []Buffer;
+    }
+    //Convert to char
+    this->Buffer= new char[resultStream.str().length()+1];
+    resultStream.str().copy(this->Buffer,std::string::npos);
+    this->Buffer[resultStream.str().length()]=0;
+    return this->Buffer;
+
 }
 void vtkMRMLVolumeRenderingDisplayNode::GetPiecewiseFunctionFromString(char* string,vtkPiecewiseFunction* result)
 {
+    
+    char *newOne=new char[strlen(string)];
+    strcpy(newOne,string);
+    int size=0;
+    std::vector<double> dataVector;
+  char * resultChar;
+  resultChar = strtok (newOne,"#");
+  if(strcmp(resultChar,"vtkPiecewiseFunction")!=0)
+  {
+    return;
+  }
+  else
+  {
+      resultChar = strtok (NULL,"#");
+  }
+  //get size
+  size=(int)(strtod(resultChar,NULL));
+  //getPoints
+
+        resultChar = strtok (NULL, "#");
+  while (resultChar != NULL)
+  {
+    dataVector.push_back(strtod(resultChar,NULL));   
+      resultChar = strtok (NULL, "#");
+
+  }
+   result->FillFromDataPointer(size/2,&dataVector[0]);
 }
 void vtkMRMLVolumeRenderingDisplayNode::GetColorTransferFunction(char* string, vtkColorTransferFunction* result)
 {
+    char *newOne=new char[strlen(string)];
+    strcpy(newOne,string);
+     int size=0;
+    std::vector<double> dataVector;
+  char * resultChar;
+  resultChar = strtok (string,"#");
+  if(strcmp(resultChar,"vtkColorTransferFunction")!=0)
+  {
+    return;
+  }
+  else
+  {
+      resultChar = strtok (NULL,"#");
+  }
+  //get size
+  size=(int)(strtod(resultChar,NULL));
+  //getPoints
+  resultChar = strtok (NULL, "#");
+  while (resultChar != NULL)
+  {
+      
+      dataVector.push_back(strtod(resultChar,NULL));
+      resultChar = strtok (NULL, "#");
+  }
+    result->FillFromDataPointer(size,&dataVector[0]);
 }
 
 void vtkMRMLVolumeRenderingDisplayNode::InitializePipeline(vtkMRMLDisplayNode *node)
@@ -265,4 +338,5 @@ void vtkMRMLVolumeRenderingDisplayNode::InitializePipeline(vtkMRMLDisplayNode *n
         puts "pfed_hist: $$::VR($this,pfed_hist)"
         $::VR($this,pfed_hist) BuildHistogram [[$::VR($this,aImageData) GetPointData] GetScalars] 0*/
 }
+
 

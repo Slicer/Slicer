@@ -18,7 +18,7 @@ class VTK_VOLUMERENDERINGMODULE_EXPORT vtkMRMLVolumeRenderingDisplayNode : publi
 public:
     
     char* getPiecewiseFunctionString(vtkPiecewiseFunction* function);//, char* result);
-    void getColorTransferFunctionString(vtkColorTransferFunction* function, char* result);
+    char* getColorTransferFunctionString(vtkColorTransferFunction* function);
     void GetPiecewiseFunctionFromString(char* string,vtkPiecewiseFunction* result);
     void GetColorTransferFunction(char* string, vtkColorTransferFunction* result);
     void InitializePipeline(vtkMRMLDisplayNode *node);

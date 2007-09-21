@@ -143,7 +143,15 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
      //Testing Button ?
      if(callerObject==this->PB_Testing&&event==vtkKWPushButton::InvokedEvent)
      {
-         char* result=this->currentNode->getPiecewiseFunctionString(this->currentNode->GetVolumeProperty()->GetScalarOpacity());
+         //char* result=this->currentNode->getPiecewiseFunctionString(this->currentNode->GetVolumeProperty()->GetScalarOpacity());
+           
+   char* pass="vtkPiecewiseFunction#6#0#0.2#1#0.1#2#0.3\0";
+   this->currentNode->GetPiecewiseFunctionFromString(pass,this->currentNode->GetVolumeProperty()->GetScalarOpacity());
+   char* result=this->currentNode->getPiecewiseFunctionString(this->currentNode->GetVolumeProperty()->GetScalarOpacity());
+   if(strcmp(pass,result)!=0)
+   {
+       vtkErrorMacro("Error in writing reading");
+   }
         vtkDebugMacro("size"<<&result);
         return;
          
