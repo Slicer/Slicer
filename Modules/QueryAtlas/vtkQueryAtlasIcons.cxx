@@ -31,6 +31,8 @@ vtkQueryAtlasIcons::vtkQueryAtlasIcons ( )
     this->SearchIcon = vtkKWIcon::New();
     this->ReserveURIsIcon = vtkKWIcon::New();
     this->ReserveSelectedURIsIcon = vtkKWIcon::New();
+    this->SetUpIcon = vtkKWIcon::New();
+    this->SelectOverlayIcon = vtkKWIcon::New();
     this->AssignImageDataToIcons ( );
 }
 
@@ -39,6 +41,16 @@ vtkQueryAtlasIcons::vtkQueryAtlasIcons ( )
 vtkQueryAtlasIcons::~vtkQueryAtlasIcons ( )
 {
 
+  if ( this->SelectOverlayIcon )
+    {
+    this->SelectOverlayIcon->Delete();
+    this->SelectOverlayIcon = NULL;
+    }
+  if ( this->SetUpIcon )
+    {
+    this->SetUpIcon->Delete();
+    this->SetUpIcon = NULL;
+    } 
   if ( this->ReserveSelectedURIsIcon )
     {
     this->ReserveSelectedURIsIcon->Delete();
@@ -255,6 +267,16 @@ void vtkQueryAtlasIcons::AssignImageDataToIcons ( )
                                 image_ReserveSelectedURIs_height,
                                 image_ReserveSelectedURIs_pixel_size,
                                 image_ReserveSelectedURIs_length, 0);
+  this->SetUpIcon->SetImage( image_SetUp,
+                                image_SetUp_width,
+                                image_SetUp_height,
+                                image_SetUp_pixel_size,
+                                image_SetUp_length, 0);
+  this->SelectOverlayIcon->SetImage( image_SelectOverlay,
+                                image_SelectOverlay_width,
+                                image_SelectOverlay_height,
+                                image_SelectOverlay_pixel_size,
+                                image_SelectOverlay_length, 0);
 
 }
 
@@ -284,7 +306,9 @@ void vtkQueryAtlasIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "WithExactSelectedIcon: " << this->GetWithExactSelectedIcon ( ) << "\n";
     os << indent << "WithExactDisabledIcon: " << this->GetWithExactDisabledIcon ( ) << "\n";
     os << indent << "SearchIcon: " << this->GetSearchIcon ( ) << "\n";
-    os << indent << "ReserveURIsIcon: " << this->GetSearchIcon ( ) << "\n";
-        os << indent << "ReserveSelectedURIsIcon: " << this->GetSearchIcon ( ) << "\n";
+    os << indent << "ReserveURIsIcon: " << this->GetReserveURIsIcon ( ) << "\n";
+    os << indent << "ReserveSelectedURIsIcon: " << this->GetReserveSelectedURIsIcon ( ) << "\n";
+    os << indent << "SetUpIcon: " << this->GetSetUpIcon ( ) << "\n";
+    os << indent << "SelectOverlayIcon: " << this->GetSelectOverlayIcon ( ) << "\n";
 
 }

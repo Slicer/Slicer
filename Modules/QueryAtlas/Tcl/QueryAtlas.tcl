@@ -73,8 +73,6 @@ proc QueryAtlasTearDown { } {
     #--- set the model and label selectors to be NULL
     set as [$::slicer3::QueryAtlasGUI GetFSasegSelector]
     $as SetSelected ""
-    set ms [$::slicer3::QueryAtlasGUI GetFSmodelSelector]
-    $ms SetSelected ""
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -157,39 +155,6 @@ proc QueryAtlasMessageDialog { str } {
 
 
 
-#----------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasSetAnnotatedModel { } {
-
-    set ms [$::slicer3::QueryAtlasGUI GetFSmodelSelector]
-    set node [ $ms GetSelected ]
-    if { $node == "" } {
-        return
-    }
-    
-    set gotmodel 0
-    set name ""
-
-    set name [ $node GetName ]
-    set t [ string first "lh.pial" $name ]
-    if {$t >= 0 } {
-        set gotmodel 1
-        set ::QA(modelNodeIDs) [ $node GetID ]
-        set ::QA(modelDisplayNodeID) [ $node GetDisplayNodeID ]
-    }
-    set t [ string first "rh.pial" $name ]
-    if {$t >= 0 } {
-        set gotmodel 1
-        set ::QA(modelNodeIDs) [ $node GetID ]
-        set ::QA(modelDisplayNodeID) [ $node GetDisplayNodeID ]
-    }
-
-    if { ! $gotmodel } {
-        #QueryAtlasMessageDialog "Selected volume should be a FreeSurfer lh.pial or rh.pial file."
-        set ::QA(modelNodeIDs) ""
-        set ::QA(modelDisplayNodeID) ""
-    }
-}
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
@@ -439,9 +404,6 @@ proc QueryAtlasAutoConfigureLayers { } {
                 set gotmodel 1
                 set ::QA(modelNodeIDs) [ $node GetID ]
                 set ::QA(modelDisplayNodeID) [ $node GetDisplayNodeID ]
-                #-- if we found it, set the model node selector in the GUI
-                set ms [$::slicer3::QueryAtlasGUI GetFSmodelSelector]
-                $ms SetSelected $node
             }
         }
         if {! $gotmodel } {
@@ -450,9 +412,6 @@ proc QueryAtlasAutoConfigureLayers { } {
                 set gotmodel 1
                 set ::QA(modelNodeIDs) [ $node GetID ]
                 set ::QA(modelDisplayNodeID) [ $node GetDisplayNodeID ]
-                #-- if we found it, set the model node selector in the GUI
-                set ms [$::slicer3::QueryAtlasGUI GetFSmodelSelector]
-                $ms SetSelected $node
             }
         }
     }
@@ -794,8 +753,10 @@ proc QueryAtlasFipsFreeSurferSetUp { } {
 
 
 #----------------------------------------------------------------------------------------------------
+#--- switches overlay to the query lut to pull out a label name
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSwitchToQueryLUT { } {
+
     if { $::QA(modelNodeIDs) != ""  } {
         set numModels [ llength $::QA(modelNodeIDs) ]
         for { set m 0 } { $m < $numModels } { incr m } {
@@ -819,6 +780,8 @@ proc QueryAtlasSwitchToQueryLUT { } {
 }
 
 #----------------------------------------------------------------------------------------------------
+#--- restores whatever scalar lut is displayed on the model after query label is
+#--- extracted.
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasRestoreScalarLUT { } {
     if { $::QA(modelNodeIDs) != ""  } {
@@ -835,10 +798,10 @@ proc QueryAtlasRestoreScalarLUT { } {
                 set lutNode [ $nodes GetNextItemAsObject ]
             }
             if { $lutNode != "" } {
-
-            $modelNode SetActiveScalars $::QA(saveOverlay)
-            [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$lutNode GetID]
-            [$modelNode GetDisplayNode ] SetActiveScalarName $::QA(saveOverlay) 
+                $modelNode SetActiveScalars $::QA(saveOverlay)
+                [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$lutNode GetID]
+                [$modelNode GetDisplayNode ] SetActiveScalarName $::QA(saveOverlay)
+            }
         }
     }
 }

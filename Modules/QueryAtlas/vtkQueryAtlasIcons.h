@@ -35,12 +35,16 @@ class vtkQueryAtlasIcons : public vtkSlicerIcons
     vtkGetObjectMacro ( SearchIcon, vtkKWIcon );
     vtkGetObjectMacro ( ReserveURIsIcon, vtkKWIcon );
     vtkGetObjectMacro ( ReserveSelectedURIsIcon, vtkKWIcon );
+    vtkGetObjectMacro (SetUpIcon, vtkKWIcon );
+    vtkGetObjectMacro (SelectOverlayIcon, vtkKWIcon);
     
     void AssignImageDataToIcons ( );
     
  protected:
     vtkQueryAtlasIcons ( );
     ~vtkQueryAtlasIcons ( );
+    vtkKWIcon *SelectOverlayIcon;
+    vtkKWIcon *SetUpIcon;
     vtkKWIcon *OntologyBrowserIcon;
     vtkKWIcon *OntologyBrowserDisabledIcon;
     vtkKWIcon *AddIcon;

@@ -15,6 +15,7 @@
 #include "vtkQueryAtlasIcons.h"
 
 class vtkKWPushButton;
+class vtkKWPushButtonWithLabel;
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWMenuButton;
 class vtkKWMenuButtonWithLabel;
@@ -142,14 +143,12 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     // load frame
     vtkGetObjectMacro (FSasegSelector, vtkSlicerNodeSelectorWidget );
-    vtkGetObjectMacro (FSmodelSelector, vtkSlicerNodeSelectorWidget );
     vtkGetObjectMacro (FSbrainSelector, vtkSlicerNodeSelectorWidget );
     vtkGetObjectMacro (FSstatsSelector, vtkSlicerNodeSelectorWidget );    
-    vtkGetObjectMacro (FSgoButton, vtkKWPushButton );
+    vtkGetObjectMacro (FSgoButton, vtkKWPushButtonWithLabel );
     vtkGetObjectMacro (QdecGetResultsButton, vtkKWLoadSaveButtonWithLabel );
-    vtkGetObjectMacro (QdecModelSelector, vtkSlicerNodeSelectorWidget );    
     vtkGetObjectMacro (QdecScalarSelector, vtkKWMenuButtonWithLabel );
-    vtkGetObjectMacro (QdecGoButton, vtkKWPushButton);
+    vtkGetObjectMacro (QdecGoButton, vtkKWPushButtonWithLabel);
 
     vtkGetObjectMacro (FIPSFSButton, vtkKWPushButton );
     vtkGetObjectMacro (QdecButton, vtkKWPushButton );
@@ -271,14 +270,13 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     int ProcessingMRMLEvent;
     // load / configure frame
     vtkSlicerNodeSelectorWidget *FSasegSelector;
-    vtkSlicerNodeSelectorWidget *FSmodelSelector;
     vtkSlicerNodeSelectorWidget *FSbrainSelector;
     vtkSlicerNodeSelectorWidget *FSstatsSelector;
-    vtkKWPushButton *FSgoButton;
+    vtkKWPushButtonWithLabel *FSgoButton;
+
     vtkKWLoadSaveButtonWithLabel *QdecGetResultsButton;
     vtkKWMenuButtonWithLabel *QdecScalarSelector;
-    vtkSlicerNodeSelectorWidget *QdecModelSelector;
-    vtkKWPushButton *QdecGoButton;
+    vtkKWPushButtonWithLabel *QdecGoButton;
     
     vtkKWPushButton *FIPSFSButton;
     vtkKWPushButton *QdecButton;
