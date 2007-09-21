@@ -262,7 +262,6 @@ itcl::body ThresholdEffect::applyOptions { } {
 
 itcl::body ThresholdEffect::setPaintThreshold {} {
 
-  set editor $::Editor(singleton)
-  eval EditorSetPaintThreshold $editor [$o(range) GetRange]
-  EditorSetPaintThresholdState $editor 1
+  eval EditorSetPaintThreshold [$o(range) GetRange]
+  EditorSetPaintThresholdState 1
 }

@@ -63,7 +63,8 @@ if { [itcl::find class EffectSWidget] == "" } {
     method tearDownOptions {} {}
     method previewOptions {} {}
     method applyOptions {} {}
-    method updateParameters {} {}
+    method setMRMLDefaults {} {}
+    method updateGUIFromMRML {} {}
     method flashCursor { {repeat 1} {delay 50} } {}
     method animateCursor { {onOff "on"} } {}
     method setAnimationState { p } {}
@@ -101,7 +102,6 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
   set node [EditorGetParameterNode]
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
   lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "puts node"]
 }
 
 itcl::body EffectSWidget::destructor {} {
@@ -290,11 +290,11 @@ itcl::body EffectSWidget::preProcessEvent { {caller ""} {event ""} } {
 
   #
   # if the caller was the parameter node, invoke the subclass's 
-  # updateParameters method which will copy the parameters into the 
+  # updateGUIFromMRML method which will copy the parameters into the 
   # GUI and into the configuration options of the effect
   #
   if { $caller == [EditorGetParameterNode] } {
-    $this updateParameters
+    $this updateGUIFromMRML
     return 1
   }
 

@@ -54,10 +54,12 @@ if { [itcl::find class Labeler] == "" } {
     method makeMaskImage {polyData} {}
     method applyPolyMask {polyData} {}
     method applyImageMask { maskIJKToRAS mask bounds } {}
+    method undoLastApply {} {}
     method buildOptions {} {}
     method tearDownOptions {} {}
-    method setOptions {} {}
-    method updateParameters {} {}
+    method setMRMLDefaults {} {}
+    method updateMRMLFromGUI {} {}
+    method updateGUIFromMRML {} {}
 
   }
 }
@@ -66,6 +68,7 @@ if { [itcl::find class Labeler] == "" } {
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
 itcl::body Labeler::constructor {sliceGUI} {
+  set o(painter) [vtkNew vtkImageSlicePaint]
 }
 
 itcl::body Labeler::destructor {} {
@@ -81,11 +84,11 @@ itcl::body Labeler::processEvent { {caller ""} {event ""} } {
   chain $caller $event
 
   if { $caller != "" && [$caller IsA "vtkKWWidget"] } {
-    $this setOptions
+    $this updateMRMLFromGUI
   }
 
   if { $caller != "" && [$caller IsA "vtkMRMLNode"] } {
-    $this updateParameters
+    $this updateGUIFromMRML
   }
 
 }
@@ -285,27 +288,34 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   $_layers(label,node) GetIJKToRASMatrix $labelIJKToRAS
 
   #
+  # create an exract image for undo if it doesn't exist yet
+  #
+  if { ![info exists o(extractImage)] } {
+    set o(extractImage) [vtkNew vtkImageData]
+  }
+
+  #
   # set up the painter class and let 'r rip!
   #
-  set painter [vtkImageSlicePaint New]
-  $painter SetBackgroundImage [$this getInputBackground]
-  $painter SetBackgroundIJKToWorld $backgroundIJKToRAS
-  $painter SetWorkingImage [$this getInputLabel]
-  $painter SetWorkingIJKToWorld $labelIJKToRAS
-  $painter SetMaskImage $mask
-  $painter SetMaskIJKToWorld $maskIJKToRAS
-  $painter SetTopLeft $tl(i) $tl(j) $tl(k)
-  $painter SetTopRight $tr(i) $tr(j) $tr(k)
-  $painter SetBottomLeft $bl(i) $bl(j) $bl(k)
-  $painter SetBottomRight $br(i) $br(j) $br(k)
-  $painter SetPaintLabel [EditorGetPaintLabel]
-  $painter SetPaintOver $paintOver
-  $painter SetThresholdPaint $paintThreshold
-  $painter SetThresholdPaintRange $paintThresholdMin $paintThresholdMax
+  $o(painter) SetBackgroundImage [$this getInputBackground]
+  $o(painter) SetBackgroundIJKToWorld $backgroundIJKToRAS
+  $o(painter) SetWorkingImage [$this getInputLabel]
+  $o(painter) SetWorkingIJKToWorld $labelIJKToRAS
+  $o(painter) SetMaskImage $mask
+  $o(painter) SetExtractImage $o(extractImage)
+  $o(painter) SetReplaceImage ""
+  $o(painter) SetMaskIJKToWorld $maskIJKToRAS
+  $o(painter) SetTopLeft $tl(i) $tl(j) $tl(k)
+  $o(painter) SetTopRight $tr(i) $tr(j) $tr(k)
+  $o(painter) SetBottomLeft $bl(i) $bl(j) $bl(k)
+  $o(painter) SetBottomRight $br(i) $br(j) $br(k)
+  $o(painter) SetPaintLabel [EditorGetPaintLabel]
+  $o(painter) SetPaintOver $paintOver
+  $o(painter) SetThresholdPaint $paintThreshold
+  $o(painter) SetThresholdPaintRange $paintThresholdMin $paintThresholdMax
 
-  $painter Paint
+  $o(painter) Paint
 
-  $painter Delete
   $labelIJKToRAS Delete
   $backgroundIJKToRAS Delete
   $maskIJKToRAS Delete
@@ -318,7 +328,23 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   return
 }
 
+# use the 'save under' information from last paint apply
+# to restore the original value of the working volume
+# - be careful can only call this after when the painter class
+#   is valid (e.g. after an apply but before changing any of the volumes)
+#   it should be crash-proof in any case, but may generated warnings
+# - if extract image doesn't exists, failes silently
+itcl::body Labeler::undoLastApply { } {
+  if { [info exists o(extractImage)] } {
+    $o(painter) SetReplaceImage $o(extractImage)
+    $o(painter) Paint
+  }
+}
+
+
 itcl::body Labeler::buildOptions { } {
+
+  $this setMRMLDefaults
   
   set o(paintOver) [vtkKWCheckButtonWithLabel New]
   $o(paintOver) SetParent [$this getOptionsFrame]
@@ -369,7 +395,7 @@ itcl::body Labeler::tearDownOptions { } {
   }
 }
 
-itcl::body Labeler::setOptions { } {
+itcl::body Labeler::updateMRMLFromGUI { } {
   #
   # set the node to the current value of the GUI
   # - this will be saved/restored with the scene
@@ -389,45 +415,60 @@ itcl::body Labeler::setOptions { } {
   $node SetParameter "Labeler,paintThresholdMax" $Max
 }
 
-itcl::body Labeler::updateParameters { } {
-  #
-  # get the parameter from the node
-  # - set default value if it doesn't exist
-  #
-  chain
+itcl::body Labeler::setMRMLDefaults { } {
   set node [EditorGetParameterNode]
+  $node DisableModifiedEventOn
   foreach {param default} {
     paintOver 1
     paintThreshold 0
     paintThresholdMin 0
     paintThresholdMax 1000
   } {
-    set pvalue [$node GetParameter "Labeler,$param"] 
-    if { $pvalue == "" } {
-      $node SetParameter "Labeler,$param" $default
-    }
+    set pvalue [$node GetParameter Labeler,$param] 
+    if { $pvalue != $default } {
+      $node SetParameter Labeler,$param $default
+      #puts "got $pvalue"
+      ##puts " want to do: $node SetParameter Labeler,$param $default"
+    } 
   }
+  $node DisableModifiedEventOff
+  $node InvokePendingModifiedEvent 
+}
+
+itcl::body Labeler::updateGUIFromMRML { } {
+
+  #
+  # get the gui to the parameter from the node
+  # - set default value if it doesn't exist
+  #
+  chain
+
+  set node [EditorGetParameterNode]
 
   # set the GUI and effect parameters to match node
   # (only if this is the instance that "owns" the GUI
-  puts [$node Print]
   set paintOver [$node GetParameter "Labeler,paintOver"]
-  puts "got $paintOver from $node GetParameter Labeler,paintOver"
   $this configure -paintOver $paintOver
   if { [info exists o(paintOver)] } {
-    [$o(paintOver) GetWidget] SetSelectedState $paintOver
+    if { [[$o(paintOver) GetWidget] GetSelectedState] != $paintOver } {
+      [$o(paintOver) GetWidget] SetSelectedState $paintOver
+    }
   }
   set paintThreshold [$node GetParameter "Labeler,paintThreshold"]
   $this configure -paintThreshold $paintThreshold
   if { [info exists o(paintThreshold)] } {
-    [$o(paintThreshold) GetWidget] SetSelectedState $paintThreshold
+    if { [[$o(paintThreshold) GetWidget] GetSelectedState] != $paintThreshold } {
+      [$o(paintThreshold) GetWidget] SetSelectedState $paintThreshold
+    }
   }
   set paintThresholdMin [$node GetParameter "Labeler,paintThresholdMin"]
   $this configure -paintThresholdMin $paintThresholdMin
   set paintThresholdMax [$node GetParameter "Labeler,paintThresholdMax"]
   $this configure -paintThresholdMax $paintThresholdMax
   if { [info exists o(paintRange)] } {
-    $o(paintRange) SetRange $paintThresholdMin $paintThresholdMax
-    $o(paintRange) SetEnabled $paintThreshold
+    if { [$o(paintRange) GetRange] != "$paintThresholdMin $paintThresholdMax" } {
+      $o(paintRange) SetRange $paintThresholdMin $paintThresholdMax
+      $o(paintRange) SetEnabled $paintThreshold
+    }
   }
 }

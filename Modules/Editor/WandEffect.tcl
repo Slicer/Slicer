@@ -38,8 +38,8 @@ if { [itcl::find class WandEffect] == "" } {
     method preview {} {}
     method apply {} {}
     method buildOptions {} {}
-    method setOptions {} {}
-    method updateParameters {} {}
+    method updateMRMLFromGUI {} {}
+    method updateGUIFromMRML {} {}
     method tearDownOptions {} {}
   }
 }
@@ -126,6 +126,11 @@ itcl::body WandEffect::apply {} {
 
 itcl::body WandEffect::preview {} {
 
+return
+
+  # first try to undo - removes las apply
+  $this undoLastApply
+
   # 
   # get the event position to use as a seed
   foreach {x y} [$_interactor GetEventPosition] {}
@@ -141,21 +146,48 @@ itcl::body WandEffect::preview {} {
   $o(wandFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
   $o(wandFilter) SetDynamicRangePercentage $percentage
 
+
+  set extents [[$this getInputBackground] GetExtent]
+  set ijkToXY [[$_layers(background,logic) GetXYToIJKTransform] GetMatrix]
+  $ijkToXY Invert
+
+
   # figure out which plane to use
+  # - transform the slice's extents into xy bounds for use with the Labeler
+  #
   foreach {i0 j0 k0 l0} [$_layers(background,xyToIJK) MultiplyPoint $x $y 0 1] {}
   set x1 [expr $x + 1]; set y1 [expr $y + 1]
   foreach {i1 j1 k1 l1} [$_layers(background,xyToIJK) MultiplyPoint $x1 $y1 0 1] {}
-  if { $i0 == $i1 } { $o(wandFilter) SetPlaneToJK }
-  if { $j0 == $j1 } { $o(wandFilter) SetPlaneToIK }
-  if { $k0 == $k1 } { $o(wandFilter) SetPlaneToIJ }
 
-  #$_layers(label,node) SetAndObserveImageData [$o(wandFilter) GetOutput] 
-  #$_layers(label,node) Modified
+  if { $i0 == $i1 } { 
+    $o(wandFilter) SetPlaneToJK
+    set extents [lreplace $extents 0 1 $i0 $i0]
+  }
+  if { $j0 == $j1 } {
+    $o(wandFilter) SetPlaneToIK
+    set extents [lreplace $extents 2 3 $j0 $j0]
+  }
+  if { $k0 == $k1 } { 
+    $o(wandFilter) SetPlaneToIJ
+    set extents [lreplace $extents 4 5 $k0 $k0]
+  }
+
+  foreach {ilo ihi jlo jhi klo khi} $extents {}
+  set xylo [$ijkToXY MultiplyPoint $ilo $jlo $klo 1]
+  set xyhi [$ijkToXY MultiplyPoint $ihi $jhi $khi 1]
+  foreach {xlo ylo zlo wlo} $xylo {}
+  foreach {xhi yhi zhi whi} $xyhi {}
+  set bounds "$xlo $xhi $ylo $yhi 0 0"
+
 
   $this setProgressFilter $o(wandFilter) "Magic Wand Connected Components"
   $o(wandFilter) Update
 
-  puts [[ $o(wandFilter) GetOutput] Print]
+  $this applyImageMask \
+    [$_sliceNode GetXYToRAS]  \
+    [ $o(wandFilter) GetOutput] \
+    $bounds
+
 }
   
 itcl::body WandEffect::buildOptions {} {
@@ -193,7 +225,7 @@ itcl::body WandEffect::buildOptions {} {
   #
   # event observers - TODO: if there were a way to make these more specific, I would...
   #
-  set tag [$o(percentage) AddObserver AnyEvent "after idle $this setOptions"]
+  set tag [$o(percentage) AddObserver AnyEvent "after idle $this updateMRMLFromGUI"]
   lappend _observerRecords "$o(percentage) $tag"
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
@@ -203,10 +235,10 @@ itcl::body WandEffect::buildOptions {} {
     after idle ::EffectSWidget::RemoveAll
   }
 
-  $this updateParameters
+  $this updateGUIFromMRML
 }
 
-itcl::body WandEffect::setOptions { } {
+itcl::body WandEffect::updateMRMLFromGUI { } {
   #
   # set the node to the current value of the GUI
   # - this will be saved/restored with the scene
@@ -218,7 +250,7 @@ itcl::body WandEffect::setOptions { } {
   $node SetParameter "Wand,percentage" [$o(percentage) GetValue]
 }
 
-itcl::body WandEffect::updateParameters { } {
+itcl::body WandEffect::updateGUIFromMRML { } {
   #
   # get the parameter from the node
   # - set default value if it doesn't exist

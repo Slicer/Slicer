@@ -505,22 +505,27 @@ proc EditorGetPaintColor {this} {
   return "0 0 0 0"
 }
 
-proc EditorGetPaintThreshold {this} {
-  return [$::Editor($this,paintRange) GetRange]
+proc EditorGetPaintThreshold {} {
+  set node [EditorGetParameterNode]
+  return [list \
+    [$node GetParameter "Labeler,paintThresholdMin"] \
+    [$node GetParameter "Labeler,paintThresholdMax"]]
 }
 
-proc EditorSetPaintThreshold {this min max} {
-  $::Editor($this,paintRange) SetRange $min $max
-  EditorUpdateSWidgets $this
+proc EditorSetPaintThreshold {min max} {
+  set node [EditorGetParameterNode]
+  $node SetParameter "Labeler,paintThresholdMin" $min
+  $node SetParameter "Labeler,paintThresholdMax" $max
 }
 
-proc EditorGetPaintThresholdState {this onOff} {
-  return [[$::Editor($this,paintThreshold) GetWidget] GetSelectedState]
+proc EditorGetPaintThresholdState {} {
+  set node [EditorGetParameterNode]
+  return [$node GetParameter "Labeler,paintThreshold"]
 }
 
-proc EditorSetPaintThresholdState {this onOff} {
-  [$::Editor($this,paintThreshold) GetWidget] SetSelectedState $onOff
-  EditorUpdateSWidgets $this
+proc EditorSetPaintThresholdState {onOff} {
+  set node [EditorGetParameterNode]
+  $node SetParameter "Labeler,paintThreshold" $onOff
 }
 
 proc EditorGetOptionsFrame {this} {

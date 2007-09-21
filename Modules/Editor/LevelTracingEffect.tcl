@@ -56,6 +56,7 @@ itcl::body LevelTracingEffect::destructor {} {
 
 itcl::body LevelTracingEffect::processEvent { {caller ""} {event ""} } {
 
+
   if { [$this preProcessEvent $caller $event] } {
     # superclass processed the event, so we don't
     return
@@ -157,6 +158,7 @@ itcl::body LevelTracingEffect::preview {} {
     lappend _actors $o(tracingActor)
   }
 
+
   $o(tracingFilter) SetInput [$this getInputBackground]
   $o(tracingFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
 
@@ -167,6 +169,7 @@ itcl::body LevelTracingEffect::preview {} {
   if { $i0 == $i1 } { $o(tracingFilter) SetPlaneToJK }
   if { $j0 == $j1 } { $o(tracingFilter) SetPlaneToIK }
   if { $k0 == $k1 } { $o(tracingFilter) SetPlaneToIJ }
+
 
   $o(tracingFilter) Update
   set polyData [$o(tracingFilter) GetOutput]
@@ -219,7 +222,7 @@ itcl::body LevelTracingEffect::buildOptions {} {
     after idle ::EffectSWidget::RemoveAll
   }
 
-  $this updateParameters
+  $this updateGUIFromMRML
 }
 
 itcl::body LevelTracingEffect::tearDownOptions { } {
