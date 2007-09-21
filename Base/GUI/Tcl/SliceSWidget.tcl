@@ -422,6 +422,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $sliceGUI SetGUICommandAbortFlag 1
     }
     "MouseWheelForwardEvent" { 
+      puts "forward"
       $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
       $this incrementSlice 
       $this updateAnnotation $x $y $r $a $s
@@ -507,7 +508,8 @@ itcl::body SliceSWidget::updateAnnotation {x y r a s} {
   if {[info command $_layers(label,node)] != "" && \
       $_layers(label,node) != "" && \
       $_layers(label,pixel) != "" && \
-      $_layers(label,pixel) != "Unknown"} {
+      $_layers(label,pixel) != "Unknown" && \
+      $_layers(label,pixel) != "Out of Frame"} {
       set labelDisplayNode [$_layers(label,node) GetDisplayNode]
       if {$labelDisplayNode != "" && [$labelDisplayNode GetColorNodeID] != ""} {
           set colorNode [$labelDisplayNode GetColorNode]

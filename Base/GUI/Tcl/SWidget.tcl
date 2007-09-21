@@ -234,7 +234,7 @@ itcl::body SWidget::getPixel { image i j k } {
   if { $image == "" } { return "" }
   foreach index "i j k" dimension [$image GetDimensions] {
     set ind [set $index]
-    if { $ind < 0 || $ind >= $dimension } {return "Unknown"}
+    if { $ind < 0 || $ind >= $dimension } {return "Out of Frame"}
   }
   set n [$image GetNumberOfScalarComponents]
 
