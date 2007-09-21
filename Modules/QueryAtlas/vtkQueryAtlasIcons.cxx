@@ -17,6 +17,7 @@ vtkQueryAtlasIcons::vtkQueryAtlasIcons ( )
     this->UseAllIcon = vtkKWIcon::New ( );
     this->UseNoneIcon = vtkKWIcon::New ( );
     this->DeselectAllIcon = vtkKWIcon::New ( );
+    this->SelectAllIcon = vtkKWIcon::New();
     this->ClearAllIcon = vtkKWIcon::New ( );
     this->ClearSelectedIcon = vtkKWIcon::New ( );
     this->WithAnyIcon = vtkKWIcon::New();
@@ -141,6 +142,11 @@ vtkQueryAtlasIcons::~vtkQueryAtlasIcons ( )
     this->UseNoneIcon->Delete();
     this->UseNoneIcon = NULL;
     }
+  if (  this->SelectAllIcon )
+    {
+    this->SelectAllIcon->Delete();
+    this->SelectAllIcon = NULL;
+    }
   if ( this->DeselectAllIcon )
     {
     this->DeselectAllIcon->Delete();
@@ -202,6 +208,11 @@ void vtkQueryAtlasIcons::AssignImageDataToIcons ( )
                                 image_DeselectAll_height,
                                 image_DeselectAll_pixel_size,
                                 image_DeselectAll_length, 0);
+  this->SelectAllIcon->SetImage( image_SelectAll,
+                                image_SelectAll_width,
+                                image_SelectAll_height,
+                                image_SelectAll_pixel_size,
+                                image_SelectAll_length, 0);
   this->ClearSelectedIcon->SetImage( image_ClearSelected,
                                 image_ClearSelected_width,
                                 image_ClearSelected_height,
@@ -295,6 +306,7 @@ void vtkQueryAtlasIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "UseNoneIcon: " << this->GetUseNoneIcon ( ) << "\n";
     os << indent << "ClearAllIcon: " << this->GetClearAllIcon ( ) << "\n";
     os << indent << "DeselectAllIcon: " << this->GetDeselectAllIcon ( ) << "\n";
+    os << indent << "SelectAllIcon: " << this->GetSelectAllIcon ( ) << "\n";
     os << indent << "ClearSelectedIcon: " << this->GetClearSelectedIcon ( ) << "\n";
     os << indent << "WithAnyIcon: " << this->GetWithAnyIcon ( ) << "\n";
     os << indent << "WithAnySelectedIcon: " << this->GetWithAnySelectedIcon ( ) << "\n";

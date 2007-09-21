@@ -145,7 +145,9 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->DeleteAllCurrentResultsButton = NULL;
     this->DeleteCurrentResultButton = NULL;
     this->DeselectAllCurrentResultsButton = NULL;
+    this->SelectAllCurrentResultsButton = NULL;
     this->DeselectAllAccumulatedResultsButton = NULL;
+    this->SelectAllAccumulatedResultsButton = NULL;
     this->DeleteAllAccumulatedResultsButton = NULL;
     this->DeleteAccumulatedResultButton = NULL;
     this->SaveCurrentResultsButton = NULL;
@@ -647,6 +649,18 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->DeselectAllCurrentResultsButton->Delete();
       this->DeselectAllCurrentResultsButton = NULL;      
       }
+    if ( this->SelectAllCurrentResultsButton )
+      {
+      this->SelectAllCurrentResultsButton->SetParent ( NULL );
+      this->SelectAllCurrentResultsButton->Delete();
+      this->SelectAllCurrentResultsButton = NULL;
+      }
+    if ( this->SelectAllAccumulatedResultsButton )
+      {
+      this->SelectAllAccumulatedResultsButton->SetParent ( NULL );
+      this->SelectAllAccumulatedResultsButton->Delete();
+      this->SelectAllAccumulatedResultsButton = NULL;      
+      }
     if ( this->DeselectAllAccumulatedResultsButton )
       {
       this->DeselectAllAccumulatedResultsButton->SetParent ( NULL );      
@@ -836,7 +850,9 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 
 #ifdef RESULTS_FRAME
   this->DeselectAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SelectAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeselectAllAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SelectAllAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentSelectedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 //  this->SaveAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -915,7 +931,9 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   
 #ifdef RESULTS_FRAME
   this->DeselectAllCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SelectAllCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeselectAllAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SelectAllAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentSelectedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 //  this->SaveAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1268,6 +1286,9 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     this->PackQueryBuilderContextFrame ( this->SpeciesFrame );
     this->ColorCodeContextButtons ( this->SpeciesButton );
     }
+  else if (( b== this->SelectAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    }
   else if ( (b == this->DeselectAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
     {
     int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
@@ -1310,7 +1331,9 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       }
     }
-
+  else if ( (b == this->SelectAllAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+    {
+    }
 
   else if ( (b == this->DeselectAllAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
     {
@@ -2350,6 +2373,14 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->DeselectAllCurrentResultsButton->SetReliefToFlat();    
     this->DeselectAllCurrentResultsButton->SetBalloonHelpString ( "Deselect all results");
 
+    this->SelectAllCurrentResultsButton = vtkKWPushButton::New();
+    this->SelectAllCurrentResultsButton->SetParent (curF);
+    this->SelectAllCurrentResultsButton->Create();
+    this->SelectAllCurrentResultsButton->SetImageToIcon ( this->QueryAtlasIcons->GetSelectAllIcon() );
+    this->SelectAllCurrentResultsButton->SetBorderWidth ( 0 );
+    this->SelectAllCurrentResultsButton->SetReliefToFlat();    
+    this->SelectAllCurrentResultsButton->SetBalloonHelpString ( "Select all results");
+
     this->DeleteCurrentResultButton = vtkKWPushButton::New();
     this->DeleteCurrentResultButton->SetParent (curF);
     this->DeleteCurrentResultButton->Create();
@@ -2422,6 +2453,14 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->DeselectAllAccumulatedResultsButton->SetReliefToFlat();    
     this->DeselectAllAccumulatedResultsButton->SetBalloonHelpString ( "Deselect all results");
 
+    this->SelectAllAccumulatedResultsButton = vtkKWPushButton::New();
+    this->SelectAllAccumulatedResultsButton->SetParent (pastF);
+    this->SelectAllAccumulatedResultsButton->Create();
+    this->SelectAllAccumulatedResultsButton->SetImageToIcon ( this->QueryAtlasIcons->GetSelectAllIcon() );
+    this->SelectAllAccumulatedResultsButton->SetBorderWidth ( 0 );
+    this->SelectAllAccumulatedResultsButton->SetReliefToFlat();    
+    this->SelectAllAccumulatedResultsButton->SetBalloonHelpString ( "Select all results");
+
     this->DeleteAllAccumulatedResultsButton = vtkKWPushButton::New();
     this->DeleteAllAccumulatedResultsButton->SetParent (pastF);
     this->DeleteAllAccumulatedResultsButton->Create();
@@ -2464,15 +2503,17 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
 
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", curF->GetWidgetName() );
     app->Script ("grid %s -row 0 -column 0 -sticky ew -pady 4 -padx 3", this->DeselectAllCurrentResultsButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 1 -sticky ew -pady 4 -padx 3", this->DeleteCurrentResultButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 2 -sticky ew -pady 4 -padx 3", this->DeleteAllCurrentResultsButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 3 -sticky ew -pady 4 -padx 3", this->SaveCurrentSelectedResultsButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 4 -sticky ew -pady 4 -padx 3", this->SaveCurrentResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 1 -sticky ew -pady 4 -padx 3", this->SelectAllCurrentResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 2 -sticky ew -pady 4 -padx 3", this->DeleteCurrentResultButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 3 -sticky ew -pady 4 -padx 3", this->DeleteAllCurrentResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 4 -sticky ew -pady 4 -padx 3", this->SaveCurrentSelectedResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 5 -sticky ew -pady 4 -padx 3", this->SaveCurrentResultsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 0 -weight 1", this->DeselectAllCurrentResultsButton->GetWidgetName() );    
-    app->Script ("grid columnconfigure %s 1 -weight 1", this->DeleteCurrentResultButton->GetWidgetName() );    
-    app->Script ("grid columnconfigure %s 2 -weight 1", this->DeleteAllCurrentResultsButton->GetWidgetName() );    
-    app->Script ("grid columnconfigure %s 3 -weight 1", this->SaveCurrentResultsButton->GetWidgetName() );    
-    app->Script ("grid columnconfigure %s 4 -weight 1", this->SaveCurrentSelectedResultsButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 1 -weight 1", this->SelectAllCurrentResultsButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 2 -weight 1", this->DeleteCurrentResultButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 3 -weight 1", this->DeleteAllCurrentResultsButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 4 -weight 1", this->SaveCurrentResultsButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 5 -weight 1", this->SaveCurrentSelectedResultsButton->GetWidgetName() );    
 
     app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand 1", toppastF->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", pastL->GetWidgetName() );
@@ -2480,15 +2521,17 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
 
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", pastF->GetWidgetName() );
     app->Script ("grid %s -row 0 -column 0 -sticky ew -pady 4 -padx 3", this->DeselectAllAccumulatedResultsButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 1 -sticky ew -pady 4 -padx 3", this->DeleteAccumulatedResultButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 2 -sticky ew -pady 4 -padx 3", this->DeleteAllAccumulatedResultsButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 3 -sticky ew -pady 4 -padx 3", this->LoadURIsButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 4 -sticky ew -pady 4 -padx 3", this->SaveAccumulatedResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 1 -sticky ew -pady 4 -padx 3", this->SelectAllAccumulatedResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 2 -sticky ew -pady 4 -padx 3", this->DeleteAccumulatedResultButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 3 -sticky ew -pady 4 -padx 3", this->DeleteAllAccumulatedResultsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 4 -sticky ew -pady 4 -padx 3", this->LoadURIsButton->GetWidgetName() );    
+    app->Script ("grid %s -row 0 -column 5 -sticky ew -pady 4 -padx 3", this->SaveAccumulatedResultsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 0 -weight 1", this->DeselectAllAccumulatedResultsButton->GetWidgetName() );    
-    app->Script ("grid columnconfigure %s 1 -weight 1", this->DeleteAccumulatedResultButton->GetWidgetName() );    
-    app->Script ("grid columnconfigure %s 2 -weight 1", this->DeleteAllAccumulatedResultsButton->GetWidgetName() );    
-    app->Script ("grid columnconfigure %s 3 -weight 1", this->LoadURIsButton->GetWidgetName() );    
-    app->Script ("grid columnconfigure %s 4 -weight 1", this->SaveAccumulatedResultsButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 1 -weight 1", this->SelectAllAccumulatedResultsButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 2 -weight 1", this->DeleteAccumulatedResultButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 3 -weight 1", this->DeleteAllAccumulatedResultsButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 4 -weight 1", this->LoadURIsButton->GetWidgetName() );    
+    app->Script ("grid columnconfigure %s 5 -weight 1", this->SaveAccumulatedResultsButton->GetWidgetName() );    
 
     curL->Delete();
     pastL->Delete();

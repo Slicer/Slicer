@@ -24,8 +24,7 @@ vtkQueryAtlasUseSearchTermWidget::vtkQueryAtlasUseSearchTermWidget ( )
 
     this->MultiColumnList = NULL;
     this->AddNewButton = NULL;
-    this->UseAllButton = NULL;
-    this->UseNoneButton = NULL;
+    this->SelectAllButton = NULL;
     this->DeselectAllButton = NULL;
     this->ClearAllButton = NULL;
     this->ClearSelectedButton = NULL;
@@ -54,17 +53,11 @@ vtkQueryAtlasUseSearchTermWidget::~vtkQueryAtlasUseSearchTermWidget ( )
     this->AddNewButton->Delete();
     this->AddNewButton = NULL;    
     }
-  if ( this->UseAllButton )
+  if ( this->SelectAllButton )
     {
-    this->UseAllButton->SetParent ( NULL );
-    this->UseAllButton->Delete();
-    this->UseAllButton = NULL;    
-    }
-  if ( this->UseNoneButton )
-    {
-    this->UseNoneButton->SetParent ( NULL );
-    this->UseNoneButton->Delete();
-    this->UseNoneButton = NULL;    
+    this->SelectAllButton->SetParent ( NULL );
+    this->SelectAllButton->Delete();
+    this->SelectAllButton = NULL;    
     }
   if ( this->DeselectAllButton )
     {
@@ -118,8 +111,7 @@ void vtkQueryAtlasUseSearchTermWidget::PrintSelf ( ostream& os, vtkIndent indent
     os << indent << "vtkQueryAtlasUseSearchTermWidget: " << this->GetClassName ( ) << "\n";
     os << indent << "MultiColumnList: " << this->GetMultiColumnList() << "\n";
     os << indent << "AddNewButton: " << this->GetAddNewButton() << "\n";
-    os << indent << "UseAllButton: " << this->GetUseAllButton() << "\n";
-    os << indent << "UseNoneButton: " << this->GetUseNoneButton() << "\n";
+    os << indent << "SelectAllButton: " << this->GetSelectAllButton() << "\n";
     os << indent << "ClearSelectedButton: " << this->GetClearSelectedButton() << "\n";
     os << indent << "ClearAllButton: " << this->GetClearAllButton() << "\n";
     os << indent << "DeselectAllButton: " << this->GetDeselectAllButton() << "\n";
@@ -154,13 +146,9 @@ void vtkQueryAtlasUseSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       this->DeleteSelectedSearchTerms ();
       }
-    else if ( (b == this->GetUseAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
+    else if ( (b == this->GetSelectAllButton()) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      this->CheckAllSearchTerms ( );
-      }
-    else if ( (b == this->GetUseNoneButton()) && (event == vtkKWPushButton::InvokedEvent ) )
-      {
-      this->UncheckAllSearchTerms ( );
+      this->SelectAllSearchTerms ( );
       }
     }
   this->UpdateMRML();
@@ -205,8 +193,7 @@ void vtkQueryAtlasUseSearchTermWidget::RemoveWidgetObservers ( ) {
   this->GetDeselectAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetAddNewButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetClearSelectedButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->GetUseAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GetUseNoneButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetSelectAllButton()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -217,8 +204,7 @@ void vtkQueryAtlasUseSearchTermWidget::AddWidgetObservers ( ) {
   this->GetDeselectAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->GetAddNewButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetClearSelectedButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  this->GetUseAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GetUseNoneButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GetSelectAllButton()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -259,20 +245,13 @@ void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
   this->MultiColumnList->GetWidget()->MovableRowsOff ( );
   this->MultiColumnList->GetWidget()->MovableColumnsOff ( );
 
-  this->MultiColumnList->GetWidget()->AddColumn ( "Use");
   this->MultiColumnList->GetWidget()->AddColumn ( "Search terms" );
 
-  this->MultiColumnList->GetWidget()->SetColumnWidth (0, 4);
-  this->MultiColumnList->GetWidget()->SetColumnAlignmentToCenter ( 0 );
-  this->MultiColumnList->GetWidget()->ColumnResizableOff ( 0);
-  this->MultiColumnList->GetWidget()->ColumnStretchableOff ( 0 );
-  this->MultiColumnList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( 0 );
-    
-  this->MultiColumnList->GetWidget()->ColumnEditableOn ( 1 );
-  this->MultiColumnList->GetWidget()->SetColumnWidth (1, 42);
-  this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft (1 );
-  this->MultiColumnList->GetWidget()->ColumnResizableOff ( 1 );
-  this->MultiColumnList->GetWidget()->ColumnStretchableOn ( 1 );
+  this->MultiColumnList->GetWidget()->ColumnEditableOn ( 0 );
+  this->MultiColumnList->GetWidget()->SetColumnWidth (0, 50);
+  this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft (0 );
+  this->MultiColumnList->GetWidget()->ColumnResizableOff ( 0 );
+  this->MultiColumnList->GetWidget()->ColumnStretchableOn ( 0 );
   app->Script ( "pack %s -side top -fill x -expand true", this->MultiColumnList->GetWidgetName() );
 
   // frame for the buttons
@@ -289,21 +268,13 @@ void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
   this->AddNewButton->SetImageToIcon ( this->QueryAtlasIcons->GetAddIcon() );
   this->AddNewButton->SetBalloonHelpString ( "Add new search term" );
 
-  this->UseAllButton = vtkKWPushButton::New();
-  this->UseAllButton->SetParent (bFrame);
-  this->UseAllButton->Create();
-  this->UseAllButton->SetBorderWidth ( 0 );
-  this->UseAllButton->SetReliefToFlat();  
-  this->UseAllButton->SetImageToIcon ( this->QueryAtlasIcons->GetUseAllIcon() );
-  this->UseAllButton->SetBalloonHelpString ( "Use all terms in list" );
-
-  this->UseNoneButton = vtkKWPushButton::New();
-  this->UseNoneButton->SetParent (bFrame);
-  this->UseNoneButton->Create();
-  this->UseNoneButton->SetBorderWidth ( 0 );
-  this->UseNoneButton->SetReliefToFlat ( );  
-  this->UseNoneButton->SetImageToIcon ( this->QueryAtlasIcons->GetUseNoneIcon() );
-  this->UseNoneButton->SetBalloonHelpString ( "Use none of the terms in list" );
+  this->SelectAllButton = vtkKWPushButton::New();
+  this->SelectAllButton->SetParent (bFrame);
+  this->SelectAllButton->Create();
+  this->SelectAllButton->SetBorderWidth ( 0 );
+  this->SelectAllButton->SetReliefToFlat();  
+  this->SelectAllButton->SetImageToIcon ( this->QueryAtlasIcons->GetSelectAllIcon() );
+  this->SelectAllButton->SetBalloonHelpString ( "Select (and use) all terms in list" );
 
   this->ClearSelectedButton = vtkKWPushButton::New();
   this->ClearSelectedButton->SetParent (bFrame);
@@ -329,11 +300,10 @@ void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
   this->DeselectAllButton->SetImageToIcon ( this->QueryAtlasIcons->GetDeselectAllIcon() );
   this->DeselectAllButton->SetBalloonHelpString ( "Deselect all terms in list" );
 
-  app->Script ("pack %s %s %s %s %s %s -side right -anchor c -expand n -padx 3 -pady 2",
+  app->Script ("pack %s %s %s %s %s -side right -anchor c -expand n -padx 3 -pady 2",
                this->ClearAllButton->GetWidgetName() ,
                this->ClearSelectedButton->GetWidgetName(),
-               this->UseNoneButton->GetWidgetName(),
-               this->UseAllButton->GetWidgetName(),
+               this->SelectAllButton->GetWidgetName(),
                this->DeselectAllButton->GetWidgetName(),
                this->AddNewButton->GetWidgetName());
   bFrame->Delete();
@@ -343,7 +313,7 @@ void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasUseSearchTermWidget::CheckAllSearchTerms ( )
+void vtkQueryAtlasUseSearchTermWidget::SelectAllSearchTerms ( )
 {
   int i;
   int numrows;
@@ -351,24 +321,10 @@ void vtkQueryAtlasUseSearchTermWidget::CheckAllSearchTerms ( )
   numrows = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
   for ( i = 0; i < numrows; i++ )
     {
-    this->GetMultiColumnList()->GetWidget()->SetCellTextAsInt ( i, 0, 1 );
-    this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton (i, 0 );
+    this->GetMultiColumnList()->GetWidget()->SelectCell ( i, 0 );
     }
 }
 
-//---------------------------------------------------------------------------
-void vtkQueryAtlasUseSearchTermWidget::UncheckAllSearchTerms ( )
-{
-  int i;
-  int numrows;
-
-  numrows = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
-  for ( i = 0; i < numrows; i++ )
-    {
-    this->GetMultiColumnList()->GetWidget()->SetCellTextAsInt ( i, 0, 0 );
-    this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton (i, 0 );
-    }
-}
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasUseSearchTermWidget::DeselectAllSearchTerms ( )
@@ -399,7 +355,7 @@ void vtkQueryAtlasUseSearchTermWidget::AddNewSearchTerm ( const char *term )
   int n = this->MultiColumnList->GetWidget()->GetNumberOfRows();
   for ( i=0; i<n; i++ )
     {
-    if ( !strcmp (this->MultiColumnList->GetWidget()->GetCellText(i, 1), term ) )
+    if ( !strcmp (this->MultiColumnList->GetWidget()->GetCellText(i, 0), term ) )
       {
       unique = 0;
       }
@@ -411,12 +367,9 @@ void vtkQueryAtlasUseSearchTermWidget::AddNewSearchTerm ( const char *term )
   if ( unique )
     {
   i = this->GetMultiColumnList()->GetWidget()->GetNumberOfRows();
-  this->GetMultiColumnList()->GetWidget()->InsertCellTextAsInt ( i, 0, 0 );
+  this->GetMultiColumnList()->GetWidget()->InsertCellText (i, 0, term );
   this->GetMultiColumnList()->GetWidget()->SetCellBackgroundColor (i, 0, 1.0, 1.0, 1.0);
-  this->GetMultiColumnList()->GetWidget()->SetCellWindowCommandToCheckButton (i, 0 );
-  this->GetMultiColumnList()->GetWidget()->InsertCellText (i, 1, term );
-  this->GetMultiColumnList()->GetWidget()->SetCellBackgroundColor (i, 1, 1.0, 1.0, 1.0);
-  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry (1);
+  this->GetMultiColumnList()->GetWidget()->SetColumnEditWindowToEntry (0);
     }
 }
 

@@ -67,7 +67,7 @@ proc QueryAtlasTearDown { } {
     QueryAtlasTearDownAnnoCursor
     QueryAtlasTearDownPicker
 
-    if { [ info exists ::QA(statsAutoWinLevTrhreshCompleted)  ] } {
+    if { [ info exists ::QA(statsAutoWinLevThreshCompleted)  ] } {
         unset -nocomplain ::QA(statsAutoWinLevThreshCompleted)
     }
 
@@ -82,6 +82,10 @@ proc QueryAtlasTearDown { } {
     if { [ info exists ::QA(QdecSceneLoaded) ] } {
         unset -nocomplain ::QA(QdecSceneLoaded) 
     }
+
+    set ::QA(brain,volumeNodeID) ""
+    set ::QA(statvol,volumeNodeID) ""
+    set ::QA(label,volumeNodeID) ""
 
     #--- set the model and label selectors to be NULL
     set as [$::slicer3::QueryAtlasGUI GetFSasegSelector]
@@ -104,9 +108,6 @@ proc QueryAtlasInitializeGlobals { } {
         unset -nocomplain  ::QA(modelDisplayNodeIDs) 
 
         set ::QA(CurrentRASPoint) ""
-        set ::QA(brain,volumeNodeID) ""
-        set ::QA(statvol,volumeNodeID) ""
-        set ::QA(label,volumeNodeID) ""
 
         set ::QA(ontologyHost) "localhost"
         set ::QA(ontologyPort) 3334
@@ -172,6 +173,7 @@ proc QueryAtlasMessageDialog { str } {
 proc QueryAtlasSetAnnotatedLabelMap { } {
 
     set vs [$::slicer3::QueryAtlasGUI GetFSasegSelector]
+    set ::QA(label,volumeNodeID) ""
     set node [ $vs GetSelected ]
 
     if { $node == "" } {
@@ -207,7 +209,9 @@ proc QueryAtlasSetAnnotatedLabelMap { } {
 proc QueryAtlasSetAnatomical { } {
 
     set vs [$::slicer3::QueryAtlasGUI GetFSbrainSelector]
+    set ::QA(brain,volumeNodeID) ""
     set node [ $vs GetSelected ]
+    
     if { $node == "" } {
         return
     }
@@ -227,14 +231,13 @@ proc QueryAtlasSetAnatomical { } {
             $cnode SetReferenceBackgroundVolumeID $::QA(brain,volumeNodeID)
         }
         #--- Set auto threshold on.
-        set dnode [ $node GetDisplayNode ]
-        $dnode SetAutoThreshold 1
+        #set dnode [ $node GetDisplayNode ]
+        #$dnode SetAutoThreshold 1
     }
     
     if { ! $gotbrain } {
         #QueryAtlasMessageDialog "Selected volume should be a FreeSurfer brain.mgz file."
         set ::QA(brain,volumeNodeID) ""
-
     }
 }
 
@@ -244,18 +247,12 @@ proc QueryAtlasSetAnatomical { } {
 proc QueryAtlasSetStatistics { } {
 
 
-    if { ! [ info exists ::QA(statsAutoWinLevThreshCompleted)] } {
-        set ::QA(statsAutoWinLevThreshCompleted) 0
-    }
-    #--- if stats have not been thresholded, then do them now
-    if {$::QA(statsAutoWinLevThreshCompleted) == 0 } {
-        QueryAtlasAutoWinLevThreshAllStats
-    }
-
 
     #--- Put the selected statistics in the foreground layer.
     set vs [$::slicer3::QueryAtlasGUI GetFSstatsSelector]
+    set ::QA(statvol,volumeNodeID) ""
     set node [ $vs GetSelected ]
+
     if { $node == "" } {
         return
     }
@@ -619,9 +616,22 @@ proc QueryAtlasSelectQdecOverlay { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasQdecSetUp { } {
 
-    #--- comment out until built.
-    
-    QueryAtlasInitializeGlobals
+    #--- make sure we have only one query scene loaded when this proc is called.
+    if { [ info exists ::QA(FIPSFreeSurferSceneLoaded) ] } {
+        if { $::QA(FIPSFreeSurferSceneLoaded) } {
+            QueryAtlasDialog "Open FIPS/FreeSurfer scene detected. Close scene (using File->Close scene) and reload only Qdec dataset to continue."
+            return
+        }
+    }
+
+    #--- make sure we are initializing globals
+    if { [ info exists ::QA(globalsInitialized) ] } {
+        if { $::QA(globalsInitialized) == 0 } {
+            QueryAtlasInitializeGlobals
+        }
+    } else {
+        QueryAtlasInitializeGlobals
+    }
 
     #--- perform once per scene.
     if { ! [ info exists ::QA(QdecSceneLoaded) ] } {
@@ -791,6 +801,15 @@ proc QueryAtlasQdecSetUp { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasFipsFreeSurferSetUp { } {
 
+
+    #--- make sure we only have one query scene loaded when this proc is called.
+    if { [ info exists ::QA(QdecSceneLoaded) ] } {
+        if { $::QA(QdecSceneLoaded) } {
+            QueryAtlasDialog "Open Qdec scene detected. Close scene (using File->Close scene) and reload only FIPS/FreeSurfer dataset to continue."
+            return
+        }
+    }
+
     #--- make sure we are initializing globals
     if { [ info exists ::QA(globalsInitialized) ] } {
         if { $::QA(globalsInitialized) == 0 } {
@@ -798,6 +817,16 @@ proc QueryAtlasFipsFreeSurferSetUp { } {
         }
     } else {
         QueryAtlasInitializeGlobals
+    }
+
+    #--- adjust display to look good.
+    if { ! [ info exists ::QA(statsAutoWinLevThreshCompleted)] } {
+        set ::QA(statsAutoWinLevThreshCompleted) 0
+    }
+
+    #--- if stats have not been thresholded, then do them now
+    if {$::QA(statsAutoWinLevThreshCompleted) == 0 } {
+        QueryAtlasAutoWinLevThreshAllStats
     }
 
     #--- perform once per scene.
@@ -1665,18 +1694,29 @@ proc QueryAtlasPickCallback {} {
 proc QueryAtlasSetQueryModelInvisible { } {
 
     if { $::QA(modelDisplayNodeID) != "" } {
-        set node [ $::slicer3::MRMLScene GetNodeByID $::QA(modelDisplayNodeID) ]
-        $node SetVisibility 0
+        set numQmodels [ llength $::QA(modelDisplayNodeID) ]
+        for { set m 0 } {$m < $numQmodels } { incr m } {
+            set mid [ lindex $::QA(modelDisplayNodeID) $m ]
+            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
+            $node SetVisibility 0
+        }
     }
 }
+
+
+
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetQueryModelVisible { } {
     
     if { $::QA(modelDisplayNodeID) != "" } {
-        set node [ $::slicer3::MRMLScene GetNodeByID $::QA(modelDisplayNodeID) ]
-        $node SetVisibility 1
+        set numQmodels [ llength $::QA(modelDisplayNodeID) ]
+        for { set m 0 } {$m < $numQmodels } { incr m } {
+            set mid [ lindex $::QA(modelDisplayNodeID) $m ]
+            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
+            $node SetVisibility 1
+        }
     }
 }
 

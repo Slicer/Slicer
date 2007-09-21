@@ -132,7 +132,10 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( SaveCurrentResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( SaveCurrentSelectedResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( DeselectAllCurrentResultsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( SelectAllCurrentResultsButton, vtkKWPushButton );
+
     vtkGetObjectMacro ( DeselectAllAccumulatedResultsButton, vtkKWPushButton );
+    vtkGetObjectMacro ( SelectAllAccumulatedResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( AccumulatedResultsList, vtkKWListBoxWithScrollbars );    
     vtkGetObjectMacro ( DeleteAccumulatedResultButton, vtkKWPushButton );
     vtkGetObjectMacro ( DeleteAllAccumulatedResultsButton, vtkKWPushButton );
@@ -361,11 +364,13 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWPushButton *SaveCurrentResultsButton;
     vtkKWPushButton *SaveCurrentSelectedResultsButton;
     vtkKWPushButton *DeselectAllCurrentResultsButton;
+    vtkKWPushButton *SelectAllCurrentResultsButton;
+
     vtkKWPushButton *DeselectAllAccumulatedResultsButton;
+    vtkKWPushButton *SelectAllAccumulatedResultsButton;
     vtkKWListBoxWithScrollbars *AccumulatedResultsList;
     vtkKWPushButton *DeleteAccumulatedResultButton;
     vtkKWPushButton *DeleteAllAccumulatedResultsButton;
-
     vtkKWLoadSaveButton *SaveAccumulatedResultsButton;
     vtkKWLoadSaveButton *LoadURIsButton;
 

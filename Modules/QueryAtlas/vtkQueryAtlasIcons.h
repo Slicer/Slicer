@@ -37,6 +37,7 @@ class vtkQueryAtlasIcons : public vtkSlicerIcons
     vtkGetObjectMacro ( ReserveSelectedURIsIcon, vtkKWIcon );
     vtkGetObjectMacro (SetUpIcon, vtkKWIcon );
     vtkGetObjectMacro (SelectOverlayIcon, vtkKWIcon);
+    vtkGetObjectMacro ( SelectAllIcon, vtkKWIcon );    
     
     void AssignImageDataToIcons ( );
     
@@ -53,6 +54,7 @@ class vtkQueryAtlasIcons : public vtkSlicerIcons
     vtkKWIcon *UseNoneIcon;
     vtkKWIcon *ClearSelectedIcon;
     vtkKWIcon *DeselectAllIcon;
+    vtkKWIcon *SelectAllIcon;
     vtkKWIcon *ClearAllIcon;
     vtkKWIcon *WithAnyIcon;
     vtkKWIcon *WithAllIcon;

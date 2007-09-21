@@ -265,11 +265,11 @@ proc QueryAtlasGetStructureTerms { } {
     set ::QA(StructureTerms) ""
     set numrows [ $ww GetNumberOfRows ]
     for { set i 0 } { $i < $numrows } { incr i } {
-        # check select state
         #--- if term is selected for use:
-        set term [ $ww GetCellText $i 1 ]
-        append terms $term
-        append terms "+"
+        if { [ $ww IsRowSelected $i ] } {
+            set term [ $ww GetCellText $i 0 ]
+            append terms $term
+            append terms "+"
     }
     set terms [ string trimright $terms "+" ]
     set ::QA(StructureTerms) $terms
@@ -287,12 +287,12 @@ proc QueryAtlasGetOtherTerms { } {
     set ::QA(OtherTerms) ""
     set numrows [ $ww GetNumberOfRows ]
     for { set i 0 } { $i < $numrows } { incr i } {
-        # check select state
         #--- if term is selected for use:
-        set term [ $ww GetCellText $i 1 ]
-        append terms $term
-        append terms "+"
-    }
+        if { [ $ww IsRowSelected $i ] } {
+            set term [ $ww GetCellText $i 0 ]
+            append terms $term
+            append terms "+"
+        }
     set terms [ string trimright $terms "+" ]
     set ::QA(OtherTerms) $terms
 }

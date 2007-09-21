@@ -22,8 +22,7 @@ public:
   // Description:
   // Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( AddNewButton, vtkKWPushButton);
-  vtkGetObjectMacro ( UseAllButton, vtkKWPushButton);
-  vtkGetObjectMacro ( UseNoneButton, vtkKWPushButton);
+  vtkGetObjectMacro ( SelectAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( DeselectAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( ClearAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( ClearSelectedButton, vtkKWPushButton);
@@ -39,8 +38,7 @@ public:
   // Method that gets all terms in the multicolumn list
   virtual void GetSearchTermsToUse ( );
 
-  virtual void CheckAllSearchTerms ( );
-  virtual void UncheckAllSearchTerms ( );
+  virtual void SelectAllSearchTerms ( );
   virtual void DeselectAllSearchTerms ( );
   virtual void DeleteAllSearchTerms ( );
   virtual void AddNewSearchTerm ( const char *term);
@@ -82,8 +80,7 @@ public:
   virtual ~vtkQueryAtlasUseSearchTermWidget();
 
   vtkKWPushButton *AddNewButton;
-  vtkKWPushButton *UseAllButton;
-  vtkKWPushButton *UseNoneButton;
+  vtkKWPushButton *SelectAllButton;
   vtkKWPushButton *DeselectAllButton;
   vtkKWPushButton *ClearAllButton;
   vtkKWPushButton *ClearSelectedButton;
@@ -114,8 +111,7 @@ public:
   // The column orders in the list box
   enum
     {
-      UseSelectionColumn = 0,
-      SearchTermColumn = 1,
+      SearchTermColumn = 0,
     };
   //ETX
 
