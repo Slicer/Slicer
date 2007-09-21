@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  BatchProcessing
+  </category>
+  <title>
+  EMSegment BatchMake
+  </title>
+  <description>
+  Run EMSegment Module as a batch process.
+  </description>
+  <version>0.1.0.$Revision: 1.1 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Julien Jomier, Stephen Aylward, and Brad Davis at Kitware Inc.</contributor>
+  <acknowledgements>http://www.batchmake.org </acknowledgements>
+  <parameters advanced="true">
+    <label>Parameters</label>
+    <description>Algorithm Parameters</description>
+
+    <string>
+      <name>parametersMRMLNodeName</name>
+      <longflag>parametersMRMLNodeName</longflag>
+
+      <description>The name of the EMSegment parameters node within the active MRML scene.  Leave blank for default.</description>
+
+      <label>EMSegment Parameters Node Name</label>
+    </string>    
+
+    <boolean>
+      <name>disableMultithreading</name>
+      <longflag>disableMultithreading</longflag>
+      <description>Disable multithreading.</description>
+      <label>Disable Multithreading</label>
+      <default>false</default>
+    </boolean>
+
+    <boolean>
+      <name>verbose</name>
+      <longflag>verbose</longflag>
+      <description>Enable verbose output.</description>
+      <label>Verbose Output</label>
+      <default>false</default>
+    </boolean>
+  </parameters>
+
+  <parameters>
+    <label>Input Datasets</label>
+    <description>Input Datasets</description>
+
+    <file fileExtensions=".mrml">
+      <name>mrmlSceneFileName</name>
+      <longflag>mrmlSceneFileName</longflag>
+
+      <description>Active MRML scene that contains EMSegment algorithm parameters.</description>
+
+      <label>MRML Scene</label>
+    </file>    
+     
+    <directory>
+      <name>dataDir</name>
+      <label>Data directory</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Directory where to find input images</description>
+    </directory>
+
+     <string>
+      <name>DataMask</name>
+      <label>Directory Mask</label>
+      <default>Patient*</default>
+      <longflag>dirmask</longflag>
+     </string>
+
+    <string>
+      <name>Target1Mask</name>
+      <label>Target 1 Mask</label>
+      <default>*T1*.mha</default>
+      <longflag>t1m</longflag>
+     </string>
+   
+     <string>
+      <name>Target2Mask</name>
+      <label>Target 2 Mask</label>
+      <default>*T2*.mha</default>
+      <longflag>t2m</longflag>
+     </string>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Directory</label>
+    <description>Output Directory</description>
+    <directory>
+      <name>outputDir</name>
+      <label>Output directory</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Directory where to put the processed images</description>
+    </directory>
+  </parameters>
+
+ <parameters>
+    <label>BatchMake</label>
+    <description>BatchMake specific parameters</description>
+
+   <string-enumeration>
+      <name>runLocally</name>
+      <longflag>local</longflag>
+      <description>Running Mode</description>
+      <label>Running Mode</label>
+      <default>locally</default>
+      <element>locally</element>
+      <element>grid via condor</element>
+    </string-enumeration>
+  
+  </parameters>
+</executable>

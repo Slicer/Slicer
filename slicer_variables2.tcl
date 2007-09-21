@@ -94,7 +94,7 @@ set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release25-maint
 set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/trunk"
 set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
 set ::BatchMake_TAG "HEAD"
-set ::LIBCURL_TAG "HEAD"
+set ::SLICERLIBCURL_TAG "HEAD"
 
 
 # Set library, binary, etc. paths...
@@ -137,8 +137,8 @@ set ::NaviTrack_DIR $::SLICER_LIB/NaviTrack-build
 set ::dcmtk_DIR $::SLICER_LIB/dcmtk-build
 set ::BatchMake_SRC_DIR $::SLICER_LIB/BatchMake
 set ::BatchMake_BUILD_DIR $::SLICER_LIB/BatchMake-build
-set ::LIBCURL_SRC_DIR $::SLICER_LIB/cmcurl
-set ::LIBCURL_BUILD_DIR $::SLICER_LIB/cmcurl-build
+set ::SLICERLIBCURL_SRC_DIR $::SLICER_LIB/cmcurl
+set ::SLICERLIBCURL_BUILD_DIR $::SLICER_LIB/cmcurl-build
 
 
 
@@ -203,8 +203,8 @@ switch $::tcl_platform(os) {
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.$shared_lib_ext
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/libNaviTrack.$shared_lib_ext
         set ::dcmtk_TEST_FILE $::dcmtk_DIR/dcmnet/libsrc/libdcmnet.a
-        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
-        set ::LIBCURL_TEST_FILE $::LIBCURL_BUILD_DIR/bin/libcmcurl.a
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake.a
+        set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
     }
     "Linux" {
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
@@ -231,8 +231,8 @@ switch $::tcl_platform(os) {
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.so
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/libNaviTrack.$shared_lib_ext
         set ::dcmtk_TEST_FILE $::dcmtk_DIR/dcmnet/libsrc/libdcmnet.a
-        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
-        set ::LIBCURL_TEST_FILE $::LIBCURL_BUILD_DIR/bin/libcmcurl.a
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake.a
+        set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
 
     }
     "Windows NT" {
@@ -268,8 +268,8 @@ switch $::tcl_platform(os) {
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/$::VTK_BUILD_TYPE/IGSTK.lib
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/$::VTK_BUILD_TYPE//libNaviTrack.lib
         set ::dcmtk_TEST_FILE $::dcmtk_DIR/bin/$::VTK_BUILD_TYPE/libdcmdata.lib
-        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/$::VTK_BUILD_TYPE/BatchMake.exe
-        set ::LIBCURL_TEST_FILE $::LIBCURL_BUILD_DIR/bin/$::VTK_BUILD_TYPE/cmcurl.lib
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/$::VTK_BUILD_TYPE/BatchMake.lib
+        set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/$::VTK_BUILD_TYPE/slicerlibcurl.lib
 
     }
     default {

@@ -3,7 +3,7 @@
 #endif
 
 // Includes
-#include <curl.h>
+#include <slicerlibcurl/slicerlibcurl.h>
 #include <itksys/SystemTools.hxx>
 #include <itksys/Process.h>
 #include <math.h>

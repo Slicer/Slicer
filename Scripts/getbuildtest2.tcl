@@ -378,7 +378,7 @@ runcmd $::CMAKE \
         -Ddcmtk_SOURCE_DIR:FILEPATH=$SLICER_LIB/dcmtk \
         -DBatchMake_DIR:FILEPATH=$SLICER_LIB/BatchMake-build \
         -DUSE_BatchMake=ON \
-        -DLIBCURL_DIR:FILEPATH=$SLICER_LIB/cmcurl-build \
+        -DSLICERLIBCURL_DIR:FILEPATH=$SLICER_LIB/cmcurl-build \
         -DUSE_MIDAS=ON \
         $SLICER_HOME
 

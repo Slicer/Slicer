@@ -17,9 +17,9 @@ FIND_PACKAGE(VTK REQUIRED)
 INCLUDE_DIRECTORIES(${VTK_SOURCE_DIR})
 
 #
-# Find LIBCURL (cmcurl)
-FIND_PACKAGE(LIBCURL REQUIRED)
-INCLUDE(${LIBCURL_USE_FILE})
+# Find SLICERLIBCURL (slicercurl)
+FIND_PACKAGE(SLICERLIBCURL REQUIRED)
+INCLUDE(${SLICERLIBCURL_USE_FILE})
 
 #
 # Find GenerateCLP
@@ -37,7 +37,7 @@ GENERATECLP(DownloadSlicerTutorials_SOURCE DownloadSlicerTutorials.xml)
 # Generate executable
 ADD_EXECUTABLE(DownloadSlicerTutorials ${DownloadSlicerTutorials_SOURCE})
 TARGET_LINK_LIBRARIES(DownloadSlicerTutorials 
-                      ${LIBCURL_LIBRARIES} ITKIO MRMLIDIO itkzlib)
+                      ${SLICERLIBCURL_LIBRARIES} ITKIO MRMLIDIO itkzlib)
 
 #
 # Generate shared loadable slicer module
@@ -46,7 +46,7 @@ ADD_LIBRARY(DownloadSlicerTutorialsModule SHARED
 SET_TARGET_PROPERTIES (DownloadSlicerTutorialsModule PROPERTIES
                        COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 TARGET_LINK_LIBRARIES(DownloadSlicerTutorialsModule 
-                      ${LIBCURL_LIBRARIES} ITKIO MRMLIDIO)
+                      ${SLICERLIBCURL_LIBRARIES} ITKIO MRMLIDIO)
 
 #
 # Move exec and module to where Slicer can find them

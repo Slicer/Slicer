@@ -972,11 +972,11 @@ if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
 
 
 ################################################################################
-# Get and build LIBCURL (cmcurl)
+# Get and build SLICERLIBCURL (slicerlibcurl)
 #
 #
 
-if { ![file exists $::LIBCURL_TEST_FILE] || $::GENLIB(update) } {
+if { ![file exists $::SLICERLIBCURL_TEST_FILE] || $::GENLIB(update) } {
     cd $SLICER_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/cmcurl cmcurl
@@ -996,9 +996,9 @@ if { ![file exists $::LIBCURL_TEST_FILE] || $::GENLIB(update) } {
 
     if {$isWindows} {
         if { $MSVC6 } {
-            runcmd $::MAKE LIBCURL.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
+            runcmd $::MAKE SLICERLIBCURL.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
-            runcmd $::MAKE LIBCURL.SLN /build  $::VTK_BUILD_TYPE
+            runcmd $::MAKE SLICERLIBCURL.SLN /build  $::VTK_BUILD_TYPE
         }
     } else {
         eval runcmd $::MAKE
@@ -1021,8 +1021,8 @@ if { ![file exists $::IGSTK_TEST_FILE] } {
 if { ![file exists $::BatchMake_TEST_FILE] } {
     puts "BatchMake test file $::BatchMake_TEST_FILE not found."
 }
-if { ![file exists $::LIBCURL_TEST_FILE] } {
-    puts "LIBCURL test file $::LIBCURL_TEST_FILE not found."
+if { ![file exists $::SLICERLIBCURL_TEST_FILE] } {
+    puts "SLICERLIBCURL test file $::SLICERLIBCURL_TEST_FILE not found."
 }
 if { ![file exists $::TCL_TEST_FILE] } {
     puts "Tcl test file $::TCL_TEST_FILE not found."
@@ -1057,7 +1057,7 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
 if { ![file exists $::CMAKE] || \
          ![file exists $::TEEM_TEST_FILE] || \
          ![file exists $::BatchMake_TEST_FILE] || \
-         ![file exists $::LIBCURL_TEST_FILE] || \
+         ![file exists $::SLICERLIBCURL_TEST_FILE] || \
          ![file exists $::TCL_TEST_FILE] || \
          ![file exists $::TK_TEST_FILE] || \
          ![file exists $::ITCL_TEST_FILE] || \

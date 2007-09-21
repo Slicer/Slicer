@@ -376,9 +376,9 @@ IF(USE_MIDAS)
   SUBDIRS( MIDASApplications )
 ENDIF(USE_MIDAS)
 
-#IF(USE_BatchMake)
-  #SUBDIRS( BatchMakeApplications )
-#ENDIF(USE_BatchMake)
+IF(USE_BatchMake)
+  SUBDIRS( BatchMakeApplications )
+ENDIF(USE_BatchMake)
 
 IF (Slicer3_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 
