@@ -1454,8 +1454,8 @@ void vtkSlicerViewControlGUI::DeviceCoordinatesToXYZ(vtkSlicerSliceGUI *sgui, in
 
   xyz[0] = x - origin[0];
   xyz[1] = y - origin[1];
-  xyz[2] = floor(ty*snode->GetLayoutGridRows())*snode->GetLayoutGridColumns()
-    + floor(tx*snode->GetLayoutGridColumns());
+  xyz[2] = static_cast<int> ( floor(ty*snode->GetLayoutGridRows())*snode->GetLayoutGridColumns()
+      + floor(tx*snode->GetLayoutGridColumns()) );
 }
 
 
