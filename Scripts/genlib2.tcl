@@ -953,7 +953,7 @@ if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
         -DUSE_FLTK:BOOL=OFF \
         -DDASHBOARD_SUPPORT:BOOL=ON \
         -DGRID_SUPPORT:BOOL=ON \
-        -DUSE_SPLASHSCREEN:BOOL=ON \
+        -DUSE_SPLASHSCREEN:BOOL=OFF \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         ../BatchMake
 
