@@ -1372,6 +1372,13 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       }
     }
+  if ( this->QdecScalarSelector )
+    {
+    if (( m == this->QdecScalarSelector->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ))
+      {
+      // what to do when an overlay  name is selected.. Get from nicole
+      }
+    }
   if ( this->DiagnosisMenuButton )
     {
     if (( m== this->DiagnosisMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
@@ -1411,6 +1418,43 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     }
     return;
 }
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
+{
+  // get file from dialog
+  const char *filen;
+  
+  filen = this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
+  if ( filen != NULL )
+    {
+    itksys::SystemTools::ConvertToUnixOutputPath( filen );
+    this->Script( "QueryAtlasLoadQdecResults \"%s\"", filen );
+    }
+    this->QdecGetResultsButton->GetLabel()->SetText ( "" );
+
+    // update Scalar overlay menu
+    this->UpdateScalarOverlayMenu();
+}
+
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::UpdateScalarOverlayMenu ( )
+{
+  this->QdecScalarSelector->GetWidget()->GetMenu()->DeleteAllItems();
+
+  // get all scalars names and add radio button for each... Get from Nicole.
+  // this->QdecScalarSelector->GetWidget()->GetMenu()->AddRadioButton ("");
+}
+
+
+
 
 
 //---------------------------------------------------------------------------
@@ -1699,7 +1743,7 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
   this->FSbrainSelector->GetWidget()->GetWidget()->SetWidth(20);
   this->FSbrainSelector->GetLabel()->SetWidth(18);
   this->FSbrainSelector->SetLabelText( "Anatomical volume: ");
-  this->FSbrainSelector->SetBalloonHelpString("select a volume (FreeSurfer brain.mgz) from the current  scene.");
+  this->FSbrainSelector->SetBalloonHelpString("Select a volume (FreeSurfer brain.mgz) from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -padx 2 -pady 2",
                   this->FSbrainSelector->GetWidgetName());
 
@@ -1715,7 +1759,7 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
   this->FSasegSelector->GetWidget()->GetWidget()->SetWidth(20);
   this->FSasegSelector->GetLabel()->SetWidth(18);
   this->FSasegSelector->SetLabelText( "Annotated labelmap: ");
-  this->FSasegSelector->SetBalloonHelpString("select an annotated label map (FreeSurfer aparc+aseg) from the current  scene.");
+  this->FSasegSelector->SetBalloonHelpString("Select an annotated label map (FreeSurfer aparc+aseg) from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -padx 2 -pady 2",
                   this->FSasegSelector->GetWidgetName());
 
@@ -1731,7 +1775,7 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
   this->FSstatsSelector->GetWidget()->GetWidget()->SetWidth(20);
   this->FSstatsSelector->GetLabel()->SetWidth(18);
   this->FSstatsSelector->SetLabelText( "Statistics: ");
-  this->FSstatsSelector->SetBalloonHelpString("select a statistical overlay volume from the current  scene.");
+  this->FSstatsSelector->SetBalloonHelpString("Select a statistical overlay volume from the current  scene.");
     this->Script ( "pack %s -side top -anchor nw -padx 2 -pady 2",
                   this->FSstatsSelector->GetWidgetName());
   
@@ -1743,7 +1787,8 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
   this->FSgoButton->GetWidget()->SetReliefToFlat ( );
   this->FSgoButton->GetLabel()->SetText ("Set up annotations: ");
   this->FSgoButton->GetLabel()->SetWidth ( 18 );
-    this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 2",
+  this->FSgoButton->SetBalloonHelpString ("Create interactive annotations for models and anatomical volume" );
+  this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 2",
                   this->FSgoButton->GetWidgetName());
   
   this->ProcessGUIEvents ( this->FSbrainSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
@@ -1769,6 +1814,7 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->QdecGetResultsButton->GetLabel()->SetWidth ( 18 );
     this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
     this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOff();
+    this->QdecGetResultsButton->GetWidget()->SetCommand ( this, "LoadQdecResultsCallback" );
     //this->QdecGetResultsButton->GetLoadSaveDialog()->SetFileTypes ( "");
     this->QdecGetResultsButton->SetBalloonHelpString("Load all results from previous Qdec analysis if not already present in the scene.");
     this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 4",
@@ -1782,6 +1828,7 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->QdecGoButton->GetWidget()->SetReliefToFlat();
     this->QdecGoButton->GetLabel()->SetText("Set up annotations: ");
     this->QdecGoButton->GetLabel()->SetWidth ( 18 );
+    this->QdecGoButton->SetBalloonHelpString ("Create interactive annotations for models"
     this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 2",
                    this->QdecGoButton->GetWidgetName());
 

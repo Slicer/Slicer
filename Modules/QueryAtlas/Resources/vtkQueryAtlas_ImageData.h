@@ -5,14 +5,14 @@
 static const unsigned int  image_SelectOverlay_width          = 21;
 static const unsigned int  image_SelectOverlay_height         = 21;
 static const unsigned int  image_SelectOverlay_pixel_size     = 3;
-static const unsigned long image_SelectOverlay_length         = 248;
+static const unsigned long image_SelectOverlay_length         = 244;
 static const unsigned long image_SelectOverlay_decoded_length = 1323;
 
 static const unsigned char image_SelectOverlay[] = 
-  "eNpjYKAU/CcXYGonaNcP3NpB7Kec+BGaegj3y//fyHrlpBkxEbIJr/5/RbMdTXvNURYgAj"
-  "K8umYAEZp2NNvRnI1fO9wENO1Y3YzVF7i0A1lABGK0MAARkLHfcx8QgUQWMQARTbVT4vj/"
-  "5xiIQoS0g2xBA0BLcWsXEBBA046WvPFrh7CRbUPXjgQwkw21chwm+P4bRBoZWQJRWloahE"
-  "GG7UZGRjNnznR1dSXJdjQTSHU8Qb9TAgDgEZNN";
+  "eNpjYKAU/CcXYGonaNcP3NqB7HWEAJp6CPfL/9/IeuWkGTERsgmv/n9Fsx1N+/86BiACMh"
+  "gO/AciNO1otqM5G792uAlo2rG6GasvcGkHsoAIyGj+wQpEQMZ+z31ABJJ6yglENNVOieOJ"
+  "B/i1g2xBA3hDXkBAAD3iUAF+7RA2sm3o2pEAZrKhVo7DBN9/g0gjI0sgSktLgzDIsN3IyG"
+  "jmzJmurq4k2Y5mAqmOJ+h3SgAA33Khqw==";
 
 
 /* 

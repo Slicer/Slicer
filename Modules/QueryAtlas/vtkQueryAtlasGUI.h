@@ -257,6 +257,15 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     void WriteBookmarksCallback();
     void LoadBookmarksCallback();
 
+    // Description:
+    // method to load precomputed Qdec results
+    // thru the QdecModule Logic
+    void LoadQdecResultsCallback();
+
+    // Description:
+    // populates the menu with loaded qdec scalar overlays
+    void UpdateScalarOverlayMenu ( );
+    
  protected:
     vtkQueryAtlasGUI ( );
     virtual ~vtkQueryAtlasGUI ( );

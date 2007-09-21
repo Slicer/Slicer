@@ -38,9 +38,6 @@ proc QueryAtlasTearDownPicker { } {
         $::QA(windowToImage) Delete
         unset -nocomplain ::QA(windowToImage)
     }
-    if { [ info exists ::QA(globalsInitialized)  ] } {
-        unset -nocomplain ::QA(globalsInitialized)
-    }
 }
 
 
@@ -70,6 +67,22 @@ proc QueryAtlasTearDown { } {
     QueryAtlasTearDownAnnoCursor
     QueryAtlasTearDownPicker
 
+    if { [ info exists ::QA(statsAutoWinLevTrhreshCompleted)  ] } {
+        unset -nocomplain ::QA(statsAutoWinLevThreshCompleted)
+    }
+
+    if { [ info exists ::QA(globalsInitialized)  ] } {
+        unset -nocomplain ::QA(globalsInitialized)
+    }
+
+    if { [ info exists ::QA(FIPSFreeSurferSceneLoaded) ] } {
+        unset -nocomplain ::QA(FIPSFreeSurferSceneLoaded) 
+    }
+    
+    if { [ info exists ::QA(QdecSceneLoaded) ] } {
+        unset -nocomplain ::QA(QdecSceneLoaded) 
+    }
+
     #--- set the model and label selectors to be NULL
     set as [$::slicer3::QueryAtlasGUI GetFSasegSelector]
     $as SetSelected ""
@@ -86,7 +99,6 @@ proc QueryAtlasInitializeGlobals { } {
         #--- initialize globals
         set ::QA(linkBundleCount) 0
 
-        set ::QA(SceneLoaded) 0
         set ::QA(annotations) ""
         unset -nocomplain ::QA(modelNodeIDs) 
         unset -nocomplain  ::QA(modelDisplayNodeIDs) 
@@ -105,8 +117,7 @@ proc QueryAtlasInitializeGlobals { } {
         set ::QA(annotationVisibility) 1
         set ::QA(localLabel) ""
         set ::QA(lastLabels) ""
-        
-        set ::QA(statsAutoWinLevThreshCompleted) 0
+
         set ::QA(globalsInitialized) 1
     }
 
@@ -232,7 +243,17 @@ proc QueryAtlasSetAnatomical { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetStatistics { } {
 
-    QueryAtlasInitializeGlobals
+
+    if { ! [ info exists ::QA(statsAutoWinLevThreshCompleted)] } {
+        set ::QA(statsAutoWinLevThreshCompleted) 0
+    }
+    #--- if stats have not been thresholded, then do them now
+    if {$::QA(statsAutoWinLevThreshCompleted) == 0 } {
+        QueryAtlasAutoWinLevThreshAllStats
+    }
+
+
+    #--- Put the selected statistics in the foreground layer.
     set vs [$::slicer3::QueryAtlasGUI GetFSstatsSelector]
     set node [ $vs GetSelected ]
     if { $node == "" } {
@@ -246,7 +267,6 @@ proc QueryAtlasSetStatistics { } {
     set t [ string first "stat" $name ]
     if { $t >= 0 } {
         set gotstats 1
-        QueryAtlasAutoWinLevThreshStats
         set ::QA(statvol,volumeNodeID) [ $node GetID ]
         #--- put in background
         set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]        
@@ -258,7 +278,7 @@ proc QueryAtlasSetStatistics { } {
     }
     
     if { ! $gotstats } {
-        set ::QA(brain,volumeNodeID) ""
+        set ::QA(statvol,volumeNodeID) ""
     } 
 }
 
@@ -268,7 +288,7 @@ proc QueryAtlasSetStatistics { } {
 #----------------------------------------------------------------------------------------------------
 # --- applies some display parameters to volumes that could be statistics...
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasAutoWinLevThreshStats { } {
+proc QueryAtlasAutoWinLevThreshAllStats { } {
     set numVnodes  [ $::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLVolumeNode" ]
     set numCnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLSliceCompositeNode"]
     
@@ -450,8 +470,8 @@ proc QueryAtlasGetLabels { } {
         $cnode SetReferenceLabelVolumeID $::QA(label,volumeNodeID)
         $cnode SetLabelOpacity 0.5
     }
-    
 }
+
 
 
 
@@ -565,63 +585,168 @@ proc QueryAtlasAddBIRNLogo {} {
 
 
 
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasLoadQdecResults { fsgdFile } {
+
+    if { ![ info exists ::QA(QdecSceneLoaded) } {
+        
+        if { [ info exists ::QA(FIPSFreeSurferSceneLoaded) ] } {
+            QueryAtlasDialog "Existing scene must be closed before loading a Qdec query scene."
+            return
+        } else {
+            #--- go ahead and make the call to load scene.
+            #set logic [ $::slicer3::QdecModuleLogic LoadResults $fsgdFile ]
+        }
+    } else {
+        QueryAtlasDialog "Existing scene must be closed before loading a new Qdec query scene."
+    }
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSelectQdecOverlay { } {
+    if { ! [ info exists ::QA(QdecSceneLoaded) ] } {
+
+    } elseif { $::QA(QdecSceneLoaded) == 0 } {
+
+    }
+    
+}
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasQdecSetUp { } {
 
     #--- comment out until built.
-    if { 0 } {    
     
     QueryAtlasInitializeGlobals
-    unset -nocomplain ::QA(modelNodeIDs)
-    unset -nocomplain ::QA(modelDisplayNodeIDs)
-    
-    #--- look thru model nodes and find all possible query models.
-    set numModelNodes [ $::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode" ]
-    for { set i 0 } { $i < $numModelNodes } { incr i } {
-        #--- does the model have an "lh" or "rh" in its name?
-        set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLModelNode" ]
-        set name [ $node GetName ]
 
-        if { ( [ string first "lh." $name ] >= 0 ) || ( [ string first "rh." $name ] >= 0 ) } {
-            #--- does this model have an overlay called "labels",
-            #--- implying it's a query model? if so, save its node ID
-            set pdata [ [$node GetPolyData] GetPointData ]
+    #--- perform once per scene.
+    if { ! [ info exists ::QA(QdecSceneLoaded) ] } {
+        set ::QA(QdecSceneLoaded) 0
+        
+        unset -nocomplain ::QA(modelNodeIDs)
+        unset -nocomplain ::QA(modelDisplayNodeIDs)
+        
+        #--- look thru model nodes and find all possible query models.
+        set numModelNodes [ $::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode" ]
+        for { set i 0 } { $i < $numModelNodes } { incr i } {
+            #--- does the model have an "lh" or "rh" in its name?
+            set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLModelNode" ]
+            #--- if the node is not named, we will not find it...
+            set name [ $node GetName ]
 
-            if { $pdata != "" } {
-                set numPointScalars [ $pdata GetNumberOfArrays ]
-                for { set p 0 } { $p < $numPointScalars } { incr p } {
-                    set lname [  [  $pdata GetArray $p] GetName ]
-                    if { $lname == "labels" } {
-                        lappend ::QA(modelNodeIDs) [ $node GetID ]
+            #--- append all inflated models with either .lh or .rh
+            if { ( [ string first "lh.inflated" $name ] >= 0 ) || ( [ string first "rh.inflated" $name ] >= 0 ) } {
+                lappend ::QA(modelNodeIDs) [ $node GetID ]
+                lappend ::QA(modelDisplayNodeIDs) [ $node GetDisplayNodeID ]
+            }
+        }
+
+        #--- did we find anything?
+        if { [ info exists ::QA(modelNodeIDs) ] } {
+            set len [ lindex $::QA(modelNodeIDs) ]
+            if { ($len == 0) && ($::QA(label,volumeNodeID) == "") } {
+                #--- nothing to query here.
+                QueryAtlasDialog "QueryAtlas: No queriable data were found in scene."
+                return
+            }
+        }
+
+
+        #--- Find the appropriate annotation file for these models
+        #--- using FreeSurfer Qdec directory conventions
+        #--- get file from the load results button and build relative path.
+        set LHAnno 0
+        set RHAnno 0
+        set fName [ [ [ $::slicer3::QueryAtlasGUI GetQdecResultsButton ] GetWidget ] GetFileName ]
+        if { $fName != "" } {
+            set dirName [ file dirname $fName ]
+            if { $dirName != "" } {
+                set inx [ string last "/" $dirName ]
+                if { $inx >= 0 } {
+                    set dirName [ string range $dirName 0 $inx ]
+                    set dirName [ file join $dirName "fsaverage" ]
+                    if { [ file isdirectory $dirName ] } {
+                        set dirName [ file join $dirName "label" ]
+                        if { [ file isdirectory $dirName ] }  {
+                            #--- read in annotation files and put them on appropriate models.
+                            set lhAnnotFileName [ file join $dirName "lh.aparc.annot" ]
+                            set rhAnnotFileName [ file join $dirName "rh.aparc.annot" ]
+                            set logic [$::slicer3::ModelsGUI GetLogic]
+                            set lhTest [ file exists $lhAnnotFileName ]
+                            set rhTest [ file exists $rhAnnotFileName ]
+                            if { $logic == ""} {
+                               QueryAtlasDialog "QueryAtlas: cannot access Models Logic class. No model annotations imported."
+                                return
+                            }
+                            #--- load left hemisphere annotations onto LH model
+                            if { $lhTest != 0 } {
+                                set numQModels [ llength $::QA(modelNodeIDs) ]
+                                for { set m 0 } { $m < $numQModels } { incr m } {
+                                    set mid [ lindex $::QA(modelNodeIDs) $m ]
+                                    set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
+                                    set name [ $node GetName ]
+                                    if { [ string first "lh." $name ] >= 0 } {
+                                        #--- add the scalar to the node
+                                        $logic AddScalar $lhAnnotFileName $node
+                                        set LHAnno 1
+                                        break
+                                    }
+                                }
+                            } else {
+                                QueryAtlasDialog "QueryAtlas: no appropriate model for LH annotations found."
+                            }
+
+                            #--- load right hemisphere annotations onto RH model
+                            if { $rhTest != 0 } {
+                                set numQModels [ llength $::QA(modelNodeIDs) ]
+                                for { set m 0 } { $m < $numQModels } { incr m } {
+                                    set mid [ lindex $::QA(modelNodeIDs) $m ]
+                                    set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
+                                    set name [ $node GetName ]
+                                    if { [ string first "rh." $name ] >= 0 } {
+                                        #--- add the scalar to the node
+                                        $logic AddScalar $rhAnnotFileName $node                                         
+                                        set RHAnno 1
+                                        break
+                                    }
+                                }
+                            } else {
+                                QueryAtlasDialog "QueryAtlas: no appropriate model for RH annotations found."
+                            }
+                        }
                     }
                 }
             }
         }
-    }
+        
+        #--- do we have anything queryable at all?
+        if { ($LHAnno == 0) && ($RHAnno == 0) } {
+            QueryAtlasDialog ( "QueryAtlas: no annotations for loaded models was found.");
+            return
+        }
 
+        puts "Setting up Qdec query scene...."
+        #--- get qdec results pathname
+        #--- construct path to lh.aparc.annot from that path
+        #--- according to FreeSurfer conventions.
+        set ::QA(annotations) ""
 
-    puts "Setting up Qdec query scene...."
-    #--- get qdec results pathname
-    #--- construct path to lh.aparc.annot from that path
-    #--- according to FreeSurfer conventions.
-    set ::QA(annotations) ""
+        #--- only do this if a model and labelmap are provided
+        if { $::QA(modelNodeIDs) == "" || $::QA(modelDisplayNodeID) == "" || $::QA(annotations) == "" } {
+            QueryAtlasMessageDialog "Please select an annotated model and labelmap to begin."
+            return
+        }
 
-    #--- only do this if a model and labelmap are provided
-    if { $::QA(modelNodeIDs) == "" || $::QA(modelDisplayNodeID) == "" || $::QA(annotations) == "" } {
-        QueryAtlasMessageDialog "Please select an annotated model and labelmap to begin."
-        return
-    }
+        #--- set up progress guage
+        set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+        set prog [ $win GetProgressGauge ]
+        $prog SetValue 0
+        $win SetStatusText "Setting up query scene..."
 
-    #--- set up progress guage
-    set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
-    set prog [ $win GetProgressGauge ]
-    $prog SetValue 0
-    $win SetStatusText "Setting up query scene..."
-
-    #--- perform once per scene.
-    if { ! $::QA(SceneLoaded) } {
         $win SetStatusText "Adding annotations..."
         $prog SetValue [ expr 100 * 1.0 / 8.0 ]
         QueryAtlasAddAnnotations
@@ -652,14 +777,12 @@ proc QueryAtlasQdecSetUp { } {
 
         set ::QA(CurrentRASPoint) "0 0 0"
         $prog SetValue [ expr 100 * 8.0 / 8.0 ]
-        set ::QA(SceneLoaded) 1
+        set ::QA(QdecSceneLoaded) 1
 
         #--- clear progress
         $win SetStatusText ""
         $prog SetValue 0
     }
-}
-
 }
 
 
@@ -668,50 +791,63 @@ proc QueryAtlasQdecSetUp { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasFipsFreeSurferSetUp { } {
 
-    #--- only do this if a model and labelmap are provided
-#    if { $::QA(modelNodeIDs) == "" || $::QA(label,volumeNodeID) == "" || $::QA(modelDisplayNodeID) == "" } {
-#        QueryAtlasMessageDialog "Please select an annotated model and labelmap to begin."
-#        return
-#    }
+    #--- make sure we are initializing globals
+    if { [ info exists ::QA(globalsInitialized) ] } {
+        if { $::QA(globalsInitialized) == 0 } {
+            QueryAtlasInitializeGlobals
+        }
+    } else {
+        QueryAtlasInitializeGlobals
+    }
 
-    QueryAtlasInitializeGlobals
-    unset -nocomplain ::QA(modelNodeIDs)
-    unset -nocomplain ::QA(modelDisplayNodeIDs)
+    #--- perform once per scene.
+    if { ! [ info exists ::QA(FIPSFreeSurferSceneLoaded) ] } {
+        set ::QA(FIPSFreeSurferSceneLoaded) 0
 
-    #--- look thru model nodes and find all possible query models.
-    set numModelNodes [ $::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode" ]
-    for { set i 0 } { $i < $numModelNodes } { incr i } {
-        #--- does the model have an "lh" or "rh" in its name?
-        set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLModelNode" ]
-        set name [ $node GetName ]
+        unset -nocomplain ::QA(modelNodeIDs)
+        unset -nocomplain ::QA(modelDisplayNodeIDs)
 
-        if { ( [ string first "lh." $name ] >= 0 ) || ( [ string first "rh." $name ] >= 0 ) } {
-            #--- does this model have an overlay called "labels",
-            #--- implying it's a query model? if so, save its node ID
-            set pdata [ [$node GetPolyData] GetPointData ]
+        #--- look thru model nodes and find all possible query models.
+        set numModelNodes [ $::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode" ]
+        for { set i 0 } { $i < $numModelNodes } { incr i } {
+            #--- does the model have an "lh" or "rh" in its name?
+            set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLModelNode" ]
+            set name [ $node GetName ]
 
-            if { $pdata != "" } {
-                set numPointScalars [ $pdata GetNumberOfArrays ]
-                for { set p 0 } { $p < $numPointScalars } { incr p } {
-                    set lname [  [  $pdata GetArray $p] GetName ]
-                    if { $lname == "labels" } {
-                        lappend ::QA(modelNodeIDs) [ $node GetID ]
-                        lappend ::QA(modelDisplayNodeIDs) [ $node GetDisplayNodeID ]
+            if { ( [ string first "lh." $name ] >= 0 ) || ( [ string first "rh." $name ] >= 0 ) } {
+                #--- does this model have an overlay called "labels",
+                #--- implying it's a query model? if so, save its node ID
+                set pdata [ [$node GetPolyData] GetPointData ]
+
+                if { $pdata != "" } {
+                    set numPointScalars [ $pdata GetNumberOfArrays ]
+                    for { set p 0 } { $p < $numPointScalars } { incr p } {
+                        set lname [  [  $pdata GetArray $p] GetName ]
+                        if { $lname == "labels" } {
+                            lappend ::QA(modelNodeIDs) [ $node GetID ]
+                            lappend ::QA(modelDisplayNodeIDs) [ $node GetDisplayNodeID ]
+                        }
                     }
                 }
             }
         }
-    }
 
-    #--- set up progress guage
-    set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
-    set prog [ $win GetProgressGauge ]
-    $prog SetValue 0
-    $win SetStatusText "Setting up query scene..."
+        #--- did we find anything?
+        if { [ info exists ::QA(modelNodeIDs) ] } {
+            set len [ lindex $::QA(modelNodeIDs) ]
+            if { ($len == 0) && ($::QA(label,volumeNodeID) == "") } {
+                #--- nothing to query here.
+                QueryAtlasDialog ("No queriable data were found in scene.");
+                return
+            }
+        }
+        
+        #--- set up progress guage
+        set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+        set prog [ $win GetProgressGauge ]
+        $prog SetValue 0
+        $win SetStatusText "Setting up query scene..."
 
-
-    #--- perform once per scene.
-    if { ! $::QA(SceneLoaded) } {
         $win SetStatusText "Adding annotations..."
         $prog SetValue [ expr 100 * 1.0 / 8.0 ]
         QueryAtlasAddAnnotations
@@ -742,7 +878,7 @@ proc QueryAtlasFipsFreeSurferSetUp { } {
 
         set ::QA(CurrentRASPoint) "0 0 0"
         $prog SetValue [ expr 100 * 8.0 / 8.0 ]
-        set ::QA(SceneLoaded) 1
+        set ::QA(FIPSFreeSurferSceneLoaded) 1
     }
 
     #--- clear progress
@@ -1751,11 +1887,6 @@ proc QueryAtlasLaunchOntologyBrowser { ontology } {
     #--- only open if not already running
     set already_running [ QueryAtlasBirnLexViewerCheck ]
     if { $already_running } {
-        return
-    }
-    
-    if { ! $::QA(SceneLoaded) } {
-        QueryAtlasMessageDialog "Scene must be loaded and configured first."
         return
     }
 
