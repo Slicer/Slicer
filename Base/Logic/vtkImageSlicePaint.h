@@ -140,14 +140,6 @@ public:
   // Apply the paint operation
   void Paint();
  
-  // Description:
-  // Extract the current paint region to the ExtractImage
-  void Extract();
-
-  // Description:
-  // Replace the current paint region with the ReplaceImage
-  void Replace();
-
 protected:
   vtkImageSlicePaint();
   ~vtkImageSlicePaint();
