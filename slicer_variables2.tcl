@@ -203,7 +203,7 @@ switch $::tcl_platform(os) {
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.$shared_lib_ext
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/libNaviTrack.$shared_lib_ext
         set ::dcmtk_TEST_FILE $::dcmtk_DIR/dcmnet/libsrc/libdcmnet.a
-        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake.a
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
     }
     "Linux" {
@@ -231,7 +231,7 @@ switch $::tcl_platform(os) {
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.so
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/libNaviTrack.$shared_lib_ext
         set ::dcmtk_TEST_FILE $::dcmtk_DIR/dcmnet/libsrc/libdcmnet.a
-        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake.a
+        set ::BatchMake_TEST_FILE $::BatchMake_BUILD_DIR/bin/BatchMake
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
 
     }
