@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Filtering</category>
+  <title>Gaussian Blur</title>
+  <description>
+	  Apply a gaussian blurr to an image
+</description>
+  <version>0.1.0.$Revision: 1.1 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Julien Jomier and Stephen Aylward</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume</description>
+    </image>
+    <double>
+      <name>sigma</name>
+      <label>Sigma</label>
+      <description>Sigma value in physical units (e.g., mm) of the Gaussian kernel</description>
+      <flag>s</flag>
+      <default>1.0</default>
+    </double>
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Blurred Volume</description>
+    </image>
+  </parameters>
+
+</executable>

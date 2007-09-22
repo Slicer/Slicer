@@ -46,7 +46,7 @@ ADD_LIBRARY(DownloadSlicerTutorialsModule SHARED
 SET_TARGET_PROPERTIES (DownloadSlicerTutorialsModule PROPERTIES
                        COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 TARGET_LINK_LIBRARIES(DownloadSlicerTutorialsModule 
-                      ${SLICERLIBCURL_LIBRARIES} ITKIO MRMLIDIO)
+                      ${SLICERLIBCURL_LIBRARIES} ITKIO MRMLIDIO itkzlib)
 
 #
 # Move exec and module to where Slicer can find them
