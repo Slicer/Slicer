@@ -182,19 +182,77 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
 
   char *moduleName;
   
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkKWPushButton *pushb = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWMenu *menu = vtkKWMenu::SafeDownCast ( caller );
   vtkKWEntry *entry = vtkKWEntry::SafeDownCast ( caller );
   
   if ( pushb == this->ModulesPrev && event == vtkKWPushButton::InvokedEvent )
     {
+
+    // Exit current module
+    char * currentModuleName = this->GetModuleNavigator()->GetCurrentModuleName();
+    if ( currentModuleName != NULL )
+      {
+      vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );
+      if (currentModule != NULL )
+        {
+        currentModule->Exit ( );
+        }
+      }
+
+    // Move current module backward in navigation list
     moduleName = this->GetModuleNavigator()->NavigateBack();
-    this->RaiseModule ( moduleName );
+
+    // Enter selected module.
+    currentModuleName = this->GetModuleNavigator()->GetCurrentModuleName();
+    if ( currentModuleName != NULL )
+      {
+      vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );        
+      if ( currentModule )
+        {
+        currentModule->Enter ( );
+        this->RaiseModule ( moduleName );
+        this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
+        this->PopulateHistoryListMenu ( );
+        this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
+        }
+      }
+//    this->RaiseModule ( moduleName );
     }
   if ( pushb == this->ModulesNext && event == vtkKWPushButton::InvokedEvent )
     {
+
+    // Exit current module
+    char * currentModuleName = this->GetModuleNavigator()->GetCurrentModuleName();
+    if ( currentModuleName != NULL )
+      {
+      vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );
+      if (currentModule != NULL )
+        {
+        currentModule->Exit ( );
+        }
+      }
+
+    // move current module forward in navigation list
     moduleName = this->GetModuleNavigator()->NavigateForward ();
-    this->RaiseModule ( moduleName );
+
+    // Enter selected module.
+    currentModuleName = this->GetModuleNavigator()->GetCurrentModuleName();
+    if ( currentModuleName != NULL )
+      {
+      vtkSlicerModuleGUI *currentModule = app->GetModuleGUIByName( currentModuleName );        
+      if ( currentModule )
+        {
+        currentModule->Enter ( );
+        this->RaiseModule ( moduleName );
+        this->GetModuleNavigator()->AddModuleNameToHistoryList ( moduleName );
+        this->PopulateHistoryListMenu ( );
+        this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
+        }
+      }
+
+//    this->RaiseModule ( moduleName );
     }
   if ( menu == this->ModulesHistory->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
     {
@@ -204,8 +262,9 @@ void vtkSlicerModuleChooseGUI::ProcessGUIEvents ( vtkObject *caller,
     // straight from the modules choose menubutton.
     // the little checkbox in this pulldown menu should really track the current module.
     // but don't want to trigger extra events by setting it. ignore for now.
+    this->SelectModule ( c );
     this->GetModuleNavigator()->AddModuleNameToNavigationList ( c );
-    this->RaiseModule ( c );
+//    this->RaiseModule ( c );
     }
   if ( entry == this->ModulesSearchEntry && event == vtkKWEntry::EntryValueChangedEvent )
     {
@@ -314,10 +373,10 @@ void vtkSlicerModuleChooseGUI::SelectModule ( const char *moduleName )
           this->PopulateHistoryListMenu ( );
           this->GetModuleNavigator()->AddModuleNameToNavigationList ( moduleName );
           }
-        }
-      else
-        {
-        vtkErrorMacro ("ERROR no slicer module GUI found for " << moduleName<< "\n");
+        else
+          {
+          vtkErrorMacro ("ERROR no slicer module GUI found for " << moduleName<< "\n");
+          }
         }
       }
     }

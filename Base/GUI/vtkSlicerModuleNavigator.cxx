@@ -192,7 +192,8 @@ char * vtkSlicerModuleNavigator::NavigateBack ( )
       }
     else
       {
-      return ( NULL );
+      return ( this->CurrentModule->ModuleName );
+//      return ( NULL );
       }
     }
   else
@@ -217,7 +218,8 @@ char * vtkSlicerModuleNavigator::NavigateForward ( )
       }
     else
       {
-      return ( NULL );
+      return ( this->CurrentModule->ModuleName );
+//      return ( NULL );
       }
     }
   else
