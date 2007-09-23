@@ -1,16 +1,16 @@
-PROJECT (EMSegmentBatchMakeModule)
+PROJECT (GaussianBlurBatchMakeModule)
 
 # Set the name of the Slicer3 execution module to be run using BatchMake
-SET(Slicer3ExeModule EMSegmentCommandLine_GUIVersion)
+SET(Slicer3ExeModule GaussianBlurImageFilter)
 
 # Set the name of the Slicer3 BatchMake module to be created
-SET(Slicer3BatchModule EMSegmentBatchMakeModule)
+SET(Slicer3BatchModule GaussianBlurBatchMakeModule)
 
 # Set the source code for the Slicer3 BatchMake module
-SET(Slicer3BatchModule_SOURCE EMSegmentBatchMakeModule.cxx)
+SET(Slicer3BatchModule_SOURCE GaussianBlurBatchMakeModule.cxx)
 
 # Set the logo for the module, or comment out the following line
-SET(Slicer3BatchModule_LOGO EMSegmentBatchMakeModuleLogo.h)
+SET(Slicer3BatchModule_LOGO GaussianBlurBatchMakeModuleLogo.h)
 
 # Disable MSVC 8 warnings
 IF(WIN32)
@@ -116,7 +116,6 @@ IF(BatchMake_DIR)
   TARGET_LINK_LIBRARIES(${Slicer3BatchModule} BatchMakeLib)
 
   IF (Slicer3_SOURCE_DIR)
-
     # install each target in the production area (where it would appear in an 
     # installation) and install each target in the developer area (for running 
     # from a build)

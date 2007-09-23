@@ -1,11 +1,13 @@
 #include <iostream>
-#include <EMSegmentBatchMakeModuleCLP.h>
-#include "bmScriptParser.h"
-//#include "bmProgressManagerGUI.h"
-#include "itksys/Glob.hxx"
-#include "itksys/SystemTools.hxx"
+
+#include <bmScriptParser.h>
+
+#include <itksys/Glob.hxx>
+#include <itksys/SystemTools.hxx>
 #include <itksys/Process.h>
-#include "EMSegmentBatchMakeModuleConfig.h"
+
+#include "SlicerBatchMakeConfig.h"
+#include "EMSegmentBatchMakeModuleCLP.h"
 
 namespace bm
 {
@@ -168,6 +170,7 @@ int main(int argc, char* argv[])
     {
     // Run condor watcher
     // REQUIRES FLTK :(
+    //
     // std::vector<const char*> args;
     // args.push_back(CONDORWATCHER_EXECUTABLE);
     // args.push_back(0);

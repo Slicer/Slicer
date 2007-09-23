@@ -1,6 +1,0 @@
-/* 
- * Configuration file from CMake to the EMSegmentModule using BatchMake 
- */
-
-#define EMSEGMENT_EXECUTABLE "@EMSegmentCommandLine_GUIVersion@"
-#define BatchMake_APPLICATIONS_DIRS "@BatchMake_APPLICATIONS_DIRS@"
