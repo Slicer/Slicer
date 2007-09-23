@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
   bm::ProgressManagerSlicer progressManager;
   
   // Come up with an approximation of the number of Run()
-  unsigned int actions = (sigmaMax-sigmaMin)/sigmaStep;
+  unsigned int actions = (int)((sigmaMax-sigmaMin)/sigmaStep);
   if(actions == 0)
     {
     actions = 1;
