@@ -1,0 +1,5 @@
+/* 
+ * Configuration file from CMake to the module using BatchMake 
+ */
+
+#define BatchMake_APPLICATIONS_DIRS "@BatchMake_APPLICATIONS_DIRS@"
