@@ -25,6 +25,7 @@ vtkQueryAtlasSearchTermWidget::vtkQueryAtlasSearchTermWidget ( )
     this->MultiColumnList = NULL;
     this->AddNewButton = NULL;
     this->DeselectAllButton = NULL;
+    this->SelectAllButton = NULL;
     this->ReserveTermsButton = NULL;
     this->ClearAllButton = NULL;
     this->ClearSelectedButton = NULL;
@@ -58,6 +59,12 @@ vtkQueryAtlasSearchTermWidget::~vtkQueryAtlasSearchTermWidget ( )
     this->ReserveTermsButton->SetParent ( NULL );
     this->ReserveTermsButton->Delete();
     this->ReserveTermsButton = NULL;
+    }
+  if ( this->SelectAllButton )
+    {
+    this->SelectAllButton->SetParent ( NULL );
+    this->SelectAllButton->Delete();
+    this->SelectAllButton = NULL;
     }
   if ( this->DeselectAllButton )
     {
@@ -103,6 +110,7 @@ void vtkQueryAtlasSearchTermWidget::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "AddNewButton: " << this->GetAddNewButton() << "\n";
     os << indent << "ClearSelectedButton: " << this->GetClearSelectedButton() << "\n";
     os << indent << "ClearAllButton: " << this->GetClearAllButton() << "\n";
+    os << indent << "SelectAllButton: " << this->GetSelectAllButton() << "\n";
     os << indent << "DeselectAllButton: " << this->GetDeselectAllButton() << "\n";
     os << indent << "ReserveTermsButton: " << this->GetReserveTermsButton() << "\n";
     // print widgets?
@@ -152,6 +160,14 @@ void vtkQueryAtlasSearchTermWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       this->GetMultiColumnList()->GetWidget()->DeleteRow ( row[0] );    
       numRows = this->MultiColumnList->GetWidget()->GetSelectedRows ( row );
+      }
+    }
+  else if ( ( b == this->SelectAllButton ) && (event == vtkKWPushButton::InvokedEvent ))
+    {
+    numRows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
+    for ( int i=0; i < numRows; i++ )
+      {
+      this->GetMultiColumnList()->GetWidget()->SelectCell ( i,0 );    
       }
     }
   else if ( ( b == this->DeselectAllButton ) && (event == vtkKWPushButton::InvokedEvent ))
@@ -208,6 +224,7 @@ void vtkQueryAtlasSearchTermWidget::AddWidgetObservers ( ) {
   this->AddNewButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ClearSelectedButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ClearAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SelectAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeselectAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ReserveTermsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
@@ -219,6 +236,7 @@ void vtkQueryAtlasSearchTermWidget::RemoveWidgetObservers ( ) {
   this->AddNewButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ClearSelectedButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ClearAllButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SelectAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeselectAllButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ReserveTermsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
@@ -306,17 +324,26 @@ void vtkQueryAtlasSearchTermWidget::CreateWidget ( )
   this->DeselectAllButton->SetImageToIcon ( this->QueryAtlasIcons->GetDeselectAllIcon() );
   this->DeselectAllButton->SetBalloonHelpString ( "Deselect all" );
 
+  this->SelectAllButton = vtkKWPushButton::New();
+  this->SelectAllButton->SetParent (bFrame);
+  this->SelectAllButton->Create();
+  this->SelectAllButton->SetBorderWidth ( 0 );
+  this->SelectAllButton->SetReliefToFlat();  
+  this->SelectAllButton->SetImageToIcon ( this->QueryAtlasIcons->GetSelectAllIcon() );
+  this->SelectAllButton->SetBalloonHelpString ( "Select all" );
+
   this->ReserveTermsButton = vtkKWPushButton::New();
   this->ReserveTermsButton->SetParent (bFrame);
   this->ReserveTermsButton->Create();
   this->ReserveTermsButton->SetBorderWidth ( 0 );
   this->ReserveTermsButton->SetReliefToFlat();  
-  this->ReserveTermsButton->SetImageToIcon ( this->QueryAtlasIcons->GetReserveSelectedURIsIcon() );
+  this->ReserveTermsButton->SetImageToIcon ( this->QueryAtlasIcons->GetReserveURIsIcon() );
   this->ReserveTermsButton->SetBalloonHelpString ( "Save selected terms as structure search terms" );
 
-  app->Script ("pack %s %s %s %s %s -side left -anchor c -expand n -padx 2 -pady 2",
+  app->Script ("pack %s %s %s %s %s %s -side left -anchor c -expand n -padx 2 -pady 2",
                this->AddNewButton->GetWidgetName(),
                this->DeselectAllButton->GetWidgetName(),
+               this->SelectAllButton->GetWidgetName(),
                this->ClearSelectedButton->GetWidgetName(),
                this->ClearAllButton->GetWidgetName(),
                this->ReserveTermsButton->GetWidgetName() );
@@ -333,10 +360,10 @@ void vtkQueryAtlasSearchTermWidget::ReserveTerms ( )
   const char *term;
   
   this->reservedTerms.clear();
-  int numRows = this->MultiColumnList->GetWidget()->GetSelectedRows ( row );
+  int numRows = this->MultiColumnList->GetWidget()->GetNumberOfRows ();
   for ( i=0; i<numRows; i++ )
     {
-    term = this->GetMultiColumnList()->GetWidget()->GetCellText ( row[i], 0 );
+    term = this->GetMultiColumnList()->GetWidget()->GetCellText ( i, 0 );
     this->reservedTerms.push_back ( std::string(term) );
     }
   this->InvokeEvent ( vtkQueryAtlasSearchTermWidget::ReservedTermsEvent );

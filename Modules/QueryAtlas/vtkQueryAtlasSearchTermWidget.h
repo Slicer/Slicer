@@ -20,6 +20,7 @@ public:
   // Description:
   // Get methods on class members ( no Set methods required. )
   vtkGetObjectMacro ( AddNewButton, vtkKWPushButton);
+  vtkGetObjectMacro ( SelectAllButton, vtkKWPushButton );
   vtkGetObjectMacro ( DeselectAllButton, vtkKWPushButton );
   vtkGetObjectMacro ( ClearAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( ClearSelectedButton, vtkKWPushButton);
@@ -88,6 +89,7 @@ public:
   virtual ~vtkQueryAtlasSearchTermWidget();
 
   vtkKWPushButton *AddNewButton;
+  vtkKWPushButton *SelectAllButton;
   vtkKWPushButton *DeselectAllButton;
   vtkKWPushButton *ClearAllButton;
   vtkKWPushButton *ClearSelectedButton;

@@ -69,6 +69,8 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->QueryAtlasIcons = NULL;
     this->AnnotationVisibility = 1;
     this->ModelVisibility = 1;
+    this->LHModelVisibility = 1;
+    this->LHModelVisibility = 1;
     this->ProcessingMRMLEvent = 0;
     this->SceneClosing = false;
     
@@ -123,6 +125,8 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->AnnotationVisibilityButton = NULL;
     this->AnnotationTermSetMenuButton = NULL;
     this->ModelVisibilityButton = NULL;
+    this->LHModelVisibilityButton = NULL;
+    this->RHModelVisibilityButton = NULL;
 #endif
     
     //---
@@ -130,6 +134,10 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     //---    
 #ifdef QUERIES_FRAME
     this->SearchButton = NULL;
+    this->UseStructureTerms = NULL;
+    this->UseOtherTerms = NULL;
+    this->UseGroupTerms = NULL;
+    this->UseSpeciesTerms = NULL;
     this->DatabasesMenuButton = NULL;
     this->ResultsWithAnyButton = NULL;
     this->ResultsWithAllButton = NULL;
@@ -301,6 +309,18 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
     // annotation frame
     //---
 #ifdef ANNO_FRAME
+    if ( this->LHModelVisibilityButton )
+      {
+      this->LHModelVisibilityButton->SetParent ( NULL );
+      this->LHModelVisibilityButton->Delete();
+      this->LHModelVisibilityButton = NULL;      
+      }
+    if ( this->RHModelVisibilityButton )
+      {
+      this->RHModelVisibilityButton->SetParent ( NULL );
+      this->RHModelVisibilityButton->Delete();
+      this->RHModelVisibilityButton = NULL;      
+      }
     if ( this->ModelVisibilityButton )
       {
       this->ModelVisibilityButton->SetParent ( NULL );
@@ -479,6 +499,30 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
     // query panel
     //---
 #ifdef QUERIES_FRAME
+    if ( this->UseOtherTerms )
+      {
+      this->UseOtherTerms->SetParent ( NULL );
+      this->UseOtherTerms->Delete();
+      this->UseOtherTerms = NULL;
+      }
+    if ( this->UseStructureTerms )
+      {
+      this->UseStructureTerms->SetParent ( NULL);
+      this->UseStructureTerms->Delete();
+      this->UseStructureTerms = NULL;      
+      }
+    if ( this->UseGroupTerms )
+      {
+      this->UseGroupTerms->SetParent ( NULL );
+      this->UseGroupTerms->Delete();
+      this->UseGroupTerms = NULL;
+      }
+    if ( this->UseSpeciesTerms )
+      {
+      this->UseSpeciesTerms->SetParent ( NULL );
+      this->UseSpeciesTerms->Delete();
+      this->UseSpeciesTerms = NULL;      
+      }
     if ( this->SearchButton )
       {
       this->SearchButton->SetParent ( NULL );
@@ -721,22 +765,9 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::OpenBIRNLexBrowser()
+void vtkQueryAtlasGUI::OpenOntologyBrowser()
 {
-  this->Script ( "QueryAtlasLaunchOntologyBrowser BIRN" );
-}
-
-
-//---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::OpenNeuroNamesBrowser()
-{
-  this->Script ( "QueryAtlasLaunchOntologyBrowser NN" );
-}
-
-
-//---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::OpenUMLSBrowser()
-{
+  this->Script ( "QueryAtlasLaunchOntologyBrowser" );
 }
 
 
@@ -825,18 +856,19 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->OtherButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OtherListWidget->RemoveWidgetObservers();
   this->SpeciesButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SpeciesNoneButton->RemoveObservers(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SpeciesHumanButton->RemoveObservers(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SpeciesMouseButton->RemoveObservers(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SpeciesMacaqueButton->RemoveObservers(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SpeciesNoneButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SpeciesHumanButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SpeciesMouseButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SpeciesMacaqueButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->ModelVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LHModelVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->RHModelVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationTermSetMenuButton->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->BIRNLexHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NeuroNamesHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->BIRNLexHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LocalSearchTermEntry->RemoveObservers(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->PopulationButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -906,18 +938,19 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->OtherButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OtherListWidget->AddWidgetObservers();
   this->SpeciesButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SpeciesNoneButton->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SpeciesHumanButton->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SpeciesMouseButton->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SpeciesMacaqueButton->AddObserver(vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SpeciesNoneButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SpeciesHumanButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SpeciesMouseButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SpeciesMacaqueButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->ModelVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LHModelVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->RHModelVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationTermSetMenuButton->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->BIRNLexHierarchyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NeuroNamesHierarchyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->BIRNLexHierarchyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LocalSearchTermEntry->AddObserver(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->PopulationButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -997,145 +1030,111 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     }
 
-/*
-  //MRML
-  if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
-      vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
-      event == vtkMRMLScene::NodeRemovedEvent)
-    {
-    // check to see if the model or labels have been deleted.
-    //--- check to see if the lh.pial has been deleted
-    //--- and clean up if so.
-    vtkMRMLModelNode *node;
-    int n = this->MRMLScene->GetNumberOfNodesByClass( "vtkMRMLModelNode");
-    for ( int i=0; i < n; i++ )
-      {
-      node = vtkMRMLModelNode::SafeDownCast ( this->MRMLScene->GetNthNodeByClass ( i, "vtkMRMLModelNode") );
-      if ( (!strcmp ( node->GetName(), "lh.pial")) ||  (! strcmp ( node->GetName(), "lh.inflated")) )
-        {
-        // ok, query model for either qdec or fips/freesurfer is still here;
-        // no op
-        }
-      else
-        {
-        this->Script ( "QueryAtlasTearDown; QueryAtlasInitializeGlobasl");
-        this->Script ("QueryAtlasNodeRemovedUpdate" );
-        break;
-        }
-      }
-    }
-  if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
-      vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
-      event == vtkMRMLScene::NodeAddedEvent)
-    {
-    this->Script ( "QueryAtlasNodeAddedUpdate" );
-    }
-  if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
-      vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
-      event == vtkMRMLScene::SceneCloseEvent)
-    {
-    //
-    }
-*/
   
-  if ((sel == this->FSasegSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
+  if ( sel != NULL )
     {
-    node = sel->GetSelected();
-    if ( node != NULL )
+    if ((sel == this->FSasegSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
       {
-      this->Script ( "QueryAtlasSetAnnotatedLabelMap" );
+      node = sel->GetSelected();
+      if ( node != NULL )
+        {
+        this->Script ( "QueryAtlasSetAnnotatedLabelMap" );
+        }
+      }
+    else if ((sel == this->FSbrainSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
+      {
+      node = sel->GetSelected();
+      if ( node != NULL )
+        {
+        this->Script ( "QueryAtlasSetAnatomical" );
+        }
+      }
+    else if ((sel == this->FSstatsSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
+      {
+      node = sel->GetSelected();
+      if ( node != NULL )
+        {
+        this->Script ( "QueryAtlasSetStatistics" );
+        }
       }
     }
-  else if ((sel == this->FSbrainSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
-    {
-    node = sel->GetSelected();
-    if ( node != NULL )
-      {
-      this->Script ( "QueryAtlasSetAnatomical" );
-      }
-    }
-  else if ((sel == this->FSstatsSelector ) && ( event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) )
-    {
-    node = sel->GetSelected();
-    if ( node != NULL )
-      {
-      this->Script ( "QueryAtlasSetStatistics" );
-      }
-    }
+  
 
-  
   //---
   //--- Process All Entry events
   //---
-  if ( this->AddDiagnosisEntry )
+  if ( e != NULL )
     {
-    if ( (e == this->AddDiagnosisEntry->GetWidget() ) && ( event == vtkKWEntry::EntryValueChangedEvent ))
+    if ( this->AddDiagnosisEntry )
       {
-      if ( strcmp (this->AddDiagnosisEntry->GetWidget()->GetValue(), "" ) ) 
+      if ( (e == this->AddDiagnosisEntry->GetWidget() ) && ( event == vtkKWEntry::EntryValueChangedEvent ))
         {
-        this->AddToDiagnosisMenu ( this->DiagnosisMenuButton->GetWidget()->GetMenu(),
-                                   this->AddDiagnosisEntry->GetWidget()->GetValue() );
+        if ( strcmp (this->AddDiagnosisEntry->GetWidget()->GetValue(), "" ) ) 
+          {
+          this->AddToDiagnosisMenu ( this->DiagnosisMenuButton->GetWidget()->GetMenu(),
+                                     this->AddDiagnosisEntry->GetWidget()->GetValue() );
+          }
         }
       }
-    }
 
-  if ( (e == this->LocalSearchTermEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
-    {
-    if ( this->LocalSearchTermEntry->GetValue() )
+    if ( (e == this->LocalSearchTermEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
       {
-      if ( strcmp ( this->LocalSearchTermEntry->GetValue(), "" )) 
+      if ( this->LocalSearchTermEntry->GetValue() )
         {
-        this->Script ("QueryAtlasPopulateOntologyInformation %s local", this->LocalSearchTermEntry->GetValue() );
+        if ( strcmp ( this->LocalSearchTermEntry->GetValue(), "" )) 
+          {
+          this->Script ("QueryAtlasPopulateOntologyInformation %s local", this->LocalSearchTermEntry->GetValue() );
+          }
         }
       }
-    }
-  else if ( (e == this->BIRNLexEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
-    {
-    if (this->BIRNLexEntry->GetValue() )
+    else if ( (e == this->BIRNLexEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
       {
-      if ( strcmp ( this->BIRNLexEntry->GetValue(), "" ))
+      if (this->BIRNLexEntry->GetValue() )
         {
-        this->Script ("QueryAtlasPopulateOntologyInformation %s BIRN_String", this->BIRNLexEntry->GetValue() );
+        if ( strcmp ( this->BIRNLexEntry->GetValue(), "" ))
+          {
+          this->Script ("QueryAtlasPopulateOntologyInformation %s BIRN_String", this->BIRNLexEntry->GetValue() );
+          }
         }
       }
-    }
-  else if ( (e == this->BIRNLexIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
-    {
-    if ( this->BIRNLexIDEntry->GetValue() )
+    else if ( (e == this->BIRNLexIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
       {
-      if ( strcmp (this->BIRNLexIDEntry->GetValue(), "" ))
+      if ( this->BIRNLexIDEntry->GetValue() )
         {
-        this->Script ("QueryAtlasPopulateOntologyInformation %s BIRN_ID", this->BIRNLexIDEntry->GetValue() );
+        if ( strcmp (this->BIRNLexIDEntry->GetValue(), "" ))
+          {
+          this->Script ("QueryAtlasPopulateOntologyInformation %s BIRN_ID", this->BIRNLexIDEntry->GetValue() );
+          }
         }
       }
-    }
-  else if ( (e == this->NeuroNamesEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
-    {
-    if (this->NeuroNamesEntry->GetValue() )
+    else if ( (e == this->NeuroNamesEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
       {
-      if  (strcmp (this->NeuroNamesEntry->GetValue(), "" ))
+      if (this->NeuroNamesEntry->GetValue() )
         {
-        this->Script ("QueryAtlasPopulateOntologyInformation %s NN", this->NeuroNamesEntry->GetValue() );
+        if  (strcmp (this->NeuroNamesEntry->GetValue(), "" ))
+          {
+          this->Script ("QueryAtlasPopulateOntologyInformation %s NN", this->NeuroNamesEntry->GetValue() );
+          }
         }
       }
-    }
-  else if ( (e == this->NeuroNamesIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
-    {
-    if ( this->NeuroNamesIDEntry->GetValue() )
+    else if ( (e == this->NeuroNamesIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
       {
-      if ( strcmp (this->NeuroNamesIDEntry->GetValue(), "" ))
+      if ( this->NeuroNamesIDEntry->GetValue() )
         {
-        this->Script ("QueryAtlasPopulateOntologyInformation %s NN_ID", this->NeuroNamesIDEntry->GetValue() );
+        if ( strcmp (this->NeuroNamesIDEntry->GetValue(), "" ))
+          {
+          this->Script ("QueryAtlasPopulateOntologyInformation %s NN_ID", this->NeuroNamesIDEntry->GetValue() );
+          }
         }
       }
-    }
-  else if ( (e == this->UMLSCIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
-    {
-    if ( this->UMLSCIDEntry->GetValue() )
+    else if ( (e == this->UMLSCIDEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
       {
-      if ( strcmp (this->UMLSCIDEntry->GetValue(), "" ))
+      if ( this->UMLSCIDEntry->GetValue() )
         {
-        this->Script ("QueryAtlasPopulateOntologyInformation %s UMLS_CID", this->UMLSCIDEntry->GetValue() );
+        if ( strcmp (this->UMLSCIDEntry->GetValue(), "" ))
+          {
+          this->Script ("QueryAtlasPopulateOntologyInformation %s UMLS_CID", this->UMLSCIDEntry->GetValue() );
+          }
         }
       }
     }
@@ -1143,303 +1142,342 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   //---
   //--- Process All PushButton events
   //---
-  if ( this->FSgoButton)
+  if ( b != NULL )
     {
-    if ( (b == this->FSgoButton->GetWidget()) && (event == vtkKWPushButton::InvokedEvent ) )
+    if ( this->FSgoButton)
       {
-      this->Script ( "QueryAtlasFipsFreeSurferSetUp" );
-      }
-    }
-  if ( this->QdecGoButton )
-    {
-    if ( (b == this->QdecGoButton->GetWidget()) && (event == vtkKWPushButton::InvokedEvent ) )
-      {
-      this->Script ( "QueryAtlasQdecSetUp");
-      }
-    }
-
-  if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->OpenBIRNLexBrowser();
-    //--- get last clicked (or typed) structure from the LocalSearchTermEntry
-    const char *structureLabel =  this->NeuroNamesEntry->GetValue();
-    if ( !strcmp (structureLabel, "" ))
-      {
-      structureLabel = "brain";
-      }
-    this->Script ( "QueryAtlasSendHierarchyCommand  \"%s\" NN", structureLabel  );
-    }
-  else if ( (b == this->BIRNLexHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->OpenBIRNLexBrowser();
-    //--- get last clicked (or typed) structure from the LocalSearchTermEntry
-    const char *structureLabel =  this->LocalSearchTermEntry->GetValue();
-    if ( !strcmp (structureLabel, "" ))
-      {
-      structureLabel = "brain";
-      }
-    this->Script ( "QueryAtlasSendHierarchyCommand  \"%s\" BIRN", structureLabel  );
-    }
-  else if ( (b == this->AddLocalTermButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->SavedTerms->AddTerm (this->LocalSearchTermEntry->GetValue() );
-    }
-  else if ( (b == this->AddSynonymButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->SavedTerms->AddTerm (this->SynonymsMenuButton->GetValue() );
-    }
-  else if ( (b == this->AddBIRNLexStringButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->SavedTerms->AddTerm (this->BIRNLexEntry->GetValue() );
-    }
-  else if ( (b == this->AddBIRNLexIDButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->SavedTerms->AddTerm (this->BIRNLexIDEntry->GetValue() );
-    }
-  else if ( (b == this->AddNeuroNamesStringButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->SavedTerms->AddTerm (this->NeuroNamesEntry->GetValue() );
-    }
-  else if ( (b == this->AddNeuroNamesIDButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->SavedTerms->AddTerm (this->NeuroNamesIDEntry->GetValue() );
-    }
-  else if ( (b == this->AddUMLSCIDButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->SavedTerms->AddTerm (this->UMLSCIDEntry->GetValue() );
-    }
-  else if ( (b == this->SearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->Script ( "QueryAtlasFormURLsForTargets");
-    }
-  else if ( (b == this->AnnotationVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    if ( this->AnnotationVisibility == 1 )
-      {
-      // turn off automatic annotations in the main viewer
-      vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
-      this->AnnotationVisibilityButton->SetImageToIcon ( i );
-      this->AnnotationVisibility = 0;
-      this->Script ( "QueryAtlasSetAnnotationsInvisible" );
-      }
-    else
-      {
-      // turn on automatic annotations in main viewer
-      vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
-      this->AnnotationVisibilityButton->SetImageToIcon ( i );
-      this->AnnotationVisibility = 1;
-     this->Script ( "QueryAtlasSetAnnotationsVisible" );
-      }
-    }
-  else if ( (b == this->ModelVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    if ( this->ModelVisibility == 1 )
-      {
-      // turn off automatic annotations in the main viewer
-      vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
-      this->ModelVisibilityButton->SetImageToIcon ( i );
-      this->ModelVisibility = 0;
-      this->Script ( "QueryAtlasSetQueryModelInvisible" );
-      }
-    else
-      {
-      // turn on automatic annotations in main viewer
-      vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
-      this->ModelVisibilityButton->SetImageToIcon ( i );
-      this->ModelVisibility = 1;
-      this->Script ( "QueryAtlasSetQueryModelVisible" );
-      }
-    }
-  else if ( (b == this->FIPSFSButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->UnpackLoaderContextFrames();
-    this->PackLoaderContextFrame ( this->FIPSFSFrame );
-    this->ColorCodeLoaderContextButtons ( this->FIPSFSButton );
-    }
-  else if ( (b == this->QdecButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->UnpackLoaderContextFrames();
-    this->PackLoaderContextFrame ( this->QdecFrame );
-    this->ColorCodeLoaderContextButtons ( this->QdecButton );
-    }
-  else if ( (b == this->StructureButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->UnpackQueryBuilderContextFrames();
-    this->PackQueryBuilderContextFrame ( this->StructureFrame );
-    this->ColorCodeContextButtons ( this->StructureButton );
-    }
-  else if ( (b == this->OtherButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->UnpackQueryBuilderContextFrames();
-    this->PackQueryBuilderContextFrame ( this->OtherFrame);    
-    this->ColorCodeContextButtons ( this->OtherButton );
-    }
-  else if ( (b == this->PopulationButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->UnpackQueryBuilderContextFrames();
-    this->PackQueryBuilderContextFrame ( this->PopulationFrame );
-    this->ColorCodeContextButtons ( this->PopulationButton );
-    }
-  else if ( (b == this->SpeciesButton) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->UnpackQueryBuilderContextFrames();
-    this->PackQueryBuilderContextFrame ( this->SpeciesFrame );
-    this->ColorCodeContextButtons ( this->SpeciesButton );
-    }
-  else if (( b== this->SelectAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    }
-  else if ( (b == this->DeselectAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
-    for ( int i=0; i<num; i++ )
-      {
-      this->CurrentResultsList->GetWidget()->SetSelectState(i,0);
-      }
-    }
-  else if ( (b == this->DeleteCurrentResultButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
-    for ( int i=0; i<num; i++ )
-      {
-      if ( this->CurrentResultsList->GetWidget()->GetSelectState(i) )
+      if ( (b == this->FSgoButton->GetWidget()) && (event == vtkKWPushButton::InvokedEvent ) )
         {
-        this->CurrentResultsList->GetWidget()->DeleteRange( i,i );
+        this->Script ( "QueryAtlasFipsFreeSurferSetUp" );
         }
       }
-    }
-  else if ( (b == this->DeleteAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->CurrentResultsList->GetWidget()->DeleteAll();
-    }
-  else if ( (b == this->SaveCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
-    for ( int i=0; i<num; i++ )
+    if ( this->QdecGoButton )
       {
-      this->AccumulatedResultsList->GetWidget()->AppendUnique (this->CurrentResultsList->GetWidget()->GetItem( i ) );
+      if ( (b == this->QdecGoButton->GetWidget()) && (event == vtkKWPushButton::InvokedEvent ) )
+        {
+        this->Script ( "QueryAtlasQdecSetUp");
+        }
       }
-    }
-  else if ( (b == this->SaveCurrentSelectedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
-    for ( int i=0; i<num; i++ )
+    if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      if ( this->CurrentResultsList->GetWidget()->GetSelectState(i) )
+      this->OpenOntologyBrowser();
+      //--- get last clicked (or typed) structure from the LocalSearchTermEntry
+      const char *structureLabel =  this->NeuroNamesEntry->GetValue();
+      if ( strcmp (structureLabel, "" ))
+        {
+        this->Script ( "QueryAtlasSendHierarchyCommand  \"%s\" NN", structureLabel  );
+        }
+
+      }
+    else if ( (b == this->BIRNLexHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->OpenOntologyBrowser();
+      //--- get last clicked (or typed) structure from the LocalSearchTermEntry
+      const char *structureLabel =  this->BIRNLexEntry->GetValue();
+      if ( strcmp (structureLabel, "" ))
+        {
+        this->Script ( "QueryAtlasSendHierarchyCommand  \"%s\" BIRN", structureLabel  );
+        }
+      }
+    else if ( (b == this->AddLocalTermButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->SavedTerms->AddTerm (this->LocalSearchTermEntry->GetValue() );
+      }
+    else if ( (b == this->AddSynonymButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->SavedTerms->AddTerm (this->SynonymsMenuButton->GetValue() );
+      }
+    else if ( (b == this->AddBIRNLexStringButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->SavedTerms->AddTerm (this->BIRNLexEntry->GetValue() );
+      }
+    else if ( (b == this->AddBIRNLexIDButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->SavedTerms->AddTerm (this->BIRNLexIDEntry->GetValue() );
+      }
+    else if ( (b == this->AddNeuroNamesStringButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->SavedTerms->AddTerm (this->NeuroNamesEntry->GetValue() );
+      }
+    else if ( (b == this->AddNeuroNamesIDButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->SavedTerms->AddTerm (this->NeuroNamesIDEntry->GetValue() );
+      }
+    else if ( (b == this->AddUMLSCIDButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->SavedTerms->AddTerm (this->UMLSCIDEntry->GetValue() );
+      }
+    else if ( (b == this->SearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->Script ( "QueryAtlasFormURLsForTargets");
+      }
+    else if ( (b == this->AnnotationVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      if ( this->AnnotationVisibility == 1 )
+        {
+        // turn off automatic annotations in the main viewer
+        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
+        this->AnnotationVisibilityButton->SetImageToIcon ( i );
+        this->AnnotationVisibility = 0;
+        this->Script ( "QueryAtlasSetAnnotationsInvisible" );
+        }
+      else
+        {
+        // turn on automatic annotations in main viewer
+        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
+        this->AnnotationVisibilityButton->SetImageToIcon ( i );
+        this->AnnotationVisibility = 1;
+        this->Script ( "QueryAtlasSetAnnotationsVisible" );
+        }
+      }
+    else if ( (b == this->LHModelVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      if ( this->LHModelVisibility == 1 )
+        {
+        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
+        this->LHModelVisibilityButton->SetImageToIcon ( i );
+        this->LHModelVisibility = 0;
+        this->Script ( "QueryAtlasSetLHQueryModelInvisible" );
+        }
+      else
+        {
+        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
+        this->LHModelVisibilityButton->SetImageToIcon ( i );
+        this->LHModelVisibility = 1;
+        this->Script ( "QueryAtlasSetLHQueryModelVisible" );
+        }
+      }
+    else if ( (b == this->RHModelVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      if ( this->RHModelVisibility == 1 )
+        {
+        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
+        this->RHModelVisibilityButton->SetImageToIcon ( i );
+        this->RHModelVisibility = 0;
+        this->Script ( "QueryAtlasSetRHQueryModelInvisible" );
+        }
+      else
+        {
+        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
+        this->RHModelVisibilityButton->SetImageToIcon ( i );
+        this->RHModelVisibility = 1;
+        this->Script ( "QueryAtlasSetRHQueryModelVisible" );
+        }
+      }
+    else if ( (b == this->ModelVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      if ( this->ModelVisibility == 1 )
+        {
+        // turn off automatic annotations in the main viewer
+        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
+        this->ModelVisibilityButton->SetImageToIcon ( i );
+        this->ModelVisibility = 0;
+        this->Script ( "QueryAtlasSetQueryModelInvisible" );
+        }
+      else
+        {
+        // turn on automatic annotations in main viewer
+        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
+        this->ModelVisibilityButton->SetImageToIcon ( i );
+        this->ModelVisibility = 1;
+        this->Script ( "QueryAtlasSetQueryModelVisible" );
+        }
+      }
+    else if ( (b == this->FIPSFSButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->UnpackLoaderContextFrames();
+      this->PackLoaderContextFrame ( this->FIPSFSFrame );
+      this->ColorCodeLoaderContextButtons ( this->FIPSFSButton );
+      }
+    else if ( (b == this->QdecButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->UnpackLoaderContextFrames();
+      this->PackLoaderContextFrame ( this->QdecFrame );
+      this->ColorCodeLoaderContextButtons ( this->QdecButton );
+      }
+    else if ( (b == this->StructureButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->UnpackQueryBuilderContextFrames();
+      this->PackQueryBuilderContextFrame ( this->StructureFrame );
+      this->ColorCodeContextButtons ( this->StructureButton );
+      }
+    else if ( (b == this->OtherButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->UnpackQueryBuilderContextFrames();
+      this->PackQueryBuilderContextFrame ( this->OtherFrame);    
+      this->ColorCodeContextButtons ( this->OtherButton );
+      }
+    else if ( (b == this->PopulationButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->UnpackQueryBuilderContextFrames();
+      this->PackQueryBuilderContextFrame ( this->PopulationFrame );
+      this->ColorCodeContextButtons ( this->PopulationButton );
+      }
+    else if ( (b == this->SpeciesButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->UnpackQueryBuilderContextFrames();
+      this->PackQueryBuilderContextFrame ( this->SpeciesFrame );
+      this->ColorCodeContextButtons ( this->SpeciesButton );
+      }
+    else if ( (b == this->DeselectAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
+      for ( int i=0; i<num; i++ )
+        {
+        this->CurrentResultsList->GetWidget()->SetSelectState(i,0);
+        }
+      }
+    else if ( (b == this->DeleteCurrentResultButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
+      for ( int i=0; i<num; i++ )
+        {
+        if ( this->CurrentResultsList->GetWidget()->GetSelectState(i) )
+          {
+          this->CurrentResultsList->GetWidget()->DeleteRange( i,i );
+          }
+        }
+      }
+    else if ( (b == this->DeleteAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->CurrentResultsList->GetWidget()->DeleteAll();
+      }
+    else if ( (b == this->SaveCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
+      for ( int i=0; i<num; i++ )
         {
         this->AccumulatedResultsList->GetWidget()->AppendUnique (this->CurrentResultsList->GetWidget()->GetItem( i ) );
         }
       }
-    }
-  else if ( (b == this->SelectAllAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    }
-
-  else if ( (b == this->DeselectAllAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    int num = this->AccumulatedResultsList->GetWidget()->GetNumberOfItems();
-    for ( int i=0; i<num; i++ )
+    else if ( (b == this->SaveCurrentSelectedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      this->AccumulatedResultsList->GetWidget()->SetSelectState(i,0);
-      }
-    }
-  else if ( (b == this->DeleteAccumulatedResultButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    int num = this->AccumulatedResultsList->GetWidget()->GetNumberOfItems();
-    for ( int i=0; i<num; i++ )
-      {
-      if ( this->AccumulatedResultsList->GetWidget()->GetSelectState(i) )
+      int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
+      for ( int i=0; i<num; i++ )
         {
-        this->AccumulatedResultsList->GetWidget()->DeleteRange( i,i );
+        if ( this->CurrentResultsList->GetWidget()->GetSelectState(i) )
+          {
+          this->AccumulatedResultsList->GetWidget()->AppendUnique (this->CurrentResultsList->GetWidget()->GetItem( i ) );
+          }
         }
       }
+    else if (( b== this->SelectAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
+      for ( int i=0; i<num; i++ )
+        {
+        this->CurrentResultsList->GetWidget()->SetSelectState(i,1);
+        }
+      }
+    else if ( (b == this->SelectAllAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      int num = this->AccumulatedResultsList->GetWidget()->GetNumberOfItems();
+      for ( int i=0; i<num; i++ )
+        {
+        this->AccumulatedResultsList->GetWidget()->SetSelectState(i,1);
+        }
+      }
+    else if ( (b == this->DeselectAllAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      int num = this->AccumulatedResultsList->GetWidget()->GetNumberOfItems();
+      for ( int i=0; i<num; i++ )
+        {
+        this->AccumulatedResultsList->GetWidget()->SetSelectState(i,0);
+        }
+      }
+    else if ( (b == this->DeleteAccumulatedResultButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      int num = this->AccumulatedResultsList->GetWidget()->GetNumberOfItems();
+      for ( int i=0; i<num; i++ )
+        {
+        if ( this->AccumulatedResultsList->GetWidget()->GetSelectState(i) )
+          {
+          this->AccumulatedResultsList->GetWidget()->DeleteRange( i,i );
+          }
+        }
+      }
+    else if ( (b == this->DeleteAllAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->AccumulatedResultsList->GetWidget()->DeleteAll();
+      }
     }
-  else if ( (b == this->DeleteAllAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-    {
-    this->AccumulatedResultsList->GetWidget()->DeleteAll();
-    }
-//  else if ( (b == this->SaveAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-//    {
-//    this->Script( "QueryAtlasWriteFirefoxBookmarkFile");
-//    }
-//  else if ( (b == this->LoadURIsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
-//    {
-//    this->Script( "QueryAtlasLoadFirefoxBookmarkFile");
-//    }
-
 
   //---
   //--- Process menu selections
   //---
   // no need to do anything here; we'll just grab the widget values when we need them with tcl
-  if ( this->AnnotationTermSetMenuButton )
+  if ( m != NULL )
     {
-    if (( m== this->AnnotationTermSetMenuButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
+    if ( this->AnnotationTermSetMenuButton )
       {
-      const char *val = this->AnnotationTermSetMenuButton->GetValue();
-      if ( !strcmp( val, "local identifier" ) )
+      if (( m== this->AnnotationTermSetMenuButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
         {
-        this->Script ( "QueryAtlasSetAnnotationTermSet local" );
+        const char *val = this->AnnotationTermSetMenuButton->GetValue();
+        if ( !strcmp( val, "local identifier" ) )
+          {
+          this->Script ( "QueryAtlasSetAnnotationTermSet local" );
+          }
+        else if (!strcmp( val, "BIRNLex String" ) )
+          {
+          this->Script ( "QueryAtlasSetAnnotationTermSet BIRNLex" );
+          }
+        else if (!strcmp( val, "NeuroNames String" ) )
+          {
+          this->Script ( "QueryAtlasSetAnnotationTermSet NeuroNames" );
+          }
+        else if (!strcmp( val, "UMLS CID" ) )
+          {
+          this->Script ( "QueryAtlasSetAnnotationTermSet UMLS" );
+          }
         }
-      else if (!strcmp( val, "BIRNLex String" ) )
+      }
+    if ( this->QdecScalarSelector )
+      {
+      if (( m == this->QdecScalarSelector->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ))
         {
-        this->Script ( "QueryAtlasSetAnnotationTermSet BIRNLex" );
+        // what to do when an overlay  name is selected.. Get from nicole
         }
-      else if (!strcmp( val, "NeuroNames String" ) )
+      }
+    }
+
+  //---
+  //--- Process Checkbuttons
+  //---
+  if ( c != NULL )
+    {
+    if ((c == this->SpeciesNoneButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent))
+      {
+      if (this->SpeciesNoneButton->GetSelectedState() == 1 )
         {
-        this->Script ( "QueryAtlasSetAnnotationTermSet NeuroNames" );
+        this->SpeciesHumanButton->SetSelectedState(0);
+        this->SpeciesMouseButton->SetSelectedState(0);
+        this->SpeciesMacaqueButton->SetSelectedState(0);
         }
-      else if (!strcmp( val, "UMLS CID" ) )
+      }
+    if ((c == this->SpeciesHumanButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent))
+      {
+      if (this->SpeciesNoneButton->GetSelectedState() == 1 && this->SpeciesHumanButton->GetSelectedState() == 1 )
         {
-        this->Script ( "QueryAtlasSetAnnotationTermSet UMLS" );
+        this->SpeciesNoneButton->SetSelectedState(0);
+        }
+      }
+    if ((c == this->SpeciesMouseButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent))
+      {
+      if (this->SpeciesNoneButton->GetSelectedState() == 1 && this->SpeciesMouseButton->GetSelectedState() == 1 )
+        {
+        this->SpeciesNoneButton->SetSelectedState(0);
+        }
+      }
+    if ((c == this->SpeciesMacaqueButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent))
+      {
+      if (this->SpeciesNoneButton->GetSelectedState() == 1 && this->SpeciesMacaqueButton->GetSelectedState() == 1 )
+        {
+        this->SpeciesNoneButton->SetSelectedState(0);
         }
       }
     }
-  if ( this->QdecScalarSelector )
-    {
-    if (( m == this->QdecScalarSelector->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ))
-      {
-      // what to do when an overlay  name is selected.. Get from nicole
-      }
-    }
-  if ( this->DiagnosisMenuButton )
-    {
-    if (( m== this->DiagnosisMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
-      {
-      }
-    }
-  if ( this->GenderMenuButton )
-    {
-    if (( m== this->GenderMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
-      {
-      }
-    }
-  if ( this->HandednessMenuButton )
-    {
-    if (( m== this->HandednessMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
-      {
-      }
-    }
-  if ( this->AgeMenuButton )
-    {
-    if (( m== this->AgeMenuButton->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
-      {
-      }
-    }
-  
-  if ((c == this->SpeciesNoneButton) && (event == vtkKWRadioButton::SelectedStateChangedEvent))
-    {
-    }
-  if ((c == this->SpeciesHumanButton) && (event == vtkKWRadioButton::SelectedStateChangedEvent))
-    {
-    }
-  if ((c == this->SpeciesMouseButton) && (event == vtkKWRadioButton::SelectedStateChangedEvent))
-    {
-    }
-  if ((c == this->SpeciesMacaqueButton) && (event == vtkKWRadioButton::SelectedStateChangedEvent))
-    {
-    }
-    return;
+
+  return;
 }
 
 
@@ -1605,12 +1643,14 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
 void vtkQueryAtlasGUI::Enter ( )
 {
     vtkDebugMacro("vtkQueryAtlasGUI: Enter\n");
+    this->Script ( "QueryAtlasAddInteractorObservers" );
 }
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::Exit ( )
 {
     vtkDebugMacro("vtkQueryAtlasGUI: Exit\n");
+    this->Script ( "QueryAtlasRemoveInteractorObservers" );
 }
 
 //---------------------------------------------------------------------------
@@ -1833,7 +1873,7 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->QdecGetResultsButton->SetBalloonHelpString ( "Load Qdec results" );
     //this->QdecGetResultsButton->GetWidget()->SetCommand ( this, "" );
     this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Load Qdec results");
-    this->QdecGetResultsButton->GetLabel()->SetText( "Qdec results: ");
+    this->QdecGetResultsButton->GetLabel()->SetText( "Load Qdec results: ");
     this->QdecGetResultsButton->GetLabel()->SetWidth ( 18 );
     this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
     this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOff();
@@ -1923,6 +1963,39 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     this->ModelVisibilityButton->SetReliefToFlat();    
     this->ModelVisibilityButton->SetBalloonHelpString ( "Toggle model visibility." );
 
+    vtkKWLabel *LHmodelLabel = vtkKWLabel::New();
+    LHmodelLabel->SetParent ( annotationFrame->GetFrame() );
+    LHmodelLabel->Create();
+    LHmodelLabel->SetText ("LH model visibility: " );
+
+    this->LHModelVisibilityButton = vtkKWPushButton::New();
+    this->LHModelVisibilityButton->SetParent ( annotationFrame->GetFrame() );
+    this->LHModelVisibilityButton->Create();
+    // get the icon this way; don't seem to admit baseGUI scope.
+    // TODO: move common icons up into applicationGUI for easy access.
+    i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
+    this->LHModelVisibilityButton->SetImageToIcon ( i );
+    this->LHModelVisibilityButton->SetBorderWidth ( 0 );
+    this->LHModelVisibilityButton->SetReliefToFlat();    
+    this->LHModelVisibilityButton->SetBalloonHelpString ( "Toggle model visibility." );
+
+    vtkKWLabel *RHmodelLabel = vtkKWLabel::New();
+    RHmodelLabel->SetParent ( annotationFrame->GetFrame() );
+    RHmodelLabel->Create();
+    RHmodelLabel->SetText ("RH model visibility: " );
+
+    this->RHModelVisibilityButton = vtkKWPushButton::New();
+    this->RHModelVisibilityButton->SetParent ( annotationFrame->GetFrame() );
+    this->RHModelVisibilityButton->Create();
+    // get the icon this way; don't seem to admit baseGUI scope.
+    // TODO: move common icons up into applicationGUI for easy access.
+    i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
+    this->RHModelVisibilityButton->SetImageToIcon ( i );
+    this->RHModelVisibilityButton->SetBorderWidth ( 0 );
+    this->RHModelVisibilityButton->SetReliefToFlat();    
+    this->RHModelVisibilityButton->SetBalloonHelpString ( "Toggle model visibility." );
+    
+
     vtkKWLabel *l = vtkKWLabel::New();
     l->SetParent ( annotationFrame->GetFrame() );
     l->Create ( );
@@ -1949,10 +2022,19 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     app->Script ( "grid %s -row 1 -column 1  -sticky wns -padx 2 -pady 2",
                   this->AnnotationVisibilityButton->GetWidgetName() );
     app->Script ( "grid %s -row 2 -column 0   -sticky ens -padx 2 -pady 2",
-                  modelLabel->GetWidgetName() );
+                  LHmodelLabel->GetWidgetName() );
     app->Script ( "grid %s -row 2 -column 1   -sticky wns -padx 2 -pady 2",
+                  this->LHModelVisibilityButton->GetWidgetName() );
+    app->Script ( "grid %s -row 3 -column 0   -sticky ens -padx 2 -pady 2",
+                  RHmodelLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 3 -column 1   -sticky wns -padx 2 -pady 2",
+                  this->RHModelVisibilityButton->GetWidgetName() );
+/*
+    app->Script ( "grid %s -row 4 -column 0   -sticky ens -padx 2 -pady 2",
+                  modelLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 4 -column 1   -sticky wns -padx 2 -pady 2",
                   this->ModelVisibilityButton->GetWidgetName() );
-
+*/
     app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 4 -pady 2 -in %s",
                   annotationFrame->GetWidgetName(), 
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
@@ -1960,6 +2042,8 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     l->Delete();
     annoLabel->Delete();
     modelLabel->Delete();
+    LHmodelLabel->Delete();
+    RHmodelLabel->Delete();    
     annotationFrame->Delete();
 }
 
@@ -2196,9 +2280,13 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     hierarchyFrame->Delete();
 }
 
+
+
+
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildSearchTermGUI ( )
 {
+
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
     // -------------------------------------------------------------------------------------------------
@@ -2231,11 +2319,13 @@ void vtkQueryAtlasGUI::BuildSearchTermGUI ( )
     this->BuildOtherFrame();
     this->PackQueryBuilderContextFrame ( this->StructureFrame );
     app->Script ( "pack %s -side top -fill x -expand 1", this->SwitchQueryFrame->GetWidgetName() );
-//    this->Script ( "place %s -relx 0 -rely 0 -anchor nw", this->SwitchQueryFrame->GetWidgetName());
     this->ColorCodeContextButtons ( this->StructureButton );
-    queryFrame->Delete();
 
+    queryFrame->Delete();
 }
+
+
+
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildQueriesGUI ( )
@@ -2243,11 +2333,6 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
 
-    // -------------------------------------------------------------------------------------------------
-    // ---
-    // BUILD QUERIES FRAME
-    // ---
-    // -------------------------------------------------------------------------------------------------
     vtkSlicerModuleCollapsibleFrame *searchFrame = vtkSlicerModuleCollapsibleFrame::New();
     searchFrame->SetParent ( page);
     searchFrame->Create();
@@ -2257,85 +2342,67 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
                   searchFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
 
-    /*
-    vtkKWFrame *f = vtkKWFrame::New();
-    f->SetParent ( searchFrame->GetFrame() );
-    f->Create();
-    this->ResultsWithAnyButton = vtkKWRadioButton::New();
-    this->ResultsWithAnyButton->SetParent ( f );
-    this->ResultsWithAnyButton->Create();
-    this->ResultsWithAnyButton->SetImageToIcon ( this->QueryAtlasIcons->GetWithAnyIcon() );
-    this->ResultsWithAnyButton->SetSelectImageToIcon ( this->QueryAtlasIcons->GetWithAnyDisabledIcon() );
-    this->ResultsWithAnyButton->SetBorderWidth ( 0 );
-    this->ResultsWithAnyButton->SetReliefToFlat ( );
-    this->ResultsWithAnyButton->SetSelectedState ( 1 );
-    this->ResultsWithAnyButton->IndicatorVisibilityOff();
-    this->ResultsWithAnyButton->SetValueAsInt ( vtkQueryAtlasGUI::Or );
-    this->ResultsWithAnyButton->SetBalloonHelpString ( "Search for results that include any of the search terms." );
+    // ---
+    // QUERY TARGET WIDGETS
+    // ---
+    this->UseOtherTerms = vtkKWCheckButton::New();
+    this->UseOtherTerms->SetParent ( searchFrame->GetFrame() );
+    this->UseOtherTerms->Create();
+    this->UseOtherTerms->SetText ( "use (selected) other terms" );
+    this->UseOtherTerms->SetSelectedState ( 0 );
 
-    this->ResultsWithAllButton = vtkKWRadioButton::New();
-    this->ResultsWithAllButton->SetParent ( f );
-    this->ResultsWithAllButton->Create();
-    this->ResultsWithAllButton->SetImageToIcon ( this->QueryAtlasIcons->GetWithAllIcon() );
-    this->ResultsWithAllButton->SetImageToIcon ( this->QueryAtlasIcons->GetWithAllDisabledIcon() );
-    this->ResultsWithAllButton->SetBorderWidth ( 0 );
-    this->ResultsWithAllButton->SetReliefToFlat ( );
-    this->ResultsWithAllButton->SetStateToDisabled();
-    this->ResultsWithAllButton->SetValueAsInt ( vtkQueryAtlasGUI::And );
-    this->ResultsWithAllButton->SetVariableName ( this->ResultsWithAnyButton->GetVariableName() );
-    this->ResultsWithAllButton->SetBalloonHelpString ( "Search for results that include all of the search terms (disabled)." );
+    this->UseStructureTerms = vtkKWCheckButton::New();
+    this->UseStructureTerms->SetParent ( searchFrame->GetFrame() );
+    this->UseStructureTerms->Create();
+    this->UseStructureTerms->SetText ( "use (selected) structure terms" );
+    this->UseStructureTerms->SetSelectedState ( 1 );
 
-    this->ResultsWithExactButton = vtkKWRadioButton::New();
-    this->ResultsWithExactButton->SetParent ( f );
-    this->ResultsWithExactButton->Create();
-    this->ResultsWithExactButton->SetImageToIcon ( this->QueryAtlasIcons->GetWithExactIcon() );
-    this->ResultsWithExactButton->SetImageToIcon ( this->QueryAtlasIcons->GetWithExactDisabledIcon() );
-    this->ResultsWithExactButton->SetBorderWidth ( 0 );
-    this->ResultsWithExactButton->SetReliefToFlat ( );
-    this->ResultsWithExactButton->SetStateToDisabled();
-    this->ResultsWithExactButton->SetValueAsInt ( vtkQueryAtlasGUI::Quote );
-    this->ResultsWithExactButton->SetVariableName ( this->ResultsWithAnyButton->GetVariableName() );
-    this->ResultsWithExactButton->SetBalloonHelpString ( "Search for results that include the exact search terms (disabled)." );
-    */
+    this->UseGroupTerms = vtkKWCheckButton::New();
+    this->UseGroupTerms->SetParent ( searchFrame->GetFrame() );
+    this->UseGroupTerms->Create();
+    this->UseGroupTerms->SetText ( "use group terms" );
+    this->UseGroupTerms->SetSelectedState ( 0 );
+
+    this->UseSpeciesTerms = vtkKWCheckButton::New();
+    this->UseSpeciesTerms->SetParent ( searchFrame->GetFrame() );
+    this->UseSpeciesTerms->Create();
+    this->UseSpeciesTerms->SetText ( "use species terms" );
+    this->UseSpeciesTerms->SetSelectedState ( 0 );
+    app->Script ( "grid %s -row 0 -column 1 -padx 0  -pady 2 -sticky w", this->UseOtherTerms->GetWidgetName() );
+    app->Script ( "grid %s -row 1 -column 1 -padx 0  -pady 2 -sticky w", this->UseStructureTerms->GetWidgetName() );
+    app->Script ( "grid %s -row 2 -column 1 -padx 0  -pady 2 -sticky w", this->UseGroupTerms->GetWidgetName() );
+    app->Script ( "grid %s -row 3 -column 1 -padx 0  -pady 2 -sticky w", this->UseSpeciesTerms->GetWidgetName() );
+
 
     vtkKWLabel *sl = vtkKWLabel::New();
     sl->SetParent ( searchFrame->GetFrame() );
     sl->Create();
     sl->SetText ("search target: ");
+    
     this->DatabasesMenuButton = vtkKWMenuButton::New();
     this->DatabasesMenuButton->SetParent ( searchFrame->GetFrame() );
     this->DatabasesMenuButton->Create();
     this->DatabasesMenuButton->SetWidth (24);    
     this->BuildDatabasesMenu(this->DatabasesMenuButton->GetMenu() );
+
     this->SearchButton = vtkKWPushButton::New();
-//    this->SearchButton->SetParent ( f );
     this->SearchButton->SetParent ( searchFrame->GetFrame() );
     this->SearchButton->Create();
     this->SearchButton->SetImageToIcon ( this->QueryAtlasIcons->GetSearchIcon() );
     this->SearchButton->SetBorderWidth ( 0 );
     this->SearchButton->SetReliefToFlat();
     this->SearchButton->SetBalloonHelpString ( "Perform a search" );
-/*
-    app->Script ( "pack %s %s %s %s -side left -anchor w -padx 2 -pady 2",
-                  this->ResultsWithAnyButton->GetWidgetName(),
-                  this->ResultsWithAllButton->GetWidgetName(),
-                  this->ResultsWithExactButton->GetWidgetName(),
-                  this->SearchButton->GetWidgetName() );
-*/
-    app->Script ("grid %s -row 0 -column 0 -padx 0 -pady 2 -sticky w",
+
+    app->Script ("grid %s -row 4 -column 0 -padx 0 -pady 2 -sticky w",
                  sl->GetWidgetName() );
-    app->Script ("grid %s -row 0 -column 1 -padx 0 -pady 2 -sticky w",
+    app->Script ("grid %s -row 4 -column 1 -padx 0 -pady 2 -sticky w",
                  this->DatabasesMenuButton->GetWidgetName() );    
-    app->Script ("grid %s -row 0 -column 2 -padx 2 -pady 2 -sticky w",
+    app->Script ("grid %s -row 4 -column 2 -padx 2 -pady 2 -sticky w",
                  this->SearchButton->GetWidgetName() );
-/*
-    app->Script ("grid %s -row 1 -column 1 -padx 0 -pady 2 -sticky w",
-                 f->GetWidgetName() );
-*/
 
 
     // ---
-    // QUERY RESULTS MANAGER FRAME
+    // QUERY RESULTS MANAGER WIDGETS
     // ---
 
     vtkKWFrame *managerFrame = vtkKWFrame::New();
@@ -2480,7 +2547,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->SetTitle("Save Firefox bookmarks file");
     this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->ChooseDirectoryOff();
     this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->SaveDialogOn();
-    this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->SetFileTypes ( "*.html");
+    this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->SetFileTypes ( "{ {Bookmark file} {*.html} }");
 
     this->LoadURIsButton = vtkKWLoadSaveButton::New();
     this->LoadURIsButton->SetParent ( pastF);
@@ -2495,7 +2562,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->LoadURIsButton->GetLoadSaveDialog()->SaveDialogOff();
     this->LoadURIsButton->GetLoadSaveDialog()->SetFileTypes ( "*.html");
 
-    app->Script ( "grid %s -row 1 -column 0 -columnspan 3 -pady 4 -padx 3", managerFrame->GetWidgetName() ); 
+    app->Script ( "grid %s -row 5 -column 0 -columnspan 3 -sticky ew -pady 4 -padx 3", managerFrame->GetWidgetName() ); 
 
     app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand 1", topcurF->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", curL->GetWidgetName() );
@@ -2540,8 +2607,6 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     toppastF->Delete();
     pastF->Delete();
     managerFrame->Delete();
-
-//    f->Delete();
     sl->Delete();
     searchFrame->Delete();
 }
@@ -2615,8 +2680,6 @@ void vtkQueryAtlasGUI::BuildStructureFrame()
     this->StructureListWidget = vtkQueryAtlasUseSearchTermWidget::New ( );
     this->StructureListWidget->SetParent ( this->StructureFrame );
     this->StructureListWidget->Create ( );
-//    int i = this->StructureListWidget->GetMultiColumnList()->GetWidget()->GetColumnIndexWithName ( "Search terms" );
-//    this->StructureListWidget->GetMultiColumnList()->GetWidget()->SetColumnName ( i, "Structure terms");
     app->Script ( "pack %s -side top -fill x -expand true", this->StructureListWidget->GetWidgetName() );
 }
 
@@ -2631,33 +2694,29 @@ void vtkQueryAtlasGUI::BuildSpeciesFrame()
     this->SpeciesLabel->Create();
     this->SpeciesLabel->SetText( "species to include: ");
     
-    this->SpeciesNoneButton = vtkKWRadioButton::New();
+    this->SpeciesNoneButton = vtkKWCheckButton::New();
     this->SpeciesNoneButton->SetParent ( this->SpeciesFrame);
     this->SpeciesNoneButton->Create();
-    this->SpeciesNoneButton->SetValue ("n/a");
     this->SpeciesNoneButton->SetText ("don't specify");
     this->SpeciesNoneButton->SetSelectedState ( 1 );
     
-    this->SpeciesHumanButton = vtkKWRadioButton::New();
+    this->SpeciesHumanButton = vtkKWCheckButton::New();
     this->SpeciesHumanButton->SetParent ( this->SpeciesFrame);
     this->SpeciesHumanButton->Create();
-    this->SpeciesHumanButton->SetValue ("human");
     this->SpeciesHumanButton->SetText ("human");
-    this->SpeciesHumanButton->SetVariableName ( this->SpeciesNoneButton->GetVariableName() );
+    this->SpeciesHumanButton->SetSelectedState ( 0 );
     
-    this->SpeciesMouseButton = vtkKWRadioButton::New();
+    this->SpeciesMouseButton = vtkKWCheckButton::New();
     this->SpeciesMouseButton->SetParent ( this->SpeciesFrame );
     this->SpeciesMouseButton->Create();
     this->SpeciesMouseButton->SetText("mouse");
-    this->SpeciesMouseButton->SetValue ("mouse");
-    this->SpeciesMouseButton->SetVariableName ( this->SpeciesNoneButton->GetVariableName() );
+    this->SpeciesMouseButton->SetSelectedState ( 0 );
 
-    this->SpeciesMacaqueButton = vtkKWRadioButton::New();
+    this->SpeciesMacaqueButton = vtkKWCheckButton::New();
     this->SpeciesMacaqueButton->SetParent ( this->SpeciesFrame);
     this->SpeciesMacaqueButton->Create();
     this->SpeciesMacaqueButton->SetText ("macaque");
-    this->SpeciesMacaqueButton->SetValue ("macaque");
-    this->SpeciesMacaqueButton->SetVariableName ( this->SpeciesNoneButton->GetVariableName() );
+    this->SpeciesMacaqueButton->SetSelectedState( 0 );
 
     app->Script ( "grid %s -row 0 -column 0 -sticky w", this->SpeciesLabel->GetWidgetName() );
     app->Script ( "grid %s -row 0 -column 1 -sticky w", this->SpeciesNoneButton->GetWidgetName() );
@@ -2856,12 +2915,17 @@ void vtkQueryAtlasGUI::UnpackQueryBuilderContextFrames ( )
     this->Script ( "pack forget %s", this->SpeciesFrame->GetWidgetName() );
 }
 
+
+
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::PackQueryBuilderContextFrame ( vtkKWFrame *f )
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   app->Script ( "pack %s -side top -anchor nw -expand 0 -fill x", f->GetWidgetName( ));
 }
+
+
+
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildQueryBuilderContextFrames ( vtkKWFrame *parent )
@@ -2883,8 +2947,8 @@ void vtkQueryAtlasGUI::BuildQueryBuilderContextFrames ( vtkKWFrame *parent )
     this->OtherFrame = vtkKWFrame::New();
     this->OtherFrame->SetParent ( parent );
     this->OtherFrame->Create();
-
 }
+
 
 
 
@@ -3013,12 +3077,27 @@ void vtkQueryAtlasGUI::GetDiagnosisTerms ( )
 }
 
 
+
+
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::GetSpeciesTerms ( )
 {
   this->SpeciesTerms.clear();
-  this->SpeciesTerms.push_back ( std::string ( this->SpeciesNoneButton->GetVariableValue() ));
+  if ( this->SpeciesHumanButton->GetSelectedState() )
+    {
+    this->SpeciesTerms.push_back ( std::string ("human" ) );
+    }
+  if ( this->SpeciesMouseButton->GetSelectedState() )
+    {
+    this->SpeciesTerms.push_back ( std::string ("mouse" ) );
+    }
+  if ( this->SpeciesMacaqueButton->GetSelectedState() )
+    {
+    this->SpeciesTerms.push_back ( std::string ("macaque" ) );
+    }
 }
+
+
 
 
 //---------------------------------------------------------------------------

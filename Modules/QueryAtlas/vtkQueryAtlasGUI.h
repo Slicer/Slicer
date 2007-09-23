@@ -16,6 +16,7 @@
 
 class vtkKWPushButton;
 class vtkKWPushButtonWithLabel;
+class vtkKWMultiColumnList;
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWMenuButton;
 class vtkKWMenuButtonWithLabel;
@@ -58,10 +59,14 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     
     // Annotation Options frame and widgets
     vtkGetObjectMacro (ModelVisibilityButton, vtkKWPushButton );
+    vtkGetObjectMacro (LHModelVisibilityButton, vtkKWPushButton );
+    vtkGetObjectMacro (RHModelVisibilityButton, vtkKWPushButton );    
     vtkGetObjectMacro (AnnotationVisibilityButton, vtkKWPushButton );
     vtkGetObjectMacro (AnnotationTermSetMenuButton, vtkKWMenuButton );
     vtkGetMacro ( AnnotationVisibility, int );
     vtkGetMacro ( ModelVisibility, int );
+    vtkGetMacro ( LHModelVisibility, int );
+    vtkGetMacro ( RHModelVisibility, int );
 
     // Querybuilder frame top widgets
     vtkGetObjectMacro (OtherButton, vtkKWPushButton );
@@ -74,10 +79,10 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // species panel
     vtkGetObjectMacro (SpeciesFrame, vtkKWFrame);
     vtkGetObjectMacro (SpeciesLabel, vtkKWLabel);
-    vtkGetObjectMacro (SpeciesNoneButton, vtkKWRadioButton );
-    vtkGetObjectMacro (SpeciesHumanButton, vtkKWRadioButton );
-    vtkGetObjectMacro (SpeciesMouseButton, vtkKWRadioButton);
-    vtkGetObjectMacro (SpeciesMacaqueButton, vtkKWRadioButton );
+    vtkGetObjectMacro (SpeciesNoneButton, vtkKWCheckButton );
+    vtkGetObjectMacro (SpeciesHumanButton, vtkKWCheckButton );
+    vtkGetObjectMacro (SpeciesMouseButton, vtkKWCheckButton);
+    vtkGetObjectMacro (SpeciesMacaqueButton, vtkKWCheckButton );
     
     // population panel
     vtkGetObjectMacro (PopulationFrame, vtkKWFrame );
@@ -99,6 +104,10 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // search panel
     vtkGetObjectMacro ( DatabasesMenuButton, vtkKWMenuButton );
     vtkGetObjectMacro ( SearchButton, vtkKWPushButton );
+    vtkGetObjectMacro ( UseOtherTerms, vtkKWCheckButton );
+    vtkGetObjectMacro ( UseStructureTerms, vtkKWCheckButton );    
+    vtkGetObjectMacro ( UseGroupTerms, vtkKWCheckButton );
+    vtkGetObjectMacro ( UseSpeciesTerms, vtkKWCheckButton );
     vtkGetObjectMacro (ResultsWithAnyButton, vtkKWRadioButton);
     vtkGetObjectMacro (ResultsWithAllButton, vtkKWRadioButton);
     vtkGetObjectMacro (ResultsWithExactButton, vtkKWRadioButton);
@@ -207,6 +216,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void AddGUIObservers ( );
     virtual void RemoveGUIObservers ( );
 
+
     // Description:
     // Add/Remove observers on MRML
     virtual void AddMRMLObservers ( );
@@ -298,6 +308,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Annotation Options frame and widgets
     vtkKWPushButton *AnnotationVisibilityButton;
     vtkKWPushButton *ModelVisibilityButton;
+    vtkKWPushButton *LHModelVisibilityButton;
+    vtkKWPushButton *RHModelVisibilityButton;
     vtkKWMenuButton *AnnotationTermSetMenuButton;
     
     // ontology frame
@@ -332,10 +344,10 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // species frame
     vtkKWFrame *SpeciesFrame;
     vtkKWLabel *SpeciesLabel;
-    vtkKWRadioButton *SpeciesNoneButton;
-    vtkKWRadioButton *SpeciesHumanButton;
-    vtkKWRadioButton *SpeciesMouseButton;
-    vtkKWRadioButton *SpeciesMacaqueButton;
+    vtkKWCheckButton *SpeciesNoneButton;
+    vtkKWCheckButton *SpeciesHumanButton;
+    vtkKWCheckButton *SpeciesMouseButton;
+    vtkKWCheckButton *SpeciesMacaqueButton;
 
     // population frame
     vtkKWFrame *PopulationFrame;
@@ -356,6 +368,10 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWRadioButton *ResultsWithAnyButton;
     vtkKWRadioButton *ResultsWithAllButton;
     vtkKWRadioButton *ResultsWithExactButton;
+    vtkKWCheckButton *UseOtherTerms;
+    vtkKWCheckButton *UseStructureTerms;
+    vtkKWCheckButton *UseGroupTerms;
+    vtkKWCheckButton *UseSpeciesTerms;
     
     // results frame
     vtkKWListBoxWithScrollbars *CurrentResultsList;
@@ -378,10 +394,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWFrame *OtherFrame;
     vtkQueryAtlasUseSearchTermWidget *OtherListWidget;
 
-
-    void OpenBIRNLexBrowser();
-    void OpenNeuroNamesBrowser();
-    void OpenUMLSBrowser();
+    void OpenOntologyBrowser();
 
     bool SceneClosing;
     
@@ -400,6 +413,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // move all this to MRML Node
     int AnnotationVisibility;
     int ModelVisibility;
+    int RHModelVisibility;
+    int LHModelVisibility;
     int SearchOption;
     //BTX
     enum

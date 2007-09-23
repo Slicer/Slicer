@@ -85,6 +85,7 @@ proc QueryAtlasLoadFirefoxBookmarkFile {bmfile } {
 proc QueryAtlasOpenLink { url } {
 
     set browser [ $::slicer3::Application GetWebBrowser ]
+    puts "browser = $browser"
     exec $browser -new-tab $url &
 }
 
@@ -260,7 +261,7 @@ proc QueryAtlasGetStructureTerms { } {
 
     set w [ $::slicer3::QueryAtlasGUI GetStructureListWidget ]
     set ww [ [$w GetMultiColumnList ] GetWidget ]
-
+    
     set terms ""
     set ::QA(StructureTerms) ""
     set numrows [ $ww GetNumberOfRows ]
@@ -270,6 +271,7 @@ proc QueryAtlasGetStructureTerms { } {
             set term [ $ww GetCellText $i 0 ]
             append terms $term
             append terms "+"
+        }
     }
     set terms [ string trimright $terms "+" ]
     set ::QA(StructureTerms) $terms
@@ -293,6 +295,7 @@ proc QueryAtlasGetOtherTerms { } {
             append terms $term
             append terms "+"
         }
+    }
     set terms [ string trimright $terms "+" ]
     set ::QA(OtherTerms) $terms
 }
@@ -418,21 +421,31 @@ proc QueryAtlasFormURLForGoogle { } {
     #--- get things from GUI:
 
     set terms ""
-    set terms [ QueryAtlasAppendStructureTerms $terms ]
-    set terms [ QueryAtlasAppendPopulationTerms $terms ]
-    set terms [ QueryAtlasAppendSpeciesTerms $terms ] 
-    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    if { [ [$::slicer3::QueryAtlasGUI GetUseStructureTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendStructureTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseGroupTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseSpeciesTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendOtherTerms $terms ]
+    }
     set terms [ string trimright $terms "+" ]
-    puts "$terms"
-    #--- now terms contains all.
-    set target [ QueryAtlasGetSearchTargets ]
 
+    puts "$terms"
     set ::QA(url,Google) ""
-    set url "http://www.google.com/search?hl-en&q="
-    append url $terms
-    append url "&btnG=Google+Search"
-    set ::QA(url,Google) $url
-    puts "$::QA(url,Google)"
+    #--- now terms contains all categories user chose
+    if { $terms != "" } {
+        set target [ QueryAtlasGetSearchTargets ]
+        set url "http://www.google.com/search?hl-en&q="
+        append url $terms
+        append url "&btnG=Google+Search"
+        set ::QA(url,Google) $url
+        puts "$::QA(url,Google)"
+    }
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -442,34 +455,32 @@ proc QueryAtlasFormURLForWikipedia { } {
 
     #--- get things from GUI:
     set terms ""
-    set terms [ QueryAtlasAppendStructureTerms $terms ]
-    set terms [ QueryAtlasAppendPopulationTerms $terms ]
-    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
-    set terms [ QueryAtlasAppendOtherTerms $terms ]
-    set terms [ string trimright $terms "+" ]
-    #--- now terms contains all.
-    set target [ QueryAtlasGetSearchTargets ]
-
-    set ::QA(url,Wikipedia) ""
-    set url "http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search="
-    #--- get only the first structure from the structurelist
-    set i [ string first "+" $structure ]
-    if { $i > 0 } {
-        #--- found a "+", so grab all chars up to it
-        set singleStructure [ string range $structure 0 [ expr $i - 1 ] ]
-    } else {
-        set singleStructure $structure
+    if { [ [$::slicer3::QueryAtlasGUI GetUseStructureTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendStructureTerms $terms ]
     }
-    append url "$singleStructure"
-#    if { $diagnosis != "normal" } {
-#        append url "+$diagnosis"
-#    }
-#    if { $gender != "n/a" } {
-#        append url "+$gender"
-#    }
-    append url "\&fulltext=Search"
-    set ::QA(url,Wikipedia) $url
-    
+
+    #if { [ [$::slicer3::QueryAtlasGUI GetUseGroupTerms ] GetSelectedState ] == 1 } {
+    #    set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    #}
+    #if { [ [$::slicer3::QueryAtlasGUI GetUseSpeciesTerms ] GetSelectedState ] == 1 } {
+    #    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    #}
+    #if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
+    #    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    #}
+
+    set terms [ string trimright $terms "+" ]
+
+    #--- now terms contains all categories user chose
+    puts "$terms"
+    set ::QA(url,Wikipedia) ""
+    if { $terms != "" } {
+        set target [ QueryAtlasGetSearchTargets ]
+        set url "http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search="
+        append url "$terms"
+        append url "\&fulltext=Search"
+        set ::QA(url,Wikipedia) $url
+    }    
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -487,29 +498,31 @@ proc QueryAtlasFormURLForIBVD { } {
     #--- now terms contains all.
     set target [ QueryAtlasGetSearchTargets ]
 
-    unset  -nocomplain ::QA(url,IBVD) 
-    set url "http://www.cma.mgh.harvard.edu/ibvd/how_big.php?"
-    #--- get only the first structure from the structurelist
-    set i [ string first "+" $structure ]
-    if { $i > 0 } {
-        #--- found a "+", so grab all chars up to it
-        set singleStructure [ string range $structure 0 [ expr $i - 1 ] ]
-    } else {
-        singleStructure = $structure
-    }
-    
-    # break this down for all demographics that ibvd allow and we offer
-    # structure from menu...
-    append url "structure=$singleStructure"
+    set ::QA(url,IBVD) ""
+    if { $terms != "" } {
+        set url "http://www.cma.mgh.harvard.edu/ibvd/how_big.php?"
+        #--- get only the first structure from the structurelist
+        set i [ string first "+" $structure ]
+        if { $i > 0 } {
+            #--- found a "+", so grab all chars up to it
+            set singleStructure [ string range $structure 0 [ expr $i - 1 ] ]
+        } else {
+            singleStructure = $structure
+        }
+        
+        # break this down for all demographics that ibvd allow and we offer
+        # structure from menu...
+        append url "structure=$singleStructure"
 
-    #--- TODO: figure out how to format url
-    # diagnosis from menu
-    #append url "\&diagnosis=$diagnosis"
-    # gender from menu
-    #if { $gender != "n/a" } {
-    #    append url "\&gender=$gender"
-    #}
-    set ::QA(url,IBVD) $url
+        #--- TODO: figure out how to format url
+        # diagnosis from menu
+        #append url "\&diagnosis=$diagnosis"
+        # gender from menu
+        #if { $gender != "n/a" } {
+        #    append url "\&gender=$gender"
+        #}
+        set ::QA(url,IBVD) $url
+    }
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -519,20 +532,30 @@ proc QueryAtlasFormURLForPubMed { } {
 
     #--- get things from GUI:
     set terms ""
-    set terms [ QueryAtlasAppendStructureTerms $terms ]
-    set terms [ QueryAtlasAppendPopulationTerms $terms ]
-    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
-    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    if { [ [$::slicer3::QueryAtlasGUI GetUseStructureTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendStructureTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseGroupTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseSpeciesTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendOtherTerms $terms ]
+    }
     set terms [ string trimright $terms "+" ]    
-    #--- now terms contains all.
-    set target [ QueryAtlasGetSearchTargets ]
 
-    #--- TODO:
-    #--- pubmed wants multi word thing + otherthing to look like
-    #-- "multi+word+thing"+otherthing
-    unset -nocomplain ::QA(url,PubMed)
-    set url "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&db=PubMed&term=$structure"
-    set ::QA(url,PubMed) $url
+    set ::QA(url,PubMed) ""
+    if { $terms != "" } {
+        #--- now terms contains all.
+        set target [ QueryAtlasGetSearchTargets ]
+        #--- TODO:
+        #--- pubmed wants multi word thing + otherthing to look like
+        #-- "multi+word+thing"+otherthing
+        set url "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&db=PubMed&term=$terms"
+        set ::QA(url,PubMed) $url
+    }
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -543,22 +566,32 @@ proc QueryAtlasFormURLForJNeurosci { } {
 
     #--- get things from GUI:
     set terms ""
-    set terms [ QueryAtlasAppendStructureTerms $terms ]
-    set terms [ QueryAtlasAppendPopulationTerms $terms ]
-    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
-    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    if { [ [$::slicer3::QueryAtlasGUI GetUseStructureTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendStructureTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseGroupTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseSpeciesTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendOtherTerms $terms ]
+    }
     set terms [ string trimright $terms "+" ]    
-    #--- now terms contains all.
-    set target [ QueryAtlasGetSearchTargets ]
+    set ::QA(url,JNeurosci) ""
+    if { $terms != "" } {
+        #--- now terms contains all.
+        set target [ QueryAtlasGetSearchTargets ]
 
-    #--- TODO:
-    #--- here, we want to put double quotes around each separate
-    #--- structure, cell, gene and misc term.
-    #--- jneurosci wants multi word thing + otherthing to look like
-    #--- "multi word thing"+otherthing
-    unset -nocomplain ::QA(url,JNeurosci) 
-    set url "http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$structure"
-    set ::QA(url,JNeurosci) $url
+        #--- TODO:
+        #--- here, we want to put double quotes around each separate
+        #--- structure, cell, gene and misc term.
+        #--- jneurosci wants multi word thing + otherthing to look like
+        #--- "multi word thing"+otherthing
+        set url "http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$terms"
+        set ::QA(url,JNeurosci) $url
+    }
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -568,17 +601,26 @@ proc QueryAtlasFormURLForMetasearch { } {
 
     #--- get things from GUI:
     set terms ""
-    set terms [ QueryAtlasAppendStructureTerms $terms ]
-    set terms [ QueryAtlasAppendPopulationTerms $terms ]
-    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
-    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    if { [ [$::slicer3::QueryAtlasGUI GetUseStructureTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendStructureTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseGroupTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseSpeciesTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendOtherTerms $terms ]
+    }
     set terms [ string trimright $terms "+" ]    
-    #--- now terms contains all.
-    set target [ QueryAtlasGetSearchTargets ]
-
-    unset -nocomplain ::QA(url,Metasearch) 
-    set url "https://loci.ucsd.edu/qametasearch/query.do?query=$structure"
-    set ::QA(url,Metasearch) $url
+    set ::QA(url,Metasearch)  ""
+    if { $terms != "" } {
+        #--- now terms contains all.
+        set target [ QueryAtlasGetSearchTargets ]
+        set url "https://loci.ucsd.edu/qametasearch/query.do?query=$terms"
+        set ::QA(url,Metasearch) $url
+    }
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -593,17 +635,19 @@ proc QueryAtlasFormURLForBraininfo { } {
 #    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
 #    set terms [ QueryAtlasAppendOtherTerms $terms ]
     set terms [ string trimright $terms "+" ]    
-    #--- now terms contains all.
-    set target [ QueryAtlasGetSearchTargets ]
+    set ::QA(url,Braininfo) ""
+    if { $terms != "" } {
+        #--- now terms contains all.
+        set target [ QueryAtlasGetSearchTargets ]
 
-    #--- TODO: just take first structure term.
-    set i [ string first "+" $structure ]
-    if { $i >= 0 } {
-        set structure [ string range $structure 0 [expr $i - 1 ] ]
-    } 
-    unset -nocomplain ::QA(url,Braininfo) 
-    set url "http://braininfo.rprc.washington.edu/Scripts/hiercentraldirectory.aspx?ID=$structure"
-    set ::QA(url,Braininfo) $url
+        #--- TODO: just take first structure term.
+        set i [ string first "+" $structure ]
+        if { $i >= 0 } {
+            set structure [ string range $structure 0 [expr $i - 1 ] ]
+        } 
+        set url "http://braininfo.rprc.washington.edu/Scripts/hiercentraldirectory.aspx?ID=$structure"
+        set ::QA(url,Braininfo) $url
+    }
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -613,83 +657,88 @@ proc QueryAtlasFormURLsForEntrez { } {
 
     #--- get things from GUI:
     set terms ""
-    set terms [ QueryAtlasAppendStructureTerms $terms ]
-   set terms [ QueryAtlasAppendPopulationTerms $terms ]
-    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
-    set terms [ QueryAtlasAppendOtherTerms $terms ]
+    if { [ [$::slicer3::QueryAtlasGUI GetUseStructureTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendStructureTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseGroupTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseSpeciesTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendOtherTerms $terms ]
+    }
     set terms [ string trimright $terms "+" ]    
     #--- now terms contains all.
     set target [ QueryAtlasGetSearchTargets ]
 
-    unset -nocomplain ::QA(url,EntrezCounts ) 
-    unset -nocomplain ::QA(url,EntrezLinks ) ""
+    set ::QA(url,EntrezLinks) ""
+    if { $terms != "" } {
+        unset -nocomplain ::QA(url,EntrezCounts ) 
+        unset -nocomplain ::QA(url,EntrezLinks ) ""
 
-    set url "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/egquery.fcgi?term="
-    append url "$structure+$diagnosis"
-    set ::QA(url,EntrezCounts) $url
+        set url "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/egquery.fcgi?term="
+        append url $terms
+        set ::QA(url,EntrezCounts) $url
 
-    QueryAtlasMakeEntrezCountQuery $::QA(url,EntrezCounts)
-    set counts [ QueryAtlasGetAllEntrezCounts ]
-    puts "$counts"
+        QueryAtlasMakeEntrezCountQuery $::QA(url,EntrezCounts)
+        set counts [ QueryAtlasGetAllEntrezCounts ]
+        puts "$counts"
 
-    #--- sometimes entrez uses the database name from
-    #--- inside one array, and sometimes it uses the other.
-    #--- We'll have to just learn these special cases and
-    #--- watch for them for now.. Use this to see the difference
-    #    puts "$::QA(entrezDatabaseFriendlyNames)"
-    #    puts "---"
-    #    puts "$::QA(entrezDatabaseNames)"
-    #--- ENTREZ
-    #--- if counts was good, form urls for all dbs with info
-    set url "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?"
-    unset -nocomplain ::QA(url,EntrezLinks)
-    if { $counts > 0 } {
-        if { [info exists ::QA(entrezDatabaseFriendlyNames) ]  && [info exists ::QA(entrezDatabaseCounts)]} {
-            set len [ llength $::QA(entrezDatabaseFriendlyNames) ]
-            for { set i 0 } { $i < $len } { incr i } {
-                set tmp $url
-                set dbname [ lindex $::QA(entrezDatabaseFriendlyNames) $i ]
-                #--- fix some inconsistencies with entrez
-                switch -glob $dbname {
-                    "PMC" {
-                        set dbname "pmc"
+        #--- sometimes entrez uses the database name from
+        #--- inside one array, and sometimes it uses the other.
+        #--- We'll have to just learn these special cases and
+        #--- watch for them for now.. Use this to see the difference
+        #    puts "$::QA(entrezDatabaseFriendlyNames)"
+        #    puts "---"
+        #    puts "$::QA(entrezDatabaseNames)"
+        #--- ENTREZ
+        #--- if counts was good, form urls for all dbs with info
+        set url "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?"
+
+        if { $counts > 0 } {
+            if { [info exists ::QA(entrezDatabaseFriendlyNames) ]  && [info exists ::QA(entrezDatabaseCounts)]} {
+                set len [ llength $::QA(entrezDatabaseFriendlyNames) ]
+                for { set i 0 } { $i < $len } { incr i } {
+                    set tmp $url
+                    set dbname [ lindex $::QA(entrezDatabaseFriendlyNames) $i ]
+                    #--- fix some inconsistencies with entrez
+                    switch -glob $dbname {
+                        "PMC" {
+                            set dbname "pmc"
+                        }
+                        "OMIA" {
+                            set dbname "omia"
+                        }
+                        "HomoloGene" {
+                            set dbname "homologene"
+                        }
                     }
-                    "OMIA" {
-                        set dbname "omia"
-                    }
-                    "HomoloGene" {
-                        set dbname "homologene"
-                    }
+                    append tmp "db=$dbname\&cmd=search\&term=$structure+$diagnosis"
+                    
+                    #--- if gender is other than 'n/a'
+                    #if {$gender =="M" } {
+                    #   set newGender "male"
+                    #} elseif {$gender == "F" } {
+                    #    set newGender "female"
+                    #} elseif {$gender == "mixed" } {
+                    #    set newGender "\"mixed gender\""
+                    #} elseif {$gender == "n/a" } {
+                    #    set newGender ""
+                    #}
+                    #append tmp "+$newGender"
+
+                    #--- if species is other than 'human', use it
+                    #if { $species != "human" } {
+                    #    append tmp "+$species"
+                    #}
+
+                    puts "Link for $dbname: $tmp"
+                    lappend ::QA(url,EntrezLinks) $tmp
                 }
-                append tmp "db=$dbname\&cmd=search\&term=$structure+$diagnosis"
-                
-                #--- if gender is other than 'n/a'
-                #if {$gender =="M" } {
-                 #   set newGender "male"
-                #} elseif {$gender == "F" } {
-                #    set newGender "female"
-                #} elseif {$gender == "mixed" } {
-                #    set newGender "\"mixed gender\""
-                #} elseif {$gender == "n/a" } {
-                #    set newGender ""
-                #}
-                #append tmp "+$newGender"
-
-                #--- if species is other than 'human', use it
-                #if { $species != "human" } {
-                #    append tmp "+$species"
-                #}
-
-                puts "Link for $dbname: $tmp"
-                lappend ::QA(url,EntrezLinks) $tmp
             }
         }
-    }
-
-    #--- build and display the fan of links in 3DViewer
-    set len [ llength $::QA(entrezDatabaseNames) ]
-    if { $len > 0 } {
-#        QueryAtlasBuildLinkFan
     }
 }
 
@@ -699,15 +748,15 @@ proc QueryAtlasFormURLsForEntrez { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasFormURLsForTargets { } {
 
-#    set terms ""
-#    QueryAtlasAppendStructureTerms $terms
-#    QueryAtlasAppendPopulationTerms $terms
-#    QueryAtlasAppendSpeciesTerms $terms
-#    QueryAtlasAppendOtherTerms $terms
-#--- now terms contains all.
-
-
     set target [ QueryAtlasGetSearchTargets ]
+
+    unset -nocomplain ::QA(url,PubMed)
+    unset -nocomplain ::QA(url,JNeurosci)
+    unset -nocomplain ::QA(url,Metasearch)
+    unset -nocomplain ::QA(url,IBVD)
+    unset -nocomplain ::QA(url,Google)
+    unset -nocomplain ::QA(url,Wikipedia)
+    unset -nocomplain ::QA(url,EntrezLinks)
     
     #--- Form urls for each Search Target requested.
     #--- PubMed
@@ -764,6 +813,16 @@ proc QueryAtlasPopulateSearchResultsBox { } {
     if { [ info exists ::QA(url,Wikipedia) ] } {    
         if { $::QA(url,Wikipedia) != "" } {
             $lb AppendUnique $::QA(url,Wikipedia)
+        }
+    }
+    if { [ info exists ::QA(url,PubMed) ] } {    
+        if { $::QA(url,PubMed) != "" } {
+            $lb AppendUnique $::QA(url,PubMed)
+        }
+    }
+    if { [ info exists ::QA(url,JNeurosci) ] } {    
+        if { $::QA(url,JNeurosci) != "" } {
+            $lb AppendUnique $::QA(url,JNeurosci)
         }
     }
     if { [ info exists ::QA(url,IBVD) ] } {
@@ -922,105 +981,6 @@ proc QueryAtlasExtractContentWithTcl { open_tag close_tag  } {
 }
 
 
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasBuildLinkFan { } {
-
-    #-- get rid of the last round of links
-    puts "deleting link fan"
-    QueryAtlasDeleteLinkFan
-    
-    #--- get the render widget and set the icon directory
-    set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
-    set renderer [ $renderWidget GetRenderer ]
-    puts "got renderer"
-    
-    set icondir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/ImageData
-    puts "icondir = $icondir"
-
-    #--- create  a list of icon names
-    set iconset [glob $icondir/*.png]
-    puts "iconset = $iconset"
-
-    #--- use only the icons for which there is a matching databasename
-    set icons ""
-    foreach name $::QA(entrezDatabaseNames) {
-        #-- search iconset for name
-        foreach icon $iconset {
-            set index [ string first $name.png $icon]
-            if { $index >= 0 } {
-                lappend icons $icon
-                break
-            }
-        }
-    }
-    
-    #-- create a cardfan with some number of cards
-    if { [ info exists ::QA(entrezDatabaseNames) ] } {
-    set len [ llength $::QA(entrezDatabaseNames)] 
-
-        if { $len > 0 } {
-            set ::QA(cardFan) [CardFan #auto [llength $::QA(entrezDatabaseNames)]]
-            puts "created cardfan"            
-
-            puts "using $::QA(entrezDatabaseNames)"
-            #--- for each icon in icons and associated card in the cardfan
-            #--- set the card's icon and text (fix the text)                 
-            foreach icon $icons card [$::QA(cardFan) cards] name $::QA(entrezDatabaseNames) {
-                $card configure -icon $icon -text $name
-            }
-            puts "configured cardfan"
-
-            #--- get the scene's bounding box...
-            set bounds [ $renderer ComputeVisiblePropBounds ]
-            #--- get the max dimension of the bbox.
-            set xmin [ lindex $bounds 0 ]
-            set xmax [ lindex $bounds 1 ]
-            set ymin [ lindex $bounds 2 ]
-            set ymax [ lindex $bounds 3 ]
-            set zmin [ lindex $bounds 4 ]
-            set zmax [ lindex $bounds 5 ]
-            set diagx [ expr ($xmax - $xmin) ]
-            set diagy [ expr ($ymax - $ymin) ]
-            set diagz [ expr ($zmax - $zmin) ]
-
-            set diagx [ expr $diagx * $diagx ]
-            set diagy [ expr $diagy * $diagy ]
-            set diagz [ expr $diagz * $diagz ]
-
-            set radius [ expr $diagx + $diagy + $diagz ]
-
-            #-- what if we have just a single point in scene?
-            if {  $radius == 0 } {
-                set radius 1.0
-            } 
-            set radius [ expr (sqrt ($radius) * 0.5 ) ]
-            
-            #--- add a little extra bump
-            set radius [ expr $radius + ( $radius * 0.2) ]
-            puts "radius = $radius"
-            puts "anchor = $::QA(cardRASAnchor)"
-            #--- and configure the cardfan's spacing, scale, startpoint and radius
-            $::QA(cardFan) configure -spacing 15 -anchor $::QA(cardRASAnchor) -radius $radius
-            $::QA(cardFan) configureAll -scale 10 -follow 0
-            puts "done."
-        }
-    }
-}
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasDeleteLinkFan { } {
-
-    if { [ info exists ::QA(cardFan) ] } {
-        itcl::delete object $::QA(cardFan)
-        unset -nocomplain ::QA(cardFan)
-    } 
-}
-
-
 
 
 #----------------------------------------------------------------------------------------------------
@@ -1028,25 +988,27 @@ proc QueryAtlasDeleteLinkFan { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasTestFan { } {
 
-    #--- get the render widget and set the icon directory
-    set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
-    set icondir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/ImageData
+    if { 0 } {
+        #--- get the render widget and set the icon directory
+        set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+        set icondir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/ImageData
 
-    #--- create  a list of icon names
-    set icons [lrange [glob $icondir/*.png] 0 4]
+        #--- create  a list of icon names
+        set icons [lrange [glob $icondir/*.png] 0 4]
 
-    #-- create a cardfan with some number of cards
-    set cardFan [CardFan #auto [llength $icons]]
+        #-- create a cardfan with some number of cards
+        set cardFan [CardFan #auto [llength $icons]]
 
-    #--- for each icon in icons and associated card in the cardfan
-    #--- set the card's icon and text (fix the text)                 
-    foreach icon $icons card [$cardFan cards] {
-          $card configure -icon $icon -text [file tail $icon]
-   }
+       #--- for each icon in icons and associated card in the cardfan
+       #--- set the card's icon and text (fix the text)                 
+       foreach icon $icons card [$cardFan cards] {
+       $card configure -icon $icon -text [file tail $icon]
+       }
 
-    #--- and configure the cardfan's spacing, scale, startpoint and radius
-    $cardFan configure -spacing 15 -anchor [list 0 0 0] -radius 50
-    $cardFan configureAll -scale 10 -follow 0
-}
+       #--- and configure the cardfan's spacing, scale, startpoint and radius
+       $cardFan configure -spacing 15 -anchor [list 0 0 0] -radius 50
+       $cardFan configureAll -scale 10 -follow 0
+       }
+  }
 
 
