@@ -415,8 +415,9 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
   std::string scriptReturn;
   scriptReturn = app->Script("set ::vtkFreeSurferReaders(PlotFileName) %s", fnFSGD.c_str());
   vtkDebugMacro("Set the plot file name to " << fnFSGD.c_str() << ", return value from tcl script call = " << scriptReturn.c_str());
-  scriptReturn = app->Script("vtkFreeSurferReadersPlotApply %s", modelNode->GetID());
-  vtkDebugMacro("Called vtkFreeSurferReadersPlotApply with model id " << modelNode->GetID() << ", return value from tcl script call = " << scriptReturn.c_str());
+  // pick for the plot returns the display node node, so pass in the display node id to set up the tcl vars
+  scriptReturn = app->Script("vtkFreeSurferReadersPlotApply %s", modelNode->GetDisplayNode()->GetID());
+  vtkDebugMacro("Called vtkFreeSurferReadersPlotApply with model display node id " << modelNode->GetDisplayNode()->GetID() << ", return value from tcl script call = " << scriptReturn.c_str());
 
   if (this->GetDebug())
     {
