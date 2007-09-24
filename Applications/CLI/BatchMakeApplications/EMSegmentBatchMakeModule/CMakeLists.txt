@@ -114,6 +114,7 @@ IF(BatchMake_DIR)
 
   ADD_EXECUTABLE(${Slicer3BatchModule} ${Slicer3BatchModule_SOURCE})
   TARGET_LINK_LIBRARIES(${Slicer3BatchModule} BatchMakeLib)
+  ADD_DEPENDENCIES(${Slicer3BatchModule} ${Slicer3ExeModule})
 
   IF (Slicer3_SOURCE_DIR)
 

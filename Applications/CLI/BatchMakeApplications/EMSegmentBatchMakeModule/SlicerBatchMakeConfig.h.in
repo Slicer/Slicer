@@ -2,4 +2,4 @@
  * Configuration file from CMake to the module using BatchMake 
  */
 
-#define BatchMake_APPLICATIONS_DIRS "@BatchMake_APPLICATIONS_DIRS@"
+#define BatchMake_WRAPPED_APPLICATION_DIR "@BatchMake_WRAPPED_APPLICATION_DIR@"

@@ -150,8 +150,8 @@ int main(int argc, char* argv[])
 
   batchMakeParser.SetProgressManager(&progressManager);
   
-  batchMakeParser.LoadWrappedApplication(BatchMake_APPLICATIONS_DIRS);
-  batchMakeParser.SetBatchMakeBinaryPath(BatchMake_APPLICATIONS_DIRS);
+  batchMakeParser.LoadWrappedApplication(BatchMake_WRAPPED_APPLICATION_DIR);
+  batchMakeParser.SetBatchMakeBinaryPath(BatchMake_WRAPPED_APPLICATION_DIR);
   
   std::cout << "<filter-start>" << std::endl;
   std::cout << " <filter-name>CondorSubmit" << std::endl;

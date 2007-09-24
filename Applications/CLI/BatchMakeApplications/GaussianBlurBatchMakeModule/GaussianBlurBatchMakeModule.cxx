@@ -195,9 +195,8 @@ int main(int argc, char* argv[])
   progressManager.SetNumberOfActions((actions*2)+10);
   batchMakeParser.SetProgressManager(&progressManager);
   
-  std::cout << "BAD = " << BatchMake_APPLICATIONS_DIRS << std::endl;
-  batchMakeParser.LoadWrappedApplication(BatchMake_APPLICATIONS_DIRS);
-  batchMakeParser.SetBatchMakeBinaryPath(BatchMake_APPLICATIONS_DIRS);
+  batchMakeParser.LoadWrappedApplication(BatchMake_WRAPPED_APPLICATION_DIR);
+  batchMakeParser.SetBatchMakeBinaryPath(BatchMake_WRAPPED_APPLICATION_DIR);
   
   if(!runUsingCondor)
     {
