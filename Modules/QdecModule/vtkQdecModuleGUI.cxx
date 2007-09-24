@@ -349,8 +349,6 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
 {
 
   
-  this->DebugOn();
-
   
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
 
@@ -601,6 +599,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
           vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
           if (app)
             {
+            vtkDebugMacro("Calling: vtkFreeSurferReadersPlotPlotData " << pointID << ", " << nodeName << ", and the RAS points");
             std::string plotReturn = app->Script("vtkFreeSurferReadersPlotPlotData %d %s %g %g %g", pointID, nodeName, RAS[0], RAS[1], RAS[2]);
             vtkDebugMacro("Plot call return value = " << plotReturn.c_str());
             // swallow the pick
@@ -650,10 +649,42 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       // trigger display change on the model
       if (this->GetLogic()->GetModelNode() != NULL)
         {
+        vtkDebugMacro("Setting the active scalars on " << this->GetLogic()->GetModelNode()->GetName() << " to " << scalarName.c_str());
         this->GetLogic()->GetModelNode()->SetActiveScalars(scalarName.c_str(), NULL);
-        // the color node has the same id as the scalar array name to facilitate
-        // this pairing
-        this->GetLogic()->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(scalarName.c_str());
+        this->GetLogic()->GetModelNode()->GetModelDisplayNode()->SetActiveScalarName(scalarName.c_str());
+        // the color node has the same name as the scalar array name to facilitate
+        // this pairing, find the ID by querying the mrml scene
+        std::string colorID = "none";
+        if (this->GetApplication() &&
+            this->GetApplicationGUI()->GetMRMLScene())
+          {
+          int numberOfNodes = this->GetApplicationGUI()->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLProceduralColorNode");
+          for (int n = 0; n < numberOfNodes; n++)
+            {
+            if (this->GetApplicationGUI()->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLProceduralColorNode"))
+              {
+              if (strcmp(this->GetApplicationGUI()->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLProceduralColorNode")->GetName(), scalarName.c_str()) == 0)
+                {
+                vtkDebugMacro("Found color node with matching name " << scalarName.c_str());
+                colorID = this->GetApplicationGUI()->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLProceduralColorNode")->GetID();
+                }
+              } else { vtkErrorMacro("Error getting " << n << "th node by class vtkMRMLProceduralColorNode"); }
+            }
+          } else { vtkErrorMacro("No application or scene, can't find matching color node"); }
+        if (strcmp(colorID.c_str(), "none") != 0)
+          {
+          // use this node id
+          if (strcmp(this->GetLogic()->GetModelNode()->GetModelDisplayNode()->GetColorNodeID(), colorID.c_str()) != 0)
+            {
+            vtkDebugMacro("Setting the model's display node color node id to " << colorID.c_str());
+            this->GetLogic()->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(colorID.c_str());
+            }
+          else { vtkDebugMacro("Model's display node color node is already set to " << colorID.c_str()); }
+          }
+        else
+          {
+          vtkErrorMacro("Qdec Module gui unable to find matching color node for scalar array " << scalarName.c_str());
+          }
         }
       else
         {
