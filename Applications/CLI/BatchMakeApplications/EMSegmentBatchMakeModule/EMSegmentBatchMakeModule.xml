@@ -85,12 +85,12 @@
       <default>*T2*.mha</default>
       <longflag>t2m</longflag>
      </string>
-
   </parameters>
 
   <parameters>
     <label>Output Directory</label>
     <description>Output Directory</description>
+
     <directory>
       <name>outputDir</name>
       <label>Output directory</label>
@@ -100,19 +100,17 @@
     </directory>
   </parameters>
 
- <parameters>
+  <parameters advanced="true">
     <label>BatchMake</label>
     <description>BatchMake specific parameters</description>
-
-   <string-enumeration>
-      <name>runLocally</name>
-      <longflag>local</longflag>
-      <description>Running Mode</description>
-      <label>Running Mode</label>
-      <default>locally</default>
-      <element>locally</element>
-      <element>grid via condor</element>
-    </string-enumeration>
-  
+    
+    <boolean>
+      <name>runUsingCondor</name>
+      <description>Select to run on local grid using Condor (BatchMake must have been compiled using Condor)</description>
+      <label>Run using Grid/Condor</label>
+      <longflag>condor</longflag> 
+      <default>false</default>
+    </boolean>
   </parameters>
+
 </executable>

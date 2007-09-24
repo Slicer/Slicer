@@ -112,7 +112,7 @@
     <boolean>
       <name>runUsingCondor</name>
       <description>Select to run on local grid using Condor (BatchMake must have been compiled using Condor)</description>
-      <label>Run using Condor</label>
+      <label>Run using Grid/Condor</label>
       <longflag>condor</longflag> 
       <default>false</default>
     </boolean>

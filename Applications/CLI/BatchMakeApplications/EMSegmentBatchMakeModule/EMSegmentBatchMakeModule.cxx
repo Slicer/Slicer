@@ -35,11 +35,10 @@ public:
   virtual void AddAction(MString name)
     {
     std::cout << "<filter-start>" << std::endl;
-    std::cout << " <filter-name>Executable " << std::endl;
-    std::cout << m_CurrentAction << std::endl;
-    std::cout << "</filter-name>" << std::endl;
-    std::cout << "<filter-comment> " << m_RecentOutput.c_str() << std::endl;
-    std::cout << "</filter-comment>" << std::endl;
+    std::cout << " <filter-name>Executable" << m_CurrentAction 
+                                            << "</filter-name>" << std::endl;
+    std::cout << " <filter-comment> " << m_RecentOutput.c_str()  
+                                      << "</filter-comment>" << std::endl;
     std::cout << "</filter-start>" << std::endl;
 
     m_CurrentAction++;
@@ -51,12 +50,9 @@ public:
   virtual void FinishAction(MString output)
     {
     std::cout << "<filter-end>" << std::endl;
-    std::cout << " <filter-name>Executable " << std::endl;
-    std::cout << m_CurrentAction << std::endl;
-    std::cout << " </filter-name>" << std::endl;
-    std::cout << " <filter-time>" << std::endl;
-    std::cout << " 0" << std::endl;
-    std::cout << " </filter-time>" << std::endl;
+    std::cout << " <filter-name>Executable" << m_CurrentAction 
+                                            << "</filter-name>" << std::endl;
+    std::cout << " <filter-time>0</filter-time>" << std::endl;
     std::cout << "</filter-end>" << std::endl;
     }
   virtual void AddOutput(MString output)
@@ -153,21 +149,31 @@ int main(int argc, char* argv[])
   batchMakeParser.LoadWrappedApplication(BatchMake_WRAPPED_APPLICATION_DIR);
   batchMakeParser.SetBatchMakeBinaryPath(BatchMake_WRAPPED_APPLICATION_DIR);
   
-  std::cout << "<filter-start>" << std::endl;
-  std::cout << " <filter-name>CondorSubmit" << std::endl;
-  std::cout << "</filter-name>" << std::endl;
-  std::cout << "<filter-comment> " << std::endl;
-  std::cout << "Submitting jobs to Condor" << std::endl;
-  std::cout << "</filter-comment>" << std::endl;
-  std::cout << "</filter-start>" << std::endl;
-
-  // If we want to run the script locally
-  if(runLocally == "locally")
+  if(!runUsingCondor)
     {
+    // If we want to run the script locally
+
+    std::cout << "<filter-start>" << std::endl;
+    std::cout << " <filter-name>LocalSubmit</filter-name>" << std::endl;
+    std::cout << " <filter-comment>Procsssing data on local machine</filter-comment>" << std::endl;
+    std::cout << "</filter-start>" << std::endl;
+
     batchMakeParser.ParseBuffer(script);
+
+    std::cout << "<filter-end>" << std::endl;
+    std::cout << " <filter-name>LocalSubmit</filter-name>" << std::endl;
+    std::cout << " <filter-time>0</filter-time>" << std::endl;
+    std::cout << "</filter-end>" << std::endl;
     }
   else
     {
+    // If we want to run the script on condor/grid
+
+    std::cout << "<filter-start>" << std::endl;
+    std::cout << " <filter-name>CondorSubmit</filter-name>" << std::endl;
+    std::cout << " <filter-comment>Submitting jobs to Condor</filter-comment>" << std::endl;
+    std::cout << "</filter-start>" << std::endl;
+ 
     // Run condor watcher
     // REQUIRES FLTK :(
     //
@@ -184,15 +190,12 @@ int main(int argc, char* argv[])
 
     // Generate the script
     batchMakeParser.RunCondor(script, outputDir.c_str());
-    }
 
-  std::cout << "<filter-end>" << std::endl;
-  std::cout << " <filter-name>CondorSubmit" << std::endl;
-  std::cout << " </filter-name>" << std::endl;
-  std::cout << " <filter-time>" << std::endl;
-  std::cout << " 0" << std::endl;
-  std::cout << " </filter-time>" << std::endl;
-  std::cout << "</filter-end>" << std::endl;
+    std::cout << "<filter-end>" << std::endl;
+    std::cout << " <filter-name>CondorSubmit</filter-name>" << std::endl;
+    std::cout << " <filter-time>0</filter-time>" << std::endl;
+    std::cout << "</filter-end>" << std::endl;
+    }
 
   return EXIT_SUCCESS;
 }
