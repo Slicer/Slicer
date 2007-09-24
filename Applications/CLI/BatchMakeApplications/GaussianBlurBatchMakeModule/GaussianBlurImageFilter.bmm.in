@@ -1,7 +1,7 @@
 <BatchMakeApplicationWrapper>
 	<BatchMakeApplicationWrapperVersion>1.0</BatchMakeApplicationWrapperVersion>
 	<Module>
-		<Name>GaussianBlurBatchMakeModule</Name>
+		<Name>GaussianBlurImageFilter</Name>
 		<Version>Not defined</Version>
 		<Path>@GaussianBlurImageFilter@</Path>
 		<Parameters>
