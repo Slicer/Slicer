@@ -39,7 +39,6 @@ Version:   $Revision: 1.2 $
 #include "vtkSlicerApplication.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWPushButton.h"
-#include "vtkKWPushButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveDialog.h"
@@ -58,6 +57,9 @@ Version:   $Revision: 1.2 $
 
 // for path manipulation
 #include "itksys/SystemTools.hxx"
+
+// for scalar overlays
+#include "vtkMRMLProceduralColorNode.h"
 
 //------------------------------------------------------------------------------
 vtkQdecModuleGUI* vtkQdecModuleGUI::New()
@@ -658,18 +660,24 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
         if (this->GetApplication() &&
             this->GetApplicationGUI()->GetMRMLScene())
           {
-          int numberOfNodes = this->GetApplicationGUI()->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLProceduralColorNode");
-          for (int n = 0; n < numberOfNodes; n++)
+          vtkCollection *colorNodes =  this->GetApplicationGUI()->GetMRMLScene()->GetNodesByName(scalarName.c_str());
+          if (colorNodes)
             {
-            if (this->GetApplicationGUI()->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLProceduralColorNode"))
+            int numberOfNodes = colorNodes->GetNumberOfItems();
+            if (numberOfNodes > 0)
               {
-              if (strcmp(this->GetApplicationGUI()->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLProceduralColorNode")->GetName(), scalarName.c_str()) == 0)
-                {
-                vtkDebugMacro("Found color node with matching name " << scalarName.c_str());
-                colorID = this->GetApplicationGUI()->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLProceduralColorNode")->GetID();
-                }
-              } else { vtkErrorMacro("Error getting " << n << "th node by class vtkMRMLProceduralColorNode"); }
+              // take the first one
+              colorID = vtkMRMLProceduralColorNode::SafeDownCast(colorNodes->GetItemAsObject(0))->GetID();
+              }
+            else
+              {
+              vtkErrorMacro("vtkQdecModuleGUI Cannot find a color node with the name " << scalarName.c_str());
+              }
             }
+          else
+            {
+            vtkErrorMacro("vtkQdecModuleGUI cannot find procedural color nodes to check for the one associated with scalar " << scalarName.c_str());
+            }         
           } else { vtkErrorMacro("No application or scene, can't find matching color node"); }
         if (strcmp(colorID.c_str(), "none") != 0)
           {
