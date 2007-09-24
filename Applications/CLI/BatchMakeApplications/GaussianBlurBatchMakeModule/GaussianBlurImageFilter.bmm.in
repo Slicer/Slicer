@@ -2,30 +2,38 @@
 	<BatchMakeApplicationWrapperVersion>1.0</BatchMakeApplicationWrapperVersion>
 	<Module>
 		<Name>GaussianBlurImageFilter</Name>
-		<Version>Not defined</Version>
+		<Version>1.0</Version>
 		<Path>@GaussianBlurImageFilter@</Path>
 		<Parameters>
 			<Param>
-				<Type>4</Type>
-				<Name>InputVolume</Name>
+				<Type>0</Type>
+				<Name>inputVolume</Name>
 				<Value></Value>
 				<Parent>0</Parent>
-				<External>0</External>
+				<External>1</External>
 				<Optional>0</Optional>
 			</Param>
 			<Param>
-				<Type>4</Type>
-				<Name>OutputVolume</Name>
+				<Type>0</Type>
+				<Name>outputVolume</Name>
 				<Value></Value>
 				<Parent>0</Parent>
 				<External>2</External>
 				<Optional>0</Optional>
 			</Param>
 			<Param>
-				<Type>2</Type>
+				<Type>1</Type>
 				<Name>sigma</Name>
-				<Value>1</Value>
+				<Value>-s</Value>
 				<Parent>0</Parent>
+				<External>0</External>
+				<Optional>0</Optional>
+			</Param>
+			<Param>
+				<Type>3</Type>
+				<Name>sigma</Name>
+				<Value></Value>
+				<Parent>1</Parent>
 				<External>0</External>
 				<Optional>0</Optional>
 			</Param>
