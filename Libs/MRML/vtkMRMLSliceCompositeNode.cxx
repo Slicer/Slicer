@@ -108,7 +108,7 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
     }
   else if ( this->AnnotationSpace == vtkMRMLSliceCompositeNode::RAS)
     {
-    of << indent << "annotationSpace=\"" << "RAS" << "\"";
+    of << indent << " annotationSpace=\"" << "RAS" << "\"";
     }
 
   if ( this->AnnotationMode == vtkMRMLSliceCompositeNode::NoAnnotation )
@@ -142,7 +142,7 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
     }
   else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowHashmarks )
     {
-    of << indent << "crosshairMode=\"" << "ShowHashmarks" << "\"";
+    of << indent << " crosshairMode=\"" << "ShowHashmarks" << "\"";
     }
   else if ( this->CrosshairMode == vtkMRMLSliceCompositeNode::ShowAll )
     {
