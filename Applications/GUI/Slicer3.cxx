@@ -148,7 +148,7 @@ extern "C" {
 #endif
 
 #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
-#include "vtkMRMLVolumeRenderingDisplayNode.h"
+#include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkVolumeRenderingModuleGUI.h"
 #include "vtkVolumeRenderingModuleLogic.h"
 #endif
@@ -1317,6 +1317,7 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+
     slicerApp->SplashMessage("Initializing Volume Rendering Module...");
     //VolumeRenderingModule
     vtkVolumeRenderingModuleGUI *vrModuleGUI = vtkVolumeRenderingModuleGUI::New ( );
@@ -1324,6 +1325,10 @@ int Slicer3_main(int argc, char *argv[])
     vrModuleLogic->SetAndObserveMRMLScene ( scene );
     vrModuleLogic->SetApplicationLogic ( appLogic );
     vrModuleLogic->SetMRMLScene(scene);
+        //TODO Quick and dirty
+     vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
+     scene->RegisterNodeClass(vrNode);
+  vrNode->Delete();
     vrModuleGUI->SetLogic(vrModuleLogic);
     vrModuleGUI->SetApplication ( slicerApp );
     vrModuleGUI->SetApplicationLogic ( appLogic );

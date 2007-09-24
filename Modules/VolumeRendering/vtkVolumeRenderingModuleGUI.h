@@ -18,8 +18,11 @@
 #include "vtkVolumeRenderingModule.h"
 #include "vtkVolumeRenderingModuleLogic.h"
 
-#include "vtkMRMLVolumeRenderingDisplayNode.h"
+#include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerVolumePropertyWidget.h"
+#include "vtkKWLabel.h"
+#include "vtkKWHistogram.h"
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI
 {
@@ -93,6 +96,18 @@ public:
   // Get/Set the slicer interactorstyle, for picking
   vtkGetObjectMacro(InteractorStyle, vtkSlicerViewerInteractorStyle);
   virtual void SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle);
+
+   vtkSetMacro(PipelineInitialized,int);
+    vtkGetMacro(PipelineInitialized,int);
+    vtkBooleanMacro(PipelineInitialized,int);
+
+vtkSetMacro(VolumeSelected,int);
+    vtkGetMacro(VolumeSelected,int);
+    vtkBooleanMacro(VolumeSelected,int);
+
+    vtkSetMacro(VolumeRenderingNodeSelected,int);
+    vtkGetMacro(VolumeRenderingNodeSelected,int);
+    vtkBooleanMacro(VolumeRenderingNodeSelected,int);
   
 protected:
   vtkVolumeRenderingModuleGUI();
@@ -123,18 +138,32 @@ protected:
   // A poitner to the interactor style, useful for picking
   vtkSlicerViewerInteractorStyle *InteractorStyle;
 
-
+  int VolumeSelected;
+  int VolumeRenderingNodeSelected;
+  int PipelineInitialized;//0=no,1=Yes
+  void InitializePipeline();
+  void InitializePipelineFromMRMLScene();
+  void InitializePipelineFromSlicer();
 
   //OWN GUI Elements
 
-  //Frame Testing
+  //Frame Save/Load
   vtkKWPushButton *PB_Testing;
   vtkKWPushButton *PB_LoadImageData;
+  vtkKWPushButton *PB_LoadVolumeRenderingDataSlicer;
+  vtkKWPushButton *PB_LoadVolumeRenderingDataScene;
   vtkSlicerNodeSelectorWidget *NS_ImageData;
+  vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataSlicer;
+  vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataScene;
+  vtkKWLabel *L_Status;
+
+  //Frame Details
+  vtkSlicerVolumePropertyWidget *SVP_VolumeProperty;
+  vtkKWHistogram *HIST_Opacity;
 
 
   //Other members
-  vtkMRMLVolumeRenderingDisplayNode  *currentNode;
+  vtkMRMLVolumeRenderingNode  *currentNode;
   
 };
 

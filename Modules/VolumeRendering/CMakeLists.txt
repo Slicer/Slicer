@@ -7,7 +7,7 @@ if(VOLUMERENDERINGMODULE)
 SET(VolumeRenderingModule_SRCS
   vtkVolumeRenderingModuleGUI.cxx
   vtkVolumeRenderingModuleLogic.cxx
-  vtkMRMLVolumeRenderingDisplayNode.cxx
+  vtkMRMLVolumeRenderingNode.cxx
   vtkLabelMapColorTransferFunction.cxx
   vtkLabelMapPiecewiseFunction.cxx
   vtkSlicerLabelMapWidget.cxx
