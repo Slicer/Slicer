@@ -87,7 +87,11 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
   //
   // process volume selector events
   //
-  if (this->CreateSnapshotButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
+  if (this->SnapshotSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event ==  vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
+    {
+    this->RestoreSceneButton->SetBackgroundColor(1.0, 0.0, 0.0);
+    }
+  else if (this->CreateSnapshotButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
     this->SnapshotSelectorWidget->SetSelectedNew("vtkMRMLSceneSnapshotNode");
     this->SnapshotSelectorWidget->ProcessNewNodeCommand("vtkMRMLSceneSnapshotNode", "SceneSnapshot");
@@ -113,6 +117,8 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
       snapshotNode->StoreScene();
       //snapshotNode->Delete();
       }
+    //this->RestoreSceneButton->SetBackgroundColor(0.0, 1.0, 0.0);
+
     }
   else if (this->RestoreSceneButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
@@ -122,6 +128,7 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       this->MRMLScene->SaveStateForUndo();
       snapshotNode->RestoreScene();
+      this->RestoreSceneButton->SetBackgroundColor(0.0, 1.0, 0.0);
       }
     }
 
@@ -145,6 +152,10 @@ void vtkSlicerSceneSnapshotWidget::RemoveWidgetObservers ( ) {
   if (this->RestoreSceneButton)
     {
     this->RestoreSceneButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->SnapshotSelectorWidget)
+    {
+    this->SnapshotSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 }
 
@@ -235,6 +246,7 @@ void vtkSlicerSceneSnapshotWidget::CreateWidget ( )
 
   this->CreateSnapshotButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->RestoreSceneButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SnapshotSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   
   frame->Delete();

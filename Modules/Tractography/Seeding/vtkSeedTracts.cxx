@@ -701,11 +701,11 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
   cellArray=outFibersCellArray->GetData();
   cellArray->SetNumberOfTuples(npts+ncells);
   vtkFloatArray *newTensors = vtkFloatArray::New();
+  newTensors->SetNumberOfComponents(9);
+  newTensors->Allocate(9*npts);
   outFibers->GetPointData()->SetTensors(newTensors);
   newTensors->Delete();
   newTensors = static_cast<vtkFloatArray *> (outFibers->GetPointData()->GetTensors());
-  newTensors->SetNumberOfComponents(9);
-  newTensors->Allocate(9*npts);
 
   int ptId=0;
   int cellId=0;
@@ -722,7 +722,7 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
       ptId++;
       }
     vtkIdTypeArray *cellArrayTransf = transformer->GetOutput()->GetLines()->GetData(); 
-    for (int k=0; k<cellArray->GetNumberOfTuples(); k++)
+    for (int k=0; k<cellArrayTransf->GetNumberOfTuples(); k++)
       {
       cellArray->InsertNextValue(cellArrayTransf->GetValue(k));
       cellId++;

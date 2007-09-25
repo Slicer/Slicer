@@ -109,7 +109,8 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::UpdateReferenceID(const char *oldID, const char *newID)
-{
+{ 
+  Superclass::UpdateReferenceID(oldID, newID);
   for (unsigned int i=0; i<this->DisplayNodeIDs.size(); i++)
     {
     if ( std::string(oldID) == this->DisplayNodeIDs[i])

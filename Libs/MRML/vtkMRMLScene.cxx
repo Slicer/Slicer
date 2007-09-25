@@ -480,6 +480,8 @@ int vtkMRMLScene::Connect()
       }
     
     // send events
+    this->UpdateNodeReferences();
+
     this->InvokeEvent(this->NewSceneEvent, NULL);
 
     for (n=0; n<nnodes; n++) 

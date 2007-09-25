@@ -371,6 +371,10 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
       }
     vtkMRMLModelNode *vnode = vtkMRMLModelNode::SafeDownCast(node);
     vtkMRMLStorageNode* snode = vnode->GetStorageNode();
+    if (snode == NULL && !node->GetModifiedSinceRead())
+      {
+      continue;
+      }
     if (snode == NULL && node->GetModifiedSinceRead()) 
       {
       vtkMRMLModelStorageNode *storageNode = vtkMRMLModelStorageNode::New();

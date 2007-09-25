@@ -63,7 +63,7 @@ void vtkMRMLTransformableNode::UpdateReferenceID(const char *oldID, const char *
 {
   if (this->TransformNodeID && !strcmp(oldID, this->TransformNodeID))
     {
-    this->SetAndObserveTransformNodeID(TransformNodeID);
+    this->SetAndObserveTransformNodeID(newID);
     }
 }
 //----------------------------------------------------------------------------
