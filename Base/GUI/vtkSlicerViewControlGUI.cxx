@@ -1451,11 +1451,12 @@ void vtkSlicerViewControlGUI::DeviceCoordinatesToXYZ(vtkSlicerSliceGUI *sgui, in
   
   vtkRenderer *ren = iren->FindPokedRenderer(x, y);
   int *origin = ren->GetOrigin();
-
+  
   xyz[0] = x - origin[0];
   xyz[1] = y - origin[1];
-  xyz[2] = static_cast<int> ( floor(ty*snode->GetLayoutGridRows())*snode->GetLayoutGridColumns()
-      + floor(tx*snode->GetLayoutGridColumns()) );
+  xyz[2] = static_cast<int> ( floor(ty*snode->GetLayoutGridRows())
+                              *snode->GetLayoutGridColumns()
+                              + floor(tx*snode->GetLayoutGridColumns()) );
 }
 
 
@@ -1478,22 +1479,34 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
             // configure zoom
             x = this->RedSliceEvents->GetLastPos ()[0];
             y = this->RedSliceEvents->GetLastPos ()[1];
-            if ( x > 0 && y > 0 )
+
+            // check that the event position is in the window
+            int *windowSize =
+              appGUI->GetMainSliceGUI0()->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor()->GetRenderWindow()->GetSize();
+            if ( x >= 0 && y >= 0 && x < windowSize[0] && y < windowSize[1] )
               {
               int xyz[3];
               this->DeviceCoordinatesToXYZ(appGUI->GetMainSliceGUI0(),
                                            x, y, xyz);
+
               this->SliceMagnifier->SetX ( xyz[0] );
               this->SliceMagnifier->SetY ( xyz[1] );
               this->SliceMagnifier->SetZ ( xyz[2] );
-              this->SliceMagnifier->SetInput ( appGUI->GetMainSliceGUI0()->GetLogic()->GetImageData());
-              this->SliceMagnifierCursor->SetInput ( this->SliceMagnifier->GetOutput());
-              this->SliceMagnifierMapper->SetInput ( this->SliceMagnifierCursor->GetOutput() );
-              this->SliceMagnifierActor->SetMapper ( this->SliceMagnifierMapper );
-              this->ZoomWidget->GetRenderer()->AddActor2D ( this->SliceMagnifierActor );
-              this->RequestZoomRender();
-              this->PackZoomWidget();            
               }
+            else
+              {
+              // event position is not in the window, punt
+              this->SliceMagnifier->SetX( 0 );
+              this->SliceMagnifier->SetY( 0 );
+              this->SliceMagnifier->SetZ( 0 );
+              }
+            this->SliceMagnifier->SetInput ( appGUI->GetMainSliceGUI0()->GetLogic()->GetImageData());
+            this->SliceMagnifierCursor->SetInput ( this->SliceMagnifier->GetOutput());
+            this->SliceMagnifierMapper->SetInput ( this->SliceMagnifierCursor->GetOutput() );
+            this->SliceMagnifierActor->SetMapper ( this->SliceMagnifierMapper );
+            this->ZoomWidget->GetRenderer()->AddActor2D ( this->SliceMagnifierActor );
+            this->RequestZoomRender();
+            this->PackZoomWidget();
             }
           else if (event == vtkCommand::LeaveEvent )
             {
@@ -1534,7 +1547,11 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
             // configure zoom
             x = this->YellowSliceEvents->GetLastPos ()[0];
             y = this->YellowSliceEvents->GetLastPos ()[1];
-            if ( x > 0 && y > 0 )
+
+            // check that the event position is in the window
+            int *windowSize =
+              appGUI->GetMainSliceGUI1()->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor()->GetRenderWindow()->GetSize();
+            if ( x >= 0 && y >= 0 && x < windowSize[0] && y < windowSize[1] )
               {
               int xyz[3];
               this->DeviceCoordinatesToXYZ(appGUI->GetMainSliceGUI1(),
@@ -1542,14 +1559,21 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
               this->SliceMagnifier->SetX ( xyz[0] );
               this->SliceMagnifier->SetY ( xyz[1] );
               this->SliceMagnifier->SetZ ( xyz[2] );
-              this->SliceMagnifier->SetInput ( appGUI->GetMainSliceGUI1()->GetLogic()->GetImageData());
-              this->SliceMagnifierCursor->SetInput ( this->SliceMagnifier->GetOutput());
-              this->SliceMagnifierMapper->SetInput ( this->SliceMagnifierCursor->GetOutput() );
-              this->SliceMagnifierActor->SetMapper ( this->SliceMagnifierMapper );
-              this->ZoomWidget->GetRenderer()->AddActor2D ( this->SliceMagnifierActor );
-              this->RequestZoomRender();
-              this->PackZoomWidget();
               }
+            else
+              {
+              // event position is not in the window, punt
+              this->SliceMagnifier->SetX( 0 );
+              this->SliceMagnifier->SetY( 0 );
+              this->SliceMagnifier->SetZ( 0 );
+              }
+            this->SliceMagnifier->SetInput ( appGUI->GetMainSliceGUI1()->GetLogic()->GetImageData());
+            this->SliceMagnifierCursor->SetInput ( this->SliceMagnifier->GetOutput());
+            this->SliceMagnifierMapper->SetInput ( this->SliceMagnifierCursor->GetOutput() );
+            this->SliceMagnifierActor->SetMapper ( this->SliceMagnifierMapper );
+            this->ZoomWidget->GetRenderer()->AddActor2D ( this->SliceMagnifierActor );
+            this->RequestZoomRender();
+            this->PackZoomWidget();
             }
           else if (event == vtkCommand::LeaveEvent )
             {
@@ -1589,7 +1613,11 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
             // configure zoom
             x = this->GreenSliceEvents->GetLastPos ()[0];
             y = this->GreenSliceEvents->GetLastPos ()[1];
-            if ( x > 0 && y > 0 )
+
+            // check that the event position is in the window
+            int *windowSize =
+              appGUI->GetMainSliceGUI2()->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor()->GetRenderWindow()->GetSize();
+            if ( x >= 0 && y >= 0 && x < windowSize[0] && y < windowSize[1] )
               {
               int xyz[3];
               this->DeviceCoordinatesToXYZ(appGUI->GetMainSliceGUI2(),
@@ -1597,14 +1625,21 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
               this->SliceMagnifier->SetX ( xyz[0] );
               this->SliceMagnifier->SetY ( xyz[1] );
               this->SliceMagnifier->SetZ ( xyz[2] );
-              this->SliceMagnifier->SetInput ( appGUI->GetMainSliceGUI2()->GetLogic()->GetImageData());
-              this->SliceMagnifierCursor->SetInput ( this->SliceMagnifier->GetOutput());
-              this->SliceMagnifierMapper->SetInput ( this->SliceMagnifierCursor->GetOutput() );
-              this->SliceMagnifierActor->SetMapper ( this->SliceMagnifierMapper );
-              this->ZoomWidget->GetRenderer()->AddActor2D ( this->SliceMagnifierActor );
-              this->RequestZoomRender();
-              this->PackZoomWidget();
               }
+            else
+              {
+              // event position is not in the window, punt
+              this->SliceMagnifier->SetX( 0 );
+              this->SliceMagnifier->SetY( 0 );
+              this->SliceMagnifier->SetZ( 0 );
+              }
+            this->SliceMagnifier->SetInput ( appGUI->GetMainSliceGUI2()->GetLogic()->GetImageData());
+            this->SliceMagnifierCursor->SetInput ( this->SliceMagnifier->GetOutput());
+            this->SliceMagnifierMapper->SetInput ( this->SliceMagnifierCursor->GetOutput() );
+            this->SliceMagnifierActor->SetMapper ( this->SliceMagnifierMapper );
+            this->ZoomWidget->GetRenderer()->AddActor2D ( this->SliceMagnifierActor );
+            this->RequestZoomRender();
+            this->PackZoomWidget();
             }
           else if (event == vtkCommand::LeaveEvent )
             {

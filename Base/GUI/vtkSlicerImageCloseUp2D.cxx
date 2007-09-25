@@ -64,8 +64,8 @@ static void vtkSlicerImageCloseUp2DExecute(vtkSlicerImageCloseUp2D *self,
                      vtkImageData *outData, T* outPtr, 
                      int outExt[6], int id)
 {
-    int idxX, maxX, inRowLength, idxY, maxY;
-    long inSliceSize;
+    int idxX, maxX, idxY, maxY;
+    long inRowLength, inSliceSize;
     vtkIdType outIncX, outIncY, outIncZ;
     int scalarSize, numComps, inX, inY, inMaxX, inMaxY;
     T *ptr;
@@ -135,6 +135,13 @@ void vtkSlicerImageCloseUp2D::ThreadedExecute(vtkImageData *inData,
 //         return;
 //     }
 
+    if (this->X < ext[0] || this->X > ext[1]
+        || this->Y < ext[2] || this->Y > ext[3]
+        || this->Z < ext[4] || this->Z > ext[5])
+      {
+      return;
+      }
+        
     switch (inData->GetScalarType())
     {
     case VTK_FLOAT:
@@ -190,8 +197,14 @@ void vtkSlicerImageCloseUp2D::PrintSelf(ostream& os, vtkIndent indent)
   
     os << indent << "X:              " << this->X << "\n";
     os << indent << "Y:              " << this->Y << "\n";
+    os << indent << "Z:              " << this->Z << "\n";
     os << indent << "HalfWidth:         " << this->HalfWidth << "\n";
     os << indent << "HalfHeight:         " << this->HalfHeight << "\n";
     os << indent << "Magnification:  " << this->Magnification << "\n";
 }
+
+
+
+
+
 
