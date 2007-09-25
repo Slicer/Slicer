@@ -26,6 +26,7 @@ public:
   vtkGetObjectMacro ( DeselectAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( ClearAllButton, vtkKWPushButton);
   vtkGetObjectMacro ( ClearSelectedButton, vtkKWPushButton);
+  vtkGetObjectMacro ( ToggleQuotesButton, vtkKWPushButton );
   vtkGetObjectMacro ( MultiColumnList, vtkKWMultiColumnListWithScrollbars );
   vtkGetObjectMacro ( QueryAtlasIcons, vtkQueryAtlasIcons );
   vtkGetObjectMacro ( ContainerFrame, vtkKWFrame );
@@ -43,6 +44,7 @@ public:
   virtual void DeleteAllSearchTerms ( );
   virtual void AddNewSearchTerm ( const char *term);
   virtual void DeleteSelectedSearchTerms ( );
+  virtual void ToggleQuotesOnSelectedSearchTerms ( );
 
   virtual int GetNumberOfSearchTermsToUse( ) {
   return useTerms.size();
@@ -84,6 +86,7 @@ public:
   vtkKWPushButton *DeselectAllButton;
   vtkKWPushButton *ClearAllButton;
   vtkKWPushButton *ClearSelectedButton;
+  vtkKWPushButton *ToggleQuotesButton;
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
   vtkQueryAtlasIcons *QueryAtlasIcons;
   vtkKWFrame *ContainerFrame;

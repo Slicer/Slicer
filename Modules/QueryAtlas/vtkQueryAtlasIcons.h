@@ -38,6 +38,7 @@ class vtkQueryAtlasIcons : public vtkSlicerIcons
     vtkGetObjectMacro (SetUpIcon, vtkKWIcon );
     vtkGetObjectMacro (SelectOverlayIcon, vtkKWIcon);
     vtkGetObjectMacro ( SelectAllIcon, vtkKWIcon );    
+    vtkGetObjectMacro ( ToggleQuotesIcon, vtkKWIcon );
     
     void AssignImageDataToIcons ( );
     
@@ -68,6 +69,7 @@ class vtkQueryAtlasIcons : public vtkSlicerIcons
     vtkKWIcon *SearchIcon;
     vtkKWIcon *ReserveURIsIcon;
     vtkKWIcon *ReserveSelectedURIsIcon;
+    vtkKWIcon *ToggleQuotesIcon;
     
  private:
     vtkQueryAtlasIcons (const vtkQueryAtlasIcons&); // Not implemented

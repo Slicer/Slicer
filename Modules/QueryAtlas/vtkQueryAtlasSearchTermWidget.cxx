@@ -126,14 +126,8 @@ void vtkQueryAtlasSearchTermWidget::GetAllSearchTerms ( )
 void vtkQueryAtlasSearchTermWidget::AddTerm ( const char *term )
 {
   
-  if ( !strcmp (term, "" ) )
-    {
-    term = "<new>";
-    }
-  // replace any white space with a "-"
-  
-  // change to this script to get good string filtering in tcl
-  this->Script ( "QueryAtlasAddEntryTermToSavedTerms \"%s\"", term );
+    // change to this script to get good string filtering in tcl
+    this->Script ( "QueryAtlasAddEntryTermToSavedTerms \"%s\"", term );
 }
 
 
@@ -355,13 +349,13 @@ void vtkQueryAtlasSearchTermWidget::CreateWidget ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasSearchTermWidget::ReserveTerms ( )
 {
-  // for all selected terms
-  int i, row[100];
+
+  // reserve all the terms
   const char *term;
   
   this->reservedTerms.clear();
   int numRows = this->MultiColumnList->GetWidget()->GetNumberOfRows ();
-  for ( i=0; i<numRows; i++ )
+  for ( int i=0; i<numRows; i++ )
     {
     term = this->GetMultiColumnList()->GetWidget()->GetCellText ( i, 0 );
     this->reservedTerms.push_back ( std::string(term) );

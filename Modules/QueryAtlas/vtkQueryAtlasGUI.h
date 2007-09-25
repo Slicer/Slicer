@@ -136,6 +136,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     // results frame?
     vtkGetObjectMacro ( CurrentResultsList, vtkKWListBoxWithScrollbars );
+    vtkGetObjectMacro ( AccumulatedResultsList, vtkKWListBoxWithScrollbars );    
+    
     vtkGetObjectMacro ( DeleteCurrentResultButton, vtkKWPushButton );
     vtkGetObjectMacro ( DeleteAllCurrentResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( SaveCurrentResultsButton, vtkKWPushButton );
@@ -145,7 +147,6 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     vtkGetObjectMacro ( DeselectAllAccumulatedResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( SelectAllAccumulatedResultsButton, vtkKWPushButton );
-    vtkGetObjectMacro ( AccumulatedResultsList, vtkKWListBoxWithScrollbars );    
     vtkGetObjectMacro ( DeleteAccumulatedResultButton, vtkKWPushButton );
     vtkGetObjectMacro ( DeleteAllAccumulatedResultsButton, vtkKWPushButton );
     vtkGetObjectMacro ( SaveAccumulatedResultsButton, vtkKWLoadSaveButton );
@@ -158,6 +159,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro (FSbrainSelector, vtkSlicerNodeSelectorWidget );
     vtkGetObjectMacro (FSstatsSelector, vtkSlicerNodeSelectorWidget );    
     vtkGetObjectMacro (FSgoButton, vtkKWPushButtonWithLabel );
+    vtkGetObjectMacro (LoadFIPSFSCatalogButton, vtkKWLoadSaveButtonWithLabel );
     vtkGetObjectMacro (QdecGetResultsButton, vtkKWLoadSaveButtonWithLabel );
     vtkGetObjectMacro (QdecScalarSelector, vtkKWMenuButtonWithLabel );
     vtkGetObjectMacro (QdecGoButton, vtkKWPushButtonWithLabel);
@@ -276,6 +278,11 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     void LoadQdecResultsCallback();
 
     // Description:
+    // method to load an xcede catalog
+    // containing FIPS and FreeSurfer results
+    void LoadXcedeCatalogCallback();
+    
+    // Description:
     // populates the menu with loaded qdec scalar overlays
     void UpdateScalarOverlayMenu ( );
     
@@ -296,6 +303,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkSlicerNodeSelectorWidget *FSstatsSelector;
     vtkKWPushButtonWithLabel *FSgoButton;
 
+    vtkKWLoadSaveButtonWithLabel *LoadFIPSFSCatalogButton;
     vtkKWLoadSaveButtonWithLabel *QdecGetResultsButton;
     vtkKWMenuButtonWithLabel *QdecScalarSelector;
     vtkKWPushButtonWithLabel *QdecGoButton;
@@ -375,6 +383,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     
     // results frame
     vtkKWListBoxWithScrollbars *CurrentResultsList;
+    vtkKWListBoxWithScrollbars *AccumulatedResultsList;
+
     vtkKWPushButton *DeleteCurrentResultButton;
     vtkKWPushButton *DeleteAllCurrentResultsButton;
     vtkKWPushButton *SaveCurrentResultsButton;
@@ -384,7 +394,6 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     vtkKWPushButton *DeselectAllAccumulatedResultsButton;
     vtkKWPushButton *SelectAllAccumulatedResultsButton;
-    vtkKWListBoxWithScrollbars *AccumulatedResultsList;
     vtkKWPushButton *DeleteAccumulatedResultButton;
     vtkKWPushButton *DeleteAllAccumulatedResultsButton;
     vtkKWLoadSaveButton *SaveAccumulatedResultsButton;

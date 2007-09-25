@@ -20,6 +20,7 @@
 #include "vtkKWListBoxWithScrollbars.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
+#include "vtkKWMessageDialog.h"
 
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerApplication.h"
@@ -34,6 +35,7 @@
 #include "vtkQueryAtlasUseSearchTermWidget.h"
 #include "vtkQueryAtlasSearchTermWidget.h"
 #include "vtkSlicerPopUpHelpWidget.h"
+#include "vtkSlicerWindow.h"
 
 // for path manipulation
 #include "itksys/SystemTools.hxx"
@@ -51,13 +53,13 @@ vtkStandardNewMacro (vtkQueryAtlasGUI );
 vtkCxxRevisionMacro ( vtkQueryAtlasGUI, "$Revision: 1.0 $");
 
 
-#define _br 0.85
-#define _bg 0.85
-#define _bb 0.95
+#define _br 0.925
+#define _bg 0.925
+#define _bb 0.975
 
-#define _fr 0.5
-#define _fg 0.5
-#define _fb 0.5
+#define _fr 0.7
+#define _fg 0.7
+#define _fb 0.7
 
 
 //---------------------------------------------------------------------------
@@ -202,6 +204,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->FSstatsSelector = NULL;
     this->FSgoButton = NULL;
     this->QdecGetResultsButton = NULL;
+    this->LoadFIPSFSCatalogButton = NULL;
     this->QdecScalarSelector = NULL;
     this->QdecGoButton = NULL;
 #endif
@@ -289,6 +292,12 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->FSasegSelector->SetParent ( NULL );
       this->FSasegSelector->Delete();
       this->FSasegSelector = NULL;
+      }
+    if ( this->LoadFIPSFSCatalogButton )
+      {
+      this->LoadFIPSFSCatalogButton->SetParent ( NULL );
+      this->LoadFIPSFSCatalogButton->Delete();
+      this->LoadFIPSFSCatalogButton = NULL;      
       }
     if ( this->QdecGetResultsButton )
       {
@@ -789,6 +798,7 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "FSgoButton: " << this->GetFSgoButton() << "\n";
     os << indent << "QdecGoButton: " << this->GetQdecGoButton() << "\n";
     os << indent << "QdecGetResultsButton: " << this->GetQdecGetResultsButton ( ) << "\n";    
+    os << indent << "LoadFIPSFSCatalogButton: " << this->GetLoadFIPSFSCatalogButton ( ) << "\n";    
     os << indent << "QdecScalarSelector: " << this->GetQdecScalarSelector ( ) << "\n";    
 #endif
     
@@ -1484,21 +1494,88 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
 
 
 //---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
+{
+  // get file from dialog
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+  const char *filen;
+  
+  filen = this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
+  if ( filen != NULL )
+    {
+    itksys::SystemTools::ConvertToUnixOutputPath( filen );
+    std::string fl(filen);
+
+    if ( this->GetMRMLScene() && fl.find(".xcede") != std::string::npos )
+      {
+      this->Script ( "XcedeCatalogImport %s", filen);
+      this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      }
+
+    if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
+      {
+      if ( app->GetApplicationGUI() != NULL )
+        {
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
+        dialog->SetStyleToMessage();
+        std::string msg = this->GetMRMLScene()->GetErrorMessage();
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->Invoke();
+        dialog->Delete();
+        }
+      this->Script ("QueryAtlasSetSceneLoaded 0");
+      } else {
+      this->Script ("QueryAtlasSetSceneLoaded 1");
+      }
+    }
+    this->LoadFIPSFSCatalogButton->GetLabel()->SetText ( "" );
+
+
+
+}
+
+
+
+//---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
 {
   // get file from dialog
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
   const char *filen;
-  
+
   filen = this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
   if ( filen != NULL )
     {
     itksys::SystemTools::ConvertToUnixOutputPath( filen );
     this->Script( "QueryAtlasLoadQdecResults \"%s\"", filen );
+    this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+    if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
+      {
+      if ( app->GetApplicationGUI() != NULL )
+        {
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
+        dialog->SetStyleToMessage();
+        std::string msg = this->GetMRMLScene()->GetErrorMessage();
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->Invoke();
+        dialog->Delete();
+      }
+      this->Script ("QueryAtlasSetSceneLoaded 0");
+      } else {
+      this->Script ("QueryAtlasSetSceneLoaded 1");
+      }
     }
+
     this->QdecGetResultsButton->GetLabel()->SetText ( "" );
 
     // update Scalar overlay menu
     this->UpdateScalarOverlayMenu();
+
+
 }
 
 
@@ -1793,6 +1870,23 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   
+    this->LoadFIPSFSCatalogButton = vtkKWLoadSaveButtonWithLabel::New() ;
+    this->LoadFIPSFSCatalogButton->SetParent ( this->FIPSFSFrame );
+    this->LoadFIPSFSCatalogButton->Create();
+    this->LoadFIPSFSCatalogButton->GetWidget()->SetImageToIcon ( app->GetApplicationGUI()->GetApplicationToolbar()->GetSlicerToolbarIcons()->GetLoadSceneIcon() );   
+    this->LoadFIPSFSCatalogButton->GetWidget()->SetBorderWidth(0);
+    this->LoadFIPSFSCatalogButton->GetWidget()->SetReliefToFlat ( );
+    this->LoadFIPSFSCatalogButton->SetBalloonHelpString ( "Load FIPS/FreeSurfer Xcede catalog" );
+    this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Load FIPS/FreeSurfer Xcede catalog");
+    this->LoadFIPSFSCatalogButton->GetLabel()->SetText( "Load catalog: ");
+    this->LoadFIPSFSCatalogButton->GetLabel()->SetWidth ( 18 );
+    this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOff();
+    this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOff();
+    this->LoadFIPSFSCatalogButton->GetWidget()->SetCommand ( this, "LoadXcedeCatalogCallback" );
+    this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes ( "{ {Xcede catalog} {*.xcede} }");
+    this->LoadFIPSFSCatalogButton->SetBalloonHelpString("Load all results from previous Qdec analysis if not already present in the scene.");
+    this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 4",
+                  this->LoadFIPSFSCatalogButton->GetWidgetName());
 
   this->FSbrainSelector = vtkSlicerNodeSelectorWidget::New() ;
   this->FSbrainSelector->SetParent ( this->FIPSFSFrame );
@@ -2420,12 +2514,12 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     curL->Create();
     curL->SetWidth ( 45 );
     curL->SetText ( "Latest search results" );
-    curL->SetBackgroundColor ( _br, _bg, _bb);
+    curL->SetBackgroundColor ( 0.85, 0.85, 0.95 );
 
     this->CurrentResultsList = vtkKWListBoxWithScrollbars::New();
     this->CurrentResultsList->SetParent ( topcurF );
     this->CurrentResultsList->Create();
-    this->CurrentResultsList->GetWidget()->SetSelectionModeToMultiple();
+    this->CurrentResultsList->GetWidget()->SetSelectionModeToSingle();
     this->CurrentResultsList->GetWidget()->SetWidth ( 45 );
     this->CurrentResultsList->GetWidget()->SetHeight (4 );
     this->CurrentResultsList->HorizontalScrollbarVisibilityOn();
@@ -2497,7 +2591,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->AccumulatedResultsList = vtkKWListBoxWithScrollbars::New();
     this->AccumulatedResultsList->SetParent ( toppastF );
     this->AccumulatedResultsList->Create();
-    this->AccumulatedResultsList->GetWidget()->SetSelectionModeToMultiple();
+    this->AccumulatedResultsList->GetWidget()->SetSelectionModeToSingle();
     this->AccumulatedResultsList->GetWidget()->SetWidth ( 45 );
     this->AccumulatedResultsList->GetWidget()->SetHeight ( 4 );
     this->AccumulatedResultsList->HorizontalScrollbarVisibilityOn();
@@ -2613,12 +2707,16 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
 
 
 //---------------------------------------------------------------------------
+//--- urls with quoted search terms should be displayed
+//--- properly for the user to see -- however, to pass this
+//--- url along to tcl as an argument, we needmakes sure 
+//--- the quote get a backslash in front of them.
+//---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::OpenLinkFromCurrentList ( )
 {
   const char *url;
   
     url = this->CurrentResultsList->GetWidget()->GetSelection();
-    //--- open in browser
     this->Script ( "QueryAtlasOpenLink %s", url);
 
 }

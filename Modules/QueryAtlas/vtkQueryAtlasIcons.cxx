@@ -34,6 +34,7 @@ vtkQueryAtlasIcons::vtkQueryAtlasIcons ( )
     this->ReserveSelectedURIsIcon = vtkKWIcon::New();
     this->SetUpIcon = vtkKWIcon::New();
     this->SelectOverlayIcon = vtkKWIcon::New();
+    this->ToggleQuotesIcon = vtkKWIcon::New();
     this->AssignImageDataToIcons ( );
 }
 
@@ -42,6 +43,11 @@ vtkQueryAtlasIcons::vtkQueryAtlasIcons ( )
 vtkQueryAtlasIcons::~vtkQueryAtlasIcons ( )
 {
 
+  if ( this->ToggleQuotesIcon )
+    {
+    this->ToggleQuotesIcon->Delete();
+    this->ToggleQuotesIcon = NULL;
+    }
   if ( this->SelectOverlayIcon )
     {
     this->SelectOverlayIcon->Delete();
@@ -288,6 +294,11 @@ void vtkQueryAtlasIcons::AssignImageDataToIcons ( )
                                 image_SelectOverlay_height,
                                 image_SelectOverlay_pixel_size,
                                 image_SelectOverlay_length, 0);
+  this->ToggleQuotesIcon->SetImage( image_ToggleQuotes,
+                                image_ToggleQuotes_width,
+                                image_ToggleQuotes_height,
+                                image_ToggleQuotes_pixel_size,
+                                image_ToggleQuotes_length, 0);
 
 }
 
@@ -322,5 +333,6 @@ void vtkQueryAtlasIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "ReserveSelectedURIsIcon: " << this->GetReserveSelectedURIsIcon ( ) << "\n";
     os << indent << "SetUpIcon: " << this->GetSetUpIcon ( ) << "\n";
     os << indent << "SelectOverlayIcon: " << this->GetSelectOverlayIcon ( ) << "\n";
+    os << indent << "ToggleQuotesIcon: " << this->GetToggleQuotesIcon ( ) << "\n";
 
 }
