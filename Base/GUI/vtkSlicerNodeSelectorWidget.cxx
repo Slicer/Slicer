@@ -284,7 +284,7 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
 
             this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(node->GetName());
             // do we need a column break?
-            if (count != 0 && count % 40 == 0)
+            if (count != 0 && count % 30 == 0)
               {
               this->GetWidget()->GetWidget()->GetMenu()->SetItemColumnBreak(count, 1);
               }
