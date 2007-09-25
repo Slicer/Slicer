@@ -357,3 +357,19 @@ static const unsigned char image_WithExactDisabled[] =
   "eNrbtGnT////N1FAPiMXQEwgWzsVbS8uLgaS0wgBuEpk2+EiQAWHcAOIdrh6uO3kaUf2O9"
   "zxBLXD7cIMeWL8jifk0RSgATRZrLYTr50Wto/6nTy/D0h+f/ToES41T58+ffz4MZDEZTsl"
   "JADUDkfQ";
+
+/* 
+ * Resource generated for file:
+ *    ToggleQuotes.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_ToggleQuotes_width          = 21;
+static const unsigned int  image_ToggleQuotes_height         = 21;
+static const unsigned int  image_ToggleQuotes_pixel_size     = 3;
+static const unsigned long image_ToggleQuotes_length         = 128;
+static const unsigned long image_ToggleQuotes_decoded_length = 1323;
+
+static const unsigned char image_ToggleQuotes[] = 
+  "eNpjYKAU/CcXDDbtPoQAQe14rKORdrghRGqH64IwduzYAWEQ43egSqB6NMffuHEDon3C1r"
+  "O4EEQ7RCUuxxPUjt/xBLXjdzxBv2M6fmDjnYraKUnzQy6/UwIAhrR/DA==";
+
+
