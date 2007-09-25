@@ -81,11 +81,24 @@ proc QueryAtlasLoadFirefoxBookmarkFile {bmfile } {
 
 
 
+
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasOpenLinkFromList { lw } {
+
+    set url [ $lw GetSelection ]
+    puts "$url"
+    set browser [ $::slicer3::Application GetWebBrowser ]
+    exec $browser -new-tab $url &    
+    
+}
+
+
+
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasOpenLink { url } {
 
+    puts "opening: $url"
     set browser [ $::slicer3::Application GetWebBrowser ]
-    puts "browser = $browser"
     exec $browser -new-tab $url &
 }
 
@@ -181,6 +194,16 @@ proc QueryAtlasAddEntryTermToSavedTerms { terms } {
 
 }
 
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasWebQuoteSearchTerms { terms } {
+
+    set terms "%22$terms%22"
+    return $terms
+
+}
+
 
 #----------------------------------------------------------------------------------------------------
 #---
@@ -253,6 +276,8 @@ proc QueryAtlasQuery { site } {
 }
 
 
+
+
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
@@ -269,6 +294,7 @@ proc QueryAtlasGetStructureTerms { } {
         #--- if term is selected for use:
         if { [ $ww IsRowSelected $i ] } {
             set term [ $ww GetCellText $i 0 ]
+            regsub -all -- "\"" $term "%22" term            
             append terms $term
             append terms "+"
         }
@@ -312,7 +338,7 @@ proc QueryAtlasGetPopulationTerms { } {
     set m $::slicer3::QueryAtlasGUI
     set termD [[[ $m GetDiagnosisMenuButton ] GetWidget ] GetValue ]
     if { $termD != "" && $termD != "n/a" && $termD != "Normal"} {
-        append terms $termD
+        append terms "\"$termD\""
         append terms "+"
     }
 
@@ -357,8 +383,9 @@ proc QueryAtlasGetSpeciesTerms { } {
 proc QueryAtlasAppendStructureTerms { terms } {
     
     QueryAtlasGetStructureTerms
+
     if { [ info exists ::QA(StructureTerms) ]  } {
-        if { $terms != "" } {
+        if { ($terms != "")  &&  ($::QA(StructureTerms) != "" ) } {
             append terms "+"
         }
         append terms $::QA(StructureTerms)
@@ -374,7 +401,7 @@ proc QueryAtlasAppendPopulationTerms { terms } {
 
     QueryAtlasGetPopulationTerms
     if { [ info exists ::QA(PopulationTerms) ]  } {
-        if { $terms != "" && $terms != "n/a" } {
+        if { ($terms) != ""  &&  ($::QA(PopulationTerms) != "" ) } {
             append terms "+"
         }
         append terms $::QA(PopulationTerms)        
@@ -389,7 +416,7 @@ proc QueryAtlasAppendSpeciesTerms { terms } {
 
     QueryAtlasGetSpeciesTerms
     if { [ info exists ::QA(SpeciesTerms) ]  } {
-        if { $terms != "" } {
+        if { ( $terms != "")  && ( $::QA(SpeciesTerms) != "") } {
             append terms "+"
         }
         append terms $::QA(SpeciesTerms)        
@@ -404,10 +431,10 @@ proc QueryAtlasAppendOtherTerms { terms } {
 
     QueryAtlasGetOtherTerms
     if { [ info exists ::QA(OtherTerms) ]  } {
-        if { $terms != "" } {
+        if { ($terms != "") && ( $::QA(OtherTerms) != "") } {
             append terms "+"
         }
-        append terms $::QA(OtherTerms)        
+        append terms $::QA(OtherTerms)
     }
     return $terms
 }

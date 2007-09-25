@@ -66,6 +66,8 @@ proc QueryAtlasFilterLocalTerms { terms } {
 }
 
 
+
+
 #----------------------------------------------------------------------------------------------------
 # Descrciption:
 # Returns 1 if entry is mapped to its parent structure

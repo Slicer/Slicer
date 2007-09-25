@@ -69,6 +69,7 @@ proc QueryAtlasTearDown { } {
     QueryAtlasCloseOntologyViewer
     QueryAtlasTearDownAnnoCursor
     QueryAtlasTearDownPicker
+    QueryAtlasSetSceneLoaded 0
 
     if { [ info exists ::QA(statsAutoWinLevThreshCompleted)  ] } {
         unset -nocomplain ::QA(statsAutoWinLevThreshCompleted)
@@ -78,14 +79,14 @@ proc QueryAtlasTearDown { } {
         unset -nocomplain ::QA(globalsInitialized)
     }
 
-    if { [ info exists ::QA(FIPSFreeSurferSceneLoaded) ] } {
-        unset -nocomplain ::QA(FIPSFreeSurferSceneLoaded) 
+    if { [ info exists ::QA(SceneType) ] } {
+        unset -nocomplain ::QA(SceneType)
     }
     
-    if { [ info exists ::QA(QdecSceneLoaded) ] } {
-        unset -nocomplain ::QA(QdecSceneLoaded) 
+    if { [ info exists ::QA(SceneSetUp) ] } {
+        unset -nocomplain ::QA(SceneSetUp) 
     }
-
+    
     set ::QA(brain,volumeNodeID) ""
     set ::QA(statvol,volumeNodeID) ""
     set ::QA(label,volumeNodeID) ""
@@ -94,6 +95,18 @@ proc QueryAtlasTearDown { } {
     set as [$::slicer3::QueryAtlasGUI GetFSasegSelector]
     $as SetSelected ""
 }
+
+
+
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetSceneLoaded { loaded } {
+
+    set ::QA(SceneLoaded) $loaded
+}
+
+
 
 #----------------------------------------------------------------------------------------------------
 # 
@@ -125,6 +138,28 @@ proc QueryAtlasInitializeGlobals { } {
         set ::QA(globalsInitialized) 1
     }
 
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#--- Checks to see if the scene is a type we know
+#--- how to query.
+#--- As new kinds of scenes become queryable,
+#--- add them here.
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasValidSceneTypeCheck { type } {
+    
+    if { ! [info exists ::QA(SceneTypes) ] } {
+        lappend ::QA(SceneTypes) "FIPSFreeSurfer"
+        lappend ::QA(SceneTypes) "Qdec"
+    }
+
+    foreach t $::QA(SceneTypes) {
+        if { $t == $type } {
+            return 1
+        }
+    }
+    return 0
 }
 
 
@@ -589,17 +624,12 @@ proc QueryAtlasAddBIRNLogo {} {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasLoadQdecResults { fsgdFile } {
 
-    if { ![ info exists ::QA(QdecSceneLoaded) } {
-        
-        if { [ info exists ::QA(FIPSFreeSurferSceneLoaded) ] } {
-            QueryAtlasDialog "Existing scene must be closed before loading a Qdec query scene."
-            return
-        } else {
-            #--- go ahead and make the call to load scene.
-            #set logic [ $::slicer3::QdecModuleLogic LoadResults $fsgdFile ]
-        }
+    if {  [ info exists ::QA(SceneSetUp) ]  } {
+        QueryAtlasDialog "A scene appears to be loaded. Existing scene must be closed (using File->Close scene) before loading a Qdec query scene."
+        return
     } else {
-        QueryAtlasDialog "Existing scene must be closed before loading a new Qdec query scene."
+        #--- go ahead and make the call to load scene.
+        #set logic [ $::slicer3::QdecModuleLogic LoadResults $fsgdFile ]
     }
 }
 
@@ -607,11 +637,12 @@ proc QueryAtlasLoadQdecResults { fsgdFile } {
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSelectQdecOverlay { } {
-    if { ! [ info exists ::QA(QdecSceneLoaded) ] } {
+    if { (![ info exists ::QA(SceneSetUp) ] ) && ( $::QA(SceneType) == "Qdec") } {
 
-    } elseif { $::QA(QdecSceneLoaded) == 0 } {
+    } elseif { $::QA(SceneSetUp) == 0 } {
 
-    }
+    } 
+
     
 }
 
@@ -620,9 +651,9 @@ proc QueryAtlasSelectQdecOverlay { } {
 proc QueryAtlasQdecSetUp { } {
 
     #--- make sure we have only one query scene loaded when this proc is called.
-    if { [ info exists ::QA(FIPSFreeSurferSceneLoaded) ] } {
-        if { $::QA(FIPSFreeSurferSceneLoaded) } {
-            QueryAtlasDialog "Open FIPS/FreeSurfer scene detected. Close scene (using File->Close scene) and reload only Qdec dataset to continue."
+    if { [ info exists ::QA(SceneSetUp) ] } {
+        if { $::QA(SceneType) != "Qdec" } {
+            QueryAtlasDialog "Non-Qdec scene detected. Close scene (using File->Close scene) and reload only Qdec dataset to continue."
             return
         }
     }
@@ -637,8 +668,8 @@ proc QueryAtlasQdecSetUp { } {
     }
 
     #--- perform once per scene.
-    if { ! [ info exists ::QA(QdecSceneLoaded) ] } {
-        set ::QA(QdecSceneLoaded) 0
+    if { ![ info exists ::QA(SceneSetUp) ] } {
+        set ::QA(SceneSetUp) 0
         
         unset -nocomplain ::QA(modelNodeIDs)
         unset -nocomplain ::QA(modelDisplayNodeIDs)
@@ -790,7 +821,8 @@ proc QueryAtlasQdecSetUp { } {
 
         set ::QA(CurrentRASPoint) "0 0 0"
         $prog SetValue [ expr 100 * 8.0 / 8.0 ]
-        set ::QA(QdecSceneLoaded) 1
+        set ::QA(SceneSetUp) 1
+        set ::QA(SceneType) "Qdec"
 
         #--- clear progress
         $win SetStatusText ""
@@ -806,9 +838,9 @@ proc QueryAtlasFipsFreeSurferSetUp { } {
 
 
     #--- make sure we only have one query scene loaded when this proc is called.
-    if { [ info exists ::QA(QdecSceneLoaded) ] } {
-        if { $::QA(QdecSceneLoaded) } {
-            QueryAtlasDialog "Open Qdec scene detected. Close scene (using File->Close scene) and reload only FIPS/FreeSurfer dataset to continue."
+    if { [ info exists ::QA(SceneSetUp) ] } {
+        if { $::QA(SceneType) != "FIPSFreeSurfer" } {
+            QueryAtlasDialog "Non FIPS/FreeSurfer scene detected. Close scene (using File->Close scene) and reload only FIPS/FreeSurfer dataset to continue."
             return
         }
     }
@@ -833,8 +865,8 @@ proc QueryAtlasFipsFreeSurferSetUp { } {
     }
 
     #--- perform once per scene.
-    if { ! [ info exists ::QA(FIPSFreeSurferSceneLoaded) ] } {
-        set ::QA(FIPSFreeSurferSceneLoaded) 0
+    if { ! [ info exists ::QA(SceneSetUp) ] } {
+        set ::QA(SceneSetUp) 0
 
         unset -nocomplain ::QA(modelNodeIDs)
         unset -nocomplain ::QA(modelDisplayNodeIDs)
@@ -910,7 +942,8 @@ proc QueryAtlasFipsFreeSurferSetUp { } {
 
         set ::QA(CurrentRASPoint) "0 0 0"
         $prog SetValue [ expr 100 * 8.0 / 8.0 ]
-        set ::QA(FIPSFreeSurferSceneLoaded) 1
+        set ::QA(SceneSetUp) 1
+        set ::QA(SceneType) "FIPSFreeSurfer"
     }
 
     #--- clear progress
@@ -1358,7 +1391,24 @@ proc QueryAtlasRenderView {} {
   $renderWidget Render
 
 
+  
   $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
+
+  if { 0 } {
+  #
+    # make a little preview window for debugging pleasure
+    #
+    catch "viewer Delete"
+    catch "viewerImage Delete"
+    vtkImageViewer viewer
+    vtkImageData viewerImage
+    viewerImage DeepCopy [$::QA(windowToImage) GetOutput]
+    viewer SetInput viewerImage
+    viewer SetColorWindow 2
+    viewer SetColorLevel 1
+    viewer Render
+}
+
 
   set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
   if { [$renderWindow GetSize] != $imageSize } {
@@ -1548,6 +1598,8 @@ proc QueryAtlasPickCallback {} {
     set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
     if { [$renderWindow GetSize] != $imageSize } {
         QueryAtlasRenderView
+
+        
     }
 
     # 
@@ -1569,13 +1621,12 @@ proc QueryAtlasPickCallback {} {
         #--- hit query model display nodes?
         for { set m 0 } { $m < $numQmodels } { incr m } {
             if { $prop == $actor($m) } {
-                puts "picked prop = $m"
-                set ::QA(currentHit) "QueryActor"
+                set ::QA(currentHit) "QueryModel"
                 #--- choose the right label map
                 set mid [ lindex $::QA(modelNodeIDs) $m ]
                 set _useLabels $::QA(labelMap_$mid)
                 set _useMID $mid
-                puts "useMID = $mid"
+                puts "picked model $mid"
             }
         }
 
@@ -1586,7 +1637,7 @@ proc QueryAtlasPickCallback {} {
                 for { set m 0 } { $m < $numQmodels } { incr m } {
                     set mid [ lindex $::QA(modelNodeIDs) $m ]
                     if { $mrmlID == $mid } {
-                        set ::QA(currentHit) "QueryActor"
+                        set ::QA(currentHit) "QueryModel"
                         #--- choose the right label map
                         set _useLabels $::QA(labelMap_$mid)
                         set _useMID $mid
@@ -1594,7 +1645,8 @@ proc QueryAtlasPickCallback {} {
                 }
                 #--- hit slice models?
                 if { $::QA(currentHit) == "" } {
-                    set ::QA(currentHit) "SliceModel"
+                    puts "picked slice $mrmlID"
+                    set ::QA(currentHit) "QuerySlice"
                 }
             } 
         }
@@ -1605,34 +1657,35 @@ proc QueryAtlasPickCallback {} {
     #
     #---- did we hit a slice model?
     set pointLabels ""
-    if { $::QA(currentHit) == "SliceModel" } {
-
+    if { $::QA(currentHit) == "QuerySlice" } {
         set node [$::slicer3::MRMLScene GetNodeByID $mrmlID]
-
-        #--- WJPTEST 
-        #--- this is now a display node.
-        #--- must get the mrml node to which it belongs....
+        puts "did= [ $node GetID] "
+        #--- get the corresponding model display node
         set numMnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode"]
         for { set zz 0 } { $zz < $numMnodes } { incr zz } {
             set testnode [ $::slicer3::MRMLScene GetNthNodeByClass $zz "vtkMRMLModelNode" ]          
             set testdisplayID [ $testnode GetDisplayNodeID ]
             if { $testdisplayID == $mrmlID } {
                 set node $testnode
+                puts "nid = [ $node GetID] "
             }
         }
-        
+
         if { $node != "" && [$node GetDescription] != "" } {
             array set nodes [$node GetDescription]
             set nodes(sliceNode) [$::slicer3::MRMLScene GetNodeByID $nodes(SliceID)]
             set nodes(compositeNode) [$::slicer3::MRMLScene GetNodeByID $nodes(CompositeID)]
-
             set propCollection [$::QA(cellPicker) GetPickList]
             $propCollection RemoveAllItems
+            
             $propCollection AddItem [$::QA(propPicker) GetViewProp]
+            puts "id = [$viewer GetIDByActor [$::QA(propPicker) GetViewProp]]"
             $::QA(cellPicker) PickFromListOn
             $::QA(cellPicker) Pick $x $y 0 $renderer
             set cellID [$::QA(cellPicker) GetCellId]
             set pCoords [$::QA(cellPicker) GetPCoords]
+            puts "x=$x y=$y cellID = $cellID"
+            puts "pcoords = $pCoords"
             if { $cellID != -1 } {
                 set polyData [[$prop GetMapper] GetInput]
                 set cell [$polyData GetCell $cellID]
@@ -1653,7 +1706,7 @@ proc QueryAtlasPickCallback {} {
                 set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
                 if { [info exists ::QAFS($labelValue,name)] } {
                     if { $::QAFS($labelValue,name) == "Unknown" } {
-                        set ::QA(currentHit) "QueryActor"
+                        set ::QA(currentHit) "QueryModel"
                     } else {
                         set pointLabels "$::QAFS($labelValue,name)"
                     }
@@ -1666,7 +1719,7 @@ proc QueryAtlasPickCallback {} {
     }
 
     #--- did we hit a model?
-    if { $::QA(currentHit) == "QueryActor" } {
+    if { $::QA(currentHit) == "QueryModel" } {
         #
         # get the color under the mouse from label image
         #
