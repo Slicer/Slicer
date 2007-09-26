@@ -152,6 +152,7 @@ protected:
   vtkKWPushButton *PB_LoadImageData;
   vtkKWPushButton *PB_LoadVolumeRenderingDataSlicer;
   vtkKWPushButton *PB_LoadVolumeRenderingDataScene;
+  vtkKWPushButton *PB_SaveCurrentAsNew;
   vtkSlicerNodeSelectorWidget *NS_ImageData;
   vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataSlicer;
   vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataScene;
@@ -160,6 +161,7 @@ protected:
   //Frame Details
   vtkSlicerVolumePropertyWidget *SVP_VolumeProperty;
   vtkKWHistogram *HIST_Opacity;
+  vtkKWHistogram *HIST_Gradient;
 
 
   //Other members

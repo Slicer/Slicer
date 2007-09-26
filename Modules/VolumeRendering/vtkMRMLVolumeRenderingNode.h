@@ -16,12 +16,12 @@
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkMRMLVolumeRenderingNode : public vtkMRMLNode
 {
 public:
-    
-    const char* getPiecewiseFunctionString(vtkPiecewiseFunction* function);//, char* result);
-    const char* getColorTransferFunctionString(vtkColorTransferFunction* function);
+    //BTX
+    std::string getPiecewiseFunctionString(vtkPiecewiseFunction* function);//, char* result);
+    std::string getColorTransferFunctionString(vtkColorTransferFunction* function);
     void GetPiecewiseFunctionFromString(const char* string,vtkPiecewiseFunction* result);
     void GetColorTransferFunction(const char* string, vtkColorTransferFunction* result);
-    
+    //ETX
     static vtkMRMLVolumeRenderingNode *New();
     vtkTypeMacro(vtkMRMLVolumeRenderingNode,vtkMRMLNode);
     void PrintSelf(ostream& os, vtkIndent indent);
@@ -101,7 +101,7 @@ public:
   
 protected:
     //Buffer vor char return
-  char* Buffer;
+  const char* Buffer;
   vtkMRMLVolumeRenderingNode(void);
     ~vtkMRMLVolumeRenderingNode(void);
   vtkMRMLVolumeRenderingNode(const vtkMRMLVolumeRenderingNode&);

@@ -8,6 +8,9 @@
 #include "vtkIndent.h"
 #include "vtkPointData.h"
 #include "vtkPiecewisefunction.h"
+#include "vtkKWPiecewiseFunctionEditor.h"
+#include "vtkKWColorTransferFunctionEditor.h"
+#include "vtkImageGradientMagnitude.h"
 
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
@@ -73,6 +76,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->NS_ImageData=vtkSlicerNodeSelectorWidget::New();
     this->NS_ImageData->SetParent(loadSaveDataFrame->GetFrame());
     this->NS_ImageData->Create();
+    this->NS_ImageData->NoneEnabledOn();
     this->NS_ImageData->SetLabelText("Source Volume");
     app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->NS_ImageData->GetWidgetName());
 
@@ -87,15 +91,22 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->NS_VolumeRenderingDataScene=vtkSlicerNodeSelectorWidget::New();
     this->NS_VolumeRenderingDataScene->SetParent(loadSaveDataFrame->GetFrame());
     this->NS_VolumeRenderingDataScene->Create();
+    this->NS_VolumeRenderingDataScene->NoneEnabledOn();
     this->NS_VolumeRenderingDataScene->SetLabelText("VolumeRenderingNode from Scene");
     app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->NS_VolumeRenderingDataScene->GetWidgetName());
     //Missing: Load from file
 
-    this->PB_LoadVolumeRenderingDataSlicer=vtkKWPushButton::New();
-    this->PB_LoadVolumeRenderingDataSlicer->SetParent(loadSaveDataFrame->GetFrame());
-    this->PB_LoadVolumeRenderingDataSlicer->Create();
-    this->PB_LoadVolumeRenderingDataSlicer->SetText("Load VolumeRenderingNode");
-    app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->PB_LoadVolumeRenderingDataSlicer->GetWidgetName());
+    this->PB_LoadVolumeRenderingDataScene=vtkKWPushButton::New();
+    this->PB_LoadVolumeRenderingDataScene->SetParent(loadSaveDataFrame->GetFrame());
+    this->PB_LoadVolumeRenderingDataScene->Create();
+    this->PB_LoadVolumeRenderingDataScene->SetText("Load VolumeRenderingNode");
+    app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->PB_LoadVolumeRenderingDataScene->GetWidgetName());
+    
+    this->PB_SaveCurrentAsNew=vtkKWPushButton::New();
+    this->PB_SaveCurrentAsNew->SetParent(loadSaveDataFrame->GetFrame());
+    this->PB_SaveCurrentAsNew->Create();
+    this->PB_SaveCurrentAsNew->SetText("SaveCurrentSettingAsNew");
+    app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->PB_SaveCurrentAsNew->GetWidgetName());
 
     //Status
     this->L_Status=vtkKWLabel::New();
@@ -118,17 +129,10 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->SVP_VolumeProperty->Create();
     app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
 
+    //Histogram
+    this->HIST_Opacity=vtkKWHistogram::New();
+    this->HIST_Gradient=vtkKWHistogram::New();
       
-        
-        /*
-    #Button to make all Models invisible
-    set ::VR($this,buttonAllModelsInvisible) [vtkKWPushButton New]
-    puts "buttonLoadNode: $::VR($this,buttonAllModelsInvisible)"
-    $::VR($this,buttonAllModelsInvisible) SetParent [$::VR($this,cFrameVolumes) GetFrame]
-    $::VR($this,buttonAllModelsInvisible) Create
-    $::VR($this,buttonAllModelsInvisible) SetText "AllModelsInvisible"
-    $::VR($this,buttonAllModelsInvisible) SetBalloonHelpString "Make all models invisible"
-    pack [$::VR($this,buttonAllModelsInvisible) GetWidgetName] -side top -anchor e -padx 0 -pady 2*/
     //Delete frames
     loadSaveDataFrame->Delete();
     detailsFrame->Delete();
@@ -158,6 +162,8 @@ void vtkVolumeRenderingModuleGUI::AddGUIObservers(void)
 {
     this->PB_Testing->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand );
     this->PB_LoadImageData->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand);
+    this->PB_SaveCurrentAsNew->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand*)this->GUICallbackCommand);
+    this->PB_LoadVolumeRenderingDataScene->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand*)this->GUICallbackCommand);
 }
 void vtkVolumeRenderingModuleGUI::RemoveGUIObservers(void)
 {
@@ -188,11 +194,56 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
          return;
          //vtkMRMLVolumeRenderingNode::
      }
-     if(callerObject==this->PB_LoadImageData&&event==vtkKWPushButton::InvokedEvent)
+     else if(callerObject==this->PB_LoadImageData&&event==vtkKWPushButton::InvokedEvent)
      {
          this->InitializePipeline();
          //this->currentNode->InitializePipeline(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetDisplayNode());
 
+     }
+     else if (callerObject==this->PB_SaveCurrentAsNew&&event==vtkKWPushButton::InvokedEvent)
+     {
+         this->currentNode->HideFromEditorsOff();
+         this->GetLogic()->GetMRMLScene()->AddNode(this->currentNode);
+
+
+     }
+     else if (callerObject==this->PB_LoadVolumeRenderingDataScene&&event==vtkKWPushButton::InvokedEvent)
+     {
+         //No Node selected
+         if(this->PipelineInitialized==0)
+         {
+             vtkDebugMacro("VolumeRenderingNode selected before Input selected");
+            return;
+         }
+         //Change everthing for new Pointer
+         //Delete ol one
+         this->currentNode->Delete();
+        this->currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataScene->GetSelected());
+        this->SVP_VolumeProperty->SetVolumeProperty(currentNode->GetVolumeProperty());
+         vtkImageData* imageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData();
+        //Update Input of Mapper
+        this->currentNode->GetMapper()->SetInput(imageData);
+
+    //Take care about histogram and automatic mapping
+    //Add Histogram to GUI
+    this->HIST_Opacity->BuildHistogram(imageData->GetPointData()->GetScalars(),0);
+    this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetHistogram(this->HIST_Opacity);
+    this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetHistogram(this->HIST_Opacity);
+
+
+    vtkImageGradientMagnitude *grad=vtkImageGradientMagnitude::New();
+    grad->SetDimensionality(3);
+    grad->SetInput(imageData);
+    grad->Update();
+    vtkImageData *test=grad->GetOutput();
+    this->HIST_Gradient->BuildHistogram(test->GetPointData()->GetScalars(),0);
+    this->SVP_VolumeProperty->GetGradientOpacityFunctionEditor()->SetHistogram(this->HIST_Gradient);
+    vtkPiecewiseFunction *gradFunction=this->currentNode->GetVolumeProperty()->GetGradientOpacity();
+    gradFunction->AdjustRange(test->GetPointData()->GetScalars()->GetRange());
+
+     this->SVP_VolumeProperty->SetVolumeProperty(this->currentNode->GetVolumeProperty());
+     this->SVP_VolumeProperty->Modified();
+            
      }
     
      this->UpdateGUI();
@@ -260,6 +311,9 @@ void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
         label<<"NOT loaded";
     }
     this->L_Status->SetText(label.str().c_str());
+    this->L_Status->Modified();
+    this->Modified();
+
     //this->L_Status->UpdateText();
 
 }
@@ -272,12 +326,16 @@ void vtkVolumeRenderingModuleGUI::SetInteractorStyle(vtkSlicerViewerInteractorSt
 
 void vtkVolumeRenderingModuleGUI::InitializePipeline()
 {
-        this->currentNode=vtkMRMLVolumeRenderingNode::New();
-        vtkImageData* imageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData();
-        
-        this->currentNode->GetMapper()->SetInput(imageData);
-    this->HIST_Opacity=vtkKWHistogram::New();
+     this->currentNode=vtkMRMLVolumeRenderingNode::New();
+     vtkImageData* imageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData();
+    //Update Input of Mapper
+    this->currentNode->GetMapper()->SetInput(imageData);
+
+    //Take care about histogram and automatic mapping
+    //Add Histogram to GUI
     this->HIST_Opacity->BuildHistogram(imageData->GetPointData()->GetScalars(),0);
+    this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetHistogram(this->HIST_Opacity);
+    this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetHistogram(this->HIST_Opacity);
     //automatic Mode
     if(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetLabelMap()==1)
     {
@@ -287,107 +345,58 @@ void vtkVolumeRenderingModuleGUI::InitializePipeline()
     else
     {
         double totalOccurance=this->HIST_Opacity->GetTotalOccurence();
-        double tresholdLow=totalOccurance*0.1;
-        double tresholdHigh=totalOccurance*0.9;
+        double tresholdLow=totalOccurance*0.2;
+        double tresholdHigh=totalOccurance*0.8;
         double *range=new double[2];
         this->HIST_Opacity->GetRange(range);
         double tresholdLowIndex=range[0];
         double sumLowIndex=0;
         double tresholdHighIndex=range[0];
         double sumHighIndex=0;
+        //calculate distance
+        double bin_width = (range[1] == range[0] ? 1 :(double)this->HIST_Opacity->GetNumberOfBins() / (range[1] - range[0]));
         while (sumLowIndex<tresholdLow)
         {
             sumLowIndex+=this->HIST_Opacity->GetOccurenceAtValue(tresholdLowIndex);
-            tresholdLowIndex+=0.1;
+            tresholdLowIndex+=bin_width;
         }
         while(sumHighIndex<tresholdHigh)
         {
-            sumHighIndex*=this->HIST_Opacity->GetOccurenceAtValue(tresholdHighIndex);
-            tresholdHighIndex+=0.1;
+            sumHighIndex+=this->HIST_Opacity->GetOccurenceAtValue(tresholdHighIndex);
+            tresholdHighIndex+=bin_width;
+
         }
         vtkPiecewiseFunction *opacity=this->currentNode->GetVolumeProperty()->GetScalarOpacity();
+        opacity->RemoveAllPoints();
+        opacity->AddPoint(range[0],0.);
+        opacity->AddPoint(tresholdLowIndex,0.0);
+        opacity->AddPoint(tresholdHighIndex,0.2);
+        opacity->AddPoint(range[1],0.2);
         vtkColorTransferFunction *colorTransfer=this->currentNode->GetVolumeProperty()->GetRGBTransferFunction();
+        colorTransfer->RemoveAllPoints();
         colorTransfer->AddRGBPoint(range[0],.3,.3,1.);
-        colorTransfer->AddRGBPoint(sumLowIndex,.3,.3,1.);
-        colorTransfer->AddRGBPoint(sumLowIndex+.5*(sumHighIndex-sumLowIndex),.3,1.,.3);
-        colorTransfer->AddRGBPoint(sumHighIndex,1.,.3,.3);
+        colorTransfer->AddRGBPoint(tresholdLowIndex,.3,.3,1.);
+        colorTransfer->AddRGBPoint(tresholdLowIndex+.5*(tresholdHighIndex-tresholdLowIndex),.3,1.,.3);
+        colorTransfer->AddRGBPoint(tresholdHighIndex,1.,.3,.3);
         colorTransfer->AddRGBPoint(range[1],1,.3,.3);
-        
-    }
-    
-        /*
-            $::VR($this,colorTransferFunction) AddRGBPoint      [lindex [$::VR($this,pfed_hist) GetRange] 0] 0.3 0.3 1.0
-            $::VR($this,colorTransferFunction) AddRGBPoint      [expr [lindex [$::VR($this,pfed_hist) GetRange] 1] * 0.25] 0.3 0.3 1.0
-            $::VR($this,colorTransferFunction) AddRGBPoint      [expr [lindex [$::VR($this,pfed_hist) GetRange] 1] * 0.5] 0.3 1.0 0.3
-            $::VR($this,colorTransferFunction) AddRGBPoint    [expr [lindex [$::VR($this,pfed_hist) GetRange] 1] * 0.75] 1.0 0.3 0.3
-            $::VR($this,colorTransferFunction) AddRGBPoint     [lindex [$::VR($this,pfed_hist) GetRange] 1] 1    .3    .3
-        } ;#else
-            
+        vtkImageGradientMagnitude *grad=vtkImageGradientMagnitude::New();
+        grad->SetDimensionality(3);
+        grad->SetInput(imageData);
+        grad->Update();
 
-        set ::VR($this,volumeProperty) [vtkVolumeProperty New]
-        puts "volumeProperty: $::VR($this,volumeProperty)"
-            $::VR($this,volumeProperty) SetScalarOpacity $::VR($this,opacityTransferFunction)
-            $::VR($this,volumeProperty) SetColor $::VR($this,colorTransferFunction)
-            #$::VR($this,volumeProperty) SetGradientOpacity $gradientOpacityTransferFunction
-            $::VR($this,volumeProperty) SetInterpolationTypeToNearest
-            $::VR($this,volumeProperty) ShadeOff
-        $::VR($this,presetSelector) SetPresetVolumeProperty 0 $::VR($this,volumeProperty)
+        vtkImageData *test=grad->GetOutput();
+        this->HIST_Gradient->BuildHistogram(test->GetPointData()->GetScalars(),0);
+        this->SVP_VolumeProperty->GetGradientOpacityFunctionEditor()->SetHistogram(this->HIST_Gradient);
+        vtkPiecewiseFunction *gradFunction=this->currentNode->GetVolumeProperty()->GetGradientOpacity();
+        gradFunction->AdjustRange(test->GetPointData()->GetScalars()->GetRange());
 
-        puts "334"
-        #Switch here for MIP and Normal Mode
-        if 0 {
-            set ::VR($this,volumeMapper) [vtkFixedPointVolumeRayCastMapper New]
-            $::VR($this,volumeMapper) SetInput $::VR($this,aImageData)
-            }
-            
-        if 1 {
-      set ::VR($this,converter) [vtkImageShiftScale New]
-            $::VR($this,converter) SetOutputScalarTypeToUnsignedChar 
-            $::VR($this,converter) SetInput $::VR($this,aImageData)
-            set ::VR($this,volumeMapper) [vtkVolumeTextureMapper3D New]
-            $::VR($this,volumeMapper) SetInput [$::VR($this,converter) GetOutput]
-            $::VR($this,volumeMapper) SetSampleDistance 0.1
-        
-        }
-            puts "348"
-    $::VR($this,volumeMapper) AddObserver ProgressEvent {puts "progress:"}
-        set ::VR($this,volume) [vtkVolume New]
-        $::VR($this,volume) SetMapper $::VR($this,volumeMapper)
-        $::VR($this,volume) SetProperty $::VR($this,volumeProperty)
-        set ::VR($this,matrix) [vtkMatrix4x4 New]
-        puts "after setMatrix"
-        puts "after cast"
-        $::VR($this,aMRMLNODE) GetIJKToRASMatrix $::VR($this,matrix)
-        puts "after get"
-        $::VR($this,volume) PokeMatrix $::VR($this,matrix)
-        puts "PokeMatrix"
-        #Add data to vtkKWVolumePropertyWidget
-        $::VR($this,vpw) SetVolumeProperty $::VR($this,volumeProperty)
-        $::VR($this,vpw) ComponentWeightsVisibilityOff
-        #$::VR($this,vpw) Update
 
-        #Add property to RenderWidget
-        $::VR($this,renderWidget) AddViewProp $::VR($this,volume)
-    $::VR($this,renderWidget) AddObserver ProgressEvent {puts "progress: widget"}
-        #Add Histograms to Widget
-        [$::VR($this,vpw) GetScalarOpacityFunctionEditor]  SetHistogram $::VR($this,pfed_hist)
-        [$::VR($this,vpw) GetScalarColorFunctionEditor] SetHistogram $::VR($this,pfed_hist)
-        #No Gradient
-        #Update vtkKWVolumePropertyWidget
-        $::VR($this,renderWidget) Create
-            puts "Render ENDE"
-    } ;#else
-    puts "proc Load Node Processed"*/
-    
-    
+        //Add VolumeProperty To Gui
+        this->SVP_VolumeProperty->SetVolumeProperty(this->currentNode->GetVolumeProperty());
     
     this->PipelineInitializedOn();
-    this->SVP_VolumeProperty->SetVolumeProperty(this->currentNode->GetVolumeProperty());
-
-    /*set ::VR($this,pfed_hist) [vtkKWHistogram New]
-        puts "pfed_hist: $$::VR($this,pfed_hist)"
-        $::VR($this,pfed_hist) BuildHistogram [[$::VR($this,aImageData) GetPointData] GetScalars] 0*/
-}
+    }//else
+}//method
 void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
 {
 }
