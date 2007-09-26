@@ -715,14 +715,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         = vtkMRMLVolumeArchetypeStorageNode::New();
       vin->SetCenterImage(0);
       in = vin;
-      if (svnd->GetLabelMap()) 
-        {
-        disp = vtkMRMLLabelMapVolumeDisplayNode::New();
-        }
-      else
-        {
-        disp = vtkMRMLScalarVolumeDisplayNode::New();
-        }
       }
     else if (dtvnd || dwvnd)
       {
@@ -733,26 +725,16 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       vtkMRMLNRRDStorageNode *nin = vtkMRMLNRRDStorageNode::New();
       nin->SetCenterImage(0);
       in = nin;
-      if (dtvnd)
-        {
-        disp = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
-        }
-      else
-        {
-        disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
-        }
       }
     else if (fbnd)
       {
       // Load a fiber bundle node
       in = vtkMRMLFiberBundleStorageNode::New();
-      disp = vtkMRMLFiberBundleDisplayNode::New();
       }
     else if (mnd)
       {
       // Load a model node
       in = vtkMRMLModelStorageNode::New();
-      disp = vtkMRMLModelDisplayNode::New();
       }
     else if (ltnd)
       {
@@ -802,6 +784,49 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       }
     }
 
+
+  // Get the right type of display node
+  //
+  if (svnd || vvnd)
+    {
+    // Scalar or vector volume node
+    if (svnd->GetLabelMap()) 
+      {
+      disp = vtkMRMLLabelMapVolumeDisplayNode::New();
+      }
+    else
+      {
+      disp = vtkMRMLScalarVolumeDisplayNode::New();
+      }
+    }
+  else if (dtvnd || dwvnd)
+    {
+    // Diffusion tensor or a diffusion weighted node
+    if (dtvnd)
+      {
+      disp = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+      }
+    else
+      {
+      disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
+      }
+    }
+  else if (fbnd)
+    {
+    // Fiber bundle node
+    disp = vtkMRMLFiberBundleDisplayNode::New();
+    }
+  else if (mnd)
+    {
+    // Model node
+    disp = vtkMRMLModelDisplayNode::New();
+    }
+  else if (ltnd)
+    {
+    // Linear transform node
+    // (no display node)  
+    }
+  
   // Display the data if requested
   //
   if (req.GetDisplayData())
