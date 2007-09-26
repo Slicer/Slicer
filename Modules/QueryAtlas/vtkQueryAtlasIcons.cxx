@@ -35,6 +35,7 @@ vtkQueryAtlasIcons::vtkQueryAtlasIcons ( )
     this->SetUpIcon = vtkKWIcon::New();
     this->SelectOverlayIcon = vtkKWIcon::New();
     this->ToggleQuotesIcon = vtkKWIcon::New();
+    this->WebIcon = vtkKWIcon::New();
     this->AssignImageDataToIcons ( );
 }
 
@@ -43,6 +44,11 @@ vtkQueryAtlasIcons::vtkQueryAtlasIcons ( )
 vtkQueryAtlasIcons::~vtkQueryAtlasIcons ( )
 {
 
+  if ( this->WebIcon)
+    {
+    this->WebIcon->Delete();
+    this->WebIcon = NULL;
+    }
   if ( this->ToggleQuotesIcon )
     {
     this->ToggleQuotesIcon->Delete();
@@ -299,6 +305,11 @@ void vtkQueryAtlasIcons::AssignImageDataToIcons ( )
                                 image_ToggleQuotes_height,
                                 image_ToggleQuotes_pixel_size,
                                 image_ToggleQuotes_length, 0);
+  this->WebIcon->SetImage( image_www,
+                                image_www_width,
+                                image_www_height,
+                                image_www_pixel_size,
+                                image_www_length, 0);
 
 }
 
@@ -334,5 +345,6 @@ void vtkQueryAtlasIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SetUpIcon: " << this->GetSetUpIcon ( ) << "\n";
     os << indent << "SelectOverlayIcon: " << this->GetSelectOverlayIcon ( ) << "\n";
     os << indent << "ToggleQuotesIcon: " << this->GetToggleQuotesIcon ( ) << "\n";
+    os << indent << "WebIcon: " << this->GetWebIcon ( ) << "\n";
 
 }

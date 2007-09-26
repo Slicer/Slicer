@@ -67,6 +67,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetMacro ( ModelVisibility, int );
     vtkGetMacro ( LHModelVisibility, int );
     vtkGetMacro ( RHModelVisibility, int );
+    vtkGetMacro ( SceneLoaded, int );
+    vtkSetMacro ( SceneLoaded, int );
 
     // Querybuilder frame top widgets
     vtkGetObjectMacro (OtherButton, vtkKWPushButton );
@@ -135,8 +137,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( SavedTerms, vtkQueryAtlasSearchTermWidget );
 
     // results frame?
-    vtkGetObjectMacro ( CurrentResultsList, vtkKWListBoxWithScrollbars );
-    vtkGetObjectMacro ( AccumulatedResultsList, vtkKWListBoxWithScrollbars );    
+    vtkGetObjectMacro ( CurrentResultsList, vtkKWMultiColumnListWithScrollbars );
+    vtkGetObjectMacro ( AccumulatedResultsList, vtkKWMultiColumnListWithScrollbars );    
     
     vtkGetObjectMacro ( DeleteCurrentResultButton, vtkKWPushButton );
     vtkGetObjectMacro ( DeleteAllCurrentResultsButton, vtkKWPushButton );
@@ -237,16 +239,12 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Get terms from the other panel
     virtual void GetOtherTerms ( );
 
-    // Description:
-    // Opens a url in browser when
-    // the current results listbox
-    // item is double-clicked
-    virtual void OpenLinkFromCurrentList ( );
-    // Description:
-    // Opens a url in browser when
-    // the accumulated results listbox
-    // item is double-clicked
-    virtual void OpenLinkFromAccumulatedList ( );
+    virtual void AppendUniqueResult ( const char *r );
+    virtual void AccumulateUniqueResult ( const char *r );
+    virtual void DeleteAllResults(vtkKWMultiColumnList *l );
+    virtual void DeleteSelectedResults(vtkKWMultiColumnList *l );
+    virtual void CurrentResultsSelectionCommandCallback ( );
+    virtual void AccumulatedResultsSelectionCommandCallback ( );
     
     //BTX
     std::vector<std::string> DiagnosisTerms;
@@ -382,8 +380,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWCheckButton *UseSpeciesTerms;
     
     // results frame
-    vtkKWListBoxWithScrollbars *CurrentResultsList;
-    vtkKWListBoxWithScrollbars *AccumulatedResultsList;
+    vtkKWMultiColumnListWithScrollbars *CurrentResultsList;
+    vtkKWMultiColumnListWithScrollbars *AccumulatedResultsList;
 
     vtkKWPushButton *DeleteCurrentResultButton;
     vtkKWPushButton *DeleteAllCurrentResultsButton;
@@ -406,6 +404,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     void OpenOntologyBrowser();
 
     bool SceneClosing;
+    int SceneLoaded;
     
     //BTX
     // Description:

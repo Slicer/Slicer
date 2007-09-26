@@ -244,7 +244,7 @@ void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
   this->ContainerFrame = vtkKWFrame::New();
   this->ContainerFrame->SetParent ( this->GetParent() );
   this->ContainerFrame->Create();
-  app->Script ( "pack %s -side top -fill both -expand true", this->ContainerFrame->GetWidgetName() );
+  app->Script ( "pack %s -side top -fill both -expand n", this->ContainerFrame->GetWidgetName() );
   
   // create the icons
   this->QueryAtlasIcons = vtkQueryAtlasIcons::New();
@@ -264,9 +264,9 @@ void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
   this->MultiColumnList->GetWidget()->ColumnEditableOn ( 0 );
   this->MultiColumnList->GetWidget()->SetColumnWidth (0, 50);
   this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft (0 );
-  this->MultiColumnList->GetWidget()->ColumnResizableOff ( 0 );
+  this->MultiColumnList->GetWidget()->ColumnResizableOn ( 0 );
   this->MultiColumnList->GetWidget()->ColumnStretchableOn ( 0 );
-  app->Script ( "pack %s -side top -fill x -expand true", this->MultiColumnList->GetWidgetName() );
+  app->Script ( "pack %s -side top -fill x -expand n", this->MultiColumnList->GetWidgetName() );
 
   // frame for the buttons
   vtkKWFrame *bFrame = vtkKWFrame::New();

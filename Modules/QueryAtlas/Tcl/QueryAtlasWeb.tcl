@@ -36,9 +36,9 @@ proc QueryAtlasWriteFirefoxBookmarkFile {bmfile } {
 
     #--- now put in links
     set rl [ [ $::slicer3::QueryAtlasGUI GetAccumulatedResultsList ] GetWidget ]
-    set num [ $rl GetNumberOfItems ]
+    set num [ $rl GetNumberOfRows ]
     for { set i 0 } { $i < $num } { incr i } {
-        set link [ $rl GetItem $i ]
+        set link [ $rl GetCellText $i 1 ]
         set line "        <DT><A HREF=\"$link\" > Slicer3:QueryAtlas link $i </A>"
         puts "adding $line"
         puts $fp $line
@@ -74,7 +74,7 @@ proc QueryAtlasLoadFirefoxBookmarkFile {bmfile } {
             set tmpstr [ string trimright $tmpstr "\"" ]
             #--- load them into accumulated results frame
             set rl [ [ $::slicer3::QueryAtlasGUI GetAccumulatedResultsList ] GetWidget ]
-            $rl AppendUnique $tmpstr
+            $::slicer3::QueryAtlasGUI AccumulateUniqueResult $tmpstr
         }
     }
 }
@@ -834,27 +834,27 @@ proc QueryAtlasPopulateSearchResultsBox { } {
 
     if { [ info exists ::QA(url,Google) ] } {
         if { $::QA(url,Google) != "" } {
-            $lb AppendUnique $::QA(url,Google)
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,Google)
         }
     }
     if { [ info exists ::QA(url,Wikipedia) ] } {    
         if { $::QA(url,Wikipedia) != "" } {
-            $lb AppendUnique $::QA(url,Wikipedia)
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,Wikipedia)
         }
     }
     if { [ info exists ::QA(url,PubMed) ] } {    
         if { $::QA(url,PubMed) != "" } {
-            $lb AppendUnique $::QA(url,PubMed)
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,PubMed)
         }
     }
     if { [ info exists ::QA(url,JNeurosci) ] } {    
         if { $::QA(url,JNeurosci) != "" } {
-            $lb AppendUnique $::QA(url,JNeurosci)
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,JNeurosci)
         }
     }
     if { [ info exists ::QA(url,IBVD) ] } {
         if { $::QA(url,IBVD) != "" } {
-            $lb AppendUnique $::QA(url,IBVD)
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,IBVD)
         }
     }
     if { [ info exists ::QA(url,EntrezLinks) ] } {
@@ -862,7 +862,7 @@ proc QueryAtlasPopulateSearchResultsBox { } {
             set len  [llength $::QA(url,EntrezLinks) ]
             for { set i 0 } { $i < $len } { incr i } {
                 set url [ lindex $::QA(url,EntrezLinks) $i ]
-                $lb AppendUnique $url
+                $::slicer3::QueryAtlasGUI AppendUniqueResult $url
             }
         }
     }

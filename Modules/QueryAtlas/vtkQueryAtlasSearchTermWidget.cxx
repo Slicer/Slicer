@@ -273,7 +273,7 @@ void vtkQueryAtlasSearchTermWidget::CreateWidget ( )
 
   this->MultiColumnList->GetWidget()->AddColumn ( "Search terms" );
 
-  this->MultiColumnList->GetWidget()->ColumnEditableOn ( 0 );
+  this->MultiColumnList->GetWidget()->ColumnEditableOff ( 0 );
   this->MultiColumnList->GetWidget()->SetColumnWidth (0, 42);
   this->MultiColumnList->GetWidget()->SetColumnAlignmentToLeft (0 );
   this->MultiColumnList->GetWidget()->ColumnResizableOff ( 0 );

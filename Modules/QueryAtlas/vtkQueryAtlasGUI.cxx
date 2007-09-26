@@ -75,6 +75,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->LHModelVisibility = 1;
     this->ProcessingMRMLEvent = 0;
     this->SceneClosing = false;
+    this->SceneLoaded = 0;
     
 #ifdef SEARCHTERM_FRAME
     //---
@@ -769,7 +770,8 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->LoadURIsButton = NULL;
       }
 #endif
-    
+
+    this->SceneLoaded = 0;    
 }
 
 
@@ -903,7 +905,7 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->DeleteAllAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteCurrentResultButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CurrentResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->CurrentResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   //  this->AccumulatedResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 #endif
   
@@ -985,7 +987,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->DeleteAllAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteCurrentResultButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CurrentResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+//  this->CurrentResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   //  this->AccumulatedResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 #endif
   
@@ -1329,86 +1331,76 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       this->PackQueryBuilderContextFrame ( this->SpeciesFrame );
       this->ColorCodeContextButtons ( this->SpeciesButton );
       }
+
     else if ( (b == this->DeselectAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
+      int num = this->CurrentResultsList->GetWidget()->GetNumberOfRows();
       for ( int i=0; i<num; i++ )
         {
-        this->CurrentResultsList->GetWidget()->SetSelectState(i,0);
+        this->CurrentResultsList->GetWidget()->DeselectCell(i,1);
         }
       }
     else if ( (b == this->DeleteCurrentResultButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
-      for ( int i=0; i<num; i++ )
-        {
-        if ( this->CurrentResultsList->GetWidget()->GetSelectState(i) )
-          {
-          this->CurrentResultsList->GetWidget()->DeleteRange( i,i );
-          }
-        }
+      this->DeleteSelectedResults( this->CurrentResultsList->GetWidget() );
       }
     else if ( (b == this->DeleteAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      this->CurrentResultsList->GetWidget()->DeleteAll();
+      this->DeleteAllResults( this->CurrentResultsList->GetWidget() ); 
       }
     else if ( (b == this->SaveCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
+      int num = this->CurrentResultsList->GetWidget()->GetNumberOfRows();
       for ( int i=0; i<num; i++ )
         {
-        this->AccumulatedResultsList->GetWidget()->AppendUnique (this->CurrentResultsList->GetWidget()->GetItem( i ) );
+        std::string result (this->CurrentResultsList->GetWidget()->GetCellText(i,1));
+        this->AccumulateUniqueResult (result.c_str() );
         }
       }
     else if ( (b == this->SaveCurrentSelectedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
+      int num = this->CurrentResultsList->GetWidget()->GetNumberOfRows();
       for ( int i=0; i<num; i++ )
         {
-        if ( this->CurrentResultsList->GetWidget()->GetSelectState(i) )
+        if ( this->CurrentResultsList->GetWidget()->IsRowSelected(i) )
           {
-          this->AccumulatedResultsList->GetWidget()->AppendUnique (this->CurrentResultsList->GetWidget()->GetItem( i ) );
+          std::string result (this->CurrentResultsList->GetWidget()->GetCellText(i,1));
+          this->AccumulateUniqueResult (result.c_str());
           }
         }
       }
     else if (( b== this->SelectAllCurrentResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      int num = this->CurrentResultsList->GetWidget()->GetNumberOfItems();
+      int num = this->CurrentResultsList->GetWidget()->GetNumberOfRows();
       for ( int i=0; i<num; i++ )
         {
-        this->CurrentResultsList->GetWidget()->SetSelectState(i,1);
+        this->CurrentResultsList->GetWidget()->SelectCell(i,1);
         }
       }
+
     else if ( (b == this->SelectAllAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      int num = this->AccumulatedResultsList->GetWidget()->GetNumberOfItems();
+      int num = this->AccumulatedResultsList->GetWidget()->GetNumberOfRows();
       for ( int i=0; i<num; i++ )
         {
-        this->AccumulatedResultsList->GetWidget()->SetSelectState(i,1);
+        this->AccumulatedResultsList->GetWidget()->SelectCell(i,1);
         }
       }
     else if ( (b == this->DeselectAllAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      int num = this->AccumulatedResultsList->GetWidget()->GetNumberOfItems();
+      int num = this->AccumulatedResultsList->GetWidget()->GetNumberOfRows();
       for ( int i=0; i<num; i++ )
         {
-        this->AccumulatedResultsList->GetWidget()->SetSelectState(i,0);
+        this->AccumulatedResultsList->GetWidget()->DeselectCell(i,1);
         }
       }
     else if ( (b == this->DeleteAccumulatedResultButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      int num = this->AccumulatedResultsList->GetWidget()->GetNumberOfItems();
-      for ( int i=0; i<num; i++ )
-        {
-        if ( this->AccumulatedResultsList->GetWidget()->GetSelectState(i) )
-          {
-          this->AccumulatedResultsList->GetWidget()->DeleteRange( i,i );
-          }
-        }
+      this->DeleteSelectedResults ( this->AccumulatedResultsList->GetWidget() );
       }
     else if ( (b == this->DeleteAllAccumulatedResultsButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      this->AccumulatedResultsList->GetWidget()->DeleteAll();
+      this->DeleteAllResults ( this->AccumulatedResultsList->GetWidget() );
       }
     }
 
@@ -1496,43 +1488,63 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
 {
-  // get file from dialog
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-  const char *filen;
-  
-  filen = this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
-  if ( filen != NULL )
+  if ( this->SceneLoaded == 0 )
     {
-    itksys::SystemTools::ConvertToUnixOutputPath( filen );
-    std::string fl(filen);
-
-    if ( this->GetMRMLScene() && fl.find(".xcede") != std::string::npos )
+    // get file from dialog
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+    const char *filen;
+  
+    filen = this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
+    if ( filen != NULL )
       {
-      this->Script ( "XcedeCatalogImport %s", filen);
-      this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-      }
+      itksys::SystemTools::ConvertToUnixOutputPath( filen );
+      std::string fl(filen);
 
-    if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
-      {
-      if ( app->GetApplicationGUI() != NULL )
+      if ( this->GetMRMLScene() && fl.find(".xcede") != std::string::npos )
         {
-        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-        dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
-        dialog->SetStyleToMessage();
-        std::string msg = this->GetMRMLScene()->GetErrorMessage();
-        dialog->SetText(msg.c_str());
-        dialog->Create ( );
-        dialog->Invoke();
-        dialog->Delete();
+        this->Script ( "XcedeCatalogImport %s", filen);
+        this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
         }
-      this->Script ("QueryAtlasSetSceneLoaded 0");
-      } else {
-      this->Script ("QueryAtlasSetSceneLoaded 1");
+
+      if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
+        {
+        this->SceneLoaded = 0;
+        if ( app->GetApplicationGUI() != NULL )
+          {
+          //--- display error message: there was an error during scene load.
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
+          dialog->SetStyleToMessage();
+          std::string msg = this->GetMRMLScene()->GetErrorMessage();
+          dialog->SetText(msg.c_str());
+          dialog->Create ( );
+          dialog->Invoke();
+          dialog->Delete();
+          }
+        }
+      else
+        {
+        //--- scene loaded; set flag and process any statistics
+        this->SceneLoaded = 1;
+        this->Script ("QueryAtlasSetAutoWinLevThreshComplete 0" );
+        this->Script ("QueryAtlasAutoWinLevThreshAllStats" );
+        this->Script ( "QueryAtlasSetSceneType FIPSFreeSurfer" );
+        }
       }
-    }
     this->LoadFIPSFSCatalogButton->GetLabel()->SetText ( "" );
-
-
+    }
+  else
+    {
+    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+    dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
+    dialog->SetStyleToMessage();
+    std::string msg = "A scene already appears to be loaded. To load a FIPS/FreeSurfer scene, first close existing scene first using File->Close Scene.";
+    dialog->SetText(msg.c_str());
+    dialog->Create ( );
+    dialog->Invoke();
+    dialog->Delete();
+    }
 
 }
 
@@ -1541,40 +1553,55 @@ void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
 {
-  // get file from dialog
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-  const char *filen;
-
-  filen = this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
-  if ( filen != NULL )
+  if ( this->SceneLoaded == 0 )
     {
-    itksys::SystemTools::ConvertToUnixOutputPath( filen );
-    this->Script( "QueryAtlasLoadQdecResults \"%s\"", filen );
-    this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-    if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
+    // get file from dialog
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+    const char *filen;
+
+    filen = this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
+    if ( filen != NULL )
       {
-      if ( app->GetApplicationGUI() != NULL )
+      itksys::SystemTools::ConvertToUnixOutputPath( filen );
+      this->Script( "QueryAtlasLoadQdecResults \"%s\"", filen );
+      this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
         {
-        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-        dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
-        dialog->SetStyleToMessage();
-        std::string msg = this->GetMRMLScene()->GetErrorMessage();
-        dialog->SetText(msg.c_str());
-        dialog->Create ( );
-        dialog->Invoke();
-        dialog->Delete();
+        if ( app->GetApplicationGUI() != NULL )
+          {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
+          dialog->SetStyleToMessage();
+          std::string msg = this->GetMRMLScene()->GetErrorMessage();
+          dialog->SetText(msg.c_str());
+          dialog->Create ( );
+          dialog->Invoke();
+          dialog->Delete();
+          }
+        this->SceneLoaded = 0;
+        } else {
+        this->SceneLoaded = 1;
+        this->Script ( "QueryAtlasSetSceneType Qdec" );        
+        }
       }
-      this->Script ("QueryAtlasSetSceneLoaded 0");
-      } else {
-      this->Script ("QueryAtlasSetSceneLoaded 1");
-      }
-    }
 
     this->QdecGetResultsButton->GetLabel()->SetText ( "" );
 
     // update Scalar overlay menu
     this->UpdateScalarOverlayMenu();
-
+    }
+  else
+    {
+    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+    dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
+    dialog->SetStyleToMessage();
+    std::string msg = "A scene already appears to be loaded. To load Qdec results, first close existing scene first using File->Close Scene.";
+    dialog->SetText(msg.c_str());
+    dialog->Create ( );
+    dialog->Invoke();
+    dialog->Delete();
+    }
 
 }
 
@@ -1884,7 +1911,7 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOff();
     this->LoadFIPSFSCatalogButton->GetWidget()->SetCommand ( this, "LoadXcedeCatalogCallback" );
     this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes ( "{ {Xcede catalog} {*.xcede} }");
-    this->LoadFIPSFSCatalogButton->SetBalloonHelpString("Load all results from previous Qdec analysis if not already present in the scene.");
+    this->LoadFIPSFSCatalogButton->SetBalloonHelpString("Load a FIPS/FreeSurfer study from an Xcede catalog.");
     this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 4",
                   this->LoadFIPSFSCatalogButton->GetWidgetName());
 
@@ -2436,29 +2463,42 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
                   searchFrame->GetWidgetName(),
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
 
+    vtkKWFrame *TF = vtkKWFrame::New();
+    TF->SetParent ( searchFrame->GetFrame() );
+    TF->Create();
+    vtkKWFrame *MF = vtkKWFrame::New();
+    MF->SetParent ( searchFrame->GetFrame() );
+    MF->Create();
+    vtkKWFrame *BF = vtkKWFrame::New();
+    BF->SetParent ( searchFrame->GetFrame() );
+    BF->Create();    
+    this->Script ( "pack %s -side top -padx 0 -pady 0 -fill x -expand y", TF->GetWidgetName() );
+    this->Script ( "pack %s -side top -padx 0 -pady 0 -fill x -expand y", MF->GetWidgetName() );
+    this->Script ( "pack %s -side top -padx 0 -pady 0 -fill x -expand y", BF->GetWidgetName() );
+
     // ---
-    // QUERY TARGET WIDGETS
+    // Top frame QUERY TARGET WIDGETS
     // ---
     this->UseOtherTerms = vtkKWCheckButton::New();
-    this->UseOtherTerms->SetParent ( searchFrame->GetFrame() );
+    this->UseOtherTerms->SetParent ( TF );
     this->UseOtherTerms->Create();
     this->UseOtherTerms->SetText ( "use (selected) other terms" );
     this->UseOtherTerms->SetSelectedState ( 0 );
 
     this->UseStructureTerms = vtkKWCheckButton::New();
-    this->UseStructureTerms->SetParent ( searchFrame->GetFrame() );
+    this->UseStructureTerms->SetParent ( TF );
     this->UseStructureTerms->Create();
     this->UseStructureTerms->SetText ( "use (selected) structure terms" );
     this->UseStructureTerms->SetSelectedState ( 1 );
 
     this->UseGroupTerms = vtkKWCheckButton::New();
-    this->UseGroupTerms->SetParent ( searchFrame->GetFrame() );
+    this->UseGroupTerms->SetParent ( TF );
     this->UseGroupTerms->Create();
     this->UseGroupTerms->SetText ( "use group terms" );
     this->UseGroupTerms->SetSelectedState ( 0 );
 
     this->UseSpeciesTerms = vtkKWCheckButton::New();
-    this->UseSpeciesTerms->SetParent ( searchFrame->GetFrame() );
+    this->UseSpeciesTerms->SetParent ( TF );
     this->UseSpeciesTerms->Create();
     this->UseSpeciesTerms->SetText ( "use species terms" );
     this->UseSpeciesTerms->SetSelectedState ( 0 );
@@ -2469,18 +2509,19 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
 
 
     vtkKWLabel *sl = vtkKWLabel::New();
-    sl->SetParent ( searchFrame->GetFrame() );
+    sl->SetParent ( TF);
     sl->Create();
+    sl->SetWidth ( 15 );
     sl->SetText ("search target: ");
     
     this->DatabasesMenuButton = vtkKWMenuButton::New();
-    this->DatabasesMenuButton->SetParent ( searchFrame->GetFrame() );
+    this->DatabasesMenuButton->SetParent ( TF );
     this->DatabasesMenuButton->Create();
-    this->DatabasesMenuButton->SetWidth (24);    
+    this->DatabasesMenuButton->SetWidth (20);    
     this->BuildDatabasesMenu(this->DatabasesMenuButton->GetMenu() );
 
     this->SearchButton = vtkKWPushButton::New();
-    this->SearchButton->SetParent ( searchFrame->GetFrame() );
+    this->SearchButton->SetParent ( TF );
     this->SearchButton->Create();
     this->SearchButton->SetImageToIcon ( this->QueryAtlasIcons->GetSearchIcon() );
     this->SearchButton->SetBorderWidth ( 0 );
@@ -2489,25 +2530,24 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
 
     app->Script ("grid %s -row 4 -column 0 -padx 0 -pady 2 -sticky w",
                  sl->GetWidgetName() );
-    app->Script ("grid %s -row 4 -column 1 -padx 0 -pady 2 -sticky w",
-                 this->DatabasesMenuButton->GetWidgetName() );    
+    app->Script ("grid %s -row 4 -column 1 -padx 2 -pady 2 -sticky w",
+                 this->DatabasesMenuButton->GetWidgetName() );
     app->Script ("grid %s -row 4 -column 2 -padx 2 -pady 2 -sticky w",
                  this->SearchButton->GetWidgetName() );
+    app->Script ( "grid columnconfigure %s 0 -weight 0", sl->GetWidgetName() );
+    app->Script ( "grid columnconfigure %s 1 -weight 0", this->DatabasesMenuButton->GetWidgetName() );
+    app->Script ( "grid columnconfigure %s 2 -weight 0", this->SearchButton->GetWidgetName() );
 
 
     // ---
-    // QUERY RESULTS MANAGER WIDGETS
+    // Middle frame QUERY RESULTS MANAGER WIDGETS
     // ---
-
-    vtkKWFrame *managerFrame = vtkKWFrame::New();
-    managerFrame->SetParent ( searchFrame->GetFrame() );
-    managerFrame->Create();
 
     vtkKWFrame *curF = vtkKWFrame::New();
-    curF->SetParent ( managerFrame );
+    curF->SetParent ( MF );
     curF->Create();
     vtkKWFrame *topcurF = vtkKWFrame::New();
-    topcurF->SetParent ( managerFrame );
+    topcurF->SetParent ( MF );
     topcurF->Create();
     vtkKWLabel *curL = vtkKWLabel::New();
     curL->SetParent ( topcurF );
@@ -2516,15 +2556,28 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     curL->SetText ( "Latest search results" );
     curL->SetBackgroundColor ( 0.85, 0.85, 0.95 );
 
-    this->CurrentResultsList = vtkKWListBoxWithScrollbars::New();
+    this->CurrentResultsList = vtkKWMultiColumnListWithScrollbars::New();
     this->CurrentResultsList->SetParent ( topcurF );
     this->CurrentResultsList->Create();
-    this->CurrentResultsList->GetWidget()->SetSelectionModeToSingle();
-    this->CurrentResultsList->GetWidget()->SetWidth ( 45 );
+    this->CurrentResultsList->GetWidget()->SetSelectionModeToMultiple();
+    this->CurrentResultsList->GetWidget()->SetWidth ( 0 );
     this->CurrentResultsList->GetWidget()->SetHeight (4 );
+    this->CurrentResultsList->GetWidget()->SetSelectionTypeToCell();
+    this->CurrentResultsList->GetWidget()->MovableRowsOn();
+    this->CurrentResultsList->GetWidget()->MovableColumnsOff();    
     this->CurrentResultsList->HorizontalScrollbarVisibilityOn();
     this->CurrentResultsList->VerticalScrollbarVisibilityOn();
-    this->CurrentResultsList->GetWidget()->SetDoubleClickCommand (this, "OpenLinkFromCurrentList" );
+    
+    this->CurrentResultsList->GetWidget()->AddColumn ( "view" );
+    this->CurrentResultsList->GetWidget()->ColumnEditableOff ( 0 );
+    this->CurrentResultsList->GetWidget()->ColumnResizableOff ( 0 );
+    this->CurrentResultsList->GetWidget()->ColumnStretchableOff ( 0 );
+    this->CurrentResultsList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( 0 );
+
+    this->CurrentResultsList->GetWidget()->AddColumn ( "url" );    
+    this->CurrentResultsList->GetWidget()->ColumnEditableOff ( 1 );
+    this->CurrentResultsList->GetWidget()->SetColumnWidth ( 1, 0 );
+    this->CurrentResultsList->GetWidget()->SetSelectionCommand ( this, "CurrentResultsSelectionCommandCallback");
 
     this->DeselectAllCurrentResultsButton = vtkKWPushButton::New();
     this->DeselectAllCurrentResultsButton->SetParent (curF);
@@ -2574,12 +2627,14 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->SaveCurrentSelectedResultsButton->SetReliefToFlat();    
     this->SaveCurrentSelectedResultsButton->SetBalloonHelpString ("Reserve selected results");
 
-
+    //---
+    //--- BottomFrame ACCUMULATED RESULTS WIDGETS
+    //---
     vtkKWFrame *pastF = vtkKWFrame::New();
-    pastF->SetParent ( managerFrame );
+    pastF->SetParent ( BF );
     pastF->Create();
     vtkKWFrame *toppastF = vtkKWFrame::New();
-    toppastF->SetParent ( managerFrame );
+    toppastF->SetParent ( BF );
     toppastF->Create();
     vtkKWLabel *pastL = vtkKWLabel::New();
     pastL->SetParent ( toppastF );
@@ -2588,15 +2643,28 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     pastL->SetText ( "Reserved search results" );
     pastL->SetBackgroundColor ( 0.85, 0.85, 0.95 );
 
-    this->AccumulatedResultsList = vtkKWListBoxWithScrollbars::New();
+    this->AccumulatedResultsList = vtkKWMultiColumnListWithScrollbars::New();
     this->AccumulatedResultsList->SetParent ( toppastF );
     this->AccumulatedResultsList->Create();
-    this->AccumulatedResultsList->GetWidget()->SetSelectionModeToSingle();
-    this->AccumulatedResultsList->GetWidget()->SetWidth ( 45 );
-    this->AccumulatedResultsList->GetWidget()->SetHeight ( 4 );
+    this->AccumulatedResultsList->GetWidget()->SetSelectionModeToMultiple();
+    this->AccumulatedResultsList->GetWidget()->SetWidth ( 0 );
+    this->AccumulatedResultsList->GetWidget()->SetHeight (4 );
+    this->AccumulatedResultsList->GetWidget()->SetSelectionTypeToCell();
+    this->AccumulatedResultsList->GetWidget()->MovableRowsOn();
+    this->AccumulatedResultsList->GetWidget()->MovableColumnsOff();    
     this->AccumulatedResultsList->HorizontalScrollbarVisibilityOn();
     this->AccumulatedResultsList->VerticalScrollbarVisibilityOn();
-    this->AccumulatedResultsList->GetWidget()->SetDoubleClickCommand (this, "OpenLinkFromAccumulatedList");
+
+    this->AccumulatedResultsList->GetWidget()->AddColumn ( "view" );
+    this->AccumulatedResultsList->GetWidget()->ColumnEditableOff ( 0 );
+    this->AccumulatedResultsList->GetWidget()->ColumnResizableOff ( 0 );
+    this->AccumulatedResultsList->GetWidget()->ColumnStretchableOff ( 0 );
+    this->AccumulatedResultsList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( 0 );
+
+    this->AccumulatedResultsList->GetWidget()->AddColumn ( "url" );    
+    this->AccumulatedResultsList->GetWidget()->ColumnEditableOff ( 1 );
+    this->AccumulatedResultsList->GetWidget()->SetColumnWidth ( 1, 0 );
+    this->AccumulatedResultsList->GetWidget()->SetSelectionCommand ( this, "AccumulatedResultsSelectionCommandCallback");
 
     this->DeleteAccumulatedResultButton = vtkKWPushButton::New();
     this->DeleteAccumulatedResultButton->SetParent (pastF);
@@ -2656,8 +2724,6 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->LoadURIsButton->GetLoadSaveDialog()->SaveDialogOff();
     this->LoadURIsButton->GetLoadSaveDialog()->SetFileTypes ( "*.html");
 
-    app->Script ( "grid %s -row 5 -column 0 -columnspan 3 -sticky ew -pady 4 -padx 3", managerFrame->GetWidgetName() ); 
-
     app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand 1", topcurF->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", curL->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 0 -fill both -expand 1", this->CurrentResultsList->GetWidgetName() );
@@ -2676,9 +2742,9 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     app->Script ("grid columnconfigure %s 4 -weight 1", this->SaveCurrentResultsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 5 -weight 1", this->SaveCurrentSelectedResultsButton->GetWidgetName() );    
 
-    app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand 1", toppastF->GetWidgetName() );
-    app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", pastL->GetWidgetName() );
-    app->Script ("pack %s -side top -padx 0 -pady 0 -fill both -expand 1", this->AccumulatedResultsList->GetWidgetName() );
+    app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand true", toppastF->GetWidgetName() );
+    app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand true", pastL->GetWidgetName() );
+    app->Script ("pack %s -side top -padx 0 -pady 0 -fill both -expand true", this->AccumulatedResultsList->GetWidgetName() );
 
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", pastF->GetWidgetName() );
     app->Script ("grid %s -row 0 -column 0 -sticky ew -pady 4 -padx 3", this->DeselectAllAccumulatedResultsButton->GetWidgetName() );    
@@ -2700,39 +2766,162 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     curF->Delete();
     toppastF->Delete();
     pastF->Delete();
-    managerFrame->Delete();
     sl->Delete();
+    BF->Delete();
+    MF->Delete();
+    TF->Delete();
     searchFrame->Delete();
 }
 
 
-//---------------------------------------------------------------------------
-//--- urls with quoted search terms should be displayed
-//--- properly for the user to see -- however, to pass this
-//--- url along to tcl as an argument, we needmakes sure 
-//--- the quote get a backslash in front of them.
-//---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::OpenLinkFromCurrentList ( )
-{
-  const char *url;
-  
-    url = this->CurrentResultsList->GetWidget()->GetSelection();
-    this->Script ( "QueryAtlasOpenLink %s", url);
 
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::DeleteAllResults ( vtkKWMultiColumnList *l )
+{
+  l->DeleteAllRows();
 }
 
 
 
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::OpenLinkFromAccumulatedList ( )
+void vtkQueryAtlasGUI::DeleteSelectedResults ( vtkKWMultiColumnList *l )
 {
-  const char *url;
-  
-    url = this->AccumulatedResultsList->GetWidget()->GetSelection();
-    //--- open in browser
-    this->Script ( "QueryAtlasOpenLink %s", url );
+  int numRows;
+  int row[1000];
 
+  numRows = l->GetSelectedRows ( row );
+  while ( numRows != 0 )
+    {
+      l->DeleteRow ( row[0] );
+      numRows = l->GetSelectedRows ( row );
+    }
 }
+
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::AppendUniqueResult ( const char *r )
+{
+
+  const char *url="";
+  int unique = 1;
+  vtkKWMultiColumnList *l = this->CurrentResultsList->GetWidget();
+  
+  //--- determine uniqueness of entry
+  int N = l->GetNumberOfRows();
+  for ( int i=0; i < N; i++ )
+    {
+    url = l->GetCellText ( i, 1);
+    if ( !(strcmp (r, url)) )
+      {
+      unique = 0;
+      break;
+      }
+    }
+
+  //--- add a unique url
+  if ( unique == 1 )
+    {
+    //--- add image in viewer column
+    l->InsertCellText (N, 1, r );
+    l->SetCellBackgroundColor ( N, 0, 1.0, 1.0, 1.0 );
+    l->SetCellBackgroundColor ( N, 1, 1.0, 1.0, 1.0 );
+    l->SetCellImageToIcon ( N, 0, this->QueryAtlasIcons->GetWebIcon() );
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::AccumulateUniqueResult ( const char *r )
+{
+
+  const char *url="";
+
+  int unique = 1;
+  vtkKWMultiColumnList *l = this->AccumulatedResultsList->GetWidget();
+  
+  //--- determine uniqueness of entry
+  int N = l->GetNumberOfRows();
+
+  for ( int i=0; i < N; i++ )
+    {
+    url = l->GetCellText ( i, 1);
+    if ( !(strcmp (r, url)) )
+      {
+      unique = 0;
+      break;
+      }
+    }
+
+  //--- add a unique url
+  if ( unique == 1 )
+    {
+    //--- add image in viewer column
+    l->InsertCellText (N, 1, r );
+    l->SetCellBackgroundColor ( N, 0, 1.0, 1.0, 1.0 );
+    l->SetCellBackgroundColor ( N, 1, 1.0, 1.0, 1.0 );
+    l->SetCellImageToIcon ( N, 0, this->QueryAtlasIcons->GetWebIcon() );
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::CurrentResultsSelectionCommandCallback ( )
+{
+
+  // loop thru the first column and see if anything is selected
+  vtkKWMultiColumnList *l = this->CurrentResultsList->GetWidget();
+  int numRows = l->GetNumberOfRows();
+  int s;
+  for ( int i=0; i<numRows; i++ )
+    {
+    s = l->IsCellSelected(i,0);
+    if ( s )
+      {
+      //-- launch browser with url
+      if ( l->GetCellText(i,1) != NULL )
+        {
+        this->Script ("QueryAtlasOpenLink \"%s\"", l->GetCellText(i,1) );
+        }
+
+      //-- now deselect the cell
+      l->DeselectCell (i,0);
+      break;
+      }
+    }
+}
+
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::AccumulatedResultsSelectionCommandCallback ( )
+{
+
+  // loop thru the first column and see if anything is selected
+  vtkKWMultiColumnList *l = this->AccumulatedResultsList->GetWidget();
+  int numRows = l->GetNumberOfRows();
+  int s;
+  for ( int i=0; i<numRows; i++ )
+    {
+    s = l->IsCellSelected(i, 0 );
+    if ( s )
+      {
+      //-- launch browser with url
+      if ( l->GetCellText(i, 1) != NULL )
+        {
+        this->Script ("QueryAtlasOpenLink \"%s\"", l->GetCellText(i,1) );
+        }
+
+      //-- now deselect the cell
+      l->DeselectCell (i, 0);
+      break;
+      }
+    }
+}
+
 
 
 
@@ -3225,3 +3414,6 @@ void vtkQueryAtlasGUI::GetOtherTerms ( )
     }
 
 }
+
+
+

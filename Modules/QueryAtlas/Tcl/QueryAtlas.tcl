@@ -43,6 +43,23 @@ proc QueryAtlasTearDownPicker { } {
 }
 
 
+
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasDialog { msg } {
+    set dialog [ vtkKWMessageDialog New ]
+    $dialog SetParent [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+    $dialog SetStyleToMessage
+    $dialog SetText $msg
+    $dialog Create
+    $dialog Invoke
+    $dialog Delete
+}
+
+
+
+
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
@@ -99,11 +116,53 @@ proc QueryAtlasTearDown { } {
 
 
 
+
+#----------------------------------------------------------------------------------------------------
+#--- Checks to see if the scene is a type we know
+#--- how to query.
+#--- As new kinds of scenes become queryable,
+#--- add them here.
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasValidSceneTypeCheck { type } {
+    
+    if { ! [info exists ::QA(SceneTypes) ] } {
+        lappend ::QA(SceneTypes) "FIPSFreeSurfer"
+        lappend ::QA(SceneTypes) "Qdec"
+    }
+
+    foreach t $::QA(SceneTypes) {
+        if { $t == $type } {
+            return 1
+        }
+    }
+    return 0
+}
+
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetSceneType { type } {
+
+    if { [QueryAtlasValidSceneTypeCheck $type] } {
+        set ::QA(SceneType) $type
+    } else {
+        QueryAtlasDialog "Don't recognize scene type $type." 
+    }
+    
+}
+
+
+
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetSceneLoaded { loaded } {
+    $::slicer3::QueryAtlasGUI SetSceneLoaded $loaded
+}
 
-    set ::QA(SceneLoaded) $loaded
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasGetSceneLoaded { } {
+    return [ $::slicer3::QueryAtlasGUI GetSceneLoaded ]
 }
 
 
@@ -140,27 +199,6 @@ proc QueryAtlasInitializeGlobals { } {
 
 }
 
-
-#----------------------------------------------------------------------------------------------------
-#--- Checks to see if the scene is a type we know
-#--- how to query.
-#--- As new kinds of scenes become queryable,
-#--- add them here.
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasValidSceneTypeCheck { type } {
-    
-    if { ! [info exists ::QA(SceneTypes) ] } {
-        lappend ::QA(SceneTypes) "FIPSFreeSurfer"
-        lappend ::QA(SceneTypes) "Qdec"
-    }
-
-    foreach t $::QA(SceneTypes) {
-        if { $t == $type } {
-            return 1
-        }
-    }
-    return 0
-}
 
 
 
@@ -319,6 +357,12 @@ proc QueryAtlasSetStatistics { } {
 
 
 
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasSetAutoWinLevThreshComplete { val } {
+    set ::QA(statsAutoWinLevThreshCompleted) $val
+}
+
 
 #----------------------------------------------------------------------------------------------------
 # --- applies some display parameters to volumes that could be statistics...
@@ -367,7 +411,7 @@ proc QueryAtlasAutoWinLevThreshAllStats { } {
         }
 
         #--- do this once per loaded dataset
-        set ::QA(statsAutoWinLevThreshCompleted) 1
+        QueryAtlasSetAutoWinLevThreshComplete 1
     }
 }
 
@@ -624,39 +668,70 @@ proc QueryAtlasAddBIRNLogo {} {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasLoadQdecResults { fsgdFile } {
 
-    if {  [ info exists ::QA(SceneSetUp) ]  } {
-        QueryAtlasDialog "A scene appears to be loaded. Existing scene must be closed (using File->Close scene) before loading a Qdec query scene."
-        return
-    } else {
-        #--- go ahead and make the call to load scene.
-        #set logic [ $::slicer3::QdecModuleLogic LoadResults $fsgdFile ]
-    }
 }
 
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSelectQdecOverlay { } {
-    if { (![ info exists ::QA(SceneSetUp) ] ) && ( $::QA(SceneType) == "Qdec") } {
-
-    } elseif { $::QA(SceneSetUp) == 0 } {
-
-    } 
-
-    
+    if { (![ info exists ::QA(SceneSetUp) ] ) && ( [ info exists ::QA(SceneType) ] ) } {
+        if { $::QA(SceneType) == "Qdec" } {
+        }
+        if { $::QA(SceneSetUp) == 0 } {
+        }
+    }
 }
+
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasQdecSetUp { } {
 
-    #--- make sure we have only one query scene loaded when this proc is called.
+    #---
+    #--- do some checking to make sure we don't try
+    #--- to set up a scene that's not a properly
+    #--- loaded Qdec scene
+    #---
+
+    #--- make sure a query scene is loaded at all...
+    if { [ QueryAtlasGetSceneLoaded ] == 0 } {
+        QueryAtlasDialog "No scene detected: a Qdec scene must be loaded before this setup can be run."
+        return
+    }
+
+    #--- if scene is already loaded and set up,
+    #--- alert if it's a non-qdec scene or just
+    #--- return without uneccesarily re-running setup.
     if { [ info exists ::QA(SceneSetUp) ] } {
+        if { $::QA(SceneSetUp) } {
+            #--- what if we know nothing of the Scene Type?
+            if { ! [ info exists ::QA(SceneType) ] } {
+                QueryAtlasDialog "Scene of unknown type detected. Close scene (using File->Close Scene) and reload only Qdec dataset to continue."
+                return
+            }
+            #--- what if the Scene type is known, but not qdec?
+            if { $::QA(SceneType) != "Qdec" } {
+                QueryAtlasDialog "Non-Qdec scene detected. Close scene (using File->Close Scene) and reload only Qdec dataset to continue."
+                return
+            } elseif { $::QA(SceneType) == "Qdec" } {
+                # already set up; don't run again.
+                return
+            }
+        }
+    }
+
+    #--- catch any non-qdec scenes loaded
+    #--- and requesting a qdec setup.
+    if {[ info exists ::QA(SceneType) ] } {
         if { $::QA(SceneType) != "Qdec" } {
-            QueryAtlasDialog "Non-Qdec scene detected. Close scene (using File->Close scene) and reload only Qdec dataset to continue."
+            QueryAtlasDialog "Non-Qdec scene detected. Close scene (using File->Close Scene) and reload only Qdec dataset to continue."
             return
         }
     }
+
+    #---
+    #--- Qdec scene is loaded, not yet set up: Set it up.
+    #---
 
     #--- make sure we are initializing globals
     if { [ info exists ::QA(globalsInitialized) ] } {
@@ -769,7 +844,7 @@ proc QueryAtlasQdecSetUp { } {
         
         #--- do we have anything queryable at all?
         if { ($LHAnno == 0) && ($RHAnno == 0) } {
-            QueryAtlasDialog ( "QueryAtlas: no annotations for loaded models was found.");
+            QueryAtlasDialog "QueryAtlas: no annotations for loaded models was found.";
             return
         }
 
@@ -784,7 +859,7 @@ proc QueryAtlasQdecSetUp { } {
             QueryAtlasMessageDialog "Please select an annotated model and labelmap to begin."
             return
         }
-
+        
         #--- set up progress guage
         set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
         set prog [ $win GetProgressGauge ]
@@ -822,7 +897,6 @@ proc QueryAtlasQdecSetUp { } {
         set ::QA(CurrentRASPoint) "0 0 0"
         $prog SetValue [ expr 100 * 8.0 / 8.0 ]
         set ::QA(SceneSetUp) 1
-        set ::QA(SceneType) "Qdec"
 
         #--- clear progress
         $win SetStatusText ""
@@ -836,14 +910,52 @@ proc QueryAtlasQdecSetUp { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasFipsFreeSurferSetUp { } {
 
+    #---
+    #--- do some checking to make sure we don't try
+    #--- to set up a scene that's not a properly
+    #--- loaded FIPS/FreeSurfer scene
+    #---
+    
+    #--- make sure a query scene is loaded at all...
+    if { [ QueryAtlasGetSceneLoaded ] == 0 } {
+        QueryAtlasDialog "No scene detected: a FIPS/FreeSurfer scene must be loaded before this setup can be run."
+        return
+    }
 
-    #--- make sure we only have one query scene loaded when this proc is called.
+    #--- if scene is already loaded and set up,
+    #--- alert if it's a non-fips/freesurfer scene requesting 
+    #--- fips/freesurfer setup, or if it's a fips/freesurfer scene,
+    #--- just return without unecessarily rerunning the setup.
     if { [ info exists ::QA(SceneSetUp) ] } {
+        if { $::QA(SceneSetUp) } {
+            #--- what if we know nothing of the Scene Type?
+            if { ! [ info exists ::QA(SceneType) ] } {
+                QueryAtlasDialog "Scene of unknown type detected. Close scene (using File->Close Scene) and reload only FIPS/FreeSurfer dataset to continue."
+                return
+            }
+            #--- what if the Scene type is known, but not fips/freesurfer?
+            if { $::QA(SceneType) != "FIPSFreeSurfer" } {
+                QueryAtlasDialog "Non-FIPSFreeSurfer scene detected. Close scene (using File->Close Scene) and reload only FIPS/FreeSurfer dataset to continue."
+                return
+            } elseif { $::QA(SceneType) == "FIPSFreeSurfer" } {
+                # already set up; don't run again.
+                return
+            }
+        }
+    }
+
+    #--- catch any non-fipsfreesurfer scenes requesting fipsfreesurfer setup
+    if {[ info exists ::QA(SceneType) ] } {
         if { $::QA(SceneType) != "FIPSFreeSurfer" } {
-            QueryAtlasDialog "Non FIPS/FreeSurfer scene detected. Close scene (using File->Close scene) and reload only FIPS/FreeSurfer dataset to continue."
+            QueryAtlasDialog "Non-FIPS/FreeSurfer scene detected. Close scene (using File->Close Scene) and reload only FIPS/FreeSurfer dataset to continue."
             return
         }
     }
+
+    #---
+    #--- FIPS/FreeSurfer scene is loaded and requesting setup: set it up.
+    #---
+    
 
     #--- make sure we are initializing globals
     if { [ info exists ::QA(globalsInitialized) ] } {
@@ -854,14 +966,11 @@ proc QueryAtlasFipsFreeSurferSetUp { } {
         QueryAtlasInitializeGlobals
     }
 
-    #--- adjust display to look good.
-    if { ! [ info exists ::QA(statsAutoWinLevThreshCompleted)] } {
-        set ::QA(statsAutoWinLevThreshCompleted) 0
-    }
-
     #--- if stats have not been thresholded, then do them now
-    if {$::QA(statsAutoWinLevThreshCompleted) == 0 } {
-        QueryAtlasAutoWinLevThreshAllStats
+    if { [ info exists ::QA(statsAutoWinLevThreshCompleted) ] } {
+        if {$::QA(statsAutoWinLevThreshCompleted) == 0 } {
+            QueryAtlasAutoWinLevThreshAllStats
+        }
     }
 
     #--- perform once per scene.
@@ -901,7 +1010,7 @@ proc QueryAtlasFipsFreeSurferSetUp { } {
             set len [ lindex $::QA(modelNodeIDs) ]
             if { ($len == 0) && ($::QA(label,volumeNodeID) == "") } {
                 #--- nothing to query here.
-                QueryAtlasDialog ("No queriable data were found in scene.");
+                QueryAtlasDialog "No queriable data were found in scene."
                 return
             }
         }
@@ -943,16 +1052,15 @@ proc QueryAtlasFipsFreeSurferSetUp { } {
         set ::QA(CurrentRASPoint) "0 0 0"
         $prog SetValue [ expr 100 * 8.0 / 8.0 ]
         set ::QA(SceneSetUp) 1
-        set ::QA(SceneType) "FIPSFreeSurfer"
+        
+        #--- clear progress
+        $win SetStatusText ""
+        $prog SetValue 0
     }
-
-    #--- clear progress
-    $win SetStatusText ""
-    $prog SetValue 0
 }
 
 
-
+    
 #----------------------------------------------------------------------------------------------------
 #--- switches overlay to the query lut to pull out a label name
 #----------------------------------------------------------------------------------------------------
