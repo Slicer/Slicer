@@ -24,6 +24,7 @@
 #include "itkImageIOBase.h"
 
 class vtkMRMLVolumeNode;
+class vtkImageData;
 
 namespace itk
 {
@@ -93,6 +94,9 @@ protected:
   ~MRMLIDImageIO();
   void PrintSelf(std::ostream& os, Indent indent) const;
 
+  /** Write the image information to the node and specified image */
+  virtual void WriteImageInformation(vtkMRMLVolumeNode *, vtkImageData*);
+  
 private:
   MRMLIDImageIO(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented

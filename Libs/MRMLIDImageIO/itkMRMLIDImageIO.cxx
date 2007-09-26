@@ -305,112 +305,114 @@ void
 MRMLIDImageIO
 ::WriteImageInformation()
 {
-  vtkMRMLVolumeNode *node;
-  unsigned int i;
+}
 
-  node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
-  if (node)
+
+void
+MRMLIDImageIO
+::WriteImageInformation(vtkMRMLVolumeNode *node, vtkImageData *img)
+{
+  unsigned int i, j;
+  
+  vtkMatrix4x4* ijkToLps = vtkMatrix4x4::New();
+  vtkMatrix4x4* rasToIjk = vtkMatrix4x4::New();
+  vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();
+  
+  rasToIjk->Identity();
+  ijkToLps->Identity();
+  lpsToRas->Identity();
+
+  for (i = 0; (i < this->GetNumberOfDimensions()) && (i < 3); i++)
     {
-    vtkMatrix4x4* ijkToLps = vtkMatrix4x4::New();
-    vtkMatrix4x4* rasToIjk = vtkMatrix4x4::New();
-    vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();
-
-    rasToIjk->Identity();
-    ijkToLps->Identity();
-    lpsToRas->Identity();
-
-    for (i = 0; (i < this->GetNumberOfDimensions()) && (i < 3); i++)
+    // Get IJK to RAS direction vector
+    for ( j=0; (j < this->GetNumberOfDimensions()) && (j < 3); j++ )
       {
-      // Get IJK to RAS direction vector
-      for ( unsigned int j=0; (j < this->GetNumberOfDimensions()) && (j < 3); j++ )
-        {
-        ijkToLps->SetElement(j, i, m_Spacing[i]*this->GetDirection(i)[j]);
-        }
+      ijkToLps->SetElement(j, i, m_Spacing[i]*this->GetDirection(i)[j]);
       }
+    }
     
-    // Transform from LPS to RAS
-    lpsToRas->SetElement(0,0,-1);
-    lpsToRas->SetElement(1,1,-1);
+  // Transform from LPS to RAS
+  lpsToRas->SetElement(0,0,-1);
+  lpsToRas->SetElement(1,1,-1);
 
-    vtkMatrix4x4::Multiply4x4(lpsToRas,ijkToLps, rasToIjk);
+  vtkMatrix4x4::Multiply4x4(lpsToRas,ijkToLps, rasToIjk);
 
-    for (int j = 0; (j < this->GetNumberOfDimensions()) && (j < 3); j++)
+  for (j = 0; (j < this->GetNumberOfDimensions()) && (j < 3); j++)
+    {
+    if (j < 2)
       {
-      if (j < 2)
-        {
-        rasToIjk->SetElement(j, 3, -m_Origin[j]);
-        }
-      else
-        {
-        rasToIjk->SetElement(j, 3, m_Origin[j]);
-        }
+      rasToIjk->SetElement(j, 3, -m_Origin[j]);
       }
-    rasToIjk->Invert();
-    
-    rasToIjk->SetElement(3,3,1.0);
-    node->SetRASToIJKMatrix(rasToIjk);
-
-    // Fill in dimensions
-    // VTK is only 3D, only copy the first 3 dimensions, fill in with
-    // reasonable defaults for the rest
-    if (this->GetNumberOfDimensions() > 3)
+    else
       {
-      itkWarningMacro("Dimension of image is too high for VTK (Dimension = "
+      rasToIjk->SetElement(j, 3, m_Origin[j]);
+      }
+    }
+  rasToIjk->Invert();
+  
+  rasToIjk->SetElement(3,3,1.0);
+  node->SetRASToIJKMatrix(rasToIjk);
+
+  // Fill in dimensions
+  // VTK is only 3D, only copy the first 3 dimensions, fill in with
+  // reasonable defaults for the rest
+  if (this->GetNumberOfDimensions() > 3)
+    {
+    itkWarningMacro("Dimension of image is too high for VTK (Dimension = "
                     << this->GetNumberOfDimensions() << ")" );
-      }
-    
-    int dim[3];
-    double origin[3];
-    double spacing[3];
-
-    for (i=0; (i < this->GetNumberOfDimensions()) && (i < 3); ++i)
+    }
+  
+  int dim[3];
+  double origin[3];
+  double spacing[3];
+  
+  for (i=0; (i < this->GetNumberOfDimensions()) && (i < 3); ++i)
+    {
+    dim[i] = this->GetDimensions(i);
+    origin[i] = 0.0;
+    spacing[i] = 1.0;
+    }
+  if (this->GetNumberOfDimensions() < 3)
+    {
+    // VTK is only 3D, fill in remaining dimensions
+    for (; i < 3; ++i)
       {
-      dim[i] = this->GetDimensions(i);
+      dim[i] = 1;
       origin[i] = 0.0;
       spacing[i] = 1.0;
       }
-    if (this->GetNumberOfDimensions() < 3)
-      {
-      // VTK is only 3D, fill in remaining dimensions
-      for (; i < 3; ++i)
-        {
-        dim[i] = 1;
-        origin[i] = 0.0;
-        spacing[i] = 1.0;
-        }
-      }
-    node->GetImageData()->SetDimensions(dim);
-    node->GetImageData()->SetOrigin(origin);
-    node->GetImageData()->SetSpacing(spacing);
+    }
+  img->SetDimensions(dim);
+  img->SetOrigin(origin);
+  img->SetSpacing(spacing);
 
-    // Number of components, PixelType
-    node->GetImageData()
-      ->SetNumberOfScalarComponents(this->GetNumberOfComponents());
+  // Number of components, PixelType
+  img->SetNumberOfScalarComponents(this->GetNumberOfComponents());
 
-    // ComponentType
-    switch (this->GetComponentType())
-      {
-      case FLOAT: node->GetImageData()->SetScalarTypeToFloat(); break;
-      case DOUBLE: node->GetImageData()->SetScalarTypeToDouble(); break;
-      case INT: node->GetImageData()->SetScalarTypeToInt(); break;
-      case UINT: node->GetImageData()->SetScalarTypeToUnsignedInt(); break;
-      case SHORT: node->GetImageData()->SetScalarTypeToShort(); break;
-      case USHORT: node->GetImageData()->SetScalarTypeToUnsignedShort(); break;
-      case LONG: node->GetImageData()->SetScalarTypeToLong(); break;
-      case ULONG: node->GetImageData()->SetScalarTypeToUnsignedLong(); break;
-      case CHAR: node->GetImageData()->SetScalarTypeToChar(); break;
-      case UCHAR: node->GetImageData()->SetScalarTypeToUnsignedChar(); break;
-      default:
-        // What should we do?
-        itkWarningMacro("Unknown scalar type.");
-        node->GetImageData()->SetScalarTypeToShort();
-        break;
-      }
-
-    // Cleanup
-    lpsToRas->Delete();
-    ijkToLps->Delete();
-    }    
+  // ComponentType
+  switch (this->GetComponentType())
+    {
+    case FLOAT: img->SetScalarTypeToFloat(); break;
+    case DOUBLE: img->SetScalarTypeToDouble(); break;
+    case INT: img->SetScalarTypeToInt(); break;
+    case UINT: img->SetScalarTypeToUnsignedInt(); break;
+    case SHORT: img->SetScalarTypeToShort(); break;
+    case USHORT: img->SetScalarTypeToUnsignedShort(); break;
+    case LONG: img->SetScalarTypeToLong(); break;
+    case ULONG: img->SetScalarTypeToUnsignedLong(); break;
+    case CHAR: img->SetScalarTypeToChar(); break;
+    case UCHAR: img->SetScalarTypeToUnsignedChar(); break;
+    default:
+      // What should we do?
+      itkWarningMacro("Unknown scalar type.");
+      img->SetScalarTypeToShort();
+      break;
+    }
+  
+  // Cleanup
+  lpsToRas->Delete();
+  ijkToLps->Delete();
+  rasToIjk->Delete();
 }
 
 // Write to the MRML scene
@@ -424,8 +426,13 @@ MRMLIDImageIO
   node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
   if (node)
     {
+    // Don't send Modified events
+    //
+    node->DisableModifiedEventOn();
+    
     // Need to create a VTK ImageData to hang off the node if there is
     // not one already there
+    //
     vtkImageData *img = 0;
     img = node->GetImageData();
     if (!img)
@@ -435,17 +442,35 @@ MRMLIDImageIO
       img->Delete();
       }
 
+    // Disconnect the observers from the image
+    //
+    //
+    img->Register(NULL);  // keep a handle
+    node->SetAndObserveImageData(NULL);
+
     // Configure the information on the node/image data
-    this->WriteImageInformation();
+    //
+    //
+    this->WriteImageInformation(node, img);
 
-    // allocate the data, copy the data (just looking at the scalars)
-    node->GetImageData()->AllocateScalars();
+    // Allocate the data, copy the data (just looking at the scalars)
+    //
+    //
+    img->AllocateScalars();
 
-    memcpy(node->GetImageData()->GetScalarPointer(), buffer,
-          node->GetImageData()->GetPointData()->GetScalars()->GetNumberOfComponents() *
-          node->GetImageData()->GetPointData()->GetScalars()->GetNumberOfTuples() *
-          node->GetImageData()->GetPointData()->GetScalars()->GetDataTypeSize()
+    memcpy(img->GetScalarPointer(), buffer,
+          img->GetPointData()->GetScalars()->GetNumberOfComponents() *
+          img->GetPointData()->GetScalars()->GetNumberOfTuples() *
+          img->GetPointData()->GetScalars()->GetDataTypeSize()
       );
+
+    // Connect the observers to the image
+    node->SetAndObserveImageData( img );
+    img->UnRegister(NULL); // release the handle
+
+    // Enable Modified events
+    //
+    node->DisableModifiedEventOff();
     }
 }
 
