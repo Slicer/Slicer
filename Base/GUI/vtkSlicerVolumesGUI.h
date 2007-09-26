@@ -58,6 +58,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro (SaveFrame, vtkSlicerModuleCollapsibleFrame );
 
     vtkGetObjectMacro ( VolumeDisplayWidget, vtkSlicerVolumeDisplayWidget );
+    vtkGetObjectMacro ( VolumeSelectorWidget, vtkSlicerNodeSelectorWidget );
 
     // Description:
     // API for setting VolumeNode, VolumeLogic and

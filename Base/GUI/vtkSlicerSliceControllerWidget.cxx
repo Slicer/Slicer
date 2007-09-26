@@ -1038,14 +1038,15 @@ void vtkSlicerSliceControllerWidget::RaiseVolumeDisplayPanel ( char *id )
     
   app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
   vgui = vtkSlicerVolumesGUI::SafeDownCast ( app->GetModuleGUIByName ("Volumes") );
-  vgui->GetApplicationLogic()->GetSelectionNode()->SetActiveVolumeID ( id );
-  vgui->GetVolumeDisplayWidget()->SetVolumeNode (vtkMRMLVolumeNode::SafeDownCast (this->GetMRMLScene()->GetNodeByID ( id )) );
   appgui = vgui->GetApplicationGUI ( );
   appgui->SelectModule ( "Volumes" );
-  //vgui->GetHelpAndAboutFrame()->CollapseFrame();
-//  vgui->GetLoadFrame()->CollapseFrame();
+
+  vtkMRMLNode *volumeNode = this->GetMRMLScene()->GetNodeByID ( id );
+  vgui->GetVolumeSelectorWidget()->SetSelected(volumeNode);
+  vgui->GetApplicationLogic()->GetSelectionNode()->SetActiveVolumeID ( id );
+  vgui->GetVolumeDisplayWidget()->SetVolumeNode (vtkMRMLVolumeNode::SafeDownCast (this->GetMRMLScene()->GetNodeByID ( id )) );
+
   vgui->GetDisplayFrame()->ExpandFrame();
-//  vgui->GetSaveFrame()->CollapseFrame();
 }
 
 
