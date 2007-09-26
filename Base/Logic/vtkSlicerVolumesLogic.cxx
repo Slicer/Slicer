@@ -17,6 +17,8 @@
 #include <vtksys/SystemTools.hxx> 
 
 #include "vtkImageThreshold.h"
+#include "vtkImageAccumulateDiscrete.h"
+#include "vtkImageBimodalAnalysis.h"
 
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerColorLogic.h"
@@ -317,13 +319,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     vtkMRMLScalarVolumeDisplayNode *sdn = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
     if (sdn)
       {
-      double range[2];
-      vtkDebugMacro("Set basic display info");
-      volumeNode->GetImageData()->GetScalarRange(range);
-      sdn->SetLowerThreshold(range[0]);
-      sdn->SetUpperThreshold(range[1]);
-      sdn->SetWindow(range[1] - range[0]);
-      sdn->SetLevel(0.5 * (range[1] + range[0]) );
+      this->CalculateAutoLevels( volumeNode->GetImageData(), sdn );
       }
     vtkDebugMacro("Adding node..");
     this->GetMRMLScene()->AddNode(storageNode);
@@ -446,6 +442,26 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
 
   int res = storageNode->WriteData(volumeNode);
   return res;
+}
+
+void vtkSlicerVolumesLogic::CalculateAutoLevels(vtkImageData *imageData, vtkMRMLScalarVolumeDisplayNode *displayNode)
+{
+  if ( !imageData || !displayNode ) 
+    {
+    return;
+    }
+
+  vtkImageAccumulateDiscrete *accumulate = vtkImageAccumulateDiscrete::New();
+  vtkImageBimodalAnalysis *bimodal = vtkImageBimodalAnalysis::New();
+
+  accumulate->SetInput(imageData);
+  bimodal->SetInput(accumulate->GetOutput());
+  bimodal->Update();
+
+  displayNode->SetWindow (bimodal->GetWindow());
+  displayNode->SetLevel (bimodal->GetLevel());
+  displayNode->SetLowerThreshold (bimodal->GetThreshold());
+  displayNode->SetUpperThreshold (bimodal->GetMax());
 }
 
 

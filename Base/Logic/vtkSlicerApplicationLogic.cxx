@@ -17,6 +17,7 @@
 #include "vtkSlicerApplicationLogic.h"
 
 #include "vtkSlicerColorLogic.h"
+#include "vtkSlicerVolumesLogic.h"
 
 #include "vtkKWTkUtilities.h"
 #include "vtkKWApplication.h"
@@ -852,6 +853,10 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         } 
       if (svnd)
         {
+        vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New();
+        vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
+        volumesLogic->CalculateAutoLevels (svnd->GetImageData(), displayNode);
+        volumesLogic->Delete();
         svnd->SetAndObserveDisplayNodeID( disp->GetID() );
         }
       else if (vvnd) vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
