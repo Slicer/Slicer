@@ -313,28 +313,28 @@ MRMLIDImageIO
     {
     vtkMatrix4x4* ijkToLps = vtkMatrix4x4::New();
     vtkMatrix4x4* rasToIjk = vtkMatrix4x4::New();
+    vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();
 
     rasToIjk->Identity();
     ijkToLps->Identity();
+    lpsToRas->Identity();
 
-    for (i = 0; i < 3; i++)
+    for (i = 0; (i < this->GetNumberOfDimensions()) && (i < 3); i++)
       {
       // Get IJK to RAS direction vector
-      for ( unsigned int j=0; j < 3; j++ )
+      for ( unsigned int j=0; (j < this->GetNumberOfDimensions()) && (j < 3); j++ )
         {
         ijkToLps->SetElement(j, i, m_Spacing[i]*this->GetDirection(i)[j]);
         }
       }
     
     // Transform from LPS to RAS
-    vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();
-    lpsToRas->Identity();
     lpsToRas->SetElement(0,0,-1);
     lpsToRas->SetElement(1,1,-1);
 
     vtkMatrix4x4::Multiply4x4(lpsToRas,ijkToLps, rasToIjk);
 
-    for (int j = 0; j < 3; j++)
+    for (int j = 0; (j < this->GetNumberOfDimensions()) && (j < 3); j++)
       {
       if (j < 2)
         {
