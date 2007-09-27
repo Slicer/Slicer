@@ -652,13 +652,16 @@ void vtkSlicerApplicationLogic::ProcessReadData()
       }
     this->ReadDataQueueLock->Unlock();
 
-    if (req.GetIsScene())
+    if (!req.GetNode().empty())
       {
-      this->ProcessReadSceneData(req);
-      }
-    else
-      {
-      this->ProcessReadNodeData(req);
+      if (req.GetIsScene())
+        {
+        this->ProcessReadSceneData(req);
+        }
+      else
+        {
+        this->ProcessReadNodeData(req);
+        }
       }
     }
   
