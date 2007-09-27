@@ -187,7 +187,12 @@ int vtkQdecModuleLogic::LoadProjectFile(const char *fileName)
 {
   if (this->QDECProject)
     {
-    int err = this->QDECProject->LoadProjectFile(fileName);
+#ifndef _WIN32
+    const char *tempDir = "/tmp";
+#else
+    const char *tempDir = "C:/tmp";
+#endif
+    int err = this->QDECProject->LoadProjectFile(fileName, tempDir);
     if (err == 0)
       {
       // success, now can load the results
