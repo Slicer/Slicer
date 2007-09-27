@@ -1843,12 +1843,19 @@ void vtkQueryAtlasGUI::BuildAcknowledgementPanel ( )
     abi->Create();
     abi->SetImageToIcon ( this->GetCollaboratorIcons()->GetBrainInfoLogo() );
     
+    vtkKWLabel *aspl = vtkKWLabel::New();
+    aspl->SetParent ( this->GetLogoFrame() );
+    aspl->Create();
+    aspl->SetImageToIcon ( this->QueryAtlasIcons->GetSPLlogo() );
+    
     app->Script ("grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky w",  abirn->GetWidgetName());
     app->Script ("grid %s -row 0 -column 1 -padx 2 -pady 2 -sticky w", anamic->GetWidgetName());
     app->Script ("grid %s -row 0 -column 2 -padx 2 -pady 2 -sticky w",  anac->GetWidgetName());
     app->Script ("grid %s -row 1 -column 0 -padx 2 -pady 2 -sticky w",  aigt->GetWidgetName());                 
-    app->Script ("grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  abi->GetWidgetName());
+    app->Script ("grid %s -row 1 -column 1 -padx 2 -pady 2 -sticky w",  aspl->GetWidgetName());
+    app->Script ("grid %s -row 1 -column 2 -padx 2 -pady 2 -sticky w",  abi->GetWidgetName());
 
+    aspl->Delete();
     abirn->Delete();
     anac->Delete();
     anamic->Delete();
