@@ -31,6 +31,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cassert>
 
 #include "QdecDataTable.h"
@@ -73,12 +74,21 @@ QdecDataTable::~QdecDataTable ( )
  * each data item is stored in a QdecFactor object).
  * @return int
  * @param  isFileName
+ * @param  osNewSubjDir
  */
-int QdecDataTable::Load (const char* isFileName )
+int QdecDataTable::Load (const char* isFileName, char* osNewSubjDir )
 {
   size_t tmpstrMaxSize = 200000; // maximum size of one line in the file
   char *tmpstr = (char *)malloc( tmpstrMaxSize );
   assert( tmpstr );
+
+  if ( NULL == isFileName)
+  {
+    fprintf(stderr, "ERROR: QdecDataTable::Load: NULL filename!\n");
+    return(-1);
+  }
+
+  if ( NULL != osNewSubjDir) osNewSubjDir[0]=0; // assume no new subj dir
 
   // delete any prior loaded data
   while (this->mFactors.size() != 0)
@@ -104,6 +114,9 @@ int QdecDataTable::Load (const char* isFileName )
     return(-1);
   }
 
+#undef WHITESPC
+#define WHITESPC " ,\"\t\n\r"
+  
   // Attempt to load the first non-commented line of the file, 
   // which may fail if it cant detect end-of-line
   tmpstr[0]='#';
@@ -117,11 +130,20 @@ int QdecDataTable::Load (const char* isFileName )
       ifsDatFile.close();
       return (-1);
     }
+
+    // while we're looking for that first line of factor names, look for
+    // a line with SUBJECTS_DIR as the first string, and set it to whatever
+    // follows it
+    if ( strncmp(tmpstr, "SUBJECTS_DIR", 12) == 0 )
+    {
+      char *token = strtok(&tmpstr[13],WHITESPC);
+      strcpy(osNewSubjDir,token);
+      printf("Setting SUBJECTS_DIR to '%s'\n", osNewSubjDir);
+      tmpstr[0] = '#'; // continue trying find the first line with factor info
+    }
   }
 
-#undef WHITESPC
-#define WHITESPC " ,\"\t\n\r"
-
+  
   /*
    * Count the number of columns in the first line from the file
    */
@@ -172,7 +194,7 @@ int QdecDataTable::Load (const char* isFileName )
   ifsDatFile.clear();
   ifsDatFile.seekg( 0 ); // rewind
   tmpstr[0]='#';
-  while( tmpstr[0] == '#' ) // ignore lines beginning with #
+  while( tmpstr[0] == '#' ) // ignore lines beginning with # and SUBJECTS_DIR
   {
     ifsDatFile.getline(tmpstr, tmpstrMaxSize);
     if (ifsDatFile.fail() || (NULL==tmpstr))
@@ -183,6 +205,7 @@ int QdecDataTable::Load (const char* isFileName )
       ifsDatFile.close();
       return (-1);
     }
+    if ( strncmp(tmpstr, "SUBJECTS_DIR", 12) == 0 ) tmpstr[0] = '#';// continue
   }
   token = strtok(tmpstr,WHITESPC);
   if (NULL == token)
@@ -212,24 +235,35 @@ int QdecDataTable::Load (const char* isFileName )
       } //else printf("token: %s\n",token);
     }
 
-    char* factor=strdup(token);
+    char factor[1024];
+    strncpy( factor, token, sizeof(factor) );
     //printf("factor: %s\n",factor);
 
     // if there exists a file called 'factor'.levels, where 'factor' is the
     // token read from the line, then it is a discrete factor, in which
     // case we'll read its valid levels, otherwise, assume its continuous
-    char fname[2000];
-    QdecUtilities::FileNamePath(isFileName,fname);
-    strcat(fname,"/");
-    strcat(fname,factor);
-    strcat(fname,".levels");
-    ifstream ifsLevelFile;
-    ifsLevelFile.open(fname);
+
+        // Extract the path of the data table from the data table file name.
+    string fnDataTable = isFileName;
+    string fnPath;
+    string::size_type nPreLastSlash = fnDataTable.rfind( '/' );
+    if( string::npos != nPreLastSlash )
+      fnPath = fnDataTable.substr( 0, nPreLastSlash );
+    else
+      fnPath = isFileName;
+
+    // Build the levels file name.
+    stringstream fnLevels;
+    fnLevels << fnPath << "/" << factor << ".levels";
+
+    // Try to open the levels file.
+    ifstream ifsLevelFile( fnLevels.str().c_str(), ios::in );
     if (ifsLevelFile.good())
     {
       QdecFactor* qf = new QdecFactor( strdup(factor), // name
                                        QdecFactor::qdecDiscreteFactorType );
-      printf("Reading discrete factor levels from config file %s...",fname);
+      printf("Reading discrete factor levels from config file %s...",
+             fnLevels.str().c_str() );
       char tmpstr2[1000];
       while ( ifsLevelFile.getline(tmpstr2,1000).good()  )
       {
@@ -239,6 +273,7 @@ int QdecDataTable::Load (const char* isFileName )
           qf->AddLevelName( tmpstr2 );
         }
       }
+      qf->SetHaveDotLevelsFile();
       ifsLevelFile.close();
       printf(" done.\n");
       this->mFactors.push_back ( qf );
@@ -300,8 +335,8 @@ int QdecDataTable::Load (const char* isFileName )
     if (NULL == token)
     {
       fprintf(stderr,
-              "ERROR3: QdecDataTable::Load failed to tokenize string: '%s'\n",
-              tmpstr);
+              "ERROR3: QdecDataTable::Load failed to tokenize string: '%s'\n"
+              "on line %d of %s\n",tmpstr,nthInput+2,isFileName);
       ifsDatFile.close();
       return (-1);
     } //else printf("token: %s\n",token);
@@ -315,19 +350,25 @@ int QdecDataTable::Load (const char* isFileName )
       }
       else // get factor data
       {
-        // if discrete, then check that its valid (a known level name)
-        if ( this->mFactors[nthfactor]->IsDiscrete() )
+        // start by assuming its continuous by trying to convert to a double
+        double dtmp=0.0;
+        int retCode = sscanf(token,"%lf",&dtmp);
+        if (retCode == 1) // yes!  its a continuous factor
         {
-          if ( this->mFactors[nthfactor]->ValidLevelName( token ) )
-          {
-            QdecFactor* qf =
-              new QdecFactor
-              ( this->mFactors[nthfactor]->GetFactorName().c_str(),
-                QdecFactor::qdecDiscreteFactorType,
-                (const char*)strdup(token) /* value */);
-            theFactors.push_back( qf ); // save this factor data
-          }
-          else
+          //printf("%d %lf\n",nthInput,dtmp);
+          QdecFactor* qf =
+            new QdecFactor( this->mFactors[nthfactor]->GetFactorName().c_str(),
+                            QdecFactor::qdecContinuousFactorType,
+                            dtmp /* value */);
+          theFactors.push_back( qf ); // save this factor data
+        }
+        else // it must be a discrete factor
+        {
+          // if discrete, then check that its valid (a known level name, as
+          // read from a factor.levels file that user optionally created)
+          if ( this->mFactors[nthfactor]->IsDiscrete() &&
+               this->mFactors[nthfactor]->HaveDotLevelsFile() && 
+               ! this->mFactors[nthfactor]->ValidLevelName( token ) )
           {
             printf("\nERROR: Subject %s has an invalid level '%s' "
                    "in the %s column.\n",
@@ -342,31 +383,17 @@ int QdecDataTable::Load (const char* isFileName )
             ifsDatFile.close();
             return(-1);
           }
-        }
-        else // assume its a continuous factor
-        {
-          double dtmp=0.0;
-          int retCode = sscanf(token,"%lf",&dtmp);
-          if (retCode != 1)
+          else // we dont know about this discrete factor, so update mFactors
           {
-            printf("\nERROR: Subject %s has an invalid value '%s' "
-                   "in the %s column.\n",
-                   subj_id.c_str(),
-                   strdup(token),
-                   this->mFactors[nthfactor]->GetFactorName().c_str());
-            printf("\nINFO: If '%s' is a discrete factor, then create a file "
-                   "named '%s.levels'\ncontaining the valid factor level "
-                   "names, one per line.\n\n",
-                   this->mFactors[nthfactor]->GetFactorName().c_str(),
-                   this->mFactors[nthfactor]->GetFactorName().c_str());
-            ifsDatFile.close();
-            return(-1);
+            this->mFactors[nthfactor]->SetDiscrete();
+            this->mFactors[nthfactor]->AddLevelName( token );
           }
-          //printf("%d %lf\n",nthInput,dtmp);
+          // and save-away this subjects discrete data
           QdecFactor* qf =
-            new QdecFactor( this->mFactors[nthfactor]->GetFactorName().c_str(),
-                            QdecFactor::qdecContinuousFactorType,
-                            dtmp /* value */);
+            new QdecFactor
+            ( this->mFactors[nthfactor]->GetFactorName().c_str(),
+              QdecFactor::qdecDiscreteFactorType,
+              (const char*)strdup(token) /* value */);
           theFactors.push_back( qf ); // save this factor data
         }
         nthfactor++;

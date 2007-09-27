@@ -69,6 +69,11 @@ public:
 
 
   /**
+   *
+   */
+  void SetDiscrete ( ) { mType = qdecDiscreteFactorType; } ;
+
+  /**
    * @return bool
    */
   bool IsContinuous ( );
@@ -93,6 +98,15 @@ public:
    */
   void AddLevelName ( string isLevelName );
 
+  /**
+   *
+   */
+  bool HaveDotLevelsFile ( ) { return mHaveDotLevelsFile; };
+
+  /**
+   *
+   */
+  void SetHaveDotLevelsFile ( ) { mHaveDotLevelsFile = true; };
 
   /**
    * @return vector< string >
@@ -137,6 +151,9 @@ private:
   // Names of possible levels (for instance, if this factor is 'gender',
   // then the two possible names are 'Female' and 'Male').
   vector< string > mLevelNames;
+
+  // true if user create a factor.levels file containing the valid level names
+  bool mHaveDotLevelsFile;
 
   string msDiscreteValue;
 

@@ -42,6 +42,9 @@ QdecFactor::QdecFactor ( const char* isName,
   // if ==2, discrete
   mType = iType;
   assert( (mType == 1) || (mType == 2) );
+
+  mHaveDotLevelsFile = false;
+
 }
 
 QdecFactor::QdecFactor ( const char* isName,
@@ -56,6 +59,8 @@ QdecFactor::QdecFactor ( const char* isName,
   assert( mType == 1 );
 
   msDiscreteValue = iValue;
+
+  mHaveDotLevelsFile = false;
 }
 
 
@@ -71,6 +76,8 @@ QdecFactor::QdecFactor ( const char* isName,
   assert( mType == 2 );
 
   mContinuousValue = iValue;
+
+  mHaveDotLevelsFile = false;
 }
 
 
@@ -129,6 +136,13 @@ string QdecFactor::GetFactorTypeName ( )
 void QdecFactor::AddLevelName ( string isLevelName )
 {
   assert( mType == 1 );
+
+  // check if already in our list:
+  if (this->ValidLevelName( isLevelName.c_str() ))
+    {
+    return;
+    }
+
   mLevelNames.push_back( isLevelName );
 }
 

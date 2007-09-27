@@ -58,8 +58,9 @@ public:
    * discrete and continuous factors.
    * @return int
    * @param  isFileName
+   * @param  osNewSubjDir
    */
-  int Load (const char* isFileName );
+  int Load (const char* isFileName, char* osNewSubjDir );
 
 
   /**

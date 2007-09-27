@@ -58,22 +58,26 @@ public:
   virtual ~QdecProject ( );
 
   /**
-   * Load a project file (containing all necessary info to begin working
-   * either on a new project, or to continue working using results from a
-   * prior saved work session).
+   * Load a .qdec project file (containing all necessary info to begin
+   * working either on a new project, or to continue working using
+   * results from a prior saved work session). isDataDir should be a
+   * directory where we can expand the .qdec file (like /tmp).
    * @return int
    * @param  isFileName
+   * @param  isDataDir
    */
-  int LoadProjectFile ( const char* isFileName );
-
+  int LoadProjectFile ( const char* isFileName,
+                        const char* isDataDir = "/tmp" );
 
   /**
    * Save all necessary information pertaining to this project
    * (all subject data, any results, any user preferences).
    * @return int
    * @param  isFileName
+   * @param  isDataDir
    */
-  int SaveProjectFile ( const char* isFileName );
+  int SaveProjectFile ( const char* isFileName,
+                        const char* isDataDir = "/tmp" );
 
 
   /**
@@ -110,7 +114,7 @@ public:
   /**
    * @param  ifnSubjectsDir
    */
-  void SetSubjectsDir ( const char* ifnSubjectsDir );
+  int SetSubjectsDir ( const char* ifnSubjectsDir );
 
 
   /**
@@ -123,6 +127,11 @@ public:
    * @param  isSubjectName
    */
   void SetAverageSubject ( const char* isSubjectName );
+
+  /**
+   * @return string
+   */
+  string GetDefaultWorkingDir ( );
 
 
   /**
@@ -199,7 +208,7 @@ public:
   /**
    * @return int
    */
-  int LoadGlmDesign(const char *fileName);
+  //int LoadGlmDesign(const char *fileName);
 
   /**
    * @return QdecGlmFitResults
@@ -219,6 +228,17 @@ public:
       ProgressUpdateGUI* iProgressUpdateGUI=NULL );
 
 
+  /**
+   * @return QdecGlmDesign
+   */
+  QdecGlmDesign* GetGlmDesign ( );
+
+  /**
+   * The file name of our metadata file, for the project file archive.
+   * @return const char*
+   */
+  const char* GetMetadataFileName () const;
+  
 private:
 
   // private attributes

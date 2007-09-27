@@ -63,11 +63,21 @@ public:
    */
   int Run (QdecGlmDesign* iGlmDesign );
 
+  /**
+   * Creates the contrast, stddef, coefficients, and fsgdf file names
+   * using the working directory from the design. Creates the results
+   * object with these values. Does not generate any new data.
+   * @return int
+   * @param iGlmDesign
+   */
+  int CreateResultsFromCachedData ( QdecGlmDesign* iGlmDesign );
+
+  
    /**
    * @return int
    * @param  iGlmDesign
    */
-  int Load (QdecGlmDesign* iGlmDesign );
+  //int Load (QdecGlmDesign* iGlmDesign );
 
   
 

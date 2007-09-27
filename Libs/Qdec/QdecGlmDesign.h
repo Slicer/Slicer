@@ -37,6 +37,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 #include "QdecContrast.h"
 #include "QdecDataTable.h"
@@ -96,6 +97,27 @@ public:
                ProgressUpdateGUI* iProgressUpdateGUI );
 
   /**
+   * Using the design parameters, writes FSGF file to the working directory.
+   * @return int
+   */
+  int WriteFsgdFile ( );
+
+  /**
+   * Using the design parameters, writes .mat files for all our contrasts.
+   * @return int
+   */
+  int WriteContrastMatrices ( );
+
+  /**
+   * Using the design parameters, creates the 'y' input data to
+   * mri_glmfit, by concatenating the subject volumes, and writes it
+   * to the specified filename.
+   * @return int
+   */
+  int WriteYdataFile ( );
+
+  
+  /**
    * @return string
    */
   string GetName ( );
@@ -128,7 +150,7 @@ public:
   /**
    * @param const char*
    */
-  void SetSubjectsDir ( const char* ifnSubjectsDir );
+  int SetSubjectsDir ( const char* ifnSubjectsDir );
 
 
   /**
@@ -174,6 +196,10 @@ public:
    */
   vector< string > GetContrastFileNames ( );
 
+  /**
+   * @return string
+   */
+  string GetDefaultWorkingDir ( );
 
   /**
    * @return string
@@ -194,10 +220,34 @@ public:
   ProgressUpdateGUI* GetProgressUpdateGUI ( );
 
   /**
+   * SetExcludeSubjectID ( const char* isSubjecID, bool ibExclude ) -
+   * Sets a subject ID's exclusion status. If excluded, it will not be
+   * included when writing the ydata file.
+   * param const char* isSubjectID
+   * param bool ibExclude
+   */
+  void SetExcludeSubjectID ( const char* isSubjectID, bool ibExclude );
+
+  /**
+   * GetExcludeSubjectID ( const char* isSubjecID ) -
+   * Returns a subject ID's exclusion status.
+   * param const char* isSubjectID
+   */
+  bool GetExcludeSubjectID ( const char* isSubjectID );
+
+  
+  /**
+   * Access the discrete and continuous factor names.
+   * Returns a const vector of QdecFactors pointers.
+   */
+  vector<QdecFactor*> const& GetDiscreteFactors () const;
+  vector<QdecFactor*> const& GetContinuousFactors () const;
+
+  /**
    * Sets FsgdFileName and reads in the values into the current design
    * @return int
    */
-  int ReadFsgdFile (const char* fsgdFile );
+//  int ReadFsgdFile (const char* fsgdFile );
 
 private:
 
@@ -220,9 +270,17 @@ private:
   vector< QdecContrast* > mContrasts;
   string mfnFsgdfFile;
   string mfnYdataFile;
+  string mfnDefaultWorkingDir;
   string mfnWorkingDir;
   ProgressUpdateGUI* mProgressUpdateGUI;  
 
+  // A list of excluded subjects. These will not be included when
+  // writing the ydata file. The key values are subject IDs, as found
+  // in data table, and if there is a value present in the set, that
+  // subject is to be excluded.
+//BTX
+  std::set<std::string> maExcludedSubjects;
+//ETX
   // private methods
   //
 
@@ -259,26 +317,12 @@ private:
    */
   string GetLevels2ClassName ( unsigned int* nthlevels );
 
-
-  /**
-   * @return int
-   */
-  int WriteFsgdFile ( );
-
   /**
    * Creates Contrast objects based on the selected factors.
    * Stores them in our 'mContrasts' QdecContrast container.
    * @return int
    */
   int GenerateContrasts ( );
-
-
-  /**
-   * Creates the 'y' input data to mri_glmfit, by concatenating the subject
-   * volumes, and writes it to the specified filename.
-   * @return int
-   */
-  int WriteYdataFile ( );
 
 };
 
