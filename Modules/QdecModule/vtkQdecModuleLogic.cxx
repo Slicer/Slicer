@@ -161,7 +161,7 @@ void vtkQdecModuleLogic::SetSubjectsDirectory(const char *fileName)
 }
 
 //----------------------------------------------------------------------------
-int vtkQdecModuleLogic::LoadGlmDesign(const char *fileName)
+int vtkQdecModuleLogic::LoadProjectFile(const char *fileName)
 {
   if (this->QDECProject)
     {
@@ -173,7 +173,7 @@ int vtkQdecModuleLogic::LoadGlmDesign(const char *fileName)
       }
     else
       {
-      vtkErrorMacro("LoadGlmDesign: error creating the qdec project glm design from file " << fileName);
+      vtkErrorMacro("LoadProjectFile: error creating the qdec project glm design from file " << fileName);
       return -1;
       }
     }

@@ -526,7 +526,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       return;
       }
     vtkDebugMacro("Trying to load file " << fileName);
-    if (this->GetLogic()->LoadGlmDesign(fileName) == -1)
+    if (this->GetLogic()->LoadProjectFile(fileName) == -1)
       {
       // failure
       vtkErrorMacro("Error loading table file " << fileName);

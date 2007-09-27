@@ -54,9 +54,10 @@ class VTK_QDECMODULE_EXPORT vtkQdecModuleLogic : public vtkSlicerModuleLogic
   int CreateGlmDesign(const char *name, const char *discreteFactor1, const char *discreteFactor2, const char *continuousFactor1, const char *continuousFactor2, const char* measure, const char* hemisphere, int smoothness);
 
   // Description:
-  // Load up the GLM design on the Qdec project
+  // Load up the already computed GLM output from a Qdec project file, a
+  // .tar.gz that's been renamed .qdec
   // Returns 0 on success
-  int LoadGlmDesign(const char *fileName);
+  int LoadProjectFile(const char *fileName);
   
   // Description:
   // Run the GLM fit, pass through it's return, 0 is success
