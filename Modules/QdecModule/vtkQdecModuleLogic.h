@@ -67,7 +67,7 @@ class VTK_QDECMODULE_EXPORT vtkQdecModuleLogic : public vtkSlicerModuleLogic
   // Load up the already computed GLM output from a Qdec project file, a
   // .tar.gz that's been renamed .qdec
   // Returns 0 on success
-  int LoadProjectFile(const char *fileName);
+  int LoadProjectFile(const char *fileName, const char *tempDir);
   
   // Description:
   // Run the GLM fit, pass through it's return, 0 is success

@@ -183,15 +183,10 @@ std::string vtkQdecModuleLogic::GetAverageSubject()
 }
 
 //----------------------------------------------------------------------------
-int vtkQdecModuleLogic::LoadProjectFile(const char *fileName)
+int vtkQdecModuleLogic::LoadProjectFile(const char *fileName, const char *tempDir)
 {
   if (this->QDECProject)
     {
-#ifndef _WIN32
-    const char *tempDir = "/tmp";
-#else
-    const char *tempDir = "C:/tmp";
-#endif
     int err = this->QDECProject->LoadProjectFile(fileName, tempDir);
     if (err == 0)
       {

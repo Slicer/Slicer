@@ -525,8 +525,9 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       this->LoadResultsButton->GetWidget()->SetText ("None");
       return;
       }
-    vtkDebugMacro("Trying to load file " << fileName);
-    if (this->GetLogic()->LoadProjectFile(fileName) == -1)
+    const char *tempDir = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetTemporaryDirectory();
+    vtkDebugMacro("Trying to load file " << fileName << ", using temp dir " << tempDir);
+    if (this->GetLogic()->LoadProjectFile(fileName, tempDir) == -1)
       {
       // failure
       vtkErrorMacro("Error loading table file " << fileName);
