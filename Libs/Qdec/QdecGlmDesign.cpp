@@ -81,16 +81,6 @@ QdecGlmDesign::QdecGlmDesign ( QdecDataTable* iDataTable )
 
 QdecGlmDesign::~QdecGlmDesign ( )
 {
-  while (mDiscreteFactors.size() != 0)
-    {
-      delete mDiscreteFactors.back();
-      mDiscreteFactors.pop_back();
-    }
-  while (mContinuousFactors.size() != 0)
-    {
-      delete mContinuousFactors.back();
-      mContinuousFactors.pop_back();
-    }
   while (mContrasts.size() != 0)
     {
       delete mContrasts.back();
