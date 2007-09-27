@@ -570,7 +570,6 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkSlicerViewerInteractorStyle::SafeDownCast(caller) != NULL &&
       callData != NULL)
     {
-    this->DebugOn();
     vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: Plot event!\n");
     // do the pick
     int x = ((int *)callData)[0];
@@ -634,7 +633,6 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: invalid pick");
       }
-    this->DebugOff();
     return;
     }
   
@@ -700,7 +698,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       }
     }
-  this->DebugOff();
+//  this->DebugOff();
   
 }
 
@@ -906,9 +904,9 @@ void vtkQdecModuleGUI::BuildGUI ( )
   this->LoadResultsButton->SetParent ( subjectsFrame->GetFrame() );
   this->LoadResultsButton->Create ( );
   this->LoadResultsButton->SetLabelText ("Load Results Data File:");
-  this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open FSGD file");
+  this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open QDEC file");
   this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
-  this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {All} {.*} } { {Data} {.fsgd} }");
+  this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {All} {.*} } { {Data} {.qdec} }");
   app->Script("pack %s -side top -anchor nw -padx 2 -pady 4", 
               this->LoadResultsButton->GetWidgetName());
 
