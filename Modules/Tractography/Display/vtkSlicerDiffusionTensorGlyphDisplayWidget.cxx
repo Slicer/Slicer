@@ -107,7 +107,12 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::PrintSelf ( ostream& os, vtkInd
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorGlyphDisplayWidget::SetDiffusionTensorDisplayPropertiesNode ( vtkMRMLDiffusionTensorDisplayPropertiesNode *node )
-{ 
+{
+  if (node == NULL)
+    {
+    this->AddMRMLObservers();
+    return;
+    }
   vtkDebugWithObjectMacro(this,"Setting DTI Display props node" <<  node->GetID());
   vtkErrorWithObjectMacro(this,"Setting DTI Display props node" <<  node->GetID());
 

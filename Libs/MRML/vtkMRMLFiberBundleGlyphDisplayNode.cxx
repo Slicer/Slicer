@@ -18,6 +18,8 @@ Version:   $Revision: 1.3 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 
+#include "vtkDiffusionTensorGlyph.h"
+
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 #include "vtkMRMLScene.h"
 
@@ -124,6 +126,31 @@ void vtkMRMLFiberBundleGlyphDisplayNode::PrintSelf(ostream& os, vtkIndent indent
   
   Superclass::PrintSelf(os,indent);
   os << indent << "TwoDimensionalVisibility:             " << this->TwoDimensionalVisibility << "\n";
+}
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLFiberBundleGlyphDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
+{
+  if (this->DiffusionTensorGlyphFilter)
+    {
+    this->DiffusionTensorGlyphFilter->SetInput(glyphPolyData);
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkPolyData* vtkMRMLFiberBundleGlyphDisplayNode::GetPolyData()
+{
+  if (this->DiffusionTensorGlyphFilter)
+    {
+    this->UpdatePolyDataPipeline();
+    this->DiffusionTensorGlyphFilter->Update();
+    return this->DiffusionTensorGlyphFilter->GetOutput();
+    }
+  else
+    {
+    return NULL;
+    }
 }
 
 //----------------------------------------------------------------------------

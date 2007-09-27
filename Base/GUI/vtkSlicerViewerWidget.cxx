@@ -608,6 +608,11 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         this->RequestRender();
         }
       }
+    else if (node != NULL && node->IsA("vtkMRMLDisplayNode") )
+      {
+      this->UpdateFromMRMLRequested = 1;
+      this->RequestRender();
+      }
     else if (node != NULL && node->IsA("vtkMRMLModelHierarchyNode") )
       {
       this->UpdateModelHierarchies();
@@ -1023,7 +1028,7 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
     if (modelDisplayNode && cit != this->DisplayedClipState.end() && cit->second == modelDisplayNode->GetClipping() )
       {
       this->DisplayedVisibility[modelDisplayNode->GetID()] = modelDisplayNode->GetVisibility();
-      return;
+      continue;
       }
     }
 

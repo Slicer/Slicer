@@ -28,11 +28,12 @@
 #include "vtkShrinkPolyData.h"
 #include "vtkGeometryFilter.h"
 
-#include "vtkDiffusionTensorGlyph.h"
-
 #include "vtkMRML.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+
+class vtkDiffusionTensorGlyph;
+
 
 class VTK_MRML_EXPORT vtkMRMLFiberBundleGlyphDisplayNode : public vtkMRMLFiberBundleDisplayNode
 {
@@ -66,29 +67,11 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleGlyphDisplayNode : public vtkMRMLFiberBu
 
   // Description:
   // Sets polydata for glyph input (usually stored in FiberBundle node)
-  void SetPolyData(vtkPolyData *glyphPolyData)
-  {
-    if (this->DiffusionTensorGlyphFilter)
-      {
-      this->DiffusionTensorGlyphFilter->SetInput(glyphPolyData);
-      }
-  }
+  void SetPolyData(vtkPolyData *glyphPolyData);
 
   // Description:
   // Gets resultin glyph PolyData 
-  virtual vtkPolyData* GetPolyData()
-  {
-    if (this->DiffusionTensorGlyphFilter)
-      {
-      this->UpdatePolyDataPipeline();
-      this->DiffusionTensorGlyphFilter->Update();
-      return this->DiffusionTensorGlyphFilter->GetOutput();
-      }
-    else
-      {
-      return NULL;
-      }
-  }
+  virtual vtkPolyData* GetPolyData();
    
   // Description:
   // Update the pipeline based on this node attributes

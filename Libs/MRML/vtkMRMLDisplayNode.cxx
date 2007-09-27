@@ -420,18 +420,10 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (caller == this &&
-      event ==  vtkCommand::ModifiedEvent)
-    {
-    this->UpdatePolyDataPipeline();
-    this->UpdateImageDataPipeline();
-    return;
-    }
-  else if (this->TextureImageData == vtkImageData::SafeDownCast(caller) &&
+  if (this->TextureImageData != NULL && this->TextureImageData == vtkImageData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
-    return;
     }
 
   vtkMRMLColorNode *cnode = this->GetColorNode();
@@ -441,7 +433,12 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }
-  return;
+  if (event ==  vtkCommand::ModifiedEvent)
+    {
+    this->UpdatePolyDataPipeline();
+    this->UpdateImageDataPipeline();
+    this->Modified();
+    }
 }
 
 //---------------------------------------------------------------------------

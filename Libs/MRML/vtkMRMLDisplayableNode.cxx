@@ -346,7 +346,7 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNodeID(const char *displayNodeI
 
   this->AddDisplayNodeID(displayNodeID);
 
-  vtkMRMLDisplayNode *dnode = this->GetDisplayNode();
+  vtkMRMLDisplayNode *dnode = vtkMRMLDisplayNode::SafeDownCast(this->GetScene()->GetNodeByID(displayNodeID));
   this->AddAndObseveDisplayNode(dnode);
   this->Modified(); 
 }

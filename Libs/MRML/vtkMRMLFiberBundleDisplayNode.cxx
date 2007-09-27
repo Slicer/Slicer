@@ -24,27 +24,13 @@ Version:   $Revision: 1.3 $
 //------------------------------------------------------------------------------
 vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleDisplayNode::New()
 {
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLFiberBundleDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiberBundleDisplayNode;
+  return NULL;
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLFiberBundleDisplayNode::CreateNodeInstance()
 {
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLFiberBundleDisplayNode");
-  if(ret)
-    {
-    return (vtkMRMLFiberBundleDisplayNode*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLFiberBundleDisplayNode;
+  return NULL;
 }
 
 

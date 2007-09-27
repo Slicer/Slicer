@@ -22,7 +22,7 @@
 
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
-#include "vtkMRMLFiberBundleDisplayNode.h"
+#include "vtkMRMLFiberBundleLineDisplayNode.h"
 
 vtkCxxRevisionMacro(vtkSlicerFiberBundleLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerFiberBundleLogic);
@@ -144,12 +144,12 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
   vtkErrorMacro("Adding fiber bundle from filename " << filename);
 
   vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::New();
-  vtkMRMLFiberBundleDisplayNode *displayNode = vtkMRMLFiberBundleDisplayNode::New();
+  vtkMRMLFiberBundleLineDisplayNode *displayNode = vtkMRMLFiberBundleLineDisplayNode::New();
   vtkMRMLFiberBundleStorageNode *storageNode = vtkMRMLFiberBundleStorageNode::New();
 
   vtkMRMLDiffusionTensorDisplayPropertiesNode *lineDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *tubeDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+  //vtkMRMLDiffusionTensorDisplayPropertiesNode *tubeDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+  //vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
 
   storageNode->SetFileName(filename);
   if (storageNode->ReadData(fiberBundleNode) != 0)
@@ -168,22 +168,25 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     this->GetMRMLScene()->AddNode(displayNode);
     fiberBundleNode->SetStorageNodeID(storageNode->GetID());
     fiberBundleNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
+    displayNode->SetPolyData(fiberBundleNode->GetPolyData());
+
 
     // put the diffusion tensor display props (like color nodes) onto the scene
+    /***
     this->GetMRMLScene()->AddNode(lineDTDPN);
     displayNode->SetAndObserveFiberLineDTDisplayPropertiesNodeID(lineDTDPN->GetID());
     this->GetMRMLScene()->AddNode(tubeDTDPN);
     displayNode->SetAndObserveFiberTubeDTDisplayPropertiesNodeID(tubeDTDPN->GetID());
     this->GetMRMLScene()->AddNode(glyphDTDPN);
     displayNode->SetAndObserveFiberGlyphDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
-
+    ***/
 
     this->GetMRMLScene()->AddNode(fiberBundleNode);  
 
     // Set up display logic and any other logic classes in future
-    this->InitializeLogicForFiberBundleNode(fiberBundleNode);
+    //this->InitializeLogicForFiberBundleNode(fiberBundleNode);
 
-    this->Modified();  
+    //this->Modified();  
 
     fiberBundleNode->Delete();
     }
@@ -197,9 +200,9 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
   displayNode->Delete();
   //displayLogic->Delete();
 
-  lineDTDPN->Delete();
-  tubeDTDPN->Delete();
-  glyphDTDPN->Delete();
+  //lineDTDPN->Delete();
+  //tubeDTDPN->Delete();
+  //glyphDTDPN->Delete();
 
   return fiberBundleNode;  
 }

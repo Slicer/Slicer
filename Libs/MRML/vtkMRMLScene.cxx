@@ -45,7 +45,9 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLFiberBundleNode.h"
-#include "vtkMRMLFiberBundleDisplayNode.h"
+#include "vtkMRMLFiberBundleLineDisplayNode.h"
+#include "vtkMRMLFiberBundleTubeDisplayNode.h"
+#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLViewNode.h"
@@ -179,10 +181,20 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass (fbn);
   fbn->Delete();
 
-  vtkMRMLFiberBundleDisplayNode *fbdn =
-                         vtkMRMLFiberBundleDisplayNode::New();
-  this->RegisterNodeClass (fbdn);
-  fbdn->Delete();
+  vtkMRMLFiberBundleLineDisplayNode *fbldn =
+                         vtkMRMLFiberBundleLineDisplayNode::New();
+  this->RegisterNodeClass (fbldn);
+  fbldn->Delete();
+  
+  vtkMRMLFiberBundleTubeDisplayNode *fbtdn =
+                         vtkMRMLFiberBundleTubeDisplayNode::New();
+  this->RegisterNodeClass (fbtdn);
+  fbtdn->Delete();
+  
+  vtkMRMLFiberBundleGlyphDisplayNode *fbgdn =
+                         vtkMRMLFiberBundleGlyphDisplayNode::New();
+  this->RegisterNodeClass (fbgdn);
+  fbgdn->Delete();
 
   vtkMRMLFiberBundleStorageNode *fbsn =
                          vtkMRMLFiberBundleStorageNode::New();

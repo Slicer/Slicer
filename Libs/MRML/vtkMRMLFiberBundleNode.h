@@ -32,6 +32,9 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
+#include "vtkMRMLFiberBundleLineDisplayNode.h"
+#include "vtkMRMLFiberBundleTubeDisplayNode.h"
+#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 
 
 class vtkCallbackCommand;
@@ -54,7 +57,31 @@ public:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "FiberBundle";};
 
+  // Description:
+  // get associated line display node or NULL if not set
+  vtkMRMLFiberBundleDisplayNode* GetLineDisplayNode();
 
+  // Description:
+  // get associated tube display node or NULL if not set
+  vtkMRMLFiberBundleDisplayNode* GetTubeDisplayNode();
+
+  // Description:
+  // get associated glyph display node or NULL if not set
+  vtkMRMLFiberBundleDisplayNode* GetGlyphDisplayNode();
+
+  // Description:
+  // add line display node if not already present and return it
+  vtkMRMLFiberBundleDisplayNode* AddLineDisplayNode();
+
+  // Description:
+  // add tube display node if not already present and return it
+  vtkMRMLFiberBundleDisplayNode* AddTubeDisplayNode();
+
+  // Description:
+  // add glyph display node if not already present and return it
+  vtkMRMLFiberBundleDisplayNode* AddGlyphDisplayNode();
+
+  
 protected:
   vtkMRMLFiberBundleNode(){};
   ~vtkMRMLFiberBundleNode(){};

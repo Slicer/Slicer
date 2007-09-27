@@ -23,8 +23,10 @@ vtkCxxRevisionMacro ( vtkSlicerFiberBundleDisplayWidget, "$Revision: 1.0 $");
 vtkSlicerFiberBundleDisplayWidget::vtkSlicerFiberBundleDisplayWidget ( )
 {
 
-    this->FiberBundleNodeID = NULL;
-    this->FiberBundleDisplayNodeID = NULL;
+    this->FiberBundleNode = NULL;
+    this->FiberBundleLineDisplayNode = NULL;
+    this->FiberBundleTubeDisplayNode = NULL;
+    this->FiberBundleGlyphDisplayNode = NULL;
 
     this->FiberBundleSelectorWidget = NULL;
     this->ColorSelectorWidget = NULL;
@@ -37,7 +39,8 @@ vtkSlicerFiberBundleDisplayWidget::vtkSlicerFiberBundleDisplayWidget ( )
 
     this->GlyphDisplayWidget = NULL;
 
-    
+    this->UpdatingMRML = 0;
+    this->UpdatingWidget = 0;
 }
 
 
@@ -106,10 +109,11 @@ vtkSlicerFiberBundleDisplayWidget::~vtkSlicerFiberBundleDisplayWidget ( )
     this->GlyphDisplayWidget = NULL;
     }
 
-
+  vtkSetAndObserveMRMLNodeMacro(this->FiberBundleNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->FiberBundleLineDisplayNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->FiberBundleTubeDisplayNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->FiberBundleGlyphDisplayNode, NULL);
   this->SetMRMLScene ( NULL );
-  this->SetFiberBundleNodeID (NULL);
-  this->SetFiberBundleDisplayNodeID (NULL);
   
 }
 
@@ -120,46 +124,24 @@ void vtkSlicerFiberBundleDisplayWidget::PrintSelf ( ostream& os, vtkIndent inden
     this->vtkObject::PrintSelf ( os, indent );
 
     os << indent << "vtkSlicerFiberBundleDisplayWidget: " << this->GetClassName ( ) << "\n";
-    os << indent << "FiberBundleNode ID: " << this->GetFiberBundleNodeID() << "\n";
-    os << indent << "FiberBundleDisplayNode ID: " << this->GetFiberBundleDisplayNodeID() << "\n";
     // print widgets?
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayWidget::SetFiberBundleNode ( vtkMRMLFiberBundleNode *fiberBundleNode )
 { 
-  vtkDebugWithObjectMacro(this,"Setting fiber bundle node" <<  fiberBundleNode->GetID());
-
-
-  // Select this fiberBundle node
-  this->FiberBundleSelectorWidget->SetSelected(fiberBundleNode); 
-
-  // 
-  // Set the member variables and do a first process
-  //
-  // Stop observing the old node
-  this->RemoveMRMLObservers();
-
-  this->SetFiberBundleNodeID( fiberBundleNode->GetID() );
-  this->SetFiberBundleDisplayNodeID( fiberBundleNode->GetDisplayNodeID() );
-    
-  // Update widgets 
-  vtkMRMLFiberBundleDisplayNode *node = 
-    vtkMRMLFiberBundleDisplayNode::SafeDownCast( this->MRMLScene->GetNodeByID( this->FiberBundleDisplayNodeID ) );
-  if ( node )
+  if (fiberBundleNode == this->FiberBundleNode)
     {
-    vtkMRMLDiffusionTensorDisplayPropertiesNode *dpnode = 
-      vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast( node->GetFiberGlyphDTDisplayPropertiesNode() );
-    this->GlyphDisplayWidget->SetDiffusionTensorDisplayPropertiesNode(dpnode);
-
+    return;
     }
+  vtkSetAndObserveMRMLNodeMacro(this->FiberBundleNode, fiberBundleNode);
 
-  // Start observing the new node
-  this->AddMRMLObservers();
-
-  if ( fiberBundleNode )
+  if (this->FiberBundleNode )
     {
-    this->ProcessMRMLEvents(fiberBundleNode, vtkCommand::ModifiedEvent, NULL);
+    vtkSetAndObserveMRMLNodeMacro(this->FiberBundleLineDisplayNode, this->FiberBundleNode->AddLineDisplayNode());
+    vtkSetAndObserveMRMLNodeMacro(this->FiberBundleTubeDisplayNode, this->FiberBundleNode->AddTubeDisplayNode());
+    vtkSetAndObserveMRMLNodeMacro(this->FiberBundleGlyphDisplayNode, this->FiberBundleNode->AddGlyphDisplayNode());
+    this->UpdateWidget();
     }
 }
 
@@ -168,12 +150,12 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
   vtkDebugWithObjectMacro(this,"Process Widget Events");
+  
 
   //
   // process fiberBundle selector events
   //
-  vtkSlicerNodeSelectorWidget *fiberBundleSelector = 
-      vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+  vtkSlicerNodeSelectorWidget *fiberBundleSelector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
 
   if (fiberBundleSelector == this->FiberBundleSelectorWidget && 
         event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
@@ -188,14 +170,29 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
 
     return;
     }
+    
+  if (!this->SyncSceneNodes())
+    {
+    return;
+    }
   
-  if (this->FiberBundleDisplayNodeID != NULL  &&
+  if (this->FiberBundleNode != NULL  &&
     !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangingEvent) &&
     !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangedEvent))
     {
-    this->MRMLScene->SaveStateForUndo(this->MRMLScene->GetNodeByID(this->FiberBundleDisplayNodeID));
+      if (this->FiberBundleLineDisplayNode)
+      {
+      this->MRMLScene->SaveStateForUndo(this->FiberBundleLineDisplayNode);
+      }
+      if (this->FiberBundleTubeDisplayNode)
+      {
+      this->MRMLScene->SaveStateForUndo(this->FiberBundleTubeDisplayNode);
+      }
+      if (this->FiberBundleGlyphDisplayNode)
+      {
+      this->MRMLScene->SaveStateForUndo(this->FiberBundleGlyphDisplayNode);
+      }
     }
-  
   this->UpdateMRML();
 
   //
@@ -204,31 +201,23 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
   vtkSlicerNodeSelectorWidget *colSelector = 
     vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
   if (colSelector == this->ColorSelectorWidget && 
-      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
-      this->FiberBundleDisplayNodeID != NULL) 
+      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent) 
     {
     vtkMRMLColorNode *color =
       vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
     if (color != NULL)
       {
       // get the fiberBundle display node
-      vtkMRMLFiberBundleDisplayNode *displayNode = NULL;
-      if (this->FiberBundleDisplayNodeID != NULL)
+      // TODO add separate colors for tube and glyph
+      if (this->FiberBundleLineDisplayNode != NULL)
         {
-        displayNode = 
-          vtkMRMLFiberBundleDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->FiberBundleDisplayNodeID) );
-        if (displayNode != NULL)
+        // set and observe it's colour node id
+        if (this->FiberBundleLineDisplayNode->GetColorNodeID() == NULL ||
+            strcmp(this->FiberBundleLineDisplayNode->GetColorNodeID(), color->GetID()) != 0)
           {
-          // set and observe it's colour node id
-          if (displayNode->GetColorNodeID() == NULL ||
-              strcmp(displayNode->GetColorNodeID(), color->GetID()) != 0)
-            {
-            vtkErrorMacro("Setting color node");
-            // there's a change, set it
-            displayNode->SetAndObserveColorNodeID(color->GetID());
-            }
-          }        
-        }
+          this->FiberBundleLineDisplayNode->SetAndObserveColorNodeID(color->GetID());
+          }
+        }        
       }
     }
 }
@@ -240,7 +229,7 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 {
   vtkDebugWithObjectMacro(this,"Process MRML Events");
 
-  if ( !this->FiberBundleNodeID )
+  if ( !this->FiberBundleNode )
     {
     return;
     }
@@ -248,33 +237,9 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
   vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(caller);
   
   // if this event comes from our fiberBundleNode, it is not null, and has been modified
-  if (fiberBundleNode == this->MRMLScene->GetNodeByID(this->FiberBundleNodeID) && 
-      fiberBundleNode != NULL && event == vtkCommand::ModifiedEvent)
+  if (fiberBundleNode != NULL && event == vtkCommand::ModifiedEvent)
     {
-    vtkMRMLFiberBundleDisplayNode *displayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(fiberBundleNode->GetDisplayNode());
-    
-
-    if (displayNode != NULL && this->FiberBundleDisplayNodeID != NULL)
-      {
-      // stop observing display node
-      this->RemoveMRMLObservers();
-
-      this->SetFiberBundleDisplayNodeID(displayNode->GetID());
-
-      // set the color node selector to reflect the volume's color node
-      if (displayNode->GetColorNode() != NULL)
-        {
-        this->ColorSelectorWidget->SetSelected(displayNode->GetColorNode());
-        }
-      else
-        {
-        vtkWarningMacro("Slicer FiberBundle Display Widget cannot set the color selector widget, as the fiberBundle's display node has no color node set");
-        }
-
-      // start observing display node again
-      this->AddMRMLObservers();
-
-      }
+    this->SetFiberBundleNode(fiberBundleNode);
     }
   
   this->UpdateWidget();
@@ -284,101 +249,133 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayWidget::AddMRMLObservers ( )
 {
-  if ( !this->FiberBundleNodeID )
+  if (this->FiberBundleLineDisplayNode != NULL)
     {
-    return;
+    this->FiberBundleLineDisplayNode->AddObserver(vtkCommand::ModifiedEvent,
+                            (vtkCommand *)this->MRMLCallbackCommand );      
+    }
+  if (this->FiberBundleTubeDisplayNode != NULL)
+    {
+    this->FiberBundleTubeDisplayNode->AddObserver(vtkCommand::ModifiedEvent,
+                            (vtkCommand *)this->MRMLCallbackCommand );      
+    }
+  if (this->FiberBundleGlyphDisplayNode != NULL)
+    {
+    this->FiberBundleGlyphDisplayNode->AddObserver(vtkCommand::ModifiedEvent,
+                            (vtkCommand *)this->MRMLCallbackCommand );      
     }
 
-  vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->FiberBundleNodeID));
-  
-  if (fiberBundleNode != NULL)
-    {
-    vtkMRMLFiberBundleDisplayNode *displayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(fiberBundleNode->GetDisplayNode());
-    
-    if (displayNode != NULL)
-      {
-        displayNode->AddObserver(vtkCommand::ModifiedEvent,
-                                 (vtkCommand *)this->MRMLCallbackCommand );      
-      }
-    }
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayWidget::RemoveMRMLObservers ( )
 {
-  if ( !this->FiberBundleNodeID )
+  if (this->FiberBundleLineDisplayNode != NULL)
     {
-    return;
+    this->FiberBundleLineDisplayNode->RemoveObservers(vtkCommand::ModifiedEvent,
+                            (vtkCommand *)this->MRMLCallbackCommand );      
+    }
+  if (this->FiberBundleTubeDisplayNode != NULL)
+    {
+    this->FiberBundleTubeDisplayNode->RemoveObservers(vtkCommand::ModifiedEvent,
+                            (vtkCommand *)this->MRMLCallbackCommand );      
+    }
+  if (this->FiberBundleGlyphDisplayNode != NULL)
+    {
+    this->FiberBundleGlyphDisplayNode->RemoveObservers(vtkCommand::ModifiedEvent,
+                            (vtkCommand *)this->MRMLCallbackCommand );      
     }
 
-  vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->FiberBundleNodeID));
-  
-  if (fiberBundleNode != NULL)
-    {
-    vtkMRMLFiberBundleDisplayNode *displayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(fiberBundleNode->GetDisplayNode());
-    
-    if (displayNode != NULL)
-      {
-        displayNode->RemoveObservers(vtkCommand::ModifiedEvent,
-                                        (vtkCommand *)this->MRMLCallbackCommand );
-      }
-    }
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayWidget::UpdateWidget()
 {
-  
-  if ( this->FiberBundleDisplayNodeID )
+  if (!this->SyncSceneNodes())
     {
-    vtkMRMLFiberBundleDisplayNode *displayNode = 
-      vtkMRMLFiberBundleDisplayNode::SafeDownCast(this->MRMLScene->GetNodeByID(
-                                              this->FiberBundleDisplayNodeID));
-    if (displayNode != NULL) 
-      {
-      this->ClippingButton->GetWidget()->SetSelectedState(displayNode->GetClipping());
-      this->OpacityScale->GetWidget()->SetValue(displayNode->GetOpacity());
-
-      this->ChangeColorButton->SetColor(displayNode->GetColor());
-
-
-      this->LineVisibilityButton->GetWidget()->SetSelectedState(displayNode->GetFiberLineVisibility());
-      this->TubeVisibilityButton->GetWidget()->SetSelectedState(displayNode->GetFiberTubeVisibility());
-      this->GlyphVisibilityButton->GetWidget()->SetSelectedState(displayNode->GetFiberGlyphVisibility());
-
-      // TO DO glyph widget
-
-      }
-    
     return;
     }
+
+  if (this->UpdatingMRML || this->UpdatingWidget)
+    {
+    return;
+    }
+  this->UpdatingWidget = 1;
+  
+  // Select this fiberBundle node
+  this->FiberBundleSelectorWidget->SetSelected(this->FiberBundleNode); 
+
+  if ( this->FiberBundleLineDisplayNode )
+    {
+    this->ClippingButton->GetWidget()->SetSelectedState(this->FiberBundleLineDisplayNode->GetClipping());
+    this->OpacityScale->GetWidget()->SetValue(this->FiberBundleLineDisplayNode->GetOpacity());
+
+    this->ChangeColorButton->SetColor(this->FiberBundleLineDisplayNode->GetColor());
+
+    if (this->FiberBundleLineDisplayNode->GetColorNode() != NULL)
+      {
+      this->ColorSelectorWidget->SetSelected(this->FiberBundleLineDisplayNode->GetColorNode());
+      }
+
+    this->LineVisibilityButton->GetWidget()->SetSelectedState(this->FiberBundleLineDisplayNode->GetVisibility());
+    } 
+  if ( this->FiberBundleTubeDisplayNode )
+    {
+    this->TubeVisibilityButton->GetWidget()->SetSelectedState(this->FiberBundleTubeDisplayNode->GetVisibility());
+    // TODO color node, opacity and color for tubes
+    } 
+  if ( this->FiberBundleGlyphDisplayNode )
+    {
+    this->GlyphVisibilityButton->GetWidget()->SetSelectedState(this->FiberBundleGlyphDisplayNode->GetVisibility());
+    // TODO color node, opacity and color for glyps
+    vtkMRMLDiffusionTensorDisplayPropertiesNode *dpnode = 
+      vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast( this->FiberBundleGlyphDisplayNode->GetFiberGlyphDTDisplayPropertiesNode() );
+    this->GlyphDisplayWidget->SetDiffusionTensorDisplayPropertiesNode(dpnode);
+
+    // TODO glyph widget
+    } 
+    
+   this->UpdatingWidget = 0;
+
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerFiberBundleDisplayWidget::UpdateMRML()
 {
-  
-  if ( this->FiberBundleDisplayNodeID )
+  if (!this->SyncSceneNodes())
     {
-    vtkMRMLFiberBundleDisplayNode *displayNode = 
-      vtkMRMLFiberBundleDisplayNode::SafeDownCast(this->MRMLScene->GetNodeByID(
-                                              this->FiberBundleDisplayNodeID));
-    if (displayNode != NULL) 
-      {
-      displayNode->SetClipping(this->ClippingButton->GetWidget()->GetSelectedState());
-      displayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
-      displayNode->SetColor(this->ChangeColorButton->GetColor());
-
-      displayNode->SetFiberLineVisibility(this->LineVisibilityButton->GetWidget()->GetSelectedState());
-      displayNode->SetFiberTubeVisibility(this->TubeVisibilityButton->GetWidget()->GetSelectedState());
-      displayNode->SetFiberGlyphVisibility(this->GlyphVisibilityButton->GetWidget()->GetSelectedState());
-
-      // TO DO glyph widget
-
-      }
-    
     return;
     }
+
+  if (this->UpdatingMRML || this->UpdatingWidget)
+    {
+    return;
+    }
+
+  this->UpdatingMRML = 1;
+
+
+  if ( this->FiberBundleLineDisplayNode )
+    {
+    this->FiberBundleLineDisplayNode->SetClipping(this->ClippingButton->GetWidget()->GetSelectedState());
+    this->FiberBundleLineDisplayNode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
+    this->FiberBundleLineDisplayNode->SetColor(this->ChangeColorButton->GetColor());
+
+    this->FiberBundleLineDisplayNode->SetVisibility(this->LineVisibilityButton->GetWidget()->GetSelectedState());
+    }
+  if ( this->FiberBundleTubeDisplayNode )
+    {
+     // TODO color node, opacity and color for tubes
+    this->FiberBundleTubeDisplayNode->SetVisibility(this->TubeVisibilityButton->GetWidget()->GetSelectedState());
+    }
+  if ( this->FiberBundleGlyphDisplayNode )
+    {
+    // TODO color node, opacity and color for glyphs
+    this->FiberBundleGlyphDisplayNode->SetVisibility(this->GlyphVisibilityButton->GetWidget()->GetSelectedState());
+    }
+      
+    this->UpdatingMRML = 0;
+    
 }
 
 
@@ -542,10 +539,38 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   this->GlyphVisibilityButton->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 
-  // TO DO glyph widget
+  // TODO glyph widget
+  // TODO color node, opacity and color for glyphs and tubes
 
 
 
   fiberBundleDisplayFrame->Delete();
     
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerFiberBundleDisplayWidget::SyncSceneNodes()
+{
+  bool inSync = true;
+  if (this->FiberBundleNode && vtkMRMLFiberBundleNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->FiberBundleNode->GetID() ) ) == NULL )
+    {
+     vtkSetAndObserveMRMLNodeMacro(this->FiberBundleNode, NULL);
+     inSync = false;
+    }
+  if (this->FiberBundleLineDisplayNode && vtkMRMLFiberBundleLineDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->FiberBundleLineDisplayNode->GetID() ) ) == NULL )
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->FiberBundleLineDisplayNode, NULL);
+    inSync = false;
+    }
+  if (this->FiberBundleTubeDisplayNode && vtkMRMLFiberBundleTubeDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->FiberBundleTubeDisplayNode->GetID() ) ) == NULL )
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->FiberBundleTubeDisplayNode, NULL);
+    inSync = false;
+    }
+  if (this->FiberBundleGlyphDisplayNode && vtkMRMLFiberBundleGlyphDisplayNode::SafeDownCast (this->MRMLScene->GetNodeByID(this->FiberBundleGlyphDisplayNode->GetID() ) ) == NULL )
+    {
+    vtkSetAndObserveMRMLNodeMacro(this->FiberBundleGlyphDisplayNode, NULL);
+    inSync = false;
+    }
+  return inSync;
 }

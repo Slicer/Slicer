@@ -56,7 +56,7 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   
   // Description:
   // Get node XML tag name (like Volume, FiberBundle)
-  virtual const char* GetNodeTagName ( ) {return "FiberBundleDisplay";};
+  virtual const char* GetNodeTagName() = 0;
 
   // Description:
   // Updates this node if it depends on other nodes 
