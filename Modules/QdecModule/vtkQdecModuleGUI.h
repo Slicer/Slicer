@@ -36,7 +36,7 @@ class VTK_QDECMODULE_EXPORT vtkQdecModuleGUI : public vtkSlicerModuleGUI
 public:
 
   static vtkQdecModuleGUI *New();
- // vtkTypeMacro(vtkQdecModuleGUI,vtkSlicerModuleGUI);
+  vtkTypeMacro(vtkQdecModuleGUI,vtkSlicerModuleGUI);
 
   void PrintSelf(ostream& os, vtkIndent indent);
 
