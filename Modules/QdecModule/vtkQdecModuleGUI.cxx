@@ -536,8 +536,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
       vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: was able to load file " << fileName);
-      
-      
+    
       this->UpdateGUI();
 
       // load the results
@@ -713,6 +712,13 @@ void vtkQdecModuleGUI::UpdateGUI ()
 {
   if (this->GetLogic() && this->GetLogic()->QDECProject)
     {
+    // update the subjects dir
+    if (strcmp(this->GetLogic()->GetSubjectsDirectory().c_str(), "") != 0)
+      {
+      this->SubjectsDirectoryButton->GetWidget()->SetText (this->GetLogic()->GetSubjectsDirectory().c_str());
+      this->SubjectsDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetInitialFileName(this->GetLogic()->GetSubjectsDirectory().c_str());
+      }
+    
     // get the discrete and continuous factors
     vector< string > discreteFactors = this->GetLogic()->QDECProject->GetDiscreteFactors();
     this->DiscreteFactorsListBox->GetWidget()->GetWidget()->DeleteAll();
