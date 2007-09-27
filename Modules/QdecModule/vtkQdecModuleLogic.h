@@ -49,6 +49,16 @@ class VTK_QDECMODULE_EXPORT vtkQdecModuleLogic : public vtkSlicerModuleLogic
   void SetSubjectsDirectory(const char *fileName);
 
   // Description:
+  // get the subjects dir from the qdec project
+//BTX
+  std::string GetSubjectsDirectory();
+
+  // Description:
+  // get the average subject file path from the qdec project
+  std::string GetAverageSubject();
+//ETX
+
+  // Description:
   // Set up the GLM design on the Qdec project
   // Returns 0 on success
   int CreateGlmDesign(const char *name, const char *discreteFactor1, const char *discreteFactor2, const char *continuousFactor1, const char *continuousFactor2, const char* measure, const char* hemisphere, int smoothness);

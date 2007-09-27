@@ -161,6 +161,28 @@ void vtkQdecModuleLogic::SetSubjectsDirectory(const char *fileName)
 }
 
 //----------------------------------------------------------------------------
+std::string vtkQdecModuleLogic::GetSubjectsDirectory()
+{
+    std::string subjectsDir = std::string("");
+    if (QDECProject)
+      {
+      subjectsDir = this->QDECProject->GetSubjectsDir();
+      }
+    return subjectsDir;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkQdecModuleLogic::GetAverageSubject()
+{
+    std::string averageSubject = std::string("");
+    if (QDECProject)
+      {
+      averageSubject = this->QDECProject->GetAverageSubject();
+      }
+    return averageSubject;
+}
+
+//----------------------------------------------------------------------------
 int vtkQdecModuleLogic::LoadProjectFile(const char *fileName)
 {
   if (this->QDECProject)
