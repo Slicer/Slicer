@@ -165,7 +165,7 @@ int vtkQdecModuleLogic::LoadGlmDesign(const char *fileName)
 {
   if (this->QDECProject)
     {
-    int err = this->QDECProject->LoadGlmDesign(fileName);
+    int err = this->QDECProject->LoadProjectFile(fileName);
     if (err == 0)
       {
       // success, now can load the results
@@ -365,7 +365,7 @@ int vtkQdecModuleLogic::LoadResults(vtkSlicerModelsLogic *modelsLogic, vtkKWAppl
           ss << sigArrayName;
           std::string composedName = std::string(ss.str());
           this->QuestionScalars[lContrastQuestions[nContrast]] = composedName;
-          vtkWarningMacro("Saved the composed scalar name " << composedName.c_str() << " for the contrast question " << lContrastQuestions[nContrast].c_str());
+          vtkDebugMacro("Saved the composed scalar name " << composedName.c_str() << " for the contrast question " << lContrastQuestions[nContrast].c_str());
           }
         }
       }
