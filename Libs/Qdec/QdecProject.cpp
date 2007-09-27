@@ -362,7 +362,7 @@ int QdecProject::SaveProjectFile ( const char* ifnProject,
 
   // Data table.
   string fnDataTable = this->GetDataTable()->GetFileName();
-  string fnDataTablePath( fnDataTablePath );
+  string fnDataTablePath( fnDataTable );
   string fnDataTableBase( fnDataTable );
   nPreLastSlash = fnDataTable.rfind( '/' );
   if( string::npos != nPreLastSlash ) {

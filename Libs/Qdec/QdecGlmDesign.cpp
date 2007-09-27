@@ -40,6 +40,8 @@
 #include "QdecGlmDesign.h"
 #include "QdecUtilities.h"
 
+#include "stdlib.h"
+
 // Constructors/Destructors
 //
 
@@ -69,7 +71,11 @@ QdecGlmDesign::QdecGlmDesign ( QdecDataTable* iDataTable )
   }
   this->mfnWorkingDir = this->mfnDefaultWorkingDir;
 
+#ifndef _WIN32
   int err = mkdir( this->mfnWorkingDir.c_str(), 0777);
+#else
+  int err = mkdir( this->mfnWorkingDir.c_str());
+#endif
   if( err != 0 && errno != EEXIST )
   {
     fprintf( stderr,
@@ -344,7 +350,12 @@ int QdecGlmDesign::SetSubjectsDir ( const char* ifnSubjectsDir )
     }
   
   this->mfnSubjectsDir = ifnSubjectsDir; 
+#ifdef _WIN32
+  std::string envVal = std::string("SUBJECTS_DIR=") + std::string(ifnSubjectsDir);
+  if ( putenv(envVal.c_str()) )
+#else
   if ( setenv( "SUBJECTS_DIR",  ifnSubjectsDir, 1) ) 
+#endif
   {
     printf( "ERROR: failure setting SUBJECTS_DIR to '%s'\n", ifnSubjectsDir );
     return -1;
