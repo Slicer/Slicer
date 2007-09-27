@@ -2567,6 +2567,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->CurrentResultsList->GetWidget()->MovableColumnsOff();    
     this->CurrentResultsList->HorizontalScrollbarVisibilityOn();
     this->CurrentResultsList->VerticalScrollbarVisibilityOn();
+    this->CurrentResultsList->GetWidget()->SortArrowVisibilityOff();
     
     this->CurrentResultsList->GetWidget()->AddColumn ( "view" );
     this->CurrentResultsList->GetWidget()->ColumnEditableOff ( 0 );
@@ -2577,6 +2578,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->CurrentResultsList->GetWidget()->AddColumn ( "url" );    
     this->CurrentResultsList->GetWidget()->ColumnEditableOff ( 1 );
     this->CurrentResultsList->GetWidget()->SetColumnWidth ( 1, 0 );
+    this->CurrentResultsList->GetWidget()->SetColumnSortModeToAscii ( 1 );
     this->CurrentResultsList->GetWidget()->SetSelectionCommand ( this, "CurrentResultsSelectionCommandCallback");
 
     this->DeselectAllCurrentResultsButton = vtkKWPushButton::New();
@@ -2654,16 +2656,19 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->AccumulatedResultsList->GetWidget()->MovableColumnsOff();    
     this->AccumulatedResultsList->HorizontalScrollbarVisibilityOn();
     this->AccumulatedResultsList->VerticalScrollbarVisibilityOn();
+    this->AccumulatedResultsList->GetWidget()->SortArrowVisibilityOff ( );
 
     this->AccumulatedResultsList->GetWidget()->AddColumn ( "view" );
     this->AccumulatedResultsList->GetWidget()->ColumnEditableOff ( 0 );
     this->AccumulatedResultsList->GetWidget()->ColumnResizableOff ( 0 );
+    this->AccumulatedResultsList->GetWidget()->ColumnStretchableOff ( 0 );
     this->AccumulatedResultsList->GetWidget()->ColumnStretchableOff ( 0 );
     this->AccumulatedResultsList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( 0 );
 
     this->AccumulatedResultsList->GetWidget()->AddColumn ( "url" );    
     this->AccumulatedResultsList->GetWidget()->ColumnEditableOff ( 1 );
     this->AccumulatedResultsList->GetWidget()->SetColumnWidth ( 1, 0 );
+    this->AccumulatedResultsList->GetWidget()->SetColumnSortModeToAscii ( 1 );
     this->AccumulatedResultsList->GetWidget()->SetSelectionCommand ( this, "AccumulatedResultsSelectionCommandCallback");
 
     this->DeleteAccumulatedResultButton = vtkKWPushButton::New();
