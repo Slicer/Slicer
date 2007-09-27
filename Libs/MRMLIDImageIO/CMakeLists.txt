@@ -31,3 +31,16 @@ CONFIGURE_FILE(
   ${MRMLIDImageIO_SOURCE_DIR}/itkMRMLIDImageIOConfigure.h.in 
   ${MRMLIDImageIO_BINARY_DIR}/itkMRMLIDImageIOConfigure.h
 )
+
+# make a copy named '.so' for compatibility with the expectations
+# of the ITK Factory mechanism on macs
+IF (APPLE)
+  ADD_CUSTOM_COMMAND(
+    TARGET MRMLIDIOPlugin
+    DEPENDS ${Slicer3_BINARY_DIR}/bin/libMRMLIDIOPlugin.dylib
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${Slicer3_BINARY_DIR}/bin/libMRMLIDIOPlugin.dylib
+      ${Slicer3_BINARY_DIR}/bin/libMRMLIDIOPlugin.so
+  )
+ENDIF (APPLE)

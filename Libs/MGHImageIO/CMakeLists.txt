@@ -26,6 +26,19 @@ TARGET_LINK_LIBRARIES(MGHIO ITKIO MRML)
 ADD_LIBRARY(MGHIOPlugin SHARED itkMGHIOPlugin.cxx)
 TARGET_LINK_LIBRARIES(MGHIOPlugin MGHIO)
 
+# make a copy named '.so' for compatibility with the expectations
+# of the ITK Factory mechanism on macs
+IF (APPLE)
+  ADD_CUSTOM_COMMAND(
+    TARGET MGHIOPlugin
+    DEPENDS ${Slicer3_BINARY_DIR}/bin/libMGHIOPlugin.dylib
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${Slicer3_BINARY_DIR}/bin/libMGHIOPlugin.dylib
+      ${Slicer3_BINARY_DIR}/bin/libMGHIOPlugin.so
+  )
+ENDIF (APPLE)
+
 IF(BUILD_SHARED_LIBS)
   INSTALL_TARGETS(${SLICER3_LIB_INSTALL_DIR} MGHIO MGHIOPlugin)
 ELSE(BUILD_SHARED_LIBS)
@@ -36,3 +49,4 @@ CONFIGURE_FILE(
   ${MGHImageIO_SOURCE_DIR}/itkMGHImageIOConfigure.h.in 
   ${MGHImageIO_BINARY_DIR}/itkMGHImageIOConfigure.h
 )
+
