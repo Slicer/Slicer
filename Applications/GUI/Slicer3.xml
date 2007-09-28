@@ -167,15 +167,6 @@
       </string>
 
       <boolean>
-      <name>AllInfo</name>
-      <longflag>--all_info</longflag>
-      <flag>-a</flag>
-      <description>Print out all of the version info and continue</description>
-      <label>Print all info</label>
-      <default>false</default>
-      </boolean>
-
-      <boolean>
       <name>Stereo</name>
       <longflag>--stereo</longflag>
       <flag>-3</flag>
