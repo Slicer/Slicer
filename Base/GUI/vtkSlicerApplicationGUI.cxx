@@ -1281,8 +1281,17 @@ void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( )
     {
       vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
       
+      this->MainSlicerWindow->Display ( );
+      int w = this->MainSlicerWindow->GetWidth ( );
+      int h = this->MainSlicerWindow->GetHeight ( );
+      int vh = app->GetMainLayout()->GetDefault3DViewerHeight();
+      int sh = app->GetMainLayout()->GetDefaultSliceGUIFrameHeight();
+      int sfh = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1Size();
+      int sf2h = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame2Size();
+      
       // pop up a warning dialog here if the computer's
       // display resolution in x is less than 1000 pixels.
+      /*
       const char *wstr = app->Script ("winfo screenwidth .");
       const char *hstr = app->Script ("winfo screenheight .");
       int screenwidth = atoi (wstr);
@@ -1298,15 +1307,7 @@ void vtkSlicerApplicationGUI::DisplayMainSlicerWindow ( )
         message->Invoke();
         message->Delete();
         }
-      
-      this->MainSlicerWindow->Display ( );
-
-      int w = this->MainSlicerWindow->GetWidth ( );
-      int h = this->MainSlicerWindow->GetHeight ( );
-      int vh = app->GetMainLayout()->GetDefault3DViewerHeight();
-      int sh = app->GetMainLayout()->GetDefaultSliceGUIFrameHeight();
-      int sfh = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame1Size();
-      int sf2h = this->MainSlicerWindow->GetSecondarySplitFrame()->GetFrame2Size();
+      */
     }
 }
 
