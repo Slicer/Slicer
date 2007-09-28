@@ -2011,6 +2011,15 @@ proc vtkFreeSurferReadersPlotApply { mid } {
         if {[file extension $datafilename] == ".mgz" ||
             [file extension $datafilename] == ".mgh"} {
             catch "reader Delete"
+            # make sure it's readable
+            if {[file exists $datafilename] == 0} {
+                # try concatenating the path from the GDF file and the data file name 
+                set datafilename "[file dirname $vtkFreeSurferReaders(PlotFileName)]/[file tail $datafilename]"
+                if {[file exists $datafilename] == 0} {
+                    puts "Cannot find data file, even tried $datafilename"
+                    return -1
+                }
+            }
             vtkITKArchetypeImageSeriesVectorReaderFile reader
             reader SetArchetype $datafilename
             reader SetOutputScalarTypeToNative
