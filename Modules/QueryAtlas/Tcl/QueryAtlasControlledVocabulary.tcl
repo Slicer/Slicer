@@ -81,7 +81,6 @@ proc QueryAtlasMappedToBIRNLexParentCheck {  } {
 # Descrciption:
 # Parses the NeuroNames Synonyms for a structure
 # into global array ::QA(Synonyms) for later indexing.
-# Uses tcl's csv package.
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasParseNeuroNamesSynonyms { } {
     #--- start fresh
@@ -89,11 +88,6 @@ proc QueryAtlasParseNeuroNamesSynonyms { } {
         unset -nocomplain ::QA(Synonyms)
     }
     set ::QA(Synonyms) ""
-
-    if { [catch "package require csv"] } {
-        puts "Can't parse controlled vocabulary without package csv"
-        return 
-    }
 
     #--- The controlled vocabulary must be a CSV file
     set synonyms "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Resources/NN2002-2-synonyms.csv"
@@ -124,7 +118,7 @@ proc QueryAtlasParseNeuroNamesSynonyms { } {
 #----------------------------------------------------------------------------------------------------
 # Descrciption:
 # Parses BrainInfo's NeuroNames URIs into a global array
-# called ::QA(BrainInfoURIs) for later lookup. Uses tcl's csv package
+# called ::QA(BrainInfoURIs) for later lookup. 
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasParseBrainInfoURIs { } {
     #--- start fresh
@@ -132,11 +126,6 @@ proc QueryAtlasParseBrainInfoURIs { } {
         unset -nocomplain ::QA(BrainInfoURIs)
     }
     set ::QA(BrainInfoURIs) ""
-
-    if { [catch "package require csv"] } {
-        puts "Can't parse controlled vocabulary without package csv"
-        return 
-    }
 
     #--- The controlled vocabulary must be a CSV file
     set uris "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Resources/NN2002-3-BrainInfoURI.csv"
@@ -166,7 +155,7 @@ proc QueryAtlasParseBrainInfoURIs { } {
 #----------------------------------------------------------------------------------------------------
 # Descrciption:
 # Parses the controlled vocabular into a global list of lists
-# called ::QA(CV) for later indexing. Uses tcl's csv package.
+# called ::QA(CV) for later indexing. 
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasParseControlledVocabulary { } {
 
@@ -176,11 +165,6 @@ proc QueryAtlasParseControlledVocabulary { } {
         unset -nocomplain ::QA(CV)
     }
     set ::QA(CV) ""
-
-    if { [catch "package require csv"] } {
-        puts "Can't parse controlled vocabulary without package csv"
-        return 
-    }
 
     #--- The controlled vocabulary must be a CSV file
     set controlledVocabulary "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Resources/controlledVocabulary.csv"

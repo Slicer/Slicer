@@ -97,9 +97,30 @@ proc QueryAtlasOpenLinkFromList { lw } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasOpenLink { url } {
 
-    puts "opening: $url"
+  puts "opening: $url"
+
+  if { $::tcl_platform(os) == "Darwin" } {
+    exec open $url
+  } else {
     set browser [ $::slicer3::Application GetWebBrowser ]
-    exec $browser -new-tab $url &
+
+    if { ![file executable $browser] } {
+      set dialog [vtkKWMessageDialog New]
+      $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+      $dialog SetStyleToMessage
+      $dialog SetText "Please use the following dialog to set the path to the Firefox Browser and then re-run your query."
+      $dialog Create
+      $dialog Invoke
+      $dialog Delete
+
+      set window [$::slicer3::ApplicationGUI GetMainSlicerWindow] 
+      set interface [$window GetApplicationSettingsInterface] 
+      $interface Show
+      set manager [$interface GetUserInterfaceManager]
+      $manager RaiseSection 0 "Slicer Settings"
+      return
+    }
+  }
 }
 
 
