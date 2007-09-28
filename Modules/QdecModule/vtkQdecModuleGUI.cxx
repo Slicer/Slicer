@@ -1171,14 +1171,23 @@ void vtkQdecModuleGUI::SetInteractorStyle( vtkSlicerViewerInteractorStyle *inter
 int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
 {
   const char *tempDir = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetTemporaryDirectory();
-  vtkDebugMacro("Trying to load file " << fileName << ", using temp dir " << tempDir);
-  if (this->GetLogic()->LoadProjectFile(fileName, tempDir) == -1)
+  // make the paths work for windows
+#ifdef _WIN32
+  std::string newTempDir = itksys::SystemTools::ConvertToOutputPath(tempDir);
+  std::string newFileName = itksys::SystemTools::ConvertToOutputPath(fileName);
+#else
+  std::string newTempDir = std::string(tempDir);
+  std::string newFileName = std::string(fileName);
+#endif
+
+  vtkDebugMacro("Trying to load file " << newFileName.c_str() << ", using temp dir " << newTempDir.c_str());
+  if (this->GetLogic()->LoadProjectFile(newFileName.c_str(), newTempDir.c_str()) == -1)
     {
     // failure
-    vtkErrorMacro("Error loading project data file " << fileName);
+    vtkErrorMacro("Error loading project data file " << newFileName.c_str());
     return 0;      
     }
-  vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: was able to load file " << fileName);
+  vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: was able to load file " << newFileName.c_str());
   
   // load the results
   vtkWarningMacro("Reading QDEC results that were in the file " << fileName);
