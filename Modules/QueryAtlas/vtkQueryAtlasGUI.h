@@ -288,6 +288,12 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Displays a selected scalar overlay on a loaded Qdec scene.
     void DisplayScalarOverlay();
     
+    // Description:
+    // Apply some conditioning to a volume that
+    // appears to be a statistics volume (has 'stat' in
+    // its name) upon load.
+    virtual void AutoWinLevThreshStatisticsVolume ( vtkMRMLScalarVolumeNode *vnode );
+    
  protected:
     vtkQueryAtlasGUI ( );
     virtual ~vtkQueryAtlasGUI ( );

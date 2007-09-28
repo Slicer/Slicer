@@ -44,6 +44,8 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLColorNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 
 // for path manipulation
 #include "itksys/SystemTools.hxx"
@@ -1035,7 +1037,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkSlicerNodeSelectorWidget *sel = vtkSlicerNodeSelectorWidget::SafeDownCast ( caller );
   vtkQueryAtlasSearchTermWidget *stw = vtkQueryAtlasSearchTermWidget::SafeDownCast (caller );
 
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkMRMLNode *node;
   
   if ( (stw = this->SavedTerms) && (event == vtkQueryAtlasSearchTermWidget::ReservedTermsEvent ))
@@ -1175,7 +1177,10 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       if ( (b == this->QdecGoButton->GetWidget()) && (event == vtkKWPushButton::InvokedEvent ) )
         {
-        this->Script ( "QueryAtlasQdecSetUp");
+        vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
+        std::string avgDir = qLogic->GetAverageSubject ( );
+        std::string labelDir = avgDir + "/label/";
+        this->Script ( "QueryAtlasQdecSetUp \"%s\"", labelDir.c_str() );
         }
       }
     if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -1535,8 +1540,6 @@ void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
         {
         //--- scene loaded; set flag and process any statistics
         this->SceneLoaded = 1;
-        this->Script ("QueryAtlasSetAutoWinLevThreshComplete 0" );
-        this->Script ("QueryAtlasAutoWinLevThreshAllStats" );
         this->Script ( "QueryAtlasSetSceneType FIPSFreeSurfer" );
         }
       }
@@ -1556,6 +1559,47 @@ void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
 
 }
 
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::AutoWinLevThreshStatisticsVolume ( vtkMRMLScalarVolumeNode *vnode )
+{
+  unsigned int i;
+  double win, level, upT, lowT;
+  
+  //--- look at the nnode's name; if it contains the substring "stat"
+  //--- then assume this is a statistics file and auto win/lev/thresh it.
+  if ( vnode != NULL )
+    {
+    std::string nname ( vnode->GetName() );
+    if ( nname != "" )
+      {
+      i=nname.find ( "stat", 0 );
+      if ( i != string::npos )
+        {
+        vtkMRMLScalarVolumeDisplayNode *dnode = vnode->GetScalarVolumeDisplayNode();
+        dnode->SetAutoThreshold (0);
+        dnode->SetAutoWindowLevel (0);
+        win = dnode->GetWindow();
+        level = dnode->GetLevel();
+        upT = dnode->GetUpperThreshold();
+        lowT = dnode->GetLowerThreshold();
+
+        //--- set window... a guess
+        dnode->SetWindow ( win/2.6 );
+        win = dnode->GetWindow();
+        dnode->SetLevel ( upT - (win/2.0) );
+        
+        //--- set lower threshold
+        dnode->SetLowerThreshold ( upT - ( (upT-lowT)/2.5));
+        dnode->SetUpperThreshold ( upT );
+
+        //-- apply the settings
+        dnode->SetApplyThreshold(1);
+        dnode->SetAutoThreshold( 0 );
+        }
+      }
+    }
+}
 
 
 //---------------------------------------------------------------------------
@@ -1582,10 +1626,10 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
       //--- TODO: build a direct way of getting logics, w/o requiring gui-route.
       vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
       vtkSlicerModelsLogic *mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
-      std::string tmpdir = app->GetTemporaryDirectory();
-      if ( tmpdir == "" )
+      const char *tmpdir = app->GetTemporaryDirectory();
+      if ( (strcmp(tmpdir,"")))
         {
-        retval = qLogic->LoadProjectFile ( filen, tmpdir.c_str() );
+        retval = qLogic->LoadProjectFile ( filen, tmpdir );
         }
       else
         {
@@ -1830,8 +1874,15 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   //--- has a node been added?
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
-       && (event == vtkMRMLScene::NodeAddedEvent ) )
+       && (event == vtkMRMLScene::NodeAddedEvent ) &&
+       (vtkMRMLScalarVolumeNode::SafeDownCast((vtkObjectBase *)callData) != NULL) )
     {
+    //--- apply ballpark threshold if the node appears to be a statistics volume.
+    vtkMRMLScalarVolumeNode *node = vtkMRMLScalarVolumeNode::SafeDownCast ( (vtkObjectBase *)callData );
+    if ( node != NULL )
+      {
+      AutoWinLevThreshStatisticsVolume ( node );
+      }
     this->Script ( "QueryAtlasNodeAddedUpdate" );
     }
 
