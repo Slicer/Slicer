@@ -451,7 +451,6 @@ proc launch_RunProgram {} {
     if {$::env(BUILD) == $::WINDOWS} {
         set fp [open "| \"$::LAUNCH(launchCommand)\" $::argv" r]
     } else {
-        #set fp [open "| csh -f -c \"$::LAUNCH(launchCommand) $::argv \" |& cat" r]
         set fp [open "| sh -c \"$::LAUNCH(launchCommand) $::argv \" 2>&1 | cat" r]
     }
 
