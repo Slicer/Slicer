@@ -42,8 +42,7 @@ vtkMRMLVolumeRenderingNode::vtkMRMLVolumeRenderingNode(void)
     //this->VolumeProperty->SetColor(vtkColorTransferFunction::New());
 
     //Standard is 3D-Volume Texture Mapper
-    this->Mapper=vtkVolumeTextureMapper3D::New();
-
+    this->mapper=0;
 }
 
 vtkMRMLVolumeRenderingNode::~vtkMRMLVolumeRenderingNode(void)
@@ -146,6 +145,7 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
             this->VolumeProperty->SetSpecularPower(specularPower);
         }//else if
 
+        //TODO save Mapper
   }//while
     vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
 }
@@ -179,14 +179,18 @@ void vtkMRMLVolumeRenderingNode::Copy(vtkMRMLNode *anode)
         //TODO problem no set ColorChannels Method
         //this->VolumeProperty->SetCGetColorChannels(
         //mapping functions
-        vtkColorTransferFunction *rgbTransfer=node->GetVolumeProperty()->GetRGBTransferFunction(i);
+        vtkColorTransferFunction *rgbTransfer=vtkColorTransferFunction::New();
+        rgbTransfer->DeepCopy(node->GetVolumeProperty()->GetRGBTransferFunction(i));
         this->VolumeProperty->SetColor(i,rgbTransfer);
 
-        vtkPiecewiseFunction *scalar=node->GetVolumeProperty()->GetScalarOpacity(i);
+        vtkPiecewiseFunction *scalar=vtkPiecewiseFunction::New();
+        scalar->DeepCopy(node->GetVolumeProperty()->GetScalarOpacity(i));
         this->VolumeProperty->SetScalarOpacity(i,scalar);
+
         this->VolumeProperty->SetScalarOpacityUnitDistance(i,this->VolumeProperty->GetScalarOpacityUnitDistance(i));
 
-        vtkPiecewiseFunction *gradient=node->GetVolumeProperty()->GetGradientOpacity(i);
+        vtkPiecewiseFunction *gradient=vtkPiecewiseFunction::New();
+        gradient->DeepCopy(node->GetVolumeProperty()->GetGradientOpacity(i));
         this->VolumeProperty->SetGradientOpacity(i,gradient);
 
         //TODO Copy default gradient?
@@ -197,9 +201,7 @@ void vtkMRMLVolumeRenderingNode::Copy(vtkMRMLNode *anode)
         this->VolumeProperty->SetSpecular(node->VolumeProperty->GetSpecular(i));
         this->VolumeProperty->SetSpecularPower(node->VolumeProperty->GetSpecularPower(i));
     }
-    //TODO Mapper
-    this->Mapper=vtkVolumeTextureMapper3D::New();
-
+    this->SetMapper(node->mapper);
 }
 
 //----------------------------------------------------------------------------
@@ -210,7 +212,14 @@ void vtkMRMLVolumeRenderingNode::PrintSelf(ostream& os, vtkIndent indent)
     os<<indent<<"VolumeProperty: ";
     this->VolumeProperty->PrintSelf(os,indent.GetNextIndent());
     os<<indent<<"Mapper: ";
-    this->Mapper->PrintSelf(os,indent.GetNextIndent());
+    if(this->mapper==Texture)
+    {
+        os<<"vtkVolumeTextureMapper3D";
+    }
+    else
+    {
+       os<<"FixedRayCastMapping";
+    }
 }
 
 //-----------------------------------------------------------

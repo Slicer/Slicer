@@ -23,6 +23,7 @@
 #include "vtkSlicerVolumePropertyWidget.h"
 #include "vtkKWLabel.h"
 #include "vtkKWHistogram.h"
+#include "vtkKWEntryWithLabel.h"
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI
 {
@@ -108,6 +109,10 @@ vtkSetMacro(VolumeSelected,int);
     vtkSetMacro(VolumeRenderingNodeSelected,int);
     vtkGetMacro(VolumeRenderingNodeSelected,int);
     vtkBooleanMacro(VolumeRenderingNodeSelected,int);
+
+
+   
+
   
 protected:
   vtkVolumeRenderingModuleGUI();
@@ -144,6 +149,8 @@ protected:
   void InitializePipeline();
   void InitializePipelineFromMRMLScene();
   void InitializePipelineFromSlicer();
+  void Rendering(void);
+  void  CheckAbort(void);
 
   //OWN GUI Elements
 
@@ -156,6 +163,7 @@ protected:
   vtkSlicerNodeSelectorWidget *NS_ImageData;
   vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataSlicer;
   vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataScene;
+  vtkKWEntryWithLabel *EWL_NameSaveCurrentAsNew;
   vtkKWLabel *L_Status;
 
   //Frame Details
@@ -166,7 +174,13 @@ protected:
 
   //Other members
   vtkMRMLVolumeRenderingNode  *currentNode;
-  
+
+  vtkMRMLScalarVolumeNode *selected;
+
+  //Rendering pipeline
+  vtkVolume *volume;
+  vtkAbstractVolumeMapper *mapper;
+  vtkMatrix4x4 *matrix;
 };
 
 #endif

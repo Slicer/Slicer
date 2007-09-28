@@ -11,6 +11,8 @@
 #include "vtkKWPiecewiseFunctionEditor.h"
 #include "vtkKWColorTransferFunctionEditor.h"
 #include "vtkImageGradientMagnitude.h"
+#include "vtkKWEntry.h"
+#include "vtkVolume.h"
 
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
@@ -102,6 +104,15 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->PB_LoadVolumeRenderingDataScene->SetText("Load VolumeRenderingNode");
     app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->PB_LoadVolumeRenderingDataScene->GetWidgetName());
     
+    //Save current as new
+    //Entry With Label
+    this->EWL_NameSaveCurrentAsNew=vtkKWEntryWithLabel::New();
+    this->EWL_NameSaveCurrentAsNew->SetParent(loadSaveDataFrame->GetFrame());
+    this->EWL_NameSaveCurrentAsNew->Create();
+    this->EWL_NameSaveCurrentAsNew->SetLabelText("Name for new Volume Rendering Node");
+    app->Script("pack %s -side top -anchor e -padx 2 -pady 2", this->EWL_NameSaveCurrentAsNew->GetWidgetName());
+    
+
     this->PB_SaveCurrentAsNew=vtkKWPushButton::New();
     this->PB_SaveCurrentAsNew->SetParent(loadSaveDataFrame->GetFrame());
     this->PB_SaveCurrentAsNew->Create();
@@ -188,61 +199,49 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
      //Testing Button ?
      if(callerObject==this->PB_Testing&&event==vtkKWPushButton::InvokedEvent)
      {
-         this->InitializePipeline();
-         this->currentNode->HideFromEditorsOff();
-         this->GetLogic()->GetMRMLScene()->AddNode(this->currentNode);
-         return;
-         //vtkMRMLVolumeRenderingNode::
+         int index=0;
+         int count=this->GetLogic()->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
+         for(int i=0;i<count;i++)
+         {
+             (vtkMRMLModelNode::SafeDownCast(this->GetLogic()->GetMRMLScene()->GetNthNodeByClass(i,"vtkMRMLModelNode")))->GetModelDisplayNode()->VisibilityOff();
+         }
+       this->Rendering();
      }
+     //Load Volume
      else if(callerObject==this->PB_LoadImageData&&event==vtkKWPushButton::InvokedEvent)
      {
          this->InitializePipeline();
+         this->VolumeSelectedOn();
          //this->currentNode->InitializePipeline(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetDisplayNode());
 
      }
+     //save current settings as a new MRML volume rendering node
      else if (callerObject==this->PB_SaveCurrentAsNew&&event==vtkKWPushButton::InvokedEvent)
      {
          this->currentNode->HideFromEditorsOff();
+         const char *name=this->EWL_NameSaveCurrentAsNew->GetWidget()->GetValue();
+         if(!name)
+         {
+             vtkErrorMacro("No Text for VolumeRenderingNode");
+         }
+         else 
+         {
+             this->currentNode->SetName(name);
+         }
          this->GetLogic()->GetMRMLScene()->AddNode(this->currentNode);
-
+         this->NS_VolumeRenderingDataScene->SetSelected(this->currentNode);
+         //Now a Node is Selected
+         this->VolumeRenderingNodeSelectedOn();
+         //Remove Text from Entry
+         this->EWL_NameSaveCurrentAsNew->GetWidget()->SetValue("");
+         //Load the Node (because of Copy)
+         this->InitializePipelineFromMRMLScene();
 
      }
      else if (callerObject==this->PB_LoadVolumeRenderingDataScene&&event==vtkKWPushButton::InvokedEvent)
      {
-         //No Node selected
-         if(this->PipelineInitialized==0)
-         {
-             vtkDebugMacro("VolumeRenderingNode selected before Input selected");
-            return;
-         }
-         //Change everthing for new Pointer
-         //Delete ol one
-         this->currentNode->Delete();
-        this->currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataScene->GetSelected());
-        this->SVP_VolumeProperty->SetVolumeProperty(currentNode->GetVolumeProperty());
-         vtkImageData* imageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData();
-        //Update Input of Mapper
-        this->currentNode->GetMapper()->SetInput(imageData);
+         this->InitializePipelineFromMRMLScene();
 
-    //Take care about histogram and automatic mapping
-    //Add Histogram to GUI
-    this->HIST_Opacity->BuildHistogram(imageData->GetPointData()->GetScalars(),0);
-    this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetHistogram(this->HIST_Opacity);
-    this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetHistogram(this->HIST_Opacity);
-
-
-    vtkImageGradientMagnitude *grad=vtkImageGradientMagnitude::New();
-    grad->SetDimensionality(3);
-    grad->SetInput(imageData);
-    grad->Update();
-    vtkImageData *test=grad->GetOutput();
-    this->HIST_Gradient->BuildHistogram(test->GetPointData()->GetScalars(),0);
-    this->SVP_VolumeProperty->GetGradientOpacityFunctionEditor()->SetHistogram(this->HIST_Gradient);
-    vtkPiecewiseFunction *gradFunction=this->currentNode->GetVolumeProperty()->GetGradientOpacity();
-    gradFunction->AdjustRange(test->GetPointData()->GetScalars()->GetRange());
-
-     this->SVP_VolumeProperty->SetVolumeProperty(this->currentNode->GetVolumeProperty());
-     this->SVP_VolumeProperty->Modified();
             
      }
     
@@ -295,27 +294,33 @@ void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
     std::stringstream label;
     label<<"Volume: ";
     if(this->VolumeSelected==1){
-        label<<this->NS_ImageData->GetSelected()->GetName();
+        label<<this->selected->GetName();
     }
     else 
     {
         label<<"NOT loaded";
     }
-    label<<"   Rendering";
+    label<<"          Rendering: ";
+
         if(this->VolumeRenderingNodeSelected==1)
     {
         label<<this->NS_VolumeRenderingDataScene->GetSelected()->GetName();
     }
     else
     {
-        label<<"NOT loaded";
+        //No VolumeRenderingNode=>automatic mode
+        if(this->VolumeSelected==1)
+        {
+            label<<"AUTOMATIC";
+        }
+        else
+        {
+            label<<"NOT loaded";
+        }
     }
     this->L_Status->SetText(label.str().c_str());
     this->L_Status->Modified();
     this->Modified();
-
-    //this->L_Status->UpdateText();
-
 }
 void vtkVolumeRenderingModuleGUI::SetViewerWidget(vtkSlicerViewerWidget *viewerWidget)
 {
@@ -327,9 +332,9 @@ void vtkVolumeRenderingModuleGUI::SetInteractorStyle(vtkSlicerViewerInteractorSt
 void vtkVolumeRenderingModuleGUI::InitializePipeline()
 {
      this->currentNode=vtkMRMLVolumeRenderingNode::New();
-     vtkImageData* imageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData();
+     this->selected=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
+     vtkImageData* imageData=this->selected->GetImageData();
     //Update Input of Mapper
-    this->currentNode->GetMapper()->SetInput(imageData);
 
     //Take care about histogram and automatic mapping
     //Add Histogram to GUI
@@ -337,7 +342,7 @@ void vtkVolumeRenderingModuleGUI::InitializePipeline()
     this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetHistogram(this->HIST_Opacity);
     this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetHistogram(this->HIST_Opacity);
     //automatic Mode
-    if(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetLabelMap()==1)
+    if(selected->GetLabelMap()==1)
     {
         vtkWarningMacro("Not yet implemented");
     }
@@ -399,7 +404,73 @@ void vtkVolumeRenderingModuleGUI::InitializePipeline()
 }//method
 void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
 {
+             //No Node selected
+         if(this->PipelineInitialized==0)
+         {
+             vtkDebugMacro("VolumeRenderingNode selected before Input selected");
+            return;
+         }
+         //Change everthing for new Pointer
+         //Delete ol one
+         this->currentNode=vtkMRMLVolumeRenderingNode::New();
+         this->currentNode->CopyWithScene(this->NS_VolumeRenderingDataScene->GetSelected());
+         //But we need a new ID
+         this->GetLogic()->GetMRMLScene()->RequestNodeID(this->currentNode,this->currentNode->GetID());
+         //The DisplayedNode is only a copy of the original one
+        this->SVP_VolumeProperty->SetVolumeProperty(currentNode->GetVolumeProperty());
+         vtkImageData* imageData=selected->GetImageData();
+        //Update Input of Mapper
+
+    //Take care about histogram and automatic mapping
+    //Add Histogram to GUI
+    this->HIST_Opacity->BuildHistogram(imageData->GetPointData()->GetScalars(),0);
+    this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetHistogram(this->HIST_Opacity);
+    this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetHistogram(this->HIST_Opacity);
+
+
+    vtkImageGradientMagnitude *grad=vtkImageGradientMagnitude::New();
+    grad->SetDimensionality(3);
+    grad->SetInput(imageData);
+    grad->Update();
+    vtkImageData *test=grad->GetOutput();
+    this->HIST_Gradient->BuildHistogram(test->GetPointData()->GetScalars(),0);
+    this->SVP_VolumeProperty->GetGradientOpacityFunctionEditor()->SetHistogram(this->HIST_Gradient);
+    vtkPiecewiseFunction *gradFunction=this->currentNode->GetVolumeProperty()->GetGradientOpacity();
+    gradFunction->AdjustRange(test->GetPointData()->GetScalars()->GetRange());
+
+     this->SVP_VolumeProperty->SetVolumeProperty(this->currentNode->GetVolumeProperty());
+     this->SVP_VolumeProperty->Modified();
+     this->VolumeRenderingNodeSelectedOn();
 }
 void vtkVolumeRenderingModuleGUI::InitializePipelineFromSlicer()
 {
+}
+
+void vtkVolumeRenderingModuleGUI::Rendering()
+{
+    this->volume=vtkVolume::New();
+    //TODO Dirty fix as Mapper
+    if(this->currentNode->GetMapper()==vtkMRMLVolumeRenderingNode::Texture)
+    {
+        this->mapper=vtkVolumeTextureMapper3D::New();
+        mapper->SetInput(selected->GetImageData());
+        volume->SetMapper(mapper);
+    }
+    volume->SetProperty(this->currentNode->GetVolumeProperty());
+    this->matrix=vtkMatrix4x4::New();
+    this->selected->GetIJKToRASMatrix(matrix);
+    volume->PokeMatrix(matrix);
+    vtkKWRenderWidget *renderWidget=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer();
+    renderWidget->AddViewProp(volume);
+    renderWidget->Create();
+}
+
+
+void vtkVolumeRenderingModuleGUI::CheckAbort ()
+{
+    int pending=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
+    if(pending!=0)
+    {
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+    }
 }

@@ -25,12 +25,22 @@ public:
     static vtkMRMLVolumeRenderingNode *New();
     vtkTypeMacro(vtkMRMLVolumeRenderingNode,vtkMRMLNode);
     void PrintSelf(ostream& os, vtkIndent indent);
-    
-
-    vtkGetObjectMacro(Mapper,vtkVolumeMapper);
-    void SetMapper(vtkVolumeMapper *ar)
+    //BTX
+    static const int Texture=0;
+    static const int RayCast=1;
+    //ETX
+    void SetMapper(int mapper)
     {
-        this->Mapper=ar;
+        if(mapper!=0||mapper!=0)
+        {
+            vtkErrorMacro("wrong type of mapping");
+            return;
+        }
+        this->mapper=mapper;
+    }
+    int GetMapper()
+    {
+        return this->mapper;
     }
 
     //vtkSetObjectMacro(Mapper,vtkVolumeMapper);
@@ -94,6 +104,7 @@ public:
     {
       TypeModifiedEvent = 20002,
     };
+
 //ETX
 
   // Description:
@@ -107,8 +118,8 @@ protected:
   vtkMRMLVolumeRenderingNode(const vtkMRMLVolumeRenderingNode&);
   void operator=(const vtkMRMLVolumeRenderingNode&);
   vtkVolumeProperty* VolumeProperty;
-  vtkVolumeMapper* Mapper;
-
+  int mapper;//0 means hardware accelerated 3D texture Mapper, 1 fixed raycastMapper
+   
 
 
 };
