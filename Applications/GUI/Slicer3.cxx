@@ -87,7 +87,7 @@ extern "C" {
 #define MRABLATION_DEBUG
 //#define NEURONAV_DEBUG
 //#define TRACTOGRAPHY_DEBUG
-#define QDEC_DEBUG
+//#define QDEC_DEBUG
 //#define COMMANDLINE_DEBUG
 //#define DEAMON_DEBUG
 
@@ -257,14 +257,14 @@ void printAllInfo(int argc, char **argv)
   // plus one for 3 char time zone
   char timeStr[27];
 
-  fprintf(stdout, "<processStep>\n");
-  fprintf(stdout, "<program version=\"$Revision$\">%s</programName>\n", argv[0]);
-  fprintf(stdout, "<programArguments>");
+  fprintf(stdout, "<ProcessStep>\n");
+  fprintf(stdout, "<ProgramName version=\"$Revision$\">%s</ProgramName>\n", argv[0]);
+  fprintf(stdout, "<ProgramArguments>");
   for (i = 1; i < argc; i++)
     {
     fprintf(stdout, " %s", argv[i]);
     }
-  fprintf(stdout, "</programArguments>\n");
+  fprintf(stdout, "</ProgramArguments>\n");
   fprintf(stdout, "<CVS>$Id$</CVS> <TimeStamp>");
   time ( &rawtime );
   timeInfo = localtime (&rawtime);
@@ -363,11 +363,11 @@ void printAllInfo(int argc, char **argv)
 #ifdef USE_PYTHON
   fprintf(stdout, "<library version=\"%s\">Python</library>\n", PY_VERSION);
 #endif
-  fprintf(stdout, "<repository>$HeadURL$</repository>\n");
-  fprintf(stdout, "<processStep>\n");
+  fprintf(stdout, "<Repository>$HeadURL$</Repository>\n");
+  fprintf(stdout, "<ProcessStep>\n");
   fprintf(stdout, "\n");
-  
-}
+  }
+
 
 
 static void WarningMessage(const char *msg)
@@ -744,14 +744,6 @@ int Slicer3_main(int argc, char *argv[])
       Slicer3_Tcl_Eval( interp, "update" );
       slicerApp->Delete();
       return ( returnCode );
-      }
-
-    //
-    // print out data provenance information if requested
-    //
-    if (AllInfo != 0)
-      {
-      printAllInfo(argc, argv);
       }
     
     //
