@@ -661,6 +661,9 @@ static void vtkImageEMLocalSegmenterExecute(vtkImageEMLocalSegmenter *self,float
 // the datas data types.
 void vtkImageEMLocalSegmenter::ExecuteData(vtkDataObject *)
 {
+  std::cerr << "###vtkImageEMLocalSegmenter::ExecuteData" << std::endl;
+  this->PrintSelf(vtkstd::cerr, 0);
+
   cout << "Local Version" << endl;
   void *outPtr;
   int idx1, i;
