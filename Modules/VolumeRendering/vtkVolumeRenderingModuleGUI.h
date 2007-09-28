@@ -174,7 +174,7 @@ protected:
 
   //Other members
   vtkMRMLVolumeRenderingNode  *currentNode;
-
+  vtkMRMLScene *presets;
   vtkMRMLScalarVolumeNode *selected;
 
   //Rendering pipeline

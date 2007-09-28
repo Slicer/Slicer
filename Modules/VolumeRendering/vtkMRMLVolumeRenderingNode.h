@@ -36,11 +36,11 @@ public:
             vtkErrorMacro("wrong type of mapping");
             return;
         }
-        this->mapper=mapper;
+        this->Mapper=mapper;
     }
     int GetMapper()
     {
-        return this->mapper;
+        return this->Mapper;
     }
 
     //vtkSetObjectMacro(Mapper,vtkVolumeMapper);
@@ -50,6 +50,20 @@ public:
     {
         this->VolumeProperty=ar;
     }
+
+    void SetOpacityOfLabel(int index, double opacity);
+    double GetOpacityOfLabel(int index);
+
+    void AddReference(const char *id);
+    bool HasReference(const char *id);
+    void RemoveReference(const char *id);
+
+
+
+    vtkSetMacro(IsLabelMap,int);
+    vtkGetMacro(IsLabelMap,int);
+    vtkBooleanMacro(IsLabelMap,int);
+
     //vtkSetObjectMacro(VolumeProperty,vtkVolumeProperty);
 
    
@@ -118,9 +132,14 @@ protected:
   vtkMRMLVolumeRenderingNode(const vtkMRMLVolumeRenderingNode&);
   void operator=(const vtkMRMLVolumeRenderingNode&);
   vtkVolumeProperty* VolumeProperty;
-  int mapper;//0 means hardware accelerated 3D texture Mapper, 1 fixed raycastMapper
-   
+  int Mapper;//0 means hardware accelerated 3D texture Mapper, 1 fixed raycastMapper
+  int IsLabelMap;//1 Yes it is a LabelMap,0 no it is not a Label Map
+  //BTX
+  vtksys_stl::vector<const char*> *References;
 
+  //if LabelMap Save the opacities of the labels of the colors
+  vtksys_stl::vector<double> *Opacities;
+  //ETX
 
 };
 

@@ -42,7 +42,7 @@ vtkMRMLVolumeRenderingNode::vtkMRMLVolumeRenderingNode(void)
     //this->VolumeProperty->SetColor(vtkColorTransferFunction::New());
 
     //Standard is 3D-Volume Texture Mapper
-    this->mapper=0;
+    this->Mapper=0;
 }
 
 vtkMRMLVolumeRenderingNode::~vtkMRMLVolumeRenderingNode(void)
@@ -201,7 +201,7 @@ void vtkMRMLVolumeRenderingNode::Copy(vtkMRMLNode *anode)
         this->VolumeProperty->SetSpecular(node->VolumeProperty->GetSpecular(i));
         this->VolumeProperty->SetSpecularPower(node->VolumeProperty->GetSpecularPower(i));
     }
-    this->SetMapper(node->mapper);
+    this->SetMapper(node->Mapper);
 }
 
 //----------------------------------------------------------------------------
@@ -212,7 +212,7 @@ void vtkMRMLVolumeRenderingNode::PrintSelf(ostream& os, vtkIndent indent)
     os<<indent<<"VolumeProperty: ";
     this->VolumeProperty->PrintSelf(os,indent.GetNextIndent());
     os<<indent<<"Mapper: ";
-    if(this->mapper==Texture)
+    if(this->Mapper==Texture)
     {
         os<<"vtkVolumeTextureMapper3D";
     }
@@ -406,6 +406,25 @@ void vtkMRMLVolumeRenderingNode::GetColorTransferFunction(const char* string, vt
       resultChar = strtok (NULL, "#");
   }
     result->FillFromDataPointer(size/4,&dataVector[0]);
+}
+
+void vtkMRMLVolumeRenderingNode::SetOpacityOfLabel(int index, double opacity)
+{
+}
+double vtkMRMLVolumeRenderingNode::GetOpacityOfLabel(int index)
+{
+    return .0;
+}
+
+void vtkMRMLVolumeRenderingNode::AddReference(const char *id)
+{
+}
+bool vtkMRMLVolumeRenderingNode::HasReference(const char *id)
+{
+    return false;
+}
+void vtkMRMLVolumeRenderingNode::RemoveReference(const char *id)
+{
 }
 
 

@@ -105,4 +105,9 @@ CONFIGURE_FILE(
   ${VolumeRenderingModule_SOURCE_DIR}/vtkVolumeRenderingModuleConfigure.h.in 
   ${VolumeRenderingModule_BINARY_DIR}/vtkVolumeRenderingModuleConfigure.h
 )
+CONFIGURE_FILE(
+  ${VolumeRenderingModule_SOURCE_DIR}/presets.xml
+  ${VolumeRenderingModule_BINARY_DIR}/presets.xml
+  COPYONLY
+)
 ENDIF(VOLUMERENDERINGMODULE)

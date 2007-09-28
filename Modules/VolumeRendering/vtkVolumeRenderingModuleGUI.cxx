@@ -19,6 +19,7 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
 {
     //In Debug Mode
     this->DebugOff();
+    this->presets=NULL;
    
 }
 
@@ -87,9 +88,17 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->PB_LoadImageData->Create();
     this->PB_LoadImageData->SetText("Load Node");
     app->Script("pack %s -side top -anchor e -padx 2 -pady 2", this->PB_LoadImageData->GetWidgetName());
+    //NodeSelector for VolumeRenderingNode Preset
+    this->NS_VolumeRenderingDataSlicer=vtkSlicerNodeSelectorWidget::New();
+    this->NS_VolumeRenderingDataSlicer->SetParent(loadSaveDataFrame->GetFrame());
+    this->NS_VolumeRenderingDataSlicer->Create();
+    this->NS_VolumeRenderingDataSlicer->NoneEnabledOn();
+    this->NS_VolumeRenderingDataSlicer->SetLabelText("Presets");
+    app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->NS_VolumeRenderingDataSlicer->GetWidgetName());
 
 
-    //NodeSelector for VolumeRenderingNode
+
+    //NodeSelector for VolumeRenderingNode Scene
     this->NS_VolumeRenderingDataScene=vtkSlicerNodeSelectorWidget::New();
     this->NS_VolumeRenderingDataScene->SetParent(loadSaveDataFrame->GetFrame());
     this->NS_VolumeRenderingDataScene->Create();
@@ -175,6 +184,9 @@ void vtkVolumeRenderingModuleGUI::AddGUIObservers(void)
     this->PB_LoadImageData->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand);
     this->PB_SaveCurrentAsNew->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand*)this->GUICallbackCommand);
     this->PB_LoadVolumeRenderingDataScene->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand*)this->GUICallbackCommand);
+
+    //TODO is this the right place for this
+//this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->CheckAbort);
 }
 void vtkVolumeRenderingModuleGUI::RemoveGUIObservers(void)
 {
@@ -254,14 +266,56 @@ void vtkVolumeRenderingModuleGUI::ProcessMRMLEvents(vtkObject *caller, unsigned 
 
 void vtkVolumeRenderingModuleGUI::Enter(void)
 {
-     vtkDebugMacro("Enter Volume Rendering Module");
-  if ( this->Built == false )
+
+    vtkDebugMacro("Enter Volume Rendering Module");
+    vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
+
+    if(!this->presets)
     {
-    this->BuildGUI();
-    this->AddGUIObservers();
+        //Instance internal MRMLScene for Presets
+        this->presets=vtkMRMLScene::New();
+        //Register node class
+        this->presets->RegisterNodeClass(vrNode);
+        vrNode->Delete();
+
+
+        //GetPath
+        vtksys_stl::string slicerHome;
+        if (vtksys::SystemTools::GetEnv("SLICER_HOME") == NULL)
+        {
+            if (vtksys::SystemTools::GetEnv("PWD") != NULL)
+            {
+                slicerHome =  vtksys_stl::string(vtksys::SystemTools::GetEnv("PWD"));
+            }
+            else
+            {
+                slicerHome =  vtksys_stl::string("");
+            }
+        }
+        else
+        {
+            slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
+        }
+        // check to see if slicer home was set
+        vtksys_stl::vector<vtksys_stl::string> filesVector;
+        filesVector.push_back(""); // for relative path
+        filesVector.push_back(slicerHome);
+        filesVector.push_back(vtksys_stl::string("Modules/VolumeRendering/presets.xml"));
+        vtksys_stl::string presetFileName = vtksys::SystemTools::JoinPath(filesVector);
+        this->presets->SetURL(presetFileName.c_str());
+        this->presets->Connect();
+
+        this->NS_VolumeRenderingDataSlicer->SetMRMLScene(this->presets);
+        this->NS_VolumeRenderingDataSlicer->SetNodeClass("vtkMRMLVolumeRenderingNode","","","");
+        this->NS_VolumeRenderingDataSlicer->UpdateMenu();
     }
-  this->CreateModuleEventBindings();
-  this->UpdateGUI();
+    if ( this->Built == false )
+    {
+        this->BuildGUI();
+        this->AddGUIObservers();
+    }
+    this->CreateModuleEventBindings();
+    this->UpdateGUI();
 }
 
 void vtkVolumeRenderingModuleGUI::Exit(void)
@@ -272,6 +326,7 @@ void vtkVolumeRenderingModuleGUI::Exit(void)
 
 void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
 {
+   
     //First of all check if we have a MRML Scene
     if (!this->GetLogic()->GetMRMLScene())
     {
@@ -474,3 +529,5 @@ void vtkVolumeRenderingModuleGUI::CheckAbort ()
         this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
     }
 }
+
+
