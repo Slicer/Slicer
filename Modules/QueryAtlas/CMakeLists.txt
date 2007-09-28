@@ -20,7 +20,9 @@ SET(QueryAtlas_DIR ${Package_DIR}/QueryAtlas)
 FILE(MAKE_DIRECTORY ${QueryAtlas_DIR})
 SET(TCLFILES
   ./Tcl/pkgIndex.tcl
-  ./Tcl/Card.tcl ./Tcl/CardFan.tcl ./Tcl/QueryAtlas.tcl
+  ./Tcl/Card.tcl ./Tcl/CardFan.tcl
+  ./Tcl/QueryAtlas.tcl
+  ./Tcl/QueryAtlasCSV.tcl
   ./Tcl/QueryAtlasControlledVocabulary.tcl
   ./Tcl/QueryAtlasWeb.tcl
 )
@@ -86,6 +88,8 @@ SET(QueryAtlas_SRCS
 INCLUDE_DIRECTORIES(
   ${QueryAtlas_SOURCE_DIR}
   ${QueryAtlas_BINARY_DIR}
+  ${QdecModule_SOURCE_DIR}
+  ${QdecModule_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
   ${SlicerBase_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
@@ -98,6 +102,8 @@ INCLUDE_DIRECTORIES(
   ${VTK_INCLUDE_DIRS}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
+  ${Qdec_SOURCE_DIR}
+  ${Qdec_BINARY_DIR}
   )
 
 
@@ -112,6 +118,8 @@ VTK_WRAP_TCL3(QueryAtlas QueryAtlas_TCL_SRCS "${QueryAtlas_SRCS}" "")
 # --------------------------------------------------------------------------
 # Build the library
 
+LINK_DIRECTORIES(${Qdec_BINARY_DIR})
+
 ADD_LIBRARY(QueryAtlas
   ${QueryAtlas_SRCS}
   ${QueryAtlas_TCL_SRCS}
@@ -122,6 +130,7 @@ IF(BUILD_SHARED_LIBS)
 ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(QueryAtlas
+  QdecModule        
   SlicerBaseLogic 
   SlicerBaseGUI 
   MRML
@@ -139,7 +148,9 @@ TARGET_LINK_LIBRARIES(QueryAtlas
   ITKBasicFilters
   ITKIO
   ITKDICOMParser
-  ${KWWidgets_LIBRARIES} )
+  ${KWWidgets_LIBRARIES}
+  Qdec
+  )
 
 
 

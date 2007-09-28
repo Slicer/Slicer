@@ -23,6 +23,7 @@
 #include "vtkKWMessageDialog.h"
 
 #include "vtkSlicerModelsGUI.h"
+#include "vtkSlicerModelsLogic.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerVisibilityIcons.h"
@@ -36,6 +37,13 @@
 #include "vtkQueryAtlasSearchTermWidget.h"
 #include "vtkSlicerPopUpHelpWidget.h"
 #include "vtkSlicerWindow.h"
+
+#include "vtkQdecModuleGUI.h"
+#include "vtkQdecModuleLogic.h"
+
+#include "vtkMRMLModelNode.h"
+#include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLColorNode.h"
 
 // for path manipulation
 #include "itksys/SystemTools.hxx"
@@ -1437,7 +1445,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       if (( m == this->QdecScalarSelector->GetWidget()->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ))
         {
-        // what to do when an overlay  name is selected.. Get from nicole
+        this->DisplayScalarOverlay();
         }
       }
     }
@@ -1553,46 +1561,100 @@ void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
 {
+  
+  int retval;
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+  //--- check to see if the scene is loaded. If not,
+  //--- attempt to load a qdec scene. If already loaded,
+  //--- warn the user that the existing scene should be
+  //--- closed first, before a qdec scene is loaded.
   if ( this->SceneLoaded == 0 )
     {
     // get file from dialog
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-    const char *filen;
-
-    filen = this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
+    
+    const char *filen = this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
     if ( filen != NULL )
       {
       itksys::SystemTools::ConvertToUnixOutputPath( filen );
-      this->Script( "QueryAtlasLoadQdecResults \"%s\"", filen );
-      this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-      if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
+
+      //--- and load results thru qdecModule Logic, which we get thru the GUI.
+      //--- TODO: build a direct way of getting logics, w/o requiring gui-route.
+      vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
+      vtkSlicerModelsLogic *mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
+      std::string tmpdir = app->GetTemporaryDirectory();
+      if ( tmpdir == "" )
         {
-        if ( app->GetApplicationGUI() != NULL )
+        retval = qLogic->LoadProjectFile ( filen, tmpdir.c_str() );
+        }
+      else
+        {
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
+        dialog->SetStyleToMessage();
+        std::string msg = "Please set your temporary directory in the Application Settings first (View->Application Settings) and then try to load the Qdec archive again.";
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->Invoke();
+        dialog->Delete();
+        }
+      
+      //--- if results appear to have loaded...
+      //--- make sure scene agrees with that.
+      if ( retval >= 0 )
+        {
+        this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+        if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
           {
-          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-          dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
-          dialog->SetStyleToMessage();
-          std::string msg = this->GetMRMLScene()->GetErrorMessage();
-          dialog->SetText(msg.c_str());
-          dialog->Create ( );
-          dialog->Invoke();
-          dialog->Delete();
+          if ( app->GetApplicationGUI() != NULL )
+            {
+            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+            dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
+            dialog->SetStyleToMessage();
+            std::string msg = this->GetMRMLScene()->GetErrorMessage();
+            dialog->SetText(msg.c_str());
+            dialog->Create ( );
+            dialog->Invoke();
+            dialog->Delete();
+            }
           }
-        this->SceneLoaded = 0;
-        } else {
-        this->SceneLoaded = 1;
-        this->Script ( "QueryAtlasSetSceneType Qdec" );        
+        else
+          {
+          //--- get FSAverage directory from logic
+          //--- and load subject annotations
+          std::string subjDir = qLogic->GetSubjectsDirectory ( );
+          std::string avgDir = qLogic->GetAverageSubject ( );
+          std::string annotFile = "";
+          vtkMRMLModelNode *mnode = qLogic->GetModelNode();
+          //--- for now there's only one model node. later, there may
+          //--- be more.
+          if ( avgDir.c_str() != "" )
+            {
+            if ( ! (strcmp (mnode->GetName(), "lh.inflated" ) ) )
+              {
+              annotFile = avgDir + "/label/" + "lh.aparc.annot";
+              }
+            else if ( ! (strcmp (mnode->GetName(), "rh.inflated")))
+              {
+              annotFile = avgDir + "/label/" + "rh.aparc.annot";
+              }
+            }
+          if ( annotFile != "" )
+            {
+            //--- add scalars
+            mLogic->AddScalar ( annotFile.c_str(), mnode );
+            }
+          this->SceneLoaded = 1;
+          this->Script ( "QueryAtlasSetSceneType Qdec" );        
+          }
+        // update Scalar overlay menu
+        this->UpdateScalarOverlayMenu();
         }
       }
-
-    this->QdecGetResultsButton->GetLabel()->SetText ( "" );
-
-    // update Scalar overlay menu
-    this->UpdateScalarOverlayMenu();
     }
   else
     {
+    //--- if scene is not loaded.
     vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
     dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
     dialog->SetStyleToMessage();
@@ -1601,6 +1663,7 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
     dialog->Create ( );
     dialog->Invoke();
     dialog->Delete();
+    return;
     }
 
 }
@@ -1612,12 +1675,83 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::UpdateScalarOverlayMenu ( )
 {
-  this->QdecScalarSelector->GetWidget()->GetMenu()->DeleteAllItems();
+/*
+  vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
 
-  // get all scalars names and add radio button for each... Get from Nicole.
-  // this->QdecScalarSelector->GetWidget()->GetMenu()->AddRadioButton ("");
+  this->QdecScalarSelector->GetWidget()->GetMenu()->DeleteAllItems();
+  int numQuestions = qLogic->GetNumberOfQuestions();
+  for ( int i=0; i<numQuestions; i++ )
+    {
+    this->QdecScalarSelector->GetWidget()->GetMenu()->AddRadioButton(qLogic->GetQuestion(i).c_str());
+    }
+*/
 }
 
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::DisplayScalarOverlay ( )
+{
+/*
+  vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
+  vtkSlicerModelsLogic *mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
+  
+    if (strcmp(this->QdecScalarSelector->GetWidget()->GetMenu()->GetValue(), "None") != 0 && qLogic )
+      {
+      std::string scalarName = qLogic()->GetQuestionScalarName(this->QdecScalarSelector->GetWidget()->GetMenu()->GetValue());
+      vtkDebugMacro("Got question scalar name from logic: " << scalarName.c_str());
+      // trigger display change on the model
+      if (qLogic()->GetModelNode() != NULL)
+        {
+        vtkDebugMacro("Setting the active scalars on " << qLogic()->GetModelNode()->GetName() << " to " << scalarName.c_str());
+        qLogic()->GetModelNode()->SetActiveScalars(scalarName.c_str(), NULL);
+        qLogic()->GetModelNode()->GetModelDisplayNode()->SetActiveScalarName(scalarName.c_str());
+        // the color node has the same name as the scalar array name to facilitate
+        // this pairing, find the ID by querying the mrml scene
+        std::string colorID = "none";
+        if (this->GetApplication() && this->GetApplicationGUI()->GetMRMLScene())
+          {
+          vtkCollection *colorNodes =  this->GetApplicationGUI()->GetMRMLScene()->GetNodesByName(scalarName.c_str());
+          if (colorNodes)
+            {
+            int numberOfNodes = colorNodes->GetNumberOfItems();
+            if (numberOfNodes > 0)
+              {
+              // take the first one
+              colorID = vtkMRMLProceduralColorNode::SafeDownCast(colorNodes->GetItemAsObject(0))->GetID();
+              }
+            else
+              {
+              vtkErrorMacro("vtkQueryAtlasGUI Cannot find a color node with the name " << scalarName.c_str());
+              }
+            }
+          else
+            {
+            vtkErrorMacro("vtkQueryAtlasGUI cannot find procedural color nodes to check for the one associated with scalar " << scalarName.c_str());
+            }         
+          } else { vtkErrorMacro("No application or scene, can't find matching color node"); }
+        if (strcmp(colorID.c_str(), "none") != 0)
+          {
+          // use this node id
+          if (strcmp(qLogic()->GetModelNode()->GetModelDisplayNode()->GetColorNodeID(), colorID.c_str()) != 0)
+            {
+            vtkDebugMacro("Setting the model's display node color node id to " << colorID.c_str());
+            qLogic()->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(colorID.c_str());
+            }
+          else { vtkDebugMacro("Model's display node color node is already set to " << colorID.c_str()); }
+          }
+        else
+          {
+          vtkErrorMacro("Qdec Module gui unable to find matching color node for scalar array " << scalarName.c_str());
+          }
+        }
+      else
+        {
+        vtkErrorMacro("Qdec Module Logic has no record of a model node, can't switch scalars");
+        }
+      }
+*/  
+}
 
 
 
@@ -1785,7 +1919,7 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     // create a page
     this->UIPanel->AddPage ( "QueryAtlas", "QueryAtlas", NULL );
 
-    const char *help = "The (Generation 1) Query Atlas module allows interactive Google, Wikipedia, queries from within the 3D anatomical display.";
+    const char *help = "The (Generation 1) Query Atlas module allows interactive queries to a number of informational resources (Google, Wikipedia, BrainInfo, IBVD, Journal of Neuroscience, and Pubmed) from within the 3D anatomical display. These queries take advantage, where appropriate,  of the QueryAtlas's controlled vocabulary, which maps anatomical terms to different formal naming systems. More advanced query building and the ability to collect and preview web links to information, and save valuable ones to a bookmarks file is avilable in the GUI panel. This module requires the use of Mozilla Firefox as your web browser; you can point Slicer to this application through the Application Settings interface (View->Application Settings) and its location will be saved in Slicer's Application Registry for future reference.";
     const char *about = "This research was supported by Grant 5 MOI RR 000827 to the FIRST BIRN and Grant 1 U24 RR021992 to the FBIRN Biomedical Informatics Research Network (BIRN, http://www.nbirn.net), that is funded by the National Center for Research Resources (NCRR) at the National Institutes of Health (NIH). This work was also supported by NA-MIC, NAC, NCIGT. NeuroNames ontology and URI resources are provided courtesy of BrainInfo, Neuroscience Division, National Primate Research Center, University of Washington (http://www.braininfo.org).                                                                                                                                                                                      ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
     this->QueryAtlasIcons = vtkQueryAtlasIcons::New();
@@ -2003,11 +2137,11 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Load Qdec results");
     this->QdecGetResultsButton->GetLabel()->SetText( "Load Qdec results: ");
     this->QdecGetResultsButton->GetLabel()->SetWidth ( 18 );
-    this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
+    this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOff();
     this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOff();
     this->QdecGetResultsButton->GetWidget()->SetCommand ( this, "LoadQdecResultsCallback" );
     //this->QdecGetResultsButton->GetLoadSaveDialog()->SetFileTypes ( "");
-    this->QdecGetResultsButton->SetBalloonHelpString("Load all results from previous Qdec analysis if not already present in the scene.");
+    this->QdecGetResultsButton->SetBalloonHelpString("Load all results from previous Qdec analysis (select a qdec directory).");
     this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 4",
                   this->QdecGetResultsButton->GetWidgetName());
 
@@ -2163,7 +2297,7 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     app->Script ( "grid %s -row 4 -column 1   -sticky wns -padx 2 -pady 2",
                   this->ModelVisibilityButton->GetWidgetName() );
 */
-    app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 4 -pady 2 -in %s",
+    app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 2 -pady 2 -in %s",
                   annotationFrame->GetWidgetName(), 
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
 

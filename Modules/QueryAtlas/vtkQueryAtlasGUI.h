@@ -283,6 +283,10 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Description:
     // populates the menu with loaded qdec scalar overlays
     void UpdateScalarOverlayMenu ( );
+
+    // Description:
+    // Displays a selected scalar overlay on a loaded Qdec scene.
+    void DisplayScalarOverlay();
     
  protected:
     vtkQueryAtlasGUI ( );

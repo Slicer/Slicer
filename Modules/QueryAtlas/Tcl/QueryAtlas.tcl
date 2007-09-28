@@ -174,7 +174,7 @@ proc QueryAtlasGetSceneLoaded { } {
 proc QueryAtlasInitializeGlobals { } {
 
     if { ![info exists ::QA(globalsInitialized) ] } {
-        puts "Initializing globals"
+
         #--- initialize globals
         set ::QA(linkBundleCount) 0
 
@@ -666,9 +666,45 @@ proc QueryAtlasAddBIRNLogo {} {
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasLoadQdecResults { fsgdFile } {
+proc QueryAtlasLoadQdecResults { qdecDir } {
 
+    #--- check to see if the directory selected ends in qdec
+    puts "got $qdecDir"
+    #--- trim the trailing /
+    set qdecDir [ string trimright $qdecDir "/" ]
+
+    #--- test directory name: should be 'qdec'
+    #--- get just the last directory name (sans path)
+    set i [ string last "/" $qdecDir ]
+    if { $i >= 0 } {
+        set tststr [ string range $qdecDir [expr $i+1] end ]
+        puts "is $tststr = qdec?"
+        if { $tststr != "qdec" } {
+            QueryAtlasDialog "QueryAtlasLoadQdecResults: please select a directory called 'qdec'. No results loaded."
+        }
+        return  0
+    }
+
+    #--- derive FreeSurfer subjects dir from qdecDir
+    #--- and set it in the Qdec module logic.
+    set FSdir "$qdecDir/../"
+    puts "subejcts directory = $FSdir"
+
+    set qlogic $::slicer3::QdecModuleLogic
+    set mlogic $::slicer3::ModelsLogic
+    set app $::slicer3::GetApplication
+    
+    $qlogic SetSubjectsDirectory $FSdir 
+    set retval [ $qlogic LoadResults $mlogic $app ]
+
+    if { $retval < 0 } {
+        QueryAtlasDialog "QueryAtlasLoadQdecResults failed. No results loaded."
+        return 0
+    }
+    return 1
 }
+
+
 
 
 #----------------------------------------------------------------------------------------------------

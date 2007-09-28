@@ -1,4 +1,3 @@
-package require csv
 
 #----------------------------------------------------------------------------------------------------
 # Descrciption:
@@ -102,7 +101,7 @@ proc QueryAtlasParseNeuroNamesSynonyms { } {
     #--- get number of columns each entry should have
     set fp [ open $synonyms r ]
     gets $fp line
-    set sline [ ::csv::split $line ]
+    set sline [ ::QueryAtlasCSV::split $line ]
     set numCols [ llength $sline ]
     close $fp
     
@@ -110,7 +109,7 @@ proc QueryAtlasParseNeuroNamesSynonyms { } {
     #--- parse the file into a list of lists called $::QA(Synonyms)
     while { ! [eof $fp ] } {
         gets $fp line
-        set sline [ ::csv::split $line ]
+        set sline [ ::QueryAtlasCSV::split $line ]
         set len [ llength $sline ]
         #--- if the line is the wrong length, blow it off
         if { $len == $numCols } {
@@ -145,7 +144,7 @@ proc QueryAtlasParseBrainInfoURIs { } {
     #--- get number of columns each entry should have
     set fp [ open $uris r ]
     gets $fp line
-    set sline [ ::csv::split $line ]
+    set sline [ ::QueryAtlasCSV::split $line ]
     set numCols [ llength $sline ]
     close $fp
     
@@ -153,7 +152,7 @@ proc QueryAtlasParseBrainInfoURIs { } {
     #--- parse the file into a list of lists called $::QA(Synonyms)
     while { ! [eof $fp ] } {
         gets $fp line
-        set sline [ ::csv::split $line ]
+        set sline [ ::QueryAtlasCSV::split $line ]
         set len [ llength $sline ]
         #--- if the line is the wrong length, blow it off
         if { $len == $numCols } {
@@ -189,7 +188,7 @@ proc QueryAtlasParseControlledVocabulary { } {
     #--- get number of columns each entry should have
     set fp [ open $controlledVocabulary r ]
     gets $fp line
-    set sline [ ::csv::split $line ]
+    set sline [ ::QueryAtlasCSV::split $line ]
     set numCols [ llength $sline ]
     close $fp
     
@@ -197,7 +196,7 @@ proc QueryAtlasParseControlledVocabulary { } {
     #--- parse the file into a list of lists called $::QA(CV)
     while { ! [eof $fp ] } {
         gets $fp line
-        set sline [ ::csv::split $line ]
+        set sline [ ::QueryAtlasCSV::split $line ]
         set len [ llength $sline ]
         #--- if the line is the wrong length, blow it off
         if { $len == $numCols } {
