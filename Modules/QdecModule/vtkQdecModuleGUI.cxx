@@ -517,7 +517,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
 
   if (filebrowse == this->LoadResultsButton->GetWidget()  && event == vtkKWPushButton::InvokedEvent )
     {
-    // If a table file has been selected for loading...
+    // If a results file has been selected for loading...
     const char *fileName = this->LoadResultsButton->GetWidget()->GetFileName();
     if (!fileName || strcmp(fileName,"") == 0)
       {
@@ -525,42 +525,14 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       this->LoadResultsButton->GetWidget()->SetText ("None");
       return;
       }
-    const char *tempDir = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetTemporaryDirectory();
-    vtkDebugMacro("Trying to load file " << fileName << ", using temp dir " << tempDir);
-    if (this->GetLogic()->LoadProjectFile(fileName, tempDir) == -1)
+    if (!this->LoadProjectFile(fileName))
       {
-      // failure
-      vtkErrorMacro("Error loading table file " << fileName);
+      // loading failed
       this->LoadResultsButton->GetWidget()->SetText ("None");
       }
     else
       {
       filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-      vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: was able to load file " << fileName);
-    
-      this->UpdateGUI();
-
-      // load the results
-      vtkWarningMacro("Reading results that were listed in file " << fileName);
-      // get the models logic to use to load the models and scalars (can't access it in the Logic class)
-      vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models"))->GetLogic();
-      if (this->GetLogic()->LoadResults(modelsLogic, this->GetApplication()) != 0)
-        {
-        vtkErrorMacro("Unable to load results of precomputed GLM fit processing from file " << fileName);
-        }
-      else
-        {
-        // clear out the questions menu
-        this->QuestionMenu->GetMenu()->DeleteAllItems();
-        // update the questions menu
-        
-        int numQuestions = this->GetLogic()->GetNumberOfQuestions();
-        for (unsigned int i = 0; i < numQuestions; i++)
-          {
-          this->QuestionMenu->GetMenu()->AddRadioButton(this->GetLogic()->GetQuestion(i).c_str());
-          }
-        }
-      
       }
     return;
     }
@@ -804,6 +776,33 @@ void vtkQdecModuleGUI::UpdateGUI ()
           }
         }
       }
+
+    if (this->QuestionMenu)
+      {
+      // update the questions menu
+      int numQuestions = this->GetLogic()->GetNumberOfQuestions();
+      if (numQuestions != this->QuestionMenu->GetMenu()->GetNumberOfItems())
+        {
+        // clear out the questions menu and reset the text
+        this->QuestionLabel->SetText("Question: ");
+        if (this->QuestionMenu->GetMenu()->GetNumberOfItems() != 0)
+          {
+          this->QuestionMenu->GetMenu()->DeleteAllItems();          
+          }
+        for (unsigned int i = 0; i < numQuestions; i++)
+          {
+          this->QuestionMenu->GetMenu()->AddRadioButton(this->GetLogic()->GetQuestion(i).c_str());
+          }
+        // reset the label text to show the model name
+        if (this->GetLogic()->GetModelNode())
+          {
+          std::string newQuestion = std::string("Question: \n(") + std::string(this->GetLogic()->GetModelNode()->GetName()) + std::string(")");
+          this->QuestionLabel->SetText(newQuestion.c_str());
+          }
+        }
+      else { vtkDebugMacro("UpdateGUI: not updating question menu"); }
+      }
+     
     } // end of valid QdecProject
   else
     {
@@ -1166,4 +1165,35 @@ void vtkQdecModuleGUI::SetInteractorStyle( vtkSlicerViewerInteractorStyle *inter
     vtkDebugMacro("vtkQdecModuleGUI::SetInteractorStyle: Adding observer on interactor style");
     this->InteractorStyle->AddObserver(vtkSlicerViewerInteractorStyle::PlotEvent, (vtkCommand *)this->GUICallbackCommand);
     }
+}
+
+//----------------------------------------------------------------------------
+int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
+{
+  const char *tempDir = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetTemporaryDirectory();
+  vtkDebugMacro("Trying to load file " << fileName << ", using temp dir " << tempDir);
+  if (this->GetLogic()->LoadProjectFile(fileName, tempDir) == -1)
+    {
+    // failure
+    vtkErrorMacro("Error loading project data file " << fileName);
+    return 0;      
+    }
+  vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: was able to load file " << fileName);
+  
+  // load the results
+  vtkWarningMacro("Reading QDEC results that were in the file " << fileName);
+  // get the models logic to use to load the models and scalars (can't access it in the Logic class)
+  vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models"))->GetLogic();
+  if (this->GetLogic()->LoadResults(modelsLogic, this->GetApplication()) != 0)
+    {
+    vtkErrorMacro("Unable to load results of precomputed GLM fit processing from file " << fileName);
+    return 0;
+    }
+  else
+    {
+    // clear out the questions menu, then update the gui
+    this->QuestionMenu->GetMenu()->DeleteAllItems();
+    this->UpdateGUI();
+    }
+  return 1;
 }
