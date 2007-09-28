@@ -107,7 +107,8 @@ if { [itcl::find class Loader] == "" } {
     variable col ;# array of the column indices for easy (and readable) access
 
     variable _volumeExtensions ".hdr .nhdr .nrrd .mhd .mha .vti .nii .mgz"
-    variable _modelExtensions ".vtk .vtp"
+    variable _modelExtensions ".vtk .vtp .pial .inflated"
+    variable _qdecExtensions ".qdec"
     variable _observerRecords ""
     variable _cleanupDirs ""
 
@@ -403,6 +404,9 @@ itcl::body Loader::add { paths } {
       } elseif { [lsearch $_modelExtensions $ext] != -1 } {
         $this addRow $path "Model"
         $this status ""
+      } elseif { [lsearch $_qdecExtensions $ext] != -1 } {
+        $this addRow $path "QDEC"
+        $this status ""
       } else {
         $this status "Cannot read file $path"
       }
@@ -457,6 +461,16 @@ itcl::body Loader::apply { } {
             $this errorDialog "Could not open $path"
           } else {
             $node SetName $name
+          }
+        }
+        "QDEC" {
+          if {[info exists ::slicer3::QdecModuleGUI]} {
+            set err [$::slicer3::QdecModuleGUI LoadProjectFile $path]
+            if {$err == -1} {
+              $this errorDialog "Could not load QDEC project $path (using $tmp to unpack into)"
+            }
+          } else {
+              $this errorDialog "QDEC module not present, cannot open $path"
           }
         }
       }
