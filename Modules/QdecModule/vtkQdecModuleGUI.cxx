@@ -450,7 +450,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       this->QuestionMenu->GetMenu()->DeleteAllItems();
       // update the questions menu
 
-      int numQuestions = this->GetLogic()->GetNumberOfQuestions();
+      unsigned int numQuestions = this->GetLogic()->GetNumberOfQuestions();
       for (unsigned int i = 0; i < numQuestions; i++)
         {
         this->QuestionMenu->GetMenu()->AddRadioButton(this->GetLogic()->GetQuestion(i).c_str());
@@ -780,7 +780,7 @@ void vtkQdecModuleGUI::UpdateGUI ()
     if (this->QuestionMenu)
       {
       // update the questions menu
-      int numQuestions = this->GetLogic()->GetNumberOfQuestions();
+      unsigned int numQuestions = this->GetLogic()->GetNumberOfQuestions();
       if (numQuestions != this->QuestionMenu->GetMenu()->GetNumberOfItems())
         {
         // clear out the questions menu and reset the text
