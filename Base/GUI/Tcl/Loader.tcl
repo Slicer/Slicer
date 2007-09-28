@@ -514,6 +514,13 @@ itcl::body Loader::processEvent { {caller ""} {event ""} } {
 }
 
 itcl::body Loader::errorDialog { errorText } {
+  set dialog [vtkKWMessageDialog New]
+  $dialog SetParent $o(toplevel)
+  $dialog SetStyleToMessage
+  $dialog SetText $errorText
+  $dialog Create
+  $dialog Invoke
+  $dialog Delete
 }
 
 itcl::body Loader::status { message } {
