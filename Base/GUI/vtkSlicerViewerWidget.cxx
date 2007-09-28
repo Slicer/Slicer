@@ -1034,6 +1034,7 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
 
   vtkActor *actor;
   vtkClipPolyData *clipper = NULL;
+  bool hasPolyData = true;
   if ( actor = vtkActor::SafeDownCast(prop) )
     {
     if (this->ClippingOn && modelDisplayNode != NULL && modelDisplayNode->GetClipping())
@@ -1051,7 +1052,11 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
       {
       poly = model->GetPolyData();
       }
-
+    if (poly == NULL)
+      {
+      hasPolyData = false;
+      }
+      
     if (clipper)
       {
       clipper->SetInput ( poly );
@@ -1068,11 +1073,12 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
     mapper->Delete();
     }
 
-  if (ait == this->DisplayedActors.end())
+  if (hasPolyData && ait == this->DisplayedActors.end())
     {
     this->MainViewer->AddViewProp( prop );
     this->DisplayedActors[modelDisplayNode->GetID()] = prop;
     this->DisplayedNodes[std::string(modelDisplayNode->GetID())] = modelDisplayNode;
+    
     if (modelDisplayNode)
       {
       this->DisplayedVisibility[modelDisplayNode->GetID()] = modelDisplayNode->GetVisibility();
@@ -1081,17 +1087,33 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
       {
       this->DisplayedVisibility[modelDisplayNode->GetID()] = 1;
       }
+      
+    if (clipper)
+      {
+      this->DisplayedClipState[modelDisplayNode->GetID()] = 1;
+      clipper->Delete();
+      }
+    else
+      {
+      this->DisplayedClipState[modelDisplayNode->GetID()] = 0;
+      }
     prop->Delete();
     }
-
-  if (clipper)
+  else if (!hasPolyData)
     {
-    this->DisplayedClipState[modelDisplayNode->GetID()] = 1;
-    clipper->Delete();
+    prop->Delete();
     }
-  else
+  else 
     {
-    this->DisplayedClipState[modelDisplayNode->GetID()] = 0;
+    if (clipper)
+      {
+      this->DisplayedClipState[modelDisplayNode->GetID()] = 1;
+      clipper->Delete();
+      }
+    else 
+      {
+      this->DisplayedClipState[modelDisplayNode->GetID()] = 0;
+      }
     }
   }
 }
@@ -1468,7 +1490,11 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
     vtkMRMLDisplayNode *dnode = dnodes[i];
     if (dnode != NULL)
       {
-      vtkProp3D *prop = this->DisplayedActors[ dnode->GetID() ];
+      vtkProp3D *prop = this->GetActorByID(dnode->GetID());
+      if (prop == NULL)
+        {
+        continue;
+        }
       vtkActor *actor = vtkActor::SafeDownCast(prop);
       vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
       prop->SetUserMatrix(transformToWorld);
