@@ -79,6 +79,28 @@ public:
   int SaveProjectFile ( const char* isFileName,
                         const char* isDataDir = "/tmp" );
 
+    /**
+   *
+   * The command format strings to zip and unzip a file. Returns -1 if
+   * parameter is invalid. The default is acceptable for Linux systems
+   * with unzip and zip installed. The substitutions that are made
+   * are:
+   *
+   * %1 - Full project filename
+   * %2 - Expanded project base name
+   * %3 - Working dir (ifnDataDir)
+   *
+   * Default zip format string is:
+   * cd %3; zip -r %1 %2 > /dev/null
+   * Default unzip format string is:
+   * unzip -d %3 %1 > /dev/null
+   *
+   * @return int
+   * @param isFormat
+   */
+  int SetZipCommandFormat ( const char* isFormat );
+  int SetUnzipCommandFormat ( const char* isFormat );
+
 
   /**
    * @return int
@@ -238,7 +260,20 @@ public:
    * @return const char*
    */
   const char* GetMetadataFileName () const;
-  
+
+  /**
+   * Perform substitutions for command format strings. See
+   * documentation for Set(Un)ZipCommandFormat. This will perform the
+   * substitutions on isFormat and write the command to iosCommand
+   * (overwriting the contents of iosCommand).
+   *
+   */
+  void FormatCommandString ( const char* ifnProject,
+                             const char* isExpandedProjectBaseName,
+                             const char* isWorkingDir,
+                             const char* isFormat,
+                             string& iosCommand ) const;
+
 private:
 
   // private attributes
@@ -248,6 +283,11 @@ private:
   QdecDataTable* mDataTable;
   QdecGlmDesign* mGlmDesign;
   QdecGlmFit* mGlmFitter;
+
+  // The command format to run to zip and unzip a file.
+  string msBinaryPath;
+  string msZipCommandFormat;
+  string msUnzipCommandFormat;
 
 };
 

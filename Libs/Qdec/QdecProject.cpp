@@ -44,6 +44,14 @@ QdecProject::QdecProject ( )
   this->mDataTable = new QdecDataTable();
   this->mGlmDesign = new QdecGlmDesign( this->mDataTable );
   this->mGlmFitter = new QdecGlmFit();
+#ifdef _WIN32
+  this->msBinaryPath = std::string("c:\\cygwin\\bin\\");
+  this->msUnzipCommandFormat = this->msBinaryPath + std::string( "unzip.exe -q -o -d %3 %1" );
+#else
+  this->msBinaryPath = std::string("/usr/bin/");
+  this->msUnzipCommandFormat = this->msBinaryPath + std::string( "unzip -o -d %3 %1 > /dev/null" );
+#endif
+  this->msZipCommandFormat = std::string( "cd %3; ") + this->msBinaryPath + std::string("zip -r %1 %2 > /dev/null" );
 }
 
 QdecProject::~QdecProject ( )
@@ -71,16 +79,24 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
 {
 
   string fnProject( ifnProject );
-
+#ifdef _WIN32
+  string sepString = "\\";
+  char sepChar = '\\';
+#else
+  string sepString = "/";
+  char sepChar = '/';
+#endif
   // Find the base name of the project file.
   string fnProjectBase( ifnProject );
-  string::size_type nPreLastSlash = fnProject.rfind( '/' );
+  string::size_type nPreLastSlash = fnProject.rfind( sepChar );
   if( string::npos != nPreLastSlash )
     fnProjectBase = fnProject.substr( nPreLastSlash+1, fnProject.size() );
   
   // Make a target dir for the expanded file in the data dir, with a
   // directory name of the project file.
-  string fnExpandedProjectDir = string(ifnDataDir) + "/" + fnProjectBase + ".working";
+   string fnExpandedProjectBase = fnProjectBase + ".working";
+   string fnExpandedProjectDir = string(ifnDataDir) + sepString + 
+     fnExpandedProjectBase;
 
   string sSubject;
   string sHemisphere;
@@ -94,15 +110,15 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   int smoothness = -1;
 
   // Check the file.
-  ifstream fInput( ifnProject, std::ios::in );
+  ifstream fInput( fnProject.c_str(), std::ios::in );
   if( !fInput || fInput.bad() )
     {
-    throw runtime_error( string("Couldn't open file " ) + ifnProject );
+    throw runtime_error( string("Couldn't open file " ) + fnProject );
     }
   fInput.close();
 
   // Erase old working directory if present.
-  string sCommand = "rm -rf " + fnExpandedProjectDir;
+  string sCommand = this->msBinaryPath + "rm -rf " + fnExpandedProjectDir;
   int rSystem = system( sCommand.c_str() );
   if( 0 != rSystem )
     {
@@ -110,18 +126,23 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
              "remove existing temp directory (cmd=%s)\n", sCommand.c_str() );
     return -1;
     }
-  // Expand the .qdec file into the destination directory.
-  sCommand = string("cd ") + ifnDataDir + "; "
-    "tar zxvf " + ifnProject + " > /dev/null";
+  // Get out command string and expand the .qdec file into the
+  // destination directory.
+  this->FormatCommandString( fnProject.c_str(),
+                             fnExpandedProjectBase.c_str(),
+                             ifnDataDir,
+                             msUnzipCommandFormat.c_str(),
+                             sCommand );
+  fprintf(stdout, "calling command %s\n", sCommand.c_str());
   rSystem = system( sCommand.c_str() );
   if( 0 != rSystem ) {
     fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Couldn't "
-             "untar project file (cmd=%s)\n", sCommand.c_str() );
+             "expand project file (cmd=%s)\n", sCommand.c_str() );
     return -1;
   }
 
   // Look for and check the version file.
-  string fnVersion = fnExpandedProjectDir + "/Version.txt";
+  string fnVersion = fnExpandedProjectDir + sepString + "Version.txt";
   ifstream fVersion( fnVersion.c_str(), ios::out );
   if( !fVersion || fVersion.bad() ) {
     fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Couldn't "
@@ -138,7 +159,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   }
   
   // Parse the meta data file.
-  string fnMetadata = fnExpandedProjectDir + "/" + this->GetMetadataFileName();
+  string fnMetadata = fnExpandedProjectDir + sepString + this->GetMetadataFileName();
   ifstream fMetadata( fnMetadata.c_str(), ios::in );
   if( !fMetadata || fMetadata.bad() ) {
     fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Couldn't "
@@ -210,7 +231,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   
   // Load our data table. Note that this might set the subjects dir,
   // but we'll set it later to our data dir.
-  string fnDataTable = fnExpandedProjectDir + "/" + fnDataTableBase;
+  string fnDataTable = fnExpandedProjectDir + sepString + fnDataTableBase;
   int errorCode;
   errorCode = this->LoadDataTable( fnDataTable.c_str() );
   if( errorCode )
@@ -221,7 +242,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   this->SetSubjectsDir( fnExpandedProjectDir.c_str() );
 
   // Set the working dir to isDataDir/sAnalysisName.
-  string fnWorkingDir = fnExpandedProjectDir + "/" + sAnalysisName;
+  string fnWorkingDir = fnExpandedProjectDir + sepString + sAnalysisName;
   this->SetWorkingDir( fnWorkingDir.c_str() );
 
   // We're generating design and results here so that we can access it
@@ -263,36 +284,60 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
 int QdecProject::SaveProjectFile ( const char* ifnProject,
                                    const char* ifnDataDir )
 {
-  /* To make our file, we create a temp directory, link in our files,
-     and then tar it up into the destination .qdec file. This is the
-     structure we want. We'll create symlinks and then tar it up into
-     the destination file.
+  // If the project file name doesn't have a path, give it one.
+  string fnProject( ifnProject );
+  if( fnProject.find( '/' ) == string::npos )
+    {
+    char sCWD[1024];
+    if( getcwd( sCWD, sizeof(sCWD) ) )
+      {
+      string fnProjectFull = string(sCWD) + "/" + fnProject;
+      fnProject = fnProjectFull;
+      }
+    else
+      {
+      fprintf(stderr, "WARNING: QdecProject::LoadProjectFile: Can't add "
+              "full path  to project file name; please specify full path." );
+      }
+    }
 
+  // If the file name doesn't end in qdec, append it now.
+  if( fnProject.find( ".qdec" ) != fnProject.size() - 5 )
+    {
+    fnProject += ".qdec";
+    }
+  
+  /* To make our file, we create a temp directory, link in our files,
+     and then compress into the destination .qdec file. This is the
+     structure we want.
+     
     $ifnWorkingDir/$project.qdec.working/
                                $Subject/surf/{r,l}h.{curv,inflatd,pial,white}
                                         label/{r,l}h.aparc.annot
                                $AnalysisName/ *
                                qdec.table.dat
                                QdecProjectMetadata.txt
+                               Version.txt
   */
 
   string fnSubjectsDir = this->GetSubjectsDir();
   string sSubjectName = this->GetAverageSubject();
   string fnWorkingDir = this->GetWorkingDir();
-  string fnProject( ifnProject );
 
   // Find the base name of the project file.
-  string fnProjectBase( ifnProject );
+  string fnProjectBase( fnProject );
   string::size_type nPreLastSlash = fnProject.rfind( '/' );
   if( string::npos != nPreLastSlash )
     fnProjectBase = fnProject.substr( nPreLastSlash+1, fnProject.size() );
 
   // Make a target dir for the expanded file in the data dir, with a
   // directory name of the project file.
-  string fnExpandedProjectDir = string(ifnDataDir) + "/" + fnProjectBase + ".working";
-
+  string fnExpandedProjectBase = fnProjectBase + ".working";
+  string fnExpandedProjectDir = string(ifnDataDir) + "/" + 
+    fnExpandedProjectBase;
+  
   // Erase old working directory if present.
-  string sCommand = "rm -rf " + fnExpandedProjectDir;
+  string sCommand = this->msBinaryPath + "rm -rf " + fnExpandedProjectDir;
   int rSystem = system( sCommand.c_str() );
   if( 0 != rSystem ) {
     fprintf( stderr, "ERROR: QdecProject::SaveProjectFile: Couldn't "
@@ -360,7 +405,7 @@ int QdecProject::SaveProjectFile ( const char* ifnProject,
     return -1;
   }
 
-  // Data table.
+  // Data table and levels files.
   string fnDataTable = this->GetDataTable()->GetFileName();
   string fnDataTablePath( fnDataTable );
   string fnDataTableBase( fnDataTable );
@@ -369,8 +414,17 @@ int QdecProject::SaveProjectFile ( const char* ifnProject,
     fnDataTableBase = fnDataTable.substr( nPreLastSlash+1, fnDataTable.size());
     fnDataTablePath = fnDataTable.substr( 0, nPreLastSlash+1);
   }
+  // NOTE: Older versions of ln don't handle this properly. For
+  // example, on kani, with ln version 4.5.3, this will create a link
+  // file called "*.levels", which is a dead link. So we can test for
+  // the right version of ln. But levels files aren't strictly needed,
+  // so just don't do this for now.
+#if 0
   sCommand = "ln -s " + fnDataTable + " " +
     fnDataTablePath + "/*.levels " + fnExpandedProjectDir;
+#else
+  sCommand = "ln -s " + fnDataTable + " " + fnExpandedProjectDir;
+#endif
   rSystem = system( sCommand.c_str() );
   if( 0 != rSystem ) {
     fprintf( stderr, "ERROR: QdecProject::SaveProjectFile: Couldn't "
@@ -418,18 +472,22 @@ int QdecProject::SaveProjectFile ( const char* ifnProject,
   fMetadata.close();
 
 
-  // Tar them up to the destination location with the .qdec filename.
-  sCommand = string("cd ") + ifnDataDir + "; " +
-    "tar hcfzv " + ifnProject + " " + fnProjectBase + ".working > /dev/null";
+  // Get our command string and compress the directory to the
+  // destination location with the .qdec filename.
+  this->FormatCommandString( fnProject.c_str(),
+                             fnExpandedProjectBase.c_str(),
+                             ifnDataDir,
+                             msZipCommandFormat.c_str(),
+                             sCommand );
   rSystem = system( sCommand.c_str() );
   if( 0 != rSystem ) {
     fprintf( stderr, "ERROR: QdecProject::SaveProjectFile: Couldn't "
-             "tar project table (cmd=%s)\n", sCommand.c_str() );
+             "compress project table (cmd=%s)\n", sCommand.c_str() );
     return -1;
   }
 
   // Delete the temp directory.
-  sCommand = "rm -rf " + fnExpandedProjectDir;
+  sCommand = this->msBinaryPath + "rm -rf " + fnExpandedProjectDir;
   rSystem = system( sCommand.c_str() );
   if( 0 != rSystem ) {
     fprintf( stderr, "ERROR: QdecProject::SaveProjectFile: Couldn't "
@@ -437,6 +495,26 @@ int QdecProject::SaveProjectFile ( const char* ifnProject,
     return -1;
   }
 
+  return 0;
+}
+
+int QdecProject::SetZipCommandFormat ( const char* isFormat ) {
+
+  if( NULL == isFormat ) 
+    return -1;
+  
+  msZipCommandFormat = isFormat;
+
+  return 0;
+}
+
+int QdecProject::SetUnzipCommandFormat ( const char* isFormat ) {
+
+  if( NULL == isFormat ) 
+    return -1;
+  
+  msUnzipCommandFormat = isFormat;
+  
   return 0;
 }
 
@@ -666,23 +744,6 @@ int QdecProject::CreateGlmDesign ( const char* isName,
   return 0;
 }
 
-/**
- * @return int
- 
-int QdecProject::LoadGlmDesign(const char *fileName)
-{
-    int retval = this->mGlmDesign->ReadFsgdFile(fileName);
-    if (retval != 0)
-      {
-      return retval;
-      }
-    
-    // init the mGlmFitter
-    retval = this->mGlmFitter->Load( this->mGlmDesign );
-    
-    return retval;
-}
-*/
 
 /**
  * @return int
@@ -785,5 +846,30 @@ QdecProject::GetMetadataFileName () const {
 
   static char fnMetadata[] = "QdecProjectMetadata.txt";
   return fnMetadata;
+}
+
+void
+QdecProject::FormatCommandString ( const char* ifnProject,
+                                   const char* isExpandedProjectBaseName,
+                                   const char* isWorkingDir,
+                                   const char* isFormat,
+                                   string& iosCommand ) const
+{
+  assert( ifnProject );
+  assert( isExpandedProjectBaseName );
+  assert( isWorkingDir );
+  assert( isFormat );
+  
+  // Start by copying the format string.
+  iosCommand = isFormat;
+  
+  // Make our substitutions.
+  string::size_type n;
+  while( string::npos != (n = iosCommand.find( "%1" )) )
+    iosCommand.replace( n, 2, ifnProject );
+  while( string::npos != (n = iosCommand.find( "%2" )) )
+    iosCommand.replace( n, 2, isExpandedProjectBaseName );
+  while( string::npos != (n = iosCommand.find( "%3" )) )
+    iosCommand.replace( n, 2, isWorkingDir );
 }
 
