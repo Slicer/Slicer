@@ -834,7 +834,6 @@ proc QueryAtlasInitializePicker {} {
     # - add the callback with the current render info
     #
     if { ![info exists ::QA(windowToImage)] } {
-        #set ::QA(viewer) [vtkImageViewer New]
         set ::QA(windowToImage) [vtkWindowToImageFilter New]
     }
 
@@ -943,26 +942,8 @@ proc QueryAtlasRenderView {} {
   $renderWindow SetSwapBuffers 0
   set renderState [QueryAtlasOverrideRenderState $renderer]
   $renderWidget Render
-
-
   
   $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
-
-  if { 0 } {
-  #
-    # make a little preview window for debugging pleasure
-    #
-    catch "viewer Delete"
-    catch "viewerImage Delete"
-    vtkImageViewer viewer
-    vtkImageData viewerImage
-    viewerImage DeepCopy [$::QA(windowToImage) GetOutput]
-    viewer SetInput viewerImage
-    viewer SetColorWindow 2
-    viewer SetColorLevel 1
-    viewer Render
-}
-
 
   set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
   if { [$renderWindow GetSize] != $imageSize } {
@@ -971,15 +952,28 @@ proc QueryAtlasRenderView {} {
     $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
   }
 
-  #$::QA(viewer) SetColorWindow 255
-  #$::QA(viewer) SetColorLevel 127.5
   $::QA(windowToImage) SetInputBufferTypeToRGBA
   $::QA(windowToImage) ShouldRerenderOn
   $::QA(windowToImage) ReadFrontBufferOff
   $::QA(windowToImage) Modified
-  #$::QA(viewer) SetInput [$::QA(windowToImage) GetOutput]
   [$::QA(windowToImage) GetOutput] Update
-  #$::QA(viewer) Render
+
+
+  if { 1 } {
+    #
+    # make a little preview window for debugging pleasure
+    #
+    if { [info command viewer] == "" } {
+      vtkImageViewer viewer
+      vtkImageData viewerImage
+    }
+    viewerImage DeepCopy [$::QA(windowToImage) GetOutput]
+    viewer SetInput viewerImage
+    viewer SetColorWindow 200
+    viewer SetColorLevel 100
+    viewer Render
+  }
+
 
   $renderWindow SetSwapBuffers 1
   QueryAtlasRestoreRenderState $renderer $renderState
@@ -1152,8 +1146,6 @@ proc QueryAtlasPickCallback {} {
     set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
     if { [$renderWindow GetSize] != $imageSize } {
         QueryAtlasRenderView
-
-        
     }
 
     # 
