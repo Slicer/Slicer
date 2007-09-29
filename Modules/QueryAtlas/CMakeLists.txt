@@ -22,6 +22,7 @@ SET(TCLFILES
   ./Tcl/pkgIndex.tcl
   ./Tcl/Card.tcl ./Tcl/CardFan.tcl
   ./Tcl/QueryAtlas.tcl
+  ./Tcl/QueryAtlasAnno.tcl
   ./Tcl/QueryAtlasCSV.tcl
   ./Tcl/QueryAtlasControlledVocabulary.tcl
   ./Tcl/QueryAtlasWeb.tcl

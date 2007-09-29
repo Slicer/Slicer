@@ -82,10 +82,9 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->AnnotationVisibility = 1;
     this->ModelVisibility = 1;
     this->LHModelVisibility = 1;
-    this->LHModelVisibility = 1;
+    this->RHModelVisibility = 1;
     this->ProcessingMRMLEvent = 0;
     this->SceneClosing = false;
-    this->SceneLoaded = 0;
     
 #ifdef SEARCHTERM_FRAME
     //---
@@ -781,7 +780,6 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       }
 #endif
 
-    this->SceneLoaded = 0;    
 }
 
 
@@ -1170,7 +1168,8 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       if ( (b == this->FSgoButton->GetWidget()) && (event == vtkKWPushButton::InvokedEvent ) )
         {
-        this->Script ( "QueryAtlasFipsFreeSurferSetUp" );
+//        this->Script ( "QueryAtlasFipsFreeSurferSetUp" );
+        this->Script ( "QueryAtlasInitialize" );
         }
       }
     if ( this->QdecGoButton )
@@ -1180,7 +1179,8 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
         vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
         std::string avgDir = qLogic->GetAverageSubject ( );
         std::string labelDir = avgDir + "/label/";
-        this->Script ( "QueryAtlasQdecSetUp \"%s\"", labelDir.c_str() );
+//        this->Script ( "QueryAtlasQdecSetUp \"%s\"", labelDir.c_str() );
+        this->Script ( "QueryAtlasInitialize");
         }
       }
     if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -1501,62 +1501,39 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
 {
+
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-  if ( this->SceneLoaded == 0 )
+  const char *filen;
+  // get file from dialog  
+  filen = this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
+  if ( filen != NULL )
     {
-    // get file from dialog
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-    const char *filen;
-  
-    filen = this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
-    if ( filen != NULL )
+    itksys::SystemTools::ConvertToUnixOutputPath( filen );
+    std::string fl(filen);
+
+    if ( this->GetMRMLScene() && fl.find(".xcede") != std::string::npos )
       {
-      itksys::SystemTools::ConvertToUnixOutputPath( filen );
-      std::string fl(filen);
+      this->Script ( "XcedeCatalogImport %s", filen);
+      this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      }
 
-      if ( this->GetMRMLScene() && fl.find(".xcede") != std::string::npos )
+    if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
+      {
+      if ( app->GetApplicationGUI() != NULL )
         {
-        this->Script ( "XcedeCatalogImport %s", filen);
-        this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-        }
-
-      if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
-        {
-        this->SceneLoaded = 0;
-        if ( app->GetApplicationGUI() != NULL )
-          {
-          //--- display error message: there was an error during scene load.
-          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-          dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
-          dialog->SetStyleToMessage();
-          std::string msg = this->GetMRMLScene()->GetErrorMessage();
-          dialog->SetText(msg.c_str());
-          dialog->Create ( );
-          dialog->Invoke();
-          dialog->Delete();
-          }
-        }
-      else
-        {
-        //--- scene loaded; set flag and process any statistics
-        this->SceneLoaded = 1;
-        this->Script ( "QueryAtlasSetSceneType FIPSFreeSurfer" );
+        //--- display error message: there was an error during scene load.
+        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+        dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
+        dialog->SetStyleToMessage();
+        std::string msg = this->GetMRMLScene()->GetErrorMessage();
+        dialog->SetText(msg.c_str());
+        dialog->Create ( );
+        dialog->Invoke();
+        dialog->Delete();
         }
       }
-    this->LoadFIPSFSCatalogButton->GetLabel()->SetText ( "" );
     }
-  else
-    {
-    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-    dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
-    dialog->SetStyleToMessage();
-    std::string msg = "A scene already appears to be loaded. To load a FIPS/FreeSurfer scene, first close existing scene first using File->Close Scene.";
-    dialog->SetText(msg.c_str());
-    dialog->Create ( );
-    dialog->Invoke();
-    dialog->Delete();
-    }
-
+  this->LoadFIPSFSCatalogButton->GetLabel()->SetText ( "" );
 }
 
 
@@ -1608,109 +1585,85 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
   
   int retval;
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-  //--- check to see if the scene is loaded. If not,
-  //--- attempt to load a qdec scene. If already loaded,
-  //--- warn the user that the existing scene should be
-  //--- closed first, before a qdec scene is loaded.
-  if ( this->SceneLoaded == 0 )
-    {
-    // get file from dialog
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-    
-    const char *filen = this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
-    if ( filen != NULL )
-      {
-      itksys::SystemTools::ConvertToUnixOutputPath( filen );
 
-      //--- and load results thru qdecModule Logic, which we get thru the GUI.
-      //--- TODO: build a direct way of getting logics, w/o requiring gui-route.
-      vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
-      vtkSlicerModelsLogic *mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
-      const char *tmpdir = app->GetTemporaryDirectory();
-      if ( (strcmp(tmpdir,"")))
+  const char *filen = this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
+  if ( filen != NULL )
+    {
+    itksys::SystemTools::ConvertToUnixOutputPath( filen );
+
+    //--- and load results thru qdecModule Logic, which we get thru the GUI.
+    //--- TODO: build a direct way of getting logics, w/o requiring gui-route.
+    vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
+    vtkSlicerModelsLogic *mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
+    const char *tmpdir = app->GetTemporaryDirectory();
+    if ( (strcmp(tmpdir,"")))
+      {
+      retval = qLogic->LoadProjectFile ( filen, tmpdir );
+      }
+    else
+      {
+      vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+      dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
+      dialog->SetStyleToMessage();
+      std::string msg = "Please set your temporary directory in the Application Settings first (View->Application Settings) and then try to load the Qdec archive again.";
+      dialog->SetText(msg.c_str());
+      dialog->Create ( );
+      dialog->Invoke();
+      dialog->Delete();
+      }
+      
+    //--- if results appear to have loaded...
+    //--- make sure scene agrees with that.
+    if ( retval >= 0 )
+      {
+      this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
         {
-        retval = qLogic->LoadProjectFile ( filen, tmpdir );
+        if ( app->GetApplicationGUI() != NULL )
+          {
+          vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+          dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
+          dialog->SetStyleToMessage();
+          std::string msg = this->GetMRMLScene()->GetErrorMessage();
+          dialog->SetText(msg.c_str());
+          dialog->Create ( );
+          dialog->Invoke();
+          dialog->Delete();
+          }
         }
       else
         {
-        vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-        dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
-        dialog->SetStyleToMessage();
-        std::string msg = "Please set your temporary directory in the Application Settings first (View->Application Settings) and then try to load the Qdec archive again.";
-        dialog->SetText(msg.c_str());
-        dialog->Create ( );
-        dialog->Invoke();
-        dialog->Delete();
-        }
-      
-      //--- if results appear to have loaded...
-      //--- make sure scene agrees with that.
-      if ( retval >= 0 )
-        {
-        this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-        if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
+        //--- get FSAverage directory from logic
+        //--- and load subject annotations
+        std::string subjDir = qLogic->GetSubjectsDirectory ( );
+        std::string avgDir = qLogic->GetAverageSubject ( );
+        std::string annotFile = "";
+        vtkMRMLModelNode *mnode = qLogic->GetModelNode();
+        //--- for now there's only one model node. later, there may
+        //--- be more.
+        if ( avgDir.c_str() != "" )
           {
-          if ( app->GetApplicationGUI() != NULL )
+          if ( ! (strcmp (mnode->GetName(), "lh.inflated" ) ) )
             {
-            vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-            dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
-            dialog->SetStyleToMessage();
-            std::string msg = this->GetMRMLScene()->GetErrorMessage();
-            dialog->SetText(msg.c_str());
-            dialog->Create ( );
-            dialog->Invoke();
-            dialog->Delete();
+            annotFile = avgDir + "/label/" + "lh.aparc.annot";
+            }
+          else if ( ! (strcmp (mnode->GetName(), "rh.inflated")))
+            {
+            annotFile = avgDir + "/label/" + "rh.aparc.annot";
             }
           }
-        else
+        if ( annotFile != "" )
           {
-          //--- get FSAverage directory from logic
-          //--- and load subject annotations
-          std::string subjDir = qLogic->GetSubjectsDirectory ( );
-          std::string avgDir = qLogic->GetAverageSubject ( );
-          std::string annotFile = "";
-          vtkMRMLModelNode *mnode = qLogic->GetModelNode();
-          //--- for now there's only one model node. later, there may
-          //--- be more.
-          if ( avgDir.c_str() != "" )
-            {
-            if ( ! (strcmp (mnode->GetName(), "lh.inflated" ) ) )
-              {
-              annotFile = avgDir + "/label/" + "lh.aparc.annot";
-              }
-            else if ( ! (strcmp (mnode->GetName(), "rh.inflated")))
-              {
-              annotFile = avgDir + "/label/" + "rh.aparc.annot";
-              }
-            }
-          if ( annotFile != "" )
-            {
-            //--- add scalars
-            mLogic->AddScalar ( annotFile.c_str(), mnode );
-            }
-          this->SceneLoaded = 1;
-          this->Script ( "QueryAtlasSetSceneType Qdec" );        
+          //--- add scalars
+          mLogic->AddScalar ( annotFile.c_str(), mnode );
           }
-        // update Scalar overlay menu
-        this->UpdateScalarOverlayMenu();
         }
+      // update Scalar overlay menu
+      this->UpdateScalarOverlayMenu();
       }
     }
-  else
-    {
-    //--- if scene is not loaded.
-    vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-    dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
-    dialog->SetStyleToMessage();
-    std::string msg = "A scene already appears to be loaded. To load Qdec results, first close existing scene first using File->Close Scene.";
-    dialog->SetText(msg.c_str());
-    dialog->Create ( );
-    dialog->Invoke();
-    dialog->Delete();
-    return;
-    }
-
 }
+
 
 
 

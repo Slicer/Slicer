@@ -67,8 +67,6 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetMacro ( ModelVisibility, int );
     vtkGetMacro ( LHModelVisibility, int );
     vtkGetMacro ( RHModelVisibility, int );
-    vtkGetMacro ( SceneLoaded, int );
-    vtkSetMacro ( SceneLoaded, int );
 
     // Querybuilder frame top widgets
     vtkGetObjectMacro (OtherButton, vtkKWPushButton );
@@ -414,7 +412,6 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     void OpenOntologyBrowser();
 
     bool SceneClosing;
-    int SceneLoaded;
     
     //BTX
     // Description:
