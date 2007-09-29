@@ -804,7 +804,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->CenterImageMenu->SetLabelText("Image Origin:");
     this->CenterImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "Centered");
     this->CenterImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "From File");
-    this->CenterImageMenu->GetWidget()->SetValue ( "Centered" );
+    this->CenterImageMenu->GetWidget()->SetValue ( "From File" );
     this->Script(
       "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
       this->CenterImageMenu->GetWidgetName());

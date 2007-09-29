@@ -305,7 +305,7 @@ itcl::body Loader::addRow { path type } {
   $w InsertCellText $i $col(Name) [file tail [file root $path]]
 
   if { $type == "Volume" } {
-    $w InsertCellTextAsInt $i $col(Centered) 1
+    $w InsertCellTextAsInt $i $col(Centered) 0
     $w SetCellWindowCommandToCheckButton $i $col(Centered)
 
     set seg [string match -nocase "*seg*" $path] 
