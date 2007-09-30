@@ -97,8 +97,6 @@ proc QueryAtlasOpenLinkFromList { lw } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasOpenLink { url } {
 
-  puts "opening: $url"
-
   if { $::tcl_platform(os) == "Darwin" } {
     exec open $url
   } else {
@@ -119,6 +117,14 @@ proc QueryAtlasOpenLink { url } {
       set manager [$interface GetUserInterfaceManager]
       $manager RaiseSection 0 "Slicer Settings"
       return
+    } else {
+        #--- Test: does this work on all windows os/versions?
+        if { $::tcl_platform(platform) == "windows" } {
+            puts "opening $url"
+            exec $browser -new-tab $url &
+        } else {
+            #--- what will work on macos?
+        }
     }
   }
 }
@@ -359,7 +365,9 @@ proc QueryAtlasGetPopulationTerms { } {
     set m $::slicer3::QueryAtlasGUI
     set termD [[[ $m GetDiagnosisMenuButton ] GetWidget ] GetValue ]
     if { $termD != "" && $termD != "n/a" && $termD != "Normal"} {
-        append terms "\"$termD\""
+        append terms "%22"
+        append terms $termD
+        append terms "%22"
         append terms "+"
     }
 
