@@ -117,7 +117,7 @@ proc QueryAtlasTearDownAnnoCursor { } {
 proc QueryAtlasTearDown { } {
 
     #--- Delete things.
-    QueryAtlasCloseOntologyViewer
+    QueryAtlasCloseOntologyBrowser
     QueryAtlasTearDownAnnoCursor
     QueryAtlasTearDownPicker
 
@@ -1795,7 +1795,7 @@ proc QueryAtlasOntologyViewerCheck { } {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasCloseOntologyViewer { } {
+proc QueryAtlasCloseOntologyBrowser { } {
 
     if { [ info exists ::QA(ontologyHost) ] && [ info exists ::QA(ontologyPort) ] } {
 
