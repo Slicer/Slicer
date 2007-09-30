@@ -1843,33 +1843,14 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
        && (event == vtkMRMLScene::NodeRemovedEvent ) )
     {
-    //this->UpdateFromMRML();
-    // check to see if the model or labels have been deleted.
-    //--- check to see if the lh.pial has been deleted
-    //--- and clean up if so.
-    vtkMRMLModelNode *node;
-    int n = this->MRMLScene->GetNumberOfNodesByClass( "vtkMRMLModelNode");
-    for ( int i=0; i < n; i++ )
-      {
-      node = vtkMRMLModelNode::SafeDownCast ( this->MRMLScene->GetNthNodeByClass ( i, "vtkMRMLModelNode") );
-      if ( (!strcmp ( node->GetName(), "lh.pial")) ||  (! strcmp ( node->GetName(), "lh.inflated")) )
-        {
-        //ok, query model is still here; no op
-        }
-      else
-        {
-        this->Script ( "QueryAtlasTearDown; QueryAtlasInitializeGlobasl");
-        this->Script ("QueryAtlasNodeRemovedUpdate" );
-        break;
-        }
-      }
+    this->Script ( "QueryAtlasNodeRemovedUpdate");
     }
   
   //--- is the scene closing?
   if (event == vtkMRMLScene::SceneCloseEvent )
     {
     this->SceneClosing = true;
-    // reset globals.
+    // clean up and reset globals.
     this->Script ("QueryAtlasTearDown" );
     this->Script("QueryAtlasInitializeGlobals");
     }
@@ -1885,7 +1866,10 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
 void vtkQueryAtlasGUI::Enter ( )
 {
     vtkDebugMacro("vtkQueryAtlasGUI: Enter\n");
+    this->Script ( "QueryAtlasCullOldModelAnnotations");
+    this->Script ( "QueryAtlasCullOldLabelMapAnnotations");
     this->Script ( "QueryAtlasAddInteractorObservers" );
+
 }
 
 //---------------------------------------------------------------------------

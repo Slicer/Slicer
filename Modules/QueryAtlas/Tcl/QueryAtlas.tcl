@@ -14,6 +14,7 @@ proc QueryAtlasTearDownPicker { } {
         unset -nocomplain ::QA(cellPicker)
     }
     
+    #--- clean out query models
     if { [ info exists ::QA(annoModelNodeIDs) ] } {
         set numQmodels [ llength $::QA(annoModelNodeIDs) ]
 
@@ -32,6 +33,38 @@ proc QueryAtlasTearDownPicker { } {
             if { [ info exists ::QA(actor_$mid)  ] } {
                 $::QA(actor_$mid) Delete
                 unset -nocomplain ::QA(actor_$mid)
+            }
+
+            if { [ info exists ::QA(actor_$mid,visibility)  ] } {
+                unset -nocomplain ::QA(actor_$mid,visibility)
+            }
+
+        }
+    }
+
+    #--- clean out query label maps
+    if { [ info exists ::QA(annoLabelMapIDs) ] } {
+        set numMapss [ llength $::QA(annoLabelMapIDs) ]
+
+        for { set m 0 } { $m < $numMaps } { incr m } {
+            set mid [ lindex $::QA(annoLabelMapIDs) ]
+            if { [ info exists ::QA(polyData_$mid)  ] } {
+                $::QA(polyData_$mid) Delete
+                unset -nocomplain ::QA(polyData_$mid)
+            }
+            
+            if { [ info exists ::QA(mapper_$mid)  ] } {
+                $::QA(mapper_$mid) Delete
+                unset -nocomplain ::QA(mapper_$mid)
+            }
+            
+            if { [ info exists ::QA(actor_$mid)  ] } {
+                $::QA(actor_$mid) Delete
+                unset -nocomplain ::QA(actor_$mid)
+            }
+
+            if { [ info exists ::QA(actor_$mid,visibility)  ] } {
+                unset -nocomplain ::QA(actor_$mid,visibility)
             }
         }
     }
@@ -94,18 +127,6 @@ proc QueryAtlasTearDown { } {
     
     if { [ info exists ::QA(SceneSetUp) ] } {
         unset -nocomplain ::QA(SceneSetUp) 
-    }
-    
-    #--- records of all models and label maps in scene
-    #--- TODO: replace QA(annoModelNodeIDs) with this, etc.
-    if {[info exists ::QA(sceneModelNodeIDs) ] } {
-        unset -nocomplain ::QA(sceneModelNodeIDs)
-    }
-    if {[info exists ::QA(sceneModelDisplayNodeIDs) ] } {
-        unset -nocomplain ::QA(sceneModelDisplayNodeIDs)
-    }
-    if {[info exists ::QA(sceneLabelMapIDs) ] } {
-        unset -nocomplain ::QA(sceneLabelMapIDs)
     }
     
     #--- record of all annotated models and label maps in scene
@@ -183,6 +204,13 @@ proc QueryAtlasInitializeGlobals { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasNodeRemovedUpdate { } {
     
+    #--- update overlay menu in case model with overlays
+    #--- was deleted
+    
+    #--- cull deleted datasets
+    puts "in remove node callback"
+    QueryAtlasCullOldModelAnnotations
+    QueryAtlasCullOldLabelMapAnnotations
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -191,6 +219,9 @@ proc QueryAtlasNodeRemovedUpdate { } {
 # we might need...
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasNodeAddedUpdate { } {
+
+    #--- update overlay menu in case model
+    #--- with overlays was deleted.
     
 }
 
@@ -555,6 +586,8 @@ proc QueryAtlasSwitchToQueryLUT { } {
     }
 }
 
+
+
 #----------------------------------------------------------------------------------------------------
 #--- restores whatever scalar lut is displayed on the model after query label is
 #--- extracted.
@@ -581,6 +614,7 @@ proc QueryAtlasRestoreScalarLUT { } {
         }
     }
 }
+
 
 
 #----------------------------------------------------------------------------------------------------
@@ -741,6 +775,16 @@ proc QueryAtlasRGBAToNumber {rgba} {
 
 
 
+
+#----------------------------------------------------------------------------------------------------
+#--- set up a picking version of the polyData that can be used
+#--- to render to the back buffer
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasCreatePickModels { } {
+
+}
+
+
 #----------------------------------------------------------------------------------------------------
 #--- set up a picking version of the polyData that can be used
 #--- to render to the back buffer
@@ -842,9 +886,14 @@ proc QueryAtlasInitializePicker {} {
     set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
     set renderer [$renderWidget GetRenderer]    
     for { set m 0 } { $m < $numQmodels } { incr m } {
+        #--- add the query actor to the scene and
+        #--- set its visibility to match that of its model node.
         set mid [ lindex $::QA(annoModelNodeIDs) $m ]
+        set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
+        set dnode [ $node GetDisplayNode ]
         $renderer AddActor $::QA(actor_$mid)
-        $::QA(actor_$mid) SetVisibility 1
+        set ::QA(actor_$mid,visibility) [ $dnode GetVisibility ]
+        $::QA(actor_$mid) SetVisibility $::QA(actor_$mid,visibility)
     }
 
 }
@@ -959,7 +1008,7 @@ proc QueryAtlasRenderView {} {
   [$::QA(windowToImage) GetOutput] Update
 
 
-  if { 1 } {
+  if { 0 } {
     #
     # make a little preview window for debugging pleasure
     #
@@ -1001,13 +1050,17 @@ proc QueryAtlasOverrideRenderState {renderer} {
   # - is just background color and visibility state of all actors
   #
 
+    #--- set all actors in scene invisible
+    #--- and turn on only the query actors
+    #--- for actors in the scene that the
+    #--- user has set visible.
 
   set actors [$renderer GetActors]
   set numberOfItems [$actors GetNumberOfItems]
   for {set i 0} {$i < $numberOfItems} {incr i} {
-    set actor [$actors GetItemAsObject $i]
-    set state($i,visibility) [$actor GetVisibility]
-    $actor SetVisibility 0
+      set actor [$actors GetItemAsObject $i]
+      set state($i,visibility) [$actor GetVisibility]
+      $actor SetVisibility 0
   }
 
   set state(background) [$renderer GetBackground]
@@ -1016,7 +1069,7 @@ proc QueryAtlasOverrideRenderState {renderer} {
   set numQmodels [ llength $::QA(annoModelNodeIDs) ]
   for { set m 0 } { $m < $numQmodels } { incr m } {
       set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-      $::QA(actor_$mid) SetVisibility 1
+      $::QA(actor_$mid) SetVisibility $::QA(actor_$mid,visibility)
   }
 
   return [array get state]
@@ -1374,18 +1427,18 @@ proc QueryAtlasUpdateCursor {} {
 
 
 #----------------------------------------------------------------------------------------------------
-#---
+#--- Turn model visibility off, and its query model's visibility off too.
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetQueryModelInvisible { } {
 
-    if { [info exists ::QA(annoModelDisplayNodeIDs)] } {
-        if { $::QA(annoModelDisplayNodeIDs) != "" } {
-            set numQmodels [ llength $::QA(annoModelDisplayNodeIDs) ]
-            for { set m 0 } {$m < $numQmodels } { incr m } {
-                set mid [ lindex $::QA(annoModelDisplayNodeIDs) $m ]
-                set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-                $node SetVisibility 0
-            }
+    if { [ info exists ::QA(annoModeNodeIDs)] } {
+        set numQmodels [ llength $::QA(annoModelNodeIDs)  ]
+        for { set m 0 } {$m < $numQmodels } { incr m } {
+            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
+            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
+            set dnode [ $node GetDisplayNode ]
+            $dnode SetVisibility 0
+            set ::QA(actor_$mid,visibility) 0
         }
     }
 }
@@ -1393,18 +1446,18 @@ proc QueryAtlasSetQueryModelInvisible { } {
 
 
 #----------------------------------------------------------------------------------------------------
-#---
+#--- Make a model visible, and it's query model visible too.
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetQueryModelVisible { } {
     
-    if { [info exists ::QA(annoModelDisplayNodeIDs)] } {
-        if { $::QA(annoModelDisplayNodeIDs) != "" } {
-            set numQmodels [ llength $::QA(annoModelDisplayNodeIDs) ]
-            for { set m 0 } {$m < $numQmodels } { incr m } {
-                set mid [ lindex $::QA(annoModelDisplayNodeIDs) $m ]
-                set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-                $node SetVisibility 1
-            }
+    if { [ info exists ::QA(annoModeNodeIDs)] } {
+        set numQmodels [ llength $::QA(annoModelNodeIDs)  ]
+        for { set m 0 } {$m < $numQmodels } { incr m } {
+            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
+            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
+            set dnode [ $node GetDisplayNode ]
+            $dnode SetVisibility 1
+            set ::QA(actor_$mid,visibility) 1
         }
     }
 }
@@ -1416,17 +1469,15 @@ proc QueryAtlasSetQueryModelVisible { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetLHQueryModelInvisible { } {
 
-    if { [info exists ::QA(annoModelDisplayNodeIDs)] } {
-        if { $::QA(annoModelDisplayNodeIDs) != "" } {
-            set numQmodels [ llength $::QA(annoModelDisplayNodeIDs) ]
-            for { set m 0 } {$m < $numQmodels } { incr m } {
-                set did [ lindex $::QA(annoModelDisplayNodeIDs) $m ]
-                set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-                set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-                if { [ string first "lh." [$node GetName] ] >= 0 } {
-                    set node [ $::slicer3::MRMLScene GetNodeByID $did ]
-                    $node SetVisibility 0
-                }
+    if { [info exists ::QA(annoModelNodeIDs)] } {
+        set numQmodels [ llength $::QA(annoModelNodeIDs) ]
+        for { set m 0 } {$m < $numQmodels } { incr m } {
+            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
+            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
+            set dnode [ $node GetDisplayNode ]
+            if { [ string first "lh." [$node GetName] ] >= 0 } {
+                $dnode SetVisibility 0
+                set ::QA(actor_$mid,visibility) 0
             }
         }
     }
@@ -1439,22 +1490,19 @@ proc QueryAtlasSetLHQueryModelInvisible { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetLHQueryModelVisible { } {
     
-    if { [info exists ::QA(annoModelDisplayNodeIDs)] } {
-        if { $::QA(annoModelDisplayNodeIDs) != "" } {
-            set numQmodels [ llength $::QA(annoModelDisplayNodeIDs) ]
-            for { set m 0 } {$m < $numQmodels } { incr m } {
-                set did [ lindex $::QA(annoModelDisplayNodeIDs) $m ]
-                set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-                set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-                if { [ string first "lh." [$node GetName] ] >= 0 } {
-                    set node [ $::slicer3::MRMLScene GetNodeByID $did ]
-                    $node SetVisibility 1
-                }
+    if { [info exists ::QA(annoModelNodeIDs)] } {
+        set numQmodels [ llength $::QA(annoModelNodeIDs) ]
+        for { set m 0 } {$m < $numQmodels } { incr m } {
+            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
+            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
+            set dnode [ $node GetDisplayNode ]
+            if { [ string first "lh." [$node GetName] ] >= 0 } {
+                $dnode SetVisibility 1
+                set ::QA(actor_$mid,visibility) 1                    
             }
         }
     }
 }
-
 
 
 
@@ -1463,17 +1511,15 @@ proc QueryAtlasSetLHQueryModelVisible { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetRHQueryModelInvisible { } {
 
-    if { [info exists ::QA(annoModelDisplayNodeIDs)] } {
-        if { $::QA(annoModelDisplayNodeIDs) != "" } {
-            set numQmodels [ llength $::QA(annoModelDisplayNodeIDs) ]
-            for { set m 0 } {$m < $numQmodels } { incr m } {
-                set did [ lindex $::QA(annoModelDisplayNodeIDs) $m ]
-                set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-                set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-                if { [ string first "rh." [$node GetName] ] >= 0 } {
-                    set node [ $::slicer3::MRMLScene GetNodeByID $did ]
-                    $node SetVisibility 0
-                }
+    if { [info exists ::QA(annoModelNodeIDs)] } {
+        set numQmodels [ llength $::QA(annoModelNodeIDs) ]
+        for { set m 0 } {$m < $numQmodels } { incr m } {
+            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
+            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
+            set dnode [ $node GetDisplayNode ]
+            if { [ string first "rh." [$node GetName] ] >= 0 } {
+                $dnode SetVisibility 0
+                set ::QA(actor_$mid,visibility) 0                    
             }
         }
     }
@@ -1486,17 +1532,15 @@ proc QueryAtlasSetRHQueryModelInvisible { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetRHQueryModelVisible { } {
     
-    if { [info exists ::QA(annoModelDisplayNodeIDs)] } {
-        if { $::QA(annoModelDisplayNodeIDs) != "" } {
-            set numQmodels [ llength $::QA(annoModelDisplayNodeIDs) ]
-            for { set m 0 } {$m < $numQmodels } { incr m } {
-                set did [ lindex $::QA(annoModelDisplayNodeIDs) $m ]
-                set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-                set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-                if { [ string first "rh." [$node GetName] ] >= 0 } {
-                    set node [ $::slicer3::MRMLScene GetNodeByID $did ]
-                    $node SetVisibility 1
-                }
+    if { [info exists ::QA(annoModelNodeIDs)] } {
+        set numQmodels [ llength $::QA(annoModelNodeIDs) ]
+        for { set m 0 } {$m < $numQmodels } { incr m } {
+            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
+            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
+            set dnode [ $node GetDisplayNode ]
+            if { [ string first "rh." [$node GetName] ] >= 0 } {
+                $dnode SetVisibility 1
+                set ::QA(actor_$mid,visibility) 1                    
             }
         }
     }
