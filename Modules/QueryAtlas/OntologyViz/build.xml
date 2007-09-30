@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<project default="main">
+
+<property name="output" location="bin" />
+<property name="prefix" value="birnlexvis" />
+
+<property name="jythondir" location="/usr/local/src/jython2.2" />
+<property name="jythonc" location="${jythondir}/jythonc" />
+<property name="jythonjar" location="${jythondir}/jython.jar" />
+
+<property name="main-module" value="${prefix}" />
+<property name="supportjar" location="${output}/${prefix}-support.jar" />
+<property name="mainjar" location="${output}/${prefix}.jar" />
+<property name="main-jy" location="src/${prefix}.py" />
+
+<path id="extjars">
+<fileset dir="extjars">
+<include name="**/*.jar" />
+</fileset>
+</path>
+
+<property name="extjarsstr" refid="extjars" />
+
+<target name="main" depends="compile, buildjar, compile-jy">
+</target>
+
+<target name="compile">
+<mkdir dir="classes" />
+<javac srcdir="src"
+       debug="on"
+       destdir="classes"
+       classpathref="extjars" />
+</target>
+
+<target name="compile-jy">
+<exec dir="." executable="${jythonc}" failonerror="true">
+  <arg value="-i" />
+  <arg value="--jar" />
+  <arg file="${mainjar}" />
+  <arg file="${main-jy}" />
+  <env key="CLASSPATH" path="${extjarsstr}:${supportjar}"/>
+</exec>
+</target>
+
+<target name="run">
+<input message="args?"
+   addproperty="run-args" />
+
+<java fork="true"
+   classpath="${extjarsstr}:${supportjar}:${mainjar}" 
+   classname="${prefix}">
+   <arg file="${run-args}" />
+</java>
+</target>
+
+<target name="buildjar">
+<jar destfile="${supportjar}" basedir="classes" includes="*.class">
+<manifest>
+  <attribute name="Main-Class" value="birnlexvis.jar" />
+</manifest>
+</jar>
+
+</target>
+
+</project>
