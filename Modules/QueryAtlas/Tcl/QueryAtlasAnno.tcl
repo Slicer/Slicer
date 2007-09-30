@@ -68,8 +68,8 @@ proc QueryAtlasCullOldModelAnnotations { } {
             QueryAtlasCullOldPickModels $id
             
             set indx [ lsearch $::QA(annoModelNodeIDs) $id ]
+            #--- hopefully these two lists have corresponding indices.
             set ::QA(annoModelNodeIDs) [ lreplace $::QA(annoModelNodeIDs) $indx $indx ]
-            set indx [ lsearch $::QA(annoModelDisplayNodeIDs) $id ]
             set ::QA(annoModelDisplayNodeIDs) [ lreplace $::QA(annoModelDisplayNodeIDs) $indx $indx ]
         }
 

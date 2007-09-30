@@ -46,6 +46,7 @@
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLProceduralColorNode.h"
 
 // for path manipulation
 #include "itksys/SystemTools.hxx"
@@ -1672,7 +1673,7 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::UpdateScalarOverlayMenu ( )
 {
-/*
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
   vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
 
   this->QdecScalarSelector->GetWidget()->GetMenu()->DeleteAllItems();
@@ -1681,7 +1682,6 @@ void vtkQueryAtlasGUI::UpdateScalarOverlayMenu ( )
     {
     this->QdecScalarSelector->GetWidget()->GetMenu()->AddRadioButton(qLogic->GetQuestion(i).c_str());
     }
-*/
 }
 
 
@@ -1689,20 +1689,23 @@ void vtkQueryAtlasGUI::UpdateScalarOverlayMenu ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::DisplayScalarOverlay ( )
 {
-/*
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
   vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
   vtkSlicerModelsLogic *mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
   
-    if (strcmp(this->QdecScalarSelector->GetWidget()->GetMenu()->GetValue(), "None") != 0 && qLogic )
+  if ( this->QdecScalarSelector->IsCreated() )
+    {
+    if ( (strcmp(this->QdecScalarSelector->GetWidget()->GetValue(), "None") != 0)  && (qLogic != NULL ) )
       {
-      std::string scalarName = qLogic()->GetQuestionScalarName(this->QdecScalarSelector->GetWidget()->GetMenu()->GetValue());
+      const char *cselection = this->QdecScalarSelector->GetWidget()->GetValue();
+      std::string scalarName = qLogic->GetQuestionScalarName( cselection );
       vtkDebugMacro("Got question scalar name from logic: " << scalarName.c_str());
       // trigger display change on the model
-      if (qLogic()->GetModelNode() != NULL)
+      if (qLogic->GetModelNode() != NULL)
         {
-        vtkDebugMacro("Setting the active scalars on " << qLogic()->GetModelNode()->GetName() << " to " << scalarName.c_str());
-        qLogic()->GetModelNode()->SetActiveScalars(scalarName.c_str(), NULL);
-        qLogic()->GetModelNode()->GetModelDisplayNode()->SetActiveScalarName(scalarName.c_str());
+        vtkDebugMacro("Setting the active scalars on " << qLogic->GetModelNode()->GetName() << " to " << scalarName.c_str());
+        qLogic->GetModelNode()->SetActiveScalars(scalarName.c_str(), NULL);
+        qLogic->GetModelNode()->GetModelDisplayNode()->SetActiveScalarName(scalarName.c_str());
         // the color node has the same name as the scalar array name to facilitate
         // this pairing, find the ID by querying the mrml scene
         std::string colorID = "none";
@@ -1730,10 +1733,10 @@ void vtkQueryAtlasGUI::DisplayScalarOverlay ( )
         if (strcmp(colorID.c_str(), "none") != 0)
           {
           // use this node id
-          if (strcmp(qLogic()->GetModelNode()->GetModelDisplayNode()->GetColorNodeID(), colorID.c_str()) != 0)
+          if (strcmp(qLogic->GetModelNode()->GetModelDisplayNode()->GetColorNodeID(), colorID.c_str()) != 0)
             {
             vtkDebugMacro("Setting the model's display node color node id to " << colorID.c_str());
-            qLogic()->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(colorID.c_str());
+            qLogic->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(colorID.c_str());
             }
           else { vtkDebugMacro("Model's display node color node is already set to " << colorID.c_str()); }
           }
@@ -1747,7 +1750,7 @@ void vtkQueryAtlasGUI::DisplayScalarOverlay ( )
         vtkErrorMacro("Qdec Module Logic has no record of a model node, can't switch scalars");
         }
       }
-*/  
+    }
 }
 
 
@@ -1837,6 +1840,7 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
       AutoWinLevThreshStatisticsVolume ( node );
       }
     this->Script ( "QueryAtlasNodeAddedUpdate" );
+    this->UpdateScalarOverlayMenu();
     }
 
   //--- has a node been deleted?
@@ -1844,6 +1848,7 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
        && (event == vtkMRMLScene::NodeRemovedEvent ) )
     {
     this->Script ( "QueryAtlasNodeRemovedUpdate");
+    this->UpdateScalarOverlayMenu();
     }
   
   //--- is the scene closing?
