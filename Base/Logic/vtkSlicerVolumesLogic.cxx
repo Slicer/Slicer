@@ -462,6 +462,9 @@ void vtkSlicerVolumesLogic::CalculateAutoLevels(vtkImageData *imageData, vtkMRML
   displayNode->SetLevel (bimodal->GetLevel());
   displayNode->SetLowerThreshold (bimodal->GetThreshold());
   displayNode->SetUpperThreshold (bimodal->GetMax());
+
+  accumulate->Delete();
+  bimodal->Delete();
 }
 
 
