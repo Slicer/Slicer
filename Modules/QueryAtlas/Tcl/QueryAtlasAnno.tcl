@@ -564,6 +564,10 @@ proc QueryAtlasCreatePicker { } {
     #--- WJP TRY this piece of InitializePicker...
     set ::QA(propPicker) [vtkPropPicker New]
     set ::QA(cellPicker) [vtkCellPicker New]
+    set ::QA(cellPickerSliceActor) [vtkActor New]
+    set ::QA(cellPickerSliceMapper) [vtkPolyDataMapper New]
+    set ::QA(cellPickerUserMatrix) [vtkMatrix4x4 New]
+    $::QA(cellPickerSliceActor) SetMapper $::QA(cellPickerSliceMapper)
     if { ![info exists ::QA(windowToImage)] } {
         set ::QA(windowToImage) [vtkWindowToImageFilter New]
     }

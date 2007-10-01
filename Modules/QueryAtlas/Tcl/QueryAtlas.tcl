@@ -3,17 +3,20 @@
 #---
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasTearDownPicker { } {
-    
-    if { [ info exists ::QA(propPicker)  ] } {
-        $::QA(propPicker) Delete
-        unset -nocomplain ::QA(propPicker)
+
+  set objects {
+    propPicker cellPicker cellPickerSliceActor 
+    cellPickerSliceMapper cellPickerUserMatrix
+  }
+
+  foreach o $objects {
+    if { [ info exists ::QA($o)  ] } {
+      $::QA($o) Delete
+      unset -nocomplain ::QA($o)
     }
-    
-    if { [ info exists ::QA(cellPicker)  ] } {
-        $::QA(cellPicker) Delete
-        unset -nocomplain ::QA(cellPicker)
-    }
-    
+  }
+
+
     #--- clean out query models
     if { [ info exists ::QA(annoModelNodeIDs) ] } {
         set numQmodels [ llength $::QA(annoModelNodeIDs) ]
@@ -44,7 +47,7 @@ proc QueryAtlasTearDownPicker { } {
 
     #--- clean out query label maps
     if { [ info exists ::QA(annoLabelMapIDs) ] } {
-        set numMapss [ llength $::QA(annoLabelMapIDs) ]
+        set numMaps [ llength $::QA(annoLabelMapIDs) ]
 
         for { set m 0 } { $m < $numMaps } { incr m } {
             set mid [ lindex $::QA(annoLabelMapIDs) ]
@@ -72,7 +75,7 @@ proc QueryAtlasTearDownPicker { } {
     if { [ info exists ::QA(windowToImage)  ] } {
         $::QA(windowToImage) Delete
         unset -nocomplain ::QA(windowToImage)
-    }
+    }   
 }
 
 
@@ -796,11 +799,18 @@ proc QueryAtlasInitializePicker {} {
     # and to identify the slice planes
     # and a pickRenderer and picker to find the actual world space pick point
     # under the mouse for a slice plane
+    # - use a SliceMapper and SliceActor as surrogates for the actual 
+    #   slice which has been changed to an ImageActor that does not work
+    #   with the cell picker
     #
 
     QueryAtlasTearDownPicker
     set ::QA(propPicker) [vtkPropPicker New]
     set ::QA(cellPicker) [vtkCellPicker New]
+    set ::QA(cellPickerSliceActor) [vtkActor New]
+    set ::QA(cellPickerSliceMapper) [vtkPolyDataMapper New]
+    set ::QA(cellPickerUserMatrix) [vtkMatrix4x4 New]
+    $::QA(cellPickerSliceActor) SetMapper $::QA(cellPickerSliceMapper)
 
     #
     # get the polydata for all query models
@@ -1217,6 +1227,7 @@ proc QueryAtlasPickCallback {} {
     if { [$::QA(propPicker) PickProp $x $y $renderer] } {
         set prop [$::QA(propPicker) GetViewProp]
 
+        puts "prop is $prop "
         #--- hit query model display nodes?
         for { set m 0 } { $m < $numQmodels } { incr m } {
             if { $prop == $actor($m) } {
@@ -1251,6 +1262,8 @@ proc QueryAtlasPickCallback {} {
         }
     }
 
+    puts $::QA(currentHit)
+
     #
     # set the 'pointlabels' depending on the thing picked
     #
@@ -1258,7 +1271,6 @@ proc QueryAtlasPickCallback {} {
     set pointLabels ""
     if { $::QA(currentHit) == "QuerySlice" } {
         set node [$::slicer3::MRMLScene GetNodeByID $mrmlID]
-        puts "did= [ $node GetID] "
         #--- get the corresponding model display node
         set numMnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode"]
         for { set zz 0 } { $zz < $numMnodes } { incr zz } {
@@ -1266,7 +1278,6 @@ proc QueryAtlasPickCallback {} {
             set testdisplayID [ $testnode GetDisplayNodeID ]
             if { $testdisplayID == $mrmlID } {
                 set node $testnode
-                puts "nid = [ $node GetID] "
             }
         }
 
@@ -1277,16 +1288,23 @@ proc QueryAtlasPickCallback {} {
             set propCollection [$::QA(cellPicker) GetPickList]
             $propCollection RemoveAllItems
             
-            $propCollection AddItem [$::QA(propPicker) GetViewProp]
-            puts "id = [$viewer GetIDByActor [$::QA(propPicker) GetViewProp]]"
+            $::QA(cellPickerUserMatrix) Identity
+            set tNode [$node GetParentTransformNode]
+            if { $tNode != "" && [$tNode IsLinear] } {
+              # TODO: this may be needed again depending on the final 
+              # configuration of the vtkSlicerSliceLogic and how 
+              # it handles slice model geometry
+              #$tNode GetMatrixTransformToWorld $::QA(cellPickerUserMatrix)
+            }
+            $::QA(cellPickerSliceActor) SetUserMatrix $::QA(cellPickerUserMatrix)
+            $::QA(cellPickerSliceMapper) SetInput [$node GetPolyData]
+            $propCollection AddItem $::QA(cellPickerSliceActor)
             $::QA(cellPicker) PickFromListOn
             $::QA(cellPicker) Pick $x $y 0 $renderer
             set cellID [$::QA(cellPicker) GetCellId]
             set pCoords [$::QA(cellPicker) GetPCoords]
-            puts "x=$x y=$y cellID = $cellID"
-            puts "pcoords = $pCoords"
             if { $cellID != -1 } {
-                set polyData [[$prop GetMapper] GetInput]
+                set polyData [$::QA(cellPickerSliceMapper) GetInput]
                 set cell [$polyData GetCell $cellID]
                 
                 #--- this gets the RAS point we're pointing to.
@@ -1294,25 +1312,29 @@ proc QueryAtlasPickCallback {} {
                 set ::QA(CurrentRASPoint) $rasPoint
 
                 set labelID [$nodes(compositeNode) GetLabelVolumeID]
-                set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
-                set rasToIJK [vtkMatrix4x4 New]
-                $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
-                set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
-                set imageData [$nodes(labelNode) GetImageData]
-                foreach var {i j k} val $ijk {
-                    set $var [expr int(round($val))]
-                }
-                set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
-                if { [info exists ::QAFS($labelValue,name)] } {
-                    if { $::QAFS($labelValue,name) == "Unknown" } {
-                        set ::QA(currentHit) "QueryModel"
-                    } else {
-                        set pointLabels "$::QAFS($labelValue,name)"
-                    }
+                if { $labelID == "" } {
+                  set pointLabels "No Label Layer"
                 } else {
-                    set pointLabels "label: $labelValue (no name available), ijk $ijk"
+                  set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
+                  set rasToIJK [vtkMatrix4x4 New]
+                  $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
+                  set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
+                  set imageData [$nodes(labelNode) GetImageData]
+                  foreach var {i j k} val $ijk {
+                      set $var [expr int(round($val))]
+                  }
+                  set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
+                  if { [info exists ::QAFS($labelValue,name)] } {
+                      if { $::QAFS($labelValue,name) == "Unknown" } {
+                          set ::QA(currentHit) "QueryModel"
+                      } else {
+                          set pointLabels "$::QAFS($labelValue,name)"
+                      }
+                  } else {
+                      set pointLabels "label: $labelValue (no name available), ijk $ijk"
+                  }
+                  $rasToIJK Delete
                 }
-                $rasToIJK Delete
             }
         }
     }
