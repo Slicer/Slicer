@@ -281,20 +281,22 @@ if { $::GETBUILDTEST(test-type) != "Continuous" } {
 
 
 # svn checkout of SIGN
-cd $::SLICER_HOME/Libs
-if { [file exists SIGN] } {
-  cd SIGN
-  runcmd echo t | svn --username ivs --password ivs switch $::SIGN_TAG
-} else {
-  runcmd echo t | svn --username ivs --password ivs checkout $::SIGN_TAG SIGN
-}
+if { $::USE_SIGN } {
+  cd $::SLICER_HOME/Libs
+  if { [file exists SIGN] } {
+    cd SIGN
+    runcmd echo t | svn --username ivs --password ivs switch $::SIGN_TAG
+  } else {
+    runcmd echo t | svn --username ivs --password ivs checkout $::SIGN_TAG SIGN
+  }
 
-cd $::SLICER_HOME/Applications
-if { [file exists SIGN] } {
-  cd SIGN
-  runcmd echo t | svn --username ivs --password ivs switch $::SIGN_APP_TAG
-} else {
-  runcmd echo t | svn --username ivs --password ivs checkout $::SIGN_APP_TAG SIGN
+  cd $::SLICER_HOME/Applications
+  if { [file exists SIGN] } {
+    cd SIGN
+    runcmd echo t | svn --username ivs --password ivs switch $::SIGN_APP_TAG
+  } else {
+    runcmd echo t | svn --username ivs --password ivs checkout $::SIGN_APP_TAG SIGN
+  }
 }
 
 

@@ -95,6 +95,7 @@ set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/trunk"
 set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
 set ::BatchMake_TAG "HEAD"
 set ::SLICERLIBCURL_TAG "HEAD"
+set ::USE_SIGN 0
 
 
 # Set library, binary, etc. paths...

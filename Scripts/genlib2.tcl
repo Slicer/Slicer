@@ -899,7 +899,7 @@ if { 0 && ![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update) } {
 #
 #
 
-if { ![file exists $::dcmtk_TEST_FILE] || $::GENLIB(update) } {
+if { $::USE_SIGN && (![file exists $::dcmtk_TEST_FILE] || $::GENLIB(update)) } {
     cd $SLICER_LIB
 
     runcmd echo t | $::SVN --username ivs --password ivs co https://ariser.uio.no/svn/sign/trunk/libs/dcmtk-3.5.4 dcmtk
