@@ -366,7 +366,7 @@ if { !$isDarwin  && (![file exists $::BLT_TEST_FILE] || $::GENLIB(update)) } {
 # Get and build python
 #
 
-if { ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
+if { 0 && ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
 
     file mkdir $SLICER_LIB/python
     file mkdir $SLICER_LIB/python-build
