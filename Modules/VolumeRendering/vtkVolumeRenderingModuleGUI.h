@@ -24,6 +24,7 @@
 #include "vtkKWLabel.h"
 #include "vtkKWHistogram.h"
 #include "vtkKWEntryWithLabel.h"
+#include <string>
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI
 {
@@ -150,6 +151,7 @@ protected:
   void InitializePipelineFromMRMLScene();
   void InitializePipelineFromSlicer();
   void InitializePipelineFromImageData();
+  void ShutdownPipeline();
   void Rendering(void);
   void  CheckAbort(void);
 
@@ -160,7 +162,12 @@ protected:
   vtkKWPushButton *PB_LoadVolumeRenderingDataSlicer;
   vtkKWPushButton *PB_CreateNewVolumeRenderingNode;
   vtkSlicerNodeSelectorWidget *NS_ImageData;
-  vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataSlicer;
+  //BTX
+  std::string PreviousNS_ImageData;
+  std::string PreviousNS_VolumeRenderingSlicer;
+  std::string PreviousNS_VolumeRenderingDataScene;
+  //ETX
+ vtkKWMenuButtonWithSpinButtonsWithLabel *NS_VolumeRenderingDataSlicer;
   vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataScene;
   vtkKWEntryWithLabel *EWL_CreateNewVolumeRenderingNode;
 
