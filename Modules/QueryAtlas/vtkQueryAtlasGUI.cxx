@@ -1407,6 +1407,11 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           this->Script ( "QueryAtlasSetAnnotationTermSet UMLS" );
           }
+        else if (!strcmp( val, "IBVD" ) )
+          {
+          this->Script ( "QueryAtlasSetAnnotationTermSet IBVD" );
+          }
+
         }
       }
     if ( this->QdecScalarSelector )
@@ -2246,6 +2251,7 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("local identifier");
     this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("BIRNLex String");
     this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("NeuroNames String");
+    this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("IBVD");
     this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("UMLS CID");
     this->AnnotationTermSetMenuButton->GetMenu()->AddSeparator();
     this->AnnotationTermSetMenuButton->GetMenu()->AddCommand ( "close" );    

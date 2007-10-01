@@ -221,16 +221,6 @@ proc QueryAtlasAddEntryTermToSavedTerms { terms } {
 
 }
 
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasWebQuoteSearchTerms { terms } {
-
-    set terms "%22$terms%22"
-    return $terms
-
-}
-
 
 #----------------------------------------------------------------------------------------------------
 #---
@@ -242,10 +232,59 @@ proc QueryAtlasQueryBrainInfo { url } {
 }
 
 
+
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasQuery { site } {
+proc QueryAtlasEncodeURL { url } {
+
+    regsub -all "/" $terms "+" terms
+    regsub -all -- "-" $terms "+" terms
+    regsub -all "ctx" $terms "cortex" terms
+    regsub -all "rh" $terms "right+hemisphere" terms
+    regsub -all "lh" $terms "left+hemisphere" terms
+    
+    #--- take care of any unsafe % first.
+    regsub -all "%" $url "%25" url
+    
+    #--- reserved characters...
+    #regsub -all "$" $url "%24" url
+    regsub -all "&" $url "%26" url
+    regsub -all "+" $url "%2B" url
+    regsub -all "," $url "%2C" url
+    regsub -all "/" $url "%2F" url
+    regsub -all ":" $url "%3A" url
+    regsub -all ";" $url "%3B" url
+    #regsub -all "=" $url "%3D" url
+    regsub -all "?" $url "%3F" url
+    regsub -all "@" $url "%40" url
+    
+    #--- unsafe characters...
+    regsub -all " " $url "%20" url
+    regsub -all "\"" $url "%22" url
+    regsub -all ">" $url "%3E" url    
+    regsub -all "<" $url "%3C" url    
+    regsub -all "#" $url "%23" url    
+    regsub -all "{" $url "%7B" url    
+    regsub -all "}" $url "%7D" url    
+    regsub -all "|" $url "%7C" url    
+    regsub -all "\\" $url "5C" url    
+    regsub -all "^" $url "%5E" url    
+    regsub -all "~" $url "%7E" url    
+    regsub -all "[" $url "%5B" url    
+    regsub -all "]" $url "%5D" url    
+    regsub -all "`" $url "%60" url
+
+    return $url
+
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasContextQuery { site } {
 
     if { $::QA(lastLabels) == "background" || $::QA(lastLabels) == "Unknown" } {
         set terms ""
@@ -261,43 +300,55 @@ proc QueryAtlasQuery { site } {
 
     switch $site {
         "google" {
-            QueryAtlasOpenLink "http://www.google.com/search?q=$terms" 
+            set url "http://www.google.com/search?q=$terms"
+            set url [ QueryAtlasEncodeURL $url ]
+            QueryAtlasOpenLink $url
         }
         "wikipedia" {
-            QueryAtlasOpenLink "http://www.google.com/search?q=$terms+site:en.wikipedia.org"
+            set url "http://www.google.com/search?q=$terms+site:en.wikipedia.org"
+            set url [ QueryAtlasEncodeURL $url ]
+            QueryAtlasOpenLink $url
         }
         "pubmed" {
-            QueryAtlasOpenLink "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&db=PubMed&term=$terms"
+            set url "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&db=PubMed&term=$terms"
+            set url [ QueryAtlasEncodeURL $url ]
+            QueryAtlasOpenLink $url
         }
         "jneurosci" {
-            QueryAtlasOpenLink "http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$terms"
+            set url "http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$terms"
+            set url [ QueryAtlasEncodeURL $url ]
+            QueryAtlasOpenLink $url
         }
         "braininfo" {
             set url [ QueryAtlasGetBrainInfoURI $::QA(lastLabels) ]
             QueryAtlasQueryBrainInfo $url
         }
         "ibvd form" {
-            regsub -all "Left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
-            regsub -all "left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
-            regsub -all "Right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
-            regsub -all "right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
-            regsub -all "\\+" $terms "," commaterms
-            set terms "human,normal,$commaterms"
+            set anatomy [ QueryAtlasMapTerm $::QA(lastLabels) $::QA(annotationTermSet) "IBVD" ]
+            set terms "human,normal,$anatomy"
             set url http://www.cma.mgh.harvard.edu/ibvd/search.php?f_submission=true&f_free=$commaterms
             QueryAtlasOpenLink $url
         }
         "ibvd: howbig?" {
-            regsub -all "Left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
-            regsub -all "left\+" $terms "" terms ;# TODO ivbd has a different way of handling side
-            regsub -all "Right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
-            regsub -all "right\+" $terms "" terms ;# TODO ivbd has a different way of handling side
-            regsub -all "\\+" $terms "," commaterms
+            puts "$::QA(lastLabels)"
+            if { $::QA(annotationTermSet) == "BIRNLex" } {
+                set terms [ QueryAtlasMapTerm $::QA(lastLabels) "BIRN_String" "IBVD" ]
+            } elseif { $::QA(annotationTermSet) == "NeuroNames" } {
+                set terms [ QueryAtlasMapTerm $::QA(lastLabels) "NN_String" "IBVD" ]
+            } elseif { $::QA(annotationTermSet) == "UMLS" } {
+                set terms [ QueryAtlasMapTerm $::QA(lastLabels) "UMLS_CID" "IBVD" ]
+            } elseif { $::QA(annotationTermSet) == "local" } {
+                set terms [ QueryAtlasMapTerm $::QA(lastLabels) "FreeSurfer" "IBVD" ]                
+            } elseif { $::QA(annotationTermSet) == "IBVD" } {
+                set terms [ QueryAtlasMapTerm $::QA(lastLabels) "IBVD" "IBVD" ]                
+            } else {
+                set terms ""
+            }
+            puts "$::QA(lastLabels)"
+            puts "$terms"
             #--- set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms&diagnosis=$dterms
             set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms
             QueryAtlasOpenLink $url
-        }
-        "metasearch" {
-            QueryAtlasOpenLink "https://loci.ucsd.edu/qametasearch/query.do?query=$terms"
         }
     }
 }
@@ -321,7 +372,6 @@ proc QueryAtlasGetStructureTerms { } {
         #--- if term is selected for use:
         if { [ $ww IsRowSelected $i ] } {
             set term [ $ww GetCellText $i 0 ]
-            regsub -all -- "\"" $term "%22" term            
             append terms $term
             append terms "+"
         }
@@ -491,7 +541,6 @@ proc QueryAtlasFormURLForGoogle { } {
     }
     set terms [ string trimright $terms "+" ]
 
-    puts "$terms"
     set ::QA(url,Google) ""
     #--- now terms contains all categories user chose
     if { $terms != "" } {
@@ -499,6 +548,7 @@ proc QueryAtlasFormURLForGoogle { } {
         set url "http://www.google.com/search?hl-en&q="
         append url $terms
         append url "&btnG=Google+Search"
+        set url [ QueryAtlasEncodeURL $url ]
         set ::QA(url,Google) $url
         puts "$::QA(url,Google)"
     }

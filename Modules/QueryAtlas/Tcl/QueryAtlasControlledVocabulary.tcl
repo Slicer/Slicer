@@ -33,6 +33,7 @@ proc QueryAtlasValidSystemCheck { termSet } {
         NN_id
         NN_String
         NN_string
+        IBVD
         UMLS_CID
         umls_cid }
 
@@ -231,8 +232,8 @@ proc QueryAtlasGetBrainInfoURI { term } {
         }
     }
 
-    #--- well, nothing in the table.
-    return ""
+    #--- well, nothing in the table. Return top search page.
+    return "http://braininfo.rprc.washington.edu/indexsearchby.html"
 
 }
 

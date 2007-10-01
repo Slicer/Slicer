@@ -1603,6 +1603,8 @@ proc QueryAtlasTranslateLabel  { label } {
     } elseif { $::QA(annotationTermSet) == "UMLS" } {
         #set newlabel [ QueryAtlasVocabularyMapper $label "FreeSurfer" "UMLS_CID" ]
         set newlabel [ QueryAtlasMapTerm $label "FreeSurfer" "UMLS_CID" ]
+    } elseif { $::QA(annotationTermSet) == "IBVD" } {
+        set newlabel [ QueryAtlasMapTerm $label "FreeSurfer" "IBVD" ]        
     } else {
         #--- assume to go local to local
         #set newlabel [ QueryAtlasVocabularyMapper $label "FreeSurfer" "FreeSurfer" ]
@@ -1699,14 +1701,13 @@ proc QueryAtlasMenuCreate { state } {
           $qaMenu insert end command -label "Add to search terms" -command "QueryAtlasAddToSavedTerms"
           $qaMenu insert end command -label $::QA(lastLabels) -command ""
           $qaMenu insert end separator
-          $qaMenu insert end command -label "Google..." -command "QueryAtlasQuery google"
-          $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasQuery wikipedia"
-          $qaMenu insert end command -label "PubMed..." -command "QueryAtlasQuery pubmed"
-          $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasQuery jneurosci"
-          $qaMenu insert end command -label "IBVD form..." -command "QueryAtlasQuery \"ibvd form\""
-          $qaMenu insert end command -label "IBVD howbig?..." -command "QueryAtlasQuery \"ibvd: howbig?\""
-          $qaMenu insert end command -label "BrainInfo..." -command "QueryAtlasQuery braininfo"
-          $qaMenu insert end command -label "MetaSearch..." -command "QueryAtlasQuery metasearch"
+          $qaMenu insert end command -label "Google..." -command "QueryAtlasContextQuery google"
+          $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasContextQuery wikipedia"
+          $qaMenu insert end command -label "PubMed..." -command "QueryAtlasContextQuery pubmed"
+          $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasContextQuery jneurosci"
+          $qaMenu insert end command -label "IBVD form..." -command "QueryAtlasContextQuery \"ibvd form\""
+          $qaMenu insert end command -label "IBVD howbig?..." -command "QueryAtlasContextQuery \"ibvd: howbig?\""
+          $qaMenu insert end command -label "BrainInfo..." -command "QueryAtlasContextQuery braininfo"
         }
         
         foreach {x y} $::QA(lastRootXY) {}
