@@ -376,7 +376,11 @@ proc XcedeCatalogImportEntryVolume {node} {
     }
     
 
-    [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveVolumeID [$volumeNode GetID]
+    if { $labelmap } {
+      [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveLabelVolumeID [$volumeNode GetID]
+    } else {
+      [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveVolumeID [$volumeNode GetID]
+    }
     [$::slicer3::VolumesGUI GetApplicationLogic] PropagateVolumeSelection
 
 }
