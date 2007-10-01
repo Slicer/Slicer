@@ -1221,13 +1221,13 @@ proc QueryAtlasPickCallback {} {
 
     #
     # use the prop picker to see if we're over the model, or the slices
-    # - set the 'hit' variable accordingly for later processing
+    # - set the 'currentHit' variable accordingly for later processing
     #
     set ::QA(currentHit) ""
     if { [$::QA(propPicker) PickProp $x $y $renderer] } {
         set prop [$::QA(propPicker) GetViewProp]
 
-        puts "prop is $prop "
+
         #--- hit query model display nodes?
         for { set m 0 } { $m < $numQmodels } { incr m } {
             if { $prop == $actor($m) } {
@@ -1236,7 +1236,6 @@ proc QueryAtlasPickCallback {} {
                 set mid [ lindex $::QA(annoModelNodeIDs) $m ]
                 set _useLabels $::QA(labelMap_$mid)
                 set _useMID $mid
-                puts "picked model $mid"
             }
         }
 
@@ -1255,14 +1254,11 @@ proc QueryAtlasPickCallback {} {
                 }
                 #--- hit slice models?
                 if { $::QA(currentHit) == "" } {
-                    puts "picked slice $mrmlID"
                     set ::QA(currentHit) "QuerySlice"
                 }
             } 
         }
     }
-
-    puts $::QA(currentHit)
 
     #
     # set the 'pointlabels' depending on the thing picked
@@ -1326,7 +1322,7 @@ proc QueryAtlasPickCallback {} {
                   set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
                   if { [info exists ::QAFS($labelValue,name)] } {
                       if { $::QAFS($labelValue,name) == "Unknown" } {
-                          set ::QA(currentHit) "QueryModel"
+                          set pointLabels "No Label"
                       } else {
                           set pointLabels "$::QAFS($labelValue,name)"
                       }

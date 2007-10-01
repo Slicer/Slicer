@@ -1011,10 +1011,12 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
     vtkPolyData *polyData = modelDisplayNode->GetPolyData();
     if ( polyData )
       {
+#ifdef USE_IMAGE_ACTOR
       if ( polyData->GetNumberOfCells() == 1 )
         {
         prop = vtkImageActor::New();
         }
+#endif
       }
     if ( !prop )
       {
@@ -1545,7 +1547,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
           if (actor->GetTexture() == NULL)
             {
             vtkTexture *texture = vtkTexture::New();
-            texture->SetInterpolate(1);
+            texture->SetInterpolate(0);
             actor->SetTexture(texture);
             texture->Delete();
             }

@@ -336,8 +336,26 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     unsigned int *dims = this->SliceNode->GetDimensions();
     vtkMatrix4x4 *xyToRAS = this->SliceNode->GetXYToRAS();
 
+
+#ifdef USE_IMAGE_ACTOR
     // set the transform for the slice model for use by an image actor in the viewer
     this->SliceModelTransformNode->GetMatrixTransformToParent()->DeepCopy( xyToRAS );
+
+    // set the plane corner point for use in a model (deprecated)
+    // TODO: remove this block
+    double pt[3]={0,0,0};
+    points->SetPoint(0, pt);
+    pt[0] = dims[0];
+    points->SetPoint(1, pt);
+    pt[0] = 0;
+    pt[1] = dims[1];
+    points->SetPoint(2, pt);
+    pt[0] = dims[0];
+    pt[1] = dims[1];
+    points->SetPoint(3, pt);
+#else
+    // set the transform for the slice model for use by an image actor in the viewer
+    this->SliceModelTransformNode->GetMatrixTransformToParent()->Identity();
 
     // set the plane corner point for use in a model (deprecated)
     // TODO: remove this block
@@ -361,6 +379,7 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     inPt[1] = dims[1];
     xyToRAS->MultiplyPoint(inPt, outPt);
     points->SetPoint(3, outPt3);
+#endif
 
     this->UpdateImageData();
     this->SliceModelNode->GetPolyData()->Modified();
