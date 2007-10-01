@@ -146,9 +146,10 @@ protected:
   int VolumeSelected;
   int VolumeRenderingNodeSelected;
   int PipelineInitialized;//0=no,1=Yes
-  void InitializePipeline();
+  void InitializePipelineNewCurrentNode();
   void InitializePipelineFromMRMLScene();
   void InitializePipelineFromSlicer();
+  void InitializePipelineFromImageData();
   void Rendering(void);
   void  CheckAbort(void);
 
@@ -156,15 +157,12 @@ protected:
 
   //Frame Save/Load
   vtkKWPushButton *PB_Testing;
-  vtkKWPushButton *PB_LoadImageData;
   vtkKWPushButton *PB_LoadVolumeRenderingDataSlicer;
-  vtkKWPushButton *PB_LoadVolumeRenderingDataScene;
-  vtkKWPushButton *PB_SaveCurrentAsNew;
+  vtkKWPushButton *PB_CreateNewVolumeRenderingNode;
   vtkSlicerNodeSelectorWidget *NS_ImageData;
   vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataSlicer;
   vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataScene;
-  vtkKWEntryWithLabel *EWL_NameSaveCurrentAsNew;
-  vtkKWLabel *L_Status;
+  vtkKWEntryWithLabel *EWL_CreateNewVolumeRenderingNode;
 
   //Frame Details
   vtkSlicerVolumePropertyWidget *SVP_VolumeProperty;
@@ -175,7 +173,6 @@ protected:
   //Other members
   vtkMRMLVolumeRenderingNode  *currentNode;
   vtkMRMLScene *presets;
-  vtkMRMLScalarVolumeNode *selected;
 
   //Rendering pipeline
   vtkVolume *volume;

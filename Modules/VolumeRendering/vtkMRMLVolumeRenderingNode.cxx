@@ -35,8 +35,9 @@ vtkMRMLNode* vtkMRMLVolumeRenderingNode::CreateNodeInstance(void)
 vtkMRMLVolumeRenderingNode::vtkMRMLVolumeRenderingNode(void)
 {   
     Buffer=NULL;
-    this->DebugOn();
+    this->DebugOff();
     this->VolumeProperty=vtkVolumeProperty::New();
+    this->References=new vtksys_stl::vector<const char*>; 
     //this->VolumeProperty->SetGradientOpacity(vtkPiecewiseFunction::New());
     //this->VolumeProperty->SetScalarOpacity(vtkPiecewiseFunction::New());
     //this->VolumeProperty->SetColor(vtkColorTransferFunction::New());
@@ -410,21 +411,42 @@ void vtkMRMLVolumeRenderingNode::GetColorTransferFunction(const char* string, vt
 
 void vtkMRMLVolumeRenderingNode::SetOpacityOfLabel(int index, double opacity)
 {
+        vtkErrorMacro("Not yet implemented");
 }
 double vtkMRMLVolumeRenderingNode::GetOpacityOfLabel(int index)
 {
+        vtkErrorMacro("Not yet implemented");
     return .0;
 }
 
 void vtkMRMLVolumeRenderingNode::AddReference(const char *id)
 {
+    //test if we already have a reference
+    if(this->HasReference(id))
+    {
+        return;
+    }
+    else 
+    {
+        this->References->push_back(id);
+    }
+
 }
 bool vtkMRMLVolumeRenderingNode::HasReference(const char *id)
 {
+    //loop over vector and comparing
+    for(unsigned int i=0;i<this->References->size();i++)
+    {
+        if(!strcmp(this->References->at(i),id));
+        {
+            return true;
+        }
+    }
     return false;
 }
 void vtkMRMLVolumeRenderingNode::RemoveReference(const char *id)
 {
-}
+    vtkErrorMacro("Not yet implemented");
 
+}
 

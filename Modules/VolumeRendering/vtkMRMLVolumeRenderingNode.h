@@ -57,6 +57,9 @@ public:
     void AddReference(const char *id);
     bool HasReference(const char *id);
     void RemoveReference(const char *id);
+    
+    //Maybe later
+    //void SetAutoValuesFromImageData(vtkImageData *data);
 
 
 
