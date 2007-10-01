@@ -196,6 +196,55 @@ int vtkQdecModuleLogic::LoadProjectFile(const char *fileName, const char *tempDi
     else
       {
       vtkErrorMacro("LoadProjectFile: error creating the qdec project glm design from file " << fileName);
+      if (err == -1)
+        {
+        vtkErrorMacro("LoadProjectFile: could not remove existing temp dir " << tempDir);
+        }
+      if (err == -2)
+        {
+        vtkErrorMacro("LoadProjectFile: couldn't expand project file " << fileName);
+        }
+      if (err == -3)
+        {
+        vtkErrorMacro("LoadProjectFile: couldn't find version file Version.txt");
+        }
+      if (err == -4)
+        {
+        vtkErrorMacro("LoadProjectFile: version file had wrong value");
+        }
+      if (err == -5)
+        {
+        vtkErrorMacro("LoadProjectFile: couldn't open meta data file " << this->QDECProject->GetMetadataFileName());
+        }
+      if (err == -6)
+        {
+        vtkErrorMacro("LoadProjectFile: invalid metadata file, token not found");
+        }
+      if (err == -7)
+        {
+        vtkErrorMacro("LoadProjectFile: invalid meta data file, Subject value not found");
+        }
+      if (err == -8)
+        {
+        vtkErrorMacro("LoadProjectFile: invalid meta data file, Hemisphere value not found");
+        }
+      if (err == -9)
+        {
+        vtkErrorMacro("LoadProjectFile: invalid meta data file, AnalysisName value not found");
+        }
+      if (err == -10)
+        {
+        vtkErrorMacro("LoadProjectFile: invalid meta data file, DataTable value not found");
+        }
+      if (err == -11)
+        {
+        vtkErrorMacro("LoadProjectFile: invalid meta data file, Measure value not found");
+        }
+      if (err == -12)
+        {
+        vtkErrorMacro("LoadProjectFile: invalid meta data file, Smoothness value not found");
+        }
+
       return -1;
       }
     }
