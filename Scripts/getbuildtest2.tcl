@@ -300,7 +300,7 @@ if { [file exists SIGN] } {
 
 if { $::GETBUILDTEST(doxy) } {
     # just run doxygen and exit
-    puts "Creating documenation files in $::env(SLICER_DOC)"
+    puts "Creating documentation files in $::env(SLICER_DOC)"
     set cmd "doxygen $::SLICER_HOME/Doxyfile"
     eval runcmd $cmd
     return
