@@ -244,7 +244,46 @@ int vtkQdecModuleLogic::LoadProjectFile(const char *fileName, const char *tempDi
         {
         vtkErrorMacro("LoadProjectFile: invalid meta data file, Smoothness value not found");
         }
-
+      if (err == -13)
+        {
+        vtkErrorMacro("LoadProjectFile: error loading the data table file");
+        }
+      if (err == -14)
+        {
+        vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: bad first discrete factor");
+        }
+      if (err == -15)
+        {
+        vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: bad second discrete factor");
+        }
+      if (err == -16)
+        {
+        vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: bad first continuous factor");
+        }
+      if (err == -17)
+        {
+        vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: bad second continuous factor");
+        }
+      if (err == -18)
+        {
+        vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: zero factors!");
+        }
+      if (err == -19)
+        {
+        vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: could not create working directory");
+        }
+      if (err == -20)
+        {
+        vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: working director not set, cannot save fsgd file");
+        }
+      if (err == -21)
+        {
+        vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: could not generate contrasts");
+        }
+      if (err == -22)
+        {
+        vtkErrorMacro("LoadProjectFile: error creating results from cached data");
+        }
       return -1;
       }
     }

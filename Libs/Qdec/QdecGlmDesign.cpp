@@ -210,7 +210,7 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
     if( NULL == qf )
     {
       fprintf( stderr,"ERROR: QdecGlmDesign::Create: bad second discrete factor!\n" );
-      return -1;
+      return -2;
     }
     assert( qf->IsDiscrete() );
     this->mDiscreteFactors.push_back( qf );
@@ -222,7 +222,7 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
     if( NULL == qf )
     {
       fprintf( stderr,"ERROR: QdecGlmDesign::Create: bad first continuous factor %s\n", isFirstContinuousFactor );
-      return -1;
+      return -3;
     }
     assert( qf->IsContinuous() );
     this->mContinuousFactors.push_back( qf );
@@ -234,7 +234,7 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
     if( NULL == qf )
     {
       fprintf( stderr,"ERROR: QdecGlmDesign::Create: bad second continuous factor %s\n", isSecondContinuousFactor);
-      return -1;
+      return -4;
     }
     assert( qf->IsContinuous() );
     this->mContinuousFactors.push_back( qf );
@@ -242,7 +242,7 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
   if ( 0 == (this->mDiscreteFactors.size() + this->mContinuousFactors.size()) )
   {
     fprintf( stderr,"ERROR: QdecGlmDesign::Create: zero factors!\n" );
-    return -1;
+    return -5;
   }
 
   // Create the fsgd and contrast files, writing these to the working dir
@@ -265,14 +265,14 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
       fprintf( stderr,
                "ERROR: QdecGlmDesign::Create: could not create directory %s\n",
                this->mfnWorkingDir.c_str());
-      return(-2);
+      return(-6);
       }
     }
   else
     {
     fprintf(stderr,
             "ERROR: QdecGlmDesign::Create: working directory not set, cannot save fsgd file\n");
-    return (-2);
+    return (-7);
     }
   
   if( this->mProgressUpdateGUI )
@@ -285,7 +285,7 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
   {
     fprintf( stderr,
              "ERROR: QdecGlmDesign::Create: could not generate contrasts\n");
-    return(-4);
+    return(-8);
   }
   
   this->mbValid = true; // success

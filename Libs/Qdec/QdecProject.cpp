@@ -235,7 +235,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   int errorCode;
   errorCode = this->LoadDataTable( fnDataTable.c_str() );
   if( errorCode )
-    return errorCode;
+    return -13;
 
   // Set the subjects dir to the data dir, so that we can find the
   // subject.
@@ -262,13 +262,15 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
                                smoothness,
                                NULL );
   if( errorCode )
-    return errorCode;
+    {
+    return -13 + errorCode; // goes to -21
+    }
   
   // Create fit results data.
   errorCode = 
     mGlmFitter->CreateResultsFromCachedData ( this->mGlmDesign );
   if( errorCode )
-    return errorCode;
+    return -22;
 
   return 0;
 }
