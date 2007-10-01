@@ -138,7 +138,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   if( 0 != rSystem ) {
     fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Couldn't "
              "expand project file (cmd=%s)\n", sCommand.c_str() );
-    return -1;
+    return -2;
   }
 
   // Look for and check the version file.
@@ -147,7 +147,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   if( !fVersion || fVersion.bad() ) {
     fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Couldn't "
              "find Version file\n" );
-    return -1;
+    return -3;
   }
   int version;
   fVersion >> version;
@@ -155,7 +155,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   if( 1 != version ) {
     fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Version "
              "file had wrong value (%d)\n", version );
-    return -1;
+    return -4;
   }
   
   // Parse the meta data file.
@@ -164,7 +164,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   if( !fMetadata || fMetadata.bad() ) {
     fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Couldn't "
              "open metadata file %s\n", fnMetadata.c_str() );
-    return -1;
+    return -5;
   }
   // Make sure the first token is QdecProjectMetadata, and then the
   // next line is Version 1.
@@ -176,7 +176,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
       fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "metadata file %s, %s token not found\n", 
                fnMetadata.c_str(), asCorrectTokens[nToken].c_str() );
-      return -1;
+      return -6;
     }
   }
   // Now we parse the file and look for names and values.
@@ -201,32 +201,32 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   if( sSubject == "" ) {
       fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, Subject value not found\n" );
-      return -1;
+      return -7;
   }
   if( sHemisphere == "" ) {
       fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, Hemisphere value not found\n" );
-      return -1;
+      return -8;
   }
   if( sAnalysisName == "" ) {
       fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, AnalysisName value not found\n" );
-      return -1;
+      return -9;
   }
   if( fnDataTableBase == "" ) {
       fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, DataTable value not found\n" );
-      return -1;
+      return -10;
   }
   if( sMeasure == "" ) {
       fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, Measure value not found\n" );
-      return -1;
+      return -11;
   }
   if( -1 == smoothness ) {
       fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, Smoothness value not found\n" );
-      return -1;
+      return -12;
   }
   
   // Load our data table. Note that this might set the subjects dir,
