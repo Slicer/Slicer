@@ -908,25 +908,11 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->SelectAllAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentSelectedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->SaveAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->LoadURIsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAccumulatedResultButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllAccumulatedResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteCurrentResultButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllCurrentResultsButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->CurrentResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  //  this->AccumulatedResultsList->GetWidget()->RemoveObservers(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 #endif
-  
-/*
- //--MRML
-  if (this->MRMLScene)
-      {
-        this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->GUICallbackCommand);
-        this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->GUICallbackCommand);
-        this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GUICallbackCommand);
-      }
-*/
 
 }
 
@@ -990,35 +976,11 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->SelectAllAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveCurrentSelectedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->SaveAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->LoadURIsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAccumulatedResultButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllAccumulatedResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteCurrentResultButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->DeleteAllCurrentResultsButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-//  this->CurrentResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  //  this->AccumulatedResultsList->GetWidget()->AddObserver(vtkKWListBox::ListBoxSelectionChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 #endif
-  
-
-/*
- //--MRML
-  if (this->MRMLScene)
-      {
-      if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->GUICallbackCommand) != 1)
-        {
-        this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->GUICallbackCommand);
-        }
-      if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->GUICallbackCommand) != 1)
-        {
-        this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->GUICallbackCommand);
-        }
-      if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GUICallbackCommand) != 1)
-        {
-        this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->GUICallbackCommand);
-        }
-      }
-*/
 }
 
 
@@ -1674,13 +1636,23 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
 void vtkQueryAtlasGUI::UpdateScalarOverlayMenu ( )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
-  vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
-
-  this->QdecScalarSelector->GetWidget()->GetMenu()->DeleteAllItems();
-  int numQuestions = qLogic->GetNumberOfQuestions();
-  for ( int i=0; i<numQuestions; i++ )
+  vtkQdecModuleLogic *qLogic;
+  if ( app )
     {
-    this->QdecScalarSelector->GetWidget()->GetMenu()->AddRadioButton(qLogic->GetQuestion(i).c_str());
+    if ( vtkQdecModuleGUI::SafeDownCast ( app->GetModuleGUIByName("QdecModule")) != NULL )
+      {
+      qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
+      }
+
+    if ( (this->QdecScalarSelector != NULL) && (qLogic != NULL) )
+      {
+      this->QdecScalarSelector->GetWidget()->GetMenu()->DeleteAllItems();
+      int numQuestions = qLogic->GetNumberOfQuestions();
+      for ( int i=0; i<numQuestions; i++ )
+        {
+        this->QdecScalarSelector->GetWidget()->GetMenu()->AddRadioButton(qLogic->GetQuestion(i).c_str());
+        }
+      }
     }
 }
 
@@ -1690,64 +1662,75 @@ void vtkQueryAtlasGUI::UpdateScalarOverlayMenu ( )
 void vtkQueryAtlasGUI::DisplayScalarOverlay ( )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
-  vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
-  vtkSlicerModelsLogic *mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
-  
-  if ( this->QdecScalarSelector->IsCreated() )
+  vtkQdecModuleLogic *qLogic;
+  vtkSlicerModelsLogic *mLogic;
+  if ( app )
     {
-    if ( (strcmp(this->QdecScalarSelector->GetWidget()->GetValue(), "None") != 0)  && (qLogic != NULL ) )
+    if ( vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule")) != NULL )
       {
-      const char *cselection = this->QdecScalarSelector->GetWidget()->GetValue();
-      std::string scalarName = qLogic->GetQuestionScalarName( cselection );
-      vtkDebugMacro("Got question scalar name from logic: " << scalarName.c_str());
-      // trigger display change on the model
-      if (qLogic->GetModelNode() != NULL)
+      qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
+      }
+    if ( vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models")) != NULL )
+      {
+      mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
+      }
+  
+    if ( (this->QdecScalarSelector->IsCreated()) && (qLogic != NULL) && (mLogic != NULL) )
+      {
+      if ( (strcmp(this->QdecScalarSelector->GetWidget()->GetValue(), "None") != 0)  && (qLogic != NULL ) )
         {
-        vtkDebugMacro("Setting the active scalars on " << qLogic->GetModelNode()->GetName() << " to " << scalarName.c_str());
-        qLogic->GetModelNode()->SetActiveScalars(scalarName.c_str(), NULL);
-        qLogic->GetModelNode()->GetModelDisplayNode()->SetActiveScalarName(scalarName.c_str());
-        // the color node has the same name as the scalar array name to facilitate
-        // this pairing, find the ID by querying the mrml scene
-        std::string colorID = "none";
-        if (this->GetApplication() && this->GetApplicationGUI()->GetMRMLScene())
+        const char *cselection = this->QdecScalarSelector->GetWidget()->GetValue();
+        std::string scalarName = qLogic->GetQuestionScalarName( cselection );
+        vtkDebugMacro("Got question scalar name from logic: " << scalarName.c_str());
+        // trigger display change on the model
+        if (qLogic->GetModelNode() != NULL)
           {
-          vtkCollection *colorNodes =  this->GetApplicationGUI()->GetMRMLScene()->GetNodesByName(scalarName.c_str());
-          if (colorNodes)
+          vtkDebugMacro("Setting the active scalars on " << qLogic->GetModelNode()->GetName() << " to " << scalarName.c_str());
+          qLogic->GetModelNode()->SetActiveScalars(scalarName.c_str(), NULL);
+          qLogic->GetModelNode()->GetModelDisplayNode()->SetActiveScalarName(scalarName.c_str());
+          // the color node has the same name as the scalar array name to facilitate
+          // this pairing, find the ID by querying the mrml scene
+          std::string colorID = "none";
+          if (this->GetApplication() && this->GetApplicationGUI()->GetMRMLScene())
             {
-            int numberOfNodes = colorNodes->GetNumberOfItems();
-            if (numberOfNodes > 0)
+            vtkCollection *colorNodes =  this->GetApplicationGUI()->GetMRMLScene()->GetNodesByName(scalarName.c_str());
+            if (colorNodes)
               {
-              // take the first one
-              colorID = vtkMRMLProceduralColorNode::SafeDownCast(colorNodes->GetItemAsObject(0))->GetID();
+              int numberOfNodes = colorNodes->GetNumberOfItems();
+              if (numberOfNodes > 0)
+                {
+                // take the first one
+                colorID = vtkMRMLProceduralColorNode::SafeDownCast(colorNodes->GetItemAsObject(0))->GetID();
+                }
+              else
+                {
+                vtkErrorMacro("vtkQueryAtlasGUI Cannot find a color node with the name " << scalarName.c_str());
+                }
               }
             else
               {
-              vtkErrorMacro("vtkQueryAtlasGUI Cannot find a color node with the name " << scalarName.c_str());
+              vtkErrorMacro("vtkQueryAtlasGUI cannot find procedural color nodes to check for the one associated with scalar " << scalarName.c_str());
+              }         
+            } else { vtkErrorMacro("No application or scene, can't find matching color node"); }
+          if (strcmp(colorID.c_str(), "none") != 0)
+            {
+            // use this node id
+            if (strcmp(qLogic->GetModelNode()->GetModelDisplayNode()->GetColorNodeID(), colorID.c_str()) != 0)
+              {
+              vtkDebugMacro("Setting the model's display node color node id to " << colorID.c_str());
+              qLogic->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(colorID.c_str());
               }
+            else { vtkDebugMacro("Model's display node color node is already set to " << colorID.c_str()); }
             }
           else
             {
-            vtkErrorMacro("vtkQueryAtlasGUI cannot find procedural color nodes to check for the one associated with scalar " << scalarName.c_str());
-            }         
-          } else { vtkErrorMacro("No application or scene, can't find matching color node"); }
-        if (strcmp(colorID.c_str(), "none") != 0)
-          {
-          // use this node id
-          if (strcmp(qLogic->GetModelNode()->GetModelDisplayNode()->GetColorNodeID(), colorID.c_str()) != 0)
-            {
-            vtkDebugMacro("Setting the model's display node color node id to " << colorID.c_str());
-            qLogic->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(colorID.c_str());
+            vtkErrorMacro("Qdec Module gui unable to find matching color node for scalar array " << scalarName.c_str());
             }
-          else { vtkDebugMacro("Model's display node color node is already set to " << colorID.c_str()); }
           }
         else
           {
-          vtkErrorMacro("Qdec Module gui unable to find matching color node for scalar array " << scalarName.c_str());
+          vtkErrorMacro("Qdec Module Logic has no record of a model node, can't switch scalars");
           }
-        }
-      else
-        {
-        vtkErrorMacro("Qdec Module Logic has no record of a model node, can't switch scalars");
         }
       }
     }
@@ -1768,7 +1751,7 @@ void vtkQueryAtlasGUI::WriteBookmarksCallback ()
     itksys::SystemTools::ConvertToUnixOutputPath( filen );
     this->Script( "QueryAtlasWriteFirefoxBookmarkFile \"%s\"", filen );
     }
-    this->SaveAccumulatedResultsButton->SetText ( "" );
+  this->SaveAccumulatedResultsButton->SetText ( "" );
 }
 
 
@@ -1811,16 +1794,16 @@ void vtkQueryAtlasGUI::ColorCodeContextButtons ( vtkKWPushButton *b )
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::ProcessLogicEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
+                                            unsigned long event, void *callData )
 {
-    // Fill in
+  // Fill in
 }
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                             unsigned long event, void *callData )
+                                           unsigned long event, void *callData )
 {    
- if (this->ProcessingMRMLEvent != 0 )
+  if (this->ProcessingMRMLEvent != 0 )
     {
     return;
     }
