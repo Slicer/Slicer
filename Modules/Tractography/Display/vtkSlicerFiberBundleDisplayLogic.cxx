@@ -21,6 +21,9 @@
 
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
+#include "vtkMRMLFiberBundleLineDisplayNode.h"
+#include "vtkMRMLFiberBundleTubeDisplayNode.h"
+#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 
 #include "vtkTubeFilter.h"
 
@@ -175,7 +178,7 @@ void vtkSlicerFiberBundleDisplayLogic::UpdateModelDisplay ( )
       {
 
       // see which kind of model we are displaying
-      if (fiberBundleDisplayNode->GetFiberLineVisibility() == 1)
+      if (fiberBundleDisplayNode->GetVisibility() == 1)
         {
         this->CreateLineModel();
         }
@@ -185,7 +188,7 @@ void vtkSlicerFiberBundleDisplayLogic::UpdateModelDisplay ( )
         }
 
       // see which kind of model we are displaying
-      if (fiberBundleDisplayNode->GetFiberTubeVisibility() == 1)
+      if (fiberBundleDisplayNode->GetVisibility() == 1)
         {
         this->CreateTubeModel();
         }
@@ -195,7 +198,7 @@ void vtkSlicerFiberBundleDisplayLogic::UpdateModelDisplay ( )
         }
 
       // see which kind of model we are displaying
-      if (fiberBundleDisplayNode->GetFiberGlyphVisibility() == 1)
+      if (fiberBundleDisplayNode->GetVisibility() == 1)
         {
         this->CreateGlyphModel();
         }
@@ -284,7 +287,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
       //vtkDebugMacro("Updating line model according to FB display node");
 
       this->LineModelDisplayNode->SetVisibility( fiberBundleDisplayNode->GetVisibility ( ) );
-      this->LineModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetFiberLineOpacity ( ) );
+      this->LineModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetOpacity ( ) );
       this->LineModelDisplayNode->SetColor( fiberBundleDisplayNode->GetColor ( ) );
       this->LineModelDisplayNode->SetAmbient( fiberBundleDisplayNode->GetAmbient ( ) );
       this->LineModelDisplayNode->SetDiffuse( fiberBundleDisplayNode->GetDiffuse ( ) );
@@ -294,7 +297,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
 
       //this->LineModelDisplayNode->GetColorModeForFiberLines();
       // set display properties according to the tensor-specific display properties node
-      vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetFiberLineDTDisplayPropertiesNode( );
+      vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetDTDisplayPropertiesNode( );
 
       // TO DO: need filter to calculate FA, average FA, etc. as requested
 
@@ -360,13 +363,13 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTubeModel ( )
 
     // update the polydata and display parameters:
     // set properties according to the fiber bundle's display node
-    vtkMRMLFiberBundleDisplayNode * fiberBundleDisplayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(this->FiberBundleNode->GetDisplayNode());
+    vtkMRMLFiberBundleTubeDisplayNode * fiberBundleDisplayNode = vtkMRMLFiberBundleTubeDisplayNode::SafeDownCast(this->FiberBundleNode->GetDisplayNode());
     if (fiberBundleDisplayNode != NULL)
       {
 
 
       this->TubeModelDisplayNode->SetVisibility( fiberBundleDisplayNode->GetVisibility ( ) );
-      this->TubeModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetFiberTubeOpacity ( ) );
+      this->TubeModelDisplayNode->SetOpacity( fiberBundleDisplayNode->GetOpacity ( ) );
       this->TubeModelDisplayNode->SetColor( fiberBundleDisplayNode->GetColor ( ) );
       this->TubeModelDisplayNode->SetAmbient( fiberBundleDisplayNode->GetAmbient ( ) );
       this->TubeModelDisplayNode->SetDiffuse( fiberBundleDisplayNode->GetDiffuse ( ) );
@@ -376,15 +379,15 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTubeModel ( )
       // get polylines from the fiber bundle node and tube them
       vtkTubeFilter *tubeFilter = vtkTubeFilter::New();
       tubeFilter->SetInput(this->FiberBundleNode->GetPolyData () );
-      tubeFilter->SetRadius(fiberBundleDisplayNode->GetFiberTubeRadius ( ) );
-      tubeFilter->SetNumberOfSides(fiberBundleDisplayNode->GetFiberTubeNumberOfSides ( ) );
+      tubeFilter->SetRadius(fiberBundleDisplayNode->GetTubeRadius ( ) );
+      tubeFilter->SetNumberOfSides(fiberBundleDisplayNode->GetTubeNumberOfSides ( ) );
       tubeFilter->Update ( );
       this->TubeModelNode->SetAndObservePolyData(tubeFilter->GetOutput( ) );
       tubeFilter->Delete ( );
       this->TubeModelDisplayNode->SetPolyData(this->TubeModelNode->GetPolyData());
       //this->TubeModelDisplayNode->GetColorModeForFiberTubes();
       // set display properties according to the tensor-specific display properties node
-      vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetFiberTubeDTDisplayPropertiesNode( );
+      vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetDTDisplayPropertiesNode( );
 
       if (DTDisplayNode != NULL)
         {
@@ -480,7 +483,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
       this->GlyphModelDisplayNode->SetAndObserveColorNodeID( fiberBundleDisplayNode->GetColorNodeID ( ) );
 
       // set display properties according to the tensor-specific display properties node for glyphs
-      vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetFiberGlyphDTDisplayPropertiesNode( );
+      vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetDTDisplayPropertiesNode( );
 
       if (DTDisplayNode != NULL)
         {
@@ -506,13 +509,13 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
           vtkErrorMacro("setting glyph geometry" << DTDisplayNode->GetGlyphGeometry( ) );
 
           // set glyph coloring
-          if (fiberBundleDisplayNode->GetColorModeForFiberGlyphs ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
+          if (fiberBundleDisplayNode->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
             {
             this->GlyphModelDisplayNode->ScalarVisibilityOff( );
             }
           else
             {
-            if (fiberBundleDisplayNode->GetColorModeForFiberGlyphs ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
+            if (fiberBundleDisplayNode->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
               {
 
               this->GlyphModelDisplayNode->ScalarVisibilityOn( );

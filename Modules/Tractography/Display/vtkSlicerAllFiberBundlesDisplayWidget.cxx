@@ -130,7 +130,7 @@ void vtkSlicerAllFiberBundlesDisplayWidget::ProcessWidgetEvents ( vtkObject *cal
 void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
 {
   vtkDebugMacro("UpdateMRML");
-
+  /*** TODO Rewrite to work with muliple display nodes
   // Traverse all fiber bundle nodes and set properties according to the widget
   // event
 
@@ -146,6 +146,7 @@ void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
   vtkMRMLDiffusionTensorDisplayPropertiesNode *tubeDisplay;
   vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDisplay;
 
+
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLFiberBundleNode");
   for (int n=0; n<nnodes; n++)
     {
@@ -160,7 +161,7 @@ void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
       if (displayNode != NULL )
         {
 
-        displayNode->SetFiberLineVisibility(this->LineVisibilityButton->GetWidget()->GetSelectedState());
+        displayNode->SetVisibility(this->LineVisibilityButton->GetWidget()->GetSelectedState());
 
         displayNode->SetFiberTubeVisibility(this->TubeVisibilityButton->GetWidget()->GetSelectedState());
 
@@ -245,7 +246,7 @@ void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
     } // end loop over f b nodes
 
   vtkDebugMacro("Done UpdateMRML");
-
+***/
 }
 
 

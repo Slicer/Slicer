@@ -217,7 +217,30 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
           {
           this->FiberBundleLineDisplayNode->SetAndObserveColorNodeID(color->GetID());
           }
-        }        
+        }           
+      if (this->FiberBundleTubeDisplayNode != NULL)
+        {
+        // set and observe it's colour node id
+        if (this->FiberBundleTubeDisplayNode->GetColorNodeID() == NULL ||
+            strcmp(this->FiberBundleTubeDisplayNode->GetColorNodeID(), color->GetID()) != 0)
+          {
+          this->FiberBundleTubeDisplayNode->SetAndObserveColorNodeID(color->GetID());
+          }
+        }  
+      if (this->FiberBundleGlyphDisplayNode != NULL)
+        {
+        // set and observe it's colour node id
+        if (this->FiberBundleGlyphDisplayNode->GetColorNodeID() == NULL ||
+            strcmp(this->FiberBundleGlyphDisplayNode->GetColorNodeID(), color->GetID()) != 0)
+          {
+          this->FiberBundleGlyphDisplayNode->SetAndObserveColorNodeID(color->GetID());
+          vtkMRMLDiffusionTensorDisplayPropertiesNode *dpnode = 
+              vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast( this->FiberBundleGlyphDisplayNode->GetDTDisplayPropertiesNode() );
+          if (dpnode)
+            {
+            }
+          }
+        }     
       }
     }
 }
@@ -329,7 +352,7 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateWidget()
     this->GlyphVisibilityButton->GetWidget()->SetSelectedState(this->FiberBundleGlyphDisplayNode->GetVisibility());
     // TODO color node, opacity and color for glyps
     vtkMRMLDiffusionTensorDisplayPropertiesNode *dpnode = 
-      vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast( this->FiberBundleGlyphDisplayNode->GetFiberGlyphDTDisplayPropertiesNode() );
+      vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast( this->FiberBundleGlyphDisplayNode->GetDTDisplayPropertiesNode() );
     this->GlyphDisplayWidget->SetDiffusionTensorDisplayPropertiesNode(dpnode);
 
     // TODO glyph widget

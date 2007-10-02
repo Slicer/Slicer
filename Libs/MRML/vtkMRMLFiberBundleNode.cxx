@@ -154,7 +154,7 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddGlyphDisplayNode()
       node->Delete();
       vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
       this->GetScene()->AddNode(glyphDTDPN);
-      node->SetAndObserveFiberGlyphDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
+      node->SetAndObserveDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
       this->AddAndObserveDisplayNodeID(node->GetID());
       node->SetPolyData(this->GetPolyData());
       }

@@ -57,7 +57,7 @@ vtkMRMLFiberBundleGlyphDisplayNode::vtkMRMLFiberBundleGlyphDisplayNode()
 
 
   this->TwoDimensionalVisibility = 0;
-
+  this->ColorMode = vtkMRMLFiberBundleDisplayNode::colorModeScalar;
 }
 
 
@@ -157,7 +157,7 @@ vtkPolyData* vtkMRMLFiberBundleGlyphDisplayNode::GetPolyData()
 void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline() 
 {
   // set display properties according to the tensor-specific display properties node for glyphs
-  vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = this->GetFiberGlyphDTDisplayPropertiesNode( );
+  vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = this->GetDTDisplayPropertiesNode( );
   
   if (DTDisplayNode != NULL) {
     // TO DO: need filter to calculate FA, average FA, etc. as requested
@@ -179,13 +179,13 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
       vtkErrorMacro("setting glyph geometry" << DTDisplayNode->GetGlyphGeometry( ) );
       
       // set glyph coloring
-      if (this->GetColorModeForFiberGlyphs ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
+      if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
         {
         this->ScalarVisibilityOff( );
         }
       else  
         {
-        if (this->GetColorModeForFiberGlyphs ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
+        if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
           {
           this->ScalarVisibilityOn( );
 

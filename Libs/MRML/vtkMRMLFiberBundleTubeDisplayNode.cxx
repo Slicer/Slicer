@@ -73,7 +73,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
-  of << indent << " tubeRadius =\"" << this->FiberTubeRadius << "\"";
+  of << indent << " tubeRadius =\"" << this->TubeRadius << "\"";
   of << indent << " tubeNumberOfSides =\"" << this->TubeNumberOfSides << "\"";
 }
 
@@ -138,7 +138,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
   this->TubeFilter->SetNumberOfSides(this->GetTubeNumberOfSides ( ) );
 
   // set display properties according to the tensor-specific display properties node for glyphs
-  vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = this->GetFiberTubeDTDisplayPropertiesNode( );
+  vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = this->GetDTDisplayPropertiesNode( );
 
   if (DTDisplayNode != NULL) 
     {
