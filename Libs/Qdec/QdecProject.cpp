@@ -86,6 +86,25 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   string sepString = "/";
   char sepChar = '/';
 #endif
+
+  FILE *fp = NULL;
+#define DEBUG
+#ifdef DEBUG
+  std::string logFile = std::string("LoadProjectFile.log");
+  fp = fopen(logFile.c_str(), "w");
+  if (fp == NULL)
+    {
+    fprintf(stderr, "LoadProjectFile: unable to open log file for writing %s\n", logFile.c_str());
+    }
+  else
+    {
+    fprintf(fp, "LoadProjectFile: opening project %s in data dir %s\n", ifnProject, ifnDataDir);
+    }
+#endif
+  if (!fp)
+    {
+    fp = stderr;
+    }
   // Find the base name of the project file.
   string fnProjectBase( ifnProject );
   string::size_type nPreLastSlash = fnProject.rfind( sepChar );
@@ -119,10 +138,11 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
 
   // Erase old working directory if present.
   string sCommand = this->msBinaryPath + "rm -rf " + fnExpandedProjectDir;
+  fprintf(fp, " QdecProject::LoadProjectFile: command = %s\n", sCommand.c_str());
   int rSystem = system( sCommand.c_str() );
   if( 0 != rSystem )
     {
-    fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Couldn't "
+    fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Couldn't "
              "remove existing temp directory (cmd=%s)\n", sCommand.c_str() );
     return -1;
     }
@@ -133,11 +153,12 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
                              ifnDataDir,
                              msUnzipCommandFormat.c_str(),
                              sCommand );
-  fprintf(stdout, "calling command %s\n", sCommand.c_str());
+  fprintf(fp, "Calling command %s\n", sCommand.c_str());
   rSystem = system( sCommand.c_str() );
   if( 0 != rSystem ) {
-    fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Couldn't "
+    fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Couldn't "
              "expand project file (cmd=%s)\n", sCommand.c_str() );
+    if (fp != stderr) { fclose(fp); }
     return -2;
   }
 
@@ -145,16 +166,18 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   string fnVersion = fnExpandedProjectDir + sepString + "Version.txt";
   ifstream fVersion( fnVersion.c_str(), ios::out );
   if( !fVersion || fVersion.bad() ) {
-    fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Couldn't "
-             "find Version file\n" );
+    fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Couldn't "
+             "find Version file %s\n", fnVersion.c_str());
+    if (fp != stderr) { fclose(fp); }
     return -3;
   }
   int version;
   fVersion >> version;
   fVersion.close();
   if( 1 != version ) {
-    fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Version "
+    fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Version "
              "file had wrong value (%d)\n", version );
+    if (fp != stderr) { fclose(fp); }
     return -4;
   }
   
@@ -162,8 +185,9 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   string fnMetadata = fnExpandedProjectDir + sepString + this->GetMetadataFileName();
   ifstream fMetadata( fnMetadata.c_str(), ios::in );
   if( !fMetadata || fMetadata.bad() ) {
-    fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Couldn't "
+    fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Couldn't "
              "open metadata file %s\n", fnMetadata.c_str() );
+    if (fp != stderr) { fclose(fp); }
     return -5;
   }
   // Make sure the first token is QdecProjectMetadata, and then the
@@ -173,9 +197,10 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   for( int nToken = 0; nToken < 3; nToken++ ) {
     fMetadata >> sToken;
     if( sToken != asCorrectTokens[nToken] ) {
-      fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
+      fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "metadata file %s, %s token not found\n", 
                fnMetadata.c_str(), asCorrectTokens[nToken].c_str() );
+      if (fp != stderr) { fclose(fp); }
       return -6;
     }
   }
@@ -192,50 +217,58 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
     else if( sToken == "ContinuousFactor1" )fMetadata >> sContinuousFactor1;
     else if( sToken == "ContinuousFactor2" )fMetadata >> sContinuousFactor2;
     else {
-      fprintf( stderr, "WARNING: QdecProject::LoadProjectFile: Unrecognized "
+      fprintf( fp, "WARNING: QdecProject::LoadProjectFile: Unrecognized "
                "token in QdecProjectMetadata: %s\n", sToken.c_str() );
     }
   }
 
   // Make sure we got some decent results.
+  int retval = 0;
   if( sSubject == "" ) {
-      fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
+      fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, Subject value not found\n" );
-      return -7;
+      retval = -7;
   }
   if( sHemisphere == "" ) {
-      fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
+      fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, Hemisphere value not found\n" );
-      return -8;
+      retval = -8;
   }
   if( sAnalysisName == "" ) {
-      fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
+      fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, AnalysisName value not found\n" );
-      return -9;
+      retval = -9;
   }
   if( fnDataTableBase == "" ) {
-      fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
+      fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, DataTable value not found\n" );
-      return -10;
+      retval = -10;
   }
   if( sMeasure == "" ) {
-      fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
+      fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, Measure value not found\n" );
-      return -11;
+      retval = -11;
   }
   if( -1 == smoothness ) {
-      fprintf( stderr, "ERROR: QdecProject::LoadProjectFile: Invalid "
+      fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Invalid "
                "project metadata file, Smoothness value not found\n" );
-      return -12;
+      retval = -12;
   }
-  
+  if (retval != 0)
+    {
+    if (fp != stderr) { fclose(fp); }
+    return retval;
+    }
   // Load our data table. Note that this might set the subjects dir,
   // but we'll set it later to our data dir.
   string fnDataTable = fnExpandedProjectDir + sepString + fnDataTableBase;
   int errorCode;
   errorCode = this->LoadDataTable( fnDataTable.c_str() );
   if( errorCode )
+    {
+    if (fp != stderr) { fclose(fp); }
     return -13;
+    }
 
   // Set the subjects dir to the data dir, so that we can find the
   // subject.
@@ -263,6 +296,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
                                NULL );
   if( errorCode )
     {
+    if (fp != stderr) { fclose(fp); }
     return -13 + errorCode; // goes to -21
     }
   
@@ -270,8 +304,15 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   errorCode = 
     mGlmFitter->CreateResultsFromCachedData ( this->mGlmDesign );
   if( errorCode )
+    {
+    if (fp != stderr) { fclose(fp); }
     return -22;
+    }
 
+  if (fp != stderr)
+    {
+    fclose(fp);
+    }
   return 0;
 }
 
