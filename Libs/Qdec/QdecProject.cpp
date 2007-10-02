@@ -48,7 +48,9 @@ QdecProject::QdecProject ( )
   this->msBinaryPath = std::string("c:\\cygwin\\bin\\");
   this->msUnzipCommandFormat = this->msBinaryPath + std::string( "unzip.exe -q -o -d %3 %1" );
 #else
-  this->msBinaryPath = std::string("/usr/bin/");
+  // assume rm, ln, unzip are in path since on dev machine, they're in
+  // different bin dirs
+  this->msBinaryPath = std::string("");
   this->msUnzipCommandFormat = this->msBinaryPath + std::string( "unzip -o -d %3 %1 > /dev/null" );
 #endif
   this->msZipCommandFormat = std::string( "cd %3; ") + this->msBinaryPath + std::string("zip -r %1 %2 > /dev/null" );
