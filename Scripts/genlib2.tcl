@@ -1045,7 +1045,7 @@ if { ![file exists $::VTK_TEST_FILE] } {
 if { ![file exists $::ITK_TEST_FILE] } {
     puts "ITK test file $::ITK_TEST_FILE not found."
 }
-if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FILE] } {
+if { 0 &&  ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FILE] } {
     if {$isLinux} {
     puts "Sandbox test file $::SANDBOX_TEST_FILE or $::ALT_SANDBOX_TEST_FILE not found."
     } else {
