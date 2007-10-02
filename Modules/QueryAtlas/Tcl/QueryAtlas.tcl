@@ -1170,109 +1170,55 @@ proc QueryAtlasDistance { fromXY toXY } {
   return [expr sqrt($sum)]
 }
 
-
 #----------------------------------------------------------------------------------------------------
 #--- query the cell number at the mouse location
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasPickCallback {} {
 
-    set _useLabels ""
+proc QueryAtlasPickProp {x y renderer viewer} {
+
+    set ::QA(currentHit) ""
+    set ::QA(currentHitProp) ""
+    set ::QA(currentHitMRMLID) ""
     set _useMID ""
 
-    if { ![info exists ::QA(windowToImage)] } {
-        return
-    }
-
-    if { [ info exists ::QA(cursor,actor) ] } {
-        if { [$::QA(cursor,actor) GetVisibility] == 0 } {
-            # if the cursor isn't on, don't bother to calculate labels
-            return
-        }
-    }
-
-    #
-    # get access to the standard view parts
-    #
-    set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
-    set renderWidget [$viewer GetMainViewer]
-    set renderWindow [$renderWidget GetRenderWindow]
-    set interactor [$renderWidget GetRenderWindowInteractor] 
-    set renderer [$renderWidget GetRenderer]
-
-    set numQmodels [ llength $::QA(annoModelDisplayNodeIDs) ]
-    for { set m 0 } { $m < $numQmodels } { incr m } {
-        set _mid [ lindex $::QA(annoModelDisplayNodeIDs) $m ]
-        set actor($m) [ $viewer GetActorByID $_mid ]
-    }
-
-    # if the window size has changed, re-render
-    set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
-    if { [$renderWindow GetSize] != $imageSize } {
-        QueryAtlasRenderView
-    }
-
-    # 
-    # get the event location
-    #
-    eval $interactor UpdateSize [$renderer GetSize]
-    set ::QA(lastWindowXY) [$interactor GetEventPosition]
-    foreach {x y} $::QA(lastWindowXY) {}
-    set ::QA(lastRootXY) [winfo pointerxy [$renderWidget GetWidgetName]]
-
-    #
-    # use the prop picker to see if we're over the model, or the slices
-    # - set the 'currentHit' variable accordingly for later processing
-    #
-    set ::QA(currentHit) ""
     if { [$::QA(propPicker) PickProp $x $y $renderer] } {
         set prop [$::QA(propPicker) GetViewProp]
+        set ::QA(currentHitProp) $prop
+        set ::QA(currentHitMRMLID) [$viewer GetIDByActor $prop]
 
-
+        set numQmodels [ llength $::QA(annoModelDisplayNodeIDs) ]
         #--- hit query model display nodes?
         for { set m 0 } { $m < $numQmodels } { incr m } {
-            if { $prop == $actor($m) } {
+            if { $prop == $::QA(actor,$m) } {
                 set ::QA(currentHit) "QueryModel"
                 #--- choose the right label map
                 set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-                set _useLabels $::QA(labelMap_$mid)
                 set _useMID $mid
             }
         }
 
         if { $::QA(currentHit) == "" } {
-            set mrmlID [$viewer GetIDByActor $prop]
-            if { $mrmlID != "" } {
-                #--- hit query models?
-                for { set m 0 } { $m < $numQmodels } { incr m } {
-                    set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-                    if { $mrmlID == $mid } {
-                        set ::QA(currentHit) "QueryModel"
-                        #--- choose the right label map
-                        set _useLabels $::QA(labelMap_$mid)
-                        set _useMID $mid
-                    }
-                }
-                #--- hit slice models?
-                if { $::QA(currentHit) == "" } {
-                    set ::QA(currentHit) "QuerySlice"
-                }
-            } 
+            if { $::QA(currentHit) == "" } {
+                set ::QA(currentHit) "QuerySlice"
+            }
         }
     }
 
-    #
-    # set the 'pointlabels' depending on the thing picked
-    #
-    #---- did we hit a slice model?
+    return $_useMID
+}
+
+proc QueryAtlasPickOnQuerySlice {x y renderer} {
+
     set pointLabels ""
+
     if { $::QA(currentHit) == "QuerySlice" } {
-        set node [$::slicer3::MRMLScene GetNodeByID $mrmlID]
+        set node [$::slicer3::MRMLScene GetNodeByID $::QA(currentHitMRMLID)]
         #--- get the corresponding model display node
         set numMnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode"]
         for { set zz 0 } { $zz < $numMnodes } { incr zz } {
             set testnode [ $::slicer3::MRMLScene GetNthNodeByClass $zz "vtkMRMLModelNode" ]          
             set testdisplayID [ $testnode GetDisplayNodeID ]
-            if { $testdisplayID == $mrmlID } {
+            if { $testdisplayID == $::QA(currentHitMRMLID) } {
                 set node $testnode
             }
         }
@@ -1296,7 +1242,9 @@ proc QueryAtlasPickCallback {} {
             $::QA(cellPickerSliceMapper) SetInput [$node GetPolyData]
             $propCollection AddItem $::QA(cellPickerSliceActor)
             $::QA(cellPicker) PickFromListOn
+
             $::QA(cellPicker) Pick $x $y 0 $renderer
+
             set cellID [$::QA(cellPicker) GetCellId]
             set pCoords [$::QA(cellPicker) GetPCoords]
             if { $cellID != -1 } {
@@ -1322,7 +1270,14 @@ proc QueryAtlasPickCallback {} {
                   set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
                   if { [info exists ::QAFS($labelValue,name)] } {
                       if { $::QAFS($labelValue,name) == "Unknown" } {
-                          set pointLabels "No Label"
+                          #
+                          # we found a part of the slice model that has no label - 
+                          # - in this case, turn that slice invisible and return empty string
+                          #   which will cause another iteration through the picker to find any
+                          #   other models (or slices) visible behind this one.
+                          set pointLabels ""
+                          $::QA(currentHitProp) SetVisibility 0
+                          lappend ::QA(tempInvisibleProps) $::QA(currentHitProp)
                       } else {
                           set pointLabels "$::QAFS($labelValue,name)"
                       }
@@ -1334,6 +1289,80 @@ proc QueryAtlasPickCallback {} {
             }
         }
     }
+
+    return $pointLabels
+}
+
+proc QueryAtlasPickCallback {} {
+
+    set _useMID ""
+
+    if { ![info exists ::QA(windowToImage)] } {
+        return
+    }
+
+    if { [ info exists ::QA(cursor,actor) ] } {
+        if { [$::QA(cursor,actor) GetVisibility] == 0 } {
+            # if the cursor isn't on, don't bother to calculate labels
+            return
+        }
+    }
+
+    #
+    # get access to the standard view parts
+    #
+    set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
+    set renderWidget [$viewer GetMainViewer]
+    set renderWindow [$renderWidget GetRenderWindow]
+    set interactor [$renderWidget GetRenderWindowInteractor] 
+    set renderer [$renderWidget GetRenderer]
+
+    set numQmodels [ llength $::QA(annoModelDisplayNodeIDs) ]
+    for { set m 0 } { $m < $numQmodels } { incr m } {
+        set _mid [ lindex $::QA(annoModelDisplayNodeIDs) $m ]
+        set ::QA(actor,$m) [ $viewer GetActorByID $_mid ]
+    }
+
+    # if the window size has changed, re-render
+    set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
+    if { [$renderWindow GetSize] != $imageSize } {
+        QueryAtlasRenderView
+    }
+
+    # 
+    # get the event location
+    #
+    eval $interactor UpdateSize [$renderer GetSize]
+    set ::QA(lastWindowXY) [$interactor GetEventPosition]
+    foreach {x y} $::QA(lastWindowXY) {}
+    set ::QA(lastRootXY) [winfo pointerxy [$renderWidget GetWidgetName]]
+
+    #
+    # use the prop picker to see if we're over the model, or the slices
+    # - set the 'currentHit' variable accordingly for later processing
+    # - sets the pointLabels variable for use in the cursor annotation
+    # - NOTE: this code loops to make up for a limitation of the vtkPropPicker
+    #   when dealing with the textured slices (vtk does not take into account
+    #   the object viewed "through" the transparent part).
+    #
+
+    set ::QA(tempInvisibleProps) ""
+    set pointLabels ""
+    while { $pointLabels == "" } {
+      set _useMID [QueryAtlasPickProp $x $y $renderer $viewer]
+      if { $::QA(currentHit) == "QuerySlice"} {
+        set pointLabels [QueryAtlasPickOnQuerySlice $x $y $renderer]
+      } else {
+        break
+      }
+    }
+
+    # restore visibility of any slices that had non-labled sections in the way
+    foreach prop $::QA(tempInvisibleProps) {
+      $prop SetVisibility 1
+    }
+
+
 
     #--- did we hit a model?
     if { $::QA(currentHit) == "QueryModel" } {
