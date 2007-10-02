@@ -53,11 +53,11 @@ public:
 
     void SetOpacityOfLabel(int index, double opacity);
     double GetOpacityOfLabel(int index);
-
-    void AddReference(const char *id);
-    bool HasReference(const char *id);
-    void RemoveReference(const char *id);
-    
+//BTX
+    void AddReference(std::string id);
+    bool HasReference(std::string id);
+    void RemoveReference(std::string id);
+//ETX    
     //Maybe later
     //void SetAutoValuesFromImageData(vtkImageData *data);
 
@@ -138,10 +138,10 @@ protected:
   int Mapper;//0 means hardware accelerated 3D texture Mapper, 1 fixed raycastMapper
   int IsLabelMap;//1 Yes it is a LabelMap,0 no it is not a Label Map
   //BTX
-  vtksys_stl::vector<const char*> *References;
+  vtksys_stl::vector<std::string> References;
 
   //if LabelMap Save the opacities of the labels of the colors
-  vtksys_stl::vector<double> *Opacities;
+  vtksys_stl::vector<double> Opacities;
   //ETX
 
 };

@@ -37,11 +37,8 @@ vtkMRMLVolumeRenderingNode::vtkMRMLVolumeRenderingNode(void)
     Buffer=NULL;
     this->DebugOff();
     this->VolumeProperty=vtkVolumeProperty::New();
-    this->References=new vtksys_stl::vector<const char*>; 
-    //this->VolumeProperty->SetGradientOpacity(vtkPiecewiseFunction::New());
-    //this->VolumeProperty->SetScalarOpacity(vtkPiecewiseFunction::New());
-    //this->VolumeProperty->SetColor(vtkColorTransferFunction::New());
-
+    //Standard is no Labelmap
+    this->IsLabelMapOff();
     //Standard is 3D-Volume Texture Mapper
     this->Mapper=0;
 }
@@ -56,7 +53,18 @@ void vtkMRMLVolumeRenderingNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
   
   //vtkIndent indent(nIndent);
- 
+  of << " isLabelmap=\""<<this->GetIsLabelMap() <<"\"";
+  of << " references=\""<<this->References.size()<<" ";
+  for(unsigned int i=0;i<this->References.size();i++)
+  {
+      of<<this->References.at(i);
+      if(i!=(this->References.size()-1))
+      {
+        of<<" ";
+      }
+  }
+  of<<"\"";
+
   of << " scalarOpacity=\"" << this->getPiecewiseFunctionString(this->VolumeProperty->GetScalarOpacity())  << "\"";
   of << " gradientOpacity=\"" <<this->getPiecewiseFunctionString(this->VolumeProperty->GetGradientOpacity())<< "\"";
 
@@ -79,6 +87,27 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
     while (*atts!=NULL){
         attName= *(atts++);
         attValue= *(atts++);
+        if(!strcmp(attName,"isLabelmap"))
+        {
+            int lm;
+            std::stringstream ss;
+            ss<<attValue;
+            ss>>lm;
+            this->SetIsLabelMap(lm);
+        }
+        if(!strcmp(attName,"references"))
+        {
+            int size=0;
+            std::stringstream ss;
+            ss << attValue;
+            ss>>size;
+            for(int i=0;i<size;i++)
+            {
+                std::string str;
+                ss>>str;
+                this->AddReference(str.c_str());
+            }
+        }
         if(!strcmp(attName,"scalarOpacity"))
         {
             vtkPiecewiseFunction *scalarOpacity=vtkPiecewiseFunction::New();
@@ -219,7 +248,16 @@ void vtkMRMLVolumeRenderingNode::PrintSelf(ostream& os, vtkIndent indent)
     }
     else
     {
-       os<<"FixedRayCastMapping";
+        os<<"FixedRayCastMapping";
+    }
+    os<<indent<<"References: ";
+    for(unsigned int i=0;i<this->References.size();i++)
+    {
+        os<<this->References.at(i);
+        if(i!=(this->References.size()-1))
+        {
+            os<<" ";
+        }
     }
 }
 
@@ -227,22 +265,7 @@ void vtkMRMLVolumeRenderingNode::PrintSelf(ostream& os, vtkIndent indent)
 
 void vtkMRMLVolumeRenderingNode::UpdateScene(vtkMRMLScene *scene)
 {
-    Superclass::UpdateScene(scene);
-    /*
-    if (this->GetStorageNodeID() == NULL) 
-    {
-        //vtkErrorMacro("No reference StorageNodeID found");
-        return;
-    }
-
-    vtkMRMLNode* mnode = scene->GetNodeByID(this->StorageNodeID);
-    if (mnode) 
-    {
-        vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
-        node->ReadData(this);
-        //this->SetAndObservePolyData(this->GetPolyData());
-    }
-    */
+   vtkErrorMacro("Subclass has not over ridden this method");
 }
 
 
@@ -251,15 +274,7 @@ void vtkMRMLVolumeRenderingNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, 
                                            void *callData )
 {
-  Superclass::ProcessMRMLEvents(caller, event, callData);
-/*
-  vtkMRMLColorDisplayNode *dnode = this->GetDisplayNode();
-  if (dnode != NULL && dnode == vtkMRMLColorDisplayNode::SafeDownCast(caller) &&
-      event ==  vtkCommand::ModifiedEvent)
-    {
-        this->InvokeEvent(vtkMRMLColorNode::DisplayModifiedEvent, NULL);
-    }
-*/
+  vtkErrorMacro("Subclass has not over ridden this method");
   return;
 }
 
@@ -419,7 +434,7 @@ double vtkMRMLVolumeRenderingNode::GetOpacityOfLabel(int index)
     return .0;
 }
 
-void vtkMRMLVolumeRenderingNode::AddReference(const char *id)
+void vtkMRMLVolumeRenderingNode::AddReference(std::string id)
 {
     //test if we already have a reference
     if(this->HasReference(id))
@@ -428,23 +443,23 @@ void vtkMRMLVolumeRenderingNode::AddReference(const char *id)
     }
     else 
     {
-        this->References->push_back(id);
+        this->References.push_back(id);
     }
 
 }
-bool vtkMRMLVolumeRenderingNode::HasReference(const char *id)
+bool vtkMRMLVolumeRenderingNode::HasReference(std::string id)
 {
     //loop over vector and comparing
-    for(unsigned int i=0;i<this->References->size();i++)
+    for(unsigned int i=0;i<this->References.size();i++)
     {
-        if(!strcmp(this->References->at(i),id));
+        if(strcmp(this->References.at(i).c_str(),id.c_str())==0)
         {
             return true;
         }
     }
     return false;
 }
-void vtkMRMLVolumeRenderingNode::RemoveReference(const char *id)
+void vtkMRMLVolumeRenderingNode::RemoveReference(std::string id)
 {
     vtkErrorMacro("Not yet implemented");
 

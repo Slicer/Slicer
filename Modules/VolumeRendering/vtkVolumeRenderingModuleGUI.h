@@ -151,8 +151,10 @@ protected:
   void InitializePipelineFromMRMLScene();
   void InitializePipelineFromSlicer();
   void InitializePipelineFromImageData();
+  void UpdateSVP();
   void ShutdownPipeline();
   void Rendering(void);
+  void UpdateRendering(void);
   void  CheckAbort(void);
 
   //OWN GUI Elements
