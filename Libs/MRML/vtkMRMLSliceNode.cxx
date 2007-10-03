@@ -120,13 +120,17 @@ void vtkMRMLSliceNode::SetOrientationToReformat()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToAxial()
 {
-    this->SliceToRAS->Identity();
-
     // Px -> Patient Left
     this->SliceToRAS->SetElement(0, 0, -1.0);
+    this->SliceToRAS->SetElement(1, 0,  0.0);
+    this->SliceToRAS->SetElement(2, 0,  0.0);
     // Py -> Patient Anterior
+    this->SliceToRAS->SetElement(0, 1,  0.0);
     this->SliceToRAS->SetElement(1, 1,  1.0);
+    this->SliceToRAS->SetElement(2, 1,  0.0);
     // Pz -> Patient Inferior
+    this->SliceToRAS->SetElement(0, 2,  0.0);
+    this->SliceToRAS->SetElement(1, 2,  0.0);
     this->SliceToRAS->SetElement(2, 2,  1.0);
 
     this->SetOrientationString( "Axial" );
@@ -136,8 +140,6 @@ void vtkMRMLSliceNode::SetOrientationToAxial()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToSagittal()
 {
-    this->SliceToRAS->Identity();
-
     // Px -> Patient Posterior
     this->SliceToRAS->SetElement(0, 0,  0.0);
     this->SliceToRAS->SetElement(1, 0, -1.0);
@@ -159,8 +161,6 @@ void vtkMRMLSliceNode::SetOrientationToSagittal()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetOrientationToCoronal()
 {
-    this->SliceToRAS->Identity();
-
     // Px -> Patient Left
     this->SliceToRAS->SetElement(0, 0, -1.0);
     this->SliceToRAS->SetElement(1, 0,  0.0);
