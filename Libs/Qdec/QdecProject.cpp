@@ -44,6 +44,12 @@ QdecProject::QdecProject ( )
   this->mDataTable = new QdecDataTable();
   this->mGlmDesign = new QdecGlmDesign( this->mDataTable );
   this->mGlmFitter = new QdecGlmFit();
+  // set these to empty strings for now, the Set methods will put the proper
+  // things inot the command format strings
+  this->msZipCommand = "";
+  this->msUnzipCommand = "";
+  this->msRmCommand = "";
+  
 #ifdef _WIN32
   this->msBinaryPath = std::string("c:\\cygwin\\bin\\");
   this->msUnzipCommandFormat = this->msBinaryPath + std::string( "unzip.exe -q -o -d %3 %1" );
@@ -131,15 +137,39 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   int smoothness = -1;
 
   // Check the file.
-  ifstream fInput( fnProject.c_str(), std::ios::in );
+  // need to take out any escapes first
+  std::string::size_type ptr;
+  std::string unescapedProject = fnProject;
+  ptr = unescapedProject.find("\\");
+  while (ptr != std::string::npos)
+    {
+    unescapedProject.erase(ptr, 1);
+    ptr = unescapedProject.find("\\");
+    }
+  fprintf(fp, "Unescaped project file = '%s'\n", unescapedProject.c_str());
+
+  ifstream fInput( unescapedProject.c_str(), std::ios::in );
   if( !fInput || fInput.bad() )
     {
-    throw runtime_error( string("Couldn't open file " ) + fnProject );
+    fprintf(fp, "QdecProject::LoadProjectFile: Couldn't open unescaped file %s\n",  unescapedProject.c_str());
+    if (fp != stderr) { fclose(fp); }
+    return -23;   
     }
-  fInput.close();
-
+  else
+    {
+    fInput.close();
+    }
+  
   // Erase old working directory if present.
-  string sCommand = this->msBinaryPath + "rm -rf " + fnExpandedProjectDir;
+  string sCommand;
+  if (this->msRmCommand.length() != 0)
+    {
+    sCommand = this->msRmCommand + " -rf " + fnExpandedProjectDir;
+    }
+  else
+    {
+    sCommand = this->msBinaryPath + "rm -rf " + fnExpandedProjectDir;
+    }
   fprintf(fp, " QdecProject::LoadProjectFile: command = %s\n", sCommand.c_str());
   int rSystem = system( sCommand.c_str() );
   if( 0 != rSystem )
@@ -382,7 +412,15 @@ int QdecProject::SaveProjectFile ( const char* ifnProject,
     fnExpandedProjectBase;
   
   // Erase old working directory if present.
-  string sCommand = this->msBinaryPath + "rm -rf " + fnExpandedProjectDir;
+  string sCommand;
+  if (this->msRmCommand.length() != 0)
+    {
+    sCommand = this->msRmCommand + " -rf " + fnExpandedProjectDir;
+    }
+  else
+    {
+    sCommand = this->msBinaryPath + "rm -rf " + fnExpandedProjectDir;
+    }
   int rSystem = system( sCommand.c_str() );
   if( 0 != rSystem ) {
     fprintf( stderr, "ERROR: QdecProject::SaveProjectFile: Couldn't "
@@ -532,7 +570,14 @@ int QdecProject::SaveProjectFile ( const char* ifnProject,
   }
 
   // Delete the temp directory.
-  sCommand = this->msBinaryPath + "rm -rf " + fnExpandedProjectDir;
+   if (this->msRmCommand.length() != 0)
+    {
+    sCommand = this->msRmCommand + " -rf " + fnExpandedProjectDir;
+    }
+  else
+    {
+    sCommand = this->msBinaryPath + "rm -rf " + fnExpandedProjectDir;
+    }
   rSystem = system( sCommand.c_str() );
   if( 0 != rSystem ) {
     fprintf( stderr, "ERROR: QdecProject::SaveProjectFile: Couldn't "
@@ -918,3 +963,39 @@ QdecProject::FormatCommandString ( const char* ifnProject,
     iosCommand.replace( n, 2, isWorkingDir );
 }
 
+
+string QdecProject::GetUnzipCommand()
+{
+  return this->msUnzipCommand;
+}
+
+string QdecProject::GetZipCommand()
+{
+  return this->msZipCommand;
+}
+
+string QdecProject::GetRmCommand()
+{
+  return this->msRmCommand;
+}
+  
+void QdecProject::SetUnzipCommand(const char *cmd)
+{
+  this->msUnzipCommand = std::string(cmd);
+  // reset the format
+#ifdef _WIN32
+  this->msUnzipCommandFormat = this->msUnzipCommand + std::string(" -q -o -d %3 %1" );
+#else
+  this->msUnzipCommandFormat = this->msUnzipCommand + std::string(" -o -d %3 %1 > /dev/null" );
+#endif
+}
+
+void QdecProject::SetZipCommand(const char *cmd)
+{
+  this->msZipCommand = std::string(cmd);
+}
+
+void QdecProject::SetRmCommand(const char *cmd)
+{
+  this->msRmCommand = std::string(cmd);
+}
