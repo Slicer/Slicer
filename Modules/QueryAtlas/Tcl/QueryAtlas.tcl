@@ -1230,6 +1230,8 @@ proc QueryAtlasPickOnQuerySlice {x y renderer} {
             set propCollection [$::QA(cellPicker) GetPickList]
             $propCollection RemoveAllItems
             
+            # add the dummy prop that uses the cell of the slice model rather than
+            # the image actor for picking
             $::QA(cellPickerUserMatrix) Identity
             set tNode [$node GetParentTransformNode]
             if { $tNode != "" && [$tNode IsLinear] } {
@@ -1255,36 +1257,57 @@ proc QueryAtlasPickOnQuerySlice {x y renderer} {
                 set rasPoint [QueryAtlasPCoordsToWorld $cell $pCoords]
                 set ::QA(CurrentRASPoint) $rasPoint
 
-                set labelID [$nodes(compositeNode) GetLabelVolumeID]
-                if { $labelID == "" } {
-                  set pointLabels "No Label Layer"
+                #
+                # check the texture for 0 alpha if so
+                # we found a part of the slice model that should not be picked
+                # - in this case, turn that slice invisible and return empty string
+                #   which will cause another iteration through the picker to find any
+                #   other models (or slices) visible behind this one.
+                #
+                set rasToXY [vtkMatrix4x4 New]
+                $rasToXY DeepCopy [$nodes(sliceNode) GetXYToRAS]
+                $rasToXY Invert
+                set xyzw [eval $rasToXY MultiplyPoint $rasPoint 1]
+                foreach {x y z w} $xyzw {}
+                set x [expr round($x)]
+                set y [expr round($y)]
+                set displayNode [$::slicer3::MRMLScene GetNodeByID [$node GetDisplayNodeID ]]
+                set texture [$displayNode GetTextureImageData]
+                set alpha [$texture GetScalarComponentAsDouble $x $y 0 3]
+                if { $alpha == 0 } {
+                  set pointLabels ""
+                  $::QA(currentHitProp) SetVisibility 0
+                  lappend ::QA(tempInvisibleProps) $::QA(currentHitProp)
                 } else {
-                  set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
-                  set rasToIJK [vtkMatrix4x4 New]
-                  $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
-                  set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
-                  set imageData [$nodes(labelNode) GetImageData]
-                  foreach var {i j k} val $ijk {
-                      set $var [expr int(round($val))]
-                  }
-                  set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
-                  if { [info exists ::QAFS($labelValue,name)] } {
-                      if { $::QAFS($labelValue,name) == "Unknown" } {
-                          #
-                          # we found a part of the slice model that has no label - 
-                          # - in this case, turn that slice invisible and return empty string
-                          #   which will cause another iteration through the picker to find any
-                          #   other models (or slices) visible behind this one.
-                          set pointLabels ""
-                          $::QA(currentHitProp) SetVisibility 0
-                          lappend ::QA(tempInvisibleProps) $::QA(currentHitProp)
-                      } else {
-                          set pointLabels "$::QAFS($labelValue,name)"
-                      }
+
+                  #
+                  # here we have a visible portion of the slice model and we want to
+                  # look for a valid label in it
+                  #
+                  set labelID [$nodes(compositeNode) GetLabelVolumeID]
+                  if { $labelID == "" } {
+                    set pointLabels "No Label Layer"
                   } else {
-                      set pointLabels "label: $labelValue (no name available), ijk $ijk"
+                    set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
+                    set rasToIJK [vtkMatrix4x4 New]
+                    $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
+                    set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
+                    set imageData [$nodes(labelNode) GetImageData]
+                    foreach var {i j k} val $ijk {
+                        set $var [expr int(round($val))]
+                    }
+                    set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
+                    if { [info exists ::QAFS($labelValue,name)] } {
+                        if { $::QAFS($labelValue,name) == "Unknown" } {
+                            set pointLabels "Not Labeled"
+                        } else {
+                            set pointLabels "$::QAFS($labelValue,name)"
+                        }
+                    } else {
+                        set pointLabels "label: $labelValue (no name available), ijk $ijk"
+                    }
+                    $rasToIJK Delete
                   }
-                  $rasToIJK Delete
                 }
             }
         }
