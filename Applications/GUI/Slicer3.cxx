@@ -1769,7 +1769,7 @@ int Slicer3_main(int argc, char *argv[])
         else
           {
           // if we're not sure, assume it is data to load...
-          std::string cmd = "::Loader::ShowDialog " + *argit;
+          std::string cmd = "::Loader::ShowDialog {" + *argit + "}";
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
           }
         ++argit;
