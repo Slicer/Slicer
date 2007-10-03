@@ -194,6 +194,20 @@ public:
 
 
   /**
+   * @return string
+   */
+  string GetUnzipCommand();
+  string GetZipCommand();
+  string GetRmCommand();
+  
+  /**
+   *
+   */
+  void SetUnzipCommand(const char *cmd);
+  void SetZipCommand(const char *cmd);
+  void SetRmCommand(const char *cmd);
+  
+  /**
    * From the given design parameters, this creates the input data required by
    * mri_glmfit:
    *  - the 'y' data (concatenated subject volumes)
@@ -288,6 +302,10 @@ private:
   string msBinaryPath;
   string msZipCommandFormat;
   string msUnzipCommandFormat;
+
+  string msZipCommand;
+  string msUnzipCommand;
+  string msRmCommand;
 
 };
 
