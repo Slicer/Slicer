@@ -195,94 +195,101 @@ int vtkQdecModuleLogic::LoadProjectFile(const char *fileName, const char *tempDi
       }
     else
       {
-      vtkErrorMacro("LoadProjectFile: error creating the qdec project glm design from file " << fileName);
       if (err == -1)
         {
         vtkErrorMacro("LoadProjectFile: could not remove existing temp dir " << tempDir);
         }
-      if (err == -2)
+      else if (err == -2)
         {
         vtkErrorMacro("LoadProjectFile: couldn't expand project file " << fileName);
         }
-      if (err == -3)
+      else if (err == -3)
         {
         vtkErrorMacro("LoadProjectFile: couldn't find version file Version.txt");
         }
-      if (err == -4)
+      else if (err == -4)
         {
         vtkErrorMacro("LoadProjectFile: version file had wrong value");
         }
-      if (err == -5)
+      else if (err == -5)
         {
         vtkErrorMacro("LoadProjectFile: couldn't open meta data file " << this->QDECProject->GetMetadataFileName());
         }
-      if (err == -6)
+      else if (err == -6)
         {
         vtkErrorMacro("LoadProjectFile: invalid metadata file, token not found");
         }
-      if (err == -7)
+      else if (err == -7)
         {
         vtkErrorMacro("LoadProjectFile: invalid meta data file, Subject value not found");
         }
-      if (err == -8)
+      else if (err == -8)
         {
         vtkErrorMacro("LoadProjectFile: invalid meta data file, Hemisphere value not found");
         }
-      if (err == -9)
+      else if (err == -9)
         {
         vtkErrorMacro("LoadProjectFile: invalid meta data file, AnalysisName value not found");
         }
-      if (err == -10)
+      else if (err == -10)
         {
         vtkErrorMacro("LoadProjectFile: invalid meta data file, DataTable value not found");
         }
-      if (err == -11)
+      else if (err == -11)
         {
         vtkErrorMacro("LoadProjectFile: invalid meta data file, Measure value not found");
         }
-      if (err == -12)
+      else if (err == -12)
         {
         vtkErrorMacro("LoadProjectFile: invalid meta data file, Smoothness value not found");
         }
-      if (err == -13)
+      else if (err == -13)
         {
         vtkErrorMacro("LoadProjectFile: error loading the data table file");
         }
-      if (err == -14)
+      else if (err == -14)
         {
         vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: bad first discrete factor");
         }
-      if (err == -15)
+      else if (err == -15)
         {
         vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: bad second discrete factor");
         }
-      if (err == -16)
+      else if (err == -16)
         {
         vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: bad first continuous factor");
         }
-      if (err == -17)
+      else if (err == -17)
         {
         vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: bad second continuous factor");
         }
-      if (err == -18)
+      else if (err == -18)
         {
         vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: zero factors!");
         }
-      if (err == -19)
+      else if (err == -19)
         {
         vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: could not create working directory");
         }
-      if (err == -20)
+      else if (err == -20)
         {
         vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: working director not set, cannot save fsgd file");
         }
-      if (err == -21)
+      else if (err == -21)
         {
         vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: could not generate contrasts");
         }
-      if (err == -22)
+      else if (err == -22)
         {
         vtkErrorMacro("LoadProjectFile: error creating results from cached data");
+        }
+      else if (err == -23)
+        {
+        vtkErrorMacro("LoadProjectFile: couldn't open the project file " << fileName);
+        }
+      else
+        {
+        vtkErrorMacro("LoadProjectFile: unspecified error trying to load " << fileName <<  " using temp dir " << tempDir);
         }
       return -1;
       }
