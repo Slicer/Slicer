@@ -7,8 +7,13 @@ proc QueryAtlasWriteFirefoxBookmarkFile {bmfile } {
     set llen [ llength $flist ]
     set title [ lindex $flist [ expr $llen-1 ] ]
     set i [ string first "." $title ]
-    set title [ string range $title 0 [expr $i-1] ]
-    
+    if { $i < 0 } {
+        set doctitle $title
+        append bmfile ".html"
+    } else {
+        set doctitle [ string range $title 0 [expr $i-1] ]
+    }
+        
     #--- open file for writing
     set fp [open $bmfile "w"]
 
@@ -25,11 +30,11 @@ proc QueryAtlasWriteFirefoxBookmarkFile {bmfile } {
     puts $fp $line
 
     #--- write title
-    set line "<TITLE>$title</TITLE>"
+    set line "<TITLE>$doctitle</TITLE>"
     puts $fp $line
-    set line "<H1>$title</H1>"
+    set line "<H1>$doctitle</H1>"
     puts $fp $line
-    set line "<DT><H3>$title</H3>"
+    set line "<DT><H3>$doctitle</H3>"
     puts $fp $line
     set line "   <DL><p>"
     puts $fp $line
@@ -460,12 +465,29 @@ proc QueryAtlasGetPopulationTerms { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasGetSpeciesTerms { } {
 
-    set ::QA(speciesTerms) ""
-    set b  [$::slicer3::QueryAtlasGUI GetSpeciesNoneButton ]
-    set species [$b GetVariableValue ]
-    if { $species == "human" || $species == "mouse" || $species == "macaque" } {
-        set ::QA(SpeciesTerms) $species
+    set ::QA(SpeciesTerms) ""
+    set terms ""
+    set b  [ $::slicer3::QueryAtlasGUI GetSpeciesNoneButton ]
+    if { $b != "" } {
+        if { [$b GetSelectedState] == 0 } {
+            set bh [ $::slicer3::QueryAtlasGUI GetSpeciesHumanButton ]
+            set bm [ $::slicer3::QueryAtlasGUI GetSpeciesMouseButton ]        
+            set bq [ $::slicer3::QueryAtlasGUI GetSpeciesMacaqueButton ]
+            if { ($bh != "" ) && ($bm != "") && ($bq != "" ) } {
+                if { [ $bh GetSelectedState ] == 1 } {
+                    append terms "human+"
+                }
+                if { [ $bm GetSelectedState ] == 1 } {
+                    append terms "mouse+"
+                }
+                if { [ $bq GetSelectedState ] == 1 } {
+                    append terms "macaque+"
+                }
+            }
+        }
     }
+    set terms [ string trimright $terms "+" ]
+    set ::QA(SpeciesTerms) $terms
 }
 
 
@@ -569,7 +591,9 @@ proc QueryAtlasFormURLForGoogle { } {
 }
 
 #----------------------------------------------------------------------------------------------------
-#---
+#--- To build a wikipedia query, try
+# using only structure terms and diagnosis terms if specified. 
+# if neither are available, use other term catagories.
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasFormURLForWikipedia { } {
 
@@ -580,63 +604,54 @@ proc QueryAtlasFormURLForWikipedia { } {
     }
     set terms [ string trimright $terms "+" ]
 
-    #--- if there were no structure terms, get diagnosis terms
-    if { $terms == "" } {
-        if { [ [$::slicer3::QueryAtlasGUI GetUseGroupTerms ] GetSelectedState ] == 1 } {
-            set terms [ QueryAtlasAppendPopulationTerms $terms ]
-        }
+    #--- test the population terms for a meaningful diagnosis
+    if { [ [$::slicer3::QueryAtlasGUI GetUseGroupTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendPopulationTerms $terms ]
+
         #--- strip off handedness terms
+        #--- since these are the last thing added to the
+        #--- string, if they're FIRST in the string, just
+        #--- set the string to empty.
         set idx [ string first "%22left handed" $terms]
-        set tmpstr [ string range $terms 0 $idx ]
+        if { $idx == 0 } {
+            set terms ""
+        } elseif { $idx > 0 } {
+            set terms [ string range $terms 0 [ expr $idx -1 ] ]
+        }
+
         set idx [ string first "%22right handed" $terms]
         set tmpstr [ string range $terms 0 $idx ]
+        if { $idx == 0 } {
+            set terms ""
+        } elseif { $idx > 0 } {
+            set terms [ string range $terms 0 [expr $idx - 1 ] ]
+        }
+
         set idx [ string first "ambidextrous" $terms]
-        set tmpstr [ string range $terms 0 $idx ]
-        #--- strip off any gender terms
-        set idx [ string first "Female" $terms]
-        set tmpstr [ string range $terms 0 $idx ]
-        set idx [ string first "Male" $terms]
-        set tmpstr [ string range $terms 0 $idx ]
-        set idx [ string first "%22 mixed" $terms]
-        set tmpstr [ string range $terms 0 $idx ]
-        #--- strip off any age terms
-        set idx [ string first "neonate" $terms]
-        set tmpstr [ string range $terms 0 $idx ]
-        set idx [ string first "infant" $terms]
-        set tmpstr [ string range $terms 0 $idx ]
-        set idx [ string first "child" $terms]
-        set tmpstr [ string range $terms 0 $idx ]
-        set idx [ string first "adolescent" $terms]
-        set tmpstr [ string range $terms 0 $idx ]
-        set idx [ string first "adult" $terms]
-        set tmpstr [ string range $terms 0 $idx ]
-        set idx [ string first "elderly" $terms]
-        set tmpstr [ string range $terms 0 $idx ]
+        if { $idx ==  0 } {
+            set terms ""
+        } elseif { $idx > 0 } {
+            set terms [ string range $terms 0 [expr $idx - 1 ] ]
+        }
     }
     set terms [ string trimright $terms "+" ]    
 
-    #--- if there were no important diagnosis terms, use other terms
-    if { $terms == "" || $terms == "\%22Normal\%22" } {
-        if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
+    #--- use other terms
+    if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
             set terms [ QueryAtlasAppendOtherTerms $terms ]
         }        
-    }
     set terms [ string trimright $terms "+" ]
 
-    #--- finally, if there were no other terms, use species terms
-    if { $terms == "" } {
-        if { [ [$::slicer3::QueryAtlasGUI GetUseSpeciesTerms ] GetSelectedState ] == 1 } {
-            set terms [ QueryAtlasAppendSpeciesTerms $terms ]
-        }        
-    }
+    #--- add species terms
+    if { [ [$::slicer3::QueryAtlasGUI GetUseSpeciesTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    }        
     set terms [ string trimright $terms "+" ]
 
     #--- now terms contains all categories user chose
     set terms [ QueryAtlasEncodeTerms $terms ]
-    puts "$terms"
     set ::QA(url,Wikipedia) ""
     if { $terms != "" } {
-        set target [ QueryAtlasGetSearchTargets ]
         set url "http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search="
         append url "$terms"
         append url "\&fulltext=Search"
@@ -651,39 +666,21 @@ proc QueryAtlasFormURLForIBVD { } {
 
     #--- get things from GUI:
     set terms ""
-    set terms [ QueryAtlasAppendStructureTerms $terms ]
-#    set terms [ QueryAtlasAppendPopulationTerms $terms ]
-#    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
-#    set terms [ QueryAtlasAppendOtherTerms $terms ]
-    set terms [ string trimright $terms "+" ]
-    #--- now terms contains all.
-    set target [ QueryAtlasGetSearchTargets ]
-
     set ::QA(url,IBVD) ""
-    if { $terms != "" } {
-        set url "http://www.cma.mgh.harvard.edu/ibvd/how_big.php?"
-        #--- get only the first structure from the structurelist
-        set i [ string first "+" $structure ]
-        if { $i > 0 } {
-            #--- found a "+", so grab all chars up to it
-            set singleStructure [ string range $structure 0 [ expr $i - 1 ] ]
-        } else {
-            singleStructure = $structure
-        }
-        
-        # break this down for all demographics that ibvd allow and we offer
-        # structure from menu...
-        append url "structure=$singleStructure"
+    set url "http://www.cma.mgh.harvard.edu/ibvd/search.php"
+    set ::QA(url,IBVD) $url
+}
 
-        #--- TODO: figure out how to format url
-        # diagnosis from menu
-        #append url "\&diagnosis=$diagnosis"
-        # gender from menu
-        #if { $gender != "n/a" } {
-        #    append url "\&gender=$gender"
-        #}
-        set ::QA(url,IBVD) $url
-    }
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasFormURLForBrainInfo { } {
+
+    #--- get things from GUI:
+    set terms ""
+    set ::QA(url,BrainInfo) ""
+    set url "http://braininfo.rprc.washington.edu/indexsearchby.html"
+    set ::QA(url,BrainInfo) $url
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -706,11 +703,11 @@ proc QueryAtlasFormURLForPubMed { } {
         set terms [ QueryAtlasAppendOtherTerms $terms ]
     }
     set terms [ string trimright $terms "+" ]    
-
+    set terms [ QueryAtlasEncodeTerms $terms ]
+    
     set ::QA(url,PubMed) ""
     if { $terms != "" } {
         #--- now terms contains all.
-        set target [ QueryAtlasGetSearchTargets ]
         #--- TODO:
         #--- pubmed wants multi word thing + otherthing to look like
         #-- "multi+word+thing"+otherthing
@@ -740,11 +737,11 @@ proc QueryAtlasFormURLForPubMedCentral { } {
         set terms [ QueryAtlasAppendOtherTerms $terms ]
     }
     set terms [ string trimright $terms "+" ]    
-
+    set terms [ QueryAtlasEncodeTerms $terms ]
+    
     set ::QA(url,PubMedCentral) ""
     if { $terms != "" } {
         #--- now terms contains all.
-        set target [ QueryAtlasGetSearchTargets ]
         #--- TODO:
         #--- pubmed wants multi word thing + otherthing to look like
         #-- "multi+word+thing"+otherthing
@@ -775,7 +772,9 @@ proc QueryAtlasFormURLForJNeurosci { } {
     if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
         set terms [ QueryAtlasAppendOtherTerms $terms ]
     }
-    set terms [ string trimright $terms "+" ]    
+    set terms [ string trimright $terms "+" ]
+    set terms [ QueryAtlasEncodeTerms $terms ]
+    
     set ::QA(url,JNeurosci) ""
     if { $terms != "" } {
         #--- now terms contains all.
@@ -796,7 +795,7 @@ proc QueryAtlasFormURLForJNeurosci { } {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasFormURLForPLoS { } {
+proc QueryAtlasFormURLForPLoSone { } {
 
 
     #--- get things from GUI:
@@ -813,23 +812,113 @@ proc QueryAtlasFormURLForPLoS { } {
     if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
         set terms [ QueryAtlasAppendOtherTerms $terms ]
     }
-    set terms [ string trimright $terms "+" ]    
-    set ::QA(url,PLoS) ""
+    set terms [ string trimright $terms "+" ]
+    set terms [ QueryAtlasEncodeTerms $terms ]
+    
+    set ::QA(url,PLoSone) ""
     if { $terms != "" } {
         #--- now terms contains all.
-        set target [ QueryAtlasGetSearchTargets ]
-
-        #--- TODO:
-        #--- here, we want to put double quotes around each separate
-        #--- structure, cell, gene and misc term.
-        #--- jneurosci wants multi word thing + otherthing to look like
-        #--- "multi word thing"+otherthing
-        set url "http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$terms"
-        set ::QA(url,PLoS) $url
+        set url "http://www.plosone.org/search/simpleSearch.action?query=$terms&x=0&y=0"
+        set ::QA(url,PLoSone) $url
     }
 }
 
 
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasFormURLForPLoSbiology { } {
+
+
+    #--- get things from GUI:
+    set terms ""
+    if { [ [$::slicer3::QueryAtlasGUI GetUseStructureTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendStructureTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseGroupTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseSpeciesTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendOtherTerms $terms ]
+    }
+    set terms [ string trimright $terms "+" ]
+    set terms [ QueryAtlasEncodeTerms $terms ]
+    
+    set ::QA(url,PLoSbiology) ""
+    if { $terms != "" } {
+        #--- now terms contains all.
+        set url "http://biology.plosjournals.org/perlserve/?request=advanced-search&row_start=1&limit=10&order=score&search_fulltext=1&issn=1545-7885&jrn_issn=1545-7885&anywhere_type=any&anywhere=$terms&x=0&y=0#results"
+        set ::QA(url,PLoSbiology) $url
+    }
+}
+
+
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasFormURLForPLoSmedicine { } {
+
+
+    #--- get things from GUI:
+    set terms ""
+    if { [ [$::slicer3::QueryAtlasGUI GetUseStructureTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendStructureTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseGroupTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseSpeciesTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendOtherTerms $terms ]
+    }
+    set terms [ string trimright $terms "+" ]
+    set terms [ QueryAtlasEncodeTerms $terms ]
+    
+    set ::QA(url,PLoSmedicine) ""
+    if { $terms != "" } {
+        #--- now terms contains all.
+        set url "http://medicine.plosjournals.org/perlserv/?request=advanced-search&row_start=1&limit=10&order=score&search_fulltext=1&issn=1549-1676&jrn_issn=1549-1676&anywhere_type=any&anywhere=$terms&x=0&y=0#results"
+        set ::QA(url,PLoSmedicine) $url
+    }
+}
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasFormURLForPLoSgenetics { } {
+
+
+    #--- get things from GUI:
+    set terms ""
+    if { [ [$::slicer3::QueryAtlasGUI GetUseStructureTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendStructureTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseGroupTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendPopulationTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseSpeciesTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendSpeciesTerms $terms ]
+    }
+    if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendOtherTerms $terms ]
+    }
+    set terms [ string trimright $terms "+" ]
+    set terms [ QueryAtlasEncodeTerms $terms ]
+    
+    set ::QA(url,PLoSgenetics) ""
+    if { $terms != "" } {
+        #--- now terms contains all.
+        set url "http://genetics.plosjournals.org/perlserv/?request=advanced-search&row_start=1&limit=10&order=score&search_fulltext=1&issn=1553-7404&jrn_issn=1553-7404&anywhere_type=any&anywhere=$terms&x=0&y=0#results"
+        set ::QA(url,PLoSgenetics) $url
+    }
+}
 
 #----------------------------------------------------------------------------------------------------
 #---
@@ -850,7 +939,9 @@ proc QueryAtlasFormURLForMetasearch { } {
     if { [ [$::slicer3::QueryAtlasGUI GetUseOtherTerms ] GetSelectedState ] == 1 } {
         set terms [ QueryAtlasAppendOtherTerms $terms ]
     }
-    set terms [ string trimright $terms "+" ]    
+    set terms [ string trimright $terms "+" ]
+    set terms [ QueryAtlasEncodeTerms $terms ]
+    
     set ::QA(url,Metasearch)  ""
     if { $terms != "" } {
         #--- now terms contains all.
@@ -860,32 +951,6 @@ proc QueryAtlasFormURLForMetasearch { } {
     }
 }
 
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasFormURLForBraininfo { } {
-
-    #--- get things from GUI:
-    set terms ""
-    set terms [ QueryAtlasAppendStructureTerms $terms ]
-#    set terms [ QueryAtlasAppendPopulationTerms $terms ]
-#    set terms [ QueryAtlasAppendSpeciesTerms $terms ]
-#    set terms [ QueryAtlasAppendOtherTerms $terms ]
-    set terms [ string trimright $terms "+" ]    
-    set ::QA(url,Braininfo) ""
-    if { $terms != "" } {
-        #--- now terms contains all.
-        set target [ QueryAtlasGetSearchTargets ]
-
-        #--- TODO: just take first structure term.
-        set i [ string first "+" $structure ]
-        if { $i >= 0 } {
-            set structure [ string range $structure 0 [expr $i - 1 ] ]
-        } 
-        set url "http://braininfo.rprc.washington.edu/Scripts/hiercentraldirectory.aspx?ID=$structure"
-        set ::QA(url,Braininfo) $url
-    }
-}
 
 
 
@@ -900,8 +965,12 @@ proc QueryAtlasFormURLsForTargets { } {
     unset -nocomplain ::QA(url,PubMedCentral)
     unset -nocomplain ::QA(url,JNeurosci)
     unset -nocomplain ::QA(url,Metasearch)
-    unset -nocomplain ::QA(url,PLoS)
+    unset -nocomplain ::QA(url,PLoSone)
+    unset -nocomplain ::QA(url,PLoSbiology)
+    unset -nocomplain ::QA(url,PLoSmedicine)
+    unset -nocomplain ::QA(url,PLoSgenetics)
     unset -nocomplain ::QA(url,IBVD)
+    unset -nocomplain ::QA(url,BrainInfo)
     unset -nocomplain ::QA(url,Google)
     unset -nocomplain ::QA(url,Wikipedia)
     
@@ -919,7 +988,7 @@ proc QueryAtlasFormURLsForTargets { } {
 
     #--- PUBMED CENTRAL     
     if { ($target == "all") || ($target == "PubMedCentral") } {
-        QueryAtlasFormURLsForPubMedCentral
+        QueryAtlasFormURLForPubMedCentral
         if { $::QA(url,PubMedCentral) == "" } {
             QueryAtlasEmptyURLMessage "PubMedCentral"
         } else {
@@ -927,13 +996,42 @@ proc QueryAtlasFormURLsForTargets { } {
         }
     }
          
-    if { ($target == "PubMed") || ($target == "all") } {
-        QueryAtlasFormURLForPLoS
-        if {$::QA(url,PubMed) == "" } {
-            QueryAtlasEmptyURLMessage "PLoS"
+    #--- Public Library of Science
+    if { ($target == "PLoSone") || ($target == "all") } {
+        QueryAtlasFormURLForPLoSone
+        if {$::QA(url,PLoSone) == "" } {
+            QueryAtlasEmptyURLMessage "PLoSone"
         } else {
-            puts "$::QA(url,PLoS)"
+            puts "$::QA(url,PLoSone)"
         }
+    }
+
+    #--- leave these guys out for now...
+    if { 0 } {
+    if { ($target == "PLoSbiology") || ($target == "all") } {
+        QueryAtlasFormURLForPLoSbiology
+        if {$::QA(url,PLoSbiology) == "" } {
+            QueryAtlasEmptyURLMessage "PLoSbiology"
+        } else {
+            puts "$::QA(url,PLoSbiology)"
+        }
+    }
+    if { ($target == "PLoSgenetics") || ($target == "all") } {
+        QueryAtlasFormURLForPLoSgenetics
+        if {$::QA(url,PLoSgenetics) == "" } {
+            QueryAtlasEmptyURLMessage "PLoSgenetics"
+        } else {
+            puts "$::QA(url,PLoSgenetics)"
+        }
+    }
+    if { ($target == "PLoSmedicine") || ($target == "all") } {
+        QueryAtlasFormURLForPLoSmedicine
+        if {$::QA(url,PLoSmedicine) == "" } {
+            QueryAtlasEmptyURLMessage "PLoSmedicine"
+        } else {
+            puts "$::QA(url,PLoSmedicine)"
+        }
+    }
     }
 
     #--- J Neurosci
@@ -964,6 +1062,15 @@ proc QueryAtlasFormURLsForTargets { } {
             puts "$::QA(url,IBVD)"
         }
     }
+    #--- BrainInfo
+    if { ($target == "all") || ($target == "BrainInfo") } {
+        QueryAtlasFormURLForBrainInfo
+        if { $::QA(url,BrainInfo) == "" } {
+            QueryAtlasEmptyURLMessage "BrainInfo"
+        } else {
+            puts "$::QA(url,BrainInfo)"
+        }
+    }
     #--- GOOGLE
     if { ($target == "all") || ($target == "Google") } {
         QueryAtlasFormURLForGoogle
@@ -983,8 +1090,9 @@ proc QueryAtlasFormURLsForTargets { } {
         }
     }
     QueryAtlasPopulateSearchResultsBox
-    
 }
+
+
 
 #----------------------------------------------------------------------------------------------------
 #---
@@ -998,6 +1106,15 @@ proc QueryAtlasEmptyURLMessage { target } {
     $dialog Invoke
     $dialog Delete
 }
+
+
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasPing { } {
+    puts "ping"
+}
+
 
 
 #----------------------------------------------------------------------------------------------------
@@ -1024,18 +1141,33 @@ proc QueryAtlasPopulateSearchResultsBox { } {
         }
     }
     if { [ info exists ::QA(url,PubMedCentral) ] } {    
-        if { $::QA(url,PubMed) != "" } {
-            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,PubMed)
+        if { $::QA(url,PubMedCentral) != "" } {
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,PubMedCentral)
         }
     }
     if { [ info exists ::QA(url,Metasearch) ] } {    
-        if { $::QA(url,PubMed) != "" } {
-            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,PubMed)
+        if { $::QA(url,Metasearch) != "" } {
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,Metasearch)
         }
     }
-    if { [ info exists ::QA(url,PLoS) ] } {    
-        if { $::QA(url,PubMed) != "" } {
-            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,PubMed)
+    if { [ info exists ::QA(url,PLoSone) ] } {    
+        if { $::QA(url,PLoSone) != "" } {
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,PLoSone)
+        }
+    }
+    if { [ info exists ::QA(url,PLoSgenetics) ] } {    
+        if { $::QA(url,PLoSgenetics) != "" } {
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,PLoSgenetics)
+        }
+    }
+    if { [ info exists ::QA(url,PLoSbiology) ] } {    
+        if { $::QA(url,PLoSbiology) != "" } {
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,PLoSbiology)
+        }
+    }
+    if { [ info exists ::QA(url,PLoSmedicine) ] } {    
+        if { $::QA(url,PLoSmedicine) != "" } {
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,PLoSmedicine)
         }
     }
     if { [ info exists ::QA(url,JNeurosci) ] } {    
@@ -1048,6 +1180,12 @@ proc QueryAtlasPopulateSearchResultsBox { } {
             $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,IBVD)
         }
     }
+    if { [ info exists ::QA(url,BrainInfo) ] } {
+        if { $::QA(url,BrainInfo) != "" } {
+            $::slicer3::QueryAtlasGUI AppendUniqueResult $::QA(url,BrainInfo)
+        }
+    }
+
 }
 
 

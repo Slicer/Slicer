@@ -29,7 +29,6 @@ proc QueryAtlasCullOldPickModels { id } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasCullOldModelAnnotations { } {
 
-    puts "inside cull"
     if {[info exists ::QA(annoModelNodeIDs) ] } {
         #---
         #--- MODELS
@@ -40,7 +39,6 @@ proc QueryAtlasCullOldModelAnnotations { } {
             set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLModelNode" ]            
             lappend tmpNodeList [$node GetID ]
         }
-        puts "all: $tmpNodeList"
 
         #--- COMPARE new list with last list.
 
@@ -57,7 +55,6 @@ proc QueryAtlasCullOldModelAnnotations { } {
                 lappend cullList $id
             }
         }
-        puts "cull: $cullList"
         
         #--- REMOVE references to deleted data
         set len [ llength $cullList ]
@@ -108,7 +105,6 @@ proc QueryAtlasCullOldLabelMapAnnotations { } {
             if { [llength $tmpNodeList] == 0 } {
                 lappend cullList $id
             } elseif { [ lsearch $tmpNodeList $id ] < 0 } {
-                puts "culling $id"
                 lappend cullList $id
             }
         }
@@ -373,7 +369,6 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
 
                     # print them out
                     set ::QA(labelMap_$id) [array get _labels]
-                    puts "$::QA(labelMap_$id)"
 
                     set entries [lsort -integer [array names _labels]]
 
@@ -461,7 +456,6 @@ proc QueryAtlasAddNewLabelMapAnnotations { } {
                             if { [scan $line "%d %s %d %d %d" label name r g b] == 5 } {
                                 set ::QAFS($label,name) $name
                                 set ::QAFS($label,rgb) "$r $g $b"
-                                puts "$name -- $r $g $b"
                             }
                         }
                         close $fp

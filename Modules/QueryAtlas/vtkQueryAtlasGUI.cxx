@@ -1196,7 +1196,10 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     else if ( (b == this->SearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      this->Script ( "QueryAtlasFormURLsForTargets");
+      if ( this->DatabasesMenuButton->IsCreated() )
+        {
+        this->Script ( "QueryAtlasFormURLsForTargets");
+        }
       }
     else if ( (b == this->AnnotationVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
       {
@@ -2314,6 +2317,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->LocalSearchTermEntry->SetParent ( hierarchyFrame->GetFrame() );
     this->LocalSearchTermEntry->Create();
     this->LocalSearchTermEntry->SetValue ("");
+    this->LocalSearchTermEntry->ReadOnlyOn();
     this->AddLocalTermButton = vtkKWPushButton::New();
     this->AddLocalTermButton->SetParent ( hierarchyFrame->GetFrame() );
     this->AddLocalTermButton->Create();
@@ -2348,6 +2352,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->BIRNLexEntry->SetParent ( hierarchyFrame->GetFrame() );
     this->BIRNLexEntry->Create();
     this->BIRNLexEntry->SetValue ("");
+    this->BIRNLexEntry->ReadOnlyOn();
     this->AddBIRNLexStringButton = vtkKWPushButton::New();
     this->AddBIRNLexStringButton->SetParent ( hierarchyFrame->GetFrame() );
     this->AddBIRNLexStringButton->Create();
@@ -2372,6 +2377,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->BIRNLexIDEntry->SetParent ( hierarchyFrame->GetFrame() );
     this->BIRNLexIDEntry->Create();
     this->BIRNLexIDEntry->SetValue("");
+    this->BIRNLexIDEntry->ReadOnlyOn();
     this->AddBIRNLexIDButton = vtkKWPushButton::New();
     this->AddBIRNLexIDButton->SetParent ( hierarchyFrame->GetFrame() );
     this->AddBIRNLexIDButton->Create();
@@ -2389,6 +2395,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->NeuroNamesEntry->SetParent ( hierarchyFrame->GetFrame() );
     this->NeuroNamesEntry->Create();
     this->NeuroNamesEntry->SetValue ("");
+    this->NeuroNamesEntry->ReadOnlyOn();
     this->AddNeuroNamesStringButton = vtkKWPushButton::New();
     this->AddNeuroNamesStringButton->SetParent ( hierarchyFrame->GetFrame() );
     this->AddNeuroNamesStringButton->Create();
@@ -2413,6 +2420,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->NeuroNamesIDEntry->SetParent ( hierarchyFrame->GetFrame() );
     this->NeuroNamesIDEntry->Create();
     this->NeuroNamesIDEntry->SetValue ("");
+    this->NeuroNamesIDEntry->ReadOnlyOn();
     this->AddNeuroNamesIDButton = vtkKWPushButton::New();
     this->AddNeuroNamesIDButton->SetParent ( hierarchyFrame->GetFrame() );
     this->AddNeuroNamesIDButton->Create();
@@ -2429,6 +2437,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->UMLSCIDEntry->SetParent ( hierarchyFrame->GetFrame() );
     this->UMLSCIDEntry->Create();
     this->UMLSCIDEntry->SetValue ("");
+    this->UMLSCIDEntry->ReadOnlyOn();
     this->AddUMLSCIDButton = vtkKWPushButton::New();
     this->AddUMLSCIDButton->SetParent ( hierarchyFrame->GetFrame() );
     this->AddUMLSCIDButton->Create();
@@ -2659,7 +2668,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->CurrentResultsList->GetWidget()->ColumnStretchableOff ( 0 );
     this->CurrentResultsList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( 0 );
 
-    this->CurrentResultsList->GetWidget()->AddColumn ( "Current search results" );    
+    this->CurrentResultsList->GetWidget()->AddColumn ( "Working search results" );    
     this->CurrentResultsList->GetWidget()->ColumnEditableOff ( 1 );
     this->CurrentResultsList->GetWidget()->SetColumnWidth ( 1, 0 );
     this->CurrentResultsList->GetWidget()->SetColumnSortModeToAscii ( 1 );
@@ -3436,8 +3445,8 @@ void vtkQueryAtlasGUI::BuildDatabasesMenu ( vtkKWMenu *m )
   m->AddRadioButton ("PubMed");
   m->AddRadioButton ("PubMedCentral");
   m->AddRadioButton ("JNeurosci");
-  m->AddRadioButton ("PLoS");
   m->AddRadioButton ("Metasearch");
+  m->AddRadioButton ("PLoSone");
   m->AddSeparator();
   m->AddRadioButton ("IBVD");
   m->AddRadioButton ("BrainInfo");
