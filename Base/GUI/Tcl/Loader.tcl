@@ -38,7 +38,9 @@ namespace eval Loader {
       set loader [Loader #auto]
     }
     if { $path != "" } {
-      $loader add $path
+      # deal with spaces in a path name
+      lappend pathList $path
+      $loader add $pathList
     }
   }
 
