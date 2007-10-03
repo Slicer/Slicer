@@ -1268,6 +1268,7 @@ proc QueryAtlasPickOnQuerySlice {x y renderer} {
                 $rasToXY DeepCopy [$nodes(sliceNode) GetXYToRAS]
                 $rasToXY Invert
                 set xyzw [eval $rasToXY MultiplyPoint $rasPoint 1]
+                $rasToXY Delete
                 foreach {x y z w} $xyzw {}
                 set x [expr round($x)]
                 set y [expr round($y)]
