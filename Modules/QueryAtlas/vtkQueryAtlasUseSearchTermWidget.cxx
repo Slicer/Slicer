@@ -223,7 +223,6 @@ void vtkQueryAtlasUseSearchTermWidget::AddWidgetObservers ( ) {
 
 
 
-
 //---------------------------------------------------------------------------
 void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
 {
@@ -259,7 +258,7 @@ void vtkQueryAtlasUseSearchTermWidget::CreateWidget ( )
   this->MultiColumnList->GetWidget()->MovableRowsOff ( );
   this->MultiColumnList->GetWidget()->MovableColumnsOff ( );
 
-  this->MultiColumnList->GetWidget()->AddColumn ( "Search terms" );
+  this->MultiColumnList->GetWidget()->AddColumn ( "Search terms (only selected terms will be used)" );
 
   this->MultiColumnList->GetWidget()->ColumnEditableOn ( 0 );
   this->MultiColumnList->GetWidget()->SetColumnWidth (0, 50);

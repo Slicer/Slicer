@@ -64,13 +64,13 @@ vtkStandardNewMacro (vtkQueryAtlasGUI );
 vtkCxxRevisionMacro ( vtkQueryAtlasGUI, "$Revision: 1.0 $");
 
 
-#define _br 0.925
-#define _bg 0.925
+#define _br 0.945
+#define _bg 0.945
 #define _bb 0.975
 
-#define _fr 0.7
-#define _fg 0.7
-#define _fb 0.7
+#define _fr 0.75
+#define _fg 0.75
+#define _fb 0.75
 
 
 //---------------------------------------------------------------------------
@@ -1142,7 +1142,6 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
         vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
         std::string avgDir = qLogic->GetAverageSubject ( );
         std::string labelDir = avgDir + "/label/";
-//        this->Script ( "QueryAtlasQdecSetUp \"%s\"", labelDir.c_str() );
         this->Script ( "QueryAtlasInitialize");
         }
       }
@@ -1472,6 +1471,7 @@ void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
 
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
   const char *filen;
+
   // get file from dialog  
   filen = this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
   if ( filen != NULL )
@@ -1561,27 +1561,14 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
 
     //--- and load results thru qdecModule Logic, which we get thru the GUI.
     //--- TODO: build a direct way of getting logics, w/o requiring gui-route.
-    vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
-    vtkSlicerModelsLogic *mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
-    const char *tmpdir = app->GetTemporaryDirectory();
-    if ( (strcmp(tmpdir,"")))
-      {
-      retval = qLogic->LoadProjectFile ( filen, tmpdir );
-      }
-    else
-      {
-      vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-      dialog->SetParent (  app->GetApplicationGUI()->GetMainSlicerWindow() );
-      dialog->SetStyleToMessage();
-      std::string msg = "Please set your temporary directory in the Application Settings first (View->Application Settings) and then try to load the Qdec archive again.";
-      dialog->SetText(msg.c_str());
-      dialog->Create ( );
-      dialog->Invoke();
-      dialog->Delete();
-      }
-      
+    vtkQdecModuleGUI *qGUI = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"));
+    vtkQdecModuleLogic *qLogic = qGUI->GetLogic();
+    vtkSlicerModelsLogic*mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
+    retval = qGUI->LoadProjectFile ( filen );
+
     //--- if results appear to have loaded...
     //--- make sure scene agrees with that.
+
     if ( retval >= 0 )
       {
       this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
@@ -1603,21 +1590,30 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
         {
         //--- get FSAverage directory from logic
         //--- and load subject annotations
-        std::string subjDir = qLogic->GetSubjectsDirectory ( );
-        std::string avgDir = qLogic->GetAverageSubject ( );
+        std::vector<std::string> pathcomponents;
+        std::string subjDir = qLogic->GetSubjectsDirectory();
+
+        itksys::SystemTools::SplitPath(subjDir.c_str(), pathcomponents);
+        pathcomponents.push_back("fsaverage");
+        std::string avgDir = itksys::SystemTools::JoinPath(pathcomponents);
+
         std::string annotFile = "";
         vtkMRMLModelNode *mnode = qLogic->GetModelNode();
         //--- for now there's only one model node. later, there may
         //--- be more.
-        if ( avgDir.c_str() != "" )
+        if ( avgDir.c_str() != "" && mnode != NULL )
           {
           if ( ! (strcmp (mnode->GetName(), "lh.inflated" ) ) )
             {
-            annotFile = avgDir + "/label/" + "lh.aparc.annot";
+            pathcomponents.push_back("label");
+            pathcomponents.push_back("lh.aparc.annot");
+            annotFile = itksys::SystemTools::JoinPath(pathcomponents);
             }
           else if ( ! (strcmp (mnode->GetName(), "rh.inflated")))
             {
-            annotFile = avgDir + "/label/" + "rh.aparc.annot";
+            pathcomponents.push_back("label");
+            pathcomponents.push_back("rh.aparc.annot");
+            annotFile = itksys::SystemTools::JoinPath(pathcomponents);
             }
           }
         if ( annotFile != "" )
@@ -1626,9 +1622,9 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
           mLogic->AddScalar ( annotFile.c_str(), mnode );
           }
         }
-      // update Scalar overlay menu
-      this->UpdateScalarOverlayMenu();
       }
+    // update Scalar overlay menu
+    this->UpdateScalarOverlayMenu();
     }
 }
 
@@ -2602,35 +2598,6 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     // ---
     // Top frame QUERY TARGET WIDGETS
     // ---
-    this->UseOtherTerms = vtkKWCheckButton::New();
-    this->UseOtherTerms->SetParent ( TF );
-    this->UseOtherTerms->Create();
-    this->UseOtherTerms->SetText ( "use (selected) other terms" );
-    this->UseOtherTerms->SetSelectedState ( 0 );
-
-    this->UseStructureTerms = vtkKWCheckButton::New();
-    this->UseStructureTerms->SetParent ( TF );
-    this->UseStructureTerms->Create();
-    this->UseStructureTerms->SetText ( "use (selected) structure terms" );
-    this->UseStructureTerms->SetSelectedState ( 1 );
-
-    this->UseGroupTerms = vtkKWCheckButton::New();
-    this->UseGroupTerms->SetParent ( TF );
-    this->UseGroupTerms->Create();
-    this->UseGroupTerms->SetText ( "use group terms" );
-    this->UseGroupTerms->SetSelectedState ( 0 );
-
-    this->UseSpeciesTerms = vtkKWCheckButton::New();
-    this->UseSpeciesTerms->SetParent ( TF );
-    this->UseSpeciesTerms->Create();
-    this->UseSpeciesTerms->SetText ( "use species terms" );
-    this->UseSpeciesTerms->SetSelectedState ( 0 );
-    app->Script ( "grid %s -row 0 -column 1 -padx 0  -pady 2 -sticky w", this->UseOtherTerms->GetWidgetName() );
-    app->Script ( "grid %s -row 1 -column 1 -padx 0  -pady 2 -sticky w", this->UseStructureTerms->GetWidgetName() );
-    app->Script ( "grid %s -row 2 -column 1 -padx 0  -pady 2 -sticky w", this->UseGroupTerms->GetWidgetName() );
-    app->Script ( "grid %s -row 3 -column 1 -padx 0  -pady 2 -sticky w", this->UseSpeciesTerms->GetWidgetName() );
-
-
     vtkKWLabel *sl = vtkKWLabel::New();
     sl->SetParent ( TF);
     sl->Create();
@@ -2649,7 +2616,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->SearchButton->SetImageToIcon ( this->QueryAtlasIcons->GetSearchIcon() );
     this->SearchButton->SetBorderWidth ( 0 );
     this->SearchButton->SetReliefToFlat();
-    this->SearchButton->SetBalloonHelpString ( "Perform a search" );
+    this->SearchButton->SetBalloonHelpString ( "Perform a search on the selected target" );
 
     app->Script ("grid %s -row 4 -column 0 -padx 0 -pady 2 -sticky w",
                  sl->GetWidgetName() );
@@ -2672,12 +2639,6 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     vtkKWFrame *topcurF = vtkKWFrame::New();
     topcurF->SetParent ( MF );
     topcurF->Create();
-    vtkKWLabel *curL = vtkKWLabel::New();
-    curL->SetParent ( topcurF );
-    curL->Create();
-    curL->SetWidth ( 45 );
-    curL->SetText ( "Latest search results" );
-    curL->SetBackgroundColor ( 0.85, 0.85, 0.95 );
 
     this->CurrentResultsList = vtkKWMultiColumnListWithScrollbars::New();
     this->CurrentResultsList->SetParent ( topcurF );
@@ -2698,7 +2659,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->CurrentResultsList->GetWidget()->ColumnStretchableOff ( 0 );
     this->CurrentResultsList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( 0 );
 
-    this->CurrentResultsList->GetWidget()->AddColumn ( "url" );    
+    this->CurrentResultsList->GetWidget()->AddColumn ( "Current search results" );    
     this->CurrentResultsList->GetWidget()->ColumnEditableOff ( 1 );
     this->CurrentResultsList->GetWidget()->SetColumnWidth ( 1, 0 );
     this->CurrentResultsList->GetWidget()->SetColumnSortModeToAscii ( 1 );
@@ -2761,12 +2722,6 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     vtkKWFrame *toppastF = vtkKWFrame::New();
     toppastF->SetParent ( BF );
     toppastF->Create();
-    vtkKWLabel *pastL = vtkKWLabel::New();
-    pastL->SetParent ( toppastF );
-    pastL->Create();
-    pastL->SetWidth ( 45 );
-    pastL->SetText ( "Reserved search results" );
-    pastL->SetBackgroundColor ( 0.85, 0.85, 0.95 );
 
     this->AccumulatedResultsList = vtkKWMultiColumnListWithScrollbars::New();
     this->AccumulatedResultsList->SetParent ( toppastF );
@@ -2788,7 +2743,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->AccumulatedResultsList->GetWidget()->ColumnStretchableOff ( 0 );
     this->AccumulatedResultsList->GetWidget()->SetColumnFormatCommandToEmptyOutput ( 0 );
 
-    this->AccumulatedResultsList->GetWidget()->AddColumn ( "url" );    
+    this->AccumulatedResultsList->GetWidget()->AddColumn ( "Reserved search results" );    
     this->AccumulatedResultsList->GetWidget()->ColumnEditableOff ( 1 );
     this->AccumulatedResultsList->GetWidget()->SetColumnWidth ( 1, 0 );
     this->AccumulatedResultsList->GetWidget()->SetColumnSortModeToAscii ( 1 );
@@ -2853,7 +2808,6 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->LoadURIsButton->GetLoadSaveDialog()->SetFileTypes ( "*.html");
 
     app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand 1", topcurF->GetWidgetName() );
-    app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", curL->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 0 -fill both -expand 1", this->CurrentResultsList->GetWidgetName() );
 
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", curF->GetWidgetName() );
@@ -2871,7 +2825,6 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     app->Script ("grid columnconfigure %s 5 -weight 1", this->SaveCurrentSelectedResultsButton->GetWidgetName() );    
 
     app->Script( "pack %s -side top -padx 0 -pady 2 -fill both -expand true", toppastF->GetWidgetName() );
-    app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand true", pastL->GetWidgetName() );
     app->Script ("pack %s -side top -padx 0 -pady 0 -fill both -expand true", this->AccumulatedResultsList->GetWidgetName() );
 
     app->Script ("pack %s -side top -padx 0 -pady 2 -fill x -expand 1", pastF->GetWidgetName() );
@@ -2888,8 +2841,6 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     app->Script ("grid columnconfigure %s 4 -weight 1", this->LoadURIsButton->GetWidgetName() );    
     app->Script ("grid columnconfigure %s 5 -weight 1", this->SaveAccumulatedResultsButton->GetWidgetName() );    
 
-    curL->Delete();
-    pastL->Delete();
     topcurF->Delete();
     curF->Delete();
     toppastF->Delete();
@@ -3192,7 +3143,7 @@ void vtkQueryAtlasGUI::BuildPopulationFrame()
     this->HandednessMenuButton->GetWidget()->GetMenu()->SelectItem ("n/a");
     this->HandednessMenuButton->GetWidget()->GetMenu()->AddRadioButton ("left");
     this->HandednessMenuButton->GetWidget()->GetMenu()->AddRadioButton ("right");
-    this->HandednessMenuButton->GetWidget()->GetMenu()->AddRadioButton ("mixed");
+    this->HandednessMenuButton->GetWidget()->GetMenu()->AddRadioButton ("both");
     this->HandednessMenuButton->GetWidget()->GetMenu()->AddSeparator();
     this->HandednessMenuButton->GetWidget()->GetMenu()->AddCommand ("close");
 
@@ -3354,10 +3305,14 @@ void vtkQueryAtlasGUI::BuildQueryBuilderContextFrames ( vtkKWFrame *parent )
     this->PopulationFrame = vtkKWFrame::New();
     this->PopulationFrame->SetParent ( parent );
     this->PopulationFrame->Create();
+    this->PopulationFrame->SetReliefToGroove();
+    this->PopulationFrame->SetBorderWidth ( 1 );    
 
     this->SpeciesFrame = vtkKWFrame::New();
     this->SpeciesFrame->SetParent ( parent );
     this->SpeciesFrame->Create();
+    this->SpeciesFrame->SetReliefToGroove();
+    this->SpeciesFrame->SetBorderWidth ( 1 );
 
     this->OtherFrame = vtkKWFrame::New();
     this->OtherFrame->SetParent ( parent );
@@ -3370,45 +3325,102 @@ void vtkQueryAtlasGUI::BuildQueryBuilderContextFrames ( vtkKWFrame *parent )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildQueryBuilderContextButtons ( vtkKWFrame *parent )
 {
-  vtkKWFrame *f = vtkKWFrame::New();
-  f->SetParent ( parent );
-  f->Create();
-  this->Script ("pack %s -side top -anchor nw -fill none", f->GetWidgetName() );
 
-  // for now this will be the "other" term repository...
-  // when we flesh this out with multiscale categories,
-  // 
-  this->OtherButton = vtkKWPushButton::New();
-  this->OtherButton->SetParent ( f );
-  this->OtherButton->Create();
-  this->OtherButton->SetWidth ( 10 );
-  this->OtherButton->SetText ( "other");
-    
-  this->StructureButton = vtkKWPushButton::New();
-  this->StructureButton->SetParent ( f );
-  this->StructureButton->Create();
-  this->StructureButton->SetWidth ( 10);
-  this->StructureButton->SetText ( "structure");
-    
-  this->PopulationButton = vtkKWPushButton::New();
-  this->PopulationButton->SetParent ( f );
-  this->PopulationButton->Create();
-  this->PopulationButton->SetWidth ( 10 );
-  this->PopulationButton->SetText ( "group");
-    
-  this->SpeciesButton = vtkKWPushButton::New();
-  this->SpeciesButton->SetParent ( f );
-  this->SpeciesButton->Create();
-  this->SpeciesButton->SetWidth ( 10 );
-  this->SpeciesButton->SetText ( "species");    
+    vtkKWFrame *f = vtkKWFrame::New();
+    f->SetParent ( parent );
+    f->Create();
+    this->Script ("pack %s -side top -anchor nw -fill none", f->GetWidgetName() );
 
-  this->Script ( "pack %s %s %s %s -anchor nw -side left -fill none -padx 2 -pady 2",
-                 this->OtherButton->GetWidgetName(),
-                 this->StructureButton->GetWidgetName(),
-                 this->PopulationButton->GetWidgetName(),
-                 this->SpeciesButton->GetWidgetName() );
+    this->UseOtherTerms = vtkKWCheckButton::New();
+    this->UseOtherTerms->SetParent ( f );
+    this->UseOtherTerms->Create();
+    this->UseOtherTerms->SetText ( "" );
+    this->UseOtherTerms->SetSelectedState ( 0 );
+    this->UseOtherTerms->SetBalloonHelpString ("Use these terms in the search");
 
-  f->Delete();
+    this->UseStructureTerms = vtkKWCheckButton::New();
+    this->UseStructureTerms->SetParent ( f );
+    this->UseStructureTerms->Create();
+    this->UseStructureTerms->SetText ( "" );
+    this->UseStructureTerms->SetSelectedState ( 1 );
+    this->UseStructureTerms->SetBalloonHelpString ("Use these terms in the search");
+
+    this->UseGroupTerms = vtkKWCheckButton::New();
+    this->UseGroupTerms->SetParent ( f );
+    this->UseGroupTerms->Create();
+    this->UseGroupTerms->SetText ( "" );
+    this->UseGroupTerms->SetSelectedState ( 0 );
+    this->UseGroupTerms->SetBalloonHelpString ("Use these terms in the search");
+
+    this->UseSpeciesTerms = vtkKWCheckButton::New();
+    this->UseSpeciesTerms->SetParent ( f );
+    this->UseSpeciesTerms->Create();
+    this->UseSpeciesTerms->SetText ( "" );
+    this->UseSpeciesTerms->SetSelectedState ( 0 );
+    this->UseSpeciesTerms->SetBalloonHelpString ("Use these terms in the search");
+
+    vtkKWLabel *useL = vtkKWLabel::New();
+    useL->SetParent ( f );
+    useL->Create();
+    useL->SetText( "use: ");
+
+    this->Script ( "grid %s -row 0 -column 0 -padx 0 -pady 1 -sticky e", useL->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 1 -padx 4 -pady 1 -sticky ew", this->UseOtherTerms->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 2 -padx 4 -pady 1 -sticky ew", this->UseStructureTerms->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 3 -padx 4 -pady 1 -sticky ew", this->UseGroupTerms->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 4 -padx 4 -pady 1 -sticky ew", this->UseSpeciesTerms->GetWidgetName() );
+
+    // for now this will be the "other" term repository...
+    // when we flesh this out with multiscale categories,
+    // 
+    this->OtherButton = vtkKWPushButton::New();
+    this->OtherButton->SetParent ( f );
+    this->OtherButton->Create();
+    this->OtherButton->SetWidth ( 8 );
+    this->OtherButton->SetText ( "other");
+    this->OtherButton->SetBalloonHelpString ("specify and select other search terms");
+    
+    this->StructureButton = vtkKWPushButton::New();
+    this->StructureButton->SetParent ( f );
+    this->StructureButton->Create();
+    this->StructureButton->SetWidth ( 8);
+    this->StructureButton->SetText ( "structure");
+    this->StructureButton->SetBalloonHelpString ("specify and select structure search terms");
+    
+    this->PopulationButton = vtkKWPushButton::New();
+    this->PopulationButton->SetParent ( f );
+    this->PopulationButton->Create();
+    this->PopulationButton->SetWidth ( 8 );
+    this->PopulationButton->SetText ( "group");
+    this->PopulationButton->SetBalloonHelpString ("Choose population search terms");
+    
+    this->SpeciesButton = vtkKWPushButton::New();
+    this->SpeciesButton->SetParent ( f );
+    this->SpeciesButton->Create();
+    this->SpeciesButton->SetWidth ( 8 );
+    this->SpeciesButton->SetText ( "species");    
+    this->SpeciesButton->SetBalloonHelpString ("Choose species search terms");
+
+    vtkKWLabel *chooseL = vtkKWLabel::New();
+    chooseL->SetParent ( f );
+    chooseL->Create();
+    chooseL->SetText ( "choose: ");
+    
+    this->Script ( "grid %s -row 1 -column 0 -padx 0 -pady 0 -sticky e", chooseL->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 1 -padx 2 -pady 0 -sticky ew", this->OtherButton->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 2 -padx 2 -pady 0 -sticky ew", this->StructureButton->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 3 -padx 2 -pady 0 -sticky ew", this->PopulationButton->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 4 -padx 2 -pady 0 -sticky ew", this->SpeciesButton->GetWidgetName() );
+
+    this->Script ( "grid columnconfigure %s 0 -weight 0", useL->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 1 -weight 0", this->UseOtherTerms->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 2 -weight 0", this->UseStructureTerms->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 3 -weight 0", this->UseGroupTerms->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 4 -weight 0", this->UseSpeciesTerms->GetWidgetName() );
+
+    useL->Delete();
+    chooseL->Delete();
+    f->Delete();
 }
 
 
@@ -3422,11 +3434,10 @@ void vtkQueryAtlasGUI::BuildDatabasesMenu ( vtkKWMenu *m )
   m->AddRadioButton ("Wikipedia");
   m->AddSeparator();
   m->AddRadioButton ("PubMed");
+  m->AddRadioButton ("PubMedCentral");
   m->AddRadioButton ("JNeurosci");
   m->AddRadioButton ("PLoS");
-  m->AddSeparator();
   m->AddRadioButton ("Metasearch");
-  m->AddRadioButton ("Entrez");
   m->AddSeparator();
   m->AddRadioButton ("IBVD");
   m->AddRadioButton ("BrainInfo");
