@@ -836,7 +836,7 @@ void vtkQdecModuleGUI::BuildGUI ( )
   // ---
     
   // HELP FRAME
-  const char *help = "The Qdec Module provides support for the QDEC program from MGH: Query, Design, Estimate, Contrast.\nBefore you start: Set up a subjects directory and set your SUBJECTS_DIR environment variable (you'll need to restart Slicer3). In that directory, put the set of subjects you wish to analyse, along with the fsaverage subject. Then make a subdirectory qdec, and in it place your qdec.table.dat file along with any .level files describing the discrete factors (ie gender.levels will have 'male' and 'female' on two separate lines).";
+  const char *help = "The Qdec Module provides support for the QDEC program from MGH: Query, Design, Estimate, Contrast.\nBefore you start: Set up a subjects directory and set your SUBJECTS_DIR environment variable (you'll need to restart Slicer3). In that directory, put the set of subjects you wish to analyse, along with the fsaverage subject. Then make a subdirectory qdec, and in it place your qdec.table.dat file along with any .level files describing the discrete factors (ie gender.levels will have 'male' and 'female' on two separate lines).\nYou can also load precomputed .qdec archives using the 'Load Results Data File' button. This requires unzip and rm, and you can point Slicer to these applications via the Application Settings interface (View->Application Settings)";
   const char *about = "This work was supported by NA-MIC. See http://na-mic.org/Wiki/index.php/Projects/Slicer3/2007_Project_Week_QDEC_Slicer3_Integration for details on the integration project.";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QdecModule" );
   this->BuildHelpAndAboutFrame ( page, help, about );
@@ -1171,6 +1171,8 @@ void vtkQdecModuleGUI::SetInteractorStyle( vtkSlicerViewerInteractorStyle *inter
 int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
 {
   const char *tempDir = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetTemporaryDirectory();
+  const char *unzip = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetUnzip();
+  const char *rm = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetRm();
   // make the paths work for windows
 #ifdef _WIN32
   std::string newTempDir = itksys::SystemTools::ConvertToOutputPath(tempDir);
@@ -1180,6 +1182,22 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
   std::string newFileName = std::string(fileName);
 #endif
 
+  // make sure to escape any characters that might make working on the file
+  // difficult, like spaces and brackets
+  newFileName =  itksys::SystemTools::EscapeChars(newFileName.c_str(), QdecModule_ESCAPE_CHARS);
+  vtkDebugMacro("Escaped file name = " << newFileName.c_str());
+  
+  // check the paths to unzip and rm
+  if (strcmp(unzip, "") != 0 &&
+      strcmp(unzip, this->GetLogic()->QDECProject->GetUnzipCommand().c_str()) != 0)
+    {
+    this->GetLogic()->QDECProject->SetUnzipCommand(unzip);
+    }
+   if (strcmp(rm, "") != 0 &&
+       strcmp(rm, this->GetLogic()->QDECProject->GetRmCommand().c_str()) != 0)
+    {
+    this->GetLogic()->QDECProject->SetRmCommand(rm);
+    }
   vtkDebugMacro("Trying to load file " << newFileName.c_str() << ", using temp dir " << newTempDir.c_str());
   if (this->GetLogic()->LoadProjectFile(newFileName.c_str(), newTempDir.c_str()) == -1)
     {

@@ -21,6 +21,8 @@
 #include "vtkMRMLScene.h"
 #include "vtkQdecModuleLogic.h"
 
+#define QdecModule_ESCAPE_CHARS " (){}[]$\"\\"
+
 class vtkKWFrame;
 class vtkKWScaleWithEntry;
 class vtkKWPushButton;
