@@ -42,6 +42,9 @@ const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
 const char *vtkSlicerApplication::ModuleCachePathRegKey = "ModuleCachePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
 const char *vtkSlicerApplication::WebBrowserRegKey = "WebBrowser";
+const char *vtkSlicerApplication::UnzipRegKey = "Unzip";
+const char *vtkSlicerApplication::ZipRegKey = "Zip";
+const char *vtkSlicerApplication::RmRegKey = "Rm";
 const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
 const char *vtkSlicerApplication::HomeModuleRegKey = "HomeModule";
 const char *vtkSlicerApplication::LoadCommandLineModulesRegKey = "LoadCommandLineModules";
@@ -516,9 +519,17 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
                     << " You will have to set the browser location each time you launch Slicer to use modules that require it.");
     }
 */  
-    
-  Superclass::RestoreApplicationSettingsFromRegistry();
 
+  //--- unzip
+  strcpy(this->Unzip, "");
+  //--- zip
+  strcpy(this->Zip, "");
+  //--- rm
+  strcpy(this->Rm, "");
+  
+  Superclass::RestoreApplicationSettingsFromRegistry();
+  
+  
   if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::ConfirmDeleteRegKey))
     {
@@ -567,6 +578,22 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
       this->WebBrowser);
     }
 
+  if (this->HasRegistryValue(2, "RunTime", vtkSlicerApplication::UnzipRegKey))
+    {
+    this->GetRegistryValue(2, "RunTime", vtkSlicerApplication::UnzipRegKey,
+                           this->Unzip);
+    }
+  if (this->HasRegistryValue(2, "RunTime", vtkSlicerApplication::ZipRegKey))
+    {
+    this->GetRegistryValue(2, "RunTime", vtkSlicerApplication::ZipRegKey,
+                           this->Zip);
+    }
+  if (this->HasRegistryValue(2, "RunTime", vtkSlicerApplication::RmRegKey))
+    {
+    this->GetRegistryValue(2, "RunTime", vtkSlicerApplication::RmRegKey,
+                           this->Rm);
+    }
+      
   if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey))
     {
@@ -667,6 +694,16 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::WebBrowserRegKey, "%s", 
     this->WebBrowser);
+
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::UnzipRegKey, "%s", 
+    this->Unzip);
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::ZipRegKey, "%s", 
+    this->Zip);
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::RmRegKey, "%s", 
+    this->Rm);
 
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey, "%d", 
@@ -846,6 +883,70 @@ const char* vtkSlicerApplication::GetWebBrowser() const
 {
   // should check if this is an executable file...
   return this->WebBrowser;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetUnzip(const char* path)
+{
+  if (path)
+    {
+    if (strcmp(this->Unzip, path) != 0
+        && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->Unzip, path);
+      this->Modified();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetUnzip() const
+{
+  // should check if this is an executable file...
+  return this->Unzip;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetZip(const char* path)
+{
+  if (path)
+    {
+    if (strcmp(this->Zip, path) != 0
+        && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->Zip, path);
+      this->Modified();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetZip() const
+{
+  // should check if this is an executable file...
+  return this->Zip;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetRm(const char* path)
+{
+  if (path)
+    {
+    if (strcmp(this->Rm, path) != 0
+        && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->Rm, path);
+      this->Modified();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetRm() const
+{
+  // should check if this is an executable file...
+  return this->Rm;
 }
 
 //----------------------------------------------------------------------------

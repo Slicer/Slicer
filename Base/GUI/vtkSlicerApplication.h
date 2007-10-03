@@ -100,6 +100,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *ModuleCachePathRegKey;
   static const char *TemporaryDirectoryRegKey;
   static const char *WebBrowserRegKey;
+  static const char *UnzipRegKey;
+  static const char *ZipRegKey;
+  static const char *RmRegKey;
   static const char *HomeModuleRegKey;
   static const char *LoadCommandLineModulesRegKey;
   static const char *EnableDaemonRegKey;
@@ -146,6 +149,18 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Set/Get an executable firefox browser for modules that need one.
   void SetWebBrowser ( const char *browser);
   const char* GetWebBrowser () const;
+
+  // Descriptin:
+  // Set/Get an executable zip and unzip for modules that need one
+  void SetUnzip ( const char *unzip );
+  const char *GetUnzip() const;
+  void SetZip (const char *zip);
+  const char *GetZip() const;
+
+  // Description:
+  // Set/Get an executable rm for modules that need one
+  void SetRm ( const char *rm );
+  const char *GetRm() const;
   
   // Description:
   // Set/Get a directory for temporary file storage
@@ -264,6 +279,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModuleCachePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char WebBrowser [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
+  char Unzip [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
+  char Zip [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
+  char Rm [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
   char TemporaryDirectory[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char HomeModule [ vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ApplicationFontSize [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
