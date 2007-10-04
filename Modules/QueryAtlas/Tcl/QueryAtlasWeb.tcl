@@ -166,7 +166,7 @@ proc QueryAtlasGetSearchTargets { } {
 proc QueryAtlasAddToSavedTerms {} {
 
     #--- add term to listbox.
-    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+#    $::slicer3::ApplicationGUI SelectModule QueryAtlas
     set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
 
     puts "prefiltered terms are $::QA(lastLabels)"
@@ -199,7 +199,7 @@ proc QueryAtlasAddToSavedTerms {} {
 proc QueryAtlasAddEntryTermToSavedTerms { terms } {
 
     #--- add term to listbox.
-    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+#    $::slicer3::ApplicationGUI SelectModule QueryAtlas
     set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
 
     #--- filter local terms for friendlier viewing
@@ -1135,7 +1135,7 @@ proc QueryAtlasPing { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasPopulateSearchResultsBox { } {
 
-    $::slicer3::ApplicationGUI SelectModule QueryAtlas
+#    $::slicer3::ApplicationGUI SelectModule QueryAtlas
     set lb [[$::slicer3::QueryAtlasGUI GetCurrentResultsList ] GetWidget]    
 
     if { [ info exists ::QA(url,Google) ] } {

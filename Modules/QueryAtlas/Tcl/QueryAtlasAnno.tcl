@@ -20,6 +20,7 @@ proc QueryAtlasCullOldPickModels { id } {
     if { [ info exists ::QA(actor_$id,visibility)  ] } {
         unset -nocomplain ::QA(actor_$id,visibility)
     }
+
 }
 
 
@@ -28,6 +29,12 @@ proc QueryAtlasCullOldPickModels { id } {
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasCullOldModelAnnotations { } {
+
+    #--- progress feedback
+    set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+    set prog [ $win GetProgressGauge ]
+    $win SetStatusText "Culling any old model annotations..."
+    $prog SetValue 0
 
     if {[info exists ::QA(annoModelNodeIDs) ] } {
         #---
@@ -41,7 +48,8 @@ proc QueryAtlasCullOldModelAnnotations { } {
         }
 
         #--- COMPARE new list with last list.
-
+        #--- progress feedback
+        $prog SetValue 10
         set cullList ""
         set len [ llength $::QA(annoModelNodeIDs) ]
         for { set i 0 } { $i < $len } { incr i } {
@@ -57,10 +65,22 @@ proc QueryAtlasCullOldModelAnnotations { } {
         }
         
         #--- REMOVE references to deleted data
-        set len [ llength $cullList ]
-        for { set i 0 } { $i < $len } { incr i } {
-            set id [ lindex $cullList $i ]
 
+        set len [ llength $cullList ]
+        if {$len == 0 } {
+            #--- progress feedback
+            $prog SetValue 100
+            $win SetStatusText ""
+            $prog SetValue 0
+            return
+        }
+        set stprog 20.0
+        for { set i 0 } { $i < $len } { incr i } {
+            #--- progress feedback
+            set progress [ expr $stprog + ( $i * ((100.0-$stprog)/$len)) ]
+            $prog SetValue $progress
+
+            set id [ lindex $cullList $i ]
             #--- Cull old pick model
             QueryAtlasCullOldPickModels $id
             
@@ -81,6 +101,12 @@ proc QueryAtlasCullOldModelAnnotations { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasCullOldLabelMapAnnotations { } {
 
+    #--- progress feedback
+    set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+    set prog [ $win GetProgressGauge ]
+    $win SetStatusText "Culling any old label map annotations..."
+    $prog SetValue 0
+
     if { [info exists ::QA(annoLabelMapIDs) ] } {
         #---
         #--- LABEL MAPS
@@ -94,6 +120,9 @@ proc QueryAtlasCullOldLabelMapAnnotations { } {
             }
         }
 
+        #--- progress feedback
+        $prog SetValue 10
+        
         #--- COMPARE new list with last list.
         set cullList ""
         set len [ llength $::QA(annoLabelMapIDs) ]
@@ -108,28 +137,27 @@ proc QueryAtlasCullOldLabelMapAnnotations { } {
                 lappend cullList $id
             }
         }
+
         
         #--- REMOVE references to deleted data
+
         set len [ llength $cullList ]
+        if {$len == 0 } {
+            #--- progress feedback
+            $prog SetValue 100
+            $win SetStatusText ""
+            $prog SetValue 0
+            return
+        }
+        set stprog 20.0
         for { set i 0 } { $i < $len } { incr i } {
+            #--- progress feedback
+            set progress [ expr $stprog + ( $i * ((100.0-$stprog)/$len)) ]
+            $prog SetValue $progress
+            
             set id [ lindex $cullList $i ]
 
-            if { [ info exists ::QA(polyData_$id) ] } {
-                $::QA(polyData_$id) Delete
-                unset -nocomplain ::QA(polyData_$id)
-            }
-            if { [ info exists ::QA(mapper_$id) ]} {
-                $::QA(mapper_$id) Delete
-                unset -nocomplain ::QA(mapper_$id)
-            }
-            if { [ info exists ::QA(actor_$id) ] } {
-                $::QA(actor_$id) Delete
-                unset -nocomplain ::QA(actor_$id)
-            }
-
-            if { [ info exists ::QA(actor_$id,visibility)  ] } {
-                unset -nocomplain ::QA(actor_$id,visibility)
-            }
+            QueryAtlasCullOldPickModels $id
             
             set indx [ lsearch $::QA(annoLabelMapIDs) $id ]
             set ::QA(annoLabelMapIDs) [ lreplace $::QA(annoLabelMapIDs) $indx $indx ]
@@ -145,6 +173,7 @@ proc QueryAtlasCullOldLabelMapAnnotations { } {
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasAddNewPickModels { mid } {
+
 
     set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
     set renderer [$renderWidget GetRenderer]
@@ -213,6 +242,12 @@ proc QueryAtlasAddNewPickModels { mid } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
 
+    #--- progress feedback
+    set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+    set prog [ $win GetProgressGauge ]
+    $win SetStatusText "Adding any new model annotations..."
+    $prog SetValue 0
+
     if { [info exists ::QA(annoModelNodeIDs) ] } {
         #---
         #--- MODELS
@@ -225,6 +260,7 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
             lappend tmpNodeList [$node GetID ]
         }
 
+        $prog SetValue 10
         #--- COMPARE new list with last list.
         set addList ""
         set len [ llength $tmpNodeList ]
@@ -249,11 +285,27 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
         #--- or an rh.aparc.annot is loaded first -- if not,
         #--- look in the modelAnnotation dir passed in.
         #---
+
         set len [ llength $addList ]
+        if {$len == 0 } {
+            #--- progress feedback
+            $prog SetValue 100
+            $win SetStatusText ""
+            $prog SetValue 0
+            return
+        }
+        set stprog 20.0
+        set pinc [ expr ( 100.0-$stprog)/$len  ]
+
         for { set i 0 } { $i < $len } { incr i } {
+            
             set id [ lindex $addList $i ]
             set node [ $::slicer3::MRMLScene GetNodeByID $id ]
             set name [ $node GetName ]
+
+            #--- progress feedback
+            set progress [ expr $stprog + ($i * $pinc) ]
+            $prog SetValue $progress
             
             set annoFileName ""
             #--- append all models with either .lh or .rh
@@ -288,23 +340,53 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
                     }
                 }
 
-                #--- if that didn't work either, just look for the next new model.
+                #--- if that didn't work eit.0her, just look for the next new model.
                 if { ! [ file exists $annoFileName ] } {
                     break
                 }
-
-                #--- if we're still here, then add annotations
+                
+                #--- if we're still here, then search for annotations on the
+                #--- model and add them if they're not already there.
+                $win SetStatusText "Adding annotation scalar for $name..."
                 set mlogic [ $::slicer3::ModelsGUI GetLogic ]
                 if { $mlogic != "" } {
-                    #--- add the scalar onto the node
-                    $mlogic AddScalar $annoFileName $node
-                    lappend ::QA(annoModelNodeIDs) $id
-                    lappend ::QA(annoModelDisplayNodeIDs) [ $node GetDisplayNodeID ]
-
+                    #--- progress feedback
+                    set p [expr $progress + ( $pinc/9.0 ) ]
+                    $prog SetValue $p
+                    
+                    #--- check to see if scalar aparc.annot is there already.
+                    #--- if not, add it
                     set dnodeID [ $node GetDisplayNodeID ]
                     set dnode [ $node GetDisplayNode ]
                     set snode [ $node GetStorageNode ]
 
+                    if { $snode != "" } {
+                        set numOverlays [ $snode GetNumberOfOverlayFiles ]
+                        if { $numOverlays == 0 } {
+                                #--- add the scalar onto the node
+                                $mlogic AddScalar $annoFileName $node                                                        
+                            } else {
+                                for { set j 0 } { $j < $numOverlays } { incr j } {
+                                    set oname   [ $snode GetOverlayFileName $j ]
+                                    if { ( [ string first "lh.aparc.annot" $oname ] < 0 ) && ( [ string first "rh.aparc.annot" $oname] < 0 ) } {
+                                        #--- add the scalar onto the node
+                                        $mlogic AddScalar $annoFileName $node                            
+                                    }
+                                }
+                            }
+                    }
+
+                    #--- progress feedback
+                    set p [expr $progress + ( $pinc/9.0 ) ]
+                    $prog SetValue $p
+                    
+                    lappend ::QA(annoModelNodeIDs) $id
+                    lappend ::QA(annoModelDisplayNodeIDs) [ $node GetDisplayNodeID ]
+
+                    #--- progress feedback
+                    set p [expr $progress + ( $pinc/8.0 ) ]
+                    $prog SetValue $p
+                    
                     set viewer [$::slicer3::ApplicationGUI GetViewerWidget] 
                     unset -nocomplain  ::QA(labelMap_$id)
 
@@ -316,27 +398,40 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
                     }
                     set mapper [$actor GetMapper]
 
+                    #--- progress feedback
+                    set p [expr $progress + ( $pinc/7.0 ) ]
+                    $prog SetValue $p
+
+                    #--- set the annotations to be the active scalars
                     set polydata [$node GetPolyData]
                     set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
                     [$node GetDisplayNode] SetActiveScalarName "labels"
                     [$node GetDisplayNode] SetScalarVisibility 1
 
                     if { $scalaridx == "-1" } {
-                        puts "couldn't find scalars -- adding"
                         set scalars [vtkIntArray New]
                         $scalars SetName "labels"
                         [$polydata GetPointData] AddArray $scalars
                         [$polydata GetPointData] SetActiveScalars "labels"
                         $scalars Delete
                     } 
+                    #--- progress feedback
+                    set p [expr $progress + ( $pinc/5.0 ) ]
+                    $prog SetValue $p
+                    
                     set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
                     set scalars [[$polydata GetPointData] GetArray $scalaridx]
+
 
                     set lutNode [vtkMRMLColorTableNode New]
                     $lutNode SetTypeToUser
                     $::slicer3::MRMLScene AddNode $lutNode
                     $lutNode SetName "QueryLUT_$id"
                     [$node GetDisplayNode] SetAndObserveColorNodeID [$lutNode GetID]
+
+                    #--- progress feedback
+                    set p [expr $progress + ( $pinc/3.0 ) ]
+                    $prog SetValue $p
 
                     set fssar [vtkFSSurfaceAnnotationReader New]
 
@@ -345,6 +440,11 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
                     $fssar SetColorTableOutput [$lutNode GetLookupTable]
                     # try reading an internal colour table first
                     $fssar UseExternalColorTableFileOff
+
+                    #--- progress feedback
+                    set p [expr $progress + ( $pinc/1.5 ) ]
+                    $win SetStatusText "Reading colors and labels (may take awhile)..."
+                    $prog SetValue $p
 
                     set retval [$fssar ReadFSAnnotation]
 
@@ -367,6 +467,10 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
                     array unset ::vtkFreeSurferReadersLabels_$id
                     array set ::vtkFreeSurferReadersLabels_$id [array get _labels]
 
+                    #--- progress feedback
+                    set p [expr $progress + ( $pinc/1.75 ) ]
+                    $prog SetValue $p
+
                     # print them out
                     set ::QA(labelMap_$id) [array get _labels]
 
@@ -384,10 +488,7 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
                     $lutNode Delete
                     $fssar Delete
 
-                    #WJP TEST -- add a new pick model
                     QueryAtlasAddNewPickModels $id
-                    
-                    [$viewer GetMainViewer] Reset
                 }
             }
         }
@@ -403,6 +504,12 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasAddNewLabelMapAnnotations { } {
 
+    #--- progress feedback
+    set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+    set prog [ $win GetProgressGauge ]
+    $win SetStatusText "Adding any new label map annotations..."
+    $prog SetValue 0
+
     if {[ info exists ::QA(annoLabelMapIDs) ] } { 
         #---
         #--- LABEL MAPS
@@ -417,6 +524,7 @@ proc QueryAtlasAddNewLabelMapAnnotations { } {
             }
         }
         
+        $prog SetValue 10
         #--- COMPARE new list with last list.
         set addList ""
         set len [ llength $tmpNodeList ]
@@ -440,10 +548,23 @@ proc QueryAtlasAddNewLabelMapAnnotations { } {
         #--- for LABELMAPS, look at the label values themselves.
         #---
         set len [ llength $addList ]
+        if {$len == 0 } {
+            #--- progress feedback
+            $prog SetValue 100
+            $win SetStatusText "Found nothing new to add."
+            return
+        }
+        set stprog  20.0
+        
         for { set i 0 } { $i < $len } { incr i } {
+
             set id [ lindex $addList $i ]
             set node [ $::slicer3::MRMLScene GetNodeByID $id ]
             set name [ $node GetName ]
+
+            #--- progress feedback
+            set progress [ expr $stprog + ( $i * ((100.0-$stprog)/$len)) ]
+            $prog SetValue $progress
 
             if { $name != "" } {
                 #--- is this a freesurfer LUT?
@@ -488,41 +609,20 @@ proc QueryAtlasAddNewLabelMapAnnotations { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasUpdateAnnotations { modelAnnotationDir } {
 
-    set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
-    set prog [ $win GetProgressGauge ]
-    $win SetStatusText "Updating annotations..."
-    $prog SetValue 0
-
     #--- take stock of what data we have loaded already
     #--- models:
     if { ![ info exists ::QA(annoModelNodeIDs) ] } {
         set ::QA(annoModelNodeIDs) ""
     } 
-    $win SetStatusText "Culling old model annotations..."
-    $prog SetValue 20
     QueryAtlasCullOldModelAnnotations
-
-    $win SetStatusText "Adding new model annotations and pick models..."
-    $prog SetValue 40
     QueryAtlasAddNewModelAnnotations $modelAnnotationDir 
 
     #--- labelmaps:
     if { ![ info exists ::QA(annoLabelMapIDs) ] } {
         set ::QA(annoLabelMapIDs) ""
     }
-
-
-    $win SetStatusText "Culling old label map annotations..."
-    $prog SetValue 70
     QueryAtlasCullOldLabelMapAnnotations
-
-    $win SetStatusText "Adding new label map annotations..."
-    $prog SetValue 90
     QueryAtlasAddNewLabelMapAnnotations
-
-    $prog SetValue 0
-    $win SetStatusText ""
-
 }
 
 
@@ -532,11 +632,8 @@ proc QueryAtlasInitialize { } {
 
 
     QueryAtlasInitializeGlobals
-    puts "updating anotations"
     QueryAtlasUpdateAnnotations ""
-    puts "creating picker and cursor"
     QueryAtlasCreatePicker
-    puts "parsing ontology resources"
     QueryAtlasParseOntologyResources
 
 }
