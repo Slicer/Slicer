@@ -34,6 +34,8 @@ proc QueryAtlasValidSystemCheck { termSet } {
         NN_String
         NN_string
         IBVD
+        UMLS_CN
+        umls_cn
         UMLS_CID
         umls_cid }
 

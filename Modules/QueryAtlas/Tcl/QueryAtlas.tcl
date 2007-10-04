@@ -1709,55 +1709,148 @@ proc QueryAtlasCursorVisibility { onoff } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasMenuCreate { state } {
 
-  set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
-  set interactor [$renderWidget GetRenderWindowInteractor] 
-  set position [$interactor GetEventPosition]
-  set ::QA(cardRASAnchor) $::QA(CurrentRASPoint)
+    if { ($::QA(lastLabels) != "background") && ($::QA(lastLabels) != "No Label") && ($::QA(lastLabels) != "Unknown") && ($::QA(lastLabels) != "") } {
+        set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+        set interactor [$renderWidget GetRenderWindowInteractor] 
+        set position [$interactor GetEventPosition]
+        set ::QA(cardRASAnchor) $::QA(CurrentRASPoint)
 
-  #
-  # save the event position when the menu action started (when the right mouse
-  # button was pressed) and only post the menu if the position is the same.  
-  # If they aren't the same, do nothing since this was a dolly(zoom) action.
-  #
-  switch $state {
-    "start" {
-      set ::QA(menu,startPosition) $position
-    }
-    "end" {
-      if { $::QA(menu,startPosition) == $position } {
 
-        set ::QA(menuRAS) $::QA(CurrentRASPoint)
-
-        set parent [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]
-        set qaMenu $parent.qaMenu
-        catch "destroy $qaMenu"
-        menu $qaMenu
-
-        if { $::QA(currentHit) == "Card" } { 
-          # bring up a card menu
-          set topic [file root [$::QA(currentCard) cget -text]]
-          $qaMenu insert end command -label "Browse $topic" -command "$::slicer3::Application OpenLink $::QA(url,EntrezLinks)"
+        #---  translate term for pull-down menu
+        set term(local) ""
+        set term(BIRNLex) ""
+        set term(NN) ""
+        set term(UMLS) ""
+        set term(IBVD) ""
+        if { $::QA(annotationTermSet) == "BIRNLex" } {
+            set term(local) [ QueryAtlasMapTerm $::QA(lastLabels) "BIRN_String" "FreeSurfer" ]
+            set term(BIRNLex) $::QA(lastLabels)
+            set term(NN) [ QueryAtlasMapTerm $::QA(lastLabels) "BIRN_String" "NN_String" ]
+            set term(UMLS) [ QueryAtlasMapTerm $::QA(lastLabels) "BIRN_String" "UMLS_CN" ]
+            set term(IBVD) [ QueryAtlasMapTerm $::QA(lastLabels) "BIRN_String" "IBVD" ]
+        } elseif { $::QA(annotationTermSet) == "NeuroNames" } {
+            set term(local) [ QueryAtlasMapTerm $::QA(lastLabels) "NN_String" "FreeSurfer" ]
+            set term(BIRNLex) [ QueryAtlasMapTerm $::QA(lastLabels) "NN_String" "BIRN_String" ]
+            set term(NN) $::QA(lastLabels)
+            set term(UMLS) [ QueryAtlasMapTerm $::QA(lastLabels) "NN_String" "UMLS_CN" ]
+            set term(IBVD) [ QueryAtlasMapTerm $::QA(lastLabels) "NN_String" "IBVD" ]
+        } elseif { $::QA(annotationTermSet) == "UMLS" } {
+            set term(local) [ QueryAtlasMapTerm $::QA(lastLabels) "UMLS_CN" "FreeSurfer" ]
+            set term(BIRNLex) [ QueryAtlasMapTerm $::QA(lastLabels) "UMLS_CN" "BIRN_String" ]
+            set term(NN) [ QueryAtlasMapTerm $::QA(lastLabels) "UMLS_CN" "NN_String" ]
+            set term(UMLS) $::QA(lastLabels) 
+            set term(IBVD) [ QueryAtlasMapTerm $::QA(lastLabels) "UMLS_CN" "IBVD" ]
+        } elseif { $::QA(annotationTermSet) == "local" } {
+            set term(local) $::QA(lastLabels) 
+            set term(BIRNLex) [ QueryAtlasMapTerm $::QA(lastLabels) "FreeSurfer" "BIRN_String" ]
+            set term(NN) [ QueryAtlasMapTerm $::QA(lastLabels) "FreeSurfer" "NN_String" ]
+            set term(UMLS) [ QueryAtlasMapTerm $::QA(lastLabels) "FreeSurfer" "UMLS_CN" ]
+            set term(IBVD) [ QueryAtlasMapTerm $::QA(lastLabels) "FreeSurfer" "IBVD" ]
+        } elseif { $::QA(annotationTermSet) == "IBVD" } {
+            set term(local) [ QueryAtlasMapTerm $::QA(lastLabels) "IBVD" "FreeSurfer" ]
+            set term(BIRNLex) [ QueryAtlasMapTerm $::QA(lastLabels) "IBVD" "BIRN_String" ]
+            set term(NN) [ QueryAtlasMapTerm $::QA(lastLabels) "IBVD" "NN_String" ]
+            set term(UMLS) [ QueryAtlasMapTerm $::QA(lastLabels) "IBVD" "UMLS_CN" ]
+            set term(IBVD) [ QueryAtlasMapTerm $::QA(lastLabels) "IBVD" "IBVD" ]
         } else {
-          #--- bring up a search menu
-          $qaMenu insert end command -label "Select structure term" -command "QueryAtlasSetStructureTerm"
-          $qaMenu insert end command -label "Add to search terms" -command "QueryAtlasAddToSavedTerms"
-          $qaMenu insert end command -label $::QA(lastLabels) -command ""
-          $qaMenu insert end separator
-          $qaMenu insert end command -label "Google..." -command "QueryAtlasContextQuery google"
-          $qaMenu insert end command -label "Wikipedia..." -command "QueryAtlasContextQuery wikipedia"
-          $qaMenu insert end command -label "PubMed..." -command "QueryAtlasContextQuery pubmed"
-          $qaMenu insert end command -label "J Neuroscience..." -command "QueryAtlasContextQuery jneurosci"
-          $qaMenu insert end command -label "IBVD form..." -command "QueryAtlasContextQuery \"ibvd form\""
-          $qaMenu insert end command -label "IBVD howbig?..." -command "QueryAtlasContextQuery \"ibvd: howbig?\""
-          $qaMenu insert end command -label "BrainInfo..." -command "QueryAtlasContextQuery braininfo"
+            set term(local) ""
+            set term(BIRNLex) ""
+            set term(NN) ""
+            set term(UMLS) ""
+            set term(IBVD) ""
         }
-        
-        foreach {x y} $::QA(lastRootXY) {}
-        $qaMenu post $x $y
-      }
-    }
-  }
 
+        
+        #
+        # save the event position when the menu action started (when the right mouse
+        # button was pressed) and only post the menu if the position is the same.  
+        # If they aren't the same, do nothing since this was a dolly(zoom) action.
+        #
+        switch $state {
+            "start" {
+                set ::QA(menu,startPosition) $position
+            }
+            "end" {
+                if { $::QA(menu,startPosition) == $position } {
+
+                    set ::QA(menuRAS) $::QA(CurrentRASPoint)
+
+                    set parent [[$::slicer3::ApplicationGUI GetMainSlicerWindow] GetWidgetName]
+                    set qaMenu $parent.qaMenu
+                    catch "destroy $qaMenu"
+                    menu $qaMenu
+
+                    if { $::QA(currentHit) == "Card" } { 
+                        # bring up a card menu
+                        set topic [file root [$::QA(currentCard) cget -text]]
+                        $qaMenu insert end command -label "Browse $topic" -command "$::slicer3::Application OpenLink $::QA(url,EntrezLinks)"
+                    } else {
+                        #--- bring up a search menu
+                        $qaMenu insert end command -label "Select and translate" -command "QueryAtlasSetStructureTerm"
+                        $qaMenu insert end separator
+                        if { $term(local) != "" } {
+                            menu $qaMenu.local
+                            $qaMenu add cascade -label "local: $term(local)" -menu $qaMenu.local
+                            $qaMenu.local insert end command -label "Search Google..." -command "QueryAtlasContextQuery google \"$term(local)\""
+                            $qaMenu.local insert end command -label "Search Wikipedia..." -command "QueryAtlasContextQuery wikipedia \"$term(local)\""
+                            $qaMenu.local insert end command -label "Search PubMed..." -command "QueryAtlasContextQuery pubmed \"$term(local)\""
+                            $qaMenu.local insert end command -label "Search PubMedCentral..." -command "QueryAtlasContextQuery pubmedcentral \"$term(local)\""
+                            $qaMenu.local insert end command -label "Search J Neuroscience..." -command "QueryAtlasContextQuery jneurosci \"$term(local)\""
+                            $qaMenu.local insert end command -label "Search J PLoSone..." -command "QueryAtlasContextQuery plosone \"$term(local)\""
+                        }
+                        if {$term(BIRNLex) != "" }  {
+                            menu $qaMenu.birnlex
+                            $qaMenu add cascade -label "BIRN: $term(BIRNLex)" -menu $qaMenu.birnlex
+                            $qaMenu.birnlex insert end command -label "Search Google..." -command "QueryAtlasContextQuery google \"$term(BIRNLex)\""
+                            $qaMenu.birnlex insert end command -label "Search Wikipedia..." -command "QueryAtlasContextQuery wikipedia \"$term(BIRNLex)\""
+                            $qaMenu.birnlex insert end command -label "Search PubMed..." -command "QueryAtlasContextQuery pubmed \"$term(BIRNLex)\""
+                            $qaMenu.birnlex insert end command -label "Search PubMedCentral..." -command "QueryAtlasContextQuery pubmedcentral \"$term(BIRNLex)\""
+                            $qaMenu.birnlex insert end command -label "Search J Neuroscience..." -command "QueryAtlasContextQuery jneurosci \"$term(BIRNLex)\""
+                            $qaMenu.birnlex insert end command -label "Search J PLoSone..." -command "QueryAtlasContextQuery plosone \"$term(BIRNLex)\""
+                        }
+                        if {$term(NN) != "" }  {
+                            menu $qaMenu.nn
+                            $qaMenu add cascade -label "NeuroNames: $term(NN)" -menu $qaMenu.nn
+                            $qaMenu.nn insert end command -label "Search Google..." -command "QueryAtlasContextQuery google \"$term(NN)\""
+                            $qaMenu.nn insert end command -label "Search Wikipedia..." -command "QueryAtlasContextQuery wikipedia \"$term(NN)\""
+                            $qaMenu.nn insert end command -label "Search PubMed..." -command "QueryAtlasContextQuery pubmed \"$term(NN)\""
+                            $qaMenu.nn insert end command -label "Search PubMedCentral..." -command "QueryAtlasContextQuery pubmedcentral \"$term(NN)\""
+                            $qaMenu.nn insert end command -label "Search J Neuroscience..." -command "QueryAtlasContextQuery jneurosci \"$term(NN)\""
+                            $qaMenu.nn insert end command -label "Search J PLoSone..." -command "QueryAtlasContextQuery plosone \"$term(NN)\""
+                            $qaMenu.nn insert end command -label "Query BrainInfo..." -command "QueryAtlasContextQuery braininfo \"$term(NN)\""
+                        }
+                        if {$term(UMLS) != "" }  {
+                            menu $qaMenu.umls
+                            $qaMenu add cascade -label "UMLS: $term(UMLS)" -menu $qaMenu.umls
+                            $qaMenu.umls insert end command -label "Search Google..." -command "QueryAtlasContextQuery google \"$term(UMLS)\""
+                            $qaMenu.umls insert end command -label "Search Wikipedia..." -command "QueryAtlasContextQuery wikipedia \"$term(UMLS)\""
+                            $qaMenu.umls insert end command -label "Search PubMed..." -command "QueryAtlasContextQuery pubmed \"$term(UMLS)\""
+                            $qaMenu.umls insert end command -label "Search PubMedCentral..." -command "QueryAtlasContextQuery pubmedcentral \"$term(UMLS)\""
+                            $qaMenu.umls insert end command -label "Search J Neuroscience..." -command "QueryAtlasContextQuery jneurosci \"$term(UMLS)\""
+                            $qaMenu.umls insert end command -label "Search J PLoSone..." -command "QueryAtlasContextQuery plosone \"$term(UMLS)\""
+                        }
+                        if {$term(IBVD) != "" }  {
+                            menu $qaMenu.ibvd
+                            $qaMenu add cascade -label "IBVD: $term(IBVD)" -menu $qaMenu.ibvd
+                            $qaMenu.ibvd insert end command -label "Search Google..." -command "QueryAtlasContextQuery google \"$term(IBVD)\""
+                            $qaMenu.ibvd insert end command -label "Search Wikipedia..." -command "QueryAtlasContextQuery wikipedia \"$term(IBVD)\""
+                            $qaMenu.ibvd insert end command -label "Search PubMed..." -command "QueryAtlasContextQuery pubmed \"$term(IBVD)\""
+                            $qaMenu.ibvd insert end command -label "Search PubMedCentral..." -command "QueryAtlasContextQuery pubmedcentral \"$term(IBVD)\""
+                            $qaMenu.ibvd insert end command -label "Search J Neuroscience..." -command "QueryAtlasContextQuery jneurosci \"$term(IBVD)\""
+                            $qaMenu.ibvd insert end command -label "Search J PLoSone..." -command "QueryAtlasContextQuery plosone \"$term(IBVD)\""
+                            $qaMenu.ibvd insert end command -label "Show IBVD form..." -command "QueryAtlasContextQuery \"ibvd form\" \"$term(IBVD)\""
+                            $qaMenu.ibvd insert end command -label "Query IBVD howbig?..." -command "QueryAtlasContextQuery \"ibvd: howbig?\" \"$term(IBVD)\""
+                        }
+                        $qaMenu insert end separator
+                        $qaMenu insert end command -label "close" -command ""          
+                    }
+                    
+                    foreach {x y} $::QA(lastRootXY) {}
+                    $qaMenu post $x $y
+                }
+            }
+        }
+    }
 }
 
 

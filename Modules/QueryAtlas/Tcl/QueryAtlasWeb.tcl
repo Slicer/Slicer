@@ -248,6 +248,7 @@ proc QueryAtlasEncodeTerms { terms } {
     #--- detect artifacts of local naming schemes
     #--- and try to prettify them.
     regsub -all "\/" $terms "\+" terms
+    regsub -all "_" $terms "\+" terms
     regsub -all " " $terms "\+" terms
     regsub -all -- "\-" $terms "\+" terms
     regsub -all "\"" $terms "%22" terms
@@ -295,15 +296,18 @@ proc QueryAtlasEncodeTerms { terms } {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasContextQuery { site } {
+proc QueryAtlasContextQuery { site terms } {
 
     if { $::QA(lastLabels) == "background" || $::QA(lastLabels) == "Unknown" } {
         set terms ""
-    } else {
-        set terms $::QA(lastLabels)
     }
+#    else {
+#        set terms $::QA(lastLabels)
+#    }
 
+    puts "terms coming in: $terms"
     set terms [ QueryAtlasEncodeTerms $terms ]
+    puts "encoded: $terms"
     
     switch $site {
         "google" {
@@ -318,8 +322,16 @@ proc QueryAtlasContextQuery { site } {
             set url "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&db=PubMed&term=$terms"
             QueryAtlasOpenLink $url
         }
+        "pubmedcentral" {
+            set url "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&db=pmc&term=$terms"
+            QueryAtlasOpenLink $url
+        }
         "jneurosci" {
             set url "http://www.jneurosci.org/cgi/search?volume=&firstpage=&sendit=Search&author1=&author2=&titleabstract=&fulltext=$terms"
+            QueryAtlasOpenLink $url
+        }
+        "plosone" {
+            set url "http://www.plosone.org/search/simpleSearch.action?query=$terms&x=0&y=0"
             QueryAtlasOpenLink $url
         }
         "braininfo" {
@@ -354,6 +366,7 @@ proc QueryAtlasContextQuery { site } {
             QueryAtlasOpenLink $url
         }
     }
+    puts "url=$url"
 }
 
 
