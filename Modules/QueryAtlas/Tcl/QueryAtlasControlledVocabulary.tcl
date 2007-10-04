@@ -508,11 +508,23 @@ proc QueryAtlasPopulateOntologyInformation { term infoType } {
             set syn_up 1
         }
     }
-    #--- UMLS
+    #--- UMLS CID
     set val [ QueryAtlasMapTerm $term $infoType "UMLS_CID" ]                
     set curval  [ [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] GetValue ]
     if { $val != $curval } {
         [$::slicer3::QueryAtlasGUI GetUMLSCIDEntry] SetValue $val
+        #--- update synonyms
+        if { ! $syn_up } {
+            QueryAtlasUpdateSynonymsMenu $term $infoType
+            set syn_up 1
+        }
+    }
+
+    #--- UMLS CN
+    set val [ QueryAtlasMapTerm $term $infoType "UMLS_CN" ]                
+    set curval  [ [$::slicer3::QueryAtlasGUI GetUMLSCNEntry] GetValue ]
+    if { $val != $curval } {
+        [$::slicer3::QueryAtlasGUI GetUMLSCNEntry] SetValue $val
         #--- update synonyms
         if { ! $syn_up } {
             QueryAtlasUpdateSynonymsMenu $term $infoType

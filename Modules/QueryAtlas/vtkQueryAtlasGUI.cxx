@@ -189,6 +189,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->NeuroNamesEntry = NULL;
     this->NeuroNamesIDEntry = NULL;
     this->UMLSCIDEntry = NULL;
+    this->UMLSCNEntry = NULL;
     this->AddLocalTermButton = NULL;
     this->AddSynonymButton = NULL;
     this->AddBIRNLexStringButton = NULL;
@@ -196,6 +197,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     this->AddNeuroNamesStringButton = NULL;
     this->AddNeuroNamesIDButton = NULL;
     this->AddUMLSCIDButton = NULL;
+    this->AddUMLSCNButton = NULL;
     this->BIRNLexHierarchyButton = NULL;
     this->NeuroNamesHierarchyButton = NULL;
     this->UMLSHierarchyButton = NULL;
@@ -616,6 +618,12 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->NeuroNamesIDEntry->Delete ( );
       this->NeuroNamesIDEntry = NULL;      
       }
+    if ( this->UMLSCNEntry)
+      {
+      this->UMLSCNEntry->SetParent(NULL);
+      this->UMLSCNEntry->Delete();
+      this->UMLSCNEntry = NULL;
+      }
     if ( this->UMLSCIDEntry )
       {
       this->UMLSCIDEntry->SetParent ( NULL );
@@ -657,6 +665,12 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->AddNeuroNamesIDButton->SetParent ( NULL );
       this->AddNeuroNamesIDButton->Delete ( );
       this->AddNeuroNamesIDButton = NULL;      
+      }
+    if ( this->AddUMLSCNButton)
+      {
+      this->AddUMLSCNButton->SetParent( NULL );
+      this->AddUMLSCNButton->Delete();
+      this->AddUMLSCNButton = NULL;
       }
     if ( this->AddUMLSCIDButton )
       {
@@ -824,6 +838,7 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "NeuroNamesEntry" << this->GetNeuroNamesEntry ( ) << "\n";    
     os << indent << "NeuroNamesIDEntry" << this->GetNeuroNamesIDEntry ( ) << "\n";    
     os << indent << "UMLSCIDEntry" << this->GetUMLSCIDEntry ( ) << "\n";    
+    os << indent << "UMLSCNEntry" << this->GetUMLSCNEntry ( ) << "\n";    
     os << indent << "AddLocalTermButton" << this->GetAddLocalTermButton ( ) << "\n";    
     os << indent << "AddSynonymButton" << this->GetAddSynonymButton ( ) << "\n";    
     os << indent << "AddBIRNLexStringButton" << this->GetAddBIRNLexStringButton ( ) << "\n";    
@@ -831,6 +846,7 @@ void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "AddNeuroNamesStringButton" << this->GetAddNeuroNamesStringButton ( ) << "\n";    
     os << indent << "AddNeuroNamesIDButton" << this->GetAddNeuroNamesIDButton ( ) << "\n";    
     os << indent << "AddUMLSCIDButton" << this->GetAddUMLSCIDButton ( ) << "\n";    
+    os << indent << "AddUMLSCNButton" << this->GetAddUMLSCNButton ( ) << "\n";    
     os << indent << "BIRNLexHierarchyButton" << this->GetBIRNLexHierarchyButton ( ) << "\n";    
     os << indent << "NeuroNamesHierarchyButton" << this->GetNeuroNamesHierarchyButton ( ) << "\n";    
     os << indent << "UMLSHierarchyButton" << this->GetUMLSHierarchyButton ( ) << "\n";    
@@ -869,6 +885,7 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->AddNeuroNamesStringButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->AddNeuroNamesIDButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->AddUMLSCIDButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->AddUMLSCNButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->SavedTerms->RemoveWidgetObservers();
   this->SavedTerms->RemoveObservers(vtkQueryAtlasSearchTermWidget::ReservedTermsEvent, (vtkCommand *)this->GUICallbackCommand );  
 
@@ -937,6 +954,7 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->AddNeuroNamesStringButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->AddNeuroNamesIDButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->AddUMLSCIDButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->AddUMLSCNButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->SavedTerms->AddWidgetObservers();
   this->SavedTerms->AddObserver(vtkQueryAtlasSearchTermWidget::ReservedTermsEvent, (vtkCommand *)this->GUICallbackCommand );  
 
@@ -1120,6 +1138,16 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         }
       }
+    else if ( (e == this->UMLSCNEntry) && (event == vtkKWEntry::EntryValueChangedEvent) )
+      {
+      if ( this->UMLSCNEntry->GetValue() )
+        {
+        if ( strcmp (this->UMLSCNEntry->GetValue(), "" ))
+          {
+          this->Script ("QueryAtlasPopulateOntologyInformation %s UMLS_CN", this->UMLSCNEntry->GetValue() );
+          }
+        }
+      }
     }
 
   //---
@@ -1193,6 +1221,10 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     else if ( (b == this->AddUMLSCIDButton ) && (event == vtkKWPushButton::InvokedEvent ) )
       {
       this->SavedTerms->AddTerm (this->UMLSCIDEntry->GetValue() );
+      }
+    else if ( (b == this->AddUMLSCNButton ) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->SavedTerms->AddTerm (this->UMLSCNEntry->GetValue() );
       }
     else if ( (b == this->SearchButton) && (event == vtkKWPushButton::InvokedEvent ) )
       {
@@ -2428,7 +2460,33 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->AddNeuroNamesIDButton->SetBorderWidth(0);
     this->AddNeuroNamesIDButton->SetReliefToFlat();
     this->AddNeuroNamesIDButton->SetBalloonHelpString ("Save this term for building queries.");
-    // seventh row (UMLS)
+    
+    // seventh row (UMLSCN)
+    vtkKWLabel *umlscnLabel = vtkKWLabel::New();
+    umlscnLabel->SetParent ( hierarchyFrame->GetFrame() );
+    umlscnLabel->Create();
+    umlscnLabel->SetText ("UMLS: ");
+    this->UMLSCNEntry = vtkKWEntry::New();
+    this->UMLSCNEntry->SetParent ( hierarchyFrame->GetFrame() );
+    this->UMLSCNEntry->Create();
+    this->UMLSCNEntry->SetValue ("");
+    this->UMLSCNEntry->ReadOnlyOn();
+    this->AddUMLSCNButton = vtkKWPushButton::New();
+    this->AddUMLSCNButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->AddUMLSCNButton->Create();
+    this->AddUMLSCNButton->SetImageToIcon ( this->QueryAtlasIcons->GetAddIcon() );
+    this->AddUMLSCNButton->SetBorderWidth(0);
+    this->AddUMLSCNButton->SetReliefToFlat();
+    this->AddUMLSCNButton->SetBalloonHelpString ("Save this term for building queries.");
+    this->UMLSHierarchyButton = vtkKWPushButton::New();
+    this->UMLSHierarchyButton->SetParent ( hierarchyFrame->GetFrame() );
+    this->UMLSHierarchyButton->Create();
+    this->UMLSHierarchyButton->SetImageToIcon ( this->QueryAtlasIcons->GetOntologyBrowserDisabledIcon() );
+    this->UMLSHierarchyButton->SetBorderWidth ( 0 );
+    this->UMLSHierarchyButton->SetReliefToFlat();
+    this->UMLSHierarchyButton->SetBalloonHelpString ("View in UMLS ontology browser.");
+
+    // eighth row (UMLSCID)
     vtkKWLabel *umlsLabel = vtkKWLabel::New();
     umlsLabel->SetParent ( hierarchyFrame->GetFrame() );
     umlsLabel->Create();
@@ -2445,15 +2503,8 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->AddUMLSCIDButton->SetBorderWidth(0);
     this->AddUMLSCIDButton->SetReliefToFlat();
     this->AddUMLSCIDButton->SetBalloonHelpString ("Save this term for building queries.");
-    this->UMLSHierarchyButton = vtkKWPushButton::New();
-    this->UMLSHierarchyButton->SetParent ( hierarchyFrame->GetFrame() );
-    this->UMLSHierarchyButton->Create();
-    this->UMLSHierarchyButton->SetImageToIcon ( this->QueryAtlasIcons->GetOntologyBrowserDisabledIcon() );
-    this->UMLSHierarchyButton->SetBorderWidth ( 0 );
-    this->UMLSHierarchyButton->SetReliefToFlat();
-    this->UMLSHierarchyButton->SetBalloonHelpString ("View in UMLS ontology browser.");
     
-    // eighth row (listbox saved terms)
+    // ninth row (listbox saved terms)
     vtkKWLabel *termsLabel = vtkKWLabel::New();
     termsLabel->SetParent (hierarchyFrame->GetFrame() );
     termsLabel->Create();
@@ -2484,8 +2535,9 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     app->Script ( "grid %s -row 3 -column 0 -sticky e -padx 0 -pady 1", birnidLabel->GetWidgetName() );
     app->Script ( "grid %s -row 4 -column 0 -sticky e -padx 0 -pady 1", nnLabel->GetWidgetName() );
     app->Script ( "grid %s -row 5 -column 0 -sticky e -padx 0 -pady 1", nnidLabel->GetWidgetName() );
-    app->Script ( "grid %s -row 6 -column 0 -sticky e -padx 0 -pady 1", umlsLabel->GetWidgetName() );
-    app->Script ( "grid %s -row 7 -column 0 -sticky ne -padx 0 -pady 1", termsLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 6 -column 0 -sticky e -padx 0 -pady 1", umlscnLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 7 -column 0 -sticky e -padx 0 -pady 1", umlsLabel->GetWidgetName() );
+    app->Script ( "grid %s -row 8 -column 0 -sticky ne -padx 0 -pady 1", termsLabel->GetWidgetName() );
 
     app->Script ( "grid %s -row 0 -column 1 -sticky ew -padx 2 -pady 1", this->LocalSearchTermEntry->GetWidgetName() );
     app->Script ( "grid %s -row 1 -column 1 -sticky ew -padx 2 -pady 1", this->SynonymsMenuButton->GetWidgetName() );
@@ -2493,8 +2545,9 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     app->Script ( "grid %s -row 3 -column 1 -sticky ew -padx 2 -pady 1", this->BIRNLexIDEntry->GetWidgetName() );
     app->Script ( "grid %s -row 4 -column 1 -sticky ew -padx 2 -pady 1", this->NeuroNamesEntry->GetWidgetName() );
     app->Script ( "grid %s -row 5 -column 1 -sticky ew -padx 2 -pady 1", this->NeuroNamesIDEntry->GetWidgetName() );
-    app->Script ( "grid %s -row 6 -column 1 -sticky ew -padx 2 -pady 1", this->UMLSCIDEntry->GetWidgetName() );
-    app->Script ( "grid %s -row 7 -column 1 -sticky ew -columnspan 2 -padx 2 -pady 1", f->GetWidgetName() );
+    app->Script ( "grid %s -row 6 -column 1 -sticky ew -padx 2 -pady 1", this->UMLSCNEntry->GetWidgetName() );
+    app->Script ( "grid %s -row 7 -column 1 -sticky ew -padx 2 -pady 1", this->UMLSCIDEntry->GetWidgetName() );
+    app->Script ( "grid %s -row 8 -column 1 -sticky ew -columnspan 2 -padx 2 -pady 1", f->GetWidgetName() );
     app->Script ( "pack %s -side top -fill x -expand true -padx 0 -pady 0", this->SavedTerms->GetWidgetName() );
     f->Delete();
     
@@ -2504,7 +2557,8 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     app->Script ( "grid %s -row 3 -column 2 -padx 2 -pady 1", this->AddBIRNLexIDButton->GetWidgetName() );
     app->Script ( "grid %s -row 4 -column 2 -padx 2 -pady 1", this->AddNeuroNamesStringButton->GetWidgetName() );
     app->Script ( "grid %s -row 5 -column 2 -padx 2 -pady 1", this->AddNeuroNamesIDButton->GetWidgetName() );
-    app->Script ( "grid %s -row 6 -column 2 -padx 2 -pady 1", this->AddUMLSCIDButton->GetWidgetName() );
+    app->Script ( "grid %s -row 6 -column 2 -padx 2 -pady 1", this->AddUMLSCNButton->GetWidgetName() );
+    app->Script ( "grid %s -row 7 -column 2 -padx 2 -pady 1", this->AddUMLSCIDButton->GetWidgetName() );
 
     app->Script ( "grid %s -row 2 -column 3 -padx 2 -pady 1", this->BIRNLexHierarchyButton->GetWidgetName() );
     app->Script ( "grid %s -row 4 -column 3 -padx 2 -pady 1", this->NeuroNamesHierarchyButton->GetWidgetName() );
@@ -2525,6 +2579,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     nnLabel->Delete();
     nnidLabel->Delete();
     umlsLabel->Delete();
+    umlscnLabel->Delete();
     termsLabel->Delete();
     hierarchyFrame->Delete();
 }

@@ -120,6 +120,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( NeuroNamesEntry, vtkKWEntry );
     vtkGetObjectMacro ( NeuroNamesIDEntry, vtkKWEntry );
     vtkGetObjectMacro ( UMLSCIDEntry, vtkKWEntry );
+    vtkGetObjectMacro ( UMLSCNEntry, vtkKWEntry );
 
     vtkGetObjectMacro ( AddLocalTermButton, vtkKWPushButton );
     vtkGetObjectMacro ( AddSynonymButton, vtkKWPushButton );
@@ -128,6 +129,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( AddNeuroNamesStringButton, vtkKWPushButton );
     vtkGetObjectMacro ( AddNeuroNamesIDButton, vtkKWPushButton );    
     vtkGetObjectMacro ( AddUMLSCIDButton, vtkKWPushButton );
+    vtkGetObjectMacro ( AddUMLSCNButton, vtkKWPushButton );
 
     vtkGetObjectMacro ( BIRNLexHierarchyButton, vtkKWPushButton );
     vtkGetObjectMacro ( NeuroNamesHierarchyButton, vtkKWPushButton );
@@ -334,6 +336,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWEntry *NeuroNamesEntry;
     vtkKWEntry *NeuroNamesIDEntry;
     vtkKWEntry *UMLSCIDEntry;
+    vtkKWEntry *UMLSCNEntry;
     vtkKWPushButton *AddLocalTermButton;
     vtkKWPushButton *AddSynonymButton;
     vtkKWPushButton *AddBIRNLexStringButton;
@@ -341,6 +344,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWPushButton *AddNeuroNamesStringButton;
     vtkKWPushButton *AddNeuroNamesIDButton;
     vtkKWPushButton *AddUMLSCIDButton;    
+    vtkKWPushButton *AddUMLSCNButton;    
     vtkKWPushButton *BIRNLexHierarchyButton;
     vtkKWPushButton *NeuroNamesHierarchyButton;
     vtkKWPushButton *UMLSHierarchyButton;
