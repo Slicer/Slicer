@@ -20,6 +20,7 @@
 
 #include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerNodeSelectorVolumeRenderingWidget.h"
 #include "vtkSlicerVolumePropertyWidget.h"
 #include "vtkKWLabel.h"
 #include "vtkKWHistogram.h"
@@ -118,8 +119,8 @@ vtkSetMacro(VolumeSelected,int);
 protected:
   vtkVolumeRenderingModuleGUI();
   ~vtkVolumeRenderingModuleGUI();
-  vtkVolumeRenderingModuleGUI(const vtkVolumeRenderingModuleGUI&);
-  void operator=(const vtkVolumeRenderingModuleGUI&);
+  vtkVolumeRenderingModuleGUI(const vtkVolumeRenderingModuleGUI&);//not implemented
+  void operator=(const vtkVolumeRenderingModuleGUI&);//not implemented
 
   // Description:
   // Updates GUI widgets based on parameters values in MRML node
@@ -156,6 +157,7 @@ protected:
   void Rendering(void);
   void UpdateRendering(void);
   void  CheckAbort(void);
+  void AdjustMapping();
 
   //OWN GUI Elements
 
@@ -169,8 +171,8 @@ protected:
   std::string PreviousNS_VolumeRenderingSlicer;
   std::string PreviousNS_VolumeRenderingDataScene;
   //ETX
- vtkKWMenuButtonWithSpinButtonsWithLabel *NS_VolumeRenderingDataSlicer;
-  vtkSlicerNodeSelectorWidget *NS_VolumeRenderingDataScene;
+vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataSlicer;
+  vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataScene;
   vtkKWEntryWithLabel *EWL_CreateNewVolumeRenderingNode;
 
   //Frame Details

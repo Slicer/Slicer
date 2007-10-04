@@ -12,7 +12,7 @@ SET(VolumeRenderingModule_SRCS
   vtkLabelMapPiecewiseFunction.cxx
   vtkSlicerLabelMapWidget.cxx
   vtkSlicerVolumePropertyWidget.cxx
-  
+  vtkSlicerNodeSelectorVolumeRenderingWidget.cxx 
 )
 
 # Abstract/pure virtual classes

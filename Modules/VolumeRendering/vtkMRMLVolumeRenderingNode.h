@@ -94,6 +94,10 @@ public:
   // Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
   
+  //Description;
+  //Copy only the paramterset (like Volume Propertys, Piecewiesefunctions etc. as deep copy,but no references etc.)
+  void CopyParameterset(vtkMRMLNode *node);
+  
   // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "VolumeRendering";};

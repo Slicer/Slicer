@@ -193,7 +193,12 @@ int vtkMRMLVolumeRenderingNode::ReadFile ()
 void vtkMRMLVolumeRenderingNode::Copy(vtkMRMLNode *anode)
 {
     Superclass::Copy(anode);
-    //cast
+    this->CopyParameterset(anode);
+
+}
+void vtkMRMLVolumeRenderingNode::CopyParameterset(vtkMRMLNode *anode)
+{
+     //cast
     vtkMRMLVolumeRenderingNode *node = (vtkMRMLVolumeRenderingNode *) anode;
 
     this->VolumeProperty->SetIndependentComponents(node->VolumeProperty->GetIndependentComponents());
