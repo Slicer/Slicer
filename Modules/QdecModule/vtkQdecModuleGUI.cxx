@@ -1221,6 +1221,10 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
     // clear out the questions menu, then update the gui
     this->QuestionMenu->GetMenu()->DeleteAllItems();
     this->UpdateGUI();
+    // trigger showing one of the questions
+    int numQuestions = this->GetLogic()->GetNumberOfQuestions();
+    this->QuestionMenu->GetMenu()->InvokeItem(numQuestions - 1);
+    this->QuestionMenu->GetMenu()->InvokeEvent(vtkKWMenu::MenuItemInvokedEvent);
     }
   return 1;
 }
