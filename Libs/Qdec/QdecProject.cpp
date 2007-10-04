@@ -79,7 +79,7 @@ QdecProject::~QdecProject ( )
  * results from a prior saved work session). isDataDir should be a
  * directory where we can expand the .qdec file (like /tmp).
  * @return int
- * @param  isFileName
+ * @param  ifnProject string with path to .qdec file, spaces and special chars escaped.
  * @param  isDataDir
  */
 int QdecProject::LoadProjectFile ( const char* ifnProject,
@@ -87,6 +87,8 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
 {
 
   string fnProject( ifnProject );
+ 
+  
 #ifdef _WIN32
   string sepString = "\\";
   char sepChar = '\\';
@@ -113,18 +115,64 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
     {
     fp = stderr;
     }
-  // Find the base name of the project file.
-  string fnProjectBase( ifnProject );
-  string::size_type nPreLastSlash = fnProject.rfind( sepChar );
-  if( string::npos != nPreLastSlash )
-    fnProjectBase = fnProject.substr( nPreLastSlash+1, fnProject.size() );
+
+  // take out quotes at start, end of string
+  if (fnProject[0] == '"')
+    {
+    fnProject.erase(0, 1);
+    }
+  if (fnProject[fnProject.size()] == '"')
+    {
+    fnProject.erase(fnProject.size(), 1);
+    }
+  fprintf(fp, "LoadProjectFile: string without quotes = %s\n", fnProject.c_str());
   
+  // keep the original string with the escaped characters for use with system commands
+  string escfnProject = fnProject;
+  
+  // remove the escape characters for use internally, but don't remove double
+  // slashes, as they may be escaping windows directory separators
+  std::string::size_type ptr, doubleptr;
+  ptr = fnProject.find("\\");
+  while (ptr != std::string::npos)
+    {
+    doubleptr = fnProject.find("\\\\", ptr);
+    if (ptr != doubleptr)
+      {
+      fnProject.erase(ptr, 1);
+      ptr = fnProject.find("\\", ptr);
+      }
+    else
+      {
+      ptr = fnProject.find("\\", ptr+1);
+      }
+    }
+  fprintf(fp, "LoadProjectFile: unescaped project file name = %s\n", fnProject.c_str());
+  
+  // Find the base name of the project file.
+  string escfnProjectBase( ifnProject );
+  string::size_type nPreLastSlash = escfnProject.rfind( sepChar );
+  if( string::npos != nPreLastSlash )
+    escfnProjectBase = escfnProject.substr( nPreLastSlash+1, fnProject.size() );
+  // now get the unescaped one
+  string fnProjectBase = fnProject;
+  nPreLastSlash = fnProject.rfind( sepChar );
+  if (string::npos != nPreLastSlash )
+    {
+    fnProjectBase = fnProject.substr( nPreLastSlash+1, fnProject.size() );
+    }
   // Make a target dir for the expanded file in the data dir, with a
   // directory name of the project file.
    string fnExpandedProjectBase = fnProjectBase + ".working";
    string fnExpandedProjectDir = string(ifnDataDir) + sepString + 
      fnExpandedProjectBase;
+   string escExpandedProjectBase = escfnProjectBase + ".working";
+   string escExpandedProjectDir = string(ifnDataDir) + sepString + escExpandedProjectBase;
 
+   fprintf(fp, "fnProjectBase = %s, fnExpandedProjectBase = %s, fnExpandedProjectDir = %s\nescProjectBase = %s, escExpandedProjectBase = %s, escExpandedProjectDir = %s",
+           fnProjectBase.c_str(), fnExpandedProjectBase.c_str(), fnExpandedProjectDir.c_str(),
+           escfnProjectBase.c_str(), escExpandedProjectBase.c_str(), escExpandedProjectDir.c_str());
+    
   string sSubject;
   string sHemisphere;
   string sAnalysisName;
@@ -136,22 +184,11 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   string sMeasure;
   int smoothness = -1;
 
-  // Check the file.
-  // need to take out any escapes first
-  std::string::size_type ptr;
-  std::string unescapedProject = fnProject;
-  ptr = unescapedProject.find("\\");
-  while (ptr != std::string::npos)
-    {
-    unescapedProject.erase(ptr, 1);
-    ptr = unescapedProject.find("\\");
-    }
-  fprintf(fp, "Unescaped project file = '%s'\n", unescapedProject.c_str());
-
-  ifstream fInput( unescapedProject.c_str(), std::ios::in );
+  // Check the file - no escapes
+  ifstream fInput( fnProject.c_str(), std::ios::in );
   if( !fInput || fInput.bad() )
     {
-    fprintf(fp, "QdecProject::LoadProjectFile: Couldn't open unescaped file %s\n",  unescapedProject.c_str());
+    fprintf(fp, "QdecProject::LoadProjectFile: Couldn't open unescaped file %s\n",  fnProject.c_str());
     if (fp != stderr) { fclose(fp); }
     return -23;   
     }
@@ -164,11 +201,11 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   string sCommand;
   if (this->msRmCommand.length() != 0)
     {
-    sCommand = this->msRmCommand + " -rf " + fnExpandedProjectDir;
+    sCommand = this->msRmCommand + " -rf " + escExpandedProjectDir;
     }
   else
     {
-    sCommand = this->msBinaryPath + "rm -rf " + fnExpandedProjectDir;
+    sCommand = this->msBinaryPath + "rm -rf " + escExpandedProjectDir;
     }
   fprintf(fp, " QdecProject::LoadProjectFile: command = %s\n", sCommand.c_str());
   int rSystem = system( sCommand.c_str() );
@@ -176,12 +213,13 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
     {
     fprintf( fp, "ERROR: QdecProject::LoadProjectFile: Couldn't "
              "remove existing temp directory (cmd=%s)\n", sCommand.c_str() );
+    if (fp != stderr) { fclose(fp); }
     return -1;
     }
   // Get out command string and expand the .qdec file into the
   // destination directory.
-  this->FormatCommandString( fnProject.c_str(),
-                             fnExpandedProjectBase.c_str(),
+  this->FormatCommandString( escfnProject.c_str(),
+                             escExpandedProjectBase.c_str(),
                              ifnDataDir,
                              msUnzipCommandFormat.c_str(),
                              sCommand );
