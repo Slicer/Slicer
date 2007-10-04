@@ -652,19 +652,27 @@ proc QueryAtlasCreatePicker { } {
     $win SetStatusText "Initializing picker..."
     $prog SetValue 0
 
-    #--- WJP TRY this piece of InitializePicker...
-    set ::QA(propPicker) [vtkPropPicker New]
-    set ::QA(cellPicker) [vtkCellPicker New]
-    set ::QA(cellPickerSliceActor) [vtkActor New]
-    set ::QA(cellPickerSliceMapper) [vtkPolyDataMapper New]
-    set ::QA(cellPickerUserMatrix) [vtkMatrix4x4 New]
+    if { ! [info exists ::QA(propPicker) ] } {
+        set ::QA(propPicker) [vtkPropPicker New]
+    }
+    if { ![ info exists ::QA(cellPicker) ] } { 
+        set ::QA(cellPicker) [vtkCellPicker New]
+    }
+    if { ![ info exists ::QA(cellPickerSliceActor) ] } {
+        set ::QA(cellPickerSliceActor) [vtkActor New]
+    }
+    if { ![ info exists ::QA(cellPickerSliceMapper) ] } {
+        set ::QA(cellPickerSliceMapper) [vtkPolyDataMapper New]
+    }
+    if { ![ info exists ::QA(cellPickerUserMatrix) ] } {
+        set ::QA(cellPickerUserMatrix) [vtkMatrix4x4 New]
+    }
     $::QA(cellPickerSliceActor) SetMapper $::QA(cellPickerSliceMapper)
+
     if { ![info exists ::QA(windowToImage)] } {
         set ::QA(windowToImage) [vtkWindowToImageFilter New]
     }
     QueryAtlasAddInteractorObservers
-#        QueryAtlasInitializePicker 
-
 
     $win SetStatusText "Rendering view..."
     $prog SetValue 60

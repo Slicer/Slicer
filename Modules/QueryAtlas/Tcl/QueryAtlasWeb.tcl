@@ -691,6 +691,12 @@ proc QueryAtlasFormURLForBrainInfo { } {
 
     #--- get things from GUI:
     set terms ""
+    if { [ [$::slicer3::QueryAtlasGUI GetUseStructureTerms ] GetSelectedState ] == 1 } {
+        set terms [ QueryAtlasAppendStructureTerms $terms ]
+    }
+    set terms [ string trimright $terms "+" ]    
+    set terms [ QueryAtlasEncodeTerms $terms ]
+    
     set ::QA(url,BrainInfo) ""
     set url "http://braininfo.rprc.washington.edu/indexsearchby.html"
     set ::QA(url,BrainInfo) $url
