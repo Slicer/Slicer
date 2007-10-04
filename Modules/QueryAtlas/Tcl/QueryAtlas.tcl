@@ -147,9 +147,19 @@ proc QueryAtlasTearDown { } {
     set ::QA(statvol,volumeNodeID) ""
     set ::QA(label,volumeNodeID) ""
 
-    #--- set the model and label selectors to be NULL
-    set as [$::slicer3::QueryAtlasGUI GetFSasegSelector]
-    $as SetSelected ""
+    #--- set the brain, label, and stats selectors to be NULL
+    set s [$::slicer3::QueryAtlasGUI GetFSasegSelector]
+    if { $s != "" } {
+        $s SetSelected ""
+    }
+    set s [ $::slicer3::QueryAtlasGUI GetFSbrainSelector]
+    if { $s != "" } {
+        $s SetSelected ""
+    }
+    set s [ $::slicer3::QueryAtlasGUI GetFSstatsSelector]    
+    if { $s != "" } {
+        $s SetSelected ""
+    }
 }
 
 
@@ -1709,7 +1719,7 @@ proc QueryAtlasCursorVisibility { onoff } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasMenuCreate { state } {
 
-    if { ($::QA(lastLabels) != "background") && ($::QA(lastLabels) != "No Label") && ($::QA(lastLabels) != "Unknown") && ($::QA(lastLabels) != "") } {
+    if { ($::QA(lastLabels) != "background") && ($::QA(lastLabels) != "Not Labeled") && ($::QA(lastLabels) != "Unknown") && ($::QA(lastLabels) != "") } {
         set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
         set interactor [$renderWidget GetRenderWindowInteractor] 
         set position [$interactor GetEventPosition]
