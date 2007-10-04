@@ -190,6 +190,24 @@ private:
   // Flag to avoid event loops
   int InMRMLCallbackFlag;
 
+  // Description:
+  // Check for additional conditions to filter the NodeSelector. node is the current node to be checked.
+  // Returns true if the condition is fullfilled
+  // Note: This method has only effects if overwritten in a sub class.
+  virtual bool CheckAdditionalConditions(vtkMRMLNode* node){return true;}
+
+  // Description:
+  // Add aditional Nodes to the current NodeSelector. Useful for presets, other MRML-Scenes etc.
+  // Returns the number of added items or 0 if no item was added.
+  // Note: This method has only effects if overwritten in a sub class. Also overwrite GetSelectedInAdditional().
+  virtual int AddAditionalNodes(){return 0;}
+
+  // Description
+  // Look for corresponding node for the SelectedID in additional nodes.
+  // Returns NULL if there is no corresponding node otherwise the corresponding node
+  // Note: This method has only effects if overwritten in a sub class. Also overwrite AddAditionalNodes().
+  virtual vtkMRMLNode* GetSelectedInAdditional(){return NULL;}
+
   vtkSlicerNodeSelectorWidget(const vtkSlicerNodeSelectorWidget&); // Not implemented
   void operator=(const vtkSlicerNodeSelectorWidget&); // Not Implemented
 };

@@ -252,6 +252,8 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
     vtkMRMLNode *node = NULL;
     vtkMRMLNode *selectedNode = NULL;
     bool selected = false;
+    int resultAddAdditionalNodes=this->AddAditionalNodes();
+    count +=resultAddAdditionalNodes;
     for (c=0; c < this->GetNumberOfNodeClasses(); c++)
     {
       const char *className = this->GetNodeClass(c);
@@ -274,10 +276,10 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
 
         // If there is a Attribute Name-Value  specified, then only include nodes that
         // match both the NodeClass and Attribute
-        if (this->GetNodeAttributeName(c)== NULL  ||
+        if ((this->GetNodeAttributeName(c)== NULL  ||
             this->GetNodeAttributeValue(c)== NULL ||
             (node->GetAttribute( this->GetNodeAttributeName(c)) != NULL &&
-             strcmp( node->GetAttribute( this->GetNodeAttributeName(c) ), this->GetNodeAttributeValue(c) ) == 0) )
+            strcmp( node->GetAttribute( this->GetNodeAttributeName(c) ), this->GetNodeAttributeValue(c) ) == 0) )&&this->CheckAdditionalConditions(node))
           {
             std::stringstream sc;
             sc << "ProcessCommand " << node->GetID();
@@ -294,7 +296,8 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
               selectedNode = node;
               selected = true;
             }
-            else if (!selected && !this->NoneEnabled)
+            //Only choose first one wenn the Additional Nodes didn't take care about this
+            else if (!selected && !this->NoneEnabled&&(resultAddAdditionalNodes==0))
             {  
               selectedNode = node;
               selected = true;
@@ -302,7 +305,11 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
           }
        }
     }
-    
+    //Node already selected in additonal Nodes
+    if(resultAddAdditionalNodes!=0&&selectedNode==NULL)
+    {
+        selectedNode=this->GetSelected();
+    }
     if (selectedNode != NULL)
       {
       this->GetWidget()->GetWidget()->SetValue(selectedNode->GetName());
@@ -329,6 +336,10 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
 vtkMRMLNode *vtkSlicerNodeSelectorWidget::GetSelected()
 {
   vtkMRMLNode *node = this->MRMLScene->GetNodeByID (this->SelectedID.c_str());
+  if(node==NULL)
+  {
+     node=this->GetSelectedInAdditional();
+  }
   return node;
 }
 
