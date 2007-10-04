@@ -81,7 +81,7 @@ void vtkSlicerFiberBundleLogic::ProcessMRMLEvents(vtkObject * caller,
       else
         {
         // Set up display logic and any other logic classes in future
-        this->InitializeLogicForFiberBundleNode(node);
+        //this->InitializeLogicForFiberBundleNode(node);
         }
       
       }
@@ -144,12 +144,14 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
   vtkErrorMacro("Adding fiber bundle from filename " << filename);
 
   vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::New();
-  vtkMRMLFiberBundleLineDisplayNode *displayNode = vtkMRMLFiberBundleLineDisplayNode::New();
+  vtkMRMLFiberBundleLineDisplayNode *displayLineNode = vtkMRMLFiberBundleLineDisplayNode::New();
+  vtkMRMLFiberBundleTubeDisplayNode *displayTubeNode = vtkMRMLFiberBundleTubeDisplayNode::New();
+  vtkMRMLFiberBundleGlyphDisplayNode *displayGlyphNode = vtkMRMLFiberBundleGlyphDisplayNode::New();
   vtkMRMLFiberBundleStorageNode *storageNode = vtkMRMLFiberBundleStorageNode::New();
 
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *lineDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+  //vtkMRMLDiffusionTensorDisplayPropertiesNode *lineDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
   //vtkMRMLDiffusionTensorDisplayPropertiesNode *tubeDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
-  //vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
 
   storageNode->SetFileName(filename);
   if (storageNode->ReadData(fiberBundleNode) != 0)
@@ -162,13 +164,27 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
 
     fiberBundleNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
-    displayNode->SetScene(this->GetMRMLScene());
+    displayLineNode->SetScene(this->GetMRMLScene());
+    displayTubeNode->SetScene(this->GetMRMLScene());
+    displayGlyphNode->SetScene(this->GetMRMLScene());
+   
+    displayTubeNode->SetVisibility(0);
+    displayGlyphNode->SetVisibility(0);
 
+   this->GetMRMLScene()->AddNode(glyphDTDPN);
+   displayGlyphNode->SetAndObserveDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
+ 
     this->GetMRMLScene()->AddNode(storageNode);  
-    this->GetMRMLScene()->AddNode(displayNode);
+    this->GetMRMLScene()->AddNode(displayLineNode);
+    this->GetMRMLScene()->AddNode(displayTubeNode);
+    this->GetMRMLScene()->AddNode(displayGlyphNode);
     fiberBundleNode->SetStorageNodeID(storageNode->GetID());
-    fiberBundleNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
-    displayNode->SetPolyData(fiberBundleNode->GetPolyData());
+    fiberBundleNode->SetAndObserveDisplayNodeID(displayLineNode->GetID());  
+    fiberBundleNode->AddAndObserveDisplayNodeID(displayTubeNode->GetID());  
+    fiberBundleNode->AddAndObserveDisplayNodeID(displayGlyphNode->GetID());  
+    displayLineNode->SetPolyData(fiberBundleNode->GetPolyData());
+    displayTubeNode->SetPolyData(fiberBundleNode->GetPolyData());
+    displayGlyphNode->SetPolyData(fiberBundleNode->GetPolyData());
 
 
     // put the diffusion tensor display props (like color nodes) onto the scene
@@ -197,7 +213,11 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     fiberBundleNode = NULL;
     }
   storageNode->Delete();
-  displayNode->Delete();
+  displayLineNode->Delete();
+  displayTubeNode->Delete();
+  displayGlyphNode->Delete();
+  glyphDTDPN->Delete();
+  
   //displayLogic->Delete();
 
   //lineDTDPN->Delete();

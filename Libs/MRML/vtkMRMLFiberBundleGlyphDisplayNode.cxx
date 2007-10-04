@@ -249,11 +249,14 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
             }
           }  // if color scalar
       }   // end else
-      this->SetScalarRange( this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange() );
+      double *range = this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange();
+      this->ScalarRange[0] = range[0];
+      this->ScalarRange[1] = range[1];
+      // avoid Set not to cause event loops
+      //this->SetScalarRange( this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange() );
 
     }
   }
 }
  
-
 

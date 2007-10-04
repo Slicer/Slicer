@@ -294,12 +294,12 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessMRMLEvents ( vtkObject *
 void vtkSlicerDiffusionTensorGlyphDisplayWidget::AddMRMLObservers ( )
 {
 
-  vtkErrorWithObjectMacro(this,"Add mrml observers ;) " << this->DiffusionTensorDisplayPropertiesNodeID);
 
   if ( !this->DiffusionTensorDisplayPropertiesNodeID )
     {
     return;
     }
+  //vtkErrorWithObjectMacro(this,"Add mrml observers ;) " << this->DiffusionTensorDisplayPropertiesNodeID);
 
   vtkMRMLDiffusionTensorDisplayPropertiesNode *node = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->DiffusionTensorDisplayPropertiesNodeID));
   
