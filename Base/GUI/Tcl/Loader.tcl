@@ -50,7 +50,7 @@ namespace eval Loader {
   # - or a directory, from which the first file is selected
   #   (assumes only one set of files in the directory)
   #
-  proc LoadArchetype { path {centered 1} {labelMap 0} {name ""} } {
+  proc LoadArchetype { path {centered 0} {labelMap 0} {name ""} } {
 
     if { ![file exists $path] } {
       error "path does not exist: $path"
@@ -102,6 +102,8 @@ if { [itcl::find class Loader] == "" } {
 
     # configure options
     public variable root ""  ;# the root to scan from
+    public variable recurse 1  ;# recurse into directories when adding 
+    public variable filter "*"  ;# filter for which files to chose when adding directory
 
     variable _vtkObjects ""
 
@@ -113,6 +115,7 @@ if { [itcl::find class Loader] == "" } {
     variable _qdecExtensions ".qdec"
     variable _observerRecords ""
     variable _cleanupDirs ""
+    variable browserResult ""
 
     # methods
     method clear {} {}
@@ -391,7 +394,7 @@ itcl::body Loader::add { paths } {
     # 
     # if it's a directory, look at each element (recurse)
     #
-    if { [file isdir $path] } {
+    if { [file isdir $path] && $recurse} {
       foreach item [glob -nocomplain $path/*] {
         $this add $item
       }
@@ -399,18 +402,21 @@ itcl::body Loader::add { paths } {
       #
       # if it's a file, see if it's something we know how to load
       #
-      $this status "Adding $path"
-      if { [lsearch $_volumeExtensions $ext] != -1 } {
-        $this addRow $path "Volume"
-        $this status ""
-      } elseif { [lsearch $_modelExtensions $ext] != -1 } {
-        $this addRow $path "Model"
-        $this status ""
-      } elseif { [lsearch $_qdecExtensions $ext] != -1 } {
-        $this addRow $path "QDEC"
-        $this status ""
-      } else {
-        $this status "Cannot read file $path"
+
+      if { [string match $filter $path] } {
+        $this status "Adding $path"
+        if { [lsearch $_volumeExtensions $ext] != -1 } {
+          $this addRow $path "Volume"
+          $this status ""
+        } elseif { [lsearch $_modelExtensions $ext] != -1 } {
+          $this addRow $path "Model"
+          $this status ""
+        } elseif { [lsearch $_qdecExtensions $ext] != -1 } {
+          $this addRow $path "QDEC"
+          $this status ""
+        } else {
+          $this status "Cannot read file $path"
+        }
       }
     }
   }
@@ -531,24 +537,53 @@ itcl::body Loader::status { message } {
 
 itcl::body Loader::chooseDirectory {} {
 
-  set dialog [vtkKWLoadSaveDialog New]
-  $dialog ChooseDirectoryOn
-  $dialog SetParent $o(toplevel)
-  $dialog Create
-  $dialog RetrieveLastPathFromRegistry "OpenPath"
-  $dialog Invoke
-  set dir ""
-  if { [[$dialog GetFileNames] GetNumberOfValues] } {
-    set dir [[$dialog GetFileNames] GetValue 0]
-  }
+  if { 0 } {
+    #
+    # use the kwwidgets load/save dialog
+    #
+    set dialog [vtkKWLoadSaveDialog New]
+    $dialog ChooseDirectoryOn
+    $dialog SetParent $o(toplevel)
+    $dialog Create
+    $dialog RetrieveLastPathFromRegistry "OpenPath"
+    $dialog Invoke
+    set dir ""
+    if { [[$dialog GetFileNames] GetNumberOfValues] } {
+      set dir [[$dialog GetFileNames] GetValue 0]
+    }
 
-  if { $dir != "" } {
-    $dialog SaveLastPathToRegistry "OpenPath"
-  }
+    if { $dir != "" } {
+      $dialog SaveLastPathToRegistry "OpenPath"
+    }
 
-  $dialog Delete
+    $dialog Delete
+
+    return $dir
+
+  } else {
+    #
+    # use a custom dialog with filtering and recursion options
+    #
+    set var ::Loader::browserSync_[namespace tail $this]
+    set $var ""
+    set browser [FilteredDirectoryDialog #auto]
+    $browser configure -ok_command "set $var ok"
+    $browser configure -cancel_command "set $var cancel"
+
+    vwait $var
+
+    if { [set $var] == "ok" } {
+      $this configure -recurse [$browser getRecurse]
+      $this configure -filter [$browser getFilter]
+      set paths [$browser getPaths]
+    } else {
+      set paths ""
+    }
+    itcl::delete object $browser
+
+    return $paths
+  }
   
-  return $dir
 }
 
 itcl::body Loader::getOpenFile {} {
