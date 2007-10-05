@@ -1543,7 +1543,7 @@ void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::AutoWinLevThreshStatisticsVolume ( vtkMRMLScalarVolumeNode *vnode )
 {
-  unsigned int i;
+  int i;
   double win, level, upT, lowT;
   
   //--- look at the nnode's name; if it contains the substring "stat"
@@ -1557,25 +1557,28 @@ void vtkQueryAtlasGUI::AutoWinLevThreshStatisticsVolume ( vtkMRMLScalarVolumeNod
       if ( i != string::npos )
         {
         vtkMRMLScalarVolumeDisplayNode *dnode = vnode->GetScalarVolumeDisplayNode();
-        dnode->SetAutoThreshold (0);
-        dnode->SetAutoWindowLevel (0);
-        win = dnode->GetWindow();
-        level = dnode->GetLevel();
-        upT = dnode->GetUpperThreshold();
-        lowT = dnode->GetLowerThreshold();
+        if ( dnode != NULL ) 
+          {
+          dnode->SetAutoThreshold (0);
+          dnode->SetAutoWindowLevel (0);
+          win = dnode->GetWindow();
+          level = dnode->GetLevel();
+          upT = dnode->GetUpperThreshold();
+          lowT = dnode->GetLowerThreshold();
 
-        //--- set window... a guess
-        dnode->SetWindow ( win/2.6 );
-        win = dnode->GetWindow();
-        dnode->SetLevel ( upT - (win/2.0) );
-        
-        //--- set lower threshold
-        dnode->SetLowerThreshold ( upT - ( (upT-lowT)/2.5));
-        dnode->SetUpperThreshold ( upT );
+          //--- set window... a guess
+          dnode->SetWindow ( win/2.6 );
+          win = dnode->GetWindow();
+          dnode->SetLevel ( upT - (win/2.0) );
+          
+          //--- set lower threshold
+          dnode->SetLowerThreshold ( upT - ( (upT-lowT)/2.5));
+          dnode->SetUpperThreshold ( upT );
 
-        //-- apply the settings
-        dnode->SetApplyThreshold(1);
-        dnode->SetAutoThreshold( 0 );
+          //-- apply the settings
+          dnode->SetApplyThreshold(1);
+          dnode->SetAutoThreshold( 0 );
+          }
         }
       }
     }
