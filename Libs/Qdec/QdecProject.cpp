@@ -116,14 +116,14 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
     fp = stderr;
     }
 
-  // take out quotes at start, end of string
-  if (fnProject[0] == '"')
+  // take out quotes at start, end of string, but will be escaped
+  if (fnProject[1] == '"')
     {
-    fnProject.erase(0, 1);
+    fnProject.erase(0, 2);
     }
-  if (fnProject[fnProject.size()] == '"')
+  if (fnProject[fnProject.size()-1] == '"')
     {
-    fnProject.erase(fnProject.size(), 1);
+    fnProject.erase(fnProject.size()-2, 2);
     }
   fprintf(fp, "LoadProjectFile: string without quotes = %s\n", fnProject.c_str());
   
@@ -153,7 +153,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   string escfnProjectBase( ifnProject );
   string::size_type nPreLastSlash = escfnProject.rfind( sepChar );
   if( string::npos != nPreLastSlash )
-    escfnProjectBase = escfnProject.substr( nPreLastSlash+1, fnProject.size() );
+    escfnProjectBase = escfnProject.substr( nPreLastSlash+1, escfnProject.size() );
   // now get the unescaped one
   string fnProjectBase = fnProject;
   nPreLastSlash = fnProject.rfind( sepChar );
@@ -169,7 +169,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
    string escExpandedProjectBase = escfnProjectBase + ".working";
    string escExpandedProjectDir = string(ifnDataDir) + sepString + escExpandedProjectBase;
 
-   fprintf(fp, "fnProjectBase = %s, fnExpandedProjectBase = %s, fnExpandedProjectDir = %s\nescProjectBase = %s, escExpandedProjectBase = %s, escExpandedProjectDir = %s",
+   fprintf(fp, "fnProjectBase = %s, fnExpandedProjectBase = %s, fnExpandedProjectDir = %s\nescfnProjectBase = %s, escExpandedProjectBase = %s, escExpandedProjectDir = %s\n",
            fnProjectBase.c_str(), fnExpandedProjectBase.c_str(), fnExpandedProjectDir.c_str(),
            escfnProjectBase.c_str(), escExpandedProjectBase.c_str(), escExpandedProjectDir.c_str());
     
@@ -218,11 +218,19 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
     }
   // Get out command string and expand the .qdec file into the
   // destination directory.
+#ifdef _WIN32
+  this->FormatCommandString( std::string("\"" + fnProject + "\"").c_str(),
+                             fnExpandedProjectBase.c_str(),
+                             ifnDataDir,
+                             msUnzipCommandFormat.c_str(),
+                             sCommand );
+#else
   this->FormatCommandString( escfnProject.c_str(),
                              escExpandedProjectBase.c_str(),
                              ifnDataDir,
                              msUnzipCommandFormat.c_str(),
                              sCommand );
+#endif
   fprintf(fp, "Calling command %s\n", sCommand.c_str());
   rSystem = system( sCommand.c_str() );
   if( 0 != rSystem ) {
