@@ -300,14 +300,6 @@ if { $::USE_SIGN } {
 }
 
 
-if { $::GETBUILDTEST(doxy) } {
-    # just run doxygen and exit
-    puts "Creating documentation files in $::env(SLICER_DOC)"
-    set cmd "doxygen $::SLICER_HOME/Doxyfile"
-    eval runcmd $cmd
-    return
-}
-
 
 # build the lib with options
 cd $::SLICER_HOME
@@ -383,6 +375,15 @@ runcmd $::CMAKE \
         -DSLICERLIBCURL_DIR:FILEPATH=$SLICER_LIB/cmcurl-build \
         -DUSE_MIDAS=ON \
         $SLICER_HOME
+
+if { $::GETBUILDTEST(doxy) } {
+    # just run doxygen and exit
+    runcmd $::CMAKE -DBUILD_DOCUMENTATION=ON $SLICER_HOME
+    puts "Creating documentation files in $::env(SLICER_DOC)"
+    cd $::SLICER_BUILD/Utilities/Doxygen
+    eval runcmd make DoxygenDoc
+    return
+}
 
 if { $isWindows } {
     if { $MSVC6 } {
