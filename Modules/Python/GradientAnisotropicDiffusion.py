@@ -3,7 +3,7 @@
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Filtering.Denoising</category>
-  <title>Gradient Anisotropic Diffusion (Python)</title>
+  <title>Python Gradient Anisotropic Diffusion</title>
   <description>
 Runs gradient anisotropic diffusion on a volume.
 
