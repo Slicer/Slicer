@@ -54,7 +54,7 @@
 #define VTK_KW_VPW_TESTING 0
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerVolumePropertyWidget, "$Revision: 1.45 $");
+//vtkCxxRevisionMacro(vtkSlicerVolumePropertyWidget, "$Revision: 1.45 $");
 vtkStandardNewMacro(vtkSlicerVolumePropertyWidget);
 
 //----------------------------------------------------------------------------

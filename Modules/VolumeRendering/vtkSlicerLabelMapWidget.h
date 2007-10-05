@@ -7,6 +7,7 @@ class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerLabelMapWidget :public vtkSlicer
 {
 public:
     static vtkSlicerLabelMapWidget *New();
+    vtkTypeMacro(vtkSlicerLabelMapWidget,vtkSlicerWidget);
     //void PrintSelf(ostream& os, vtkIndent indent);
     
 public:

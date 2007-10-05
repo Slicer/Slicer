@@ -15,6 +15,8 @@
 #include "vtkVolume.h"
 #include "vtkKWTreeWithScrollbars.h"
 #include "vtkKWTree.h"
+#include "vtkLabelMapPiecewiseFunction.h"
+#include "vtkLabelMapColorTransferFunction.h"
 
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
@@ -663,9 +665,27 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
     //automatic Mode
     if(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetLabelMap()==1)
     {
-        vtkErrorMacro("Not yet implemented");
+        //delete old PiecewiseFunction
+        vtkPiecewiseFunction *opacity=this->currentNode->GetVolumeProperty()->GetScalarOpacity();
+        if(opacity)
+        {
+            opacity->Delete();
+        }
+        vtkLabelMapPiecewiseFunction *opacityNew=vtkLabelMapPiecewiseFunction::New();
+        opacityNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected()),.3,0);
+        this->currentNode->GetVolumeProperty()->SetScalarOpacity(opacityNew);
+        this->currentNode->SetIsLabelMap(1);
+        vtkColorTransferFunction *colorOld=this->currentNode->GetVolumeProperty()->GetRGBTransferFunction();
+        if(colorOld)
+        {
+            colorOld->Delete();
+        }
+        vtkLabelMapColorTransferFunction *colorNew=vtkLabelMapColorTransferFunction::New();
+        colorNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected()));
+        this->currentNode->GetVolumeProperty()->SetColor(colorNew);
+
     }
-    //automatic Mode for LabelMaps
+    //automatic Mode non LabelMaps
     else
     {
         double totalOccurance=this->HIST_Opacity->GetTotalOccurence();
@@ -723,6 +743,7 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
     vtkImageData* imageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData();
 
     this->UpdateSVP();
+    this->AdjustMapping();
     this->VolumeRenderingNodeSelectedOn();
     this->UpdateRendering();
 }
@@ -844,8 +865,6 @@ void vtkVolumeRenderingModuleGUI::UpdateSVP()
     this->SVP_VolumeProperty->GetGradientOpacityFunctionEditor()->SetHistogram(this->HIST_Gradient);
     vtkPiecewiseFunction *gradFunction=this->currentNode->GetVolumeProperty()->GetGradientOpacity();
     gradFunction->AdjustRange(test->GetPointData()->GetScalars()->GetRange());
-
-    this->AdjustMapping();
      this->SVP_VolumeProperty->SetVolumeProperty(this->currentNode->GetVolumeProperty());
      this->SVP_VolumeProperty->Modified();
      //Update Rendering
@@ -854,59 +873,20 @@ void vtkVolumeRenderingModuleGUI::UpdateSVP()
 
 void vtkVolumeRenderingModuleGUI::AdjustMapping(){
 
-////Update Color    
-//    vtkColorTransferFunction *functionColor=this->currentNode->GetVolumeProperty()->GetRGBTransferFunction();
-//    double *rangeOld=functionColor->GetRange();
-//    double rangeOldLow=*rangeOld++;
-//    double rangeOldHigh=*rangeOld;
-//    double *rangeNew=this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->GetHistogram()->GetRange();
-//    double rangeNewLow=*rangeNew++;
-//    double rangeNewHigh=*rangeNew;
-//    //Move low point to new position
-//    double *color=functionColor->GetColor(rangeOldLow);
-//    functionColor->AddRGBPoint(rangeNewLow,*color++,*color++,*color);
-//    functionColor->RemovePoint(rangeOldLow);
-//
-//    //Move high point to new position
-//    color=functionColor->GetColor(rangeOldHigh);
-//    functionColor->AddRGBPoint(rangeNewHigh,*color++,*color++,*color);
-//    functionColor->RemovePoint(rangeOldHigh);
-//    functionColor->Modified();
-//
-//    //Update Opacity
-//    vtkPiecewiseFunction *function=this->currentNode->GetVolumeProperty()->GetScalarOpacity();
-//    rangeOld=function->GetRange();
-//    rangeOldLow=*rangeOld++;
-//    rangeOldHigh=*rangeOld;
-//    rangeNew=this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->GetHistogram()->GetRange();
-//    rangeNewLow=*rangeNew++;
-//    rangeNewHigh=*rangeNew;
-//    //Move low point to new position
-//    function->AddPoint(rangeNewLow,function->GetValue(rangeOldLow));
-//    function->RemovePoint(rangeOldLow);
-//
-//    //Move high point to new position
-//    function->AddPoint(rangeNewHigh,function->GetValue(rangeOldHigh));
-//    function->RemovePoint(rangeOldHigh);
-//    function->Update();
-//
-//    //Update 
-//    function=this->currentNode->GetVolumeProperty()->GetGradientOpacity();
-//    rangeOld=function->GetRange();
-//    rangeOldLow=*rangeOld++;
-//    rangeOldHigh=*rangeOld;
-//    rangeNew=this->SVP_VolumeProperty->GetGradientOpacityFunctionEditor()->GetHistogram()->GetRange();
-//    rangeNewLow=*rangeNew++;
-//    rangeNewHigh=*rangeNew;
-//    //Move low point to new position
-//    function->AddPoint(rangeNewLow,function->GetValue(rangeOldLow));
-//    function->RemovePoint(rangeOldLow);
-//
-//    //Move high point to new position
-//    function->AddPoint(rangeNewHigh,function->GetValue(rangeOldHigh));
-//    function->RemovePoint(rangeOldHigh);
-//    function->Update();
+//Update Color    
+    vtkColorTransferFunction *functionColor=this->currentNode->GetVolumeProperty()->GetRGBTransferFunction();
+    double rangeNew[2];
+   this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->GetHistogram()->GetRange(rangeNew);
+    functionColor->AdjustRange(rangeNew);
 
+    //Update Opacity
+    vtkPiecewiseFunction *function=this->currentNode->GetVolumeProperty()->GetScalarOpacity();
+    this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->GetHistogram()->GetRange(rangeNew);
+    function->AdjustRange(rangeNew);
+    //Update
+    function=this->currentNode->GetVolumeProperty()->GetGradientOpacity();
+    this->SVP_VolumeProperty->GetGradientOpacityFunctionEditor()->GetHistogram()->GetRange(rangeNew);
+    function->AdjustRange(rangeNew);
 }
 
 

@@ -32,7 +32,7 @@ class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSl
 public:
 
   static vtkVolumeRenderingModuleGUI *New();
- // vtkTypeMacro(vtkVolumeRenderingModuleGUI,vtkSlicerModuleGUI);
+  vtkTypeMacro(vtkVolumeRenderingModuleGUI,vtkSlicerModuleGUI);
 
   void PrintSelf(ostream& os, vtkIndent indent);
 

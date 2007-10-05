@@ -132,8 +132,6 @@ public:
   //Own Methods
   
 protected:
-    //Buffer vor char return
-  const char* Buffer;
   vtkMRMLVolumeRenderingNode(void);
     ~vtkMRMLVolumeRenderingNode(void);
   vtkMRMLVolumeRenderingNode(const vtkMRMLVolumeRenderingNode&);
@@ -143,9 +141,6 @@ protected:
   int IsLabelMap;//1 Yes it is a LabelMap,0 no it is not a Label Map
   //BTX
   vtksys_stl::vector<std::string> References;
-
-  //if LabelMap Save the opacities of the labels of the colors
-  vtksys_stl::vector<double> Opacities;
   //ETX
 
 };

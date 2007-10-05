@@ -7,7 +7,7 @@ class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleLogic :public vtk
 {
 public:
   static vtkVolumeRenderingModuleLogic *New();
-  //vtkTypeMacro(vtkVolumeRenderingModuleLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkVolumeRenderingModuleLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // TODO: do we need to observe MRML here?
