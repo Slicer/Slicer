@@ -1284,7 +1284,16 @@ proc QueryAtlasPickOnQuerySlice {x y renderer} {
                 set y [expr round($y)]
                 set displayNode [$::slicer3::MRMLScene GetNodeByID [$node GetDisplayNodeID ]]
                 set texture [$displayNode GetTextureImageData]
-                set alpha [$texture GetScalarComponentAsDouble $x $y 0 3]
+                foreach {w h d} [$texture GetDimensions] {}
+                if { $x >= 0 && $x < $w && $y >= 0 && $y < $h } {
+                  set alpha [$texture GetScalarComponentAsDouble $x $y 0 3]
+                } else {
+                  set alpha 0
+                  puts "Out of bounds:"
+                  puts " ras: $rasPoint"
+                  puts " xy: $x $y"
+                  puts " dims: $w $h $d"
+                }
                 if { $alpha == 0 } {
                   set pointLabels ""
                   $::QA(currentHitProp) SetVisibility 0
