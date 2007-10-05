@@ -685,7 +685,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
 {
   // What type of node is the data really? Or is it a scene
   vtkMRMLNode *nd = 0;
-  vtkMRMLNode *disp = 0;
+  vtkMRMLDisplayNode *disp = 0;
   vtkMRMLStorageNode *in = 0;
   vtkMRMLScalarVolumeNode *svnd = 0;
   vtkMRMLVectorVolumeNode *vvnd = 0;
@@ -788,9 +788,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     }
 
 
-  // Get the right type of display node
+  // Get the right type of display node. Only create a display node
+  // if one does not exist already
   //
-  if (svnd || vvnd)
+  if ((svnd && !svnd->GetDisplayNode())
+      || (vvnd && !vvnd->GetDisplayNode()))
     {
     // Scalar or vector volume node
     if (svnd->GetLabelMap()) 
@@ -802,7 +804,8 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       disp = vtkMRMLScalarVolumeDisplayNode::New();
       }
     }
-  else if (dtvnd || dwvnd)
+  else if ((dtvnd && !dtvnd->GetDisplayNode())
+           || (dwvnd && !dwvnd->GetDisplayNode()))
     {
     // Diffusion tensor or a diffusion weighted node
     if (dtvnd)
@@ -814,12 +817,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
       }
     }
-  else if (fbnd)
+  else if (fbnd && !fbnd->GetDisplayNode())
     {
     // Fiber bundle node
     disp = vtkMRMLFiberBundleDisplayNode::New();
     }
-  else if (mnd)
+  else if (mnd && !mnd->GetDisplayNode())
     {
     // Model node
     disp = vtkMRMLModelDisplayNode::New();
@@ -830,77 +833,74 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     // (no display node)  
     }
   
-  // Display the data if requested
+  // Set up the display node.  If we already have a display node,
+  // just use that one.
   //
-  if (req.GetDisplayData())
+  if (disp)
     {
-    // Set up the display node.  What if the node already had a
-    // display node?
-    if (disp)
+    vtkMRMLNode *dnode = this->MRMLScene->AddNode( disp );
+    disp = vtkMRMLDisplayNode::SafeDownCast(dnode);
+    int isLabelMap = 0;
+    vtkMRMLVolumeDisplayNode *displayNode = NULL;
+    if (svnd)
       {
-//        std::cout << " vtkSlicerApplicationLogic::ProcessReadData\n";
-      disp->SetScene( this->MRMLScene );
-      disp = this->MRMLScene->AddNode( disp );
-      int isLabelMap = 0;
-      vtkMRMLVolumeDisplayNode *displayNode = NULL;
-      if (svnd)
+      isLabelMap = svnd->GetLabelMap();
+      if (isLabelMap)
         {
-        isLabelMap = svnd->GetLabelMap();
+        displayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(disp);
+        }
+      else
+        {
+        displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
+        }
+      
+      }
+    if (displayNode)
+      {
+      vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+      if (colorLogic)
+        {
         if (isLabelMap)
           {
-          displayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(disp);
+          displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
           }
         else
           {
-          displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
+          displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
           }
-
+        colorLogic->Delete();
         }
-      if (displayNode)
-        {
-        //  int isLabelMap = svnd->GetLabelMap();            
-        //std::cout << "vtkSlicerApplicationLogic: setting the volume display node default color, islabelmap = " << isLabelMap << "\n";
-        //displayNode->SetDefaultColorMap(isLabelMap);
-        //std::cout << "\tdisp color node id = " <<
-        //(displayNode->GetColorNodeID() == NULL ? "NULL" :
-        //displayNode->GetColorNodeID()) << endl;
-        vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
-        //vtkSlicerColorGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Color"))->GetLogic();
-        if (colorLogic)
-          {
-          if (isLabelMap)
-            {
-            displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
-            }
-          else
-            {
-            displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
-            }
-          colorLogic->Delete();
-          }
-        } 
-      if (svnd)
-        {
-        vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New();
-        vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
-        volumesLogic->CalculateAutoLevels (svnd->GetImageData(), displayNode);
-        volumesLogic->Delete();
-        svnd->SetAndObserveDisplayNodeID( disp->GetID() );
-        }
-      else if (vvnd) vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-      else if (dtvnd) dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-      else if (dwvnd) dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-      else if (mnd) mnd->SetAndObserveDisplayNodeID( disp->GetID() );
-      
-      disp->Delete();
+      } 
+    if (svnd)
+      {
+      vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New();
+      vtkMRMLScalarVolumeDisplayNode *displayNode
+        = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
+      volumesLogic->CalculateAutoLevels (svnd->GetImageData(), displayNode);
+      volumesLogic->Delete();
+      svnd->SetAndObserveDisplayNodeID( disp->GetID() );
       }
+    else if (vvnd) vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+    else if (dtvnd) dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+    else if (dwvnd) dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+    else if (mnd) mnd->SetAndObserveDisplayNodeID( disp->GetID() );
     
-    // If scalar volume, set the volume as the active volume and
-    // propagate selection.
-    //
-    // Models are always displayed when loaded above.
-    // 
-    // Tensors? Vectors?
+    disp->Delete();
+    }
+    
+  // Cause the any observers to fire (we may have avoided calling
+  // modified on the node)
+  //
+  nd->Modified();
+
+  // If scalar volume, set the volume as the active volume and
+  // propagate selection.
+  //
+  // Models are always displayed when loaded above.
+  // 
+  // Tensors? Vectors?
+  if (req.GetDisplayData())
+    {
     if (svnd)
       {
       if (svnd->GetLabelMap())
@@ -916,7 +916,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       this->PropagateVolumeSelection();
       }
     }
-  
 }
 
 void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
