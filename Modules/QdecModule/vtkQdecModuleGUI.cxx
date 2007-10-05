@@ -49,6 +49,12 @@ Version:   $Revision: 1.2 $
 #include "vtkKWListBoxWithScrollbars.h"
 #include "vtkKWListBoxWithScrollbarsWithLabel.h"
 
+// for setting the zip/unzip/rm paths
+#include "vtkKWMessageDialog.h"
+#include "vtkKWApplicationSettingsInterface.h"
+#include "vtkKWUserInterfaceManager.h"
+#include "vtkKWUserInterfaceManagerDialog.h"
+
 #include "vtkSlicerModelsGUI.h"
 
 // for pick events
@@ -525,14 +531,14 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       this->LoadResultsButton->GetWidget()->SetText ("None");
       return;
       }
-    if (!this->LoadProjectFile(fileName))
+    if (this->LoadProjectFile(fileName) == 0)
       {
-      // loading failed
-      this->LoadResultsButton->GetWidget()->SetText ("None");
+      filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
       }
     else
       {
-      filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      // loading failed
+      this->LoadResultsButton->GetWidget()->SetText ("None");
       }
     return;
     }
@@ -1199,11 +1205,45 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
     this->GetLogic()->QDECProject->SetRmCommand(rm);
     }
   vtkDebugMacro("Trying to load file " << newFileName.c_str() << ", using temp dir " << newTempDir.c_str());
-  if (this->GetLogic()->LoadProjectFile(newFileName.c_str(), newTempDir.c_str()) == -1)
+  int retval = this->GetLogic()->LoadProjectFile(newFileName.c_str(), newTempDir.c_str());
+  if (retval != 0)
     {
     // failure
     vtkErrorMacro("Error loading project data file " << newFileName.c_str());
-    return 0;      
+    if (retval == -2)
+      {
+      // couldn't open the archive, give user a chance to set the zip file
+      vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+      dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
+      dialog->SetStyleToMessage();
+      std::string msg = "The qdec archive failed to open. It should be a ZIP file and there should be one directory inside named qdec_project_archive.\nIf all that is true, maybe the system couldn't find the proper command to unzip it. You can force which application is used to unzip the .qdec file by using the following dialog, then try to open it again.";
+      dialog->SetText(msg.c_str());
+      dialog->Create ( );
+      dialog->Invoke();
+      dialog->Delete();
+      
+      if (this->GetApplicationGUI() &&
+          this->GetApplicationGUI()->GetMainSlicerWindow() &&
+          this->GetApplicationGUI()->GetMainSlicerWindow()->GetApplicationSettingsInterface())
+        {
+        this->GetApplicationGUI()->GetMainSlicerWindow()->GetApplicationSettingsInterface()->Show();
+        if (this->GetApplicationGUI()->GetMainSlicerWindow()->GetApplicationSettingsInterface()->GetUserInterfaceManager() &&
+            this->GetApplicationGUI()->GetMainSlicerWindow()->GetApplicationSettingsInterface()->GetUserInterfaceManager() &&
+            vtkKWUserInterfaceManagerDialog::SafeDownCast(this->GetApplicationGUI()->GetMainSlicerWindow()->GetApplicationSettingsInterface()->GetUserInterfaceManager()))
+          {
+          vtkKWUserInterfaceManagerDialog::SafeDownCast(this->GetApplicationGUI()->GetMainSlicerWindow()->GetApplicationSettingsInterface()->GetUserInterfaceManager())->RaiseSection(0, "Slicer Settings");
+          }
+        else
+          {
+          vtkErrorMacro("Couldn't get Slicer Settings Panel");
+          }
+        }
+      else
+        {
+        vtkErrorMacro("Couldn't get application settings interface");
+        }
+      }
+    return retval;      
     }
   vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: was able to load file " << newFileName.c_str());
   
