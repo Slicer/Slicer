@@ -291,7 +291,7 @@ int vtkQdecModuleLogic::LoadProjectFile(const char *fileName, const char *tempDi
         {
         vtkErrorMacro("LoadProjectFile: unspecified error trying to load " << fileName <<  " using temp dir " << tempDir);
         }
-      return -1;
+      return err;
       }
     }
   else
