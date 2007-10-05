@@ -311,10 +311,9 @@ const char *vtkMRMLColorNode::GetColorName(int ind)
 }
 
 //---------------------------------------------------------------------------
-const char *vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *subst)
+std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *subst)
 {
   std::string name = std::string(this->GetColorName(ind));
-  const char *returnName;
   if (strstr(name.c_str(), " ") != NULL)
     {
     std::string::size_type spaceIndex = name.find( " ", 0 );
@@ -323,14 +322,9 @@ const char *vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *sub
       name.replace(spaceIndex, 1, subst, 0, strlen(subst));
       spaceIndex = name.find( " ", spaceIndex );
       }
-    returnName =  name.c_str();
     }
-  else
-    {
-    // no spaces, return it as is
-    returnName = name.c_str();
-    }
-  return returnName;
+
+  return name;
 }
 
 //---------------------------------------------------------------------------

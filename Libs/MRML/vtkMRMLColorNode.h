@@ -103,7 +103,9 @@ public:
   // Description:
   // Get the 0th based nth name of this colour, replacing the spaces with
   // subst
-  const char *GetColorNameWithoutSpaces(int ind, const char *subst);
+  //BTX
+  std::string GetColorNameWithoutSpaces(int ind, const char *subst);
+  //ETX
   
   // Description:
   // Add a color name to the vector

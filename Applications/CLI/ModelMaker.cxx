@@ -464,7 +464,7 @@ int main(int argc, char * argv[])
         std::string stringI =    stream.str();
         if (colorNode != NULL)
           {
-          if (colorNode->GetColorNameWithoutSpaces(i, "_") != NULL)
+          if (colorNode->GetColorNameWithoutSpaces(i, "_").c_str() != NULL)
             {
             labelName = Name + std::string("_") + stringI + std::string("_") + std::string(colorNode->GetColorNameWithoutSpaces(i, "_"));
             if (debug)
@@ -502,7 +502,7 @@ int main(int argc, char * argv[])
         // just make one
         if (colorNode != NULL)
           {
-          if (colorNode->GetColorNameWithoutSpaces(i, "_") != NULL)
+          if (colorNode->GetColorNameWithoutSpaces(i, "_").c_str() != NULL)
             {
             std::stringstream    stream;
             stream <<    i;

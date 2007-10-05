@@ -44,6 +44,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleLineDisplayNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
@@ -195,6 +196,12 @@ vtkMRMLScene::vtkMRMLScene()
                          vtkMRMLFiberBundleGlyphDisplayNode::New();
   this->RegisterNodeClass (fbgdn);
   fbgdn->Delete();
+
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *dtdpn =
+                         vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+  this->RegisterNodeClass (dtdpn);
+  dtdpn->Delete();
+
 
   vtkMRMLFiberBundleStorageNode *fbsn =
                          vtkMRMLFiberBundleStorageNode::New();
