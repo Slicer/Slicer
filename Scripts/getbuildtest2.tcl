@@ -379,9 +379,8 @@ runcmd $::CMAKE \
 if { $::GETBUILDTEST(doxy) } {
     # just run doxygen and exit
     runcmd $::CMAKE -DBUILD_DOCUMENTATION=ON $SLICER_HOME
-    puts "Creating documentation files in $::env(SLICER_DOC)"
     cd $::SLICER_BUILD/Utilities/Doxygen
-    eval runcmd make DoxygenDoc
+    eval runcmd make CombinedDoxygenDoc
     return
 }
 
