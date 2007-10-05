@@ -38,6 +38,9 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->HomeModuleEntry = NULL;
   this->TemporaryDirectoryButton = NULL;
   this->BrowserSelectButton = NULL;
+  this->ZipSelectButton = NULL;
+  this->UnzipSelectButton = NULL;
+  this->RmSelectButton = NULL;
   this->LoadCommandLineModulesCheckButton = NULL;
   this->EnableDaemonCheckButton = NULL;
   this->FontSizeButtons = NULL;
@@ -104,6 +107,24 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     {
     this->BrowserSelectButton->Delete();
     this->BrowserSelectButton = 0;
+    }
+
+  if ( this->ZipSelectButton )
+    {
+    this->ZipSelectButton->Delete();
+    this->ZipSelectButton = 0;
+    }
+
+  if ( this->UnzipSelectButton )
+    {
+    this->UnzipSelectButton->Delete();
+    this->UnzipSelectButton = 0;
+    }
+
+  if ( this->RmSelectButton )
+    {
+    this->RmSelectButton->Delete();
+    this->RmSelectButton = 0;
     }
   
   if (this->TemporaryDirectoryButton)
@@ -227,6 +248,85 @@ void vtkSlicerApplicationSettingsInterface::Create()
   tk_cmd << "pack " << this->BrowserSelectButton->GetWidgetName()
          << "  -side top -anchor w -expand no -padx 2 -pady 2" << endl;
 
+  // --------------------------------------------------------------
+  // Slicer interface settings : Zip Select
+  if (!this->ZipSelectButton)
+    {
+    this->ZipSelectButton = vtkKWLoadSaveButtonWithLabel::New();
+    }
+
+  this->ZipSelectButton->SetParent(frame);
+  this->ZipSelectButton->Create();
+  this->ZipSelectButton->SetLabelText("Set zip executable:");
+  this->ZipSelectButton->SetLabelWidth(20);
+  this->ZipSelectButton->GetWidget()->TrimPathFromFileNameOff();
+  this->ZipSelectButton->GetWidget()
+    ->SetCommand(this, "ZipSelectCallback");
+  this->ZipSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->ChooseDirectoryOff();
+  this->ZipSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->SaveDialogOff();
+  this->ZipSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->SetTitle("Set zip executable");
+  this->ZipSelectButton->SetBalloonHelpString(
+    "Select the zip executable for making archive files.");
+
+  tk_cmd << "pack " << this->ZipSelectButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -padx 2 -pady 2" << endl;
+
+  // --------------------------------------------------------------
+  // Slicer interface settings : Unzip Select
+  if (!this->UnzipSelectButton)
+    {
+    this->UnzipSelectButton = vtkKWLoadSaveButtonWithLabel::New();
+    }
+
+  this->UnzipSelectButton->SetParent(frame);
+  this->UnzipSelectButton->Create();
+  this->UnzipSelectButton->SetLabelText("Set unzip executable:");
+  this->UnzipSelectButton->SetLabelWidth(20);
+  this->UnzipSelectButton->GetWidget()->TrimPathFromFileNameOff();
+  this->UnzipSelectButton->GetWidget()
+    ->SetCommand(this, "UnzipSelectCallback");
+  this->UnzipSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->ChooseDirectoryOff();
+  this->UnzipSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->SaveDialogOff();
+  this->UnzipSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->SetTitle("Set unzip executable");
+  this->UnzipSelectButton->SetBalloonHelpString(
+    "Select the unzip executable for expanding archive files.");
+
+  tk_cmd << "pack " << this->UnzipSelectButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -padx 2 -pady 2" << endl;
+
+  // --------------------------------------------------------------
+  // Slicer interface settings : Rm Select
+  if (!this->RmSelectButton)
+    {
+    this->RmSelectButton = vtkKWLoadSaveButtonWithLabel::New();
+    }
+
+  this->RmSelectButton->SetParent(frame);
+  this->RmSelectButton->Create();
+  this->RmSelectButton->SetLabelText("Set file remove executable:");
+  this->RmSelectButton->SetLabelWidth(20);
+  this->RmSelectButton->GetWidget()->TrimPathFromFileNameOff();
+  this->RmSelectButton->GetWidget()
+    ->SetCommand(this, "RmSelectCallback");
+  this->RmSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->ChooseDirectoryOff();
+  this->RmSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->SaveDialogOff();
+  this->RmSelectButton->GetWidget()
+    ->GetLoadSaveDialog()->SetTitle("Set rm executable");
+  this->RmSelectButton->SetBalloonHelpString(
+    "Select the executable for removing files (needs to take -rf argument).");
+
+  tk_cmd << "pack " << this->RmSelectButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -padx 2 -pady 2" << endl;
+  
+  
   // --------------------------------------------------------------
   // Slicer interface settings : Font settings frame
   if ( !this->FontSettingsFrame )
@@ -645,7 +745,44 @@ void vtkSlicerApplicationSettingsInterface::BrowserSelectCallback()
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::ZipSelectCallback()
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
 
+  if (app)
+    {
+    // Store the setting in the application object
+    app->SetZip(this->ZipSelectButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::UnzipSelectCallback()
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
+    {
+    // Store the setting in the application object
+    app->SetUnzip(this->UnzipSelectButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::RmSelectCallback()
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
+    {
+    // Store the setting in the application object
+    app->SetRm(this->RmSelectButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
+    }
+}
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::TemporaryDirectoryCallback()
 {
@@ -740,6 +877,18 @@ void vtkSlicerApplicationSettingsInterface::Update()
     if (this->BrowserSelectButton)
       {
       this->BrowserSelectButton->GetWidget()->SetText(app->GetWebBrowser());
+      }
+    if (this->ZipSelectButton)
+      {
+      this->ZipSelectButton->GetWidget()->SetText(app->GetZip());
+      }
+    if (this->UnzipSelectButton)
+      {
+      this->UnzipSelectButton->GetWidget()->SetText(app->GetUnzip());
+      }
+    if (this->RmSelectButton)
+      {
+      this->RmSelectButton->GetWidget()->SetText(app->GetRm());
       }
     }
 }

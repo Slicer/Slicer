@@ -42,6 +42,9 @@ public:
   virtual void HomeModuleCallback(char *name);
   virtual void TemporaryDirectoryCallback();
   virtual void BrowserSelectCallback();
+  virtual void ZipSelectCallback();
+  virtual void UnzipSelectCallback();
+  virtual void RmSelectCallback();
   virtual void LoadCommandLineModulesCallback(int state);
   virtual void EnableDaemonCallback(int state);
 
@@ -72,6 +75,9 @@ private:
   vtkKWEntryWithLabel *ModuleCachePathEntry;
   vtkKWLoadSaveButtonWithLabel *TemporaryDirectoryButton;
   vtkKWLoadSaveButtonWithLabel *BrowserSelectButton;
+  vtkKWLoadSaveButtonWithLabel *ZipSelectButton;
+  vtkKWLoadSaveButtonWithLabel *UnzipSelectButton;
+  vtkKWLoadSaveButtonWithLabel *RmSelectButton;
   vtkKWRadioButtonSet *FontSizeButtons;
   vtkKWRadioButtonSet *FontFamilyButtons;
   vtkKWCheckButton  *LoadCommandLineModulesCheckButton;
