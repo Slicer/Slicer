@@ -148,7 +148,7 @@ public:
   void SetDisplayNodeID(const char* id) ;
   void SetNthDisplayNodeID(int n, const char* id);
   void AddDisplayNodeID(const char* id);
-  void AddAndObseveDisplayNode(vtkMRMLDisplayNode *dnode);
+  void AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode);
 
   vtkSetObjectMacro(PolyData, vtkPolyData);
 

@@ -312,7 +312,7 @@ void vtkMRMLDisplayableNode::SetAndObserveDisplayNodeID(const char *displayNodeI
   this->SetDisplayNodeID(displayNodeID);
 
   vtkMRMLDisplayNode *dnode = this->GetDisplayNode();
-  this->AddAndObseveDisplayNode(dnode);
+  this->AddAndObserveDisplayNode(dnode);
 
   this->Modified(); 
 
@@ -347,12 +347,12 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNodeID(const char *displayNodeI
   this->AddDisplayNodeID(displayNodeID);
 
   vtkMRMLDisplayNode *dnode = vtkMRMLDisplayNode::SafeDownCast(this->GetScene()->GetNodeByID(displayNodeID));
-  this->AddAndObseveDisplayNode(dnode);
+  this->AddAndObserveDisplayNode(dnode);
   this->Modified(); 
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::AddAndObseveDisplayNode(vtkMRMLDisplayNode *dnode)
+void vtkMRMLDisplayableNode::AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode)
 {
   if (dnode) 
     {
