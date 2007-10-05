@@ -484,19 +484,20 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
   int flag;
   int deleteIndex;
 
+  *onumEntries = 0;
   //  vtkDebugMacro( << "Starting ReadEmbeddedColorTable\n");
   // Embedded color tables are identified by a tag at the end of
-  // the normal data. Right now there's only one kind of tag, so
-  // just check for it. If there is no embedded table, we'll get
+  // the normal data. If there is no embedded table, we'll get
   // an eof error here.
   read = vtkFSIO::ReadInt (annotFile, tag);
   if (read != 1)
   {
       return vtkFSSurfaceAnnotationReader::FS_NO_COLOR_TABLE;
   }
+  // check the value of the tag, should be 1
   
   if (vtkFSSurfaceAnnotationReader::FS_COLOR_TABLE_TAG == tag)
-  {
+    {
       // Read the number of entries.
       read = vtkFSIO::ReadInt (annotFile, numColorTableEntries);
       if (read != 1)
@@ -505,13 +506,12 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
                          << "number of entries");
           return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
       }
-      if (numColorTableEntries <= 0)
-      {
-          vtkErrorMacro (<< "\nReadEmbeddedColorTable: color table has "
-                         << numColorTableEntries << " entries.");
-          return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
-      }
-      
+      // check the next int, if it's >0 it's the old format, 
+      // and this int is the number of entries, if it's <0 it's the new format, 
+      // and it's the negative version number 
+      if (numColorTableEntries > 0)
+        {
+         // old version
       // Read the table name.
       read = vtkFSIO::ReadInt (annotFile, nameLength);
       if (read != 1)
@@ -665,8 +665,152 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
               return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
           }
       }
-  } 
-  else // if (tag == vtkFSSurfaceAnnotationReader::FS_COLOR_TABLE_TAG)
+      }
+      else
+        {
+          //new version
+      int version = -numColorTableEntries;
+      vtkDebugMacro ("ReadEmbeddedColorTable: color table has "
+                         << numColorTableEntries << " entries, this means a new style file and the version number is " << version);
+      if (version == 2)
+        {
+          int num_entries_to_read, i = 0;
+          int structure, len;
+          char *name;
+          int t;
+          // read the number of entries
+          read = vtkFSIO::ReadInt(annotFile, numColorTableEntries);
+          if (read != 1 || numColorTableEntries < 0)
+        {
+          vtkErrorMacro("ReadEmbeddedColorTable: error getting number of colour table entries: " << numColorTableEntries);
+          return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
+        }
+          // allocate arrays for our r/g/b values and for our names.
+          rgbValues = (int**) calloc (numColorTableEntries, sizeof(int*) );
+          names = (char**) calloc (numColorTableEntries, sizeof(char*) );
+          if (NULL == rgbValues || NULL == names)
+        {
+          vtkErrorMacro (<< "\nReadEmbeddedColorTable: error allocating "
+                 << "rgb or name arrays with\n " 
+                 << numColorTableEntries << " entries.");
+          return -1;
+        }
+          // read the file name
+          read = vtkFSIO::ReadInt(annotFile, len);
+          if (read != 1 || len < 0)
+        {
+          vtkErrorMacro("ReadEmbeddedColorTable: error getting length of file name: " << len);
+          free (rgbValues);
+          free (names);
+          return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
+        }
+          name = (char*) malloc (len+1);
+          fread (name, sizeof(char), len, annotFile);
+          vtkDebugMacro("ReadEmbeddedColorTable: got name: " << name);
+          // read the number of entries to read
+          read = vtkFSIO::ReadInt(annotFile, num_entries_to_read);
+          if (read != 1 || num_entries_to_read < 0)
+        {
+          vtkErrorMacro("ReadEmbeddedColorTable: error getting num entries to read: " << num_entries_to_read);
+          free (rgbValues);
+          free (names);
+          return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
+        }
+          // for each entry, read in the info
+          for (i = 0; i < num_entries_to_read; i++)
+        {
+          // read structure number first
+          read =  vtkFSIO::ReadInt(annotFile, structure);
+          if (read != 1 || structure < 0)
+            {
+              vtkErrorMacro("ReadEmbeddedColorTable: error in structure " << structure << " at entry " << i);
+              free(rgbValues); free(names); 
+              return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
+            }
+          // check if we already have an entry here
+          if (rgbValues[structure] != NULL)
+            {
+              vtkErrorMacro("ReadEmbeddedColorTable: duplicate structure " << structure << " at index " << i);
+              free(rgbValues); free(names); 
+              return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
+            }
+          // create the entry
+          rgbValues[structure] = (int*) calloc (3, sizeof(int));
+          if (NULL == rgbValues[structure])
+            {
+              vtkErrorMacro (<< "\nReadEmbeddedColorTable: error allocating\n "
+                     << "rgb entry " << structure << " at index " << i);
+              free (rgbValues);
+              for (deleteIndex = 0; deleteIndex <= i; deleteIndex++)
+            {
+              free (names[deleteIndex]);
+            }
+              free (names);
+              return -1;
+            }
+          // Read the name length and name.
+          read = vtkFSIO::ReadInt (annotFile, nameLength);
+          if (read != 1)
+            {
+              vtkErrorMacro (<< "\nReadEmbeddedColorTable: error reading\n"
+                     << "entry name length for entry " 
+                     << structure);
+              free (rgbValues);
+              for (deleteIndex = 0; deleteIndex <= i; deleteIndex++)
+            {
+              free (names[deleteIndex]);
+            }
+              free (names);
+              return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
+            }
+          names[structure] = (char*) malloc (nameLength+1);
+          read = fread (names[structure], sizeof(char), 
+                nameLength, annotFile);
+          if (read != nameLength)
+            {
+              vtkErrorMacro (<< "\nReadEmbeddedColorTable: error reading\n"
+                     << "entry name for entry "
+                     << structure);
+              free (rgbValues);
+              for (deleteIndex = 0; deleteIndex <= i; deleteIndex++)
+            {
+              free (names[deleteIndex]);
+            }
+              free (names);
+              return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
+            }
+          // read in the color
+          read  = vtkFSIO::ReadInt (annotFile, rgbValues[structure][0]);
+          read += vtkFSIO::ReadInt (annotFile, rgbValues[structure][1]);
+          read += vtkFSIO::ReadInt (annotFile, rgbValues[structure][2]);
+          read += vtkFSIO::ReadInt (annotFile, t);
+          if (read != 4)
+            { 
+              vtkErrorMacro (<< "\nReadEmbeddedColorTable: error reading RGBT "
+                     << "value for entry structure " << structure << " at index " << i);
+              free (rgbValues);
+              for (deleteIndex = 0; deleteIndex <= i; deleteIndex++)
+            {
+              free (names[deleteIndex]);
+            }
+              free (names);
+              return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
+            }
+          // alpha = 255 - transparency
+        }
+          // clean up
+          free(name);
+        }
+      else
+        {
+          vtkErrorMacro("ReadEmbeddedColorTable: version of embedded color table not supported: " << version);
+          return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
+        }
+          
+    }
+      
+    }
+  else
   {
       return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
   }
