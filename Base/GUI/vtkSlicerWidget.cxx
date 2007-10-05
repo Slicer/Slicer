@@ -73,6 +73,11 @@ vtkSlicerWidget::MRMLCallback(vtkObject *caller,
 {
   vtkSlicerWidget *self = reinterpret_cast<vtkSlicerWidget *>(clientData);
 
+  if (self == NULL)
+    {
+    return;
+    }
+  
   if (self->GetInMRMLCallbackFlag())
     {
 #ifdef _DEBUG
