@@ -148,17 +148,19 @@ proc QueryAtlasTearDown { } {
     set ::QA(label,volumeNodeID) ""
 
     #--- set the brain, label, and stats selectors to be NULL
-    set s [$::slicer3::QueryAtlasGUI GetFSasegSelector]
-    if { $s != "" } {
-        $s SetSelected ""
-    }
-    set s [ $::slicer3::QueryAtlasGUI GetFSbrainSelector]
-    if { $s != "" } {
-        $s SetSelected ""
-    }
-    set s [ $::slicer3::QueryAtlasGUI GetFSstatsSelector]    
-    if { $s != "" } {
-        $s SetSelected ""
+    if { [info command $::slicer3::QueryAtlasGUI] != "" } {
+      set s [$::slicer3::QueryAtlasGUI GetFSasegSelector]
+      if { $s != "" } {
+          $s SetSelected ""
+      }
+      set s [ $::slicer3::QueryAtlasGUI GetFSbrainSelector]
+      if { $s != "" } {
+          $s SetSelected ""
+      }
+      set s [ $::slicer3::QueryAtlasGUI GetFSstatsSelector]    
+      if { $s != "" } {
+          $s SetSelected ""
+      }
     }
 }
 
