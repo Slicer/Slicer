@@ -943,7 +943,7 @@ proc QueryAtlasAddInteractorObservers { } {
         
         set ::QA(enterEventTag) [ $interactor AddObserver EnterEvent "QueryAtlasCursorVisibility on" ]
         set ::QA(leaveEventTag) [ $interactor AddObserver LeaveEvent "QueryAtlasCursorVisibility off" ]
-        set ::QA(moveEventTag) [ $interactor AddObserver MouseMoveEvent "QueryAtlasPickCallback" ]
+        set ::QA(moveEventTag) [ $interactor AddObserver MouseMoveEvent "QueryAtlasRequestPickCallback" ]
         set ::QA(rightClickEventTag) [$interactor AddObserver RightButtonPressEvent "QueryAtlasMenuCreate start" ]
         set ::QA(rightReleaseEventTag) [ $interactor AddObserver RightButtonReleaseEvent "QueryAtlasMenuCreate end" ]
         set ::QA(startInteractionEventTag) [ $style AddObserver StartInteractionEvent "QueryAtlasCursorVisibility off" ]
@@ -1338,7 +1338,18 @@ proc QueryAtlasPickOnQuerySlice {x y renderer} {
     return $pointLabels
 }
 
+proc QueryAtlasRequestPickCallback {} {
+  if { [info exists ::QA(pickPending)] && $::QA(pickPending) } {
+    return
+  }
+
+  set ::QA(pickPending) 1
+  after idle QueryAtlasPickCallback 
+}
+
 proc QueryAtlasPickCallback {} {
+
+    set ::QA(pickPending) 0
 
     set _useMID ""
 
