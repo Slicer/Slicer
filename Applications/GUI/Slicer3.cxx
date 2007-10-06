@@ -78,7 +78,7 @@ extern "C" {
 //#define GAD_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
-#define QUERYATLAS_DEBUG
+//#define QUERYATLAS_DEBUG
 //#define COLORS_DEBUG
 //#define FIDUCIALS_DEBUG
 //#define CAMERA_DEBUG
@@ -550,6 +550,7 @@ int Slicer3_main(int argc, char *argv[])
       }
 #endif
 
+    // TODO: get rid of fixed size buffer
     char cmd[2048];
 
     // Make sure SLICER_HOME is available
@@ -1746,7 +1747,16 @@ int Slicer3_main(int argc, char *argv[])
         {
         cout << "Arg =  " << *argit << endl;
         std::string fileName;
-        fileName.append(*argit);
+        // strip backslashes
+        char buffer[2]; buffer[1] = '\0';
+        for (unsigned int i = 0; i < (*argit).size(); i++)
+          {
+          buffer[0] = (*argit)[i];
+          if ( buffer[0] != '\\' )
+            {
+            fileName.append(std::string(buffer));
+            }
+          }
         // is it a MRML or XML file?
         if (fileName.find(".mrml",0) != std::string::npos ||
             fileName.find(".xml",0) != std::string::npos)
@@ -1769,7 +1779,7 @@ int Slicer3_main(int argc, char *argv[])
         else
           {
           // if we're not sure, assume it is data to load...
-          std::string cmd = "::Loader::ShowDialog {" + *argit + "}";
+          std::string cmd = "::Loader::ShowDialog \"" + *argit + "\"";
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
           }
         ++argit;

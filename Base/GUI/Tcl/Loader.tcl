@@ -396,7 +396,7 @@ itcl::body Loader::add { paths } {
     #
     if { [file isdir $path] && $recurse} {
       foreach item [glob -nocomplain $path/*] {
-        $this add $item
+        $this add [list $item]
       }
     } else {
       #
@@ -497,7 +497,8 @@ itcl::body Loader::processEvent { {caller ""} {event ""} } {
 
   if { $caller == $o(addDir) } {
     # TODO: switch to kwwidgets directory browser
-    $this add [$this chooseDirectory]
+    set paths [$this chooseDirectory]
+    $this add $paths
     return
   }
 
@@ -569,7 +570,6 @@ itcl::body Loader::chooseDirectory {} {
     set browser [FilteredDirectoryDialog #auto]
     $browser configure -ok_command "set $var ok"
     $browser configure -cancel_command "set $var cancel"
-
     vwait $var
 
     if { [set $var] == "ok" } {
