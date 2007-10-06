@@ -189,8 +189,16 @@ proc QueryAtlasAddNewPickModels { mid } {
     set renderer [$renderWidget GetRenderer]
 
     #--- add pick model and trappings for all new annotated models.
+    #--- run the model's polydata through a triangle filter so picking will work right
     #--- update current scene model list
     set modelNode [$::slicer3::MRMLScene GetNodeByID $mid]
+
+    set triangleFilter [vtkTriangleFilter New]
+    $triangleFilter SetInput [$modelNode GetPolyData]
+    $triangleFilter Update
+    $modelNode SetAndObservePolyData [$triangleFilter GetOutput]
+    $triangleFilter Delete
+
     set ::QA(polyData_$mid) [vtkPolyData New]
     $::QA(polyData_$mid) DeepCopy [$modelNode GetPolyData]
     set ::QA(actor_$mid) [vtkActor New]
