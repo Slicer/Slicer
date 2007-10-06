@@ -1386,6 +1386,8 @@ void vtkSlicerViewerWidget::RemoveDisplayable(vtkMRMLDisplayableNode* model)
     {
     this->RemoveDispalyedID(removedIDs[i]);
     }
+  this->RemoveModelObservers(model);
+  this->DisplayableNodes.erase(model->GetID());
 }
 
 void vtkSlicerViewerWidget::RemoveDispalyedID(std::string &id)
