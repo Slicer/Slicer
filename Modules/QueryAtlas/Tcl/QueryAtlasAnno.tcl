@@ -193,11 +193,13 @@ proc QueryAtlasAddNewPickModels { mid } {
     #--- update current scene model list
     set modelNode [$::slicer3::MRMLScene GetNodeByID $mid]
 
-    set triangleFilter [vtkTriangleFilter New]
-    $triangleFilter SetInput [$modelNode GetPolyData]
-    $triangleFilter Update
-    $modelNode SetAndObservePolyData [$triangleFilter GetOutput]
-    $triangleFilter Delete
+    if { 0 } {
+      set triangleFilter [vtkTriangleFilter New]
+      $triangleFilter SetInput [$modelNode GetPolyData]
+      $triangleFilter Update
+      $modelNode SetAndObservePolyData [$triangleFilter GetOutput]
+      $triangleFilter Delete
+    }
 
     set ::QA(polyData_$mid) [vtkPolyData New]
     $::QA(polyData_$mid) DeepCopy [$modelNode GetPolyData]
@@ -234,7 +236,9 @@ proc QueryAtlasAddNewPickModels { mid } {
     set pinit 20.0
     for {set i 0} {$i < $numberOfCells} {incr i} {
         eval $cellNumberColors InsertNextTuple4 [QueryAtlasNumberToRGBA $i]
-        $prog SetValue [ expr $pinit + ($i*$pinc) ]
+        if { [expr $i % 1000] == 0 } {
+          $prog SetValue [ expr $pinit + ($i*$pinc) ]
+        }
     }
 
     $win SetStatusText "Adding new pick model..."

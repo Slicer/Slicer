@@ -94,6 +94,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
   vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::New();
   vtkMRMLModelStorageNode *mStorageNode = vtkMRMLModelStorageNode::New();
   vtkMRMLFreeSurferModelStorageNode *fsmStorageNode = vtkMRMLFreeSurferModelStorageNode::New();
+  fsmStorageNode->SetUseStripper(0);  // turn off stripping by default (breaks some pickers)
   vtkMRMLStorageNode *storageNode = NULL;
   
   mStorageNode->SetFileName(filename);
