@@ -16,7 +16,7 @@
 
 std::ostream& operator<<(std::ostream &os, const ModuleProcessInformation &p)
 {
-  os << "  Abort: " << p.Abort << std::endl;
+  os << "  Abort: " << (short) p.Abort << std::endl;
   os << "  Progress: " << p.Progress << std::endl;
   os << "  Stage Progress: " << p.StageProgress << std::endl;
   os << "  ProgressMessage: " << p.ProgressMessage << std::endl;
