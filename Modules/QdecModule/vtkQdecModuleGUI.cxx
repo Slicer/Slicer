@@ -1180,18 +1180,18 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
   const char *unzip = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetUnzip();
   const char *rm = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetRm();
   // make the paths work for windows
-#ifdef _WIN32
-  std::string newTempDir = itksys::SystemTools::ConvertToOutputPath(tempDir);
-  std::string newFileName = itksys::SystemTools::ConvertToOutputPath(fileName);
-#else
+//#ifdef _WIN32
+  //std::string newTempDir = itksys::SystemTools::ConvertToOutputPath(tempDir);
+  //std::string newFileName = itksys::SystemTools::ConvertToOutputPath(fileName);
+//#else
   std::string newTempDir = std::string(tempDir);
   std::string newFileName = std::string(fileName);
-#endif
+//#endif
 
   // make sure to escape any characters that might make working on the file
   // difficult, like spaces and brackets
-  newFileName =  itksys::SystemTools::EscapeChars(newFileName.c_str(), QdecModule_ESCAPE_CHARS);
-  vtkDebugMacro("Escaped file name = " << newFileName.c_str());
+  //newFileName =  itksys::SystemTools::EscapeChars(newFileName.c_str(), QdecModule_ESCAPE_CHARS);
+  //vtkDebugMacro("Escaped file name = " << newFileName.c_str());
   
   // check the paths to unzip and rm
   if (strcmp(unzip, "") != 0 &&

@@ -89,13 +89,8 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   string fnProject( ifnProject );
  
   
-#ifdef _WIN32
-  string sepString = "\\";
-  char sepChar = '\\';
-#else
   string sepString = "/";
   char sepChar = '/';
-#endif
 
   FILE *fp = NULL;
 #define DEBUG
@@ -220,8 +215,8 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   // destination directory.
 #ifdef _WIN32
   this->FormatCommandString( std::string("\"" + fnProject + "\"").c_str(),
-                             fnExpandedProjectBase.c_str(),
-                             ifnDataDir,
+                             std::string("\"" + fnExpandedProjectBase + "\"").c_str(),
+                             std::string("\"" + std::string(ifnDataDir) + "\"").c_str(),
                              msUnzipCommandFormat.c_str(),
                              sCommand );
 #else
@@ -913,7 +908,7 @@ int QdecProject::GenerateMappedLabelForAllSubjects
 {
   vector< string > subjects = this->GetSubjectIDs();
   int numSubjects = this->GetSubjectIDs().size();
-  float stepIncrement = 100.0 / numSubjects-1;
+  double stepIncrement = 100.0 / numSubjects-1.;
   int nStep = 1;
 
   if ( 0 == numSubjects )
