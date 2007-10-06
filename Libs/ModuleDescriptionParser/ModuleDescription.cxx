@@ -24,17 +24,20 @@ ModuleDescription::ModuleDescription()
 
 ModuleDescription::ModuleDescription(const ModuleDescription &md)
 {
-  this->Type = md.Type;
-  this->Category = md.Category;
   this->Title = md.Title;
+  this->Category = md.Category;
   this->Description = md.Description;
   this->Version = md.Version;
   this->DocumentationURL = md.DocumentationURL;
   this->License = md.License;
   this->Acknowledgements = md.Acknowledgements;
   this->Contributor = md.Contributor;
+  this->Type = md.Type;
   this->Target = md.Target;
   this->Location = md.Location;
+  this->AlternativeType = md.AlternativeType;
+  this->AlternativeTarget = md.AlternativeTarget;
+  this->AlternativeLocation = md.AlternativeLocation;
   this->ParameterGroups = md.ParameterGroups;
   this->Logo = md.Logo;
   
@@ -44,17 +47,20 @@ ModuleDescription::ModuleDescription(const ModuleDescription &md)
 void
 ModuleDescription::operator=(const ModuleDescription &md)
 {
-  this->Type= md.Type;
-  this->Category = md.Category;
   this->Title = md.Title;
+  this->Category = md.Category;
   this->Description = md.Description;
   this->Version = md.Version;
   this->DocumentationURL = md.DocumentationURL;
   this->License = md.License;
   this->Acknowledgements = md.Acknowledgements;
   this->Contributor = md.Contributor;
+  this->Type= md.Type;
   this->Target = md.Target;
   this->Location = md.Location;
+  this->AlternativeType= md.AlternativeType;
+  this->AlternativeTarget = md.AlternativeTarget;
+  this->AlternativeLocation = md.AlternativeLocation;
   this->ParameterGroups = md.ParameterGroups;
   this->ProcessInformation = md.ProcessInformation;
   this->Logo = md.Logo;
@@ -62,17 +68,20 @@ ModuleDescription::operator=(const ModuleDescription &md)
 
 std::ostream & operator<<(std::ostream &os, const ModuleDescription &module)
 {
-  os << "Category: " << module.GetCategory() << std::endl;
   os << "Title: " << module.GetTitle() << std::endl;
+  os << "Category: " << module.GetCategory() << std::endl;
   os << "Description: " << module.GetDescription() << std::endl;
   os << "Version: " << module.GetVersion() << std::endl;
-  os << "Type: " << module.GetType() << std::endl;
   os << "DocumentationURL: " << module.GetDocumentationURL() << std::endl;
   os << "License: " << module.GetLicense() << std::endl;
   os << "Contributor: " << module.GetContributor() << std::endl;
   os << "Acknowledgements: " << module.GetAcknowledgements() << std::endl;
+  os << "Type: " << module.GetType() << std::endl;
   os << "Target: " << module.GetTarget() << std::endl;
   os << "Location: " << module.GetLocation() << std::endl;
+  os << "Alternative Type: " << module.GetAlternativeType() << std::endl;
+  os << "Alternative Target: " << module.GetAlternativeTarget() << std::endl;
+  os << "Alternative Location: " << module.GetAlternativeLocation() << std::endl;
   //os << "Logo: " << module.GetLogo() << std::endl;
 
   os << "ProcessInformation: " << std::endl

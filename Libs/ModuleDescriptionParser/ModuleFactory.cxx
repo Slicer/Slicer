@@ -689,6 +689,16 @@ ModuleFactory
                   }
                 else
                   {
+                  // module already exists, set the alternative type,
+                  // location, and target if not already set
+                  if ((*mit).second.GetAlternativeType().empty()
+                      && (*mit).second.GetType() != module.GetType())
+                    {
+                    (*mit).second.SetAlternativeType( module.GetType() );
+                    (*mit).second.SetAlternativeLocation(module.GetLocation());
+                    (*mit).second.SetAlternativeTarget( module.GetTarget() );
+                    }
+                  
                   information << "A module named \"" << module.GetTitle()
                             << "\" has already been discovered." << std::endl
                             << "    First discovered at "
@@ -808,7 +818,8 @@ ModuleFactory
     std::stringstream information;
     
     information << "Searching " << *pit
-                << " for command line executable plugins by executing." << std::endl;
+                << " for command line executable plugins by executing."
+                << std::endl;
     
     itksys::Directory directory;
     directory.Load( (*pit).c_str() );
@@ -960,6 +971,16 @@ ModuleFactory
                   }
                 else
                   {
+                  // module already exists, set the alternative type,
+                  // location, and target if not already set
+                  if ((*mit).second.GetAlternativeType().empty()
+                      && (*mit).second.GetType() != module.GetType())
+                    {
+                    (*mit).second.SetAlternativeType( module.GetType() );
+                    (*mit).second.SetAlternativeLocation(module.GetLocation());
+                    (*mit).second.SetAlternativeTarget( module.GetTarget() );
+                    }
+
                   information << "A module named \"" << module.GetTitle()
                               << "\" has already been discovered." << std::endl
                               << "    First discovered at "
@@ -1216,6 +1237,16 @@ ModuleFactory
                   }
                 else
                   {
+                  // module already exists, set the alternative type,
+                  // location, and target if not already set
+                  if ((*mit).second.GetAlternativeType().empty()
+                      && (*mit).second.GetType() != module.GetType())
+                    {
+                    (*mit).second.SetAlternativeType( module.GetType() );
+                    (*mit).second.SetAlternativeLocation(module.GetLocation());
+                    (*mit).second.SetAlternativeTarget( module.GetTarget() );
+                    }
+
                   information << "A module named \"" << module.GetTitle()
                             << "\" has already been discovered." << std::endl
                             << "    First discovered at "
@@ -1457,6 +1488,16 @@ ModuleFactory
                   }
                 else
                   {
+                  // module already exists, set the alternative type,
+                  // location, and target if not already set
+                  if ((*mit).second.GetAlternativeType().empty()
+                      && (*mit).second.GetType() != module.GetType())
+                    {
+                    (*mit).second.SetAlternativeType( module.GetType() );
+                    (*mit).second.SetAlternativeLocation(module.GetLocation());
+                    (*mit).second.SetAlternativeTarget( module.GetTarget() );
+                    }
+
                   information << "A module named \"" << module.GetTitle()
                             << "\" has already been discovered." << std::endl
                             << "    First discovered at "
@@ -1817,6 +1858,16 @@ ModuleFactory
               }
             else
               {
+              // module already exists, set the alternative type,
+              // location, and target if not already set
+              if ((*mit).second.GetAlternativeType().empty()
+                      && (*mit).second.GetType() != module.GetType())
+                {
+                (*mit).second.SetAlternativeType( module.GetType() );
+                (*mit).second.SetAlternativeLocation(module.GetLocation());
+                (*mit).second.SetAlternativeTarget( module.GetTarget() );
+                }
+              
               information << "A module named \"" << module.GetTitle()
                           << "\" has already been discovered." << std::endl
                           << "    First discovered at "
@@ -2170,6 +2221,16 @@ ModuleFactory
           }
         else
           {
+          // module already exists, set the alternative type,
+          // location, and target if not already set
+          if ((*mit).second.GetAlternativeType().empty()
+              && (*mit).second.GetType() != module.GetType())
+            {
+            (*mit).second.SetAlternativeType( module.GetType() );
+            (*mit).second.SetAlternativeLocation( module.GetLocation() );
+            (*mit).second.SetAlternativeTarget( module.GetTarget() );
+            }
+          
           stream << "A module named \"" << module.GetTitle()
                  << "\" has already been discovered." << std::endl
                  << "    First discovered at "
