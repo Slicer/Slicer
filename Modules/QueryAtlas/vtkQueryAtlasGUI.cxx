@@ -24,6 +24,8 @@
 
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerModelsLogic.h"
+#include "vtkSlicerColorLogic.h"
+#include "vtkSlicerColorGUI.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleLogic.h"
 #include "vtkSlicerVisibilityIcons.h"
@@ -40,6 +42,7 @@
 
 #include "vtkQdecModuleGUI.h"
 #include "vtkQdecModuleLogic.h"
+
 
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -1160,7 +1163,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( (b == this->FSgoButton->GetWidget()) && (event == vtkKWPushButton::InvokedEvent ) )
         {
 //        this->Script ( "QueryAtlasFipsFreeSurferSetUp" );
-        this->Script ( "QueryAtlasInitialize" );
+        this->Script ( "QueryAtlasInitialize FIPSFreeSurfer NULL" );
         }
       }
     if ( this->QdecGoButton )
@@ -1168,9 +1171,18 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( (b == this->QdecGoButton->GetWidget()) && (event == vtkKWPushButton::InvokedEvent ) )
         {
         vtkQdecModuleLogic *qLogic = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"))->GetLogic();
-        std::string avgDir = qLogic->GetAverageSubject ( );
-        std::string labelDir = avgDir + "/label/";
-        this->Script ( "QueryAtlasInitialize");
+        if ( qLogic != NULL )
+          {
+          std::vector<std::string> pathcomponents;
+          std::string subjDir = qLogic->GetSubjectsDirectory();
+          itksys::SystemTools::SplitPath(subjDir.c_str(), pathcomponents);
+          std::string avgDir = qLogic->GetAverageSubject ( );
+          pathcomponents.push_back(avgDir.c_str() );
+          pathcomponents.push_back("label" );
+          std::string labelDir = "";
+          labelDir = itksys::SystemTools::JoinPath(pathcomponents);
+          this->Script ( "QueryAtlasInitialize Qdec \"%s\"", labelDir.c_str() );
+          }
         }
       }
     if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -1586,6 +1598,15 @@ void vtkQueryAtlasGUI::AutoWinLevThreshStatisticsVolume ( vtkMRMLScalarVolumeNod
 
 
 //---------------------------------------------------------------------------
+//void vtkQueryAtlasGUI::LoadQdecAnnotationCallback ( )
+//{
+//  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+//  const char *dirn = this->QdecGetAnnotationButton->GetWidget()->GetLoadSaveDialog()->GetDirectoryName();
+
+//}
+
+
+//---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
 {
   
@@ -1624,42 +1645,6 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
           dialog->Delete();
           }
         }
-      else
-        {
-        //--- get FSAverage directory from logic
-        //--- and load subject annotations
-        std::vector<std::string> pathcomponents;
-        std::string subjDir = qLogic->GetSubjectsDirectory();
-
-        itksys::SystemTools::SplitPath(subjDir.c_str(), pathcomponents);
-        pathcomponents.push_back("fsaverage");
-        std::string avgDir = itksys::SystemTools::JoinPath(pathcomponents);
-
-        std::string annotFile = "";
-        vtkMRMLModelNode *mnode = qLogic->GetModelNode();
-        //--- for now there's only one model node. later, there may
-        //--- be more.
-        if ( avgDir.c_str() != "" && mnode != NULL )
-          {
-          if ( ! (strcmp (mnode->GetName(), "lh.inflated" ) ) )
-            {
-            pathcomponents.push_back("label");
-            pathcomponents.push_back("lh.aparc.annot");
-            annotFile = itksys::SystemTools::JoinPath(pathcomponents);
-            }
-          else if ( ! (strcmp (mnode->GetName(), "rh.inflated")))
-            {
-            pathcomponents.push_back("label");
-            pathcomponents.push_back("rh.aparc.annot");
-            annotFile = itksys::SystemTools::JoinPath(pathcomponents);
-            }
-          }
-        if ( annotFile != "" )
-          {
-          //--- add scalars
-          mLogic->AddScalar ( annotFile.c_str(), mnode );
-          }
-        }
       }
     // update Scalar overlay menu
     this->UpdateScalarOverlayMenu();
@@ -1691,6 +1676,28 @@ void vtkQueryAtlasGUI::UpdateScalarOverlayMenu ( )
         {
         this->QdecScalarSelector->GetWidget()->GetMenu()->AddRadioButton(qLogic->GetQuestion(i).c_str());
         }
+
+      //--- if the labels are now on the model, add the menuitem
+      vtkMRMLModelNode *mnode = qLogic->GetModelNode();
+      if ( mnode != NULL )
+        {
+        std::string lutName ("QueryLUT_" );
+        lutName = lutName + mnode->GetID();
+        // find the query lut by name
+        int n= this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLColorNode");
+        for ( int j=0; j< n; j++ )
+          {
+          vtkMRMLColorNode *cnode = vtkMRMLColorNode::SafeDownCast( this->GetMRMLScene()->GetNthNodeByClass ( j, "vtkMRMLColorNode"));
+          if ( cnode != NULL )
+            {
+            if ( !(strcmp(cnode->GetName(), lutName.c_str() )) )
+              {
+              // looks like the node is in the scene; so add the menuitem.
+              this->QdecScalarSelector->GetWidget()->GetMenu()->AddRadioButton("labels");
+              }
+            }
+          }
+        }
       }
     }
 }
@@ -1703,6 +1710,7 @@ void vtkQueryAtlasGUI::DisplayScalarOverlay ( )
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
   vtkQdecModuleLogic *qLogic;
   vtkSlicerModelsLogic *mLogic;
+  vtkSlicerColorLogic *cLogic;
   if ( app )
     {
     if ( vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule")) != NULL )
@@ -1713,57 +1721,86 @@ void vtkQueryAtlasGUI::DisplayScalarOverlay ( )
       {
       mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
       }
-  
+    if ( vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Color")) != NULL )
+      {
+      cLogic = vtkSlicerColorGUI::SafeDownCast(app->GetModuleGUIByName("Color"))->GetLogic();
+      }
     if ( (this->QdecScalarSelector->IsCreated()) && (qLogic != NULL) && (mLogic != NULL) )
       {
       if ( (strcmp(this->QdecScalarSelector->GetWidget()->GetValue(), "None") != 0)  && (qLogic != NULL ) )
         {
         const char *cselection = this->QdecScalarSelector->GetWidget()->GetValue();
-        std::string scalarName = qLogic->GetQuestionScalarName( cselection );
-        vtkDebugMacro("Got question scalar name from logic: " << scalarName.c_str());
         // trigger display change on the model
-        if (qLogic->GetModelNode() != NULL)
+        vtkMRMLModelNode *mnode = qLogic->GetModelNode();
+        if ( mnode != NULL)
           {
-          vtkDebugMacro("Setting the active scalars on " << qLogic->GetModelNode()->GetName() << " to " << scalarName.c_str());
-          qLogic->GetModelNode()->SetActiveScalars(scalarName.c_str(), NULL);
-          qLogic->GetModelNode()->GetModelDisplayNode()->SetActiveScalarName(scalarName.c_str());
-          // the color node has the same name as the scalar array name to facilitate
-          // this pairing, find the ID by querying the mrml scene
-          std::string colorID = "none";
-          if (this->GetApplication() && this->GetApplicationGUI()->GetMRMLScene())
+          if ( !(strcmp( cselection,"labels" )) )
             {
-            vtkCollection *colorNodes =  this->GetApplicationGUI()->GetMRMLScene()->GetNodesByName(scalarName.c_str());
-            if (colorNodes)
+            // find the query lut by name
+            std::string lutName ("QueryLUT_" );
+            lutName = lutName + mnode->GetID();
+            int n= this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLColorNode");
+            for ( int j=0; j< n; j++ )
               {
-              int numberOfNodes = colorNodes->GetNumberOfItems();
-              if (numberOfNodes > 0)
+              // get the color node that goes with that name
+              vtkMRMLColorNode *cnode = vtkMRMLColorNode::SafeDownCast( this->GetMRMLScene()->GetNthNodeByClass ( j, "vtkMRMLColorNode"));
+              if ( cnode != NULL )
                 {
-                // take the first one
-                colorID = vtkMRMLProceduralColorNode::SafeDownCast(colorNodes->GetItemAsObject(0))->GetID();
-                }
-              else
-                {
-                vtkErrorMacro("vtkQueryAtlasGUI Cannot find a color node with the name " << scalarName.c_str());
+                if ( !(strcmp(cnode->GetName(), lutName.c_str() )) )
+                  {
+                  vtkDebugMacro("Setting the active scalars on " << mnode->GetName() << " to " << cselection );
+                  qLogic->GetModelNode()->SetActiveScalars(cselection, NULL);
+                  qLogic->GetModelNode()->GetModelDisplayNode()->SetActiveScalarName( cselection );
+                  qLogic->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(cnode->GetID() );
+                  }
                 }
               }
-            else
-              {
-              vtkErrorMacro("vtkQueryAtlasGUI cannot find procedural color nodes to check for the one associated with scalar " << scalarName.c_str());
-              }         
-            } else { vtkErrorMacro("No application or scene, can't find matching color node"); }
-          if (strcmp(colorID.c_str(), "none") != 0)
-            {
-            // use this node id
-            if (strcmp(qLogic->GetModelNode()->GetModelDisplayNode()->GetColorNodeID(), colorID.c_str()) != 0)
-              {
-              vtkDebugMacro("Setting the model's display node color node id to " << colorID.c_str());
-              qLogic->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(colorID.c_str());
-              }
-            else { vtkDebugMacro("Model's display node color node is already set to " << colorID.c_str()); }
             }
           else
             {
-            vtkErrorMacro("Qdec Module gui unable to find matching color node for scalar array " << scalarName.c_str());
+            std::string scalarName = qLogic->GetQuestionScalarName( cselection );
+            vtkDebugMacro("Got question scalar name from logic: " << scalarName.c_str());
+            vtkDebugMacro("Setting the active scalars on " << qLogic->GetModelNode()->GetName() << " to " << scalarName.c_str());
+            qLogic->GetModelNode()->SetActiveScalars(scalarName.c_str(), NULL);
+            qLogic->GetModelNode()->GetModelDisplayNode()->SetActiveScalarName(scalarName.c_str());
+            // the color node has the same name as the scalar array name to facilitate
+            // this pairing, find the ID by querying the mrml scene
+            std::string colorID = "none";
+            if (this->GetApplication() && this->GetApplicationGUI()->GetMRMLScene())
+              {
+              vtkCollection *colorNodes =  this->GetApplicationGUI()->GetMRMLScene()->GetNodesByName(scalarName.c_str());
+              if (colorNodes)
+                {
+                int numberOfNodes = colorNodes->GetNumberOfItems();
+                if (numberOfNodes > 0)
+                  {
+                  // take the first one
+                  colorID = vtkMRMLProceduralColorNode::SafeDownCast(colorNodes->GetItemAsObject(0))->GetID();
+                  }
+                else
+                  {
+                  vtkErrorMacro("vtkQueryAtlasGUI Cannot find a color node with the name " << scalarName.c_str());
+                  }
+                }
+              else
+                {
+                vtkErrorMacro("vtkQueryAtlasGUI cannot find procedural color nodes to check for the one associated with scalar " << scalarName.c_str());
+                }         
+              } else { vtkErrorMacro("No application or scene, can't find matching color node"); }
+            if (strcmp(colorID.c_str(), "none") != 0)
+              {
+              // use this node id
+              if (strcmp(qLogic->GetModelNode()->GetModelDisplayNode()->GetColorNodeID(), colorID.c_str()) != 0)
+                {
+                vtkDebugMacro("Setting the model's display node color node id to " << colorID.c_str());
+                qLogic->GetModelNode()->GetModelDisplayNode()->SetAndObserveColorNodeID(colorID.c_str());
+                }
+              else { vtkDebugMacro("Model's display node color node is already set to " << colorID.c_str()); }
+              }
+            else
+              {
+              vtkErrorMacro("Qdec Module gui unable to find matching color node for scalar array " << scalarName.c_str());
+              }
             }
           }
         else
@@ -1896,7 +1933,7 @@ void vtkQueryAtlasGUI::Enter ( )
     this->Script ( "QueryAtlasCullOldModelAnnotations");
     this->Script ( "QueryAtlasCullOldLabelMapAnnotations");
     this->Script ( "QueryAtlasAddInteractorObservers" );
-
+    this->UpdateScalarOverlayMenu();
 }
 
 //---------------------------------------------------------------------------

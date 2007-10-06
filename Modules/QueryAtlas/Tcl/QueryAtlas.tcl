@@ -71,8 +71,21 @@ proc QueryAtlasTearDownPicker { } {
             }
         }
     }
-    
-    if { [ info exists ::QA(windowToImage)  ] } {
+
+  if { [info exists ::QA(cellPickerSliceMapper) ] } {
+      $::QA(cellPickerSliceMapper) Delete
+      unset -nocomplain ::QA(cellPickerSliceMapper) 
+  }
+  if { [info exists ::QA(cellPickerUserMatrix) ] } {
+      $::QA(cellPickerUserMatrix) Delete
+      unset -nocomplain ::QA(cellPickerUserMatrix) 
+  }
+  if { [info exists ::QA(cellPickerSliceActor) ] } {
+      $::QA(cellPickerSliceActor) Delete
+      unset -nocomplain ::QA(cellPickerSliceActor) 
+  }
+  
+  if { [ info exists ::QA(windowToImage)  ] } {
         $::QA(windowToImage) Delete
         unset -nocomplain ::QA(windowToImage)
     }   
@@ -1345,6 +1358,7 @@ proc QueryAtlasRequestPickCallback {} {
 
   set ::QA(pickPending) 1
   after idle QueryAtlasPickCallback 
+
 }
 
 proc QueryAtlasPickCallback {} {
