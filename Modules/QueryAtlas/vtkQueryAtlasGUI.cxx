@@ -1583,8 +1583,6 @@ void vtkQueryAtlasGUI::ModifyQuerySceneVisibility()
       int m = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLModelNode" );
 
       const char *menuText;
-      const char *mid;
-
       vtkMRMLModelNode *mnode;
       vtkMRMLModelDisplayNode *dnode;
 
@@ -1918,13 +1916,12 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   //--- has a node been added?
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
-       && (event == vtkMRMLScene::NodeAddedEvent ) &&
-       (vtkMRMLScalarVolumeNode::SafeDownCast((vtkObjectBase *)callData) != NULL) )
+       && (event == vtkMRMLScene::NodeAddedEvent ))
     {
-    //--- apply ballpark threshold if the node appears to be a statistics volume.
     vtkMRMLScalarVolumeNode *node = vtkMRMLScalarVolumeNode::SafeDownCast ( (vtkObjectBase *)callData );
     if ( node != NULL )
       {
+      //--- apply ballpark threshold if the node appears to be a statistics volume.
       AutoWinLevThreshStatisticsVolume ( node );
       }
     this->Script ( "QueryAtlasNodeAddedUpdate" );
