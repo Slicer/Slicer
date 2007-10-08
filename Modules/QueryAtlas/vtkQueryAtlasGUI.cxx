@@ -1456,7 +1456,6 @@ void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
         }
       }
     }
-  this->LoadFIPSFSCatalogButton->GetLabel()->SetText ( "" );
 }
 
 
