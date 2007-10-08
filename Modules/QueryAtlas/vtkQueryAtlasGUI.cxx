@@ -1599,11 +1599,13 @@ void vtkQueryAtlasGUI::ModifyQuerySceneVisibility()
           mnode = vtkMRMLModelNode::SafeDownCast (this->GetMRMLScene()->GetNthNodeByClass ( j, "vtkMRMLModelNode" ));
           if ( mnode != NULL )
             {
-            mid = mnode->GetID();
-            if ( !(strcmp ( mid, menuText )) )
+            std::string name (mnode->GetName() );
+            std::string mid (mnode->GetID() );
+            std::string menuitem = name + " (" + mid + ")";
+            if ( !(strcmp ( menuitem.c_str(), menuText )) )
               {
-              this->QuerySceneVisibilityMenuButton->GetMenu()->SetItemStateToNormal(mid);
-              state =  this->QuerySceneVisibilityMenuButton->GetMenu()->GetItemSelectedState(mid);
+              this->QuerySceneVisibilityMenuButton->GetMenu()->SetItemStateToNormal(menuitem.c_str() );
+              state =  this->QuerySceneVisibilityMenuButton->GetMenu()->GetItemSelectedState(menuitem.c_str() );
               // if selected state is different from node's state, then change node's state.
               dnode = vtkMRMLModelDisplayNode::SafeDownCast (mnode->GetDisplayNode() );
               if ( dnode != NULL )
@@ -1612,7 +1614,7 @@ void vtkQueryAtlasGUI::ModifyQuerySceneVisibility()
                   {
                   this->GetMRMLScene()->SaveStateForUndo( dnode );
                   dnode->SetVisibility ( state );
-                  this->Script ( "QueryAtlasSetQueryModelVisibility %s %d", mid, state);
+                  this->Script ( "QueryAtlasSetQueryModelVisibility %s %d", mid.c_str(), state);
                   break;
                   }
                 }
@@ -1655,23 +1657,24 @@ void vtkQueryAtlasGUI::UpdateAnnoVisibilityMenu ( )
         vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast ( this->GetMRMLScene()->GetNthNodeByClass ( i, "vtkMRMLModelNode" ));
         if ( mnode != NULL )
           {
-          const char *name = mnode->GetName();
-          const char *mid = mnode->GetID();
-          if ( (!(strcmp (name, "lh.pial"))) || (!(strcmp (name, "rh.pial")))
-               || (!(strcmp (name, "lh.inflated")))
-               || (!(strcmp (name, "rh.inflated"))) )
+          std::string name (mnode->GetName() );
+          std::string mid (mnode->GetID() );
+          std::string menuitem = name + " (" + mid + ")";
+          if ( (!(strcmp (name.c_str(), "lh.pial"))) || (!(strcmp (name.c_str(), "rh.pial")))
+               || (!(strcmp (name.c_str(), "lh.inflated")))
+               || (!(strcmp (name.c_str(), "rh.inflated"))) )
             {
-            this->QuerySceneVisibilityMenuButton->GetMenu()->AddCheckButton ( mid );
+            this->QuerySceneVisibilityMenuButton->GetMenu()->AddCheckButton ( menuitem.c_str() );
             //--- set the model's initial visibility according to the display node.
             vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast( mnode->GetDisplayNode() );
             int v = dnode->GetVisibility ( );
             if ( v )
               {
-              this->QuerySceneVisibilityMenuButton->GetMenu()->SelectItem ( mid );
+              this->QuerySceneVisibilityMenuButton->GetMenu()->SelectItem ( menuitem.c_str() );
               }
             else
               {
-              this->QuerySceneVisibilityMenuButton->GetMenu()->DeselectItem ( mid );
+              this->QuerySceneVisibilityMenuButton->GetMenu()->DeselectItem ( menuitem.c_str() );
               }
             }
           }
