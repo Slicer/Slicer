@@ -58,15 +58,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( QueryAtlasIcons, vtkQueryAtlasIcons );
     
     // Annotation Options frame and widgets
-    vtkGetObjectMacro (ModelVisibilityButton, vtkKWPushButton );
-    vtkGetObjectMacro (LHModelVisibilityButton, vtkKWPushButton );
-    vtkGetObjectMacro (RHModelVisibilityButton, vtkKWPushButton );    
-    vtkGetObjectMacro (AnnotationVisibilityButton, vtkKWPushButton );
     vtkGetObjectMacro (AnnotationTermSetMenuButton, vtkKWMenuButton );
-    vtkGetMacro ( AnnotationVisibility, int );
-    vtkGetMacro ( ModelVisibility, int );
-    vtkGetMacro ( LHModelVisibility, int );
-    vtkGetMacro ( RHModelVisibility, int );
+    vtkGetObjectMacro (QuerySceneVisibilityMenuButton, vtkKWMenuButton );
 
     // Querybuilder frame top widgets
     vtkGetObjectMacro (OtherButton, vtkKWPushButton );
@@ -285,6 +278,15 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     void UpdateScalarOverlayMenu ( );
 
     // Description:
+    // populates the model/annotation visibility menu with query models
+    void UpdateAnnoVisibilityMenu ( );
+
+    // Description:
+    // method lets you set the visibility of annotations or models in the scene.
+    // useful in case you want to peek under a model to see a slice plane.
+    void ModifyQuerySceneVisibility();
+    
+    // Description:
     // Displays a selected scalar overlay on a loaded Qdec scene.
     void DisplayScalarOverlay();
     
@@ -322,11 +324,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWFrame *QdecFrame;
 
     // Annotation Options frame and widgets
-    vtkKWPushButton *AnnotationVisibilityButton;
-    vtkKWPushButton *ModelVisibilityButton;
-    vtkKWPushButton *LHModelVisibilityButton;
-    vtkKWPushButton *RHModelVisibilityButton;
     vtkKWMenuButton *AnnotationTermSetMenuButton;
+    vtkKWMenuButton *QuerySceneVisibilityMenuButton;
     
     // ontology frame
     vtkKWEntry *LocalSearchTermEntry;
@@ -430,10 +429,6 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     // DUMP ALL STATE HERE FOR NOW.
     // move all this to MRML Node
-    int AnnotationVisibility;
-    int ModelVisibility;
-    int RHModelVisibility;
-    int LHModelVisibility;
     int SearchOption;
     //BTX
     enum

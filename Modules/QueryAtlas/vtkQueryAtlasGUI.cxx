@@ -83,10 +83,6 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
 
     this->CollaboratorIcons = NULL;
     this->QueryAtlasIcons = NULL;
-    this->AnnotationVisibility = 1;
-    this->ModelVisibility = 1;
-    this->LHModelVisibility = 1;
-    this->RHModelVisibility = 1;
     this->ProcessingMRMLEvent = 0;
     this->SceneClosing = false;
     
@@ -138,11 +134,8 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
     // annotation frame
     //---    
 #ifdef ANNO_FRAME
-    this->AnnotationVisibilityButton = NULL;
     this->AnnotationTermSetMenuButton = NULL;
-    this->ModelVisibilityButton = NULL;
-    this->LHModelVisibilityButton = NULL;
-    this->RHModelVisibilityButton = NULL;
+    this->QuerySceneVisibilityMenuButton = NULL;
 #endif
     
     //---
@@ -334,35 +327,17 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
     // annotation frame
     //---
 #ifdef ANNO_FRAME
-    if ( this->LHModelVisibilityButton )
-      {
-      this->LHModelVisibilityButton->SetParent ( NULL );
-      this->LHModelVisibilityButton->Delete();
-      this->LHModelVisibilityButton = NULL;      
-      }
-    if ( this->RHModelVisibilityButton )
-      {
-      this->RHModelVisibilityButton->SetParent ( NULL );
-      this->RHModelVisibilityButton->Delete();
-      this->RHModelVisibilityButton = NULL;      
-      }
-    if ( this->ModelVisibilityButton )
-      {
-      this->ModelVisibilityButton->SetParent ( NULL );
-      this->ModelVisibilityButton->Delete();
-      this->ModelVisibilityButton = NULL;
-      }
-    if ( this->AnnotationVisibilityButton )
-      {
-      this->AnnotationVisibilityButton->SetParent ( NULL );
-      this->AnnotationVisibilityButton->Delete();
-      this->AnnotationVisibilityButton = NULL;
-      }
     if ( this->AnnotationTermSetMenuButton )
       {
       this->AnnotationTermSetMenuButton->SetParent ( NULL );
       this->AnnotationTermSetMenuButton->Delete();
       this->AnnotationTermSetMenuButton = NULL;      
+      }
+    if ( this->QuerySceneVisibilityMenuButton )
+      {
+      this->QuerySceneVisibilityMenuButton->SetParent ( NULL );
+      this->QuerySceneVisibilityMenuButton->Delete();
+      this->QuerySceneVisibilityMenuButton = NULL;      
       }
 #endif
     
@@ -902,12 +877,8 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
   this->SpeciesMouseButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesMacaqueButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->ModelVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->LHModelVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->RHModelVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->AnnotationVisibilityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationTermSetMenuButton->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  this->QuerySceneVisibilityMenuButton->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->BIRNLexHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NeuroNamesHierarchyButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LocalSearchTermEntry->RemoveObservers(vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -971,11 +942,8 @@ void vtkQueryAtlasGUI::AddGUIObservers ( )
   this->SpeciesMouseButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SpeciesMacaqueButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->ModelVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->LHModelVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->RHModelVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->AnnotationVisibilityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->AnnotationTermSetMenuButton->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->QuerySceneVisibilityMenuButton->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->BIRNLexHierarchyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NeuroNamesHierarchyButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -1162,8 +1130,12 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       if ( (b == this->FSgoButton->GetWidget()) && (event == vtkKWPushButton::InvokedEvent ) )
         {
-//        this->Script ( "QueryAtlasFipsFreeSurferSetUp" );
         this->Script ( "QueryAtlasInitialize FIPSFreeSurfer NULL" );
+        // do this here again in case node added events haven't triggered
+        // the update of this menu, which they seem not to do for command
+        // line loading.
+        this->Script ( "QueryAtlasAnnotationVisibility on");
+        this->UpdateAnnoVisibilityMenu();
         }
       }
     if ( this->QdecGoButton )
@@ -1182,6 +1154,11 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
           std::string labelDir = "";
           labelDir = itksys::SystemTools::JoinPath(pathcomponents);
           this->Script ( "QueryAtlasInitialize Qdec \"%s\"", labelDir.c_str() );
+          // do this here again in case node added events haven't triggered
+          // the update of this menu, which they seem not to do for command
+          // line loading
+          this->Script ( "QueryAtlasAnnotationVisibility on");
+          this->UpdateAnnoVisibilityMenu();
           }
         }
       }
@@ -1243,78 +1220,6 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( this->DatabasesMenuButton->IsCreated() )
         {
         this->Script ( "QueryAtlasFormURLsForTargets");
-        }
-      }
-    else if ( (b == this->AnnotationVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
-      {
-      if ( this->AnnotationVisibility == 1 )
-        {
-        // turn off automatic annotations in the main viewer
-        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
-        this->AnnotationVisibilityButton->SetImageToIcon ( i );
-        this->AnnotationVisibility = 0;
-        this->Script ( "QueryAtlasSetAnnotationsInvisible" );
-        }
-      else
-        {
-        // turn on automatic annotations in main viewer
-        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
-        this->AnnotationVisibilityButton->SetImageToIcon ( i );
-        this->AnnotationVisibility = 1;
-        this->Script ( "QueryAtlasSetAnnotationsVisible" );
-        }
-      }
-    else if ( (b == this->LHModelVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
-      {
-      if ( this->LHModelVisibility == 1 )
-        {
-        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
-        this->LHModelVisibilityButton->SetImageToIcon ( i );
-        this->LHModelVisibility = 0;
-        this->Script ( "QueryAtlasSetLHQueryModelInvisible" );
-        }
-      else
-        {
-        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
-        this->LHModelVisibilityButton->SetImageToIcon ( i );
-        this->LHModelVisibility = 1;
-        this->Script ( "QueryAtlasSetLHQueryModelVisible" );
-        }
-      }
-    else if ( (b == this->RHModelVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
-      {
-      if ( this->RHModelVisibility == 1 )
-        {
-        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
-        this->RHModelVisibilityButton->SetImageToIcon ( i );
-        this->RHModelVisibility = 0;
-        this->Script ( "QueryAtlasSetRHQueryModelInvisible" );
-        }
-      else
-        {
-        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
-        this->RHModelVisibilityButton->SetImageToIcon ( i );
-        this->RHModelVisibility = 1;
-        this->Script ( "QueryAtlasSetRHQueryModelVisible" );
-        }
-      }
-    else if ( (b == this->ModelVisibilityButton) && (event == vtkKWPushButton::InvokedEvent ) )
-      {
-      if ( this->ModelVisibility == 1 )
-        {
-        // turn off automatic annotations in the main viewer
-        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetInvisibleIcon();
-        this->ModelVisibilityButton->SetImageToIcon ( i );
-        this->ModelVisibility = 0;
-        this->Script ( "QueryAtlasSetQueryModelInvisible" );
-        }
-      else
-        {
-        // turn on automatic annotations in main viewer
-        vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
-        this->ModelVisibilityButton->SetImageToIcon ( i );
-        this->ModelVisibility = 1;
-        this->Script ( "QueryAtlasSetQueryModelVisible" );
         }
       }
     else if ( (b == this->FIPSFSButton) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -1432,7 +1337,11 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   // no need to do anything here; we'll just grab the widget values when we need them with tcl
   if ( m != NULL )
     {
-    if ( this->AnnotationTermSetMenuButton )
+    if ( (m==this->QuerySceneVisibilityMenuButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) )
+      {
+      this->ModifyQuerySceneVisibility();
+      }
+    else if ( this->AnnotationTermSetMenuButton )
       {
       if (( m== this->AnnotationTermSetMenuButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent ) )
         {
@@ -1457,7 +1366,6 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
           {
           this->Script ( "QueryAtlasSetAnnotationTermSet IBVD" );
           }
-
         }
       }
     if ( this->QdecScalarSelector )
@@ -1653,7 +1561,125 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
 
 
 
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::ModifyQuerySceneVisibility()
+{
+  int state;
+  if ( this->QuerySceneVisibilityMenuButton != NULL )
+    {
+    if ( this->QuerySceneVisibilityMenuButton->GetMenu() != NULL )
+      {
+      //--- update annotation visibility
+      state =  this->QuerySceneVisibilityMenuButton->GetMenu()->GetItemSelectedState("annotations");
+      if ( state == 1 )
+        {
+        this->Script ( "QueryAtlasAnnotationVisibility on");
+        }
+      else
+        {
+        this->Script ( "QueryAtlasAnnotationVisibility off");
+        }
+      int n = this->QuerySceneVisibilityMenuButton->GetMenu()->GetNumberOfItems();
+      int m = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLModelNode" );
 
+      const char *menuText;
+      const char *mid;
+
+      vtkMRMLModelNode *mnode;
+      vtkMRMLModelDisplayNode *dnode;
+
+      //--- process models (don't include separators and 'close' command
+      //--- at beginning and end of menu
+      for ( int i=2; i<n-2; i++)
+        {
+        menuText = this->QuerySceneVisibilityMenuButton->GetMenu()->GetItemLabel ( i );
+        //--- search all models for this modelID
+        for ( int j=0; j < m; j++)
+          {
+          mnode = vtkMRMLModelNode::SafeDownCast (this->GetMRMLScene()->GetNthNodeByClass ( j, "vtkMRMLModelNode" ));
+          if ( mnode != NULL )
+            {
+            mid = mnode->GetID();
+            if ( !(strcmp ( mid, menuText )) )
+              {
+              this->QuerySceneVisibilityMenuButton->GetMenu()->SetItemStateToNormal(mid);
+              state =  this->QuerySceneVisibilityMenuButton->GetMenu()->GetItemSelectedState(mid);
+              // if selected state is different from node's state, then change node's state.
+              dnode = vtkMRMLModelDisplayNode::SafeDownCast (mnode->GetDisplayNode() );
+              if ( dnode != NULL )
+                {
+                if ( state != dnode->GetVisibility() )
+                  {
+                  this->GetMRMLScene()->SaveStateForUndo( dnode );
+                  dnode->SetVisibility ( state );
+                  this->Script ( "QueryAtlasSetQueryModelVisibility %s %d", mid, state);
+                  break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::UpdateAnnoVisibilityMenu ( )
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
+
+    if ( this->QuerySceneVisibilityMenuButton != NULL )
+      {
+      //--- clear it out
+      int state = this->QuerySceneVisibilityMenuButton->GetMenu()->GetItemSelectedState ( "annotations" );
+      this->QuerySceneVisibilityMenuButton->GetMenu()->DeleteAllItems();    
+      //--- now reconstruct it
+      this->QuerySceneVisibilityMenuButton->GetMenu()->AddCheckButton ( "annotations" );
+      if ( state == 1 )
+        {
+        this->QuerySceneVisibilityMenuButton->GetMenu()->SelectItem ( "annotations" );
+        }
+      else if ( state == 0 )
+        {
+        this->QuerySceneVisibilityMenuButton->GetMenu()->DeselectItem ( "annotations" );
+        }
+      this->QuerySceneVisibilityMenuButton->GetMenu()->AddSeparator();
+      // search the scene for any models and add them to this list.
+      int numModels = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLModelNode");
+      for ( int i=0; i < numModels; i++ )
+        {
+        vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast ( this->GetMRMLScene()->GetNthNodeByClass ( i, "vtkMRMLModelNode" ));
+        if ( mnode != NULL )
+          {
+          const char *name = mnode->GetName();
+          const char *mid = mnode->GetID();
+          if ( (!(strcmp (name, "lh.pial"))) || (!(strcmp (name, "rh.pial")))
+               || (!(strcmp (name, "lh.inflated")))
+               || (!(strcmp (name, "rh.inflated"))) )
+            {
+            this->QuerySceneVisibilityMenuButton->GetMenu()->AddCheckButton ( mid );
+            //--- set the model's initial visibility according to the display node.
+            vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast( mnode->GetDisplayNode() );
+            int v = dnode->GetVisibility ( );
+            if ( v )
+              {
+              this->QuerySceneVisibilityMenuButton->GetMenu()->SelectItem ( mid );
+              }
+            else
+              {
+              this->QuerySceneVisibilityMenuButton->GetMenu()->DeselectItem ( mid );
+              }
+            }
+          }
+        }
+      this->QuerySceneVisibilityMenuButton->GetMenu()->AddSeparator();
+      this->QuerySceneVisibilityMenuButton->GetMenu()->AddCommand ( "close" );    
+      }
+}
 
 
 //---------------------------------------------------------------------------
@@ -1900,6 +1926,7 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
       }
     this->Script ( "QueryAtlasNodeAddedUpdate" );
     this->UpdateScalarOverlayMenu();
+    this->UpdateAnnoVisibilityMenu();
     }
 
   //--- has a node been deleted?
@@ -1908,6 +1935,7 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->Script ( "QueryAtlasNodeRemovedUpdate");
     this->UpdateScalarOverlayMenu();
+    this->UpdateAnnoVisibilityMenu();
     }
   
   //--- is the scene closing?
@@ -1917,6 +1945,9 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
     // clean up and reset globals.
     this->Script ("QueryAtlasTearDown" );
     this->Script("QueryAtlasInitializeGlobals");
+    // empty menus.
+    this->QdecScalarSelector->GetWidget()->GetMenu()->DeleteAllItems();
+    this->UpdateAnnoVisibilityMenu();
     }
   else 
     {
@@ -1934,6 +1965,7 @@ void vtkQueryAtlasGUI::Enter ( )
     this->Script ( "QueryAtlasCullOldLabelMapAnnotations");
     this->Script ( "QueryAtlasAddInteractorObservers" );
     this->UpdateScalarOverlayMenu();
+    this->UpdateAnnoVisibilityMenu();
 }
 
 //---------------------------------------------------------------------------
@@ -1972,7 +2004,7 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "QueryAtlas", "QueryAtlas", NULL );
 
     const char *help = "The (Generation 1) Query Atlas module allows interactive queries to a number of informational resources (Google, Wikipedia, BrainInfo, IBVD, Journal of Neuroscience, and Pubmed) from within the 3D anatomical display. These queries take advantage, where appropriate,  of the QueryAtlas's controlled vocabulary, which maps anatomical terms to different formal naming systems. More advanced query building and the ability to collect and preview web links to information, and save valuable ones to a bookmarks file is avilable in the GUI panel. This module requires the use of Mozilla Firefox as your web browser; you can point Slicer to this application through the Application Settings interface (View->Application Settings) and its location will be saved in Slicer's Application Registry for future reference.";
-    const char *about = "This research was supported by Grant 5 MOI RR 000827 to the FIRST BIRN and Grant 1 U24 RR021992 to the FBIRN Biomedical Informatics Research Network (BIRN, http://www.nbirn.net), that is funded by the National Center for Research Resources (NCRR) at the National Institutes of Health (NIH). This work was also supported by NA-MIC, NAC, NCIGT. NeuroNames ontology and URI resources are provided courtesy of BrainInfo, Neuroscience Division, National Primate Research Center, University of Washington (http://www.braininfo.org).                                                                                                                                                                                      ";
+    const char *about = "This research was supported by Grant 5 MOI RR 000827 to the FIRST BIRN and Grant 1 U24 RR021992 to the FBIRN Biomedical Informatics Research Network (BIRN, http://www.nbirn.net), that is funded by the National Center for Research Resources (NCRR) at the National Institutes of Health (NIH). This work was also supported by NA-MIC, NAC, NCIGT. NeuroNames ontology and URI resources are provided courtesy of BrainInfo, University of Washington (http://www.braininfo.org).                                                                                                                                                                                      ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "QueryAtlas" );
     this->QueryAtlasIcons = vtkQueryAtlasIcons::New();
     this->BuildHelpAndAboutFrame ( page, help, about );
@@ -2245,80 +2277,16 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     annotationFrame->SetLabelText ( "Annotation & Display Options" );
     annotationFrame->CollapseFrame ( );
 
-    vtkKWLabel *annoLabel = vtkKWLabel::New();
-    annoLabel->SetParent ( annotationFrame->GetFrame() );
-    annoLabel->Create();
-    annoLabel->SetText ("annotation visibility: " );
-
-    this->AnnotationVisibilityButton = vtkKWPushButton::New();
-    this->AnnotationVisibilityButton->SetParent ( annotationFrame->GetFrame() );
-    this->AnnotationVisibilityButton->Create();
-    // get the icon this way; don't seem to admit baseGUI scope.
-    // TODO: move common icons up into applicationGUI for easy access.
-    vtkKWIcon *i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
-    this->AnnotationVisibilityButton->SetImageToIcon ( i );
-    this->AnnotationVisibilityButton->SetBorderWidth ( 0 );
-    this->AnnotationVisibilityButton->SetReliefToFlat();    
-    this->AnnotationVisibilityButton->SetBalloonHelpString ( "Toggle annotation visibility." );
-
-    vtkKWLabel *modelLabel = vtkKWLabel::New();
-    modelLabel->SetParent ( annotationFrame->GetFrame() );
-    modelLabel->Create();
-    modelLabel->SetText ("model visibility: " );
-
-    this->ModelVisibilityButton = vtkKWPushButton::New();
-    this->ModelVisibilityButton->SetParent ( annotationFrame->GetFrame() );
-    this->ModelVisibilityButton->Create();
-    // get the icon this way; don't seem to admit baseGUI scope.
-    // TODO: move common icons up into applicationGUI for easy access.
-    i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
-    this->ModelVisibilityButton->SetImageToIcon ( i );
-    this->ModelVisibilityButton->SetBorderWidth ( 0 );
-    this->ModelVisibilityButton->SetReliefToFlat();    
-    this->ModelVisibilityButton->SetBalloonHelpString ( "Toggle model visibility." );
-
-    vtkKWLabel *LHmodelLabel = vtkKWLabel::New();
-    LHmodelLabel->SetParent ( annotationFrame->GetFrame() );
-    LHmodelLabel->Create();
-    LHmodelLabel->SetText ("LH model visibility: " );
-
-    this->LHModelVisibilityButton = vtkKWPushButton::New();
-    this->LHModelVisibilityButton->SetParent ( annotationFrame->GetFrame() );
-    this->LHModelVisibilityButton->Create();
-    // get the icon this way; don't seem to admit baseGUI scope.
-    // TODO: move common icons up into applicationGUI for easy access.
-    i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
-    this->LHModelVisibilityButton->SetImageToIcon ( i );
-    this->LHModelVisibilityButton->SetBorderWidth ( 0 );
-    this->LHModelVisibilityButton->SetReliefToFlat();    
-    this->LHModelVisibilityButton->SetBalloonHelpString ( "Toggle model visibility." );
-
-    vtkKWLabel *RHmodelLabel = vtkKWLabel::New();
-    RHmodelLabel->SetParent ( annotationFrame->GetFrame() );
-    RHmodelLabel->Create();
-    RHmodelLabel->SetText ("RH model visibility: " );
-
-    this->RHModelVisibilityButton = vtkKWPushButton::New();
-    this->RHModelVisibilityButton->SetParent ( annotationFrame->GetFrame() );
-    this->RHModelVisibilityButton->Create();
-    // get the icon this way; don't seem to admit baseGUI scope.
-    // TODO: move common icons up into applicationGUI for easy access.
-    i = app->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetVisibilityIcons()->GetVisibleIcon();
-    this->RHModelVisibilityButton->SetImageToIcon ( i );
-    this->RHModelVisibilityButton->SetBorderWidth ( 0 );
-    this->RHModelVisibilityButton->SetReliefToFlat();    
-    this->RHModelVisibilityButton->SetBalloonHelpString ( "Toggle model visibility." );
-    
-
+    //--- widget that lets you choose what term set to
+    //--- display in the annotations in the 3D viewer
     vtkKWLabel *l = vtkKWLabel::New();
     l->SetParent ( annotationFrame->GetFrame() );
     l->Create ( );
     l->SetText ( "annotation term set: " );
-
     this->AnnotationTermSetMenuButton = vtkKWMenuButton::New();
     this->AnnotationTermSetMenuButton->SetParent ( annotationFrame->GetFrame() );
     this->AnnotationTermSetMenuButton->Create();
-    this->AnnotationTermSetMenuButton->SetWidth ( 25 );
+    this->AnnotationTermSetMenuButton->SetWidth ( 24 );
     this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("local identifier");
     this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("BIRNLex String");
     this->AnnotationTermSetMenuButton->GetMenu()->AddRadioButton ("NeuroNames String");
@@ -2327,38 +2295,40 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     this->AnnotationTermSetMenuButton->GetMenu()->AddSeparator();
     this->AnnotationTermSetMenuButton->GetMenu()->AddCommand ( "close" );    
     this->AnnotationTermSetMenuButton->GetMenu()->SelectItem ("local identifier");
+    this->AnnotationTermSetMenuButton->SetBalloonHelpString ( "Select term set used to display annotations in the 3D viewer." );
+
+    //--- widget that permits toggling of annotations and
+    //--- query model visibility in the 3D viewer.
+    vtkKWLabel *vl = vtkKWLabel::New();
+    vl->SetParent ( annotationFrame->GetFrame() );
+    vl->Create();
+    vl->SetText ( "scene visibility: " );
+    this->QuerySceneVisibilityMenuButton = vtkKWMenuButton::New();
+    this->QuerySceneVisibilityMenuButton->SetParent ( annotationFrame->GetFrame() );
+    this->QuerySceneVisibilityMenuButton->Create();
+    this->QuerySceneVisibilityMenuButton->SetWidth ( 24 );
+    this->QuerySceneVisibilityMenuButton->GetMenu()->AddCheckButton ( "annotations" );
+    this->QuerySceneVisibilityMenuButton->GetMenu()->SelectItem ("annotations");
+    this->QuerySceneVisibilityMenuButton->GetMenu()->AddSeparator();
+    this->QuerySceneVisibilityMenuButton->GetMenu()->AddSeparator();
+    this->QuerySceneVisibilityMenuButton->GetMenu()->AddCommand ( "close" );    
+    this->QuerySceneVisibilityMenuButton->SetValue ( "(models + annotations)" );
+    this->QuerySceneVisibilityMenuButton->SetBalloonHelpString ( "Toggle the visibility of models and annotations in the 3D viewer." );
 
     app->Script ( "grid %s -row 0 -column 0 -sticky nse -padx 2 -pady 2",
                   l->GetWidgetName() );
     app->Script ( "grid %s -row 0 -column 1 -sticky wns -padx 2 -pady 2",
                   this->AnnotationTermSetMenuButton->GetWidgetName() );
-    app->Script ( "grid %s -row 1 -column 0 -sticky ens -padx 2 -pady 2",
-                  annoLabel->GetWidgetName() );
-    app->Script ( "grid %s -row 1 -column 1  -sticky wns -padx 2 -pady 2",
-                  this->AnnotationVisibilityButton->GetWidgetName() );
-    app->Script ( "grid %s -row 2 -column 0   -sticky ens -padx 2 -pady 2",
-                  LHmodelLabel->GetWidgetName() );
-    app->Script ( "grid %s -row 2 -column 1   -sticky wns -padx 2 -pady 2",
-                  this->LHModelVisibilityButton->GetWidgetName() );
-    app->Script ( "grid %s -row 3 -column 0   -sticky ens -padx 2 -pady 2",
-                  RHmodelLabel->GetWidgetName() );
-    app->Script ( "grid %s -row 3 -column 1   -sticky wns -padx 2 -pady 2",
-                  this->RHModelVisibilityButton->GetWidgetName() );
-/*
-    app->Script ( "grid %s -row 4 -column 0   -sticky ens -padx 2 -pady 2",
-                  modelLabel->GetWidgetName() );
-    app->Script ( "grid %s -row 4 -column 1   -sticky wns -padx 2 -pady 2",
-                  this->ModelVisibilityButton->GetWidgetName() );
-*/
+    app->Script ( "grid %s -row 1 -column 0 -sticky nse -padx 2 -pady 2",
+                  vl->GetWidgetName() );
+    app->Script ( "grid %s -row 1 -column 1 -sticky wns -padx 2 -pady 2",
+                  this->QuerySceneVisibilityMenuButton->GetWidgetName() );
     app->Script ( "pack %s -side top -anchor nw -fill x -expand y -padx 2 -pady 2 -in %s",
                   annotationFrame->GetWidgetName(), 
                   this->UIPanel->GetPageWidget("QueryAtlas")->GetWidgetName());
 
     l->Delete();
-    annoLabel->Delete();
-    modelLabel->Delete();
-    LHmodelLabel->Delete();
-    RHmodelLabel->Delete();    
+    vl->Delete();
     annotationFrame->Delete();
 }
 
@@ -2712,6 +2682,7 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->DatabasesMenuButton->SetParent ( TF );
     this->DatabasesMenuButton->Create();
     this->DatabasesMenuButton->SetWidth (20);    
+    this->DatabasesMenuButton->SetBalloonHelpString ( "Select a target for search." );
     this->BuildDatabasesMenu(this->DatabasesMenuButton->GetMenu() );
 
     this->SearchButton = vtkKWPushButton::New();

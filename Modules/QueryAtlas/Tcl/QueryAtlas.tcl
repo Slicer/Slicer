@@ -162,18 +162,24 @@ proc QueryAtlasTearDown { } {
 
     #--- set the brain, label, and stats selectors to be NULL
     if { [info command $::slicer3::QueryAtlasGUI] != "" } {
-      set s [$::slicer3::QueryAtlasGUI GetFSasegSelector]
-      if { $s != "" } {
-          $s SetSelected ""
-      }
+        if { [info exists $::slicer3::QueryAtlasGUI GetFSasegSelector ] != "" } {
+            set s [$::slicer3::QueryAtlasGUI GetFSasegSelector]
+            if { $s != "" } {
+                $s SetSelected ""
+            }
+        }
       set s [ $::slicer3::QueryAtlasGUI GetFSbrainSelector]
-      if { $s != "" } {
-          $s SetSelected ""
-      }
+        if { [info exists $::slicer3::QueryAtlasGUI GetFSbrainSelector ] != "" } {
+            if { $s != "" } {
+                $s SetSelected ""
+            }
+        }
       set s [ $::slicer3::QueryAtlasGUI GetFSstatsSelector]    
-      if { $s != "" } {
-          $s SetSelected ""
-      }
+        if { [info exists $::slicer3::QueryAtlasGUI GetFSstatsSelector ] != "" } {
+            if { $s != "" } {
+                $s SetSelected ""
+            }
+        }
     }
 }
 
@@ -1543,127 +1549,13 @@ proc QueryAtlasUpdateCursor {} {
 }
 
 
-#----------------------------------------------------------------------------------------------------
-#--- Turn model visibility off, and its query model's visibility off too.
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasSetQueryModelInvisible { } {
-
-    if { [ info exists ::QA(annoModeNodeIDs)] } {
-        set numQmodels [ llength $::QA(annoModelNodeIDs)  ]
-        for { set m 0 } {$m < $numQmodels } { incr m } {
-            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-            set dnode [ $node GetDisplayNode ]
-            $dnode SetVisibility 0
-            set ::QA(actor_$mid,visibility) 0
-        }
-    }
-}
-
-
-
-#----------------------------------------------------------------------------------------------------
-#--- Make a model visible, and it's query model visible too.
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasSetQueryModelVisible { } {
-    
-    if { [ info exists ::QA(annoModeNodeIDs)] } {
-        set numQmodels [ llength $::QA(annoModelNodeIDs)  ]
-        for { set m 0 } {$m < $numQmodels } { incr m } {
-            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-            set dnode [ $node GetDisplayNode ]
-            $dnode SetVisibility 1
-            set ::QA(actor_$mid,visibility) 1
-        }
-    }
-}
-
-
 
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasSetLHQueryModelInvisible { } {
-
-    if { [info exists ::QA(annoModelNodeIDs)] } {
-        set numQmodels [ llength $::QA(annoModelNodeIDs) ]
-        for { set m 0 } {$m < $numQmodels } { incr m } {
-            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-            set dnode [ $node GetDisplayNode ]
-            if { [ string first "lh." [$node GetName] ] >= 0 } {
-                $dnode SetVisibility 0
-                set ::QA(actor_$mid,visibility) 0
-            }
-        }
-    }
+proc QueryAtlasSetQueryModelVisibility { mid visibility } {
+    set ::QA(actor_$mid,visibility) $visibility
 }
-
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasSetLHQueryModelVisible { } {
-    
-    if { [info exists ::QA(annoModelNodeIDs)] } {
-        set numQmodels [ llength $::QA(annoModelNodeIDs) ]
-        for { set m 0 } {$m < $numQmodels } { incr m } {
-            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-            set dnode [ $node GetDisplayNode ]
-            if { [ string first "lh." [$node GetName] ] >= 0 } {
-                $dnode SetVisibility 1
-                set ::QA(actor_$mid,visibility) 1                    
-            }
-        }
-    }
-}
-
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasSetRHQueryModelInvisible { } {
-
-    if { [info exists ::QA(annoModelNodeIDs)] } {
-        set numQmodels [ llength $::QA(annoModelNodeIDs) ]
-        for { set m 0 } {$m < $numQmodels } { incr m } {
-            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-            set dnode [ $node GetDisplayNode ]
-            if { [ string first "rh." [$node GetName] ] >= 0 } {
-                $dnode SetVisibility 0
-                set ::QA(actor_$mid,visibility) 0                    
-            }
-        }
-    }
-}
-
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasSetRHQueryModelVisible { } {
-    
-    if { [info exists ::QA(annoModelNodeIDs)] } {
-        set numQmodels [ llength $::QA(annoModelNodeIDs) ]
-        for { set m 0 } {$m < $numQmodels } { incr m } {
-            set mid [ lindex $::QA(annoModelNodeIDs) $m ]
-            set node [ $::slicer3::MRMLScene GetNodeByID $mid ]
-            set dnode [ $node GetDisplayNode ]
-            if { [ string first "rh." [$node GetName] ] >= 0 } {
-                $dnode SetVisibility 1
-                set ::QA(actor_$mid,visibility) 1                    
-            }
-        }
-    }
-}
-
-
 
 
 
@@ -1716,6 +1608,18 @@ proc QueryAtlasSetAnnotationsInvisible { } {
 proc QueryAtlasSetAnnotationsVisible { } {
     set ::QA(annotationVisibility) 1
 }
+
+#----------------------------------------------------------------------------------------------------
+#---
+#----------------------------------------------------------------------------------------------------
+proc QueryAtlasAnnotationVisibility { onoff } {
+    if { $onoff == "on" } {
+        set ::QA(annotationVisibility) 1        
+    } elseif { $onoff == "off" } {
+         set ::QA(annotationVisibility) 0
+    }
+}
+
 
 
 #----------------------------------------------------------------------------------------------------
