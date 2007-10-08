@@ -1745,7 +1745,6 @@ int Slicer3_main(int argc, char *argv[])
       std::vector<std::string>::const_iterator argit = Args.begin();
       while (argit != Args.end())
         {
-        cout << "Arg =  " << *argit << endl;
         std::string fileName;
         // strip backslashes
         char buffer[2]; buffer[1] = '\0';
@@ -1758,10 +1757,9 @@ int Slicer3_main(int argc, char *argv[])
             }
           }
         // is it a MRML or XML file?
-        if (fileName.find(".mrml",0) != std::string::npos ||
-            fileName.find(".xml",0) != std::string::npos)
+        if (fileName.find(".mrml",0) != std::string::npos
+            || fileName.find(".MRML",0) != std::string::npos)
           {
-          cout << fileName << " is a MRML or XML file, setting MRML scene file name and connecting\n";
           appLogic->GetMRMLScene()->SetURL(fileName.c_str());
           // and then load it
           int errorCode = appLogic->GetMRMLScene()->Connect();
@@ -1770,6 +1768,20 @@ int Slicer3_main(int argc, char *argv[])
             slicerCerr("ERROR loading MRML file " << fileName << ", error code = " << errorCode << endl);
             }
           }                    
+        else if (fileName.find(".xml",0) != std::string::npos
+                 || fileName.find(".XML",0) != std::string::npos)
+          {
+          // if it's an xml file, load it
+          std::string cmd = "after idle ImportSlicer2Scene " + *argit;
+          res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+          }
+        else if (fileName.find(".xcede",0) != std::string::npos
+                 || fileName.find(".XCEDE",0) != std::string::npos)
+          {
+          // if it's an xcede file, load it
+          std::string cmd = "after idle XcedeCatalogImport " + *argit;
+          res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+          }
         else if (fileName.find(".tcl",0) != std::string::npos)
           {
           // if it's a tcl file source it after the app starts
