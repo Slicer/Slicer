@@ -15,74 +15,79 @@ proc XcedeCatalogImport { xcedeFile } {
     #--- create a parser and parse the file
     set parser [vtkXMLDataParser New]
     $parser SetFileName $xcedeFile
-    $parser Parse
+    set retval [ $parser Parse ]
 
-    #--- display to progress guage and status bar.
-    set ::XcedeCatalog_mainWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
-    set ::XcedeCatalog_progressGauge [$::XcedeCatalog_mainWindow GetProgressGauge]
-    $::XcedeCatalog_progressGauge SetValue 0
-    $::XcedeCatalog_mainWindow SetStatusText "Parsing $xcedeFile"
+    if { $retval == 0 } {
+        $parser Delete
+        return $retval
+    } else {
+        #--- display to progress guage and status bar.
+        set ::XcedeCatalog_mainWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+        set ::XcedeCatalog_progressGauge [$::XcedeCatalog_mainWindow GetProgressGauge]
+        $::XcedeCatalog_progressGauge SetValue 0
+        $::XcedeCatalog_mainWindow SetStatusText "Parsing $xcedeFile"
 
-    #--- get the XCEDE root
-    set root [$parser GetRootElement]
+        #--- get the XCEDE root
+        set root [$parser GetRootElement]
 
-    #--- get the directory of the normalized xcede file.
-    set ::XcedeCatalog_Dir [file dirname [file normalize $xcedeFile]]
-    puts "Reading file $xcedeFile from $::XcedeCatalog_Dir..."
+        #--- get the directory of the normalized xcede file.
+        set ::XcedeCatalog_Dir [file dirname [file normalize $xcedeFile]]
+        puts "Reading file $xcedeFile from $::XcedeCatalog_Dir..."
 
-    #--- initialize some globals
-    set ::XcedeCatalog(transformIDStack) ""
-    set ::XcedeCatalog_HParent_ID ""
-    set ::XcedeCatalogMrmlID(LHmodel) ""
-    set ::XcedeCatalogMrmlID(RHmodel) ""
-    set ::XcedeCatalog_MrmlID(anat2exf) ""
-    set ::XcedeCatalog_MrmlID(FSBrain) ""
-    set ::XcedeCatalog_MrmlID(ExampleFunc) ""
-    set ::XcedeCatalog_MrmlID(StatisticsToBrainXform) ""
-    set ::XcedeCatalog_MrmlID(StatFileList) ""
-    set ::XcedeCatalog_AnnotationFiles ""
-    set ::XcedeCatalog_NumberOfElements 0
-    set ::XcedeCatalog_WhichElement 0
-    set ::XcedeCatalog_RAS2RASTransformCreated 0
-    array unset ::XcedeCatalog_MrmlID ""
-    set ::XcedeCatalog(transformIDStack) ""
-    set ::XcedeCatalog_HParent_ID ""
-    
-    #--- recursively import cataloged datasets 
-    XcedeCatalogImportGetNumberOfElements $root
+        #--- initialize some globals
+        set ::XcedeCatalog(transformIDStack) ""
+        set ::XcedeCatalog_HParent_ID ""
+        set ::XcedeCatalogMrmlID(LHmodel) ""
+        set ::XcedeCatalogMrmlID(RHmodel) ""
+        set ::XcedeCatalog_MrmlID(anat2exf) ""
+        set ::XcedeCatalog_MrmlID(FSBrain) ""
+        set ::XcedeCatalog_MrmlID(ExampleFunc) ""
+        set ::XcedeCatalog_MrmlID(StatisticsToBrainXform) ""
+        set ::XcedeCatalog_MrmlID(StatFileList) ""
+        set ::XcedeCatalog_AnnotationFiles ""
+        set ::XcedeCatalog_NumberOfElements 0
+        set ::XcedeCatalog_WhichElement 0
+        set ::XcedeCatalog_RAS2RASTransformCreated 0
+        array unset ::XcedeCatalog_MrmlID ""
+        set ::XcedeCatalog(transformIDStack) ""
+        set ::XcedeCatalog_HParent_ID ""
+        
+        #--- recursively import cataloged datasets 
+        XcedeCatalogImportGetNumberOfElements $root
 
-    #--- recursively import cataloged datasets 
-    set ::XcedeCatalog(transformIDStack) ""
-    set ::XcedeCatalog_HParent_ID ""
-    set root [$parser GetRootElement]
-    XcedeCatalogImportGetElement $root
+        #--- recursively import cataloged datasets 
+        set ::XcedeCatalog(transformIDStack) ""
+        set ::XcedeCatalog_HParent_ID ""
+        set root [$parser GetRootElement]
+        XcedeCatalogImportGetElement $root
 
-    #--- if the catalog includes a brain.mgz, example_func.nii and
-    #--- anat2exf.dat, we assume this is a FreeSurfer/FIPS catalog
-    #--- and convert FreeSurfer tkRegister2's registration matrix
-    #--- to a Slicer RAS2RAS registration matrix. 
-    XcedeCatalogImportComputeFIPS2SlicerTransformCorrection
+        #--- if the catalog includes a brain.mgz, example_func.nii and
+        #--- anat2exf.dat, we assume this is a FreeSurfer/FIPS catalog
+        #--- and convert FreeSurfer tkRegister2's registration matrix
+        #--- to a Slicer RAS2RAS registration matrix. 
+        XcedeCatalogImportComputeFIPS2SlicerTransformCorrection
 
-    #--- if the Correction transform node is created,
-    #--- place all statistics volumes inside that.
-    XcedeCatalogImportApplyFIPS2SlicerTransformCorrection
-    
-    #--- reset the feedback things
-    $::XcedeCatalog_progressGauge SetValue 0
-    $::XcedeCatalog_mainWindow SetStatusText ""
-    
-    #--- update main viewer and slice viewers.
-    $::slicer3::MRMLScene Modified
-    [$::slicer3::ApplicationGUI GetViewerWidget ] RequestRender
-    [ [$::slicer3::ApplicationGUI GetMainSliceGUI0 ] GetSliceViewer ]  RequestRender
-    [ [$::slicer3::ApplicationGUI GetMainSliceGUI1 ] GetSliceViewer ]  RequestRender
-    [ [$::slicer3::ApplicationGUI GetMainSliceGUI2 ] GetSliceViewer ]  RequestRender
-    
-    #--- clean up.
-    $parser Delete
-    $::slicer3::MRMLScene SetErrorCode 0
-    puts "...done reading $xcedeFile."
-
+        #--- if the Correction transform node is created,
+        #--- place all statistics volumes inside that.
+        XcedeCatalogImportApplyFIPS2SlicerTransformCorrection
+        
+        #--- reset the feedback things
+        $::XcedeCatalog_progressGauge SetValue 0
+        $::XcedeCatalog_mainWindow SetStatusText ""
+        
+        #--- update main viewer and slice viewers.
+        $::slicer3::MRMLScene Modified
+        [$::slicer3::ApplicationGUI GetViewerWidget ] RequestRender
+        [ [$::slicer3::ApplicationGUI GetMainSliceGUI0 ] GetSliceViewer ]  RequestRender
+        [ [$::slicer3::ApplicationGUI GetMainSliceGUI1 ] GetSliceViewer ]  RequestRender
+        [ [$::slicer3::ApplicationGUI GetMainSliceGUI2 ] GetSliceViewer ]  RequestRender
+        
+        #--- clean up.
+        $parser Delete
+        $::slicer3::MRMLScene SetErrorCode 0
+        puts "...done reading $xcedeFile."
+        return $retval
+    }
 }
 
 

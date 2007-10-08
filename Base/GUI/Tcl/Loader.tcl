@@ -113,6 +113,7 @@ if { [itcl::find class Loader] == "" } {
     variable _volumeExtensions ".hdr .nhdr .nrrd .mhd .mha .vti .nii .mgz"
     variable _modelExtensions ".vtk .vtp .pial .inflated"
     variable _qdecExtensions ".qdec"
+    variable _xcedeExtensions ".xcede"
     variable _observerRecords ""
     variable _cleanupDirs ""
     variable browserResult ""
@@ -411,6 +412,9 @@ itcl::body Loader::add { paths } {
         } elseif { [lsearch $_modelExtensions $ext] != -1 } {
           $this addRow $path "Model"
           $this status ""
+        } elseif { [lsearch $_xcedeExtensions $ext] != -1 } {
+            $this addRow $path "XCEDE"
+            $this status ""
         } elseif { [lsearch $_qdecExtensions $ext] != -1 } {
           $this addRow $path "QDEC"
           $this status ""
@@ -471,6 +475,12 @@ itcl::body Loader::apply { } {
             $node SetName $name
           }
         }
+          "XCEDE" {
+              set pass [ XcedeCatalogImport $path ]
+              if { $pass == 0 } {
+                  $this errorDialog "Could not load XCEDE catalog at $path."
+              }
+          }
         "QDEC" {
           if {[info exists ::slicer3::QdecModuleGUI]} {
             set err [$::slicer3::QdecModuleGUI LoadProjectFile $path]
