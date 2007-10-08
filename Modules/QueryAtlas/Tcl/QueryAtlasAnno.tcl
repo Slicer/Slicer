@@ -193,14 +193,6 @@ proc QueryAtlasAddNewPickModels { mid } {
     #--- update current scene model list
     set modelNode [$::slicer3::MRMLScene GetNodeByID $mid]
 
-    if { 0 } {
-      set triangleFilter [vtkTriangleFilter New]
-      $triangleFilter SetInput [$modelNode GetPolyData]
-      $triangleFilter Update
-      $modelNode SetAndObservePolyData [$triangleFilter GetOutput]
-      $triangleFilter Delete
-    }
-
     set ::QA(polyData_$mid) [vtkPolyData New]
     $::QA(polyData_$mid) DeepCopy [$modelNode GetPolyData]
     set ::QA(actor_$mid) [vtkActor New]
@@ -811,6 +803,9 @@ proc QueryAtlasCreatePicker { } {
 
         if { ! [info exists ::QA(propPicker) ] } {
             set ::QA(propPicker) [vtkPropPicker New]
+        }
+        if { ! [info exists ::QA(propPickerCollection) ] } {
+            set ::QA(propPickerCollection) [vtkPropCollection New]
         }
         if { ![ info exists ::QA(cellPicker) ] } { 
             set ::QA(cellPicker) [vtkCellPicker New]

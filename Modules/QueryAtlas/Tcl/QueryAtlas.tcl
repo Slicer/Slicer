@@ -5,7 +5,8 @@
 proc QueryAtlasTearDownPicker { } {
 
   set objects {
-    propPicker cellPicker cellPickerSliceActor 
+    propPicker propPickerCollection
+    cellPicker cellPickerSliceActor 
     cellPickerSliceMapper cellPickerUserMatrix
   }
 
@@ -825,6 +826,8 @@ proc QueryAtlasCreatePickModels { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasInitializePicker {} {
 
+  ### deprecated - see QueryAtlasCreatePicker in QueryAtlasAnno.tcl
+
     #
     # add a prop picker to figure out if the mouse is actually over the model
     # and to identify the slice planes
@@ -837,6 +840,7 @@ proc QueryAtlasInitializePicker {} {
 
     QueryAtlasTearDownPicker
     set ::QA(propPicker) [vtkPropPicker New]
+    set ::QA(propPickerCollection) [vtkPropCollection New]
     set ::QA(cellPicker) [vtkCellPicker New]
     set ::QA(cellPickerSliceActor) [vtkActor New]
     set ::QA(cellPickerSliceMapper) [vtkPolyDataMapper New]
@@ -1185,12 +1189,13 @@ proc QueryAtlasWorldToScreen { r a s } {
   set w [lindex $vport 3]
   set vx [expr [lindex $vport 0] / $w]
   set vy [expr [lindex $vport 1] / $w]
+  set vz [expr [lindex $vport 2] / $w]
 
 
   set x [expr $width * (1. + $vx)/2.]
   set y [expr $height * (1. + $vy)/2.]
 
-  return "$x $y"
+  return "$x $y $vz"
 }
 
 proc QueryAtlasDistance { fromXY toXY } {
@@ -1208,13 +1213,18 @@ proc QueryAtlasDistance { fromXY toXY } {
 proc QueryAtlasPickProp {x y renderer viewer} {
 
     set ::QA(currentHit) ""
-    set ::QA(currentHitProp) ""
     set ::QA(currentHitMRMLID) ""
     set _useMID ""
 
-    if { [$::QA(propPicker) PickProp $x $y $renderer] } {
+    # set up the collection with only the annotated models to choose from
+    $::QA(propPickerCollection) RemoveAllItems
+    set numQmodels [ llength $::QA(annoModelDisplayNodeIDs) ]
+    for { set m 0 } { $m < $numQmodels } { incr m } {
+      $::QA(propPickerCollection) AddItem $::QA(actor,$m)
+    }
+
+    if { [$::QA(propPicker) PickProp $x $y $renderer $::QA(propPickerCollection)] } {
         set prop [$::QA(propPicker) GetViewProp]
-        set ::QA(currentHitProp) $prop
         set ::QA(currentHitMRMLID) [$viewer GetIDByActor $prop]
 
         set numQmodels [ llength $::QA(annoModelDisplayNodeIDs) ]
@@ -1227,130 +1237,123 @@ proc QueryAtlasPickProp {x y renderer viewer} {
                 set _useMID $mid
             }
         }
-
-        if { $::QA(currentHit) == "" } {
-            if { $::QA(currentHit) == "" } {
-                set ::QA(currentHit) "QuerySlice"
-            }
-        }
     }
 
     return $_useMID
 }
 
-proc QueryAtlasPickOnQuerySlice {x y renderer} {
+#
+# look at the given modelNode to see if it is a slice node that
+# is picked by the given xy in the given renderer.  If so, return 
+# the pointLabel and set the ::QA(CurrentRASPoint) to the selected
+# point
+#
+proc QueryAtlasPickOnQuerySlice {x y renderer modelNode} {
 
     set pointLabels ""
 
-    if { $::QA(currentHit) == "QuerySlice" } {
-        set node [$::slicer3::MRMLScene GetNodeByID $::QA(currentHitMRMLID)]
-        #--- get the corresponding model display node
-        set numMnodes [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode"]
-        for { set zz 0 } { $zz < $numMnodes } { incr zz } {
-            set testnode [ $::slicer3::MRMLScene GetNthNodeByClass $zz "vtkMRMLModelNode" ]          
-            set testdisplayID [ $testnode GetDisplayNodeID ]
-            if { $testdisplayID == $::QA(currentHitMRMLID) } {
-                set node $testnode
-            }
+    #
+    # slice nodes will have information about their provenance in their
+    # description field.
+    #
+    set attributes [$modelNode GetDescription]
+    if { $attributes == "" || [expr [llength $attributes] % 2] != 0 } {
+      return
+    }
+    array set nodes $attributes
+    if { ![info exists nodes(SliceID)] } {
+      return ""
+    }
+
+    set displayNode [$::slicer3::MRMLScene GetNodeByID [$modelNode GetDisplayNodeID ]]
+    if { ![$displayNode GetVisibility] } {
+      return
+    }
+
+    # if we got here, we know the attribute data is valid and we have a slice node
+    set nodes(sliceNode) [$::slicer3::MRMLScene GetNodeByID $nodes(SliceID)]
+    set nodes(compositeNode) [$::slicer3::MRMLScene GetNodeByID $nodes(CompositeID)]
+    set propCollection [$::QA(cellPicker) GetPickList]
+    $propCollection RemoveAllItems
+    
+    # add the dummy prop that uses the cell of the slice model rather than
+    # the image actor for picking
+    $::QA(cellPickerUserMatrix) Identity
+    set tNode [$modelNode GetParentTransformNode]
+    if { $tNode != "" && [$tNode IsLinear] } {
+      $tNode GetMatrixTransformToWorld $::QA(cellPickerUserMatrix)
+    }
+    $::QA(cellPickerSliceActor) SetUserMatrix $::QA(cellPickerUserMatrix)
+    $::QA(cellPickerSliceMapper) SetInput [$modelNode GetPolyData]
+    $propCollection AddItem $::QA(cellPickerSliceActor)
+    $::QA(cellPicker) PickFromListOn
+
+    $::QA(cellPicker) Pick $x $y 0 $renderer
+
+    set cellID [$::QA(cellPicker) GetCellId]
+    set pCoords [$::QA(cellPicker) GetPCoords]
+    if { $cellID != -1 } {
+        set polyData [$::QA(cellPickerSliceMapper) GetInput]
+        set cell [$polyData GetCell $cellID]
+        
+        #--- this gets the RAS point we're pointing to.
+        set rasPoint [QueryAtlasPCoordsToWorld $cell $pCoords]
+        set ::QA(CurrentRASPoint) $rasPoint
+
+        #
+        # check the texture for 0 alpha if so
+        # we found a part of the slice model that should not be picked
+        # - in this case, turn that slice invisible and return empty string
+        #   which will cause another iteration through the picker to find any
+        #   other models (or slices) visible behind this one.
+        #
+        set rasToXY [vtkMatrix4x4 New]
+        $rasToXY DeepCopy [$nodes(sliceNode) GetXYToRAS]
+        $rasToXY Invert
+        set xyzw [eval $rasToXY MultiplyPoint $rasPoint 1]
+        $rasToXY Delete
+        foreach {x y z w} $xyzw {}
+        set x [expr round($x)]
+        set y [expr round($y)]
+        set texture [$displayNode GetTextureImageData]
+        foreach {w h d} [$texture GetDimensions] {}
+        if { $x >= 0 && $x < $w && $y >= 0 && $y < $h } {
+          set alpha [$texture GetScalarComponentAsDouble $x $y 0 3]
+        } else {
+          set alpha 0
         }
+        if { $alpha == 0 } {
+          set pointLabels ""
+        } else {
 
-        if { $node != "" && [$node GetDescription] != "" } {
-            array set nodes [$node GetDescription]
-            set nodes(sliceNode) [$::slicer3::MRMLScene GetNodeByID $nodes(SliceID)]
-            set nodes(compositeNode) [$::slicer3::MRMLScene GetNodeByID $nodes(CompositeID)]
-            set propCollection [$::QA(cellPicker) GetPickList]
-            $propCollection RemoveAllItems
-            
-            # add the dummy prop that uses the cell of the slice model rather than
-            # the image actor for picking
-            $::QA(cellPickerUserMatrix) Identity
-            set tNode [$node GetParentTransformNode]
-            if { $tNode != "" && [$tNode IsLinear] } {
-              # TODO: this may be needed again depending on the final 
-              # configuration of the vtkSlicerSliceLogic and how 
-              # it handles slice model geometry
-              #$tNode GetMatrixTransformToWorld $::QA(cellPickerUserMatrix)
+          #
+          # here we have a visible portion of the slice model and we want to
+          # look for a valid label in it
+          #
+          set labelID [$nodes(compositeNode) GetLabelVolumeID]
+          if { $labelID == "" } {
+            set pointLabels "No Label Layer"
+          } else {
+            set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
+            set rasToIJK [vtkMatrix4x4 New]
+            $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
+            set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
+            set imageData [$nodes(labelNode) GetImageData]
+            foreach var {i j k} val $ijk {
+                set $var [expr int(round($val))]
             }
-            $::QA(cellPickerSliceActor) SetUserMatrix $::QA(cellPickerUserMatrix)
-            $::QA(cellPickerSliceMapper) SetInput [$node GetPolyData]
-            $propCollection AddItem $::QA(cellPickerSliceActor)
-            $::QA(cellPicker) PickFromListOn
-
-            $::QA(cellPicker) Pick $x $y 0 $renderer
-
-            set cellID [$::QA(cellPicker) GetCellId]
-            set pCoords [$::QA(cellPicker) GetPCoords]
-            if { $cellID != -1 } {
-                set polyData [$::QA(cellPickerSliceMapper) GetInput]
-                set cell [$polyData GetCell $cellID]
-                
-                #--- this gets the RAS point we're pointing to.
-                set rasPoint [QueryAtlasPCoordsToWorld $cell $pCoords]
-                set ::QA(CurrentRASPoint) $rasPoint
-
-                #
-                # check the texture for 0 alpha if so
-                # we found a part of the slice model that should not be picked
-                # - in this case, turn that slice invisible and return empty string
-                #   which will cause another iteration through the picker to find any
-                #   other models (or slices) visible behind this one.
-                #
-                set rasToXY [vtkMatrix4x4 New]
-                $rasToXY DeepCopy [$nodes(sliceNode) GetXYToRAS]
-                $rasToXY Invert
-                set xyzw [eval $rasToXY MultiplyPoint $rasPoint 1]
-                $rasToXY Delete
-                foreach {x y z w} $xyzw {}
-                set x [expr round($x)]
-                set y [expr round($y)]
-                set displayNode [$::slicer3::MRMLScene GetNodeByID [$node GetDisplayNodeID ]]
-                set texture [$displayNode GetTextureImageData]
-                foreach {w h d} [$texture GetDimensions] {}
-                if { $x >= 0 && $x < $w && $y >= 0 && $y < $h } {
-                  set alpha [$texture GetScalarComponentAsDouble $x $y 0 3]
+            set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
+            if { [info exists ::QAFS($labelValue,name)] } {
+                if { $::QAFS($labelValue,name) == "Unknown" } {
+                    set pointLabels "Not Labeled"
                 } else {
-                  set alpha 0
-                  puts "Out of bounds:"
-                  puts " ras: $rasPoint"
-                  puts " xy: $x $y"
-                  puts " dims: $w $h $d"
+                    set pointLabels "$::QAFS($labelValue,name)"
                 }
-                if { $alpha == 0 } {
-                  set pointLabels ""
-                  $::QA(currentHitProp) SetVisibility 0
-                  lappend ::QA(tempInvisibleProps) $::QA(currentHitProp)
-                } else {
-
-                  #
-                  # here we have a visible portion of the slice model and we want to
-                  # look for a valid label in it
-                  #
-                  set labelID [$nodes(compositeNode) GetLabelVolumeID]
-                  if { $labelID == "" } {
-                    set pointLabels "No Label Layer"
-                  } else {
-                    set nodes(labelNode) [$::slicer3::MRMLScene GetNodeByID $labelID]
-                    set rasToIJK [vtkMatrix4x4 New]
-                    $nodes(labelNode) GetRASToIJKMatrix $rasToIJK
-                    set ijk [lrange [eval $rasToIJK MultiplyPoint $rasPoint 1] 0 2]
-                    set imageData [$nodes(labelNode) GetImageData]
-                    foreach var {i j k} val $ijk {
-                        set $var [expr int(round($val))]
-                    }
-                    set labelValue [$imageData GetScalarComponentAsDouble $i $j $k 0]
-                    if { [info exists ::QAFS($labelValue,name)] } {
-                        if { $::QAFS($labelValue,name) == "Unknown" } {
-                            set pointLabels "Not Labeled"
-                        } else {
-                            set pointLabels "$::QAFS($labelValue,name)"
-                        }
-                    } else {
-                        set pointLabels "label: $labelValue (no name available), ijk $ijk"
-                    }
-                    $rasToIJK Delete
-                  }
-                }
+            } else {
+                set pointLabels "label: $labelValue (no name available), ijk $ijk"
             }
+            $rasToIJK Delete
+          }
         }
     }
 
@@ -1413,33 +1416,39 @@ proc QueryAtlasPickCallback {} {
     foreach {x y} $::QA(lastWindowXY) {}
     set ::QA(lastRootXY) [winfo pointerxy [$renderWidget GetWidgetName]]
 
+
     #
-    # use the prop picker to see if we're over the model, or the slices
+    # look at slices to find the closes hit point that is not transparent
+    #
+
+    set pointLabelsSlice ""
+    set nearestSliceRAS ""
+    set nearestSliceZ 1000000
+    set numModels [$::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode"]
+    for { set zz 0 } { $zz < $numModels } { incr zz } {
+        set testNode [ $::slicer3::MRMLScene GetNthNodeByClass $zz "vtkMRMLModelNode" ]          
+        set pointLabels [QueryAtlasPickOnQuerySlice $x $y $renderer $testNode]
+        if { $pointLabels != "" } {
+            foreach {sx sy sz} [eval QueryAtlasWorldToScreen $::QA(CurrentRASPoint)] {}
+            if { $sz < $nearestSliceZ } {
+              set nearestSliceZ $sz
+              set nearestSliceRAS $::QA(CurrentRASPoint)
+              set pointLabelsSlice $pointLabels
+            }
+        }
+    }
+
+
+    #
+    # use the prop picker to see if we're over one of the models
     # - set the 'currentHit' variable accordingly for later processing
     # - sets the pointLabels variable for use in the cursor annotation
-    # - NOTE: this code loops to make up for a limitation of the vtkPropPicker
-    #   when dealing with the textured slices (vtk does not take into account
-    #   the object viewed "through" the transparent part).
+    # - later compare against slice picking to see what's closest
     #
+    set _useMID [QueryAtlasPickProp $x $y $renderer $viewer]
 
-    set ::QA(tempInvisibleProps) ""
-    set pointLabels ""
-    while { $pointLabels == "" } {
-      set _useMID [QueryAtlasPickProp $x $y $renderer $viewer]
-      if { $::QA(currentHit) == "QuerySlice"} {
-        set pointLabels [QueryAtlasPickOnQuerySlice $x $y $renderer]
-      } else {
-        break
-      }
-    }
-
-    # restore visibility of any slices that had non-labled sections in the way
-    foreach prop $::QA(tempInvisibleProps) {
-      $prop SetVisibility 1
-    }
-
-
-
+    set nearestModelRAS ""
+    set pointLabelsModel ""
     #--- did we hit a model?
     if { $::QA(currentHit) == "QueryModel" } {
         #
@@ -1462,36 +1471,53 @@ proc QueryAtlasPickCallback {} {
 
             set m $_useMID
             array set labelMap $::QA(labelMap_$m)
-            set pointLabels ""
+            set pointLabelsModel ""
             set numberOfPoints [$cell GetNumberOfPoints]
 
-            set nearestRAS "0 0 0"
             set nearestIndex ""
             set nearestDistance 1000000
 
             for {set p 0} {$p < $numberOfPoints} {incr p} {
                 set index [$cell GetPointId $p]
                 set ras [$points GetPoint $index]
-                set xy [eval QueryAtlasWorldToScreen $ras]
-                set dist [QueryAtlasDistance $xy "$x $y"]
+                foreach {sx sy sz} [eval QueryAtlasWorldToScreen $ras] {}
+                set dist [QueryAtlasDistance "$sx $sy" "$x $y"]
                 if { $dist < $nearestDistance } {
                     set nearestDistance $dist
                     set nearestIndex $index
-                    set nearestRAS $ras
+                    set nearestModelRAS $ras
                 }
             }
             
             if { $nearestIndex != "" } {
-                set ::QA(CurrentRASPoint) $nearestRAS
+                set ::QA(CurrentRASPoint) $nearestModelRAS
                 set pointLabel [$labels GetValue $index]
                 if { [info exists labelMap($pointLabel)] } {
-                    set pointLabels $labelMap($pointLabel)
+                    set pointLabelsModel $labelMap($pointLabel)
                 } else {
-                    lappend pointLabels ""
+                    lappend pointLabelsModel ""
                 }
             }
         }
     }
+
+    if { $nearestModelRAS != "" && $nearestSliceRAS != "" } { 
+      foreach {mx my mz} [eval QueryAtlasWorldToScreen $nearestModelRAS] {}
+      foreach {sx sy sz} [eval QueryAtlasWorldToScreen $nearestSliceRAS] {}
+      if { $mz < $sz } {
+        set pointLabels $pointLabelsModel
+      } else {
+        set pointLabels $pointLabelsSlice
+      }
+    } else {
+      if { $nearestModelRAS != "" } { 
+        set pointLabels $pointLabelsModel
+      }
+      if { $nearestSliceRAS != "" } { 
+        set pointLabels $pointLabelsSlice
+      }
+    }
+
 
     # - nothing is hit yet, so check the cards
     if { $pointLabels == "" } {
