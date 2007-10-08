@@ -23,6 +23,8 @@
 #include "vtkKWTopLevel.h"
 #include "vtkKWTkUtilities.h"
 
+#include "vtkRenderer.h"
+
 // uncomment in order to stub out the FOV Entries.
 //#define FOV_ENTRIES_DEBUG
 
@@ -725,17 +727,21 @@ void vtkSlicerSlicesControlGUI::FitFOVToBackground( double fov, int viewer )
         {
         return;
         }
-
-      // get viewer's wid and height
-      int width, height;
-      sscanf(this->Script("winfo width %s", sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()),"%d", &width);
-      sscanf(this->Script("winfo height %s",sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()),"%d", &height);
-
+      
       if ( !sliceNode || !compositeNode )
         {
         return;
         }
   
+      // get viewer's width and height. we may be using a LightBox
+      // display, so base width and height on renderer0 in the SliceViewer.
+      int width, height;
+
+      vtkRenderer *ren=sgui->GetSliceViewer()->GetRenderWidget()->GetRenderer();
+      width = ren->GetSize()[0];
+      height = ren->GetSize()[1];
+
+      
       // get backgroundNode  and imagedata
       backgroundNode =
         vtkMRMLScalarVolumeNode::SafeDownCast (

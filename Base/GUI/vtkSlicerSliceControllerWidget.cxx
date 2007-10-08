@@ -64,8 +64,8 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->FitToWindowButton = NULL;
   this->VolumeDisplayMenuButton = NULL;
   this->LightboxButton = NULL;
-  this->LightboxWidthEntry = NULL;
-  this->LightboxHeightEntry = NULL;
+  this->LightboxRowsEntry = NULL;
+  this->LightboxColumnsEntry = NULL;
   this->LightboxApplyButton = NULL;
 }
 
@@ -175,17 +175,17 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
     this->LightboxButton->Delete();
     this->LightboxButton = NULL;
     }
-  if ( this->LightboxWidthEntry )
+  if ( this->LightboxRowsEntry )
     {
-    this->LightboxWidthEntry->SetParent ( NULL );
-    this->LightboxWidthEntry->Delete();
-    this->LightboxWidthEntry = NULL;    
+    this->LightboxRowsEntry->SetParent ( NULL );
+    this->LightboxRowsEntry->Delete();
+    this->LightboxRowsEntry = NULL;    
     }
-  if ( this->LightboxHeightEntry )
+  if ( this->LightboxColumnsEntry )
     {
-    this->LightboxHeightEntry->SetParent ( NULL );
-    this->LightboxHeightEntry->Delete();
-    this->LightboxHeightEntry = NULL;    
+    this->LightboxColumnsEntry->SetParent ( NULL );
+    this->LightboxColumnsEntry->Delete();
+    this->LightboxColumnsEntry = NULL;    
     }
   if ( this->LinkButton )
     {
@@ -610,36 +610,36 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     popUpFrame1->Create ( );
     popUpFrame1->SetBinding ( "<Leave>", this, "HideLightboxCustomLayoutFrame" );
     this->Script ( "pack %s -side left -anchor w -padx 2 -pady 2 -fill x -fill y -expand n", popUpFrame1->GetWidgetName ( ) );   
-    this->LightboxWidthEntry = vtkKWEntry::New ( );
-    this->LightboxWidthEntry->SetParent ( popUpFrame1 );
-    this->LightboxWidthEntry->Create ( );
-    this->LightboxWidthEntry->SetValueAsInt (1);
-    this->LightboxWidthEntry->SetWidth ( 3 );
-    this->LightboxHeightEntry = vtkKWEntry::New ( );
-    this->LightboxHeightEntry->SetParent ( popUpFrame1 );
-    this->LightboxHeightEntry->Create ( );
-    this->LightboxHeightEntry->SetWidth ( 3 );
-    this->LightboxHeightEntry->SetValueAsInt (1);
-    vtkKWLabel *widthLabel = vtkKWLabel::New();
-    widthLabel->SetParent ( popUpFrame1 );
-    widthLabel->Create ( );
-    widthLabel->SetText ( "horizontal:" );
-    vtkKWLabel *heightLabel = vtkKWLabel::New();
-    heightLabel->SetParent ( popUpFrame1 );
-    heightLabel->Create ( );
-    heightLabel->SetText ( "vertical:" );
+    this->LightboxRowsEntry = vtkKWEntry::New ( );
+    this->LightboxRowsEntry->SetParent ( popUpFrame1 );
+    this->LightboxRowsEntry->Create ( );
+    this->LightboxRowsEntry->SetValueAsInt (1);
+    this->LightboxRowsEntry->SetWidth ( 3 );
+    this->LightboxColumnsEntry = vtkKWEntry::New ( );
+    this->LightboxColumnsEntry->SetParent ( popUpFrame1 );
+    this->LightboxColumnsEntry->Create ( );
+    this->LightboxColumnsEntry->SetWidth ( 3 );
+    this->LightboxColumnsEntry->SetValueAsInt (1);
+    vtkKWLabel *rowsLabel = vtkKWLabel::New();
+    rowsLabel->SetParent ( popUpFrame1 );
+    rowsLabel->Create ( );
+    rowsLabel->SetText ( "Number of rows:" );
+    vtkKWLabel *columnsLabel = vtkKWLabel::New();
+    columnsLabel->SetParent ( popUpFrame1 );
+    columnsLabel->Create ( );
+    columnsLabel->SetText ( "Number of columns:" );
     this->LightboxApplyButton = vtkKWPushButton::New ( );
     this->LightboxApplyButton->SetParent ( popUpFrame1 );
     this->LightboxApplyButton->Create ( );
     this->LightboxApplyButton->SetText ("Apply");    
-    this->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 8", widthLabel->GetWidgetName());
-    this->Script ( "grid %s -row 0 -column 1 -padx 6 -pady 8", this->LightboxWidthEntry->GetWidgetName() );
-    this->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 8", heightLabel->GetWidgetName());
-    this->Script ( "grid %s -row 1 -column 1 -padx 6 -pady 8", this->LightboxHeightEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 8", rowsLabel->GetWidgetName());
+    this->Script ( "grid %s -row 0 -column 1 -padx 6 -pady 8", this->LightboxRowsEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 8", columnsLabel->GetWidgetName());
+    this->Script ( "grid %s -row 1 -column 1 -padx 6 -pady 8", this->LightboxColumnsEntry->GetWidgetName() );
     this->Script ( "grid %s -row 2 -column 0 -columnspan 2 -pady 8", this->LightboxApplyButton->GetWidgetName() );
     // delete temporary stuff
-    widthLabel->Delete();
-    heightLabel->Delete();
+    rowsLabel->Delete();
+    columnsLabel->Delete();
     popUpFrame1->Delete();
     
     //--- Popup Scale with Entry (displayed when user clicks LabelOpacityButton
@@ -1172,7 +1172,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   int link, i, nnodes;
   vtkMRMLSliceCompositeNode *cnode;
   vtkMRMLSliceNode *snode;
-  int numHPanes, numVPanes;
+  int numRows, numColumns;
     
   //
   // --- Find out whether SliceViewers are linked or unlinked
@@ -1551,8 +1551,8 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   if ( button == this->LightboxApplyButton &&
             event == vtkKWPushButton::InvokedEvent )
     {
-    numHPanes = this->LightboxWidthEntry->GetValueAsInt();
-    numVPanes = this->LightboxHeightEntry->GetValueAsInt();
+    numRows = this->LightboxRowsEntry->GetValueAsInt();
+    numColumns = this->LightboxColumnsEntry->GetValueAsInt();
     if ( false && link && sgui )
       {
       // apply this reformat to all slice MRMLs
@@ -1560,7 +1560,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     else
       {
       // apply this reformat to only this slice MRML
-      this->SliceNode->SetLayoutGrid( numHPanes, numVPanes );
+      this->SliceNode->SetLayoutGrid( numRows, numColumns );
       }
     }
   
@@ -1884,15 +1884,6 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     }
 
 
-  //
-  //  Update the values of the LightboxWidthEntry and LightboxHeightEntry
-  // to match the state of the viewer....
-  // int wid = this->GetLightboxWidthEntry->GetValueAsInt();
-  // int hit = this->GetLightboxHeightEntry->GetValueAsInt ();
-  // ....compare with node value.... if different, then set.
-  // this->GetLightboxWidthEntry->SetValueAsInt();
-  // this->GetLightboxHeightEntry->SetValueAsInt();
-  
   //
   // Update the VisibilityButton in the SliceController to match the logic state
   //

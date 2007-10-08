@@ -53,8 +53,8 @@ public:
   vtkGetObjectMacro ( FitToWindowButton, vtkKWPushButton );
   vtkGetObjectMacro ( VolumeDisplayMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro ( LightboxButton, vtkKWMenuButton );
-  vtkGetObjectMacro ( LightboxWidthEntry, vtkKWEntry );
-  vtkGetObjectMacro ( LightboxHeightEntry, vtkKWEntry );
+  vtkGetObjectMacro ( LightboxRowsEntry, vtkKWEntry );
+  vtkGetObjectMacro ( LightboxColumnsEntry, vtkKWEntry );
   vtkGetObjectMacro ( LightboxApplyButton, vtkKWPushButton);
   vtkGetObjectMacro ( OrientationMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro ( ForegroundMenuButton, vtkKWMenuButton );
@@ -181,8 +181,8 @@ protected:
   vtkKWPushButton *FitToWindowButton;
   vtkKWMenuButton *VolumeDisplayMenuButton;
   vtkKWMenuButton *LightboxButton;
-  vtkKWEntry *LightboxWidthEntry;
-  vtkKWEntry *LightboxHeightEntry;
+  vtkKWEntry *LightboxRowsEntry;
+  vtkKWEntry *LightboxColumnsEntry;
   vtkKWPushButton *LightboxApplyButton;
 
   //

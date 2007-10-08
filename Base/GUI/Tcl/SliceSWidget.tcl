@@ -181,12 +181,33 @@ itcl::body SliceSWidget::resizeSliceNode {} {
   if { $windoww == "10" && $windowh == "10" } {
     puts "ignoring bogus resize"
   } else {
-    set oldPixelSize0 [expr $nodefovx / (1. * $nodeW)]
-    set oldPixelSize1 [expr $nodefovy / (1. * $nodeH)]
-    set oldPixelSize2 $sliceStep  
+    set scaling0 [expr $w / (1. * $nodeW)]
+    set scaling1 [expr $h / (1. * $nodeH)]
+
+    set sMagnitude0 $scaling0
+    if { $sMagnitude0 < 1.0 } {
+       set sMagnitude0 [expr 1. / $sMagnitude0]
+    }
+
+    set sMagnitude1 $scaling1
+    if { $sMagnitude1 < 1.0 } {
+       set sMagnitude1 [expr 1. / $sMagnitude1]
+    }
+
+    if {$sMagnitude0 < $sMagnitude1} {
+       # keep x fov the same, adjust y
+       set fovx $nodefovx
+       set fovy [expr $nodefovy * $scaling1 / $scaling0]
+       set fovz [expr $sliceStep * $nodeD]
+    } else {
+       # keep y fov the same, adjust x
+       set fovx [expr $nodefovx * $scaling0 / $scaling1]
+       set fovy $nodefovy
+       set fovz [expr $sliceStep * $nodeD]
+    }
+
     $_sliceNode SetDimensions $w $h $nodeD
-    $_sliceNode SetFieldOfView \
-        [expr $oldPixelSize0 * $w] [expr $oldPixelSize1 * $h] [expr $oldPixelSize2 * $nodeD]
+    $_sliceNode SetFieldOfView $fovx $fovy $fovz
   }
 }
 
@@ -422,7 +443,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $sliceGUI SetGUICommandAbortFlag 1
     }
     "MouseWheelForwardEvent" { 
-      puts "forward"
       $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
       $this incrementSlice 
       $this updateAnnotation $x $y $r $a $s
