@@ -197,7 +197,7 @@ protected:
 
   void RemoveModelProps();
 
-  void RemoveModelObservers();
+  void RemoveModelObservers(int clearCache);
   void RemoveModelObservers( vtkMRMLDisplayableNode *model);
 
   void UpdateModelsFromMRML();
@@ -215,7 +215,7 @@ protected:
 
   void CheckModelHierarchies();
   void AddHierarchiyObservers();
-  void RemoveHierarchyObservers();
+  void RemoveHierarchyObservers(int clearCache);
 
   void UpdateModelHierarchies() {
     this->CheckModelHierarchies();

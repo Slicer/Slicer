@@ -297,6 +297,7 @@ public:
       NodeRemovedEvent = 66001,
       NewSceneEvent = 66002,
       SceneCloseEvent = 66003,
+      SceneClosingEvent = 66004,
     };
 //ETX
 

@@ -273,6 +273,8 @@ vtkMRMLScene::~vtkMRMLScene()
 void vtkMRMLScene::Clear(int removeSingletons) 
 {
   this->SetUndoOff();
+  this->InvokeEvent(this->SceneClosingEvent, NULL);
+  
   if (!removeSingletons)
     {
     this->RemoveAllNodesExceptSingletons();

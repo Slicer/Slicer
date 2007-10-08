@@ -574,13 +574,20 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
   this->ProcessingMRMLEvent = event;
 
   vtkDebugMacro("ProcessMRMLEvents: processing event " << event);
-   
-  if (event == vtkMRMLScene::SceneCloseEvent )
+
+  if (event == vtkMRMLScene::SceneClosingEvent )
+    {
+    this->RemoveHierarchyObservers(0);
+    this->RemoveModelObservers(0);
+    }
+  else if (event == vtkMRMLScene::SceneCloseEvent )
     {
     this->SceneClosing = true;
     this->RemoveModelProps();
-    this->RemoveHierarchyObservers();
-    this->RemoveModelObservers();
+    this->RemoveHierarchyObservers(1);
+    this->RemoveModelObservers(1);
+    this->UpdateFromMRMLRequested = 1;
+    this->RequestRender();
     this->UpdateFromMRML();
     //this->MainViewer->RemoveAllViewProps();
     this->Render();
@@ -883,6 +890,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
   // observe scene for add/remove nodes
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneClosingEvent);
   //events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -947,8 +955,8 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
   if (clearDisplayedModels)
     {
     this->MainViewer->RemoveAllViewProps();
-    this->RemoveModelObservers();
-    this->RemoveHierarchyObservers();
+    this->RemoveModelObservers(1);
+    this->RemoveHierarchyObservers(1);
     this->DisplayedActors.clear();
     this->DisplayedNodes.clear();
     this->DisplayedClipState.clear();
@@ -1421,8 +1429,8 @@ int vtkSlicerViewerWidget::GetDisplayedModelsVisibility(vtkMRMLDisplayNode *mode
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveMRMLObservers()
 {
-  this->RemoveModelObservers();
-  this->RemoveHierarchyObservers();
+  this->RemoveModelObservers(1);
+  this->RemoveHierarchyObservers(1);
 
   //this->RemoveFiducialObservers();
 
@@ -1430,7 +1438,7 @@ void vtkSlicerViewerWidget::RemoveMRMLObservers()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewerWidget::RemoveModelObservers()
+void vtkSlicerViewerWidget::RemoveModelObservers(int clearCache)
 {
   std::map<std::string, vtkMRMLDisplayableNode *>::iterator iter;
 
@@ -1441,11 +1449,14 @@ void vtkSlicerViewerWidget::RemoveModelObservers()
       this->RemoveModelObservers(iter->second);
       }
     }
-  this->DisplayableNodes.clear();
-  this->DisplayedActors.clear();
-  this->DisplayedNodes.clear();
-  this->DisplayedClipState.clear();
-  this->DisplayedVisibility.clear();
+  if (clearCache)
+    {
+    this->DisplayableNodes.clear();
+    this->DisplayedActors.clear();
+    this->DisplayedNodes.clear();
+    this->DisplayedClipState.clear();
+    this->DisplayedVisibility.clear();
+    }
 
 }
 
@@ -1461,7 +1472,7 @@ void vtkSlicerViewerWidget::RemoveModelObservers( vtkMRMLDisplayableNode *model)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerViewerWidget::RemoveHierarchyObservers()
+void vtkSlicerViewerWidget::RemoveHierarchyObservers(int clearCache)
 {
   std::map<std::string, int>::iterator iter;
   for(iter=this->RegisteredModelHierarchies.begin(); iter != this->RegisteredModelHierarchies.end(); iter++) 
@@ -1472,7 +1483,10 @@ void vtkSlicerViewerWidget::RemoveHierarchyObservers()
       node->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
       }
     }
-  RegisteredModelHierarchies.clear();
+  if (clearCache)
+    {
+    RegisteredModelHierarchies.clear();
+    }
 }
 
 
