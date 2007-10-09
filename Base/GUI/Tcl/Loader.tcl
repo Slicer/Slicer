@@ -168,6 +168,25 @@ itcl::body Loader::constructor { {root ""} } {
   wm protocol [$o(toplevel) GetWidgetName] \
     WM_DELETE_WINDOW "itcl::delete object $this"
 
+  #
+  # actions menu
+  #
+  set o(actions) [vtkNew vtkKWMenuButtonWithLabel]
+  $o(actions) SetParent $o(toplevel)
+  $o(actions) Create
+  $o(actions) SetLabelText "Actions: "
+  set m [[$o(actions) GetWidget] GetMenu]
+  $m AddCommand "Clear Data"
+  $m AddCommand "Select All"
+  $m AddCommand "Select None"
+  $m AddCommand "Centered All"
+  $m AddCommand "Centered None"
+  $m AddCommand "Label All"
+  $m AddCommand "Label None"
+  pack [$o(actions) GetWidgetName] -side top -anchor e -padx 2 -pady 2 -expand false -fill none
+  set tag [$m AddObserver AnyEvent "$this processEvent $o(actions)"]
+  lappend _observerRecords [list $m $tag]
+  #$o(addFile) SetCommand $o(addFile) Modified
 
   #
   # the listbox of data to load
@@ -390,6 +409,7 @@ itcl::body Loader::add { paths } {
           lappend _cleanupDirs $tmp
         }
       }
+      continue
     }
 
     # 
@@ -475,12 +495,12 @@ itcl::body Loader::apply { } {
             $node SetName $name
           }
         }
-          "XCEDE" {
-              set pass [ XcedeCatalogImport $path ]
-              if { $pass == 0 } {
-                  $this errorDialog "Could not load XCEDE catalog at $path."
-              }
+        "XCEDE" {
+          set pass [ XcedeCatalogImport $path ]
+          if { $pass == 0 } {
+            $this errorDialog "Could not load XCEDE catalog at $path."
           }
+        }
         "QDEC" {
           if {[info exists ::slicer3::QdecModuleGUI]} {
             set err [$::slicer3::QdecModuleGUI LoadProjectFile $path]
