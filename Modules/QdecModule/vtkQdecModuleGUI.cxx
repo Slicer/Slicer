@@ -437,11 +437,13 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       else
         {
         vtkErrorMacro("Error running GLM Fit...");
+        return;
         }
       }
     else
       {
       vtkErrorMacro("Error creating the GLM Design...");
+      return;
       }
     
     // get the models logic to use to load the models and scalars (can't access it in the Logic class)
