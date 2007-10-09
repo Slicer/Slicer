@@ -1019,6 +1019,7 @@ proc QueryAtlasRemoveInteractorObservers { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasRenderView {} {
 
+  puts RenderView
   #
   # get the renderer related instances
   #
@@ -1053,7 +1054,17 @@ proc QueryAtlasRenderView {} {
   [$::QA(windowToImage) GetOutput] Update
 
 
-  if { 0 } {
+  $renderWindow SetSwapBuffers 1
+  QueryAtlasRestoreRenderState $renderer $renderState
+  $renderWidget Render
+
+  #--- need to let go of the RenderWindow to avoid a crash on
+  #--- ApplicationGUI->ViewerWidget->Delete()
+  #--- Why it crashes instead of generating leaks I'm not sure.
+  $::QA(windowToImage) SetInput ""
+
+
+  if { 1 } {
     #
     # make a little preview window for debugging pleasure
     #
@@ -1067,17 +1078,6 @@ proc QueryAtlasRenderView {} {
     viewer SetColorLevel 100
     viewer Render
   }
-
-
-  $renderWindow SetSwapBuffers 1
-  QueryAtlasRestoreRenderState $renderer $renderState
-  $renderWidget Render
-
-  #--- need to let go of the RenderWindow to avoid a crash on
-  #--- ApplicationGUI->ViewerWidget->Delete()
-  #--- Why it crashes instead of generating leaks I'm not sure.
-  $::QA(windowToImage) SetInput ""
-
 }
 
 #####################################
@@ -1404,7 +1404,8 @@ proc QueryAtlasPickCallback {} {
 
     # if the window size has changed, re-render
     set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
-    if { [$renderWindow GetSize] != $imageSize } {
+    set windowsize [string trim [$renderWindow GetSize]]
+    if { $windowsize != $imageSize } {
         QueryAtlasRenderView
     }
 
@@ -1551,6 +1552,7 @@ proc QueryAtlasUpdateCursor {} {
 
   set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
 
+  # create the text actor if needed
   if { ![info exists ::QA(cursor,actor)] } {
       set ::QA(cursor,actor) [vtkTextActor New]
       set ::QA(cursor,mapper) [vtkTextMapper New]
@@ -1564,6 +1566,7 @@ proc QueryAtlasUpdateCursor {} {
       $renderer AddActor2D $::QA(cursor,actor)
   }
 
+  # update the actor and render
   if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] && [info exists ::QA(cursor,mapper)] } {
       $::QA(cursor,mapper) SetInput $::QA(lastLabels) 
       #--- position the text label just higher than the cursor
