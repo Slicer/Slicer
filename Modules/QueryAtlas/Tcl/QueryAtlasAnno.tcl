@@ -223,15 +223,22 @@ proc QueryAtlasAddNewPickModels { mid } {
 
     #--- create model with progress feedback
     #--- because it takes awhile...
+    if { ![info exists ::QA(nextCellIndex)] } {
+      set ::QA(nextCellIndex) 0
+    }
     set numberOfCells [$::QA(polyData_$mid) GetNumberOfCells]
     set pinc [expr 60.0 / $numberOfCells ]
     set pinit 20.0
     for {set i 0} {$i < $numberOfCells} {incr i} {
-        eval $cellNumberColors InsertNextTuple4 [QueryAtlasNumberToRGBA $i]
-        if { [expr $i % 1000] == 0 } {
+        eval $cellNumberColors InsertNextTuple4 [QueryAtlasNumberToRGBA [expr $i + $::QA(nextCellIndex)]]
+        if { [expr $i % 10000] == 0 } {
           $prog SetValue [ expr $pinit + ($i*$pinc) ]
         }
     }
+
+    set ::QA(nextCellIndex) [expr $::QA(nextCellIndex) + $numberOfCells]
+    set ::QA(numberOfCells,$mid) $numberOfCells
+
 
     $win SetStatusText "Adding new pick model..."
     set ::QA(cellData_$mid) $cellData

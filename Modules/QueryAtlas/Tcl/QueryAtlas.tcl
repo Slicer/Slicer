@@ -966,7 +966,7 @@ proc QueryAtlasAddInteractorObservers { } {
         
         set ::QA(enterEventTag) [ $interactor AddObserver EnterEvent "QueryAtlasCursorVisibility on" ]
         set ::QA(leaveEventTag) [ $interactor AddObserver LeaveEvent "QueryAtlasCursorVisibility off" ]
-        set ::QA(moveEventTag) [ $interactor AddObserver MouseMoveEvent "QueryAtlasRequestPickCallback" ]
+        set ::QA(moveEventTag) [ $interactor AddObserver MouseMoveEvent "QueryAtlasPickCallback" ]
         set ::QA(rightClickEventTag) [$interactor AddObserver RightButtonPressEvent "QueryAtlasMenuCreate start" ]
         set ::QA(rightReleaseEventTag) [ $interactor AddObserver RightButtonReleaseEvent "QueryAtlasMenuCreate end" ]
         set ::QA(startInteractionEventTag) [ $style AddObserver StartInteractionEvent "QueryAtlasCursorVisibility off" ]
@@ -1236,7 +1236,9 @@ proc QueryAtlasPickProp {x y renderer viewer} {
       $::QA(propPickerCollection) AddItem $::QA(actor,$m)
     }
 
-    if { [$::QA(propPicker) PickProp $x $y $renderer $::QA(propPickerCollection)] } {
+    #puts [time "$::QA(propPicker) PickProp $x $y $renderer"]
+    # puts [time "$::QA(propPicker) PickProp $x $y $renderer $::QA(propPickerCollection)"]
+    if { [$::QA(propPicker) PickProp $x $y $renderer] } {
         set prop [$::QA(propPicker) GetViewProp]
         set ::QA(currentHitMRMLID) [$viewer GetIDByActor $prop]
 
@@ -1373,19 +1375,7 @@ proc QueryAtlasPickOnQuerySlice {x y renderer modelNode} {
     return $pointLabels
 }
 
-proc QueryAtlasRequestPickCallback {} {
-  if { [info exists ::QA(pickPending)] && $::QA(pickPending) } {
-    return
-  }
-
-  set ::QA(pickPending) 1
-  after idle QueryAtlasPickCallback 
-
-}
-
 proc QueryAtlasPickCallback {} {
-
-    set ::QA(pickPending) 0
 
     set _useMID ""
 
@@ -1422,6 +1412,7 @@ proc QueryAtlasPickCallback {} {
         QueryAtlasRenderView
     }
 
+
     # 
     # get the event location
     #
@@ -1454,76 +1445,83 @@ proc QueryAtlasPickCallback {} {
 
 
     #
-    # use the prop picker to see if we're over one of the models
-    # - set the 'currentHit' variable accordingly for later processing
+    # use the cell index picker to see if we're over one of the models
     # - sets the pointLabels variable for use in the cursor annotation
     # - later compare against slice picking to see what's closest
     #
-    set _useMID [QueryAtlasPickProp $x $y $renderer $viewer]
 
     set nearestModelRAS ""
     set pointLabelsModel ""
     #--- did we hit a model?
-    if { $::QA(currentHit) == "QueryModel" } {
-        #
-        # get the color under the mouse from label image
-        #
-        set color ""
-        foreach c {0 1 2 3} {
-            lappend color [[$::QA(windowToImage) GetOutput] GetScalarComponentAsFloat $x $y 0 $c]
-        }
-        #
-        # convert the color to a cell index and get the cooresponding
-        # label names from the vertices
-        #
-        set cellNumber [QueryAtlasRGBAToNumber $color]
-#puts "color $color is [QueryAtlasRGBAToNumber $color]"
-#puts "cellNumber is $cellNumber"
-        if { $cellNumber >= 0 && $cellNumber < [$::QA(polyData_$_useMID) GetNumberOfCells] } {
-            set cell [$::QA(polyData_$_useMID) GetCell $cellNumber]
+    #
+    # get the color under the mouse from label image
+    #
+    set color ""
+    foreach c {0 1 2 3} {
+        lappend color [[$::QA(windowToImage) GetOutput] GetScalarComponentAsFloat $x $y 0 $c]
+    }
+    #
+    # convert the color to a cell index and get the cooresponding
+    # label names from the vertices
+    #
+    set cellNumber [QueryAtlasRGBAToNumber $color]
 
-            set labels [[$::QA(polyData_$_useMID) GetPointData] GetScalars "labels"]
-            set points [$::QA(polyData_$_useMID) GetPoints]
+    if { $cellNumber == 0 } {
+      puts "didn't hit"
+    }
+    
+    set i 0
+    set cellBase 0
+    foreach mid $::QA(annoModelNodeIDs) {
+      set newBase [expr $cellBase + $::QA(numberOfCells,$mid)]
+      if { $cellNumber < $newBase } {
+        set _useMID $mid
+        break
+      } else {
+        set cellBase $newBase
+      }
+      incr i
+    }
 
-            set m $_useMID
-            array set labelMap $::QA(labelMap_$m)
-            set pointLabelsModel ""
-            set numberOfPoints [$cell GetNumberOfPoints]
+    set cellNumber [expr $cellNumber - $cellBase]
 
-            set nearestIndex ""
-            set nearestDistance 1000000
+    if { $cellNumber >= 0 && $cellNumber < [$::QA(polyData_$_useMID) GetNumberOfCells] } {
+        set cell [$::QA(polyData_$_useMID) GetCell $cellNumber]
 
-#puts "numberOfPoints is $numberOfPoints"
-            for {set p 0} {$p < $numberOfPoints} {incr p} {
-                set index [$cell GetPointId $p]
-                set ras [$points GetPoint $index]
-                foreach {sx sy sz} [eval QueryAtlasWorldToScreen $ras] {}
-                set dist [QueryAtlasDistance "$sx $sy" "$x $y"]
-#puts "$sx $sy to  $x $y"
-#puts "index $index is $dist"
-                if { $dist < $nearestDistance } {
-                    set nearestDistance $dist
-                    set nearestIndex $index
-                    set nearestModelRAS $ras
-                }
+        set labels [[$::QA(polyData_$_useMID) GetPointData] GetScalars "labels"]
+        set points [$::QA(polyData_$_useMID) GetPoints]
+
+        set m $_useMID
+        array set labelMap $::QA(labelMap_$m)
+        set pointLabelsModel ""
+        set numberOfPoints [$cell GetNumberOfPoints]
+
+        set nearestIndex ""
+        set nearestDistance 1000000
+
+        for {set p 0} {$p < $numberOfPoints} {incr p} {
+            set index [$cell GetPointId $p]
+            set ras [$points GetPoint $index]
+            foreach {sx sy sz} [eval QueryAtlasWorldToScreen $ras] {}
+            set dist [QueryAtlasDistance "$sx $sy" "$x $y"]
+            if { $dist < $nearestDistance } {
+                set nearestDistance $dist
+                set nearestIndex $index
+                set nearestModelRAS $ras
             }
-#puts "nearestDistance is $nearestDistance"
-#puts "nearestIndex is $nearestIndex"
-#puts "nearestModelRAS is $nearestModelRAS"
-            
-            if { $nearestIndex != "" } {
-                set ::QA(CurrentRASPoint) $nearestModelRAS
-                set pointLabel [$labels GetValue $nearestIndex]
-#puts "pointLabel is $pointLabel"
-                if { [info exists labelMap($pointLabel)] } {
-                    set pointLabelsModel $labelMap($pointLabel)
-#puts "pointLabelsModel is $pointLabelsModel"
-                } else {
-                    lappend pointLabelsModel ""
-                }
+        }
+        
+        if { $nearestIndex != "" } {
+            set ::QA(CurrentRASPoint) $nearestModelRAS
+            set pointLabel [$labels GetValue $nearestIndex]
+            if { [info exists labelMap($pointLabel)] } {
+                set pointLabelsModel $labelMap($pointLabel)
+            } else {
+                lappend pointLabelsModel ""
             }
         }
     }
+
 
     if { $nearestModelRAS != "" && $nearestSliceRAS != "" } { 
       foreach {mx my mz} [eval QueryAtlasWorldToScreen $nearestModelRAS] {}
@@ -1550,8 +1548,6 @@ proc QueryAtlasPickCallback {} {
 
     #---keep raw local label here
     set ::QA(localLabel) $pointLabels
-
-#puts "pointLabels is $pointLabels\n\n"
 
     #---Before modifying freesurfer labelname,
     # get UMLS, Neuronames, BIRNLex mapping.
@@ -1598,7 +1594,8 @@ proc QueryAtlasUpdateCursor {} {
       foreach {x y} $::QA(lastWindowXY) {}
       set y [expr $y + 15]
       $::QA(cursor,actor) SetPosition $x $y
-      $viewer RequestRender
+      #$viewer RequestRender
+      $viewer Render
   } 
 }
 
