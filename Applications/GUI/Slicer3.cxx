@@ -1,3 +1,4 @@
+#include "vtkOpenGLRenderWindow.h"
 #include "vtkRenderWindow.h"
 
 #include "vtkKWApplication.h"
@@ -487,6 +488,12 @@ int Slicer3_main(int argc, char *argv[])
     slicerCerr("Error: InitializeTcl failed" << endl );
     return 1;
     }
+
+  //
+  // turn off hardware antialiasing by default
+  // - the QueryAtlas picker relies on this
+  //   
+  vtkOpenGLRenderWindow::SetGlobalMaximumNumberOfMultiSamples(1);
 
 #ifdef USE_PYTHON
 
