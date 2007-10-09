@@ -256,7 +256,7 @@ const char * vtkMRMLModelNode::GetActivePointScalarName(const char *type)
     vtkErrorMacro("Unknown point scalar type " << type);
     return "";
     }
-  vtkWarningMacro("GetActivePointScalarName: node " << this->GetName() << " unable to get " << type << " data to get the name, so active name is returned as an empty string");
+  vtkDebugMacro("GetActivePointScalarName: node " << this->GetName() << " unable to get " << type << " data to get the name, so active name is returned as an empty string");
   return "";
 }
 
