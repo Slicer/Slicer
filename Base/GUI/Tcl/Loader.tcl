@@ -381,7 +381,7 @@ itcl::body Loader::add { paths } {
       if { [file exists $unzip] } {
         set cwd [pwd]
         cd $tmp
-        set fp [open "| $unzip $path" "r"]
+        set fp [open "| $unzip \"$path\"" "r"]
         while { ![eof $fp] } {
           set line [read $fp]
           $this status $line
