@@ -1107,6 +1107,13 @@ proc QueryAtlasOverrideRenderState {renderer} {
       set state($i,visibility) [$actor GetVisibility]
       $actor SetVisibility 0
   }
+  set actors2D [$renderer GetActors2D]
+  set numberOfItems [$actors2D GetNumberOfItems]
+  for {set i 0} {$i < $numberOfItems} {incr i} {
+      set actor [$actors2D GetItemAsObject $i]
+      set state($i,visibility) [$actor GetVisibility]
+      $actor SetVisibility 0
+  }
 
   set state(background) [$renderer GetBackground]
   $renderer SetBackground 0 0 0
@@ -1134,6 +1141,12 @@ proc QueryAtlasRestoreRenderState {renderer renderState} {
   for {set i 0} {$i < $numberOfItems} {incr i} {
     set actor [$actors GetItemAsObject $i]
     $actor SetVisibility $state($i,visibility)
+  }
+  set actors2D [$renderer GetActors2D]
+  set numberOfItems [$actors2D GetNumberOfItems]
+  for {set i 0} {$i < $numberOfItems} {incr i} {
+      set actor [$actors2D GetItemAsObject $i]
+      $actor SetVisibility $state($i,visibility)
   }
 
   set numQmodels [ llength $::QA(annoModelNodeIDs) ]
@@ -1464,6 +1477,8 @@ proc QueryAtlasPickCallback {} {
         # label names from the vertices
         #
         set cellNumber [QueryAtlasRGBAToNumber $color]
+#puts "color $color is [QueryAtlasRGBAToNumber $color]"
+#puts "cellNumber is $cellNumber"
         if { $cellNumber >= 0 && $cellNumber < [$::QA(polyData_$_useMID) GetNumberOfCells] } {
             set cell [$::QA(polyData_$_useMID) GetCell $cellNumber]
 
@@ -1478,23 +1493,31 @@ proc QueryAtlasPickCallback {} {
             set nearestIndex ""
             set nearestDistance 1000000
 
+#puts "numberOfPoints is $numberOfPoints"
             for {set p 0} {$p < $numberOfPoints} {incr p} {
                 set index [$cell GetPointId $p]
                 set ras [$points GetPoint $index]
                 foreach {sx sy sz} [eval QueryAtlasWorldToScreen $ras] {}
                 set dist [QueryAtlasDistance "$sx $sy" "$x $y"]
+#puts "$sx $sy to  $x $y"
+#puts "index $index is $dist"
                 if { $dist < $nearestDistance } {
                     set nearestDistance $dist
                     set nearestIndex $index
                     set nearestModelRAS $ras
                 }
             }
+#puts "nearestDistance is $nearestDistance"
+#puts "nearestIndex is $nearestIndex"
+#puts "nearestModelRAS is $nearestModelRAS"
             
             if { $nearestIndex != "" } {
                 set ::QA(CurrentRASPoint) $nearestModelRAS
-                set pointLabel [$labels GetValue $index]
+                set pointLabel [$labels GetValue $nearestIndex]
+#puts "pointLabel is $pointLabel"
                 if { [info exists labelMap($pointLabel)] } {
                     set pointLabelsModel $labelMap($pointLabel)
+#puts "pointLabelsModel is $pointLabelsModel"
                 } else {
                     lappend pointLabelsModel ""
                 }
@@ -1527,6 +1550,8 @@ proc QueryAtlasPickCallback {} {
 
     #---keep raw local label here
     set ::QA(localLabel) $pointLabels
+
+#puts "pointLabels is $pointLabels\n\n"
 
     #---Before modifying freesurfer labelname,
     # get UMLS, Neuronames, BIRNLex mapping.
