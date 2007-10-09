@@ -1068,7 +1068,11 @@ void vtkQdecModuleGUI::BuildGUI ( )
               this->ApplyButton->GetWidgetName(),
               designFrame->GetFrame()->GetWidgetName());
   
-
+#ifdef _WIN32
+  // On windows, there is no glm fit binary available, so grey out the button
+  this->ApplyButton->EnabledOff();
+  this->ApplyButton->SetBalloonHelpString("GLM Fit binary is not available on Windows, please load precomputed results in .qdec files using the 'Load Results Data File' browser");
+#endif
   // ---
   // Display Frame
   vtkSlicerModuleCollapsibleFrame *displayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
