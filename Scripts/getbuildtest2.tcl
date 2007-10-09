@@ -380,7 +380,7 @@ if { $::GETBUILDTEST(doxy) } {
     # just run doxygen and exit
     runcmd $::CMAKE -DBUILD_DOCUMENTATION=ON $SLICER_HOME
     cd $::SLICER_BUILD/Utilities/Doxygen
-    eval runcmd make CombinedDoxygenDoc
+    eval runcmd make Slicer3DoxygenDoc
     return
 }
 
