@@ -74,7 +74,10 @@ ADD_LIBRARY(SlicerTractographySeeding
   )
 
 IF(BUILD_SHARED_LIBS)
-  INSTALL_TARGETS(${SLICER3_LIB_INSTALL_DIR} SlicerTractographySeeding)
+  INSTALL(TARGETS SlicerTractographySeeding
+      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+      LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION lib COMPONENT Development)
 ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(SlicerTractographySeeding
