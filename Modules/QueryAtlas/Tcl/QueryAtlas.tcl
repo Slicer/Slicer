@@ -1855,6 +1855,7 @@ proc QueryAtlasLaunchOntologyBrowser {} {
     #--- launch the viewer with a dataset
     #--- set directory of java stuff
     set dir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/OntologyViz
+    puts "$dir"
 
     #--- launch the browser on windows or other platforms and get PID
     if { $::tcl_platform(platform) == "windows" } {
@@ -1896,7 +1897,7 @@ proc OntologyVizLaunch {ontdir use_semicolon_separator} {
     }
 
     #--- return PID
-    return [exec java -cp "$cpath" "$progbase" "$datadir/*.json" & ]
+    return [exec java -cp "$cpath" "$progbase" "$datadir/birnlex-body-v1.json" "$datadir/neuronames-v1.json" & ]
 
 }
 

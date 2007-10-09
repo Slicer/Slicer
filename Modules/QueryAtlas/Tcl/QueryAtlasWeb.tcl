@@ -104,6 +104,9 @@ proc QueryAtlasOpenLink { url } {
 
     if { $url != "" } {
         if { $::tcl_platform(os) == "Darwin" } {
+            #--- on mac you can easily open in any browser,
+            #--- but bookmarks will only be saved in Firefox Bookmark file format.
+            #--- so to use the bookmarks, you'll have to use firefox later....
             exec open $url
         } else {
             set browser [ $::slicer3::Application GetWebBrowser ]
@@ -124,13 +127,9 @@ proc QueryAtlasOpenLink { url } {
                 $manager RaiseSection 0 "Slicer Settings"
                 return
             } else {
-                #--- Test: does this work on all windows os/versions?
-                if { $::tcl_platform(platform) == "windows" } {
-                    puts "opening $url"
-                    exec $browser -new-tab $url &
-                } else {
-                    #--- what will work on macos?
-                }
+                #--- For Windows or Linux builds:
+                puts "opening $url"
+                exec $browser -new-tab $url &
             }
         }
     }

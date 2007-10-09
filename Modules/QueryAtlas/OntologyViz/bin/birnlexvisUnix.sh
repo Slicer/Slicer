@@ -11,5 +11,4 @@ extjars="${extjardir}/json.jar:${extjardir}/prefuse.jar:${extjardir}/jython.jar"
 
 CLASSPATH="${binjars}:${extjars}"; export CLASSPATH
 
-exec  java  "${progbase}" "${datadir}/*.json"
-
+exec  java  "${progbase}" "${datadir}"/*.json
