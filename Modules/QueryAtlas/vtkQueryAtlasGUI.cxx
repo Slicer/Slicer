@@ -1164,23 +1164,21 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     if ( (b == this->NeuroNamesHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      this->OpenOntologyBrowser();
       //--- get last clicked (or typed) structure from the LocalSearchTermEntry
       const char *structureLabel =  this->NeuroNamesEntry->GetValue();
       if ( strcmp (structureLabel, "" ))
         {
-        this->Script ( "QueryAtlasSendHierarchyCommand  \"%s\" NN", structureLabel  );
+        this->Script ( "QueryAtlasSendOntologyCommand  \"%s\" NN", structureLabel  );
         }
 
       }
     else if ( (b == this->BIRNLexHierarchyButton) && (event == vtkKWPushButton::InvokedEvent ) )
       {
-      this->OpenOntologyBrowser();
       //--- get last clicked (or typed) structure from the LocalSearchTermEntry
       const char *structureLabel =  this->BIRNLexEntry->GetValue();
       if ( strcmp (structureLabel, "" ))
         {
-        this->Script ( "QueryAtlasSendHierarchyCommand  \"%s\" BIRN", structureLabel  );
+        this->Script ( "QueryAtlasSendOntologyCommand  \"%s\" BIRN", structureLabel  );
         }
       }
     else if ( (b == this->AddLocalTermButton ) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -2407,7 +2405,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->BIRNLexHierarchyButton->SetImageToIcon ( this->QueryAtlasIcons->GetOntologyBrowserIcon() );
     this->BIRNLexHierarchyButton->SetBorderWidth ( 0 );
     this->BIRNLexHierarchyButton->SetReliefToFlat ( );
-    this->BIRNLexHierarchyButton->SetBalloonHelpString ("View in BIRNLex ontology browser.");
+    this->BIRNLexHierarchyButton->SetBalloonHelpString ("View in BIRNLex ontology browser (click once to launch, and click again to select term).");
 
     // forthrow (BIRNLex ID )
     vtkKWLabel *birnidLabel = vtkKWLabel::New();
@@ -2450,7 +2448,7 @@ void vtkQueryAtlasGUI::BuildOntologyGUI ( )
     this->NeuroNamesHierarchyButton->SetImageToIcon ( this->QueryAtlasIcons->GetOntologyBrowserIcon() );
     this->NeuroNamesHierarchyButton->SetBorderWidth ( 0 );
     this->NeuroNamesHierarchyButton->SetReliefToFlat();
-    this->NeuroNamesHierarchyButton->SetBalloonHelpString ("View in NeuroNames ontology browser.");
+    this->NeuroNamesHierarchyButton->SetBalloonHelpString ("View in NeuroNames ontology browser (click once to launch, and click again to select term).");
 
     // sixth row (NeuroNames ID)
     vtkKWLabel *nnidLabel = vtkKWLabel::New();    

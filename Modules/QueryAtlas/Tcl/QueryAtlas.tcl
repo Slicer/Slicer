@@ -1064,7 +1064,7 @@ proc QueryAtlasRenderView {} {
   $::QA(windowToImage) SetInput ""
 
 
-  if { 1 } {
+  if { 0 } {
     #
     # make a little preview window for debugging pleasure
     #
@@ -1766,6 +1766,8 @@ proc QueryAtlasMenuCreate { state } {
                     } else {
                         #--- bring up a search menu
                         $qaMenu insert end command -label "Select and translate" -command "QueryAtlasSetStructureTerm"
+                        $qaMenu insert end command -label "Ontology browser (BIRNLex)" -command "QueryAtlasSendOntologyCommand \"$term(BIRNLex)\" BIRN"
+                        $qaMenu insert end command -label "Ontology browser (NeuroNames)" -command "QueryAtlasSendOntologyCommand \"$term(NN)\" NN"
                         $qaMenu insert end separator
                         if { $term(local) != "" } {
                             menu $qaMenu.local
@@ -1839,48 +1841,6 @@ proc QueryAtlasMenuCreate { state } {
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasLaunchOntologyBrowser {} {
-
-    #--- only open if not already running
-    set already_running [ QueryAtlasOntologyViewerCheck ]
-    if { $already_running } {
-        puts "Ontology browser already appears to be running."
-        return
-    }
-
-    puts "Launching ontology browser"
-    #--- start it up
-    set ::QA(ontologyHost) "localhost"
-    set ::QA(ontologyPort) 3334
-    set ::QA(ontologyViewerPID) ""
-    set ::QA(ontologyBrowserRunning) 0
-    
-    #--- launch the viewer with a dataset
-    #--- set directory of java stuff
-    set dir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/OntologyViz
-    puts "$dir"
-
-    #--- launch the browser on windows or other platforms and get PID
-    if { $::tcl_platform(platform) == "windows" } {
-        set ::QA(ontologyViewerPID) [ OntologyVizLaunch $dir 1 ]
-    } else {
-        set ::QA(ontologyViewerPID) [ OntologyVizLaunch $dir 0 ]            
-    }
-
-    #--- check to see if running....
-    if { $::QA(ontologyViewerPID) == "" } {
-        puts "QueryAtlasLaunchOntologyBrowser: tried and failed to launch Ontology Browser."
-    } else {
-        set ::QA(ontologyBrowserRunning) 1
-    }
-
-}
-
-
-
-#----------------------------------------------------------------------------------------------------
-#---
-#----------------------------------------------------------------------------------------------------
 proc OntologyVizLaunch {ontdir use_semicolon_separator} {
 
     set progbase "birnlexvis"
@@ -1905,28 +1865,6 @@ proc OntologyVizLaunch {ontdir use_semicolon_separator} {
 }
 
 
-
-
-#----------------------------------------------------------------------------------------------------
-#---TODO: test! Is the BirnLex Ontology viewer running?
-#----------------------------------------------------------------------------------------------------
-proc QueryAtlasOntologyViewerCheck { } {
-    set running 0
-
-    set str ""
-    if { [ info exists ::QA(ontologyViewerPID) ] } {
-        #--- check to see if the PID still exists
-        if { $::tcl_platform(platform) == "windows" } {
-            catch { set str [ exec ps --windows | grep java | grep $::QA(ontologyViewerPID) ] }
-        } else {
-            catch { set str [ exec ps -ef | grep java | grep $::QA(ontologyViewerPID) ] }
-        }
-        if { $str != "" } {
-            set running 1
-        }
-    }
-    return $running
-}
 
 
 
@@ -1957,37 +1895,47 @@ proc QueryAtlasCloseOntologyBrowser { } {
 
 
 
+
 #----------------------------------------------------------------------------------------------------
 #---
 #----------------------------------------------------------------------------------------------------
-proc QueryAtlasSendHierarchyCommand { term ontology } {
+proc QueryAtlasSendOntologyCommand { term ontology } {
 
-    set running [ QueryAtlasOntologyViewerCheck ]
-    if { $running } {
-        #--- get command from Hierarchy frame widget
-        
-        puts "sending hierarchy command: term = $term"
-        if { $term != "" } {
-            set ::QA(socket) ""
-            #--- make search reqest to birnlexviz demo if port/host are defined
-            if { [ info exists ::QA(ontologyHost) ] && [ info exists ::QA(ontologyPort) ] } {
-                catch { set ::QA(socket) [ socket $::QA(ontologyHost) $::QA(ontologyPort) ] }
-
-                if  { $::QA(socket) != "" } {
-                    #--- other stuff to do:
-                    #puts $::QA(socket) "@listdatasets"
-                    #puts $::QA(socket) "@quit"
-
-                    if { $ontology == "BIRN" } {
-                        puts "sending $term for BIRN"
-                        puts $::QA(socket) "@query $term (birnlex)"
-                    } else {
-                        puts "sending $term for NN"
-                        puts $::QA(socket) "@query $term (neuronames)"                    
-                    }
-                    flush $::QA(socket)
-                    close $::QA(socket)
+    #--- start it up
+    set ::QA(ontologyHost) "localhost"
+    set ::QA(ontologyPort) 3334
+    set ::QA(ontologyViewerPID) ""
+    set ::QA(ontologyBrowserRunning) 0
+    
+    if { $term != "" } {
+        set ::QA(socket) ""
+        #--- make search reqest to birnlexviz demo if port/host are defined
+        if { [ info exists ::QA(ontologyHost) ] && [ info exists ::QA(ontologyPort) ] } {
+            set errcheck [ catch { set ::QA(socket) [ socket $::QA(ontologyHost) $::QA(ontologyPort) ] } ]
+            #--- if wer get an error, try launching the ontology browser
+            if { $errcheck != 0 } {
+                #--- launch the browser on windows or other platforms and get PID
+                set dir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/OntologyViz
+                if { $::tcl_platform(platform) == "windows" } {
+                    set ::QA(ontologyViewerPID) [ OntologyVizLaunch $dir 1 ]
+                } else {
+                    set ::QA(ontologyViewerPID) [ OntologyVizLaunch $dir 0 ]            
                 }
+                return
+            }
+
+            if  { $::QA(socket) != "" } {
+                #--- other stuff to do:
+                #puts $::QA(socket) "@listdatasets"
+                #puts $::QA(socket) "@quit"
+
+                if { $ontology == "BIRN" } {
+                    puts $::QA(socket) "@query $term (birnlex)"
+                } else {
+                    puts $::QA(socket) "@query $term (neuronames)"                    
+                }
+                flush $::QA(socket)
+                close $::QA(socket)
             }
         }
     }
