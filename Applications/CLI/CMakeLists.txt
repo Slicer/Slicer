@@ -435,10 +435,10 @@ IF (Slicer3_SOURCE_DIR)
         LabelMapSmoothing
   )
 
-  FOREACH(target ${TARGETS})
-    INSTALL(TARGETS ${target}
-      RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins
-      LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins)
-  ENDFOREACH(target)
+  INSTALL(TARGETS ${TARGETS}
+    RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins COMPONENT RuntimeLibraries)
+
+  INSTALL(FILES itkPluginFilterWatcher.h vtkPluginFilterWatcher.h itkPluginUtilities.h DESTINATION include/Slicer3 COMPONENT Development)
 
 ENDIF (Slicer3_SOURCE_DIR)

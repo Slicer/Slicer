@@ -107,4 +107,11 @@ IF(BUILD_TESTING)
   SUBDIRS(Testing)
 ENDIF(BUILD_TESTING)
 
-INSTALL_TARGETS(/lib ModuleDescriptionParser)
+INSTALL(TARGETS ModuleDescriptionParser 
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib COMPONENT Development)
+
+FILE(GLOB __files1 "${ModuleDescriptionParser_SOURCE_DIR}/*.h")
+INSTALL(FILES ${__files1} DESTINATION include/ModuleDescriptionParser COMPONENT Development)
+INSTALL(FILES ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfigure.h DESTINATION include/ModuleDescriptionParser COMPONENT Development)
