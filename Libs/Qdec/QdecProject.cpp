@@ -79,7 +79,7 @@ QdecProject::~QdecProject ( )
  * results from a prior saved work session). isDataDir should be a
  * directory where we can expand the .qdec file (like /tmp).
  * @return int
- * @param  ifnProject string with path to .qdec file, spaces and special chars escaped.
+ * @param  ifnProject string with path to .qdec file
  * @param  isDataDir
  */
 int QdecProject::LoadProjectFile ( const char* ifnProject,
@@ -122,27 +122,18 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
     }
   fprintf(fp, "LoadProjectFile: string without quotes = %s\n", fnProject.c_str());
   
-  // keep the original string with the escaped characters for use with system commands
+  // escape spaces for use with system commands
   string escfnProject = fnProject;
-  
-  // remove the escape characters for use internally, but don't remove double
-  // slashes, as they may be escaping windows directory separators
-  std::string::size_type ptr, doubleptr;
-  ptr = fnProject.find("\\");
-  while (ptr != std::string::npos)
+#ifndef _WIN32
+  string::size_type nSpace = escfnProject.find(' ');
+  while (nSpace != string::npos)
     {
-    doubleptr = fnProject.find("\\\\", ptr);
-    if (ptr != doubleptr)
-      {
-      fnProject.erase(ptr, 1);
-      ptr = fnProject.find("\\", ptr);
-      }
-    else
-      {
-      ptr = fnProject.find("\\", ptr+1);
-      }
+    escfnProject.insert(nSpace, "\\");
+    fprintf(fp, "\tstring in process of escaping spaces = '%s'\n", escfnProject.c_str());
+    nSpace = escfnProject.find(' ', nSpace+2);
     }
-  fprintf(fp, "LoadProjectFile: unescaped project file name = %s\n", fnProject.c_str());
+  fprintf(fp, "LoadProjectFile: string with escaped spaces = '%s'\n", escfnProject.c_str());
+#endif
   
   // Find the base name of the project file.
   string escfnProjectBase( ifnProject );
@@ -158,10 +149,10 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
     }
   // Make a target dir for the expanded file in the data dir, with a
   // directory name of the project file.
-   string fnExpandedProjectBase = fnProjectBase + ".working";
+   string fnExpandedProjectBase = "qdec_project_archive";
    string fnExpandedProjectDir = string(ifnDataDir) + sepString + 
      fnExpandedProjectBase;
-   string escExpandedProjectBase = escfnProjectBase + ".working";
+   string escExpandedProjectBase = "qdec_project_archive";
    string escExpandedProjectDir = string(ifnDataDir) + sepString + escExpandedProjectBase;
 
    fprintf(fp, "fnProjectBase = %s, fnExpandedProjectBase = %s, fnExpandedProjectDir = %s\nescfnProjectBase = %s, escExpandedProjectBase = %s, escExpandedProjectDir = %s\n",
