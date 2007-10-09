@@ -9,7 +9,7 @@ class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerNodeSelectorVolumeRenderingWidge
 {
 public:
   static vtkSlicerNodeSelectorVolumeRenderingWidget* New();
-  vtkTypeMacro(vtkSlicerNodeSelectorVolumeRenderingWidget,vtkSlicerNodeSelectorWidget);
+  //vtkTypeMacro(vtkSlicerNodeSelectorVolumeRenderingWidget,vtkSlicerNodeSelectorWidget);
   void PrintSelf(ostream& os, vtkIndent indent){}
     //BTX
     void SetCondition(std::string con,bool modeCon)

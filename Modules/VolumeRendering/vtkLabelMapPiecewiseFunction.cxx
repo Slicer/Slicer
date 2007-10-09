@@ -88,7 +88,7 @@ void vtkLabelMapPiecewiseFunction::Init(vtkMRMLScalarVolumeNode *node,double opa
         this->AddPoint(i-.49,opacity);
         this->AddPoint(i+.5,0);
         this->AddPoint(i+.49,opacity);
-        this->Opacities[index++];
+        this->Opacities[index++]=opacity;
 
     }
 

@@ -189,6 +189,17 @@ vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataSlicer;
   vtkVolume *volume;
   vtkAbstractVolumeMapper *mapper;
   vtkMatrix4x4 *matrix;
+
+  //Callbacks
+  void SetInVolumeRenderingCallbackFlag (int flag) {
+    this->InVolumeRenderingCallbackFlag = flag;
+    }
+  vtkGetMacro(InVolumeRenderingCallbackFlag, int);
+  vtkCallbackCommand* VolumeRenderingCallbackCommand;
+  int InVolumeRenderingCallbackFlag;
+  static void VolumeRenderingCallback( vtkObject *__caller,
+                           unsigned long eid, void *__clientData, void *callData );
+   void ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData);
 };
 
 #endif
