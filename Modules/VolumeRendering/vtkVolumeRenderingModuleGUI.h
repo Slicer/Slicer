@@ -177,9 +177,6 @@ vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataSlicer;
 
   //Frame Details
   vtkSlicerVolumePropertyWidget *SVP_VolumeProperty;
-  vtkKWHistogram *HIST_Opacity;
-  vtkKWHistogram *HIST_Gradient;
-
 
   //Other members
   vtkMRMLVolumeRenderingNode  *currentNode;
@@ -189,6 +186,7 @@ vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataSlicer;
   vtkVolume *volume;
   vtkAbstractVolumeMapper *mapper;
   vtkMatrix4x4 *matrix;
+  vtkKWHistogramSet *Histograms;
 
   //Callbacks
   void SetInVolumeRenderingCallbackFlag (int flag) {
