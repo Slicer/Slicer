@@ -340,8 +340,12 @@ void vtkQdecModuleGUI::RemoveGUIObservers ( )
 }
 
 //---------------------------------------------------------------------------
-void vtkQdecModuleGUI::RemoveMRMLNodeObservers ( ) {
-    // Fill in.
+void vtkQdecModuleGUI::RemoveMRMLNodeObservers ( )
+{
+   if ( this->GetApplicationGUI() &&  this->GetApplicationGUI()->GetMRMLScene())
+    {
+    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -824,7 +828,20 @@ void vtkQdecModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
                                             void *callData ) 
 {
   // if parameter node has been changed externally, update GUI widgets with new values
-
+  if (event == vtkMRMLScene::SceneCloseEvent)
+    {
+    vtkWarningMacro("Got a scene close event in QdecModuleGUI");
+    this->Script("vtkFreeSurferReadersGDFPlotCBCloseAllWindows");
+    // clear out the gui
+    this->MultiColumnList->GetWidget()->DeleteAllRows();
+    this->MultiColumnList->GetWidget()->DeleteAllColumns();
+    this->DiscreteFactorsListBox->GetWidget()->GetWidget()->DeleteAll();
+    this->ContinuousFactorsListBox->GetWidget()->GetWidget()->DeleteAll();
+    this->QuestionLabel->SetText("Question: ");
+    this->QuestionMenu->GetMenu()->DeleteAllItems();
+    this->QuestionMenu->GetMenu()->AddRadioButton( "None" );
+    this->QuestionMenu->SetValue( "None" );
+    }
 }
 
 
@@ -1127,6 +1144,11 @@ void vtkQdecModuleGUI::BuildGUI ( )
         }
     }
 
+  // watch for a scene closing event so that the gui gets cleared out
+  if ( this->GetApplicationGUI() &&  this->GetApplicationGUI()->GetMRMLScene())
+    {
+    this->GetApplicationGUI()->GetMRMLScene()->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
+    }
   this->Built = true;
 }
 
