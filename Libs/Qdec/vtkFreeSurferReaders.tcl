@@ -1461,7 +1461,26 @@ proc vtkFreeSurferReadersGDFPlotGetClassIndexFromLabel { iID iLabel } {
 #-------------------------------------------------------------------------------
 proc vtkFreeSurferReadersGDFPlotCBCloseWindow { iID } {
     global vtkFreeSurferReaders
+
+    destroy .fsgdf-$iID
+
     set vtkFreeSurferReaders(gWidgets,$iID,bWindowBuilt) 0
+}
+
+proc vtkFreeSurferReadersGDFPlotCBCloseAllWindows {} {
+    # find top level .fsgdf-* windows numbered 0-99 and destroy them
+    set windowList [info commands {.fsgdf-[0-9]}]
+    lappend windowList [info commands {.fsgdf-[0-9][0-9]}]
+    foreach w $windowList {
+        puts "Destroying $w"
+        destroy $w
+        # get the id
+        set retval [regexp {.fsgdf-([0-9]+)} $w matchVar id]
+        if {$retval == 1} {
+            puts "Setting windowbuilt flag to 0 for id = $id"
+            set vtkFreeSurferReaders(gWidgets,$id,bWindowBuilt) 0
+        }
+    }
 }
 
 #-------------------------------------------------------------------------------
