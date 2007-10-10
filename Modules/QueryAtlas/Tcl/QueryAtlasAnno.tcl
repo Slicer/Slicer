@@ -831,6 +831,10 @@ proc QueryAtlasCreatePicker { } {
         if { ![info exists ::QA(windowToImage)] } {
             set ::QA(windowToImage) [vtkWindowToImageFilter New]
         }
+
+        #--- clean up 
+        QueryAtlasRemoveInteractorObservers
+        #--- and start fresh.
         QueryAtlasAddInteractorObservers
 
         #--- progress feedback
