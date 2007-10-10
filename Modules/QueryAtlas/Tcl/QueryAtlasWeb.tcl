@@ -45,7 +45,6 @@ proc QueryAtlasWriteFirefoxBookmarkFile {bmfile } {
     for { set i 0 } { $i < $num } { incr i } {
         set link [ $rl GetCellText $i 1 ]
         set line "        <DT><A HREF=\"$link\" > Slicer3:QueryAtlas link $i </A>"
-        puts "adding $line"
         puts $fp $line
     }
 
@@ -91,7 +90,6 @@ proc QueryAtlasLoadFirefoxBookmarkFile {bmfile } {
 proc QueryAtlasOpenLinkFromList { lw } {
 
     set url [ $lw GetSelection ]
-    puts "$url"
     set browser [ $::slicer3::Application GetWebBrowser ]
     exec $browser -new-tab $url &    
     
@@ -128,7 +126,6 @@ proc QueryAtlasOpenLink { url } {
                 return
             } else {
                 #--- For Windows or Linux builds:
-                puts "opening $url"
                 exec $browser -new-tab $url &
             }
         }
@@ -168,7 +165,6 @@ proc QueryAtlasAddToSavedTerms {} {
 #    $::slicer3::ApplicationGUI SelectModule QueryAtlas
     set mcl [[[$::slicer3::QueryAtlasGUI GetSavedTerms] GetMultiColumnList] GetWidget]
 
-    puts "prefiltered terms are $::QA(lastLabels)"
     #--- filter terms for friendlier viewing
     set terms [ QueryAtlasFilterLocalTerms $::QA(lastLabels) ]
     
@@ -304,9 +300,7 @@ proc QueryAtlasContextQuery { site terms } {
 #        set terms $::QA(lastLabels)
 #    }
 
-    puts "terms coming in: $terms"
     set terms [ QueryAtlasEncodeTerms $terms ]
-    puts "encoded: $terms"
     
     switch $site {
         "google" {
@@ -344,7 +338,6 @@ proc QueryAtlasContextQuery { site terms } {
             QueryAtlasOpenLink $url
         }
         "ibvd: howbig?" {
-            puts "$::QA(lastLabels)"
             if { $::QA(annotationTermSet) == "BIRNLex" } {
                 set terms [ QueryAtlasMapTerm $::QA(lastLabels) "BIRN_String" "IBVD" ]
             } elseif { $::QA(annotationTermSet) == "NeuroNames" } {
@@ -358,14 +351,11 @@ proc QueryAtlasContextQuery { site terms } {
             } else {
                 set terms ""
             }
-            puts "$::QA(lastLabels)"
-            puts "$terms"
             #--- set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms&diagnosis=$dterms
             set url http://www.cma.mgh.harvard.edu/ibvd/how_big.php?structure=$terms
             QueryAtlasOpenLink $url
         }
     }
-    puts "url=$url"
 }
 
 
@@ -589,7 +579,6 @@ proc QueryAtlasFormURLForGoogle { } {
     set terms [ string trimright $terms "+" ]
 
     set terms [ QueryAtlasEncodeTerms $terms ]
-    puts "terms = $terms"
 
     set ::QA(url,Google) ""
     #--- now terms contains all categories user chose
@@ -598,7 +587,6 @@ proc QueryAtlasFormURLForGoogle { } {
         append url $terms
         append url "&btnG=Google+Search"
         set ::QA(url,Google) $url
-        puts "url = $url"
     }
 }
 
@@ -1000,7 +988,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if {$::QA(url,PubMed) == "" } {
             QueryAtlasEmptyURLMessage "PubMed"
         } else {
-            puts "$::QA(url,PubMed)"
+            #puts "$::QA(url,PubMed)"
         }
     }
 
@@ -1010,7 +998,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if { $::QA(url,PubMedCentral) == "" } {
             QueryAtlasEmptyURLMessage "PubMedCentral"
         } else {
-            puts "$::QA(url,PubMedCentral)"
+            #puts "$::QA(url,PubMedCentral)"
         }
     }
          
@@ -1020,7 +1008,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if {$::QA(url,PLoSone) == "" } {
             QueryAtlasEmptyURLMessage "PLoSone"
         } else {
-            puts "$::QA(url,PLoSone)"
+            #puts "$::QA(url,PLoSone)"
         }
     }
 
@@ -1031,7 +1019,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if {$::QA(url,PLoSbiology) == "" } {
             QueryAtlasEmptyURLMessage "PLoSbiology"
         } else {
-            puts "$::QA(url,PLoSbiology)"
+            #puts "$::QA(url,PLoSbiology)"
         }
     }
     if { ($target == "PLoSgenetics") || ($target == "all") } {
@@ -1039,7 +1027,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if {$::QA(url,PLoSgenetics) == "" } {
             QueryAtlasEmptyURLMessage "PLoSgenetics"
         } else {
-            puts "$::QA(url,PLoSgenetics)"
+            #puts "$::QA(url,PLoSgenetics)"
         }
     }
     if { ($target == "PLoSmedicine") || ($target == "all") } {
@@ -1047,7 +1035,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if {$::QA(url,PLoSmedicine) == "" } {
             QueryAtlasEmptyURLMessage "PLoSmedicine"
         } else {
-            puts "$::QA(url,PLoSmedicine)"
+            #puts "$::QA(url,PLoSmedicine)"
         }
     }
     }
@@ -1058,7 +1046,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if { $::QA(url,JNeurosci) == "" } {
             QueryAtlasEmptyURLMessage "Journal of Neuroscience"
         } else {
-            puts "$::QA(url,JNeurosci)"
+            #puts "$::QA(url,JNeurosci)"
         }
     }
     
@@ -1068,7 +1056,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if { $::QA(url,Metasearch) == "" } {
             QueryAtlasEmptyURLMessage "Metasearch"
         } else {
-            puts "$::QA(url,Metasearch)"
+            #puts "$::QA(url,Metasearch)"
         }
     }
     #--- IBVD
@@ -1077,7 +1065,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if { $::QA(url,IBVD) == "" } {
             QueryAtlasEmptyURLMessage "IBVD"
         } else {
-            puts "$::QA(url,IBVD)"
+            #puts "$::QA(url,IBVD)"
         }
     }
     #--- BrainInfo
@@ -1086,7 +1074,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if { $::QA(url,BrainInfo) == "" } {
             QueryAtlasEmptyURLMessage "BrainInfo"
         } else {
-            puts "$::QA(url,BrainInfo)"
+            #puts "$::QA(url,BrainInfo)"
         }
     }
     #--- GOOGLE
@@ -1095,7 +1083,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if { $::QA(url,Google) == "" } {
             QueryAtlasEmptyURLMessage "Google"
         } else {
-            puts "$::QA(url,Google)"
+            #puts "$::QA(url,Google)"
         }
     }
     #--- WIKIPEDIA
@@ -1104,7 +1092,7 @@ proc QueryAtlasFormURLsForTargets { } {
         if { $::QA(url,Wikipedia) == "" } {
             QueryAtlasEmptyURLMessage "Wikipedia"
         } else {
-            puts "$::QA(url,Wikipedia)"
+            #puts "$::QA(url,Wikipedia)"
         }
     }
     QueryAtlasPopulateSearchResultsBox
@@ -1218,7 +1206,6 @@ proc QueryAtlasMakeEntrezCountQuery { url } {
 
     package require http
 
-    puts "making count query........."
      set ::QA(entrezCountFileName) "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/tmp/QA.counts"
     set ::QA(entrezCountFile) [ open $::QA(entrezCountFileName) w+ ]
     set token [ ::http::geturl $url -channel $::QA(entrezCountFile) ]
@@ -1280,7 +1267,6 @@ proc QueryAtlasParseAllEntrezCounts {} {
                     incr i
 
                     set db [QueryAtlasExtractContentWithTcl "<DbName>" "</DbName>" ]
-                    puts ".......getting counts for $db"
                     set fname [ QueryAtlasExtractContentWithTcl "<MenuName>" "</MenuName>"]
                     set count [ QueryAtlasExtractContentWithTcl "<Count>" "</Count>" ]
                     set status [ QueryAtlasExtractContentWithTcl "<Status>" "</Status>" ]

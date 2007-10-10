@@ -63,6 +63,8 @@ proc QueryAtlasFilterLocalTerms { terms } {
     regsub -all "ctx" $terms "cortex" terms
     regsub -all "rh" $terms "right+hemisphere" terms
     regsub -all "lh" $terms "left+hemisphere" terms
+    set terms [ string trimright $terms "+" ]
+    set terms [ string trimleft $terms "+" ]
     return $terms
 
 }
@@ -207,7 +209,6 @@ proc QueryAtlasGetBrainInfoURI { term } {
     }
 
     set NNID [ QueryAtlasMapTerm $term "FreeSurfer" "NN_ID" ]
-    puts "NNID = $NNID"
 
     #--- FIND the columns in the controlled vocabulary
     #--- that map to target and source TermSets
