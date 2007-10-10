@@ -920,7 +920,7 @@ void vtkQdecModuleGUI::BuildGUI ( )
   this->LoadResultsButton->SetLabelText ("Load Results Data File:");
   this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open QDEC file");
   this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
-  this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {All} {.*} } { {Data} {.qdec} }");
+  this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {Data} {.qdec} } { {All} {.*} }");
   app->Script("pack %s -side top -anchor nw -padx 2 -pady 4", 
               this->LoadResultsButton->GetWidgetName());
 
