@@ -93,7 +93,7 @@ if { [itcl::find class Loader] == "" } {
 
   itcl::class Loader {
 
-    constructor  { {root ""} } {
+    constructor  { } {
     }
 
     destructor {
@@ -101,7 +101,6 @@ if { [itcl::find class Loader] == "" } {
     }
 
     # configure options
-    public variable root ""  ;# the root to scan from
     public variable recurse 1  ;# recurse into directories when adding 
     public variable filter "*"  ;# filter for which files to chose when adding directory
 
@@ -123,6 +122,7 @@ if { [itcl::find class Loader] == "" } {
     method add {paths} {}
     method addRow { path type } {}
     method processEvent {{caller ""} {event ""}} {}
+    method setAll { field value } {}
     method apply {} {}
     method errorDialog {errorText} {}
     method status {message} {}
@@ -152,9 +152,7 @@ if { [itcl::find class Loader] == "" } {
 # ------------------------------------------------------------------
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
-itcl::body Loader::constructor { {root ""} } {
-
-  $this configure -root ""
+itcl::body Loader::constructor { } {
 
   #
   # make the toplevel 
@@ -169,24 +167,34 @@ itcl::body Loader::constructor { {root ""} } {
     WM_DELETE_WINDOW "itcl::delete object $this"
 
   #
-  # actions menu
+  # actions buttons
   #
-  set o(actions) [vtkNew vtkKWMenuButtonWithLabel]
-  $o(actions) SetParent $o(toplevel)
-  $o(actions) Create
-  $o(actions) SetLabelText "Actions: "
-  set m [[$o(actions) GetWidget] GetMenu]
-  $m AddCommand "Clear Data"
-  $m AddCommand "Select All"
-  $m AddCommand "Select None"
-  $m AddCommand "Centered All"
-  $m AddCommand "Centered None"
-  $m AddCommand "Label All"
-  $m AddCommand "Label None"
-  pack [$o(actions) GetWidgetName] -side top -anchor e -padx 2 -pady 2 -expand false -fill none
-  set tag [$m AddObserver AnyEvent "$this processEvent $o(actions)"]
-  lappend _observerRecords [list $m $tag]
-  #$o(addFile) SetCommand $o(addFile) Modified
+  set o(actionFrame) [vtkNew vtkKWFrame]
+  $o(actionFrame) SetParent $o(toplevel)
+  $o(actionFrame) Create
+  pack [$o(actionFrame) GetWidgetName] -side top -anchor nw -fill x
+
+  set actions { 
+    "Clear Entries"
+    "Select All" "Select None"
+    "Label All" "Label None"
+    "Centered All" "Centered None"
+  }
+  set widgets ""
+  foreach a $actions {
+    set aa [string tolower [string index $a 0]]
+    regsub -all " " $a "" nospace
+    set aa $aa[string range $nospace 1 end]
+    set o($aa) [vtkNew vtkKWPushButton]
+    $o($aa) SetParent $o(actionFrame)
+    $o($aa) Create
+    $o($aa) SetText $a
+    set tag [$o($aa) AddObserver ModifiedEvent "$this processEvent $o($aa)"]
+    lappend _observerRecords [list $o($aa) $tag]
+    $o($aa) SetCommand $o($aa) Modified
+    lappend widgets [$o($aa) GetWidgetName]
+  }
+  eval pack $widgets -side left 
 
   #
   # the listbox of data to load
@@ -311,11 +319,9 @@ itcl::body Loader::destructor {} {
 }
 
 
-itcl::configbody Loader::root {
-}
-
 # remove entries from the list box
 itcl::body Loader::clear { } {
+  [$o(list) GetWidget] DeleteAllRows
 }
 
 itcl::body Loader::addRow { path type } {
@@ -549,7 +555,51 @@ itcl::body Loader::processEvent { {caller ""} {event ""} } {
     return
   }
   
+  if { $caller == $o(clearEntries) } {
+    $this clear
+    return
+  }
+
+  if { $caller == $o(selectAll) } {
+    $this setAll Select 1
+    return
+  }
+
+  if { $caller == $o(selectNone) } {
+    $this setAll Select 0
+    return
+  }
+
+  if { $caller == $o(centeredAll) } {
+    $this setAll Centered 1
+    return
+  }
+
+  if { $caller == $o(centeredNone) } {
+    $this setAll Centered 0
+    return
+  }
+
+  if { $caller == $o(labelAll) } {
+    $this setAll LabelMap 1
+    return
+  }
+
+  if { $caller == $o(labelNone) } {
+    $this setAll LabelMap 0
+    return
+  }
+
   puts "unknown event from $caller"
+}
+
+itcl::body Loader::setAll { field value } {
+  set w [$o(list) GetWidget] 
+  set rows [$w GetNumberOfRows]
+  for {set row 0} {$row < $rows} {incr row} {
+    $w SetCellTextAsInt $row $col($field) $value
+    $w SetCellWindowCommandToCheckButton $row $col($field)
+  }
 }
 
 itcl::body Loader::errorDialog { errorText } {
