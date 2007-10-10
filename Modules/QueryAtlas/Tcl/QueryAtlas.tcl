@@ -1019,14 +1019,6 @@ proc QueryAtlasRemoveInteractorObservers { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasRenderView {} {
 
-    #--- first make sure the interaction event that brought
-    #--- us here was not the context menu.
-    #--- (That doesn't require a re-render)
-    if { ![info exists ::QA(menuUp)] } {
-        set ::QA(menuUp) 0
-    }
-
-    if { $::QA(menuUp) == 0 } {
         set ::QA(lastLabels) "calculating..."
         QueryAtlasUpdateCursor
 
@@ -1088,7 +1080,6 @@ proc QueryAtlasRenderView {} {
             viewer SetColorLevel 100
             viewer Render
         }
-    }
 }
 
 #####################################
@@ -1693,9 +1684,6 @@ proc QueryAtlasCursorVisibility { onoff } {
 
 
 
-    if { ! [ info exists ::QA(menuUp) ] } {
-        set ::QA(menuUp) 0
-    }
     if { $onoff == "on" } {
         #--- allows a master "switch" to turn off annotations
         #--- by default, they are on.
@@ -1714,13 +1702,8 @@ proc QueryAtlasCursorVisibility { onoff } {
         }
     }
 
-    #--- first make sure the interaction event that brought
-    #--- us here was not the context menu.
-    #--- (That doesn't require a re-render)
-    if { $::QA(menuUp) == 0 } {
-        set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
-        $viewer RequestRender
-    }
+    set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
+    $viewer RequestRender
 }
 
 
