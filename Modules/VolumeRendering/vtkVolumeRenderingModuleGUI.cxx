@@ -19,6 +19,7 @@
 #include "vtkLabelMapColorTransferFunction.h"
 #include "vtkKWProgressGauge.h"
 #include "vtkKWHistogramSet.h"
+#include "vtkKWTkUtilities.h"
 
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
@@ -28,6 +29,7 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
     this->VolumeRenderingCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
     this->VolumeRenderingCallbackCommand->SetCallback(vtkVolumeRenderingModuleGUI::VolumeRenderingCallback);
 
+    this->Utilities=vtkKWTkUtilities::New();
     //In Debug Mode
     this->DebugOff();
     this->presets=NULL;
@@ -157,6 +159,12 @@ vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
     {
         this->VolumeRenderingCallbackCommand->Delete();
         this->VolumeRenderingCallbackCommand=NULL;
+    }
+
+    if(this->Utilities)
+    {
+        this->Utilities->Delete();
+        this->Utilities=NULL;
     }
     this->SetViewerWidget(NULL);
     this->SetInteractorStyle(NULL);
@@ -391,8 +399,7 @@ void vtkVolumeRenderingModuleGUI::AddGUIObservers(void)
     this->PB_Testing->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand );
     this->PB_CreateNewVolumeRenderingNode->AddObserver(vtkKWPushButton::InvokedEvent,(vtkCommand*)this->GUICallbackCommand);
 
-    //TODO is this the right place for this
-    //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->CheckAbort);
+   
 }
 void vtkVolumeRenderingModuleGUI::RemoveGUIObservers(void)
 {
@@ -831,14 +838,15 @@ void vtkVolumeRenderingModuleGUI::Rendering()
     if(this->currentNode->GetMapper()==vtkMRMLVolumeRenderingNode::Texture)
     {
         this->mapper=vtkVolumeTextureMapper3D::New();
-        vtkVolumeTextureMapper3D::SafeDownCast(this->mapper)->SetSampleDistance(2);
+        vtkVolumeTextureMapper3D::SafeDownCast(this->mapper)->SetSampleDistance(.1);
         this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
         this->volume->SetMapper(mapper);
     }
     this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-
+    //TODO This is not the right place for this
+   this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     this->volume->SetProperty(this->currentNode->GetVolumeProperty());
     this->matrix=vtkMatrix4x4::New();
     vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetIJKToRASMatrix(matrix);
@@ -848,7 +856,6 @@ void vtkVolumeRenderingModuleGUI::Rendering()
     renderWidget->Render();
     //Deletes in destructor!
 }
-
 void vtkVolumeRenderingModuleGUI::UpdateRendering()
 {
     //first check if REndering was already called
@@ -872,6 +879,12 @@ void vtkVolumeRenderingModuleGUI::CheckAbort ()
     if(pending!=0)
     {
         this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+        return;
+    }
+    int pendingGUI=this->CheckForPendingEvents();
+    if(pendingGUI!=0)
+    {
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
     }
 }
 
@@ -882,7 +895,12 @@ void vtkVolumeRenderingModuleGUI::ShutdownPipeline()
     this->mapper->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->mapper->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->mapper->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-
+    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+    if(this->Utilities)
+    {
+        this->Utilities->Delete();
+        this->Utilities==NULL;
+    }
     //Remove Volume
     if(this->volume!=NULL)
     {
@@ -972,6 +990,15 @@ void vtkVolumeRenderingModuleGUI::VolumeRenderingCallback( vtkObject *caller, un
 
 void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData){
 
+    //TODO not the right place for this
+    vtkRenderWindow *callerRen=vtkRenderWindow::SafeDownCast(caller);
+    if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::AbortCheckEvent)
+    {
+        this->CheckAbort();
+        return;
+
+
+    }
     //Check if caller equals mapper
     vtkAbstractMapper *callerMapper=vtkAbstractMapper::SafeDownCast(caller);
     if(callerMapper!=this->mapper)
@@ -992,5 +1019,18 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
         this->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100**progress);
     }
 }
+int vtkVolumeRenderingModuleGUI_EventDeleteProc (Tcl_Event *evPtr, ClientData clientData)
+{
+  vtkVolumeRenderingModuleGUI *self = (  vtkVolumeRenderingModuleGUI *) (clientData);
+  self->SetEventsPending(1);
+  return 0;
+}
 
+//----------------------------------------------------------------------------
+int vtkVolumeRenderingModuleGUI::CheckForPendingEvents()
+{
+  this->SetEventsPending(0);
+  Tcl_DeleteEvents(vtkVolumeRenderingModuleGUI_EventDeleteProc, static_cast<ClientData> (this));
+  return (this->GetEventsPending());
+} 
 

@@ -25,6 +25,7 @@
 #include "vtkKWLabel.h"
 #include "vtkKWHistogram.h"
 #include "vtkKWEntryWithLabel.h"
+#include "vtkKWTkUtilities.h"
 #include <string>
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI
@@ -112,6 +113,9 @@ vtkSetMacro(VolumeSelected,int);
     vtkGetMacro(VolumeRenderingNodeSelected,int);
     vtkBooleanMacro(VolumeRenderingNodeSelected,int);
 
+      vtkGetMacro(EventsPending, int);
+  vtkSetMacro(EventsPending, int);
+
 
    
 
@@ -188,6 +192,9 @@ vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataSlicer;
   vtkMatrix4x4 *matrix;
   vtkKWHistogramSet *Histograms;
 
+  //
+  vtkKWTkUtilities *Utilities;
+
   //Callbacks
   void SetInVolumeRenderingCallbackFlag (int flag) {
     this->InVolumeRenderingCallbackFlag = flag;
@@ -198,6 +205,15 @@ vtkSlicerNodeSelectorVolumeRenderingWidget *NS_VolumeRenderingDataSlicer;
   static void VolumeRenderingCallback( vtkObject *__caller,
                            unsigned long eid, void *__clientData, void *callData );
    void ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData);
+
+
+    // Description:
+  // 1 if the tcl event queue has pending events (call CheckForPendingEvents 
+  // and then look at the value of EventsPending)
+  int CheckForPendingEvents();
+
+
+  int EventsPending;
 };
 
 #endif
