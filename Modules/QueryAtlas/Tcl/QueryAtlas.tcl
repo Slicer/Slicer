@@ -1019,8 +1019,6 @@ proc QueryAtlasRemoveInteractorObservers { } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasRenderView {} {
 
-        set ::QA(lastLabels) "calculating..."
-        QueryAtlasUpdateCursor
 
         #
         # get the renderer related instances
@@ -1156,7 +1154,6 @@ proc QueryAtlasRestoreRenderState {renderer renderState} {
       set mid [ lindex $::QA(annoModelNodeIDs) $m ]
       $::QA(actor_$mid) SetVisibility 0
   }
-
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -1412,6 +1409,8 @@ proc QueryAtlasPickCallback {} {
     set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
     set windowsize [string trim [$renderWindow GetSize]]
     if { $windowsize != $imageSize } {
+        #--- for refreshing the label since RenderView may
+        #--- post a 'calculating...' message
         QueryAtlasRenderView
     }
 
@@ -1776,10 +1775,10 @@ proc QueryAtlasMenuCreate { state } {
         #
         switch $state {
             "start" {
-                set ::QA(menuUp) 1
                 set ::QA(menu,startPosition) $position
             }
             "end" {
+
                 if { $::QA(menu,startPosition) == $position } {
 
                     set ::QA(menuRAS) $::QA(CurrentRASPoint)
@@ -1852,7 +1851,6 @@ proc QueryAtlasMenuCreate { state } {
                     
                     foreach {x y} $::QA(lastRootXY) {}
                     $qaMenu post $x $y
-                    set ::QA(menuUp) 0
                 }
             }
         }
