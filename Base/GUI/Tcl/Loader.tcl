@@ -394,7 +394,7 @@ itcl::body Loader::add { paths } {
           after 50 update
         }
         catch "close $fp"
-        $this add $tmp
+        $this add [list $tmp]
         lappend _cleanupDirs $tmp
         cd $cwd
       } else {
@@ -410,7 +410,7 @@ itcl::body Loader::add { paths } {
           # TODO: let user pick the destination to save the unzipped data
           set fd [::vfs::zip::Mount $path /zipfile]
           file copy -force /zipfile $tmp
-          $this add $tmp
+          $this add [list $tmp]
           ::vfs::zip::Unmount $fd /zipfile
           lappend _cleanupDirs $tmp
         }
@@ -590,7 +590,7 @@ itcl::body Loader::processEvent { {caller ""} {event ""} } {
     return
   }
 
-  puts "unknown event from $caller"
+  puts "$this: unknown event from $caller"
 }
 
 itcl::body Loader::setAll { field value } {
