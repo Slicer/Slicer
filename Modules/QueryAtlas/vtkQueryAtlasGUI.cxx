@@ -1941,6 +1941,7 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
     this->SceneClosing = true;
     // clean up and reset globals.
     this->Script ("QueryAtlasTearDown" );
+    this->ClearOntologyGUI();
     this->Script("QueryAtlasInitializeGlobals");
     // empty menus.
     this->QdecScalarSelector->GetWidget()->GetMenu()->DeleteAllItems();
@@ -2327,6 +2328,22 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
     l->Delete();
     vl->Delete();
     annotationFrame->Delete();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::ClearOntologyGUI ( )
+{
+  this->LocalSearchTermEntry->SetValue ( "" );
+  this->SynonymsMenuButton->GetMenu()->DeleteAllItems();
+  this->SynonymsMenuButton->SetValue ( "" );
+  this->BIRNLexEntry->SetValue ( "" );
+  this->BIRNLexIDEntry->SetValue ( "" );
+  this->NeuroNamesEntry->SetValue ( "" );
+  this->NeuroNamesIDEntry->SetValue ( "" );
+  this->UMLSCNEntry->SetValue ( "" );
+  this->UMLSCIDEntry->SetValue ( "" );
+  this->SavedTerms->GetMultiColumnList()->GetWidget()->DeleteAllRows();
 }
 
 

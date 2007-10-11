@@ -181,6 +181,10 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void BuildSearchTermGUI ( );
     virtual void BuildQueriesGUI ( );
     virtual void BuildDisplayAndNavigationGUI ( );
+
+    // Description:
+    // Clear all the widgets    
+    virtual void ClearOntologyGUI ( );
     
     // Description:
     // Helper methods for building the complicated GUI
