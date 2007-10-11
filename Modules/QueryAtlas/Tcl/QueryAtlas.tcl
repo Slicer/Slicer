@@ -1612,6 +1612,7 @@ proc QueryAtlasUpdateCursor {} {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasSetQueryModelVisibility { mid visibility } {
     set ::QA(actor_$mid,visibility) $visibility
+    QueryAtlasRenderView
 }
 
 
