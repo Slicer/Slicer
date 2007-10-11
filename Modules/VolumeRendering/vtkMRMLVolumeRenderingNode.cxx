@@ -79,7 +79,7 @@ void vtkMRMLVolumeRenderingNode::WriteXML(ostream& of, int nIndent)
     if(this->GetIsLabelMap())
     {
         vtkLabelMapPiecewiseFunction *opacity=vtkLabelMapPiecewiseFunction::SafeDownCast(this->VolumeProperty->GetScalarOpacity());
-        of<<"opacityLabelMap=\""<<opacity->GetSaveString()<< "\"";
+        of<<" opacityLabelMap=\""<<opacity->GetSaveString()<< "\"";
 
     }
     else
@@ -331,11 +331,10 @@ std::string vtkMRMLVolumeRenderingNode::getPiecewiseFunctionString(vtkPiecewiseF
     double *data=function->GetDataPointer();
     double *it=data;
     //write header
-    resultStream<<"vtkPiecewiseFunction#";
     resultStream<<arraysize;
     for (int i=0;i<arraysize;i++)
     {
-        resultStream<<"#";
+        resultStream<<" ";
         resultStream<<*it;
         it++;
 
@@ -352,84 +351,56 @@ std::string  vtkMRMLVolumeRenderingNode::getColorTransferFunctionString(vtkColor
     double *data=function->GetDataPointer();
     double *it=data;
     //write header
-    resultStream<<"vtkColorTransferFunction#"<<arraysize;
+    resultStream<<arraysize;
     for (int i=0;i<arraysize;i++)
     {
-        resultStream<<"#";
+        resultStream<<" ";
         resultStream<<*it;
         it++;
 
     }
      return resultStream.str();
 }
-void vtkMRMLVolumeRenderingNode::GetPiecewiseFunctionFromString(const char* string,vtkPiecewiseFunction* result)
+void vtkMRMLVolumeRenderingNode::GetPiecewiseFunctionFromString(std::string str,vtkPiecewiseFunction* result)
 {
-    
-    char *newOne=new char[strlen(string)];
-    strcpy(newOne,string);
+    std::stringstream stream;
+    stream<<str;
     int size=0;
-    std::vector<double> dataVector;
-  char * resultChar;
-  resultChar = strtok (newOne,"#");
-  if(strcmp(resultChar,"vtkPiecewiseFunction")!=0)
-  {
-    return;
-  }
-  else
-  {
-      resultChar = strtok (NULL,"#");
-  }
-  //get size
-  size=(int)(strtod(resultChar,NULL));
-  //nothing to fill
-  if (size==0)
-  {
-      return;
-  }
-  //getPoints
 
-        resultChar = strtok (NULL, "#");
-  while (resultChar != NULL)
-  {
-    dataVector.push_back(strtod(resultChar,NULL));   
-      resultChar = strtok (NULL, "#");
+    stream>>size;
 
-  }
-   result->FillFromDataPointer(size/2,&dataVector[0]);
+    if (size==0)
+    {
+        return;
+    }
+    double *data=new double[size];
+    for(int i=0;i<size;i++)
+    {
+        stream>>data[i];
+    }
+    result->FillFromDataPointer(size/2,data);
+    delete[] data;
 }
-void vtkMRMLVolumeRenderingNode::GetColorTransferFunction(const char* string, vtkColorTransferFunction* result)
+void vtkMRMLVolumeRenderingNode::GetColorTransferFunction(std::string str, vtkColorTransferFunction* result)
 {
+    std::stringstream stream;
+    stream<<str;
+    int size=0;
 
-    char *newOne=new char[strlen(string)];
-    strcpy(newOne,string);
-     int size=0;
-    std::vector<double> dataVector;
-  char * resultChar;
-  resultChar = strtok (newOne,"#");
-  if(strcmp(resultChar,"vtkColorTransferFunction")!=0)
-  {
-    return;
-  }
-  else
-  {
-      resultChar = strtok (NULL,"#");
-  }
-  //get size
-  size=(int)(strtod(resultChar,NULL));
-  //nothing to fill
-  if (size==0)
-  {
-      return;
-  }
-  //getPoints
-  resultChar = strtok (NULL, "#");
-  while (resultChar != NULL)
-  {
-      
-      dataVector.push_back(strtod(resultChar,NULL));
-      resultChar = strtok (NULL, "#");
-  }
-    result->FillFromDataPointer(size/4,&dataVector[0]);
+    stream>>size;
+
+    if (size==0)
+    {
+        return;
+    }
+    double *data=new double[size];
+    for(int i=0;i<size;i++)
+    {
+        stream>>data[i];
+    }
+    result->FillFromDataPointer(size/4,data);
+    delete[] data;
+
 }
 
 void vtkMRMLVolumeRenderingNode::SetOpacityOfLabel(int index, double opacity)

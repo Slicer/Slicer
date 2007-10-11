@@ -765,13 +765,9 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
         colorTransfer->AddRGBPoint(range[1],1,.3,.3);
         this->SVP_VolumeProperty->Update();
         //and select Node as new Node
-        this->NS_VolumeRenderingDataScene->EnabledOn();
-        this->NS_VolumeRenderingDataScene->NoneEnabledOff();
-        this->NS_VolumeRenderingDataScene->SetSelected(this->currentNode);
-        this->NS_VolumeRenderingDataScene->Modified();
-
-        this->PipelineInitializedOn();
+       
     }//else
+            this->PipelineInitializedOn();
 
 }//method
 void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
@@ -920,9 +916,7 @@ void vtkVolumeRenderingModuleGUI::ShutdownPipeline()
         this->matrix=NULL;
     }
     //Take care about GUI
-    this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetHistogram(NULL);
-    this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetHistogram(NULL);
-    this->SVP_VolumeProperty->GetGradientOpacityFunctionEditor()->SetHistogram(NULL);
+    this->Histograms->RemoveAllHistograms();
     this->SVP_VolumeProperty->SetVolumeProperty(NULL);
     this->SVP_VolumeProperty->SetDataSet(NULL);
 }

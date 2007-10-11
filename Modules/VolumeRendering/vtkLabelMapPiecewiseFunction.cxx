@@ -81,6 +81,7 @@ void vtkLabelMapPiecewiseFunction::Init(vtkMRMLScalarVolumeNode *node,double opa
     this->AdjustRange(lookup->GetTableRange());
     Opacities=new double[lookup->GetNumberOfTableValues()];
     this->ColorNode=node->GetVolumeDisplayNode()->GetColorNode();
+    this->Size=lookup->GetTableRange()[1]-lookup->GetTableRange()[0];
     int index=0;
     for (int i=(int)lookup->GetTableRange()[0];i<lookup->GetTableRange()[1];i++)
     {
@@ -116,7 +117,7 @@ std::string vtkLabelMapPiecewiseFunction::GetSaveString()
     ss<<this->Size;
     for(int i=0;i<this->Size;i++)
     {
-        ss<<" "<<this->Opacities;
+        ss<<" "<<(int)(this->Opacities[i]*100);
     }
     return ss.str();
 }
@@ -125,9 +126,11 @@ void vtkLabelMapPiecewiseFunction::FillFromString(std::string str)
     std::stringstream ss;
     ss<<str;
     ss>>this->Size;
+    int tmp=0;
     for(int i=0;i<this->Size;i++)
     {
-        ss>>this->Opacities[i];
+        ss>>tmp;
+        this->Opacities[i]=tmp*100.;
     }
 }
 void vtkLabelMapPiecewiseFunction::UpdateFromOpacities(vtkMRMLScalarVolumeNode *node)

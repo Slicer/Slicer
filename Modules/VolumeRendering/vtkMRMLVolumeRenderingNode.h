@@ -19,8 +19,8 @@ public:
     //BTX
     std::string getPiecewiseFunctionString(vtkPiecewiseFunction* function);//, char* result);
     std::string getColorTransferFunctionString(vtkColorTransferFunction* function);
-    void GetPiecewiseFunctionFromString(const char* string,vtkPiecewiseFunction* result);
-    void GetColorTransferFunction(const char* string, vtkColorTransferFunction* result);
+    void GetPiecewiseFunctionFromString(std::string str,vtkPiecewiseFunction* result);
+    void GetColorTransferFunction(std::string str, vtkColorTransferFunction* result);
     //ETX
     static vtkMRMLVolumeRenderingNode *New();
     vtkTypeMacro(vtkMRMLVolumeRenderingNode,vtkMRMLNode);
