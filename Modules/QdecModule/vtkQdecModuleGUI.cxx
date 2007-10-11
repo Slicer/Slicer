@@ -655,6 +655,8 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
               {
               vtkErrorMacro("vtkQdecModuleGUI Cannot find a color node with the name " << scalarName.c_str());
               }
+            colorNodes->RemoveAllItems();
+            colorNodes->Delete();
             }
           else
             {
