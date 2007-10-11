@@ -347,7 +347,7 @@ if {$isDarwin} {
 if {$isWindows} {
     set BuildPython NO
 } else {
-    set BuildPython YES
+    set BuildPython NO
 }
 
 # build the slicer
