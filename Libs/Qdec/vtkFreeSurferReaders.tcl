@@ -260,26 +260,37 @@ proc FreeSurferReadersFiducialsPointCreatedCallback {type fid pid} {
 # .ARGS
 # .END
 #-------------------------------------------------------------------------------
-proc vtkFreeSurferReadersGDFInit {} {
+proc vtkFreeSurferReadersGDFInit { } {
     global vtkFreeSurferReaders 
 
+    # check to see if Init was called already
+    if {[info exists vtkFreeSurferReaders(gbLibLoaded)] == 1 && $vtkFreeSurferReaders(gbLibLoaded) == 1} {
+        # clear up the windows
+        # puts "Clearing up windows, id list = $vtkFreeSurferReaders(gGDF,lID)"
+        foreach winID $vtkFreeSurferReaders(gGDF,lID) {
+            # puts "Closing window for id $winID"
+            vtkFreeSurferReadersGDFPlotCBCloseWindow $winID
+        }
+    }
     set vtkFreeSurferReaders(verbose) 0
     set vtkFreeSurferReaders(kValid,lMarkers)  {square circle diamond plus cross splus scross triangle}
     set vtkFreeSurferReaders(kValid,lColors) {red blue green yellow black purple orange pink brown}
+    # clear the list
     set vtkFreeSurferReaders(gGDF,lID) {}
+
     # should check to see here if the library is loaded
     # incorporate it into the vtkFreeSurferReaders library, then change this to 1
     set vtkFreeSurferReaders(gbLibLoaded) 0
     if {[info command vtkGDFReader] == ""} {
         # the library wasn't loaded in properly
         set vtkFreeSurferReaders(gbLibLoaded) 0
-    puts "vtkGDFReader wasn't loaded"
+        puts "vtkGDFReader wasn't loaded"
     } else {
         # declare a variable and save it
         catch "vtkFreeSurferReaders(gdfReader) Delete"
         vtkGDFReader vtkFreeSurferReaders(gdfReader)
         set vtkFreeSurferReaders(gbLibLoaded) 1
-    puts "declared a vtkGDFReader"
+        puts "Declared a vtkGDFReader"
     }
 }
 
@@ -1467,17 +1478,23 @@ proc vtkFreeSurferReadersGDFPlotCBCloseWindow { iID } {
     set vtkFreeSurferReaders(gWidgets,$iID,bWindowBuilt) 0
 }
 
+#-------------------------------------------------------------------------------
+# .PROC vtkFreeSurferReadersGDFPlotCBCloseAllWindows
+# Find top level .fsgdf-* windows numbered 0-99 and destroy them
+# TODO: check the window id list in vtkFreeSurferReaders(gGDF,lID)
+# .ARGS
+# .END
+#-------------------------------------------------------------------------------
 proc vtkFreeSurferReadersGDFPlotCBCloseAllWindows {} {
-    # find top level .fsgdf-* windows numbered 0-99 and destroy them
     set windowList [info commands {.fsgdf-[0-9]}]
     lappend windowList [info commands {.fsgdf-[0-9][0-9]}]
     foreach w $windowList {
-        puts "Destroying $w"
+        # puts "Destroying $w"
         destroy $w
         # get the id
         set retval [regexp {.fsgdf-([0-9]+)} $w matchVar id]
         if {$retval == 1} {
-            puts "Setting windowbuilt flag to 0 for id = $id"
+            # puts "Setting windowbuilt flag to 0 for id = $id"
             set vtkFreeSurferReaders(gWidgets,$id,bWindowBuilt) 0
         }
     }
@@ -1577,7 +1594,7 @@ proc vtkFreeSurferReadersGDFPlotPrint { iID } {
         return 
     }
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersGDFPlotPrint: ID $iID not found"
         return 
     }
     gdfPrintStdout $vtkFreeSurferReaders(gGDF,$iID,object)
@@ -1599,7 +1616,7 @@ proc vtkFreeSurferReadersPlotShowWindow { iID } {
         return 
     }
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotShowWindow: ID $iID not found"
         return 
     }
     if { ![info exists vtkFreeSurferReaders(gWidgets,$iID,bWindowBuilt)] ||
@@ -1623,7 +1640,7 @@ proc vtkFreeSurferReadersPlotHideWindow { iID } {
     global vtkFreeSurferReaders
     if { !$vtkFreeSurferReaders(gbLibLoaded) } { return }
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotHideWindow: ID $iID not found"
         return 
     }
     if { [info exists vtkFreeSurferReaders(gWidgets,$iID,wwTop)] } {
@@ -1649,11 +1666,11 @@ proc vtkFreeSurferReadersPlotSetVariable { iID {vID 0} } {
         return 
     }
     if {[catch {set inVariable [$vtkFreeSurferReaders(gWidgets,$iID,owVar) index select]} errmsg] == 1} {
-        puts "ID $iID not found: $errmsg"
+        puts "vtkFreeSurferReadersPlotSetVariable: ID $iID not found: $errmsg"
         return
     }
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotSetVariable: ID $iID not found"
         return 
     }
 
@@ -1679,7 +1696,7 @@ proc vtkFreeSurferReadersPlotSetMode { iID } {
     }
     set iMode  [$vtkFreeSurferReaders(gWidgets,$iID,owMode) get select]
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotSetMode: ID $iID not found"
         return 
     }
     if { $iMode != "subject" && $iMode != "class" } { 
@@ -1709,7 +1726,7 @@ proc vtkFreeSurferReadersPlotSetNthClassMarker { iID inClass } {
 
     set iMarker [$vtkFreeSurferReaders(gWidgets,$iID,fwClassConfig).owMarker$inClass get select]
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotSetNthClassMarker: ID $iID not found"
         return 
     }
     if { $inClass < 0 || $inClass >= $vtkFreeSurferReaders(gGDF,$iID,cClasses) } { 
@@ -1742,7 +1759,7 @@ proc vtkFreeSurferReadersPlotSetNthClassColor { iID inClass } {
 
     set iColor [$vtkFreeSurferReaders(gWidgets,$iID,fwClassConfig).owColor$inClass get select]
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotSetNthClassColor: ID $iID not found"
         return 
     }
     if { $inClass < 0 || $inClass >= $vtkFreeSurferReaders(gGDF,$iID,cClasses) } { 
@@ -1775,7 +1792,7 @@ proc vtkFreeSurferReadersPlotSetPoint { iID iX iY iZ } {
         return 
     }
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotSetPoint: ID $iID not found"
         return 
     }
     vtkFreeSurferReadersPlotBeginPointList $iID
@@ -1799,7 +1816,7 @@ proc vtkFreeSurferReadersPlotBeginPointList { iID } {
 # don't do this, as the lID list only lists the data file ids
     if {0} {
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotBeginPointList: ID $iID not found"
         return 
     }
     }
@@ -1825,7 +1842,7 @@ proc vtkFreeSurferReadersPlotAddPoint { iID iX iY iZ } {
 # this checks theplot window id, not necessary
     if {0} {
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotAddPoint: ID $iID not found"
         return 
     }
     }
@@ -1849,7 +1866,7 @@ proc vtkFreeSurferReadersPlotEndPointList { iID } {
 # this is checking the plot window, rather than the vertex
     if {0} {
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotEndPointList: ID $iID not found"
         return 
     }
     }
@@ -1871,7 +1888,7 @@ proc vtkFreeSurferReadersPlotSetInfo { iID isInfo } {
         return 
     }
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotSetInfo: ID $iID not found"
         return 
     }
     set vtkFreeSurferReaders(gPlot,$iID,state,info) $isInfo
@@ -1888,7 +1905,7 @@ proc vtkFreeSurferReadersPlotSetInfo { iID isInfo } {
 proc vtkFreeSurferReadersPlotSaveToTable { iID ifnTable } {
     global vtkFreeSurferReaders
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotSaveToTable: ID $iID not found"
         return 
     }
 
@@ -1935,7 +1952,7 @@ proc vtkFreeSurferReadersPlotSaveToPostscript { iID ifnPS } {
         return 
     }
     if { [lsearch $vtkFreeSurferReaders(gGDF,lID) $iID] == -1 } { 
-        puts "ID $iID not found"
+        puts "vtkFreeSurferReadersPlotSaveToPostscript: ID $iID not found"
         return 
     }
     set err [catch {$vtkFreeSurferReaders(gWidgets,$iID,gwPlot) postscript output $ifnPS} sResult]
