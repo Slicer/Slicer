@@ -700,6 +700,7 @@ proc QueryAtlasInitialize { dataset annoPath } {
                 QueryAtlasCreatePicker
                 QueryAtlasParseOntologyResources
                 $::slicer3::QueryAtlasGUI UpdateScalarOverlayMenu
+                QueryAtlasRenderView
                 set specialload 1
             } else {
                 QueryAtlasDialog "No annotations were found. Querying not enabled."
@@ -712,6 +713,7 @@ proc QueryAtlasInitialize { dataset annoPath } {
                 QueryAtlasUpdateAnnotations ""
                 QueryAtlasCreatePicker
                 QueryAtlasParseOntologyResources
+                QueryAtlasRenderView
                 set specialload 1
             } else {
                 QueryAtlasDialog "No annotations were found. Querying not enabled."

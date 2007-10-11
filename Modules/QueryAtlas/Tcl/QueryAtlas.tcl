@@ -259,7 +259,6 @@ proc QueryAtlasNodeAddedUpdate { } {
 
     #--- update overlay menu in case model
     #--- with overlays was deleted.
-    
 }
 
 

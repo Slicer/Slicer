@@ -989,6 +989,11 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
 
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkMRMLNode *node;
+
+  if ( app ==  NULL )
+    {
+    return;
+    }
   
   if ( (stw = this->SavedTerms) && (event == vtkQueryAtlasSearchTermWidget::ReservedTermsEvent ))
     {
@@ -1502,22 +1507,18 @@ void vtkQueryAtlasGUI::AutoWinLevThreshStatisticsVolume ( vtkMRMLScalarVolumeNod
 }
 
 
-//---------------------------------------------------------------------------
-//void vtkQueryAtlasGUI::LoadQdecAnnotationCallback ( )
-//{
-//  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-//  const char *dirn = this->QdecGetAnnotationButton->GetWidget()->GetLoadSaveDialog()->GetDirectoryName();
-
-//}
-
 
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
 {
   
-  int retval;
+  int retval = -1;
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
 
+  if ( app == NULL )
+    {
+    return;
+    }
   const char *filen = this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->GetFileName();
   if ( filen != NULL )
     {
@@ -1526,9 +1527,10 @@ void vtkQueryAtlasGUI::LoadQdecResultsCallback ( )
     //--- and load results thru qdecModule Logic, which we get thru the GUI.
     //--- TODO: build a direct way of getting logics, w/o requiring gui-route.
     vtkQdecModuleGUI *qGUI = vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule"));
-    vtkQdecModuleLogic *qLogic = qGUI->GetLogic();
-    vtkSlicerModelsLogic*mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
-    retval = qGUI->LoadProjectFile ( filen );
+    if ( qGUI != NULL )
+      {
+      retval = qGUI->LoadProjectFile ( filen );
+      }
 
     //--- if results appear to have loaded...
     //--- make sure scene agrees with that.
@@ -1627,7 +1629,6 @@ void vtkQueryAtlasGUI::ModifyQuerySceneVisibility()
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::UpdateAnnoVisibilityMenu ( )
 {
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
 
     if ( this->QuerySceneVisibilityMenuButton != NULL )
       {
@@ -1734,7 +1735,6 @@ void vtkQueryAtlasGUI::DisplayScalarOverlay ( )
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
   vtkQdecModuleLogic *qLogic;
   vtkSlicerModelsLogic *mLogic;
-  vtkSlicerColorLogic *cLogic;
   if ( app )
     {
     if ( vtkQdecModuleGUI::SafeDownCast(app->GetModuleGUIByName("QdecModule")) != NULL )
@@ -1744,10 +1744,6 @@ void vtkQueryAtlasGUI::DisplayScalarOverlay ( )
     if ( vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models")) != NULL )
       {
       mLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
-      }
-    if ( vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Color")) != NULL )
-      {
-      cLogic = vtkSlicerColorGUI::SafeDownCast(app->GetModuleGUIByName("Color"))->GetLogic();
       }
     if ( (this->QdecScalarSelector->IsCreated()) && (qLogic != NULL) && (mLogic != NULL) )
       {
@@ -3006,25 +3002,28 @@ void vtkQueryAtlasGUI::AppendUniqueResult ( const char *r )
   vtkKWMultiColumnList *l = this->CurrentResultsList->GetWidget();
   
   //--- determine uniqueness of entry
-  int N = l->GetNumberOfRows();
-  for ( int i=0; i < N; i++ )
+  if ( l )
     {
-    url = l->GetCellText ( i, 1);
-    if ( !(strcmp (r, url)) )
+    int N = l->GetNumberOfRows();
+    for ( int i=0; i < N; i++ )
       {
-      unique = 0;
-      break;
+      url = l->GetCellText ( i, 1);
+      if ( !(strcmp (r, url)) )
+        {
+        unique = 0;
+        break;
+        }
       }
-    }
 
-  //--- add a unique url
-  if ( unique == 1 )
-    {
-    //--- add image in viewer column
-    l->InsertCellText (N, 1, r );
-    l->SetCellBackgroundColor ( N, 0, 1.0, 1.0, 1.0 );
-    l->SetCellBackgroundColor ( N, 1, 1.0, 1.0, 1.0 );
-    l->SetCellImageToIcon ( N, 0, this->QueryAtlasIcons->GetWebIcon() );
+    //--- add a unique url
+    if ( unique == 1 )
+      {
+      //--- add image in viewer column
+      l->InsertCellText (N, 1, r );
+      l->SetCellBackgroundColor ( N, 0, 1.0, 1.0, 1.0 );
+      l->SetCellBackgroundColor ( N, 1, 1.0, 1.0, 1.0 );
+      l->SetCellImageToIcon ( N, 0, this->QueryAtlasIcons->GetWebIcon() );
+      }
     }
 }
 
@@ -3037,28 +3036,31 @@ void vtkQueryAtlasGUI::AccumulateUniqueResult ( const char *r )
 
   int unique = 1;
   vtkKWMultiColumnList *l = this->AccumulatedResultsList->GetWidget();
-  
-  //--- determine uniqueness of entry
-  int N = l->GetNumberOfRows();
 
-  for ( int i=0; i < N; i++ )
+  if ( l )
     {
-    url = l->GetCellText ( i, 1);
-    if ( !(strcmp (r, url)) )
+    //--- determine uniqueness of entry
+    int N = l->GetNumberOfRows();
+
+    for ( int i=0; i < N; i++ )
       {
-      unique = 0;
-      break;
+      url = l->GetCellText ( i, 1);
+      if ( !(strcmp (r, url)) )
+        {
+        unique = 0;
+        break;
+        }
       }
-    }
 
-  //--- add a unique url
-  if ( unique == 1 )
-    {
-    //--- add image in viewer column
-    l->InsertCellText (N, 1, r );
-    l->SetCellBackgroundColor ( N, 0, 1.0, 1.0, 1.0 );
-    l->SetCellBackgroundColor ( N, 1, 1.0, 1.0, 1.0 );
-    l->SetCellImageToIcon ( N, 0, this->QueryAtlasIcons->GetWebIcon() );
+    //--- add a unique url
+    if ( unique == 1 )
+      {
+      //--- add image in viewer column
+      l->InsertCellText (N, 1, r );
+      l->SetCellBackgroundColor ( N, 0, 1.0, 1.0, 1.0 );
+      l->SetCellBackgroundColor ( N, 1, 1.0, 1.0, 1.0 );
+      l->SetCellImageToIcon ( N, 0, this->QueryAtlasIcons->GetWebIcon() );
+      }
     }
 }
 
@@ -3071,20 +3073,23 @@ void vtkQueryAtlasGUI::CurrentResultsSelectionCommandCallback ( )
   vtkKWMultiColumnList *l = this->CurrentResultsList->GetWidget();
   int numRows = l->GetNumberOfRows();
   int s;
-  for ( int i=0; i<numRows; i++ )
+  if ( l )
     {
-    s = l->IsCellSelected(i,0);
-    if ( s )
+    for ( int i=0; i<numRows; i++ )
       {
-      //-- launch browser with url
-      if ( l->GetCellText(i,1) != NULL )
+      s = l->IsCellSelected(i,0);
+      if ( s )
         {
-        this->Script ("QueryAtlasOpenLink \"%s\"", l->GetCellText(i,1) );
-        }
+        //-- launch browser with url
+        if ( l->GetCellText(i,1) != NULL )
+          {
+          this->Script ("QueryAtlasOpenLink \"%s\"", l->GetCellText(i,1) );
+          }
 
-      //-- now deselect the cell
-      l->DeselectCell (i,0);
-      break;
+        //-- now deselect the cell
+        l->DeselectCell (i,0);
+        break;
+        }
       }
     }
 }
@@ -3101,20 +3106,23 @@ void vtkQueryAtlasGUI::AccumulatedResultsSelectionCommandCallback ( )
   vtkKWMultiColumnList *l = this->AccumulatedResultsList->GetWidget();
   int numRows = l->GetNumberOfRows();
   int s;
-  for ( int i=0; i<numRows; i++ )
+  if ( l )
     {
-    s = l->IsCellSelected(i, 0 );
-    if ( s )
+    for ( int i=0; i<numRows; i++ )
       {
-      //-- launch browser with url
-      if ( l->GetCellText(i, 1) != NULL )
+      s = l->IsCellSelected(i, 0 );
+      if ( s )
         {
-        this->Script ("QueryAtlasOpenLink \"%s\"", l->GetCellText(i,1) );
-        }
+        //-- launch browser with url
+        if ( l->GetCellText(i, 1) != NULL )
+          {
+          this->Script ("QueryAtlasOpenLink \"%s\"", l->GetCellText(i,1) );
+          }
 
-      //-- now deselect the cell
-      l->DeselectCell (i, 0);
-      break;
+        //-- now deselect the cell
+        l->DeselectCell (i, 0);
+        break;
+        }
       }
     }
 }
@@ -3405,7 +3413,10 @@ void vtkQueryAtlasGUI::UnpackQueryBuilderContextFrames ( )
 void vtkQueryAtlasGUI::PackQueryBuilderContextFrame ( vtkKWFrame *f )
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-  app->Script ( "pack %s -side top -anchor nw -expand 0 -fill x", f->GetWidgetName( ));
+  if ( app )
+    {
+    app->Script ( "pack %s -side top -anchor nw -expand 0 -fill x", f->GetWidgetName( ));
+    }
 }
 
 
@@ -3414,7 +3425,6 @@ void vtkQueryAtlasGUI::PackQueryBuilderContextFrame ( vtkKWFrame *f )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildQueryBuilderContextFrames ( vtkKWFrame *parent )
 {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     
     this->StructureFrame = vtkKWFrame::New();
     this->StructureFrame->SetParent ( parent );
