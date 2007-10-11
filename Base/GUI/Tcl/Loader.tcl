@@ -112,7 +112,7 @@ if { [itcl::find class Loader] == "" } {
     variable _volumeExtensions ".hdr .nhdr .nrrd .mhd .mha .vti .nii .mgz"
     variable _modelExtensions ".vtk .vtp .pial .inflated"
     variable _qdecExtensions ".qdec"
-    variable _xcedeExtensions ".xcede"
+    variable _xcedeExtensions ".xcat"
     variable _observerRecords ""
     variable _cleanupDirs ""
     variable browserResult ""

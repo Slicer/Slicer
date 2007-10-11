@@ -316,7 +316,7 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
           this->Script ( "ImportSlicer2Scene %s", fileName);
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
           }
-        else if ( this->GetMRMLScene() && fl.find(".xcede") != std::string::npos )
+        else if ( this->GetMRMLScene() && fl.find(".xcat") != std::string::npos )
           {
           this->Script ( "XcedeCatalogImport %s", fileName);
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
@@ -360,7 +360,7 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
           this->Script ( "ImportSlicer2Scene %s", fileName);
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
           }
-        else if ( this->GetMRMLScene() && fl.find(".xcede") != std::string::npos )
+        else if ( this->GetMRMLScene() && fl.find(".xcat") != std::string::npos )
           {
           this->Script ( "XcedeCatalogImport %s", fileName);
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
@@ -865,7 +865,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             
             this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
             this->LoadSceneDialog->Create ( );
-            this->LoadSceneDialog->SetFileTypes("{ {MRML Scene} {*.mrml} } { {Slicer2 Scene} {*.xml} } { {Xcede Catalog} {*.xcede} }");
+            this->LoadSceneDialog->SetFileTypes("{ {MRML Scene} {*.mrml} } { {Slicer2 Scene} {*.xml} } { {Xcede Catalog} {*.xcat} }");
             this->LoadSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
 
 #endif

@@ -1432,7 +1432,7 @@ void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
     itksys::SystemTools::ConvertToUnixOutputPath( filen );
     std::string fl(filen);
 
-    if ( this->GetMRMLScene() && fl.find(".xcede") != std::string::npos )
+    if ( this->GetMRMLScene() && fl.find(".xcat") != std::string::npos )
       {
       this->Script ( "XcedeCatalogImport %s", filen);
       this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
@@ -2132,7 +2132,7 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOff();
     this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOff();
     this->LoadFIPSFSCatalogButton->GetWidget()->SetCommand ( this, "LoadXcedeCatalogCallback" );
-    this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes ( "{ {Xcede catalog} {*.xcede} }");
+    this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes ( "{ {Xcede catalog} {*.xcat} }");
     this->LoadFIPSFSCatalogButton->SetBalloonHelpString("Load a FIPS/FreeSurfer study from an Xcede catalog.");
     this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 4",
                   this->LoadFIPSFSCatalogButton->GetWidgetName());

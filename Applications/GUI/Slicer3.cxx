@@ -1782,8 +1782,8 @@ int Slicer3_main(int argc, char *argv[])
           std::string cmd = "after idle ImportSlicer2Scene " + *argit;
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
           }
-        else if (fileName.find(".xcede",0) != std::string::npos
-                 || fileName.find(".XCEDE",0) != std::string::npos)
+        else if (fileName.find(".xcat",0) != std::string::npos
+                 || fileName.find(".XCAT",0) != std::string::npos)
           {
           // if it's an xcede file, load it
           std::string cmd = "after idle XcedeCatalogImport " + *argit;
