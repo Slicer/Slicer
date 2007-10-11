@@ -317,12 +317,12 @@ int vtkQdecModuleLogic::CreateGlmDesign(const char *name, const char *discreteFa
     else
       {
       vtkErrorMacro("CreateGlmDesign: error creating the qdec project glm design");
-      return -1;
+      return err;
       }
     }
   else
     {
-    return -1;
+    return -12;
     }
 }
 
@@ -336,7 +336,7 @@ int vtkQdecModuleLogic::RunGlmFit()
   else
     {
     vtkErrorMacro("RunGlmFit: null QDEC project...");
-    return -1;
+    return -4;
     }
 }
 
