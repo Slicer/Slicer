@@ -841,21 +841,21 @@ int QdecProject::CreateGlmDesign ( const char* isName,
     {
     fprintf( stderr, "ERROR: QdecProject::CreateGlmDesign: "
              "could not create fsgd file\n");
-    return(-3);
+    return(-9);
     }
 
   if( mGlmDesign->WriteContrastMatrices() )
     {
     fprintf( stderr, "ERROR: QdecProject::CreateGlmDesign: could not "
              "generate contrasts\n");
-    return(-4);
+    return(-10);
     }
 
   if( mGlmDesign->WriteYdataFile() )
     {
     fprintf( stderr, "ERROR: QdecProject::CreateGlmDesign: could not "
              "create y.mgh file\n");
-    return(-4);
+    return(-11);
     }
 
   if( iProgressUpdateGUI )

@@ -198,7 +198,11 @@ int QdecGlmFit::Run ( QdecGlmDesign* iGlmDesign )
                  fnResidualErrorStdDevFile,
                  fnRegressionCoefficientsFile,
                  fnFsgdFile );
-    assert( glmFitResults );
+    if (!glmFitResults )
+      {
+      fprintf(stderr,"\nERROR: QdecGlmFit::Run: glm fit results are invalid!");
+      return -2;
+      }
     this->mGlmFitResults = glmFitResults;
     
     if( iGlmDesign->GetProgressUpdateGUI() )
@@ -258,11 +262,17 @@ int QdecGlmFit::Run ( QdecGlmDesign* iGlmDesign )
                              fnFsgdFile );
     
     // Check it.
-    assert( glmFitResults );
+    if (!glmFitResults)
+      {
+      fprintf(stderr,"\nERROR: QdecGlmFit::Run: Unable to load demo data");
+      return -3;
+      }
 
     // Make it ours.
     this->mGlmFitResults = glmFitResults;
-    
+
+    // return a code to advertise that loaded demo data
+    return 1;
     // =======================================================================
     }
 return 0;
