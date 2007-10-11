@@ -1020,64 +1020,70 @@ proc QueryAtlasRenderView {} {
     if { ![ info exists ::QA(windowToImage) ] } {
         return
     }
-        #
-        # get the renderer related instances
-        #
-        set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
-        set renderWindow [$renderWidget GetRenderWindow]
-        set renderer [$renderWidget GetRenderer]
+    #
+    # get the renderer related instances
+    #
+    set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+    set renderWindow [$renderWidget GetRenderWindow]
+    set renderer [$renderWidget GetRenderer]
 
-        #
-        # draw the image and get the pixels
-        # - set the render parameters to draw with the cell labels
-        # - draw in the back buffer
-        # - pull out the pixels
-        # - restore the draw state and render
-        #
-        $renderWindow SetSwapBuffers 0
-        set renderState [QueryAtlasOverrideRenderState $renderer]
-        $renderWidget Render
-        
+    #
+    # draw the image and get the pixels
+    # - set the render parameters to draw with the cell labels
+    # - draw in the back buffer
+    # - pull out the pixels
+    # - restore the draw state and render
+    #
+    $renderWindow SetSwapBuffers 0
+    
+    # turn off hardware antialiasing 
+    $renderWindow SetGlobalMaximumNumberOfMultiSamples 0
+    set renderState [QueryAtlasOverrideRenderState $renderer]
+    $renderWidget Render
+    
+    $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
+
+    set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
+    if { [$renderWindow GetSize] != $imageSize } {
+        $::QA(windowToImage) Delete
+        set ::QA(windowToImage) [vtkWindowToImageFilter New]
         $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
+    }
 
-        set imageSize [lrange [[$::QA(windowToImage) GetOutput] GetDimensions] 0 1]
-        if { [$renderWindow GetSize] != $imageSize } {
-            $::QA(windowToImage) Delete
-            set ::QA(windowToImage) [vtkWindowToImageFilter New]
-            $::QA(windowToImage) SetInput [$renderWidget GetRenderWindow]
+    $::QA(windowToImage) SetInputBufferTypeToRGBA
+    $::QA(windowToImage) ShouldRerenderOn
+    $::QA(windowToImage) ReadFrontBufferOff
+    $::QA(windowToImage) Modified
+    [$::QA(windowToImage) GetOutput] Update
+
+
+    $renderWindow SetSwapBuffers 1
+    QueryAtlasRestoreRenderState $renderer $renderState
+    # restore hardware antialiasing 
+    $renderWindow SetGlobalMaximumNumberOfMultiSamples 1
+
+    $renderWidget Render
+
+    #--- need to let go of the RenderWindow to avoid a crash on
+    #--- ApplicationGUI->ViewerWidget->Delete()
+    #--- Why it crashes instead of generating leaks I'm not sure.
+    $::QA(windowToImage) SetInput ""
+
+
+    if { 0 } {
+        #
+        # make a little preview window for debugging pleasure
+        #
+        if { [info command viewer] == "" } {
+            vtkImageViewer viewer
+            vtkImageData viewerImage
         }
-
-        $::QA(windowToImage) SetInputBufferTypeToRGBA
-        $::QA(windowToImage) ShouldRerenderOn
-        $::QA(windowToImage) ReadFrontBufferOff
-        $::QA(windowToImage) Modified
-        [$::QA(windowToImage) GetOutput] Update
-
-
-        $renderWindow SetSwapBuffers 1
-        QueryAtlasRestoreRenderState $renderer $renderState
-        $renderWidget Render
-
-        #--- need to let go of the RenderWindow to avoid a crash on
-        #--- ApplicationGUI->ViewerWidget->Delete()
-        #--- Why it crashes instead of generating leaks I'm not sure.
-        $::QA(windowToImage) SetInput ""
-
-
-        if { 0 } {
-            #
-            # make a little preview window for debugging pleasure
-            #
-            if { [info command viewer] == "" } {
-                vtkImageViewer viewer
-                vtkImageData viewerImage
-            }
-            viewerImage DeepCopy [$::QA(windowToImage) GetOutput]
-            viewer SetInput viewerImage
-            viewer SetColorWindow 200
-            viewer SetColorLevel 100
-            viewer Render
-        }
+        viewerImage DeepCopy [$::QA(windowToImage) GetOutput]
+        viewer SetInput viewerImage
+        viewer SetColorWindow 200
+        viewer SetColorLevel 100
+        viewer Render
+    }
 }
 
 #####################################
@@ -1125,6 +1131,8 @@ proc QueryAtlasOverrideRenderState {renderer} {
           $::QA(actor_$mid) SetVisibility $::QA(actor_$mid,visibility)
       }
   }
+
+  
 
   return [array get state]
 }
