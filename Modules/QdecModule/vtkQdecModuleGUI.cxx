@@ -1316,6 +1316,7 @@ void vtkQdecModuleGUI::SetInteractorStyle( vtkSlicerViewerInteractorStyle *inter
 }
 
 //----------------------------------------------------------------------------
+// returns 0 on success, -1 on failure
 int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
 {
   const char *tempDir = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetTemporaryDirectory();
@@ -1329,7 +1330,7 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
       this->GetLogic()->QDECProject == NULL)
     {
     vtkErrorMacro("LoadProjectFile: Logic or it's associated QDECProject isn't defined yet, unable to load " << fileName);
-    return 0;
+    return -1;
     }
   // check the paths to unzip and rm
   if (strcmp(unzip, "") != 0 &&
@@ -1402,7 +1403,7 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
       if (this->GetLogic()->LoadResults(modelsLogic, app) != 0)
         {
         vtkErrorMacro("Unable to load results of precomputed GLM fit processing from file " << fileName);
-        return 0;
+        return -1;
         }
       else
         {
@@ -1418,18 +1419,18 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
     else
       {
       vtkErrorMacro("Unable to get Models module GUI, can't load results as need to add models");
-      return 0;
+      return -1;
       }
     }
   else
     {
     vtkErrorMacro("Could not get application to get at the models module");
-    return 0;
+    return -1;
     }
   // set the project file name on the load button
   if (this->LoadResultsButton)
     {
     this->LoadResultsButton->GetWidget()->SetInitialFileName(fileName);
     }
-  return 1;
+  return 0;
 }
