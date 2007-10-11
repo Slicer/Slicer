@@ -366,7 +366,7 @@ if { !$isDarwin  && (![file exists $::BLT_TEST_FILE] || $::GENLIB(update)) } {
 # Get and build python
 #
 
-if { 0 && ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
+if {  ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
 
     file mkdir $SLICER_LIB/python
     file mkdir $SLICER_LIB/python-build
@@ -381,6 +381,10 @@ if { 0 && ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
         runcmd ./configure --prefix=$SLICER_LIB/python-build --with-tcl=$SLICER_LIB/tcl-build --enable-shared
         eval runcmd $::MAKE
         puts [catch "eval runcmd $::SERIAL_MAKE install" res] ;# try twice - it probably fails first time...
+        if { $isDarwin } {
+            # Special Slicer target to install the python dynamic library
+            runcmd $::MAKE install_dylib
+        }
     }
 }
 
@@ -388,7 +392,7 @@ if { 0 && ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
 # Get and build numpy and scipy
 #
 
-if { 0 &&  ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
+if { ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
 
     set ::env(PYTHONHOME)        $SLICER_LIB/python-build
     cd $SLICER_LIB/python

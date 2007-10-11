@@ -57,13 +57,12 @@ class SlicerWrapper:
         result = tk.tk.call ( *string.split ( inString ) )
         return self.__convertString ( result )
     def __callVTKmethod ( self, m, *a ):
-        cstring = ''
-        cstring += self.obj
-        cstring += ' '
-        cstring += m
+        cstring = []
+        cstring.append ( str(self.obj) )
+        cstring.append ( str(m) )
         for idx in range(len(a)):
-            cstring += ' ' + str(a[idx])
-        value = tk.tk.call ( *string.split ( cstring ) )
+            cstring.append ( str(a[idx]) )
+        value = tk.tk.call ( *cstring )
         if tk.tk.call ( 'info', 'command', value ):
             return SlicerWrapper ( self, value )
         else:

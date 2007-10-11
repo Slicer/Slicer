@@ -92,6 +92,14 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
 //ETX  
   void SetParameterAsString(const char *name, const char *value)
     {this->SetParameterAsString(std::string(name), std::string(value));}
+  void SetParameterAsInt(const char *name, const int value)
+    {this->SetParameterAsInt(std::string(name), value);}
+  void SetParameterAsBool(const char *name, const bool value)
+    {this->SetParameterAsBool(std::string(name), value);}
+  void SetParameterAsDouble(const char *name, const double value)
+    {this->SetParameterAsDouble(std::string(name), value);}
+  void SetParameterAsFloat(const char *name, const float value)
+    {this->SetParameterAsFloat(std::string(name), value);}
   
   // Description:
   // Methods to manage the master list of module description prototypes

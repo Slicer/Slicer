@@ -608,7 +608,6 @@ Tkapp_New(char *screenName, char *baseName, char *className,
     return NULL;
 
   if ( ExternalInterp != NULL ) {
-    fprintf ( stderr, "Using existing Interp\n" );
     v->interp = ExternalInterp;
   } else {
     v->interp = Tcl_CreateInterp();
@@ -3118,7 +3117,6 @@ PyMODINIT_FUNC init_mytkinter( Tcl_Interp* interp )
   PyObject *m, *d;
 
   ExternalInterp = interp;
-  printf ( "Init\n" );
   Tkapp_Type.ob_type = &PyType_Type;
 
 #ifdef WITH_THREAD

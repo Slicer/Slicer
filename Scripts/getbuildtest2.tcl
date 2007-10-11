@@ -343,6 +343,13 @@ if {$isDarwin} {
   set ::GETBUILDTEST(shared-lib-extension) ".dylib"
 }
 
+# Build Python everywhere but Windows
+if {$isWindows} {
+    set BuildPython NO
+} else {
+    set BuildPython YES
+}
+
 # build the slicer
 cd $::SLICER_BUILD
 runcmd $::CMAKE \
@@ -359,7 +366,7 @@ runcmd $::CMAKE \
         -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
-        -DUSE_PYTHON=OFF \
+        -DUSE_PYTHON=$BuildPython \
         -DPYTHON_INCLUDE_PATH:PATH=$::SLICER_LIB/python-build/include/python2.5 \
         -DPYTHON_LIBRARY:FILEPATH=$::SLICER_LIB/python-build/lib/libpython2.5$::GETBUILDTEST(shared-lib-extension) \
         -DUSE_IGSTK=$::IGSTK \
