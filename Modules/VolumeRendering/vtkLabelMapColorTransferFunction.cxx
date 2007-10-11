@@ -1,16 +1,17 @@
 #include "vtkLabelMapColorTransferFunction.h"
 #include "vtkObjectFactory.h"
+#include "vtkTimerLog.h"
 
 vtkLabelMapColorTransferFunction* vtkLabelMapColorTransferFunction::New(void)
 {
-     // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkLabelMapColorTransferFunction");
-  if(ret)
+    // First try to create the object from the vtkObjectFactory
+    vtkObject* ret = vtkObjectFactory::CreateInstance("vtkLabelMapColorTransferFunction");
+    if(ret)
     {
-      return (vtkLabelMapColorTransferFunction*)ret;
+        return (vtkLabelMapColorTransferFunction*)ret;
     }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkLabelMapColorTransferFunction;
+    // If the factory was unable to create the object, then create it here.
+    return new vtkLabelMapColorTransferFunction;
 }
 vtkLabelMapColorTransferFunction::vtkLabelMapColorTransferFunction(void)
 {
@@ -21,6 +22,8 @@ vtkLabelMapColorTransferFunction::~vtkLabelMapColorTransferFunction(void)
 }
 void vtkLabelMapColorTransferFunction::Init(vtkMRMLScalarVolumeNode *node)
 {
+    vtkTimerLog *timer1=vtkTimerLog::New();
+    timer1->StartTimer();
     //test if inputdata is valid
     if(node==NULL)
     {
@@ -37,7 +40,7 @@ void vtkLabelMapColorTransferFunction::Init(vtkMRMLScalarVolumeNode *node)
         vtkErrorMacro("No Color Node");
         return;
     }
-     if (node->GetLabelMap()==0)
+    if (node->GetLabelMap()==0)
     {
         vtkErrorMacro("this is not a labelMap");
         return;
@@ -58,4 +61,8 @@ void vtkLabelMapColorTransferFunction::Init(vtkMRMLScalarVolumeNode *node)
         this->AddRGBPoint(i+.9999,color[0],color[1],color[2]);
 
     }
+    timer1->StopTimer();
+    vtkErrorMacro("Init Labelmap Colortransfer calculated in "<<timer1->GetElapsedTime()<<"seconds");
+    timer1->Delete();
 }
+

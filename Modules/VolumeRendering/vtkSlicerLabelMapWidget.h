@@ -7,13 +7,14 @@ class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerLabelMapWidget :public vtkSlicer
 {
 public:
     static vtkSlicerLabelMapWidget *New();
-    vtkTypeMacro(vtkSlicerLabelMapWidget,vtkSlicerWidget);
+    vtkTypeRevisionMacro(vtkSlicerLabelMapWidget,vtkSlicerWidget);
     //void PrintSelf(ostream& os, vtkIndent indent);
-    
-public:
+
+    protected:
     vtkSlicerLabelMapWidget(void);
     ~vtkSlicerLabelMapWidget(void);
     vtkSlicerLabelMapWidget(const vtkSlicerLabelMapWidget&);
     void operator=(const vtkSlicerLabelMapWidget&);
+    virtual void CreateWidget(void);
 };
 #endif

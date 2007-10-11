@@ -20,6 +20,7 @@
 #include "vtkKWProgressGauge.h"
 #include "vtkKWHistogramSet.h"
 #include "vtkKWTkUtilities.h"
+#include "vtkTimerLog.h"
 
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
@@ -47,16 +48,20 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
 
     //Frame Details
     this->SVP_VolumeProperty=NULL;
+        this->Histograms=NULL;
+    this->detailsFrame=NULL;
+    this->LM_OptionTree=NULL;
 
     //Other members
     this->currentNode=NULL;
     this->presets=NULL;
-    this->Histograms=NULL;
+
 
     //Rendering pipeline
     this->volume=NULL;
     this->mapper=NULL;
     this->matrix=NULL;
+
 
 }
 
@@ -166,6 +171,16 @@ vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
         this->Utilities->Delete();
         this->Utilities=NULL;
     }
+    if(this->detailsFrame)
+    {
+        this->detailsFrame->Delete();
+        this->detailsFrame=NULL;
+    }
+    if(this->LM_OptionTree)
+    {
+        this->LM_OptionTree->Delete();
+        this->LM_OptionTree=NULL;
+    }
     this->SetViewerWidget(NULL);
     this->SetInteractorStyle(NULL);
 }
@@ -263,111 +278,18 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->PB_CreateNewVolumeRenderingNode->GetWidgetName());
 
     //Details frame
-    vtkSlicerModuleCollapsibleFrame *detailsFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    detailsFrame->SetParent (this->UIPanel->GetPageWidget("VolumeRendering"));
-    detailsFrame->Create();
-    detailsFrame->ExpandFrame();
-    detailsFrame->SetLabelText("Details");
+    this->detailsFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    this->detailsFrame->SetParent (this->UIPanel->GetPageWidget("VolumeRendering"));
+    this->detailsFrame->Create();
+    this->detailsFrame->ExpandFrame();
+    this->detailsFrame->SetLabelText("Details");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-        detailsFrame->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
+        this->detailsFrame->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
 
-    //Histogram
-    this->Histograms=vtkKWHistogramSet::New();
-    //Volume Property frame
-    this->SVP_VolumeProperty=vtkSlicerVolumePropertyWidget::New();
-    this->SVP_VolumeProperty->SetParent(detailsFrame->GetFrame());
-    this->SVP_VolumeProperty->Create();
-    this->SVP_VolumeProperty->SetHistogramSet(this->Histograms);
-    app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
-
-
-    //Test of the vtkTree
-    vtkSlicerModuleCollapsibleFrame *treetest=vtkSlicerModuleCollapsibleFrame::New();
-    treetest->SetParent (this->UIPanel->GetPageWidget("VolumeRendering"));
-    treetest->Create();
-    treetest->ExpandFrame();
-    treetest->SetLabelText("Treetest");
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-        treetest->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
-
-    vtkKWTreeWithScrollbars *widgets_tree =vtkKWTreeWithScrollbars::New();
-    widgets_tree->SetParent(treetest->GetFrame());
-    widgets_tree->Create();
-    app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",widgets_tree->GetWidgetName());
-    vtkKWTree *tree=widgets_tree->GetWidget();
-    tree->RedrawOnIdleOn();
-    tree->SelectionFillOn();
-    tree->SetDeltaY(30);
-    for(int i=1;i<50;i++)
-    {
-        std::stringstream str;
-        std::stringstream str1;
-        str1<<i;
-        str<<"test"<<i;
-        tree->AddNode("",str1.str().c_str(),str.str().c_str());
-        tree->OpenNode(str1.str().c_str());
-        tree->SetNodeSelectableFlag(str1.str().c_str(),0);
-        tree->SetNodeFontWeightToBold(str1.str().c_str());
-        vtkKWCompositeWidget *frame=vtkKWCompositeWidget::New();
-        frame->SetParent(tree);
-        frame->Create();
-        vtkKWPushButton *pushB=vtkKWPushButton::New();
-        pushB->SetParent(frame);
-        pushB->SetText(str.str().c_str());
-        pushB->Create();
-        app->Script("pack %s -side left -anchor nw -fill x -padx 2 -pady 2",pushB->GetWidgetName());
-
-        vtkKWLabel *label=vtkKWLabel::New();
-        label->SetParent(frame);
-        label->SetText(str.str().c_str());
-        label->Create();
-        label->SetBackgroundColor(1-i/100.,1-i/100.,1-i/100.);
-
-        app->Script("pack %s -side right -anchor nw -fill x -padx 2 -pady 2",label->GetWidgetName());
-        tree->SetNodeWindow(str1.str().c_str(),frame);
-        pushB->Delete();
-        label->Delete();
-        frame->Delete();
-        for(int j=i*1000;j<(i*1000+3);j++)
-        {
-            std::stringstream Cstr;
-            std::stringstream Cstr1;
-            Cstr1<<j;
-            Cstr<<"testChild"<<j;
-            tree->AddNode(str1.str().c_str(),Cstr1.str().c_str(),Cstr.str().c_str());
-            tree->OpenNode(Cstr1.str().c_str());
-            tree->SetNodeSelectableFlag(Cstr1.str().c_str(),0);
-            tree->SetNodeFontWeightToBold(Cstr1.str().c_str());
-            vtkKWCompositeWidget *frameA=vtkKWCompositeWidget::New();
-            frameA->SetParent(tree);
-            frameA->Create();
-            vtkKWPushButton *pushBA=vtkKWPushButton::New();
-            pushBA->SetParent(frameA);
-            pushBA->SetText(Cstr.str().c_str());
-            pushBA->Create();
-            app->Script("pack %s -side left -anchor nw -fill x -padx 2 -pady 2",pushBA->GetWidgetName());
-
-            vtkKWLabel *labelA=vtkKWLabel::New();
-            labelA->SetParent(frameA);
-            labelA->SetText(Cstr.str().c_str());
-            labelA->Create();
-            labelA->SetBackgroundColor(1-i/100.,1-i/100.,1-i/100.);
-
-            app->Script("pack %s -side right -anchor nw -fill x -padx 2 -pady 2",labelA->GetWidgetName());
-            tree->SetNodeWindow(Cstr1.str().c_str(),frameA);
-            pushBA->Delete();
-            labelA->Delete();
-            frameA->Delete();
-        }
-    }
-    widgets_tree->Delete();
-    treetest->Delete();
-    //end test of widgets_tree
-
+    
     //set subnodes
     //Delete frames
     loadSaveDataFrame->Delete();
-    detailsFrame->Delete();
     this->Built=true;
 }
 
@@ -455,12 +377,11 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
         this->VolumeRenderingNodeSelectedOn();
         //Remove Text from Entry
         this->EWL_CreateNewVolumeRenderingNode->GetWidget()->SetValue("");
-        //Load the Node (because of Copy)
-        //this->InitializePipelineFromMRMLScene();
     }
     //
     // End Check PushButtons
-    //   
+    // 
+
     //
     //Check Node Selectors
     //
@@ -477,31 +398,45 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
         //Only proceed event,if new Node
         else if(strcmp(this->NS_ImageData->GetSelected()->GetID(),this->PreviousNS_ImageData.c_str())!=0)
         {
-            //Take care about HistogramSet and ImageData
-            this->SVP_VolumeProperty->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
-            
-            //Remove all old Histograms
-            this->Histograms->RemoveAllHistograms();
+            vtkMRMLScalarVolumeNode *selectedImageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
+            //This is a LabelMap
+            if(selectedImageData->GetLabelMap()==1)
+            {
+                this->PackLabelMapGUI();
 
-            //Add Histogram for image data
-            this->Histograms->AddHistograms(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData()->GetPointData()->GetScalars());
-            //Build the gradient histogram
-            vtkImageGradientMagnitude *grad=vtkImageGradientMagnitude::New();
-            grad->SetDimensionality(3);
-            grad->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
-            grad->Update();
-            vtkKWHistogram *gradHisto=vtkKWHistogram::New();
-            gradHisto->BuildHistogram(grad->GetOutput()->GetPointData()->GetScalars(),0);
-            this->Histograms->AddHistogram(gradHisto,"0gradient");
+            }
+            //This is NO LabelMap
+            else
+            {
+                this->PackSvpGUI();
+                //Take care about HistogramSet and ImageData
+                this->SVP_VolumeProperty->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
 
-            this->InitializePipelineFromImageData();
+                //Remove all old Histograms
+                this->Histograms->RemoveAllHistograms();
+
+                //Add Histogram for image data
+                this->Histograms->AddHistograms(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData()->GetPointData()->GetScalars());
+                //Build the gradient histogram
+                vtkImageGradientMagnitude *grad=vtkImageGradientMagnitude::New();
+                grad->SetDimensionality(3);
+                grad->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
+                grad->Update();
+                vtkKWHistogram *gradHisto=vtkKWHistogram::New();
+                gradHisto->BuildHistogram(grad->GetOutput()->GetPointData()->GetScalars(),0);
+                this->Histograms->AddHistogram(gradHisto,"0gradient");
+
+                this->InitializePipelineFromImageData();
+                            //Delete
+            grad->Delete();
+            gradHisto->Delete();
+
+            }
             this->VolumeSelectedOn();
             //update previous:
             this->PreviousNS_ImageData=this->NS_ImageData->GetSelected()->GetID();//only when not "None"
 
-            //Delete
-            grad->Delete();
-            gradHisto->Delete();
+
         }//else if
     }//if
     //Volume RenderingDataScene
@@ -690,6 +625,8 @@ void vtkVolumeRenderingModuleGUI::SetInteractorStyle(vtkSlicerViewerInteractorSt
 
 void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
 {
+    vtkTimerLog *timer=vtkTimerLog::New();
+    timer->StartTimer();
     this->currentNode=vtkMRMLVolumeRenderingNode::New();
     //Add Node to Scene
     this->currentNode->HideFromEditorsOff();
@@ -704,6 +641,8 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
     //automatic Mode
     if(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetLabelMap()==1)
     {
+        vtkTimerLog *timer1=vtkTimerLog::New();
+        timer1->StartTimer();
         vtkLabelMapPiecewiseFunction *opacityNew=vtkLabelMapPiecewiseFunction::New();
         opacityNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected()),.3,0);
         this->currentNode->GetVolumeProperty()->SetScalarOpacity(opacityNew);
@@ -711,11 +650,16 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
         vtkLabelMapColorTransferFunction *colorNew=vtkLabelMapColorTransferFunction::New();
         colorNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected()));
         this->currentNode->GetVolumeProperty()->SetColor(colorNew);
+        timer1->StopTimer();
+        vtkErrorMacro("New current Node Labelmap withoutUpdateSVP calculated  in "<<timer1->GetElapsedTime()<<"seconds");
         this->UpdateSVP();
 
         //Delete
         opacityNew->Delete();
         colorNew->Delete();
+        
+    
+    timer1->Delete();
 
     }
     //automatic Mode non LabelMaps
@@ -768,7 +712,9 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
        
     }//else
             this->PipelineInitializedOn();
-
+    timer->StopTimer();
+    vtkErrorMacro("New current Node calculated in "<<timer->GetElapsedTime()<<"seconds");
+    timer->Delete();
 }//method
 void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
 {
@@ -895,7 +841,7 @@ void vtkVolumeRenderingModuleGUI::ShutdownPipeline()
     if(this->Utilities)
     {
         this->Utilities->Delete();
-        this->Utilities==NULL;
+        this->Utilities=NULL;
     }
     //Remove Volume
     if(this->volume!=NULL)
@@ -923,6 +869,8 @@ void vtkVolumeRenderingModuleGUI::ShutdownPipeline()
 
 void vtkVolumeRenderingModuleGUI::UpdateSVP()
 {
+    vtkTimerLog *timer=vtkTimerLog::New();
+    timer->StartTimer();
     //Take care about histogram
     //Update Histogramm Scalar
     //First of all set New Property, Otherwise all Histograms will be overwritten
@@ -930,6 +878,9 @@ void vtkVolumeRenderingModuleGUI::UpdateSVP()
     if(this->SVP_VolumeProperty->GetVolumeProperty()==this->currentNode->GetVolumeProperty())
     {
         this->SVP_VolumeProperty->Update();
+        timer->StopTimer();
+        vtkErrorMacro("Update SVP calculated in "<<timer->GetElapsedTime()<<"seconds");
+        timer->Delete();
         return;
     }
     this->SVP_VolumeProperty->SetVolumeProperty(this->currentNode->GetVolumeProperty());
@@ -940,6 +891,10 @@ void vtkVolumeRenderingModuleGUI::UpdateSVP()
 
     //Adjust mapping
     this->AdjustMapping();
+    timer->StopTimer();
+    vtkErrorMacro("Update SVP calculated in "<<timer->GetElapsedTime()<<"seconds");
+    timer->Delete();
+
 }
 
 
@@ -1027,4 +982,75 @@ int vtkVolumeRenderingModuleGUI::CheckForPendingEvents()
   Tcl_DeleteEvents(vtkVolumeRenderingModuleGUI_EventDeleteProc, static_cast<ClientData> (this));
   return (this->GetEventsPending());
 } 
+
+void vtkVolumeRenderingModuleGUI::PackLabelMapGUI()
+{
+    if(this->LM_OptionTree!=NULL)
+    {
+        vtkErrorMacro("LM_OptionTree: Already packed");
+        return;
+    }
+    this->UnpackSvpGUI();
+    this->LM_OptionTree=vtkSlicerLabelMapWidget::New();
+    this->LM_OptionTree->SetParent(this->detailsFrame->GetFrame());
+    this->LM_OptionTree->Create();
+    ((vtkSlicerApplication *)this->GetApplication())->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",this->LM_OptionTree->GetWidgetName(),this->detailsFrame->GetFrame()->GetWidgetName());
+}
+
+void vtkVolumeRenderingModuleGUI::UnpackLabelMapGUI()
+{
+    if(this->LM_OptionTree==NULL)
+    {
+        vtkErrorMacro("LM_OptionTree: Already unpacked");
+        return;
+    }
+     ((vtkSlicerApplication *)this->GetApplication())->Script("pack forget %s",this->LM_OptionTree->GetWidgetName());
+     this->LM_OptionTree->SetParent(NULL);
+     this->LM_OptionTree->Delete();
+     this->LM_OptionTree=NULL;
+     //this->
+}
+
+void vtkVolumeRenderingModuleGUI::PackSvpGUI()
+{
+    //Histogram
+     if(this->SVP_VolumeProperty!=NULL)
+    {
+        vtkErrorMacro("SVP_VolumeProperty: Already packed");
+        return;
+    }
+    this->UnpackLabelMapGUI();
+    this->Histograms=vtkKWHistogramSet::New();
+    //Volume Property frame
+    this->SVP_VolumeProperty=vtkSlicerVolumePropertyWidget::New();
+    this->SVP_VolumeProperty->SetParent(this->detailsFrame->GetFrame());
+    this->SVP_VolumeProperty->Create();
+    this->SVP_VolumeProperty->SetHistogramSet(this->Histograms);
+    ((vtkSlicerApplication *)this->GetApplication())->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
+
+}
+void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
+{
+    if(this->SVP_VolumeProperty==NULL)
+    {
+        vtkErrorMacro("SVP_VolumeProperty: Nothing to unpack");
+        return;
+    }
+
+     ((vtkSlicerApplication *)this->GetApplication())->Script("pack forget %s",this->SVP_VolumeProperty->GetWidgetName());
+     this->SVP_VolumeProperty->SetHistogramSet(NULL);
+     this->SVP_VolumeProperty->SetVolumeProperty(NULL);
+     this->SVP_VolumeProperty->SetDataSet(NULL);
+     this->SVP_VolumeProperty->SetParent(NULL);
+
+     if(this->Histograms)
+     {
+         this->Histograms->RemoveAllHistograms();
+         this->Histograms->Delete();
+         this->Histograms=NULL;
+     }
+     this->SVP_VolumeProperty->Delete();
+     this->SVP_VolumeProperty=NULL;
+
+}
 
