@@ -1036,8 +1036,6 @@ proc QueryAtlasRenderView {} {
     #
     $renderWindow SetSwapBuffers 0
     
-    # turn off hardware antialiasing 
-    $renderWindow SetGlobalMaximumNumberOfMultiSamples 0
     set renderState [QueryAtlasOverrideRenderState $renderer]
     $renderWidget Render
     
@@ -1059,8 +1057,6 @@ proc QueryAtlasRenderView {} {
 
     $renderWindow SetSwapBuffers 1
     QueryAtlasRestoreRenderState $renderer $renderState
-    # restore hardware antialiasing 
-    $renderWindow SetGlobalMaximumNumberOfMultiSamples 1
 
     $renderWidget Render
 

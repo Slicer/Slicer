@@ -493,7 +493,7 @@ int Slicer3_main(int argc, char *argv[])
   // turn off hardware antialiasing by default
   // - the QueryAtlas picker relies on this
   //   
-  vtkOpenGLRenderWindow::SetGlobalMaximumNumberOfMultiSamples(1);
+  vtkOpenGLRenderWindow::SetGlobalMaximumNumberOfMultiSamples(0);
 
 #ifdef USE_PYTHON
 
