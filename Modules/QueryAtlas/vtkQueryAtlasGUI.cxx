@@ -2334,16 +2334,43 @@ void vtkQueryAtlasGUI::BuildAnnotationOptionsGUI ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::ClearOntologyGUI ( )
 {
-  this->LocalSearchTermEntry->SetValue ( "" );
-  this->SynonymsMenuButton->GetMenu()->DeleteAllItems();
-  this->SynonymsMenuButton->SetValue ( "" );
-  this->BIRNLexEntry->SetValue ( "" );
-  this->BIRNLexIDEntry->SetValue ( "" );
-  this->NeuroNamesEntry->SetValue ( "" );
-  this->NeuroNamesIDEntry->SetValue ( "" );
-  this->UMLSCNEntry->SetValue ( "" );
-  this->UMLSCIDEntry->SetValue ( "" );
-  this->SavedTerms->GetMultiColumnList()->GetWidget()->DeleteAllRows();
+  if ( this->LocalSearchTermEntry->IsCreated() )
+    {
+    this->LocalSearchTermEntry->SetValue ( "" );
+    }
+  if ( this->SynonymsMenuButton->IsCreated() )
+    {
+    this->SynonymsMenuButton->GetMenu()->DeleteAllItems();
+    this->SynonymsMenuButton->SetValue ( "" );
+    }
+  if ( this->BIRNLexEntry->IsCreated() )
+    {
+    this->BIRNLexEntry->SetValue ( "" );
+    }
+  if ( this->BIRNLexIDEntry->IsCreated() )
+    {
+    this->BIRNLexIDEntry->SetValue ( "" );
+    }
+  if ( this->NeuroNamesEntry->IsCreated() )
+    {
+    this->NeuroNamesEntry->SetValue ( "" );
+    }
+  if ( this->NeuroNamesIDEntry->IsCreated() )
+    {    
+    this->NeuroNamesIDEntry->SetValue ( "" );
+    }
+  if ( this->UMLSCNEntry->IsCreated() )
+    {
+    this->UMLSCNEntry->SetValue ( "" );
+    }
+  if ( this->UMLSCIDEntry->IsCreated() )
+    {
+    this->UMLSCIDEntry->SetValue ( "" );
+    }
+  if ( this->SavedTerms->IsCreated() )
+    {
+    this->SavedTerms->GetMultiColumnList()->GetWidget()->DeleteAllRows();
+    }
 }
 
 
