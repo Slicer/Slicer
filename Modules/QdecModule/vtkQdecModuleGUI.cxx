@@ -110,7 +110,8 @@ vtkQdecModuleGUI::vtkQdecModuleGUI()
 //----------------------------------------------------------------------------
 vtkQdecModuleGUI::~vtkQdecModuleGUI()
 {
-  if (this->GetLogic()->GetTclScriptLoaded())
+  if (this->GetLogic() &&
+      this->GetLogic()->GetTclScriptLoaded())
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     if (app)
@@ -292,7 +293,7 @@ void vtkQdecModuleGUI::TearDownGUI ( )
 void vtkQdecModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "vtkQdecModuleGUI" << endl;
-  os << indent << "vtkQdecModuleLogic: " << this->GetLogic() << endl;
+  os << indent << "vtkQdecModuleLogic: " << (this->GetLogic() != NULL ? "" : "NULL") << endl;
   if (this->GetLogic() != NULL)
     {
     this->GetLogic()->PrintSelf(os, indent.GetNextIndent());
@@ -302,16 +303,27 @@ void vtkQdecModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkQdecModuleGUI::AddGUIObservers ( ) 
 {
-  this->SubjectsDirectoryButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->LoadTableButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->LoadResultsButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
-  this->QuestionMenu->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  if (this->SubjectsDirectoryButton)
+    {
+    this->SubjectsDirectoryButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->LoadTableButton)
+    {
+    this->LoadTableButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->LoadResultsButton)
+    {
+    this->LoadResultsButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->ApplyButton)
+    {
+    this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->QuestionMenu)
+    {
+    this->QuestionMenu->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
 }
-
-
 
 //---------------------------------------------------------------------------
 void vtkQdecModuleGUI::RemoveGUIObservers ( )
@@ -331,8 +343,11 @@ void vtkQdecModuleGUI::RemoveGUIObservers ( )
     this->LoadResultsButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
 
-  this->ApplyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-
+  if (this->ApplyButton)
+    {
+    this->ApplyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    }
+  
   if (this->QuestionMenu)
     {
     this->QuestionMenu->GetMenu()->RemoveObservers(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -367,7 +382,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
   if (b == this->ApplyButton && event == vtkKWPushButton::InvokedEvent ) 
     {
     //this->DebugOn();
-    if (this->GetDebug())
+    if (this->GetDebug() && this->GetLogic())
       {
       this->GetLogic()->DebugOn();
       }
@@ -421,34 +436,105 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkDebugMacro("Measure = " << this->MeasureMenu->GetValue());
     vtkDebugMacro("Hemisphere = " << this->HemisphereMenu->GetValue());
     vtkDebugMacro("Smoothness = " << this->SmoothnessMenu->GetValue());
-    
+
+    if (!this->GetLogic())
+      {
+      vtkErrorMacro("No Logic associated with QDEC GUI, can't create the GLM design");
+      return;
+      }
     // now pass it into the QDEC project to create a design
     int err = this->GetLogic()->CreateGlmDesign(this->DesignEntry->GetWidget()->GetValue(),
                                                 dis1.c_str(), dis2.c_str(), cont1.c_str(), cont2.c_str(),
                                                 this->MeasureMenu->GetValue(),
                                                 this->HemisphereMenu->GetValue(),
                                                 atoi(this->SmoothnessMenu->GetValue()));
-    
-    if (err == 0)
+    if (err != 0)
       {
-      // success!
-      vtkDebugMacro("Success in making the GLM design.");
-      err = this->GetLogic()->RunGlmFit();
-      if (err == 0)
+      std::string errorMessage;
+      if (err == -1)
         {
-        vtkDebugMacro("Succeeded in running Glm Fit.");
+        errorMessage = "GLM Design: Bad first discrete factor";
         }
-      else
+      if (err == -2)
         {
-        vtkErrorMacro("Error running GLM Fit...");
-        return;
+        errorMessage = "GLM Design: Bad second discrete factor";
         }
-      }
-    else
-      {
-      vtkErrorMacro("Error creating the GLM Design...");
+      if (err == -3)
+        {
+        errorMessage = "GLM Design: Bad first continuous factor";
+        }
+      if (err == -4)
+        {
+        errorMessage = "GLM Design: Bad second continuous factor";
+        }
+      if (err == -5)
+        {
+        errorMessage = "GLM Design: Zero factors!";
+        }
+      if (err == -6)
+        {
+        errorMessage = "GLM Design: could not create working directory";
+        }
+      if (err == -7)
+        {
+        errorMessage = "GLM Design: working directory not set, cannot save fsgd file";
+        }
+      if (err == -8)
+        {
+        errorMessage = "GLM Design: could not generate contrasts";
+        }
+      if (err == -9)
+        {
+        errorMessage = "Could not create the fsgd file";
+        }
+      if (err == -10)
+        {
+        errorMessage = "Could not generate contrasts";
+        }
+      if (err == -11)
+        {
+        errorMessage = "Could not create y.mgh file, the appropriate analysis may not have been performed on these subjects to provide the input mgh files to the creation of y.mgh";
+        }
+      if (err == -12)
+        {
+        errorMessage = "No QDEC Project defined on the logic";
+        }
+      vtkErrorMacro("Error making the GLM design: " <<  errorMessage.c_str());
       return;
       }
+
+    vtkDebugMacro("Success in making the GLM design.");
+
+    err = this->GetLogic()->RunGlmFit();
+
+    if (err == 1)
+      {
+      vtkWarningMacro("Unable to run GLM Fit, but succeeded at loading some demo data");
+      }
+    else if (err != 0)
+      {
+      
+      std::string errorMessage;
+      if (err == -1)
+        {
+        errorMessage = "QdecGlmFit::Run: QdecGlmDesign is invalid";
+        }
+      if (err == -2)
+        {
+        errorMessage = "QdecGlmFit::Run: glm fit results are invalid";
+        }
+      if (err == -3)
+        {
+        errorMessage = "QdecGlmFit::Run: failed to run fit, and demo data isn't valid";
+        }
+      if (err == -4)
+        {
+        errorMessage = "QDEC project not defined on Logic";
+        }
+      vtkErrorMacro("Error running GLM Fit: " << errorMessage.c_str());
+      return;
+      }
+    vtkDebugMacro("Succeeded in running Glm Fit.");
     
     // get the models logic to use to load the models and scalars (can't access it in the Logic class)
     vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models"))->GetLogic();
@@ -539,11 +625,13 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     if (this->LoadProjectFile(fileName) == 0)
       {
+      vtkWarningMacro("Loaded project file from " << fileName << ", widget text = " << this->LoadResultsButton->GetWidget()->GetText());
       filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
       }
     else
       {
       // loading failed
+      vtkErrorMacro("Loading results file " << fileName << " failed");
       this->LoadResultsButton->GetWidget()->SetText ("None");
       }
     return;
@@ -832,17 +920,37 @@ void vtkQdecModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
   // if parameter node has been changed externally, update GUI widgets with new values
   if (event == vtkMRMLScene::SceneCloseEvent)
     {
-    vtkWarningMacro("Got a scene close event in QdecModuleGUI");
+    vtkDebugMacro("Got a scene close event in QdecModuleGUI");
     this->Script("vtkFreeSurferReadersGDFPlotCBCloseAllWindows");
     // clear out the gui
-    this->MultiColumnList->GetWidget()->DeleteAllRows();
-    this->MultiColumnList->GetWidget()->DeleteAllColumns();
-    this->DiscreteFactorsListBox->GetWidget()->GetWidget()->DeleteAll();
-    this->ContinuousFactorsListBox->GetWidget()->GetWidget()->DeleteAll();
-    this->QuestionLabel->SetText("Question: ");
-    this->QuestionMenu->GetMenu()->DeleteAllItems();
-    this->QuestionMenu->GetMenu()->AddRadioButton( "None" );
-    this->QuestionMenu->SetValue( "None" );
+    if (this->MultiColumnList && this->MultiColumnList->GetWidget())
+      {
+      this->MultiColumnList->GetWidget()->DeleteAllRows();
+      this->MultiColumnList->GetWidget()->DeleteAllColumns();
+      }
+    if (this->DiscreteFactorsListBox &&
+        this->DiscreteFactorsListBox->GetWidget() &&
+        this->DiscreteFactorsListBox->GetWidget()->GetWidget())
+      {
+      this->DiscreteFactorsListBox->GetWidget()->GetWidget()->DeleteAll();
+      }
+    if (this->ContinuousFactorsListBox &&
+        this->ContinuousFactorsListBox->GetWidget() &&
+        this->ContinuousFactorsListBox->GetWidget()->GetWidget())
+      {
+      this->ContinuousFactorsListBox->GetWidget()->GetWidget()->DeleteAll();
+      }
+    if (this->QuestionLabel)
+      {
+      this->QuestionLabel->SetText("Question: ");
+      }
+    if (this->QuestionMenu &&
+        this->QuestionMenu->GetMenu())
+      {
+      this->QuestionMenu->GetMenu()->DeleteAllItems();
+      this->QuestionMenu->GetMenu()->AddRadioButton( "None" );
+      this->QuestionMenu->SetValue( "None" );
+      }
     }
 }
 
@@ -854,7 +962,11 @@ void vtkQdecModuleGUI::BuildGUI ( )
 {
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
-
+  if (!app || !this->UIPanel)
+    {
+    return;
+    }
+  
   this->UIPanel->AddPage ( "QdecModule", "QdecModule", NULL );
   // ---
   // MODULE GUI FRAME 
@@ -1132,7 +1244,7 @@ void vtkQdecModuleGUI::BuildGUI ( )
   
 
   // for plotting
-  if (!this->GetLogic()->GetTclScriptLoaded())
+  if (this->GetLogic() && !this->GetLogic()->GetTclScriptLoaded())
     {
       const char *tclScript = this->GetLogic()->GetPlotTclScript();
       vtkWarningMacro("Loading: " << tclScript);
@@ -1209,20 +1321,16 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
   const char *tempDir = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetTemporaryDirectory();
   const char *unzip = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetUnzip();
   const char *rm = vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetRm();
-  // make the paths work for windows
-//#ifdef _WIN32
-  //std::string newTempDir = itksys::SystemTools::ConvertToOutputPath(tempDir);
-  //std::string newFileName = itksys::SystemTools::ConvertToOutputPath(fileName);
-//#else
+
   std::string newTempDir = std::string(tempDir);
   std::string newFileName = std::string(fileName);
-//#endif
 
-  // make sure to escape any characters that might make working on the file
-  // difficult, like spaces and brackets
-  //newFileName =  itksys::SystemTools::EscapeChars(newFileName.c_str(), QdecModule_ESCAPE_CHARS);
-  //vtkDebugMacro("Escaped file name = " << newFileName.c_str());
-  
+  if (this->GetLogic() == NULL ||
+      this->GetLogic()->QDECProject == NULL)
+    {
+    vtkErrorMacro("LoadProjectFile: Logic or it's associated QDECProject isn't defined yet, unable to load " << fileName);
+    return 0;
+    }
   // check the paths to unzip and rm
   if (strcmp(unzip, "") != 0 &&
       strcmp(unzip, this->GetLogic()->QDECProject->GetUnzipCommand().c_str()) != 0)
@@ -1244,7 +1352,11 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
       {
       // couldn't open the archive, give user a chance to set the zip file
       vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
-      dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
+      if (this->GetApplicationGUI() &&
+          this->GetApplicationGUI()->GetMainSlicerWindow())
+        {
+        dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow() );
+        }
       dialog->SetStyleToMessage();
       std::string msg = "The qdec archive failed to open. It should be a ZIP file and there should be one directory inside named qdec_project_archive.\nIf all that is true, maybe the system couldn't find the proper command to unzip it. You can force which application is used to unzip the .qdec file by using the following dialog, then try to open it again.";
       dialog->SetText(msg.c_str());
@@ -1279,22 +1391,45 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
   
   // load the results
   vtkWarningMacro("Reading QDEC results that were in the file " << fileName);
-  // get the models logic to use to load the models and scalars (can't access it in the Logic class)
-  vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Models"))->GetLogic();
-  if (this->GetLogic()->LoadResults(modelsLogic, this->GetApplication()) != 0)
+  // get the models logic to use to load the models and scalars (can't access
+  // it in the Logic class)
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if (app)
     {
-    vtkErrorMacro("Unable to load results of precomputed GLM fit processing from file " << fileName);
-    return 0;
+    if (vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models")))
+      {
+      vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsGUI::SafeDownCast(app->GetModuleGUIByName("Models"))->GetLogic();
+      if (this->GetLogic()->LoadResults(modelsLogic, app) != 0)
+        {
+        vtkErrorMacro("Unable to load results of precomputed GLM fit processing from file " << fileName);
+        return 0;
+        }
+      else
+        {
+        // clear out the questions menu, then update the gui
+        this->QuestionMenu->GetMenu()->DeleteAllItems();
+        this->UpdateGUI();
+        // trigger showing one of the questions
+        int numQuestions = this->GetLogic()->GetNumberOfQuestions();
+        this->QuestionMenu->GetMenu()->InvokeItem(numQuestions - 1);
+        this->QuestionMenu->GetMenu()->InvokeEvent(vtkKWMenu::MenuItemInvokedEvent);
+        }
+      }
+    else
+      {
+      vtkErrorMacro("Unable to get Models module GUI, can't load results as need to add models");
+      return 0;
+      }
     }
   else
     {
-    // clear out the questions menu, then update the gui
-    this->QuestionMenu->GetMenu()->DeleteAllItems();
-    this->UpdateGUI();
-    // trigger showing one of the questions
-    int numQuestions = this->GetLogic()->GetNumberOfQuestions();
-    this->QuestionMenu->GetMenu()->InvokeItem(numQuestions - 1);
-    this->QuestionMenu->GetMenu()->InvokeEvent(vtkKWMenu::MenuItemInvokedEvent);
+    vtkErrorMacro("Could not get application to get at the models module");
+    return 0;
+    }
+  // set the project file name on the load button
+  if (this->LoadResultsButton)
+    {
+    this->LoadResultsButton->GetWidget()->SetInitialFileName(fileName);
     }
   return 1;
 }
