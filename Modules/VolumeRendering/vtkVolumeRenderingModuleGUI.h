@@ -118,6 +118,25 @@ public:
     vtkSetMacro(EventsPending, int);
 
 
+     // Description:
+  // Get methods on class members ( no Set methods required. )
+  vtkGetObjectMacro (PB_Testing,vtkKWPushButton);
+  vtkGetObjectMacro (PB_CreateNewVolumeRenderingNode,vtkKWPushButton);
+  vtkGetObjectMacro (NS_ImageData,vtkSlicerNodeSelectorWidget);
+  vtkGetObjectMacro (NS_VolumeRenderingDataSlicer,vtkSlicerNodeSelectorVolumeRenderingWidget);
+  vtkGetObjectMacro (NS_VolumeRenderingDataScene,vtkSlicerNodeSelectorVolumeRenderingWidget);
+  vtkGetObjectMacro (EWL_CreateNewVolumeRenderingNode,vtkKWEntryWithLabel);
+  vtkGetObjectMacro (detailsFrame,vtkSlicerModuleCollapsibleFrame);
+  vtkGetObjectMacro (LM_OptionTree,vtkSlicerLabelMapWidget);
+  vtkGetObjectMacro (Histograms,vtkKWHistogramSet);
+  vtkGetObjectMacro (SVP_VolumeProperty,vtkSlicerVolumePropertyWidget);
+  vtkGetObjectMacro (currentNode,vtkMRMLVolumeRenderingNode);
+  vtkGetObjectMacro (presets, vtkMRMLScene);
+  vtkGetObjectMacro (volume,vtkVolume);
+  vtkGetObjectMacro (mapper,vtkAbstractVolumeMapper);
+  vtkGetObjectMacro (matrix,vtkMatrix4x4);
+
+
 
 
 
@@ -168,7 +187,6 @@ protected:
 
     //Frame Save/Load
     vtkKWPushButton *PB_Testing;
-    vtkKWPushButton *PB_LoadVolumeRenderingDataSlicer;
     vtkKWPushButton *PB_CreateNewVolumeRenderingNode;
     vtkSlicerNodeSelectorWidget *NS_ImageData;
     //BTX

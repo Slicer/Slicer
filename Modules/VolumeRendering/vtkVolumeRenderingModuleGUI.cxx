@@ -21,6 +21,7 @@
 #include "vtkKWHistogramSet.h"
 #include "vtkKWTkUtilities.h"
 #include "vtkTimerLog.h"
+#include "vtkSlicerMRMLTreeWidget.h"
 
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
@@ -39,7 +40,6 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
     this->PreviousNS_VolumeRenderingSlicer="";
     this->volume=NULL;
     this->PB_Testing=NULL;
-    this->PB_LoadVolumeRenderingDataSlicer=NULL;
     this->PB_CreateNewVolumeRenderingNode=NULL;
     this->NS_ImageData=NULL;
     this->NS_VolumeRenderingDataSlicer=NULL;
@@ -79,13 +79,6 @@ vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
         this->PB_Testing->SetParent(NULL);
         this->PB_Testing->Delete();
         this->PB_Testing=NULL;
-    }
-
-    if(this->PB_LoadVolumeRenderingDataSlicer)
-    {
-        this->PB_LoadVolumeRenderingDataSlicer->SetParent(NULL);
-        this->PB_LoadVolumeRenderingDataSlicer->Delete();
-        this->PB_LoadVolumeRenderingDataSlicer=NULL;
     }
 
     if (this->PB_CreateNewVolumeRenderingNode)
@@ -994,7 +987,7 @@ void vtkVolumeRenderingModuleGUI::PackLabelMapGUI()
     this->LM_OptionTree=vtkSlicerLabelMapWidget::New();
     this->LM_OptionTree->SetParent(this->detailsFrame->GetFrame());
     this->LM_OptionTree->Create();
-    ((vtkSlicerApplication *)this->GetApplication())->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",this->LM_OptionTree->GetWidgetName(),this->detailsFrame->GetFrame()->GetWidgetName());
+    ((vtkSlicerApplication *)this->GetApplication())->Script("pack %s",this->LM_OptionTree->GetWidgetName());
 }
 
 void vtkVolumeRenderingModuleGUI::UnpackLabelMapGUI()
@@ -1004,10 +997,12 @@ void vtkVolumeRenderingModuleGUI::UnpackLabelMapGUI()
         vtkErrorMacro("LM_OptionTree: Already unpacked");
         return;
     }
-     ((vtkSlicerApplication *)this->GetApplication())->Script("pack forget %s",this->LM_OptionTree->GetWidgetName());
-     this->LM_OptionTree->SetParent(NULL);
-     this->LM_OptionTree->Delete();
-     this->LM_OptionTree=NULL;
+    //this->LM_OptionTree->Unpack();
+    
+     this->Script("pack forget %s",this->LM_OptionTree->GetWidgetName());
+    // this->LM_OptionTree->SetParent(NULL);
+     //this->LM_OptionTree->Delete();
+     //this->LM_OptionTree=NULL;
      //this->
 }
 
@@ -1027,7 +1022,7 @@ void vtkVolumeRenderingModuleGUI::PackSvpGUI()
     this->SVP_VolumeProperty->Create();
     this->SVP_VolumeProperty->SetHistogramSet(this->Histograms);
     ((vtkSlicerApplication *)this->GetApplication())->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
-
+    const char* debug=this->SVP_VolumeProperty->GetWidgetName();
 }
 void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
 {
@@ -1037,20 +1032,20 @@ void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
         return;
     }
 
-     ((vtkSlicerApplication *)this->GetApplication())->Script("pack forget %s",this->SVP_VolumeProperty->GetWidgetName());
-     this->SVP_VolumeProperty->SetHistogramSet(NULL);
-     this->SVP_VolumeProperty->SetVolumeProperty(NULL);
-     this->SVP_VolumeProperty->SetDataSet(NULL);
-     this->SVP_VolumeProperty->SetParent(NULL);
+     this->Script("pack forget %s",this->SVP_VolumeProperty->GetWidgetName());
+     //this->SVP_VolumeProperty->SetHistogramSet(NULL);
+     //this->SVP_VolumeProperty->SetVolumeProperty(NULL);
+     //this->SVP_VolumeProperty->SetDataSet(NULL);
+     //this->SVP_VolumeProperty->SetParent(NULL);
 
-     if(this->Histograms)
-     {
-         this->Histograms->RemoveAllHistograms();
-         this->Histograms->Delete();
-         this->Histograms=NULL;
-     }
-     this->SVP_VolumeProperty->Delete();
-     this->SVP_VolumeProperty=NULL;
+     //if(this->Histograms)
+     //{
+     //    this->Histograms->RemoveAllHistograms();
+     //    this->Histograms->Delete();
+     //    this->Histograms=NULL;
+     //}
+     //this->SVP_VolumeProperty->Delete();
+     //this->SVP_VolumeProperty=NULL;
 
 }
 
