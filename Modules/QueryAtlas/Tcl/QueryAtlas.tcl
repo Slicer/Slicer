@@ -1638,8 +1638,8 @@ proc QueryAtlasTranslateLabel  { label } {
         #set newlabel [ QueryAtlasVocabularyMapper $label "FreeSurfer" "NN_String" ]
         set newlabel [ QueryAtlasMapTerm $label "FreeSurfer" "NN_String" ]
     } elseif { $::QA(annotationTermSet) == "UMLS" } {
-        #set newlabel [ QueryAtlasVocabularyMapper $label "FreeSurfer" "UMLS_CID" ]
-        set newlabel [ QueryAtlasMapTerm $label "FreeSurfer" "UMLS_CID" ]
+        #set newlabel [ QueryAtlasVocabularyMapper $label "FreeSurfer" "UMLS_CN" ]
+        set newlabel [ QueryAtlasMapTerm $label "FreeSurfer" "UMLS_CN" ]
     } elseif { $::QA(annotationTermSet) == "IBVD" } {
         set newlabel [ QueryAtlasMapTerm $label "FreeSurfer" "IBVD" ]        
     } else {
