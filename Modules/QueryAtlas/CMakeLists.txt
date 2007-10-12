@@ -37,6 +37,21 @@ FOREACH(tclfile ${TCLFILES})
 ENDFOREACH(tclfile)
 
 
+SET (CSVFILES
+  ./Resources/NN2002-2-synonyms.csv
+  ./Resources/controlledVocabulary.csv
+  ./Resources/Neurons_CellpropDB.csv
+  ./Resources/NN2002-3-BrainInfoURI.csv
+)
+
+FOREACH( csvfile ${CSVFILES})
+   CONFIGURE_FILE(
+      ${Slicer3_SOURCE_DIR}/Modules/QueryAtlas/${csvfile}
+      ${QueryAtlas_DIR}/${csvfile}
+      COPYONLY
+)
+ENDFOREACH(csvfile)
+
 
 # --------------------------------------------------------------------------
 # Sources
