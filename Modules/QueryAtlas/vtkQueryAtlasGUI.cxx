@@ -783,6 +783,38 @@ void vtkQueryAtlasGUI::OpenOntologyBrowser()
 }
 
 
+
+
+//---------------------------------------------------------------------------
+vtkDataArray* vtkQueryAtlasGUI::AssignCellColorCode (
+                                                     int numCells,
+                                                     int nextCellIndex,
+                                                     vtkDataArray *cellNumberColors)
+{
+  int val, r, g, b;
+  int mult = 256*256;
+  cellNumberColors->Initialize();
+  cellNumberColors->SetNumberOfComponents (4);
+  if ( nextCellIndex >= 0 )
+    {
+    for ( int i=0; i<numCells; i++ )
+      {
+      val = i + nextCellIndex;
+      val = val+1;
+      r = val / (mult);
+      val = val % (mult);
+      g = val / 256;
+      b = val % 256;
+      cellNumberColors->InsertNextTuple4 ( (double)r, (double)g, (double)b, 255.0 );
+      }
+    }
+  return (cellNumberColors);
+}
+
+
+
+
+
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::PrintSelf ( ostream& os, vtkIndent indent )
 {

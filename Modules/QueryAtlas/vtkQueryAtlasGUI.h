@@ -187,6 +187,12 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void ClearOntologyGUI ( );
     
     // Description:
+    // Assign colors that encode cell label and modelID
+    virtual vtkDataArray *AssignCellColorCode ( int numCells,
+                                                    int nextCellIndex,
+                                                    vtkDataArray *cellNumberColors );
+
+    // Description:
     // Helper methods for building the complicated GUI
 
     virtual void UnpackLoaderContextFrames ( );

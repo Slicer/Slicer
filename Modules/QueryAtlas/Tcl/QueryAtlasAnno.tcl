@@ -201,6 +201,7 @@ proc QueryAtlasAddNewPickModels { mid } {
     $::QA(actor_$mid) SetMapper $::QA(mapper_$mid)
     $::QA(polyData_$mid) Update
 
+
     #--- progress feedback
     $prog SetValue 10
     
@@ -210,35 +211,19 @@ proc QueryAtlasAddNewPickModels { mid } {
         set cellNumberColors [vtkUnsignedCharArray New]
         $cellNumberColors SetName "CellNumberColors"
         $cellData AddArray $cellNumberColors
-        $cellData SetScalars $cellNumberColors
     }
 
     #--- progress feedback
-    $prog SetValue 20
+    $prog SetValue 40
 
-    $cellData SetScalars $cellNumberColors
     set cellNumberColors [$cellData GetArray "CellNumberColors"] 
-    $cellNumberColors Initialize
-    $cellNumberColors SetNumberOfComponents 4
-
-    #--- create model with progress feedback
-    #--- because it takes awhile...
     if { ![info exists ::QA(nextCellIndex)] } {
       set ::QA(nextCellIndex) 0
     }
     set numberOfCells [$::QA(polyData_$mid) GetNumberOfCells]
-    set pinc [expr 60.0 / $numberOfCells ]
-    set pinit 20.0
-    for {set i 0} {$i < $numberOfCells} {incr i} {
-        eval $cellNumberColors InsertNextTuple4 [QueryAtlasNumberToRGBA [expr $i + $::QA(nextCellIndex)]]
-        if { [expr $i % 10000] == 0 } {
-          $prog SetValue [ expr $pinit + ($i*$pinc) ]
-        }
-    }
-
+    $cellData SetScalars [ $::slicer3::QueryAtlasGUI AssignCellColorCode  $numberOfCells $::QA(nextCellIndex) $cellNumberColors]
     set ::QA(nextCellIndex) [expr $::QA(nextCellIndex) + $numberOfCells]
     set ::QA(numberOfCells,$mid) $numberOfCells
-
 
     $win SetStatusText "Adding new pick model..."
     set ::QA(cellData_$mid) $cellData
@@ -254,7 +239,7 @@ proc QueryAtlasAddNewPickModels { mid } {
     }
 
     #--- progress feedback
-    $prog SetValue 90
+    $prog SetValue 80
     
     $::QA(mapper_$mid) SetScalarModeToUseCellData
     $::QA(mapper_$mid) SetScalarVisibility 1
@@ -279,6 +264,9 @@ proc QueryAtlasAddNewPickModels { mid } {
 
 
 
+
+
+
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
@@ -288,6 +276,7 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
     set prog [ $win GetProgressGauge ]
     $win SetStatusText "Adding any new model annotations..."
     $prog SetValue 0
+
 
     if { [info exists ::QA(annoModelNodeIDs) ] } {
         #---
