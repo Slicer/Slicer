@@ -553,6 +553,9 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
         {
         this->QuestionMenu->GetMenu()->AddRadioButton(this->GetLogic()->GetQuestion(i).c_str());
         }
+      // trigger showing one of the questions
+      this->QuestionMenu->GetMenu()->InvokeItem(numQuestions - 1);
+      this->QuestionMenu->GetMenu()->InvokeEvent(vtkKWMenu::MenuItemInvokedEvent);
       }
     if (this->GetDebug())
       {
