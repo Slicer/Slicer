@@ -255,6 +255,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   vtkGetMacro (UseSplashScreen, int);
 
   // Description:
+  // Control stereo render capability
+  vtkSetMacro (StereoEnabled, int);
+  vtkGetMacro (StereoEnabled, int);
+  
+  // Description:
   // Control the state of the splash screen
   void SplashMessage (const char * message);
 
@@ -316,6 +321,7 @@ private:
   static vtkSlicerApplication* Instance;
 
   int UseSplashScreen;
+  int StereoEnabled;
 }; 
 
 #endif
