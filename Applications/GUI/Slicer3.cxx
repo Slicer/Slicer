@@ -211,6 +211,9 @@ extern "C" int Slicertractographydisplay_Init(Tcl_Interp *interp);
 #if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Queryatlas_Init(Tcl_Interp *interp);
 #endif
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+extern "C" int Volumerenderingmodule_Init(Tcl_Interp *interp);
+#endif
 #if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
 #endif
@@ -678,6 +681,9 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
     Qdecmodule_Init(interp);
+#endif
+ #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+    Volumerenderingmodule_Init(interp);
 #endif
     
 #if !defined(GAD_DEBUG) && defined(BUILD_MODULES)
@@ -1592,6 +1598,7 @@ int Slicer3_main(int argc, char *argv[])
     name = queryAtlasGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set QueryAtlasGUI %s", name);
 #endif
+   
     
 #if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
     name = wfEngineModuleGUI->GetTclName();
@@ -1601,6 +1608,10 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
     name = qdecModuleGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set QdecModuleGUI %s", name);
+#endif
+#if !defined (VOLUMERENDERINGMODULE_DEBUG) && defined (BUILD_MODULES)
+    name = vrModuleGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set VRModuleGUI %s", name);
 #endif
     
     if ( appGUI->GetViewerWidget() )
@@ -1890,6 +1901,10 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
     qdecModuleGUI->TearDownGUI ( );
 #endif
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+    vrModuleGUI->TearDownGUI ( );
+#endif
+
 
     transformsGUI->TearDownGUI ( );
 #ifndef CAMERA_DEBUG
@@ -2003,6 +2018,11 @@ int Slicer3_main(int argc, char *argv[])
     qdecModuleGUI->Delete ( );
 #endif
 
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+    vrModuleGUI->Delete ( );
+#endif
+
+
     
     transformsGUI->Delete ();
 #ifndef CAMERA_DEBUG
@@ -2115,6 +2135,10 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
     qdecModuleLogic->SetAndObserveMRMLScene ( NULL );
     qdecModuleLogic->Delete ( );
+#endif
+    #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+    vrModuleLogic->SetAndObserveMRMLScene ( NULL );
+    vrModuleLogic->Delete ( );
 #endif
 
     sliceLogic2->SetAndObserveMRMLScene ( NULL );
