@@ -93,7 +93,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   char sepChar = '/';
 
   FILE *fp = NULL;
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
   std::string logFile = std::string("LoadProjectFile.log");
   fp = fopen(logFile.c_str(), "w");
@@ -155,10 +155,10 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
    string escExpandedProjectBase = "qdec_project_archive";
    string escExpandedProjectDir = string(ifnDataDir) + sepString + escExpandedProjectBase;
 
-   fprintf(fp, "fnProjectBase = %s, fnExpandedProjectBase = %s, fnExpandedProjectDir = %s\nescfnProjectBase = %s, escExpandedProjectBase = %s, escExpandedProjectDir = %s\n",
-           fnProjectBase.c_str(), fnExpandedProjectBase.c_str(), fnExpandedProjectDir.c_str(),
-           escfnProjectBase.c_str(), escExpandedProjectBase.c_str(), escExpandedProjectDir.c_str());
-    
+   fprintf(fp, "fnProjectBase = %s, fnExpandedProjectDir = %s\nescfnProjectBase = %s, escExpandedProjectDir = %s\n",
+           fnProjectBase.c_str(), fnExpandedProjectDir.c_str(),
+           escfnProjectBase.c_str(), escExpandedProjectDir.c_str());
+  
   string sSubject;
   string sHemisphere;
   string sAnalysisName;
@@ -176,7 +176,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
     {
     fprintf(fp, "QdecProject::LoadProjectFile: Couldn't open unescaped file %s\n",  fnProject.c_str());
     if (fp != stderr) { fclose(fp); }
-    return -23;   
+    return -24;   
     }
   else
     {
@@ -193,7 +193,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
     {
     sCommand = this->msBinaryPath + "rm -rf " + escExpandedProjectDir;
     }
-  fprintf(fp, " QdecProject::LoadProjectFile: command = %s\n", sCommand.c_str());
+  fprintf(fp, "QdecProject::LoadProjectFile: command = %s\n", sCommand.c_str());
   int rSystem = system( sCommand.c_str() );
   if( 0 != rSystem )
     {
@@ -370,7 +370,7 @@ int QdecProject::LoadProjectFile ( const char* ifnProject,
   if( errorCode )
     {
     if (fp != stderr) { fclose(fp); }
-    return -22;
+    return -23;
     }
 
   if (fp != stderr)
@@ -977,10 +977,11 @@ QdecProject::FormatCommandString ( const char* ifnProject,
                                    const char* isFormat,
                                    string& iosCommand ) const
 {
-  assert( ifnProject );
-  assert( isExpandedProjectBaseName );
-  assert( isWorkingDir );
-  assert( isFormat );
+  if (!ifnProject || !isExpandedProjectBaseName || !isWorkingDir || !isFormat )
+    {
+    fprintf(stderr, "FormatCommandString: an input string  is null");
+    return;
+    }
   
   // Start by copying the format string.
   iosCommand = isFormat;

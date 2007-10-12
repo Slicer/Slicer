@@ -47,7 +47,11 @@
 
 QdecGlmDesign::QdecGlmDesign ( QdecDataTable* iDataTable )
 {
-  assert( iDataTable );
+  if (!iDataTable)
+    {
+    fprintf(stderr, "ERROR: QdecGlmDesign Constructor: input data table is null");
+    return;
+    }
   this->mDataTable = iDataTable;
   this->mbValid = false;
   this->msName = "Untitled";
@@ -65,9 +69,17 @@ QdecGlmDesign::QdecGlmDesign ( QdecDataTable* iDataTable )
     this->mfnDefaultWorkingDir = getenv("QDEC_WORKING_DIR");
   }
   if( "" == this->mfnDefaultWorkingDir )
-  {
-    this->mfnDefaultWorkingDir = this->mfnSubjectsDir;
-    this->mfnDefaultWorkingDir += "/qdec";
+    {
+    if ( "" != this->mfnSubjectsDir)
+      {
+      this->mfnDefaultWorkingDir = this->mfnSubjectsDir;
+      this->mfnDefaultWorkingDir += "/qdec";
+      }
+    else
+      {
+      this->mfnDefaultWorkingDir = "qdec";
+      fprintf(stderr, "WARNING: QdecGlmDesign::Constructor: subjects dir and working directory not set! Using qdec");
+      }
   }
   this->mfnWorkingDir = this->mfnDefaultWorkingDir;
 
@@ -77,12 +89,12 @@ QdecGlmDesign::QdecGlmDesign ( QdecDataTable* iDataTable )
   int err = mkdir( this->mfnWorkingDir.c_str());
 #endif
   if( err != 0 && errno != EEXIST )
-  {
+    {
     fprintf( stderr,
              "ERROR: QdecGlmDesign::Constructor: "
              "could not create directory %s\n",
              this->mfnWorkingDir.c_str());
-  }
+    }
 }
 
 QdecGlmDesign::~QdecGlmDesign ( )
@@ -170,7 +182,11 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
 
   // begin absorbing input parameters
 
-  assert( iDataTable );
+  if (!iDataTable)
+    {
+    fprintf(stderr, "ERROR: QdecGlmDesign Create: input data table is null");
+    return -9;
+    }
   this->mDataTable = iDataTable;
 
   //
@@ -200,8 +216,10 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
       mDataTable->Dump( stderr );
       return -1;
     }
-    assert( qf->IsDiscrete() );
-    this->mDiscreteFactors.push_back( qf );
+    if (qf->IsDiscrete())
+      {
+      this->mDiscreteFactors.push_back( qf );
+      }
   }
   if ( (NULL != isSecondDiscreteFactor) &&
        (strcmp(isSecondDiscreteFactor,"none")) )
@@ -212,8 +230,10 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
       fprintf( stderr,"ERROR: QdecGlmDesign::Create: bad second discrete factor!\n" );
       return -2;
     }
-    assert( qf->IsDiscrete() );
-    this->mDiscreteFactors.push_back( qf );
+    if (qf->IsDiscrete())
+      {
+      this->mDiscreteFactors.push_back( qf );
+      }
   }
   if ( (NULL != isFirstContinuousFactor) &&
        (strcmp(isFirstContinuousFactor,"none")) )
@@ -224,8 +244,10 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
       fprintf( stderr,"ERROR: QdecGlmDesign::Create: bad first continuous factor %s\n", isFirstContinuousFactor );
       return -3;
     }
-    assert( qf->IsContinuous() );
-    this->mContinuousFactors.push_back( qf );
+    if ( qf->IsContinuous() )
+      {
+      this->mContinuousFactors.push_back( qf );
+      }
   }
   if ( (NULL != isSecondContinuousFactor) &&
        (strcmp(isSecondContinuousFactor,"none")) )
@@ -236,8 +258,10 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
       fprintf( stderr,"ERROR: QdecGlmDesign::Create: bad second continuous factor %s\n", isSecondContinuousFactor);
       return -4;
     }
-    assert( qf->IsContinuous() );
-    this->mContinuousFactors.push_back( qf );
+    if ( qf->IsContinuous() )
+      {
+      this->mContinuousFactors.push_back( qf );
+      }
   }
   if ( 0 == (this->mDiscreteFactors.size() + this->mContinuousFactors.size()) )
   {
@@ -498,7 +522,11 @@ ProgressUpdateGUI* QdecGlmDesign::GetProgressUpdateGUI ( )
 void QdecGlmDesign::SetExcludeSubjectID ( const char* isSubjectID, 
                                           bool ibExclude )
 {
-  assert( isSubjectID );
+  if ( !isSubjectID )
+    {
+    fprintf(stderr, " QdecGlmDesign::SetExcludeSubjectID: null subject id string");
+    return;
+    }
   
   if( ibExclude )
     {
@@ -521,13 +549,21 @@ void QdecGlmDesign::SetExcludeSubjectID ( const char* isSubjectID,
  */
 bool QdecGlmDesign::GetExcludeSubjectID ( const char* isSubjectID )
 {
-  assert( isSubjectID );
+  if ( !isSubjectID )
+    {
+    fprintf(stderr, " QdecGlmDesign::GetExcludeSubjectID: null subject id string");
+    return false;
+    }
   
   if( maExcludedSubjects.find( string(isSubjectID) ) != 
       maExcludedSubjects.end() )
+    {
     return true;
+    }
   else
+    {
     return false;
+    }
 }
 
 /**
@@ -576,7 +612,11 @@ string QdecGlmDesign::GetLevels2ClassName ( unsigned int* nthlevels )
   {
     QdecFactor* F = this->mDiscreteFactors[f];
     unsigned int nLevels = F->GetLevelNames().size();
-    assert( nLevels );
+    if (!nLevels)
+      {
+      fprintf(stderr, "ERROR: QdecGlmDesign::GetLevels2ClassName: nLevels is null!");
+      break;
+      }
     if ( nthlevels[df] >= nLevels )
     {
       fprintf
@@ -740,7 +780,12 @@ int QdecGlmDesign::GenerateContrasts ( )
     {
       vector< double > contrast;
       for (unsigned int i=0; i < nreg; i++) contrast.push_back( 0.0 );
-      assert( contrast.size() == nreg );
+      if (contrast.size() != nreg )
+        {
+        fprintf(stderr,
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+        return -1;
+        }
       contrast[nthc] = 1;
       string name = "";
       string question = "";
@@ -795,7 +840,12 @@ int QdecGlmDesign::GenerateContrasts ( )
     {
       vector< double > contrast;
       for (unsigned int i=0; i < nreg; i++) contrast.push_back( 0.0 );
-      assert( contrast.size() == nreg );
+      if (contrast.size() != nreg )
+        {
+        fprintf(stderr,
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+        return -1;
+        }
       int a = 2*nthvar;
       contrast[a] = 1;
       contrast[a+1] = 1;
@@ -834,7 +884,13 @@ int QdecGlmDesign::GenerateContrasts ( )
     {
       vector< double > contrast;
       for (unsigned int i=0; i < nreg; i++) contrast.push_back( 0.0 );
-      assert( contrast.size() == nreg );
+      if (contrast.size() != nreg )
+        {
+        fprintf(stderr,
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+        return -1;
+        }
+
       int a = 2*nthvar;
       contrast[a] = 1;
       contrast[a+1] = -1;
@@ -902,7 +958,12 @@ int QdecGlmDesign::GenerateContrasts ( )
     {
       vector< double > contrast;
       for (unsigned int i=0; i < nreg; i++) contrast.push_back( 0.0 );
-      assert( contrast.size() == nreg );
+      if (contrast.size() != nreg )
+        {
+        fprintf(stderr,
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+        return -1;
+        }
       int a = 4*nthvar;
       for (unsigned int d=0;d<4;d++) contrast[a+d] = 1;
       string name = "";
@@ -939,7 +1000,12 @@ int QdecGlmDesign::GenerateContrasts ( )
     {
       vector< double > contrast;
       for (unsigned int i=0; i < nreg; i++) contrast.push_back( 0.0 );
-      assert( contrast.size() == nreg );
+      if (contrast.size() != nreg )
+        {
+        fprintf(stderr,
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+        return -1;
+        }
       int a = 4*nthvar;
       contrast[a]   = +1;
       contrast[a+1] = -1;
@@ -978,7 +1044,12 @@ int QdecGlmDesign::GenerateContrasts ( )
     {
       vector< double > contrast;
       for (unsigned int i=0; i < nreg; i++) contrast.push_back( 0.0 );
-      assert( contrast.size() == nreg );
+      if (contrast.size() != nreg )
+        {
+        fprintf(stderr,
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+        return -1;
+        }
       int a = 4*nthvar;
       contrast[a]   = +1;
       contrast[a+1] = +1;
@@ -1017,7 +1088,12 @@ int QdecGlmDesign::GenerateContrasts ( )
     {
       vector< double > contrast;
       for (unsigned int i=0; i < nreg; i++) contrast.push_back( 0.0 );
-      assert( contrast.size() == nreg );
+      if (contrast.size() != nreg )
+        {
+        fprintf(stderr,
+                "ERROR: QdecGlmDesign::GenerateContrasts: contrast size %d != %d\n", contrast.size(), nreg);
+        return -1;
+        }
       int a = 4*nthvar;
       contrast[a]   = +1;
       contrast[a+1] = -1;
@@ -1151,7 +1227,10 @@ int QdecGlmDesign::WriteYdataFile ( )
   }
 
   if ( lfnInputs.size() < 1 )
-    throw runtime_error( "No input files" );
+    {
+    fprintf(stderr, "QdecGlmDesign::WriteYdataFile: No input files" );
+    return 1;
+    }
 
    // Go through and concatenate copy all the volumes.
   if( this->mProgressUpdateGUI )
