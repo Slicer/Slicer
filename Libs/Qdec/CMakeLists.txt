@@ -75,3 +75,9 @@ CONFIGURE_FILE(
   ${Qdec_BINARY_DIR}/vtkFreeSurferReaders.tcl
   COPYONLY
 )
+
+# install the tcl file
+INSTALL(
+  FILES ${Qdec_BINARY_DIR}/vtkFreeSurferReaders.tcl
+  DESTINATION Libs/Qdec
+)
