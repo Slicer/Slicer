@@ -281,9 +281,13 @@ int vtkQdecModuleLogic::LoadProjectFile(const char *fileName, const char *tempDi
         }
       else if (err == -22)
         {
-        vtkErrorMacro("LoadProjectFile: error creating results from cached data");
+        vtkErrorMacro("LoadProjectFile: QdecGlmDesign::Create: input table was null");
         }
       else if (err == -23)
+        {
+        vtkErrorMacro("LoadProjectFile: error creating results from cached data");
+        }
+      else if (err == -24)
         {
         vtkErrorMacro("LoadProjectFile: couldn't open the project file " << fileName);
         }

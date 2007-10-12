@@ -493,7 +493,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       if (err == -11)
         {
-        errorMessage = "Could not create y.mgh file, the appropriate analysis may not have been performed on these subjects to provide the input mgh files to the creation of y.mgh";
+        errorMessage = "Could not create y.mgh file, the appropriate analysis may not have been performed on these subjects to provide the input mgh files for the creation of y.mgh";
         }
       if (err == -12)
         {
