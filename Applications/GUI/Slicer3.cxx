@@ -821,6 +821,16 @@ int Slicer3_main(int argc, char *argv[])
 
     cout << "Starting Slicer: " << slicerHome.c_str() << endl;
 
+    if ( Stereo )
+      {
+      slicerApp->SetStereoEnabled(1);
+      } 
+    else 
+      {
+      slicerApp->SetStereoEnabled(0);
+      }
+    
+
     // Create MRML scene
     vtkMRMLScene *scene = vtkMRMLScene::New();
     vtksys_stl::string root = vtksys::SystemTools::GetCurrentWorkingDirectory();
