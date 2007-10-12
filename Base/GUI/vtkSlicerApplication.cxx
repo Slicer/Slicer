@@ -259,6 +259,9 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     // Use the splash screen by default - needs to be overridden before
     // the splash is first used
     this->UseSplashScreen = 1;
+
+    // Disable stereo render capability by default
+    this->SetStereoEnabled(0);
 }
 
 //---------------------------------------------------------------------------
