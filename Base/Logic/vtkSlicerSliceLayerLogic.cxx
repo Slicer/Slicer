@@ -502,8 +502,39 @@ void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
     {
     this->AssignAttributeTensorsFromScalars->SetInput(volumeNode->GetImageData());
     this->AssignAttributeTensorsFromScalars->Update();
+    
+    ///
+    if (volumeNode->GetImageData() && volumeNode->GetImageData()->GetPointData() && volumeNode->GetImageData()->GetPointData()->GetScalars()) {
+      int nscalars = volumeNode->GetImageData()->GetPointData()->GetScalars()->GetNumberOfComponents();
+      std::cout << "vtkSlicerSliceLayerLogic::UpdateImageDisplay() input volume scalar components = " << nscalars << "\n";
+      }
+    if (volumeNode->GetImageData() && volumeNode->GetImageData()->GetPointData() && volumeNode->GetImageData()->GetPointData()->GetTensors()) {
+      int ntensors = volumeNode->GetImageData()->GetPointData()->GetTensors()->GetNumberOfComponents();
+      std::cout << "vtkSlicerSliceLayerLogic::UpdateImageDisplay() input volume tensor components = " << ntensors << "\n";
+      }
+    ///
+
     vtkImageData* InterchangedImage =  vtkImageData::SafeDownCast(this->AssignAttributeTensorsFromScalars->GetOutput());
-    InterchangedImage->SetNumberOfScalarComponents(9);
+    //InterchangedImage->SetNumberOfScalarComponents(9);
+    if (InterchangedImage->GetPointData())
+      {
+      InterchangedImage->GetPointData()->CopyTensorsOff();
+      if  (InterchangedImage->GetPointData()->GetArray(1))
+        {
+        InterchangedImage->GetPointData()->GetArray(1)->SetName("base");
+        InterchangedImage->GetPointData()->RemoveArray("base");
+        }
+      }
+    ///
+    if (InterchangedImage && InterchangedImage->GetPointData() && InterchangedImage->GetPointData()->GetScalars()) {
+      int nscalars = InterchangedImage->GetPointData()->GetScalars()->GetNumberOfComponents();
+      std::cout << "vtkSlicerSliceLayerLogic::UpdateImageDisplay() interchanged image scalar components = " << nscalars << "\n";
+      }
+    if (InterchangedImage && InterchangedImage->GetPointData() && InterchangedImage->GetPointData()->GetTensors()) {
+      int ntensors = InterchangedImage->GetPointData()->GetTensors()->GetNumberOfComponents();
+      std::cout << "vtkSlicerSliceLayerLogic::UpdateImageDisplay() interchanged image tensor components = " << ntensors << "\n";
+      }
+    ///
 
     this->Reslice->SetInput( InterchangedImage );
     this->Reslice->Update();
@@ -511,9 +542,29 @@ void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
     //Fixing horrible bug of the vtkSetAttributes Filter it doesn't copy attributes without name
     this->Reslice->GetOutput()->GetPointData()->GetScalars()->SetName(volumeNode->GetImageData()->GetPointData()->GetTensors()->GetName());
 
+    vtkImageData *resliceImageData = this->Reslice->GetOutput();
+    if (resliceImageData && resliceImageData->GetPointData() && resliceImageData->GetPointData()->GetScalars()) {
+      int nscalars = resliceImageData->GetPointData()->GetScalars()->GetNumberOfComponents();
+      std::cout << "vtkSlicerSliceLayerLogic::UpdateImageDisplay() resliceImageData image scalar components = " << nscalars << "\n";
+      }
+    if (resliceImageData && resliceImageData->GetPointData() && resliceImageData->GetPointData()->GetTensors()) {
+      int ntensors = resliceImageData->GetPointData()->GetTensors()->GetNumberOfComponents();
+      std::cout << "vtkSlicerSliceLayerLogic::UpdateImageDisplay() interchanged image tensor components = " << ntensors << "\n";
+      }
+ 
     this->AssignAttributeScalarsFromTensors->SetInput(this->Reslice->GetOutput() );
     this->AssignAttributeScalarsFromTensors->Update();
     slicedImageData = vtkImageData::SafeDownCast(this->AssignAttributeScalarsFromTensors->GetOutput());
+    
+    if (slicedImageData && slicedImageData->GetPointData() && slicedImageData->GetPointData()->GetScalars()) {
+      int nscalars = slicedImageData->GetPointData()->GetScalars()->GetNumberOfComponents();
+      std::cout << "vtkSlicerSliceLayerLogic::UpdateImageDisplay() slicedImageData image scalar components = " << nscalars << "\n";
+      }
+    if (slicedImageData && slicedImageData->GetPointData() && slicedImageData->GetPointData()->GetTensors()) {
+      int ntensors = slicedImageData->GetPointData()->GetTensors()->GetNumberOfComponents();
+      std::cout << "vtkSlicerSliceLayerLogic::UpdateImageDisplay() interchanged image tensor components = " << ntensors << "\n";
+      }
+
     } 
   else if (volumeNode) 
     {
