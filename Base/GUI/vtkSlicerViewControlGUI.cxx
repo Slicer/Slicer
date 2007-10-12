@@ -636,7 +636,7 @@ void vtkSlicerViewControlGUI::UpdateViewFromMRML()
 
     vtkIntArray  *events = vtkIntArray::New();
     events->InsertNextValue( vtkMRMLViewNode::AnimationModeEvent);
-    events->InsertNextValue( vtkMRMLViewNode::RenderModeEvent);
+    events->InsertNextValue( vtkMRMLViewNode::RenderModeEvent); 
     events->InsertNextValue( vtkMRMLViewNode::StereoModeEvent);
     events->InsertNextValue( vtkMRMLViewNode::VisibilityEvent);
     events->InsertNextValue( vtkMRMLViewNode::BackgroundColorEvent);    
@@ -927,21 +927,25 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
           appGUI->GetMRMLScene()->SaveStateForUndo( vn );
           if ( m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
             {
-            if ( !strcmp (this->StereoButton->GetValue(), "NoStereo"))
+            if ( !strcmp (this->StereoButton->GetValue(), "No stereo"))
               {
-              vn->SetStereoType( vtkMRMLViewNode::NoStereo);
+              vn->SetStereoType( vtkMRMLViewNode::NoStereo );
               }
             else if (!strcmp (this->StereoButton->GetValue(), "Red/Blue"))
               {
-              vn->SetStereoType( vtkMRMLViewNode::RedBlue);
+              vn->SetStereoType( vtkMRMLViewNode::RedBlue );
+              }
+            else if (!strcmp (this->StereoButton->GetValue(), "Anaglyph"))
+              {
+              vn->SetStereoType( vtkMRMLViewNode::Anaglyph );
               }
             else if (!strcmp (this->StereoButton->GetValue(), "CrystalEyes"))
               {
-              vn->SetStereoType( vtkMRMLViewNode::CrystalEyes);
+              vn->SetStereoType( vtkMRMLViewNode::CrystalEyes );
               }
             else if (!strcmp (this->StereoButton->GetValue(), "Interlaced"))
               {
-              vn->SetStereoType( vtkMRMLViewNode::Interlaced);            
+              vn->SetStereoType( vtkMRMLViewNode::Interlaced );            
               }
             }
           else if ( m == this->VisibilityButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
@@ -1400,41 +1404,42 @@ void vtkSlicerViewControlGUI::UpdateNavigationWidgetViewActors ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewSetStereo ( )
 {
-  // TODO: check whether stereo is enabled.
-  int stereoEnabled = 0;
-  if ( stereoEnabled )
+  if ( this->GetApplicationGUI() != NULL )
     {
-      if ( this->GetApplicationGUI() != NULL )
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( )); 
+    vtkMRMLViewNode *vn = this->GetActiveView();
+    if ( vn != NULL )
+      {
+      int s = vn->GetStereoType();
+      switch ( s )
         {
-        vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
-        vtkMRMLViewNode *vn = this->GetActiveView();
-        if ( vn != NULL )
-          {
-          int s = vn->GetStereoType();
-          switch ( s )
-            {
-            case vtkMRMLViewNode::NoStereo:
-              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOff ( );
-              break;
-            case vtkMRMLViewNode::RedBlue:
-              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToRedBlue();
-              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
-              break;
-            case vtkMRMLViewNode::CrystalEyes:
-              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToCrystalEyes();
-              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
-              break;
-            case vtkMRMLViewNode::Interlaced:
-              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToInterlaced();
-              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
-              break;
-            default:
-              p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOff ( );
-              break;
-            }
-          }
-        }  
-    }
+        case vtkMRMLViewNode::NoStereo:
+          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOff ( );
+          break;
+        case vtkMRMLViewNode::RedBlue:
+          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToRedBlue();
+          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
+          break;
+        case vtkMRMLViewNode::Anaglyph:
+          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToAnaglyph();
+          //p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAnaglyphColorSaturation(0.1);
+          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
+          break;
+        case vtkMRMLViewNode::CrystalEyes:
+          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToCrystalEyes();
+          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
+          break;
+        case vtkMRMLViewNode::Interlaced:
+          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetStereoTypeToInterlaced();
+          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOn ( );
+          break;
+        default:
+          p->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->StereoRenderOff ( );
+          break;
+        }
+      p->GetViewerWidget()->GetMainViewer()->Render();
+      }
+    } 
 }
 
 
@@ -2085,21 +2090,29 @@ void vtkSlicerViewControlGUI::BuildStereoSelectMenu ( )
   this->StereoButton->GetMenu()->DeleteAllItems ( );
   this->StereoButton->GetMenu()->AddRadioButton ( "No stereo" );
   this->StereoButton->GetMenu()->AddRadioButton ( "Red/Blue" );
+  this->StereoButton->GetMenu()->AddRadioButton ( "Anaglyph" );
+  this->StereoButton->GetMenu()->AddRadioButton ( "Interlaced" );  
   this->StereoButton->GetMenu()->AddRadioButton ( "CrystalEyes" );
-  this->StereoButton->GetMenu()->AddRadioButton ( "Interlaced" );
   this->StereoButton->GetMenu()->AddSeparator();
   this->StereoButton->GetMenu()->AddCommand ( "close");
   this->StereoButton->GetMenu()->SelectItem ( "No stereo");
-  // TODO: check whether stereo is enabled.
-  int stereoEnabled = 0;
-  if ( !stereoEnabled )
-    {
-    this->StereoButton->GetMenu()->SetItemStateToDisabled ( "No stereo" );
-    this->StereoButton->GetMenu()->SetItemStateToDisabled ( "Red/Blue" );
-    this->StereoButton->GetMenu()->SetItemStateToDisabled ( "CrystalEyes" );
-    this->StereoButton->GetMenu()->SetItemStateToDisabled ( "Interlaced" );
-    }
   
+  int enableStereoCapableWindow = 0;
+  // check whether stereo is enabled.
+  if ( this->GetApplicationGUI() != NULL )
+    {
+    vtkSlicerApplication *slicerApp = vtkSlicerApplication::SafeDownCast( this->GetApplicationGUI()->GetApplication() ); 
+    if ( slicerApp->GetStereoEnabled() )
+      {
+      enableStereoCapableWindow = 1;
+      }
+    }
+ if ( !enableStereoCapableWindow )
+   {
+     // let always enabled Red/Blue, Anaglyph, and Interlaced since those modes don't need the
+     // special enabled stereo window
+     this->StereoButton->GetMenu()->SetItemStateToDisabled ( "CrystalEyes" );
+   }
 }
 
 
