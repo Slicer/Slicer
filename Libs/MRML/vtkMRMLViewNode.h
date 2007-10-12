@@ -173,6 +173,7 @@ public:
     {
       NoStereo = 0,
       RedBlue,
+      Anaglyph,
       CrystalEyes,
       Interlaced
     };
