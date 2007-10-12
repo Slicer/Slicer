@@ -116,6 +116,10 @@ void vtkMRMLViewNode::SetStereoType ( int m )
       this->StereoType = m;
       this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
       break;
+    case vtkMRMLViewNode::Anaglyph:
+      this->StereoType = m;
+      this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
+      break;
     case vtkMRMLViewNode::CrystalEyes:
       this->StereoType = m;
       this->InvokeEvent ( vtkMRMLViewNode::StereoModeEvent );
@@ -329,6 +333,10 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " stereoType=\"" << "RedBlue" << "\"";    
     }
+  else if ( this->GetStereoType() == vtkMRMLViewNode::Anaglyph )
+    {
+    of << indent << " stereoType=\"" << "Anaglyph" << "\"";    
+    }
   else if ( this->GetStereoType() == vtkMRMLViewNode::CrystalEyes )
     {
     of << indent << " stereoType=\"" << "CrystalEyes" << "\"";    
@@ -453,6 +461,10 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       else if ( !strcmp (attValue, "RedBlue" ))
         {
         this->StereoType = vtkMRMLViewNode::RedBlue;
+        }
+      else if ( !strcmp (attValue, "Anaglyph" ))
+        {
+        this->StereoType = vtkMRMLViewNode::Anaglyph;
         }
       else if ( !strcmp (attValue, "CrystalEyes" ))
         {
