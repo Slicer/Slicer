@@ -1941,7 +1941,7 @@ proc QueryAtlasSendOntologyCommand { term ontology } {
             #--- if wer get an error, try launching the ontology browser
             if { $errcheck != 0 } {
                 #--- launch the browser on windows or other platforms and get PID
-                set dir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/OntologyViz
+                set dir $::env(SLICER_HOME)/lib/Slicer3/Modules/Packages/QueryAtlas/OntologyViz
                 if { $::tcl_platform(platform) == "windows" } {
                     set ::QA(ontologyViewerPID) [ OntologyVizLaunch $dir 1 ]
                 } else {

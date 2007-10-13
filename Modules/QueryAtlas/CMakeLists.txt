@@ -53,6 +53,31 @@ FOREACH( csvfile ${CSVFILES})
 ENDFOREACH(csvfile)
 
 
+SET (ONTOVIZFILES
+    ./OntologyViz/build.xml
+    ./OntologyViz/bin/birnlexvis-support.jar
+    ./OntologyViz/bin/birnlexvis.jar
+    ./OntologyViz/bin/birnlexvis.tcl
+    ./OntologyViz/bin/birnlexvisUnix.sh
+    ./OntologyViz/bin/birnlexvisWin.sh
+    ./OntologyViz/data/neuronames-v1.json
+    ./OntologyViz/data/birnlex-body-v1.json
+    ./OntologyViz/extjars/json.jar
+    ./OntologyViz/extjars/jython.jar
+    ./OntologyViz/extjars/prefuse.jar    
+)
+
+
+FOREACH( ovfile ${ONTOVIZFILES})
+   CONFIGURE_FILE(
+      ${Slicer3_SOURCE_DIR}/Modules/QueryAtlas/${ovfile}
+      ${QueryAtlas_DIR}/${ovfile}
+      COPYONLY
+)
+ENDFOREACH(ovfile)
+
+
+
 # --------------------------------------------------------------------------
 # Sources
 
