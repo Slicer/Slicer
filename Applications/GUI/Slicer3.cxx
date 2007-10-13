@@ -469,7 +469,18 @@ int Slicer3_main(int argc, char *argv[])
 #if WIN32
   itkAutoLoadPath = ptemp + ";" + itkAutoLoadPath;
 #else
-  itkAutoLoadPath = ptemp + ":" + itkAutoLoadPath;
+  // shared libs are in bin dir in the build tree, but get
+  // moved to the lib directory in the INSTALL, so put
+  // both paths into the path
+  if ( itkAutoLoadPath.size() == 0 )
+    {
+    itkAutoLoadPath = ptemp; // add the bin dir
+    }
+  else 
+    {
+    itkAutoLoadPath = ptemp + ":" + itkAutoLoadPath; // add the bin dir
+    }
+  itkAutoLoadPath = ptemp + "/../lib:" + itkAutoLoadPath; // add the lib dir
 #endif
   itkAutoLoadPath = "ITK_AUTOLOAD_PATH=" + itkAutoLoadPath;
   int putSuccess = 
