@@ -1254,8 +1254,8 @@ int Slicer3_main(int argc, char *argv[])
 
     //--- Incorporate the tcl QueryAtlas components
     std::string qaTclCommand = "set ::QA_PACKAGE {};";
-    qaTclCommand += "set dir [ glob \"" + slicerBinDir + "/../"
-      SLICER_INSTALL_LIBRARIES_DIR "/Modules/Packages/QueryAtlas/Tcl\" ]; ";
+    qaTclCommand += "set dir \"" + slicerBinDir + "/../" +
+      SLICER_INSTALL_LIBRARIES_DIR + "/Modules/Packages/QueryAtlas/Tcl\" ; ";
     qaTclCommand += "  if { [ file exists $dir/pkgIndex.tcl ] } {";
     qaTclCommand += "    lappend ::QA_PACKAGE [ file tail $dir ];";
     qaTclCommand += "    lappend ::auto_path $dir;";
