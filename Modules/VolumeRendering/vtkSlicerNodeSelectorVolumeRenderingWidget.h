@@ -17,6 +17,10 @@ public:
         this->Condition=con;
         this->ModeCondition=modeCon;
     }
+    std::string GetCondition(void)
+    {
+        return this->Condition;
+    }
     void SetAdditionalMRMLScene(vtkMRMLScene *scene)
     {
         this->AdditionalMRMLScene=scene;

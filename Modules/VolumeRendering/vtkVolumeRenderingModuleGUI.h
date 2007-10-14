@@ -106,35 +106,27 @@ public:
     vtkGetMacro(PipelineInitialized,int);
     vtkBooleanMacro(PipelineInitialized,int);
 
-    vtkSetMacro(VolumeSelected,int);
-    vtkGetMacro(VolumeSelected,int);
-    vtkBooleanMacro(VolumeSelected,int);
-
-    vtkSetMacro(VolumeRenderingNodeSelected,int);
-    vtkGetMacro(VolumeRenderingNodeSelected,int);
-    vtkBooleanMacro(VolumeRenderingNodeSelected,int);
-
     vtkGetMacro(EventsPending, int);
     vtkSetMacro(EventsPending, int);
 
 
-     // Description:
-  // Get methods on class members ( no Set methods required. )
-  vtkGetObjectMacro (PB_Testing,vtkKWPushButton);
-  vtkGetObjectMacro (PB_CreateNewVolumeRenderingNode,vtkKWPushButton);
-  vtkGetObjectMacro (NS_ImageData,vtkSlicerNodeSelectorWidget);
-  vtkGetObjectMacro (NS_VolumeRenderingDataSlicer,vtkSlicerNodeSelectorVolumeRenderingWidget);
-  vtkGetObjectMacro (NS_VolumeRenderingDataScene,vtkSlicerNodeSelectorVolumeRenderingWidget);
-  vtkGetObjectMacro (EWL_CreateNewVolumeRenderingNode,vtkKWEntryWithLabel);
-  vtkGetObjectMacro (detailsFrame,vtkSlicerModuleCollapsibleFrame);
-  vtkGetObjectMacro (LM_OptionTree,vtkSlicerLabelMapWidget);
-  vtkGetObjectMacro (Histograms,vtkKWHistogramSet);
-  vtkGetObjectMacro (SVP_VolumeProperty,vtkSlicerVolumePropertyWidget);
-  vtkGetObjectMacro (currentNode,vtkMRMLVolumeRenderingNode);
-  vtkGetObjectMacro (presets, vtkMRMLScene);
-  vtkGetObjectMacro (volume,vtkVolume);
-  vtkGetObjectMacro (mapper,vtkAbstractVolumeMapper);
-  vtkGetObjectMacro (matrix,vtkMatrix4x4);
+    // Description:
+    // Get methods on class members ( no Set methods required. )
+    vtkGetObjectMacro (PB_Testing,vtkKWPushButton);
+    vtkGetObjectMacro (PB_CreateNewVolumeRenderingNode,vtkKWPushButton);
+    vtkGetObjectMacro (NS_ImageData,vtkSlicerNodeSelectorWidget);
+    vtkGetObjectMacro (NS_VolumeRenderingDataSlicer,vtkSlicerNodeSelectorVolumeRenderingWidget);
+    vtkGetObjectMacro (NS_VolumeRenderingDataScene,vtkSlicerNodeSelectorVolumeRenderingWidget);
+    vtkGetObjectMacro (EWL_CreateNewVolumeRenderingNode,vtkKWEntryWithLabel);
+    vtkGetObjectMacro (detailsFrame,vtkSlicerModuleCollapsibleFrame);
+    vtkGetObjectMacro (LM_OptionTree,vtkSlicerLabelMapWidget);
+    vtkGetObjectMacro (Histograms,vtkKWHistogramSet);
+    vtkGetObjectMacro (SVP_VolumeProperty,vtkSlicerVolumePropertyWidget);
+    vtkGetObjectMacro (currentNode,vtkMRMLVolumeRenderingNode);
+    vtkGetObjectMacro (presets, vtkMRMLScene);
+    vtkGetObjectMacro (volume,vtkVolume);
+    vtkGetObjectMacro (mapper,vtkAbstractVolumeMapper);
+    vtkGetObjectMacro (matrix,vtkMatrix4x4);
 
 
 
@@ -169,14 +161,17 @@ protected:
     // A poitner to the interactor style, useful for picking
     vtkSlicerViewerInteractorStyle *InteractorStyle;
 
-    int VolumeSelected;
-    int VolumeRenderingNodeSelected;
     int PipelineInitialized;//0=no,1=Yes
     void InitializePipelineNewCurrentNode();
     void InitializePipelineFromMRMLScene();
     void InitializePipelineFromSlicer();
     void InitializePipelineFromImageData();
+    void LabelMapInitializePipelineNewCurrentNode();
+    void LabelMapInitializePipelineFromMRMLScene();
+    void LabelMapInitializePipelineFromSlicer();
+    void LabelMapInitializePipelineFromImageData();
     void UpdateSVP();
+    void UpdateLM();
     void ShutdownPipeline();
     void Rendering(void);
     void UpdateRendering(void);
