@@ -96,6 +96,10 @@ SET(dir_list
   ${VolumeRenderingModule_BINARY_DIR}
   ${VolumeRenderingModule_Init_SOURCE_DIR}
   ${VolumeRenderingModule_Init_BINARY_DIR}
+  ${VolumeMath_SOURCE_DIR}       
+  ${VolumeMath_BINARY_DIR}
+  ${VolumeMath_Init_SOURCE_DIR}
+  ${VolumeMath_Init_BINARY_DIR}
   ${WFEngineModule_SOURCE_DIR}
   ${WFEngineModule_BINARY_DIR}
   ${WFEngineModule_Init_SOURCE_DIR}
@@ -172,6 +176,13 @@ ELSE(VOLUMERENDERINGMODULE)
  ADD_DEFINITIONS(-DVOLUMERENDERINGMODULE_DEBUG)
 ENDIF(VOLUMERENDERINGMODULE)
 
+# Option for VolumeMath
+IF(VOLUMEMATH)
+ SET(VOLUMEMATH_LINK_LIB VolumeMath)
+ELSE(VOLUMEMATH)
+ ADD_DEFINITIONS(-DVOLUMEMATH_DEBUG)
+ENDIF(VOLUMEMATH)
+
 TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     SlicerBaseLogic
     SlicerBaseGUI
@@ -192,6 +203,7 @@ IF(BUILD_MODULES)
     #   RealTimeImaging
     #   MRAblation
     ${VOLUMERENDERINGMODULE_LINK_LIB}
+    ${VOLUMEMATH_LINK_LIB} 
     NeuroNav
     QueryAtlas
     CommandLineModule
