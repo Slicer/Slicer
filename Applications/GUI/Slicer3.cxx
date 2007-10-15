@@ -91,6 +91,7 @@ extern "C" {
 //#define QDEC_DEBUG
 //#define COMMANDLINE_DEBUG
 //#define DEAMON_DEBUG
+//#define VOLUME_MATH
 
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
 #include "vtkSlicerFiberBundleLogic.h"
@@ -152,6 +153,11 @@ extern "C" {
 #include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkVolumeRenderingModuleGUI.h"
 #include "vtkVolumeRenderingModuleLogic.h"
+#endif
+
+#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
+#include "vtkSlicerVolumeMathGUI.h"
+#include "vtkSlicerVolumeMathLogic.h"
 #endif
 //
 // note: always write to cout rather than cerr so log messages will
@@ -223,6 +229,9 @@ extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
 #endif
 #if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Scriptedmodule_Init(Tcl_Interp *interp);
+#endif
+#ifndef VOLUMEMATH_DEBUG
+extern "C" int Volumemath_Init(Tcl_Interp *interp);
 #endif
 
 struct SpacesToUnderscores
@@ -717,6 +726,9 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 #if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
     Scriptedmodule_Init(interp);
+#endif
+#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
+    Volumemath_Init(interp);
 #endif
 
   // first call to GetInstance will create the Application
@@ -1373,6 +1385,28 @@ int Slicer3_main(int argc, char *argv[])
     vrModuleGUI->SetViewerWidget(appGUI->GetViewerWidget());
     vrModuleGUI->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
 #endif
+
+#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
+    // --- VolumeMath  module
+    slicerApp->SplashMessage("Initializing VolumeMath Module...");
+    vtkSlicerVolumeMathGUI *volumeMathGUI = vtkSlicerVolumeMathGUI::New ( );
+    vtkSlicerVolumeMathLogic *volumeMathLogic  = vtkSlicerVolumeMathLogic::New ( );
+    volumeMathLogic->SetAndObserveMRMLScene ( scene );
+    volumeMathLogic->SetApplicationLogic ( appLogic );
+    //    volumeMathLogic->SetMRMLScene(scene);
+    volumeMathGUI->SetLogic ( volumeMathLogic );
+    volumeMathGUI->SetApplication ( slicerApp );
+    volumeMathGUI->SetApplicationLogic ( appLogic );
+    volumeMathGUI->SetApplicationGUI ( appGUI );
+    volumeMathGUI->SetGUIName( "VolumeMath" );
+    volumeMathGUI->GetUIPanel()->SetName ( volumeMathGUI->GetGUIName ( ) );
+    volumeMathGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    volumeMathGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( volumeMathGUI );
+    volumeMathGUI->BuildGUI ( );
+    volumeMathGUI->AddGUIObservers ( );
+#endif
+
 #if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
     //
     // --- SlicerDaemon Module
@@ -1627,6 +1661,7 @@ int Slicer3_main(int argc, char *argv[])
     name = wfEngineModuleGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set WFEngineModuleGUI %s", name);
 #endif
+
 
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
     name = qdecModuleGUI->GetTclName();
@@ -1921,6 +1956,11 @@ int Slicer3_main(int argc, char *argv[])
     wfEngineModuleGUI->TearDownGUI ( );
 #endif
 
+#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
+    volumeMathGUI->RemoveGUIObservers ( );
+    volumeMathGUI->TearDownGUI ( );
+#endif
+
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
     qdecModuleGUI->TearDownGUI ( );
 #endif
@@ -2035,6 +2075,10 @@ int Slicer3_main(int argc, char *argv[])
     
 #if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
     wfEngineModuleGUI->Delete ( );
+#endif
+
+#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
+    volumeMathGUI->Delete ( );
 #endif
 
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
@@ -2154,7 +2198,12 @@ int Slicer3_main(int argc, char *argv[])
     wfEngineModuleLogic->SetAndObserveMRMLScene ( NULL );
     wfEngineModuleLogic->Delete ( );
 #endif
-  
+ 
+#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
+    volumeMathLogic->SetAndObserveMRMLScene ( NULL );
+    volumeMathLogic->Delete ( );
+#endif
+
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
     qdecModuleLogic->SetAndObserveMRMLScene ( NULL );
     qdecModuleLogic->Delete ( );
