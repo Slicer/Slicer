@@ -382,8 +382,19 @@ if {  ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
         eval runcmd $::MAKE
         puts [catch "eval runcmd $::SERIAL_MAKE install" res] ;# try twice - it probably fails first time...
         if { $isDarwin } {
-            # Special Slicer target to install the python dynamic library
-            runcmd $::MAKE install_dylib
+            # Special Slicer hack to build and install the .dylib
+            file mkdir $SLICER_LIB/python-build/lib/
+            file delete -force $SLICER_LIB/python-build/lib/libpython2.5.dylib
+            set fid [open environhack.c w]
+            puts $fid "char **environ=0;"
+            close $fid
+            runcmd gcc -c -o environhack.o environhack.c
+            runcmd libtool -o $SLICER_LIB/python-build/lib/libpython2.5.dylib -dynamic  \
+                -all_load libpython2.5.a environhack.o -single_module \
+                -install_name $SLICER_LIB/python-build/lib/libpython2.5.dylib \
+                -compatibility_version 2.5 \
+                -current_version 2.5 -lSystem -lSystemStubs
+
         }
     }
 }

@@ -345,9 +345,9 @@ if {$isDarwin} {
 
 # Build Python everywhere but Windows
 if {$isWindows} {
-    set BuildPython NO
-} else {
-    set BuildPython NO
+    set BuildPython OFF
+} elseif {$isDarwin}  {
+    set BuildPython ON
 }
 
 # build the slicer

@@ -92,8 +92,8 @@ TARGET_LINK_LIBRARIES(ModuleDescriptionParser
   itksys
 )
 IF(USE_PYTHON)
-  TARGET_LINK_LIBRARIES(ModuleDescriptionParser
-    ${PYTHON_LIBRARIES}
+   TARGET_LINK_LIBRARIES(ModuleDescriptionParser
+     ${PYTHON_LIBRARIES}
   )
 ENDIF(USE_PYTHON)
 
