@@ -293,6 +293,7 @@ proc QueryAtlasEncodeTerms { terms } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasContextQuery { site terms } {
 
+
     if { $::QA(lastLabels) == "background" || $::QA(lastLabels) == "Unknown" } {
         set terms ""
     }
@@ -343,7 +344,7 @@ proc QueryAtlasContextQuery { site terms } {
             } elseif { $::QA(annotationTermSet) == "NeuroNames" } {
                 set terms [ QueryAtlasMapTerm $::QA(lastLabels) "NN_String" "IBVD" ]
             } elseif { $::QA(annotationTermSet) == "UMLS" } {
-                set terms [ QueryAtlasMapTerm $::QA(lastLabels) "UMLS_CID" "IBVD" ]
+                set terms [ QueryAtlasMapTerm $::QA(lastLabels) "UMLS_CN" "IBVD" ]
             } elseif { $::QA(annotationTermSet) == "local" } {
                 set terms [ QueryAtlasMapTerm $::QA(lastLabels) "FreeSurfer" "IBVD" ]                
             } elseif { $::QA(annotationTermSet) == "IBVD" } {
