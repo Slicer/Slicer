@@ -210,6 +210,10 @@ protected:
     vtkAbstractVolumeMapper *mapper;
     vtkMatrix4x4 *matrix;
 
+    vtkRenderer *renViewport;
+    vtkRenderer *renPlane;
+    int RenderPlane;
+
 
     //
     vtkKWTkUtilities *Utilities;

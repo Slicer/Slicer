@@ -74,6 +74,10 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
     this->mapper=NULL;
     this->matrix=NULL;
 
+    this->renViewport=NULL;
+    this->renPlane=NULL;
+    this->RenderPlane=0;
+
 
 }
 
@@ -809,134 +813,32 @@ void vtkVolumeRenderingModuleGUI::Rendering()
         this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
         this->volume->SetMapper(mapper);
     }
-    //this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    //this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    //this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+
     //TODO This is not the right place for this
-    //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     this->volume->SetProperty(this->currentNode->GetVolumeProperty());
     this->matrix=vtkMatrix4x4::New();
     vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetIJKToRASMatrix(matrix);
     this->volume->PokeMatrix(matrix);
-     vtkRendererCollection *renderes=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetRenderers();
-    renderes->InitTraversal(); 
-    //Remove the unimportant renderer
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->RemoveRenderer(renderes->GetNextItem());
-    
-    for(int i=0;i<1;i++)//renderes->GetNumberOfItems();i++)
+
+    //For Performance
+    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->volume);
+    this->renViewport=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetNthRenderer(0);
+    //Causes trouble
+  /*  if(renderes->GetNumberOfItems()==2)
     {
-        vtkRenderer *ren=renderes->GetNextItem();
-        //Add the volume for rendering
-        ren->AddViewProp(this->volume);
-        //Change viewport(simulation of "sample distance for "rays"" if using texture mapping)
-        ren->SetViewport(0,0,.9,.9);
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SwapBuffersOff();
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-        
-        //Get current size of window
-        int *size=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize();
-
-        //RGB Data from the smaller viewport
-        vtkUnsignedCharArray *image=vtkUnsignedCharArray::New();
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetRGBACharPixelData(0,0,.9*size[0],.9*size[1],0,image);
-        //Creat the new imageData, map an rendr it
-        vtkImageData *imageData=vtkImageData::New();
-        imageData->GetPointData()->SetScalars(image);
-        imageData->SetDimensions(.9*size[0]+1,.9*size[1]+1,1);
-        imageData->SetNumberOfScalarComponents(4);
-        imageData->SetScalarTypeToUnsignedChar();
-        imageData->SetOrigin(.0,.0,.0);
-        imageData->SetSpacing(1.,1.,1.);
-        imageData->Update();
-        vtkImageExtractComponents *components=vtkImageExtractComponents::New();
-        components->SetInput(imageData);
-        components->SetComponents(0,1,2);
-        vtkRenderer *rendererImageData=vtkRenderer::New();
-        rendererImageData->SetBackground(ren->GetBackground());
-        rendererImageData->SetActiveCamera(ren->GetActiveCamera());
-         this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(ren);
-       
-        /*rendererImageData->AddActor2D(actor);*/
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddRenderer(rendererImageData);
-        rendererImageData->SetDisplayPoint(0,0,0);
-        rendererImageData->DisplayToWorld();
-        double coordinatesA[4];
-        rendererImageData->GetWorldPoint(coordinatesA);
-
-        rendererImageData->SetDisplayPoint(size[0],0,0);
-        rendererImageData->DisplayToWorld();
-        double coordinatesB[4];
-        rendererImageData->GetWorldPoint(coordinatesB);
-
-        rendererImageData->SetDisplayPoint(size[0],size[1],0);
-        rendererImageData->DisplayToWorld();
-        double coordinatesC[4];
-        rendererImageData->GetWorldPoint(coordinatesC);
-
-        rendererImageData->SetDisplayPoint(0,size[1],0);
-        rendererImageData->DisplayToWorld();
-        double coordinatesD[4];
-        rendererImageData->GetWorldPoint(coordinatesD);
-
-        //Create the Polydata
-        vtkPoints *points=vtkPoints::New();
-        points->InsertPoint(0,coordinatesA);
-        points->InsertPoint(1,coordinatesB);
-        points->InsertPoint(2,coordinatesC);
-        points->InsertPoint(3,coordinatesD);
-
-        vtkCellArray *polygon=vtkCellArray::New();
-        polygon->InsertNextCell(4);
-        polygon->InsertCellPoint(0);
-        polygon->InsertCellPoint(1);
-        polygon->InsertCellPoint(2);
-        polygon->InsertCellPoint(3);
-        //Take care about Texture coordinates
-        vtkFloatArray *textCoords=vtkFloatArray::New();
-        textCoords->SetNumberOfComponents(2);
-        textCoords->Allocate(8);
-        float tc[2];
-        tc[0]=0;
-        tc[1]=0;
-        textCoords->InsertNextTuple(tc);
-        tc[0]=1;
-        tc[1]=0;
-        textCoords->InsertNextTuple(tc);
-        tc[0]=1;
-        tc[1]=1;
-        textCoords->InsertNextTuple(tc);
-        tc[0]=0;
-        tc[1]=1;
-        textCoords->InsertNextTuple(tc);
-        
-        vtkPolyData *polydata=vtkPolyData::New();
-        polydata->SetPoints(points);
-        polydata->SetPolys(polygon);
-        polydata->GetPointData()->SetTCoords(textCoords);
-
-        vtkPolyDataMapper *polyMapper=vtkPolyDataMapper::New();
-        polyMapper->SetInput(polydata);
-
-        vtkActor *actor=vtkActor::New(); 
-        actor->SetMapper(polyMapper);
-
-        //Take care about the texture
-        vtkTexture *atext=vtkTexture::New();
-        atext->SetInput(components->GetOutput());
-        atext->SetInterpolate(1);
-        actor->SetTexture(atext);
-
-        rendererImageData->AddActor(actor);
-        //Remove the old Renderer
-       
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SwapBuffersOn();
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-        
-
-
-      }
-    //renderWidget->Render();
-    //Deletes in destructor!
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->RemoveNthRenderer(0);
+    } 
+    int count=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetRenderers()->GetNumberOfItems();
+    vtkErrorMacro("Number of Renderes"<<count);*/
+    
+    //Render
+    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
 }
 void vtkVolumeRenderingModuleGUI::UpdateRendering()
 {
@@ -961,7 +863,7 @@ void vtkVolumeRenderingModuleGUI::CheckAbort ()
     int pending=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
     if(pending!=0)
     {
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+        //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
         return;
     }
     int pendingGUI=this->CheckForPendingEvents();
@@ -1072,18 +974,180 @@ void vtkVolumeRenderingModuleGUI::VolumeRenderingCallback( vtkObject *caller, un
 
     self->SetInVolumeRenderingCallbackFlag(1);
     self->ProcessVolumeRenderingEvents(caller, eid, callData);
-    self->SetInVolumeRenderingCallbackFlag(0);
+        self->SetInVolumeRenderingCallbackFlag(0);
+
 }
 
 void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData){
 
     //TODO not the right place for this
     vtkRenderWindow *callerRen=vtkRenderWindow::SafeDownCast(caller);
+    vtkTimerLog *log=vtkTimerLog::New();
     if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::AbortCheckEvent)
     {
         this->CheckAbort();
         return;
+    }
+    else if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::StartEvent)
+    {
+        //Decide if we REnder plane or not
+        if(this->RenderPlane==1)
+        {
+            return;
+        }
+        log->StartTimer();
+        vtkRenderWindow *renWin=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
 
+        double factor=.1;
+        //We don't like to see, what we are doing here
+        renWin->SwapBuffersOff();
+        //get the viewport renderer up
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
+            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
+        //Change viewport(simulation of "sample distance for "rays"" if using texture mapping)
+        this->renViewport->SetViewport(0,0,factor,factor);
+
+        
+        //We are already in the Rendering Process
+        //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+
+    }
+    else if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::EndEvent)
+    {
+        if(this->RenderPlane==1)
+        {
+            this->RenderPlane=0;
+            return;
+        }
+
+        
+        vtkRenderWindow *renWin=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
+        double factor=.1;
+        //Get current size of window
+        int *size=renWin->GetSize();
+
+        //RGB Data from the smaller viewport
+        vtkUnsignedCharArray *image=vtkUnsignedCharArray::New();
+        renWin->GetRGBACharPixelData(0,0,factor*size[0],factor*size[1],0,image);
+
+        vtkImageData *imageData=vtkImageData::New();
+        imageData->GetPointData()->SetScalars(image);
+        imageData->SetDimensions(factor*size[0]+1,factor*size[1]+1,1);
+        imageData->SetNumberOfScalarComponents(4);
+        imageData->SetScalarTypeToUnsignedChar();
+        imageData->SetOrigin(.0,.0,.0);
+        imageData->SetSpacing(1.,1.,1.);
+        //imageData->Update();
+        vtkImageExtractComponents *components=vtkImageExtractComponents::New();
+        components->SetInput(imageData);
+        components->SetComponents(0,1,2);
+        if(this->renPlane==NULL)
+        {
+            this->renPlane=vtkRenderer::New();
+        }
+        
+        this->renPlane->SetBackground(this->renViewport->GetBackground());
+        this->renPlane->SetActiveCamera(this->renViewport->GetActiveCamera());
+
+        //Get Our Renderer Up
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renViewport);
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renPlane);
+
+        this->renPlane->SetDisplayPoint(0,0,0.5);
+        this->renPlane->DisplayToWorld();
+        double coordinatesA[4];
+        this->renPlane->GetWorldPoint(coordinatesA);
+
+        this->renPlane->SetDisplayPoint(size[0],0,0.5);
+        this->renPlane->DisplayToWorld();
+        double coordinatesB[4];
+        this->renPlane->GetWorldPoint(coordinatesB);
+
+        this->renPlane->SetDisplayPoint(size[0],size[1],0.5);
+        this->renPlane->DisplayToWorld();
+        double coordinatesC[4];
+        this->renPlane->GetWorldPoint(coordinatesC);
+
+        this->renPlane->SetDisplayPoint(0,size[1],0.5);
+        this->renPlane->DisplayToWorld();
+        double coordinatesD[4];
+        this->renPlane->GetWorldPoint(coordinatesD);
+
+        //Create the Polydata
+        vtkPoints *points=vtkPoints::New();
+        points->InsertPoint(0,coordinatesA);
+        points->InsertPoint(1,coordinatesB);
+        points->InsertPoint(2,coordinatesC);
+        points->InsertPoint(3,coordinatesD);
+
+        vtkCellArray *polygon=vtkCellArray::New();
+        polygon->InsertNextCell(4);
+        polygon->InsertCellPoint(0);
+        polygon->InsertCellPoint(1);
+        polygon->InsertCellPoint(2);
+        polygon->InsertCellPoint(3);
+        //Take care about Texture coordinates
+        vtkFloatArray *textCoords=vtkFloatArray::New();
+        textCoords->SetNumberOfComponents(2);
+        textCoords->Allocate(8);
+        float tc[2];
+        tc[0]=0;
+        tc[1]=0;
+        textCoords->InsertNextTuple(tc);
+        tc[0]=1;
+        tc[1]=0;
+        textCoords->InsertNextTuple(tc);
+        tc[0]=1;
+        tc[1]=1;
+        textCoords->InsertNextTuple(tc);
+        tc[0]=0;
+        tc[1]=1;
+        textCoords->InsertNextTuple(tc);
+
+        vtkPolyData *polydata=vtkPolyData::New();
+        polydata->SetPoints(points);
+        polydata->SetPolys(polygon);
+        polydata->GetPointData()->SetTCoords(textCoords);
+
+        vtkPolyDataMapper *polyMapper=vtkPolyDataMapper::New();
+        polyMapper->SetInput(polydata);
+
+        vtkActor *actor=vtkActor::New(); 
+        actor->SetMapper(polyMapper);
+
+        //Take care about the texture
+        vtkTexture *atext=vtkTexture::New();
+        atext->SetInput(components->GetOutput());
+        atext->SetInterpolate(1);
+        actor->SetTexture(atext);
+
+        //Remove all old Actors
+        this->renPlane->RemoveAllViewProps();
+
+        this->renPlane->AddActor(actor);
+        //Remove the old Renderer
+
+        renWin->SwapBuffersOn();
+        //Do we do that
+        this->RenderPlane=1;
+
+
+
+        //Delete everything we have done
+        image->Delete();
+        imageData->Delete();
+        components->Delete();
+        points->Delete();
+        polygon->Delete();
+        textCoords->Delete();
+        polydata->Delete();
+        polyMapper->Delete();
+        actor->Delete();
+        atext->Delete();
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
+        log->StopTimer();
+        vtkErrorMacro("TimeToRender:"<<log->GetElapsedTime());
+        log->Delete();
 
     }
     //Check if caller equals mapper
