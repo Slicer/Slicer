@@ -46,10 +46,22 @@ extern "C" {
 #include "vtkObjectFactory.h"
 
 vtkCxxRevisionMacro(vtkDiffusionTensorMathematicsSimple, "$Revision: 1.11 $");
-vtkStandardNewMacro(vtkDiffusionTensorMathematicsSimple);
 
 vtkCxxSetObjectMacro(vtkDiffusionTensorMathematicsSimple,TensorRotationMatrix,vtkMatrix4x4);
 vtkCxxSetObjectMacro(vtkDiffusionTensorMathematicsSimple,ScalarMask,vtkImageData);
+
+//----------------------------------------------------------------------------
+vtkDiffusionTensorMathematicsSimple* vtkDiffusionTensorMathematicsSimple::New()
+{
+  // First try to create the object from the vtkObjectFactory
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkDiffusionTensorMathematicsSimple");
+  if(ret)
+    {
+    return (vtkDiffusionTensorMathematicsSimple*)ret;
+    }
+  // If the factory was unable to create the object, then create it here.
+  return new vtkDiffusionTensorMathematicsSimple;
+}
 
 //----------------------------------------------------------------------------
 vtkDiffusionTensorMathematicsSimple::vtkDiffusionTensorMathematicsSimple()
