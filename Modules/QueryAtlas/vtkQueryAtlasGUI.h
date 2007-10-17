@@ -159,6 +159,9 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro (QdecScalarSelector, vtkKWMenuButtonWithLabel );
     vtkGetObjectMacro (QdecGoButton, vtkKWPushButtonWithLabel);
 
+    vtkGetObjectMacro ( BasicAnnotateButton, vtkKWPushButtonWithLabel );
+    vtkGetObjectMacro (GeneralButton, vtkKWPushButton);
+    vtkGetObjectMacro (GeneralFrame, vtkKWFrame);
     vtkGetObjectMacro (FIPSFSButton, vtkKWPushButton );
     vtkGetObjectMacro (QdecButton, vtkKWPushButton );
     vtkGetObjectMacro (FIPSFSFrame, vtkKWFrame );
@@ -203,6 +206,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     virtual void BuildFreeSurferFIPSFrame( );
     virtual void BuildQdecFrame();
+    virtual void BuildGeneralAnnotateFrame ( );
 
     virtual void UnpackQueryBuilderContextFrames ( );
     virtual void PackQueryBuilderContextFrame ( vtkKWFrame *f );
@@ -328,8 +332,12 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     vtkKWMenuButtonWithLabel *QdecScalarSelector;
     vtkKWPushButtonWithLabel *QdecGoButton;
     
+    vtkKWPushButtonWithLabel *BasicAnnotateButton;
+    
+    vtkKWPushButton *GeneralButton;
     vtkKWPushButton *FIPSFSButton;
     vtkKWPushButton *QdecButton;
+    vtkKWFrame *GeneralFrame;
     vtkKWFrame *FIPSFSFrame;
     vtkKWFrame *QdecFrame;
 

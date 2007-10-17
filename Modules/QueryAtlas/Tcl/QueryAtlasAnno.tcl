@@ -672,12 +672,13 @@ proc QueryAtlasUpdateAnnotations { modelAnnotationDir } {
 }
 
 
+
+
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasInitialize { dataset annoPath } {
 
     set annotest 0
-    set specialload 0
     # handle known datasets
     switch  $dataset {
         "Qdec" {
@@ -690,7 +691,6 @@ proc QueryAtlasInitialize { dataset annoPath } {
                 QueryAtlasParseOntologyResources
                 $::slicer3::QueryAtlasGUI UpdateScalarOverlayMenu
                 QueryAtlasRenderView
-                set specialload 1
             } else {
                 QueryAtlasDialog "No annotations were found. Querying not enabled."
             }
@@ -703,14 +703,17 @@ proc QueryAtlasInitialize { dataset annoPath } {
                 QueryAtlasCreatePicker
                 QueryAtlasParseOntologyResources
                 QueryAtlasRenderView
-                set specialload 1
             } else {
                 QueryAtlasDialog "No annotations were found. Querying not enabled."
             }
         }
-    }
-    if { $specialload == 0 } {
-        #--- handle generic label maps...
+        "NULL" {
+            QueryAtlasInitializeGlobals
+            QueryAtlasUpdateAnnotations ""
+            QueryAtlasCreatePicker
+            QueryAtlasParseOntologyResources
+            QueryAtlasRenderView
+        }
     }
 }
 

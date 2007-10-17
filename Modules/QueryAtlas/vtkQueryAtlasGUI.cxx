@@ -206,6 +206,9 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
 #ifdef LOAD_FRAME
     this->FIPSFSButton = NULL;
     this->FIPSFSFrame = NULL;
+    this->BasicAnnotateButton = NULL;
+    this->GeneralFrame = NULL;
+    this->GeneralButton = NULL;
     this->QdecButton = NULL;
     this->QdecFrame = NULL;
     this->FSasegSelector = NULL;
@@ -259,6 +262,24 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
       this->FIPSFSFrame->SetParent ( NULL );
       this->FIPSFSFrame->Delete();
       this->FIPSFSFrame = NULL;      
+      }
+    if ( this->BasicAnnotateButton)
+      {
+      this->BasicAnnotateButton->SetParent ( NULL );
+      this->BasicAnnotateButton->Delete();
+      this->BasicAnnotateButton = NULL;      
+      }
+    if ( this->GeneralFrame)
+      {
+      this->GeneralFrame->SetParent ( NULL);
+      this->GeneralFrame->Delete();
+      this->GeneralFrame = NULL;
+      }
+    if ( this->GeneralButton )
+      {
+      this->GeneralButton->SetParent ( NULL );
+      this->GeneralButton->Delete();
+      this->GeneralButton = NULL;
       }
     if ( this->QdecButton )
       {
@@ -879,7 +900,9 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 {
   vtkDebugMacro("vtkQueryAtlasGUI: RemoveGUIObservers\n");
 
+  this->BasicAnnotateButton->GetWidget()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FIPSFSButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeneralButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
   this->QdecButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSasegSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSbrainSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -944,7 +967,9 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 void vtkQueryAtlasGUI::AddGUIObservers ( )
 {
   vtkDebugMacro("vtkQueryAtlasGUI: AddGUIObservers\n");
+  this->BasicAnnotateButton->GetWidget()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FIPSFSButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->GeneralButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->QdecButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSasegSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FSbrainSelector->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -1262,6 +1287,18 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
       this->UnpackLoaderContextFrames();
       this->PackLoaderContextFrame ( this->FIPSFSFrame );
       this->ColorCodeLoaderContextButtons ( this->FIPSFSButton );
+      }
+    else if ( (b == this->BasicAnnotateButton->GetWidget()) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->Script ( "QueryAtlasInitialize NULL NULL" );
+      this->Script ( "QueryAtlasAnnotationVisibility on");
+      this->UpdateAnnoVisibilityMenu();
+      }
+    else if ( (b == this->GeneralButton) && (event == vtkKWPushButton::InvokedEvent ) )
+      {
+      this->UnpackLoaderContextFrames();
+      this->PackLoaderContextFrame ( this->GeneralFrame );
+      this->ColorCodeLoaderContextButtons ( this->GeneralButton );
       }
     else if ( (b == this->QdecButton) && (event == vtkKWPushButton::InvokedEvent ) )
       {
@@ -2137,10 +2174,11 @@ void vtkQueryAtlasGUI::BuildLoadAndConvertGUI ( )
     this->BuildLoaderContextFrames ( switcher );
     this->BuildFreeSurferFIPSFrame ( );
     this->BuildQdecFrame ( );
-    this->PackLoaderContextFrame ( this->FIPSFSFrame );
+    this->BuildGeneralAnnotateFrame ( );
+    this->PackLoaderContextFrame ( this->GeneralFrame );
     app->Script ( "pack %s -side top -fill x -expand 1 -pady 0", switcher->GetWidgetName() );
 
-    this->ColorCodeLoaderContextButtons ( this->FIPSFSButton );
+    this->ColorCodeLoaderContextButtons ( this->GeneralButton );
     switcher->Delete();
     convertFrame->Delete();
 }
@@ -2231,6 +2269,25 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
   this->ProcessGUIEvents ( this->FSbrainSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
   this->ProcessGUIEvents ( this->FSasegSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
   this->ProcessGUIEvents ( this->FSstatsSelector, vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
+}
+
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::BuildGeneralAnnotateFrame ( )
+{
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+
+  this->BasicAnnotateButton = vtkKWPushButtonWithLabel::New ( );
+  this->BasicAnnotateButton->SetParent ( this->GeneralFrame );
+  this->BasicAnnotateButton->Create();
+  this->BasicAnnotateButton->GetWidget()->SetImageToIcon ( this->QueryAtlasIcons->GetSetUpIcon() );
+  this->BasicAnnotateButton->GetWidget()->SetBorderWidth(0);
+  this->BasicAnnotateButton->GetWidget()->SetReliefToFlat();
+  this->BasicAnnotateButton->GetLabel()->SetText("Set up annotations: ");
+  this->BasicAnnotateButton->GetLabel()->SetWidth ( 18 );
+  this->BasicAnnotateButton->SetBalloonHelpString ("Create interactive annotations for any models and label maps in the scene (currently supports FreeSurfer models only)");
+  this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 2",
+                 this->BasicAnnotateButton->GetWidgetName());
 }
 
 //---------------------------------------------------------------------------
@@ -3339,6 +3396,7 @@ void vtkQueryAtlasGUI::UnpackLoaderContextFrames ( )
 {
     this->Script ( "pack forget %s", this->FIPSFSFrame->GetWidgetName() );
     this->Script ( "pack forget %s", this->QdecFrame->GetWidgetName() );
+    this->Script ( "pack forget %s", this->GeneralFrame->GetWidgetName() );
 }
 
 //---------------------------------------------------------------------------
@@ -3361,18 +3419,25 @@ void vtkQueryAtlasGUI::BuildLoaderContextButtons ( vtkKWFrame *parent )
   this->FIPSFSButton->Create();
   this->FIPSFSButton->SetWidth ( 12 );
   this->FIPSFSButton->SetText ( "FIPS+FreeSurfer" );
+  this->FIPSFSButton->SetBalloonHelpString ( "Load, annotate and display FIPS+FreeSurfer datasets" );
 
   this->QdecButton = vtkKWPushButton::New();
   this->QdecButton->SetParent ( f );
   this->QdecButton->Create();
   this->QdecButton->SetWidth ( 12 );
   this->QdecButton->SetText ( "Qdec");
+  this->QdecButton->SetBalloonHelpString ( "Load, annotate and display a Qdec dataset" );
 
-  this->Script ( "pack %s %s -anchor nw -side left -fill none -padx 2 -pady 0",
+  this->GeneralButton = vtkKWPushButton::New();
+  this->GeneralButton->SetParent ( f );
+  this->GeneralButton->Create();
+  this->GeneralButton->SetWidth ( 12) ;
+  this->GeneralButton->SetText ( "Basic" );
+  this->GeneralButton->SetBalloonHelpString ( "Annotate models and/or label maps" );
+  this->Script ( "pack %s %s %s -anchor nw -side left -fill none -padx 2 -pady 0",
+                 this->GeneralButton->GetWidgetName(),
                  this->FIPSFSButton->GetWidgetName(),
                  this->QdecButton->GetWidgetName() );
-
-
   f->Delete();
 }
 
@@ -3393,6 +3458,12 @@ void vtkQueryAtlasGUI::BuildLoaderContextFrames ( vtkKWFrame *parent )
     this->QdecFrame->Create();
     this->QdecFrame->SetReliefToGroove();
     this->QdecFrame->SetBorderWidth ( 1 );
+
+    this->GeneralFrame = vtkKWFrame::New();
+    this->GeneralFrame->SetParent ( parent );
+    this->GeneralFrame->Create();
+    this->GeneralFrame->SetReliefToGroove();
+    this->GeneralFrame->SetBorderWidth ( 1 );    
 }
 
 
@@ -3402,9 +3473,11 @@ void vtkQueryAtlasGUI::ColorCodeLoaderContextButtons ( vtkKWPushButton *b )
 {
   this->FIPSFSButton->SetBackgroundColor ( _br, _bg, _bb );
   this->QdecButton->SetBackgroundColor ( _br, _bg, _bb );
-
+  this->GeneralButton->SetBackgroundColor (_br, _bg, _bb );
+                                           
   this->FIPSFSButton->SetForegroundColor ( _fr, _fg, _fb );
   this->QdecButton->SetForegroundColor ( _fr, _fg, _fb );
+  this->GeneralButton->SetForegroundColor( _fr, _fg, _fb );
 
   b->SetBackgroundColor (1.0, 1.0, 1.0);
   b->SetForegroundColor (0.0, 0.0, 0.0);
