@@ -22,9 +22,9 @@
 
 #include <string>
 
-#ifdef USE_NAVITRACK
-#include "vtkIGTOpenTrackerStream.h"
-#endif
+//#ifdef USE_NAVITRACK
+//#include "vtkIGTOpenTrackerStream.h"
+//#endif
 #ifdef USE_IGSTK
 #include "vtkIGTIGSTKStream.h"
 #endif
