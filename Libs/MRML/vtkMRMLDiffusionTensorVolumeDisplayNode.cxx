@@ -26,7 +26,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkSphereSource.h"
 
-#include "vtkDiffusionTensorMathematics.h"
+#include "vtkDiffusionTensorMathematicsSimple.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode* vtkMRMLDiffusionTensorVolumeDisplayNode::New()
@@ -58,7 +58,7 @@ vtkMRMLNode* vtkMRMLDiffusionTensorVolumeDisplayNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode()
 {
- this->DTIMathematics = vtkDiffusionTensorMathematics::New();
+ this->DTIMathematics = vtkDiffusionTensorMathematicsSimple::New();
  this->Threshold->SetInput( this->DTIMathematics->GetOutput());
  this->MapToWindowLevelColors->SetInput( this->DTIMathematics->GetOutput());
 

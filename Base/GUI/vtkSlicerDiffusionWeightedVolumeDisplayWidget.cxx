@@ -13,6 +13,8 @@
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 
+#include "vtkImageExtractComponents.h"
+
 // to get at the colour logic to set a default color node
 #include "vtkKWApplication.h"
 #include "vtkSlicerApplication.h"
@@ -20,6 +22,7 @@
 #include "vtkSlicerColorGUI.h"
 #include "vtkSlicerColorLogic.h"
 #include "vtkMRMLScalarVolumeNode.h"
+#include "vtkSlicerVolumesLogic.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDiffusionWeightedVolumeDisplayWidget );
@@ -29,6 +32,8 @@ vtkCxxRevisionMacro ( vtkSlicerDiffusionWeightedVolumeDisplayWidget, "$Revision:
 //---------------------------------------------------------------------------
 vtkSlicerDiffusionWeightedVolumeDisplayWidget::vtkSlicerDiffusionWeightedVolumeDisplayWidget ( )
 {
+    this->ExtractComponent = vtkImageExtractComponents::New();
+
     this->DiffusionSelectorWidget = NULL;
     this->ColorSelectorWidget = NULL;
     this->InterpolateButton = NULL;
@@ -41,6 +46,8 @@ vtkSlicerDiffusionWeightedVolumeDisplayWidget::vtkSlicerDiffusionWeightedVolumeD
 //---------------------------------------------------------------------------
 vtkSlicerDiffusionWeightedVolumeDisplayWidget::~vtkSlicerDiffusionWeightedVolumeDisplayWidget ( )
 {
+  this->ExtractComponent->Delete();
+
   if (this->IsCreated())
     {
     this->RemoveWidgetObservers();
@@ -110,6 +117,16 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessWidgetEvents ( vtkObj
     if (displayNode != NULL)
       {
       displayNode->SetDiffusionComponent((int) dwiSelector->GetScale()->GetValue());
+      vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+
+      if (volumeNode != NULL && volumeNode->GetImageData() && this->WindowLevelThresholdEditor)
+        {
+        this->ExtractComponent->SetInput(volumeNode->GetImageData());
+        this->ExtractComponent->SetComponents(displayNode->GetDiffusionComponent());
+        this->ExtractComponent->Update();
+        vtkSlicerVolumesLogic::CalculateScalarAutoLevels(this->ExtractComponent->GetOutput(), displayNode);
+        this->WindowLevelThresholdEditor->SetImageData(this->ExtractComponent->GetOutput());
+        }
       }
     this->UpdatingWidget = 0;
     return;
@@ -301,13 +318,17 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::UpdateWidgetFromMRML ()
   vtkDebugMacro("UpdateWidgetFromMRML");
   
   vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
-  if (volumeNode != NULL)
-    {
-    this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
-    this->DiffusionSelectorWidget->GetScale()->SetRange(0,volumeNode->GetImageData()->GetNumberOfScalarComponents()-1);
-    }
-  
   vtkMRMLDiffusionWeightedVolumeDisplayNode *displayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
+  
+  if (volumeNode != NULL && displayNode != NULL && this->WindowLevelThresholdEditor)
+    {
+    
+    this->ExtractComponent->SetInput(volumeNode->GetImageData());
+    this->ExtractComponent->SetComponents(displayNode->GetDiffusionComponent());
+    this->ExtractComponent->Update();
+    this->WindowLevelThresholdEditor->SetImageData(this->ExtractComponent->GetOutput());
+    }
+    
 
   // check to see if the color selector widget has it's mrml scene set (it
   // could have been set to null)

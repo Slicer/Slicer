@@ -37,6 +37,7 @@
 #include "vtkKWEntry.h"
 #include "vtkKWColorTransferFunctionEditor.h"
 #include "vtkKWHistogram.h"
+#include "vtkImageExtractComponents.h"
 
 #include "vtkSlicerBaseGUI.h"
 
@@ -150,6 +151,7 @@ private:
 
   vtkImageAccumulateDiscrete *Accumulate;
   vtkImageBimodalAnalysis *Bimodal;
+  vtkImageExtractComponents *ExtractComponents;
 
   vtkKWRange *WindowLevelRange;
   vtkKWEntry *LevelEntry;

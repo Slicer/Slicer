@@ -35,6 +35,9 @@
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
+class vtkDiffusionTensorMathematics;
+class vtkImageExtractComponents;
+class vtkAssignAttribute;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDiffusionTensorVolumeDisplayWidget : public vtkSlicerVolumeDisplayWidget
 {
@@ -77,6 +80,15 @@ protected:
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
   vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
   vtkKWCheckButton* InterpolateButton;
+
+  vtkDiffusionTensorMathematics *DTIMathematics;
+  vtkImageExtractComponents *ExtractComponent;
+  
+  vtkAssignAttribute* AssignAttributeTensorsFromScalars;
+  vtkAssignAttribute* AssignAttributeScalarsFromTensors;
+
+  int UpdatingMRML;
+  int UpdatingWidget;
 
   //BTX
   std::map <std::string, int> ScalarModeMap;

@@ -28,7 +28,7 @@
 #include "vtkMRMLVolumeGlyphDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
-class vtkDiffusionTensorMathematics;
+class vtkDiffusionTensorMathematicsSimple;
 class vtkDiffusionTensorGlyph;
 class vtkImageData;
 
@@ -118,7 +118,7 @@ protected:
 
   vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
 
-  vtkDiffusionTensorMathematics *DTIMathematics;
+  vtkDiffusionTensorMathematicsSimple *DTIMathematics;
 
 };
 

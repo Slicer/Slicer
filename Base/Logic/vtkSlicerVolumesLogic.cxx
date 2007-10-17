@@ -19,6 +19,9 @@
 #include "vtkImageThreshold.h"
 #include "vtkImageAccumulateDiscrete.h"
 #include "vtkImageBimodalAnalysis.h"
+#include "vtkImageExtractComponents.h"
+#include "vtkDiffusionTensorMathematics.h"
+#include "vtkAssignAttribute.h"
 
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerColorLogic.h"
@@ -316,11 +319,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
       }
   
     //should we give the user the chance to modify this?.
-    vtkMRMLScalarVolumeDisplayNode *sdn = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
-    if (sdn)
-      {
-      this->CalculateAutoLevels( volumeNode->GetImageData(), sdn );
-      }
+
     vtkDebugMacro("Adding node..");
     this->GetMRMLScene()->AddNode(storageNode);
     this->GetMRMLScene()->AddNode(displayNode);
@@ -355,8 +354,19 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
       vtkMRMLDiffusionTensorVolumeDisplayNode *dtiDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(displayNode);
       if (dtiDisplayNode)
         {
+        dtiDisplayNode->SetAutoWindowLevel(0);
+        dtiDisplayNode->SetWindow(0);
+        dtiDisplayNode->SetLevel(0);
+        dtiDisplayNode->SetUpperThreshold(0);
+        dtiDisplayNode->SetLowerThreshold(0);
         dtiDisplayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(displayPropertiesNode->GetID());
         }
+      }
+      
+    vtkMRMLScalarVolumeDisplayNode *sdn = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
+    if (sdn && volumeNode)
+      {
+      this->CalculateAutoLevels( volumeNode->GetImageData(), sdn );
       }
 
     vtkDebugMacro("Name vol node "<<volumeNode->GetClassName());
@@ -446,25 +456,100 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
 
 void vtkSlicerVolumesLogic::CalculateAutoLevels(vtkImageData *imageData, vtkMRMLScalarVolumeDisplayNode *displayNode)
 {
-  if ( !imageData || !displayNode ) 
+  if ( !imageData || !displayNode) 
     {
     return;
     }
+  vtkImageData *imageDataScalar = imageData;
+  
+  vtkImageExtractComponents *extractComp = NULL;
+  vtkDiffusionTensorMathematics *DTIMathematics = NULL;  
+  vtkAssignAttribute *AssignAttributeTensorsFromScalars = NULL;
 
-  vtkImageAccumulateDiscrete *accumulate = vtkImageAccumulateDiscrete::New();
-  vtkImageBimodalAnalysis *bimodal = vtkImageBimodalAnalysis::New();
+  vtkMRMLDiffusionTensorVolumeDisplayNode *dtDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(displayNode);
+  vtkMRMLDiffusionWeightedVolumeDisplayNode *dwDisplayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(displayNode);
+ 
+ if (dtDisplayNode != NULL ) 
+    {
+    if (dtDisplayNode->GetDiffusionTensorDisplayPropertiesNode())
+      {
+      DTIMathematics = vtkDiffusionTensorMathematics::New();    
+      AssignAttributeTensorsFromScalars= vtkAssignAttribute::New();
+      AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
+      
+      DTIMathematics->SetInput(imageData);
+      DTIMathematics->SetOperation(dtDisplayNode->GetDiffusionTensorDisplayPropertiesNode()->
+                                     GetScalarInvariant());
+      DTIMathematics->Update();
+      imageDataScalar = DTIMathematics->GetOutput();
+      }
+    else
+      {
+      imageDataScalar = NULL;
+      }
+    }
+  else if (dwDisplayNode != NULL) 
+    {
+    extractComp = vtkImageExtractComponents::New();
+    extractComp->SetInput(imageData);
+    extractComp->SetComponents(dwDisplayNode->GetDiffusionComponent());
+    imageDataScalar = extractComp->GetOutput();
+    }
+  
+  vtkSlicerVolumesLogic::CalculateScalarAutoLevels(imageDataScalar, displayNode);
+    
+  if (extractComp)
+    {
+    extractComp->Delete();
+    }
+  if (DTIMathematics)
+    {
+    DTIMathematics->Delete();
+    }
+  if (AssignAttributeTensorsFromScalars)
+    {
+    AssignAttributeTensorsFromScalars->Delete();
+    }
+}
 
-  accumulate->SetInput(imageData);
-  bimodal->SetInput(accumulate->GetOutput());
-  bimodal->Update();
+void vtkSlicerVolumesLogic::CalculateScalarAutoLevels(vtkImageData *imageData, vtkMRMLScalarVolumeDisplayNode *displayNode)
+{
+  if ( !imageData || !displayNode) 
+    {
+    return;
+    }
+  vtkImageData *imageDataScalar = imageData;
 
-  displayNode->SetWindow (bimodal->GetWindow());
-  displayNode->SetLevel (bimodal->GetLevel());
-  displayNode->SetLowerThreshold (bimodal->GetThreshold());
-  displayNode->SetUpperThreshold (bimodal->GetMax());
+  //if (imageDataScalar) 
+  if (imageDataScalar && imageDataScalar->GetNumberOfScalarComponents() == 1) 
+    {
+    vtkImageAccumulateDiscrete *accumulate = vtkImageAccumulateDiscrete::New();
+    vtkImageBimodalAnalysis *bimodal = vtkImageBimodalAnalysis::New();
 
-  accumulate->Delete();
-  bimodal->Delete();
+    accumulate->SetInput(imageDataScalar);
+    bimodal->SetInput(accumulate->GetOutput());
+    bimodal->Update();
+
+    // Workaround DT case that does not work with DTMath
+    if (bimodal->GetWindow() == 0.0 && bimodal->GetLevel() == 0.0) 
+      {
+      double min = bimodal->GetMin();
+      double max = bimodal->GetMax();
+      displayNode->SetWindow (max-min);
+      displayNode->SetLevel (0.5*(max+min));
+      }
+    else
+      {
+      displayNode->SetWindow (bimodal->GetWindow());
+      displayNode->SetLevel (bimodal->GetLevel());
+      }
+    displayNode->SetLowerThreshold (bimodal->GetThreshold());
+    displayNode->SetUpperThreshold (bimodal->GetMax());
+
+    accumulate->Delete();
+    bimodal->Delete();
+    }
+    
 }
 
 

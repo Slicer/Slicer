@@ -41,6 +41,7 @@ vtkKWWindowLevelThresholdEditor::vtkKWWindowLevelThresholdEditor()
    
   this->Accumulate = vtkImageAccumulateDiscrete::New();
   this->Bimodal = vtkImageBimodalAnalysis::New();
+  this->ExtractComponents = vtkImageExtractComponents::New();
 
   this->WindowLevelRange = vtkKWRange::New();
   this->LevelEntry = vtkKWEntry::New();
@@ -122,13 +123,19 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
     {
     this->Bimodal->Delete();
     }
+  this->ExtractComponents->Delete();
 }
 
 void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
 {
-  if (this->ImageData != imageData) 
-    {
+  //if (this->ImageData != imageData || (imageData != NULL && imageData->GetMTime() > this->ImageData->GetMTime()) ) 
+   // {
     vtkImageData* tempImageData = this->ImageData;
+    if (this->ImageData == NULL)
+      {
+      this->SetWindowLevel(0,0);
+      this->SetThreshold(0,0);
+      }
     this->ImageData = imageData;
     if (this->ImageData != NULL)
       {
@@ -149,7 +156,7 @@ void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
 
       this->Modified();
       }
-    }
+    //}
 }
 
 void vtkKWWindowLevelThresholdEditor::UpdateAutoLevels()
@@ -159,7 +166,10 @@ void vtkKWWindowLevelThresholdEditor::UpdateAutoLevels()
     {
     return;
     }
-  this->Accumulate->SetInput(this->ImageData);
+    
+  this->ExtractComponents->SetInput(this->ImageData);
+  this->ExtractComponents->SetComponents(0);
+  this->Accumulate->SetInput(this->ExtractComponents->GetOutput());
   this->Accumulate->Update();
   this->Bimodal->SetInput(this->Accumulate->GetOutput());
   this->Bimodal->Update();
@@ -401,12 +411,23 @@ void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
       this->Histogram->BuildHistogram( this->ImageData->GetPointData()->GetScalars(), 0);
       double *range = this->Histogram->GetRange();
 
+      double w = this->GetWindow();
+      double l = this->GetLevel();
+      double r0 = l - 0.5*w;
+      double r1 = l + 0.5*w;
+      double tl= this->GetLowerThreshold();
+      double tu= this->GetUpperThreshold();
+      
       this->ThresholdRange->SetWholeRange(range[0], range[1]);
       this->WindowLevelRange->SetWholeRange(range[0] - 0.5 * (range[0] + range[1]), range[1] + 0.5 * (range[0] + range[1]));
-
-      this->SetWindowLevel(range[1] - range[0], 0.5 * (range[0] + range[1]) );
-      this->SetThreshold(range[0], range[1]);
-
+      if (this->GetAutoWindowLevel() == 1 || range[0] < r0 || range[1] > r1) 
+        {
+        this->SetWindowLevel(range[1] - range[0], 0.5 * (range[0] + range[1]) );
+        }
+      if (this->GetThresholdType() != vtkKWWindowLevelThresholdEditor::ThresholdManual || range[0] > tl || range[1] < tu)
+        {
+        this->SetThreshold(range[0], range[1]);
+        }
       // avoid crash when Image not set for histogram
       this->ColorTransferFunctionEditor->SetHistogram(NULL);
       this->ColorTransferFunctionEditor->SetHistogram(this->Histogram);

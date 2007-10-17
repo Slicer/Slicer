@@ -874,8 +874,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     if (svnd)
       {
       vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New();
-      vtkMRMLScalarVolumeDisplayNode *displayNode
-        = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
+      vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
       volumesLogic->CalculateAutoLevels (svnd->GetImageData(), displayNode);
       volumesLogic->Delete();
       svnd->SetAndObserveDisplayNodeID( disp->GetID() );

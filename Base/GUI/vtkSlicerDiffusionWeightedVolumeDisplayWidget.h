@@ -33,6 +33,8 @@
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
+class vtkImageExtractComponents;
+
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDiffusionWeightedVolumeDisplayWidget : public vtkSlicerVolumeDisplayWidget
 {
@@ -75,6 +77,9 @@ protected:
 
   int UpdatingMRML;
   int UpdatingWidget;
+  
+  vtkImageExtractComponents *ExtractComponent;
+
 
 private:
 

@@ -14,14 +14,19 @@
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
+#include "vtkDiffusionTensorMathematics.h"
+
+#include "vtkAssignAttribute.h"
+
 // to get at the colour logic to set a default color node
 #include "vtkKWApplication.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleGUI.h"
 #include "vtkSlicerColorGUI.h"
 #include "vtkSlicerColorLogic.h"
+#include "vtkSlicerVolumesLogic.h"
+
 #include "vtkMRMLScalarVolumeNode.h"
-//#include "vtkDiffusionTensorMathematics.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDiffusionTensorVolumeDisplayWidget );
@@ -31,6 +36,14 @@ vtkCxxRevisionMacro ( vtkSlicerDiffusionTensorVolumeDisplayWidget, "$Revision: 1
 //---------------------------------------------------------------------------
 vtkSlicerDiffusionTensorVolumeDisplayWidget::vtkSlicerDiffusionTensorVolumeDisplayWidget ( )
 {
+    this->DTIMathematics = vtkDiffusionTensorMathematics::New();
+    this->ExtractComponent = vtkImageExtractComponents::New();
+    
+    this->AssignAttributeTensorsFromScalars= vtkAssignAttribute::New();
+    this->AssignAttributeScalarsFromTensors= vtkAssignAttribute::New();
+    this->AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
+    this->AssignAttributeScalarsFromTensors->Assign(vtkDataSetAttributes::SCALARS, vtkDataSetAttributes::TENSORS, vtkAssignAttribute::POINT_DATA);
+
     this->ScalarModeMenu = NULL;
     this->ScalarOptionsFrame=NULL;
     this->GlyphButton = NULL;
@@ -38,12 +51,21 @@ vtkSlicerDiffusionTensorVolumeDisplayWidget::vtkSlicerDiffusionTensorVolumeDispl
     this->InterpolateButton = NULL;
     this->ColorSelectorWidget = NULL;
     this->WindowLevelThresholdEditor = NULL;
+    
+    this->UpdatingMRML = 0;
+    this->UpdatingWidget = 0;
+
 }
 
 
 //---------------------------------------------------------------------------
 vtkSlicerDiffusionTensorVolumeDisplayWidget::~vtkSlicerDiffusionTensorVolumeDisplayWidget ( )
 {
+  this->DTIMathematics->Delete();
+  this->ExtractComponent->Delete();
+  this->AssignAttributeTensorsFromScalars->Delete();
+  this->AssignAttributeScalarsFromTensors->Delete();
+
   if (this->IsCreated())
     {
     this->RemoveWidgetObservers();
@@ -109,6 +131,12 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::PrintSelf ( ostream& os, vtkIn
 void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                          unsigned long event, void *callData )
 {
+  if (this->UpdatingMRML || this->UpdatingWidget)
+    {
+    return;
+    }
+
+  this->UpdatingWidget = 1;
 
   this->Superclass::ProcessWidgetEvents(caller, event, callData);
 
@@ -121,16 +149,25 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
   if (scalarMenu == this->ScalarModeMenu->GetWidget()->GetWidget()->GetMenu() && 
         event == vtkKWMenu::MenuItemInvokedEvent)
     {
+    vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
     vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
-    if (displayNode != NULL)
+    if (volumeNode != NULL && displayNode != NULL)
       {
       const char *scalarSelection = this->ScalarModeMenu->GetWidget()->GetWidget()->GetValue();
       if (displayNode->GetDiffusionTensorDisplayPropertiesNode())
         {
         displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetScalarInvariant(this->ScalarModeMap[std::string(scalarSelection)]);
-        this->UpdateWidgetFromMRML();
+        this->DTIMathematics->SetInput(volumeNode->GetImageData());
+        this->DTIMathematics->SetOperation(displayNode->GetDiffusionTensorDisplayPropertiesNode()->
+                                            GetScalarInvariant());
+        this->DTIMathematics->Update();
+        
+        vtkImageData* image = this->DTIMathematics->GetOutput();
+        vtkSlicerVolumesLogic::CalculateScalarAutoLevels(image, displayNode);
+        this->WindowLevelThresholdEditor->SetImageData(image);
         }
       }
+    this->UpdatingWidget = 0;
     return;
     }
 
@@ -153,6 +190,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
         displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetGlyphGeometry(this->GlyphModeMap[std::string(glyphSelection)]);
         }
       }
+    this->UpdatingWidget = 0;
     return;
     }
 
@@ -174,6 +212,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
           displayNode->SetVisualizationModeToScalarVolume();
           }
         }
+      this->UpdatingWidget = 0;
       return;
       }
 
@@ -203,6 +242,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
           }
         }
       }
+    this->UpdatingWidget = 0;
     return;
     }
 
@@ -227,6 +267,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
         vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
         if (volumeNode == NULL)
           {
+          this->UpdatingWidget = 0;
           return;
           }
         else 
@@ -287,7 +328,8 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
         displayNode->SetApplyThreshold(1);
         displayNode->SetAutoThreshold(0);
         }
-      return;
+     this->UpdatingWidget = 0;
+     return;
       }
     }
 
@@ -299,6 +341,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
         {
         displayNode->SetInterpolate( this->InterpolateButton->GetSelectedState() );
         }
+      this->UpdatingWidget = 0;
       return;
       }
 
@@ -310,6 +353,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
       {
       this->MRMLScene->SaveStateForUndo(displayNode);
       }
+    this->UpdatingWidget = 0;
     return;
     }
 
@@ -321,10 +365,17 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
 void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
                                               unsigned long event, void *callData )
 {
+if (this->UpdatingMRML || this->UpdatingWidget)
+    {
+    return;
+    }
+  this->UpdatingMRML = 1;
+  
   vtkMRMLVolumeNode *curVolumeNode = this->GetVolumeNode();
 
   if (curVolumeNode  == NULL)
     {
+    this->UpdatingMRML = 0;
     return;
     }
 
@@ -350,6 +401,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject 
   if (event == vtkCommand::ModifiedEvent)
     {
     this->UpdateWidgetFromMRML();
+    this->UpdatingMRML = 0;
     return;
     }
 }
@@ -389,7 +441,24 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::UpdateWidgetFromMRML ()
         }
       }
     }
- 
+    
+    
+
+  vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+  if (volumeNode != NULL && displayNode != NULL && this->WindowLevelThresholdEditor)
+    {
+    if (displayNode->GetDiffusionTensorDisplayPropertiesNode())
+      {
+      this->DTIMathematics->SetInput(volumeNode->GetImageData());
+      this->DTIMathematics->SetOperation(displayNode->GetDiffusionTensorDisplayPropertiesNode()->
+                                   GetScalarInvariant());
+      this->DTIMathematics->Update();
+      
+      vtkImageData* image = this->DTIMathematics->GetOutput();
+      this->WindowLevelThresholdEditor->SetImageData(image);
+      }
+    }
+    
   // check to see if the color selector widget has it's mrml scene set (it
   // could have been set to null)
   if ( this->ColorSelectorWidget )

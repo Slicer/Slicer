@@ -749,7 +749,7 @@ void vtkDiffusionTensorMathematics::ThreadedRequestData(
       }
     break;
   }
-
+  outData[0]->GetPointData()->SetTensors(NULL);
 }
 
 
