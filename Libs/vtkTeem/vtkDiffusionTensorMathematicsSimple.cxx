@@ -40,6 +40,9 @@ extern "C" {
 
 #define VTK_EPS 10e-15
 
+#define tensor_math_clamp( a, b, c) ( (a) > (b) ? ((a) < (c) ? (a) : (c)) : (b) )
+
+
 #include "vtkDiffusionTensorMathematicsSimple.h"
 
 #include "vtkImageData.h"
@@ -607,10 +610,13 @@ void vtkDiffusionTensorMathematicsSimple::SimpleExecute(vtkImageData* input,
 
 // copied from 
 // vtkInteractorStyleUnicam.cxx
+/***
 template <class Type>
 inline Type tensor_math_clamp(const Type a,
                   const Type b,
                   const Type c) { return (a) > (b) ? ((a) < (c) ? (a) : (c)) : (b) ; }
+
+***/
 
 
 //----------------------------------------------------------------------------
