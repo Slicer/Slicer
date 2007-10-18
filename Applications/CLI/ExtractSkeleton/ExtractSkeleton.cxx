@@ -68,6 +68,7 @@ int main(int argc, char **argv)
     outputImage->SetRegions(Reader->GetOutput()->GetLargestPossibleRegion());
     outputImage->SetSpacing(Reader->GetOutput()->GetSpacing());
     outputImage->SetOrigin(Reader->GetOutput()->GetOrigin());
+    outputImage->SetDirection(Reader->GetOutput()->GetDirection());
     outputImage->Allocate();
     
     itk::Size<3> itkSize = inputImage->GetLargestPossibleRegion().GetSize();

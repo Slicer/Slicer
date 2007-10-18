@@ -24,7 +24,7 @@ The original implementation of this method was provided by ETH Zurich, Image Ana
       <index>1</index>
       <description>Input image</description>
     </image>
-    <image>
+    <image type="label">
       <name>OutputImageFileName</name>
       <label>Output Image</label>
       <channel>output</channel>
