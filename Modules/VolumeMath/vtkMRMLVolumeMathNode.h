@@ -14,7 +14,7 @@
 #ifndef __vtkMRMLVolumeMathNode_h
 #define __vtkMRMLVolumeMathNode_h
 
-#include <list.h>
+#include <list>
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
@@ -38,7 +38,7 @@ class VTK_VOLUMEMATH_EXPORT vtkMRMLVolumeMathNode : public vtkMRMLNode
   } LabelStatsEntry;
  
   //  LabelStatsEntry* LabelStats;
-  list<LabelStatsEntry> LabelStats;
+  std::list <LabelStatsEntry> LabelStats;
 
   //ETX
  
