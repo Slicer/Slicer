@@ -12,7 +12,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerSliceLogic.h"
-#include "vtkSlicerVolumesLogic.h"
+#include "vtkVolumesLogic.h"
 #include "vtkSlicerModelsLogic.h"
 #include "vtkSlicerFiducialsLogic.h"
 #include "vtkSlicerColorLogic.h"
@@ -25,7 +25,7 @@
 #include "vtkKWUserInterfaceManagerNotebook.h"
 #include "vtkKWLogDialog.h"
 #include "vtkSlicerGUICollection.h"
-#include "vtkSlicerVolumesGUI.h"
+#include "vtkVolumesGUI.h"
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerFiducialsGUI.h"
 #include "vtkSlicerColorGUI.h"
@@ -156,8 +156,8 @@ extern "C" {
 #endif
 
 #if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
-#include "vtkSlicerVolumeMathGUI.h"
-#include "vtkSlicerVolumeMathLogic.h"
+#include "vtkVolumeMathGUI.h"
+#include "vtkVolumeMathLogic.h"
 #endif
 //
 // note: always write to cout rather than cerr so log messages will
@@ -918,9 +918,9 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef VOLUMES_DEBUG
     slicerApp->SplashMessage("Initializing Volumes Module...");
 
-    vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New ( );
+    vtkVolumesLogic *volumesLogic = vtkVolumesLogic::New ( );
     volumesLogic->SetAndObserveMRMLScene ( scene );
-    vtkSlicerVolumesGUI *volumesGUI = vtkSlicerVolumesGUI::New ( );
+    vtkVolumesGUI *volumesGUI = vtkVolumesGUI::New ( );
     volumesGUI->SetApplication ( slicerApp );
     volumesGUI->SetApplicationGUI ( appGUI );
     volumesGUI->SetAndObserveApplicationLogic ( appLogic );
@@ -1389,8 +1389,8 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
     // --- VolumeMath  module
     slicerApp->SplashMessage("Initializing VolumeMath Module...");
-    vtkSlicerVolumeMathGUI *volumeMathGUI = vtkSlicerVolumeMathGUI::New ( );
-    vtkSlicerVolumeMathLogic *volumeMathLogic  = vtkSlicerVolumeMathLogic::New ( );
+    vtkVolumeMathGUI *volumeMathGUI = vtkVolumeMathGUI::New ( );
+    vtkVolumeMathLogic *volumeMathLogic  = vtkVolumeMathLogic::New ( );
     volumeMathLogic->SetAndObserveMRMLScene ( scene );
     volumeMathLogic->SetApplicationLogic ( appLogic );
     //    volumeMathLogic->SetMRMLScene(scene);
