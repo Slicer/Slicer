@@ -6,7 +6,7 @@ See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $RCSfile: vtkSlicerVolumeMathLogic.cxx,v $
+Module:    $RCSfile: vtkVolumeMathLogic.cxx,v $
 Date:      $Date: 2006/03/17 15:10:10 $
 Version:   $Revision: 1.2 $
 
@@ -18,7 +18,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkObjectFactory.h"
 
-#include "vtkSlicerVolumeMathLogic.h"
+#include "vtkVolumeMathLogic.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
 #include "vtkImageAccumulate.h"
@@ -26,72 +26,72 @@ Version:   $Revision: 1.2 $
 #include "vtkImageMathematics.h"
 #include "vtkImageToImageStencil.h"
 
-vtkSlicerVolumeMathLogic* vtkSlicerVolumeMathLogic::New()
+vtkVolumeMathLogic* vtkVolumeMathLogic::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkSlicerVolumeMathLogic");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkVolumeMathLogic");
   if(ret)
     {
-      return (vtkSlicerVolumeMathLogic*)ret;
+      return (vtkVolumeMathLogic*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtkSlicerVolumeMathLogic;
+  return new vtkVolumeMathLogic;
 }
 
 
 //----------------------------------------------------------------------------
-vtkSlicerVolumeMathLogic::vtkSlicerVolumeMathLogic()
+vtkVolumeMathLogic::vtkVolumeMathLogic()
 {
-  this->SlicerVolumeMathNode = NULL;
+  this->VolumeMathNode = NULL;
   this->SetProgress(0);
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerVolumeMathLogic::~vtkSlicerVolumeMathLogic()
+vtkVolumeMathLogic::~vtkVolumeMathLogic()
 {
-  vtkSetMRMLNodeMacro(this->SlicerVolumeMathNode, NULL);
+  vtkSetMRMLNodeMacro(this->VolumeMathNode, NULL);
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeMathLogic::PrintSelf(ostream& os, vtkIndent indent)
+void vtkVolumeMathLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeMathLogic::Apply()
+void vtkVolumeMathLogic::Apply()
 {
   int lo, hi;
   
   // check if MRML node is present 
-  if (this->SlicerVolumeMathNode == NULL)
+  if (this->VolumeMathNode == NULL)
     {
-    vtkErrorMacro("No input SlicerVolumeMathNode found");
+    vtkErrorMacro("No input VolumeMathNode found");
     return;
     }
 
 
   // find input grayscale volume
-  vtkMRMLScalarVolumeNode *inGrayscaleVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->SlicerVolumeMathNode->GetInputGrayscaleRef()));
+  vtkMRMLScalarVolumeNode *inGrayscaleVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->VolumeMathNode->GetInputGrayscaleRef()));
   if (inGrayscaleVolume == NULL)
     {
-    vtkErrorMacro("No input volume found with id= " << this->SlicerVolumeMathNode->GetInputGrayscaleRef());
+    vtkErrorMacro("No input volume found with id= " << this->VolumeMathNode->GetInputGrayscaleRef());
     return;
     }
   
   // find input labelmap volume
-  vtkMRMLScalarVolumeNode *inLabelmapVolume =  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->SlicerVolumeMathNode->GetInputLabelmapRef()));
+  vtkMRMLScalarVolumeNode *inLabelmapVolume =  vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->VolumeMathNode->GetInputLabelmapRef()));
   if (inLabelmapVolume == NULL)
     {
-    vtkErrorMacro("No input volume found with id= " << this->SlicerVolumeMathNode->GetInputLabelmapRef());
+    vtkErrorMacro("No input volume found with id= " << this->VolumeMathNode->GetInputLabelmapRef());
     return;
     }
   
-  this->InvokeEvent(vtkSlicerVolumeMathLogic::StartLabelStats, (void*)"start label stats");
+  this->InvokeEvent(vtkVolumeMathLogic::StartLabelStats, (void*)"start label stats");
   
 
   //clear the LabelStats result list
-  this->SlicerVolumeMathNode->LabelStats.clear();
+  this->VolumeMathNode->LabelStats.clear();
  
   vtkImageAccumulate *stataccum = vtkImageAccumulate::New();
   stataccum->SetInput(inLabelmapVolume->GetImageData());
@@ -101,7 +101,7 @@ void vtkSlicerVolumeMathLogic::Apply()
   stataccum->Delete();
 
   std::string tmpString("Label\tCount\tMin\tMax\tMean\tStdDev\n");
-  this->SlicerVolumeMathNode->SetResultText(tmpString.c_str());
+  this->VolumeMathNode->SetResultText(tmpString.c_str());
 
    for(int i = lo; i <= hi; i++ ) 
    {
@@ -110,7 +110,7 @@ void vtkSlicerVolumeMathLogic::Apply()
      std::stringstream s;
      s << i;
      event_message.append(s.str());
-     this->InvokeEvent(vtkSlicerVolumeMathLogic::LabelStatsOuterLoop, (void*)event_message.c_str());
+     this->InvokeEvent(vtkVolumeMathLogic::LabelStatsOuterLoop, (void*)event_message.c_str());
      //logic copied from slicer2 VolumeMath MaskStat
      // create the binary volume of the label
      vtkImageThreshold *thresholder = vtkImageThreshold::New();
@@ -122,14 +122,14 @@ void vtkSlicerVolumeMathLogic::Apply()
      thresholder->SetOutputScalarType(inGrayscaleVolume->GetImageData()->GetScalarType());
      thresholder->Update();
      
-     this->InvokeEvent(vtkSlicerVolumeMathLogic::LabelStatsInnerLoop, (void*)"0.25");
+     this->InvokeEvent(vtkVolumeMathLogic::LabelStatsInnerLoop, (void*)"0.25");
      
      // use vtk's statistics class with the binary labelmap as a stencil
      vtkImageToImageStencil *stencil = vtkImageToImageStencil::New();
      stencil->SetInput(thresholder->GetOutput());
      stencil->ThresholdBetween(1, 1);
      
-     this->InvokeEvent(vtkSlicerVolumeMathLogic::LabelStatsInnerLoop, (void*)"0.5");
+     this->InvokeEvent(vtkVolumeMathLogic::LabelStatsInnerLoop, (void*)"0.5");
      
     vtkImageAccumulate *stat1 = vtkImageAccumulate::New();
     stat1->SetInput(inGrayscaleVolume->GetImageData());
@@ -138,7 +138,7 @@ void vtkSlicerVolumeMathLogic::Apply()
     
     stencil->Delete();
 
- this->InvokeEvent(vtkSlicerVolumeMathLogic::LabelStatsInnerLoop, (void*)"0.75");
+ this->InvokeEvent(vtkVolumeMathLogic::LabelStatsInnerLoop, (void*)"0.75");
 
     if ( (stat1->GetVoxelCount()) > 0 ) 
       {
@@ -159,9 +159,9 @@ void vtkSlicerVolumeMathLogic::Apply()
       entry.Mean = (stat1->GetMean())[0];
       entry.StdDev = (stat1->GetStandardDeviation())[0];
       
-   this->InvokeEvent(vtkSlicerVolumeMathLogic::LabelStatsInnerLoop, (void*)"1");
+   this->InvokeEvent(vtkVolumeMathLogic::LabelStatsInnerLoop, (void*)"1");
 
-      this->SlicerVolumeMathNode->LabelStats.push_back(entry);
+      this->VolumeMathNode->LabelStats.push_back(entry);
 
       {
       std::stringstream ss;
@@ -213,19 +213,19 @@ void vtkSlicerVolumeMathLogic::Apply()
       }
 
       tmpString.append("\n");
-      this->SlicerVolumeMathNode->SetResultText(tmpString.c_str());
+      this->VolumeMathNode->SetResultText(tmpString.c_str());
       }
     //  multMath->Delete();
     thresholder->Delete();
     stat1->Delete();
     }
-   this->InvokeEvent(vtkSlicerVolumeMathLogic::EndLabelStats, (void*)"end label stats");
+   this->InvokeEvent(vtkVolumeMathLogic::EndLabelStats, (void*)"end label stats");
 }
 
-float  vtkSlicerVolumeMathLogic::GetProgress(){
+float  vtkVolumeMathLogic::GetProgress(){
   return this->Progress;
 }
 
-void  vtkSlicerVolumeMathLogic::SetProgress(float p){
+void  vtkVolumeMathLogic::SetProgress(float p){
   this->Progress = p;
 }

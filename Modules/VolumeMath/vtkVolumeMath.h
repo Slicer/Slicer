@@ -6,7 +6,7 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerVolumeMath.h,v $
+  Module:    $RCSfile: vtkVolumeMath.h,v $
   Date:      $Date: 2006/01/06 17:56:51 $
   Version:   $Revision: 1.6 $
 
@@ -28,4 +28,4 @@
 #define SLICER_VTK5
 #endif
 
-#include "vtkSlicerVolumeMathWin32Header.h"
+#include "vtkVolumeMathWin32Header.h"

@@ -6,7 +6,7 @@ See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $RCSfile: vtkSlicerVolumeMathGUI.cxx,v $
+Module:    $RCSfile: vtkVolumeMathGUI.cxx,v $
 Date:      $Date: 2006/03/17 15:10:10 $
 Version:   $Revision: 1.2 $
 
@@ -18,7 +18,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkObjectFactory.h"
 
-#include "vtkSlicerVolumeMathGUI.h"
+#include "vtkVolumeMathGUI.h"
 
 #include "vtkCommand.h"
 #include "vtkKWApplication.h"
@@ -44,21 +44,21 @@ Version:   $Revision: 1.2 $
 //#include "vtkSlicerWindow.h" 
 
 //------------------------------------------------------------------------------
-vtkSlicerVolumeMathGUI* vtkSlicerVolumeMathGUI::New()
+vtkVolumeMathGUI* vtkVolumeMathGUI::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkSlicerVolumeMathGUI");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkVolumeMathGUI");
   if(ret)
     {
-      return (vtkSlicerVolumeMathGUI*)ret;
+      return (vtkVolumeMathGUI*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtkSlicerVolumeMathGUI;
+  return new vtkVolumeMathGUI;
 }
 
 
 //----------------------------------------------------------------------------
-vtkSlicerVolumeMathGUI::vtkSlicerVolumeMathGUI()
+vtkVolumeMathGUI::vtkVolumeMathGUI()
 {
   this->GrayscaleSelector = vtkSlicerNodeSelectorWidget::New();
   this->LabelmapSelector = vtkSlicerNodeSelectorWidget::New();
@@ -67,11 +67,11 @@ vtkSlicerVolumeMathGUI::vtkSlicerVolumeMathGUI()
   //this->VolStatsResult = vtkKWText::New();
   this->ResultList = vtkKWMultiColumnList::New();
   this->Logic = NULL;
-  this->SlicerVolumeMathNode = NULL;
+  this->VolumeMathNode = NULL;
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerVolumeMathGUI::~vtkSlicerVolumeMathGUI()
+vtkVolumeMathGUI::~vtkVolumeMathGUI()
 {
   if ( this->GrayscaleSelector ) 
     {
@@ -111,17 +111,17 @@ vtkSlicerVolumeMathGUI::~vtkSlicerVolumeMathGUI()
     }
   
   this->SetLogic (NULL);
-  vtkSetMRMLNodeMacro(this->SlicerVolumeMathNode, NULL);
+  vtkSetMRMLNodeMacro(this->VolumeMathNode, NULL);
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeMathGUI::PrintSelf(ostream& os, vtkIndent indent)
+void vtkVolumeMathGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
   
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeMathGUI::AddGUIObservers ( ) 
+void vtkVolumeMathGUI::AddGUIObservers ( ) 
 {
   this->GrayscaleSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   
@@ -130,16 +130,16 @@ void vtkSlicerVolumeMathGUI::AddGUIObservers ( )
   this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->SaveToFile->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
- this->Logic->AddObserver (vtkSlicerVolumeMathLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
-    this->Logic->AddObserver (vtkSlicerVolumeMathLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
-    this->Logic->AddObserver (vtkSlicerVolumeMathLogic::StartLabelStats, (vtkCommand *)this->LogicCallbackCommand );
-    this->Logic->AddObserver (vtkSlicerVolumeMathLogic::EndLabelStats, (vtkCommand *)this->LogicCallbackCommand );
+ this->Logic->AddObserver (vtkVolumeMathLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
+    this->Logic->AddObserver (vtkVolumeMathLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
+    this->Logic->AddObserver (vtkVolumeMathLogic::StartLabelStats, (vtkCommand *)this->LogicCallbackCommand );
+    this->Logic->AddObserver (vtkVolumeMathLogic::EndLabelStats, (vtkCommand *)this->LogicCallbackCommand );
 }
 
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeMathGUI::RemoveGUIObservers ( )
+void vtkVolumeMathGUI::RemoveGUIObservers ( )
 {
   this->GrayscaleSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
@@ -149,19 +149,19 @@ void vtkSlicerVolumeMathGUI::RemoveGUIObservers ( )
 
   this->SaveToFile->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->Logic->RemoveObservers (vtkSlicerVolumeMathLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
+  this->Logic->RemoveObservers (vtkVolumeMathLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
 
-  this->Logic->RemoveObservers (vtkSlicerVolumeMathLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
+  this->Logic->RemoveObservers (vtkVolumeMathLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
 
-  this->Logic->RemoveObservers (vtkSlicerVolumeMathLogic::StartLabelStats, (vtkCommand *)this->LogicCallbackCommand );
+  this->Logic->RemoveObservers (vtkVolumeMathLogic::StartLabelStats, (vtkCommand *)this->LogicCallbackCommand );
 
-  this->Logic->RemoveObservers (vtkSlicerVolumeMathLogic::EndLabelStats, (vtkCommand *)this->LogicCallbackCommand );
+  this->Logic->RemoveObservers (vtkVolumeMathLogic::EndLabelStats, (vtkCommand *)this->LogicCallbackCommand );
 
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeMathGUI::ProcessGUIEvents ( vtkObject *caller,
+void vtkVolumeMathGUI::ProcessGUIEvents ( vtkObject *caller,
                                            unsigned long event,
                                            void *callData ) 
 {
@@ -195,17 +195,17 @@ void vtkSlicerVolumeMathGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( fileName ) 
         {
           std::cout << "This is the filename: "<<  this->SaveToFile->GetFileName() << "\n";
-          vtkMRMLVolumeMathNode* n = this->GetSlicerVolumeMathNode();
+          vtkMRMLVolumeMathNode* n = this->GetVolumeMathNode();
           n->SaveResultToTextFile(fileName);
         }
    }
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeMathGUI::UpdateMRML ()
+void vtkVolumeMathGUI::UpdateMRML ()
 {
   std::cout <<"UpdateMRML gets called!" << "\n";
-  vtkMRMLVolumeMathNode* n = this->GetSlicerVolumeMathNode();
+  vtkMRMLVolumeMathNode* n = this->GetVolumeMathNode();
   if (n == NULL)
     {
       //  std::cout <<"UpdateMRML: n is null, create new one?!" << "\n";
@@ -213,12 +213,12 @@ void vtkSlicerVolumeMathGUI::UpdateMRML ()
     vtkMRMLVolumeMathNode* volumeMathNode = vtkMRMLVolumeMathNode::New();
     n = volumeMathNode;
     //set an observe new node in Logic
-    this->Logic->SetAndObserveSlicerVolumeMathNode(volumeMathNode);
-    vtkSetAndObserveMRMLNodeMacro(this->SlicerVolumeMathNode, volumeMathNode);
-   //  this->Logic->AddObserver (vtkSlicerVolumeMathLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
-//     this->Logic->AddObserver (vtkSlicerVolumeMathLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
-//     this->Logic->AddObserver (vtkSlicerVolumeMathLogic::StartLabelStats, (vtkCommand *)this->LogicCallbackCommand );
-//     this->Logic->AddObserver (vtkSlicerVolumeMathLogic::EndLabelStats, (vtkCommand *)this->LogicCallbackCommand );
+    this->Logic->SetAndObserveVolumeMathNode(volumeMathNode);
+    vtkSetAndObserveMRMLNodeMacro(this->VolumeMathNode, volumeMathNode);
+   //  this->Logic->AddObserver (vtkVolumeMathLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
+//     this->Logic->AddObserver (vtkVolumeMathLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
+//     this->Logic->AddObserver (vtkVolumeMathLogic::StartLabelStats, (vtkCommand *)this->LogicCallbackCommand );
+//     this->Logic->AddObserver (vtkVolumeMathLogic::EndLabelStats, (vtkCommand *)this->LogicCallbackCommand );
     }
 
   // save node parameters for Undo
@@ -237,10 +237,10 @@ void vtkSlicerVolumeMathGUI::UpdateMRML ()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeMathGUI::UpdateGUI ()
+void vtkVolumeMathGUI::UpdateGUI ()
 { 
   std::cout <<"UpdateGUI gets called!" << "\n";
-  vtkMRMLVolumeMathNode* n = this->GetSlicerVolumeMathNode();
+  vtkMRMLVolumeMathNode* n = this->GetVolumeMathNode();
   if (n != NULL)
     {
       // this->VolStatsResult->SetText(n->GetResultText());
@@ -271,7 +271,7 @@ void vtkSlicerVolumeMathGUI::UpdateGUI ()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeMathGUI::ProcessMRMLEvents ( vtkObject *caller,
+void vtkVolumeMathGUI::ProcessMRMLEvents ( vtkObject *caller,
                                             unsigned long event,
                                             void *callData ) 
 {
@@ -279,14 +279,14 @@ void vtkSlicerVolumeMathGUI::ProcessMRMLEvents ( vtkObject *caller,
  // std::cout << "This is call data: "<<(char *) callData<<"\n";
   // if parameter node has been changed externally, update GUI widgets with new values
   vtkMRMLVolumeMathNode* node = vtkMRMLVolumeMathNode::SafeDownCast(caller);
-  if (node != NULL && this->GetSlicerVolumeMathNode() == node) 
+  if (node != NULL && this->GetVolumeMathNode() == node) 
     {
     this->UpdateGUI();
     }
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVolumeMathGUI::BuildGUI ( ) 
+void vtkVolumeMathGUI::BuildGUI ( ) 
 {
  std::cout <<"BuildGUI gets called!" << "\n";
 
@@ -296,23 +296,23 @@ void vtkSlicerVolumeMathGUI::BuildGUI ( )
   this->Logic->GetMRMLScene()->RegisterNodeClass(n);
   n->Delete();
 
-  this->UIPanel->AddPage ( "SlicerVolumeMath", "SlicerVolumeMath", NULL );
+  this->UIPanel->AddPage ( "VolumeMath", "VolumeMath", NULL );
   // ---
   // MODULE GUI FRAME 
   // ---
    // Define your help text and build the help frame here.
-  const char *help = "The SlicerVolumeMath module....";
+  const char *help = "The VolumeMath module....";
   const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
-  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "SlicerVolumeMath" );
+  vtkKWWidget *page = this->UIPanel->GetPageWidget ( "VolumeMath" );
   this->BuildHelpAndAboutFrame ( page, help, about );
     
   vtkSlicerModuleCollapsibleFrame *moduleFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-  moduleFrame->SetParent ( this->UIPanel->GetPageWidget ( "SlicerVolumeMath" ) );
+  moduleFrame->SetParent ( this->UIPanel->GetPageWidget ( "VolumeMath" ) );
   moduleFrame->Create ( );
   moduleFrame->SetLabelText ("Label Statistics");
   moduleFrame->ExpandFrame ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget("SlicerVolumeMath")->GetWidgetName());
+                moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeMath")->GetWidgetName());
   
   this->GrayscaleSelector->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
   this->GrayscaleSelector->SetParent( moduleFrame->GetFrame() );
@@ -416,11 +416,11 @@ void vtkSlicerVolumeMathGUI::BuildGUI ( )
   
 }
 
-void vtkSlicerVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
+void vtkVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
                                                   unsigned long event,
                                                   void *callData)
 {
-  vtkSlicerVolumeMathLogic* logic =  vtkSlicerVolumeMathLogic::SafeDownCast(caller);
+  vtkVolumeMathLogic* logic =  vtkVolumeMathLogic::SafeDownCast(caller);
   const char * callDataStr = (const char *)callData;
   //  std::cout << "This is call data: "<< callDataStr << " .\n";
 
@@ -429,7 +429,7 @@ void vtkSlicerVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
   vtkSlicerWindow* mainWindow = this->ApplicationGUI->GetMainSlicerWindow();
   vtkKWProgressGauge* progressGauge =  mainWindow->GetProgressGauge(); 
  
-  if (event == vtkSlicerVolumeMathLogic::StartLabelStats)
+  if (event == vtkVolumeMathLogic::StartLabelStats)
     {
       std::cout << "StartLabelStats\n"<< "\n";
       progressGauge->SetValue(0);
@@ -437,13 +437,13 @@ void vtkSlicerVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
 
       mainWindow->SetStatusText("Start calculating ...");
     } 
-  else if (event == vtkSlicerVolumeMathLogic::EndLabelStats)
+  else if (event == vtkVolumeMathLogic::EndLabelStats)
     {
       std::cout << "EndLabelStats\n"<< "\n";
       //    progressGauge->SetValue(0);
       mainWindow->SetStatusText("Done");
     }
-  else if (event == vtkSlicerVolumeMathLogic::LabelStatsOuterLoop) 
+  else if (event == vtkVolumeMathLogic::LabelStatsOuterLoop) 
     {
       std::cout << "LabelStatsOuterLoop\n"<< "\n";
       std::cout << "This is the progress in GUI: "<< logic->GetProgress() << " .\n";
@@ -451,7 +451,7 @@ void vtkSlicerVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
       mainWindow->SetStatusText(innerLoopMsg.append( callDataStr ).c_str() );
 
     } 
-  else if (event == vtkSlicerVolumeMathLogic::LabelStatsInnerLoop)  
+  else if (event == vtkVolumeMathLogic::LabelStatsInnerLoop)  
     {
       std::cout << "LabelStatsInnerLoop\n"<< "\n";
       // int prog = (int) callData;
@@ -469,54 +469,54 @@ void vtkSlicerVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
 
 }
 
-//void vtkSlicerVolumeMathGUI::SetPrimarySelectionInTcl( char* text)
-//{
- //  std::string cmd;
+void vtkVolumeMathGUI::SetPrimarySelectionInTcl( char* text)
+{
+  std::string cmd;
 
-//   // # selectText "text" --
-//   // #       Sets the value of the PRIMARY selection to "$text".
-//   // #
-//   // #       (Note: this doesn't really "set the value" of the selection.
-//   // #       More precisely, it arranges to provide the value given
-//   // #       when another client requests it.)
-//   // #
+  // # selectText "text" --
+  // #       Sets the value of the PRIMARY selection to "$text".
+  // #
+  // #       (Note: this doesn't really "set the value" of the selection.
+  // #       More precisely, it arranges to provide the value given
+  // #       when another client requests it.)
+  // #
   
-//   cmd = "proc selectText {text} { \
-//         variable currentSelectioset             \
-//         currentSelection $text                                         \
-//         selection handle -selection PRIMARY \".\"  primaryTransfer      \
-//          selection own -selection PRIMARY -command lostSelection \".\" }";
+  cmd = "proc selectText {text} { \
+        variable currentSelection \
+        set currentSelection $text \
+        selection handle -selection PRIMARY \".\"  primaryTransfer \
+        selection own -selection PRIMARY -command lostSelection \".\" }";
   
-//   Slicer3_Tcl_Eval( interp, cmd.c_str() );
+  Slicer3_Tcl_Eval( interp, cmd.c_str() );
   
-//   cmd.clear();
+  cmd.clear();
 
-//   // # The following will be called whenever a client requests the value
-//   // # of the PRIMARY selection.  See selection(n) for a description
-//   // # of 'offset' and 'maxChars'; we probably ought to do something
-//   // # sensible with these parameters, but it's mostly safe to
-//   // # just ignore them.
-//   // #
-//   cmd = "proc primaryTransfer {offset maxChars} { \
-//             variable currentSelection \
-//             return $currentSelection  \
-//          }";
+  // # The following will be called whenever a client requests the value
+  // # of the PRIMARY selection.  See selection(n) for a description
+  // # of 'offset' and 'maxChars'; we probably ought to do something
+  // # sensible with these parameters, but it's mostly safe to
+  // # just ignore them.
+  // #
+  cmd = "proc primaryTransfer {offset maxChars} { \
+            variable currentSelection \
+            return $currentSelection  \
+         }";
 
-//   Slicer3_Tcl_Eval( interp, cmd.c_str() );
+  Slicer3_Tcl_Eval( interp, cmd.c_str() );
 
-//   cmd.clear();
+  cmd.clear();
  
-//   // # This is called when we lose ownership of the selection:
-//   // #
-//   cmd = "proc lostSelection {} { \
-//            variable currentSelection    \
-//            set currentSelection \"\" \
-//     }";
+  // # This is called when we lose ownership of the selection:
+  // #
+  cmd = "proc lostSelection {} { \
+           variable currentSelection \
+           set currentSelection \"\" \
+    }";
   
-//   Slicer3_Tcl_Eval( interp, cmd.c_str() );
+  Slicer3_Tcl_Eval( interp, cmd.c_str() );
 
-//   cmd.clear();
+  cmd.clear();
 
-//   cmd = "selectText()";
+  cmd = "selectText()";
 
-//}
+}

@@ -11,17 +11,17 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#ifndef __vtkSlicerVolumeMathLogic_h
-#define __vtkSlicerVolumeMathLogic_h
+#ifndef __vtkVolumeMathLogic_h
+#define __vtkVolumeMathLogic_h
 
 #include "vtkSlicerModuleLogic.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkSlicerVolumeMath.h"
+#include "vtkVolumeMath.h"
 #include "vtkMRMLVolumeMathNode.h"
 
 
-class VTK_SLICERVOLUMEMATH_EXPORT vtkSlicerVolumeMathLogic : public vtkSlicerModuleLogic
+class VTK_VOLUMEMATH_EXPORT vtkVolumeMathLogic : public vtkSlicerModuleLogic
 {
   public:
   //BTX
@@ -32,8 +32,8 @@ class VTK_SLICERVOLUMEMATH_EXPORT vtkSlicerVolumeMathLogic : public vtkSlicerMod
     LabelStatsInnerLoop
   };
   //ETX
-  static vtkSlicerVolumeMathLogic *New();
-  vtkTypeMacro(vtkSlicerVolumeMathLogic,vtkSlicerModuleLogic);
+  static vtkVolumeMathLogic *New();
+  vtkTypeMacro(vtkVolumeMathLogic,vtkSlicerModuleLogic);
 
   void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -42,10 +42,10 @@ class VTK_SLICERVOLUMEMATH_EXPORT vtkSlicerVolumeMathLogic : public vtkSlicerMod
                                    void *callData ){};
 
   // Description: Get/Set MRML node storing parameter values
-  vtkGetObjectMacro (SlicerVolumeMathNode, vtkMRMLVolumeMathNode);
-  void SetAndObserveSlicerVolumeMathNode(vtkMRMLVolumeMathNode *n) 
+  vtkGetObjectMacro (VolumeMathNode, vtkMRMLVolumeMathNode);
+  void SetAndObserveVolumeMathNode(vtkMRMLVolumeMathNode *n) 
   {
-    vtkSetAndObserveMRMLNodeMacro( this->SlicerVolumeMathNode, n);
+    vtkSetAndObserveMRMLNodeMacro( this->VolumeMathNode, n);
   }
   
   // The method that creates and runs VTK or ITK pipeline
@@ -61,12 +61,12 @@ class VTK_SLICERVOLUMEMATH_EXPORT vtkSlicerVolumeMathLogic : public vtkSlicerMod
   //vtkSetMacro(TestFloat);
  
  protected:
-  vtkSlicerVolumeMathLogic();
-  virtual ~vtkSlicerVolumeMathLogic();
-  vtkSlicerVolumeMathLogic(const vtkSlicerVolumeMathLogic&);
-  void operator=(const vtkSlicerVolumeMathLogic&);
+  vtkVolumeMathLogic();
+  virtual ~vtkVolumeMathLogic();
+  vtkVolumeMathLogic(const vtkVolumeMathLogic&);
+  void operator=(const vtkVolumeMathLogic&);
   
-  vtkMRMLVolumeMathNode* SlicerVolumeMathNode;
+  vtkMRMLVolumeMathNode* VolumeMathNode;
   float Progress; //progress of labelStats processing in percent
   char* Res;
   float TestFloat;
