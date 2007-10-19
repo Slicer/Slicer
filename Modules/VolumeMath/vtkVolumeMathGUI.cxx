@@ -246,7 +246,7 @@ void vtkVolumeMathGUI::UpdateGUI ()
       // this->VolStatsResult->SetText(n->GetResultText());
     if(!n->LabelStats.empty()) 
       { 
-        typedef list<vtkMRMLVolumeMathNode::LabelStatsEntry>::const_iterator LI;
+      typedef std::list<vtkMRMLVolumeMathNode::LabelStatsEntry>::const_iterator LI;
         int i = 0;
         for (LI li = n->LabelStats.begin(); li != n->LabelStats.end(); ++li)
           {
@@ -471,52 +471,52 @@ void vtkVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
 
 void vtkVolumeMathGUI::SetPrimarySelectionInTcl( char* text)
 {
-  std::string cmd;
+  //std::string cmd;
 
-  // # selectText "text" --
-  // #       Sets the value of the PRIMARY selection to "$text".
-  // #
-  // #       (Note: this doesn't really "set the value" of the selection.
-  // #       More precisely, it arranges to provide the value given
-  // #       when another client requests it.)
-  // #
-  
-  cmd = "proc selectText {text} { \
-        variable currentSelection \
-        set currentSelection $text \
-        selection handle -selection PRIMARY \".\"  primaryTransfer \
-        selection own -selection PRIMARY -command lostSelection \".\" }";
-  
-  Slicer3_Tcl_Eval( interp, cmd.c_str() );
-  
-  cmd.clear();
+  //// # selectText "text" --
+  //// #       Sets the value of the PRIMARY selection to "$text".
+  //// #
+  //// #       (Note: this doesn't really "set the value" of the selection.
+  //// #       More precisely, it arranges to provide the value given
+  //// #       when another client requests it.)
+  //// #
+  //
+  //cmd = "proc selectText {text} { \
+  //      variable currentSelection \
+  //      set currentSelection $text \
+  //      selection handle -selection PRIMARY \".\"  primaryTransfer \
+  //      selection own -selection PRIMARY -command lostSelection \".\" }";
+  //
+  //Slicer3_Tcl_Eval( interp, cmd.c_str() );
+  //
+  //cmd.clear();
 
-  // # The following will be called whenever a client requests the value
-  // # of the PRIMARY selection.  See selection(n) for a description
-  // # of 'offset' and 'maxChars'; we probably ought to do something
-  // # sensible with these parameters, but it's mostly safe to
-  // # just ignore them.
-  // #
-  cmd = "proc primaryTransfer {offset maxChars} { \
-            variable currentSelection \
-            return $currentSelection  \
-         }";
+  //// # The following will be called whenever a client requests the value
+  //// # of the PRIMARY selection.  See selection(n) for a description
+  //// # of 'offset' and 'maxChars'; we probably ought to do something
+  //// # sensible with these parameters, but it's mostly safe to
+  //// # just ignore them.
+  //// #
+  //cmd = "proc primaryTransfer {offset maxChars} { \
+  //          variable currentSelection \
+  //          return $currentSelection  \
+  //       }";
 
-  Slicer3_Tcl_Eval( interp, cmd.c_str() );
+  //Slicer3_Tcl_Eval( interp, cmd.c_str() );
 
-  cmd.clear();
+  //cmd.clear();
  
-  // # This is called when we lose ownership of the selection:
-  // #
-  cmd = "proc lostSelection {} { \
-           variable currentSelection \
-           set currentSelection \"\" \
-    }";
-  
-  Slicer3_Tcl_Eval( interp, cmd.c_str() );
+  //// # This is called when we lose ownership of the selection:
+  //// #
+  //cmd = "proc lostSelection {} { \
+  //         variable currentSelection \
+  //         set currentSelection \"\" \
+  //  }";
+  //
+  //Slicer3_Tcl_Eval( interp, cmd.c_str() );
 
-  cmd.clear();
+  //cmd.clear();
 
-  cmd = "selectText()";
+  //cmd = "selectText()";
 
 }
