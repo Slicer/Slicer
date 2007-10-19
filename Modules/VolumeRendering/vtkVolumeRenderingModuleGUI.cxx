@@ -34,6 +34,7 @@
 #include "vtkPlaneSource.h"
 #include "vtkBMPReader.h"
 #include "vtkfloatarray.h"
+#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
@@ -808,16 +809,21 @@ void vtkVolumeRenderingModuleGUI::Rendering()
     //TODO Dirty fix as Mapper
     if(this->currentNode->GetMapper()==vtkMRMLVolumeRenderingNode::Texture)
     {
-        this->mapper=vtkVolumeTextureMapper3D::New();
-        vtkVolumeTextureMapper3D::SafeDownCast(this->mapper)->SetSampleDistance(.1);
+        this->mapper=vtkSlicerFixedPointVolumeRayCastMapper::New();
+        vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->SetBlendModeToMaximumIntensity();
+        vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->Setlimit(1,2,3,4);
+       /* this->mapper=vtkVolumeTextureMapper3D::New();
+        vtkVolumeTextureMapper3D::SafeDownCast(this->mapper)->SetSampleDistance(.1);*/
         this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
         this->volume->SetMapper(mapper);
     }
     this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+
+    //Only needed if using performance enhancement
+    //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
 
     //TODO This is not the right place for this
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
@@ -829,13 +835,6 @@ void vtkVolumeRenderingModuleGUI::Rendering()
     //For Performance
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->volume);
     this->renViewport=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetNthRenderer(0);
-    //Causes trouble
-  /*  if(renderes->GetNumberOfItems()==2)
-    {
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->RemoveNthRenderer(0);
-    } 
-    int count=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetRenderers()->GetNumberOfItems();
-    vtkErrorMacro("Number of Renderes"<<count);*/
     
     //Render
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
@@ -866,9 +865,10 @@ void vtkVolumeRenderingModuleGUI::CheckAbort ()
         //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
         return;
     }
-    int pendingGUI=this->CheckForPendingEvents();
+    int pendingGUI=vtkKWTkUtilities::CheckForPendingInteractionEvents(this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow());
     if(pendingGUI!=0)
     {
+        vtkErrorMacro("We got pending events");
         //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
     }
 }

@@ -12,8 +12,19 @@ SET(VolumeRenderingModule_SRCS
   vtkLabelMapPiecewiseFunction.cxx
   vtkSlicerLabelMapWidget.cxx
   vtkSlicerVolumePropertyWidget.cxx
-  vtkSlicerNodeSelectorVolumeRenderingWidget.cxx 
-)
+  vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
+  vtkSlicerFixedPointRayCastImage.cxx
+  vtkSlicerFixedPointVolumeRayCastCompositeGOHelper.cxx
+  vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper.cxx
+  vtkSlicerFixedPointVolumeRayCastCompositeHelper.cxx
+  vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper.cxx
+  vtkSlicerFixedPointVolumeRayCastHelper.cxx
+  vtkSlicerFixedPointVolumeRayCastMapper.cxx
+  vtkSlicerFixedPointVolumeRayCastMIPHelper.cxx
+  vtkSlicerRayCastImageDisplayHelper.cxx
+  vtkSlicerOpenGLRayCastImageDisplayHelper.cxx
+  vtkEffectedArea.cxx
+  )
 
 # Abstract/pure virtual classes
 
