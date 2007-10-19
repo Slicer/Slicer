@@ -12,7 +12,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerSliceLogic.h"
-#include "vtkVolumesLogic.h"
+#include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerModelsLogic.h"
 #include "vtkSlicerFiducialsLogic.h"
 #include "vtkSlicerColorLogic.h"
@@ -25,7 +25,7 @@
 #include "vtkKWUserInterfaceManagerNotebook.h"
 #include "vtkKWLogDialog.h"
 #include "vtkSlicerGUICollection.h"
-#include "vtkVolumesGUI.h"
+#include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerFiducialsGUI.h"
 #include "vtkSlicerColorGUI.h"
@@ -918,9 +918,9 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef VOLUMES_DEBUG
     slicerApp->SplashMessage("Initializing Volumes Module...");
 
-    vtkVolumesLogic *volumesLogic = vtkVolumesLogic::New ( );
+    vtkSlicerVolumesLogic *volumesLogic = vtkVolumesLogic::New ( );
     volumesLogic->SetAndObserveMRMLScene ( scene );
-    vtkVolumesGUI *volumesGUI = vtkVolumesGUI::New ( );
+    vtkSlicerVolumesGUI *volumesGUI = vtkVolumesGUI::New ( );
     volumesGUI->SetApplication ( slicerApp );
     volumesGUI->SetApplicationGUI ( appGUI );
     volumesGUI->SetAndObserveApplicationLogic ( appLogic );
