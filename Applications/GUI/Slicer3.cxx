@@ -918,9 +918,9 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef VOLUMES_DEBUG
     slicerApp->SplashMessage("Initializing Volumes Module...");
 
-    vtkSlicerVolumesLogic *volumesLogic = vtkVolumesLogic::New ( );
+    vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New ( );
     volumesLogic->SetAndObserveMRMLScene ( scene );
-    vtkSlicerVolumesGUI *volumesGUI = vtkVolumesGUI::New ( );
+    vtkSlicerVolumesGUI *volumesGUI = vtkSlicerVolumesGUI::New ( );
     volumesGUI->SetApplication ( slicerApp );
     volumesGUI->SetApplicationGUI ( appGUI );
     volumesGUI->SetAndObserveApplicationLogic ( appLogic );
