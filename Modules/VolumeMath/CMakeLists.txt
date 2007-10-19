@@ -6,8 +6,8 @@ IF(VOLUMEMATH)
 # Sources
 
 SET(VolumeMath_SRCS
-  vtkSlicerVolumeMathLogic.cxx
-  vtkSlicerVolumeMathGUI.cxx
+  vtkVolumeMathLogic.cxx
+  vtkVolumeMathGUI.cxx
   vtkMRMLVolumeMathNode.cxx
 )
 
@@ -98,8 +98,8 @@ IF(BUILD_TESTING)
 ENDIF(BUILD_TESTING)
 
 CONFIGURE_FILE(
-  ${VolumeMath_SOURCE_DIR}/vtkSlicerVolumeMathConfigure.h.in 
-  ${VolumeMath_BINARY_DIR}/vtkSlicerVolumeMathConfigure.h
+  ${VolumeMath_SOURCE_DIR}/vtkVolumeMathConfigure.h.in 
+  ${VolumeMath_BINARY_DIR}/vtkVolumeMathConfigure.h
 )
 
 ENDIF(VOLUMEMATH)

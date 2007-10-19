@@ -19,12 +19,12 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
-#include "vtkSlicerVolumeMath.h"
+#include "vtkVolumeMath.h"
 
 
 class vtkImageData;
 
-class VTK_SLICERVOLUMEMATH_EXPORT vtkMRMLVolumeMathNode : public vtkMRMLNode
+class VTK_VOLUMEMATH_EXPORT vtkMRMLVolumeMathNode : public vtkMRMLNode
 {
   public:
  //BTX
