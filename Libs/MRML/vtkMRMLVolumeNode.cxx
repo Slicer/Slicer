@@ -382,6 +382,18 @@ void vtkMRMLVolumeNode::GetRASToIJKMatrix(vtkMatrix4x4* mat)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::GetIJKToRASDirections(double dirs[3][3])
+{
+  for (int i=0; i<3; i++)
+    {
+    for (int j=0; j<3; j++)
+      {
+      dirs[i][j] = IJKToRASDirections[i][j];
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(char *order, 
                                                      double* spacing, int *dims,
                                                      bool centerImage,
