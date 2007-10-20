@@ -726,7 +726,7 @@ if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
 # Get and build the sandbox
 
 # NOTE: disabled for now - nothing in the sandbox we actually need...
-if { 0 && ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FILE] || $::GENLIB(update) } {
+if { 0 && ( ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FILE] || $::GENLIB(update) ) } {
     cd $SLICER_LIB
 
     runcmd $::SVN checkout $::SANDBOX_TAG NAMICSandBox
