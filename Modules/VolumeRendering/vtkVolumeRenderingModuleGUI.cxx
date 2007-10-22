@@ -34,7 +34,8 @@
 #include "vtkPlaneSource.h"
 #include "vtkBMPReader.h"
 #include "vtkfloatarray.h"
-#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
+//#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
+#include "vtkFixedPointVolumeRayCastMapper.h"
 
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
@@ -78,6 +79,12 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
     this->renViewport=NULL;
     this->renPlane=NULL;
     this->RenderPlane=0;
+
+    //Timer
+    this->timer=vtkTimerLog::New();
+    counter=0;
+    this->EventHandlerID="";
+    this->scheduled=0;
 
 
 }
@@ -190,6 +197,11 @@ vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
     {
         this->LM_OptionTree->Delete();
         this->LM_OptionTree=NULL;
+    }
+    if(this->timer)
+    {
+        this->timer->Delete();
+        this->timer=NULL;
     }
     this->SetViewerWidget(NULL);
     this->SetInteractorStyle(NULL);
@@ -809,11 +821,11 @@ void vtkVolumeRenderingModuleGUI::Rendering()
     //TODO Dirty fix as Mapper
     if(this->currentNode->GetMapper()==vtkMRMLVolumeRenderingNode::Texture)
     {
-        this->mapper=vtkSlicerFixedPointVolumeRayCastMapper::New();
-        vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->SetBlendModeToMaximumIntensity();
-        vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->Setlimit(1,2,3,4);
-       /* this->mapper=vtkVolumeTextureMapper3D::New();
-        vtkVolumeTextureMapper3D::SafeDownCast(this->mapper)->SetSampleDistance(.1);*/
+        //this->mapper=vtkSlicerFixedPointVolumeRayCastMapper::New();
+        //vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->SetBlendModeToMaximumIntensity();
+        //vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->Setlimit(1,2,3,4);
+        this->mapper=vtkVolumeTextureMapper3D::New();
+        vtkVolumeTextureMapper3D::SafeDownCast(this->mapper)->SetSampleDistance(2);
         this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
         this->volume->SetMapper(mapper);
     }
@@ -822,8 +834,8 @@ void vtkVolumeRenderingModuleGUI::Rendering()
     this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
     //Only needed if using performance enhancement
-    //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
 
     //TODO This is not the right place for this
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
@@ -868,7 +880,7 @@ void vtkVolumeRenderingModuleGUI::CheckAbort ()
     int pendingGUI=vtkKWTkUtilities::CheckForPendingInteractionEvents(this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow());
     if(pendingGUI!=0)
     {
-        vtkErrorMacro("We got pending events");
+        //vtkErrorMacro("We got pending events");
         //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
     }
 }
@@ -974,7 +986,7 @@ void vtkVolumeRenderingModuleGUI::VolumeRenderingCallback( vtkObject *caller, un
 
     self->SetInVolumeRenderingCallbackFlag(1);
     self->ProcessVolumeRenderingEvents(caller, eid, callData);
-        self->SetInVolumeRenderingCallbackFlag(0);
+    self->SetInVolumeRenderingCallbackFlag(0);
 
 }
 
@@ -982,7 +994,6 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
 
     //TODO not the right place for this
     vtkRenderWindow *callerRen=vtkRenderWindow::SafeDownCast(caller);
-    vtkTimerLog *log=vtkTimerLog::New();
     if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::AbortCheckEvent)
     {
         this->CheckAbort();
@@ -990,39 +1001,110 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
     }
     else if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::StartEvent)
     {
-        //Decide if we REnder plane or not
-        if(this->RenderPlane==1)
+        this->Script("puts \"startevent scheduled %d\"",this->scheduled);
+        this->Script("puts \"startevent currentstage %d\"",this->currentStage);
+        this->Script("puts \"startevent id %s\"",this->EventHandlerID.c_str());
+        //it is not a scheduled event so we use stage 0
+        if(this->scheduled==0)
         {
+
+            //go back to stage 0;
+            //Check if we have an Event Scheduled, if this is the case abort it
+            if(strcmp(this->EventHandlerID.c_str(),"")!=0)
+            {
+                const char* result=this->Script("after info %s",this->EventHandlerID.c_str());
+                this->Script("after cancel %s",this->EventHandlerID.c_str());
+                const char* resulta=this->Script("after info %s",this->EventHandlerID.c_str());
+                this->EventHandlerID="";
+
+                this->Script("puts \"Reseted to stage 0\"");
+
+            }
+            if(currentStage==2)
+            {
+                //Get the right Mapper back
+                this->mapper=vtkVolumeTextureMapper3D::New();
+                vtkVolumeTextureMapper3D::SafeDownCast(this->mapper)->SetSampleDistance(2);
+                this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
+                this->volume->SetMapper(mapper);
+            }
+            this->currentStage=0;
+            this->Script("puts \"Stage 0 started\"");
+            //Decide if we REnder plane or not
+            if(this->RenderPlane==1)
+            {
+                return;
+            }
+            timer->StartTimer();
+            vtkRenderWindow *renWin=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
+
+            double factor=.2;
+            //We don't like to see, what we are doing here
+            renWin->SwapBuffersOff();
+            //get the viewport renderer up
+            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
+            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
+            //Change viewport(simulation of "sample distance for "rays"" if using texture mapping)
+            this->renViewport->SetViewport(0,0,factor,factor);
+
+
+            //We are already in the Rendering Process
+            //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+        }//if
+
+        //Stage 1
+        if(this->currentStage==1)
+        {
+            this->Script("puts \"Stage 1 started\"");
+            //Remove plane Renderer and get viewport Renderer Up
+            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
+            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
+            //Go to Fullsize
+            this->renViewport->SetViewport(0,0,1,1);
+            this->scheduled=0;
             return;
         }
-        log->StartTimer();
-        vtkRenderWindow *renWin=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
 
-        double factor=.1;
-        //We don't like to see, what we are doing here
-        renWin->SwapBuffersOff();
-        //get the viewport renderer up
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
-            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
-        //Change viewport(simulation of "sample distance for "rays"" if using texture mapping)
-        this->renViewport->SetViewport(0,0,factor,factor);
-
-        
-        //We are already in the Rendering Process
-        //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-
+        //Stage 2
+        if(this->currentStage==2)
+        {
+            this->Script("puts \"Stage 2 started\"");
+                this->EventHandlerID="";
+            this->scheduled=0;
+            return;
+        }   
     }
     else if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::EndEvent)
     {
+                this->Script("puts \"endevent scheduled %d\"",this->scheduled);
+        this->Script("puts \"endevent currentstage %d\"",this->currentStage);
+        if(this->currentStage==1)
+        {
+            this->EventHandlerID=this->Script("after 3000 %s ScheduleRender",this->GetTclName());
+            this->Script("puts \"Stage 1 ended\"");
+            return;
+        }
+        if(this->currentStage==2)
+        {
+            //We reached the highest Resolution, no scheduling
+            this->Script("puts \"Stage 2 ended\"");
+            return;
+        }
         if(this->RenderPlane==1)
         {
             this->RenderPlane=0;
+            this->timer->StopTimer();
+            this->LastTimeLowRes=this->timer->GetElapsedTime();
+            this->Script("puts %f",this->LastTimeLowRes);
+            //It's time to start for the Scheduled Rendering
+            this->EventHandlerID=this->Script("after 200 %s ScheduleRender",this->GetTclName());
+            this->Script("puts \"Stage 0 ended\"");
             return;
         }
 
-        
+
         vtkRenderWindow *renWin=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
-        double factor=.1;
+        double factor=.2;
         //Get current size of window
         int *size=renWin->GetSize();
 
@@ -1045,7 +1127,7 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
         {
             this->renPlane=vtkRenderer::New();
         }
-        
+
         this->renPlane->SetBackground(this->renViewport->GetBackground());
         this->renPlane->SetActiveCamera(this->renViewport->GetActiveCamera());
 
@@ -1145,9 +1227,6 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
         actor->Delete();
         atext->Delete();
         this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
-        log->StopTimer();
-        vtkErrorMacro("TimeToRender:"<<log->GetElapsedTime());
-        log->Delete();
 
     }
     //Check if caller equals mapper
@@ -1275,5 +1354,21 @@ void vtkVolumeRenderingModuleGUI::UpdateLM()
         vtkErrorMacro("LM Option Tree does not exist");
         return;
     }
+}
+
+void vtkVolumeRenderingModuleGUI::ScheduleRender(void)
+{
+    this->scheduled=1;
+    this->currentStage++;
+    if(this->currentStage>2)
+    {
+        this->currentStage=0;
+        this->scheduled=0;
+        return;
+    }
+        counter++;
+    this->Script("puts \"%d\"",counter);
+    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+    
 }
 

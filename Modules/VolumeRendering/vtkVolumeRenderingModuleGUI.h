@@ -33,6 +33,9 @@ class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSl
 {
 public:
 
+    //Schedule the Render
+    void ScheduleRender(void);
+
     static vtkVolumeRenderingModuleGUI *New();
     vtkTypeMacro(vtkVolumeRenderingModuleGUI,vtkSlicerModuleGUI);
 
@@ -210,9 +213,38 @@ protected:
     vtkAbstractVolumeMapper *mapper;
     vtkMatrix4x4 *matrix;
 
+
+    //That's all for Speed optimization ->Own class?!
     vtkRenderer *renViewport;
     vtkRenderer *renPlane;
     int RenderPlane;
+
+    //Initial Factor for Interactive Rendering
+    double InitialDropLowRes;
+    //Factor during last low Resolution Rendering
+    double FactorLastLowRes;
+    //Time for the last High Resolution Rendering
+    double LastTimeHighRes;
+    //Time for the last Low Resolution Rendering
+    double LastTimeLowRes;
+    //Timer
+    vtkTimerLog *timer;
+    //Which time would we like to achieve
+    double GoalLowResTime;
+    //Area in which no change in Factor will be made.
+    int PercentageNoChange;
+    //How long to wait, before Rendering in High Resolution
+    double TimeToWaitForHigherStage;
+    //0 interactive, 1 High Resolution Texture VR, 2 SW Ray Cast
+    int currentStage;
+
+    int scheduled;
+    //Flag if next Render is a High Resolution Render
+    int NextRenderHighResolution;
+    //BTX
+    std::string EventHandlerID;
+    //ETX
+
 
 
     //
@@ -233,6 +265,9 @@ protected:
 
     void PackSvpGUI(void);
     void UnpackSvpGUI(void);
+    int counter;
+
+    
 
 
     // Description:
