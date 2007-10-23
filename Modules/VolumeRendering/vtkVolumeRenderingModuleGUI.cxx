@@ -824,6 +824,7 @@ void vtkVolumeRenderingModuleGUI::Rendering()
         //this->mapper=vtkSlicerFixedPointVolumeRayCastMapper::New();
         //vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->SetBlendModeToMaximumIntensity();
         //vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->Setlimit(1,2,3,4);
+        //this->MapperTexture=
         this->mapper=vtkVolumeTextureMapper3D::New();
         vtkVolumeTextureMapper3D::SafeDownCast(this->mapper)->SetSampleDistance(2);
         this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
@@ -1012,17 +1013,24 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
             //Check if we have an Event Scheduled, if this is the case abort it
             if(strcmp(this->EventHandlerID.c_str(),"")!=0)
             {
-                const char* result=this->Script("after info %s",this->EventHandlerID.c_str());
-                this->Script("after cancel %s",this->EventHandlerID.c_str());
-                const char* resulta=this->Script("after info %s",this->EventHandlerID.c_str());
+                const char* result=this->Script("after cancel %s",this->EventHandlerID.c_str());
+                const char* resulta=this->Script("after info");
+                this->Script("puts \"ResultCancel: %s\"",result);
+                this->Script("puts \"Result info: %s\"",resulta);
                 this->EventHandlerID="";
+                //delete result;
+                //delete resulta;
 
-                this->Script("puts \"Reseted to stage 0\"");
+
 
             }
             if(currentStage==2)
             {
                 //Get the right Mapper back
+                if(this->mapper!=NULL)
+                {
+                    this->mapper->Delete();
+                }
                 this->mapper=vtkVolumeTextureMapper3D::New();
                 vtkVolumeTextureMapper3D::SafeDownCast(this->mapper)->SetSampleDistance(2);
                 this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
@@ -1069,7 +1077,17 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
         if(this->currentStage==2)
         {
             this->Script("puts \"Stage 2 started\"");
-                this->EventHandlerID="";
+            //Go to Raycasting
+            if(this->mapper!=NULL)
+            {
+                this->mapper->Delete();
+            }
+            this->mapper=vtkFixedPointVolumeRayCastMapper::New();
+            vtkFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->SetBlendModeToComposite();
+            this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
+            this->volume->SetMapper(mapper);
+
+            this->EventHandlerID="";
             this->scheduled=0;
             return;
         }   
@@ -1097,7 +1115,7 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
             this->LastTimeLowRes=this->timer->GetElapsedTime();
             this->Script("puts %f",this->LastTimeLowRes);
             //It's time to start for the Scheduled Rendering
-            this->EventHandlerID=this->Script("after 200 %s ScheduleRender",this->GetTclName());
+            //this->EventHandlerID=this->Script("after 2000 %s ScheduleRender",this->GetTclName());
             this->Script("puts \"Stage 0 ended\"");
             return;
         }

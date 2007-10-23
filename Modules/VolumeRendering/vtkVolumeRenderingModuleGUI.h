@@ -29,6 +29,8 @@ Version:   $Revision: 1.3 $
 #include "vtkSlicerLabelMapWidget.h"
 #include <string>
 
+class vtkVolumeTextureMapper3D;
+class vtkFixedPointVolumeRayCastMapper;
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI
 {
 public:
@@ -218,6 +220,8 @@ protected:
     vtkRenderer *renViewport;
     vtkRenderer *renPlane;
     int RenderPlane;
+    vtkVolumeTextureMapper3D *MapperTexture;
+    vtkFixedPointVolumeRayCastMapper *MapperRaycast;
 
     //Initial Factor for Interactive Rendering
     double InitialDropLowRes;
