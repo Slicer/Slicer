@@ -130,8 +130,6 @@ public:
     vtkGetObjectMacro (currentNode,vtkMRMLVolumeRenderingNode);
     vtkGetObjectMacro (presets, vtkMRMLScene);
     vtkGetObjectMacro (volume,vtkVolume);
-    vtkGetObjectMacro (mapper,vtkAbstractVolumeMapper);
-    vtkGetObjectMacro (matrix,vtkMatrix4x4);
 
 
 
@@ -212,8 +210,6 @@ protected:
 
     //Rendering pipeline
     vtkVolume *volume;
-    vtkAbstractVolumeMapper *mapper;
-    vtkMatrix4x4 *matrix;
 
 
     //That's all for Speed optimization ->Own class?!

@@ -73,8 +73,6 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
 
     //Rendering pipeline
     this->volume=NULL;
-    this->mapper=NULL;
-    this->matrix=NULL;
 
     this->renViewport=NULL;
     this->renPlane=NULL;
@@ -157,18 +155,6 @@ vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
     {
         this->presets->Delete();
         this->presets=NULL;
-    }
-
-    if(this->mapper)
-    {
-        this->mapper->Delete();
-        this->mapper=NULL;
-    }
-
-    if(this->matrix)
-    {
-        this->matrix->Delete();
-        this->matrix=NULL;
     }
 
     if(this->volume)
@@ -601,13 +587,13 @@ void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
     }
     if(this->NS_VolumeRenderingDataScene->GetMRMLScene()!=this->GetLogic()->GetMRMLScene())
     {
-         //Update NodeSelector for VolumeRendering Node
+        //Update NodeSelector for VolumeRendering Node
         this->NS_VolumeRenderingDataScene->SetMRMLScene(this->GetLogic()->GetMRMLScene());
         this->NS_VolumeRenderingDataScene->UpdateMenu();
     }
-    
 
-   
+
+
     //Set the new condition
     if(this->NS_ImageData->GetSelected()!=NULL&&(this->NS_VolumeRenderingDataScene->GetCondition()!=this->NS_ImageData->GetSelected()->GetID()))
     {
@@ -620,8 +606,8 @@ void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
     //We need None for this
     if(this->NS_VolumeRenderingDataSlicer->GetMRMLScene()!=this->GetLogic()->GetMRMLScene())
     {
-         this->NS_VolumeRenderingDataSlicer->SetMRMLScene(this->GetLogic()->GetMRMLScene());
-         this->NS_VolumeRenderingDataSlicer->UpdateMenu();
+        this->NS_VolumeRenderingDataSlicer->SetMRMLScene(this->GetLogic()->GetMRMLScene());
+        this->NS_VolumeRenderingDataSlicer->UpdateMenu();
     }  
 
     if(this->NS_ImageData->GetSelected()!=NULL)
@@ -659,10 +645,10 @@ void vtkVolumeRenderingModuleGUI::SetInteractorStyle(vtkSlicerViewerInteractorSt
 void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
 {
     //Check if we have an old Node
-   /* if(this->currentNode!=NULL)
+    /* if(this->currentNode!=NULL)
     {
-        this->currentNode->Delete();
-        this->currentNode=NULL;
+    this->currentNode->Delete();
+    this->currentNode=NULL;
     }*/
     this->currentNode=vtkMRMLVolumeRenderingNode::New();
     this->currentNode->HideFromEditorsOff();
@@ -673,13 +659,13 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
     //Update the menu
     this->PreviousNS_VolumeRenderingDataScene=this->currentNode->GetID();
     this->NS_VolumeRenderingDataScene->SetSelected(this->currentNode);
-        this->NS_VolumeRenderingDataScene->UpdateMenu(); 
+    this->NS_VolumeRenderingDataScene->UpdateMenu(); 
     //this->PreviousNS_VolumeRenderingDataScene=this->currentNode->GetID();
 
 
     //take care about references
 
-    
+
     //Labelmap
     if(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetLabelMap()==1)
     {
@@ -778,8 +764,8 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineFromSlicer()
 }
 void vtkVolumeRenderingModuleGUI::InitializePipelineFromImageData()
 {
-   
-   
+
+
     //First check if we already have a reference
     const char *id=this->NS_ImageData->GetSelected()->GetID();
     //loop over existing Nodes in scene
@@ -824,15 +810,21 @@ void vtkVolumeRenderingModuleGUI::Rendering()
         //this->mapper=vtkSlicerFixedPointVolumeRayCastMapper::New();
         //vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->SetBlendModeToMaximumIntensity();
         //vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->Setlimit(1,2,3,4);
-        //this->MapperTexture=
-        this->mapper=vtkVolumeTextureMapper3D::New();
-        vtkVolumeTextureMapper3D::SafeDownCast(this->mapper)->SetSampleDistance(2);
-        this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
-        this->volume->SetMapper(mapper);
+        this->MapperTexture=vtkVolumeTextureMapper3D::New();
+        this->MapperTexture->SetSampleDistance(2);
+        this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
+        this->volume->SetMapper(this->MapperTexture);
+        //Also take care about Ray Cast
+        this->MapperRaycast=vtkFixedPointVolumeRayCastMapper::New();
+        this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
     }
-    this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->mapper->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+
+    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
     //Only needed if using performance enhancement
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
@@ -841,16 +833,17 @@ void vtkVolumeRenderingModuleGUI::Rendering()
     //TODO This is not the right place for this
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     this->volume->SetProperty(this->currentNode->GetVolumeProperty());
-    this->matrix=vtkMatrix4x4::New();
+    vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
     vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetIJKToRASMatrix(matrix);
     this->volume->PokeMatrix(matrix);
 
     //For Performance
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->volume);
     this->renViewport=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetNthRenderer(0);
-    
+    matrix->Delete();
     //Render
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
+
 }
 void vtkVolumeRenderingModuleGUI::UpdateRendering()
 {
@@ -861,12 +854,16 @@ void vtkVolumeRenderingModuleGUI::UpdateRendering()
         return;
     }
     //Update mapper
-    this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
+    this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
+    this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
     //Update Property
     this->volume->SetProperty(this->currentNode->GetVolumeProperty());
     //Update matrix
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetIJKToRASMatrix(this->matrix);
+    vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+    vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetIJKToRASMatrix(matrix);
     this->volume->PokeMatrix(matrix);
+
+    matrix->Delete();
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 }
 
@@ -890,9 +887,12 @@ void vtkVolumeRenderingModuleGUI::ShutdownPipeline()
 {
     vtkKWRenderWidget *renderWidget=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer();
     //Remove Observers
-    this->mapper->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->mapper->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->mapper->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     if(this->Utilities)
     {
@@ -907,15 +907,15 @@ void vtkVolumeRenderingModuleGUI::ShutdownPipeline()
         this->volume=NULL;
         renderWidget->Render();
     }
-    if(this->mapper!=NULL)
+    if(this->MapperRaycast!=NULL)
     {
-        this->mapper->Delete();
-        this->mapper=NULL;
+        this->MapperRaycast->Delete();
+        this->MapperRaycast=NULL;
     }
-    if(this->matrix!=NULL)
+    if(this->MapperTexture!=NULL)
     {
-        this->matrix->Delete();
-        this->matrix=NULL;
+        this->MapperTexture->Delete();
+        this->MapperTexture=NULL;
     }
 }
 
@@ -940,7 +940,7 @@ void vtkVolumeRenderingModuleGUI::UpdateSVP()
     }
     this->SVP_VolumeProperty->SetVolumeProperty(this->currentNode->GetVolumeProperty());
     this->SVP_VolumeProperty->SetHSVColorSelectorVisibility(1);
-    
+
     //Adjust mapping
     this->AdjustMapping();
     this->SVP_VolumeProperty->Update();
@@ -1026,15 +1026,7 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
             }
             if(currentStage==2)
             {
-                //Get the right Mapper back
-                if(this->mapper!=NULL)
-                {
-                    this->mapper->Delete();
-                }
-                this->mapper=vtkVolumeTextureMapper3D::New();
-                vtkVolumeTextureMapper3D::SafeDownCast(this->mapper)->SetSampleDistance(2);
-                this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
-                this->volume->SetMapper(mapper);
+                this->volume->SetMapper(this->MapperTexture);
             }
             this->currentStage=0;
             this->Script("puts \"Stage 0 started\"");
@@ -1077,15 +1069,7 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
         if(this->currentStage==2)
         {
             this->Script("puts \"Stage 2 started\"");
-            //Go to Raycasting
-            if(this->mapper!=NULL)
-            {
-                this->mapper->Delete();
-            }
-            this->mapper=vtkFixedPointVolumeRayCastMapper::New();
-            vtkFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->SetBlendModeToComposite();
-            this->mapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
-            this->volume->SetMapper(mapper);
+            this->volume->SetMapper(this->MapperRaycast);
 
             this->EventHandlerID="";
             this->scheduled=0;
@@ -1094,7 +1078,7 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
     }
     else if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::EndEvent)
     {
-                this->Script("puts \"endevent scheduled %d\"",this->scheduled);
+        this->Script("puts \"endevent scheduled %d\"",this->scheduled);
         this->Script("puts \"endevent currentstage %d\"",this->currentStage);
         if(this->currentStage==1)
         {
@@ -1115,7 +1099,7 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
             this->LastTimeLowRes=this->timer->GetElapsedTime();
             this->Script("puts %f",this->LastTimeLowRes);
             //It's time to start for the Scheduled Rendering
-            //this->EventHandlerID=this->Script("after 2000 %s ScheduleRender",this->GetTclName());
+            this->EventHandlerID=this->Script("after 2000 %s ScheduleRender",this->GetTclName());
             this->Script("puts \"Stage 0 ended\"");
             return;
         }
@@ -1249,7 +1233,7 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
     }
     //Check if caller equals mapper
     vtkAbstractMapper *callerMapper=vtkAbstractMapper::SafeDownCast(caller);
-    if(callerMapper!=this->mapper)
+    if((this->volume!=0)&&(callerMapper!=this->volume->GetMapper()))
     {
         return;
     }
@@ -1384,9 +1368,9 @@ void vtkVolumeRenderingModuleGUI::ScheduleRender(void)
         this->scheduled=0;
         return;
     }
-        counter++;
+    counter++;
     this->Script("puts \"%d\"",counter);
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-    
+
 }
 
