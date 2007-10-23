@@ -36,6 +36,7 @@
 #include "vtkfloatarray.h"
 //#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkFixedPointVolumeRayCastMapper.h"
+#include "vtkKWEvent.h"
 
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
@@ -354,6 +355,11 @@ void vtkVolumeRenderingModuleGUI::RemoveLogicObservers(void)
 void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData)
 {
     vtkDebugMacro("vtkVolumeRenderingModuleGUI::ProcessGUIEvents: event = " << event);
+    vtkSlicerVolumePropertyWidget *callerObjectSVP=vtkSlicerVolumePropertyWidget::SafeDownCast(caller);
+    if(callerObjectSVP==this->SVP_VolumeProperty&&event==vtkKWEvent::VolumePropertyChangingEvent)
+    {
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
+    }
 
     //
     //Check PushButtons
@@ -872,14 +878,22 @@ void vtkVolumeRenderingModuleGUI::CheckAbort ()
     int pending=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
     if(pending!=0)
     {
-        //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+        this->Script("puts \"got an abort\"");
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+        //Ensure that we are not scheduled
+        this->scheduled=0;
+        //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
         return;
     }
     int pendingGUI=vtkKWTkUtilities::CheckForPendingInteractionEvents(this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow());
     if(pendingGUI!=0)
     {
+        this->Script("puts \"got an abort from gui\"");
         //vtkErrorMacro("We got pending events");
-        //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+        this->scheduled=0;
+        //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
+        return;
     }
 }
 
@@ -894,6 +908,11 @@ void vtkVolumeRenderingModuleGUI::ShutdownPipeline()
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+     //Only needed if using performance enhancement
+    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    
+    
     if(this->Utilities)
     {
         this->Utilities->Delete();
@@ -1002,6 +1021,7 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
     }
     else if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::StartEvent)
     {
+        //TODO what happens if volume==NULL and why does it happen?!
         this->Script("puts \"startevent scheduled %d\"",this->scheduled);
         this->Script("puts \"startevent currentstage %d\"",this->currentStage);
         this->Script("puts \"startevent id %s\"",this->EventHandlerID.c_str());
@@ -1028,6 +1048,8 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
             {
                 this->volume->SetMapper(this->MapperTexture);
             }
+            //always got to less sample distance
+            this->MapperTexture->SetSampleDistance(2);
             this->currentStage=0;
             this->Script("puts \"Stage 0 started\"");
             //Decide if we REnder plane or not
@@ -1061,6 +1083,7 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
             this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
             //Go to Fullsize
             this->renViewport->SetViewport(0,0,1,1);
+            this->MapperTexture->SetSampleDistance(.1);
             this->scheduled=0;
             return;
         }
@@ -1082,7 +1105,7 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
         this->Script("puts \"endevent currentstage %d\"",this->currentStage);
         if(this->currentStage==1)
         {
-            this->EventHandlerID=this->Script("after 3000 %s ScheduleRender",this->GetTclName());
+            this->EventHandlerID=this->Script("after 100 %s ScheduleRender",this->GetTclName());
             this->Script("puts \"Stage 1 ended\"");
             return;
         }
@@ -1099,7 +1122,7 @@ void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller
             this->LastTimeLowRes=this->timer->GetElapsedTime();
             this->Script("puts %f",this->LastTimeLowRes);
             //It's time to start for the Scheduled Rendering
-            this->EventHandlerID=this->Script("after 2000 %s ScheduleRender",this->GetTclName());
+            this->EventHandlerID=this->Script("after 100 %s ScheduleRender",this->GetTclName());
             this->Script("puts \"Stage 0 ended\"");
             return;
         }
@@ -1310,6 +1333,8 @@ void vtkVolumeRenderingModuleGUI::PackSvpGUI()
     this->SVP_VolumeProperty->SetHistogramSet(this->Histograms);
     ((vtkSlicerApplication *)this->GetApplication())->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
     const char* debug=this->SVP_VolumeProperty->GetWidgetName();
+    //AddEvent for Interactive apply
+    this->SVP_VolumeProperty->AddObserver(vtkKWEvent::VolumePropertyChangingEvent,(vtkCommand*)this->GUICallbackCommand);
 }
 void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
 {
@@ -1318,12 +1343,13 @@ void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
         vtkErrorMacro("SVP_VolumeProperty: Nothing to unpack");
         return;
     }
-
+    
     this->Script("pack forget %s",this->SVP_VolumeProperty->GetWidgetName());
     this->SVP_VolumeProperty->SetHistogramSet(NULL);
     this->SVP_VolumeProperty->SetVolumeProperty(NULL);
     this->SVP_VolumeProperty->SetDataSet(NULL);
     this->SVP_VolumeProperty->SetParent(NULL);
+    this->SVP_VolumeProperty->RemoveObservers(vtkKWEvent::VolumePropertyChangingEvent,(vtkCommand*)this->GUICallbackCommand);
 
     if(this->Histograms)
     {
