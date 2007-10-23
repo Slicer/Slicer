@@ -313,7 +313,7 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
           }
         else if (this->GetMRMLScene() && fl.find(".xml") != std::string::npos ) 
           {
-          this->Script ( "ImportSlicer2Scene %s", fileName);
+          this->Script ( "ImportSlicer2Scene \"%s\"", fileName);
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
           }
         else if ( this->GetMRMLScene() && fl.find(".xcat") != std::string::npos )
