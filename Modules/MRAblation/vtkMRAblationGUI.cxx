@@ -218,7 +218,7 @@ void vtkMRAblationGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkSlicerApplication *slicerApp = (vtkSlicerApplication *)this->GetApplication();
     if (slicerApp != NULL)
     {
-      vtkSlicerVolumesGUI* volumesGUI = (vtkSlicerVolumesGUI *)slicerApp->GetModuleGUIByName("Volumes");
+      vtkSlicerVolumesGUI* volumesGUI = (vtkSlicerVolumesGUI *)slicerApp->GetModuleGUIByName("Volume");
       this->Logic->Apply(volumesGUI);
     }
     }
