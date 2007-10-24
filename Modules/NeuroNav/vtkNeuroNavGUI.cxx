@@ -1269,7 +1269,7 @@ void vtkNeuroNavGUI::BuildGUIForDeviceFrame ()
     this->UpdateRateEntry->Create();
     this->UpdateRateEntry->SetWidth(25);
     this->UpdateRateEntry->SetLabelWidth(15);
-    this->UpdateRateEntry->SetLabelText("Pulling Rate (ms):");
+    this->UpdateRateEntry->SetLabelText("Pulling Rate (ms)");
     this->UpdateRateEntry->GetWidget()->SetValue ( "100" );
     this->Script(
       "pack %s -side top -anchor nw -expand n -padx 2 -pady 2",
