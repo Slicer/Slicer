@@ -25,12 +25,13 @@
 #include <string>
 
 #include "vtkPolyData.h"
-#include "vtkShrinkPolyData.h"
-#include "vtkTubeFilter.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+
+class vtkPolyDataTensorToColor;
+class vtkTubeFilter;
 
 class VTK_MRML_EXPORT vtkMRMLFiberBundleTubeDisplayNode : public vtkMRMLFiberBundleDisplayNode
 {
@@ -64,30 +65,12 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleTubeDisplayNode : public vtkMRMLFiberBun
 
   // Description:
   // Sets polydata for glyph input (usually stored in FiberBundle node)
-  void SetPolyData(vtkPolyData *glyphPolyData)
-  {
-    if (this->TubeFilter)
-      {
-      this->TubeFilter->SetInput(glyphPolyData);
-      }
-  }
+  void SetPolyData(vtkPolyData *glyphPolyData);
 
   // Description:
   // Gets resultin glyph PolyData 
-  virtual vtkPolyData* GetPolyData()
-  {
-    if (this->TubeFilter)
-      {
-      this->UpdatePolyDataPipeline();
-      this->TubeFilter->Update();
-      return this->TubeFilter->GetOutput();
-      }
-    else
-      {
-      return NULL;
-      }
-  }
-   
+  virtual vtkPolyData* GetPolyData();
+
   // Description:
   // Update the pipeline based on this node attributes
   virtual void UpdatePolyDataPipeline();
@@ -122,6 +105,8 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleTubeDisplayNode : public vtkMRMLFiberBun
 
   // dispaly pipeline
   vtkTubeFilter *TubeFilter;
+  vtkPolyDataTensorToColor *TensorToColor;
+
 };
 
 #endif

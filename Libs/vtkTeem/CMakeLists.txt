@@ -19,6 +19,7 @@ SET(vtkTeem_SRCS
   vtkDiffusionTensorMathematicsSimple.cxx
   vtkTeemEstimateDiffusionTensor.cxx
   vtkDiffusionTensorGlyph.cxx
+  vtkPolyDataTensorToColor.cxx
 )
 
 # Abstract/pure virtual classes

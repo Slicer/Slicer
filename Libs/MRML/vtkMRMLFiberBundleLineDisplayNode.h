@@ -25,12 +25,12 @@
 #include <string>
 
 #include "vtkPolyData.h"
-#include "vtkShrinkPolyData.h"
-#include "vtkGeometryFilter.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+
+class vtkPolyDataTensorToColor;
 
 class VTK_MRML_EXPORT vtkMRMLFiberBundleLineDisplayNode : public vtkMRMLFiberBundleDisplayNode
 {
@@ -62,20 +62,26 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleLineDisplayNode : public vtkMRMLFiberBun
   // Get node XML tag name (like Volume, UnstructuredGrid)
   virtual const char* GetNodeTagName ( ) {return "FiberBundleLineDisplayNode";};
 
- 
-  //--------------------------------------------------------------------------
-  // Display Information: Geometry to display (not mutually exclusive)
-  //--------------------------------------------------------------------------
+  // Description:
+  // Sets polydata for glyph input (usually stored in FiberBundle node)
+  void SetPolyData(vtkPolyData *glyphPolyData);
 
+  // Description:
+  // Gets resultin glyph PolyData 
+  virtual vtkPolyData* GetPolyData();
+   
+  // Description:
+  // Update the pipeline based on this node attributes
+  virtual void UpdatePolyDataPipeline();
+
+ 
  protected:
   vtkMRMLFiberBundleLineDisplayNode ( );
   ~vtkMRMLFiberBundleLineDisplayNode ( );
   vtkMRMLFiberBundleLineDisplayNode ( const vtkMRMLFiberBundleLineDisplayNode& );
   void operator= ( const vtkMRMLFiberBundleLineDisplayNode& );
 
-  int TwoDimensionalVisibility;
-
-
+  vtkPolyDataTensorToColor *TensorToColor;
   // dispaly pipeline
 };
 

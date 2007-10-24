@@ -245,18 +245,37 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
                 this->DiffusionTensorGlyphFilter->ColorGlyphsByRelativeAnisotropy( );
               }
               break;
-              
+          default:
+            {
+            vtkErrorMacro("coloring with relative anisotropy");
+            this->ScalarVisibilityOff( );
             }
-          }  // if color scalar
-      }   // end else
-      double *range = this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange();
-      this->ScalarRange[0] = range[0];
-      this->ScalarRange[1] = range[1];
-      // avoid Set not to cause event loops
-      //this->SetScalarRange( this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange() );
-
+            break;
+            
+          }
+        }
+      }   
     }
+    else
+      {
+      this->ScalarVisibilityOff( );
+      }
+    }
+  else
+    {
+    this->ScalarVisibilityOff( );
+    }
+   
+ if (this->GetScalarVisibility())
+  {
+  this->DiffusionTensorGlyphFilter->Update();
+  double *range = this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange();
+  this->ScalarRange[0] = range[0];
+  this->ScalarRange[1] = range[1];
+  // avoid Set not to cause event loops
+  //this->SetScalarRange( this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange() );
   }
+
 }
- 
+
 

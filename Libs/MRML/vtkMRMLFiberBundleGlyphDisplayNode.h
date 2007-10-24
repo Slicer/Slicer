@@ -25,8 +25,6 @@
 #include <string>
 
 #include "vtkPolyData.h"
-#include "vtkShrinkPolyData.h"
-#include "vtkGeometryFilter.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
