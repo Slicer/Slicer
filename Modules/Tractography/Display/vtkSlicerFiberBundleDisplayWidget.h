@@ -31,6 +31,8 @@
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWScaleWithLabel.h"
 #include "vtkKWChangeColorButton.h"
+#include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWFrameWithLabel.h"
 
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
@@ -111,6 +113,13 @@ public:
   vtkMRMLFiberBundleDisplayNode* FiberBundleLineDisplayNode;
   vtkMRMLFiberBundleDisplayNode* FiberBundleTubeDisplayNode;
   vtkMRMLFiberBundleDisplayNode* FiberBundleGlyphDisplayNode;
+  
+  vtkKWMenuButtonWithLabel *GeometryMenu;
+  vtkKWFrameWithLabel *DisplayFrame;
+  
+//BTX
+  std::string CurrentGeometry;
+//ETX
   
 private:
 
