@@ -37,23 +37,19 @@
 //#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkFixedPointVolumeRayCastMapper.h"
 #include "vtkKWEvent.h"
-
+#include "vtkSlicerVRHelper.h"
+#include "vtkSlicerVRLabelmapHelper.h"
+#include "vtkSlicerVRGrayscaleHelper.h"
+#include "vtkMRMLVolumeRenderingNode.h"
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
 {
-    //Take care about own callback
-    this->VolumeRenderingCallbackCommand=vtkCallbackCommand::New();
-    this->VolumeRenderingCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
-    this->VolumeRenderingCallbackCommand->SetCallback(vtkVolumeRenderingModuleGUI::VolumeRenderingCallback);
-
-    this->Utilities=vtkKWTkUtilities::New();
     //In Debug Mode
     this->DebugOff();
     this->presets=NULL;
     this->PreviousNS_ImageData="";
     this->PreviousNS_VolumeRenderingDataScene="";
     this->PreviousNS_VolumeRenderingSlicer="";
-    this->volume=NULL;
     this->PB_Testing=NULL;
     this->PB_CreateNewVolumeRenderingNode=NULL;
     this->NS_ImageData=NULL;
@@ -62,30 +58,12 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
     this->EWL_CreateNewVolumeRenderingNode=NULL;
 
     //Frame Details
-    this->SVP_VolumeProperty=NULL;
-    this->Histograms=NULL;
     this->detailsFrame=NULL;
-    this->LM_OptionTree=NULL;
 
     //Other members
     this->currentNode=NULL;
     this->presets=NULL;
-
-
-    //Rendering pipeline
-    this->volume=NULL;
-
-    this->renViewport=NULL;
-    this->renPlane=NULL;
-    this->RenderPlane=0;
-
-    //Timer
-    this->timer=vtkTimerLog::New();
-    counter=0;
-    this->EventHandlerID="";
-    this->scheduled=0;
-
-
+    this->Helper=NULL;
 }
 
 vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
@@ -139,18 +117,6 @@ vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
         this->EWL_CreateNewVolumeRenderingNode=NULL;
     }
 
-    if(this->SVP_VolumeProperty)
-    {
-        this->SVP_VolumeProperty->SetParent(NULL);
-        this->SVP_VolumeProperty->Delete();
-        this->SVP_VolumeProperty=NULL;
-    }
-
-    if(this->Histograms)
-    {
-        this->Histograms->Delete();
-        this->Histograms=NULL;
-    }
 
     if(this->presets)
     {
@@ -158,37 +124,20 @@ vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
         this->presets=NULL;
     }
 
-    if(this->volume)
-    {
-        this->volume->Delete();
-        this->volume=NULL;
-    }
-
-    if(this->VolumeRenderingCallbackCommand)
-    {
-        this->VolumeRenderingCallbackCommand->Delete();
-        this->VolumeRenderingCallbackCommand=NULL;
-    }
-
-    if(this->Utilities)
-    {
-        this->Utilities->Delete();
-        this->Utilities=NULL;
-    }
     if(this->detailsFrame)
     {
         this->detailsFrame->Delete();
         this->detailsFrame=NULL;
     }
-    if(this->LM_OptionTree)
+    if(this->Helper)
     {
-        this->LM_OptionTree->Delete();
-        this->LM_OptionTree=NULL;
+        this->Helper->Delete();
+        this->Helper=NULL;
     }
-    if(this->timer)
+    if(this->currentNode)
     {
-        this->timer->Delete();
-        this->timer=NULL;
+        this->currentNode->Delete();
+        this->currentNode=NULL;
     }
     this->SetViewerWidget(NULL);
     this->SetInteractorStyle(NULL);
@@ -260,8 +209,6 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->NS_VolumeRenderingDataSlicer->NoneEnabledOn();
     this->NS_VolumeRenderingDataSlicer->SetNodeClass("vtkMRMLVolumeRenderingNode","","","");
     app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->NS_VolumeRenderingDataSlicer->GetWidgetName());
-
-
 
     //NodeSelector for VolumeRenderingNode Scene
     this->NS_VolumeRenderingDataScene=vtkSlicerNodeSelectorVolumeRenderingWidget::New();
@@ -355,11 +302,7 @@ void vtkVolumeRenderingModuleGUI::RemoveLogicObservers(void)
 void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData)
 {
     vtkDebugMacro("vtkVolumeRenderingModuleGUI::ProcessGUIEvents: event = " << event);
-    vtkSlicerVolumePropertyWidget *callerObjectSVP=vtkSlicerVolumePropertyWidget::SafeDownCast(caller);
-    if(callerObjectSVP==this->SVP_VolumeProperty&&event==vtkKWEvent::VolumePropertyChangingEvent)
-    {
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
-    }
+
 
     //
     //Check PushButtons
@@ -411,7 +354,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             this->UnpackLabelMapGUI();
             this->UnpackSvpGUI();
 
-            this->ShutdownPipeline();
+            this->Helper->ShutdownPipeline();
             this->PreviousNS_ImageData="";
         }
         //Only proceed event,if new Node
@@ -428,26 +371,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             else
             {
                 this->PackSvpGUI();
-                //Take care about HistogramSet and ImageData
-                this->SVP_VolumeProperty->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
 
-                //Remove all old Histograms
-                this->Histograms->RemoveAllHistograms();
-
-                //Add Histogram for image data
-                this->Histograms->AddHistograms(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData()->GetPointData()->GetScalars());
-                //Build the gradient histogram
-                vtkImageGradientMagnitude *grad=vtkImageGradientMagnitude::New();
-                grad->SetDimensionality(3);
-                grad->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
-                grad->Update();
-                vtkKWHistogram *gradHisto=vtkKWHistogram::New();
-                gradHisto->BuildHistogram(grad->GetOutput()->GetPointData()->GetScalars(),0);
-                this->Histograms->AddHistogram(gradHisto,"0gradient");
-
-                //Delete
-                grad->Delete();
-                gradHisto->Delete();
 
             }
             //Initialize the Pipeline
@@ -492,8 +416,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             {
                 //Copy Preset Information in current Node
                 this->currentNode->CopyParameterset(this->NS_VolumeRenderingDataSlicer->GetSelected());
-                this->SVP_VolumeProperty->Modified();
-                this->SVP_VolumeProperty->Update();
+                this->Helper->UpdateGUIElements();
             }
             //It's not a preset so just update references, and select the new Added Node
             else 
@@ -648,14 +571,61 @@ void vtkVolumeRenderingModuleGUI::SetInteractorStyle(vtkSlicerViewerInteractorSt
 {
 }
 
+
+void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
+{
+    this->currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataScene->GetSelected());
+    vtkImageData* imageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData();
+    this->Helper->UpdateGUIElements();
+    this->Helper->UpdateRendering();
+}
+
+void vtkVolumeRenderingModuleGUI::PackLabelMapGUI()
+{
+    if(this->Helper!=NULL)
+    {
+        this->Helper->Delete();
+        this->Helper=NULL;
+    }
+    this->UnpackSvpGUI();
+    this->Helper=vtkSlicerVRLabelmapHelper::New();
+    this->Helper->Init(this);
+
+}
+
+void vtkVolumeRenderingModuleGUI::UnpackLabelMapGUI()
+{
+    if(this->Helper!=NULL)
+    {
+        this->Helper->Delete();
+        this->Helper=NULL;
+    }
+}
+
+void vtkVolumeRenderingModuleGUI::PackSvpGUI()
+{
+    if(this->Helper!=NULL)
+    {
+        this->Helper->Delete();
+        this->Helper=NULL;
+    }
+    this->UnpackLabelMapGUI();
+    this->Helper=vtkSlicerVRGrayscaleHelper::New();
+    this->Helper->Init(this);
+}
+void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
+{
+
+    if(this->Helper!=NULL)
+    {
+        this->Helper->Delete();
+        this->Helper=NULL;
+    }
+}
+
 void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
 {
-    //Check if we have an old Node
-    /* if(this->currentNode!=NULL)
-    {
-    this->currentNode->Delete();
-    this->currentNode=NULL;
-    }*/
+ //TODO move this part
     this->currentNode=vtkMRMLVolumeRenderingNode::New();
     this->currentNode->HideFromEditorsOff();
     //Add Node to Scene
@@ -666,108 +636,14 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
     this->PreviousNS_VolumeRenderingDataScene=this->currentNode->GetID();
     this->NS_VolumeRenderingDataScene->SetSelected(this->currentNode);
     this->NS_VolumeRenderingDataScene->UpdateMenu(); 
-    //this->PreviousNS_VolumeRenderingDataScene=this->currentNode->GetID();
+    //this->PreviousNS_VolumeRenderingDataScene=this->Gui->GetcurrentNode()->GetID();
+    //The Helper has to do something too
+    this->Helper->InitializePipelineNewCurrentNode();
 
 
     //take care about references
-
-
-    //Labelmap
-    if(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetLabelMap()==1)
-    {
-        vtkLabelMapPiecewiseFunction *opacityNew=vtkLabelMapPiecewiseFunction::New();
-        opacityNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected()),.3,0);
-        this->currentNode->GetVolumeProperty()->SetScalarOpacity(opacityNew);
-        this->currentNode->SetIsLabelMap(1);
-        vtkLabelMapColorTransferFunction *colorNew=vtkLabelMapColorTransferFunction::New();
-        colorNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected()));
-        this->currentNode->GetVolumeProperty()->SetColor(colorNew);
-        this->UpdateLM();
-
-        //Delete
-        opacityNew->Delete();
-        colorNew->Delete();
-
-    }
-    //automatic Mode non LabelMaps
-    else
-    {
-        vtkKWHistogram *histogram=this->Histograms->GetHistogramWithName("0");
-        if(histogram==NULL)
-        {
-            vtkErrorMacro("Problems with HistogramSet");
-            return;
-        }
-        double totalOccurance=histogram->GetTotalOccurence();
-        double tresholdLow=totalOccurance*0.2;
-        double tresholdHigh=totalOccurance*0.8;
-        double range[2];
-
-        histogram->GetRange(range);
-        double tresholdLowIndex=range[0];
-        double sumLowIndex=0;
-        double tresholdHighIndex=range[0];
-        double sumHighIndex=0;
-        //calculate distance
-        double bin_width = (range[1] == range[0] ? 1 :(double)histogram->GetNumberOfBins() / (range[1] - range[0]));
-        while (sumLowIndex<tresholdLow)
-        {
-            sumLowIndex+=histogram->GetOccurenceAtValue(tresholdLowIndex);
-            tresholdLowIndex+=bin_width;
-        }
-        while(sumHighIndex<tresholdHigh)
-        {
-            sumHighIndex+=histogram->GetOccurenceAtValue(tresholdHighIndex);
-            tresholdHighIndex+=bin_width;
-
-        }
-        vtkPiecewiseFunction *opacity=this->currentNode->GetVolumeProperty()->GetScalarOpacity();
-        opacity->RemoveAllPoints();
-        opacity->AddPoint(range[0],0.);
-        opacity->AddPoint(tresholdLowIndex,0.0);
-        opacity->AddPoint(tresholdHighIndex,0.2);
-        opacity->AddPoint(range[1],0.2);
-        vtkColorTransferFunction *colorTransfer=this->currentNode->GetVolumeProperty()->GetRGBTransferFunction();
-        colorTransfer->RemoveAllPoints();
-        colorTransfer->AddRGBPoint(range[0],.3,.3,1.);
-        colorTransfer->AddRGBPoint(tresholdLowIndex,.3,.3,1.);
-        colorTransfer->AddRGBPoint(tresholdLowIndex+.5*(tresholdHighIndex-tresholdLowIndex),.3,1.,.3);
-        colorTransfer->AddRGBPoint(tresholdHighIndex,1.,.3,.3);
-        colorTransfer->AddRGBPoint(range[1],1,.3,.3);
-        this->UpdateSVP();
-    }//else
-    this->PipelineInitializedOn();
-}//method
-void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
-{
-    //Change currentNode to selected Node
-    //Delete old node if there is one
-    //if(this->currentNode!=NULL)
-    //{
-    //    this->currentNode->Delete();
-    //    this->currentNode=NULL;
-    //}
-    //TODO whats the problem with this cast?!
-    this->currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataScene->GetSelected());
-    vtkImageData* imageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData();
-
-    //UpdateGUI
-    //We have a labelmap
-    if(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetLabelMap()==1)
-    {
-        this->UpdateLM();
-    }
-    //No labelmap
-    else 
-    {
-        this->UpdateSVP();
-    }
-    //Update the Rendering
-    this->UpdateRendering();
 }
-void vtkVolumeRenderingModuleGUI::InitializePipelineFromSlicer()
-{
-}
+
 void vtkVolumeRenderingModuleGUI::InitializePipelineFromImageData()
 {
 
@@ -799,604 +675,6 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineFromImageData()
     }
     //Render it
     this->PipelineInitializedOn();
-    this->UpdateRendering();
-}
-void vtkVolumeRenderingModuleGUI::Rendering()
-{
-    if(this->volume!=NULL)
-    {
-        vtkErrorMacro("Rendering already called, use update Rendering instead");
-        return;
-    }
-
-    this->volume=vtkVolume::New();
-    //TODO Dirty fix as Mapper
-    if(this->currentNode->GetMapper()==vtkMRMLVolumeRenderingNode::Texture)
-    {
-        //this->mapper=vtkSlicerFixedPointVolumeRayCastMapper::New();
-        //vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->SetBlendModeToMaximumIntensity();
-        //vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->Setlimit(1,2,3,4);
-        this->MapperTexture=vtkVolumeTextureMapper3D::New();
-        this->MapperTexture->SetSampleDistance(2);
-        this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
-        this->volume->SetMapper(this->MapperTexture);
-        //Also take care about Ray Cast
-        this->MapperRaycast=vtkFixedPointVolumeRayCastMapper::New();
-        this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
-    }
-    this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-
-    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-
-    //Only needed if using performance enhancement
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-
-    //TODO This is not the right place for this
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-    this->volume->SetProperty(this->currentNode->GetVolumeProperty());
-    vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetIJKToRASMatrix(matrix);
-    this->volume->PokeMatrix(matrix);
-
-    //For Performance
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->volume);
-    this->renViewport=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetNthRenderer(0);
-    matrix->Delete();
-    //Render
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
-
-}
-void vtkVolumeRenderingModuleGUI::UpdateRendering()
-{
-    //first check if REndering was already called
-    if(this->volume==NULL)
-    {
-        this->Rendering();
-        return;
-    }
-    //Update mapper
-    this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
-    this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData());
-    //Update Property
-    this->volume->SetProperty(this->currentNode->GetVolumeProperty());
-    //Update matrix
-    vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetIJKToRASMatrix(matrix);
-    this->volume->PokeMatrix(matrix);
-
-    matrix->Delete();
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-}
-
-void vtkVolumeRenderingModuleGUI::CheckAbort ()
-{
-    int pending=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
-    if(pending!=0)
-    {
-        this->Script("puts \"got an abort\"");
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
-        //Ensure that we are not scheduled
-        this->scheduled=0;
-        //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
-        return;
-    }
-    int pendingGUI=vtkKWTkUtilities::CheckForPendingInteractionEvents(this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow());
-    if(pendingGUI!=0)
-    {
-        this->Script("puts \"got an abort from gui\"");
-        //vtkErrorMacro("We got pending events");
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
-        this->scheduled=0;
-        //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
-        return;
-    }
-}
-
-void vtkVolumeRenderingModuleGUI::ShutdownPipeline()
-{
-    vtkKWRenderWidget *renderWidget=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer();
-    //Remove Observers
-    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-     //Only needed if using performance enhancement
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    
-    
-    if(this->Utilities)
-    {
-        this->Utilities->Delete();
-        this->Utilities=NULL;
-    }
-    //Remove Volume
-    if(this->volume!=NULL)
-    {
-        renderWidget->RemoveViewProp(this->volume);
-        this->volume->Delete();
-        this->volume=NULL;
-        renderWidget->Render();
-    }
-    if(this->MapperRaycast!=NULL)
-    {
-        this->MapperRaycast->Delete();
-        this->MapperRaycast=NULL;
-    }
-    if(this->MapperTexture!=NULL)
-    {
-        this->MapperTexture->Delete();
-        this->MapperTexture=NULL;
-    }
-}
-
-void vtkVolumeRenderingModuleGUI::UpdateSVP()
-{
-    //First check if we have a SVP
-    if(this->SVP_VolumeProperty==NULL)
-    {
-        vtkErrorMacro("SVP does not exist");
-    }
-    vtkTimerLog *timer=vtkTimerLog::New();
-    timer->StartTimer();
-    //First of all set New Property, Otherwise all Histograms will be overwritten
-    //First check if we really need to update
-    if(this->SVP_VolumeProperty->GetVolumeProperty()==this->currentNode->GetVolumeProperty())
-    {
-        this->SVP_VolumeProperty->Update();
-        timer->StopTimer();
-        vtkErrorMacro("Update SVP calculated in "<<timer->GetElapsedTime()<<"seconds");
-        timer->Delete();
-        return;
-    }
-    this->SVP_VolumeProperty->SetVolumeProperty(this->currentNode->GetVolumeProperty());
-    this->SVP_VolumeProperty->SetHSVColorSelectorVisibility(1);
-
-    //Adjust mapping
-    this->AdjustMapping();
-    this->SVP_VolumeProperty->Update();
-    timer->StopTimer();
-    vtkDebugMacro("Update SVP calculated in "<<timer->GetElapsedTime()<<"seconds");
-    timer->Delete();
-
-}
-
-
-void vtkVolumeRenderingModuleGUI::AdjustMapping(){
-
-    //Update Color    
-    //vtkColorTransferFunction *functionColor=this->currentNode->GetVolumeProperty()->GetRGBTransferFunction();
-    //double rangeNew[2];
-    //this->HIST_Opacity->GetRange(rangeNew);
-    //functionColor->AdjustRange(rangeNew);
-
-    ////Update Opacity
-    //vtkPiecewiseFunction *function=this->currentNode->GetVolumeProperty()->GetScalarOpacity();
-    //this->HIST_Opacity->GetRange(rangeNew);
-    //function->AdjustRange(rangeNew);
-    ////Update
-    //function=this->currentNode->GetVolumeProperty()->GetGradientOpacity();
-    //this->HIST_Gradient->GetRange(rangeNew);
-    //function->AdjustRange(rangeNew);
-}
-
-
-void vtkVolumeRenderingModuleGUI::VolumeRenderingCallback( vtkObject *caller, unsigned long eid, void *clientData, void *callData )
-{
-    vtkVolumeRenderingModuleGUI *self = reinterpret_cast<vtkVolumeRenderingModuleGUI *>(clientData);
-
-
-    if (self->GetInVolumeRenderingCallbackFlag())
-    {
-#ifdef _DEBUG
-        vtkDebugWithObjectMacro(self, "In vtkVOlumeRendering *********GUICallback called recursively?");
-#endif
-        //return;
-    }
-
-    vtkDebugWithObjectMacro(self, "In vtkVolumeREndering GUICallback");
-
-    self->SetInVolumeRenderingCallbackFlag(1);
-    self->ProcessVolumeRenderingEvents(caller, eid, callData);
-    self->SetInVolumeRenderingCallbackFlag(0);
-
-}
-
-void vtkVolumeRenderingModuleGUI::ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData){
-
-    //TODO not the right place for this
-    vtkRenderWindow *callerRen=vtkRenderWindow::SafeDownCast(caller);
-    if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::AbortCheckEvent)
-    {
-        this->CheckAbort();
-        return;
-    }
-    else if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::StartEvent)
-    {
-        //TODO what happens if volume==NULL and why does it happen?!
-        this->Script("puts \"startevent scheduled %d\"",this->scheduled);
-        this->Script("puts \"startevent currentstage %d\"",this->currentStage);
-        this->Script("puts \"startevent id %s\"",this->EventHandlerID.c_str());
-        //it is not a scheduled event so we use stage 0
-        if(this->scheduled==0)
-        {
-
-            //go back to stage 0;
-            //Check if we have an Event Scheduled, if this is the case abort it
-            if(strcmp(this->EventHandlerID.c_str(),"")!=0)
-            {
-                const char* result=this->Script("after cancel %s",this->EventHandlerID.c_str());
-                const char* resulta=this->Script("after info");
-                this->Script("puts \"ResultCancel: %s\"",result);
-                this->Script("puts \"Result info: %s\"",resulta);
-                this->EventHandlerID="";
-                //delete result;
-                //delete resulta;
-
-
-
-            }
-            if(currentStage==2)
-            {
-                this->volume->SetMapper(this->MapperTexture);
-            }
-            //always got to less sample distance
-            this->MapperTexture->SetSampleDistance(2);
-            this->currentStage=0;
-            this->Script("puts \"Stage 0 started\"");
-            //Decide if we REnder plane or not
-            if(this->RenderPlane==1)
-            {
-                return;
-            }
-            timer->StartTimer();
-            vtkRenderWindow *renWin=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
-
-            double factor=.2;
-            //We don't like to see, what we are doing here
-            renWin->SwapBuffersOff();
-            //get the viewport renderer up
-            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
-            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
-            //Change viewport(simulation of "sample distance for "rays"" if using texture mapping)
-            this->renViewport->SetViewport(0,0,factor,factor);
-
-
-            //We are already in the Rendering Process
-            //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-        }//if
-
-        //Stage 1
-        if(this->currentStage==1)
-        {
-            this->Script("puts \"Stage 1 started\"");
-            //Remove plane Renderer and get viewport Renderer Up
-            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
-            this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
-            //Go to Fullsize
-            this->renViewport->SetViewport(0,0,1,1);
-            this->MapperTexture->SetSampleDistance(.1);
-            this->scheduled=0;
-            return;
-        }
-
-        //Stage 2
-        if(this->currentStage==2)
-        {
-            this->Script("puts \"Stage 2 started\"");
-            this->volume->SetMapper(this->MapperRaycast);
-
-            this->EventHandlerID="";
-            this->scheduled=0;
-            return;
-        }   
-    }
-    else if(caller==this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::EndEvent)
-    {
-        this->Script("puts \"endevent scheduled %d\"",this->scheduled);
-        this->Script("puts \"endevent currentstage %d\"",this->currentStage);
-        if(this->currentStage==1)
-        {
-            this->EventHandlerID=this->Script("after 100 %s ScheduleRender",this->GetTclName());
-            this->Script("puts \"Stage 1 ended\"");
-            return;
-        }
-        if(this->currentStage==2)
-        {
-            //We reached the highest Resolution, no scheduling
-            this->Script("puts \"Stage 2 ended\"");
-            return;
-        }
-        if(this->RenderPlane==1)
-        {
-            this->RenderPlane=0;
-            this->timer->StopTimer();
-            this->LastTimeLowRes=this->timer->GetElapsedTime();
-            this->Script("puts %f",this->LastTimeLowRes);
-            //It's time to start for the Scheduled Rendering
-            this->EventHandlerID=this->Script("after 100 %s ScheduleRender",this->GetTclName());
-            this->Script("puts \"Stage 0 ended\"");
-            return;
-        }
-
-
-        vtkRenderWindow *renWin=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
-        double factor=.2;
-        //Get current size of window
-        int *size=renWin->GetSize();
-
-        //RGB Data from the smaller viewport
-        vtkUnsignedCharArray *image=vtkUnsignedCharArray::New();
-        renWin->GetRGBACharPixelData(0,0,factor*size[0],factor*size[1],0,image);
-
-        vtkImageData *imageData=vtkImageData::New();
-        imageData->GetPointData()->SetScalars(image);
-        imageData->SetDimensions(factor*size[0]+1,factor*size[1]+1,1);
-        imageData->SetNumberOfScalarComponents(4);
-        imageData->SetScalarTypeToUnsignedChar();
-        imageData->SetOrigin(.0,.0,.0);
-        imageData->SetSpacing(1.,1.,1.);
-        //imageData->Update();
-        vtkImageExtractComponents *components=vtkImageExtractComponents::New();
-        components->SetInput(imageData);
-        components->SetComponents(0,1,2);
-        if(this->renPlane==NULL)
-        {
-            this->renPlane=vtkRenderer::New();
-        }
-
-        this->renPlane->SetBackground(this->renViewport->GetBackground());
-        this->renPlane->SetActiveCamera(this->renViewport->GetActiveCamera());
-
-        //Get Our Renderer Up
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renViewport);
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renPlane);
-
-        this->renPlane->SetDisplayPoint(0,0,0.5);
-        this->renPlane->DisplayToWorld();
-        double coordinatesA[4];
-        this->renPlane->GetWorldPoint(coordinatesA);
-
-        this->renPlane->SetDisplayPoint(size[0],0,0.5);
-        this->renPlane->DisplayToWorld();
-        double coordinatesB[4];
-        this->renPlane->GetWorldPoint(coordinatesB);
-
-        this->renPlane->SetDisplayPoint(size[0],size[1],0.5);
-        this->renPlane->DisplayToWorld();
-        double coordinatesC[4];
-        this->renPlane->GetWorldPoint(coordinatesC);
-
-        this->renPlane->SetDisplayPoint(0,size[1],0.5);
-        this->renPlane->DisplayToWorld();
-        double coordinatesD[4];
-        this->renPlane->GetWorldPoint(coordinatesD);
-
-        //Create the Polydata
-        vtkPoints *points=vtkPoints::New();
-        points->InsertPoint(0,coordinatesA);
-        points->InsertPoint(1,coordinatesB);
-        points->InsertPoint(2,coordinatesC);
-        points->InsertPoint(3,coordinatesD);
-
-        vtkCellArray *polygon=vtkCellArray::New();
-        polygon->InsertNextCell(4);
-        polygon->InsertCellPoint(0);
-        polygon->InsertCellPoint(1);
-        polygon->InsertCellPoint(2);
-        polygon->InsertCellPoint(3);
-        //Take care about Texture coordinates
-        vtkFloatArray *textCoords=vtkFloatArray::New();
-        textCoords->SetNumberOfComponents(2);
-        textCoords->Allocate(8);
-        float tc[2];
-        tc[0]=0;
-        tc[1]=0;
-        textCoords->InsertNextTuple(tc);
-        tc[0]=1;
-        tc[1]=0;
-        textCoords->InsertNextTuple(tc);
-        tc[0]=1;
-        tc[1]=1;
-        textCoords->InsertNextTuple(tc);
-        tc[0]=0;
-        tc[1]=1;
-        textCoords->InsertNextTuple(tc);
-
-        vtkPolyData *polydata=vtkPolyData::New();
-        polydata->SetPoints(points);
-        polydata->SetPolys(polygon);
-        polydata->GetPointData()->SetTCoords(textCoords);
-
-        vtkPolyDataMapper *polyMapper=vtkPolyDataMapper::New();
-        polyMapper->SetInput(polydata);
-
-        vtkActor *actor=vtkActor::New(); 
-        actor->SetMapper(polyMapper);
-
-        //Take care about the texture
-        vtkTexture *atext=vtkTexture::New();
-        atext->SetInput(components->GetOutput());
-        atext->SetInterpolate(1);
-        actor->SetTexture(atext);
-
-        //Remove all old Actors
-        this->renPlane->RemoveAllViewProps();
-
-        this->renPlane->AddActor(actor);
-        //Remove the old Renderer
-
-        renWin->SwapBuffersOn();
-        //Do we do that
-        this->RenderPlane=1;
-
-
-
-        //Delete everything we have done
-        image->Delete();
-        imageData->Delete();
-        components->Delete();
-        points->Delete();
-        polygon->Delete();
-        textCoords->Delete();
-        polydata->Delete();
-        polyMapper->Delete();
-        actor->Delete();
-        atext->Delete();
-        this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
-
-    }
-    //Check if caller equals mapper
-    vtkAbstractMapper *callerMapper=vtkAbstractMapper::SafeDownCast(caller);
-    if((this->volume!=0)&&(callerMapper!=this->volume->GetMapper()))
-    {
-        return;
-    }
-    if(eid==vtkCommand::VolumeMapperComputeGradientsStartEvent)
-    {
-        this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Calculate Gradients");
-    }
-    else if(eid==vtkCommand::VolumeMapperComputeGradientsEndEvent)
-    {
-        this->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Calculate Gradients finished");
-    }
-    else if(eid==vtkCommand::VolumeMapperComputeGradientsProgressEvent)
-    {
-        float *progress=(float*)callData;
-        this->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100**progress);
-    }
-}
-int vtkVolumeRenderingModuleGUI_EventDeleteProc (Tcl_Event *evPtr, ClientData clientData)
-{
-    vtkVolumeRenderingModuleGUI *self = (  vtkVolumeRenderingModuleGUI *) (clientData);
-    self->SetEventsPending(1);
-    return 0;
-}
-
-//----------------------------------------------------------------------------
-int vtkVolumeRenderingModuleGUI::CheckForPendingEvents()
-{
-    this->SetEventsPending(0);
-    Tcl_DeleteEvents(vtkVolumeRenderingModuleGUI_EventDeleteProc, static_cast<ClientData> (this));
-    return (this->GetEventsPending());
-} 
-
-void vtkVolumeRenderingModuleGUI::PackLabelMapGUI()
-{
-    if(this->LM_OptionTree!=NULL)
-    {
-        vtkErrorMacro("LM_OptionTree: Already packed");
-        return;
-    }
-    this->UnpackSvpGUI();
-    this->LM_OptionTree=vtkSlicerLabelMapWidget::New();
-    this->LM_OptionTree->SetParent(this->detailsFrame->GetFrame());
-    this->LM_OptionTree->Create();
-    ((vtkSlicerApplication *)this->GetApplication())->Script("pack %s",this->LM_OptionTree->GetWidgetName());
-}
-
-void vtkVolumeRenderingModuleGUI::UnpackLabelMapGUI()
-{
-    if(this->LM_OptionTree==NULL)
-    {
-        vtkErrorMacro("LM_OptionTree: Already unpacked");
-        return;
-    }    
-    this->Script("pack forget %s",this->LM_OptionTree->GetWidgetName());
-    this->LM_OptionTree->SetParent(NULL);
-    this->LM_OptionTree->Delete();
-    this->LM_OptionTree=NULL;
-}
-
-void vtkVolumeRenderingModuleGUI::PackSvpGUI()
-{
-    //Histogram
-    if(this->SVP_VolumeProperty!=NULL)
-    {
-        vtkErrorMacro("SVP_VolumeProperty: Already packed");
-        return;
-    }
-    this->UnpackLabelMapGUI();
-    this->Histograms=vtkKWHistogramSet::New();
-    //Volume Property frame
-    this->SVP_VolumeProperty=vtkSlicerVolumePropertyWidget::New();
-    this->SVP_VolumeProperty->SetParent(this->detailsFrame->GetFrame());
-    this->SVP_VolumeProperty->Create();
-    this->SVP_VolumeProperty->SetHistogramSet(this->Histograms);
-    ((vtkSlicerApplication *)this->GetApplication())->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
-    const char* debug=this->SVP_VolumeProperty->GetWidgetName();
-    //AddEvent for Interactive apply
-    this->SVP_VolumeProperty->AddObserver(vtkKWEvent::VolumePropertyChangingEvent,(vtkCommand*)this->GUICallbackCommand);
-}
-void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
-{
-    if(this->SVP_VolumeProperty==NULL)
-    {
-        vtkErrorMacro("SVP_VolumeProperty: Nothing to unpack");
-        return;
-    }
-    
-    this->Script("pack forget %s",this->SVP_VolumeProperty->GetWidgetName());
-    this->SVP_VolumeProperty->SetHistogramSet(NULL);
-    this->SVP_VolumeProperty->SetVolumeProperty(NULL);
-    this->SVP_VolumeProperty->SetDataSet(NULL);
-    this->SVP_VolumeProperty->SetParent(NULL);
-    this->SVP_VolumeProperty->RemoveObservers(vtkKWEvent::VolumePropertyChangingEvent,(vtkCommand*)this->GUICallbackCommand);
-
-    if(this->Histograms)
-    {
-        this->Histograms->RemoveAllHistograms();
-        this->Histograms->Delete();
-        this->Histograms=NULL;
-    }
-    this->SVP_VolumeProperty->Delete();
-    this->SVP_VolumeProperty=NULL;
-}
-
-
-void vtkVolumeRenderingModuleGUI::LabelMapInitializePipelineNewCurrentNode()
-{
-}
-void vtkVolumeRenderingModuleGUI::LabelMapInitializePipelineFromMRMLScene()
-{
-}
-void vtkVolumeRenderingModuleGUI::LabelMapInitializePipelineFromSlicer()
-{
-}
-void vtkVolumeRenderingModuleGUI::LabelMapInitializePipelineFromImageData()
-{
-}
-
-void vtkVolumeRenderingModuleGUI::UpdateLM()
-{
-    if(this->LM_OptionTree==NULL)
-    {
-        vtkErrorMacro("LM Option Tree does not exist");
-        return;
-    }
-}
-
-void vtkVolumeRenderingModuleGUI::ScheduleRender(void)
-{
-    this->scheduled=1;
-    this->currentStage++;
-    if(this->currentStage>2)
-    {
-        this->currentStage=0;
-        this->scheduled=0;
-        return;
-    }
-    counter++;
-    this->Script("puts \"%d\"",counter);
-    this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-
+    this->Helper->UpdateRendering();
 }
 

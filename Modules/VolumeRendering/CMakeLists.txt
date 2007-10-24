@@ -24,6 +24,9 @@ SET(VolumeRenderingModule_SRCS
   vtkSlicerRayCastImageDisplayHelper.cxx
   vtkSlicerOpenGLRayCastImageDisplayHelper.cxx
   vtkEffectedArea.cxx
+  vtkSlicerVRHelper.cxx
+  vtkSlicerVRLabelmapHelper.cxx
+  vtkSlicerVRGrayscaleHelper.cxx
   )
 
 # Abstract/pure virtual classes

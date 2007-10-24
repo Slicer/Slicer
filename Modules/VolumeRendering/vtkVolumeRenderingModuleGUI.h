@@ -31,12 +31,10 @@ Version:   $Revision: 1.3 $
 
 class vtkVolumeTextureMapper3D;
 class vtkFixedPointVolumeRayCastMapper;
+class vtkSlicerVRHelper;
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI
 {
 public:
-
-    //Schedule the Render
-    void ScheduleRender(void);
 
     static vtkVolumeRenderingModuleGUI *New();
     vtkTypeMacro(vtkVolumeRenderingModuleGUI,vtkSlicerModuleGUI);
@@ -111,10 +109,6 @@ public:
     vtkGetMacro(PipelineInitialized,int);
     vtkBooleanMacro(PipelineInitialized,int);
 
-    vtkGetMacro(EventsPending, int);
-    vtkSetMacro(EventsPending, int);
-
-
     // Description:
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro (PB_Testing,vtkKWPushButton);
@@ -124,12 +118,8 @@ public:
     vtkGetObjectMacro (NS_VolumeRenderingDataScene,vtkSlicerNodeSelectorVolumeRenderingWidget);
     vtkGetObjectMacro (EWL_CreateNewVolumeRenderingNode,vtkKWEntryWithLabel);
     vtkGetObjectMacro (detailsFrame,vtkSlicerModuleCollapsibleFrame);
-    vtkGetObjectMacro (LM_OptionTree,vtkSlicerLabelMapWidget);
-    vtkGetObjectMacro (Histograms,vtkKWHistogramSet);
-    vtkGetObjectMacro (SVP_VolumeProperty,vtkSlicerVolumePropertyWidget);
     vtkGetObjectMacro (currentNode,vtkMRMLVolumeRenderingNode);
     vtkGetObjectMacro (presets, vtkMRMLScene);
-    vtkGetObjectMacro (volume,vtkVolume);
 
 
 
@@ -173,13 +163,6 @@ protected:
     void LabelMapInitializePipelineFromMRMLScene();
     void LabelMapInitializePipelineFromSlicer();
     void LabelMapInitializePipelineFromImageData();
-    void UpdateSVP();
-    void UpdateLM();
-    void ShutdownPipeline();
-    void Rendering(void);
-    void UpdateRendering(void);
-    void  CheckAbort(void);
-    void AdjustMapping();
 
     //OWN GUI Elements
 
@@ -198,85 +181,25 @@ protected:
 
     //Frame Details
     vtkSlicerModuleCollapsibleFrame *detailsFrame;
-    //For Labelmaps
-    vtkSlicerLabelMapWidget *LM_OptionTree;
-    //For normal
-    vtkKWHistogramSet *Histograms;
-    vtkSlicerVolumePropertyWidget *SVP_VolumeProperty;
+
 
     //Other members
     vtkMRMLVolumeRenderingNode  *currentNode;
     vtkMRMLScene *presets;
 
-    //Rendering pipeline
-    vtkVolume *volume;
-
-
-    //That's all for Speed optimization ->Own class?!
-    vtkRenderer *renViewport;
-    vtkRenderer *renPlane;
-    int RenderPlane;
-    vtkVolumeTextureMapper3D *MapperTexture;
-    vtkFixedPointVolumeRayCastMapper *MapperRaycast;
-
-    //Initial Factor for Interactive Rendering
-    double InitialDropLowRes;
-    //Factor during last low Resolution Rendering
-    double FactorLastLowRes;
-    //Time for the last High Resolution Rendering
-    double LastTimeHighRes;
-    //Time for the last Low Resolution Rendering
-    double LastTimeLowRes;
-    //Timer
-    vtkTimerLog *timer;
-    //Which time would we like to achieve
-    double GoalLowResTime;
-    //Area in which no change in Factor will be made.
-    int PercentageNoChange;
-    //How long to wait, before Rendering in High Resolution
-    double TimeToWaitForHigherStage;
-    //0 interactive, 1 High Resolution Texture VR, 2 SW Ray Cast
-    int currentStage;
-
-    int scheduled;
-    //Flag if next Render is a High Resolution Render
-    int NextRenderHighResolution;
-    //BTX
-    std::string EventHandlerID;
-    //ETX
 
 
 
-    //
-    vtkKWTkUtilities *Utilities;
 
-    //Callbacks
-    void SetInVolumeRenderingCallbackFlag (int flag) {
-        this->InVolumeRenderingCallbackFlag = flag;
-    }
-    vtkGetMacro(InVolumeRenderingCallbackFlag, int);
-    vtkCallbackCommand* VolumeRenderingCallbackCommand;
-    int InVolumeRenderingCallbackFlag;
-    static void VolumeRenderingCallback( vtkObject *__caller,unsigned long eid, void *__clientData, void *callData );
-    void ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData);
-
+   
     void PackLabelMapGUI(void);
     void UnpackLabelMapGUI(void);
 
     void PackSvpGUI(void);
     void UnpackSvpGUI(void);
-    int counter;
-
-    
-
-
-    // Description:
-    // 1 if the tcl event queue has pending events (call CheckForPendingEvents 
-    // and then look at the value of EventsPending)
-    int CheckForPendingEvents();
-
-
-    int EventsPending;
+    vtkSlicerVRHelper *Helper;
+    //0 means grayscale, 1 means LabelMap
+    int HelperNumber;
 };
 
 #endif
