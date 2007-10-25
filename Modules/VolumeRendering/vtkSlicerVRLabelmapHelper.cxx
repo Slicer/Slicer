@@ -53,12 +53,14 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
     {
         this->MapperRaycast=vtkFixedPointVolumeRayCastMapper::New();
         this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
-        //this->MapperRaycast->SetBlendModeToComposite();
-        //this->MapperRaycast->SetSampleDistance(.1);
+        this->MapperRaycast->SetBlendModeToComposite();
+        this->MapperRaycast->SetSampleDistance(.1);
 
         vtkVolumeRayCastCompositeFunction  *compositeFunction=vtkVolumeRayCastCompositeFunction::New();
+        //compositeFunction->SetCompositeMethodToClassifyFirst();
         this->MapperRaycastHighDetail=vtkVolumeRayCastMapper::New();
         this->MapperRaycastHighDetail->SetVolumeRayCastFunction(compositeFunction);
+
         vtkImageShiftScale *converter=vtkImageShiftScale::New();
         converter->SetOutputScalarTypeToUnsignedChar();
         converter->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
@@ -77,7 +79,7 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
     //TODO This is not the right place for this
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     this->Gui->GetcurrentNode()->GetVolumeProperty()->ShadeOff();
-    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetInterpolationTypeToLinear();
+    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetInterpolationTypeToNearest();
     this->Volume->SetProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
 
     //this->Volume->SetMapper(this->MapperRaycastHighDetail);

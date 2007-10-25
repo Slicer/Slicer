@@ -56,7 +56,7 @@ protected:
     //Which time would we like to achieve
     double GoalLowResTime;
     //Area in which no change in Factor will be made.
-    int PercentageNoChange;
+    double PercentageNoChange;
     //How long to wait, before Rendering in High Resolution
     double TimeToWaitForHigherStage;
     //0 interactive, 1 High Resolution Texture VR, 2 SW Ray Cast
@@ -65,6 +65,7 @@ protected:
     int scheduled;
     //Flag if next Render is a High Resolution Render
     int NextRenderHighResolution;
+    int IgnoreStepZero;
     //BTX
     std::string EventHandlerID;
     //ETX

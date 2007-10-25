@@ -34,6 +34,15 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->currentStage=0;
     this->scheduled=0;
     this->EventHandlerID="";
+    this->InitialDropLowRes=0.2;
+    this->FactorLastLowRes=0;
+    this->LastTimeLowRes=0;
+    this->LastTimeHighRes=0;
+    this->GoalLowResTime=0.1;
+    this->PercentageNoChange=0.2;
+    this->TimeToWaitForHigherStage=0.1;
+    this->NextRenderHighResolution=0;
+    this->IgnoreStepZero=0;
 
 }
 
@@ -272,10 +281,16 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::StartEvent)
     {
-        //TODO what happens if volume==NULL and why does it happen?!
+        //It's the first time we render
+        if(this->FactorLastLowRes==0)
+        {
+            this->FactorLastLowRes=this->InitialDropLowRes;
+
+        }
         this->Gui->Script("puts \"startevent scheduled %d\"",this->scheduled);
         this->Gui->Script("puts \"startevent currentstage %d\"",this->currentStage);
         this->Gui->Script("puts \"startevent id %s\"",this->EventHandlerID.c_str());
+
         //it is not a scheduled event so we use stage 0
         if(this->scheduled==0)
         {
@@ -289,11 +304,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                 this->Gui->Script("puts \"ResultCancel: %s\"",result);
                 this->Gui->Script("puts \"Result info: %s\"",resulta);
                 this->EventHandlerID="";
-                //delete result;
-                //delete resulta;
-
-
-
             }
             if(currentStage==2)
             {
@@ -308,17 +318,37 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             {
                 return;
             }
+            //Time to adjust our Factor
+            if(this->LastTimeLowRes<(1-this->PercentageNoChange)*this->GoalLowResTime)
+            {
+                this->FactorLastLowRes+=0.2;
+
+            }
+            else if(this->LastTimeLowRes>(1+this->PercentageNoChange)*this->GoalLowResTime)
+            {
+                this->FactorLastLowRes-=0.2;
+            }
+            if(this->FactorLastLowRes<this->InitialDropLowRes)
+            {
+                this->FactorLastLowRes=this->InitialDropLowRes;
+            }
+            if(this->FactorLastLowRes>1)
+            {
+                this->FactorLastLowRes=1;
+                // Maxbe later
+                //this->IgnoreStepZero;
+            }
+            this->Gui->Script("puts \"NEWFACTORLASTLOWRES %f\"",this->FactorLastLowRes);
             timer->StartTimer();
             vtkRenderWindow *renWin=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
 
-            double factor=.2;
             //We don't like to see, what we are doing here
             renWin->SwapBuffersOff();
             //get the viewport renderer up
             this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
             this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
             //Change viewport(simulation of "sample distance for "rays"" if using texture mapping)
-            this->renViewport->SetViewport(0,0,factor,factor);
+            this->renViewport->SetViewport(0,0,this->FactorLastLowRes,this->FactorLastLowRes);
 
 
             //We are already in the Rendering Process
@@ -380,17 +410,16 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
 
 
         vtkRenderWindow *renWin=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
-        double factor=.2;
         //Get current size of window
         int *size=renWin->GetSize();
 
         //RGB Data from the smaller viewport
         vtkUnsignedCharArray *image=vtkUnsignedCharArray::New();
-        renWin->GetRGBACharPixelData(0,0,factor*size[0],factor*size[1],0,image);
+        renWin->GetRGBACharPixelData(0,0,this->FactorLastLowRes*size[0],this->FactorLastLowRes*size[1],0,image);
 
         vtkImageData *imageData=vtkImageData::New();
         imageData->GetPointData()->SetScalars(image);
-        imageData->SetDimensions(factor*size[0]+1,factor*size[1]+1,1);
+        imageData->SetDimensions(this->FactorLastLowRes*size[0]+1,this->FactorLastLowRes*size[1]+1,1);
         imageData->SetNumberOfScalarComponents(4);
         imageData->SetScalarTypeToUnsignedChar();
         imageData->SetOrigin(.0,.0,.0);
