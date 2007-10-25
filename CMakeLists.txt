@@ -155,7 +155,7 @@ ENDIF(USE_NAVITRACK)
 # IGSTK
 # Built in Slicer3-lib
 #
-OPTION(USE_IGSTK "Build Slicer3 with IGSTK support." ON)
+OPTION(USE_IGSTK "Build Slicer3 with IGSTK support." OFF)
 IF(USE_IGSTK)
   FIND_PACKAGE(IGSTK REQUIRED)
   INCLUDE(${IGSTK_USE_FILE})
