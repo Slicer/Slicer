@@ -353,8 +353,6 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             //Unpack the details frame
             this->UnpackLabelMapGUI();
             this->UnpackSvpGUI();
-
-            this->Helper->ShutdownPipeline();
             this->PreviousNS_ImageData="";
         }
         //Only proceed event,if new Node
@@ -582,11 +580,6 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
 
 void vtkVolumeRenderingModuleGUI::PackLabelMapGUI()
 {
-    if(this->Helper!=NULL)
-    {
-        this->Helper->Delete();
-        this->Helper=NULL;
-    }
     this->UnpackSvpGUI();
     this->Helper=vtkSlicerVRLabelmapHelper::New();
     this->Helper->Init(this);
@@ -604,18 +597,12 @@ void vtkVolumeRenderingModuleGUI::UnpackLabelMapGUI()
 
 void vtkVolumeRenderingModuleGUI::PackSvpGUI()
 {
-    if(this->Helper!=NULL)
-    {
-        this->Helper->Delete();
-        this->Helper=NULL;
-    }
     this->UnpackLabelMapGUI();
     this->Helper=vtkSlicerVRGrayscaleHelper::New();
     this->Helper->Init(this);
 }
 void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
 {
-
     if(this->Helper!=NULL)
     {
         this->Helper->Delete();

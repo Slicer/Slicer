@@ -40,7 +40,6 @@ protected:
     virtual void ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData);
 
     virtual void Rendering(void);
-    void CheckAbort(void);
-    int Scheduled;
+
 };
 #endif

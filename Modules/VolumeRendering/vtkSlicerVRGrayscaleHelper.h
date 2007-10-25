@@ -71,5 +71,8 @@ protected:
 
     void UpdateSVP(void);
 
+    void CheckAbort(void);
+    int Scheduled;
+
 };
 #endif

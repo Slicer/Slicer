@@ -39,6 +39,24 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
 
 vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
 {
+    //Remove Obersvers
+       this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+    //Only needed if using performance enhancement
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+     vtkKWRenderWidget *renderWidget=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer();
+    //Remove Observers
+
+
+    //Remove Volume
+
+    
     if(this->SVP_VolumeProperty!=NULL)
     {
         this->Gui->Script("pack forget %s",this->SVP_VolumeProperty->GetWidgetName());
@@ -166,9 +184,6 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     //TODO Dirty fix as Mapper
     if(this->Gui->GetcurrentNode()->GetMapper()==vtkMRMLVolumeRenderingNode::Texture)
     {
-        //this->mapper=vtkSlicerFixedPointVolumeRayCastMapper::New();
-        //vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->SetBlendModeToMaximumIntensity();
-        //vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(this->mapper)->Setlimit(1,2,3,4);
         this->MapperTexture=vtkVolumeTextureMapper3D::New();
         this->MapperTexture->SetSampleDistance(2);
         this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
@@ -227,27 +242,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
 }
 void vtkSlicerVRGrayscaleHelper::ShutdownPipeline(void)
 {
-    vtkKWRenderWidget *renderWidget=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer();
-    //Remove Observers
-    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-    //Only needed if using performance enhancement
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-
-    //Remove Volume
-    if(this->Volume!=NULL)
-    {
-        renderWidget->RemoveViewProp(this->Volume);
-        this->Volume->Delete();
-        this->Volume=NULL;
-        renderWidget->Render();
-    }
+   
     if(this->MapperRaycast!=NULL)
     {
         this->MapperRaycast->Delete();
@@ -578,4 +573,23 @@ void vtkSlicerVRGrayscaleHelper::UpdateGUIElements(void)
 {
     Superclass::UpdateGUIElements();
     this->UpdateSVP();
+}
+void vtkSlicerVRGrayscaleHelper::CheckAbort(void)
+{
+    int pending=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
+    if(pending!=0)
+    {
+        this->Gui->Script("puts \"got an abort\"");
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+        this->scheduled=0;
+        return;
+    }
+    int pendingGUI=vtkKWTkUtilities::CheckForPendingInteractionEvents(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow());
+    if(pendingGUI!=0)
+    {
+        this->Gui->Script("puts \"got an abort from gui\"");
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
+        this->scheduled=0;
+        return;
+    }
 }

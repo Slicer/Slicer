@@ -21,6 +21,9 @@ vtkSlicerVRHelper::~vtkSlicerVRHelper(void)
 {
     if(this->Volume!=NULL)
     {
+        vtkKWRenderWidget *renderWidget= this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer();
+        renderWidget->RemoveViewProp(this->Volume);
+        renderWidget->Render();
         this->Volume->Delete();
         this->Volume=NULL;
     }
@@ -38,30 +41,6 @@ void vtkSlicerVRHelper::Rendering()
 
 void vtkSlicerVRHelper::UpdateRendering()
 {
-}
-
-void vtkSlicerVRHelper::CheckAbort ()
-{
-    int pending=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
-    if(pending!=0)
-    {
-        this->Gui->Script("puts \"got an abort\"");
-        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
-        //Ensure that we are not scheduled
-        this->Scheduled=0;
-        //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
-        return;
-    }
-    int pendingGUI=vtkKWTkUtilities::CheckForPendingInteractionEvents(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow());
-    if(pendingGUI!=0)
-    {
-        this->Gui->Script("puts \"got an abort from gui\"");
-        //vtkErrorMacro("We got pending events");
-        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
-        this->Scheduled=0;
-        //this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
-        return;
-    }
 }
 
 void vtkSlicerVRHelper::ShutdownPipeline()
