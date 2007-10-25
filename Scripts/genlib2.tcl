@@ -292,8 +292,8 @@ if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
         eval runcmd $::MAKE
         eval runcmd $::MAKE install
 
-        file copy $SLICER_LIB/tcl/tk/generic/default.h $SLICER_LIB/tcl-build/include
-        file copy $SLICER_LIB/tcl/tk/unix/tkUnixDefault.h $SLICER_LIB/tcl-build/include
+        file copy -force $SLICER_LIB/tcl/tk/generic/default.h $SLICER_LIB/tcl-build/include
+        file copy -force $SLICER_LIB/tcl/tk/unix/tkUnixDefault.h $SLICER_LIB/tcl-build/include
     }
 }
 
