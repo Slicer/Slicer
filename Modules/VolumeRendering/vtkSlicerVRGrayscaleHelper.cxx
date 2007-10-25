@@ -39,7 +39,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->LastTimeLowRes=0;
     this->LastTimeHighRes=0;
     this->GoalLowResTime=0.1;
-    this->PercentageNoChange=0.2;
+    this->PercentageNoChange=0.4;
     this->TimeToWaitForHigherStage=0.1;
     this->NextRenderHighResolution=0;
     this->IgnoreStepZero=0;
@@ -294,6 +294,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         //it is not a scheduled event so we use stage 0
         if(this->scheduled==0)
         {
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using LowestResolution");
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,1);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,1);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
 
             //go back to stage 0;
             //Check if we have an Event Scheduled, if this is the case abort it
@@ -358,6 +362,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         //Stage 1
         if(this->currentStage==1)
         {
+   this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,1);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using Middle Resolution");
             this->Gui->Script("puts \"Stage 1 started\"");
             //Remove plane Renderer and get viewport Renderer Up
             this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
@@ -372,6 +380,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         //Stage 2
         if(this->currentStage==2)
         {
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using Highest Resolution");
             this->Gui->Script("puts \"Stage 2 started\"");
             this->Volume->SetMapper(this->MapperRaycast);
 
@@ -388,12 +400,18 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         {
             this->EventHandlerID=this->Gui->Script("after 100 %s ScheduleRender",this->GetTclName());
             this->Gui->Script("puts \"Stage 1 ended\"");
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
             return;
         }
         if(this->currentStage==2)
         {
             //We reached the highest Resolution, no scheduling
             this->Gui->Script("puts \"Stage 2 ended\"");
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,100);
             return;
         }
         if(this->RenderPlane==1)
@@ -405,6 +423,9 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             //It's time to start for the Scheduled Rendering
             this->EventHandlerID=this->Gui->Script("after 100 %s ScheduleRender",this->GetTclName());
             this->Gui->Script("puts \"Stage 0 ended\"");
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,1);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
             return;
         }
 

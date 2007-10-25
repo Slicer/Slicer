@@ -7,6 +7,7 @@
 class vtkSlicerLabelMapWidget;
 class vtkFixedPointVolumeRayCastMapper;
 class vtkVolumeRayCastMapper;
+class vtkKWVolumeMaterialPropertyWidget;
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRLabelmapHelper :public vtkSlicerVRHelper
 {
 public:
@@ -22,7 +23,7 @@ protected:
     vtkSlicerVRLabelmapHelper(const vtkSlicerVRLabelmapHelper&);//not implemented
     void operator=(const vtkSlicerVRLabelmapHelper&);//not implemented
 
-
+    vtkKWVolumeMaterialPropertyWidget *VMPW_Shading;
     vtkSlicerLabelMapWidget *LM_OptionTree;
     vtkFixedPointVolumeRayCastMapper *MapperRaycast;
     vtkVolumeRayCastMapper *MapperRaycastHighDetail;

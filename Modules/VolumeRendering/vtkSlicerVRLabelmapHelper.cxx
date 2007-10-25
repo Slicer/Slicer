@@ -10,12 +10,14 @@
 #include "vtkVolumeRayCastCompositeFunction.h"
 #include "vtkVolumeRayCastMapper.h"
 #include "vtkImageShiftScale.h"
+#include "vtkKWVolumeMaterialPropertyWidget.h"
 vtkCxxRevisionMacro(vtkSlicerVRLabelmapHelper, "$Revision: 1.46 $");
 vtkStandardNewMacro(vtkSlicerVRLabelmapHelper);
 vtkSlicerVRLabelmapHelper::vtkSlicerVRLabelmapHelper(void)
 {
     this->LM_OptionTree=NULL;
     this->MapperRaycast=NULL;
+    this->VMPW_Shading=NULL;
 }
 
 vtkSlicerVRLabelmapHelper::~vtkSlicerVRLabelmapHelper(void)
@@ -87,7 +89,7 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
     vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
     this->Volume->PokeMatrix(matrix);
-
+    this->VMPW_Shading->SetVolumeProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
     //For Performance
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->Volume);
     matrix->Delete();
@@ -97,6 +99,10 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
 void vtkSlicerVRLabelmapHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
     Superclass::Init(gui);
+    this->VMPW_Shading=vtkKWVolumeMaterialPropertyWidget::New();
+    this->VMPW_Shading->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+    this->VMPW_Shading->Create();
+    ((vtkSlicerApplication *)this->Gui->GetApplication())->Script("pack %s",this->VMPW_Shading->GetWidgetName());
     this->LM_OptionTree=vtkSlicerLabelMapWidget::New();
     this->LM_OptionTree->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
     this->LM_OptionTree->Create();
