@@ -44,7 +44,7 @@ class vtkKWMultiColumnListWithScrollbars;
 
 
 // Description:    
-// This class implements Slicer's Volumes GUI
+// This class implements Slicer's Volumes GUI.
 //
 class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
 {
