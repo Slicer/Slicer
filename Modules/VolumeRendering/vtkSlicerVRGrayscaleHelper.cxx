@@ -296,7 +296,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         if(this->scheduled==0)
         {
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using LowestResolution");
-            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,1);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,1);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
 
@@ -331,7 +331,12 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             }
             else if(this->LastTimeLowRes>(1+this->PercentageNoChange)*this->GoalLowResTime)
             {
-                this->FactorLastLowRes=sqrt((this->FactorLastLowRes*this->FactorLastLowRes)-0.2);
+                double tmp=(this->FactorLastLowRes*this->FactorLastLowRes-0.2);
+                if(tmp>0)
+                {
+                    this->FactorLastLowRes=sqrt(tmp);
+                }
+                
             }
             if(this->FactorLastLowRes<this->InitialDropLowRes)
             {

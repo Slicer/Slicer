@@ -12,8 +12,9 @@ public:
   //vtkTypeMacro(vtkSlicerNodeSelectorVolumeRenderingWidget,vtkSlicerNodeSelectorWidget);
   void PrintSelf(ostream& os, vtkIndent indent){}
     //BTX
-    void SetCondition(std::string con,bool modeCon)
+    void SetCondition(std::string con,int IsLM, bool modeCon)
     {
+        this->IsLabelmap=IsLM;
         this->Condition=con;
         this->ModeCondition=modeCon;
     }
@@ -31,6 +32,7 @@ protected:
     std::string Condition;
     //ETX
     bool ModeCondition;//if 1 use ==for condition if 0 use != for condition
+    int IsLabelmap;
     vtkMRMLScene *AdditionalMRMLScene;
     vtkSlicerNodeSelectorVolumeRenderingWidget();
     ~vtkSlicerNodeSelectorVolumeRenderingWidget();

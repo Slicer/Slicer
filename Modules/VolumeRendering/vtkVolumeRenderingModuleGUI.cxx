@@ -524,7 +524,7 @@ void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
     //Set the new condition
     if(this->NS_ImageData->GetSelected()!=NULL&&(this->NS_VolumeRenderingDataScene->GetCondition()!=this->NS_ImageData->GetSelected()->GetID()))
     {
-        this->NS_VolumeRenderingDataScene->SetCondition(this->NS_ImageData->GetSelected()->GetID(),true);
+        this->NS_VolumeRenderingDataScene->SetCondition(this->NS_ImageData->GetSelected()->GetID(),vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetLabelMap(),true);
         this->NS_VolumeRenderingDataScene->UpdateMenu();
     }
 
@@ -539,7 +539,8 @@ void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
 
     if(this->NS_ImageData->GetSelected()!=NULL)
     {
-        this->NS_VolumeRenderingDataSlicer->SetCondition(this->NS_ImageData->GetSelected()->GetID(),false);
+        this->NS_VolumeRenderingDataSlicer->SetCondition(this->NS_ImageData->GetSelected()->GetID(),vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetLabelMap(),false);
+        this->NS_VolumeRenderingDataSlicer->UpdateMenu();
     }
 
     //Disable/Enable after Volume is selected
@@ -561,6 +562,8 @@ void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
         this->NS_VolumeRenderingDataScene->EnabledOff();
         this->NS_VolumeRenderingDataSlicer->EnabledOff();
     }
+    //In presets always "None" is selected
+    this->NS_VolumeRenderingDataSlicer->SetSelected(NULL);
 }
 void vtkVolumeRenderingModuleGUI::SetViewerWidget(vtkSlicerViewerWidget *viewerWidget)
 {
