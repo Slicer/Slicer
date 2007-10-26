@@ -138,7 +138,7 @@ def ParseArgs ( ModuleArgs, ArgTags ):
 
     def CastArg (arg,argtag):
         if argtag == 'boolean':
-            if argval == 'true':
+            if arg == 'true':
                 argval = True
             else:
                 argval = False

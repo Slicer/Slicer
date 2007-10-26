@@ -640,15 +640,19 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
           }
         if ((*pit).GetTag() == "boolean")
           {
-          // booleans only have a flag (no value)
-          if ((*pit).GetDefault() == "true")
+          // booleans only have a flag (no value) in non-Python modules
+          if ( commandType != PythonModule )
             {
-            commandLineAsString.push_back(prefix + flag);
+            if ((*pit).GetDefault() == "true")
+              {
+              commandLineAsString.push_back(prefix + flag);
+              }
             }
-          if ( commandType == PythonModule )
+          else
             {
-            // For Python, if the flag is true, specify that
-            commandLineAsString.push_back ( "true" );
+            // For Python, if the flag is true or false, specify that
+            commandLineAsString.push_back ( prefix + flag );
+            commandLineAsString.push_back ( (*pit).GetDefault() );
             }
           continue;
           }
