@@ -60,6 +60,7 @@
 #include "itkGE5ImageIOFactory.h"
 #endif
 
+
 #include "itkArchetypeSeriesFileNames.h"
 #include "itkImage.h"
 #include "itkVector.h"
@@ -73,6 +74,8 @@
 #include "itkMetaImageIO.h"
 #include "itkNrrdImageIO.h"
 #include "itkGE5ImageIO.h"
+#include "itkBrains2MaskImageIOFactory.h"
+#include "itkBrains2MaskImageIO.h"
 #include "itkNiftiImageIO.h"
 #include "itkVTKImageIO.h"
 #include "itkTIFFImageIO.h"
@@ -124,6 +127,7 @@ vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
   itk::MutexLockHolder<itk::SimpleMutexLock> mutexHolder( mutex );
   if( firstTime )
     {
+    itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
     itk::ObjectFactoryBase::RegisterFactory( itk::GE5ImageIOFactory::New() );
     firstTime = false;
     }
