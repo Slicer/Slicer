@@ -2,7 +2,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkKWHistogram.h"
 #include "vtkKWHistogramSet.h"
-#include "vtkVolumeRenderingModuleGui.h"
+#include "vtkVolumeRenderingModuleGUI.h"
 #include "vtkVolume.h"
 #include "vtkVolumeTextureMapper3D.h"
 #include "vtkFixedPointVolumeRayCastMapper.h"

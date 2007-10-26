@@ -1,7 +1,7 @@
 #include "vtkSlicerVRLabelmapHelper.h"
 #include "vtkObjectFactory.h"
 #include "vtkMRMLScalarVolumeNode.h"
-#include "vtkVolumeRenderingModuleGui.h"
+#include "vtkVolumeRenderingModuleGUI.h"
 #include "vtkLabelMapPiecewiseFunction.h"
 #include "vtkLabelMapColorTransferFunction.h"
 #include "vtkFixedPointVolumeRayCastMapper.h"
