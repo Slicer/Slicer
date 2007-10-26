@@ -80,7 +80,7 @@ set ::CMAKE_TAG "CMake-2-4-2"
 set ::TEEM_TAG "Teem-1-9-0-patches"
 set ::KWWidgets_TAG "HEAD"
 set ::VTK_TAG "VTK-5-0"
-set ::ITK_TAG ITK-3-2
+set ::ITK_TAG ITK-3-4
 set ::TCL_TAG "core-8-4-6"
 set ::TK_TAG "core-8-4-6"
 set ::ITCL_TAG "itcl-3-2-1"
