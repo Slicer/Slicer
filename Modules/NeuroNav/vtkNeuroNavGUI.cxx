@@ -49,6 +49,9 @@ vtkStandardNewMacro (vtkNeuroNavGUI );
 vtkCxxRevisionMacro ( vtkNeuroNavGUI, "$Revision: 1.0 $");
 
 
+/* go redsox */
+
+
 //---------------------------------------------------------------------------
 vtkNeuroNavGUI::vtkNeuroNavGUI ( )
 {
