@@ -16,6 +16,7 @@
 #include "vtkImageGradientMagnitude.h"
 #include "vtkSlicerApplication.h"
 #include "vtkKWEvent.h"
+#include <math.h>
 
 
 
@@ -38,7 +39,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->FactorLastLowRes=0;
     this->LastTimeLowRes=0;
     this->LastTimeHighRes=0;
-    this->GoalLowResTime=0.1;
+    this->GoalLowResTime=0.06;
     this->PercentageNoChange=0.4;
     this->TimeToWaitForHigherStage=0.1;
     this->NextRenderHighResolution=0;
@@ -325,12 +326,12 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             //Time to adjust our Factor
             if(this->LastTimeLowRes<(1-this->PercentageNoChange)*this->GoalLowResTime)
             {
-                this->FactorLastLowRes+=0.2;
+                this->FactorLastLowRes=sqrt((this->FactorLastLowRes*this->FactorLastLowRes)+0.2);
 
             }
             else if(this->LastTimeLowRes>(1+this->PercentageNoChange)*this->GoalLowResTime)
             {
-                this->FactorLastLowRes-=0.2;
+                this->FactorLastLowRes=sqrt((this->FactorLastLowRes*this->FactorLastLowRes)-0.2);
             }
             if(this->FactorLastLowRes<this->InitialDropLowRes)
             {
