@@ -599,7 +599,12 @@ void vtkNeuroNavGUI::HandleMouseEvent(vtkSlicerInteractorStyle *style)
     vtkSlicerInteractorStyle *istyle2 = vtkSlicerInteractorStyle::SafeDownCast(appGUI->GetMainSliceGUI2()->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle());
 
     
-    ////////////////// comment
+    //
+    //
+    // So easy, a caveman can do it!
+    //
+    //
+
 
 
     vtkCornerAnnotation *anno = NULL;
