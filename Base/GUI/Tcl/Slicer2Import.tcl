@@ -306,12 +306,18 @@ proc ImportNodeVolume {node} {
   }
 
   if { [info exists n(applyThreshold)] && ( $n(applyThreshold) == "yes" || $n(applyThreshold) == "true" ) } {
-    $volumeDisplayNode SetApplyThreshold 1
+      if { [$volumeDisplayNode IsA "vtkMRMLScalarVolumeDisplayNode"] } {
+          $volumeDisplayNode SetApplyThreshold 1
+      } else {
+          puts "Slicer2Import.tcl: ImportNodeVolume Can't set apply threshold, $volumeDisplayNode is a [$volumeDisplayNode GetClassName] rather than a vtkMRMLScalarVolumeDisplayNode"
+      }
   }
-  $volumeDisplayNode SetWindow $n(window)
-  $volumeDisplayNode SetLevel $n(level)
-  $volumeDisplayNode SetLowerThreshold $n(lowerThreshold)
-  $volumeDisplayNode SetUpperThreshold $n(upperThreshold)
+  if { [$volumeDisplayNode IsA "vtkMRMLScalarVolumeDisplayNode"] } {
+    $volumeDisplayNode SetWindow $n(window)
+    $volumeDisplayNode SetLevel $n(level)
+    $volumeDisplayNode SetLowerThreshold $n(lowerThreshold)
+    $volumeDisplayNode SetUpperThreshold $n(upperThreshold)
+  }
 
   set logic [$::slicer3::VolumesGUI GetLogic]
   $logic SetActiveVolumeNode $volumeNode
