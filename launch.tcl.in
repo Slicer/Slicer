@@ -291,11 +291,23 @@ proc launch_SetPaths {} {
 # optional - show splash screen
 #
 proc launch_SplashScreen {} {
+
   if { $::LAUNCH(showSplash) } {
+
+    # mac os 10.5 now has a /tmp/lanch-xxxx:0 syntax for the DISPLAY
+    # variable which is not compatible with the tclkit - change to :0 sytle
+    if { [string match -nocase "Darwin" $::tcl_platform(os)] &&
+        [string index $::env(DISPLAY) 0] == "/" } {
+      set colon [string last ":" $::env(DISPLAY)]
+      set ::env(DISPLAY) [string range $::env(DISPLAY) $colon end]
+    }
+
     package require Tk
     wm withdraw .
     launch_SplashShow
   }
+  
+  # windows always has a display, so get rid of the default window
   if { [string match -nocase "windows*" $::tcl_platform(os)] } {
     wm withdraw .
   }
