@@ -51,11 +51,17 @@ extern __FILE    _iob[_NFILE];
 #define stderr stderr
 #endif
 
-/* For Mac */
-#if defined(__MACH__)
+#ifdef __APPLE_CC__
+# include <AvailabilityMacros.h>
+# ifdef MAC_OS_X_VERSION_10_5 /* Not defined for pre-leopard versions */
+#define stdin __stdinp
+#define stdout __stdoutp
+#define stderr __stderrp
+# else
 #define stdin   (&__sF[0])
 #define stdout  (&__sF[1])
 #define stderr  (&__sF[2])
+#endif
 #endif
 
 /* For Windows */
