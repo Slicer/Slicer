@@ -249,6 +249,10 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
 
     //set subnodes
     //Delete frames
+    if ( this->GetApplicationGUI() &&  this->GetApplicationGUI()->GetMRMLScene())
+    {
+        this->GetApplicationGUI()->GetMRMLScene()->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
+    }
     loadSaveDataFrame->Delete();
     this->Built=true;
 }
@@ -436,6 +440,21 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
 }
 void vtkVolumeRenderingModuleGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
 {
+    if (event == vtkMRMLScene::SceneCloseEvent)
+    {
+        if(this->Helper!=NULL)
+        {
+            this->Helper->Delete();
+            this->Helper=NULL;
+        }
+        //Reset every Node related stuff
+        this->PreviousNS_ImageData="";
+        this->PreviousNS_VolumeRenderingDataScene="";
+        this->PreviousNS_VolumeRenderingSlicer="";
+        this->currentNode=NULL;
+        this->UpdateGUI();
+
+    }
 }
 
 void vtkVolumeRenderingModuleGUI::Enter(void)
@@ -616,7 +635,7 @@ void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
 
 void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
 {
- //TODO move this part
+    //TODO move this part
     this->currentNode=vtkMRMLVolumeRenderingNode::New();
     this->currentNode->HideFromEditorsOff();
     //Add Node to Scene

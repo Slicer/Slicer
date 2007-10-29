@@ -50,7 +50,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
 vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
 {
     //Remove Obersvers
-       this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
@@ -60,13 +60,13 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
     //Only needed if using performance enhancement
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-     vtkKWRenderWidget *renderWidget=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer();
+    vtkKWRenderWidget *renderWidget=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer();
     //Remove Observers
 
 
     //Remove Volume
 
-    
+
     if(this->SVP_VolumeProperty!=NULL)
     {
         this->Gui->Script("pack forget %s",this->SVP_VolumeProperty->GetWidgetName());
@@ -85,11 +85,7 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->Histograms=NULL;
     }
     //Don't delete the renViewport(allocated in Outside)
-    if(this->renPlane!=NULL)
-    {
-        this->renPlane->Delete();
-        this->renPlane=NULL;
-    }
+
     if(this->MapperTexture!=NULL)
     {
         this->MapperTexture->Delete();
@@ -99,6 +95,25 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
     {
         this->MapperRaycast->Delete();
         this->MapperRaycast=NULL;
+    }
+
+    //Ensure that Render is back to normal
+    vtkRenderWindow *renWin=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
+    //get the viewport renderer up
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
+    //this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("");
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,0);
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,0);
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,0);
+    //Change viewport(simulation of "sample distance for "rays"" if using texture mapping)
+    this->renViewport->SetViewport(0,0,1,1);
+    renWin->SwapBuffersOn();
+
+    if(this->renPlane!=NULL)
+    {
+        this->renPlane->Delete();
+        this->renPlane=NULL;
     }
     if(this->timer!=NULL)
     {
@@ -252,7 +267,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
 }
 void vtkSlicerVRGrayscaleHelper::ShutdownPipeline(void)
 {
-   
+
     if(this->MapperRaycast!=NULL)
     {
         this->MapperRaycast->Delete();
@@ -337,7 +352,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                 {
                     this->FactorLastLowRes=sqrt(tmp);
                 }
-                
+
             }
             if(this->FactorLastLowRes<this->InitialDropLowRes)
             {
@@ -369,7 +384,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         //Stage 1
         if(this->currentStage==1)
         {
-   this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,1);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using Middle Resolution");
@@ -598,7 +613,7 @@ void vtkSlicerVRGrayscaleHelper::ScheduleRender(void)
 
 void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
 {
-        //First check if we have a SVP
+    //First check if we have a SVP
     if(this->SVP_VolumeProperty==NULL)
     {
         vtkErrorMacro("SVP does not exist");
