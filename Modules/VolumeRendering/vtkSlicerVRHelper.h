@@ -3,6 +3,14 @@
 
 #include "vtkVolumeRenderingModule.h"
 #include "vtkKWObject.h"
+
+# define vtkSlicerVRHelperDebug(message,format)                                        \
+  {                                                                             \
+  if (this->GetDebug())                                                         \
+    {                                                                           \
+        this->Script("puts \""message"\"",format);                                    \
+    }                                                                           \
+  }
 class vtkVolumeRenderingModuleGUI;
 class vtkCallbackCommand;
 class vtkVolume;

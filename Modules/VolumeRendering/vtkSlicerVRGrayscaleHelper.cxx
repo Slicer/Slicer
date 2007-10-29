@@ -24,6 +24,7 @@ vtkCxxRevisionMacro(vtkSlicerVRGrayscaleHelper, "$Revision: 1.46 $");
 vtkStandardNewMacro(vtkSlicerVRGrayscaleHelper);
 vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
 {
+    this->DebugOn();
     this->Histograms=NULL;
     this->SVP_VolumeProperty=NULL;
     this->renViewport=NULL;
@@ -303,9 +304,9 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->FactorLastLowRes=this->InitialDropLowRes;
 
         }
-        this->Gui->Script("puts \"startevent scheduled %d\"",this->scheduled);
-        this->Gui->Script("puts \"startevent currentstage %d\"",this->currentStage);
-        this->Gui->Script("puts \"startevent id %s\"",this->EventHandlerID.c_str());
+        vtkSlicerVRHelperDebug("startevent scheduled %d",this->scheduled);
+        vtkSlicerVRHelperDebug("startevent currentstage %d",this->currentStage);
+        vtkSlicerVRHelperDebug("startevent id %s",this->EventHandlerID.c_str());
 
         //it is not a scheduled event so we use stage 0
         if(this->scheduled==0)
@@ -322,8 +323,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             {
                 const char* result=this->Gui->Script("after cancel %s",this->EventHandlerID.c_str());
                 const char* resulta=this->Gui->Script("after info");
-                this->Gui->Script("puts \"ResultCancel: %s\"",result);
-                this->Gui->Script("puts \"Result info: %s\"",resulta);
+                vtkSlicerVRHelperDebug("ResultCancel: %s",result);
+                vtkSlicerVRHelperDebug("Result info: %s",resulta);
                 this->EventHandlerID="";
             }
             if(currentStage==2)
@@ -333,7 +334,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             //always got to less sample distance
             this->MapperTexture->SetSampleDistance(2);
             this->currentStage=0;
-            this->Gui->Script("puts \"Stage 0 started\"");
+            vtkSlicerVRHelperDebug("Stage 0 started","");
             //Decide if we REnder plane or not
             if(this->RenderPlane==1)
             {
@@ -364,7 +365,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                 // Maxbe later
                 //this->IgnoreStepZero;
             }
-            this->Gui->Script("puts \"NEWFACTORLASTLOWRES %f\"",this->FactorLastLowRes);
+            vtkSlicerVRHelperDebug("NEWFACTORLASTLOWRES %f",this->FactorLastLowRes);
             timer->StartTimer();
             vtkRenderWindow *renWin=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
 
@@ -388,7 +389,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,1);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using Middle Resolution");
-            this->Gui->Script("puts \"Stage 1 started\"");
+            vtkSlicerVRHelperDebug("Stage 1 started","");
             //Remove plane Renderer and get viewport Renderer Up
             this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
             this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
@@ -406,7 +407,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using Highest Resolution");
-            this->Gui->Script("puts \"Stage 2 started\"");
+            vtkSlicerVRHelperDebug("Stage 2 started","");
             this->Volume->SetMapper(this->MapperRaycast);
 
             this->EventHandlerID="";
@@ -416,12 +417,12 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::EndEvent)
     {
-        this->Gui->Script("puts \"endevent scheduled %d\"",this->scheduled);
-        this->Gui->Script("puts \"endevent currentstage %d\"",this->currentStage);
+        vtkSlicerVRHelperDebug("endevent scheduled %d",this->scheduled);
+        vtkSlicerVRHelperDebug("endevent currentstage %d",this->currentStage);
         if(this->currentStage==1)
         {
             this->EventHandlerID=this->Gui->Script("after 100 %s ScheduleRender",this->GetTclName());
-            this->Gui->Script("puts \"Stage 1 ended\"");
+            vtkSlicerVRHelperDebug("Stage 1 ended","");
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
@@ -430,7 +431,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         if(this->currentStage==2)
         {
             //We reached the highest Resolution, no scheduling
-            this->Gui->Script("puts \"Stage 2 ended\"");
+            vtkSlicerVRHelperDebug("Stage 2 ended","");
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,100);
@@ -441,10 +442,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->RenderPlane=0;
             this->timer->StopTimer();
             this->LastTimeLowRes=this->timer->GetElapsedTime();
-            this->Gui->Script("puts %f",this->LastTimeLowRes);
+            vtkSlicerVRHelperDebug("Last time low %f",this->LastTimeLowRes);
             //It's time to start for the Scheduled Rendering
             this->EventHandlerID=this->Gui->Script("after 100 %s ScheduleRender",this->GetTclName());
-            this->Gui->Script("puts \"Stage 0 ended\"");
+            vtkSlicerVRHelperDebug("Stage 0 ended","");
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,1);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
@@ -641,7 +642,7 @@ void vtkSlicerVRGrayscaleHelper::CheckAbort(void)
     int pending=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
     if(pending!=0)
     {
-        this->Gui->Script("puts \"got an abort\"");
+        vtkSlicerVRHelperDebug("got an abort","");
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
         this->scheduled=0;
         return;
@@ -649,7 +650,7 @@ void vtkSlicerVRGrayscaleHelper::CheckAbort(void)
     int pendingGUI=vtkKWTkUtilities::CheckForPendingInteractionEvents(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow());
     if(pendingGUI!=0)
     {
-        this->Gui->Script("puts \"got an abort from gui\"");
+        vtkSlicerVRHelperDebug("got an abort from gui","");
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
         this->scheduled=0;
         return;

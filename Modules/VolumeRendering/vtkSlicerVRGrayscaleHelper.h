@@ -5,6 +5,8 @@
 #include "vtkSlicerVRHelper.h"
 #include <string>
 
+                                                                       
+
 class vtkKWHistogramSet;
 class vtkSlicerVolumePropertyWidget;
 class vtkRenderer;
