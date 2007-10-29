@@ -20,10 +20,10 @@
 #include "vtkImageData.h"
 #include "SeedingCLP.h"
 #include "vtkSeedTracts.h"
-#include "vtkPolyDataWriter.h"
+#include "vtkXMLPolyDataWriter.h"
 #include "vtkMath.h"
 #include "vtkImageThreshold.h"
-
+#include "vtkImageWriter.h"
 
 int main( int argc, const char * argv[] )
 {
@@ -37,6 +37,16 @@ int main( int argc, const char * argv[] )
   if ( reader->GetOutput()->GetPointData()->GetTensors() == NULL )
     {
     std::cerr << argv[0] << ": No tensor data" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  vtkNRRDReader *reader2 = vtkNRRDReader::New();
+  reader2->SetFileName(InputROI.c_str());
+  reader2->Update();
+  
+  if ( reader2->GetOutput()->GetPointData()->GetScalars() == NULL )
+    {
+    std::cerr << argv[0] << ": No roi data" << std::endl;
     return EXIT_FAILURE;
     }
     
@@ -96,6 +106,7 @@ int main( int argc, const char * argv[] )
   vtkDiffusionTensorMathematics *math = vtkDiffusionTensorMathematics::New();
   math->SetInput(0, reader->GetOutput());
   math->SetInput(1, reader->GetOutput());
+  math->SetScalarMask(reader2->GetOutput());
   math->SetOperationToLinearMeasure();
   math->Update();
   
@@ -108,6 +119,13 @@ int main( int argc, const char * argv[] )
   th->ReplaceOutOn();
   th->SetOutputScalarTypeToShort();
   th->Update();
+  /**
+  vtkImageWriter *tmp = vtkImageWriter::New();
+  tmp->SetInput( th->GetOutput() );
+  tmp->SetFilePrefix("C:/Temp/test");
+  tmp->SetFilePattern("%s.%03d");
+  tmp->Write();
+  **/
   
   //PENDING: Do merging with input ROI
   
@@ -156,18 +174,29 @@ int main( int argc, const char * argv[] )
   //5. Run the thing
   seed->SeedStreamlinesInROI();
   
-  //6. Extract PolyData in RAS
+  //6. Extra5ct PolyData in RAS
   vtkPolyData *outFibers = vtkPolyData::New();
   seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
   
   //Save result
-  vtkPolyDataWriter *writer = vtkPolyDataWriter::New();
+  vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
   writer->SetFileName(OutputFibers.c_str());
-  writer->SetFileTypeToBinary();
+  //writer->SetFileTypeToBinary();
   writer->SetInput(outFibers);
   writer->Write();
 
   // Delete everything: Still trying to figure out what is going on
-
+  reader->Delete();
+  outFibers->Delete();
+  seed->Delete();
+  TensorRASToIJK->Delete();
+  TensorRASToIJKRotation->Delete();
+  math->Delete();
+  th->Delete();
+  trans2->Delete();
+  trans->Delete();
+  streamer->Delete();
+  reader2->Delete();
+  writer->Delete();
   return EXIT_SUCCESS;
 }

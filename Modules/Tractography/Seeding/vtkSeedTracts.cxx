@@ -88,7 +88,8 @@ vtkSeedTracts::~vtkSeedTracts()
   this->ROIToWorld->Delete();
   this->ROI2ToWorld->Delete();
   this->WorldToTensorScaledIJK->Delete();
-  
+  this->TensorRotationMatrix->Delete();
+
   // volumes
   if (this->InputTensorField) this->InputTensorField->Delete();
   if (this->InputROI) this->InputROI->Delete();
@@ -675,7 +676,7 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
   vtkSmartPointer<vtkTransformPolyDataFilter> transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   transform->SetMatrix(this->WorldToTensorScaledIJK->GetMatrix());
   transform->Inverse();
-  transformer=vtkTransformPolyDataFilter::New();
+  //transformer=vtkTransformPolyDataFilter::New();
   transformer->SetTransform(transform);
   
   vtkHyperStreamline *streamline;
@@ -692,11 +693,12 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
   vtkPoints *points = vtkPoints::New();
   outFibers->SetPoints(points);
   points->Delete();
-  outFibers->GetPoints()->SetNumberOfPoints(npts);
+  //outFibers->GetPoints()->SetNumberOfPoints(npts);
   vtkIdTypeArray *cellArray;
   vtkCellArray *outFibersCellArray = vtkCellArray::New();
   outFibers->SetLines(outFibersCellArray);
   outFibersCellArray->Delete();
+  outFibersCellArray->SetNumberOfCells(this->Streamlines->GetNumberOfItems());
   outFibersCellArray = outFibers->GetLines();
   cellArray=outFibersCellArray->GetData();
   cellArray->SetNumberOfTuples(npts+ncells);
@@ -709,6 +711,8 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
 
   int ptId=0;
   int cellId=0;
+  int ptOffset = 0;
+  vtkIdType cellIndex;
   for (int i=0; i<this->Streamlines->GetNumberOfItems(); i++)
     {
     streamline = static_cast<vtkHyperStreamline*> (this->Streamlines->GetItemAsObject(i));
@@ -722,11 +726,17 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
       ptId++;
       }
     vtkIdTypeArray *cellArrayTransf = transformer->GetOutput()->GetLines()->GetData(); 
-    for (int k=0; k<cellArrayTransf->GetNumberOfTuples(); k++)
+    cellIndex = cellArrayTransf->GetNumberOfTuples()-1;
+    cellArray->SetTupleValue(cellId, &cellIndex);
+    cellId++;
+    for (int k=1; k<cellArrayTransf->GetNumberOfTuples(); k++)
       {
-      cellArray->InsertNextValue(cellArrayTransf->GetValue(k));
+      //cellArray->InsertNextValue(ptOffset+cellArrayTransf->GetValue(k));
+      cellIndex = ptOffset+cellArrayTransf->GetValue(k);
+      cellArray->SetTupleValue(cellId, &cellIndex);
       cellId++;
       }
+    ptOffset += transformer->GetOutput()->GetNumberOfPoints();
 
     // transform any tensors as well (rotate them)
     // this should be a vtk class but leave that for slicer3/vtk5
@@ -734,9 +744,9 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
     // -------------------------------------------------
     vtkDebugMacro("Rotating tensors");
     int numPts = transformer->GetOutput()->GetNumberOfPoints();
-    vtkFloatArray *newTensors = vtkFloatArray::New();
-    newTensors->SetNumberOfComponents(9);
-    newTensors->Allocate(9*numPts);
+    //vtkFloatArray *newTensors = vtkFloatArray::New();
+    //newTensors->SetNumberOfComponents(9);
+    //newTensors->Allocate(9*numPts);
                           
     vtkDebugMacro("Rotating tensors: init");
     double (*matrix)[4] = this->TensorRotationMatrix->Element;

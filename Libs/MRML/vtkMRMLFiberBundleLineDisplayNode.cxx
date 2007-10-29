@@ -147,6 +147,7 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
       if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
         {
         this->ScalarVisibilityOn( );
+        this->TensorToColor->SetExtractScalar(1);
 
         switch ( DTDisplayNode->GetColorGlyphBy( ))
           {
@@ -202,6 +203,7 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
             {
             vtkErrorMacro("coloring with relative anisotropy");
             this->ScalarVisibilityOff( );
+            this->TensorToColor->SetExtractScalar(0);
             }
             break;
             

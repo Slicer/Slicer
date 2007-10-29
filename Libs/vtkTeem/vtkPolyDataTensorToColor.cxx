@@ -197,8 +197,8 @@ int vtkPolyDataTensorToColor::RequestData(
   m[0] = m0; m[1] = m1; m[2] = m2; 
   v[0] = v0; v[1] = v1; v[2] = v2; 
 
-  if ((this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES) || 
-       (inScalars && (this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS))  )
+  if (this->ExtractScalar && ((this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES) || 
+       (inScalars && (this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS)))  )
     {
     newScalars = vtkFloatArray::New();
     newScalars->Allocate(numPts);

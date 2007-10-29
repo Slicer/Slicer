@@ -102,7 +102,6 @@ public:
   // Description:
   // All of the widgets used in this widget
   vtkKWMenuButtonWithLabel  *GlyphGeometryMenu;
-  vtkKWMenuButtonWithLabel  *GlyphColorMenu;
 
   //vtkKWCheckButtonWithLabel *VisibilityButton;
   //vtkKWCheckButtonWithLabel *ScalarVisibilityButton;
@@ -125,7 +124,6 @@ public:
 
   //BTX
   std::map <std::string, int> GlyphGeometryMap;
-  std::map <std::string, int> GlyphColorMap;
   std::map <std::string, int> GlyphEigenvectorMap;
   //ETX
 

@@ -99,9 +99,7 @@ public:
   vtkKWScaleWithLabel  *OpacityScale;
   vtkKWChangeColorButton *ChangeColorButton;
 
-  vtkKWCheckButtonWithLabel *LineVisibilityButton;
-  vtkKWCheckButtonWithLabel *TubeVisibilityButton;
-  vtkKWCheckButtonWithLabel *GlyphVisibilityButton;
+  vtkKWCheckButtonWithLabel *VisibilityButton;
 
   vtkSlicerDiffusionTensorGlyphDisplayWidget *GlyphDisplayWidget;
 
@@ -113,12 +111,18 @@ public:
   vtkMRMLFiberBundleDisplayNode* FiberBundleLineDisplayNode;
   vtkMRMLFiberBundleDisplayNode* FiberBundleTubeDisplayNode;
   vtkMRMLFiberBundleDisplayNode* FiberBundleGlyphDisplayNode;
-  
+
+  vtkMRMLFiberBundleDisplayNode* GetCurrentDisplayNode();
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetCurrentDTDisplayPropertyNode();
+
   vtkKWMenuButtonWithLabel *GeometryMenu;
   vtkKWFrameWithLabel *DisplayFrame;
+  vtkKWMenuButtonWithLabel  *GeometryColorMenu;
+
   
 //BTX
   std::string CurrentGeometry;
+  std::map <std::string, int> GeometryColorMap;
 //ETX
   
 private:

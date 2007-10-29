@@ -26,7 +26,6 @@ vtkSlicerDiffusionTensorGlyphDisplayWidget::vtkSlicerDiffusionTensorGlyphDisplay
 
     //this->VisibilityButton = NULL;
     this->GlyphGeometryMenu = NULL;
-    this->GlyphColorMenu = NULL;
     this->LineGlyphEigenvectorMenu = NULL;
     this->TubeGlyphEigenvectorMenu = NULL;
 
@@ -53,12 +52,6 @@ vtkSlicerDiffusionTensorGlyphDisplayWidget::~vtkSlicerDiffusionTensorGlyphDispla
     this->GlyphGeometryMenu->SetParent(NULL);
     this->GlyphGeometryMenu->Delete();
     this->GlyphGeometryMenu = NULL;
-    }
-  if (this->GlyphColorMenu)
-    {
-    this->GlyphColorMenu->SetParent(NULL);
-    this->GlyphColorMenu->Delete();
-    this->GlyphColorMenu = NULL;
     }
   if (this->LineGlyphEigenvectorMenu)
     {
@@ -166,22 +159,6 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject
     vtkErrorWithObjectMacro(this,"Process WIDGET... Events, display node glyph set!  ;)");
     return;
     }
-
-  // process glyph color menu events
-  vtkKWMenu *colorMenuButton = 
-      vtkKWMenu::SafeDownCast(caller);
-  if (colorMenuButton == this->GlyphColorMenu->GetWidget()->GetMenu())
-    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, color menu event!  ;)" << event);
-
-  if (colorMenuButton == this->GlyphColorMenu->GetWidget()->GetMenu() && 
-        event == vtkKWMenu::MenuItemInvokedEvent)
-    {
-    displayNode->SetColorGlyphBy(this->GlyphColorMap[std::string(this->GlyphColorMenu->GetWidget()->GetValue())]);
-    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, display node glyph color set!  ;)");
-    return;
-    }
-
-  // advanced frame
 
   // process glyph scale events
   vtkKWScale *glyphScale = vtkKWScale::SafeDownCast(caller);
@@ -347,7 +324,6 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::UpdateWidget()
       {
       //this->VisibilityButton->GetWidget()->SetSelectedState(displayNode->GetVisibility());
       this->GlyphGeometryMenu->GetWidget()->SetValue(displayNode->GetGlyphGeometryAsString());
-      this->GlyphColorMenu->GetWidget()->SetValue(displayNode->GetColorGlyphByAsString());
       this->LineGlyphEigenvectorMenu->GetWidget()->SetValue(displayNode->GetGlyphEigenvectorAsString());
 
       this->TubeGlyphEigenvectorMenu->GetWidget()->SetValue(displayNode->GetGlyphEigenvectorAsString());
@@ -383,7 +359,6 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::UpdateMRML()
       {
       //displayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
       displayNode->SetGlyphGeometry(this->GlyphGeometryMap[std::string(this->GlyphGeometryMenu->GetWidget()->GetValue())]);
-      displayNode->SetColorGlyphBy(this->GlyphColorMap[std::string(this->GlyphColorMenu->GetWidget()->GetValue())]);
       displayNode->SetGlyphEigenvector(this->GlyphEigenvectorMap[std::string(this->LineGlyphEigenvectorMenu->GetWidget()->GetValue())]);
       displayNode->SetGlyphScaleFactor(this->GlyphScale->GetWidget()->GetValue());
       displayNode->SetTubeGlyphNumberOfSides((int) this->TubeNumberOfSidesScale->GetWidget()->GetValue());
@@ -403,7 +378,6 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::AddWidgetObservers ( ) {
   //this->Superclass::AddWidgetObservers();
 
   this->GlyphGeometryMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GlyphColorMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LineGlyphEigenvectorMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->TubeGlyphEigenvectorMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -422,7 +396,6 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::RemoveWidgetObservers ( ) {
   //this->Superclass::RemoveWidgetObservers();
 
   this->GlyphGeometryMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GlyphColorMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LineGlyphEigenvectorMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->TubeGlyphEigenvectorMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -507,36 +480,6 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
   glyphMenuButton->SetLabelText("Glyph Type");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                glyphMenuButton->GetWidgetName());
-
-
-  // glyph color menu
-  vtkKWMenuButtonWithLabel *colorMenuButton = 
-    vtkKWMenuButtonWithLabel::New();
-
-  this->GlyphColorMenu = colorMenuButton;
-  colorMenuButton->SetParent( frame->GetFrame() );
-  colorMenuButton->Create();
-
-  // initialize color menu
-  initIdx = propNode->GetFirstColorGlyphBy();
-  endIdx = propNode->GetLastColorGlyphBy();
-  currentVal = propNode->GetColorGlyphBy();
-  this->GlyphColorMap.clear();
-  for (k=initIdx ; k<=endIdx ; k++)
-    {
-    propNode->SetColorGlyphBy(k);
-    const char *tag = propNode->GetColorGlyphByAsString();
-    this->GlyphColorMap[std::string(tag)]=k;
-    colorMenuButton->GetWidget()->GetMenu()->AddRadioButton(tag);
-    }
-  // init to class default value
-  propNode->SetColorGlyphBy(currentVal);
-  colorMenuButton->GetWidget()->SetValue(propNode->GetColorGlyphByAsString());
-
-  // pack color menu
-  colorMenuButton->SetLabelText("Glyph Color");
-  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-               colorMenuButton->GetWidgetName());
 
 
   // ---

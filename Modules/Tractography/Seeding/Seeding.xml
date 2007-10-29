@@ -26,13 +26,14 @@
       <description>Input DTI volume</description>
     </image>
     
-    <!-- <image type ="label">
+    <image type ="label">
       <name>InputROI</name>
       <label>Input ROI</label>
       <channel>input</channel>
       <index>1</index>
       <description>Label map with seeding ROIs</description>
-    </image> -->
+    </image> 
+
     <geometry type = "fiberbundle">
       <name>OutputFibers</name>
       <label>Output Fiber bundle</label>
