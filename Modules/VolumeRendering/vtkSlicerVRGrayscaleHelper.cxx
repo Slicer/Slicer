@@ -300,6 +300,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,1);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
 
+
             //go back to stage 0;
             //Check if we have an Event Scheduled, if this is the case abort it
             if(strcmp(this->EventHandlerID.c_str(),"")!=0)
@@ -602,27 +603,17 @@ void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
     {
         vtkErrorMacro("SVP does not exist");
     }
-    vtkTimerLog *timer=vtkTimerLog::New();
-    timer->StartTimer();
     //First of all set New Property, Otherwise all Histograms will be overwritten
     //First check if we really need to update
     if(this->SVP_VolumeProperty->GetVolumeProperty()==this->Gui->GetcurrentNode()->GetVolumeProperty())
     {
+        this->AdjustMapping();
         this->SVP_VolumeProperty->Update();
-        timer->StopTimer();
-        vtkErrorMacro("Update SVP calculated in "<<timer->GetElapsedTime()<<"seconds");
-        timer->Delete();
         return;
     }
     this->SVP_VolumeProperty->SetVolumeProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
     this->SVP_VolumeProperty->SetHSVColorSelectorVisibility(1);
-
-    //Adjust mapping
-    //this->AdjustMapping();
     this->SVP_VolumeProperty->Update();
-    timer->StopTimer();
-    vtkDebugMacro("Update SVP calculated in "<<timer->GetElapsedTime()<<"seconds");
-    timer->Delete();
 }
 
 void vtkSlicerVRGrayscaleHelper::UpdateGUIElements(void)
@@ -648,4 +639,20 @@ void vtkSlicerVRGrayscaleHelper::CheckAbort(void)
         this->scheduled=0;
         return;
     }
+}
+void vtkSlicerVRGrayscaleHelper::AdjustMapping(){
+
+    //Update Color    
+    vtkColorTransferFunction *functionColor=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetRGBTransferFunction();
+    double rangeNew[2];
+    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(rangeNew);
+    functionColor->AdjustRange(rangeNew);
+
+    //Update Opacity
+    vtkPiecewiseFunction *function=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetScalarOpacity();
+    function->AdjustRange(rangeNew);
+    //Update
+    function=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetGradientOpacity();
+    this->Histograms->GetHistogramWithName("0gradient")->GetRange(rangeNew);
+    function->AdjustRange(rangeNew);
 }

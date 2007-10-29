@@ -336,6 +336,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
         }
         //Remove Text from Entry
         this->EWL_CreateNewVolumeRenderingNode->GetWidget()->SetValue("");
+        this->NS_VolumeRenderingDataScene->UpdateMenu();
     }
     //
     // End Check PushButtons

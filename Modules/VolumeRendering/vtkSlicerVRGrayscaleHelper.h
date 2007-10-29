@@ -75,5 +75,6 @@ protected:
     void CheckAbort(void);
     int Scheduled;
 
+    void AdjustMapping();
 };
 #endif
