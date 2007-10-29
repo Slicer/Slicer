@@ -853,23 +853,14 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         {
         displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
         }
-      
+      }
+    else
+      {
+      displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(disp);
       }
     if (displayNode)
       {
-      vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
-      if (colorLogic)
-        {
-        if (isLabelMap)
-          {
-          displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
-          }
-        else
-          {
-          displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
-          }
-        colorLogic->Delete();
-        }
+      displayNode->SetDefaultColorMap();
       } 
     if (svnd)
       {
