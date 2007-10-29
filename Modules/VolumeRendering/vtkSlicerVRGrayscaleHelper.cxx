@@ -39,7 +39,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->FactorLastLowRes=0;
     this->LastTimeLowRes=0;
     this->LastTimeHighRes=0;
-    this->GoalLowResTime=0.06;
+    this->GoalLowResTime=0.05;
     this->PercentageNoChange=0.4;
     this->TimeToWaitForHigherStage=0.1;
     this->NextRenderHighResolution=0;
@@ -667,7 +667,10 @@ void vtkSlicerVRGrayscaleHelper::AdjustMapping(){
     vtkPiecewiseFunction *function=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetScalarOpacity();
     function->AdjustRange(rangeNew);
     //Update
+    rangeNew[0]/=4;
+    rangeNew[1]/=4;
     function=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetGradientOpacity();
-    this->Histograms->GetHistogramWithName("0gradient")->GetRange(rangeNew);
+    function->RemovePoint(255);//Remove the standard value
+    //this->Histograms->GetHistogramWithName("0gradient")->GetRange(rangeNew);
     function->AdjustRange(rangeNew);
 }
