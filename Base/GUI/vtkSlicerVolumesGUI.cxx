@@ -601,6 +601,22 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         snode->Delete();
         }
       this->UseCompressionCheckButton->SetSelectedState(snode->GetUseCompression());
+
+      // update the load frame
+      if (snode->GetCenterImage())
+        {
+        if (strcmp("Centered", this->CenterImageMenu->GetWidget()->GetValue ()) != 0)
+          {
+          this->CenterImageMenu->GetWidget()->SetValue ( "Centered" );
+          }
+        }
+      else
+        {
+        if (strcmp("From File", this->CenterImageMenu->GetWidget()->GetValue ()) != 0)
+          {
+          this->CenterImageMenu->GetWidget()->SetValue ( "From File" );
+          }
+        }
       }
     else 
       {
@@ -616,6 +632,21 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         snode->Delete();
         }
       this->UseCompressionCheckButton->SetSelectedState(snode->GetUseCompression());
+      // update the load frame
+      if (snode->GetCenterImage())
+        {
+        if (strcmp("Centered", this->CenterImageMenu->GetWidget()->GetValue ()) != 0)
+          {
+          this->CenterImageMenu->GetWidget()->SetValue ( "Centered" );
+          }
+        }
+      else
+        {
+        if (strcmp("From File", this->CenterImageMenu->GetWidget()->GetValue ()) != 0)
+          {
+          this->CenterImageMenu->GetWidget()->SetValue ( "From File" );
+          }
+        }
       }
     
     if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
@@ -635,6 +666,10 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         this->VolumeDisplayWidget = this->labelVDW;
         this->VolumeDisplayFrame = this->LabelMapDisplayFrame;
         }
+       if (svol->GetLabelMap() != this->LabelMapCheckButton->GetSelectedState())
+         {
+         this->LabelMapCheckButton->SetSelectedState(svol->GetLabelMap());
+         }
       }
     else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
       {
@@ -703,7 +738,18 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
       // trigger a modified event that triggers update widget from mrml
       this->VolumeDisplayWidget->UpdateWidgetFromMRML();
       }
+     const char * currentVolName = this->NameEntry->GetWidget()->GetValue();
+     const char * volName = refNode->GetName();
+     if (currentVolName && volName)
+       {
+       if (strcmp(currentVolName, volName) != 0)
+         {
+         this->NameEntry->GetWidget()->SetValue(volName);
+         }       
+       }
     }
+
+  // update the image origin
 }
 
 //---------------------------------------------------------------------------
