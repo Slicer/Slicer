@@ -25,7 +25,7 @@
 #if defined(VTK_USE_OGLR) || defined(_WIN32) || defined(VTK_USE_COCOA) || defined(VTK_USE_CARBON)
 #include "vtkOpenGLRayCastImageDisplayHelper.h"
 #include "vtkOpenGLVolumeTextureMapper2D.h"
-#include "vtkOpenGLVolumeTextureMapper3D.h"
+#include "vtkSlicerOpenGLVolumeTextureMapper3D.h"
 #endif
 
 #if defined(VTK_USE_MANGLED_MESA)
@@ -83,7 +83,7 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
         return 0;
         }
 #endif
-      return vtkOpenGLVolumeTextureMapper3D::New();
+      return vtkSlicerOpenGLVolumeTextureMapper3D::New();
       }
     
     // Ray Cast Image Display Helper
