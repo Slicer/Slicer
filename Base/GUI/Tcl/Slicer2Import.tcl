@@ -479,6 +479,9 @@ proc ImportNodeFiducials {node} {
     foreach {c0 c1 c2} $n(color) {}
     $fiducialNode SetColor $c0 $c1 $c2
   }
+  if { [info exists n(name)] } {
+    $fiducialNode SetName $n(name)
+  } 
   $::slicer3::MRMLScene AddNode $fiducialNode
   set ::S2(fiducialListNode) $fiducialNode
 }
@@ -491,6 +494,9 @@ proc ImportNodePoint {node} {
     foreach {x y z} $n(xyz) {}
     $::S2(fiducialListNode) SetNthFiducialXYZ $f $x $y $z
   }
+  if { [info exists n(name)] } {
+    $::S2(fiducialListNode) SetNthFiducialLabelText $f $n(name)
+  } 
 }
 
 proc ImportNodeColor {node} {
