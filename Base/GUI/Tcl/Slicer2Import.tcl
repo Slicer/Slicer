@@ -484,6 +484,13 @@ proc ImportNodeFiducials {node} {
   } 
   $::slicer3::MRMLScene AddNode $fiducialNode
   set ::S2(fiducialListNode) $fiducialNode
+
+  # set it to be the selected one, last one imported will stick
+  set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
+  if { $selNode != "" } {
+     $selNode SetReferenceActiveFiducialListID [$fiducialNode GetID]
+     $::slicer3::ApplicationLogic PropagateFiducialListSelection
+  }
 }
 
 proc ImportNodePoint {node} {
