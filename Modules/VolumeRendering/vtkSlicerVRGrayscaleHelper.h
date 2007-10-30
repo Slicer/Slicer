@@ -13,6 +13,7 @@ class vtkRenderer;
 class vtkVolumeTextureMapper3D;
 class vtkTimerLog;
 class vtkFixedPointVolumeRayCastMapper;
+class vtkKWMenuButtonWithSpinButtonsWithLabel;
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
 public:
@@ -26,6 +27,11 @@ public:
     virtual void ShutdownPipeline(void);
     virtual void ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData);
     void ScheduleRender(void);
+    void SetQuality(int qual)
+    {
+        this->Quality=qual;
+    }
+    vtkGetMacro(Quality,int);
 
 protected:
     vtkSlicerVRGrayscaleHelper(void);
@@ -36,6 +42,9 @@ protected:
     //GUI
     vtkKWHistogramSet *Histograms;
     vtkSlicerVolumePropertyWidget *SVP_VolumeProperty;
+
+    //GUI1
+    vtkKWMenuButtonWithSpinButtonsWithLabel *MB_Quality;
 
 
     //Render logic
@@ -63,6 +72,8 @@ protected:
     double TimeToWaitForHigherStage;
     //0 interactive, 1 High Resolution Texture VR, 2 SW Ray Cast
     int currentStage;
+
+    int Quality;
 
     int scheduled;
     //Flag if next Render is a High Resolution Render
