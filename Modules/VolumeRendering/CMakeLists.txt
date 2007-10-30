@@ -1,18 +1,26 @@
 PROJECT(VolumeRenderingModule)
 OPTION(VOLUMERENDERINGMODULE "Would you like to build Volume Rendering" OFF)
+OPTION(VR_LABELMAP "Would you like to use Labelmaps" OFF)
+if(VR_LABELMAP AND NOT VOLUMERENDERINGMODULE)
+MESSAGE(FATAL_ERROR "VR_LABELMAP can only be build if VOLUMERENDERINGMODULE is ON")
+ENDIF(VR_LABELMAP AND NOT VOLUMERENDERINGMODULE)
 if(VOLUMERENDERINGMODULE)
 # --------------------------------------------------------------------------
 # Sources
-
-SET(VolumeRenderingModule_SRCS
+if(VR_LABELMAP)
+  SET(VolumeRenderingModule_SRCS
   vtkVolumeRenderingModuleGUI.cxx
   vtkVolumeRenderingModuleLogic.cxx
   vtkMRMLVolumeRenderingNode.cxx
+  vtkSlicerVolumePropertyWidget.cxx
+  vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
+  vtkSlicerVRHelper.cxx
+  vtkSlicerVRGrayscaleHelper.cxx
+  #LabelmapPart
+  vtkSlicerVRLabelmapHelper.cxx
   vtkLabelMapColorTransferFunction.cxx
   vtkLabelMapPiecewiseFunction.cxx
   vtkSlicerLabelMapWidget.cxx
-  vtkSlicerVolumePropertyWidget.cxx
-  vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
   vtkSlicerFixedPointRayCastImage.cxx
   vtkSlicerFixedPointVolumeRayCastCompositeGOHelper.cxx
   vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper.cxx
@@ -23,12 +31,18 @@ SET(VolumeRenderingModule_SRCS
   vtkSlicerFixedPointVolumeRayCastMIPHelper.cxx
   vtkSlicerRayCastImageDisplayHelper.cxx
   vtkSlicerOpenGLRayCastImageDisplayHelper.cxx
-  vtkEffectedArea.cxx
+  vtkEffectedArea.cxx)
+ELSE(VR_LABELMAP)
+ADD_DEFINITIONS(-DVR_LABELMAP_DEBUG)
+  SET(VolumeRenderingModule_SRCS
+  vtkVolumeRenderingModuleGUI.cxx
+  vtkVolumeRenderingModuleLogic.cxx
+  vtkMRMLVolumeRenderingNode.cxx
+  vtkSlicerVolumePropertyWidget.cxx
+  vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
   vtkSlicerVRHelper.cxx
-  vtkSlicerVRLabelmapHelper.cxx
-  vtkSlicerVRGrayscaleHelper.cxx
-  )
-
+  vtkSlicerVRGrayscaleHelper.cxx)
+ENDIF(VR_LABELMAP)
 # Abstract/pure virtual classes
 
 #SET_SOURCE_FILES_PROPERTIES(

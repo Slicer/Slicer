@@ -26,7 +26,10 @@ Version:   $Revision: 1.3 $
 #include "vtkKWHistogram.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWTkUtilities.h"
+#if !defined (VR_LABELMAP_DEBUG)
 #include "vtkSlicerLabelMapWidget.h"
+#endif
+
 #include <string>
 
 class vtkVolumeTextureMapper3D;

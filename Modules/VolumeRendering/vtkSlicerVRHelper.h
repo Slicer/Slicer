@@ -8,7 +8,7 @@
   {                                                                             \
   if (this->GetDebug())                                                         \
     {                                                                           \
-        this->Script("puts \""message"\"",format);                                    \
+        this->Script("puts \""message"\"",format);                              \
     }                                                                           \
   }
 class vtkVolumeRenderingModuleGUI;

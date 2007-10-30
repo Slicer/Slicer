@@ -2,7 +2,9 @@
 #include "vtkMRMLNode.h"
 #include "vtkVolumeTextureMapper3D.h"
 #include "vtkPiecewiseFunction.h"
+#if !defined (VR_LABELMAP_DEBUG)
 #include "vtkLabelMapPiecewiseFunction.h"
+#endif
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -78,8 +80,13 @@ void vtkMRMLVolumeRenderingNode::WriteXML(ostream& of, int nIndent)
     //Only write opacities when LabelMap
     if(this->GetIsLabelMap())
     {
+        #if !defined (VR_LABELMAP_DEBUG)
         vtkLabelMapPiecewiseFunction *opacity=vtkLabelMapPiecewiseFunction::SafeDownCast(this->VolumeProperty->GetScalarOpacity());
         of<<" opacityLabelMap=\""<<opacity->GetSaveString()<< "\"";
+        #endif
+        #if defined (VR_LABELMAP_DEBUG)
+        vtkErrorMacro("VR_LBELMAP is not activated")
+        #endif
 
     }
     else

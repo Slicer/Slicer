@@ -15,8 +15,6 @@
 #include "vtkVolume.h"
 #include "vtkKWTreeWithScrollbars.h"
 #include "vtkKWTree.h"
-#include "vtkLabelMapPiecewiseFunction.h"
-#include "vtkLabelMapColorTransferFunction.h"
 #include "vtkKWProgressGauge.h"
 #include "vtkKWHistogramSet.h"
 #include "vtkKWTkUtilities.h"
@@ -38,9 +36,12 @@
 #include "vtkFixedPointVolumeRayCastMapper.h"
 #include "vtkKWEvent.h"
 #include "vtkSlicerVRHelper.h"
+#if !defined (VR_LABELMAP_DEBUG)
 #include "vtkSlicerVRLabelmapHelper.h"
+#endif
 #include "vtkSlicerVRGrayscaleHelper.h"
 #include "vtkMRMLVolumeRenderingNode.h"
+#include "vtkKWMessageDialog.h"
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
 {
@@ -367,7 +368,27 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             //This is a LabelMap
             if(selectedImageData->GetLabelMap()==1)
             {
+                #if !defined (VR_LABELMAP_DEBUG)
                 this->PackLabelMapGUI();
+                #endif
+
+                #if defined (VR_LABELMAP_DEBUG)
+                this->UnpackSvpGUI();
+                this->NS_ImageData->SetSelected(NULL);
+                this->PreviousNS_ImageData="";
+                this->NS_ImageData->UpdateMenu();
+                this->UpdateGUI();
+                vtkKWMessageDialog *dialog = vtkKWMessageDialog::New();
+                dialog->SetParent (  this->GetApplicationGUI()->GetMainSlicerWindow());
+                dialog->SetStyleToMessage();
+                dialog->SetText("Labelmaps are not supported yet");
+                dialog->Create ( );
+                dialog->Invoke();
+                dialog->Delete();
+
+
+                return;
+                #endif
 
             }
             //This is NO LabelMap
@@ -604,8 +625,10 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
 void vtkVolumeRenderingModuleGUI::PackLabelMapGUI()
 {
     this->UnpackSvpGUI();
+    #if !defined (VR_LABELMAP_DEBUG)
     this->Helper=vtkSlicerVRLabelmapHelper::New();
     this->Helper->Init(this);
+    #endif
 
 }
 
