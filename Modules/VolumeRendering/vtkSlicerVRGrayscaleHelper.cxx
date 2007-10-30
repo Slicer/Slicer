@@ -4,7 +4,7 @@
 #include "vtkKWHistogramSet.h"
 #include "vtkVolumeRenderingModuleGUI.h"
 #include "vtkVolume.h"
-#include "vtkVolumeTextureMapper3D.h"
+#include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkFixedPointVolumeRayCastMapper.h"
 #include "vtkTimerLog.h"
 #include "vtkRenderer.h"
@@ -237,7 +237,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     //TODO Dirty fix as Mapper
     if(this->Gui->GetcurrentNode()->GetMapper()==vtkMRMLVolumeRenderingNode::Texture)
     {
-        this->MapperTexture=vtkVolumeTextureMapper3D::New();
+        this->MapperTexture=vtkSlicerVolumeTextureMapper3D::New();
         this->MapperTexture->SetSampleDistance(2);
         this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
         this->Volume->SetMapper(this->MapperTexture);
@@ -250,11 +250,11 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-
+    this->MapperTexture->AddObserver(vtkCommand::VolumeMapperRenderProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-
+    this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     //Only needed if using performance enhancement
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
@@ -630,6 +630,16 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     {
         float *progress=(float*)callData;
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100**progress);
+    }
+    else if (eid==vtkCommand::VolumeMapperRenderProgressEvent&&this->currentStage==1)
+    {
+        double *progress=(double*)callData;
+        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100**progress);
+    }
+    else if (eid==vtkCommand::ProgressEvent)
+    {
+        float *progress=(float*)callData;
+        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,100**progress);
     }
 }
 

@@ -32,7 +32,7 @@ Version:   $Revision: 1.3 $
 
 #include <string>
 
-class vtkVolumeTextureMapper3D;
+class vtkSlicerVolumeTextureMapper3D;
 class vtkFixedPointVolumeRayCastMapper;
 class vtkSlicerVRHelper;
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI

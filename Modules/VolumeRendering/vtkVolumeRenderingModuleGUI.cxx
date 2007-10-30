@@ -2,7 +2,7 @@
 
 #include <ostream>
 #include "vtkMRMLVolumeRenderingNode.h"
-#include "vtkVolumeTextureMapper3D.h"
+#include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleGUI.h"
 #include "vtkIndent.h"

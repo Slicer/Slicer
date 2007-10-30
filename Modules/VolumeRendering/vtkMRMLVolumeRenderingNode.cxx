@@ -1,6 +1,6 @@
 #include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkMRMLNode.h"
-#include "vtkVolumeTextureMapper3D.h"
+#include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkPiecewiseFunction.h"
 #if !defined (VR_LABELMAP_DEBUG)
 #include "vtkLabelMapPiecewiseFunction.h"
@@ -276,7 +276,7 @@ void vtkMRMLVolumeRenderingNode::PrintSelf(ostream& os, vtkIndent indent)
     os<<indent<<"Mapper: ";
     if(this->Mapper==Texture)
     {
-        os<<"vtkVolumeTextureMapper3D";
+        os<<"vtkSlicerVolumeTextureMapper3D";
     }
     else
     {

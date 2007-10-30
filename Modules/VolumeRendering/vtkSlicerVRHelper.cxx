@@ -2,7 +2,7 @@
 #include "vtkVolumeRenderingModuleGUI.h"
 #include "vtkFixedPointVolumeRayCastMapper.h"
 #include "vtkVolume.h"
-#include "vtkVolumeTextureMapper3D.h"
+#include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkCallbackCommand.h"
 
 

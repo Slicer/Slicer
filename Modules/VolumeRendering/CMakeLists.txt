@@ -16,6 +16,9 @@ if(VR_LABELMAP)
   vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
   vtkSlicerVRHelper.cxx
   vtkSlicerVRGrayscaleHelper.cxx
+  vtkSlicerVolumeTextureMapper3D.cxx
+  vtkSlicerOpenGLVolumeTextureMapper3D.cxx
+  vtkSlicerVolumeRenderingFactory.cxx
   #LabelmapPart
   vtkSlicerVRLabelmapHelper.cxx
   vtkLabelMapColorTransferFunction.cxx
@@ -41,7 +44,10 @@ ADD_DEFINITIONS(-DVR_LABELMAP_DEBUG)
   vtkSlicerVolumePropertyWidget.cxx
   vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
   vtkSlicerVRHelper.cxx
-  vtkSlicerVRGrayscaleHelper.cxx)
+  vtkSlicerVRGrayscaleHelper.cxx
+    vtkSlicerVolumeTextureMapper3D.cxx
+  vtkSlicerOpenGLVolumeTextureMapper3D.cxx
+  vtkSlicerVolumeRenderingFactory.cxx)
 ENDIF(VR_LABELMAP)
 # Abstract/pure virtual classes
 

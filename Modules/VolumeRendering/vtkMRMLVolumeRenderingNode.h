@@ -9,7 +9,7 @@
 #include "vtkColorTransferFunction.h"
 
 #include <string>
-//#include "vtkVolumeTextureMapper3D.h"
+//#include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkVolumeMapper.h"
 // .NAME vtkMRMLVolumeRenderingNode - MRML node to represent Volume Rendering information
 // .SECTION Description

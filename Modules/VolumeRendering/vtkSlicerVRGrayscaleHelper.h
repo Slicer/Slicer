@@ -10,7 +10,7 @@
 class vtkKWHistogramSet;
 class vtkSlicerVolumePropertyWidget;
 class vtkRenderer;
-class vtkVolumeTextureMapper3D;
+class vtkSlicerVolumeTextureMapper3D;
 class vtkTimerLog;
 class vtkFixedPointVolumeRayCastMapper;
 class vtkKWMenuButtonWithSpinButtonsWithLabel;
@@ -51,7 +51,7 @@ protected:
     vtkRenderer *renViewport;
     vtkRenderer *renPlane;
     int RenderPlane;
-    vtkVolumeTextureMapper3D *MapperTexture;
+    vtkSlicerVolumeTextureMapper3D *MapperTexture;
     vtkFixedPointVolumeRayCastMapper *MapperRaycast;
 
         //Initial Factor for Interactive Rendering
