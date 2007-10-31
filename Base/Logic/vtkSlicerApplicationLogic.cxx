@@ -40,7 +40,9 @@
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLFiberBundleDisplayNode.h"
+#include "vtkMRMLFiberBundleLineDisplayNode.h"
+#include "vtkMRMLFiberBundleTubeDisplayNode.h"
+#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 #include "vtkSlicerTask.h"
 #include "vtkMRMLNRRDStorageNode.h"
 
@@ -703,7 +705,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   dwvnd = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
   mnd   = vtkMRMLModelNode::SafeDownCast(nd);
   ltnd  = vtkMRMLLinearTransformNode::SafeDownCast(nd);
-  fbnd  = vtkMRMLFiberBundleNode::SafeDownCast(fbnd);
+  fbnd  = vtkMRMLFiberBundleNode::SafeDownCast(nd);
   
   // Read the data into the referenced node
   if (itksys::SystemTools::FileExists( req.GetFilename().c_str() ))
@@ -817,10 +819,16 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
       }
     }
-  else if (fbnd && !fbnd->GetDisplayNode())
+  else if (fbnd)
     {
     // Fiber bundle node
-    disp = vtkMRMLFiberBundleDisplayNode::New();
+    disp = NULL;
+    vtkMRMLFiberBundleDisplayNode *fbdn = fbnd->AddLineDisplayNode();
+    fbdn->SetVisibility(1);
+    fbdn = fbnd->AddTubeDisplayNode();
+    fbdn->SetVisibility(0);
+    fbdn = fbnd->AddGlyphDisplayNode();
+    fbdn->SetVisibility(0);
     }
   else if (mnd && !mnd->GetDisplayNode())
     {

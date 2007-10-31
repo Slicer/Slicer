@@ -24,12 +24,13 @@
 #include "vtkMath.h"
 #include "vtkImageThreshold.h"
 #include "vtkImageWriter.h"
+#include "vtkNRRDWriter.h"
 
 int main( int argc, const char * argv[] )
 {
 
   PARSE_ARGS;
-
+  try {
   vtkNRRDReader *reader = vtkNRRDReader::New();
   reader->SetFileName(InputVolume.c_str());
   reader->Update();
@@ -44,12 +45,20 @@ int main( int argc, const char * argv[] )
   reader2->SetFileName(InputROI.c_str());
   reader2->Update();
   
+  /*
+  vtkNRRDWriter *iwriter = vtkNRRDWriter::New();
+  iwriter->SetInput(reader->GetOutput());
+  iwriter->SetFileName("C:/Temp/helix.nhdr");
+  iwriter->Write();
+  iwriter->Delete();
+  **/
+
   if ( reader2->GetOutput()->GetPointData()->GetScalars() == NULL )
     {
     std::cerr << argv[0] << ": No roi data" << std::endl;
     return EXIT_FAILURE;
     }
-    
+  
   vtkSeedTracts *seed = vtkSeedTracts::New();
   
   //1. Set Input
@@ -198,5 +207,12 @@ int main( int argc, const char * argv[] )
   streamer->Delete();
   reader2->Delete();
   writer->Delete();
+  }
+  catch (...) 
+    { 
+    cout << "default exception"; 
+    return EXIT_FAILURE;
+    }
+
   return EXIT_SUCCESS;
 }
