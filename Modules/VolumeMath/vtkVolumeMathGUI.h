@@ -14,6 +14,10 @@
 #ifndef __vtkVolumeMathGUI_h
 #define __vtkVolumeMathGUI_h
 
+#include <string>
+#include <iostream>
+#include <sstream>
+
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerModuleGUI.h"
 
@@ -75,9 +79,15 @@ class VTK_VOLUMEMATH_EXPORT vtkVolumeMathGUI : public vtkSlicerModuleGUI
   virtual void Exit ( ){};
 
   // Description:
-  // Sets text to be primary selection, for copy to clipboard functionality 
-  virtual void SetPrimarySelectionInTcl ( char* text );
+  // Set up primary selection tcl procedures 
+  virtual void SetPrimarySelectionTclProcedures ( );
 
+  //BTX
+  // Description:
+  // Sets text to be primary selection, for copy to clipboard functionality 
+  virtual void SetPrimarySelection ( std::string text );
+  //ETX
+  
 protected:
   vtkVolumeMathGUI();
   virtual ~vtkVolumeMathGUI();
@@ -95,12 +105,13 @@ protected:
   vtkSlicerNodeSelectorWidget* GrayscaleSelector;
   vtkSlicerNodeSelectorWidget* LabelmapSelector; 
   vtkKWPushButton* ApplyButton;
-  
+ 
   vtkVolumeMathLogic *Logic;
   vtkMRMLVolumeMathNode* VolumeMathNode;
   //vtkKWText* VolStatsResult;
   vtkKWMultiColumnList* ResultList;
   vtkKWLoadSaveButton* SaveToFile;
+  vtkKWPushButton* SaveToClipboardButton;
   
 };
 

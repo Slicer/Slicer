@@ -12,14 +12,8 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
 #include "vtkObjectFactory.h"
-
 #include "vtkVolumeMathGUI.h"
-
 #include "vtkCommand.h"
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
@@ -66,8 +60,10 @@ vtkVolumeMathGUI::vtkVolumeMathGUI()
   this->SaveToFile = vtkKWLoadSaveButton::New();
   //this->VolStatsResult = vtkKWText::New();
   this->ResultList = vtkKWMultiColumnList::New();
+  this->SaveToClipboardButton = vtkKWPushButton::New();
   this->Logic = NULL;
   this->VolumeMathNode = NULL;
+  this->SetPrimarySelectionTclProcedures();
 }
 
 //----------------------------------------------------------------------------
@@ -90,6 +86,12 @@ vtkVolumeMathGUI::~vtkVolumeMathGUI()
     this->ApplyButton->SetParent(NULL);
     this->ApplyButton->Delete();
     this->ApplyButton = NULL;
+    }
+  if ( this->SaveToClipboardButton ) 
+    {
+    this->SaveToClipboardButton->SetParent(NULL);
+    this->SaveToClipboardButton->Delete();
+    this->SaveToClipboardButton = NULL;
     }
   if ( this->SaveToFile ) 
     {
@@ -128,12 +130,12 @@ void vtkVolumeMathGUI::AddGUIObservers ( )
   this->LabelmapSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   
   this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  this->SaveToClipboardButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveToFile->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
- this->Logic->AddObserver (vtkVolumeMathLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
-    this->Logic->AddObserver (vtkVolumeMathLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
-    this->Logic->AddObserver (vtkVolumeMathLogic::StartLabelStats, (vtkCommand *)this->LogicCallbackCommand );
-    this->Logic->AddObserver (vtkVolumeMathLogic::EndLabelStats, (vtkCommand *)this->LogicCallbackCommand );
+  this->Logic->AddObserver (vtkVolumeMathLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
+  this->Logic->AddObserver (vtkVolumeMathLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
+  this->Logic->AddObserver (vtkVolumeMathLogic::StartLabelStats, (vtkCommand *)this->LogicCallbackCommand );
+  this->Logic->AddObserver (vtkVolumeMathLogic::EndLabelStats, (vtkCommand *)this->LogicCallbackCommand );
 }
 
 
@@ -146,6 +148,8 @@ void vtkVolumeMathGUI::RemoveGUIObservers ( )
   this->LabelmapSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->ApplyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+
+  this->SaveToClipboardButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 
   this->SaveToFile->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
@@ -183,21 +187,22 @@ void vtkVolumeMathGUI::ProcessGUIEvents ( vtkObject *caller,
     this->ResultList->DeleteAllRows();
     this->UpdateMRML();
     this->Logic->Apply();
-
+    }
+ if (b == this->SaveToClipboardButton && event == vtkKWPushButton::InvokedEvent ) 
+    {
+      vtkMRMLVolumeMathNode* n = this->GetVolumeMathNode();
+      this->SetPrimarySelection(n->GetResultText());
     }
  if (b == this->SaveToFile && event == vtkKWPushButton::InvokedEvent ) 
    {
      vtkKWLoadSaveButton *saveLoadButton = vtkKWLoadSaveButton::SafeDownCast(caller);
-     // else if (filebrowse == this->SaveTractographyButton  && event == vtkKWPushButton::InvokedEvent )
-     //{
-      // If a file has been selected for saving...
      const char *fileName = saveLoadButton->GetFileName();
-      if ( fileName ) 
-        {
-          std::cout << "This is the filename: "<<  this->SaveToFile->GetFileName() << "\n";
-          vtkMRMLVolumeMathNode* n = this->GetVolumeMathNode();
-          n->SaveResultToTextFile(fileName);
-        }
+     if ( fileName ) 
+       {
+         std::cout << "This is the filename: "<<  this->SaveToFile->GetFileName() << "\n";
+         vtkMRMLVolumeMathNode* n = this->GetVolumeMathNode();
+         n->SaveResultToTextFile(fileName);
+       }
    }
 }
 
@@ -208,22 +213,16 @@ void vtkVolumeMathGUI::UpdateMRML ()
   vtkMRMLVolumeMathNode* n = this->GetVolumeMathNode();
   if (n == NULL)
     {
-      //  std::cout <<"UpdateMRML: n is null, create new one?!" << "\n";
-    //    no parameter node selected yet, create new
+    //no parameter node selected yet, create new
     vtkMRMLVolumeMathNode* volumeMathNode = vtkMRMLVolumeMathNode::New();
     n = volumeMathNode;
     //set an observe new node in Logic
     this->Logic->SetAndObserveVolumeMathNode(volumeMathNode);
     vtkSetAndObserveMRMLNodeMacro(this->VolumeMathNode, volumeMathNode);
-   //  this->Logic->AddObserver (vtkVolumeMathLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
-//     this->Logic->AddObserver (vtkVolumeMathLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
-//     this->Logic->AddObserver (vtkVolumeMathLogic::StartLabelStats, (vtkCommand *)this->LogicCallbackCommand );
-//     this->Logic->AddObserver (vtkVolumeMathLogic::EndLabelStats, (vtkCommand *)this->LogicCallbackCommand );
     }
-
+  
   // save node parameters for Undo
   this->GetLogic()->GetMRMLScene()->SaveStateForUndo(n);
-
   // set node parameters from GUI widgets
   if (this->GrayscaleSelector->GetSelected() != NULL)
     {
@@ -250,21 +249,19 @@ void vtkVolumeMathGUI::UpdateGUI ()
         int i = 0;
         for (LI li = n->LabelStats.begin(); li != n->LabelStats.end(); ++li)
           {
-            const vtkMRMLVolumeMathNode::LabelStatsEntry& label = *li;  
+           const vtkMRMLVolumeMathNode::LabelStatsEntry& label = *li;  
            //  std::cout << "This is i: " << i <<std::endl;
-//             std::cout << "Label: " << label.Label << "\tMin: " << label.Min ;
-//             std::cout << "\tMax: " << label.Max << "\tMean: " << label.Mean << std::endl ;
-
-            this->ResultList->InsertCellTextAsInt(i, 0, label.Label);
-            this->ResultList->InsertCellTextAsInt(i, 1, label.Count);
-            
-            this->ResultList->InsertCellTextAsInt(i, 2, label.Min);
-            this->ResultList->InsertCellTextAsInt(i, 3, label.Max);
-          
-          this->ResultList->InsertCellTextAsDouble(i, 4, label.Mean);
-          
-          this->ResultList->InsertCellTextAsDouble(i, 5, label.StdDev);
-          i++;
+           // std::cout << "Label: " << label.Label << "\tMin: " << label.Min ;
+           // std::cout << "\tMax: " << label.Max << "\tMean: " << label.Mean << std::endl ;
+           
+           this->ResultList->InsertCellTextAsInt(i, 0, label.Label);
+           this->ResultList->InsertCellTextAsInt(i, 1, label.Count);
+           
+           this->ResultList->InsertCellTextAsInt(i, 2, label.Min);
+           this->ResultList->InsertCellTextAsInt(i, 3, label.Max);
+           this->ResultList->InsertCellTextAsDouble(i, 4, label.Mean);
+           this->ResultList->InsertCellTextAsDouble(i, 5, label.StdDev);
+           i++;
           }
       }
     }
@@ -275,23 +272,19 @@ void vtkVolumeMathGUI::ProcessMRMLEvents ( vtkObject *caller,
                                             unsigned long event,
                                             void *callData ) 
 {
- std::cout <<"ProcessMRMLEvents gets called!" << "\n";
- // std::cout << "This is call data: "<<(char *) callData<<"\n";
-  // if parameter node has been changed externally, update GUI widgets with new values
-  vtkMRMLVolumeMathNode* node = vtkMRMLVolumeMathNode::SafeDownCast(caller);
-  if (node != NULL && this->GetVolumeMathNode() == node) 
-    {
-    this->UpdateGUI();
-    }
+std::cout <<"ProcessMRMLEvents gets called!" << "\n";
+// if parameter node has been changed externally, update GUI widgets with new values
+ vtkMRMLVolumeMathNode* node = vtkMRMLVolumeMathNode::SafeDownCast(caller);
+ if (node != NULL && this->GetVolumeMathNode() == node) 
+   {
+   this->UpdateGUI();
+   }
 }
 
 //---------------------------------------------------------------------------
 void vtkVolumeMathGUI::BuildGUI ( ) 
 {
- std::cout <<"BuildGUI gets called!" << "\n";
-
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-
   vtkMRMLVolumeMathNode* n = vtkMRMLVolumeMathNode::New();
   this->Logic->GetMRMLScene()->RegisterNodeClass(n);
   n->Delete();
@@ -327,7 +320,6 @@ void vtkVolumeMathGUI::BuildGUI ( )
                 this->GrayscaleSelector->GetWidgetName());
   
   this->LabelmapSelector->SetNodeClass("vtkMRMLScalarVolumeNode", NULL, NULL, NULL);
-  //this->LabelmapSelector->SetNewNodeEnabled(1);
   this->LabelmapSelector->SetParent( moduleFrame->GetFrame() );
   this->LabelmapSelector->Create();
   this->LabelmapSelector->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -386,16 +378,16 @@ void vtkVolumeMathGUI::BuildGUI ( )
   col_index = this->ResultList->AddColumn("StdDev");
   this->ResultList->ColumnEditableOn(col_index);
 
- //  app->Script(
-//     "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-//     this->ResultList->GetWidgetName());
-   
   app->Script(
     "pack %s -side top -anchor e  -padx 20 -pady 10", 
     this->ResultList->GetWidgetName());
  
+  // Create the button to copy result to clipboard
+  this->SaveToClipboardButton->SetParent( moduleFrame->GetFrame() );
+  this->SaveToClipboardButton->Create();
+  this->SaveToClipboardButton->SetText("Copy result to clipboard");
+  this->SaveToClipboardButton->SetWidth ( 28 );
 
- // Create a load button to pick a file
   this->SaveToFile->SetParent( moduleFrame->GetFrame() );
   this->SaveToFile->Create();
   this->SaveToFile->SetText("Save to file");
@@ -406,14 +398,14 @@ void vtkVolumeMathGUI::BuildGUI ( )
   this->SaveToFile->GetLoadSaveDialog()->SetDefaultExtension("txt");
 
   app->Script(
-    "pack %s -side top -anchor e  -padx 20 -pady 10", 
+    "pack %s %s -side right -anchor w  -padx 20 -pady 10", 
+    this->SaveToClipboardButton->GetWidgetName(),
     this->SaveToFile->GetWidgetName());
+
   this->SaveToFile->Delete();
 
   ///--------
   moduleFrame->Delete();
-
-  
 }
 
 void vtkVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
@@ -422,8 +414,7 @@ void vtkVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
 {
   vtkVolumeMathLogic* logic =  vtkVolumeMathLogic::SafeDownCast(caller);
   const char * callDataStr = (const char *)callData;
-  //  std::cout << "This is call data: "<< callDataStr << " .\n";
-
+  
   std::string innerLoopMsg = "Computing Stats for ";
 
   vtkSlicerWindow* mainWindow = this->ApplicationGUI->GetMainSlicerWindow();
@@ -440,7 +431,6 @@ void vtkVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
   else if (event == vtkVolumeMathLogic::EndLabelStats)
     {
       std::cout << "EndLabelStats\n"<< "\n";
-      //    progressGauge->SetValue(0);
       mainWindow->SetStatusText("Done");
     }
   else if (event == vtkVolumeMathLogic::LabelStatsOuterLoop) 
@@ -454,12 +444,10 @@ void vtkVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
   else if (event == vtkVolumeMathLogic::LabelStatsInnerLoop)  
     {
       std::cout << "LabelStatsInnerLoop\n"<< "\n";
-      // int prog = (int) callData;
       std::stringstream ss ( callDataStr );
       double innerProg = 0;
       ss >> innerProg;
       progressGauge->SetNthValue(1,innerProg*100);
-      // mainWindow->SetStatusText("katharina's status");
     }
   else 
     {
@@ -469,54 +457,62 @@ void vtkVolumeMathGUI::ProcessLogicEvents ( vtkObject *caller,
 
 }
 
-void vtkVolumeMathGUI::SetPrimarySelectionInTcl( char* text)
+void vtkVolumeMathGUI::SetPrimarySelectionTclProcedures( )
 {
-  //std::string cmd;
+  std::string cmd;
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  Tcl_Interp *interp = app->GetMainInterp(); 
 
-  //// # selectText "text" --
-  //// #       Sets the value of the PRIMARY selection to "$text".
-  //// #
-  //// #       (Note: this doesn't really "set the value" of the selection.
-  //// #       More precisely, it arranges to provide the value given
-  //// #       when another client requests it.)
-  //// #
-  //
-  //cmd = "proc selectText {text} { \
-  //      variable currentSelection \
-  //      set currentSelection $text \
-  //      selection handle -selection PRIMARY \".\"  primaryTransfer \
-  //      selection own -selection PRIMARY -command lostSelection \".\" }";
-  //
-  //Slicer3_Tcl_Eval( interp, cmd.c_str() );
-  //
-  //cmd.clear();
+  //  # selectText "text" --
+  //   #       Sets the value of the PRIMARY selection to "$text".
+  //   #
+  //   #       (Note: this doesn't really "set the value" of the selection.
+  //   #       More precisely, it arranges to provide the value given
+  //   #       when another client requests it.)
+    
+  cmd = "proc selectText {text} { \
+         variable currentSelection; \
+        set currentSelection $text; \
+        selection handle -selection PRIMARY \".\"  primaryTransfer; \
+        selection own -selection PRIMARY -command lostSelection \".\"; }";
+  
+  Tcl_Eval( interp, cmd.c_str() );
+  cmd.clear();
 
-  //// # The following will be called whenever a client requests the value
-  //// # of the PRIMARY selection.  See selection(n) for a description
-  //// # of 'offset' and 'maxChars'; we probably ought to do something
-  //// # sensible with these parameters, but it's mostly safe to
-  //// # just ignore them.
-  //// #
-  //cmd = "proc primaryTransfer {offset maxChars} { \
-  //          variable currentSelection \
-  //          return $currentSelection  \
-  //       }";
-
-  //Slicer3_Tcl_Eval( interp, cmd.c_str() );
-
-  //cmd.clear();
- 
-  //// # This is called when we lose ownership of the selection:
-  //// #
-  //cmd = "proc lostSelection {} { \
-  //         variable currentSelection \
-  //         set currentSelection \"\" \
-  //  }";
-  //
-  //Slicer3_Tcl_Eval( interp, cmd.c_str() );
-
-  //cmd.clear();
-
-  //cmd = "selectText()";
-
+  //  # The following will be called whenever a client requests the value
+  //   # of the PRIMARY selection.  See selection(n) for a description
+  //   # of 'offset' and 'maxChars'; we probably ought to do something
+  //   # sensible with these parameters, but it's mostly safe to
+  //   # just ignore them.
+  //   #
+  cmd = "proc primaryTransfer {offset maxChars} { \
+           variable currentSelection;             \
+           return $currentSelection;              \
+          }";
+  
+  Tcl_Eval( interp, cmd.c_str() );
+  cmd.clear();
+  
+  //  # This is called when we lose ownership of the selection:
+  //   #
+  cmd = "proc lostSelection {} { \
+           variable currentSelection; \
+           set currentSelection \"\"; \
+         }";
+  
+  Tcl_Eval( interp, cmd.c_str() );
+  cmd.clear();
 }
+
+
+void vtkVolumeMathGUI::SetPrimarySelection( std::string text )
+{
+  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
+  Tcl_Interp *interp = app->GetMainInterp(); 
+  std::string cmd = "selectText \"";
+  cmd.append(text);
+  cmd.append("\"");
+  Tcl_Eval( interp, cmd.c_str() );
+  cmd.clear();
+}
+
