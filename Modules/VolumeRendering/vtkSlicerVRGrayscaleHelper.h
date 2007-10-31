@@ -45,6 +45,7 @@ protected:
 
     //GUI1
     vtkKWMenuButtonWithSpinButtonsWithLabel *MB_Quality;
+    int LockProgressGauge;
 
 
     //Render logic

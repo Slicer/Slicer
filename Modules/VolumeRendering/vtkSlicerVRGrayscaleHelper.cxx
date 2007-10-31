@@ -48,6 +48,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->NextRenderHighResolution=0;
     this->IgnoreStepZero=0;
     this->Quality=0;
+    this->LockProgressGauge=0;
 
 }
 
@@ -636,10 +637,12 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         double *progress=(double*)callData;
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100**progress);
     }
-    else if (eid==vtkCommand::ProgressEvent)
+    else if (eid==vtkCommand::ProgressEvent&&(this->LockProgressGauge==0))
     {
+        this->LockProgressGauge=1;
         float *progress=(float*)callData;
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,100**progress);
+        this->LockProgressGauge=0;
     }
 }
 
