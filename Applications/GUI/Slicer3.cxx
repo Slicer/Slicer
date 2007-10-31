@@ -1787,7 +1787,7 @@ int Slicer3_main(int argc, char *argv[])
     // DISPLAY WINDOW AND RUN
     slicerApp->SplashMessage("Finalizing Startup...");
     appGUI->DisplayMainSlicerWindow ( );
-
+    
     // More command line arguments:
     // use the startup script passed on command line if it exists
     if ( Script != "" )
@@ -1838,10 +1838,15 @@ int Slicer3_main(int argc, char *argv[])
           {
           appLogic->GetMRMLScene()->SetURL(fileName.c_str());
           // and then load it
+          slicerApp->SplashMessage("Set scene url, connecting...");
           int errorCode = appLogic->GetMRMLScene()->Connect();
           if (errorCode != 1)
             {
             slicerCerr("ERROR loading MRML file " << fileName << ", error code = " << errorCode << endl);
+            }
+          else
+            {
+            slicerApp->SplashMessage("Connected to scene.");
             }
           }                    
         else if (fileName.find(".xml",0) != std::string::npos
@@ -1849,14 +1854,18 @@ int Slicer3_main(int argc, char *argv[])
           {
           // if it's an xml file, load it
           std::string cmd = "after idle {ImportSlicer2Scene \"" + *argit + "\"}";
+          slicerApp->SplashMessage("Importing Slicer2 scene...");
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+          slicerApp->SplashMessage("Imported scene.");
           }
         else if (fileName.find(".xcat",0) != std::string::npos
                  || fileName.find(".XCAT",0) != std::string::npos)
           {
           // if it's an xcede file, load it
+          slicerApp->SplashMessage("Importing Xcede catalog ...");
           std::string cmd = "after idle {XcedeCatalogImport \"" + *argit + "\"}";
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
+          slicerApp->SplashMessage("Imported catalog.");
           }
         else if (fileName.find(".tcl",0) != std::string::npos)
           {
