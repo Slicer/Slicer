@@ -181,7 +181,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     loadSaveDataFrame->SetParent (this->UIPanel->GetPageWidget("VolumeRendering"));
     loadSaveDataFrame->Create();
     loadSaveDataFrame->ExpandFrame();
-    loadSaveDataFrame->SetLabelText("Load and save");
+    loadSaveDataFrame->SetLabelText("Load and Save");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
         loadSaveDataFrame->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
 
@@ -189,7 +189,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->PB_Testing= vtkKWPushButton::New();
     this->PB_Testing->SetParent(loadSaveDataFrame->GetFrame());
     this->PB_Testing->Create();
-    this->PB_Testing->SetText("Testing");
+    this->PB_Testing->SetText("Make All Models Invisible");
     app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->PB_Testing->GetWidgetName());
 
     //NodeSelector  for Node from MRML Scene
@@ -197,7 +197,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->NS_ImageData->SetParent(loadSaveDataFrame->GetFrame());
     this->NS_ImageData->Create();
     this->NS_ImageData->NoneEnabledOn();
-    this->NS_ImageData->SetLabelText("Source Volume");
+    this->NS_ImageData->SetLabelText("Source Volume: ");
     this->NS_ImageData->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
     app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->NS_ImageData->GetWidgetName());
 
@@ -205,7 +205,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->NS_VolumeRenderingDataSlicer=vtkSlicerNodeSelectorVolumeRenderingWidget::New();
     this->NS_VolumeRenderingDataSlicer->SetParent(loadSaveDataFrame->GetFrame());
     this->NS_VolumeRenderingDataSlicer->Create();
-    this->NS_VolumeRenderingDataSlicer->SetLabelText("Presets");
+    this->NS_VolumeRenderingDataSlicer->SetLabelText("Use Existing Visualization Parameterset: ");
     this->NS_VolumeRenderingDataSlicer->EnabledOff();//By default off
     this->NS_VolumeRenderingDataSlicer->NoneEnabledOn();
     this->NS_VolumeRenderingDataSlicer->SetNodeClass("vtkMRMLVolumeRenderingNode","","","");
@@ -216,7 +216,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->NS_VolumeRenderingDataScene->SetParent(loadSaveDataFrame->GetFrame());
     this->NS_VolumeRenderingDataScene->Create();
     this->NS_VolumeRenderingDataScene->NoneEnabledOn();
-    this->NS_VolumeRenderingDataScene->SetLabelText("VolumeRenderingNode from Scene");
+    this->NS_VolumeRenderingDataScene->SetLabelText("Current Visualization Parameterset: ");
     this->NS_VolumeRenderingDataScene->EnabledOff();//By default off
     this->NS_VolumeRenderingDataScene->SetNodeClass("vtkMRMLVolumeRenderingNode","","","");
     app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->NS_VolumeRenderingDataScene->GetWidgetName());
@@ -227,7 +227,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->EWL_CreateNewVolumeRenderingNode=vtkKWEntryWithLabel::New();
     this->EWL_CreateNewVolumeRenderingNode->SetParent(loadSaveDataFrame->GetFrame());
     this->EWL_CreateNewVolumeRenderingNode->Create();
-    this->EWL_CreateNewVolumeRenderingNode->SetLabelText("Name for new Volume Rendering Node");
+    this->EWL_CreateNewVolumeRenderingNode->SetLabelText("Name for Visualization Parameterset: ");
     this->EWL_CreateNewVolumeRenderingNode->EnabledOff();
     app->Script("pack %s -side top -anchor e -padx 2 -pady 2", this->EWL_CreateNewVolumeRenderingNode->GetWidgetName());
 
@@ -235,7 +235,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->PB_CreateNewVolumeRenderingNode=vtkKWPushButton::New();
     this->PB_CreateNewVolumeRenderingNode->SetParent(loadSaveDataFrame->GetFrame());
     this->PB_CreateNewVolumeRenderingNode->Create();
-    this->PB_CreateNewVolumeRenderingNode->SetText("Create new VolumeRenderingNode");
+    this->PB_CreateNewVolumeRenderingNode->SetText("Create Visualization Parameterset");
     app->Script("pack %s -side top -anchor e -padx 2 -pady 2",this->PB_CreateNewVolumeRenderingNode->GetWidgetName());
 
     //Details frame

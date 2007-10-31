@@ -48,7 +48,6 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->NextRenderHighResolution=0;
     this->IgnoreStepZero=0;
     this->Quality=0;
-    this->LockProgressGauge=0;
 
 }
 
@@ -166,7 +165,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->MB_Quality=vtkKWMenuButtonWithSpinButtonsWithLabel::New();
     this->MB_Quality->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
     this->MB_Quality->Create();
-    this->MB_Quality->SetLabelText("Performance/Quality");
+    this->MB_Quality->SetLabelText("Performance / Quality:");
     this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("Low Quality - High Performance");
     this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(0,this,"SetQuality 0");
     this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("Middle Quality - Middle Performance");
@@ -637,12 +636,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         double *progress=(double*)callData;
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100**progress);
     }
-    else if (eid==vtkCommand::ProgressEvent&&(this->LockProgressGauge==0))
+    else if (eid==vtkCommand::ProgressEvent)
     {
-        this->LockProgressGauge=1;
         float *progress=(float*)callData;
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,100**progress);
-        this->LockProgressGauge=0;
     }
 }
 

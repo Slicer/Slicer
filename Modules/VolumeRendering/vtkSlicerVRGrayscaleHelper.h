@@ -45,7 +45,6 @@ protected:
 
     //GUI1
     vtkKWMenuButtonWithSpinButtonsWithLabel *MB_Quality;
-    int LockProgressGauge;
 
 
     //Render logic
@@ -55,7 +54,7 @@ protected:
     vtkSlicerVolumeTextureMapper3D *MapperTexture;
     vtkFixedPointVolumeRayCastMapper *MapperRaycast;
 
-        //Initial Factor for Interactive Rendering
+    //Initial Factor for Interactive Rendering
     double InitialDropLowRes;
     //Factor during last low Resolution Rendering
     double FactorLastLowRes;
