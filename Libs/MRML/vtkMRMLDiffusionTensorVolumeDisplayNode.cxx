@@ -136,7 +136,15 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent i
   Superclass::PrintSelf(os,indent);
 
 
-  os << indent << "DiffusionTensorDisplayPropertiesNodeID:   " << this->DiffusionTensorDisplayPropertiesNodeID << "\n";
+  os << indent << "DiffusionTensorDisplayPropertiesNodeID:  ";
+  if ( this->DiffusionTensorDisplayPropertiesNodeID )
+    {
+    os << indent << this->DiffusionTensorDisplayPropertiesNodeID << "\n";
+    }
+  else
+    {
+    os << indent << "NULL\n";
+    }
 }
 
 //---------------------------------------------------------------------------
