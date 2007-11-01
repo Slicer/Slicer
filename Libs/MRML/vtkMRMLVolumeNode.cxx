@@ -203,11 +203,13 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << " " << this->Origin[j];
     }
+  os << "\n";
   os << "Spacing:";
   for(j=0; j<3; j++) 
     {
     os << indent << " " << this->Spacing[j];
     }
+  os << "\n";
 
   if (this->ImageData != NULL) 
     {
