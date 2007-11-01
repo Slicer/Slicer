@@ -19,11 +19,7 @@ if(VR_LABELMAP)
   vtkSlicerVolumeTextureMapper3D.cxx
   vtkSlicerOpenGLVolumeTextureMapper3D.cxx
   vtkSlicerVolumeRenderingFactory.cxx
-  #LabelmapPart
-  vtkSlicerVRLabelmapHelper.cxx
-  vtkLabelMapColorTransferFunction.cxx
-  vtkLabelMapPiecewiseFunction.cxx
-  vtkSlicerLabelMapWidget.cxx
+  #Ray Cast stuff
   vtkSlicerFixedPointRayCastImage.cxx
   vtkSlicerFixedPointVolumeRayCastCompositeGOHelper.cxx
   vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper.cxx
@@ -34,6 +30,11 @@ if(VR_LABELMAP)
   vtkSlicerFixedPointVolumeRayCastMIPHelper.cxx
   vtkSlicerRayCastImageDisplayHelper.cxx
   vtkSlicerOpenGLRayCastImageDisplayHelper.cxx
+  #LabelmapPart
+  vtkSlicerVRLabelmapHelper.cxx
+  vtkLabelMapColorTransferFunction.cxx
+  vtkLabelMapPiecewiseFunction.cxx
+  vtkSlicerLabelMapWidget.cxx
   vtkEffectedArea.cxx)
 ELSE(VR_LABELMAP)
 ADD_DEFINITIONS(-DVR_LABELMAP_DEBUG)
@@ -45,9 +46,20 @@ ADD_DEFINITIONS(-DVR_LABELMAP_DEBUG)
   vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
   vtkSlicerVRHelper.cxx
   vtkSlicerVRGrayscaleHelper.cxx
-    vtkSlicerVolumeTextureMapper3D.cxx
+  vtkSlicerVolumeTextureMapper3D.cxx
   vtkSlicerOpenGLVolumeTextureMapper3D.cxx
-  vtkSlicerVolumeRenderingFactory.cxx)
+  vtkSlicerVolumeRenderingFactory.cxx
+    #Ray Cast stuff
+  vtkSlicerFixedPointRayCastImage.cxx
+  vtkSlicerFixedPointVolumeRayCastCompositeGOHelper.cxx
+  vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper.cxx
+  vtkSlicerFixedPointVolumeRayCastCompositeHelper.cxx
+  vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper.cxx
+  vtkSlicerFixedPointVolumeRayCastHelper.cxx
+  vtkSlicerFixedPointVolumeRayCastMapper.cxx
+  vtkSlicerFixedPointVolumeRayCastMIPHelper.cxx
+  vtkSlicerRayCastImageDisplayHelper.cxx
+  vtkSlicerOpenGLRayCastImageDisplayHelper.cxx)
 ENDIF(VR_LABELMAP)
 # Abstract/pure virtual classes
 

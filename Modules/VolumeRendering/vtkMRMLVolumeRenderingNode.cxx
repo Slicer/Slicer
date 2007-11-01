@@ -297,7 +297,7 @@ void vtkMRMLVolumeRenderingNode::PrintSelf(ostream& os, vtkIndent indent)
 
 void vtkMRMLVolumeRenderingNode::UpdateScene(vtkMRMLScene *scene)
 {
-   vtkErrorMacro("Subclass has not over ridden this method");
+   vtkErrorMacro("Subclass has not overwritten this method");
 }
 
 
@@ -306,28 +306,28 @@ void vtkMRMLVolumeRenderingNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, 
                                            void *callData )
 {
-  vtkErrorMacro("Subclass has not over ridden this method");
+  vtkErrorMacro("Subclass has not overwritten this method");
   return;
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLVolumeRenderingNode::GetFirstType()
 {
-  vtkErrorMacro("Subclass has not over ridden this method");
+  vtkErrorMacro("Subclass has not overwritten this method");
   return -1;
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLVolumeRenderingNode::GetLastType()
 {
-  vtkErrorMacro("Subclass has not over ridden this method");
+  vtkErrorMacro("Subclass has not overwritten this method");
   return -1;
 }
 
 //---------------------------------------------------------------------------
 const char * vtkMRMLVolumeRenderingNode::GetTypeAsString()
 {
-  vtkErrorMacro("Subclass has not over ridden this method");
+  vtkErrorMacro("Subclass has not overwritten this method");
   return "(unknown)";
 }
 

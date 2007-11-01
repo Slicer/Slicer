@@ -12,7 +12,7 @@ class vtkSlicerVolumePropertyWidget;
 class vtkRenderer;
 class vtkSlicerVolumeTextureMapper3D;
 class vtkTimerLog;
-class vtkFixedPointVolumeRayCastMapper;
+class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkKWMenuButtonWithSpinButtonsWithLabel;
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
@@ -52,7 +52,7 @@ protected:
     vtkRenderer *renPlane;
     int RenderPlane;
     vtkSlicerVolumeTextureMapper3D *MapperTexture;
-    vtkFixedPointVolumeRayCastMapper *MapperRaycast;
+    vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
 
     //Initial Factor for Interactive Rendering
     double InitialDropLowRes;

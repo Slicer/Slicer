@@ -105,10 +105,16 @@ void vtkSlicerOpenGLRayCastImageDisplayHelper::RenderTextureInternal( vtkVolume 
                                                                 void *image )
 {
 
- //SLICERADD
- this->MergeWithExistingImage(image,imageInUseSize[0]);
- 
- //ENDSLICERADD
+    //SLICERADD
+#if !defined (VR_LABELMAP_DEBUG)
+    this->MergeWithExistingImage(image,imageInUseSize[0]);
+#endif
+#if defined (VR_LABELMAP_DEBUG)
+    this->PreviousImage=image;
+#endif
+
+
+    //ENDSLICERADD
 
   int i;
   float offsetX, offsetY;
@@ -562,6 +568,8 @@ void vtkSlicerOpenGLRayCastImageDisplayHelper::PrintSelf(ostream& os, vtkIndent 
 {
   this->Superclass::PrintSelf(os,indent);
 }
+//SLICERADD
+#if !defined (VR_LABELMAP_DEBUG)
 
 void vtkSlicerOpenGLRayCastImageDisplayHelper::MergeWithExistingImage(void *image,int scalarType)
 {
@@ -613,3 +621,5 @@ void vtkSlicerOpenGLRayCastImageDisplayHelper::MergeWithExistingImage(void *imag
     }
 
 }
+#endif
+//END SLICERADD

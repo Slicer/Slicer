@@ -13,7 +13,7 @@
 
 =========================================================================*/
 #include "vtkSlicerRayCastImageDisplayHelper.h"
-#include "vtkVolumeRenderingFactory.h"
+#include "vtkSlicerVolumeRenderingFactory.h"
 
 vtkCxxRevisionMacro(vtkSlicerRayCastImageDisplayHelper, "$Revision: 1.4 $");
 
@@ -25,7 +25,7 @@ vtkInstantiatorNewMacro(vtkSlicerRayCastImageDisplayHelper);
 vtkSlicerRayCastImageDisplayHelper* vtkSlicerRayCastImageDisplayHelper::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret=vtkVolumeRenderingFactory::CreateInstance("vtkSlicerRayCastImageDisplayHelper");
+  vtkObject* ret=vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerRayCastImageDisplayHelper");
   return (vtkSlicerRayCastImageDisplayHelper*)ret;
 }
 

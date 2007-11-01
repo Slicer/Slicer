@@ -32,8 +32,7 @@
 #include "vtkPlaneSource.h"
 #include "vtkBMPReader.h"
 #include "vtkFloatArray.h"
-//#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
-#include "vtkFixedPointVolumeRayCastMapper.h"
+#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkKWEvent.h"
 #include "vtkSlicerVRHelper.h"
 #if !defined (VR_LABELMAP_DEBUG)

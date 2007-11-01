@@ -74,19 +74,15 @@ protected:
                               void *image );
 
 private:
+//#if !defined (VR_LABELMAP_DEBUG)
   void MergeWithExistingImage(void *image,int scalarType);
-  void *PreviousImage;
-
-
-
   int PreviousSize;
-
-
-
-
   int PreviousScalarType;
   int Limit[4];
   int PreviousImageSize;
+//#endif  
+
+  void *PreviousImage;
   vtkSlicerOpenGLRayCastImageDisplayHelper(const vtkSlicerOpenGLRayCastImageDisplayHelper&);  // Not implemented.
   void operator=(const vtkSlicerOpenGLRayCastImageDisplayHelper&);  // Not implemented.
 };

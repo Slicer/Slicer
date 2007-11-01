@@ -491,6 +491,9 @@ vtkSlicerFixedPointVolumeRayCastMapper::vtkSlicerFixedPointVolumeRayCastMapper()
   this->SavedMinMaxInput = NULL;
   
   this->Volume = NULL;
+  //SLICERADD
+  this->LimitEnabled=0;
+  //ENDSLICERADD
   
   
 }

@@ -23,7 +23,7 @@
 
 // if using some sort of opengl, then include these files
 #if defined(VTK_USE_OGLR) || defined(_WIN32) || defined(VTK_USE_COCOA) || defined(VTK_USE_CARBON)
-#include "vtkOpenGLRayCastImageDisplayHelper.h"
+#include "vtkSlicerOpenGLRayCastImageDisplayHelper.h"
 #include "vtkOpenGLVolumeTextureMapper2D.h"
 #include "vtkSlicerOpenGLVolumeTextureMapper3D.h"
 #endif
@@ -87,7 +87,7 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
       }
     
     // Ray Cast Image Display Helper
-    if(strcmp(vtkclassname, "vtkRayCastImageDisplayHelper") == 0)
+    if(strcmp(vtkclassname, "vtkSlicerRayCastImageDisplayHelper") == 0)
       {
 #if defined(VTK_USE_MANGLED_MESA)
       if ( vtkGraphicsFactory::GetUseMesaClasses() )
@@ -95,7 +95,7 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
         return vtkMesaRayCastImageDisplayHelper::New();
         }
 #endif
-      return vtkOpenGLRayCastImageDisplayHelper::New();
+      return vtkSlicerOpenGLRayCastImageDisplayHelper::New();
       }
     }
 #endif

@@ -1179,7 +1179,7 @@
       imagePtr+=4;                                                              \
       VTKKWRCHelper_SLICER_CloseLimitBrace                                      \
       }                                                                         \
-    if ( j%32 == 31 )                                                           \
+    if ( j%32 == 0 && threadID==0 )                                                           \
       {                                                                         \
       float fargs[1];                                                           \
       fargs[0] = static_cast<float>(j)/static_cast<float>(imageInUseSize[1]-1); \
@@ -1293,14 +1293,14 @@
 //BTX
 #define VTKKWRCHelper_SLICER_LimitRaysI                                         \
     int positionI=i+imageOrigin[0];                                             \
-    if(positionI>=mapper->Getlimit()[0]||positionI<=mapper->Getlimit()[1])                                \
+    if(mapper->GetLimitEnabled()==0||(positionI>=mapper->Getlimit()[0]||positionI<=mapper->Getlimit()[1]))                                \
     {
 //ETX
 
 //BTX
 #define VTKKWRCHelper_SLICER_LimitRaysJ                                         \
     int positionJ=j+imageOrigin[1];                                             \
-    if(positionJ>=mapper->Getlimit()[2]||positionJ<=mapper->Getlimit()[3])                    \
+    if(mapper->GetLimitEnabled()==0||(positionJ>=mapper->Getlimit()[2]||positionJ<=mapper->Getlimit()[3]))                    \
     {
 //ETX
 

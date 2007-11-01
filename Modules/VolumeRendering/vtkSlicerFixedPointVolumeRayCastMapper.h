@@ -99,6 +99,7 @@ public:
         this->limit[3]=ymax;
     }
     vtkGetVectorMacro(limit,int,4);
+    vtkGetMacro(LimitEnabled,int);
   //ENDSLICERADD
 
   static vtkSlicerFixedPointVolumeRayCastMapper *New();
@@ -266,6 +267,7 @@ protected:
 
     //SLICERADD
     int limit[4];
+    int LimitEnabled;
   //ENDSLICERADD
 
 

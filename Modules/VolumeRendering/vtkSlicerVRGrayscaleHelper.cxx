@@ -5,7 +5,7 @@
 #include "vtkVolumeRenderingModuleGUI.h"
 #include "vtkVolume.h"
 #include "vtkSlicerVolumeTextureMapper3D.h"
-#include "vtkFixedPointVolumeRayCastMapper.h"
+#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkTimerLog.h"
 #include "vtkRenderer.h"
 #include "vtkPointData.h"
@@ -242,7 +242,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
         this->Volume->SetMapper(this->MapperTexture);
         //Also take care about Ray Cast
-        this->MapperRaycast=vtkFixedPointVolumeRayCastMapper::New();
+        this->MapperRaycast=vtkSlicerFixedPointVolumeRayCastMapper::New();
         this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
         this->MapperRaycast->SetAutoAdjustSampleDistances(0);
         this->MapperRaycast->SetSampleDistance(0.1);
