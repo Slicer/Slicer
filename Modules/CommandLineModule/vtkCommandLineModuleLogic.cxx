@@ -86,6 +86,7 @@ vtkCommandLineModuleLogic* vtkCommandLineModuleLogic::New()
 vtkCommandLineModuleLogic::vtkCommandLineModuleLogic()
 {
   this->CommandLineModuleNode = NULL;
+  this->DeleteTemporaryFiles = 1;
 }
 
 //----------------------------------------------------------------------------
@@ -1468,18 +1469,21 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 
   // Remove any remaining temporary files.  At this point, these files
   // should be the files written as inputs to the module
-  bool removed;
-  std::set<std::string>::iterator fit;
-  for (fit = filesToDelete.begin(); fit != filesToDelete.end(); ++fit)
+  if ( this->GetDeleteTemporaryFiles() )
     {
-    if (itksys::SystemTools::FileExists((*fit).c_str()))
+    bool removed;
+    std::set<std::string>::iterator fit;
+    for (fit = filesToDelete.begin(); fit != filesToDelete.end(); ++fit)
       {
-      removed = itksys::SystemTools::RemoveFile((*fit).c_str());
-      if (!removed)
+      if (itksys::SystemTools::FileExists((*fit).c_str()))
         {
-        std::stringstream information;
-        information << "Unable to delete temporary file " << *fit << std::endl;
-        vtkWarningMacro( << information.str().c_str() );
+        removed = itksys::SystemTools::RemoveFile((*fit).c_str());
+        if (!removed)
+          {
+          std::stringstream information;
+          information << "Unable to delete temporary file " << *fit << std::endl;
+          vtkWarningMacro( << information.str().c_str() );
+          }
         }
       }
     }
