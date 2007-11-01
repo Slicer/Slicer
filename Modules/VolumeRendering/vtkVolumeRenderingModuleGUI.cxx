@@ -139,6 +139,9 @@ vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
         this->currentNode->Delete();
         this->currentNode=NULL;
     }
+
+    //Remove the MRML observer
+    this->GetApplicationGUI()->GetMRMLScene()->RemoveObservers(vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand);
     this->SetViewerWidget(NULL);
     this->SetInteractorStyle(NULL);
 }

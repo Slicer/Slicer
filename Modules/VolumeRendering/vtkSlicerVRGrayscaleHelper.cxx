@@ -48,6 +48,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->NextRenderHighResolution=0;
     this->IgnoreStepZero=0;
     this->Quality=0;
+    this->StageZeroEventHandlerID="";
 
 }
 
@@ -327,6 +328,13 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::StartEvent)
     {
+
+        //First check if we have to abort the ZeroStageRender
+        if(strcmp(this->StageZeroEventHandlerID.c_str(),"")!=0)
+        {
+            this->Gui->Script("after cancel %s",this->StageZeroEventHandlerID.c_str());
+            this->StageZeroEventHandlerID="";
+        }
         //It's the first time we render
         if(this->FactorLastLowRes==0)
         {
@@ -451,6 +459,12 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::EndEvent)
     {
+        //The Rendering has been aborted
+        if(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetAbortRender()==1)
+        {
+            this->StageZeroEventHandlerID=this->Gui->Script("after 500 [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow] Render");
+            return;
+        }
         vtkSlicerVRHelperDebug("endevent scheduled %d",this->scheduled);
         vtkSlicerVRHelperDebug("endevent currentstage %d",this->currentStage);
         if(this->currentStage==1)
@@ -639,6 +653,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     else if (eid==vtkCommand::ProgressEvent)
     {
         float *progress=(float*)callData;
+        if(*progress==0)
+        {
+            return;
+        }
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,100**progress);
     }
 }
@@ -647,11 +665,11 @@ void vtkSlicerVRGrayscaleHelper::ScheduleRender(void)
 {
     this->scheduled=1;
     this->currentStage++;
-    if(this->currentStage>2)
+    if(this->currentStage>2||vtkKWTkUtilities::CheckForPendingInteractionEvents(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow())!=0)
     {
         this->currentStage=0;
         this->scheduled=0;
-        return;
+        //return;
     }
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 }

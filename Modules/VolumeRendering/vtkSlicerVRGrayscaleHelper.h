@@ -81,12 +81,13 @@ protected:
     int IgnoreStepZero;
     //BTX
     std::string EventHandlerID;
+    std::string StageZeroEventHandlerID;
     //ETX
+    void ScheduleStageZero(void);
 
     void UpdateSVP(void);
 
     void CheckAbort(void);
-    int Scheduled;
 
     void AdjustMapping();
 };
