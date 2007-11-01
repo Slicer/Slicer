@@ -325,6 +325,7 @@ switch $::tcl_platform(os) {
         ## for Visual Studio 8
         # - automatically use newest if available
         # - use full if available, otherwise express
+        # - use the 64 bit version if available
         #
         if { [file exists "c:/Program Files/Microsoft Visual Studio 8/Common7/IDE/VCExpress.exe"] } {
             set ::GENERATOR "Visual Studio 8 2005" 
@@ -340,7 +341,8 @@ switch $::tcl_platform(os) {
         }
 
         if { [file exists "c:/Program Files (x86)/Microsoft Visual Studio 8/Common7/IDE/devenv.exe"] } {
-            set ::GENERATOR "Visual Studio 8 2005" 
+            #set ::GENERATOR "Visual Studio 8 2005 Win64"
+            set ::GENERATOR "Visual Studio 8 2005"   ;# do NOT use the 64 bit target
             set ::MAKE "c:/Program Files (x86)/Microsoft Visual Studio 8/Common7/IDE/devenv.exe"
             set ::COMPILER_PATH "c:/Program Files (x86)/Microsoft Visual Studio 8/VC/bin"
         }
