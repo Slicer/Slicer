@@ -153,10 +153,10 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
   for (unsigned int i=0; i<this->DisplayNodeIDs.size(); i++)
     {
-    os << indent << "DisplayNodeIDs[" << i << "]" <<
+    os << indent << "DisplayNodeIDs[" << i << "]: " <<
       this->DisplayNodeIDs[i] << "\n";
     }
-  os << "\nPoly Data:\n";
+  os << indent << "\nPoly Data:\n";
   if (this->PolyData) 
     {
     this->PolyData->PrintSelf(os, indent.GetNextIndent());
