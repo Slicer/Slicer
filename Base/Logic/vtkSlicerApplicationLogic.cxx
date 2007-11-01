@@ -39,6 +39,7 @@
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLFiberBundleLineDisplayNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
@@ -692,6 +693,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLScalarVolumeNode *svnd = 0;
   vtkMRMLVectorVolumeNode *vvnd = 0;
   vtkMRMLDiffusionTensorVolumeNode *dtvnd = 0;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *dwdpn = NULL;
   vtkMRMLDiffusionWeightedVolumeNode *dwvnd = 0;
   vtkMRMLModelNode *mnd = 0;
   vtkMRMLLinearTransformNode *ltnd = 0;
@@ -812,7 +814,17 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     // Diffusion tensor or a diffusion weighted node
     if (dtvnd)
       {
-      disp = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+      vtkMRMLDiffusionTensorVolumeDisplayNode *dtvdn = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+      disp = dtvdn; // assign to superclass pointer
+      dwdpn = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+      this->MRMLScene->AddNode( dwdpn );
+      dtvdn->SetAutoWindowLevel(0);
+      dtvdn->SetWindow(0);
+      dtvdn->SetLevel(0);
+      dtvdn->SetUpperThreshold(0);
+      dtvdn->SetLowerThreshold(0);
+      dtvdn->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(dwdpn->GetID());
+      dwdpn->Delete();
       }
     else
       {
