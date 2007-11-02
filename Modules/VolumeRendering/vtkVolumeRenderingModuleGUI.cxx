@@ -483,6 +483,7 @@ void vtkVolumeRenderingModuleGUI::ProcessMRMLEvents(vtkObject *caller, unsigned 
 void vtkVolumeRenderingModuleGUI::Enter(void)
 {
 
+
     vtkDebugMacro("Enter Volume Rendering Module");
     //Load Presets
     vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();

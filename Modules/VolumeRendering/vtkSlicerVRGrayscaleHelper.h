@@ -27,11 +27,20 @@ public:
     virtual void ShutdownPipeline(void);
     virtual void ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData);
     void ScheduleRender(void);
+    void ScheduleStageZero(void);
     void SetQuality(int qual)
     {
         this->Quality=qual;
     }
     vtkGetMacro(Quality,int);
+    void SetButtonDown(int _arg)
+    {
+        this->SetTCLDebug(1);
+        vtkSlicerVRHelperDebug("setbutton %d",_arg);
+        this->SetTCLDebug(0);
+        this->ButtonDown=(_arg);
+    }
+    //vtkSetMacro(ButtonDown,int);
 
 protected:
     vtkSlicerVRGrayscaleHelper(void);
@@ -74,6 +83,7 @@ protected:
     int currentStage;
 
     int Quality;
+    int ButtonDown;
 
     int scheduled;
     //Flag if next Render is a High Resolution Render
@@ -83,7 +93,7 @@ protected:
     std::string EventHandlerID;
     std::string StageZeroEventHandlerID;
     //ETX
-    void ScheduleStageZero(void);
+    
 
     void UpdateSVP(void);
 

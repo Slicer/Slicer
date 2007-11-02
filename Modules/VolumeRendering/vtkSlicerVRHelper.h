@@ -6,7 +6,7 @@
 
 # define vtkSlicerVRHelperDebug(message,format)                                        \
   {                                                                             \
-  if (this->GetDebug())                                                         \
+  if (this->GetTCLDebug())                                                         \
     {                                                                           \
         this->Script("puts \""message"\"",format);                              \
     }                                                                           \
@@ -25,6 +25,8 @@ public:
     virtual void InitializePipelineNewCurrentNode(void);
     virtual void ShutdownPipeline(void);
     virtual void UpdateRendering(void);
+    vtkSetMacro(TCLDebug,int);
+    vtkGetMacro(TCLDebug, int);
 
 
 protected:
@@ -35,6 +37,7 @@ protected:
 
     //Rendering pipeline
     vtkVolume *Volume;
+    int TCLDebug;
 
     vtkVolumeRenderingModuleGUI *Gui;
     //Callbacks
