@@ -170,7 +170,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
       this->DiffusionTensorGlyphFilter->ClampScalingOff();
       
       // TO DO: implement max # ellipsoids, random sampling features
-      this->DiffusionTensorGlyphFilter->SetResolution(2);
+      this->DiffusionTensorGlyphFilter->SetResolution(DTDisplayNode->GetLineGlyphResolution());
       
       this->DiffusionTensorGlyphFilter->SetScaleFactor( DTDisplayNode->GetGlyphScaleFactor( ) );
       

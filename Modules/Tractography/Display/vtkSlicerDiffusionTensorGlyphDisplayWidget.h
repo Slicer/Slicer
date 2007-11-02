@@ -110,6 +110,7 @@ public:
 
   // advanced frame
   vtkKWScaleWithLabel  *GlyphScale;
+  vtkKWScaleWithLabel  *GlyphResolutionScale;
 
   // lines frame
   vtkKWMenuButtonWithLabel  *LineGlyphEigenvectorMenu;
