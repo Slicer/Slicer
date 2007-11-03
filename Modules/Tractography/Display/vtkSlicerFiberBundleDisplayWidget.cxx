@@ -551,6 +551,8 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   propNode->SetColorGlyphBy(currentVal);
   colorMenuButton->GetWidget()->SetValue(propNode->GetColorGlyphByAsString());
 
+  propNode->Delete();
+
   // pack color menu
   colorMenuButton->SetLabelText("Color By Scalar");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",

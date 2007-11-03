@@ -69,7 +69,7 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayProper
   this->GlyphEigenvector = this->Major;
 
   // Line Glyph parameters
-  this->LineGlyphResolution = 8;  // was 10 in dtmri.tcl
+  this->LineGlyphResolution = 10;  // was 10 in dtmri.tcl
 
   // Tube Glyph parameters
   this->TubeGlyphRadius = 0.1;
