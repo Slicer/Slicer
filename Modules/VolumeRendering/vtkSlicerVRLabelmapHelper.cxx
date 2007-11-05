@@ -106,7 +106,9 @@ void vtkSlicerVRLabelmapHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->LM_OptionTree=vtkSlicerLabelMapWidget::New();
     this->LM_OptionTree->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
     this->LM_OptionTree->Create();
-    ((vtkSlicerApplication *)this->Gui->GetApplication())->Script("pack %s",this->LM_OptionTree->GetWidgetName());
+    //vtkMRMLScalarVolumeNode *volume=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData());
+    this->LM_OptionTree->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()));
+    ((vtkSlicerApplication *)this->Gui->GetApplication())->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->LM_OptionTree->GetWidgetName());
 
 }
 void vtkSlicerVRLabelmapHelper::UpdateRendering(void)

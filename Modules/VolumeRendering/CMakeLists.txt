@@ -35,7 +35,12 @@ if(VR_LABELMAP)
   vtkLabelMapColorTransferFunction.cxx
   vtkLabelMapPiecewiseFunction.cxx
   vtkSlicerLabelMapWidget.cxx
-  vtkEffectedArea.cxx)
+  vtkEffectedArea.cxx
+  vtkSlicerLabelmapTree.cxx
+  vtkSlicerLabelmapElement.cxx
+  vtkSlicerBaseTree.cxx
+  vtkSlicerBaseTreeElement.cxx
+  )
 ELSE(VR_LABELMAP)
 ADD_DEFINITIONS(-DVR_LABELMAP_DEBUG)
   SET(VolumeRenderingModule_SRCS
