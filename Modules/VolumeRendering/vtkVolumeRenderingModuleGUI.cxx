@@ -486,10 +486,11 @@ void vtkVolumeRenderingModuleGUI::Enter(void)
 
     vtkDebugMacro("Enter Volume Rendering Module");
     //Load Presets
-    vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
+
 
     if(!this->presets)
     {
+            vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
         //Instance internal MRMLScene for Presets
         this->presets=vtkMRMLScene::New();
         //Register node class

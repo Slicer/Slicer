@@ -17,6 +17,7 @@ vtkSlicerVRLabelmapHelper::vtkSlicerVRLabelmapHelper(void)
 {
     this->LM_OptionTree=NULL;
     this->MapperRaycast=NULL;
+    this->MapperRaycastHighDetail=NULL;
     this->VMPW_Shading=NULL;
 }
 
@@ -39,6 +40,19 @@ vtkSlicerVRLabelmapHelper::~vtkSlicerVRLabelmapHelper(void)
     {
         this->MapperRaycast->Delete();
         this->MapperRaycast=NULL;
+    }
+    if(this->MapperRaycastHighDetail!=NULL)
+    {
+        this->MapperRaycastHighDetail->Delete();
+        this->MapperRaycastHighDetail=NULL;
+    }
+    if(this->VMPW_Shading!=NULL)
+    {
+        this->Gui->Script("pack forget %s",this->VMPW_Shading->GetWidgetName());
+        this->VMPW_Shading->SetParent(NULL);
+        this->VMPW_Shading->Delete();
+        this->VMPW_Shading=NULL;
+
     }
 }
 void vtkSlicerVRLabelmapHelper::Rendering(void)
@@ -68,6 +82,8 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
         converter->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
         this->MapperRaycastHighDetail->SetInput(converter->GetOutput());
         this->MapperRaycastHighDetail->SetSampleDistance(0.1);
+        converter->Delete();
+        compositeFunction->Delete();
     }
 
     this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
@@ -102,7 +118,7 @@ void vtkSlicerVRLabelmapHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->VMPW_Shading=vtkKWVolumeMaterialPropertyWidget::New();
     this->VMPW_Shading->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
     this->VMPW_Shading->Create();
-    this->Script("pack %s",this->VMPW_Shading->GetWidgetName());
+    this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->VMPW_Shading->GetWidgetName());
     this->LM_OptionTree=vtkSlicerLabelMapWidget::New();
     this->LM_OptionTree->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
     this->LM_OptionTree->Create();

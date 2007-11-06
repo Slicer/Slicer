@@ -27,6 +27,11 @@ vtkSlicerVRHelper::~vtkSlicerVRHelper(void)
         this->Volume->Delete();
         this->Volume=NULL;
     }
+    if(this->VolumeRenderingCallbackCommand!=NULL)
+    {
+        this->VolumeRenderingCallbackCommand->Delete();
+        this->VolumeRenderingCallbackCommand=NULL;
+    }
 }
 
 void vtkSlicerVRHelper::InitializePipelineNewCurrentNode()

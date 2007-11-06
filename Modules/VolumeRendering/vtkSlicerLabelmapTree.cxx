@@ -17,10 +17,22 @@ vtkCxxRevisionMacro(vtkSlicerLabelmapTree, "$Revision: 0.1 $");
 vtkStandardNewMacro(vtkSlicerLabelmapTree);
 vtkSlicerLabelmapTree::vtkSlicerLabelmapTree(void)
 {
+    this->InChangeOpacityAll=0;
+    this->PiecewiseFunction=NULL;
+    this->Node=NULL;    //BTX
+    std::vector<vtkSlicerLabelmapElement*> Elements;
 }
 
 vtkSlicerLabelmapTree::~vtkSlicerLabelmapTree(void)
 {
+    for(unsigned int i=0;i<this->Elements.size();i++)
+    {
+        this->Elements[i]->RemoveObservers(vtkCommand::AnyEvent);
+        
+        this->Elements[i]->Delete();
+        this->Elements[i]=NULL;
+    }
+    this->Elements.clear();
 }
 void vtkSlicerLabelmapTree::CreateWidget(void)
 {
@@ -79,10 +91,16 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecew
     timer->StopTimer();
     vtkErrorMacro("Elapsed time:"<<timer->GetElapsedTime());
     vtkErrorMacro("NumberOfElements:"<<counter);
+    histo->Delete();
+    timer->Delete();
 
 }
 void vtkSlicerLabelmapTree::ProcessBaseTreeEvents(vtkObject *caller, unsigned long eid, void *callData)
 {
+    if(this->InChangeOpacityAll==0)
+    {
+        this->InvokeEvent(vtkSlicerLabelmapTree::SingleLabelEdited);
+    }
     int *callDataInt=(int*)callData;
     this->PiecewiseFunction->EditLabel(callDataInt[0],callDataInt[1]/20.);
     this->Script("puts \" event\"");
@@ -90,9 +108,11 @@ void vtkSlicerLabelmapTree::ProcessBaseTreeEvents(vtkObject *caller, unsigned lo
 }
 void vtkSlicerLabelmapTree::ChangeAllOpacities(int stage)
 {
+    this->InChangeOpacityAll=1;
     for(unsigned int i=0;i<this->Elements.size();i++)
     {   
         this->Elements[i]->ChangeOpacity(stage);
 
     }
+    this->InChangeOpacityAll=0;
 }

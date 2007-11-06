@@ -21,18 +21,23 @@ vtkSlicerLabelMapWidget::vtkSlicerLabelMapWidget(void)
 
 vtkSlicerLabelMapWidget::~vtkSlicerLabelMapWidget(void)
 {
-    if(this->Tree!=NULL)
-    {
-        this->Tree->SetParent(NULL);
-        this->Tree->Delete();
-        this->Tree=NULL;
-    }
     if(this->ChangeAll!=NULL)
     {
+        this->Script("pack forget %s",this->ChangeAll->GetWidgetName());
+        this->ChangeAll->RemoveObservers(vtkCommand::AnyEvent);
         this->ChangeAll->SetParent(NULL);
         this->ChangeAll->Delete();
         this->ChangeAll=NULL;
     }
+    if(this->Tree!=NULL)
+    {
+        this->Script("pack forget %s",this->Tree->GetWidgetName());
+        this->Tree->RemoveObservers(vtkSlicerLabelmapTree::SingleLabelEdited);
+        this->Tree->SetParent(NULL);
+        this->Tree->Delete();
+        this->Tree=NULL;
+    }
+
 }
 
 void vtkSlicerLabelMapWidget::CreateWidget(void)
@@ -52,16 +57,26 @@ void vtkSlicerLabelMapWidget::CreateWidget(void)
     this->Tree->SetParent(this);
     this->Tree->Create();
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->Tree->GetWidgetName());
-    
- 
+    this->Tree->AddObserver(vtkSlicerLabelmapTree::SingleLabelEdited,(vtkCommand *) this->GUICallbackCommand);
+
+
 }
 void vtkSlicerLabelMapWidget::ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData)
 {
     vtkSlicerLabelmapElement *callerLabelmap=vtkSlicerLabelmapElement::SafeDownCast(caller);
-    if(callerLabelmap=this->ChangeAll)
+
+    if(callerLabelmap==this->ChangeAll)
     {
         int *opacities=(int*) callData;
         this->Tree->ChangeAllOpacities(opacities[1]);
         vtkErrorMacro("got a labelmapwidget event");
+        return;
     }
+    vtkSlicerLabelmapTree *callerLabelmapTree=vtkSlicerLabelmapTree::SafeDownCast(caller);
+    if(callerLabelmapTree==this->Tree&&event==vtkSlicerLabelmapTree::SingleLabelEdited)
+    {
+        this->ChangeAll->ChangeOpacity(0);
+
+    }
+
 }

@@ -136,7 +136,6 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->MB_Quality->Delete();
         this->MB_Quality=NULL;
     }
-
 }
 void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {

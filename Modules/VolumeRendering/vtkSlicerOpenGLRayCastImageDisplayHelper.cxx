@@ -576,6 +576,7 @@ void vtkSlicerOpenGLRayCastImageDisplayHelper::MergeWithExistingImage(void *imag
     if(this->PreviousScalarType!=scalarType)
     {
         vtkErrorMacro("The scalarType has changed, merge is not possible");
+        this->PreviousImage=image;
         return;
     }
     int size=(Limit[3]-Limit[2])*(Limit[1]*Limit[0]);

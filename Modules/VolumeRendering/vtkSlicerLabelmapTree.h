@@ -16,8 +16,15 @@ public:
     void Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecewiseFunction *piecewiseFunction);
     virtual void CreateWidget(void);
     void ChangeAllOpacities(int stage);
+    //BTX
+  enum
+    {
+      SingleLabelEdited = 12000,
+    };
+//ETX
 
 protected:
+    int InChangeOpacityAll;
     vtkLabelMapPiecewiseFunction *PiecewiseFunction;
     vtkMRMLScalarVolumeNode *Node;
     //BTX

@@ -39,6 +39,11 @@ vtkSlicerLabelmapElement::~vtkSlicerLabelmapElement(void)
             this->Opacity[i]=NULL;
         }
     }
+    if(this->LabelmapCallbackCommand!=NULL)
+    {
+        this->LabelmapCallbackCommand->Delete();
+        this->LabelmapCallbackCommand=NULL;
+    }
 }
 void vtkSlicerLabelmapElement::CreateWidget(void)
 {

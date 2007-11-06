@@ -12,6 +12,11 @@ vtkSlicerBaseTree::vtkSlicerBaseTree(void)
 
 vtkSlicerBaseTree::~vtkSlicerBaseTree(void)
 {
+    if(this->BaseTreeCallbackCommand!=NULL)
+    {
+        this->BaseTreeCallbackCommand->Delete();
+        this->BaseTreeCallbackCommand=NULL;
+    }
 }
 void vtkSlicerBaseTree::CreateWidget(void)
 {
