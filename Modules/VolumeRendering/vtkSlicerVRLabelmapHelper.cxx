@@ -102,13 +102,11 @@ void vtkSlicerVRLabelmapHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->VMPW_Shading=vtkKWVolumeMaterialPropertyWidget::New();
     this->VMPW_Shading->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
     this->VMPW_Shading->Create();
-    ((vtkSlicerApplication *)this->Gui->GetApplication())->Script("pack %s",this->VMPW_Shading->GetWidgetName());
+    this->Script("pack %s",this->VMPW_Shading->GetWidgetName());
     this->LM_OptionTree=vtkSlicerLabelMapWidget::New();
     this->LM_OptionTree->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
     this->LM_OptionTree->Create();
-    //vtkMRMLScalarVolumeNode *volume=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData());
-    this->LM_OptionTree->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()));
-    ((vtkSlicerApplication *)this->Gui->GetApplication())->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->LM_OptionTree->GetWidgetName());
+    this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->LM_OptionTree->GetWidgetName());
 
 }
 void vtkSlicerVRLabelmapHelper::UpdateRendering(void)
@@ -143,6 +141,7 @@ void vtkSlicerVRLabelmapHelper::InitializePipelineNewCurrentNode()
         vtkLabelMapColorTransferFunction *colorNew=vtkLabelMapColorTransferFunction::New();
         colorNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()));
         this->Gui->GetcurrentNode()->GetVolumeProperty()->SetColor(colorNew);
+        this->LM_OptionTree->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()),opacityNew);
         this->UpdateLM();
 
         //Delete

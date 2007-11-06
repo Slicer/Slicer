@@ -13,10 +13,12 @@ public:
     vtkTypeRevisionMacro(vtkSlicerLabelmapElement,vtkSlicerBaseTreeElement);
     virtual void CreateWidget(void);
     //BTX
-    void Init(std::string colorName,double color[3] ,int opacityLevel,int max);
+    void Init(int id,std::string colorName,double color[3] ,int opacityLevel,int max);
     //ETX
     void ChangeOpacity(int stage);
+    vtkGetMacro(Id,int);
 protected:
+    int Id;
     vtkKWLabel *ColorName;
     vtkKWLabel *Color;
     vtkKWPushButton *Opacity[6];

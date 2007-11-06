@@ -10,6 +10,7 @@
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkPointData.h"
 #include "vtkCommand.h"
+#include "vtkLabelMapPiecewiseFunction.h"
 #include <sstream>
 #include <vector>
 vtkCxxRevisionMacro(vtkSlicerLabelmapTree, "$Revision: 0.1 $");
@@ -30,9 +31,10 @@ void vtkSlicerLabelmapTree::CreateWidget(void)
     tree->SetDeltaY(30);
 }
 
-void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node)
+void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecewiseFunction *piecewiseFunction)
 {
     this->Node=node;
+    this->PiecewiseFunction=piecewiseFunction;
     vtkLookupTable *lookup=this->Node->GetVolumeDisplayNode()->GetColorNode()->GetLookupTable();
     vtkTimerLog *timer=vtkTimerLog::New();
 
@@ -66,7 +68,7 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node)
             element->Create();
             double rgb[3];
             lookup->GetColor(i,rgb);
-            element->Init(this->Node->GetVolumeDisplayNode()->GetColorNode()->GetColorName(i),rgb,1,max);
+            element->Init(i,this->Node->GetVolumeDisplayNode()->GetColorNode()->GetColorName(i),rgb,1,max);
             this->Script("pack %s -side left -anchor c -expand y",element->GetWidgetName());
             element->AddObserver(vtkCommand::AnyEvent,(vtkCommand *) this->BaseTreeCallbackCommand);
             this->GetWidget()->SetNodeWindow(streamA.str().c_str(),element);
@@ -81,13 +83,16 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node)
 }
 void vtkSlicerLabelmapTree::ProcessBaseTreeEvents(vtkObject *caller, unsigned long eid, void *callData)
 {
+    int *callDataInt=(int*)callData;
+    this->PiecewiseFunction->EditLabel(callDataInt[0],callDataInt[1]/20.);
     this->Script("puts \" event\"");
 
 }
 void vtkSlicerLabelmapTree::ChangeAllOpacities(int stage)
 {
-    for(int i=0;i<this->Elements.size();i++)
-    {
+    for(unsigned int i=0;i<this->Elements.size();i++)
+    {   
         this->Elements[i]->ChangeOpacity(stage);
+
     }
 }

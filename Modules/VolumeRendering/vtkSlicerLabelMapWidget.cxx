@@ -45,7 +45,7 @@ void vtkSlicerLabelMapWidget::CreateWidget(void)
     color[0]=0.5;
     color[1]=0.5;
     color[2]=0.5;
-    this->ChangeAll->Init("ALL COLORS",color,.2,20);
+    this->ChangeAll->Init(INT_MIN,"ALL COLORS",color,.2,20);
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->ChangeAll->GetWidgetName());
     this->ChangeAll->AddObserver(vtkCommand::AnyEvent,(vtkCommand *)this->GUICallbackCommand);
     this->Tree=vtkSlicerLabelmapTree::New();
@@ -60,8 +60,8 @@ void vtkSlicerLabelMapWidget::ProcessWidgetEvents(vtkObject *caller, unsigned lo
     vtkSlicerLabelmapElement *callerLabelmap=vtkSlicerLabelmapElement::SafeDownCast(caller);
     if(callerLabelmap=this->ChangeAll)
     {
-        int opacities=*((int*) callData);
-        this->Tree->ChangeAllOpacities(opacities);
+        int *opacities=(int*) callData;
+        this->Tree->ChangeAllOpacities(opacities[1]);
         vtkErrorMacro("got a labelmapwidget event");
     }
 }

@@ -6,17 +6,19 @@
 
 class vtkSlicerLabelmapElement;
 class vtkMRMLScalarVolumeNode;
-
+class vtkLabelMapPiecewiseFunction;
+ 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerLabelmapTree : public vtkSlicerBaseTree
 {
 public:
     static vtkSlicerLabelmapTree *New();
     vtkTypeRevisionMacro(vtkSlicerLabelmapTree,vtkSlicerBaseTree);
-    void Init(vtkMRMLScalarVolumeNode *node);
+    void Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecewiseFunction *piecewiseFunction);
     virtual void CreateWidget(void);
     void ChangeAllOpacities(int stage);
 
 protected:
+    vtkLabelMapPiecewiseFunction *PiecewiseFunction;
     vtkMRMLScalarVolumeNode *Node;
     //BTX
     std::vector<vtkSlicerLabelmapElement*> Elements;

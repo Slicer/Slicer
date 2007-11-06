@@ -69,8 +69,9 @@ void vtkSlicerLabelmapElement::CreateWidget(void)
         this->Script("pack %s -side left -anchor c -expand y",this->Opacity[i]->GetWidgetName());
     }
 }
-void vtkSlicerLabelmapElement::Init(std::string colorName,double color[3],int opacityLevel,int max)
+void vtkSlicerLabelmapElement::Init(int id,std::string colorName,double color[3],int opacityLevel,int max)
 {
+    this->Id=id;
     std::stringstream expansion;
     expansion<<colorName;
     int sizeBefore=expansion.str().length();
@@ -136,5 +137,8 @@ void vtkSlicerLabelmapElement::FillButtons(int stage)
 void vtkSlicerLabelmapElement::ChangeOpacity(int stage)
 {
     this->FillButtons(stage);
-    this->InvokeEvent(vtkCommand::AnyEvent,&stage);
+    int returnValue[2];
+    returnValue[0]=this->Id;
+    returnValue[1]=stage;
+    this->InvokeEvent(vtkCommand::AnyEvent,returnValue);
 }

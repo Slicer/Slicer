@@ -112,6 +112,10 @@ void vtkLabelMapPiecewiseFunction::EditLabel(int index,double opacity)
         return;
     }
     this->Opacities[index]=opacity;
+            this->AddPoint(index-.5,0);
+        this->AddPoint(index-.49,opacity);
+        this->AddPoint(index+.5,0);
+        this->AddPoint(index+.49,opacity);
 
 }
 double vtkLabelMapPiecewiseFunction::GetLabel(int index)
