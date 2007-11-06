@@ -117,3 +117,17 @@ CONFIGURE_FILE(
   ${SlicerBaseLogic_SOURCE_DIR}/vtkSlicerBaseLogicConfigure.h.in 
   ${SlicerBaseLogic_BINARY_DIR}/vtkSlicerBaseLogicConfigure.h
 )
+
+# --------------------------------------------------------------------------
+# Resources
+SET (COLORFILES
+    ./Resources/ColorFiles/PelvisColor.txt
+)
+
+FOREACH ( colorfile ${COLORFILES})
+   CONFIGURE_FILE(
+        ${SlicerBaseLogic_SOURCE_DIR}/${colorfile}
+        ${SlicerBaseLogic_BINARY_DIR}/${colorfile}
+        COPYONLY
+)
+ENDFOREACH(colorfile)

@@ -83,6 +83,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
   // Description:
   // return a default color node id for a procedural color node
   char * GetDefaultProceduralColorNodeID(const char *name);
+
+  // Description:
+  // return a default color node id for a file based node, based on the file name
+  char * GetDefaultFileColorNodeID(const char *fileName);
   
 protected:
   vtkSlicerColorLogic();
@@ -90,6 +94,13 @@ protected:
   vtkSlicerColorLogic(const vtkSlicerColorLogic&);
   void operator=(const vtkSlicerColorLogic&);
 
+  // Description:
+  // a vector holding discovered colour files, white space separated with:
+  // int name r g b a
+  // with rgba in the range 0-255
+  //BTX
+  std::vector<std::string> ColorFiles;
+  //ETX
 };
 
 #endif
