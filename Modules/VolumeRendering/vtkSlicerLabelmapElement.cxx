@@ -1,11 +1,16 @@
 #include "vtkSlicerLabelmapElement.h"
 #include "vtkObjectFactory.h"
 #include "vtkKWLabel.h"
+#include "vtkCommand.h"
+#include "vtkCallbackCommand.h"
 #include <sstream>
 vtkCxxRevisionMacro(vtkSlicerLabelmapElement, "$Revision: 0.1 $");
 vtkStandardNewMacro(vtkSlicerLabelmapElement);
 vtkSlicerLabelmapElement::vtkSlicerLabelmapElement(void)
 {
+    this->LabelmapCallbackCommand=vtkCallbackCommand::New();
+    this->LabelmapCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
+    this->LabelmapCallbackCommand->SetCallback(vtkSlicerLabelmapElement::LabelmapCallback);
     this->ColorName=NULL;
     this->Color=NULL;
     for(int i=0;i<6;i++)
@@ -56,6 +61,11 @@ void vtkSlicerLabelmapElement::CreateWidget(void)
         this->Opacity[i]=vtkKWPushButton::New();
         this->Opacity[i]->SetParent(this);
         this->Opacity[i]->Create();
+        std::stringstream command;
+        command<<"ChangeOpacity ";
+        command<<i;
+        this->Opacity[i]->SetCommand(this,command.str().c_str()); 
+        //this->Opacity[i]->AddObserver(vtkCommand::AnyEvent,(vtkCommand *)this->LabelmapCallbackCommand);
         this->Script("pack %s -side left -anchor c -expand y",this->Opacity[i]->GetWidgetName());
     }
 }
@@ -71,8 +81,60 @@ void vtkSlicerLabelmapElement::Init(std::string colorName,double color[3],int op
 
     this->ColorName->SetText(expansion.str().c_str());
     this->Color->SetBackgroundColor(color);
-    for(int i=0;i<=opacityLevel;i++)
+    this->FillButtons(opacityLevel);
+}
+
+void vtkSlicerLabelmapElement::LabelmapCallback( vtkObject *caller, unsigned long eid, void *clientData, void *callData )
+{
+    vtkSlicerLabelmapElement *self = reinterpret_cast<vtkSlicerLabelmapElement *>(clientData);
+
+
+    if (self->GetInLabelmapCallbackFlag())
+    {
+#ifdef _DEBUG
+        vtkDebugWithObjectMacro(self, "In vtkLabelmapCallback called recursively?");
+#endif
+        //return;
+    }
+
+    vtkDebugWithObjectMacro(self, "In vtkLabelmapCallback");
+
+    self->SetInLabelmapCallbackFlag(1);
+    self->ProcessLabelmapEvents(caller,eid,callData);
+    self->SetInLabelmapCallbackFlag(0);
+}
+void vtkSlicerLabelmapElement::ProcessLabelmapEvents(vtkObject *caller, unsigned long eid, void *callData)
+{
+    vtkKWPushButton *callerPushButton=vtkKWPushButton::SafeDownCast(caller);
+        for(int i=0;i<6;i++)
+    {
+        if(callerPushButton=this->Opacity[i])
+        {
+            this->FillButtons(i);
+            return;
+
+        }
+        this->Opacity[i]=vtkKWPushButton::New();
+        this->Opacity[i]->SetParent(this);
+        this->Opacity[i]->Create();
+        }
+    this->Script("puts \" labelmapEvent\"");
+}
+
+void vtkSlicerLabelmapElement::FillButtons(int stage)
+{
+    for(int i=0;i<=stage;i++)
     {
         this->Opacity[i]->SetBackgroundColor(.5,.5,.5);
     }
+    for(int i=stage+1;i<6;i++)
+    {
+        this->Opacity[i]->SetBackgroundColor(1,1,1);
+    }
+}
+
+void vtkSlicerLabelmapElement::ChangeOpacity(int stage)
+{
+    this->FillButtons(stage);
+    this->InvokeEvent(vtkCommand::AnyEvent,&stage);
 }

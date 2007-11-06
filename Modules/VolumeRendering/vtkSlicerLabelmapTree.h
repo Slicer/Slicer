@@ -2,22 +2,31 @@
 #define __vtkSlicerLabelmapTree_h
 #include "vtkSlicerBaseTree.h"
 #include "vtkVolumeRenderingModule.h"
+#include <vector>
 
+class vtkSlicerLabelmapElement;
 class vtkMRMLScalarVolumeNode;
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerLabelmapTree : public vtkSlicerBaseTree
 {
 public:
-        static vtkSlicerLabelmapTree *New();
+    static vtkSlicerLabelmapTree *New();
     vtkTypeRevisionMacro(vtkSlicerLabelmapTree,vtkSlicerBaseTree);
     void Init(vtkMRMLScalarVolumeNode *node);
     virtual void CreateWidget(void);
+    void ChangeAllOpacities(int stage);
 
 protected:
     vtkMRMLScalarVolumeNode *Node;
+    //BTX
+    std::vector<vtkSlicerLabelmapElement*> Elements;
+    //ETX
     ~vtkSlicerLabelmapTree(void);
-        vtkSlicerLabelmapTree(void);
-              vtkSlicerLabelmapTree(const vtkSlicerLabelmapTree&);//not implemented
+    vtkSlicerLabelmapTree(void);
+    vtkSlicerLabelmapTree(const vtkSlicerLabelmapTree&);//not implemented
     void operator=(const vtkSlicerLabelmapTree&);//not implemented
+    virtual void ProcessBaseTreeEvents(vtkObject *caller, unsigned long eid, void *callData);
+
+
 };
 #endif 

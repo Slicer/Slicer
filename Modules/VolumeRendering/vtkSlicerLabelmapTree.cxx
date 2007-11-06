@@ -9,7 +9,9 @@
 #include "vtkKWHistogram.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkPointData.h"
+#include "vtkCommand.h"
 #include <sstream>
+#include <vector>
 vtkCxxRevisionMacro(vtkSlicerLabelmapTree, "$Revision: 0.1 $");
 vtkStandardNewMacro(vtkSlicerLabelmapTree);
 vtkSlicerLabelmapTree::vtkSlicerLabelmapTree(void)
@@ -36,7 +38,7 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node)
 
     vtkKWHistogram *histo=vtkKWHistogram::New();
     histo->BuildHistogram(node->GetImageData()->GetPointData()->GetScalars(),0);
-       timer->StartTimer();
+    timer->StartTimer();
     int counter=0;
     //detect the max size of color Name
     int max=0;
@@ -53,24 +55,39 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node)
     {
         if(histo->GetOccurenceAtValue(i)>1)
         {
-        std::stringstream streamA;
-        streamA<<i;
-        this->GetWidget()->AddNode("",streamA.str().c_str(),"");
-        vtkSlicerLabelmapElement *element=vtkSlicerLabelmapElement::New();
-        element->SetParent(this->GetWidget());
-        element->Create();
-        double rgb[3];
-        lookup->GetColor(i,rgb);
-        element->Init(this->Node->GetVolumeDisplayNode()->GetColorNode()->GetColorName(i),rgb,1,max);
-        this->Script("pack %s -side left -anchor c -expand y",element->GetWidgetName());
-        this->GetWidget()->SetNodeWindow(streamA.str().c_str(),element);
-        element->Delete();
-        counter++;
+            std::stringstream streamA;
+            streamA<<i;
+            this->GetWidget()->AddNode("",streamA.str().c_str(),"");
+
+            vtkSlicerLabelmapElement *element=vtkSlicerLabelmapElement::New();
+            this->Elements.push_back(element);
+
+            element->SetParent(this->GetWidget());
+            element->Create();
+            double rgb[3];
+            lookup->GetColor(i,rgb);
+            element->Init(this->Node->GetVolumeDisplayNode()->GetColorNode()->GetColorName(i),rgb,1,max);
+            this->Script("pack %s -side left -anchor c -expand y",element->GetWidgetName());
+            element->AddObserver(vtkCommand::AnyEvent,(vtkCommand *) this->BaseTreeCallbackCommand);
+            this->GetWidget()->SetNodeWindow(streamA.str().c_str(),element);
+            counter++;
         }
 
     }
-            timer->StopTimer();
-            vtkErrorMacro("Elapsed time:"<<timer->GetElapsedTime());
-            vtkErrorMacro("NumberOfElements:"<<counter);
+    timer->StopTimer();
+    vtkErrorMacro("Elapsed time:"<<timer->GetElapsedTime());
+    vtkErrorMacro("NumberOfElements:"<<counter);
 
+}
+void vtkSlicerLabelmapTree::ProcessBaseTreeEvents(vtkObject *caller, unsigned long eid, void *callData)
+{
+    this->Script("puts \" event\"");
+
+}
+void vtkSlicerLabelmapTree::ChangeAllOpacities(int stage)
+{
+    for(int i=0;i<this->Elements.size();i++)
+    {
+        this->Elements[i]->ChangeOpacity(stage);
+    }
 }
