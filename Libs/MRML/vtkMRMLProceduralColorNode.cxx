@@ -69,7 +69,6 @@ vtkMRMLProceduralColorNode::~vtkMRMLProceduralColorNode()
   if (this->ColorTransferFunction)
     {
     this->ColorTransferFunction->Delete();
-    this->ColorTransferFunction = NULL;
     }
 }
 
