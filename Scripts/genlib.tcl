@@ -509,6 +509,8 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DCMAKE_SKIP_RPATH:BOOL=OFF \
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
             -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+            -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
+            -DCMAKE_EXE_LINKER_FLAGS="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
             -DBUILD_TESTING:BOOL=OFF \
             -DVTK_USE_CARBON:BOOL=OFF \
             -DVTK_USE_X:BOOL=ON \
@@ -586,6 +588,13 @@ if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
         -DBUILD_TESTING:BOOL=ON \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         ../KWWidgets
+
+    if { $isDarwin } {
+      runcmd $::CMAKE \
+          -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
+          -DCMAKE_EXE_LINKER_FLAGS="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
+          ../KWWidgets
+    }
 
     if {$isWindows} {
         if { $MSVC6 } {
@@ -850,6 +859,13 @@ if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
         -DIGSTK_BUILD_TESTING:BOOL=OFF \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         ../IGSTK
+    }
+
+    if { $isDarwin } {
+      runcmd $::CMAKE \
+          -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
+          -DCMAKE_EXE_LINKER_FLAGS="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
+          ../IGSTK
     }
 
     if {$isWindows} {
