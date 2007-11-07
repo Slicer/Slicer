@@ -69,7 +69,6 @@ vtkMRMLColorTableNode::~vtkMRMLColorTableNode()
   if (this->LookupTable)
     {
     this->LookupTable->Delete();
-    this->LookupTable = NULL;
     }
   if (this->FileName)
     {  

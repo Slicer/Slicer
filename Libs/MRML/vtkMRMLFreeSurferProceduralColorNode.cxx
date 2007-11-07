@@ -98,7 +98,6 @@ vtkMRMLFreeSurferProceduralColorNode::~vtkMRMLFreeSurferProceduralColorNode()
   if (this->LookupTable)
     {
     this->LookupTable->Delete();
-    this->LookupTable = NULL;
     }
 
   if (this->LabelsFileName)
