@@ -25,8 +25,12 @@
 #include "vtkMRMLFiducial.h"
 #include "vtkMRMLFiducialListNode.h"
 
+#ifdef WIN32
+#include <windows.h>
+#else
 #include <dirent.h>
 #include <errno.h>
+#endif
 
 vtkCxxRevisionMacro(vtkSlicerColorLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerColorLogic);
@@ -61,6 +65,38 @@ vtkSlicerColorLogic::vtkSlicerColorLogic()
    
   // get the list of colour files in this dir
   vtksys_stl::string dirString = vtksys::SystemTools::JoinPath(filesVector);
+#ifdef WIN32
+  WIN32_FIND_DATA findData;
+  HANDLE fileHandle;
+  int flag = 1;
+  std::string search ("*.*");
+  dirString += "/";
+  search = dirString + search;
+  
+  fileHandle = FindFirstFile(search.c_str(), &findData);
+  if (fileHandle != INVALID_HANDLE_VALUE)
+    {
+    while (flag)
+      {
+      int fileType = vtksys::SystemTools::DetectFileType(findData.cFileName);
+      if (fileType == vtksys::SystemTools::FileTypeText)
+        {
+        vtkDebugMacro("Adding " << findData.cFileName << " to list of potential colour files. Type = " << fileType);
+        ColorFiles.push_back(findData.cFileName);
+        flag = FindNextFile(fileHandle, &findData);
+        }
+      else
+        {
+        vtkWarningMacro("Skipping potential colour file " << findData.cFileName << ", file type = " << fileType);
+        }
+      }
+    FindClose(fileHandle);
+    }
+  else
+    {
+    vtkWarningMacro("Unable to find any colour files using search string: " << search.c_str());
+    }
+#else
   DIR *dp;
   struct dirent *dirp;
   if ((dp  = opendir(dirString.c_str())) == NULL)
@@ -85,6 +121,7 @@ vtkSlicerColorLogic::vtkSlicerColorLogic()
       }
     closedir(dp);
     }
+#endif
 }
 
 //----------------------------------------------------------------------------
