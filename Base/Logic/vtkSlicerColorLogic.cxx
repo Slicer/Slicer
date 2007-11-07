@@ -78,17 +78,23 @@ vtkSlicerColorLogic::vtkSlicerColorLogic()
     {
     while (flag)
       {
-      int fileType = vtksys::SystemTools::DetectFileType(findData.cFileName);
+      // add this file to the vector holding the base dir name so check the
+      // file type using the full path
+      filesVector.push_back(vtksys_stl::string(findData.cFileName));
+      vtksys_stl::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector); 
+      int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
       if (fileType == vtksys::SystemTools::FileTypeText)
         {
-        vtkDebugMacro("Adding " << findData.cFileName << " to list of potential colour files. Type = " << fileType);
-        ColorFiles.push_back(findData.cFileName);
+        vtkDebugMacro("Adding " << fileToCheck.c_str() << " to list of potential colour files. Type = " << fileType);
+        ColorFiles.push_back(fileToCheck.c_str());
         }
       else
         {
-        vtkWarningMacro("Skipping potential colour file " << findData.cFileName << ", file type = " << fileType);
+        vtkWarningMacro("Skipping potential colour file " << fileToCheck.c_str() << ", file type = " << fileType);
         }
-       flag = FindNextFile(fileHandle, &findData);
+      // take this file off so that can build the next file name
+      filesVector.pop_back();
+      flag = FindNextFile(fileHandle, &findData);
       }
     FindClose(fileHandle);
     }
