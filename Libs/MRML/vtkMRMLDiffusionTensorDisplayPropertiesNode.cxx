@@ -137,9 +137,11 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::ReadXMLAttributes(const char**
       attValue = *(atts++);
       if (!strcmp(attName, "glyphGeometry")) 
       {
+      int glyphGeometry;
       std::stringstream ss;
       ss << attValue;
-      ss >> GlyphGeometry;
+      ss >> glyphGeometry;
+      this->SetGlyphGeometry(glyphGeometry);
       }
       else if (!strcmp(attName, "colorGlyphBy")) 
       {

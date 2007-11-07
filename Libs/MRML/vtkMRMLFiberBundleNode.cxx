@@ -121,6 +121,7 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddLineDisplayNode()
       vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
       this->GetScene()->AddNode(glyphDTDPN);
       node->SetAndObserveDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
+      node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
       glyphDTDPN->Delete();
 
       this->AddAndObserveDisplayNodeID(node->GetID());
@@ -146,7 +147,8 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddTubeDisplayNode()
       this->GetScene()->AddNode(glyphDTDPN);
       node->SetAndObserveDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
       glyphDTDPN->Delete();
-
+      node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+      
       this->AddAndObserveDisplayNodeID(node->GetID());
       node->SetPolyData(this->GetPolyData());
       }
@@ -169,6 +171,7 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddGlyphDisplayNode()
       this->GetScene()->AddNode(glyphDTDPN);
       node->SetAndObserveDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
       glyphDTDPN->Delete();
+      node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
 
       this->AddAndObserveDisplayNodeID(node->GetID());
       node->SetPolyData(this->GetPolyData());

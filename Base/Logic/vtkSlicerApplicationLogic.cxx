@@ -834,6 +834,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   else if (fbnd)
     {
     // Fiber bundle node
+    fbnd->SetModifiedSinceRead(1);
     disp = NULL;
     vtkMRMLFiberBundleDisplayNode *fbdn = fbnd->AddLineDisplayNode();
     fbdn->SetVisibility(1);
@@ -841,6 +842,10 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     fbdn->SetVisibility(0);
     fbdn = fbnd->AddGlyphDisplayNode();
     fbdn->SetVisibility(0);
+    vtkMRMLFiberBundleStorageNode *storageNode = vtkMRMLFiberBundleStorageNode::New();
+    this->GetMRMLScene()->AddNode(storageNode);  
+    fbnd->SetStorageNodeID(storageNode->GetID());
+    storageNode->Delete();
     }
   else if (mnd && !mnd->GetDisplayNode())
     {

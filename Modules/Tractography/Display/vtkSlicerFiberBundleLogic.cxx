@@ -161,7 +161,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     fiberBundleNode->SetName(name.c_str());
 
     this->GetMRMLScene()->SaveStateForUndo();
-
+    
     fiberBundleNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
     displayLineNode->SetScene(this->GetMRMLScene());
@@ -170,7 +170,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
    
     displayTubeNode->SetVisibility(0);
     displayGlyphNode->SetVisibility(0);
-
+    
     this->GetMRMLScene()->AddNode(lineDTDPN);
     displayLineNode->SetAndObserveDTDisplayPropertiesNodeID(lineDTDPN->GetID());
     this->GetMRMLScene()->AddNode(tubeDTDPN);
@@ -183,6 +183,11 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     this->GetMRMLScene()->AddNode(displayTubeNode);
     this->GetMRMLScene()->AddNode(displayGlyphNode);
     fiberBundleNode->SetStorageNodeID(storageNode->GetID());
+    
+    displayLineNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+    displayTubeNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+    displayGlyphNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+
     fiberBundleNode->SetAndObserveDisplayNodeID(displayLineNode->GetID());  
     fiberBundleNode->AddAndObserveDisplayNodeID(displayTubeNode->GetID());  
     fiberBundleNode->AddAndObserveDisplayNodeID(displayGlyphNode->GetID());  
