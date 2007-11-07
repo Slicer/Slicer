@@ -105,14 +105,6 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 
   this->MapToColors->SetOutputFormatToRGB();
 
-  if (this->VolumeDisplayNode != NULL
-      && this->VolumeDisplayNode->GetColorNode() != NULL)
-    {
-    // if there's a volume display node which has a valid color node, use it's
-    // look up table
-    // std::cout << "slicer slice layer logic, getting the colour node to " << this->VolumeDisplayNode->GetColorNode()->GetID() << "\n";
-    this->MapToColors->SetLookupTable( this->VolumeDisplayNode->GetColorNode()->GetLookupTable());
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -161,7 +153,7 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
   this->AssignAttributeTensorsFromScalars->Delete();
   this->AssignAttributeScalarsFromTensors->Delete();
    
-  if ( this->VolumeDisplayNode)
+  if ( this->VolumeDisplayNode )
     {
     this->VolumeDisplayNode->Delete();
     }
@@ -188,7 +180,7 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
     {
       if (this->VolumeDisplayNode && this->VolumeDisplayNodeObserved)
         {
-        this->VolumeDisplayNode->Copy(this->VolumeDisplayNodeObserved);
+        this->VolumeDisplayNode->CopyWithoutModifiedEvent(this->VolumeDisplayNodeObserved);
         }
     // reset the colour look up table
     if (this->VolumeDisplayNodeObserved != NULL
@@ -222,7 +214,10 @@ void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
     vtkSetAndObserveMRMLNodeMacro( this->SliceNode, sliceNode );
 
     // Update the reslice transform to move this image into XY
-    this->UpdateTransforms();
+    if (this->SliceNode) 
+      {
+      this->UpdateTransforms();
+      }
     }
 }
 
@@ -236,7 +231,10 @@ void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
   events->Delete();
 
   // Update the reslice transform to move this image into XY
-  this->UpdateTransforms();
+  if (this->VolumeNode)
+    {
+    this->UpdateTransforms();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -314,7 +312,7 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
       {
       if (this->VolumeDisplayNode && displayNode)
         {
-        this->VolumeDisplayNode->Copy(displayNode);
+        this->VolumeDisplayNode->CopyWithoutModifiedEvent(displayNode);
         }
       return;
       }
@@ -326,7 +324,7 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
         this->VolumeDisplayNode->Delete();
         }
       this->VolumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(displayNode->CreateNodeInstance());
-      this->VolumeDisplayNode->Copy(displayNode);
+      this->VolumeDisplayNode->CopyWithoutModifiedEvent(displayNode);
       this->VolumeDisplayNode->SetScene(displayNode->GetScene());
       vtkSetAndObserveMRMLNodeMacro(this->VolumeDisplayNodeObserved, displayNode);
       }

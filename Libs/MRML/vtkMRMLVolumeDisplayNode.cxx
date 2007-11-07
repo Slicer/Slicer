@@ -171,7 +171,16 @@ void vtkMRMLVolumeDisplayNode::SetAndObserveColorNodeID(std::string colorNodeID)
 void vtkMRMLVolumeDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
 {
   vtkSetAndObserveMRMLObjectMacro(this->ColorNode, NULL);
-
+  
+  if (colorNodeID == NULL) 
+    {
+    if (this->ColorNodeID) 
+      {
+      delete [] this->ColorNodeID;
+      this->ColorNodeID = NULL;
+      return;
+      }
+    }
   this->SetColorNodeID(colorNodeID);
 
   vtkMRMLColorNode *cnode = this->GetColorNode();

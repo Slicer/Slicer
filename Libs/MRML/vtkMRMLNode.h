@@ -275,6 +275,14 @@ public:
     this->InvokePendingModifiedEvent();
     this->SetDisableModifiedEvent(oldMode);
     }
+    
+  void CopyWithoutModifiedEvent (vtkMRMLNode *node)
+    {
+    int oldMode = this->GetDisableModifiedEvent();
+    this->DisableModifiedEventOn();
+    this->Copy(node);
+    this->SetDisableModifiedEvent(oldMode);
+    }
 
   void CopyWithSceneWithSingleModifiedEvent (vtkMRMLNode *node)
     {

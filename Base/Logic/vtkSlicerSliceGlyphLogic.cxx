@@ -130,10 +130,6 @@ vtkSlicerSliceGlyphLogic::~vtkSlicerSliceGlyphLogic()
     {
     this->DTIMathematics->Delete();
     }
-  if (this->LookupTable)
-    {
-    this->LookupTable->Delete();
-    }
   if (this->AssignAttributeTensorsFromScalars)
     {
     this->AssignAttributeTensorsFromScalars->Delete();
