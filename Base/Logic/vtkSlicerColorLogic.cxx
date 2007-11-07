@@ -83,12 +83,12 @@ vtkSlicerColorLogic::vtkSlicerColorLogic()
         {
         vtkDebugMacro("Adding " << findData.cFileName << " to list of potential colour files. Type = " << fileType);
         ColorFiles.push_back(findData.cFileName);
-        flag = FindNextFile(fileHandle, &findData);
         }
       else
         {
         vtkWarningMacro("Skipping potential colour file " << findData.cFileName << ", file type = " << fileType);
         }
+       flag = FindNextFile(fileHandle, &findData);
       }
     FindClose(fileHandle);
     }
