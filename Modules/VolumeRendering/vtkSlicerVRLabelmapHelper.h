@@ -5,7 +5,7 @@
 #include "vtkSlicerVRHelper.h"
 
 class vtkSlicerLabelMapWidget;
-class vtkFixedPointVolumeRayCastMapper;
+class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkVolumeRayCastMapper;
 class vtkKWVolumeMaterialPropertyWidget;
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRLabelmapHelper :public vtkSlicerVRHelper
@@ -15,6 +15,7 @@ public:
     vtkTypeRevisionMacro(vtkSlicerVRLabelmapHelper,vtkSlicerVRHelper);
     virtual void Init(vtkVolumeRenderingModuleGUI *gui);
     virtual void InitializePipelineNewCurrentNode();
+    virtual void UpdateGUIElements(void);
     virtual void Rendering(void);
     virtual void UpdateRendering(void);
 protected:
@@ -25,7 +26,7 @@ protected:
 
     vtkKWVolumeMaterialPropertyWidget *VMPW_Shading;
     vtkSlicerLabelMapWidget *LM_OptionTree;
-    vtkFixedPointVolumeRayCastMapper *MapperRaycast;
+    vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
     vtkVolumeRayCastMapper *MapperRaycastHighDetail;
 
     virtual void ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData);

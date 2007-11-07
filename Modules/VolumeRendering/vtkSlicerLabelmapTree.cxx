@@ -19,7 +19,9 @@ vtkSlicerLabelmapTree::vtkSlicerLabelmapTree(void)
 {
     this->InChangeOpacityAll=0;
     this->PiecewiseFunction=NULL;
-    this->Node=NULL;    //BTX
+    this->Node=NULL;
+    this->StepSize=20;
+    //this->NumberOfSteps=6;
     std::vector<vtkSlicerLabelmapElement*> Elements;
 }
 
@@ -80,7 +82,14 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecew
             element->Create();
             double rgb[3];
             lookup->GetColor(i,rgb);
-            element->Init(i,this->Node->GetVolumeDisplayNode()->GetColorNode()->GetColorName(i),rgb,1,max);
+            //CalculateOpacities
+            int opacityLevel=piecewiseFunction->GetLabel(i)*this->StepSize;
+            if(opacityLevel>5)
+            {
+                opacityLevel=5;
+                    vtkWarningMacro("OpacityLevelIsOutOfRange");
+            }
+            element->Init(i,this->Node->GetVolumeDisplayNode()->GetColorNode()->GetColorName(i),rgb,opacityLevel,max);
             this->Script("pack %s -side left -anchor c -expand y",element->GetWidgetName());
             element->AddObserver(vtkCommand::AnyEvent,(vtkCommand *) this->BaseTreeCallbackCommand);
             this->GetWidget()->SetNodeWindow(streamA.str().c_str(),element);
@@ -102,7 +111,7 @@ void vtkSlicerLabelmapTree::ProcessBaseTreeEvents(vtkObject *caller, unsigned lo
         this->InvokeEvent(vtkSlicerLabelmapTree::SingleLabelEdited);
     }
     int *callDataInt=(int*)callData;
-    this->PiecewiseFunction->EditLabel(callDataInt[0],callDataInt[1]/20.);
+    this->PiecewiseFunction->EditLabel(callDataInt[0],callDataInt[1]/(double)this->StepSize);
     this->Script("puts \" event\"");
 
 }

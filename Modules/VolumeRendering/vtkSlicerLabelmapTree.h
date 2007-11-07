@@ -24,6 +24,7 @@ public:
 //ETX
 
 protected:
+    int StepSize;
     int InChangeOpacityAll;
     vtkLabelMapPiecewiseFunction *PiecewiseFunction;
     vtkMRMLScalarVolumeNode *Node;

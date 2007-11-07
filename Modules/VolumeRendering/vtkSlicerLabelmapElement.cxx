@@ -48,12 +48,6 @@ vtkSlicerLabelmapElement::~vtkSlicerLabelmapElement(void)
 void vtkSlicerLabelmapElement::CreateWidget(void)
 {
     Superclass::CreateWidget();
-
-    this->ColorName=vtkKWLabel::New();
-    this->ColorName->SetParent(this);
-    this->ColorName->Create();
-    this->ColorName->SetText("ColorName");
-    this->Script("pack %s -side left -anchor c -expand y", this->ColorName->GetWidgetName());
     
     this->Color=vtkKWLabel::New();
     this->Color->SetParent(this);
@@ -73,6 +67,12 @@ void vtkSlicerLabelmapElement::CreateWidget(void)
         //this->Opacity[i]->AddObserver(vtkCommand::AnyEvent,(vtkCommand *)this->LabelmapCallbackCommand);
         this->Script("pack %s -side left -anchor c -expand y",this->Opacity[i]->GetWidgetName());
     }
+
+    this->ColorName=vtkKWLabel::New();
+    this->ColorName->SetParent(this);
+    this->ColorName->Create();
+    this->ColorName->SetText("ColorName");
+    this->Script("pack %s -side left -anchor c -expand y", this->ColorName->GetWidgetName());
 }
 void vtkSlicerLabelmapElement::Init(int id,std::string colorName,double color[3],int opacityLevel,int max)
 {

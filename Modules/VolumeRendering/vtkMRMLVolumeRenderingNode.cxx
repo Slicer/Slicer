@@ -410,16 +410,6 @@ void vtkMRMLVolumeRenderingNode::GetColorTransferFunction(std::string str, vtkCo
 
 }
 
-void vtkMRMLVolumeRenderingNode::SetOpacityOfLabel(int index, double opacity)
-{
-        vtkErrorMacro("Not yet implemented");
-}
-double vtkMRMLVolumeRenderingNode::GetOpacityOfLabel(int index)
-{
-        vtkErrorMacro("Not yet implemented");
-    return .0;
-}
-
 void vtkMRMLVolumeRenderingNode::AddReference(std::string id)
 {
     //test if we already have a reference

@@ -573,9 +573,10 @@ void vtkSlicerOpenGLRayCastImageDisplayHelper::PrintSelf(ostream& os, vtkIndent 
 
 void vtkSlicerOpenGLRayCastImageDisplayHelper::MergeWithExistingImage(void *image,int scalarType)
 {
-    if(this->PreviousScalarType!=scalarType)
+    //TODO remove >>treus
+    if(this->PreviousScalarType!=scalarType||true)
     {
-        vtkErrorMacro("The scalarType has changed, merge is not possible");
+        //vtkErrorMacro("The scalarType has changed, merge is not possible");
         this->PreviousImage=image;
         return;
     }

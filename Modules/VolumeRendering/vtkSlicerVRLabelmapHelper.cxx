@@ -4,13 +4,14 @@
 #include "vtkVolumeRenderingModuleGUI.h"
 #include "vtkLabelMapPiecewiseFunction.h"
 #include "vtkLabelMapColorTransferFunction.h"
-#include "vtkFixedPointVolumeRayCastMapper.h"
+#include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkVolume.h"
 #include "vtkSlicerApplication.h"
 #include "vtkVolumeRayCastCompositeFunction.h"
 #include "vtkVolumeRayCastMapper.h"
 #include "vtkImageShiftScale.h"
 #include "vtkKWVolumeMaterialPropertyWidget.h"
+#include "vtkKWProgressGauge.h"
 vtkCxxRevisionMacro(vtkSlicerVRLabelmapHelper, "$Revision: 1.46 $");
 vtkStandardNewMacro(vtkSlicerVRLabelmapHelper);
 vtkSlicerVRLabelmapHelper::vtkSlicerVRLabelmapHelper(void)
@@ -67,7 +68,7 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
     //TODO Dirty fix as Mapper
     if(this->Gui->GetcurrentNode()->GetMapper()==vtkMRMLVolumeRenderingNode::Texture)
     {
-        this->MapperRaycast=vtkFixedPointVolumeRayCastMapper::New();
+        this->MapperRaycast=vtkSlicerFixedPointVolumeRayCastMapper::New();
         this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
         this->MapperRaycast->SetBlendModeToComposite();
         this->MapperRaycast->SetSampleDistance(.1);
@@ -86,9 +87,9 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
         compositeFunction->Delete();
     }
 
-    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    //this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+   // this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
     //Only needed if using performance enhancement
     //this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
@@ -151,7 +152,7 @@ void vtkSlicerVRLabelmapHelper::InitializePipelineNewCurrentNode()
     if(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetLabelMap()==1)
     {
         vtkLabelMapPiecewiseFunction *opacityNew=vtkLabelMapPiecewiseFunction::New();
-        opacityNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()),.3,0);
+        opacityNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()),.1,0);
         this->Gui->GetcurrentNode()->GetVolumeProperty()->SetScalarOpacity(opacityNew);
         this->Gui->GetcurrentNode()->SetIsLabelMap(1);
         vtkLabelMapColorTransferFunction *colorNew=vtkLabelMapColorTransferFunction::New();
@@ -184,6 +185,15 @@ void vtkSlicerVRLabelmapHelper::ProcessVolumeRenderingEvents(vtkObject *caller,u
         this->CheckAbort();
         return;
     }
+    else if (eid==vtkCommand::ProgressEvent)
+    {
+        float *progress=(float*)callData;
+        if(*progress==0)
+        {
+            return;
+        }
+        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100**progress);
+    }
 }
 
 void vtkSlicerVRLabelmapHelper::CheckAbort(void)
@@ -202,6 +212,10 @@ void vtkSlicerVRLabelmapHelper::CheckAbort(void)
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
         return;
     }
+}
+void vtkSlicerVRLabelmapHelper::UpdateGUIElements(void)
+{
+    this->LM_OptionTree->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()),vtkLabelMapPiecewiseFunction::SafeDownCast(this->Gui->GetcurrentNode()->GetVolumeProperty()->GetScalarOpacity()));
 }
 
 

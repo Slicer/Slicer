@@ -16,6 +16,9 @@ public:
     double GetLabel(int index);
     vtkGetMacro(Size,int);
     //BTX
+    vtkGetMacro(Opacities,double*);
+    //ETX
+    //BTX
     std::string GetSaveString();
     void FillFromString(std::string);
     //ETX    

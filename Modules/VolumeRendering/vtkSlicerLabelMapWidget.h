@@ -15,8 +15,13 @@ public:
     static vtkSlicerLabelMapWidget *New();
     //vtkTypeRevisionMacro(vtkSlicerLabelMapWidget,vtkKWCompositeWidget);
       vtkTypeMacro(vtkSlicerLabelMapWidget,vtkKWCompositeWidget);
+      //void UpdateGuiElements(void);
       void Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecewiseFunction *piecewise)
       {
+          if(this->PiecewiseFunction==piecewise&&this->Node==node)
+          {
+              return;
+          }
           this->PiecewiseFunction=piecewise;
           this->Node=node;
           if(this->Tree!=NULL)
@@ -25,6 +30,10 @@ public:
           }
       }
       virtual void CreateWidget();
+
+      vtkGetObjectMacro(PiecewiseFunction,vtkLabelMapPiecewiseFunction);
+      vtkGetObjectMacro(Node,vtkMRMLScalarVolumeNode);
+
     //void PrintSelf(ostream& os, vtkIndent indent);
 
     protected:
