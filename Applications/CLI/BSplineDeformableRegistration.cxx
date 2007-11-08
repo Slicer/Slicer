@@ -320,45 +320,48 @@ template<class T> int DoIt( int argc, char * argv[], T )
   //
   // 7) Resample
   //
-  typename ResampleFilterType::Pointer resample = ResampleFilterType::New();
-  typename OptimizerType::ParametersType finalParameters = 
-                    registration->GetLastTransformParameters();
-
-  itk::PluginFilterWatcher watcher(
-    resample,
-    "Resample",
-    CLPProcessInformation,
-    1.0/3.0, 2.0/3.0);
-
-  transform->SetParameters      ( finalParameters );
-  resample->SetTransform        ( transform );
-  resample->SetInput            ( movingOrient->GetOutput() );
-  resample->SetDefaultPixelValue( DefaultPixelValue );
-  resample->SetOutputParametersFromImage ( fixedOrient->GetOutput() );
-
-  collector.Start( "Resample" );
-  resample->Update();
-  collector.Stop( "Resample" );
-
-  //
-  // 7) Write the resampled image
-  //
-  typename WriterType::Pointer      writer =  WriterType::New();
-  writer->SetFileName( resampledImageFileName.c_str() );
-  writer->SetInput( resample->GetOutput()   );
-
-  try
+  if (resampledImageFileName != "")
     {
-    collector.Start( "Write resampled volume" );
-    writer->Update();
-    collector.Stop( "Write resampled volume" );
+    typename ResampleFilterType::Pointer resample = ResampleFilterType::New();
+    typename OptimizerType::ParametersType finalParameters = 
+      registration->GetLastTransformParameters();
+    
+    itk::PluginFilterWatcher watcher(
+      resample,
+      "Resample",
+      CLPProcessInformation,
+      1.0/3.0, 2.0/3.0);
+    
+    transform->SetParameters      ( finalParameters );
+    resample->SetTransform        ( transform );
+    resample->SetInput            ( movingOrient->GetOutput() );
+    resample->SetDefaultPixelValue( DefaultPixelValue );
+    resample->SetOutputParametersFromImage ( fixedOrient->GetOutput() );
+    
+    collector.Start( "Resample" );
+    resample->Update();
+    collector.Stop( "Resample" );
+
+    //
+    // 8) Write the resampled image
+    //
+    typename WriterType::Pointer      writer =  WriterType::New();
+    writer->SetFileName( resampledImageFileName.c_str() );
+    writer->SetInput( resample->GetOutput()   );
+
+    try
+      {
+      collector.Start( "Write resampled volume" );
+      writer->Update();
+      collector.Stop( "Write resampled volume" );
+      }
+    catch( itk::ExceptionObject & err ) 
+      { 
+      std::cerr << "ExceptionObject caught !" << std::endl; 
+      std::cerr << err << std::endl; 
+      return EXIT_FAILURE;
+      }
     }
-  catch( itk::ExceptionObject & err ) 
-    { 
-    std::cerr << "ExceptionObject caught !" << std::endl; 
-    std::cerr << err << std::endl; 
-    return EXIT_FAILURE;
-    } 
 
   // Report the time taken by the registration
   collector.Report();

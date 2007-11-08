@@ -415,23 +415,29 @@ PARSE_ARGS;
   fixed->Print ( std::cout );
   moving->Print ( std::cout );
   transform->Print ( std::cout );
-  
-  Resample->SetInput ( moving ); 
-  Resample->SetTransform ( transform );
-  Resample->SetInterpolator ( Interpolator );
-  Resample->SetOutputParametersFromImage ( fixed );
-  
-  Resample->Update();
-  typedef itk::ImageFileWriter<Volume> WriterType;
-  WriterType::Pointer ResampledWriter = WriterType::New();
-  ResampledWriter->SetFileName ( resampledImageFileName.c_str() );
-  ResampledWriter->SetInput ( Resample->GetOutput() );
-  try {
-    ResampledWriter->Write();
-  } catch( itk::ExceptionObject & err ) { 
-    cerr << err << endl;
-    exit ( EXIT_FAILURE );
-  }
+
+  if (resampledImageFileName != "")
+    {
+    Resample->SetInput ( moving ); 
+    Resample->SetTransform ( transform );
+    Resample->SetInterpolator ( Interpolator );
+    Resample->SetOutputParametersFromImage ( fixed );
+    
+    Resample->Update();
+    typedef itk::ImageFileWriter<Volume> WriterType;
+    WriterType::Pointer ResampledWriter = WriterType::New();
+    ResampledWriter->SetFileName ( resampledImageFileName.c_str() );
+    ResampledWriter->SetInput ( Resample->GetOutput() );
+    try
+      {
+      ResampledWriter->Write();
+      }
+    catch( itk::ExceptionObject & err )
+      { 
+      cerr << err << endl;
+      exit ( EXIT_FAILURE );
+      }
+    }
   
   exit ( EXIT_SUCCESS );
 }

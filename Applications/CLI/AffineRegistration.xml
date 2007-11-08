@@ -16,8 +16,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <description>Parameters used for registration</description>
     <integer>
       <name>HistogramBins</name>
-      <flag>-b</flag>
-      <longflag>--histogrambins</longflag>
+      <flag>b</flag>
+      <longflag>histogrambins</longflag>
       <description>Number of histogram bins to use for Mattes Mutual Information</description>
       <label>Histogram Bins</label>
       <default>100</default>
@@ -30,8 +30,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 
     <integer>
       <name>SpatialSamples</name>
-      <flag>-s</flag>
-      <longflag>--spatialsamples</longflag>
+      <flag>s</flag>
+      <longflag>spatialsamples</longflag>
       <description>Number of spatial samples to use in estimating Mattes Mutual Information</description>
       <label>Spatial Samples</label>
       <default>50000</default>
@@ -44,8 +44,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 
     <integer>
       <name>Iterations</name>
-      <flag>-i</flag>
-      <longflag>--iterations</longflag>
+      <flag>i</flag>
+      <longflag>iterations</longflag>
       <description>Number of iterations</description>
       <label>Iterations</label>
       <default>200</default>
@@ -53,8 +53,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 
     <double>
       <name>TranslationScale</name>
-      <longflag>--translationscale</longflag>
-      <flag>-t</flag>
+      <longflag>translationscale</longflag>
+      <flag>t</flag>
       <description>Relative scale of translations to rotations, i.e. a value of 100 means 10mm = 1 degree</description>
       <label>Translation scaling</label>
       <default>100.0</default>
@@ -74,7 +74,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Fixed Image</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Fixed image to register to</description>
+      <description>Fixed image to which to register</description>
     </image>
     <image>
       <name>movingImageFileName</name>
@@ -85,10 +85,10 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     </image>
     <image>
       <name>resampledImageFileName</name>
+      <longflag>resampledmovingfilename</longflag>
       <label>Output Volume</label>
       <channel>output</channel>
-      <index>2</index>
-      <description>Resampled Moving Image</description>
+      <description>Resampled Moving Image. Optional.</description>
     </image>
   </parameters>
 

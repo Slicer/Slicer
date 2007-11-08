@@ -280,16 +280,18 @@ template<class T> int DoIt( int argc, char * argv[], T )
     exit ( EXIT_FAILURE );
     }
 
-  /////////////////////////////////////////////////////////////////////////////
-  // Resample using the registration results
-  //
-  typename ResampleType::Pointer resample = ResampleType::New();
-  typename ResampleInterpolatorType::Pointer Interpolator = ResampleInterpolatorType::New();
-  itk::PluginFilterWatcher watchResample(resample,
-                                         "Resample",
-                                         CLPProcessInformation,
-                                         1.0/3.0, 2.0/3.0);
-
+  if (resampledImageFileName != "")
+    {
+    //////////////////////////////////////////////////////////////////////////
+    // Resample using the registration results
+    //
+    typename ResampleType::Pointer resample = ResampleType::New();
+    typename ResampleInterpolatorType::Pointer Interpolator = ResampleInterpolatorType::New();
+    itk::PluginFilterWatcher watchResample(resample,
+                                           "Resample",
+                                           CLPProcessInformation,
+                                           1.0/3.0, 2.0/3.0);
+    
     transform->SetParameters ( registration->GetLastTransformParameters() );
 
     resample->SetInput ( orientMoving->GetOutput() ); 
@@ -302,24 +304,25 @@ template<class T> int DoIt( int argc, char * argv[], T )
     collector.Start( "Resample" );
     resample->Update();
     collector.Stop( "Resample" );
-
-  /////////////////////////////////////////////////////////////////////////////
-  // Write the registerded volume
-  //
-  typename WriterType::Pointer resampledWriter = WriterType::New();
+    
+    //////////////////////////////////////////////////////////////////////////
+    // Write the registerded volume
+    //
+    typename WriterType::Pointer resampledWriter = WriterType::New();
     resampledWriter->SetFileName ( resampledImageFileName.c_str() );
     resampledWriter->SetInput ( resample->GetOutput() );
-  try
-    {
-    collector.Start( "Write volume" );
-    resampledWriter->Write();
-    collector.Stop( "Write volume" );
-    }
-  catch( itk::ExceptionObject & err )
-    { 
-    std::cerr << err << std::endl;
-    std::cerr << err << std::endl;
-    return EXIT_FAILURE;
+    try
+      {
+      collector.Start( "Write volume" );
+      resampledWriter->Write();
+      collector.Stop( "Write volume" );
+      }
+    catch( itk::ExceptionObject & err )
+      { 
+      std::cerr << err << std::endl;
+      std::cerr << err << std::endl;
+      return EXIT_FAILURE;
+      }
     }
   
   // Report the time taken by the registration
