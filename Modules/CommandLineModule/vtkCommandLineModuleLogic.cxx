@@ -1416,7 +1416,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         // now, he/she will still be looking at the node by the time the
         // data is reloaded by the main thread.
         bool displayData = false;
-        bool deleteFile = true;
+        bool deleteFile = this->GetDeleteTemporaryFiles();
         displayData = (node == this->GetCommandLineModuleNode());
         this->GetApplicationLogic()
           ->RequestReadData((*id2fn).first.c_str(), (*id2fn).second.c_str(),
@@ -1434,7 +1434,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   if (miniscene->GetNumberOfNodes() > 0)
     {
     bool displayData = false;
-    bool deleteFile = true;
+    bool deleteFile = this->GetDeleteTemporaryFiles();
     displayData = (node == this->GetCommandLineModuleNode());
 
     // Convert the index map to two vectors so that we can pass it to
