@@ -36,6 +36,12 @@ public:
 
     //void PrintSelf(ostream& os, vtkIndent indent);
 
+      //BTX
+    enum
+    {
+        NeedForRenderEvent=30000,
+    };
+    //ETX
     protected:
     vtkLabelMapPiecewiseFunction *PiecewiseFunction;
     vtkMRMLScalarVolumeNode *Node;

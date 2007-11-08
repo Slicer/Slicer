@@ -16,16 +16,20 @@ vtkCxxRevisionMacro(vtkSlicerVRLabelmapHelper, "$Revision: 1.46 $");
 vtkStandardNewMacro(vtkSlicerVRLabelmapHelper);
 vtkSlicerVRLabelmapHelper::vtkSlicerVRLabelmapHelper(void)
 {
+    this->ScheduledRenderID="";
     this->LM_OptionTree=NULL;
     this->MapperRaycast=NULL;
     this->MapperRaycastHighDetail=NULL;
     this->VMPW_Shading=NULL;
+    this->ProgressLock=0;
+    this->CurrentStage=0;
+    this->OldSampleDistance=0;
 }
 
 vtkSlicerVRLabelmapHelper::~vtkSlicerVRLabelmapHelper(void)
 {
     //Remove all the Observers we added
-     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
@@ -71,29 +75,30 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
         this->MapperRaycast=vtkSlicerFixedPointVolumeRayCastMapper::New();
         this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
         this->MapperRaycast->SetBlendModeToComposite();
+        this->MapperRaycast->SetAutoAdjustSampleDistances(1);
         this->MapperRaycast->SetSampleDistance(.1);
 
-        vtkVolumeRayCastCompositeFunction  *compositeFunction=vtkVolumeRayCastCompositeFunction::New();
-        //compositeFunction->SetCompositeMethodToClassifyFirst();
-        this->MapperRaycastHighDetail=vtkVolumeRayCastMapper::New();
-        this->MapperRaycastHighDetail->SetVolumeRayCastFunction(compositeFunction);
+        //vtkVolumeRayCastCompositeFunction  *compositeFunction=vtkVolumeRayCastCompositeFunction::New();
+        ////compositeFunction->SetCompositeMethodToClassifyFirst();
+        //this->MapperRaycastHighDetail=vtkVolumeRayCastMapper::New();
+        //this->MapperRaycastHighDetail->SetVolumeRayCastFunction(compositeFunction);
 
-        vtkImageShiftScale *converter=vtkImageShiftScale::New();
-        converter->SetOutputScalarTypeToUnsignedChar();
-        converter->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
-        this->MapperRaycastHighDetail->SetInput(converter->GetOutput());
-        this->MapperRaycastHighDetail->SetSampleDistance(0.1);
-        converter->Delete();
-        compositeFunction->Delete();
+        //vtkImageShiftScale *converter=vtkImageShiftScale::New();
+        //converter->SetOutputScalarTypeToUnsignedChar();
+        //converter->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+        //this->MapperRaycastHighDetail->SetInput(converter->GetOutput());
+        //this->MapperRaycastHighDetail->SetSampleDistance(0.1);
+        //converter->Delete();
+        //compositeFunction->Delete();
     }
 
-    //this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     //this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
-   // this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    // this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
     //Only needed if using performance enhancement
-    //this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    //this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
 
     //TODO This is not the right place for this
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
@@ -111,7 +116,7 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->Volume);
     matrix->Delete();
     //Render
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 }
 void vtkSlicerVRLabelmapHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
@@ -124,6 +129,7 @@ void vtkSlicerVRLabelmapHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->LM_OptionTree->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
     this->LM_OptionTree->Create();
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->LM_OptionTree->GetWidgetName());
+    this->LM_OptionTree->AddObserver(vtkSlicerLabelMapWidget::NeedForRenderEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
 }
 void vtkSlicerVRLabelmapHelper::UpdateRendering(void)
@@ -134,7 +140,7 @@ void vtkSlicerVRLabelmapHelper::UpdateRendering(void)
         this->Rendering();
         return;
     }
-    this->MapperRaycastHighDetail->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+    // this->MapperRaycastHighDetail->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
     this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
     //Update Property
     this->Volume->SetProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
@@ -148,7 +154,7 @@ void vtkSlicerVRLabelmapHelper::UpdateRendering(void)
 }
 void vtkSlicerVRLabelmapHelper::InitializePipelineNewCurrentNode()
 {
-  //Labelmap
+    //Labelmap
     if(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetLabelMap()==1)
     {
         vtkLabelMapPiecewiseFunction *opacityNew=vtkLabelMapPiecewiseFunction::New();
@@ -178,6 +184,8 @@ void vtkSlicerVRLabelmapHelper::UpdateLM()
 
 void vtkSlicerVRLabelmapHelper::ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData)
 {
+    this->SetTCLDebug(1);
+    
     //TODO not the right place for this
     vtkRenderWindow *callerRen=vtkRenderWindow::SafeDownCast(caller);
     if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::AbortCheckEvent)
@@ -185,15 +193,94 @@ void vtkSlicerVRLabelmapHelper::ProcessVolumeRenderingEvents(vtkObject *caller,u
         this->CheckAbort();
         return;
     }
-    else if (eid==vtkCommand::ProgressEvent)
+    else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::StartEvent)
     {
+        //it is a interactiv rendering->everything is alright
+        if(this->MapperRaycast->GetSampleDistance()==this->MapperRaycast->GetInteractiveSampleDistance())
+        {
+            vtkSlicerVRHelperDebug("interactiv started","");
+           return;
+        }
+        //it is a scheduled renderer
+        if(this->CurrentStage==1)
+        {        
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->SetStillUpdateRate(0.00001);
+            vtkSlicerVRHelperDebug("scheduled started","");
+            return;
+        }
+        //It is a still rendering, but we want it interactive
+        //Abort potential high resolution rendering
+        if(strcmp(this->ScheduledRenderID.c_str(),"")!=0)
+        {
+            this->Script("after cancel %s",this->ScheduledRenderID.c_str());
+            this->ScheduledRenderID="";
+        }
+
+        this->MapperRaycast->SetAutoAdjustSampleDistances(1);
+        this->OldSampleDistance=this->MapperRaycast->GetSampleDistance();
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetDesiredUpdateRate(0.0001);//->SetDesiredUpdateRate(20);
+        //this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->SetStillUpdateRate(20);
+        //this->MapperRaycast->SetSampleDistance(this->MapperRaycast->GetInteractiveSampleDistance());
+        vtkSlicerVRHelperDebug("faked interactiv started","");
+
+
+    }
+    else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::EndEvent)
+    {
+         //if we have an interactive sample distance and we don't pretend to be interactiv
+        if(this->MapperRaycast->GetSampleDistance()==this->MapperRaycast->GetInteractiveSampleDistance()&&this->OldSampleDistance==0)
+        {
+            vtkSlicerVRHelperDebug("interactiv ended","");
+            return;
+        }
+        //The next Rendering has to be interactiv
+        if(this->CurrentStage==1)
+        {
+            vtkSlicerVRHelperDebug("scheduled ended","");
+            this->CurrentStage=0;
+            return;
+
+        }
+        vtkSlicerVRHelperDebug("faked interactiv ended","");
+        //We pretend to be interactiv
+        //this->MapperRaycast->SetSampleDistance(this->OldSampleDistance);
+        //this->MapperRaycast->SetAutoAdjustSampleDistances(1);
+        this->ScheduledRenderID=this->Script("after 100 %s ScheduleRender",this->GetTclName());
+        this->OldSampleDistance=0;
+
+    }
+    vtkSlicerFixedPointVolumeRayCastMapper *callerMapper=vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(caller);
+    if (callerMapper==this->MapperRaycast&&eid==vtkCommand::ProgressEvent)
+    {
+
+        if(this->MapperRaycast->GetSampleDistance()==this->MapperRaycast->GetInteractiveSampleDistance())
+        {
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(0);
+            this->Script("puts \"Interactive no progress \"");
+            return;
+        }
         float *progress=(float*)callData;
         if(*progress==0)
         {
             return;
         }
+        int progressInt =*progress*100;
+        this->Script("puts \"progress %d\"",progressInt);
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100**progress);
+        //Debug stuff
+        const char *result=this->Script("after info");
+        this->Script("puts \"[after info]\"");
+        this->Script("puts \"[after info [lindex [after info] 0]]\"");
+        this->Script("puts \"[after info]\"");
+        return;
     }
+    vtkSlicerLabelMapWidget *callerLabelmapWidget=vtkSlicerLabelMapWidget::SafeDownCast(caller);
+    if(callerLabelmapWidget==this->LM_OptionTree&&eid==vtkSlicerLabelMapWidget::NeedForRenderEvent)
+    {
+
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+    }
+
 }
 
 void vtkSlicerVRLabelmapHelper::CheckAbort(void)
@@ -202,6 +289,7 @@ void vtkSlicerVRLabelmapHelper::CheckAbort(void)
     if(pending!=0)
     {
         this->Gui->Script("puts \"got an abort\"");
+
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
         return;
     }
@@ -212,6 +300,13 @@ void vtkSlicerVRLabelmapHelper::CheckAbort(void)
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
         return;
     }
+}
+
+void vtkSlicerVRLabelmapHelper::ScheduleRender(void)
+{
+    this->CurrentStage=1;
+
+    this->ScheduledRenderID=this->Gui->Script("after idle [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] Render");
 }
 void vtkSlicerVRLabelmapHelper::UpdateGUIElements(void)
 {

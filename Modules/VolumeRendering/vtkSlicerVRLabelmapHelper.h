@@ -3,6 +3,7 @@
 
 #include "vtkVolumeRenderingModule.h"
 #include "vtkSlicerVRHelper.h"
+#include <string>
 
 class vtkSlicerLabelMapWidget;
 class vtkSlicerFixedPointVolumeRayCastMapper;
@@ -18,7 +19,13 @@ public:
     virtual void UpdateGUIElements(void);
     virtual void Rendering(void);
     virtual void UpdateRendering(void);
+    void ScheduleRender(void);
 protected:
+    int CurrentStage;
+    float OldSampleDistance;
+    //BTX
+    std::string ScheduledRenderID;
+    //ETX
     vtkSlicerVRLabelmapHelper(void);
     ~vtkSlicerVRLabelmapHelper(void);
     vtkSlicerVRLabelmapHelper(const vtkSlicerVRLabelmapHelper&);//not implemented
@@ -33,5 +40,6 @@ protected:
 
     void UpdateLM();
     void CheckAbort(void);
+    int ProgressLock;
 };
 #endif

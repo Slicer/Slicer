@@ -59,12 +59,9 @@ void vtkSlicerVRHelper::VolumeRenderingCallback( vtkObject *caller, unsigned lon
     vtkSlicerVRHelper *self = reinterpret_cast<vtkSlicerVRHelper *>(clientData);
 
 
-    if (self->GetInVolumeRenderingCallbackFlag())
+    if (self->GetInVolumeRenderingCallbackFlag()==1)
     {
-#ifdef _DEBUG
-        vtkDebugWithObjectMacro(self, "In vtkVOlumeRendering *********GUICallback called recursively?");
-#endif
-        //return;
+        vtkErrorWithObjectMacro(self,"In vtkVOlumeRendering *********GUICallback called recursively?");
     }
 
     vtkDebugWithObjectMacro(self, "In vtkVolumeREndering GUICallback");
