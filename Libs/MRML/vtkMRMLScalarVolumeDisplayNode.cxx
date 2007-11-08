@@ -127,7 +127,7 @@ void vtkMRMLScalarVolumeDisplayNode::UpdateImageDataPipeline()
     lookupTable = this->GetColorNode()->GetLookupTable();
     }
 
-  if (lookupTable != this->MapToColors->GetLookupTable())
+  if ( this->MapToColors && (lookupTable != this->MapToColors->GetLookupTable()) )
     {
     this->MapToColors->SetLookupTable(lookupTable);
     }
