@@ -239,6 +239,16 @@ class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkSeedTracts : public vtkObject
  vtkGetMacro(MinimumPathLength,double);
  vtkSetMacro(MinimumPathLength,double);
 
+  // Description:
+  // A file directory name for lines
+  vtkSetStringMacro(FileDirectoryName);
+  vtkGetStringMacro(FileDirectoryName);
+
+  // Description:
+  // A file name prefix in the lines file directory 
+  vtkSetStringMacro(FilePrefix);
+  vtkGetStringMacro(FilePrefix);
+
  protected:
   vtkSeedTracts();
   ~vtkSeedTracts();
@@ -270,6 +280,10 @@ class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkSeedTracts : public vtkObject
   int PointWithinTensorData(double *point, double *pointw);
   
   int TypeOfHyperStreamline;
+
+  char *FileDirectoryName;
+
+  char *FilePrefix;
 
   // Here we have a representative accessible object 
   // of each type, so that the user can modify it.

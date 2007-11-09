@@ -79,6 +79,8 @@ vtkSeedTracts::vtkSeedTracts()
   this->IntegrationDirection = VTK_INTEGRATE_BOTH_DIRECTIONS;
 
   this->MinimumPathLength = 15;
+  this->FileDirectoryName = NULL;
+  this->FilePrefix = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -110,6 +112,14 @@ vtkSeedTracts::~vtkSeedTracts()
     {
     this->DeleteAllStreamlines();
     this->Streamlines->Delete();
+    }
+  if (FileDirectoryName) 
+    {
+    delete [] FileDirectoryName;
+    }
+  if (FilePrefix) 
+    {
+    delete [] FilePrefix;
     }
 }
 
@@ -443,6 +453,7 @@ void vtkSeedTracts::SeedStreamlinesInROI()
   vtkHyperStreamlineDTMRI *newStreamline;
   int idx;
 
+
   // test we have input
   if (this->InputROI == NULL)
     {
@@ -467,6 +478,13 @@ void vtkSeedTracts::SeedStreamlinesInROI()
       return;      
     }
 
+  vtkSmartPointer<vtkTransform> transform=vtkSmartPointer<vtkTransform>::New();
+  vtkSmartPointer<vtkTransformPolyDataFilter> transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  transform->SetMatrix(this->WorldToTensorScaledIJK->GetMatrix());
+  transform->Inverse();
+  transformer->SetTransform(transform);
+
+  vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
 
   // make sure we are creating objects with points
   this->UseVtkHyperStreamlinePoints();
@@ -600,6 +618,24 @@ void vtkSeedTracts::SeedStreamlinesInROI()
                       if (length > this->MinimumPathLength)
                         {
                         this->Streamlines->AddItem((vtkObject *) newStreamline);
+                        if (this->FileDirectoryName) 
+                          {
+                          if (this->FilePrefix == NULL)
+                            {
+                            this->SetFilePrefix("line");
+                            }
+                          // transform model
+                          transformer->SetInput(newStreamline->GetOutput());
+                          
+                          // Save the model to disk
+                          writer->SetInput(transformer->GetOutput());
+                          writer->SetFileType(2);
+
+                          std::stringstream fileNameStr;
+                          fileNameStr << FileDirectoryName << "/" << FilePrefix << '_' << idx << ".vtk";
+                          writer->SetFileName(fileNameStr.str().c_str());
+                          writer->Write();
+                          }
                         idx++;
                         }
                       else
@@ -855,6 +891,14 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
       return;      
     }
 
+  vtkSmartPointer<vtkTransform> transform=vtkSmartPointer<vtkTransform>::New();
+  vtkSmartPointer<vtkTransformPolyDataFilter> transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  transform->SetMatrix(this->WorldToTensorScaledIJK->GetMatrix());
+  transform->Inverse();
+  transformer->SetTransform(transform);
+
+  vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+
   // Create transformation matrices to go backwards from streamline points to ROI space
   // This is used to access ROI2.
   vtkTransform *WorldToROI2 = vtkTransform::New();
@@ -994,8 +1038,27 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
                       // display it, otherwise delete it.
                       if (intersects) 
                         {
-                          this->Streamlines->AddItem
+                        this->Streamlines->AddItem
                             ((vtkObject *)newStreamline);
+
+                        if (this->FileDirectoryName) 
+                          {
+                          if (this->FilePrefix == NULL)
+                            {
+                            this->SetFilePrefix("line");
+                            }
+                          // transform model
+                          transformer->SetInput(newStreamline->GetOutput());
+                          
+                          // Save the model to disk
+                          writer->SetInput(transformer->GetOutput());
+                          writer->SetFileType(2);
+                          
+                          std::stringstream fileNameStr;
+                          fileNameStr << FileDirectoryName << "/" << FilePrefix << '_' << this->Streamlines->GetNumberOfItems()-1 << ".vtk";
+                          writer->SetFileName(fileNameStr.str().c_str());
+                          writer->Write();
+                          }
                         }
                       else 
                         {

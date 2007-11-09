@@ -149,6 +149,16 @@ int main( int argc, const char * argv[] )
   seed->SetROIToWorld(trans2);
   
   //4. Set Tractography specific parameters
+  
+  if (WriteToFile) 
+    {
+    seed->SetFileDirectoryName(OutputDirectory.c_str());
+    if (FilePrefix.length() > 0)
+      {
+      seed->SetFilePrefix(FilePrefix.c_str());
+      }
+    }
+  
   seed->SetIsotropicSeeding(1);
   seed->SetIsotropicSeedingResolution(SeedSpacing);
   seed->SetMinimumPathLength(MinimumLength);
@@ -189,11 +199,13 @@ int main( int argc, const char * argv[] )
   
   //Save result
   vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
-  writer->SetFileName(OutputFibers.c_str());
-  //writer->SetFileTypeToBinary();
-  writer->SetInput(outFibers);
-  writer->Write();
-
+  if (!WriteToFile) 
+    {
+    writer->SetFileName(OutputFibers.c_str());
+    //writer->SetFileTypeToBinary();
+    writer->SetInput(outFibers);
+    writer->Write();
+    }
   // Delete everything: Still trying to figure out what is going on
   reader->Delete();
   outFibers->Delete();
