@@ -1490,6 +1490,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 
   // node was registered when the task was scheduled so unregister now
   node->UnRegister(this);
+  miniscene->Delete();
 
 }
 

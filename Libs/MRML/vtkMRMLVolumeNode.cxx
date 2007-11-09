@@ -588,7 +588,7 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (this->ImageData == vtkImageData::SafeDownCast(caller) &&
+  if (this->ImageData && this->ImageData == vtkImageData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
     this->ModifiedSinceRead = true;

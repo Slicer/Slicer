@@ -414,7 +414,7 @@ void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,
       this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, NULL);
       }
     }
-  if (this->PolyData == vtkPolyData::SafeDownCast(caller) &&
+  if (this->PolyData && this->PolyData == vtkPolyData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
     this->ModifiedSinceRead = true;
