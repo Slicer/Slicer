@@ -513,6 +513,10 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
           }
       }
   }
+  else
+    {
+    os << indent << "No fiducial points.\n";
+    }
 }
 
 //-----------------------------------------------------------
@@ -678,6 +682,20 @@ int vtkMRMLFiducialListNode::SetNthFiducialSelected(int n, int flag)
 }
 
 //----------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::SetNthFiducialSelectedNoModified(int n, int flag)
+{
+    vtkMRMLFiducial *node = this->GetNthFiducial(n);
+    if (node == NULL)
+    {
+        vtkErrorMacro("Unable to get fiducial number " << n);
+        return 1;
+    }
+    node->SetSelected((flag == 0 ? false : true));
+    node = NULL;
+    return 0;
+}
+
+//----------------------------------------------------------------------------
 int vtkMRMLFiducialListNode::GetNthFiducialSelected(int n)
 {
     vtkMRMLFiducial *node = this->GetNthFiducial(n);
@@ -707,6 +725,21 @@ int vtkMRMLFiducialListNode::SetNthFiducialID(int n, const char *id)
     // the list contents have been modified
     this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
     return 0;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::SetAllFiducialsSelected(int flag)
+{
+
+  int numPoints = this->GetNumberOfFiducials();
+  int retVal = 0;
+  for (int f = 0; f < numPoints; f++)
+    {
+    retVal += this->SetNthFiducialSelectedNoModified(f, flag);
+    }
+  // now call modified
+  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+  return (retVal == 0 ? 0 : 1);
 }
 
 //----------------------------------------------------------------------------

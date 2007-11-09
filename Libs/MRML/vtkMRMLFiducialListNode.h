@@ -113,7 +113,12 @@ public:
   int SetNthFiducialOrientation(int n, float w, float x, float y, float z);
   int SetNthFiducialLabelText(int n, const char *text);
   int SetNthFiducialSelected(int n, int flag);
+  int SetNthFiducialSelectedNoModified(int n, int flag);
   int SetNthFiducialID(int n, const char *id);
+
+  // Description:
+  // Set all fiducials selected state to flag
+  int SetAllFiducialsSelected(int flag);
 
   // Description:
   // Get the elements of the fiducial points
