@@ -886,15 +886,16 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     if (displayNode)
       {
       displayNode->SetDefaultColorMap();
+      vtkMRMLVolumeNode *vnd = vtkMRMLVolumeNode::SafeDownCast(nd);
+      vtkMRMLScalarVolumeDisplayNode *svdnd = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
+      if ( vnd )
+        {
+          vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New();
+          volumesLogic->CalculateAutoLevels (vnd->GetImageData(), svdnd);
+          volumesLogic->Delete();
+        }
       } 
-    if (svnd)
-      {
-      vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New();
-      vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
-      volumesLogic->CalculateAutoLevels (svnd->GetImageData(), displayNode);
-      volumesLogic->Delete();
-      svnd->SetAndObserveDisplayNodeID( disp->GetID() );
-      }
+    if (svnd) svnd->SetAndObserveDisplayNodeID( disp->GetID() );
     else if (vvnd) vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
     else if (dtvnd) dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
     else if (dwvnd) dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );
