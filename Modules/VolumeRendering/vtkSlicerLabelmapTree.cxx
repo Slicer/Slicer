@@ -106,14 +106,12 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecew
 }
 void vtkSlicerLabelmapTree::ProcessBaseTreeEvents(vtkObject *caller, unsigned long eid, void *callData)
 {
-    if(this->InChangeOpacityAll==0)
+    int *callDataInt=(int*)callData;
+    this->PiecewiseFunction->EditLabel(callDataInt[0],callDataInt[1]/(double)this->StepSize);
+        if(this->InChangeOpacityAll==0)
     {
         this->InvokeEvent(vtkSlicerLabelmapTree::SingleLabelEdited);
     }
-    int *callDataInt=(int*)callData;
-    this->PiecewiseFunction->EditLabel(callDataInt[0],callDataInt[1]/(double)this->StepSize);
-    this->Script("puts \" event\"");
-
 }
 void vtkSlicerLabelmapTree::ChangeAllOpacities(int stage)
 {

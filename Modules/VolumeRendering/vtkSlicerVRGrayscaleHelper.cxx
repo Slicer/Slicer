@@ -56,8 +56,8 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
 
 vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
 {
-    this->Gui->Script("bind all <Any-ButtonPress> {%s {}}",this->GetTclName());
-    this->Gui->Script("bind all <Any-ButtonRelease> {%s {}}",this->GetTclName());
+    this->Gui->Script("bind all <Any-ButtonPress> {}",this->GetTclName());
+    this->Gui->Script("bind all <Any-ButtonRelease> {}",this->GetTclName());
     //Remove Obersvers
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);

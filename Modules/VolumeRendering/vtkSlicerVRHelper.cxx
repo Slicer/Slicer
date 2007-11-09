@@ -61,7 +61,8 @@ void vtkSlicerVRHelper::VolumeRenderingCallback( vtkObject *caller, unsigned lon
 
     if (self->GetInVolumeRenderingCallbackFlag()==1)
     {
-        vtkErrorWithObjectMacro(self,"In vtkVOlumeRendering *********GUICallback called recursively?");
+        self->Script("puts \"In vtkVOlumeRendering *********GUICallback called recursively?\"");
+       // vtkErrorWithObjectMacro(self,"In vtkVOlumeRendering *********GUICallback called recursively?");
     }
 
     vtkDebugWithObjectMacro(self, "In vtkVolumeREndering GUICallback");
