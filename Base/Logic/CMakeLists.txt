@@ -122,6 +122,7 @@ CONFIGURE_FILE(
 # Resources
 SET (COLORFILES
     ./Resources/ColorFiles/PelvisColor.txt
+    ./Resources/ColorFiles/64Color-Nonsemantic.txt 
 )
 
 FOREACH ( colorfile ${COLORFILES})
