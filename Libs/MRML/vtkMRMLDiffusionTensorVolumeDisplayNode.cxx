@@ -257,7 +257,6 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLDiffusionTensorVolumeDisplay
 void vtkMRMLDiffusionTensorVolumeDisplayNode::SetImageData(vtkImageData *imageData)
 {
   this->DTIMathematics->SetInput(0, imageData);
-  this->DTIMathematics->SetInput(1, imageData);
 }
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()

@@ -520,12 +520,10 @@ void vtkSlicerSliceGlyphLogic::DiffusionTensorVolumeNodeUpdateTransforms()
     {
      inVol = this->VolumeNode->GetImageData();
      this->DTIMathematics->SetInput(0,inVol);
-     this->DTIMathematics->SetInput(1,inVol);
     }
   else
     {
     this->DTIMathematics->SetInput(0,NULL);
-    this->DTIMathematics->SetInput(1,NULL);
     }
 
   vtkMRMLDiffusionTensorVolumeDisplayNode *dtiVolumeDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
