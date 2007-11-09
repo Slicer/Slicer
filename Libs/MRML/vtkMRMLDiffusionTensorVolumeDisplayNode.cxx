@@ -94,7 +94,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL)
     {
     ss << this->DiffusionTensorDisplayPropertiesNodeID;
-    of << indent << " diffussionTensorDisplayPropertiesNodeID=\"" << ss.str() << "\"";
+    of << indent << " diffusionTensorDisplayPropertiesNodeID=\"" << ss.str() << "\"";
     }
 }
 
