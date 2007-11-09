@@ -100,6 +100,9 @@ public:
     }
     vtkGetVectorMacro(limit,int,4);
     vtkGetMacro(LimitEnabled,int);
+    vtkGetMacro(ManualInteractive,int);
+    vtkSetMacro(ManualInteractive,int);
+    vtkBooleanMacro(ManualInteractive,int);
   //ENDSLICERADD
 
   static vtkSlicerFixedPointVolumeRayCastMapper *New();
@@ -268,6 +271,7 @@ protected:
     //SLICERADD
     int limit[4];
     int LimitEnabled;
+    int ManualInteractive;
   //ENDSLICERADD
 
 

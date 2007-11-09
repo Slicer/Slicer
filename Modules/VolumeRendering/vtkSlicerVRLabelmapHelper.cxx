@@ -16,6 +16,7 @@ vtkCxxRevisionMacro(vtkSlicerVRLabelmapHelper, "$Revision: 1.46 $");
 vtkStandardNewMacro(vtkSlicerVRLabelmapHelper);
 vtkSlicerVRLabelmapHelper::vtkSlicerVRLabelmapHelper(void)
 {
+    this->ButtonDown=0;
     this->ScheduledRenderID="";
     this->LM_OptionTree=NULL;
     this->MapperRaycast=NULL;
@@ -28,6 +29,8 @@ vtkSlicerVRLabelmapHelper::vtkSlicerVRLabelmapHelper(void)
 
 vtkSlicerVRLabelmapHelper::~vtkSlicerVRLabelmapHelper(void)
 {
+    this->Gui->Script("bind all <Any-ButtonPress> {%s {}}",this->GetTclName());
+    this->Gui->Script("bind all <Any-ButtonRelease> {%s {}}",this->GetTclName());
     //Remove all the Observers we added
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
@@ -121,9 +124,13 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
 void vtkSlicerVRLabelmapHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
     Superclass::Init(gui);
+    this->Gui->Script("bind all <Any-ButtonPress> {%s SetButtonDown 1}",this->GetTclName());
+    this->Gui->Script("bind all <Any-ButtonRelease> {%s SetButtonDown 0}",this->GetTclName());
     this->VMPW_Shading=vtkKWVolumeMaterialPropertyWidget::New();
     this->VMPW_Shading->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
     this->VMPW_Shading->Create();
+    this->VMPW_Shading->SetPropertyChangingCommand(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer(),"Render");
+    this->VMPW_Shading->SetPropertyChangedCommand(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer(),"Render");
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->VMPW_Shading->GetWidgetName());
     this->LM_OptionTree=vtkSlicerLabelMapWidget::New();
     this->LM_OptionTree->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
@@ -195,58 +202,101 @@ void vtkSlicerVRLabelmapHelper::ProcessVolumeRenderingEvents(vtkObject *caller,u
     }
     else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::StartEvent)
     {
-        //it is a interactiv rendering->everything is alright
-        if(this->MapperRaycast->GetSampleDistance()==this->MapperRaycast->GetInteractiveSampleDistance())
+        if(this->CurrentStage==1&&this->ButtonDown==0)
         {
-            vtkSlicerVRHelperDebug("interactiv started","");
-           return;
+            this->MapperRaycast->ManualInteractiveOff();
         }
-        //it is a scheduled renderer
-        if(this->CurrentStage==1)
-        {        
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->SetStillUpdateRate(0.00001);
-            vtkSlicerVRHelperDebug("scheduled started","");
-            return;
-        }
-        //It is a still rendering, but we want it interactive
-        //Abort potential high resolution rendering
-        if(strcmp(this->ScheduledRenderID.c_str(),"")!=0)
+        else
         {
-            this->Script("after cancel %s",this->ScheduledRenderID.c_str());
-            this->ScheduledRenderID="";
+            if(strcmp(this->ScheduledRenderID.c_str(),"")!=0)
+            {
+                this->Script("after cancel %s", this->ScheduledRenderID.c_str());
+                this->ScheduledRenderID="";
+            }
+
+            this->MapperRaycast->ManualInteractiveOn();
         }
 
-        this->MapperRaycast->SetAutoAdjustSampleDistances(1);
-        this->OldSampleDistance=this->MapperRaycast->GetSampleDistance();
-        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetDesiredUpdateRate(0.0001);//->SetDesiredUpdateRate(20);
+        return;
+        //if(this->Volume->GetAllocatedRenderTime()>=1.0)
+        //{
+        //            this->Volume->SetAllocatedRenderTime(0.01,NULL);
+        //}
+
+        //return;
+        ////it is a interactiv rendering->everything is alright
+        //if(this->MapperRaycast->GetSampleDistance()==this->MapperRaycast->GetInteractiveSampleDistance())
+        //{
+        //    vtkSlicerVRHelperDebug("interactiv started","");
+        //   return;
+        //}
+        ////it is a scheduled renderer
+        //if(this->CurrentStage==1)
+        //{        
+        //    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->SetStillUpdateRate(0.00001);
+        //    vtkSlicerVRHelperDebug("scheduled started","");
+        //    return;
+        //}
+        ////It is a still rendering, but we want it interactive
+        ////Abort potential high resolution rendering
+        //if(strcmp(this->ScheduledRenderID.c_str(),"")!=0)
+        //{
+        //    this->Script("after cancel %s",this->ScheduledRenderID.c_str());
+        //    this->ScheduledRenderID="";
+        //}
+
+        //this->MapperRaycast->SetAutoAdjustSampleDistances(1);
+        //this->OldSampleDistance=this->MapperRaycast->GetSampleDistance();
+        //this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetDesiredUpdateRate(0.0001);//->SetDesiredUpdateRate(20);
         //this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->SetStillUpdateRate(20);
-        //this->MapperRaycast->SetSampleDistance(this->MapperRaycast->GetInteractiveSampleDistance());
-        vtkSlicerVRHelperDebug("faked interactiv started","");
+        ////this->MapperRaycast->SetSampleDistance(this->MapperRaycast->GetInteractiveSampleDistance());
+        //vtkSlicerVRHelperDebug("faked interactiv started","");
 
 
     }
     else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::EndEvent)
     {
-         //if we have an interactive sample distance and we don't pretend to be interactiv
-        if(this->MapperRaycast->GetSampleDistance()==this->MapperRaycast->GetInteractiveSampleDistance()&&this->OldSampleDistance==0)
+        if(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetAbortRender()==1)
         {
-            vtkSlicerVRHelperDebug("interactiv ended","");
-            return;
-        }
-        //The next Rendering has to be interactiv
-        if(this->CurrentStage==1)
-        {
-            vtkSlicerVRHelperDebug("scheduled ended","");
             this->CurrentStage=0;
-            return;
-
+            //Take care about potential Rendering
+            if(strcmp(this->ScheduledRenderID.c_str(),"")!=0)
+            {
+                this->Script("after cancel %s", this->ScheduledRenderID.c_str());
+                this->ScheduledRenderID="";
+            }
+            //Start a new low resolution renderer
+            this->ScheduledRenderID=this->Script("after 100 %s ScheduleRender 0",this->GetTclName());
         }
-        vtkSlicerVRHelperDebug("faked interactiv ended","");
-        //We pretend to be interactiv
-        //this->MapperRaycast->SetSampleDistance(this->OldSampleDistance);
-        //this->MapperRaycast->SetAutoAdjustSampleDistances(1);
-        this->ScheduledRenderID=this->Script("after 100 %s ScheduleRender",this->GetTclName());
-        this->OldSampleDistance=0;
+        if(this->CurrentStage==0)
+        {
+            this->ScheduledRenderID=this->Script("after 100 %s ScheduleRender 1",this->GetTclName());
+        }
+        else
+        {
+            this->CurrentStage=0;
+        }
+        //return;
+        // //if we have an interactive sample distance and we don't pretend to be interactiv
+        //if(this->MapperRaycast->GetSampleDistance()==this->MapperRaycast->GetInteractiveSampleDistance()&&this->OldSampleDistance==0)
+        //{
+        //    vtkSlicerVRHelperDebug("interactiv ended","");
+        //    return;
+        //}
+        ////The next Rendering has to be interactiv
+        //if(this->CurrentStage==1)
+        //{
+        //    vtkSlicerVRHelperDebug("scheduled ended","");
+        //    this->CurrentStage=0;
+        //    return;
+
+        //}
+        //vtkSlicerVRHelperDebug("faked interactiv ended","");
+        ////We pretend to be interactiv
+        ////this->MapperRaycast->SetSampleDistance(this->OldSampleDistance);
+        ////this->MapperRaycast->SetAutoAdjustSampleDistances(1);
+
+        //this->OldSampleDistance=0;
 
     }
     vtkSlicerFixedPointVolumeRayCastMapper *callerMapper=vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(caller);
@@ -302,11 +352,17 @@ void vtkSlicerVRLabelmapHelper::CheckAbort(void)
     }
 }
 
-void vtkSlicerVRLabelmapHelper::ScheduleRender(void)
+void vtkSlicerVRLabelmapHelper::ScheduleRender(int stage)
 {
-    this->CurrentStage=1;
-
+    this->CurrentStage=stage;
+    if(stage==1)
+    {
     this->ScheduledRenderID=this->Gui->Script("after idle [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] Render");
+    }
+    else
+    {
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+    }
 }
 void vtkSlicerVRLabelmapHelper::UpdateGUIElements(void)
 {

@@ -19,8 +19,17 @@ public:
     virtual void UpdateGUIElements(void);
     virtual void Rendering(void);
     virtual void UpdateRendering(void);
-    void ScheduleRender(void);
+    void ScheduleRender(int stage);
+        void SetButtonDown(int _arg)
+    {
+        this->SetTCLDebug(1);
+        vtkSlicerVRHelperDebug("setbutton %d",_arg);
+        this->SetTCLDebug(0);
+        this->ButtonDown=(_arg);
+    }
+    //vtkSetMacro(ButtonDown,int);
 protected:
+    int ButtonDown;
     int CurrentStage;
     float OldSampleDistance;
     //BTX
