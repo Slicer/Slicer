@@ -758,6 +758,9 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         {
         in->SetFileName( req.GetFilename().c_str() );
         in->ReadData( nd );
+        // since this was read from a temp location, 
+        // mark it as needing to be saved when the scene is saved
+        nd->SetModifiedSinceRead(1); 
         }
       catch (itk::ExceptionObject& exc)
         {
