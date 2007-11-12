@@ -53,6 +53,24 @@ void vtkSlicerFiducialsLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerFiducialsLogic::AddFiducialListSelected()
+{
+  vtkMRMLFiducialListNode *node = this->AddFiducialList();
+
+  // make it active
+  vtkMRMLSelectionNode *selnode;
+  selnode = vtkMRMLSelectionNode::SafeDownCast (
+            this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  if (selnode)
+    {
+    selnode->SetActiveFiducialListID(node->GetID());
+    }
+  if (node)
+    {
+    node->Delete();
+    }
+}
+//----------------------------------------------------------------------------
 vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
 {
   this->GetMRMLScene()->SaveStateForUndo();
@@ -67,7 +85,7 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
   name = this->MRMLScene->GetTagByClassName("vtkMRMLFiducialListNode");
 //  node->SetName(this->MRMLScene->GetUniqueNameByString(name));
   node->SetName(this->MRMLScene->GetUniqueNameByString("L"));
-  this->GetMRMLScene()->AddNode(node);
+  this->GetMRMLScene()->AddNode(node); 
   return vtkMRMLFiducialListNode::SafeDownCast(node);
 }
 

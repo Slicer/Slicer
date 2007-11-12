@@ -40,8 +40,12 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerFiducialsLogic : public vtkSlicerLog
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
+  // Create new mrml node for a full list, make it the selected list, and clear up local pointers
+  void AddFiducialListSelected();
+  
+  // Description:
   // Create new mrml node and associated display node for a full list,
-  // return the node id
+  // return the node
   vtkMRMLFiducialListNode * AddFiducialList();
 
   // Description:
