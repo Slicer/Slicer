@@ -37,6 +37,9 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->AddFiducialButton = NULL;
     this->RemoveFiducialButton = NULL;
     this->RemoveFiducialsButton = NULL;
+
+    this->SelectAllFiducialsButton = NULL;
+    this->DeselectAllFiducialsButton = NULL;
     
     this->VisibilityToggle = NULL;
     this->VisibilityIcons = NULL;
@@ -91,6 +94,19 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
         this->RemoveFiducialsButton = NULL;
     }
 
+    if (this->SelectAllFiducialsButton)
+      {
+      this->SelectAllFiducialsButton->SetParent(NULL);
+      this->SelectAllFiducialsButton->Delete();
+      this->SelectAllFiducialsButton = NULL;
+      }
+     if (this->DeselectAllFiducialsButton)
+      {
+      this->DeselectAllFiducialsButton->SetParent(NULL);
+      this->DeselectAllFiducialsButton->Delete();
+      this->DeselectAllFiducialsButton = NULL;
+      }
+    
     if (this->VisibilityToggle) {
         this->VisibilityToggle->SetParent(NULL);
         this->VisibilityToggle->Delete();
@@ -196,6 +212,9 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     this->RemoveFiducialButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->RemoveFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+    this->SelectAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->DeselectAllFiducialsButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
     this->VisibilityToggle->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ListColorButton->RemoveObservers (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->ListSelectedColorButton->RemoveObservers (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -206,7 +225,11 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     
     this->RemoveObservers (vtkSlicerFiducialsGUI::FiducialListIDModifiedEvent, (vtkCommand *)this->GUICallbackCommand);    
 
-    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->GUICallbackCommand);
+    if (this->MRMLScene)
+      {
+      this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      }
 }
 
 
@@ -218,6 +241,10 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     this->AddFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->RemoveFiducialButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->RemoveFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+
+    this->SelectAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->DeselectAllFiducialsButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+
     
     this->VisibilityToggle->AddObserver (vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
     this->ListColorButton->AddObserver (vtkKWChangeColorButton::ColorChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -232,13 +259,13 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
     // observe the scene for node deleted events
     if (this->MRMLScene)
       {
-      if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->GUICallbackCommand) != 1)
+      if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
         {
-        this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->GUICallbackCommand);
+        this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
         }
-      else
+      if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
         {
-        vtkDebugMacro("MRML scene already has the node removed event being watched by the fid gui");
+        this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
         }
       }
         
@@ -246,44 +273,31 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
 
 
 
-//---------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
                                             unsigned long event, void *callData )
 {
   vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessGUIEvents: event = " << event);
   
-  // first check to see if there was a fiducial list node deleted
-  if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
-      vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
-      event == vtkMRMLScene::NodeRemovedEvent)
-    {
-    vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessGUIEvents: got a node deleted event on scene");
-    // check to see if it was the current node that was deleted
-    if (callData != NULL)
-      {
-      vtkMRMLNode *delNode = (vtkMRMLNode *)callData;
-      if (delNode != NULL &&
-          delNode->GetID() == this->GetFiducialListNodeID())
-        {
-        vtkDebugMacro("My node got deleted " << this->GetFiducialListNodeID());
-//        this->SetFiducialListNodeID(NULL);
-        }
-      }
-    }
     // process fiducial list node selector events
     vtkSlicerNodeSelectorWidget *fidListSelector = 
-        vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+        vtkSlicerNodeSelectorWidget::SafeDownCast(caller);    
+    
     if (fidListSelector == this->FiducialListSelectorWidget &&
         event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent )
-    {
-        vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent Node Selector Event: " << event << ".\n");
-        vtkMRMLFiducialListNode *fidList =
-            vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected());
-        if (fidList != NULL)
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent Node Selector Event: " << event << ".\n");
+      vtkMRMLFiducialListNode *fidList =
+        vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected());
+      if (fidList != NULL)
         {
-            this->SetFiducialListNode(fidList);
+        this->SetFiducialListNode(fidList);
         }
-        return;
+      else
+        {
+        vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: the selected node is null!");
+        }
+      return;
     }
     vtkMRMLFiducialListNode *fidList =
         vtkMRMLFiducialListNode::SafeDownCast(caller);
@@ -299,7 +313,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkMRMLFiducialListNode *activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
   if (activeFiducialListNode == NULL)
   {
-      vtkErrorMacro ("ERROR: No Fiducial List, adding one first!\n");
+      vtkWarningMacro ("ERROR: No Fiducial List, adding one first!\n");
       vtkMRMLFiducialListNode *newList = this->GetLogic()->AddFiducialList();      
       if (newList != NULL)
         {
@@ -385,6 +399,20 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
         this->MRMLScene->SaveStateForUndo();
         activeFiducialListNode->RemoveAllFiducials();
     }
+   if (button == this->SelectAllFiducialsButton && event == vtkKWPushButton::InvokedEvent)
+     {
+     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Select all Fiducials Button event: " << event << ".\n");
+     // save state for undo
+     this->MRMLScene->SaveStateForUndo();
+     activeFiducialListNode->SetAllFiducialsSelected(1);
+     }
+   if (button == this->DeselectAllFiducialsButton && event == vtkKWPushButton::InvokedEvent)
+     {
+     vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Deselect all Fiducials Button event: " << event << ".\n");
+     // save state for undo
+     this->MRMLScene->SaveStateForUndo();
+     activeFiducialListNode->SetAllFiducialsSelected(0);
+     }
   if (button == this->GetVisibilityToggle()  && event ==  vtkKWPushButton::InvokedEvent)
     {
         vtkDebugMacro("vtkSlicerFiducialsGUI: ProcessGUIEvent: Visibility button event: " << event << ".\n");
@@ -461,13 +489,32 @@ void vtkSlicerFiducialsGUI::ProcessLogicEvents ( vtkObject *caller,
 void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
                                              unsigned long event, void *callData )
 {    
-    vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessMRMLEvents: event = " << event << ".\n");
-    
-    if (event == vtkCommand::WidgetValueChangedEvent)
+  vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessMRMLEvents: event = " << event << ".\n");
+  
+  if (event == vtkCommand::WidgetValueChangedEvent)
     {
-        vtkDebugMacro("got a widget value changed event... the list node was changed.\n");
+    vtkDebugMacro("got a widget value changed event... the list node was changed.\n");
     }
-
+  
+  // first check to see if there was a fiducial list node deleted
+  if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
+      vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
+      event == vtkMRMLScene::NodeRemovedEvent)
+    {
+    vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessGUIEvents: got a node deleted event on scene");
+    // check to see if it was the current node that was deleted
+    if (callData != NULL)
+      {
+      vtkMRMLNode *delNode = (vtkMRMLNode *)callData;
+      if (delNode != NULL &&
+          delNode->GetID() == this->GetFiducialListNodeID())
+        {
+        vtkDebugMacro("My node got deleted " << this->GetFiducialListNodeID());
+//        this->SetFiducialListNodeID(NULL);
+        }
+      }
+    }
+  
     // did the selected node get modified?
     if (this->ApplicationLogic)
       {
@@ -495,46 +542,57 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
     vtkMRMLFiducialListNode *activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
     
     if (node == activeFiducialListNode && event == vtkCommand::ModifiedEvent)
-    {
-        vtkDebugMacro("\tmodified event on the fiducial list node.\n");
-        if (node == NULL)
+      {
+      vtkDebugMacro("\tmodified event on the fiducial list node.\n");
+      if (node == NULL)
         {
-            vtkDebugMacro("\tBUT: the node is null\n");
-            return;
-        }
-        vtkDebugMacro("\t\tUpdating the GUI\n");
-        // update the table
-        SetGUIFromList(activeFiducialListNode);
+        vtkDebugMacro("\tBUT: the node is null\n");
         return;
-    }
+        }
+      vtkDebugMacro("ProcessMRMLEvents: \t\tUpdating the GUI\n");
+      // update the table
+      SetGUIFromList(activeFiducialListNode);
+      return;
+      }
     if (node == activeFiducialListNode && event == vtkMRMLFiducialListNode::FiducialModifiedEvent)
-    {
-        vtkDebugMacro("\tfiducial modified event on the active fiducial list.");
-        if (node == NULL)
+      {
+      vtkDebugMacro("\tfiducial modified event on the active fiducial list.");
+      if (node == NULL)
         {
-            return;
-        }
-        SetGUIFromList(activeFiducialListNode);
         return;
-    }
+        }
+      vtkDebugMacro("ProcessMRMLEvents: setting the gui from the acitve fid list node");
+      SetGUIFromList(activeFiducialListNode);
+      return;
+      }
     
     if (node == activeFiducialListNode && event == vtkMRMLFiducialListNode::DisplayModifiedEvent)
-    {
-        vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessMRMLEvents: DisplayModified event on the fiducial list node...\n");
-    }
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessMRMLEvents: DisplayModified event on the fiducial list node...\n");
+      }
     if (node == vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()) && event == vtkCommand::ModifiedEvent)
-    {
-        vtkDebugMacro("\tmodified event on the fiducial list selected node.\n");
-        if (activeFiducialListNode !=  vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()))
+      {
+      vtkDebugMacro("\tmodified event on the fiducial list selected node.\n");
+      if (activeFiducialListNode !=  vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()))
         {
-            // select it first off
-            this->SetFiducialListNode(vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()));
+        // select it first off
+        this->SetFiducialListNode(vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()));
         }
-        SetGUIFromList(activeFiducialListNode);
-        return;        
-    }    
+      vtkDebugMacro("Setting gui from list after display modified event");
+      SetGUIFromList(activeFiducialListNode);
+      return;        
+      }    
+    
 
-
+    // did the scene close?
+    if (event == vtkMRMLScene::SceneCloseEvent)
+      {
+      vtkDebugMacro("Scene closing, deleting rows");
+      if (this->MultiColumnList && this->MultiColumnList->GetWidget())
+        {
+        this->MultiColumnList->GetWidget()->DeleteAllRows();
+        }
+      }
     vtkDebugMacro("vtkSlicerFiducialsGUI: Done processing mrml events...");
 //    std::cerr << "vtkSlicerFiducialsGUI::ProcessMRMLEvents  mismatched
 //    caller and event (" << event << ")\n";
@@ -564,11 +622,16 @@ void vtkSlicerFiducialsGUI::UpdateGUI()
           this->SetFiducialListNodeID(selnode->GetActiveFiducialListID());
           }
         }
+      else
+        {
+        vtkDebugMacro("UpdateGUI: the selection node is null, can't get the scene's currently active fid list");
+        }
       }
     
     // update the gui
     if (this->GetFiducialListNodeID() != NULL)
       {
+      vtkDebugMacro("Setting gui from the scene's fid list poitned to by this fid list node id");
       SetGUIFromList((vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID()));
       }
 }
@@ -576,115 +639,138 @@ void vtkSlicerFiducialsGUI::UpdateGUI()
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiducialListNode)
 {
+    
     if (activeFiducialListNode == NULL)
-      {
+      {      
       //clear out the list box
       if (this->MultiColumnList)
         {
         if (this->MultiColumnList->GetWidget()->GetNumberOfRows() != 0)
           {
+          vtkDebugMacro("SetGUIFromList: passed in active fid list node is null, clearing outthe list box");
           this->MultiColumnList->GetWidget()->DeleteAllRows();
           }
         }
+      vtkDebugMacro("SetGUIFromList: passed in active fid list node is null, returning");
+      return;
+      }
+
+    // make sure that it's selected
+    if (this->FiducialListSelectorWidget->GetSelected() == NULL)
+      {
+      vtkDebugMacro("Null selected fid list, selecting it");
+      this->FiducialListSelectorWidget->SetSelected(activeFiducialListNode);
+      return;
+      }
+    if (activeFiducialListNode && this->FiducialListSelectorWidget->GetSelected() &&
+        strcmp(activeFiducialListNode->GetName(),
+               this->FiducialListSelectorWidget->GetSelected()->GetName()) != 0)
+      {
+      vtkDebugMacro("SetGUIFromList: input list " << activeFiducialListNode->GetName() << " doesn't match selector widget value: " << this->FiducialListSelectorWidget->GetSelected()->GetName());
+      //this->FiducialListSelectorWidget->GetWidget()->GetWidget()->SetValue(activeFiducialListNode->GetName());
+      this->FiducialListSelectorWidget->SetSelected(activeFiducialListNode);
+      vtkDebugMacro("... returning, hoping for a invoke event");
       return;
       }
     
     int numPoints = activeFiducialListNode->GetNumberOfFiducials();
     bool deleteFlag = true;
+
+    vtkDebugMacro("SetGUIFromList: have " << numPoints << " points in the list");
     
     if (numPoints != this->MultiColumnList->GetWidget()->GetNumberOfRows())
-    {
-        vtkDebugMacro("SetGUIFromList: numPoints " << numPoints << " doesn't match number of rows " << this->MultiColumnList->GetWidget()->GetNumberOfRows() << ", so deleting all of them and starting from scratch\n");
-    
-        // clear out the multi column list box and fill it in with the
-        // new list
-        this->MultiColumnList->GetWidget()->DeleteAllRows();
-    }
+      {
+      vtkDebugMacro("SetGUIFromList: numPoints " << numPoints << " doesn't match number of rows " << this->MultiColumnList->GetWidget()->GetNumberOfRows() << ", so deleting all of them and starting from scratch\n");
+      
+      // clear out the multi column list box and fill it in with the
+      // new list
+      this->MultiColumnList->GetWidget()->DeleteAllRows();
+      }
     else
-    {
-        deleteFlag = false;
-    }
+      {
+      deleteFlag = false;
+      }
     // a row for each point
         
-        float *xyz;
-        float *wxyz;
-        for (int row = 0; row < numPoints; row++)
+    float *xyz;
+    float *wxyz;
+    for (int row = 0; row < numPoints; row++)
+      {
+      // add a row for this point
+      if (deleteFlag)
         {
-            // add a row for this point
-            if (deleteFlag)
-            {
-                vtkDebugMacro("SetGUIFromList: Adding point " << row << " to the table" << endl);
-                this->MultiColumnList->GetWidget()->AddRow();
-            }
-            vtkDebugMacro("SetGUIFromList: getting " << row << "th fiducial xyz - total fids = " << numPoints);
-            // now populate it
-            xyz = activeFiducialListNode->GetNthFiducialXYZ(row);
-            if (xyz == NULL)
-              {
-              vtkErrorMacro ("SetGUIFromList: ERROR: got null xyz for point " << row << endl);
-              }
-            vtkDebugMacro("Getting nth fiducial orientation");            
-            wxyz = activeFiducialListNode->GetNthFiducialOrientation(row);
-            
-            if (activeFiducialListNode->GetNthFiducialLabelText(row) != NULL)
-            {
-                if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,this->NameColumn), activeFiducialListNode->GetNthFiducialLabelText(row)) != 0)
-                {
-                    this->MultiColumnList->GetWidget()->SetCellText(row,this->NameColumn,activeFiducialListNode->GetNthFiducialLabelText(row));
-                }               
-            }
-            else
-            {
-                if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,this->NameColumn), "(none)") != 0)
-                {
-                    this->MultiColumnList->GetWidget()->SetCellText(row,this->NameColumn,"(none)");
-                }
-            }
-             // selected
-            if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->SelectedColumn) != (activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0))
-            {
-                this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,this->SelectedColumn,(activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0));
-                this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,this->SelectedColumn);
-            }
-            if (xyz != NULL)
-            {
-                // always set it if it's a new row added because all were
-                // deleted, because the numerical default is 0
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->XColumn) != xyz[0])
-                {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->XColumn,xyz[0]);
-                } 
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->YColumn) != xyz[1])
-                {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->YColumn,xyz[1]);
-                }
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->ZColumn) != xyz[2])
-                {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->ZColumn,xyz[2]);
-                }
-            }
-            if (wxyz != NULL)
-            {
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrWColumn) != wxyz[0])
-                {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrWColumn,wxyz[0]);
-                }
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrXColumn) != wxyz[1])
-                {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrXColumn,wxyz[1]);
-                }
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrYColumn) != wxyz[2])
-                {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrYColumn,wxyz[2]);
-                }
-                if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrZColumn) != wxyz[3])
-                {
-                    this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrZColumn,wxyz[3]);
-                }
-            }
+        vtkDebugMacro("SetGUIFromList: Adding point " << row << " to the table" << endl);
+        this->MultiColumnList->GetWidget()->AddRow();
         }
-        
-        vtkDebugMacro("Now going to update GUI from the logic's active list");
+      vtkDebugMacro("SetGUIFromList: getting " << row << "th fiducial xyz - total fids = " << numPoints);
+      // now populate it
+      xyz = activeFiducialListNode->GetNthFiducialXYZ(row);
+      if (xyz == NULL)
+        {
+        vtkErrorMacro ("SetGUIFromList: ERROR: got null xyz for point " << row << endl);
+        }
+      vtkDebugMacro("Getting nth fiducial orientation");            
+      wxyz = activeFiducialListNode->GetNthFiducialOrientation(row);
+      
+      if (activeFiducialListNode->GetNthFiducialLabelText(row) != NULL)
+        {
+        if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,this->NameColumn), activeFiducialListNode->GetNthFiducialLabelText(row)) != 0)
+          {
+          this->MultiColumnList->GetWidget()->SetCellText(row,this->NameColumn,activeFiducialListNode->GetNthFiducialLabelText(row));
+          }               
+        }
+      else
+        {
+        if (strcmp(this->MultiColumnList->GetWidget()->GetCellText(row,this->NameColumn), "(none)") != 0)
+          {
+          this->MultiColumnList->GetWidget()->SetCellText(row,this->NameColumn,"(none)");
+          }
+        }
+      // selected
+      if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->SelectedColumn) != (activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0))
+        {
+        this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,this->SelectedColumn,(activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0));
+        this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,this->SelectedColumn);
+        }
+      if (xyz != NULL)
+        {
+        // always set it if it's a new row added because all were
+        // deleted, because the numerical default is 0
+        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->XColumn) != xyz[0])
+          {
+          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->XColumn,xyz[0]);
+          } 
+        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->YColumn) != xyz[1])
+          {
+          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->YColumn,xyz[1]);
+          }
+        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->ZColumn) != xyz[2])
+          {
+          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->ZColumn,xyz[2]);
+          }
+        }
+      if (wxyz != NULL)
+        {
+        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrWColumn) != wxyz[0])
+          {
+          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrWColumn,wxyz[0]);
+          }
+        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrXColumn) != wxyz[1])
+          {
+          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrXColumn,wxyz[1]);
+          }
+        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrYColumn) != wxyz[2])
+          {
+          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrYColumn,wxyz[2]);
+          }
+        if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsDouble(row,this->OrZColumn) != wxyz[3])
+          {
+          this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->OrZColumn,wxyz[3]);
+          }
+        }
+      }
+    
+    vtkDebugMacro("Now going to update GUI from the logic's active list");
     // update the visibility, color, scale buttons to match the displayed list's
     if (activeFiducialListNode == NULL)
       {
@@ -694,73 +780,73 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
     vtkDebugMacro(<< "\tupdating the visibility button\n");
     if (this->GetVisibilityToggle() != NULL &&
         this->GetVisibilityIcons() != NULL)
-    {
-        if (activeFiducialListNode->GetVisibility() > 0)
+      {
+      if (activeFiducialListNode->GetVisibility() > 0)
         {
-            this->GetVisibilityToggle()->SetImageToIcon(
-                this->GetVisibilityIcons()->GetVisibleIcon());
+        this->GetVisibilityToggle()->SetImageToIcon(
+                                                    this->GetVisibilityIcons()->GetVisibleIcon());
         }
-        else
+      else
         {
-            this->GetVisibilityToggle()->SetImageToIcon(
-                this->GetVisibilityIcons()->GetInvisibleIcon());
+        this->GetVisibilityToggle()->SetImageToIcon(
+                                                    this->GetVisibilityIcons()->GetInvisibleIcon());
         }
-    }
+      }
     else
-    {
+      {
       vtkErrorMacro ("ERROR; trying up update null visibility toggle!\n");
-    }
+      }
     
     // color
     vtkDebugMacro(<< "\tupdating the colour\n");
     double *nodeColor = activeFiducialListNode->GetColor();
     if (this->ListColorButton != NULL)
-    {
-        double *buttonColor = this->ListColorButton->GetColor();
-        if (nodeColor != NULL && buttonColor != NULL && 
-            (nodeColor[0] != buttonColor[0] ||
-             nodeColor[1] != buttonColor[1] ||
-             nodeColor[2] != buttonColor[2]))
+      {
+      double *buttonColor = this->ListColorButton->GetColor();
+      if (nodeColor != NULL && buttonColor != NULL && 
+          (nodeColor[0] != buttonColor[0] ||
+           nodeColor[1] != buttonColor[1] ||
+           nodeColor[2] != buttonColor[2]))
         {
-            vtkDebugMacro("Updating list color button\n");
-            this->ListColorButton->SetColor(nodeColor);
+        vtkDebugMacro("Updating list color button\n");
+        this->ListColorButton->SetColor(nodeColor);
         }
-    }
+      }
     else
-    {
-        vtkErrorMacro("No colour button!\n");
-    }
-
+      {
+      vtkErrorMacro("No colour button!\n");
+      }
+    
     // selected color
     vtkDebugMacro(<< "\tupdating the selected colour\n");
     double *nodeSelectedColor = activeFiducialListNode->GetSelectedColor();
     if (this->ListSelectedColorButton != NULL)
-    {
-        double *buttonSelectedColor = this->ListSelectedColorButton->GetColor();
-        if (nodeSelectedColor != NULL && buttonSelectedColor != NULL && 
-            (nodeSelectedColor[0] != buttonSelectedColor[0] ||
-             nodeSelectedColor[1] != buttonSelectedColor[1] ||
-             nodeSelectedColor[2] != buttonSelectedColor[2]))
+      {
+      double *buttonSelectedColor = this->ListSelectedColorButton->GetColor();
+      if (nodeSelectedColor != NULL && buttonSelectedColor != NULL && 
+          (nodeSelectedColor[0] != buttonSelectedColor[0] ||
+           nodeSelectedColor[1] != buttonSelectedColor[1] ||
+           nodeSelectedColor[2] != buttonSelectedColor[2]))
         {
-            vtkDebugMacro("Updating list selected color button\n");
-            this->ListSelectedColorButton->SetColor(nodeSelectedColor);
+        vtkDebugMacro("Updating list selected color button\n");
+        this->ListSelectedColorButton->SetColor(nodeSelectedColor);
         }
-    }
+      }
     else
-    {
-        vtkErrorMacro("No selected colour button!\n");
-    }
+      {
+      vtkErrorMacro("No selected colour button!\n");
+      }
     
     // symbol scale
     vtkDebugMacro(<< "\tupdating the symbol scale");
     double scale = activeFiducialListNode->GetSymbolScale();
     if (this->ListSymbolScale != NULL &&
         scale != this->ListSymbolScale->GetValue())
-    {
-        this->ListSymbolScale->SetValue(scale);
-    }
+      {
+      this->ListSymbolScale->SetValue(scale);
+      }
     
-
+    
     // symbol glyph type
     vtkDebugMacro("\tupdating the symbol glyph type to " << activeFiducialListNode->GetGlyphType() << endl);
     const char * glyphType = activeFiducialListNode->GetGlyphTypeAsString();
@@ -776,18 +862,18 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
     scale = activeFiducialListNode->GetTextScale();
     if (this->ListTextScale != NULL &&
         scale != this->ListTextScale->GetValue())
-    {
-        this->ListTextScale->SetValue(scale);
-    }
-
+      {
+      this->ListTextScale->SetValue(scale);
+      }
+    
     // opacity
     vtkDebugMacro(<< "\tupdating the opacity");
     scale = activeFiducialListNode->GetOpacity();
     if (this->ListOpacity != NULL &&
         scale != this->ListOpacity->GetValue())
-    {
-        this->ListOpacity->SetValue(scale);
-    }
+      {
+      this->ListOpacity->SetValue(scale);
+      }
 }
 
 
@@ -814,6 +900,7 @@ void vtkSlicerFiducialsGUI::Enter ( )
     this->AddGUIObservers();
     }
     this->CreateModuleEventBindings();
+    vtkErrorMacro("vtkSlicerFiducialsGUI::Enter: calling update gui");
     this->UpdateGUI();
 }
 
@@ -1137,7 +1224,38 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
                 this->RemoveFiducialButton->GetWidgetName(),
                 this->RemoveFiducialsButton->GetWidgetName());
 
+    // select button frame
+    vtkKWFrame *selectButtonFrame = vtkKWFrame::New();
+    selectButtonFrame->SetParent ( listFrame->GetFrame() );
+    selectButtonFrame->Create ( );
+    app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
+                 selectButtonFrame->GetWidgetName(),
+                 listFrame->GetFrame()->GetWidgetName());
+    
+    app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
+                 selectButtonFrame->GetWidgetName(),
+                 listFrame->GetFrame()->GetWidgetName());
+
+    // add a select all fiducials on this list button
+    this->SelectAllFiducialsButton = vtkKWPushButton::New ( );
+    this->SelectAllFiducialsButton->SetParent ( selectButtonFrame );
+    this->SelectAllFiducialsButton->Create ( );
+    this->SelectAllFiducialsButton->SetText ("Select All Fiducials");
+    this->SelectAllFiducialsButton->SetBalloonHelpString("Select all fiducial points from the list.");
+
+     // add a deselect all fiducials on this list button
+    this->DeselectAllFiducialsButton = vtkKWPushButton::New ( );
+    this->DeselectAllFiducialsButton->SetParent ( selectButtonFrame );
+    this->DeselectAllFiducialsButton->Create ( );
+    this->DeselectAllFiducialsButton->SetText ("Deselect All Fiducials");
+    this->DeselectAllFiducialsButton->SetBalloonHelpString("Deselect all fiducial points from the list.");
+
+    app->Script("pack %s %s -side left -anchor w -padx 4 -pady 2", 
+                this->SelectAllFiducialsButton->GetWidgetName(),
+                this->DeselectAllFiducialsButton->GetWidgetName());
+
     // deleting frame widgets
+    selectButtonFrame->Delete();
     buttonFrame->Delete ();
     colourFrame->Delete ();
     visibilityOpacityFrame->Delete ();
@@ -1230,7 +1348,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
         id != NULL &&
         strcmp(id,this->GetFiducialListNodeID()) == 0)
     {
-        vtkDebugMacro("no change in id, not doing anything for now: " << id << endl);
+        vtkDebugMacro("SetFiducialListNodeID: no change in id, not doing anything for now: " << id << endl);
         return;
     }
 
@@ -1267,7 +1385,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
       }
     else
       {
-        vtkErrorMacro ("ERROR: unable to get the mrml fiducial node to observe!\n");
+      vtkErrorMacro ("ERROR: unable to get the mrml fiducial node to observe!\n");
       }
 
     // update the selected fid list id

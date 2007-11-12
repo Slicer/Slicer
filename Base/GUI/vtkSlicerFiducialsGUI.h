@@ -49,6 +49,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialsButton, vtkKWPushButton);
+    vtkGetObjectMacro ( SelectAllFiducialsButton, vtkKWPushButton);
+    vtkGetObjectMacro ( DeselectAllFiducialsButton, vtkKWPushButton);
     vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton);
     vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons);
     vtkGetObjectMacro ( ListColorButton, vtkKWChangeColorButton);
@@ -167,6 +169,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkKWPushButton *RemoveFiducialButton;
     // remove all the fiducial points on this list
     vtkKWPushButton *RemoveFiducialsButton;
+    // select all fiducial points on this list
+    vtkKWPushButton *SelectAllFiducialsButton;
+    // deselect all fiducial points on this list
+    vtkKWPushButton *DeselectAllFiducialsButton;
     
     // list visibility
     vtkKWPushButton *VisibilityToggle;
