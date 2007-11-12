@@ -991,7 +991,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->HomeIconButton->SetBorderWidth ( 0 );
   this->HomeIconButton->SetOverReliefToNone ( );
   this->HomeIconButton->SetImageToIcon ( this->SlicerToolbarIcons->GetHomeIcon( ) );
-  this->HomeIconButton->SetBalloonHelpString ( "Home module (set home module with Ctrl+h" );
+  this->HomeIconButton->SetBalloonHelpString ( "Home module (set home module with Ctrl+h)" );
   mtb->AddWidget ( this->HomeIconButton );
 
   // data module icon
