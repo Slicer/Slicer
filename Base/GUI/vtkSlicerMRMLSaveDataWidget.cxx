@@ -19,8 +19,11 @@
 #include "vtkKWCheckButton.h"
 
 #include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLModelStorageNode.h"
 
 #include <vtksys/stl/string>
@@ -310,7 +313,16 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
     vtkMRMLStorageNode* snode = vnode->GetStorageNode();
     if (snode == NULL) 
       {
-      vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+      vtkMRMLStorageNode *storageNode;
+      if ( vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) || 
+            vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) )
+        {
+        storageNode = vtkMRMLNRRDStorageNode::New();
+        }
+      else
+        {
+        storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+        }
       storageNode->SetScene(this->GetMRMLScene());
       this->SetMRMLScene(this->GetMRMLScene());
       this->GetMRMLScene()->AddNode(storageNode);  
@@ -319,12 +331,13 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
       storageNode->Delete();
       snode = storageNode;
       }
-    if (snode->GetFileName() == NULL && this->DataDirectoryName != NULL) {
+    if (snode->GetFileName() == NULL && this->DataDirectoryName != NULL) 
+      {
       std::string name (this->DataDirectoryName);
       name += std::string(node->GetName());
       name += std::string(".nrrd");
       snode->SetFileName(name.c_str());
-    }
+      }
 
     // get absolute filename
     std::string name;
