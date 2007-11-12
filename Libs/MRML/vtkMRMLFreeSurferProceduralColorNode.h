@@ -87,6 +87,7 @@ public:
   void SetTypeToGreenRed();
   void SetTypeToLabels();
   void SetTypeToSurfaceLabels();
+  void SetTypeToCustom();
   
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
@@ -112,6 +113,7 @@ public:
     GreenRed = 5,
     Labels = 6,
     SurfaceLabels = 7,
+    Custom = 8,
   };
   //ETX
 
