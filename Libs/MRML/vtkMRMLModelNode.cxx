@@ -29,6 +29,7 @@ Version:   $Revision: 1.3 $
 #include "vtkFloatArray.h"
 
 #include "vtkMRMLProceduralColorNode.h"
+#include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkColorTransferFunction.h"
 
 //------------------------------------------------------------------------------
@@ -580,6 +581,8 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     // set up a colour node
     vtkMRMLProceduralColorNode *colorNode = vtkMRMLProceduralColorNode::New();
     colorNode->SetName(composedName.c_str());
+    // set the type to avoid error messages when copy it, as the default is -1
+    colorNode->SetType(vtkMRMLFreeSurferProceduralColorNode::Custom);
     vtkColorTransferFunction *func = colorNode->GetColorTransferFunction();
 
     // adapted from FS code that assumed that one scalar was curvature, the
