@@ -402,8 +402,6 @@ void vtkVolumeMathGUI::BuildGUI ( )
     this->SaveToClipboardButton->GetWidgetName(),
     this->SaveToFile->GetWidgetName());
 
-  this->SaveToFile->Delete();
-
   ///--------
   moduleFrame->Delete();
 }
