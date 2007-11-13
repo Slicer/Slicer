@@ -22,6 +22,13 @@ vtkLabelMapColorTransferFunction::vtkLabelMapColorTransferFunction(void)
 vtkLabelMapColorTransferFunction::~vtkLabelMapColorTransferFunction(void)
 {
 }
+
+//----------------------------------------------------------------------------
+void vtkLabelMapColorTransferFunction::PrintSelf(ostream& os, vtkIndent indent)
+{
+  
+    Superclass::PrintSelf(os,indent);
+}
 void vtkLabelMapColorTransferFunction::Init(vtkMRMLScalarVolumeNode *node)
 {
     vtkTimerLog *timer1=vtkTimerLog::New();

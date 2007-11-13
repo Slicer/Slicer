@@ -1,8 +1,10 @@
 #include "vtkLabelMapPiecewiseFunction.h"
+
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkTimerLog.h"
+#include "vtkMRMLScalarVolumeNode.h"
 #include <sstream>
 
 vtkLabelMapPiecewiseFunction::vtkLabelMapPiecewiseFunction(void)
@@ -36,6 +38,11 @@ vtkLabelMapPiecewiseFunction* vtkLabelMapPiecewiseFunction::New(void)
     }
     // If the factory was unable to create the object, then create it here.
     return new vtkLabelMapPiecewiseFunction;
+}
+
+void vtkLabelMapPiecewiseFunction::PrintSelf(ostream& os, vtkIndent indent)
+{
+    Superclass::PrintSelf(os,indent);
 }
 void vtkLabelMapPiecewiseFunction::Init(vtkMRMLScalarVolumeNode *node,double opacity, int treshold)
 {   

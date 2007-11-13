@@ -1,3 +1,8 @@
+// .NAME vtkMRMLVolumeRenderingNode - MRML node to represent volume rendering information
+// .SECTION Description
+// This node is especially used to store visualization parameter sets for volume rendering
+
+
 #ifndef __vtkMRMLVolumeRenderingNode_h
 #define __vtkMRMLVolumeRenderingNode_h
 
@@ -9,11 +14,8 @@
 #include "vtkColorTransferFunction.h"
 
 #include <string>
-//#include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkVolumeMapper.h"
-// .NAME vtkMRMLVolumeRenderingNode - MRML node to represent volume rendering information
-// .SECTION Description
-// This node is especially used to store visualization parameter set for volume rendering
+
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkMRMLVolumeRenderingNode : public vtkMRMLNode
 {
 public:
