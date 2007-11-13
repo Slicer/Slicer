@@ -283,22 +283,30 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
   unsigned long target;
   int numInputs;
   double *dwi;
-  double averageDWI;    
+  double averageDWI;
+  int numDWI;
   vtkDataArray *outTensors;
   float outT[3][3];
   int ptId;
 
-  T * baselinePtr;
-  T * averageDWIPtr;
+  T * baselinePtr = NULL;
+  T * averageDWIPtr = NULL;
+  Nrrd *ngrad =NULL;
+  Nrrd *nbmat =NULL; 
+  //Creating new nrrd arrays
+  ngrad  = nrrdNew();
+  nbmat = nrrdNew();
 
   // Get information to march through output tensor data
   outTensors = self->GetOutput()->GetPointData()->GetTensors();
 
   // Set Ten Context
   tenEstimateContext *tec = tenEstimateContextNew();
-  if (self->SetTenContext(tec)) {
+  if (self->SetTenContext(tec,ngrad,nbmat)) {
     cout<<"TenContext cannot be set. Bailing out"<<endl;
     tenEstimateContextNix(tec);
+    nrrdNuke(nbmat);
+    nrrdNix(ngrad);
     return;
   }
 
@@ -348,12 +356,16 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
             {
              // create tensor from combination of gradient inputs
              averageDWI = 0.0;
-             for (int i=0; i< numInputs; i++) 
+             numDWI =0;
+             for (int k=0; k< numInputs; k++) 
              {
-               dwi[i] = (double) inPtr[i];
-               averageDWI += dwi[i];
+               dwi[k] = (double) inPtr[k];
+               if (self->GetBValues()->GetValue(k) > 1)
+                 {
+                 averageDWI += dwi[k];
+                 numDWI++;
+                 }
              }
-
              // Set dwi to context
              //Main method
               tenEstimate1TensorSingle_d(tec,_ten, dwi);
@@ -371,7 +383,10 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
 
               // Copy B0 and DWI
              *baselinePtr = (T) tec->estimatedB0;
-             *averageDWIPtr = (T) (averageDWI - tec->estimatedB0)/(numInputs-1);
+             if (numDWI > 0)
+                *averageDWIPtr = (T) (averageDWI/numDWI);
+              else
+                *averageDWIPtr = (T) 0;
 
               // Ideally we should saved the Chisquare error of the fitting.
               // this is really relevant information
@@ -398,16 +413,13 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
 
   delete [] dwi;
   // Delete Context
-  tenEstimateContextNix(tec);
+  tenEstimateContextNix(tec);  
+  nrrdNix(ngrad);
+  nrrdNuke(nbmat);
 }
 
-int vtkTeemEstimateDiffusionTensor::SetGradientsToContext(tenEstimateContext *tec) 
+int vtkTeemEstimateDiffusionTensor::SetGradientsToContext(tenEstimateContext *tec,Nrrd *ngrad, Nrrd *nbmat) 
 {
-  Nrrd *ngrad =NULL;
-  Nrrd *nbmat =NULL;
-  //Fill ngrad  from vtkArray
-  ngrad  = nrrdNew();
-  nbmat = nrrdNew();
   char *err = NULL;
   const int type = nrrdTypeDouble;
   size_t size[2];
@@ -417,8 +429,6 @@ int vtkTeemEstimateDiffusionTensor::SetGradientsToContext(tenEstimateContext *te
   if(nrrdWrap_nva(ngrad ,data,type,2,size)) {
     biffAdd(NRRD, err);
     sprintf(err,"%s:",this->GetClassName());
-    nrrdNuke(ngrad);
-    nrrdNuke(nbmat);
     return 1;
   }
   
@@ -439,23 +449,20 @@ int vtkTeemEstimateDiffusionTensor::SetGradientsToContext(tenEstimateContext *te
   if (tenBMatrixCalc(nbmat,ngrad) ) {
     biffAdd(NRRD, err);
     sprintf(err,"%s:",this->GetClassName());
-    nrrdNuke(ngrad);
-    nrrdNuke(nbmat);
     return 1;
   }
 
   tenEstimateBMatricesSet(tec,nbmat,maxB,!this->knownB0);
   tec->knownB0 = this->knownB0;
-  nrrdNuke(ngrad);
   return 0;
 }
 
-int vtkTeemEstimateDiffusionTensor::SetTenContext(  tenEstimateContext *tec)
+int vtkTeemEstimateDiffusionTensor::SetTenContext(  tenEstimateContext *tec,Nrrd* ngrad, Nrrd* nbmat )
 {
     tec->progress = AIR_TRUE;
 
     // Set gradients
-    if (this->SetGradientsToContext(tec)) {
+    if (this->SetGradientsToContext(tec,ngrad, nbmat)) {
       vtkErrorMacro("Error setting gradient into tenEstimateContext. Bailing out");
       return 1;
     }

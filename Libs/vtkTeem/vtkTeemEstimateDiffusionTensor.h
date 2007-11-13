@@ -21,6 +21,7 @@
 #include "vtkImageToImageFilter.h"
 #include "vtkDoubleArray.h"
 #include "vtkTransform.h"
+#include "teem/nrrd.h"
 #include "teem/ten.h"
 
 class VTK_TEEM_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFilter
@@ -111,8 +112,8 @@ class VTK_TEEM_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   // Internal class use only
   //BTX
   void TransformDiffusionGradients();
-  int SetGradientsToContext ( tenEstimateContext *tec);
-  int SetTenContext(  tenEstimateContext *tec);
+  int SetGradientsToContext ( tenEstimateContext *tec,Nrrd *ngrad, Nrrd *nbmat);
+  int SetTenContext(  tenEstimateContext *tec,Nrrd *ngrad, Nrrd *nbmat);
   //ETX
 
  protected:
