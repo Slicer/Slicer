@@ -14,6 +14,9 @@ class vtkSlicerVolumeTextureMapper3D;
 class vtkTimerLog;
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkKWMenuButtonWithSpinButtonsWithLabel;
+class vtkKWSplashScreen;
+class vtkKWProgressGauge;
+class vtkKWMessageDialog;
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
 public:
@@ -43,6 +46,9 @@ public:
     //vtkSetMacro(ButtonDown,int);
 
 protected:
+    //Dialog for gradients
+    vtkKWProgressGauge *Gauge;
+    vtkKWMessageDialog *GradientDialog;
     vtkSlicerVRGrayscaleHelper(void);
     ~vtkSlicerVRGrayscaleHelper(void);
     vtkSlicerVRGrayscaleHelper(const vtkSlicerVRGrayscaleHelper&);//not implemented

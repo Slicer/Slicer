@@ -17,6 +17,8 @@
 #include "vtkSlicerApplication.h"
 #include "vtkKWEvent.h"
 #include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
+#include "vtkKWMessageDialog.h"
+#include "vtkKWSplashScreen.h"
 #include <math.h>
 
 
@@ -261,12 +263,13 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     //Only needed if using performance enhancement
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
 
     //TODO This is not the right place for this
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+    
     this->Volume->SetProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
     vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
@@ -646,16 +649,36 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     if(eid==vtkCommand::VolumeMapperComputeGradientsStartEvent)
     {
-        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Calculate Gradients");
+        this->GradientDialog = vtkKWMessageDialog::New();
+        this->GradientDialog->SetParent (  this->Gui->GetApplicationGUI()->GetMainSlicerWindow());
+        this->GradientDialog->SetStyleToCancel();
+        this->GradientDialog->SetDisplayPositionToMasterWindowCenter();
+        this->GradientDialog->SetText("Please standby Gradients are calculated");
+        this->GradientDialog->Create ( );
+        this->Gauge=vtkKWProgressGauge::New();
+        this->Gauge->SetParent(this->GradientDialog);
+        this->Gauge->Create();
+                this->Script("pack %s",this->Gauge->GetWidgetName());
+        this->GradientDialog->Display();
+        //this->GetApplication()->ProcessIdleTasks();
+        this->GetApplication()->ProcessPendingEvents();
+        //this->GetApplication()->ProcessIdleEvents();
+        //this->Script("update");
+        //this->GradientDialog->Invoke();
     }
     else if(eid==vtkCommand::VolumeMapperComputeGradientsEndEvent)
     {
-        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Calculate Gradients finished");
+        this->Script("after 100");
+        this->GradientDialog->Withdraw();
+        this->GradientDialog->Delete();
+        this->GradientDialog=NULL;
+       
     }
     else if(eid==vtkCommand::VolumeMapperComputeGradientsProgressEvent)
     {
         float *progress=(float*)callData;
-        this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100**progress);
+        this->Gauge->SetValue(100**progress);
+        //this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100**progress);
     }
     else if (eid==vtkCommand::VolumeMapperRenderProgressEvent&&this->currentStage==1)
     {
