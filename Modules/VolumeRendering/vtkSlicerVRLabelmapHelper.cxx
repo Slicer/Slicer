@@ -12,6 +12,7 @@
 #include "vtkImageShiftScale.h"
 #include "vtkKWVolumeMaterialPropertyWidget.h"
 #include "vtkKWProgressGauge.h"
+#include "vtkKWMessageDialog.h"
 vtkCxxRevisionMacro(vtkSlicerVRLabelmapHelper, "$Revision: 1.46 $");
 vtkStandardNewMacro(vtkSlicerVRLabelmapHelper);
 vtkSlicerVRLabelmapHelper::vtkSlicerVRLabelmapHelper(void)
@@ -45,6 +46,8 @@ vtkSlicerVRLabelmapHelper::~vtkSlicerVRLabelmapHelper(void)
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+   
+    //Delete everything
     if(this->LM_OptionTree)
     {
         this->Gui->Script("pack forget %s",this->LM_OptionTree->GetWidgetName());
@@ -90,8 +93,11 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
         this->MapperRaycast->SetAutoAdjustSampleDistances(1);
         this->MapperRaycast->SetSampleDistance(.1);
     }
-    //TODO //Activate after bug is clear
     this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+
+    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
 
     //Only needed if using performance enhancement
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
@@ -102,14 +108,11 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
     this->Gui->GetcurrentNode()->GetVolumeProperty()->ShadeOff();
     this->Gui->GetcurrentNode()->GetVolumeProperty()->SetInterpolationTypeToNearest();
     this->Volume->SetProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
-
-    //this->Volume->SetMapper(this->MapperRaycastHighDetail);
     this->Volume->SetMapper(this->MapperRaycast);
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
     vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
     this->Volume->PokeMatrix(matrix);
     this->VMPW_Shading->SetVolumeProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
-    //For Performance
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->Volume);
     matrix->Delete();
     //Render
@@ -257,14 +260,47 @@ void vtkSlicerVRLabelmapHelper::ProcessVolumeRenderingEvents(vtkObject *caller,u
         {
             return;
         }
-        int progressInt =*progress*100;
-        //this->Script("puts \"progress %d\"",progressInt);
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100**progress);
-        //Debug stuff
-        //const char *result=this->Script("after info");
-        //this->Script("puts \"[after info]\"");
-        ///this->Script("puts \"[after info [lindex [after info] 0]]\"");
-        //this->Script("puts \"[after info]\"");
+        return;
+    }
+    if(callerMapper==this->MapperRaycast&&eid==vtkCommand::VolumeMapperComputeGradientsStartEvent)
+    {
+        this->GradientDialog = vtkKWTopLevel::New();
+        this->GradientDialog->SetParent (  this->Gui->GetApplicationGUI()->GetMainSlicerWindow());
+        this->GradientDialog->SetDisplayPositionToMasterWindowCenter();
+        this->GradientDialog->Create ( );
+
+        vtkKWLabel *label=vtkKWLabel::New();
+        label->SetParent(this->GradientDialog);
+        label->Create();
+        label->SetText("Please standby: Gradients for shading are calculated");
+        this->Script("pack %s ",label->GetWidgetName());
+        label->Delete();
+
+        this->Gauge=vtkKWProgressGauge::New();
+        this->Gauge->SetParent(this->GradientDialog);
+        this->Gauge->Create();
+        this->Script("pack %s",this->Gauge->GetWidgetName());
+        this->GradientDialog->Display();
+        this->GetApplication()->ProcessPendingEvents();
+        return;
+    }
+    if(callerMapper==this->MapperRaycast&&eid==vtkCommand::VolumeMapperComputeGradientsEndEvent)
+    {
+        this->Gauge->SetParent(NULL);
+        this->Gauge->Delete();
+        this->Gauge=NULL;
+        this->GradientDialog->Withdraw();
+        this->GradientDialog->SetParent(NULL);
+        this->GradientDialog->Delete();
+        this->GradientDialog=NULL;
+        return;
+       
+    }
+    if(eid==vtkCommand::VolumeMapperComputeGradientsProgressEvent)
+    {
+        float *progress=(float*)callData;
+        this->Gauge->SetValue(100**progress);
         return;
     }
     vtkSlicerLabelMapWidget *callerLabelmapWidget=vtkSlicerLabelMapWidget::SafeDownCast(caller);

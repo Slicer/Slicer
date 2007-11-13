@@ -1,4 +1,6 @@
 #include "vtkLabelMapColorTransferFunction.h"
+
+#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkObjectFactory.h"
 #include "vtkTimerLog.h"
 
@@ -62,7 +64,7 @@ void vtkLabelMapColorTransferFunction::Init(vtkMRMLScalarVolumeNode *node)
 
     }
     timer1->StopTimer();
-    vtkErrorMacro("Init Labelmap Colortransfer calculated in "<<timer1->GetElapsedTime()<<"seconds");
+    vtkDebugMacro("Init Labelmap Colortransfer calculated in "<<timer1->GetElapsedTime()<<"seconds");
     timer1->Delete();
 }
 

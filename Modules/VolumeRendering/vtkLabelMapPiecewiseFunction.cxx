@@ -42,7 +42,7 @@ void vtkLabelMapPiecewiseFunction::Init(vtkMRMLScalarVolumeNode *node,double opa
     vtkTimerLog *timer1=vtkTimerLog::New();
     timer1->StartTimer();
 
-    vtkErrorMacro("treshold without effect at the moment");
+    vtkDebugMacro("treshold without effect at the moment");
     //test if inputdata is valid
     if(node==NULL||opacity<0||opacity>1||treshold<0)
     {
@@ -101,7 +101,7 @@ void vtkLabelMapPiecewiseFunction::Init(vtkMRMLScalarVolumeNode *node,double opa
 
     }
     timer1->StopTimer();
-    vtkErrorMacro("Init Labelmap Piecewise calculated in "<<timer1->GetElapsedTime()<<"seconds");
+    vtkDebugMacro("Init Labelmap Piecewise calculated in "<<timer1->GetElapsedTime()<<"seconds");
     timer1->Delete();
 
 }
@@ -150,7 +150,7 @@ void vtkLabelMapPiecewiseFunction::FillFromString(std::string str)
 }
 void vtkLabelMapPiecewiseFunction::UpdateFromOpacities(vtkMRMLScalarVolumeNode *node)
 {
-     vtkErrorMacro("treshold without effect at the moment");
+     vtkDebugMacro("treshold without effect at the moment");
     //test if inputdata is valid
     if(node==NULL)
     {

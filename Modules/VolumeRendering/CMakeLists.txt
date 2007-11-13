@@ -1,13 +1,8 @@
 PROJECT(VolumeRenderingModule)
-OPTION(VOLUMERENDERINGMODULE "Would you like to build Volume Rendering" OFF)
-OPTION(VR_LABELMAP "Would you like to use Labelmaps" OFF)
-if(VR_LABELMAP AND NOT VOLUMERENDERINGMODULE)
-MESSAGE(FATAL_ERROR "VR_LABELMAP can only be build if VOLUMERENDERINGMODULE is ON")
-ENDIF(VR_LABELMAP AND NOT VOLUMERENDERINGMODULE)
+OPTION(VOLUMERENDERINGMODULE "Would you like to build Volume Rendering" ON)
 if(VOLUMERENDERINGMODULE)
 # --------------------------------------------------------------------------
 # Sources
-if(VR_LABELMAP)
   SET(VolumeRenderingModule_SRCS
   vtkVolumeRenderingModuleGUI.cxx
   vtkVolumeRenderingModuleLogic.cxx
@@ -35,54 +30,12 @@ if(VR_LABELMAP)
   vtkLabelMapColorTransferFunction.cxx
   vtkLabelMapPiecewiseFunction.cxx
   vtkSlicerLabelMapWidget.cxx
-  vtkEffectedArea.cxx
   vtkSlicerLabelmapTree.cxx
   vtkSlicerLabelmapElement.cxx
   vtkSlicerBaseTree.cxx
   vtkSlicerBaseTreeElement.cxx
   )
-ELSE(VR_LABELMAP)
-ADD_DEFINITIONS(-DVR_LABELMAP_DEBUG)
-  SET(VolumeRenderingModule_SRCS
-  vtkVolumeRenderingModuleGUI.cxx
-  vtkVolumeRenderingModuleLogic.cxx
-  vtkMRMLVolumeRenderingNode.cxx
-  vtkSlicerVolumePropertyWidget.cxx
-  vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
-  vtkSlicerVRHelper.cxx
-  vtkSlicerVRGrayscaleHelper.cxx
-  vtkSlicerVolumeTextureMapper3D.cxx
-  vtkSlicerOpenGLVolumeTextureMapper3D.cxx
-  vtkSlicerVolumeRenderingFactory.cxx
-    #Ray Cast stuff
-  vtkSlicerFixedPointRayCastImage.cxx
-  vtkSlicerFixedPointVolumeRayCastCompositeGOHelper.cxx
-  vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper.cxx
-  vtkSlicerFixedPointVolumeRayCastCompositeHelper.cxx
-  vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper.cxx
-  vtkSlicerFixedPointVolumeRayCastHelper.cxx
-  vtkSlicerFixedPointVolumeRayCastMapper.cxx
-  vtkSlicerFixedPointVolumeRayCastMIPHelper.cxx
-  vtkSlicerRayCastImageDisplayHelper.cxx
-  vtkSlicerOpenGLRayCastImageDisplayHelper.cxx)
-ENDIF(VR_LABELMAP)
-# Abstract/pure virtual classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #ABSTRACT "TRUE"
-  #)
-
-# Helper classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #WRAP_EXCLUDE "TRUE"
-  #)
-
-# --------------------------------------------------------------------------
+#-----------------------------------------------
 # Include dirs
 
 INCLUDE_DIRECTORIES(

@@ -72,10 +72,6 @@ public:
   vtkSetMacro( PixelScale, float );
   vtkGetMacro( PixelScale, float );
   
-  //SLICERADD
-  vtkGetVectorMacro(Limit,int,4);
-  vtkSetVector4Macro(Limit,int);
-  //ENDSLICERADD
   
 protected:
   vtkSlicerRayCastImageDisplayHelper();
@@ -88,9 +84,6 @@ protected:
   float PixelScale;
   
 private:
-  //SLICERADD
-  int Limit[4];
-  //ENDSLICERADD
   vtkSlicerRayCastImageDisplayHelper(const vtkSlicerRayCastImageDisplayHelper&);  // Not implemented.
   void operator=(const vtkSlicerRayCastImageDisplayHelper&);  // Not implemented.
 };

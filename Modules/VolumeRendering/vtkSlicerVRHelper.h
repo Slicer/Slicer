@@ -14,6 +14,8 @@
 class vtkVolumeRenderingModuleGUI;
 class vtkCallbackCommand;
 class vtkVolume;
+class vtkKWProgressGauge;
+class vtkKWTopLevel;
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRHelper :public vtkKWObject
 {
@@ -30,6 +32,9 @@ public:
 
 
 protected:
+        //Dialog for gradients
+    vtkKWProgressGauge *Gauge;
+    vtkKWTopLevel *GradientDialog;
     vtkSlicerVRHelper(void);
     ~vtkSlicerVRHelper(void);
     vtkSlicerVRHelper(const vtkSlicerVRHelper&);//not implemented

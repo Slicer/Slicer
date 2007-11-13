@@ -2,9 +2,7 @@
 #include "vtkMRMLNode.h"
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkPiecewiseFunction.h"
-#if !defined (VR_LABELMAP_DEBUG)
 #include "vtkLabelMapPiecewiseFunction.h"
-#endif
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -80,13 +78,8 @@ void vtkMRMLVolumeRenderingNode::WriteXML(ostream& of, int nIndent)
     //Only write opacities when LabelMap
     if(this->GetIsLabelMap())
     {
-        #if !defined (VR_LABELMAP_DEBUG)
         vtkLabelMapPiecewiseFunction *opacity=vtkLabelMapPiecewiseFunction::SafeDownCast(this->VolumeProperty->GetScalarOpacity());
         of<<" opacityLabelMap=\""<<opacity->GetSaveString()<< "\"";
-        #endif
-        #if defined (VR_LABELMAP_DEBUG)
-        vtkErrorMacro("VR_LBELMAP is not activated")
-        #endif
 
     }
     else
@@ -206,12 +199,6 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
     vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
 }
 
-//----------------------------------------------------------------------------
-int vtkMRMLVolumeRenderingNode::ReadFile ()
-{
-  vtkErrorMacro("Subclass has not implemented ReadFile.");
-  return 0;
-}
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -297,7 +284,7 @@ void vtkMRMLVolumeRenderingNode::PrintSelf(ostream& os, vtkIndent indent)
 
 void vtkMRMLVolumeRenderingNode::UpdateScene(vtkMRMLScene *scene)
 {
-   vtkErrorMacro("Subclass has not overwritten this method");
+   Superclass::UpdateScene(scene);
 }
 
 
@@ -306,30 +293,10 @@ void vtkMRMLVolumeRenderingNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, 
                                            void *callData )
 {
-  vtkErrorMacro("Subclass has not overwritten this method");
+  Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
 }
 
-//---------------------------------------------------------------------------
-int vtkMRMLVolumeRenderingNode::GetFirstType()
-{
-  vtkErrorMacro("Subclass has not overwritten this method");
-  return -1;
-}
-
-//---------------------------------------------------------------------------
-int vtkMRMLVolumeRenderingNode::GetLastType()
-{
-  vtkErrorMacro("Subclass has not overwritten this method");
-  return -1;
-}
-
-//---------------------------------------------------------------------------
-const char * vtkMRMLVolumeRenderingNode::GetTypeAsString()
-{
-  vtkErrorMacro("Subclass has not overwritten this method");
-  return "(unknown)";
-}
 
 std::string vtkMRMLVolumeRenderingNode::getPiecewiseFunctionString(vtkPiecewiseFunction* function)
 {

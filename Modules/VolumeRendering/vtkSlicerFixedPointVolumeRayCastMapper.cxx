@@ -171,7 +171,7 @@ void vtkSlicerFixedPointVolumeRayCastMapperComputeGradients( T *dataPtr,
     unsigned char       *magPtr, *cmagPtr;
 
 
-    me->InvokeEvent( vtkCommand::StartEvent, NULL );
+    me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsStartEvent, NULL );
 
     double avgSpacing = (spacing[0]+spacing[1]+spacing[2])/3.0;
 
@@ -374,11 +374,11 @@ void vtkSlicerFixedPointVolumeRayCastMapperComputeGradients( T *dataPtr,
             args[0] = 
                 static_cast<float>(z - z_start) / 
                 static_cast<float>(z_limit - z_start - 1);
-            me->InvokeEvent( vtkCommand::ProgressEvent, args );
+            me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsProgressEvent, args );
         }
     }
 
-    me->InvokeEvent( vtkCommand::EndEvent, NULL );  
+    me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsEndEvent, NULL );  
 }
 
 // Construct a new vtkSlicerFixedPointVolumeRayCastMapper with default values
@@ -492,7 +492,6 @@ vtkSlicerFixedPointVolumeRayCastMapper::vtkSlicerFixedPointVolumeRayCastMapper()
 
     this->Volume = NULL;
     //SLICERADD
-    this->LimitEnabled=0;
     this->ManualInteractive=0;
     //ENDSLICERADD
 

@@ -107,12 +107,6 @@ public:
     // Write this node's information to a MRML file in XML format.
     virtual void WriteXML(ostream& of, int indent);
 
-
-    // Description:
-    // Read in a text file holding colours
-    // Return 1 on sucess, 0 on failure
-    virtual int ReadFile ();
-
     // Description:
     // Copy the node's attributes to this object
     virtual void Copy(vtkMRMLNode *node);
@@ -128,18 +122,7 @@ public:
     // Description:
     // 
     virtual void UpdateScene(vtkMRMLScene *scene);
-
-    void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
-
-    // Description:
-    // Return the lowest and the highest type integers (defined in enum in
-    // subclass), for use in looping
-    virtual int GetFirstType();
-    virtual int GetLastType ();
-
-    // Description:
-    // return a text string describing the colour look up table type
-    virtual const char * GetTypeAsString();
+    virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
 
 protected:
     // Description:

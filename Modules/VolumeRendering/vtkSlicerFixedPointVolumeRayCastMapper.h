@@ -88,18 +88,7 @@ VTK_THREAD_RETURN_TYPE SlicerFixedPointVolumeRayCastMapper_CastRays( void *arg )
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerFixedPointVolumeRayCastMapper : public vtkVolumeMapper
 {
 public:
-  //SLICERADD Limits for rays.[0]=xmin,[1]=xmax,[2]=ymin,[3]=ymax
-    void Setlimit(int xmin,int xmax,int ymin,int ymax)
-    {
-        //Ensure that we have the limit information in the displayhelper
-        this->ImageDisplayHelper->SetLimit(xmin,xmax,ymin,ymax);
-        this->limit[0]=xmin;
-        this->limit[1]=xmax;
-        this->limit[2]=ymin;
-        this->limit[3]=ymax;
-    }
-    vtkGetVectorMacro(limit,int,4);
-    vtkGetMacro(LimitEnabled,int);
+  //SLICERADD
     vtkGetMacro(ManualInteractive,int);
     vtkSetMacro(ManualInteractive,int);
     vtkBooleanMacro(ManualInteractive,int);
@@ -269,8 +258,6 @@ public:
 protected:
 
     //SLICERADD
-    int limit[4];
-    int LimitEnabled;
     int ManualInteractive;
   //ENDSLICERADD
 

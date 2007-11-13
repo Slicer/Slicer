@@ -649,36 +649,42 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     if(eid==vtkCommand::VolumeMapperComputeGradientsStartEvent)
     {
-        this->GradientDialog = vtkKWMessageDialog::New();
+        this->GradientDialog = vtkKWTopLevel::New();
         this->GradientDialog->SetParent (  this->Gui->GetApplicationGUI()->GetMainSlicerWindow());
-        this->GradientDialog->SetStyleToCancel();
         this->GradientDialog->SetDisplayPositionToMasterWindowCenter();
-        this->GradientDialog->SetText("Please standby Gradients are calculated");
         this->GradientDialog->Create ( );
+
+        vtkKWLabel *label=vtkKWLabel::New();
+        label->SetParent(this->GradientDialog);
+        label->Create();
+        label->SetText("Please standby: Gradients are calculated");
+        this->Script("pack %s ",label->GetWidgetName());
+        label->Delete();
+
         this->Gauge=vtkKWProgressGauge::New();
         this->Gauge->SetParent(this->GradientDialog);
         this->Gauge->Create();
-                this->Script("pack %s",this->Gauge->GetWidgetName());
+        this->Script("pack %s",this->Gauge->GetWidgetName());
         this->GradientDialog->Display();
-        //this->GetApplication()->ProcessIdleTasks();
         this->GetApplication()->ProcessPendingEvents();
-        //this->GetApplication()->ProcessIdleEvents();
-        //this->Script("update");
-        //this->GradientDialog->Invoke();
+        return;
     }
     else if(eid==vtkCommand::VolumeMapperComputeGradientsEndEvent)
     {
-        this->Script("after 100");
+        this->Gauge->SetParent(NULL);
+        this->Gauge->Delete();
+        this->Gauge=NULL;
         this->GradientDialog->Withdraw();
+        this->GradientDialog->SetParent(NULL);
         this->GradientDialog->Delete();
         this->GradientDialog=NULL;
+        return;
        
     }
     else if(eid==vtkCommand::VolumeMapperComputeGradientsProgressEvent)
     {
         float *progress=(float*)callData;
         this->Gauge->SetValue(100**progress);
-        //this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(100**progress);
     }
     else if (eid==vtkCommand::VolumeMapperRenderProgressEvent&&this->currentStage==1)
     {
