@@ -756,8 +756,16 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       {
       try
         {
+        vtkMRMLDisplayableNode *displayableNode = 
+          vtkMRMLDisplayableNode::SafeDownCast(nd);
+        if (displayableNode)
+          {
+          this->MRMLScene->AddNode( in );
+          displayableNode->SetReferenceStorageNodeID( in->GetID() );
+          }
         in->SetFileName( req.GetFilename().c_str() );
         in->ReadData( nd );
+        in->SetFileName( NULL ); // clear temp file name
         // since this was read from a temp location, 
         // mark it as needing to be saved when the scene is saved
         nd->SetModifiedSinceRead(1); 
@@ -837,7 +845,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   else if (fbnd)
     {
     // Fiber bundle node
-    fbnd->SetModifiedSinceRead(1);
     disp = NULL;
     vtkMRMLFiberBundleDisplayNode *fbdn = fbnd->AddLineDisplayNode();
     fbdn->SetVisibility(1);
@@ -845,10 +852,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     fbdn->SetVisibility(0);
     fbdn = fbnd->AddGlyphDisplayNode();
     fbdn->SetVisibility(0);
-    vtkMRMLFiberBundleStorageNode *storageNode = vtkMRMLFiberBundleStorageNode::New();
-    this->GetMRMLScene()->AddNode(storageNode);  
-    fbnd->SetStorageNodeID(storageNode->GetID());
-    storageNode->Delete();
     }
   else if (mnd && !mnd->GetDisplayNode())
     {
