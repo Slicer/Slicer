@@ -41,6 +41,7 @@ SET(MRML_SRCS
         vtkMRMLInteractionNode.cxx
         vtkObserverManager.cxx
         vtkMRMLColorNode.cxx
+        vtkMRMLColorTableStorageNode.cxx
         vtkMRMLColorTableNode.cxx
         vtkMRMLProceduralColorNode.cxx
         vtkMRMLFreeSurferProceduralColorNode.cxx
