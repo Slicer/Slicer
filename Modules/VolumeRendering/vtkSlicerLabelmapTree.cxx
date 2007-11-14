@@ -11,6 +11,7 @@
 #include "vtkPointData.h"
 #include "vtkCommand.h"
 #include "vtkLabelMapPiecewiseFunction.h"
+#include "vtkMRMLVolumeRenderingNode.h"
 #include <sstream>
 #include <vector>
 vtkCxxRevisionMacro(vtkSlicerLabelmapTree, "$Revision: 0.1 $");
@@ -18,8 +19,8 @@ vtkStandardNewMacro(vtkSlicerLabelmapTree);
 vtkSlicerLabelmapTree::vtkSlicerLabelmapTree(void)
 {
     this->InChangeOpacityAll=0;
-    this->PiecewiseFunction=NULL;
-    this->Node=NULL;
+    this->VolumeRenderingNode=0;
+    this->ScalarVolumeNode=NULL;
     this->StepSize=20;
     //this->NumberOfSteps=6;
     std::vector<vtkSlicerLabelmapElement*> Elements;
@@ -30,7 +31,7 @@ vtkSlicerLabelmapTree::~vtkSlicerLabelmapTree(void)
     for(unsigned int i=0;i<this->Elements.size();i++)
     {
         this->Elements[i]->RemoveObservers(vtkCommand::AnyEvent);
-        
+
         this->Elements[i]->Delete();
         this->Elements[i]=NULL;
     }
@@ -41,15 +42,32 @@ void vtkSlicerLabelmapTree::CreateWidget(void)
     Superclass::CreateWidget();
     vtkKWTree *tree=this->GetWidget();
     tree->RedrawOnIdleOn();
-    tree->SelectionFillOn();
+    tree->SelectionFillOff();
     tree->SetDeltaY(30);
 }
 
-void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecewiseFunction *piecewiseFunction)
+void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkMRMLVolumeRenderingNode *vrnode)
 {
-    this->Node=node;
-    this->PiecewiseFunction=piecewiseFunction;
-    vtkLookupTable *lookup=this->Node->GetVolumeDisplayNode()->GetColorNode()->GetLookupTable();
+    vtkLabelMapPiecewiseFunction *piecewiseFunction=NULL;
+    if(this->ScalarVolumeNode!=NULL)
+    {
+        vtkErrorMacro("Init already called, use UpdateGUIElementsInstead");
+        return;
+    }
+    this->ScalarVolumeNode=node;
+    this->VolumeRenderingNode=vrnode;
+    if(this->VolumeRenderingNode!=NULL&&
+        this->VolumeRenderingNode->GetVolumeProperty()!=NULL&&
+        this->VolumeRenderingNode->GetVolumeProperty()->GetScalarOpacity()!=NULL)
+    {
+        piecewiseFunction=vtkLabelMapPiecewiseFunction::SafeDownCast(this->VolumeRenderingNode->GetVolumeProperty()->GetScalarOpacity());
+    }
+    else
+    {
+        vtkErrorMacro("Volume Rendering Node is not valid");
+        return;
+    }
+    vtkLookupTable *lookup=this->ScalarVolumeNode->GetVolumeDisplayNode()->GetColorNode()->GetLookupTable();
     vtkTimerLog *timer=vtkTimerLog::New();
 
     vtkKWHistogram *histo=vtkKWHistogram::New();
@@ -60,7 +78,7 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecew
     int max=0;
     for(int i=lookup->GetTableRange()[0];i<lookup->GetTableRange()[1];i++)
     {
-        std::string colorName=this->Node->GetVolumeDisplayNode()->GetColorNode()->GetColorName(i);
+        std::string colorName=this->ScalarVolumeNode->GetVolumeDisplayNode()->GetColorNode()->GetColorName(i);
         int tmp=colorName.length();
         if(tmp>max)
         {
@@ -87,9 +105,9 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecew
             if(opacityLevel>5)
             {
                 opacityLevel=5;
-                    vtkWarningMacro("OpacityLevelIsOutOfRange");
+                vtkWarningMacro("OpacityLevelIsOutOfRange");
             }
-            element->Init(i,this->Node->GetVolumeDisplayNode()->GetColorNode()->GetColorName(i),rgb,opacityLevel,max);
+            element->Init(i,this->ScalarVolumeNode->GetVolumeDisplayNode()->GetColorNode()->GetColorName(i),rgb,opacityLevel,max);
             this->Script("pack %s -side left -anchor c -expand y",element->GetWidgetName());
             element->AddObserver(vtkCommand::AnyEvent,(vtkCommand *) this->BaseTreeCallbackCommand);
             this->GetWidget()->SetNodeWindow(streamA.str().c_str(),element);
@@ -107,11 +125,26 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecew
 void vtkSlicerLabelmapTree::ProcessBaseTreeEvents(vtkObject *caller, unsigned long eid, void *callData)
 {
     int *callDataInt=(int*)callData;
-    this->PiecewiseFunction->EditLabel(callDataInt[0],callDataInt[1]/(double)this->StepSize);
-        if(this->InChangeOpacityAll==0)
+    vtkLabelMapPiecewiseFunction *piecewiseFunction=NULL;
+
+    if(this->VolumeRenderingNode!=NULL&&
+        this->VolumeRenderingNode->GetVolumeProperty()!=NULL&&
+        this->VolumeRenderingNode->GetVolumeProperty()->GetScalarOpacity()!=NULL)
     {
-        this->InvokeEvent(vtkSlicerLabelmapTree::SingleLabelEdited);
+        piecewiseFunction=vtkLabelMapPiecewiseFunction::SafeDownCast(this->VolumeRenderingNode->GetVolumeProperty()->GetScalarOpacity());
+
+        piecewiseFunction->EditLabel(callDataInt[0],callDataInt[1]/(double)this->StepSize);
+        if(this->InChangeOpacityAll==0)
+        {
+            this->InvokeEvent(vtkSlicerLabelmapTree::SingleLabelEdited);
+        }
     }
+    else
+    {
+        vtkErrorMacro("Volume Rendering Node is not valid");
+        return;
+    }
+
 }
 void vtkSlicerLabelmapTree::ChangeAllOpacities(int stage)
 {
@@ -122,4 +155,28 @@ void vtkSlicerLabelmapTree::ChangeAllOpacities(int stage)
 
     }
     this->InChangeOpacityAll=0;
+}
+
+void vtkSlicerLabelmapTree::UpdateGuiElements(void)
+{
+    vtkLabelMapPiecewiseFunction *piecewiseFunction=NULL;
+
+    if(this->VolumeRenderingNode!=NULL&&
+        this->VolumeRenderingNode->GetVolumeProperty()!=NULL&&
+        this->VolumeRenderingNode->GetVolumeProperty()->GetScalarOpacity()!=NULL)
+    {
+        piecewiseFunction=vtkLabelMapPiecewiseFunction::SafeDownCast(this->VolumeRenderingNode->GetVolumeProperty()->GetScalarOpacity());
+
+        for(unsigned int i=0; i<this->Elements.size();i++)
+        {
+            int id=this->Elements[i]->GetId();
+            int opacityLevel=piecewiseFunction->GetLabel(id)*this->StepSize;
+            this->Elements[i]->ChangeOpacity(opacityLevel);
+        }
+    }
+    else
+    {
+        vtkErrorMacro("Volume Rendering Node is not valid");
+        return;
+    }
 }

@@ -82,4 +82,18 @@ void vtkSlicerLabelMapWidget::ProcessWidgetEvents(vtkObject *caller, unsigned lo
     }
 
 }
-void UpdateGuiElements(void);
+void vtkSlicerLabelMapWidget::UpdateGuiElements(void)
+{
+    //Update the tree
+    if(this->Tree==NULL)
+    {
+        vtkErrorMacro("Call Init before updating GUI Elements");
+    }
+    else
+    {
+        this->Tree->UpdateGuiElements();
+    }
+    //Update the all Buttons
+    //Not needed yet
+
+}

@@ -12,26 +12,40 @@ class vtkLabelMapPiecewiseFunction;
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerLabelMapWidget :public vtkSlicerWidget
 {
 public:
+    void UpdateGuiElements(void);
     static vtkSlicerLabelMapWidget *New();
     //vtkTypeRevisionMacro(vtkSlicerLabelMapWidget,vtkKWCompositeWidget);
       vtkTypeMacro(vtkSlicerLabelMapWidget,vtkKWCompositeWidget);
       //void UpdateGuiElements(void);
-      void Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecewiseFunction *piecewise)
+      void Init(vtkMRMLScalarVolumeNode *node,vtkMRMLVolumeRenderingNode *vrnode)
       {
-          if(this->PiecewiseFunction==piecewise&&this->Node==node)
+          if(this->VolumeRenderingNode==vrnode&&this->Node==node)
           {
+              vtkErrorMacro("Init already called, call UpdateGUIElements instead");
               return;
           }
-          this->PiecewiseFunction=piecewise;
+          this->VolumeRenderingNode=vrnode;
           this->Node=node;
           if(this->Tree!=NULL)
           {
-              this->Tree->Init(this->Node,this->PiecewiseFunction);
+              this->Tree->Init(this->Node,this->VolumeRenderingNode);
           }
       }
       virtual void CreateWidget();
 
-      vtkGetObjectMacro(PiecewiseFunction,vtkLabelMapPiecewiseFunction);
+      void UpdateVolumeRenderingNode(vtkMRMLVolumeRenderingNode *vrNode)
+      {
+          if(this->Tree!=NULL)
+          {
+              this->Tree->UpdateVolumeRenderingNode(vrNode);
+          }
+          else
+          {
+              vtkErrorMacro("Init has to be used before Update is called");
+          }
+      }
+          //TODO
+      vtkGetObjectMacro(VolumeRenderingNode,vtkMRMLVolumeRenderingNode);
       vtkGetObjectMacro(Node,vtkMRMLScalarVolumeNode);
 
     //void PrintSelf(ostream& os, vtkIndent indent);
@@ -43,7 +57,8 @@ public:
     };
     //ETX
     protected:
-    vtkLabelMapPiecewiseFunction *PiecewiseFunction;
+
+    vtkMRMLVolumeRenderingNode *VolumeRenderingNode;
     vtkMRMLScalarVolumeNode *Node;
     vtkSlicerLabelmapTree *Tree;
     vtkSlicerLabelmapElement *ChangeAll;
