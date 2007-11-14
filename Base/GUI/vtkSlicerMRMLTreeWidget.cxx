@@ -19,6 +19,14 @@
 #include "vtkMRMLTransformableNode.h"
 #include "vtkKWTreeWithScrollbars.h"
 
+
+#include "vtkMRMLDisplayableNode.h"
+#include "vtkMRMLModelNode.h"
+#include "vtkMRMLVolumeNode.h"
+#include "vtkMatrix4x4.h"
+#include "vtkMatrixToLinearTransform.h"
+#include "vtkTransformPolyDataFilter.h"
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerMRMLTreeWidget );
 vtkCxxRevisionMacro ( vtkSlicerMRMLTreeWidget, "$Revision: 1.0 $");
@@ -161,6 +169,28 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
           sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
           this->ContextMenu->AddCommand("Go To Editor...", this, command);
           }
+
+        //TODO: in the final implementation, this should handle everything, including all displayable, fiducial lists and transform nodes; basically, vtkMRMLTransformableNode should have a pure virtual method TransformData or ApplyTransformToData taking a vtkMRMLMatrix4x4 in input; the callback should limit itself to calling the pure virtual.
+        //TODO: if (node != NULL && (node->IsA("vtkMRMLTransformableNode"))
+        if (node != NULL && (node->IsA("vtkMRMLModelNode") || node->IsA("vtkMRMLVolumeNode") || node->IsA("vtkMRMLTransformNode")))
+          {
+          vtkMRMLTransformableNode* tbnode = vtkMRMLTransformableNode::SafeDownCast(node);
+          vtkMRMLTransformNode* tnode = vtkMRMLTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(tbnode->GetTransformNodeID()));
+          if (tbnode->GetParentTransformNode())
+            {
+            if (tnode->IsTransformToWorldLinear())
+              {
+              sprintf(command, "HardenTransformCallback {%s}", (const char *)callData);
+              this->ContextMenu->AddCommand("Harden Transforms", this, command);
+              }
+            }
+          }
+        if (node != NULL && node->IsA("vtkMRMLDisplayableNode") && !node->IsA("vtkMRMLVolumeNode") && !node->IsA("vtkMRMLTransformNode"))
+          {
+          sprintf(command, "ToggleVisibilityCallback {%s}", (const char *)callData);
+          int index = this->ContextMenu->AddCheckButton("Toggle Visibility", this, command);
+          this->ContextMenu->SetItemSelectedState(index, vtkMRMLDisplayableNode::SafeDownCast(node)->GetDisplayNode()->GetVisibility());
+          }
         if (node != NULL)
           {
           sprintf(command, "DeleteNodeCallback {%s}", (const char *)callData);
@@ -300,7 +330,122 @@ void vtkSlicerMRMLTreeWidget::NodeParentChangedCallback(
     }
   this->UpdateTreeFromMRML();
 }
+ 
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::ToggleVisibilityCallback(const char *id)
+{
+  vtkMRMLDisplayableNode *dnode = vtkMRMLDisplayableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
 
+  if (!dnode)
+    {
+    return;
+    }
+
+  int newVisibilityState = this->ContextMenu->GetItemSelectedState("Toggle Visibility");
+  for (int i=0; i<dnode->GetNumberOfDisplayNodes(); i++)
+    {
+    dnode->GetNthDisplayNode(i)->SetVisibility(newVisibilityState);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMRMLTreeWidget::HardenTransformCallback(const char *id)
+{
+  vtkMRMLTransformableNode* tbnode = vtkMRMLTransformableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+
+  if (!tbnode)
+    {
+    return;
+    }
+
+  vtkMRMLTransformNode* tnode = vtkMRMLTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(tbnode->GetTransformNodeID()));
+
+  if (!tnode)
+    {
+    return;
+    }
+
+  if (!tnode->IsTransformToWorldLinear())
+    {
+    return;
+    }
+
+  vtkMatrix4x4* hardeningMatrix = vtkMatrix4x4::New();
+  tnode->GetMatrixTransformToWorld(hardeningMatrix);
+
+  vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+  vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+  vtkMRMLLinearTransformNode* ltnode = vtkMRMLLinearTransformNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
+
+  if (mnode)
+    {
+    this->GetMRMLScene()->SaveStateForUndo();
+
+    //TODO: the actual data transformation should be performed within vtkMRMLModelNode. Same goes for other transformables. See above.
+    vtkMatrixToLinearTransform* hardeningTransform = vtkMatrixToLinearTransform::New();
+    hardeningTransform->SetInput(hardeningMatrix);
+
+    vtkTransformPolyDataFilter* transformFilter = vtkTransformPolyDataFilter::New();
+    transformFilter->SetInput(mnode->GetPolyData());
+    transformFilter->SetTransform(hardeningTransform);
+    transformFilter->Update();
+
+    mnode->GetPolyData()->DeepCopy(transformFilter->GetOutput());
+
+    mnode->SetAndObserveTransformNodeID(NULL);
+
+    mnode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
+    mnode->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent);
+
+    this->UpdateTreeFromMRML();
+
+    transformFilter->Delete();
+    hardeningTransform->Delete();
+    }
+  else if (vnode)
+    {
+    this->GetMRMLScene()->SaveStateForUndo();
+
+    vtkMatrix4x4* ijkToRASMatrix = vtkMatrix4x4::New();
+    vtkMatrix4x4* hardenedIJKToRASMatrix = vtkMatrix4x4::New();
+    vnode->GetIJKToRASMatrix(ijkToRASMatrix);
+    vtkMatrix4x4::Multiply4x4(hardeningMatrix,ijkToRASMatrix,hardenedIJKToRASMatrix);
+
+    vnode->SetIJKToRASMatrix(hardenedIJKToRASMatrix);
+    
+    vnode->SetAndObserveTransformNodeID(NULL);
+    vnode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
+
+    this->UpdateTreeFromMRML();
+
+    ijkToRASMatrix->Delete();
+    hardenedIJKToRASMatrix->Delete();
+    }
+  else if (ltnode)
+    {
+    this->GetMRMLScene()->SaveStateForUndo();
+
+    hardeningMatrix->PrintSelf(cout,1);
+
+    vtkMatrix4x4* matrixToParent = ltnode->GetMatrixTransformToParent();
+    vtkMatrix4x4* matrixToWorld = vtkMatrix4x4::New();
+
+    vtkMatrix4x4::Multiply4x4(matrixToParent,hardeningMatrix,matrixToWorld);
+
+    ltnode->SetAndObserveMatrixTransformToParent(matrixToWorld);
+
+    ltnode->SetAndObserveTransformNodeID(NULL);
+    ltnode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
+    ltnode->PrintSelf(cout,1);
+
+    this->UpdateTreeFromMRML();
+
+    matrixToWorld->Delete();
+    }
+
+  hardeningMatrix->Delete();
+}
+ 
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLTreeWidget::ProcessMRMLEvents ( vtkObject *caller,
                                                   unsigned long event, 

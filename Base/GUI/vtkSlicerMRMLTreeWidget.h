@@ -72,7 +72,10 @@ public:
   
   virtual void NodeParentChangedCallback (const char *node, const char *new_parent, const char*);
   
+  virtual void ToggleVisibilityCallback(const char *id);
 
+  virtual void HardenTransformCallback(const char *id);
+ 
 //BTX
   enum
     {
