@@ -59,7 +59,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
 #include "vtkMRMLUnstructuredGridStorageNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
-
+#include "vtkMRMLColorTableStorageNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
@@ -243,6 +243,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLNRRDStorageNode *nrrd = vtkMRMLNRRDStorageNode::New();
   this->RegisterNodeClass ( nrrd );
   nrrd->Delete();
+
+  vtkMRMLColorTableStorageNode *ctsn = vtkMRMLColorTableStorageNode::New();
+  this->RegisterNodeClass ( ctsn );
+  ctsn->Delete();
 
 }
 
