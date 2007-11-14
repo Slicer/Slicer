@@ -1374,7 +1374,7 @@ int Slicer3_main(int argc, char *argv[])
     vrModuleGUI->SetApplication ( slicerApp );
     vrModuleGUI->SetApplicationLogic ( appLogic );
     vrModuleGUI->SetApplicationGUI ( appGUI );
-    vrModuleGUI->SetGUIName( "VolumeRenderingModule" );
+    vrModuleGUI->SetGUIName( "VolumeRendering" );
     vrModuleGUI->GetUIPanel()->SetName ( vrModuleGUI->GetGUIName ( ) );
     vrModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
     vrModuleGUI->GetUIPanel()->Create ( );
