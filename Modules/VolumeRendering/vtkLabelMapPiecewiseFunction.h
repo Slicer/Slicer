@@ -1,7 +1,9 @@
-// .NAME vtkMRMLVolumeRenderingNode - MRML node to represent volume rendering information
+// .NAME vtkLabelMapPiecewiseFunction - Extend vtkPiecewiseFunction for Labelmaps
 // .SECTION Description
-// This node is especially used to store visualization parameter sets for volume rendering
-
+//  vtkLabelMapPiecewiseFunction - extends vtkPiecewiseFunction for specific behavior of labelmaps.
+// That means, that piecewise FUnction can be linked with a labelmap. Also the vtkPiecewiseFunction should not be
+// edited anymore with AddPoints and corresponding methods but with EditLabel and GetLabel instead, as this is needed
+// to help and save the opacities later.
 #ifndef __vtkLabelMapPiecewiseFunction_h
 #define __vtkLabelMapPiecewiseFunction_h
 #include "vtkVolumeRenderingModule.h"
@@ -19,6 +21,7 @@ public:
     static vtkLabelMapPiecewiseFunction *New();
     vtkTypeMacro(vtkLabelMapPiecewiseFunction,vtkPiecewiseFunction);
     void PrintSelf(ostream& os, vtkIndent indent);
+
     // Description:
     // Initialize the labelmap piecewise function with a vtkMRMLScalarVolume (to get the vtkLookuptable)
     // and opacity that determines which opacity every value in the vtkLookuptable will get and a 

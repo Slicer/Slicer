@@ -133,8 +133,7 @@ protected:
     // Description:
     // Use ->Delete() to delete object
     ~vtkMRMLVolumeRenderingNode(void);
-    vtkMRMLVolumeRenderingNode(const vtkMRMLVolumeRenderingNode&);//Not implemented
-    void operator=(const vtkMRMLVolumeRenderingNode&);// Not implmented
+
     // Description:
     // Main parameters for visualization
     vtkVolumeProperty* VolumeProperty;
@@ -149,6 +148,12 @@ protected:
     // References to vtkMRMLScalarVolumeNodes
     vtksys_stl::vector<std::string> References;
     //ETX
+
+private:
+    // Description:
+    // Caution: Not implemented
+    vtkMRMLVolumeRenderingNode(const vtkMRMLVolumeRenderingNode&);//Not implemented
+    void operator=(const vtkMRMLVolumeRenderingNode&);// Not implmented
 
 };
 
