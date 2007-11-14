@@ -17,6 +17,8 @@ vtkSlicerLabelMapWidget::vtkSlicerLabelMapWidget(void)
 {
     this->Tree=NULL;
     this->ChangeAll=NULL;
+    this->VolumeRenderingNode=NULL;
+    this->Node=NULL;
 }
 
 vtkSlicerLabelMapWidget::~vtkSlicerLabelMapWidget(void)

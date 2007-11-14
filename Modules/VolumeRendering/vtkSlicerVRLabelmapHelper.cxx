@@ -158,6 +158,8 @@ void vtkSlicerVRLabelmapHelper::UpdateRendering(void)
 }
 void vtkSlicerVRLabelmapHelper::InitializePipelineNewCurrentNode()
 {
+    this->Gui->GetcurrentNode()->SetName("autoLabelmapVisualization");
+     this->Gui->GetLogic()->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent);
     //Labelmap
     if(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetLabelMap()==1)
     {
@@ -349,8 +351,17 @@ void vtkSlicerVRLabelmapHelper::ScheduleRender(int stage)
 }
 void vtkSlicerVRLabelmapHelper::UpdateGUIElements(void)
 {
-    this->LM_OptionTree->UpdateVolumeRenderingNode(this->Gui->GetcurrentNode());
+    //We have to init
+    if(this->LM_OptionTree->GetVolumeRenderingNode()==NULL)
+    {
+        this->LM_OptionTree->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()),this->Gui->GetcurrentNode());      
+    }
+    else
+    {
+        this->LM_OptionTree->UpdateVolumeRenderingNode(this->Gui->GetcurrentNode());
     this->LM_OptionTree->UpdateGuiElements();
+    }
+    
 }
 
 

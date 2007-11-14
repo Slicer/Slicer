@@ -19,7 +19,7 @@ vtkStandardNewMacro(vtkSlicerLabelmapTree);
 vtkSlicerLabelmapTree::vtkSlicerLabelmapTree(void)
 {
     this->InChangeOpacityAll=0;
-    this->VolumeRenderingNode=0;
+    this->VolumeRenderingNode=NULL;
     this->ScalarVolumeNode=NULL;
     this->StepSize=20;
     //this->NumberOfSteps=6;

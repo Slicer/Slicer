@@ -653,7 +653,7 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
     //this->PreviousNS_VolumeRenderingDataScene=this->Gui->GetcurrentNode()->GetID();
     //The Helper has to do something too
     this->Helper->InitializePipelineNewCurrentNode();
-        this->Helper->UpdateGUIElements();
+    this->Helper->UpdateGUIElements();
     this->Helper->UpdateRendering();
 
 

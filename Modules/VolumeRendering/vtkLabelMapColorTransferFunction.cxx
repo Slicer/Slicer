@@ -60,7 +60,7 @@ void vtkLabelMapColorTransferFunction::Init(vtkMRMLScalarVolumeNode *node)
         vtkErrorMacro("No LookupTable");
         return;
     }
-    this->AdjustRange(lookup->GetTableRange());
+    //this->AdjustRange(lookup->GetTableRange());
     double color[3];
 
     for (int i=(int)lookup->GetTableRange()[0];i<lookup->GetTableRange()[1];i++)
