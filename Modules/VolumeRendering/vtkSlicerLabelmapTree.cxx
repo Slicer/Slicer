@@ -98,8 +98,8 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkLabelMapPiecew
 
     }
     timer->StopTimer();
-    vtkErrorMacro("Elapsed time:"<<timer->GetElapsedTime());
-    vtkErrorMacro("NumberOfElements:"<<counter);
+    vtkDebugMacro("Elapsed time:"<<timer->GetElapsedTime());
+    vtkDebugMacro("NumberOfElements:"<<counter);
     histo->Delete();
     timer->Delete();
 

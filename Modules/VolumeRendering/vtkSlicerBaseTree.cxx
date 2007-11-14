@@ -5,7 +5,7 @@ vtkCxxRevisionMacro(vtkSlicerBaseTree, "$Revision: 0.1 $");
 vtkStandardNewMacro(vtkSlicerBaseTree);
 vtkSlicerBaseTree::vtkSlicerBaseTree(void)
 {
-        this->BaseTreeCallbackCommand=vtkCallbackCommand::New();
+    this->BaseTreeCallbackCommand=vtkCallbackCommand::New();
     this->BaseTreeCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
     this->BaseTreeCallbackCommand->SetCallback(vtkSlicerBaseTree::BaseTreeCallback);
 }
@@ -29,13 +29,10 @@ void vtkSlicerBaseTree::BaseTreeCallback( vtkObject *caller, unsigned long eid, 
 
     if (self->GetInBaseTreeCallbackFlag())
     {
-#ifdef _DEBUG
-        vtkDebugWithObjectMacro(self, "In vtkLabelmapCallback called recursively?");
-#endif
-        //return;
+        #ifdef _DEBUG
+                vtkDebugWithObjectMacro(self, "In vtkLabelmapCallback called recursively?");
+        #endif
     }
-
-    vtkDebugWithObjectMacro(self, "In vtkLabelmapCallback");
 
     self->SetInBaseTreeCallbackFlag(1);
     self->ProcessBaseTreeEvents(caller,eid,callData);

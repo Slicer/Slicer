@@ -70,7 +70,6 @@ void vtkSlicerLabelMapWidget::ProcessWidgetEvents(vtkObject *caller, unsigned lo
     {
         int *opacities=(int*) callData;
         this->Tree->ChangeAllOpacities(opacities[1]);
-        vtkErrorMacro("got a labelmapwidget event");
         this->InvokeEvent(vtkSlicerLabelMapWidget::NeedForRenderEvent);
         return;
     }

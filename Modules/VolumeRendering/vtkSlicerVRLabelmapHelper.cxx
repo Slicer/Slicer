@@ -35,7 +35,7 @@ vtkSlicerVRLabelmapHelper::~vtkSlicerVRLabelmapHelper(void)
     //Stop potential Rendering
     if(strcmp(this->ScheduledRenderID.c_str(),"")!=0)
     {
-        this->Script("puts \"[after cancel %s]\"", this->ScheduledRenderID.c_str());
+        this->Script("after cancel %s", this->ScheduledRenderID.c_str());
         this->ScheduledRenderID="";
     }
     //Remove all the Observers we added
@@ -188,7 +188,6 @@ void vtkSlicerVRLabelmapHelper::UpdateLM()
 
 void vtkSlicerVRLabelmapHelper::ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData)
 {
-    this->SetTCLDebug(1);
     
     //TODO not the right place for this
     vtkRenderWindow *callerRen=vtkRenderWindow::SafeDownCast(caller);
@@ -252,7 +251,6 @@ void vtkSlicerVRLabelmapHelper::ProcessVolumeRenderingEvents(vtkObject *caller,u
         if(this->MapperRaycast->GetSampleDistance()==this->MapperRaycast->GetInteractiveSampleDistance())
         {
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(0);
-            //this->Script("puts \"Interactive no progress \"");
             return;
         }
         float *progress=(float*)callData;
@@ -317,7 +315,7 @@ void vtkSlicerVRLabelmapHelper::CheckAbort(void)
     int pending=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
     if(pending!=0)
     {
-        this->Gui->Script("puts \"got an abort\"");
+        vtkSlicerVRHelperDebug("got an abort","");
 
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
         return;
@@ -325,7 +323,7 @@ void vtkSlicerVRLabelmapHelper::CheckAbort(void)
     int pendingGUI=vtkKWTkUtilities::CheckForPendingInteractionEvents(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow());
     if(pendingGUI!=0)
     {
-        this->Gui->Script("puts \"got an abort from gui\"");
+        vtkSlicerVRHelperDebug("got an abort from GUI","");
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
         return;
     }

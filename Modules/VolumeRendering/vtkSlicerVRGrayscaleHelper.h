@@ -36,9 +36,7 @@ public:
     vtkGetMacro(Quality,int);
     void SetButtonDown(int _arg)
     {
-        this->SetTCLDebug(1);
         vtkSlicerVRHelperDebug("setbutton %d",_arg);
-        this->SetTCLDebug(0);
         this->ButtonDown=(_arg);
     }
     //vtkSetMacro(ButtonDown,int);

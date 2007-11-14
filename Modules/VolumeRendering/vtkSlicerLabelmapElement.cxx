@@ -124,7 +124,6 @@ void vtkSlicerLabelmapElement::ProcessLabelmapEvents(vtkObject *caller, unsigned
         this->Opacity[i]->SetParent(this);
         this->Opacity[i]->Create();
         }
-    this->Script("puts \" labelmapEvent\"");
 }
 
 void vtkSlicerLabelmapElement::FillButtons(int stage)

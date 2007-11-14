@@ -28,7 +28,7 @@ vtkStandardNewMacro(vtkSlicerVRGrayscaleHelper);
 vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
 {
     this->DebugOff();
-    this->SetTCLDebug(1);
+    this->SetTCLDebug(0);
     this->Histograms=NULL;
     this->SVP_VolumeProperty=NULL;
     this->MB_Quality=NULL;

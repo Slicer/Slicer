@@ -19,10 +19,19 @@ public:
     static vtkLabelMapPiecewiseFunction *New();
     vtkTypeMacro(vtkLabelMapPiecewiseFunction,vtkPiecewiseFunction);
     void PrintSelf(ostream& os, vtkIndent indent);
-
+    // Description:
+    // Initialize the labelmap piecewise function with a vtkMRMLScalarVolume (to get the vtkLookuptable)
+    // and opacity that determines which opacity every value in the vtkLookuptable will get and a 
+    // treshold that determines how if you ignore a grayscale value while setting up the opacity or not
+    // Note: the treshold functionality has not been implemented yet
     void Init(vtkMRMLScalarVolumeNode *node,double opacity, int treshold);
-    void UpdateFromOpacities(vtkMRMLScalarVolumeNode *node);
+
+    // Description:
+    // Change the opacity at a specific index. Use that instead of AddPoint or corresponding methods in vtkPiecewiseFunction
     void EditLabel(int index,double opacity);
+
+    //Description:
+    // Get the opacity at a specific index
     double GetLabel(int index);
     vtkGetMacro(Size,int);
     //BTX
@@ -46,6 +55,8 @@ protected:
     // Stored Opacities for labelmaps. The opacities start at the beginning
     // of the associated vtkLookupTable
     double *Opacities;
+    // Description:
+    //
     vtkMRMLColorNode *ColorNode;
     // Description:
     // Use ::New() to get a new instance.
