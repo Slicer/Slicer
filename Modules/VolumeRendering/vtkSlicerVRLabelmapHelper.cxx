@@ -158,7 +158,10 @@ void vtkSlicerVRLabelmapHelper::UpdateRendering(void)
 }
 void vtkSlicerVRLabelmapHelper::InitializePipelineNewCurrentNode()
 {
-    this->Gui->GetcurrentNode()->SetName("autoLabelmapVisualization");
+    std::stringstream autoname;
+    autoname<<"autoVisualization";
+    autoname<<this->Gui->GetNS_ImageData()->GetSelected()->GetName();
+    this->Gui->GetcurrentNode()->SetName(autoname.str().c_str());
      this->Gui->GetLogic()->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent);
     //Labelmap
     if(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetLabelMap()==1)

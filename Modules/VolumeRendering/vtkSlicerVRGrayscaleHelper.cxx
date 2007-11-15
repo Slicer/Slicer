@@ -201,7 +201,10 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 }
 void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
 {
-    this->Gui->GetcurrentNode()->SetName("autoGrayscaleVisualization");
+    std::stringstream autoname;
+    autoname<<"autoVisualization";
+    autoname<<this->Gui->GetNS_ImageData()->GetSelected()->GetName();
+    this->Gui->GetcurrentNode()->SetName(autoname.str().c_str());
     this->Gui->GetLogic()->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent);
     vtkKWHistogram *histogram=this->Histograms->GetHistogramWithName("0");
     if(histogram==NULL)

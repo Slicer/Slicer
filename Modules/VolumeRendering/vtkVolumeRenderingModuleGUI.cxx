@@ -368,6 +368,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             //This is a LabelMap
             if(selectedImageData->GetLabelMap()==1)
             {
+                this->UnpackLabelMapGUI();
                 this->PackLabelMapGUI();
 
 
@@ -375,6 +376,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             //This is NO LabelMap
             else
             {
+                this->UnpackSvpGUI();
                 this->PackSvpGUI();
 
 
@@ -549,8 +551,8 @@ void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
     if(this->NS_ImageData->GetSelected()!=NULL&&(this->NS_VolumeRenderingDataScene->GetCondition()!=this->NS_ImageData->GetSelected()->GetID()))
     {
         this->NS_VolumeRenderingDataScene->SetCondition(this->NS_ImageData->GetSelected()->GetID(),vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetLabelMap(),true);
-        this->NS_VolumeRenderingDataScene->UpdateMenu();
     }
+            this->NS_VolumeRenderingDataScene->UpdateMenu();
 
 
     //Take care about Presets...
@@ -583,6 +585,7 @@ void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
         this->PB_CreateNewVolumeRenderingNode->EnabledOff();
         this->PB_Testing->EnabledOff();
         this->NS_VolumeRenderingDataScene->NoneEnabledOn();
+        this->NS_VolumeRenderingDataScene->SetSelected(NULL);
         this->NS_VolumeRenderingDataScene->EnabledOff();
         this->NS_VolumeRenderingDataSlicer->EnabledOff();
     }
@@ -689,6 +692,9 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineFromImageData()
     {
         this->InitializePipelineNewCurrentNode();
     }
+    //Ensure that none is not visible
+    this->NS_VolumeRenderingDataScene->NoneEnabledOff();
+    this->NS_VolumeRenderingDataScene->UpdateMenu();
     //Render it
     this->PipelineInitializedOn();
     this->Helper->UpdateRendering();

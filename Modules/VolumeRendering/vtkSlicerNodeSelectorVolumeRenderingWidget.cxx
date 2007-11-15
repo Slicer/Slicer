@@ -25,7 +25,7 @@ bool vtkSlicerNodeSelectorVolumeRenderingWidget::CheckAdditionalConditions(vtkMR
     bool retA=(currentNode->GetIsLabelMap()==this->IsLabelmap);
     if(ModeCondition)
     {
-        return (ret||retA);
+        return (ret&&retA);
     }
     //Else we have to take care about the preset widget;
     //We can have a preset, retA has to be true, ret to be false
