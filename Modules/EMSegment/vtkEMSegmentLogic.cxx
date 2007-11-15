@@ -308,7 +308,6 @@ StartSegmentation()
 
   outVolume->CopyOrientation(inVolume);
   outVolume->SetAndObserveTransformNodeID(inVolume->GetTransformNodeID());
-  outVolume->SetName("Segmentation_Result");
 
   //
   // create segmenter class
