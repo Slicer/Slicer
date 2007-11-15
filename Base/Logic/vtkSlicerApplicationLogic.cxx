@@ -34,6 +34,8 @@
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
+#include "vtkMRMLColorTableStorageNode.h"
+#include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
@@ -698,6 +700,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLModelNode *mnd = 0;
   vtkMRMLLinearTransformNode *ltnd = 0;
   vtkMRMLFiberBundleNode *fbnd = 0;
+  vtkMRMLColorTableNode *cnd = 0;
   
   nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
   
@@ -708,6 +711,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   mnd   = vtkMRMLModelNode::SafeDownCast(nd);
   ltnd  = vtkMRMLLinearTransformNode::SafeDownCast(nd);
   fbnd  = vtkMRMLFiberBundleNode::SafeDownCast(nd);
+  cnd = vtkMRMLColorTableNode::SafeDownCast(nd);
   
   // Read the data into the referenced node
   if (itksys::SystemTools::FileExists( req.GetFilename().c_str() ))
@@ -737,6 +741,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       {
       // Load a fiber bundle node
       in = vtkMRMLFiberBundleStorageNode::New();
+      }
+    else if (cnd)
+      {
+      // load in a color node
+      in = vtkMRMLColorTableStorageNode::New();
       }
     else if (mnd)
       {
