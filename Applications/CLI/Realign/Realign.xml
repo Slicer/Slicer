@@ -17,7 +17,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>InputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
-      <index>0</index>
+      <longflag>--inputvolume</longflag>
       <description>Input volume.</description>
       </image>
       <point coordinateSystem="ras" multiple="true">
@@ -39,7 +39,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Output Volume</label>
       <channel>output</channel>
       <longflag>--outputvolume</longflag>
-      <description>Output realigned volume, optional</description>
+      <description>Output realigned volume, optional (if not set, just returns the output transform)</description>
     </image>
     <string-enumeration>
       <name>InterpolationType</name>
@@ -63,6 +63,12 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Output transform</label>
       <channel>output</channel>
     </transform>
-
+    <boolean>
+      <name>debugSwitch</name>
+      <label>Debug</label>
+      <description>Click if wish to see debugging output</description>
+      <flag>d</flag> 
+      <default>true</default>
+    </boolean>
 </parameters>
 </executable>
