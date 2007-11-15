@@ -19,6 +19,9 @@
 //
 class vtkSlicerColorDisplayWidget;
 class vtkKWMessage;
+class vtkKWPushButton;
+class vtkKWLoadSaveButtonWithLabel;
+class vtkKWLoadSaveButton;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColorGUI : public vtkSlicerModuleGUI
 {
 public:
@@ -72,6 +75,10 @@ public:
     virtual void Enter ( );
     virtual void Exit ( );
 
+    // Description:
+    // Get methods on class members (no Set methods required)
+    vtkGetObjectMacro ( LoadColorFileButton, vtkKWLoadSaveButtonWithLabel );
+    
 protected:
     vtkSlicerColorGUI ( );
     virtual ~vtkSlicerColorGUI ( );
@@ -87,6 +94,9 @@ protected:
     vtkKWLabel *NCIGTLabel;
     vtkKWLabel *BIRNLabel;
 
+    vtkKWLoadSaveButtonWithLabel *LoadColorFileButton;
+    vtkKWPushButton *ApplyButton;
+    
 private:
     vtkSlicerColorGUI ( const vtkSlicerColorGUI& ); // Not implemented.
     void operator = ( const vtkSlicerColorGUI& ); //Not implemented.
