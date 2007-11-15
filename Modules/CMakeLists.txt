@@ -16,7 +16,7 @@ SUBDIRS(
   QueryAtlas
   Tractography
   VolumeRendering
-  VolumeMath
+  Statistics   
 )
 
 
