@@ -28,6 +28,7 @@
 
 #include "vtkMRML.h"
 
+class vtkMRMLColorNode;
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic 
 {
   public:
@@ -87,6 +88,16 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkSlicerLogic
   // Description:
   // return a default color node id for a file based node, based on the file name
   char * GetDefaultFileColorNodeID(const char *fileName);
+
+  // Description:
+  // look for color files in the Base/Logic/Resources/ColorFiles directory and
+  // put their names in the ColorFiles list
+  void FindColorFiles();
+
+  // Description:
+  // load in a color file and add the name to the names list, creating a
+  // storage node
+  vtkMRMLColorNode * LoadColorFile(const char *fileName);
   
 protected:
   vtkSlicerColorLogic();

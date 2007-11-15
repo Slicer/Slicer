@@ -17,13 +17,13 @@
 #include <vtksys/SystemTools.hxx> 
 
 #include "vtkSlicerColorLogic.h"
+#include "vtkMRMLColorNode.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkMRMLProceduralColorNode.h"
 #include "vtkColorTransferFunction.h"
 
-#include "vtkMRMLFiducial.h"
-#include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLColorTableStorageNode.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -38,96 +38,9 @@ vtkStandardNewMacro(vtkSlicerColorLogic);
 //----------------------------------------------------------------------------
 vtkSlicerColorLogic::vtkSlicerColorLogic()
 {
+//  this->DebugOn();
   // find the color files
-  // get the slicer home dir
-  vtksys_stl::string slicerHome;
-  if (vtksys::SystemTools::GetEnv("SLICER_HOME") == NULL)
-    {
-    if (vtksys::SystemTools::GetEnv("PWD") != NULL)
-      {
-      slicerHome =  vtksys_stl::string(vtksys::SystemTools::GetEnv("PWD"));
-      }
-    else
-      {
-      slicerHome =  vtksys_stl::string("");
-      }
-    }
-  else
-    {
-    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
-    }
-  // build up the vector
-  vtksys_stl::vector<vtksys_stl::string> filesVector;
-  filesVector.push_back(""); // for relative path
-  filesVector.push_back(slicerHome);
-  filesVector.push_back(vtksys_stl::string("Base/Logic/Resources/ColorFiles"));
-
-   
-  // get the list of colour files in this dir
-  vtksys_stl::string dirString = vtksys::SystemTools::JoinPath(filesVector);
-#ifdef WIN32
-  WIN32_FIND_DATA findData;
-  HANDLE fileHandle;
-  int flag = 1;
-  std::string search ("*.*");
-  dirString += "/";
-  search = dirString + search;
-  
-  fileHandle = FindFirstFile(search.c_str(), &findData);
-  if (fileHandle != INVALID_HANDLE_VALUE)
-    {
-    while (flag)
-      {
-      // add this file to the vector holding the base dir name so check the
-      // file type using the full path
-      filesVector.push_back(vtksys_stl::string(findData.cFileName));
-      vtksys_stl::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector); 
-      int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
-      if (fileType == vtksys::SystemTools::FileTypeText)
-        {
-        vtkDebugMacro("Adding " << fileToCheck.c_str() << " to list of potential colour files. Type = " << fileType);
-        ColorFiles.push_back(fileToCheck.c_str());
-        }
-      else
-        {
-        vtkWarningMacro("Skipping potential colour file " << fileToCheck.c_str() << ", file type = " << fileType);
-        }
-      // take this file off so that can build the next file name
-      filesVector.pop_back();
-      flag = FindNextFile(fileHandle, &findData);
-      }
-    FindClose(fileHandle);
-    }
-  else
-    {
-    vtkWarningMacro("Unable to find any colour files using search string: " << search.c_str());
-    }
-#else
-  DIR *dp;
-  struct dirent *dirp;
-  if ((dp  = opendir(dirString.c_str())) == NULL)
-    {
-    vtkErrorMacro("Error(" << errno << ") opening " << dirString.c_str());
-    }
-  else
-    {
-    while ((dirp = readdir(dp)) != NULL)
-      {
-      // add this file to the vector holding the base dir name
-      filesVector.push_back(vtksys_stl::string(dirp->d_name));
-      vtksys_stl::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector); 
-      int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
-      if (fileType == vtksys::SystemTools::FileTypeText)
-        {
-        vtkDebugMacro("Adding " << fileToCheck.c_str() << " to list of potential colour files. Type = " << fileType);
-        ColorFiles.push_back(fileToCheck);
-        }
-      // take this file off so that can build the next file name
-      filesVector.pop_back();
-      }
-    closedir(dp);
-    }
-#endif
+  this->FindColorFiles();
 }
 
 //----------------------------------------------------------------------------
@@ -205,6 +118,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   basicNode->Delete();
 
   // add a random procedural node that covers full integer range
+  vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: making a random int mrml proc color node");
   vtkMRMLProceduralColorNode *procNode = vtkMRMLProceduralColorNode::New();
   procNode->SetName("RandomInt");
   procNode->SaveWithSceneOff();
@@ -234,11 +148,13 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   procNode->Delete();
   
   // add freesurfer nodes
-  vtkDebugMacro("Adding Freesurfer nodes");
+  vtkDebugMacro("AddDefaultColorNodes: Adding Freesurfer nodes");
   vtkMRMLFreeSurferProceduralColorNode *basicFSNode = vtkMRMLFreeSurferProceduralColorNode::New();
+  vtkDebugMacro("AddDefaultColorNodes: first type = " <<  basicFSNode->GetFirstType() << ", last type = " <<  basicFSNode->GetLastType());
   for (int i = basicFSNode->GetFirstType(); i <= basicFSNode->GetLastType(); i++)
     {
     vtkMRMLFreeSurferProceduralColorNode *node = vtkMRMLFreeSurferProceduralColorNode::New();
+    vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: setting free surfer proc color node type to " << i);
     node->SetType(i);
     node->SaveWithSceneOff();
     if (node->GetTypeAsString() == NULL)
@@ -250,6 +166,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       {
       vtkDebugMacro("Got node type as string " << node->GetTypeAsString());
       node->SetName(node->GetTypeAsString());
+      vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: set proc node name to " << node->GetName());
       }
     /*
     if (this->GetDefaultFreeSurferColorNodeID(i) == NULL)
@@ -257,7 +174,9 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       vtkDebugMacro("Error getting default node id for freesurfer node " << i);
       }
     */
+    vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: Getting default fs color node id for type " << i);
     const char* id = this->GetDefaultFreeSurferColorNodeID(i);
+    vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: got default node id " << id << " for type " << i);
     node->SetSingletonTag(id);
     vtkDebugMacro("vtkSlicerColorLogic::AddDefaultColorNodes: requesting id " << id << endl);
     if (this->GetMRMLScene()->GetNodeByID(id) == NULL)
@@ -278,7 +197,17 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
   node->SetTypeToFile();
   node->SaveWithSceneOff();
-
+  node->SetScene(this->GetMRMLScene());
+  // make a storage node
+  vtkMRMLColorTableStorageNode *colorStorageNode = vtkMRMLColorTableStorageNode::New();
+  colorStorageNode->SaveWithSceneOff();
+  if (this->GetMRMLScene())
+    {
+    this->GetMRMLScene()->AddNode(colorStorageNode);
+    node->SetStorageNodeID(colorStorageNode->GetID());
+    }
+  colorStorageNode->Delete();
+  
   vtkDebugMacro("Adding FreeSurfer Labels file node");
   std::string colorFileName;
   std::string id;
@@ -319,6 +248,16 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   node = vtkMRMLColorTableNode::New();
   node->SetTypeToFile();
   node->SaveWithSceneOff();
+  node->SetScene(this->GetMRMLScene());
+  // make a storage node
+  colorStorageNode = vtkMRMLColorTableStorageNode::New();
+  colorStorageNode->SaveWithSceneOff();
+  if (this->GetMRMLScene())
+    {
+    this->GetMRMLScene()->AddNode(colorStorageNode);
+    node->SetStorageNodeID(colorStorageNode->GetID());
+    }
+  colorStorageNode->Delete();
   node->SetName("FSSurfaceLabels");
   if (basicFSNode->GetSurfaceLabelsFileName() == NULL)
     {
@@ -357,6 +296,16 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     node =  vtkMRMLColorTableNode::New();
     node->SetTypeToFile();
     node->SaveWithSceneOff();
+    node->SetScene(this->GetMRMLScene());
+    // make a storage node
+    vtkMRMLColorTableStorageNode *colorStorageNode = vtkMRMLColorTableStorageNode::New();
+    colorStorageNode->SaveWithSceneOff();
+    if (this->GetMRMLScene())
+      {
+      this->GetMRMLScene()->AddNode(colorStorageNode);
+      node->SetStorageNodeID(colorStorageNode->GetID());
+      }
+    colorStorageNode->Delete();
     node->SetFileName(this->ColorFiles[i].c_str());
     node->SetName(vtksys::SystemTools::GetFilenameName(node->GetFileName()).c_str());
     if (node->ReadFile())
@@ -540,4 +489,140 @@ char *vtkSlicerColorLogic::GetDefaultFileColorNodeID(const char * fileName)
   id =  new char[idStr.length() + 1];
   strcpy(id, idStr.c_str());
   return id;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerColorLogic::FindColorFiles()
+{
+    // get the slicer home dir
+  vtksys_stl::string slicerHome;
+  if (vtksys::SystemTools::GetEnv("SLICER_HOME") == NULL)
+    {
+    if (vtksys::SystemTools::GetEnv("PWD") != NULL)
+      {
+      slicerHome =  vtksys_stl::string(vtksys::SystemTools::GetEnv("PWD"));
+      }
+    else
+      {
+      slicerHome =  vtksys_stl::string("");
+      }
+    }
+  else
+    {
+    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
+    }
+  // build up the vector
+  vtksys_stl::vector<vtksys_stl::string> filesVector;
+  filesVector.push_back(""); // for relative path
+  filesVector.push_back(slicerHome);
+  filesVector.push_back(vtksys_stl::string("Base/Logic/Resources/ColorFiles"));
+
+   
+  // get the list of colour files in this dir
+  vtksys_stl::string dirString = vtksys::SystemTools::JoinPath(filesVector);
+#ifdef WIN32
+  WIN32_FIND_DATA findData;
+  HANDLE fileHandle;
+  int flag = 1;
+  std::string search ("*.*");
+  dirString += "/";
+  search = dirString + search;
+  
+  fileHandle = FindFirstFile(search.c_str(), &findData);
+  if (fileHandle != INVALID_HANDLE_VALUE)
+    {
+    while (flag)
+      {
+      // add this file to the vector holding the base dir name so check the
+      // file type using the full path
+      filesVector.push_back(vtksys_stl::string(findData.cFileName));
+      vtksys_stl::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector); 
+      int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
+      if (fileType == vtksys::SystemTools::FileTypeText)
+        {
+        vtkDebugMacro("Adding " << fileToCheck.c_str() << " to list of potential colour files. Type = " << fileType);
+        ColorFiles.push_back(fileToCheck.c_str());
+        }
+      else
+        {
+        vtkWarningMacro("Skipping potential colour file " << fileToCheck.c_str() << ", file type = " << fileType);
+        }
+      // take this file off so that can build the next file name
+      filesVector.pop_back();
+      flag = FindNextFile(fileHandle, &findData);
+      }
+    FindClose(fileHandle);
+    }
+  else
+    {
+    vtkWarningMacro("Unable to find any colour files using search string: " << search.c_str());
+    }
+#else
+  DIR *dp;
+  struct dirent *dirp;
+  if ((dp  = opendir(dirString.c_str())) == NULL)
+    {
+    vtkErrorMacro("Error(" << errno << ") opening " << dirString.c_str());
+    }
+  else
+    {
+    while ((dirp = readdir(dp)) != NULL)
+      {
+      // add this file to the vector holding the base dir name
+      filesVector.push_back(vtksys_stl::string(dirp->d_name));
+      vtksys_stl::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector); 
+      int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
+      if (fileType == vtksys::SystemTools::FileTypeText)
+        {
+        vtkDebugMacro("Adding " << fileToCheck.c_str() << " to list of potential colour files. Type = " << fileType);
+        ColorFiles.push_back(fileToCheck);
+        }
+      // take this file off so that can build the next file name
+      filesVector.pop_back();
+      }
+    closedir(dp);
+    }
+#endif
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName)
+{
+  vtkMRMLColorTableNode *node = vtkMRMLColorTableNode::New();
+  
+  node->SetTypeToFile();
+  node->SetScene(this->GetMRMLScene());
+  // make a storage node
+  vtkMRMLColorTableStorageNode *colorStorageNode = vtkMRMLColorTableStorageNode::New();
+  colorStorageNode->SaveWithSceneOff();
+  if (this->GetMRMLScene())
+    {
+    this->GetMRMLScene()->AddNode(colorStorageNode);
+    node->SetStorageNodeID(colorStorageNode->GetID());
+    }
+  
+  node->SetFileName(fileName);
+  colorStorageNode->SetFileName(fileName);
+  
+  node->SetName(vtksys::SystemTools::GetFilenameName(node->GetFileName()).c_str());
+  std::string id;
+  if (colorStorageNode->ReadData(node)) // ReadFile())
+    {
+    id =  std::string(this->GetDefaultFileColorNodeID(colorStorageNode->GetFileName()));
+    if (this->GetMRMLScene()->GetNodeByID(id) == NULL)
+      {
+      this->GetMRMLScene()->RequestNodeID(node, id.c_str());
+      this->GetMRMLScene()->AddNode(node);
+      vtkDebugMacro("Read and added file node: " <<  fileName);
+      ColorFiles.push_back(std::string(fileName));
+      colorStorageNode->Delete();
+      return node;
+      }
+    }
+  else
+    {
+    vtkWarningMacro("Unable to read color file " << fileName);
+    }
+  colorStorageNode->Delete();
+  return NULL;
 }
