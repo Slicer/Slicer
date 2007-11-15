@@ -379,15 +379,23 @@ void vtkEMSegmentAnatomicalStructureStep::DisplaySelectedNodeAnatomicalAttribute
       double rgb[3] = { 0.5, 0.5, 0.5 };
       mrmlManager->GetTreeNodeColor(sel_vol_id, rgb);
       this->AnatomicalNodeAttributeColorButton->SetColor(rgb);
-      this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 
-                   this->AnatomicalNodeAttributeColorButton->GetWidgetName());
+
+      //
+      // We hide the color button for now because the color that is
+      // selected here is not the color that is displayed for the
+      // segmentation later.  Colors are dealt with using the colormap
+      // mechanism and that functionality should be integrated here at
+      // some point.
+      //this->Script("pack %s -side top -anchor nw -padx 2 -pady 2", 
+      //             this->AnatomicalNodeAttributeColorButton->GetWidgetName());
       }
     else
       {
       this->AnatomicalNodeAttributeColorButton->SetEnabled(0);
       this->AnatomicalNodeAttributeColorButton->SetCommand(NULL, NULL);
-      this->Script("pack forget %s", 
-                   this->AnatomicalNodeAttributeColorButton->GetWidgetName());
+      // see comment just above
+      //this->Script("pack forget %s", 
+      //             this->AnatomicalNodeAttributeColorButton->GetWidgetName());
       }
     }
 }
