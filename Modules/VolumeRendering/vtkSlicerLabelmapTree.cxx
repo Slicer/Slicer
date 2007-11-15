@@ -148,9 +148,24 @@ void vtkSlicerLabelmapTree::ProcessBaseTreeEvents(vtkObject *caller, unsigned lo
 }
 void vtkSlicerLabelmapTree::ChangeAllOpacities(int stage)
 {
+    vtkLabelMapPiecewiseFunction *piecewiseFunction=NULL;
+
+    if(this->VolumeRenderingNode!=NULL&&
+        this->VolumeRenderingNode->GetVolumeProperty()!=NULL&&
+        this->VolumeRenderingNode->GetVolumeProperty()->GetScalarOpacity()!=NULL)
+    {
+        piecewiseFunction=vtkLabelMapPiecewiseFunction::SafeDownCast(this->VolumeRenderingNode->GetVolumeProperty()->GetScalarOpacity());
+
+    }
+    else 
+    {
+        vtkErrorMacro("invalid piecewisefunction");
+        return;
+    }
     this->InChangeOpacityAll=1;
     for(unsigned int i=0;i<this->Elements.size();i++)
-    {   
+    {               int id=this->Elements[i]->GetId();
+        piecewiseFunction->EditLabel(id,stage/(double)this->StepSize);
         this->Elements[i]->ChangeOpacity(stage);
 
     }

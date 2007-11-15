@@ -11,26 +11,26 @@
 
 vtkMRMLVolumeRenderingNode* vtkMRMLVolumeRenderingNode::New()
 {
-        // First try to create the object from the vtkObjectFactory
-        vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingNode");
-        if(ret)
-        {
-                return (vtkMRMLVolumeRenderingNode*)ret;
-        }
-        // If the factory was unable to create the object, then create it here.
-        return new vtkMRMLVolumeRenderingNode;
+    // First try to create the object from the vtkObjectFactory
+    vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingNode");
+    if(ret)
+    {
+        return (vtkMRMLVolumeRenderingNode*)ret;
+    }
+    // If the factory was unable to create the object, then create it here.
+    return new vtkMRMLVolumeRenderingNode;
 }
 
 vtkMRMLNode* vtkMRMLVolumeRenderingNode::CreateNodeInstance(void)
 {
-        // First try to create the object from the vtkObjectFactory
-        vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingNode");
-        if(ret)
-        {
-                return (vtkMRMLVolumeRenderingNode*)ret;
-        }
-        // If the factory was unable to create the object, then create it here.
-        return new vtkMRMLVolumeRenderingNode;
+    // First try to create the object from the vtkObjectFactory
+    vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeRenderingNode");
+    if(ret)
+    {
+        return (vtkMRMLVolumeRenderingNode*)ret;
+    }
+    // If the factory was unable to create the object, then create it here.
+    return new vtkMRMLVolumeRenderingNode;
 }
 
 vtkMRMLVolumeRenderingNode::vtkMRMLVolumeRenderingNode(void)
@@ -89,8 +89,8 @@ void vtkMRMLVolumeRenderingNode::WriteXML(ostream& of, int nIndent)
         of << " colorTransfer=\"" <<this->getColorTransferFunctionString(this->VolumeProperty->GetRGBTransferFunction())<< "\"";
 
     }
- 
- 
+
+
 }
 
 //----------------------------------------------------------------------------
@@ -126,13 +126,27 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
         }
         if(!strcmp(attName,"scalarOpacity"))
         {
-            vtkPiecewiseFunction *scalarOpacity=vtkPiecewiseFunction::New();
-            this->GetPiecewiseFunctionFromString(attValue,scalarOpacity);
-            this->VolumeProperty->SetScalarOpacity(scalarOpacity);
-            scalarOpacity->Delete();
+            if(this->GetIsLabelMap()==1)
+            {
+                vtkErrorMacro("labelmaps don't have a scalar opacity use opacity labelmap instead"); 
+
+
+            }
+            else
+            {
+                vtkPiecewiseFunction *scalarOpacity=vtkPiecewiseFunction::New();
+                this->GetPiecewiseFunctionFromString(attValue,scalarOpacity);
+                this->VolumeProperty->SetScalarOpacity(scalarOpacity);
+                scalarOpacity->Delete();
+            }
         }
         else if(!strcmp(attName,"gradientOpacity"))
         {
+            //double check that we don't have a labelmap missmatch
+            if(this->GetIsLabelMap()==1)
+            {
+                vtkErrorMacro("Labelmaps don't have a gradient opacity");
+            }
             vtkPiecewiseFunction *gradientOpacity=vtkPiecewiseFunction::New();
             this->GetPiecewiseFunctionFromString(attValue,gradientOpacity);
             this->VolumeProperty->SetGradientOpacity(gradientOpacity);
@@ -140,6 +154,11 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
         }
         else if(!strcmp(attName,"colorTransfer"))
         {
+            //double check that we don't have a labelmap missmatch
+            if(this->GetIsLabelMap()==1)
+            {
+                vtkErrorMacro("Labelmaps don't have a color transfer function");
+            }
             vtkColorTransferFunction *colorTransfer=vtkColorTransferFunction::New();
             this->GetColorTransferFunction(attValue,colorTransfer);
             this->VolumeProperty->SetColor(colorTransfer);
@@ -194,8 +213,19 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
             this->VolumeProperty->SetSpecularPower(specularPower);
         }//else if
 
-        //TODO save Mapper
-  }//while
+        //special behavior for labelmaps
+        else if(!strcmp(attName,"opacityLabelMap"))
+        {
+            if(this->IsLabelMap==0)
+            {
+                vtkErrorMacro("grayscale volumes don't have a opacityLabelMap");
+            }
+            vtkLabelMapPiecewiseFunction *scalarOpacityLabelmap=vtkLabelMapPiecewiseFunction::New();
+            scalarOpacityLabelmap->FillFromString(attValue);
+            this->VolumeProperty->SetScalarOpacity(scalarOpacityLabelmap);
+            scalarOpacityLabelmap->Delete();
+        }
+    }//while
     vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
 }
 
@@ -211,7 +241,7 @@ void vtkMRMLVolumeRenderingNode::Copy(vtkMRMLNode *anode)
 }
 void vtkMRMLVolumeRenderingNode::CopyParameterset(vtkMRMLNode *anode)
 {
-     //cast
+    //cast
     vtkMRMLVolumeRenderingNode *node = (vtkMRMLVolumeRenderingNode *) anode;
 
     this->VolumeProperty->SetIndependentComponents(node->VolumeProperty->GetIndependentComponents());
@@ -256,7 +286,7 @@ void vtkMRMLVolumeRenderingNode::CopyParameterset(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
     Superclass::PrintSelf(os,indent);
     os<<indent<<"VolumeProperty: ";
     this->VolumeProperty->PrintSelf(os,indent.GetNextIndent());
@@ -284,17 +314,17 @@ void vtkMRMLVolumeRenderingNode::PrintSelf(ostream& os, vtkIndent indent)
 
 void vtkMRMLVolumeRenderingNode::UpdateScene(vtkMRMLScene *scene)
 {
-   Superclass::UpdateScene(scene);
+    Superclass::UpdateScene(scene);
 }
 
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
-                                           void *callData )
+                                                    unsigned long event, 
+                                                    void *callData )
 {
-  Superclass::ProcessMRMLEvents(caller, event, callData);
-  return;
+    Superclass::ProcessMRMLEvents(caller, event, callData);
+    return;
 }
 
 
@@ -317,7 +347,7 @@ std::string vtkMRMLVolumeRenderingNode::getPiecewiseFunctionString(vtkPiecewiseF
 }
 std::string  vtkMRMLVolumeRenderingNode::getColorTransferFunctionString(vtkColorTransferFunction* function)
 {
-    
+
     //maybe size*4
     std::stringstream resultStream;
     //resultStream.str
@@ -333,7 +363,7 @@ std::string  vtkMRMLVolumeRenderingNode::getColorTransferFunctionString(vtkColor
         it++;
 
     }
-     return resultStream.str();
+    return resultStream.str();
 }
 void vtkMRMLVolumeRenderingNode::GetPiecewiseFunctionFromString(std::string str,vtkPiecewiseFunction* result)
 {

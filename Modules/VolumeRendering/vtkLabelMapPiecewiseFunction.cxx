@@ -145,13 +145,21 @@ std::string vtkLabelMapPiecewiseFunction::GetSaveString()
 }
 void vtkLabelMapPiecewiseFunction::FillFromString(std::string str)
 {
+    if(this->Opacities!=NULL)
+    {
+        vtkErrorMacro("Fill from String is not allowed when you already used the opacities");
+        return;
+    }
     std::stringstream ss;
     ss<<str;
     ss>>this->Size;
     int tmp=0;
+    this->Opacities=new double[this->Size];
+
     for(int i=0;i<this->Size;i++)
     {
         ss>>tmp;
         this->Opacities[i]=tmp*100.;
+        this->EditLabel(i,tmp);
     }
 }

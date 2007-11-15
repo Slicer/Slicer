@@ -355,6 +355,15 @@ void vtkSlicerVRLabelmapHelper::ScheduleRender(int stage)
 void vtkSlicerVRLabelmapHelper::UpdateGUIElements(void)
 {
     //We have to init
+    if(vtkLabelMapColorTransferFunction::SafeDownCast(this->Gui->GetcurrentNode()->GetVolumeProperty()->GetRGBTransferFunction())==NULL)
+    {
+         vtkLabelMapColorTransferFunction *colorNew=vtkLabelMapColorTransferFunction::New();
+        colorNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()));
+        this->Gui->GetcurrentNode()->GetVolumeProperty()->SetColor(colorNew);
+        colorNew->Delete();
+
+    }
+    //We have to init
     if(this->LM_OptionTree->GetVolumeRenderingNode()==NULL)
     {
         this->LM_OptionTree->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()),this->Gui->GetcurrentNode());      
