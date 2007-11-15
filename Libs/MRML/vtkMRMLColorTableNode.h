@@ -28,8 +28,11 @@
 #include "vtkMRMLNode.h"
 #include "vtkMRMLColorNode.h"
 #include "vtkLookupTable.h"
+#include "vtkMRMLScene.h"
 
 class vtkLookupTable;
+class vtkMRMLStorageNode;
+class vtkMRMLScene;
 class VTK_MRML_EXPORT vtkMRMLColorTableNode : public vtkMRMLColorNode
 {
 public:
@@ -57,7 +60,17 @@ public:
   // id name r g b a
   // comments start with a hash mark
   virtual int ReadFile ();
-  
+
+  // Description:
+  // Set the storage node id, used for reading files
+  vtkSetReferenceStringMacro(StorageNodeID);
+  void SetReferenceStorageNodeID(const char *id) { this->SetStorageNodeID(id); }
+  vtkGetStringMacro(StorageNodeID);
+
+  // Description:
+  // Get associated storage MRML node
+  vtkMRMLStorageNode* GetStorageNode();
+
   // Description:
   // Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
@@ -164,6 +177,10 @@ public:
   // Set a colour into the User colour table
   void SetColor(int entry, const char* name, double r, double g, double b);
 
+  // Description:
+  // clear out the names list
+  void ClearNames();
+  
 protected:
   vtkMRMLColorTableNode();
   ~vtkMRMLColorTableNode();
@@ -178,6 +195,11 @@ protected:
   // Description: 
   // The look up table, constructed according to the Type
   vtkLookupTable *LookupTable;
+
+  // Description:
+  // id of the storage node
+  char *StorageNodeID;
+
 };
 
 #endif
