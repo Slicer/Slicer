@@ -96,10 +96,10 @@ SET(dir_list
   ${VolumeRenderingModule_BINARY_DIR}
   ${VolumeRenderingModule_Init_SOURCE_DIR}
   ${VolumeRenderingModule_Init_BINARY_DIR}
-  ${VolumeMath_SOURCE_DIR}       
-  ${VolumeMath_BINARY_DIR}
-  ${VolumeMath_Init_SOURCE_DIR}
-  ${VolumeMath_Init_BINARY_DIR}
+  ${LabelStatistics_SOURCE_DIR}       
+  ${LabelStatistics_BINARY_DIR}
+  ${LabelStatistics_Init_SOURCE_DIR}
+  ${LabelStatistics_Init_BINARY_DIR}
   ${WFEngineModule_SOURCE_DIR}
   ${WFEngineModule_BINARY_DIR}
   ${WFEngineModule_Init_SOURCE_DIR}
@@ -176,12 +176,12 @@ ELSE(VOLUMERENDERINGMODULE)
  ADD_DEFINITIONS(-DVOLUMERENDERINGMODULE_DEBUG)
 ENDIF(VOLUMERENDERINGMODULE)
 
-# Option for VolumeMath
-IF(VOLUMEMATH)
- SET(VOLUMEMATH_LINK_LIB VolumeMath)
-ELSE(VOLUMEMATH)
- ADD_DEFINITIONS(-DVOLUMEMATH_DEBUG)
-ENDIF(VOLUMEMATH)
+# Option for LabelStatistics
+IF(LABELSTATISTICS)
+ SET(LABELSTATISTICS_LINK_LIB LabelStatistics)
+ELSE(LABELSTATISTICS)
+ ADD_DEFINITIONS(-DLABELSTATISTICS_DEBUG)
+ENDIF(LABELSTATISTICS)
 
 TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     SlicerBaseLogic
@@ -203,7 +203,7 @@ IF(BUILD_MODULES)
     #   RealTimeImaging
     #   MRAblation
     ${VOLUMERENDERINGMODULE_LINK_LIB}
-    ${VOLUMEMATH_LINK_LIB} 
+    ${LABELSTATISTICS_LINK_LIB} 
     NeuroNav
     QueryAtlas
     CommandLineModule

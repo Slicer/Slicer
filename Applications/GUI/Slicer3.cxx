@@ -91,7 +91,6 @@ extern "C" {
 //#define QDEC_DEBUG
 //#define COMMANDLINE_DEBUG
 //#define DEAMON_DEBUG
-//#define VOLUME_MATH
 
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
 #include "vtkSlicerFiberBundleLogic.h"
@@ -155,10 +154,12 @@ extern "C" {
 #include "vtkVolumeRenderingModuleLogic.h"
 #endif
 
-#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
-#include "vtkVolumeMathGUI.h"
-#include "vtkVolumeMathLogic.h"
+#if !defined(LABELSTATISTICS_DEBUG) && defined(BUILD_MODULES)
+#include "vtkLabelStatisticsGUI.h"
+#include "vtkLabelStatisticsLogic.h"
 #endif
+
+
 //
 // note: always write to cout rather than cerr so log messages will
 // appear in the correct order when running tests.  Normally cerr preempts cout
@@ -230,8 +231,8 @@ extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
 #if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Scriptedmodule_Init(Tcl_Interp *interp);
 #endif
-#ifndef VOLUMEMATH_DEBUG
-extern "C" int Volumemath_Init(Tcl_Interp *interp);
+#ifndef LABELSTATISTICS_DEBUG
+extern "C" int Labelstatistics_Init(Tcl_Interp *interp);
 #endif
 
 struct SpacesToUnderscores
@@ -727,8 +728,8 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
     Scriptedmodule_Init(interp);
 #endif
-#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
-    Volumemath_Init(interp);
+#if !defined(LABELSTATISTICS_DEBUG) && defined(BUILD_MODULES)
+    Labelstatistics_Init(interp);
 #endif
 
   // first call to GetInstance will create the Application
@@ -1386,25 +1387,25 @@ int Slicer3_main(int argc, char *argv[])
     vrModuleGUI->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
 #endif
 
-#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
-    // --- VolumeMath  module
-    slicerApp->SplashMessage("Initializing VolumeMath Module...");
-    vtkVolumeMathGUI *volumeMathGUI = vtkVolumeMathGUI::New ( );
-    vtkVolumeMathLogic *volumeMathLogic  = vtkVolumeMathLogic::New ( );
-    volumeMathLogic->SetAndObserveMRMLScene ( scene );
-    volumeMathLogic->SetApplicationLogic ( appLogic );
-    //    volumeMathLogic->SetMRMLScene(scene);
-    volumeMathGUI->SetLogic ( volumeMathLogic );
-    volumeMathGUI->SetApplication ( slicerApp );
-    volumeMathGUI->SetApplicationLogic ( appLogic );
-    volumeMathGUI->SetApplicationGUI ( appGUI );
-    volumeMathGUI->SetGUIName( "VolumeMath" );
-    volumeMathGUI->GetUIPanel()->SetName ( volumeMathGUI->GetGUIName ( ) );
-    volumeMathGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-    volumeMathGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( volumeMathGUI );
-    volumeMathGUI->BuildGUI ( );
-    volumeMathGUI->AddGUIObservers ( );
+#if !defined(LABELSTATISTICS_DEBUG) && defined(BUILD_MODULES)
+    // --- LabelStatistics  module
+    slicerApp->SplashMessage("Initializing LabelStatistics Module...");
+    vtkLabelStatisticsGUI *labelStatsGUI = vtkLabelStatisticsGUI::New ( );
+    vtkLabelStatisticsLogic *labelStatsLogic  = vtkLabelStatisticsLogic::New ( );
+    labelStatsLogic->SetAndObserveMRMLScene ( scene );
+    labelStatsLogic->SetApplicationLogic ( appLogic );
+    //    labelStatsLogic->SetMRMLScene(scene);
+    labelStatsGUI->SetLogic ( labelStatsLogic );
+    labelStatsGUI->SetApplication ( slicerApp );
+    labelStatsGUI->SetApplicationLogic ( appLogic );
+    labelStatsGUI->SetApplicationGUI ( appGUI );
+    labelStatsGUI->SetGUIName( "LabelStatistics" );
+    labelStatsGUI->GetUIPanel()->SetName ( labelStatsGUI->GetGUIName ( ) );
+    labelStatsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    labelStatsGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( labelStatsGUI );
+    labelStatsGUI->BuildGUI ( );
+    labelStatsGUI->AddGUIObservers ( );
 #endif
 
 #if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
@@ -1965,9 +1966,9 @@ int Slicer3_main(int argc, char *argv[])
     wfEngineModuleGUI->TearDownGUI ( );
 #endif
 
-#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
-    volumeMathGUI->RemoveGUIObservers ( );
-    volumeMathGUI->TearDownGUI ( );
+#if !defined(LABELSTATISTICS_DEBUG) && defined(BUILD_MODULES)
+    labelStatsGUI->RemoveGUIObservers ( );
+    labelStatsGUI->TearDownGUI ( );
 #endif
 
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
@@ -2086,8 +2087,8 @@ int Slicer3_main(int argc, char *argv[])
     wfEngineModuleGUI->Delete ( );
 #endif
 
-#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
-    volumeMathGUI->Delete ( );
+#if !defined(LABELSTATISTICS_DEBUG) && defined(BUILD_MODULES)
+    labelStatsGUI->Delete ( );
 #endif
 
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
@@ -2208,9 +2209,9 @@ int Slicer3_main(int argc, char *argv[])
     wfEngineModuleLogic->Delete ( );
 #endif
  
-#if !defined(VOLUMEMATH_DEBUG) && defined(BUILD_MODULES)
-    volumeMathLogic->SetAndObserveMRMLScene ( NULL );
-    volumeMathLogic->Delete ( );
+#if !defined(LABELSTATISTICS_DEBUG) && defined(BUILD_MODULES)
+    labelStatsLogic->SetAndObserveMRMLScene ( NULL );
+    labelStatsLogic->Delete ( );
 #endif
 
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
