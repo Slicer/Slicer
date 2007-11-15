@@ -26,7 +26,7 @@ class VTK_VOLUMEMATH_EXPORT vtkVolumeMathLogic : public vtkSlicerModuleLogic
   public:
   //BTX
   enum VolumeLogicEventIDs {
-    StartLabelStats,
+    StartLabelStats= vtkCommand::UserEvent,
     EndLabelStats,
     LabelStatsOuterLoop,
     LabelStatsInnerLoop
