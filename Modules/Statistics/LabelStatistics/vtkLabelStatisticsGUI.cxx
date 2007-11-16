@@ -35,6 +35,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLLabelStatisticsNode.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWProgressGauge.h"
+#include "vtkKWLoadSaveDialog.h"
+#include "vtkKWTopLevel.h"
 //#include "vtkSlicerWindow.h" 
 
 //------------------------------------------------------------------------------
@@ -113,7 +115,12 @@ vtkLabelStatisticsGUI::~vtkLabelStatisticsGUI()
     }
   
   this->SetLogic (NULL);
-  vtkSetMRMLNodeMacro(this->LabelStatisticsNode, NULL);
+  
+  if ( this->LabelStatisticsNode ) 
+    {
+    this->LabelStatisticsNode->Delete();
+    vtkSetMRMLNodeMacro(this->LabelStatisticsNode, NULL);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -126,12 +133,10 @@ void vtkLabelStatisticsGUI::PrintSelf(ostream& os, vtkIndent indent)
 void vtkLabelStatisticsGUI::AddGUIObservers ( ) 
 {
   this->GrayscaleSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  
   this->LabelmapSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-  
   this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveToClipboardButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SaveToFile->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SaveToFile->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Logic->AddObserver (vtkLabelStatisticsLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
   this->Logic->AddObserver (vtkLabelStatisticsLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
   this->Logic->AddObserver (vtkLabelStatisticsLogic::StartLabelStats, (vtkCommand *)this->LogicCallbackCommand );
@@ -144,23 +149,14 @@ void vtkLabelStatisticsGUI::AddGUIObservers ( )
 void vtkLabelStatisticsGUI::RemoveGUIObservers ( )
 {
   this->GrayscaleSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-
   this->LabelmapSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-
   this->ApplyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-
   this->SaveToClipboardButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-
-  this->SaveToFile->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  this->SaveToFile->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Logic->RemoveObservers (vtkLabelStatisticsLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
-
   this->Logic->RemoveObservers (vtkLabelStatisticsLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
-
   this->Logic->RemoveObservers (vtkLabelStatisticsLogic::StartLabelStats, (vtkCommand *)this->LogicCallbackCommand );
-
   this->Logic->RemoveObservers (vtkLabelStatisticsLogic::EndLabelStats, (vtkCommand *)this->LogicCallbackCommand );
-
 }
 
 
@@ -171,6 +167,7 @@ void vtkLabelStatisticsGUI::ProcessGUIEvents ( vtkObject *caller,
 {
   vtkKWPushButton *b = vtkKWPushButton::SafeDownCast(caller);
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+  vtkKWLoadSaveDialog *loadSaveDialog = vtkKWLoadSaveDialog::SafeDownCast(caller);
   
   if (selector == this->GrayscaleSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
     this->GrayscaleSelector->GetSelected() != NULL) 
@@ -193,13 +190,12 @@ void vtkLabelStatisticsGUI::ProcessGUIEvents ( vtkObject *caller,
       vtkMRMLLabelStatisticsNode* n = this->GetLabelStatisticsNode();
       this->SetPrimarySelection(n->GetResultText());
     }
- if (b == this->SaveToFile && event == vtkKWPushButton::InvokedEvent ) 
+ if (loadSaveDialog == this->SaveToFile->GetLoadSaveDialog() && event == vtkKWTopLevel::WithdrawEvent ) 
    {
-     vtkKWLoadSaveButton *saveLoadButton = vtkKWLoadSaveButton::SafeDownCast(caller);
-     const char *fileName = saveLoadButton->GetFileName();
+     const char *fileName = this->SaveToFile->GetFileName();
      if ( fileName ) 
        {
-         std::cout << "This is the filename: "<<  this->SaveToFile->GetFileName() << "\n";
+         //std::cout << "This is the filename: "<<  this->SaveToFile->GetFileName() << "\n";
          vtkMRMLLabelStatisticsNode* n = this->GetLabelStatisticsNode();
          n->SaveResultToTextFile(fileName);
        }
@@ -209,7 +205,7 @@ void vtkLabelStatisticsGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkLabelStatisticsGUI::UpdateMRML ()
 {
-  std::cout <<"UpdateMRML gets called!" << "\n";
+  //std::cout <<"UpdateMRML gets called!" << "\n";
   vtkMRMLLabelStatisticsNode* n = this->GetLabelStatisticsNode();
   if (n == NULL)
     {
@@ -238,7 +234,7 @@ void vtkLabelStatisticsGUI::UpdateMRML ()
 //---------------------------------------------------------------------------
 void vtkLabelStatisticsGUI::UpdateGUI ()
 { 
-  std::cout <<"UpdateGUI gets called!" << "\n";
+  //std::cout <<"UpdateGUI gets called!" << "\n";
   vtkMRMLLabelStatisticsNode* n = this->GetLabelStatisticsNode();
   if (n != NULL)
     {
@@ -272,10 +268,10 @@ void vtkLabelStatisticsGUI::ProcessMRMLEvents ( vtkObject *caller,
                                             unsigned long event,
                                             void *callData ) 
 {
-std::cout <<"ProcessMRMLEvents gets called!" << "\n";
-// if parameter node has been changed externally, update GUI widgets with new values
- vtkMRMLLabelStatisticsNode* node = vtkMRMLLabelStatisticsNode::SafeDownCast(caller);
- if (node != NULL && this->GetLabelStatisticsNode() == node) 
+  //std::cout <<"ProcessMRMLEvents gets called!" << "\n";
+  // if parameter node has been changed externally, update GUI widgets with new values
+  vtkMRMLLabelStatisticsNode* node = vtkMRMLLabelStatisticsNode::SafeDownCast(caller);
+  if (node != NULL && this->GetLabelStatisticsNode() == node) 
    {
    this->UpdateGUI();
    }
@@ -386,7 +382,7 @@ void vtkLabelStatisticsGUI::BuildGUI ( )
   this->SaveToClipboardButton->SetParent( moduleFrame->GetFrame() );
   this->SaveToClipboardButton->Create();
   this->SaveToClipboardButton->SetText("Copy result to clipboard");
-  this->SaveToClipboardButton->SetWidth ( 28 );
+  this->SaveToClipboardButton->SetWidth ( 20 );
 
   this->SaveToFile->SetParent( moduleFrame->GetFrame() );
   this->SaveToFile->Create();

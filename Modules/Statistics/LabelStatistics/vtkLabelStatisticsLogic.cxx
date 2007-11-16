@@ -142,13 +142,13 @@ void vtkLabelStatisticsLogic::Apply()
 
     if ( (stat1->GetVoxelCount()) > 0 ) 
       {
-      std::cout << i << "\t";
-      std::cout << stat1->GetVoxelCount() << "\t";
-      std::cout << (stat1->GetMin())[0] <<  "\t";
-      std::cout << (stat1->GetMax())[0] << "\t";
-      std::cout << (stat1->GetMean())[0] << "\t";
-      std::cout << (stat1->GetStandardDeviation())[0] << std::endl;
-      std::cout << std::endl;
+      //   std::cout << i << "\t";
+      //       std::cout << stat1->GetVoxelCount() << "\t";
+      //       std::cout << (stat1->GetMin())[0] <<  "\t";
+      //       std::cout << (stat1->GetMax())[0] << "\t";
+      //       std::cout << (stat1->GetMean())[0] << "\t";
+      //       std::cout << (stat1->GetStandardDeviation())[0] << std::endl;
+      //       std::cout << std::endl;
       
       //add an entry to the LabelStats list
       vtkMRMLLabelStatisticsNode::LabelStatsEntry entry;
