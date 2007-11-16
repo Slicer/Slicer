@@ -32,6 +32,7 @@ public:
   virtual void      SaveTemplateNow();
 
   virtual void      StartPreprocessing();
+  virtual void      StartPreprocessingInitializeInputData();
   virtual void      StartPreprocessingTargetIntensityNormalization();
   virtual void      StartPreprocessingTargetToTargetRegistration();
   virtual void      StartPreprocessingAtlasToTargetRegistration();

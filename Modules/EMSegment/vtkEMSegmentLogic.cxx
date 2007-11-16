@@ -113,15 +113,22 @@ StartPreprocessing()
     return;
   }
 
+  this->StartPreprocessingInitializeInputData();
+  this->StartPreprocessingTargetIntensityNormalization();
+  //this->StartPreprocessingTargetToTargetRegistration();
+  //this->StartPreprocessingAtlasToTargetRegistration();
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+StartPreprocessingInitializeInputData()
+{
   // set the input to the working data
   this->MRMLManager->GetWorkingDataNode()->SetInputTargetNodeID
     (this->MRMLManager->GetSegmenterNode()->GetTargetNodeID());
   this->MRMLManager->GetWorkingDataNode()->SetInputAtlasNodeID
     (this->MRMLManager->GetSegmenterNode()->GetAtlasNodeID());
-
-  this->StartPreprocessingTargetIntensityNormalization();
-  //this->StartPreprocessingTargetToTargetRegistration();
-  //this->StartPreprocessingAtlasToTargetRegistration();
 }
 
 //----------------------------------------------------------------------------
@@ -160,6 +167,8 @@ StartPreprocessingTargetIntensityNormalization()
     std::cerr << "Node is " << (normalizedTarget ? "Non-null" : "Null")
               << std::endl;
     std::cerr << "Number of images is: " << normalizedTarget->GetNumberOfVolumes() << std::endl;
+    m->GetWorkingDataNode()->
+      SetNormalizedTargetNodeID(normalizedTarget->GetID());
     }
   
   //
@@ -241,11 +250,95 @@ void
 vtkEMSegmentLogic::
 StartPreprocessingTargetToTargetRegistration()
 {
-  // clone input to aligned target node
+  std::cerr << "Starting target-to-target registration..." << std::endl;
 
-  // set up registration
+  // get a pointer to the mrml manager for easy access
+  vtkEMSegmentMRMLManager* m = this->MRMLManager;
 
-  // run registration
+  // get input target from working node
+  vtkMRMLEMSTargetNode* normalizedTarget = 
+    m->GetWorkingDataNode()->GetNormalizedTargetNode();
+  if (normalizedTarget == NULL)
+    {
+    vtkErrorMacro("Normalized target node is null, aborting!");
+    }
+  
+  // check that global parameters exist
+  if (!this->MRMLManager->GetGlobalParametersNode())
+    {
+    vtkErrorMacro("Global parameters node is null, aborting!");
+    }
+  
+  // set up the aligned target node
+  vtkMRMLEMSTargetNode* alignedTarget = 
+    m->GetWorkingDataNode()->GetAlignedTargetNode();
+  if (!alignedTarget)
+    {
+    // clone intput to new aligned target node
+    std::cerr << "Cloning target node...";
+    alignedTarget = m->CloneTargetNode(normalizedTarget, "AlignedTarget");
+    std::cerr << "Done." << std::endl;
+    std::cerr << "Node is " << (alignedTarget ? "Non-null" : "Null")
+              << std::endl;
+    std::cerr << "Number of images is: " 
+              << alignedTarget->GetNumberOfVolumes() << std::endl;
+    m->GetWorkingDataNode()->
+      SetAlignedTargetNodeID(alignedTarget->GetID());
+    }
+  
+  //
+  // check that the number of target images did not change
+  // !!! todo !!!
+
+  //
+  // apply registration
+  for (int i = 1; i < alignedTarget->GetNumberOfVolumes(); ++i)
+    {
+      // align image i with image 0
+
+      // get image data
+      
+      vtkImageData* fixedImageData =
+        alignedTarget->GetNthVolumeNode(0)->GetImageData();         
+      vtkImageData* movingImageData = 
+        normalizedTarget->GetNthVolumeNode(i)->GetImageData();
+      vtkImageData* outImageData = 
+        alignedTarget->GetNthVolumeNode(i)->GetImageData(); 
+
+      if (fixedImageData == NULL || movingImageData == NULL)
+      {
+        vtkErrorMacro("Normalized input is null, skipping: " << i);
+        continue;
+      }
+      if (outImageData == NULL)
+      {
+        vtkErrorMacro("Normalization output is null, skipping: " << i);
+        continue;
+      }
+
+      // setup vtk filter
+
+      // execute filter
+      try
+      {
+        //alignmentFilter->Update();
+      }
+      catch (...)
+      {
+        vtkErrorMacro("Error executing alignment filter for target image " 
+                      << i << ".  Skipping this image.");
+      }
+      //alighmentFilter->Delete();
+    }
+       
+  // replace target in segmenter node with the normalized target
+  this->MRMLManager->GetSegmenterNode()->
+    SetTargetNodeID(alignedTarget->GetID());
+
+  std::cerr << "Alignment complete." << std::endl;
+
+  // intensity statistics, if computed from data, must be updated
+  m->UpdateIntensityDistributions();
 }
 
 //----------------------------------------------------------------------------
