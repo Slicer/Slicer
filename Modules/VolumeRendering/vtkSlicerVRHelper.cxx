@@ -4,6 +4,8 @@
 #include "vtkVolume.h"
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkCallbackCommand.h"
+#include "vtkMatrix4x4.h"
+#include "vtkMRMLTransformNode.h"
 
 
 vtkCxxRevisionMacro(vtkSlicerVRHelper, "$Revision: 1.46 $");
@@ -86,4 +88,52 @@ void vtkSlicerVRHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
     this->Gui=gui;
     this->SetApplication(this->Gui->GetApplication());
+}
+
+void vtkSlicerVRHelper::CalculateMatrix(vtkMatrix4x4 *output)
+{
+        //Update matrix
+    //Check for NUll Pointer
+    if(this->Gui!=NULL&&this->Gui->GetNS_ImageData()!=NULL&&this->Gui->GetNS_ImageData()->GetSelected()!=NULL)
+    {
+        //IJK to ras
+         vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+         vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
+
+         // Parent transforms
+         vtkMRMLTransformNode *tmp=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetParentTransformNode();
+         vtkMatrix4x4   *transform=vtkMatrix4x4::New();
+         
+         tmp->GetMatrixTransformToWorld(transform);
+         //Transform world to ras
+         vtkMatrix4x4::Multiply4x4(transform,matrix,output);
+         matrix->Delete();
+         transform->Delete();
+    
+
+         //while(tmp!=NULL)
+         //{
+         //    root=tmp;
+         //    tmp=tmp->GetParentTransformNode();
+         //}
+         ////We don't have a tansform->We only do ijk to ras
+         //if(root==NULL)
+         //{
+         //   vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(output);
+         //   return;
+         //}
+         ////We have to take car about all the parent transform nodes
+         //else
+         //{
+         //    vtkMatrix4x4 *transform=vtkMatrix4x4::New();
+         //    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetParentTransformNode()->GetMatrixTransformToNode(root,transfrom);
+         //    
+         //}
+         ////get matrix to root of parent transforms
+
+    }
+    else
+    {
+        vtkErrorMacro("invalid data");
+    }
 }

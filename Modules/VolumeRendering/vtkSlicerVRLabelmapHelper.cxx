@@ -110,7 +110,7 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
     this->Volume->SetProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
     this->Volume->SetMapper(this->MapperRaycast);
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
+    this->CalculateMatrix(matrix);
     this->Volume->PokeMatrix(matrix);
     this->VMPW_Shading->SetVolumeProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->Volume);
@@ -150,7 +150,7 @@ void vtkSlicerVRLabelmapHelper::UpdateRendering(void)
     this->Volume->SetProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
     //Update matrix
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
+    this->CalculateMatrix(matrix);
     this->Volume->PokeMatrix(matrix);
 
     matrix->Delete();

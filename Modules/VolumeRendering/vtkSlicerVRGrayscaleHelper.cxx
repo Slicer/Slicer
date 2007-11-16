@@ -290,7 +290,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
 
     this->Volume->SetProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
+    this->CalculateMatrix(matrix);
     this->Volume->PokeMatrix(matrix);
 
     //For Performance
@@ -316,7 +316,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
     this->Volume->SetProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
     //Update matrix
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
+    this->CalculateMatrix(matrix);
     this->Volume->PokeMatrix(matrix);
 
     matrix->Delete();

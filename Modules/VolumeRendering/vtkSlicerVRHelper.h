@@ -4,9 +4,9 @@
 #include "vtkVolumeRenderingModule.h"
 #include "vtkKWObject.h"
 
-# define vtkSlicerVRHelperDebug(message,format)                                        \
+# define vtkSlicerVRHelperDebug(message,format)                                 \
   {                                                                             \
-  if (this->GetTCLDebug())                                                         \
+  if (this->GetTCLDebug())                                                      \
     {                                                                           \
         this->Script("puts \""message"\"",format);                              \
     }                                                                           \
@@ -16,6 +16,7 @@ class vtkCallbackCommand;
 class vtkVolume;
 class vtkKWProgressGauge;
 class vtkKWTopLevel;
+class vtkMatrix4x4;
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRHelper :public vtkKWObject
 {
@@ -56,6 +57,8 @@ protected:
     virtual void ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData);
 
     virtual void Rendering(void);
+
+    void CalculateMatrix(vtkMatrix4x4 *output);
 
 };
 #endif

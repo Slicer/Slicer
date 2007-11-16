@@ -294,7 +294,7 @@ void vtkVolumeRenderingModuleGUI::RemoveGUIObservers(void)
     this->NS_VolumeRenderingDataScene->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->NS_VolumeRenderingDataSlicer->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->PB_Testing->RemoveObservers (vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand);
-    this->PB_CreateNewVolumeRenderingNode->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+    this->PB_CreateNewVolumeRenderingNode->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
 }
 void vtkVolumeRenderingModuleGUI::RemoveMRMLNodeObservers(void)
 {
@@ -365,6 +365,8 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
         else if(strcmp(this->NS_ImageData->GetSelected()->GetID(),this->PreviousNS_ImageData.c_str())!=0)
         {
             vtkMRMLScalarVolumeNode *selectedImageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
+            //Add observer to trigger update of transform
+            selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
             //This is a LabelMap
             if(selectedImageData->GetLabelMap()==1)
             {
@@ -458,6 +460,14 @@ void vtkVolumeRenderingModuleGUI::ProcessMRMLEvents(vtkObject *caller, unsigned 
         this->currentNode=NULL;
         this->UpdateGUI();
 
+    }
+    if(event == vtkMRMLTransformableNode::TransformModifiedEvent)
+    {
+        if (this->Helper!=NULL)
+        {
+            this->Helper->UpdateRendering();
+        }
+        //TODO when can we remove the op
     }
 }
 
