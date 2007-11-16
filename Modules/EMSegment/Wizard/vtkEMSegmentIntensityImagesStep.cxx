@@ -143,7 +143,7 @@ void vtkEMSegmentIntensityImagesStep::PopulateIntensityImagesTargetVolumeSelecto
     }
 
   // Update the target volume list
-
+  this->IntensityImagesTargetVolumeSelector->RemoveItemsFromFinalList();
   for(int i = 0; i < nb_of_target_volumes; i++)
     {
     target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
