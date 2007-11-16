@@ -165,9 +165,10 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     this->RunSegmentationSaveFrame->Create();
     this->RunSegmentationSaveFrame->SetLabelText("Save");
     }
-  this->Script(
-    "pack %s -side top -anchor nw -fill x -padx 0 -pady 2", 
-    this->RunSegmentationSaveFrame->GetWidgetName());
+  // disable this frame for now, it is not currently useful
+  //   this->Script(
+  //     "pack %s -side top -anchor nw -fill x -padx 0 -pady 2", 
+  //     this->RunSegmentationSaveFrame->GetWidgetName());
   
   // Create the "save after segmentation" checkbutton
 
@@ -329,9 +330,10 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
       GetWidget()->SetCommand(this, "GenerateSurfaceModelsCallback");
     }
 
-  this->Script(
-    "pack %s -side top -anchor nw -padx 2 -pady 2", 
-    this->RunSegmentationGenerateSurfaceCheckButton->GetWidgetName());
+  // disable for now, not used and confusing
+  //   this->Script(
+  //     "pack %s -side top -anchor nw -padx 2 -pady 2", 
+  //     this->RunSegmentationGenerateSurfaceCheckButton->GetWidgetName());
   
   this->RunSegmentationGenerateSurfaceCheckButton->
     GetWidget()->SetSelectedState(
