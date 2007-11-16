@@ -71,6 +71,17 @@ IF( NOT DISABLE_CXX_TESTING )
     vtkCommon
     )
 
+  ADD_EXECUTABLE(
+    vtkEMSegmentPreprocessingManagerTest
+    vtkEMSegmentPreprocessingManagerTest.cxx
+    vtkEMSegmentTestUtilities.cxx
+    )
+  TARGET_LINK_LIBRARIES(
+    vtkEMSegmentPreprocessingManagerTest
+    EMSegment
+    vtkCommon
+    )
+
   ############################################################################
   # The test is a stand-alone executable.  However, the Slicer3
   # launcher is needed to set up shared library paths correctly.
@@ -93,7 +104,15 @@ IF( NOT DISABLE_CXX_TESTING )
   ADD_TEST(
     vtkEMSegmentMRMLManagerTest
     ${SLICER_EXE} ${WRAPPED_EXE_PREFIX}/vtkEMSegmentMRMLManagerTest
-    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
+    "EMSegment Tutorial Template"
+    )
+
+  # Does the preprocessing function correctly?
+  ADD_TEST(
+    vtkEMSegmentPreprocessingManagerTest
+    ${SLICER_EXE} ${WRAPPED_EXE_PREFIX}/vtkEMSegmentPreprocessingManagerTest
+    ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
     "EMSegment Tutorial Template"
     )
 

@@ -3,6 +3,8 @@
 #include "vtkMRMLScene.h"
 #include "vtkEMSegmentLogic.h"
 #include "vtkEMSegmentTestUtilities.h"
+#include "vtkMRMLEMSWorkingDataNode.h"
+#include "vtkMRMLEMSTargetNode.h"
 #include <stdexcept>
 #include <stdlib.h>
 
@@ -388,7 +390,6 @@ int main(int argc, char** argv)
                               TargetVolumeIntensityNormalizationEnabled,
                               MAGIC_INT, targetID);
 
-
       // registration parameters
       vtkTestSetGetMacro(pass, m,
                          RegistrationAffineType, MAGIC_INT);
@@ -423,6 +424,7 @@ int main(int argc, char** argv)
                                 SegmentationBoundaryMin, int, bound);      
       vtkTestSetGetPoint3DMacro(pass, m, 
                                 SegmentationBoundaryMax, int, bound);      
+
 
       /////////////////////////////////////////////////////////////////
       // manipulate tree structure
@@ -510,7 +512,7 @@ int main(int argc, char** argv)
         }
 
       // move node D to node C
-      std::cerr << "Moving D...";
+      std::cerr << "Moving D to C...";
       m->SetTreeNodeParentNodeID(idD, idC);
       if (m->GetTreeNodeIsLeaf(idA) ||
           !m->GetTreeNodeIsLeaf(idB) || 
