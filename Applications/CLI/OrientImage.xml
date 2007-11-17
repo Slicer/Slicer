@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Converters</category>
+  <title>Orient Images</title>
+  <description>
+Orients an output volume. Rearranges the slices in a volume accoording to the selected orientation. The resulting volume will cover the original volume.
+</description>
+  <version>0.1.0.$Revision$(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>inputVolume1</name>
+      <label>Input Volume 1</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume 1</description>
+    </image>
+    <image>
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>The oriented volume</description>
+    </image>
+  </parameters>
+
+  <parameters>
+    <label>Orientation Parameters</label>
+    <description>Orientation of output</description>
+    <string-enumeration>
+      <name>orientation</name>
+      <flag>o</flag>
+      <longflag>orientation</longflag>
+      <description>Orientation choices</description>
+      <default>LPS</default>
+      <label>Orientation</label>
+        <element>Axial</element>
+        <element>Coronal</element>
+        <element>Sagittal</element>
+        <element>RIP</element>
+        <element>LIP</element>
+        <element>RSP</element>
+        <element>LSP</element>
+        <element>RIA</element>
+        <element>LIA</element>
+        <element>RSA</element>
+        <element>LSA</element>
+        <element>IRP</element>
+        <element>ILP</element>
+        <element>SRP</element>
+        <element>SLP</element>
+        <element>IRA</element>
+        <element>ILA</element>
+        <element>SRA</element>
+        <element>SLA</element>
+        <element>RPI</element>
+        <element>LPI</element>
+        <element>RAI</element>
+        <element>LAI</element>
+        <element>RPS</element>
+        <element>LPS</element>
+        <element>RAS</element>
+        <element>LAS</element>
+        <element>PRI</element>
+        <element>PLI</element>
+        <element>ARI</element>
+        <element>ALI</element>
+        <element>PRS</element>
+        <element>PLS</element>
+        <element>ARS</element>
+        <element>ALS</element>
+        <element>IPR</element>
+        <element>SPR</element>
+        <element>IAR</element>
+        <element>SAR</element>
+        <element>IPL</element>
+        <element>SPL</element>
+        <element>IAL</element>
+        <element>SAL</element>
+        <element>PIR</element>
+        <element>PSR</element>
+        <element>AIR</element>
+        <element>ASR</element>
+        <element>PIL</element>
+        <element>PSL</element>
+        <element>AIL</element>
+        <element>ASL</element>
+    </string-enumeration>
+  </parameters>
+
+</executable>

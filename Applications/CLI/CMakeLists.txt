@@ -64,6 +64,18 @@ INCLUDE_DIRECTORIES(
         ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
 
 #####################
+SET (CLP OrientImage)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters ITKNumerics)
+
+ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
+SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
+
+#####################
 SET (CLP LinearRegistration)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
@@ -433,6 +445,8 @@ IF (Slicer3_SOURCE_DIR)
         AffineRegistration
         BSplineDeformableRegistration
         LabelMapSmoothing
+        OrientImage
+        OrientImageLib
   )
 
   INSTALL(TARGETS ${TARGETS}

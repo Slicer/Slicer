@@ -48,6 +48,40 @@ namespace itk
       }
     }
   
+#include "itkContinuousIndex.h"
+  template <class T>
+  void AlignVolumeCenters(T *fixed, T *moving, T::PointType &origin)
+  {
+    // compute the center of fixed
+    typename T::PointType fixedCenter;
+    {
+    itk::ContinuousIndex<double,T::ImageDimension> centerIndex;
+    typename T::SizeType size = fixed->GetLargestPossibleRegion().GetSize();
+    for (unsigned int i = 0; i < T::ImageDimension; i++)
+      {
+      centerIndex[i] = static_cast<double>((size[i]-1)/2.0);
+      }    
+    fixed->TransformContinuousIndexToPhysicalPoint(centerIndex, fixedCenter);
+    }
+
+    // compute the center of moving
+    typename T::PointType movingCenter;
+    {
+    itk::ContinuousIndex<double,T::ImageDimension> centerIndex;
+    typename T::SizeType size = moving->GetLargestPossibleRegion().GetSize();
+    for (unsigned i = 0; i < T::ImageDimension; i++)
+      {
+      centerIndex[i] = static_cast<double>((size[i]-1)/2.0);
+      }    
+    moving->TransformContinuousIndexToPhysicalPoint(centerIndex, movingCenter);
+    }
+
+    for (unsigned int j = 0; j < fixedCenter.Size(); j++)
+      {
+      origin[j] = moving->GetOrigin()[j] - (movingCenter[j] - fixedCenter[j]);
+      }
+  }
+
 } // end namespace itk
 
 #endif
