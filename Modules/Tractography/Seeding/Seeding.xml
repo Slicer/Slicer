@@ -78,7 +78,7 @@
       <flag>-s</flag>
       <longflag>--seedspacing</longflag>
       <description>Spacing (in mm) between seed points</description>
-      <default>3</default>
+      <default>5</default>
       <constraints>
       	<minimum>0.1</minimum>
 	<maximum>10</maximum>

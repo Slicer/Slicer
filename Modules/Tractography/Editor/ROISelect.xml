@@ -23,27 +23,20 @@
       <label>Input ROI A</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Label map with selection ROI 1</description>
+      <description>Label map with selection ROI</description>
     </image>
-    <image type ="label">
-      <name>InputROI_B</name>
-      <label>Input ROI B</label>
-      <channel>input</channel>
-      <index>1</index>
-      <description>Label map with selection ROI 2</description>
-    </image>
-    <geometry>
+    <geometry type = "fiberbundle">
       <name>InputFibers</name>
       <label>Input Fiber bundle</label>
       <channel>input</channel>
-      <index>2</index>
+      <index>1</index>
       <description>Input tractography</description>
     </geometry>
-    <geometry>
+    <geometry type = "fiberbundle">
       <name>OutputFibers</name>
       <label>Output Fiber bundle</label>
       <channel>output</channel>
-      <index>3</index>
+      <index>2</index>
       <description>Selected tractography result</description>
     </geometry>
   </parameters>
@@ -53,12 +46,22 @@
     <description>Selection of label/s for ROI definition</description>
     
     <integer>
-      <name>ROIlabel</name>
-      <label> ROI label</label>
-      <flag>-l</flag>
-      <longflag>--label</longflag>
-      <description>ROI label value that defines seeding region.</description>
+      <name>PassLabel</name>
+      <label> ROI pass label</label>
+      <flag>-p</flag>
+      <longflag>--pass</longflag>
+      <description>ROI label value that defines pass region.</description>
       <default>1</default>
     </integer>
+
+    <integer>
+      <name>NotPassLabel</name>
+      <label> ROI not pass label</label>
+      <flag>-n</flag>
+      <longflag>--nopass</longflag>
+      <description>ROI label value that defines no pass region.</description>
+      <default>9999</default>
+    </integer>
+
   </parameters>  
 </executable>

@@ -195,12 +195,12 @@ int main( int argc, const char * argv[] )
   
   //6. Extra5ct PolyData in RAS
   vtkPolyData *outFibers = vtkPolyData::New();
-  seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
   
   //Save result
   vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
   if (!WriteToFile) 
     {
+    seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
     writer->SetFileName(OutputFibers.c_str());
     //writer->SetFileTypeToBinary();
     writer->SetInput(outFibers);

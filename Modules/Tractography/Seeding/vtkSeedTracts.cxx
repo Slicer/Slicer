@@ -617,8 +617,8 @@ void vtkSeedTracts::SeedStreamlinesInROI()
  
                       if (length > this->MinimumPathLength)
                         {
-                        this->Streamlines->AddItem((vtkObject *) newStreamline);
                         if (this->FileDirectoryName) 
+                          // write streamline to disk
                           {
                           if (this->FilePrefix == NULL)
                             {
@@ -635,6 +635,12 @@ void vtkSeedTracts::SeedStreamlinesInROI()
                           fileNameStr << FileDirectoryName << "/" << FilePrefix << '_' << idx << ".vtk";
                           writer->SetFileName(fileNameStr.str().c_str());
                           writer->Write();
+                          newStreamline->Delete();
+                          }
+                        else
+                          {
+                          // keep the streamline in memory
+                          this->Streamlines->AddItem((vtkObject *) newStreamline);
                           }
                         idx++;
                         }
@@ -1038,9 +1044,6 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
                       // display it, otherwise delete it.
                       if (intersects) 
                         {
-                        this->Streamlines->AddItem
-                            ((vtkObject *)newStreamline);
-
                         if (this->FileDirectoryName) 
                           {
                           if (this->FilePrefix == NULL)
@@ -1058,6 +1061,11 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
                           fileNameStr << FileDirectoryName << "/" << FilePrefix << '_' << this->Streamlines->GetNumberOfItems()-1 << ".vtk";
                           writer->SetFileName(fileNameStr.str().c_str());
                           writer->Write();
+                          }
+                        else
+                          {
+                          this->Streamlines->AddItem((vtkObject *)newStreamline);
+                          newStreamline->Delete();
                           }
                         }
                       else 
