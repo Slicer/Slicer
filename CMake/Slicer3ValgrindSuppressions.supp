@@ -19,7 +19,7 @@
 #
 #   valgrind -v --gen-suppressions=all --suppressions=./CMake/Slicer3ValgrindSuppressions.supp --suppressions=../Slicer3-lib/VTK/CMake/VTKValgrindSuppressions.supp --suppressions=../Slicer3-lib/KWWidgets/CMake/KWWidgetsValgrindSuppressions.supp --suppressions=../Slicer3-lib/Insight/CMake/InsightValgrind.supp --suppressions=../Slicer3-lib/Insight/Utilities/gdcm/CMake/gdcmValgrind.supp --suppressions=../Slicer3-lib/Insight/Utilities/vxl/config/valgrind.supp ../Slicer3-build/bin/Slicer3-real | & tee /tmp/slicerval
 #
-# add --leak-check=full to get report on leaks (not a useful as the VTK leak tool)
+# add --leak-check=full to get report on leaks (not as useful as the VTK leak tool)
 # 
 #
 # vi map command to copy suppressions from slicerval to this file 
