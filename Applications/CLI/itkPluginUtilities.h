@@ -50,7 +50,7 @@ namespace itk
   
 #include "itkContinuousIndex.h"
   template <class T>
-  void AlignVolumeCenters(T *fixed, T *moving, T::PointType &origin)
+  void AlignVolumeCenters(T *fixed, T *moving, typename T::PointType &origin)
   {
     // compute the center of fixed
     typename T::PointType fixedCenter;
