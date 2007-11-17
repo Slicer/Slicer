@@ -168,21 +168,29 @@ proc runcmd {args} {
 }
 
 
+#initialize platform variables
+foreach v { isSolaris isWindows isDarwin isLinux } { set $v 0 }
+switch $tcl_platform(os) {
+    "SunOS" { set isSolaris 1 }
+    "Linux" { set isLinux 1 }
+    "Darwin" { set isDarwin 1 }
+    default { set isWindows 1 }
+}
+
 ################################################################################
 # First, set up the directory
 # - determine the location
 # - determine the build
 # 
 
-set script [info script]
-catch {set script [file normalize $script]}
-set ::SLICER_HOME [file dirname [file dirname $script]]
 set cwd [pwd]
 cd [file dirname [info script]]
 cd ..
 set ::SLICER_HOME [pwd]
 cd $cwd
-
+if { $isWindows } {
+  set ::SLICER_HOME [file attributes $::SLICER_HOME -shortname]
+}
 set ::SLICER_LIB $::SLICER_HOME/../Slicer3-lib
 set ::SLICER_BUILD $::SLICER_HOME/../Slicer3-build
 # use an environment variable so doxygen can use it
@@ -208,14 +216,6 @@ if { [file exists $localvarsfile] } {
 
 puts "making with $::MAKE"
 
-#initialize platform variables
-foreach v { isSolaris isWindows isDarwin isLinux } { set $v 0 }
-switch $tcl_platform(os) {
-    "SunOS" { set isSolaris 1 }
-    "Linux" { set isLinux 1 }
-    "Darwin" { set isDarwin 1 }
-    default { set isWindows 1 }
-}
 
 #
 # Deletes both SLICER_LIB and SLICER_BUILD if clean option given
