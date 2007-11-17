@@ -137,7 +137,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   // that moves the output center to the input center. Then appl that
   // offset to the output volume origin
 
-  ImageType::PointType newOrigin;
+  typename ImageType::PointType newOrigin;
   itk::AlignVolumeCenters<ImageType>(reader1->GetOutput(), filter->GetOutput(), newOrigin);
 
   // Now change the origin of the output volume
