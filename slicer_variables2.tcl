@@ -78,7 +78,7 @@ set ::SLICER_TAG "http://www.na-mic.org/svn/Slicer3/trunk"
 set ::CMAKE_TAG "CMake-2-4-2"
 #set ::TEEM_TAG "HEAD"
 set ::TEEM_TAG "Teem-1-9-0-patches"
-set ::KWWidgets_TAG "HEAD"
+set ::KWWidgets_TAG "Slicer-3-0"
 set ::VTK_TAG "VTK-5-0"
 set ::ITK_TAG ITK-3-4
 set ::TCL_TAG "core-8-4-6"
