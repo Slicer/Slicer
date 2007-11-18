@@ -403,7 +403,7 @@ void GeneratePluginDataSymbols(std::ofstream &sout, std::vector<std::string>& lo
 
 void GeneratePluginEntryPoints(std::ofstream &sout, std::vector<std::string> &logos)
 {
-  sout << "#ifdef main" << std::endl;
+  sout << "#if defined(main) && !defined(REGISTER_TEST)" << std::endl;
   sout << "// If main defined as a preprocessor symbol, redefine it to the expected entry point." << std::endl;
   sout << "#undef main" << std::endl;
   sout << "#define main ModuleEntryPoint" << std::endl;
