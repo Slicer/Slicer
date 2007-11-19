@@ -68,6 +68,7 @@ SET(LIB_SRCS
   vtkKWMatrix4x4.cxx
   vtkKWScriptedWidget.cxx
   vtkKWWindowLevelThresholdEditor.cxx
+  vtkKWProgressDialog.cxx
   vtkSlicerVolumeDisplayWidget.cxx
   vtkSlicerLabelMapVolumeDisplayWidget.cxx
   vtkSlicerScalarVolumeDisplayWidget.cxx
