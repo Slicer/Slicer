@@ -4,6 +4,9 @@
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 
 INCLUDE_DIRECTORIES(${Slicer3_SOURCE_DIR}/Applications/CLI)
+INCLUDE_DIRECTORIES(${Slicer3_BINARY_DIR}/Applications/CLI)
+INCLUDE_DIRECTORIES(${Slicer3_SOURCE_DIR}/Libs/ModuleDescriptionParser)
+INCLUDE_DIRECTORIES (${TCLAP_SOURCE_DIR}/include)
 
 #
 # Put the test executables in the Slicer3 bin directory
