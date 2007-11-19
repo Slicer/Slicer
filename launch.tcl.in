@@ -250,6 +250,7 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(SLICER_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(PATH) "$::env(PATH):$::env(TEEM_DIR)"
+            set ::env(PATH) "$::env(SLICER_BIN_DIR):$::env(PATH)"
         } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
             # add vtk, slicer, and tcl bins
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -259,6 +260,7 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(SLICER_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(PATH) $::env(PATH):$::env(TEEM_DIR)
+            set ::env(PATH) "$::env(SLICER_BIN_DIR):$::env(PATH)"
         } elseif {$::env(BUILD) == $::WINDOWS} {
             # add vtk, slicer, and tcl bins
             set ::env(Path) $::env(VTK_BIN_DIR)\;$::env(Path)
