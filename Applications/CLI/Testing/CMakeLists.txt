@@ -1,0 +1,67 @@
+#
+# Test CLI executables
+#
+INCLUDE_REGULAR_EXPRESSION("^.*$")
+
+INCLUDE_DIRECTORIES(${Slicer3_SOURCE_DIR}/Applications/CLI)
+
+#
+# Put the test executables in the Slicer3 bin directory
+#
+SET(EXECUTABLE_OUTPUT_PATH "${Slicer3_BINARY_DIR}/bin")
+
+#
+# Slicer3 is needed to resolve shared libraries
+#
+SET(SLICER_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+
+SET(BASELINE "${Slicer3_SOURCE_DIR}/Testing/Data/Baseline/CLI")
+SET(TEST_DATA "${Slicer3_SOURCE_DIR}/Testing/Data/Input")
+SET(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
+
+SET(MRML_DATA "${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/TestData")
+
+# OrientImage tests
+ADD_TEST(OrientImageTest1 ${SLICER_EXE} --launch OrientImageTest
+  --compare ${BASELINE}/OrientImageTestAxial.nrrd
+            ${TEMP}/OrientImageTestAxial.nrrd
+  OrientImageTest
+           --orientation Axial ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestAxial.nrrd
+)
+ADD_TEST(OrientImageTest2 ${SLICER_EXE} --launch OrientImageTest
+  --compare ${BASELINE}/OrientImageTestCoronal.nrrd
+            ${TEMP}/OrientImageTestCoronal.nrrd
+  OrientImageTest
+           --orientation Coronal ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestCoronal.nrrd
+)
+ADD_TEST(OrientImageTest3 ${SLICER_EXE} --launch OrientImageTest
+  --compare ${BASELINE}/OrientImageTestSagittal.nrrd
+            ${TEMP}/OrientImageTestSagittal.nrrd
+  OrientImageTest
+           --orientation Sagittal ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestSagittal.nrrd
+)
+
+ADD_EXECUTABLE(OrientImageTest OrientImageTest.cxx)
+TARGET_LINK_LIBRARIES(OrientImageTest ITKIO)
+
+# Median tests
+ADD_TEST(MedianImageFilterTest ${SLICER_EXE} --launch MedianImageFilterTest
+  --compare ${BASELINE}/MedianImageFilterTest.nhdr
+            ${TEMP}/MedianImageFilterTest.nhdr
+  MedianImageFilterTest
+           --neighborhood 1,2,3 ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/MedianImageFilterTest.nhdr
+)
+
+ADD_EXECUTABLE(MedianImageFilterTest MedianImageFilterTest.cxx)
+TARGET_LINK_LIBRARIES(MedianImageFilterTest ITKIO)
+
+# GaussianBlur tests
+ADD_TEST(GaussianBlurImageFilterTest ${SLICER_EXE} --launch GaussianBlurImageFilterTest
+  --compare ${BASELINE}/GaussianBlurImageFilterTest.nhdr
+            ${TEMP}/GaussianBlurImageFilterTest.nhdr
+  GaussianBlurImageFilterTest
+      --sigma 2.5 ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/GaussianBlurImageFilterTest.nhdr
+)
+
+ADD_EXECUTABLE(GaussianBlurImageFilterTest GaussianBlurImageFilterTest.cxx)
+TARGET_LINK_LIBRARIES(GaussianBlurImageFilterTest ITKIO)
