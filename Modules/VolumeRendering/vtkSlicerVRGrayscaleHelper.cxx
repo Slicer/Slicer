@@ -17,8 +17,7 @@
 #include "vtkSlicerApplication.h"
 #include "vtkKWEvent.h"
 #include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
-#include "vtkKWMessageDialog.h"
-#include "vtkKWSplashScreen.h"
+#include "vtkKWProgressDialog.h"
 #include <math.h>
 
 
@@ -667,31 +666,16 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     if(eid==vtkCommand::VolumeMapperComputeGradientsStartEvent)
     {
-        this->GradientDialog = vtkKWTopLevel::New();
+        this->GradientDialog = vtkKWProgressDialog::New();
         this->GradientDialog->SetParent (  this->Gui->GetApplicationGUI()->GetMainSlicerWindow());
         this->GradientDialog->SetDisplayPositionToMasterWindowCenter();
         this->GradientDialog->Create ( );
-
-        vtkKWLabel *label=vtkKWLabel::New();
-        label->SetParent(this->GradientDialog);
-        label->Create();
-        label->SetText("Please standby: Gradients are calculated");
-        this->Script("pack %s ",label->GetWidgetName());
-        label->Delete();
-
-        this->Gauge=vtkKWProgressGauge::New();
-        this->Gauge->SetParent(this->GradientDialog);
-        this->Gauge->Create();
-        this->Script("pack %s",this->Gauge->GetWidgetName());
+        this->GradientDialog->SetMessageText("Please standby: Gradients are calculated");
         this->GradientDialog->Display();
-        this->GetApplication()->ProcessPendingEvents();
         return;
     }
     else if(eid==vtkCommand::VolumeMapperComputeGradientsEndEvent)
     {
-        this->Gauge->SetParent(NULL);
-        this->Gauge->Delete();
-        this->Gauge=NULL;
         this->GradientDialog->Withdraw();
         this->GradientDialog->SetParent(NULL);
         this->GradientDialog->Delete();
@@ -702,7 +686,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     else if(eid==vtkCommand::VolumeMapperComputeGradientsProgressEvent)
     {
         float *progress=(float*)callData;
-        this->Gauge->SetValue(100**progress);
+        this->GradientDialog->UpdateProgress(*progress);
     }
     else if (eid==vtkCommand::VolumeMapperRenderProgressEvent&&this->currentStage==1)
     {

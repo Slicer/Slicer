@@ -12,7 +12,7 @@
 #include "vtkImageShiftScale.h"
 #include "vtkKWVolumeMaterialPropertyWidget.h"
 #include "vtkKWProgressGauge.h"
-#include "vtkKWMessageDialog.h"
+#include "vtkKWProgressDialog.h"
 vtkCxxRevisionMacro(vtkSlicerVRLabelmapHelper, "$Revision: 1.46 $");
 vtkStandardNewMacro(vtkSlicerVRLabelmapHelper);
 vtkSlicerVRLabelmapHelper::vtkSlicerVRLabelmapHelper(void)
@@ -274,31 +274,16 @@ void vtkSlicerVRLabelmapHelper::ProcessVolumeRenderingEvents(vtkObject *caller,u
     }
     if(callerMapper==this->MapperRaycast&&eid==vtkCommand::VolumeMapperComputeGradientsStartEvent)
     {
-        this->GradientDialog = vtkKWTopLevel::New();
+        this->GradientDialog = vtkKWProgressDialog::New();
         this->GradientDialog->SetParent (  this->Gui->GetApplicationGUI()->GetMainSlicerWindow());
         this->GradientDialog->SetDisplayPositionToMasterWindowCenter();
         this->GradientDialog->Create ( );
-
-        vtkKWLabel *label=vtkKWLabel::New();
-        label->SetParent(this->GradientDialog);
-        label->Create();
-        label->SetText("Please standby: Gradients for shading are calculated");
-        this->Script("pack %s ",label->GetWidgetName());
-        label->Delete();
-
-        this->Gauge=vtkKWProgressGauge::New();
-        this->Gauge->SetParent(this->GradientDialog);
-        this->Gauge->Create();
-        this->Script("pack %s",this->Gauge->GetWidgetName());
+        this->GradientDialog->SetMessageText("Standby: Gradients are calculated");
         this->GradientDialog->Display();
-        this->GetApplication()->ProcessPendingEvents();
         return;
     }
     if(callerMapper==this->MapperRaycast&&eid==vtkCommand::VolumeMapperComputeGradientsEndEvent)
     {
-        this->Gauge->SetParent(NULL);
-        this->Gauge->Delete();
-        this->Gauge=NULL;
         this->GradientDialog->Withdraw();
         this->GradientDialog->SetParent(NULL);
         this->GradientDialog->Delete();
@@ -309,7 +294,7 @@ void vtkSlicerVRLabelmapHelper::ProcessVolumeRenderingEvents(vtkObject *caller,u
     if(eid==vtkCommand::VolumeMapperComputeGradientsProgressEvent)
     {
         float *progress=(float*)callData;
-        this->Gauge->SetValue(100**progress);
+        this->GradientDialog->UpdateProgress(*progress);
         return;
     }
     vtkSlicerLabelMapWidget *callerLabelmapWidget=vtkSlicerLabelMapWidget::SafeDownCast(caller);
