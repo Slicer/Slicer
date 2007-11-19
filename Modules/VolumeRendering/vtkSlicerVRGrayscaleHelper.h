@@ -14,6 +14,7 @@ class vtkSlicerVolumeTextureMapper3D;
 class vtkTimerLog;
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkKWMenuButtonWithSpinButtonsWithLabel;
+class vtkKWScaleWithLabel;
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
@@ -53,6 +54,7 @@ protected:
 
     //GUI1
     vtkKWMenuButtonWithSpinButtonsWithLabel *MB_Quality;
+    vtkKWScaleWithLabel *SC_Framerate;
 
 
     //Render logic

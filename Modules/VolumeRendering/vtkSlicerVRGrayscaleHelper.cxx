@@ -18,6 +18,8 @@
 #include "vtkKWEvent.h"
 #include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
 #include "vtkKWProgressDialog.h"
+#include "vtkKWScale.h"
+#include "vtkKWScaleWithLabel.h"
 #include <math.h>
 
 
@@ -45,13 +47,14 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->LastTimeLowRes=0;
     this->LastTimeHighRes=0;
     this->GoalLowResTime=0.05;
-    this->PercentageNoChange=0.6;
+    this->PercentageNoChange=0.4;
     this->TimeToWaitForHigherStage=0.1;
     this->NextRenderHighResolution=0;
     this->IgnoreStepZero=0;
     this->Quality=0;
     this->StageZeroEventHandlerID="";
     this->ButtonDown=0;
+    this->SC_Framerate=NULL;
 
 }
 
@@ -150,6 +153,13 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->MB_Quality->Delete();
         this->MB_Quality=NULL;
     }
+    if(this->SC_Framerate!=NULL)
+    {
+        this->SC_Framerate->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_Framerate->SetParent(NULL);
+        this->SC_Framerate->Delete();
+        this->SC_Framerate=NULL;
+    }
 }
 void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
@@ -195,6 +205,21 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SelectItem(0);
 
     this->Gui->GetApplicationGUI()->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->MB_Quality->GetWidgetName());
+
+
+    //Framerate
+    this->SC_Framerate=vtkKWScaleWithLabel::New();
+    this->SC_Framerate->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+    this->SC_Framerate->Create();
+    this->SC_Framerate->SetLabelText("FPS (Low Resolution):");
+    this->SC_Framerate->GetWidget()->SetRange(1,20);
+    this->SC_Framerate->GetWidget()->SetResolution(1);
+    this->SC_Framerate->GetWidget()->SetValue(1./this->GoalLowResTime);
+    this->SC_Framerate->SetBalloonHelpString("set frames per sec for lowest resolution rendering");
+    this->SC_Framerate->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 this->SC_Framerate->GetWidgetName() );
+
     ((vtkSlicerApplication *)this->Gui->GetApplication())->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
 
 }
@@ -338,10 +363,18 @@ void vtkSlicerVRGrayscaleHelper::ShutdownPipeline(void)
 
 void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData)
 {
+    vtkKWScale *callerObjectSC=vtkKWScale::SafeDownCast(caller);
+    if(callerObjectSC==this->SC_Framerate->GetWidget()&&eid==vtkKWScale::ScaleValueChangedEvent)
+    {
+        this->GoalLowResTime=1./callerObjectSC->GetValue();
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
+        return;
+    }
     vtkSlicerVolumePropertyWidget *callerObjectSVP=vtkSlicerVolumePropertyWidget::SafeDownCast(caller);
     if(callerObjectSVP==this->SVP_VolumeProperty&&eid==vtkKWEvent::VolumePropertyChangingEvent)
     {
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
+        return;
     }
 
     //TODO not the right place for this
@@ -656,6 +689,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         actor->Delete();
         atext->Delete();
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
+        return;
 
     }
     //Check if caller equals mapper
@@ -687,11 +721,13 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     {
         float *progress=(float*)callData;
         this->GradientDialog->UpdateProgress(*progress);
+        return;
     }
     else if (eid==vtkCommand::VolumeMapperRenderProgressEvent&&this->currentStage==1)
     {
         double *progress=(double*)callData;
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100**progress);
+        return;
     }
     else if (eid==vtkCommand::ProgressEvent)
     {
@@ -701,7 +737,9 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             return;
         }
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,100**progress);
+        return;
     }
+    vtkDebugMacro("observed event but didn't process it");
 }
 
 void vtkSlicerVRGrayscaleHelper::ScheduleRender(void)
