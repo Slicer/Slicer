@@ -1,5 +1,11 @@
 PROJECT( CLI )
 
+#
+
+IF(BUILD_TESTING)
+  SUBDIRS(Testing)
+ENDIF(BUILD_TESTING)
+
 # 
 
 FIND_PACKAGE(GenerateCLP REQUIRED)
@@ -387,10 +393,6 @@ TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 
 #####################
 
-
-#IF (Slicer3_BUILD_TESTING)
-#  SUBDIRS( Testing )
-#ENDIF (Slicer3_BUILD_TESTING)
 
 SUBDIRS ( Realign )
 SUBDIRS( DiffusionApplications )
