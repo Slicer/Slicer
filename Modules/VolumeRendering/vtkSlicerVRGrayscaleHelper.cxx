@@ -47,7 +47,8 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->LastTimeLowRes=0;
     this->LastTimeHighRes=0;
     this->GoalLowResTime=0.05;
-    this->PercentageNoChange=0.4;
+    //.6 seems to be best
+    this->PercentageNoChange=0.6;
     this->TimeToWaitForHigherStage=0.1;
     this->NextRenderHighResolution=0;
     this->IgnoreStepZero=0;
