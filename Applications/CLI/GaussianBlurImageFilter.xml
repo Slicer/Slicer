@@ -14,6 +14,14 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 </acknowledgements>
 
   <parameters>
+    <double>
+      <name>sigma</name>
+      <longflag>sigma</longflag>
+      <flag>s</flag>
+      <label>Sigma</label>
+      <description>Sigma value in physical units (e.g., mm) of the Gaussian kernel</description>
+      <default>1.0</default>
+    </double>
     <label>IO</label>
     <description>Input/output parameters</description>
     <image>
@@ -23,13 +31,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <index>0</index>
       <description>Input volume</description>
     </image>
-    <double>
-      <name>sigma</name>
-      <label>Sigma</label>
-      <description>Sigma value in physical units (e.g., mm) of the Gaussian kernel</description>
-      <flag>s</flag>
-      <default>1.0</default>
-    </double>
     <image>
       <name>outputVolume</name>
       <label>Output Volume</label>
