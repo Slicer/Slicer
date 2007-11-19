@@ -25,19 +25,19 @@ SET(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
 SET(MRML_DATA "${Slicer3_SOURCE_DIR}/Libs/MRML/Testing/TestData")
 
 # OrientImage tests
-ADD_TEST(OrientImageTest1 ${SLICER_EXE} --launch OrientImageTest
+ADD_TEST(OrientImageTest1 ${SLICER_EXE} --launch ${EXECUTABLE_OUTPUT_PATH}/OrientImageTest
   --compare ${BASELINE}/OrientImageTestAxial.nrrd
             ${TEMP}/OrientImageTestAxial.nrrd
   OrientImageTest
            --orientation Axial ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestAxial.nrrd
 )
-ADD_TEST(OrientImageTest2 ${SLICER_EXE} --launch OrientImageTest
+ADD_TEST(OrientImageTest2 ${SLICER_EXE} --launch ${EXECUTABLE_OUTPUT_PATH}/OrientImageTest
   --compare ${BASELINE}/OrientImageTestCoronal.nrrd
             ${TEMP}/OrientImageTestCoronal.nrrd
   OrientImageTest
            --orientation Coronal ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestCoronal.nrrd
 )
-ADD_TEST(OrientImageTest3 ${SLICER_EXE} --launch OrientImageTest
+ADD_TEST(OrientImageTest3 ${SLICER_EXE} --launch ${EXECUTABLE_OUTPUT_PATH}/OrientImageTest
   --compare ${BASELINE}/OrientImageTestSagittal.nrrd
             ${TEMP}/OrientImageTestSagittal.nrrd
   OrientImageTest
@@ -48,7 +48,7 @@ ADD_EXECUTABLE(OrientImageTest OrientImageTest.cxx)
 TARGET_LINK_LIBRARIES(OrientImageTest ITKIO)
 
 # Median tests
-ADD_TEST(MedianImageFilterTest ${SLICER_EXE} --launch MedianImageFilterTest
+ADD_TEST(MedianImageFilterTest ${SLICER_EXE} --launch ${EXECUTABLE_OUTPUT_PATH}/MedianImageFilterTest
   --compare ${BASELINE}/MedianImageFilterTest.nhdr
             ${TEMP}/MedianImageFilterTest.nhdr
   MedianImageFilterTest
@@ -59,7 +59,7 @@ ADD_EXECUTABLE(MedianImageFilterTest MedianImageFilterTest.cxx)
 TARGET_LINK_LIBRARIES(MedianImageFilterTest ITKIO)
 
 # GaussianBlur tests
-ADD_TEST(GaussianBlurImageFilterTest ${SLICER_EXE} --launch GaussianBlurImageFilterTest
+ADD_TEST(GaussianBlurImageFilterTest ${SLICER_EXE} --launch ${EXECUTABLE_OUTPUT_PATH}/GaussianBlurImageFilterTest
   --compare ${BASELINE}/GaussianBlurImageFilterTest.nhdr
             ${TEMP}/GaussianBlurImageFilterTest.nhdr
   GaussianBlurImageFilterTest
