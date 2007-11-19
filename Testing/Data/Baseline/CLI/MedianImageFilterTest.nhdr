@@ -1,0 +1,13 @@
+NRRD0004
+# Complete NRRD file format specification at:
+# http://teem.sourceforge.net/nrrd/format.html
+type: short
+dimension: 3
+space: left-posterior-superior
+sizes: 64 64 93
+space directions: (3.2,0,0) (0,3.2,0) (0,0,1.5)
+kinds: domain domain domain
+endian: little
+encoding: raw
+space origin: (0,0,0)
+data file: MedianImageFilterTest.raw
