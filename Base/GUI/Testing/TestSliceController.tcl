@@ -28,6 +28,6 @@ t Delete
 w Delete
 scene Delete
 
-app Exit
 app Delete
 
+exit 0
