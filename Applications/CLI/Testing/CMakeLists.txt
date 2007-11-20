@@ -3,6 +3,8 @@
 #
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 
+FIND_PACKAGE(GenerateCLP REQUIRED)
+
 INCLUDE_DIRECTORIES(${Slicer3_SOURCE_DIR}/Applications/CLI)
 INCLUDE_DIRECTORIES(${Slicer3_BINARY_DIR}/Applications/CLI)
 INCLUDE_DIRECTORIES(${Slicer3_SOURCE_DIR}/Libs/ModuleDescriptionParser)
@@ -44,8 +46,11 @@ ADD_TEST(OrientImageTest3 ${SLICER_EXE} --launch OrientImageTest
            --orientation Sagittal ${MRML_DATA}/fixed.nrrd ${TEMP}/OrientImageTestSagittal.nrrd
 )
 
-ADD_EXECUTABLE(OrientImageTest OrientImageTest.cxx)
-TARGET_LINK_LIBRARIES(OrientImageTest ITKIO)
+SET (CLP OrientImage)
+ADD_EXECUTABLE(${CLP}Test ${CLP}Test.cxx)
+ADD_DEPENDENCIES(${CLP}Test ${CLP}Lib)
+ADD_DEPENDENCIES(${CLP}Test ${CLP})
+TARGET_LINK_LIBRARIES(${CLP}Test ITKIO)
 
 # Median tests
 ADD_TEST(MedianImageFilterTest ${SLICER_EXE} --launch MedianImageFilterTest
@@ -55,8 +60,11 @@ ADD_TEST(MedianImageFilterTest ${SLICER_EXE} --launch MedianImageFilterTest
            --neighborhood 1,2,3 ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/MedianImageFilterTest.nhdr
 )
 
-ADD_EXECUTABLE(MedianImageFilterTest MedianImageFilterTest.cxx)
-TARGET_LINK_LIBRARIES(MedianImageFilterTest ITKIO)
+SET (CLP MedianImageFilter)
+ADD_EXECUTABLE(${CLP}Test ${CLP}Test.cxx)
+ADD_DEPENDENCIES(${CLP}Test ${CLP}Lib)
+ADD_DEPENDENCIES(${CLP}Test ${CLP})
+TARGET_LINK_LIBRARIES(${CLP}Test ITKIO)
 
 # GaussianBlur tests
 ADD_TEST(GaussianBlurImageFilterTest ${SLICER_EXE} --launch GaussianBlurImageFilterTest
@@ -65,6 +73,8 @@ ADD_TEST(GaussianBlurImageFilterTest ${SLICER_EXE} --launch GaussianBlurImageFil
   GaussianBlurImageFilterTest
       --sigma 2.5 ${TEST_DATA}/CTHeadAxial.nhdr ${TEMP}/GaussianBlurImageFilterTest.nhdr
 )
-
-ADD_EXECUTABLE(GaussianBlurImageFilterTest GaussianBlurImageFilterTest.cxx)
-TARGET_LINK_LIBRARIES(GaussianBlurImageFilterTest ITKIO)
+SET (CLP GaussianBlurImageFilter)
+ADD_EXECUTABLE(${CLP}Test ${CLP}Test.cxx)
+ADD_DEPENDENCIES(${CLP}Test ${CLP}Lib)
+ADD_DEPENDENCIES(${CLP}Test ${CLP})
+TARGET_LINK_LIBRARIES(${CLP}Test ITKIO)
