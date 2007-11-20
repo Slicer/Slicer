@@ -45,7 +45,11 @@ protected:
     // Use ->Delete() to delete object
     ~vtkSlicerLabelmapTree(void);
 
-
+    //BTX
+    //Description:
+    //What was the RecentColorNodeID, (do we have to change colors and labels and range?!)
+    std::string RecentColorNodeID;
+    //ETX
     int StepSize;
     int InChangeOpacityAll;
     vtkMRMLVolumeRenderingNode *VolumeRenderingNode;

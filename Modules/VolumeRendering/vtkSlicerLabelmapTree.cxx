@@ -23,7 +23,7 @@ vtkSlicerLabelmapTree::vtkSlicerLabelmapTree(void)
     this->ScalarVolumeNode=NULL;
     this->StepSize=20;
     //this->NumberOfSteps=6;
-    std::vector<vtkSlicerLabelmapElement*> Elements;
+    this->RecentColorNodeID="";
 }
 
 vtkSlicerLabelmapTree::~vtkSlicerLabelmapTree(void)
@@ -49,7 +49,7 @@ void vtkSlicerLabelmapTree::CreateWidget(void)
 void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkMRMLVolumeRenderingNode *vrnode)
 {
     vtkLabelMapPiecewiseFunction *piecewiseFunction=NULL;
-    if(this->ScalarVolumeNode!=NULL)
+    if(this->ScalarVolumeNode!=NULL&&!strcmp(this->RecentColorNodeID.c_str(),this->ScalarVolumeNode->GetVolumeDisplayNode()->GetColorNode()->GetID()))
     {
         vtkErrorMacro("Init already called, use UpdateGUIElementsInstead");
         return;
@@ -115,6 +115,9 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkMRMLVolumeRend
         }
 
     }
+    //Take care about recent id
+    this->RecentColorNodeID=this->ScalarVolumeNode->GetVolumeDisplayNode()->GetColorNode()->GetID();
+
     timer->StopTimer();
     vtkDebugMacro("Elapsed time:"<<timer->GetElapsedTime());
     vtkDebugMacro("NumberOfElements:"<<counter);
@@ -138,6 +141,8 @@ void vtkSlicerLabelmapTree::ProcessBaseTreeEvents(vtkObject *caller, unsigned lo
         {
             this->InvokeEvent(vtkSlicerLabelmapTree::SingleLabelEdited);
         }
+        //Now change color and label if we have a new colornode
+        this->RecentColorNodeID=this->ScalarVolumeNode->GetVolumeDisplayNode()->GetColorNode()->GetID();
     }
     else
     {
@@ -165,8 +170,8 @@ void vtkSlicerLabelmapTree::ChangeAllOpacities(int stage)
     this->InChangeOpacityAll=1;
     for(unsigned int i=0;i<this->Elements.size();i++)
     {               int id=this->Elements[i]->GetId();
-        piecewiseFunction->EditLabel(id,stage/(double)this->StepSize);
-        this->Elements[i]->ChangeOpacity(stage);
+    piecewiseFunction->EditLabel(id,stage/(double)this->StepSize);
+    this->Elements[i]->ChangeOpacity(stage);
 
     }
     this->InChangeOpacityAll=0;
@@ -180,6 +185,24 @@ void vtkSlicerLabelmapTree::UpdateGuiElements(void)
         this->VolumeRenderingNode->GetVolumeProperty()!=NULL&&
         this->VolumeRenderingNode->GetVolumeProperty()->GetScalarOpacity()!=NULL)
     {
+
+        //First of all check if we have to redraw:
+        if(strcmp(this->RecentColorNodeID.c_str(),this->ScalarVolumeNode->GetVolumeDisplayNode()->GetColorNode()->GetID())!=0)
+        {
+            //Delete old stuff
+            for(unsigned int i=0;i<this->Elements.size();i++)
+            {
+                this->Elements[i]->RemoveObservers(vtkCommand::AnyEvent);
+
+                this->Elements[i]->Delete();
+                this->Elements[i]=NULL;
+            }
+            this->Elements.clear();
+            this->GetWidget()->DeleteAllNodes();
+            this->Init(this->ScalarVolumeNode,this->VolumeRenderingNode);
+            this->RecentColorNodeID=this->ScalarVolumeNode->GetVolumeDisplayNode()->GetColorNode()->GetID();
+        }
+
         piecewiseFunction=vtkLabelMapPiecewiseFunction::SafeDownCast(this->VolumeRenderingNode->GetVolumeProperty()->GetScalarOpacity());
 
         for(unsigned int i=0; i<this->Elements.size();i++)
@@ -188,6 +211,7 @@ void vtkSlicerLabelmapTree::UpdateGuiElements(void)
             int opacityLevel=piecewiseFunction->GetLabel(id)*this->StepSize;
             this->Elements[i]->ChangeOpacity(opacityLevel);
         }
+
     }
     else
     {

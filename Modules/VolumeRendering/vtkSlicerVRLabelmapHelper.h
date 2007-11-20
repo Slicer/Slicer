@@ -32,6 +32,7 @@ protected:
     float OldSampleDistance;
     //BTX
     std::string ScheduledRenderID;
+    std::string RecentColorNodeID;
     //ETX
     vtkSlicerVRLabelmapHelper(void);
     ~vtkSlicerVRLabelmapHelper(void);

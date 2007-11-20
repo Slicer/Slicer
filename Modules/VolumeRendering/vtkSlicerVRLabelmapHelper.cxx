@@ -46,6 +46,7 @@ vtkSlicerVRLabelmapHelper::~vtkSlicerVRLabelmapHelper(void)
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+    this->LM_OptionTree->GetNode()->RemoveObservers(vtkCommand::ModifiedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
    
     //Delete everything
     if(this->LM_OptionTree)
@@ -93,6 +94,8 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
         this->MapperRaycast->SetAutoAdjustSampleDistances(1);
         this->MapperRaycast->SetSampleDistance(.1);
     }
+    //Test for colornode
+    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetVolumeDisplayNode()->AddObserver(vtkCommand::ModifiedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
 
     this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
@@ -168,11 +171,14 @@ void vtkSlicerVRLabelmapHelper::InitializePipelineNewCurrentNode()
     {
         vtkLabelMapPiecewiseFunction *opacityNew=vtkLabelMapPiecewiseFunction::New();
         opacityNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()),.1,0);
+        
         this->Gui->GetcurrentNode()->GetVolumeProperty()->SetScalarOpacity(opacityNew);
         this->Gui->GetcurrentNode()->SetIsLabelMap(1);
         vtkLabelMapColorTransferFunction *colorNew=vtkLabelMapColorTransferFunction::New();
         colorNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()));
         this->Gui->GetcurrentNode()->GetVolumeProperty()->SetColor(colorNew);
+
+        this->RecentColorNodeID=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetVolumeDisplayNode()->GetColorNode()->GetID();
         //Check if we already made an init only update (performance)
         if(this->LM_OptionTree->GetNode()==vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()))
         {
@@ -254,6 +260,7 @@ void vtkSlicerVRLabelmapHelper::ProcessVolumeRenderingEvents(vtkObject *caller,u
         {
             this->CurrentStage=0;
         }
+        return;
     }
     vtkSlicerFixedPointVolumeRayCastMapper *callerMapper=vtkSlicerFixedPointVolumeRayCastMapper::SafeDownCast(caller);
     if (callerMapper==this->MapperRaycast&&eid==vtkCommand::ProgressEvent)
@@ -302,7 +309,15 @@ void vtkSlicerVRLabelmapHelper::ProcessVolumeRenderingEvents(vtkObject *caller,u
     {
 
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+        return;
     }
+    vtkMRMLVolumeDisplayNode *callerVolumeDisplay=vtkMRMLVolumeDisplayNode::SafeDownCast(caller);
+    if(callerVolumeDisplay==vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetVolumeDisplayNode()&&eid==vtkCommand::ModifiedEvent)
+    {
+        this->UpdateGUIElements();
+        return;
+    }
+    vtkDebugMacro("GotEventButDontUseIT");
 
 }
 
@@ -339,6 +354,17 @@ void vtkSlicerVRLabelmapHelper::ScheduleRender(int stage)
 }
 void vtkSlicerVRLabelmapHelper::UpdateGUIElements(void)
 {
+
+    //Check if the colorTable has changed:+
+     if(strcmp(this->RecentColorNodeID.c_str(),vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetVolumeDisplayNode()->GetColorNode()->GetID())!=0)
+     {
+        vtkLabelMapColorTransferFunction *colorNew=vtkLabelMapColorTransferFunction::New();
+        colorNew->Init(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected()));
+        this->Gui->GetcurrentNode()->GetVolumeProperty()->SetColor(colorNew);
+        colorNew->Delete();
+        this->RecentColorNodeID=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetVolumeDisplayNode()->GetColorNode()->GetID();
+     }
+  
     //We have to init
     if(vtkLabelMapColorTransferFunction::SafeDownCast(this->Gui->GetcurrentNode()->GetVolumeProperty()->GetRGBTransferFunction())==NULL)
     {
@@ -355,7 +381,7 @@ void vtkSlicerVRLabelmapHelper::UpdateGUIElements(void)
     }
     else
     {
-        this->LM_OptionTree->UpdateVolumeRenderingNode(this->Gui->GetcurrentNode());
+    this->LM_OptionTree->UpdateVolumeRenderingNode(this->Gui->GetcurrentNode());
     this->LM_OptionTree->UpdateGuiElements();
     }
     
