@@ -3,6 +3,7 @@
 #include "vtkSlicerBaseTree.h"
 #include "vtkVolumeRenderingModule.h"
 #include <vector>
+#include <string>
 
 class vtkSlicerLabelmapElement;
 class vtkMRMLScalarVolumeNode;
