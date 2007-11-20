@@ -298,15 +298,14 @@ proc launch_SplashScreen {} {
 
   if { $::LAUNCH(showSplash) } {
 
-    # mac os 10.5 now has a /tmp/lanch-xxxx:0 syntax for the DISPLAY
-    # variable which is not compatible with the tclkit - change to :0 sytle
-    if { [string match -nocase "Darwin" $::tcl_platform(os)] &&
-        [string index $::env(DISPLAY) 0] == "/" } {
-      set colon [string last ":" $::env(DISPLAY)]
-      set ::env(DISPLAY) [string range $::env(DISPLAY) $colon end]
+    if { [catch "package require Tk"] } {
+      # if we can't open Tk, there's 
+      puts "\nWarning: cannot open DISPLAY.  This is likely to be an X Server issue."
+      puts "Slicer will attempt to launch, but may fail.\n"
+      set $::LAUNCH(showSplash) 0
+      return
     }
 
-    package require Tk
     wm withdraw .
     launch_SplashShow
   }
