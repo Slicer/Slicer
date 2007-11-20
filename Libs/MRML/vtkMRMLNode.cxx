@@ -104,6 +104,7 @@ vtkMRMLNode::~vtkMRMLNode()
   // unregister and set null pointers.
   if ( this->MRMLCallbackCommand )
     {
+    this->MRMLCallbackCommand->SetClientData( NULL );
     this->MRMLCallbackCommand->Delete ( );
     this->MRMLCallbackCommand = NULL;
     }
@@ -267,6 +268,13 @@ void vtkMRMLNode::MRMLCallback(vtkObject *caller,
                                void *callData)
 {
   vtkMRMLNode *self = reinterpret_cast<vtkMRMLNode *>(clientData);
+
+  if ( self == NULL )
+    {
+    vtkDebugWithObjectMacro(self, "In vtkMRMLNode *********MRMLCallback called after delete!");
+    return;
+    }
+
 
   if (self->GetInMRMLCallbackFlag())
     {
