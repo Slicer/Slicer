@@ -242,6 +242,11 @@ void vtkMRMLColorTableNode::PrintSelf(ostream& os, vtkIndent indent)
     for (unsigned int i = 0; (int)i < this->Names.size(); i++)
       {
       os << indent << indent << i << " " << this->GetColorName(i) << endl;
+      if ( i > 10 )
+        {
+        os << indent << indent << "..." << endl;
+        break;
+        }
       }
     }
 }
