@@ -263,6 +263,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Control the state of the splash screen
   void SplashMessage (const char * message);
 
+  // Description:
+  // Entry point to the interpreter that can be used 
+  // by an external application tro trigger
+  // performance analysis
+  const char *TraceScript (const char * script) {return (this->Script(script));};
 
  protected:
   vtkSlicerApplication ( );

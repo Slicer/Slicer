@@ -165,7 +165,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 
                                   void * /*callData*/ );
-   virtual void ProcessMRMLEvents () { this->ProcessMRMLEvents( NULL, vtkCommand::NoEvent, NULL ); };
+  virtual void ProcessMRMLEvents () { this->ProcessMRMLEvents( NULL, vtkCommand::NoEvent, NULL ); };
 
   // Description:
   // Create a thread for processing
@@ -241,6 +241,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
 
   void ClearCollections ( );
 
+
+  // Description:
+  // These routings act as place holders so that test scripts can
+  // turn on and off tracing.  These are just hooks
+  // for use with external tracing tool (such as AQTime)
+  void SetTracingOn () { this->Tracing = 1; };
+  void SetTracingOff () { this->Tracing = 0; };
+
 protected:
 
   vtkSlicerApplicationLogic();
@@ -308,7 +316,8 @@ private:
   
   // Transient Application State
   
-
+  // For use with external tracing tool (such as AQTime)
+  int Tracing;
 };
 
 #endif
