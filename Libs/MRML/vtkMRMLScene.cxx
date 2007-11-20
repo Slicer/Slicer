@@ -1080,6 +1080,8 @@ void vtkMRMLScene::InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *n)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
 {
+  this->Superclass::PrintSelf(os,indent);
+
   this->CurrentScene->vtkCollection::PrintSelf(os,indent);
   std::list<std::string> classes = this->GetNodeClassesList();
 
