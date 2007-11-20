@@ -1,11 +1,5 @@
 PROJECT( CLI )
 
-#
-
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
-
 # 
 
 FIND_PACKAGE(GenerateCLP REQUIRED)
@@ -458,3 +452,9 @@ IF (Slicer3_SOURCE_DIR)
   INSTALL(FILES itkPluginFilterWatcher.h vtkPluginFilterWatcher.h itkPluginUtilities.h DESTINATION include/Slicer3 COMPONENT Development)
 
 ENDIF (Slicer3_SOURCE_DIR)
+
+#
+
+IF(BUILD_TESTING)
+  SUBDIRS(Testing)
+ENDIF(BUILD_TESTING)
