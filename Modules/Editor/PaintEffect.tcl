@@ -5,7 +5,7 @@ package require Itcl
 #
 if {0} { ;# comment
 
-  PaintSWidget a class for slicer painting
+  PaintEffect a class for slicer painting
 
 
 # TODO : 
@@ -17,27 +17,22 @@ if {0} { ;# comment
 #
 #########################################################
 # ------------------------------------------------------------------
-#                             PaintSWidget
+#                             PaintEffect
 # ------------------------------------------------------------------
 #
 # The class definition - define if needed (not when re-sourcing)
 #
-if { [itcl::find class PaintSWidget] == "" } {
+if { [itcl::find class PaintEffect] == "" } {
 
-  itcl::class PaintSWidget {
+  itcl::class PaintEffect {
 
-    inherit SWidget
+    inherit Labeler
 
-    constructor {args} {}
+    constructor {sliceGUI} {Labeler::constructor $sliceGUI} {}
     destructor {}
 
-    public variable paintColor 1
-    public variable thresholdPaint 0
-    public variable thresholdMin 1
-    public variable thresholdMax 1
     public variable radius 10
-    public variable paintDropper 0
-    public variable paintOver 1
+    public variable smudge 0
     public variable delayedPaint 1
 
     variable _startPosition "0 0 0"
@@ -47,6 +42,12 @@ if { [itcl::find class PaintSWidget] == "" } {
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
+    method buildOptions {} {}
+    method tearDownOptions {} {}
+    method setMRMLDefaults {} {}
+    method updateMRMLFromGUI {} {}
+    method updateGUIFromMRML {} {}
+
     method positionActors {} {}
     method highlight {} {}
     method createGlyph { {polyData ""} } {}
@@ -60,7 +61,8 @@ if { [itcl::find class PaintSWidget] == "" } {
 # ------------------------------------------------------------------
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
-itcl::body PaintSWidget::constructor {sliceGUI} {
+
+itcl::body PaintEffect::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
  
@@ -73,6 +75,8 @@ itcl::body PaintSWidget::constructor {sliceGUI} {
   $o(actor) VisibilityOff
   [$_renderWidget GetRenderer] AddActor2D $o(actor)
   lappend _actors $o(actor)
+
+puts [parray o]
 
   set _startPosition "0 0 0"
   set _currentPosition "0 0 0"
@@ -88,7 +92,7 @@ itcl::body PaintSWidget::constructor {sliceGUI} {
   lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent"]
 }
 
-itcl::body PaintSWidget::destructor {} {
+itcl::body PaintEffect::destructor {} {
 
   if { [info command $sliceGUI] != "" } {
     foreach tag $_guiObserverTags {
@@ -109,7 +113,7 @@ itcl::body PaintSWidget::destructor {} {
   }
 }
 
-itcl::configbody PaintSWidget::radius {
+itcl::configbody PaintEffect::radius {
   $this createGlyph $o(brush)
 }
 
@@ -117,7 +121,7 @@ itcl::configbody PaintSWidget::radius {
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body PaintSWidget::createGlyph { {polyData ""} } {
+itcl::body PaintEffect::createGlyph { {polyData ""} } {
   # make a circle paint brush
   if { $polyData == "" } {
     set polyData [vtkNew vtkPolyData]
@@ -161,13 +165,13 @@ itcl::body PaintSWidget::createGlyph { {polyData ""} } {
   return $polyData
 }
 
-itcl::body PaintSWidget::positionActors { } {
+itcl::body PaintEffect::positionActors { } {
 
   set xyzw [$this rasToXY $_currentPosition]
   eval $o(actor) SetPosition [lrange $xyzw 0 1]
 }
 
-itcl::body PaintSWidget::highlight { } {
+itcl::body PaintEffect::highlight { } {
 
   set property [$o(actor) GetProperty]
   $property SetColor 1 1 0
@@ -189,7 +193,7 @@ itcl::body PaintSWidget::highlight { } {
   }
 }
 
-itcl::body PaintSWidget::processEvent { {caller ""} {event ""} } {
+itcl::body PaintEffect::processEvent { {caller ""} {event ""} } {
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
@@ -259,7 +263,129 @@ itcl::body PaintSWidget::processEvent { {caller ""} {event ""} } {
   [$sliceGUI GetSliceViewer] RequestRender
 }
 
-itcl::body PaintSWidget::paintFeedback {} {
+  
+itcl::body PaintEffect::buildOptions {} {
+
+  # call superclass version of buildOptions
+  chain
+
+  #
+  # a radius control
+  #
+  set o(radius) [vtkNew vtkKWThumbWheel]
+  $o(radius) SetParent [$this getOptionsFrame]
+  $o(radius) PopupModeOn
+  $o(radius) Create
+  $o(radius) DisplayEntryAndLabelOnTopOn
+  $o(radius) DisplayEntryOn
+  $o(radius) DisplayLabelOn
+  $o(radius) SetValue 10
+  [$o(radius) GetLabel] SetText "Radius: "
+  $o(radius) SetBalloonHelpString "Set the radius of the paint brush in screen space pixels"
+  pack [$o(radius) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 
+
+  set o(smudge) [vtkKWCheckButtonWithLabel New]
+  $o(smudge) SetParent [$this getOptionsFrame]
+  $o(smudge) Create
+  $o(smudge) SetLabelText "Smudge: "
+  $o(smudge) SetBalloonHelpString "Set the label number automatically by sampling the pixel location where the brush stroke starts."
+  pack [$o(smudge) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 
+
+  #
+  # a cancel button
+  #
+  set o(cancel) [vtkNew vtkKWPushButton]
+  $o(cancel) SetParent [$this getOptionsFrame]
+  $o(cancel) Create
+  $o(cancel) SetText "Cancel"
+  $o(cancel) SetBalloonHelpString "Cancel wand without applying to label map."
+  pack [$o(cancel) GetWidgetName] \
+    -side right -anchor e -padx 2 -pady 2 
+
+  #
+  # event observers - TODO: if there were a way to make these more specific, I would...
+  #
+  set tag [$o(radius) AddObserver AnyEvent "after idle $this updateMRMLFromGUI"]
+  lappend _observerRecords "$o(percentage) $tag"
+  set tag [$o(smudge) AddObserver AnyEvent "after idle $this updateMRMLFromGUI"]
+  lappend _observerRecords "$o(percentage) $tag"
+  set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
+  lappend _observerRecords "$o(cancel) $tag"
+
+  if { [$this getInputBackground] == "" || [$this getOutputLabel] == "" } {
+    $this errorDialog "Background and Label map needed for painting"
+    after idle ::EffectSWidget::RemoveAll
+  }
+
+  $this updateGUIFromMRML
+}
+
+itcl::body PaintEffect::updateMRMLFromGUI { } {
+  #
+  # set the node to the current value of the GUI
+  # - this will be saved/restored with the scene
+  # - all instances of the effect are observing the node,
+  #   so changes will propogate automatically
+  #
+  chain
+  set node [EditorGetParameterNode]
+  $node SetParameter "Paint,radius" [[$o(smudge) GetWidget] GetValue]
+  $node SetParameter "Paint,smudge" [$o(smudge) GetSelectedState]
+}
+
+itcl::body PaintEffect::setMRMLDefaults { } {
+  chain
+  set node [EditorGetParameterNode]
+  foreach {param default} {
+    radius 10
+    smudge 0
+  } {
+    set pvalue [$node GetParameter Paint,$param] 
+    if { $pvalue == "" } {
+      $node SetParameter Paint,$param $default
+    } 
+  }
+}
+
+
+itcl::body PaintEffect::updateGUIFromMRML { } {
+  #
+  # get the parameter from the node
+  # - set default value if it doesn't exist
+  #
+  chain
+
+  set node [EditorGetParameterNode]
+  # set the GUI and effect parameters to match node
+  # (only if this is the instance that "owns" the GUI
+  set radius [$node GetParameter Paint,radius] 
+  $this configure -radius $percentage
+  if { [info exists o(radius)] } {
+    [$o(radius) GetWidget] SetValue $radius
+  }
+  set smudge [$node GetParameter Paint,smudge] 
+  $this configure -smudge $smudge
+  if { [info exists o(smudge)] } {
+    $o(smudge) SetSelectedState $smudge
+  }
+  $this preview
+}
+
+itcl::body PaintEffect::tearDownOptions { } {
+
+  # call superclass version of tearDownOptions
+  chain
+
+  foreach w "percentage cancel" {
+    if { [info exists o($w)] } {
+      $o($w) SetParent ""
+      pack forget [$o($w) GetWidgetName] 
+    }
+  }
+}
+itcl::body PaintEffect::paintFeedback {} {
 
   set renderer [$_renderWidget GetRenderer]
 
@@ -281,7 +407,7 @@ itcl::body PaintSWidget::paintFeedback {} {
   }
 }
 
-itcl::body PaintSWidget::paintAddPoint {x y} {
+itcl::body PaintEffect::paintAddPoint {x y} {
 
   lappend _paintCoordinates "$x $y"
   if { $delayedPaint } {
@@ -292,7 +418,7 @@ itcl::body PaintSWidget::paintAddPoint {x y} {
   }
 }
 
-itcl::body PaintSWidget::paintApply {} {
+itcl::body PaintEffect::paintApply {} {
 
   foreach xy $_paintCoordinates {
     eval $this paintBrush $xy
@@ -305,7 +431,7 @@ itcl::body PaintSWidget::paintApply {} {
 ## Note: there is a pure-tcl implementation of the painting
 ##  in the subversion history - it is slower (of course) but
 ##  useful for debugging (and was remarkably terse)
-itcl::body PaintSWidget::paintBrush {x y} {
+itcl::body PaintEffect::paintBrush {x y} {
 
   #
   # paint with a brush that is circular in XY space 
@@ -416,31 +542,31 @@ itcl::body PaintSWidget::paintBrush {x y} {
   return
 }
 
-proc PaintSWidget::AddPaint {} {
+proc PaintEffect::AddPaint {} {
   foreach sw [itcl::find objects -class SliceSWidget] {
     set sliceGUI [$sw cget -sliceGUI]
     if { [info command $sliceGUI] != "" } {
-      PaintSWidget #auto [$sw cget -sliceGUI]
+      PaintEffect #auto [$sw cget -sliceGUI]
     }
   }
 }
 
-proc PaintSWidget::RemovePaint {} {
-  foreach pw [itcl::find objects -class PaintSWidget] {
+proc PaintEffect::RemovePaint {} {
+  foreach pw [itcl::find objects -class PaintEffect] {
     itcl::delete object $pw
   }
 }
 
-proc PaintSWidget::TogglePaint {} {
-  if { [itcl::find objects -class PaintSWidget] == "" } {
-    PaintSWidget::AddPaint
+proc PaintEffect::TogglePaint {} {
+  if { [itcl::find objects -class PaintEffect] == "" } {
+    PaintEffect::AddPaint
   } else {
-    PaintSWidget::RemovePaint
+    PaintEffect::RemovePaint
   }
 }
 
-proc PaintSWidget::ConfigureAll { args } {
-  foreach pw [itcl::find objects -class PaintSWidget] {
+proc PaintEffect::ConfigureAll { args } {
+  foreach pw [itcl::find objects -class PaintEffect] {
     eval $pw configure $args
   }
 }

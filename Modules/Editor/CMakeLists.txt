@@ -23,7 +23,7 @@ SET(TCLFILES
   pkgIndex.tcl
   Editor.tcl EditorNode.tcl EditorLogic.tcl EditorGUI.tcl
   Box.tcl EditBox.tcl EditColor.tcl ColorBox.tcl
-  PaintSWidget.tcl DrawSWidget.tcl
+  PaintEffect.tcl DrawEffect.tcl
   EffectSWidget.tcl Labeler.tcl
   SaveIslandEffect.tcl ThresholdEffect.tcl RemoveIslandsEffect.tcl
   LevelTracingEffect.tcl
@@ -57,7 +57,7 @@ EraseLabel.png EraseLabelDisabled.png EraseLabelSelected.png
 ErodeLabel.png ErodeLabelDisabled.png ErodeLabelSelected.png
 FiducialVisibilityOff.png FiducialVisibilityOffDisabled.png FiducialVisibilityOffSelected.png
 FiducialVisibilityOn.png FiducialVisibilityOnDisabled.png FiducialVisibilityOnSelected.png
-FreehandDrawLabel.png FreehandDrawLabelDisabled.png FreehandDrawLabelSelected.png
+Draw.png DrawDisabled.png DrawSelected.png
 GoToEditorModule.png GoToEditorModuleDisabled.png GoToEditorModuleSelected.png
 IdentifyIslands.png IdentifyIslandsDisabled.png IdentifyIslandsSelected.png
 ImplicitCube.png ImplicitCubeDisabled.png ImplicitCubeSelected.png
@@ -69,7 +69,7 @@ LabelVisibilityOn.png LabelVisibilityOnDisabled.png LabelVisibilityOnSelected.pn
 LabelVisibilityOff.png LabelVisibilityOffDisabled.png LabelVisibilityOffSelected.png
 MakeModel.png MakeModelDisabled.png MakeModelSelected.png
 NextFiducial.png NextFiducialDisabled.png NextFiducialSelected.png
-PaintLabel.png PaintLabelDisabled.png PaintLabelSelected.png
+Paint.png PaintSelected.png PaintDisabled.png
 PinOpen.png PinOpenDisabled.png PinOpenSelected.png
 PreviousFiducial.png PreviousFiducialDisabled.png PreviousFiducialSelected.png
 SaveIsland.png SaveIslandDisabled.png SaveIslandSelected.png

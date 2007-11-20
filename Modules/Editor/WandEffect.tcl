@@ -39,6 +39,7 @@ if { [itcl::find class WandEffect] == "" } {
     method apply {} {}
     method buildOptions {} {}
     method updateMRMLFromGUI {} {}
+    method setMRMLDefaults { } {}
     method updateGUIFromMRML {} {}
     method tearDownOptions {} {}
   }
@@ -250,18 +251,26 @@ itcl::body WandEffect::updateMRMLFromGUI { } {
   $node SetParameter "Wand,percentage" [$o(percentage) GetValue]
 }
 
+itcl::body WandEffect::setMRMLDefaults { } {
+  chain
+  set node [EditorGetParameterNode]
+  foreach {param default} {
+    percentage 0.1
+  } {
+    set pvalue [$node GetParameter Wand,$param] 
+    if { $pvalue == "" } {
+      $node SetParameter Wand,$param $default
+    } 
+  }
+}
+
+
 itcl::body WandEffect::updateGUIFromMRML { } {
   #
   # get the parameter from the node
   # - set default value if it doesn't exist
   #
   chain
-  set node [EditorGetParameterNode]
-  set percentage [$node GetParameter "Wand,percentage"] 
-  if { $percentage == "" } {
-    set percentage 0.1
-    $node SetParameter "Wand,percentage" $percentage
-  }
 
   # set the GUI and effect parameters to match node
   # (only if this is the instance that "owns" the GUI
