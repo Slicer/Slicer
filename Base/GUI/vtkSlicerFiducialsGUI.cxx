@@ -1133,12 +1133,9 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     
     // ---
     // LIST FRAME
-    
-    vtkSlicerModuleCollapsibleFrame *listFrame = vtkSlicerModuleCollapsibleFrame::New();
+    vtkKWFrame *listFrame = vtkKWFrame::New();
     listFrame->SetParent( page );
     listFrame->Create();
-    listFrame->SetLabelText("Fiducial List");
-    listFrame->ExpandFrame();
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   listFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Fiducials")->GetWidgetName());
 
@@ -1146,7 +1143,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     
     // add the multicolumn list to show the points
     this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
-    this->MultiColumnList->SetParent ( listFrame->GetFrame() );
+    this->MultiColumnList->SetParent ( listFrame );
     this->MultiColumnList->Create ( );
     this->MultiColumnList->SetHeight(4);
     this->MultiColumnList->GetWidget()->SetSelectionTypeToCell();
@@ -1191,11 +1188,11 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
 
     // button frame
     vtkKWFrame *buttonFrame = vtkKWFrame::New();
-    buttonFrame->SetParent ( listFrame->GetFrame() );
+    buttonFrame->SetParent ( listFrame );
     buttonFrame->Create ( );
     app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
                  buttonFrame->GetWidgetName(),
-                 listFrame->GetFrame()->GetWidgetName());
+                 listFrame->GetWidgetName());
     
      // add an add fiducial button
     this->AddFiducialButton = vtkKWPushButton::New ( );
@@ -1226,15 +1223,15 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
 
     // select button frame
     vtkKWFrame *selectButtonFrame = vtkKWFrame::New();
-    selectButtonFrame->SetParent ( listFrame->GetFrame() );
+    selectButtonFrame->SetParent ( listFrame );
     selectButtonFrame->Create ( );
     app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
                  selectButtonFrame->GetWidgetName(),
-                 listFrame->GetFrame()->GetWidgetName());
+                 listFrame->GetWidgetName());
     
     app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
                  selectButtonFrame->GetWidgetName(),
-                 listFrame->GetFrame()->GetWidgetName());
+                 listFrame->GetWidgetName());
 
     // add a select all fiducials on this list button
     this->SelectAllFiducialsButton = vtkKWPushButton::New ( );
