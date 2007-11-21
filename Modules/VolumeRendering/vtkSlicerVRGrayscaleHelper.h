@@ -15,6 +15,8 @@ class vtkTimerLog;
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkKWMenuButtonWithSpinButtonsWithLabel;
 class vtkKWScaleWithLabel;
+class vtkKWCheckButtonWithLabel;
+class vtkKWFrameWithLabel;
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
@@ -53,8 +55,15 @@ protected:
     vtkSlicerVolumePropertyWidget *SVP_VolumeProperty;
 
     //GUI1
-    vtkKWMenuButtonWithSpinButtonsWithLabel *MB_Quality;
+    //vtkKWMenuButtonWithSpinButtonsWithLabel *MB_Quality;
+    vtkKWFrameWithLabel *MappersFrame;
+    vtkKWCheckButtonWithLabel *CB_TextureLow;
+    vtkKWCheckButtonWithLabel *CB_TextureHigh;
+    vtkKWCheckButtonWithLabel *CB_RayCast;
     vtkKWScaleWithLabel *SC_Framerate;
+    
+    
+    int ScheduleMask[3];
 
 
     //Render logic
@@ -100,6 +109,8 @@ protected:
 
     void CheckAbort(void);
 
-    void AdjustMapping();
+    void AdjustMapping(void);
+
+    void UpdateQualityCheckBoxes(void);
 };
 #endif

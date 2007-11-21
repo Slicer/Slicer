@@ -1,25 +1,35 @@
-#include "vtkSlicerVRGrayscaleHelper.h"
-#include "vtkObjectFactory.h"
-#include "vtkKWHistogram.h"
-#include "vtkKWHistogramSet.h"
-#include "vtkVolumeRenderingModuleGUI.h"
-#include "vtkVolume.h"
+//Slicer
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
+#include "vtkSlicerVRGrayscaleHelper.h"
+#include "vtkVolumeRenderingModuleGUI.h"
+#include "vtkSlicerApplication.h"
+
+//VTK
+#include "vtkObjectFactory.h"
+#include "vtkVolume.h"
 #include "vtkTimerLog.h"
 #include "vtkRenderer.h"
 #include "vtkPointData.h"
 #include "vtkCellArray.h"
 #include "vtkFloatArray.h"
-#include "vtkKWProgressGauge.h" 
 #include "vtkTexture.h"
 #include "vtkImageGradientMagnitude.h"
-#include "vtkSlicerApplication.h"
+
+//KWWidgets
+#include "vtkKWHistogram.h"
+#include "vtkKWHistogramSet.h"
+#include "vtkKWProgressGauge.h" 
 #include "vtkKWEvent.h"
 #include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
 #include "vtkKWProgressDialog.h"
 #include "vtkKWScale.h"
 #include "vtkKWScaleWithLabel.h"
+#include "vtkKWCheckButtonWithLabel.h"
+#include "vtkKWCheckButton.h"
+#include "vtkKWFrameWithLabel.h"
+
+//Compiler
 #include <math.h>
 
 
@@ -28,11 +38,16 @@ vtkCxxRevisionMacro(vtkSlicerVRGrayscaleHelper, "$Revision: 1.46 $");
 vtkStandardNewMacro(vtkSlicerVRGrayscaleHelper);
 vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
 {
+
+    //Debug
     this->DebugOff();
     this->SetTCLDebug(0);
     this->Histograms=NULL;
-    this->SVP_VolumeProperty=NULL;
-    this->MB_Quality=NULL;
+
+    this->ScheduleMask[0]=1;
+    this->ScheduleMask[1]=1;
+    this->ScheduleMask[2]=1;
+    //this->MB_Quality=NULL;
     this->renViewport=NULL;
     this->renPlane=NULL;
     this->MapperTexture=NULL;
@@ -55,7 +70,14 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->Quality=0;
     this->StageZeroEventHandlerID="";
     this->ButtonDown=0;
+
+    //GUI:
+    this->CB_TextureLow=NULL;
+    this->CB_TextureHigh=NULL;
+    this->CB_RayCast=NULL;
     this->SC_Framerate=NULL;
+    this->SVP_VolumeProperty=NULL;
+    this->MappersFrame=NULL;
 
 }
 
@@ -148,11 +170,40 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->timer->Delete();
         this->timer=NULL;
     }
-    if(this->MB_Quality!=NULL)
+    //if(this->MB_Quality!=NULL)
+    //{
+    //    this->MB_Quality->SetParent(NULL);
+    //    this->MB_Quality->Delete();
+    //    this->MB_Quality=NULL;
+    //}
+
+    if(this->MappersFrame!=NULL)
     {
-        this->MB_Quality->SetParent(NULL);
-        this->MB_Quality->Delete();
-        this->MB_Quality=NULL;
+        this->Gui->Script("pack forget %s",this->MappersFrame->GetWidgetName());
+        this->MappersFrame->SetParent(NULL);
+        this->MappersFrame->Delete();
+        this->MappersFrame=NULL;
+    }
+    if(this->CB_RayCast!=NULL)
+    {
+        this->CB_RayCast->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->CB_RayCast->SetParent(NULL);
+        this->CB_RayCast->Delete();
+        this->CB_RayCast=NULL;
+    }
+    if(this->CB_TextureLow!=NULL)
+    {
+        this->CB_TextureLow->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->CB_TextureLow->SetParent(NULL);
+        this->CB_TextureLow->Delete();
+        this->CB_TextureLow=NULL;
+    }
+            if(this->CB_TextureHigh!=NULL)
+    {
+        this->CB_TextureHigh->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->CB_TextureHigh->SetParent(NULL);
+        this->CB_TextureHigh->Delete();
+        this->CB_TextureHigh=NULL;
     }
     if(this->SC_Framerate!=NULL)
     {
@@ -192,25 +243,58 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     grad->Delete();
     gradHisto->Delete(); 
 
-    //Quality Button
-    this->MB_Quality=vtkKWMenuButtonWithSpinButtonsWithLabel::New();
-    this->MB_Quality->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
-    this->MB_Quality->Create();
-    this->MB_Quality->SetLabelText("Performance / Quality:");
-    this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("Low Quality - High Performance");
-    this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(0,this,"SetQuality 0");
-    this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("Middle Quality - Middle Performance");
-    this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(1,this,"SetQuality 1");
-    this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("High Quality - Low Performance");
-    this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(2,this,"SetQuality 2");
-    this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SelectItem(0);
+    ////Quality Button
+    //this->MB_Quality=vtkKWMenuButtonWithSpinButtonsWithLabel::New();
+    //this->MB_Quality->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+    //this->MB_Quality->Create();
+    //this->MB_Quality->SetLabelText("Performance / Quality:");
+    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("Low Quality - High Performance");
+    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(0,this,"SetQuality 0");
+    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("Middle Quality - Middle Performance");
+    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(1,this,"SetQuality 1");
+    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("High Quality - Low Performance");
+    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(2,this,"SetQuality 2");
+    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SelectItem(0);
 
-    this->Gui->GetApplicationGUI()->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->MB_Quality->GetWidgetName());
+    //this->Gui->GetApplicationGUI()->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->MB_Quality->GetWidgetName());
+    this->MappersFrame=vtkKWFrameWithLabel::New();
+    this->MappersFrame->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+    this->MappersFrame->Create();
+    this->MappersFrame->SetLabelText("Quality / Performance");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+        MappersFrame->GetWidgetName() );
 
+    this->CB_TextureLow=vtkKWCheckButtonWithLabel::New();
+    this->CB_TextureLow->SetParent(this->MappersFrame->GetFrame());
+    this->CB_TextureLow->Create();
+    this->CB_TextureLow->SetLabelText("Use Texture Low");
+    this->CB_TextureLow->GetWidget()->SetSelectedState(1);
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+        this->CB_TextureLow->GetWidgetName() );
+    this->CB_TextureLow->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+
+
+    this->CB_TextureHigh=vtkKWCheckButtonWithLabel::New();
+    this->CB_TextureHigh->SetParent(this->MappersFrame->GetFrame());
+    this->CB_TextureHigh->Create();
+    this->CB_TextureHigh->SetLabelText("Use Texture High");
+    this->CB_TextureHigh->GetWidget()->SetSelectedState(1);
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+        this->CB_TextureHigh->GetWidgetName() );
+    this->CB_TextureHigh->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+
+    this->CB_RayCast=vtkKWCheckButtonWithLabel::New();
+    this->CB_RayCast->SetParent(this->MappersFrame->GetFrame());
+    this->CB_RayCast->Create();
+    this->CB_RayCast->SetLabelText("Use Raycast      ");
+    this->CB_RayCast->GetWidget()->SetSelectedState(1);
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+        this->CB_RayCast->GetWidgetName() );
+    this->CB_RayCast->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
 
     //Framerate
     this->SC_Framerate=vtkKWScaleWithLabel::New();
-    this->SC_Framerate->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+    this->SC_Framerate->SetParent(this->MappersFrame->GetFrame());
     this->SC_Framerate->Create();
     this->SC_Framerate->SetLabelText("FPS (Low Resolution):");
     this->SC_Framerate->GetWidget()->SetRange(1,20);
@@ -219,7 +303,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->SC_Framerate->SetBalloonHelpString("set frames per sec for lowest resolution rendering");
     this->SC_Framerate->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->SC_Framerate->GetWidgetName() );
+        this->SC_Framerate->GetWidgetName() );
 
     ((vtkSlicerApplication *)this->Gui->GetApplication())->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
 
@@ -364,6 +448,28 @@ void vtkSlicerVRGrayscaleHelper::ShutdownPipeline(void)
 
 void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData)
 {
+
+    //Check the checkbuttons
+    vtkKWCheckButton *callerObjectCheckButton=vtkKWCheckButton::SafeDownCast(caller);
+    if(callerObjectCheckButton==this->CB_TextureLow->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    {
+        this->ScheduleMask[0]=callerObjectCheckButton->GetSelectedState();
+        this->UpdateQualityCheckBoxes();
+
+        return;
+    }
+    if(callerObjectCheckButton==this->CB_TextureHigh->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    {
+        this->ScheduleMask[1]=callerObjectCheckButton->GetSelectedState();
+        this->UpdateQualityCheckBoxes();
+        return;
+    }   
+    if(callerObjectCheckButton==this->CB_RayCast->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    {
+        this->ScheduleMask[2]=callerObjectCheckButton->GetSelectedState();
+        this->UpdateQualityCheckBoxes();
+        return;
+    }
     vtkKWScale *callerObjectSC=vtkKWScale::SafeDownCast(caller);
     if(callerObjectSC==this->SC_Framerate->GetWidget()&&eid==vtkKWScale::ScaleValueChangedEvent)
     {
@@ -424,10 +530,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                 this->EventHandlerID="";
             }
             this->currentStage=this->Quality;
-
-
-            //We are already in the Rendering Process
-            //this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
         }//if
         if(this->currentStage==0)
         {
@@ -505,6 +607,13 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         //Stage 2
         if(this->currentStage==2)
         {
+
+            //Do the following code just in case we skipped stage 1
+            //Remove plane Renderer and get viewport Renderer Up
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
+            //Go to Fullsize
+            this->renViewport->SetViewport(0,0,1,1);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
@@ -747,11 +856,28 @@ void vtkSlicerVRGrayscaleHelper::ScheduleRender(void)
 {
     this->scheduled=1;
     this->currentStage++;
+
+    //Security if we ran out of range or an event occured in between
     if(this->currentStage>2||vtkKWTkUtilities::CheckForPendingInteractionEvents(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow())!=0)
     {
         this->currentStage=0;
         this->scheduled=0;
         //return;
+    }
+    else 
+    {
+        while(!ScheduleMask[this->currentStage])
+        {
+
+            this->currentStage++;
+            //Nothing to schedule
+            if(this->currentStage==3)
+            {
+                this->currentStage=0;
+                this->scheduled=0;
+                return;
+            }
+        }
     }
     this->EventHandlerID=this->Gui->Script("after idle [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow] Render");
     //this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
@@ -825,5 +951,51 @@ void vtkSlicerVRGrayscaleHelper::AdjustMapping(){
 void vtkSlicerVRGrayscaleHelper::ScheduleStageZero()
 {
     this->StageZeroEventHandlerID=this->Gui->Script("after idle [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow] Render");
+
+}
+
+void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
+{
+    //Update the quality
+    int i=0;
+    this->Quality=0;
+    while(!this->ScheduleMask[i]&&i<2)
+    {
+        i++;
+        this->Quality=i;
+    }
+
+    //Check if we have to enable or  disable FPS
+    this->SC_Framerate->SetEnabled(this->ScheduleMask[0]);
+
+    //Check if we have to enable the last Checkbutton
+    int count=0;
+    int indexMayBeDisabled=-1;
+    for(int i=0;i<3;i++)
+    {
+        if(this->ScheduleMask[i])
+        {
+            count++;
+            indexMayBeDisabled=i;
+        }
+    }
+    if(count>1)
+    {
+            this->CB_RayCast->EnabledOn();
+            this->CB_TextureHigh->EnabledOn();
+            this->CB_TextureLow->EnabledOn();
+    }
+    else if(indexMayBeDisabled==0)
+    {
+        this->CB_TextureLow->EnabledOff();
+    }
+    else if(indexMayBeDisabled==1)
+    {
+        this->CB_TextureHigh->EnabledOff();
+    }
+    else if(indexMayBeDisabled==2)
+    {
+        this->CB_RayCast->EnabledOff();
+    }
 
 }

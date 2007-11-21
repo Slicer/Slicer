@@ -33,11 +33,13 @@ vtkSlicerVRLabelmapHelper::~vtkSlicerVRLabelmapHelper(void)
     this->Gui->Script("bind all <Any-ButtonPress> {}",this->GetTclName());
     this->Gui->Script("bind all <Any-ButtonRelease> {}",this->GetTclName());
     //Stop potential Rendering
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
     if(strcmp(this->ScheduledRenderID.c_str(),"")!=0)
     {
         this->Script("after cancel %s", this->ScheduledRenderID.c_str());
         this->ScheduledRenderID="";
     }
+
     //Remove all the Observers we added
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
@@ -95,7 +97,7 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
         this->MapperRaycast->SetSampleDistance(.1);
     }
     //Test for colornode
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetVolumeDisplayNode()->AddObserver(vtkCommand::ModifiedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetVolumeDisplayNode()->AddObserver(vtkCommand::ModifiedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);   
     this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
 
     this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
