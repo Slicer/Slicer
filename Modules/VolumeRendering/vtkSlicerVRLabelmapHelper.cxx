@@ -40,6 +40,9 @@ vtkSlicerVRLabelmapHelper::~vtkSlicerVRLabelmapHelper(void)
         this->ScheduledRenderID="";
     }
 
+    //Set ProgressBar to 0
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(0);
+
     //Remove all the Observers we added
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);

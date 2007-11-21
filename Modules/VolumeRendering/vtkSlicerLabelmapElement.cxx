@@ -1,8 +1,16 @@
+//Slicer
 #include "vtkSlicerLabelmapElement.h"
+
+//vtk
 #include "vtkObjectFactory.h"
-#include "vtkKWLabel.h"
 #include "vtkCommand.h"
 #include "vtkCallbackCommand.h"
+
+//KWWidgets
+#include "vtkKWPushButton.h"
+#include "vtkKWLabel.h"
+
+//Compiler
 #include <sstream>
 vtkCxxRevisionMacro(vtkSlicerLabelmapElement, "$Revision: 0.1 $");
 vtkStandardNewMacro(vtkSlicerLabelmapElement);
@@ -13,7 +21,7 @@ vtkSlicerLabelmapElement::vtkSlicerLabelmapElement(void)
     this->LabelmapCallbackCommand->SetCallback(vtkSlicerLabelmapElement::LabelmapCallback);
     this->ColorName=NULL;
     this->Color=NULL;
-    for(int i=0;i<6;i++)
+    for(int i=0;i<vtkSlicerLabelmapElement::NUMBER_LEVELS;i++)
     {
         this->Opacity[i]=NULL;
     }
@@ -31,7 +39,7 @@ vtkSlicerLabelmapElement::~vtkSlicerLabelmapElement(void)
     this->Color->Delete();
     this->Color=NULL;
     }
-    for(int i=0;i<6;i++)
+    for(int i=0;i<vtkSlicerLabelmapElement::NUMBER_LEVELS;i++)
     {
         if(this->Opacity[i]!=NULL)
         {
@@ -55,7 +63,7 @@ void vtkSlicerLabelmapElement::CreateWidget(void)
     this->Color->Create();
     this->Script("pack %s -side left -anchor c -expand y",this->Color->GetWidgetName());
 
-    for(int i=0;i<6;i++)
+    for(int i=0;i<vtkSlicerLabelmapElement::NUMBER_LEVELS;i++)
     {
         this->Opacity[i]=vtkKWPushButton::New();
         this->Opacity[i]->SetParent(this);
@@ -64,7 +72,6 @@ void vtkSlicerLabelmapElement::CreateWidget(void)
         command<<"ChangeOpacity ";
         command<<i;
         this->Opacity[i]->SetCommand(this,command.str().c_str()); 
-        //this->Opacity[i]->AddObserver(vtkCommand::AnyEvent,(vtkCommand *)this->LabelmapCallbackCommand);
         this->Script("pack %s -side left -anchor c -expand y",this->Opacity[i]->GetWidgetName());
     }
 
@@ -112,7 +119,7 @@ void vtkSlicerLabelmapElement::LabelmapCallback( vtkObject *caller, unsigned lon
 void vtkSlicerLabelmapElement::ProcessLabelmapEvents(vtkObject *caller, unsigned long eid, void *callData)
 {
     vtkKWPushButton *callerPushButton=vtkKWPushButton::SafeDownCast(caller);
-        for(int i=0;i<6;i++)
+        for(int i=0;i<vtkSlicerLabelmapElement::NUMBER_LEVELS;i++)
     {
         if(callerPushButton=this->Opacity[i])
         {
@@ -132,7 +139,7 @@ void vtkSlicerLabelmapElement::FillButtons(int stage)
     {
         this->Opacity[i]->SetBackgroundColor(.5,.5,.5);
     }
-    for(int i=stage+1;i<6;i++)
+    for(int i=stage+1;i<vtkSlicerLabelmapElement::NUMBER_LEVELS;i++)
     {
         this->Opacity[i]->SetBackgroundColor(1,1,1);
     }

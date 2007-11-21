@@ -21,8 +21,6 @@ vtkSlicerLabelmapTree::vtkSlicerLabelmapTree(void)
     this->InChangeOpacityAll=0;
     this->VolumeRenderingNode=NULL;
     this->ScalarVolumeNode=NULL;
-    this->StepSize=20;
-    //this->NumberOfSteps=6;
     this->RecentColorNodeID="";
 }
 
@@ -101,7 +99,7 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkMRMLVolumeRend
             double rgb[3];
             lookup->GetColor(i,rgb);
             //CalculateOpacities
-            int opacityLevel=piecewiseFunction->GetLabel(i)*this->StepSize;
+            int opacityLevel=piecewiseFunction->GetLabel(i)*vtkSlicerLabelmapTree::FACTOR_OPACITY_TO_STAGE;
             if(opacityLevel>5)
             {
                 opacityLevel=5;
@@ -136,7 +134,7 @@ void vtkSlicerLabelmapTree::ProcessBaseTreeEvents(vtkObject *caller, unsigned lo
     {
         piecewiseFunction=vtkLabelMapPiecewiseFunction::SafeDownCast(this->VolumeRenderingNode->GetVolumeProperty()->GetScalarOpacity());
 
-        piecewiseFunction->EditLabel(callDataInt[0],callDataInt[1]/(double)this->StepSize);
+        piecewiseFunction->EditLabel(callDataInt[0],callDataInt[1]/(double)vtkSlicerLabelmapTree::FACTOR_OPACITY_TO_STAGE);
         if(this->InChangeOpacityAll==0)
         {
             this->InvokeEvent(vtkSlicerLabelmapTree::SingleLabelEdited);
@@ -170,7 +168,7 @@ void vtkSlicerLabelmapTree::ChangeAllOpacities(int stage)
     this->InChangeOpacityAll=1;
     for(unsigned int i=0;i<this->Elements.size();i++)
     {               int id=this->Elements[i]->GetId();
-    piecewiseFunction->EditLabel(id,stage/(double)this->StepSize);
+    piecewiseFunction->EditLabel(id,stage/(double)vtkSlicerLabelmapTree::FACTOR_OPACITY_TO_STAGE);
     this->Elements[i]->ChangeOpacity(stage);
 
     }
@@ -208,7 +206,7 @@ void vtkSlicerLabelmapTree::UpdateGuiElements(void)
         for(unsigned int i=0; i<this->Elements.size();i++)
         {
             int id=this->Elements[i]->GetId();
-            int opacityLevel=piecewiseFunction->GetLabel(id)*this->StepSize;
+            int opacityLevel=piecewiseFunction->GetLabel(id)*vtkSlicerLabelmapTree::FACTOR_OPACITY_TO_STAGE;
             this->Elements[i]->ChangeOpacity(opacityLevel);
         }
 

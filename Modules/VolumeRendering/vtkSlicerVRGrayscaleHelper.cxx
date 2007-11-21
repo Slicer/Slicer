@@ -86,7 +86,9 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
     //Remove Bindings
     this->Gui->Script("bind all <Any-ButtonPress> {}",this->GetTclName());
     this->Gui->Script("bind all <Any-ButtonRelease> {}",this->GetTclName());
-
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,0);
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,0);
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,0);
     //cancel potential rendering
     if(strcmp(this->EventHandlerID.c_str(),"")!=0)
     {
@@ -170,12 +172,6 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->timer->Delete();
         this->timer=NULL;
     }
-    //if(this->MB_Quality!=NULL)
-    //{
-    //    this->MB_Quality->SetParent(NULL);
-    //    this->MB_Quality->Delete();
-    //    this->MB_Quality=NULL;
-    //}
 
     if(this->MappersFrame!=NULL)
     {
@@ -198,7 +194,7 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->CB_TextureLow->Delete();
         this->CB_TextureLow=NULL;
     }
-            if(this->CB_TextureHigh!=NULL)
+    if(this->CB_TextureHigh!=NULL)
     {
         this->CB_TextureHigh->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
         this->CB_TextureHigh->SetParent(NULL);
@@ -981,9 +977,9 @@ void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
     }
     if(count>1)
     {
-            this->CB_RayCast->EnabledOn();
-            this->CB_TextureHigh->EnabledOn();
-            this->CB_TextureLow->EnabledOn();
+        this->CB_RayCast->EnabledOn();
+        this->CB_TextureHigh->EnabledOn();
+        this->CB_TextureLow->EnabledOn();
     }
     else if(indexMayBeDisabled==0)
     {
