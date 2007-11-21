@@ -234,10 +234,13 @@ StartPreprocessingTargetIntensityNormalization()
       }
     normFilter->Delete();
     }
-       
-  // replace target in segmenter node with the normalized target
-  this->MRMLManager->GetSegmenterNode()->
-    SetTargetNodeID(normalizedTarget->GetID());
+    
+  // !!! should get data from the working node, the input should
+  // always be the input!
+  // 
+  // replace target in segmenter node with the
+  // normalized target this->MRMLManager->GetSegmenterNode()->
+  // SetTargetNodeID(normalizedTarget->GetID());
 
   std::cerr << "Normalization complete." << std::endl;
 
@@ -307,12 +310,12 @@ StartPreprocessingTargetToTargetRegistration()
 
       if (fixedImageData == NULL || movingImageData == NULL)
       {
-        vtkErrorMacro("Normalized input is null, skipping: " << i);
+        vtkErrorMacro("fixed or moving input is null, skipping: " << i);
         continue;
       }
       if (outImageData == NULL)
       {
-        vtkErrorMacro("Normalization output is null, skipping: " << i);
+        vtkErrorMacro("Registration output is null, skipping: " << i);
         continue;
       }
 
@@ -330,10 +333,11 @@ StartPreprocessingTargetToTargetRegistration()
       }
       //alighmentFilter->Delete();
     }
-       
+    
+  // !!! should get this from the working node!
   // replace target in segmenter node with the normalized target
-  this->MRMLManager->GetSegmenterNode()->
-    SetTargetNodeID(alignedTarget->GetID());
+  //this->MRMLManager->GetSegmenterNode()->
+  //  SetTargetNodeID(alignedTarget->GetID());
 
   std::cerr << "Alignment complete." << std::endl;
 
@@ -646,50 +650,21 @@ void
 vtkEMSegmentLogic::
 CopyTargetDataToSegmenter(vtkImageEMLocalSegmenter* segmenter)
 {
-  segmenter->SetNumInputImages(this->MRMLManager->
-                               GetTargetNumberOfSelectedVolumes());
+  // !!! todo: TESTING HERE!!!
+  vtkMRMLEMSTargetNode* workingTarget = 
+    this->MRMLManager->GetWorkingDataNode()->GetWorkingTargetNode();
+  unsigned int numTargetImages = workingTarget->GetNumberOfVolumes();
+  segmenter->SetNumInputImages(numTargetImages);
 
-  // target images
-  unsigned int numTargetImages = 
-    this->MRMLManager->GetTargetNumberOfSelectedVolumes();
   for (unsigned int i = 0; i < numTargetImages; ++i)
     {
-    std::string mrmlID = 
-      this->MRMLManager->GetTargetSelectedVolumeNthMRMLID(i);
+    std::string mrmlID = workingTarget->GetNthVolumeNodeID(i);
     vtkDebugMacro("Setting target image " << i << " mrmlID=" 
                   << mrmlID.c_str());
 
-    vtkImageData* imageData = this->MRMLManager->
-      GetVolumeNode(this->MRMLManager->GetTargetSelectedVolumeNthID(i))->
-      GetImageData();
+    vtkImageData* imageData = 
+      workingTarget->GetNthVolumeNode(i)->GetImageData();
 
-#ifdef NOT_DEFINED
-    //
-    // add normalization filter if normalization is enabled
-    vtkMRMLEMSIntensityNormalizationParametersNode* normNode =
-      this->GetTargetNode()->GetNthIntensityNormalizationParametersNode(i);
-
-    if (normNode && normNode->GetEnabled())
-      {
-        vtkImageMeanIntensityNormalization* normFilter =
-          vtkImageMeanIntensityNormalization::New();
-        normFilter->SetNormValue(normNode->GetNormValue());
-        normFilter->SetNormType(normNode->GetNormType());
-        normFilter->SetInitialHistogramSmoothingWidth
-          (normNode->GetInitialHistogramSmoothingWidth());
-        normFilter->SetMaxHistogramSmoothingWidth
-          (normNode->GetMaxHistogramSmoothingWidth());
-        normFilter->SetRelativeMaxVoxelNum(normNode->GetRelativeMaxVoxelNum());
-        normFilter->SetPrintInfo(normNode->GetPrintInfo());
-        normFilter->SetInput(imageData);
-        vtkstd::cerr << "Normalizing image..." << vtkstd::endl;
-        normFilter->Update();
-
-        segmenter->SetImageInput(i, normFilter->GetOutput());
-
-        normFilter->Delete();
-      }
-#endif
     segmenter->SetImageInput(i, imageData);
     }
 }

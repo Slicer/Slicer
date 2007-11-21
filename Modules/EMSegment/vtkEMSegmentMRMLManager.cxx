@@ -731,8 +731,11 @@ void
 vtkEMSegmentMRMLManager::
 UpdateIntensityDistributionFromSample(vtkIdType nodeID)
 {
-  unsigned int numVolumes = 
-    this->GetTargetNumberOfSelectedVolumes();
+  // get working node @@@
+  vtkMRMLEMSTargetNode* workingTarget = 
+    this->GetWorkingDataNode()->GetWorkingTargetNode();
+  unsigned int numTargetImages = workingTarget->GetNumberOfVolumes();
+
   unsigned int numPoints  = 
     this->GetTreeNodeDistributionNumberOfSamples(nodeID);
   unsigned int r, c, p;
@@ -740,9 +743,9 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
   //
   // the default is mean 0, zero covariance
   //
-  vtkstd::vector<double> logMean(numVolumes, 0.0);
+  vtkstd::vector<double> logMean(numTargetImages, 0.0);
   vtkstd::vector<vtkstd::vector<double> > 
-    logCov(numVolumes, vtkstd::vector<double>(numVolumes, 0.0));
+    logCov(numTargetImages, vtkstd::vector<double>(numTargetImages, 0.0));
 
   if (numPoints > 0)
     {
@@ -750,12 +753,13 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
     // get all the intensities and compute the means
     //
     vtkstd::vector<vtkstd::vector<double> > 
-      logSamples(numVolumes, vtkstd::vector<double>(numPoints, 0));
+      logSamples(numTargetImages, vtkstd::vector<double>(numPoints, 0));
     
-    for (unsigned int imageIndex = 0; imageIndex < numVolumes; ++imageIndex)
+    for (unsigned int imageIndex = 0; imageIndex < numTargetImages; 
+         ++imageIndex)
       {
-      vtkIdType volumeID = 
-        this->GetTargetSelectedVolumeNthID(imageIndex);
+      std::string mrmlID = workingTarget->GetNthVolumeNodeID(imageIndex);
+      vtkIdType volumeID = this->MapMRMLNodeIDToVTKNodeID(mrmlID.c_str());
       
       for (unsigned int sampleIndex = 0; sampleIndex < numPoints; 
            ++sampleIndex)
@@ -777,9 +781,9 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
     //
     // compute covariance
     //
-    for (r = 0; r < numVolumes; ++r)
+    for (r = 0; r < numTargetImages; ++r)
       {
-      for (c = 0; c < numVolumes; ++c)
+      for (c = 0; c < numTargetImages; ++c)
         {
         for (p = 0; p < numPoints; ++p)
           {
@@ -802,11 +806,11 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
     this->
     GetTreeNode(nodeID)->GetParametersNode()->GetLeafParametersNode();
 
-  for (r = 0; r < numVolumes; ++r)
+  for (r = 0; r < numTargetImages; ++r)
     {
     leafNode->SetLogMean(r, logMean[r]);
     
-    for (c = 0; c < numVolumes; ++c)
+    for (c = 0; c < numTargetImages; ++c)
       {
       leafNode->SetLogCovariance(r, c, logCov[r][c]);
       }
@@ -3304,6 +3308,10 @@ CreateAndObserveNewParameterSet()
   workingNode->SetHideFromEditors(this->HideNodesFromEditors);
   this->GetMRMLScene()->AddNode(workingNode);
   
+  // make connections
+  workingNode->SetInputTargetNodeID(targetNode->GetID());
+  workingNode->SetInputAtlasNodeID(atlasNode->GetID());
+
   // create global parameters node
   vtkMRMLEMSGlobalParametersNode* globalParametersNode = 
     vtkMRMLEMSGlobalParametersNode::New();
@@ -3363,7 +3371,7 @@ CreateAndObserveNewParameterSet()
   segmenterNode->SetAtlasNodeID(atlasNode->GetID());
   segmenterNode->SetTargetNodeID(targetNode->GetID());
   segmenterNode->SetWorkingDataNodeID(workingNode->GetID());
-
+  
   // create template builder node
   vtkMRMLEMSNode* templateBuilderNode = vtkMRMLEMSNode::New();
   templateBuilderNode->SetHideFromEditors(this->HideNodesFromEditors);
