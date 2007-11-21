@@ -26,7 +26,7 @@ proc bounceParam {code min max step} {
 }
 
 
-proc TestGlyphs {} {
+proc SetupGlyphs {} {
 
   $::slicer3::MRMLScene Clear 0
 
@@ -34,6 +34,7 @@ proc TestGlyphs {} {
   set ::logic [$::gui GetLogic]
 
   set testData $::env(SLICER_HOME)/../Slicer3/Modules/Tractography/Testing/TestData/twoFibers.vtk
+  #set testData c:/data/tracts/Seeding1.vtp
 
   set ::fbNode [$::logic AddFiberBundle $testData]
 
@@ -43,6 +44,9 @@ proc TestGlyphs {} {
   set ::tubeNode [$::fbNode GetTubeDisplayNode]
   set ::glyphNode [$::fbNode GetGlyphDisplayNode]
 
+}
+
+proc TestProperties {} {
   $::tubeNode SetVisibility 1
   $::glyphNode SetVisibility 1
   set ::dtNode [$::glyphNode GetDTDisplayPropertiesNode]
@@ -52,8 +56,26 @@ proc TestGlyphs {} {
     $::dtNode SetGlyphGeometryTo$mode
     bounceParam "$::dtNode SetGlyphScaleFactor" 50 500 20
   }
-
 }
 
-$::slicer3::Application TraceScript TestGlyphs
+proc TestColor { color } {
+
+  $::lineNode SetVisibility 1
+  $::glyphNode SetVisibility 1
+
+  set ::glyphDTNode [$::glyphNode GetDTDisplayPropertiesNode]
+  $::glyphDTNode SetGlyphGeometryToEllipsoids
+
+  $::lineNode SetAndObserveColorNodeID "vtkMRMLColorTableNode$color"
+  bounceParam "$::MRML(vtkMRMLCameraNode1) SetPosition 0 500 " 0 100 10
+}
+
+SetupGlyphs
+
+MRMLWatcher #auto
+
+
+$::slicer3::Application TraceScript TestProperties
+$::slicer3::Application TraceScript "TestColor Rainbow"
+$::slicer3::Application TraceScript "TestColor Ocean"
 
