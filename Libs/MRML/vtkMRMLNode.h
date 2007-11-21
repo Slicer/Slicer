@@ -293,6 +293,13 @@ public:
     this->SetDisableModifiedEvent(oldMode);
     }
 
+  void CopyWithSceneWithoutModifiedEvent (vtkMRMLNode *node)
+    {
+    int oldMode = this->GetDisableModifiedEvent();
+    this->DisableModifiedEventOn();
+    this->CopyWithScene(node);
+    this->SetDisableModifiedEvent(oldMode);
+    }
   
   vtkMRMLScene* GetScene() {return this->Scene;};
   void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};

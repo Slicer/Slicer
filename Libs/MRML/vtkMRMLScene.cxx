@@ -346,11 +346,13 @@ void vtkMRMLScene::ResetNodes()
     char *tag = nodes[i]->GetSingletonTag();
 
     newNode = nodes[i]->CreateNodeInstance();
-    nodes[i]->CopyWithSceneWithSingleModifiedEvent(newNode);
+    nodes[i]->DisableModifiedEventOn();
+    nodes[i]->CopyWithSceneWithoutModifiedEvent(newNode);
     nodes[i]->SetSaveWithScene(save);
     nodes[i]->SetHideFromEditors(hide);
     nodes[i]->SetSelectable(select);
     nodes[i]->SetSingletonTag(tag);
+    nodes[i]->DisableModifiedEventOff(); // does not invoke Modified()
     newNode->Delete();
     }
 
