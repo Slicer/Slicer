@@ -1,6 +1,8 @@
 
+set ::Tractography_Exit_After_Script 1
 if {0} {
   source c:/pieper/bwh/slicer3/latest/slicer3/Modules/Tractography/Testing/testglyphs.tcl
+  set ::Tractography_Exit_After_Script 0
 }
 
 
@@ -79,3 +81,6 @@ $::slicer3::Application TraceScript TestProperties
 $::slicer3::Application TraceScript "TestColor Rainbow"
 $::slicer3::Application TraceScript "TestColor Ocean"
 
+if { $::Tractography_Exit_After_Script } {
+  exit
+}
