@@ -3156,10 +3156,13 @@ CloneTargetNode(vtkMRMLEMSTargetNode* targetNode, char* name)
   vtkSlicerVolumesLogic* volumeLogic = vtkSlicerVolumesLogic::New();
   for (int i = 0; i < clonedTarget->GetNumberOfVolumes(); ++i)
   {    
+    vtksys_stl::stringstream volumeName;
+    volumeName << clonedTarget->GetNthVolumeNode(i)->GetName()
+               << " (" << name << ")";
     vtkMRMLScalarVolumeNode* clonedVolume = 
       volumeLogic->CloneVolume(this->MRMLScene,
                                clonedTarget->GetNthVolumeNode(i),
-                               clonedTarget->GetNthVolumeNode(i)->GetName());
+                               (char*) volumeName.str().c_str());
     clonedTarget->SetNthVolumeNodeID(i, clonedVolume->GetID());
   }
 
