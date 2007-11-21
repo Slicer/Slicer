@@ -5,6 +5,7 @@
 
 #include "vtkSlicerMRMLSaveDataWidget.h"
 
+#include "vtkKWTopLevel.h"
 #include "vtkKWDialog.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
@@ -116,7 +117,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
                                                     void *callData )
 {
 
-  if (this->SaveSceneButton->GetWidget() == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent) 
+  if (this->SaveSceneButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
     {
     const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
     if (fileName)
@@ -147,7 +148,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     }
 
-  else if (this->SaveDataButton->GetWidget() == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent) 
+  else if (this->SaveDataButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
     {
     const char *fileName = this->SaveDataButton->GetWidget()->GetFileName();
     if (fileName) 
@@ -513,12 +514,12 @@ void vtkSlicerMRMLSaveDataWidget::RemoveWidgetObservers ( )
     }
   if (this->SaveSceneButton)
     {
-    this->SaveSceneButton->GetWidget()->RemoveObservers( vtkKWPushButton::InvokedEvent, 
+        this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers( vtkKWTopLevel::WithdrawEvent,
         (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->SaveDataButton)
     {
-    this->SaveDataButton->GetWidget()->RemoveObservers( vtkKWPushButton::InvokedEvent, 
+    this->SaveDataButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent,
         (vtkCommand *)this->GUICallbackCommand );
     }
 
@@ -684,8 +685,8 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   // add observers
   this->OkButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->CancelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->SaveSceneButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SaveDataButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SaveDataButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
 
   
   this->MultiColumnList->SetEnabled(1);

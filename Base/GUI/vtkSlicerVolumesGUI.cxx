@@ -23,6 +23,7 @@
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveDialog.h"
+#include "vtkKWTopLevel.h"
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMessageDialog.h"
@@ -278,7 +279,7 @@ void vtkSlicerVolumesGUI::RemoveGUIObservers ( )
       }
     if (this->LoadVolumeButton)
       {
-      this->LoadVolumeButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+      this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
       }
     if (this->SaveVolumeButton)
       {
@@ -302,7 +303,7 @@ void vtkSlicerVolumesGUI::AddGUIObservers ( )
     // Fill in
     // observer load volume button    
     this->VolumeSelectorWidget->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->LoadVolumeButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SaveVolumeButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->UseCompressionCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -383,7 +384,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
                                                     this->NameEntry->GetWidget()->GetValue(), snode);
     return;
     }
-  if (this->LoadVolumeButton->GetWidget() == vtkKWLoadSaveButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
+  if (this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
     {
     const char * filename = this->LoadVolumeButton->GetWidget()->GetFileName();
     if (filename)
