@@ -14,6 +14,8 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWMessageDialog.h"
 
+#include "vtkKWTopLevel.h"
+
 // for scalars
 #include "vtkPointData.h"
 
@@ -154,19 +156,23 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( )
 {
   if (this->LoadModelButton)
     {
-    this->LoadModelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LoadModelButton->GetLoadSaveDialog()->RemoveObservers( vtkKWTopLevel::WithdrawEvent,
+        (vtkCommand *)this->GUICallbackCommand );    
     }
   if (this->LoadModelDirectoryButton)
     {
-    this->LoadModelDirectoryButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LoadModelDirectoryButton->GetLoadSaveDialog()->RemoveObservers( vtkKWTopLevel::WithdrawEvent,
+        (vtkCommand *)this->GUICallbackCommand );    
     }
   if (this->SaveModelButton)
     {
-    this->SaveModelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->SaveModelButton->GetLoadSaveDialog()->RemoveObservers( vtkKWTopLevel::WithdrawEvent,
+        (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->LoadScalarsButton)
     {
-    this->LoadScalarsButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers( vtkKWTopLevel::WithdrawEvent,
+        (vtkCommand *)this->GUICallbackCommand );    
     }
   if (this->ModelDisplaySelectorWidget)
     {
@@ -183,10 +189,10 @@ void vtkSlicerModelsGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerModelsGUI::AddGUIObservers ( )
 {
-  this->LoadModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->LoadModelDirectoryButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->SaveModelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->LoadScalarsButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->LoadModelButton->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LoadModelDirectoryButton->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SaveModelButton->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ModelDisplaySelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ModelHierarchyWidget->AddObserver(vtkSlicerModelHierarchyWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
@@ -230,11 +236,10 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
     return;
     }
 
-  vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
-  if (filebrowse == this->LoadModelButton  && event == vtkKWPushButton::InvokedEvent )
+  if (this->LoadModelButton->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent)
     {
     // If a file has been selected for loading...
-    const char *fileName = filebrowse->GetFileName();
+    const char *fileName = this->LoadModelButton->GetFileName();
     if ( fileName ) 
       {
       vtkSlicerModelsLogic* modelLogic = this->Logic;
@@ -256,17 +261,16 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       else
         {
-        filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-        
+         this->LoadModelButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");        
         }
       }
       this->LoadModelButton->SetText ("Load Model");
     return;
     }
-    else if (filebrowse == this->LoadModelDirectoryButton  && event == vtkKWPushButton::InvokedEvent )
+    else if (this->LoadModelDirectoryButton->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
     {
     // If a file has been selected for loading...
-    const char *fileName = filebrowse->GetFileName();
+    const char *fileName = this->LoadModelDirectoryButton->GetFileName();
     if ( fileName ) 
       {
       vtkSlicerModelsLogic* modelLogic = this->Logic;
@@ -284,17 +288,16 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       else
         {
-        filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-        
+        this->LoadModelDirectoryButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");        
         }
       }
     this->LoadModelDirectoryButton->SetText ("Load Model Directory");
     return;
     }
-  else if (filebrowse == this->SaveModelButton  && event == vtkKWPushButton::InvokedEvent )
+  else if (this->SaveModelButton->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent  && event == vtkKWPushButton::InvokedEvent )
       {
       // If a file has been selected for saving...
-      const char *fileName = filebrowse->GetFileName();
+      const char *fileName = this->SaveModelButton->GetFileName();
       if ( fileName ) 
       {
         vtkSlicerModelsLogic* ModelLogic = this->Logic;
@@ -305,15 +308,15 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         else
           {
-          filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");           
+          this->SaveModelButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");           
           }
        }
        return;
     } 
-  else if (filebrowse == this->LoadScalarsButton->GetWidget()  && event == vtkKWPushButton::InvokedEvent )
+  else if (this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent)
     {
     // If a scalar file has been selected for loading...
-    const char *fileName = filebrowse->GetFileName();
+    const char *fileName = this->LoadScalarsButton->GetWidget()->GetFileName();
     if ( fileName ) 
       {
       // get the model from the display widget rather than this gui's save
@@ -340,7 +343,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         else
           {
-          filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+          this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
           // set the active scalar in the display node to this one
           // - is done in the model storage node         
           }
