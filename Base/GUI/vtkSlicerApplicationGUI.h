@@ -40,7 +40,6 @@
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkSlicerViewerWidget.h"
-#include "vtkSlicerFiducialListWidget.h"
 #include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerSliceGUICollection.h"
 
@@ -49,6 +48,7 @@ class vtkLogoWidget;
 class vtkKWLabel;
 class vtkKWDialog;
 class vtkSlicerMRMLSaveDataWidget;
+class vtkSlicerFiducialListWidget;
 
 // Description:
 // This class implements Slicer's main Application GUI.

@@ -61,6 +61,8 @@
 #include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerViewerInteractorStyle.h"
 
+#include "vtkSlicerFiducialListWidget.h"
+
 #ifdef USE_PYTHON
 #ifdef _DEBUG
 #undef _DEBUG
