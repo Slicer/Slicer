@@ -927,6 +927,7 @@ int main(int argc, char * argv[])
         // each model needs a mrml node, a storage node and a display node
         vtkMRMLModelNode *mnode = vtkMRMLModelNode::New();
         mnode->SetScene(modelScene);
+        mnode->SetName(labelName.c_str());
         
         vtkMRMLModelStorageNode *snode = vtkMRMLModelStorageNode::New();
         snode->SetFileName(fileName.c_str());
