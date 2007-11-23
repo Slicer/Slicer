@@ -28,6 +28,7 @@
 
 #include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
 #include "vtkKWMenuButtonWithSpinButtons.h"
+#include "vtkKWMenuButton.h"
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
@@ -166,6 +167,10 @@ protected:
   std::vector<std::string> AttributeNames;
   std::vector<std::string> AttributeValues;
   std::vector<std::string> NodeNames;
+
+  std::map<std::string, std::string> NodeID_to_EntryName;
+  std::string MakeEntryName(vtkMRMLNode *node);
+  std::string FindEntryName(vtkMRMLNode *node);
 
   std::string SelectedID;
 //ETX

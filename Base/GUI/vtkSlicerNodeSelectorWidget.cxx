@@ -16,7 +16,6 @@ Version:   $Revision: 1.2 $
 
 
 #include "vtkKWMenu.h"
-#include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithSpinButtons.h"
 
 #include <sstream>
@@ -199,6 +198,54 @@ void vtkSlicerNodeSelectorWidget::ClearMenu()
 }
 
 //----------------------------------------------------------------------------
+std::string vtkSlicerNodeSelectorWidget::MakeEntryName(vtkMRMLNode *node)
+{
+  std::string entryName("");
+  std::string nodeName("");
+  if (node == NULL || node->GetName() == NULL) 
+    {
+    return entryName;
+    }
+  else
+    {
+    nodeName = node->GetName();
+    }
+  entryName = nodeName;
+  std::map<std::string, std::string>::iterator iter;
+  int count = 1;
+  for (iter = this->NodeID_to_EntryName.begin(); 
+       iter != this->NodeID_to_EntryName.end();
+       iter++)
+    {
+    if (iter->second == entryName) 
+      {
+      std::stringstream ss;
+      ss << nodeName << "_" << count++;
+      entryName = ss.str();
+      }
+    }
+  return entryName;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkSlicerNodeSelectorWidget::FindEntryName(vtkMRMLNode *node)
+{
+  std::string entryName("");
+  if (node == NULL || node->GetName() == NULL) 
+    {
+    return entryName;
+    }
+
+  std::map<std::string, std::string>::iterator iter = this->NodeID_to_EntryName.find(node->GetID());
+
+  if (iter != this->NodeID_to_EntryName.end() )
+    {
+    entryName = iter->second;
+    }
+  return entryName;
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerNodeSelectorWidget::UpdateMenu()
 {
   if ( !this || !this->MRMLScene )
@@ -207,129 +254,140 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
     }
 
   if (this->NodeClasses.size() == 0)
-      {
-      return;
-      }
-    vtkMRMLNode *oldSelectedNode = this->GetSelected();
-    this->ClearMenu();
-
-    vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
-    vtkKWMenu *m = mb->GetMenu();
-
-    int count = 0;
-    int c=0;
-
-    if (this->NewNodeEnabled)
     {
-      for (c=0; c < this->GetNumberOfNodeClasses(); c++)
-      {
-        const char *name = this->GetNodeName(c);
-        if (name == NULL || !strcmp(name, "") )
-          {
-          name = this->MRMLScene->GetTagByClassName(this->GetNodeClass(c));
-          }
-
-        std::stringstream ss;
-        ss << "Create New " << this->MRMLScene->GetTagByClassName(this->GetNodeClass(c));
-
-        // Build the command.  Since node name can contain spaces, we
-        // need to quote the node name in the constructed Tcl command
-        std::stringstream sc;
-        sc << "ProcessNewNodeCommand " << this->GetNodeClass(c) << " \"" << name << "\"";
-
-        this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(ss.str().c_str());
-        this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str() );
-        this->GetWidget()->GetWidget()->SetValue(ss.str().c_str());
-      }
+    return;
     }
+  
+  NodeID_to_EntryName.clear();
 
-    if (this->NoneEnabled) 
-      {
-      this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("None");
-      this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, "ProcessCommand None");
-      }
+  vtkMRMLNode *oldSelectedNode = this->GetSelected();
+  std::string oldSelectedName = this->FindEntryName(oldSelectedNode);
 
-    vtkMRMLNode *node = NULL;
-    vtkMRMLNode *selectedNode = NULL;
-    bool selected = false;
-    int resultAddAdditionalNodes=this->AddAditionalNodes();
-    count +=resultAddAdditionalNodes;
+  this->ClearMenu();
+
+  vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
+  vtkKWMenu *m = mb->GetMenu();
+
+  int count = 0;
+  int c=0;
+
+  if (this->NewNodeEnabled)
+  {
     for (c=0; c < this->GetNumberOfNodeClasses(); c++)
     {
-      const char *className = this->GetNodeClass(c);
-      this->MRMLScene->InitTraversal();
-      while ( (node = this->MRMLScene->GetNextNodeByClass(className) ) != NULL)
+      const char *name = this->GetNodeName(c);
+      if (name == NULL || !strcmp(name, "") )
         {
-        if (!node->GetSelectable())
-          {
-          continue;
-          }
-        if (!this->ShowHidden && node->GetHideFromEditors())
-          {
-          continue;
-          }
-
-        if (!this->GetChildClassesEnabled() && strcmp(node->GetClassName(), className) != 0)
-          {
-          continue;
-          }
-
-        // If there is a Attribute Name-Value  specified, then only include nodes that
-        // match both the NodeClass and Attribute
-        if ((this->GetNodeAttributeName(c)== NULL  ||
-            this->GetNodeAttributeValue(c)== NULL ||
-            (node->GetAttribute( this->GetNodeAttributeName(c)) != NULL &&
-            strcmp( node->GetAttribute( this->GetNodeAttributeName(c) ), this->GetNodeAttributeValue(c) ) == 0) )&&this->CheckAdditionalConditions(node))
-          {
-            std::stringstream sc;
-            sc << "ProcessCommand " << node->GetID();
-
-            this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(node->GetName());
-            // do we need a column break?
-            if (count != 0 && count % 30 == 0)
-              {
-              this->GetWidget()->GetWidget()->GetMenu()->SetItemColumnBreak(count, 1);
-              }
-            this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str());
-            if (oldSelectedNode == node)
-            {
-              selectedNode = node;
-              selected = true;
-            }
-            //Only choose first one wenn the Additional Nodes didn't take care about this
-            else if (!selected && !this->NoneEnabled&&(resultAddAdditionalNodes==0))
-            {  
-              selectedNode = node;
-              selected = true;
-            }
-          }
-       }
-    }
-    //Node already selected in additonal Nodes
-    if(resultAddAdditionalNodes!=0&&selectedNode==NULL)
-    {
-        selectedNode=this->GetSelected();
-    }
-    if (selectedNode != NULL)
-      {
-      this->GetWidget()->GetWidget()->SetValue(selectedNode->GetName());
-      this->SelectedID = std::string(selectedNode->GetID());
-      }
-    else
-      {
-      char *name = "";
-      if (this->NoneEnabled)
-        {
-        name = "None";
+        name = this->MRMLScene->GetTagByClassName(this->GetNodeClass(c));
         }
-      this->GetWidget()->GetWidget()->SetValue(name);
-      this->SelectedID = std::string(name);
-      }
 
-    if (oldSelectedNode != selectedNode)
+      std::stringstream ss;
+      ss << "Create New " << this->MRMLScene->GetTagByClassName(this->GetNodeClass(c));
+
+      // Build the command.  Since node name can contain spaces, we
+      // need to quote the node name in the constructed Tcl command
+      std::stringstream sc;
+      sc << "ProcessNewNodeCommand " << this->GetNodeClass(c) << " \"" << name << "\"";
+
+      this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(ss.str().c_str());
+      this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str() );
+      this->GetWidget()->GetWidget()->SetValue(ss.str().c_str());
+    }
+  }
+
+  if (this->NoneEnabled) 
+    {
+    this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("None");
+    this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, "ProcessCommand None");
+    }
+
+  vtkMRMLNode *node = NULL;
+  vtkMRMLNode *selectedNode = NULL;
+  std::string selectedName;
+  bool selected = false;
+  int resultAddAdditionalNodes=this->AddAditionalNodes();
+  count +=resultAddAdditionalNodes;
+  for (c=0; c < this->GetNumberOfNodeClasses(); c++)
+  {
+    const char *className = this->GetNodeClass(c);
+    this->MRMLScene->InitTraversal();
+    while ( (node = this->MRMLScene->GetNextNodeByClass(className) ) != NULL)
       {
-      this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
+      if (!node->GetSelectable())
+        {
+        continue;
+        }
+      if (!this->ShowHidden && node->GetHideFromEditors())
+        {
+        continue;
+        }
+
+      if (!this->GetChildClassesEnabled() && strcmp(node->GetClassName(), className) != 0)
+        {
+        continue;
+        }
+
+      // If there is a Attribute Name-Value  specified, then only include nodes that
+      // match both the NodeClass and Attribute
+      if ((this->GetNodeAttributeName(c)== NULL  ||
+          this->GetNodeAttributeValue(c)== NULL ||
+          (node->GetAttribute( this->GetNodeAttributeName(c)) != NULL &&
+          strcmp( node->GetAttribute( this->GetNodeAttributeName(c) ), this->GetNodeAttributeValue(c) ) == 0) )&&this->CheckAdditionalConditions(node))
+        {
+          std::stringstream sc;
+          sc << "ProcessCommand " << node->GetID();
+
+          std::string entryName = this->MakeEntryName(node);
+          this->NodeID_to_EntryName[node->GetID()] = entryName.c_str();
+          this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(entryName.c_str());
+          // do we need a column break?
+          if (count != 0 && count % 30 == 0)
+            {
+            this->GetWidget()->GetWidget()->GetMenu()->SetItemColumnBreak(count, 1);
+            }
+          this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str());
+          if (oldSelectedNode == node)
+          {
+            selectedNode = node;
+            selected = true;
+            selectedName = entryName;
+          }
+          //Only choose first one wenn the Additional Nodes didn't take care about this
+          else if (!selected && !this->NoneEnabled&&(resultAddAdditionalNodes==0))
+          {  
+            selectedNode = node;
+            selected = true;
+            selectedName = entryName;
+          }
+        }
+     }
+  }
+  //Node already selected in additonal Nodes
+  if(resultAddAdditionalNodes!=0&&selectedNode==NULL)
+    {
+    selectedNode=this->GetSelected();
+    selectedName = this->FindEntryName(selectedNode);
+    }
+  if (selectedNode != NULL)
+    {
+    this->GetWidget()->GetWidget()->SetValue(selectedName.c_str());
+    this->SelectedID = std::string(selectedNode->GetID());
+    }
+  else
+    {
+    char *name = "";
+    if (this->NoneEnabled)
+      {
+      name = "None";
       }
+    this->GetWidget()->GetWidget()->SetValue(name);
+    this->SelectedID = std::string(name);
+    }
+
+  if (oldSelectedNode != selectedNode)
+    {
+    this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -423,7 +481,8 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
 
   if ( node != NULL) 
     {
-    if ( !strcmp ( m->GetValue(), node->GetName() ) )
+    std::string name = this->FindEntryName(node);
+    if ( !strcmp ( m->GetValue(), name.c_str() ) )
       {
       return; // no change, don't propogate events
       }
@@ -431,7 +490,7 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
     // new value, set it and notify observers
     this->SetBalloonHelpString(node->GetName());
     this->SelectedID = std::string(node->GetID());
-    m->SetValue(node->GetName());
+    m->SetValue(name.c_str());
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
     }
   else 
