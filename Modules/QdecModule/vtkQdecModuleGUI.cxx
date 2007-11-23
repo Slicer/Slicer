@@ -48,6 +48,7 @@ Version:   $Revision: 1.2 $
 #include "vtkKWListBox.h"
 #include "vtkKWListBoxWithScrollbars.h"
 #include "vtkKWListBoxWithScrollbarsWithLabel.h"
+#include "vtkKWTopLevel.h"
 
 // for setting the zip/unzip/rm paths
 #include "vtkKWMessageDialog.h"
@@ -305,15 +306,15 @@ void vtkQdecModuleGUI::AddGUIObservers ( )
 {
   if (this->SubjectsDirectoryButton)
     {
-    this->SubjectsDirectoryButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->SubjectsDirectoryButton->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->LoadTableButton)
     {
-    this->LoadTableButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LoadTableButton->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->LoadResultsButton)
     {
-    this->LoadResultsButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->ApplyButton)
     {
@@ -330,17 +331,17 @@ void vtkQdecModuleGUI::RemoveGUIObservers ( )
 {
   if (this->SubjectsDirectoryButton)
     {
-    this->SubjectsDirectoryButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->SubjectsDirectoryButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   
   if (this->LoadTableButton)
     {
-    this->LoadTableButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LoadTableButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 
   if (this->LoadResultsButton)
     {
-    this->LoadResultsButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );    
     }
 
   if (this->ApplyButton)
@@ -565,9 +566,9 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     return;
     }
 
-  vtkKWLoadSaveButton *dirbrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
+  vtkKWLoadSaveDialog *browse = vtkKWLoadSaveDialog::SafeDownCast(caller);
 
-  if (dirbrowse == this->SubjectsDirectoryButton->GetWidget()  && event == vtkKWPushButton::InvokedEvent )
+  if (browse == this->SubjectsDirectoryButton->GetWidget()->GetLoadSaveDialog() && event == vtkKWTopLevel::WithdrawEvent )
     {
     // If a table file has been selected for loading...
     const char *fileName = this->SubjectsDirectoryButton->GetWidget()->GetFileName();
@@ -582,10 +583,8 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     this->GetLogic()->SetSubjectsDirectory(fileName);
     return;
     }
-  
-  vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
 
-  if (filebrowse == this->LoadTableButton->GetWidget()  && event == vtkKWPushButton::InvokedEvent )
+  if (browse == this->LoadTableButton->GetWidget()->GetLoadSaveDialog()   && event == vtkKWTopLevel::WithdrawEvent )
     {
     // If a table file has been selected for loading...
     const char *fileName = this->LoadTableButton->GetWidget()->GetFileName();
@@ -604,7 +603,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     else
       {
-      filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      browse->SaveLastPathToRegistry("OpenPath");
       vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: was able to load file " << fileName);
       if (this->GetDebug())
         {
@@ -616,7 +615,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     return;
     }
 
-  if (filebrowse == this->LoadResultsButton->GetWidget()  && event == vtkKWPushButton::InvokedEvent )
+  if (browse == this->LoadResultsButton->GetWidget()->GetLoadSaveDialog()  && event == vtkKWTopLevel::WithdrawEvent )
     {
     // If a results file has been selected for loading...
     const char *fileName = this->LoadResultsButton->GetWidget()->GetFileName();
@@ -629,7 +628,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     if (this->LoadProjectFile(fileName) == 0)
       {
       vtkWarningMacro("Loaded project file from " << fileName << ", widget text = " << this->LoadResultsButton->GetWidget()->GetText());
-      filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+      browse->SaveLastPathToRegistry("OpenPath");
       }
     else
       {
