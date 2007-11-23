@@ -260,7 +260,7 @@ void vtkSlicerDataGUI::BuildGUI ( )
     snapshotFrame->SetParent ( this->UIPanel->GetPageWidget ( "Data" ) );
     snapshotFrame->Create ( );
     snapshotFrame->ExpandFrame ( );
-    snapshotFrame->SetLabelText ("Scene Snaphots");
+    snapshotFrame->SetLabelText ("Scene Snapshots");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   snapshotFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Data")->GetWidgetName());
 
