@@ -317,7 +317,7 @@ const char * vtkMRMLModelNode::GetActiveCellScalarName(const char *type)
     vtkErrorMacro("Unknown point scalar type " << type);
     return "";
     }
-  vtkErrorMacro("GetActiveCellScalarName: unable to get " << type << " data to get the name");
+  vtkDebugMacro("GetActiveCellScalarName: unable to get " << type << " data to get the name");
   return "";
 }
 
@@ -343,7 +343,7 @@ int vtkMRMLModelNode::SetActiveScalars(const char *scalarName, const char *typeN
     {
     return retval;
     }
-  
+
   int attribute =  vtkDataSetAttributes::SCALARS;
   if (typeName != NULL && (strcmp(typeName, "") != 0))
     {
@@ -401,7 +401,7 @@ int vtkMRMLModelNode::SetActivePointScalars(const char *scalarName, int attribut
   // is this array present?
   if (this->PolyData->GetPointData()->HasArray(scalarName) == 0)
     {
-    vtkDebugMacro("Model " << this->GetName() << " doesn't have an array named " << scalarName);
+    vtkDebugMacro("Model " << this->GetName() << " doesn't have a point data array named " << scalarName);
     return -1;
     }
 
@@ -448,7 +448,7 @@ int vtkMRMLModelNode::SetActiveCellScalars(const char *scalarName, int attribute
   // is this array present?
   if (this->PolyData->GetCellData()->HasArray(scalarName) == 0)
     {
-    vtkDebugMacro("Model " << this->GetName() << " doesn't have an array named " << scalarName);
+    vtkDebugMacro("Model " << this->GetName() << " doesn't have a cell array named " << scalarName);
     return -1;
     }
 
