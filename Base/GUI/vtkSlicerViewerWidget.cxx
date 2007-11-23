@@ -1539,17 +1539,34 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
               actor->GetMapper()->SetLookupTable((vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(dnode->GetColorNode())->GetColorTransferFunction()));
               }
             }
-          
+
+          int cellScalarsActive = 0;
           if (dnode->GetActiveScalarName() != NULL)
             {
             vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(model);
             if (mnode)
               {
               mnode->SetActiveScalars(dnode->GetActiveScalarName(), "Scalars");
+              if (strcmp(dnode->GetActiveScalarName(), mnode->GetActiveCellScalarName("scalars")) == 0)
+                {
+                cellScalarsActive = 1;
+                }
               }
+            actor->GetMapper()->SelectColorArray(dnode->GetActiveScalarName());
             }
-          // set the scalar range
-          actor->GetMapper()->SetScalarRange(dnode->GetScalarRange());
+          if (!cellScalarsActive)
+            {
+            // set the scalar range
+            actor->GetMapper()->SetScalarRange(dnode->GetScalarRange());
+            actor->GetMapper()->SetScalarModeToUsePointFieldData();
+            actor->GetMapper()->SetColorModeToMapScalars();            
+            }
+          else
+            {
+            actor->GetMapper()->SetScalarModeToUseCellFieldData();
+            actor->GetMapper()->SetColorModeToDefault();
+            actor->GetMapper()->UseLookupTableScalarRangeOff();
+            }
           }
         
         actor->GetProperty()->SetColor(dnode->GetColor());
