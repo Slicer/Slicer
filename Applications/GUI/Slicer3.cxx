@@ -82,7 +82,7 @@ extern "C" {
 //#define QUERYATLAS_DEBUG
 //#define COLORS_DEBUG
 //#define FIDUCIALS_DEBUG
-//#define CAMERA_DEBUG
+#define CAMERA_DEBUG
 //#define EMSEG_DEBUG
 #define REALTIMEIMAGING_DEBUG
 #define MRABLATION_DEBUG
