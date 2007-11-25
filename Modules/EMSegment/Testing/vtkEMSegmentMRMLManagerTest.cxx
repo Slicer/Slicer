@@ -5,6 +5,7 @@
 #include "vtkEMSegmentTestUtilities.h"
 #include "vtkMRMLEMSWorkingDataNode.h"
 #include "vtkMRMLEMSTargetNode.h"
+#include "vtkMRMLEMSTreeNode.h"
 #include <stdexcept>
 #include <stdlib.h>
 
@@ -197,13 +198,23 @@ int main(int argc, char** argv)
       }
 
     vtkEMSegmentMRMLManager* m = emLogic->GetMRMLManager();
+    vtkIdType rootID = m->GetTreeRootNodeID();
+    
+    mrmlScene->InitTraversal();
+    vtkMRMLNode* nodeToPrint;
+    while ((nodeToPrint = mrmlScene->GetNextNode()) && nodeToPrint)
+      {
+      std::cerr << "Node ID/Name: " << nodeToPrint->GetID() 
+                << "/" << nodeToPrint->GetName() << std::endl;
+      }
+    m->PrintTree(rootID, 2);
 
     //////////////////////////////////////////////////////////////////////
     // test parameter modification (we'll test structure changes later)
     //////////////////////////////////////////////////////////////////////
 
     // tree node
-    vtkIdType rootID = m->GetTreeRootNodeID();
+
     vtkIdType treeNodeID = m->GetTreeNodeChildNodeID(rootID, 0);
 
     vtkTestSetGetMacroIndex(pass, m,
@@ -434,7 +445,7 @@ int main(int argc, char** argv)
 
       // add node A under root
       int numChildren = m->GetTreeNodeNumberOfChildren(rootID);
-
+      
       std::cerr << "Adding A...";
 
       vtkIdType idA = m->AddTreeNode(rootID);
@@ -606,8 +617,10 @@ int main(int argc, char** argv)
       std::cerr << "Adding/Removing/Moving target images...";
       localPass = true;
       // remove all targets
+      std::cerr << "Removing all targets...";
       while (m->GetTargetNumberOfSelectedVolumes() > 0)
         {
+        std::cerr << m->GetTargetNumberOfSelectedVolumes() << ",";
         m->RemoveTargetSelectedVolume(m->GetTargetSelectedVolumeNthID(0));
         }
       if (m->GetTargetNumberOfSelectedVolumes() != 0)
@@ -618,6 +631,7 @@ int main(int argc, char** argv)
         }
 
       // add back some targets
+      std::cerr << "Adding back some targets...";
       m->AddTargetSelectedVolume(m->GetVolumeNthID(0));
       m->AddTargetSelectedVolume(m->GetVolumeNthID(1));
       m->AddTargetSelectedVolume(m->GetVolumeNthID(2));
@@ -631,6 +645,7 @@ int main(int argc, char** argv)
         }
 
       // set some parameters that we can check later
+      std::cerr << "Set some log mean parameters...";
       m->SetTreeNodeDistributionLogMean(treeNodeID, 0, MAGIC_DOUBLE);
       m->SetTreeNodeDistributionLogMean(treeNodeID, 1, MAGIC_DOUBLE2);
       m->SetTreeNodeDistributionLogMean(treeNodeID, 2, MAGIC_DOUBLE3);
@@ -676,6 +691,7 @@ int main(int argc, char** argv)
       m->SetNthTargetVolumeIntensityNormalizationNormValue(4, MAGIC_DOUBLE5);
 
       // remove a target
+      std::cerr << "Removing a target...";
       m->RemoveTargetSelectedVolume(m->GetVolumeNthID(2));
       if (m->GetTargetNumberOfSelectedVolumes() != 4)
         {
@@ -685,6 +701,7 @@ int main(int argc, char** argv)
         }
 
       // move some targets
+      std::cerr << "Moving some targetsx...";
       m->MoveTargetSelectedVolume(m->GetVolumeNthID(1), 2);
       m->MoveTargetSelectedVolume(m->GetVolumeNthID(4), 0);
       if (m->GetTargetNumberOfSelectedVolumes() != 4)
@@ -696,6 +713,7 @@ int main(int argc, char** argv)
 
       // check that all is ok
       // we should have changed 0, 1, 2, 3, 4 to 4, 0, 3, 1
+      std::cerr << "Checking that parameters moved ok...";
       if (m->GetTreeNodeDistributionLogMean(treeNodeID, 0) != MAGIC_DOUBLE5 ||
           m->GetTreeNodeDistributionLogMean(treeNodeID, 1) != MAGIC_DOUBLE ||
           m->GetTreeNodeDistributionLogMean(treeNodeID, 2) != MAGIC_DOUBLE4 ||
