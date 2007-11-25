@@ -374,3 +374,36 @@ GetClassInteractionMatrixNode()
     }
   return node;
 }
+
+//-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSTreeParametersParentNode::
+AddChildNode(const char* childNodeID)
+{
+  if (this->GetClassInteractionMatrixNode() != NULL)
+    {
+    this->GetClassInteractionMatrixNode()->AddClass();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSTreeParametersParentNode::
+RemoveNthChildNode(int n)
+{
+  if (this->GetClassInteractionMatrixNode() != NULL)
+    {
+    this->GetClassInteractionMatrixNode()->RemoveNthClass(n);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSTreeParametersParentNode::
+MoveNthChildNode(int fromIndex, int toIndex)
+{
+  if (this->GetClassInteractionMatrixNode() != NULL)
+    {
+    this->GetClassInteractionMatrixNode()->MoveNthClass(fromIndex, toIndex);
+    }
+}

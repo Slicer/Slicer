@@ -65,7 +65,7 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSTreeParameters
  id="vtkMRMLEMSTreeParametersNode1" name="vtkMRMLEMSTreeParametersNode1"  hideFromEditors="false"  selectable="true" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode1" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode1" ColorRGB="0 0 0" InputChannelWeights="1 1 " SpatialPriorVolumeName="" SpatialPriorWeight="1" ClassProbability="1" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
 <EMSTree
- id="vtkMRMLEMSTreeNode1" name="Root"  hideFromEditors="false"  selectable="true" ParentNodeID="NULL" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode1" Label="Root" ></EMSTree>
+ id="vtkMRMLEMSTreeNode1" name="Root"  hideFromEditors="false"  selectable="true" ParentNodeID="NULL" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode1" Label="Root" ChildNodeIDs="vtkMRMLEMSTreeNode2 vtkMRMLEMSTreeNode3"></EMSTree>
 <EMSTemplate
  id="vtkMRMLEMSTemplateNode1" name="vtkMRMLEMSTemplateNode1"  hideFromEditors="false"  selectable="true" TreeNodeID="vtkMRMLEMSTreeNode1" GlobalParametersNodeID="vtkMRMLEMSGlobalParametersNode1" ></EMSTemplate>
 <EMSSegmenter
@@ -81,7 +81,7 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSTreeParameters
  id="vtkMRMLEMSTreeParametersNode2" name="vtkMRMLEMSTreeParametersNode2"  hideFromEditors="false"  selectable="true" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode2" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode2" ColorRGB="0 0 0" InputChannelWeights="1 1 " SpatialPriorVolumeName="" SpatialPriorWeight="1" ClassProbability="0.15" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
 <EMSTree
- id="vtkMRMLEMSTreeNode2" name="Background"  hideFromEditors="false"  selectable="true" ParentNodeID="vtkMRMLEMSTreeNode1" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode2" Label="NULL" ></EMSTree>
+ id="vtkMRMLEMSTreeNode2" name="Background"  hideFromEditors="false"  selectable="true" ParentNodeID="vtkMRMLEMSTreeNode1" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode2" Label="NULL" ChildNodeIDs="vtkMRMLEMSTreeNode7 vtkMRMLEMSTreeNode8"></EMSTree>
 <EMSTreeParametersLeaf
  id="vtkMRMLEMSTreeParametersLeafNode3" name="vtkMRMLEMSTreeParametersLeafNode3"  hideFromEditors="false"  selectable="true" PrintQuality="0" IntensityLabel="1009" LogMean="0 0 " LogCovariance="0 0 | 0 0 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent
@@ -91,7 +91,7 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSTreeParameters
  id="vtkMRMLEMSTreeParametersNode3" name="vtkMRMLEMSTreeParametersNode3"  hideFromEditors="false"  selectable="true" ParentParametersNodeID="vtkMRMLEMSTreeParametersParentNode3" LeafParametersNodeID="vtkMRMLEMSTreeParametersLeafNode3" ColorRGB="0 0 0" InputChannelWeights="1 1 " SpatialPriorVolumeName="" SpatialPriorWeight="1" ClassProbability="0.85" ExcludeFromIncompleteEStep="0" PrintWeights="0" ></EMSTreeParameters>
 <EMSTree
- id="vtkMRMLEMSTreeNode3" name="ICC"  hideFromEditors="false"  selectable="true" ParentNodeID="vtkMRMLEMSTreeNode1" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode3" Label="NULL" ></EMSTree>
+ id="vtkMRMLEMSTreeNode3" name="ICC"  hideFromEditors="false"  selectable="true" ParentNodeID="vtkMRMLEMSTreeNode1" TreeParametersNodeID="vtkMRMLEMSTreeParametersNode3" Label="NULL" ChildNodeIDs="vtkMRMLEMSTreeNode4 vtkMRMLEMSTreeNode5 vtkMRMLEMSTreeNode6"></EMSTree>
 <EMSTreeParametersLeaf
  id="vtkMRMLEMSTreeParametersLeafNode4" name="vtkMRMLEMSTreeParametersLeafNode4"  hideFromEditors="false"  selectable="true" PrintQuality="0" IntensityLabel="5" LogMean="4.0437 6.3336 " LogCovariance="0.025513 -0.011894 | -0.011894 0.0058532 " DistributionSpecificationMethod="0" DistributionSamplePointsRAS="" ></EMSTreeParametersLeaf>
 <EMSTreeParametersParent

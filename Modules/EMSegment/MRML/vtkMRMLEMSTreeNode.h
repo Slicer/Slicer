@@ -56,12 +56,18 @@ public:
   vtkGetStringMacro(Label);
   vtkSetStringMacro(Label);
 
-  // convinience methods for accessing child nodes
-  // NB: this searches through the MRML scene 
-  virtual int GetNumberOfChildNodes();
-  virtual char* GetNthChildNodeID(int n);
+  // access child nodes
+  virtual void AddChildNode(const char* childNodeID);
+  virtual void SetNthChildNode(int n, const char* childNodeID);
+
+  virtual int  GetNumberOfChildNodes();
+  virtual const char* GetNthChildNodeID(int n);
   virtual vtkMRMLEMSTreeNode* GetNthChildNode(int n);
-  virtual int GetChildIndexByMRMLID(char* childID);
+
+  virtual void RemoveNthChildNode(int index);
+  virtual void MoveNthChildNode(int fromIndex, int toIndex);  
+  virtual int GetChildIndexByMRMLID(const char* childID);
+  
 
 protected:
   vtkMRMLEMSTreeNode();
@@ -71,6 +77,11 @@ protected:
 
   // parent of this node
   char*                               ParentNodeID;
+  
+  // childrent of this node
+  //BTX
+  std::vector<std::string>            ChildNodeIDs;
+  //ETX
 
   // associated algorithm parameters
   char*                               TreeParametersNodeID;

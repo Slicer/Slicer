@@ -265,6 +265,30 @@ void vtkMRMLEMSTreeParametersLeafNode::PrintSelf(ostream& os,
 }
 
 //-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSTreeParametersLeafNode::
+AddChildNode(const char* childNodeID)
+{
+  // nothing to do here...
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSTreeParametersLeafNode::
+RemoveNthChildNode(int n)
+{
+  // nothing to do here...
+}
+
+//-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSTreeParametersLeafNode::
+MoveNthChildNode(int fromIndex, int toIndex)
+{
+  // nothing to do here...
+}
+
+//-----------------------------------------------------------------------------
 void
 vtkMRMLEMSTreeParametersLeafNode::
 SetNumberOfTargetInputChannels(unsigned int n)

@@ -42,6 +42,12 @@ public:
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);  
 
+  // manipulate tree structure
+  virtual void AddChildNode(const char* childNodeID);
+  virtual void RemoveNthChildNode(int n);
+  virtual void MoveNthChildNode(int fromIndex, int toIndex);
+
+  // manipulate target input channels
   vtkGetMacro(NumberOfTargetInputChannels, unsigned int);
   vtkSetMacro(NumberOfTargetInputChannels, unsigned int);
   virtual void AddTargetInputChannel() {}

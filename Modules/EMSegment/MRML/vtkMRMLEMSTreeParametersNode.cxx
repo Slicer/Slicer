@@ -287,6 +287,60 @@ void vtkMRMLEMSTreeParametersNode::PrintSelf(ostream& os,
 }
 
 //-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSTreeParametersNode::
+AddChildNode(const char* childNodeID)
+{
+  // nothing for the parameters in this class, but pass it on to leaf
+  // and parent parameter nodes
+
+  if (this->GetLeafParametersNode() != NULL)
+    {
+    this->GetLeafParametersNode()->AddChildNode(childNodeID);
+    }
+  if (this->GetParentParametersNode() != NULL)
+    {
+    this->GetParentParametersNode()->AddChildNode(childNodeID);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkMRMLEMSTreeParametersNode::
+RemoveNthChildNode(int n)
+{
+  // nothing for the parameters in this class, but pass it on to leaf
+  // and parent parameter nodes
+
+  if (this->GetLeafParametersNode() != NULL)
+    {
+    this->GetLeafParametersNode()->RemoveNthChildNode(n);
+    }
+  if (this->GetParentParametersNode() != NULL)
+    {
+    this->GetParentParametersNode()->RemoveNthChildNode(n);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void 
+vtkMRMLEMSTreeParametersNode::
+MoveNthChildNode(int fromIndex, int toIndex)
+{
+  // nothing for the parameters in this class, but pass it on to leaf
+  // and parent parameter nodes
+
+  if (this->GetLeafParametersNode() != NULL)
+    {
+    this->GetLeafParametersNode()->MoveNthChildNode(fromIndex, toIndex);
+    }
+  if (this->GetParentParametersNode() != NULL)
+    {
+    this->GetParentParametersNode()->MoveNthChildNode(fromIndex, toIndex);
+    }
+}
+
+//-----------------------------------------------------------------------------
 void
 vtkMRMLEMSTreeParametersNode::
 SetNumberOfTargetInputChannels(unsigned int n)
@@ -299,6 +353,15 @@ SetNumberOfTargetInputChannels(unsigned int n)
     this->InputChannelWeights.resize(n);
     vtksys_stl::fill(this->InputChannelWeights.begin(), 
                      this->InputChannelWeights.end(), 1.0);
+
+    if (this->GetLeafParametersNode() != NULL)
+      {
+      this->GetLeafParametersNode()->SetNumberOfTargetInputChannels(n);
+      }
+    if (this->GetParentParametersNode() != NULL)
+      {
+      this->GetParentParametersNode()->SetNumberOfTargetInputChannels(n);
+      }  
     }
 }
 
@@ -309,6 +372,15 @@ AddTargetInputChannel()
 {
   ++this->NumberOfTargetInputChannels;
   this->InputChannelWeights.push_back(1.0);
+
+  if (this->GetLeafParametersNode() != NULL)
+    {
+    this->GetLeafParametersNode()->AddTargetInputChannel();
+    }
+  if (this->GetParentParametersNode() != NULL)
+    {
+    this->GetParentParametersNode()->AddTargetInputChannel();
+    }  
 }
 
 //-----------------------------------------------------------------------------
@@ -318,6 +390,15 @@ RemoveNthTargetInputChannel(int index)
 {
   --this->NumberOfTargetInputChannels;
   this->InputChannelWeights.erase(InputChannelWeights.begin() + index);
+
+  if (this->GetLeafParametersNode() != NULL)
+    {
+    this->GetLeafParametersNode()->RemoveNthTargetInputChannel(index);
+    }
+  if (this->GetParentParametersNode() != NULL)
+    {
+    this->GetParentParametersNode()->RemoveNthTargetInputChannel(index);
+    }  
 }
 
 //-----------------------------------------------------------------------------
@@ -330,6 +411,15 @@ MoveNthTargetInputChannel(int fromIndex, int toIndex)
                                   fromIndex);
   this->InputChannelWeights.insert(this->InputChannelWeights.begin() + 
                                    toIndex, movingParam);
+
+  if (this->GetLeafParametersNode() != NULL)
+    {
+    this->GetLeafParametersNode()->MoveNthTargetInputChannel(fromIndex, toIndex);
+    }
+  if (this->GetParentParametersNode() != NULL)
+    {
+    this->GetParentParametersNode()->MoveNthTargetInputChannel(fromIndex, toIndex);
+    }  
 }
 
 //-----------------------------------------------------------------------------

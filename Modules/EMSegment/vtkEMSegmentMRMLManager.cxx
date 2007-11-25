@@ -251,8 +251,7 @@ SetTreeNodeParentNodeID(vtkIdType childNodeID, vtkIdType newParentNodeID)
     return;
     }
 
-  // remove the entry for this node in the old parent's class
-  // interaction matrix
+  // remove the reference from the old parent
   vtkMRMLEMSTreeNode* oldParentNode = childNode->GetParentNode();
   if (oldParentNode)
     {
@@ -264,44 +263,21 @@ SetTreeNodeParentNodeID(vtkIdType childNodeID, vtkIdType newParentNodeID)
                     << newParentNodeID);
       return;    
       }
-    
-    vtkMRMLEMSClassInteractionMatrixNode* oldMatrixNode = 
-      this->GetTreeClassInteractionNode(oldParentID);
-    if (oldMatrixNode)
+
+    int childIndex = oldParentNode->GetChildIndexByMRMLID(childNode->GetID());
+    if (childIndex < 0)
       {
-      int childIndex = 
-        childNode->GetParentNode()->GetChildIndexByMRMLID(childNode->GetID());
-      if (childIndex < 0)
-        {
-        vtkErrorMacro("ERROR: can't find child's index in old parent node.");
-        }
-      else
-        {
-        oldMatrixNode->RemoveNthClass(childIndex);
-        }
+      vtkErrorMacro("ERROR: can't find child's index in old parent node.");
       }
-    else
-      {
-      vtkErrorMacro("Error: parent node doesn't have a matrix node for node ID:"
-                    << childNodeID);
-      }
-    }
+
+    oldParentNode->RemoveNthChildNode(childIndex);
+    }  
 
   // point the child to the new parent
   childNode->SetParentNodeID(parentNode->GetID());
 
-  // add entry in CIM matrix for new parent
-  vtkMRMLEMSClassInteractionMatrixNode* newMatrixNode = 
-    this->GetTreeClassInteractionNode(newParentNodeID);
-  if (newMatrixNode)
-    {
-    newMatrixNode->AddClass();
-    }
-  else
-    {
-    vtkErrorMacro("Error: new parent node doesn't have a matrix for node ID:"
-                  << childNodeID);
-    }
+  // point parent to this child node
+  parentNode->AddChildNode(childNode->GetID());
 }
 
 //----------------------------------------------------------------------------
@@ -351,33 +327,21 @@ RemoveTreeNode(vtkIdType removedNodeID)
   // remove parameters nodes associated with this node
   this->RemoveTreeNodeParametersNodes(removedNodeID);
 
-  // remove the entry for this node in the old parent's class
-  // interaction matrix
+  // remove reference to this node from it's parent node
   vtkMRMLEMSTreeNode* parentNode = node->GetParentNode();
   if (parentNode)
     {
     vtkIdType parentID = this->MapMRMLNodeIDToVTKNodeID(parentNode->GetID());
     if (parentID != ERROR_NODE_VTKID)
       {
-      vtkMRMLEMSClassInteractionMatrixNode* matrixNode = 
-        this->GetTreeClassInteractionNode(parentID);
-      if (matrixNode)
+      int childIndex = parentNode->GetChildIndexByMRMLID(node->GetID());
+
+      if (childIndex < 0)
         {
-        int childIndex = parentNode->GetChildIndexByMRMLID(node->GetID());
-        if (childIndex < 0)
-          {
-          vtkErrorMacro("ERROR: can't find child's index in parent node.");
-          }
-        else
-          {
-          matrixNode->RemoveNthClass(childIndex);
-          }
+        vtkErrorMacro("ERROR: can't find child's index in old parent node.");
         }
-      else
-        {
-        vtkErrorMacro("Error: parent node doesn't have a matrix node for node ID:"
-                      << removedNodeID);
-        }  
+
+      parentNode->RemoveNthChildNode(childIndex);
       }
     }
  
@@ -1742,7 +1706,6 @@ int
 vtkEMSegmentMRMLManager::
 GetTargetNumberOfSelectedVolumes()
 {
-  
   if (this->GetTargetNode())
     {
     return this->GetTargetNode()->GetNumberOfVolumes();
@@ -3436,12 +3399,6 @@ AddNewTreeNode()
   treeParametersNode->SetParentParametersNodeID(parentParametersNode->GetID());
 
   // update memory
-  leafParametersNode->
-    SetNumberOfTargetInputChannels(this->GetTargetNode()->
-                                   GetNumberOfVolumes());
-  parentParametersNode->
-    SetNumberOfTargetInputChannels(this->GetTargetNode()->
-                                   GetNumberOfVolumes());
   treeParametersNode->
     SetNumberOfTargetInputChannels(this->GetTargetNode()->
                                    GetNumberOfVolumes());
@@ -3674,11 +3631,6 @@ PropogateAdditionOfSelectedTargetImage()
     {
     this->GetTreeParametersNode(*i)->
       AddTargetInputChannel();
-    this->GetTreeParametersLeafNode(*i)->
-      AddTargetInputChannel();
-    this->GetTreeParametersParentNode(*i)->
-      AddTargetInputChannel();
-    
 
     if (this->GetTreeParametersLeafNode(*i)->
         GetDistributionSpecificationMethod() == 
@@ -3706,10 +3658,6 @@ PropogateRemovalOfSelectedTargetImage(int imageIndex)
     {
     this->GetTreeParametersNode(*i)->
       RemoveNthTargetInputChannel(imageIndex);
-    this->GetTreeParametersLeafNode(*i)->
-      RemoveNthTargetInputChannel(imageIndex);
-    this->GetTreeParametersParentNode(*i)->
-      RemoveNthTargetInputChannel(imageIndex);
     }
 }
 
@@ -3729,10 +3677,6 @@ PropogateMovementOfSelectedTargetImage(int fromIndex, int toIndex)
   for (NodeIDListIterator i = nodeIDList.begin(); i != nodeIDList.end(); ++i)
     {
     this->GetTreeParametersNode(*i)->
-      MoveNthTargetInputChannel(fromIndex, toIndex);
-    this->GetTreeParametersLeafNode(*i)->
-      MoveNthTargetInputChannel(fromIndex, toIndex);
-    this->GetTreeParametersParentNode(*i)->
       MoveNthTargetInputChannel(fromIndex, toIndex);
     }
 }
@@ -4020,6 +3964,18 @@ PrintTree(vtkIdType rootID, vtkIndent indent)
                  << vtkstd::endl;
     int numChildren = this->GetTreeNodeNumberOfChildren(rootID); 
     vtkstd::cerr << indent << "Num. Children: " << numChildren << vtkstd::endl;
+    vtkstd::cerr << indent << "Child IDs from parent: ";
+    for (unsigned int i = 0; i < numChildren; ++i)
+      {
+      vtkstd::cerr << rnode->GetNthChildNodeID(i) << " ";
+      }
+    vtkstd::cerr << vtkstd::endl;
+    vtkstd::cerr << indent << "Child IDs from children: ";
+    for (unsigned int i = 0; i < numChildren; ++i)
+      {
+      vtkstd::cerr << rnode->GetNthChildNode(i)->GetID() << " ";
+      }
+    vtkstd::cerr << vtkstd::endl;
 
     indent = indent.GetNextIndent();
     for (int i = 0; i < numChildren; ++i)
