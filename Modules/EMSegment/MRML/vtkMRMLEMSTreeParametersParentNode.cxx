@@ -62,6 +62,8 @@ vtkMRMLEMSTreeParametersParentNode::vtkMRMLEMSTreeParametersParentNode()
   this->PrintMFAWeightsConvergence    = 0;
 
   this->GenerateBackgroundProbability = 0;
+
+  this->NumberOfTargetInputChannels   = 0;
 }
 
 //-----------------------------------------------------------------------------
