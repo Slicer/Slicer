@@ -1,5 +1,5 @@
-# The ModuleDescriptionParser source and binary trees. Also, the library direcory.
-SET(ModuleDescriptionParser_SOURCE_DIR "@ModuleDescriptionParser_SOURCE_DIR@")
-SET(ModuleDescriptionParser_BINARY_DIR "@ModuleDescriptionParser_BINARY_DIR@")
-SET(ModuleDescriptionParser_LIB_DIR "@CMAKE_BINARY_DIR@/bin" "@CMAKE_BINARY_DIR@")
-SET(ITK_DIR "@ITK_DIR@")
+# 
+SET(ModuleDescriptionParser_INCLUDE_DIRS "@ModuleDescriptionParser_INCLUDE_DIRS_CONFIG@")
+SET(ModuleDescriptionParser_LIBRARY_DIRS "@ModuleDescriptionParser_LIBRARY_DIRS_CONFIG@")
+SET(ModuleDescriptionParser_USE_FILE "@ModuleDescriptionParser_USE_FILE_CONFIG@")
+SET(ITK_DIR "@ITK_DIR_CONFIG@")

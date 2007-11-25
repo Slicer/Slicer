@@ -13,20 +13,27 @@ IF(Slicer3_SOURCE_DIR)
 ENDIF(Slicer3_SOURCE_DIR)
 
 FIND_PACKAGE(TCLAP REQUIRED)
+IF(TCLAP_FOUND)
+   INCLUDE(${TCLAP_USE_FILE})
+ENDIF(TCLAP_FOUND)
+
 FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
+IF(ModuleDescriptionParser_FOUND)
+   INCLUDE(${ModuleDescriptionParser_USE_FILE})
+ENDIF(ModuleDescriptionParser_FOUND)
 
-INCLUDE_DIRECTORIES (${TCLAP_SOURCE_DIR}/include)
-
-IF(ModuleDescriptionParser_SOURCE_DIR)
-  INCLUDE_DIRECTORIES(
-  ${ModuleDescriptionParser_SOURCE_DIR}
-  ${ModuleDescriptionParser_BINARY_DIR}
-  )
-ELSE(ModuleDescriptionParser_SOURCE_DIR)
-  INCLUDE_DIRECTORIES(
-  ${Slicer3_SOURCE_DIR}/Libs/ModuleDescriptionParser
-  )
-ENDIF(ModuleDescriptionParser_SOURCE_DIR)
+#INCLUDE_DIRECTORIES (${TCLAP_SOURCE_DIR}/include)
+#
+#IF(ModuleDescriptionParser_SOURCE_DIR)
+#  INCLUDE_DIRECTORIES(
+#  ${ModuleDescriptionParser_SOURCE_DIR}
+#  ${ModuleDescriptionParser_BINARY_DIR}
+#  )
+#ELSE(ModuleDescriptionParser_SOURCE_DIR)
+#  INCLUDE_DIRECTORIES(
+#  ${Slicer3_SOURCE_DIR}/Libs/ModuleDescriptionParser
+#  )
+#ENDIF(ModuleDescriptionParser_SOURCE_DIR)
 
 UTILITY_SOURCE(GENERATECLP_EXE GenerateCLP ./ GenerateCLP.cxx)
 IF (NOT GENERATECLP_EXE)

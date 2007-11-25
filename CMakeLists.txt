@@ -218,7 +218,7 @@ ENDIF(VTKsource_revision LESS 1.2196)
 SET(GenerateCLP_DIR ${Slicer3_BINARY_DIR}/Libs/GenerateCLP)
 SET(ModuleDescriptionParser_DIR ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionParser)
 SET(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
-SET(tclap_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
+SET(TCLAP_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 
 
 #
@@ -275,3 +275,22 @@ INSTALL(
   FILES ${Slicer3_BINARY_DIR}/lib/launch.tcl
   DESTINATION lib
 )
+
+
+# Set up for building against a Slicer3 build tree and a Slicer3 installation 
+#
+#
+INCLUDE( ${Slicer3_SOURCE_DIR}/GenerateSlicer3Config.cmake)
+
+CONFIGURE_FILE(${Slicer3_SOURCE_DIR}/UseSlicer3.cmake.in
+               ${Slicer3_BINARY_DIR}/UseSlicer3.cmake COPYONLY IMMEDIATE)
+
+INSTALL(FILES
+#   ${Slicer3_BINARY_DIR}/Slicer3BuildSettings.cmake
+   ${Slicer3_BINARY_DIR}/UseSlicer3.cmake
+   ${Slicer3_BINARY_DIR}/Utilities/Slicer3Config.cmake
+   DESTINATION lib
+   COMPONENT Development
+)
+
+

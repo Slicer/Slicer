@@ -7,11 +7,6 @@ CONFIGURE_FILE(
   ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfigure.h
 )
 
-CONFIGURE_FILE(
-  ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfig.cmake.in 
-  ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfig.cmake 
-)
-
 ## ITK is required for expat.h
 FIND_PACKAGE(ITK REQUIRED)
 INCLUDE(${ITK_USE_FILE})
@@ -61,8 +56,8 @@ ENDIF (USE_BFD)
 
 
 INCLUDE_DIRECTORIES(
-  ${ModuleDescriptionParser_SOURCE_DIR} 
   ${ModuleDescriptionParser_BINARY_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR} 
 )
 
 IF(USE_PYTHON)
@@ -107,6 +102,13 @@ IF(BUILD_TESTING)
   SUBDIRS(Testing)
 ENDIF(BUILD_TESTING)
 
+
+INCLUDE (GenerateModuleDescriptionParserConfig.cmake) 
+
+CONFIGURE_FILE(${ModuleDescriptionParser_SOURCE_DIR}/UseModuleDescriptionParser.cmake.in
+               ${ModuleDescriptionParser_BINARY_DIR}/UseModuleDescriptionParser.cmake COPYONLY IMMEDIATE)
+
+
 INSTALL(TARGETS ModuleDescriptionParser 
     RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
     LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
@@ -115,3 +117,8 @@ INSTALL(TARGETS ModuleDescriptionParser
 FILE(GLOB __files1 "${ModuleDescriptionParser_SOURCE_DIR}/*.h")
 INSTALL(FILES ${__files1} DESTINATION include/ModuleDescriptionParser COMPONENT Development)
 INSTALL(FILES ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfigure.h DESTINATION include/ModuleDescriptionParser COMPONENT Development)
+
+INSTALL(FILES 
+     ${ModuleDescriptionParser_BINARY_DIR}/UseModuleDescriptionParser.cmake 
+     ${ModuleDescriptionParser_BINARY_DIR}/install/ModuleDescriptionParserConfig.cmake 
+     DESTINATION lib/ModuleDescriptionParser COMPONENT Development)

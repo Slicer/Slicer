@@ -1,0 +1,3 @@
+INCLUDE_DIRECTORIES(BEFORE ${ModuleDescriptionParser_INCLUDE_DIRS})
+LINK_DIRECTORIES(${ModuleDescriptionParser_LIBRARY_DIRS})
+

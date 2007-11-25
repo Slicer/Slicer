@@ -1,0 +1,43 @@
+#
+# This file sets up the include directories, link directories and compiler
+# settings for a project to use Slicer3.  Such projects could provide new
+# Slicer3 modules built against a Slicer3 build tree or a Slicer3 installation.
+#
+
+
+FIND_PACKAGE(TCLAP REQUIRED)
+IF(TCLAP_FOUND)
+   INCLUDE(${TCLAP_USE_FILE})
+ENDIF(TCLAP_FOUND)
+
+FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
+IF(ModuleDescriptionParser_FOUND)
+   INCLUDE(${ModuleDescriptionParser_USE_FILE})
+ENDIF(ModuleDescriptionParser_FOUND)
+
+FIND_PACKAGE(GenerateCLP REQUIRED)
+IF(GenerateCLP_FOUND)
+   INCLUDE(${GenerateCLP_USE_FILE})
+ENDIF(GenerateCLP_FOUND)
+
+
+#IF(Slicer3_BUILD_SETTINGS_FILE)
+#  INCLUDE(${CMAKE_ROOT}/Modules/CMakeImportBuildSettings.cmake)
+#  CMAKE_IMPORT_BUILD_SETTINGS(${Slicer3_BUILD_SETTINGS_FILE})
+#ENDIF(Slicer3_BUILD_SETTINGS_FILE)
+
+
+# Add compiler flags needed to use Slicer3.
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${Slicer3_REQUIRED_C_FLAGS}")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Slicer3_REQUIRED_CXX_FLAGS}")
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${Slicer3_REQUIRED_LINK_FLAGS}")
+SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${Slicer3_REQUIRED_LINK_FLAGS}")
+SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${Slicer3_REQUIRED_LINK_FLAGS}")
+
+
+# Add include directories needed to use Slicer3.
+INCLUDE_DIRECTORIES(BEFORE ${Slicer3_INCLUDE_DIRS})
+
+# Add link directories needed to use Slicer3.
+LINK_DIRECTORIES(${Slicer3_LIBRARY_DIRS})
+

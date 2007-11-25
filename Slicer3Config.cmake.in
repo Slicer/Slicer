@@ -1,0 +1,41 @@
+#
+# Slicer3Config.cmake - Slicer3 CMake configuration file for external projects
+#
+# This file is configured by Slicer3 and used by UseSlicer3.cmake module
+# to load Slicer3's settings for an external project. External projects
+# can use these setting to build new modules against a Slicer3 build tree
+# or a Slicer3 installation.
+#
+
+# The Slicer3 include file directories.
+SET(Slicer3_INCLUDE_DIRS "@Slicer3_INCLUDE_DIRS_CONFIG@")
+
+# The Slicer3 library directories.
+SET(Slicer3_LIBRARY_DIRS "@Slicer3_LIBRARY_DIRS_CONFIG@")
+
+# The C and C++ flags added by Slicer3 to the cmake-configured flags.
+SET(Slicer3_REQUIRED_C_FLAGS "@Slicer3_REQUIRED_C_FLAGS@")
+SET(Slicer3_REQUIRED_CXX_FLAGS "@Slicer3_REQUIRED_CXX_FLAGS@")
+SET(Slicer3_REQUIRED_LINK_FLAGS "@Slicer3_REQUIRED_LINK_FLAGS@")
+
+# The Slicer3 version number
+SET(Slicer3_VERSION_MAJOR "@Slicer3_VERSION_MAJOR@")
+SET(Slicer3_VERSION_MINOR "@Slicer3_VERSION_MINOR@")
+SET(Slicer3_VERSION_PATCH "@Slicer3_VERSION_PATCH@")
+
+# The location of the UseSlicer3.cmake file.
+SET(Slicer3_USE_FILE "@Slicer3_USE_FILE_CONFIG@")
+
+# The build settings file.
+SET(Slicer3_BUILD_SETTINGS_FILE "@Slicer3_BUILD_SETTINGS_FILE@")
+
+# Whether Slicer3 was built with shared libraries.
+SET(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
+
+# Components needed to build modules from outside a Slicer3 build tree or 
+# from outside a Slicer3 installation tree
+SET(TCLAP_DIR "@TCLAP_DIR_CONFIG@")
+SET(ModuleDescriptionParser_DIR "@ModuleDescriptionParser_DIR_CONFIG@")
+SET(GenerateCLP_DIR "@GenerateCLP_DIR_CONFIG@")
+SET(GenerateCLP_USE_FILE "@GenerateCLP_USE_FILE_CONFIG@")
+SET(GENERATECLP_EXE "@GENERATECLP_EXE_CONFIG@")
