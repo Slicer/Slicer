@@ -104,7 +104,6 @@ ProcessMRMLEvents(vtkObject* caller,
     {
     if (node->IsA("vtkMRMLEMSTreeNode"))
       {
-      vtkIdType   vtkID  = this->MapMRMLNodeIDToVTKNodeID(node->GetID());
       this->IDMapRemovePair(node->GetID());
       }
     else if (node->IsA("vtkMRMLVolumeNode"))
@@ -150,7 +149,6 @@ GetTreeRootNodeID()
   vtkMRMLEMSTreeNode* rootNode = this->GetTreeRootNode();
   if (rootNode == NULL)
     {
-    //vtkErrorMacro("Tree root node is NULL");
     return ERROR_NODE_VTKID;
     }
 
@@ -3935,6 +3933,14 @@ CheckMRMLNodeStructure()
 
   // everything checks out
   return 1;
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+PrintTree()
+{
+  this->PrintTree(this->GetTreeRootNodeID(), 0);
 }
 
 //-----------------------------------------------------------------------------

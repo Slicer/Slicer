@@ -449,6 +449,7 @@ public:
   // Return if we have a global parameters node
   virtual int HasGlobalParametersNode();
 
+  virtual void PrintTree();
   virtual void PrintTree(vtkIdType rootID, vtkIndent indent);
 
   //
