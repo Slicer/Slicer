@@ -30,6 +30,7 @@ public:
   // actions
   //
   virtual void      SaveTemplateNow();
+  virtual void      SaveIntermediateResults();
 
   virtual void      StartPreprocessing();
   virtual void      StartPreprocessingInitializeInputData();

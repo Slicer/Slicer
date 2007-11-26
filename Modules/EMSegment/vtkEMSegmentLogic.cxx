@@ -105,6 +105,129 @@ SaveTemplateNow()
 //----------------------------------------------------------------------------
 void
 vtkEMSegmentLogic::
+SaveIntermediateResults()
+{
+  //
+  // make sure a directory has been specified and exists
+  std::string outputDirectory(this->MRMLManager->GetSaveWorkingDirectory());
+  
+  // test for existence!!!
+
+  // create a mrml scene with this EMSegmenter data and parameters
+
+  //
+  // create a mrml scene that will hold the parameters and data
+  std::string rootDirectory("/playpen/davisb/EMSegIntermediateResultsTesting");
+  std::string mrmlURL(rootDirectory + "/EMSegmenterScene.mrml");
+  vtkMRMLScene* mrmlScene = vtkMRMLScene::New();
+  mrmlScene->SetRootDirectory(rootDirectory.c_str());
+  mrmlScene->SetURL(mrmlURL.c_str());
+  
+  //
+  // copy em nodes (and the volumes, etc, that they depend on) into
+  // the new scene
+  vtkMRMLEMSNode* emNode = this->MRMLManager->GetEMSNode();
+  // !!! problem if emNode is null
+  vtkCollection* emNodeCollection = this->GetMRMLScene()->
+    GetReferencedNodes(emNode);
+  int numEMNodes = emNodeCollection->GetNumberOfItems();
+  
+  // add the nodes to the scene
+  emNodeCollection->InitTraversal();
+  vtkObject* currentObject;
+  std::map<vtkObject*, bool> addedMap;
+  while ((currentObject = emNodeCollection->GetNextItemAsObject()) &&
+         (currentObject != NULL))
+    {
+    // don't add duplicates !!! be carful, what about node with
+    // multiple refs, will the refs be updated correctly if this ref
+    // gets a different name???
+    if (addedMap.count(currentObject) == 0)
+      {
+      addedMap[currentObject] = true;
+      vtkMRMLNode* n = dynamic_cast<vtkMRMLNode*>(currentObject);
+      if (n != NULL)
+        {
+        mrmlScene->CopyNode(n);
+        }
+      }
+    }
+
+  //
+  // create an EMSeg mrml manager for the new scene
+  vtkEMSegmentMRMLManager* newSceneManager = vtkEMSegmentMRMLManager::New();
+  newSceneManager->SetMRMLScene(mrmlScene);
+  vtkMRMLEMSNode* newEMSNode = 
+    dynamic_cast<vtkMRMLEMSNode*>
+    (mrmlScene->GetNthNodeByClass(0, "vtkMRMLEMSNode"));
+  if (newEMSNode == NULL)
+    {
+    // !!! what if null?
+    std::cerr << "New Node is null :(" << std::endl;
+    }
+  else
+    {
+    newSceneManager->SetNode(newEMSNode);
+
+    // change the storage file for the 
+    vtkMRMLStorageNode* snode = 
+      newSceneManager->GetOutputVolumeNode()->GetStorageNode();
+    // !!! what if null
+    std::cerr << "File Name: ";
+    //std::cerr << snode->GetFileName() << std::endl;
+
+    vtkMRMLEMSWorkingDataNode* workingDataNode = 
+      newSceneManager->GetWorkingDataNode();
+    }
+
+  // write the scene
+  mrmlScene->Commit();
+
+  // clean up
+  mrmlScene->Delete();
+
+  //
+  // write target
+
+  // if Target subdir ne create it
+
+  // if Target/Input ne create it
+
+  // write Target/Input/InputTargetImages
+
+  // if Target/Normalized ne create it
+  
+  // write Target/Normalized/NormalizedTargetImages
+
+  // if Target/Aligned ne create it
+
+  // write Target/Aligned/AlignedTargetImages
+
+  //
+  // write atlas
+
+  // if Atlas ne create it
+
+  // if Atlas/Input ne create it
+
+  // write Atlas/Input/InputAtlasImages
+
+  // if Atlas/Aligned ne create it
+
+  // write Atlas/Aligned/AlignedAtlasImages
+
+  // if Segmentation ne create it
+
+  // write Segmentation/SegmentationResult
+
+  // craeate a MRML scene that will apply to this data
+  
+  // write the mrml scene
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
 StartPreprocessing()
 {
   if (!this->MRMLManager->GetWorkingDataNode())
@@ -473,21 +596,26 @@ StartSegmentation()
   image->Delete();
   outVolume->SetModifiedSinceRead(1);
 
-  //outVolume->
-  //SetImageData(segmenter->GetOutput());
-
   //
   // clean up
   //
   segmenter->Delete();
 
   //
+  // save intermediate results
+  // !!! in progress
+  if (false && this->MRMLManager->GetSaveIntermediateResults())
+    {
+    this->SaveIntermediateResults();
+    }
+
+  //!!!
   // save template file if desired
   //
-  if (this->MRMLManager->GetSaveTemplateAfterSegmentation())
-    {
-    this->SaveTemplateNow();
-    }
+  //if (this->MRMLManager->GetSaveTemplateAfterSegmentation())
+  //  {
+  //  this->SaveTemplateNow();
+  //  }
 }
 
 //-----------------------------------------------------------------------------
