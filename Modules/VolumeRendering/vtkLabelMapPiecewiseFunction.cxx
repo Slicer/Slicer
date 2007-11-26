@@ -20,11 +20,6 @@ vtkLabelMapPiecewiseFunction::~vtkLabelMapPiecewiseFunction(void)
         delete[] this->Opacities;
         this->Opacities=NULL;
     }
-    if(this->ColorNode)
-    {
-        this->ColorNode->Delete();
-        this->ColorNode=NULL;
-    }
 }
 
 vtkLabelMapPiecewiseFunction* vtkLabelMapPiecewiseFunction::New(void)
