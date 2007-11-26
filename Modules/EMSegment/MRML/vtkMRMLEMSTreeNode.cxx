@@ -225,7 +225,7 @@ const char*
 vtkMRMLEMSTreeNode::
 GetNthChildNodeID(int n)
 {
-  if (n >= 0 && n < this->ChildNodeIDs.size())
+  if (n >= 0 && n < static_cast<int>(this->ChildNodeIDs.size()))
     {
     return this->ChildNodeIDs[n].c_str();
     }
@@ -241,7 +241,7 @@ vtkMRMLEMSTreeNode::
 GetChildIndexByMRMLID(const char* childID)
 {
   std::string searchID(childID);
-  for (int i = 0; i < this->ChildNodeIDs.size(); ++i)
+  for (int i = 0; i < static_cast<int>(this->ChildNodeIDs.size()); ++i)
     {
     if (this->ChildNodeIDs[i] == searchID)
       {

@@ -147,7 +147,7 @@ void vtkMRMLEMSTreeParametersLeafNode::ReadXMLAttributes(const char** attrs)
       {
       // remove visual row seperators
       std::string valStr(val);
-      for (int i = 0; i < valStr.size(); ++i)
+      for (unsigned int i = 0; i < valStr.size(); ++i)
         {
         if (valStr[i] == '|')
           {
