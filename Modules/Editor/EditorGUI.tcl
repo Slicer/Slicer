@@ -111,7 +111,7 @@ proc EditorBuildGUI {this} {
   $::Editor($this,volumesSelect) SetParent [$::Editor($this,volumesFrame) GetFrame]
   $::Editor($this,volumesSelect) Create
   $::Editor($this,volumesSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
-  $::Editor($this,volumesSelect) SetNodeClass "vtkMRMLVolumeNode" "" "" ""
+  $::Editor($this,volumesSelect) SetNodeClass "vtkMRMLScalarVolumeNode" "" "" ""
   $::Editor($this,volumesSelect) UpdateMenu
   $::Editor($this,volumesSelect) SetLabelText "Source Volume:"
   $::Editor($this,volumesSelect) SetBalloonHelpString "The Source Volume will define the dimensions and directions for the new label map"
