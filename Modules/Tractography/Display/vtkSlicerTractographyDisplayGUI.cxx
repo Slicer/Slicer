@@ -10,6 +10,8 @@
 
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWLoadSaveDialog.h"
+#include "vtkKWTopLevel.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerTractographyDisplayGUI );
@@ -90,15 +92,15 @@ void vtkSlicerTractographyDisplayGUI::RemoveGUIObservers ( )
 {
   if (this->LoadTractographyButton)
     {
-    this->LoadTractographyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-    }
+    this->LoadTractographyButton->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+   }
   if (this->LoadTractographyDirectoryButton)
     {
-    this->LoadTractographyDirectoryButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LoadTractographyDirectoryButton->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     }
   if (this->SaveTractographyButton)
     {
-    this->SaveTractographyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->SaveTractographyButton->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 }
 
@@ -106,9 +108,9 @@ void vtkSlicerTractographyDisplayGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyDisplayGUI::AddGUIObservers ( )
 {
-  this->LoadTractographyButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->LoadTractographyDirectoryButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->SaveTractographyButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->LoadTractographyButton->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LoadTractographyDirectoryButton->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SaveTractographyButton->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent,  (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -117,11 +119,12 @@ void vtkSlicerTractographyDisplayGUI::AddGUIObservers ( )
 void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
                                             unsigned long event, void *callData )
 {
-  vtkKWLoadSaveButton *filebrowse = vtkKWLoadSaveButton::SafeDownCast(caller);
-  if (filebrowse == this->LoadTractographyButton  && event == vtkKWPushButton::InvokedEvent )
+  vtkKWLoadSaveDialog *loadSaveDialog = vtkKWLoadSaveDialog::SafeDownCast(caller);
+  if (loadSaveDialog && loadSaveDialog == this->LoadTractographyButton->GetLoadSaveDialog() &&
+      event == vtkKWTopLevel::WithdrawEvent  )
     {
     // If a file has been selected for loading...
-    const char *fileName = filebrowse->GetFileName();
+    const char *fileName = this->LoadTractographyButton->GetFileName();
     if ( fileName ) 
       {
       vtkSlicerFiberBundleLogic* fiberBundleLogic = this->Logic;
@@ -135,7 +138,7 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       else
         {
-        filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+        this->LoadTractographyButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
         
         }
 
@@ -147,11 +150,12 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
     return;
 
     }
-    else if (filebrowse == this->LoadTractographyDirectoryButton  && event == vtkKWPushButton::InvokedEvent )
+  else if (loadSaveDialog && loadSaveDialog == this->LoadTractographyDirectoryButton->GetLoadSaveDialog() &&
+           event == vtkKWPushButton::InvokedEvent )
     {
 
     // If a directory has been selected for loading...
-    const char *fileName = filebrowse->GetFileName();
+    const char *fileName = this->LoadTractographyDirectoryButton->GetFileName();
     if ( fileName ) 
       {
       vtkSlicerFiberBundleLogic* fiberBundleLogic = this->Logic;
@@ -162,8 +166,7 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
         }
       else
         {
-        filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-        
+        this->LoadTractographyDirectoryButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
         }
 
       }
@@ -173,10 +176,11 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
 
     return;
     }
-  else if (filebrowse == this->SaveTractographyButton  && event == vtkKWPushButton::InvokedEvent )
+  else if (loadSaveDialog && loadSaveDialog == this->SaveTractographyButton->GetLoadSaveDialog()  && 
+           event == vtkKWTopLevel::WithdrawEvent  )
       {
       // If a file has been selected for saving...
-      const char *fileName = filebrowse->GetFileName();
+      const char *fileName = this->SaveTractographyButton->GetFileName();
       if ( fileName ) 
       {
  
@@ -189,7 +193,7 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         else
           {
-          filebrowse->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");           
+          this->SaveTractographyButton->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");           
           }
        }
 
