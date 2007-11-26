@@ -452,6 +452,8 @@ public:
   virtual void PrintTree();
   virtual void PrintTree(vtkIdType rootID, vtkIndent indent);
 
+  virtual void PrintVolumeInfo();
+
   //
   // convienince functions for managing MRML nodes
   //

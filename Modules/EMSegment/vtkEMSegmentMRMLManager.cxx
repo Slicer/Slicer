@@ -720,7 +720,7 @@ UpdateIntensityDistributionFromSample(vtkIdType nodeID)
     for (unsigned int imageIndex = 0; imageIndex < numTargetImages; 
          ++imageIndex)
       {
-      std::string mrmlID = workingTarget->GetNthVolumeNodeID(imageIndex);
+      vtkstd::string mrmlID = workingTarget->GetNthVolumeNodeID(imageIndex);
       vtkIdType volumeID = this->MapMRMLNodeIDToVTKNodeID(mrmlID.c_str());
       
       for (unsigned int sampleIndex = 0; sampleIndex < numPoints; 
@@ -1778,7 +1778,7 @@ AddTargetSelectedVolume(vtkIdType volumeID)
     }
 
   // get volume name
-  std::string name = volumeNode->GetName();
+  vtkstd::string name = volumeNode->GetName();
   if (name.empty())
     {
     name = volumeNode->GetID();
@@ -3790,7 +3790,7 @@ UpdateMapsFromMRML()
 
     if (node != NULL)
       {
-      std::string mrmlID = node->GetID();
+      vtkstd::string mrmlID = node->GetID();
       
       if (oldMRMLtoVTKMap.count(mrmlID) > 0)
         {
@@ -3821,7 +3821,7 @@ UpdateMapsFromMRML()
 
     if (node != NULL)
       {
-      std::string mrmlID = node->GetID();
+      vtkstd::string mrmlID = node->GetID();
       
       if (oldMRMLtoVTKMap.count(mrmlID) > 0)
         {
@@ -3981,13 +3981,13 @@ PrintTree(vtkIdType rootID, vtkIndent indent)
     int numChildren = this->GetTreeNodeNumberOfChildren(rootID); 
     vtkstd::cerr << indent << "Num. Children: " << numChildren << vtkstd::endl;
     vtkstd::cerr << indent << "Child IDs from parent: ";
-    for (unsigned int i = 0; i < numChildren; ++i)
+    for (int i = 0; i < numChildren; ++i)
       {
       vtkstd::cerr << rnode->GetNthChildNodeID(i) << " ";
       }
     vtkstd::cerr << vtkstd::endl;
     vtkstd::cerr << indent << "Child IDs from children: ";
-    for (unsigned int i = 0; i < numChildren; ++i)
+    for (int i = 0; i < numChildren; ++i)
       {
       vtkstd::cerr << rnode->GetNthChildNode(i)->GetID() << " ";
       }
@@ -4001,5 +4001,39 @@ PrintTree(vtkIdType rootID, vtkIndent indent)
                    << ") of node " << rootID << vtkstd::endl;
       this->PrintTree(childID, indent);
       }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+PrintVolumeInfo()
+{
+  // for every volume node
+  int numVolumes = 
+    this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
+  for (int i = 0; i < numVolumes; ++i)
+    {
+    vtkMRMLNode* node = this->GetMRMLScene()->
+      GetNthNodeByClass(i, "vtkMRMLVolumeNode");
+    vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
+
+    // print volume node ID and name
+    vtkstd::cerr << "Volume Node ID / Name: " << volumeNode->GetID()
+              << " / " << volumeNode->GetName() << vtkstd::endl;
+    // print display node id
+    vtkstd::cerr << " Display Node ID: " 
+              << (volumeNode->GetDisplayNode() ?
+                  volumeNode->GetDisplayNode()->GetID() : "NULL")
+              << vtkstd::endl;
+
+    // print storage node id and filename
+    vtkstd::cerr << " Storage Node ID / Filename: " 
+              << (volumeNode->GetStorageNode() ?
+                  volumeNode->GetStorageNode()->GetID() : "NULL")
+              << " / "
+              << (volumeNode->GetStorageNode() ?
+                  volumeNode->GetStorageNode()->GetFileName() : "NULL")
+              << vtkstd::endl;
     }
 }
