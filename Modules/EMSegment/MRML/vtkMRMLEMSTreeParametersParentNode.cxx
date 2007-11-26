@@ -169,8 +169,8 @@ void vtkMRMLEMSTreeParametersParentNode::ReadXMLAttributes(const char** attrs)
     if (!strcmp(key, "ClassInteractionMatrixNodeID"))
       {
       this->SetClassInteractionMatrixNodeID(val);
-      this->Scene->AddReferencedNodeID(this->ClassInteractionMatrixNodeID, 
-                                       this);   
+      //this->Scene->AddReferencedNodeID(this->ClassInteractionMatrixNodeID, 
+      //                                 this);   
       }    
     else if (!strcmp(key, "Alpha"))
       {

@@ -161,27 +161,27 @@ void vtkMRMLEMSSegmenterNode::ReadXMLAttributes(const char** attrs)
     if (!strcmp(key, "TemplateNodeID"))
       {
       this->SetTemplateNodeID(val);
-      this->Scene->AddReferencedNodeID(this->TemplateNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->TemplateNodeID, this);
       }
     else if (!strcmp(key, "AtlasNodeID"))
       {
       this->SetAtlasNodeID(val);
-      this->Scene->AddReferencedNodeID(this->AtlasNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->AtlasNodeID, this);
       }
     else if (!strcmp(key, "TargetNodeID"))
       {
       this->SetTargetNodeID(val);
-      this->Scene->AddReferencedNodeID(this->TargetNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->TargetNodeID, this);
       }
     else if (!strcmp(key, "OutputVolumeNodeID"))
       {
       this->SetOutputVolumeNodeID(val);
-      this->Scene->AddReferencedNodeID(this->OutputVolumeNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->OutputVolumeNodeID, this);
       }
     else if (!strcmp(key, "WorkingDataNodeID"))
       {
       this->SetWorkingDataNodeID(val);
-      this->Scene->AddReferencedNodeID(this->WorkingDataNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->WorkingDataNodeID, this);
       }
     else if (!strcmp(key, "WorkingDirectory"))
       {

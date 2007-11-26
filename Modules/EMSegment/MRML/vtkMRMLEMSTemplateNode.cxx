@@ -108,12 +108,12 @@ void vtkMRMLEMSTemplateNode::ReadXMLAttributes(const char** attrs)
     if (!strcmp(key, "TreeNodeID"))
       {
       this->SetTreeNodeID(val);
-      this->Scene->AddReferencedNodeID(this->TreeNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->TreeNodeID, this);
       }
     else if (!strcmp(key, "GlobalParametersNodeID"))
       {
       this->SetGlobalParametersNodeID(val);
-      this->Scene->AddReferencedNodeID(this->GlobalParametersNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->GlobalParametersNodeID, this);
       }
     }
 }

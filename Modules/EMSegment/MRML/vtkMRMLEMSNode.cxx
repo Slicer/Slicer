@@ -106,7 +106,7 @@ void vtkMRMLEMSNode::ReadXMLAttributes(const char** attrs)
     if (!strcmp(key, "SegmenterNodeID"))
       {
       this->SetSegmenterNodeID(val);
-      this->Scene->AddReferencedNodeID(this->SegmenterNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->SegmenterNodeID, this);
       }
     else if (!strcmp(key, "TemplateFilename"))
       {

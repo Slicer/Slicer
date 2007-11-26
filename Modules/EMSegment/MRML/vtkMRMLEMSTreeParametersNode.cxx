@@ -156,12 +156,12 @@ void vtkMRMLEMSTreeParametersNode::ReadXMLAttributes(const char** attrs)
     if (!strcmp(key, "LeafParametersNodeID"))
       {
       this->SetLeafParametersNodeID(val);
-      this->Scene->AddReferencedNodeID(this->LeafParametersNodeID, this);   
+      //this->Scene->AddReferencedNodeID(this->LeafParametersNodeID, this);   
       }
     else if (!strcmp(key, "ParentParametersNodeID"))
       {
       this->SetParentParametersNodeID(val);
-      this->Scene->AddReferencedNodeID(this->ParentParametersNodeID, this);   
+      //this->Scene->AddReferencedNodeID(this->ParentParametersNodeID, this);   
       }
     else if (!strcmp(key, "ColorRGB"))
       {

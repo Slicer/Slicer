@@ -163,27 +163,27 @@ void vtkMRMLEMSWorkingDataNode::ReadXMLAttributes(const char** attrs)
     if (!strcmp(key, "InputTargetNodeID"))
       {
       this->SetInputTargetNodeID(val);
-      this->Scene->AddReferencedNodeID(this->InputTargetNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->InputTargetNodeID, this);
       }
     else if (!strcmp(key, "NormalizedTargetNodeID"))
       {
       this->SetNormalizedTargetNodeID(val);
-      this->Scene->AddReferencedNodeID(this->NormalizedTargetNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->NormalizedTargetNodeID, this);
       }
     else if (!strcmp(key, "AlignedTargetNodeID"))
       {
       this->SetAlignedTargetNodeID(val);
-      this->Scene->AddReferencedNodeID(this->AlignedTargetNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->AlignedTargetNodeID, this);
       }
     else if (!strcmp(key, "InputAtlasNodeID"))
       {
       this->SetInputAtlasNodeID(val);
-      this->Scene->AddReferencedNodeID(this->InputAtlasNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->InputAtlasNodeID, this);
       }
     else if (!strcmp(key, "AlignedAtlasNodeID"))
       {
       this->SetAlignedAtlasNodeID(val);
-      this->Scene->AddReferencedNodeID(this->AlignedAtlasNodeID, this);
+      //this->Scene->AddReferencedNodeID(this->AlignedAtlasNodeID, this);
       }
     }
 }
