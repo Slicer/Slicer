@@ -226,7 +226,6 @@ void vtkSlicerSceneSnapshotWidget::CreateWidget ( )
   this->SnapshotSelectorWidget->SetBalloonHelpString("select a scene snapshot.");
   this->Script ( "pack %s -side left -anchor nw -fill x -padx 2 -pady 2",
                  this->SnapshotSelectorWidget->GetWidgetName());
-  this->SnapshotSelectorWidget->SetWidgetName("SnapshotSelector");
 
   
   // Restore Snapshot button

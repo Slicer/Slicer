@@ -293,7 +293,6 @@ void vtkSlicerRecordSnapshotWidget::CreateWidget ( )
   this->ClipSelectorWidget->SetBalloonHelpString("select a scene snapshot.");
   this->Script ( "pack %s -side left -anchor nw -fill x -padx 2 -pady 2",
                  this->ClipSelectorWidget->GetWidgetName());
-  this->ClipSelectorWidget->SetWidgetName("SnapshotSelector");
 
 
 

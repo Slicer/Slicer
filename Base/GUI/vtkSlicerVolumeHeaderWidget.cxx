@@ -341,7 +341,6 @@ void vtkSlicerVolumeHeaderWidget::CreateWidget ( )
     this->VolumeSelectorWidget->SetBalloonHelpString("select a volume from the current mrml scene.");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->VolumeSelectorWidget->GetWidgetName());
-    this->VolumeSelectorWidget->SetWidgetName("DisplayVolumeSelector");
     }
   else
     {
