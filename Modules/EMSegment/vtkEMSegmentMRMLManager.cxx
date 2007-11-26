@@ -3103,6 +3103,16 @@ GetSegmenterNode()
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLEMSNode*
+vtkEMSegmentMRMLManager::
+GetEMSNode()
+{
+  return this->Node;
+}
+
+
+
+//----------------------------------------------------------------------------
 vtkMRMLEMSTargetNode*
 vtkEMSegmentMRMLManager::
 CloneTargetNode(vtkMRMLEMSTargetNode* targetNode, char* name)

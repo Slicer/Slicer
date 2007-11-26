@@ -469,6 +469,7 @@ public:
     GetTreeParametersParentNode(vtkIdType);  
   virtual vtkMRMLEMSClassInteractionMatrixNode* 
     GetTreeClassInteractionNode(vtkIdType);  
+  virtual vtkMRMLEMSNode*                 GetEMSNode();
   virtual vtkMRMLEMSSegmenterNode*        GetSegmenterNode();
   virtual vtkMRMLVolumeNode*              GetVolumeNode(vtkIdType);
   virtual vtkMRMLEMSWorkingDataNode*      GetWorkingDataNode();
