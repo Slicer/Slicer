@@ -184,13 +184,13 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     readerFile->UpdateInformation();
     if ( readerFile->GetNumberOfFileNames() == 1 )
       {
-      reader = readerSeries;
-      readerFile->Delete();
+      reader = readerFile;
+      readerSeries->Delete();
       }
     else
       {
-      reader = readerFile;
-      readerSeries->Delete();
+      reader = readerSeries;
+      readerFile->Delete();
       }
     }
 
