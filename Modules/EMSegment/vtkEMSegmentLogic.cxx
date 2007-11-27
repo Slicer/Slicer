@@ -109,59 +109,22 @@ SaveIntermediateResults()
 {
   std::cerr << "Save intermediate results..." << std::endl;
 
+  //
+  // get output directory
   std::string outputDirectory(this->MRMLManager->GetSaveWorkingDirectory());
   std::string 
-    testOutputDirectory("/playpen/davisb/EMSegIntermediateResultsTesting");
+    testOutputDirectory("/playpen/davisb/EMSegIntermediateResultsTesting/");
   outputDirectory = testOutputDirectory;
 
   //
-  // create a new mrml scene and copy to it the EMSeg parameters;
-  // reset filenames to the standardized EMSeg intermediate results
-  // package layout
-  vtkMRMLScene* mrmlScene = vtkMRMLScene::New();
-  this->MRMLManager->CopyEMRelatedNodesToMRMLScene(mrmlScene);
-  this->MRMLManager->CreatePackageFilenames(mrmlScene, 
-                                            outputDirectory.c_str());
+  // package EMSeg-related parameters together and write them to disk
+  bool writeSuccessful = 
+    this->MRMLManager->PackageAndWriteData(outputDirectory.c_str());
 
-  //
-  // write target
-
-  // if Target subdir ne create it
-
-  // if Target/Input ne create it
-
-  // write Target/Input/InputTargetImages
-
-  // if Target/Normalized ne create it
-  
-  // write Target/Normalized/NormalizedTargetImages
-
-  // if Target/Aligned ne create it
-
-  // write Target/Aligned/AlignedTargetImages
-
-  //
-  // write atlas
-
-  // if Atlas ne create it
-
-  // if Atlas/Input ne create it
-
-  // write Atlas/Input/InputAtlasImages
-
-  // if Atlas/Aligned ne create it
-
-  // write Atlas/Aligned/AlignedAtlasImages
-
-  // if Segmentation ne create it
-
-  // write Segmentation/SegmentationResult
-
-  // write the scene
-  mrmlScene->Commit();
-
-  // clean up
-  mrmlScene->Delete();
+  if (!writeSuccessful)
+    {
+    vtkErrorMacro("ERROR: unable to save intermediate results");
+    }
 
   std::cerr << "Save intermediate results DONE" << std::endl;
 }
@@ -545,7 +508,7 @@ StartSegmentation()
   //
   // save intermediate results
   // !!! in progress
-  if (false &&  this->MRMLManager->GetSaveIntermediateResults())
+  if (false && this->MRMLManager->GetSaveIntermediateResults())
     {
     this->SaveIntermediateResults();
     }
