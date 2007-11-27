@@ -1649,7 +1649,7 @@ void vtkMRMLScene::AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes
   for (n=0; n<nnodes; n++)
     {
     rnode = this->GetNodeByID(ids[n]);
-    if (rnode != NULL)
+    if (rnode != NULL && !refNodes->IsItemPresent(rnode))
       {
       refNodes->AddItem(rnode);
       this->AddReferencedNodes(rnode, refNodes);
