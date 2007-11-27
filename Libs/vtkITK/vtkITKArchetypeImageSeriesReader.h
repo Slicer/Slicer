@@ -52,6 +52,13 @@ public:
   vtkGetStringMacro(Archetype);
 
   // Description:
+  // See how many file names were generated during ExecuteInformation
+  int GetNumberOfFileNames()
+    {
+    return this->FileNames.size();
+    };
+
+  // Description:
   // Set/Get the default spacing of the data in the file. This will be
   // used if the reader provided spacing is 1.0. (Default is 1.0)
   vtkSetVector3Macro(DefaultDataSpacing,double);
