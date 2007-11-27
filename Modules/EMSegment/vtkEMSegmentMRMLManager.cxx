@@ -4037,3 +4037,268 @@ PrintVolumeInfo()
               << vtkstd::endl;
     }
 }
+
+//-----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+CopyEMRelatedNodesToMRMLScene(vtkMRMLScene* newScene)
+{
+  //
+  // clear scene
+  //
+  newScene->Clear(1);
+
+  //
+  // copy over nodes from the current scene to the new scene
+  //
+
+  vtkMRMLScene*   currentScene = this->GetMRMLScene();
+  vtkMRMLEMSNode* emNode       = this->GetEMSNode();
+  if (currentScene == NULL || emNode == NULL)
+    {
+    return;
+    }
+
+  // get all nodes associated with this EMSeg parameter set
+  vtkCollection* emNodeCollection = this->GetMRMLScene()->
+    GetReferencedNodes(emNode);  
+
+  // add the nodes to the scene
+  emNodeCollection->InitTraversal();
+  vtkObject* currentObject = NULL;
+  while ((currentObject = emNodeCollection->GetNextItemAsObject()) &&
+         (currentObject != NULL))
+    {
+    vtkMRMLNode* n = dynamic_cast<vtkMRMLNode*>(currentObject);
+    if (n == NULL)
+      {
+      continue;
+      }
+
+    vtkMRMLNode* node = n->CreateNodeInstance();
+    node->CopyWithScene(n);
+    newScene->AddNode(node);
+    node->Delete();
+    }
+
+  // clean up
+  emNodeCollection->Delete();
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+CreatePackageFilenames(vtkMRMLScene* scene, 
+                       const char* packageDirectoryName)
+{
+  // 
+  // setup output directory
+  std::string outputDirectory(packageDirectoryName);
+  std::string mrmlURL(outputDirectory + "/" + "EMSegmenterScene.mrml");
+
+  scene->SetRootDirectory(outputDirectory.c_str());
+  scene->SetURL(mrmlURL.c_str());
+
+  //
+  // set up mrml manager for this new scene
+  vtkEMSegmentMRMLManager* newSceneManager = vtkEMSegmentMRMLManager::New();
+  newSceneManager->SetMRMLScene(scene);
+  vtkMRMLEMSNode* newEMSNode = dynamic_cast<vtkMRMLEMSNode*>
+    (scene->GetNthNodeByClass(0, "vtkMRMLEMSNode"));
+  if (newEMSNode == NULL)
+    {
+    // !!! what if null?
+    std::cerr << "New Node is null :(" << std::endl;
+    }
+  else
+    {
+    newSceneManager->SetNode(newEMSNode);
+    }
+  vtkMRMLEMSWorkingDataNode* workingDataNode = 
+    newSceneManager->GetWorkingDataNode();
+
+  //
+  // change the storage file for the targets
+  int numTargets = newSceneManager->GetTargetNumberOfSelectedVolumes();
+
+  // input target volumes
+  if (workingDataNode->GetInputTargetNode())
+    {
+    for (int i = 0; i < numTargets; ++i)
+      {
+      vtkMRMLVolumeNode* volumeNode =
+        workingDataNode->GetInputTargetNode()->GetNthVolumeNode(i);
+      if (volumeNode == NULL)
+        {
+        // bail out !!!
+        }
+      vtkMRMLStorageNode* storageNode = volumeNode->GetStorageNode();
+      if (storageNode == NULL)
+        {
+        // create a storage node !!! ???
+        std::cerr << "Storage node is null..." << std::endl;
+        }
+      
+      // create new filename
+      std::string oldFilename       = storageNode->GetFileName();
+      std::string oldFlienameNoPath = 
+        vtksys::SystemTools::GetFilenameName(oldFilename);
+      std::vector<std::string> pathComponents;
+      pathComponents.push_back("Target");
+      pathComponents.push_back("Input");
+      pathComponents.push_back(oldFlienameNoPath);
+      std::string newFilename = 
+        vtksys::SystemTools::JoinPath(pathComponents);
+
+      storageNode->SetFileName(newFilename.c_str());
+      }
+    }  
+
+  // normalized target volumes
+  if (workingDataNode->GetNormalizedTargetNode())
+    {
+    for (int i = 0; i < numTargets; ++i)
+      {
+      vtkMRMLVolumeNode* volumeNode =
+        workingDataNode->GetNormalizedTargetNode()->GetNthVolumeNode(i);
+      if (volumeNode == NULL)
+        {
+        // bail out !!!
+        std::cerr << "Volume node is null..." << std::endl;
+        continue;
+        }
+      vtkMRMLStorageNode* storageNode = volumeNode->GetStorageNode();
+      if (storageNode == NULL)
+        {
+        // create a storage node !!! ???
+        std::cerr << "Storage node is null for volume node "
+                  << volumeNode->GetID() << "..." << std::endl;
+        continue;
+        }
+      
+      // create new filename
+      std::string oldFilename       = storageNode->GetFileName();
+      std::string oldFlienameNoPath = 
+        vtksys::SystemTools::GetFilenameName(oldFilename);
+      std::vector<std::string> pathComponents;
+      pathComponents.push_back("Target");
+      pathComponents.push_back("Normalized");
+      pathComponents.push_back(oldFlienameNoPath);
+      std::string newFilename = 
+        vtksys::SystemTools::JoinPath(pathComponents);
+
+      storageNode->SetFileName(newFilename.c_str());
+      }
+    }  
+
+  // aligned target volumes
+  if (workingDataNode->GetAlignedTargetNode())
+    {
+    for (int i = 0; i < numTargets; ++i)
+      {
+      vtkMRMLVolumeNode* volumeNode =
+        workingDataNode->GetAlignedTargetNode()->GetNthVolumeNode(i);
+      if (volumeNode == NULL)
+        {
+        // bail out !!!
+        std::cerr << "Volume node is null..." << std::endl;
+        continue;
+        }
+      vtkMRMLStorageNode* storageNode = volumeNode->GetStorageNode();
+      if (storageNode == NULL)
+        {
+        // create a storage node !!! ???
+        std::cerr << "Storage node is null for volume node "
+                  << volumeNode->GetID() << "..." << std::endl;
+        continue;
+        }
+      
+      // create new filename
+      std::string oldFilename       = storageNode->GetFileName();
+      std::string oldFlienameNoPath = 
+        vtksys::SystemTools::GetFilenameName(oldFilename);
+      std::vector<std::string> pathComponents;
+      pathComponents.push_back("Target");
+      pathComponents.push_back("Aligned");
+      pathComponents.push_back(oldFlienameNoPath);
+      std::string newFilename = 
+        vtksys::SystemTools::JoinPath(pathComponents);
+
+      storageNode->SetFileName(newFilename.c_str());
+      }
+    }  
+
+  //
+  // change the storage file for the atlas
+  int numAtlasVolumes = newSceneManager->GetAtlasNode()->GetNumberOfVolumes();
+
+  // input atlas volumes
+  if (workingDataNode->GetInputAtlasNode())
+    {
+    for (int i = 0; i < numAtlasVolumes; ++i)
+      {
+      vtkMRMLVolumeNode* volumeNode =
+        workingDataNode->GetInputAtlasNode()->GetNthVolumeNode(i);
+      if (volumeNode == NULL)
+        {
+        // bail out !!!
+        }
+      vtkMRMLStorageNode* storageNode = volumeNode->GetStorageNode();
+      if (storageNode == NULL)
+        {
+        // create a storage node !!! ???
+        std::cerr << "Storage node is null..." << std::endl;
+        }
+      
+      // create new filename
+      std::string oldFilename       = storageNode->GetFileName();
+      std::string oldFlienameNoPath = 
+        vtksys::SystemTools::GetFilenameName(oldFilename);
+      std::vector<std::string> pathComponents;
+      pathComponents.push_back("Atlas");
+      pathComponents.push_back("Input");
+      pathComponents.push_back(oldFlienameNoPath);
+      std::string newFilename = 
+        vtksys::SystemTools::JoinPath(pathComponents);
+
+      storageNode->SetFileName(newFilename.c_str());
+      }
+    }  
+
+  // aligned atlas volumes
+  if (workingDataNode->GetAlignedAtlasNode())
+    {
+    for (int i = 0; i < numAtlasVolumes; ++i)
+      {
+      vtkMRMLVolumeNode* volumeNode =
+        workingDataNode->GetAlignedAtlasNode()->GetNthVolumeNode(i);
+      if (volumeNode == NULL)
+        {
+        // bail out !!!
+        }
+      vtkMRMLStorageNode* storageNode = volumeNode->GetStorageNode();
+      if (storageNode == NULL)
+        {
+        // create a storage node !!! ???
+        std::cerr << "Storage node is null..." << std::endl;
+        }
+      
+      // create new filename
+      std::string oldFilename       = storageNode->GetFileName();
+      std::string oldFlienameNoPath = 
+        vtksys::SystemTools::GetFilenameName(oldFilename);
+      std::vector<std::string> pathComponents;
+      pathComponents.push_back("Atlas");
+      pathComponents.push_back("Aligned");
+      pathComponents.push_back(oldFlienameNoPath);
+      std::string newFilename = 
+        vtksys::SystemTools::JoinPath(pathComponents);
+
+      storageNode->SetFileName(newFilename.c_str());
+      }
+    }  
+
+  // clean up
+  newSceneManager->Delete();
+}
+

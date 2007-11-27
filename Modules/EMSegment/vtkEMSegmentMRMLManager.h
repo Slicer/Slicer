@@ -49,6 +49,13 @@ public:
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event,
                                    void *callData );
 
+  // 
+  // copy all nodes relating to the EMSegmenter into newScene
+  virtual void CopyEMRelatedNodesToMRMLScene(vtkMRMLScene* newScene);
+  
+  virtual void CreatePackageFilenames(vtkMRMLScene* scene, 
+                                      const char* packageDirectoryName);
+
   //
   // functions for getting and setting the current template builder
   // node (i.e. the set of parameters to edit and use)
