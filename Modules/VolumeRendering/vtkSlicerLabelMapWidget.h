@@ -21,9 +21,12 @@ class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerLabelMapWidget :public vtkSlicer
 public:
     // Description:
     // Usual vtk/KWWidgets methods: go to www.vtk.org / www.kwwidgets.org for more details
-    void UpdateGuiElements(void);
     static vtkSlicerLabelMapWidget *New();
     vtkTypeRevisionMacro(vtkSlicerLabelMapWidget,vtkKWCompositeWidget);
+
+    // Description:
+    // Update the GuiElements of the labelmap widget
+    void UpdateGuiElements(void);
 
     // Description:
     // Initialize the Labelmap widget. Use this method directly after creating the widget and 

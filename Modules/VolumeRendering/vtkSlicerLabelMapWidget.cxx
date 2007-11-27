@@ -22,7 +22,6 @@ vtkSlicerLabelMapWidget::vtkSlicerLabelMapWidget(void)
     this->VolumeRenderingNode=NULL;
     this->Node=NULL;
     this->VMPW_Shading=NULL;
-
 }
 
 vtkSlicerLabelMapWidget::~vtkSlicerLabelMapWidget(void)
@@ -50,7 +49,6 @@ vtkSlicerLabelMapWidget::~vtkSlicerLabelMapWidget(void)
         this->VMPW_Shading->SetParent(NULL);
         this->VMPW_Shading->Delete();
         this->VMPW_Shading=NULL;
-
     }
 
 }
@@ -58,7 +56,8 @@ vtkSlicerLabelMapWidget::~vtkSlicerLabelMapWidget(void)
 void vtkSlicerLabelMapWidget::CreateWidget(void)
 {
     this->Superclass::CreateWidget();
-    
+
+    //Shading
     this->VMPW_Shading=vtkKWVolumeMaterialPropertyWidget::New();
     this->VMPW_Shading->SetParent(this);
     this->VMPW_Shading->Create();
@@ -67,9 +66,7 @@ void vtkSlicerLabelMapWidget::CreateWidget(void)
     this->VMPW_Shading->SetPropertyChangedCommand(this,"InvokeEvent 30000");;
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->VMPW_Shading->GetWidgetName());
 
-
-
-    //Change all element
+    //Change all opacities
     this->ChangeAll=vtkSlicerLabelmapElement::New();
     this->ChangeAll->SetParent(this);
     this->ChangeAll->Create();
@@ -81,14 +78,15 @@ void vtkSlicerLabelMapWidget::CreateWidget(void)
     this->ChangeAll->ChangeOpacity(-1);
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->ChangeAll->GetWidgetName());
     this->ChangeAll->AddObserver(vtkCommand::AnyEvent,(vtkCommand *)this->GUICallbackCommand);
+
+    //Tree with all opacities
     this->Tree=vtkSlicerLabelmapTree::New();
     this->Tree->SetParent(this);
     this->Tree->Create();
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->Tree->GetWidgetName());
     this->Tree->AddObserver(vtkSlicerLabelmapTree::SingleLabelEdited,(vtkCommand *) this->GUICallbackCommand);
-
-
 }
+
 void vtkSlicerLabelMapWidget::ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData)
 {
     vtkSlicerLabelmapElement *callerLabelmap=vtkSlicerLabelmapElement::SafeDownCast(caller);
@@ -106,9 +104,10 @@ void vtkSlicerLabelMapWidget::ProcessWidgetEvents(vtkObject *caller, unsigned lo
 
         this->ChangeAll->ChangeOpacity(-1);
         this->InvokeEvent(vtkSlicerLabelMapWidget::NeedForRenderEvent);
+        return;
     }
-
 }
+
 void vtkSlicerLabelMapWidget::UpdateGuiElements(void)
 {
     //Update the tree
@@ -128,9 +127,7 @@ void vtkSlicerLabelMapWidget::UpdateGuiElements(void)
     }
     else
     {
-                this->VMPW_Shading->SetVolumeProperty(this->VolumeRenderingNode->GetVolumeProperty());
+        this->VMPW_Shading->SetVolumeProperty(this->VolumeRenderingNode->GetVolumeProperty());
     }
-
-
 }
 
