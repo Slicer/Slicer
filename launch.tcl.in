@@ -204,6 +204,8 @@ proc launch_ParseArgs {argv} {
   set newargs ""
   foreach arg $::argv {
     switch -- $arg {
+      "--help" -
+      "-h" -
       "--no_splash" -
       "--no-splash" {
           set ::LAUNCH(showSplash) 0
