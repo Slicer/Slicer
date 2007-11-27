@@ -678,11 +678,11 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
 
         //RGB Data from the smaller viewport
         vtkUnsignedCharArray *image=vtkUnsignedCharArray::New();
-        renWin->GetRGBACharPixelData(0,0,this->FactorLastLowRes*size[0],this->FactorLastLowRes*size[1],0,image);
+        renWin->GetRGBACharPixelData(0,0,(int)(this->FactorLastLowRes*size[0]),(int)(this->FactorLastLowRes*size[1]),0,image);
 
         vtkImageData *imageData=vtkImageData::New();
         imageData->GetPointData()->SetScalars(image);
-        imageData->SetDimensions(this->FactorLastLowRes*size[0]+1,this->FactorLastLowRes*size[1]+1,1);
+        imageData->SetDimensions((int)(this->FactorLastLowRes*size[0])+1,(int)(this->FactorLastLowRes*size[1])+1,1);
         imageData->SetNumberOfScalarComponents(4);
         imageData->SetScalarTypeToUnsignedChar();
         imageData->SetOrigin(.0,.0,.0);

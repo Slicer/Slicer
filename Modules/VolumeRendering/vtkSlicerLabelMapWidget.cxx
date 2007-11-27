@@ -74,7 +74,7 @@ void vtkSlicerLabelMapWidget::CreateWidget(void)
     color[0]=0.5;
     color[1]=0.5;
     color[2]=0.5;
-    this->ChangeAll->Init(INT_MIN,"ALL COLORS",color,.2,20);
+    this->ChangeAll->Init(INT_MIN,"ALL COLORS",color,-1,20);
     this->ChangeAll->ChangeOpacity(-1);
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->ChangeAll->GetWidgetName());
     this->ChangeAll->AddObserver(vtkCommand::AnyEvent,(vtkCommand *)this->GUICallbackCommand);

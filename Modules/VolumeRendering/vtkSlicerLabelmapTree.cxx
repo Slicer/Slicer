@@ -74,7 +74,7 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkMRMLVolumeRend
     int counter=0;
     //detect the max size of color Name
     int max=0;
-    for(int i=lookup->GetTableRange()[0];i<lookup->GetTableRange()[1];i++)
+    for(int i=(int)lookup->GetTableRange()[0];i<lookup->GetTableRange()[1];i++)
     {
         std::string colorName=this->ScalarVolumeNode->GetVolumeDisplayNode()->GetColorNode()->GetColorName(i);
         int tmp=colorName.length();
@@ -83,7 +83,7 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkMRMLVolumeRend
             max=tmp;
         }
     }
-    for(int i=lookup->GetTableRange()[0];i<lookup->GetTableRange()[1];i++)
+    for(int i=(int)lookup->GetTableRange()[0];i<lookup->GetTableRange()[1];i++)
     {
         if(histo->GetOccurenceAtValue(i)>1)
         {
@@ -99,7 +99,7 @@ void vtkSlicerLabelmapTree::Init(vtkMRMLScalarVolumeNode *node,vtkMRMLVolumeRend
             double rgb[3];
             lookup->GetColor(i,rgb);
             //CalculateOpacities
-            int opacityLevel=piecewiseFunction->GetLabel(i)*vtkSlicerLabelmapTree::FACTOR_OPACITY_TO_STAGE;
+            int opacityLevel=(int)(piecewiseFunction->GetLabel(i)*vtkSlicerLabelmapTree::FACTOR_OPACITY_TO_STAGE);
             if(opacityLevel>5)
             {
                 opacityLevel=5;
@@ -206,7 +206,7 @@ void vtkSlicerLabelmapTree::UpdateGuiElements(void)
         for(unsigned int i=0; i<this->Elements.size();i++)
         {
             int id=this->Elements[i]->GetId();
-            int opacityLevel=piecewiseFunction->GetLabel(id)*vtkSlicerLabelmapTree::FACTOR_OPACITY_TO_STAGE;
+            int opacityLevel=(int) (piecewiseFunction->GetLabel(id)*vtkSlicerLabelmapTree::FACTOR_OPACITY_TO_STAGE);
             this->Elements[i]->ChangeOpacity(opacityLevel);
         }
 

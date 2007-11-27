@@ -91,7 +91,7 @@ void vtkLabelMapPiecewiseFunction::Init(vtkMRMLScalarVolumeNode *node,double opa
     this->AdjustRange(lookup->GetTableRange());
     Opacities=new double[lookup->GetNumberOfTableValues()];
     this->ColorNode=node->GetVolumeDisplayNode()->GetColorNode();
-    this->Size=lookup->GetTableRange()[1]-lookup->GetTableRange()[0];
+    this->Size=(int) (lookup->GetTableRange()[1]-lookup->GetTableRange()[0]);
     int index=0;
     for (int i=(int)lookup->GetTableRange()[0];i<lookup->GetTableRange()[1];i++)
     {
