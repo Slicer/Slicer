@@ -498,6 +498,12 @@ StartSegmentation()
   image->DeepCopy(segmenter->GetOutput());
   outVolume->SetAndObserveImageData(image);
   image->Delete();
+  // make sure the output volume is a labelmap
+  if (!outVolume->GetLabelMap())
+  {
+    vtkWarningMacro("Changing output image to labelmap");
+    outVolume->LabelMapOn();
+  }
   outVolume->SetModifiedSinceRead(1);
 
   //
