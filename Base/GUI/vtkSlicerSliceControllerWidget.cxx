@@ -559,7 +559,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->FitToWindowButton->SetOverReliefToNone ( );
     this->FitToWindowButton->SetBorderWidth ( 0 );
     this->FitToWindowButton->SetImageToIcon ( this->SliceControlIcons->GetFitToWindowIcon ( ));    
-    this->FitToWindowButton->SetBalloonHelpString ( "Adjusts the Slice Viewer's field of view to match the extent of current background volume.");
+    this->FitToWindowButton->SetBalloonHelpString ( "Adjusts the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).");
 
     //
     // Create a menubutton that navigates to Volumes->Display
@@ -1124,7 +1124,7 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
         // Fit to the size of viewport 0 (for the LightBox)
         int *rSize = sgui->GetSliceViewer()->GetRenderWidget()
           ->GetRenderer()->GetSize();
-        sgui->GetLogic()->FitSliceToBackground ( rSize[0], rSize[1] );
+        sgui->GetLogic()->FitSliceToAll ( rSize[0], rSize[1] );
         sgui->GetSliceNode()->UpdateMatrices( );
         appGUI->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
         sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
@@ -1154,7 +1154,7 @@ void vtkSlicerSliceControllerWidget::FitSliceToBackground ( int link )
       // Fit to the size of viewport 0 (for the LightBox)
       int *rSize = sgui->GetSliceViewer()->GetRenderWidget()
         ->GetRenderer()->GetSize();
-      sgui->GetLogic()->FitSliceToBackground ( rSize[0], rSize[1] );
+      sgui->GetLogic()->FitSliceToAll ( rSize[0], rSize[1] );
       this->SliceNode->UpdateMatrices( );
       appGUI->GetSlicesControlGUI()->RequestFOVEntriesUpdate();      
       }
@@ -1861,7 +1861,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   // into slice space)
   //
   const double *sliceSpacing;
-  sliceSpacing = this->SliceLogic->GetBackgroundSliceSpacing();
+  sliceSpacing = this->SliceLogic->GetLowestVolumeSliceSpacing();
 
   this->OffsetScale->SetResolution(sliceSpacing[2]);
   this->Script ("%s configure -digits 20", 
@@ -1871,7 +1871,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
   // Set the scale range to match the field of view
   //
   double sliceBounds[6];
-  this->SliceLogic->GetBackgroundSliceBounds(sliceBounds);
+  this->SliceLogic->GetLowestVolumeSliceBounds(sliceBounds);
 
   double newMin = sliceBounds[4];
   double newMax = sliceBounds[5];

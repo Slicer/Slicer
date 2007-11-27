@@ -1186,7 +1186,7 @@ void vtkSlicerSlicesControlGUI::FitSlicesToBackground ( )
           this->Script("winfo height %s", 
               sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
           "%d", &h);
-        sgui->GetLogic()->FitSliceToBackground ( w, h );
+        sgui->GetLogic()->FitSliceToAll ( w, h );
         sgui->GetSliceNode()->UpdateMatrices( );
         this->RequestFOVEntriesUpdate();
         sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
