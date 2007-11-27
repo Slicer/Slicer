@@ -39,10 +39,14 @@ protected:
     vtkSlicerVRLabelmapHelper(const vtkSlicerVRLabelmapHelper&);//not implemented
     void operator=(const vtkSlicerVRLabelmapHelper&);//not implemented
 
-    vtkKWVolumeMaterialPropertyWidget *VMPW_Shading;
-    vtkSlicerLabelMapWidget *LM_OptionTree;
+
     vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
     vtkVolumeRayCastMapper *MapperRaycastHighDetail;
+
+    //GUI Elements
+
+    
+    vtkSlicerLabelMapWidget *LM_OptionTree;
 
     virtual void ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData);
 

@@ -9,16 +9,20 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerLabelmapTree.h"
 #include "vtkSlicerLabelmapElement.h"
+#include "vtkKWVolumeMaterialPropertyWidget.h"
+#include "vtkMRMLVolumeRenderingNode.h"
 
 
 vtkStandardNewMacro (vtkSlicerLabelMapWidget);
-//vtkCxxRevisionMacro (vtkSlicerLabelMapWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro (vtkSlicerLabelMapWidget, "$Revision: 1.0 $");
 vtkSlicerLabelMapWidget::vtkSlicerLabelMapWidget(void)
 {
     this->Tree=NULL;
     this->ChangeAll=NULL;
     this->VolumeRenderingNode=NULL;
     this->Node=NULL;
+    this->VMPW_Shading=NULL;
+
 }
 
 vtkSlicerLabelMapWidget::~vtkSlicerLabelMapWidget(void)
@@ -40,11 +44,32 @@ vtkSlicerLabelMapWidget::~vtkSlicerLabelMapWidget(void)
         this->Tree=NULL;
     }
 
+    if(this->VMPW_Shading!=NULL)
+    {
+        this->Script("pack forget %s",this->VMPW_Shading->GetWidgetName());
+        this->VMPW_Shading->SetParent(NULL);
+        this->VMPW_Shading->Delete();
+        this->VMPW_Shading=NULL;
+
+    }
+
 }
 
 void vtkSlicerLabelMapWidget::CreateWidget(void)
 {
     this->Superclass::CreateWidget();
+    
+    this->VMPW_Shading=vtkKWVolumeMaterialPropertyWidget::New();
+    this->VMPW_Shading->SetParent(this);
+    this->VMPW_Shading->Create();
+    //Invoke a needForRenderEvent
+    this->VMPW_Shading->SetPropertyChangingCommand(this,"InvokeEvent 30000");
+    this->VMPW_Shading->SetPropertyChangedCommand(this,"InvokeEvent 30000");;
+    this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->VMPW_Shading->GetWidgetName());
+
+
+
+    //Change all element
     this->ChangeAll=vtkSlicerLabelmapElement::New();
     this->ChangeAll->SetParent(this);
     this->ChangeAll->Create();
@@ -95,7 +120,17 @@ void vtkSlicerLabelMapWidget::UpdateGuiElements(void)
     {
         this->Tree->UpdateGuiElements();
     }
-    //Update the all Buttons
-    //Not needed yet
+
+    //Update the shading
+    if(this->VolumeRenderingNode==NULL)
+    {
+        vtkErrorMacro("Attention Volume Rendering is NULL");
+    }
+    else
+    {
+                this->VMPW_Shading->SetVolumeProperty(this->VolumeRenderingNode->GetVolumeProperty());
+    }
+
 
 }
+

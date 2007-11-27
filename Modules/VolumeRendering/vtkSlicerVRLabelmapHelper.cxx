@@ -10,7 +10,7 @@
 #include "vtkVolumeRayCastCompositeFunction.h"
 #include "vtkVolumeRayCastMapper.h"
 #include "vtkImageShiftScale.h"
-#include "vtkKWVolumeMaterialPropertyWidget.h"
+
 #include "vtkKWProgressGauge.h"
 #include "vtkKWProgressDialog.h"
 vtkCxxRevisionMacro(vtkSlicerVRLabelmapHelper, "$Revision: 1.46 $");
@@ -22,7 +22,6 @@ vtkSlicerVRLabelmapHelper::vtkSlicerVRLabelmapHelper(void)
     this->LM_OptionTree=NULL;
     this->MapperRaycast=NULL;
     this->MapperRaycastHighDetail=NULL;
-    this->VMPW_Shading=NULL;
     this->ProgressLock=0;
     this->CurrentStage=0;
     this->OldSampleDistance=0;
@@ -72,14 +71,7 @@ vtkSlicerVRLabelmapHelper::~vtkSlicerVRLabelmapHelper(void)
         this->MapperRaycastHighDetail->Delete();
         this->MapperRaycastHighDetail=NULL;
     }
-    if(this->VMPW_Shading!=NULL)
-    {
-        this->Gui->Script("pack forget %s",this->VMPW_Shading->GetWidgetName());
-        this->VMPW_Shading->SetParent(NULL);
-        this->VMPW_Shading->Delete();
-        this->VMPW_Shading=NULL;
 
-    }
 }
 void vtkSlicerVRLabelmapHelper::Rendering(void)
 {
@@ -120,23 +112,18 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
     this->CalculateMatrix(matrix);
     this->Volume->PokeMatrix(matrix);
-    this->VMPW_Shading->SetVolumeProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->Volume);
     matrix->Delete();
     //Render
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+    this->UpdateGUIElements();
 }
 void vtkSlicerVRLabelmapHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
     Superclass::Init(gui);
     this->Gui->Script("bind all <Any-ButtonPress> {%s SetButtonDown 1}",this->GetTclName());
     this->Gui->Script("bind all <Any-ButtonRelease> {%s SetButtonDown 0}",this->GetTclName());
-    this->VMPW_Shading=vtkKWVolumeMaterialPropertyWidget::New();
-    this->VMPW_Shading->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
-    this->VMPW_Shading->Create();
-    this->VMPW_Shading->SetPropertyChangingCommand(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer(),"Render");
-    this->VMPW_Shading->SetPropertyChangedCommand(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer(),"Render");
-    this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->VMPW_Shading->GetWidgetName());
+
     this->LM_OptionTree=vtkSlicerLabelMapWidget::New();
     this->LM_OptionTree->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
     this->LM_OptionTree->Create();

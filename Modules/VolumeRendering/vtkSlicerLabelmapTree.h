@@ -1,6 +1,6 @@
 // .NAME vtkSlicerLabelmapTree - Extends vtkSlicerBaseTree with labelmap specific methods and behavior 
 // .SECTION Description
-// vtkSlcierLabelmapTree extends vtkSlicerBaseTree with labelmap specific behavior for Volume Rendering. This means that 
+// vtkSlicerLabelmapTree extends vtkSlicerBaseTree with labelmap specific behavior for Volume Rendering. This means that 
 // the tree is especially linked to one vtkMRMLScalerVolumeNode and a vtkMRMLVolumeRenderingNode.
 // vtkSlicerLabelmapTree is intended to use it together with vtkSlicerLabelmapElement.
 
