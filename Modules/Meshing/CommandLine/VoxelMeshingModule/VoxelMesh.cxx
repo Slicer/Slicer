@@ -20,7 +20,7 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
+ 
 #if defined(_MSC_VER)
 #pragma warning ( disable : 4786 )
 #endif
@@ -32,7 +32,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include <math.h>
 #include <time.h>
-#include <itkArray.h>
+//#include <itkArray.h>
 #include <itkImage.h>
 #include <itkOrientedImage.h>
 #include <itkMesh.h>
