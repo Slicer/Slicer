@@ -127,9 +127,8 @@ itcl::body WandEffect::apply {} {
 
 itcl::body WandEffect::preview {} {
 
-return
 
-  # first try to undo - removes las apply
+  # first try to undo - removes last apply
   $this undoLastApply
 
   # 
@@ -160,6 +159,7 @@ return
   set x1 [expr $x + 1]; set y1 [expr $y + 1]
   foreach {i1 j1 k1 l1} [$_layers(background,xyToIJK) MultiplyPoint $x1 $y1 0 1] {}
 
+puts "orig extents: $extents"
   if { $i0 == $i1 } { 
     $o(wandFilter) SetPlaneToJK
     set extents [lreplace $extents 0 1 $i0 $i0]
@@ -174,15 +174,23 @@ return
   }
 
   foreach {ilo ihi jlo jhi klo khi} $extents {}
+puts "extents: $extents"
   set xylo [$ijkToXY MultiplyPoint $ilo $jlo $klo 1]
   set xyhi [$ijkToXY MultiplyPoint $ihi $jhi $khi 1]
   foreach {xlo ylo zlo wlo} $xylo {}
   foreach {xhi yhi zhi whi} $xyhi {}
   set bounds "$xlo $xhi $ylo $yhi 0 0"
+puts "bounds: $bounds"
 
 
   $this setProgressFilter $o(wandFilter) "Magic Wand Connected Components"
   $o(wandFilter) Update
+
+  puts "$this applyImageMask \
+    [$_sliceNode GetXYToRAS]  \
+    [ $o(wandFilter) GetOutput] \
+    $bounds"
+return
 
   $this applyImageMask \
     [$_sliceNode GetXYToRAS]  \
