@@ -187,12 +187,12 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   moduleFrame->SetLabelText ("Tractography Seeding From Fiducial");
   moduleFrame->ExpandFrame ( );
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget("FiducialSeeding")->GetWidgetName());
+                moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Tractography")->GetWidgetName());
   
   this->VolumeSelector->SetNodeClass("vtkMRMLDiffusionTensorVolumeNode", NULL, NULL, NULL);
   this->VolumeSelector->SetParent( moduleFrame->GetFrame() );
   this->VolumeSelector->Create();
-  this->VolumeSelector->SetMRMLScene(this->GetMRMLScene());
+  this->VolumeSelector->SetMRMLScene(this->GetApplicationLogic()->GetMRMLScene());
   this->VolumeSelector->UpdateMenu();
   this->VolumeSelector->SetBorderWidth(2);
   this->VolumeSelector->SetLabelText( "Select DTI Volume: ");
@@ -206,7 +206,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->FiducialSelector->SetShowHidden(1);
   this->FiducialSelector->SetParent( moduleFrame->GetFrame() );
   this->FiducialSelector->Create();
-  this->FiducialSelector->SetMRMLScene(this->GetMRMLScene());
+  this->FiducialSelector->SetMRMLScene(this->GetApplicationLogic()->GetMRMLScene());
   this->FiducialSelector->UpdateMenu();
   this->FiducialSelector->SetBorderWidth(2);
   this->FiducialSelector->SetLabelText( "Select FiducialList");
@@ -219,7 +219,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->OutFiberSelector->SetNewNodeEnabled(1);
   this->OutFiberSelector->SetParent( moduleFrame->GetFrame() );
   this->OutFiberSelector->Create();
-  this->OutFiberSelector->SetMRMLScene(this->GetMRMLScene());
+  this->OutFiberSelector->SetMRMLScene(this->GetApplicationLogic()->GetMRMLScene());
   this->OutFiberSelector->UpdateMenu();
   this->OutFiberSelector->SetBorderWidth(2);
   this->OutFiberSelector->SetLabelText( "Output FiberBundleNode: ");

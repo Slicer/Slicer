@@ -66,6 +66,10 @@ SET(dir_list
   ${SlicerTractographyDisplay_BINARY_DIR}
   ${SlicerTractographyDisplay_Init_SOURCE_DIR}
   ${SlicerTractographyDisplay_Init_BINARY_DIR}
+  ${SlicerTractographyFiducialSeeding_SOURCE_DIR}
+  ${SlicerTractographyFiducialSeeding_BINARY_DIR}
+  ${SlicerTractographyFiducialSeeding_Init_SOURCE_DIR}
+  ${SlicerTractographyFiducialSeeding_Init_BINARY_DIR}
   ${EMSegment_SOURCE_DIR}
   ${EMSegment_BINARY_DIR}
   ${EMSegment_Init_SOURCE_DIR}
@@ -212,6 +216,7 @@ IF(BUILD_MODULES)
     ${WFENGINE_LINK_LIB}
     QdecModule
     SlicerTractographyDisplay
+    SlicerTractographyFiducialSeeding
     )
 ENDIF(BUILD_MODULES)
 

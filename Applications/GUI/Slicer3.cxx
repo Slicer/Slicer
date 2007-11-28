@@ -95,6 +95,7 @@ extern "C" {
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
 #include "vtkSlicerFiberBundleLogic.h"
 #include "vtkSlicerTractographyDisplayGUI.h"
+#include "vtkSlicerTractographyFiducialSeedingGUI.h"
 #endif
 
 #if !defined(EMSEG_DEBUG) && defined(BUILD_MODULES)
@@ -215,6 +216,7 @@ extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
 #endif
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Slicertractographydisplay_Init(Tcl_Interp *interp);
+extern "C" int Slicertractographyfiducialseeding_Init(Tcl_Interp *interp);
 #endif
 #if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Queryatlas_Init(Tcl_Interp *interp);
@@ -715,6 +717,7 @@ int Slicer3_main(int argc, char *argv[])
 
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
     Slicertractographydisplay_Init(interp);
+    Slicertractographyfiducialseeding_Init(interp);
 #endif
 #if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
     Queryatlas_Init(interp);
@@ -1236,6 +1239,24 @@ int Slicer3_main(int argc, char *argv[])
     slicerTractographyDisplayGUI->AddGUIObservers ( );
 #endif
 
+#if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
+    // --- Tractography Fiducail Seeding module
+    slicerApp->SplashMessage("Initializing Tractography Fiducail Seeding Module...");
+    vtkSlicerTractographyFiducialSeedingGUI *slicerTractographyFiducialSeedingGUI = vtkSlicerTractographyFiducialSeedingGUI::New ( );
+
+
+    slicerFiberBundleLogic->SetApplicationLogic ( appLogic );
+    slicerTractographyFiducialSeedingGUI->SetApplication ( slicerApp );
+    slicerTractographyFiducialSeedingGUI->SetApplicationLogic ( appLogic );
+    slicerTractographyFiducialSeedingGUI->SetApplicationGUI ( appGUI );
+    slicerTractographyFiducialSeedingGUI->SetGUIName( "FiducialSeeding" );
+    slicerTractographyFiducialSeedingGUI->GetUIPanel()->SetName ( slicerTractographyFiducialSeedingGUI->GetGUIName ( ) );
+    slicerTractographyFiducialSeedingGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    slicerTractographyFiducialSeedingGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( slicerTractographyFiducialSeedingGUI );
+    slicerTractographyFiducialSeedingGUI->BuildGUI ( );
+    slicerTractographyFiducialSeedingGUI->AddGUIObservers ( );
+#endif
 
 #if !defined(EMSEG_DEBUG) && defined(BUILD_MODULES)
     //
@@ -1925,6 +1946,7 @@ int Slicer3_main(int argc, char *argv[])
     
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
     slicerTractographyDisplayGUI->RemoveGUIObservers ( );
+    slicerTractographyFiducialSeedingGUI->RemoveGUIObservers ( );
 #endif
 
 #if !defined(EMSEG_DEBUG) && defined(BUILD_MODULES)
@@ -2048,6 +2070,7 @@ int Slicer3_main(int argc, char *argv[])
     
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
     slicerTractographyDisplayGUI->Delete ();
+    slicerTractographyFiducialSeedingGUI->Delete ();
 #endif
 
 #if !defined(EMSEG_DEBUG) && defined(BUILD_MODULES)
