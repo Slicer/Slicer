@@ -148,7 +148,8 @@ itcl::body WandEffect::preview {} {
 
 
   set extents [[$this getInputBackground] GetExtent]
-  set ijkToXY [[$_layers(background,logic) GetXYToIJKTransform] GetMatrix]
+  set ijkToXY [vtkMatrix4x4 New]
+  $ijkToXY DeepCopy [[$_layers(background,logic) GetXYToIJKTransform] GetMatrix]
   $ijkToXY Invert
 
 
@@ -159,6 +160,10 @@ itcl::body WandEffect::preview {} {
   set x1 [expr $x + 1]; set y1 [expr $y + 1]
   foreach {i1 j1 k1 l1} [$_layers(background,xyToIJK) MultiplyPoint $x1 $y1 0 1] {}
 
+  #
+  # Note there seems to be a bug (ITK smart pointer crash)
+  # for some slice planes.  This Effect is disabled in EditBox for now.
+  #
 puts "orig extents: $extents"
   if { $i0 == $i1 } { 
     $o(wandFilter) SetPlaneToJK
@@ -179,8 +184,11 @@ puts "extents: $extents"
   set xyhi [$ijkToXY MultiplyPoint $ihi $jhi $khi 1]
   foreach {xlo ylo zlo wlo} $xylo {}
   foreach {xhi yhi zhi whi} $xyhi {}
+  if { $xlo > $xhi } { set tmp $xhi; set xhi $xlo; set xlo $tmp }
+  if { $ylo > $yhi } { set tmp $yhi; set yhi $ylo; set ylo $tmp }
   set bounds "$xlo $xhi $ylo $yhi 0 0"
 puts "bounds: $bounds"
+  $ijkToXY Delete
 
 
   $this setProgressFilter $o(wandFilter) "Magic Wand Connected Components"
