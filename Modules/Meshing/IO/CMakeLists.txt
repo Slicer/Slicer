@@ -37,6 +37,15 @@ ADD_LIBRARY(MimxMeshIO
 #  ${MeshIO_TCL_SRCS}
   )
 
+TARGET_LINK_LIBRARIES( MimxMeshIO 
+  vtkCommonTCL
+  vtkImagingTCL
+  vtkFilteringTCL
+  vtkIOTCL
+  vtkWidgets
+  vtkRendering
+  )
+
 IF(BUILD_SHARED_LIBS)
   INSTALL(TARGETS MimxMeshIO
       RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
