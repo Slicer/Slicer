@@ -375,7 +375,7 @@ void vtkRealTimeImagingGUI::RemoveGUIObservers ( )
     // Fill in
     if (this->LoadConfigButton)
     {
-        this->LoadConfigButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+        this->LoadConfigButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
     }
     if (this->ConnectCheckButton)
     {
@@ -427,7 +427,8 @@ void vtkRealTimeImagingGUI::AddGUIObservers ( )
 
     // Fill in
     // observer load volume button
-    this->LoadConfigButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->LoadConfigButton->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+
     this->ConnectCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->GetPatCoordinatesPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->AddPointPairPushButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -449,8 +450,8 @@ void vtkRealTimeImagingGUI::AddGUIObservers ( )
 void vtkRealTimeImagingGUI::ProcessGUIEvents ( vtkObject *caller,
         unsigned long event, void *callData )
 {
-    if (this->LoadConfigButton->GetWidget() == vtkKWLoadSaveButton::SafeDownCast(caller) 
-        && event == vtkKWPushButton::InvokedEvent )
+    if (this->LoadConfigButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) 
+                && event == vtkKWTopLevel::WithdrawEvent)
     {
         const char * filename = this->LoadConfigButton->GetWidget()->GetFileName();
         if (filename)
