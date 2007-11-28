@@ -81,7 +81,8 @@ itcl::body Labeler::destructor {} {
 
 itcl::body Labeler::processEvent { {caller ""} {event ""} } {
   
-  chain $caller $event
+  # don't chain this method - superclass method is meant 
+  # to be overridden and not chained.
 
   if { $caller != "" && [$caller IsA "vtkKWWidget"] } {
     $this updateMRMLFromGUI

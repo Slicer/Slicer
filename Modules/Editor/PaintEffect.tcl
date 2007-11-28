@@ -76,8 +76,6 @@ itcl::body PaintEffect::constructor {sliceGUI} {
   [$_renderWidget GetRenderer] AddActor2D $o(actor)
   lappend _actors $o(actor)
 
-puts [parray o]
-
   set _startPosition "0 0 0"
   set _currentPosition "0 0 0"
 
@@ -205,6 +203,9 @@ itcl::body PaintEffect::highlight { } {
 
 itcl::body PaintEffect::processEvent { {caller ""} {event ""} } {
 
+  # chain to superclass
+  chain $caller $event
+
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
@@ -228,9 +229,9 @@ itcl::body PaintEffect::processEvent { {caller ""} {event ""} } {
       set _actionState "painting"
       foreach {x y} [$_interactor GetEventPosition] {}
       if { $smudge } {
-        # in Dropper mode, set the paint color to be the first pixel you touch
+        # in smudge mode, set the paint color to be the first pixel you touch
         $this queryLayers $x $y
-        set paintColor [$this getPixel $_layers(label,image) \
+        EditorSetPaintLabel [$this getPixel $_layers(label,image) \
           $_layers(label,i) $_layers(label,j) $_layers(label,k)]
       }
       $this paintAddPoint $x $y
@@ -291,7 +292,7 @@ itcl::body PaintEffect::buildOptions {} {
   $o(radius) DisplayEntryAndLabelOnTopOn
   $o(radius) DisplayEntryOn
   $o(radius) DisplayLabelOn
-  $o(radius) SetValue 10
+  $o(radius) SetValue [[EditorGetParameterNode] GetParameter Paint,radius] 
   [$o(radius) GetLabel] SetText "Radius: "
   $o(radius) SetBalloonHelpString "Set the radius of the paint brush in screen space pixels"
   pack [$o(radius) GetWidgetName] \
@@ -302,6 +303,7 @@ itcl::body PaintEffect::buildOptions {} {
   $o(smudge) Create
   $o(smudge) SetLabelText "Smudge: "
   $o(smudge) SetBalloonHelpString "Set the label number automatically by sampling the pixel location where the brush stroke starts."
+  [$o(smudge) GetWidget] SetSelectedState [[EditorGetParameterNode] GetParameter Paint,smudge] 
   pack [$o(smudge) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
 
@@ -321,7 +323,7 @@ itcl::body PaintEffect::buildOptions {} {
   #
   set tag [$o(radius) AddObserver AnyEvent "after idle $this updateMRMLFromGUI"]
   lappend _observerRecords "$o(radius) $tag"
-  set tag [$o(smudge) AddObserver AnyEvent "after idle $this updateMRMLFromGUI"]
+  set tag [[$o(smudge) GetWidget] AddObserver AnyEvent "after idle $this updateMRMLFromGUI"]
   lappend _observerRecords "$o(smudge) $tag"
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
@@ -369,6 +371,7 @@ itcl::body PaintEffect::updateGUIFromMRML { } {
   #
   chain
 
+
   set node [EditorGetParameterNode]
   # set the GUI and effect parameters to match node
   # (only if this is the instance that "owns" the GUI
@@ -382,6 +385,7 @@ itcl::body PaintEffect::updateGUIFromMRML { } {
   if { [info exists o(smudge)] } {
     [$o(smudge) GetWidget] SetSelectedState $smudge
   }
+
   $this preview
 }
 
@@ -390,7 +394,7 @@ itcl::body PaintEffect::tearDownOptions { } {
   # call superclass version of tearDownOptions
   chain
 
-  foreach w "radius cancel" {
+  foreach w "radius smudge cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 

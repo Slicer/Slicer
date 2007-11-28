@@ -181,10 +181,10 @@ itcl::body EffectSWidget::positionCursor {} {
   set xyzw [$this rasToXY $_currentPosition]
   foreach {x y z w} $xyzw {}
 
-if { $x == "nan" } {
-  puts "skip $x"
-  return
-}
+  if { $x == "nan" } {
+    puts "Bad cursor position in $this"
+    return
+  }
 
   set x [expr $x + 16]
   set y [expr $y - 32]
