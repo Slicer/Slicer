@@ -4488,4 +4488,6 @@ WritePackagedScene(vtkMRMLScene* scene)
   //
   // write the MRML scene file
   scene->Commit();
+  
+  return true;
 }
