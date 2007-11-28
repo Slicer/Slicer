@@ -54,8 +54,11 @@ PURPOSE.  See the above copyright notices for more information.
 #include <itkFlipImageFilter.h>
 #include <itksys/Directory.hxx>
 #include <vtkXMLUnstructuredGridWriter.h>
-#include <vtkTable.h>
-#include <vtkTableReader.h>
+//#include <vtkTable.h>
+//#include <vtkTableReader.h>
+#include <vtkDataObject.h>
+#include <vtkDataObjectReader.h>
+#include <vtkDataReader.h>
 
 #include <vtkPluginFilterWatcher.h>
 #include <itkPluginFilterWatcher.h>
@@ -200,10 +203,18 @@ int main( int argc, char * argv[] )
     rebinMeshMaterialProperties->SetInput( imageToHexMeshFilter->GetOutput( ) );
     if ( ! histogramBinFilename.empty() )
       {
-      vtkTableReader *histogramReader = vtkTableReader::New();
+      //vtkTableReader *histogramReader = vtkTableReader::New();
+      //histogramReader->SetFileName( histogramBinFilename.c_str() );
+      //histogramReader->Update();
+      //rebinMeshMaterialProperties->SetPropertyTable( histogramReader->GetOutput( ) );
+      vtkDataReader *histogramReader = vtkDataReader::New();
       histogramReader->SetFileName( histogramBinFilename.c_str() );
-      histogramReader->Update();
-      rebinMeshMaterialProperties->SetPropertyTable( histogramReader->GetOutput( ) );
+      histogramReader->OpenVTKFile( );
+      histogramReader->ReadHeader( );
+      vtkFieldData *histogramData = histogramReader->ReadFieldData( );
+      histogramReader->CloseVTKFile();
+      //rebinMeshMaterialProperties->SetPropertyTable( histogramReader->GetOutput( )->GetFieldData() );
+      rebinMeshMaterialProperties->SetPropertyTable( histogramData );
       }
     else
       {

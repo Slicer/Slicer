@@ -56,13 +56,16 @@ PURPOSE.  See the above copyright notices for more information.
 #include <itkFlipImageFilter.h>
 #include <itksys/Directory.hxx>
 #include <vtkXMLUnstructuredGridWriter.h>
-#include <vtkTable.h>
-#include <vtkTableReader.h>
+//#include <vtkTable.h>
+//#include <vtkTableReader.h>
 #include <vtkAbstractArray.h>
 #include <vtkDoubleArray.h>
 #include <vtkUnsignedLongArray.h>
 #include <vtkFieldData.h>
 #include <vtkUnstructuredGridWriter.h>
+#include <vtkDataObjectWriter.h>
+#include <vtkDataObjectReader.h>
+#include <vtkDataWriter.h>
 
 // MIMX Meshing Classes
 #include <vtkMimxRebinMaterialProperty.h>
@@ -180,8 +183,11 @@ int main( int argc, char * argv[] )
   {
     histogramArray->InsertValue( i, static_cast<double>(i)*stepSize );
   }
-  vtkTable *materialTable = vtkTable::New();
-  materialTable->AddColumn( histogramArray );
+  //vtkTable *materialTable = vtkTable::New();
+  //materialTable->AddColumn( histogramArray );
+  vtkFieldData *materialTable = vtkFieldData::New();
+  materialTable->AddArray( histogramArray );
+
   
   vtkMimxRebinMaterialProperty *rebinFilter = vtkMimxRebinMaterialProperty::New();
   rebinFilter->SetInput( grid );
@@ -215,16 +221,24 @@ int main( int argc, char * argv[] )
   vtkFieldData *gridFieldData = rebinGrid->GetFieldData();
   vtkFieldData *gridPointData = rebinGrid->GetPointData( );
   vtkDoubleArray *materialPropertyArray = NULL;
-  vtkAbstractArray *tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
-  tmpArray->Print(std::cerr);
-  if ( tmpArray == NULL )
+  //vtkAbstractArray *tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
+  //vtkAbstractArray *tmpArray = vtkAbstractArray::SafeDownCast( gridFieldData->GetArray("Material_Properties") );
+  //tmpArray->Print(std::cerr);
+  //if ( tmpArray == NULL )
+  //  {
+  //  std::cerr << "Error: Test 1" << std::endl;
+  //  std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
+  //  return EXIT_FAILURE;
+  //  }
+    
+  materialPropertyArray = (vtkDoubleArray *) gridFieldData->GetArray("Material_Properties");
+  if ( materialPropertyArray == NULL )
     {
     std::cerr << "Error: Test 1" << std::endl;
     std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
     return EXIT_FAILURE;
     }
-    
-  materialPropertyArray = vtkDoubleArray::SafeDownCast(tmpArray);
+
   // Temporary Check of Array
   //for (int i=0;i<histogramArray->GetNumberOfTuples( );i++)
   //{
@@ -255,13 +269,20 @@ int main( int argc, char * argv[] )
 
   /****************** Check Node Data ****************************/
   vtkUnsignedLongArray *nodexIndexArray = NULL;
-  tmpArray = gridPointData->GetAbstractArray("Node_Numbers");
-  if ( ! tmpArray->IsA("vtkUnsignedLongArray") )
+  //tmpArray = gridPointData->GetAbstractArray("Node_Numbers");
+  //tmpArray = vtkAbstractArray::SafeDownCast( gridPointData->GetArray("Node_Numbers") );
+  //if ( ! tmpArray->IsA("vtkUnsignedLongArray") )
+  //  {
+  //  std::cerr << "Error: Test 1 - Failed to obtain 'Node_Numbers' Field Data" << std::endl;
+  //  return EXIT_FAILURE;
+  //  }
+  nodexIndexArray = (vtkUnsignedLongArray *) gridPointData->GetArray("Node_Numbers");
+  if ( nodexIndexArray == NULL )
     {
     std::cerr << "Error: Test 1 - Failed to obtain 'Node_Numbers' Field Data" << std::endl;
     return EXIT_FAILURE;
     }
-  nodexIndexArray = vtkUnsignedLongArray::SafeDownCast(tmpArray);
+  //nodexIndexArray = vtkUnsignedLongArray::SafeDownCast(tmpArray);
   unsigned long index0 = nodexIndexArray->GetValue(0);
   unsigned long indexLast = nodexIndexArray->GetValue( numberOfPoints-1 );
   
@@ -290,7 +311,8 @@ int main( int argc, char * argv[] )
   rebinFilter2->Update();
       
   materialTable = rebinFilter2->GetPropertyTable();
-  histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetColumnByName( "Histogram" ) );
+  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetColumnByName( "Histogram" ) );
+  histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetArray( "Histogram" ) );
   
   vtkUnstructuredGrid *rebinGrid2 = rebinFilter2->GetOutput( );
   numberOfCells = rebinGrid2->GetNumberOfCells();
@@ -312,15 +334,22 @@ int main( int argc, char * argv[] )
   /****************** Check Cell Data ****************************/
   gridFieldData = rebinGrid2->GetFieldData();
   gridPointData = rebinGrid2->GetPointData( );
-  tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
-  if ( ! tmpArray->IsA("vtkDoubleArray") )
+  //tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
+  //tmpArray = vtkAbstractArray::SafeDownCast( gridFieldData->GetArray("Material_Properties") );
+  //if ( ! tmpArray->IsA("vtkDoubleArray") )
+  //{
+  //  std::cerr << "Error: Test 2" << std::endl;
+  //  std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
+  //  return EXIT_FAILURE;
+  //}
+  materialPropertyArray = (vtkDoubleArray *) gridFieldData->GetArray("Material_Properties");
+  if ( materialPropertyArray == NULL )
   {
     std::cerr << "Error: Test 2" << std::endl;
     std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
     return EXIT_FAILURE;
   }
-  
-  materialPropertyArray = vtkDoubleArray::SafeDownCast(tmpArray);
+  //materialPropertyArray = vtkDoubleArray::SafeDownCast(tmpArray);
   //Temporary Sanitary Check
   //for (int i=0;i<histogramArray->GetNumberOfTuples( );i++)
   //  {
@@ -346,13 +375,20 @@ int main( int argc, char * argv[] )
     }
   
   /****************** Check Node Data ****************************/
-  tmpArray = gridPointData->GetAbstractArray("Node_Numbers");
-  if ( ! tmpArray->IsA("vtkUnsignedLongArray") )
+  //tmpArray = gridPointData->GetAbstractArray("Node_Numbers");
+  //tmpArray = vtkAbstractArray::SafeDownCast( gridPointData->GetArray("Node_Numbers") );
+  //if ( ! tmpArray->IsA("vtkUnsignedLongArray") )
+  //  {
+  //  std::cerr << "Error: Test 2 - Failed to obtain 'Node_Numbers' Field Data" << std::endl;
+  //  return EXIT_FAILURE;
+  //  }
+  nodexIndexArray = (vtkUnsignedLongArray *) gridPointData->GetArray("Node_Numbers");
+  if ( nodexIndexArray == NULL )
     {
     std::cerr << "Error: Test 2 - Failed to obtain 'Node_Numbers' Field Data" << std::endl;
     return EXIT_FAILURE;
     }
-  nodexIndexArray = vtkUnsignedLongArray::SafeDownCast(tmpArray);
+  //nodexIndexArray = vtkUnsignedLongArray::SafeDownCast(tmpArray);
   index0 = nodexIndexArray->GetValue(0);
   indexLast = nodexIndexArray->GetValue( numberOfPoints-1 );
 
@@ -386,7 +422,9 @@ int main( int argc, char * argv[] )
   gridPointData = rebinGrid3->GetPointData( );
   
   materialTable = rebinFilter3->GetPropertyTable();
-  histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetColumnByName( "Histogram" ) );
+  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetColumnByName( "Histogram" ) );
+  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetArray( "Histogram" ) );
+  histogramArray = (vtkDoubleArray *) materialTable->GetArray( "Histogram" );
   if ( histogramArray->GetNumberOfTuples() != 9 )
     {
     std::cerr << "Error: Test 3 - Invalid number of material property array bins" << std::endl;
@@ -400,15 +438,23 @@ int main( int argc, char * argv[] )
     }
   
  
-  tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
-  if ( ! tmpArray->IsA("vtkDoubleArray") )
+  //tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
+  //tmpArray = vtkAbstractArray::SafeDownCast( gridFieldData->GetArray("Material_Properties") );
+  //if ( ! tmpArray->IsA("vtkDoubleArray") )
+  //  {
+  //  std::cerr << "Error: Test 3" << std::endl;
+  //  std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
+  //  return EXIT_FAILURE;
+  //  }
+  //materialPropertyArray = vtkDoubleArray::SafeDownCast(tmpArray);
+  materialPropertyArray = (vtkDoubleArray *) gridFieldData->GetArray("Material_Properties");
+  if ( materialPropertyArray == NULL )
     {
     std::cerr << "Error: Test 3" << std::endl;
     std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
     return EXIT_FAILURE;
     }
-  materialPropertyArray = vtkDoubleArray::SafeDownCast(tmpArray);
-  
+
   for (int i=0;i<numberOfCells;i++)
     {
     bool found = false;
@@ -445,22 +491,40 @@ int main( int argc, char * argv[] )
   gridPointData = rebinGrid4->GetPointData( );
   
   materialTable = rebinFilter4->GetPropertyTable();
-  histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetColumnByName( "Histogram" ) );
+  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetColumnByName( "Histogram" ) );
+  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetArray( "Histogram" ) );
+  histogramArray = (vtkDoubleArray *) materialTable->GetArray( "Histogram" );
   if ( histogramArray->GetNumberOfTuples() != 12 )
     {
       std::cerr << "Error: Test 4 - Invalid number of material property array bins " << histogramArray->GetSize() << std::endl;
     //return EXIT_FAILURE;
     }
-
-  tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
-  if ( ! tmpArray->IsA("vtkDoubleArray") )
+  /* Test for VTK 5.0 Field Data Writer */
+  /*
+  vtkDataWriter *writer = vtkDataWriter::New();
+  writer->SetFileName( "histogram.vtk" );
+  ostream *ofs = writer->OpenVTKFile();
+  writer->WriteHeader( ofs );
+  writer->WriteFieldData( ofs, materialTable );
+  writer->CloseVTKFile( ofs );
+  */
+  //tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
+  //tmpArray = vtkAbstractArray::SafeDownCast( gridFieldData->GetArray("Material_Properties") );
+  //if ( ! tmpArray->IsA("vtkDoubleArray") )
+  //  {
+  //  std::cerr << "Error: Test 4" << std::endl;
+  //  std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
+  //  return EXIT_FAILURE;
+  //  }
+  //materialPropertyArray = vtkDoubleArray::SafeDownCast(tmpArray);
+  materialPropertyArray = (vtkDoubleArray *) gridFieldData->GetArray("Material_Properties");
+  if ( materialPropertyArray == NULL )
     {
     std::cerr << "Error: Test 4" << std::endl;
     std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
     return EXIT_FAILURE;
     }
-    materialPropertyArray = vtkDoubleArray::SafeDownCast(tmpArray);
-  
+
   for (int i=0;i<numberOfCells;i++)
     {
     bool found = false;

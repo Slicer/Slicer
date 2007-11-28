@@ -121,7 +121,7 @@ must be odd.
       <name>numberOfBins</name>
       <longflag>--numberofbins</longflag>
       <description>The number of histogram bins in the mesh</description>
-      <label>NUmber of Histogram Bins</label>
+      <label>Number of Histogram Bins</label>
       <default>0</default>
     </integer>
 

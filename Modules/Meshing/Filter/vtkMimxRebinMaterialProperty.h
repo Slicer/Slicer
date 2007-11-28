@@ -55,7 +55,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include <vtkUnstructuredGridAlgorithm.h>
 //#include <vtkTable.h>
 
-class vtkTable;
+//class vtkTable;
+class vtkFieldData;
 
 class VTK_MIMXFILTER_EXPORT vtkMimxRebinMaterialProperty : public vtkUnstructuredGridAlgorithm 
 {
@@ -103,9 +104,10 @@ public:
   
   // Description:
   // Set/Get the bins to be used for the rebinning of material properties.
-  vtkSetMacro(PropertyTable, vtkTable*);
-  vtkGetMacro(PropertyTable, vtkTable*);
-  
+  //vtkSetMacro(PropertyTable, vtkTable*);
+  //vtkGetMacro(PropertyTable, vtkTable*);
+  vtkSetMacro(PropertyTable, vtkFieldData*);
+  vtkGetMacro(PropertyTable, vtkFieldData*);
   
 protected:
   vtkMimxRebinMaterialProperty();
@@ -125,7 +127,8 @@ protected:
   bool ComputeMinBin;
   bool GeneratePropertyBins;
 
-  vtkTable* PropertyTable;
+  //vtkTable* PropertyTable;
+  vtkFieldData *PropertyTable;
 
 private:
   vtkMimxRebinMaterialProperty( const vtkMimxRebinMaterialProperty& ); // Not implemented.
