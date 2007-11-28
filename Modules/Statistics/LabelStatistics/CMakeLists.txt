@@ -1,5 +1,5 @@
 PROJECT(LabelStatistics)
-OPTION(LABELSTATISTICS "Do you want to build the LabelStatistics Module?")
+OPTION(LABELSTATISTICS "Do you want to build the LabelStatistics Module?" ON)
 IF(LABELSTATISTICS)
 
 # --------------------------------------------------------------------------
