@@ -50,10 +50,6 @@ void vtkSlicerVRHelper::UpdateRendering()
 {
 }
 
-void vtkSlicerVRHelper::ShutdownPipeline()
-{
-   
-}
 
 
 void vtkSlicerVRHelper::VolumeRenderingCallback( vtkObject *caller, unsigned long eid, void *clientData, void *callData )
