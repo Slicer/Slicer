@@ -60,6 +60,7 @@ protected:
     vtkKWCheckButtonWithLabel *CB_TextureLow;
     vtkKWCheckButtonWithLabel *CB_TextureHigh;
     vtkKWCheckButtonWithLabel *CB_RayCast;
+    vtkKWCheckButtonWithLabel *CB_InteractiveFrameRate;
     vtkKWScaleWithLabel *SC_Framerate;
     
     

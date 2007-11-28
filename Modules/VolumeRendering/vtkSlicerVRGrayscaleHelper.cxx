@@ -75,6 +75,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->CB_TextureLow=NULL;
     this->CB_TextureHigh=NULL;
     this->CB_RayCast=NULL;
+    this->CB_InteractiveFrameRate=NULL;
     this->SC_Framerate=NULL;
     this->SVP_VolumeProperty=NULL;
     this->MappersFrame=NULL;
@@ -208,6 +209,14 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->SC_Framerate->Delete();
         this->SC_Framerate=NULL;
     }
+    if(this->CB_InteractiveFrameRate!=NULL)
+    {
+        this->CB_InteractiveFrameRate->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->CB_InteractiveFrameRate->SetParent(NULL);
+        this->CB_InteractiveFrameRate->Delete();
+        this->CB_InteractiveFrameRate=NULL;
+
+    }
 }
 void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
@@ -239,20 +248,6 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     grad->Delete();
     gradHisto->Delete(); 
 
-    ////Quality Button
-    //this->MB_Quality=vtkKWMenuButtonWithSpinButtonsWithLabel::New();
-    //this->MB_Quality->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
-    //this->MB_Quality->Create();
-    //this->MB_Quality->SetLabelText("Performance / Quality:");
-    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("Low Quality - High Performance");
-    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(0,this,"SetQuality 0");
-    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("Middle Quality - Middle Performance");
-    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(1,this,"SetQuality 1");
-    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("High Quality - Low Performance");
-    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(2,this,"SetQuality 2");
-    //this->MB_Quality->GetWidget()->GetWidget()->GetMenu()->SelectItem(0);
-
-    //this->Gui->GetApplicationGUI()->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->MB_Quality->GetWidgetName());
     this->MappersFrame=vtkKWFrameWithLabel::New();
     this->MappersFrame->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
     this->MappersFrame->Create();
@@ -287,6 +282,14 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->CB_RayCast->GetWidgetName() );
     this->CB_RayCast->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+
+    this->CB_InteractiveFrameRate=vtkKWCheckButtonWithLabel::New();
+    this->CB_InteractiveFrameRate->SetParent(this->MappersFrame->GetFrame());
+    this->CB_InteractiveFrameRate->Create();
+    this->CB_InteractiveFrameRate->SetLabelText("Raycast interactive?!");
+    this->CB_InteractiveFrameRate->EnabledOff();
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->CB_InteractiveFrameRate->GetWidgetName() );
+    this->CB_InteractiveFrameRate->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
 
     //Framerate
     this->SC_Framerate=vtkKWScaleWithLabel::New();
@@ -464,6 +467,16 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     {
         this->ScheduleMask[2]=callerObjectCheckButton->GetSelectedState();
         this->UpdateQualityCheckBoxes();
+        return;
+    }
+    if(callerObjectCheckButton==this->CB_InteractiveFrameRate->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
+    {
+        this->MapperRaycast->SetAutoAdjustSampleDistances(callerObjectCheckButton->GetSelectedState());
+        if(!callerObjectCheckButton->GetSelectedState())
+        {
+            this->MapperRaycast->SetSampleDistance(0.1);
+        }
+
         return;
     }
     vtkKWScale *callerObjectSC=vtkKWScale::SafeDownCast(caller);
@@ -993,5 +1006,15 @@ void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
     {
         this->CB_RayCast->EnabledOff();
     }
+    if(!this->ScheduleMask[0]&&!this->ScheduleMask[1])
+    {
+        this->CB_InteractiveFrameRate->EnabledOn();
+    }
+    else
+    {
+        this->CB_InteractiveFrameRate->GetWidget()->SetSelectedState(0);
+        this->CB_InteractiveFrameRate->EnabledOff();
+    }
+    //Check if we can activate the interactive checkbox
 
 }
