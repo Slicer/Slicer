@@ -167,11 +167,21 @@ itcl::body PaintEffect::createGlyph { {polyData ""} } {
 
 itcl::body PaintEffect::positionActors { } {
 
+  if { ![info exists o(actor)] } {
+    # if called during construction...
+    return
+  }
+
   set xyzw [$this rasToXY $_currentPosition]
   eval $o(actor) SetPosition [lrange $xyzw 0 1]
 }
 
 itcl::body PaintEffect::highlight { } {
+
+  if { ![info exists o(actor)] } {
+    # if called during construction...
+    return
+  }
 
   set property [$o(actor) GetProperty]
   $property SetColor 1 1 0
@@ -217,7 +227,7 @@ itcl::body PaintEffect::processEvent { {caller ""} {event ""} } {
     "LeftButtonPressEvent" {
       set _actionState "painting"
       foreach {x y} [$_interactor GetEventPosition] {}
-      if { $paintDropper } {
+      if { $smudge } {
         # in Dropper mode, set the paint color to be the first pixel you touch
         $this queryLayers $x $y
         set paintColor [$this getPixel $_layers(label,image) \
@@ -243,6 +253,8 @@ itcl::body PaintEffect::processEvent { {caller ""} {event ""} } {
     "LeftButtonReleaseEvent" {
       $this paintApply
       [$_renderWidget GetRenderWindow] ShowCursor
+      foreach {x y} [$_interactor GetEventPosition] {}
+      $this queryLayers $x $y
       $_layers(label,node) Modified
       set _actionState ""
       $sliceGUI SetGrabID ""
@@ -308,9 +320,9 @@ itcl::body PaintEffect::buildOptions {} {
   # event observers - TODO: if there were a way to make these more specific, I would...
   #
   set tag [$o(radius) AddObserver AnyEvent "after idle $this updateMRMLFromGUI"]
-  lappend _observerRecords "$o(percentage) $tag"
+  lappend _observerRecords "$o(radius) $tag"
   set tag [$o(smudge) AddObserver AnyEvent "after idle $this updateMRMLFromGUI"]
-  lappend _observerRecords "$o(percentage) $tag"
+  lappend _observerRecords "$o(smudge) $tag"
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
 
@@ -331,8 +343,8 @@ itcl::body PaintEffect::updateMRMLFromGUI { } {
   #
   chain
   set node [EditorGetParameterNode]
-  $node SetParameter "Paint,radius" [[$o(smudge) GetWidget] GetValue]
-  $node SetParameter "Paint,smudge" [$o(smudge) GetSelectedState]
+  $node SetParameter "Paint,radius" [$o(radius) GetValue]
+  $node SetParameter "Paint,smudge" [[$o(smudge) GetWidget] GetSelectedState]
 }
 
 itcl::body PaintEffect::setMRMLDefaults { } {
@@ -361,14 +373,14 @@ itcl::body PaintEffect::updateGUIFromMRML { } {
   # set the GUI and effect parameters to match node
   # (only if this is the instance that "owns" the GUI
   set radius [$node GetParameter Paint,radius] 
-  $this configure -radius $percentage
+  $this configure -radius $radius
   if { [info exists o(radius)] } {
-    [$o(radius) GetWidget] SetValue $radius
+    $o(radius) SetValue $radius
   }
   set smudge [$node GetParameter Paint,smudge] 
   $this configure -smudge $smudge
   if { [info exists o(smudge)] } {
-    $o(smudge) SetSelectedState $smudge
+    [$o(smudge) GetWidget] SetSelectedState $smudge
   }
   $this preview
 }
@@ -378,7 +390,7 @@ itcl::body PaintEffect::tearDownOptions { } {
   # call superclass version of tearDownOptions
   chain
 
-  foreach w "percentage cancel" {
+  foreach w "radius cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 
@@ -527,10 +539,10 @@ itcl::body PaintEffect::paintBrush {x y} {
   $painter SetBottomRight $br(i) $br(j) $br(k)
   eval $painter SetBrushCenter $brushCenter
   $painter SetBrushRadius $brushRadius
-  $painter SetPaintLabel $paintColor
+  $painter SetPaintLabel [EditorGetPaintLabel]
   $painter SetPaintOver $paintOver
-  $painter SetThresholdPaint $thresholdPaint
-  $painter SetThresholdPaintRange $thresholdMin $thresholdMax
+  $painter SetThresholdPaint $paintThreshold
+  $painter SetThresholdPaintRange $paintThresholdMin $paintThresholdMax
   $painter Paint
 
   $extractImage Delete
