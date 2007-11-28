@@ -971,7 +971,7 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
     vtkMRMLDisplayableNode *model = slices[i];
     // add nodes that are not in the list yet
     vtkMRMLDisplayNode *dnode = model->GetDisplayNode();
-    if (this->DisplayedActors.find(dnode->GetID()) == this->DisplayedActors.end() )
+    if (dnode && this->DisplayedActors.find(dnode->GetID()) == this->DisplayedActors.end() )
       {
       this->UpdateModel(model);
       } 
@@ -984,13 +984,16 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
     {
     vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLDisplayableNode"));
     // render slices last so that transparent objects are rendered in fron of them
-    if (!strcmp(model->GetName(), "Red Volume Slice") ||
-        !strcmp(model->GetName(), "Green Volume Slice") ||
-        !strcmp(model->GetName(), "Yellow Volume Slice"))
+    if (model)
       {
-      continue;
+      if (!strcmp(model->GetName(), "Red Volume Slice") ||
+          !strcmp(model->GetName(), "Green Volume Slice") ||
+          !strcmp(model->GetName(), "Yellow Volume Slice"))
+        {
+        continue;
+        }
+      this->UpdateModifiedModel(model);
       }
-    this->UpdateModifiedModel(model);
     } // end while
 
 }
@@ -1376,17 +1379,24 @@ void vtkSlicerViewerWidget::RemoveModelProps()
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::RemoveDisplayable(vtkMRMLDisplayableNode* model)
 {
+  if (!model)
+    {
+    return;
+    }  
   int ndnodes = model->GetNumberOfDisplayNodes();
   std::map<std::string, vtkProp3D *>::iterator iter;
   std::vector<std::string> removedIDs;
   for (int i=0; i<ndnodes; i++)
     {
     vtkMRMLDisplayNode *displayNode = model->GetNthDisplayNode(i);
-    iter = this->DisplayedActors.find(displayNode->GetID());
-    if (iter != this->DisplayedActors.end())
+    if (displayNode)
       {
-      this->MainViewer->RemoveViewProp(iter->second);
-      removedIDs.push_back(iter->first);
+      iter = this->DisplayedActors.find(displayNode->GetID());
+      if (iter != this->DisplayedActors.end())
+        {
+        this->MainViewer->RemoveViewProp(iter->second);
+        removedIDs.push_back(iter->first);
+        }
       }
     }
 
@@ -1554,6 +1564,9 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
               }
             actor->GetMapper()->SelectColorArray(dnode->GetActiveScalarName());
             }
+          if (!(dnode->IsA("vtkMRMLFiberBundleDisplayNode")))
+            {
+            // still debugging fibre bundle display nodes
           if (!cellScalarsActive)
             {
             // set the scalar range
@@ -1566,6 +1579,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
             actor->GetMapper()->SetScalarModeToUseCellFieldData();
             actor->GetMapper()->SetColorModeToDefault();
             actor->GetMapper()->UseLookupTableScalarRangeOff();
+            }
             }
           }
         
