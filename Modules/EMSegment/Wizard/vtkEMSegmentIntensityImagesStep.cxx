@@ -136,7 +136,7 @@ void vtkEMSegmentIntensityImagesStep::PopulateIntensityImagesTargetVolumeSelecto
       const char *name = mrmlManager->GetVolumeName(vol_id);
       if (name)
         {
-        sprintf(buffer, "%s (%d)", name, vol_id);
+        sprintf(buffer, "%s (%d)", name, static_cast<int>(vol_id));
         this->IntensityImagesTargetVolumeSelector->AddSourceElement(buffer);
         }
       }
@@ -150,7 +150,7 @@ void vtkEMSegmentIntensityImagesStep::PopulateIntensityImagesTargetVolumeSelecto
     const char *name = mrmlManager->GetVolumeName(target_vol_id);
     if (name)
       {
-      sprintf(buffer, "%s (%d)", name, target_vol_id);
+      sprintf(buffer, "%s (%d)", name, static_cast<int>(target_vol_id));
       this->IntensityImagesTargetVolumeSelector->AddFinalElement(buffer);
       }
     }

@@ -351,8 +351,8 @@ void vtkEMSegmentIntensityNormalizationStep::
     {
     target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
     sprintf(buffer, "%s %d", 
-      "NormalizationTargetSelectionChangedCallback", 
-      target_vol_id);
+            "NormalizationTargetSelectionChangedCallback", 
+            static_cast<int>(target_vol_id));
     const char *name = mrmlManager->GetVolumeName(target_vol_id);
     if (name)
       {
@@ -378,7 +378,8 @@ void vtkEMSegmentIntensityNormalizationStep::
   this->NormalizationEnableCheckButton->SetEnabled(parentEnabled);  
   vtkKWCheckButton *cbEnable = 
     this->NormalizationEnableCheckButton->GetWidget();
-  sprintf(buffer, "NormalizationEnableCallback %d", target_vol_id);
+  sprintf(buffer, "NormalizationEnableCallback %d", 
+          static_cast<int>(target_vol_id));
   cbEnable->SetCommand(this, buffer);
   cbEnable->SetSelectedState(mrmlManager->
     GetTargetVolumeIntensityNormalizationEnabled(target_vol_id));
@@ -416,42 +417,47 @@ void vtkEMSegmentIntensityNormalizationStep::
 
   this->NormalizationDefaultsMenuButton->GetMenu()->DeleteAllItems();
   sprintf(buffer, "NormalizationNormTypeCallback %d %d", 
-    target_vol_id, NormalizationDefaultT1SPGR);
+          static_cast<int>(target_vol_id), NormalizationDefaultT1SPGR);
   this->NormalizationDefaultsMenuButton->
     GetMenu()->AddRadioButton("MR T1 SPGR", this, buffer);
   sprintf(buffer, "NormalizationNormTypeCallback %d %d", 
-    target_vol_id, NormalizationDefaultT2);
+          static_cast<int>(target_vol_id), NormalizationDefaultT2);
   this->NormalizationDefaultsMenuButton->
     GetMenu()->AddRadioButton("MR T2", this, buffer);
 
   // Update Print-Info check button
 
-  sprintf(buffer, "NormalizationPrintInfoCallback %d", target_vol_id);
+  sprintf(buffer, "NormalizationPrintInfoCallback %d", 
+          static_cast<int>(target_vol_id));
   this->NormalizationPrintCheckButton->GetWidget()->SetCommand(
     this, buffer);
 
   // Update Norm-value entry
 
   vtkKWEntry *entry = this->NormalizationNormValueEntry->GetWidget();
-  sprintf(buffer, "NormalizationNormValueCallback %d", target_vol_id);
+  sprintf(buffer, "NormalizationNormValueCallback %d", 
+          static_cast<int>(target_vol_id));
   entry->SetCommand(this, buffer);
 
   // Update Histogram-smoothing-width
 
   entry = this->NormalizationSmoothingWidthEntry->GetWidget();
-  sprintf(buffer, "NormalizationSmoothingWidthCallback %d", target_vol_id);
+  sprintf(buffer, "NormalizationSmoothingWidthCallback %d", 
+          static_cast<int>(target_vol_id));
   entry->SetCommand(this, buffer);
 
   // Update Max Histogram-smoothing-width
 
   entry = this->NormalizationMaxSmoothingWidthEntry->GetWidget();
-  sprintf(buffer, "NormalizationMaxSmoothingWidthCallback %d", target_vol_id);
+  sprintf(buffer, "NormalizationMaxSmoothingWidthCallback %d", 
+          static_cast<int>(target_vol_id));
   entry->SetCommand(this, buffer);
 
   // Update the Relative-Max-Voxel Num scale entry.
 
   sprintf(
-    buffer, "NormalizationRelativeMaxVoxelNumCallback %d", target_vol_id);
+    buffer, "NormalizationRelativeMaxVoxelNumCallback %d", 
+    static_cast<int>(target_vol_id));
   this->NormalizationRelativeMaxVoxelScale->SetEndCommand(this, buffer);
   this->NormalizationRelativeMaxVoxelScale->SetEntryCommand(this, buffer);
 

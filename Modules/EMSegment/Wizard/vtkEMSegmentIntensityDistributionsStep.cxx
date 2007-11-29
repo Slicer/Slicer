@@ -307,17 +307,17 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
       this->IntensityDistributionSpecificationMenuButton->SetEnabled(enabled);
       sprintf(
         buffer, "IntensityDistributionSpecificationCallback %d %d", 
-        sel_vol_id, vtkEMSegmentMRMLManager::
+        static_cast<int>(sel_vol_id), vtkEMSegmentMRMLManager::
         DistributionSpecificationManual);
       menu->AddRadioButton("Manual", this, buffer);
       sprintf(
         buffer, "IntensityDistributionSpecificationCallback %d %d", 
-        sel_vol_id,vtkEMSegmentMRMLManager::
+        static_cast<int>(sel_vol_id),vtkEMSegmentMRMLManager::
         DistributionSpecificationManuallySample);
       menu->AddRadioButton("Manual Sampling", this, buffer);
       sprintf(
         buffer, "IntensityDistributionSpecificationCallback %d %d", 
-        sel_vol_id, vtkEMSegmentMRMLManager::
+        static_cast<int>(sel_vol_id), vtkEMSegmentMRMLManager::
         DistributionSpecificationAutoSample);
       menu->AddRadioButton("Auto Sampling", this, buffer);
 
@@ -366,7 +366,8 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
         mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) !=
         vtkEMSegmentMRMLManager::DistributionSpecificationManual);
       sprintf(
-        buffer, "IntensityDistributionMeanChangedCallback %d", sel_vol_id);
+        buffer, "IntensityDistributionMeanChangedCallback %d", 
+        static_cast<int>(sel_vol_id));
       matrix->SetElementChangedCommand(this, buffer);
 
       for(col = 0; col < nb_of_target_volumes; col++)
@@ -400,7 +401,8 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
         mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id) !=
         vtkEMSegmentMRMLManager::DistributionSpecificationManual);
       sprintf(
-        buffer,"IntensityDistributionCovarianceChangedCallback %d",sel_vol_id);
+        buffer,"IntensityDistributionCovarianceChangedCallback %d",
+        static_cast<int>(sel_vol_id));
       matrix->SetElementChangedCommand(this, buffer);
 
       for (row = 0; row < nb_of_target_volumes; row++)
@@ -591,13 +593,15 @@ void vtkEMSegmentIntensityDistributionsStep::PopupManualIntensitySampleContextMe
   if (row >= 0)
     {
     sprintf(
-      buffer, "DeleteManualIntensitySampleCallback %d %d", sel_vol_id, row);
+      buffer, "DeleteManualIntensitySampleCallback %d %d", 
+      static_cast<int>(sel_vol_id), row);
     this->ContextMenu->AddCommand("Delete sample", this, buffer);
     }
 
   if (list->GetNumberOfRows())
     {
-    sprintf(buffer, "DeleteAllManualIntensitySampleCallback %d", sel_vol_id);
+    sprintf(buffer, "DeleteAllManualIntensitySampleCallback %d", 
+            static_cast<int>(sel_vol_id));
     this->ContextMenu->AddCommand("Delete all samples", this, buffer);
     }
 

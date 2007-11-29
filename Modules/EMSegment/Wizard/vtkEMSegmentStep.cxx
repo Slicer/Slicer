@@ -65,7 +65,7 @@ void vtkEMSegmentStep::PopulateMenuWithLoadedVolumes(
   for(int index=0; index < nb_of_volumes; index++)
     {
     vtkIdType vol_id = mrmlManager->GetVolumeNthID(index);
-    sprintf(buffer, "%s %d", callback, vol_id);
+    sprintf(buffer, "%s %d", callback, static_cast<int>(vol_id));
     const char *name = mrmlManager->GetVolumeName(vol_id);
     if (name)
       {
@@ -118,7 +118,7 @@ void vtkEMSegmentStep::PopulateMenuWithTargetVolumes(
     const char *name = mrmlManager->GetVolumeName(vol_id);
     if (name)
       {
-      sprintf(buffer, "%s %d", callback, vol_id);
+      sprintf(buffer, "%s %d", callback, static_cast<int>(vol_id));
       menu->AddRadioButton(name, object, buffer);
       }
     }

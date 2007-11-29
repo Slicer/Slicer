@@ -152,7 +152,8 @@ void vtkEMSegmentSpatialPriorsStep::DisplaySelectedNodeSpatialPriorsCallback()
     if (has_valid_selection)
       {
       this->SpatialPriorsVolumeMenuButton->SetEnabled(tree->GetEnabled());
-      sprintf(buffer, "SpatialPriorsVolumeCallback %d", sel_vol_id);
+      sprintf(buffer, "SpatialPriorsVolumeCallback %d", 
+              static_cast<int>(sel_vol_id));
       this->PopulateMenuWithLoadedVolumes(menu, this, buffer);
       vtkIdType vol_id = mrmlManager->GetTreeNodeSpatialPriorVolumeID(sel_vol_id);
       if(!this->SetMenuButtonSelectedItem(menu, vol_id))
