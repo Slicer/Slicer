@@ -301,7 +301,14 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
 
 
   // 8 connected neighbor offsets
-  int neighbors[8][2]= {-1, -1, -1, 0, -1, 1, 0, 1, 1,1, 1,0, 1,-1, 0,-1};
+  int neighbors[8][2]= {{-1, -1}, 
+                        {-1,  0}, 
+                        {-1,  1}, 
+                        { 0,  1}, 
+                        { 1,  1},
+                        { 1,  0}, 
+                        { 1, -1}, 
+                        { 0, -1}};
   
   int noOfPixels = 0;
 
