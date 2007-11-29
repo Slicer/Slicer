@@ -94,25 +94,16 @@ void vtkMRMLEMSClassInteractionMatrixNode::ReadXMLAttributes(const char** attrs)
     key = *attrs++;
     val = *attrs++;
     
-    int directionIndex = -1;
-    for (int i = 0; i < this->DirectionNames.size(); ++i)
+    vtkstd::vector<vtkstd::string>::iterator directionPosition = 
+      vtkstd::find(this->DirectionNames.begin(), this->DirectionNames.end(),
+                 key);
+    if (directionPosition != this->DirectionNames.end())
       {
-      if (!strcmp(key, this->DirectionNames[i].c_str()))
-        {
-        directionIndex = i;
-        }
-      }
-    if (directionIndex >= 0)
-      {
+      int directionIndex = directionPosition - this->DirectionNames.begin();
+
       // remove visual row seperators
       std::string valStr(val);
-      for (int i = 0; i < valStr.size(); ++i)
-        {
-        if (valStr[i] == '|')
-          {
-          valStr[i] = ' ';
-          }
-        }
+      vtkstd::replace(valStr.begin(), valStr.end(), '|', ' ');
 
       // read data into a temporary vector
       vtksys_stl::stringstream ss;

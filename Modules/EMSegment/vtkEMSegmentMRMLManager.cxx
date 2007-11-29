@@ -4028,49 +4028,49 @@ PackageAndWriteData(const char* packageDirectory)
   //
   // create a scene and copy the EMSeg related nodes to it
   //
-
-  std::cerr << "PackageAndWriteData CopyEMRelatedNodes...";
   vtkMRMLScene* newScene = vtkMRMLScene::New();
-
   std::string outputDirectory(packageDirectory);
+
+  if (!outputDirectory.empty() && 
+      outputDirectory[outputDirectory.size()-1] != '/')
+    {
+    // make sure directory ends in seperator
+    outputDirectory = outputDirectory + "/";
+    }
+
   std::string mrmlURL(outputDirectory + "EMSegmenterScene.mrml");
   newScene->SetRootDirectory(outputDirectory.c_str());
   newScene->SetURL(mrmlURL.c_str());
-
   this->CopyEMRelatedNodesToMRMLScene(newScene);
-  std::cerr << "DONE (" << newScene->GetNumberOfNodes() << " nodes)"
-            << std::endl;
   
   //
-  // update filenames to match set package structure
-  std::cerr << "PackageAndWriteData CreatePackageFilenames...";
+  // update filenames to match standardized package structure
   this->CreatePackageFilenames(newScene, packageDirectory);
-  std::cerr << "DONE" << std::endl;
 
   //
   // create directory structure on disk
-  std::cerr << "PackageAndWriteData CreatePackageDirectories...";
   bool createdDirectories = this->CreatePackageDirectories(packageDirectory);
-  std::cerr << "DONE" << std::endl;
   if (!createdDirectories)
     {
-    vtkWarningMacro("ERROR: failed to create directories");
+    vtkErrorMacro("PackageAndWriteData: failed to create directories");
+    newScene->Delete();
+    return false;
     }
 
   //
   // write the scene out to disk
-  std::cerr << "PackageAndWriteData WritePackagedScene...";
   bool wroteScene = this->WritePackagedScene(newScene);
-  std::cerr << "DONE" << std::endl;
   if (!wroteScene)
     {
-    vtkWarningMacro("ERROR: failed to write scene");
+    vtkErrorMacro("PackageAndWrite: failed to write scene");
+    newScene->Delete();
+    return false;
     }  
 
   // clean up
   newScene->Delete();
-
-  return createdDirectories && wroteScene;
+  
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -4134,8 +4134,9 @@ CreatePackageFilenames(vtkMRMLScene* scene,
     (scene->GetNthNodeByClass(0, "vtkMRMLEMSNode"));
   if (newEMSNode == NULL)
     {
-    // !!! what if null?
-    std::cerr << "New Node is null :(" << std::endl;
+    vtkWarningMacro("CreatePackageFilenames: no EMS node!");
+    newSceneManager->Delete();
+    return;
     }
   else
     {
@@ -4410,11 +4411,10 @@ CreatePackageDirectories(const char* packageDirectoryName)
   // check that parent directory exists
   std::string parentDirectory = 
     vtksys::SystemTools::GetParentDirectory(packageDirectory.c_str());
-  std::cerr << "Parent directory: " << parentDirectory << std::endl;
-
   if (!vtksys::SystemTools::FileExists(parentDirectory.c_str()))
     {
-    std::cerr << "Parent directory does not exist!" << std::endl;
+    vtkWarningMacro
+      ("CreatePackageDirectories: Parent directory does not exist!");
     return false;
     }
   
@@ -4441,7 +4441,7 @@ CreatePackageDirectories(const char* packageDirectoryName)
 
   if (!createdOK)
     {
-    std::cerr << "Could not create directories!" << std::endl;
+    vtkWarningMacro("CreatePackageDirectories: Could not create directories!");
     return false;
     }
 
@@ -4453,13 +4453,11 @@ bool
 vtkEMSegmentMRMLManager::
 WritePackagedScene(vtkMRMLScene* scene)
 {
-  std::cerr << "Scene root directory is : " << scene->GetRootDirectory() 
-            << std::endl;
-
   //
   // write the volumes
   scene->InitTraversal();
   vtkMRMLNode* currentNode;
+  bool allOK = true;
   while ((currentNode = scene->GetNextNodeByClass("vtkMRMLVolumeNode")) &&
          (currentNode != NULL))
     {
@@ -4468,26 +4466,33 @@ WritePackagedScene(vtkMRMLScene* scene)
 
     if (volumeNode == NULL || volumeNode->GetStorageNode() == NULL)
       {
-      std::cerr << "Can't write volume node " << currentNode->GetID()
-                << std::endl;
+      vtkErrorMacro("Volume node or storage node is null " 
+                    << currentNode->GetID());
+      allOK = false;
       continue;
       }
     try
       {
-      std::cerr << "Writing image: " 
-                << volumeNode->GetStorageNode()->GetFileName() << std::endl;
       volumeNode->GetStorageNode()->WriteData(volumeNode);
       }
     catch (...)
       {
-      std::cerr << "Problem writing volume: " << volumeNode->GetID() 
-                << std::endl;
+      vtkErrorMacro("Problem writing volume: " << volumeNode->GetID());
+      allOK = false;
       }
     }
   
   //
   // write the MRML scene file
-  scene->Commit();
-  
-  return true;
+  try 
+    {
+    scene->Commit();
+    }
+  catch (...)
+    {
+    vtkErrorMacro("Problem writing scene.");
+    allOK = false;
+    }  
+
+  return allOK;
 }

@@ -23,6 +23,7 @@
 #include "vtkImageMeanIntensityNormalization.h"
 
 #include "vtkMath.h"
+#include "vtkImageReslice.h"
 
 // needed to translate between enums
 #include "EMLocalInterface.h"
@@ -103,30 +104,26 @@ SaveTemplateNow()
 }
 
 //----------------------------------------------------------------------------
-void
+bool
 vtkEMSegmentLogic::
 SaveIntermediateResults()
 {
-  std::cerr << "Save intermediate results..." << std::endl;
-
   //
   // get output directory
   std::string outputDirectory(this->MRMLManager->GetSaveWorkingDirectory());
-  std::string 
-    testOutputDirectory("/playpen/davisb/EMSegIntermediateResultsTesting/");
-  outputDirectory = testOutputDirectory;
+
+  if (!vtksys::SystemTools::FileExists(outputDirectory.c_str()))
+    {
+    // directory does not exist, bail out (and let the user create it!)
+    return false;
+    }  
 
   //
   // package EMSeg-related parameters together and write them to disk
   bool writeSuccessful = 
     this->MRMLManager->PackageAndWriteData(outputDirectory.c_str());
 
-  if (!writeSuccessful)
-    {
-    vtkErrorMacro("ERROR: unable to save intermediate results");
-    }
-
-  std::cerr << "Save intermediate results DONE" << std::endl;
+  return writeSuccessful;
 }
 
 //----------------------------------------------------------------------------
@@ -142,8 +139,8 @@ StartPreprocessing()
 
   this->StartPreprocessingInitializeInputData();
   this->StartPreprocessingTargetIntensityNormalization();
-  //this->StartPreprocessingTargetToTargetRegistration();
-  //this->StartPreprocessingAtlasToTargetRegistration();
+  this->StartPreprocessingTargetToTargetRegistration();
+  this->StartPreprocessingAtlasToTargetRegistration();
 }
 
 //----------------------------------------------------------------------------
@@ -262,13 +259,6 @@ StartPreprocessingTargetIntensityNormalization()
     normFilter->Delete();
     }
     
-  // !!! should get data from the working node, the input should
-  // always be the input!
-  // 
-  // replace target in segmenter node with the
-  // normalized target this->MRMLManager->GetSegmenterNode()->
-  // SetTargetNodeID(normalizedTarget->GetID());
-
   std::cerr << "Normalization complete." << std::endl;
 
   // intensity statistics, if computed from data, must be updated
@@ -322,50 +312,83 @@ StartPreprocessingTargetToTargetRegistration()
 
   //
   // apply registration
-  for (int i = 1; i < alignedTarget->GetNumberOfVolumes(); ++i)
+  // align image i with image 0
+  int fixedTargetImageIndex = 0;
+  vtkImageData* fixedImageData =
+    alignedTarget->GetNthVolumeNode(fixedTargetImageIndex)->GetImageData();
+  for (int i = 0; i < alignedTarget->GetNumberOfVolumes(); ++i)
     {
-      // align image i with image 0
+      if (i == fixedTargetImageIndex)
+        {
+        std::cerr << "Skipping fixed target image " << i << std::endl;
+        continue;
+        }
 
+      //
       // get image data
-      
-      vtkImageData* fixedImageData =
-        alignedTarget->GetNthVolumeNode(0)->GetImageData();         
       vtkImageData* movingImageData = 
         normalizedTarget->GetNthVolumeNode(i)->GetImageData();
       vtkImageData* outImageData = 
         alignedTarget->GetNthVolumeNode(i)->GetImageData(); 
 
-      if (fixedImageData == NULL || movingImageData == NULL)
-      {
-        vtkErrorMacro("fixed or moving input is null, skipping: " << i);
+      if (fixedImageData == NULL)
+        {
+        vtkErrorMacro("Fixed image is null, skipping: " << i);
         continue;
-      }
+        }
+      if (movingImageData == NULL)
+        {
+        vtkErrorMacro("Moving image is null, skipping: " << i);
+        continue;
+        }
       if (outImageData == NULL)
-      {
+        {
         vtkErrorMacro("Registration output is null, skipping: " << i);
         continue;
-      }
+        }
 
-      // setup vtk filter
+      //
+      // set up registration
+//       std::cerr << "Starting registration...";
+//       vtkRigidRegistrator* registrator = vtkRigidRegistrator::New();
+//       registrator->SetFixedImage(fixedImageData);
+//       registrator->SetMovingImage(movingImageData);
+//       registrator->SetImageToImageMetricToMutualInformation();
+//       registrator->SetMetricComputationSamplingRatioo(0.5);
+//       registrator->SetNumberOfIterations(50);
+//       registrator->SetIntensityInterpolationTypeToLinear();
+//       registrator->SetTransformInitializationTypeToCenterOfMass();
+//       try
+//         {
+//         registrator->RegisterImages();
+//         }
+//       catch (...)
+//         {
+//         std::cerr << "Failed to register images!!!" << std::endl;
+//         }
+//       std::cerr << "Target-to-target transform: " << std::endl;
+//       registrator->GetTransform()->PrintSelf(std::cerr, 0);
+      
+      //
+      // resample moving image
 
-      // execute filter
-      try
-      {
-        //alignmentFilter->Update();
-      }
-      catch (...)
-      {
-        vtkErrorMacro("Error executing alignment filter for target image " 
-                      << i << ".  Skipping this image.");
-      }
-      //alighmentFilter->Delete();
-    }
-    
-  // !!! should get this from the working node!
-  // replace target in segmenter node with the normalized target
-  //this->MRMLManager->GetSegmenterNode()->
-  //  SetTargetNodeID(alignedTarget->GetID());
+      //
+      // !!! need to make sure that the output image is in space of
+      // 0th target image !!!
+      std::cerr << "Resampling target image...";
+      vtkImageReslice* resliceFilter = vtkImageReslice::New();
+      //resliceFilter->SetResliceTransform(registrator->GetTransform());
+      resliceFilter->SetInput(movingImageData);
+      resliceFilter->SetOutput(outImageData);
+      resliceFilter->SetInformationInput(fixedImageData);
+      resliceFilter->Update();
+      std::cerr << "DONE" << std::endl;
 
+      //
+      // clean up
+      //registrator->Delete();
+      resliceFilter->Delete();
+    }    
   std::cerr << "Alignment complete." << std::endl;
 
   // intensity statistics, if computed from data, must be updated
@@ -377,11 +400,101 @@ void
 vtkEMSegmentLogic::
 StartPreprocessingAtlasToTargetRegistration()
 {
-  // clone input to aligned atlas node
+  std::cerr << "Starting atlas-to-target registration..." << std::endl;
 
-  // set up registration
+  // get a pointer to the mrml manager for easy access
+  vtkEMSegmentMRMLManager* m = this->MRMLManager;
 
-  // run registration
+  // get input target from working node
+  vtkMRMLEMSTargetNode* alignedTarget = 
+    m->GetWorkingDataNode()->GetAlignedTargetNode();
+  if (alignedTarget == NULL)
+    {
+    vtkErrorMacro("Aligned target node is null, aborting!");
+    }
+
+  // get input atlas from working node
+  vtkMRMLEMSAtlasNode* inputAtlas = 
+    m->GetWorkingDataNode()->GetInputAtlasNode();
+  if (inputAtlas == NULL)
+    {
+    vtkErrorMacro("Input atlas node is null, aborting!");
+    }
+  
+  // check that global parameters exist
+  if (!this->MRMLManager->GetGlobalParametersNode())
+    {
+    vtkErrorMacro("Global parameters node is null, aborting!");
+    }
+  
+  // set up the aligned atlas node
+  vtkMRMLEMSAtlasNode* alignedAtlas = 
+    m->GetWorkingDataNode()->GetAlignedAtlasNode();
+  if (!alignedAtlas)
+    {
+    // clone intput to new aligned atlas node
+    std::cerr << "Cloning atlas node...";
+    alignedAtlas = m->CloneAtlasNode(inputAtlas, "AlignedAtlas");
+    std::cerr << "Done." << std::endl;
+    std::cerr << "Node is " << (alignedAtlas ? "Non-null" : "Null")
+              << std::endl;
+    std::cerr << "Number of images is: " 
+              << alignedAtlas->GetNumberOfVolumes() << std::endl;
+    m->GetWorkingDataNode()->
+      SetAlignedAtlasNodeID(alignedAtlas->GetID());
+    }
+  
+  //
+  // check that the number of target images did not change
+  // !!! todo !!!
+
+  //
+  // apply registration
+  // align atlas "registration image" with first target image
+  int fixedTargetImageIndex = 0;
+  vtkImageData* fixedTargetImageData =
+    alignedTarget->GetNthVolumeNode(fixedTargetImageIndex)->GetImageData();
+  vtkImageData* movingAtlasImageData = NULL; // !!!
+    
+  // set up registration between these images !!!
+
+  //
+  // resample all the atlas images using the transform
+  for (int i = 0; i < alignedAtlas->GetNumberOfVolumes(); ++i)
+    {
+      //
+      // get image data
+      vtkImageData* movingImageData = 
+        inputAtlas->GetNthVolumeNode(i)->GetImageData();
+      vtkImageData* outImageData = 
+        alignedAtlas->GetNthVolumeNode(i)->GetImageData(); 
+
+      if (movingImageData == NULL)
+        {
+        vtkErrorMacro("Moving image is null, skipping: " << i);
+        continue;
+        }
+      if (outImageData == NULL)
+        {
+        vtkErrorMacro("Registration output is null, skipping: " << i);
+        continue;
+        }
+
+      std::cerr << "Resampling atlas image " << i << "...";
+      vtkImageReslice* resliceFilter = vtkImageReslice::New();
+      //resliceFilter->SetResliceTransform(registrator->GetTransform());
+      resliceFilter->SetInput(movingImageData);
+      resliceFilter->SetOutput(outImageData);
+      resliceFilter->SetInformationInput(fixedTargetImageData);
+      resliceFilter->Update();
+      std::cerr << "DONE" << std::endl;
+
+      //
+      // clean up
+      //registrator->Delete();
+      resliceFilter->Delete();
+    }    
+  std::cerr << "Alignment complete." << std::endl;
 }
 
 //----------------------------------------------------------------------------
@@ -514,18 +627,14 @@ StartSegmentation()
   //
   // save intermediate results
   // !!! in progress
-  if (false && this->MRMLManager->GetSaveIntermediateResults())
+  if (true || this->MRMLManager->GetSaveIntermediateResults())
     {
-    this->SaveIntermediateResults();
+    bool savedResults = this->SaveIntermediateResults();
+    if (!savedResults)
+      {
+      vtkErrorMacro("Error writing intermediate results");
+      }
     }
-
-  //!!!
-  // save template file if desired
-  //
-  //if (this->MRMLManager->GetSaveTemplateAfterSegmentation())
-  //  {
-  //  this->SaveTemplateNow();
-  //  }
 }
 
 //-----------------------------------------------------------------------------
