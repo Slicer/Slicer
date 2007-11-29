@@ -139,8 +139,8 @@ StartPreprocessing()
 
   this->StartPreprocessingInitializeInputData();
   this->StartPreprocessingTargetIntensityNormalization();
-  this->StartPreprocessingTargetToTargetRegistration();
-  this->StartPreprocessingAtlasToTargetRegistration();
+  //this->StartPreprocessingTargetToTargetRegistration();
+  //this->StartPreprocessingAtlasToTargetRegistration();
 }
 
 //----------------------------------------------------------------------------
@@ -627,7 +627,7 @@ StartSegmentation()
   //
   // save intermediate results
   // !!! in progress
-  if (true || this->MRMLManager->GetSaveIntermediateResults())
+  if (false && this->MRMLManager->GetSaveIntermediateResults())
     {
     bool savedResults = this->SaveIntermediateResults();
     if (!savedResults)
