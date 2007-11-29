@@ -28,7 +28,7 @@
 #define VTK_MIMXIO_EXPORT __declspec( dllimport )
 #endif
 #else
-#define VTK_MIMXFILTER_EXPORT 
+#define VTK_MIMXIO_EXPORT 
 #endif
 
 #endif
