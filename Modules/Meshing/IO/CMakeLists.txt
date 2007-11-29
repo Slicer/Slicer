@@ -32,7 +32,7 @@ VTK_WRAP_TCL3(MeshIO MeshIO_TCL_SRCS "${MeshIO_SRCS}" "")
 
 # Build the library
 #
-ADD_LIBRARY(MimxMeshIO 
+ADD_LIBRARY(MimxMeshIO
   ${MeshIO_SRCS} 
 #  ${MeshIO_TCL_SRCS}
   )

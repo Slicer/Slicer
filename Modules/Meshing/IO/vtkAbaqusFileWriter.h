@@ -21,9 +21,10 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkPolyData.h"
 #include "vtkStructuredGrid.h"
 #include "vtkUnstructuredGrid.h"
+#include "vtkMeshIOWin32Header.h"
 
 
-class VTK_GRAPHICS_EXPORT vtkAbaqusFileWriter : public vtkDataSetWriter
+class VTK_MIMXIO_EXPORT vtkAbaqusFileWriter : public vtkDataSetWriter
 {
 public:
   
