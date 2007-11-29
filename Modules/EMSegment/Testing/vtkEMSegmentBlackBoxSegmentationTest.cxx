@@ -13,7 +13,6 @@ int main(int argc, char** argv)
   std::string parametersNodeName;
   std::string correctSegmentationFilename;
   enum TestType { ReadScene, CopyScene, ManualCopyScene, SetScene };
-  TestType testType = ReadScene;
 
   //
   // parse command line
