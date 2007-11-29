@@ -5,7 +5,6 @@ SUBDIRS(
   Seeding
   Settings
   Display
-  FiducialSeeding
 )
 
 
