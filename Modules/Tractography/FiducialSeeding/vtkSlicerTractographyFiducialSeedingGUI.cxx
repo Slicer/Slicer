@@ -16,15 +16,27 @@ Version:   $Revision: 1.2 $
 #include <iostream>
 #include <sstream>
 
-#include "vtkObjectFactory.h"
-#include "vtkIntArray.h"
-
 #include "vtkSlicerTractographyFiducialSeedingGUI.h"
 
+#include "vtkObjectFactory.h"
+#include "vtkIntArray.h"
+#include "vtkMatrix4x4.h"
+#include "vtkTransform.h"
+#include "vtkImageData.h"
+#include "vtkXMLPolyDataWriter.h"
+#include "vtkMath.h"
+#include "vtkCommand.h"
+
+#include "vtkDiffusionTensorMathematics.h"
+#include "vtkNRRDReader.h"
+#include "vtkNRRDWriter.h"
+#include "vtkSeedTracts.h"
+
 #include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 
-#include "vtkCommand.h"
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
 #include "vtkSlicerApplication.h"
@@ -55,6 +67,11 @@ vtkSlicerTractographyFiducialSeedingGUI::vtkSlicerTractographyFiducialSeedingGUI
   this->OutFiberSelector = vtkSlicerNodeSelectorWidget::New();
   this->FiducialSelector = vtkSlicerNodeSelectorWidget::New();
   this->FiducialListNode = NULL;
+  
+  this->StoppingMode = NULL;
+  this->StoppingThreshold=0.15;
+  this->MaximumPropagationDistance = 600;
+
 }
 
 //----------------------------------------------------------------------------
@@ -80,6 +97,11 @@ vtkSlicerTractographyFiducialSeedingGUI::~vtkSlicerTractographyFiducialSeedingGU
     this->FiducialSelector = NULL;
   }
   vtkSetAndObserveMRMLNodeMacro(this->FiducialListNode, NULL);
+  
+  if (this->StoppingMode)
+    {
+    delete [] this->StoppingMode;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -163,7 +185,132 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessMRMLEvents ( vtkObject *cal
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
 {
+  vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeSelector->GetSelected());
+  vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(this->FiducialSelector->GetSelected());
+  vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(this->OutFiberSelector->GetSelected());
+  
+  // 0. check inputs
+  if (volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL ||
+      volumeNode->GetImageData() == NULL || fiducialListNode->GetNumberOfFiducials() == 0)
+    {
+    if (fiberNode && fiberNode->GetPolyData())
+      {
+      fiberNode->GetPolyData()->Reset();
+      }
+    return;
+    }
+    
+  vtkSeedTracts *seed = vtkSeedTracts::New();
+  
+  //1. Set Input
+  seed->SetInputTensorField(volumeNode->GetImageData());
+  
+  //2. Set Up matrices
+  vtkMatrix4x4 *mat = vtkMatrix4x4::New();
+  volumeNode->GetRASToIJKMatrix(mat);
+  
+  vtkMatrix4x4 *TensorRASToIJK = vtkMatrix4x4::New();
+  TensorRASToIJK->DeepCopy(mat);
+  mat->Delete();
+  
+  //Do scale IJK
+  double sp[3];
+  volumeNode->GetImageData()->GetSpacing(sp);
+  
+  vtkTransform *trans = vtkTransform::New();
+  trans->Identity();
+  trans->PreMultiply();
+  trans->SetMatrix(TensorRASToIJK);
+  // Trans from IJK to RAS
+  trans->Inverse();
+  // Take into account spacing to compute Scaled IJK
+  trans->Scale(1/sp[0],1/sp[1],1/sp[2]);
+  trans->Inverse();
+  
+  //Set Transformation to seeding class
+  seed->SetWorldToTensorScaledIJK(trans);
+  
+  vtkMatrix4x4 *TensorRASToIJKRotation = vtkMatrix4x4::New();
+  TensorRASToIJKRotation->DeepCopy(TensorRASToIJK);
+  
+  //Set Translation to zero
+  for (int i=0;i<3;i++)
+    {
+    TensorRASToIJKRotation->SetElement(i,3,0);
+    }
+  //Remove scaling in rasToIjk to make a real roation matrix
+  double col[3];
+  for (int jjj = 0; jjj < 3; jjj++) 
+    {
+    for (int iii = 0; iii < 3; iii++)
+      {
+      col[iii]=TensorRASToIJKRotation->GetElement(iii,jjj);
+      }
+    vtkMath::Normalize(col);
+    for (int iii = 0; iii < 3; iii++)
+      {
+      TensorRASToIJKRotation->SetElement(iii,jjj,col[iii]);
+     }  
+  }
+  TensorRASToIJKRotation->Invert();
+  seed->SetTensorRotationMatrix(TensorRASToIJKRotation);  
+  
 
+  //ROI comes from tensor, IJKToRAS is the same
+  // as the tensor
+  vtkTransform *trans2 = vtkTransform::New();
+  trans2->Identity();
+  trans2->SetMatrix(TensorRASToIJK);
+  trans2->Inverse();
+  seed->SetROIToWorld(trans2);
+  
+  seed->UseVtkHyperStreamlinePoints();
+  vtkHyperStreamlineDTMRI *streamer=vtkHyperStreamlineDTMRI::New();
+  seed->SetVtkHyperStreamlinePointsSettings(streamer);
+ 
+  if (std::string(this->StoppingMode) == std::string("LinearMeasurement"))
+    {
+     streamer->SetStoppingModeToLinearMeasure();
+    }
+  else if (std::string(this->StoppingMode) == std::string("PlanarMeasurement"))
+    {  
+    streamer->SetStoppingModeToPlanarMeasure();
+    }
+  else if (std::string(this->StoppingMode) == std::string("FractionalAnisotropy"))
+    {  
+    streamer->SetStoppingModeToFractionalAnisotropy();
+    }
+    
+  streamer->SetStoppingThreshold(this->StoppingThreshold);
+  streamer->SetMaximumPropagationDistance(this->MaximumPropagationDistance);
+  
+  // Temp fix to provide a scalar
+  seed->GetInputTensorField()->GetPointData()->SetScalars(volumeNode->GetImageData()->GetPointData()->GetScalars());
+  
+  // loop over fiducials
+  int nf = fiducialListNode->GetNumberOfFiducials();
+  for (int f=0; f<nf; f++)
+    {
+    float *xyz = fiducialListNode->GetNthFiducialXYZ(f);
+    //Run the thing
+    seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
+    }
+    
+  //6. Extra5ct PolyData in RAS
+  vtkPolyData *outFibers = vtkPolyData::New();
+  
+  seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
+  
+  fiberNode->SetPolyData(outFibers);
+  
+  // Delete everything: Still trying to figure out what is going on
+  outFibers->Delete();
+  seed->Delete();
+  TensorRASToIJK->Delete();
+  TensorRASToIJKRotation->Delete();
+  trans2->Delete();
+  trans->Delete();
+  streamer->Delete();
 }
 
 //---------------------------------------------------------------------------

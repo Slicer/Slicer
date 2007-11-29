@@ -29,6 +29,10 @@ SET(SlicerTractographyFiducialSeeding_SRCS
 INCLUDE_DIRECTORIES(
   ${SlicerTractographyFiducialSeeding_SOURCE_DIR}
   ${SlicerTractographyFiducialSeeding_BINARY_DIR}
+  ${SlicerTractographySeeding_SOURCE_DIR}
+  ${SlicerTractographySeeding_BINARY_DIR}
+  ${vtkTeem_SOURCE_DIR}
+  ${vtkTeem_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
   ${SlicerBase_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
@@ -68,6 +72,7 @@ IF(BUILD_SHARED_LIBS)
 ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(SlicerTractographyFiducialSeeding
+  SlicerTractographySeeding
   SlicerBaseLogic 
   SlicerBaseGUI 
   MRML
@@ -85,6 +90,7 @@ TARGET_LINK_LIBRARIES(SlicerTractographyFiducialSeeding
   ITKBasicFilters
   ITKIO
   ITKDICOMParser
+  vtkTeem
   ${KWWidgets_LIBRARIES} )
 
 

@@ -63,6 +63,23 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   virtual void Enter ( ){};
   virtual void Exit ( ){};
 
+  // Description:
+  // Type of anisotropy used to stop tractography.
+  vtkGetStringMacro(StoppingMode);
+  vtkSetStringMacro(StoppingMode);
+  
+  // If StoppingMode criterion becomes smaller than this number,
+  // tracking stops.
+  vtkGetMacro(StoppingThreshold,vtkFloatingPointType);
+  vtkSetMacro(StoppingThreshold,vtkFloatingPointType);
+  
+   // Description:
+  // Set / get the maximum length of the hyperstreamline expressed as absolute
+  // distance (i.e., arc length) value.
+  vtkSetClampMacro(MaximumPropagationDistance,double,0.0,VTK_DOUBLE_MAX);
+  vtkGetMacro(MaximumPropagationDistance,double);
+
+  
 protected:
   vtkSlicerTractographyFiducialSeedingGUI();
   virtual ~vtkSlicerTractographyFiducialSeedingGUI();
@@ -73,7 +90,10 @@ protected:
   // Create tracts from fiducuials
   void CreateTracts();
 
-
+  char* StoppingMode;
+  vtkFloatingPointType StoppingThreshold;
+  double MaximumPropagationDistance;
+  
   vtkSlicerNodeSelectorWidget* VolumeSelector;
   vtkSlicerNodeSelectorWidget* FiducialSelector;
   vtkSlicerNodeSelectorWidget* OutFiberSelector;
