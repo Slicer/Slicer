@@ -3152,10 +3152,13 @@ CloneAtlasNode(vtkMRMLEMSAtlasNode* atlasNode, char* name)
   vtkSlicerVolumesLogic* volumeLogic = vtkSlicerVolumesLogic::New();
   for (int i = 0; i < clonedAtlas->GetNumberOfVolumes(); ++i)
   {
+    vtksys_stl::stringstream volumeName;
+    volumeName << clonedAtlas->GetNthVolumeNode(i)->GetName()
+               << " (" << name << ")";
     vtkMRMLScalarVolumeNode* clonedVolume = 
       volumeLogic->CloneVolume(this->MRMLScene,
                                clonedAtlas->GetNthVolumeNode(i),
-                               clonedAtlas->GetNthVolumeNode(i)->GetName());
+                               (char*) volumeName.str().c_str());
     clonedAtlas->SetNthVolumeNodeID(i, clonedVolume->GetID());
   }
 
