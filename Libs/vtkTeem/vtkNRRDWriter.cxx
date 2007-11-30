@@ -269,7 +269,9 @@ void vtkNRRDWriter::WriteData()
       {
       for (unsigned int saxj=0; saxj < nrrd->spaceDim; saxj++)
         {
-        nrrd->measurementFrame[saxi][saxj] = this->MeasurementFrameMatrix->GetElement(saxi,saxj);
+        // Note the transpose: each entry in the nrrd measurementFrame
+        // is a column of the matrix
+        nrrd->measurementFrame[saxi][saxj] = this->MeasurementFrameMatrix->GetElement(saxj,saxi);
         }
       }
     }
