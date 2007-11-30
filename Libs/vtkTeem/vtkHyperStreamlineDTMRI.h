@@ -36,12 +36,12 @@
 #ifndef __vtkHyperStreamlineDTMRI_h
 #define __vtkHyperStreamlineDTMRI_h
 
-#include "vtkSlicerTractographySeeding.h"
+#include "vtkTeemConfigure.h"
 #include "vtkHyperStreamline.h"
 #include "vtkDiffusionTensorMathematics.h" // for VTK_TENS_FRACTIONAL_ANISOTROPY
 #include "vtkTractographyPointAndArray.h"
 
-class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkHyperStreamlineDTMRI : public vtkHyperStreamline
+class VTK_TEEM_EXPORT vtkHyperStreamlineDTMRI : public vtkHyperStreamline
 {
 public:
   vtkTypeRevisionMacro(vtkHyperStreamlineDTMRI,vtkHyperStreamline);

@@ -14,11 +14,12 @@
 #ifndef __vtkPreciseHyperStreamlinePoints_h
 #define __vtkPreciseHyperStreamlinePoints_h
 
-#include "vtkSlicerTractographySeeding.h"
+#include "vtkTeemConfigure.h"
+
 #include "vtkPreciseHyperStreamline.h"
 #include "vtkPoints.h"
 
-class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkPreciseHyperStreamlinePoints : public vtkPreciseHyperStreamline
+class VTK_TEEM_EXPORT vtkPreciseHyperStreamlinePoints : public vtkPreciseHyperStreamline
 {
 public:
   static vtkPreciseHyperStreamlinePoints *New();

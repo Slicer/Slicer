@@ -1,7 +1,8 @@
 #ifndef __vtkHyperStreamlineTeem_h
 #define __vtkHyperStreamlineTeem_h
 
-#include "vtkSlicerTractographySeeding.h"
+#include "vtkTeemConfigure.h"
+
 #include "vtkHyperStreamline.h"
 #include "vtkHyperStreamlineDTMRI.h"
 #include "vtkDiffusionTensorMathematics.h"
@@ -10,7 +11,7 @@
 #include "teem/ten.h"
 #include "teem/nrrd.h"
 
-class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkHyperStreamlineTeem : public vtkHyperStreamlineDTMRI
+class VTK_TEEM_EXPORT vtkHyperStreamlineTeem : public vtkHyperStreamlineDTMRI
 {
 
  public:

@@ -1,0 +1,41 @@
+<MRML>
+<Selection
+ id="vtkMRMLSelectionNode1" name="vtkMRMLSelectionNode1" hideFromEditors="true" selectable="true"  activeVolumeID="vtkMRMLDiffusionTensorVolumeNode1" activeLabelVolumeID="NULL" activeFiducialListID="vtkMRMLFiducialListNode1" activeROIListID="NULL" activeCameraID="NULL" activeViewID="NULL"></Selection>
+<Interaction
+ id="vtkMRMLInteractionNode1" name="vtkMRMLInteractionNode1" hideFromEditors="true" selectable="true"  currentInteractionMode="ViewTransform" lastInteractionMode="ViewTransform"></Interaction>
+<View
+ id="vtkMRMLViewNode1" name="vtkMRMLViewNode1" hideFromEditors="true" selectable="true"  active="false" fieldOfView="200" letterSize="0.05" boxVisible="true" fiducialsVisible="true" fiducialLabelsVisible="true" axisLabelsVisible="true" backgroundColor="0.70196 0.70196 0.90588" animationMode="Off" viewAxisMode="LookFrom" spinDegrees="2" spinMs="5" spinDirection="YawLeft" rotateDegrees="5" rockLength="200" rockCount="0" stereoType="NoStereo" renderMode="Perspective"></View>
+<Camera
+ id="vtkMRMLCameraNode1" name="vtkMRMLCameraNode1" hideFromEditors="true" selectable="true"  position="16.4021 354.937 351.782" focalPoint="0 0 0" viewUp="0.0281773 -0.704321 0.709323" parallelProjection="false" parallelScale="1" active="false"></Camera>
+<ModelDisplay
+ id="vtkMRMLModelDisplayNode1" name="vtkMRMLModelDisplayNode1" hideFromEditors="true" selectable="true"  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="false" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100" ></ModelDisplay>
+<LinearTransform
+ id="vtkMRMLLinearTransformNode1" name="IGTDataManagerTransform" hideFromEditors="true" selectable="true"  matrixTransformToParent="1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1"></LinearTransform>
+<Model
+ id="vtkMRMLModelNode1" name="igt_matrix_0" hideFromEditors="true" selectable="true"  transformNodeRef="vtkMRMLLinearTransformNode1" displayNodeRef="vtkMRMLModelDisplayNode1"></Model>
+<Slice
+ id="vtkMRMLSliceNode1" name="vtkMRMLSliceNode1" hideFromEditors="true" selectable="true"  fieldOfView="211.101 193.75 12.5" dimensions="292 268 1" layoutGridRows="1" layoutGridColumns="1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Red" orientation="Axial" sliceVisibility="true"></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode1" name="vtkMRMLSliceCompositeNode1" hideFromEditors="true" selectable="true"  backgroundVolumeID="vtkMRMLDiffusionTensorVolumeNode1" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Red" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal"></SliceComposite>
+<Slice
+ id="vtkMRMLSliceNode2" name="vtkMRMLSliceNode2" hideFromEditors="true" selectable="true"  fieldOfView="203.591 187.5 3.125" dimensions="291 268 1" layoutGridRows="1" layoutGridColumns="1" sliceToRAS="0 0 1 43.3769 -1 0 0 28.9179 0 1 0 0 0 0 0 1" layoutName="Yellow" orientation="Sagittal" sliceVisibility="false"></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode2" name="vtkMRMLSliceCompositeNode2" hideFromEditors="true" selectable="true"  backgroundVolumeID="vtkMRMLDiffusionTensorVolumeNode1" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Yellow" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal"></SliceComposite>
+<Slice
+ id="vtkMRMLSliceNode3" name="vtkMRMLSliceNode3" hideFromEditors="true" selectable="true"  fieldOfView="203.591 187.5 6.25" dimensions="291 268 1" layoutGridRows="1" layoutGridColumns="1" sliceToRAS="-1 0 0 43.3769 0 0 1 28.9179 0 1 0 0 0 0 0 1" layoutName="Green" orientation="Coronal" sliceVisibility="false"></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode3" name="vtkMRMLSliceCompositeNode3" hideFromEditors="true" selectable="true"  backgroundVolumeID="vtkMRMLDiffusionTensorVolumeNode1" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Green" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal"></SliceComposite>
+<ScriptedModule
+ id="vtkMRMLScriptedModuleNode1" name="vtkMRMLScriptedModuleNode1" hideFromEditors="true" selectable="true"  ModuleName ="Editor" parameter.label= "1"></ScriptedModule>
+<NRRDStorage
+ id="vtkMRMLNRRDStorageNode1" name="vtkMRMLNRRDStorageNode1" hideFromEditors="true" selectable="true"  fileName="TestData/helix-DTI.nhdr" useCompression="1" centerImage="0"></NRRDStorage>
+<DiffusionTensorVolumeDisplay
+ id="vtkMRMLDiffusionTensorVolumeDisplayNode1" name="vtkMRMLDiffusionTensorVolumeDisplayNode1" hideFromEditors="true" selectable="true"  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100"  colorNodeRef="vtkMRMLColorTableNodeGrey" window="0.57996" level="0.28998" upperThreshold="0.579957" lowerThreshold="0" interpolate="1" autoWindowLevel="0" applyThreshold="0" autoThreshold="0" visualizationMode="0" diffusionTensorDisplayPropertiesNodeID="vtkMRMLDiffusionTensorDisplayPropertiesNode1"></DiffusionTensorVolumeDisplay>
+<DiffusionTensorDisplayProperties
+ id="vtkMRMLDiffusionTensorDisplayPropertiesNode1" name="vtkMRMLDiffusionTensorDisplayPropertiesNode1" hideFromEditors="true" selectable="true"  type="-1" glyphGeometry="0" colorGlyphBy="3" glyphScaleFactor="50" glyphEigenvector="1" glyphExtractEigenvalues="1" lineGlyphResolution="20" tubeGlyphRadius="0.1" tubeGlyphNumberOfSides="4" ellipsoidGlyphThetaResolution="9" ellipsoidGlyphPhiResolution="9" superquadricGlyphGamma="1" superquadricGlyphThetaResolution="6" superquadricGlyphPhiResolution="6"></DiffusionTensorDisplayProperties>
+<DiffusionTensorVolume
+ id="vtkMRMLDiffusionTensorVolumeNode1" name="helix-DTI.nhdr" hideFromEditors="false" selectable="true"  displayNodeRef="vtkMRMLDiffusionTensorVolumeDisplayNode1" storageNodeRef="vtkMRMLNRRDStorageNode1" ijkToRASDirections="1   -0   0 -0   1   -0 0 -0 1 " spacing="3.125 6.25 12.5" origin="-98.4375 -96.875 -93.75" measurementFrame="1   -0   0 -0   1   -0 0 -0 1 " order="2"></DiffusionTensorVolume>
+<FiducialList
+ id="vtkMRMLFiducialListNode1" name="L1" hideFromEditors="false" selectable="true"  symbolScale="10" symbolType="11" textScale="4.5" visibility="1" color="0.4 1 1" selectedcolor="1 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" fiducials="
+id L1-P1 labeltext L1-P1 xyz 46.9916 -0.722948 0 orientationwxyz 0 0 0 1 selected 0"></FiducialList>
+</MRML>

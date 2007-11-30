@@ -44,7 +44,8 @@
 #ifndef __vtkPreciseHyperStreamline_h
 #define __vtkPreciseHyperStreamline_h
 
-#include "vtkSlicerTractographySeeding.h"
+#include "vtkTeemConfigure.h"
+
 #include "vtkDataSetToPolyDataFilter.h"
 #include "vtkInitialValueProblemSolver.h" // to get the function set
 
@@ -59,7 +60,7 @@
 
 class vtkPreciseHyperArray;
 
-class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkPreciseHyperStreamline : public vtkDataSetToPolyDataFilter
+class VTK_TEEM_EXPORT vtkPreciseHyperStreamline : public vtkDataSetToPolyDataFilter
 {
  public:
   vtkTypeRevisionMacro(vtkPreciseHyperStreamline,vtkDataSetToPolyDataFilter);

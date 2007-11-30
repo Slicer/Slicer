@@ -16,7 +16,7 @@
 
 //BTX
 
-class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkPreciseHyperPoint { //;prevent man page generation
+class VTK_TEEM_EXPORT vtkPreciseHyperPoint { //;prevent man page generation
 public:
     vtkPreciseHyperPoint(); // method sets up storage
     vtkPreciseHyperPoint &operator=(const vtkPreciseHyperPoint& hp); //for resizing

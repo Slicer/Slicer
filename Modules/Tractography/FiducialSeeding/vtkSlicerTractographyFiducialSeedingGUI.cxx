@@ -268,15 +268,15 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
   vtkHyperStreamlineDTMRI *streamer=vtkHyperStreamlineDTMRI::New();
   seed->SetVtkHyperStreamlinePointsSettings(streamer);
  
-  if (std::string(this->StoppingMode) == std::string("LinearMeasurement"))
+  if (this->StoppingMode && std::string(this->StoppingMode) == std::string("LinearMeasurement"))
     {
      streamer->SetStoppingModeToLinearMeasure();
     }
-  else if (std::string(this->StoppingMode) == std::string("PlanarMeasurement"))
+  else if (this->StoppingMode && std::string(this->StoppingMode) == std::string("PlanarMeasurement"))
     {  
     streamer->SetStoppingModeToPlanarMeasure();
     }
-  else if (std::string(this->StoppingMode) == std::string("FractionalAnisotropy"))
+  else if (this->StoppingMode && std::string(this->StoppingMode) == std::string("FractionalAnisotropy"))
     {  
     streamer->SetStoppingModeToFractionalAnisotropy();
     }

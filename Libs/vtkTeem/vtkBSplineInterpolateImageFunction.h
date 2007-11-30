@@ -23,7 +23,8 @@
 #define __vtkBSplineInterpolateImageFunction_h
 
 #include "vtkImplicitFunction.h"
-#include "vtkSlicerTractographySeeding.h"
+#include "vtkTeemConfigure.h"
+
 #include <vtkstd/vector>  // for the buffer
 
 #define VTK_INTEGRATE_MAJOR_EIGENVECTOR  0
@@ -33,7 +34,7 @@
 #define ImageDimension 3
 
 class vtkImageData;
-class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkBSplineInterpolateImageFunction : public vtkImplicitFunction
+class  VTK_TEEM_EXPORT vtkBSplineInterpolateImageFunction : public vtkImplicitFunction
 {
  public:
   static vtkBSplineInterpolateImageFunction *New();

@@ -6,28 +6,28 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkHyperPointandArray.h,v $
-  Date:      $Date: 2006/01/06 17:58:05 $
-  Version:   $Revision: 1.7 $
+  Module:    $RCSfile: vtkTractographyPointAndArray.h,v $
+  Date:      $Date: 2007/02/20 20:44:22 $
+  Version:   $Revision: 1.1 $
 
 =========================================================================auto=*/
-#ifndef __vtkHyperPointandArray_h
-#define __vtkHyperPointandArray_h
+#ifndef __vtkTractographyPointAndArray_h
+#define __vtkTractographyPointAndArray_h
 
 #include "vtkSystemIncludes.h"
 #include "vtkStreamer.h"
-#include "vtkSlicerTractographySeeding.h"
+#include "vtkTeemConfigure.h"
 
-// copied directly from vtkHyperStreamline.
-// this class was defined in the vtkHyperStreamline.cxx file.
+// copied directly from vtkTractographyStreamline.
+// this class was defined in the vtkTractographyStreamline.cxx file.
 
 //
 // Special classes for manipulating data
 //BTX
-class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkHyperPoint { //;prevent man page generation
+class VTK_TEEM_EXPORT vtkTractographyPoint { //;prevent man page generation
 public:
-    vtkHyperPoint(); // method sets up storage
-    vtkHyperPoint &operator=(const vtkHyperPoint& hp); //for resizing
+    vtkTractographyPoint(); // method sets up storage
+    vtkTractographyPoint &operator=(const vtkTractographyPoint& hp); //for resizing
     
     vtkFloatingPointType   X[3];    // position 
     vtkIdType     CellId;  // cell
@@ -40,14 +40,18 @@ public:
     vtkFloatingPointType   V2[3];
     vtkFloatingPointType   S;       // scalar value 
     vtkFloatingPointType   D;       // distance travelled so far 
+    vtkFloatingPointType      *T[3];   // pointers to tensor
+    vtkFloatingPointType   T0[3];   // storage for tensor
+    vtkFloatingPointType   T1[3];
+    vtkFloatingPointType   T2[3];
 };
 //ETX
 
 //BTX
-class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkHyperArray { //;prevent man page generation
+class VTK_TEEM_EXPORT vtkTractographyArray { //;prevent man page generation
 public:
-  vtkHyperArray();
-  ~vtkHyperArray()
+  vtkTractographyArray();
+  ~vtkTractographyArray()
     {
       if (this->Array)
         {
@@ -55,8 +59,8 @@ public:
         }
     };
   vtkIdType GetNumberOfPoints() {return this->MaxId + 1;};
-  vtkHyperPoint *GetHyperPoint(vtkIdType i) {return this->Array + i;};
-  vtkHyperPoint *InsertNextHyperPoint() 
+  vtkTractographyPoint *GetTractographyPoint(vtkIdType i) {return this->Array + i;};
+  vtkTractographyPoint *InsertNextTractographyPoint() 
     {
     if ( ++this->MaxId >= this->Size )
       {
@@ -64,10 +68,10 @@ public:
       }
     return this->Array + this->MaxId;
     }
-  vtkHyperPoint *Resize(vtkIdType sz); //reallocates data
+  vtkTractographyPoint *Resize(vtkIdType sz); //reallocates data
   void Reset() {this->MaxId = -1;};
 
-  vtkHyperPoint *Array;  // pointer to data
+  vtkTractographyPoint *Array;  // pointer to data
   vtkIdType MaxId;             // maximum index inserted thus far
   vtkIdType Size;              // allocated size of data
   vtkIdType Extend;            // grow array by this amount

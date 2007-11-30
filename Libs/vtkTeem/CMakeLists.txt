@@ -20,6 +20,17 @@ SET(vtkTeem_SRCS
   vtkTeemEstimateDiffusionTensor.cxx
   vtkDiffusionTensorGlyph.cxx
   vtkPolyDataTensorToColor.cxx
+
+  vtkBSplineInterpolateImageFunction.cxx
+  vtkHyperPointandArray.cxx
+  vtkHyperStreamlineDTMRI.cxx
+  vtkHyperStreamlineTeem.cxx
+  vtkPreciseHyperStreamline.cxx
+  vtkPreciseHyperStreamlinePoints.cxx
+  vtkSeedTracts.cxx
+  vtkTensorImplicitFunctionToFunctionSet.cxx
+  vtkTractographyPointAndArray.cxx
+
 )
 
 # Abstract/pure virtual classes
@@ -30,9 +41,11 @@ SET(vtkTeem_SRCS
 
 # Helper classes
 
-#SET_SOURCE_FILES_PROPERTIES(
-#  WRAP_EXCLUDE
-#  )
+SET_SOURCE_FILES_PROPERTIES(
+  vtkHyperPointandArray.cxx
+  vtkTractographyPointAndArray.cxx
+  WRAP_EXCLUDE
+  )
 
 # --------------------------------------------------------------------------
 # Include dirs

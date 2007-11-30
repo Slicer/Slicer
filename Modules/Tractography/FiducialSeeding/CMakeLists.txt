@@ -72,7 +72,6 @@ IF(BUILD_SHARED_LIBS)
 ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(SlicerTractographyFiducialSeeding
-  SlicerTractographySeeding
   SlicerBaseLogic 
   SlicerBaseGUI 
   MRML

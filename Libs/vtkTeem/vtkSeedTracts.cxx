@@ -401,7 +401,7 @@ void vtkSeedTracts::SeedStreamlineFromPoint(double x,
 
 {
   double pointw[3], point[3];
-  vtkHyperStreamline *newStreamline;
+  vtkHyperStreamlineDTMRI *newStreamline;
 
   // test we have input
   if (this->InputTensorField == NULL)
@@ -427,15 +427,25 @@ void vtkSeedTracts::SeedStreamlineFromPoint(double x,
       vtkErrorMacro("Point " << x << ", " << y << ", " << z << " outside of tensor dataset.");
       return;
     }
-
-  // Now create a streamline and put it on the collection.
-  newStreamline=this->CreateHyperStreamline();
-  this->Streamlines->AddItem((vtkObject *)newStreamline);
-  
+    
+    
+  newStreamline=(vtkHyperStreamlineDTMRI *)this->CreateHyperStreamline();
+                      
   // Set its input information.
   newStreamline->SetInput(this->InputTensorField);
   newStreamline->SetStartPosition(point[0],point[1],point[2]);
+  //newStreamline->DebugOn();
+
+  // Ask it to output tensors and to only do one trajectory per start point
+  newStreamline->OutputTensorsOn();
+  newStreamline->OneTrajectoryPerSeedPointOn();
+
+  // Force it to execute
+  newStreamline->Update();
+
+  this->Streamlines->AddItem((vtkObject *)newStreamline);  
   
+  newStreamline->Delete();
 }
 
 // Seed in an ROI using a continous grid with the resolution given by 
@@ -712,6 +722,7 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
     vtkErrorMacro("PolyData objects has not been allocated");
     return;
     }
+      
   // Create transformation matrix to place actors in scene
   // This is used to transform the models before writing them to disk
   vtkSmartPointer<vtkTransform> transform=vtkSmartPointer<vtkTransform>::New();
@@ -731,6 +742,11 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
     npts += streamline->GetOutput()->GetNumberOfPoints();
     ncells += streamline->GetOutput()->GetNumberOfLines();
     }
+  if (npts == 0 || ncells == 0)
+    {
+    return;
+    }
+  
   //Preallocate PolyData elements
   vtkPoints *points = vtkPoints::New();
   outFibers->SetPoints(points);
@@ -1121,8 +1137,7 @@ void vtkSeedTracts::DeleteStreamline(int index)
 
   // Delete actual streamline
   vtkDebugMacro( << "Delete stream" );
-  currStreamline = (vtkHyperStreamline *)
-    this->Streamlines->GetItemAsObject(index);
+  currStreamline = vtkHyperStreamline::SafeDownCast(this->Streamlines->GetItemAsObject(index));
   if (currStreamline != NULL)
     {
       this->Streamlines->RemoveItem(index);

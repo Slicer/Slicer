@@ -21,9 +21,10 @@
 #ifndef __vtkSeedTracts_h
 #define __vtkSeedTracts_h
 
-#include "vtkSlicerTractographySeedingConfigure.h"
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
+
+#include "vtkTeemConfigure.h"
 
 #include "vtkImageData.h"
 #include "vtkTransform.h"
@@ -40,7 +41,7 @@
 #define USE_VTK_PRECISE_HYPERSTREAMLINE_POINTS 2
 #define USE_VTK_HYPERSTREAMLINE_TEEM 3
 
-class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkSeedTracts : public vtkObject
+class VTK_TEEM_EXPORT vtkSeedTracts : public vtkObject
 {
  public:
   static vtkSeedTracts *New();

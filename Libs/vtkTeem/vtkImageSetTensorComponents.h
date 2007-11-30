@@ -25,11 +25,11 @@
 #ifndef __vtkImageSetTensorComponents_h
 #define __vtkImageSetTensorComponents_h
 
-#include "vtkSlicerTractographySeeding.h"
+#include "vtkTeemConfigure.h"
 
 #include "vtkImageToImageFilter.h"
 
-class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkImageSetTensorComponents : public vtkImageToImageFilter
+class VTK_TEEM_EXPORT vtkImageSetTensorComponents : public vtkImageToImageFilter
 {
 public:
   static vtkImageSetTensorComponents *New();

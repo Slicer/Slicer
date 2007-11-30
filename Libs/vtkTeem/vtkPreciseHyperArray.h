@@ -16,7 +16,7 @@
 
 //BTX
 #include "vtkPreciseHyperPoint.h"
-class VTK_SLICERTRACTOGRAPHYSEEDING_EXPORT vtkPreciseHyperArray { //;prevent man page generation
+class VTK_TEEM_EXPORT vtkPreciseHyperArray { //;prevent man page generation
 public:
   vtkPreciseHyperArray();
   ~vtkPreciseHyperArray()
