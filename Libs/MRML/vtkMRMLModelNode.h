@@ -110,6 +110,8 @@ public:
   // Based on code from K. Teich, MGH
   int CompositeScalars(const char* backgroundName, const char* overlayName, float overlayMin, float overlayMax, int showOverlayPositive, int showOverlayNegative, int reverseOverlay);
   
+  virtual void SetAndObservePolyData(vtkPolyData *PolyData);
+
 protected:
   vtkMRMLModelNode();
   ~vtkMRMLModelNode();

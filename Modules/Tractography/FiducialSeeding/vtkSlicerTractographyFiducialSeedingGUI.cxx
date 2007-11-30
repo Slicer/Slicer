@@ -301,7 +301,30 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
   
   seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
   
-  fiberNode->SetPolyData(outFibers);
+  fiberNode->SetAndObservePolyData(outFibers);
+  
+  vtkMRMLFiberBundleDisplayNode *dnode = fiberNode->GetLineDisplayNode();
+  if (dnode == NULL)
+    {
+    dnode = fiberNode->AddLineDisplayNode();
+    dnode->SetVisibility(1);
+    }
+    
+  dnode = fiberNode->GetTubeDisplayNode();
+  if (dnode == NULL)
+    {
+    dnode = fiberNode->AddTubeDisplayNode();
+    dnode->SetVisibility(0);
+    }
+  
+  dnode = fiberNode->GetGlyphDisplayNode();
+  if (dnode == NULL)
+    {
+    dnode = fiberNode->AddGlyphDisplayNode();
+    dnode->SetVisibility(0);
+    }
+  
+  fiberNode->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
   
   // Delete everything: Still trying to figure out what is going on
   outFibers->Delete();

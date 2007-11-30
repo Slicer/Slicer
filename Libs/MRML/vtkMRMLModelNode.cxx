@@ -120,6 +120,21 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *polyData)
+{
+  int ndisp = this->GetNumberOfDisplayNodes();
+  for (int n=0; n<ndisp; n++) 
+    {
+    vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
+    if (dnode)
+      {
+      dnode->SetPolyData(polyData);
+      }
+    }
+  Superclass::SetAndObservePolyData(polyData);
+}
+
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::AddPointScalars(vtkDataArray *array)
 {
@@ -658,3 +673,4 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     
     return 1;
 }
+

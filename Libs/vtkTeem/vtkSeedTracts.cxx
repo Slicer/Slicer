@@ -445,7 +445,7 @@ void vtkSeedTracts::SeedStreamlineFromPoint(double x,
 
   this->Streamlines->AddItem((vtkObject *)newStreamline);  
   
-  newStreamline->Delete();
+  //newStreamline->Delete();
 }
 
 // Seed in an ROI using a continous grid with the resolution given by 

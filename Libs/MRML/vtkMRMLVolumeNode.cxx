@@ -566,7 +566,16 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *ImageData)
     {
     this->Modified();
     }
-
+    
+  int ndisp = this->GetNumberOfDisplayNodes();
+  for (int n=0; n<ndisp; n++) 
+    {
+    vtkMRMLVolumeDisplayNode *dnode = vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
+    if (dnode)
+      {
+      dnode->SetImageData(ImageData);
+      }
+    }
   //vtkSetAndObserveMRMLObjectMacro(this->ImageData, ImageData);
 }
 

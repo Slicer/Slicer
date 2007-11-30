@@ -111,7 +111,7 @@ public:
   // Description:
   // Set and observe poly data for this model
   vtkGetObjectMacro(PolyData, vtkPolyData);
-  void SetAndObservePolyData(vtkPolyData *PolyData);
+  virtual void SetAndObservePolyData(vtkPolyData *PolyData);
 
 
   // Description:
@@ -140,6 +140,7 @@ public:
     };
 //ETX
 
+ protected:
   vtkMRMLDisplayableNode();
   ~vtkMRMLDisplayableNode();
   vtkMRMLDisplayableNode(const vtkMRMLDisplayableNode&);
