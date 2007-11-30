@@ -4146,22 +4146,49 @@ CreatePackageFilenames(vtkMRMLScene* scene,
     newSceneManager->GetWorkingDataNode();
 
   //
+  // We might be creating volume storage nodes.  We must decide if the
+  // images should be automatically centered when they are read.  Look
+  // at the original input target node zero to decide if we will use
+  // centering.
+  bool centerImages = false;
+  if (workingDataNode && workingDataNode->GetInputTargetNode())
+    {
+    if (workingDataNode->GetInputTargetNode()->GetNumberOfVolumes() > 0)
+      {
+      vtkMRMLStorageNode* firstTargetStorageNode =
+        workingDataNode->GetInputTargetNode()->GetNthVolumeNode(0)->
+        GetStorageNode();
+      vtkMRMLVolumeArchetypeStorageNode* firstTargetVolumeStorageNode =
+        dynamic_cast<vtkMRMLVolumeArchetypeStorageNode*>
+        (firstTargetStorageNode);
+      if (firstTargetVolumeStorageNode != NULL)
+        {
+        centerImages = firstTargetVolumeStorageNode->GetCenterImage();
+        }
+      }
+    }
+
+  //
   // change the storage file for the segmentation result
     {
     vtkMRMLVolumeNode* volumeNode = newSceneManager->GetOutputVolumeNode();
     if (volumeNode != NULL)
       {
       vtkMRMLStorageNode* storageNode = volumeNode->GetStorageNode();
-      if (storageNode == NULL)
+      vtkMRMLVolumeArchetypeStorageNode* volumeStorageNode = 
+        dynamic_cast<vtkMRMLVolumeArchetypeStorageNode*>(storageNode);
+      if (volumeStorageNode == NULL)
       {
       // create a new storage node for this volume
-      storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-      scene->AddNode(storageNode);
-      volumeNode->SetStorageNodeID(storageNode->GetID());
-      std::cerr << "Added storage node : " << storageNode->GetID() 
+      volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+      scene->AddNode(volumeStorageNode);
+      volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
+      std::cerr << "Added storage node : " << volumeStorageNode->GetID() 
                 << std::endl;
-      storageNode->Delete();
+      volumeStorageNode->Delete();
+      storageNode = volumeStorageNode;
       }
+      volumeStorageNode->SetCenterImage(centerImages);
     
       // create new filename
       std::string oldFilename       = 
@@ -4193,16 +4220,20 @@ CreatePackageFilenames(vtkMRMLScene* scene,
       if (volumeNode != NULL)
         {
         vtkMRMLStorageNode* storageNode = volumeNode->GetStorageNode();
-        if (storageNode == NULL)
+        vtkMRMLVolumeArchetypeStorageNode* volumeStorageNode = 
+          dynamic_cast<vtkMRMLVolumeArchetypeStorageNode*>(storageNode);
+        if (volumeStorageNode == NULL)
           {
           // create a new storage node for this volume
-          storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-          scene->AddNode(storageNode);
-          volumeNode->SetStorageNodeID(storageNode->GetID());
+          volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+          scene->AddNode(volumeStorageNode);
+          volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
           std::cerr << "Added storage node : " << storageNode->GetID() 
                     << std::endl;
-          storageNode->Delete();
+          volumeStorageNode->Delete();
+          storageNode = volumeStorageNode;
           }
+        volumeStorageNode->SetCenterImage(centerImages);
       
         // create new filename
         vtkstd::stringstream defaultFilename;
@@ -4235,17 +4266,21 @@ CreatePackageFilenames(vtkMRMLScene* scene,
       if (volumeNode != NULL)
         {
         vtkMRMLStorageNode* storageNode = volumeNode->GetStorageNode();
-        if (storageNode == NULL)
+        vtkMRMLVolumeArchetypeStorageNode* volumeStorageNode = 
+          dynamic_cast<vtkMRMLVolumeArchetypeStorageNode*>(storageNode);
+        if (volumeStorageNode == NULL)
           {
           // create a new storage node for this volume
-          storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-          scene->AddNode(storageNode);
-          volumeNode->SetStorageNodeID(storageNode->GetID());
-          std::cerr << "Added storage node : " << storageNode->GetID() 
+          volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+          scene->AddNode(volumeStorageNode);
+          volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
+          std::cerr << "Added storage node : " << volumeStorageNode->GetID() 
                     << std::endl;
-          storageNode->Delete();
+          volumeStorageNode->Delete();
+          storageNode = volumeStorageNode;
           }
-      
+        volumeStorageNode->SetCenterImage(centerImages);
+          
         // create new filename
         vtkstd::stringstream defaultFilename;
         defaultFilename << "Target" << i << "_Normalized.mhd";
@@ -4277,17 +4312,21 @@ CreatePackageFilenames(vtkMRMLScene* scene,
       if (volumeNode != NULL)
         {
         vtkMRMLStorageNode* storageNode = volumeNode->GetStorageNode();
-        if (storageNode == NULL)
+        vtkMRMLVolumeArchetypeStorageNode* volumeStorageNode = 
+          dynamic_cast<vtkMRMLVolumeArchetypeStorageNode*>(storageNode);
+        if (volumeStorageNode == NULL)
           {
           // create a new storage node for this volume
-          storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-          scene->AddNode(storageNode);
-          volumeNode->SetStorageNodeID(storageNode->GetID());
-          std::cerr << "Added storage node : " << storageNode->GetID() 
+          volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+          scene->AddNode(volumeStorageNode);
+          volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
+          std::cerr << "Added storage node : " << volumeStorageNode->GetID() 
                     << std::endl;
-          storageNode->Delete();
+          volumeStorageNode->Delete();
+          storageNode = volumeStorageNode;
           }
-      
+        volumeStorageNode->SetCenterImage(centerImages);
+          
         // create new filename
         vtkstd::stringstream defaultFilename;
         defaultFilename << "Target" << i << "_Aligned.mhd";
@@ -4323,16 +4362,20 @@ CreatePackageFilenames(vtkMRMLScene* scene,
       if (volumeNode != NULL)
         {
         vtkMRMLStorageNode* storageNode = volumeNode->GetStorageNode();
-        if (storageNode == NULL)
+        vtkMRMLVolumeArchetypeStorageNode* volumeStorageNode = 
+          dynamic_cast<vtkMRMLVolumeArchetypeStorageNode*>(storageNode);
+        if (volumeStorageNode == NULL)
           {
           // create a new storage node for this volume
-          storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-          scene->AddNode(storageNode);
-          volumeNode->SetStorageNodeID(storageNode->GetID());
-          std::cerr << "Added storage node : " << storageNode->GetID() 
+          volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+          scene->AddNode(volumeStorageNode);
+          volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
+          std::cerr << "Added storage node : " << volumeStorageNode->GetID() 
                     << std::endl;
-          storageNode->Delete();
+          volumeStorageNode->Delete();
+          storageNode = volumeStorageNode;
           }
+        volumeStorageNode->SetCenterImage(centerImages);
       
         // create new filename
         vtkstd::stringstream defaultFilename;
@@ -4365,17 +4408,21 @@ CreatePackageFilenames(vtkMRMLScene* scene,
       if (volumeNode != NULL)
         {
         vtkMRMLStorageNode* storageNode = volumeNode->GetStorageNode();
-        if (storageNode == NULL)
+        vtkMRMLVolumeArchetypeStorageNode* volumeStorageNode = 
+          dynamic_cast<vtkMRMLVolumeArchetypeStorageNode*>(storageNode);
+        if (volumeStorageNode == NULL)
           {
           // create a new storage node for this volume
-          storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-          scene->AddNode(storageNode);
-          volumeNode->SetStorageNodeID(storageNode->GetID());
-          std::cerr << "Added storage node : " << storageNode->GetID() 
+          volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+          scene->AddNode(volumeStorageNode);
+          volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
+          std::cerr << "Added storage node : " << volumeStorageNode->GetID() 
                     << std::endl;
-          storageNode->Delete();
+          volumeStorageNode->Delete();
+          storageNode = volumeStorageNode;
           }
-      
+        volumeStorageNode->SetCenterImage(centerImages);
+        
         // create new filename
         vtkstd::stringstream defaultFilename;
         defaultFilename << "Atlas" << i << "_Aligned.mhd";
