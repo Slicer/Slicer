@@ -395,7 +395,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     {
     this->RunSegmentationOutputFrame->SetParent(parent);
     this->RunSegmentationOutputFrame->Create();
-    this->RunSegmentationOutputFrame->SetLabelText("Output Volume");
+    this->RunSegmentationOutputFrame->SetLabelText("Output Labelmap");
     }
   this->Script(
     "pack %s -side top -anchor nw -fill x -padx 0 -pady 2", 
@@ -410,7 +410,7 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
   if (!this->RunSegmentationOutVolumeSelector->IsCreated())
     {
     this->RunSegmentationOutVolumeSelector->SetNodeClass(
-      "vtkMRMLScalarVolumeNode", NULL, NULL, "EMSVolumeOut");
+      "vtkMRMLVolumeNode", "LabelMap", "1", "EM Segmentation");
     this->RunSegmentationOutVolumeSelector->SetNewNodeEnabled(1);
     this->RunSegmentationOutVolumeSelector->SetParent(
       this->RunSegmentationOutputFrame->GetFrame());
@@ -418,9 +418,9 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
     this->RunSegmentationOutVolumeSelector->SetMRMLScene(mrmlManager->GetMRMLScene());
 
     this->RunSegmentationOutVolumeSelector->SetBorderWidth(2);
-    this->RunSegmentationOutVolumeSelector->SetLabelText( "Output Volume: ");
+    this->RunSegmentationOutVolumeSelector->SetLabelText( "Output Labelmap: ");
     this->RunSegmentationOutVolumeSelector->SetBalloonHelpString(
-      "select an output volume from the current mrml scene.");
+      "select an output labelmap from the current mrml scene.");
     }
   this->RunSegmentationOutVolumeSelector->UpdateMenu();
   if(mrmlManager->GetOutputVolumeMRMLID())
