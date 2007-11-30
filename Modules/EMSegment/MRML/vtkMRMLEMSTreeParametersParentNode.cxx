@@ -47,11 +47,11 @@ vtkMRMLEMSTreeParametersParentNode::vtkMRMLEMSTreeParametersParentNode()
   this->SmoothingKernelSigma          = 5.0;
 
   this->StopEMType                    = 0;
-  this->StopEMMaxIterations           = 0;
+  this->StopEMMaxIterations           = 4;
   this->StopEMValue                   = 0.0;
 
   this->StopMFAType                   = 0;
-  this->StopMFAMaxIterations          = 0;
+  this->StopMFAMaxIterations          = 2;
   this->StopMFAValue                  = 0.0;
 
   this->PrintFrequency                = 0;
