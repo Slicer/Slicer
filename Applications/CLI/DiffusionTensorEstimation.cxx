@@ -29,7 +29,7 @@ int main( int argc, const char * argv[] )
 {
 
   PARSE_ARGS;
-
+  {
   //vtkNRRDReader *reader = vtkNRRDReader::New();
   vtkSmartPointer<vtkNRRDReader> reader = vtkNRRDReader::New();
   reader->SetFileName(inputVolume.c_str());
@@ -123,6 +123,6 @@ int main( int argc, const char * argv[] )
   writer2->UseCompressionOn();
   writer2->SetIJKToRASMatrix( reader->GetRasToIjkMatrix() );
   writer2->Write();
-  
+  }
   return EXIT_SUCCESS;
 }
