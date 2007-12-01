@@ -310,9 +310,9 @@ int main( int argc, char * argv[] )
   rebinFilter2->SetGeneratePropertyBins( true );
   rebinFilter2->Update();
       
-  materialTable = rebinFilter2->GetPropertyTable();
-  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetColumnByName( "Histogram" ) );
-  histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetArray( "Histogram" ) );
+  vtkFieldData *materialTable2 = rebinFilter2->GetPropertyTable();
+  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable2->GetColumnByName( "Histogram" ) );
+  histogramArray = vtkDoubleArray::SafeDownCast( materialTable2->GetArray( "Histogram" ) );
   
   vtkUnstructuredGrid *rebinGrid2 = rebinFilter2->GetOutput( );
   numberOfCells = rebinGrid2->GetNumberOfCells();
@@ -421,10 +421,10 @@ int main( int argc, char * argv[] )
   gridFieldData = rebinGrid3->GetFieldData();
   gridPointData = rebinGrid3->GetPointData( );
   
-  materialTable = rebinFilter3->GetPropertyTable();
-  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetColumnByName( "Histogram" ) );
-  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetArray( "Histogram" ) );
-  histogramArray = (vtkDoubleArray *) materialTable->GetArray( "Histogram" );
+  vtkFieldData *materialTable3 = rebinFilter3->GetPropertyTable();
+  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable3->GetColumnByName( "Histogram" ) );
+  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable3->GetArray( "Histogram" ) );
+  histogramArray = (vtkDoubleArray *) materialTable3->GetArray( "Histogram" );
   if ( histogramArray->GetNumberOfTuples() != 9 )
     {
     std::cerr << "Error: Test 3 - Invalid number of material property array bins" << std::endl;
@@ -490,10 +490,10 @@ int main( int argc, char * argv[] )
   gridFieldData = rebinGrid4->GetFieldData();
   gridPointData = rebinGrid4->GetPointData( );
   
-  materialTable = rebinFilter4->GetPropertyTable();
-  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetColumnByName( "Histogram" ) );
-  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable->GetArray( "Histogram" ) );
-  histogramArray = (vtkDoubleArray *) materialTable->GetArray( "Histogram" );
+  vtkFieldData *materialTable4 = rebinFilter4->GetPropertyTable();
+  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable4->GetColumnByName( "Histogram" ) );
+  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable4->GetArray( "Histogram" ) );
+  histogramArray = (vtkDoubleArray *) materialTable4->GetArray( "Histogram" );
   if ( histogramArray->GetNumberOfTuples() != 12 )
     {
       std::cerr << "Error: Test 4 - Invalid number of material property array bins " << histogramArray->GetSize() << std::endl;
@@ -505,7 +505,7 @@ int main( int argc, char * argv[] )
   writer->SetFileName( "histogram.vtk" );
   ostream *ofs = writer->OpenVTKFile();
   writer->WriteHeader( ofs );
-  writer->WriteFieldData( ofs, materialTable );
+  writer->WriteFieldData( ofs, materialTable4 );
   writer->CloseVTKFile( ofs );
   */
   //tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
@@ -543,8 +543,22 @@ int main( int argc, char * argv[] )
       return EXIT_FAILURE;
       }
     }
-    
-  
+  std::cerr << "hist" << std::endl;
+  histogramArray->Delete();
+  materialTable->Delete();
+  materialTable2->Delete();
+  materialTable3->Delete();
+  materialTable4->Delete();
+  std::cerr << "writer" << std::endl;
+  tmpWriter->Delete();
+  std::cerr << "1" << std::endl;
+  rebinFilter->Delete();
+  std::cerr << "2" << std::endl;
+  //rebinFilter2->Delete();
+  std::cerr << "3" << std::endl;
+  //rebinFilter3->Delete();
+  std::cerr << "4" << std::endl;
+  //rebinFilter4->Delete();
     
     
   return EXIT_SUCCESS;
