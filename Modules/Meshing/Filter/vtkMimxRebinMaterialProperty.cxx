@@ -104,6 +104,7 @@ int vtkMimxRebinMaterialProperty::RequestData(
   
 
   out->DeepCopy( in );
+  out->BuildLinks( );
   
   /* Get the Grid Field Data - Material Property */
   vtkFieldData *gridFieldData = in->GetFieldData();
@@ -117,7 +118,8 @@ int vtkMimxRebinMaterialProperty::RequestData(
   vtkDoubleArray *materialPropertyArray = vtkDoubleArray::New();
   materialPropertyArray->SetNumberOfComponents(1);
   int fieldDataSize = gridFieldData->GetArray("Material_Properties")->GetNumberOfTuples();
-  gridFieldData->GetArray("Material_Properties")->GetData(0, fieldDataSize, 0, 0, materialPropertyArray);
+  materialPropertyArray->SetNumberOfTuples( fieldDataSize );
+  gridFieldData->GetArray("Material_Properties")->GetData(0, fieldDataSize-1, 0, 0, materialPropertyArray);
   if ( materialPropertyArray == NULL)
   {
     vtkErrorMacro(<< "vtkRebinMaterialProperty::RequestData - Grid does not contain 'Material_Properties' array");
@@ -176,7 +178,9 @@ int vtkMimxRebinMaterialProperty::RequestData(
   vtkDoubleArray *histogramArray = vtkDoubleArray::New();
   histogramArray->SetNumberOfComponents(1);
   this->NumberOfHistogramBins = this->PropertyTable->GetArray("Histogram")->GetNumberOfTuples();
-  this->PropertyTable->GetArray("Histogram")->GetData(0, this->NumberOfHistogramBins, 0, 0, histogramArray);
+  histogramArray->SetNumberOfTuples( this->NumberOfHistogramBins );
+  
+  this->PropertyTable->GetArray("Histogram")->GetData(0, this->NumberOfHistogramBins-1, 0, 0, histogramArray);
   if (histogramArray->IsA("vtkDoubleArray"))
     {
     if ( ! this->GeneratePropertyBins )
@@ -218,11 +222,13 @@ int vtkMimxRebinMaterialProperty::RequestData(
         }
       }
     }
-    
+  histogramArray->Delete( );  
+  materialPropertyArray->Delete( );
+  
   gridFieldData->RemoveArray( "Material_Properties" );
   gridFieldData->AddArray( binPropertyArray );
   out->SetFieldData( gridFieldData );
-  
+  //binPropertyArray->Delete( );
 
   return 1;
 }

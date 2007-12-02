@@ -476,6 +476,18 @@ MimxImageToVtkUnstructuredGridFilter<TInputImage,TMaskImage>
    m_Output->SetFieldData( gridFields );
    m_Output->BuildLinks();
   
+  nodalPoints->Delete();
+  hexCellArray->Delete();
+  nodeIndexArray->Delete( );
+  materialPropertyArray->Delete( ); 
+  elementIndexArray->Delete( );
+  gridFields->Delete( );
+  /*
+  nodeIndexArray->Delete( );
+  elementIndexArray->Delete( );
+  materialPropertyArray->Delete( );
+  gridFields->Delete( );
+  */
 }
 
 

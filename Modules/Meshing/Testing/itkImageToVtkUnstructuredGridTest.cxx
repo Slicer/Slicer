@@ -224,7 +224,8 @@ int main( int argc, char * argv[] )
     std::cerr << "Error: Test 1 - Invalid last node index value" << std::endl;
     return EXIT_FAILURE;
     }
-  
+    
+  grid->Delete();
   
   /*********************** Test 2 - Build Mesh with Mask ***********************/
   InputImageType::Pointer maskImage = InputImageType::New();
@@ -293,9 +294,9 @@ int main( int argc, char * argv[] )
   // writer2->Update();
   
   
-  grid = imageToHexMeshFilter1->GetOutput();
-  numberOfCells = grid->GetNumberOfCells();
-  numberOfPoints = grid->GetNumberOfPoints();
+  vtkUnstructuredGrid *grid2 = imageToHexMeshFilter1->GetOutput();
+  numberOfCells = grid2->GetNumberOfCells();
+  numberOfPoints = grid2->GetNumberOfPoints();
   if ( numberOfCells != 27 )
     {
     std::cerr << "Error: Test 2 - Invalid number of cells in unstructured grid. " << std::endl;
@@ -310,8 +311,9 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
   
+  
   /****************** Check Cell Data ****************************/
-  gridFieldData = grid->GetFieldData();
+  gridFieldData = grid2->GetFieldData();
   materialPropertyArray = NULL;
   //tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
   //tmpArray = vtkAbstractArray::SafeDownCast( gridFieldData->GetArray("Material_Properties") );
@@ -337,7 +339,7 @@ int main( int argc, char * argv[] )
   nodexIndexArray = NULL;
   //tmpArray = grid->GetPointData()->GetAbstractArray("Node_Numbers");
   //tmpArray = vtkAbstractArray::SafeDownCast( grid->GetPointData()->GetArray("Node_Numbers") );
-  nodexIndexArray = (vtkUnsignedLongArray *) grid->GetPointData()->GetArray("Node_Numbers");
+  nodexIndexArray = (vtkUnsignedLongArray *) grid2->GetPointData()->GetArray("Node_Numbers");
   if ( ! nodexIndexArray->IsA("vtkUnsignedLongArray") )
     {
     std::cerr << "Error: Test 2 - Failed to obtain 'Node_Numbers' Field Data" << std::endl;
@@ -358,7 +360,7 @@ int main( int argc, char * argv[] )
     std::cerr << "Error: Test 2 - Invalid last node index value" << std::endl;
     return EXIT_FAILURE;
     }
-
+  grid2->Delete();
   //std::cout << "Test 2" << std::endl;
   /********************* Check Conversion Function ******************/
   ImageToMeshFilterType::Pointer imageToHexMeshFilter2 = 
@@ -384,9 +386,9 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
   
-  grid = imageToHexMeshFilter2->GetOutput();
-  numberOfCells = grid->GetNumberOfCells();
-  numberOfPoints = grid->GetNumberOfPoints();
+  vtkUnstructuredGrid *grid3 = imageToHexMeshFilter2->GetOutput();
+  numberOfCells = grid3->GetNumberOfCells();
+  numberOfPoints = grid3->GetNumberOfPoints();
   if ( numberOfCells != 27 )
     {
     std::cerr << "Error: Test 3 - Invalid number of cells in unstructured grid. " << std::endl;
@@ -402,7 +404,7 @@ int main( int argc, char * argv[] )
     }
   //std::cout << "Check Cell" << std::endl;
   /****************** Check Cell Data ****************************/
-  gridFieldData = grid->GetFieldData();
+  gridFieldData = grid3->GetFieldData();
   materialPropertyArray = NULL;
   //tmpArray = gridFieldData->GetAbstractArray("Material_Properties");
   //tmpArray = vtkAbstractArray::SafeDownCast( gridFieldData->GetArray("Material_Properties") );
@@ -423,6 +425,8 @@ int main( int argc, char * argv[] )
       return EXIT_FAILURE;
       }
     }
-  
+ 
+  grid3->Delete();
+   
   return EXIT_SUCCESS;
 }

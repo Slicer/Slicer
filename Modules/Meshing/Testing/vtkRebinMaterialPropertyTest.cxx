@@ -311,8 +311,9 @@ int main( int argc, char * argv[] )
   rebinFilter2->Update();
       
   vtkFieldData *materialTable2 = rebinFilter2->GetPropertyTable();
-  //histogramArray = vtkDoubleArray::SafeDownCast( materialTable2->GetColumnByName( "Histogram" ) );
-  histogramArray = vtkDoubleArray::SafeDownCast( materialTable2->GetArray( "Histogram" ) );
+  vtkDoubleArray *histogramArray2 = NULL;
+  //histogramArray2 = vtkDoubleArray::SafeDownCast( materialTable2->GetColumnByName( "Histogram" ) );
+  histogramArray2 = vtkDoubleArray::SafeDownCast( materialTable2->GetArray( "Histogram" ) );
   
   vtkUnstructuredGrid *rebinGrid2 = rebinFilter2->GetOutput( );
   numberOfCells = rebinGrid2->GetNumberOfCells();
@@ -342,8 +343,9 @@ int main( int argc, char * argv[] )
   //  std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
   //  return EXIT_FAILURE;
   //}
-  materialPropertyArray = (vtkDoubleArray *) gridFieldData->GetArray("Material_Properties");
-  if ( materialPropertyArray == NULL )
+  vtkDoubleArray *materialPropertyArray1 = NULL;
+  materialPropertyArray1 = (vtkDoubleArray *) gridFieldData->GetArray("Material_Properties");
+  if ( materialPropertyArray1 == NULL )
   {
     std::cerr << "Error: Test 2" << std::endl;
     std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
@@ -351,17 +353,17 @@ int main( int argc, char * argv[] )
   }
   //materialPropertyArray = vtkDoubleArray::SafeDownCast(tmpArray);
   //Temporary Sanitary Check
-  //for (int i=0;i<histogramArray->GetNumberOfTuples( );i++)
+  //for (int i=0;i<histogramArray2->GetNumberOfTuples( );i++)
   //  {
-  //  std::cerr << "Mat Element " << i << " " << histogramArray->GetValue(i) << std::endl;
+  //  std::cerr << "Mat Element " << i << " " << histogramArray2->GetValue(i) << std::endl;
   //  }
   for (int i=0;i<numberOfCells;i++)
     {
     bool found = false;
-    double value = materialPropertyArray->GetValue(i);
+    double value = materialPropertyArray1->GetValue(i);
     for (int j=0;j<15;j++)
       {
-      if (fabs(value-histogramArray->GetValue(j)) < 0.0001)
+      if (fabs(value-histogramArray2->GetValue(j)) < 0.0001)
         {
         found = true;
         }
@@ -382,15 +384,16 @@ int main( int argc, char * argv[] )
   //  std::cerr << "Error: Test 2 - Failed to obtain 'Node_Numbers' Field Data" << std::endl;
   //  return EXIT_FAILURE;
   //  }
-  nodexIndexArray = (vtkUnsignedLongArray *) gridPointData->GetArray("Node_Numbers");
-  if ( nodexIndexArray == NULL )
+  vtkUnsignedLongArray *nodexIndexArray1 = NULL;
+  nodexIndexArray1 = (vtkUnsignedLongArray *) gridPointData->GetArray("Node_Numbers");
+  if ( nodexIndexArray1 == NULL )
     {
     std::cerr << "Error: Test 2 - Failed to obtain 'Node_Numbers' Field Data" << std::endl;
     return EXIT_FAILURE;
     }
   //nodexIndexArray = vtkUnsignedLongArray::SafeDownCast(tmpArray);
-  index0 = nodexIndexArray->GetValue(0);
-  indexLast = nodexIndexArray->GetValue( numberOfPoints-1 );
+  index0 = nodexIndexArray1->GetValue(0);
+  indexLast = nodexIndexArray1->GetValue( numberOfPoints-1 );
 
   if (index0 != 3*12*12+3*12+3+100)
     {
@@ -424,17 +427,18 @@ int main( int argc, char * argv[] )
   vtkFieldData *materialTable3 = rebinFilter3->GetPropertyTable();
   //histogramArray = vtkDoubleArray::SafeDownCast( materialTable3->GetColumnByName( "Histogram" ) );
   //histogramArray = vtkDoubleArray::SafeDownCast( materialTable3->GetArray( "Histogram" ) );
-  histogramArray = (vtkDoubleArray *) materialTable3->GetArray( "Histogram" );
-  if ( histogramArray->GetNumberOfTuples() != 9 )
+  vtkDoubleArray *histogramArray3 = NULL;
+  histogramArray3 = (vtkDoubleArray *) materialTable3->GetArray( "Histogram" );
+  if ( histogramArray3->GetNumberOfTuples() != 9 )
     {
     std::cerr << "Error: Test 3 - Invalid number of material property array bins" << std::endl;
     return EXIT_FAILURE;
     }
   
   // Temporary Sanitary Check
-  for (int i=0;i<histogramArray->GetNumberOfTuples( );i++)
+  for (int i=0;i<histogramArray3->GetNumberOfTuples( );i++)
     {
-    std::cerr << "Mat Element " << i << " " << histogramArray->GetValue(i) << std::endl;
+    std::cerr << "Mat Element " << i << " " << histogramArray3->GetValue(i) << std::endl;
     }
   
  
@@ -447,8 +451,9 @@ int main( int argc, char * argv[] )
   //  return EXIT_FAILURE;
   //  }
   //materialPropertyArray = vtkDoubleArray::SafeDownCast(tmpArray);
-  materialPropertyArray = (vtkDoubleArray *) gridFieldData->GetArray("Material_Properties");
-  if ( materialPropertyArray == NULL )
+  vtkDoubleArray *materialPropertyArray2 = NULL;
+  materialPropertyArray2 = (vtkDoubleArray *) gridFieldData->GetArray("Material_Properties");
+  if ( materialPropertyArray2 == NULL )
     {
     std::cerr << "Error: Test 3" << std::endl;
     std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
@@ -458,10 +463,10 @@ int main( int argc, char * argv[] )
   for (int i=0;i<numberOfCells;i++)
     {
     bool found = false;
-    double value = materialPropertyArray->GetValue(i);
+    double value = materialPropertyArray2->GetValue(i);
     for (int j=0;j<9;j++)
       {
-      if (fabs(value-histogramArray->GetValue(j)) < 0.0001)
+      if (fabs(value-histogramArray3->GetValue(j)) < 0.0001)
         {
           found = true;
         }
@@ -493,10 +498,11 @@ int main( int argc, char * argv[] )
   vtkFieldData *materialTable4 = rebinFilter4->GetPropertyTable();
   //histogramArray = vtkDoubleArray::SafeDownCast( materialTable4->GetColumnByName( "Histogram" ) );
   //histogramArray = vtkDoubleArray::SafeDownCast( materialTable4->GetArray( "Histogram" ) );
-  histogramArray = (vtkDoubleArray *) materialTable4->GetArray( "Histogram" );
-  if ( histogramArray->GetNumberOfTuples() != 12 )
+  vtkDoubleArray *histogramArray4 = NULL;
+  histogramArray4 = (vtkDoubleArray *) materialTable4->GetArray( "Histogram" );
+  if ( histogramArray4->GetNumberOfTuples() != 12 )
     {
-      std::cerr << "Error: Test 4 - Invalid number of material property array bins " << histogramArray->GetSize() << std::endl;
+      std::cerr << "Error: Test 4 - Invalid number of material property array bins " << histogramArray4->GetSize() << std::endl;
     //return EXIT_FAILURE;
     }
   /* Test for VTK 5.0 Field Data Writer */
@@ -517,8 +523,9 @@ int main( int argc, char * argv[] )
   //  return EXIT_FAILURE;
   //  }
   //materialPropertyArray = vtkDoubleArray::SafeDownCast(tmpArray);
-  materialPropertyArray = (vtkDoubleArray *) gridFieldData->GetArray("Material_Properties");
-  if ( materialPropertyArray == NULL )
+  vtkDoubleArray *materialPropertyArray3 = NULL;
+  materialPropertyArray3 = (vtkDoubleArray *) gridFieldData->GetArray("Material_Properties");
+  if ( materialPropertyArray3 == NULL )
     {
     std::cerr << "Error: Test 4" << std::endl;
     std::cerr << "Failed to obtain 'Material_Properties' Field Data" << std::endl;
@@ -528,10 +535,10 @@ int main( int argc, char * argv[] )
   for (int i=0;i<numberOfCells;i++)
     {
     bool found = false;
-    double value = materialPropertyArray->GetValue(i);
+    double value = materialPropertyArray3->GetValue(i);
     for (int j=0;j<12;j++)
       {
-      if (fabs(value-histogramArray->GetValue(j)) < 0.0001)
+      if (fabs(value-histogramArray4->GetValue(j)) < 0.0001)
         {
         found = true;
         }
@@ -543,22 +550,34 @@ int main( int argc, char * argv[] )
       return EXIT_FAILURE;
       }
     }
-  std::cerr << "hist" << std::endl;
+  //std::cerr << "hist" << std::endl;
   histogramArray->Delete();
+  histogramArray2->Delete();
+  histogramArray3->Delete();
+  histogramArray4->Delete();
+  //std::cerr << "mat table" << std::endl;
   materialTable->Delete();
   materialTable2->Delete();
   materialTable3->Delete();
   materialTable4->Delete();
-  std::cerr << "writer" << std::endl;
+  //std::cerr << "mat prop" << std::endl;
+  materialPropertyArray->Delete();
+  materialPropertyArray1->Delete();
+  materialPropertyArray2->Delete();
+  materialPropertyArray3->Delete();
+  
+  //std::cerr << "grid" << std::endl;
+  grid->Delete();
+  //std::cerr << "writer" << std::endl;
   tmpWriter->Delete();
-  std::cerr << "1" << std::endl;
+  //std::cerr << "1" << std::endl;
   rebinFilter->Delete();
-  std::cerr << "2" << std::endl;
-  //rebinFilter2->Delete();
-  std::cerr << "3" << std::endl;
-  //rebinFilter3->Delete();
-  std::cerr << "4" << std::endl;
-  //rebinFilter4->Delete();
+  //std::cerr << "2" << std::endl;
+  rebinFilter2->Delete();
+  //std::cerr << "3" << std::endl;
+  rebinFilter3->Delete();
+  //std::cerr << "4" << std::endl;
+  rebinFilter4->Delete();
     
     
   return EXIT_SUCCESS;
