@@ -24,6 +24,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
 #include <vtkUnstructuredGrid.h>
+#include <vtkCellLinks.h>
 #include <vtkFieldData.h>
 #include <vtkDataArray.h>
 #include <vtkDoubleArray.h>
@@ -104,6 +105,9 @@ int vtkMimxRebinMaterialProperty::RequestData(
   
 
   out->DeepCopy( in );
+  // the following line should fix leak, but vtkCellLinks::DeepCopy does a memcopy of 
+  // pointers to allocate memory, meaning that they get double-freed by the destructor
+  //out->GetCellLinks()->Delete(); // need to do this because BuildLinks will create a new vtkCellLinks
   out->BuildLinks( );
   
   /* Get the Grid Field Data - Material Property */
