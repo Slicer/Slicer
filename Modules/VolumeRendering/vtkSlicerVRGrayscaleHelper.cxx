@@ -15,6 +15,7 @@
 #include "vtkFloatArray.h"
 #include "vtkTexture.h"
 #include "vtkImageGradientMagnitude.h"
+#include "vtkInteractorStyle.h"
 
 //KWWidgets
 #include "vtkKWHistogram.h"
@@ -79,6 +80,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->SC_Framerate=NULL;
     this->SVP_VolumeProperty=NULL;
     this->MappersFrame=NULL;
+    this->SavedStillRate=0;
 
 }
 
@@ -480,7 +482,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->MapperRaycast->SetAutoAdjustSampleDistances(callerObjectCheckButton->GetSelectedState());
         if(!callerObjectCheckButton->GetSelectedState())
         {
-            this->MapperRaycast->SetSampleDistance(0.1);
+            this->MapperRaycast->SetSampleDistance(.1);
+            this->MapperRaycast->SetImageSampleDistance(1);
         }
 
         return;
@@ -623,7 +626,12 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         //Stage 2
         if(this->currentStage==2)
         {
+            vtkRenderWindowInteractor *interactor=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor();
+            if(this->ButtonDown&&this->CB_InteractiveFrameRate->GetWidget()->GetSelectedState())
+            {
 
+                this->MapperRaycast->SetManualInteractive(1);
+            }
             //Do the following code just in case we skipped stage 1
             //Remove plane Renderer and get viewport Renderer Up
             this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
@@ -670,11 +678,18 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         }
         if(this->currentStage==2)
         {
-            //We reached the highest Resolution, no scheduling
             vtkSlicerVRHelperDebug("Stage 2 ended","");
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,100);
+            if(this->MapperRaycast->GetManualInteractive())
+            {
+                this->MapperRaycast->SetManualInteractive(0);
+                this->scheduled=1;
+                this->EventHandlerID=this->Gui->Script("after idle [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow] Render");
+            }
+            //We reached the highest Resolution, no scheduling
+
             return;
         }
         if(this->RenderPlane==1)

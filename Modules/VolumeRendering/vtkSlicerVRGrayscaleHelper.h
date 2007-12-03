@@ -105,7 +105,7 @@ protected:
     std::string StageZeroEventHandlerID;
     //ETX
     
-
+    double SavedStillRate;
     void UpdateSVP(void);
 
     void CheckAbort(void);
