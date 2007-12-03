@@ -119,9 +119,9 @@ itcl::body FiducialsSWidget::destructor {} {
 
 itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
 
-    if { [info command $caller] == ""} {
-        return
-    }
+  if { [info command $caller] == ""} {
+      return
+  }
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
@@ -138,7 +138,6 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
         if { [lsearch "grave quoteleft " $key] != -1 } {
           $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
           $sliceGUI SetGUICommandAbortFlag 1
-          puts "fiducial eating $key"
           switch [$_interactor GetKeySym] {
             "grave" -
             "quoteleft" {
@@ -169,8 +168,6 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
                 }
               }
             }
-          } else {
-            # puts "fiducial ignoring $key"
           }
         }
       }
