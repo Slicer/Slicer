@@ -63,5 +63,6 @@ CONFIGURE_FILE(
   )
 
 FILE(GLOB __files1 "${MeshIO_SOURCE_DIR}/*.h")
-FILE(GLOB __files2 "${MeshIO_SOURCE_DIR}/*.txx")
-INSTALL(FILES ${__files1} {$__files2} DESTINATION include/MimxMesh/IO COMPONENT Development)
+# FILE(GLOB __files2 "${MeshIO_SOURCE_DIR}/*.txx")
+# INSTALL(FILES ${__files1} {$__files2} DESTINATION include/MimxMesh/IO COMPONENT Development)
+INSTALL(FILES ${__files1} DESTINATION include/MimxMesh/IO COMPONENT Development)
