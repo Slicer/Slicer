@@ -33,7 +33,8 @@ AddNewScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
                             int labelMap, 
                             const char* volname)
 {
-  vtkMRMLScalarVolumeDisplayNode *displayNode  = vtkMRMLScalarVolumeDisplayNode::New();
+  vtkMRMLScalarVolumeDisplayNode *displayNode  = 
+    vtkMRMLScalarVolumeDisplayNode::New();
   vtkMRMLScalarVolumeNode  *scalarNode   = vtkMRMLScalarVolumeNode::New();
   scalarNode->SetLabelMap(labelMap);
   vtkMRMLVolumeNode        *volumeNode   = scalarNode;
@@ -349,6 +350,7 @@ int main(int argc, char** argv)
   bool useDefaultTarget         = targetVolumeFileNames.empty();
   bool useDefaultAtlas          = atlasVolumeFileNames.empty();
   bool useDefaultOutput         = resultVolumeFileName.empty();
+  bool writeIntermediateResults = !intermediateResultsDirectory.empty();
   bool segmentationSucceeded    = true;
 
   if (verbose) std::cerr << "Starting EMSegment Command Line." << std::endl;
@@ -770,9 +772,21 @@ int main(int argc, char** argv)
         {
         // create volume node
         if (verbose) std::cerr << "Creating output volume node...";
+
+        //
+        // Set up the filename so that a relative filename will be
+        // relative to the current directory, not relative to the mrml
+        // scene's path.
+        vtkstd::string absolutePath = resultVolumeFileName;
+        if (!vtksys::SystemTools::FileIsFullPath(resultVolumeFileName.c_str()))
+          {
+          absolutePath = vtksys::SystemTools::
+            CollapseFullPath(resultVolumeFileName.c_str());
+          }
+
         vtkMRMLVolumeNode* outputNode = 
           AddNewScalarArchetypeVolume(mrmlScene,
-                                      resultVolumeFileName.c_str(),
+                                      absolutePath.c_str(),
                                       true,
                                       true,
                                       NULL);
@@ -815,6 +829,21 @@ int main(int argc, char** argv)
       << segmentationBoundaryMax[0] << ", "
       << segmentationBoundaryMax[1] << ", "
       << segmentationBoundaryMax[2] << "]" << std::endl;
+    
+    //
+    // set intermediate results directory
+    if (writeIntermediateResults)
+      {
+      emMRMLManager->SetSaveIntermediateResults(true);
+      vtkstd::string absolutePath = vtksys::SystemTools::
+        CollapseFullPath(intermediateResultsDirectory.c_str());
+      emMRMLManager->
+        SetSaveWorkingDirectory(absolutePath.c_str());
+      }
+    else
+      {
+      emMRMLManager->SetSaveIntermediateResults(false);
+      }
 
     //
     // check parameters' node structure
@@ -854,9 +883,12 @@ int main(int argc, char** argv)
     {
     //
     // save the results
-    if (verbose) std::cerr << "Saving segmentation result...";
+    if (verbose) std::cerr << "Saving segmentation results..." << std::endl;
     try
       {
+      vtkstd::cerr << "Writing segmentation result: " << 
+        emMRMLManager->GetOutputVolumeNode()->GetStorageNode()->GetFileName()
+                   << vtkstd::endl;
       emMRMLManager->GetOutputVolumeNode()->GetStorageNode()->
         SetUseCompression(!disableCompression);
       emMRMLManager->GetOutputVolumeNode()->GetStorageNode()->

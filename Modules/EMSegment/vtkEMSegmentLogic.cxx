@@ -139,8 +139,8 @@ StartPreprocessing()
 
   this->StartPreprocessingInitializeInputData();
   this->StartPreprocessingTargetIntensityNormalization();
-  //this->StartPreprocessingTargetToTargetRegistration();
-  //this->StartPreprocessingAtlasToTargetRegistration();
+  this->StartPreprocessingTargetToTargetRegistration();
+  this->StartPreprocessingAtlasToTargetRegistration();
 }
 
 //----------------------------------------------------------------------------
@@ -160,7 +160,7 @@ void
 vtkEMSegmentLogic::
 StartPreprocessingTargetIntensityNormalization()
 {
-  std::cerr << "Starting intensity normalization..." << std::endl;
+  std::cerr << " EMSEG: Starting intensity normalization..." << std::endl;
 
   // get a pointer to the mrml manager for easy access
   vtkEMSegmentMRMLManager* m = this->MRMLManager;
@@ -185,12 +185,13 @@ StartPreprocessingTargetIntensityNormalization()
   if (!normalizedTarget)
     {
     // clone intput to new normalized target node
-    std::cerr << "Cloning target node...";
+    std::cerr << "  Cloning target node...";
     normalizedTarget = m->CloneTargetNode(inputTarget, "NormalizedTarget");
     std::cerr << "Done." << std::endl;
-    std::cerr << "Node is " << (normalizedTarget ? "Non-null" : "Null")
+    std::cerr << "  Node is " << (normalizedTarget ? "Non-null" : "Null")
               << std::endl;
-    std::cerr << "Number of images is: " << normalizedTarget->GetNumberOfVolumes() << std::endl;
+    std::cerr << "  Number of images is: " 
+              << normalizedTarget->GetNumberOfVolumes() << std::endl;
     m->GetWorkingDataNode()->
       SetNormalizedTargetNodeID(normalizedTarget->GetID());
     }
@@ -206,10 +207,11 @@ StartPreprocessingTargetIntensityNormalization()
     if (!m->GetNthTargetVolumeIntensityNormalizationEnabled(i))
       {
       // don't apply normaliation to this image
-      std::cerr << "Skipping image " << i << "." << std::endl;
+      std::cerr << "  Skipping image " << i 
+                << " (no normalization requested)." << std::endl;
       continue;
       }
-    std::cerr << "Normalizing image " << i << "..." << std::endl;
+    std::cerr << "  Normalizing image " << i << "..." << std::endl;
     
     // get image data
     vtkImageData* inData = 
@@ -259,7 +261,7 @@ StartPreprocessingTargetIntensityNormalization()
     normFilter->Delete();
     }
     
-  std::cerr << "Normalization complete." << std::endl;
+  std::cerr << " EMSEG: Normalization complete." << std::endl;
 
   // intensity statistics, if computed from data, must be updated
   m->UpdateIntensityDistributions();
@@ -270,7 +272,8 @@ void
 vtkEMSegmentLogic::
 StartPreprocessingTargetToTargetRegistration()
 {
-  std::cerr << "Starting target-to-target registration..." << std::endl;
+  std::cerr << " EMSEG: Starting target-to-target registration..." 
+            << std::endl;
 
   // get a pointer to the mrml manager for easy access
   vtkEMSegmentMRMLManager* m = this->MRMLManager;
@@ -295,12 +298,12 @@ StartPreprocessingTargetToTargetRegistration()
   if (!alignedTarget)
     {
     // clone intput to new aligned target node
-    std::cerr << "Cloning target node...";
+    std::cerr << "  Cloning target node...";
     alignedTarget = m->CloneTargetNode(normalizedTarget, "AlignedTarget");
     std::cerr << "Done." << std::endl;
-    std::cerr << "Node is " << (alignedTarget ? "Non-null" : "Null")
+    std::cerr << "  Node is " << (alignedTarget ? "Non-null" : "Null")
               << std::endl;
-    std::cerr << "Number of images is: " 
+    std::cerr << "  Number of images is: " 
               << alignedTarget->GetNumberOfVolumes() << std::endl;
     m->GetWorkingDataNode()->
       SetAlignedTargetNodeID(alignedTarget->GetID());
@@ -320,7 +323,7 @@ StartPreprocessingTargetToTargetRegistration()
     {
       if (i == fixedTargetImageIndex)
         {
-        std::cerr << "Skipping fixed target image " << i << std::endl;
+        std::cerr << "  Skipping fixed target image " << i << std::endl;
         continue;
         }
 
@@ -375,7 +378,7 @@ StartPreprocessingTargetToTargetRegistration()
       //
       // !!! need to make sure that the output image is in space of
       // 0th target image !!!
-      std::cerr << "Resampling target image...";
+      std::cerr << "  Resampling target image " << i << "...";
       vtkImageReslice* resliceFilter = vtkImageReslice::New();
       //resliceFilter->SetResliceTransform(registrator->GetTransform());
       resliceFilter->SetInput(movingImageData);
@@ -389,7 +392,7 @@ StartPreprocessingTargetToTargetRegistration()
       //registrator->Delete();
       resliceFilter->Delete();
     }    
-  std::cerr << "Alignment complete." << std::endl;
+  std::cerr << " EMSEG: Target-to-target registration complete." << std::endl;
 
   // intensity statistics, if computed from data, must be updated
   m->UpdateIntensityDistributions();
@@ -400,7 +403,7 @@ void
 vtkEMSegmentLogic::
 StartPreprocessingAtlasToTargetRegistration()
 {
-  std::cerr << "Starting atlas-to-target registration..." << std::endl;
+  std::cerr << " EMSEG: Starting atlas-to-target registration..." << std::endl;
 
   // get a pointer to the mrml manager for easy access
   vtkEMSegmentMRMLManager* m = this->MRMLManager;
@@ -433,12 +436,12 @@ StartPreprocessingAtlasToTargetRegistration()
   if (!alignedAtlas)
     {
     // clone intput to new aligned atlas node
-    std::cerr << "Cloning atlas node...";
+    std::cerr << "  Cloning atlas node...";
     alignedAtlas = m->CloneAtlasNode(inputAtlas, "AlignedAtlas");
     std::cerr << "Done." << std::endl;
-    std::cerr << "Node is " << (alignedAtlas ? "Non-null" : "Null")
+    std::cerr << "  Node is " << (alignedAtlas ? "Non-null" : "Null")
               << std::endl;
-    std::cerr << "Number of images is: " 
+    std::cerr << "  Number of images is: " 
               << alignedAtlas->GetNumberOfVolumes() << std::endl;
     m->GetWorkingDataNode()->
       SetAlignedAtlasNodeID(alignedAtlas->GetID());
@@ -480,7 +483,7 @@ StartPreprocessingAtlasToTargetRegistration()
         continue;
         }
 
-      std::cerr << "Resampling atlas image " << i << "...";
+      std::cerr << "  Resampling atlas image " << i << "...";
       vtkImageReslice* resliceFilter = vtkImageReslice::New();
       //resliceFilter->SetResliceTransform(registrator->GetTransform());
       resliceFilter->SetInput(movingImageData);
@@ -494,7 +497,7 @@ StartPreprocessingAtlasToTargetRegistration()
       //registrator->Delete();
       resliceFilter->Delete();
     }    
-  std::cerr << "Alignment complete." << std::endl;
+  std::cerr << " EMSEG: Atlas-to-target registration complete." << std::endl;
 }
 
 //----------------------------------------------------------------------------
@@ -505,9 +508,9 @@ StartSegmentation()
   //
   // make sure preprocessing is up to date
   //
-  std::cerr << "Start preprocessing..." << std::endl;
+  std::cerr << "EMSEG: Start preprocessing..." << std::endl;
   this->StartPreprocessing();
-  std::cerr << "Done preprocessing." << std::endl;
+  std::cerr << "EMSEG: Preprocessing complete." << std::endl;
 
   //
   // make sure we're ready to start
@@ -559,9 +562,9 @@ StartSegmentation()
   //
   // copy mrml data to segmenter class
   //
-  vtkstd::cerr << "[Start] Copying data to algorithm class..." << vtkstd::endl;
+  vtkstd::cerr << "EMSEG: Copying data to algorithm class...";
   this->CopyDataToSegmenter(segmenter);
-  vtkstd::cerr << "[Done]  Copying data to algorithm class." << vtkstd::endl;
+  vtkstd::cerr << "DONE" << vtkstd::endl;
 
   if (this->GetDebug())
   {
@@ -626,8 +629,7 @@ StartSegmentation()
 
   //
   // save intermediate results
-  // !!! in progress
-  if (false && this->MRMLManager->GetSaveIntermediateResults())
+  if (this->MRMLManager->GetSaveIntermediateResults())
     {
     bool savedResults = this->SaveIntermediateResults();
     if (!savedResults)
@@ -756,25 +758,25 @@ CopyDataToSegmenter(vtkImageEMLocalSegmenter* segmenter)
   //
   // copy atlas related parameters to algorithm
   //
-  vtkstd::cerr << "  atlas data..." << vtkstd::endl;
+  vtkstd::cerr << "atlas data...";
   this->CopyAtlasDataToSegmenter(segmenter);
 
   //
   // copy target related parameters to algorithm
   //
-  vtkstd::cerr << "  target data..." << vtkstd::endl;
+  vtkstd::cerr << "target data...";
   this->CopyTargetDataToSegmenter(segmenter);
 
   //
   // copy global parameters to algorithm 
   //
-  vtkstd::cerr << "  global data..." << vtkstd::endl;
+  vtkstd::cerr << "global data...";
   this->CopyGlobalDataToSegmenter(segmenter);
 
   //
   // copy tree base parameters to algorithm
   //
-  vtkstd::cerr << "  tree data..." << vtkstd::endl;
+  vtkstd::cerr << "tree data...";
   vtkImageEMLocalSuperClass* rootNode = vtkImageEMLocalSuperClass::New();
   this->CopyTreeDataToSegmenter(rootNode, 
                                 this->MRMLManager->GetTreeRootNodeID());

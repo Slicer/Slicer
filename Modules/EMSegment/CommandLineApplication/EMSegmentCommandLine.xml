@@ -57,6 +57,15 @@
       <channel>input</channel>
     </file>
 
+    <directory multiple="false">
+      <name>intermediateResultsDirectory</name>
+      <longflag>intermediateResultsDirectory</longflag>
+
+      <description>Directory where EMSegmenter will write intermediate data (e.g., aligned atlas data).</description>
+      <label>Intermediate Results Directory</label>      
+      <channel>input</channel>
+    </directory>
+
   </parameters>
 
   <parameters advanced="true">
