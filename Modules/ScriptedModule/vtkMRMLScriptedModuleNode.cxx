@@ -92,9 +92,11 @@ void vtkMRMLScriptedModuleNode::WriteXML(ostream& of, int nIndent)
 
   std::map<std::string, std::string>::iterator iter;
 
+  int i = 0;
   for (iter=this->Parameters.begin(); iter != this->Parameters.end(); iter++)
     {
-    of << " parameter." << iter->first << "= \"" << iter->second << "\"";
+    of << " parameter" << i << "= \"" << iter->first << " " << iter->second << "\"";
+    i++;
     }
 }
 
@@ -114,10 +116,12 @@ void vtkMRMLScriptedModuleNode::ReadXMLAttributes(const char** atts)
       {
       this->SetModuleName( attValue );
       }
-    else if ( !strncmp(attName, "parameter.", strlen("parameter.") ) )
+    else if ( !strncmp(attName, "parameter", strlen("parameter") ) )
       {
-      std::string sname(attName+strlen("parameter."));
-      std::string svalue(attValue);
+      std::string satt(attValue);
+      int space = satt.find(" ", 0);
+      std::string sname = satt.substr(0,space);
+      std::string svalue = satt.substr(space+1,satt.length()-space-1);
       this->SetParameter(sname, svalue);
       }
     }
