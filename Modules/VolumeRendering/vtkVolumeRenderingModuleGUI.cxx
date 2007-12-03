@@ -39,6 +39,7 @@
 #include "vtkSlicerVRGrayscaleHelper.h"
 #include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkKWMessageDialog.h"
+#include "vtkKWCheckButton.h"
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
 {
@@ -359,11 +360,13 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             //Unpack the details frame
             this->UnpackLabelMapGUI();
             this->UnpackSvpGUI();
+            this->GetApplicationGUI()->GetViewControlGUI()->GetEnableDisableNavButton()->SelectedStateOn();
             this->PreviousNS_ImageData="";
         }
         //Only proceed event,if new Node
         else if(strcmp(this->NS_ImageData->GetSelected()->GetID(),this->PreviousNS_ImageData.c_str())!=0)
         {
+            this->GetApplicationGUI()->GetViewControlGUI()->GetEnableDisableNavButton()->SelectedStateOff();
             this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
 
             vtkMRMLScalarVolumeNode *selectedImageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());

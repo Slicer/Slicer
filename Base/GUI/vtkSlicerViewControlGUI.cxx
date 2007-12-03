@@ -101,6 +101,9 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->FOVBox = NULL;
   this->FOVBoxMapper = NULL;
   this->FOVBoxActor = NULL;
+
+  //Enable/Disable navigation window
+  this->EnableDisableNavButton;
   
   this->ViewNode = NULL;
   this->RedSliceNode = NULL;
@@ -291,6 +294,12 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     this->NavigationWidget->Delete ();
     this->NavigationWidget = NULL;
     }
+  if( this->EnableDisableNavButton)
+  {
+      this->EnableDisableNavButton->SetParent ( NULL );
+      this->EnableDisableNavButton->Delete ();
+      this->EnableDisableNavButton = NULL;
+  }
   if ( this->ZoomWidget )
     {
     this->ZoomWidget->SetParent ( NULL );
@@ -708,7 +717,15 @@ void vtkSlicerViewControlGUI::UpdateSlicesFromMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::RequestNavigationRender()
 {
+
+
 #ifndef NAVZOOMWIDGET_DEBUG
+  if(!this->EnableDisableNavButton->GetSelectedState())
+  {
+          this->NavigationWidget->RemoveAllViewProps();
+          this->NavigationWidget->Render();
+          return;
+  }
   if (this->GetNavigationRenderPending())
     {
     return;
@@ -2934,7 +2951,12 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->BuildStereoSelectMenu ( );
       this->BuildVisibilityMenu ( );
 
-      
+      //Create the Enable/Disable BUtton for the navigation widget but don't pack it
+      this->EnableDisableNavButton=vtkKWCheckButton::New();
+      this->EnableDisableNavButton->SetParent(f0);
+      this->EnableDisableNavButton->Create();
+      this->EnableDisableNavButton->SelectedStateOn();
+    
       // clean up
       f0->Delete ( );
       f1->Delete ( );

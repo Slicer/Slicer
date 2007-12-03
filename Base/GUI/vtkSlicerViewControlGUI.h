@@ -121,6 +121,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (SelectCameraButton, vtkKWMenuButton);
   vtkGetObjectMacro (StereoButton, vtkKWMenuButton);
   vtkGetObjectMacro (VisibilityButton, vtkKWMenuButton );
+
 //  vtkGetObjectMacro (RedFOVEntry, vtkKWEntryWithLabel);
 //  vtkGetObjectMacro (YellowFOVEntry, vtkKWEntry);
 //  vtkGetObjectMacro (GreenFOVEntry, vtkKWEntry);
@@ -189,6 +190,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro ( GreenSliceNode, vtkMRMLSliceNode );
   vtkMRMLViewNode *GetActiveView();
   vtkMRMLCameraNode *GetActiveCamera();
+
+
+  // Description:
+  // Get the button which enables/disables the navigation widget
+  // Caution: This Button is not packed at the moment
+  vtkGetObjectMacro (EnableDisableNavButton, vtkKWCheckButton);
     
   // Description:
   // This method builds the Data module's GUI
@@ -390,6 +397,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   
   vtkSlicerApplicationGUI *ApplicationGUI;
   vtkSlicerViewControlIcons *SlicerViewControlIcons;
+
+  //Caution: this Button is not packed at the moment
+  //Enable/Disable if the Navigation widget is active or not
+  vtkKWCheckButton *EnableDisableNavButton;
   vtkKWCheckButton *SpinButton;
   vtkKWCheckButton *RockButton;
   vtkKWPushButton *OrthoButton;
