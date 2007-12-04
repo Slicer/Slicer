@@ -132,4 +132,8 @@ FOREACH ( colorfile ${COLORFILES})
         ${SlicerBaseLogic_BINARY_DIR}/${colorfile}
         COPYONLY
 )
+   INSTALL(
+        FILES ${SlicerBaseLogic_BINARY_DIR}/${colorfile}
+        DESTINATION Base/Logic/Resources/ColorFiles
+)
 ENDFOREACH(colorfile)
