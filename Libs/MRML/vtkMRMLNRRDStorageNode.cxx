@@ -167,6 +167,16 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
 
   reader = vtkNRRDReader::New();
 
+  // Set Reader member variables
+  if (this->CenterImage) 
+    {
+    reader->SetUseNativeOriginOff();
+    }
+  else
+    {
+    reader->SetUseNativeOriginOn();
+    }
+
   if (volNode->GetImageData()) 
     {
     volNode->SetAndObserveImageData (NULL);
@@ -249,15 +259,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     }
 
-  // Set Reader member variables
-  if (this->CenterImage) 
-    {
-    reader->SetUseNativeOriginOff();
-    }
-  else
-    {
-    reader->SetUseNativeOriginOn();
-    }
   reader->Update();
   // set volume attributes
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
