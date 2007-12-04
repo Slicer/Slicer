@@ -4514,10 +4514,27 @@ WritePackagedScene(vtkMRMLScene* scene)
     vtkMRMLVolumeNode* volumeNode = 
       dynamic_cast<vtkMRMLVolumeNode*>(currentNode);
 
-    if (volumeNode == NULL || volumeNode->GetStorageNode() == NULL)
+    if (volumeNode == NULL)
       {
-      vtkErrorMacro("Volume node or storage node is null: " 
+      vtkWarningMacro("Volume node is null for node: " 
                     << currentNode->GetID());
+      scene->RemoveNode(currentNode);
+      allOK = false;
+      continue;
+      }
+    if (volumeNode->GetImageData() == NULL)
+      {
+      vtkWarningMacro("Volume data is null for volume node: " 
+                    << currentNode->GetID());
+      scene->RemoveNode(currentNode);
+      allOK = false;
+      continue;
+      }
+    if (volumeNode->GetStorageNode() == NULL)
+      {
+      vtkWarningMacro("Volume storage node is null for volume node: " 
+                    << currentNode->GetID());
+      scene->RemoveNode(currentNode);
       allOK = false;
       continue;
       }
