@@ -502,14 +502,18 @@ void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
     this->AssignAttributeTensorsFromScalars->Update();
     
     vtkImageData* InterchangedImage =  vtkImageData::SafeDownCast(this->AssignAttributeTensorsFromScalars->GetOutput());
-    InterchangedImage->SetNumberOfScalarComponents(9);
-
+    if (InterchangedImage)
+      {
+      InterchangedImage->SetNumberOfScalarComponents(9);
+      }
     this->Reslice->SetInput( InterchangedImage );
     this->Reslice->Update();
 
     //Fixing horrible bug of the vtkSetAttributes Filter it doesn't copy attributes without name
-    this->Reslice->GetOutput()->GetPointData()->GetScalars()->SetName(volumeNode->GetImageData()->GetPointData()->GetTensors()->GetName());
-     
+    if ( this->Reslice->GetOutput() && this->Reslice->GetOutput()->GetPointData()->GetScalars() )
+      {
+      this->Reslice->GetOutput()->GetPointData()->GetScalars()->SetName(volumeNode->GetImageData()->GetPointData()->GetTensors()->GetName());
+      }
     this->AssignAttributeScalarsFromTensors->SetInput(this->Reslice->GetOutput() );
     this->AssignAttributeScalarsFromTensors->Update();
     slicedImageData = vtkImageData::SafeDownCast(this->AssignAttributeScalarsFromTensors->GetOutput());

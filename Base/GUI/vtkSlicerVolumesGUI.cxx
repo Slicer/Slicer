@@ -497,7 +497,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     else if (this->SaveVolumeButton->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
       {
-      const char * fileName = this->LoadVolumeButton->GetWidget()->GetFileName();
+      const char * fileName = this->SaveVolumeButton->GetFileName();
       if ( fileName ) 
       {
         vtkSlicerVolumesLogic* volumeLogic = this->Logic;

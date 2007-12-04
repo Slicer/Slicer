@@ -215,8 +215,12 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
   
   //Do scale IJK
   double sp[3];
-  volumeNode->GetImageData()->GetSpacing(sp);
-  
+  double spold[3];
+  volumeNode->GetSpacing(sp);
+  // putr spacing into image so that tractography knows about
+  volumeNode->GetImageData()->GetSpacing(spold);
+  volumeNode->GetImageData()->SetSpacing(sp);
+
   vtkTransform *trans = vtkTransform::New();
   trans->Identity();
   trans->PreMultiply();
@@ -323,7 +327,9 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
     dnode = fiberNode->AddGlyphDisplayNode();
     dnode->SetVisibility(0);
     }
-  
+  // Restore the original spacing
+  volumeNode->GetImageData()->SetSpacing(spold);
+
   fiberNode->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
   
   // Delete everything: Still trying to figure out what is going on
