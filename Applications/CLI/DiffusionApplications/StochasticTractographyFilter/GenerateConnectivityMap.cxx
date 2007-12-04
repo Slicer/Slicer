@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 #include "itkImageRegionConstIterator.h"
-#include "CalculateStatisticsCLP.h"
+#include "GenerateConnectivityMapCLP.h"
 #include "itkTensorFractionalAnisotropyImageFilter.h"
 #include "itkPathIterator.h"
 #include <string>

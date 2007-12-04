@@ -18,6 +18,9 @@ LINK_DIRECTORIES(${ModuleDescriptionParser_BINARY_DIR})
 FIND_PACKAGE(ITK REQUIRED)
 INCLUDE(${ITK_USE_FILE})
 
+FIND_PACKAGE(VTK REQUIRED)
+INCLUDE(${VTK_USE_FILE})
+
 INCLUDE(${GenerateCLP_SOURCE_DIR}/UseGenerateCLP.cmake)
 
 IF (Slicer3_SOURCE_DIR)
@@ -38,6 +41,8 @@ TARGET_LINK_LIBRARIES (${CLP}
     ITKIO
     ITKBasicFilters 
     ITKCommon
+    vtkIO
+    vtkCommon
     ModuleDescriptionParser
     # MRML
 )
@@ -51,6 +56,8 @@ TARGET_LINK_LIBRARIES (${CLP}
     ITKIO
     ITKBasicFilters 
     ITKCommon
+    vtkIO
+    vtkCommon
     ModuleDescriptionParser
     # MRML
 )
@@ -64,6 +71,8 @@ TARGET_LINK_LIBRARIES (${CLP}
     ITKIO
     ITKBasicFilters 
     ITKCommon
+    vtkIO
+    vtkCommon
     ModuleDescriptionParser
     # MRML
 )
