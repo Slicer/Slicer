@@ -95,9 +95,9 @@ itcl::body EditBox::findEffects { {path ""} } {
     FiducialVisibilityOff
     FiducialVisibilityOn 
     IdentifyIslands
-    LabelVisibilityOff LabelVisibilityOn NextFiducial 
+    LabelVisibilityOff LabelVisibilityOn 
     SnapToGridOff SnapToGridOn
-    PreviousFiducial  InterpolateLabels LabelOpacity
+    InterpolateLabels LabelOpacity
     ToggleLabelOutline Watershed
   }
 
@@ -264,6 +264,14 @@ itcl::body EditBox::selectEffect { effect } {
       #TODO: invoke the real modelmaker.  Figure out which label map to use (each slice
       # could have a different label layer -- for now use the red one...
       EditorTestQuickModel
+      EditorSetActiveToolLabel DefaultTool
+    }
+    "PreviousFiducial" {
+      ::FiducialsSWidget::JumpAllToNextFiducial -1
+      EditorSetActiveToolLabel DefaultTool
+    }
+    "NextFiducial" {
+      ::FiducialsSWidget::JumpAllToNextFiducial 1
       EditorSetActiveToolLabel DefaultTool
     }
     default {
