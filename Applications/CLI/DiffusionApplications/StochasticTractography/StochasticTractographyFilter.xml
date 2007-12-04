@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Tractography.Seeding</category>
+  <category>Tractography.Stochastic</category>
   <title>Stochastic Tractography Filter</title>
   <description>
-  Generates a map of connectivity probabilities from a DWI volume.
+  Generates a VTK XML polydata file that contains a collection of sampled fiber tracts.
+  Each fiber tract is a sample from the fiber tract posterior probability distribution.
   </description>
   <version>1.0</version>
-  <documentation-url></documentation-url>
   <license></license>
   <contributor>Tri Ngo</contributor>
 
@@ -25,19 +25,6 @@
       <description>Label Number to use as seed points</description>
       <label>Seed Point(s) Label Number</label>
       <default>0</default>
-      <constraints>
-        <minimum>0</minimum>
-        <step>1</step>
-      </constraints>
-    </integer>
-    
-    <integer>
-      <name>endlabelnumber</name>
-      <flag>e</flag>
-      <longflag>endlabelnumber</longflag>
-      <description>Label Number to use as end region</description>
-      <label>End Region Label Number</label>
-      <default>1</default>
       <constraints>
         <minimum>0</minimum>
         <step>1</step>
@@ -63,24 +50,32 @@
       <longflag>maxtractlength</longflag>
       <description>Maximum Length of Sample Tract</description>
       <label>Maximum Tract Length</label>
-      <default>100</default>
+      <default>200</default>
       <constraints>
         <minimum>0</minimum>
         <step>1</step>
       </constraints>
     </integer>
-    <integer>
+    <double>
       <name>stepsize</name>
       <flag>s</flag>
       <longflag>stepsize</longflag>
       <description>The length of each segment of the tract in mm</description>
       <label>Step Size(mm)</label>
-      <default>1</default>
+      <default>0.5</default>
       <constraints>
         <minimum>0.1</minimum>
         <step>0.1</step>
       </constraints>
-    </integer>
+    </double>
+    <double>
+      <name>gamma</name>
+      <flag>g</flag>
+      <longflag>gamma</longflag>
+      <description>A prior parameter controlling the smoothness of the tracts. Larger values reduce probability of sharp turns</description>
+      <label>Gamma</label>
+      <default>1</default>
+    </double>
     <integer>
       <name>maxlikelihoodcachesize</name>
       <flag>c</flag>
@@ -93,26 +88,10 @@
         <step>1</step>
       </constraints>
     </integer>
-    <string>
-      <name>outputprefix</name>
-      <flag>o</flag>
-      <longflag>outputprefix</longflag>
-      <description>Prefix for the output files</description>
-      <label>Output Filename Prefix</label>
-      <default>"Output"</default>
-    </string>
-    <boolean>
-      <name>outputimageswitch</name>
-      <flag>i</flag>
-      <default>false</default>
-      <longflag>outputimageswitch</longflag>
-      <label>Produce Output Images</label>
-      <description>Output Tensor, FA maps and Connectivity Maps</description>
-    </boolean>
     <boolean>
       <name>recenteroriginswitch</name>
       <flag>r</flag>
-      <default>false</default>
+      <default>true</default>
       <longflag>recenteroriginswitch</longflag>
       <label>Recenter Image Origins</label>
       <description>Ignore the origins of the ROI and WM mask and set it to be the same as the DWI image origin</description>
@@ -129,6 +108,15 @@
         <step>1</step>
       </constraints>
     </integer>
+    <boolean>
+      <name>continuoustractsswitch</name>
+      <flag>d</flag>
+      <longflag>continuous</longflag>
+      <description>Output tracts in continuous instead of discretized IJK space.</description>
+      <label>continuoustractsswitch</label>
+      <default>false</default>
+    </boolean>
+    
   </parameters>
 
   <parameters>
@@ -155,6 +143,13 @@
       <index>2</index>
       <description>Input ROI volume used to seed algorithm</description>
     </image>
+    <file>
+      <name>tractsfilename</name>
+      <label>Output Tracts</label>
+      <channel>output</channel>
+      <index>3</index>
+      <description>Output tracts as VTK XML Polydata file (.vtp extension)</description>
+    </file>
   </parameters>
 
 </executable>

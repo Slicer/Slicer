@@ -1,4 +1,4 @@
-PROJECT(StochasticTractography)
+PROJECT(StochasticTractographyFilter)
 
 SET(CMAKE_VERBOSE_MAKEFILE OFF)
 
@@ -29,10 +29,36 @@ INCLUDE_DIRECTORIES( ${CLI_SOURCE_DIR} )
 
 #####################
 
-SET (CLP StochasticTractography)
+SET (CLP StochasticTractographyFilter)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h ${Slicer3_SOURCE_DIR}/Resources/MITLogo.h)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP}
+    ITKIO
+    ITKBasicFilters 
+    ITKCommon
+    ModuleDescriptionParser
+    # MRML
+)
+
+SET (CLP GenerateConnectivityMap)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h ${Slicer3_SOURCE_DIR}/Resources/MITLogo.h)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP}
+    ITKIO
+    ITKBasicFilters 
+    ITKCommon
+    ModuleDescriptionParser
+    # MRML
+)
+
+SET (CLP ROITractFilter)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h ${Slicer3_SOURCE_DIR}/Resources/MITLogo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP}
     ITKIO
@@ -48,7 +74,9 @@ IF (Slicer3_SOURCE_DIR)
   # installation) and install each target in the developer area (for running 
   # from a build)
   SET(TARGETS        
-        StochasticTractography
+        StochasticTractographyFilter
+        GenerateConnectivityMap
+        ROITractFilter
   )
 
   FOREACH(target ${TARGETS})

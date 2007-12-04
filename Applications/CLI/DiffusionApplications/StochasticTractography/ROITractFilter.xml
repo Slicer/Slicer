@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Tractography.Stochastic</category>
+  <title>ROI Tract Filter</title>
+  <description>
+  Creates a new tract container containing only tracts which pass through the selected ROI's
+  </description>
+  <version>1.0</version>
+  <license></license>
+  <contributor>Tri Ngo</contributor>
+
+  <parameters>
+    <label>
+    Stochastic Tractography Parameters
+    </label>
+    <description>
+    Parameters for the Stochastic Tractography algorithm
+    </description>
+
+    <integer-vector>
+      <name>roilabels</name>
+      <flag>l</flag>
+      <description>
+      Labels numbers for the ROIs that will be used to filter the tracts
+      </description>
+      <label>ROI Label Numbers</label>
+      <default>1</default>
+    </integer-vector>
+
+    <integer>
+      <name>totalthreads</name>
+      <flag>j</flag>
+      <longflag>totalthreads</longflag>
+      <description>Total number of threads to use.  Default value of zero sets number of threads to number of CPUs</description>
+      <label>Total Threads</label>
+      <default>0</default>
+      <constraints>
+        <minimum>0</minimum>
+        <step>1</step>
+      </constraints>
+    </integer>
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <file>
+      <name>inputtractsfilename</name>
+      <label>Unfiltered Input Tracts</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input tracts as VTK XML Polydata file (.vtp extension)</description>
+    </file>
+    <image>
+      <name>roifilename</name>
+      <label>Input ROI Volume</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Input ROI volume used to seed algorithm</description>
+    </image>
+    <file>
+      <name>outputtractsfilename</name>
+      <label>Output Tracts</label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>Output filtered tracts as VTK XML Polydata file (.vtp extension)</description>
+    </file>
+  </parameters>
+
+</executable>

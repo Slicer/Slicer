@@ -2,5 +2,5 @@ PROJECT( DiffusionFiltering )
 
 SUBDIRS(
   dwiNoiseFilter
-  StochasticTractography
+  StochasticTractographyFilter
 )

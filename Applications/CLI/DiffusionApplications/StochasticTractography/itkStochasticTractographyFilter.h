@@ -1,18 +1,20 @@
 #ifndef __itkStochasticTractographyFilter_h__
 #define __itkStochasticTractographyFilter_h__
 
-#include "itkImageToImageFilter.h"
+#include "itkProcessObject.h"
 #include "vnl/vnl_random.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix.h"
 #include "itkArray.h"
 #include "itkVectorContainer.h"
 #include "vnl/algo/vnl_qr.h"
+#include "vnl/algo/vnl_svd.h"
 #include "itkVariableLengthVector.h"
-#include "itkSlowPolyLineParametricPath.h"
 #include "itkSimpleFastMutexLock.h"
 #include "itkRealTimeClock.h"
 #include "itkDiffusionTensor3D.h"
+#include "itkPolyLineParametricPath.h"
+#include "itkImage.h"
 #include <vector>
 
 namespace itk{
@@ -21,39 +23,37 @@ namespace itk{
 typedef Image< Array< double >, 3 > ProbabilityDistributionImageType;
 
 template< class TInputDWIImage, class TInputWhiteMatterProbabilityImage,
-  class TOutputConnectivityImage >
+  class TInputROIImage >
 class ITK_EXPORT StochasticTractographyFilter :
-  public ImageToImageFilter< TInputDWIImage,
-                    TOutputConnectivityImage >{
+  public ProcessObject{
 public:
   typedef StochasticTractographyFilter Self;
-  typedef ImageToImageFilter< TInputDWIImage,
-    TOutputConnectivityImage > Superclass;
+  typedef ProcessObject Superclass;
   typedef SmartPointer< Self > Pointer;
   typedef SmartPointer< const Self > ConstPointer;
   
   itkNewMacro(Self);
   itkTypeMacro( StochasticTractographyFilter,
-            ImageToImageFilter );
+    ProcessObject );
   
   /** Types for the DWI Input Image **/
   typedef TInputDWIImage InputDWIImageType;
   
-  /** Types for the Connectivity Output Image**/
-  typedef TOutputConnectivityImage OutputConnectivityImageType;
-  
   /** Types for the Mask Image **/
   typedef TInputWhiteMatterProbabilityImage InputWhiteMatterProbabilityImageType;
   
+  /** Types for the ROI Image **/
+  typedef TInputROIImage InputROIImageType;
+  
   /** Tract Types **/
-  typedef SlowPolyLineParametricPath< 3 > TractType;
+  typedef PolyLineParametricPath< 3 > TractType;
   
   /** Types for the TractContainer **/
   typedef VectorContainer< unsigned int, typename TractType::Pointer > 
     TractContainerType;
   
   /** Types for Tensor Output Image **/
-  typedef Image< DiffusionTensor3D< double >, 3 > OutputTensorImageType;
+  typedef Image< DiffusionTensor3D< float >, 3 > OutputTensorImageType;
   
   /** Types for the Image-wide Magnetic Field Gradient Directions **/
   typedef VectorContainer< unsigned int, vnl_vector_fixed< double, 3 > >
@@ -86,6 +86,10 @@ public:
   itkSetConstObjectMacro( Gradients, GradientDirectionContainerType );
   itkGetConstObjectMacro( Gradients, GradientDirectionContainerType );
   
+  /** Set/Get the DWI Input Image **/
+  itkSetInputMacro(DWIImage, InputDWIImageType, 0);
+  itkGetInputMacro(DWIImage, InputDWIImageType, 0);
+  
   /** Set/Get the White Matter Probability Input image **/
   /* At each voxel specifies the probability of a mylinated fiber existing
      at that location.  This probability is interpreted to be the probability
@@ -94,29 +98,9 @@ public:
   itkSetInputMacro(WhiteMatterProbabilityImage, InputWhiteMatterProbabilityImageType, 1);
   itkGetInputMacro(WhiteMatterProbabilityImage, InputWhiteMatterProbabilityImageType, 1);
   
-  //overide the built in set input function
-  //we need to create a new cache everytime we change the input image
-  //but we need to preserve it when the input image is the same
-  void SetInput( typename InputDWIImageType::Pointer dwiimagePtr ){
-    Superclass::SetInput( dwiimagePtr );
-    //update the likelihood cache
-    this->m_LikelihoodCachePtr = ProbabilityDistributionImageType::New();
-    this->m_LikelihoodCachePtr->CopyInformation( this->GetInput() );
-    this->m_LikelihoodCachePtr->SetBufferedRegion( this->GetInput()->GetBufferedRegion() );
-    this->m_LikelihoodCachePtr->SetRequestedRegion( this->GetInput()->GetRequestedRegion() );
-    this->m_LikelihoodCachePtr->Allocate();
-    this->m_CurrentLikelihoodCacheElements = 0;
-    //update the likelihoodcache mutex image
-    this->m_LikelihoodCacheMutexImagePtr = LikelihoodCacheMutexImageType::New();
-    this->m_LikelihoodCacheMutexImagePtr->CopyInformation( this->GetInput() );
-    this->m_LikelihoodCacheMutexImagePtr->SetBufferedRegion( this->GetInput()->GetBufferedRegion() );
-    this->m_LikelihoodCacheMutexImagePtr->SetRequestedRegion( this->GetInput()->GetRequestedRegion() );
-    this->m_LikelihoodCacheMutexImagePtr->Allocate();
-  }
-  
-  /** Set/Get the seed index **/
-  itkSetMacro( SeedIndex, typename InputDWIImageType::IndexType );
-  itkGetMacro( SeedIndex, typename InputDWIImageType::IndexType );
+  /** Set/Get the ROI Input Image **/
+  itkSetInputMacro(ROIImage, InputROIImageType, 2);
+  itkGetInputMacro(ROIImage, InputROIImageType, 2)
   
   /** Set/Get the list of directions to sample **/
   itkSetConstObjectMacro( SampleDirections, TractOrientationContainerType );
@@ -129,16 +113,46 @@ public:
   /** Set/Get the Maximum Likelihood Cache Size, the max num. of cached voxels **/
   itkSetMacro( MaxLikelihoodCacheSize, unsigned int );
   itkGetMacro( MaxLikelihoodCacheSize, unsigned int );
+  
+  /** Set/Get the tract segment size **/
+  itkSetMacro( StepSize, double );
+  itkGetMacro( StepSize, double );
+  
+  /** Set/Get Gamma, a prior parameter controlling the smoothness of the tracts **/
+  itkSetMacro( Gamma, double );
+  itkGetMacro( Gamma, double );
             
-  /** Get the Tracts that are generated **/
-  itkGetObjectMacro( OutputTractContainer, TractContainerType );
+  /** Set/Get ROI Label **/
+  itkSetMacro( ROILabel, unsigned int );
+  itkGetMacro( ROILabel, unsigned int );
+  
+  /** Get the Continuous Tracts that are generated **/
+  itkGetObjectMacro( OutputContinuousTractContainer, TractContainerType );
+  
+  /** Get the Discret Tracts that are generated
+      these tracts are generate using the voxels selected by the probabilistic
+      interpolation **/
+  itkGetObjectMacro( OutputDiscreteTractContainer, TractContainerType );
   
   /** Get TensorImage **/
   itkGetObjectMacro( OutputTensorImage, OutputTensorImageType );
   
+
   void GenerateData();
-  void GenerateTractContainerOutput( void );
   void GenerateTensorImageOutput( void );
+  
+  /** override the Proccess Object Update because we don't have a
+      dataobject as an output.  We can change this later by wrapping the
+      tractcontainer in a dataobject decorator and letting the Superclass
+      know about it.
+  **/
+  virtual void Update(){
+    this->GenerateData();
+  }
+  
+  /* Extract the likelihood from one voxel, more for debugging purposes */
+  void ExtractVoxelLikelihood( const typename InputDWIImageType::IndexType seedindex,
+    ProbabilityDistributionImageType::PixelType& likelihood );
   
 protected:
   /** Convenience Types used only inside the filter **/
@@ -181,7 +195,7 @@ protected:
   //in this case we solve instead:
   //R*Beta = Q'logPhi
   vnl_matrix< double >* m_A;
-  vnl_qr< double >* m_Aqr;    
+  vnl_matrix< double >* m_AApinverse;   
   
   void CalculateConstrainedModelParameters( const TensorModelParamType& tensormodelparams,
     ConstrainedModelParamType& constrainedmodelparams);
@@ -214,9 +228,14 @@ protected:
   
   void StochasticTractGeneration( typename InputDWIImageType::ConstPointer dwiimagePtr,
     typename InputWhiteMatterProbabilityImageType::ConstPointer maskimagePtr,
-    typename InputDWIImageType::IndexType seedindex,
+    typename InputDWIImageType::IndexType index,
     unsigned long randomseed,
-    TractType::Pointer tract );
+    TractType::Pointer conttract,
+    TractType::Pointer discretetract );
+    
+  void CalculateNuisanceParameters( const DWIVectorImageType::PixelType& dwivalues,
+    const vnl_diag_matrix< double >& W,
+    ConstrainedModelParamType& constrainedparams );
 
   /** Callback routine used by the threading library. This routine just calls
       the ThreadedGenerateData method after setting the correct region for this
@@ -227,15 +246,22 @@ protected:
     Pointer Filter;
   };
 
+  /** Allocates the tract output container **/
+  void AllocateOutputs();
+  
   /** Thread Safe Function to check/update an entry in the likelihood cache **/
   ProbabilityDistributionImageType::PixelType& 
     AccessLikelihoodCache( typename InputDWIImageType::IndexType index );
+    
   /** Thread Safe Function to delegate a tract and obtain a randomseed to start tracking **/
-  bool DelegateTract(unsigned long& randomseed);
-  /** Function to write a tract to the connectivity map **/
-  void TractContainerToConnectivityMap(TractContainerType::Pointer tractcontainer);
+  bool DelegateTract(unsigned long& randomseed, typename InputDWIImageType::IndexType& index);
+  
   /** Thread Safe Function to store a tract to a TractContainer **/
-  void StoreTract(TractType::Pointer tract);
+  void StoreContinuousTract(TractType::Pointer tract);
+  
+  /** Thread Safe Function to store a discrete tract to a TractContainer **/
+  void StoreDiscreteTract(TractType::Pointer tract);
+  
   /** Randomly samples the existence of a fiber tract in the current voxel **/
   bool FiberExistenceTest( vnl_random& randomgenerator,
     typename InputWhiteMatterProbabilityImageType::ConstPointer wmpimage,
@@ -250,23 +276,32 @@ protected:
   LikelihoodCacheMutexImageType::Pointer m_LikelihoodCacheMutexImagePtr;
   unsigned int m_MaxTractLength;
   unsigned int m_TotalTracts;
-  typename InputDWIImageType::IndexType m_SeedIndex;
-  TractOrientationContainerType::ConstPointer m_SampleDirections;
+
+  TractOrientationContainerType::ConstPointer   m_SampleDirections;
   unsigned long m_MaxLikelihoodCacheSize;   //in Megabytes
   unsigned long m_MaxLikelihoodCacheElements;  //in Elements (Voxels)
   unsigned long m_CurrentLikelihoodCacheElements;
   SimpleFastMutexLock m_LikelihoodCacheMutex;
   
+  double m_StepSize;
+  double m_Gamma;
+  unsigned int m_ROILabel;
   unsigned int m_TotalDelegatedTracts;
   SimpleFastMutexLock m_TotalDelegatedTractsMutex;
   RealTimeClock::Pointer m_ClockPtr;
   //unsigned long m_RandomSeed;
   SimpleFastMutexLock m_OutputImageMutex;
-  TractContainerType::Pointer m_OutputTractContainer;
-  SimpleFastMutexLock m_OutputTractContainerMutex;
+  
+  TractContainerType::Pointer m_OutputContinuousTractContainer;
+  SimpleFastMutexLock m_OutputContinuousTractContainerMutex;
+  
+  TractContainerType::Pointer m_OutputDiscreteTractContainer;
+  SimpleFastMutexLock m_OutputDiscreteTractContainerMutex;
   
   OutputTensorImageType::Pointer m_OutputTensorImage;
   vnl_random m_RandomGenerator;
+  
+  std::vector< typename InputDWIImageType::IndexType > m_SeedIndices;
 };
 
 }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Tractography.Stochastic</category>
+  <title>Generate Connectivity Map</title>
+  <description>
+  Generates a volume where the value of each voxel is the number of fibers which pass through that voxel divided by the total number of sampled fibers.
+  This value can been interpreted as the probability that a particular voxel is connected to the seed ROI by a fiber tract.
+  </description>
+  <version>1.0</version>
+  <license></license>
+  <contributor>Tri Ngo</contributor>
+
+  <parameters>
+    <label>
+    Calculate Statistics Parameters
+    </label>
+    <description>
+    Parameters for the Stochastic Tractography algorithm
+    </description>
+
+    <integer>
+      <name>totalthreads</name>
+      <flag>j</flag>
+      <longflag>totalthreads</longflag>
+      <description>Total number of threads to use.  Default value of zero sets number of threads to number of CPUs</description>
+      <label>Total Threads</label>
+      <default>0</default>
+      <constraints>
+        <minimum>0</minimum>
+        <step>1</step>
+      </constraints>
+    </integer>
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <file>
+      <name>tractsfilename</name>
+      <label>Input Tracts</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input tracts as VTK XML Polydata file</description>
+    </file>
+    <image type="diffusion-weighted">
+      <name>dwifilename</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Input DWI volume</description>
+    </image>
+    <image>
+      <name>ncmapfilename</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>Normalized Connectivity Map Output</description>
+    </image>
+  </parameters>
+
+</executable>
