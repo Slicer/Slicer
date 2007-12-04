@@ -481,6 +481,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
         runcmd $::CMAKE \
             -G$GENERATOR \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+            -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
             -DBUILD_SHARED_LIBS:BOOL=ON \
             -DCMAKE_SKIP_RPATH:BOOL=ON \
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
@@ -512,6 +513,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
         runcmd $::CMAKE \
             -G$GENERATOR \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+            -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
             -DBUILD_SHARED_LIBS:BOOL=ON \
             -DCMAKE_SKIP_RPATH:BOOL=OFF \
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
@@ -536,6 +538,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
         runcmd $::CMAKE \
             -G$GENERATOR \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+            -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
             -DBUILD_SHARED_LIBS:BOOL=ON \
             -DCMAKE_SKIP_RPATH:BOOL=ON \
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
@@ -591,6 +594,7 @@ if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
         -DBUILD_EXAMPLES:BOOL=ON \
         -DBUILD_TESTING:BOOL=ON \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         ../KWWidgets
 
     if {$isWindows} {
@@ -627,6 +631,7 @@ if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
         -DBUILD_EXAMPLES:BOOL=OFF \
         -DBUILD_TESTING:BOOL=OFF \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         ../Insight
     } else {
     runcmd $::CMAKE \
@@ -638,6 +643,7 @@ if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
         -DBUILD_EXAMPLES:BOOL=OFF \
         -DBUILD_TESTING:BOOL=OFF \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         ../Insight
     }
 
@@ -693,6 +699,7 @@ if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
     runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
@@ -748,6 +755,7 @@ if { 0 && ( ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_
             -DBUILD_EXAMPLES:BOOL=OFF \
             -DBUILD_TESTING:BOOL=OFF \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+            -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
             -DVTK_DIR:PATH=$VTK_DIR \
             -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
             -DOPENGL_glu_LIBRARY:FILEPATH=\" \" \
@@ -763,6 +771,7 @@ if { 0 && ( ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_
             -DBUILD_EXAMPLES:BOOL=OFF \
             -DBUILD_TESTING:BOOL=OFF \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+            -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
             -DVTK_DIR:PATH=$VTK_DIR \
             -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
             -DOPENGL_glu_LIBRARY:FILEPATH=\" \" \
@@ -843,6 +852,7 @@ if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
         -DIGSTK_BUILD_EXAMPLES:BOOL=OFF \
         -DIGSTK_BUILD_TESTING:BOOL=OFF \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         ../IGSTK
     } else {
     runcmd $::CMAKE \
@@ -856,6 +866,7 @@ if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
         -DIGSTK_BUILD_EXAMPLES:BOOL=OFF \
         -DIGSTK_BUILD_TESTING:BOOL=OFF \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         ../IGSTK
     }
 
@@ -894,6 +905,7 @@ if { 0 && ![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update) } {
     runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
         -DBUILD_TESTING:BOOL=OFF \
         ../NaviTrack
@@ -928,6 +940,7 @@ if { $::USE_SIGN && (![file exists $::dcmtk_TEST_FILE] || $::GENLIB(update)) } {
     runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
         -DBUILD_SHARED_LIBS:BOOL=ON \
         -DBUILD_TESTING:BOOL=OFF \
@@ -963,6 +976,7 @@ if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
     runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
@@ -1005,6 +1019,7 @@ if { ![file exists $::SLICERLIBCURL_TEST_FILE] || $::GENLIB(update) } {
     runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \

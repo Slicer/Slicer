@@ -121,6 +121,7 @@ set ::TEEM_BUILD_DIR  $::SLICER_LIB/teem-build
 set ::VTK_DIR  $::SLICER_LIB/VTK-build
 set ::VTK_SRC_DIR $::SLICER_LIB/VTK
 set ::VTK_BUILD_TYPE "Debug"
+set ::CMAKE_CXX_FLAGS_DEBUG "-g"
 set ::VTK_BUILD_SUBDIR ""
 set ::env(VTK_BUILD_TYPE) $::VTK_BUILD_TYPE
 set ::KWWidgets_BUILD_DIR  $::SLICER_LIB/KWWidgets-build
