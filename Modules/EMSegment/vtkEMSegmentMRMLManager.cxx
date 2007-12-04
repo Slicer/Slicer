@@ -4516,14 +4516,17 @@ WritePackagedScene(vtkMRMLScene* scene)
 
     if (volumeNode == NULL || volumeNode->GetStorageNode() == NULL)
       {
-      vtkErrorMacro("Volume node or storage node is null " 
+      vtkErrorMacro("Volume node or storage node is null: " 
                     << currentNode->GetID());
       allOK = false;
       continue;
       }
     try
       {
+      std::cerr << "Writing volume: " << volumeNode->GetName() 
+                << ": " << volumeNode->GetStorageNode()->GetFileName() << "...";
       volumeNode->GetStorageNode()->WriteData(volumeNode);
+      std::cerr << "DONE" << std::endl;
       }
     catch (...)
       {

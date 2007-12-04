@@ -33,8 +33,6 @@ AddNewScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
                             int labelMap, 
                             const char* volname)
 {
-  vtkMRMLScalarVolumeDisplayNode *displayNode  = 
-    vtkMRMLScalarVolumeDisplayNode::New();
   vtkMRMLScalarVolumeNode  *scalarNode   = vtkMRMLScalarVolumeNode::New();
   scalarNode->SetLabelMap(labelMap);
   vtkMRMLVolumeNode        *volumeNode   = scalarNode;
@@ -58,17 +56,10 @@ AddNewScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
     }
 
   // add nodes to scene
-  volumeNode->SetScene(mrmlScene);  
-  storageNode->SetScene(mrmlScene); 
-  displayNode->SetScene(mrmlScene); 
-
   mrmlScene->AddNode(storageNode);  
-  mrmlScene->AddNode(displayNode);  
+  mrmlScene->AddNode(volumeNode);
 
   volumeNode->SetStorageNodeID(storageNode->GetID());
-  volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-
-  mrmlScene->AddNode(volumeNode);
 
   if (scalarNode)
     {
@@ -77,10 +68,6 @@ AddNewScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
   if (storageNode)
     {
     storageNode->Delete();
-    }
-  if (displayNode)
-    {
-    displayNode->Delete();
     }
   return volumeNode;    
 }
