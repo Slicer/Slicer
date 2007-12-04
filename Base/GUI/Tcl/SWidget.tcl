@@ -22,7 +22,10 @@ namespace eval SWidget {
 namespace eval SWidget {
   proc ProtectedCallback {instance args} {
     if { [info command $instance] != "" } {
-      eval $instance $args
+      if { [catch "eval $instance $args" res] } {
+        puts $res
+        puts $::errorInfo
+      }
     }
   }
 }
