@@ -32,7 +32,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include <math.h>
 #include <time.h>
-#include <itkArray.h>
+
 #include <itkImage.h>
 #include <itkOrientedImage.h>
 #include <itkImageRegionIteratorWithIndex.h>
