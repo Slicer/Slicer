@@ -4,7 +4,7 @@
 #include "vtkVolumeRenderingModule.h"
 #include "vtkSlicerVRHelper.h"
 #include <string>
-
+#include "vtkKWRange.h"
                                                                        
 
 class vtkKWHistogramSet;
@@ -44,6 +44,9 @@ public:
     }
     //vtkSetMacro(ButtonDown,int);
 
+    
+    void Cropping(int index, double min,double max);
+
 protected:
     vtkSlicerVRGrayscaleHelper(void);
     ~vtkSlicerVRGrayscaleHelper(void);
@@ -62,6 +65,9 @@ protected:
     vtkKWCheckButtonWithLabel *CB_RayCast;
     vtkKWCheckButtonWithLabel *CB_InteractiveFrameRate;
     vtkKWScaleWithLabel *SC_Framerate;
+    // Cropping GUI
+    vtkKWCheckButtonWithLabel *CB_Cropping;
+    vtkKWRange *RA_Cropping[3];
     
     
     int ScheduleMask[3];
@@ -113,5 +119,6 @@ protected:
     void AdjustMapping(void);
 
     void UpdateQualityCheckBoxes(void);
+
 };
 #endif

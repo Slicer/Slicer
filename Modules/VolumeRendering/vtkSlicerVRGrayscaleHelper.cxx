@@ -82,6 +82,14 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->MappersFrame=NULL;
     this->SavedStillRate=0;
 
+    //Cropping:
+    this->CB_Cropping=NULL;
+    for(int i=0;i<3;i++)
+    {
+        this->RA_Cropping[i]=NULL;
+    }
+    
+
 }
 
 vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
@@ -219,6 +227,23 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->CB_InteractiveFrameRate=NULL;
 
     }
+    if(this->CB_Cropping)
+    {
+        this->CB_Cropping->SetParent(NULL);
+        this->CB_Cropping->Delete();
+        this->CB_Cropping=NULL;
+    }
+    for(int i=0;i<3;i++)
+    {
+        if(this->RA_Cropping[i])
+        {
+            this->RA_Cropping[i]->SetParent(NULL);
+            this->RA_Cropping[i]->Delete();
+            this->RA_Cropping[i]=NULL;
+        }
+    }
+    //Cropping
+   
 }
 void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
@@ -312,7 +337,31 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->SC_Framerate->GetWidgetName() );
 
-    ((vtkSlicerApplication *)this->Gui->GetApplication())->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
+    this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
+
+    //Cropping
+    for(int i=0;i<3;i++)
+    {
+        this->RA_Cropping[i]=vtkKWRange::New();
+        this->RA_Cropping[i]->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+        this->RA_Cropping[i]->Create();
+        this->RA_Cropping[i]->SymmetricalInteractionOff();
+        std::stringstream str;
+        str<<"Cropping ";
+        str<<i;
+        this->RA_Cropping[i]->SetCommand(this,str.str().c_str());
+        this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->RA_Cropping[i]->GetWidgetName());
+    }
+    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+    this->RA_Cropping[0]->SetLabelText("A<->P");
+    this->RA_Cropping[0]->SetWholeRange(iData->GetOrigin()[0],iData->GetDimensions()[0]);
+    this->RA_Cropping[0]->SetRange(iData->GetOrigin()[0],iData->GetDimensions()[0]);
+    this->RA_Cropping[1]->SetLabelText("I<->S");
+    this->RA_Cropping[1]->SetWholeRange(iData->GetOrigin()[1],iData->GetDimensions()[1]);
+    this->RA_Cropping[1]->SetRange(iData->GetOrigin()[1],iData->GetDimensions()[1]);
+    this->RA_Cropping[2]->SetLabelText("L<->R");
+    this->RA_Cropping[2]->SetWholeRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
+    this->RA_Cropping[2]->SetRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
 
 }
 void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
@@ -1040,4 +1089,28 @@ void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
     }
     //Check if we can activate the interactive checkbox
 
+}
+
+void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
+{
+    if(this->MapperTexture==NULL||this->MapperRaycast==NULL)
+    {
+        return;
+    }
+    this->MapperTexture->CroppingOn();
+    this->MapperTexture->SetCroppingRegionFlagsToSubVolume();
+    this->MapperRaycast->CroppingOn();
+    this->MapperRaycast->SetCroppingRegionFlagsToSubVolume();
+    //double *oldCropping=this->MapperTexture->GetCroppingRegionPlanes();
+    //oldCropping[2*index]=min;
+    //oldCropping[2*index+1]=max;
+    double oldCropping[6];
+    for(int i=0;i<3;i++)
+    {
+        oldCropping[2*i]=this->RA_Cropping[i]->GetRange()[0];
+        oldCropping[2*i+1]=this->RA_Cropping[i]->GetRange()[1];
+    }
+    this->MapperRaycast->SetCroppingRegionPlanes(oldCropping);
+    this->MapperTexture->SetCroppingRegionPlanes(oldCropping);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 }
