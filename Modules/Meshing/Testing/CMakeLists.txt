@@ -19,8 +19,8 @@ ENDIF(ITK_BINARY_DIR)
 
 # Configure Dart testing support.  This should be done before any
 # MESSAGE(FATAL_ERROR ...) commands are invoked.
-INCLUDE(${CMAKE_ROOT}/Modules/Dart.cmake)
-ENABLE_TESTING()
+#INCLUDE(${CMAKE_ROOT}/Modules/Dart.cmake)
+#ENABLE_TESTING()
 
 
 ############################################################################
