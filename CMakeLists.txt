@@ -276,6 +276,9 @@ INSTALL(
   DESTINATION lib
 )
 
+# setup file for setting custom ctest vars
+CONFIGURE_FILE(${Slicer3_SOURCE_DIR}/CTestCustom.cmake.in
+  ${Slicer3_BINARY_DIR}/CTestCustom.cmake @ONLY)
 
 # Set up for building against a Slicer3 build tree and a Slicer3 installation 
 #
