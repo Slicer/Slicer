@@ -48,6 +48,8 @@ vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
   this->RegistrationAtlasVolumeKey = NULL;
   this->RegistrationTargetVolumeKey = NULL;
 
+  this->EnableTargetToTargetRegistration = 0;
+
   this->WorkingDirectory = NULL;
 
   this->SaveIntermediateResults       = 0;
@@ -149,6 +151,9 @@ void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
            ? this->RegistrationTargetVolumeKey 
            : "") << "\" ";
 
+    of << indent << "EnableTargetToTargetRegistration=\""
+       << this->EnableTargetToTargetRegistration << "\" ";
+
     of << indent << "SaveIntermediateResults=\"" 
        << this->SaveIntermediateResults << "\" ";
     of << indent << "SaveSurfaceModels=\"" 
@@ -182,6 +187,12 @@ void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
         vtksys_stl::stringstream ss;
         ss << val;
         ss >> this->NumberOfTargetInputChannels;
+      }
+    else if (!strcmp(key, "EnableTargetToTargetRegistration"))
+      {
+        vtksys_stl::stringstream ss;
+        ss << val;
+        ss >> this->EnableTargetToTargetRegistration;
       }
     else if (!strcmp(key, "WorkingDirectory"))
       {
@@ -285,6 +296,7 @@ void vtkMRMLEMSGlobalParametersNode::Copy(vtkMRMLNode *rhs)
     (vtkMRMLEMSGlobalParametersNode*) rhs;
 
   this->NumberOfTargetInputChannels = node->NumberOfTargetInputChannels;
+  this->SetEnableTargetToTargetRegistration(node->EnableTargetToTargetRegistration);
   this->SetWorkingDirectory(node->WorkingDirectory);
 
   this->SetSegmentationBoundaryMin(node->SegmentationBoundaryMin);
@@ -312,6 +324,9 @@ void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os,
 
   os << indent << "NumberOfTargetInputChannels: "
      << this->NumberOfTargetInputChannels << "\n";
+
+  os << indent << "EnableTargetToTargetRegistration: "
+     << (this->EnableTargetToTargetRegistration ? "true" : "false") << "\n";
 
   os << indent << "WorkingDirectory: " 
      << (this->WorkingDirectory ? this->WorkingDirectory : "(none)") << "\n";

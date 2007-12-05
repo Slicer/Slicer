@@ -292,6 +292,10 @@ public:
   // index in [0, #selected volumes)
   virtual vtkIdType   GetTargetSelectedVolumeNthID(int n); 
   virtual const char* GetTargetSelectedVolumeNthMRMLID(int n); 
+  //BTX
+  virtual void
+    ResetTargetSelectedVolumes(const std::vector<vtkIdType>& volumeID);
+  //ETX
   virtual void        AddTargetSelectedVolume(vtkIdType volumeID);
   virtual void        AddTargetSelectedVolumeByMRMLID(char* mrmlID);
   virtual void        RemoveTargetSelectedVolume(vtkIdType volumeID);
@@ -387,6 +391,9 @@ public:
 
   virtual int       GetRegistrationDeformableType();
   virtual void      SetRegistrationDeformableType(int deformableType);
+
+  virtual int       GetEnableTargetToTargetRegistration();
+  virtual void      SetEnableTargetToTargetRegistration(int enable);
 
   //BTX
   enum

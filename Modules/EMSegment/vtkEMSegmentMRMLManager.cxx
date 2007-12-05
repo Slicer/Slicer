@@ -1761,6 +1761,55 @@ GetTargetSelectedVolumeNthMRMLID(int n)
 //----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
+ResetTargetSelectedVolumes(const std::vector<vtkIdType>& volumeIDs)
+{
+  int targetOldNumImages = this->GetTargetNode()->GetNumberOfVolumes();
+
+  //
+  // remove the old volumes from the target node and add the new volumes
+  this->GetTargetNode()->RemoveAllVolumes();
+  for (unsigned int i = 0; i < volumeIDs.size(); ++i)
+    {
+    vtkMRMLVolumeNode* volumeNode = this->GetVolumeNode(volumeIDs[i]);
+    if (volumeNode == NULL)
+      {
+      vtkErrorMacro("Invalid volume ID: " << volumeIDs[i]);
+      return;
+      }
+
+    vtkstd::string name = volumeNode->GetName();
+    if (name.empty())
+      {
+      name = volumeNode->GetID();
+      }
+    this->GetTargetNode()->AddVolume(name.c_str(), volumeNode->GetID());
+    }
+
+  //
+  // propogate change if the number of channels is different
+  int targetNewNumImages = this->GetTargetNode()->GetNumberOfVolumes();
+
+  if (targetNewNumImages > targetOldNumImages)
+    {
+    int numAddedImages = targetNewNumImages - targetOldNumImages;
+    for (int i = 0; i < numAddedImages; ++i)
+      {
+      this->PropogateAdditionOfSelectedTargetImage();
+      }
+    }
+  else if (targetNewNumImages < targetOldNumImages)
+    {
+    int numRemovedImages = targetOldNumImages - targetNewNumImages;
+    for (int i = 0; i < numRemovedImages; ++i)
+      {
+      this->PropogateRemovalOfSelectedTargetImage(targetOldNumImages-1-i);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
 AddTargetSelectedVolume(vtkIdType volumeID)
 {
   vtkMRMLVolumeNode* volumeNode = this->GetVolumeNode(volumeID);
@@ -2509,6 +2558,27 @@ SetRegistrationInterpolationType(int interpolationType)
     {
     this->GetGlobalParametersNode()->
       SetRegistrationInterpolationType(interpolationType);  
+    }
+}
+
+//----------------------------------------------------------------------------  
+int
+vtkEMSegmentMRMLManager::
+GetEnableTargetToTargetRegistration()
+{
+  return this->GetGlobalParametersNode() ? this->GetGlobalParametersNode()->
+    GetEnableTargetToTargetRegistration() : 0;
+}
+
+//----------------------------------------------------------------------------  
+void
+vtkEMSegmentMRMLManager::
+SetEnableTargetToTargetRegistration(int enable)
+{
+  if (this->GetGlobalParametersNode())
+    {
+    this->GetGlobalParametersNode()->
+      SetEnableTargetToTargetRegistration(enable);
     }
 }
 

@@ -101,6 +101,9 @@ public:
     SetNthIntensityNormalizationParametersNodeID(int n, 
                                                  const char* nodeID);
 
+  vtkSetMacro(EnableTargetToTargetRegistration, int);
+  vtkGetMacro(EnableTargetToTargetRegistration, int);
+
 protected:
   vtkMRMLEMSGlobalParametersNode();
   ~vtkMRMLEMSGlobalParametersNode();
@@ -125,6 +128,8 @@ protected:
   int                                 SegmentationBoundaryMax[3];
 
   int                                 NumberOfTargetInputChannels;
+
+  int                                 EnableTargetToTargetRegistration;
 
   //BTX
   typedef vtkstd::vector<std::string>  IntensityNormalizationParameterListType;
