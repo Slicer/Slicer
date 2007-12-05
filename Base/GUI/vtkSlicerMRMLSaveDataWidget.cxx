@@ -128,7 +128,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
            fileNameString.find(".mrml",0) != fileNameString.length() - 5 )
         {
         fileNameString = fileNameString + vtksys_stl::string(".mrml");
-        //this->SaveSceneButton->GetWidget()->SetFileName(fileNameString.c_str());
+        this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetFileName(fileNameString.c_str());
         }
 
       // save the file name in the label text and set the data directory
@@ -709,6 +709,7 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
     if ( this->MRMLScene->GetURL() )
       {
       this->SaveSceneButton->GetWidget()->SetInitialFileName( this->MRMLScene->GetURL() );
+      this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetFileName( this->MRMLScene->GetURL() );
       this->SaveSceneButton->GetWidget()->SetText( this->MRMLScene->GetURL() );
       vtkStringArray *fileNames = this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->GetFileNames();
       fileNames->Reset();
