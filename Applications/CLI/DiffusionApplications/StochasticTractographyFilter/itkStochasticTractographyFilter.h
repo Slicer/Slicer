@@ -15,6 +15,7 @@
 #include "itkDiffusionTensor3D.h"
 #include "itkPolyLineParametricPath.h"
 #include "itkImage.h"
+#include "itkProgressReporter.h"
 #include <vector>
 
 namespace itk{
@@ -302,6 +303,7 @@ protected:
   vnl_random m_RandomGenerator;
   
   std::vector< typename InputDWIImageType::IndexType > m_SeedIndices;
+  ProgressReporter* m_progress;
 };
 
 }

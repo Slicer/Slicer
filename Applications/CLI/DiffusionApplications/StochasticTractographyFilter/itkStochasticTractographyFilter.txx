@@ -16,6 +16,7 @@
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
+#include "itkProgressReporter.h"
 
 namespace itk{
 
@@ -26,7 +27,7 @@ StochasticTractographyFilter< TInputDWIImage, TInputWhiteMatterProbabilityImage,
   m_SampleDirections(NULL), m_A(NULL), m_AApinverse(NULL), m_LikelihoodCachePtr(NULL),
   m_MaxLikelihoodCacheSize(0), m_CurrentLikelihoodCacheElements(0), m_StepSize(0), m_Gamma(0),
   m_ClockPtr(NULL), m_TotalDelegatedTracts(0), m_OutputContinuousTractContainer(NULL),
-  m_OutputDiscreteTractContainer(NULL){
+  m_OutputDiscreteTractContainer(NULL),m_progress(NULL){
   this->m_MeasurementFrame.set_identity();
   this->SetNumberOfRequiredInputs(3); //Filter needs a DWI image, Mask Image, ROI Image
   
@@ -539,7 +540,6 @@ template< class TInputDWIImage, class TInputWhiteMatterProbabilityImage, class T
 void
 StochasticTractographyFilter< TInputDWIImage, TInputWhiteMatterProbabilityImage, TInputROIImage >
 ::GenerateData(){
-  std::cout << "Generate Data\n";
   //Generate the tracts
   //allocate tractcontainer
   this->AllocateOutputs();
@@ -594,13 +594,16 @@ StochasticTractographyFilter< TInputDWIImage, TInputWhiteMatterProbabilityImage,
   this->GetMultiThreader()->SetSingleMethod( StochasticTractGenerationCallback,
     &data );
   this->GetMultiThreader()->SetNumberOfThreads(this->GetNumberOfThreads());
-  std::cout<<"Number of Threads: " << this->GetMultiThreader()->GetNumberOfThreads() << std::endl; 
+  //std::cout<<"Number of Threads: " << this->GetMultiThreader()->GetNumberOfThreads() << std::endl; 
+  
+  m_progress = new ProgressReporter( this, 0, this->m_SeedIndices.size() );
   
   //start the multithreaded execution
   this->GetMultiThreader()->SingleMethodExecute();
   std::cout<< "CurrentLikelihoodCacheElements: " << 
     this->m_CurrentLikelihoodCacheElements << std::endl; 
-
+  
+  delete m_progress;
 }
 
 template< class TInputDWIImage, class TInputWhiteMatterProbabilityImage, class TInputROIImage >
@@ -696,7 +699,8 @@ StochasticTractographyFilter< TInputDWIImage, TInputWhiteMatterProbabilityImage,
       break;
     }
     else{
-      std::cout << "Remaining Seed Voxels:" << this->m_SeedIndices.size() << std::endl;
+      //std::cout << "Remaining Seed Voxels:" << this->m_SeedIndices.size() << std::endl;
+      this->m_progress->CompletedPixel();
       this->m_TotalDelegatedTracts = 0;
       this->m_SeedIndices.pop_back();
     }

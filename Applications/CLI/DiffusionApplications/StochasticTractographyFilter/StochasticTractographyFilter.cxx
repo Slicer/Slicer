@@ -10,7 +10,6 @@
 #include "itkImageRegionConstIterator.h"
 #include "StochasticTractographyFilterCLP.h"
 #include "itkTensorFractionalAnisotropyImageFilter.h"
-#include "itkPathIterator.h"
 #include <string>
 #include "itkShiftScaleImageFilter.h"
 #include "vtkXMLPolyDataWriter.h"
@@ -18,6 +17,36 @@
 #include "vtkCellArray.h"
 #include "vtkPoints.h" 
 #include "vtkZLibDataCompressor.h"
+#include "vtkCleanPolyData.h"
+//#include "itkCommand.h"
+#include "itkXMLFilterWatcher.h"
+
+/*
+class CommandProgressUpdate:public itk::Command{
+public:
+  typedef CommandProgressUpdate Self;
+  typedef itk::Command  Superclass;
+  typedef itk::SmartPointer<Self> Pointer;
+  itkNewMacro( Self );
+  
+protected:
+  CommandProgressUpdate() {};
+  typedef itk::StochasticTractographyFilter STFilterType;
+  typedef const STFilterType* STFilterPointer;
+  
+  void Execute( itk::Object* caller, const itk::EventObject& event ){
+    Execute( (const itk::Object*)caller, event);
+  }
+  void Execute( itk::Object* object, const itk::EventObject& event ){
+    STFilterPointer stfilter = dynamic_cast< STFilterPointer >( object ):
+    
+    if( !itk::ProgressEvent().CheckEvent( &event ) ){
+      return;
+    }
+    std::cout << stfilter->GetSomething
+  }
+};
+*/
 
 int main(int argc, char* argv[]){
   PARSE_ARGS;
@@ -175,6 +204,8 @@ int main(int argc, char* argv[]){
   stfilterPtr->SetGamma( gamma );
   if(totalthreads!=0) stfilterPtr->SetNumberOfThreads( totalthreads );
   
+  itk::XMLFilterWatcher filterwatcher( stfilterPtr );
+  
   //Run the filter
   stfilterPtr->Update();
   
@@ -213,10 +244,15 @@ int main(int argc, char* argv[]){
       vtktractarray->InsertCellPoint(points->GetNumberOfPoints()-1);
     }
   }        
-  
   //finish up the vtk polydata
   vtktracts->SetPoints( points );
   vtktracts->SetLines( vtktractarray );
+  
+  //clean up the poly data to remove redundant points
+  vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
+  cleaner->SetInput( vtktracts );
+  cleaner->SetAbsoluteTolerance( 0.0 );
+  cleaner->Update();
   
   //output the vtk tract container
   vtkZLibDataCompressor* compressor = vtkZLibDataCompressor::New();
@@ -224,7 +260,7 @@ int main(int argc, char* argv[]){
   tractswriter->SetCompressor( compressor );
   //tractswriter->SetDataModeToBinary();
   tractswriter->EncodeAppendedDataOff();
-  tractswriter->SetInput( vtktracts );
+  tractswriter->SetInput( cleaner->GetOutput() );
   tractswriter->SetFileName( tractsfilename.c_str() );
   tractswriter->Write();
   

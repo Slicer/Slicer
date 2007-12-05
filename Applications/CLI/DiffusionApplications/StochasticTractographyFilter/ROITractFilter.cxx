@@ -11,6 +11,7 @@
 #include "vtkPoints.h" 
 #include "vtkZLibDataCompressor.h"
 #include "vtkXMLPolyDataReader.h"
+#include "vtkCleanPolyData.h"
 
 int main(int argc, char* argv[]){
   PARSE_ARGS;
@@ -44,12 +45,12 @@ int main(int argc, char* argv[]){
   vtkPoints* points = tractsreader->GetOutput()->GetPoints();
   loadedtracts->InitTraversal();
   while( loadedtracts->GetNextCell( npts, pts ) ){
-    int currentpointID=0;
+    int currentpointIDindex=0;
     bool roifound=false;
     for(int currentlabel=0; currentlabel<roilabels.size(); currentlabel++){
       roifound=false;
-      while(currentpointID<npts){
-        double* vertex = points->GetPoint( pts[currentpointID] );
+      while(currentpointIDindex<npts){
+        double* vertex = points->GetPoint( pts[currentpointIDindex] );
         index[0]=static_cast<long int>(vertex[0]);
         index[1]=static_cast<long int>(vertex[1]);
         index[2]=static_cast<long int>(vertex[2]);
@@ -58,14 +59,19 @@ int main(int argc, char* argv[]){
           roifound=true;
           break;
         }
-        currentpointID++;
+        currentpointIDindex++;
       }
       if(!roifound){
         break;
       } 
     }
     if(roifound){
-      filteredtractarray->InsertNextCell( npts, pts );
+      if(cuttractsswitch){
+        filteredtractarray->InsertNextCell( currentpointIDindex+1, pts );
+      }
+      else{
+        filteredtractarray->InsertNextCell( npts, pts );
+      }
     }
   }
   
@@ -73,13 +79,19 @@ int main(int argc, char* argv[]){
   filteredtracts->SetPoints( tractsreader->GetOutput()->GetPoints() );
   filteredtracts->SetLines( filteredtractarray );
   
+  //clean up the poly data to remove redundant points
+  vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
+  cleaner->SetInput( filteredtracts );
+  cleaner->SetAbsoluteTolerance( 0.0 );
+  cleaner->Update();
+  
   std::cout<<"Total Output Tracts: "<<filteredtracts->GetNumberOfCells()<<std::endl;
   //output the vtk tract container
   vtkZLibDataCompressor* compressor = vtkZLibDataCompressor::New();
   vtkXMLPolyDataWriter* tractswriter = vtkXMLPolyDataWriter::New();
   tractswriter->SetCompressor( compressor );
   //tractswriter->SetDataModeToBinary();
-  tractswriter->SetInput( filteredtracts );
+  tractswriter->SetInput( cleaner->GetOutput() );
   tractswriter->SetFileName( outputtractsfilename.c_str() );
   tractswriter->Write();
   

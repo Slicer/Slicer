@@ -7,7 +7,7 @@
   </description>
   <version>1.0</version>
   <license></license>
-  <contributor>Tri Ngo</contributor>
+  <contributor>Tri Ngo (tringo@gmail.com)</contributor>
 
   <parameters>
     <label>
@@ -21,24 +21,21 @@
       <name>roilabels</name>
       <flag>l</flag>
       <description>
-      Labels numbers for the ROIs that will be used to filter the tracts
+      Labels numbers, seperated by commas, for the ROIs that will be used to filter the tracts.  The tracts must pass through the ROI's in this specific order.
       </description>
       <label>ROI Label Numbers</label>
       <default>1</default>
     </integer-vector>
 
-    <integer>
-      <name>totalthreads</name>
-      <flag>j</flag>
-      <longflag>totalthreads</longflag>
-      <description>Total number of threads to use.  Default value of zero sets number of threads to number of CPUs</description>
-      <label>Total Threads</label>
-      <default>0</default>
-      <constraints>
-        <minimum>0</minimum>
-        <step>1</step>
-      </constraints>
-    </integer>
+    <boolean>
+      <name>cuttractsswitch</name>
+      <flag>c</flag>
+      <default>false</default>
+      <longflag>cuttractsswitch</longflag>
+      <label>Cut Tracts</label>
+      <description>Cut the filtered tract so that it ends when it reaches the target ROI.</description>
+    </boolean>
+  
   </parameters>
 
   <parameters>

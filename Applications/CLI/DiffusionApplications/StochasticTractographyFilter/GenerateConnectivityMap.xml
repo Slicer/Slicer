@@ -8,7 +8,7 @@
   </description>
   <version>1.0</version>
   <license></license>
-  <contributor>Tri Ngo</contributor>
+  <contributor>Tri Ngo (tringo@gmail.com)</contributor>
 
   <parameters>
     <label>
@@ -17,19 +17,6 @@
     <description>
     Parameters for the Stochastic Tractography algorithm
     </description>
-
-    <integer>
-      <name>totalthreads</name>
-      <flag>j</flag>
-      <longflag>totalthreads</longflag>
-      <description>Total number of threads to use.  Default value of zero sets number of threads to number of CPUs</description>
-      <label>Total Threads</label>
-      <default>0</default>
-      <constraints>
-        <minimum>0</minimum>
-        <step>1</step>
-      </constraints>
-    </integer>
   </parameters>
 
   <parameters>

@@ -35,7 +35,7 @@ INCLUDE_DIRECTORIES( ${CLI_SOURCE_DIR} )
 SET (CLP StochasticTractographyFilter)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h ${Slicer3_SOURCE_DIR}/Resources/MITLogo.h)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP}
     ITKIO
@@ -43,6 +43,7 @@ TARGET_LINK_LIBRARIES (${CLP}
     ITKCommon
     vtkIO
     vtkCommon
+    vtkGraphics
     ModuleDescriptionParser
     # MRML
 )
@@ -50,7 +51,7 @@ TARGET_LINK_LIBRARIES (${CLP}
 SET (CLP GenerateConnectivityMap)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h ${Slicer3_SOURCE_DIR}/Resources/MITLogo.h)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP}
     ITKIO
@@ -65,7 +66,7 @@ TARGET_LINK_LIBRARIES (${CLP}
 SET (CLP ROITractFilter)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h ${Slicer3_SOURCE_DIR}/Resources/MITLogo.h)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP}
     ITKIO
@@ -73,6 +74,7 @@ TARGET_LINK_LIBRARIES (${CLP}
     ITKCommon
     vtkIO
     vtkCommon
+    vtkGraphics
     ModuleDescriptionParser
     # MRML
 )
