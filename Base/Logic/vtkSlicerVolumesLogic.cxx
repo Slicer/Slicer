@@ -607,7 +607,9 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode*
 vtkSlicerVolumesLogic::
-CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, char *name)
+CloneVolume (vtkMRMLScene *scene, 
+             vtkMRMLVolumeNode *volumeNode, 
+             const char *name)
 {
   if ( volumeNode == NULL ) 
     {

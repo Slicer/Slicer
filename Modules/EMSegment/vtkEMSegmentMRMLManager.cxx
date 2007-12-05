@@ -3097,7 +3097,7 @@ GetEMSNode()
 //----------------------------------------------------------------------------
 vtkMRMLEMSTargetNode*
 vtkEMSegmentMRMLManager::
-CloneTargetNode(vtkMRMLEMSTargetNode* targetNode, char* name)
+CloneTargetNode(vtkMRMLEMSTargetNode* targetNode, const char* name)
 {
   if (targetNode == NULL)
     {
@@ -3136,7 +3136,7 @@ CloneTargetNode(vtkMRMLEMSTargetNode* targetNode, char* name)
 //----------------------------------------------------------------------------
 vtkMRMLEMSAtlasNode*
 vtkEMSegmentMRMLManager::
-CloneAtlasNode(vtkMRMLEMSAtlasNode* atlasNode, char* name)
+CloneAtlasNode(vtkMRMLEMSAtlasNode* atlasNode, const char* name)
 {
   if (atlasNode == NULL)
     {

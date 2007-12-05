@@ -481,10 +481,10 @@ public:
   virtual vtkMRMLEMSWorkingDataNode*      GetWorkingDataNode();
 
   virtual vtkMRMLEMSTargetNode* CloneTargetNode(vtkMRMLEMSTargetNode* target,
-                                                char* name);
+                                                const char* name);
 
   virtual vtkMRMLEMSAtlasNode*  CloneAtlasNode(vtkMRMLEMSAtlasNode* target,
-                                               char* name);
+                                               const char* name);
 
 private:
   vtkEMSegmentMRMLManager();
