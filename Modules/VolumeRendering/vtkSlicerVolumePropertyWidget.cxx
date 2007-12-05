@@ -281,6 +281,7 @@ void vtkSlicerVolumePropertyWidget::CreateWidget()
 
   this->EditorFrame->SetParent(this);
   this->EditorFrame->Create();
+  this->EditorFrame->AllowFrameToCollapseOff();
   this->EditorFrame->SetLabelText(
     ks_("Volume Property Editor|Title|Volume Appearance Settings"));
 

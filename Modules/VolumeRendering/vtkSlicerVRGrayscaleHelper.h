@@ -17,6 +17,7 @@ class vtkKWMenuButtonWithSpinButtonsWithLabel;
 class vtkKWScaleWithLabel;
 class vtkKWCheckButtonWithLabel;
 class vtkKWFrameWithLabel;
+class vtkKWNotebook;
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
@@ -60,6 +61,7 @@ protected:
     //GUI1
     //vtkKWMenuButtonWithSpinButtonsWithLabel *MB_Quality;
     vtkKWFrameWithLabel *MappersFrame;
+    vtkKWNotebook *NB_Details;
     vtkKWCheckButtonWithLabel *CB_TextureLow;
     vtkKWCheckButtonWithLabel *CB_TextureHigh;
     vtkKWCheckButtonWithLabel *CB_RayCast;

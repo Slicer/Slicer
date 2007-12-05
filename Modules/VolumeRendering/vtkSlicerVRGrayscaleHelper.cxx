@@ -29,6 +29,7 @@
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWFrameWithLabel.h"
+#include "vtkKWNotebook.h"
 
 //Compiler
 #include <math.h>
@@ -88,7 +89,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     {
         this->RA_Cropping[i]=NULL;
     }
-    
+
 
 }
 
@@ -242,8 +243,13 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
             this->RA_Cropping[i]=NULL;
         }
     }
-    //Cropping
-   
+   if(this->NB_Details)
+    {
+        this->Script("pack forget %s",this->NB_Details->GetWidgetName());
+        this->NB_Details->SetParent(NULL);
+        this->NB_Details->Delete();
+        this->NB_Details=NULL;
+    }
 }
 void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
@@ -256,8 +262,19 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     Superclass::Init(gui);
     this->Gui->Script("bind all <Any-ButtonPress> {%s SetButtonDown 1}",this->GetTclName());
     this->Gui->Script("bind all <Any-ButtonRelease> {%s SetButtonDown 0}",this->GetTclName());
+
+    //Create a notebook
+    this->NB_Details=vtkKWNotebook::New();
+    this->NB_Details->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+    this->NB_Details->Create();
+    this->NB_Details->AddPage("Mapping");
+    this->NB_Details->AddPage("Performance");
+    this->NB_Details->AddPage("Cropping");
+    this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
+        this->NB_Details->GetWidgetName());
+
     this->SVP_VolumeProperty=vtkSlicerVolumePropertyWidget::New();
-    this->SVP_VolumeProperty->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+    this->SVP_VolumeProperty->SetParent(this->NB_Details->GetFrame("Mapping"));
     this->SVP_VolumeProperty->Create();
     this->SVP_VolumeProperty->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
     this->Histograms=vtkKWHistogramSet::New();
@@ -282,8 +299,9 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     gradHisto->Delete(); 
 
     this->MappersFrame=vtkKWFrameWithLabel::New();
-    this->MappersFrame->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+    this->MappersFrame->SetParent(this->NB_Details->GetFrame("Performance"));
     this->MappersFrame->Create();
+    this->MappersFrame->AllowFrameToCollapseOff();
     this->MappersFrame->SetLabelText("Quality / Performance");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         MappersFrame->GetWidgetName() );
@@ -340,7 +358,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
 
     this->CreateCropping();
-   
+
 
 }
 void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
@@ -1107,7 +1125,7 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
         }
         if(points[position]<pointsOrigin[position])
         {
-                    oldCropping[2*position]=points[position];
+            oldCropping[2*position]=points[position];
             oldCropping[2*position+1]=pointsOrigin[position];
         }
         else
@@ -1120,15 +1138,24 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
     this->MapperRaycast->SetCroppingRegionPlanes(oldCropping);
     this->MapperTexture->SetCroppingRegionPlanes(oldCropping);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+    matrix->Delete();
 }
 
 void vtkSlicerVRGrayscaleHelper::CreateCropping()
 {
+    vtkKWFrameWithLabel *croppingFrame=vtkKWFrameWithLabel::New();
+    croppingFrame->SetParent(this->NB_Details->GetFrame("Cropping"));
+    croppingFrame->Create();
+    croppingFrame->AllowFrameToCollapseOff();
+    croppingFrame->SetLabelText("Cropping");
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+        croppingFrame->GetWidgetName() );
+
     //Build GUI
     for(int i=0;i<3;i++)
     {
         this->RA_Cropping[i]=vtkKWRange::New();
-        this->RA_Cropping[i]->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+        this->RA_Cropping[i]->SetParent(croppingFrame->GetFrame());
         this->RA_Cropping[i]->Create();
         this->RA_Cropping[i]->SymmetricalInteractionOff();
         std::stringstream str;
@@ -1165,8 +1192,8 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
         //check if position is negativ
         if(points[position]<0)
         {
-        this->RA_Cropping[position]->SetWholeRange(pointsOrigin[position],points[position]);
-        this->RA_Cropping[position]->SetRange(pointsOrigin[position],points[position]);
+            this->RA_Cropping[position]->SetWholeRange(pointsOrigin[position],points[position]);
+            this->RA_Cropping[position]->SetRange(pointsOrigin[position],points[position]);
         }
 
         else
@@ -1178,4 +1205,6 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->RA_Cropping[0]->SetLabelText("R<->L");
     this->RA_Cropping[1]->SetLabelText("A<->P");
     this->RA_Cropping[2]->SetLabelText("S<->I");
+    croppingFrame->Delete();
+    matrix->Delete();
 }
