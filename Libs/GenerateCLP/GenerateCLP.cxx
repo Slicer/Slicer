@@ -294,8 +294,8 @@ void GenerateSplitFilenames(std::ofstream &sout)
   sout << "splitFilenames (const std::string &text," << std::endl;
   sout << "                std::vector<std::string> &words)" << std::endl;
   sout << "{" << std::endl;
-  sout << "  int n = text.length();" << std::endl;
-  sout << "  int start, stop, startq, stopq;" << std::endl;
+  sout << "  size_t n = text.length();" << std::endl;
+  sout << "  size_t start, stop, startq, stopq;" << std::endl;
   sout << "  bool quoted;" << std::endl;
   sout << "  std::string comma(\",\");" << std::endl;
   sout << "  std::string quote(\"\\\"\");" << std::endl;
@@ -772,11 +772,11 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   sout << "  {" << EOL << std::endl;
   sout << "    std::string fullDescription(\"Description: \");" << EOL << std::endl;
   sout << "    fullDescription += \"" << module.GetDescription() << "\";" << EOL << std::endl;
-  sout << "    if (\"" << module.GetContributor() << "\" != \"\")" << EOL << std::endl;
+  sout << "    if (!std::string(\"" << module.GetContributor() << "\").empty())" << EOL << std::endl;
   sout << "      {" << EOL << std::endl;
   sout << "      fullDescription += \"\\nAuthor(s): " << module.GetContributor() << "\";" << EOL << std::endl;
   sout << "      }" << EOL << std::endl;
-  sout << "    if (\"" << module.GetAcknowledgements() << "\" != \"\")" << EOL << std::endl;
+  sout << "    if (!std::string(\"" << module.GetAcknowledgements() << "\").empty())" << EOL << std::endl;
   sout << "      {" << EOL << std::endl;
   sout << "      fullDescription += \"\\nAcknowledgements: " << module.GetAcknowledgements() << "\";" << EOL << std::endl;
   sout << "      }" << EOL << std::endl;
