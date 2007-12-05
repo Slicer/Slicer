@@ -6,6 +6,7 @@
 #include "vtkKWFrame.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWListBoxToListBoxSelectionEditor.h"
+#include "vtkKWMessageDialog.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
 #include "vtkKWListBoxWithScrollbarsWithLabel.h"
@@ -257,6 +258,32 @@ void vtkEMSegmentIntensityImagesStep::
       }
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentIntensityImagesStep::Validate()
+{
+  vtkKWWizardWorkflow *wizard_workflow = 
+    this->GetGUI()->GetWizardWidget()->GetWizardWorkflow();
+
+  int number_of_target_images_changed = 0; // to be completed by Brad
+
+  if (number_of_target_images_changed &&
+      !vtkKWMessageDialog::PopupYesNo( 
+        this->GetApplication(), 
+        NULL, 
+        "Change the number of target images?",
+        "Are you sure you want to change the number of target images?",
+        vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
+    {
+    wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
+    wizard_workflow->ProcessInputs();
+    }
+  else
+    {
+    this->Superclass::Validate();
+    }
+}
+
 
 //----------------------------------------------------------------------------
 void vtkEMSegmentIntensityImagesStep::PrintSelf(ostream& os, vtkIndent indent)

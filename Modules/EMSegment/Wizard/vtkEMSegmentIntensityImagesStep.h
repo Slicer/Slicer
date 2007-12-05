@@ -21,6 +21,10 @@ public:
   // Callbacks.
   virtual void IntensityImagesTargetSelectionChangedCallback();
 
+  // Description:
+  // Reimplement the superclass's method.
+  virtual void Validate();
+
 protected:
   vtkEMSegmentIntensityImagesStep();
   ~vtkEMSegmentIntensityImagesStep();
