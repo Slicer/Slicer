@@ -229,12 +229,15 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
       message->Invoke();
       message->Delete();
       }
-    if (this->SaveSceneCheckBox->GetSelectedState())
+    else
       {
-      this->SaveScene();
+      if (this->SaveSceneCheckBox->GetSelectedState())
+        {
+        this->SaveScene();
+        }
+      this->SaveDialog->OK();
+      this->InvokeEvent(vtkSlicerMRMLSaveDataWidget::DataSavedEvent);
       }
-    this->SaveDialog->OK();
-    this->InvokeEvent(vtkSlicerMRMLSaveDataWidget::DataSavedEvent);
     }
    else if (this->CancelButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
     { 
