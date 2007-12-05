@@ -119,6 +119,7 @@ protected:
     void AdjustMapping(void);
 
     void UpdateQualityCheckBoxes(void);
+    void CreateCropping(void);
 
 };
 #endif
