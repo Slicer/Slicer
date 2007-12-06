@@ -97,7 +97,7 @@
       
     <double>
       <name>ClTh</name>
-      <label>Cl Threshold</label>
+      <label>Linear Measurement Start Threshold</label>
       <flag>-c</flag>
       <longflag>--clthreshold</longflag>
       <description>Minimum Linear Measurement for the seeding to start.</description>
@@ -150,7 +150,6 @@
       <longflag>--stoppingmode</longflag>      	
       <default>LinearMeasurement</default>
       <element>LinearMeasurement</element>
-      <element>PlanarMeasurement</element>
       <element>FractionalAnisotropy</element>
     </string-enumeration>
     
@@ -164,6 +163,20 @@
       <constraints>
         <minimum>0</minimum>
 	<maximum>1</maximum>
+	<step>0.1</step>
+      </constraints>
+    </double>  	
+
+    <double>
+      <name>StoppingCurvature</name>
+      <label>Stopping Track Curvature</label>
+      <description>Tractography will stop if radius of curvature becomes smaller than this number units are degrees per mm</description>
+      <flag>-t</flag>
+      <longflag>--stoppingcurvature</longflag>
+      <default>0.8</default>
+      <constraints>
+        <minimum>0</minimum>
+	<maximum>10</maximum>
 	<step>0.1</step>
       </constraints>
     </double>  	

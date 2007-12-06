@@ -24,6 +24,9 @@
 
 class vtkKWFrame;
 class vtkSlicerNodeSelectorWidget;
+class vtkKWCheckButton;
+class vtkKWMenuButtonWithLabel;
+class vtkKWScaleWithLabel;
 
 class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : public vtkSlicerModuleGUI
 {
@@ -98,6 +101,13 @@ protected:
   vtkSlicerNodeSelectorWidget* FiducialSelector;
   vtkSlicerNodeSelectorWidget* OutFiberSelector;
   
+  vtkKWMenuButtonWithLabel *StoppingModeMenu;
+  vtkKWScaleWithLabel *StoppingValueScale;
+  vtkKWScaleWithLabel *StoppingCurvatureScale;
+  vtkKWScaleWithLabel *IntegrationStepLengthScale;
+  
+  vtkKWCheckButton *SeedButton;
+
   void SetFiducialListNode(vtkMRMLFiducialListNode* FiducialListNode);
 
   vtkMRMLFiducialListNode* FiducialListNode;

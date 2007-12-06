@@ -39,6 +39,12 @@ Version:   $Revision: 1.2 $
 
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
+#include "vtkKWMessageDialog.h"
+#include "vtkKWCheckButton.h"
+#include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWScaleWithLabel.h"
+#include "vtkKWScale.h"
+
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerNodeSelectorWidget.h"
@@ -66,6 +72,12 @@ vtkSlicerTractographyFiducialSeedingGUI::vtkSlicerTractographyFiducialSeedingGUI
   this->VolumeSelector = vtkSlicerNodeSelectorWidget::New();
   this->OutFiberSelector = vtkSlicerNodeSelectorWidget::New();
   this->FiducialSelector = vtkSlicerNodeSelectorWidget::New();
+  this->SeedButton  = vtkKWCheckButton::New();
+  this->StoppingModeMenu = vtkKWMenuButtonWithLabel::New();
+  this->StoppingValueScale = vtkKWScaleWithLabel::New();
+  this->StoppingCurvatureScale = vtkKWScaleWithLabel::New();
+  this->IntegrationStepLengthScale = vtkKWScaleWithLabel::New();
+
   this->FiducialListNode = NULL;
   
   this->StoppingMode = NULL;
@@ -96,6 +108,40 @@ vtkSlicerTractographyFiducialSeedingGUI::~vtkSlicerTractographyFiducialSeedingGU
     this->FiducialSelector->Delete();
     this->FiducialSelector = NULL;
   }
+  
+  if ( this->SeedButton ) 
+  {
+    this->SeedButton->SetParent(NULL);
+    this->SeedButton->Delete();
+    this->SeedButton = NULL;
+  }  
+  
+  if ( this->StoppingModeMenu ) 
+  {
+    this->StoppingModeMenu->SetParent(NULL);
+    this->StoppingModeMenu->Delete();
+    this->StoppingModeMenu = NULL;
+  }
+  
+  if ( this->StoppingValueScale ) 
+  {
+    this->StoppingValueScale->SetParent(NULL);
+    this->StoppingValueScale->Delete();
+    this->StoppingValueScale = NULL;
+  }
+    if ( this->StoppingCurvatureScale) 
+  {
+    this->StoppingCurvatureScale->SetParent(NULL);
+    this->StoppingCurvatureScale->Delete();
+    this->StoppingCurvatureScale = NULL;
+  }
+    if ( this->IntegrationStepLengthScale ) 
+  {
+    this->IntegrationStepLengthScale->SetParent(NULL);
+    this->IntegrationStepLengthScale->Delete();
+    this->IntegrationStepLengthScale = NULL;
+  }
+  
   vtkSetAndObserveMRMLNodeMacro(this->FiducialListNode, NULL);
   
   if (this->StoppingMode)
@@ -117,7 +163,16 @@ void vtkSlicerTractographyFiducialSeedingGUI::AddGUIObservers ( )
 
   this->OutFiberSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
-  this->FiducialSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FiducialSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand ); 
+  
+  this->SeedButton->AddObserver (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand ); 
+  
+  this->StoppingValueScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
+  this->StoppingCurvatureScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
+  this->IntegrationStepLengthScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 
 }
 
@@ -131,6 +186,15 @@ void vtkSlicerTractographyFiducialSeedingGUI::RemoveGUIObservers ( )
   this->OutFiberSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
   this->FiducialSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+
+  this->SeedButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand ); 
+
+  this->StoppingValueScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
+  this->StoppingCurvatureScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
+  this->IntegrationStepLengthScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
 
 }
 
@@ -151,7 +215,24 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
   else if (selector == this->OutFiberSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
     this->OutFiberSelector->GetSelected() != NULL) 
     { 
-    this->CreateTracts();
+    vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(this->OutFiberSelector->GetSelected());
+    
+    int createFiber = 1;
+    if (fiberNode->GetPolyData() != NULL)
+      {
+      vtkKWMessageDialog *message = vtkKWMessageDialog::New();
+      message->SetParent ( this->UIPanel->GetPageWidget ( "Tractography" ) );
+      message->SetStyleToYesNo();
+      std::string msg = "Fiber Bundle " + std::string(fiberNode->GetName()) + " contains polydata. Do you want to override it?";
+      message->SetText(msg.c_str());
+      message->Create();
+      createFiber = message->Invoke();
+      message->Delete();
+      }
+    if (createFiber)
+      {
+      this->CreateTracts();
+      }
     }
   if (selector == this->FiducialSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
     this->FiducialSelector->GetSelected() != NULL) 
@@ -166,7 +247,16 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
 
     this->CreateTracts();
     }
-  
+  else if ( this->SeedButton == vtkKWCheckButton::SafeDownCast(caller) &&
+          event == vtkKWCheckButton::SelectedStateChangedEvent ) 
+    {
+    this->CreateTracts();
+    }
+  else if (event == vtkKWScale::ScaleValueChangedEvent ) 
+    {
+    this->CreateTracts();
+    }
+
 }
 
 //---------------------------------------------------------------------------
@@ -185,9 +275,14 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessMRMLEvents ( vtkObject *cal
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
 {
+  if ( this->SeedButton->GetSelectedState() == 0) 
+    {
+    return;
+    }
   vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeSelector->GetSelected());
   vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(this->FiducialSelector->GetSelected());
   vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(this->OutFiberSelector->GetSelected());
+  
   
   // 0. check inputs
   if (volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL ||
@@ -200,6 +295,8 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
     return;
     }
     
+  vtkPolyData *oldPoly = fiberNode->GetPolyData();
+   
   vtkSeedTracts *seed = vtkSeedTracts::New();
   
   //1. Set Input
@@ -272,21 +369,21 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
   vtkHyperStreamlineDTMRI *streamer=vtkHyperStreamlineDTMRI::New();
   seed->SetVtkHyperStreamlinePointsSettings(streamer);
  
-  if (this->StoppingMode && std::string(this->StoppingMode) == std::string("LinearMeasurement"))
+  //if (this->StoppingMode && std::string(this->StoppingMode) == std::string("LinearMeasurement"))
+  if (strcmp("Linear Measurement", this->StoppingModeMenu->GetWidget()->GetValue ()) != 0)
     {
      streamer->SetStoppingModeToLinearMeasure();
     }
-  else if (this->StoppingMode && std::string(this->StoppingMode) == std::string("PlanarMeasurement"))
-    {  
-    streamer->SetStoppingModeToPlanarMeasure();
-    }
-  else if (this->StoppingMode && std::string(this->StoppingMode) == std::string("FractionalAnisotropy"))
+  //else if (this->StoppingMode && std::string(this->StoppingMode) == std::string("FractionalAnisotropy"))
+  else if (strcmp("Fractional Anisotropy", this->StoppingModeMenu->GetWidget()->GetValue ()) != 0)
     {  
     streamer->SetStoppingModeToFractionalAnisotropy();
     }
     
-  streamer->SetStoppingThreshold(this->StoppingThreshold);
-  streamer->SetMaximumPropagationDistance(this->MaximumPropagationDistance);
+  //streamer->SetMaximumPropagationDistance(this->MaximumPropagationDistance);
+  streamer->SetStoppingThreshold(this->StoppingValueScale->GetWidget()->GetValue());
+  streamer->SetRadiusOfCurvature(this->StoppingCurvatureScale->GetWidget()->GetValue());
+  streamer->SetStepLength(this->IntegrationStepLengthScale->GetWidget()->GetValue());
   
   // Temp fix to provide a scalar
   seed->GetInputTensorField()->GetPointData()->SetScalars(volumeNode->GetImageData()->GetPointData()->GetScalars());
@@ -308,21 +405,21 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
   fiberNode->SetAndObservePolyData(outFibers);
   
   vtkMRMLFiberBundleDisplayNode *dnode = fiberNode->GetLineDisplayNode();
-  if (dnode == NULL)
+  if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddLineDisplayNode();
-    dnode->SetVisibility(1);
+    dnode->SetVisibility(0);
     }
     
   dnode = fiberNode->GetTubeDisplayNode();
-  if (dnode == NULL)
+  if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddTubeDisplayNode();
-    dnode->SetVisibility(0);
+    dnode->SetVisibility(1);
     }
   
   dnode = fiberNode->GetGlyphDisplayNode();
-  if (dnode == NULL)
+  if (dnode == NULL || oldPoly == NULL)
     {
     dnode = fiberNode->AddGlyphDisplayNode();
     dnode->SetVisibility(0);
@@ -403,6 +500,55 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
                 this->OutFiberSelector->GetWidgetName());
 
+  this->StoppingModeMenu->SetParent( moduleFrame->GetFrame());
+  this->StoppingModeMenu->Create();
+  this->StoppingModeMenu->SetWidth(20);
+  this->StoppingModeMenu->SetLabelWidth(12);
+  this->StoppingModeMenu->SetLabelText("Stopping Mode:");
+  this->StoppingModeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Linear Measurement");
+  this->StoppingModeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Fractional Anisotropy");
+  this->StoppingModeMenu->GetWidget()->SetValue ( "Linear Measurement" );
+  this->Script(
+    "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    this->StoppingModeMenu->GetWidgetName());
+
+  this->StoppingValueScale->SetParent ( moduleFrame->GetFrame() );
+  this->StoppingValueScale->Create ( );
+  this->StoppingValueScale->SetLabelText("Stopping Value");
+  this->StoppingValueScale->GetWidget()->SetRange(0,1);
+  this->StoppingValueScale->GetWidget()->SetResolution(0.1);
+  this->StoppingValueScale->GetWidget()->SetValue(0.1);
+  this->StoppingValueScale->SetBalloonHelpString("Tractography will stop when the stopping measurement drops below this value.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->StoppingValueScale->GetWidgetName() );
+
+  this->StoppingCurvatureScale->SetParent ( moduleFrame->GetFrame() );
+  this->StoppingCurvatureScale->Create ( );
+  this->StoppingCurvatureScale->SetLabelText("Stopping Track Curvature");
+  this->StoppingCurvatureScale->GetWidget()->SetRange(0,10);
+  this->StoppingCurvatureScale->GetWidget()->SetResolution(0.1);
+  this->StoppingCurvatureScale->GetWidget()->SetValue(0.8);
+  this->StoppingCurvatureScale->SetBalloonHelpString("Tractography will stop if radius of curvature becomes smaller than this number units are degrees per mm.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->StoppingCurvatureScale->GetWidgetName() );
+
+  this->IntegrationStepLengthScale->SetParent ( moduleFrame->GetFrame() );
+  this->IntegrationStepLengthScale->Create ( );
+  this->IntegrationStepLengthScale->SetLabelText("Integration Step Length (mm)");
+  this->IntegrationStepLengthScale->GetWidget()->SetRange(0.1,10);
+  this->IntegrationStepLengthScale->GetWidget()->SetResolution(0.1);
+  this->IntegrationStepLengthScale->GetWidget()->SetValue(0.5);
+  this->IntegrationStepLengthScale->SetBalloonHelpString("Integration step size.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->IntegrationStepLengthScale->GetWidgetName() );
+
+  this->SeedButton->SetParent(moduleFrame->GetFrame());
+  this->SeedButton->Create();
+  this->SeedButton->SelectedStateOn();
+  this->SeedButton->SetText("Seed Tracts");
+  this->Script(
+    "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    this->SeedButton->GetWidgetName());
 
   moduleFrame->Delete();
 
