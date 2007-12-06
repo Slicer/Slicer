@@ -49,6 +49,8 @@ SET(EMSegment_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkSimonParameterReaderWriter.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkTimeDef.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageMeanIntensityNormalization.cxx
+  # Registration
+  #${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkRigidRegistrator.cxx
 # not used in current implementation---used in slicer2 modules
 #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasClass.cxx
 #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSegmenter.cxx
@@ -73,6 +75,7 @@ INCLUDE_DIRECTORIES(
   ${EMSegment_SOURCE_DIR}/Wizard
   ${EMSegment_SOURCE_DIR}/MRML
   ${EMSegment_SOURCE_DIR}/Algorithm
+  ${EMSegment_SOURCE_DIR}/Registration
   ${SlicerBase_SOURCE_DIR}
   ${SlicerBase_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
