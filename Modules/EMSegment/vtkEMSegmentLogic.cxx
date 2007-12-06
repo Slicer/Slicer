@@ -21,9 +21,12 @@
 #include "vtkImageEMLocalSegmenter.h"
 #include "vtkImageEMLocalSuperClass.h"
 #include "vtkImageMeanIntensityNormalization.h"
-
 #include "vtkMath.h"
 #include "vtkImageReslice.h"
+
+#ifdef EMSEG_ENABLE_REGISTRATION
+#include "vtkRigidRegistrator.h"
+#endif
 
 // needed to translate between enums
 #include "EMLocalInterface.h"
@@ -352,35 +355,47 @@ StartPreprocessingTargetToTargetRegistration()
 
       //
       // set up registration
-//       std::cerr << "Starting registration...";
-//       vtkRigidRegistrator* registrator = vtkRigidRegistrator::New();
-//       registrator->SetFixedImage(fixedImageData);
-//       registrator->SetMovingImage(movingImageData);
-//       registrator->SetImageToImageMetricToMutualInformation();
-//       registrator->SetMetricComputationSamplingRatioo(0.5);
-//       registrator->SetNumberOfIterations(50);
-//       registrator->SetIntensityInterpolationTypeToLinear();
-//       registrator->SetTransformInitializationTypeToCenterOfMass();
-//       try
-//         {
-//         registrator->RegisterImages();
-//         }
-//       catch (...)
-//         {
-//         std::cerr << "Failed to register images!!!" << std::endl;
-//         }
-//       std::cerr << "Target-to-target transform: " << std::endl;
-//       registrator->GetTransform()->PrintSelf(std::cerr, 0);
-      
+#ifdef EMSEG_ENABLE_REGISTRATION
+      vtkRigidRegistrator* registrator = vtkRigidRegistrator::New();
+      registrator->SetFixedImage(fixedImageData);
+      registrator->SetMovingImage(movingImageData);
+      registrator->SetImageToImageMetricToMutualInformation();
+      registrator->SetMetricComputationSamplingRatio(0.333);
+      registrator->SetNumberOfIterations(50);
+      registrator->SetIntensityInterpolationTypeToLinear();
+      registrator->SetTransformInitializationTypeToImageCenters();
+      try
+        {
+        if (this->MRMLManager->GetEnableTargetToTargetRegistration())
+          {
+          std::cerr << "  Registering target image " << i << "...";
+          registrator->RegisterImages();
+          }
+        else
+          {
+          std::cerr << "  Skipping registration of target image " 
+                    << i << "." << std::endl;
+          }
+        }
+      catch (...)
+        {
+        std::cerr << "Failed to register images!!!" << std::endl;
+        }
+      std::cerr << "    Target-to-target transform: " << std::endl;
+      registrator->GetTransform()->GetMatrix()->PrintSelf(std::cerr, 4);
+#endif
+
       //
       // resample moving image
 
       //
-      // !!! need to make sure that the output image is in space of
-      // 0th target image !!!
+      // need to make sure that the output image is in space of 0th
+      // target image
       std::cerr << "  Resampling target image " << i << "...";
       vtkImageReslice* resliceFilter = vtkImageReslice::New();
-      //resliceFilter->SetResliceTransform(registrator->GetTransform());
+#ifdef EMSEG_ENABLE_REGISTRATION
+      resliceFilter->SetResliceTransform(registrator->GetTransform());
+#endif
       resliceFilter->SetInput(movingImageData);
       resliceFilter->SetOutput(outImageData);
       resliceFilter->SetInformationInput(fixedImageData);
@@ -389,7 +404,9 @@ StartPreprocessingTargetToTargetRegistration()
 
       //
       // clean up
-      //registrator->Delete();
+#ifdef EMSEG_ENABLE_REGISTRATION
+      registrator->Delete();
+#endif
       resliceFilter->Delete();
     }    
   std::cerr << " EMSEG: Target-to-target registration complete." << std::endl;
