@@ -122,6 +122,7 @@ AddScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
     displayNode->SetUpperThreshold(range[1]);
     displayNode->SetWindow(range[1] - range[0]);
     displayNode->SetLevel(0.5 * (range[1] + range[0]) );
+    displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeGrey");
 
     // add nodes to scene
     mrmlScene->AddNode(storageNode);  
@@ -524,6 +525,11 @@ int main(int argc, char** argv)
       {
       throw std::runtime_error("ERROR: failed to set EMSegment parameters.");
       }
+
+    //
+    // don't use manual sampling because the target images might change
+    // this is a hack; do better !!!
+    emMRMLManager->ChangeTreeNodeDistributionsFromManualSamplingToManual();
 
     //
     // make sure the basic parameters are available
