@@ -385,7 +385,7 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
     double tresholdHighIndex=range[0];
     double sumHighIndex=0;
     //calculate distance
-    double bin_width = (range[1] == range[0] ? 1 :(double)histogram->GetNumberOfBins() / (range[1] - range[0]));
+    double bin_width = (range[1] == range[0] ? 1 : (range[1] - range[0])/(double)histogram->GetNumberOfBins());
     while (sumLowIndex<tresholdLow)
     {
         sumLowIndex+=histogram->GetOccurenceAtValue(tresholdLowIndex);
