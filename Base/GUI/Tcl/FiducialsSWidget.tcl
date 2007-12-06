@@ -89,7 +89,9 @@ itcl::body FiducialsSWidget::destructor {} {
 
   foreach pair $_fiducialListObserverTagPairs {
     foreach {fidListNode tag} $pair {}
-    $fidListNode RemoveObserver $tag
+    if { [info command $fidListNode] != "" } {
+      $fidListNode RemoveObserver $tag
+    }
   }
 
   if { [info command $_sliceNode] != "" } {
@@ -188,7 +190,9 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
   if { [$caller IsA "vtkMRMLScene"] } {
     foreach pair $_fiducialListObserverTagPairs {
       foreach {fidListNode tag} $pair {}
-      after idle "$fidListNode RemoveObserver $tag"
+      if { [info command $fidListNode] != "" } {
+        after idle "::SWidget::ProtectedCallback $fidListNode RemoveObserver $tag"
+      }
     }
   }
 
@@ -262,8 +266,10 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
 }
 
 itcl::body FiducialsSWidget::addFiducialListObserver {fidListNode} {
-  set tag [$fidListNode AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $fidListNode"]
-  lappend _fiducialListObserverTagPairs "$fidListNode $tag"
+  if { [info command $fidListNode] != "" } {
+    set tag [$fidListNode AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $fidListNode"]
+    lappend _fiducialListObserverTagPairs "$fidListNode $tag"
+  }
 }
 
 itcl::body FiducialsSWidget::seedMovedCallback {seed fidListNode fidIndex} {
