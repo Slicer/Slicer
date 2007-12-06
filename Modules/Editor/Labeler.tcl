@@ -474,3 +474,12 @@ itcl::body Labeler::updateGUIFromMRML { } {
     $o(paintRange) SetEnabled $paintThreshold
   }
 }
+
+
+namespace eval Labler {
+  proc SetPaintRange {min max} {
+    set node [EditorGetParameterNode]
+    $node SetParameter Labeler,paintThresholdMin $min
+    $node SetParameter Labeler,paintThresholdMax $max
+  }
+}

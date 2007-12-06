@@ -468,6 +468,5 @@ proc EditorCreateLabelVolume {this} {
 
   # update the editor range to be the full range of the background image
   set range [[$volumeNode GetImageData] GetScalarRange]
-  eval $::Editor($this,paintRange) SetWholeRange $range
-  eval $::Editor($this,paintRange) SetRange $range
+  eval ::Labler::SetPaintRange $range
 }
