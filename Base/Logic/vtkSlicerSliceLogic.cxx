@@ -50,6 +50,8 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->ForegroundOpacity = 0.5; // Start by blending fg/bg
   this->LabelOpacity = 1.0;
   this->Blend = vtkImageBlend::New();
+  this->ExtractModelTexture = vtkImageReslice::New();
+  this->ExtractModelTexture->SetOutputDimensionality (2);
   this->PolyDataCollection = vtkPolyDataCollection::New();
   this->LookupTableCollection = vtkCollection::New();
   this->SetForegroundOpacity(this->ForegroundOpacity);
@@ -76,6 +78,11 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
     {
     this->Blend->Delete();
     this->Blend = NULL;
+    }
+  if ( this->ExtractModelTexture ) 
+    {
+    this->ExtractModelTexture->Delete();
+    this->ExtractModelTexture = NULL;
     }
   this->PolyDataCollection->Delete();
   this->LookupTableCollection->Delete();
@@ -793,9 +800,9 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         {
         this->SliceModelNode->GetModelDisplayNode()->SetVisibility( this->SliceNode->GetSliceVisible() );
         }
-      if (this->SliceModelNode->GetModelDisplayNode()->GetTextureImageData() != this->GetImageData())
+      if (this->SliceModelNode->GetModelDisplayNode()->GetTextureImageData() != this->ExtractModelTexture->GetOutput())
         {
-        this->SliceModelNode->GetModelDisplayNode()->SetAndObserveTextureImageData(this->GetImageData());
+        this->SliceModelNode->GetModelDisplayNode()->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
         }
       }
 
@@ -897,7 +904,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetColor(1,1,1);
     this->SliceModelDisplayNode->SetAmbient(1);
     this->SliceModelDisplayNode->SetDiffuse(0);
-    this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
+    this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
     this->SliceModelDisplayNode->SetSaveWithScene(0);
 
     std::string name = std::string(this->Name) + " Volume Slice";
@@ -917,7 +924,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->MRMLScene->AddNodeNoNotify(this->SliceModelTransformNode);
     this->MRMLScene->AddNode(this->SliceModelNode);
     this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
-    this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->GetImageData());
+    this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
     this->SliceModelNode->SetAndObserveTransformNodeID(this->SliceModelTransformNode->GetID());
     }
 

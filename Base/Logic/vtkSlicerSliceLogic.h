@@ -48,6 +48,7 @@
 class vtkImageData;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLLinearTransformNode;
+class vtkImageReslice;
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic 
 {
@@ -138,6 +139,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   vtkGetObjectMacro (LookupTableCollection, vtkCollection);
 
   // Description:
+  // An image reslice instance to pull a single slice from the volume that 
+  // represents the filmsheet display output
+  vtkGetObjectMacro (ExtractModelTexture, vtkImageReslice);
+
+  // Description:
   // the tail of the pipeline
   // -- returns NULL if none of the inputs exist
   vtkImageData *GetImageData () { 
@@ -163,6 +169,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
       if (this->Blend->GetOutput()->GetMTime() > this->ImageData->GetMTime())
         {
         this->ImageData->DeepCopy( this->Blend->GetOutput()); 
+        this->ExtractModelTexture->SetInput( this->ImageData );
         }
       }
   };
@@ -302,6 +309,7 @@ protected:
   double LabelOpacity;
   vtkImageBlend *Blend;
   vtkImageData *ImageData;
+  vtkImageReslice *ExtractModelTexture;
 
   vtkPolyDataCollection *PolyDataCollection;
   vtkCollection *LookupTableCollection;
