@@ -116,6 +116,7 @@ public:
   virtual int   GetTreeNodeDistributionSpecificationMethod(vtkIdType nodeID);
   virtual void  SetTreeNodeDistributionSpecificationMethod(vtkIdType nodeID, 
                                                            int method);
+  virtual void  ChangeTreeNodeDistributionsFromManualSamplingToManual();
 
   virtual double   GetTreeNodeDistributionLogMean(vtkIdType nodeID, 
                                                   int volumeNumber);

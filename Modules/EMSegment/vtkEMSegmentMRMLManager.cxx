@@ -692,6 +692,29 @@ UpdateIntensityDistributions()
 //-----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
+ChangeTreeNodeDistributionsFromManualSamplingToManual()
+{
+  // iterate over tree nodes
+  typedef vtkstd::vector<vtkIdType>  NodeIDList;
+  typedef NodeIDList::const_iterator NodeIDListIterator;
+  NodeIDList nodeIDList;
+  this->GetListOfTreeNodeIDs(this->GetTreeRootNodeID(), nodeIDList);
+  for (NodeIDListIterator i = nodeIDList.begin(); i != nodeIDList.end(); ++i)
+    {
+    if (this->GetTreeParametersLeafNode(*i)->
+        GetDistributionSpecificationMethod() == 
+        vtkMRMLEMSTreeParametersLeafNode::
+        DistributionSpecificationManuallySample)
+      {
+      this->SetTreeNodeDistributionSpecificationMethod
+        (*i, DistributionSpecificationManual);
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
 UpdateIntensityDistributionFromSample(vtkIdType nodeID)
 {
   // get working node @@@
@@ -4619,7 +4642,7 @@ WritePackagedScene(vtkMRMLScene* scene)
       {
       vtkWarningMacro("Volume node is null for node: " 
                     << currentNode->GetID());
-      //scene->RemoveNode(currentNode);
+      scene->RemoveNode(currentNode);
       allOK = false;
       continue;
       }
@@ -4627,7 +4650,7 @@ WritePackagedScene(vtkMRMLScene* scene)
       {
       vtkWarningMacro("Volume data is null for volume node: " 
                     << currentNode->GetID());
-      //scene->RemoveNode(currentNode);
+      scene->RemoveNode(currentNode);
       allOK = false;
       continue;
       }
@@ -4635,7 +4658,7 @@ WritePackagedScene(vtkMRMLScene* scene)
       {
       vtkWarningMacro("Volume storage node is null for volume node: " 
                     << currentNode->GetID());
-      //scene->RemoveNode(currentNode);
+      scene->RemoveNode(currentNode);
       allOK = false;
       continue;
       }
