@@ -30,6 +30,7 @@
 #include "vtkKWCheckButton.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWNotebook.h"
+#include "vtkKWMenuButtonWithLabel.h"
 
 //Compiler
 #include <math.h>
@@ -89,6 +90,13 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     {
         this->RA_Cropping[i]=NULL;
     }
+
+    //TresholdGUI
+    this->MB_TresholdMode=NULL;
+    this->MB_ColorMode=NULL;
+    this->RA_RampRectangleHorizontal=NULL;
+    this->RA_RampRectangleVertical=NULL;
+    this->ColorMode=0;
 
 
 }
@@ -250,6 +258,33 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->NB_Details->Delete();
         this->NB_Details=NULL;
     }
+
+    //TresholdGUI
+   if(this->MB_TresholdMode)
+   {
+       this->MB_TresholdMode->SetParent(NULL);
+       this->MB_TresholdMode->Delete();
+       this->MB_TresholdMode=NULL;
+
+   }
+   if(this->MB_ColorMode)
+   {
+       this->MB_ColorMode->SetParent(NULL);
+       this->MB_ColorMode->Delete();
+       this->MB_ColorMode=NULL;
+   }
+   if(this->RA_RampRectangleHorizontal)
+   {
+       this->RA_RampRectangleHorizontal->SetParent(NULL);
+       this->RA_RampRectangleHorizontal->Delete();
+       this->RA_RampRectangleHorizontal=NULL;
+   }
+   if(this->RA_RampRectangleVertical)
+   {
+       this->RA_RampRectangleVertical->SetParent(NULL);
+       this->RA_RampRectangleVertical->Delete();
+       this->RA_RampRectangleVertical=NULL;
+   }
 }
 void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
@@ -354,10 +389,11 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->SC_Framerate->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         this->SC_Framerate->GetWidgetName() );
-
+    this->CreateTreshold();
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
 
     this->CreateCropping();
+    
 
 
 }
@@ -1207,4 +1243,118 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->RA_Cropping[2]->SetLabelText("S<->I");
     croppingFrame->Delete();
     matrix->Delete();
+}
+
+void vtkSlicerVRGrayscaleHelper::CreateTreshold()
+{
+    vtkKWFrameWithLabel *tresholdFrame=vtkKWFrameWithLabel::New();
+    tresholdFrame->SetParent(this->NB_Details->GetFrame("Mapping"));
+    tresholdFrame->Create();
+    tresholdFrame->SetLabelText("Treshold");
+    this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
+        tresholdFrame->GetWidgetName());
+
+    this->MB_TresholdMode=vtkKWMenuButtonWithLabel::New();
+    this->MB_TresholdMode->SetParent(tresholdFrame->GetFrame());
+    this->MB_TresholdMode->Create();
+    this->MB_TresholdMode->SetLabelText("Treshold");
+    this->MB_TresholdMode->GetWidget()->GetMenu()->AddRadioButton("None");
+    this->MB_TresholdMode->GetWidget()->GetMenu()->SetItemCommand(0, this,"ProcessTresholdModeEvents 0");
+    this->MB_TresholdMode->GetWidget()->GetMenu()->AddRadioButton("Ramp");
+    this->MB_TresholdMode->GetWidget()->GetMenu()->SetItemCommand(1, this,"ProcessTresholdModeEvents 1");
+    this->MB_TresholdMode->GetWidget()->GetMenu()->AddRadioButton("Rectangle");
+    this->MB_TresholdMode->GetWidget()->GetMenu()->SetItemCommand(2, this,"ProcessTresholdModeEvents 2");
+    this->MB_TresholdMode->GetWidget()->GetMenu()->SelectItem("None");
+    this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
+        this->MB_TresholdMode->GetWidgetName());
+
+    this->MB_ColorMode=vtkKWMenuButtonWithLabel::New();
+    this->MB_ColorMode->SetParent(tresholdFrame->GetFrame());
+    this->MB_ColorMode->Create();
+    this->MB_ColorMode->SetLabelText("Color mode"); 
+    this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Grayscale");
+    this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(0,this,"ProcessColorModeEvents 0");
+    this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Rainbow");
+    this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(1,this,"ProcessColorModEvents 1");
+    this->MB_ColorMode->GetWidget()->GetMenu()->SelectItem("Grayscale");
+    this->MB_ColorMode->EnabledOff();
+    this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
+        this->MB_ColorMode->GetWidgetName());
+
+        vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+    this->RA_RampRectangleHorizontal=vtkKWRange::New();
+    this->RA_RampRectangleHorizontal->SetParent(tresholdFrame->GetFrame());
+    this->RA_RampRectangleHorizontal->Create();
+    this->RA_RampRectangleHorizontal->SetLabelText("Treshold");
+    this->RA_RampRectangleHorizontal->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+    this->RA_RampRectangleHorizontal->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+    this->RA_RampRectangleHorizontal->EnabledOff();
+    this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
+        this->RA_RampRectangleHorizontal->GetWidgetName());
+
+    this->RA_RampRectangleVertical=vtkKWRange::New();
+    this->RA_RampRectangleVertical->SetParent(tresholdFrame->GetFrame());
+    this->RA_RampRectangleVertical->Create();
+    this->RA_RampRectangleVertical->SetLabelText("Opacity");
+    this->RA_RampRectangleVertical->SetOrientationToVertical();
+    this->RA_RampRectangleVertical->SetWholeRange(0,1);
+    this->RA_RampRectangleVertical->SetRange(0,1);
+    this->RA_RampRectangleVertical->EnabledOff();
+    this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
+        this->RA_RampRectangleVertical->GetWidgetName());
+    
+    
+    tresholdFrame->Delete();
+}
+
+void vtkSlicerVRGrayscaleHelper::ProcessTresholdModeEvents(int id)
+{
+    //Disable Everything and go back to standard
+    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+    if(id==0)
+    {
+        this->MB_ColorMode->EnabledOff();
+
+        this->RA_RampRectangleHorizontal->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+        this->RA_RampRectangleHorizontal->EnabledOff();
+        this->RA_RampRectangleVertical->SetRange(0,1);
+        this->RA_RampRectangleVertical->EnabledOff();
+        return;
+    }
+    //Before we continue enabled everything
+    this->MB_ColorMode->EnabledOn();
+    this->RA_RampRectangleHorizontal->EnabledOn();
+    this->RA_RampRectangleVertical->EnabledOn();
+
+    //Delete all old Mapping Points
+    vtkPiecewiseFunction *opacity=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetScalarOpacity();
+    opacity->RemoveAllPoints();
+    opacity->AdjustRange(iData->GetScalarRange());
+
+    vtkColorTransferFunction *colorTransfer=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetRGBTransferFunction();
+    colorTransfer->RemoveAllPoints();
+    colorTransfer->AdjustRange(iData->GetScalarRange());
+
+    //this->SVP_VolumeProperty->MergeScalarOpacityAndColorEditors();
+
+    opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[0],this->RA_RampRectangleVertical->GetRange()[0]);
+    opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[0]+0.1,this->RA_RampRectangleVertical->GetRange()[1]);
+    opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[1],this->RA_RampRectangleVertical->GetRange()[1]);
+    opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[1]+0.1,this->RA_RampRectangleVertical->GetRange()[0]);
+
+    
+    this->SVP_VolumeProperty->Update();
+    //this->SVP_VolumeProperty->MergeScalarOpacityAndColorEditors();
+    //this->SVP_VolumeProperty->Update();
+
+
+
+
+    
+
+}
+
+void vtkSlicerVRGrayscaleHelper::ProcessColorModeEvents(int id)
+{
+    this->ColorMode=id;
 }

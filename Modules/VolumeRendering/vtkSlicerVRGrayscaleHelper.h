@@ -18,6 +18,7 @@ class vtkKWScaleWithLabel;
 class vtkKWCheckButtonWithLabel;
 class vtkKWFrameWithLabel;
 class vtkKWNotebook;
+class vtkKWMenuButtonWithLabel;
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
@@ -47,6 +48,8 @@ public:
 
     
     void Cropping(int index, double min,double max);
+    void ProcessTresholdModeEvents(int id);
+    void ProcessColorModeEvents(int id);
 
 protected:
     vtkSlicerVRGrayscaleHelper(void);
@@ -70,6 +73,15 @@ protected:
     // Cropping GUI
     vtkKWCheckButtonWithLabel *CB_Cropping;
     vtkKWRange *RA_Cropping[3];
+
+    //TresholdGUI
+    vtkKWMenuButtonWithLabel *MB_TresholdMode;
+    vtkKWMenuButtonWithLabel *MB_ColorMode;
+    vtkKWRange *RA_RampRectangleHorizontal;
+    vtkKWRange *RA_RampRectangleVertical;
+    int ColorMode;
+
+
     
     
     int ScheduleMask[3];
@@ -122,6 +134,8 @@ protected:
 
     void UpdateQualityCheckBoxes(void);
     void CreateCropping(void);
+    void CreateTreshold(void);
+
 
 };
 #endif
