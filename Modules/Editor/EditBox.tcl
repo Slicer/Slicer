@@ -333,6 +333,7 @@ proc eeeee {} {
 
   source $::env(SLICER_HOME)/../Slicer3/Modules/Editor/Box.tcl
   source $::env(SLICER_HOME)/../Slicer3/Modules/Editor/EffectSWidget.tcl
+  source $::env(SLICER_HOME)/../Slicer3/Modules/Editor/Labeler.tcl
   foreach eff [glob $::env(SLICER_HOME)/../Slicer3/Modules/Editor/*Effect.tcl] {
     source $eff
   }
