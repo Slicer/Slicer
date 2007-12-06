@@ -271,11 +271,11 @@ void vtkSlicerDataGUI::BuildGUI ( )
                   this->SceneSnapshotWidget->GetWidgetName(), snapshotFrame->GetFrame()->GetWidgetName());
 
 
-    this->RecordSnapshotWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
-    this->RecordSnapshotWidget->SetParent ( snapshotFrame->GetFrame() );
-    this->RecordSnapshotWidget->Create ( );
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->RecordSnapshotWidget->GetWidgetName(), snapshotFrame->GetFrame()->GetWidgetName());
+    //this->RecordSnapshotWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
+    //this->RecordSnapshotWidget->SetParent ( snapshotFrame->GetFrame() );
+    //this->RecordSnapshotWidget->Create ( );
+    //app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  //this->RecordSnapshotWidget->GetWidgetName(), snapshotFrame->GetFrame()->GetWidgetName());
 
 
     displayModifyFrame->Delete ( );
