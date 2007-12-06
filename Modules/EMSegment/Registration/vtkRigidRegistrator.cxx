@@ -28,12 +28,13 @@ vtkStandardNewMacro(vtkRigidRegistrator);
 //  that will monitor the evolution of the registration process.
 //
 #include "itkCommand.h"
+#include <iomanip>
 template <class TOptimizer>
 class CommandIterationUpdate : public itk::Command
 {
 public:
-  typedef  CommandIterationUpdate   Self;
-  typedef  itk::Command             Superclass;
+  typedef CommandIterationUpdate   Self;
+  typedef itk::Command             Superclass;
   typedef itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
 protected:
@@ -56,9 +57,13 @@ public:
       {
         return;
       }
-      std::cout << optimizer->GetCurrentIteration() << "   ";
-      std::cout << optimizer->GetValue() << "   ";
-      std::cout << optimizer->GetCurrentStepLength() << std::endl;
+      std::cerr << "   " << std::setw(7) << std::right << std::setfill('.')
+                << optimizer->GetCurrentIteration();
+      std::cerr << std::setw(20) << std::right << std::setfill('.')
+                << optimizer->GetValue();
+      std::cerr << std::setw(17) << std::right << std::setfill('.')
+                << optimizer->GetCurrentStepLength();
+      std::cerr << std::endl;
   }
 };
 
@@ -337,7 +342,7 @@ RegisterImagesInternal3()
   OptimizerScalesType optimizerScales(6);
   const double translationScale = 1.0 / 1000.0;
 
-  double               initialStepLength               = 1.0;
+  double               initialStepLength               = 0.1;
   double               relaxationFactor                = 0.6;
   double               minimumStepLength               = 0.001;
 
@@ -369,7 +374,9 @@ RegisterImagesInternal3()
   try 
     {
     itk::RealTimeClock::Pointer clock = itk::RealTimeClock::New();
-    std::cerr << "Starting registration..." << std::endl;
+    std::cerr << "  Starting registration..." << std::endl;
+    std::cerr << "   Iteration         Image Match        Step Size" 
+              << std::endl;
     double timeStart = clock->GetTimeStamp();
     
     registration->StartRegistration();
