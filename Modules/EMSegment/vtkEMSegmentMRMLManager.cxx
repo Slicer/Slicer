@@ -4190,6 +4190,31 @@ CopyEMRelatedNodesToMRMLScene(vtkMRMLScene* newScene)
       }
 
     vtkMRMLNode* node = n->CreateNodeInstance();
+
+    // Hack to get around probable bug
+    //
+    // If this is a volume display node manually add the color node as
+    // well.  For some reson the reference that should take care of
+    // this through GetReferencedNode is broken in this case.
+//     vtkMRMLVolumeDisplayNode* volumeDisplayNode = 
+//       dynamic_cast<vtkMRMLVolumeDisplayNode*>(node);
+//     if (volumeDisplayNode != NULL)
+//       {
+//       std::cerr << "Found volume display node: " 
+//                 << volumeDisplayNode->GetID() << " " 
+//                 << volumeDisplayNode->GetName() << std::endl;
+//       vtkMRMLColorNode* colorNode = volumeDisplayNode->GetColorNode();
+//       if (colorNode != NULL && !newScene->IsNodePresent(colorNode))
+//         {
+//         std::cerr << "Adding Color Node: " << colorNode->GetID() << " " 
+//                   << colorNode->GetName() << std::endl;
+//         vtkMRMLNode* newColorNode = colorNode->CreateNodeInstance();
+//         newColorNode->CopyWithScene(colorNode);
+//         newScene->AddNode(newColorNode);
+//         newColorNode->Delete();        
+//         }
+//       }
+
     node->CopyWithScene(n);
     newScene->AddNode(node);
     node->Delete();
@@ -4594,7 +4619,7 @@ WritePackagedScene(vtkMRMLScene* scene)
       {
       vtkWarningMacro("Volume node is null for node: " 
                     << currentNode->GetID());
-      scene->RemoveNode(currentNode);
+      //scene->RemoveNode(currentNode);
       allOK = false;
       continue;
       }
@@ -4602,7 +4627,7 @@ WritePackagedScene(vtkMRMLScene* scene)
       {
       vtkWarningMacro("Volume data is null for volume node: " 
                     << currentNode->GetID());
-      scene->RemoveNode(currentNode);
+      //scene->RemoveNode(currentNode);
       allOK = false;
       continue;
       }
@@ -4610,7 +4635,7 @@ WritePackagedScene(vtkMRMLScene* scene)
       {
       vtkWarningMacro("Volume storage node is null for volume node: " 
                     << currentNode->GetID());
-      scene->RemoveNode(currentNode);
+      //scene->RemoveNode(currentNode);
       allOK = false;
       continue;
       }
