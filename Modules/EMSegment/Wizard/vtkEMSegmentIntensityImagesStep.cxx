@@ -116,9 +116,11 @@ void vtkEMSegmentIntensityImagesStep::PopulateIntensityImagesTargetVolumeSelecto
   int nb_of_volumes = mrmlManager->GetVolumeNumberOfChoices();
   int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
   
-  // Update the source volume list 
-
+  // clear the lists 
   this->IntensityImagesTargetVolumeSelector->RemoveItemsFromSourceList();
+  this->IntensityImagesTargetVolumeSelector->RemoveItemsFromFinalList();
+
+  // Update the source volume list 
   for (int index = 0; index < nb_of_volumes; index++)
     {
     vol_id = mrmlManager->GetVolumeNthID(index);
@@ -144,7 +146,6 @@ void vtkEMSegmentIntensityImagesStep::PopulateIntensityImagesTargetVolumeSelecto
     }
 
   // Update the target volume list
-  this->IntensityImagesTargetVolumeSelector->RemoveItemsFromFinalList();
   for(int i = 0; i < nb_of_target_volumes; i++)
     {
     target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
@@ -161,102 +162,8 @@ void vtkEMSegmentIntensityImagesStep::PopulateIntensityImagesTargetVolumeSelecto
 void vtkEMSegmentIntensityImagesStep::
   IntensityImagesTargetSelectionChangedCallback()
 {
-  // The target volumes have changed because of user interaction
-
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  vtkIdType vol_id, target_vol_id;
-
-  vtksys_stl::string targettext;
-  vtksys_stl::string::size_type pos1, pos2;
-  
-  // First, remove any target volumes that are not in the 
-  // selected target list anymore
-
-  bool found = false;
-  unsigned int i, iTarget;
-  vtksys_stl::vector<vtkIdType> remVec, selVec, addVec;
-
-  unsigned int size = this->IntensityImagesTargetVolumeSelector->
-    GetNumberOfElementsOnFinalList();
-  for(i = 0; i < size; i++) 
-    {
-    targettext = 
-      this->IntensityImagesTargetVolumeSelector->GetElementFromFinalList(i);
-    pos1 = targettext.rfind("(");
-    pos2 = targettext.rfind(")");
-    if (pos1 != vtksys_stl::string::npos && pos2 != vtksys_stl::string::npos)
-      {
-      vol_id = atoi(targettext.substr(pos1+1, pos2-pos1-1).c_str());
-      selVec.push_back(vol_id);
-      }
-    }
-
-  unsigned int nb_of_target_volumes = 
-    mrmlManager->GetTargetNumberOfSelectedVolumes();
-  for(iTarget = 0; iTarget < nb_of_target_volumes; iTarget++)
-    {
-    target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(iTarget);
-    found = false;
-    for(i = 0; i < selVec.size(); i++) 
-      {
-      if(target_vol_id == selVec[i])
-        {
-        found = true;
-        break;
-        }
-      }
-    if(!found)
-      {
-      remVec.push_back(target_vol_id);
-      }
-    }
-
-  if(remVec.size()>0)
-    {
-    for(i=0; i<remVec.size(); i++)
-      {
-      mrmlManager->RemoveTargetSelectedVolume(remVec[i]);
-      }
-    }
-  
-  // Then, add the target volume list according to the selected list 
-
-  nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
-  if(selVec.size() > nb_of_target_volumes)
-    {
-    for(i = 0; i < selVec.size(); i++) 
-      {
-      found = false;
-      for(iTarget = 0; iTarget < nb_of_target_volumes; iTarget++)
-        {
-        target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(iTarget);
-        if (selVec[i] == target_vol_id)
-          {
-          found = true;
-          break;
-          }
-        }
-      if (!found)
-        {
-        mrmlManager->AddTargetSelectedVolume(selVec[i]);
-        }
-      }
-    }
-
-  // Finally, adjusting selected volume orders
-
-  nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
-  if(selVec.size() == nb_of_target_volumes)
-    {
-    for(i = 0; i < selVec.size(); i++) 
-      {
-      target_vol_id = mrmlManager->GetTargetSelectedVolumeNthID(i);
-      if (selVec[i] != target_vol_id)
-        { 
-        mrmlManager->MoveTargetSelectedVolume(selVec[i], i);
-        }
-      }
-    }
+  // nothing for now; changes are made on transitions
+  // (see svn revisions)
 }
 
 //----------------------------------------------------------------------------
@@ -264,22 +171,46 @@ void vtkEMSegmentIntensityImagesStep::Validate()
 {
   vtkKWWizardWorkflow *wizard_workflow = 
     this->GetGUI()->GetWizardWidget()->GetWizardWorkflow();
-
-  int number_of_target_images_changed = 0; // to be completed by Brad
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  
+  // decide if the number of target volumes changed
+  unsigned int nb_of_parameter_target_volumes = 
+    mrmlManager->GetTargetNumberOfSelectedVolumes();
+  unsigned int nb_of_currently_selected_target_volumes = 
+    this->IntensityImagesTargetVolumeSelector->
+    GetNumberOfElementsOnFinalList();
+  bool number_of_target_images_changed = 
+    nb_of_parameter_target_volumes != nb_of_currently_selected_target_volumes;
 
   if (number_of_target_images_changed &&
-      !vtkKWMessageDialog::PopupYesNo( 
-        this->GetApplication(), 
-        NULL, 
-        "Change the number of target images?",
-        "Are you sure you want to change the number of target images?",
-        vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
+      !vtkKWMessageDialog::PopupYesNo
+      (this->GetApplication(), 
+       NULL, 
+       "Change the number of target images?",
+       "Are you sure you want to change the number of target images?",
+       vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
     {
+    // don't change number of volumes; stay on this step
     wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
     wizard_workflow->ProcessInputs();
     }
   else
     {
+    // record indices of currently selected volumes
+    std::vector<vtkIdType> selectedIDs;
+    for(unsigned int i = 0; i < nb_of_currently_selected_target_volumes; ++i) 
+      {
+      std::string targettext = 
+        this->IntensityImagesTargetVolumeSelector->GetElementFromFinalList(i);
+      std::string::size_type pos1 = targettext.rfind("(");
+      std::string::size_type pos2 = targettext.rfind(")");
+      if (pos1 != vtksys_stl::string::npos && pos2 != vtksys_stl::string::npos)
+        {
+        vtkIdType vol_id = atoi(targettext.substr(pos1+1, pos2-pos1-1).c_str());
+        selectedIDs.push_back(vol_id);
+        }
+      }
+    mrmlManager->ResetTargetSelectedVolumes(selectedIDs);
     this->Superclass::Validate();
     }
 }
