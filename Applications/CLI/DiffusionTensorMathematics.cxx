@@ -13,7 +13,7 @@
 #include "itkPluginFilterWatcher.h"
 #include "itkPluginUtilities.h"
 
-#include "vtkDiffusionTensorMathematics.h"
+#include "vtkDiffusionTensorMathematicsSimple.h"
 
 #include "vtkNRRDReader.h"
 #include "vtkNRRDWriter.h"
@@ -35,7 +35,7 @@ int main( int argc, const char * argv[] )
     std::cerr << argv[0] << ": No tensor data" << std::endl;
     return EXIT_FAILURE;
     }
-  vtkDiffusionTensorMathematics *math = vtkDiffusionTensorMathematics::New();
+  vtkDiffusionTensorMathematicsSimple *math = vtkDiffusionTensorMathematicsSimple::New();
 
   math->SetInput(0, reader->GetOutput());
   math->SetInput(1, reader->GetOutput());
