@@ -311,9 +311,9 @@ switch $::tcl_platform(os) {
         set ::COMPILER_PATH "/usr/bin"
         set ::COMPILER "g++"
         set ::CMAKE $::CMAKE_PATH/bin/cmake
-        set ::MAKE make
-        set ::SERIAL_MAKE make
-    }
+        set numCPUs [exec sysctl -n hw.ncpu ]
+        set ::MAKE "make -j [expr $numCPUs * 2]"
+        set ::SERIAL_MAKE "make"}
     default {
         # different windows machines say different things, so assume
         # that if it doesn't match above it must be windows
