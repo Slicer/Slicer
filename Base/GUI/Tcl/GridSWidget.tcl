@@ -57,7 +57,7 @@ itcl::body GridSWidget::constructor {sliceGUI} {
   $o(gridActor) SetMapper $o(gridMapper)
   eval [$o(gridActor) GetProperty] SetColor [lrange $rgba 0 2]
   eval [$o(gridActor) GetProperty] SetOpacity [lindex $rgba 3]
-  [$_renderWidget GetRenderer] AddActor2D $o(gridActor)
+  after idle [$_renderWidget GetRenderer] AddActor2D $o(gridActor)
   lappend _actors $o(gridActor)
 
   #
