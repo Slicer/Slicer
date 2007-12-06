@@ -1805,6 +1805,12 @@ ResetTargetSelectedVolumes(const std::vector<vtkIdType>& volumeIDs)
       this->PropogateRemovalOfSelectedTargetImage(targetOldNumImages-1-i);
       }
     }
+  else
+    {
+    // order may have changed, need to update distros
+    std::cerr << "Updating distros..." << std::endl;
+    this->UpdateIntensityDistributions();
+    }
 }
 
 //----------------------------------------------------------------------------
