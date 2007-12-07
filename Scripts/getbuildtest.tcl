@@ -380,48 +380,63 @@ set curlfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension
 if {$::GETBUILDTEST(pack) == "true" && 
     [file exists $::SLICER_BUILD/$curlfile] &&
     $::GETBUILDTEST(upload) == "true"} {
-    puts "About to do a curl $::GETBUILDTEST(uploadFlag) upload with $curlfile"
-    set namic_url "http://www.na-mic.org/Slicer/Upload.cgi"
-    switch $::GETBUILDTEST(uploadFlag) {
-        "nightly" {            
-            # reset the file name - take out the date
-            set ex ".${::GETBUILDTEST(version-patch)}"
-            regsub $ex $curlfile "" curlNightlyFile
-            set curldest "${namic_url}/Nightly/${curlNightlyFile}"
-            }
-            "snapshot" {
-                set curldest "${namic_url}/Snapshots/$::env(BUILD)/${curlfile}"
-            }
-            "release" {
-                set curldest "${namic_url}/Release/$::env(BUILD)/${curlfile}"
-            }
-            default {
-                puts "Invalid ::GETBUILDTEST(uploadFlag) \"$::GETBUILDTEST(uploadFlag)\", setting curldest to snapshot value"
-                set curldest "${namic_url}/Snapshots/$::env(BUILD)/${curlfile}"
-            }
-        }
+#    puts "About to do a curl $::GETBUILDTEST(uploadFlag) upload with $curlfile"
+    puts "About to do a $::GETBUILDTEST(uploadFlag) upload with $curlfile"
+#    set namic_url "http://www.na-mic.org/Slicer/Upload.cgi"
+    set scpdestination "lonely@slicerl.bwh.harvard.edu:/var/www/html/Slicer3-nightly"
 
-    puts " -- upload $curlfile to $curldest"
-    set curlcmd ""
     switch $::tcl_platform(os) {
         "SunOS" -
-        "Linux" {
-            
-            set curlcmd "xterm -e curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
-        }
-        "Darwin" {            
-            set curlcmd "/usr/X11R6/bin/xterm -e curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
-        }
-        default {             
-            set curlcmd "curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
-        }
+        "Linux" - 
+        "Darwin" {
+            exec xterm -e scp $curlfile $scpdestination
     }
-    set curlReturn [catch "eval runcmd [split $curlcmd]"]
-    if {$curlReturn} {
-        puts "Upload failed..."
-    } else {
-        puts "See http://www.na-mic.org/Slicer/Download, in the $::GETBUILDTEST(uploadFlag) directory, for the uploaded file."
+    default { 
+        puts "rxvt -e scp $curlfile $scpdestination &"
+        exec rxvt -e scp $curlfile $scpdestination &
     }
+    }
+
+#    switch $::GETBUILDTEST(uploadFlag) {
+#        "nightly" {            
+#            # reset the file name - take out the date
+#            set ex ".${::GETBUILDTEST(version-patch)}"
+#            regsub $ex $curlfile "" curlNightlyFile
+#            set curldest "${namic_url}/Nightly/${curlNightlyFile}"
+#            }
+#            "snapshot" {
+#                set curldest "${namic_url}/Snapshots/$::env(BUILD)/${curlfile}"
+#            }
+#            "release" {
+#                set curldest "${namic_url}/Release/$::env(BUILD)/${curlfile}"
+#            }
+#            default {
+#                puts "Invalid ::GETBUILDTEST(uploadFlag) \"$::GETBUILDTEST(uploadFlag)\", setting curldest to snapshot value"
+#                set curldest "${namic_url}/Snapshots/$::env(BUILD)/${curlfile}"
+#            }
+#        }
+
+#    puts " -- upload $curlfile to $curldest"
+#    set curlcmd ""
+#    switch $::tcl_platform(os) {
+#        "SunOS" -
+#        "Linux" {
+#            
+#            set curlcmd "xterm -e curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
+#        }
+#        "Darwin" {            
+#            set curlcmd "/usr/X11R6/bin/xterm -e curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
+#        }
+#        default {             
+#            set curlcmd "curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
+#        }
+#    }
+#    set curlReturn [catch "eval runcmd [split $curlcmd]"]
+#    if {$curlReturn} {
+#        puts "Upload failed..."
+#    } else {
+#        puts "See http://www.na-mic.org/Slicer/Download, in the $::GETBUILDTEST(uploadFlag) directory, for the uploaded file."
+#    }
 } else {
     if {$::GETBUILDTEST(verbose)} {
         puts "Not uploading $curlfile"
