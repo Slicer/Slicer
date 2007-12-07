@@ -375,7 +375,7 @@ if { $isWindows } {
       puts "package [if $packageReturn "concat failed" "concat succeeded"]"
     }
 }
-# upload
+# upload to slicerl
 set curlfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension)}"
 if {$::GETBUILDTEST(pack) == "true" && 
     [file exists $::SLICER_BUILD/$curlfile] &&
