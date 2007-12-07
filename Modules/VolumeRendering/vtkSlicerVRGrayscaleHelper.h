@@ -50,6 +50,7 @@ public:
     void Cropping(int index, double min,double max);
     void ProcessTresholdModeEvents(int id);
     void ProcessColorModeEvents(int id);
+    void ProcessTresholdRange(double notUsed,double notUsedA);
 
 protected:
     vtkSlicerVRGrayscaleHelper(void);
@@ -80,6 +81,7 @@ protected:
     vtkKWRange *RA_RampRectangleHorizontal;
     vtkKWRange *RA_RampRectangleVertical;
     int ColorMode;
+    int TresholdMode;
 
 
     
@@ -134,7 +136,9 @@ protected:
 
     void UpdateQualityCheckBoxes(void);
     void CreateCropping(void);
+
     void CreateTreshold(void);
+
 
 
 };

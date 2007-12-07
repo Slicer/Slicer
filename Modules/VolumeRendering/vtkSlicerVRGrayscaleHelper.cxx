@@ -251,7 +251,7 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
             this->RA_Cropping[i]=NULL;
         }
     }
-   if(this->NB_Details)
+    if(this->NB_Details)
     {
         this->Script("pack forget %s",this->NB_Details->GetWidgetName());
         this->NB_Details->SetParent(NULL);
@@ -260,31 +260,31 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
     }
 
     //TresholdGUI
-   if(this->MB_TresholdMode)
-   {
-       this->MB_TresholdMode->SetParent(NULL);
-       this->MB_TresholdMode->Delete();
-       this->MB_TresholdMode=NULL;
+    if(this->MB_TresholdMode)
+    {
+        this->MB_TresholdMode->SetParent(NULL);
+        this->MB_TresholdMode->Delete();
+        this->MB_TresholdMode=NULL;
 
-   }
-   if(this->MB_ColorMode)
-   {
-       this->MB_ColorMode->SetParent(NULL);
-       this->MB_ColorMode->Delete();
-       this->MB_ColorMode=NULL;
-   }
-   if(this->RA_RampRectangleHorizontal)
-   {
-       this->RA_RampRectangleHorizontal->SetParent(NULL);
-       this->RA_RampRectangleHorizontal->Delete();
-       this->RA_RampRectangleHorizontal=NULL;
-   }
-   if(this->RA_RampRectangleVertical)
-   {
-       this->RA_RampRectangleVertical->SetParent(NULL);
-       this->RA_RampRectangleVertical->Delete();
-       this->RA_RampRectangleVertical=NULL;
-   }
+    }
+    if(this->MB_ColorMode)
+    {
+        this->MB_ColorMode->SetParent(NULL);
+        this->MB_ColorMode->Delete();
+        this->MB_ColorMode=NULL;
+    }
+    if(this->RA_RampRectangleHorizontal)
+    {
+        this->RA_RampRectangleHorizontal->SetParent(NULL);
+        this->RA_RampRectangleHorizontal->Delete();
+        this->RA_RampRectangleHorizontal=NULL;
+    }
+    if(this->RA_RampRectangleVertical)
+    {
+        this->RA_RampRectangleVertical->SetParent(NULL);
+        this->RA_RampRectangleVertical->Delete();
+        this->RA_RampRectangleVertical=NULL;
+    }
 }
 void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
@@ -393,7 +393,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
 
     this->CreateCropping();
-    
+
 
 
 }
@@ -1275,21 +1275,22 @@ void vtkSlicerVRGrayscaleHelper::CreateTreshold()
     this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Grayscale");
     this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(0,this,"ProcessColorModeEvents 0");
     this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Rainbow");
-    this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(1,this,"ProcessColorModEvents 1");
+    this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(1,this,"ProcessColorModeEvents 1");
     this->MB_ColorMode->GetWidget()->GetMenu()->SelectItem("Grayscale");
     this->MB_ColorMode->EnabledOff();
     this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
         this->MB_ColorMode->GetWidgetName());
 
-        vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
     this->RA_RampRectangleHorizontal=vtkKWRange::New();
     this->RA_RampRectangleHorizontal->SetParent(tresholdFrame->GetFrame());
     this->RA_RampRectangleHorizontal->Create();
     this->RA_RampRectangleHorizontal->SetLabelText("Treshold");
     this->RA_RampRectangleHorizontal->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
     this->RA_RampRectangleHorizontal->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+    this->RA_RampRectangleHorizontal->SetCommand(this, "ProcessTresholdRange");
     this->RA_RampRectangleHorizontal->EnabledOff();
-    this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
+    this->Script("pack %s -side top -anchor nw -expand y -padx 0 -pady 2", 
         this->RA_RampRectangleHorizontal->GetWidgetName());
 
     this->RA_RampRectangleVertical=vtkKWRange::New();
@@ -1297,18 +1298,21 @@ void vtkSlicerVRGrayscaleHelper::CreateTreshold()
     this->RA_RampRectangleVertical->Create();
     this->RA_RampRectangleVertical->SetLabelText("Opacity");
     this->RA_RampRectangleVertical->SetOrientationToVertical();
-    this->RA_RampRectangleVertical->SetWholeRange(0,1);
-    this->RA_RampRectangleVertical->SetRange(0,1);
+    this->RA_RampRectangleVertical->SetWholeRange(1,0);
+    this->RA_RampRectangleVertical->SetRange(1,0);
     this->RA_RampRectangleVertical->EnabledOff();
-    this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
+    this->RA_RampRectangleVertical->SetCommand(this, "ProcessTresholdRange");
+    this->Script("pack %s -side top -anchor nw -expand y -padx 0 -pady 2", 
         this->RA_RampRectangleVertical->GetWidgetName());
-    
-    
+
+
     tresholdFrame->Delete();
 }
 
 void vtkSlicerVRGrayscaleHelper::ProcessTresholdModeEvents(int id)
 {
+
+    this->TresholdMode=id;
     //Disable Everything and go back to standard
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
     if(id==0)
@@ -1317,7 +1321,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessTresholdModeEvents(int id)
 
         this->RA_RampRectangleHorizontal->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
         this->RA_RampRectangleHorizontal->EnabledOff();
-        this->RA_RampRectangleVertical->SetRange(0,1);
+        this->RA_RampRectangleVertical->SetRange(1,0);
         this->RA_RampRectangleVertical->EnabledOff();
         return;
     }
@@ -1326,35 +1330,79 @@ void vtkSlicerVRGrayscaleHelper::ProcessTresholdModeEvents(int id)
     this->RA_RampRectangleHorizontal->EnabledOn();
     this->RA_RampRectangleVertical->EnabledOn();
 
-    //Delete all old Mapping Points
-    vtkPiecewiseFunction *opacity=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetScalarOpacity();
-    opacity->RemoveAllPoints();
-    opacity->AdjustRange(iData->GetScalarRange());
-
-    vtkColorTransferFunction *colorTransfer=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetRGBTransferFunction();
-    colorTransfer->RemoveAllPoints();
-    colorTransfer->AdjustRange(iData->GetScalarRange());
-
-    //this->SVP_VolumeProperty->MergeScalarOpacityAndColorEditors();
-
-    opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[0],this->RA_RampRectangleVertical->GetRange()[0]);
-    opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[0]+0.1,this->RA_RampRectangleVertical->GetRange()[1]);
-    opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[1],this->RA_RampRectangleVertical->GetRange()[1]);
-    opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[1]+0.1,this->RA_RampRectangleVertical->GetRange()[0]);
-
-    
-    this->SVP_VolumeProperty->Update();
-    //this->SVP_VolumeProperty->MergeScalarOpacityAndColorEditors();
-    //this->SVP_VolumeProperty->Update();
+    this->ProcessTresholdRange(.0,.0);
 
 
 
 
-    
+
+
 
 }
 
 void vtkSlicerVRGrayscaleHelper::ProcessColorModeEvents(int id)
 {
     this->ColorMode=id;
+    this->ProcessTresholdRange(0.,0.);
+}
+
+void vtkSlicerVRGrayscaleHelper::ProcessTresholdRange(double notUsed,double notUsedA)
+{
+    if(this->TresholdMode==0)
+    {
+        return;
+    }
+    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+    //Delete all old Mapping Points
+    vtkPiecewiseFunction *opacity=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetScalarOpacity();
+    opacity->RemoveAllPoints();
+    //opacity->AdjustRange(iData->GetScalarRange());
+
+    vtkColorTransferFunction *colorTransfer=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetRGBTransferFunction();
+    colorTransfer->RemoveAllPoints();
+    //colorTransfer->AdjustRange(iData->GetScalarRange());
+
+    opacity->AddPoint(iData->GetScalarRange()[0],this->RA_RampRectangleVertical->GetRange()[1]);
+    opacity->AddPoint(iData->GetScalarRange()[1],this->RA_RampRectangleVertical->GetRange()[1]);
+    if(this->TresholdMode==1)
+    {
+        opacity->AddPoint(iData->GetScalarRange()[0],this->RA_RampRectangleVertical->GetRange()[1]);
+        opacity->AddPoint(iData->GetScalarRange()[1],this->RA_RampRectangleVertical->GetRange()[0]);
+        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[0],this->RA_RampRectangleVertical->GetRange()[1]);
+        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[1],this->RA_RampRectangleVertical->GetRange()[0]);
+
+    }
+    else if(this->TresholdMode==2)
+    {
+
+        opacity->AddPoint(iData->GetScalarRange()[0],this->RA_RampRectangleVertical->GetRange()[1]);
+        opacity->AddPoint(iData->GetScalarRange()[1],this->RA_RampRectangleVertical->GetRange()[1]);
+
+        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[0],this->RA_RampRectangleVertical->GetRange()[1]);
+        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[0]+0.1,this->RA_RampRectangleVertical->GetRange()[0]);
+        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[1]-0.1,this->RA_RampRectangleVertical->GetRange()[0]);
+        opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[1],this->RA_RampRectangleVertical->GetRange()[1]);
+
+    }
+
+    if(!this->ColorMode)
+    {
+        colorTransfer->AddRGBPoint(iData->GetScalarRange()[0],.0,.0,.0);
+        colorTransfer->AddRGBPoint(iData->GetScalarRange()[1],1.,1.,1.);
+
+        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0],.0,.0,.0);
+        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[1],1.,1.,1.);
+    }
+    else
+    {
+        colorTransfer->AddRGBPoint(iData->GetScalarRange()[0],.3,.3,1.);
+        colorTransfer->AddRGBPoint(iData->GetScalarRange()[1],1.,.3,.3);
+
+        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0],.3,.3,1.);
+        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0]+.5*(this->RA_RampRectangleHorizontal->GetRange()[1]-this->RA_RampRectangleHorizontal->GetRange()[0]),.3,1.,.3);
+        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[1],1.,.3,.3);
+    }
+
+    this->SVP_VolumeProperty->Update();
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
 }
