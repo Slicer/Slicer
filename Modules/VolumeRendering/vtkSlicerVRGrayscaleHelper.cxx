@@ -196,6 +196,7 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
     this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","CB_RayCast","%d",this->CB_RayCast->GetWidget()->GetSelectedState());
     this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","CB_TextureLow","%d",this->CB_TextureLow->GetWidget()->GetSelectedState());
     this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","CB_TextureHigh","%d",this->CB_TextureHigh->GetWidget()->GetSelectedState());
+    this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","CB_InteractiveFrameRate","%d",this->CB_InteractiveFrameRate->GetWidget()->GetSelectedState());
     this->Gui->GetApplication()->SetRegistryValue(2,"VolumeRendering","SC_FrameRate","%e",this->SC_Framerate->GetWidget()->GetValue());
     if(this->MappersFrame!=NULL)
     {
@@ -401,23 +402,6 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 
     this->CreateCropping();
 
-    //Try to load from the registry
-    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_RayCast"))
-    {
-        this->CB_RayCast->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_RayCast"));
-    }
-    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_TextureLow"))
-    {
-        this->CB_TextureLow->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_TextureLow"));
-    }
-    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_TextureHigh"))
-    {
-        this->CB_TextureHigh->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_TextureHigh"));
-    }
-    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","SC_FrameRate"))
-    {
-        this->SC_Framerate->GetWidget()->SetValue(this->Gui->GetApplication()->GetFloatRegistryValue(2,"VolumeRendering","SC_FrameRate"));
-    }
 }
 void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
 {
@@ -492,6 +476,28 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
         this->MapperRaycast->SetAutoAdjustSampleDistances(0);
         this->MapperRaycast->SetSampleDistance(0.1);
+    }
+    
+    //Try to load from the registry; do it here to ensure all objects are there
+    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_RayCast"))
+    {
+        this->CB_RayCast->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_RayCast"));
+    }
+    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_TextureLow"))
+    {
+        this->CB_TextureLow->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_TextureLow"));
+    }
+    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_TextureHigh"))
+    {
+        this->CB_TextureHigh->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_TextureHigh"));
+    }
+    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","SC_FrameRate"))
+    {
+        this->SC_Framerate->GetWidget()->SetValue(this->Gui->GetApplication()->GetFloatRegistryValue(2,"VolumeRendering","SC_FrameRate"));
+    }
+        if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_InteractiveFrameRate"))
+    {
+        this->CB_InteractiveFrameRate->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_InteractiveFrameRate"));
     }
     this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
