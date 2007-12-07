@@ -10,6 +10,8 @@
 
 #include "vtkKWMessage.h"
 
+#include "vtkKWTopLevel.h"
+
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWLabel.h"
 
@@ -42,7 +44,6 @@ vtkSlicerColorGUI::vtkSlicerColorGUI ( )
   BIRNLabel = NULL;
   this->ColorDisplayWidget = NULL;
   this->LoadColorFileButton = NULL;
-  this->ApplyButton=NULL;
 }
 
 
@@ -86,11 +87,6 @@ vtkSlicerColorGUI::~vtkSlicerColorGUI ( )
     this->LoadColorFileButton->SetParent(NULL );
     this->LoadColorFileButton->Delete ( );
     }
-   if (this->ApplyButton)
-    {
-    this->ApplyButton->SetParent(NULL );
-    this->ApplyButton->Delete ( );
-    }
 }
 
 //---------------------------------------------------------------------------
@@ -109,12 +105,8 @@ void vtkSlicerColorGUI::RemoveGUIObservers ( )
   vtkDebugMacro("vtkSlicerColorGUI: RemoveGUIObservers\n");
   if (this->LoadColorFileButton)
     {
-    this->LoadColorFileButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+    this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers ( vtkKWTopLevel::WithdrawEvent,  (vtkCommand *)this->GUICallbackCommand );
     }
-   if (this->ApplyButton)
-     {
-     this->ApplyButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-     }
 }
 
 
@@ -122,8 +114,7 @@ void vtkSlicerColorGUI::RemoveGUIObservers ( )
 void vtkSlicerColorGUI::AddGUIObservers ( )
 {
   vtkDebugMacro("vtkSlicerColorGUI: AddGUIObservers\n");
-  this->LoadColorFileButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent , (vtkCommand *)this->GUICallbackCommand );
 }
 
 
@@ -132,10 +123,7 @@ void vtkSlicerColorGUI::AddGUIObservers ( )
 void vtkSlicerColorGUI::ProcessGUIEvents ( vtkObject *caller,
                                             unsigned long event, void *callData )
 {
-  if (this->LoadColorFileButton->GetWidget() == vtkKWLoadSaveButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
-    {
-    }
-  else if (this->ApplyButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
+  if (this->LoadColorFileButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event ==  vtkKWTopLevel::WithdrawEvent )
     {
     // If a file has been selected for loading...
     const char *fileName = this->LoadColorFileButton->GetWidget()->GetFileName();
@@ -281,15 +269,6 @@ void vtkSlicerColorGUI::BuildGUI ( )
                                                                                          "OpenPath");
   app->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
               this->LoadColorFileButton->GetWidgetName());
-  // Apply button
-  this->ApplyButton = vtkKWPushButton::New();
-  this->ApplyButton->SetParent(loadFrame->GetFrame());
-  this->ApplyButton->Create();
-  this->ApplyButton->SetText("Apply");
-  this->ApplyButton->SetWidth ( 20);
-  this->Script(
-               "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
-               this->ApplyButton->GetWidgetName());
   
   // ---
   // DISPLAY FRAME            

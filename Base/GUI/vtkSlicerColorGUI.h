@@ -95,7 +95,6 @@ protected:
     vtkKWLabel *BIRNLabel;
 
     vtkKWLoadSaveButtonWithLabel *LoadColorFileButton;
-    vtkKWPushButton *ApplyButton;
     
 private:
     vtkSlicerColorGUI ( const vtkSlicerColorGUI& ); // Not implemented.
