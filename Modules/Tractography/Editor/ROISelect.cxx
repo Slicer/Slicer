@@ -113,7 +113,7 @@ int main( int argc, const char * argv[] )
     double pIJK[3];
     int pt[3];
     short *inPtr;
-    bool addLine = true;
+    bool addLine = false;
     bool pass = false;
     bool nopass = false;
     for (j=0; j < npts; j++)
