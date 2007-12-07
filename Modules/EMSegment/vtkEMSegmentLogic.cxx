@@ -23,7 +23,7 @@
 #include "vtkImageMeanIntensityNormalization.h"
 #include "vtkMath.h"
 #include "vtkImageReslice.h"
-
+//#define EMSEG_ENABLE_REGISTRATION 1
 #ifdef EMSEG_ENABLE_REGISTRATION
 #include "vtkRigidRegistrator.h"
 #endif
@@ -322,6 +322,46 @@ StartPreprocessingTargetToTargetRegistration()
   int fixedTargetImageIndex = 0;
   vtkImageData* fixedImageData =
     alignedTarget->GetNthVolumeNode(fixedTargetImageIndex)->GetImageData();
+
+  //
+  // pick up origin and spacing from MRML
+  double* mrmlOrigin = 
+    alignedTarget->GetNthVolumeNode(fixedTargetImageIndex)->GetOrigin();
+  double* mrmlSpacing = 
+    alignedTarget->GetNthVolumeNode(fixedTargetImageIndex)->GetSpacing();
+  fixedImageData->SetOrigin(mrmlOrigin);
+  fixedImageData->SetSpacing(mrmlSpacing);
+
+  std::cerr << " Origin  = ";
+  std::copy(mrmlOrigin, mrmlOrigin+3, 
+            std::ostream_iterator<double>(cerr, " "));
+  std::cerr << std::endl;
+  std::cerr << " Spacing = ";
+  std::copy(mrmlSpacing, mrmlSpacing+3, 
+            std::ostream_iterator<double>(cerr, " "));
+  std::cerr << std::endl;
+
+  double origin[3];
+  double spacing[3];
+  int    dimensions[3];
+
+  fixedImageData->GetOrigin(origin);
+  fixedImageData->GetSpacing(spacing);
+  fixedImageData->GetDimensions(dimensions);
+  
+  std::cerr << "Before Registration:" << std::endl;
+  std::cerr << " Fixed Image   " << std::endl;
+  std::cerr << "  Origin:     ";
+  std::copy(origin, origin+3, std::ostream_iterator<double>(cerr, " "));
+  std::cerr << std::endl;
+  std::cerr << "  Spacing:    ";
+  std::copy(spacing, spacing+3, std::ostream_iterator<double>(cerr, " "));
+  std::cerr << std::endl;
+  std::cerr << "  Dimensions: ";
+  std::copy(dimensions, dimensions+3, 
+            std::ostream_iterator<int>(cerr, " "));
+  std::cerr << std::endl;
+
   for (int i = 0; i < alignedTarget->GetNumberOfVolumes(); ++i)
     {
       if (i == fixedTargetImageIndex)
@@ -334,6 +374,16 @@ StartPreprocessingTargetToTargetRegistration()
       // get image data
       vtkImageData* movingImageData = 
         normalizedTarget->GetNthVolumeNode(i)->GetImageData();
+
+      //
+      // pick up origin and spacing from MRML
+      double* mrmlOrigin = 
+        normalizedTarget->GetNthVolumeNode(i)->GetOrigin();
+      double* mrmlSpacing = 
+        normalizedTarget->GetNthVolumeNode(i)->GetSpacing();
+      movingImageData->SetOrigin(mrmlOrigin);
+      movingImageData->SetSpacing(mrmlSpacing);
+
       vtkImageData* outImageData = 
         alignedTarget->GetNthVolumeNode(i)->GetImageData(); 
 
@@ -401,6 +451,73 @@ StartPreprocessingTargetToTargetRegistration()
       resliceFilter->SetInformationInput(fixedImageData);
       resliceFilter->Update();
       std::cerr << "DONE" << std::endl;
+
+      //
+      // push origin and spacing back to MRML
+      outImageData->GetOrigin(origin);
+      outImageData->GetSpacing(spacing);
+      alignedTarget->GetNthVolumeNode(i)->SetOrigin(origin);
+      alignedTarget->GetNthVolumeNode(i)->SetSpacing(spacing);
+
+      // debugging output
+      fixedImageData->GetOrigin(origin);
+      fixedImageData->GetSpacing(spacing);
+      fixedImageData->GetDimensions(dimensions);
+
+      std::cerr << "After Registration:" << std::endl;
+      std::cerr << " Fixed Image   " << std::endl;
+      std::cerr << "  Origin:     ";
+      std::copy(origin, origin+3, std::ostream_iterator<double>(cerr, " "));
+      std::cerr << std::endl;
+      std::cerr << "  Spacing:    ";
+      std::copy(spacing, spacing+3, std::ostream_iterator<double>(cerr, " "));
+      std::cerr << std::endl;
+      std::cerr << "  Dimensions: ";
+      std::copy(dimensions, dimensions+3, 
+                std::ostream_iterator<int>(cerr, " "));
+      std::cerr << std::endl;
+
+      movingImageData->GetOrigin(origin);
+      movingImageData->GetSpacing(spacing);
+      movingImageData->GetDimensions(dimensions);
+      std::cerr << " Moving Image   " << std::endl;
+      std::cerr << "  Origin:     ";
+      std::copy(origin, origin+3, std::ostream_iterator<double>(cerr, " "));
+      std::cerr << std::endl;
+      std::cerr << "  Spacing:    ";
+      std::copy(spacing, spacing+3, std::ostream_iterator<double>(cerr, " "));
+      std::cerr << std::endl;
+      std::cerr << "  Dimensions:     ";
+      std::copy(dimensions, dimensions+3, 
+                std::ostream_iterator<int>(cerr, " "));
+      std::cerr << std::endl;
+
+      outImageData->GetOrigin(origin);
+      outImageData->GetSpacing(spacing);
+      outImageData->GetDimensions(dimensions);
+      std::cerr << " Output Image   " << std::endl;
+      std::cerr << "  Origin:     ";
+      std::copy(origin, origin+3, std::ostream_iterator<double>(cerr, " "));
+      std::cerr << std::endl;
+      std::cerr << "  Spacing:    ";
+      std::copy(spacing, spacing+3, std::ostream_iterator<double>(cerr, " "));
+      std::cerr << std::endl;
+      std::cerr << "  Dimensions:     ";
+      std::copy(dimensions, dimensions+3, 
+                std::ostream_iterator<int>(cerr, " "));
+      std::cerr << std::endl;
+
+      mrmlOrigin = 
+        alignedTarget->GetNthVolumeNode(i)->GetOrigin();
+      mrmlSpacing = 
+        alignedTarget->GetNthVolumeNode(i)->GetSpacing();
+      std::cerr << " Output Image MRML node  " << std::endl;
+      std::cerr << "  Origin:     ";
+      std::copy(mrmlOrigin, mrmlOrigin+3, std::ostream_iterator<double>(cerr, " "));
+      std::cerr << std::endl;
+      std::cerr << "  Spacing:    ";
+      std::copy(mrmlSpacing, mrmlSpacing+3, std::ostream_iterator<double>(cerr, " "));
+      std::cerr << std::endl;
 
       //
       // clean up
