@@ -1098,8 +1098,8 @@ int vtkSlicerFixedPointVolumeRayCastMapper::PerImageInitialization( vtkRenderer 
         if(this->ManualInteractive==1)
         {
             this->ImageSampleDistance =
-                this->ComputeRequiredImageSampleDistance( 0.05, ren, vol );
-            this->SampleDistance = this->InteractiveSampleDistance;
+                this->ComputeRequiredImageSampleDistance( this->ManualInteractiveRate, ren, vol );
+            //this->SampleDistance = this->InteractiveSampleDistance;
         }
         else
         {

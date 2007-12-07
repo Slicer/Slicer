@@ -92,6 +92,9 @@ public:
     vtkGetMacro(ManualInteractive,int);
     vtkSetMacro(ManualInteractive,int);
     vtkBooleanMacro(ManualInteractive,int);
+    vtkGetMacro(ManualInteractiveRate,int);
+    vtkSetMacro(ManualInteractiveRate,int);
+
   //ENDSLICERADD
 
   static vtkSlicerFixedPointVolumeRayCastMapper *New();
@@ -259,6 +262,7 @@ protected:
 
     //SLICERADD
     int ManualInteractive;
+    int ManualInteractiveRate;
   //ENDSLICERADD
 
 

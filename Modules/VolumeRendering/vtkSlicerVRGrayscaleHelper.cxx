@@ -383,12 +383,12 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->CB_InteractiveFrameRate->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
 
 
-    
+
     //Framerate
     this->SC_Framerate=vtkKWScaleWithLabel::New();
     this->SC_Framerate->SetParent(this->MappersFrame->GetFrame());
     this->SC_Framerate->Create();
-    this->SC_Framerate->SetLabelText("FPS (Low Resolution):");
+    this->SC_Framerate->SetLabelText("FPS (Interactive):");
     this->SC_Framerate->GetWidget()->SetRange(1,20);
     this->SC_Framerate->GetWidget()->SetResolution(1);
     this->SC_Framerate->GetWidget()->SetValue(1./this->GoalLowResTime);
@@ -439,6 +439,7 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
         tresholdHighIndex+=bin_width;
 
     }
+    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetInterpolationTypeToLinear();
     vtkPiecewiseFunction *opacity=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetScalarOpacity();
     opacity->RemoveAllPoints();
     opacity->AddPoint(range[0],0.);
@@ -477,7 +478,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperRaycast->SetAutoAdjustSampleDistances(0);
         this->MapperRaycast->SetSampleDistance(0.1);
     }
-    
+
     //Try to load from the registry; do it here to ensure all objects are there
     if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_RayCast"))
     {
@@ -495,10 +496,14 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     {
         this->SC_Framerate->GetWidget()->SetValue(this->Gui->GetApplication()->GetFloatRegistryValue(2,"VolumeRendering","SC_FrameRate"));
     }
-        if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_InteractiveFrameRate"))
+    if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_InteractiveFrameRate"))
     {
         this->CB_InteractiveFrameRate->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_InteractiveFrameRate"));
+        this->GoalLowResTime=1./this->SC_Framerate->GetWidget()->GetValue();
+        this->MapperRaycast->SetManualInteractiveRate(this->GoalLowResTime);
     }
+
+
     this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
@@ -589,6 +594,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     if(callerObjectCheckButton==this->CB_InteractiveFrameRate->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
     {
+
         this->MapperRaycast->SetAutoAdjustSampleDistances(callerObjectCheckButton->GetSelectedState());
         if(!callerObjectCheckButton->GetSelectedState())
         {
@@ -602,6 +608,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     if(callerObjectSC==this->SC_Framerate->GetWidget()&&eid==vtkKWScale::ScaleValueChangedEvent)
     {
         this->GoalLowResTime=1./callerObjectSC->GetValue();
+        this->MapperRaycast->SetManualInteractiveRate(this->GoalLowResTime);
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
         return;
     }
@@ -621,6 +628,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::StartEvent)
     {
+        if(this->ButtonDown)
+        {
+            this->Volume->SetAllocatedRenderTime(this->GoalLowResTime,NULL);
+        }
 
         //First check if we have to abort the ZeroStageRender
         if(strcmp(this->StageZeroEventHandlerID.c_str(),"")!=0)
@@ -1108,7 +1119,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
     }
 
     //Check if we have to enable or  disable FPS
-    this->SC_Framerate->SetEnabled(this->ScheduleMask[0]);
+    //this->SC_Framerate->SetEnabled(this->ScheduleMask[0]);
 
     //Check if we have to enable the last Checkbutton
     int count=0;
@@ -1415,11 +1426,11 @@ void vtkSlicerVRGrayscaleHelper::ProcessTresholdRange(double notUsed,double notU
 
     if(!this->ColorMode)
     {
-        colorTransfer->AddRGBPoint(iData->GetScalarRange()[0],.0,.0,.0);
-        colorTransfer->AddRGBPoint(iData->GetScalarRange()[1],1.,1.,1.);
+        colorTransfer->AddRGBPoint(iData->GetScalarRange()[0],.5,.5,.5);
+        colorTransfer->AddRGBPoint(iData->GetScalarRange()[1],1,1,1);
 
-        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0],.0,.0,.0);
-        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[1],1.,1.,1.);
+        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0],.5,.5,.5);
+        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[1],1,1,1);
     }
     else
     {
