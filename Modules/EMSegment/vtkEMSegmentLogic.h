@@ -92,6 +92,15 @@ private:
   // the mrml manager is created in the constructor
   vtkSetObjectMacro(MRMLManager, vtkEMSegmentMRMLManager);
 
+  // utility---should probably go to general slicer lib at some point
+  static void SlicerImageReslice(vtkMRMLVolumeNode* inputVolumeNode,
+                                 vtkMRMLVolumeNode* outputVolumeNode,
+                                 vtkMRMLVolumeNode* outputVolumeGeometryNode,
+                                 vtkTransform* outputRASToInputRASTransform,
+                                 double backgroundLevel);
+
+  static void PrintImageInfo(vtkImageData* image);
+
   // copy data from MRML to algorithm
   virtual void CopyAtlasDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);
   virtual void CopyTargetDataToSegmenter(vtkImageEMLocalSegmenter* segmenter);

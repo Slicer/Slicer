@@ -234,7 +234,7 @@ RegisterImagesInternal3()
                                    GetNumberOfPixels() *
                                    this->MetricComputationSamplingRatio));
       registration->SetMetric(metric);
-      std::cerr << "Metric: MMI" << std::endl;
+      //std::cerr << "Metric: MMI" << std::endl;
 
       break;
       }
@@ -244,7 +244,7 @@ RegisterImagesInternal3()
         ITKImageType, ITKImageType>   MetricType;
       typename MetricType::Pointer    metric  = MetricType::New();
       registration->SetMetric(metric);
-      std::cerr << "Metric: MSE" << std::endl;
+      //std::cerr << "Metric: MSE" << std::endl;
 
       break;
       }
@@ -254,7 +254,7 @@ RegisterImagesInternal3()
         ITKImageType, ITKImageType>   MetricType;
       typename MetricType::Pointer    metric  = MetricType::New();
       registration->SetMetric(metric);
-      std::cerr << "Metric: MSE" << std::endl;
+      //std::cerr << "Metric: MSE" << std::endl;
 
       break;
       }
@@ -275,7 +275,7 @@ RegisterImagesInternal3()
       typename InterpolatorType::Pointer interpolator  = 
         InterpolatorType::New();
       registration->SetInterpolator(interpolator);
-      std::cerr << "Interpolation: Nearest neighbor" << std::endl;
+      //std::cerr << "Interpolation: Nearest neighbor" << std::endl;
       }
       break;
 
@@ -287,7 +287,7 @@ RegisterImagesInternal3()
       typename InterpolatorType::Pointer   
         interpolator  = InterpolatorType::New();
       registration->SetInterpolator(interpolator);
-      std::cerr << "Interpolation: Linear" << std::endl;
+      //std::cerr << "Interpolation: Linear" << std::endl;
       }
       break;
     default:
@@ -316,20 +316,20 @@ RegisterImagesInternal3()
   if (this->TransformInitializationType == CentersOfMass)
   {
     transformInitializer->MomentsOn();
-    std::cerr << "Initialization: Moments" << std::endl;
+    //std::cerr << "Initialization: Moments" << std::endl;
   }
   else if (this->TransformInitializationType == ImageCenters)
   {
     transformInitializer->GeometryOn();
-    std::cerr << "Initialization: Image centers..." << std::endl;
+    //std::cerr << "Initialization: Image centers..." << std::endl;
   }
   transformInitializer->InitializeTransform();
 
   registration->SetTransform(transform);
   registration->SetInitialTransformParameters(transform->GetParameters());
 
-  std::cerr << "After Initializtation: " << std::endl;
-  transform->Print(std::cerr, 0);
+  //std::cerr << "After Initializtation: " << std::endl;
+  //transform->Print(std::cerr, 0);
 
   //
   // setup optomizer
@@ -373,7 +373,7 @@ RegisterImagesInternal3()
   try 
     {
     itk::RealTimeClock::Pointer clock = itk::RealTimeClock::New();
-    std::cerr << "  Starting registration..." << std::endl;
+    //std::cerr << "  Starting registration..." << std::endl;
     std::cerr << "   Iteration         Image Match        Step Size" 
               << std::endl;
     double timeStart = clock->GetTimeStamp();
@@ -382,7 +382,7 @@ RegisterImagesInternal3()
     
     double timeStop = clock->GetTimeStamp();
     double timeLength = (timeStop - timeStart);
-    std::cerr << "DONE, time = " << timeLength << std::endl;
+    std::cerr << "  DONE, time = " << timeLength << std::endl;
     }
   catch( itk::ExceptionObject & err )
     {
@@ -390,8 +390,8 @@ RegisterImagesInternal3()
     throw;
     }
 
-  std::cerr << "After Registration: " << std::endl;
-  transform->Print(std::cerr, 0);
+  //std::cerr << "After Registration: " << std::endl;
+  //transform->Print(std::cerr, 0);
 
   //
   // copy transform from itk back to this vtk class

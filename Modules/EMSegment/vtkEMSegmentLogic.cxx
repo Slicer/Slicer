@@ -1,8 +1,10 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include "vtkObjectFactory.h"
+#include "vtkImageChangeInformation.h"
 
 #include "vtkEMSegmentLogic.h"
 #include "vtkEMSegment.h"
@@ -23,10 +25,7 @@
 #include "vtkImageMeanIntensityNormalization.h"
 #include "vtkMath.h"
 #include "vtkImageReslice.h"
-//#define EMSEG_ENABLE_REGISTRATION 1
-#ifdef EMSEG_ENABLE_REGISTRATION
 #include "vtkRigidRegistrator.h"
-#endif
 
 // needed to translate between enums
 #include "EMLocalInterface.h"
@@ -270,6 +269,106 @@ StartPreprocessingTargetIntensityNormalization()
   m->UpdateIntensityDistributions();
 }
 
+// a utility to print out a vtk image origin, spacing, and extent
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+PrintImageInfo(vtkImageData* image)
+{
+  double spacing[3];
+  double origin[3];
+  int extent[6];
+
+  image->GetSpacing(spacing);
+  image->GetOrigin(origin);
+  image->GetExtent(extent);
+
+  std::cerr << "Spacing: ";
+  std::copy(spacing,spacing+3,std::ostream_iterator<double>(std::cerr," "));
+  std::cerr << std::endl;
+  std::cerr << "Origin: ";
+  std::copy(origin,origin+3,std::ostream_iterator<double>(std::cerr," "));
+  std::cerr << std::endl;
+  std::cerr << "Extent: ";
+  std::copy(extent,extent+6,std::ostream_iterator<double>(std::cerr," "));
+  std::cerr << std::endl;
+}
+
+//
+// A Slicer3 wrapper around vtkImageReslice.  Reslice the image data
+// from inputVolumeNode into outputVolumeNode with the output image
+// geometry specified by outputVolumeGeometryNode.  Optionally specify
+// a transform.  The reslice transorm will be:
+//
+// outputIJK->outputRAS->(outputRASToInputRASTransform)->inputRAS->inputIJK
+//
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentLogic::
+SlicerImageReslice(vtkMRMLVolumeNode* inputVolumeNode,
+                   vtkMRMLVolumeNode* outputVolumeNode,
+                   vtkMRMLVolumeNode* outputVolumeGeometryNode,
+                   vtkTransform* outputRASToInputRASTransform,
+                   double backgroundLevel)
+{
+  vtkImageData* inputImageData  = inputVolumeNode->GetImageData();
+  vtkImageData* outputImageData = outputVolumeNode->GetImageData();
+  vtkImageData* outputGeometryData = NULL;
+  if (outputVolumeGeometryNode != NULL)
+    {
+    outputGeometryData = outputVolumeGeometryNode->GetImageData();
+    }
+
+  vtkImageReslice* resliceFilter = vtkImageReslice::New();
+
+  //
+  // set inputs
+  resliceFilter->SetInput(inputImageData);
+  resliceFilter->SetOutput(outputImageData);
+
+  //
+  // set geometry
+  if (outputGeometryData != NULL)
+    {
+    resliceFilter->SetInformationInput(outputGeometryData);
+    outputVolumeNode->CopyOrientation(outputVolumeGeometryNode);
+    }
+
+  //
+  // setup total transform
+  // ijk of output -> RAS -> XFORM -> RAS -> ijk of input
+  vtkTransform* totalTransform = vtkTransform::New();
+  if (outputRASToInputRASTransform != NULL)
+    {
+    totalTransform->DeepCopy(outputRASToInputRASTransform);
+    }
+
+  vtkMatrix4x4* outputIJKToRAS  = vtkMatrix4x4::New();
+  outputVolumeNode->GetIJKToRASMatrix(outputIJKToRAS);
+  vtkMatrix4x4* inputRASToIJK = vtkMatrix4x4::New();
+  inputVolumeNode->GetRASToIJKMatrix(inputRASToIJK);
+
+  totalTransform->PreMultiply();
+  totalTransform->Concatenate(outputIJKToRAS);
+  totalTransform->PostMultiply();
+  totalTransform->Concatenate(inputRASToIJK);
+  resliceFilter->SetResliceTransform(totalTransform);
+
+  //
+  // resample the image
+  resliceFilter->SetBackgroundLevel(backgroundLevel);
+  resliceFilter->SetInterpolationModeToLinear();
+  resliceFilter->OptimizationOn();
+  resliceFilter->Update();
+
+  //
+  // clean up
+  outputIJKToRAS->Delete();
+  inputRASToIJK->Delete();
+  resliceFilter->Delete();
+  totalTransform->Delete();
+}
+
 //----------------------------------------------------------------------------
 void
 vtkEMSegmentLogic::
@@ -277,10 +376,10 @@ StartPreprocessingTargetToTargetRegistration()
 {
   std::cerr << " EMSEG: Starting target-to-target registration..." 
             << std::endl;
-
+  
   // get a pointer to the mrml manager for easy access
   vtkEMSegmentMRMLManager* m = this->MRMLManager;
-
+  
   // get input target from working node
   vtkMRMLEMSTargetNode* normalizedTarget = 
     m->GetWorkingDataNode()->GetNormalizedTargetNode();
@@ -315,219 +414,165 @@ StartPreprocessingTargetToTargetRegistration()
   //
   // check that the number of target images did not change
   // !!! todo !!!
-
+  
   //
   // apply registration
   // align image i with image 0
   int fixedTargetImageIndex = 0;
-  vtkImageData* fixedImageData =
-    alignedTarget->GetNthVolumeNode(fixedTargetImageIndex)->GetImageData();
-
-  //
-  // pick up origin and spacing from MRML
-  double* mrmlOrigin = 
-    alignedTarget->GetNthVolumeNode(fixedTargetImageIndex)->GetOrigin();
-  double* mrmlSpacing = 
-    alignedTarget->GetNthVolumeNode(fixedTargetImageIndex)->GetSpacing();
-  fixedImageData->SetOrigin(mrmlOrigin);
-  fixedImageData->SetSpacing(mrmlSpacing);
-
-  std::cerr << " Origin  = ";
-  std::copy(mrmlOrigin, mrmlOrigin+3, 
-            std::ostream_iterator<double>(cerr, " "));
-  std::cerr << std::endl;
-  std::cerr << " Spacing = ";
-  std::copy(mrmlSpacing, mrmlSpacing+3, 
-            std::ostream_iterator<double>(cerr, " "));
-  std::cerr << std::endl;
-
-  double origin[3];
-  double spacing[3];
-  int    dimensions[3];
-
-  fixedImageData->GetOrigin(origin);
-  fixedImageData->GetSpacing(spacing);
-  fixedImageData->GetDimensions(dimensions);
+  vtkMRMLVolumeNode* fixedVolumeNode = 
+    alignedTarget->GetNthVolumeNode(fixedTargetImageIndex);
+  vtkImageData* fixedImageData = fixedVolumeNode->GetImageData();
   
-  std::cerr << "Before Registration:" << std::endl;
-  std::cerr << " Fixed Image   " << std::endl;
-  std::cerr << "  Origin:     ";
-  std::copy(origin, origin+3, std::ostream_iterator<double>(cerr, " "));
-  std::cerr << std::endl;
-  std::cerr << "  Spacing:    ";
-  std::copy(spacing, spacing+3, std::ostream_iterator<double>(cerr, " "));
-  std::cerr << std::endl;
-  std::cerr << "  Dimensions: ";
-  std::copy(dimensions, dimensions+3, 
-            std::ostream_iterator<int>(cerr, " "));
-  std::cerr << std::endl;
-
   for (int i = 0; i < alignedTarget->GetNumberOfVolumes(); ++i)
     {
-      if (i == fixedTargetImageIndex)
+    if (i == fixedTargetImageIndex)
+      {
+      std::cerr << "  Skipping fixed target image " << i << std::endl;
+      continue;
+      }
+    
+    //
+    // get image data
+    vtkMRMLVolumeNode* movingVolumeNode = 
+      normalizedTarget->GetNthVolumeNode(i);
+    vtkImageData* movingImageData = movingVolumeNode->GetImageData();
+    vtkMRMLVolumeNode* outputVolumeNode = 
+      alignedTarget->GetNthVolumeNode(i);
+    vtkImageData* outImageData = outputVolumeNode->GetImageData(); 
+    
+    if (fixedImageData == NULL)
+      {
+      vtkErrorMacro("Fixed image is null, skipping: " << i);
+      continue;
+      }
+    if (movingImageData == NULL)
+      {
+      vtkErrorMacro("Moving image is null, skipping: " << i);
+      continue;
+      }
+    if (outImageData == NULL)
+      {
+      vtkErrorMacro("Registration output is null, skipping: " << i);
+      continue;
+      }
+
+    // 
+    // We want to use ITK for registration so we need to coordinate
+    // image orientation/origin/spacing in Slicer3 and in ITK.
+    //
+    // Setup origin and spacing of images so that their ITK world
+    // coordinates are measured in units of the basis vectors RAS (we
+    // know the correct transform from the mrml volume node).  Why?
+    // Because this way ITK registration results from these images can
+    // be naturally and easily applied to our images.
+    //
+    // Once you have the ITK fixed->moving transformation, you can map
+    // a voxel from a fixed to a moving image (e.g., in order to
+    // resample a moving image onto a fixed image) via:
+    //
+    // movingIJK =                         # ijk coords of moving vtk image
+    //   movingRASToIJK \circ              # get this from mrml node
+    //   ITKFixedToMovingTransform \circ   # itk registration results
+    //   fixedIJKToRAS \circ               # get this from mrml node 
+    //   fixedIJK                          # ijk coords of fixed image
+    //
+    // NB: this assumes that IJKToRASDirections is a diagonal matrix.
+    //
+    
+    // fixed -----
+    vtkImageChangeInformation* changeInformationFixedImage = 
+      vtkImageChangeInformation::New();
+    changeInformationFixedImage->SetInput(fixedImageData);
+    vtkMatrix4x4* IJKToRASMatrixFixed = vtkMatrix4x4::New();
+    fixedVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixFixed);
+    changeInformationFixedImage->
+      SetOutputOrigin((*IJKToRASMatrixFixed)[0][3],
+                      (*IJKToRASMatrixFixed)[1][3],
+                      (*IJKToRASMatrixFixed)[2][3]);
+    changeInformationFixedImage->
+      SetOutputSpacing((*IJKToRASMatrixFixed)[0][0],
+                       (*IJKToRASMatrixFixed)[1][1],
+                       (*IJKToRASMatrixFixed)[2][2]);
+    IJKToRASMatrixFixed->Delete();
+
+    // moving -----
+    vtkImageChangeInformation* changeInformationMovingImage = 
+      vtkImageChangeInformation::New();
+    changeInformationMovingImage->SetInput(movingImageData);
+    vtkMatrix4x4* IJKToRASMatrixMoving = vtkMatrix4x4::New();
+    movingVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixMoving);
+    changeInformationMovingImage->
+      SetOutputOrigin((*IJKToRASMatrixMoving)[0][3],
+                      (*IJKToRASMatrixMoving)[1][3],
+                      (*IJKToRASMatrixMoving)[2][3]);
+    changeInformationMovingImage->
+      SetOutputSpacing((*IJKToRASMatrixMoving)[0][0],
+                       (*IJKToRASMatrixMoving)[1][1],
+                       (*IJKToRASMatrixMoving)[2][2]);
+    IJKToRASMatrixMoving->Delete();
+
+    //
+    // set up registration
+    vtkRigidRegistrator* registrator = vtkRigidRegistrator::New();
+    registrator->SetFixedImage(changeInformationFixedImage->GetOutput());
+    registrator->SetMovingImage(changeInformationMovingImage->GetOutput());
+    registrator->SetImageToImageMetricToMutualInformation();
+    registrator->SetMetricComputationSamplingRatio(0.08);
+    registrator->SetNumberOfIterations(15);
+    registrator->SetIntensityInterpolationTypeToLinear();
+    registrator->SetTransformInitializationTypeToImageCenters();
+    try
+      {
+      if (this->MRMLManager->GetEnableTargetToTargetRegistration())
         {
-        std::cerr << "  Skipping fixed target image " << i << std::endl;
-        continue;
+        std::cerr << "  Registering target image " << i << "..." << std::endl;
+        registrator->RegisterImages();
         }
-
-      //
-      // get image data
-      vtkImageData* movingImageData = 
-        normalizedTarget->GetNthVolumeNode(i)->GetImageData();
-
-      //
-      // pick up origin and spacing from MRML
-      double* mrmlOrigin = 
-        normalizedTarget->GetNthVolumeNode(i)->GetOrigin();
-      double* mrmlSpacing = 
-        normalizedTarget->GetNthVolumeNode(i)->GetSpacing();
-      movingImageData->SetOrigin(mrmlOrigin);
-      movingImageData->SetSpacing(mrmlSpacing);
-
-      vtkImageData* outImageData = 
-        alignedTarget->GetNthVolumeNode(i)->GetImageData(); 
-
-      if (fixedImageData == NULL)
+      else
         {
-        vtkErrorMacro("Fixed image is null, skipping: " << i);
-        continue;
+        std::cerr << "  Skipping registration of target image " 
+                  << i << "." << std::endl;
         }
-      if (movingImageData == NULL)
+      }
+    catch (...)
+      {
+      std::cerr << "Failed to register images!!!" << std::endl;
+      }
+    std::cerr << "  Target-to-target transform (fixedRAS->movingRAS): " 
+              << std::endl;
+    for (unsigned int r = 0; r < 4; ++r)
+      {
+      std::cerr << "   ";
+      for (unsigned int c = 0; c < 4; ++c)
         {
-        vtkErrorMacro("Moving image is null, skipping: " << i);
-        continue;
+        std::cerr << registrator->GetTransform()->GetMatrix()->GetElement(r,c)
+                  << "   ";
         }
-      if (outImageData == NULL)
-        {
-        vtkErrorMacro("Registration output is null, skipping: " << i);
-        continue;
-        }
+      std::cerr << std::endl;
+      }
 
-      //
-      // set up registration
-#ifdef EMSEG_ENABLE_REGISTRATION
-      vtkRigidRegistrator* registrator = vtkRigidRegistrator::New();
-      registrator->SetFixedImage(fixedImageData);
-      registrator->SetMovingImage(movingImageData);
-      registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetMetricComputationSamplingRatio(0.333);
-      registrator->SetNumberOfIterations(50);
-      registrator->SetIntensityInterpolationTypeToLinear();
-      registrator->SetTransformInitializationTypeToImageCenters();
-      try
-        {
-        if (this->MRMLManager->GetEnableTargetToTargetRegistration())
-          {
-          std::cerr << "  Registering target image " << i << "...";
-          registrator->RegisterImages();
-          }
-        else
-          {
-          std::cerr << "  Skipping registration of target image " 
-                    << i << "." << std::endl;
-          }
-        }
-      catch (...)
-        {
-        std::cerr << "Failed to register images!!!" << std::endl;
-        }
-      std::cerr << "    Target-to-target transform: " << std::endl;
-      registrator->GetTransform()->GetMatrix()->PrintSelf(std::cerr, 4);
-#endif
+    // new image should be down and to right in slicer axial view!
+    //vtkTransform* testTransform = vtkTransform::New();
+    //testTransform->Translate(5, 5, 0);
 
-      //
-      // resample moving image
-
-      //
-      // need to make sure that the output image is in space of 0th
-      // target image
-      std::cerr << "  Resampling target image " << i << "...";
-      vtkImageReslice* resliceFilter = vtkImageReslice::New();
-#ifdef EMSEG_ENABLE_REGISTRATION
-      resliceFilter->SetResliceTransform(registrator->GetTransform());
-#endif
-      resliceFilter->SetInput(movingImageData);
-      resliceFilter->SetOutput(outImageData);
-      resliceFilter->SetInformationInput(fixedImageData);
-      resliceFilter->Update();
-      std::cerr << "DONE" << std::endl;
-
-      //
-      // push origin and spacing back to MRML
-      outImageData->GetOrigin(origin);
-      outImageData->GetSpacing(spacing);
-      alignedTarget->GetNthVolumeNode(i)->SetOrigin(origin);
-      alignedTarget->GetNthVolumeNode(i)->SetSpacing(spacing);
-
-      // debugging output
-      fixedImageData->GetOrigin(origin);
-      fixedImageData->GetSpacing(spacing);
-      fixedImageData->GetDimensions(dimensions);
-
-      std::cerr << "After Registration:" << std::endl;
-      std::cerr << " Fixed Image   " << std::endl;
-      std::cerr << "  Origin:     ";
-      std::copy(origin, origin+3, std::ostream_iterator<double>(cerr, " "));
-      std::cerr << std::endl;
-      std::cerr << "  Spacing:    ";
-      std::copy(spacing, spacing+3, std::ostream_iterator<double>(cerr, " "));
-      std::cerr << std::endl;
-      std::cerr << "  Dimensions: ";
-      std::copy(dimensions, dimensions+3, 
-                std::ostream_iterator<int>(cerr, " "));
-      std::cerr << std::endl;
-
-      movingImageData->GetOrigin(origin);
-      movingImageData->GetSpacing(spacing);
-      movingImageData->GetDimensions(dimensions);
-      std::cerr << " Moving Image   " << std::endl;
-      std::cerr << "  Origin:     ";
-      std::copy(origin, origin+3, std::ostream_iterator<double>(cerr, " "));
-      std::cerr << std::endl;
-      std::cerr << "  Spacing:    ";
-      std::copy(spacing, spacing+3, std::ostream_iterator<double>(cerr, " "));
-      std::cerr << std::endl;
-      std::cerr << "  Dimensions:     ";
-      std::copy(dimensions, dimensions+3, 
-                std::ostream_iterator<int>(cerr, " "));
-      std::cerr << std::endl;
-
-      outImageData->GetOrigin(origin);
-      outImageData->GetSpacing(spacing);
-      outImageData->GetDimensions(dimensions);
-      std::cerr << " Output Image   " << std::endl;
-      std::cerr << "  Origin:     ";
-      std::copy(origin, origin+3, std::ostream_iterator<double>(cerr, " "));
-      std::cerr << std::endl;
-      std::cerr << "  Spacing:    ";
-      std::copy(spacing, spacing+3, std::ostream_iterator<double>(cerr, " "));
-      std::cerr << std::endl;
-      std::cerr << "  Dimensions:     ";
-      std::copy(dimensions, dimensions+3, 
-                std::ostream_iterator<int>(cerr, " "));
-      std::cerr << std::endl;
-
-      mrmlOrigin = 
-        alignedTarget->GetNthVolumeNode(i)->GetOrigin();
-      mrmlSpacing = 
-        alignedTarget->GetNthVolumeNode(i)->GetSpacing();
-      std::cerr << " Output Image MRML node  " << std::endl;
-      std::cerr << "  Origin:     ";
-      std::copy(mrmlOrigin, mrmlOrigin+3, std::ostream_iterator<double>(cerr, " "));
-      std::cerr << std::endl;
-      std::cerr << "  Spacing:    ";
-      std::copy(mrmlSpacing, mrmlSpacing+3, std::ostream_iterator<double>(cerr, " "));
-      std::cerr << std::endl;
-
-      //
-      // clean up
-#ifdef EMSEG_ENABLE_REGISTRATION
-      registrator->Delete();
-#endif
-      resliceFilter->Delete();
+    //
+    // resample moving image
+    std::cerr << "  Resampling target image " << i << "...";
+    vtkEMSegmentLogic::SlicerImageReslice(movingVolumeNode, 
+                                          outputVolumeNode, 
+                                          fixedVolumeNode, 
+                                          registrator->GetTransform(),
+                                          0); // hardwire background for now!!!
+    std::cerr << "DONE" << std::endl;
+    
+    //
+    // clean up
+    changeInformationFixedImage->Delete();
+    changeInformationMovingImage->Delete();
+    registrator->Delete();
     }    
   std::cerr << " EMSEG: Target-to-target registration complete." << std::endl;
-
+  
   // intensity statistics, if computed from data, must be updated
   m->UpdateIntensityDistributions();
 }
@@ -589,47 +634,49 @@ StartPreprocessingAtlasToTargetRegistration()
   // apply registration
   // align atlas "registration image" with first target image
   int fixedTargetImageIndex = 0;
-  vtkImageData* fixedTargetImageData =
-    alignedTarget->GetNthVolumeNode(fixedTargetImageIndex)->GetImageData();
-  vtkImageData* movingAtlasImageData = NULL; // !!!
-    
-  // set up registration between these images !!!
+  vtkMRMLVolumeNode* fixedTargetVolumeNode = 
+    alignedTarget->GetNthVolumeNode(fixedTargetImageIndex);
+  //vtkImageData* fixedTargetImageData = fixedTargetVolumeNode->GetImageData();
+  //vtkImageData* movingAtlasImageData = NULL; // !!!
 
+  // set up registration between these images !!!
+  
   //
-  // resample all the atlas images using the transform
+  // resample all the atlas images using the same target->atlas transform
   for (int i = 0; i < alignedAtlas->GetNumberOfVolumes(); ++i)
     {
-      //
-      // get image data
-      vtkImageData* movingImageData = 
-        inputAtlas->GetNthVolumeNode(i)->GetImageData();
-      vtkImageData* outImageData = 
-        alignedAtlas->GetNthVolumeNode(i)->GetImageData(); 
+    //
+    // get image data
+    vtkMRMLVolumeNode* movingAtlasVolumeNode = inputAtlas->GetNthVolumeNode(i);
+    vtkImageData* movingAtlasImageData = movingAtlasVolumeNode->GetImageData();
+    vtkMRMLVolumeNode* outputAtlasVolumeNode = 
+      alignedAtlas->GetNthVolumeNode(i);
+    vtkImageData* outAtlasImageData = outputAtlasVolumeNode->GetImageData(); 
 
-      if (movingImageData == NULL)
-        {
-        vtkErrorMacro("Moving image is null, skipping: " << i);
-        continue;
-        }
-      if (outImageData == NULL)
-        {
-        vtkErrorMacro("Registration output is null, skipping: " << i);
-        continue;
-        }
+    if (movingAtlasImageData == NULL)
+      {
+      vtkErrorMacro("Moving image is null, skipping: " << i);
+      continue;
+      }
+    if (outAtlasImageData == NULL)
+      {
+      vtkErrorMacro("Registration output is null, skipping: " << i);
+      continue;
+      }
 
-      std::cerr << "  Resampling atlas image " << i << "...";
-      vtkImageReslice* resliceFilter = vtkImageReslice::New();
-      //resliceFilter->SetResliceTransform(registrator->GetTransform());
-      resliceFilter->SetInput(movingImageData);
-      resliceFilter->SetOutput(outImageData);
-      resliceFilter->SetInformationInput(fixedTargetImageData);
-      resliceFilter->Update();
-      std::cerr << "DONE" << std::endl;
+    std::cerr << "  Resampling atlas image " << i << "...";
+    //
+    // resample moving image
+    vtkEMSegmentLogic::SlicerImageReslice(movingAtlasVolumeNode, 
+                                          outputAtlasVolumeNode, 
+                                          fixedTargetVolumeNode, 
+                                          // need to specify xform here!!!
+                                          NULL, 0);      
+    std::cerr << "DONE" << std::endl;
 
-      //
-      // clean up
-      //registrator->Delete();
-      resliceFilter->Delete();
+    //
+    // clean up
+    //registrator->Delete();
     }    
   std::cerr << " EMSEG: Atlas-to-target registration complete." << std::endl;
 }
