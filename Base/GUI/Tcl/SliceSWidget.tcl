@@ -216,6 +216,7 @@ itcl::body SliceSWidget::resizeSliceNode {} {
 #
 itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
+
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
@@ -242,6 +243,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     set tkwindow [$_renderWidget  GetWidgetName]
     $_interactor UpdateSize [winfo width $tkwindow] [winfo height $tkwindow]
   }
+
 
   #
   # if another widget has the grab, let this go unless

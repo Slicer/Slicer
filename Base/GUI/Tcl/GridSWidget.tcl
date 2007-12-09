@@ -79,7 +79,9 @@ itcl::body GridSWidget::constructor {sliceGUI} {
 
   set node [[$sliceGUI GetLogic] GetSliceCompositeNode]
   lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "after idle ::SWidget::ProtectedCallback $this processEvent $node"]
+
+  after idle $this processEvent $node
 }
 
 
@@ -114,6 +116,7 @@ itcl::body GridSWidget::destructor {} {
 # handle interactor events
 #
 itcl::body GridSWidget::processEvent { {caller ""} {event ""} } {
+
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
@@ -192,9 +195,10 @@ itcl::body GridSWidget::addGridLine { startPoint endPoint } {
 itcl::body GridSWidget::updateGrid { } {
 
   $this resetGrid
-  
-  if { ![$_sliceCompositeNode GetLabelGrid] } {
+
+  if { ![$_sliceCompositeNode GetLabelGrid] || [$_sliceCompositeNode GetLabelVolumeID] == "" } {
     $o(gridActor) SetVisibility 0
+    [$sliceGUI GetSliceViewer] RequestRender
     return
   }
 
@@ -211,11 +215,16 @@ itcl::body GridSWidget::updateGrid { } {
   $ijkToXY SetElement 2 3  0
   $ijkToXY Invert
   foreach {x y z w} [$ijkToXY MultiplyPoint 1 1 1 0] {}
-  if { $x < $cutoff && $y < $cutoff || $_layers($layer,image) == "" } {
+  if { [expr abs($x)] < $cutoff && [expr abs($y)] < $cutoff || $_layers($layer,image) == "" } {
     $o(gridActor) SetVisibility 0
     $ijkToXY Delete
     return
   } else {
+    if { [$o(gridActor) GetVisibility] } {
+      # put the actor at the top of the display list
+      [$_renderWidget GetRenderer] RemoveActor2D $o(gridActor)
+      [$_renderWidget GetRenderer] AddActor2D $o(gridActor)
+    }
     $o(gridActor) SetVisibility 1
   }
 
