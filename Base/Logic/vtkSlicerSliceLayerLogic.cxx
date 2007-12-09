@@ -475,7 +475,7 @@ void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
 {
   vtkMRMLVolumeDisplayNode *volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
   vtkMRMLLabelMapVolumeDisplayNode *labelMapVolumeDisplayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
-  vtkMRMLScalarVolumeDisplayNode *scalrVolumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
+  vtkMRMLScalarVolumeDisplayNode *scalarVolumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
   vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast (this->VolumeNode);
 
   if (this->VolumeNode == NULL)
@@ -531,7 +531,7 @@ void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
     volumeDisplayNode->SetBackgroundImageData(this->Reslice->GetBackgroundMask());
     }
 
-  if (scalrVolumeDisplayNode && scalrVolumeDisplayNode->GetInterpolate() == 0  )
+  if (scalarVolumeDisplayNode && scalarVolumeDisplayNode->GetInterpolate() == 0  )
     {
     this->Reslice->SetInterpolationModeToNearestNeighbor();
     }
@@ -907,11 +907,17 @@ void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SliceNode: " <<
     (this->SliceNode ? this->SliceNode->GetID() : "(none)") << "\n";
 
-  os << indent << "VolumeDisplayNode: " <<
-    (this->VolumeDisplayNode ? this->VolumeDisplayNode->GetID() : "(none)") << "\n";
+  
+
   if (this->VolumeDisplayNode)
     {
+    os << indent << "VolumeDisplayNode: ";
+    os << (this->VolumeDisplayNode->GetID() ? this->VolumeDisplayNode->GetID() : "(null ID)") << "\n";
     this->VolumeDisplayNode->PrintSelf(os, nextIndent);
+    }
+  else
+    {
+    os << indent << "VolumeDisplayNode: (none)\n";
     }
   os << indent << "Slice:\n";
   if (this->Slice)
