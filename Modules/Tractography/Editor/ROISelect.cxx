@@ -90,7 +90,7 @@ int main( int argc, const char * argv[] )
 
   if ( !inPts || numPts  < 1 || !inLines || numLines < 1 )
     {
-    EXIT_SUCCESS;
+    return EXIT_SUCCESS;
     }
 
   std::vector<bool> addLines;
