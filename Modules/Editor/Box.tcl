@@ -91,6 +91,9 @@ if { [itcl::find class Box] == "" } {
     # clean up the vtk classes instanced by this Box
     method vtkDelete {} {
       foreach object $_vtkObjects {
+        if { [$object IsA "vtkKWWidget"] } {
+          $object SetParent ""
+        }
         if { [catch "$object Delete" res] } {
           tk_messageBox -message "cleaning box, got:\n\n$res"
         }

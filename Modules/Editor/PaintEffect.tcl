@@ -112,7 +112,9 @@ itcl::body PaintEffect::destructor {} {
 }
 
 itcl::configbody PaintEffect::radius {
-  $this createGlyph $o(brush)
+  if { $radius != "" } {
+    $this createGlyph $o(brush)
+  }
 }
 
 # ------------------------------------------------------------------
@@ -120,6 +122,7 @@ itcl::configbody PaintEffect::radius {
 # ------------------------------------------------------------------
 
 itcl::body PaintEffect::createGlyph { {polyData ""} } {
+
   # make a circle paint brush
   if { $polyData == "" } {
     set polyData [vtkNew vtkPolyData]

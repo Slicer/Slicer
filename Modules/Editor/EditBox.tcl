@@ -328,6 +328,23 @@ itcl::body EditBox::processEvent { {caller ""} {event ""} } {
 # TODO: this little helper reloads the editor functionality
 #
 proc eeeee {} {
+
+  EffectSWidget::RemoveAll
+
+  if { ![info exists ::Editor(singleton)] } {
+    error "editor not yet loaded"
+  }
+  set editor $::Editor(singleton)
+
+  EditorTearDownGUI $::Editor(singleton)
+
+  foreach eff [itcl::find objects -isa EffectSWidget] {
+    itcl::delete object $eff
+  }
+  foreach box [itcl::find objects -isa Box] {
+    itcl::delete object $box
+  }
+
   itcl::delete class Box
   itcl::delete class EffectSWidget
 
@@ -340,4 +357,7 @@ proc eeeee {} {
   foreach box [glob $::env(SLICER_HOME)/../Slicer3/Modules/Editor/*Box.tcl] {
     source $box
   }
+  source $::env(SLICER_HOME)/../Slicer3/Modules/Editor/EditColor.tcl
+
+  EditorBuildGUI $editor
 }

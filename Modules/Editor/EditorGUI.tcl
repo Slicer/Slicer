@@ -43,6 +43,8 @@ proc EditorTearDownGUI {this} {
     [$this GetUIPanel] RemovePage "Editor"
   }
 
+  unset ::Editor(singleton)
+
 }
 
 proc EditorBuildGUI {this} {
