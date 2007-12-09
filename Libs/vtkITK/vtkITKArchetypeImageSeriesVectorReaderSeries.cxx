@@ -78,12 +78,13 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteData(vtkDataObject *ou
       typedef itk::ImageSource<image##typeN> FilterType; \
       FilterType::Pointer filter; \
       itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
-        itk::ImageSeriesReader<image##typeN>::New(); \
-        itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
-        pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
+      itk::ImageSeriesReader<image##typeN>::New(); \
+      itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
+      pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
       pcl->SetClientData(this); \
       reader##typeN->SetFileNames(this->FileNames); \
       reader##typeN->ReleaseDataFlagOn(); \
+      reader##typeN->GetOutput()->SetVectorLength(3); \
       if (this->UseNativeCoordinateOrientation) \
         { \
         filter = reader##typeN; \
@@ -118,20 +119,27 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteData(vtkDataObject *ou
   else
     {
     // use the series reader
-    switch (this->OutputScalarType)
+    try 
       {
-      vtkITKExecuteDataFromSeriesVector(VTK_DOUBLE, double);
-      vtkITKExecuteDataFromSeriesVector(VTK_FLOAT, float);
-      vtkITKExecuteDataFromSeriesVector(VTK_LONG, long);
-      vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_LONG, unsigned long);
-      vtkITKExecuteDataFromSeriesVector(VTK_INT, int);
-      vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_INT, unsigned int);
-      vtkITKExecuteDataFromSeriesVector(VTK_SHORT, short);
-      vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_SHORT, unsigned short);
-      vtkITKExecuteDataFromSeriesVector(VTK_CHAR, char);
-      vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_CHAR, unsigned char);
-      default:
-        vtkErrorMacro(<< "UpdateFromFile Series: Unknown data type " << this->OutputScalarType);
+      switch (this->OutputScalarType)
+        {
+        vtkITKExecuteDataFromSeriesVector(VTK_DOUBLE, double);
+        vtkITKExecuteDataFromSeriesVector(VTK_FLOAT, float);
+        vtkITKExecuteDataFromSeriesVector(VTK_LONG, long);
+        vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_LONG, unsigned long);
+        vtkITKExecuteDataFromSeriesVector(VTK_INT, int);
+        vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_INT, unsigned int);
+        vtkITKExecuteDataFromSeriesVector(VTK_SHORT, short);
+        vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_SHORT, unsigned short);
+        vtkITKExecuteDataFromSeriesVector(VTK_CHAR, char);
+        vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_CHAR, unsigned char);
+        default:
+          vtkErrorMacro(<< "UpdateFromFile Series: Unknown data type " << this->OutputScalarType);
+        }
+      }
+    catch (itk::ExceptionObject & e)
+      {
+      vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
       }
     }
 }
