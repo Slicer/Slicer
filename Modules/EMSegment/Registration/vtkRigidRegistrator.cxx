@@ -11,7 +11,6 @@
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkRealTimeClock.h"
-//#include "itkTemporaryTraitsForLongLong.h"
 #include "itkPixelTraits.h"
 #include "vtkImageCast.h"
 #include "vtkTypeTraits.h"
@@ -342,7 +341,7 @@ RegisterImagesInternal3()
   OptimizerScalesType optimizerScales(6);
   const double translationScale = 1.0 / 1000.0;
 
-  double               initialStepLength               = 0.1;
+  double               initialStepLength               = 1.0;
   double               relaxationFactor                = 0.6;
   double               minimumStepLength               = 0.001;
 
