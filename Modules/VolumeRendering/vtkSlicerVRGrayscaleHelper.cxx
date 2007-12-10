@@ -1107,8 +1107,8 @@ void vtkSlicerVRGrayscaleHelper::AdjustMapping(){
     vtkPiecewiseFunction *function=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetScalarOpacity();
     function->AdjustRange(rangeNew);
     //Update
-    rangeNew[0]/=4;
-    rangeNew[1]/=4;
+    rangeNew[1]=(rangeNew[1]-rangeNew[0])/4;
+    rangeNew[0]=0;
     function=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetGradientOpacity();
     function->RemovePoint(255);//Remove the standard value
     //this->Histograms->GetHistogramWithName("0gradient")->GetRange(rangeNew);
