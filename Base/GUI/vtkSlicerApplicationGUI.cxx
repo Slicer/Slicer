@@ -313,7 +313,9 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
           vtkKWProgressDialog *progressDialog = vtkKWProgressDialog::New();
           progressDialog->SetParent( this->MainSlicerWindow );
           progressDialog->Create();
-          progressDialog->SetMessageText( "Loading Scene..." );
+          std::string message("Loading Scene...\n");
+          message += std::string(fileName);
+          progressDialog->SetMessageText( message.c_str() );
           progressDialog->SetObservedObject( this->GetMRMLScene() );
           progressDialog->Display();
           this->GetMRMLScene()->SetURL(fileName);
