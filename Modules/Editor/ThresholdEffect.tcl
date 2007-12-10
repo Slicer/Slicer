@@ -76,7 +76,7 @@ itcl::body ThresholdEffect::apply {} {
 
   $this configure -scope "all"
 
-  if { [$this getInputBackground] == "" || [$this getOutputLabel] == "" } {
+  if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
     $this errorDialog "Background and Label map needed for Threshold"
     return
   }
@@ -99,7 +99,7 @@ itcl::body ThresholdEffect::preview {} {
 
   $this configure -scope "visible"
 
-  if { [$this getInputBackground] == "" || [$this getOutputLabel] == "" } {
+  if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
     $this errorDialog "Background and Label map needed for Threshold"
     return
   }

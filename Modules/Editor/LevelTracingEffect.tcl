@@ -109,7 +109,7 @@ itcl::body LevelTracingEffect::processEvent { {caller ""} {event ""} } {
 
 itcl::body LevelTracingEffect::apply {} {
 
-  if { [$this getInputLabel] == "" || [$this getOutputLabel] == "" } {
+  if { [$this getInputLabel] == "" || [$this getInputLabel] == "" } {
     $this flashCursor 3
     return
   }

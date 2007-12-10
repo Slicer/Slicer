@@ -5,7 +5,7 @@ package require Itcl
 #
 if {0} { ;# comment
 
-  DrawSWidget a class for slicer drawing
+  DrawEffect a class for slicer drawing
 
 
 # TODO : 
@@ -17,25 +17,20 @@ if {0} { ;# comment
 #
 #########################################################
 # ------------------------------------------------------------------
-#                             DrawSWidget
+#                             DrawEffect
 # ------------------------------------------------------------------
 #
 # The class definition - define if needed (not when re-sourcing)
 #
-if { [itcl::find class DrawSWidget] == "" } {
+if { [itcl::find class DrawEffect] == "" } {
 
-  itcl::class DrawSWidget {
+  itcl::class DrawEffect {
 
-    inherit SWidget
+    inherit Labeler
 
-    constructor {args} {}
+    constructor {args} {Labeler::constructor $sliceGUI} {}
     destructor {}
 
-    public variable drawColor 1
-    public variable thresholdPaint 0
-    public variable thresholdMin 1
-    public variable thresholdMax 1
-    public variable drawOver 1
     public variable polygonDebugViewer 0
 
     variable _lastEventPoint ""
@@ -55,7 +50,7 @@ if { [itcl::find class DrawSWidget] == "" } {
 # ------------------------------------------------------------------
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
-itcl::body DrawSWidget::constructor {sliceGUI} {
+itcl::body DrawEffect::constructor {sliceGUI} {
 
   $this configure -sliceGUI $sliceGUI
  
@@ -85,7 +80,7 @@ itcl::body DrawSWidget::constructor {sliceGUI} {
   lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
 }
 
-itcl::body DrawSWidget::destructor {} {
+itcl::body DrawEffect::destructor {} {
 
   if { [info command $sliceGUI] != "" } {
     foreach tag $_guiObserverTags {
@@ -111,7 +106,7 @@ itcl::body DrawSWidget::destructor {} {
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body DrawSWidget::createPolyData {} {
+itcl::body DrawEffect::createPolyData {} {
   # make a single-polyline polydata
 
   set polyData [vtkNew vtkPolyData]
@@ -134,7 +129,7 @@ itcl::body DrawSWidget::createPolyData {} {
   return $polyData
 }
 
-itcl::body DrawSWidget::resetPolyData {} {
+itcl::body DrawEffect::resetPolyData {} {
   # return the polyline to initial state with no points
   set lines [$o(polyData) GetLines]
   set idArray [$lines GetData]
@@ -147,7 +142,7 @@ itcl::body DrawSWidget::resetPolyData {} {
   set _lastInsertSlice ""
 }
 
-itcl::body DrawSWidget::addPoint {r a s} {
+itcl::body DrawEffect::addPoint {r a s} {
 
   # store modify time so these points can be cleared if 
   # slice plane is moved
@@ -162,7 +157,7 @@ itcl::body DrawSWidget::addPoint {r a s} {
   $lines SetNumberOfCells 1
 }
 
-itcl::body DrawSWidget::makeMaskImage {} {
+itcl::body DrawEffect::makeMaskImage {} {
 
   #
   # use the slicer2-based vtkImageFillROI filter
@@ -261,7 +256,7 @@ itcl::body DrawSWidget::makeMaskImage {} {
 }
 
     
-itcl::body DrawSWidget::apply {} {
+itcl::body DrawEffect::apply {} {
 
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
@@ -379,7 +374,7 @@ itcl::body DrawSWidget::apply {} {
 }
 
 
-itcl::body DrawSWidget::positionActors { } {
+itcl::body DrawEffect::positionActors { } {
   set rasToXY [vtkTransform New]
   $rasToXY SetMatrix [$_sliceNode GetXYToRAS]
   $rasToXY Inverse
@@ -389,7 +384,7 @@ itcl::body DrawSWidget::positionActors { } {
   $o(polyData) Modified
 }
 
-itcl::body DrawSWidget::processEvent { {caller ""} {event ""} } {
+itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
@@ -459,31 +454,31 @@ $this apply
 }
 
 
-proc DrawSWidget::AddDraw {} {
+proc DrawEffect::AddDraw {} {
   foreach sw [itcl::find objects -class SliceSWidget] {
     set sliceGUI [$sw cget -sliceGUI]
     if { [info command $sliceGUI] != "" } {
-      DrawSWidget #auto [$sw cget -sliceGUI]
+      DrawEffect #auto [$sw cget -sliceGUI]
     }
   }
 }
 
-proc DrawSWidget::RemoveDraw {} {
-  foreach pw [itcl::find objects -class DrawSWidget] {
+proc DrawEffect::RemoveDraw {} {
+  foreach pw [itcl::find objects -class DrawEffect] {
     itcl::delete object $pw
   }
 }
 
-proc DrawSWidget::ToggleDraw {} {
-  if { [itcl::find objects -class DrawSWidget] == "" } {
-    DrawSWidget::AddDraw
+proc DrawEffect::ToggleDraw {} {
+  if { [itcl::find objects -class DrawEffect] == "" } {
+    DrawEffect::AddDraw
   } else {
-    DrawSWidget::RemoveDraw
+    DrawEffect::RemoveDraw
   }
 }
 
-proc DrawSWidget::ConfigureAll { args } {
-  foreach pw [itcl::find objects -class DrawSWidget] {
+proc DrawEffect::ConfigureAll { args } {
+  foreach pw [itcl::find objects -class DrawEffect] {
     eval $pw configure $args
   }
 }

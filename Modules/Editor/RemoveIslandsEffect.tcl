@@ -86,7 +86,7 @@ itcl::body RemoveIslandsEffect::apply {} {
   foreach {x y} [$_interactor GetEventPosition] {}
   $this queryLayers $x $y
 
-  if { [$this getInputLabel] == "" || [$this getOutputLabel] == "" } {
+  if { [$this getInputLabel] == "" || [$this getInputLabel] == "" } {
     $this flashCursor 3
     return
   }

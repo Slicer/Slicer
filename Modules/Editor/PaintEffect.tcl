@@ -331,7 +331,7 @@ itcl::body PaintEffect::buildOptions {} {
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
 
-  if { [$this getInputBackground] == "" || [$this getOutputLabel] == "" } {
+  if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
     $this errorDialog "Background and Label map needed for painting"
     after idle ::EffectSWidget::RemoveAll
   }

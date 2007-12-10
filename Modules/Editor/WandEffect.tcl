@@ -117,7 +117,7 @@ itcl::body WandEffect::processEvent { {caller ""} {event ""} } {
 
 itcl::body WandEffect::apply {} {
 
-  if { [$this getInputLabel] == "" || [$this getOutputLabel] == "" } {
+  if { [$this getInputLabel] == "" || [$this getInputLabel] == "" } {
     $this flashCursor 3
     return
   }
@@ -247,7 +247,7 @@ itcl::body WandEffect::buildOptions {} {
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
 
-  if { [$this getInputBackground] == "" || [$this getOutputLabel] == "" } {
+  if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
     $this errorDialog "Background and Label map needed for wand"
     after idle ::EffectSWidget::RemoveAll
   }

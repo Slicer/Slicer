@@ -67,7 +67,7 @@ itcl::body ChangeLabelEffect::processEvent { {caller ""} {event ""} } {
 
 itcl::body ChangeLabelEffect::apply {} {
 
-  if { [$this getInputLabel] == "" || [$this getOutputLabel] == "" } {
+  if { [$this getInputLabel] == "" || [$this getInputLabel] == "" } {
     $this flashCursor 3
     return
   }
