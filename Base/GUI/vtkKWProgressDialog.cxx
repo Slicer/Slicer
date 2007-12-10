@@ -1,3 +1,6 @@
+
+#include "vtkCallbackCommand.h"
+
 #include "vtkKWProgressDialog.h"
 
 #include "vtkKWLabel.h"
@@ -13,11 +16,29 @@ vtkStandardNewMacro( vtkKWProgressDialog );
 vtkCxxRevisionMacro(vtkKWProgressDialog , "$Revision: 1.49 $");
 
 //----------------------------------------------------------------------------
+// Description:
+// the Callback is a static function to reflect progress to the widget
+//
+void 
+vtkKWProgressDialog::Callback(vtkObject *caller, 
+                                    unsigned long eid, void *clientData, void *callData)
+{
+  vtkKWProgressDialog *self = reinterpret_cast<vtkKWProgressDialog *>(clientData);
+
+  double progress = * (static_cast<double*> (callData));
+  self->UpdateProgress(progress);
+}
+
+//----------------------------------------------------------------------------
 vtkKWProgressDialog::vtkKWProgressDialog(void)
 {
     this->Message=NULL;
     this->Progress=NULL;
     this->MessageText="";
+    this->ObservedObject=NULL;
+    this->CallbackCommand=vtkCallbackCommand::New();
+    this->CallbackCommand->SetCallback( &vtkKWProgressDialog::Callback );
+    this->CallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
 }
 
 //----------------------------------------------------------------------------
@@ -36,6 +57,8 @@ vtkKWProgressDialog::~vtkKWProgressDialog(void)
         this->Progress->Delete();
         this->Progress=NULL;
     }
+
+    this->SetObservedObject(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -67,9 +90,34 @@ void vtkKWProgressDialog::CreateWidget(void)
 }
 
 //----------------------------------------------------------------------------
-void vtkKWProgressDialog::UpdateProgress(float progress)
+void vtkKWProgressDialog::UpdateProgress(double progress)
 {
     this->Progress->SetValue(100*progress);
+}
+
+//----------------------------------------------------------------------------
+void vtkKWProgressDialog::SetObservedObject(vtkObject *observedObject)
+{
+  if ( this->ObservedObject == observedObject ) 
+    {
+    return;
+    }
+
+  if ( this->ObservedObject != NULL ) 
+    {
+    this->ObservedObject->RemoveObservers (vtkCommand::ProgressEvent, this->CallbackCommand);
+    this->ObservedObject->Delete();
+    }
+
+  this->ObservedObject = observedObject;
+
+  if ( this->ObservedObject != NULL ) 
+    {
+    this->ObservedObject->Register(this);
+    this->ObservedObject->AddObserver (vtkCommand::ProgressEvent, this->CallbackCommand);
+    }
+
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------

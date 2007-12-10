@@ -15,12 +15,17 @@
 
 #include "vtkSlicerBaseGUI.h"
 
+class vtkCallbackCommand;
 class vtkKWLabel;
 class vtkKWProgressGauge;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkKWProgressDialog : public vtkKWTopLevel
 {
 public:
+    // Description:
+    // Callback function for progress tracking
+    static void Callback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
+
     // Description:
     // Usual vtk methods: go to www.vtk.org for more details
     static vtkKWProgressDialog *New();
@@ -29,7 +34,12 @@ public:
 
     //Description:
     //Update the progress of the ProgressDialog. Valid values are between 0 and 1.
-    void UpdateProgress(float progress);
+    void UpdateProgress(double progress);
+
+    //Description:
+    //The vtkObject to observe
+    void SetObservedObject(vtkObject *observedObject);
+    vtkGetObjectMacro(ObservedObject, vtkObject);
 
     //Description:
     //Set the message text which will be shown.
@@ -65,7 +75,14 @@ protected:
     //ProgressGauge that is shown.
     vtkKWProgressGauge *Progress;
 
+    //Description:
+    //The object whose progress will be observed
+    vtkObject *ObservedObject;
+
+    vtkCallbackCommand *CallbackCommand;
+
 private:
+
     // Description:
     // Caution: Not implemented
     vtkKWProgressDialog(const vtkKWProgressDialog&); // Not implemented

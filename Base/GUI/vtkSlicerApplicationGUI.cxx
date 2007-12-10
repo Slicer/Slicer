@@ -45,6 +45,7 @@
 #include "vtkKWMessageDialog.h"
 #include "vtkKWToolbarSet.h"
 #include "vtkKWMessageDialog.h"
+#include "vtkKWProgressDialog.h"
 
 #include "vtkSlicerWindow.h"
 #include "vtkSlicerApplication.h"
@@ -309,8 +310,16 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
         std::string fl(fileName);
         if (this->GetMRMLScene() && fl.find(".mrml") != std::string::npos ) 
           {
+          vtkKWProgressDialog *progressDialog = vtkKWProgressDialog::New();
+          progressDialog->SetParent( this->MainSlicerWindow );
+          progressDialog->Create();
+          progressDialog->SetMessageText( "Loading Scene..." );
+          progressDialog->SetObservedObject( this->GetMRMLScene() );
+          progressDialog->Display();
           this->GetMRMLScene()->SetURL(fileName);
           this->GetMRMLScene()->Connect();
+          progressDialog->SetParent(NULL);
+          progressDialog->Delete();
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
           }
         else if (this->GetMRMLScene() && fl.find(".xml") != std::string::npos ) 
