@@ -52,19 +52,19 @@ public:
   // this should be specialized later...
   void Execute(const itk::Object * object, const itk::EventObject & event)
   {
-      OptimizerPointer optimizer =
-        dynamic_cast< OptimizerPointer >( object );
-      if( ! itk::IterationEvent().CheckEvent( &event ) )
-      {
-        return;
-      }
-      std::cerr << "   " << std::setw(7) << std::right << std::setfill('.')
-                << optimizer->GetCurrentIteration();
-      std::cerr << std::setw(20) << std::right << std::setfill('.')
-                << optimizer->GetValue();
-      std::cerr << std::setw(17) << std::right << std::setfill('.')
-                << optimizer->GetCurrentStepLength();
-      std::cerr << std::endl;
+    OptimizerPointer optimizer =
+      dynamic_cast< OptimizerPointer >( object );
+    if( ! itk::IterationEvent().CheckEvent( &event ) )
+    {
+      return;
+    }
+    std::cerr << "   " << std::setw(7) << std::right << std::setfill('.')
+              << optimizer->GetCurrentIteration();
+    std::cerr << std::setw(20) << std::right << std::setfill('.')
+              << optimizer->GetValue();
+    std::cerr << std::setw(17) << std::right << std::setfill('.')
+              << optimizer->GetCurrentStepLength();
+    std::cerr << std::endl;
   }
 };
 
@@ -174,15 +174,15 @@ GetStringFromTransformInitializationType(InitializationType id)
 //----------------------------------------------------------------------------
 void
 vtkRigidRegistrator::
-ComputeReorientationInformation(const vtkMatrix4x4* ITKToXYZ,
+ComputeReorientationInformation(const vtkMatrix4x4* IJKToXYZ,
                                 int*    filteredAxesForPermuteFilter,
                                 double* originForChangeInformationFilter,
                                 double* spacingForChangeInformationFilter)
 {
   // origin is easy...
-  originForChangeInformationFilter[0] = (*ITKToXYZ)[0][3];
-  originForChangeInformationFilter[1] = (*ITKToXYZ)[1][3];
-  originForChangeInformationFilter[2] = (*ITKToXYZ)[2][3];
+  originForChangeInformationFilter[0] = (*IJKToXYZ)[0][3];
+  originForChangeInformationFilter[1] = (*IJKToXYZ)[1][3];
+  originForChangeInformationFilter[2] = (*IJKToXYZ)[2][3];
 
   // figure out spacing and permutation.  Assumes one nonzero entry
   // per row/column of directions matrix.
@@ -190,7 +190,7 @@ ComputeReorientationInformation(const vtkMatrix4x4* ITKToXYZ,
     {
     for (int r = 0; r < 3; ++r)
       {
-      double t = (*ITKToXYZ)[r][c];
+      double t = (*IJKToXYZ)[r][c];
       if (t != 0)
         {
         filteredAxesForPermuteFilter[c]      = r;

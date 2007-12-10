@@ -119,7 +119,7 @@ private:
   // matrix or cosines).  This way ITK will do registration in XYZ
   // coordinates.
   static void
-    ComputeReorientationInformation(const vtkMatrix4x4* ITKToXYZ,
+    ComputeReorientationInformation(const vtkMatrix4x4* IJKToXYZ,
                                     int*    filteredAxesForPermuteFilter,
                                     double* originForChangeInformationFilter,
                                     double* spacingForChangeInformationFilter);
