@@ -248,46 +248,49 @@ void vtkEMSegmentIntensityImagesStep::Validate()
     this->GetGUI()->GetWizardWidget()->GetWizardWorkflow();
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   
-  // decide if the number of target volumes changed
-  unsigned int nb_of_parameter_target_volumes = 
-    mrmlManager->GetTargetNumberOfSelectedVolumes();
-  unsigned int nb_of_currently_selected_target_volumes = 
-    this->IntensityImagesTargetVolumeSelector->
-    GetNumberOfElementsOnFinalList();
-  bool number_of_target_images_changed = 
-    nb_of_parameter_target_volumes != nb_of_currently_selected_target_volumes;
-
-  if (number_of_target_images_changed &&
-      !vtkKWMessageDialog::PopupYesNo
-      (this->GetApplication(), 
-       NULL, 
-       "Change the number of target images?",
-       "Are you sure you want to change the number of target images?",
-       vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
+  if (mrmlManager->GetTargetNode() != NULL)
     {
-    // don't change number of volumes; stay on this step
-    wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
-    wizard_workflow->ProcessInputs();
-    }
-  else
-    {
-    // record indices of currently selected volumes
-    std::vector<vtkIdType> selectedIDs;
-    for(unsigned int i = 0; i < nb_of_currently_selected_target_volumes; ++i) 
+    // decide if the number of target volumes changed
+    unsigned int nb_of_parameter_target_volumes = 
+      mrmlManager->GetTargetNumberOfSelectedVolumes();
+    unsigned int nb_of_currently_selected_target_volumes = 
+      this->IntensityImagesTargetVolumeSelector->
+      GetNumberOfElementsOnFinalList();
+    bool number_of_target_images_changed = 
+      nb_of_parameter_target_volumes != nb_of_currently_selected_target_volumes;
+    
+    if (number_of_target_images_changed &&
+        !vtkKWMessageDialog::PopupYesNo
+        (this->GetApplication(), 
+         NULL, 
+         "Change the number of target images?",
+         "Are you sure you want to change the number of target images?",
+         vtkKWMessageDialog::WarningIcon | vtkKWMessageDialog::InvokeAtPointer))
       {
-      std::string targettext = 
-        this->IntensityImagesTargetVolumeSelector->GetElementFromFinalList(i);
-      std::string::size_type pos1 = targettext.rfind("(");
-      std::string::size_type pos2 = targettext.rfind(")");
-      if (pos1 != vtksys_stl::string::npos && pos2 != vtksys_stl::string::npos)
-        {
-        vtkIdType vol_id = atoi(targettext.substr(pos1+1, pos2-pos1-1).c_str());
-        selectedIDs.push_back(vol_id);
-        }
+      // don't change number of volumes; stay on this step
+      wizard_workflow->PushInput(vtkKWWizardStep::GetValidationFailedInput());
+      wizard_workflow->ProcessInputs();
       }
-    mrmlManager->ResetTargetSelectedVolumes(selectedIDs);
-    this->Superclass::Validate();
+    else
+      {
+      // record indices of currently selected volumes
+      std::vector<vtkIdType> selectedIDs;
+      for(unsigned int i = 0; i < nb_of_currently_selected_target_volumes; ++i) 
+        {
+        std::string targettext = 
+          this->IntensityImagesTargetVolumeSelector->GetElementFromFinalList(i);
+        std::string::size_type pos1 = targettext.rfind("(");
+        std::string::size_type pos2 = targettext.rfind(")");
+        if (pos1 != vtksys_stl::string::npos && pos2 != vtksys_stl::string::npos)
+          {
+          vtkIdType vol_id = atoi(targettext.substr(pos1+1, pos2-pos1-1).c_str());
+          selectedIDs.push_back(vol_id);
+          }
+        }
+      mrmlManager->ResetTargetSelectedVolumes(selectedIDs);
+      }
     }
+  this->Superclass::Validate();
 }
 
 
