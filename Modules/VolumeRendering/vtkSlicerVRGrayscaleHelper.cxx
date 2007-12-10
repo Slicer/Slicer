@@ -31,6 +31,9 @@
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWNotebook.h"
 #include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWPushButton.h"
+#include "vtkKWColorTransferFunctionEditor.h"
+#include "vtkKWPiecewiseFunctionEditor.h"
 
 //Compiler
 #include <math.h>
@@ -97,6 +100,9 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->RA_RampRectangleHorizontal=NULL;
     this->RA_RampRectangleVertical=NULL;
     this->ColorMode=0;
+    this->TresholdMode=0;
+    this->PB_Reset=NULL;
+    this->PB_TresholdZoomIn=NULL;
 
 
 }
@@ -289,6 +295,18 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->RA_RampRectangleVertical->SetParent(NULL);
         this->RA_RampRectangleVertical->Delete();
         this->RA_RampRectangleVertical=NULL;
+    }
+    if(this->PB_Reset)
+    {
+        this->PB_Reset->SetParent(NULL);
+        this->PB_Reset->Delete();
+        this->PB_Reset=NULL;
+    }
+    if(this->PB_TresholdZoomIn)
+    {
+        this->PB_TresholdZoomIn->SetParent(NULL);
+        this->PB_TresholdZoomIn->Delete();
+        this->PB_TresholdZoomIn=NULL;
     }
 }
 void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
@@ -1270,6 +1288,24 @@ void vtkSlicerVRGrayscaleHelper::CreateTreshold()
     this->Script("pack %s -side top -anchor nw -expand y -padx 0 -pady 2", 
         this->RA_RampRectangleHorizontal->GetWidgetName());
 
+    this->PB_TresholdZoomIn=vtkKWPushButton::New();
+    this->PB_TresholdZoomIn->SetParent(tresholdFrame->GetFrame());
+    this->PB_TresholdZoomIn->Create();
+    this->PB_TresholdZoomIn->SetText("+");
+    this->PB_TresholdZoomIn->EnabledOff();
+    this->PB_TresholdZoomIn->SetCommand(this,"ProcessTresholdZoomIn");
+    this->Script("pack %s -side top -anchor nw -padx 0 -pady 2",
+        this->PB_TresholdZoomIn->GetWidgetName());
+
+    this->PB_Reset=vtkKWPushButton::New();
+    this->PB_Reset->SetParent(tresholdFrame->GetFrame());
+    this->PB_Reset->Create();
+    this->PB_Reset->SetText("R");
+    this->PB_Reset->EnabledOff();
+    this->PB_Reset->SetCommand(this,"ProcessTresholdReset");
+    this->Script("pack %s -side top -anchor nw -padx 0 -pady 2",
+        this->PB_Reset->GetWidgetName());
+
     this->RA_RampRectangleVertical=vtkKWRange::New();
     this->RA_RampRectangleVertical->SetParent(tresholdFrame->GetFrame());
     this->RA_RampRectangleVertical->Create();
@@ -1306,7 +1342,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessTresholdModeEvents(int id)
     this->MB_ColorMode->EnabledOn();
     this->RA_RampRectangleHorizontal->EnabledOn();
     this->RA_RampRectangleVertical->EnabledOn();
-
+    this->PB_Reset->EnabledOn();
+    this->PB_TresholdZoomIn->EnabledOn();
     this->ProcessTresholdRange(.0,.0);
 
 
@@ -1382,4 +1419,34 @@ void vtkSlicerVRGrayscaleHelper::ProcessTresholdRange(double notUsed,double notU
 
     this->SVP_VolumeProperty->Update();
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
+}
+void vtkSlicerVRGrayscaleHelper::ProcessTresholdZoomIn(void)
+{
+    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+    double leftBorder=this->RA_RampRectangleHorizontal->GetRange()[0];
+    double rightBorder=this->RA_RampRectangleHorizontal->GetRange()[1];
+    double expansion=.1*(rightBorder-leftBorder);
+    double leftBorderWholeRange=leftBorder-expansion;
+    double rightBorderWholeRange=rightBorder+expansion;
+
+    if(leftBorderWholeRange<iData->GetScalarRange()[0])
+    {
+        leftBorderWholeRange=iData->GetScalarRange()[0];
+    }
+    if(rightBorderWholeRange>iData->GetScalarRange()[1])
+    {
+        rightBorderWholeRange=iData->GetScalarRange()[1];
+    }
+    this->RA_RampRectangleHorizontal->SetWholeRange(leftBorderWholeRange,rightBorderWholeRange);
+    this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetVisibleParameterRange(leftBorderWholeRange,rightBorderWholeRange);
+    this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetVisibleParameterRange(leftBorderWholeRange,rightBorderWholeRange);
+
+}
+void vtkSlicerVRGrayscaleHelper::ProcessTresholdReset(void)
+{
+    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+
+    this->RA_RampRectangleHorizontal->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+        this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetVisibleParameterRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+    this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetVisibleParameterRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
 }

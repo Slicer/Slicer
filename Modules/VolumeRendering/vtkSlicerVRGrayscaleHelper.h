@@ -19,6 +19,7 @@ class vtkKWCheckButtonWithLabel;
 class vtkKWFrameWithLabel;
 class vtkKWNotebook;
 class vtkKWMenuButtonWithLabel;
+class vtkKWPushButton;
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
@@ -51,6 +52,8 @@ public:
     void ProcessTresholdModeEvents(int id);
     void ProcessColorModeEvents(int id);
     void ProcessTresholdRange(double notUsed,double notUsedA);
+    void ProcessTresholdZoomIn(void);
+    void ProcessTresholdReset(void);
 
 protected:
     vtkSlicerVRGrayscaleHelper(void);
@@ -80,6 +83,9 @@ protected:
     vtkKWMenuButtonWithLabel *MB_ColorMode;
     vtkKWRange *RA_RampRectangleHorizontal;
     vtkKWRange *RA_RampRectangleVertical;
+
+    vtkKWPushButton *PB_TresholdZoomIn;
+    vtkKWPushButton *PB_Reset;
     int ColorMode;
     int TresholdMode;
 
