@@ -569,10 +569,6 @@ StartPreprocessingAtlasToTargetRegistration()
                                          GetRegistrationAtlasVolumeKey());
   int atlasRegistrationVolumeIndex = 
     inputAtlas->GetIndexByKey(atlasRegistrationVolumeKey.c_str());
-  if (atlasRegistrationVolumeIndex < 0)
-    {
-    vtkErrorMacro("Atlas registration volume not found, aborting!");    
-    }
   
   // set up the aligned atlas node
   vtkMRMLEMSAtlasNode* alignedAtlas = 
@@ -603,77 +599,79 @@ StartPreprocessingAtlasToTargetRegistration()
     alignedTarget->GetNthVolumeNode(fixedTargetImageIndex);
   vtkImageData* fixedTargetImageData = fixedTargetVolumeNode->GetImageData();
   
-  vtkMRMLVolumeNode* movingAtlasVolumeNode = 
-    inputAtlas->GetNthVolumeNode(atlasRegistrationVolumeIndex);
-  vtkImageData* movingAtlasImageData = movingAtlasVolumeNode->GetImageData();  
-
-  //
-  // set up registration between these images
-  vtkRigidRegistrator* registrator = vtkRigidRegistrator::New();
-
-  registrator->SetFixedImage(fixedTargetImageData);
-  vtkMatrix4x4* IJKToRASMatrixFixed = vtkMatrix4x4::New();
-  fixedTargetVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixFixed);
-  registrator->SetFixedIJKToXYZ(IJKToRASMatrixFixed);
-  IJKToRASMatrixFixed->Delete();
-
-  registrator->SetMovingImage(movingAtlasImageData);
-  vtkMatrix4x4* IJKToRASMatrixMoving = vtkMatrix4x4::New();
-  movingAtlasVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixMoving);
-  registrator->SetMovingIJKToXYZ(IJKToRASMatrixMoving);
-  IJKToRASMatrixMoving->Delete();
-
-  registrator->SetImageToImageMetricToMutualInformation();
-  registrator->SetMetricComputationSamplingRatio(0.1);
-  registrator->SetNumberOfIterations(15);
-  registrator->SetTransformInitializationTypeToImageCenters();
-
-  int interpolationType = m->GetRegistrationInterpolationType();
-  switch (interpolationType)
+  vtkTransform* RASToRASTransform = vtkTransform::New();
+  if (atlasRegistrationVolumeIndex >= 0 &&
+      this->MRMLManager->GetRegistrationAffineType() !=
+      vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationOff)
     {
-    case vtkEMSegmentMRMLManager::InterpolationNearestNeighbor:
-      registrator->SetIntensityInterpolationTypeToNearestNeighbor();
-      break;
-    case vtkEMSegmentMRMLManager::InterpolationCubic:
-      registrator->SetIntensityInterpolationTypeToCubic();
-      break;
-    case vtkEMSegmentMRMLManager::InterpolationLinear:
-    default:
-      registrator->SetIntensityInterpolationTypeToLinear();
-    }
-
-  try
-    {
-    if (this->MRMLManager->GetRegistrationAffineType() ==
-        vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMI)
+    vtkMRMLVolumeNode* movingAtlasVolumeNode = 
+      inputAtlas->GetNthVolumeNode(atlasRegistrationVolumeIndex);
+    vtkImageData* movingAtlasImageData = movingAtlasVolumeNode->GetImageData();  
+    
+    //
+    // set up registration between these images
+    vtkRigidRegistrator* registrator = vtkRigidRegistrator::New();
+    
+    registrator->SetFixedImage(fixedTargetImageData);
+    vtkMatrix4x4* IJKToRASMatrixFixed = vtkMatrix4x4::New();
+    fixedTargetVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixFixed);
+    registrator->SetFixedIJKToXYZ(IJKToRASMatrixFixed);
+    IJKToRASMatrixFixed->Delete();
+    
+    registrator->SetMovingImage(movingAtlasImageData);
+    vtkMatrix4x4* IJKToRASMatrixMoving = vtkMatrix4x4::New();
+    movingAtlasVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixMoving);
+    registrator->SetMovingIJKToXYZ(IJKToRASMatrixMoving);
+    IJKToRASMatrixMoving->Delete();
+    
+    registrator->SetImageToImageMetricToMutualInformation();
+    registrator->SetMetricComputationSamplingRatio(0.1);
+    registrator->SetNumberOfIterations(15);
+    registrator->SetTransformInitializationTypeToImageCenters();
+    
+    int interpolationType = m->GetRegistrationInterpolationType();
+    switch (interpolationType)
+      {
+      case vtkEMSegmentMRMLManager::InterpolationNearestNeighbor:
+        registrator->SetIntensityInterpolationTypeToNearestNeighbor();
+        break;
+      case vtkEMSegmentMRMLManager::InterpolationCubic:
+        registrator->SetIntensityInterpolationTypeToCubic();
+        break;
+      case vtkEMSegmentMRMLManager::InterpolationLinear:
+      default:
+        registrator->SetIntensityInterpolationTypeToLinear();
+      }
+    
+    try
       {
       std::cerr << "  Registering atlas and target images..." << std::endl;
       registrator->RegisterImages();
       }
-    else
+    catch (...)
       {
-        std::cerr 
-          << "  Skipping rigid registration of affine and target images " 
-          << std::endl;
+      std::cerr << "Failed to register images!!!" << std::endl;
       }
+    std::cerr << "  Target-to-Atlas transform (targetRAS->atlasRAS): " 
+              << std::endl;
+    for (unsigned int r = 0; r < 4; ++r)
+      {
+      std::cerr << "   ";
+      for (unsigned int c = 0; c < 4; ++c)
+        {
+        std::cerr << registrator->GetTransform()->GetMatrix()->GetElement(r,c)
+                  << "   ";
+        }
+      std::cerr << std::endl;
+      }  
+    RASToRASTransform->DeepCopy(registrator->GetTransform());
+    registrator->Delete();
     }
-  catch (...)
+  else
     {
-    std::cerr << "Failed to register images!!!" << std::endl;
-      }
-  std::cerr << "  Target-to-Atlas transform (targetRAS->atlasRAS): " 
-            << std::endl;
-  for (unsigned int r = 0; r < 4; ++r)
-    {
-    std::cerr << "   ";
-    for (unsigned int c = 0; c < 4; ++c)
-      {
-      std::cerr << registrator->GetTransform()->GetMatrix()->GetElement(r,c)
-                << "   ";
-      }
-    std::cerr << std::endl;
-    }  
-  
+    std::cerr << "Skipping atlas-to-target registration" << std::endl;
+    }
+
   //
   // resample all the atlas images using the same target->atlas transform
   for (int i = 0; i < alignedAtlas->GetNumberOfVolumes(); ++i)
@@ -703,13 +701,13 @@ StartPreprocessingAtlasToTargetRegistration()
     vtkEMSegmentLogic::SlicerImageReslice(movingAtlasVolumeNode, 
                                           outputAtlasVolumeNode, 
                                           fixedTargetVolumeNode,
-                                          registrator->GetTransform(),
+                                          RASToRASTransform,
                                           0);      
     std::cerr << "DONE" << std::endl;
     }    
   //
   // clean up
-  registrator->Delete();
+  RASToRASTransform->Delete();
   std::cerr << " EMSEG: Atlas-to-target registration complete." << std::endl;
 }
 
