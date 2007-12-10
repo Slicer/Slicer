@@ -456,71 +456,28 @@ StartPreprocessingTargetToTargetRegistration()
       continue;
       }
 
-    // 
-    // We want to use ITK for registration so we need to coordinate
-    // image orientation/origin/spacing in Slicer3 and in ITK.
-    //
-    // Setup origin and spacing of images so that their ITK world
-    // coordinates are measured in units of the basis vectors RAS (we
-    // know the correct transform from the mrml volume node).  Why?
-    // Because this way ITK registration results from these images can
-    // be naturally and easily applied to our images.
-    //
-    // Once you have the ITK fixed->moving transformation, you can map
-    // a voxel from a fixed to a moving image (e.g., in order to
-    // resample a moving image onto a fixed image) via:
-    //
-    // movingIJK =                         # ijk coords of moving vtk image
-    //   movingRASToIJK \circ              # get this from mrml node
-    //   ITKFixedToMovingTransform \circ   # itk registration results
-    //   fixedIJKToRAS \circ               # get this from mrml node 
-    //   fixedIJK                          # ijk coords of fixed image
-    //
-    // NB: this assumes that IJKToRASDirections is a diagonal matrix.
-    //
-    
-    // fixed -----
-    vtkImageChangeInformation* changeInformationFixedImage = 
-      vtkImageChangeInformation::New();
-    changeInformationFixedImage->SetInput(fixedImageData);
-    vtkMatrix4x4* IJKToRASMatrixFixed = vtkMatrix4x4::New();
-    fixedVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixFixed);
-    changeInformationFixedImage->
-      SetOutputOrigin((*IJKToRASMatrixFixed)[0][3],
-                      (*IJKToRASMatrixFixed)[1][3],
-                      (*IJKToRASMatrixFixed)[2][3]);
-    changeInformationFixedImage->
-      SetOutputSpacing((*IJKToRASMatrixFixed)[0][0],
-                       (*IJKToRASMatrixFixed)[1][1],
-                       (*IJKToRASMatrixFixed)[2][2]);
-    IJKToRASMatrixFixed->Delete();
-
-    // moving -----
-    vtkImageChangeInformation* changeInformationMovingImage = 
-      vtkImageChangeInformation::New();
-    changeInformationMovingImage->SetInput(movingImageData);
-    vtkMatrix4x4* IJKToRASMatrixMoving = vtkMatrix4x4::New();
-    movingVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixMoving);
-    changeInformationMovingImage->
-      SetOutputOrigin((*IJKToRASMatrixMoving)[0][3],
-                      (*IJKToRASMatrixMoving)[1][3],
-                      (*IJKToRASMatrixMoving)[2][3]);
-    changeInformationMovingImage->
-      SetOutputSpacing((*IJKToRASMatrixMoving)[0][0],
-                       (*IJKToRASMatrixMoving)[1][1],
-                       (*IJKToRASMatrixMoving)[2][2]);
-    IJKToRASMatrixMoving->Delete();
-
     //
     // set up registration
     vtkRigidRegistrator* registrator = vtkRigidRegistrator::New();
-    registrator->SetFixedImage(changeInformationFixedImage->GetOutput());
-    registrator->SetMovingImage(changeInformationMovingImage->GetOutput());
+
+    registrator->SetFixedImage(fixedImageData);
+    vtkMatrix4x4* IJKToRASMatrixFixed = vtkMatrix4x4::New();
+    fixedVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixFixed);
+    registrator->SetFixedIJKToXYZ(IJKToRASMatrixFixed);
+    IJKToRASMatrixFixed->Delete();
+    
+    registrator->SetMovingImage(movingImageData);
+    vtkMatrix4x4* IJKToRASMatrixMoving = vtkMatrix4x4::New();
+    movingVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixMoving);
+    registrator->SetMovingIJKToXYZ(IJKToRASMatrixMoving);
+    IJKToRASMatrixMoving->Delete();
+
     registrator->SetImageToImageMetricToMutualInformation();
-    registrator->SetMetricComputationSamplingRatio(0.08);
+    registrator->SetMetricComputationSamplingRatio(0.1);
     registrator->SetNumberOfIterations(15);
     registrator->SetIntensityInterpolationTypeToLinear();
     registrator->SetTransformInitializationTypeToImageCenters();
+
     try
       {
       if (this->MRMLManager->GetEnableTargetToTargetRegistration())
@@ -567,8 +524,6 @@ StartPreprocessingTargetToTargetRegistration()
     
     //
     // clean up
-    changeInformationFixedImage->Delete();
-    changeInformationMovingImage->Delete();
     registrator->Delete();
     }    
   std::cerr << " EMSEG: Target-to-target registration complete." << std::endl;
@@ -602,11 +557,21 @@ StartPreprocessingAtlasToTargetRegistration()
     {
     vtkErrorMacro("Input atlas node is null, aborting!");
     }
-  
+
   // check that global parameters exist
   if (!this->MRMLManager->GetGlobalParametersNode())
     {
     vtkErrorMacro("Global parameters node is null, aborting!");
+    }
+
+  // check that an atlas was selected for registration
+  std::string atlasRegistrationVolumeKey(m->GetGlobalParametersNode()->
+                                         GetRegistrationAtlasVolumeKey());
+  int atlasRegistrationVolumeIndex = 
+    inputAtlas->GetIndexByKey(atlasRegistrationVolumeKey.c_str());
+  if (atlasRegistrationVolumeIndex < 0)
+    {
+    vtkErrorMacro("Atlas registration volume not found, aborting!");    
     }
   
   // set up the aligned atlas node
@@ -636,10 +601,78 @@ StartPreprocessingAtlasToTargetRegistration()
   int fixedTargetImageIndex = 0;
   vtkMRMLVolumeNode* fixedTargetVolumeNode = 
     alignedTarget->GetNthVolumeNode(fixedTargetImageIndex);
-  //vtkImageData* fixedTargetImageData = fixedTargetVolumeNode->GetImageData();
-  //vtkImageData* movingAtlasImageData = NULL; // !!!
+  vtkImageData* fixedTargetImageData = fixedTargetVolumeNode->GetImageData();
+  
+  vtkMRMLVolumeNode* movingAtlasVolumeNode = 
+    inputAtlas->GetNthVolumeNode(atlasRegistrationVolumeIndex);
+  vtkImageData* movingAtlasImageData = movingAtlasVolumeNode->GetImageData();  
 
-  // set up registration between these images !!!
+  //
+  // set up registration between these images
+  vtkRigidRegistrator* registrator = vtkRigidRegistrator::New();
+
+  registrator->SetFixedImage(fixedTargetImageData);
+  vtkMatrix4x4* IJKToRASMatrixFixed = vtkMatrix4x4::New();
+  fixedTargetVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixFixed);
+  registrator->SetFixedIJKToXYZ(IJKToRASMatrixFixed);
+  IJKToRASMatrixFixed->Delete();
+
+  registrator->SetMovingImage(movingAtlasImageData);
+  vtkMatrix4x4* IJKToRASMatrixMoving = vtkMatrix4x4::New();
+  movingAtlasVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixMoving);
+  registrator->SetMovingIJKToXYZ(IJKToRASMatrixMoving);
+  IJKToRASMatrixMoving->Delete();
+
+  registrator->SetImageToImageMetricToMutualInformation();
+  registrator->SetMetricComputationSamplingRatio(0.1);
+  registrator->SetNumberOfIterations(15);
+  registrator->SetTransformInitializationTypeToImageCenters();
+
+  int interpolationType = m->GetRegistrationInterpolationType();
+  switch (interpolationType)
+    {
+    case vtkEMSegmentMRMLManager::InterpolationNearestNeighbor:
+      registrator->SetIntensityInterpolationTypeToNearestNeighbor();
+      break;
+    case vtkEMSegmentMRMLManager::InterpolationCubic:
+      registrator->SetIntensityInterpolationTypeToCubic();
+      break;
+    case vtkEMSegmentMRMLManager::InterpolationLinear:
+    default:
+      registrator->SetIntensityInterpolationTypeToLinear();
+    }
+
+  try
+    {
+    if (this->MRMLManager->GetRegistrationAffineType() ==
+        vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMI)
+      {
+      std::cerr << "  Registering atlas and target images..." << std::endl;
+      registrator->RegisterImages();
+      }
+    else
+      {
+        std::cerr 
+          << "  Skipping rigid registration of affine and target images " 
+          << std::endl;
+      }
+    }
+  catch (...)
+    {
+    std::cerr << "Failed to register images!!!" << std::endl;
+      }
+  std::cerr << "  Target-to-Atlas transform (targetRAS->atlasRAS): " 
+            << std::endl;
+  for (unsigned int r = 0; r < 4; ++r)
+    {
+    std::cerr << "   ";
+    for (unsigned int c = 0; c < 4; ++c)
+      {
+      std::cerr << registrator->GetTransform()->GetMatrix()->GetElement(r,c)
+                << "   ";
+      }
+    std::cerr << std::endl;
+    }  
   
   //
   // resample all the atlas images using the same target->atlas transform
@@ -669,15 +702,14 @@ StartPreprocessingAtlasToTargetRegistration()
     // resample moving image
     vtkEMSegmentLogic::SlicerImageReslice(movingAtlasVolumeNode, 
                                           outputAtlasVolumeNode, 
-                                          fixedTargetVolumeNode, 
-                                          // need to specify xform here!!!
-                                          NULL, 0);      
+                                          fixedTargetVolumeNode,
+                                          registrator->GetTransform(),
+                                          0);      
     std::cerr << "DONE" << std::endl;
-
-    //
-    // clean up
-    //registrator->Delete();
     }    
+  //
+  // clean up
+  registrator->Delete();
   std::cerr << " EMSEG: Atlas-to-target registration complete." << std::endl;
 }
 
