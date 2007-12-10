@@ -83,6 +83,7 @@ vtkSlicerTractographyFiducialSeedingGUI::vtkSlicerTractographyFiducialSeedingGUI
   this->StoppingMode = NULL;
   this->StoppingThreshold=0.15;
   this->MaximumPropagationDistance = 600;
+  this->OverwritePolyDataWarning =1;
 
 }
 
@@ -218,7 +219,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
     vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(this->OutFiberSelector->GetSelected());
     
     int createFiber = 1;
-    if (fiberNode->GetPolyData() != NULL)
+    if (this->OverwritePolyDataWarning && fiberNode->GetPolyData() != NULL)
       {
       vtkKWMessageDialog *message = vtkKWMessageDialog::New();
       message->SetParent ( this->UIPanel->GetPageWidget ( "Tractography" ) );

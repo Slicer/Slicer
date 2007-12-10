@@ -35,6 +35,11 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   vtkTypeMacro(vtkSlicerTractographyFiducialSeedingGUI, vtkSlicerModuleGUI);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+    // Description: 
+    // Get the categorization of the module.
+    const char *GetCategory() const
+        { return "Tractography.Seeding"; }
+
   // Description:
   // Create widgets
   virtual void BuildGUI ( );
@@ -75,7 +80,12 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   // tracking stops.
   vtkGetMacro(StoppingThreshold,vtkFloatingPointType);
   vtkSetMacro(StoppingThreshold,vtkFloatingPointType);
-  
+
+  // Show warning or not
+  vtkBooleanMacro(OverwritePolyDataWarning, int);
+  vtkGetMacro(OverwritePolyDataWarning, int);
+  vtkSetMacro(OverwritePolyDataWarning, int);
+
    // Description:
   // Set / get the maximum length of the hyperstreamline expressed as absolute
   // distance (i.e., arc length) value.
@@ -97,6 +107,8 @@ protected:
   vtkFloatingPointType StoppingThreshold;
   double MaximumPropagationDistance;
   
+  int OverwritePolyDataWarning;
+
   vtkSlicerNodeSelectorWidget* VolumeSelector;
   vtkSlicerNodeSelectorWidget* FiducialSelector;
   vtkSlicerNodeSelectorWidget* OutFiberSelector;

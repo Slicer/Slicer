@@ -13,7 +13,7 @@
 #include "itkPluginFilterWatcher.h"
 #include "itkPluginUtilities.h"
 
-#include "vtkDiffusionTensorMathematics.h"
+#include "vtkDiffusionTensorMathematicsSimple.h"
 
 #include "vtkNRRDReader.h"
 #include "vtkNRRDWriter.h"
@@ -25,6 +25,7 @@
 #include "vtkImageThreshold.h"
 #include "vtkImageWriter.h"
 #include "vtkNRRDWriter.h"
+#include "vtkImageCast.h"
 
 int main( int argc, const char * argv[] )
 {
@@ -109,16 +110,38 @@ int main( int argc, const char * argv[] )
   }
   TensorRASToIJKRotation->Invert();
   seed->SetTensorRotationMatrix(TensorRASToIJKRotation);  
+
+
+  //vtkNRRDWriter *iwriter = vtkNRRDWriter::New();
   
   // 3. Set up ROI based on Cl mask
   //Create Cl mask
-  vtkDiffusionTensorMathematics *math = vtkDiffusionTensorMathematics::New();
+
+  vtkImageCast *imageCast = vtkImageCast::New();
+  imageCast->SetOutputScalarTypeToShort();
+  imageCast->SetInput(reader2->GetOutput());
+  imageCast->Update();
+
+  /**
+  iwriter->SetInput(imageCast->GetOutput());
+  iwriter->SetFileName("C:/Temp/cast.nhdr");
+  iwriter->Write();
+  **/
+
+  vtkDiffusionTensorMathematicsSimple *math = vtkDiffusionTensorMathematicsSimple::New();
   math->SetInput(0, reader->GetOutput());
-  math->SetInput(1, reader->GetOutput());
-  math->SetScalarMask(reader2->GetOutput());
+  // math->SetInput(1, reader->GetOutput());
+  math->SetScalarMask(imageCast->GetOutput());
+  math->MaskWithScalarsOn();
   math->SetOperationToLinearMeasure();
   math->Update();
   
+  /**
+  iwriter->SetInput(math->GetOutput());
+  iwriter->SetFileName("C:/Temp/math.nhdr");
+  iwriter->Write();
+  **/
+
   vtkImageThreshold *th = vtkImageThreshold::New();
   th->SetInput(math->GetOutput());
   th->ThresholdBetween(ClTh,1);
@@ -128,12 +151,11 @@ int main( int argc, const char * argv[] )
   th->ReplaceOutOn();
   th->SetOutputScalarTypeToShort();
   th->Update();
+
   /**
-  vtkImageWriter *tmp = vtkImageWriter::New();
-  tmp->SetInput( th->GetOutput() );
-  tmp->SetFilePrefix("C:/Temp/test");
-  tmp->SetFilePattern("%s.%03d");
-  tmp->Write();
+  iwriter->SetInput(th->GetOutput());
+  iwriter->SetFileName("C:/Temp/th.nhdr");
+  iwriter->Write();
   **/
   
   //PENDING: Do merging with input ROI
@@ -220,6 +242,7 @@ int main( int argc, const char * argv[] )
   streamer->Delete();
   reader2->Delete();
   writer->Delete();
+  imageCast->Delete();
   }
   catch (...) 
     { 

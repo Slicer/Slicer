@@ -33,6 +33,10 @@ proc SetupGlyphs {} {
   $::slicer3::MRMLScene Clear 0
 
   set ::gui [$::slicer3::Application GetModuleGUIByName DisplayLoadSave] 
+
+  set ::seed [$::slicer3::Application GetModuleGUIByName FiducialSeeding]
+  $::seed OverwritePolyDataWarningOff
+
   set ::logic [$::gui GetLogic]
 
   set testData $::env(SLICER_HOME)/../Slicer3/Modules/Tractography/Testing/TestData/twoFibers.vtk
