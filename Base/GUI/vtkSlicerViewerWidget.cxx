@@ -91,6 +91,7 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->WorldPointPicker = vtkWorldPointPicker::New();
   this->PropPicker = vtkPropPicker::New();
   this->CellPicker = vtkCellPicker::New();
+  this->CellPicker->SetTolerance(0.00001);
   this->PointPicker = vtkPointPicker::New();
   this->ResetPick();
 
@@ -1551,6 +1552,35 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
             }
 
           int cellScalarsActive = 0;
+          if (dnode->GetActiveScalarName() == NULL)
+            {
+            // see if there are scalars on the poly data that are not set as
+            // active on the display node
+            vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(model);
+            if (mnode)
+              {
+              std::string pointScalarName = std::string(mnode->GetActivePointScalarName("scalars"));
+              std::string cellScalarName = std::string(mnode->GetActiveCellScalarName("scalars"));
+              vtkDebugMacro("Display node active scalar name was null, but the node says active point scalar name = '" << pointScalarName.c_str() << "', cell = '" << cellScalarName.c_str() << "'");
+              if (pointScalarName.compare("") != 0)
+                {
+                vtkWarningMacro("Setting the display node's active scalar to " << pointScalarName.c_str());
+                dnode->SetActiveScalarName(pointScalarName.c_str());
+                }
+              else
+                {
+                if (cellScalarName.compare("") != 0)
+                  {
+                  vtkWarningMacro("Setting the display node's active scalar to " << cellScalarName.c_str());
+                  dnode->SetActiveScalarName(cellScalarName.c_str());
+                  }
+                else
+                  {
+                  vtkDebugMacro("No active scalars");
+                  }
+                }
+              }
+            }
           if (dnode->GetActiveScalarName() != NULL)
             {
             vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(model);
