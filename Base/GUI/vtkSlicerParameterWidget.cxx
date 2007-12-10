@@ -27,6 +27,7 @@
 #include "vtkKWSpinBoxWithLabel.h"
 #include "vtkKWCheckButton.h"
 #include "vtkKWCheckButtonWithLabel.h"
+#include "vtkKWTopLevel.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveDialog.h"
@@ -702,7 +703,7 @@ void vtkSlicerParameterWidget::AddParameterAndEventToWidget(vtkKWCoreWidget *par
                 (vtkCommand *) GUIChangedCallbackCommand);
     } else if (lsb) {
         GUIChangedCallbackCommand->SetClientData(cbStruct);
-        lsb->GetWidget()->AddObserver(vtkKWPushButton::InvokedEvent,
+        lsb->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent,
                 (vtkCommand *) GUIChangedCallbackCommand);
     } else if (rbs) {
         int num = rbs->GetWidget()->GetNumberOfWidgets();
