@@ -47,6 +47,8 @@ public:
   
   // The method that schedules the command line module to run
   void Apply();
+  void Apply( vtkMRMLCommandLineModuleNode* node );
+  void ApplyAndWait ( vtkMRMLCommandLineModuleNode* node );
 
   // Set/Get the directory to use for temporary files
   void SetTemporaryDirectory(const char *tempdir)

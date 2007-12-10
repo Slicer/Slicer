@@ -379,8 +379,12 @@ if {  ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
     if { $isWindows } {
         # can't do Windows
     } else {
-        cd $::SLICER_LIB/python/release25-maint
-        runcmd ./configure --prefix=$::SLICER_LIB/python-build --with-tcl=$::SLICER_LIB/tcl-build --enable-shared
+        cd $SLICER_LIB/python/release25-maint
+
+        set ::env(LDFLAGS) -L$SLICER_LIB/tcl-build/lib
+        set ::env(CPPFLAGS) -I$SLICER_LIB/tcl-build/include
+
+        runcmd ./configure --prefix=$SLICER_LIB/python-build --with-tcl=$SLICER_LIB/tcl-build --enable-shared
         eval runcmd $::MAKE
         puts [catch "eval runcmd $::SERIAL_MAKE install" res] ;# try twice - it probably fails first time...
         if { $isDarwin } {
@@ -452,6 +456,41 @@ if { ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
 
 
 }
+
+################################################################################
+# Get and build matplotlib
+#
+if { 0 && ![file exists $::MATPLOTLIB_TEST_FILE] || $::GENLIB(update) } {
+
+    set ::env(PYTHONHOME)        $SLICER_LIB/python-build
+    cd $SLICER_LIB/python
+
+    # do freetype
+
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/freetype2 freetype2
+
+    if { $isWindows } {
+        # can't do Windows
+    } else {
+        cd $SLICER_LIB/python/freetype2
+        runcmd ./configure --prefix=$SLICER_LIB/python-build
+        eval runcmd $::MAKE
+        eval runcmd $::MAKE install
+    }
+
+    # Now matplotlib
+    cd $SLICER_LIB/python
+    runcmd $::SVN co http://matplotlib.svn.sourceforge.net/svnroot/matplotlib/trunk/matplotlib matplotlib
+    if { $isWindows } {
+        # Can't do Windows yet
+    } else {
+        cd $SLICER_LIB/python/matplotlib
+        set ::env(FREETYPEDIR) $SLICER_LIB/python-build
+        runcmd $SLICER_LIB/python-build/bin/python ./setup.py build
+    }
+}
+        
+
 
 ################################################################################
 # Get and build vtk

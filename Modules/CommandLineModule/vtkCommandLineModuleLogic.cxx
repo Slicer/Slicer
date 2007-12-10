@@ -276,6 +276,18 @@ vtkCommandLineModuleLogic
 
 void vtkCommandLineModuleLogic::Apply()
 {
+  this->Apply ( this->CommandLineModuleNode );
+}
+
+void vtkCommandLineModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* node )
+{
+  // Just execute and wait.
+  node->Register(this);
+  vtkCommandLineModuleLogic::ApplyTask ( node );
+}
+
+void vtkCommandLineModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node )
+{
   bool ret;
   vtkSlicerTask* task = vtkSlicerTask::New();
 
@@ -285,12 +297,12 @@ void vtkCommandLineModuleLogic::Apply()
   // task does run, it will operate on the correct node.
   task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
                         &vtkCommandLineModuleLogic::ApplyTask,
-                        this->CommandLineModuleNode);
+                        node);
   
   // Client data on the task is just a regular pointer, up the
   // reference count on the node, we'll decrease the reference count
   // once the task actually runs
-  this->CommandLineModuleNode->Register(this);
+  node->Register(this);
   
   // Schedule the task
   ret = this->GetApplicationLogic()->ScheduleTask( task );
@@ -301,13 +313,12 @@ void vtkCommandLineModuleLogic::Apply()
     }
   else
     {
-    this->CommandLineModuleNode
-      ->SetStatus(vtkMRMLCommandLineModuleNode::Scheduled);
+      node->SetStatus(vtkMRMLCommandLineModuleNode::Scheduled);
     }
   
   task->Delete();
-}
 
+}
 
 //
 // This routine is called in a separate thread from the main thread.
@@ -327,7 +338,6 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     }
 
   vtkMRMLCommandLineModuleNode *node = reinterpret_cast<vtkMRMLCommandLineModuleNode*>(clientdata);
-
 
   // Check to see if this node/task has been cancelled
   if (node->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelled)

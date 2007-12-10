@@ -411,3 +411,26 @@ vtkMRMLCommandLineModuleNode
 {
   (*vtkMRMLCommandLineModuleNode::RegisteredModules).clear();
 }
+
+int
+vtkMRMLCommandLineModuleNode
+::GetNumberOfRegisteredModules ()
+{ 
+  return RegisteredModules->size(); 
+}
+
+const char* 
+vtkMRMLCommandLineModuleNode
+::GetRegisteredModuleNameByIndex ( int idx )
+{
+  ModuleDescriptionMap::iterator mit = RegisteredModules->begin();
+  int count = 0;
+  while ( mit != RegisteredModules->end() ) 
+    {
+    if ( count == idx ) { return (*mit).first.c_str(); }
+    ++mit;
+    ++count;
+    }
+  return "";
+}
+
