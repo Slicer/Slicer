@@ -47,7 +47,7 @@ vtkMRMLEMSTreeParametersNode::vtkMRMLEMSTreeParametersNode()
   this->ColorRGB[2] = 0.0;
 
   this->SpatialPriorVolumeName     = NULL;
-  this->SpatialPriorWeight         = 0.0;
+  this->SpatialPriorWeight         = 1.0;
   this->ClassProbability           = 0.0;
   this->ExcludeFromIncompleteEStep = 0;
   this->PrintWeights               = 0;

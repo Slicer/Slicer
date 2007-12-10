@@ -39,7 +39,7 @@ vtkMRMLEMSTreeParametersParentNode::vtkMRMLEMSTreeParametersParentNode()
 {
   this->ClassInteractionMatrixNodeID  = NULL;
   
-  this->Alpha                         = 0.7;
+  this->Alpha                         = 0.99;
 
   this->PrintBias                     = 0;
   this->BiasCalculationMaxIterations  = -1;
