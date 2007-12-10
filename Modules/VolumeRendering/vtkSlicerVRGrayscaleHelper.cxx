@@ -646,10 +646,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     else if(caller==this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()&&eid==vtkCommand::StartEvent)
     {
-        if(this->ButtonDown)
-        {
-            this->Volume->SetAllocatedRenderTime(this->GoalLowResTime,NULL);
-        }
 
         //First check if we have to abort the ZeroStageRender
         if(strcmp(this->StageZeroEventHandlerID.c_str(),"")!=0)
@@ -1267,11 +1263,13 @@ void vtkSlicerVRGrayscaleHelper::CreateTreshold()
     this->MB_ColorMode->SetParent(tresholdFrame->GetFrame());
     this->MB_ColorMode->Create();
     this->MB_ColorMode->SetLabelText("Color mode"); 
-    this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Grayscale");
+    this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Grayscale dynamic");
     this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(0,this,"ProcessColorModeEvents 0");
-    this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Rainbow");
+    this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Grayscale static");
     this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(1,this,"ProcessColorModeEvents 1");
-    this->MB_ColorMode->GetWidget()->GetMenu()->SelectItem("Grayscale");
+    this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Rainbow");
+    this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(2,this,"ProcessColorModeEvents 2");
+    this->MB_ColorMode->GetWidget()->GetMenu()->SelectItem("Grayscale static");
     this->MB_ColorMode->EnabledOff();
     this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
         this->MB_ColorMode->GetWidgetName());
@@ -1336,6 +1334,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessTresholdModeEvents(int id)
         this->RA_RampRectangleHorizontal->EnabledOff();
         this->RA_RampRectangleVertical->SetRange(1,0);
         this->RA_RampRectangleVertical->EnabledOff();
+        this->PB_Reset->EnabledOff();
+        this->PB_TresholdZoomIn->EnabledOff();
         return;
     }
     //Before we continue enabled everything
@@ -1406,6 +1406,15 @@ void vtkSlicerVRGrayscaleHelper::ProcessTresholdRange(double notUsed,double notU
 
         colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0],.5,.5,.5);
         colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[1],1,1,1);
+    }
+    else if(this->ColorMode)
+    {
+         colorTransfer->AddRGBPoint(iData->GetScalarRange()[0],.5,.5,.5);
+        colorTransfer->AddRGBPoint(iData->GetScalarRange()[1],.5,.5,.5);
+
+        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0],.5,.5,.5);
+        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[1],.5,.5,.5);
+
     }
     else
     {

@@ -92,8 +92,8 @@ public:
     vtkGetMacro(ManualInteractive,int);
     vtkSetMacro(ManualInteractive,int);
     vtkBooleanMacro(ManualInteractive,int);
-    vtkGetMacro(ManualInteractiveRate,int);
-    vtkSetMacro(ManualInteractiveRate,int);
+    vtkGetMacro(ManualInteractiveRate,double);
+    vtkSetMacro(ManualInteractiveRate,double);
 
   //ENDSLICERADD
 
@@ -262,7 +262,7 @@ protected:
 
     //SLICERADD
     int ManualInteractive;
-    int ManualInteractiveRate;
+    double ManualInteractiveRate;
   //ENDSLICERADD
 
 
