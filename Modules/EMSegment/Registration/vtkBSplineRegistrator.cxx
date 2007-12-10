@@ -4,6 +4,7 @@
 #include "itkVTKImageImport.h"
 #include "vtkITKUtility.h"
 #include "vtkImageExport.h"
+#include "itkLBFGSBOptimizer.h"
 #include "itkImageRegistrationMethod.h"
 #include "itkMattesMutualInformationImageToImageMetric.h"
 #include "itkNormalizedCorrelationImageToImageMetric.h"
@@ -11,7 +12,6 @@
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkRealTimeClock.h"
-//#include "itkTemporaryTraitsForLongLong.h"
 #include "itkPixelTraits.h"
 #include "vtkImageCast.h"
 #include "vtkTypeTraits.h"
@@ -19,6 +19,9 @@
 #include "itkCenteredVersorTransformInitializer.h"
 #include "itkVersorRigid3DTransformOptimizer.h"
 #include "vtkRegistratorTypeTraits.h"
+#include "vtkImageChangeInformation.h"
+#include "vtkImagePermute.h"
+#include "vtkMatrix4x4.h"
 
 vtkCxxRevisionMacro(vtkBSplineRegistrator, "$Revision: 0.0 $");
 vtkStandardNewMacro(vtkBSplineRegistrator);
@@ -28,6 +31,7 @@ vtkStandardNewMacro(vtkBSplineRegistrator);
 //  that will monitor the evolution of the registration process.
 //
 #include "itkCommand.h"
+#include <iomanip>
 template <class TOptimizer>
 class CommandIterationUpdate : public itk::Command
 {
@@ -50,15 +54,17 @@ public:
   // this should be specialized later...
   void Execute(const itk::Object * object, const itk::EventObject & event)
   {
-      OptimizerPointer optimizer =
-        dynamic_cast< OptimizerPointer >( object );
-      if( ! itk::IterationEvent().CheckEvent( &event ) )
+    OptimizerPointer optimizer =
+      dynamic_cast< OptimizerPointer >( object );
+    if( ! itk::IterationEvent().CheckEvent( &event ) )
       {
-        return;
+      return;
       }
-      std::cout << optimizer->GetCurrentIteration() << "   ";
-      std::cout << optimizer->GetValue() << "   ";
-      std::cout << optimizer->GetCurrentStepLength() << std::endl;
+    std::cerr << "   " << std::setw(7) << std::right << std::setfill('.')
+              << optimizer->GetCurrentIteration();
+    std::cerr << std::setw(20) << std::right << std::setfill('.')
+              << optimizer->GetValue();
+    std::cerr << std::endl;
   }
 };
 
@@ -68,8 +74,11 @@ vtkBSplineRegistrator()
 {
   this->FixedImage  = NULL;
   this->MovingImage = NULL;
+
+  this->FixedIJKToXYZ  = NULL;
+  this->MovingIJKToXYZ = NULL;
+
   this->Transform   = vtkGridTransform::New();
-  this->Transform->Identity();
 
   this->ImageToImageMetric   = vtkBSplineRegistrator::MutualInformation;
   this->MetricComputationSamplingRatio = 1.0;
@@ -81,6 +90,8 @@ vtkBSplineRegistrator::
 {
   this->SetFixedImage(NULL);
   this->SetMovingImage(NULL);
+  this->SetFixedIJKToXYZ(NULL);
+  this->SetMovingIJKToXYZ(NULL);
   this->Transform->Delete();
   this->Transform = NULL;
 }
@@ -99,9 +110,7 @@ PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ImageToImageMetric: " 
      << GetStringFromMetricType(this->ImageToImageMetric);
   os << indent << "InterpolationType: " 
-     << GetStringFromInterpolationType(this->IntensityInterpolationType);
-  os << indent << "InitializationType: " 
-     << GetStringFromTransformInitializationType(this->TransformInitializationType)
+     << GetStringFromInterpolationType(this->IntensityInterpolationType)
      << std::endl;
 }
 
@@ -134,27 +143,41 @@ GetStringFromInterpolationType(InterpolationType id)
       return "NearestNeighbor";
     case (vtkBSplineRegistrator::Linear):
       return "Linear";
+    case (vtkBSplineRegistrator::Cubic):
+      return "Cubic";
     default:
       return "Unknown";
     };
 }
 
 //----------------------------------------------------------------------------
-const char*
+void
 vtkBSplineRegistrator::
-GetStringFromTransformInitializationType(InitializationType id)
+ComputeReorientationInformation(const vtkMatrix4x4* IJKToXYZ,
+                                int*    filteredAxesForPermuteFilter,
+                                double* originForChangeInformationFilter,
+                                double* spacingForChangeInformationFilter)
 {
-  switch (id)
+  // origin is easy...
+  originForChangeInformationFilter[0] = (*IJKToXYZ)[0][3];
+  originForChangeInformationFilter[1] = (*IJKToXYZ)[1][3];
+  originForChangeInformationFilter[2] = (*IJKToXYZ)[2][3];
+
+  // figure out spacing and permutation.  Assumes one nonzero entry
+  // per row/column of directions matrix.
+  for (int c = 0; c < 3; ++c)
     {
-    case (vtkBSplineRegistrator::Identity):
-      return "Identity";
-    case (vtkBSplineRegistrator::CentersOfMass):
-      return "CentersOfMass";
-    case (vtkBSplineRegistrator::ImageCenters):
-      return "ImageCenters";
-    default:
-      return "Unknown";
-    };
+    for (int r = 0; r < 3; ++r)
+      {
+      double t = (*IJKToXYZ)[r][c];
+      if (t != 0)
+        {
+        filteredAxesForPermuteFilter[c]      = r;
+        spacingForChangeInformationFilter[r] = t;
+        break;
+        }
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -164,6 +187,68 @@ vtkBSplineRegistrator::
 RegisterImagesInternal3()
 {
   //
+  // Deal with orientation.  Permute images and setup origin and
+  // spacing so that both images are measured in XYZ basis vectors
+  // with only spacing and origin information.  This way ITK will do
+  // registration in XYZ coordinates.
+  //
+  int     filteredAxesForPermuteFilter[3];
+  double  originForChangeInformationFilter[3];
+  double  spacingForChangeInformationFilter[3];
+
+  // fixed ------
+  vtkMatrix4x4* IJKToXYZMatrixFixed = vtkMatrix4x4::New();
+  IJKToXYZMatrixFixed->Identity();
+  if (this->FixedIJKToXYZ != NULL)
+    {
+    IJKToXYZMatrixFixed->DeepCopy(this->FixedIJKToXYZ);
+    }
+  vtkBSplineRegistrator::
+    ComputeReorientationInformation(IJKToXYZMatrixFixed,
+                                    filteredAxesForPermuteFilter,
+                                    originForChangeInformationFilter,
+                                    spacingForChangeInformationFilter);
+
+  vtkImagePermute* permuteFixedImage = vtkImagePermute::New();
+  vtkImageChangeInformation* changeInformationFixedImage = 
+    vtkImageChangeInformation::New();
+  
+  permuteFixedImage->SetInput(this->FixedImage);
+  permuteFixedImage->SetFilteredAxes(filteredAxesForPermuteFilter);
+
+  changeInformationFixedImage->SetInput(permuteFixedImage->GetOutput());
+  changeInformationFixedImage->
+    SetOutputSpacing(spacingForChangeInformationFilter);
+  changeInformationFixedImage->
+    SetOutputOrigin(originForChangeInformationFilter);
+
+  // moving ------
+  vtkMatrix4x4* IJKToXYZMatrixMoving = vtkMatrix4x4::New();
+  IJKToXYZMatrixMoving->Identity();
+  if (this->MovingIJKToXYZ != NULL)
+    {
+    IJKToXYZMatrixMoving->DeepCopy(this->MovingIJKToXYZ);
+    }
+  vtkBSplineRegistrator::
+    ComputeReorientationInformation(IJKToXYZMatrixMoving,
+                                    filteredAxesForPermuteFilter,
+                                    originForChangeInformationFilter,
+                                    spacingForChangeInformationFilter);
+
+  vtkImagePermute* permuteMovingImage = vtkImagePermute::New();
+  vtkImageChangeInformation* changeInformationMovingImage = 
+    vtkImageChangeInformation::New();
+  
+  permuteMovingImage->SetInput(this->MovingImage);
+  permuteMovingImage->SetFilteredAxes(filteredAxesForPermuteFilter);
+
+  changeInformationMovingImage->SetInput(permuteMovingImage->GetOutput());
+  changeInformationMovingImage->
+    SetOutputSpacing(spacingForChangeInformationFilter);
+  changeInformationMovingImage->
+    SetOutputOrigin(originForChangeInformationFilter);
+
+  //
   // create vtk --> itk pipelines
   //
 
@@ -171,9 +256,9 @@ RegisterImagesInternal3()
   typedef itk::VTKImageImport<ITKImageType>     ImageImportType;
 
   //
-  // fixed image 
+  // fixed image ------
   vtkImageCast* fixedImageCaster              = vtkImageCast::New();
-  fixedImageCaster->SetInput(this->FixedImage);
+  fixedImageCaster->SetInput(changeInformationFixedImage->GetOutput());
   fixedImageCaster->
     SetOutputScalarType(vtkTypeTraits<TVoxel>::VTKTypeID());
   vtkImageExport* fixedImageVTKToITKExporter  = vtkImageExport::New();
@@ -185,9 +270,9 @@ RegisterImagesInternal3()
   fixedImageITKImporter->Update();
 
   //
-  // moving image
+  // moving image ------
   vtkImageCast*   movingImageCaster           = vtkImageCast::New();
-  movingImageCaster->SetInput(this->MovingImage);
+  movingImageCaster->SetInput(changeInformationMovingImage->GetOutput());
   movingImageCaster->
     SetOutputScalarType(vtkTypeTraits<TVoxel>::VTKTypeID());
   vtkImageExport* movingImageVTKToITKExporter = vtkImageExport::New();
@@ -240,7 +325,7 @@ RegisterImagesInternal3()
         ITKImageType, ITKImageType>   MetricType;
       typename MetricType::Pointer    metric  = MetricType::New();
       registration->SetMetric(metric);
-      std::cerr << "Metric: MSE" << std::endl;
+      std::cerr << "Metric: Normalized Cross Correlation" << std::endl;
 
       break;
       }
@@ -301,6 +386,10 @@ RegisterImagesInternal3()
   TransformType::RegionType::SizeType  gridBorderSize;
   TransformType::RegionType::SizeType  totalGridSize;
 
+  // for now just make up a number of knots!!!
+  TransformType::RegionType::SizeType  numberOfKnots;  
+  numberOfKnots.Fill(20);
+
   gridSizeOnImage[0] = numberOfKnots[0];
   gridSizeOnImage[1] = numberOfKnots[1];
   gridSizeOnImage[2] = numberOfKnots[2];
@@ -309,12 +398,12 @@ RegisterImagesInternal3()
   bSplineRegion.SetSize(totalGridSize);
 
   TransformType::SpacingType spacing = 
-    fixedImageReader->GetOutput()->GetSpacing();
+    fixedImageITKImporter->GetOutput()->GetSpacing();
   TransformType::OriginType  origin  = 
-    fixedImageReader->GetOutput()->GetOrigin();
+    fixedImageITKImporter->GetOutput()->GetOrigin();
   
-  FixedImageType::SizeType fixedImageSize = 
-    fixedImageReader->GetOutput()->GetLargestPossibleRegion().GetSize();
+  typename ITKImageType::SizeType fixedImageSize = 
+    fixedImageITKImporter->GetOutput()->GetLargestPossibleRegion().GetSize();
 
   for (unsigned int r = 0; r < 3; ++r)
   {
@@ -342,35 +431,6 @@ RegisterImagesInternal3()
   registration->
     SetInitialTransformParameters(bSplineTransform->GetParameters());
 
-  typedef
-    itk::CenteredVersorTransformInitializer<ITKImageType, ITKImageType>
-    TransformInitializerType;
-
-  typename TransformInitializerType::Pointer transformInitializer = 
-    TransformInitializerType::New();
-  transformInitializer->SetTransform(transform);
-  transformInitializer->SetFixedImage(fixedImageITKImporter->GetOutput());
-  transformInitializer->SetMovingImage(movingImageITKImporter->GetOutput());
-  transformInitializer->InitializeTransform();
-
-  if (this->TransformInitializationType == CentersOfMass)
-  {
-    transformInitializer->MomentsOn();
-    std::cerr << "Initialization: Moments" << std::endl;
-  }
-  else if (this->TransformInitializationType == ImageCenters)
-  {
-    transformInitializer->GeometryOn();
-    std::cerr << "Initialization: Image centers..." << std::endl;
-  }
-  transformInitializer->InitializeTransform();
-
-  registration->SetTransform(transform);
-  registration->SetInitialTransformParameters(transform->GetParameters());
-
-  std::cerr << "After Initializtation: " << std::endl;
-  transform->Print(std::cerr, 0);
-
   //
   // setup optomizer
   typedef itk::LBFGSBOptimizer                       OptimizerType;
@@ -389,8 +449,8 @@ RegisterImagesInternal3()
   
   optimizer->SetCostFunctionConvergenceFactor(1e+4);
   optimizer->SetProjectedGradientTolerance(1e-10);
-  optimizer->SetMaximumNumberOfIterations(numberOfIterations);
-  optimizer->SetMaximumNumberOfEvaluations(numberOfIterations);
+  optimizer->SetMaximumNumberOfIterations(this->NumberOfIterations);
+  optimizer->SetMaximumNumberOfEvaluations(this->NumberOfIterations);
   optimizer->SetMaximumNumberOfCorrections(10);
   
   std::cerr << "Optimization: LBFGSB" << std::endl;
@@ -424,7 +484,7 @@ RegisterImagesInternal3()
     }
 
   std::cerr << "After Registration: " << std::endl;
-  transform->Print(std::cerr, 0);
+  //transform->Print(std::cerr, 0);
 
   //
   // copy transform from itk back to this vtk class
@@ -439,6 +499,12 @@ RegisterImagesInternal3()
   movingImageCaster->Delete();
   fixedImageVTKToITKExporter->Delete();
   movingImageVTKToITKExporter->Delete();
+  changeInformationFixedImage->Delete();
+  changeInformationMovingImage->Delete();
+  permuteFixedImage->Delete();
+  permuteMovingImage->Delete();
+  IJKToXYZMatrixFixed->Delete();
+  IJKToXYZMatrixMoving->Delete();
 
   this->Modified();
 }
@@ -451,7 +517,7 @@ RegisterImagesInternal2()
 {
   //
   // First, find the smallest voxel type that can represent both fixed
-  // and moving voxel type.  The, convert that type to one that we
+  // and moving voxel type.  Then, convert that type to one that we
   // have instantiated (currently short, unsigned short, float, and
   // double) in order to reduce code bloat.
   typedef itk::JoinTraits<TFixedImageVoxel, TMovingImageVoxel> TraitsType;
