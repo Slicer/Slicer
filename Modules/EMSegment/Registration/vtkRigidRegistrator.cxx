@@ -18,6 +18,8 @@
 #include "itkCenteredVersorTransformInitializer.h"
 #include "itkVersorRigid3DTransformOptimizer.h"
 #include "vtkRegistratorTypeTraits.h"
+#include "vtkImageChangeInformation.h"
+#include "vtkImagePermute.h"
 
 vtkCxxRevisionMacro(vtkRigidRegistrator, "$Revision: 0.0 $");
 vtkStandardNewMacro(vtkRigidRegistrator);
@@ -72,6 +74,10 @@ vtkRigidRegistrator()
 {
   this->FixedImage  = NULL;
   this->MovingImage = NULL;
+
+  this->FixedIJKToXYZ  = NULL;
+  this->MovingIJKToXYZ = NULL;
+
   this->Transform   = vtkTransform::New();
   this->Transform->Identity();
 
@@ -85,6 +91,8 @@ vtkRigidRegistrator::
 {
   this->SetFixedImage(NULL);
   this->SetMovingImage(NULL);
+  this->SetFixedIJKToXYZ(NULL);
+  this->SetMovingIJKToXYZ(NULL);
   this->Transform->Delete();
   this->Transform = NULL;
 }
@@ -138,6 +146,8 @@ GetStringFromInterpolationType(InterpolationType id)
       return "NearestNeighbor";
     case (vtkRigidRegistrator::Linear):
       return "Linear";
+    case (vtkRigidRegistrator::Cubic):
+      return "Cubic";
     default:
       return "Unknown";
     };
@@ -162,11 +172,103 @@ GetStringFromTransformInitializationType(InitializationType id)
 }
 
 //----------------------------------------------------------------------------
+void
+vtkRigidRegistrator::
+ComputeReorientationInformation(const vtkMatrix4x4* ITKToXYZ,
+                                int*    filteredAxesForPermuteFilter,
+                                double* originForChangeInformationFilter,
+                                double* spacingForChangeInformationFilter)
+{
+  // origin is easy...
+  originForChangeInformationFilter[0] = (*ITKToXYZ)[0][3];
+  originForChangeInformationFilter[1] = (*ITKToXYZ)[1][3];
+  originForChangeInformationFilter[2] = (*ITKToXYZ)[2][3];
+
+  // figure out spacing and permutation.  Assumes one nonzero entry
+  // per row/column of directions matrix.
+  for (int c = 0; c < 3; ++c)
+    {
+    for (int r = 0; r < 3; ++r)
+      {
+      double t = (*ITKToXYZ)[r][c];
+      if (t != 0)
+        {
+        filteredAxesForPermuteFilter[c]      = r;
+        spacingForChangeInformationFilter[r] = t;
+        break;
+        }
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 template <class TVoxel>
 void 
 vtkRigidRegistrator::
 RegisterImagesInternal3()
 {
+  //
+  // Deal with orientation.  Permute images and setup origin and
+  // spacing so that both images are measured in XYZ basis vectors
+  // with only spacing and origin information.  This way ITK will do
+  // registration in XYZ coordinates.
+  //
+  int     filteredAxesForPermuteFilter[3];
+  double  originForChangeInformationFilter[3];
+  double  spacingForChangeInformationFilter[3];
+
+  // fixed ------
+  vtkMatrix4x4* IJKToXYZMatrixFixed = vtkMatrix4x4::New();
+  IJKToXYZMatrixFixed->Identity();
+  if (this->FixedIJKToXYZ != NULL)
+    {
+    IJKToXYZMatrixFixed->DeepCopy(this->FixedIJKToXYZ);
+    }
+  vtkRigidRegistrator::
+    ComputeReorientationInformation(IJKToXYZMatrixFixed,
+                                    filteredAxesForPermuteFilter,
+                                    originForChangeInformationFilter,
+                                    spacingForChangeInformationFilter);
+
+  vtkImagePermute* permuteFixedImage = vtkImagePermute::New();
+  vtkImageChangeInformation* changeInformationFixedImage = 
+    vtkImageChangeInformation::New();
+  
+  permuteFixedImage->SetInput(this->FixedImage);
+  permuteFixedImage->SetFilteredAxes(filteredAxesForPermuteFilter);
+
+  changeInformationFixedImage->SetInput(permuteFixedImage->GetOutput());
+  changeInformationFixedImage->
+    SetOutputSpacing(spacingForChangeInformationFilter);
+  changeInformationFixedImage->
+    SetOutputOrigin(originForChangeInformationFilter);
+
+  // moving ------
+  vtkMatrix4x4* IJKToXYZMatrixMoving = vtkMatrix4x4::New();
+  IJKToXYZMatrixMoving->Identity();
+  if (this->MovingIJKToXYZ != NULL)
+    {
+    IJKToXYZMatrixMoving->DeepCopy(this->MovingIJKToXYZ);
+    }
+  vtkRigidRegistrator::
+    ComputeReorientationInformation(IJKToXYZMatrixMoving,
+                                    filteredAxesForPermuteFilter,
+                                    originForChangeInformationFilter,
+                                    spacingForChangeInformationFilter);
+
+  vtkImagePermute* permuteMovingImage = vtkImagePermute::New();
+  vtkImageChangeInformation* changeInformationMovingImage = 
+    vtkImageChangeInformation::New();
+  
+  permuteMovingImage->SetInput(this->MovingImage);
+  permuteMovingImage->SetFilteredAxes(filteredAxesForPermuteFilter);
+
+  changeInformationMovingImage->SetInput(permuteMovingImage->GetOutput());
+  changeInformationMovingImage->
+    SetOutputSpacing(spacingForChangeInformationFilter);
+  changeInformationMovingImage->
+    SetOutputOrigin(originForChangeInformationFilter);
+
   //
   // create vtk --> itk pipelines
   //
@@ -174,10 +276,9 @@ RegisterImagesInternal3()
   typedef itk::Image<TVoxel, 3>                 ITKImageType;
   typedef itk::VTKImageImport<ITKImageType>     ImageImportType;
 
-  //
-  // fixed image 
+  // fixed image ------
   vtkImageCast* fixedImageCaster              = vtkImageCast::New();
-  fixedImageCaster->SetInput(this->FixedImage);
+  fixedImageCaster->SetInput(changeInformationFixedImage->GetOutput());
   fixedImageCaster->
     SetOutputScalarType(vtkTypeTraits<TVoxel>::VTKTypeID());
   vtkImageExport* fixedImageVTKToITKExporter  = vtkImageExport::New();
@@ -188,10 +289,9 @@ RegisterImagesInternal3()
   ConnectPipelines(fixedImageVTKToITKExporter, fixedImageITKImporter);
   fixedImageITKImporter->Update();
 
-  //
-  // moving image
+  // moving image ------
   vtkImageCast*   movingImageCaster           = vtkImageCast::New();
-  movingImageCaster->SetInput(this->MovingImage);
+  movingImageCaster->SetInput(changeInformationMovingImage->GetOutput());
   movingImageCaster->
     SetOutputScalarType(vtkTypeTraits<TVoxel>::VTKTypeID());
   vtkImageExport* movingImageVTKToITKExporter = vtkImageExport::New();
@@ -290,6 +390,7 @@ RegisterImagesInternal3()
       //std::cerr << "Interpolation: Linear" << std::endl;
       }
       break;
+
     default:
       vtkErrorMacro(<< "Unknown interpolation type: " 
                     << this->IntensityInterpolationType);
@@ -421,6 +522,12 @@ RegisterImagesInternal3()
   fixedImageVTKToITKExporter->Delete();
   movingImageVTKToITKExporter->Delete();
   vtkMatrix->Delete();
+  changeInformationFixedImage->Delete();
+  changeInformationMovingImage->Delete();
+  permuteFixedImage->Delete();
+  permuteMovingImage->Delete();
+  IJKToXYZMatrixFixed->Delete();
+  IJKToXYZMatrixMoving->Delete();
 
   this->Modified();
 }

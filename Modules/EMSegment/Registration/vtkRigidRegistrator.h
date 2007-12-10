@@ -43,7 +43,8 @@ public:
   typedef enum 
   {
     NearestNeighbor,
-    Linear
+    Linear,
+    Cubic
   } InterpolationType;
   //ETX
   static const char* GetStringFromInterpolationType(InterpolationType);
@@ -54,6 +55,8 @@ public:
   { this->SetIntensityInterpolationType(NearestNeighbor); }
   void SetIntensityInterpolationTypeToLinear()
   { this->SetIntensityInterpolationType(Linear); }
+  void SetIntensityInterpolationTypeToCubic()
+  { this->SetIntensityInterpolationType(Cubic); }
 
   //BTX
   typedef enum 
@@ -83,6 +86,9 @@ public:
 
   vtkGetObjectMacro(Transform, vtkTransform);
 
+  vtkSetObjectMacro(FixedIJKToXYZ, vtkMatrix4x4);
+  vtkSetObjectMacro(MovingIJKToXYZ, vtkMatrix4x4);
+
   void RegisterImages();
 
 protected:
@@ -105,8 +111,24 @@ private:
   vtkRigidRegistrator(const vtkRigidRegistrator&);  // not implemented
   void operator=(const vtkRigidRegistrator&);        // not implemented
 
+
+  //
+  // Deal with orientation.  Permute images and setup origin and
+  // spacing so that both images are measured in XYZ basis vectors
+  // with only spacing and origin information (no need for direction
+  // matrix or cosines).  This way ITK will do registration in XYZ
+  // coordinates.
+  static void
+    ComputeReorientationInformation(const vtkMatrix4x4* ITKToXYZ,
+                                    int*    filteredAxesForPermuteFilter,
+                                    double* originForChangeInformationFilter,
+                                    double* spacingForChangeInformationFilter);
+
   vtkImageData*                   FixedImage;
   vtkImageData*                   MovingImage;
+
+  vtkMatrix4x4*                   FixedIJKToXYZ;
+  vtkMatrix4x4*                   MovingIJKToXYZ;
 
   vtkTransform*                   Transform;
 
