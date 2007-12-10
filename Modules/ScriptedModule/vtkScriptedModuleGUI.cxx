@@ -235,6 +235,7 @@ void vtkScriptedModuleGUI::RemoveMRMLObserverByNumber ( vtkObject *observee, uns
   if (observee == NULL)
     {
     vtkErrorMacro("RemoveMRMLObserverByNumber: observee is null");
+    return;
     }
   vtkDebugMacro("RemoveMRMLObserverByNumber: event = " << event);
   if (observee->HasObserver(event, (vtkCommand *)this->MRMLCallbackCommand))
