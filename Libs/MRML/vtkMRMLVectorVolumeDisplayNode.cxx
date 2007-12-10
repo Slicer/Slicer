@@ -18,6 +18,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkImageExtractComponents.h"
 
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
@@ -56,12 +57,44 @@ vtkMRMLVectorVolumeDisplayNode::vtkMRMLVectorVolumeDisplayNode()
  this->VisualizationMode = this->visModeScalar;
  this->ScalarMode = this->scalarModeMagnitude;
  this->GlyphMode = this->glyphModeLines;
+
+ this->ShiftScale = vtkImageShiftScale::New();
+ this->RGBToHSI = vtkImageRGBToHSI::New();
+ this->ExtractIntensity = vtkImageExtractComponents::New();
+
+ // TODO: hook this into the Alpha Logic of the superclass
+ // so that the thresholds can apply to RGB images
+ // - for now just pass on RGB
+
+ this->ShiftScale->SetOutputScalarTypeToUnsignedChar();
+
+ this->ExtractIntensity->SetInput( this->RGBToHSI->GetOutput() );
+ this->ExtractIntensity->SetComponents( 2 );
+
+ this->Threshold->SetInput( this->ExtractIntensity->GetOutput() );
+
+ this->AppendComponents->RemoveAllInputs();
+ this->AppendComponents->SetInputConnection(0, this->ShiftScale->GetOutput()->GetProducerPort());
+ this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutput()->GetProducerPort());
+
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLVectorVolumeDisplayNode::~vtkMRMLVectorVolumeDisplayNode()
 {
+ this->ShiftScale->Delete();
+ this->RGBToHSI->Delete();
+ this->ExtractIntensity->Delete();
+}
 
+void vtkMRMLVectorVolumeDisplayNode::UpdateImageDataPipeline()
+{
+  Superclass::UpdateImageDataPipeline();
+
+  double halfWindow = (this->Window / 2.);
+  double min = this->Level - halfWindow;
+  this->ShiftScale->SetShift ( -min );
+  this->ShiftScale->SetScale ( 255. * (this->Window / 255.) );
 }
 
 //----------------------------------------------------------------------------
@@ -133,3 +166,10 @@ void vtkMRMLVectorVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
 
 
+//---------------------------------------------------------------------------
+void vtkMRMLVectorVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
+                                           unsigned long event, 
+                                           void *callData )
+{
+  Superclass::ProcessMRMLEvents(caller, event, callData);
+}

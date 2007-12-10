@@ -30,8 +30,13 @@
 
 #include "vtkMatrix4x4.h"
 #include "vtkImageData.h"
+#include "vtkImageShiftScale.h"
+#include "vtkImageRGBToHSI.h"
 
 class vtkImageData;
+class vtkImageShiftScale;
+class vtkImageExtractComponents;
+class vtkImageRGBToHSI;
 
 class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLVolumeGlyphDisplayNode
 {
@@ -97,6 +102,44 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLVolumeGlyph
   virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* ) {return NULL;};
 
   virtual void SetDefaultColorMap() {};
+
+  // Description:
+  // alternative method to propagate events generated in Display nodes
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
+                                   unsigned long /*event*/, 
+                                   void * /*callData*/ );
+  // Description:
+  // Sets vtkImageData to be converted to displayable vtkImageData
+  virtual void SetImageData(vtkImageData *imageData)
+    {
+    this->ShiftScale->SetInput( imageData );
+    this->RGBToHSI->SetInput( imageData );
+    };
+
+  // Description:
+  // Sets ImageData for background mask 
+  virtual void SetBackgroundImageData(vtkImageData *imageData)
+    {
+    // TODO: what is this for?  The comment above is unhelpful!
+    this->ResliceAlphaCast->SetInput(imageData);
+    };
+
+  // Description:
+  // Gets ImageData converted from the real data in the node
+  virtual vtkImageData* GetImageData() 
+    {
+    this->UpdateImageDataPipeline();
+    this->AppendComponents->Update();
+    return this->AppendComponents->GetOutput();
+    };
+
+  virtual void UpdateImageDataPipeline();
+
+  // Description:
+  // Access to this class's internal filter elements
+  vtkGetObjectMacro (ShiftScale, vtkImageShiftScale);
+  vtkGetObjectMacro (RGBToHSI, vtkImageRGBToHSI);
+  vtkGetObjectMacro (ExtractIntensity, vtkImageExtractComponents);
   
 protected:
   vtkMRMLVectorVolumeDisplayNode();
@@ -106,6 +149,10 @@ protected:
 
   int ScalarMode;
   int GlyphMode;
+
+  vtkImageShiftScale *ShiftScale;
+  vtkImageRGBToHSI *RGBToHSI;
+  vtkImageExtractComponents *ExtractIntensity;
 };
 
 #endif
