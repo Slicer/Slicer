@@ -1160,13 +1160,45 @@ CopyTreeGenericDataToSegmenter(vtkImageEMLocalGenericClass* node,
 {
   unsigned int numTargetImages = 
     this->MRMLManager->GetTargetNumberOfSelectedVolumes();
-  
-  int boundMin[3];
-  this->MRMLManager->GetSegmentationBoundaryMin(boundMin);
-  node->SetSegmentationBoundaryMin(boundMin[0], boundMin[1], boundMin[2]);
 
+  //
+  // Setup ROI.  If if looks bogus then use the default (entire image)
+  bool useDefaultBoundary = false;
+  int boundMin[3];
   int boundMax[3];
+
+  // get dimensions of target image
+  int targetImageDimensions[3];
+  this->MRMLManager->GetTargetNode()->GetNthVolumeNode(0)->
+    GetImageData()->GetDimensions(targetImageDimensions);
+
+  this->MRMLManager->GetSegmentationBoundaryMin(boundMin);
   this->MRMLManager->GetSegmentationBoundaryMax(boundMax);
+  // Specify boundary in 1-based, NOT 0-based as you might expect
+  for (unsigned int i = 0; i < 3; ++i)
+    {
+    if (boundMin[i] <  1                   || 
+        boundMin[i] >  targetImageDimensions[i]   ||
+        boundMax[i] <  1                   ||
+        boundMax[i] >  targetImageDimensions[i]   ||
+        boundMax[i] <= boundMin[i])
+      {
+      useDefaultBoundary = true;
+      break;
+      }
+    }
+  if (useDefaultBoundary)
+    {
+    std::cerr 
+      << "Warning: the segmentation ROI was bogus, setting ROI to entire image"
+      << std::endl;
+    for (unsigned int i = 0; i < 3; ++i)
+      {
+      boundMin[i] = 1;
+      boundMax[i] = targetImageDimensions[i];
+      }
+    }
+  node->SetSegmentationBoundaryMin(boundMin[0], boundMin[1], boundMin[2]);
   node->SetSegmentationBoundaryMax(boundMax[0], boundMax[1], boundMax[2]);
   
   node->SetProbDataWeight(this->MRMLManager->
