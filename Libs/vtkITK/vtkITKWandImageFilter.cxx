@@ -215,6 +215,21 @@ int vtkITKWandImageFilter::RequestData(
     delta = this->DynamicRangePercentage*(range[1] - range[0]);
 
     void* scalars = inScalars->GetVoidPointer(0);
+
+////////// These types are not defined in itk ////////////
+#ifdef vtkTemplateMacroCase_ui64
+#undef vtkTemplateMacroCase_ui64
+# define vtkTemplateMacroCase_ui64(typeN, type, call)
+#endif
+#ifdef vtkTemplateMacroCase_si64
+#undef vtkTemplateMacroCase_si64
+# define vtkTemplateMacroCase_si64(typeN, type, call)
+#endif
+#ifdef vtkTemplateMacroCase_ll
+#undef vtkTemplateMacroCase_ll
+# define vtkTemplateMacroCase_ll(typeN, type, call)
+#endif
+
     switch (inScalars->GetDataType())
       {
       vtkTemplateMacro(

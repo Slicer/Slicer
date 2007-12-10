@@ -7,6 +7,7 @@
 #include "itkConstNeighborhoodIterator.h"
 #include "itkConstantBoundaryCondition.h"
 #include "itkImageFunction.h"
+#include "itkNumericTraits.h"
 
 namespace itk
 {

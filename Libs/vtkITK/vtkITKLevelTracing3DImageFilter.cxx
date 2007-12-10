@@ -153,6 +153,19 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
 
   inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent);
 
+////////// These types are not defined in itk::NumericTraits ////////////
+#ifdef vtkTemplateMacroCase_ui64
+#undef vtkTemplateMacroCase_ui64
+# define vtkTemplateMacroCase_ui64(typeN, type, call)
+#endif
+#ifdef vtkTemplateMacroCase_si64
+#undef vtkTemplateMacroCase_si64
+# define vtkTemplateMacroCase_si64(typeN, type, call)
+#endif
+#ifdef vtkTemplateMacroCase_ll
+#undef vtkTemplateMacroCase_ll
+# define vtkTemplateMacroCase_ll(typeN, type, call)
+#endif
   if (inScalars->GetNumberOfComponents() == 1 )
   {
     void* scalars = inScalars->GetVoidPointer(0);
