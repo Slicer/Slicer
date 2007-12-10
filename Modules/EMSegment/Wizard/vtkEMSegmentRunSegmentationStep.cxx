@@ -410,12 +410,16 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
   if (!this->RunSegmentationOutVolumeSelector->IsCreated())
     {
     this->RunSegmentationOutVolumeSelector->SetNodeClass(
-      "vtkMRMLVolumeNode", "LabelMap", "1", "EM Segmentation");
+      "vtkMRMLScalarVolumeNode", 
+      "LabelMap", "1", 
+      "EM Segmentation");
     this->RunSegmentationOutVolumeSelector->SetNewNodeEnabled(1);
     this->RunSegmentationOutVolumeSelector->SetParent(
       this->RunSegmentationOutputFrame->GetFrame());
     this->RunSegmentationOutVolumeSelector->Create();
-    this->RunSegmentationOutVolumeSelector->SetMRMLScene(mrmlManager->GetMRMLScene());
+    this->RunSegmentationOutVolumeSelector->
+      SetMRMLScene(mrmlManager->GetMRMLScene());
+    this->RunSegmentationOutVolumeSelector->UpdateMenu();
 
     this->RunSegmentationOutVolumeSelector->SetBorderWidth(2);
     this->RunSegmentationOutVolumeSelector->SetLabelText( "Output Labelmap: ");
