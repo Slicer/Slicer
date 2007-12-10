@@ -281,7 +281,7 @@ void vtkCommandLineModuleGUI::AddGUIObservers ( )
       }
     else if (lsb)
       {
-      lsb->GetWidget()->AddObserver(vtkKWPushButton::InvokedEvent,
+      lsb->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent,
                        (vtkCommand *) this->GUICallbackCommand);
       }
     else if (rbs)
@@ -379,7 +379,7 @@ void vtkCommandLineModuleGUI::RemoveGUIObservers ( )
       }
     else if (lsb)
       {
-      lsb->GetWidget()->RemoveObservers(vtkKWPushButton::InvokedEvent,
+      lsb->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent,
                        (vtkCommand *) this->GUICallbackCommand);
       }
     else if (rbs)
