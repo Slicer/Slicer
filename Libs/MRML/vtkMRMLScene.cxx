@@ -17,6 +17,7 @@ Version:   $Revision: 1.18 $
 //#include <hash_map>
 #include "vtkObjectFactory.h"
 #include "vtkErrorCode.h"
+#include "vtkCommand.h"
 #include "vtkGeneralTransform.h"
 
 #include "vtkMRMLScene.h"
@@ -489,6 +490,8 @@ int vtkMRMLScene::Connect()
 
     for (n=0; n<nnodes; n++)
       {
+      double progress = n / (1. * nnodes);
+      this->InvokeEvent(vtkCommand::ProgressEvent,(void *)&progress);
       bool update = true;
       node = (vtkMRMLNode *)this->CurrentScene->GetItemAsObject(n);
       for (int no=0; no<nold; no++)
