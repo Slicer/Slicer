@@ -1173,47 +1173,18 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
     this->MapperTexture->SetCroppingRegionFlagsToSubVolume();
     this->MapperRaycast->CroppingOn();
     this->MapperRaycast->SetCroppingRegionFlagsToSubVolume();
-
-    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
-    vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetRASToIJKMatrix(matrix);
+    //double *oldCropping=this->MapperTexture->GetCroppingRegionPlanes();
+    //oldCropping[2*index]=min;
+    //oldCropping[2*index+1]=max;
     double oldCropping[6];
     for(int i=0;i<3;i++)
     {
-        float points[4]={0,0,0,0};
-        points[i]=this->RA_Cropping[i]->GetRange()[0];
-        matrix->MultiplyPoint(points,points);
-
-        //Take care about origin
-        float pointsOrigin[4]={0,0,0,0};
-        pointsOrigin[i]=this->RA_Cropping[i]->GetRange()[1];
-        matrix->MultiplyPoint(pointsOrigin,pointsOrigin);
-
-        int position=0;
-        for(int j=0;j<3;j++)
-        {
-            if(points[j]!=0||pointsOrigin[j]!=0)
-            {
-                position=j;
-                break;
-            }
-        }
-        if(points[position]<pointsOrigin[position])
-        {
-            oldCropping[2*position]=points[position];
-            oldCropping[2*position+1]=pointsOrigin[position];
-        }
-        else
-        {
-            oldCropping[2*position]=pointsOrigin[position];
-            oldCropping[2*position+1]=points[position];
-        }
-
+        oldCropping[2*i]=this->RA_Cropping[i]->GetRange()[0];
+        oldCropping[2*i+1]=this->RA_Cropping[i]->GetRange()[1];
     }
     this->MapperRaycast->SetCroppingRegionPlanes(oldCropping);
     this->MapperTexture->SetCroppingRegionPlanes(oldCropping);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-    matrix->Delete();
 }
 
 void vtkSlicerVRGrayscaleHelper::CreateCropping()
@@ -1222,7 +1193,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     croppingFrame->SetParent(this->NB_Details->GetFrame("Cropping"));
     croppingFrame->Create();
     croppingFrame->AllowFrameToCollapseOff();
-    croppingFrame->SetLabelText("Cropping");
+    croppingFrame->SetLabelText("Cropping (IJK coordinates)");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         croppingFrame->GetWidgetName() );
 
@@ -1239,49 +1210,16 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
         this->RA_Cropping[i]->SetCommand(this,str.str().c_str());
         this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->RA_Cropping[i]->GetWidgetName());
     }
-    //Get imagedata and matrix
-    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
-    vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(matrix);
-
-    for(int i=0;i<3;i++)
-    {
-        float points[4]={0,0,0,0};
-        points[i]=iData->GetDimensions()[i];
-        matrix->MultiplyPoint(points,points);
-
-        //Take care about origin
-        float pointsOrigin[4]={0,0,0,0};
-        pointsOrigin[i]=iData->GetOrigin()[i];
-        matrix->MultiplyPoint(pointsOrigin,pointsOrigin);
-
-        int position=0;
-        for(int j=0;j<3;j++)
-        {
-            if(points[j]!=0)
-            {
-                position=j;
-                break;
-            }
-        }
-        //check if position is negativ
-        if(points[position]<0)
-        {
-            this->RA_Cropping[position]->SetWholeRange(pointsOrigin[position],points[position]);
-            this->RA_Cropping[position]->SetRange(pointsOrigin[position],points[position]);
-        }
-
-        else
-        {
-            this->RA_Cropping[position]->SetWholeRange(points[position],pointsOrigin[position]);
-            this->RA_Cropping[position]->SetRange(points[position],pointsOrigin[position]);
-        }
-    }
-    this->RA_Cropping[0]->SetLabelText("R<->L");
-    this->RA_Cropping[1]->SetLabelText("A<->P");
-    this->RA_Cropping[2]->SetLabelText("S<->I");
-    croppingFrame->Delete();
-    matrix->Delete();
+        vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+    this->RA_Cropping[0]->SetLabelText("I");
+    this->RA_Cropping[0]->SetWholeRange(iData->GetOrigin()[0],iData->GetDimensions()[0]);
+    this->RA_Cropping[0]->SetRange(iData->GetOrigin()[0],iData->GetDimensions()[0]);
+    this->RA_Cropping[1]->SetLabelText("J");
+    this->RA_Cropping[1]->SetWholeRange(iData->GetOrigin()[1],iData->GetDimensions()[1]);
+    this->RA_Cropping[1]->SetRange(iData->GetOrigin()[1],iData->GetDimensions()[1]);
+    this->RA_Cropping[2]->SetLabelText("K");
+    this->RA_Cropping[2]->SetWholeRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
+    this->RA_Cropping[2]->SetRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
 }
 
 void vtkSlicerVRGrayscaleHelper::CreateTreshold()
