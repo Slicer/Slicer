@@ -5,6 +5,7 @@
 
 class vtkKWFrameWithLabel;
 class vtkKWListBoxToListBoxSelectionEditor;
+class vtkKWCheckButtonWithLabel;
 
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentIntensityImagesStep : public vtkEMSegmentStep
 {
@@ -20,6 +21,7 @@ public:
   // Description:
   // Callbacks.
   virtual void IntensityImagesTargetSelectionChangedCallback();
+  virtual void AlignTargetImagesCallback(int state);
 
   // Description:
   // Reimplement the superclass's method.
@@ -33,6 +35,8 @@ protected:
 
   vtkKWFrameWithLabel                  *IntensityImagesTargetSelectorFrame;
   vtkKWListBoxToListBoxSelectionEditor *IntensityImagesTargetVolumeSelector;
+  vtkKWFrameWithLabel        *TargetToTargetRegistrationFrame;
+  vtkKWCheckButtonWithLabel  *IntensityImagesAlignTargetImagesCheckButton;
 
 private:
   vtkEMSegmentIntensityImagesStep(const vtkEMSegmentIntensityImagesStep&);

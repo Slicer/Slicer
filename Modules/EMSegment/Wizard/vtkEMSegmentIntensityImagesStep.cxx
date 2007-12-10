@@ -4,12 +4,15 @@
 #include "vtkEMSegmentLogic.h"
 
 #include "vtkKWFrame.h"
+#include "vtkKWLabel.h"
+#include "vtkKWCheckButton.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWListBoxToListBoxSelectionEditor.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
 #include "vtkKWListBoxWithScrollbarsWithLabel.h"
+#include "vtkKWCheckButtonWithLabel.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentIntensityImagesStep);
@@ -21,8 +24,10 @@ vtkEMSegmentIntensityImagesStep::vtkEMSegmentIntensityImagesStep()
   this->SetName("4/9. Select Target Images");
   this->SetDescription("Choose the set of images that will be segmented.");
 
-  this->IntensityImagesTargetSelectorFrame  = NULL;
-  this->IntensityImagesTargetVolumeSelector = NULL;
+  this->IntensityImagesTargetSelectorFrame          = NULL;
+  this->IntensityImagesTargetVolumeSelector         = NULL;
+  this->TargetToTargetRegistrationFrame             = NULL;
+  this->IntensityImagesAlignTargetImagesCheckButton = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -39,6 +44,18 @@ vtkEMSegmentIntensityImagesStep::~vtkEMSegmentIntensityImagesStep()
     this->IntensityImagesTargetSelectorFrame->Delete();
     this->IntensityImagesTargetSelectorFrame = NULL;
     }
+
+  if (this->TargetToTargetRegistrationFrame)
+    {
+    this->TargetToTargetRegistrationFrame->Delete();
+    this->TargetToTargetRegistrationFrame = NULL;
+    }
+
+  if (this->IntensityImagesAlignTargetImagesCheckButton)
+    {
+    this->IntensityImagesAlignTargetImagesCheckButton->Delete();
+    this->IntensityImagesAlignTargetImagesCheckButton = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -46,10 +63,12 @@ void vtkEMSegmentIntensityImagesStep::ShowUserInterface()
 {
   this->Superclass::ShowUserInterface();
 
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
   wizard_widget->GetCancelButton()->SetEnabled(0);
 
   vtkKWWidget *parent = wizard_widget->GetClientArea();
+  int enabled = parent->GetEnabled();
 
   // Create the frame
 
@@ -100,6 +119,51 @@ void vtkEMSegmentIntensityImagesStep::ShowUserInterface()
   // Update the UI with the proper value
 
   this->PopulateIntensityImagesTargetVolumeSelector();
+
+  // Create the target-to-target registration frame
+
+  if (!this->TargetToTargetRegistrationFrame)
+    {
+    this->TargetToTargetRegistrationFrame = vtkKWFrameWithLabel::New();
+    }
+  if (!this->TargetToTargetRegistrationFrame->IsCreated())
+    {
+    this->TargetToTargetRegistrationFrame->SetParent(parent);
+    this->TargetToTargetRegistrationFrame->Create();
+    this->TargetToTargetRegistrationFrame->SetLabelText("Target-to-target Registration");
+    }
+
+  this->Script(
+    "pack %s -side top -anchor nw -fill x -padx 2 -pady 2", 
+    this->TargetToTargetRegistrationFrame->GetWidgetName());
+
+  if (!this->IntensityImagesAlignTargetImagesCheckButton)
+    {
+    this->IntensityImagesAlignTargetImagesCheckButton = 
+      vtkKWCheckButtonWithLabel::New();
+    }
+  if (!this->IntensityImagesAlignTargetImagesCheckButton->IsCreated())
+    {
+    this->IntensityImagesAlignTargetImagesCheckButton->SetParent(
+      this->TargetToTargetRegistrationFrame->GetFrame());
+    this->IntensityImagesAlignTargetImagesCheckButton->Create();
+    this->IntensityImagesAlignTargetImagesCheckButton->GetLabel()->
+      SetWidth(EMSEG_WIDGETS_LABEL_WIDTH);
+    this->IntensityImagesAlignTargetImagesCheckButton->
+      SetLabelText("Align Target Images:");
+    this->IntensityImagesAlignTargetImagesCheckButton->
+      GetWidget()->SetCommand(this, "AlignTargetImagesCallback");
+    }
+  this->IntensityImagesAlignTargetImagesCheckButton->SetEnabled(
+    mrmlManager->HasGlobalParametersNode() ? enabled : 0);
+
+  this->Script(
+    "pack %s -side top -anchor nw -padx 2 -pady 2", 
+    this->IntensityImagesAlignTargetImagesCheckButton->GetWidgetName());
+
+  this->IntensityImagesAlignTargetImagesCheckButton->
+    GetWidget()->SetSelectedState(
+      mrmlManager->GetEnableTargetToTargetRegistration());
 
   wizard_widget->SetErrorText(
     "Please note that the order of the images is important.");
@@ -164,6 +228,17 @@ void vtkEMSegmentIntensityImagesStep::
 {
   // nothing for now; changes are made on transitions
   // (see svn revisions)
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentIntensityImagesStep::
+AlignTargetImagesCallback(int state)
+{
+  // The align target images checkbutton has changed because of user
+  // interaction
+  
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetEnableTargetToTargetRegistration(state);
 }
 
 //----------------------------------------------------------------------------
