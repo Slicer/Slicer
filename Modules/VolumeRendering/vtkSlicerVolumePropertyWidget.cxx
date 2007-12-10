@@ -1376,9 +1376,7 @@ void vtkSlicerVolumePropertyWidget::Update()
     }
 
   // Execute (if any)
-
-  const char* tmp = tk_cmd.str().c_str();
-  if (*tmp)
+  if (!tk_cmd.str().empty())
     {
     this->Script(tk_cmd.str().c_str());
     }
