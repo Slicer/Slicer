@@ -387,9 +387,24 @@ public:
   //
   // registration parameters
   //
+
+  //BTX
+  enum
+    {
+    AtlasToTargetAffineRegistrationOff     = 0,
+    AtlasToTargetAffineRegistrationRigidMI = 1
+    };
+  //ETX
   virtual int       GetRegistrationAffineType();
   virtual void      SetRegistrationAffineType(int affineType);
 
+  //BTX
+  enum
+    {
+    AtlasToTargetDeformableRegistrationOff        = 0,
+    AtlasToTargetDeformableRegistrationBSplineMMI = 1
+    };
+  //ETX
   virtual int       GetRegistrationDeformableType();
   virtual void      SetRegistrationDeformableType(int deformableType);
 
