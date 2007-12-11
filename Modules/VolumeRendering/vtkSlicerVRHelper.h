@@ -10,6 +10,7 @@
 #include "vtkVolumeRenderingModule.h"
 #include "vtkKWObject.h"
 
+
 //show the debug message in the TCon not in the ErrorWindow
 //Reason to deal this seperate: Performance issues in ErrorWindow
 # define vtkSlicerVRHelperDebug(message,format)                                 \
@@ -53,6 +54,10 @@ public:
     // Enable/Disable the printing of debug messages in the TCon
     vtkSetMacro(TCLDebug,int);
     vtkGetMacro(TCLDebug, int);
+
+    void DisplayProgressDialog(const char* message);
+
+    void WithdrawProgressDialog(void);
 
 
 protected:

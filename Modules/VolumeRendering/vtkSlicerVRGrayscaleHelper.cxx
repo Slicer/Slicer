@@ -317,6 +317,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
         this->UpdateGUIElements();
         return;
     }
+    //Start dialog right here
     Superclass::Init(gui);
     this->Gui->Script("bind all <Any-ButtonPress> {%s SetButtonDown 1}",this->GetTclName());
     this->Gui->Script("bind all <Any-ButtonRelease> {%s SetButtonDown 0}",this->GetTclName());
@@ -482,9 +483,11 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
 
     this->Gui->GetcurrentNode()->GetVolumeProperty()->ShadeOn();
     this->Gui->GetcurrentNode()->GetVolumeProperty()->SetAmbient(.10);
-    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetDiffuse(.90);
-    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetSpecular(.20);
-    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetSpecularPower(10);//this is really weird
+    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetDiffuse(.60);
+    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetSpecular(.50);
+    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetSpecularPower(40);//this is really weird
+
+    //Disable Gradient Opacity
 
     this->UpdateSVP();
 }
@@ -992,27 +995,22 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     }
     if(eid==vtkCommand::VolumeMapperComputeGradientsStartEvent)
     {
-        this->GradientDialog = vtkKWProgressDialog::New();
-        this->GradientDialog->SetParent (  this->Gui->GetApplicationGUI()->GetMainSlicerWindow());
-        this->GradientDialog->SetDisplayPositionToMasterWindowCenter();
-        this->GradientDialog->Create ( );
-        this->GradientDialog->SetMessageText("Please standby: Gradients are calculated");
-        this->GradientDialog->Display();
+        this->DisplayProgressDialog("Please standby: Gradients are calculated");
         return;
     }
     else if(eid==vtkCommand::VolumeMapperComputeGradientsEndEvent)
     {
-        this->GradientDialog->Withdraw();
-        this->GradientDialog->SetParent(NULL);
-        this->GradientDialog->Delete();
-        this->GradientDialog=NULL;
+        this->WithdrawProgressDialog();
         return;
 
     }
     else if(eid==vtkCommand::VolumeMapperComputeGradientsProgressEvent)
     {
         float *progress=(float*)callData;
+        if(this->GradientDialog!=NULL)
+        {
         this->GradientDialog->UpdateProgress(*progress);
+        }
         return;
     }
     else if (eid==vtkCommand::VolumeMapperRenderProgressEvent&&this->currentStage==1)
@@ -1071,6 +1069,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
     if(this->SVP_VolumeProperty==NULL)
     {
         vtkErrorMacro("SVP does not exist");
+        return;
     }
     //First of all set New Property, Otherwise all Histograms will be overwritten
     //First check if we really need to update
@@ -1245,7 +1244,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
         this->RA_Cropping[i]->SetCommand(this,str.str().c_str());
         this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->RA_Cropping[i]->GetWidgetName());
     }
-        vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
     this->RA_Cropping[0]->SetLabelText("I");
     this->RA_Cropping[0]->SetWholeRange(iData->GetOrigin()[0],iData->GetDimensions()[0]);
     this->RA_Cropping[0]->SetRange(iData->GetOrigin()[0],iData->GetDimensions()[0]);
@@ -1255,7 +1254,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->RA_Cropping[2]->SetLabelText("K");
     this->RA_Cropping[2]->SetWholeRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
     this->RA_Cropping[2]->SetRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
-        
+
     //Now we have the cropping ranges
     this->ProcessEnableDisableCropping(0);
 }
@@ -1435,7 +1434,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessTresholdRange(double notUsed,double notU
     }
     else if(this->ColorMode==1)
     {
-         colorTransfer->AddRGBPoint(iData->GetScalarRange()[0],.5,.5,.5);
+        colorTransfer->AddRGBPoint(iData->GetScalarRange()[0],.5,.5,.5);
         colorTransfer->AddRGBPoint(iData->GetScalarRange()[1],.5,.5,.5);
 
         colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0],.5,.5,.5);
@@ -1482,7 +1481,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessTresholdReset(void)
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
 
     this->RA_RampRectangleHorizontal->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
-        this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetVisibleParameterRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+    this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetVisibleParameterRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
     this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetVisibleParameterRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
 }
 
@@ -1491,12 +1490,12 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
 {
     if(this->MapperTexture!=NULL&&this->MapperRaycast!=NULL)
     {
-    this->MapperTexture->SetCropping(cbSelectedState);
-    this->MapperRaycast->SetCropping(cbSelectedState);
-    this->MapperTexture->SetCroppingRegionFlagsToSubVolume();
-    this->MapperRaycast->SetCroppingRegionFlagsToSubVolume();
+        this->MapperTexture->SetCropping(cbSelectedState);
+        this->MapperRaycast->SetCropping(cbSelectedState);
+        this->MapperTexture->SetCroppingRegionFlagsToSubVolume();
+        this->MapperRaycast->SetCroppingRegionFlagsToSubVolume();
     }
-    
+
     for(int i=0;i<3;i++)
     {
         this->RA_Cropping[i]->SetEnabled(cbSelectedState);

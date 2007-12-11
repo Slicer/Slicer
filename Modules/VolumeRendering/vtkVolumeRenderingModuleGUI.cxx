@@ -379,8 +379,9 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             vtkMRMLScalarVolumeNode *selectedImageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
             //Add observer to trigger update of transform
             selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
-
+            this->UnpackSvpGUI();
             this->PackSvpGUI();
+                        
 
             //Change here for different Helper classes
             ////This is a LabelMap
@@ -405,6 +406,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             //update previous:
             this->PreviousNS_ImageData=this->NS_ImageData->GetSelected()->GetID();//only when not "None"
             this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
+            this->Helper->WithdrawProgressDialog();
 
 
         }//else if
@@ -629,7 +631,7 @@ void vtkVolumeRenderingModuleGUI::SetInteractorStyle(vtkSlicerViewerInteractorSt
 
 void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
 {
-    this->currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataScene->GetSelected());
+    //this->currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataScene->GetSelected());
     vtkImageData* imageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData();
     this->Helper->UpdateGUIElements();
     this->Helper->UpdateRendering();
@@ -707,6 +709,7 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineFromImageData()
             //Select first found Node
             //So everyting will be treated when InitializeFromMRMLScene
             this->PreviousNS_VolumeRenderingDataScene=tmp->GetID();
+            this->currentNode=tmp;
             this->NS_VolumeRenderingDataScene->SetSelected(tmp);
             //We will call the initialize on our own.
             this->InitializePipelineFromMRMLScene();

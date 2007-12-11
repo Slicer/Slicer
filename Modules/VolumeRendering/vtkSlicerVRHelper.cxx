@@ -6,6 +6,7 @@
 #include "vtkCallbackCommand.h"
 #include "vtkMatrix4x4.h"
 #include "vtkMRMLTransformNode.h"
+#include "vtkKWProgressDialog.h"
 
 
 vtkCxxRevisionMacro(vtkSlicerVRHelper, "$Revision: 1.46 $");
@@ -17,6 +18,7 @@ vtkSlicerVRHelper::vtkSlicerVRHelper(void)
     this->VolumeRenderingCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
     this->VolumeRenderingCallbackCommand->SetCallback(vtkSlicerVRHelper::VolumeRenderingCallback);
     this->Volume=NULL;
+    this->GradientDialog=NULL;
 }
 
 vtkSlicerVRHelper::~vtkSlicerVRHelper(void)
@@ -84,6 +86,7 @@ void vtkSlicerVRHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
     this->Gui=gui;
     this->SetApplication(this->Gui->GetApplication());
+    this->DisplayProgressDialog("Preparation: Please stand by");
 }
 
 void vtkSlicerVRHelper::CalculateMatrix(vtkMatrix4x4 *output)
@@ -121,4 +124,31 @@ void vtkSlicerVRHelper::CalculateMatrix(vtkMatrix4x4 *output)
     {
         vtkErrorMacro("invalid data");
     }
+}
+
+void vtkSlicerVRHelper::DisplayProgressDialog(const char* message)
+{
+    if(this->GradientDialog!=NULL)
+    {
+                    //this->GradientDialog->SetMessageText(message);
+        return;
+    }
+                this->GradientDialog = vtkKWProgressDialog::New();
+            this->GradientDialog->SetParent (  this->Gui->GetApplicationGUI()->GetMainSlicerWindow());
+            this->GradientDialog->SetDisplayPositionToMasterWindowCenter();
+            this->GradientDialog->Create ( );
+            this->GradientDialog->SetMessageText(message);
+            this->GradientDialog->Display();
+}
+
+void vtkSlicerVRHelper::WithdrawProgressDialog()
+{
+    if(this->GradientDialog==NULL)
+    {
+        return;
+    }
+        this->GradientDialog->Withdraw();
+        this->GradientDialog->SetParent(NULL);
+        this->GradientDialog->Delete();
+        this->GradientDialog=NULL;
 }
