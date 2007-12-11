@@ -294,6 +294,162 @@ PrintImageInfo(vtkImageData* image)
   std::cerr << std::endl;
 }
 
+template <class T>
+T
+vtkEMSegmentLogic::
+GuessRegistrationBackgroundLevel(vtkImageData* imageData)
+{
+  int borderWidth = 5;
+  T inLevel;
+  std::map<T, unsigned int> m;
+
+  T* inData = static_cast<T*>(imageData->GetScalarPointer());
+  int dim[3];
+  imageData->GetDimensions(dim);
+
+  vtkIdType inc[3];
+  vtkIdType iInc, jInc, kInc;
+  imageData->GetIncrements(inc);
+
+   // k first slice
+  for (int k = 0; k < borderWidth; ++k)
+    {
+    kInc = k*inc[2];
+    for (int j = 0; j < dim[1]; ++j)
+      {
+      jInc = j*inc[1];
+      for (int i = 0; i < dim[0]; ++i)
+        {
+        iInc = i*inc[0];
+        inLevel = imageData[iInc+jInc+kInc];
+        if (m.count(inLevel))
+          {
+          ++m[inLevel];
+          }
+        else
+          {
+          m[inLevel] = 1;
+          }
+        }
+      }
+    }
+
+  // k last slice
+  for (int k = dim[2]-borderWidth; k < dim[2]; ++k)
+    {
+    kInc = k*inc[2];
+    for (int j = 0; j < dim[1]; ++j)
+      {
+      jInc = j*inc[1];
+      for (int i = 0; i < dim[0]; ++i)
+        {
+        iInc = i*inc[0];
+        inLevel = imageData[iInc+jInc+kInc];
+        if (m.count(inLevel))
+          {
+          ++m[inLevel];
+          }
+        else
+          {
+          m[inLevel] = 1;
+          }
+        }
+      }
+    }
+
+  // j first slice
+  for (int j = 0; j < borderWidth; ++j)
+    {
+    jInc = j*inc[1];
+    for (int k = 0; k < dim[2]; ++k)
+      {
+      kInc = k*inc[2];
+      for (int i = 0; i < dim[0]; ++i)
+        {
+        iInc = i*inc[0];
+        inLevel = imageData[iInc+jInc+kInc];
+        if (m.count(inLevel))
+          {
+          ++m[inLevel];
+          }
+        else
+          {
+          m[inLevel] = 1;
+          }
+        }
+      }
+    }
+
+  // j last slice
+  for (int j = dim[1]-borderWidth; j < dim[1]; ++j)
+    {
+    jInc = j*inc[1];
+    for (int k = 0; k < dim[2]; ++k)
+      {
+      kInc = k*inc[2];
+      for (int i = 0; i < dim[0]; ++i)
+        {
+        iInc = i*inc[0];
+        inLevel = imageData[iInc+jInc+kInc];
+        if (m.count(inLevel))
+          {
+          ++m[inLevel];
+          }
+        else
+          {
+          m[inLevel] = 1;
+          }
+        }
+      }
+    }
+
+  // i first slice
+  for (int i = 0; i < borderWidth; ++i)
+    {
+    iInc = i*inc[0];
+    for (int k = 0; k < dim[2]; ++k)
+      {
+      kInc = k*inc[2];
+      for (int j = 0; j < dim[1]; ++j)
+        {
+        jInc = j*inc[1];
+        inLevel = imageData[iInc+jInc+kInc];
+        if (m.count(inLevel))
+          {
+          ++m[inLevel];
+          }
+        else
+          {
+          m[inLevel] = 1;
+          }
+        }
+      }
+    }
+
+  // i last slice
+  for (int i = dim[0]-borderWidth; i < dim[0]; ++i)
+    {
+    iInc = i*inc[0];
+    for (int k = 0; k < dim[2]; ++k)
+      {
+      kInc = k*inc[2];
+      for (int j = 0; j < dim[1]; ++j)
+        {
+        jInc = j*inc[1];
+        inLevel = imageData[iInc+jInc+kInc];
+        if (m.count(inLevel))
+          {
+          ++m[inLevel];
+          }
+        else
+          {
+          m[inLevel] = 1;
+          }
+        }
+      }
+    }
+}
+
 //
 // A Slicer3 wrapper around vtkImageReslice.  Reslice the image data
 // from inputVolumeNode into outputVolumeNode with the output image

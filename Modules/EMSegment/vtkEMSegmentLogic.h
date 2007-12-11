@@ -98,6 +98,10 @@ private:
                                  vtkMRMLVolumeNode* outputVolumeGeometryNode,
                                  vtkTransform* outputRASToInputRASTransform,
                                  double backgroundLevel);
+  //BTX
+  template <class T>
+  static T GuessRegistrationBackgroundLevel(vtkImageData* imageData);
+  //ETX
 
   static void PrintImageInfo(vtkImageData* image);
 
