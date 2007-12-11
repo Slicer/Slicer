@@ -491,6 +491,37 @@ RegisterImagesInternal3()
   //
   // !!!
 
+  // resize the grid transform and set it up so it can be applied in
+  // vtk as an RAS space transform: needs origin and spacing of fixed
+  // image.  Needs to be natually RAS oriented.
+  vtkImageData* displacementGrid = vtkImageData::New();
+  displacementGrid->CopyStructure(changeInformationFixedImage->GetOutput());
+  displacementGrid->SetNumberOfScalarComponents(3); // x, y, z
+  displacementGrid->SetScalarTypeToFloat();
+
+  vtkIdType numVoxels = displacementGrid->GetNumberOfPoints();
+  TransformType::InputPointType inPtRAS;
+  TransformType::OutputPointType outPtRAS;
+  double inPtVTK[3];
+  float* outDataPtr = 
+    static_cast<float*>(displacementGrid->GetScalarPointer());
+  for (vtkIdType i = 0; i < numVoxels; ++i)
+    {
+    // index to RAS
+    displacementGrid->GetPoint(i, inPtVTK);    
+    inPtRAS[0] = inPtVTK[0];
+    inPtRAS[1] = inPtVTK[1];
+    inPtRAS[2] = inPtVTK[2];
+
+    // what was the transform...
+    outPtRAS = bSplineTransform->TransformPoint(inPtRAS);
+
+    // save result in grid xform
+    *outDataPtr++ = outPtRAS[0];
+    *outDataPtr++ = outPtRAS[1];
+    *outDataPtr++ = outPtRAS[2];
+    }
+
   //
   // clean up memory
   //
