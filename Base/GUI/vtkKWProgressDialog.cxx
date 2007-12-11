@@ -59,6 +59,13 @@ vtkKWProgressDialog::~vtkKWProgressDialog(void)
     }
 
     this->SetObservedObject(NULL);
+
+    if ( this->CallbackCommand != NULL )
+      {
+      this->CallbackCommand->Delete();
+      this->CallbackCommand= NULL;
+      }
+
 }
 
 //----------------------------------------------------------------------------
