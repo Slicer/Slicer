@@ -34,6 +34,8 @@
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLDisplayableNode.h"
 
+#include "itkMetaDataDictionary.h"
+
 class vtkImageData;
 
 class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
@@ -147,6 +149,13 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
       ImageDataModifiedEvent = 18001,
     };
 //ETX
+
+//BTX
+  // Description:
+  // Set/Get the ITK MetaDataDictionary
+  void SetMetaDataDictionary( const itk::MetaDataDictionary& );
+  const itk::MetaDataDictionary& GetMetaDataDictionary() const;
+//ETX
   
 protected:
   vtkMRMLVolumeNode();
@@ -165,6 +174,9 @@ protected:
 
   vtkImageData               *ImageData;
 
+//BTX
+  itk::MetaDataDictionary Dictionary;
+//ETX  
 };
 
 #endif

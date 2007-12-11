@@ -33,6 +33,8 @@
 #include <vector>
 #include <string>
 
+#include "itkMetaDataDictionary.h"
+
 #include "vtkITK.h"
 
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageSource
@@ -221,6 +223,12 @@ public:
   //
   void RegisterExtraBuiltInFactories();
 
+//BTX
+  // Description:
+  // Return the MetaDataDictionary from the ITK layer
+  const itk::MetaDataDictionary &GetMetaDataDictionary() const;
+//ETX
+  
 protected:
   vtkITKArchetypeImageSeriesReader();
   ~vtkITKArchetypeImageSeriesReader();
@@ -252,6 +260,10 @@ protected:
   // defined in the subclasses
   virtual void ExecuteData(vtkDataObject *data);
 
+//BTX
+  itk::MetaDataDictionary Dictionary;
+//ETX
+  
 private:
   vtkITKArchetypeImageSeriesReader(const vtkITKArchetypeImageSeriesReader&);  // Not implemented.
   void operator=(const vtkITKArchetypeImageSeriesReader&);  // Not implemented.

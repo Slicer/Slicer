@@ -235,6 +235,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   // set volume attributes
   volNode->SetStorageNodeID(this->GetID());
+  volNode->SetMetaDataDictionary( reader->GetMetaDataDictionary() );
   //TODO update scene to send Modified event
  
   vtkImageChangeInformation *ici = vtkImageChangeInformation::New();

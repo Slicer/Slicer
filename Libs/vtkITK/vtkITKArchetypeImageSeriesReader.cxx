@@ -563,6 +563,15 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   output->SetScalarType(this->OutputScalarType);
   output->SetNumberOfScalarComponents(this->GetNumberOfComponents());
 
+  // Copy the MetaDataDictionary from the ITK layer to the VTK layer
+  if (imageIO.GetPointer() != NULL)
+    {
+    this->Dictionary = imageIO->GetMetaDataDictionary();
+    }
+  else
+    {
+    this->Dictionary = itk::MetaDataDictionary();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -572,4 +581,11 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
 void vtkITKArchetypeImageSeriesReader::ExecuteData(vtkDataObject *output)
 {
   vtkErrorMacro(<<"The subclass has not defined anything for ExecuteData!\n");
+}
+
+const itk::MetaDataDictionary&
+vtkITKArchetypeImageSeriesReader
+::GetMetaDataDictionary() const
+{
+  return this->Dictionary;
 }

@@ -606,3 +606,15 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
   return;
 }
 
+void vtkMRMLVolumeNode::SetMetaDataDictionary( const itk::MetaDataDictionary& dictionary )
+{
+  this->Dictionary = dictionary;
+  this->Modified();
+}
+
+const
+itk::MetaDataDictionary&
+vtkMRMLVolumeNode::GetMetaDataDictionary() const
+{
+  return this->Dictionary;
+}
