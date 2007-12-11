@@ -328,7 +328,8 @@ void vtkSlicerRecordSnapshotWidget::AddMRMLObservers()
   for (int n=0; n<nnodes; n++)
     {    
     node = this->MRMLScene->GetNthNode(n);
-    if (node && !node->IsA("vtkMRMLSceneSnapshotNode"))
+    if (node && !node->IsA("vtkMRMLSceneSnapshotNode") &&
+        !node->HasObserver(vtkCommand::AnyEvent, (vtkCommand *)this->MRMLCallbackCommand ))
       {
       node->AddObserver(vtkCommand::AnyEvent, (vtkCommand *)this->MRMLCallbackCommand );
       }
