@@ -305,9 +305,9 @@ if {$::GETBUILDTEST(verbose)} {
 }
 # set the cpack generator to determine the binary file extension
 if {$isLinux || $isDarwin} {
-    set ::GETBUILDTEST(cpack-generator) "STGZ"
-    set ::GETBUILDTEST(cpack-extension) ".sh"
-    # if wish to have .tar.gz, use generator = TGZ and extension = .tar.gz
+    set ::GETBUILDTEST(cpack-generator) "TGZ"
+    set ::GETBUILDTEST(cpack-extension) ".tar.gz"
+    # if wish to have .sh, use generator = STGZ and extension = .sh / currently disabled due to Ubuntu bug
 }
 if {$isWindows} {
     set ::GETBUILDTEST(cpack-generator) "NSIS"
