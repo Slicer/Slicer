@@ -476,6 +476,16 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
     colorTransfer->AddRGBPoint(tresholdLowIndex+.5*(tresholdHighIndex-tresholdLowIndex),.3,1.,.3);
     colorTransfer->AddRGBPoint(tresholdHighIndex,1.,.3,.3);
     colorTransfer->AddRGBPoint(range[1],1,.3,.3);
+
+
+    //Enable shading as default
+
+    this->Gui->GetcurrentNode()->GetVolumeProperty()->ShadeOn();
+    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetAmbient(.10);
+    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetDiffuse(.90);
+    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetSpecular(.20);
+    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetSpecularPower(10);//this is really weird
+
     this->UpdateSVP();
 }
 
@@ -1188,10 +1198,7 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
     {
         return;
     }
-    this->MapperTexture->CroppingOn();
-    this->MapperTexture->SetCroppingRegionFlagsToSubVolume();
-    this->MapperRaycast->CroppingOn();
-    this->MapperRaycast->SetCroppingRegionFlagsToSubVolume();
+
     //double *oldCropping=this->MapperTexture->GetCroppingRegionPlanes();
     //oldCropping[2*index]=min;
     //oldCropping[2*index+1]=max;
@@ -1217,6 +1224,15 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
         croppingFrame->GetWidgetName() );
 
     //Build GUI
+
+    this->CB_Cropping=vtkKWCheckButtonWithLabel::New();
+    this->CB_Cropping->SetParent(croppingFrame->GetFrame());
+    this->CB_Cropping->Create();
+    this->CB_Cropping->GetWidget()->SetSelectedState(0);
+    this->CB_Cropping->SetLabelText("Enable /Disable Cropping");
+    this->CB_Cropping->GetWidget()->SetCommand(this, "ProcessEnableDisableCropping");
+    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",
+        this->CB_Cropping->GetWidgetName());
     for(int i=0;i<3;i++)
     {
         this->RA_Cropping[i]=vtkKWRange::New();
@@ -1227,7 +1243,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
         str<<"Cropping ";
         str<<i;
         this->RA_Cropping[i]->SetCommand(this,str.str().c_str());
-        this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->RA_Cropping[i]->GetWidgetName());
+        this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->RA_Cropping[i]->GetWidgetName());
     }
         vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
     this->RA_Cropping[0]->SetLabelText("I");
@@ -1239,6 +1255,9 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->RA_Cropping[2]->SetLabelText("K");
     this->RA_Cropping[2]->SetWholeRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
     this->RA_Cropping[2]->SetRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
+        
+    //Now we have the cropping ranges
+    this->ProcessEnableDisableCropping(0);
 }
 
 void vtkSlicerVRGrayscaleHelper::CreateTreshold()
@@ -1414,7 +1433,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessTresholdRange(double notUsed,double notU
         colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0],.5,.5,.5);
         colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[1],1,1,1);
     }
-    else if(this->ColorMode)
+    else if(this->ColorMode==1)
     {
          colorTransfer->AddRGBPoint(iData->GetScalarRange()[0],.5,.5,.5);
         colorTransfer->AddRGBPoint(iData->GetScalarRange()[1],.5,.5,.5);
@@ -1465,4 +1484,22 @@ void vtkSlicerVRGrayscaleHelper::ProcessTresholdReset(void)
     this->RA_RampRectangleHorizontal->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
         this->SVP_VolumeProperty->GetScalarColorFunctionEditor()->SetVisibleParameterRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
     this->SVP_VolumeProperty->GetScalarOpacityFunctionEditor()->SetVisibleParameterRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
+}
+
+
+void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedState)
+{
+    if(this->MapperTexture!=NULL&&this->MapperRaycast!=NULL)
+    {
+    this->MapperTexture->SetCropping(cbSelectedState);
+    this->MapperRaycast->SetCropping(cbSelectedState);
+    this->MapperTexture->SetCroppingRegionFlagsToSubVolume();
+    this->MapperRaycast->SetCroppingRegionFlagsToSubVolume();
+    }
+    
+    for(int i=0;i<3;i++)
+    {
+        this->RA_Cropping[i]->SetEnabled(cbSelectedState);
+    }
+    this->Cropping(0,0,0);
 }

@@ -203,7 +203,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->NS_ImageData->NoneEnabledOn();
     this->NS_ImageData->SetLabelText("Source Volume: ");
     this->NS_ImageData->SetLabelWidth(labelWidth);
-    this->NS_ImageData->SetNodeClass("vtkMRMLScalarVolumeNode","LabelMap","0","");
+    this->NS_ImageData->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
     app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ImageData->GetWidgetName());
 
     //NodeSelector for VolumeRenderingNode Preset
@@ -379,22 +379,26 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             vtkMRMLScalarVolumeNode *selectedImageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected());
             //Add observer to trigger update of transform
             selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
-            //This is a LabelMap
-            if(selectedImageData->GetLabelMap()==1)
-            {
-                this->UnpackLabelMapGUI();
-                this->PackLabelMapGUI();
+
+            this->PackSvpGUI();
+
+            //Change here for different Helper classes
+            ////This is a LabelMap
+            //if(selectedImageData->GetLabelMap()==1)
+            //{
+            //    this->UnpackLabelMapGUI();
+            //    this->PackLabelMapGUI();
 
 
-            }
-            //This is NO LabelMap
-            else
-            {
-                this->UnpackSvpGUI();
-                this->PackSvpGUI();
+            //}
+            ////This is NO LabelMap
+            //else
+            //{
+            //    this->UnpackSvpGUI();
+            //    this->PackSvpGUI();
 
 
-            }
+            //}
             //Initialize the Pipeline
             this->InitializePipelineFromImageData();
 

@@ -54,6 +54,7 @@ public:
     void ProcessTresholdRange(double notUsed,double notUsedA);
     void ProcessTresholdZoomIn(void);
     void ProcessTresholdReset(void);
+    void ProcessEnableDisableCropping(int cbSelectedState);
 
 protected:
     vtkSlicerVRGrayscaleHelper(void);
