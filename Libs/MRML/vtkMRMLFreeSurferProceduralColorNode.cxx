@@ -80,12 +80,12 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
   vtksys_stl::vector<vtksys_stl::string> filesVector;
   filesVector.push_back(""); // for relative path
   filesVector.push_back(slicerHome);
-  filesVector.push_back(vtksys_stl::string("Libs/FreeSurfer/FreeSurferColorLUT.txt"));
+  filesVector.push_back(vtksys_stl::string("lib/Slicer3/Libs/FreeSurfer/FreeSurferColorLUT.txt"));
   vtksys_stl::string colorFileName = vtksys::SystemTools::JoinPath(filesVector);
   this->SetLabelsFileName(colorFileName.c_str());
 
   filesVector.pop_back();
-  filesVector.push_back("Libs/FreeSurfer/Simple_surface_labels2002.txt");
+  filesVector.push_back("lib/Slicer3/Libs/FreeSurfer/Simple_surface_labels2002.txt");
   colorFileName = vtksys::SystemTools::JoinPath(filesVector);
   this->SetSurfaceLabelsFileName(colorFileName.c_str());
   

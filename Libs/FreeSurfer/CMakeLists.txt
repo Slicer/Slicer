@@ -60,24 +60,24 @@ TARGET_LINK_LIBRARIES(FreeSurfer
   )
 
 # Copy the colour files to the build directory
-CONFIGURE_FILE(
-  ${FreeSurfer_SOURCE_DIR}/FreeSurferColorLUT.txt
-  ${FreeSurfer_BINARY_DIR}/FreeSurferColorLUT.txt
-  COPYONLY
+SET (COLORFILES
+    FreeSurferColorLUT.txt
+    Simple_surface_labels2002.txt    
 )
-INSTALL(
-  FILES ${FreeSurfer_BINARY_DIR}/FreeSurferColorLUT.txt
-  DESTINATION Libs/FreeSurfer
+
+SET (Color_DIR  ${SLICER_LIBRARIES_DIR}/Libs/FreeSurfer)
+
+FOREACH ( colorfile ${COLORFILES})
+  CONFIGURE_FILE(
+    ${FreeSurfer_SOURCE_DIR}/${colorfile}
+    ${Color_DIR}/${colorfile}
+    COPYONLY
 )
-CONFIGURE_FILE(
-  ${FreeSurfer_SOURCE_DIR}/Simple_surface_labels2002.txt
-  ${FreeSurfer_BINARY_DIR}/Simple_surface_labels2002.txt
-  COPYONLY
+  INSTALL(
+    FILES ${Color_DIR}/${colorfile}
+  DESTINATION lib/Slicer3/Libs/FreeSurfer
 )
-INSTALL(
-  FILES ${FreeSurfer_BINARY_DIR}/Simple_surface_labels2002.txt
-  DESTINATION Libs/FreeSurfer
-)
+ENDFOREACH(colorfile)
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
@@ -85,4 +85,3 @@ INSTALL(
 # IF(BUILD_TESTING)
 #  SUBDIRS(Testing)
 # ENDIF(BUILD_TESTING)
-
