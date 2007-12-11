@@ -126,14 +126,19 @@ SET (COLORFILES
     ./Resources/ColorFiles/SPL-BrainAtlas-ColorFile.txt
 )
 
+SET (Color_DIR ${SLICER_LIBRARIES_DIR}/Base/Logic)
+IF (NOT EXISTS ${Color_DIR})
+   FILE(MAKE_DIRECTORY ${Color_DIR})
+ENDIF (NOT EXISTS ${Color_DIR})
+
 FOREACH ( colorfile ${COLORFILES})
    CONFIGURE_FILE(
         ${SlicerBaseLogic_SOURCE_DIR}/${colorfile}
-        ${SlicerBaseLogic_BINARY_DIR}/${colorfile}
+        ${Color_DIR}/${colorfile}
         COPYONLY
 )
    INSTALL(
-        FILES ${SlicerBaseLogic_BINARY_DIR}/${colorfile}
-        DESTINATION Base/Logic/Resources/ColorFiles
+        FILES ${Color_DIR}/${colorfile}
+        DESTINATION lib/Slicer3/Base/Logic/Resources/ColorFiles
 )
 ENDFOREACH(colorfile)

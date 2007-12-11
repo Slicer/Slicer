@@ -515,7 +515,7 @@ void vtkSlicerColorLogic::FindColorFiles()
   vtksys_stl::vector<vtksys_stl::string> filesVector;
   filesVector.push_back(""); // for relative path
   filesVector.push_back(slicerHome);
-  filesVector.push_back(vtksys_stl::string("Base/Logic/Resources/ColorFiles"));
+  filesVector.push_back(vtksys_stl::string("lib/Slicer3/Base/Logic/Resources/ColorFiles"));
 
    
   // get the list of colour files in this dir
