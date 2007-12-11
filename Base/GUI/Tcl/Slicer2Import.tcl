@@ -267,6 +267,7 @@ proc ImportNodeVolume {node} {
       $::slicer3::MRMLScene AddNode $volumeDisplayNode
       $::slicer3::MRMLScene AddNode $volumeNode
       $volumeNode SetAndObserveDisplayNodeID [$volumeDisplayNode GetID]
+      $volumeNode SetModifiedSinceRead 1
 
       # use the RASToIJK information from the file, to override what the 
       # archetype reader might have set
