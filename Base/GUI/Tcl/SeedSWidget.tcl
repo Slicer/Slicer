@@ -52,6 +52,7 @@ if { [itcl::find class SeedSWidget] == "" } {
     method place {x y z} {}
     method setRASPosition {r a s} { $this place $x $y $z }
     method getRASPosition {} { return $_currentPosition }
+    method getPickState {} { return $_pickState }
     method highlight {} {}
     method createGlyph { {type "StarBurst"} } {}
   }

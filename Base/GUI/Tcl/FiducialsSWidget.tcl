@@ -140,7 +140,8 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
     switch $event {
       "KeyPressEvent" { 
         set key [$_interactor GetKeySym]
-        if { [lsearch "grave quoteleft " $key] != -1 } {
+        set activeKeys "grave quoteleft BackSpace Delete p"
+        if { [lsearch $activeKeys $key] != -1 } {
           $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
           $sliceGUI SetGUICommandAbortFlag 1
           switch [$_interactor GetKeySym] {
@@ -163,6 +164,39 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
                 set direction 1
               }
               ::FiducialsSWidget::JumpToNextFiducial $sliceNode $jumpMode $direction
+            }
+            "BackSpace" -
+            "Delete" {
+              # delete the fiducial if you are over it
+              foreach seed $_seedSWidgets {
+                if { [$seed getPickState] == "over" } {
+                  set cmd [$seed cget -movedCommand]
+                  foreach {fid tag seed fidListNode fidIndex} $cmd {}
+                  $fidListNode RemoveFiducial $fidIndex
+                  return
+                }
+              }
+            }
+            "p" {
+              # add a fiducial to the current list
+
+              #
+              # get the event position and make it relative to a renderer/viewport
+              #
+              foreach {windowx windowy} [$_interactor GetEventPosition] {}
+              foreach {lastwindowx lastwindowy} [$_interactor GetLastEventPosition] {}
+              foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
+
+              set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
+              set renderer0 [$_renderWidget GetRenderer]
+
+              foreach {x y z} [$this dcToXYZ $windowx $windowy] {}
+              $this queryLayers $x $y $z
+              set xyToRAS [$_sliceNode GetXYToRAS]
+              set ras [$xyToRAS MultiplyPoint $x $y $z 1]
+
+              foreach {r a s t} $ras {}
+              FiducialsSWidget::AddFiducial $r $a $s
             }
           }
         }
