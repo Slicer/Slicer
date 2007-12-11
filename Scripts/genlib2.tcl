@@ -460,7 +460,7 @@ if { ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
 ################################################################################
 # Get and build matplotlib
 #
-if { 0 && ![file exists $::MATPLOTLIB_TEST_FILE] || $::GENLIB(update) } {
+if { 0 && (![file exists $::MATPLOTLIB_TEST_FILE] || $::GENLIB(update)) } {
 
     set ::env(PYTHONHOME)        $SLICER_LIB/python-build
     cd $SLICER_LIB/python
