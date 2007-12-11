@@ -269,7 +269,7 @@ void vtkSlicerMRMLSaveDataWidget::SaveScene()
       {
       node = scene->GetNthNodeByClass(n, "vtkMRMLStorageNode");
       vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
-      if (!this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+      if (snode->GetFileName() && !this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
         {        
         itksys_stl::string relPath = itksys::SystemTools::RelativePath((const char*)directory.c_str(), snode->GetFileName());
         snode->SetFileName(relPath.c_str());
