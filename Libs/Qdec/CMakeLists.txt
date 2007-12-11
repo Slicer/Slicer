@@ -70,14 +70,16 @@ TARGET_LINK_LIBRARIES(Qdec
 #  SUBDIRS(Testing)
 # ENDIF(BUILD_TESTING)
 
+SET (tcl_DIR  ${SLICER_LIBRARIES_DIR}/Libs/Qdec)
+
 CONFIGURE_FILE(
   ${Qdec_SOURCE_DIR}/vtkFreeSurferReaders.tcl
-  ${Qdec_BINARY_DIR}/vtkFreeSurferReaders.tcl
+  ${tcl_DIR}/vtkFreeSurferReaders.tcl
   COPYONLY
 )
 
 # install the tcl file
 INSTALL(
-  FILES ${Qdec_BINARY_DIR}/vtkFreeSurferReaders.tcl
-  DESTINATION Libs/Qdec
+  FILES ${tcl_DIR}/vtkFreeSurferReaders.tcl
+  DESTINATION lib/Slicer3/Libs/Qdec
 )
