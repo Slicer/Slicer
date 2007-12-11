@@ -56,29 +56,28 @@ int ImportAnatomyLabelFile( std::string, LabelAnatomyContainer &);
 int main(int argc, char * argv[])
 {
     PARSE_ARGS;
-    bool debug = false;
+    bool debug = true;
 
     if (debug) 
       {
       std::cout << "The input volume is: " << InputVolume << std::endl;
       std::cout << "The output directory is: " << OutputDirectory << std::endl;
+      std::cout << "The labels are: " << std::endl;
+      for (int l = 0; l < Labels.size(); l++)
+        {
+        std::cout << "\tList element " << l << " = " << Labels[l] << std::endl;
+        }
       std::cout << "The starting label is: " << StartLabel << std::endl;
       std::cout << "The ending label is: " << EndLabel << std::endl;
-      if (EndLabel <= StartLabel) 
-        {
-        std::cout << "The model name is: " << Name << std::endl;
-        }
-      else 
-        {
-        // will make multiple
-        std::cout << "Do joint smoothing flag is: " << JointSmoothing << std::endl;
-        }
+      std::cout << "The model name is: " << Name << std::endl;
+      std::cout << "Do joint smoothing flag is: " << JointSmoothing << std::endl;
       std::cout << "Number of smoothing iterations: " << Smooth << std::endl;
       std::cout << "Number of decimate iterations: " << Decimate << std::endl;
       std::cout << "Split normals? " << SplitNormals << std::endl;
       std::cout << "Calculate point normals? " << PointNormals << std::endl;
       std::cout << "Filter type: " << FilterType << std::endl;
       std::cout << "Output model scene file: " << ModelSceneFile << std::endl;
+      std::cout << "Color node name : " << ColorNodeName << std::endl;
       std::cout << "\nStarting..." << std::endl;
       }
 
@@ -87,25 +86,31 @@ int main(int argc, char * argv[])
     int useColorNode = 0;
     vtkMRMLColorTableNode *colorNode = NULL;
 
-    // if an anatomy label file is specified, populate a map with its contents
-    if (AnatomyLabelFile != "" && AnatomyLabelFile != "NoneSpecified")
+    if (ColorNodeName !=  "")
       {
-        if (ImportAnatomyLabelFile( AnatomyLabelFile, labelToAnatomy ))
-          {
-          return EXIT_FAILURE;
-          }
+      if (ModelSceneFile == "")
+        {
+        std::cerr << "ERROR: if using the color node name " << ColorNodeName << ", need to specify a model scene file so that can get the color node from the scene!" << std::endl;
+        return EXIT_FAILURE;
+        }
+      useColorNode = 1;
       }
-    else
+    else if (AnatomyLabelFile != "" && AnatomyLabelFile != "NoneSpecified")
       {
-      // use a color node
-      useColorNode = 1;     
+      // if an anatomy label file is specified, populate a map with its contents
+      if (ImportAnatomyLabelFile( AnatomyLabelFile, labelToAnatomy ))
+        {
+        return EXIT_FAILURE;
+        }
       }
+
     // vtk and helper variables
     vtkITKArchetypeImageSeriesReader* reader = NULL;
     vtkImageData * image;
     vtkDiscreteMarchingCubes  * cubes = NULL;
     vtkWindowedSincPolyDataFilter *smoother = NULL;
-    bool makeMultiple;
+    bool makeMultiple = false;
+    bool useStartEnd = false;
     vtkImageAccumulate *hist = NULL;
     std::vector<int> skippedModels;
     std::vector<int> madeModels;
@@ -135,16 +140,27 @@ int main(int argc, char * argv[])
     float numFilterSteps;
     // increment after each filter is run
     float currentFilterOffset = 0.0;
+    // if using the labels vector, get out the min/max
+    int labelsMin, labelsMax;
 
     // figure out if we're making multiple models
-    if (GenerateAll)
+    if (Labels.size() > 0)
+      {
+      makeMultiple = true;
+      // TODO: sort the vector
+      labelsMin = Labels[0];
+      labelsMax = Labels[Labels.size()-1];
+      }    
+    else if (GenerateAll)
       {
       makeMultiple = true;
       }
-    else
+    else if (EndLabel > StartLabel)
       {
-      makeMultiple = (EndLabel > StartLabel ? true : false);
+      makeMultiple = true;
+      useStartEnd = true;
       }
+    
     if (makeMultiple) 
       {
       numSingletonFilterSteps = 4;
@@ -156,7 +172,14 @@ int main(int argc, char * argv[])
         {
         numRepeatedFilterSteps = 9;
         }
-      numModelsToGenerate = EndLabel - StartLabel +1;
+      if (useStartEnd)
+        {
+        numModelsToGenerate = EndLabel - StartLabel +1;
+        }
+      else
+        {
+        numModelsToGenerate = Labels.size();
+        }
       }
     else
       {
@@ -166,7 +189,7 @@ int main(int argc, char * argv[])
     numFilterSteps = numSingletonFilterSteps + (numRepeatedFilterSteps * numModelsToGenerate);
     if (debug)
       {
-      std::cout << "numModelsToGenerate = "<< numModelsToGenerate << ", numFilterSteps " << numFilterSteps << endl;
+      std::cout << "useStartEnd = " << useStartEnd << ", numModelsToGenerate = "<< numModelsToGenerate << ", numFilterSteps " << numFilterSteps << endl;
       }
     // check for the input file
     FILE * infile;
@@ -250,6 +273,17 @@ int main(int argc, char * argv[])
             std::cout << "Adding default color nodes" << endl;
             }
           colorLogic->AddDefaultColorNodes();
+          // see if can get out the named one
+          vtkCollection *colorNodes = modelScene->GetNodesByClassByName("vtkMRMLColorTableNode", ColorNodeName.c_str());
+          if (colorNodes != NULL && colorNodes->GetNumberOfItems() >0)
+            {
+            // get the first colour node that matches
+            colorNode =  vtkMRMLColorTableNode::SafeDownCast(colorNodes->GetItemAsObject(0));
+            if (colorNode != NULL)
+              {
+              std::cout << "Using color node with name " << colorNode->GetName() << " and id " << colorNode->GetID() << std::endl;
+              }
+            }
           }
         }
       }
@@ -275,7 +309,14 @@ int main(int argc, char * argv[])
         }
       currentFilterOffset += 1.0;
       cubes->SetInput(image);
-      cubes->GenerateValues((EndLabel-StartLabel +1), StartLabel, EndLabel);
+      if (useStartEnd)
+        {
+        cubes->GenerateValues((EndLabel-StartLabel +1), StartLabel, EndLabel);
+        }
+      else
+        {
+        cubes->GenerateValues((labelsMax - labelsMin + 1), labelsMin, labelsMax);
+        }
       cubes->Update();
       
       if (JointSmoothing)
@@ -352,52 +393,59 @@ int main(int argc, char * argv[])
         }
       if (useColorNode)
         {
-        if (max != NULL)
-          {          
-          // check the max value in the input label map against number of
-          // colours in the default colour label nodes
-          // should be 257, or 714 if it's the SPL atlas
-          int numDefaultLabelMapColor = 
-            vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()))->GetLookupTable()->GetNumberOfColors();
-          // should be 5003, may have failed if it couldn't read in the file
-          int numDefaultFSLabelMapColor = 0;
-          if (modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()) != NULL)
-            {
-            numDefaultFSLabelMapColor = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()))->GetLookupTable()->GetNumberOfColors();
-            }
-          if (debug)
-            {
-            std::cout << "\tmax = " << max[0] << ", " << max[1] << ", " << max[2] << endl;
-            std::cout << "\tnumDefaultLabelMapColor = " << numDefaultLabelMapColor << ", numDefaultFSLabelMapColor = " << numDefaultFSLabelMapColor << endl;
-            }
-          if (max[0] <= numDefaultLabelMapColor)
-            {
-            if (debug) { std::cout << "Using default label map colour node" << endl; }
-            colorNode = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()));
-            }          
-          else if (max[0] < numDefaultFSLabelMapColor)
-            {
-            // use the freesurfer one
-            if (debug) { std::cout << "Using default freesurfer colour node" << endl; }
-            colorNode =  vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()));
-            }
-          else
-            {
-            // default to the default label map one
-            if (debug) { std::cout << "Using default label map colour node as a last resort" << endl; }
-            colorNode = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()));
+        // but if we didn't get a named color node, try to guess
+        if (colorNode == NULL)
+          {
+          if (max != NULL)
+            {          
+            // check the max value in the input label map against number of
+            // colours in the default colour label nodes
+            // should be 257, or 714 if it's the SPL atlas
+            int numDefaultLabelMapColor = 
+              vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()))->GetLookupTable()->GetNumberOfColors();
+            // should be 5003, may have failed if it couldn't read in the file
+            int numDefaultFSLabelMapColor = 0;
+            if (modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()) != NULL)
+              {
+              numDefaultFSLabelMapColor = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()))->GetLookupTable()->GetNumberOfColors();
+              }
+            if (debug)
+              {
+              std::cout << "\tmax = " << max[0] << ", " << max[1] << ", " << max[2] << endl;
+              std::cout << "\tnumDefaultLabelMapColor = " << numDefaultLabelMapColor << ", numDefaultFSLabelMapColor = " << numDefaultFSLabelMapColor << endl;
+              }
+            if (max[0] <= numDefaultLabelMapColor)
+              {
+              if (debug) { std::cout << "Using default label map colour node" << endl; }
+              colorNode = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()));
+              }          
+            else if (max[0] < numDefaultFSLabelMapColor)
+              {
+              // use the freesurfer one
+              if (debug) { std::cout << "Using default freesurfer colour node" << endl; }
+              colorNode =  vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()));
+              }
+            else
+              {
+              // default to the default label map one
+              if (debug) { std::cout << "Using default label map colour node as a last resort" << endl; }
+              colorNode = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()));
+              }
             }
           }
-        else
+        if (colorNode == NULL)
           {
-          // invalid max on the file, use the default
+          // use the default
           colorNode = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()));
           }
         }
       }
     else 
       {
-      EndLabel = StartLabel;
+      if (useStartEnd)
+        {
+        EndLabel = StartLabel;
+        }
       }
 
     // ModelMakerMarch
@@ -434,9 +482,29 @@ int main(int argc, char * argv[])
 
     //
     // Loop through all the labels
-    //    
-    for (int i = StartLabel; i <= EndLabel; i++)
+    //
+    std::vector<int> loopLabels;
+    if (useStartEnd)
       {
+      // set up the loop list with all the labels between start and end
+      for (int i = StartLabel; i <= EndLabel; i++)
+        {
+        loopLabels.push_back(i);
+        }
+      }
+    else
+      {
+      // just copy the list of labels into the new var
+      for (int i = 0; i < Labels.size(); i++)
+        {
+        loopLabels.push_back(Labels[i]);
+        }
+      }
+    for (int l = 0; l < loopLabels.size(); l++)
+      {
+      // get the label out of the vector
+      int i = loopLabels[l];
+      
       if (makeMultiple)
         {
         labelFrequency = (int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i));
