@@ -482,7 +482,7 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
     //Enable shading as default
 
     this->Gui->GetcurrentNode()->GetVolumeProperty()->ShadeOn();
-    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetAmbient(.10);
+    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetAmbient(.30);
     this->Gui->GetcurrentNode()->GetVolumeProperty()->SetDiffuse(.60);
     this->Gui->GetcurrentNode()->GetVolumeProperty()->SetSpecular(.50);
     this->Gui->GetcurrentNode()->GetVolumeProperty()->SetSpecularPower(40);//this is really weird
@@ -1077,7 +1077,11 @@ void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
     {
         this->AdjustMapping();
         this->SVP_VolumeProperty->Update();
-        return;
+        //Set Treshold to none
+        this->MB_ThresholdMode->GetWidget()->GetMenu()->SelectItem("None");
+        //Reset cropping
+        this->CB_Cropping->GetWidget()->SetSelectedState(0);
+        this->ProcessThresholdModeEvents(0);
     }
     this->SVP_VolumeProperty->SetVolumeProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
     this->SVP_VolumeProperty->SetHSVColorSelectorVisibility(1);
@@ -1295,6 +1299,7 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Rainbow");
     this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(2,this,"ProcessColorModeEvents 2");
     this->MB_ColorMode->GetWidget()->GetMenu()->SelectItem("Grayscale static");
+    this->ProcessColorModeEvents(1);
     this->MB_ColorMode->EnabledOff();
     this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 2 -pady 2", 
         this->MB_ColorMode->GetWidgetName());
@@ -1495,7 +1500,14 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
         this->MapperTexture->SetCroppingRegionFlagsToSubVolume();
         this->MapperRaycast->SetCroppingRegionFlagsToSubVolume();
     }
-
+    //Reset range
+    if(!cbSelectedState)
+    {
+            vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+            this->RA_Cropping[0]->SetRange(iData->GetOrigin()[0],iData->GetDimensions()[0]);
+            this->RA_Cropping[1]->SetRange(iData->GetOrigin()[1],iData->GetDimensions()[1]);
+            this->RA_Cropping[2]->SetRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
+    }
     for(int i=0;i<3;i++)
     {
         this->RA_Cropping[i]->SetEnabled(cbSelectedState);
