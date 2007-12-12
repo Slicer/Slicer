@@ -499,6 +499,11 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         vtkErrorMacro("Rendering already called, use update Rendering instead");
         return;
     }
+    if(this->Gui==NULL)
+    {
+        vtkErrorMacro("Call init before calling rendering");
+        return;
+    }
 
     this->Volume=vtkVolume::New();
     //TODO Dirty fix as Mapper

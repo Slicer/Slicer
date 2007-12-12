@@ -76,19 +76,19 @@ void vtkMRMLVolumeRenderingNode::WriteXML(ostream& of, int nIndent)
     }
     of<<"\"";
     //Only write opacities when LabelMap
-    if(this->GetIsLabelMap())
-    {
-        vtkLabelMapPiecewiseFunction *opacity=vtkLabelMapPiecewiseFunction::SafeDownCast(this->VolumeProperty->GetScalarOpacity());
-        of<<" opacityLabelMap=\""<<opacity->GetSaveString()<< "\"";
+    //if(this->GetIsLabelMap())
+    //{
+    //    vtkLabelMapPiecewiseFunction *opacity=vtkLabelMapPiecewiseFunction::SafeDownCast(this->VolumeProperty->GetScalarOpacity());
+    //    of<<" opacityLabelMap=\""<<opacity->GetSaveString()<< "\"";
 
-    }
-    else
-    {
+    //}
+    //else
+    //{
         of << " scalarOpacity=\"" << this->getPiecewiseFunctionString(this->VolumeProperty->GetScalarOpacity())  << "\"";
         of << " gradientOpacity=\"" <<this->getPiecewiseFunctionString(this->VolumeProperty->GetGradientOpacity())<< "\"";
         of << " colorTransfer=\"" <<this->getColorTransferFunctionString(this->VolumeProperty->GetRGBTransferFunction())<< "\"";
 
-    }
+   // }
 
 
 }
@@ -182,7 +182,7 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
         }
         else if(!strcmp(attName,"diffuse"))
         {
-            int diffuse;
+            double diffuse;
             std::stringstream ss;
             ss<<attValue;
             ss>>diffuse;
@@ -190,7 +190,7 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
         }
         else if(!strcmp(attName,"ambient"))
         {
-            int ambient;
+            double ambient;
             std::stringstream ss;
             ss<<attValue;
             ss>>ambient;
@@ -198,7 +198,7 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
         }
         else if(!strcmp(attName,"specular"))
         {
-            int specular;
+            double specular;
             std::stringstream ss;
             ss<<attValue;
             ss>>specular;
