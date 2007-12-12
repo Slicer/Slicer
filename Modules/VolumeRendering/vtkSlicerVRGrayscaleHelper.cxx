@@ -713,7 +713,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             //Decide if we REnder plane or not
             if(this->RenderPlane==1)
             {
-                return;
+              return;
             }
             //Time to adjust our Factor
             if(this->LastTimeLowRes<(1-this->PercentageNoChange)*this->GoalLowResTime)
@@ -857,6 +857,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,1);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Enable();
             return;
         }
 
@@ -886,6 +887,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         }
 
         this->renPlane->SetBackground(this->renViewport->GetBackground());
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
+
         this->renPlane->SetActiveCamera(this->renViewport->GetActiveCamera());
 
         //Get Our Renderer Up
