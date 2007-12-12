@@ -39,14 +39,14 @@ void vtkLabelMapPiecewiseFunction::PrintSelf(ostream& os, vtkIndent indent)
 {
     Superclass::PrintSelf(os,indent);
 }
-void vtkLabelMapPiecewiseFunction::Init(vtkMRMLScalarVolumeNode *node,double opacity, int treshold)
+void vtkLabelMapPiecewiseFunction::Init(vtkMRMLScalarVolumeNode *node,double opacity, int threshold)
 {   
     vtkTimerLog *timer1=vtkTimerLog::New();
     timer1->StartTimer();
 
-    vtkDebugMacro("treshold without effect at the moment");
+    vtkDebugMacro("threshold without effect at the moment");
     //test if inputdata is valid
-    if(node==NULL||opacity<0||opacity>1||treshold<0)
+    if(node==NULL||opacity<0||opacity>1||threshold<0)
     {
         vtkErrorMacro("Input is not valid");
         return;

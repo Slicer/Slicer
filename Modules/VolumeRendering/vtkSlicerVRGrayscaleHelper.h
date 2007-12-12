@@ -49,11 +49,11 @@ public:
 
     
     void Cropping(int index, double min,double max);
-    void ProcessTresholdModeEvents(int id);
+    void ProcessThresholdModeEvents(int id);
     void ProcessColorModeEvents(int id);
-    void ProcessTresholdRange(double notUsed,double notUsedA);
-    void ProcessTresholdZoomIn(void);
-    void ProcessTresholdReset(void);
+    void ProcessThresholdRange(double notUsed,double notUsedA);
+    void ProcessThresholdZoomIn(void);
+    void ProcessThresholdReset(void);
     void ProcessEnableDisableCropping(int cbSelectedState);
 
 protected:
@@ -79,16 +79,16 @@ protected:
     vtkKWCheckButtonWithLabel *CB_Cropping;
     vtkKWRange *RA_Cropping[3];
 
-    //TresholdGUI
-    vtkKWMenuButtonWithLabel *MB_TresholdMode;
+    //ThresholdGUI
+    vtkKWMenuButtonWithLabel *MB_ThresholdMode;
     vtkKWMenuButtonWithLabel *MB_ColorMode;
     vtkKWRange *RA_RampRectangleHorizontal;
     vtkKWRange *RA_RampRectangleVertical;
 
-    vtkKWPushButton *PB_TresholdZoomIn;
+    vtkKWPushButton *PB_ThresholdZoomIn;
     vtkKWPushButton *PB_Reset;
     int ColorMode;
-    int TresholdMode;
+    int ThresholdMode;
 
 
     
@@ -144,7 +144,7 @@ protected:
     void UpdateQualityCheckBoxes(void);
     void CreateCropping(void);
 
-    void CreateTreshold(void);
+    void CreateThreshold(void);
 
 
 

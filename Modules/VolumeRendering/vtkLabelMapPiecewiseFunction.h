@@ -25,9 +25,9 @@ public:
     // Description:
     // Initialize the labelmap piecewise function with a vtkMRMLScalarVolume (to get the vtkLookuptable)
     // and opacity that determines which opacity every value in the vtkLookuptable will get and a 
-    // treshold that determines how if you ignore a grayscale value while setting up the opacity or not
-    // Note: the treshold functionality has not been implemented yet
-    void Init(vtkMRMLScalarVolumeNode *node,double opacity, int treshold);
+    // threshold that determines how if you ignore a grayscale value while setting up the opacity or not
+    // Note: the threshold functionality has not been implemented yet
+    void Init(vtkMRMLScalarVolumeNode *node,double opacity, int threshold);
 
     // Description:
     // Change the opacity at a specific index. Use that instead of AddPoint or corresponding methods in vtkPiecewiseFunction
