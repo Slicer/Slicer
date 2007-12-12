@@ -422,6 +422,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
         //Only proceed event,if new Node
         else if(strcmp(this->NS_VolumeRenderingDataScene->GetSelected()->GetID(),this->PreviousNS_VolumeRenderingDataScene.c_str())!=0)
         {
+            this->currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataScene->GetSelected());
             this->InitializePipelineFromMRMLScene();
             this->PreviousNS_VolumeRenderingDataScene=this->NS_VolumeRenderingDataScene->GetSelected()->GetID();
         }
@@ -631,7 +632,7 @@ void vtkVolumeRenderingModuleGUI::SetInteractorStyle(vtkSlicerViewerInteractorSt
 
 void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
 {
-    //this->currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataScene->GetSelected());
+    
     vtkImageData* imageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData();
     this->Helper->UpdateGUIElements();
     this->Helper->UpdateRendering();

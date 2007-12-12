@@ -23,15 +23,22 @@ bool vtkSlicerNodeSelectorVolumeRenderingWidget::CheckAdditionalConditions(vtkMR
     vtkMRMLVolumeRenderingNode *currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(node);
 
     bool ret=currentNode->HasReference(this->Condition);
-    bool retA=(currentNode->GetIsLabelMap()==this->IsLabelmap);
+    //Enable this back for Labelmaps
+    //bool retA=(currentNode->GetIsLabelMap()==this->IsLabelmap);
+    //if(ModeCondition)
+    //{
+    //    return (ret&&retA);
+    //}
+    ////Else we have to take care about the preset widget;
+    ////We can have a preset, retA has to be true, ret to be false
+    ////or another Node: retA has to be true, ret to be false
+    //return (retA&&!ret);
+
     if(ModeCondition)
     {
-        return (ret&&retA);
+        return ret;
     }
-    //Else we have to take care about the preset widget;
-    //We can have a preset, retA has to be true, ret to be false
-    //or another Node: retA has to be true, ret to be false
-    return (retA&&!ret);
+    return !ret;
 
 }
 
