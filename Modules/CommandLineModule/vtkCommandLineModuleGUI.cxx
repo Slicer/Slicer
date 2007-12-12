@@ -1552,6 +1552,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         tparameter->SetLabelText( (*pit).GetLabel().c_str() );
         tparameter->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
         tparameter->GetWidget()->GetLoadSaveDialog()->SetInitialFileName( (*pit).GetDefault().c_str() );
+        tparameter->GetWidget()->SetText( (*pit).GetDefault().c_str() );
         parameter = tparameter;
         }
       else if ((*pit).GetTag() == "file")
@@ -1569,7 +1570,9 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           }
         tparameter->Create();
         tparameter->SetLabelText( (*pit).GetLabel().c_str() );
-
+        tparameter->GetWidget()->SetText( (*pit).GetDefault().c_str() );
+        tparameter->GetWidget()->GetLoadSaveDialog()->SetInitialFileName( (*pit).GetDefault().c_str() );
+        
         vtkSmartPointer<vtkStringArray> names = vtkStringArray::New();
         splitFilenames((*pit).GetDefault(), names);
         tparameter->GetWidget()->GetLoadSaveDialog()->SetInitialSelectedFileNames( names );
