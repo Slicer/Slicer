@@ -96,6 +96,10 @@ vtkMRMLNode::~vtkMRMLNode()
     {
     delete [] this->SceneRootDir;
     }
+  if (this->SingletonTag)
+    {
+    delete [] this->SingletonTag;
+    }
   if (this->MRMLObserverManager)
     {
     this->MRMLObserverManager->Delete();
