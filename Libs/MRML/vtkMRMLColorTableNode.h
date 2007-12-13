@@ -183,7 +183,7 @@ public:
   
 protected:
   vtkMRMLColorTableNode();
-  ~vtkMRMLColorTableNode();
+  virtual ~vtkMRMLColorTableNode();
   vtkMRMLColorTableNode(const vtkMRMLColorTableNode&);
   void operator=(const vtkMRMLColorTableNode&);
 

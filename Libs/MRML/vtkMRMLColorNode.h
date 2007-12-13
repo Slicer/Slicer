@@ -141,7 +141,7 @@ public:
   
 protected:
   vtkMRMLColorNode();
-  ~vtkMRMLColorNode();
+  virtual ~vtkMRMLColorNode();
   vtkMRMLColorNode(const vtkMRMLColorNode&);
   void operator=(const vtkMRMLColorNode&);
 
