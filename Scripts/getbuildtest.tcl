@@ -389,9 +389,9 @@ if {$::GETBUILDTEST(pack) == "true" &&
 switch $::GETBUILDTEST(uploadFlag) {
     "nightly" {            
     # reset the file name - take out the date
-    set ex ".${::GETBUILDTEST(version-patch)}"
-    regsub $ex $scpfile "" scpNightlyFile
-    set scpfile $scpNightlyFile
+    #set ex ".${::GETBUILDTEST(version-patch)}"
+    #regsub $ex $scpfile "" scpNightlyFile
+    #set scpfile $scpNightlyFile
     set scpdest "${namic_path}/Nightly"
     }
     "snapshot" {
