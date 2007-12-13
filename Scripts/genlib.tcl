@@ -654,6 +654,34 @@ if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
     } else {
         eval runcmd $::MAKE 
     }
+
+    puts "Patching ITK..."
+
+    set fp1 [open "$SLICER_LIB/Insight-build/Utilities/nifti/niftilib/cmake_install.cmake" r]
+    set fp2 [open "$SLICER_LIB/Insight-build/Utilities/nifti/znzlib/cmake_install.cmake" r]
+    set data1 [read $fp1]
+    puts "data1 is $data1"
+    set data2 [read $fp2]
+    puts "data2 is $data2"
+
+    close $fp1
+    close $fp2
+
+    regsub -all /usr/local/lib $data1 \${CMAKE_INSTALL_PREFIX}/lib data1
+    regsub -all /usr/local/include $data1 \${CMAKE_INSTALL_PREFIX}/include data1
+    regsub -all /usr/local/lib $data2 \${CMAKE_INSTALL_PREFIX}/lib data2
+    regsub -all /usr/local/include $data2 \${CMAKE_INSTALL_PREFIX}/include data2
+
+    set fw1 [open "$SLICER_LIB/Insight-build/Utilities/nifti/niftilib/cmake_install.cmake" w]
+    set fw2 [open "$SLICER_LIB/Insight-build/Utilities/nifti/znzlib/cmake_install.cmake" w]
+
+    puts -nonewline $fw1 $data1
+    puts "data1out is $data1"
+    puts -nonewline $fw2 $data2
+    puts "data2out is $data2"
+ 
+    close $fw1
+    close $fw2
 }
 
 
