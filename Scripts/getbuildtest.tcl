@@ -127,6 +127,7 @@ for {set i 0} {$i < $argc} {incr i} {
         }
     }
 }
+
 set argv $strippedargs
 set argc [llength $argv]
 
@@ -267,10 +268,10 @@ if { $::GETBUILDTEST(doxy) && ![file exists $::env(SLICER_DOC)] } {
 # svn checkout (does an update if it already exists)
 cd $::SLICER_HOME/..
 if { [file exists Slicer3] } {
-  cd Slicer3
-  runcmd svn switch $::SLICER_TAG
+    cd Slicer3
+    runcmd svn switch $::SLICER_TAG
 } else {
-  runcmd svn checkout $::SLICER_TAG Slicer3
+    runcmd svn checkout $::SLICER_TAG Slicer3
 }
 
 if { $::GETBUILDTEST(doxy) } {
@@ -345,7 +346,7 @@ if { $isWindows } {
     if { $MSVC6 } {
         eval runcmd $::MAKE Slicer3.dsw /MAKE $::GETBUILDTEST(test-type)
         if { $::GETBUILDTEST(pack) == "true" } {
-          eval runcmd $::MAKE Slicer3.dsw /MAKE package
+            eval runcmd $::MAKE Slicer3.dsw /MAKE package
         }
     } else {
         # tell cmake explicitly what command line to run when doing the ctest builds
@@ -353,92 +354,81 @@ if { $isWindows } {
         runcmd $::CMAKE -DMAKECOMMAND:STRING=$makeCmd $SLICER_HOME
 
         if { $::GETBUILDTEST(test-type) == "" } {
-          runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE
+            runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE
         } else {
-          # running ctest through visual studio is broken in cmake2.4, so run ctest directly
-          runcmd $::CMAKE_PATH/bin/ctest -D $::GETBUILDTEST(test-type) -C $::VTK_BUILD_TYPE
+            # running ctest through visual studio is broken in cmake2.4, so run ctest directly
+            runcmd $::CMAKE_PATH/bin/ctest -D $::GETBUILDTEST(test-type) -C $::VTK_BUILD_TYPE
         }
 
         if { $::GETBUILDTEST(pack) == "true" } {
-          runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE /project PACKAGE
+            runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE /project PACKAGE
         }
     }
 } else {
     set buildReturn [catch "eval runcmd $::MAKE $::GETBUILDTEST(test-type)"]
     if { $::GETBUILDTEST(pack) == "true" } {
-      set packageReturn [catch "eval runcmd $::MAKE package"]
+        set packageReturn [catch "eval runcmd $::MAKE package"]
     }
 
     puts "\nResults: "
     puts "build of \"$::GETBUILDTEST(test-type)\" [if $buildReturn "concat failed" "concat succeeded"]"
     if { $::GETBUILDTEST(pack) == "true" } {
-      puts "package [if $packageReturn "concat failed" "concat succeeded"]"
+        puts "package [if $packageReturn "concat failed" "concat succeeded"]"
     }
 }
-# upload to slicerl
-set curlfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension)}"
-if {$::GETBUILDTEST(pack) == "true" && 
-    [file exists $::SLICER_BUILD/$curlfile] &&
+# upload
+
+set scpfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension)}"
+if {$::GETBUILDTEST(pack) == "true" &&  
+    [file exists $::SLICER_BUILD/$scpfile] && 
     $::GETBUILDTEST(upload) == "true"} {
-#    puts "About to do a curl $::GETBUILDTEST(uploadFlag) upload with $curlfile"
-    puts "About to do a $::GETBUILDTEST(uploadFlag) upload with $curlfile"
-#    set namic_url "http://www.na-mic.org/Slicer/Upload.cgi"
-    set scpdestination "lonely@slicerl.bwh.harvard.edu:/var/www/html/Slicer3-nightly"
+    puts "About to do a $::GETBUILDTEST(uploadFlag) upload with $scpfile"
+    set namic_path "/clients/Slicer3/WWW/Downloads"
+}
 
-    switch $::tcl_platform(os) {
-        "SunOS" -
-        "Linux" - 
-        "Darwin" {
-            exec xterm -e scp $curlfile $scpdestination
+switch $::GETBUILDTEST(uploadFlag) {
+    "nightly" {            
+    # reset the file name - take out the date
+    set ex ".${::GETBUILDTEST(version-patch)}"
+    regsub $ex $scpfile "" scpNightlyFile
+    set scpfile $scpNightlyFile
+    set scpdest "${namic_path}/Nightly"
     }
-    default { 
-        puts "rxvt -e scp $curlfile $scpdestination &"
-        exec rxvt -e scp $curlfile $scpdestination &
+    "snapshot" {
+    set scpdest "${namic_path}/Snapshots/$::env(BUILD)"
     }
+    "release" {
+    set scpdest "${namic_url}/Release/$::env(BUILD)"
     }
-
-#    switch $::GETBUILDTEST(uploadFlag) {
-#        "nightly" {            
-#            # reset the file name - take out the date
-#            set ex ".${::GETBUILDTEST(version-patch)}"
-#            regsub $ex $curlfile "" curlNightlyFile
-#            set curldest "${namic_url}/Nightly/${curlNightlyFile}"
-#            }
-#            "snapshot" {
-#                set curldest "${namic_url}/Snapshots/$::env(BUILD)/${curlfile}"
-#            }
-#            "release" {
-#                set curldest "${namic_url}/Release/$::env(BUILD)/${curlfile}"
-#            }
-#            default {
-#                puts "Invalid ::GETBUILDTEST(uploadFlag) \"$::GETBUILDTEST(uploadFlag)\", setting curldest to snapshot value"
-#                set curldest "${namic_url}/Snapshots/$::env(BUILD)/${curlfile}"
-#            }
-#        }
-
-#    puts " -- upload $curlfile to $curldest"
-#    set curlcmd ""
-#    switch $::tcl_platform(os) {
-#        "SunOS" -
-#        "Linux" {
-#            
-#            set curlcmd "xterm -e curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
-#        }
-#        "Darwin" {            
-#            set curlcmd "/usr/X11R6/bin/xterm -e curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
-#        }
-#        default {             
-#            set curlcmd "curl --connect-timeout 120 --silent --show-error --upload-file $curlfile $curldest"
-#        }
-#    }
-#    set curlReturn [catch "eval runcmd [split $curlcmd]"]
-#    if {$curlReturn} {
-#        puts "Upload failed..."
-#    } else {
-#        puts "See http://www.na-mic.org/Slicer/Download, in the $::GETBUILDTEST(uploadFlag) directory, for the uploaded file."
-#    }
-} else {
-    if {$::GETBUILDTEST(verbose)} {
-        puts "Not uploading $curlfile"
+    default {
+    puts "Invalid ::GETBUILDTEST(uploadFlag) \"$::GETBUILDTEST(uploadFlag)\", setting scpdest to snapshot value"
+    set scpdest "${namic_path}/Snapshots/$::env(BUILD)"
     }
 }
+
+puts " -- upload $scpfile to $scpdest"
+set curlcmd ""
+switch $::tcl_platform(os) {
+    "SunOS" -
+    "Linux" {
+    set scpcmd "xterm -e scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
+    }
+    "Darwin" {            
+    set scpcmd "/usr/X11R6/bin/xterm -e scp $scpfile hayes@namic1.bwh.harvard.edu:$scpdest"
+    }
+    default {             
+    set scpcmd "scp $scpfile hayes@namic1.bwh.harvard.edu:$scpdest"
+    }
+}
+
+set scpReturn [catch "eval runcmd [split $scpcmd]"]
+if {$scpReturn} {
+    puts "Upload failed..."
+} else {
+    puts "See http://www.na-mic.org/Slicer/Download, in the $::GETBUILDTEST(uploadFlag) directory, for the uploaded file."
+}
+#else {
+#    if {$::GETBUILDTEST(verbose)} {
+#    puts "Not uploading $scpfile"
+#    }
+#}
