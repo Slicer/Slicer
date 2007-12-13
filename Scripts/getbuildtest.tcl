@@ -414,10 +414,10 @@ switch $::tcl_platform(os) {
     set scpcmd "xterm -e scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
     }
     "Darwin" {            
-    set scpcmd "/usr/X11R6/bin/xterm -e scp $scpfile hayes@namic1.bwh.harvard.edu:$scpdest"
+    set scpcmd "/usr/X11R6/bin/xterm -e scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
     }
     default {             
-    set scpcmd "scp $scpfile hayes@namic1.bwh.harvard.edu:$scpdest"
+    set scpcmd "scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
     }
 }
 
