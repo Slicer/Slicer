@@ -81,6 +81,11 @@ vtkRigidRegistrator()
   this->Transform   = vtkTransform::New();
   this->Transform->Identity();
 
+  this->NumberOfIterations = 0;
+
+  this->IntensityInterpolationType  = vtkRigidRegistrator::Linear;
+  this->TransformInitializationType = vtkRigidRegistrator::ImageCenters;
+
   this->ImageToImageMetric   = vtkRigidRegistrator::MutualInformation;
   this->MetricComputationSamplingRatio = 1.0;
 }
@@ -334,8 +339,9 @@ RegisterImagesInternal3()
                                    GetNumberOfPixels() *
                                    this->MetricComputationSamplingRatio));
       registration->SetMetric(metric);
-      //std::cerr << "Metric: MMI" << std::endl;
-
+      std::cerr << "   Metric: MMI" << std::endl;
+      std::cerr << "   Sampling Ratio: " 
+                << this->MetricComputationSamplingRatio << std::endl;
       break;
       }
     case vtkRigidRegistrator::CrossCorrelation:
@@ -344,7 +350,7 @@ RegisterImagesInternal3()
         ITKImageType, ITKImageType>   MetricType;
       typename MetricType::Pointer    metric  = MetricType::New();
       registration->SetMetric(metric);
-      //std::cerr << "Metric: MSE" << std::endl;
+      std::cerr << "   Metric: NCC" << std::endl;
 
       break;
       }
@@ -354,7 +360,7 @@ RegisterImagesInternal3()
         ITKImageType, ITKImageType>   MetricType;
       typename MetricType::Pointer    metric  = MetricType::New();
       registration->SetMetric(metric);
-      //std::cerr << "Metric: MSE" << std::endl;
+      std::cerr << "   Metric: MSE" << std::endl;
 
       break;
       }
@@ -375,7 +381,7 @@ RegisterImagesInternal3()
       typename InterpolatorType::Pointer interpolator  = 
         InterpolatorType::New();
       registration->SetInterpolator(interpolator);
-      //std::cerr << "Interpolation: Nearest neighbor" << std::endl;
+      std::cerr << "   Interpolation: Nearest neighbor" << std::endl;
       }
       break;
 
@@ -387,7 +393,7 @@ RegisterImagesInternal3()
       typename InterpolatorType::Pointer   
         interpolator  = InterpolatorType::New();
       registration->SetInterpolator(interpolator);
-      //std::cerr << "Interpolation: Linear" << std::endl;
+      std::cerr << "   Interpolation: Linear" << std::endl;
       }
       break;
 
@@ -417,12 +423,12 @@ RegisterImagesInternal3()
   if (this->TransformInitializationType == CentersOfMass)
   {
     transformInitializer->MomentsOn();
-    //std::cerr << "Initialization: Moments" << std::endl;
+    std::cerr << "   Initialization: Moments" << std::endl;
   }
   else if (this->TransformInitializationType == ImageCenters)
   {
     transformInitializer->GeometryOn();
-    //std::cerr << "Initialization: Image centers..." << std::endl;
+    std::cerr << "   Initialization: Image centers" << std::endl;
   }
   transformInitializer->InitializeTransform();
 
@@ -460,6 +466,8 @@ RegisterImagesInternal3()
   optimizer->SetMaximumStepLength( initialStepLength );
   optimizer->SetMinimumStepLength( minimumStepLength );
   optimizer->SetNumberOfIterations( this->NumberOfIterations );
+  std::cerr << "   Max Iterations: " 
+            << this->NumberOfIterations << std::endl;
 
   //
   // set up command observer
