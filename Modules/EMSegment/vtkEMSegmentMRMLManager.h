@@ -391,8 +391,12 @@ public:
   //BTX
   enum
     {
-    AtlasToTargetAffineRegistrationOff     = 0,
-    AtlasToTargetAffineRegistrationRigidMI = 1
+    AtlasToTargetAffineRegistrationOff          = 0,
+    AtlasToTargetAffineRegistrationCenters      = 1,
+    AtlasToTargetAffineRegistrationRigidMI      = 2,
+    AtlasToTargetAffineRegistrationRigidNCC     = 3,
+    AtlasToTargetAffineRegistrationRigidMIFast  = 4,
+    AtlasToTargetAffineRegistrationRigidNCCFast = 5
     };
   //ETX
   virtual int       GetRegistrationAffineType();
@@ -401,8 +405,11 @@ public:
   //BTX
   enum
     {
-    AtlasToTargetDeformableRegistrationOff        = 0,
-    AtlasToTargetDeformableRegistrationBSplineMMI = 1
+    AtlasToTargetDeformableRegistrationOff            = 0,
+    AtlasToTargetDeformableRegistrationBSplineMMI     = 1,
+    AtlasToTargetDeformableRegistrationBSplineNCC     = 2,
+    AtlasToTargetDeformableRegistrationBSplineMMIFast = 3,
+    AtlasToTargetDeformableRegistrationBSplineNCCFast = 4
     };
   //ETX
   virtual int       GetRegistrationDeformableType();

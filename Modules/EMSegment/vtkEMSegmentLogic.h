@@ -13,6 +13,8 @@ class vtkImageEMLocalGenericClass;
 class vtkImageEMLocalSuperClass;
 class vtkImageEMLocalClass;
 
+class vtkGridTransform;
+
 class VTK_EMSEGMENT_EXPORT vtkEMSegmentLogic : 
   public vtkSlicerModuleLogic
 {
@@ -32,11 +34,11 @@ public:
   virtual void      SaveTemplateNow();
   virtual bool      SaveIntermediateResults();
 
-  virtual void      StartPreprocessing();
-  virtual void      StartPreprocessingInitializeInputData();
-  virtual void      StartPreprocessingTargetIntensityNormalization();
-  virtual void      StartPreprocessingTargetToTargetRegistration();
-  virtual void      StartPreprocessingAtlasToTargetRegistration();
+  virtual bool      StartPreprocessing();
+  virtual bool      StartPreprocessingInitializeInputData();
+  virtual bool      StartPreprocessingTargetIntensityNormalization();
+  virtual bool      StartPreprocessingTargetToTargetRegistration();
+  virtual bool      StartPreprocessingAtlasToTargetRegistration();
 
   virtual void      StartSegmentation();
 
@@ -97,12 +99,51 @@ private:
                                  vtkMRMLVolumeNode* outputVolumeNode,
                                  vtkMRMLVolumeNode* outputVolumeGeometryNode,
                                  vtkTransform* outputRASToInputRASTransform,
+                                  int iterpolationType,
                                  double backgroundLevel);
   //BTX
   template <class T>
   static T GuessRegistrationBackgroundLevel(vtkImageData* imageData);
   //ETX
 
+  static void
+  ComposeGridTransform(vtkGridTransform* inGrid,
+                       vtkMatrix4x4*     preMultiply,
+                       vtkMatrix4x4*     postMultiply,
+                       vtkGridTransform* outGrid);
+
+  static void 
+  SlicerImageResliceWithGrid(vtkMRMLVolumeNode* inputVolumeNode,
+                             vtkMRMLVolumeNode* outputVolumeNode,
+                             vtkMRMLVolumeNode* outputVolumeGeometryNode,
+                             vtkGridTransform* outputRASToInputRASTransform,
+                             int iterpolationType,
+                             double backgroundLevel);
+
+  static void SlicerRigidRegister(vtkMRMLVolumeNode* fixedVolumeNode,
+                                  vtkMRMLVolumeNode* movingVolumeNode,
+                                  vtkMRMLVolumeNode* outputVolumeNode,
+                                  vtkTransform* fixedRASToMovingRASTransform,
+                                  int imageMatchType,
+                                  int iterpolationType,
+                                  double backgroundLevel);
+
+  static void 
+  SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
+                        vtkMRMLVolumeNode* movingVolumeNode,
+                        vtkMRMLVolumeNode* outputVolumeNode,
+                        vtkGridTransform* fixedRASToMovingRASTransform,
+                        vtkTransform* fixedRASToMovingRASAffineTransform,
+                        int imageMatchType,
+                        int iterpolationType,
+                        double backgroundLevel);
+
+  // Description:
+  // Convenience method for determining if two volumes have same geometry
+  static bool IsVolumeGeometryEqual(vtkMRMLVolumeNode* lhs,
+                                    vtkMRMLVolumeNode* rhs);
+
+  static void PrintImageInfo(vtkMRMLVolumeNode* volumeNode);
   static void PrintImageInfo(vtkImageData* image);
 
   // copy data from MRML to algorithm
