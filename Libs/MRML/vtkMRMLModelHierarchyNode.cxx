@@ -268,6 +268,50 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetUnExpandedParentNode()
   return node;
 }
 
+//----------------------------------------------------------------------------
+vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetTopParentNode()
+{
+  vtkMRMLModelHierarchyNode *node = NULL;
+  vtkMRMLModelHierarchyNode *parent = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetParentNode());
+  if (parent == NULL) 
+    {
+    node = this;
+    }
+  else 
+    {
+    node =  parent->GetTopParentNode();
+    }
+  return node;
+}
+
+
+  
+//---------------------------------------------------------------------------
+void vtkMRMLModelHierarchyNode:: GetChildrenModelNodes(vtkCollection *models)
+{
+  vtkMRMLScene *scene = this->GetScene();
+  vtkMRMLNode *mnode = NULL;
+  vtkMRMLModelHierarchyNode *hnode = NULL;
+  for (int n=0; n < scene->GetNumberOfNodes(); n++) 
+    {
+    mnode = scene->GetNthNode(n);
+    if (mnode->IsA("vtkMRMLModelNode"))
+      {
+      hnode = vtkMRMLModelHierarchyNode::GetModelHierarchyNode(scene, mnode->GetID());
+      while (hnode)
+        {
+        if (hnode == this) 
+          {
+          models->AddItem(mnode);
+          break;
+          }
+          hnode = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetParentNode());
+        }// end while
+      }// end if
+    }// end for
+}
+
+
 //---------------------------------------------------------------------------
 vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetModelHierarchyNode(vtkMRMLScene *scene,
                                                                             const char *modelNodeID)

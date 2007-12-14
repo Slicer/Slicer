@@ -106,6 +106,14 @@ public:
   // Description:
   // Get the first parent node in hierarchy which is not expanded
   vtkMRMLModelHierarchyNode* GetUnExpandedParentNode();
+  
+  // Description:
+  // Get the top parent node in the hierarchy
+  vtkMRMLModelHierarchyNode* GetTopParentNode();
+
+  // Description:
+  // Find all child model nodes in the hierarchy
+  void GetChildrenModelNodes(vtkCollection *models);
 
   // Description:
   // Get Hierarchy node for a given Model node
