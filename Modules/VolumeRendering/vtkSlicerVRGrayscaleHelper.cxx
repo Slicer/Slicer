@@ -335,6 +335,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->SVP_VolumeProperty=vtkSlicerVolumePropertyWidget::New();
     this->SVP_VolumeProperty->SetParent(this->NB_Details->GetFrame("Mapping"));
     this->SVP_VolumeProperty->Create();
+    this->SVP_VolumeProperty->ScalarOpacityUnitDistanceVisibilityOff ();
     this->SVP_VolumeProperty->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
     this->Histograms=vtkKWHistogramSet::New();
 
