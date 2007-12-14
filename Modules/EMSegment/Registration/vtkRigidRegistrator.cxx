@@ -338,6 +338,7 @@ RegisterImagesInternal3()
                                    GetLargestPossibleRegion().
                                    GetNumberOfPixels() *
                                    this->MetricComputationSamplingRatio));
+      metric->ReinitializeSeed(0);
       registration->SetMetric(metric);
       std::cerr << "   Metric: MMI" << std::endl;
       std::cerr << "   Sampling Ratio: " 

@@ -338,6 +338,7 @@ RegisterImagesInternal3()
                                    GetLargestPossibleRegion().
                                    GetNumberOfPixels() *
                                    this->MetricComputationSamplingRatio));
+      metric->ReinitializeSeed(0);
       registration->SetMetric(metric);
       std::cerr << "   Metric: MMI" << std::endl;
       std::cerr << "   Sampling Ratio: " 
@@ -351,7 +352,8 @@ RegisterImagesInternal3()
       typename MetricType::Pointer    metric  = MetricType::New();
       registration->SetMetric(metric);
       std::cerr << "   Metric: NCC" << std::endl;
-
+      std::cerr << "   Sampling Ratio: 1 (NOT IMPLEMENTED FOR NCC) " 
+                << this->MetricComputationSamplingRatio << std::endl;
       break;
       }
     case vtkBSplineRegistrator::MeanSquaredError:
