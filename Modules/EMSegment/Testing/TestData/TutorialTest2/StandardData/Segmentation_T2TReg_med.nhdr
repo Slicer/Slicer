@@ -10,4 +10,4 @@ kinds: domain domain domain
 endian: little
 encoding: gzip
 space origin: (-119.531,-119.531,-82.2)
-data file: Segmentation_T2TReg_med.raw.gz
+data file: Segmentation_med.raw.gz
