@@ -393,10 +393,12 @@ public:
     {
     AtlasToTargetAffineRegistrationOff          = 0,
     AtlasToTargetAffineRegistrationCenters      = 1,
-    AtlasToTargetAffineRegistrationRigidMI      = 2,
+    AtlasToTargetAffineRegistrationRigidMMI     = 2,
     AtlasToTargetAffineRegistrationRigidNCC     = 3,
-    AtlasToTargetAffineRegistrationRigidMIFast  = 4,
-    AtlasToTargetAffineRegistrationRigidNCCFast = 5
+    AtlasToTargetAffineRegistrationRigidMMIFast = 4,
+    AtlasToTargetAffineRegistrationRigidNCCFast = 5,
+    AtlasToTargetAffineRegistrationRigidMMISlow = 6,
+    AtlasToTargetAffineRegistrationRigidNCCSlow = 7
     };
   //ETX
   virtual int       GetRegistrationAffineType();
@@ -409,7 +411,9 @@ public:
     AtlasToTargetDeformableRegistrationBSplineMMI     = 1,
     AtlasToTargetDeformableRegistrationBSplineNCC     = 2,
     AtlasToTargetDeformableRegistrationBSplineMMIFast = 3,
-    AtlasToTargetDeformableRegistrationBSplineNCCFast = 4
+    AtlasToTargetDeformableRegistrationBSplineNCCFast = 4,
+    AtlasToTargetDeformableRegistrationBSplineMMISlow = 5,
+    AtlasToTargetDeformableRegistrationBSplineNCCSlow = 6
     };
   //ETX
   virtual int       GetRegistrationDeformableType();

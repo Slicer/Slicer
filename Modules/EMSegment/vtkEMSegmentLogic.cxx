@@ -847,22 +847,32 @@ SlicerRigidRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       registrator->SetImageToImageMetricToCrossCorrelation();
       registrator->SetNumberOfIterations(0);      
       break;
+    case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCCSlow:
+      registrator->SetImageToImageMetricToCrossCorrelation();
+      registrator->SetMetricComputationSamplingRatio(0.8);
+      registrator->SetNumberOfIterations(100);
+      break;
+    case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMISlow:
+      registrator->SetImageToImageMetricToMutualInformation();
+      registrator->SetMetricComputationSamplingRatio(0.8);
+      registrator->SetNumberOfIterations(100);
+      break;
     case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCCFast:
       registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetMetricComputationSamplingRatio(0.1);
-      registrator->SetNumberOfIterations(10);
+      registrator->SetMetricComputationSamplingRatio(0.3333);
+      registrator->SetNumberOfIterations(30);
       break;
-    case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMIFast:
+    case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMIFast:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetMetricComputationSamplingRatio(0.1);
-      registrator->SetNumberOfIterations(10);
+      registrator->SetMetricComputationSamplingRatio(0.3333);
+      registrator->SetNumberOfIterations(30);
       break;
     case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCC:
       registrator->SetImageToImageMetricToCrossCorrelation();
       registrator->SetMetricComputationSamplingRatio(0.3333);
       registrator->SetNumberOfIterations(30);
       break;
-    case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMI:
+    case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMI:
     default:
       registrator->SetImageToImageMetricToMutualInformation();
       registrator->SetMetricComputationSamplingRatio(0.3333);
@@ -946,10 +956,26 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
     {
     case 
       vtkEMSegmentMRMLManager
+      ::AtlasToTargetDeformableRegistrationBSplineNCCSlow:
+      registrator->SetImageToImageMetricToCrossCorrelation();
+      registrator->SetVoxelsPerKnot(16.0);
+      registrator->SetMetricComputationSamplingRatio(0.8);
+      registrator->SetNumberOfIterations(100);
+      break;
+    case 
+      vtkEMSegmentMRMLManager
+      ::AtlasToTargetDeformableRegistrationBSplineMMISlow:
+      registrator->SetImageToImageMetricToMutualInformation();
+      registrator->SetVoxelsPerKnot(16.0);
+      registrator->SetMetricComputationSamplingRatio(0.8);
+      registrator->SetNumberOfIterations(100);
+      break;
+    case 
+      vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineNCCFast:
       registrator->SetImageToImageMetricToCrossCorrelation();
       registrator->SetVoxelsPerKnot(16.0);
-      registrator->SetMetricComputationSamplingRatio(0.1);
+      registrator->SetMetricComputationSamplingRatio(0.2);
       registrator->SetNumberOfIterations(10);
       break;
     case 
@@ -957,7 +983,7 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       ::AtlasToTargetDeformableRegistrationBSplineMMIFast:
       registrator->SetImageToImageMetricToMutualInformation();
       registrator->SetVoxelsPerKnot(16.0);
-      registrator->SetMetricComputationSamplingRatio(0.1);
+      registrator->SetMetricComputationSamplingRatio(0.2);
       registrator->SetNumberOfIterations(10);
       break;
     case 
@@ -1142,7 +1168,7 @@ StartPreprocessingTargetToTargetRegistration()
          movingVolumeNode,
          outputVolumeNode,
          fixedRASToMovingRASTransform,
-         vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMI,
+         vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMI,
          vtkEMSegmentMRMLManager::InterpolationLinear,
          backgroundLevel);
 
@@ -1307,9 +1333,11 @@ StartPreprocessingAtlasToTargetRegistration()
     // affine registration
     switch (m->GetRegistrationAffineType())
       {
-      case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationCenters:
-      case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMI:
-      case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCC:
+      case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationOff:
+        std::cerr << "  Skipping affine registration of atlas image." 
+                  << std::endl;
+        break;
+      default:
         // do rigid registration
         std::cerr << "  Registering atlas image rigid..." << std::endl;
         vtkEMSegmentLogic::
@@ -1335,19 +1363,17 @@ StartPreprocessingAtlasToTargetRegistration()
           std::cerr << std::endl;
           }
         break;
-      case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationOff:
-      default:
-        std::cerr << "  Skipping affine registration of atlas image." 
-                  << std::endl;
       }
 
     // deformable registration
     switch (m->GetRegistrationDeformableType())
       {
       case vtkEMSegmentMRMLManager::
-        AtlasToTargetDeformableRegistrationBSplineMMI:
-      case vtkEMSegmentMRMLManager::
-        AtlasToTargetDeformableRegistrationBSplineNCC:
+        AtlasToTargetDeformableRegistrationOff:
+        std::cerr << "  Skipping deformable registration of atlas image." 
+                  << std::endl;
+        break;
+      default:
         // do deformable registration
         std::cerr << "  Registering atlas image B-Spline..." << std::endl;
         fixedRASToMovingRASTransformDeformable = vtkGridTransform::New();
@@ -1361,11 +1387,6 @@ StartPreprocessingAtlasToTargetRegistration()
                                 m->GetRegistrationInterpolationType(),
                                 0);
         break;
-      case vtkEMSegmentMRMLManager::
-        AtlasToTargetDeformableRegistrationOff:
-      default:
-        std::cerr << "  Skipping deformable registration of atlas image." 
-                  << std::endl;
       }
     }
 
