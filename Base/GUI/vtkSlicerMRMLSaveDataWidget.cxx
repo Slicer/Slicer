@@ -122,22 +122,12 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
     const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
     if (fileName)
       {
-      // add a .mrml if needed
-      vtksys_stl::string fileNameString(fileName);
-      if ( fileNameString.find(".mrml",0) == vtksys_stl::string::npos ||
-           fileNameString.find(".mrml",0) != fileNameString.length() - 5 )
-        {
-        fileNameString = fileNameString + vtksys_stl::string(".mrml");
-        this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetFileName(fileNameString.c_str());
-        }
-
-      // save the file name in the label text and set the data directory
       this->SaveSceneCheckBox->SetEnabled(1);
       this->SaveSceneCheckBox->Select();
-      this->SaveSceneButton->SetLabelText(fileNameString.c_str());
       if (this->DataDirectoryName == NULL) 
         {
-        vtksys_stl::string dir =  vtksys::SystemTools::GetParentDirectory(fileName);   
+        vtksys_stl::string dir =  
+          vtksys::SystemTools::GetParentDirectory(fileName);   
         if (dir[dir.size()-1] != '/')
           {
           dir = dir + vtksys_stl::string("/");
@@ -153,7 +143,6 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
     const char *fileName = this->SaveDataButton->GetWidget()->GetFileName();
     if (fileName) 
       {
-      this->SaveDataButton->SetLabelText(fileName);
       std::string name(fileName);
       if (name[name.size()-1] != '/')
         {
@@ -165,6 +154,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
     }
   else if (this->OkButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
     {
+    this->MultiColumnList->GetWidget()->FinishEditing();
     int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
     for (int row=0; row<nrows; row++)
       {
@@ -184,6 +174,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
           {
           vtkKWMessageDialog *message = vtkKWMessageDialog::New();
           message->SetParent ( this->GetParent() );
+          message->SetMasterWindow ( this->SaveDialog );
           message->SetStyleToYesNo();
           std::string msg = "File " + fileName + " exists. Do you want to override it?";
           message->SetText(msg.c_str());
@@ -203,6 +194,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
             {
             vtkKWMessageDialog *message = vtkKWMessageDialog::New();
             message->SetParent ( this->GetParent() );      
+            message->SetMasterWindow ( this->SaveDialog );
             message->SetStyleToOkCancel();
             std::string msg = "Cannot write data file " + fileName + ". Do you want to continue saving?";
             message->SetText(msg.c_str());
@@ -218,11 +210,15 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
         }
       }
     const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
+    if (!fileName && this->MRMLScene)
+      {
+      fileName = this->MRMLScene->GetURL();
+      }
     if (fileName == NULL)
       {
       vtkKWMessageDialog *message = vtkKWMessageDialog::New();
       message->SetParent ( this->GetParent() );
-      
+      message->SetMasterWindow ( this->SaveDialog );
       message->SetStyleToMessage ();
       message->SetText("No scene file selected. Scene is not saved");
       message->Create();
@@ -249,15 +245,17 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerMRMLSaveDataWidget::SaveScene()
 {
-  // get filename from label text (not file browser), 
-  // since this has a .mrml added if the user didn't 
-  // add it manually
-  const char *fileName = this->SaveSceneButton->GetLabelText();
+  // Pick selected filename. If none, use the old one
+  const char *fileName = this->SaveSceneButton->GetWidget()->GetFileName();
+  if (!fileName && this->MRMLScene)
+    {
+    fileName = this->MRMLScene->GetURL();
+    }
 
   if (fileName && this->GetMRMLScene()) 
     {
-
-    vtksys_stl::string directory = vtksys::SystemTools::GetParentDirectory(fileName);
+    vtksys_stl::string directory = 
+      vtksys::SystemTools::GetParentDirectory(fileName);
     this->MRMLScene->SetRootDirectory(directory.c_str());
     directory = directory + vtksys_stl::string("/");
 
@@ -269,9 +267,11 @@ void vtkSlicerMRMLSaveDataWidget::SaveScene()
       {
       node = scene->GetNthNodeByClass(n, "vtkMRMLStorageNode");
       vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
-      if (snode->GetFileName() && !this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
+      if (snode->GetFileName() && 
+          !this->MRMLScene->IsFilePathRelative(snode->GetFileName()))
         {        
-        itksys_stl::string relPath = itksys::SystemTools::RelativePath((const char*)directory.c_str(), snode->GetFileName());
+        itksys_stl::string relPath = itksys::SystemTools::RelativePath(
+          (const char*)directory.c_str(), snode->GetFileName());
         snode->SetFileName(relPath.c_str());
         }
       }
@@ -290,10 +290,10 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
     return 0;
     }
   if (this->IsProcessing) 
-  {
+    {
     return 0;
-  }
-
+    }
+  
   this->IsProcessing = true;
 
   this->Nodes.clear();
@@ -301,7 +301,10 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
 
   vtkMRMLNode *node;
   int nModified = 0;
-  this->MultiColumnList->GetWidget()->DeleteAllRows ();
+  if (this->MultiColumnList->GetWidget()->GetNumberOfRows())
+    {
+    this->MultiColumnList->GetWidget()->DeleteAllRows ();
+    }
 
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
   int n;
@@ -458,6 +461,9 @@ void vtkSlicerMRMLSaveDataWidget::UpdateDataDirectory()
     return;
     }
   
+  this->SaveDataButton->GetWidget()->SetInitialFileName(
+    this->DataDirectoryName);
+
   int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
   for (int row=0; row<nrows; row++)
     {
@@ -544,6 +550,7 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->Superclass::CreateWidget();
 
   this->SaveDialog = vtkKWDialog::New();
+  this->SaveDialog->SetMasterWindow ( this->GetParent());
   this->SaveDialog->SetParent ( this->GetParent());
   this->SaveDialog->SetTitle("Save Scene and Unsaved Data");
   this->SaveDialog->SetSize(400, 200);
@@ -562,11 +569,13 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->SaveSceneButton = vtkKWLoadSaveButtonWithLabel::New ( );
   this->SaveSceneButton->SetParent ( frame->GetFrame() );
   this->SaveSceneButton->Create ( );
-  this->SaveSceneButton->SetWidth(20);
-  this->SaveSceneButton->SetLabelPositionToRight();
-  this->SaveSceneButton->GetWidget()->SetText ("Select Scene File");
+  this->SaveSceneButton->SetLabelPositionToLeft();
+  this->SaveSceneButton->SetLabelText ("Scene File:");
+  this->SaveSceneButton->GetWidget()->TrimPathFromFileNameOff();
+  this->SaveSceneButton->GetWidget()->SetMaximumFileNameLength(100);
   this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes(
                                                             "{ {scene} {*.mrml} }");
+  this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetDefaultExtension(".mrml");
   this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOn();
   this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
     "OpenPath");
@@ -609,9 +618,10 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->SaveDataButton = vtkKWLoadSaveButtonWithLabel::New ( );
   this->SaveDataButton->SetParent ( dataFrame->GetFrame() );
   this->SaveDataButton->Create ( );
-  this->SaveDataButton->SetWidth(20);
-  this->SaveDataButton->SetLabelPositionToRight();
-  this->SaveDataButton->GetWidget()->SetText ("Select Data Directory");
+  this->SaveDataButton->SetLabelPositionToLeft();
+  this->SaveDataButton->SetLabelText ("Data Directory:");
+  this->SaveDataButton->GetWidget()->TrimPathFromFileNameOff();
+  this->SaveDataButton->GetWidget()->SetMaximumFileNameLength(100);
   this->SaveDataButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
   this->SaveDataButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
     "OpenPath");
@@ -700,25 +710,8 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   if (this->MRMLScene != NULL)
     {
     this->SetAndObserveMRMLScene(this->MRMLScene);
-    std::string dir = this->MRMLScene->GetRootDirectory();
-    if (dir[dir.size()-1] != '/')
-      {
-      dir += std::string("/");
-      }
-    this->SetDataDirectoryName(dir.c_str());
-    if ( this->MRMLScene->GetURL() )
-      {
-      this->SaveSceneButton->GetWidget()->SetInitialFileName( this->MRMLScene->GetURL() );
-      this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->SetFileName( this->MRMLScene->GetURL() );
-      this->SaveSceneButton->GetWidget()->SetText( this->MRMLScene->GetURL() );
-      vtkStringArray *fileNames = this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->GetFileNames();
-      fileNames->Reset();
-      fileNames->InsertNextValue( this->MRMLScene->GetURL() );
-      this->SaveSceneCheckBox->SetEnabled(1);
-      this->SaveSceneCheckBox->SelectedStateOn();
-      }
     }
-    
+
   frame->Delete();
   dataFrame->Delete();
   saveFrame->Delete();
@@ -729,6 +722,28 @@ void vtkSlicerMRMLSaveDataWidget::Invoke ( )
 {
   this->Create();
 
+  if (this->MRMLScene != NULL)
+    {
+    std::string dir = this->MRMLScene->GetRootDirectory();
+    if (dir[dir.size()-1] != '/')
+      {
+      dir += std::string("/");
+      }
+    this->SetDataDirectoryName(dir.c_str());
+    if (this->DataDirectoryName && *this->DataDirectoryName)
+      {
+      this->SaveDataButton->GetWidget()->SetInitialFileName(
+        this->DataDirectoryName);
+      }
+    const char *url = this->MRMLScene->GetURL();
+    if (url && *url)
+      {
+      this->SaveSceneButton->GetWidget()->SetInitialFileName(url);
+      this->SaveSceneCheckBox->SetEnabled(1);
+      this->SaveSceneCheckBox->SelectedStateOn();
+      }
+    }
+    
   this->UpdateFromMRML();
 
   if (this->SaveDialog)
