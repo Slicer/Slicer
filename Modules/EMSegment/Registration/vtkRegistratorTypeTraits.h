@@ -7,7 +7,7 @@
 // thus code bloat) by explicit specialization of this primary
 // template.  Only double, float, short, and unsigned short are
 // currently instantiated.  All other voxel types are converted to one
-// of these three.
+// of these four.
 template <class CommonVoxelType>
 class RegistrationVoxelTypeTraits
 {
