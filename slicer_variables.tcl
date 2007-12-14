@@ -109,8 +109,11 @@ set ::TEEM_SRC_DIR  $::SLICER_LIB/teem
 set ::TEEM_BUILD_DIR  $::SLICER_LIB/teem-build
 set ::VTK_DIR  $::SLICER_LIB/VTK-build
 set ::VTK_SRC_DIR $::SLICER_LIB/VTK
-set ::VTK_BUILD_TYPE "Debug" ;# options: Release, RelWithDebInfo, Debug
-set ::VTK_BUILD_SUBDIR ""
+if { ![info exists ::VTK_BUILD_TYPE] } {
+  # set a default if it hasn't already been specified
+  set ::VTK_BUILD_TYPE "Debug" ;# options: Release, RelWithDebInfo, Debug
+}
+set ::VTK_BUILD_SUBDIR $::VTK_BUILD_TYPE 
 set ::env(VTK_BUILD_TYPE) $::VTK_BUILD_TYPE
 set ::KWWidgets_BUILD_DIR  $::SLICER_LIB/KWWidgets-build
 set ::KWWIDGETS_DIR  $::SLICER_LIB/KWWidgets

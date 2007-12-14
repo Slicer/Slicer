@@ -77,6 +77,7 @@ for {set i 0} {$i < $argc} {incr i} {
         }
         "--release" {
             set isRelease 1
+            set ::VTK_BUILD_TYPE "Release"
         }
         "--help" -
         "-h" {

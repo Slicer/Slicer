@@ -198,7 +198,6 @@ set ::SLICER_BUILD $::SLICER_HOME/../Slicer3-build
 set ::env(SLICER_DOC) $::SLICER_HOME/../Slicer3-doc
 
 
-
 #######
 #
 # Note: the local vars file, slicer2/slicer_variables.tcl, overrides the default values in this script
