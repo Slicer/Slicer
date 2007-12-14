@@ -366,8 +366,11 @@ proc slicerd_sock_fileevent {sock} {
            
         }
         "eval*" {
+            set oldMode [fconfigure $sock -buffering]
+            fconfigure $sock -buffering none
             puts $sock [eval $line]
             flush $sock
+            fconfigure $sock -buffering $oldMode
         }
         default {
             puts $sock "unknown command $line"

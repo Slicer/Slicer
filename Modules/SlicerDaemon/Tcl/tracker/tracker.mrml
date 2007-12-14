@@ -1,0 +1,38 @@
+<MRML>
+<Selection
+ id="vtkMRMLSelectionNode1" name="vtkMRMLSelectionNode1" hideFromEditors="true" selectable="true"  activeVolumeID="NULL" activeLabelVolumeID="NULL" activeFiducialListID="NULL" activeROIListID="NULL" activeCameraID="NULL" activeViewID="NULL"></Selection>
+<Interaction
+ id="vtkMRMLInteractionNode1" name="vtkMRMLInteractionNode1" hideFromEditors="true" selectable="true"  currentInteractionMode="ViewTransform" lastInteractionMode="ViewTransform"></Interaction>
+<View
+ id="vtkMRMLViewNode1" name="vtkMRMLViewNode1" hideFromEditors="true" selectable="true"  active="false" fieldOfView="200" letterSize="0.05" boxVisible="true" fiducialsVisible="true" fiducialLabelsVisible="true" axisLabelsVisible="true" backgroundColor="0.70196 0.70196 0.90588" animationMode="Off" viewAxisMode="LookFrom" spinDegrees="2" spinMs="5" spinDirection="YawLeft" rotateDegrees="5" rockLength="200" rockCount="0" stereoType="NoStereo" renderMode="Perspective"></View>
+<Camera
+ id="vtkMRMLCameraNode1" name="vtkMRMLCameraNode1" hideFromEditors="true" selectable="true"  position="101.492 146.527 80.443" focalPoint="0 0 0" viewUp="-0.270413 -0.312606 0.910579" parallelProjection="false" parallelScale="1" active="false"></Camera>
+<ModelDisplay
+ id="vtkMRMLModelDisplayNode1" name="vtkMRMLModelDisplayNode1" hideFromEditors="true" selectable="true"  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="false" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100" ></ModelDisplay>
+<LinearTransform
+ id="vtkMRMLLinearTransformNode1" name="IGTDataManagerTransform" hideFromEditors="true" selectable="true"  matrixTransformToParent="1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1"></LinearTransform>
+<Model
+ id="vtkMRMLModelNode1" name="igt_matrix_0" hideFromEditors="true" selectable="true"  transformNodeRef="vtkMRMLLinearTransformNode1" displayNodeRef="vtkMRMLModelDisplayNode1"></Model>
+<Slice
+ id="vtkMRMLSliceNode1" name="vtkMRMLSliceNode1" hideFromEditors="true" selectable="true"  fieldOfView="360.185 248.855 1" dimensions="385 266 1" layoutGridRows="1" layoutGridColumns="1" sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Red" orientation="Axial" sliceVisibility="false"></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode1" name="vtkMRMLSliceCompositeNode1" hideFromEditors="true" selectable="true"  backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Red" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal"></SliceComposite>
+<Slice
+ id="vtkMRMLSliceNode2" name="vtkMRMLSliceNode2" hideFromEditors="true" selectable="true"  fieldOfView="360.667 249.693 1" dimensions="390 270 1" layoutGridRows="1" layoutGridColumns="1" sliceToRAS="0 0 1 0 -1 0 0 0 0 1 0 0 0 0 0 1" layoutName="Yellow" orientation="Sagittal" sliceVisibility="false"></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode2" name="vtkMRMLSliceCompositeNode2" hideFromEditors="true" selectable="true"  backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Yellow" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal"></SliceComposite>
+<Slice
+ id="vtkMRMLSliceNode3" name="vtkMRMLSliceNode3" hideFromEditors="true" selectable="true"  fieldOfView="361.111 248.849 1" dimensions="386 266 1" layoutGridRows="1" layoutGridColumns="1" sliceToRAS="-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1" layoutName="Green" orientation="Coronal" sliceVisibility="false"></Slice>
+<SliceComposite
+ id="vtkMRMLSliceCompositeNode3" name="vtkMRMLSliceCompositeNode3" hideFromEditors="true" selectable="true"  backgroundVolumeID="" foregroundVolumeID="" labelVolumeID="" labelOpacity="1" linkedControl="0" foregroundGrid="0" backgroundGrid="0" labelGrid="1" fiducialVisibility="1" fiducialLabelVisibility="1" layoutName="Green" annotationMode="All" crosshairMode="NoCrosshair" crosshairBehavior="Normal"></SliceComposite>
+<ScriptedModule
+ id="vtkMRMLScriptedModuleNode1" name="vtkMRMLScriptedModuleNode1" hideFromEditors="true" selectable="true"  ModuleName ="Editor" parameter0= "label 1"></ScriptedModule>
+<ModelStorage
+ id="vtkMRMLModelStorageNode1" name="vtkMRMLModelStorageNode1" hideFromEditors="true" selectable="true"  fileName="probe.vtk" useCompression="1"></ModelStorage>
+<ModelDisplay
+ id="vtkMRMLModelDisplayNode5" name="vtkMRMLModelDisplayNode5" hideFromEditors="true" selectable="true"  color="0.5 0.5 0.5" ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" clipping="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" scalarRange="0 100" ></ModelDisplay>
+<Model
+ id="vtkMRMLModelNode5" name="probe" hideFromEditors="false" selectable="true"  transformNodeRef="vtkMRMLLinearTransformNode5" displayNodeRef="vtkMRMLModelDisplayNode5" storageNodeRef="vtkMRMLModelStorageNode1"></Model>
+<LinearTransform
+ id="vtkMRMLLinearTransformNode5" name="vtkMRMLLinearTransformNode5" hideFromEditors="false" selectable="true"  matrixTransformToParent="1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1"></LinearTransform>
+</MRML>
