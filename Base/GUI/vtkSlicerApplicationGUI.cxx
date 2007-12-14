@@ -312,11 +312,15 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
           {
           vtkKWProgressDialog *progressDialog = vtkKWProgressDialog::New();
           progressDialog->SetParent( this->MainSlicerWindow );
+          progressDialog->SetMasterWindow( this->MainSlicerWindow );
           progressDialog->Create();
           std::string message("Loading Scene...\n");
           message += std::string(fileName);
           progressDialog->SetMessageText( message.c_str() );
-          progressDialog->SetObservedObject( this->GetMRMLScene() );
+          // don't observe the scene, to avoid getting render updates
+          // during load.  TODO: make a vtk-based progress bar that doesn't
+          // call the tcl update method
+          //progressDialog->SetObservedObject( this->GetMRMLScene() );
           progressDialog->Display();
           this->GetMRMLScene()->SetURL(fileName);
           this->GetMRMLScene()->Connect();
