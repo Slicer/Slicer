@@ -76,6 +76,7 @@ vtkDiffusionTensorMathematicsSimple::vtkDiffusionTensorMathematicsSimple()
   this->TensorRotationMatrix = NULL;
   this->ScalarMask = NULL;
   this->MaskWithScalars = 0;
+  this->MaskLabelValue = 1;
   this->FixNegativeEigenvalues = 1;
 }
 
@@ -209,6 +210,12 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1(vtkDiffusionTensorMathem
     vtkGenericWarningMacro(<<"No input tensor data to filter!");
     return;
     }
+    
+  if (self->GetScalarMask() && self->GetScalarMask()->GetScalarType() != VTK_SHORT)
+    {
+    vtkGenericWarningMacro(<<"scalr type for mask must be short!");
+    return;
+    }
 
   vtkTransform *trans = vtkTransform::New();
   int useTransform = 0;
@@ -235,7 +242,7 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1(vtkDiffusionTensorMathem
   int inPtId = 0;
   for(int n=0; n<size; n++) {
     inPtId = n;
-    if (doMasking && inMask->GetTuple1(inPtId)==0) {
+    if (doMasking && inMask->GetTuple1(inPtId) != self->GetMaskLabelValue()) {
       *outPtr = 0;
     }
     else {   
@@ -336,6 +343,12 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1Eigen(vtkDiffusionTensorM
     vtkGenericWarningMacro(<<"No input tensor data to filter!");
     return;
     }
+    
+  if (self->GetScalarMask() && self->GetScalarMask()->GetScalarType() != VTK_SHORT)
+    {
+    vtkGenericWarningMacro(<<"scalr type for mask must be short!");
+    return;
+    }
 
   // transformation of tensor orientations for coloring
   vtkTransform *trans = vtkTransform::New();
@@ -365,7 +378,7 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1Eigen(vtkDiffusionTensorM
   int inPtId = 0;
   for(int n=0; n<size; n++) {
     inPtId = n;
-    if (doMasking && inMask->GetTuple1(inPtId)==0) {
+    if (doMasking && inMask->GetTuple1(inPtId) != self->GetMaskLabelValue()) {
       *outPtr = 0;
       
       if (op ==  vtkDiffusionTensorMathematicsSimple::VTK_TENS_COLOR_MODE || 

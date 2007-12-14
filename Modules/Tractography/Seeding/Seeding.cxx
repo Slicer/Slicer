@@ -133,6 +133,7 @@ int main( int argc, const char * argv[] )
   // math->SetInput(1, reader->GetOutput());
   math->SetScalarMask(imageCast->GetOutput());
   math->MaskWithScalarsOn();
+  math->SetMaskLabelValue(ROIlabel);
   math->SetOperationToLinearMeasure();
   math->Update();
   

@@ -208,6 +208,10 @@ public:
   virtual void SetScalarMask(vtkImageData*);
   vtkGetObjectMacro(ScalarMask, vtkImageData);
   
+  // Description:
+  // Label value defining ROI for mask  
+  vtkSetMacro(MaskLabelValue, int);
+  vtkGetMacro(MaskLabelValue, int);
 
   // Public for access from threads
   static void ModeToRGB(double Mode, double FA,
@@ -254,7 +258,8 @@ protected:
 
   int MaskWithScalars;
   vtkImageData *ScalarMask;
-
+  int MaskLabelValue;
+  
   vtkMatrix4x4 *TensorRotationMatrix;
   int FixNegativeEigenvalues;
 
