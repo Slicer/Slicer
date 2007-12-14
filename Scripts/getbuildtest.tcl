@@ -377,57 +377,61 @@ if { $isWindows } {
 }
 # upload
 
-set scpfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension)}"
-if {$::GETBUILDTEST(pack) == "true" &&  
-    [file exists $::SLICER_BUILD/$scpfile] && 
-    $::GETBUILDTEST(upload) == "true"} {
-    puts "About to do a $::GETBUILDTEST(uploadFlag) upload with $scpfile"
-    set namic_path "/clients/Slicer3/WWW/Downloads"
-}
+if {$::GETBUILDTEST(upload) == "true"} {
+    set scpfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension)}"
+    if {$::GETBUILDTEST(pack) == "true" &&  
+        [file exists $::SLICER_BUILD/$scpfile] && 
+        $::GETBUILDTEST(upload) == "true"} {
+        puts "About to do a $::GETBUILDTEST(uploadFlag) upload with $scpfile"
+        set namic_path "/clients/Slicer3/WWW/Downloads"
+    }
 
-switch $::GETBUILDTEST(uploadFlag) {
-    "nightly" {            
-    # reset the file name - take out the date
-    #set ex ".${::GETBUILDTEST(version-patch)}"
-    #regsub $ex $scpfile "" scpNightlyFile
-    #set scpfile $scpNightlyFile
-    set scpdest "${namic_path}/Nightly"
+    switch $::GETBUILDTEST(uploadFlag) {
+        "nightly" {            
+            # reset the file name - take out the date
+            #set ex ".${::GETBUILDTEST(version-patch)}"
+            #regsub $ex $scpfile "" scpNightlyFile
+            #set scpfile $scpNightlyFile
+            set scpdest "${namic_path}/Nightly"
+        }
+        "snapshot" {
+            set scpdest "${namic_path}/Snapshots/$::env(BUILD)"
+        }
+        "release" {
+            set scpdest "${namic_url}/Release/$::env(BUILD)"
+        }
+        default {
+            puts "Invalid ::GETBUILDTEST(uploadFlag) \"$::GETBUILDTEST(uploadFlag)\", setting scpdest to snapshot value"
+            set scpdest "${namic_path}/Snapshots/$::env(BUILD)"
+        }
     }
-    "snapshot" {
-    set scpdest "${namic_path}/Snapshots/$::env(BUILD)"
-    }
-    "release" {
-    set scpdest "${namic_url}/Release/$::env(BUILD)"
-    }
-    default {
-    puts "Invalid ::GETBUILDTEST(uploadFlag) \"$::GETBUILDTEST(uploadFlag)\", setting scpdest to snapshot value"
-    set scpdest "${namic_path}/Snapshots/$::env(BUILD)"
-    }
-}
 
-puts " -- upload $scpfile to $scpdest"
-set curlcmd ""
-switch $::tcl_platform(os) {
-    "SunOS" -
-    "Linux" {
-    set scpcmd "xterm -e scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
+    puts " -- upload $scpfile to $scpdest"
+    set curlcmd ""
+    switch $::tcl_platform(os) {
+        "SunOS" -
+        "Linux" {
+            set scpcmd "xterm -e scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
+        }
+        "Darwin" {            
+            set scpcmd "/usr/X11R6/bin/xterm -e scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
+        }
+        default {             
+            set scpcmd "scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
+        }
     }
-    "Darwin" {            
-    set scpcmd "/usr/X11R6/bin/xterm -e scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
-    }
-    default {             
-    set scpcmd "scp $scpfile hayes@na-mic1.bwh.harvard.edu:$scpdest"
-    }
-}
 
-set scpReturn [catch "eval runcmd [split $scpcmd]"]
-if {$scpReturn} {
-    puts "Upload failed..."
-} else {
-    puts "See http://www.na-mic.org/Slicer/Download, in the $::GETBUILDTEST(uploadFlag) directory, for the uploaded file."
+    set scpReturn [catch "eval runcmd [split $scpcmd]"]
+    if {$scpReturn} {
+        puts "Upload failed..."
+    } else {
+        puts "See http://www.na-mic.org/Slicer/Download, in the $::GETBUILDTEST(uploadFlag) directory, for the uploaded file."
+    }
+
+    #else {
+    #    if {$::GETBUILDTEST(verbose)} {
+    #    puts "Not uploading $scpfile"
+    #    }
+    #}
+
 }
-#else {
-#    if {$::GETBUILDTEST(verbose)} {
-#    puts "Not uploading $scpfile"
-#    }
-#}
