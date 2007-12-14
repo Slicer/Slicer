@@ -25,8 +25,6 @@
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLColorNode.h"
 
-#include "vtkMatrix4x4.h"
-#include "vtkTransform.h"
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
 
@@ -179,12 +177,15 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   
   // Description:
   // String ID of the color MRML node
-  void SetAndObserveColorNodeID(const char *ColorNodeID);
+  virtual void SetAndObserveColorNodeID(const char *ColorNodeID);
+  //BTX
+  virtual void SetAndObserveColorNodeID(const std::string& ColorNodeID);
+  //ETX
   vtkGetStringMacro(ColorNodeID);
 
   // Description:
   // Get associated color MRML node
-  vtkMRMLColorNode* GetColorNode();
+  virtual vtkMRMLColorNode* GetColorNode();
 
   // Description:
   // the name of the currently active scalar field for this model

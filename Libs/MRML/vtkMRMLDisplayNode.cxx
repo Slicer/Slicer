@@ -410,7 +410,11 @@ void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
   vtkMRMLNode *cnode = this->GetColorNode();
 
   vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
+}
 
+void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const std::string& colorNodeID)
+{
+  this->SetAndObserveColorNodeID( colorNodeID.c_str() );
 }
 
 //---------------------------------------------------------------------------

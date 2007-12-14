@@ -22,12 +22,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
-#include "vtkMRMLColorNode.h"
 #include "vtkMRMLDisplayNode.h"
-
-#include "vtkMatrix4x4.h"
-#include "vtkTransform.h"
-#include "vtkImageData.h"
 
 class vtkImageData;
 
@@ -57,10 +52,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
   virtual const char* GetNodeTagName() = 0;
 
   // Description:
-  // Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
-
-  // Description:
   // Updates this node if it depends on other nodes 
   // when the node is deleted in the scene
   virtual void UpdateReferences();
@@ -86,18 +77,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
   virtual void UpdateImageDataPipeline() {};
 
   // Description:
-  // String ID of the color MRML node
-  void SetAndObserveColorNodeID(const char *ColorNodeID);
-  //BTX
-  void SetAndObserveColorNodeID(std::string ColorNodeID);
-  //ETX
-  vtkGetStringMacro(ColorNodeID);
-
-  // Description:
-  // Get associated color MRML node
-  vtkMRMLColorNode* GetColorNode();
-
-  // Description:
   // alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
@@ -111,12 +90,6 @@ protected:
   ~vtkMRMLVolumeDisplayNode();
   vtkMRMLVolumeDisplayNode(const vtkMRMLVolumeDisplayNode&);
   void operator=(const vtkMRMLVolumeDisplayNode&);
-
-  char *ColorNodeID;
-
-  vtkSetReferenceStringMacro(ColorNodeID);
-
-  vtkMRMLColorNode *ColorNode;
 
 };
 

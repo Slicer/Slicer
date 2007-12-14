@@ -294,7 +294,7 @@ int vtkMRMLColorTableStorageNode::WriteData(vtkMRMLNode *refNode)
 
   if (colorNode == NULL)
     {
-    vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a known color table node");
+    vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known color table node");
     return 0;
     }
 
@@ -325,7 +325,7 @@ int vtkMRMLColorTableStorageNode::WriteData(vtkMRMLNode *refNode)
     of << endl;   
     }
   of.close();
-  vtkErrorMacro("WriteData: not implemented yet!");
-  return 0;
+
+  return 1;
   
 }
