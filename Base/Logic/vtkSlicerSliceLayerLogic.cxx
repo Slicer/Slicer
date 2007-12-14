@@ -510,7 +510,12 @@ void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
     this->Reslice->Update();
 
     //Fixing horrible bug of the vtkSetAttributes Filter it doesn't copy attributes without name
-    if ( this->Reslice->GetOutput() && this->Reslice->GetOutput()->GetPointData()->GetScalars() )
+    if ( this->Reslice->GetOutput() && 
+         this->Reslice->GetOutput()->GetPointData() && 
+         this->Reslice->GetOutput()->GetPointData()->GetScalars() &&
+         volumeNode->GetImageData() &&
+         volumeNode->GetImageData()->GetPointData() && 
+         volumeNode->GetImageData()->GetPointData()->GetTensors())
       {
       this->Reslice->GetOutput()->GetPointData()->GetScalars()->SetName(volumeNode->GetImageData()->GetPointData()->GetTensors()->GetName());
       }
