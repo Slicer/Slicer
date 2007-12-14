@@ -1,9 +1,15 @@
 #include "vtkBSplineRegistrator.h"
 #include "vtkObjectFactory.h"
-#include "itkImage.h"
-#include "itkVTKImageImport.h"
+
+#include "vtkCommand.h"
 #include "vtkITKUtility.h"
 #include "vtkImageExport.h"
+#include "vtkImageCast.h"
+#include "vtkTypeTraits.h"
+
+#include "itkImage.h"
+#include "itkVTKImageImport.h"
+
 #include "itkLBFGSBOptimizer.h"
 #include "itkImageRegistrationMethod.h"
 #include "itkMattesMutualInformationImageToImageMetric.h"
@@ -11,17 +17,17 @@
 #include "itkMeanSquaresImageToImageMetric.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkLinearInterpolateImageFunction.h"
+
 #include "itkRealTimeClock.h"
 #include "itkPixelTraits.h"
-#include "vtkImageCast.h"
-#include "vtkTypeTraits.h"
-#include "itkVersorRigid3DTransform.h"
-#include "itkCenteredVersorTransformInitializer.h"
-#include "itkVersorRigid3DTransformOptimizer.h"
+
+#include "vtkTransformToGrid.h"
 #include "vtkRegistratorTypeTraits.h"
 #include "vtkImageChangeInformation.h"
 #include "vtkImagePermute.h"
 #include "vtkMatrix4x4.h"
+#include "itkAffineTransform.h"
+#include "vtkITKTransformAdapter.h"
 
 vtkCxxRevisionMacro(vtkBSplineRegistrator, "$Revision: 0.0 $");
 vtkStandardNewMacro(vtkBSplineRegistrator);
@@ -68,6 +74,17 @@ public:
   }
 };
 
+class vtkMyCallback : public vtkCommand
+{
+public:
+  static vtkMyCallback *New() 
+    { return new vtkMyCallback; }
+  virtual void Execute(vtkObject *caller, unsigned long, void*)
+    {
+      std::cerr << ".";
+    }
+};
+
 //----------------------------------------------------------------------------
 vtkBSplineRegistrator::
 vtkBSplineRegistrator()
@@ -78,8 +95,12 @@ vtkBSplineRegistrator()
   this->FixedIJKToXYZ  = NULL;
   this->MovingIJKToXYZ = NULL;
 
+  this->BulkTransform = NULL;
   this->Transform   = vtkGridTransform::New();
 
+  this->NumberOfIterations = 0;
+  this->IntensityInterpolationType = vtkBSplineRegistrator::Linear;
+  
   this->ImageToImageMetric   = vtkBSplineRegistrator::MutualInformation;
   this->MetricComputationSamplingRatio = 1.0;
 }
@@ -92,6 +113,8 @@ vtkBSplineRegistrator::
   this->SetMovingImage(NULL);
   this->SetFixedIJKToXYZ(NULL);
   this->SetMovingIJKToXYZ(NULL);
+  this->SetBulkTransform(NULL);
+
   this->Transform->Delete();
   this->Transform = NULL;
 }
@@ -315,8 +338,9 @@ RegisterImagesInternal3()
                                    GetNumberOfPixels() *
                                    this->MetricComputationSamplingRatio));
       registration->SetMetric(metric);
-      std::cerr << "Metric: MMI" << std::endl;
-
+      std::cerr << "   Metric: MMI" << std::endl;
+      std::cerr << "   Sampling Ratio: " 
+                << this->MetricComputationSamplingRatio << std::endl;
       break;
       }
     case vtkBSplineRegistrator::CrossCorrelation:
@@ -325,7 +349,7 @@ RegisterImagesInternal3()
         ITKImageType, ITKImageType>   MetricType;
       typename MetricType::Pointer    metric  = MetricType::New();
       registration->SetMetric(metric);
-      std::cerr << "Metric: Normalized Cross Correlation" << std::endl;
+      std::cerr << "   Metric: NCC" << std::endl;
 
       break;
       }
@@ -335,7 +359,7 @@ RegisterImagesInternal3()
         ITKImageType, ITKImageType>   MetricType;
       typename MetricType::Pointer    metric  = MetricType::New();
       registration->SetMetric(metric);
-      std::cerr << "Metric: MSE" << std::endl;
+      std::cerr << "   Metric: MSE" << std::endl;
 
       break;
       }
@@ -356,7 +380,7 @@ RegisterImagesInternal3()
       typename InterpolatorType::Pointer interpolator  = 
         InterpolatorType::New();
       registration->SetInterpolator(interpolator);
-      std::cerr << "Interpolation: Nearest neighbor" << std::endl;
+      std::cerr << "   Interpolation: Nearest neighbor" << std::endl;
       }
       break;
 
@@ -368,7 +392,7 @@ RegisterImagesInternal3()
       typename InterpolatorType::Pointer   
         interpolator  = InterpolatorType::New();
       registration->SetInterpolator(interpolator);
-      std::cerr << "Interpolation: Linear" << std::endl;
+      std::cerr << "   Interpolation: Linear" << std::endl;
       }
       break;
     default:
@@ -380,7 +404,33 @@ RegisterImagesInternal3()
   //
   // setup transform
   typedef itk::BSplineDeformableTransform<double, 3, 3> TransformType ;
-  TransformType::Pointer               bSplineTransform = TransformType::New();
+  TransformType::Pointer bSplineTransform = TransformType::New();
+
+  // specify bulk transform if available
+  if (this->BulkTransform)
+    {
+    typedef itk::AffineTransform<double, 3>    ITKBulkTransformType;
+    ITKBulkTransformType::MatrixType       itkMatrix;
+    ITKBulkTransformType::OutputVectorType itkOffset;
+
+    vtkMatrix4x4* vtkMatrix = this->BulkTransform->GetMatrix();
+    for (int i = 0; i < 3; ++i)
+      {
+      for (int j = 0; j < 3; ++j)
+        {
+        itkMatrix(i,j) = (*vtkMatrix)[i][j];
+        }
+      itkOffset[i] = (*vtkMatrix)[i][3];
+      }    
+
+    ITKBulkTransformType::Pointer itkBulkTransform = 
+      ITKBulkTransformType::New();
+    itkBulkTransform->SetMatrix(itkMatrix);
+    itkBulkTransform->SetOffset(itkOffset);
+
+    bSplineTransform->SetBulkTransform(itkBulkTransform);
+    }
+
   TransformType::RegionType            bSplineRegion;
   TransformType::RegionType::SizeType  gridSizeOnImage;
   TransformType::RegionType::SizeType  gridBorderSize;
@@ -388,7 +438,7 @@ RegisterImagesInternal3()
 
   // for now just make up a number of knots!!!
   TransformType::RegionType::SizeType  numberOfKnots;  
-  numberOfKnots.Fill(20);
+  numberOfKnots.Fill(10);
 
   gridSizeOnImage[0] = numberOfKnots[0];
   gridSizeOnImage[1] = numberOfKnots[1];
@@ -417,10 +467,10 @@ RegisterImagesInternal3()
   bSplineTransform->SetGridRegion(bSplineRegion);
   unsigned int numberOfParameters = bSplineTransform->GetNumberOfParameters();
 
-  std::cerr << "BSpline spacing: " << spacing << std::endl;
-  std::cerr << "BSpline origin: "  << origin  << std::endl;
-  std::cerr << "BSpline region: "  << bSplineRegion  << std::endl;
-  std::cerr << "BSpline number of parameters: " << numberOfParameters 
+  std::cerr << "   BSpline spacing: " << spacing << std::endl;
+  std::cerr << "   BSpline origin: "  << origin  << std::endl;
+  std::cerr << "   BSpline region: "  << bSplineRegion  << std::endl;
+  std::cerr << "   BSpline number of parameters: " << numberOfParameters 
             << std::endl;
 
   TransformType::ParametersType params(numberOfParameters);
@@ -453,7 +503,8 @@ RegisterImagesInternal3()
   optimizer->SetMaximumNumberOfEvaluations(this->NumberOfIterations);
   optimizer->SetMaximumNumberOfCorrections(10);
   
-  std::cerr << "Optimization: LBFGSB" << std::endl;
+  std::cerr << "   Optimization: LBFGSB" << std::endl;
+  std::cerr << "   Max iterations: " << this->NumberOfIterations << std::endl;
   
   //
   // set up command observer
@@ -468,14 +519,15 @@ RegisterImagesInternal3()
   try 
     {
     itk::RealTimeClock::Pointer clock = itk::RealTimeClock::New();
-    std::cerr << "Starting registration..." << std::endl;
+    std::cerr << "   Iteration         Image Match        Step Size" 
+              << std::endl;
     double timeStart = clock->GetTimeStamp();
     
     registration->StartRegistration();
     
     double timeStop = clock->GetTimeStamp();
     double timeLength = (timeStop - timeStart);
-    std::cerr << "DONE, time = " << timeLength << std::endl;
+    std::cerr << "  DONE, time = " << timeLength << std::endl;
     }
   catch( itk::ExceptionObject & err )
     {
@@ -483,44 +535,27 @@ RegisterImagesInternal3()
     throw;
     }
 
-  std::cerr << "After Registration: " << std::endl;
-  //transform->Print(std::cerr, 0);
-
   //
   // copy transform from itk back to this vtk class
   //
-  // !!!
 
-  // resize the grid transform and set it up so it can be applied in
-  // vtk as an RAS space transform: needs origin and spacing of fixed
-  // image.  Needs to be natually RAS oriented.
-  vtkImageData* displacementGrid = vtkImageData::New();
-  displacementGrid->CopyStructure(changeInformationFixedImage->GetOutput());
-  displacementGrid->SetNumberOfScalarComponents(3); // x, y, z
-  displacementGrid->SetScalarTypeToFloat();
+  std::cerr << "  Copy BSpline to Grid";
+  vtkITKTransformAdapter* itkTransformWrapper = vtkITKTransformAdapter::New();
+  itkTransformWrapper->SetITKTransform(bSplineTransform);
 
-  vtkIdType numVoxels = displacementGrid->GetNumberOfPoints();
-  TransformType::InputPointType inPtRAS;
-  TransformType::OutputPointType outPtRAS;
-  double inPtVTK[3];
-  float* outDataPtr = 
-    static_cast<float*>(displacementGrid->GetScalarPointer());
-  for (vtkIdType i = 0; i < numVoxels; ++i)
-    {
-    // index to RAS
-    displacementGrid->GetPoint(i, inPtVTK);    
-    inPtRAS[0] = inPtVTK[0];
-    inPtRAS[1] = inPtVTK[1];
-    inPtRAS[2] = inPtVTK[2];
-
-    // what was the transform...
-    outPtRAS = bSplineTransform->TransformPoint(inPtRAS);
-
-    // save result in grid xform
-    *outDataPtr++ = outPtRAS[0];
-    *outDataPtr++ = outPtRAS[1];
-    *outDataPtr++ = outPtRAS[2];
-    }
+  vtkTransformToGrid* transformGenerator = vtkTransformToGrid::New();
+  transformGenerator->SetInput(itkTransformWrapper);
+  transformGenerator->SetGridExtent
+    (changeInformationFixedImage->GetOutput()->GetExtent());
+  transformGenerator->SetGridOrigin(changeInformationFixedImage->GetOutput()->GetOrigin());
+  transformGenerator->SetGridSpacing
+    (changeInformationFixedImage->GetOutput()->GetSpacing());
+  vtkMyCallback *mob = vtkMyCallback::New();
+  transformGenerator->AddObserver(vtkCommand::ProgressEvent, mob);
+  mob->Delete();
+  transformGenerator->Update();
+  this->Transform->SetDisplacementGrid(transformGenerator->GetOutput());
+  std::cerr << "DONE" << std::endl;
 
   //
   // clean up memory
@@ -536,6 +571,8 @@ RegisterImagesInternal3()
   permuteMovingImage->Delete();
   IJKToXYZMatrixFixed->Delete();
   IJKToXYZMatrixMoving->Delete();
+  transformGenerator->Delete();
+  itkTransformWrapper->Delete();
 
   this->Modified();
 }
