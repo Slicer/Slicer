@@ -832,6 +832,8 @@ int main(int argc, char** argv)
         CollapseFullPath(intermediateResultsDirectory.c_str());
       emMRMLManager->
         SetSaveWorkingDirectory(absolutePath.c_str());
+      std::cerr << "Intermediate results will be written to: "
+                << absolutePath << std::endl;
       }
     else
       {
