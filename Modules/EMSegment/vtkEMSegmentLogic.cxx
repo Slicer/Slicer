@@ -847,26 +847,29 @@ SlicerRigidRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       registrator->SetImageToImageMetricToCrossCorrelation();
       registrator->SetNumberOfIterations(0);      
       break;
-    case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCC:
-      registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetNumberOfIterations(20);
-      break;
     case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCCFast:
       registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetNumberOfIterations(5);
+      registrator->SetMetricComputationSamplingRatio(0.1);
+      registrator->SetNumberOfIterations(10);
       break;
     case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMIFast:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetNumberOfIterations(5);
+      registrator->SetMetricComputationSamplingRatio(0.1);
+      registrator->SetNumberOfIterations(10);
+      break;
+    case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCC:
+      registrator->SetImageToImageMetricToCrossCorrelation();
+      registrator->SetMetricComputationSamplingRatio(0.3333);
+      registrator->SetNumberOfIterations(30);
       break;
     case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMI:
     default:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetNumberOfIterations(20);
+      registrator->SetMetricComputationSamplingRatio(0.3333);
+      registrator->SetNumberOfIterations(30);
       break;
     }
 
-  registrator->SetMetricComputationSamplingRatio(0.05);
   registrator->SetTransformInitializationTypeToImageCenters();
 
   switch (interpolationType)
@@ -942,30 +945,37 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
   switch (imageMatchType)
     {
     case 
-      vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineNCC:
-      registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetNumberOfIterations(20);
-      break;
-    case 
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineNCCFast:
       registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetNumberOfIterations(5);
+      registrator->SetVoxelsPerKnot(16.0);
+      registrator->SetMetricComputationSamplingRatio(0.1);
+      registrator->SetNumberOfIterations(10);
       break;
     case 
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineMMIFast:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetNumberOfIterations(5);
+      registrator->SetVoxelsPerKnot(16.0);
+      registrator->SetMetricComputationSamplingRatio(0.1);
+      registrator->SetNumberOfIterations(10);
+      break;
+    case 
+      vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineNCC:
+      registrator->SetImageToImageMetricToCrossCorrelation();
+      registrator->SetVoxelsPerKnot(16.0);
+      registrator->SetMetricComputationSamplingRatio(0.333);
+      registrator->SetNumberOfIterations(30);
       break;
     case 
       vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineMMI:
     default:
       registrator->SetImageToImageMetricToMutualInformation();
-    registrator->SetNumberOfIterations(20);
+      registrator->SetVoxelsPerKnot(16.0);
+      registrator->SetMetricComputationSamplingRatio(0.333);
+      registrator->SetNumberOfIterations(30);
       break;
     }
-  registrator->SetMetricComputationSamplingRatio(0.05);
 
   switch (interpolationType)
     {

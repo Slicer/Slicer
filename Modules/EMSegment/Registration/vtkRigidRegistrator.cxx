@@ -351,7 +351,8 @@ RegisterImagesInternal3()
       typename MetricType::Pointer    metric  = MetricType::New();
       registration->SetMetric(metric);
       std::cerr << "   Metric: NCC" << std::endl;
-
+      std::cerr << "   Sampling Ratio: 1 (NOT IMPLEMENTED FOR NCC) " 
+                << this->MetricComputationSamplingRatio << std::endl;
       break;
       }
     case vtkRigidRegistrator::MeanSquaredError:

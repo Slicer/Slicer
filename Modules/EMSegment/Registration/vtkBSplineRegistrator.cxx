@@ -103,6 +103,7 @@ vtkBSplineRegistrator()
   
   this->ImageToImageMetric   = vtkBSplineRegistrator::MutualInformation;
   this->MetricComputationSamplingRatio = 1.0;
+  this->VoxelsPerKnot = 16.0;
 }
 
 //----------------------------------------------------------------------------
@@ -436,9 +437,15 @@ RegisterImagesInternal3()
   TransformType::RegionType::SizeType  gridBorderSize;
   TransformType::RegionType::SizeType  totalGridSize;
 
-  // for now just make up a number of knots!!!
+  typename ITKImageType::SizeType fixedImageSize = 
+    fixedImageITKImporter->GetOutput()->GetLargestPossibleRegion().GetSize();
+
   TransformType::RegionType::SizeType  numberOfKnots;  
-  numberOfKnots.Fill(10);
+  for (int i  = 0; i < 3; ++i)
+    {
+    numberOfKnots[i] = 
+      static_cast<int>(std::floor(fixedImageSize[i] / this->VoxelsPerKnot));
+    }
 
   gridSizeOnImage[0] = numberOfKnots[0];
   gridSizeOnImage[1] = numberOfKnots[1];
@@ -451,9 +458,6 @@ RegisterImagesInternal3()
     fixedImageITKImporter->GetOutput()->GetSpacing();
   TransformType::OriginType  origin  = 
     fixedImageITKImporter->GetOutput()->GetOrigin();
-  
-  typename ITKImageType::SizeType fixedImageSize = 
-    fixedImageITKImporter->GetOutput()->GetLargestPossibleRegion().GetSize();
 
   for (unsigned int r = 0; r < 3; ++r)
   {
@@ -467,9 +471,15 @@ RegisterImagesInternal3()
   bSplineTransform->SetGridRegion(bSplineRegion);
   unsigned int numberOfParameters = bSplineTransform->GetNumberOfParameters();
 
-  std::cerr << "   BSpline spacing: " << spacing << std::endl;
-  std::cerr << "   BSpline origin: "  << origin  << std::endl;
-  std::cerr << "   BSpline region: "  << bSplineRegion  << std::endl;
+  //std::cerr << "   BSpline spacing: " << spacing << std::endl;
+  //std::cerr << "   BSpline origin: "  << origin  << std::endl;
+  //std::cerr << "   BSpline region: "  << bSplineRegion  << std::endl;
+  std::cerr << "   BSpline voxels-per-knot:      "     
+            << this->VoxelsPerKnot << std::endl;
+  std::cerr << "   BSpline knots on image:       "     
+            << gridSizeOnImage << std::endl;
+  std::cerr << "   BSpline knots total:          "     
+            << totalGridSize << std::endl;
   std::cerr << "   BSpline number of parameters: " << numberOfParameters 
             << std::endl;
 
@@ -519,7 +529,7 @@ RegisterImagesInternal3()
   try 
     {
     itk::RealTimeClock::Pointer clock = itk::RealTimeClock::New();
-    std::cerr << "   Iteration         Image Match        Step Size" 
+    std::cerr << "   Iteration         Image Match" 
               << std::endl;
     double timeStart = clock->GetTimeStamp();
     
@@ -539,7 +549,7 @@ RegisterImagesInternal3()
   // copy transform from itk back to this vtk class
   //
 
-  std::cerr << "  Copy BSpline to Grid";
+  std::cerr << "  Copy BSpline to Grid..";
   vtkITKTransformAdapter* itkTransformWrapper = vtkITKTransformAdapter::New();
   itkTransformWrapper->SetITKTransform(bSplineTransform);
 

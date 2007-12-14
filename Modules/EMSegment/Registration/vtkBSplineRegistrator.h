@@ -67,6 +67,9 @@ public:
   vtkSetClampMacro(MetricComputationSamplingRatio, double, 0, 1);
   vtkGetMacro(MetricComputationSamplingRatio, double);
 
+  vtkSetMacro(VoxelsPerKnot, double);
+  vtkGetMacro(VoxelsPerKnot, double);
+
   vtkSetObjectMacro(BulkTransform, vtkTransform);
   vtkGetObjectMacro(BulkTransform, vtkTransform);
   
@@ -122,6 +125,8 @@ private:
   MetricType                      ImageToImageMetric;
   InterpolationType               IntensityInterpolationType;
   double                          MetricComputationSamplingRatio;
+
+  double                          VoxelsPerKnot;
 };
 
 #endif // __vtkBSplineRegistrator_h
