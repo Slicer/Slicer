@@ -180,6 +180,84 @@ IF( NOT DISABLE_CXX_TESTING )
     )
 
   # Does the segmenter work and give the correct answer using the
+  # Tutorial2 default parameters with no registration?
+  SET(test_name        "EMSegCL_RunRegNoReg")
+  SET(test_exe         "${SLICER_EXE}")
+  SET(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
+  SET(test_cmp_file    "${test_file_prefix}.raw.gz")
+  SET(test_std_file    "${EMSegment_TUTORIAL2_DIR}/StandardData/Segmentation_NoReg_med.raw.gz")
+  IF( ${EMSEG_REMOVE_TMP_TEST_DATA} )
+    SET(test_rm_files    ${test_file_prefix}.mhd ${test_file_prefix}.raw.gz)
+  ELSE( ${EMSEG_REMOVE_TMP_TEST_DATA} )
+    SET(test_rm_files)
+  ENDIF( ${EMSEG_REMOVE_TMP_TEST_DATA} )
+  SET(test_args 
+    ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    --verbose 
+    --mrmlSceneFileName ${EMSegment_TUTORIAL2_DIR}/EMSegmentTestSet2_NoReg_med.mrml 
+    --resultVolumeFileName "${test_file_prefix}.nhdr"
+    )
+  ADD_TEST(
+    ${test_name} ${CMAKE_COMMAND} -V -VV "-Dtest_name:STRING=${test_name}"
+    "-Dtest_exe:STRING=${test_exe}"      "-Dtest_exe_args:STRING=${test_args}"
+    "-Dfile_cmp:STRING=${test_cmp_file}" "-Dfile_std:STRING=${test_std_file}"
+    "-Drm_files:STRING=${test_rm_files}"
+    -P "${EMSegment_SOURCE_DIR}/Testing/RunDiffRemoveTest.cmake"
+    )
+
+  # Does the segmenter work and give the correct answer using the
+  # Tutorial2 default parameters with only T2T registration?
+  SET(test_name        "EMSegCL_RunRegT2T")
+  SET(test_exe         "${SLICER_EXE}")
+  SET(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
+  SET(test_cmp_file    "${test_file_prefix}.raw.gz")
+  SET(test_std_file    "${EMSegment_TUTORIAL2_DIR}/StandardData/Segmentation_T2TReg_med.raw.gz")
+  IF( ${EMSEG_REMOVE_TMP_TEST_DATA} )
+    SET(test_rm_files    ${test_file_prefix}.mhd ${test_file_prefix}.raw.gz)
+  ELSE( ${EMSEG_REMOVE_TMP_TEST_DATA} )
+    SET(test_rm_files)
+  ENDIF( ${EMSEG_REMOVE_TMP_TEST_DATA} )
+  SET(test_args 
+    ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    --verbose 
+    --mrmlSceneFileName ${EMSegment_TUTORIAL2_DIR}/EMSegmentTestSet2_T2TReg_med.mrml 
+    --resultVolumeFileName "${test_file_prefix}.nhdr"
+    )
+  ADD_TEST(
+    ${test_name} ${CMAKE_COMMAND} -V -VV "-Dtest_name:STRING=${test_name}"
+    "-Dtest_exe:STRING=${test_exe}"      "-Dtest_exe_args:STRING=${test_args}"
+    "-Dfile_cmp:STRING=${test_cmp_file}" "-Dfile_std:STRING=${test_std_file}"
+    "-Drm_files:STRING=${test_rm_files}"
+    -P "${EMSegment_SOURCE_DIR}/Testing/RunDiffRemoveTest.cmake"
+    )
+
+  # Does the segmenter work and give the correct answer using the
+  # Tutorial2 default parameters with only A2T registration?
+  SET(test_name        "EMSegCL_RunRegA2T")
+  SET(test_exe         "${SLICER_EXE}")
+  SET(test_file_prefix "${EMSegment_TEST_DIR}/${test_name}_tmp")
+  SET(test_cmp_file    "${test_file_prefix}.raw.gz")
+  SET(test_std_file    "${EMSegment_TUTORIAL2_DIR}/StandardData/Segmentation_A2TReg_med.raw.gz")
+  IF( ${EMSEG_REMOVE_TMP_TEST_DATA} )
+    SET(test_rm_files    ${test_file_prefix}.mhd ${test_file_prefix}.raw.gz)
+  ELSE( ${EMSEG_REMOVE_TMP_TEST_DATA} )
+    SET(test_rm_files)
+  ENDIF( ${EMSEG_REMOVE_TMP_TEST_DATA} )
+  SET(test_args 
+    ${WRAPPED_EXE_PREFIX}/EMSegmentCommandLine
+    --verbose 
+    --mrmlSceneFileName ${EMSegment_TUTORIAL2_DIR}/EMSegmentTestSet2_A2TReg_med.mrml 
+    --resultVolumeFileName "${test_file_prefix}.nhdr"
+    )
+  ADD_TEST(
+    ${test_name} ${CMAKE_COMMAND} -V -VV "-Dtest_name:STRING=${test_name}"
+    "-Dtest_exe:STRING=${test_exe}"      "-Dtest_exe_args:STRING=${test_args}"
+    "-Dfile_cmp:STRING=${test_cmp_file}" "-Dfile_std:STRING=${test_std_file}"
+    "-Drm_files:STRING=${test_rm_files}"
+    -P "${EMSegment_SOURCE_DIR}/Testing/RunDiffRemoveTest.cmake"
+    )
+
+  # Does the segmenter work and give the correct answer using the
   # default parameters from the small template scene.
   SET(test_name        "EMSegCL_RunDefaultNodes")
   SET(test_exe         "${SLICER_EXE}")
