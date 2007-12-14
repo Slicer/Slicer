@@ -289,6 +289,10 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetTopParentNode()
 //---------------------------------------------------------------------------
 void vtkMRMLModelHierarchyNode:: GetChildrenModelNodes(vtkCollection *models)
 {
+  if (models == NULL)
+    {
+    return;
+    }
   vtkMRMLScene *scene = this->GetScene();
   vtkMRMLNode *mnode = NULL;
   vtkMRMLModelHierarchyNode *hnode = NULL;
