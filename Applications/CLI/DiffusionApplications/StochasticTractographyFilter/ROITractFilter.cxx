@@ -44,36 +44,54 @@ int main(int argc, char* argv[]){
   vtkIdType* pts;
   vtkPoints* points = tractsreader->GetOutput()->GetPoints();
   loadedtracts->InitTraversal();
+
   while( loadedtracts->GetNextCell( npts, pts ) ){
-    int currentpointIDindex=0;
-    bool roifound=false;
-    for(int currentlabel=0; currentlabel<roilabels.size(); currentlabel++){
-      roifound=false;
-      while(currentpointIDindex<npts){
-        double* vertex = points->GetPoint( pts[currentpointIDindex] );
-        index[0]=static_cast<long int>(vertex[0]);
-        index[1]=static_cast<long int>(vertex[1]);
-        index[2]=static_cast<long int>(vertex[2]);
-        ROIImageType::PixelType& roiimagepix = roireaderPtr->GetOutput()->GetPixel( index );
-        if(roiimagepix==roilabels[currentlabel]){
-          roifound=true;
-          break;
+    //std::cout<<std::endl;
+    int state=0;
+    int firstoutsidepointID=0;
+    int currentlabel=0;
+    for(int currentpointIDindex=0; currentpointIDindex<npts; currentpointIDindex++){
+      double* vertex = points->GetPoint( pts[currentpointIDindex] );
+      index[0]=static_cast<long int>(vertex[0]);
+      index[1]=static_cast<long int>(vertex[1]); 
+      index[2]=static_cast<long int>(vertex[2]);
+      ROIImageType::PixelType& roiimagepix = roireaderPtr->GetOutput()->GetPixel( index );
+      switch(state){
+      case 0: //have not found first ROI
+        if(roiimagepix==roilabels[0]){
+          state=1;
+          currentlabel++;
         }
-        currentpointIDindex++;
-      }
-      if(!roifound){
         break;
-      } 
-    }
-    if(roifound){
-      if(cuttractsswitch){
-        filteredtractarray->InsertNextCell( currentpointIDindex+1, pts );
+      case 1: //found first ROI but have not left it yet
+        if(roiimagepix!=roilabels[0]){
+          state=2;
+          firstoutsidepointID = currentpointIDindex;
+        }
+        //don't break because it is possible that 1st outside pixel is last ROI
+      case 2: //left first ROI, looking for remaining ROI's in order
+        if(roiimagepix==roilabels[currentlabel]){
+          if( currentlabel==roilabels.size()-1 ){
+            state=3;
+          } 
+          else currentlabel++;
+        }
+        break;
+      default:
+        break;
       }
-      else{
-        filteredtractarray->InsertNextCell( npts, pts );
+      //std::cout<<state;
+      if(state==3){
+        if(cuttractsswitch){
+          vtkIdType* cutpts = pts+firstoutsidepointID;
+          filteredtractarray->InsertNextCell( currentpointIDindex-firstoutsidepointID, cutpts );
+        }
+        else filteredtractarray->InsertNextCell( npts, pts );
+        
+        break;
       }
     }
-  }
+  }    
   
   //finish up the vtk polydata
   filteredtracts->SetPoints( tractsreader->GetOutput()->GetPoints() );
@@ -98,6 +116,7 @@ int main(int argc, char* argv[]){
   //cleanup vtk stuff
   tractsreader->Delete();
   filteredtracts->Delete();
+  cleaner->Delete();
   //filteredpoints->Delete();
   filteredtractarray->Delete();
   tractswriter->Delete();
