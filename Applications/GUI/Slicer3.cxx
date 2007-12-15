@@ -541,6 +541,7 @@ int Slicer3_main(int argc, char *argv[])
       }
 
     pythonEnv += slicerBinDir + "/../../Slicer3/Base/GUI/Python" + PathSep;
+    pythonEnv += slicerBinDir + "/../lib/Slicer3/Plugins" + PathSep;
     pythonEnv += slicerBinDir + "/../Base/GUI/Python";
     vtkKWApplication::PutEnv(const_cast <char *> (pythonEnv.c_str()));
   
@@ -565,6 +566,9 @@ int Slicer3_main(int argc, char *argv[])
       + "\" );\n"
       "sys.path.append ( \""
       + slicerBinDir + "/../Base/GUI/Python"
+      + "\" );\n";
+      "sys.path.append ( \""
+      + slicerBinDir + "/../lib/Slicer3/Plugins"
       + "\" );\n";
   
     v = PyRun_String( TkinitString.c_str(),

@@ -2,34 +2,48 @@ PROJECT(SlicerGUIPython)
 
 IF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
   SET(LIB_NAME "SlicerGUIPython")
+
+# set this one outside the file
+  OPTION(USE_NUMPY "Enable Numpy/Scipy support in Python" OFF) 
+
+  IF(USE_NUMPY)
+    FIND_PATH(PYTHON_NUMPY arrayobject.h
+      PATHS
+        ${PYTHON_INCLUDE_PATH}
+        ${PYTHON_INCLUDE_PATH}/../lib/
+        ${PYTHON_INCLUDE_PATH}/../lib/site-packages/numpy/core/include/numpy
+        ${PYTHON_INCLUDE_PATH}/../lib/site-packages/numpy/numarray/numpy
+        ${PYTHON_INCLUDE_PATH}/../../lib/python2.5/site-packages/numpy/core/include/numpy
+        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.5\\InstallPath]/libs
+        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.4\\InstallPath]/libs
+        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.3\\InstallPath]/libs
+      PATH_SUFFIXES
+        site-packages/numpy/core/include
+        site-packages/numpy/core/include/numpy
+        site-packages/numpy/numarray/numpy
+      DOC "Path to libnumarray.h for numpy module"
+      NO_SYSTEM_ENVIRONMENT_PATH
+    )
+   ADD_DEFINITIONS(-DUSE_NUMPY)
+  ENDIF(USE_NUMPY)
+
   SET(LIB_SRCS _mytkinter.c _slicerPython.cxx)
-  FIND_PATH(PYTHON_NUMPY arrayobject.h
-    PATHS
-      ${PYTHON_INCLUDE_PATH}
-      ${PYTHON_INCLUDE_PATH}/../lib/
-      ${PYTHON_INCLUDE_PATH}/../lib/site-packages/numpy/core/include/numpy
-      ${PYTHON_INCLUDE_PATH}/../lib/site-packages/numpy/numarray/numpy
-      ${PYTHON_INCLUDE_PATH}/../../lib/python2.5/site-packages/numpy/core/include/numpy
-      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.5\\InstallPath]/libs
-      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.4\\InstallPath]/libs
-      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.3\\InstallPath]/libs
-    PATH_SUFFIXES
-      site-packages/numpy/core/include
-      site-packages/numpy/core/include/numpy
-      site-packages/numpy/numarray/numpy
-    DOC "Path to libnumarray.h for numpy module"
-    NO_SYSTEM_ENVIRONMENT_PATH
-  )
 
   INCLUDE_DIRECTORIES(
     ${PYTHON_INCLUDE_PATH}
-    ${PYTHON_NUMPY}
-    ${PYTHON_NUMPY}/../
-    ${PYTHON_NUMPY}/../../../numarray/numpy
     ${VTK_INCLUDE_DIR}
     ${SlicerBase_SOURCE_DIR}
     ${SlicerBase_BINARY_DIR}
   )
+
+  IF(USE_NUMPY)
+    INCLUDE_DIRECTORIES(
+      ${PYTHON_NUMPY}
+      ${PYTHON_NUMPY}/../
+      ${PYTHON_NUMPY}/../../../numarray/numpy
+    )
+  ENDIF(USE_NUMPY)
+
   ADD_LIBRARY(${LIB_NAME} ${LIB_SRCS})
   TARGET_LINK_LIBRARIES(${LIB_NAME} SlicerBaseLogic)
 

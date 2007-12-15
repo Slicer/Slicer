@@ -289,6 +289,14 @@ void vtkCommandLineModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* nod
 void vtkCommandLineModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node )
 {
   bool ret;
+
+  if ( node->GetModuleDescription().GetType() == "PythonModule" )
+    {
+    this->ApplyAndWait ( node );
+    return;
+    }
+
+
   vtkSlicerTask* task = vtkSlicerTask::New();
 
   // Pass the current node as client data to the task.  This allows
@@ -1269,7 +1277,9 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       std::cerr.rdbuf( cerrstringstream.rdbuf() );
 
       // run the module
-      (*entryPoint)(commandLineAsString.size(), command);
+      if ( entryPoint != NULL ) {
+        (*entryPoint)(commandLineAsString.size(), command);
+      }
 
       // report the output
       if (coutstringstream.str().size() > 0)

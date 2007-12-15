@@ -6,15 +6,18 @@
 #else
 #include <Python.h>
 #endif
-// #include <../lib/site-packages/numpy/numarray/numpy/libnumarray.h>
+
+#ifdef USE_NUMPY
 #include <libnumarray.h>
 #include <arrayobject.h>
+#endif
 
 #include "vtkSystemIncludes.h"
 #include "vtkTclUtil.h"
 #include "vtkImageData.h"
 
-// Sould look like vtkImageDataToArray interp imagedata
+#ifdef USE_NUMPY
+// Should look like vtkImageDataToArray interp imagedata
 static PyObject* SlicerPython_ToArray ( PyObject* self, PyObject* args )
 {
   long addr;
@@ -86,5 +89,19 @@ PyMODINIT_FUNC init_slicer(void) {
   import_array();
   Py_InitModule ( "_slicer", moduleMethods );
 }
+
+#else
+
+static PyMethodDef moduleMethods[] =
+{
+  /* {"ArrayTovtkImageData", SlicerPython_ToArray, METH_VARARGS}, */
+  {NULL, NULL, 0, NULL}
+};
+
+PyMODINIT_FUNC init_slicer(void) {
+  Py_InitModule ( "_slicer", moduleMethods );
+}
+
+#endif
 
 #endif

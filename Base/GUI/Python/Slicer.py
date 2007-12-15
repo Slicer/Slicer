@@ -181,6 +181,7 @@ class Plugin:
         logic.SetAndObserveMRMLScene ( self.slicer.MRMLScene )
         logic.SetApplicationLogic ( self.slicer.ApplicationGUI.GetApplicationLogic() )
         logic.SetTemporaryDirectory ( self.slicer.Application.GetTemporaryDirectory() )
+        print "Apply and Wait"
         logic.ApplyAndWait ( self.module )
 
         status = self.module.GetStatusString()
