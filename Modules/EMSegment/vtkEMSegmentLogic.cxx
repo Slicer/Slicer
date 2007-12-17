@@ -28,6 +28,7 @@
 #include "vtkRigidRegistrator.h"
 #include "vtkBSplineRegistrator.h"
 #include "vtkTransformToGrid.h"
+#include "vtkIdentityTransform.h"
 
 // needed to translate between enums
 #include "EMLocalInterface.h"
@@ -276,7 +277,6 @@ StartPreprocessingTargetIntensityNormalization()
     normFilter->SetPrintInfo
       (m->GetNthTargetVolumeIntensityNormalizationPrintInfo(i));
     normFilter->SetInput(inData);
-    normFilter->SetOutput(outData);
 
     // execute filter
     try
@@ -288,6 +288,7 @@ StartPreprocessingTargetIntensityNormalization()
       vtkWarningMacro("Error executing normalization filter for target image " 
                       << i << ".  Skipping this image.");
       }
+    outData->ShallowCopy(normFilter->GetOutput());
     normFilter->Delete();
     }
     
@@ -620,7 +621,6 @@ SlicerImageReslice(vtkMRMLVolumeNode* inputVolumeNode,
   //
   // set inputs
   resliceFilter->SetInput(inputImageData);
-  resliceFilter->SetOutput(outputImageData);
 
   //
   // set geometry
@@ -669,6 +669,7 @@ SlicerImageReslice(vtkMRMLVolumeNode* inputVolumeNode,
     }
 
   resliceFilter->Update();
+  outputImageData->ShallowCopy(resliceFilter->GetOutput());
 
   //
   // clean up
@@ -742,13 +743,13 @@ SlicerImageResliceWithGrid(vtkMRMLVolumeNode* inputVolumeNode,
   //
   // set inputs
   resliceFilter->SetInput(inputImageData);
-  resliceFilter->SetOutput(outputImageData);
 
   //
   // create total transform
   vtkTransformToGrid* gridSource = vtkTransformToGrid::New();
-  vtkTransform* idTransform = vtkTransform::New();
+  vtkIdentityTransform* idTransform = vtkIdentityTransform::New();
   gridSource->SetInput(idTransform);
+  //gridSource->SetGridScalarType(VTK_FLOAT);
   idTransform->Delete();
 
   //
@@ -764,13 +765,14 @@ SlicerImageResliceWithGrid(vtkMRMLVolumeNode* inputVolumeNode,
     }
   else
     {
-    gridSource->SetGridExtent(outputGeometryData->GetExtent());
-    gridSource->SetGridSpacing(outputGeometryData->GetSpacing());
-    gridSource->SetGridOrigin(outputGeometryData->GetOrigin());
+    gridSource->SetGridExtent(outputImageData->GetExtent());
+    gridSource->SetGridSpacing(outputImageData->GetSpacing());
+    gridSource->SetGridOrigin(outputImageData->GetOrigin());
     }
   gridSource->Update();
   vtkGridTransform* totalTransform = vtkGridTransform::New();
   totalTransform->SetDisplacementGrid(gridSource->GetOutput());
+//  totalTransform->SetInterpolationModeToCubic();
   gridSource->Delete();
   
   //
@@ -805,6 +807,7 @@ SlicerImageResliceWithGrid(vtkMRMLVolumeNode* inputVolumeNode,
     }
 
   resliceFilter->Update();
+  outputImageData->ShallowCopy(resliceFilter->GetOutput());
 
   //
   // clean up
@@ -950,7 +953,21 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
   movingVolumeNode->GetIJKToRASMatrix(IJKToRASMatrixMoving);
   registrator->SetMovingIJKToXYZ(IJKToRASMatrixMoving);
   IJKToRASMatrixMoving->Delete();
-  
+
+  //
+  // use a heuristic to put a knot point about every third of the image
+  int fixedImageDimensions[3];
+  fixedVolumeNode->GetImageData()->GetDimensions(fixedImageDimensions);
+  int maxDim = fixedImageDimensions[0];
+  for (int i = 1; i < 3; ++i)
+    {
+    if (fixedImageDimensions[i] > maxDim)
+      {
+      maxDim = fixedImageDimensions[i];
+      }
+    }
+  double voxelsPerKnotPoint = 16.0 * maxDim / 64.0;
+
   // set parameters ------  
   switch (imageMatchType)
     {
@@ -958,7 +975,7 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineNCCSlow:
       registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetVoxelsPerKnot(16.0);
+      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
       registrator->SetMetricComputationSamplingRatio(0.8);
       registrator->SetNumberOfIterations(100);
       break;
@@ -966,7 +983,7 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineMMISlow:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetVoxelsPerKnot(16.0);
+      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
       registrator->SetMetricComputationSamplingRatio(0.8);
       registrator->SetNumberOfIterations(100);
       break;
@@ -974,7 +991,7 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineNCCFast:
       registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetVoxelsPerKnot(16.0);
+      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
       registrator->SetMetricComputationSamplingRatio(0.2);
       registrator->SetNumberOfIterations(10);
       break;
@@ -982,23 +999,23 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineMMIFast:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetVoxelsPerKnot(16.0);
+      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
       registrator->SetMetricComputationSamplingRatio(0.2);
       registrator->SetNumberOfIterations(10);
       break;
     case 
       vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineNCC:
       registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetVoxelsPerKnot(16.0);
-      registrator->SetMetricComputationSamplingRatio(0.333);
+      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
+      registrator->SetMetricComputationSamplingRatio(0.3333);
       registrator->SetNumberOfIterations(30);
       break;
     case 
       vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineMMI:
     default:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetVoxelsPerKnot(16.0);
-      registrator->SetMetricComputationSamplingRatio(0.333);
+      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
+      registrator->SetMetricComputationSamplingRatio(0.3333);
       registrator->SetNumberOfIterations(30);
       break;
     }
@@ -1030,7 +1047,8 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
     //
     // run registration
     registrator->RegisterImages();
-    fixedRASToMovingRASTransform->DeepCopy(registrator->GetTransform());
+    fixedRASToMovingRASTransform->
+      SetDisplacementGrid(registrator->GetTransform()->GetDisplacementGrid());
 
     if (outputVolumeNode != NULL)
       {
@@ -1377,6 +1395,7 @@ StartPreprocessingAtlasToTargetRegistration()
         // do deformable registration
         std::cerr << "  Registering atlas image B-Spline..." << std::endl;
         fixedRASToMovingRASTransformDeformable = vtkGridTransform::New();
+        fixedRASToMovingRASTransformDeformable->SetInterpolationModeToCubic();
         vtkEMSegmentLogic::
           SlicerBSplineRegister(fixedTargetVolumeNode,
                                 movingAtlasVolumeNode,
@@ -1575,10 +1594,8 @@ StartSegmentation()
   //
   
   // set ouput of the filter to VolumeNode's ImageData
-  // NB: this comment coppied from Gradient Anisotropic Dif. filter:
-  // TODO FIX the bug of the image is deallocated unless we do DeepCopy
   vtkImageData* image = vtkImageData::New(); 
-  image->DeepCopy(segmenter->GetOutput());
+  image->ShallowCopy(segmenter->GetOutput());
   outVolume->SetAndObserveImageData(image);
   image->Delete();
   // make sure the output volume is a labelmap
