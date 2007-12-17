@@ -427,6 +427,13 @@ RegisterImagesInternal3()
       {
       deleteLevel[i] = true;
       }
+    else if (i > 0                                            &&
+             initialSchedule[i][0] == initialSchedule[i-1][0] &&
+             initialSchedule[i][1] == initialSchedule[i-1][1] &&
+             initialSchedule[i][2] == initialSchedule[i-1][2])
+      {
+      deleteLevel[i] = true;
+      }
     else
       {
       deleteLevel[i] = false;
