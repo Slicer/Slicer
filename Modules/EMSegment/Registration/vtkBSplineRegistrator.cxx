@@ -712,16 +712,17 @@ RegisterImagesInternal3()
   vtkITKTransformAdapter* itkTransformWrapper = vtkITKTransformAdapter::New();
   itkTransformWrapper->SetITKTransform(bSplineTransform);
 
-  // only sample the transform at every other voxel in each dimension
+  // allow transform to be sampled at less than every voxel
+  double gridSamplingFactor = 2.0;
   double transformSpacing[3];
   int    transformExtent[6];
   changeInformationFixedImage->GetOutput()->GetSpacing(transformSpacing);  
   changeInformationFixedImage->GetOutput()->GetExtent(transformExtent);  
   for (int i = 0; i < 3; ++i)
     {
-    transformSpacing[i] *= 2.0;
+    transformSpacing[i] *= gridSamplingFactor;
     transformExtent[i*2+1] = 
-      static_cast<int>(std::ceil(transformExtent[i*2+1] / 2.0));
+      static_cast<int>(std::ceil(transformExtent[i*2+1] / gridSamplingFactor));
     }
 
   vtkTransformToGrid* transformGenerator = vtkTransformToGrid::New();
