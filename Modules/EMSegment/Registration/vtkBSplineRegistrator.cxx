@@ -122,7 +122,8 @@ public:
         GetLargestPossibleRegion().GetNumberOfPixels();
       
       metric->
-        SetNumberOfSpatialSamples(this->m_SamplingRatio * numVoxels);
+        SetNumberOfSpatialSamples(static_cast<unsigned long>
+                                  (this->m_SamplingRatio * numVoxels));
       std::cerr << "       Image Size: " << registration->GetFixedImagePyramid()->GetOutput(level)->
         GetLargestPossibleRegion().GetSize() << std::endl;
       std::cerr << "       Number of spatial samples: " 
@@ -413,7 +414,7 @@ RegisterImagesInternal3()
   int maxSide = 128;
   // use a fudge factor of 2, it is ok if it is close
   unsigned long maxVoxels = maxSide*maxSide*maxSide*2;
-  bool deleteLevel[initialNumberOfLevels];
+  std::vector<bool> deleteLevel(initialNumberOfLevels, false);
   int  finalNumberOfLevels   = 0;
   for (int i = 0; i < initialNumberOfLevels; ++i)
     {
@@ -425,6 +426,7 @@ RegisterImagesInternal3()
       }
     if (voxels > maxVoxels)
       {
+      // too many voxels
       deleteLevel[i] = true;
       }
     else if (i > 0                                            &&
@@ -432,11 +434,12 @@ RegisterImagesInternal3()
              initialSchedule[i][1] == initialSchedule[i-1][1] &&
              initialSchedule[i][2] == initialSchedule[i-1][2])
       {
+      // we alredy had this one...
       deleteLevel[i] = true;
       }
     else
       {
-      deleteLevel[i] = false;
+      // its ok, use it
       ++finalNumberOfLevels;
       }
     }
