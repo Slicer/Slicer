@@ -76,7 +76,7 @@ public:
   }
 };
 
-template <class TRegistration, class TMetric>
+template <class TRegistration, class TMetric, class TOptimizer>
 class CommandStartLevelUpdate : public itk::Command
 {
 public:
@@ -85,15 +85,23 @@ public:
   typedef itk::SmartPointer<Self>    Pointer;
   itkNewMacro( Self );
 protected:
-  CommandStartLevelUpdate() { this->m_SamplingRatio = 0.33; }
+  CommandStartLevelUpdate() 
+  { 
+    this->m_SamplingRatio = 0.33; 
+    this->m_NumberOfIterations = 10;
+  }
   double m_SamplingRatio;
+  int    m_NumberOfIterations;
 public:
   typedef TRegistration                 RegistrationType;
   typedef RegistrationType   *          RegistrationPointer;
   typedef TMetric                       MetricType;
   typedef MetricType*                   MetricPointer;
+  typedef TOptimizer                    OptimizerType;
+  typedef OptimizerType*                OptimizerPointer;
 
   itkSetMacro(SamplingRatio, double);
+  itkSetMacro(NumberOfIterations, int);
 
   void Execute(const itk::Object *caller, const itk::EventObject & event)
   {
@@ -121,15 +129,36 @@ public:
         registration->GetFixedImagePyramid()->GetOutput(level)->
         GetLargestPossibleRegion().GetNumberOfPixels();
       
+      double samplingRatio = 
+        1.0 -
+        registration->GetCurrentLevel() *
+        (1.0 - m_SamplingRatio) / (registration->GetNumberOfLevels() - 1.0);
+
       metric->
-        SetNumberOfSpatialSamples(static_cast<unsigned long>
-                                  (this->m_SamplingRatio * numVoxels));
-      std::cerr << "       Image Size: " << registration->GetFixedImagePyramid()->GetOutput(level)->
+        SetNumberOfSpatialSamples(samplingRatio * numVoxels);
+
+      std::cerr << "       Image Size: " << 
+        registration->GetFixedImagePyramid()->GetOutput(level)->
         GetLargestPossibleRegion().GetSize() << std::endl;
       std::cerr << "       Number of spatial samples: " 
                 << metric->GetNumberOfSpatialSamples() 
+                << " (" << round(100 * samplingRatio) << "%)"
                 << std::endl;
       }
+
+    OptimizerPointer optimizer = dynamic_cast<OptimizerPointer>
+      (registration->GetOptimizer());
+    if (optimizer)
+    {
+      int numIterations = this->m_NumberOfIterations * 
+        (registration->GetNumberOfLevels() - registration->GetCurrentLevel());
+
+      optimizer->SetMaximumNumberOfIterations(numIterations);
+      optimizer->SetMaximumNumberOfEvaluations(numIterations);
+      std::cerr << "       Max Iterations: " 
+                << optimizer->GetMaximumNumberOfIterations() 
+                << std::endl;
+    }
   }
 };
 
@@ -162,7 +191,7 @@ vtkBSplineRegistrator()
   
   this->ImageToImageMetric   = vtkBSplineRegistrator::MutualInformation;
   this->MetricComputationSamplingRatio = 1.0;
-  this->VoxelsPerKnot = 16.0;
+  this->NumberOfKnotPoints = 5;
 }
 
 //----------------------------------------------------------------------------
@@ -392,28 +421,25 @@ RegisterImagesInternal3()
   typename ITKImageType::SizeType fixedImageSize = 
     fixedImageITKImporter->GetOutput()->GetBufferedRegion().GetSize();  
   
-  // don't downsample too much 
-  int minSide = 64;
-  unsigned int startingShrinkFactors[3];
-  for (int i = 0; i < 3; ++i)
-    {
-    startingShrinkFactors[i] = fixedImageSize[i] / minSide;
-    if (startingShrinkFactors[i] < 1)
-      {
-      startingShrinkFactors[i] = 1;
-      }
-    }
-  
-  fixedImagePyramid->SetNumberOfLevels(4);
-  fixedImagePyramid->SetStartingShrinkFactors(startingShrinkFactors);
-  typename ImagePyramidType::ScheduleType initialSchedule= 
+  // don't downsample too much or too little
+  // int minDesiredSide = 64;
+  int maxDesiredSide = 128;
+
+  int initialNumberOfLevels = 3;
+  int initialShrinkFactor = 
+    static_cast<int>(std::pow(2,static_cast<float>(initialNumberOfLevels)));
+
+  fixedImagePyramid->SetNumberOfLevels(initialNumberOfLevels);
+  fixedImagePyramid->SetStartingShrinkFactors(initialShrinkFactor);
+  movingImagePyramid->SetNumberOfLevels(initialNumberOfLevels);
+  movingImagePyramid->SetStartingShrinkFactors(initialShrinkFactor);
+
+  typename ImagePyramidType::ScheduleType initialSchedule = 
     fixedImagePyramid->GetSchedule();
-  int  initialNumberOfLevels = fixedImagePyramid->GetNumberOfLevels();
-  
-  // don't upsample too much
-  int maxSide = 128;
+
+  // don't upsamaple too much
   // use a fudge factor of 2, it is ok if it is close
-  unsigned long maxVoxels = maxSide*maxSide*maxSide*2;
+  unsigned long maxVoxels = maxDesiredSide*maxDesiredSide*maxDesiredSide*2;
   std::vector<bool> deleteLevel(initialNumberOfLevels, false);
   int  finalNumberOfLevels   = 0;
   for (int i = 0; i < initialNumberOfLevels; ++i)
@@ -424,49 +450,32 @@ RegisterImagesInternal3()
       voxels *= static_cast<unsigned long>
         (static_cast<float>(fixedImageSize[j]) / initialSchedule[i][j]);
       }
-    if (voxels > maxVoxels)
-      {
-      // too many voxels
-      deleteLevel[i] = true;
-      }
-    else if (i > 0                                            &&
-             initialSchedule[i][0] == initialSchedule[i-1][0] &&
-             initialSchedule[i][1] == initialSchedule[i-1][1] &&
-             initialSchedule[i][2] == initialSchedule[i-1][2])
-      {
-      // we alredy had this one...
-      deleteLevel[i] = true;
-      }
-    else
-      {
-      // its ok, use it
-      ++finalNumberOfLevels;
-      }
+     if (voxels > maxVoxels)
+       {
+       // too many voxels
+       deleteLevel[i] = true;
+       }
+     else
+       {
+       // its ok, use it
+       ++finalNumberOfLevels;
+       }
     }
 
   // fill in the final schedule
   typename ImagePyramidType::ScheduleType finalSchedule;
-  if (finalNumberOfLevels > 0)
+  finalSchedule.SetSize(finalNumberOfLevels, 3);
+  int finalScheduleIndex = 0;
+  for (int i = 0; i < initialNumberOfLevels; ++i)
     {
-    finalSchedule.SetSize(finalNumberOfLevels, 3);
-    int finalScheduleIndex = 0;
-    for (int i = 0; i < initialNumberOfLevels; ++i)
+    if (!deleteLevel[i])
       {
-      if (!deleteLevel[i])
+      for (int j = 0; j < 3; ++j)
         {
-        for (int j = 0; j < 3; ++j)
-          {
-          finalSchedule[finalScheduleIndex][j] = initialSchedule[i][j];
-          }
-        ++finalScheduleIndex;
+        finalSchedule[finalScheduleIndex][j] = initialSchedule[i][j];
         }
+      ++finalScheduleIndex;
       }
-    }
-  else
-    {
-    finalNumberOfLevels = 1;
-    finalSchedule.SetSize(1, 3);
-    finalSchedule.Fill(1);
     }
 
   fixedImagePyramid->SetNumberOfLevels(finalNumberOfLevels);
@@ -477,6 +486,7 @@ RegisterImagesInternal3()
   multiResRegistration->SetFixedImagePyramid(fixedImagePyramid);
   multiResRegistration->SetMovingImagePyramid(movingImagePyramid);
   multiResRegistration->SetNumberOfLevels(finalNumberOfLevels);
+
   std::cerr << "DONE" << std::endl;
       
   //
@@ -596,16 +606,7 @@ RegisterImagesInternal3()
   TransformType::RegionType::SizeType  gridBorderSize;
   TransformType::RegionType::SizeType  totalGridSize;
 
-  TransformType::RegionType::SizeType  numberOfKnots;  
-  for (int i  = 0; i < 3; ++i)
-    {
-    numberOfKnots[i] = 
-      static_cast<int>(std::floor(fixedImageSize[i] / this->VoxelsPerKnot));
-    }
-
-  gridSizeOnImage[0] = numberOfKnots[0];
-  gridSizeOnImage[1] = numberOfKnots[1];
-  gridSizeOnImage[2] = numberOfKnots[2];
+  gridSizeOnImage.Fill(this->NumberOfKnotPoints);
   gridBorderSize.Fill(3);
   totalGridSize = gridSizeOnImage + gridBorderSize;
   bSplineRegion.SetSize(totalGridSize);
@@ -627,11 +628,9 @@ RegisterImagesInternal3()
   bSplineTransform->SetGridRegion(bSplineRegion);
   unsigned int numberOfParameters = bSplineTransform->GetNumberOfParameters();
 
-  //std::cerr << "   BSpline spacing: " << spacing << std::endl;
-  //std::cerr << "   BSpline origin: "  << origin  << std::endl;
-  //std::cerr << "   BSpline region: "  << bSplineRegion  << std::endl;
-  std::cerr << "   BSpline voxels-per-knot:      "     
-            << this->VoxelsPerKnot << std::endl;
+  std::cerr << "   BSpline spacing: " << spacing << std::endl;
+  std::cerr << "   BSpline origin: "  << origin  << std::endl;
+  std::cerr << "   BSpline region: "  << bSplineRegion  << std::endl;
   std::cerr << "   BSpline knots on image:       "     
             << gridSizeOnImage << std::endl;
   std::cerr << "   BSpline knots total:          "     
@@ -678,10 +677,14 @@ RegisterImagesInternal3()
     CommandIterationUpdate<OptimizerType>::New();
   optimizer->AddObserver( itk::IterationEvent(), observer );
 
-  typename CommandStartLevelUpdate<MultiResolutionRegistrationType, itk::MattesMutualInformationImageToImageMetric<ITKImageType, ITKImageType> >::Pointer 
+  typename CommandStartLevelUpdate<MultiResolutionRegistrationType, itk::MattesMutualInformationImageToImageMetric<ITKImageType, ITKImageType>, OptimizerType >::Pointer 
     startLevelCommand = 
-    CommandStartLevelUpdate<MultiResolutionRegistrationType, itk::MattesMutualInformationImageToImageMetric<ITKImageType, ITKImageType> >::New();
+    CommandStartLevelUpdate
+    <MultiResolutionRegistrationType, 
+    itk::MattesMutualInformationImageToImageMetric<ITKImageType, ITKImageType>,
+    OptimizerType>::New();
   startLevelCommand->SetSamplingRatio(this->MetricComputationSamplingRatio);
+  startLevelCommand->SetNumberOfIterations(this->NumberOfIterations);
   multiResRegistration->AddObserver(itk::IterationEvent(), startLevelCommand);
 
   //

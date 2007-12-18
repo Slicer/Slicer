@@ -871,23 +871,23 @@ SlicerRigidRegister(vtkMRMLVolumeNode* fixedVolumeNode,
     case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCCFast:
       registrator->SetImageToImageMetricToCrossCorrelation();
       registrator->SetMetricComputationSamplingRatio(0.3333);
-      registrator->SetNumberOfIterations(30);
+      registrator->SetNumberOfIterations(5);
       break;
     case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMIFast:
       registrator->SetImageToImageMetricToMutualInformation();
       registrator->SetMetricComputationSamplingRatio(0.3333);
-      registrator->SetNumberOfIterations(30);
+      registrator->SetNumberOfIterations(5);
       break;
     case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidNCC:
       registrator->SetImageToImageMetricToCrossCorrelation();
       registrator->SetMetricComputationSamplingRatio(0.3333);
-      registrator->SetNumberOfIterations(30);
+      registrator->SetNumberOfIterations(10);
       break;
     case vtkEMSegmentMRMLManager::AtlasToTargetAffineRegistrationRigidMMI:
     default:
       registrator->SetImageToImageMetricToMutualInformation();
       registrator->SetMetricComputationSamplingRatio(0.3333);
-      registrator->SetNumberOfIterations(30);
+      registrator->SetNumberOfIterations(10);
       break;
     }
 
@@ -962,20 +962,6 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
   registrator->SetMovingIJKToXYZ(IJKToRASMatrixMoving);
   IJKToRASMatrixMoving->Delete();
 
-  //
-  // use a heuristic to put a knot point about every third of the image
-  int fixedImageDimensions[3];
-  fixedVolumeNode->GetImageData()->GetDimensions(fixedImageDimensions);
-  int maxDim = fixedImageDimensions[0];
-  for (int i = 1; i < 3; ++i)
-    {
-    if (fixedImageDimensions[i] > maxDim)
-      {
-      maxDim = fixedImageDimensions[i];
-      }
-    }
-  double voxelsPerKnotPoint = 16.0 * maxDim / 64.0;
-
   // set parameters ------  
   switch (imageMatchType)
     {
@@ -983,7 +969,7 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineNCCSlow:
       registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
+      registrator->SetNumberOfKnotPoints(7);
       registrator->SetMetricComputationSamplingRatio(0.8);
       registrator->SetNumberOfIterations(100);
       break;
@@ -991,7 +977,7 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineMMISlow:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
+      registrator->SetNumberOfKnotPoints(7);
       registrator->SetMetricComputationSamplingRatio(0.8);
       registrator->SetNumberOfIterations(100);
       break;
@@ -999,32 +985,32 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineNCCFast:
       registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
+      registrator->SetNumberOfKnotPoints(5);
       registrator->SetMetricComputationSamplingRatio(0.2);
-      registrator->SetNumberOfIterations(10);
+      registrator->SetNumberOfIterations(5);
       break;
     case 
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineMMIFast:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
+      registrator->SetNumberOfKnotPoints(5);
       registrator->SetMetricComputationSamplingRatio(0.2);
-      registrator->SetNumberOfIterations(10);
+      registrator->SetNumberOfIterations(5);
       break;
     case 
       vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineNCC:
       registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
+      registrator->SetNumberOfKnotPoints(7);
       registrator->SetMetricComputationSamplingRatio(0.3333);
-      registrator->SetNumberOfIterations(30);
+      registrator->SetNumberOfIterations(10);
       break;
     case 
       vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineMMI:
     default:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetVoxelsPerKnot(voxelsPerKnotPoint);
+      registrator->SetNumberOfKnotPoints(7);
       registrator->SetMetricComputationSamplingRatio(0.3333);
-      registrator->SetNumberOfIterations(30);
+      registrator->SetNumberOfIterations(10);
       break;
     }
 
