@@ -401,8 +401,8 @@ if {$::GETBUILDTEST(upload) == "true"} {
             set scpdest "${namic_url}/Release/$::env(BUILD)"
         }
         default {
-            puts "Invalid ::GETBUILDTEST(uploadFlag) \"$::GETBUILDTEST(uploadFlag)\", setting scpdest to snapshot value"
-            set scpdest "${namic_path}/Snapshots/$::env(BUILD)"
+            puts "Invalid ::GETBUILDTEST(uploadFlag) \"$::GETBUILDTEST(uploadFlag)\", setting scpdest to nightly value"
+            set scpdest "${namic_path}/Nightly"
         }
     }
 
