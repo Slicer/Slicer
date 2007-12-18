@@ -579,7 +579,14 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
     vtkDebugMacro("ProcessMRMLEvents: got either a fid list display or fid modified evnent or scene modified or fid list modified, calling update from mrml");
     this->UpdateFromMRML();
     }
-      
+     
+  // if the list transfrom was updated...
+  if (event == vtkMRMLTransformableNode::TransformModifiedEvent &&
+      (vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL))
+    {
+    vtkDebugMacro("Got transform modified event, calling update from mrml");
+    this->UpdateFromMRML();
+    } 
   this->ProcessingMRMLEvent = 0;
 }
 
