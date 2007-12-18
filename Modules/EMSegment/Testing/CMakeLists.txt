@@ -31,6 +31,11 @@ SET(EMSEG_RUN_EXTRA_LONG_TESTS   OFF
   )
 MARK_AS_ADVANCED(EMSEG_RUN_EXTRA_LONG_TESTS)
 
+MARK_AS_ADVANCED(EMSEG_RUN_REG_TESTS)
+SET(EMSEG_RUN_REG_TESTS   OFF
+  CACHE BOOL "Enable EMSegment extra, registration tests." 
+  )
+
 # Set to 1 to remove temporary test output files
 SET(EMSEG_REMOVE_TMP_TEST_DATA   ON
   CACHE BOOL "Remove EMSegment temporary test data." FORCE)
@@ -153,6 +158,7 @@ IF( NOT DISABLE_CXX_TESTING )
     PASS_REGULAR_EXPRESSION "version"
     )
 
+  IF ( EMSEG_RUN_REG_TESTS )
   # Does the segmenter work and give the correct answer using the
   # Tutorial2 default parameters (this includes registration)?
   SET(test_name        "EMSegCL_RunReg")
@@ -256,6 +262,7 @@ IF( NOT DISABLE_CXX_TESTING )
     "-Drm_files:STRING=${test_rm_files}"
     -P "${EMSegment_SOURCE_DIR}/Testing/RunDiffRemoveTest.cmake"
     )
+  ENDIF ( EMSEG_RUN_REG_TESTS )
 
   # Does the segmenter work and give the correct answer using the
   # default parameters from the small template scene.
