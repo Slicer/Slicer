@@ -661,9 +661,9 @@ if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
     set fp1 [open "$SLICER_LIB/Insight-build/Utilities/nifti/niftilib/cmake_install.cmake" r]
     set fp2 [open "$SLICER_LIB/Insight-build/Utilities/nifti/znzlib/cmake_install.cmake" r]
     set data1 [read $fp1]
-    puts "data1 is $data1"
+#    puts "data1 is $data1"
     set data2 [read $fp2]
-    puts "data2 is $data2"
+#    puts "data2 is $data2"
 
     close $fp1
     close $fp2
@@ -677,9 +677,9 @@ if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
     set fw2 [open "$SLICER_LIB/Insight-build/Utilities/nifti/znzlib/cmake_install.cmake" w]
 
     puts -nonewline $fw1 $data1
-    puts "data1out is $data1"
+#    puts "data1out is $data1"
     puts -nonewline $fw2 $data2
-    puts "data2out is $data2"
+#    puts "data2out is $data2"
  
     close $fw1
     close $fw2
