@@ -468,6 +468,9 @@ public:
   virtual int       GetEnableMultithreading();
   virtual void      SetEnableMultithreading(int isEnabled);
 
+  virtual int       GetUpdateIntermediateData();
+  virtual void      SetUpdateIntermediateData(int shouldUpdate);
+
   virtual int       GetAtlasNumberOfTrainingSamples();
 
   virtual void      GetSegmentationBoundaryMin(int minPoint[3]);

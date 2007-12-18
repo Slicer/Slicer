@@ -88,6 +88,9 @@ public:
   vtkSetMacro(MultithreadingEnabled, int);
   vtkGetMacro(MultithreadingEnabled, int);
 
+  vtkSetMacro(UpdateIntermediateData, int);
+  vtkGetMacro(UpdateIntermediateData, int);
+
   vtkGetStringMacro(WorkingDirectory);
   vtkSetStringMacro(WorkingDirectory);
 
@@ -123,6 +126,7 @@ protected:
   int                                 SaveSurfaceModels;
 
   int                                 MultithreadingEnabled;
+  int                                 UpdateIntermediateData;
 
   int                                 SegmentationBoundaryMin[3];
   int                                 SegmentationBoundaryMax[3];

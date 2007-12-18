@@ -90,6 +90,14 @@
     </boolean>
 
     <boolean>
+      <name>dontUpdateIntermediateData</name>
+      <longflag>dontUpdateIntermediateData</longflag>
+      <description>Disable update of intermediate results.</description>
+      <label>Skip Intermediate Data Update</label>
+      <default>false</default>
+    </boolean>
+
+    <boolean>
       <name>verbose</name>
       <longflag>verbose</longflag>
       <description>Enable verbose output.</description>

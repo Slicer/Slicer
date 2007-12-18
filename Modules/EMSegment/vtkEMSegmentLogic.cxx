@@ -226,6 +226,14 @@ StartPreprocessingTargetIntensityNormalization()
     m->GetWorkingDataNode()->
       SetNormalizedTargetNodeID(normalizedTarget->GetID());
     }
+  else
+    {
+    if (!m->GetUpdateIntermediateData())
+      {
+      std::cerr << "  Using current normalized images." << std::endl;
+      return true;
+      }
+    }
   
   //
   // check that the number of target images did not change
@@ -1115,6 +1123,15 @@ StartPreprocessingTargetToTargetRegistration()
     m->GetWorkingDataNode()->
       SetAlignedTargetNodeID(alignedTarget->GetID());
     }
+  else
+    {
+    if (!m->GetUpdateIntermediateData())
+      {
+      std::cerr << "  Using current target-to-target registered images." 
+                << std::endl;
+      return true;
+      }
+    }
   
   //
   // check that the number of target images did not change
@@ -1296,6 +1313,15 @@ StartPreprocessingAtlasToTargetRegistration()
               << alignedAtlas->GetNumberOfVolumes() << std::endl;
     m->GetWorkingDataNode()->
       SetAlignedAtlasNodeID(alignedAtlas->GetID());
+    }
+  else
+    {
+    if (!m->GetUpdateIntermediateData())
+      {
+      std::cerr << "  Using current atlas-to-target registered images." 
+                << std::endl;
+      return true;
+      }
     }
   
   //

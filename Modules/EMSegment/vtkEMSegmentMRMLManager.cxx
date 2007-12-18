@@ -2841,6 +2841,36 @@ SetEnableMultithreading(int isEnabled)
 }
 
 //----------------------------------------------------------------------------
+int
+vtkEMSegmentMRMLManager::
+GetUpdateIntermediateData()
+{
+  if (this->GetGlobalParametersNode())
+    {
+    return this->GetGlobalParametersNode()->GetUpdateIntermediateData();
+    }
+  else
+    {
+    return 0;
+    }
+}
+
+//----------------------------------------------------------------------------
+void
+vtkEMSegmentMRMLManager::
+SetUpdateIntermediateData(int shouldUpdate)
+{
+  if (this->GetGlobalParametersNode())
+    {
+    this->GetGlobalParametersNode()->SetUpdateIntermediateData(shouldUpdate);
+    }
+  else
+    {
+    vtkErrorMacro("Attempt to access null global parameter node.");
+    }
+}
+
+//----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
 GetSegmentationBoundaryMin(int minPoint[3])

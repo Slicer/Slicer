@@ -332,6 +332,7 @@ int main(int argc, char** argv)
   std::string resultStandardVolumeFileName = "";
   std::string generateEmptyMRMLSceneAndQuit = "";
   bool dontWriteResults = false;
+  bool dontUpdateIntermediateData = false;
 #endif
 
   bool useDefaultParametersNode = parametersMRMLNodeName.empty();
@@ -808,6 +809,12 @@ int main(int argc, char** argv)
     if (verbose) 
       std::cerr << "Multithreading is " 
                 << (disableMultithreading ? "disabled." : "enabled.")
+                << std::endl;
+
+    emMRMLManager->SetUpdateIntermediateData(!dontUpdateIntermediateData);
+    if (verbose) 
+      std::cerr << "Update intermediate data: " 
+                << (dontUpdateIntermediateData ? "disabled." : "enabled.")
                 << std::endl;
 
     int segmentationBoundaryMin[3];

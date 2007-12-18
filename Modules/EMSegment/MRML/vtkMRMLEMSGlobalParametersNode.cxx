@@ -55,6 +55,7 @@ vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
   this->SaveIntermediateResults       = 0;
   this->SaveSurfaceModels             = 0;
   this->MultithreadingEnabled         = 0;
+  this->UpdateIntermediateData        = 1;
 
   this->SegmentationBoundaryMin[0] = 0;
   this->SegmentationBoundaryMin[1] = 0;
@@ -160,6 +161,8 @@ void vtkMRMLEMSGlobalParametersNode::WriteXML(ostream& of, int nIndent)
        << this->SaveSurfaceModels << "\" ";
     of << indent << "MultithreadingEnabled=\"" 
        << this->MultithreadingEnabled << "\" ";
+    of << indent << "UpdateIntermediateData=\"" 
+       << this->UpdateIntermediateData << "\" ";
 
     of << indent << "IntensityNormalizationParameterNodeIDs=\"";
     vtksys_stl::copy(this->IntensityNormalizationParameterList.begin(),
@@ -268,6 +271,12 @@ void vtkMRMLEMSGlobalParametersNode::ReadXMLAttributes(const char** attrs)
       ss << val;
       ss >> this->MultithreadingEnabled;
       }
+    else if (!strcmp(key, "UpdateIntermediateData"))
+      {
+      vtksys_stl::stringstream ss;
+      ss << val;
+      ss >> this->UpdateIntermediateData;
+      }
     if (!strcmp(key, "IntensityNormalizationParameterNodeIDs"))
       {
       vtksys_stl::stringstream ss;
@@ -311,6 +320,7 @@ void vtkMRMLEMSGlobalParametersNode::Copy(vtkMRMLNode *rhs)
   this->SetSaveIntermediateResults(node->SaveIntermediateResults);
   this->SetSaveSurfaceModels(node->SaveSurfaceModels);
   this->SetMultithreadingEnabled(node->MultithreadingEnabled);
+  this->SetUpdateIntermediateData(node->UpdateIntermediateData);
 
   this->IntensityNormalizationParameterList = 
     node->IntensityNormalizationParameterList;
@@ -362,6 +372,8 @@ void vtkMRMLEMSGlobalParametersNode::PrintSelf(ostream& os,
      << this->SaveSurfaceModels << "\n";
   os << indent << "MultithreadingEnabled: " 
      << this->MultithreadingEnabled << "\n";
+  os << indent << "UpdateIntermediateData: " 
+     << this->UpdateIntermediateData << "\n";
 
   os << indent << "IntensityNormalizationParameterNodeIDs: ";
   vtksys_stl::copy(this->IntensityNormalizationParameterList.begin(),
