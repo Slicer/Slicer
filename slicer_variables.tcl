@@ -160,6 +160,7 @@ switch $::tcl_platform(os) {
 switch $::tcl_platform(os) {
     "SunOS" -
     "Darwin" {
+        set ::VTK_BUILD_SUBDIR ""
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
 
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
@@ -183,6 +184,7 @@ switch $::tcl_platform(os) {
 
     }
     "Linux" {
+        set ::VTK_BUILD_SUBDIR ""
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
 
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
