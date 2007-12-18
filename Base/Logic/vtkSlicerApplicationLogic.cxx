@@ -337,7 +337,7 @@ void vtkSlicerApplicationLogic::PropagateFiducialListSelection()
     {
     return;
     }
-  char *ID = this->SelectionNode->GetActiveFiducialListID();
+  //char *ID = this->SelectionNode->GetActiveFiducialListID();
 
   // set the Fiducials GUI to show the active list? it's watching the node for
   // now
