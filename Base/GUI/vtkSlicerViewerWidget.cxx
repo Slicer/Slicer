@@ -1049,7 +1049,8 @@ void vtkSlicerViewerWidget::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
   vtkActor *actor;
   vtkClipPolyData *clipper = NULL;
   bool hasPolyData = true;
-  if ( actor = vtkActor::SafeDownCast(prop) )
+  actor = vtkActor::SafeDownCast(prop);
+  if ( actor )
     {
     if (this->ClippingOn && modelDisplayNode != NULL && modelDisplayNode->GetClipping())
       {
