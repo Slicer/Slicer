@@ -214,7 +214,14 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
     for (int column = 0; column <= maxColumnDelta; column++)
       {
       // get coordinates in Working IJK space (intIJK)
-      for (int i = 0; i < 3; i++) { intIJK[i] = paintRound (ijk[i]); }
+      for (int i = 0; i < 3; i++) 
+        { 
+        intIJK[i] = paintRound (ijk[i]); 
+        if ( intIJK[i] < 0 )
+          {
+          intIJK[i] = 0;
+          }
+        }
 
       workingPtr = (T *)(self->GetWorkingImage()->GetScalarPointer(intIJK));
       if ( workingPtr ) 
@@ -256,7 +263,14 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
             // check the mask image
             // note: k will always be zero for the mask since it is 2D...
             transform3(maskWorldToIJK, workingWorld, maskIJK);
-            for (int i = 0; i < 2; i++) { intMaskIJK[i] = paintRound(maskIJK[i]); }
+            for (int i = 0; i < 2; i++) 
+              { 
+              intMaskIJK[i] = paintRound(maskIJK[i]); 
+              if ( intMaskIJK[i] < 0 )
+                {
+                intMaskIJK[i] = 0;
+                }
+              }
             intMaskIJK[2] = 0;
 
             void *ptr = self->GetMaskImage()->GetScalarPointer ( 
@@ -307,7 +321,14 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
 
               // get the background pixel
               transform3(backgroundWorldToIJK, workingWorld, bgIJK);
-              for (int i = 0; i < 3; i++) { intbgIJK[i] = paintRound(bgIJK[i]); }
+              for (int i = 0; i < 3; i++) 
+                { 
+                intbgIJK[i] = paintRound(bgIJK[i]); 
+                if ( intbgIJK[i] < 0 )
+                  {
+                  intbgIJK[i] = 0;
+                  }
+                }
               // TODO: bg may not be of type T
               T *bgPtr = (T *) background->GetScalarPointer(intbgIJK);
 
