@@ -6,6 +6,7 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
+#include "vtkKWFrameWithLabel.h"
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
@@ -189,10 +190,11 @@ void vtkSlicerTransformsGUI::BuildGUI ( )
 
 
   // DISPLAY & EDIT FRAME
-  vtkSlicerModuleCollapsibleFrame *displayAndEditFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+//  vtkSlicerModuleCollapsibleFrame *displayAndEditFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+  vtkKWFrameWithLabel *displayAndEditFrame = vtkKWFrameWithLabel::New();
   displayAndEditFrame->SetParent ( this->UIPanel->GetPageWidget ( "Transforms" ) );
   displayAndEditFrame->Create ( );
-  displayAndEditFrame->ExpandFrame ( );
+  // displayAndEditFrame->ExpandFrame ( );
   displayAndEditFrame->SetLabelText ("Display and edit");
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 displayAndEditFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Transforms")->GetWidgetName());
