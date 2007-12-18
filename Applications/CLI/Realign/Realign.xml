@@ -11,37 +11,60 @@
 This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 </acknowledgements>
 <parameters>
-   <label>IO</label>
-    <description>Input/output parameters</description>
-    <image type="scalar">
-      <name>InputVolume</name>
-      <label>Input Volume</label>
-      <channel>input</channel>
-      <longflag>--inputvolume</longflag>
-      <description>Input volume.</description>
-      </image>
-      <point coordinateSystem="ras" multiple="true">
+   <label>Transform</label>
+   <description>Calculate a transform from midline and ACPC fiducial lists, or specify a transform.</description>
+   <point coordinateSystem="ras" multiple="true">
       <name>ACPC</name>
       <label>ACPC Line</label>
       <longflag>--acpc</longflag>
       <description>ACPC line</description>
       <default>0,0,0</default>
-      </point>
-      <point coordinateSystem="ras" multiple="true">
+   </point>
+   <point coordinateSystem="ras" multiple="true">
       <name>Midline</name>
       <label>Midline</label>
       <longflag>--midline</longflag>
       <description>Mid line</description>
       <default>0,0,0</default>
-      </point>
-     <image type="scalar">
+   </point>
+   <transform type="linear">
+      <longflag>transform2</longflag>
+      <description>An output transform - load a calculated transform in this node.</description>
+      <label>Output transform</label>
+      <channel>output</channel>
+   </transform>
+</parameters>
+<parameters>
+  <label>Reslice</label>
+  <description>Apply transform to volume</description>
+  <transform type="linear">
+      <longflag>transform1</longflag>
+      <description>An input transform, apply this to the input volume and get the output volume</description>
+      <label>Input transform</label>
+      <channel>input</channel>
+   </transform>
+   <image type="scalar">
+      <name>InputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <longflag>--inputvolume</longflag>
+      <description>Input volume.</description>
+   </image>
+   <image type="scalar">
       <name>OutputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <longflag>--outputvolume</longflag>
       <description>Output realigned volume, optional (if not set, just returns the output transform)</description>
-    </image>
-    <string-enumeration>
+   </image>
+   <image type="scalar">
+      <name>ReferenceVolume</name>
+      <label>Reference Volume</label>
+      <channel>input</channel>
+      <longflag>--referencevolume</longflag>
+      <description>Reference volume, optional. If set, use the RAS/IJK transform from this volume instead of the input volume.</description>
+   </image>
+   <string-enumeration>
       <name>InterpolationType</name>
       <label>Interpolation Type</label>
       <description>Controls the type of interpolation done when reslicing</description>
@@ -50,19 +73,10 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>Linear</element>
       <element>Cubic</element>
       <default>NearestNeighbor</default> 
-    </string-enumeration>
-    <transform type="linear">
-      <longflag>transform1</longflag>
-      <description>An input transform</description>
-      <label>Input transform</label>
-      <channel>input</channel>
-    </transform>
-    <transform type="linear">
-      <longflag>transform2</longflag>
-      <description>An output transform</description>
-      <label>Output transform</label>
-      <channel>output</channel>
-    </transform>
+   </string-enumeration>
+</parameters>
+<parameters>
+  <label>Debug</label>
     <boolean>
       <name>debugSwitch</name>
       <label>Debug</label>

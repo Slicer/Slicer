@@ -17,7 +17,6 @@ Version:   $Revision: 3328 $
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 #include "vtkITKImageWriter.h"
 #include "vtkImageData.h"
-#include "vtkImageChangeInformation.h"
 #include "vtkTransform.h"
 #include "vtkPolyData.h"
 #include "vtkMath.h"
@@ -77,6 +76,7 @@ int main(int argc, char * argv[])
       {
       std::cout << "The input volume is " << InputVolume.c_str() << std::endl;
       std::cout << "The output volume is " << OutputVolume.c_str() << std::endl;
+      std::cout << "The reference volume is " << ReferenceVolume.c_str() << std::endl;
       std::cout << "The ACPC fiducial list is " <<  std::endl;
       for (int i = 0; i<ACPC.size(); i++)
         {
@@ -130,11 +130,17 @@ int main(int argc, char * argv[])
 
     // set up filter watcher
     float numFilterSteps = 2.0;
+    if (strcmp(ReferenceVolume.c_str(), "") != 0)
+      {
+      // add a filter step for reading the reference volume
+      numFilterSteps++;
+      }
     // increment after each filter is run
     float currentFilterOffset = 0.0;
+
+    // used to pass the space directiosn matrix to the writer
+    vtkMatrix4x4 *RasToIjkOut = vtkMatrix4x4::New();
     
-    // read in the input volume
-    vtkImageChangeInformation *ici = NULL;
     if (strcmp(InputVolume.c_str(), "") != 0)
       {
       reader = vtkITKArchetypeImageSeriesScalarReader::New();
@@ -153,14 +159,8 @@ int main(int argc, char * argv[])
       reader->SetDesiredCoordinateOrientationToNative();
       reader->SetUseNativeOriginOn();
       reader->Update();
-
-      ici = vtkImageChangeInformation::New();
-      ici->SetInput (reader->GetOutput());
-      ici->SetOutputSpacing( 1, 1, 1 );
-      ici->SetOutputOrigin( 0, 0, 0 );
-      ici->Update();
-
-      image = ici->GetOutput();
+      
+      image = reader->GetOutput();
       image->Update();
       }
     
@@ -181,25 +181,41 @@ int main(int argc, char * argv[])
       if (transformNode != NULL)
         {
         trans->SetMatrix(transformNode->GetMatrixTransformToParent());
+        if (debugSwitch)
+          {
+          std::cout << "Set the matrix to:" << std::endl;
+          trans->GetMatrix()->Print(std::cout);
+          }
         }
       }
     else
       {
       if (Midline.size() > 0)
         {
+        if (debugSwitch)
+          {
+          std::cout << "Doing Midline..." << std::endl;
+          }
         vtkMath *math = vtkMath::New();
         vtkPolyData *polydata = vtkPolyData::New();
         vtkPolyData *output = vtkPolyData::New();
         vtkPoints *points = vtkPoints::New();
+        points->SetDataTypeToDouble();
         int x = Midline.size();
         if (debugSwitch)
           {
-          std::cout << "Total number of midline points " << x << std::endl;
+          std::cout << "Total number of midline points " << x << ", points data type = " << points->GetDataType() << std::endl;
           }
         points->SetNumberOfPoints(x);
         for (int i = 0; i < x; i++)
           {
           points->SetPoint(i, Midline[i][0], Midline[i][1], Midline[i][2]);
+          if (debugSwitch)
+            {
+            double pt[3];
+            points->GetPoint(i, pt);
+            std::cout << "Set midline point " << i << " to " <<pt[0] << ", " << pt[1] << "," <<pt[2] << "\n";
+            }
           }
         polydata->SetPoints(points);
         
@@ -308,7 +324,7 @@ int main(int argc, char * argv[])
       {
       std::cout << "Determinant " << det << std::endl;
       }
-    std::cout << "Output Matrix = " << std::endl;
+    std::cout << "RAS to RAS Matrix to apply = " << std::endl;
     trans->GetMatrix()->Print(std::cout);
 
     // transform and save to output volume if requested
@@ -316,17 +332,94 @@ int main(int argc, char * argv[])
       {
       if (debugSwitch)
         {
-        std::cout << "Doing resample...\n";
+        std::cout << "Doing resample...copying image and changing information\n";
         }
       vtkImageData *Target = vtkImageData::New();
       Target->DeepCopy(image);
-      vtkImageChangeInformation *iciOut = vtkImageChangeInformation::New();
-      iciOut->CenterImageOn();
-      iciOut->SetInput(Target);
+      
+      // space directions vector is encoded in here
+      vtkMatrix4x4 *RasToIjkIn = reader->GetRasToIjkMatrix();
+      vtkMatrix4x4 *IjkToRasIn  = vtkMatrix4x4::New();
+      IjkToRasIn->DeepCopy(RasToIjkIn);;
+      IjkToRasIn->Invert();
+
+      vtkTransform *IjkToRasInTransform = vtkTransform::New();
+      IjkToRasInTransform->SetMatrix(IjkToRasIn);
+      
+      // for now until get a reference transform
+      if (strcmp(ReferenceVolume.c_str(), "") != 0)
+        {
+        vtkITKArchetypeImageSeriesReader* refReader = vtkITKArchetypeImageSeriesScalarReader::New();
+        vtkPluginFilterWatcher watchReader(refReader,
+                                           "Read Volume",
+                                           CLPProcessInformation,
+                                           1.0/numFilterSteps,
+                                           currentFilterOffset/numFilterSteps);
+        if (debugSwitch)
+          {
+          watchReader.QuietOn();
+          }
+        currentFilterOffset++;
+        refReader->SetArchetype(ReferenceVolume.c_str());
+        refReader->SetOutputScalarTypeToNative();
+        refReader->SetDesiredCoordinateOrientationToNative();
+        refReader->SetUseNativeOriginOn();
+        refReader->Update();
+        // then get the matrix
+        RasToIjkOut = refReader->GetRasToIjkMatrix();
+        if (debugSwitch)
+          {
+          std::cout << "Got the reference volume " << ReferenceVolume.c_str() << " ras to ijk matrix:\n";
+          RasToIjkOut->Print(std::cout);
+          }
+        refReader->Delete();
+        }
+      else
+        {
+        RasToIjkOut->DeepCopy(RasToIjkIn);
+         if (debugSwitch)
+          {
+          std::cout << "No reference volume, using the input volume's ras to ijk matrix.\n";
+          }
+        }
+      
+      vtkTransform *RasToIjkOutTransform = vtkTransform::New();
+      RasToIjkOutTransform->SetMatrix(RasToIjkOut);
+      vtkTransform *ResliceTransform = vtkTransform::New();
+      //ResliceTransform->PostMultiply();
+      
+      // build up the reslice transform from the calculated or passed in
+      // transform,  the IJK to RAS transform from the input volume, and the
+      // RAS to IJK transform from either the input volume or the reference
+      // volume, if using it.
+      // reslice transfrom = RAS to IJK out . RAS to RAS . IJK to RAS in
+      
+      // the main transform that we wish to apply is an RAS->RAS transform, so
+      // first put the input image data into RAS space
+      ResliceTransform->SetMatrix(IjkToRasIn);
+      // then apply the transform
+      ResliceTransform->Concatenate(trans);
+      // now apply the out transform to put the image back into IJK space
+      ResliceTransform->Concatenate(RasToIjkOut);
+      
+      if (debugSwitch)
+        {        
+        std::cout << "Input volume's RAS to IJK matrix = " << std:: endl;
+        RasToIjkIn->Print(std::cout);
+        std::cout << "Input volume's inverted matrix, IJK to RAS: \n";
+        IjkToRasIn->Print(std::cout);
+        std::cout << "trans = " << std::endl;
+        trans->GetMatrix()->Print(std::cout);
+        std::cout << "Reslice transform = " << std::endl;
+        ResliceTransform->GetMatrix()->Print(std::cout);
+        }
+
+     
+      
       // Set the input of the vtkImageReslice
       vtkImageReslice *reslice = vtkImageReslice::New();
-      reslice->SetInput(iciOut->GetOutput());
-      reslice->SetResliceTransform(trans);
+      reslice->SetInput(Target);
+      
       // if doing a full resample, would set the output spacing to user
       // entered values, as well as the extent
       if (InterpolationType.length() > 0)
@@ -344,35 +437,27 @@ int main(int argc, char * argv[])
           reslice->SetInterpolationModeToLinear();
           }
         }
+
+      
+       reslice->SetResliceTransform(ResliceTransform);
+
       // reslice!
       reslice->Update();
 
       // save, use the itk writer so that memory mapping works
       vtkITKImageWriter *writer = vtkITKImageWriter::New();
-      if (debugSwitch)
-        {
-        writer->DebugOn();
-        }
+      writer->SetRasToIJKMatrix(RasToIjkOut);
       writer->SetFileName(OutputVolume.c_str());
       writer->SetInput(reslice->GetOutput());
       writer->Write();
-
+        
       writer->Delete();
       reslice->Delete();
-      iciOut->Delete();
       Target->Delete();
+      
       }
 
-    // clean up
-    if (ici)
-      {
-      if (debugSwitch)
-        {
-        std::cout << "Deleting ici" << endl;
-        }
-      ici->SetInput(NULL);
-      ici->Delete();
-      }
+    // clean up   
     if (debugSwitch)
       {
       std::cout << "Deleting reader" << endl;
