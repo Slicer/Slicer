@@ -822,7 +822,7 @@ void vtkQdecModuleGUI::UpdateGUI ()
         }
       // set up the correct number of columns
       if ((1 + discreteFactors.size() + continuousFactors.size()) !=
-          this->MultiColumnList->GetWidget()->GetNumberOfColumns())
+          (unsigned int)this->MultiColumnList->GetWidget()->GetNumberOfColumns())
         {
         this->MultiColumnList->GetWidget()->DeleteAllColumns();
         this->MultiColumnList->GetWidget()->AddColumn("Subject");
@@ -885,7 +885,7 @@ void vtkQdecModuleGUI::UpdateGUI ()
       {
       // update the questions menu
       unsigned int numQuestions = this->GetLogic()->GetNumberOfQuestions();
-      if (numQuestions != this->QuestionMenu->GetMenu()->GetNumberOfItems())
+      if (numQuestions != (unsigned int)(this->QuestionMenu->GetMenu()->GetNumberOfItems()))
         {
         // clear out the questions menu and reset the text
         this->QuestionLabel->SetText("Question: ");
