@@ -27,6 +27,7 @@ SET(TCLFILES
   EffectSWidget.tcl Labeler.tcl
   SaveIslandEffect.tcl ThresholdEffect.tcl RemoveIslandsEffect.tcl
   LevelTracingEffect.tcl
+  ImplicitRectangleEffect.tcl
   WandEffect.tcl
   ChangeIslandEffect.tcl ChangeLabelEffect.tcl
 )

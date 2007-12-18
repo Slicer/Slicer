@@ -88,7 +88,7 @@ itcl::body EditBox::findEffects { {path ""} } {
 
   set _effects(list,disabled) {
     ChooseColor 
-    ImplicitCube ImplicitEllipse ImplicitRectangle 
+    ImplicitCube ImplicitEllipse 
     ConnectedComponents 
     SlurpColor  Wand
     DeleteFiducials LabelOpacity
@@ -105,6 +105,9 @@ itcl::body EditBox::findEffects { {path ""} } {
   # combined list of all effects
   set _effects(list) [concat $_effects(list,mouseTools) $_effects(list,operations)]
 
+  # for each effect
+  # - look for implementation class of pattern *Effect
+  # - get an icon  for the pushbutton
   set iconDir $::env(SLICER_HOME)/lib/Slicer3/Modules/Packages/Editor/ImageData
   set reader [vtkPNGReader New]
   foreach effect $_effects(list) {

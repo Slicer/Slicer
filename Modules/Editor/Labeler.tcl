@@ -112,9 +112,9 @@ itcl::body Labeler::makeMaskImage {polyData} {
   #
   set maskIJKToRAS [vtkMatrix4x4 New]
   $maskIJKToRAS DeepCopy [$_sliceNode GetXYToRAS]
-  $o(xyPoints) Modified
-  set xyBounds [$o(xyPoints) GetBounds]
-  foreach {xlo xhi ylo yhi zlo zhi} $xyBounds {}
+  [$polyData GetPoints] Modified
+  set bounds [$polyData GetBounds]
+  foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
   set xlo [expr $xlo - 1]
   set ylo [expr $ylo - 1]
   set originRAS [$this xyToRAS "$xlo $ylo"]
@@ -127,9 +127,6 @@ itcl::body Labeler::makeMaskImage {polyData} {
   # - needs to include the full region of the polygon
   # - plus a little extra 
   #
-  [$polyData GetPoints] Modified
-  set bounds [$polyData GetBounds]
-  foreach {xlo xhi ylo yhi zlo zhi} $bounds {}
   # round to int and add extra pixel for both sides
   # -- TODO: figure out why we need to add buffer pixels on each 
   #    side for the width in order to end up with a single extra
@@ -154,7 +151,7 @@ itcl::body Labeler::makeMaskImage {polyData} {
   $translate Translate [expr 2 + -1. * $xlo] [expr 1 + -1. * $ylo] 0
   set drawPoints [vtkPoints New]
   $drawPoints Reset
-  $translate TransformPoints $o(xyPoints) $drawPoints
+  $translate TransformPoints [$polyData GetPoints] $drawPoints
   $translate Delete
   $drawPoints Modified
 
