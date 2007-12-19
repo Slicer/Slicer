@@ -319,8 +319,8 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     }
     //Start dialog right here
     Superclass::Init(gui);
-    this->Gui->Script("bind all <Any-ButtonPress> {%s SetButtonDown 1}",this->GetTclName());
-    this->Gui->Script("bind all <Any-ButtonRelease> {%s SetButtonDown 0}",this->GetTclName());
+    this->Gui->Script("bind all <Any-ButtonPress> {if {[info command %s] != {}} {%s SetButtonDown 1}}",this->GetTclName(), this->GetTclName());
+    this->Gui->Script("bind all <Any-ButtonRelease> {if {[info command %s] != {}} {%s SetButtonDown 0}}",this->GetTclName(), this->GetTclName());
 
     //Create a notebook
     this->NB_Details=vtkKWNotebook::New();

@@ -121,8 +121,8 @@ void vtkSlicerVRLabelmapHelper::Rendering(void)
 void vtkSlicerVRLabelmapHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
     Superclass::Init(gui);
-    this->Gui->Script("bind all <Any-ButtonPress> {%s SetButtonDown 1}",this->GetTclName());
-    this->Gui->Script("bind all <Any-ButtonRelease> {%s SetButtonDown 0}",this->GetTclName());
+    this->Gui->Script("bind all <Any-ButtonPress> {if {[info command %s] != {}} {%s SetButtonDown 1}}",this->GetTclName(), this->GetTclName());
+    this->Gui->Script("bind all <Any-ButtonRelease> {if {[info command %s] != {}} {%s SetButtonDown 0}}",this->GetTclName(), this->GetTclName());
 
     this->LM_OptionTree=vtkSlicerLabelMapWidget::New();
     this->LM_OptionTree->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
