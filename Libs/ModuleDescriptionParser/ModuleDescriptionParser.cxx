@@ -814,6 +814,10 @@ startElement(void *userData, const char *element, const char **attrs)
         {
         parameter->SetFileExtensionsAsString(attrs[2*attr+1]);
         }
+      else if ((strcmp(attrs[2*attr], "reference") == 0))
+        {
+        parameter->SetReference(attrs[2*attr+1]);
+        }
       else
         {
         std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr]) + "\" is not a valid attribute for \"" + name + "\". Only \"multiple\", \"fileExtensions\" and \"type\" are accepted.");
@@ -946,11 +950,6 @@ startElement(void *userData, const char *element, const char **attrs)
             (strcmp(attrs[2*attr+1], "false") == 0))
           {
           parameter->SetMultiple(attrs[2*attr+1]);
-          if (strcmp(attrs[2*attr+1], "true") == 0)
-            {
-            parameter->SetCPPType("std::vector<std::string>");
-            parameter->SetArgType("std::string");
-            }
           }
         else
           {
@@ -965,7 +964,26 @@ startElement(void *userData, const char *element, const char **attrs)
           return;
           }
         }
-      else if ((strcmp(attrs[2*attr], "type") == 0))
+      else if ((strcmp(attrs[2*attr], "aggregate") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "true") == 0) ||
+            (strcmp(attrs[2*attr+1], "false") == 0))
+          {
+          parameter->SetAggregate(attrs[2*attr+1]);
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid argument for the attribute \"aggregate\". Only \"true\" and \"false\" are accepted.");
+          if (ps->ErrorDescription.size() == 0)
+            {
+            ps->ErrorDescription = error;
+            ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+            ps->Error = true;
+            }
+          ps->OpenTags.push(name);
+          return;
+          }
+        }      else if ((strcmp(attrs[2*attr], "type") == 0))
         {
         if ((strcmp(attrs[2*attr+1], "fiberbundle") == 0) ||
             (strcmp(attrs[2*attr+1], "model") == 0))
@@ -991,7 +1009,124 @@ startElement(void *userData, const char *element, const char **attrs)
         }
       else
         {
-        std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr]) + "\" is not a valid attribute for \"" + name + "\". Only \"multiple\" and \"fileExtensions\" are accepted.");
+        std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr]) + "\" is not a valid attribute for \"" + name + "\". Only \"multiple\", \"type\", and \"fileExtensions\" are accepted.");
+        if (ps->ErrorDescription.size() == 0)
+          {
+          ps->ErrorDescription = error;
+          ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+          ps->Error = true;
+          }
+        ps->OpenTags.push(name);
+        return;
+        }
+      }
+    parameter->SetTag(name);
+    if (parameter->GetMultiple() == "true"
+        && parameter->GetAggregate() != "true")
+      {
+      parameter->SetCPPType("std::vector<std::string>");
+      parameter->SetArgType("std::string");
+      }
+    }
+  else if (name == "table")
+    {
+    if (!group || (ps->OpenTags.top() != "parameters"))
+      {
+      std::string error("ModuleDescriptionParser Error: <" + name + "> can only be used inside <parameters> but was found inside <" + ps->OpenTags.top() + ">");
+      if (ps->ErrorDescription.size() == 0)
+        {
+        ps->ErrorDescription = error;
+        ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+        ps->Error = true;
+        }
+      ps->OpenTags.push(name);
+      return;
+      }
+    parameter = new ModuleParameter;
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+
+    // Parse attribute pairs
+    parameter->SetCPPType("std::string");
+    parameter->SetType("scalar");
+    for (int attr=0; attr < (attrCount / 2); attr++)
+      {
+      if ((strcmp(attrs[2*attr], "multiple") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "true") == 0) ||
+            (strcmp(attrs[2*attr+1], "false") == 0))
+          {
+          parameter->SetMultiple(attrs[2*attr+1]);
+          if (strcmp(attrs[2*attr+1], "true") == 0)
+            {
+            parameter->SetCPPType("std::vector<std::string>");
+            parameter->SetArgType("std::string");
+            }
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid argument for the attribute \"multiple\". Only \"true\" and \"false\" are accepted.");
+          if (ps->ErrorDescription.size() == 0)
+            {
+            ps->ErrorDescription = error;
+            ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+            ps->Error = true;
+            }
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
+      else if ((strcmp(attrs[2*attr], "reference") == 0))
+        {
+        parameter->SetReference(attrs[2*attr+1]);
+        }
+      else if ((strcmp(attrs[2*attr], "hidden") == 0))
+        {
+        if ((strcmp(attrs[2*attr+1], "true") == 0) ||
+            (strcmp(attrs[2*attr+1], "false") == 0))
+          {
+          parameter->SetHidden(attrs[2*attr+1]);
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid argument for the attribute \"hidden\". Only \"true\" and \"false\" are accepted.");
+          if (ps->ErrorDescription.size() == 0)
+            {
+            ps->ErrorDescription = error;
+            ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+            ps->Error = true;
+            }
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
+      else if ((strcmp(attrs[2*attr], "type") == 0))
+        {
+        // Need to add other tables with context (similar to color
+        // tables) as well as add general CSV files
+        if ((strcmp(attrs[2*attr+1], "color") == 0))
+          {
+          parameter->SetType(attrs[2*attr+1]);
+          }
+        else
+          {
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid value for the attribute \"" + "type" + "\". Only \"color\" is currently accepted.");
+          if (ps->ErrorDescription.size() == 0)
+            {
+            ps->ErrorDescription = error;
+            ps->ErrorLine = XML_GetCurrentLineNumber(ps->Parser);
+            ps->Error = true;
+            }
+          ps->OpenTags.push(name);
+          return;
+          }
+        }
+      else if ((strcmp(attrs[2*attr], "fileExtensions") == 0))
+        {
+        parameter->SetFileExtensionsAsString(attrs[2*attr+1]);
+        }
+      else
+        {
+        std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr]) + "\" is not a valid attribute for \"" + name + "\". Only \"multiple\", \"hidden\", \"reference\", \"type\", and \"fileExtensions\" are accepted.");
         if (ps->ErrorDescription.size() == 0)
           {
           ps->ErrorDescription = error;
@@ -1076,6 +1211,11 @@ endElement(void *userData, const char *element)
     ps->CurrentParameter = 0;
     }
   else if (group && parameter && (name == "geometry"))
+    {
+    ps->CurrentGroup->AddParameter(*parameter);
+    ps->CurrentParameter = 0;
+    }
+  else if (group && parameter && (name == "table"))
     {
     ps->CurrentGroup->AddParameter(*parameter);
     ps->CurrentParameter = 0;

@@ -309,6 +309,29 @@ INCLUDE_DIRECTORIES(
         ${SlicerBaseLogic_SOURCE_DIR}  ${SlicerBaseLogic_BINARY_DIR})
 
 #####################
+
+SET (CLP MultipleModelsExample)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPluginFilterWatcher.cxx )
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+LINK_DIRECTORIES(${vtkITK_LIB_DIR})
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+# TODO: remove SlicerBaseLogic once pass in color node information
+TARGET_LINK_LIBRARIES (${CLP}
+    vtkITK vtkImaging vtkGraphics vtkIO
+    ITKIO
+    ModuleDescriptionParser
+    MRML
+    SlicerBaseLogic
+)
+INCLUDE_DIRECTORIES(
+        ${vtkITK_SOURCE_DIR} 
+        ${vtkITK_BINARY_DIR} 
+        ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR} 
+        ${SlicerBaseLogic_SOURCE_DIR}  ${SlicerBaseLogic_BINARY_DIR})
+
+
+#####################
 SET (CLP GrayscaleModelMaker)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPluginFilterWatcher.cxx)

@@ -68,6 +68,26 @@ public:
   {
     return this->Type;
   }
+
+  virtual void SetReference(const std::string &ref)
+  {
+    this->Reference = ref;
+  }
+
+  virtual std::string GetReference() const
+  {
+    return this->Reference;
+  }
+
+  virtual void SetHidden(const std::string &hidden)
+  {
+    this->Hidden = hidden;
+  }
+
+  virtual std::string GetHidden() const
+  {
+    return this->Hidden;
+  }
   
   virtual void SetArgType(const std::string &argType)
   {
@@ -219,6 +239,16 @@ public:
     return this->Multiple;
   }
 
+  virtual void SetAggregate(const std::string &aggregate)
+  {
+    this->Aggregate = aggregate;
+  }
+
+  virtual std::string GetAggregate() const
+  {
+    return this->Aggregate;
+  }
+  
   virtual void SetFileExtensionsAsString(const std::string &extensions);
 
   virtual std::string GetFileExtensionsAsString() const
@@ -259,6 +289,8 @@ private:
   std::string Label;
   std::string CPPType;
   std::string Type;
+  std::string Reference;
+  std::string Hidden;
   std::string ArgType;
   std::string StringToType;
   std::string Default;
@@ -271,6 +303,7 @@ private:
   std::string Channel;
   std::string Index;
   std::string Multiple;
+  std::string Aggregate;
   std::string FileExtensionsAsString;
   mutable std::vector<std::string> FileExtensions;
   std::string CoordinateSystem;

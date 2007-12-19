@@ -64,6 +64,8 @@ protected:
                                      const std::vector<std::string>& extensions,
                                      CommandLineModuleType commandType) const;
   std::string ConstructTemporarySceneFileName(vtkMRMLScene *scene);
+  std::string FindHiddenNodeID(const ModuleDescription& d,
+                               const ModuleParameter& p);
   //ETX
 
   // The method that runs the command line module

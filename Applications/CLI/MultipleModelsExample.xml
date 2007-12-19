@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Model Generation</category>
+  <title>Multiple models example</title>
+  <description>
+Create 3D surface models from segmented data.
+
+This example exports colors and imports a set of models automatically.
+
+If specify a list of Labels, it will over ride any start/end label settings.
+</description>
+  <version>3.0</version>
+  <documentation-url>http://www.slicer.org</documentation-url>
+  <license>slicer3</license>
+  <contributor>Nicole Aucoin</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
+<parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image type="label">
+      <name>InputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input label map.</description>
+    </image>
+    <table type="color" reference="InputVolume" hidden="true">
+      <name>ColorTable</name>
+      <channel>input</channel>
+      <longflag>color</longflag>
+      <description>Color table to make labels to colors and objects</description>
+    </table>
+    <integer-enumeration>
+     <name>NumberOfModels</name>
+     <label>Number of models</label>
+     <description>How many example models to return?</description>
+     <longflag>--numberOfModels</longflag>
+     <default>3</default>
+     <element>1</element>
+     <element>2</element>
+     <element>3</element>
+    </integer-enumeration>        
+    <geometry fileExtensions=".mrml" multiple="true" aggregate="true">
+      <name>Models</name>
+      <channel>output</channel>
+      <label>Models</label>
+      <longflag>--models</longflag>
+      <description>Generated models</description>
+    </geometry>
+  </parameters>
+</executable>

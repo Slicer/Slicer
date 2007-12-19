@@ -38,6 +38,8 @@ ModuleParameter::ModuleParameter()
     this->Label = "";
     this->CPPType = "";
     this->Type = "";
+    this->Reference = "";
+    this->Hidden = "false";
     this->ArgType = "";
     this->StringToType = "";
     this->Default = "";
@@ -49,7 +51,8 @@ ModuleParameter::ModuleParameter()
     this->Step = "";
     this->Channel = "";
     this->Index = "";
-    this->Multiple = "";
+    this->Multiple = "false";
+    this->Aggregate = "false";
     this->FileExtensionsAsString = "";        
     this->CoordinateSystem = "";
 }
@@ -62,6 +65,8 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
   this->Label = parameter.Label;
   this->CPPType = parameter.CPPType;
   this->Type = parameter.Type;
+  this->Reference = parameter.Reference;
+  this->Hidden = parameter.Hidden;
   this->ArgType = parameter.ArgType;
   this->StringToType = parameter.StringToType;
   this->Default = parameter.Default;
@@ -74,6 +79,7 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
   this->Channel = parameter.Channel;
   this->Index = parameter.Index;
   this->Multiple = parameter.Multiple;
+  this->Aggregate = parameter.Aggregate;
   this->FileExtensionsAsString = parameter.FileExtensionsAsString;
   this->FileExtensions = parameter.FileExtensions;
   this->Elements = parameter.Elements;
@@ -88,6 +94,7 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->Label = parameter.Label;
   this->CPPType = parameter.CPPType;
   this->Type = parameter.Type;
+  this->Hidden = parameter.Hidden;
   this->ArgType = parameter.ArgType;
   this->StringToType = parameter.StringToType;
   this->Default = parameter.Default;
@@ -100,6 +107,7 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->Channel = parameter.Channel;
   this->Index = parameter.Index;
   this->Multiple = parameter.Multiple;
+  this->Aggregate = parameter.Aggregate;
   this->FileExtensionsAsString = parameter.FileExtensionsAsString;
   this->FileExtensions = parameter.FileExtensions;
   this->Elements = parameter.Elements;
@@ -129,6 +137,8 @@ std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
   os << "      " << "Description: " << parameter.GetDescription() << std::endl;
   os << "      " << "Label: " << parameter.GetLabel() << std::endl;
   os << "      " << "Type: " << parameter.GetType() << std::endl;
+  os << "      " << "Reference: " << parameter.GetReference() << std::endl;
+  os << "      " << "Hidden: " << parameter.GetHidden() << std::endl;
   os << "      " << "CPPType: " << parameter.GetCPPType() << std::endl;
   os << "      " << "ArgType: " << parameter.GetArgType() << std::endl;
   os << "      " << "StringToType: " << parameter.GetStringToType() << std::endl;
@@ -154,6 +164,7 @@ std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter)
   os << "      " << "Channel: " << parameter.GetChannel() << std::endl;
   os << "      " << "Index: " << parameter.GetIndex() << std::endl;
   os << "      " << "Multiple: " << parameter.GetMultiple() << std::endl;
+  os << "      " << "Aggregate: " << parameter.GetAggregate() << std::endl;
   os << "      " << "FileExtensionsAsString: " << parameter.GetFileExtensionsAsString() << std::endl;
   os << "      " << "FileExtensions: ";
   std::vector<std::string>::const_iterator fit;  

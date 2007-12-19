@@ -27,6 +27,7 @@
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLFiberBundleNode.h"
@@ -1000,6 +1001,102 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
     if (source && target)
       {
       target->Copy(source);
+
+      // if the source node is a model hierachy node, then also copy
+      // and remap any child nodes of the target that are not in the
+      // target list (nodes that had no source equivalent before the
+      // module ran).
+      vtkMRMLModelHierarchyNode *smhnd
+        = vtkMRMLModelHierarchyNode::SafeDownCast(source);
+      vtkMRMLModelHierarchyNode *tmhnd
+        = vtkMRMLModelHierarchyNode::SafeDownCast(target);
+      if (smhnd && tmhnd)
+        {
+        // get the model node and display node BEFORE we add nodes to
+        // the target scene
+        vtkMRMLModelNode *smnd = smhnd->GetModelNode();
+        vtkMRMLDisplayNode *sdnd = smhnd->GetDisplayNode();
+        
+        // add the model and display referenced by source model hierarchy node
+        if (smnd)
+          {
+          // get display node BEFORE we add nodes to the target scene
+          vtkMRMLDisplayNode *sdnd = smnd->GetDisplayNode();
+          
+          vtkMRMLNode *tmodel = this->MRMLScene->AddNodeNoNotify(smnd);
+          vtkMRMLModelNode *mnd = vtkMRMLModelNode::SafeDownCast( tmodel );
+          tmhnd->SetModelNodeID( mnd->GetID() );
+
+          if (sdnd)
+            {
+            vtkMRMLNode *tdnd = this->MRMLScene->AddNodeNoNotify(sdnd);
+            mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
+            }
+          }
+        
+        if (sdnd)
+          {
+          vtkMRMLNode *dnd = this->MRMLScene->AddNodeNoNotify(sdnd);
+          tmhnd->SetAndObserveDisplayNodeID( dnd->GetID() );
+          }
+        
+        // add any children model hierarchy nodes, rinse, repeat
+        //
+        // need a way to recurse - JVM
+        for (int n=0;
+             n<miniscene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
+             n++)
+          {
+          vtkMRMLModelHierarchyNode * mhnd = vtkMRMLModelHierarchyNode
+            ::SafeDownCast(miniscene->GetNthNodeByClass(n,
+                                                "vtkMRMLModelHierarchyNode"));
+          if (mhnd)
+            {
+            // is this model hierarchy node in our source list
+            // already? if so skip it
+            std::vector<std::string>::const_iterator ssit
+              = std::find(req.GetSourceNodes().begin(),
+                          req.GetSourceNodes().end(), mhnd->GetID());
+            if (ssit == req.GetSourceNodes().end())
+              {
+              // not in source list, so we may need to add it
+              if (mhnd->GetParentNode() == smhnd)
+                {
+                // get the model and display node BEFORE we add nodes
+                // to the target scene
+                vtkMRMLModelNode *smnd = mhnd->GetModelNode();
+                vtkMRMLDisplayNode *sdnd = mhnd->GetDisplayNode();
+                
+                vtkMRMLNode *tchild = this->MRMLScene->AddNodeNoNotify(mhnd);
+                vtkMRMLModelHierarchyNode *tcmhd
+                  = vtkMRMLModelHierarchyNode::SafeDownCast( tchild );
+
+                if (smnd)
+                  {
+                  // get display node BEFORE we add nodes to the target scene
+                  vtkMRMLDisplayNode *sdnd = smnd->GetDisplayNode();
+
+                  vtkMRMLNode *tmodel = this->MRMLScene->AddNodeNoNotify(smnd);
+                  vtkMRMLModelNode *mnd =vtkMRMLModelNode::SafeDownCast(tmodel);
+                  tcmhd->SetModelNodeID( mnd->GetID() );
+
+                  if (sdnd)
+                    {
+                    vtkMRMLNode *tdnd = this->MRMLScene->AddNodeNoNotify(sdnd);
+                    mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
+                    }
+                  }
+                
+                if (sdnd)
+                  {
+                  vtkMRMLNode *tdnd = this->MRMLScene->AddNodeNoNotify(sdnd);
+                  tcmhd->SetAndObserveDisplayNodeID( tdnd->GetID() );
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     else if (!source)
       {
