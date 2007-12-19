@@ -60,7 +60,6 @@ vtkMRMLColorTableNode::vtkMRMLColorTableNode()
   this->Name = NULL;
   this->SetName("");
   this->LookupTable = NULL;
-  this->FileName = NULL;
   this->LastAddedColor = -1;
   this->StorageNodeID = NULL;
 }
@@ -71,11 +70,6 @@ vtkMRMLColorTableNode::~vtkMRMLColorTableNode()
   if (this->LookupTable)
     {
     this->LookupTable->Delete();
-    }
-  if (this->FileName)
-    {  
-    delete [] this->FileName;
-    this->FileName = NULL;
     }
   if (this->StorageNodeID)
     {
@@ -172,10 +166,18 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
       }
       else if (!strcmp(attName, "filename"))
         {
-        this->SetFileName(attValue);
-        // read in the file with the colours
-        std::cout << "Reading file " << this->FileName << endl;
-        this->ReadFile();
+        vtkMRMLStorageNode *storageNode = this->GetStorageNode();
+        if (!storageNode)
+          {
+          vtkErrorMacro("ReadFile: unable to get storage node to read file");
+          }
+        else
+          {
+          storageNode->SetFileName(attValue);
+          // read in the file with the colours
+          std::cout << "Reading file " << storageNode->GetFileName() << endl;
+          storageNode->ReadData(this);
+          }
         }
       else
       {
@@ -185,21 +187,6 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
   vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
 }
 
-//----------------------------------------------------------------------------
-int vtkMRMLColorTableNode::ReadFile ()
-{
-
-  vtkMRMLStorageNode *storageNode = this->GetStorageNode();
-  if (!storageNode)
-    {
-    vtkErrorMacro("ReadFile: unable to get storage node to read file");
-    return 0;
-    }
-  storageNode->SetFileName(this->FileName);
-  return storageNode->ReadData(this);
-  
-
-}
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
@@ -1071,7 +1058,7 @@ void vtkMRMLColorTableNode::SetType(int type)
 
     else if (this->Type == this->File)
       {
-      vtkDebugMacro("Set type to file, call SetFileName and ReadFile next...");
+      vtkDebugMacro("Set type to file, set up a storage node, set it's FileName and call ReadData on it...");
       }
     
     else
