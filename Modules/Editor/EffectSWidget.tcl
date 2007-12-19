@@ -92,7 +92,7 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
   lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
   foreach event "LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent KeyPressEvent EnterEvent LeaveEvent" {
     lappend _guiObserverTags \
-              [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent"]
+              [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI"]
   }
 
   set node [[$sliceGUI GetLogic] GetSliceNode]

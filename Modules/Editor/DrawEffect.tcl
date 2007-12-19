@@ -31,13 +31,19 @@ if { [itcl::find class DrawEffect] == "" } {
     constructor {sliceGUI} {Labeler::constructor $sliceGUI} {}
     destructor {}
 
+    variable _lastInsertSlice ""
+    variable _actionState ""
+
     # methods
     method processEvent {{caller ""} {event ""}} {}
-    method preview {} {}
     method apply {} {}
-    method apply3D {} {}
     method buildOptions {} {}
     method tearDownOptions {} {}
+
+    method positionActors {} {}
+    method createPolyData {} {}
+    method resetPolyData {} {}
+    method addPoint {r a s} {}
   }
 }
 
@@ -45,6 +51,23 @@ if { [itcl::find class DrawEffect] == "" } {
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
 itcl::body DrawEffect::constructor {sliceGUI} {
+  set o(xyPoints) [vtkNew vtkPoints]
+  set o(rasPoints) [vtkNew vtkPoints]
+  set o(polyData) [$this createPolyData]
+
+  set o(mapper) [vtkNew vtkPolyDataMapper2D]
+  set o(actor) [vtkNew vtkActor2D]
+  $o(mapper) SetInput $o(polyData)
+  $o(actor) SetMapper $o(mapper)
+  set property [$o(actor) GetProperty]
+  $property SetColor 1 1 0
+  $property SetLineWidth 1
+  [$_renderWidget GetRenderer] AddActor2D $o(actor)
+  lappend _actors $o(actor)
+
+  set node [[$sliceGUI GetLogic] GetSliceNode]
+  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
 }
 
 itcl::body DrawEffect::destructor {} {
@@ -54,8 +77,21 @@ itcl::body DrawEffect::destructor {} {
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
+itcl::body DrawEffect::positionActors { } {
+  if { ![info exists o(xyPoints)] } {
+    # called during startup...
+    return
+  }
+  set rasToXY [vtkTransform New]
+  $rasToXY SetMatrix [$_sliceNode GetXYToRAS]
+  $rasToXY Inverse
+  $o(xyPoints) Reset
+  $rasToXY TransformPoints $o(rasPoints) $o(xyPoints)
+  $rasToXY Delete
+  $o(polyData) Modified
+}
 
+itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
 
   if { [$this preProcessEvent $caller $event] } {
     # superclass processed the event, so we don't
@@ -67,42 +103,69 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
   set event [$sliceGUI GetCurrentGUIEvent] 
   set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
-  switch $event {
-    "LeftButtonPressEvent" {
-      $this apply
-      $sliceGUI SetGUICommandAbortFlag 1
-    }
-    "MouseMoveEvent" {
-      $this preview
-    }
-    "KeyPressEvent" { 
-      set key [$_interactor GetKeySym]
-      if { [lsearch "3" $key] != -1 } {
-        $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+  if { $caller == $sliceGUI } {
+    switch $event {
+      "LeftButtonPressEvent" {
+        set _actionState "drawing"
+        eval $this addPoint $_currentPosition
         $sliceGUI SetGUICommandAbortFlag 1
-        switch [$_interactor GetKeySym] {
-          "3" {
-            $this apply3D
+      }
+      "MouseMoveEvent" {
+        switch $_actionState {
+          "drawing" {
+            eval $this addPoint $_currentPosition
+            $sliceGUI SetGUICommandAbortFlag 1
           }
         }
-      } else {
-        # puts "wand ignoring $key"
       }
-    }
-    "EnterEvent" {
-      $o(cursorActor) VisibilityOn
-      if { [info exists o(tracingActor)] } {
-       $o(tracingActor) VisibilityOn
+      "LeftButtonReleaseEvent" {
+        set _actionState ""
+        eval $this addPoint $_currentPosition
+        $sliceGUI SetGUICommandAbortFlag 1
       }
-    }
-    "LeaveEvent" {
-      $o(cursorActor) VisibilityOff
-      if { [info exists o(tracingActor)] } {
-       $o(tracingActor) VisibilityOff
+      "KeyPressEvent" { 
+        set key [$_interactor GetKeySym]
+        if { [lsearch "a" $key] != -1 } {
+          $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
+          $sliceGUI SetGUICommandAbortFlag 1
+          switch [$_interactor GetKeySym] {
+            "a" {
+              $this apply
+              set _actionState ""
+            }
+          }
+        } else {
+          # puts "wand ignoring $key"
+        }
+      }
+      "EnterEvent" {
+        $o(cursorActor) VisibilityOn
+        if { [info exists o(tracingActor)] } {
+         $o(tracingActor) VisibilityOn
+        }
+      }
+      "LeaveEvent" {
+        $o(cursorActor) VisibilityOff
+        if { [info exists o(tracingActor)] } {
+         $o(tracingActor) VisibilityOff
+        }
       }
     }
   }
 
+  if { $caller != "" && [$caller IsA "vtkMRMLSliceNode"] } {
+    # 
+    # make sure all points are on the current slice plane
+    # - if the SliceToRAS has been modified, then we're on a different plane
+    #
+    set logic [$sliceGUI GetLogic]
+    set currentSlice [$logic GetSliceOffset]
+    if { $_lastInsertSlice != $currentSlice } {
+      $this resetPolyData
+    }
+  }
+
+  $this positionActors
   $this positionCursor
   [$sliceGUI GetSliceViewer] RequestRender
 }
@@ -114,79 +177,78 @@ itcl::body DrawEffect::apply {} {
     return
   }
 
-  $this applyPolyMask $o(tracingPolyData)
+  $this applyPolyMask $o(polyData)
+  $this resetPolyData
 
 }
 
+itcl::body DrawEffect::createPolyData {} {
+  # make a single-polyline polydata
 
-itcl::body DrawEffect::apply3D {} {
+  set polyData [vtkNew vtkPolyData]
+  $polyData SetPoints $o(xyPoints)
 
-  if { ![info exists o(tracing3DFilter)] } {
-    set o(tracing3DFilter) [vtkNew vtkITKLevelTracing3DImageFilter]
-  }
+  set lines [vtkCellArray New]
+  $polyData SetLines $lines
+  set idArray [$lines GetData]
+  $idArray Reset
+  $idArray InsertNextTuple1 0
 
-  $o(tracing3DFilter) SetInput [$this getInputBackground]
-  $o(tracing3DFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
+  set polygons [vtkCellArray New]
+  $polyData SetPolys $polygons
+  set idArray [$polygons GetData]
+  $idArray Reset
+  $idArray InsertNextTuple1 0
 
-  $_layers(label,node) SetAndObserveImageData [$o(tracing3DFilter) GetOutput] 
-  $_layers(label,node) Modified
-
-  $o(tracing3DFilter) Update
+  $polygons Delete
+  $lines Delete
+  return $polyData
 }
 
-
-itcl::body DrawEffect::preview {} {
-
-  foreach {x y} [$_interactor GetEventPosition] {}
-  $this queryLayers $x $y
-
-  if { ![info exists o(ijkToXY)] } {
-    set o(tracingFilter) [vtkNew vtkITKLevelTracingImageFilter]
-
-    set o(ijkToXY) [vtkNew vtkTransform]
-    set o(xyPoints) [vtkNew vtkPoints]
-
-    set o(tracingPolyData) [vtkNew vtkPolyData]
-    set o(tracingMapper) [vtkNew vtkPolyDataMapper2D]
-    set o(tracingActor) [vtkNew vtkActor2D]
-    $o(tracingActor) SetMapper $o(tracingMapper)
-    $o(tracingMapper) SetInput $o(tracingPolyData)
-    set property [$o(tracingActor) GetProperty]
-    $property SetColor [expr 107/255.] [expr 190/255.] [expr 99/255.]
-    $property SetLineWidth 1
-    [$_renderWidget GetRenderer] AddActor2D $o(tracingActor)
-    lappend _actors $o(tracingActor)
-  }
-
-
-  $o(tracingFilter) SetInput [$this getInputBackground]
-  $o(tracingFilter) SetSeed $_layers(background,i) $_layers(background,j) $_layers(background,k) 
-
-  # figure out which plane to use
-  foreach {i0 j0 k0 l0} [$_layers(background,xyToIJK) MultiplyPoint $x $y 0 1] {}
-  set x1 [expr $x + 1]; set y1 [expr $y + 1]
-  foreach {i1 j1 k1 l1} [$_layers(background,xyToIJK) MultiplyPoint $x1 $y1 0 1] {}
-  if { $i0 == $i1 } { $o(tracingFilter) SetPlaneToJK }
-  if { $j0 == $j1 } { $o(tracingFilter) SetPlaneToIK }
-  if { $k0 == $k1 } { $o(tracingFilter) SetPlaneToIJ }
-
-
-  $o(tracingFilter) Update
-  set polyData [$o(tracingFilter) GetOutput]
-  
+itcl::body DrawEffect::resetPolyData {} {
+  # return the polyline to initial state with no points
+  set lines [$o(polyData) GetLines]
+  set idArray [$lines GetData]
+  $idArray Reset
+  $idArray InsertNextTuple1 0
   $o(xyPoints) Reset
-  $o(ijkToXY) SetMatrix $_layers(background,xyToIJK)
-  $o(ijkToXY) Inverse
-  $o(ijkToXY) TransformPoints [$polyData GetPoints] $o(xyPoints)
+  $o(rasPoints) Reset
+  $lines SetNumberOfCells 0
 
-  $o(tracingPolyData) DeepCopy $polyData
-  [$o(tracingPolyData) GetPoints] DeepCopy $o(xyPoints)
+  set _lastInsertSlice ""
 }
-  
+
+itcl::body DrawEffect::addPoint {r a s} {
+
+  # store modify time so these points can be cleared if 
+  # slice plane is moved
+  set logic [$sliceGUI GetLogic]
+  set _lastInsertSlice [$logic GetSliceOffset]
+
+  set p [$o(rasPoints) InsertNextPoint $r $a $s]
+  set lines [$o(polyData) GetLines]
+  set idArray [$lines GetData]
+  $idArray InsertNextTuple1 $p
+  $idArray SetTuple1 0 [expr [$idArray GetNumberOfTuples] - 1]
+  $lines SetNumberOfCells 1
+}
+
 itcl::body DrawEffect::buildOptions {} {
 
   # call superclass version of buildOptions
   chain
+
+  #
+  # an appl button
+  #
+  set o(apply) [vtkNew vtkKWPushButton]
+  $o(apply) SetParent [$this getOptionsFrame]
+  $o(apply) Create
+  $o(apply) SetText "Apply"
+  $o(apply) SetBalloonHelpString "Apply current outline.\nUse the 'a' hotkey to apply in slice window"
+  pack [$o(apply) GetWidgetName] \
+    -side right -anchor e -padx 2 -pady 2 
+
 
   #
   # a cancel button
@@ -195,7 +257,7 @@ itcl::body DrawEffect::buildOptions {} {
   $o(cancel) SetParent [$this getOptionsFrame]
   $o(cancel) Create
   $o(cancel) SetText "Cancel"
-  $o(cancel) SetBalloonHelpString "Cancel level tracing without applying to label map."
+  $o(cancel) SetBalloonHelpString "Cancel current outline."
   pack [$o(cancel) GetWidgetName] \
     -side right -anchor e -padx 2 -pady 2 
 
@@ -206,7 +268,7 @@ itcl::body DrawEffect::buildOptions {} {
   $o(help) SetParent [$this getOptionsFrame]
   $o(help) Create
   $o(help) SetHelpTitle "Draw"
-  $o(help) SetHelpText "Use this tool to track around similar intensity levels."
+  $o(help) SetHelpText "Use this tool to draw an outline."
   $o(help) SetBalloonHelpString "Bring up help window."
   pack [$o(help) GetWidgetName] \
     -side right -anchor sw -padx 2 -pady 2 
@@ -214,11 +276,13 @@ itcl::body DrawEffect::buildOptions {} {
   #
   # event observers - TODO: if there were a way to make these more specific, I would...
   #
+  set tag [$o(apply) AddObserver AnyEvent "::DrawEffect::ApplyAll"]
+  lappend _observerRecords "$o(apply) $tag"
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
 
   if { [$this getInputBackground] == "" || [$this getOutputLabel] == "" } {
-    $this errorDialog "Background and Label map needed for Threshold"
+    $this errorDialog "Background and Label map needed for Drawing"
     after idle ::EffectSWidget::RemoveAll
   }
 
@@ -230,10 +294,16 @@ itcl::body DrawEffect::tearDownOptions { } {
   # call superclass version of tearDownOptions
   chain
 
-  foreach w "help cancel" {
+  foreach w "help cancel apply" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 
     }
+  }
+}
+
+proc ::DrawEffect::ApplyAll {} {
+  foreach draw [itcl::find objects -class DrawEffect] {
+    $draw apply
   }
 }
