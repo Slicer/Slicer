@@ -244,8 +244,8 @@ itcl::body EffectSWidget::animateCursor { {onOff "on"} } {
   $this setAnimationState $p
 
   # force a render
-  #[$sliceGUI GetSliceViewer] RequestRender
-  [$sliceGUI GetSliceViewer] Render
+  [$sliceGUI GetSliceViewer] RequestRender
+  #[$sliceGUI GetSliceViewer] Render
 
   incr _cursorAnimationState
   set _cursorAnimationTag [after $animationDelay "$this animateCursor on"]

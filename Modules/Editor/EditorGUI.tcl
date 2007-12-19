@@ -6,11 +6,6 @@ proc EditorConstructor {this} {
 }
 
 proc EditorDestructor {this} {
-
-  set boxes [itcl::find objects -isa Box]
-  foreach b $boxes {
-    itcl::delete object $b
-  }
 }
 
 
@@ -32,6 +27,12 @@ proc EditorTearDownGUI {this} {
 
   itcl::delete object $::Editor($this,editColor)
   itcl::delete object $::Editor($this,editBox)
+
+  # kill any remaining boxes (popup)
+  set boxes [itcl::find objects -isa Box]
+  foreach b $boxes {
+    itcl::delete object $b
+  }
 
   foreach w $widgets {
     $::Editor($this,$w) SetParent ""
