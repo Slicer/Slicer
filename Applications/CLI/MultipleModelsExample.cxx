@@ -21,6 +21,7 @@ Version:   $Revision: 5168 $
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLColorTableNode.h"
+#include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 
 #include "vtkConeSource.h"
@@ -43,7 +44,8 @@ int main(int argc, char * argv[])
 
   // put in code to read the color table file
   //
-  
+  vtkMRMLColorTableNode *colorNode = NULL;
+  vtkMRMLColorTableStorageNode *colorStorageNode = NULL;
   
   // tease apart the scene files and the nodes
   std::string::size_type loc;
@@ -84,6 +86,19 @@ int main(int argc, char * argv[])
 
   modelScene->SetURL(sceneFilename.c_str());
   modelScene->Import();
+
+  // get the color node
+  colorNode = vtkMRMLColorTableNode::New();
+  modelScene->AddNode(colorNode);
+  colorStorageNode = vtkMRMLColorTableStorageNode::New();
+  colorStorageNode->SetFileName(ColorTable.c_str());
+  modelScene->AddNode(colorStorageNode);
+  colorNode->SetStorageNodeID(colorStorageNode->GetID());
+  if (!colorStorageNode->ReadData(colorNode))
+    {
+    std::cerr << "Error reading colour file " << colorStorageNode->GetFileName() << endl;
+    return EXIT_FAILURE;
+    }
   
   // make sure we have a model hierarchy node
   vtkMRMLNode *rnd = modelScene->GetNodeByID( modelHierarchyID );
@@ -127,6 +142,15 @@ int main(int argc, char * argv[])
     vtkMRMLModelDisplayNode *dnd = vtkMRMLModelDisplayNode::New();
     dnd->SetPolyData(mnd->GetPolyData());
     dnd->SetColor(0.8, 0.0, 0.0);
+    // over ride from the color node
+    if (colorNode != NULL)
+      {
+      double *rgba = colorNode->GetLookupTable()->GetTableValue(1);
+      if (rgba != NULL)
+        {
+        dnd->SetColor(rgba[0], rgba[1], rgba[2]);
+        }
+      }
     dnd->SetVisibility(1);
     modelScene->AddNode(dnd);
 
@@ -170,6 +194,15 @@ int main(int argc, char * argv[])
     vtkMRMLModelDisplayNode *dnd = vtkMRMLModelDisplayNode::New();
     dnd->SetPolyData(mnd->GetPolyData());
     dnd->SetColor(0.0, 0.8, 0.0);
+    // over ride from the color node
+    if (colorNode != NULL)
+      {
+      double *rgba = colorNode->GetLookupTable()->GetTableValue(2);
+      if (rgba != NULL)
+        {
+        dnd->SetColor(rgba[0], rgba[1], rgba[2]);
+        }
+      }
     dnd->SetVisibility(1);
     modelScene->AddNode(dnd);
 
@@ -214,6 +247,15 @@ int main(int argc, char * argv[])
     vtkMRMLModelDisplayNode *dnd = vtkMRMLModelDisplayNode::New();
     dnd->SetPolyData(mnd->GetPolyData());
     dnd->SetColor(0.0, 0.0, 0.8);
+    // over ride from the color node
+    if (colorNode != NULL)
+      {
+      double *rgba = colorNode->GetLookupTable()->GetTableValue(3);
+      if (rgba != NULL)
+        {
+        dnd->SetColor(rgba[0], rgba[1], rgba[2]);
+        }
+      }
     dnd->SetVisibility(1);
     modelScene->AddNode(dnd);
 
