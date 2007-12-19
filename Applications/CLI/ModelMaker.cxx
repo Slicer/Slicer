@@ -43,6 +43,8 @@ Version:   $Revision$
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLColorTableNode.h"
+#include "vtkMRMLModelHierarchyNode.h"
+#include "vtkMRMLColorTableStorageNode.h"
 #include "vtkSlicerColorLogic.h"
 
 #include <fstream>
@@ -56,7 +58,7 @@ int ImportAnatomyLabelFile( std::string, LabelAnatomyContainer &);
 int main(int argc, char * argv[])
 {
     PARSE_ARGS;
-    bool debug = true;
+    bool debug = false;
 
     if (debug) 
       {
@@ -76,23 +78,76 @@ int main(int argc, char * argv[])
       std::cout << "Split normals? " << SplitNormals << std::endl;
       std::cout << "Calculate point normals? " << PointNormals << std::endl;
       std::cout << "Filter type: " << FilterType << std::endl;
-      std::cout << "Output model scene file: " << ModelSceneFile << std::endl;
-      std::cout << "Color node name : " << ColorNodeName << std::endl;
+      std::cout << "Output model scene file: " << (ModelSceneFile.size() > 0 ? ModelSceneFile[0].c_str() : "None") << std::endl;
+      std::cout << "Color table file : " << ColorTable.c_str() << std::endl;
       std::cout << "\nStarting..." << std::endl;
       }
 
+    // get the model hierarchy id from the scene file
+    std::string::size_type loc;
+    std::string sceneFilename;
+    std::string modelHierarchyID;
+
+    if (ModelSceneFile.size() == 0)
+      {
+      std::cerr << "ERROR: no model hierarchy node defined!" << endl;
+      return EXIT_FAILURE;
+      }
+    
+    loc = ModelSceneFile[0].find_last_of("#");
+    if (loc != std::string::npos)
+      {
+      sceneFilename = std::string(ModelSceneFile[0].begin(),
+                                  ModelSceneFile[0].begin() + loc);
+      loc++;
+      
+      modelHierarchyID = std::string(ModelSceneFile[0].begin()+loc, ModelSceneFile[0].end());
+      }
+
+    if (debug)
+      {
+      std::cout << "Models file: " << sceneFilename << std::endl;
+      std::cout << "Model Hierarchy ID: " << modelHierarchyID << std::endl;
+      }
+
+     // check for the model mrml file
+    if (sceneFilename == "")
+      {
+      std::cout << "No file to store models!" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    // get the directory of the scene file
+    std::string rootDir
+      = vtksys::SystemTools::GetParentDirectory( sceneFilename.c_str() );
+    
+    vtkMRMLScene *modelScene = NULL;
+    modelScene = vtkMRMLScene::New();
+
+    modelScene->SetURL(sceneFilename.c_str());
+    modelScene->Import();
+    
+    // make sure we have a model hierarchy node
+    vtkMRMLNode *rnd = modelScene->GetNodeByID( modelHierarchyID );
+    
+    if (!rnd)
+      {
+      std::cerr << "Error: no model hierarchy node at ID \""
+                << modelHierarchyID << "\"" << std::endl;
+      return EXIT_FAILURE;
+      }
+    
+
+    vtkMRMLModelHierarchyNode *rtnd = vtkMRMLModelHierarchyNode::SafeDownCast(rnd);
+  
     LabelAnatomyContainer labelToAnatomy;
 
-    int useColorNode = 0;
     vtkMRMLColorTableNode *colorNode = NULL;
-
-    if (ColorNodeName !=  "")
-      {
-      if (ModelSceneFile == "")
-        {
-        std::cerr << "ERROR: if using the color node name " << ColorNodeName << ", need to specify a model scene file so that can get the color node from the scene!" << std::endl;
-        return EXIT_FAILURE;
-        }
+    vtkMRMLColorTableStorageNode *colorStorageNode = NULL;
+    
+    int useColorNode = 0;
+    if (ColorTable !=  "")
+      {      
       useColorNode = 1;
       }
     else if (AnatomyLabelFile != "" && AnatomyLabelFile != "NoneSpecified")
@@ -130,7 +185,6 @@ int main(int argc, char * argv[])
     vtkStripper * stripper = NULL;
     vtkPolyDataWriter * writer = NULL;
 
-    vtkMRMLScene *modelScene = NULL;
     vtkSlicerColorLogic *colorLogic = NULL;
     // keep track of number of models that will be generated, for filter
     // watcher reporting
@@ -232,61 +286,45 @@ int main(int argc, char * argv[])
 
     image = ici->GetOutput();
     image->Update();
-
-    // check for the model mrml file
-    FILE *modelSceneFile;
-    if (ModelSceneFile != "")
+    
+    if (useColorNode)
       {
-      // make a scene
-      modelScene = vtkMRMLScene::New();
+      colorNode = vtkMRMLColorTableNode::New();
+      modelScene->AddNode(colorNode);
+
+      // read the colour file
       if (debug)
         {
-        std::cout << "Opening model scene file " << ModelSceneFile << endl;
+        std::cout << "Colour table file name = " << ColorTable.c_str() << std::endl;
         }
-      modelSceneFile = fopen(ModelSceneFile.c_str(), "w");
-      if (modelSceneFile == NULL)
+      colorStorageNode = vtkMRMLColorTableStorageNode::New();
+      colorStorageNode->SetFileName(ColorTable.c_str());
+      modelScene->AddNode(colorStorageNode);
+
+      if (debug)
         {
-        std::cerr << "ERROR: cannot open the model scene file " << ModelSceneFile << endl;
+        std::cout << "Setting the colour node's storage node id to " << colorStorageNode->GetID() << ", it's file name = " << colorStorageNode->GetFileName() << std::endl;
         }
-      else
+      colorNode->SetStorageNodeID(colorStorageNode->GetID());
+      if (!colorStorageNode->ReadData(colorNode))
         {
-        modelScene->SetURL(ModelSceneFile.c_str());
+        std::cerr << "Error reading colour file " << colorStorageNode->GetFileName() << endl;
+        return EXIT_FAILURE;
         }
-      if (useColorNode)
+      if (debug)
         {
-        // add default color nodes to it so can point into it later
-        colorLogic = vtkSlicerColorLogic::New();        
-        if (colorLogic == NULL)
-          {
-          std::cerr << "ERROR: Unable to get color logic and add default color nodes" << endl;
-          useColorNode = 0;
-          }
-        else
-          {
-          if (debug)
-            {
-            std::cout << "Color Logic setting mrml scene" << endl;
-            }
-          colorLogic->SetMRMLScene(modelScene);
-          if (debug)
-            {
-            std::cout << "Adding default color nodes" << endl;
-            }
-          colorLogic->AddDefaultColorNodes();
-          // see if can get out the named one
-          vtkCollection *colorNodes = modelScene->GetNodesByClassByName("vtkMRMLColorTableNode", ColorNodeName.c_str());
-          if (colorNodes != NULL && colorNodes->GetNumberOfItems() >0)
-            {
-            // get the first colour node that matches
-            colorNode =  vtkMRMLColorTableNode::SafeDownCast(colorNodes->GetItemAsObject(0));
-            if (colorNode != NULL)
-              {
-              std::cout << "Using color node with name " << colorNode->GetName() << " and id " << colorNode->GetID() << std::endl;
-              }
-            }
-          }
+        std::cout << "Color node after reading file = " << endl;
+        colorNode->Print(std::cout);
         }
       }
+
+    // each hierarchy node needs a display node
+    vtkMRMLModelDisplayNode *dnd = vtkMRMLModelDisplayNode::New();
+    dnd->SetVisibility(1);
+    modelScene->AddNode(dnd);
+    rtnd->SetAndObserveDisplayNodeID( dnd->GetID() );
+    dnd->Delete();
+  
     // If making mulitple models, figure out which labels have voxels
     if (makeMultiple) 
       {
@@ -391,55 +429,17 @@ int main(int argc, char * argv[])
           }
         numFilterSteps = numSingletonFilterSteps + (numRepeatedFilterSteps * numModelsToGenerate);
         }
+      
       if (useColorNode)
         {
         // but if we didn't get a named color node, try to guess
         if (colorNode == NULL)
           {
-          if (max != NULL)
-            {          
-            // check the max value in the input label map against number of
-            // colours in the default colour label nodes
-            // should be 257, or 714 if it's the SPL atlas
-            int numDefaultLabelMapColor = 
-              vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()))->GetLookupTable()->GetNumberOfColors();
-            // should be 5003, may have failed if it couldn't read in the file
-            int numDefaultFSLabelMapColor = 0;
-            if (modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()) != NULL)
-              {
-              numDefaultFSLabelMapColor = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()))->GetLookupTable()->GetNumberOfColors();
-              }
-            if (debug)
-              {
-              std::cout << "\tmax = " << max[0] << ", " << max[1] << ", " << max[2] << endl;
-              std::cout << "\tnumDefaultLabelMapColor = " << numDefaultLabelMapColor << ", numDefaultFSLabelMapColor = " << numDefaultFSLabelMapColor << endl;
-              }
-            if (max[0] <= numDefaultLabelMapColor)
-              {
-              if (debug) { std::cout << "Using default label map colour node" << endl; }
-              colorNode = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()));
-              }          
-            else if (max[0] < numDefaultFSLabelMapColor)
-              {
-              // use the freesurfer one
-              if (debug) { std::cout << "Using default freesurfer colour node" << endl; }
-              colorNode =  vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()));
-              }
-            else
-              {
-              // default to the default label map one
-              if (debug) { std::cout << "Using default label map colour node as a last resort" << endl; }
-              colorNode = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()));
-              }
-            }
-          }
-        if (colorNode == NULL)
-          {
-          // use the default
-          colorNode = vtkMRMLColorTableNode::SafeDownCast(modelScene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()));
+          std::cerr << "ERROR: must have a color node! Should be associated with the input label map volume.\n";
+          return EXIT_FAILURE;
           }
         }
-      }
+      } // end of make multiple
     else 
       {
       if (useStartEnd)
@@ -537,7 +537,7 @@ int main(int argc, char * argv[])
             labelName = Name + std::string("_") + stringI + std::string("_") + std::string(colorNode->GetColorNameWithoutSpaces(i, "_"));
             if (debug)
               {
-              std::cout << "Got color name, set label name = " << labelName.c_str() << endl;
+              std::cout << "Got color name, set label name = " << labelName.c_str() << " (color name w/o spaces = " << colorNode->GetColorNameWithoutSpaces(i, "_") << endl;
               }
             }
           else
@@ -1018,6 +1018,10 @@ int main(int argc, char * argv[])
               }
             dnode->SetColor(rgba[0], rgba[1], rgba[2]);
             }
+          else
+            {
+            std::cerr << "Couldn't get look up table value for " << i << ", display node colour is not set (grey)" << endl;
+            }
           }
           
         dnode->SetVisibility(1);
@@ -1030,6 +1034,13 @@ int main(int argc, char * argv[])
         mnode->SetReferenceStorageNodeID(snode->GetID());        
         mnode->SetAndObserveDisplayNodeID(dnode->GetID());
         modelScene->AddNode(mnode);
+
+        // put it in the hierarchy
+        vtkMRMLModelHierarchyNode *mhnd = vtkMRMLModelHierarchyNode::New();
+        modelScene->AddNode(mhnd);
+        mhnd->SetParentNodeID( rnd->GetID() );
+        mhnd->SetModelNodeID( mnode->GetID() );
+    
         if (debug)
           {
           std::cout << "...done adding model to output scene" << endl;
@@ -1041,6 +1052,8 @@ int main(int argc, char * argv[])
         snode = NULL;
         mnode->Delete();
         mnode = NULL;
+        mhnd->Delete();
+        mhnd = NULL;
         }
         } // end of skipping an empty label
       } // end of loop over labels
@@ -1067,15 +1080,14 @@ int main(int argc, char * argv[])
         }
       std::cout << endl;
       }
-    if (ModelSceneFile != "")
+    if (ModelSceneFile[0] != "")
       {
       if (debug)
         {
-        std::cout << "Writing to model scene output file: " << ModelSceneFile;
+        std::cout << "Writing to model scene output file: " << ModelSceneFile[0].c_str();
         std::cout << ", to url: " << modelScene->GetURL() << std::endl;
         }
       modelScene->Commit();
-      fclose(modelSceneFile);
       }
     
     // Clean up
@@ -1247,15 +1259,6 @@ int main(int argc, char * argv[])
       }
     reader->Delete();
     
-    if (colorLogic)
-      {
-      if (debug)
-        {
-        std::cout << "Deleting color logic" << endl;
-        }
-      colorLogic->Delete();
-      colorLogic = NULL;
-      }
     if (modelScene)
       {
       if (debug)
