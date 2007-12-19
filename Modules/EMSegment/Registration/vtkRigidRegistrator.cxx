@@ -136,10 +136,10 @@ public:
       std::cerr << "       Image Size: " << 
         registration->GetFixedImagePyramid()->GetOutput(level)->
         GetLargestPossibleRegion().GetSize() << std::endl;
-      std::cerr << "       Number of spatial samples: " 
-                << metric->GetNumberOfSpatialSamples() 
-                << " (" << round(100 * samplingRatio) << "%)"
-                << std::endl;
+//       std::cerr << "       Number of spatial samples: " 
+//                 << metric->GetNumberOfSpatialSamples() 
+//                 << " (" << round(100 * samplingRatio) << "%)"
+//                 << std::endl;
       }
 
     OptimizerPointer optimizer = dynamic_cast<OptimizerPointer>
