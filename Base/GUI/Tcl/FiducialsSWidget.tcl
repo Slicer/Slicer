@@ -249,6 +249,8 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
   set scene [$sliceGUI GetMRMLScene]
   set nLists [$scene GetNumberOfNodesByClass "vtkMRMLFiducialListNode"]
 
+  set rasToRAS [vtkMatrix4x4 New]
+
   for {set i 0} {$i < $nLists} {incr i} {
     set fidListNode [$scene GetNthNodeByClass $i "vtkMRMLFiducialListNode"]
 
@@ -261,6 +263,12 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
       continue
     }
     
+    $rasToRAS Identity
+    set transformNode [$::slicer3::MRMLScene GetNodeByID [$fidListNode GetTransformNodeID]]
+    if { $transformNode != "" } {
+      $transformNode GetMatrixTransformToWorld $rasToRAS
+    }
+
     set glyphType [$fidListNode GetGlyphTypeAsString]
     set indexOf2D [string last "2D" $glyphType]
     if { $indexOf2D != -1 } {
@@ -274,6 +282,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
     set nFids [$fidListNode GetNumberOfFiducials]
     for {set f 0} {$f < $nFids} {incr f} {
       foreach {r a s} [$fidListNode GetNthFiducialXYZ $f] {}
+      foreach {r a s t} [$rasToRAS MultiplyPoint $r $a $s 1] {}
       set xyz [$this rasToXYZ "$r $a $s"]
       foreach {x y z} $xyz {}
       if { $z >= -0.5 && $z < [expr 0.5+[lindex [$node GetDimensions] 2]-1]} {
@@ -296,6 +305,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
     }
   }
 
+  $rasToRAS Delete
   $rasToSlice Delete
 }
 
