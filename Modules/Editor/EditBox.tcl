@@ -116,7 +116,6 @@ itcl::body EditBox::findEffects { {path ""} } {
     } else {
       set _effects($effect,class) EffectSWidget
     }
-    set _effects($effect,icon) [vtkNew vtkKWIcon]
     foreach iconType { "" Selected Disabled} {
       set _effects($effect,imageData$iconType) [vtkNew vtkImageData]
       $reader SetFileName $iconDir/$effect$iconType.png
@@ -128,6 +127,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     if { [lsearch $_effects(list,disabled) $effect] != -1 } {
       set iconMode "Disabled"
     }
+    set _effects($effect,icon) [vtkNew vtkKWIcon]
     $::slicer3::ApplicationGUI SetIconImage \
         $_effects($effect,icon) $_effects($effect,imageData$iconMode)
   }

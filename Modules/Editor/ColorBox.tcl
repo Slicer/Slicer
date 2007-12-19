@@ -85,7 +85,7 @@ itcl::body ColorBox::create { } {
     $o(colors) SetText "Cannot display colors.\nNo label layer is selected."
     $o(colors) Create
 
-    set tag [$o(colors) AddObserver AnyEvent "$this processEvent $o(colors)"]
+    set tag [$o(colors) AddObserver AnyEvent "::Box::ProtectedCallback $this processEvent $o(colors)"]
     lappend _observerRecords [list $o(colors) $tag]
 
   } else {
@@ -100,7 +100,7 @@ itcl::body ColorBox::create { } {
     $o(colors) SetColorNode [$::slicer3::MRMLScene GetNodeByID [$colorNode GetTypeAsIDString]]
     $colorNode Delete
 
-    set tag [$o(colors) AddObserver AnyEvent "$this processEvent $o(colors)"]
+    set tag [$o(colors) AddObserver AnyEvent "::Box::ProtectedCallback $this processEvent $o(colors)"]
     lappend _observerRecords [list $o(colors) $tag]
   }
   pack [$o(colors) GetWidgetName] \

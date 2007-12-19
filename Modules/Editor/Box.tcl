@@ -42,6 +42,21 @@ namespace eval Box {
   }
 }
 
+# 
+# utility to run method only if instance hasn't already been deleted
+# (this is useful in event handling)
+#
+namespace eval Box {
+  proc ProtectedCallback {instance args} {
+    if { [info command $instance] != "" } {
+      if { [catch "eval $instance $args" res] } {
+        puts $res
+        puts $::errorInfo
+      }
+    }
+  }
+}
+
 
 #
 # The partent class definition - define if needed (not when re-sourcing)
