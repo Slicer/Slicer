@@ -222,8 +222,8 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     colorFileName = std::string(basicFSNode->GetLabelsFileName());
     vtkDebugMacro("Trying to read colour file " << colorFileName.c_str());
   
-    node->SetFileName(colorFileName.c_str());
-    if (node->ReadFile())
+    node->GetStorageNode()->SetFileName(colorFileName.c_str());
+    if (node->GetStorageNode()->ReadData(node))
       {
       id = std::string(this->GetDefaultFreeSurferLabelMapColorNodeID());
       node->SetSingletonTag(id.c_str());
@@ -234,7 +234,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
         }
       else
         {
-        vtkWarningMacro("Unable to add a new colour node " << id.c_str() << " with freesurfer colours, from file: " << node->GetFileName() << " as there is already a node with this id in the scene");
+        vtkWarningMacro("Unable to add a new colour node " << id.c_str() << " with freesurfer colours, from file: " << node->GetStorageNode()->GetFileName() << " as there is already a node with this id in the scene");
         }
       }
     else
@@ -267,8 +267,8 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     {
     colorFileName = std::string(basicFSNode->GetSurfaceLabelsFileName());
     vtkDebugMacro("Trying to read colour file " << colorFileName.c_str());
-    node->SetFileName(colorFileName.c_str());
-    if (node->ReadFile())
+    node->GetStorageNode()->SetFileName(colorFileName.c_str());
+    if (node->GetStorageNode()->ReadData(node))
       {
       id = std::string(this->GetDefaultFreeSurferSurfaceLabelsColorNodeID());
       node->SetSingletonTag(id.c_str());
@@ -279,12 +279,12 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
         }
       else
         {
-        vtkWarningMacro("Unable to add a new colour node " << id.c_str() << " with freesurfer colours, from file: " << node->GetFileName());
+        vtkWarningMacro("Unable to add a new colour node " << id.c_str() << " with freesurfer colours, from file: " << node->GetStorageNode()->GetFileName());
         }
       }
     else
       {
-      vtkErrorMacro("Unable to open freesurfer color file " << node->GetFileName());
+      vtkErrorMacro("Unable to open freesurfer color file " << node->GetStorageNode()->GetFileName());
       }
     }
   basicFSNode->Delete();
@@ -306,11 +306,11 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
       node->SetStorageNodeID(colorStorageNode->GetID());
       }
     colorStorageNode->Delete();
-    node->SetFileName(this->ColorFiles[i].c_str());
-    node->SetName(vtksys::SystemTools::GetFilenameName(node->GetFileName()).c_str());
-    if (node->ReadFile())
+    node->GetStorageNode()->SetFileName(this->ColorFiles[i].c_str());
+    node->SetName(vtksys::SystemTools::GetFilenameName(node->GetStorageNode()->GetFileName()).c_str());
+    if (node->GetStorageNode()->ReadData(node))
       {
-      id =  std::string(this->GetDefaultFileColorNodeID(node->GetFileName()));
+      id =  std::string(this->GetDefaultFileColorNodeID(this->ColorFiles[i].c_str()));
       
       node->SetSingletonTag(id.c_str());
       if (this->GetMRMLScene()->GetNodeByID(id) == NULL)
