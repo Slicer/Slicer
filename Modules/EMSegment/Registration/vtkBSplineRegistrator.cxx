@@ -427,7 +427,8 @@ RegisterImagesInternal3()
 
   int initialNumberOfLevels = 3;
   int initialShrinkFactor = 
-    static_cast<int>(std::pow(2,static_cast<float>(initialNumberOfLevels)));
+    static_cast<int>(std::pow(static_cast<double>(2.0),
+                              static_cast<double>(initialNumberOfLevels)));
 
   fixedImagePyramid->SetNumberOfLevels(initialNumberOfLevels);
   fixedImagePyramid->SetStartingShrinkFactors(initialShrinkFactor);
