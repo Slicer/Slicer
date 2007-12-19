@@ -316,12 +316,22 @@ int vtkMRMLColorTableStorageNode::WriteData(vtkMRMLNode *refNode)
     {
     double *rgba;
     rgba = colorNode->GetLookupTable()->GetTableValue(i);
+    // the colour look up table uses 0-1, file values are 0-255,
+    double r = rgba[0] * 255.0;
+    double g = rgba[1] * 255.0;
+    double b = rgba[2] * 255.0;
+    double a = rgba[3] * 255.0;
     of << i;
+    of << " ";
     of << colorNode->GetColorNameWithoutSpaces(i, "_");
-    of << rgba[0];
-    of << rgba[1];
-    of << rgba[2];
-    of << rgba[3];
+    of << " ";
+    of << r;
+    of << " ";
+    of << g;
+    of << " ";
+    of << b;
+    of << " ";
+    of << a;
     of << endl;   
     }
   of.close();
