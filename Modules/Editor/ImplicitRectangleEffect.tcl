@@ -75,6 +75,8 @@ itcl::body ImplicitRectangleEffect::constructor {sliceGUI} {
   [$_renderWidget GetRenderer] AddActor2D $o(actor)
   lappend _actors $o(actor)
 
+  $o(cursorActor) VisibilityOn
+
   $this processEvent
 
   set _guiObserverTags ""
@@ -172,25 +174,16 @@ itcl::body ImplicitRectangleEffect::updateGlyph { {polyData ""} } {
 
 itcl::body ImplicitRectangleEffect::processEvent { {caller ""} {event ""} } {
 
-  # chain to superclass
-  chain $caller $event
-
-  if { [info command $sliceGUI] == "" } {
-    # the sliceGUI was deleted behind our back, so we need to 
-    # self destruct
-    itcl::delete object $this
+  if { [$this preProcessEvent $caller $event] } {
+    # superclass processed the event, so we don't
     return
   }
 
-  set grabID [$sliceGUI GetGrabID]
-  if { ($grabID != "") && ($grabID != $this) } {
-    # some other widget wants these events
-    # -- we can position wrt the current slice node
-    [$sliceGUI GetSliceViewer] RequestRender
-    return 
-  }
+  # chain to superclass
+  chain $caller $event
 
   set event [$sliceGUI GetCurrentGUIEvent] 
+  set _currentPosition [$this xyToRAS [$_interactor GetEventPosition]]
 
   switch $event {
     "LeftButtonPressEvent" {
@@ -227,14 +220,17 @@ itcl::body ImplicitRectangleEffect::processEvent { {caller ""} {event ""} } {
     }
     "EnterEvent" {
       set _description "Ready to ImplicitRectangle!"
+      $o(cursorActor) VisibilityOn
       $o(actor) VisibilityOn
     }
     "LeaveEvent" {
       set _description ""
+      $o(cursorActor) VisibilityOff
       $o(actor) VisibilityOff
     }
   }
 
+  $this positionCursor
   [$sliceGUI GetSliceViewer] RequestRender
 }
 
