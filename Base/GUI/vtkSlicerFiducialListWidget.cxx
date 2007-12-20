@@ -531,7 +531,7 @@ void vtkSlicerFiducialListWidget::ProcessWidgetEvents ( vtkObject *caller,
         vtkSlicerFiducialsLogic *fidLogic  = vtkSlicerFiducialsGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Fiducials"))->GetLogic();
         int modelIndex = fidLogic->AddFiducialSelected(rasPoint[0], rasPoint[1], rasPoint[2], 1);
         // swallow the event
-        vtkDebugMacro("Fiducial List Widget dealt with the Pick, setting my gui call back command abort flag so that the interactor style will stop passing the event along, event = " << event);
+        vtkDebugMacro("Fiducial List Widget dealt with the Pick, added fiducial at index " << modelIndex << ", setting my gui call back command abort flag so that the interactor style will stop passing the event along, event = " << event);
         if (this->GUICallbackCommand != NULL)
           {
             
@@ -859,7 +859,6 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
     vtkErrorMacro("...the scene is null... returning");
     return;
     }
-  vtkMRMLNode *node = NULL;
 
   vtkDebugMacro("UpdateFiducialsFromMRML: Starting to update the viewer's actors, glyphs for the fid lists.");
   
@@ -984,7 +983,6 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
         actorExists = 1;
         }
 
-      vtkPolyDataMapper *mapper = NULL;
       vtkGlyph3D * glyph3d = NULL;
         
       glyph3d = (vtkGlyph3D*)this->Glyph3DMap[flist->GetID()]; // ->GetItemAsObject(listNumber);
