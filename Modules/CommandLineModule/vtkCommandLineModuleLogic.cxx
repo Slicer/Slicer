@@ -588,6 +588,19 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
 
       // keep track of scene node corresponds to what the miniscene node
       sceneToMiniSceneMap[nd->GetID()] = cp->GetID();
+
+      // also add any display node
+      vtkMRMLDisplayNode *dnd = mhnd->GetDisplayNode();
+      if (dnd)
+        {
+        vtkMRMLNode *dcp = miniscene->CopyNode(dnd);
+
+        vtkMRMLModelHierarchyNode *mhcp
+          = vtkMRMLModelHierarchyNode::SafeDownCast(cp);
+        vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(dcp);
+        
+        mhcp->SetAndObserveDisplayNodeID( d->GetID() );
+        }
       }
 
     // if the file is to be written, then write it
@@ -619,11 +632,37 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
   
     if (tnd || mhnd)
       {
-      // always put transform and model hierarchy nodes in the miniscene
+      // always put transform nodes in the miniscene
       vtkMRMLNode *cp = miniscene->CopyNode(nd);
       
       // Keep track what scene node corresponds to what miniscene node
       sceneToMiniSceneMap[nd->GetID()] = cp->GetID();
+      }
+    else if (mhnd)
+      {
+      // always put model hierarchy nodes in the miniscene
+      vtkMRMLNode *cp = miniscene->CopyNode(nd);
+      
+      // Keep track what scene node corresponds to what miniscene node
+      sceneToMiniSceneMap[nd->GetID()] = cp->GetID();
+
+      // try casting to a DisplayableNode, if successful, add the
+      // display node if there is one
+      vtkMRMLDisplayableNode *dable = vtkMRMLDisplayableNode::SafeDownCast(nd);
+      if (dable)
+        {
+        vtkMRMLDisplayNode *dnd = dable->GetDisplayNode();
+        if (dnd)
+          {
+          vtkMRMLNode *dcp = miniscene->CopyNode(dnd);
+
+          vtkMRMLDisplayableNode *dablecp
+            = vtkMRMLDisplayableNode::SafeDownCast(cp);
+          vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(dcp);
+
+          dablecp->SetAndObserveDisplayNodeID( d->GetID() );
+          }
+        }
       }
     }
   

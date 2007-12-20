@@ -1023,20 +1023,20 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
           // get display node BEFORE we add nodes to the target scene
           vtkMRMLDisplayNode *sdnd = smnd->GetDisplayNode();
           
-          vtkMRMLNode *tmodel = this->MRMLScene->AddNodeNoNotify(smnd);
+          vtkMRMLNode *tmodel = this->MRMLScene->CopyNode(smnd);
           vtkMRMLModelNode *mnd = vtkMRMLModelNode::SafeDownCast( tmodel );
           tmhnd->SetModelNodeID( mnd->GetID() );
 
           if (sdnd)
             {
-            vtkMRMLNode *tdnd = this->MRMLScene->AddNodeNoNotify(sdnd);
+            vtkMRMLNode *tdnd = this->MRMLScene->CopyNode(sdnd);
             mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
             }
           }
         
         if (sdnd)
           {
-          vtkMRMLNode *dnd = this->MRMLScene->AddNodeNoNotify(sdnd);
+          vtkMRMLNode *dnd = this->MRMLScene->CopyNode(sdnd);
           tmhnd->SetAndObserveDisplayNodeID( dnd->GetID() );
           }
         
@@ -1067,29 +1067,30 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                 vtkMRMLModelNode *smnd = mhnd->GetModelNode();
                 vtkMRMLDisplayNode *sdnd = mhnd->GetDisplayNode();
                 
-                vtkMRMLNode *tchild = this->MRMLScene->AddNodeNoNotify(mhnd);
+                vtkMRMLNode *tchild = this->MRMLScene->CopyNode(mhnd);
                 vtkMRMLModelHierarchyNode *tcmhd
                   = vtkMRMLModelHierarchyNode::SafeDownCast( tchild );
-
+                tcmhd->SetParentNodeID( tmhnd->GetID() );
+                
                 if (smnd)
                   {
                   // get display node BEFORE we add nodes to the target scene
                   vtkMRMLDisplayNode *sdnd = smnd->GetDisplayNode();
 
-                  vtkMRMLNode *tmodel = this->MRMLScene->AddNodeNoNotify(smnd);
+                  vtkMRMLNode *tmodel = this->MRMLScene->CopyNode(smnd);
                   vtkMRMLModelNode *mnd =vtkMRMLModelNode::SafeDownCast(tmodel);
                   tcmhd->SetModelNodeID( mnd->GetID() );
 
                   if (sdnd)
                     {
-                    vtkMRMLNode *tdnd = this->MRMLScene->AddNodeNoNotify(sdnd);
+                    vtkMRMLNode *tdnd = this->MRMLScene->CopyNode(sdnd);
                     mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
                     }
                   }
                 
                 if (sdnd)
                   {
-                  vtkMRMLNode *tdnd = this->MRMLScene->AddNodeNoNotify(sdnd);
+                  vtkMRMLNode *tdnd = this->MRMLScene->CopyNode(sdnd);
                   tcmhd->SetAndObserveDisplayNodeID( tdnd->GetID() );
                   }
                 }
