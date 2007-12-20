@@ -43,6 +43,14 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 <parameters>
   <label>Create Multiple</label>
   <description>Create more than one model at the same time, used for continuous ranges of labels.</description>
+  <string>
+     <name>Name</name>
+     <label>Model Prefix</label>
+     <flag>-n</flag>
+     <longflag>--name</longflag>
+     <description>Name to use for this model. If making multiple models, use this as a prefix to the label and color name</description>
+     <default>Model</default>
+   </string>
   <boolean>
      <name>GenerateAll</name>
      <label>Generate All Models</label>
@@ -57,14 +65,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <description>A comma separated list of label values from which to make models. Over-rides the Start/End Labels.</description>
     <label>Labels</label>
   </integer-vector>
-   <string>
-     <name>Name</name>
-     <label>Model Prefix</label>
-     <flag>-n</flag>
-     <longflag>--name</longflag>
-     <description>Name to use for this model. If making multiple models, use this as a prefix to the label and color name</description>
-     <default>Model</default>
-   </string>
    <integer>
     <name>StartLabel</name>
     <label>Start Label</label>
