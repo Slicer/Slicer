@@ -201,7 +201,8 @@ int main(int argc, char * argv[])
     if (Labels.size() > 0)
       {
       makeMultiple = true;
-      // TODO: sort the vector
+      // sort the vector
+      std::sort(Labels.begin(), Labels.end()); 
       labelsMin = Labels[0];
       labelsMax = Labels[Labels.size()-1];
       }    
