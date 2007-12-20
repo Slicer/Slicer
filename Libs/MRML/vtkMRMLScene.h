@@ -372,6 +372,7 @@ protected:
   //ETX
   
   void UpdateNodeReferences();
+  void UpdateNodeReferences(vtkCollection* chekNodes);
 
   void UpdateNodeIDs();
 

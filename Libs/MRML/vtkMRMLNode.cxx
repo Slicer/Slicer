@@ -271,7 +271,7 @@ void vtkMRMLNode::MRMLCallback(vtkObject *caller,
 
   if ( self == NULL )
     {
-    vtkDebugWithObjectMacro(self, "In vtkMRMLNode *********MRMLCallback called after delete!");
+    //vtkDebugMacro(self, "In vtkMRMLNode *********MRMLCallback called after delete!");
     return;
     }
 
