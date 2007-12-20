@@ -1286,14 +1286,25 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
 {
   vtkDebugMacro("vtkSlicerFiducialListWidget::SetFiducialDisplayProperty: n = " << n);
   float *xyz = flist->GetNthFiducialXYZ(n);
+  float worldxyz[4], *worldp = &worldxyz[0];
   int selected = flist->GetNthFiducialSelected(n);
+
+  vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
+  vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+  vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+  transformToWorld->Identity();
+  if (tnode != NULL && tnode->IsLinear())
+    {
+    lnode->GetMatrixTransformToWorld(transformToWorld);
+    }
+  transformToWorld->MultiplyPoint(xyz, worldp);
 
   if (actor != NULL)
     {
     if (!flist->GlyphTypeIs3D())
       {
       // dont' set the position if it's a 3d list
-      actor->SetPosition(xyz[0], xyz[1], xyz[2]);
+      actor->SetPosition(worldxyz[0], worldxyz[1], worldxyz[2]);
       actor->SetScale(flist->GetSymbolScale());
       }
     actor->SetVisibility(flist->GetVisibility());
@@ -1301,30 +1312,14 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
 
   if (textActor != NULL)
     {
-    textActor->SetPosition(xyz[0], xyz[1], xyz[2]);
+    textActor->SetPosition(worldxyz[0], worldxyz[1], worldxyz[2]);
     textActor->SetScale(flist->GetTextScale());
     // visib from after tnode code
     textActor->SetVisibility(flist->GetVisibility());
     }
-  
-  vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
-  if (tnode != NULL && tnode->IsLinear())
-    {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
-    transformToWorld->Identity();
-    lnode->GetMatrixTransformToWorld(transformToWorld);
-    if (actor)
-      {
-      actor->SetUserMatrix(transformToWorld);
-      }
-    if (textActor)
-      {
-      textActor->SetUserMatrix(transformToWorld);
-      }
-    transformToWorld->Delete();
-    }
 
+  transformToWorld->Delete();
+  
   
   // don't update the actor's selected if it's 3d
   if (selected)
