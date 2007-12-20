@@ -116,7 +116,7 @@ protected:
   //vtkKWText* VolStatsResult;
   vtkKWMultiColumnList* ResultList;
   vtkKWLoadSaveButton* SaveToFile;
-  vtkKWPushButton* SaveToClipboardButton;
+  //vtkKWPushButton* SaveToClipboardButton;
   
 };
 

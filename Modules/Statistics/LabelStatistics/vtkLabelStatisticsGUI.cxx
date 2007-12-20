@@ -62,7 +62,7 @@ vtkLabelStatisticsGUI::vtkLabelStatisticsGUI()
   this->SaveToFile = vtkKWLoadSaveButton::New();
   //this->VolStatsResult = vtkKWText::New();
   this->ResultList = vtkKWMultiColumnList::New();
-  this->SaveToClipboardButton = vtkKWPushButton::New();
+  // this->SaveToClipboardButton = vtkKWPushButton::New();
   this->Logic = NULL;
   this->LabelStatisticsNode = NULL;
   this->SetPrimarySelectionTclProcedures();
@@ -89,12 +89,12 @@ vtkLabelStatisticsGUI::~vtkLabelStatisticsGUI()
     this->ApplyButton->Delete();
     this->ApplyButton = NULL;
     }
-  if ( this->SaveToClipboardButton ) 
-    {
-    this->SaveToClipboardButton->SetParent(NULL);
-    this->SaveToClipboardButton->Delete();
-    this->SaveToClipboardButton = NULL;
-    }
+ //  if ( this->SaveToClipboardButton ) 
+//     {
+//     this->SaveToClipboardButton->SetParent(NULL);
+//     this->SaveToClipboardButton->Delete();
+//     this->SaveToClipboardButton = NULL;
+//     }
   if ( this->SaveToFile ) 
     {
       this->SaveToFile->SetParent(NULL);
@@ -135,7 +135,7 @@ void vtkLabelStatisticsGUI::AddGUIObservers ( )
   this->GrayscaleSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->LabelmapSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->ApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->SaveToClipboardButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  // this->SaveToClipboardButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveToFile->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Logic->AddObserver (vtkLabelStatisticsLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
   this->Logic->AddObserver (vtkLabelStatisticsLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
@@ -151,7 +151,7 @@ void vtkLabelStatisticsGUI::RemoveGUIObservers ( )
   this->GrayscaleSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->LabelmapSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->ApplyButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
-  this->SaveToClipboardButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  //this->SaveToClipboardButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->SaveToFile->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
   this->Logic->RemoveObservers (vtkLabelStatisticsLogic::LabelStatsOuterLoop, (vtkCommand *)this->LogicCallbackCommand );
   this->Logic->RemoveObservers (vtkLabelStatisticsLogic::LabelStatsInnerLoop, (vtkCommand *)this->LogicCallbackCommand );
@@ -185,11 +185,11 @@ void vtkLabelStatisticsGUI::ProcessGUIEvents ( vtkObject *caller,
     this->UpdateMRML();
     this->Logic->Apply();
     }
- if (b == this->SaveToClipboardButton && event == vtkKWPushButton::InvokedEvent ) 
-    {
-      vtkMRMLLabelStatisticsNode* n = this->GetLabelStatisticsNode();
-      this->SetPrimarySelection(n->GetResultText());
-    }
+//  if (b == this->SaveToClipboardButton && event == vtkKWPushButton::InvokedEvent ) 
+//     {
+//       vtkMRMLLabelStatisticsNode* n = this->GetLabelStatisticsNode();
+//       this->SetPrimarySelection(n->GetResultText());
+//     }
  if (loadSaveDialog == this->SaveToFile->GetLoadSaveDialog() && event == vtkKWTopLevel::WithdrawEvent ) 
    {
      const char *fileName = this->SaveToFile->GetFileName();
@@ -379,10 +379,10 @@ void vtkLabelStatisticsGUI::BuildGUI ( )
     this->ResultList->GetWidgetName());
  
   // Create the button to copy result to clipboard
-  this->SaveToClipboardButton->SetParent( moduleFrame->GetFrame() );
-  this->SaveToClipboardButton->Create();
-  this->SaveToClipboardButton->SetText("Copy result to clipboard");
-  this->SaveToClipboardButton->SetWidth ( 20 );
+  // this->SaveToClipboardButton->SetParent( moduleFrame->GetFrame() );
+//   this->SaveToClipboardButton->Create();
+//   this->SaveToClipboardButton->SetText("Copy result to clipboard");
+//   this->SaveToClipboardButton->SetWidth ( 20 );
 
   this->SaveToFile->SetParent( moduleFrame->GetFrame() );
   this->SaveToFile->Create();
@@ -394,9 +394,10 @@ void vtkLabelStatisticsGUI::BuildGUI ( )
   this->SaveToFile->GetLoadSaveDialog()->SetDefaultExtension("txt");
 
   app->Script(
-    "pack %s %s -side right -anchor w  -padx 20 -pady 10", 
-    this->SaveToClipboardButton->GetWidgetName(),
+    "pack %s -side right -anchor w  -padx 20 -pady 10", 
     this->SaveToFile->GetWidgetName());
+    // this->SaveToClipboardButton->GetWidgetName(),
+    
 
   ///--------
   moduleFrame->Delete();
