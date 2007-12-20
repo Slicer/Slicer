@@ -155,7 +155,9 @@ template<class T> int DoIt( int argc, char * argv[], T )
   writer->SetInput( change->GetOutput() );
   writer->Update();
   std::cout << "Input origin is: " << reader1->GetOutput()->GetOrigin() << std::endl;
-  std::cout << "Output origin is: " << change->GetOutput()->GetOrigin() << std::endl;
+  std::cout << "Output origin is: " << change->GetOutput()->GetOrigin() <<
+  std::endl;
+
   return EXIT_SUCCESS;
 }
 
