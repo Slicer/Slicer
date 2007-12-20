@@ -63,7 +63,6 @@ int main(int argc, char * argv[])
     if (debug) 
       {
       std::cout << "The input volume is: " << InputVolume << std::endl;
-//      std::cout << "The output directory is: " << OutputDirectory << std::endl;
       std::cout << "The labels are: " << std::endl;
       for (int l = 0; l < Labels.size(); l++)
         {
@@ -195,7 +194,7 @@ int main(int argc, char * argv[])
     // increment after each filter is run
     float currentFilterOffset = 0.0;
     // if using the labels vector, get out the min/max
-    int labelsMin, labelsMax;
+    int labelsMin = 0, labelsMax = 0;
 
     // figure out if we're making multiple models
     if (Labels.size() > 0)
@@ -205,12 +204,16 @@ int main(int argc, char * argv[])
       std::sort(Labels.begin(), Labels.end()); 
       labelsMin = Labels[0];
       labelsMax = Labels[Labels.size()-1];
+      if (debug)
+        {
+        cout << "Set labels min to " << labelsMin << ", labels max = " << labelsMax << ", labels vector size = " << Labels.size() << endl;
+        }
       }    
     else if (GenerateAll)
       {
       makeMultiple = true;
       }
-    else if (EndLabel > StartLabel)
+    else if (EndLabel >= StartLabel && (EndLabel != -1 && StartLabel != -1))
       {
       makeMultiple = true;
       useStartEnd = true;
@@ -265,8 +268,9 @@ int main(int argc, char * argv[])
 
     // Read the file
     reader = vtkITKArchetypeImageSeriesScalarReader::New();
+    std::string comment = "Read Volume";
     vtkPluginFilterWatcher watchReader(reader,
-                                       "Read Volume",
+                                       comment.c_str(),
                                        CLPProcessInformation,
                                        1.0/numFilterSteps, currentFilterOffset/numFilterSteps);
     if (debug)
@@ -301,7 +305,7 @@ int main(int argc, char * argv[])
       colorStorageNode = vtkMRMLColorTableStorageNode::New();
       colorStorageNode->SetFileName(ColorTable.c_str());
       modelScene->AddNode(colorStorageNode);
-
+      
       if (debug)
         {
         std::cout << "Setting the colour node's storage node id to " << colorStorageNode->GetID() << ", it's file name = " << colorStorageNode->GetFileName() << std::endl;
@@ -311,7 +315,15 @@ int main(int argc, char * argv[])
         {
         std::cerr << "Error reading colour file " << colorStorageNode->GetFileName() << endl;
         return EXIT_FAILURE;
-        }      
+        }
+      else
+        {
+        if (debug)
+          {
+          std::cout << "Read colour file  " << colorStorageNode->GetFileName() << endl;
+          }
+        }
+      colorStorageNode->Delete();
       }
 
     // each hierarchy node needs a display node
@@ -320,7 +332,7 @@ int main(int argc, char * argv[])
     modelScene->AddNode(dnd);
     rtnd->SetAndObserveDisplayNodeID( dnd->GetID() );
     dnd->Delete();
-  
+
     // If making mulitple models, figure out which labels have voxels
     if (makeMultiple) 
       {
@@ -329,7 +341,61 @@ int main(int argc, char * argv[])
       hist->SetComponentExtent(0, 1023, 0, 0, 0, 0);
       hist->SetComponentOrigin(0, 0, 0);
       hist->SetComponentSpacing(1,1,1);      
+      // try and update and get the min/max here, as need them for the
+      // marching cubes
+      comment = "Histogram All Models";
+      vtkPluginFilterWatcher watchImageAccumulate(hist,
+                                                  comment.c_str(),
+                                                 CLPProcessInformation,
+                                                 1.0/numFilterSteps,
+                                                 currentFilterOffset/numFilterSteps);
+      currentFilterOffset += 1.0;
+      if (debug)
+        {
+        watchImageAccumulate.QuietOn();
+        }
+      hist->Update();
+      double *max = hist->GetMax();
+      double *min = hist->GetMin();
+      if (min[0] == 0)
+        {
+        if (debug)
+          {
+          std::cout << "Skipping 0" << endl;
+          }
+        min[0]++;
+        }
+      if (debug)
+        {
+        std::cout << "Hist: Min = " << min[0] << " and max = " << max[0] << endl;
+        }
+      if (GenerateAll)
+        {
+        if (debug)
+          {
+          std::cout << "GenerateAll flag is true, resetting the start and end labels from: " << StartLabel << " and " << EndLabel << " to " << min[0] << " and " << max[0] << endl;
+          }
+        StartLabel = (int)floor(min[0]);
+        EndLabel = (int)floor(max[0]);
+        // recalculate the number of filter steps, discount the labels with no
+        // voxels       
+        numModelsToGenerate = 0;
+        for (int i = StartLabel; i <= EndLabel; i++)
+          {
+          if((int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i)) > 0)
+            {
+            if (debug && i < 0 && i > -100) { std::cout << i << " "; }
+            numModelsToGenerate++;
+            }
+          }
+        if (debug)
+          {
+          std::cout << endl << "GenerateAll: there are " << numModelsToGenerate << " models to be generated." << endl;
+          }
+        numFilterSteps = numSingletonFilterSteps + (numRepeatedFilterSteps * numModelsToGenerate);
+        }
       
+       
       cubes = vtkDiscreteMarchingCubes::New();
       std::string comment = "Discrete Marching Cubes";
       vtkPluginFilterWatcher watchDMCubes(cubes,
@@ -345,10 +411,18 @@ int main(int argc, char * argv[])
       cubes->SetInput(image);
       if (useStartEnd)
         {
+        if (debug)
+          {
+          std::cout << "Using end label = " << EndLabel << ", start label = " << StartLabel << endl;
+          }
         cubes->GenerateValues((EndLabel-StartLabel +1), StartLabel, EndLabel);
         }
       else
         {
+        if (debug)
+          {
+          std::cout << "Using max = " << labelsMax << ", min = " << labelsMin << endl;
+          }
         cubes->GenerateValues((labelsMax - labelsMin + 1), labelsMin, labelsMax);
         }
       cubes->Update();
@@ -381,7 +455,7 @@ int main(int argc, char * argv[])
         smoother->Update();
         //        smoother->ReleaseDataFlagOn();
         }
-
+/*
       vtkPluginFilterWatcher watchImageAccumulate(hist,
                                                  "Histogram All Models",
                                                  CLPProcessInformation,
@@ -433,7 +507,7 @@ int main(int argc, char * argv[])
           }
         numFilterSteps = numSingletonFilterSteps + (numRepeatedFilterSteps * numModelsToGenerate);
         }
-      
+*/    
       if (useColorNode)
         {
         // but if we didn't get a named color node, try to guess
@@ -590,7 +664,7 @@ int main(int argc, char * argv[])
       
       // threshold
       if (JointSmoothing == 0)
-        {    
+        {        
         imageThreshold = vtkImageThreshold::New();
         std::string comment = "Threshold " + labelName;
         vtkPluginFilterWatcher watchImageThreshold(imageThreshold,
@@ -1107,6 +1181,12 @@ int main(int argc, char * argv[])
         }
       cubes->SetInput(NULL);
       cubes->Delete();
+      cubes = NULL;
+      }
+    if (colorNode)
+      {
+      colorNode->Delete();
+      colorNode = NULL;
       }
     if (smoother)
       {
@@ -1125,6 +1205,7 @@ int main(int argc, char * argv[])
         }
       hist->SetInput(NULL);
       hist->Delete();
+      hist = NULL;
       }
     if (smootherSinc)
       {
@@ -1134,6 +1215,7 @@ int main(int argc, char * argv[])
         }
       smootherSinc->SetInput(NULL);
       smootherSinc->Delete();
+      smootherSinc = NULL;
       }
     if (smootherPoly)
       {
@@ -1143,6 +1225,7 @@ int main(int argc, char * argv[])
         }
       smootherPoly->SetInput(NULL);
       smootherPoly->Delete();
+      smootherPoly = NULL;
       }
     if (decimator)
       {
@@ -1152,6 +1235,7 @@ int main(int argc, char * argv[])
         }
       decimator->SetInput(NULL);
       decimator->Delete();
+      decimator = NULL;
       }
     if (mcubes)
       {
@@ -1161,6 +1245,7 @@ int main(int argc, char * argv[])
         }
       mcubes->SetInput(NULL);
       mcubes->Delete();
+      mcubes = NULL;
       }
     if (imageThreshold)
       {
@@ -1171,6 +1256,7 @@ int main(int argc, char * argv[])
       imageThreshold->SetInput(NULL);
       imageThreshold->RemoveAllInputs();
       imageThreshold->Delete();
+      imageThreshold = NULL;
       if (debug)
         {
         std::cout << "... done deleting image threshold" << endl;
@@ -1184,6 +1270,7 @@ int main(int argc, char * argv[])
         }
       threshold->SetInput(NULL);
       threshold->Delete();
+      threshold = NULL;
       }
     if (imageToStructuredPoints)
       {
@@ -1193,6 +1280,7 @@ int main(int argc, char * argv[])
         }
       imageToStructuredPoints->SetInput(NULL);
       imageToStructuredPoints->Delete();
+      imageToStructuredPoints = NULL;
       }
     if (geometryFilter)
       {
@@ -1202,6 +1290,7 @@ int main(int argc, char * argv[])
         }
       geometryFilter->SetInput(NULL);
       geometryFilter->Delete();
+      geometryFilter = NULL;
       }
     if (transformIJKtoRAS)
       {
@@ -1211,6 +1300,7 @@ int main(int argc, char * argv[])
         }
       transformIJKtoRAS->SetInput(NULL);
       transformIJKtoRAS->Delete();
+      transformIJKtoRAS = NULL;
       }
     if (reverser)
       {
@@ -1220,6 +1310,7 @@ int main(int argc, char * argv[])
         }
       reverser->SetInput(NULL);
       reverser->Delete();
+      reverser = NULL;
       }
     if (transformer)
       {
@@ -1229,6 +1320,7 @@ int main(int argc, char * argv[])
         }
       transformer->SetInput(NULL);
       transformer->Delete();
+      transformer = NULL;
       }
     if (normals)
       {
@@ -1238,6 +1330,7 @@ int main(int argc, char * argv[])
         }
       normals->SetInput(NULL);
       normals->Delete();
+      normals = NULL;
       }
     if (stripper)
       {
@@ -1247,6 +1340,7 @@ int main(int argc, char * argv[])
         }
       stripper->SetInput(NULL);
       stripper->Delete();
+      stripper = NULL;
       }
     if (ici)
       {
@@ -1256,12 +1350,14 @@ int main(int argc, char * argv[])
         }
       ici->SetInput(NULL);
       ici->Delete();
+      ici = NULL;
       }
     if (debug)
       {
       std::cout << "Deleting reader" << endl;
       }
     reader->Delete();
+    reader = NULL;
     
     if (modelScene)
       {
