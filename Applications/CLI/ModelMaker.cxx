@@ -232,7 +232,14 @@ int main(int argc, char * argv[])
         }
       else
         {
-        numModelsToGenerate = Labels.size();
+        if (GenerateAll)
+          {
+          // this will be calculated later from the histogram output
+          }
+        else
+          {
+          numModelsToGenerate = Labels.size();
+          }
         }
       }
     else
@@ -250,13 +257,7 @@ int main(int argc, char * argv[])
     infile = fopen(InputVolume.c_str(),"r");
     if (infile == NULL)
       {
-      std::cerr << "ERROR: cannot open input volume file " << InputVolume << endl;
-      if (debug)
-        {
-        char waiting;
-        std::cout << "Press a key and hit return: " << std::endl;
-        std::cin >> waiting;
-        }
+      std::cerr << "ERROR: cannot open input volume file " << InputVolume << endl;     
       return EXIT_FAILURE;
       }
     fclose(infile);
@@ -277,7 +278,6 @@ int main(int argc, char * argv[])
     reader->SetDesiredCoordinateOrientationToNative();
     reader->SetUseNativeOriginOn();
     reader->Update();
-
     vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
     ici->SetInput (reader->GetOutput());
     ici->SetOutputSpacing( 1, 1, 1 );
@@ -310,12 +310,7 @@ int main(int argc, char * argv[])
         {
         std::cerr << "Error reading colour file " << colorStorageNode->GetFileName() << endl;
         return EXIT_FAILURE;
-        }
-      if (debug)
-        {
-        std::cout << "Color node after reading file = " << endl;
-        colorNode->Print(std::cout);
-        }
+        }      
       }
 
     // each hierarchy node needs a display node
@@ -399,6 +394,14 @@ int main(int argc, char * argv[])
       hist->Update();
       double *max = hist->GetMax();
       double *min = hist->GetMin();
+      if (min[0] == 0)
+        {
+        if (debug)
+          {
+          std::cout << "Skipping 0" << endl;
+          }
+        min[0]++;
+        }
        if (debug)
          {
          std::cout << "Min = " << min[0] << " and max = " << max[0] << endl;
@@ -484,7 +487,7 @@ int main(int argc, char * argv[])
     // Loop through all the labels
     //
     std::vector<int> loopLabels;
-    if (useStartEnd)
+    if (useStartEnd || GenerateAll)
       {
       // set up the loop list with all the labels between start and end
       for (int i = StartLabel; i <= EndLabel; i++)
@@ -493,7 +496,7 @@ int main(int argc, char * argv[])
         }
       }
     else
-      {
+      {      
       // just copy the list of labels into the new var
       for (int i = 0; i < Labels.size(); i++)
         {
