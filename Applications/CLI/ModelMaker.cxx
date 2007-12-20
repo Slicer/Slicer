@@ -63,7 +63,7 @@ int main(int argc, char * argv[])
     if (debug) 
       {
       std::cout << "The input volume is: " << InputVolume << std::endl;
-      std::cout << "The output directory is: " << OutputDirectory << std::endl;
+//      std::cout << "The output directory is: " << OutputDirectory << std::endl;
       std::cout << "The labels are: " << std::endl;
       for (int l = 0; l < Labels.size(); l++)
         {
@@ -970,9 +970,9 @@ int main(int argc, char * argv[])
       writer->SetInput(stripper->GetOutput());
       writer->SetFileType(2);
       std::string fileName;
-      if (OutputDirectory != "")
+      if (rootDir != "")
         {
-        fileName = OutputDirectory + std::string("/") + labelName + std::string(".vtk");
+        fileName = rootDir + std::string("/") + labelName + std::string(".vtk");
         }
       else
         {
