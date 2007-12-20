@@ -33,8 +33,7 @@
 #include "vtkXMLPolyDataWriter.h"
 
 
-int main( int argc, const char * argv[] )
-{
+int main( int argc, const char * argv[] ){
 
   PARSE_ARGS;
 
@@ -67,7 +66,7 @@ int main( int argc, const char * argv[] )
   trans->PreMultiply();
   trans->SetMatrix(ROI_A_RASToIJK);
 
-  /***
+  /**
   // Trans from IJK to RAS
   trans->Inverse();
   // Take into account spacing to compute Scaled IJK

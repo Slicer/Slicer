@@ -240,6 +240,18 @@ class VTK_TEEM_EXPORT vtkSeedTracts : public vtkObject
  vtkGetMacro(MinimumPathLength,double);
  vtkSetMacro(MinimumPathLength,double);
 
+ // Description
+ // Minimum value of CL to start seeding.
+ vtkGetMacro(StartingThreshold,double);
+ vtkSetMacro(StartingThreshold,double);
+
+  // Description:
+  // Whether to randomly jitter seed points. 
+  // (They stay within same grid cube or voxel.)
+  vtkSetMacro(UseStartingThreshold,int)
+  vtkGetMacro(UseStartingThreshold,int)
+  vtkBooleanMacro(UseStartingThreshold,int)
+
   // Description:
   // A file directory name for lines
   vtkSetStringMacro(FileDirectoryName);
@@ -285,6 +297,10 @@ class VTK_TEEM_EXPORT vtkSeedTracts : public vtkObject
   char *FileDirectoryName;
 
   char *FilePrefix;
+
+  double StartingThreshold;
+
+  int UseStartingThreshold;
 
   // Here we have a representative accessible object 
   // of each type, so that the user can modify it.

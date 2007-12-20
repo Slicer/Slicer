@@ -81,6 +81,8 @@ vtkSeedTracts::vtkSeedTracts()
   this->MinimumPathLength = 15;
   this->FileDirectoryName = NULL;
   this->FilePrefix = NULL;
+  this->UseStartingThreshold = 0;
+  this->StartingThreshold = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -536,6 +538,13 @@ void vtkSeedTracts::SeedStreamlinesInROI()
       gridIncZ = 1;
     }
   
+  double tensor[3][3];
+  double *m[3], w[3], *v[3];
+  double m0[3], m1[3], m2[3];
+  double v0[3], v1[3], v2[3];
+  m[0] = m0; m[1] = m1; m[2] = m2; 
+  v[0] = v0; v[1] = v1; v[2] = v2;
+
   // filename index
   idx=0;
 
@@ -602,6 +611,34 @@ void vtkSeedTracts::SeedStreamlinesInROI()
                   // make sure it is within the bounds of the tensor dataset
                   if (this->PointWithinTensorData(point,point2))
                     {
+                    if (this->UseStartingThreshold)
+                      {
+                      // Check the tensor threshold
+                      int  ijk[3];
+                      double  pcoords[3];   
+                      this->GetInputTensorField()->ComputeStructuredCoordinates  ( point, ijk, pcoords); 
+                      vtkIdType tensorId = this->GetInputTensorField()->ComputePointId  (ijk );
+                     
+                      vtkDataArray *inTensors = this->GetInputTensorField()->GetPointData()->GetTensors();
+                      inTensors->GetTuple(tensorId,(double *)tensor);
+                      for (int j=0; j<3; j++)
+                        {
+                        for (int i=0; i<3; i++)
+                          {
+                          // transpose
+                          m[i][j] = tensor[j][i];
+                          }
+                        }
+                      // compute eigensystem
+                      //vtkMath::Jacobi(m, w, v);
+                      vtkDiffusionTensorMathematics::TeemEigenSolver(m,w,v);
+                      double cl = vtkDiffusionTensorMathematics::LinearMeasure(w);
+                      if (cl < this->StartingThreshold) 
+                        {
+                        continue;
+                        }
+                      } // end if (UseStartingThreshold)
+
                       // Now create a streamline 
                       newStreamline=(vtkHyperStreamlineDTMRI *) 
                         this->CreateHyperStreamline();

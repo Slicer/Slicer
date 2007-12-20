@@ -217,6 +217,11 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToWorld(vtkMatrix4x4* transfo
 int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* node,
                                                           vtkMatrix4x4* transformToNode)
 {
+  if (node == NULL) 
+    {
+    this->GetMatrixTransformToWorld(transformToNode);
+    return 1;
+    }
   if (this->IsTransformToNodeLinear(node) != 1) 
     {
     transformToNode->Identity();

@@ -126,7 +126,7 @@ int main( int argc, const char * argv[] )
   iwriter->SetInput(imageCast->GetOutput());
   iwriter->SetFileName("C:/Temp/cast.nhdr");
   iwriter->Write();
-  **/
+
 
   vtkDiffusionTensorMathematicsSimple *math = vtkDiffusionTensorMathematicsSimple::New();
   math->SetInput(0, reader->GetOutput());
@@ -137,11 +137,9 @@ int main( int argc, const char * argv[] )
   math->SetOperationToLinearMeasure();
   math->Update();
   
-  /**
   iwriter->SetInput(math->GetOutput());
   iwriter->SetFileName("C:/Temp/math.nhdr");
   iwriter->Write();
-  **/
 
   vtkImageThreshold *th = vtkImageThreshold::New();
   th->SetInput(math->GetOutput());
@@ -153,7 +151,6 @@ int main( int argc, const char * argv[] )
   th->SetOutputScalarTypeToShort();
   th->Update();
 
-  /**
   iwriter->SetInput(th->GetOutput());
   iwriter->SetFileName("C:/Temp/th.nhdr");
   iwriter->Write();
@@ -161,8 +158,11 @@ int main( int argc, const char * argv[] )
   
   //PENDING: Do merging with input ROI
   
-  seed->SetInputROI(th->GetOutput());
-  seed->SetInputROIValue(1);
+  seed->SetInputROI(imageCast->GetOutput());
+  seed->SetInputROIValue(ROIlabel);
+  seed->UseStartingThresholdOn();
+  seed->SetStartingThreshold(ClTh);
+
   //ROI comes from tensor, IJKToRAS is the same
   // as the tensor
   vtkTransform *trans2 = vtkTransform::New();
@@ -212,7 +212,7 @@ int main( int argc, const char * argv[] )
   streamer->SetRadiusOfCurvature(StoppingCurvature);
   
   // Temp fix to provide a scalar
-  seed->GetInputTensorField()->GetPointData()->SetScalars(math->GetOutput()->GetPointData()->GetScalars());
+  //seed->GetInputTensorField()->GetPointData()->SetScalars(math->GetOutput()->GetPointData()->GetScalars());
 
   //5. Run the thing
   seed->SeedStreamlinesInROI();
@@ -236,8 +236,8 @@ int main( int argc, const char * argv[] )
   seed->Delete();
   TensorRASToIJK->Delete();
   TensorRASToIJKRotation->Delete();
-  math->Delete();
-  th->Delete();
+  //math->Delete();
+  //th->Delete();
   trans2->Delete();
   trans->Delete();
   streamer->Delete();

@@ -36,6 +36,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLFiberBundleNode.h"
+#include "vtkMRMLTransformNode.h"
 
 #include "vtkKWApplication.h"
 #include "vtkKWWidget.h"
@@ -304,13 +305,26 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
   seed->SetInputTensorField(volumeNode->GetImageData());
   
   //2. Set Up matrices
+  vtkMRMLTransformNode* vxformNode = volumeNode->GetParentTransformNode();
+  vtkMRMLTransformNode* fxformNode = fiducialListNode->GetParentTransformNode();
+  vtkMatrix4x4* transformVolumeToFifucial = vtkMatrix4x4::New();
+  transformVolumeToFifucial->Identity();
+  if (fxformNode != NULL )
+    {
+    fxformNode->GetMatrixTransformToNode(vxformNode, transformVolumeToFifucial);
+    }
+  vtkTransform *transFiducial = vtkTransform::New();
+  transFiducial->Identity();
+  transFiducial->PreMultiply();
+  transFiducial->SetMatrix(transformVolumeToFifucial);
+
   vtkMatrix4x4 *mat = vtkMatrix4x4::New();
   volumeNode->GetRASToIJKMatrix(mat);
   
   vtkMatrix4x4 *TensorRASToIJK = vtkMatrix4x4::New();
   TensorRASToIJK->DeepCopy(mat);
   mat->Delete();
-  
+
   //Do scale IJK
   double sp[3];
   double spold[3];
@@ -393,7 +407,8 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
   int nf = fiducialListNode->GetNumberOfFiducials();
   for (int f=0; f<nf; f++)
     {
-    float *xyz = fiducialListNode->GetNthFiducialXYZ(f);
+    float *xyzf = fiducialListNode->GetNthFiducialXYZ(f);
+    float *xyz = transFiducial->TransformFloatPoint(xyzf);
     //Run the thing
     seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
     }
@@ -438,6 +453,8 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
   trans2->Delete();
   trans->Delete();
   streamer->Delete();
+  transformVolumeToFifucial->Delete();
+  transFiducial->Delete();
 }
 
 //---------------------------------------------------------------------------
