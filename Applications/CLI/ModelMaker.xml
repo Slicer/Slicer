@@ -30,14 +30,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <channel>input</channel>
       <longflag>color</longflag>
       <description>Color table to make labels to colors and objects</description>
-    </table>
-    <directory>
-      <name>OutputDirectory</name>
-      <label>Output Directory</label>
-      <channel>output</channel>
-      <index>1</index>
-      <description>Directory in which to save model(s)</description>
-    </directory>    
+    </table>   
     <geometry fileExtensions=".mrml" multiple="true" aggregate="true">
       <name>ModelSceneFile</name>
       <channel>output</channel>
@@ -47,30 +40,65 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <default>models.mrml</default>
     </geometry>
   </parameters>
-  <parameters>
-  <label>Model Maker Parameters</label>
-  <description>Parameters used for making models.</description>
-  <integer-vector>
+<parameters>
+  <label>Create Multiple</label>
+  <description>Create more than one model at the same time, used for continuous ranges of labels.</description>
+  <boolean>
+     <name>GenerateAll</name>
+     <label>Generate All Models</label>
+     <longflag>--generateAll</longflag>
+     <description>Generate models for all labels in the input volume. Ignores Labels, Start Label, End Label settings. Skips label 0.</description>
+     <default>false</default>
+   </boolean>
+ <integer-vector>
     <name>Labels</name>
     <flag>-l</flag>
     <longflag>-labels</longflag>
-    <description>A comma separated list of label values from which to make models. Over-rides the Start/End Labels in the Make Multiple section. Make sure they're in ascending order.</description>
+    <description>A comma separated list of label values from which to make models. Over-rides the Start/End Labels.</description>
     <label>Labels</label>
   </integer-vector>
    <string>
      <name>Name</name>
-     <label>Model Name</label>
+     <label>Model Prefix</label>
      <flag>-n</flag>
      <longflag>--name</longflag>
-     <description>Name to use for this model. If making multiple models, use this as a prefix to the label color name</description>
+     <description>Name to use for this model. If making multiple models, use this as a prefix to the label and color name</description>
      <default>Model</default>
    </string>
+   <integer>
+    <name>StartLabel</name>
+    <label>Start Label</label>
+    <flag>-s</flag>
+    <longflag>--start</longflag>
+    <description>Voxel value from which to start making models. Used instead of the label list to specify a range (make sure the label list is empty or it will over ride this).</description>
+    <default>-1</default>
+  </integer>
+  <integer>
+    <name>EndLabel</name>
+    <label>End Label</label>
+    <flag>-e</flag>
+    <longflag>--end</longflag>
+    <description>Voxel value up to which to continue making models. Skip any values with zero voxels.</description>
+    <default>-1</default>
+  </integer>
+  <boolean>
+    <name>JointSmoothing</name>
+    <label>Joint Smoothing</label>
+    <description>Perform joint smoothing between models, so that they will fit together. </description>
+    <flag>-j</flag>
+    <longflag>--jointsmooth</longflag>
+    <default>false</default>
+  </boolean>
+</parameters>
+  <parameters advanced="true">
+  <label>Model Maker Parameters</label>
+  <description>Parameters used for making models.</description> 
    <integer>
      <name>Smooth</name>
      <label>Smooth</label>
      <longflag>--smooth</longflag>
      <description>Number of smoothing iterations</description>
-     <default>15</default>
+     <default>10</default>
      <constraints>
      <minimum>0</minimum>
      </constraints>
@@ -110,9 +138,10 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
      <element>Laplacian</element>
    </string-enumeration>
 </parameters>
-<parameters>
+
+<parameters advanced="true">
    <label>Anatomical Information</label>
-   <description>Use external information to name models</description>   
+   <description>Use external information to name models, instead of the colors associated with the label map.</description>   
    <file fileExtensions=".csv">
      <name>AnatomyLabelFile</name>
      <channel>input</channel>
@@ -128,40 +157,5 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
      <description> If true and an Anatomy Label File is specified, only models which have an entry in the Anatomy Label File will be generated. If false, generate all models that exist within the label range.</description>
      <default>true</default>
    </boolean>
-</parameters>
-<parameters>
-  <label>Create Multiple</label>
-  <description>Create more than one model at the same time, used for continuous ranges of labels.</description>
-  <boolean>
-     <name>GenerateAll</name>
-     <label>Generate All Models</label>
-     <longflag>--generateAll</longflag>
-     <description>Generate models for all labels in the input volume. Ignores Start Label and End Label settings.</description>
-     <default>false</default>
-   </boolean>
-   <integer>
-    <name>StartLabel</name>
-    <label>Start Label</label>
-    <flag>-s</flag>
-    <longflag>--start</longflag>
-    <description>Voxel value from which to start making models. Used instead of the label list to specify a range (make sure the label list is empty or it will over ride this).</description>
-    <default>-1</default>
-  </integer>
-  <integer>
-    <name>EndLabel</name>
-    <label>End Label</label>
-    <flag>-e</flag>
-    <longflag>--end</longflag>
-    <description>Voxel value up to which to continue making models. Skip any values with zero voxels.</description>
-    <default>-1</default>
-  </integer>
-  <boolean>
-    <name>JointSmoothing</name>
-    <label>Joint Smoothing</label>
-    <description>Perform joint smoothing between all models, so that they will fit together. </description>
-    <flag>-j</flag>
-    <longflag>--jointsmooth</longflag>
-    <default>false</default>
-  </boolean>
 </parameters>
 </executable>
