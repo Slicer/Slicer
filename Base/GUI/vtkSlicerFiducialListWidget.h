@@ -156,8 +156,8 @@ protected:
   // Description:
   // Keep track of the actors that represent each fiducial point
   //BTX
-  std::map<const char *, vtkActor *> DisplayedFiducials;
-  std::map<const char *, vtkFollower *> DisplayedTextFiducials;
+  std::map<std::string, vtkActor *> DisplayedFiducials;
+  std::map<std::string, vtkFollower *> DisplayedTextFiducials;
   
   std::string GetFiducialActorID (const char *id, int index);
   // Description:
@@ -180,40 +180,40 @@ protected:
   //BTX
   // Description:
   // the transforms applied to the 3d diamond glyphs, indexed by fiducial list id
-  std::map< const char *, vtkTransform * > DiamondTransformMap;
+  std::map< std::string, vtkTransform * > DiamondTransformMap;
   // Description:
   // encapsulates the vtkPoints for each list, indexed by fiducial list id
-  std::map< const char *, vtkPoints * > GlyphPointsMap;
+  std::map< std::string, vtkPoints * > GlyphPointsMap;
   // Description:
   // encapsulates the scalars for each list, indexed by fiducial list id
-  std::map< const char *, vtkFloatArray * > GlyphScalarsMap;
+  std::map< std::string, vtkFloatArray * > GlyphScalarsMap;
   // Description:
   // encapsulates the glyph points and the glyph scalars, indexed by fiducial list id
-  std::map< const char *, vtkPolyData * > GlyphPolyDataMap;
+  std::map< std::string, vtkPolyData * > GlyphPolyDataMap;
 
   // Description:
   // encapsulates the transforms applied to the text for each list, indexed by fiducial list id
-  std::map< const char *, vtkTransform * > TextTransformMap;
+  std::map< std::string, vtkTransform * > TextTransformMap;
   // Description:
   // encapsulates the transforms applied to the symbols for each list, indexed by fiducial list id
-  std::map< const char *, vtkTransform * > SymbolTransformMap;
+  std::map< std::string, vtkTransform * > SymbolTransformMap;
 
   // Description:
   // encapsulates the filter that takes in the shape for each glyph, for each
   // list, indexed by fiducial list id
-  std::map< const char *, vtkTransformPolyDataFilter * > TransformFilterMap;
+  std::map< std::string, vtkTransformPolyDataFilter * > TransformFilterMap;
 
   // Description:
   // encapsulates the glyphs that are used to display each list, indexed by
   // fiducial list id
-  std::map< const char *, vtkGlyph3D * > Glyph3DMap;
+  std::map< std::string, vtkGlyph3D * > Glyph3DMap;
   //std::vector< vtkGlyph3D * > Glyph3DVector;
   //std::vector< int > GlyphSymbolVector;
   
 
   // Description:
   // encapsulates the data mappers for each list, indexed by fiducial list id
-  std::map< const char *, vtkMapper * > GlyphMapperMap;
+  std::map< std::string, vtkMapper * > GlyphMapperMap;
   //ETX
 
   // Description:
