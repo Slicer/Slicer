@@ -1286,6 +1286,11 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
 {
   vtkDebugMacro("vtkSlicerFiducialListWidget::SetFiducialDisplayProperty: n = " << n);
   float *xyz = flist->GetNthFiducialXYZ(n);
+  float xyzw[4];
+  xyzw[0] = xyz[0];
+  xyzw[1] = xyz[1];
+  xyzw[2] = xyz[2];
+  xyzw[3] = 1.0;
   float worldxyz[4], *worldp = &worldxyz[0];
   int selected = flist->GetNthFiducialSelected(n);
 
@@ -1297,7 +1302,7 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
     {
     lnode->GetMatrixTransformToWorld(transformToWorld);
     }
-  transformToWorld->MultiplyPoint(xyz, worldp);
+  transformToWorld->MultiplyPoint(xyzw, worldp);
 
   if (actor != NULL)
     {
