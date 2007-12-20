@@ -21,6 +21,7 @@
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWMessageDialog.h"
+#include "vtkKWTopLevel.h"
 
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerModelsLogic.h"
@@ -900,6 +901,12 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 {
   vtkDebugMacro("vtkQueryAtlasGUI: RemoveGUIObservers\n");
 
+  //--- all the KWLoadSaveDialogs
+  this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->RemoveObservers(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->LoadURIsButton->GetLoadSaveDialog()->RemoveObservers(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
+
   this->BasicAnnotateButton->GetWidget()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FIPSFSButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GeneralButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );    
@@ -967,6 +974,13 @@ void vtkQueryAtlasGUI::RemoveGUIObservers ( )
 void vtkQueryAtlasGUI::AddGUIObservers ( )
 {
   vtkDebugMacro("vtkQueryAtlasGUI: AddGUIObservers\n");
+
+  //--- all the KWLoadSaveDialogs
+  this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->AddObserver(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->AddObserver(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->AddObserver(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->LoadURIsButton->GetLoadSaveDialog()->AddObserver(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
+    
   this->BasicAnnotateButton->GetWidget()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FIPSFSButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GeneralButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -1043,7 +1057,7 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkKWEntry *e  = vtkKWEntry::SafeDownCast ( caller);
   vtkSlicerNodeSelectorWidget *sel = vtkSlicerNodeSelectorWidget::SafeDownCast ( caller );
   vtkQueryAtlasSearchTermWidget *stw = vtkQueryAtlasSearchTermWidget::SafeDownCast (caller );
-
+  vtkKWLoadSaveDialog *lsdialog = vtkKWLoadSaveDialog::SafeDownCast ( caller );
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
   vtkMRMLNode *node;
 
@@ -1051,7 +1065,29 @@ void vtkQueryAtlasGUI::ProcessGUIEvents ( vtkObject *caller,
     {
     return;
     }
+
   
+  //--- check all LoadSaveDialogs
+  if ( lsdialog != NULL )
+    {
+    if ( (lsdialog == this->LoadURIsButton->GetLoadSaveDialog() ) && (event == vtkKWTopLevel::WithdrawEvent ) )
+      {
+      this->LoadBookmarksCallback();
+      }
+    else if  ( (lsdialog == this->SaveAccumulatedResultsButton->GetLoadSaveDialog() ) && (event == vtkKWTopLevel::WithdrawEvent ) )
+      {
+      this->WriteBookmarksCallback();
+      }
+    else if  ( (lsdialog == this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog() ) && (event == vtkKWTopLevel::WithdrawEvent ) )
+      {
+      this->LoadXcedeCatalogCallback();
+      }
+    else if  ( (lsdialog == this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog() ) && (event == vtkKWTopLevel::WithdrawEvent ) )
+      {
+      this->LoadQdecResultsCallback();
+      }    
+    }
+
   if ( (stw = this->SavedTerms) && (event == vtkQueryAtlasSearchTermWidget::ReservedTermsEvent ))
     {
     // test
@@ -1732,14 +1768,17 @@ void vtkQueryAtlasGUI::UpdateAnnoVisibilityMenu ( )
             this->QuerySceneVisibilityMenuButton->GetMenu()->AddCheckButton ( menuitem.c_str() );
             //--- set the model's initial visibility according to the display node.
             vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast( mnode->GetDisplayNode() );
-            int v = dnode->GetVisibility ( );
-            if ( v )
+            if ( dnode )
               {
-              this->QuerySceneVisibilityMenuButton->GetMenu()->SelectItem ( menuitem.c_str() );
-              }
-            else
-              {
-              this->QuerySceneVisibilityMenuButton->GetMenu()->DeselectItem ( menuitem.c_str() );
+              int v = dnode->GetVisibility ( );
+              if ( v )
+                {
+                this->QuerySceneVisibilityMenuButton->GetMenu()->SelectItem ( menuitem.c_str() );
+                }
+              else
+                {
+                this->QuerySceneVisibilityMenuButton->GetMenu()->DeselectItem ( menuitem.c_str() );
+                }
               }
             }
           }
@@ -2200,7 +2239,6 @@ void vtkQueryAtlasGUI::BuildFreeSurferFIPSFrame( )
     this->LoadFIPSFSCatalogButton->GetLabel()->SetWidth ( 18 );
     this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOff();
     this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOff();
-    this->LoadFIPSFSCatalogButton->GetWidget()->SetCommand ( this, "LoadXcedeCatalogCallback" );
     this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes ( "{ {Xcede catalog} {*.xcat} }");
     this->LoadFIPSFSCatalogButton->SetBalloonHelpString("Load a FIPS/FreeSurfer study from an Xcede catalog.");
     this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 4",
@@ -2308,7 +2346,6 @@ void vtkQueryAtlasGUI::BuildQdecFrame ( )
     this->QdecGetResultsButton->GetLabel()->SetWidth ( 18 );
     this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOff();
     this->QdecGetResultsButton->GetWidget()->GetLoadSaveDialog()->SaveDialogOff();
-    this->QdecGetResultsButton->GetWidget()->SetCommand ( this, "LoadQdecResultsCallback" );
     //this->QdecGetResultsButton->GetLoadSaveDialog()->SetFileTypes ( "");
     this->QdecGetResultsButton->SetBalloonHelpString("Load all results from previous Qdec analysis (select a qdec directory).");
     this->Script ( "pack %s -side top -anchor nw -padx 6 -pady 4",
@@ -2991,7 +3028,6 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->SaveAccumulatedResultsButton->SetBorderWidth ( 0 );
     this->SaveAccumulatedResultsButton->SetReliefToFlat();    
     this->SaveAccumulatedResultsButton->SetBalloonHelpString ("Save links to file");
-    this->SaveAccumulatedResultsButton->SetCommand ( this, "WriteBookmarksCallback" );
     this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->SetTitle("Save Firefox bookmarks file");
     this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->ChooseDirectoryOff();
     this->SaveAccumulatedResultsButton->GetLoadSaveDialog()->SaveDialogOn();
@@ -3004,7 +3040,6 @@ void vtkQueryAtlasGUI::BuildQueriesGUI ( )
     this->LoadURIsButton->SetBorderWidth(0);
     this->LoadURIsButton->SetReliefToFlat ( );
     this->LoadURIsButton->SetBalloonHelpString ( "Load links from file" );
-    this->LoadURIsButton->SetCommand ( this, "LoadBookmarksCallback" );
     this->LoadURIsButton->GetLoadSaveDialog()->SetTitle("Load Firefox bookmarks file");
     this->LoadURIsButton->GetLoadSaveDialog()->ChooseDirectoryOff();
     this->LoadURIsButton->GetLoadSaveDialog()->SaveDialogOff();
