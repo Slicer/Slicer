@@ -1310,6 +1310,10 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
 {
   vtkDebugMacro("vtkSlicerFiducialListWidget::SetFiducialDisplayProperty: n = " << n << ", actor is " << (actor == NULL ? "null" : "not null"));
   float *xyz = flist->GetNthFiducialXYZ(n);
+  if (xyz == NULL)
+    {
+    return;
+    }
   float xyzw[4];
   xyzw[0] = xyz[0];
   xyzw[1] = xyz[1];
