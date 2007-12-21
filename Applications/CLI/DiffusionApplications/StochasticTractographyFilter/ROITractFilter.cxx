@@ -48,7 +48,7 @@ int main(int argc, char* argv[]){
   while( loadedtracts->GetNextCell( npts, pts ) ){
     //std::cout<<std::endl;
     int state=0;
-    int firstoutsidepointID=0;
+    int firstoutsidepointIDindex=0;
     int currentlabel=0;
     for(int currentpointIDindex=0; currentpointIDindex<npts; currentpointIDindex++){
       double* vertex = points->GetPoint( pts[currentpointIDindex] );
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]){
       case 1: //found first ROI but have not left it yet
         if(roiimagepix!=roilabels[0]){
           state=2;
-          firstoutsidepointID = currentpointIDindex;
+          firstoutsidepointIDindex = currentpointIDindex;
         }
         //don't break because it is possible that 1st outside pixel is last ROI
       case 2: //left first ROI, looking for remaining ROI's in order
@@ -83,8 +83,9 @@ int main(int argc, char* argv[]){
       //std::cout<<state;
       if(state==3){
         if(cuttractsswitch){
-          vtkIdType* cutpts = pts+firstoutsidepointID;
-          filteredtractarray->InsertNextCell( currentpointIDindex-firstoutsidepointID, cutpts );
+          std::cout<<firstoutsidepointIDindex<<std::endl;
+          vtkIdType* cutpts = pts+firstoutsidepointIDindex;
+          filteredtractarray->InsertNextCell( currentpointIDindex-firstoutsidepointIDindex, cutpts );
         }
         else filteredtractarray->InsertNextCell( npts, pts );
         
