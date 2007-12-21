@@ -234,7 +234,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
         }
       else
         {
-        vtkWarningMacro("Unable to add a new colour node " << id.c_str() << " with freesurfer colours, from file: " << node->GetStorageNode()->GetFileName() << " as there is already a node with this id in the scene");
+        vtkDebugMacro("Unable to add a new colour node " << id.c_str() << " with freesurfer colours, from file: " << node->GetStorageNode()->GetFileName() << " as there is already a node with this id in the scene");
         }
       }
     else
@@ -279,7 +279,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
         }
       else
         {
-        vtkWarningMacro("Unable to add a new colour node " << id.c_str() << " with freesurfer colours, from file: " << node->GetStorageNode()->GetFileName());
+        vtkDebugMacro("Unable to add a new colour node " << id.c_str() << " with freesurfer colours, from file: " << node->GetStorageNode()->GetFileName());
         }
       }
     else

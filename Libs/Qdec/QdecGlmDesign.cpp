@@ -78,7 +78,7 @@ QdecGlmDesign::QdecGlmDesign ( QdecDataTable* iDataTable )
     else
       {
       this->mfnDefaultWorkingDir = "qdec";
-      fprintf(stderr, "WARNING: QdecGlmDesign::Constructor: subjects dir and working directory not set! Using qdec");
+      //fprintf(stderr, "WARNING: QdecGlmDesign::Constructor: subjects dir and working directory not set! Using qdec\n");
       }
   }
   this->mfnWorkingDir = this->mfnDefaultWorkingDir;
@@ -369,7 +369,7 @@ int QdecGlmDesign::SetSubjectsDir ( const char* ifnSubjectsDir )
 {
   if (ifnSubjectsDir == NULL)
     {
-    printf("ERROR: failure setting SUBJECTS_DIR, string is null\n");
+    //printf("ERROR: failure setting SUBJECTS_DIR, string is null\n");
     return -1;
     }
   

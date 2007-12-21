@@ -627,7 +627,7 @@ void vtkQdecModuleGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     if (this->LoadProjectFile(fileName) == 0)
       {
-      vtkWarningMacro("Loaded project file from " << fileName << ", widget text = " << this->LoadResultsButton->GetWidget()->GetText());
+      vtkDebugMacro("Loaded project file from " << fileName << ", widget text = " << this->LoadResultsButton->GetWidget()->GetText());
       browse->SaveLastPathToRegistry("OpenPath");
       }
     else
@@ -1249,7 +1249,7 @@ void vtkQdecModuleGUI::BuildGUI ( )
   if (this->GetLogic() && !this->GetLogic()->GetTclScriptLoaded())
     {
       const char *tclScript = this->GetLogic()->GetPlotTclScript();
-      vtkWarningMacro("Loading: " << tclScript);
+      vtkDebugMacro("Loading: " << tclScript);
       if (app->LoadScript(tclScript) == 0)
         {
         vtkErrorMacro("vtkQdecModuleGUI::BuildGUI: unable to load in tcl script " << tclScript);
@@ -1393,7 +1393,7 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
   vtkDebugMacro("vtkQdecModuleGUI:ProcessGUIEvents: was able to load file " << newFileName.c_str());
   
   // load the results
-  vtkWarningMacro("Reading QDEC results that were in the file " << fileName);
+  vtkDebugMacro("Reading QDEC results that were in the file " << fileName);
   // get the models logic to use to load the models and scalars (can't access
   // it in the Logic class)
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
