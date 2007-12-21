@@ -145,7 +145,7 @@ int main( int argc, const char * argv[] )
   cast1->Update();
 
 
-  vtkImageConnectivity *conn = vtkImageConnectivity::New();
+  vtkSmartPointer<vtkImageConnectivity> conn = vtkImageConnectivity::New();
   if (removeIslands)  
     {
     conn->SetBackground(1);
