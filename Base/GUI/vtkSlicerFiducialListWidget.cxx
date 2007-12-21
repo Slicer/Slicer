@@ -1023,11 +1023,34 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
        
         } // end of glyph3d != NULL
 
-      // do the updates for each point, point position, scalar map, text actor text
+      // do the updates for each point, point position, scalar map, text actor
+      // text
+
+      // first get the list's transform node
+      vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
+      vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+      transformToWorld->Identity();
+      if (tnode != NULL && tnode->IsLinear())
+        {
+        vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+        lnode->GetMatrixTransformToWorld(transformToWorld);
+        }
       for (int f=0; f<flist->GetNumberOfFiducials(); f++)
         {
+        // get this point
+        float *xyz = flist->GetNthFiducialXYZ(f);
+        // convert by the parent transform
+        float xyzw[4];
+        xyzw[0] = xyz[0];
+        xyzw[1] = xyz[1];
+        xyzw[2] = xyz[2];
+        xyzw[3] = 1.0;
+        float worldxyz[4], *worldp = &worldxyz[0];        
+        transformToWorld->MultiplyPoint(xyzw, worldp);
+
         // add this point to the list of points
-        this->GlyphPointsMap[id]->InsertNextPoint(flist->GetNthFiducialXYZ(f));
+        vtkDebugMacro("Inserting point for id " << id.c_str() << " " << worldxyz[0] << " " << worldxyz[1] << " " << worldxyz[2]);
+        this->GlyphPointsMap[id]->InsertNextPoint(worldxyz);
         //std::cout << "3D: added the next point to the glyph points map, " << f << " = " << flist->GetNthFiducialXYZ(f) << ", glyph points map now has " << this->GlyphPointsMap[id]->GetNumberOfPoints() << " points." << endl;
 
         // update the scalar map for the point selected state
@@ -1045,6 +1068,8 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
         
         this->UpdateTextActor(flist, f);
         }
+      transformToWorld->Delete();
+      transformToWorld = NULL;
       // now update the actor that controls the full list
       this->SetFiducialDisplayProperty(flist, 0, actor, NULL);
       
@@ -1240,7 +1265,6 @@ void vtkSlicerFiducialListWidget::RemoveFiducialProps()
       }
     }
   this->DisplayedTextFiducials.clear();
-
 }
 
 //---------------------------------------------------------------------------
@@ -1284,7 +1308,7 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
                                                        int n,
                                                        vtkActor *actor, vtkFollower *textActor)
 {
-  vtkDebugMacro("vtkSlicerFiducialListWidget::SetFiducialDisplayProperty: n = " << n);
+  vtkDebugMacro("vtkSlicerFiducialListWidget::SetFiducialDisplayProperty: n = " << n << ", actor is " << (actor == NULL ? "null" : "not null"));
   float *xyz = flist->GetNthFiducialXYZ(n);
   float xyzw[4];
   xyzw[0] = xyz[0];
@@ -1308,7 +1332,8 @@ void vtkSlicerFiducialListWidget::SetFiducialDisplayProperty(vtkMRMLFiducialList
     {
     if (!flist->GlyphTypeIs3D())
       {
-      // dont' set the position if it's a 3d list
+      // don't set the position if it's a 3d list, it was done already at the
+      // point level
       actor->SetPosition(worldxyz[0], worldxyz[1], worldxyz[2]);
       actor->SetScale(flist->GetSymbolScale());
       }
