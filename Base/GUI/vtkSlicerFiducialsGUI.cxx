@@ -926,7 +926,6 @@ void vtkSlicerFiducialsGUI::Enter ( )
     this->AddGUIObservers();
     }
     this->CreateModuleEventBindings();
-    vtkErrorMacro("vtkSlicerFiducialsGUI::Enter: calling update gui");
     this->UpdateGUI();
 }
 
