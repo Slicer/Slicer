@@ -146,6 +146,27 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLNode::Reset()
+{    
+  vtkMRMLNode *newNode = this->CreateNodeInstance();
+    
+  int save = this->GetSaveWithScene();
+  int hide = this->GetHideFromEditors();
+  int select = this->GetSelectable();
+  char *tag = this->GetSingletonTag();
+
+  this->DisableModifiedEventOn();
+  this->CopyWithSceneWithoutModifiedEvent(newNode);
+  
+  this->SetSaveWithScene(save);
+  this->SetHideFromEditors(hide);
+  this->SetSelectable(select);
+  this->SetSingletonTag(tag);
+  this->DisableModifiedEventOff(); // does not invoke Modified()
+  
+  newNode->Delete();
+}
+//----------------------------------------------------------------------------
 void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os,indent);

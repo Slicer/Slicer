@@ -139,6 +139,14 @@ public:
   // Description:
   // Copy everything from another node of the same type.
   void CopyWithScene(vtkMRMLNode *node);
+  
+  // Description:
+  // Reset node attributes to the initilal state as defined in the constructor.
+  // NOTE:   it preserves values several dynamic attributes that may be set by an application:
+  // SaveWithScene, HideFromEditors, Selectable, SingletonTag
+  // NOTE: other attributes that needs to be preserved should be handled in the subclass
+  virtual void Reset();
+
 
   // Description:
   // Get node XML tag name (like Volume, Model)
