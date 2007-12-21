@@ -369,3 +369,10 @@ void vtkMRMLColorNode::AddColorName(const char *name)
   this->Names.push_back(std::string(name));
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLColorNode::Reset()
+{
+  // don't need to call reset on color nodes, as all but the User color table
+  // node are static, and that's taken care of in the vtkMRMLColorTableNode
+  //Superclass::Reset();
+}

@@ -68,14 +68,7 @@ public:
   // Description:
   // Reset node attributes to the initilal state as defined in the constructor.
   // NOTE:   it preserves values several dynamic attributes that may be set by an application: type, name
-  virtual void Reset() 
-    {
-    int type = this->GetType();
-    Superclass::Reset();
-    this->DisableModifiedEventOn();
-    this->SetType(type);
-    this->DisableModifiedEventOff(); 
-    };
+  virtual void Reset();
   
   // Description:
   // 

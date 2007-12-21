@@ -1076,6 +1076,11 @@ void vtkMRMLColorTableNode::SetType(int type)
 //---------------------------------------------------------------------------
 void vtkMRMLColorTableNode::SetNamesFromColors()
 {
+  if (this->GetNamesInitialised())
+    {
+    vtkWarningMacro("SetNamesFromColors is over riding already set names for node " << this->GetName());
+    }
+  
   int size = this->GetLookupTable()->GetNumberOfColors();
   double *rgba;
   // reset the names
@@ -1193,4 +1198,18 @@ vtkMRMLStorageNode* vtkMRMLColorTableNode::GetStorageNode()
     node = vtkMRMLStorageNode::SafeDownCast(snode);
     }
   return node;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLColorTableNode::Reset()
+{
+  // only call reset if this is a user node
+  if (this->GetType() == vtkMRMLColorTableNode::User)
+    {
+    int type = this->GetType();
+    Superclass::Reset();
+    this->DisableModifiedEventOn();
+    this->SetType(type);
+    this->DisableModifiedEventOff();
+    }
 }
