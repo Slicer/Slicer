@@ -34,6 +34,7 @@ SET(vtkITK_SRCS
     vtkITKLevelTracingImageFilter.cxx
     vtkITKLevelTracing3DImageFilter.cxx
     vtkITKWandImageFilter.cxx
+    vtkITKNewOtsuThresholdImageFilter.cxx
 )
 
 # Abstract/pure virtual classes
