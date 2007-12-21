@@ -228,6 +228,7 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     if (this->MRMLScene)
       {
       this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+//    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
       this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
       }
 }
@@ -263,7 +264,13 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
         {
         this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
         }
-      if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+      /*
+      if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
+        {
+        this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+        }
+      */
+       if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
         {
         this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
         }
@@ -488,7 +495,8 @@ void vtkSlicerFiducialsGUI::ProcessLogicEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
                                              unsigned long event, void *callData )
-{    
+{
+    
   vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessMRMLEvents: event = " << event << ".\n");
   
   if (event == vtkCommand::WidgetValueChangedEvent)
@@ -514,7 +522,25 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
         }
       }
     }
-  
+  /*
+    // check for a node added event
+    if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
+        vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
+        event == vtkMRMLScene::NodeAddedEvent)
+      {
+      vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessGUIEvents: got a node added event on scene");
+      // check to see if it was a fid node    
+      if (callData != NULL)
+        {
+        vtkMRMLNode *addNode = (vtkMRMLNode *)callData;
+        if (addNode != NULL &&
+            addNode->IsA("vtkMRMLFiducialListNode"))
+          {
+          vtkDebugMacro("A fid list node got added " << addNode->GetID());
+          }
+        }
+      }
+  */
     // did the selected node get modified?
     if (this->ApplicationLogic)
       {
@@ -939,7 +965,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "Fiducials", "Fiducials", NULL );
     
     // Define your help text and build the help frame here.
-    const char *help = "The Fiducials Module creates and manages lists of Fiducial points. ";
+    const char *help = "The Fiducials Module creates and manages lists of Fiducial points. Click on the tool bar icon of an arrow pointing to a starburst fiducial to enter the 'place a new object mode', then click on 3D models or on 2D slices. You can also place fiducials while in 'tranform view' mode by positioning the mouse over a 2D slice plane in the Slice view windows (it must be the active window) and pressing the 'P' key. You can then click and drag the fiducial using the mouse in 'transform view' mode. 3D interactions are coming. You can reset the positions of the fiducials in the table below, and adjust selection (fiducials must be selected if they are to be passed into a command line module). To align slices with fiducials, move the fiducial while holding down the Control key. You can use the '`' key to jump to the next fiducial, Shift-` to jump backwards through the list. Use the backspace or delete key to delete a fiducial over which you are hovering in 2D.";
     const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Fiducials" );
     this->BuildHelpAndAboutFrame ( page, help, about );
