@@ -34,9 +34,9 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <channel>output</channel>
    </transform>
 </parameters>
-<parameters>
+<parameters advanced="true">
   <label>Reslice</label>
-  <description>Apply transform to volume</description>
+  <description>Apply transform to volume, still under development</description>
   <transform type="linear">
       <longflag>transform1</longflag>
       <description>An input transform, apply this to the input volume and get the output volume</description>
@@ -75,7 +75,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <default>NearestNeighbor</default> 
    </string-enumeration>
 </parameters>
-<parameters>
+<parameters advanced="true">
   <label>Debug</label>
     <boolean>
       <name>debugSwitch</name>
