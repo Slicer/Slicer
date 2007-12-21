@@ -111,7 +111,7 @@ int main( int argc, const char * argv[] )
   //compute tenor mask
   
   vtkSmartPointer<vtkITKNewOtsuThresholdImageFilter> otsu = vtkITKNewOtsuThresholdImageFilter::New();
-  otsu->SetInput(estim->GetOutput());
+  otsu->SetInput(estim->GetBaseline());
   otsu->SetOmega (1 + otsuOmegaThreshold);
   otsu->SetOutsideValue(1);
   otsu->SetInsideValue(0);
