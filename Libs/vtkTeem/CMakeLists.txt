@@ -30,7 +30,7 @@ SET(vtkTeem_SRCS
   vtkSeedTracts.cxx
   vtkTensorImplicitFunctionToFunctionSet.cxx
   vtkTractographyPointAndArray.cxx
-  #vtkTensorMask.cxx
+  vtkTensorMask.cxx
 )
 
 # Abstract/pure virtual classes
@@ -95,7 +95,7 @@ ENDIF ( ${TEEM_VERSION_MAJOR} GREATER 1 )
 TARGET_LINK_LIBRARIES(vtkTeem 
   vtkCommon
   vtkFiltering
-  vtkImaging
+  vtkImagingTCL
   vtkIOTCL
   vtkGraphicsTCL
   ${TEEM_LIBRARIES}
