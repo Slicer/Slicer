@@ -30,7 +30,7 @@ SET(vtkTeem_SRCS
   vtkSeedTracts.cxx
   vtkTensorImplicitFunctionToFunctionSet.cxx
   vtkTractographyPointAndArray.cxx
-
+  #vtkTensorMask.cxx
 )
 
 # Abstract/pure virtual classes

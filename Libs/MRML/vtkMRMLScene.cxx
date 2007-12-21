@@ -499,7 +499,7 @@ int vtkMRMLScene::Import()
     for (n=0; n<nnodes; n++) 
       {
       double progress = n / (1. * nnodes);
-      this->InvokeEvent(vtkCommand::ProgressEvent,(void *)&progress);
+      //this->InvokeEvent(vtkCommand::ProgressEvent,(void *)&progress);
 
       node = (vtkMRMLNode *)scene->GetItemAsObject(n);
       nodesAddedByClass[std::string(node->GetClassName())] = node;

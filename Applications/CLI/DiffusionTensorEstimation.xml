@@ -40,6 +40,13 @@
       <index>2</index>
       <description>Estimated DTI volume</description>
     </image>
+    <image type ="label">
+      <name>thresholdMask</name>
+      <label>Otsu Threshold Mask</label>
+      <channel>output</channel>
+      <index>3</index>
+      <description>Otsu Threshold Mask</description>
+    </image> 
   </parameters>
   <parameters>
     <label>Estimation Parameters</label>
@@ -55,5 +62,32 @@
       <element>Weigthed Least Squares</element>
       <element>Non Linear</element>
     </string-enumeration>
+    <double>
+      <name>otsuOmegaThreshold</name>
+      <label>Otsu Omega Threshold Parameter</label>
+      <flag>o</flag>
+      <longflag>otsuomegathreshold</longflag>
+      <description>Control the sharpness of the threshold in the Otsu computation. 0: lower threshold, 1: higher threhold</description>
+      <default>0.5</default>
+      <constraints>
+      	<minimum>0.0</minimum>
+	<maximum>1.0</maximum>
+	<step>0.1</step>
+      </constraints>
+    </double>
+    <boolean>
+     <name>removeIslands</name>
+     <label>Remove Islands in Threshold Mask</label>
+     <longflag>--removeislands</longflag>
+     <description>Remove Islands in Threshold Mask?</description>
+     <default>true</default>
+    </boolean>
+    <boolean>
+     <name>applyMask</name>
+     <label>Apply Threshold Mask</label>
+     <longflag>--applythresholdmask</longflag>
+     <description>Apply threshold mask to tenor volume?</description>
+     <default>true</default>
+    </boolean>
   </parameters>
 </executable>

@@ -43,8 +43,9 @@ SET (CLP DiffusionTensorEstimation)
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-LINK_DIRECTORIES(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR})
-TARGET_LINK_LIBRARIES (${CLP} ITKBasicFilters MRML vtkTeem)
+LINK_DIRECTORIES(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR} ${SlicerBaseLogic_SOURCE_DIR}
+  ${SlicerBaseLogic_BINARY_DIR})
+TARGET_LINK_LIBRARIES (${CLP} ITKBasicFilters MRML vtkTeem SlicerBaseLogic)
 INCLUDE_DIRECTORIES(
         ${vtkITK_SOURCE_DIR} 
         ${vtkITK_BINARY_DIR} 
