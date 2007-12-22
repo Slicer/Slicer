@@ -21,6 +21,7 @@
 #include "vtkRegistratorTypeTraits.h"
 #include "vtkImageChangeInformation.h"
 #include "vtkImagePermute.h"
+#include "itkImageFileWriter.h"
 
 vtkCxxRevisionMacro(vtkRigidRegistrator, "$Revision: 0.0 $");
 vtkStandardNewMacro(vtkRigidRegistrator);
@@ -65,6 +66,8 @@ public:
               << optimizer->GetValue();
     std::cerr << std::setw(17) << std::right << std::setfill('.')
               << optimizer->GetCurrentStepLength();
+    std::cerr << std::endl;
+    std::cerr << "   " << optimizer->GetCurrentPosition() << std::endl;
     std::cerr << std::endl;
   }
 };
@@ -113,7 +116,7 @@ public:
     int level       = registration->GetCurrentLevel();
     int totalLevels = registration->GetNumberOfLevels();
     std::cerr << "   ### Starting registration level: " 
-              <<  level << " of " << totalLevels << " ###" << std::endl;
+              <<  level+1 << " of " << totalLevels << " ###" << std::endl;
 
     std::cerr << "       " 
               << registration->GetOptimizer()->GetCurrentPosition() 
@@ -305,7 +308,7 @@ ComputeReorientationInformation(const vtkMatrix4x4* IJKToXYZ,
       double t = (*IJKToXYZ)[r][c];
       if (t != 0)
         {
-        filteredAxesForPermuteFilter[c]      = r;
+        filteredAxesForPermuteFilter[r]      = c;
         spacingForChangeInformationFilter[r] = t;
         break;
         }
@@ -615,6 +618,20 @@ RegisterImagesInternal3()
   //
   // everything should be set up, run the registration
   //
+
+  //
+  // debug: write input images to disk
+#ifdef NOT_EVER_DEFINED
+  typedef itk::ImageFileWriter<ITKImageType> ITKWriterType;
+  typename ITKWriterType::Pointer writerFixed = ITKWriterType::New();
+  writerFixed->SetInput(fixedImageITKImporter->GetOutput());
+  writerFixed->SetFileName("/tmp/Fixed.nhdr");
+  writerFixed->Update();
+  typename ITKWriterType::Pointer writerMoving = ITKWriterType::New();
+  writerMoving->SetInput(movingImageITKImporter->GetOutput());
+  writerMoving->SetFileName("/tmp/Moving.nhdr");
+  writerMoving->Update();
+#endif NOT_EVER_DEFINED
 
   try 
     {

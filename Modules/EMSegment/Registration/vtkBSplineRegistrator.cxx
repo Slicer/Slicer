@@ -121,7 +121,7 @@ public:
     int level       = registration->GetCurrentLevel();
     int totalLevels = registration->GetNumberOfLevels();
     std::cerr << "   ### Starting registration level: " 
-              <<  level << " of " << totalLevels << " ###" << std::endl;
+              <<  level+1 << " of " << totalLevels << " ###" << std::endl;
     MetricPointer metric = 
       dynamic_cast<MetricPointer>(registration->GetMetric());
     if (metric != NULL)
@@ -285,7 +285,7 @@ ComputeReorientationInformation(const vtkMatrix4x4* IJKToXYZ,
       double t = (*IJKToXYZ)[r][c];
       if (t != 0)
         {
-        filteredAxesForPermuteFilter[c]      = r;
+        filteredAxesForPermuteFilter[r]      = c;
         spacingForChangeInformationFilter[r] = t;
         break;
         }
