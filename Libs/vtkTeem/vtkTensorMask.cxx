@@ -82,9 +82,9 @@ static void vtkTensorMaskExecute(vtkTensorMask *self, int ext[6],
 {
   int num0, num1, num2, numC, pixSize;
   int idx0, idx1, idx2;
-  int in1Inc0, in1Inc1, in1Inc2;
-  int in2Inc0, in2Inc1, in2Inc2;
-  int outInc0, outInc1, outInc2;
+  vtkIdType in1Inc0, in1Inc1, in1Inc2;
+  vtkIdType in2Inc0, in2Inc1, in2Inc2;
+  vtkIdType outInc0, outInc1, outInc2;
   T *maskedValue;
   vtkFloatingPointType *v;
   int nv;
@@ -176,9 +176,9 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
 {
   int num0, num1, num2;
   int idx0, idx1, idx2;
-  int in1Inc0, in1Inc1, in1Inc2;
-  int in2Inc0, in2Inc1, in2Inc2;
-  int outInc0, outInc1, outInc2;
+  vtkIdType in1Inc0, in1Inc1, in1Inc2;
+  vtkIdType in2Inc0, in2Inc1, in2Inc2;
+  vtkIdType outInc0, outInc1, outInc2;
   int maskState;
   unsigned long count = 0;
   unsigned long target;
@@ -208,7 +208,8 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
   // This is the id in the input and output datasets.
   //ptId = ext[0] + ext[2]*(ext[1]-ext[0]) + ext[4]*(ext[3]-ext[2]);
 
-  int outInc[3],outFullUpdateExt[6];
+  vtkIdType outInc[3];
+  int outFullUpdateExt[6];
   self->GetOutput()->GetIncrements(outInc);
   self->GetOutput()->GetUpdateExtent(outFullUpdateExt); //We are only working over the update extent
   ptId = ((ext[0] - outFullUpdateExt[0]) * outInc[0]
