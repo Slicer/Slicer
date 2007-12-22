@@ -379,11 +379,11 @@ if { $isWindows } {
 
 if {$::GETBUILDTEST(upload) == "true"} {
     set scpfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension)}"
+    set namic_path "/clients/Slicer3/WWW/Downloads"
     if {$::GETBUILDTEST(pack) == "true" &&  
         [file exists $::SLICER_BUILD/$scpfile] && 
         $::GETBUILDTEST(upload) == "true"} {
         puts "About to do a $::GETBUILDTEST(uploadFlag) upload with $scpfile"
-        set namic_path "/clients/Slicer3/WWW/Downloads"
     }
 
     switch $::GETBUILDTEST(uploadFlag) {
