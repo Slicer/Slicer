@@ -1,3 +1,4 @@
+#define ITK_LEAN_AND_MEAN
 #include "vtkBSplineRegistrator.h"
 #include "vtkObjectFactory.h"
 

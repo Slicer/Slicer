@@ -1,3 +1,4 @@
+#define ITK_LEAN_AND_MEAN
 #include "vtkRigidRegistrator.h"
 #include "vtkObjectFactory.h"
 #include "itkImage.h"
