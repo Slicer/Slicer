@@ -48,8 +48,8 @@
       <name>maxtractlength</name>
       <flag>m</flag>
       <longflag>maxtractlength</longflag>
-      <description>Maximum Length of Sample Tract</description>
-      <label>Maximum Tract Length</label>
+      <description>Maximum Length of Sample Tract in real dimensions (usually millimeters)</description>
+      <label>Maximum Tract Length (mm)</label>
       <default>200</default>
       <constraints>
         <minimum>0</minimum>
@@ -60,7 +60,7 @@
       <name>stepsize</name>
       <flag>s</flag>
       <longflag>stepsize</longflag>
-      <description>The length of each segment of the tract in mm</description>
+      <description>The length of each segment of the tract in real dimensions (usually millimeters)</description>
       <label>Step Size(mm)</label>
       <default>0.5</default>
       <constraints>
@@ -96,6 +96,25 @@
       <label>Recenter Image Origins</label>
       <description>Ignore the origins of the ROI and WM mask and set it to be the same as the DWI image origin</description>
     </boolean>
+    <boolean>
+      <name>streamlineswitch</name>
+      <flag>z</flag>
+      <default>false</default>
+      <longflag>streamlineswitch</longflag>
+      <label>Streamline Tractography</label>
+      <description>
+        Perform simple major eigenvector streamline tractography instead of stochastic tractography.
+        Enabling this option ignores all options relating to stochastic tractography.
+      </description>
+    </boolean>
+    <boolean>
+      <name>nninterpolationswitch</name>
+      <flag>n</flag>
+      <default>false</default>
+      <longflag>nninterpolationswitch</longflag>
+      <label>Nearest Neighbor Interpolation</label>
+      <description>Use Nearest Neighbor instead of Stochastic Voxel Interpolation</description>
+    </boolean>
     <integer>
       <name>totalthreads</name>
       <flag>j</flag>
@@ -115,8 +134,7 @@
       <description>Output tracts in continuous instead of discretized IJK space.</description>
       <label>continuoustractsswitch</label>
       <default>false</default>
-    </boolean>
-    
+    </boolean>  
   </parameters>
 
   <parameters>

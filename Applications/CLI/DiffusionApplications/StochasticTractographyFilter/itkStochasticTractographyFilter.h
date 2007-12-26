@@ -138,11 +138,27 @@ public:
   /** Get TensorImage **/
   itkGetObjectMacro( OutputTensorImage, OutputTensorImageType );
   
+  /** Set/Get NearestNeighborInterpolation flag
+      true: Use NN voxel interpolation
+      false (default): Use Stochastic(Probabilistic) Interpolation
+  **/
+  itkSetMacro( NearestNeighborInterpolation, bool );
+  itkGetMacro( NearestNeighborInterpolation, bool );
+  
+  /** Set/Get StreamlineTractography flag
+      true: Perform simple major Eigenvector following streamline tractography
+      false (default): Perform Stochastic Tractography
+  **/
+  itkSetMacro( StreamlineTractography, bool );
+  itkGetMacro( StreamlineTractography, bool );
 
+  /** Entry Point For the Algorithm:  Is invoked when Update() is called
+      either directly or through itk pipeline propagation
+  **/
   void GenerateData();
   void GenerateTensorImageOutput( void );
   
-  /** override the Proccess Object Update because we don't have a
+  /** override the Process Object Update because we don't have a
       dataobject as an output.  We can change this later by wrapping the
       tractcontainer in a dataobject decorator and letting the Superclass
       know about it.
@@ -184,6 +200,10 @@ protected:
     const TractType::ContinuousIndexType& cindex,
     typename InputDWIImageType::IndexType& index);
                       
+  /** Chose the nearest neighboring pixel **/
+  void NearestNeighborInterpolate( const TractType::ContinuousIndexType& cindex,
+    typename InputDWIImageType::IndexType& index);
+
   /** Functions and data related to fitting the tensor model at each pixel **/
   void UpdateGradientDirections(void);
   void UpdateTensorModelFittingMatrices( void );
@@ -231,8 +251,8 @@ protected:
     typename InputWhiteMatterProbabilityImageType::ConstPointer maskimagePtr,
     typename InputDWIImageType::IndexType index,
     unsigned long randomseed,
-    TractType::Pointer conttract,
-    TractType::Pointer discretetract );
+    TractType::Pointer conttracts[2],
+    TractType::Pointer discretetracts[2] );
     
   void CalculateNuisanceParameters( const DWIVectorImageType::PixelType& dwivalues,
     const vnl_diag_matrix< double >& W,
@@ -267,6 +287,10 @@ protected:
   bool FiberExistenceTest( vnl_random& randomgenerator,
     typename InputWhiteMatterProbabilityImageType::ConstPointer wmpimage,
     typename InputWhiteMatterProbabilityImageType::IndexType index );
+  /** Picks the eigenvector associated with the largest eigenvalue that is in the direction of v_prev**/
+  void PickLargestEigenvector( const DWIVectorImageType::PixelType &dwipixel,
+    TractOrientationContainerType::Element v_prev,
+    TractOrientationContainerType::Element& v_curr);
   
   GradientDirectionContainerType::ConstPointer m_Gradients;
   GradientDirectionContainerType::Pointer m_TransformedGradients;
@@ -304,6 +328,9 @@ protected:
   
   std::vector< typename InputDWIImageType::IndexType > m_SeedIndices;
   ProgressReporter* m_progress;
+  
+  bool m_NearestNeighborInterpolation;
+  bool m_StreamlineTractography;
 };
 
 }

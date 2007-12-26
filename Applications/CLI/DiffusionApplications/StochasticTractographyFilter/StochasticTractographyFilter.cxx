@@ -18,35 +18,7 @@
 #include "vtkPoints.h" 
 #include "vtkZLibDataCompressor.h"
 #include "vtkCleanPolyData.h"
-//#include "itkCommand.h"
 #include "itkXMLFilterWatcher.h"
-
-/*
-class CommandProgressUpdate:public itk::Command{
-public:
-  typedef CommandProgressUpdate Self;
-  typedef itk::Command  Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
-  itkNewMacro( Self );
-  
-protected:
-  CommandProgressUpdate() {};
-  typedef itk::StochasticTractographyFilter STFilterType;
-  typedef const STFilterType* STFilterPointer;
-  
-  void Execute( itk::Object* caller, const itk::EventObject& event ){
-    Execute( (const itk::Object*)caller, event);
-  }
-  void Execute( itk::Object* object, const itk::EventObject& event ){
-    STFilterPointer stfilter = dynamic_cast< STFilterPointer >( object ):
-    
-    if( !itk::ProgressEvent().CheckEvent( &event ) ){
-      return;
-    }
-    std::cout << stfilter->GetSomething
-  }
-};
-*/
 
 int main(int argc, char* argv[]){
   PARSE_ARGS;
@@ -202,6 +174,8 @@ int main(int argc, char* argv[]){
   stfilterPtr->SetStepSize( stepsize );
   stfilterPtr->SetROILabel( labelnumber );
   stfilterPtr->SetGamma( gamma );
+  stfilterPtr->SetNearestNeighborInterpolation( nninterpolationswitch );
+  stfilterPtr->SetStreamlineTractography( streamlineswitch );
   if(totalthreads!=0) stfilterPtr->SetNumberOfThreads( totalthreads );
   
   itk::XMLFilterWatcher filterwatcher( stfilterPtr );
@@ -265,6 +239,7 @@ int main(int argc, char* argv[]){
   tractswriter->Write();
   
   //cleanup vtk stuff
+  cleaner->Delete();
   vtktracts->Delete();
   points->Delete();
   vtktractarray->Delete();
