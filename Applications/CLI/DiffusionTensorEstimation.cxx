@@ -13,14 +13,14 @@
 #include "itkPluginFilterWatcher.h"
 #include "itkPluginUtilities.h"
 #include "vtkSmartPointer.h"
-#include "vtkTeemEstimateDiffusionTensor.h"
 #include "vtkMatrix4x4.h"
 #include "vtkNRRDReader.h"
 #include "vtkNRRDWriter.h"
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMath.h"
-#include "vtkImageData.h"
 #include "vtkDoubleArray.h"
+#include "vtkTensorMask.h"
+#include "vtkTeemEstimateDiffusionTensor.h"
 
 #include "vtkImageData.h"
 #include "vtkImageCast.h"
@@ -29,7 +29,6 @@
 #include "vtkITKNewOtsuThresholdImageFilter.h"
 
 #include "DiffusionTensorEstimationCLP.h"
-
 
 int main( int argc, const char * argv[] )
 {
@@ -158,6 +157,27 @@ int main( int argc, const char * argv[] )
     conn->Update();
    } 
 
+  // Maks tensor
+  //TODO: fix tenosr mask
+  /**
+  vtkSmartPointer<vtkTensorMask> tensorMask = vtkTensorMask::New();
+  if (applyMask)
+    {
+    tensorMask->SetMaskAlpha(0.0);
+    tensorMask->SetInput(tensorImage);
+    if (removeIslands)  
+      {
+      tensorMask->SetMaskInput(conn->GetOutput());
+      }
+    else
+      {
+      tensorMask->SetMaskInput(cast1->GetOutput());
+      }
+     tensorMask->Update();
+     tensorImage = tensorMask->GetOutput();
+    }
+  **/
+  
   //Save tensor
   vtkSmartPointer<vtkNRRDWriter> writer = vtkNRRDWriter::New();
   writer->SetInput(tensorImage);
@@ -194,6 +214,16 @@ int main( int argc, const char * argv[] )
   writer3->UseCompressionOn();
   writer3->SetIJKToRASMatrix( reader->GetRasToIjkMatrix() );
   writer3->Write();
+  
+  estim->SetInput(NULL);
+  otsu->SetInput(NULL);
+  cast->SetInput(NULL);
+  cast1->SetInput(NULL);
+  con->SetInput(NULL);
+  conn->SetInput(NULL);
+  writer->SetInput(NULL);
+  writer2->SetInput(NULL);
+  writer3->SetInput(NULL);
   }
   return EXIT_SUCCESS;
 }

@@ -82,12 +82,5 @@
      <description>Remove Islands in Threshold Mask?</description>
      <default>true</default>
     </boolean>
-    <boolean>
-     <name>applyMask</name>
-     <label>Apply Threshold Mask</label>
-     <longflag>--applythresholdmask</longflag>
-     <description>Apply threshold mask to tenor volume?</description>
-     <default>true</default>
-    </boolean>
   </parameters>
 </executable>
