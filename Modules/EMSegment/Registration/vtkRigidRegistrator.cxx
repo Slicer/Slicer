@@ -135,7 +135,8 @@ public:
         (1.0 - m_SamplingRatio) / (registration->GetNumberOfLevels() - 1.0);
 
       metric->
-        SetNumberOfSpatialSamples(samplingRatio * numVoxels);
+        SetNumberOfSpatialSamples(static_cast<unsigned long>
+                                  (samplingRatio * numVoxels));
 
       std::cerr << "       Image Size: " << 
         registration->GetFixedImagePyramid()->GetOutput(level)->
@@ -631,7 +632,7 @@ RegisterImagesInternal3()
   writerMoving->SetInput(movingImageITKImporter->GetOutput());
   writerMoving->SetFileName("/tmp/Moving.nhdr");
   writerMoving->Update();
-#endif NOT_EVER_DEFINED
+#endif // NOT_EVER_DEFINED
 
   try 
     {

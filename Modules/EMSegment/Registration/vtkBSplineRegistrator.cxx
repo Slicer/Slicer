@@ -136,7 +136,8 @@ public:
         (1.0 - m_SamplingRatio) / (registration->GetNumberOfLevels() - 1.0);
 
       metric->
-        SetNumberOfSpatialSamples(samplingRatio * numVoxels);
+        SetNumberOfSpatialSamples(static_cast<unsigned long>
+                                  (samplingRatio * numVoxels));
 
       std::cerr << "       Image Size: " << 
         registration->GetFixedImagePyramid()->GetOutput(level)->
