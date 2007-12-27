@@ -969,7 +969,7 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineNCCSlow:
       registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetNumberOfKnotPoints(7);
+      registrator->SetNumberOfKnotPoints(5);
       registrator->SetMetricComputationSamplingRatio(0.8);
       registrator->SetNumberOfIterations(100);
       break;
@@ -977,7 +977,7 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       vtkEMSegmentMRMLManager
       ::AtlasToTargetDeformableRegistrationBSplineMMISlow:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetNumberOfKnotPoints(7);
+      registrator->SetNumberOfKnotPoints(5);
       registrator->SetMetricComputationSamplingRatio(0.8);
       registrator->SetNumberOfIterations(100);
       break;
@@ -1000,7 +1000,7 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
     case 
       vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineNCC:
       registrator->SetImageToImageMetricToCrossCorrelation();
-      registrator->SetNumberOfKnotPoints(7);
+      registrator->SetNumberOfKnotPoints(5);
       registrator->SetMetricComputationSamplingRatio(0.3333);
       registrator->SetNumberOfIterations(10);
       break;
@@ -1008,7 +1008,7 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
       vtkEMSegmentMRMLManager::AtlasToTargetDeformableRegistrationBSplineMMI:
     default:
       registrator->SetImageToImageMetricToMutualInformation();
-      registrator->SetNumberOfKnotPoints(7);
+      registrator->SetNumberOfKnotPoints(5);
       registrator->SetMetricComputationSamplingRatio(0.3333);
       registrator->SetNumberOfIterations(10);
       break;
