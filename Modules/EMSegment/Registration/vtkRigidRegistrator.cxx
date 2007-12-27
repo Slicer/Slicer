@@ -67,8 +67,8 @@ public:
     std::cerr << std::setw(17) << std::right << std::setfill('.')
               << optimizer->GetCurrentStepLength();
     std::cerr << std::endl;
-    std::cerr << "   " << optimizer->GetCurrentPosition() << std::endl;
-    std::cerr << std::endl;
+    std::cerr << "              " 
+              << optimizer->GetCurrentPosition() << std::endl;
   }
 };
 
