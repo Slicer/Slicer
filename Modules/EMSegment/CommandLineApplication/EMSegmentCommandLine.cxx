@@ -372,6 +372,15 @@ int main(int argc, char** argv)
 
   //
   // make sure files exist
+  if (writeIntermediateResults &&
+      !vtksys::SystemTools::FileExists(intermediateResultsDirectory.c_str()))
+    {
+    std::cerr << "Error: intermediate results directory does not exist." 
+              << std::endl;
+    std::cerr << intermediateResultsDirectory << std::endl;      
+    exit(EXIT_FAILURE);
+    }
+
   if (!vtksys::SystemTools::FileExists(mrmlSceneFileName.c_str()))
     {
     std::cerr << "Error: MRML scene file does not exist." << std::endl;
@@ -743,6 +752,28 @@ int main(int argc, char** argv)
           throw std::runtime_error(ss.str());
           }
         }
+
+      //
+      // make sure the number of atlas volumes matches the expected
+      // value in the parameters
+      if (oldAtlasNode->GetNumberOfVolumes() !=
+          emMRMLManager->GetAtlasNode()->GetNumberOfVolumes())
+        {
+        vtkstd::stringstream ss;
+        ss << "ERROR: Number of atlas volumes (" << 
+          emMRMLManager->GetAtlasNode()->GetNumberOfVolumes()
+           << ") does not match expected value from parameters (" << 
+          oldAtlasNode->GetNumberOfVolumes() << ")";
+        throw std::runtime_error(ss.str());
+        }
+      else
+        {
+        if (verbose)
+          std::cerr << "Number of atlas volumes (" <<
+            emMRMLManager->GetAtlasNode()->GetNumberOfVolumes()
+                    << ") matches expected value from parameters (" <<
+            oldAtlasNode->GetNumberOfVolumes() << ")" << std::endl;
+        }
       }
 
     //
@@ -881,7 +912,7 @@ int main(int argc, char** argv)
     segmentationSucceeded = false;
     }
 
-  if (!dontWriteResults)
+  if (segmentationSucceeded && !dontWriteResults)
     {
     //
     // save the results
@@ -917,7 +948,7 @@ int main(int argc, char** argv)
 
   //
   // compare results to standard image
-  if (!resultStandardVolumeFileName.empty())
+  if (segmentationSucceeded && !resultStandardVolumeFileName.empty())
     {
     if (verbose) 
       cerr << "Comparing results with standard..." << std::endl;
@@ -966,7 +997,7 @@ int main(int argc, char** argv)
 
   //
   // write the final mrml scene file
-  if (!resultMRMLSceneFileName.empty())
+  if (segmentationSucceeded && !resultMRMLSceneFileName.empty())
     {
     if (verbose) std::cerr << "Writing mrml scene...";
     mrmlScene->Commit(resultMRMLSceneFileName.c_str());
