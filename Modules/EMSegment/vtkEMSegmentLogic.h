@@ -103,6 +103,10 @@ private:
                                  double backgroundLevel);
   //BTX
   template <class T>
+  static 
+  bool map_value_comparer(typename std::map<T, unsigned int>::value_type &i1, 
+                          typename std::map<T, unsigned int>::value_type &i2);
+  template <class T>
   static T GuessRegistrationBackgroundLevel(vtkImageData* imageData);
   //ETX
 

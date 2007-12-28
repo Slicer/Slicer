@@ -218,13 +218,11 @@ StartPreprocessingTargetIntensityNormalization()
     // clone intput to new normalized target node
     std::cerr << "  Cloning target node...";
     normalizedTarget = m->CloneTargetNode(inputTarget, "NormalizedTarget");
-    std::cerr << "Done." << std::endl;
-    std::cerr << "  Node is " << (normalizedTarget ? "Non-null" : "Null")
-              << std::endl;
-    std::cerr << "  Number of images is: " 
-              << normalizedTarget->GetNumberOfVolumes() << std::endl;
+    std::cerr << "Number of images is: " 
+              << normalizedTarget->GetNumberOfVolumes() << "..." << std::endl;
     m->GetWorkingDataNode()->
       SetNormalizedTargetNodeID(normalizedTarget->GetID());
+    std::cerr << "Done" << std::endl;
     }
   else
     {
@@ -400,8 +398,10 @@ IsVolumeGeometryEqual(vtkMRMLVolumeNode* lhs,
 }
 
 template <class T>
-bool map_value_comparer(typename std::map<T, unsigned int>::value_type &i1, 
-                        typename std::map<T, unsigned int>::value_type &i2)
+bool 
+vtkEMSegmentLogic::
+map_value_comparer(typename std::map<T, unsigned int>::value_type &i1, 
+                   typename std::map<T, unsigned int>::value_type &i2)
 {
   return i1.second<i2.second;
 }
@@ -575,16 +575,18 @@ GuessRegistrationBackgroundLevel(vtkImageData* imageData)
     }
   else
     {
-    typename MapType::iterator itor = std::max_element(m.begin(), m.end(),
-                                                       map_value_comparer<T>);
+    typename MapType::iterator itor = 
+      std::max_element(m.begin(), m.end(),
+                       vtkEMSegmentLogic::map_value_comparer<T>);
 
     T backgroundLevel = itor->first;
     double percentageOfVoxels = 
       100.0 * static_cast<double>(itor->second)/totalVoxelsCounted;
     m.erase(itor);
 
-    typename MapType::iterator itor2 = std::max_element(m.begin(), m.end(),
-                                                        map_value_comparer<T>);
+    typename MapType::iterator itor2 = 
+      std::max_element(m.begin(), m.end(),
+                       vtkEMSegmentLogic::map_value_comparer<T>);
 
     std::cerr << "   Background level guess : " 
               << backgroundLevel << "(" << percentageOfVoxels << "%) "
@@ -1102,13 +1104,11 @@ StartPreprocessingTargetToTargetRegistration()
     // clone intput to new aligned target node
     std::cerr << "  Cloning target node...";
     alignedTarget = m->CloneTargetNode(normalizedTarget, "AlignedTarget");
-    std::cerr << "Done." << std::endl;
-    std::cerr << "  Node is " << (alignedTarget ? "Non-null" : "Null")
-              << std::endl;
     std::cerr << "  Number of images is: " 
-              << alignedTarget->GetNumberOfVolumes() << std::endl;
+              << alignedTarget->GetNumberOfVolumes() << "..." << std::endl;
     m->GetWorkingDataNode()->
       SetAlignedTargetNodeID(alignedTarget->GetID());
+    std::cerr << "Done." << std::endl;
     }
   else
     {
@@ -1134,11 +1134,11 @@ StartPreprocessingTargetToTargetRegistration()
   
   for (int i = 0; i < alignedTarget->GetNumberOfVolumes(); ++i)
     {
-    std::cerr << "  Target image " << i << "..." << std::endl;    
+      std::cerr << "  Target image " << i << "...";
 
     if (i == fixedTargetImageIndex)
       {
-      std::cerr << "  Skipping fixed target image " << i << std::endl;
+        std::cerr <<  "Skipping fixed target image." << std::endl;
       continue;
       }
 
@@ -1181,8 +1181,6 @@ StartPreprocessingTargetToTargetRegistration()
     // apply rigid registration
     if (this->MRMLManager->GetEnableTargetToTargetRegistration())
       {
-      std::cerr << "  Registering target image " << i << "..." << std::endl;
-
       vtkTransform* fixedRASToMovingRASTransform = vtkTransform::New();
       vtkEMSegmentLogic::
         SlicerRigidRegister
