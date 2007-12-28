@@ -580,6 +580,9 @@ int main(int argc, char** argv)
         vtkMRMLEMSTargetNode* targetNode = vtkMRMLEMSTargetNode::New();
         mrmlScene->AddNode(targetNode);        
 
+        // remove default target node
+        mrmlScene->RemoveNode(emMRMLManager->GetTargetNode());
+
         // connect target node to segmenter
         emMRMLManager->GetSegmenterNode()->
           SetTargetNodeID(targetNode->GetID());
@@ -774,6 +777,9 @@ int main(int argc, char** argv)
                     << ") matches expected value from parameters (" <<
             oldAtlasNode->GetNumberOfVolumes() << ")" << std::endl;
         }
+
+      // remove default atlas node
+      mrmlScene->RemoveNode(oldAtlasNode);
       }
 
     //

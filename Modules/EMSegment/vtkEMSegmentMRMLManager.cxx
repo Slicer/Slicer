@@ -4192,16 +4192,16 @@ PackageAndWriteData(const char* packageDirectory)
   //
   // write the scene out to disk
   bool wroteScene = this->WritePackagedScene(newScene);
-  if (!wroteScene)
-    {
-    vtkErrorMacro("PackageAndWrite: failed to write scene");
-    newScene->Delete();
-    return false;
-    }  
 
   // clean up
   newScene->Delete();
   
+  if (!wroteScene)
+    {
+    vtkErrorMacro("PackageAndWrite: failed to write scene");
+    return false;
+    }  
+
   return true;
 }
 
