@@ -153,7 +153,7 @@ public:
       {
       if (registration->GetCurrentLevel() == 0)
         {
-        optimizer->SetMaximumStepLength(8.0);
+        optimizer->SetMaximumStepLength(4.0);
         optimizer->SetMinimumStepLength(1.0);
         }
       else

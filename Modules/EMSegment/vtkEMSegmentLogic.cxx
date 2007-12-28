@@ -1058,6 +1058,7 @@ SlicerBSplineRegister(vtkMRMLVolumeNode* fixedVolumeNode,
     }
   catch (...)
     {
+    fixedRASToMovingRASTransform->SetDisplacementGrid(NULL);
     std::cerr << "Failed to register images!!!" << std::endl;
     }
     

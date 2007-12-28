@@ -710,6 +710,18 @@ RegisterImagesInternal3()
   catch( itk::ExceptionObject & err )
     {
     std::cerr << err << std::endl;
+
+    fixedImageCaster->Delete();
+    movingImageCaster->Delete();
+    fixedImageVTKToITKExporter->Delete();
+    movingImageVTKToITKExporter->Delete();
+    changeInformationFixedImage->Delete();
+    changeInformationMovingImage->Delete();
+    permuteFixedImage->Delete();
+    permuteMovingImage->Delete();
+    IJKToXYZMatrixFixed->Delete();
+    IJKToXYZMatrixMoving->Delete();
+
     throw;
     }
 
