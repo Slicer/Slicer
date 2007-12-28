@@ -27,7 +27,7 @@
 
   You should specify as many target images as are present in the
   EMSegment parameter set (e.g., 2 if the set uses an MR T1 and MR T2
-  image).  These images should be aligned.  
+  image).  
 
   </description>
   <version>0.1.0.$Revision: 2085 $(alpha)</version>
@@ -39,7 +39,7 @@
     <label>Inputs and Outputs</label>
     <description>Altorithm input and output.</description>
 
-    <file fileExtensions=".mrml">
+    <file>
       <name>mrmlSceneFileName</name>
       <longflag>mrmlSceneFileName</longflag>
 
@@ -48,7 +48,7 @@
       <label>MRML Scene</label>
     </file>    
 
-    <file fileExtensions=".mhd">
+    <file>
       <name>resultVolumeFileName</name>
       <longflag>resultVolumeFileName</longflag>
 
@@ -57,7 +57,7 @@
       <channel>output</channel>
     </file>    
 
-    <file fileExtensions=".mhd">
+    <file>
       <name>targetVolumeFileName1</name>
       <longflag>targetVolumeFileName1</longflag>
 
@@ -67,7 +67,7 @@
       <channel>input</channel>
     </file>
 
-    <file fileExtensions=".mhd">
+    <file>
       <name>targetVolumeFileName2</name>
       <longflag>targetVolumeFileName2</longflag>
 
@@ -77,7 +77,7 @@
       <channel>input</channel>
     </file>
 
-    <file fileExtensions=".mhd">
+    <file>
       <name>targetVolumeFileName3</name>
       <longflag>targetVolumeFileName3</longflag>
 
@@ -87,7 +87,7 @@
       <channel>input</channel>
     </file>
 
-    <file fileExtensions=".mhd">
+    <file>
       <name>targetVolumeFileName4</name>
       <longflag>targetVolumeFileName4</longflag>
 
@@ -97,7 +97,7 @@
       <channel>input</channel>
     </file>
 
-    <file fileExtensions=".mhd">
+    <file>
       <name>targetVolumeFileName5</name>
       <longflag>targetVolumeFileName5</longflag>
 
@@ -107,38 +107,11 @@
       <channel>input</channel>
     </file>
 
-    <file multiple="true" fileExtensions=".mhd">
-      <name>atlasVolumeFileNames</name>
-      <longflag>atlasVolumeFileNames</longflag>
-
-      <description>File names of atlas (spatial) probability maps.  The number of atlas volumes must match the number specified in the parameter set.  The ordering must match the ordering defined in the mrml parameters file.</description>
-      <label>Atlas Volumes</label>      
-      <channel>input</channel>
-    </file>
-
-    <directory multiple="false">
-      <name>intermediateResultsDirectory</name>
-      <longflag>intermediateResultsDirectory</longflag>
-
-      <description>Directory where EMSegmenter will write intermediate data (e.g., aligned atlas data).</description>
-      <label>Intermediate Results Directory</label>      
-      <channel>input</channel>
-    </directory>
-
   </parameters>
 
   <parameters advanced="true">
     <label>Parameters</label>
     <description>Algorithm Parameters</description>
-
-    <string>
-      <name>parametersMRMLNodeName</name>
-      <longflag>parametersMRMLNodeName</longflag>
-
-      <description>The name of the EMSegment parameters node within the active MRML scene.  Leave blank for default.</description>
-
-      <label>Parameters Node Name</label>
-    </string>    
 
     <boolean>
       <name>disableMultithreading</name>
@@ -153,22 +126,6 @@
       <longflag>verbose</longflag>
       <description>Enable verbose output.</description>
       <label>Verbose Output</label>
-      <default>false</default>
-    </boolean>
-
-    <file>
-      <name>resultMRMLSceneFileName</name>
-      <longflag>resultMRMLSceneFileName</longflag>
-      <description>Write out the MRML scene after command line substitutions have been made.</description>
-      <label>Output MRML scene filename.</label>
-      <channel>output</channel>
-    </file>
-
-    <boolean>
-      <name>disableCompression</name>
-      <longflag>disableCompression</longflag>
-      <description>Don't use compression when writing result image to disk.</description>
-      <label>Disable compression.</label>
       <default>false</default>
     </boolean>
 

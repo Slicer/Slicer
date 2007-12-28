@@ -3,6 +3,7 @@
 #include <string>
 
 #include "vtkMRMLScene.h"
+#include "vtkSlicerColorLogic.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkEMSegmentLogic.h"
@@ -56,8 +57,8 @@ AddNewScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
     }
 
   // add nodes to scene
-  mrmlScene->AddNode(storageNode);  
-  mrmlScene->AddNode(volumeNode);
+  mrmlScene->AddNodeNoNotify(storageNode);  
+  mrmlScene->AddNodeNoNotify(volumeNode);
 
   volumeNode->SetStorageNodeID(storageNode->GetID());
 
@@ -111,10 +112,6 @@ AddScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
       volumeNode->SetName(volname);
       }
 
-    volumeNode->SetScene(mrmlScene);  
-    storageNode->SetScene(mrmlScene); 
-    displayNode->SetScene(mrmlScene); 
-
     // set basic display info
     double range[2];
     volumeNode->GetImageData()->GetScalarRange(range);
@@ -125,14 +122,12 @@ AddScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
     displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeGrey");
 
     // add nodes to scene
-    mrmlScene->AddNode(storageNode);  
-    mrmlScene->AddNode(displayNode);  
+    mrmlScene->AddNodeNoNotify(storageNode);  
+    mrmlScene->AddNodeNoNotify(displayNode);  
+    mrmlScene->AddNodeNoNotify(volumeNode);
 
     volumeNode->SetStorageNodeID(storageNode->GetID());
     volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-
-    mrmlScene->AddNode(volumeNode);
-
     }
 
   scalarNode->Delete();
@@ -333,6 +328,11 @@ int main(int argc, char** argv)
   std::string generateEmptyMRMLSceneAndQuit = "";
   bool dontWriteResults = false;
   bool dontUpdateIntermediateData = false;
+  std::string parametersMRMLNodeName = "";
+  std::vector<std::string> atlasVolumeFileNames;
+  std::string intermediateResultsDirectory = "";
+  bool disableCompression = false;
+  std::string resultMRMLSceneFileName = "";
 #endif
 
   bool useDefaultParametersNode = parametersMRMLNodeName.empty();
@@ -427,6 +427,10 @@ int main(int argc, char** argv)
   vtkMRMLScene::SetActiveScene(mrmlScene);
   mrmlScene->SetURL(mrmlSceneFileName.c_str());
 
+  vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New ( );
+  colorLogic->SetMRMLScene(mrmlScene);
+  colorLogic->AddDefaultColorNodes();
+  
   //
   // create an instance of vtkEMSegmentLogic and connect it with the
   // MRML scene
@@ -578,7 +582,7 @@ int main(int argc, char** argv)
 
         // create target node
         vtkMRMLEMSTargetNode* targetNode = vtkMRMLEMSTargetNode::New();
-        mrmlScene->AddNode(targetNode);        
+        mrmlScene->AddNodeNoNotify(targetNode);        
 
         // remove default target node
         mrmlScene->RemoveNode(emMRMLManager->GetTargetNode());

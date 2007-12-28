@@ -4244,32 +4244,8 @@ CopyEMRelatedNodesToMRMLScene(vtkMRMLScene* newScene)
 
     vtkMRMLNode* node = n->CreateNodeInstance();
 
-    // Hack to get around probable bug
-    //
-    // If this is a volume display node manually add the color node as
-    // well.  For some reson the reference that should take care of
-    // this through GetReferencedNode is broken in this case.
-//     vtkMRMLVolumeDisplayNode* volumeDisplayNode = 
-//       dynamic_cast<vtkMRMLVolumeDisplayNode*>(node);
-//     if (volumeDisplayNode != NULL)
-//       {
-//       std::cerr << "Found volume display node: " 
-//                 << volumeDisplayNode->GetID() << " " 
-//                 << volumeDisplayNode->GetName() << std::endl;
-//       vtkMRMLColorNode* colorNode = volumeDisplayNode->GetColorNode();
-//       if (colorNode != NULL && !newScene->IsNodePresent(colorNode))
-//         {
-//         std::cerr << "Adding Color Node: " << colorNode->GetID() << " " 
-//                   << colorNode->GetName() << std::endl;
-//         vtkMRMLNode* newColorNode = colorNode->CreateNodeInstance();
-//         newColorNode->CopyWithScene(colorNode);
-//         newScene->AddNode(newColorNode);
-//         newColorNode->Delete();        
-//         }
-//       }
-
     node->CopyWithScene(n);
-    newScene->AddNode(node);
+    newScene->AddNodeNoNotify(node);
     node->Delete();
     }
 
@@ -4338,7 +4314,7 @@ CreatePackageFilenames(vtkMRMLScene* scene,
       {
       // create a new storage node for this volume
       volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-      scene->AddNode(volumeStorageNode);
+      scene->AddNodeNoNotify(volumeStorageNode);
       volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
       std::cerr << "Added storage node : " << volumeStorageNode->GetID() 
                 << std::endl;
@@ -4383,7 +4359,7 @@ CreatePackageFilenames(vtkMRMLScene* scene,
           {
           // create a new storage node for this volume
           volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-          scene->AddNode(volumeStorageNode);
+          scene->AddNodeNoNotify(volumeStorageNode);
           volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
           std::cerr << "Added storage node : " << storageNode->GetID() 
                     << std::endl;
@@ -4429,7 +4405,7 @@ CreatePackageFilenames(vtkMRMLScene* scene,
           {
           // create a new storage node for this volume
           volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-          scene->AddNode(volumeStorageNode);
+          scene->AddNodeNoNotify(volumeStorageNode);
           volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
           std::cerr << "Added storage node : " << volumeStorageNode->GetID() 
                     << std::endl;
@@ -4475,7 +4451,7 @@ CreatePackageFilenames(vtkMRMLScene* scene,
           {
           // create a new storage node for this volume
           volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-          scene->AddNode(volumeStorageNode);
+          scene->AddNodeNoNotify(volumeStorageNode);
           volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
           std::cerr << "Added storage node : " << volumeStorageNode->GetID() 
                     << std::endl;
@@ -4525,7 +4501,7 @@ CreatePackageFilenames(vtkMRMLScene* scene,
           {
           // create a new storage node for this volume
           volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-          scene->AddNode(volumeStorageNode);
+          scene->AddNodeNoNotify(volumeStorageNode);
           volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
           std::cerr << "Added storage node : " << volumeStorageNode->GetID() 
                     << std::endl;
@@ -4571,7 +4547,7 @@ CreatePackageFilenames(vtkMRMLScene* scene,
           {
           // create a new storage node for this volume
           volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-          scene->AddNode(volumeStorageNode);
+          scene->AddNodeNoNotify(volumeStorageNode);
           volumeNode->SetStorageNodeID(volumeStorageNode->GetID());
           std::cerr << "Added storage node : " << volumeStorageNode->GetID() 
                     << std::endl;
@@ -4692,10 +4668,12 @@ WritePackagedScene(vtkMRMLScene* scene)
       allOK = false;
       continue;
       }
+
     try
       {
       std::cerr << "Writing volume: " << volumeNode->GetName() 
                 << ": " << volumeNode->GetStorageNode()->GetFileName() << "...";
+      volumeNode->GetStorageNode()->SetUseCompression(0);
       volumeNode->GetStorageNode()->WriteData(volumeNode);
       std::cerr << "DONE" << std::endl;
       }
