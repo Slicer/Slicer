@@ -430,6 +430,7 @@ int main(int argc, char** argv)
   vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New ( );
   colorLogic->SetMRMLScene(mrmlScene);
   colorLogic->AddDefaultColorNodes();
+  colorLogic->SetMRMLScene(NULL);
   colorLogic->Delete();
 
   //
