@@ -38,6 +38,20 @@
 
 #define ERROR_NODE_VTKID 0
 
+
+// A helper class to compare two maps
+template <class T>
+class MapCompare
+{
+public:
+  static bool 
+  map_value_comparer(typename std::map<T, unsigned int>::value_type &i1, 
+                     typename std::map<T, unsigned int>::value_type &i2)
+  {
+  return i1.second<i2.second;
+  }
+};
+
 //----------------------------------------------------------------------------
 vtkEMSegmentLogic* vtkEMSegmentLogic::New()
 {
@@ -398,15 +412,6 @@ IsVolumeGeometryEqual(vtkMRMLVolumeNode* lhs,
 }
 
 template <class T>
-bool 
-vtkEMSegmentLogic::
-map_value_comparer(typename std::map<T, unsigned int>::value_type &i1, 
-                   typename std::map<T, unsigned int>::value_type &i2)
-{
-  return i1.second<i2.second;
-}
-
-template <class T>
 T
 vtkEMSegmentLogic::
 GuessRegistrationBackgroundLevel(vtkImageData* imageData)
@@ -577,7 +582,7 @@ GuessRegistrationBackgroundLevel(vtkImageData* imageData)
     {
     typename MapType::iterator itor = 
       std::max_element(m.begin(), m.end(),
-                       vtkEMSegmentLogic::map_value_comparer<T>);
+                       MapCompare<T>::map_value_comparer);
 
     T backgroundLevel = itor->first;
     double percentageOfVoxels = 
@@ -586,7 +591,7 @@ GuessRegistrationBackgroundLevel(vtkImageData* imageData)
 
     typename MapType::iterator itor2 = 
       std::max_element(m.begin(), m.end(),
-                       vtkEMSegmentLogic::map_value_comparer<T>);
+                       MapCompare<T>::map_value_comparer);
 
     std::cerr << "   Background level guess : " 
               << backgroundLevel << "(" << percentageOfVoxels << "%) "
