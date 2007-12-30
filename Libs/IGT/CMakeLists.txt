@@ -17,26 +17,27 @@ SET(IGT_SRCS
   vtkIGTPat2ImgRegistration.cxx
 )
 SET(TRACKING_INTERFACE_LIBRARY "")
-
-
-#--- NH took out the following section in an effot to remove Navitrak
-#--- 10/16/07
-
-#IF(USE_NAVITRACK)
-#  SET(IGT_SRCS
-#    vtkIGTDataManager.cxx
-#    vtkIGTDataStream.cxx
-#    vtkIGTMatrixState.cxx
-#    vtkIGTPat2ImgRegistration.cxx
-#    vtkIGTOpenTrackerStream.cxx
-#  )
-#  SET(TRACKING_INTERFACE_INCLUDE_DIR
-#    ${NAVITRACK_INC}
-#  )
-#  SET(TRACKING_INTERFACE_LIB  
-#    ${NAVITRACK_LIB}
-#  )
-#ENDIF(USE_NAVITRACK)
+IF(USE_NAVITRACK)
+  SET(IGT_SRCS
+    vtkIGTDataManager.cxx
+    vtkIGTDataStream.cxx
+    vtkIGTMatrixState.cxx
+    vtkIGTPat2ImgRegistration.cxx
+    vtkIGTOpenTrackerStream.cxx
+    vtkIGTOpenTrackerStream2.cxx
+    vtkIGTMessageAttributeBase.cxx
+    vtkIGTMessageAttributeSet.cxx
+#    vtkIGTMessageGenericAttribute.cxx
+    vtkIGTMessageImageDataAttribute.cxx
+  )
+  SET(TRACKING_INTERFACE_INCLUDE_DIR
+    ${NAVITRACK_INC}
+    ${NAVITRACK_INC}/../libs
+  )
+  SET(TRACKING_INTERFACE_LIB  
+    ${NAVITRACK_LIB}
+  )
+ENDIF(USE_NAVITRACK)
 
 IF(USE_IGSTK)
   SET(IGT_SRCS
