@@ -134,6 +134,7 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
     this->SetName(node->GetName());
     }
   this->HideFromEditors = node->HideFromEditors;
+  this->ModifiedSinceRead = node->ModifiedSinceRead;
   this->SaveWithScene = node->SaveWithScene ;
   this->Selectable = node->Selectable;
   this->AddToScene = node->AddToScene;
