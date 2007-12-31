@@ -1020,6 +1020,9 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
         // add the model and display referenced by source model hierarchy node
         if (smnd)
           {
+          // set the model node to be modified, as it was read from a temp
+          // location
+          smnd->SetModifiedSinceRead(1); 
           // get display node BEFORE we add nodes to the target scene
           vtkMRMLDisplayNode *sdnd = smnd->GetDisplayNode();
           
@@ -1074,6 +1077,8 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                 
                 if (smnd)
                   {
+                  // set it as modified
+                  smnd->SetModifiedSinceRead(1);
                   // get display node BEFORE we add nodes to the target scene
                   vtkMRMLDisplayNode *sdnd = smnd->GetDisplayNode();
 
