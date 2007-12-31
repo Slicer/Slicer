@@ -294,17 +294,17 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
     this->LoadModelDirectoryButton->SetText ("Load Model Directory");
     return;
     }
-  else if (this->SaveModelButton->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent  && event == vtkKWPushButton::InvokedEvent )
+  else if (this->SaveModelButton->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent)
       {
       // If a file has been selected for saving...
       const char *fileName = this->SaveModelButton->GetFileName();
       if ( fileName ) 
       {
         vtkSlicerModelsLogic* ModelLogic = this->Logic;
-        vtkMRMLModelNode *volNode = vtkMRMLModelNode::SafeDownCast(this->ModelSelectorWidget->GetSelected());
-        if ( !ModelLogic->SaveModel( fileName, volNode ))
+        vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->ModelSelectorWidget->GetSelected());
+        if ( !ModelLogic->SaveModel( fileName, modelNode ))
           {
-         // TODO: generate an error...
+          vtkErrorMacro("ModelsGUI: unable to save model to file " << fileName);
           }
         else
           {
