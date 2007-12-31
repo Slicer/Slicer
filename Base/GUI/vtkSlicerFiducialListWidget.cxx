@@ -176,6 +176,7 @@ vtkSlicerFiducialListWidget::~vtkSlicerFiducialListWidget ( )
     if (fIter->second != NULL)
       {
       fIter->second->SetCamera(NULL);
+      fIter->second->SetMapper(NULL);
       fIter->second->Delete();
       }
     }
@@ -1123,6 +1124,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
             actor->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
             }
           actor->SetMapper ( mapper );
+          mapper->Delete();
           this->MainViewer->AddViewProp ( actor );
           }
         
@@ -1151,6 +1153,7 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
         // only call delete if made them new, they didn't exist before
         if (glyph2d != NULL)
           {
+          glyph2d->SetOutput(NULL);
           glyph2d->Delete();
           glyph2d = NULL;
           }
@@ -1215,13 +1218,15 @@ void vtkSlicerFiducialListWidget::UpdateTextActor(vtkMRMLFiducialListNode *flist
     {
     this->DisplayedTextFiducials[flist->GetNthFiducialID(f)] = textActor;
     // only delete them if made them new
-    if (vtext != NULL)
-      {
-      vtext->Delete();
-      }
     if (textMapper != NULL)
       {
       textMapper->Delete();
+      textMapper = NULL;
+      }
+    if (vtext != NULL)
+      {
+      vtext->Delete();
+      vtext = NULL;
       }
     }
 }
