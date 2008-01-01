@@ -24,7 +24,6 @@ IF(USE_NAVITRACK)
     vtkIGTMatrixState.cxx
     vtkIGTPat2ImgRegistration.cxx
     vtkIGTOpenTrackerStream.cxx
-    vtkIGTOpenTrackerStream2.cxx
     vtkIGTMessageAttributeBase.cxx
     vtkIGTMessageAttributeSet.cxx
 #    vtkIGTMessageGenericAttribute.cxx

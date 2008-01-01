@@ -6,10 +6,9 @@
 #include "vtkKWApplication.h"
 #include "vtkCommand.h"
 
-
-
 #include <vtksys/SystemTools.hxx>
 #include "vtkCallbackCommand.h"
+
 
 #include "OpenTracker/OpenTracker.h"
 #include "OpenTracker/common/CallbackModule.h"

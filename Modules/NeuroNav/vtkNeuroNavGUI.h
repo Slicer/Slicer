@@ -223,10 +223,10 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
     void TrackerLoop();
 
 
-#ifdef USE_NAVITRACK
-    vtkIGTOpenTrackerStream *OpenTrackerStream;
-    void SetOpenTrackerConnectionParameters();
-#endif
+//#ifdef USE_NAVITRACK
+//    vtkIGTOpenTrackerStream *OpenTrackerStream;
+//    void SetOpenTrackerConnectionParameters();
+//#endif
 
 #ifdef USE_IGSTK    
     vtkIGTIGSTKStream *IGSTKStream;

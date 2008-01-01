@@ -87,6 +87,7 @@ extern "C" {
 #define REALTIMEIMAGING_DEBUG
 #define MRABLATION_DEBUG
 //#define NEURONAV_DEBUG
+#define PROSTATENAV_DEBUG
 //#define TRACTOGRAPHY_DEBUG
 //#define QDEC_DEBUG
 //#define COMMANDLINE_DEBUG
@@ -122,6 +123,11 @@ extern "C" {
 #if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
 #include "vtkNeuroNavLogic.h"
 #include "vtkNeuroNavGUI.h"
+#endif
+
+#if !defined(PROSTATENAV_DEBUG) && defined(BUILD_MODULES)
+#include "vtkProstateNavLogic.h"
+#include "vtkProstateNavGUI.h"
 #endif
 
 #if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
@@ -201,6 +207,9 @@ extern "C" int Emsegment_Init(Tcl_Interp *interp);
 #endif
 #if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Neuronav_Init(Tcl_Interp *interp);
+#endif
+#if !defined(PROSTATENAV_DEBUG) && defined (BUILD_MODULES)
+extern "C" int Prostatenav_Init(Tcl_Interp *interp);
 #endif
 #if !defined(REALTIMEIMAGING_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Realtimeimaging_Init(Tcl_Interp *interp);
@@ -702,6 +711,9 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
     Neuronav_Init(interp);
 #endif
+#if !defined(PROSTATENAV_DEBUG) && defined(BUILD_MODULES)
+    Prostatenav_Init(interp);
+#endif
 #if !defined(REALTIMEIMAGING_DEBUG) && defined(BUILD_MODULES)
     Realtimeimaging_Init(interp);
 #endif
@@ -1086,6 +1098,28 @@ int Slicer3_main(int argc, char *argv[])
     neuronavGUI->AddGUIObservers ( );
     neuronavGUI->Init();
 #endif 
+
+#if !defined(PROSTATENAV_DEBUG) && defined(BUILD_MODULES)
+    // -- Prostatenav module
+    vtkProstateNavLogic *prostatenavLogic = vtkProstateNavLogic::New(); 
+    prostatenavLogic->SetAndObserveMRMLScene ( scene );
+    vtkProstateNavGUI *prostatenavGUI = vtkProstateNavGUI::New();
+
+    prostatenavGUI->SetApplication ( slicerApp );
+    prostatenavGUI->SetApplicationGUI ( appGUI );
+    prostatenavGUI->SetAndObserveApplicationLogic ( appLogic );
+    prostatenavGUI->SetAndObserveMRMLScene ( scene );
+    prostatenavGUI->SetModuleLogic ( prostatenavLogic );
+    prostatenavGUI->SetGUIName( "Prostate Module" );
+    prostatenavGUI->GetUIPanel()->SetName ( prostatenavGUI->GetGUIName ( ) );
+    prostatenavGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    prostatenavGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( prostatenavGUI );
+    prostatenavGUI->BuildGUI ( );
+    prostatenavGUI->AddGUIObservers ( );
+    prostatenavGUI->Init();
+#endif 
+
 
     // --- Transforms module
     slicerApp->SplashMessage("Initializing Transforms Module...");
@@ -1674,6 +1708,11 @@ int Slicer3_main(int argc, char *argv[])
     name = neuronavGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set NeuroNavGUI %s", name);
 #endif
+#if !defined(PROSTATENAV_DEBUG) &&  defined(BUILD_MODULES)
+    name = prostatenavGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set ProstatenavGUI %s", name);
+#endif
+
 
     name = transformsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
@@ -1987,6 +2026,9 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
     neuronavGUI->TearDownGUI ( );
 #endif
+#if !defined(PROSTATENAV_DEBUG) && defined(BUILD_MODULES)
+    prostatenavGUI->TearDownGUI ( );
+#endif
     
 #if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
     wfEngineModuleGUI->TearDownGUI ( );
@@ -2109,6 +2151,9 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
     neuronavGUI->Delete();
 #endif
+#if !defined(PROSTATENAV_DEBUG) && defined(BUILD_MODULES)
+    prostatenavGUI->Delete();
+#endif
     
 #if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
     wfEngineModuleGUI->Delete ( );
@@ -2229,6 +2274,10 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
     neuronavLogic->SetAndObserveMRMLScene ( NULL );
     neuronavLogic->Delete();
+#endif
+#if !defined(PROSTATENAV_DEBUG) && defined(BUILD_MODULES)
+    prostatenavLogic->SetAndObserveMRMLScene ( NULL );
+    prostatenavLogic->Delete();
 #endif
     
 #if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)

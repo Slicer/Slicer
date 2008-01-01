@@ -2,7 +2,8 @@ PROJECT(RealTimeImaging)
 
 #Check if NaviTrack is switch on, else don't compile that module!
 
-IF(USE_NAVITRACK)
+#IF(USE_NAVITRACK)
+IF(0)
 
 #
 # Sources

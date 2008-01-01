@@ -86,6 +86,10 @@ SET(dir_list
   ${NeuroNav_BINARY_DIR}
   ${NeuroNav_Init_SOURCE_DIR}
   ${NeuroNav_Init_BINARY_DIR}
+  ${ProstateNav_SOURCE_DIR}
+  ${ProstateNav_BINARY_DIR}
+  ${ProstateNav_Init_SOURCE_DIR}
+  ${ProstateNav_Init_BINARY_DIR}
   ${Qdec_SOURCE_DIR}
   ${Qdec_BINARY_DIR}
   ${QdecModule_SOURCE_DIR}
@@ -209,6 +213,7 @@ IF(BUILD_MODULES)
     ${VOLUMERENDERINGMODULE_LINK_LIB}
     ${LABELSTATISTICS_LINK_LIB} 
     NeuroNav
+    #    ProstateNav
     QueryAtlas
     CommandLineModule
     ScriptedModule
