@@ -12,7 +12,6 @@ SUBDIRS(
   Editor
   Python
   Meshing
-  ProstateNav
   QdecModule
   QueryAtlas
   Tractography
