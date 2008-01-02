@@ -752,8 +752,9 @@ int vtkProstateNavLogic::ConnectTracker(const char* filename)
 
     this->InvokeEvent(vtkProstateNavLogic::StatusUpdateEvent);
 
-
 #endif //USE_NAVITRACK
+
+    return 1;
 }
 
 
@@ -771,6 +772,8 @@ int vtkProstateNavLogic::DisconnectTracker()
     this->InvokeEvent(vtkProstateNavLogic::StatusUpdateEvent);
 
 #endif // USE_NAVITRACK
+
+    return 1;
 }
 
 
@@ -779,6 +782,7 @@ int vtkProstateNavLogic::RobotStop()
 {
 
   std::cerr << "vtkProstateNavLogic::RobotStop()" << std::endl;
+  return 1;
 
 }
 
@@ -813,6 +817,8 @@ int vtkProstateNavLogic::RobotMoveTo(float px, float py, float pz,
     }
 
 #endif // USE_NAVITRACK
+
+  return 1;
 }
 
 
@@ -842,6 +848,8 @@ int vtkProstateNavLogic::RobotMoveTo(float position[3], float orientation[3])
     }
 
 #endif // USE_NAVITRACK
+
+  return 1;
 }
 
 
@@ -866,6 +874,7 @@ int vtkProstateNavLogic::ScanStart()
 //    }
 //#endif // USE_NAVITRACK
 //  
+  return 1;
 }
 
 //---------------------------------------------------------------------------
@@ -887,6 +896,7 @@ int vtkProstateNavLogic::ScanPause()
 //    }
 //#endif // USE_NAVITRACK
 //  
+  return 1;
 }
 
 //---------------------------------------------------------------------------
@@ -909,6 +919,7 @@ int vtkProstateNavLogic::ScanStop()
 //    }
 //#endif // USE_NAVITRACK
 //  
+  return 1;
 }
 
 //---------------------------------------------------------------------------
