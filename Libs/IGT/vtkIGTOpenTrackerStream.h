@@ -10,12 +10,9 @@
 #include "vtkIGTWin32Header.h" 
 #include "vtkIGTDataStream.h"
 
-#include "vtkIGTMessageAttributeSet.h"
-
 #include "OpenTracker/OpenTracker.h"
 #include "OpenTracker/common/CallbackModule.h"
 
-#include <map>
 
 using namespace ot;
 
@@ -40,20 +37,6 @@ public:
 
     void Init(const char *configFile);
     static void callbackF(const Node&, const Event &event, void *data);
-    static void GenericCallback(const Node &node, const Event &event, void *data);
- 
-    //BTX
-    // Register callback functions to process data from NaviTrack data stream.
-    // AddCallback() should be called before Init();
-    void AddCallback(const char* cbname,
-                     vtkIGTMessageAttributeSet::MessageHandlingFunction* func,
-                     vtkIGTMessageAttributeSet* attrSet,
-                     void* arg);
-
-    // Send data to NaviTrack data stream.
-    void SetAttributes(const char* srcName, vtkIGTMessageAttributeSet* attrSet);
-
-    //ETX
     void StopPulling();
     void PullRealTime();    
 
@@ -63,11 +46,7 @@ private:
     Context *context;
 
     void CloseConnection();
-    //BTX
-    vtkIGTMessageAttributeSet::AttributeSetMap     AttributeSetMap;
-    friend class vtkIGTMessageAttributeSet;
-    //ETX
-    
+
 };
 
 #endif // IGTOPENTRACKERSTREAM_H
