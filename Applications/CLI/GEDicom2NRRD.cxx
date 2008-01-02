@@ -106,6 +106,8 @@ int main(int argc, char* argv[])
 //////////////////////////////////////////////////  
 // 1) Read the input series as an array of slices
   ImageIOType::Pointer gdcmIO = ImageIOType::New();
+  gdcmIO->LoadPrivateTagsOn();
+
   InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
   inputNames->SetInputDirectory( inputDicom.c_str() );
 
@@ -132,41 +134,59 @@ int main(int argc, char* argv[])
 //    vectors, and form volume based on these info
 
   ReaderType::DictionaryArrayRawPointer inputDict = reader->GetMetaDataDictionaryArray();
+
+//   /// for debug. to check what tags have been exposed
+//   itk::MetaDataDictionary & debugDict = gdcmIO->GetMetaDataDictionary();
+//   std::vector<std::string> allKeys = debugDict.GetKeys();
+//   for (int k = 0; k < allKeys.size(); k++)
+//     {
+//     std::cout << allKeys[k] << std::endl;
+//     }
+
   
   int nSlice = inputDict->size();   
   std::string tag;
 
+  tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0028|0010", tag );
   int nRows = atoi( tag.c_str() );
 
+  tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0028|0011", tag );
   int nCols = atoi( tag.c_str() );
 
+  tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0028|0030", tag );
   float xRes;
   float yRes;
   sscanf( tag.c_str(), "%f\\%f", &xRes, &yRes );
 
+  tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0032", tag );
   float xOrigin;
   float yOrigin;
   float zOrigin;
   sscanf( tag.c_str(), "%f\\%f\\%f", &xOrigin, &yOrigin, &zOrigin );
 
+  tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0018|0050", tag );
   float sliceThickness = atof( tag.c_str() );
    
+  tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0018|0088", tag );
   float sliceSpacing = atof( tag.c_str() );
 
+  tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|1041", tag );  
   float maxSliceLocation = atof( tag.c_str() );
        
+  tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[1], "0020|1041", tag );  
   float minSliceLocation = atof( tag.c_str() );
 
   for (int k = 0; k < nSlice; k++)
   {
+    tag.clear();
     itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0020|1041",  tag);
     float sliceLocation = atof( tag.c_str() );
     
@@ -182,6 +202,7 @@ int main(int argc, char* argv[])
   }    
 
   // check ImageOrientationPatient and figure out Slice direction in right-hand coordinate system.
+  tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0037", tag );
   float xRow, yRow, zRow, xCol, yCol, zCol, xSlice, ySlice, zSlice;
   sscanf( tag.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", &xRow, &yRow, &zRow, &xCol, &yCol, &zCol );
@@ -194,8 +215,10 @@ int main(int argc, char* argv[])
   {
   float x0, y0, z0;
   float x1, y1, z1;
+  tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0032", tag );
   sscanf( tag.c_str(), "%f\\%f\\%f", &x0, &y0, &z0 );
+  tag.clear();
   itk::ExposeMetaData<std::string> ( *(*inputDict)[1], "0020|0032", tag );
   sscanf( tag.c_str(), "%f\\%f\\%f", &x1, &y1, &z1 );
   x1 -= x0; y1 -= y0; z1 -= z0;
@@ -205,7 +228,7 @@ int main(int argc, char* argv[])
     rightHanded = false;
     }
   }
-
+  
   if (!rightHanded)
     {
     xSlice = -xSlice;
@@ -224,6 +247,7 @@ int main(int argc, char* argv[])
   
   for (int k = 0; k < nSlice; k += nSliceInVolume)
     {
+    tag.clear();
     itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0043|1039",  tag);
     float b = atof( tag.c_str() );
     if (b == 0)
@@ -246,20 +270,26 @@ int main(int argc, char* argv[])
   
   for (int k = 0; k < nSlice; k += nSliceInVolume)
     {
+    tag.clear();
     itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0043|1039",  tag);
     float b = atof( tag.c_str() );
     if (b == 0)
       {
       continue;
       }
-
+    
     idVolume[count] = k/nSliceInVolume;
     count ++;
 
+    tag.clear();
     itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bb",  tag);
     vect3d[0] = atof( tag.c_str() );
+
+    tag.clear();
     itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bc",  tag);
     vect3d[1] = atof( tag.c_str() );
+
+    tag.clear();
     itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bd",  tag);
     vect3d[2] = atof( tag.c_str() );
 
