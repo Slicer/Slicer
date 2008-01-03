@@ -37,8 +37,10 @@
 class VTK_TEEM_EXPORT vtkTensorMask : public vtkImageMask
 {
 public:
+
+  vtkTypeRevisionMacro(vtkTensorMask,vtkImageMask);
+
   static vtkTensorMask *New();
-  vtkTypeMacro(vtkTensorMask, vtkImageMask);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
@@ -47,12 +49,17 @@ protected:
   vtkTensorMask(const vtkTensorMask&);
   void operator=(const vtkTensorMask&);
 
-  void ThreadedExecute(vtkImageData **inDatas, vtkImageData *outData, int extent[6], int id);
-
   // We override this in order to allocate output tensors
   // before threading happens.  This replaces the superclass 
   // vtkImageMultipleInputFilter's Execute function.
   void ExecuteData(vtkDataObject *out);
+
+  virtual void ThreadedRequestData(vtkInformation *request, 
+                                   vtkInformationVector **inputVector, 
+                                   vtkInformationVector *outputVector,
+                                   vtkImageData ***inData, 
+                                   vtkImageData **outData,
+                                   int extent[6], int threadId);
 };
 
 #endif

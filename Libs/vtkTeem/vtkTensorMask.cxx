@@ -18,6 +18,8 @@
 #include "vtkImageData.h"
 #include "vtkPointData.h"
 
+vtkCxxRevisionMacro(vtkTensorMask, "$Revision: 1.28 $");
+
 //------------------------------------------------------------------------------
 vtkTensorMask* vtkTensorMask::New()
 {
@@ -299,9 +301,13 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
 // algorithm to fill the output from the inputs.
 // It just executes a switch statement to call the correct function for
 // the Datas data types.
-void vtkTensorMask::ThreadedExecute(vtkImageData **inData, 
-                   vtkImageData *outData,
-                   int outExt[6], int id)
+void vtkTensorMask::ThreadedRequestData(
+  vtkInformation * vtkNotUsed( request ), 
+  vtkInformationVector ** vtkNotUsed( inputVector ), 
+  vtkInformationVector * vtkNotUsed( outputVector ),
+  vtkImageData ***inData, 
+  vtkImageData **outData,
+  int outExt[6], int id)
 {
   void *inPtr1;
   void *inPtr2;
@@ -309,27 +315,23 @@ void vtkTensorMask::ThreadedExecute(vtkImageData **inData,
   int *tExt;
   vtkDataArray *inTensors;
 
-  vtkDebugMacro(<< "Execute: inData = " << inData 
-  << ", outData = " << outData);
-  
-
-  if (inData[0] == NULL)
+  if (inData[0][0] == NULL)
     {
       vtkErrorMacro(<< "Input " << 0 << " must be specified.");
       return;
     }
-  if (inData[1] == NULL)
+  if (inData[1][0] == NULL)
     {
       vtkErrorMacro(<< "Input " << 1 << " must be specified.");
       return;
     }
   
   // input image
-  inPtr1 = inData[0]->GetScalarPointerForExtent(outExt);
+  inPtr1 = inData[0][0]->GetScalarPointerForExtent(outExt);
   // mask
-  inPtr2 = inData[1]->GetScalarPointerForExtent(outExt);
+  inPtr2 = inData[1][0]->GetScalarPointerForExtent(outExt);
   // output
-  outPtr = outData->GetScalarPointerForExtent(outExt);
+  outPtr = outData[0]->GetScalarPointerForExtent(outExt);
   // input tensors
 #if (VTK_MAJOR_VERSION >= 5)
   inTensors = this->GetImageDataInput(0)->GetPointData()->GetTensors();
@@ -337,7 +339,7 @@ void vtkTensorMask::ThreadedExecute(vtkImageData **inData,
   inTensors = this->GetInput()->GetPointData()->GetTensors();
 #endif
 
-  tExt = inData[1]->GetExtent();
+  tExt = inData[1][0]->GetExtent();
   if (tExt[0] > outExt[0] || tExt[1] < outExt[1] || 
       tExt[2] > outExt[2] || tExt[3] < outExt[3] ||
       tExt[4] > outExt[4] || tExt[5] < outExt[5])
@@ -346,19 +348,19 @@ void vtkTensorMask::ThreadedExecute(vtkImageData **inData,
       return;
     }
   
-  if (inData[1]->GetNumberOfScalarComponents() != 1)
+  if (inData[1][0]->GetNumberOfScalarComponents() != 1)
     {
       vtkErrorMacro("Masks can have one component");
     }
     
-  if (inData[0]->GetScalarType() != outData->GetScalarType() ||
-      (inData[1]->GetScalarType() != VTK_UNSIGNED_CHAR &&
-       inData[1]->GetScalarType() != VTK_SHORT))
+  if (inData[0][0]->GetScalarType() != outData[0]->GetScalarType() ||
+      (inData[1][0]->GetScalarType() != VTK_UNSIGNED_CHAR &&
+       inData[1][0]->GetScalarType() != VTK_SHORT))
     {
       vtkErrorMacro(<< "Execute: image ScalarType (" 
-      << inData[0]->GetScalarType() << ") must match out ScalarType (" 
-      << outData->GetScalarType() << "), and mask scalar type (" 
-      << inData[1]->GetScalarType() << ") must be unsigned char or short.");
+      << inData[0][0]->GetScalarType() << ") must match out ScalarType (" 
+      << outData[0]->GetScalarType() << "), and mask scalar type (" 
+      << inData[1][0]->GetScalarType() << ") must be unsigned char or short.");
       return;
     }
 
@@ -369,19 +371,19 @@ void vtkTensorMask::ThreadedExecute(vtkImageData **inData,
   if (inTensors) 
     {
       // call the execute code for tensors
-      switch (inData[1]->GetScalarType())
+      switch (inData[1][0]->GetScalarType())
     {  
     case VTK_UNSIGNED_CHAR:
-      vtkTensorMaskExecuteTensor(this, outExt, inData[0], 
-                     inData[1], 
+      vtkTensorMaskExecuteTensor(this, outExt, inData[0][0], 
+                     inData[1][0], 
                      (unsigned char *)(inPtr2),
-                     outData, id);
+                     outData[0], id);
       break;
     case VTK_SHORT:
-      vtkTensorMaskExecuteTensor(this, outExt, inData[0], 
-                     inData[1], 
+      vtkTensorMaskExecuteTensor(this, outExt, inData[0][0], 
+                     inData[1][0], 
                      (short *)(inPtr2),
-                     outData, id);
+                     outData[0], id);
       break;
     default:
       vtkErrorMacro(<< "Execute: Unknown ScalarType for mask input");
@@ -393,27 +395,27 @@ void vtkTensorMask::ThreadedExecute(vtkImageData **inData,
   // do we have input scalars?
   if (inPtr1) 
     {
-      switch (inData[1]->GetScalarType())
+      switch (inData[1][0]->GetScalarType())
     {  
     case VTK_UNSIGNED_CHAR:
-      switch (inData[0]->GetScalarType())
+      switch (inData[0][0]->GetScalarType())
         {
           vtkTemplateMacro9(vtkTensorMaskExecute, this, outExt, 
-                inData[0], (VTK_TT *)(inPtr1), 
-                inData[1], (unsigned char *)(inPtr2),
-                outData, (VTK_TT *)(outPtr),id);
+                inData[0][0], (VTK_TT *)(inPtr1), 
+                inData[1][0], (unsigned char *)(inPtr2),
+                outData[0], (VTK_TT *)(outPtr),id);
         default:
           vtkErrorMacro(<< "Execute: Unknown ScalarType");
           return;
         }
       break;
     case VTK_SHORT:
-      switch (inData[0]->GetScalarType())
+      switch (inData[0][0]->GetScalarType())
         {
           vtkTemplateMacro9(vtkTensorMaskExecute, this, outExt, 
-                inData[0], (VTK_TT *)(inPtr1), 
-                inData[1], (short *)(inPtr2),
-                outData, (VTK_TT *)(outPtr),id);
+                inData[0][0], (VTK_TT *)(inPtr1), 
+                inData[1][0], (short *)(inPtr2),
+                outData[0], (VTK_TT *)(outPtr),id);
         default:
           vtkErrorMacro(<< "Execute: Unknown ScalarType");
           return;

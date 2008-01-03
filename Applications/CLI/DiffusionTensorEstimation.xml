@@ -82,5 +82,12 @@
      <description>Remove Islands in Threshold Mask?</description>
      <default>true</default>
     </boolean>
+    <boolean>
+     <name>applyMask</name>
+     <label>Apply Mask to Tensor Image</label>
+     <longflag>--applymask</longflag>
+     <description>Apply Threshold Mask to Tensor?</description>
+     <default>true</default>
+    </boolean>
   </parameters>
 </executable>

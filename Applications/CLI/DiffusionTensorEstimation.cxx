@@ -128,7 +128,6 @@ int main( int argc, const char * argv[] )
   cast->SetInput(mask);
   cast->SetOutputScalarTypeToUnsignedChar();
   cast->Update();
-  mask->Delete();    
 
   vtkSmartPointer<vtkImageSeedConnectivity> con = vtkImageSeedConnectivity::New();
   con->SetInput(cast->GetOutput());
@@ -159,27 +158,33 @@ int main( int argc, const char * argv[] )
 
   // Maks tensor
   //TODO: fix tenosr mask
-  /**
-  vtkSmartPointer<vtkTensorMask> tensorMask = vtkTensorMask::New();
+  /**/
+  //vtkSmartPointer<vtkTensorMask> tensorMask = vtkTensorMask::New();
+  vtkTensorMask *tensorMask = vtkTensorMask::New();
+  vtkSmartPointer<vtkImageCast> cast2 = vtkImageCast::New();
+  cast2->SetOutputScalarTypeToUnsignedChar();
   if (applyMask)
-    {
+    {  
+
     tensorMask->SetMaskAlpha(0.0);
     tensorMask->SetInput(tensorImage);
     if (removeIslands)  
       {
-      tensorMask->SetMaskInput(conn->GetOutput());
+      cast2->SetInput(conn->GetOutput());
       }
     else
       {
-      tensorMask->SetMaskInput(cast1->GetOutput());
+      cast2->SetInput(cast1->GetOutput());
       }
+     tensorMask->SetMaskInput(cast2->GetOutput());
      tensorMask->Update();
      tensorImage = tensorMask->GetOutput();
     }
-  **/
+  /**/
   
   //Save tensor
   vtkSmartPointer<vtkNRRDWriter> writer = vtkNRRDWriter::New();
+  tensorImage->GetPointData()->SetScalars(NULL);
   writer->SetInput(tensorImage);
   writer->SetFileName( outputTensor.c_str() );
   writer->UseCompressionOn();
@@ -224,6 +229,8 @@ int main( int argc, const char * argv[] )
   writer->SetInput(NULL);
   writer2->SetInput(NULL);
   writer3->SetInput(NULL);
+  mask->Delete();    
   }
+
   return EXIT_SUCCESS;
 }
