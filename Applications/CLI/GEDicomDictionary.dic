@@ -1,0 +1,4 @@
+0043 1039 IS 1 B Value of diffusion weighting
+0019 10bb DS 1 X component of gradient direction
+0019 10bc DS 1 Y component of gradient direction
+0019 10bd DS 1 Z component of gradient direction

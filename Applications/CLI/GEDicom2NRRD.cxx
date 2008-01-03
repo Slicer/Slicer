@@ -68,6 +68,9 @@ Assumptions:
 #include "vnl/algo/vnl_svd.h"
 
 #include "itkVectorImage.h"
+#include "gdcmDictSet.h"   // access to dictionary
+#include "gdcmGlobal.h"   // access to dictionary
+
 
 #include "GEDicom2NRRDCLP.h"
 
@@ -78,6 +81,9 @@ int main(int argc, char* argv[])
 {
   
   PARSE_ARGS;
+
+  // add private dictionary
+  gdcm::Global::GetDicts()->GetDefaultPubDict()->AddDict(PrivateDictionary.c_str());
 
   // check if the file name is valid
   std::string nhdrname = outputFileName;

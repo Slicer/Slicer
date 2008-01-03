@@ -37,11 +37,19 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>Directory holding output nrrd files</description>
     </directory>
 
+    <file>
+      <name>PrivateDictionary</name>
+      <label>Additional Dicom Dictionary</label>
+      <channel>input</channel>
+      <index>2</index>
+      <description>Filename of additional dicom Dictionary</description>
+    </file>
+
     <string>
       <name>outputFileName</name>
       <label>NRRD header (.nhdr)</label>
       <channel>output</channel>
-      <index>2</index>
+      <index>3</index>
       <description>NRRD header file name</description>
     </string>
   </parameters>
