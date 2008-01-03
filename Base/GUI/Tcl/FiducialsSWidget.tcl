@@ -226,7 +226,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
       foreach {fidListNode tag} $pair {}
       if { [info command $fidListNode] != "" } {
         after idle "::SWidget::ProtectedCallback $fidListNode RemoveObserver $tag"
-      }
+      } 
     }
   }
 
@@ -245,7 +245,6 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
   # are close enough to the current slice node; create seed widgets
   # for those and give them a "moved command" that will set the position of the fiducial
   #
-
   set scene [$sliceGUI GetMRMLScene]
   set nLists [$scene GetNumberOfNodesByClass "vtkMRMLFiducialListNode"]
 
@@ -256,7 +255,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
 
     # add an observer on this fiducial list
     if { [$caller IsA "vtkMRMLScene"] } {
-      after idle "$this addFiducialListObserver $fidListNode"
+      $this addFiducialListObserver $fidListNode
     }
 
     if { ![$fidListNode GetVisibility] } {
