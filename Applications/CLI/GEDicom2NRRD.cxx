@@ -68,11 +68,17 @@ Assumptions:
 #include "vnl/algo/vnl_svd.h"
 
 #include "itkVectorImage.h"
-#include "gdcmDictSet.h"   // access to dictionary
-#include "gdcmGlobal.h"   // access to dictionary
-
+#include "gdcmDictSet.h"        // access to dictionary
+#include "gdcmDict.h"        // access to dictionary
+#include "gdcmDictEntry.h"   // access to dictionary
+#include "gdcmGlobal.h"        // access to dictionary
 
 #include "GEDicom2NRRDCLP.h"
+
+const gdcm::DictEntry GEDictBValue( 0x0043, 0x1039, "IS", "1", "B Value of diffusion weighting" );
+const gdcm::DictEntry GEDictXGradient( 0x0019, 0x10bb, "DS", "1", "X component of gradient direction" );
+const gdcm::DictEntry GEDictYGradient( 0x0019, 0x10bc, "DS", "1", "Y component of gradient direction" );
+const gdcm::DictEntry GEDictZGradient( 0x0019, 0x10bd, "DS", "1", "Z component of gradient direction" );
 
 typedef vnl_vector_fixed<double, 3> VectorType;
 typedef itk::Vector<float, 3> OutputVectorType;
@@ -82,9 +88,11 @@ int main(int argc, char* argv[])
   
   PARSE_ARGS;
 
-  // add private dictionary
-  gdcm::Global::GetDicts()->GetDefaultPubDict()->AddDict(PrivateDictionary.c_str());
-
+  gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictBValue);
+  gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictXGradient);
+  gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictYGradient);
+  gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictZGradient);
+ 
   // check if the file name is valid
   std::string nhdrname = outputFileName;
   std::string dataname;
@@ -313,7 +321,7 @@ int main(int argc, char* argv[])
 // write volumes in raw format
   itk::ImageFileWriter< VolumeType >::Pointer rawWriter = itk::ImageFileWriter< VolumeType >::New();
   itk::RawImageIO<PixelValueType, 3>::Pointer rawIO = itk::RawImageIO<PixelValueType, 3>::New();
-  std::string rawFileName = outputDir + "\\" + dataname;
+  std::string rawFileName = outputDir + "/" + dataname;
   rawWriter->SetFileName( rawFileName.c_str() );
   rawWriter->SetInput( reader->GetOutput() );
   rawWriter->SetImageIO( rawIO );
@@ -335,7 +343,7 @@ int main(int argc, char* argv[])
 // There should be a better way using itkNRRDImageIO.
 
   std::ofstream header;
-  std::string headerFileName = outputDir + "\\" + outputFileName;
+  std::string headerFileName = outputDir + "/" + outputFileName;
 
   header.open (headerFileName.c_str());
   header << "NRRD0005" << std::endl;
