@@ -1,11 +1,8 @@
 
 
-proc TestFiducial { {nodeNumber -1} } {
-    if {$nodeNumber == -1} {
-        set nodeNumber 1
-    }
-    set fiducialList [$::slicer3::MRMLScene GetNodeByID vtkMRMLFiducialListNode${nodeNumber}] 
+proc TestFiducial {} {
 
+  set fiducialList [$::slicer3::MRMLScene GetNthNodeByClass 0 "vtkMRMLFiducialListNode"]
   set numberOfFiducials [$fiducialList GetNumberOfFiducials]
 
   for {set f 0} {$f < $numberOfFiducials} {incr f} {
@@ -27,6 +24,7 @@ proc TestFiducial { {nodeNumber -1} } {
     if { [string trim [$fiducialList GetNthFiducialOrientation $f]] != "$f $f $f 1" } {
         error "fiducial OrientationWXYZ didn't change ($f) (WXYZ is [$fiducialList GetNthFiducialOrientation $f] not $f $f $f 1)"
     }
+    update
   }
 
   puts "fiducial test okay"
@@ -34,3 +32,28 @@ proc TestFiducial { {nodeNumber -1} } {
 }
 
 
+proc CreateFiducials {} {
+
+  foreach f { "0 0 0"
+              "10 0 0"
+              "10 10 0"
+              "0 10 0"
+              "50 10 0"
+              "50 50 0"
+              "10 50 0" } {
+    eval FiducialsSWidget::AddFiducial $f
+    update
+  }
+}
+
+set ret [ catch {
+  $::slicer3::Application TraceScript CreateFiducials
+  $::slicer3::Application TraceScript TestFiducial
+} res]
+
+if { $ret } {
+  puts stderr $res
+  exit 1
+}
+
+exit 0

@@ -173,6 +173,7 @@ ENDIF(WIN32 AND NOT BORLAND AND NOT CYGWIN)
 IF(BUILD_TESTING)
   ADD_TEST(Slicer3GUITest1 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestSliceController.tcl)
   ADD_TEST(Slicer3GUITest2 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestProgressDialog.tcl)
+  ADD_TEST(Slicer3FiducialsTest1 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestFiducials.tcl)
 ENDIF(BUILD_TESTING)
 
 # If needed, copy the Tcl/Tk support files required at run-time 
