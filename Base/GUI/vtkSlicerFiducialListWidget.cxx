@@ -571,8 +571,9 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
       (vtkMRMLScene::SafeDownCast(caller) != NULL && 
       (event == vtkMRMLScene::NodeAddedEvent && vtkMRMLFiducialListNode::SafeDownCast((vtkObjectBase *)callData) != NULL ||
       event == vtkMRMLScene::NodeRemovedEvent && vtkMRMLFiducialListNode::SafeDownCast((vtkObjectBase *)callData) != NULL ||
-      event == vtkMRMLScene::SceneCloseEvent ||
-      event == vtkMRMLScene::NewSceneEvent )) )
+      event == vtkMRMLScene::SceneCloseEvent)) ) 
+      //||
+      //event == vtkMRMLScene::NewSceneEvent )) )
 
     {
     // could have finer grain control by calling remove fid props and then
