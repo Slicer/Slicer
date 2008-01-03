@@ -5,6 +5,7 @@ PROJECT(SlicerTractographyFiducialSeeding)
 
 SET(SlicerTractographyFiducialSeeding_SRCS
   vtkSlicerTractographyFiducialSeedingGUI.cxx
+  vtkSlicerTractographyFiducialSeedingLogic.cxx
 )
 
 # Abstract/pure virtual classes
