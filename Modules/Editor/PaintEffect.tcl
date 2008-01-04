@@ -123,6 +123,19 @@ itcl::configbody PaintEffect::radius {
 
 itcl::body PaintEffect::createGlyph { {polyData ""} } {
 
+  #
+  # get the brush radius in XY space
+  # - assume uniform scaling between XY and RAS which
+  #   is enforced by the view interactors
+  #
+  set rasToXY [vtkMatrix4x4 New]
+  $rasToXY DeepCopy [$_sliceNode GetXYToRAS]
+  $rasToXY Invert
+  set xyRadius [$rasToXY MultiplyPoint $radius $radius $radius 0]
+  foreach {xRadius yRadius} $xyRadius {}
+  set xRadius [expr abs([lindex $xyRadius 0])]
+  set yRadius [expr abs([lindex $xyRadius 1])]
+
   # make a circle paint brush
   if { $polyData == "" } {
     set polyData [vtkNew vtkPolyData]
@@ -139,8 +152,8 @@ itcl::body PaintEffect::createGlyph { {polyData ""} } {
   set prevPoint ""
   set firstPoint ""
   for { set angle 0 } { $angle <= $TWOPI } { set angle [expr $angle + $PIoverSIXTEEN] } {
-    set x [expr $radius * cos($angle)]
-    set y [expr $radius * sin($angle)]
+    set x [expr $xRadius * cos($angle)]
+    set y [expr $yRadius * sin($angle)]
     set p [$points InsertNextPoint $x $y 0]
     if { $prevPoint != "" } {
       set idList [vtkIdList New]
@@ -297,7 +310,7 @@ itcl::body PaintEffect::buildOptions {} {
   $o(radius) DisplayLabelOn
   $o(radius) SetValue [[EditorGetParameterNode] GetParameter Paint,radius] 
   [$o(radius) GetLabel] SetText "Radius: "
-  $o(radius) SetBalloonHelpString "Set the radius of the paint brush in screen space pixels"
+  $o(radius) SetBalloonHelpString "Set the radius of the paint brush in millimeters"
   pack [$o(radius) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
 
@@ -478,6 +491,8 @@ itcl::body PaintEffect::paintBrush {x y} {
   set bottom [expr $y + [lindex $bounds 2]]
   set top [expr $y + [lindex $bounds 3]]
 
+#puts "x y bounds: $x  $y  $bounds"
+
   set xyToIJK [[$_layers(label,logic) GetXYToIJKTransform] GetMatrix]
   set tlIJK [$xyToIJK MultiplyPoint $left $top 0 1]
   set trIJK [$xyToIJK MultiplyPoint $right $top 0 1]
@@ -506,6 +521,9 @@ itcl::body PaintEffect::paintBrush {x y} {
     if { $br($v) >= $d } { set br($v) [expr $d - 1] }
   }
 
+foreach corner "tl tr bl br" {
+#  parray $corner
+}
 
   #
   # get the ijk to ras matrices 
@@ -515,6 +533,12 @@ itcl::body PaintEffect::paintBrush {x y} {
   set labelIJKToRAS [vtkMatrix4x4 New]
   $_layers(label,node) GetIJKToRASMatrix $labelIJKToRAS
 
+foreach one "background label" {
+#  puts $one
+#  puts [[set ${one}IJKToRAS] Print]
+}
+
+if {0} {
   #
   # get the brush center and radius in World
   # - assume uniform scaling between XY and RAS
@@ -530,6 +554,13 @@ itcl::body PaintEffect::paintBrush {x y} {
     }
   }
   set brushRadius [expr $scale * $radius]
+puts "worldScale is $worldScale"
+puts "brush radius is $brushRadius"
+} else {
+  set xyToRAS [$_sliceNode GetXYToRAS]
+  set brushCenter [lrange [$xyToRAS MultiplyPoint $x $y 0 1] 0 2]
+  set brushRadius $radius
+}
 
   #
   # set up the painter class and let 'r rip!

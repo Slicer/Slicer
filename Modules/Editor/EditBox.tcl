@@ -90,7 +90,9 @@ itcl::body EditBox::findEffects { {path ""} } {
     ChooseColor 
     ImplicitCube ImplicitEllipse 
     ConnectedComponents 
-    SlurpColor  Wand
+    SlurpColor  Wand 
+    ThresholdPaintLabel ThresholdBucket
+    ErodeLabel DilateLabel
     DeleteFiducials LabelOpacity
     FiducialVisibilityOff
     FiducialVisibilityOn 
