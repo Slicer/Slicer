@@ -104,6 +104,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLVo
 
   virtual void UpdateImageDataPipeline();
 
+  vtkGetObjectMacro(DTIMathematics, vtkDiffusionTensorMathematicsSimple);
+  vtkGetObjectMacro(DTIMathematicsAlpha, vtkDiffusionTensorMathematicsSimple);
+
 
 protected:
   vtkMRMLDiffusionTensorVolumeDisplayNode();
@@ -118,7 +121,10 @@ protected:
 
   vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
 
+  // used for main scalar invarant (can be 1 or 3 component)
   vtkDiffusionTensorMathematicsSimple *DTIMathematics;
+  // used for calculating single component magnitude for color images
+  vtkDiffusionTensorMathematicsSimple *DTIMathematicsAlpha;
 
 };
 
