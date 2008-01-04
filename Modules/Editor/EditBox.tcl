@@ -69,7 +69,7 @@ itcl::body EditBox::findEffects { {path ""} } {
   set _effects(list,mouseTools) {
     ChangeIsland ChooseColor 
     ImplicitCube ImplicitEllipse ImplicitRectangle 
-    Draw EraseLabel RemoveIslands ConnectedComponents 
+    Draw RemoveIslands ConnectedComponents 
     ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor Paint
     DefaultTool LevelTracing Wand
   }
@@ -82,7 +82,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     IdentifyIslands
     LabelVisibilityOff LabelVisibilityOn MakeModel NextFiducial 
     SnapToGridOff SnapToGridOn
-    Threshold PinOpen PreviousFiducial  InterpolateLabels LabelOpacity
+    EraseLabel Threshold PinOpen PreviousFiducial  InterpolateLabels LabelOpacity
     ToggleLabelOutline Watershed
   }
 
@@ -269,6 +269,11 @@ itcl::body EditBox::selectEffect { effect } {
       EditorTestQuickModel
       EditorSetActiveToolLabel DefaultTool
     }
+    "LabelCheckpoint" {
+      # save a copy of the current label layer into the scene
+      EditorLabelCheckpoint
+      EditorSetActiveToolLabel DefaultTool
+    }
     "PreviousFiducial" {
       ::FiducialsSWidget::JumpAllToNextFiducial -1
       EditorSetActiveToolLabel DefaultTool
@@ -276,6 +281,9 @@ itcl::body EditBox::selectEffect { effect } {
     "NextFiducial" {
       ::FiducialsSWidget::JumpAllToNextFiducial 1
       EditorSetActiveToolLabel DefaultTool
+    }
+    "EraseLabel" {
+      EditorToggleErasePaintLabel
     }
     default {
 

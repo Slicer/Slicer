@@ -58,6 +58,40 @@ proc EditorAddQuickModel { sliceLogic } {
 }
 
 #
+# TODO: flesh this out...
+#
+proc EditorLabelCheckpoint { sliceLogic } {
+
+  #
+  # get the image data for the label layer
+  #
+  set layerLogic [$sliceLogic GetLabelLayer]
+  set volumeNode [$layerLogic GetVolumeNode]
+  if { $volumeNode == "" } {
+    puts "cannot make label checkpoint - no volume node"
+    return
+  }
+  set imageData [$volumeNode GetImageData]
+
+  set volumesLogic [$::slicer3::VolumesGUI GetLogic]
+  set labelNode [$volumesLogic CreateLabelVolume $scene $volumeNode $name]
+
+  # make the source node the active background, and the label node the active label
+  set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]
+  $selectionNode SetReferenceActiveVolumeID [$volumeNode GetID]
+  $selectionNode SetReferenceActiveLabelVolumeID [$labelNode GetID]
+  [[$this GetLogic] GetApplicationLogic]  PropagateVolumeSelection
+
+  $labelNode Delete
+
+  # update the editor range to be the full range of the background image
+  set range [[$volumeNode GetImageData] GetScalarRange]
+  eval ::Labler::SetPaintRange $range
+}
+
+
+
+#
 # make it easier to test the model by looking for the first slice logic
 #
 proc EditorTestQuickModel {} {
