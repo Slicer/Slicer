@@ -74,8 +74,9 @@ vtkMRMLVectorVolumeDisplayNode::vtkMRMLVectorVolumeDisplayNode()
  this->Threshold->SetInput( this->ExtractIntensity->GetOutput() );
 
  this->AppendComponents->RemoveAllInputs();
- this->AppendComponents->SetInputConnection(0, this->ShiftScale->GetOutput()->GetProducerPort());
- this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutput()->GetProducerPort());
+ //this->AppendComponents->SetInputConnection(0, this->ShiftScale->GetOutput()->GetProducerPort());
+ this->AppendComponents->SetInput(0, this->RGBToHSI->GetInput());
+ this->AppendComponents->SetInput(1, this->Threshold->GetOutput());
 
 }
 

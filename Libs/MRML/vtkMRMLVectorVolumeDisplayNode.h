@@ -140,6 +140,8 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLVolumeGlyph
   vtkGetObjectMacro (ShiftScale, vtkImageShiftScale);
   vtkGetObjectMacro (RGBToHSI, vtkImageRGBToHSI);
   vtkGetObjectMacro (ExtractIntensity, vtkImageExtractComponents);
+  vtkGetObjectMacro (AppendComponents, vtkImageAppendComponents);
+  vtkGetObjectMacro (Threshold, vtkImageThreshold);
   
 protected:
   vtkMRMLVectorVolumeDisplayNode();
