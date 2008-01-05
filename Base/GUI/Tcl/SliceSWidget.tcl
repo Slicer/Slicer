@@ -417,11 +417,13 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "LeftButtonPressEvent" {
       if { [info command SeedSWidget] != "" } {
         set interactionNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLInteractionNode]
-        set mode [$interactionNode GetCurrentInteractionMode]
-        set modeString [$interactionNode GetInteractionModeAsString $mode]
-        set modifier [expr [$_interactor GetControlKey] && [$_interactor GetShiftKey]]
-        if { $modeString == "Place" || $modifier } {
-          FiducialsSWidget::AddFiducial $r $a $s
+        if { $interactionNode != "" } {
+          set mode [$interactionNode GetCurrentInteractionMode]
+          set modeString [$interactionNode GetInteractionModeAsString $mode]
+          set modifier [expr [$_interactor GetControlKey] && [$_interactor GetShiftKey]]
+          if { $modeString == "Place" || $modifier } {
+            FiducialsSWidget::AddFiducial $r $a $s
+          }
         }
       }
     }
@@ -470,7 +472,7 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "TimerEvent" { }
     "KeyPressEvent" { 
       set key [$_interactor GetKeySym]
-      if { [lsearch "v r b f space c Up Down Left Right" $key] != -1 } {
+      if { [lsearch "v r b f space c e Up Down Left Right" $key] != -1 } {
         $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
         $sliceGUI SetGUICommandAbortFlag 1
         switch [$_interactor GetKeySym] {
@@ -495,6 +497,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           }
           "c" {
             ::Box::ShowDialog ColorBox
+          }
+          "e" {
+            EditorToggleErasePaintLabel
           }
           default {
             set capture 0
