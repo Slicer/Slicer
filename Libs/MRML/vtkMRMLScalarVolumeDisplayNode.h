@@ -134,10 +134,11 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   virtual vtkImageData* GetImageData() 
     {
     this->UpdateImageDataPipeline();
-    if (this->Threshold->GetInput() != NULL)
+    if (this->Threshold->GetInput() == NULL)
       {
-      this->AppendComponents->Update();
+      return NULL;
       }
+    this->AppendComponents->Update();
     return this->AppendComponents->GetOutput();
     };
 
