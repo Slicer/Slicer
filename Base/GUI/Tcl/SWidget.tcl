@@ -58,9 +58,6 @@ if { [itcl::find class SWidget] == "" } {
     }
 
     destructor {
-      if { [info command $sliceGUI] != "" } {
-        $sliceGUI SetGrabID ""
-      }
       vtkDelete  
     }
 
