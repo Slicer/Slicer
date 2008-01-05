@@ -590,6 +590,7 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
   thresh->ReplaceOutOn();
   thresh->SetInValue(0);
   thresh->SetOutValue(0);
+  thresh->SetOutputScalarType (VTK_SHORT);
   thresh->SetInput( volumeNode->GetImageData() );
   thresh->GetOutput()->Update();
   labelNode->SetAndObserveImageData( thresh->GetOutput() );
