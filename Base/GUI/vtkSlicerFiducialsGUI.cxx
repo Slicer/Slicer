@@ -320,7 +320,7 @@ void vtkSlicerFiducialsGUI::ProcessGUIEvents ( vtkObject *caller,
   vtkMRMLFiducialListNode *activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
   if (activeFiducialListNode == NULL)
   {
-      vtkWarningMacro ("ERROR: No Fiducial List, adding one first!\n");
+      vtkDebugMacro ("ERROR: No Fiducial List, adding one first!\n");
       vtkMRMLFiducialListNode *newList = this->GetLogic()->AddFiducialList();      
       if (newList != NULL)
         {
@@ -1407,7 +1407,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
       }
     else
       {
-      vtkErrorMacro ("ERROR: unable to get the mrml fiducial node to observe!\n");
+      vtkDebugMacro ("ERROR: unable to get the mrml fiducial node to observe!\n");
       }
 
     // update the selected fid list id
