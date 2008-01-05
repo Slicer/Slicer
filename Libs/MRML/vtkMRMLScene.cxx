@@ -333,7 +333,6 @@ void vtkMRMLScene::ResetNodes()
 {
   vtkMRMLNode *node;
   std::vector <vtkMRMLNode *> nodes;
-  vtkMRMLNode *newNode;
   this->InitTraversal();
   while (node = this->GetNextNode()) 
     {
@@ -751,6 +750,22 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     node->UpdateReferences();
     }
   //this->Modified();
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::RemoveNodeNoNotify(vtkMRMLNode *n) 
+{
+  n->Register(this);
+  this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
+  this->RemoveNodeReferences(n);
+  n->UnRegister(this);
+
+  vtkMRMLNode *node = NULL;
+  for (int i=0; i < this->CurrentScene->GetNumberOfItems(); i++) 
+    {
+    node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(i);
+    node->UpdateReferences();
+    }
 }
 
 //------------------------------------------------------------------------------

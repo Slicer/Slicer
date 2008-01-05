@@ -195,8 +195,8 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
     return;
     }
 
-  int nnodesSanpshot = this->Nodes->GetNumberOfItems();
-  int n;
+  unsigned int nnodesSanpshot = this->Nodes->GetNumberOfItems();
+  unsigned int n;
   vtkMRMLNode *node = NULL;
 
   // remove nodes in the scene which are not stored in the snapshot

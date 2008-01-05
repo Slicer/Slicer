@@ -563,7 +563,7 @@ void vtkMRMLSliceNode::UpdateScene(vtkMRMLScene* scene)
     }
   if (node != NULL)
     {
-    scene->RemoveNode(node);
+    scene->RemoveNodeNoNotify(node);
     }
 }
 // End

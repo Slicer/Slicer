@@ -277,7 +277,7 @@ void vtkSlicerVolumeHeaderWidget::UpdateWidgetFromMRML ()
     {
     itksys_stl::string dir =  
           itksys::SystemTools::GetParentDirectory(storageNode->GetFileName());   
-    if (dir[dir.size()-1] != '/')
+    if (dir.size() > 0 && dir[dir.size()-1] != '/')
       {
       dir = dir + vtksys_stl::string("/");
       }

@@ -63,6 +63,10 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
   // Gets ImageData converted from the real data in the node
   virtual vtkImageData* GetImageData() 
     {
+    if (this->MapToColors->GetInput() == NULL)
+      {
+      return NULL;
+      }
     this->MapToColors->Update();
     return this->MapToColors->GetOutput();
     };
