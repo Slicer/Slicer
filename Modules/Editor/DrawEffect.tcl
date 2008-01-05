@@ -98,6 +98,18 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  #
+  # if another widget has the grab, let this go unless
+  # it is a focus event, in which case we want to update
+  # out display icon
+  #
+  set grabID [$sliceGUI GetGrabID]
+  if { $grabID != "" && $grabID != $this } {
+    if { ![string match "Focus*Event" $event] } {
+      return ;# some other widget wants these events
+    }
+  }
+
   chain $caller $event
 
   set event [$sliceGUI GetCurrentGUIEvent] 
@@ -107,6 +119,7 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
     switch $event {
       "LeftButtonPressEvent" {
         set _actionState "drawing"
+        $sliceGUI SetGrabID $this
         eval $this addPoint $_currentPosition
         $sliceGUI SetGUICommandAbortFlag 1
       }
@@ -116,10 +129,14 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
             eval $this addPoint $_currentPosition
             $sliceGUI SetGUICommandAbortFlag 1
           }
+          default {
+            $sliceGUI SetGrabID ""
+          }
         }
       }
       "LeftButtonReleaseEvent" {
         set _actionState ""
+        $sliceGUI SetGrabID ""
         eval $this addPoint $_currentPosition
         $sliceGUI SetGUICommandAbortFlag 1
       }
