@@ -860,9 +860,8 @@ void vtkImageConnectivity::ExecuteData(vtkDataObject *)
   s = inData->GetScalarType();
   if (s != VTK_SHORT) 
     {
-    vtkErrorMacro("Input scalars are type "<<s 
+    vtkErrorMacro("Warning: Input scalars are type "<<s 
       << " instead of "<<VTK_SHORT);
-    return;
     }
 
   vtkImageConnectivityExecute(this, inData, (short *)inPtr, 
