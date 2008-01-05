@@ -227,7 +227,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     if (! (reader->GetPointDataType() == VECTORS || reader->GetPointDataType() == NORMALS))
       {
-      vtkErrorMacro("MRMLVolumeNode does not match file kind");
+      vtkDebugMacro("MRMLVolumeNode does not match file kind");
       reader->Delete();
       return 0;
       }
@@ -236,7 +236,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     if ( ! (reader->GetPointDataType() == TENSORS))
       {
-      vtkErrorMacro("MRMLVolumeNode does not match file kind");
+      vtkDebugMacro("MRMLVolumeNode does not match file kind");
       reader->Delete();
       return 0;
       }
