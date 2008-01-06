@@ -114,7 +114,7 @@ int vtkSlicerFiducialsLogic::AddFiducialSelected (float x, float y, float z, int
     vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(selnode->GetActiveFiducialListID()));
     if (flist == NULL)
       {
-      vtkErrorMacro("FiducialsLogic: selected fiducial list " << selnode->GetActiveFiducialListID() << " is null, making a new one");
+      vtkDebugMacro("FiducialsLogic: selected fiducial list " << selnode->GetActiveFiducialListID() << " is null, making a new one");
       this->AddFiducialListSelected();
       flist = vtkMRMLFiducialListNode::SafeDownCast(this->MRMLScene->GetNodeByID(selnode->GetActiveFiducialListID()));
       }
