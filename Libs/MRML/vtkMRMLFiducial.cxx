@@ -269,9 +269,10 @@ void vtkMRMLFiducial::SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat)
         ortho[2][i] = matrix[2][i];
     }
     if (vtkMath::Determinant3x3(ortho) < 0)
-    {   ortho[0][i] = -ortho[0][i];
-        ortho[1][i] = -ortho[1][i];
-        ortho[2][i] = -ortho[2][i];
+    {   
+      ortho[0][2] = -ortho[0][2];
+      ortho[1][2] = -ortho[1][2];
+      ortho[2][2] = -ortho[2][2];
     }
 
     vtkMath::Matrix3x3ToQuaternion(ortho, wxyz);
