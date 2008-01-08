@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>filtering</category>
+  <title>Calculate Volume Statistics</title>
+  <description>
+    Extracts statistics from an ROI.
+  </description>
+  <version>1.0</version>
+  <license></license>
+  <contributor>Tri Ngo</contributor>
+  <parameters>
+    <label>
+    Calculate Statistics Parameters
+    </label>
+    <description>
+    Parameters for the Stochastic Tractography algorithm
+    </description>
+
+    <integer>
+      <name>roilabel</name>
+      <flag>l</flag>
+      <longflag>roilabel</longflag>
+      <description>Label Number of the ROI</description>
+      <label>ROI Label</label>
+      <default>0</default>
+    </integer>
+  </parameters>
+  
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <file>
+      <name>roifilename</name>
+      <label>Input Tracts</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input tracts as VTK XML Polydata file</description>
+    </file>
+    <image>
+      <name>statfilename</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Input FA volume</description>
+    </image>
+    <file>
+      <name>outputfilename</name>
+      <label>Output Tract FA textfile</label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>Output tract averaged FA as text file</description>
+    </file>
+  </parameters>
+
+</executable>

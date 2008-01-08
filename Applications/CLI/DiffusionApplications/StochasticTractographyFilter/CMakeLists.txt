@@ -45,7 +45,7 @@ TARGET_LINK_LIBRARIES (${CLP}
     vtkCommon
     vtkGraphics
     ModuleDescriptionParser
-    # MRML
+    MRML
 )
 
 SET (CLP GenerateConnectivityMap)
@@ -76,9 +76,24 @@ TARGET_LINK_LIBRARIES (${CLP}
     vtkCommon
     vtkGraphics
     ModuleDescriptionParser
-    # MRML
+    MRML
 )
 
+SET (CLP CalculateVolumeStatistics)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP}
+    ITKIO
+    ITKBasicFilters 
+    ITKCommon
+    vtkIO
+    vtkCommon
+    vtkGraphics
+    ModuleDescriptionParser
+    MRML
+)
 
 IF (Slicer3_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 
@@ -88,6 +103,7 @@ IF (Slicer3_SOURCE_DIR)
         StochasticTractographyFilter
         GenerateConnectivityMap
         ROITractFilter
+        CalculateVolumeStatistics
   )
 
   FOREACH(target ${TARGETS})
