@@ -112,7 +112,10 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
 
     // get out the id
     ss >> keyName;
-    ss >> this->ID;
+    //ss >> this->ID;
+    ss >> keyName;
+    this->SetID(keyName.c_str());
+
     vtkDebugMacro("ReadXMLString: got id " << this->ID);
     
     // now get out the labeltext key
