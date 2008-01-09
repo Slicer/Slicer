@@ -273,10 +273,11 @@ void vtkImageEMLocalClass::ExecuteData(vtkDataObject *)
        return;
      } 
      for (int k=j+1; k <   NumInputImages; k++) {
-       if (this->LogCovariance[j][k] != this->LogCovariance[k][j]) {
-     vtkEMAddErrorMessage("Covariance must be symetric for class with label " << this->Label);
-     return;
-       }
+     if (fabs(this->LogCovariance[j][k] - this->LogCovariance[k][j]) > 0.000001) 
+         {
+         vtkEMAddErrorMessage("Covariance must be symetric for class with label " << this->Label);
+         return;
+         }
      }
    }
 
