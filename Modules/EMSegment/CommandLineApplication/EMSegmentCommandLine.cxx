@@ -330,7 +330,6 @@ int main(int argc, char** argv)
   bool dontUpdateIntermediateData = false;
   std::string parametersMRMLNodeName = "";
   std::vector<std::string> atlasVolumeFileNames;
-  std::string intermediateResultsDirectory = "";
   bool disableCompression = false;
   std::string resultMRMLSceneFileName = "";
 #endif

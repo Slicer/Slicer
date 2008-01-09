@@ -129,6 +129,15 @@
       <default>false</default>
     </boolean>
 
+    <directory multiple="false">
+      <name>intermediateResultsDirectory</name>
+      <longflag>intermediateResultsDirectory</longflag>
+
+      <description>Directory where EMSegmenter will write intermediate data (e.g., aligned atlas data).</description>
+      <label>Intermediate Results Directory</label>      
+      <channel>input</channel>
+    </directory>
+
   </parameters>
 
 </executable>
