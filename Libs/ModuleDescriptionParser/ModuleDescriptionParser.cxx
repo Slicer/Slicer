@@ -1450,6 +1450,12 @@ endElement(void *userData, const char *element)
     trimLeadingAndTrailing(temp);
     ps->CurrentDescription.SetContributor(temp);
     }
+  else if (name == "location")
+    {
+    std::string temp = ps->LastData[ps->Depth];
+    trimLeadingAndTrailing(temp);
+    ps->CurrentDescription.SetLocation(temp);
+    }
   else if (name ==  "description")
     {
     std::string temp = ps->LastData[ps->Depth];
