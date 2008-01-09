@@ -326,6 +326,7 @@ PrintImageInfo(vtkMRMLVolumeNode* volumeNode)
 {
   if (volumeNode == NULL || volumeNode->GetImageData() == NULL)
     {
+    std::cerr << "Volume node or image data is null" << std::endl;
     return;
     }
 
@@ -401,9 +402,18 @@ IsVolumeGeometryEqual(vtkMRMLVolumeNode* lhs,
   vtkMatrix4x4* matrixLHS = vtkMatrix4x4::New();
   lhs->GetIJKToRASMatrix(matrixLHS);
   vtkMatrix4x4* matrixRHS = vtkMatrix4x4::New();
-  rhs->GetIJKToRASMatrix(matrixLHS);  
-  bool equalMatrix = std::equal((*matrixLHS)[0], (*matrixLHS)[0]+16, 
-                                (*matrixRHS)[0]);
+  rhs->GetIJKToRASMatrix(matrixRHS);  
+  bool equalMatrix = true;
+  for (int r = 0; r < 4; ++r)
+    {
+    for (int c = 0; c < 4; ++c)
+      {
+      if ((*matrixLHS)[r][c] != (*matrixRHS)[r][c])
+        {
+        equalMatrix = false;
+        }
+      }
+    }
 
   matrixLHS->Delete();
   matrixRHS->Delete();
@@ -594,9 +604,9 @@ GuessRegistrationBackgroundLevel(vtkImageData* imageData)
                        MapCompare<T>::map_value_comparer);
 
     std::cerr << "   Background level guess : " 
-              << backgroundLevel << "(" << percentageOfVoxels << "%) "
+              << static_cast<int>(backgroundLevel) << "(" << percentageOfVoxels << "%) "
               << "second place: "
-              << itor2->first << "(" 
+              << static_cast<int>(itor2->first) << "(" 
               << 100.0 * static_cast<double>(itor2->second)/totalVoxelsCounted
               << "%)"
               << std::endl;
@@ -1216,7 +1226,7 @@ StartPreprocessingTargetToTargetRegistration()
       {
       std::cerr << "  Skipping registration of target image " 
                 << i << "." << std::endl;
-
+      
       if (!vtkEMSegmentLogic::
           IsVolumeGeometryEqual(fixedVolumeNode, outputVolumeNode))
         {
@@ -1225,8 +1235,14 @@ StartPreprocessingTargetToTargetRegistration()
                   << std::endl
                   << "Suggestion: If you are not positive that your images are "
                   << "aligned, you should enable target-to-target registration."
-                  << std::endl
-                  << "Resampling target image " << i << "...";
+                  << std::endl;
+
+        std::cerr << "Fixed Volume Node: " << std::endl;
+        PrintImageInfo(fixedVolumeNode);
+        std::cerr << "Output Volume Node: " << std::endl;
+        PrintImageInfo(outputVolumeNode);
+
+        std::cerr << "Resampling target image " << i << "...";
         vtkEMSegmentLogic::
           SlicerImageReslice(movingVolumeNode, 
                              outputVolumeNode, 
