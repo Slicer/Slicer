@@ -394,6 +394,10 @@ void vtkEMSegmentIntensityNormalizationStep::
   // The target volume enabled checkbutton has changed 
   // because of user interaction
 
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  mrmlManager->SetTargetVolumeIntensityNormalizationEnabled(target_vol_id, 
+    checked);
+
   int iEnabled = 
     this->NormalizationParametersFrame->GetEnabled();
   if(!checked)
@@ -467,10 +471,6 @@ void vtkEMSegmentIntensityNormalizationStep::
     this->NormalizationParametersFrame->GetEnabled();
   vtkKWCheckButton *cbEnable = 
     this->NormalizationEnableCheckButton->GetWidget();
-
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  mrmlManager->SetTargetVolumeIntensityNormalizationEnabled(target_vol_id, 
-    cbEnable->GetSelectedState());
 
   this->NormalizationDefaultsMenuButton->SetEnabled(
     cbEnable->GetSelectedState() ? parentEnabled : 0);
