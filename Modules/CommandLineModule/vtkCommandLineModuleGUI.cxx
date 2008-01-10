@@ -1170,7 +1170,6 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
             ->SetRange(itk::NumericTraits<float>::NonpositiveMin(),
                        itk::NumericTraits<float>::max());
           tparameter->GetWidget()->SetIncrement( 0.1 );
-          tparameter->GetWidget()->SetValueFormat("%1.1f");
           tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
           parameter = tparameter;
           }
@@ -1227,7 +1226,6 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
             ->SetRange(itk::NumericTraits<double>::NonpositiveMin(),
                        itk::NumericTraits<double>::max());
           tparameter->GetWidget()->SetIncrement( 0.1 );
-          tparameter->GetWidget()->SetValueFormat("%1.1f");
           tparameter->GetWidget()->SetValue(atof((*pit).GetDefault().c_str()));
           parameter = tparameter;
           }
