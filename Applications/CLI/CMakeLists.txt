@@ -415,6 +415,7 @@ TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 SUBDIRS ( Realign )
 SUBDIRS( DiffusionApplications )
 SUBDIRS( ExtractSkeleton )
+#SUBDIRS( RegisterImagesModule )
 
 IF(USE_MIDAS)
   SUBDIRS( MIDASApplications )
