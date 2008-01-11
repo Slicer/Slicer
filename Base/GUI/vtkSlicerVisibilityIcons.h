@@ -8,7 +8,7 @@
 #include "./Resources/vtkSlicerVisibility_ImageData.h"
 
 
-class vtkSlicerVisibilityIcons : public vtkSlicerIcons
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVisibilityIcons : public vtkSlicerIcons
 {
  public:
     static vtkSlicerVisibilityIcons* New ( );
