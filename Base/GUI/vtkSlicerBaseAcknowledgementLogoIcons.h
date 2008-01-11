@@ -7,7 +7,7 @@
 #include "vtkSlicerIcons.h"
 #include "./Resources/vtkSlicerBaseAcknowledgementLogos_ImageData.h"
 
-class vtkSlicerBaseAcknowledgementLogoIcons : public vtkSlicerIcons
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerBaseAcknowledgementLogoIcons : public vtkSlicerIcons
 {
  public:
     static vtkSlicerBaseAcknowledgementLogoIcons* New ( );
