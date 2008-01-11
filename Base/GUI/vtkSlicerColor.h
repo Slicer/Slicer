@@ -2,11 +2,12 @@
 #define __vtkSlicerColor_h
 
 #include "vtkObject.h"
+#include "vtkSlicerBaseGUIWin32Header.h" 
 
 // Description:
 // Color definitios used in Slicer's style.
 //
-class vtkSlicerColor : public vtkObject
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColor : public vtkObject
 {
  public:
     static vtkSlicerColor* New ( );
