@@ -68,6 +68,7 @@ BSplineImageToImageRegistrationMethod< TImage >
 
   typename TransformType::SpacingType spacing   = this->GetFixedImage()->GetSpacing();
   typename TransformType::OriginType  origin    = this->GetFixedImage()->GetOrigin();
+  typename TransformType::DirectionType  direction    = this->GetFixedImage()->GetDirection();
 
   typename TImage::SizeType fixedImageSize = this->GetFixedImage()->GetLargestPossibleRegion().GetSize();
 
@@ -81,6 +82,7 @@ BSplineImageToImageRegistrationMethod< TImage >
   this->GetTypedTransform()->SetGridSpacing( spacing );
   this->GetTypedTransform()->SetGridOrigin( origin );
   this->GetTypedTransform()->SetGridRegion( bsplineRegion );
+  this->GetTypedTransform()->SetGridDirection( direction );
 
   const unsigned int numberOfParameters =
     this->GetTypedTransform()->GetNumberOfParameters();
