@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  BatchProcessing
+  </category>
+  <title>
+  Registration BatchMake
+  </title>
+  <description>
+  Run Registration Module as a batch process.
+  </description>
+  <version>0.1.0.$Revision: 1.1 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Stephen Aylward at Kitware Inc.</contributor>
+  <acknowledgements>http://www.batchmake.org
+  </acknowledgements>
+
+  <parameters>
+    <label>Input Datasets</label>
+    <description>Input Datasets</description>
+
+    <image>
+      <name>fixedImage</name>
+      <label>Fixed Image</label>
+      <channel>input</channel>
+      <index>0</index>
+    </image>
+
+    <file fileExtensions=".prm">
+      <name>parametersFileName</name>
+      <longflag>parametersFileName</longflag>
+      <description>File that contrains the registration module parameters.</description>
+      <label>Registration parameters file</label>
+    </file>    
+     
+    <directory>
+      <name>movingImageDir</name>
+      <label>Moving image directory</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Directory where to find input images</description>
+    </directory>
+
+    <string>
+      <name>movingImageMask</name>
+      <label>Directory Mask</label>
+      <default>Patient*</default>
+      <longflag>movingImageMask</longflag>
+    </string>
+
+  </parameters>
+
+  <parameters>
+    <label>Output Directory</label>
+    <description>Output Directory</description>
+    <directory>
+       <name>outputDir</name>
+       <label>Output directory</label>
+       <channel>output</channel>
+       <index>1</index>
+       <description>Directory where to put the processed images</description>
+    </directory>
+  </parameters>
+
+ <parameters>
+    <label>BatchMake</label>
+    <description>BatchMake specific parameters</description>
+
+    <string-enumeration>
+      <name>runLocally</name>
+      <longflag>local</longflag>
+      <description>Running Mode</description>
+      <label>Running Mode</label>
+      <default>locally</default>
+      <element>locally</element>
+      <element>grid via condor</element>
+    </string-enumeration>
+  
+  </parameters>
+</executable>

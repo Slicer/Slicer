@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration</category>
+  <title>Register Images</title>
+  <description>Provides rigid, affine, and BSpline registration methods via a simple GUI</description>
+  <version>0.1.0.$Revision: 2104 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Stephen R. Aylward</contributor>
+  <acknowledgements></acknowledgements>
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>fixedImage</name>
+      <label>Fixed Image</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Image which defines the space into which the moving image is registered</description>
+    </image>
+    <image>
+      <name>movingImage</name>
+      <label>Moving Image</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>The transform goes from the fixed image's space into the moving image's space</description>
+    </image>
+    <image>
+      <name>resampledImage</name>
+      <label>Resample image</label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>Registration results</description>
+    </image>
+  </parameters>
+  <parameters>
+    <label>Registration Parameters</label>
+    <description>Common parameters</description>
+    <file>
+      <name>loadTransform</name>
+      <label>Load transform</label>
+      <description>Load a transform that is immediately applied to the moving image</description>
+      <longflag>loadTransform</longflag>
+    </file>
+    <file>
+      <name>saveTransform</name>
+      <label>Save transform</label>
+      <description>Save the transform that results from registration</description>
+      <longflag>saveTransform</longflag>
+    </file>
+    <file>
+      <name>loadParameters</name>
+      <label>Load parameters</label>
+      <description>File containing detailed parameters for registration</description>
+      <longflag>loadParameters</longflag>
+    </file>
+    <file>
+      <name>saveParameters</name>
+      <label>Save parameters</label>
+      <description>Writed the parameters used for registration</description>
+      <longflag>saveParameters</longflag>
+    </file>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced Registration Parameters</label>
+    <description>Parameters that determine how registration is performed</description>
+    <string-enumeration>
+      <name>initialization</name>
+      <description>Method to prime the registration process</description>
+      <label>Initialization</label>
+      <longflag>initialization</longflag>
+      <element>None</element>
+      <element>ImageCenters</element>
+      <element>CentersOfMass</element>
+      <element>SecondMoments</element>
+      <default>CentersOfMass</default>
+    </string-enumeration>
+    <string-enumeration>
+      <name>registration</name>
+      <description>Method for the registration process</description>
+      <label>Registration</label>
+      <longflag>registration</longflag>
+      <element>None</element>
+      <element>Rigid</element>
+      <element>Affine</element>
+      <element>BSpline</element>
+      <default>BSpline</default>
+    </string-enumeration>
+    <string-enumeration>
+      <name>metric</name>
+      <description>Method to quantify image match</description>
+      <label>Metric</label>
+      <longflag>metric</longflag>
+      <element>MattesMI</element>
+      <element>NormCorr</element>
+      <element>MeanSqrd</element>
+      <default>MattesMI</default>
+    </string-enumeration>
+    <integer>
+      <name>maxIterations</name>
+      <description>Maximum number of optimization iterations</description>
+      <label>Max Iterations</label>
+      <longflag>maxIterations</longflag>
+      <default>500</default>
+    </integer>
+    <float>
+      <name>affineSamplingRatio</name>
+      <description>Portion of the image to use in computing the metric during rigid/affine registration</description>
+      <label>Affine sampling ratio</label>
+      <longflag>affineSamplingRatio</longflag>
+      <default>0.1</default>
+    </float>
+    <float>
+      <name>bsplineSamplingRatio</name>
+      <description>Portion of the image to use in computing the metric during BSpline registration</description>
+      <label>BSpline sampling ratio</label>
+      <longflag>bsplineSamplingRatio</longflag>
+      <default>0.3</default>
+    </float>
+    <float>
+      <name>expectedOffset</name>
+      <description>Expected mis-alignment after initialization</description>
+      <label>Expected offset magnitude</label>
+      <longflag>expectedOffset</longflag>
+      <default>10</default>
+    </float>
+    <float>
+      <name>expectedRotation</name>
+      <description>Expected mis-alignment after initialization</description>
+      <label>Expected rotation magnitude</label>
+      <longflag>expectedRotation</longflag>
+      <default>0.05</default>
+    </float>
+    <float>
+      <name>expectedScale</name>
+      <description>Expected mis-alignment after initialization</description>
+      <label>Expected scale magnitude</label>
+      <longflag>expectedScale</longflag>
+      <default>0.05</default>
+    </float>
+    <float>
+      <name>expectedSkew</name>
+      <description>Expected mis-alignment after initialization</description>
+      <label>Expected skew magnitude</label>
+      <longflag>expectedSkew</longflag>
+      <default>0.01</default>
+    </float>
+    <integer>
+      <name>controlPointSpacing</name>
+      <description>Number of pixels between control points</description>
+      <label>Control point spacing (pixels)</label>
+      <longflag>controlPointSpacing</longflag>
+      <default>20</default>
+    </integer>
+    <boolean>
+      <name>useWindowedSinc</name>
+      <description>Use Windowed Sinc interpolation for final resampling</description>
+      <label>Use windowed sinc</label>
+      <longflag>useWindowedSinc</longflag>
+      <default>false</default>
+    </boolean>
+  </parameters>
+</executable>

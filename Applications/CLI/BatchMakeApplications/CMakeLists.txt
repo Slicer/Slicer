@@ -1,4 +1,5 @@
 SUBDIRS(
   EMSegmentBatchMakeModule
   GaussianBlurBatchMakeModule
+  RegisterImagesBatchMakeModule
 )
