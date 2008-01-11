@@ -10,7 +10,7 @@
 // Description:
 // Definition of Slicer's look and feel.
 //
-class vtkSlicerStyle : public vtkObject
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerStyle : public vtkObject
 {
  public:
     static vtkSlicerStyle* New ( );

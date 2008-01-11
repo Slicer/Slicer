@@ -12,7 +12,7 @@
 #include "vtkSlicerFont.h"
 #include "vtkSlicerCheckRadioButtonIcons.h"
 
-class vtkSlicerTheme : public vtkKWTheme
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTheme : public vtkKWTheme
 {
  public:
     // Description:

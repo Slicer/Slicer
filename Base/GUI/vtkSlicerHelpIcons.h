@@ -7,7 +7,7 @@
 #include "vtkSlicerIcons.h"
 #include "./Resources/vtkSlicerHelpAndInformation_ImageData.h"
 
-class vtkSlicerHelpIcons : public vtkSlicerIcons
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerHelpIcons : public vtkSlicerIcons
 {
  public:
     static vtkSlicerHelpIcons* New ( );

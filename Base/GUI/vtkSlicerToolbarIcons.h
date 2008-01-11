@@ -12,7 +12,7 @@
 #include "./Resources/vtkSlicerModuleToolbar_ImageData.h"
 #include "./Resources/vtkSlicerUndoRedoToolbar_ImageData.h"
 
-class vtkSlicerToolbarIcons : public vtkSlicerIcons
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarIcons : public vtkSlicerIcons
 {
  public:
     static vtkSlicerToolbarIcons* New ( );

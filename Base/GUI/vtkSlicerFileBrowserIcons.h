@@ -7,7 +7,7 @@
 #include "vtkSlicerIcons.h"
 #include "./Resources/vtkSlicerFileBrowser_ImageData.h"
 
-class vtkSlicerFileBrowserIcons : public vtkSlicerIcons
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFileBrowserIcons : public vtkSlicerIcons
 {
  public:
     static vtkSlicerFileBrowserIcons* New ( );

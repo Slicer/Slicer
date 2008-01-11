@@ -7,7 +7,7 @@
 #include "vtkSlicerIcons.h"
 #include "./Resources/vtkSlicerModuleChoose_ImageData.h"
 
-class vtkSlicerModuleNavigationIcons : public vtkSlicerIcons
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleNavigationIcons : public vtkSlicerIcons
 {
  public:
     static vtkSlicerModuleNavigationIcons* New ( );

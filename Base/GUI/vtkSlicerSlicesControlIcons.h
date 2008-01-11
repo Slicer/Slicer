@@ -15,7 +15,7 @@
 // vtkKWLabels and vtkKWPushbuttons can display these
 // vtkKWIcons instead of text.
 
-class vtkSlicerSlicesControlIcons : public vtkSlicerIcons
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlIcons : public vtkSlicerIcons
 {
  public:
     // Description:

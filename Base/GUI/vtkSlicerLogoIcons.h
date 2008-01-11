@@ -8,7 +8,7 @@
 //#include "./Resources/vtkSlicerLogo_ImageData.h"
 #include "./Resources/vtkSlicerLogoHorizontal_ImageData.h"
 
-class vtkSlicerLogoIcons : public vtkSlicerIcons
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerLogoIcons : public vtkSlicerIcons
 {
  public:
     static vtkSlicerLogoIcons* New ( );
