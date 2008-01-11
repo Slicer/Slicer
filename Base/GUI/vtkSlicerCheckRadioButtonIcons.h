@@ -7,7 +7,7 @@
 #include "vtkSlicerIcons.h"
 #include "./Resources/vtkSlicerCheckRadioButton_ImageData.h"
 
-class vtkSlicerCheckRadioButtonIcons : public vtkSlicerIcons
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerCheckRadioButtonIcons : public vtkSlicerIcons
 {
  public:
   static vtkSlicerCheckRadioButtonIcons* New();
