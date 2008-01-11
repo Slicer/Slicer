@@ -42,6 +42,7 @@ class vtkTransform;
 class vtkCollection;
 class vtkSlicerViewerWidget;
 class vtkSlicerViewerInteractorStyle;
+class vtkPointWidget;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialListWidget : public vtkSlicerWidget
 {
 public:
@@ -104,6 +105,10 @@ public:
   vtkActor * GetFiducialActorByID (const char *id);
 
   // Description:
+  // return the current point widget corresponding to a given MRML ID
+  vtkPointWidget * GetPointWidgetByID (const char *id);
+
+  // Description:
   // Get/Set the main slicer viewer widget, for picking
   vtkGetObjectMacro(ViewerWidget, vtkSlicerViewerWidget);
   virtual void SetViewerWidget(vtkSlicerViewerWidget *viewerWidget);
@@ -112,7 +117,7 @@ public:
   // Get/Set the slicer interactorstyle, for picking
   vtkGetObjectMacro(InteractorStyle, vtkSlicerViewerInteractorStyle);
   virtual void SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle);
-  
+
 protected:
   vtkSlicerFiducialListWidget();
   virtual ~vtkSlicerFiducialListWidget();
@@ -125,6 +130,10 @@ protected:
   // Update the properties of the text actor
   void UpdateTextActor(vtkMRMLFiducialListNode *flist, int f);
   
+  // Description:
+  // Update the properties of the point widget
+  void UpdatePointWidget(vtkMRMLFiducialListNode *flist, int f);
+
   // Description:
   // Remove fiducial properties from the main viewer
   void RemoveFiducialProps();
@@ -158,13 +167,17 @@ protected:
   //BTX
   std::map<std::string, vtkActor *> DisplayedFiducials;
   std::map<std::string, vtkFollower *> DisplayedTextFiducials;
-  
+ 
   std::string GetFiducialActorID (const char *id, int index);
   // Description:
   // returns the fiducial list's id from the fiducial point's id
   std::string GetFiducialNodeID (const char *actorid, int &index);
-  //ETX
 
+  // Description:
+  // encapsulates the vtk 3d widgets for each fiducial, indexed by fiducial id
+  std::map<std::string, vtkPointWidget*> DisplayedPointWidgets; 
+  //ETX
+  
   // Description:
   // Flag set to 1 when processing mrml events
   int ProcessingMRMLEvent;
