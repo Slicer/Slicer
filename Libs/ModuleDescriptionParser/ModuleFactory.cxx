@@ -1795,7 +1795,7 @@ ModuleFactory
             "if 'toXML' in dir ( Module ):\n"
             "    XML = Module.ToXML()\n"
             "if not 'Execute' in dir ( Module ):\n"
-            "    XML = None\n";
+            "    XML = ''\n";
 
           PyObject* v;
       
