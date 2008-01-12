@@ -22,11 +22,12 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
 
-
 #include "vtkDataSetAttributes.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "vtkFloatArray.h"
+#include "vtkAbstractTransform.h"
+#include "vtkTransformPolyDataFilter.h"
 
 #include "vtkMRMLProceduralColorNode.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
@@ -674,3 +675,15 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     return 1;
 }
 
+void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
+{
+  vtkTransformPolyDataFilter* transformFilter = vtkTransformPolyDataFilter::New();
+  transformFilter->SetInput(this->GetPolyData());
+  transformFilter->SetTransform(transform);
+  transformFilter->Update();
+
+//  this->SetAndObservePolyData(transformFilter->GetOutput());
+  this->GetPolyData()->DeepCopy(transformFilter->GetOutput());
+
+  transformFilter->Delete();
+}

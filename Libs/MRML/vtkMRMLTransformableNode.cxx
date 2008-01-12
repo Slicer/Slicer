@@ -19,6 +19,7 @@ Version:   $Revision: 1.14 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include "vtkIntArray.h"
+#include "vtkMatrixToLinearTransform.h"
 
 #include "vtkMRMLTransformableNode.h"
 
@@ -164,5 +165,14 @@ void vtkMRMLTransformableNode::UpdateReferences()
     {
     this->SetAndObserveTransformNodeID(NULL);
     }
+}
+
+//-----------------------------------------------------------
+void vtkMRMLTransformableNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+{
+  vtkMatrixToLinearTransform* transform = vtkMatrixToLinearTransform::New();
+  transform->SetInput(transformMatrix);
+  this->ApplyTransform(transform);
+  transform->Delete();
 }
 // End

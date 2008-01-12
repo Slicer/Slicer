@@ -23,7 +23,6 @@
 #include <string>
 
 #include "vtkPolyData.h" 
-#include "vtkMatrix4x4.h"
 
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
@@ -111,6 +110,9 @@ public:
   int CompositeScalars(const char* backgroundName, const char* overlayName, float overlayMin, float overlayMax, int showOverlayPositive, int showOverlayNegative, int reverseOverlay);
   
   virtual void SetAndObservePolyData(vtkPolyData *PolyData);
+
+  virtual bool CanApplyNonLinearTransforms() { return true; }
+  virtual void ApplyTransform(vtkAbstractTransform* transform);
 
 protected:
   vtkMRMLModelNode();

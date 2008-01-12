@@ -18,6 +18,7 @@ Version:   $Revision: 1.14 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkLinearTransform.h"
 
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
@@ -327,4 +328,27 @@ void vtkMRMLLinearTransformNode::ProcessMRMLEvents ( vtkObject *caller,
     }
 }
 
+
+//----------------------------------------------------------------------------
+void vtkMRMLLinearTransformNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+{
+  vtkMatrix4x4* matrixToParent = this->GetMatrixTransformToParent();
+  vtkMatrix4x4* newMatrixToParent = vtkMatrix4x4::New();
+
+  vtkMatrix4x4::Multiply4x4(matrixToParent,transformMatrix,newMatrixToParent);
+
+  this->SetAndObserveMatrixTransformToParent(newMatrixToParent);
+
+  newMatrixToParent->Delete();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLinearTransformNode::ApplyTransform(vtkAbstractTransform* transform)
+{
+  if (!transform->IsA("vtkLinearTransform"))
+    {
+    vtkErrorMacro(<<"Can't harden a general transform in a linear transform.");
+    }
+  this->ApplyTransform(vtkLinearTransform::SafeDownCast(transform)->GetMatrix());
+}
 // End

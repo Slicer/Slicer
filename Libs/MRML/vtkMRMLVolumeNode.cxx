@@ -19,6 +19,7 @@ Version:   $Revision: 1.14 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include "vtkMatrix4x4.h"
+#include "vtkLinearTransform.h"
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -396,6 +397,34 @@ void vtkMRMLVolumeNode::GetIJKToRASDirections(double dirs[3][3])
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::SetIJKToRASDirectionMatrix(vtkMatrix4x4* ijkToRASDirectionMatrix)
+{
+  double dirs[3][3];
+  for (int i=0; i<3; i++)
+    {
+    for (int j=0; j<3; j++)
+      {
+      dirs[i][j] = ijkToRASDirectionMatrix->Element[i][j];
+      }
+    }
+  this->SetIJKToRASDirections(dirs);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::GetIJKToRASDirectionMatrix(vtkMatrix4x4* ijkToRASDirectionMatrix)
+{
+  double dirs[3][3];
+  this->GetIJKToRASDirections(dirs);
+  for (int i=0; i<3; i++)
+    {
+    for (int j=0; j<3; j++)
+      {
+      ijkToRASDirectionMatrix->Element[i][j] = dirs[i][j];
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(char *order, 
                                                      double* spacing, int *dims,
                                                      bool centerImage,
@@ -618,3 +647,26 @@ vtkMRMLVolumeNode::GetMetaDataDictionary() const
 {
   return this->Dictionary;
 }
+
+void vtkMRMLVolumeNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+{
+  vtkMatrix4x4* ijkToRASMatrix = vtkMatrix4x4::New();
+  vtkMatrix4x4* newIJKToRASMatrix = vtkMatrix4x4::New();
+  this->GetIJKToRASMatrix(ijkToRASMatrix);
+  vtkMatrix4x4::Multiply4x4(transformMatrix,ijkToRASMatrix,newIJKToRASMatrix);
+  
+  this->SetIJKToRASMatrix(newIJKToRASMatrix);
+
+  ijkToRASMatrix->Delete();
+  newIJKToRASMatrix->Delete();
+}
+
+void vtkMRMLVolumeNode::ApplyTransform(vtkAbstractTransform* transform)
+{
+  if (!transform->IsA("vtkLinearTransform"))
+    {
+    vtkErrorMacro(<<"Only linear transforms can be hardened in volumes. Image resampling is required for nonlinear transforms.");
+    }
+  this->ApplyTransform(vtkLinearTransform::SafeDownCast(transform)->GetMatrix());
+}
+

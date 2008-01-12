@@ -22,6 +22,9 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
 #include "vtkMRMLUnstructuredGridStorageNode.h"
 
+#include "vtkAbstractTransform.h"
+#include "vtkTransformFilter.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLUnstructuredGridNode* vtkMRMLUnstructuredGridNode::New()
 {
@@ -128,5 +131,18 @@ void vtkMRMLUnstructuredGridNode::ProcessMRMLEvents ( vtkObject *caller,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
+}
+
+void vtkMRMLUnstructuredGridNode::ApplyTransform(vtkAbstractTransform* transform)
+{
+  vtkTransformFilter* transformFilter = vtkTransformFilter::New();
+  transformFilter->SetInput(this->GetUnstructuredGrid());
+  transformFilter->SetTransform(transform);
+  transformFilter->Update();
+
+//  this->SetAndObserveUnstructuredGrid(vtkUnstructuredGrid::SafeDownCast(transformFilter->GetOutput()));
+  this->GetUnstructuredGrid()->DeepCopy(transformFilter->GetOutput());
+
+  transformFilter->Delete();
 }
 

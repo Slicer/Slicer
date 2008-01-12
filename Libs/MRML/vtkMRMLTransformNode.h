@@ -97,6 +97,8 @@ class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLTransformableNode
   // Returns 1 if the node is one of the this node's descendents
   int IsTransformNodeMyChild(vtkMRMLTransformNode* node);
 
+  virtual bool CanApplyNonLinearTransforms() { return true; }
+  virtual void ApplyTransform(vtkAbstractTransform* transform);
 
 protected:
   vtkMRMLTransformNode();

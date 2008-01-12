@@ -224,6 +224,10 @@ public:
   const char* GetGlyphTypeAsString(int g);
   void SetGlyphTypeFromString(const char *glyphString);
 
+  virtual bool CanApplyNonLinearTransforms() { return true; }
+  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
+  virtual void ApplyTransform(vtkAbstractTransform* transform);
+
 protected:
   vtkMRMLFiducialListNode();
   ~vtkMRMLFiducialListNode();

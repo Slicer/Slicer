@@ -21,6 +21,9 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkAbstractTransform.h"
+#include "vtkMath.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLFiducialListNode* vtkMRMLFiducialListNode::New()
 {
@@ -1128,4 +1131,74 @@ void vtkMRMLFiducialListNode::SetOpacity(double opacity)
     
     // invoke a display modified event
     this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLFiducialListNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
+{
+  int numPoints = this->GetNumberOfFiducials();
+  double (*matrix)[4] = transformMatrix->Element;
+  float xyzIn[3];
+  float xyzOut[3];
+  float orientationIn[4], quaternionIn[4];
+  float orientationMatrix3x3[3][3];
+  vtkMatrix4x4* orientationMatrix = vtkMatrix4x4::New();
+  vtkMatrix4x4* newOrientationMatrix = vtkMatrix4x4::New();
+  for (int n=0; n<numPoints; n++)
+    {
+    vtkMRMLFiducial *node = this->GetNthFiducial(n);
+
+    node->GetXYZ(xyzIn);
+    xyzOut[0] = matrix[0][0]*xyzIn[0] + matrix[0][1]*xyzIn[1] + matrix[0][2]*xyzIn[2] + matrix[0][3];
+    xyzOut[1] = matrix[1][0]*xyzIn[0] + matrix[1][1]*xyzIn[1] + matrix[1][2]*xyzIn[2] + matrix[1][3];
+    xyzOut[2] = matrix[2][0]*xyzIn[0] + matrix[2][1]*xyzIn[1] + matrix[2][2]*xyzIn[2] + matrix[2][3];
+    node->SetXYZ(xyzOut);
+
+    node->GetOrientationWXYZ(orientationIn);
+    quaternionIn[0] = cos(0.5*orientationIn[0]);
+    double f = sin(0.5*orientationIn[0])/sqrt(orientationIn[1]*orientationIn[1]+orientationIn[2]*orientationIn[2]+orientationIn[3]*orientationIn[3]);
+    quaternionIn[1] = f * orientationIn[1];
+    quaternionIn[2] = f * orientationIn[2];
+    quaternionIn[3] = f * orientationIn[3];
+    vtkMath::QuaternionToMatrix3x3(quaternionIn,orientationMatrix3x3);
+    orientationMatrix->Identity();
+    for (int i=0; i<3; i++)
+      {
+      orientationMatrix->Element[i][0] = orientationMatrix3x3[i][0];
+      orientationMatrix->Element[i][1] = orientationMatrix3x3[i][1];
+      orientationMatrix->Element[i][2] = orientationMatrix3x3[i][2];
+      }
+    vtkMatrix4x4::Multiply4x4(orientationMatrix,transformMatrix,newOrientationMatrix);
+    node->SetOrientationWXYZFromMatrix4x4(newOrientationMatrix);
+    }
+
+  orientationMatrix->Delete();
+  newOrientationMatrix->Delete();
+}
+
+void vtkMRMLFiducialListNode::ApplyTransform(vtkAbstractTransform* transform)
+{
+  int numPoints = this->GetNumberOfFiducials();
+  float xyzIn[3];
+  float xyzOut[3];
+  float orientationIn[4], orientationNormalIn[3];
+  float orientationOut[4], orientationNormalOut[3];
+  for (int n=0; n<numPoints; n++)
+    {
+    vtkMRMLFiducial *node = this->GetNthFiducial(n);
+    node->GetXYZ(xyzIn);
+    transform->TransformPoint(xyzIn,xyzOut);
+    node->SetXYZ(xyzOut);
+
+    node->GetOrientationWXYZ(orientationIn);
+    orientationNormalIn[0] = orientationIn[1];
+    orientationNormalIn[1] = orientationIn[2];
+    orientationNormalIn[2] = orientationIn[3];
+    transform->TransformNormalAtPoint(xyzIn,orientationNormalIn,orientationNormalOut);
+    orientationOut[0] = orientationIn[0];
+    orientationOut[1] = orientationNormalOut[0];
+    orientationOut[2] = orientationNormalOut[1];
+    orientationOut[3] = orientationNormalOut[2];
+    node->SetOrientationWXYZ(orientationOut);
+    }
 }

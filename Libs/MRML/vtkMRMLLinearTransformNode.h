@@ -75,7 +75,11 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-  
+
+  virtual bool CanApplyNonLinearTransforms() { return false; } 
+  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
+  virtual void ApplyTransform(vtkAbstractTransform* transform);
+ 
 protected:
   vtkMRMLLinearTransformNode();
   ~vtkMRMLLinearTransformNode();

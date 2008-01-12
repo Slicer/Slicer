@@ -1300,7 +1300,8 @@ int Slicer3_main(int argc, char *argv[])
     //
 #endif
 
-#ifndef QUERYATLAS_DEBUG
+#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
+//#ifndef QUERYATLAS_DEBUG
     slicerApp->SplashMessage("Initializing Query Atlas Module...");
 
     //--- Incorporate the tcl QueryAtlas components
@@ -1677,7 +1678,8 @@ int Slicer3_main(int argc, char *argv[])
 
     name = transformsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
-#ifndef QUERYATLAS_DEBUG
+#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
+//#ifndef QUERYATLAS_DEBUG
     name = queryAtlasGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set QueryAtlasGUI %s", name);
 #endif
@@ -1788,6 +1790,49 @@ int Slicer3_main(int argc, char *argv[])
     tclCommand += "";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+
+#ifdef USE_PYTHON
+    slicerApp->SplashMessage("Initializing Python Scripted Modules...");
+    std::string pythonCommand = "";
+    pythonCommand += "import sys\n";
+    pythonCommand += "import os\n";
+    pythonCommand += "modulePath = os.path.join('" + slicerBinDir + "','..','" + 
+      SLICER_INSTALL_LIBRARIES_DIR + "/Modules/Packages')\n";
+    pythonCommand += "sys.path.append(modulePath)\n";
+    pythonCommand += "packageNames = []\n";
+    pythonCommand += "for packageName in os.listdir(modulePath):\n";
+    pythonCommand += "    if os.path.isfile(os.path.join(modulePath,packageName,'__init__.py')):\n";
+    pythonCommand += "        packageNames.append(packageName)\n";
+    pythonCommand += "import Slicer\n";
+    pythonCommand += "slicer = Slicer.Slicer()\n";
+    pythonCommand += "PythonScriptedModuleDict = {}\n";
+    pythonCommand += "for packageName in packageNames:\n";
+    pythonCommand += "    PythonScriptedModuleDict[packageName] = __import__(packageName)\n";
+    pythonCommand += "    logic = slicer.vtkScriptedModuleLogic.New()\n";
+    pythonCommand += "    logic.SetModuleName(packageName)\n";
+    pythonCommand += "    logic.SetAndObserveMRMLScene(slicer.MRMLScene)\n";
+    pythonCommand += "    logic.SetApplicationLogic(slicer.ApplicationLogic)\n";
+    pythonCommand += "    gui = slicer.vtkScriptedModuleGUI.New()\n";
+    pythonCommand += "    gui.SetModuleName(packageName)\n";
+    pythonCommand += "    gui.SetLanguageToPython()\n";
+    pythonCommand += "    gui.SetLogic(logic)\n";
+    pythonCommand += "    gui.SetApplicationGUI(slicer.ApplicationGUI)\n";
+    pythonCommand += "    gui.SetApplication(slicer.Application)\n";
+    pythonCommand += "    gui.SetGUIName(packageName)\n";
+    pythonCommand += "    gui.GetUIPanel().SetName(packageName)\n";
+    pythonCommand += "    gui.GetUIPanel().SetUserInterfaceManager(slicer.ApplicationGUI.GetMainSlicerWindow().GetMainUserInterfaceManager())\n";
+    pythonCommand += "    gui.GetUIPanel().Create()\n";
+    pythonCommand += "    slicer.Application.AddModuleGUI(gui)\n";
+    pythonCommand += "    gui.BuildGUI()\n";
+    pythonCommand += "    gui.AddGUIObservers()\n";
+    v = PyRun_String( pythonCommand.c_str(),
+                      Py_file_input,
+                      PythonDictionary,PythonDictionary);
+    if (v == NULL)
+      {
+      PyErr_Print();
+      }
+#endif
 #endif
 
     //
@@ -1958,7 +2003,8 @@ int Slicer3_main(int argc, char *argv[])
     emSegmentGUI->RemoveGUIObservers();
 #endif
 
-#ifndef QUERYATLAS_DEBUG
+#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
+//#ifndef QUERYATLAS_DEBUG
     queryAtlasGUI->RemoveGUIObservers ( );
 #endif
 
@@ -2081,7 +2127,8 @@ int Slicer3_main(int argc, char *argv[])
     emSegmentGUI->Delete();
 #endif
 
-#ifndef QUERYATLAS_DEBUG
+#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
+//#ifndef QUERYATLAS_DEBUG
     queryAtlasGUI->Delete ( );
 #endif
     
@@ -2191,7 +2238,8 @@ int Slicer3_main(int argc, char *argv[])
     emSegmentLogic->Delete();
 #endif
         
-#ifndef QUERYATLAS_DEBUG
+#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
+//#ifndef QUERYATLAS_DEBUG
     queryAtlasLogic->SetAndObserveMRMLScene ( NULL );
     queryAtlasLogic->Delete ( );
 #endif

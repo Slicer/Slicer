@@ -82,6 +82,9 @@ public:
   vtkGetObjectMacro(UnstructuredGrid, vtkUnstructuredGrid);
   void SetAndObserveUnstructuredGrid(vtkUnstructuredGrid *UnstructuredGrid);
 
+  virtual bool CanApplyNonLinearTransforms() { return true; }
+  virtual void ApplyTransform(vtkAbstractTransform* transform);
+
 protected:
   vtkMRMLUnstructuredGridNode();
   ~vtkMRMLUnstructuredGridNode();

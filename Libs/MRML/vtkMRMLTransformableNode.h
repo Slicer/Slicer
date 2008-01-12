@@ -26,6 +26,8 @@
 
 class vtkMRMLTransformNode;
 class vtkCallbackCommand;
+class vtkMatrix4x4;
+class vtkAbstractTransform;
 
 class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
 {
@@ -88,7 +90,10 @@ class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
       TransformModifiedEvent = 15000,
     };
  //ETX
-  
+ 
+  virtual bool CanApplyNonLinearTransforms() = 0;
+  virtual void ApplyTransform(vtkMatrix4x4* transformMatrix); 
+  virtual void ApplyTransform(vtkAbstractTransform* transform) = 0; 
 
 protected:
   vtkMRMLTransformableNode();

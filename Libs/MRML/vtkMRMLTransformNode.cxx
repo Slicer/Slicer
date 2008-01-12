@@ -225,4 +225,10 @@ int vtkMRMLTransformNode::IsTransformNodeMyChild(vtkMRMLTransformNode* node)
 {
   return node->IsTransformNodeMyParent(this);
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::ApplyTransform(vtkAbstractTransform* transform)
+{
+  this->TransformToParent->Concatenate(transform); 
+}
 // End
