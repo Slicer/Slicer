@@ -12,6 +12,9 @@ def StartConsole():
     c.master.title("Python Console v%s" % Console.VERSION)
     return
 
+def TkCall(commandString):
+    tk.tk.call(*commandString.split())
+
 class SlicerWrapper:
     def ToArray (self):
         try:
@@ -101,17 +104,17 @@ class Slicer:
         for name in ( inName, qname ):
             # if it's a variable, find the value, and see if it's a command
             if self.__eval ( 'info exists ' + name ):
-                print "found name: ", name
+                # print "found name: ", name
                 cname = str ( self.__eval ( 'set ' + name ) );
                 # print "found cname: ", cname
                 if self.__eval ( 'info command ' + cname ):
-                    print "Returning Wrapped object: ", cname
+                    # print "Returning Wrapped object: ", cname
                     return SlicerWrapper ( self, cname )
                 else:
-                    print "Returning object: ", cname
+                    # print "Returning object: ", cname
                     return cname
             if self.__eval ( 'info command ' + name ):
-                print "Returning Wrapped object, wo/lookup"
+                # print "Returning Wrapped object, wo/lookup"
                 return SlicerWrapper ( self, name )
         raise Exception ( "attribute " + qname + " does not exist" )
 
@@ -261,7 +264,7 @@ def ListVolumeNodes():
         nodes[idx] = scene.GetNthNodeByClass ( idx, 'vtkMRMLVolumeNode' )
     return nodes
 
-def ParseArgs ( ModuleArgs, ArgTags ):
+def ParseArgs ( ModuleArgs, ArgTags, ArgFlags, ArgMultiples ):
     """This is a helper function to strip off all the flags
     and make them keyword args to the eventual Execute call
     returns a tuple of FlagArgs and PositionalArgs"""
@@ -278,7 +281,7 @@ def ParseArgs ( ModuleArgs, ArgTags ):
             argval = float(arg)
         elif argtag == 'integer-vector':
             argval = [int(el) for el in arg.split(',')]
-        elif argtag in ['float-vector', 'double-vector']:
+        elif argtag in ['float-vector', 'double-vector', 'point']:
             argval = [float(el) for el in arg.split(',')]
         elif argtag == 'string-vector':
             argval = arg.split(',')
@@ -289,15 +292,25 @@ def ParseArgs ( ModuleArgs, ArgTags ):
     FlagArgs = {}
     PositionalArgs = []
 
-    # Check each argument in turn, if we hit one that
-    # does not start with a "-", it's the positional args.
-    while len ( ModuleArgs ) != 0:
-        arg = ModuleArgs.pop ( 0 );
+    while len (ModuleArgs) != 0:
+        arg = ModuleArgs.pop(0)
         print "Looking at: ", arg
         if arg.startswith ( "-" ):
-            FlagArgs[arg.lstrip( "-" )] = CastArg(ModuleArgs.pop(0),ArgTags.pop(0))
+            argflag = arg.lstrip("-")
+            argtag = ArgTags[ArgFlags.index(argflag)]
+            argmultiple = ArgMultiples[ArgFlags.index(argflag)]
+            if argmultiple == 'true':
+                if not FlagArgs.has_key(argflag):
+                    FlagArgs[argflag] = []
+                FlagArgs[argflag].append(CastArg(ModuleArgs.pop(0),argtag))
+            else:
+                FlagArgs[argflag] = CastArg(ModuleArgs.pop(0),argtag)
         else:
+            nFlags = len([argflag for argflag in ArgFlags if argflag != ''])
+            ArgTags = ArgTags[nFlags:]
             PositionalArgs.append(CastArg(arg,ArgTags.pop(0)))
-            while len ( ModuleArgs ) != 0:
+            while len(ModuleArgs) != 0:
                 PositionalArgs.append(CastArg(ModuleArgs.pop(0),ArgTags.pop(0)))
+
     return FlagArgs, PositionalArgs
+
