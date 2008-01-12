@@ -1434,7 +1434,9 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       "import Slicer;\n"
       "ModuleName = \"" + node->GetModuleDescription().GetTarget() + "\"\n"
       "ModuleArgs = []\n"
-      "ArgTags = []\n";
+      "ArgTags = []\n"
+      "ArgFlags = []\n"
+      "ArgMultiples = []\n";
 
     // Now add the individual command line items
     for (std::vector<std::string>::size_type i=1; i < commandLineAsString.size(); ++i)
@@ -1451,11 +1453,13 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       std::vector<ModuleParameter>::const_iterator pit;  
       for (pit = pbeginit; pit != pendit; ++pit)
         {
-        ExecuteModuleString += "ArgTags.append ( '" + (*pit).GetTag() + "' );\n";
+        ExecuteModuleString += "ArgTags.append ( '" + (*pit).GetTag() + "' )\n";
+        ExecuteModuleString += "ArgFlags.append ( '" + (*pit).GetLongFlag() + "' )\n";
+        ExecuteModuleString += "ArgMultiples.append ( '" + (*pit).GetMultiple() + "' )\n";
         }
       }
     ExecuteModuleString +=
-      "FlagArgs, PositionalArgs = Slicer.ParseArgs ( ModuleArgs, ArgTags )\n"
+      "FlagArgs, PositionalArgs = Slicer.ParseArgs ( ModuleArgs, ArgTags , ArgFlags, ArgMultiples )\n"
       "Module = __import__ ( ModuleName )\n"
       "reload ( Module )\n"
       "Module.Execute ( *PositionalArgs, **FlagArgs )\n";
