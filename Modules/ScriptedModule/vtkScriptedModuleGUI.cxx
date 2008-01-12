@@ -21,6 +21,8 @@ Version:   $Revision: 979 $
 #include "vtkKWApplication.h"
 #include "vtkScriptedModuleGUI.h"
 
+#include "vtkSlicerApplication.h"
+
 //------------------------------------------------------------------------------
 vtkScriptedModuleGUI* vtkScriptedModuleGUI::New()
 {
@@ -41,16 +43,31 @@ vtkScriptedModuleGUI::vtkScriptedModuleGUI()
   this->Logic = NULL;
   this->ScriptedModuleNode = NULL;
   this->ModuleName = NULL;
+  this->Language = vtkScriptedModuleGUI::Tcl;
 }
 
 //----------------------------------------------------------------------------
 vtkScriptedModuleGUI::~vtkScriptedModuleGUI()
 {
 
-  if (this->GetApplication())
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
-    this->GetApplication()->Script("%sDestructor %s", 
-      this->GetModuleName(), this->GetTclName());
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sDestructor %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].Destructor('" << this->GetTclName() << "')\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
     }
 
   this->RemoveMRMLNodeObservers();
@@ -64,20 +81,48 @@ vtkScriptedModuleGUI::~vtkScriptedModuleGUI()
 
 void vtkScriptedModuleGUI::RemoveMRMLNodeObservers()
 {
-  if (this->GetApplication())
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
-    this->GetApplication()->Script("%sRemoveMRMLNodeObservers %s", 
-      this->GetModuleName(), this->GetTclName());
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sRemoveMRMLNodeObservers %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].RemoveMRMLNodeObservers('" << this->GetTclName() << "')\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
     }
 }
 
 
 void vtkScriptedModuleGUI::RemoveLogicObservers()
 {
-  if (this->GetApplication())
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
-    this->GetApplication()->Script("%sRemoveLogicObservers %s", 
-      this->GetModuleName(), this->GetTclName());
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sRemoveLogicObservers %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].RemoveLogicObservers('" << this->GetTclName() << "')\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
     }
 }
 
@@ -104,10 +149,24 @@ void vtkScriptedModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::AddGUIObservers ( ) 
 {
-  if (this->GetApplication())
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
-    this->GetApplication()->Script("%sAddGUIObservers %s", 
-      this->GetModuleName(), this->GetTclName());
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sAddGUIObservers %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].AddGUIObservers('" << this->GetTclName() << "')\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
     }
 }
 
@@ -116,10 +175,24 @@ void vtkScriptedModuleGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::RemoveGUIObservers ( )
 {
-  if (this->GetApplication())
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
-    this->GetApplication()->Script("%sRemoveGUIObservers %s", 
-      this->GetModuleName(), this->GetTclName());
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sRemoveGUIObservers %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].RemoveGUIObservers('" << this->GetTclName() << "')\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
     }
 }
 
@@ -130,30 +203,72 @@ void vtkScriptedModuleGUI::ProcessGUIEvents ( vtkObject *caller,
 {
   vtkKWObject *kwObject = vtkKWObject::SafeDownCast(caller);
 
-  if (kwObject != NULL)
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
-    this->GetApplication()->Script("%sProcessGUIEvents %s %s %ld", 
-      this->GetModuleName(), this->GetTclName(), kwObject->GetTclName(), event);
+    if (kwObject != NULL)
+      {
+      this->GetApplication()->Script("%sProcessGUIEvents %s %s %ld", 
+        this->GetModuleName(), this->GetTclName(), kwObject->GetTclName(), event);
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].ProcessGUIEvents('" << this->GetTclName() << "','" << kwObject->GetTclName() << "'," << event << ")\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
     }
 }
 
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::UpdateMRML ()
 {
-  if (this->GetApplication())
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
-    this->GetApplication()->Script("%sUpdateMRML %s", 
-      this->GetModuleName(), this->GetTclName());
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sUpdateMRML %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].UpdateMRML('" << this->GetTclName() << "')\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
     }
 }
 
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::UpdateGUI ()
 {
-  if (this->GetApplication())
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
-    this->GetApplication()->Script("%sUpdateGUI %s", 
-      this->GetModuleName(), this->GetTclName());
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sUpdateGUI %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].UpdateGUI('" << this->GetTclName() << "')\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
     }
 }
 
@@ -165,13 +280,26 @@ void vtkScriptedModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
   vtkDebugMacro("ProcessMRMLEvents()");
   vtkMRMLNode *mrmlNode = vtkMRMLNode::SafeDownCast(caller);
 
-  if (mrmlNode != NULL)
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
-    vtkDebugMacro("vtkScriptedModuleGUI::ProcessMRMLEvents: calling script " <<  this->GetModuleName() << "ProcessMRMLEvents with event " << event);
-    this->GetApplication()->Script("%sProcessMRMLEvents %s %s %ld", 
-                                   this->GetModuleName(), this->GetTclName(), mrmlNode->GetID(), event);
+    if (mrmlNode != NULL)
+      {
+      vtkDebugMacro("vtkScriptedModuleGUI::ProcessMRMLEvents: calling script " <<  this->GetModuleName() << "ProcessMRMLEvents with event " << event);
+      this->GetApplication()->Script("%sProcessMRMLEvents %s %s %ld", 
+                                     this->GetModuleName(), this->GetTclName(), mrmlNode->GetID(), event);
+      }
     }
-  
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].ProcessMRMLEvents('" << this->GetTclName() << "','" << mrmlNode->GetID() << "'," << event << ")\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
+    }
   
   // if parameter node has been changed externally, update GUI widgets
   // with new values 
@@ -183,27 +311,52 @@ void vtkScriptedModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
     }
 }
 
-
-
-
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::BuildGUI ( ) 
 {
-  if (this->GetApplication())
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
-    this->GetApplication()->Script("%sBuildGUI %s", 
-      this->GetModuleName(), this->GetTclName());
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sBuildGUI %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].BuildGUI('" << this->GetTclName() << "')\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
     }
 }
 
 //---------------------------------------------------------------------------
 void vtkScriptedModuleGUI::TearDownGUI ( ) 
 {
-  if (this->GetApplication())
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
-    this->GetApplication()->Script("%sTearDownGUI %s", 
-      this->GetModuleName(), this->GetTclName());
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sTearDownGUI %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
     }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].TearDownGUI('" << this->GetTclName() << "')\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
+    } 
 }
 
 

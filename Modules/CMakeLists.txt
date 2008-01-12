@@ -11,6 +11,7 @@ SUBDIRS(
   SlicerDaemon
   Editor
   Python
+  PythonGADScriptedModule
   Meshing
   QdecModule
   QueryAtlas

@@ -35,6 +35,10 @@ public:
   // Description: Get/Set MRML node
   vtkGetObjectMacro (ScriptedModuleNode, vtkMRMLScriptedModuleNode);
   vtkSetObjectMacro (ScriptedModuleNode, vtkMRMLScriptedModuleNode);
+  void SetAndObserveScriptedModuleNode (vtkMRMLScriptedModuleNode *n)
+    {
+    vtkSetAndObserveMRMLNodeMacro( this->ScriptedModuleNode, n);
+    }
 
   // Description:
   // Create widgets
@@ -89,6 +93,18 @@ public:
   unsigned long AddObserverByNumber (vtkObject *observee, unsigned long event);
   unsigned long AddMRMLObserverByNumber (vtkObject *observee, unsigned long event);
   void RemoveMRMLObserverByNumber (vtkObject *observee, unsigned long event);
+
+  vtkGetMacro(Language,int);
+  vtkSetMacro(Language,int);
+  void SetLanguageToTcl() { this->SetLanguage(Tcl); }
+  void SetLanguageToPython() { this->SetLanguage(Python); }
+//BTX
+  enum {
+    Tcl = 0,
+    Python
+  };
+//ETX
+
 protected:
   
 private:
@@ -109,6 +125,7 @@ private:
   vtkMRMLScriptedModuleNode* ScriptedModuleNode;
   char *ModuleName;
 
+  int Language;
 };
 
 #endif
