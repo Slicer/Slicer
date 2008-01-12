@@ -2,7 +2,7 @@
 
 XML = """<?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Filtering.Denoising</category>
+  <category>Python Modules</category>
   <title>Python Gradient Anisotropic Diffusion</title>
   <description>
 Runs gradient anisotropic diffusion on a volume.
@@ -88,7 +88,7 @@ N-dimensions.
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Output filtered</description>
+      <description>Output filtered volume</description>
     </image>
   </parameters>
 
@@ -114,4 +114,8 @@ def Execute ( inputVolume, outputVolume, conductance=1.0, timeStep=0.0625, itera
     matrix = slicer.vtkMatrix4x4.New()
     inputVolume.GetIJKToRASMatrix ( matrix )
     outputVolume.SetIJKToRASMatrix ( matrix )
+
+    filter.Delete()
+    matrix.Delete()
+
     return
