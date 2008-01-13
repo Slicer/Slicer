@@ -38,12 +38,6 @@ SET ( ${CLP}_SOURCE ${CLP}.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP}
-    ITKIO
-    ITKBasicFilters 
-    ITKCommon
-    vtkIO
-    vtkCommon
-    vtkGraphics
     ModuleDescriptionParser
     MRML
 )
@@ -54,13 +48,11 @@ SET ( ${CLP}_SOURCE ${CLP}.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP}
-    ITKIO
     ITKBasicFilters 
     ITKCommon
     vtkIO
     vtkCommon
     ModuleDescriptionParser
-    # MRML
 )
 
 SET (CLP ROITractFilter)
@@ -69,12 +61,6 @@ SET ( ${CLP}_SOURCE ${CLP}.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP}
-    ITKIO
-    ITKBasicFilters 
-    ITKCommon
-    vtkIO
-    vtkCommon
-    vtkGraphics
     ModuleDescriptionParser
     MRML
 )
@@ -85,12 +71,6 @@ SET ( ${CLP}_SOURCE ${CLP}.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP}
-    ITKIO
-    ITKBasicFilters 
-    ITKCommon
-    vtkIO
-    vtkCommon
-    vtkGraphics
     ModuleDescriptionParser
     MRML
 )
