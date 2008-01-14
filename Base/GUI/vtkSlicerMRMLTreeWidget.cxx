@@ -24,8 +24,6 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMatrix4x4.h"
-#include "vtkMatrixToLinearTransform.h"
-#include "vtkTransformPolyDataFilter.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerMRMLTreeWidget );
