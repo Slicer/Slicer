@@ -43,8 +43,9 @@ TARGET_LINK_LIBRARIES (${CLP}
     ITKCommon
     vtkIO
     vtkCommon
+    vtkGraphics
     ModuleDescriptionParser
-    MRML
+    #MRML
 )
 
 SET (CLP GenerateConnectivityMap)
@@ -75,7 +76,7 @@ TARGET_LINK_LIBRARIES (${CLP}
     vtkCommon
     vtkGraphics
     ModuleDescriptionParser
-    MRML
+    #MRML
 )
 
 SET (CLP CalculateVolumeStatistics)
@@ -91,7 +92,7 @@ TARGET_LINK_LIBRARIES (${CLP}
     vtkCommon
     vtkGraphics
     ModuleDescriptionParser
-    MRML
+    #MRML
 )
 
 IF (Slicer3_SOURCE_DIR)
