@@ -13,10 +13,12 @@ TARGET_LINK_LIBRARIES(CommandIO
   ITKIO
 )
 
-  
-#
-# Shared library that when placed in ITK_AUTOLOAD_PATH, will add MyImageIO
-# as an ImageIOFactory.  Need to have separate shared library for each new format.
+
+# Shared library that when placed in ITK_AUTOLOAD_PATH, will add
+# MRMLIDImageIO as an ImageIOFactory.  Need to have separate shared
+# library for each new format. Note that the plugin library is placed
+# in a special directory to speed up the searching for ImageIO
+# factories (which improves the speed at which plugins run).
 ADD_LIBRARY(CommandIOPlugin SHARED itkCommandIOPlugin.cxx)
 TARGET_LINK_LIBRARIES(CommandIOPlugin CommandIO  
   ITKAlgorithms
@@ -29,11 +31,30 @@ TARGET_LINK_LIBRARIES(CommandIOPlugin CommandIO
   ITKIO
   ITKDICOMParser
   slicerio ITKNrrdIO)
+# We should switch to SET_TARGET_PROPERTIES() with LIBRARY_OUTPUT_DIRECTORY 
+# once CMake 2.6 is released.  Until then, we need to hack a solution with
+# ADD_CUSTOM_COMMAND()
+#SET_TARGET_PROPERTIES(CommandIOPlugin PROPERTIES 
+#              LIBRARY_OUTPUT_DIRECTORY "${SLICER_LIBRARIES_DIR}/ITKFactories")
+GET_TARGET_PROPERTY(LIBFULLNAME CommandIOPlugin LOCATION)
+GET_FILENAME_COMPONENT(LIBNAME ${LIBFULLNAME} NAME)
+
+ADD_CUSTOM_COMMAND(TARGET CommandIOPlugin
+  DEPENDS ${LIB_NAME}
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy ${LIBFULLNAME} ${SLICER_LIBRARIES_DIR}/ITKFactories/${CMAKE_CFG_INTDIR}/${LIBNAME})
+
 
 IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS CommandIO CommandIOPlugin 
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+  # Note CommandIO and CommandIOPlugin are installed in different locations
+  INSTALL(TARGETS CommandIO  
+      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
       LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION lib COMPONENT Development)
+  INSTALL(TARGETS CommandIOPlugin
+      RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/ITKFactories COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/ITKFactories COMPONENT RuntimeLibraries)
+  INSTALL(TARGETS CommandIOPlugin
       ARCHIVE DESTINATION lib COMPONENT Development)
 ENDIF(BUILD_SHARED_LIBS)
 
@@ -50,7 +71,7 @@ IF (APPLE)
     DEPENDS ${Slicer3_BINARY_DIR}/bin/libCommandIOPlugin.dylib
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-      ${Slicer3_BINARY_DIR}/bin/libCommandIOPlugin.dylib
-      ${Slicer3_BINARY_DIR}/bin/libCommandIOPlugin.so
+      ${SLICER_LIBRARIES_DIR}/ITKFactories/libCommandIOPlugin.dylib
+      ${SLICER_LIBRARIES_DIR}/ITKFactories/libCommandIOPlugin.so
   )
 ENDIF (APPLE)

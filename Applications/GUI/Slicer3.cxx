@@ -415,10 +415,15 @@ static void SplashMessage(const char *msg)
 
 int Slicer3_main(int argc, char *argv[])
 {
-  // Append the path to the slicer executable to the ITK_AUTOLOAD_PATH
-  // so that Slicer specific ITK factories will be available by
-  // default. We assume any factories to be loaded will be in the same
-  // directory as the slicer executable. Also, set up the TCL_LIBRARY
+#if WIN32
+#define PathSep ";"
+#else
+#define PathSep ":"
+#endif
+
+  // Append the path to Slicer specific ITK factories. These are kept
+  // in a separate directory from other libraries to speed the search
+  // and launching of plugins. Also, set up the TCL_LIBRARY
   // environment variable.
   std::string itkAutoLoadPath;
   vtksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", itkAutoLoadPath);
@@ -434,7 +439,6 @@ int Slicer3_main(int argc, char *argv[])
   
   std::string slicerBinDir
     = vtksys::SystemTools::GetFilenamePath(programPath.c_str());
-  std::string ptemp;
   bool hasIntDir = false;
   std::string intDir = "";
   
@@ -476,24 +480,20 @@ int Slicer3_main(int argc, char *argv[])
   vtkKWApplication::PutEnv(const_cast <char *> (tclEnv.c_str()));
 
 
-  ptemp = vtksys::SystemTools::CollapseFullPath(argv[0]);
-  ptemp = vtksys::SystemTools::GetFilenamePath(ptemp);
-#if WIN32
-  itkAutoLoadPath = ptemp + ";" + itkAutoLoadPath;
-#else
-  // shared libs are in bin dir in the build tree, but get
-  // moved to the lib directory in the INSTALL, so put
-  // both paths into the path
+  std::string slicerITKFactoriesDir;
+  slicerITKFactoriesDir = slicerBinDir + "/../lib/Slicer3/ITKFactories";
+  if (hasIntDir)
+    {
+    slicerITKFactoriesDir += "/" + intDir;
+    }
   if ( itkAutoLoadPath.size() == 0 )
     {
-    itkAutoLoadPath = ptemp; // add the bin dir
+    itkAutoLoadPath = slicerITKFactoriesDir; 
     }
   else 
     {
-    itkAutoLoadPath = ptemp + ":" + itkAutoLoadPath; // add the bin dir
+    itkAutoLoadPath = slicerITKFactoriesDir + PathSep + itkAutoLoadPath; 
     }
-  itkAutoLoadPath = ptemp + "/../lib:" + itkAutoLoadPath; // add the lib dir
-#endif
   itkAutoLoadPath = "ITK_AUTOLOAD_PATH=" + itkAutoLoadPath;
   int putSuccess = 
     vtkKWApplication::PutEnv(const_cast <char *> (itkAutoLoadPath.c_str()));
@@ -523,12 +523,6 @@ int Slicer3_main(int argc, char *argv[])
   vtkOpenGLRenderWindow::SetGlobalMaximumNumberOfMultiSamples(0);
 
 #ifdef USE_PYTHON
-
-#if WIN32
-#define PathSep ";"
-#else
-#define PathSep ":"
-#endif
     // Initialize Python
     
     // Set up the search path

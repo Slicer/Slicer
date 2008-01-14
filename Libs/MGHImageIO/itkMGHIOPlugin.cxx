@@ -9,6 +9,6 @@
  */
 itk::ObjectFactoryBase* itkLoad()
 {
-    static itk::MGHImageIOFactory::Pointer f = itk::MGHImageIOFactory::New();
-    return f;
+  static itk::MGHImageIOFactory::Pointer f = itk::MGHImageIOFactory::New();
+  return f;
 }

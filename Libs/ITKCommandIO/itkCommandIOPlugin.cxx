@@ -22,7 +22,7 @@
  */
 itk::ObjectFactoryBase* itkLoad()
 {
-    static itk::CommandIOFactory::Pointer f = itk::CommandIOFactory::New();
-    return f;
+  static itk::CommandIOFactory::Pointer f = itk::CommandIOFactory::New();
+  return f;
 }
 
