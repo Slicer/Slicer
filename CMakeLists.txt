@@ -203,7 +203,7 @@ FIND_PACKAGE(VTK REQUIRED)
 IF(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
  INCLUDE(${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
 ELSE(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
- MESSAGE("Using local version of VTKVersionMacros for compatibility.")
+ #MESSAGE("Using local version of VTKVersionMacros for compatibility.")
  INCLUDE(${Slicer3_SOURCE_DIR}/Scripts/VTKVersionMacros.cmake)
 ENDIF(EXISTS ${VTK_CMAKE_DIR}/VTKVersionMacros.cmake)
 
@@ -295,5 +295,3 @@ INSTALL(FILES
    DESTINATION lib
    COMPONENT Development
 )
-
-
