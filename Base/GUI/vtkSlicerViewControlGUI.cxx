@@ -878,6 +878,12 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
 
   if ( this->GetApplicationGUI() != NULL )
     {
+    //Check for abort during rendering of navigation widget
+    if(caller==this->NavigationWidget->GetRenderWindow()&&event==vtkCommand::AbortCheckEvent)
+      {
+      this->CheckAbort();
+      return;
+      }
     vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( appGUI->GetApplication() );
     if ( app != NULL )
@@ -1232,6 +1238,11 @@ void vtkSlicerViewControlGUI::ConfigureNavigationWidgetRender ( )
   // MainViewer's window on the scene.
   if ( this->GetApplicationGUI() != NULL )
     {
+        //Add an observer for check abort events
+        if(!this->NavigationWidget->GetRenderWindow()->HasObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->GUICallbackCommand))
+        {
+            this->NavigationWidget->GetRenderWindow()->AddObserver(vtkCommand::AbortCheckEvent,(vtkCommand*)this->GUICallbackCommand);
+        }
 
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
     // 3DViewer's renderer and its camera
@@ -3126,6 +3137,18 @@ void vtkSlicerViewControlGUI::UpdateMainViewerInteractorStyles ( )
                                                                  GetInteractorStyle() ));
     // add observers on events
     this->AddMainViewerEventObservers();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::CheckAbort(void)
+{
+    int pending=this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetEventPending();
+    int pendingGUI=vtkKWTkUtilities::CheckForPendingInteractionEvents(this->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow());
+    if(pending!=0)//||pendingGUI!=0)
+    {
+        this->NavigationWidget->GetRenderWindow()->SetAbortRender(1);
+        return;
     }
 }
 

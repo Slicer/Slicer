@@ -388,6 +388,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
  protected:
   vtkSlicerViewControlGUI ( );
   virtual ~vtkSlicerViewControlGUI ( );
+  // Description:
+  // Check if an interaction occurs in the main viewer. If that is the case, abort navigation rendering
+  void CheckAbort(void);
     
   int NavigationRenderPending;
   int ZoomRenderPending;
