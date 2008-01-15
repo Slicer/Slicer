@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Testing</category>
+  <title>Event Broker Test</title>
+  <description>
+Test the Event Broker on some mrml and gui elements.
+  </description>
+  <version>3.0</version>
+  <documentation-url>http://www.slicer.org</documentation-url>
+  <license>slicer3</license>
+  <contributor>Steve Pieper</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
+<parameters>
+</parameters>
+</executable>

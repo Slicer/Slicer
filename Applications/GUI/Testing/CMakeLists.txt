@@ -1,0 +1,38 @@
+PROJECT( GUITesting )
+#####################
+
+FIND_PACKAGE(GenerateCLP REQUIRED)
+FIND_PACKAGE(vtkITK REQUIRED)
+
+FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
+LINK_DIRECTORIES(${ModuleDescriptionParser_BINARY_DIR})
+
+FIND_PACKAGE(ITK REQUIRED)
+INCLUDE(${ITK_USE_FILE})
+
+FIND_PACKAGE(VTK REQUIRED)
+INCLUDE(${VTK_USE_FILE})
+
+INCLUDE(${GenerateCLP_SOURCE_DIR}/UseGenerateCLP.cmake)
+
+SET (CLP EventBrokerTest)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx )
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+LINK_DIRECTORIES(${vtkITK_LIB_DIR})
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP}
+    vtkITK vtkImaging vtkGraphics vtkIO
+    ITKIO
+    ModuleDescriptionParser
+    MRML
+)
+
+INCLUDE_DIRECTORIES(
+        ${vtkITK_SOURCE_DIR} 
+        ${vtkITK_BINARY_DIR} 
+        ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR}
+)
+
+
+ADD_TEST(EventBrokerTest ${Slicer3_BINARY_DIR}/Slicer3 --launch EventBrokerTest)
