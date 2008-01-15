@@ -12,6 +12,7 @@
 
 #ifdef EM_CL_GUI
 #include "EMSegmentCommandLine_GUIVersionCLP.h"
+#include "ModuleProcessInformation.h"
 #else
 #include "EMSegmentCommandLineCLP.h"
 #endif
@@ -293,11 +294,57 @@ std::string StripBackslashes(const std::string& s)
   return outString;
 }
 
+class ProgressReporter
+{
+public:
+  void ReportProgress(const std::string& message,
+                      float totalProgress = 0.0f,
+                      float stageProgress = 0.0f)
+  {
+#ifdef EM_CL_GUI
+    if (this->ProcessInformation != NULL)
+    {
+      ProcessInformation->Progress      = totalProgress;
+      ProcessInformation->StageProgress = stageProgress;
+      strncpy(ProcessInformation->ProgressMessage,
+              message.c_str(), 1023);      
+      
+      if (this->ProcessInformation->ProgressCallbackFunction
+          && this->ProcessInformation->ProgressCallbackClientData)
+      {
+        (*(this->ProcessInformation->ProgressCallbackFunction))
+          (this->ProcessInformation->ProgressCallbackClientData);
+      }
+    }
+#endif
+  }
+  
+#ifdef EM_CL_GUI
+  void SetProcessInformation(ModuleProcessInformation* ProcessInformation)
+  {
+    this->ProcessInformation = ProcessInformation;
+  }
+
+private:
+  ModuleProcessInformation* ProcessInformation;
+#endif
+};
+
+
 int main(int argc, char** argv)
 {
   //
   // parse arguments using the CLP system; this creates variables.
   PARSE_ARGS;
+
+  ProgressReporter progressReporter;
+  float currentStep = 0.0f;
+  float totalSteps  = 6.0f;
+#ifdef EM_CL_GUI
+  progressReporter.SetProcessInformation(CLPProcessInformation);
+#endif
+  progressReporter.ReportProgress("Parsing Arguments...", 
+                                   currentStep++ / totalSteps);
 
 #ifdef EM_CL_GUI
   // the GUI as a different interface than the command line; adapt.
@@ -420,6 +467,9 @@ int main(int argc, char** argv)
       }
     }
 
+  progressReporter.ReportProgress("Loading Data...", 
+                                   currentStep++ / totalSteps);
+
   //
   // create a mrml scene that will hold the parameters and data
   vtkMRMLScene* mrmlScene = vtkMRMLScene::New();
@@ -450,6 +500,10 @@ int main(int argc, char** argv)
   // shortcut to the manager.
   vtkEMSegmentMRMLManager* emMRMLManager = emLogic->GetMRMLManager();
 
+  progressReporter.ReportProgress("Loading Data...", 
+                                   currentStep / totalSteps,
+                                   0.2f);
+
   //
   // global try block makes sure data is cleaned up if anything goes
   // wrong
@@ -477,6 +531,10 @@ int main(int argc, char** argv)
                            << (numParameterSets == 1 ? "node." : "nodes.")
                            << std::endl;
   
+    progressReporter.ReportProgress("Loading Data...", 
+                                     currentStep / totalSteps,
+                                     0.4f);
+
     //
     // make sure there is at least one parameter set
     if (numParameterSets < 1)
@@ -560,6 +618,10 @@ int main(int argc, char** argv)
       {
       throw std::runtime_error("ERROR: MRML: Missing global parameters node.");
       }
+
+    progressReporter.ReportProgress("Loading Data...", 
+                                     currentStep / totalSteps,
+                                     0.6f);
 
     //
     // set the target images
@@ -671,6 +733,9 @@ int main(int argc, char** argv)
                   << ")" << std::endl;
       }
 
+    progressReporter.ReportProgress("Loading Data...", 
+                                     currentStep / totalSteps,
+                                     0.8f);
     //
     // set the atlas images
     if (useDefaultAtlas)
@@ -845,6 +910,9 @@ int main(int argc, char** argv)
         }
       }
 
+    progressReporter.ReportProgress("Updating Parameters...", 
+                                     currentStep++ / totalSteps,
+                                     0.0f);
     //
     // update logic parameters from command line
     emMRMLManager->SetEnableMultithreading(!disableMultithreading);
@@ -864,7 +932,7 @@ int main(int argc, char** argv)
     emMRMLManager->GetSegmentationBoundaryMin(segmentationBoundaryMin);
     emMRMLManager->GetSegmentationBoundaryMax(segmentationBoundaryMax);
     if (verbose) std::cerr 
-      << "ROI is [" 
+      << "Default ROI is [" 
       << segmentationBoundaryMin[0] << ", "
       << segmentationBoundaryMin[1] << ", "
       << segmentationBoundaryMin[2] << "] -->> ["
@@ -897,6 +965,9 @@ int main(int argc, char** argv)
         runtime_error("ERROR: EMSegment invalid parameter node structure");
       }
 
+    progressReporter.ReportProgress("Running Segmentation...", 
+                                     currentStep++ / totalSteps);
+    
     //
     // run the segmentation
     try
@@ -922,6 +993,9 @@ int main(int argc, char** argv)
     std::cerr << "Unknown error detected.  Segmentation failed." << std::endl;
     segmentationSucceeded = false;
     }
+
+  progressReporter.ReportProgress("Updating Results...", 
+                                   currentStep++ / totalSteps);
 
   if (segmentationSucceeded && !dontWriteResults)
     {
@@ -1014,6 +1088,9 @@ int main(int argc, char** argv)
     mrmlScene->Commit(resultMRMLSceneFileName.c_str());
     if (verbose) std::cerr << "DONE" << std::endl;
     }
+
+  progressReporter.ReportProgress("Cleaning Up...", 
+                                  currentStep++ / totalSteps);
 
   //
   // clean up
