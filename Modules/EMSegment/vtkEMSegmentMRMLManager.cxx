@@ -1819,6 +1819,7 @@ ResetTargetSelectedVolumes(const std::vector<vtkIdType>& volumeIDs)
       {
       this->PropogateAdditionOfSelectedTargetImage();
       }
+    this->UpdateIntensityDistributions();
     }
   else if (targetNewNumImages < targetOldNumImages)
     {
@@ -1831,7 +1832,6 @@ ResetTargetSelectedVolumes(const std::vector<vtkIdType>& volumeIDs)
   else
     {
     // order may have changed, need to update distros
-    std::cerr << "Updating distros..." << std::endl;
     this->UpdateIntensityDistributions();
     }
 }
@@ -1868,6 +1868,7 @@ AddTargetSelectedVolume(vtkIdType volumeID)
   
   // propogate change to parameters nodes
   this->PropogateAdditionOfSelectedTargetImage();
+  this->UpdateIntensityDistributions();
 }
 
 //----------------------------------------------------------------------------
@@ -3753,14 +3754,6 @@ PropogateAdditionOfSelectedTargetImage()
     {
     this->GetTreeParametersNode(*i)->
       AddTargetInputChannel();
-
-    if (this->GetTreeParametersLeafNode(*i)->
-        GetDistributionSpecificationMethod() == 
-        vtkMRMLEMSTreeParametersLeafNode::
-        DistributionSpecificationManuallySample)
-      {
-      this->UpdateIntensityDistributionFromSample(*i);
-      }
     }
 }
 
