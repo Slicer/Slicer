@@ -54,6 +54,9 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   //   are no longer valid
   vtkSetObjectMacro (EventBroker, vtkEventBroker);
   vtkGetObjectMacro (EventBroker, vtkEventBroker);
+  vtkGetMacro (InEventQueue, int);
+  vtkSetMacro (InEventQueue, int);
+  vtkGetObjectMacro (ObservationCallbackCommand, vtkCallbackCommand);
   vtkGetObjectMacro (Subject, vtkObject);
   void AssignSubject(vtkObject* subject) {this->Subject = subject;};
   vtkGetMacro (Event, unsigned long);
@@ -86,6 +89,12 @@ protected:
   // Holder for callback that this object wants called when either
   // the subject or the observer triggers and event
   vtkCallbackCommand *ObservationCallbackCommand;
+
+  // Description:
+  // Flag that tells the broker that this observation 
+  // is already in the event queue and doesn't need
+  // to be re-added
+  int InEventQueue;
 
   // Description:
   // Holder for Subject

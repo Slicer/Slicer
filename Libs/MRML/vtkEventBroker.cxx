@@ -25,6 +25,7 @@ vtkStandardNewMacro(vtkEventBroker);
 //----------------------------------------------------------------------------
 vtkEventBroker::vtkEventBroker()
 {
+  this->EventMode = vtkEventBroker::Synchronous;
 }
 
 //----------------------------------------------------------------------------
@@ -76,13 +77,13 @@ void vtkEventBroker::AttachObservation ( vtkObservation *observation )
 
   unsigned long tag;
 
-  tag = observation->GetSubject()->AddObserver( vtkCommand::DeleteEvent, this->CallbackCommand );
+  tag = observation->GetSubject()->AddObserver( vtkCommand::DeleteEvent, observation->GetObservationCallbackCommand() );
   observation->SetSubjectDeleteEventTag( tag );
 
-  tag = observation->GetObserver()->AddObserver( vtkCommand::DeleteEvent, this->CallbackCommand );
+  tag = observation->GetObserver()->AddObserver( vtkCommand::DeleteEvent, observation->GetObservationCallbackCommand() );
   observation->SetObserverDeleteEventTag( tag );
 
-  tag = observation->GetSubject()->AddObserver( observation->GetEvent(), this->CallbackCommand );
+  tag = observation->GetSubject()->AddObserver( observation->GetEvent(), observation->GetObservationCallbackCommand() );
   observation->SetEventTag( tag );
 
 }
@@ -139,6 +140,9 @@ void vtkEventBroker::RemoveObservation ( vtkObservation *observation )
       }
     }
   this->EventQueue = newEventQueue;
+
+  this->DetachObservation( observation );
+  observation->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -223,7 +227,12 @@ void vtkEventBroker::ProcessEvent ( vtkObservation *observation, vtkObject *call
 //----------------------------------------------------------------------------
 void vtkEventBroker::QueueObservation ( vtkObservation *observation )
 {
+  if ( observation->GetInEventQueue())
+    {
+    return;
+    }
   this->EventQueue.push_back( observation );
+  observation->SetInEventQueue(1);
 }
 
 //----------------------------------------------------------------------------
@@ -247,6 +256,7 @@ vtkObservation *vtkEventBroker::DequeueObservation ()
 {
   vtkObservation *observation = this->EventQueue.front();
   this->EventQueue.pop_front();
+  observation->SetInEventQueue(0);
   return( observation );
 }
 

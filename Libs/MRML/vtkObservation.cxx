@@ -25,6 +25,7 @@ vtkStandardNewMacro(vtkObservation);
 vtkObservation::vtkObservation()
 {
   this->EventBroker = NULL;
+  this->InEventQueue = 0;
   this->Subject = NULL;
   this->Event = 0;
   this->Observer = NULL;
@@ -45,6 +46,16 @@ vtkObservation::~vtkObservation()
   if (this->ObservationCallbackCommand != NULL)
     {
     this->ObservationCallbackCommand->Delete();
+    }
+
+  if (this->CallbackCommand != NULL)
+    {
+    this->CallbackCommand->Delete();
+    }
+
+  if (this->EventBroker != NULL)
+    {
+    this->EventBroker->Delete();
     }
 }
 

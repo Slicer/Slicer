@@ -15,6 +15,7 @@ Version:   $Revision: 5304 $
 #include "EventBrokerTestCLP.h"
 
 #include "vtkEventBroker.h"
+#include "vtkObservation.h"
 #include "vtkCommand.h"
 #include "vtkCallbackCommand.h"
 #include "vtkImageEllipsoidSource.h"
@@ -45,9 +46,21 @@ int main(int argc, char * argv[])
   callback->SetCallback( Callback ); 
   callback->SetClientData( reinterpret_cast<void *> (viewer) );
 
-  broker->AddObservation(ellip, vtkCommand::ModifiedEvent, viewer, callback);
+  vtkObservation *observation = broker->AddObservation( ellip, vtkCommand::ModifiedEvent, viewer, callback);
 
+
+  std::cerr << "Three synchonous events:\n";
+  broker->SetEventModeToSynchronous();
   ellip->Modified();
+  ellip->Modified();
+  ellip->Modified();
+
+  std::cerr << "Three asynchonous events:\n";
+  broker->SetEventModeToAsynchronous();
+  ellip->Modified();
+  ellip->Modified();
+  ellip->Modified();
+  broker->ProcessEventQueue();
 
   viewer->Delete();
   ellip->Delete();
