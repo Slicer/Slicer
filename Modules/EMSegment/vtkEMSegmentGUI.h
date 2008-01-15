@@ -27,8 +27,8 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description: Get the categorization of the module.
-  //   const char *GetCategory() const
-  //     { return "Segmentation"; }
+  const char *GetCategory() const
+  { return "Segmentation"; }
 
   // Description: 
   // Get/Set logic node
