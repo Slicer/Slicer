@@ -52,6 +52,7 @@ vtkObservation *vtkEventBroker::AddObservation (
   observation->SetCallbackCommand( notify );
 
   this->AttachObservation( observation );
+  return (observation);
 }
 
 //----------------------------------------------------------------------------
@@ -59,6 +60,7 @@ vtkObservation *vtkEventBroker::AddObservation (vtkObject *subject, unsigned lon
 {
   vtkObservation *observation = this->AddObservation (subject, event, observer, notify);
   observation->SetComment (comment);
+  return (observation);
 };
 
 //----------------------------------------------------------------------------
