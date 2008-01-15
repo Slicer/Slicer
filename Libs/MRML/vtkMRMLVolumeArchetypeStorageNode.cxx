@@ -64,7 +64,7 @@ vtkMRMLNode* vtkMRMLVolumeArchetypeStorageNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
-  this->CenterImage = 1;
+  this->CenterImage = 0;
 }
 
 //----------------------------------------------------------------------------
