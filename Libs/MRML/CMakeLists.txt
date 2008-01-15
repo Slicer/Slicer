@@ -12,6 +12,9 @@ CONFIGURE_FILE(
 # Sources
 
 SET(MRML_SRCS
+        vtkObserverManager.cxx
+        vtkEventBroker.cxx
+        vtkObservation.cxx
         vtkMRMLScene.cxx
         vtkMRMLParser.cxx
         vtkMRMLNode.cxx
@@ -39,7 +42,6 @@ SET(MRML_SRCS
         vtkMRMLSliceCompositeNode.cxx
         vtkMRMLSelectionNode.cxx
         vtkMRMLInteractionNode.cxx
-        vtkObserverManager.cxx
         vtkMRMLColorNode.cxx
         vtkMRMLColorTableStorageNode.cxx
         vtkMRMLColorTableNode.cxx
