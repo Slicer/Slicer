@@ -204,7 +204,7 @@ SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoi
 TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 
 #####################
-SET (CLP GEDicom2NRRD)
+SET (CLP DicomToNrrdConverter)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
@@ -415,7 +415,6 @@ TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 SUBDIRS ( Realign )
 SUBDIRS( DiffusionApplications )
 SUBDIRS( ExtractSkeleton )
-#SUBDIRS( RegisterImagesModule )
 
 IF(USE_MIDAS)
   SUBDIRS( MIDASApplications )

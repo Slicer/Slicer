@@ -4,10 +4,10 @@
   Converters
   </category>
   <title>
-  GE Dicom to NRRD Converter
+  Dicom to Nrrd
   </title>
   <description>
-  Converts diffusion weighted MR images in dicom series into NRRD format.
+  Converts diffusion weighted MR images in dicom series into Nrrd format.
   </description>
   <version>0.1.0.$Revision: 916 $(alpha)</version>
   <documentation-url></documentation-url>
@@ -26,7 +26,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Dicom Directory</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Directory holding GE Dicom series</description>
+      <description>Directory holding Dicom series</description>
     </directory>
 
     <directory>
@@ -39,10 +39,10 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 
     <string>
       <name>outputFileName</name>
-      <label>NRRD header (.nhdr)</label>
+      <label>Nrrd header (.nhdr)</label>
       <channel>output</channel>
       <index>2</index>
-      <description>NRRD header file name</description>
+      <description>Nrrd header file name</description>
     </string>
   </parameters>
 
