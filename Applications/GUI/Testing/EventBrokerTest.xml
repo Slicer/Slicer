@@ -12,6 +12,17 @@ Test the Event Broker on some mrml and gui elements.
 <acknowledgements>
 This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
 </acknowledgements>
+
 <parameters>
+
+    <file>
+      <name>logFile</name>
+      <longflag>logFile</longflag>
+      <description>If specified, file to log all event information.</description>
+      <label>Log File</label>
+      <channel>output</channel>
+    </file>
+
 </parameters>
+
 </executable>

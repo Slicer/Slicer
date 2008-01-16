@@ -13,6 +13,7 @@ INCLUDE(${ITK_USE_FILE})
 FIND_PACKAGE(VTK REQUIRED)
 INCLUDE(${VTK_USE_FILE})
 
+
 INCLUDE(${GenerateCLP_SOURCE_DIR}/UseGenerateCLP.cmake)
 
 SET (CLP EventBrokerTest)
@@ -35,4 +36,6 @@ INCLUDE_DIRECTORIES(
 )
 
 
-ADD_TEST(EventBrokerTest ${Slicer3_BINARY_DIR}/Slicer3 --launch EventBrokerTest)
+SET(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
+ADD_TEST(EventBrokerTest 
+  ${Slicer3_BINARY_DIR}/Slicer3 --launch EventBrokerTest --logFile ${TEMP}/EventBroker.log)

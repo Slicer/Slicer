@@ -48,6 +48,12 @@ int main(int argc, char * argv[])
 
   vtkObservation *observation = broker->AddObservation( ellip, vtkCommand::ModifiedEvent, viewer, callback);
 
+  if ( logFile != "" )
+    {
+    broker->SetLogFile( logFile.c_str() );
+    broker->EventLoggingOn();
+    }
+
 
   std::cerr << "Three synchonous events:\n";
   broker->SetEventModeToSynchronous();
