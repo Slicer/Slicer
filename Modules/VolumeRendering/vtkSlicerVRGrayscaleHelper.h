@@ -20,6 +20,8 @@ class vtkKWFrameWithLabel;
 class vtkKWNotebook;
 class vtkKWMenuButtonWithLabel;
 class vtkKWPushButton;
+class vtkBoxWidget;
+class vtkSlicerColorDisplayWidget;
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
@@ -55,6 +57,8 @@ public:
     void ProcessThresholdZoomIn(void);
     void ProcessThresholdReset(void);
     void ProcessEnableDisableCropping(int cbSelectedState);
+    void ProcessEnableDisableClippingPlanes(int clippingEnabled);
+    void ProcessSelection(void);
 
 protected:
     vtkSlicerVRGrayscaleHelper(void);
@@ -78,6 +82,13 @@ protected:
     // Cropping GUI
     vtkKWCheckButtonWithLabel *CB_Cropping;
     vtkKWRange *RA_Cropping[3];
+
+    vtkBoxWidget *BW_Clipping;
+    vtkKWCheckButtonWithLabel *CB_Clipping;
+
+    //ColorDisplay Widget
+    vtkSlicerColorDisplayWidget *ColorDisplay;
+
 
     //ThresholdGUI
     vtkKWMenuButtonWithLabel *MB_ThresholdMode;
@@ -145,6 +156,10 @@ protected:
     void CreateCropping(void);
 
     void CreateThreshold(void);
+
+    double ColorsClippingHandles[6][3];
+
+    int NoSetRangeNeeded;
 
 
 

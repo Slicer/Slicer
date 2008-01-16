@@ -8,7 +8,6 @@
 #include <sstream>
 #include <string>
 
-
 vtkMRMLVolumeRenderingNode* vtkMRMLVolumeRenderingNode::New()
 {
     // First try to create the object from the vtkObjectFactory
@@ -41,6 +40,11 @@ vtkMRMLVolumeRenderingNode::vtkMRMLVolumeRenderingNode(void)
     this->IsLabelMapOff();
     //Standard is 3D-Volume Texture Mapper
     this->Mapper=0;
+    this->CroppingEnabled=0;
+    for(int i=0;i<COUNT_CROPPING_REGION_PLANES;i++)
+    {
+        this->CroppingRegionPlanes[i]=0;
+    }
 }
 
 vtkMRMLVolumeRenderingNode::~vtkMRMLVolumeRenderingNode(void)
@@ -75,6 +79,21 @@ void vtkMRMLVolumeRenderingNode::WriteXML(ostream& of, int nIndent)
         }
     }
     of<<"\"";
+
+    //Save cropping information
+    of << " croppingEnabled=\""<< this->CroppingEnabled<< "\"";
+    of << " croppingRegionPlanes=\"";
+    for(int i=0;i<COUNT_CROPPING_REGION_PLANES;i++)
+    {
+        of<<this->CroppingRegionPlanes[i];
+        if(i!=COUNT_CROPPING_REGION_PLANES-1)
+        {
+            of<<" ";
+        }
+
+    }
+    of <<"\"";
+
     //Only write opacities when LabelMap
     //if(this->GetIsLabelMap())
     //{
@@ -212,6 +231,21 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
             ss>>specularPower;
             this->VolumeProperty->SetSpecularPower(specularPower);
         }//else if
+        else if (!strcmp(attName,"croppingEnabled"))
+        {
+            std::stringstream ss;
+            ss<<attValue;
+            ss>>this->CroppingEnabled;  
+        }
+        else if (!strcmp(attName,"croppingRegionPlanes"))
+        {
+            std::stringstream ss;
+            ss<<attValue;
+            for(int i=0;i<COUNT_CROPPING_REGION_PLANES;i++)
+            {
+                ss>>this->CroppingRegionPlanes[i];          
+            }
+        }
 
         //special behavior for labelmaps
         else if(!strcmp(attName,"opacityLabelMap"))

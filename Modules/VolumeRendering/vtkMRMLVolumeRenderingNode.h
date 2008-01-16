@@ -16,6 +16,8 @@
 #include <string>
 #include "vtkVolumeMapper.h"
 
+#define COUNT_CROPPING_REGION_PLANES 6
+
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkMRMLVolumeRenderingNode : public vtkMRMLNode
 {
 public:
@@ -94,6 +96,12 @@ public:
     vtkGetMacro(IsLabelMap,int);
     vtkBooleanMacro(IsLabelMap,int);
 
+    vtkSetMacro(CroppingEnabled,int);
+    vtkGetMacro(CroppingEnabled,int);
+    vtkBooleanMacro(CroppingEnabled,int);
+
+    vtkSetVector6Macro(CroppingRegionPlanes,double);
+    vtkGetVectorMacro(CroppingRegionPlanes,double,6);
 
     //--------------------------------------------------------------------------
     // MRMLNode methods
@@ -143,6 +151,14 @@ protected:
     // Description:
     //1 Yes it is a LabelMap,0 no it is not a Label Map
     int IsLabelMap;
+
+    // Description:
+    // Cropping planes from the mapper
+    double CroppingRegionPlanes[COUNT_CROPPING_REGION_PLANES];
+
+    // Description:
+    // Is cropping enabled?
+    int CroppingEnabled;
     //BTX
     // Description:
     // References to vtkMRMLScalarVolumeNodes
