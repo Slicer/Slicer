@@ -30,11 +30,11 @@
 #define __vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper_h
 
 #include "vtkSlicerFixedPointVolumeRayCastHelper.h"
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRenderingReplacements.h"
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkVolume;
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper : public vtkSlicerFixedPointVolumeRayCastHelper
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper : public vtkSlicerFixedPointVolumeRayCastHelper
 {
 public:
   static vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper *New();

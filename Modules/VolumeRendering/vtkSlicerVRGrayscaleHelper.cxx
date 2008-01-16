@@ -5,6 +5,7 @@
 #include "vtkVolumeRenderingModuleGUI.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerColorDisplayWidget.h"
+#include "vtkSlicerVolumePropertyWidget.h"
 
 //VTK
 #include "vtkObjectFactory.h"

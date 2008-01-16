@@ -7,24 +7,9 @@ if(VOLUMERENDERINGMODULE)
   vtkVolumeRenderingModuleGUI.cxx
   vtkVolumeRenderingModuleLogic.cxx
   vtkMRMLVolumeRenderingNode.cxx
-  vtkSlicerVolumePropertyWidget.cxx
   vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
   vtkSlicerVRHelper.cxx
   vtkSlicerVRGrayscaleHelper.cxx
-  vtkSlicerVolumeTextureMapper3D.cxx
-  vtkSlicerOpenGLVolumeTextureMapper3D.cxx
-  vtkSlicerVolumeRenderingFactory.cxx
-  #Ray Cast stuff
-  vtkSlicerFixedPointRayCastImage.cxx
-  vtkSlicerFixedPointVolumeRayCastCompositeGOHelper.cxx
-  vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper.cxx
-  vtkSlicerFixedPointVolumeRayCastCompositeHelper.cxx
-  vtkSlicerFixedPointVolumeRayCastCompositeShadeHelper.cxx
-  vtkSlicerFixedPointVolumeRayCastHelper.cxx
-  vtkSlicerFixedPointVolumeRayCastMapper.cxx
-  vtkSlicerFixedPointVolumeRayCastMIPHelper.cxx
-  vtkSlicerRayCastImageDisplayHelper.cxx
-  vtkSlicerOpenGLRayCastImageDisplayHelper.cxx
   #LabelmapPart
   vtkSlicerVRLabelmapHelper.cxx
   vtkLabelMapColorTransferFunction.cxx
@@ -38,9 +23,13 @@ if(VOLUMERENDERINGMODULE)
 #-----------------------------------------------
 # Include dirs
 
+SUBDIRS(VolumeRenderingReplacements)
+
 INCLUDE_DIRECTORIES(
   ${VolumeRenderingModule_SOURCE_DIR}
   ${VolumeRenderingModule_BINARY_DIR}
+  ${VolumeRenderingReplacements_SOURCE_DIR}
+  ${VolumeRenderingReplacements_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
   ${SlicerBase_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
@@ -84,6 +73,7 @@ TARGET_LINK_LIBRARIES(VolumeRenderingModule
   SlicerBaseGUI 
   MRML
   vtkITK
+  VolumeRenderingReplacements
   vtkCommonTCL
   vtkImagingTCL
   vtkFilteringTCL

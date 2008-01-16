@@ -29,13 +29,13 @@
 #ifndef __vtkSlicerFixedPointVolumeRayCastCompositeGOHelper_h
 #define __vtkSlicerFixedPointVolumeRayCastCompositeGOHelper_h
 
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRenderingReplacements.h"
 #include "vtkSlicerFixedPointVolumeRayCastHelper.h"
 
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkVolume;
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerFixedPointVolumeRayCastCompositeGOHelper : public vtkSlicerFixedPointVolumeRayCastHelper
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerFixedPointVolumeRayCastCompositeGOHelper : public vtkSlicerFixedPointVolumeRayCastHelper
 {
 public:
   static vtkSlicerFixedPointVolumeRayCastCompositeGOHelper *New();

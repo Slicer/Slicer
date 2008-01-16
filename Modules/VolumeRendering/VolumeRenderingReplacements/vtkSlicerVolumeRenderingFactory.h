@@ -19,9 +19,9 @@
 #define __vtkSlicerVolumeRenderingFactory_h
 
 #include "vtkObject.h"
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRenderingReplacements.h"
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVolumeRenderingFactory : public vtkObject
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerVolumeRenderingFactory : public vtkObject
 {
 public:
   static vtkSlicerVolumeRenderingFactory *New();

@@ -25,13 +25,13 @@
 #define __vtkSlicerOpenGLRayCastImageDisplayHelper_h
 
 #include "vtkSlicerRayCastImageDisplayHelper.h"
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRenderingReplacements.h"
 
 class vtkVolume;
 class vtkRenderer;
 class vtkSlicerFixedPointRayCastImage;
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerOpenGLRayCastImageDisplayHelper : public vtkSlicerRayCastImageDisplayHelper
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerOpenGLRayCastImageDisplayHelper : public vtkSlicerRayCastImageDisplayHelper
 {
 public:
   static vtkSlicerOpenGLRayCastImageDisplayHelper *New();

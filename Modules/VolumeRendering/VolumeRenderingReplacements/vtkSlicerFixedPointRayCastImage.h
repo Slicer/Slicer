@@ -29,10 +29,10 @@
 
 #ifndef __vtkSlicerFixedPointRayCastImage_h
 #define __vtkSlicerFixedPointRayCastImage_h
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRenderingReplacements.h"
 #include "vtkObject.h"
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerFixedPointRayCastImage : public vtkObject
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerFixedPointRayCastImage : public vtkObject
 {
 public:
   static vtkSlicerFixedPointRayCastImage *New();

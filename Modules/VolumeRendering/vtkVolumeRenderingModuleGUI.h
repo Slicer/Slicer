@@ -21,7 +21,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerNodeSelectorVolumeRenderingWidget.h"
-#include "vtkSlicerVolumePropertyWidget.h"
+
 #include "vtkKWLabel.h"
 #include "vtkKWHistogram.h"
 #include "vtkKWEntryWithLabel.h"
@@ -33,6 +33,7 @@ Version:   $Revision: 1.3 $
 class vtkSlicerVolumeTextureMapper3D;
 class vtkFixedPointVolumeRayCastMapper;
 class vtkSlicerVRHelper;
+class vtkSlicerVolumePropertyWidget;
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI
 {
 public:

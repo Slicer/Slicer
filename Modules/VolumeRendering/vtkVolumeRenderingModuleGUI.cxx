@@ -40,6 +40,7 @@
 #include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkKWCheckButton.h"
+#include "vtkSlicerVolumePropertyWidget.h"
 
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
 {

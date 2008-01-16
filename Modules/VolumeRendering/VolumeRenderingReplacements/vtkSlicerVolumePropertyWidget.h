@@ -21,7 +21,7 @@
 #ifndef __vtkSlicerVolumePropertyWidget_h
 #define __vtkSlicerVolumePropertyWidget_h
 
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRenderingReplacements.h"
 #include "vtkKWCompositeWidget.h"
 #include "vtkSlicerWidget.h"
 
@@ -41,7 +41,7 @@ class vtkKWScaleWithEntry;
 class vtkKWVolumeMaterialPropertyWidget;
 class vtkVolumeProperty;
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVolumePropertyWidget : public vtkSlicerWidget
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerVolumePropertyWidget : public vtkSlicerWidget
 {
 public:
   static vtkSlicerVolumePropertyWidget* New();

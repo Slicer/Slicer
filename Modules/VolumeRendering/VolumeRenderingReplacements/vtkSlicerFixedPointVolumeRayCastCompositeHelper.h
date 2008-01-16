@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper.h,v $
+  Module:    $RCSfile: vtkSlicerFixedPointVolumeRayCastCompositeHelper.h,v $
   Language:  C++
   Date:      $Date: 2005/05/04 14:13:58 $
   Version:   $Revision: 1.1 $
@@ -16,30 +16,30 @@
 
 =========================================================================*/
 
-// .NAME vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper - A helper that generates composite images for the volume ray cast mapper
+// .NAME vtkSlicerFixedPointVolumeRayCastCompositeHelper - A helper that generates composite images for the volume ray cast mapper
 // .SECTION Description
 // This is one of the helper classes for the vtkSlicerFixedPointVolumeRayCastMapper. 
-// It will generate composite images using an alpha blending operation.
+// It will generate composite images using an alpha blending operation. 
 // This class should not be used directly, it is a helper class for
 // the mapper and has no user-level API.
 //
 // .SECTION see also
 // vtkSlicerFixedPointVolumeRayCastMapper
 
-#ifndef __vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper_h
-#define __vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper_h
+#ifndef __vtkSlicerFixedPointVolumeRayCastCompositeHelper_h
+#define __vtkSlicerFixedPointVolumeRayCastCompositeHelper_h
 
 #include "vtkSlicerFixedPointVolumeRayCastHelper.h"
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRenderingReplacements.h"
 
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkVolume;
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper : public vtkSlicerFixedPointVolumeRayCastHelper
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerFixedPointVolumeRayCastCompositeHelper : public vtkSlicerFixedPointVolumeRayCastHelper
 {
 public:
-  static vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper *New();
-  vtkTypeRevisionMacro(vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper,vtkSlicerFixedPointVolumeRayCastHelper);
+  static vtkSlicerFixedPointVolumeRayCastCompositeHelper *New();
+  vtkTypeRevisionMacro(vtkSlicerFixedPointVolumeRayCastCompositeHelper,vtkSlicerFixedPointVolumeRayCastHelper);
   void PrintSelf( ostream& os, vtkIndent indent );
 
   virtual void  GenerateImage( int threadID, 
@@ -48,12 +48,12 @@ public:
                                vtkSlicerFixedPointVolumeRayCastMapper *mapper);
 
 protected:
-  vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper();
-  ~vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper();
+  vtkSlicerFixedPointVolumeRayCastCompositeHelper();
+  ~vtkSlicerFixedPointVolumeRayCastCompositeHelper();
 
 private:
-  vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper(const vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper&);  // Not implemented.
-  void operator=(const vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper&);  // Not implemented.
+  vtkSlicerFixedPointVolumeRayCastCompositeHelper(const vtkSlicerFixedPointVolumeRayCastCompositeHelper&);  // Not implemented.
+  void operator=(const vtkSlicerFixedPointVolumeRayCastCompositeHelper&);  // Not implemented.
 };
 
 #endif

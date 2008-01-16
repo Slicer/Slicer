@@ -68,14 +68,14 @@
 #define __vtkSlicerVolumeTextureMapper3D_h
 
 #include "vtkVolumeMapper.h"
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRenderingReplacements.h"
 
 class vtkImageData;
 class vtkColorTransferFunction;
 class vtkPiecewiseFunction;
 class vtkVolumeProperty;
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVolumeTextureMapper3D : public vtkVolumeMapper
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerVolumeTextureMapper3D : public vtkVolumeMapper
 {
 public:
   vtkTypeRevisionMacro(vtkSlicerVolumeTextureMapper3D,vtkVolumeMapper);

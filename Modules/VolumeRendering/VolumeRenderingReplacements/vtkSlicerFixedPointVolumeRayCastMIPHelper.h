@@ -26,12 +26,12 @@
 #define __vtkSlicerFixedPointVolumeRayCastMIPHelper_h
 
 #include "vtkSlicerFixedPointVolumeRayCastHelper.h"
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRenderingReplacements.h"
 
 class vtkSlicerFixedPointVolumeRayCastMapper;
 class vtkVolume;
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerFixedPointVolumeRayCastMIPHelper : public vtkSlicerFixedPointVolumeRayCastHelper
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerFixedPointVolumeRayCastMIPHelper : public vtkSlicerFixedPointVolumeRayCastHelper
 {
 public:
   static vtkSlicerFixedPointVolumeRayCastMIPHelper *New();

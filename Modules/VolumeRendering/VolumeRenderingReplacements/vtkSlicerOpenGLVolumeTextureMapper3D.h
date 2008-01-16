@@ -25,7 +25,7 @@
 #define __vtkSlicerOpenGLVolumeTextureMapper3D_h
 
 #include "vtkSlicerVolumeTextureMapper3D.h"
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRenderingReplacements.h"
 
 #ifndef VTK_IMPLEMENT_MESA_CXX
 # include "vtkOpenGL.h" // GLfloat type is used in some method signatures.
@@ -35,7 +35,7 @@
 class vtkRenderWindow;
 class vtkVolumeProperty;
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerOpenGLVolumeTextureMapper3D : public vtkSlicerVolumeTextureMapper3D
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerOpenGLVolumeTextureMapper3D : public vtkSlicerVolumeTextureMapper3D
 {
 public:
   vtkTypeRevisionMacro(vtkSlicerOpenGLVolumeTextureMapper3D,vtkSlicerVolumeTextureMapper3D);
