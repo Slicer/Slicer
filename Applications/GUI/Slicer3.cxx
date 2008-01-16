@@ -1279,7 +1279,7 @@ int Slicer3_main(int argc, char *argv[])
     emSegmentGUI->SetApplication(slicerApp);
     emSegmentGUI->SetApplicationLogic(appLogic);
     emSegmentGUI->SetApplicationGUI(appGUI);
-    emSegmentGUI->SetGUIName("EMSegment");
+    emSegmentGUI->SetGUIName("EMSegment Template Builder");
     emSegmentGUI->GetUIPanel()->
       SetName(emSegmentGUI->GetGUIName());
     emSegmentGUI->GetUIPanel()->
