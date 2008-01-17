@@ -186,15 +186,16 @@ itcl::configbody SeedSWidget::textScale {
 # ------------------------------------------------------------------
 
 itcl::body SeedSWidget::createGlyph { {type "StarBurst"} } {
+
+  set polyData [vtkNew vtkPolyData]
   
   set glyphSource [vtkSlicerGlyphSource2D New]
   $glyphSource SetGlyphTypeTo$type
-  set polyData [$glyphSource GetOutput]
-  $polyData Register ""
-  $polyData Update
+  [$glyphSource GetOutput] Update
+  $polyData DeepCopy [$glyphSource GetOutput]
   [$polyData GetCellData] SetScalars ""
-  $glyphSource SetOutput ""
   $glyphSource Delete
+
   return $polyData
 }
 
@@ -327,8 +328,6 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
               set newxyz [list [expr $ex + $dx] [expr $ey + $dy] [expr $ez + $dz]]
               set _currentPosition [$this xyzToRAS $newxyz]
               eval $movingCommand
-            }
-            default {
             }
           }
         }
