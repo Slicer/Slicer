@@ -412,6 +412,17 @@ TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 #####################
 
 
+SET (CLP FreesurferSurfaceSectionExtraction)
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters ITKCommon)
+
+SET( SLICER_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+
+###################
+
 SUBDIRS ( Realign )
 SUBDIRS( DiffusionApplications )
 SUBDIRS( ExtractSkeleton )

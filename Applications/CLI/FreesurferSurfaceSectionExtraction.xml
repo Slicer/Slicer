@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Segmentation</category>
+  <title>FreesurferSurfaceSectionExtraction</title>
+  <description>This module creates gray matter models based on
+  fiducials on a freesurfer generated white matter surface.</description>
+  <version>
+           1.0</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Katharina Quintus </contributor>
+  <acknowledgements> This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. </acknowledgements>
+ <parameters>
+    <label>Input</label>
+      <description>Input parameters</description> 
+       
+       <geometry>
+        <name>lh_orig</name>
+	<label>white matter model left side</label>
+	<channel>input</channel>
+	<index>0</index>
+	<default>None</default>
+	<description>Freesurfer white matter model of the left hemishere</description>
+       </geometry>
+   
+    <geometry>
+      <name>lr_orig</name>
+      <label>white matter model right side</label>
+      <channel>input</channel>
+      <index>0</index>
+      <default>None</default>
+      <description>Freesurfer white matter model of the right hemishere</description>
+    </geometry>
+
+    <point multiple="true">
+      <name>fiducials_rh</name>
+      <label>Fiducial list for right hemisphere</label>
+      <longflag>--fiducials_lh</longflag>
+      <description>Fiducial list for right hemisphere</description>
+      
+    </point>
+
+    <point multiple="true">
+      <name>fiducials_lh</name>
+      <label>Fiducial list for left hemisphere</label>
+      <longflag>--fiducials_rh</longflag>
+      <description>>Fiducial list for left hemisphere</description>
+    </point>
+
+ 
+</parameters>
+
+ <parameters>
+    <label>Output</label>
+    <description>output parameters</description>
+       
+      <geometry>
+      <name>grayMatterROI_lh</name>
+      <label>Graymatter selection left hemisphere</label>
+      <channel>output</channel>
+      <index>1</index>
+      <default>None</default>
+      <description>Graymatter surface selection on left hemisphere</description>
+      </geometry>
+
+      <geometry>
+      <name>grayMatterROI_rh</name>
+      <label>Graymatter selection right hemisphere</label>
+      <channel>output</channel>
+      <index>1</index>
+      <default>None</default>
+      <description>Graymatter surface selection on right hemisphere</description>
+      </geometry>
+
+</parameters>
+
+
+
+</executable>
