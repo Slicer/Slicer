@@ -1,6 +1,5 @@
-﻿#include "vtkObject.h"
+#include "vtkObject.h"
 #include "vtkObjectFactory.h"
-
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
