@@ -26,6 +26,7 @@ vtkStandardNewMacro(vtkEventBroker);
 vtkEventBroker::vtkEventBroker()
 {
   this->EventMode = vtkEventBroker::Synchronous;
+  this->LogFile = NULL;
 }
 
 //----------------------------------------------------------------------------
