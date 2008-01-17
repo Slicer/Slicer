@@ -50,12 +50,10 @@ itcl::body RegionsSWidget::constructor {sliceGUI} {
   # - track them so they can be removed in the destructor
   #
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
-
-
   set scene [$sliceGUI GetMRMLScene]
+  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
   lappend _sceneObserverTags [$scene AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
   lappend _sceneObserverTags [$scene AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $scene"]
 
 
@@ -117,9 +115,9 @@ itcl::body RegionsSWidget::destructor {} {
 
 itcl::body RegionsSWidget::processEvent { {caller ""} {event ""} } {
 
-    if { [info command $caller] == ""} {
-        return
-    }
+  if { [info command $caller] == ""} {
+      return
+  }
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
@@ -173,15 +171,6 @@ itcl::body RegionsSWidget::processEvent { {caller ""} {event ""} } {
     }
   }
 
-  #
-  # get the rasToSlice for the SliceNode - transforming the roi
-  # by this matrix will let us easily check the distance from the slice plane
-  #
-  set node [[$sliceGUI GetLogic] GetSliceNode]
-  set rasToSlice [vtkMatrix4x4 New]
-  $rasToSlice DeepCopy [$node GetSliceToRAS]
-  $rasToSlice Invert
-
 
   #
   # now, look through all the roi lists for rois that
@@ -192,68 +181,80 @@ itcl::body RegionsSWidget::processEvent { {caller ""} {event ""} } {
   set scene [$sliceGUI GetMRMLScene]
   set nLists [$scene GetNumberOfNodesByClass "vtkMRMLROIListNode"]
 
-  for {set i 0} {$i < $nLists} {incr i} {
-    set roiListNode [$scene GetNthNodeByClass $i "vtkMRMLROIListNode"]
+  if { $nLists > 0 } { 
 
-    # add an observer on this roi list
-    if { [$caller IsA "vtkMRMLScene"] } {
-      after idle "$this addROIListObserver $roiListNode"
-    }
-
-    if { ![$roiListNode GetVisibility] } {
-      continue
-    }
+    #
+    # get the rasToSlice for the SliceNode - transforming the roi
+    # by this matrix will let us easily check the distance from the slice plane
+    #
+    set node [[$sliceGUI GetLogic] GetSliceNode]
+    set rasToSlice [vtkMatrix4x4 New]
+    $rasToSlice DeepCopy [$node GetSliceToRAS]
     
-    #
-    # make the roi visible if within 1mm of the slice
-    # - place a seed widget and keep track for later deletion
-    #
-    set nROIs [$roiListNode GetNumberOfROIs]
-    for {set f 0} {$f < $nROIs} {incr f} {
-      foreach {r a s} [$roiListNode GetNthROIXYZ $f] {}
-      set slice [eval $rasToSlice MultiplyPoint $r $a $s 1]
-      set z [lindex $slice 2]
-      if { [expr abs($z)] <= 1000 } {
+    $rasToSlice Invert
 
-        set seedSWidget [SeedSWidget #auto $sliceGUI]
-        $seedSWidget place $r $a $s
-        $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $roiListNode $f"
-        $seedSWidget configure -movingCommand "$this seedMovingCallback $seedSWidget $roiListNode $f"
-        $seedSWidget configure -glyph "Cross"
-        $seedSWidget configure -scale 15
-        $seedSWidget configure -color [$roiListNode GetColor]
-        $seedSWidget configure -selectedColor [$roiListNode GetSelectedColor]
-        $seedSWidget configure -opacity [$roiListNode GetOpacity]
-        $seedSWidget configure -text [$roiListNode GetNthROILabelText $f]
-        $seedSWidget configure -textScale [$roiListNode GetTextScale]
-        if { [$roiListNode GetNthROISelected $f] } {
-          $seedSWidget configure -selected 1
-        }
-        lappend _seedSWidgets $seedSWidget
+    for {set i 0} {$i < $nLists} {incr i} {
+      set roiListNode [$scene GetNthNodeByClass $i "vtkMRMLROIListNode"]
 
-        if { 0 } {
-          foreach vert [::RegionsSWidget::GetROIRASVertices $roiListNode $f] {
-            set seedSWidget [SeedSWidget #auto $sliceGUI]
-            eval $seedSWidget place $vert
-            $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $roiListNode $f"
-            $seedSWidget configure -movingCommand "$this seedMovingCallback $seedSWidget $roiListNode $f"
-            $seedSWidget configure -glyph "Circle"
-            $seedSWidget configure -scale 10
-            $seedSWidget configure -color [$roiListNode GetColor]
-            $seedSWidget configure -selectedColor [$roiListNode GetSelectedColor]
-            $seedSWidget configure -opacity [$roiListNode GetOpacity]
-            if { [$roiListNode GetNthROISelected $f] } {
-              $seedSWidget configure -selected 1
-            }
-            lappend _seedSWidgets $seedSWidget
+      # add an observer on this roi list
+      if { [$caller IsA "vtkMRMLScene"] } {
+        after idle "$this addROIListObserver $roiListNode"
+      }
+
+      if { ![$roiListNode GetVisibility] } {
+        continue
+      }
+      
+      #
+      # make the roi visible if within 1mm of the slice
+      # - place a seed widget and keep track for later deletion
+      #
+      set nROIs [$roiListNode GetNumberOfROIs]
+      for {set f 0} {$f < $nROIs} {incr f} {
+        foreach {r a s} [$roiListNode GetNthROIXYZ $f] {}
+        set slice [eval $rasToSlice MultiplyPoint $r $a $s 1]
+        set z [lindex $slice 2]
+        if { [expr abs($z)] <= 1000 } {
+
+          set seedSWidget [SeedSWidget #auto $sliceGUI]
+          $seedSWidget place $r $a $s
+          $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $roiListNode $f"
+          $seedSWidget configure -movingCommand "$this seedMovingCallback $seedSWidget $roiListNode $f"
+          $seedSWidget configure -glyph "Cross"
+          $seedSWidget configure -scale 15
+          $seedSWidget configure -color [$roiListNode GetColor]
+          $seedSWidget configure -selectedColor [$roiListNode GetSelectedColor]
+          $seedSWidget configure -opacity [$roiListNode GetOpacity]
+          $seedSWidget configure -text [$roiListNode GetNthROILabelText $f]
+          $seedSWidget configure -textScale [$roiListNode GetTextScale]
+          if { [$roiListNode GetNthROISelected $f] } {
+            $seedSWidget configure -selected 1
           }
-        }
+          lappend _seedSWidgets $seedSWidget
 
+          if { 0 } {
+            foreach vert [::RegionsSWidget::GetROIRASVertices $roiListNode $f] {
+              set seedSWidget [SeedSWidget #auto $sliceGUI]
+              eval $seedSWidget place $vert
+              $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $roiListNode $f"
+              $seedSWidget configure -movingCommand "$this seedMovingCallback $seedSWidget $roiListNode $f"
+              $seedSWidget configure -glyph "Circle"
+              $seedSWidget configure -scale 10
+              $seedSWidget configure -color [$roiListNode GetColor]
+              $seedSWidget configure -selectedColor [$roiListNode GetSelectedColor]
+              $seedSWidget configure -opacity [$roiListNode GetOpacity]
+              if { [$roiListNode GetNthROISelected $f] } {
+                $seedSWidget configure -selected 1
+              }
+              lappend _seedSWidgets $seedSWidget
+            }
+          }
+
+        }
       }
     }
+    $rasToSlice Delete
   }
-
-  $rasToSlice Delete
 }
 
 itcl::body RegionsSWidget::addROIListObserver {roiListNode} {

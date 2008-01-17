@@ -230,15 +230,6 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
     }
   }
 
-  #
-  # get the rasToSlice for the SliceNode - transforming the fiducial
-  # by this matrix will let us easily check the distance from the slice plane
-  #
-  set node [[$sliceGUI GetLogic] GetSliceNode]
-  set rasToSlice [vtkMatrix4x4 New]
-  $rasToSlice DeepCopy [$node GetSliceToRAS]
-  $rasToSlice Invert
-
 
   #
   # now, look through all the fiducial lists for fiducials that
@@ -248,64 +239,76 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
   set scene [$sliceGUI GetMRMLScene]
   set nLists [$scene GetNumberOfNodesByClass "vtkMRMLFiducialListNode"]
 
-  set rasToRAS [vtkMatrix4x4 New]
-
-  for {set i 0} {$i < $nLists} {incr i} {
-    set fidListNode [$scene GetNthNodeByClass $i "vtkMRMLFiducialListNode"]
-
-    # add an observer on this fiducial list
-    if { [$caller IsA "vtkMRMLScene"] } {
-      $this addFiducialListObserver $fidListNode
-    }
-
-    if { ![$fidListNode GetVisibility] } {
-      continue
-    }
-    
-    $rasToRAS Identity
-    set transformNode [$::slicer3::MRMLScene GetNodeByID [$fidListNode GetTransformNodeID]]
-    if { $transformNode != "" } {
-      $transformNode GetMatrixTransformToWorld $rasToRAS
-    }
-
-    set glyphType [$fidListNode GetGlyphTypeAsString]
-    set indexOf2D [string last "2D" $glyphType]
-    if { $indexOf2D != -1 } {
-      set glyphType [string range $glyphType 0 [incr indexOf2D -1]]
-    }
+  if { $nLists > 0 } {
 
     #
-    # make the fiducial visible if within half a slicewidth of the slice
-    # - place a seed widget and keep track for later deletion
+    # get the rasToSlice for the SliceNode - transforming the fiducial
+    # by this matrix will let us easily check the distance from the slice plane
     #
-    set nFids [$fidListNode GetNumberOfFiducials]
-    for {set f 0} {$f < $nFids} {incr f} {
-      foreach {r a s} [$fidListNode GetNthFiducialXYZ $f] {}
-      foreach {r a s t} [$rasToRAS MultiplyPoint $r $a $s 1] {}
-      set xyz [$this rasToXYZ "$r $a $s"]
-      foreach {x y z} $xyz {}
-      if { $z >= -0.5 && $z < [expr 0.5+[lindex [$node GetDimensions] 2]-1]} {
-        set seedSWidget [SeedSWidget #auto $sliceGUI]
-        $seedSWidget place $r $a $s
-        $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $fidListNode $f"
-        $seedSWidget configure -movingCommand "$this seedMovingCallback $seedSWidget $fidListNode $f"
-        $seedSWidget configure -glyph $glyphType
-        $seedSWidget configure -scale [$fidListNode GetSymbolScale]
-        $seedSWidget configure -color [$fidListNode GetColor]
-        $seedSWidget configure -selectedColor [$fidListNode GetSelectedColor]
-        $seedSWidget configure -opacity [$fidListNode GetOpacity]
-        $seedSWidget configure -text [$fidListNode GetNthFiducialLabelText $f]
-        $seedSWidget configure -textScale [$fidListNode GetTextScale]
-        if { [$fidListNode GetNthFiducialSelected $f] } {
-          $seedSWidget configure -selected 1
+    set node [[$sliceGUI GetLogic] GetSliceNode]
+    set rasToSlice [vtkMatrix4x4 New]
+    $rasToSlice DeepCopy [$node GetSliceToRAS]
+    $rasToSlice Invert
+
+    set rasToRAS [vtkMatrix4x4 New]
+
+    for {set i 0} {$i < $nLists} {incr i} {
+      set fidListNode [$scene GetNthNodeByClass $i "vtkMRMLFiducialListNode"]
+
+      # add an observer on this fiducial list
+      if { [$caller IsA "vtkMRMLScene"] } {
+        $this addFiducialListObserver $fidListNode
+      }
+
+      if { ![$fidListNode GetVisibility] } {
+        continue
+      }
+      
+      $rasToRAS Identity
+      set transformNode [$::slicer3::MRMLScene GetNodeByID [$fidListNode GetTransformNodeID]]
+      if { $transformNode != "" } {
+        $transformNode GetMatrixTransformToWorld $rasToRAS
+      }
+
+      set glyphType [$fidListNode GetGlyphTypeAsString]
+      set indexOf2D [string last "2D" $glyphType]
+      if { $indexOf2D != -1 } {
+        set glyphType [string range $glyphType 0 [incr indexOf2D -1]]
+      }
+
+      #
+      # make the fiducial visible if within half a slicewidth of the slice
+      # - place a seed widget and keep track for later deletion
+      #
+      set nFids [$fidListNode GetNumberOfFiducials]
+      for {set f 0} {$f < $nFids} {incr f} {
+        foreach {r a s} [$fidListNode GetNthFiducialXYZ $f] {}
+        foreach {r a s t} [$rasToRAS MultiplyPoint $r $a $s 1] {}
+        set xyz [$this rasToXYZ "$r $a $s"]
+        foreach {x y z} $xyz {}
+        if { $z >= -0.5 && $z < [expr 0.5+[lindex [$node GetDimensions] 2]-1]} {
+          set seedSWidget [SeedSWidget #auto $sliceGUI]
+          $seedSWidget place $r $a $s
+          $seedSWidget configure -movedCommand "$this seedMovedCallback $seedSWidget $fidListNode $f"
+          $seedSWidget configure -movingCommand "$this seedMovingCallback $seedSWidget $fidListNode $f"
+          $seedSWidget configure -glyph $glyphType
+          $seedSWidget configure -scale [$fidListNode GetSymbolScale]
+          $seedSWidget configure -color [$fidListNode GetColor]
+          $seedSWidget configure -selectedColor [$fidListNode GetSelectedColor]
+          $seedSWidget configure -opacity [$fidListNode GetOpacity]
+          $seedSWidget configure -text [$fidListNode GetNthFiducialLabelText $f]
+          $seedSWidget configure -textScale [$fidListNode GetTextScale]
+          if { [$fidListNode GetNthFiducialSelected $f] } {
+            $seedSWidget configure -selected 1
+          }
+          lappend _seedSWidgets $seedSWidget
         }
-        lappend _seedSWidgets $seedSWidget
       }
     }
-  }
 
-  $rasToRAS Delete
-  $rasToSlice Delete
+    $rasToRAS Delete
+    $rasToSlice Delete
+  }
 }
 
 itcl::body FiducialsSWidget::addFiducialListObserver {fidListNode} {
