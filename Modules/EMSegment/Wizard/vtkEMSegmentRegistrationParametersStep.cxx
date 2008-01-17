@@ -25,7 +25,6 @@ vtkEMSegmentRegistrationParametersStep::vtkEMSegmentRegistrationParametersStep()
 
   this->RegistrationParametersFrame                   = NULL;
   this->RegistrationParametersAtlasImageMenuButton    = NULL;
-  this->RegistrationParametersTargetImageMenuButton   = NULL;
   this->RegistrationParametersAffineMenuButton        = NULL;
   this->RegistrationParametersDeformableMenuButton    = NULL;
   this->RegistrationParametersInterpolationMenuButton = NULL;
@@ -38,12 +37,6 @@ vtkEMSegmentRegistrationParametersStep::~vtkEMSegmentRegistrationParametersStep(
     {
     this->RegistrationParametersAtlasImageMenuButton->Delete();
     this->RegistrationParametersAtlasImageMenuButton = NULL;
-    }
-
-  if (this->RegistrationParametersTargetImageMenuButton)
-    {
-    this->RegistrationParametersTargetImageMenuButton->Delete();
-    this->RegistrationParametersTargetImageMenuButton = NULL;
     }
 
   if (this->RegistrationParametersAffineMenuButton)
@@ -143,48 +136,6 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
     }
   this->RegistrationParametersAtlasImageMenuButton->SetEnabled(
     mrmlManager->GetVolumeNumberOfChoices() ? enabled : 0);
-
-  // Create the target image volume selector
-
-  if (!this->RegistrationParametersTargetImageMenuButton)
-    {
-    this->RegistrationParametersTargetImageMenuButton =
-      vtkKWMenuButtonWithLabel::New();
-    }
-  if (!this->RegistrationParametersTargetImageMenuButton->IsCreated())
-    {
-    this->RegistrationParametersTargetImageMenuButton->SetParent(
-      this->RegistrationParametersFrame->GetFrame());
-    this->RegistrationParametersTargetImageMenuButton->Create();
-    this->RegistrationParametersTargetImageMenuButton->GetWidget()->
-      SetWidth(EMSEG_MENU_BUTTON_WIDTH);
-    this->RegistrationParametersTargetImageMenuButton->GetLabel()->
-      SetWidth(EMSEG_WIDGETS_LABEL_WIDTH);
-    this->RegistrationParametersTargetImageMenuButton->
-      SetLabelText("Target Image:");
-    this->RegistrationParametersTargetImageMenuButton->
-      SetBalloonHelpString("Select volume for the target image.");
-    }
-
-  // disable for now !!!
-  //this->Script(
-  //  "pack %s -side top -anchor nw -padx 2 -pady 2", 
-  //  this->RegistrationParametersTargetImageMenuButton->GetWidgetName());
-  
-  this->PopulateMenuWithTargetVolumes(
-    this->RegistrationParametersTargetImageMenuButton->
-    GetWidget()->GetMenu(), this, "RegistrationTargetImageCallback");
-
-  if(!mrmlManager->GetTargetNumberOfSelectedVolumes() ||
-     !this->SetMenuButtonSelectedItem(
-       this->RegistrationParametersTargetImageMenuButton->
-       GetWidget()->GetMenu(), mrmlManager->GetRegistrationTargetVolumeID()))
-    {
-    this->RegistrationParametersTargetImageMenuButton->
-      GetWidget()->SetValue("");
-    }
-  this->RegistrationParametersTargetImageMenuButton->SetEnabled(
-    mrmlManager->GetTargetNumberOfSelectedVolumes() ? enabled : 0);
 
   // Create the affine registration menu button
 
@@ -483,16 +434,6 @@ void vtkEMSegmentRegistrationParametersStep::RegistrationAtlasImageCallback(
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   mrmlManager->SetRegistrationAtlasVolumeID(volume_id);
-}
-
-//----------------------------------------------------------------------------
-void vtkEMSegmentRegistrationParametersStep::RegistrationTargetImageCallback(
-  vtkIdType volume_id)
-{
-  // The target image has changed because of user interaction
-
-  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  mrmlManager->SetRegistrationTargetVolumeID(volume_id);
 }
 
 //----------------------------------------------------------------------------

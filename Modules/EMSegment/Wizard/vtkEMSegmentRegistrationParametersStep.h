@@ -20,7 +20,6 @@ public:
   // Description:
   // Callbacks.
   virtual void RegistrationAtlasImageCallback(vtkIdType volumeId);
-  virtual void RegistrationTargetImageCallback(vtkIdType volumeId);
   virtual void RegistrationInterpolationCallback(int type);
   virtual void RegistrationDeformableCallback(int type);
   virtual void RegistrationAffineCallback(int type);
@@ -31,7 +30,6 @@ protected:
 
   vtkKWFrameWithLabel      *RegistrationParametersFrame;
   vtkKWMenuButtonWithLabel *RegistrationParametersAtlasImageMenuButton;
-  vtkKWMenuButtonWithLabel *RegistrationParametersTargetImageMenuButton;
   vtkKWMenuButtonWithLabel *RegistrationParametersAffineMenuButton;
   vtkKWMenuButtonWithLabel *RegistrationParametersDeformableMenuButton;
   vtkKWMenuButtonWithLabel *RegistrationParametersInterpolationMenuButton;
