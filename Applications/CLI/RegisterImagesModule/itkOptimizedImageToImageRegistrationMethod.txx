@@ -207,10 +207,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
   std::cout << "UPDATE START" << std::endl;
 
-  typedef TransformParametersType         TransformParametersType;
-  typedef TransformParametersScalesType   TransformParametersScalesType;
-
-  this->GetTransform()->SetParameters( this->GetInitialTransformParameters() );
+  this->GetTransform()->SetParametersByValue( this->GetInitialTransformParameters() );
 
   typedef ImageToImageMetric< TImage, TImage >        MetricType;
   typename MetricType::Pointer metric;
@@ -268,9 +265,9 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
   switch( this->GetOptimizationMethodEnum() )
     {
-    case HIERARCHICAL_OPTIMIZATION:
+    case MULTIRESOLUTION_OPTIMIZATION:
       {
-      std::cout << "HIERAR" << std::endl;
+      std::cout << "MULTIRESOLUTION" << std::endl;
 
       typedef MultiResolutionImageRegistrationMethod< TImage, TImage > RegType;
       typedef MultiResolutionPyramidImageFilter< TImage, TImage >      PyramidType;
@@ -281,6 +278,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
       OptimizerType::Pointer gradOpt;
       if( m_TransformMethodEnum == BSPLINE_TRANSFORM )
         {
+        std::cout << "LBFSGB" << std::endl;
         typedef LBFGSBOptimizer                  GradOptimizerType;
         gradOpt = GradOptimizerType::New();
         GradOptimizerType::Pointer tmpOpt = static_cast<GradOptimizerType *>( gradOpt.GetPointer() );
@@ -317,8 +315,11 @@ OptimizedImageToImageRegistrationMethod< TImage >
  
       typedef ImageRegistrationViewer ViewerCommandType;
       typename ViewerCommandType::Pointer command = ViewerCommandType::New();
+      if( this->GetTransform()->GetNumberOfParameters() > 16)
+        {
+        command->SetDontShowParameters( true );
+        }
       gradOpt->AddObserver( itk::IterationEvent(), command );
-
 
       if( this->GetObserver() )
         {
@@ -368,16 +369,9 @@ OptimizedImageToImageRegistrationMethod< TImage >
       reg->StartRegistration();
 
       this->SetLastTransformParameters( reg->GetLastTransformParameters() );
-      if( m_TransformMethodEnum == BSPLINE_TRANSFORM )
-        {
-        this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
-        }
-      else
-        {
-        this->GetTransform()->SetParameters( this->GetLastTransformParameters() );
-        }
+      this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
-      std::cout << "HIERAR END" << std::endl;
+      std::cout << "MULTIRESOLUTION END" << std::endl;
       break;
       }
     case EVOLUTIONARY_OPTIMIZATION:
@@ -394,7 +388,6 @@ OptimizedImageToImageRegistrationMethod< TImage >
       evoOpt->Initialize( 1.01 );
       evoOpt->SetScales( this->GetTransformParametersScales() );
       evoOpt->SetMaximumIteration( this->GetMaxIterations() );
-      evoOpt->Print( std::cout );
 
       int numberOfParameters = this->GetTransform()->GetNumberOfParameters();
 
@@ -440,8 +433,12 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
       typedef ImageRegistrationViewer ViewerCommandType;
       typename ViewerCommandType::Pointer command = ViewerCommandType::New();
-      //evoOpt->AddObserver( itk::IterationEvent(), command );
-      //gradOpt->AddObserver( itk::IterationEvent(), command );
+      if( this->GetTransform()->GetNumberOfParameters() > 16)
+        {
+        command->SetDontShowParameters( true );
+        }
+      evoOpt->AddObserver( itk::IterationEvent(), command );
+      gradOpt->AddObserver( itk::IterationEvent(), command );
 
       if( this->GetObserver() )
         {
@@ -477,22 +474,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
       std::cout << "   *** Initial transform = " << reg->GetInitialTransformParameters() << std::endl;
 
-      reg->Print( std::cout );
-      this->GetFixedImage()->Print( std::cout );
-      this->GetMovingImage()->Print( std::cout );
-      this->GetTransform()->Print( std::cout );
-
       reg->StartRegistration();
 
       this->SetLastTransformParameters( reg->GetLastTransformParameters() );
-      if( m_TransformMethodEnum == BSPLINE_TRANSFORM )
-        {
-        this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
-        }
-      else
-        {
-        this->GetTransform()->SetParameters( this->GetLastTransformParameters() );
-        }
+      this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
       std::cout << "   *** Evolutionary transform = " << reg->GetLastTransformParameters() << std::endl;
 
@@ -501,14 +486,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
       gradOpt->StartOptimization();
 
       this->SetLastTransformParameters( gradOpt->GetCurrentPosition() );
-      if( m_TransformMethodEnum == BSPLINE_TRANSFORM )
-        {
-        this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
-        }
-      else
-        {
-        this->GetTransform()->SetParameters( this->GetLastTransformParameters() );
-        }
+      this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
       std::cout << "   *** Gradient transform = " << reg->GetLastTransformParameters() << std::endl;
 
@@ -528,6 +506,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
       OptimizerType::Pointer gradOpt;
       if( m_TransformMethodEnum == BSPLINE_TRANSFORM )
         {
+        std::cout << "LBFSGB" << std::endl;
         typedef LBFGSBOptimizer                  GradOptimizerType;
         gradOpt = GradOptimizerType::New();
         GradOptimizerType::Pointer tmpOpt = static_cast<GradOptimizerType *>( gradOpt.GetPointer() );
@@ -564,6 +543,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
       typedef ImageRegistrationViewer ViewerCommandType;
       typename ViewerCommandType::Pointer command = ViewerCommandType::New();
+      if( this->GetTransform()->GetNumberOfParameters() > 16)
+        {
+        command->SetDontShowParameters( true );
+        }
       gradOpt->AddObserver( itk::IterationEvent(), command );
 
       if( this->GetObserver() )
@@ -597,18 +580,12 @@ OptimizedImageToImageRegistrationMethod< TImage >
       reg->SetInterpolator( interpolator );
       reg->SetOptimizer( gradOpt );
 
-      std::cout << "REG START REGISTRATION START" << std::endl;
+      std::cout << "REGISTRATION START" << std::endl;
       reg->StartRegistration();
+      std::cout << "REGISTRATION END" << std::endl;
 
       this->SetLastTransformParameters( reg->GetLastTransformParameters() );
-      if( m_TransformMethodEnum == BSPLINE_TRANSFORM )
-        {
-        this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
-        }
-      else
-        {
-        this->GetTransform()->SetParameters( this->GetLastTransformParameters() );
-        }
+      this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
       std::cout << "GRAD END" << std::endl;
       break;
@@ -673,8 +650,8 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
   switch( m_OptimizationMethodEnum )
     {
-    case HIERARCHICAL_OPTIMIZATION:
-      os << indent << "Optimization method = Hierarchical" << std::endl;
+    case MULTIRESOLUTION_OPTIMIZATION:
+      os << indent << "Optimization method = Multiresolution" << std::endl;
       break;
     case EVOLUTIONARY_OPTIMIZATION:
       os << indent << "Optimization method = Evolution" << std::endl;

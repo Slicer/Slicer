@@ -107,7 +107,7 @@ ImageToImageRegistrationHelper< TImage >
   m_BSplineTransform = 0;
   m_BSplineMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_BSplineInterpolationMethodEnum = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION;
-  m_BSplineOptimizationMethodEnum = OptimizedRegistrationMethodType::EVOLUTIONARY_OPTIMIZATION;
+  m_BSplineOptimizationMethodEnum = OptimizedRegistrationMethodType::GRADIENT_OPTIMIZATION;
 
 }
 
@@ -918,9 +918,9 @@ ImageToImageRegistrationHelper< TImage >
   os << indent << std::endl;
   switch( optimization )
     {
-    case OptimizedRegistrationMethodType::HIERARCHICAL_OPTIMIZATION:
+    case OptimizedRegistrationMethodType::MULTIRESOLUTION_OPTIMIZATION:
       {
-      os << indent << basename << " Optimization Method = HIERARCHICAL" << std::endl;
+      os << indent << basename << " Optimization Method = Multiresolution" << std::endl;
       break;
       }
     case OptimizedRegistrationMethodType::EVOLUTIONARY_OPTIMIZATION:

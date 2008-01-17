@@ -68,7 +68,7 @@ class OptimizedImageToImageRegistrationMethod
                                        BSPLINE_INTERPOLATION,
                                        SINC_INTERPOLATION };
 
-    enum OptimizationMethodEnumType { HIERARCHICAL_OPTIMIZATION,
+    enum OptimizationMethodEnumType { MULTIRESOLUTION_OPTIMIZATION,
                                       EVOLUTIONARY_OPTIMIZATION,
                                       GRADIENT_OPTIMIZATION };
 

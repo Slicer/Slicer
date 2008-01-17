@@ -31,16 +31,17 @@ BSplineImageToImageRegistrationMethod< TImage >
   this->SetTransform( BSplineTransformType::New() );
   this->GetTypedTransform()->SetIdentity();
 
-  this->SetInitialTransformParameters( this->GetTypedTransform()->GetParameters() );
+  m_NumberOfControlPoints = 10;
 
   typename Superclass::TransformParametersScalesType scales;
   scales.set_size( this->GetTypedTransform()->GetNumberOfParameters() );
   scales.fill( 1.0f );
   this->SetTransformParametersScales( scales );
 
+  this->SetInitialTransformParameters( this->GetTypedTransform()->GetParameters() );
+
   this->SetTransformMethodEnum( Superclass::BSPLINE_TRANSFORM );
 
-  m_NumberOfControlPoints = 10;
 }
 
 template< class TImage >
@@ -85,14 +86,16 @@ BSplineImageToImageRegistrationMethod< TImage >
   this->GetTypedTransform()->SetGridDirection( direction );
 
   const unsigned int numberOfParameters =
-    this->GetTypedTransform()->GetNumberOfParameters();
+               this->GetTypedTransform()->GetNumberOfParameters();
 
-  typename TransformType::ParametersType params( numberOfParameters );
+  Superclass::TransformParametersType params( numberOfParameters );
   params.Fill( 0.0 );
-
-  this->GetTypedTransform()->SetParametersByValue( params );
-
-  this->SetInitialTransformParameters( params );
+  this->GetTypedTransform()->SetParameters( params );
+  if( this->GetInitialTransformParameters().GetSize() !=
+      numberOfParameters )
+    {
+    this->SetInitialTransformParameters( params );
+    }
 
   Superclass::Update();
 
