@@ -152,11 +152,11 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
 
     if (!strcmp(attName, "title"))
       {
-      moduleTitle = attValue;
+      moduleTitle = this->URLDecodeString(attValue);
       }
     else if (!strcmp(attName, "version"))
       {
-      moduleVersion = attValue;
+      moduleVersion = this->URLDecodeString(attValue);
       }
     }
 
@@ -193,8 +193,8 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
   tatts = atts;
   while (*tatts)
     {
-    attName = *(tatts++);
-    attValue = *(tatts++);
+    attName = this->URLDecodeString(*(tatts++));
+    attValue = this->URLDecodeString(*(tatts++));
 
     if (this->ModuleDescriptionObject.HasParameter(attName))
       {
