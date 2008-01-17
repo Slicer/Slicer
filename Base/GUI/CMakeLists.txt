@@ -93,6 +93,7 @@ SET(LIB_SRCS
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx
   vtkSlicerROIGUI.cxx
+  vtkSlicerGradientEditorWidget.cxx
   )
 
 # Helper classes

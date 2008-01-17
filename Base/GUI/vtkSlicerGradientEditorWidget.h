@@ -30,7 +30,9 @@ public:
     // Description:
     // Method to propagate events generated in GUI to logic / mrml
     virtual void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData );
-
+    
+    // Description:
+    // Method to update the widget when a new node is loaded
     virtual void UpdateWidget(vtkMRMLVolumeNode *node);
 
 protected:

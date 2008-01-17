@@ -59,6 +59,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     this->InfoFrame = NULL;
     this->OptionFrame = NULL;
     this->SaveFrame = NULL;
+    this->GradientFrame = NULL;
 
     this->ScalarDisplayFrame = NULL;
     this->LabelMapDisplayFrame = NULL;
@@ -73,6 +74,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     this->ApplyButton=NULL;
 
     this->VolumeFileHeaderWidget = NULL;
+    this->GradientEditorWidget = NULL;
 
     NACLabel = NULL;
     NAMICLabel = NULL;
@@ -207,6 +209,19 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->DisplayFrame->SetParent ( NULL );
     this->DisplayFrame->Delete ( );
     this->DisplayFrame = NULL;
+    }
+  if ( this->GradientFrame )
+    {
+    this->GradientFrame->SetParent ( NULL );
+    this->GradientFrame->Delete ( );
+    this->GradientFrame = NULL;
+    }
+  
+   if ( this->GradientEditorWidget )
+    {
+    this->GradientEditorWidget->SetParent ( NULL );
+    this->GradientEditorWidget->Delete ( );
+    this->GradientEditorWidget = NULL;
     }
   if ( this->InfoFrame )
     {
@@ -692,6 +707,9 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         this->VolumeDisplayWidget = this->dwiVDW;
         this->VolumeDisplayFrame = this->DWIDisplayFrame;
         }
+        this->GradientFrame->EnabledOn();
+        this->GradientFrame->SetAllowFrameToCollapse(1);
+        this->GradientEditorWidget->UpdateWidget(refNode);
       }
     else if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
       { 
@@ -957,6 +975,24 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
                  dtiVDW->GetWidgetName(), this->DTIDisplayFrame->GetWidgetName());
 
     this->VolumeDisplayWidget = this->scalarVDW;
+
+    // ---
+    // Gradient FRAME
+    this->GradientFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    this->GradientFrame->SetParent ( page );
+    this->GradientFrame->Create ( );
+    this->GradientFrame->SetLabelText ("DWI Gradient Editor");
+    this->GradientFrame->CollapseFrame ( );
+    this->GradientFrame->EnabledOff();
+    this->GradientFrame->SetAllowFrameToCollapse(0);
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  this->GradientFrame->GetWidgetName(), page->GetWidgetName());
+
+    this->GradientEditorWidget = vtkSlicerGradientEditorWidget::New ( );
+    this->GradientEditorWidget->SetParent ( this->GradientFrame->GetFrame() );
+    this->GradientEditorWidget->Create ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  this->GradientEditorWidget->GetWidgetName(), this->GradientFrame->GetFrame()->GetWidgetName());
 
     // ---
     // Info FRAME            
