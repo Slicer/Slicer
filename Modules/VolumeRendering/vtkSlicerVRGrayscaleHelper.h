@@ -59,6 +59,7 @@ public:
     void ProcessEnableDisableCropping(int cbSelectedState);
     void ProcessEnableDisableClippingPlanes(int clippingEnabled);
     void ProcessSelection(void);
+    void ProcessPauseResume(void);
 
 protected:
     vtkSlicerVRGrayscaleHelper(void);
@@ -100,6 +101,9 @@ protected:
     vtkKWPushButton *PB_Reset;
     int ColorMode;
     int ThresholdMode;
+
+    //Pause Resume
+    vtkKWPushButton *PB_PauseResume;
 
 
     
@@ -160,6 +164,10 @@ protected:
     double ColorsClippingHandles[6][3];
 
     int NoSetRangeNeeded;
+
+    //Description;
+    //Indicates if the VolumeRendering is Paused or not
+    int RenderingPaused;
 
 
 

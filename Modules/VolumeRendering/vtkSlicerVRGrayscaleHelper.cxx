@@ -137,6 +137,10 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     ColorsClippingHandles[5][0]=0;
     ColorsClippingHandles[5][1]=0;
     ColorsClippingHandles[5][2]=0;
+
+    //PauseResume
+    this->PB_PauseResume=NULL;
+    this->RenderingPaused=0;
 }
 
 vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
@@ -360,6 +364,17 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->Gui->Script("bind all <Any-ButtonPress> {%s SetButtonDown 1}",this->GetTclName());
     this->Gui->Script("bind all <Any-ButtonRelease> {%s SetButtonDown 0}",this->GetTclName());
 
+    //TODO: Move Pause Resume Button to another Place
+        //Pause Resume Button
+    this->PB_PauseResume=vtkKWPushButton::New();
+    this->PB_PauseResume->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+    this->PB_PauseResume->Create();
+    this->PB_PauseResume->SetText("Pause");
+    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",
+        this->PB_PauseResume->GetWidgetName());
+    this->PB_PauseResume->SetCommand(this,"ProcessPauseResume");
+
+
     //Create a notebook
     this->NB_Details=vtkKWNotebook::New();
     this->NB_Details->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
@@ -476,6 +491,8 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->ColorDisplay->AddObserver(vtkSlicerColorDisplayWidget::ColorIDModifiedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
     this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",
         this->ColorDisplay->GetWidgetName()); 
+
+
 
 }
 void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
@@ -1739,5 +1756,40 @@ void vtkSlicerVRGrayscaleHelper::ProcessSelection(void)
     this->ColorDisplay->GetMultiColumnList()->GetWidget()->SetSelectionType(0);
 
     delete indices;
+}
+
+void vtkSlicerVRGrayscaleHelper::ProcessPauseResume(void)
+{
+    //Resume Rendering
+    if(this->RenderingPaused)
+    {
+        this->RenderingPaused=0;
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+        this->Volume->VisibilityOn();
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+        this->PB_PauseResume->SetText("Pause");
+
+    }
+    //Pause Rendering
+    else if (!this->RenderingPaused)
+    {
+         this->RenderingPaused=1;
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+        //Clear ProgressGauge
+                    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,0);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,0);
+            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,0);
+        
+        this->Volume->VisibilityOff();
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+        this->PB_PauseResume->SetText("Resume");
+    }
+    else
+    {
+        vtkErrorMacro("RenderingPaused is not a valid number");
+    }
+    this->Script("put \"ProcessPauseResume\"");
 }
 
