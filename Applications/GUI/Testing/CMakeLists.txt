@@ -38,4 +38,4 @@ INCLUDE_DIRECTORIES(
 
 SET(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")
 ADD_TEST(EventBrokerTest 
-  ${Slicer3_BINARY_DIR}/Slicer3 --launch EventBrokerTest --logFile ${TEMP}/EventBroker.log)
+  ${Slicer3_BINARY_DIR}/Slicer3 --launch EventBrokerTest --logFileName ${TEMP}/EventLog.dot --graphFile ${TEMP}/EventBroker.dot)

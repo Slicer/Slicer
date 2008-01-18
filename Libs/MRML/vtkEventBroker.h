@@ -37,6 +37,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <fstream>
 
 class vtkCollection;
 class vtkCallbackCommand;
@@ -102,9 +103,19 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
 
   // Description:
   // File to write event logs to when EventLoging is turned on
-  vtkSetStringMacro (LogFile);
-  vtkGetStringMacro (LogFile);
+  vtkSetStringMacro (LogFileName);
+  vtkGetStringMacro (LogFileName);
 
+  // Description:
+  // actually write to the log file (also manages state of the LogFile ivar
+  // based on the filename and the EventLogging variable)
+  void LogEvent (vtkObservation *observation);
+
+  //// Graph File
+
+  // Description:
+  // Write out the current list of observations in graphviz format (.dot)
+  int GenerateGraphFile ( const char *graphFile );
 
 
   //// Event Queue processing modes
@@ -173,9 +184,13 @@ protected:
   //ETX
   
   int EventLogging;
-  char *LogFile;
+  char *LogFileName;
 
   int EventMode;
+
+  //BTX
+  std::ofstream LogFile;
+  //ETX
 
 };
 

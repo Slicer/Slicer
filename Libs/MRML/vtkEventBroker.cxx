@@ -26,17 +26,25 @@ vtkStandardNewMacro(vtkEventBroker);
 vtkEventBroker::vtkEventBroker()
 {
   this->EventMode = vtkEventBroker::Synchronous;
-  this->LogFile = NULL;
+  this->LogFileName = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkEventBroker::~vtkEventBroker()
 {
+  // clear out all the observation records
   std::vector< vtkObservation *>::iterator iter; 
   for(iter=this->Observations.begin(); iter != this->Observations.end(); iter++)  
     { 
     this->DetachObservation (*iter);
     (*iter)->Delete();
+    }
+
+  // close the event log if needed
+  if ( this->LogFile.is_open() )
+    {
+    this->EventLoggingOff();
+    this->LogEvent( NULL );
     }
 }
 
@@ -193,8 +201,100 @@ vtkObservation *vtkEventBroker::GetNthObservation ( int n )
 }
 
 //----------------------------------------------------------------------------
+int vtkEventBroker::GenerateGraphFile ( const char *graphFile )
+{
+  std::ofstream file;
+
+  file.open( graphFile, std::ios::out );
+
+  if ( file.fail() )
+    {
+    vtkErrorMacro( "could not write to " << graphFile );
+    return 1;
+    }
+
+  file << "digraph G {\n";
+
+  vtkObservation *observation;
+  int size = this->GetNumberOfObservations();
+  for (int count = 0; count < size; count++)
+    {
+    observation = this->GetNthObservation( count );
+    file << " " \
+        << observation->GetObserver()->GetClassName() 
+        << " -> "
+        << observation->GetSubject()->GetClassName() 
+        << " [ label = \"" 
+        << vtkCommand::GetStringFromEventId( observation->GetEvent() )
+        << "\" ]\n;" ;
+    }
+
+
+  file << "}\n";
+  file.close();
+}
+
+//----------------------------------------------------------------------------
+void vtkEventBroker::LogEvent ( vtkObservation *observation )
+{
+  if ( this->LogFileName == NULL )
+    {
+    // if we don't have a log file, we can't do anything
+    return;
+    }
+
+  // start an event log if needed
+  if ( this->EventLogging && !this->LogFile.is_open() )
+    {
+    this->LogFile.open( this->LogFileName, std::ios::out );
+    this->LogFile << "digraph G {\n";
+    }
+
+  // close the log if done
+  if ( !this->EventLogging && this->LogFile.is_open() )
+    {
+    this->LogFile << "}\n";
+    this->LogFile.close();
+    return;
+    }
+
+  if ( this->EventLogging && observation != NULL )
+    {
+    // log the actual event
+    this->LogFile << " " \
+        << observation->GetSubject()->GetClassName() 
+        << " -> "
+        << observation->GetObserver()->GetClassName() 
+        << " [ label = \"" 
+        << vtkCommand::GetStringFromEventId( observation->GetEvent() )
+        << "\" ]\n;" ;
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkEventBroker::ProcessEvent ( vtkObservation *observation, vtkObject *caller, unsigned long eid, void *callData )
 {
+  //
+  // we've got an event we care about - either invoke it
+  // right away, or put it on the queue for later handling
+  // - check first if it's the event the observer asked for (it might
+  // be a delete event that the event broker asked for)
+  //
+  if ( eid == observation->GetEvent() )
+    {
+    if ( this->EventMode == vtkEventBroker::Synchronous )
+      {
+      this->InvokeObservation( observation );
+      }
+    else if ( this->EventMode == vtkEventBroker::Asynchronous )
+      {
+      this->QueueObservation( observation );
+      }
+    else
+      {
+      vtkErrorMacro ( "Bad EventMode " << this->EventMode );
+      }
+    }
 
   // 
   // for delete events, just clean up and get out
@@ -204,23 +304,6 @@ void vtkEventBroker::ProcessEvent ( vtkObservation *observation, vtkObject *call
     {
     this->RemoveObservation( observation );
     return;
-    }
-
-  //
-  // otherwise, we've got an event we care about - either invoke it
-  // right away, or put it on the queue for later handling
-  //
-  if ( this->EventMode == vtkEventBroker::Synchronous )
-    {
-    this->InvokeObservation( observation );
-    }
-  else if ( this->EventMode == vtkEventBroker::Asynchronous )
-    {
-    this->QueueObservation( observation );
-    }
-  else
-    {
-    vtkErrorMacro ( "Bad EventMode " << this->EventMode );
     }
 }
 
@@ -264,10 +347,17 @@ vtkObservation *vtkEventBroker::DequeueObservation ()
 //----------------------------------------------------------------------------
 void vtkEventBroker::InvokeObservation ( vtkObservation *observation )
 {
+  // TODO record the timing before and after invocation
+ 
+  // Invoke the observation
   observation->GetCallbackCommand()->Execute(
                                     observation->GetSubject(),
                                     observation->GetEvent(),
                                     NULL);
+
+  // Write the to the log file if enabled
+  this->LogEvent (observation);
+
 }
 
 //----------------------------------------------------------------------------
@@ -292,8 +382,8 @@ void vtkEventBroker::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "NumberOfQueueObservations: " << this->GetNumberOfQueuedObservations() << "\n";
   os << indent << "EventMode: " << this->GetEventModeAsString() << "\n";
   os << indent << "EventLogging: " << this->EventLogging << "\n";
-  os << indent << "LogFile: " <<
-    (this->LogFile ? this->LogFile : "(none)") << "\n";
+  os << indent << "LogFileName: " <<
+    (this->LogFileName ? this->LogFileName : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------

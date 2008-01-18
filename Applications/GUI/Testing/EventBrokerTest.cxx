@@ -48,12 +48,11 @@ int main(int argc, char * argv[])
 
   vtkObservation *observation = broker->AddObservation( ellip, vtkCommand::ModifiedEvent, viewer, callback);
 
-  if ( logFile != "" )
+  if ( logFileName != "" )
     {
-    broker->SetLogFile( logFile.c_str() );
+    broker->SetLogFileName( logFileName.c_str() );
     broker->EventLoggingOn();
     }
-
 
   std::cerr << "Three synchonous events:\n";
   broker->SetEventModeToSynchronous();
@@ -67,6 +66,11 @@ int main(int argc, char * argv[])
   ellip->Modified();
   ellip->Modified();
   broker->ProcessEventQueue();
+
+  if ( graphFile != "" )
+    {
+    broker->GenerateGraphFile( graphFile.c_str() );
+    }
 
   viewer->Delete();
   ellip->Delete();

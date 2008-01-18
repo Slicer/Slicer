@@ -16,10 +16,18 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
 <parameters>
 
     <file>
-      <name>logFile</name>
-      <longflag>logFile</longflag>
+      <name>logFileName</name>
+      <longflag>logFileName</longflag>
       <description>If specified, file to log all event information.</description>
-      <label>Log File</label>
+      <label>Log File Name</label>
+      <channel>output</channel>
+    </file>
+
+    <file>
+      <name>graphFile</name>
+      <longflag>graphFile</longflag>
+      <description>If specified, generate a file in dot (Graphviz) format showing all the observations registered in the broker.</description>
+      <label>Graph File</label>
       <channel>output</channel>
     </file>
 
