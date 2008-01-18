@@ -117,8 +117,6 @@ itcl::body GridSWidget::destructor {} {
 #
 itcl::body GridSWidget::processEvent { {caller ""} {event ""} } {
 
-puts "$this event ($event) from $caller [$caller GetClassName]"
-
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
@@ -194,8 +192,6 @@ itcl::body GridSWidget::addGridLine { startPoint endPoint } {
 # make the grid object
 #
 itcl::body GridSWidget::updateGrid { } {
-
-puts "$this updating"
 
   $this resetGrid
 
