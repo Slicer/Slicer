@@ -172,6 +172,5 @@ protected:
     int RenderingPaused;
 
 
-
 };
 #endif

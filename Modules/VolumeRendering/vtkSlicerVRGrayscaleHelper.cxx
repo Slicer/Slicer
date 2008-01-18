@@ -141,6 +141,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     //PauseResume
     this->PB_PauseResume=NULL;
     this->RenderingPaused=0;
+
 }
 
 vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
@@ -589,6 +590,8 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->MapperRaycast->SetCropping(this->CB_Cropping->GetWidget()->GetSelectedState());
         this->MapperTexture->SetCroppingRegionFlagsToSubVolume();
         this->MapperRaycast->SetCroppingRegionFlagsToSubVolume();
+
+
     }
 
     //Try to load from the registry; do it here to ensure all objects are there
@@ -613,6 +616,27 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->CB_InteractiveFrameRate->GetWidget()->SetSelectedState(this->Gui->GetApplication()->GetIntRegistryValue(2,"VolumeRendering","CB_InteractiveFrameRate"));
         this->GoalLowResTime=1./this->SC_Framerate->GetWidget()->GetValue();
         this->MapperRaycast->SetManualInteractiveRate(this->GoalLowResTime);
+    }
+
+            //check if texture mapping is supported important to do it after registry
+        //otherwise show textmessage
+    int supportTexture=this->MapperTexture->IsRenderSupported(this->Gui->GetcurrentNode()->GetVolumeProperty());
+
+    if(!supportTexture)
+    {
+
+        vtkKWLabel *errorText=vtkKWLabel::New();
+        errorText->SetParent(this->MappersFrame->GetFrame());
+        errorText->Create();
+        errorText->SetText("OpenGL Texture Mapping is not supported");
+        this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+            errorText->GetWidgetName());
+        this->CB_RayCast->GetWidget()->SetSelectedState(1);            
+        this->CB_TextureLow->GetWidget()->SetSelectedState(0);
+        this->CB_TextureHigh->GetWidget()->SetSelectedState(0);
+        this->CB_TextureLow->EnabledOff();
+        this->CB_TextureHigh->EnabledOff();
+
     }
 
 
@@ -740,7 +764,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
     {
         this->ScheduleMask[0]=callerObjectCheckButton->GetSelectedState();
         this->UpdateQualityCheckBoxes();
-
         return;
     }
     if(callerObjectCheckButton==this->CB_TextureHigh->GetWidget()&&eid==vtkKWCheckButton::SelectedStateChangedEvent)
@@ -1292,6 +1315,7 @@ void vtkSlicerVRGrayscaleHelper::ScheduleStageZero()
 
 void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
 {
+
     //Update the quality
     int i=0;
     this->Quality=0;
@@ -1342,8 +1366,6 @@ void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
         this->CB_InteractiveFrameRate->GetWidget()->SetSelectedState(0);
         this->CB_InteractiveFrameRate->EnabledOff();
     }
-    //Check if we can activate the interactive checkbox
-
 }
 
 void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
