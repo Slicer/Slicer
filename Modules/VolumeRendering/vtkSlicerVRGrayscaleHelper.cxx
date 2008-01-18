@@ -210,18 +210,7 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->MapperRaycast=NULL;
     }
 
-    //Ensure that Render is back to normal
-    vtkRenderWindow *renWin=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
-    //get the viewport renderer up
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
-    //this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("");
-    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,0);
-    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,0);
-    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,0);
-    //Change viewport(simulation of "sample distance for "rays"" if using texture mapping)
-    this->renViewport->SetViewport(0,0,1,1);
-    renWin->SwapBuffersOn();
+    this->ResetRenderingAlgorithm();
 
     if(this->renPlane!=NULL)
     {
@@ -1778,9 +1767,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessPauseResume(void)
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
         //Clear ProgressGauge
-                    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,0);
-            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,0);
-            this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,0);
+        this->ResetRenderingAlgorithm();
         
         this->Volume->VisibilityOff();
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
@@ -1793,3 +1780,18 @@ void vtkSlicerVRGrayscaleHelper::ProcessPauseResume(void)
     this->Script("put \"ProcessPauseResume\"");
 }
 
+void vtkSlicerVRGrayscaleHelper::ResetRenderingAlgorithm(void)
+{
+        //Ensure that Render is back to normal
+    vtkRenderWindow *renWin=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
+    //get the viewport renderer up
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
+    //this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("");
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,0);
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,0);
+    this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,0);
+    //Change viewport(simulation of "sample distance for "rays"" if using texture mapping)
+    this->renViewport->SetViewport(0,0,1,1);
+    renWin->SwapBuffersOn();
+}

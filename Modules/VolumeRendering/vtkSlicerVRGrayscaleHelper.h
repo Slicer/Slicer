@@ -160,6 +160,8 @@ protected:
     void CreateCropping(void);
 
     void CreateThreshold(void);
+    void ResetRenderingAlgorithm(void);
+
 
     double ColorsClippingHandles[6][3];
 
