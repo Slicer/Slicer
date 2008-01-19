@@ -22,6 +22,9 @@ class vtkKWMenuButtonWithLabel;
 class vtkKWPushButton;
 class vtkBoxWidget;
 class vtkSlicerColorDisplayWidget;
+class vtkSlicerNodeSelectorWidget;
+
+
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
@@ -60,6 +63,8 @@ public:
     void ProcessEnableDisableClippingPlanes(int clippingEnabled);
     void ProcessSelection(void);
     void ProcessPauseResume(void);
+    void ProcessSelectAllLabels(void);
+    void ProcessDeselectAllLabels(void);
 
 protected:
     vtkSlicerVRGrayscaleHelper(void);
@@ -81,6 +86,7 @@ protected:
     vtkKWCheckButtonWithLabel *CB_InteractiveFrameRate;
     vtkKWScaleWithLabel *SC_Framerate;
     // Cropping GUI
+    vtkSlicerNodeSelectorWidget *NS_TransformNode;
     vtkKWCheckButtonWithLabel *CB_Cropping;
     vtkKWRange *RA_Cropping[3];
 
@@ -89,6 +95,8 @@ protected:
 
     //ColorDisplay Widget
     vtkSlicerColorDisplayWidget *ColorDisplay;
+    vtkKWPushButton *PB_LabelsSelectAll;
+    vtkKWPushButton *PB_LabelsDeselectAll;
 
 
     //ThresholdGUI
@@ -156,16 +164,24 @@ protected:
 
     void AdjustMapping(void);
 
-    void UpdateQualityCheckBoxes(void);
-    void CreateCropping(void);
-
     void CreateThreshold(void);
-    void ResetRenderingAlgorithm(void);
+    void DestroyTreshold(void);
+
+    void CreatePerformance(void);
+    void DestroyPerformance(void);
+    
+    void CreateCropping(void);
+    void DestroyCropping(void);
+    void UpdateQualityCheckBoxes(void);
+
+    void CreateLabelmap(void);
+    void DestroyLabelmap(void);
 
 
     double ColorsClippingHandles[6][3];
 
     int NoSetRangeNeeded;
+    void ResetRenderingAlgorithm(void);
 
     //Description;
     //Indicates if the VolumeRendering is Paused or not
