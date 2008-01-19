@@ -123,8 +123,8 @@ int DoIt( int argc, char *argv[] )
     }
   else //if( registration == "BSpline" )
     {
-    reger->SetEnableRigidRegistration( false );
-    reger->SetEnableAffineRegistration( false );
+    reger->SetEnableRigidRegistration( true );
+    reger->SetEnableAffineRegistration( true );
     reger->SetEnableBSplineRegistration( true );
     }
 

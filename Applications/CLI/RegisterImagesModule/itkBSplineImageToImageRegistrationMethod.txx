@@ -90,7 +90,7 @@ BSplineImageToImageRegistrationMethod< TImage >
 
   Superclass::TransformParametersType params( numberOfParameters );
   params.Fill( 0.0 );
-  this->GetTypedTransform()->SetParameters( params );
+  this->GetTypedTransform()->SetParametersByValue( params );
   if( this->GetInitialTransformParameters().GetSize() !=
       numberOfParameters )
     {

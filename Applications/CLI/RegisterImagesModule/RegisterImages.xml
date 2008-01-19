@@ -115,7 +115,7 @@
       <description>Portion of the image to use in computing the metric during BSpline registration</description>
       <label>BSpline sampling ratio</label>
       <longflag>bsplineSamplingRatio</longflag>
-      <default>0.3</default>
+      <default>0.2</default>
     </float>
     <float>
       <name>expectedOffset</name>
@@ -150,7 +150,7 @@
       <description>Number of pixels between control points</description>
       <label>Control point spacing (pixels)</label>
       <longflag>controlPointSpacing</longflag>
-      <default>20</default>
+      <default>30</default>
     </integer>
     <boolean>
       <name>useWindowedSinc</name>
