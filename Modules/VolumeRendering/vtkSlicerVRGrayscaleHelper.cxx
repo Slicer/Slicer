@@ -222,7 +222,10 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->timer->Delete();
         this->timer=NULL;
     }
-
+    this->DestroyTreshold();
+    this->DestroyPerformance();
+    this->DestroyCropping();
+    this->DestroyLabelmap();
 
     if(this->NB_Details)
     {
@@ -240,10 +243,7 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->PB_PauseResume->Delete();
         this->PB_PauseResume=NULL;
     }
-    this->DestroyTreshold();
-    this->DestroyPerformance();
-    this->DestroyCropping();
-    this->DestroyLabelmap();
+
 }
 void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 {
