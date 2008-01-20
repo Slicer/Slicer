@@ -143,15 +143,15 @@ int DoIt( int argc, char *argv[] )
 
   if( reger->GetEnableBSplineRegistration() )
     {
-    reger->SetBSplineMaxIterations( maxIterations );
+    reger->SetBSplineMaxIterations( bsplineMaxIterations );
     }
   else if( reger->GetEnableAffineRegistration() )
     {
-    reger->SetAffineMaxIterations( maxIterations );
+    reger->SetAffineMaxIterations( affineMaxIterations );
     }
   else
     {
-    reger->SetRigidMaxIterations( maxIterations );
+    reger->SetRigidMaxIterations( affineMaxIterations );
     }
 
   reger->SetRigidSamplingRatio( affineSamplingRatio );

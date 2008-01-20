@@ -105,6 +105,8 @@ InitialImageToImageRegistrationMethod< TImage >
         momCalc->SetSpatialObjectMask( this->GetFixedImageMaskObject() );
         }
       }
+    // HELP: ImageMomentsCalculator isn't multi-threaded :(
+    //momCalc->SetNumberOfThreads( this->GetRegistrationNumberOfThreads() );
     momCalc->Compute();
 
     typename MomentsCalculatorType::AffineTransformType::Pointer 

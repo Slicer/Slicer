@@ -36,12 +36,8 @@ ImageToImageRegistrationMethod< TImage >
 
   this->ProcessObject::SetNthOutput( 0, transformDecorator.GetPointer() );
 
-#ifdef ITK_USE_OPTIMIZED_REGISTRATION_METHODS
-  this->SetNumberOfThreads( this->GetMultiThreader()->GetNumberOfThreads() );
-#else
-  this->SetNumberOfThreads( 1 );
-  this->GetMultiThreader()->SetNumberOfThreads( this->GetNumberOfThreads() );
-#endif
+  m_RegistrationNumberOfThreads = this->GetNumberOfThreads();
+  this->GetMultiThreader()->SetNumberOfThreads( m_RegistrationNumberOfThreads );
 
   m_FixedImage = 0;
   m_MovingImage = 0;
@@ -159,6 +155,8 @@ void
 ImageToImageRegistrationMethod< TImage >
 ::Initialize( void )
 {
+  this->GetMultiThreader()->SetNumberOfThreads( m_RegistrationNumberOfThreads );
+
   if( m_Transform.IsNull() )
     {
     itkExceptionMacro( << "Transform is not set" );
@@ -195,6 +193,8 @@ ImageToImageRegistrationMethod< TImage >
 {
   Superclass::PrintSelf( os, indent );
 
+  os << indent << "Number of threads = " << m_RegistrationNumberOfThreads
+     << std::endl;
   if( m_Transform.IsNotNull() )
     {
     os << indent << "Transform = " << m_Transform << std::endl;

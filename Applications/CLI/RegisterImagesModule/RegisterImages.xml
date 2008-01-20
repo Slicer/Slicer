@@ -97,25 +97,32 @@
       <default>MattesMI</default>
     </string-enumeration>
     <integer>
-      <name>maxIterations</name>
+      <name>affineMaxIterations</name>
       <description>Maximum number of optimization iterations</description>
-      <label>Max Iterations</label>
-      <longflag>maxIterations</longflag>
-      <default>500</default>
+      <label>Affine Max Iterations</label>
+      <longflag>affineMaxIterations</longflag>
+      <default>100</default>
     </integer>
     <float>
       <name>affineSamplingRatio</name>
       <description>Portion of the image to use in computing the metric during rigid/affine registration</description>
       <label>Affine sampling ratio</label>
       <longflag>affineSamplingRatio</longflag>
-      <default>0.1</default>
+      <default>0.02</default>
     </float>
+    <integer>
+      <name>bsplineMaxIterations</name>
+      <description>Maximum number of optimization iterations</description>
+      <label>BSpline Max Iterations</label>
+      <longflag>bsplineMaxIterations</longflag>
+      <default>100</default>
+    </integer>
     <float>
       <name>bsplineSamplingRatio</name>
       <description>Portion of the image to use in computing the metric during BSpline registration</description>
       <label>BSpline sampling ratio</label>
       <longflag>bsplineSamplingRatio</longflag>
-      <default>0.2</default>
+      <default>0.1</default>
     </float>
     <float>
       <name>expectedOffset</name>
@@ -150,7 +157,7 @@
       <description>Number of pixels between control points</description>
       <label>Control point spacing (pixels)</label>
       <longflag>controlPointSpacing</longflag>
-      <default>30</default>
+      <default>50</default>
     </integer>
     <boolean>
       <name>useWindowedSinc</name>

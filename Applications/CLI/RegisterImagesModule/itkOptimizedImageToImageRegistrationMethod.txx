@@ -309,7 +309,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
         tmpOpt->SetStepLength( 2 );
         tmpOpt->SetStepTolerance( this->GetTargetError() );
         tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() * 2 );
-        tmpOpt->SetMaximumLineIteration( this->GetMaxIterations() );
+        tmpOpt->SetMaximumLineIteration( (int)( this->GetMaxIterations() / (this->GetTransform()->GetNumberOfParameters() * 0.5) ) );
         tmpOpt->SetScales( this->GetTransformParametersScales() );
         }
  
@@ -387,7 +387,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
       evoOpt->SetEpsilon( 1e-10 );
       evoOpt->Initialize( 1.01 );
       evoOpt->SetScales( this->GetTransformParametersScales() );
-      evoOpt->SetMaximumIteration( this->GetMaxIterations() );
+      evoOpt->SetMaximumIteration( this->GetMaxIterations() / 2 );
 
       int numberOfParameters = this->GetTransform()->GetNumberOfParameters();
 
@@ -410,8 +410,8 @@ OptimizedImageToImageRegistrationMethod< TImage >
         tmpOpt->SetLowerBound( lowerBound );
         tmpOpt->SetCostFunctionConvergenceFactor( this->GetTargetError() );
         tmpOpt->SetProjectedGradientTolerance( 1e-10 );
-        tmpOpt->SetMaximumNumberOfIterations( this->GetMaxIterations() );
-        tmpOpt->SetMaximumNumberOfEvaluations( this->GetMaxIterations() );
+        tmpOpt->SetMaximumNumberOfIterations( this->GetMaxIterations() / 2 );
+        tmpOpt->SetMaximumNumberOfEvaluations( this->GetMaxIterations() / 2 );
         tmpOpt->SetMaximumNumberOfCorrections( 10 );
         }
       else
@@ -426,8 +426,8 @@ OptimizedImageToImageRegistrationMethod< TImage >
         tmpOpt->SetMaximize( false );
         tmpOpt->SetStepLength( 0.5 );
         tmpOpt->SetStepTolerance( this->GetTargetError() );
-        tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() * 2 );
-        tmpOpt->SetMaximumLineIteration( this->GetMaxIterations() / 2 );
+        tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() );
+        tmpOpt->SetMaximumLineIteration( (int)( this->GetMaxIterations() / (this->GetTransform()->GetNumberOfParameters() * 0.5) ) );
         tmpOpt->SetScales( this->GetTransformParametersScales() );
         }
 
@@ -537,7 +537,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
         tmpOpt->SetStepLength( 0.5 );
         tmpOpt->SetStepTolerance( this->GetTargetError() );
         tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() * 2 );
-        tmpOpt->SetMaximumLineIteration( this->GetMaxIterations() );
+        tmpOpt->SetMaximumLineIteration( (int)( this->GetMaxIterations() / (this->GetTransform()->GetNumberOfParameters() * 0.5) ) );
         tmpOpt->SetScales( this->GetTransformParametersScales() );
         }
 

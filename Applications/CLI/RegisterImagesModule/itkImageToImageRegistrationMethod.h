@@ -67,6 +67,9 @@ class ImageToImageRegistrationMethod
     //
     // Custom Methods
     //
+    itkSetMacro( RegistrationNumberOfThreads, unsigned int );
+    itkGetMacro( RegistrationNumberOfThreads, unsigned int );
+
     itkSetObjectMacro( Observer, Command );
     itkGetObjectMacro( Observer, Command );
 
@@ -109,6 +112,8 @@ class ImageToImageRegistrationMethod
 
     ImageToImageRegistrationMethod( const Self & ); // Purposely not implemented
     void operator = ( const Self & );               // Purposely not implemented
+
+    unsigned int                           m_RegistrationNumberOfThreads;
 
     typename TransformType::Pointer        m_Transform;
 

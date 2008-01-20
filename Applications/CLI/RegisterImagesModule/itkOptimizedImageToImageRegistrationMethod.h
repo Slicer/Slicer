@@ -75,7 +75,7 @@ class OptimizedImageToImageRegistrationMethod
     // 
     // Methods from Superclass
     //
-    void Update();
+    void Update( void );
 
     //
     // Custom Methods
