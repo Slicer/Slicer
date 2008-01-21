@@ -30,6 +30,7 @@ vtkObservation::vtkObservation()
   this->Event = 0;
   this->Observer = NULL;
   this->CallbackCommand = NULL;
+  this->Script = NULL;
   this->Comment = NULL;
   this->EventTag = 0;
   this->SubjectDeleteEventTag = 0;
@@ -43,6 +44,8 @@ vtkObservation::vtkObservation()
 //----------------------------------------------------------------------------
 vtkObservation::~vtkObservation()
 {
+  this->SetScript( NULL );
+
   if (this->ObservationCallbackCommand != NULL)
     {
     this->ObservationCallbackCommand->Delete();
@@ -78,6 +81,9 @@ void vtkObservation::PrintSelf(ostream& os, vtkIndent indent)
 
   if ( this->CallbackCommand ) os << indent << "CallbackCommand: " << this->CallbackCommand << "\n";
   else os << indent << "CallbackCommand: " << "(none) \n";
+
+  os << indent << "Script: " <<
+    (this->Script ? this->Script : "(none)") << "\n";
 
   os << indent << "Comment: " <<
     (this->Comment ? this->Comment : "(none)") << "\n";

@@ -61,8 +61,9 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   vtkObservation *AddObservation (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify);
 
   // Description:
-  // Optional string of comments for tracing
-  vtkObservation *AddObservation (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify, char *comment);
+  // Scripted version of observation
+  // - creates an observation that will be inoked using the ScriptHandler method
+  vtkObservation *AddObservation (vtkObject *subject, const char *event, const char *script);
 
   // Description:
   // Attach adds the observers to the object.
@@ -163,7 +164,17 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   static void Callback(vtkObject *caller, 
       unsigned long eid, void *clientData, void *callData);
 
+  // Description:
+  // Sets the method pointer to be used for processing script observations
+  //BTX
+  void SetScriptHandler ( const char* (*scriptHandler) (const char* script) )
+    {
+    this->ScriptHandler = scriptHandler;
+    }
+  //ETX
+
 protected:
+
   vtkEventBroker();
   virtual ~vtkEventBroker();
   vtkEventBroker(const vtkEventBroker&);
@@ -183,6 +194,10 @@ protected:
   //std::map< vtkObject*, int > ObservationsBySubject;
   //ETX
   
+  //BTX
+  const char* (*ScriptHandler) (const char* script);
+  //ETX
+
   int EventLogging;
   char *LogFileName;
 

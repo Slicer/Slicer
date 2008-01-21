@@ -63,6 +63,8 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   vtkSetMacro (Event, unsigned long);
   vtkSetObjectMacro (CallbackCommand, vtkCallbackCommand);
   vtkGetObjectMacro (CallbackCommand, vtkCallbackCommand);
+  vtkSetStringMacro (Script);
+  vtkGetStringMacro (Script);
   vtkGetObjectMacro (Observer, vtkObject);
   void AssignObserver(vtkObject* observer) {this->Observer = observer;};
   vtkSetStringMacro (Comment);
@@ -111,6 +113,10 @@ protected:
   // Description:
   // Holder for callback that the Observer wants to have run when Event happens
   vtkCallbackCommand *CallbackCommand;
+
+  // Description:
+  // Holder for script as an alternative to the callback command
+  char *Script;
 
   // Description:
   // Holder for comment string

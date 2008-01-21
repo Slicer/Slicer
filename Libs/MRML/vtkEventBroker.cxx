@@ -27,6 +27,7 @@ vtkEventBroker::vtkEventBroker()
 {
   this->EventMode = vtkEventBroker::Synchronous;
   this->LogFileName = NULL;
+  this->ScriptHandler = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -66,12 +67,27 @@ vtkObservation *vtkEventBroker::AddObservation (
 }
 
 //----------------------------------------------------------------------------
-vtkObservation *vtkEventBroker::AddObservation (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify, char *comment)
+vtkObservation *vtkEventBroker::AddObservation (
+  vtkObject *subject, const char *event, const char *script)
 {
-  vtkObservation *observation = this->AddObservation (subject, event, observer, notify);
-  observation->SetComment (comment);
+  vtkObservation *observation = vtkObservation::New();
+  observation->SetEventBroker( this );
+  this->Observations.push_back( observation );
+  observation->AssignSubject( subject );
+
+  // figure out event either as a predefined string, or
+  // as an ascii number
+  unsigned long eventID = vtkCommand::GetEventIdFromString( event );
+  if ( eventID == vtkCommand::NoEvent )
+    {
+    eventID = static_cast<unsigned long> (atoi( event ));
+    }
+  observation->SetEvent( eventID );
+  observation->SetScript( script );
+
+  this->AttachObservation( observation );
   return (observation);
-};
+}
 
 //----------------------------------------------------------------------------
 void vtkEventBroker::AttachObservation ( vtkObservation *observation )
@@ -82,7 +98,7 @@ void vtkEventBroker::AttachObservation ( vtkObservation *observation )
   // (remove any old notifications first)
   //
 
-  this->DetachObservation ( observation );
+  this->DetachObservation( observation );
 
   unsigned long tag;
 
@@ -247,7 +263,7 @@ void vtkEventBroker::LogEvent ( vtkObservation *observation )
   if ( this->EventLogging && !this->LogFile.is_open() )
     {
     this->LogFile.open( this->LogFileName, std::ios::out );
-    this->LogFile << "digraph G {\n";
+    this->LogFile << "strict digraph G {\n";
     }
 
   // close the log if done
