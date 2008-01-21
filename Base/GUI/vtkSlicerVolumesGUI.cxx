@@ -11,8 +11,6 @@
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
 
-#include "vtkSlicerModuleCollapsibleFrame.h"
-
 #include "vtkKWWidget.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWCheckButton.h"
@@ -28,17 +26,17 @@
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkKWProgressGauge.h"
+
+#include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkSlicerVolumeFileHeaderWidget.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerVolumesGUI );
 vtkCxxRevisionMacro ( vtkSlicerVolumesGUI, "$Revision: 1.0 $");
 
-
 //---------------------------------------------------------------------------
 vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
 {
-
     this->Logic = NULL;
     this->VolumeNode = NULL;
     this->SelectedVolumeID = NULL;
@@ -80,9 +78,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
     NAMICLabel = NULL;
     NCIGTLabel = NULL;
     BIRNLabel = NULL;
-
 }
-
 
 //---------------------------------------------------------------------------
 vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
@@ -104,7 +100,6 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->SaveVolumeButton->SetParent(NULL );
     this->SaveVolumeButton->Delete ( );
     }
-
   if (this->VolumeFileHeaderWidget)
     {
     this->VolumeFileHeaderWidget->SetParent(NULL );
@@ -115,7 +110,6 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->VolumeHeaderWidget->SetParent(NULL );
     this->VolumeHeaderWidget->Delete ( );
     }
-
   if (this->VolumeSelectorWidget)
     {
     this->VolumeSelectorWidget->SetParent(NULL );
@@ -216,8 +210,7 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->GradientFrame->Delete ( );
     this->GradientFrame = NULL;
     }
-  
-   if ( this->GradientEditorWidget )
+  if ( this->GradientEditorWidget )
     {
     this->GradientEditorWidget->SetParent ( NULL );
     this->GradientEditorWidget->Delete ( );
@@ -314,7 +307,6 @@ void vtkSlicerVolumesGUI::RemoveGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::AddGUIObservers ( )
 {
-
     // Fill in
     // observer load volume button    
     this->VolumeSelectorWidget->AddObserver ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -709,7 +701,8 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         }
         this->GradientFrame->EnabledOn();
         this->GradientFrame->SetAllowFrameToCollapse(1);
-        this->GradientEditorWidget->UpdateWidget(refNode);
+        vtkMRMLDiffusionWeightedVolumeNode *dwiNode = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(refNode);
+        this->GradientEditorWidget->UpdateWidget(dwiNode);
       }
     else if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
       { 
@@ -983,8 +976,8 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->GradientFrame->Create ( );
     this->GradientFrame->SetLabelText ("DWI Gradient Editor");
     this->GradientFrame->CollapseFrame ( );
-    this->GradientFrame->EnabledOff();
-    this->GradientFrame->SetAllowFrameToCollapse(0);
+   // this->GradientFrame->EnabledOff();
+   // this->GradientFrame->SetAllowFrameToCollapse(0);
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->GradientFrame->GetWidgetName(), page->GetWidgetName());
 

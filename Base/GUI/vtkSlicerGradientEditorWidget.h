@@ -1,11 +1,10 @@
 #ifndef __vtkSlicerGradientEditorWidget_h
 #define __vtkSlicerGradientEditorWidget_h
 
-#define ARRAY_LENGTH 3
 #include "vtkSlicerWidget.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
+
 class vtkKWFrameWithLabel;
-class vtkKWEntrySet;
 class vtkKWCheckButtonSet;
 class vtkKWPushButton;
 class vtkKWLabel;
@@ -15,12 +14,17 @@ class vtkSlicerNodeSelectorWidget;
 class vtkKWCheckButton;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkMatrix4x4;
+class vtkDoubleArray;
+class vtkKWMatrixWidget;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
-{
-public:
+  {
+  public:
+    // Description:
+    // Usual vtk class functions
     static vtkSlicerGradientEditorWidget* New();
     vtkTypeRevisionMacro(vtkSlicerGradientEditorWidget,vtkSlicerWidget);
+    void PrintSelf (ostream& os, vtkIndent indent );
 
     // Description:
     // Add/Remove observers on widgets in the GUI
@@ -30,34 +34,35 @@ public:
     // Description:
     // Method to propagate events generated in GUI to logic / mrml
     virtual void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData );
-    
-    // Description:
-    // Method to update the widget when a new node is loaded
-    virtual void UpdateWidget(vtkMRMLVolumeNode *node);
 
-protected:
+    // Description:
+    // Method to update the widget when a new node is loaded.
+    void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node);
+
+  protected:
     vtkSlicerGradientEditorWidget(void);
     virtual ~vtkSlicerGradientEditorWidget(void);
 
     // Description:
-    // Create the widget.
+    // Method to create the widget.
     virtual void CreateWidget();
 
     // Description:
-    // Update the GUI Matrix.
+    // Method to update the GUI matrix.
     void UpdateMatrix();
 
-    void PrintSelf (ostream& os, vtkIndent indent );
+    // Description:
+    // Method to update the GUI GradientsTextfield.
+    void UpdateGradients();
 
     vtkKWLoadSaveButtonWithLabel *SaveButton;
-    vtkKWLoadSaveButtonWithLabel *LoadButton;
     vtkKWLoadSaveButtonWithLabel *LoadGradientsButton;
     vtkKWFrameWithLabel *MeasurementFrame;
     vtkKWFrameWithLabel *TestFrame;
     vtkKWFrameWithLabel *GradientsFrame;
     vtkKWFrameWithLabel *LoadSaveFrame;
     vtkKWFrame *ButtonsFrame;
-    vtkKWEntrySet *MatrixGUI;
+    vtkKWMatrixWidget *MatrixGUI;
     vtkKWPushButton *NegativeButton;
     vtkKWPushButton *SwapButton;    
     vtkKWPushButton *RunButton;
@@ -68,12 +73,14 @@ protected:
     vtkSlicerNodeSelectorWidget *ROIMenu;
     vtkKWCheckButton *EnableMatrixButton;
     vtkKWCheckButton *EnableGradientsButton;
-    vtkKWCheckButton* Checkbuttons[ARRAY_LENGTH];
+    vtkKWCheckButton* Checkbuttons[3];
     vtkMatrix4x4 *Matrix;
+    vtkDoubleArray *Gradients;
+    vtkDoubleArray *BValues;
 
-private:
+  private:
     vtkSlicerGradientEditorWidget ( const vtkSlicerGradientEditorWidget& ); // Not implemented.
     void operator = ( const vtkSlicerGradientEditorWidget& ); //Not implemented.
-};
+  };
 
 #endif 
