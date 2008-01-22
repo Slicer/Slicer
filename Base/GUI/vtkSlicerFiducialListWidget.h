@@ -227,6 +227,12 @@ protected:
   // Description:
   // encapsulates the data mappers for each list, indexed by fiducial list id
   std::map< std::string, vtkMapper * > GlyphMapperMap;
+
+  // Description:
+  // keeps track of the kind of glyph was used for each fiducial list (2d or
+  // 3d), indexed by fiducial list id. If the type changes, may need to do some
+  // clean up.
+  std::map< std::string, bool> Use3DSymbolsMap;
   //ETX
 
   // Description:
