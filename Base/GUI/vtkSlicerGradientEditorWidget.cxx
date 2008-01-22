@@ -12,6 +12,7 @@
 #include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWMatrixWidget.h"
+#include "vtkKWMultiColumnList.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerGradientEditorWidget.h"
@@ -201,6 +202,7 @@ void vtkSlicerGradientEditorWidget::AddWidgetObservers ( )
   this->SwapButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->RunButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->AddObserver(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->Matrix->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);
   for(int i=0; i<3;i ++)
     {
     this->Checkbuttons[i]->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -228,6 +230,17 @@ void vtkSlicerGradientEditorWidget::PrintSelf ( ostream& os, vtkIndent indent )
   this->vtkObject::PrintSelf ( os, indent );
   os << indent << "vtkSlicerGradientEditorWidget: " << this->GetClassName ( ) << "\n";
   }
+
+//---------------------------------------------------------------------------
+void vtkSlicerGradientEditorWidget::ProcessMRMLEvents ( vtkObject *caller,
+                                              unsigned long event, void *callData )
+{
+  vtkErrorMacro(""<<caller->GetClassName());
+  if (this->Matrix == vtkMatrix4x4::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent)
+    {
+    vtkErrorMacro(" modified");
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerGradientEditorWidget::ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData )
@@ -388,11 +401,12 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents ( vtkObject *caller, uns
   //load gradients from file
   if (this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent)
     {
-    const char * filename = this->LoadGradientsButton->GetWidget()->GetFileName();
+    const char *filename = this->LoadGradientsButton->GetWidget()->GetFileName();
     if(filename)
       {
       vtkSlicerGradientEditorLogic *myLogic = vtkSlicerGradientEditorLogic::New();
-      vtkMRMLDiffusionWeightedVolumeNode *dwiNode = myLogic->AddGradients(filename);
+      vtkMRMLDiffusionWeightedVolumeNode *dwiNode = vtkMRMLDiffusionWeightedVolumeNode::New();
+      myLogic->AddGradients(filename, dwiNode);
       this->Gradients = dwiNode->GetDiffusionGradients();
       this->BValues = dwiNode->GetBValues();
       this->UpdateGradients();
@@ -403,6 +417,7 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents ( vtkObject *caller, uns
   if (this->RunButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
     //TODO
+    
     }
   }
 
@@ -413,7 +428,7 @@ void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeN
     // update the measurement frame when the active node changes
     vtkMatrix4x4 *newFrame = vtkMatrix4x4::New();
     dwiNode->GetMeasurementFrameMatrix(newFrame);
-    this->Matrix = newFrame;
+    this->Matrix->DeepCopy(newFrame);
     this->UpdateMatrix();
     newFrame->Delete();
 
@@ -508,7 +523,7 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->MatrixGUI->SetPadX(10);
   this->MatrixGUI->SetEnabled(0);
   this->MatrixGUI->SetRestrictElementValueToDouble();
-  this->MatrixGUI->SetWidth(5);
+  this->MatrixGUI->SetElementWidth(7);
 
   //initialize with default values
   this->UpdateMatrix();
@@ -605,6 +620,31 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->GradientsTextfield->SetEnabled(0);
   this->Script("pack %s -side top -anchor s -fill x -padx 2 -pady 2", 
     this->GradientsTextfield->GetWidgetName());
+
+  this->Gradients2 = vtkKWMultiColumnList::New();
+  this->Gradients2->SetParent(this->GradientsFrame->GetFrame());
+  this->Gradients2->Create();
+  int col_index;
+  col_index= this->Gradients2->AddColumn("Gradient");
+  this->Gradients2->SetColumnAlignmentToRight(col_index);
+  this->Gradients2->ResizableColumnsOff();
+  this->Gradients2->AddColumn("X");
+  this->Gradients2->AddColumn("Y");
+  this->Gradients2->AddColumn("Z");
+  this->Gradients2->MovableColumnsOff();
+  this->Gradients2->SortArrowVisibilityOff();
+  for(int i=1; i<this->Gradients2->GetNumberOfColumns(); i++)
+    {
+    this->Gradients2->SetColumnWidth(i, 14);
+    this->Gradients2->SetColumnAlignmentToRight(i);
+    }
+  this->Script("pack %s -side top -anchor s -fill x -padx 2 -pady 2", 
+    this->Gradients2->GetWidgetName());
+
+  this->Gradients2->InsertCellTextAsInt(0,0,1);
+  this->Gradients2->InsertCellTextAsInt(1,0,2);
+  this->Gradients2->InsertCellTextAsDouble(0,1, 0.99382);
+  this->Gradients2->InsertCellTextAsDouble(0,2, 0.23332);
 
   //create enable gradients textfield button
   this->EnableGradientsButton = vtkKWCheckButton::New();

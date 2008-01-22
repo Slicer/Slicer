@@ -16,6 +16,7 @@ class vtkKWLoadSaveButtonWithLabel;
 class vtkMatrix4x4;
 class vtkDoubleArray;
 class vtkKWMatrixWidget;
+class vtkKWMultiColumnList;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
   {
@@ -33,7 +34,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
 
     // Description:
     // Method to propagate events generated in GUI to logic / mrml
-    virtual void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData );
+    void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData );
+    void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData );
 
     // Description:
     // Method to update the widget when a new node is loaded.
@@ -77,6 +79,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     vtkMatrix4x4 *Matrix;
     vtkDoubleArray *Gradients;
     vtkDoubleArray *BValues;
+    vtkKWMultiColumnList *Gradients2;
 
   private:
     vtkSlicerGradientEditorWidget ( const vtkSlicerGradientEditorWidget& ); // Not implemented.

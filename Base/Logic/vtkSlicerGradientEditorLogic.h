@@ -17,7 +17,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerGradientEditorLogic : public vtkSlic
 
     // Description:
     // Method to add gradients from files to the GUI.
-    virtual vtkMRMLDiffusionWeightedVolumeNode* AddGradients(const char* filename);
+    void AddGradients(const char* filename, vtkMRMLDiffusionWeightedVolumeNode *dwiNode);
 
   protected:
     vtkSlicerGradientEditorLogic(void);

@@ -29,7 +29,7 @@ void vtkSlicerGradientEditorLogic::PrintSelf ( ostream& os, vtkIndent indent )
   }
 
 //---------------------------------------------------------------------------
-vtkMRMLDiffusionWeightedVolumeNode* vtkSlicerGradientEditorLogic::AddGradients (const char* filename)
+void vtkSlicerGradientEditorLogic::AddGradients (const char* filename, vtkMRMLDiffusionWeightedVolumeNode *dwiNode)
   {
   // format the filename
   std::string fileString(filename);
@@ -40,8 +40,6 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkSlicerGradientEditorLogic::AddGradients (
       fileString[i] = '/';
       }
     }
-
-  vtkMRMLDiffusionWeightedVolumeNode *dwiNode = vtkMRMLDiffusionWeightedVolumeNode::New();
 
   // Instanciation of the I/O mechanism
   vtkMRMLNRRDStorageNode *storageNode = vtkMRMLNRRDStorageNode::New();
@@ -55,7 +53,5 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkSlicerGradientEditorLogic::AddGradients (
     reader->GetClassName();
     }
 
-  dwiNode->Delete();
-  return dwiNode;
+  storageNode->Delete();
   }
-
