@@ -108,7 +108,7 @@
       <description>Portion of the image to use in computing the metric during rigid/affine registration</description>
       <label>Affine sampling ratio</label>
       <longflag>affineSamplingRatio</longflag>
-      <default>0.02</default>
+      <default>0.01</default>
     </float>
     <integer>
       <name>bsplineMaxIterations</name>
@@ -122,7 +122,7 @@
       <description>Portion of the image to use in computing the metric during BSpline registration</description>
       <label>BSpline sampling ratio</label>
       <longflag>bsplineSamplingRatio</longflag>
-      <default>0.1</default>
+      <default>0.05</default>
     </float>
     <float>
       <name>expectedOffset</name>
@@ -136,21 +136,21 @@
       <description>Expected mis-alignment after initialization</description>
       <label>Expected rotation magnitude</label>
       <longflag>expectedRotation</longflag>
-      <default>0.05</default>
+      <default>0.02</default>
     </float>
     <float>
       <name>expectedScale</name>
       <description>Expected mis-alignment after initialization</description>
       <label>Expected scale magnitude</label>
       <longflag>expectedScale</longflag>
-      <default>0.05</default>
+      <default>0.04</default>
     </float>
     <float>
       <name>expectedSkew</name>
       <description>Expected mis-alignment after initialization</description>
       <label>Expected skew magnitude</label>
       <longflag>expectedSkew</longflag>
-      <default>0.01</default>
+      <default>0.005</default>
     </float>
     <integer>
       <name>controlPointSpacing</name>

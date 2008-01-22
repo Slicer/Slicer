@@ -6,9 +6,6 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#define nBinsND 200
-#define nBins1D 2000
-
 #include "RegisterImagesCLP.h"
 
 #include "itkTimeProbesCollectorBase.h"

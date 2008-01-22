@@ -56,11 +56,11 @@ ImageToImageRegistrationHelper< TImage >
 
   m_ExpectedOffsetPixelMagnitude = 10;
   m_ExpectedRotationMagnitude = 0.02;
-  m_ExpectedScaleMagnitude = 0.1;
-  m_ExpectedSkewMagnitude = 0.01;
+  m_ExpectedScaleMagnitude = 0.05;
+  m_ExpectedSkewMagnitude = 0.005;
 
   m_CompletedInitialization = false;
-  m_CompletedRegistration = false;
+  m_CompletedStage = PRE_STAGE;
   m_CompletedResampling = false;
 
   m_CurrentMovingImage = 0;
@@ -132,8 +132,9 @@ ImageToImageRegistrationHelper< TImage >
 
   SetFixedImage( imageReader->GetOutput() );
 
+  m_CompletedStage = PRE_STAGE;
+
   m_CompletedInitialization = false;
-  m_CompletedRegistration = false;
   m_CompletedResampling = false;
 }
 
@@ -152,8 +153,9 @@ ImageToImageRegistrationHelper< TImage >
 
   SetMovingImage( imageReader->GetOutput() );
 
+  m_CompletedStage = PRE_STAGE;
+
   m_CompletedInitialization = false;
-  m_CompletedRegistration = false;
   m_CompletedResampling = false;
 }
 
@@ -181,8 +183,9 @@ ImageToImageRegistrationHelper< TImage >
   m_AffineTransform = 0;
   m_BSplineTransform = 0;
 
+  m_CompletedStage = PRE_STAGE;
+
   m_CompletedInitialization = true;
-  m_CompletedRegistration = false;
   m_CompletedResampling = false;
 
   m_CurrentMatrixTransform = 0;
@@ -214,7 +217,7 @@ ImageToImageRegistrationHelper< TImage >
     {
     Initialize();
     }
-  bool resamplingNeeded = false;
+
   if( m_EnableLoadedRegistration 
       && ( m_LoadedMatrixTransform.IsNotNull() 
            || m_LoadedBSplineTransform.IsNotNull() ) )
@@ -231,12 +234,19 @@ ImageToImageRegistrationHelper< TImage >
                                    m_LoadedMatrixTransform,
                                    m_LoadedBSplineTransform );
       m_CurrentMovingImage = m_LoadedTransformResampledImage;
-      m_MatrixTransformResampledImage = 0;
-      m_BSplineTransformResampledImage = 0;
-      m_CompletedRegistration = true;
-      m_CompletedResampling = true;
+
       }
+
+    m_MatrixTransformResampledImage = 0;
+    m_BSplineTransformResampledImage = 0;
+
+    m_CompletedStage = LOAD_STAGE;
+    m_CompletedResampling = true;
+
+    m_CurrentMatrixTransform = 0;
+    m_CurrentBSplineTransform = 0;
     }
+
   if( m_EnableInitialRegistration
       && m_InitialMethodEnum != INIT_WITH_NONE
       && m_InitialMethodEnum != INIT_WITH_CURRENT_RESULTS )
@@ -275,7 +285,8 @@ ImageToImageRegistrationHelper< TImage >
     m_InitialTransform = reg->GetTypedTransform();
     m_CurrentMatrixTransform = reg->GetAffineTransform();
     m_CurrentBSplineTransform = 0;
-    m_CompletedRegistration = true;
+
+    m_CompletedStage = INIT_STAGE;
     m_CompletedResampling = false;
 
     std::cout << "*** INITIAL Transform = " << std::endl << "       "
@@ -332,7 +343,6 @@ ImageToImageRegistrationHelper< TImage >
         scales[i] /= minS;
         }
       }
-    std::cout << "  Scales = " << scales << std::endl;
     reg->SetTransformParametersScales( scales );
     if( m_CurrentMatrixTransform.IsNotNull() )
       {
@@ -347,7 +357,8 @@ ImageToImageRegistrationHelper< TImage >
     m_RigidTransform = reg->GetTypedTransform();
     m_CurrentMatrixTransform = reg->GetAffineTransform();
     m_CurrentBSplineTransform = 0;
-    m_CompletedRegistration = true;
+
+    m_CompletedStage = RIGID_STAGE;
     m_CompletedResampling = false;
     
     std::cout << "*** RIGID Transform = " << std::endl << "       "
@@ -411,7 +422,6 @@ ImageToImageRegistrationHelper< TImage >
         }
       }
     reg->SetTransformParametersScales( scales );
-    std::cout << "  Scales = " << scales << std::endl;
 
     if( m_CurrentMatrixTransform.IsNotNull() )
       {
@@ -428,7 +438,8 @@ ImageToImageRegistrationHelper< TImage >
     m_AffineTransform = reg->GetTypedTransform();
     m_CurrentMatrixTransform = reg->GetAffineTransform();
     m_CurrentBSplineTransform = 0;
-    m_CompletedRegistration = true;
+
+    m_CompletedStage = AFFINE_STAGE;
     m_CompletedResampling = false;
 
     std::cout << "*** AFFINE Transform = " << std::endl << "       "
@@ -438,6 +449,14 @@ ImageToImageRegistrationHelper< TImage >
   if( m_EnableBSplineRegistration )
     {
     std::cout << "*** BSPLINE REGISTRATION ***" << std::endl;
+
+    if( m_CurrentMatrixTransform.IsNotNull() && !m_CompletedResampling )
+      {
+      std::cout << "BSpline: Resampling image prior to registration." << std::endl;
+      m_CurrentMovingImage = this->ResampleImage();
+      m_CompletedResampling = true;
+      this->SaveImage("affineResampled.mha", m_CurrentMovingImage);
+      }
 
     typename BSplineRegistrationMethodType::Pointer reg = BSplineRegistrationMethodType::New();
     reg->SetMovingImage( m_CurrentMovingImage );
@@ -461,17 +480,12 @@ ImageToImageRegistrationHelper< TImage >
     reg->SetOptimizationMethodEnum( m_BSplineOptimizationMethodEnum );
     reg->SetNumberOfControlPoints( (int)(fixedImageSize[0] / m_BSplineControlPointPixelSpacing) );
 
-    if( m_CurrentMatrixTransform.IsNotNull() )
-      {
-      std::cout << "BSpline: Resampling image prior to registration." << std::endl;
-      m_CurrentMovingImage = this->ResampleImage();
-      }
-
     reg->Update();
 
     m_BSplineTransform = reg->GetTypedTransform();
     m_CurrentBSplineTransform = m_BSplineTransform;
-    m_CompletedRegistration = true;
+
+    m_CompletedStage = BSPLINE_STAGE;
     m_CompletedResampling = false;
 
     std::cout << "*** BSpline Transform = " << std::endl << "       "
@@ -481,7 +495,7 @@ ImageToImageRegistrationHelper< TImage >
 
 
 template< class TImage >
-typename TImage::Pointer
+typename TImage::ConstPointer
 ImageToImageRegistrationHelper< TImage >
 ::ResampleImage( InterpolationMethodEnumType interpolationMethod,
                  const ImageType * movingImage,
@@ -526,252 +540,185 @@ ImageToImageRegistrationHelper< TImage >
   typename ResampleImageFilterType::Pointer resampler = 
                                              ResampleImageFilterType::New();
 
-  resampler->SetInterpolator( interpolator.GetPointer() );
-  resampler->SetOutputParametersFromImage( m_FixedImage );
-
   if( movingImage == NULL 
       && matrixTransform == NULL 
-      && bsplineTransform == NULL )
+      && bsplineTransform == NULL
+      && m_CompletedResampling )
     {
-    if( m_CompletedResampling )
-      {
-      return m_CurrentMovingImage;
-      }
-    if( m_CompletedRegistration )
-      {
-      if( m_EnableBSplineRegistration 
-          && m_CurrentBSplineTransform.IsNotNull() )
-        {
-        // Register using BSpline
-        interpolator->SetInputImage( m_CurrentMovingImage );
-        resampler->SetInput( m_CurrentMovingImage );
-        resampler->SetTransform( m_CurrentBSplineTransform );
-        std::cout << "Resampling bspline start..." << std::endl;
-        resampler->Update();
-        std::cout << "...Resampling bspline stop" << std::endl;
-        m_CurrentMovingImage = resampler->GetOutput();
-        m_CompletedResampling = true;
-        return m_CurrentMovingImage;
-        }
-      else if( ( m_EnableInitialRegistration
-                 || m_EnableRigidRegistration
-                 || m_EnableAffineRegistration )
-               && m_CurrentMatrixTransform.IsNotNull() )
-        {
-        // Register using Matrix
-        interpolator->SetInputImage( m_CurrentMovingImage );
-        resampler->SetInput( m_CurrentMovingImage );
-        resampler->SetTransform( m_CurrentMatrixTransform );
-        std::cout << "Resampling affine start..." << std::endl;
-        resampler->Update();
-        std::cout << "...Resampling affine stop" << std::endl;
-        m_CurrentMovingImage = resampler->GetOutput();
-        m_MatrixTransformResampledImage = m_CurrentMovingImage;
-        m_CompletedResampling = true;
-        return m_CurrentMovingImage;
-        }
-      else if( m_EnableLoadedRegistration )
-        {
-        interpolator->SetInputImage( m_MovingImage );
-        resampler->SetInput( m_MovingImage );
-        if( m_LoadedMatrixTransform.IsNotNull() )
-          {
-          // Register using LoadedMatrix
-          resampler->SetTransform( m_LoadedMatrixTransform );
-          std::cout << "Resampling affine start..." << std::endl;
-          resampler->Update();
-          std::cout << "...Resampling affine stop" << std::endl;
-          m_CurrentMovingImage = resampler->GetOutput();
-          m_LoadedTransformResampledImage = m_CurrentMovingImage;
-          m_CompletedResampling = true;
-          resampler->SetInput( m_CurrentMovingImage );
-          }
-        if( m_LoadedBSplineTransform.IsNotNull() )
-          {
-          // Register using LoadedMatrix
-          resampler->SetTransform( m_LoadedBSplineTransform );
-          std::cout << "Resampling bspline start..." << std::endl;
-          resampler->Update();
-          std::cout << "...Resampling bspline stop" << std::endl;
-          m_CurrentMovingImage = resampler->GetOutput();
-          m_LoadedTransformResampledImage = m_CurrentMovingImage;
-          m_CompletedResampling = true;
-          }
-        if( !m_CompletedResampling )
-          {
-          typename RigidTransformType::Pointer tmpTransform = RigidTransformType::New();
-          tmpTransform->SetIdentity();
-          resampler->SetTransform( tmpTransform );
-          std::cout << "Resampling affine start..." << std::endl;
-          resampler->Update();
-          std::cout << "...Resampling affine stop" << std::endl;
-          m_CurrentMovingImage = resampler->GetOutput();
-          m_LoadedTransformResampledImage = m_CurrentMovingImage;
-          m_CompletedResampling = true;
-          }
-        return m_CurrentMovingImage;
-        }
-      else
-        {
-        // Warning: No registrations enabled
-        typename RigidTransformType::Pointer tmpTransform = RigidTransformType::New();
-        tmpTransform->SetIdentity();
-        interpolator->SetInputImage( m_MovingImage );
-        resampler->SetInput( m_MovingImage );
-        resampler->SetTransform( tmpTransform );
-        std::cout << "Resampling affine start..." << std::endl;
-        resampler->Update();
-        std::cout << "...Resampling affine stop" << std::endl;
-        m_CurrentMovingImage = resampler->GetOutput();
-        m_LoadedTransformResampledImage = m_CurrentMovingImage;
-        m_CompletedResampling = true;
-        return m_CurrentMovingImage;
-        }
-      }
-    else
-      {
-      // Warning: Registration has not been computed - using loaded transforms only
-      if( m_EnableLoadedRegistration )
-        {
-        interpolator->SetInputImage( m_MovingImage );
-        resampler->SetInput( m_MovingImage );
-        if( m_LoadedMatrixTransform.IsNotNull() )
-          {
-          // Register using LoadedMatrix
-          resampler->SetTransform( m_LoadedMatrixTransform );
-          std::cout << "Resampling affine start..." << std::endl;
-          resampler->Update();
-          std::cout << "...Resampling affine stop" << std::endl;
-          m_CurrentMovingImage = resampler->GetOutput();
-          m_LoadedTransformResampledImage = m_CurrentMovingImage;
-          m_CompletedResampling = true;
-          resampler->SetInput( m_CurrentMovingImage );
-          }
-        if( m_LoadedBSplineTransform.IsNotNull() )
-          {
-          // Register using LoadedMatrix
-          resampler->SetTransform( m_LoadedBSplineTransform );
-          std::cout << "Resampling bspline start..." << std::endl;
-          resampler->Update();
-          std::cout << "...Resampling bspline stop" << std::endl;
-          m_CurrentMovingImage = resampler->GetOutput();
-          m_LoadedTransformResampledImage = m_CurrentMovingImage;
-          m_CompletedResampling = true;
-          }
-        if( !m_CompletedResampling )
-          {
-          typename RigidTransformType::Pointer tmpTransform = RigidTransformType::New();
-          tmpTransform->SetIdentity();
-          resampler->SetTransform( tmpTransform );
-          std::cout << "Resampling rigid start..." << std::endl;
-          resampler->Update();
-          std::cout << "...Resampling rigid stop" << std::endl;
-          m_CurrentMovingImage = resampler->GetOutput();
-          m_LoadedTransformResampledImage = m_CurrentMovingImage;
-          m_CompletedResampling = true;
-          }
-        return m_CurrentMovingImage;
-        }
-      else
-        {
-        // Warning: No registrations enabled
-        typename RigidTransformType::Pointer tmpTransform = RigidTransformType::New();
-        tmpTransform->SetIdentity();
-        interpolator->SetInputImage( m_MovingImage );
-        resampler->SetInput( m_MovingImage );
-        resampler->SetTransform( tmpTransform );
-        std::cout << "Resampling rigid start..." << std::endl;
-        resampler->Update();
-        std::cout << "...Resampling rigid stop" << std::endl;
-        m_CurrentMovingImage = resampler->GetOutput();
-        m_LoadedTransformResampledImage = m_CurrentMovingImage;
-        m_CompletedResampling = true;
-        return m_CurrentMovingImage;
-        }
-      }
+    return m_CurrentMovingImage;
     }
-  if( matrixTransform == NULL 
-      && bsplineTransform == NULL )
+
+  bool doLoaded = false;
+  bool doMatrix = false;
+  bool doBSpline = false;
+  switch( m_CompletedStage )
     {
-    // movingImage is not null
-    resampler->SetInput( movingImage );
-    interpolator->SetInputImage( movingImage );
-
-    typename ImageType::Pointer outputImage = 0;
-
-    if( m_EnableLoadedRegistration )
-      {
-      if( m_LoadedMatrixTransform.IsNotNull() )
-        {
-        resampler->SetTransform( m_LoadedMatrixTransform );
-        std::cout << "Resampling affine start..." << std::endl;
-        resampler->Update();
-        std::cout << "...Resampling affine stop" << std::endl;
-        outputImage = resampler->GetOutput();
-        resampler->SetInput( outputImage );
-        }
-      if( m_LoadedBSplineTransform.IsNotNull() )
-        {
-        resampler->SetTransform( m_LoadedBSplineTransform );
-        std::cout << "Resampling bspline start..." << std::endl;
-        resampler->Update();
-        std::cout << "...Resampling bspline stop" << std::endl;
-        outputImage = resampler->GetOutput();
-        resampler->SetInput( outputImage );
-        }
-      }
-    if( outputImage.IsNull() )
-      {
-      // Warning: No registrations enabled
-      typename RigidTransformType::Pointer tmpTransform = RigidTransformType::New();
-      tmpTransform->SetIdentity();
-      resampler->SetTransform( tmpTransform );
-      std::cout << "Resampling affine start..." << std::endl;
-      resampler->Update();
-      std::cout << "...Resampling affine stop" << std::endl;
-      outputImage = resampler->GetOutput();
-      }
-
-    return outputImage;
+    default:
+    case PRE_STAGE:
+      break;
+    case LOAD_STAGE:
+      doLoaded = true;
+      break;
+    case INIT_STAGE:
+    case RIGID_STAGE:
+    case AFFINE_STAGE:
+      doMatrix = true;
+      break;
+    case BSPLINE_STAGE:
+      doBSpline = true;
+      break;
     }
-  else
-    {
-    if(movingImage != NULL)
-      {
-      resampler->SetInput( movingImage );
-      interpolator->SetInputImage( movingImage );
-      }
-    else
-      {
-      resampler->SetInput( m_MovingImage );
-      interpolator->SetInputImage( m_MovingImage );
-      }
 
-    typename ImageType::Pointer outputImage = 0;
+  bool resampled = false;
+  bool passedImage = false;
+  typename TImage::ConstPointer mImage = m_CurrentMovingImage;
+  if( movingImage != NULL)
+    {
+    mImage = movingImage;
+
+    passedImage = true;
+    doLoaded = true;
+    doMatrix = true;
+    doBSpline = true;
+    }
+
+  typename AffineTransformType::ConstPointer aTrans = m_CurrentMatrixTransform;
+  typename BSplineTransformType::ConstPointer bTrans = m_CurrentBSplineTransform;
+  if( matrixTransform != NULL
+      || bsplineTransform != NULL )
+    {
+    passedImage = true;
+    doLoaded = false;
+    doMatrix = false;
+    doBSpline = false;
+
     if( matrixTransform != NULL )
       {
-      resampler->SetTransform( matrixTransform );
-      std::cout << "Resampling affine start..." << std::endl;
-      resampler->Update();
-      std::cout << "...Resampling affine stop" << std::endl;
-      outputImage = resampler->GetOutput();
-      resampler->SetInput( outputImage );
+      aTrans = matrixTransform;
+      doMatrix = true;
       }
     if( bsplineTransform != NULL )
       {
-      resampler->SetTransform( bsplineTransform );
-      std::cout << "Resampling bspline start..." << std::endl;
+      bTrans = bsplineTransform;
+      doBSpline = true;
+      }
+    }
+
+  interpolator->SetInputImage( mImage );
+  resampler->SetInput( mImage );
+  resampler->SetInterpolator( interpolator.GetPointer() );
+  resampler->SetOutputParametersFromImage( m_FixedImage );
+
+  if( doLoaded 
+      && ( m_LoadedMatrixTransform.IsNotNull()
+           || m_LoadedBSplineTransform.IsNotNull() ) )
+    {
+    if( m_LoadedMatrixTransform.IsNotNull() )
+      {
+      // Register using LoadedMatrix
+      resampler->SetTransform( m_LoadedMatrixTransform );
+      std::cout << "Resampling loaded matrix start..." << std::endl;
       resampler->Update();
-      std::cout << "...Resampling bspline stop" << std::endl;
-      outputImage = resampler->GetOutput();
+      std::cout << "...Resampling loaded matrix stop" << std::endl;
+      if( !passedImage )
+        {
+        m_CurrentMovingImage = resampler->GetOutput();
+        m_LoadedTransformResampledImage = m_CurrentMovingImage;
+        }
+
+      resampled = true;
+      mImage = resampler->GetOutput();
+      interpolator->SetInputImage( mImage );
+      resampler->SetInput( mImage );
+      resampler->SetInterpolator( interpolator.GetPointer() );
       }
 
-    return outputImage;
+    if( m_LoadedBSplineTransform.IsNotNull() )
+      {
+      // Register using LoadedMatrix
+      resampler->SetTransform( m_LoadedBSplineTransform );
+      std::cout << "Resampling loaded bspline start..." << std::endl;
+      resampler->Update();
+      std::cout << "...Resampling loaded bspline stop" << std::endl;
+      if( !passedImage )
+        {
+        m_CurrentMovingImage = resampler->GetOutput();
+        m_LoadedTransformResampledImage = m_CurrentMovingImage;
+        }
+
+      resampled = true;
+      mImage = resampler->GetOutput();
+      interpolator->SetInputImage( mImage );
+      resampler->SetInput( mImage );
+      resampler->SetInterpolator( interpolator.GetPointer() );
+      }
     }
+
+  if( doMatrix && aTrans.IsNotNull() )
+    {
+    // Register using Matrix
+    resampler->SetTransform( aTrans );
+    std::cout << "Resampling matrix start..." << std::endl;
+    resampler->Update();
+    std::cout << "...Resampling matrix stop" << std::endl;
+    if( !passedImage )
+      {
+      m_CurrentMovingImage = resampler->GetOutput();
+      m_MatrixTransformResampledImage = m_CurrentMovingImage;
+      }
+
+    resampled = true;
+    mImage = resampler->GetOutput();
+    interpolator->SetInputImage( mImage );
+    resampler->SetInput( mImage );
+    resampler->SetInterpolator( interpolator.GetPointer() );
+    }
+
+  if( doBSpline && bTrans.IsNotNull() )
+    {
+    // Register using BSpline
+    resampler->SetTransform( bTrans );
+    std::cout << "Resampling bspline start..." << std::endl;
+    resampler->Update();
+    std::cout << "...Resampling bspline stop" << std::endl;
+    if( !passedImage )
+      {
+      m_CurrentMovingImage = resampler->GetOutput();
+      m_BSplineTransformResampledImage = m_CurrentMovingImage;
+      }
+
+    resampled = true;
+    mImage = resampler->GetOutput();
+    interpolator->SetInputImage( mImage );
+    resampler->SetInput( mImage );
+    resampler->SetInterpolator( interpolator.GetPointer() );
+    }
+
+  if( !resampled )
+    {
+    // Warning: No registrations computed
+    typename RigidTransformType::Pointer tmpTransform = RigidTransformType::New();
+    tmpTransform->SetIdentity();
+    resampler->SetTransform( tmpTransform );
+    std::cout << "Resampling identity start..." << std::endl;
+    resampler->Update();
+    std::cout << "...Resampling identity stop" << std::endl;
+
+    mImage = resampler->GetOutput();
+    interpolator->SetInputImage( mImage );
+    resampler->SetInput( mImage );
+    resampler->SetInterpolator( interpolator.GetPointer() );
+    }
+  else if( !passedImage )
+    {
+    m_CompletedResampling = true;
+    }
+
+  return mImage;
 }
 
 template< class TImage >
-typename TImage::Pointer
+typename TImage::ConstPointer
 ImageToImageRegistrationHelper< TImage >
 ::GetFinalMovingImage( InterpolationMethodEnumType interpolationMethod )
 {
@@ -1010,42 +957,73 @@ ImageToImageRegistrationHelper< TImage >
   os << indent << "Expected Skew Magnitude = " << m_ExpectedSkewMagnitude << std::endl;
   os << indent << std::endl;
   os << indent << "Completed Initialization = " << m_CompletedInitialization << std::endl;
-  os << indent << "Completed Registration = " << m_CompletedRegistration << std::endl;
   os << indent << "Completed Resampling = " << m_CompletedResampling << std::endl;
   os << indent << std::endl;
   if( m_CurrentMovingImage.IsNotNull() )
     {
     os << indent << "Current Moving Image = " << m_CurrentMovingImage << std::endl;
     }
+  else
+    {
+    os << indent << "Current Moving Image = NULL" << std::endl;
+    }
   if( m_CurrentMatrixTransform.IsNotNull() )
     {
     os << indent << "Current Matrix Transform = " << m_CurrentMatrixTransform << std::endl;
     }
+  else
+    {
+    os << indent << "Current Matrix Transform = NULL" << std::endl;
+    }
   if( m_CurrentBSplineTransform.IsNotNull() )
     {
     os << indent << "Current BSpline Transform = " << m_CurrentBSplineTransform << std::endl;
+    }
+  else
+    {
+    os << indent << "Current BSpline Transform = NULL" << std::endl;
     }
   os << indent << std::endl;
   if( m_LoadedTransformResampledImage.IsNotNull() )
     {
     os << indent << "Loaded Transform Resampled Image = " << m_LoadedTransformResampledImage << std::endl;
     }
+  else
+    {
+    os << indent << "Loaded Transform Resampled Image = NULL" << std::endl;
+    }
   if( m_MatrixTransformResampledImage.IsNotNull() )
     {
     os << indent << "Matrix Transform Resampled Image = " << m_MatrixTransformResampledImage << std::endl;
     }
+  else
+    {
+    os << indent << "Matrix Transform Resampled Image = NULL" << std::endl;
+    }
   if( m_BSplineTransformResampledImage.IsNotNull() )
     {
     os << indent << "BSpline Transform Resampled Image = " << m_BSplineTransformResampledImage << std::endl;
+    }
+  else
+    {
+    os << indent << "BSpline Transform Resampled Image = NULL" << std::endl;
     }
   os << indent << std::endl;
   if( m_LoadedMatrixTransform.IsNotNull() )
     {
     os << indent << "Loaded Matrix Transform = " << m_LoadedMatrixTransform << std::endl;
     }
+  else
+    {
+    os << indent << "Loaded Matrix Transform = NULL" << std::endl;
+    }
   if( m_LoadedBSplineTransform.IsNotNull() )
     {
     os << indent << "Loaded BSpline Transform = " << m_LoadedBSplineTransform << std::endl;
+    }
+  else
+    {
+    os << indent << "Loaded BSpline Transform = NULL" << std::endl;
     }
   os << indent << std::endl;
   switch( m_InitialMethodEnum )
@@ -1085,6 +1063,10 @@ ImageToImageRegistrationHelper< TImage >
     {
     os << indent << "Initial Transform = " << m_InitialTransform << std::endl;
     }
+  else
+    {
+    os << indent << "Initial Transform = NULL" << std::endl;
+    }
   os << indent << std::endl;
   os << indent << "Rigid Sampling Ratio = " << m_RigidSamplingRatio << std::endl;
   os << indent << "Rigid Target Error = " << m_RigidTargetError << std::endl;
@@ -1096,6 +1078,10 @@ ImageToImageRegistrationHelper< TImage >
   if( m_RigidTransform.IsNotNull() )
     {
     os << indent << "Rigid Transform = " << m_RigidTransform << std::endl;
+    }
+  else
+    {
+    os << indent << "Rigid Transform = NULL" << std::endl;
     }
   os << indent << std::endl;
   os << indent << "Affine Sampling Ratio = " << m_AffineSamplingRatio << std::endl;
@@ -1109,6 +1095,10 @@ ImageToImageRegistrationHelper< TImage >
     {
     os << indent << "Affine Transform = " << m_AffineTransform << std::endl;
     }
+  else
+    {
+    os << indent << "Affine Transform = NULL" << std::endl;
+    }
   os << indent << std::endl;
   os << indent << "BSpline Sampling Ratio = " << m_BSplineSamplingRatio << std::endl;
   os << indent << "BSpline Target Error = " << m_BSplineTargetError << std::endl;
@@ -1121,6 +1111,10 @@ ImageToImageRegistrationHelper< TImage >
   if( m_BSplineTransform.IsNotNull() )
     {
     os << indent << "BSpline Transform = " << m_BSplineTransform << std::endl;
+    }
+  else
+    {
+    os << indent << "BSpline Transform = NULL" << std::endl;
     }
   os << indent << std::endl;
 

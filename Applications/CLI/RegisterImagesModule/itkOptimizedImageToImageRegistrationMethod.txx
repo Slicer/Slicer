@@ -219,7 +219,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
       metric = TypedMetricType::New();
 
       TypedMetricType * m = static_cast< TypedMetricType * >( metric.GetPointer() );
-      m->SetNumberOfHistogramBins( 100 );
+      m->SetNumberOfHistogramBins( 200 );
       m->SetNumberOfSpatialSamples( this->GetNumberOfSamples() );
       break;
       }
@@ -296,7 +296,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
         tmpOpt->SetProjectedGradientTolerance( 1e-10 );
         tmpOpt->SetMaximumNumberOfIterations( this->GetMaxIterations() );
         tmpOpt->SetMaximumNumberOfEvaluations( this->GetMaxIterations() );
-        tmpOpt->SetMaximumNumberOfCorrections( 10 );
+        tmpOpt->SetMaximumNumberOfCorrections( (int)log( (float)numberOfParameters ) );
         }
       else
         {
@@ -412,7 +412,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
         tmpOpt->SetProjectedGradientTolerance( 1e-10 );
         tmpOpt->SetMaximumNumberOfIterations( this->GetMaxIterations() / 2 );
         tmpOpt->SetMaximumNumberOfEvaluations( this->GetMaxIterations() / 2 );
-        tmpOpt->SetMaximumNumberOfCorrections( 10 );
+        tmpOpt->SetMaximumNumberOfCorrections( (int)log( (float)numberOfParameters ) );
         }
       else
         {
@@ -424,7 +424,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
         GradOptimizerType::Pointer tmpOpt = static_cast<GradOptimizerType *>( gradOpt.GetPointer() );
 
         tmpOpt->SetMaximize( false );
-        tmpOpt->SetStepLength( 0.5 );
+        tmpOpt->SetStepLength( 0.25 );
         tmpOpt->SetStepTolerance( this->GetTargetError() );
         tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() );
         tmpOpt->SetMaximumLineIteration( (int)( this->GetMaxIterations() / (this->GetTransform()->GetNumberOfParameters() * 0.5) ) );
@@ -524,7 +524,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
         tmpOpt->SetProjectedGradientTolerance( 1e-10 );
         tmpOpt->SetMaximumNumberOfIterations( this->GetMaxIterations() );
         tmpOpt->SetMaximumNumberOfEvaluations( this->GetMaxIterations() );
-        tmpOpt->SetMaximumNumberOfCorrections( 10 );
+        tmpOpt->SetMaximumNumberOfCorrections( (int)log( (float)numberOfParameters ) );
         }
       else
         {
@@ -534,7 +534,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
         GradOptimizerType::Pointer tmpOpt = static_cast<GradOptimizerType *>( gradOpt.GetPointer() );
 
         tmpOpt->SetMaximize( false );
-        tmpOpt->SetStepLength( 0.5 );
+        tmpOpt->SetStepLength( 0.25 );
         tmpOpt->SetStepTolerance( this->GetTargetError() );
         tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() * 2 );
         tmpOpt->SetMaximumLineIteration( (int)( this->GetMaxIterations() / (this->GetTransform()->GetNumberOfParameters() * 0.5) ) );

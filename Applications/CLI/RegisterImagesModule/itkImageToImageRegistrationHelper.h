@@ -96,6 +96,13 @@ class ImageToImageRegistrationHelper : public Object
                                  INIT_WITH_CENTERS_OF_MASS,
                                  INIT_WITH_SECOND_MOMENTS };
 
+    enum RegistrationStageEnumType { PRE_STAGE,
+                                     LOAD_STAGE,
+                                     INIT_STAGE,
+                                     RIGID_STAGE,
+                                     AFFINE_STAGE,
+                                     BSPLINE_STAGE };
+
     typedef typename InitialRegistrationMethodType::TransformType
                                                    InitialTransformType;
 
@@ -140,13 +147,13 @@ class ImageToImageRegistrationHelper : public Object
 
     void Update( void );
 
-    typename ImageType::Pointer  ResampleImage( 
+    typename ImageType::ConstPointer  ResampleImage( 
                                     InterpolationMethodEnumType interp=OptimizedRegistrationMethodType::LINEAR_INTERPOLATION,
                                     const ImageType * movingImage=NULL,
                                     const MatrixTransformType * matrixTransform=NULL,
                                     const BSplineTransformType * bsplineTransform=NULL );
 
-    typename ImageType::Pointer  GetFinalMovingImage( InterpolationMethodEnumType interp=OptimizedRegistrationMethodType::LINEAR_INTERPOLATION );
+    typename ImageType::ConstPointer  GetFinalMovingImage( InterpolationMethodEnumType interp=OptimizedRegistrationMethodType::LINEAR_INTERPOLATION );
 
     //
     // Process Control
@@ -320,16 +327,16 @@ class ImageToImageRegistrationHelper : public Object
     double                                m_ExpectedSkewMagnitude;
 
     bool                                  m_CompletedInitialization;
-    bool                                  m_CompletedRegistration;
+    RegistrationStageEnumType             m_CompletedStage;
     bool                                  m_CompletedResampling;
 
-    typename ImageType::Pointer             m_CurrentMovingImage;
+    typename ImageType::ConstPointer        m_CurrentMovingImage;
     typename MatrixTransformType::Pointer   m_CurrentMatrixTransform;
     typename BSplineTransformType::Pointer  m_CurrentBSplineTransform;
 
-    typename ImageType::Pointer             m_LoadedTransformResampledImage;
-    typename ImageType::Pointer             m_MatrixTransformResampledImage;
-    typename ImageType::Pointer             m_BSplineTransformResampledImage;
+    typename ImageType::ConstPointer        m_LoadedTransformResampledImage;
+    typename ImageType::ConstPointer        m_MatrixTransformResampledImage;
+    typename ImageType::ConstPointer        m_BSplineTransformResampledImage;
 
     //  Loaded Tansform
     typename MatrixTransformType::Pointer   m_LoadedMatrixTransform;
