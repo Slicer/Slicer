@@ -267,7 +267,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
     {
     case MULTIRESOLUTION_OPTIMIZATION:
       {
-      std::cout << "MULTIRESOLUTION" << std::endl;
+      std::cout << "MULTIRESOLUTION START" << std::endl;
 
       typedef MultiResolutionImageRegistrationMethod< TImage, TImage > RegType;
       typedef MultiResolutionPyramidImageFilter< TImage, TImage >      PyramidType;
@@ -278,7 +278,6 @@ OptimizedImageToImageRegistrationMethod< TImage >
       OptimizerType::Pointer gradOpt;
       if( m_TransformMethodEnum == BSPLINE_TRANSFORM )
         {
-        std::cout << "LBFSGB" << std::endl;
         typedef LBFGSBOptimizer                  GradOptimizerType;
         gradOpt = GradOptimizerType::New();
         GradOptimizerType::Pointer tmpOpt = static_cast<GradOptimizerType *>( gradOpt.GetPointer() );
@@ -376,7 +375,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
       }
     case EVOLUTIONARY_OPTIMIZATION:
       {
-      std::cout << "EVO" << std::endl;
+      std::cout << "EVOLUTIONARY START" << std::endl;
 
       typedef ImageRegistrationMethod< TImage, TImage >  RegType;
       typedef OnePlusOneEvolutionaryOptimizer            EvoOptimizerType;
@@ -394,7 +393,6 @@ OptimizedImageToImageRegistrationMethod< TImage >
       OptimizerType::Pointer gradOpt;
       if( m_TransformMethodEnum == BSPLINE_TRANSFORM )
         {
-        std::cout << "LBFSGB" << std::endl;
         typedef LBFGSBOptimizer                  GradOptimizerType;
         gradOpt = GradOptimizerType::New();
         GradOptimizerType::Pointer tmpOpt = static_cast<GradOptimizerType *>( gradOpt.GetPointer() );
@@ -416,8 +414,6 @@ OptimizedImageToImageRegistrationMethod< TImage >
         }
       else
         {
-        std::cout << "FRPR" << std::endl;
-
         typedef FRPROptimizer                  GradOptimizerType;
 
         gradOpt = GradOptimizerType::New();
@@ -472,14 +468,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
       reg->SetInterpolator( interpolator );
       reg->SetOptimizer( evoOpt );
 
-      std::cout << "   *** Initial transform = " << reg->GetInitialTransformParameters() << std::endl;
-
       reg->StartRegistration();
 
       this->SetLastTransformParameters( reg->GetLastTransformParameters() );
       this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
-
-      std::cout << "   *** Evolutionary transform = " << reg->GetLastTransformParameters() << std::endl;
 
       gradOpt->SetCostFunction( reg->GetMetric() );
       gradOpt->SetInitialPosition( reg->GetLastTransformParameters() );
@@ -488,14 +480,12 @@ OptimizedImageToImageRegistrationMethod< TImage >
       this->SetLastTransformParameters( gradOpt->GetCurrentPosition() );
       this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
-      std::cout << "   *** Gradient transform = " << reg->GetLastTransformParameters() << std::endl;
-
-      std::cout << "EVO END" << std::endl;
+      std::cout << "EVOLUTIONARY END" << std::endl;
       break;
       }
     case GRADIENT_OPTIMIZATION:
       {
-      std::cout << "GRAD" << std::endl;
+      std::cout << "GRADIENT START" << std::endl;
 
       typedef SingleValuedNonLinearOptimizer            OptimizerType;
 
@@ -506,7 +496,6 @@ OptimizedImageToImageRegistrationMethod< TImage >
       OptimizerType::Pointer gradOpt;
       if( m_TransformMethodEnum == BSPLINE_TRANSFORM )
         {
-        std::cout << "LBFSGB" << std::endl;
         typedef LBFGSBOptimizer                  GradOptimizerType;
         gradOpt = GradOptimizerType::New();
         GradOptimizerType::Pointer tmpOpt = static_cast<GradOptimizerType *>( gradOpt.GetPointer() );
@@ -580,14 +569,12 @@ OptimizedImageToImageRegistrationMethod< TImage >
       reg->SetInterpolator( interpolator );
       reg->SetOptimizer( gradOpt );
 
-      std::cout << "REGISTRATION START" << std::endl;
       reg->StartRegistration();
-      std::cout << "REGISTRATION END" << std::endl;
 
       this->SetLastTransformParameters( reg->GetLastTransformParameters() );
       this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
-      std::cout << "GRAD END" << std::endl;
+      std::cout << "GRADIENT END" << std::endl;
       break;
       }
     }

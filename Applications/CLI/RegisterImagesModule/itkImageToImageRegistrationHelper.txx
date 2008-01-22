@@ -288,9 +288,6 @@ ImageToImageRegistrationHelper< TImage >
 
     m_CompletedStage = INIT_STAGE;
     m_CompletedResampling = false;
-
-    std::cout << "*** INITIAL Transform = " << std::endl << "       "
-              << m_CurrentMatrixTransform->GetParameters() << std::endl;
     }
 
   typename ImageType::SizeType fixedImageSize = m_FixedImage->GetLargestPossibleRegion().GetSize();
@@ -360,9 +357,6 @@ ImageToImageRegistrationHelper< TImage >
 
     m_CompletedStage = RIGID_STAGE;
     m_CompletedResampling = false;
-    
-    std::cout << "*** RIGID Transform = " << std::endl << "       "
-              << m_CurrentMatrixTransform->GetParameters() << std::endl;
     }
 
   if( m_EnableAffineRegistration )
@@ -431,9 +425,7 @@ ImageToImageRegistrationHelper< TImage >
       reg->SetInitialTransformParameters( reg->GetTypedTransform()->GetParameters() );
       }
 
-    std::cout << "AFFINE UPDATE START" << std::endl;
     reg->Update();
-    std::cout << "AFFINE UPDATE END" << std::endl;
 
     m_AffineTransform = reg->GetTypedTransform();
     m_CurrentMatrixTransform = reg->GetAffineTransform();
@@ -441,9 +433,6 @@ ImageToImageRegistrationHelper< TImage >
 
     m_CompletedStage = AFFINE_STAGE;
     m_CompletedResampling = false;
-
-    std::cout << "*** AFFINE Transform = " << std::endl << "       "
-              << m_CurrentMatrixTransform->GetParameters() << std::endl;
     }
 
   if( m_EnableBSplineRegistration )
@@ -452,7 +441,6 @@ ImageToImageRegistrationHelper< TImage >
 
     if( m_CurrentMatrixTransform.IsNotNull() && !m_CompletedResampling )
       {
-      std::cout << "BSpline: Resampling image prior to registration." << std::endl;
       m_CurrentMovingImage = this->ResampleImage();
       m_CompletedResampling = true;
       this->SaveImage("affineResampled.mha", m_CurrentMovingImage);
@@ -487,9 +475,6 @@ ImageToImageRegistrationHelper< TImage >
 
     m_CompletedStage = BSPLINE_STAGE;
     m_CompletedResampling = false;
-
-    std::cout << "*** BSpline Transform = " << std::endl << "       "
-              << m_CurrentBSplineTransform->GetParameters() << std::endl;
     }
 }
 
@@ -617,9 +602,9 @@ ImageToImageRegistrationHelper< TImage >
       {
       // Register using LoadedMatrix
       resampler->SetTransform( m_LoadedMatrixTransform );
-      std::cout << "Resampling loaded matrix start..." << std::endl;
+      std::cout << "...Resampling loaded matrix start..." << std::endl;
       resampler->Update();
-      std::cout << "...Resampling loaded matrix stop" << std::endl;
+      std::cout << "...Resampling loaded matrix stop..." << std::endl;
       if( !passedImage )
         {
         m_CurrentMovingImage = resampler->GetOutput();
@@ -637,9 +622,9 @@ ImageToImageRegistrationHelper< TImage >
       {
       // Register using LoadedMatrix
       resampler->SetTransform( m_LoadedBSplineTransform );
-      std::cout << "Resampling loaded bspline start..." << std::endl;
+      std::cout << "...Resampling loaded bspline start..." << std::endl;
       resampler->Update();
-      std::cout << "...Resampling loaded bspline stop" << std::endl;
+      std::cout << "...Resampling loaded bspline stop..." << std::endl;
       if( !passedImage )
         {
         m_CurrentMovingImage = resampler->GetOutput();
@@ -658,9 +643,9 @@ ImageToImageRegistrationHelper< TImage >
     {
     // Register using Matrix
     resampler->SetTransform( aTrans );
-    std::cout << "Resampling matrix start..." << std::endl;
+    std::cout << "...Resampling matrix start..." << std::endl;
     resampler->Update();
-    std::cout << "...Resampling matrix stop" << std::endl;
+    std::cout << "...Resampling matrix stop..." << std::endl;
     if( !passedImage )
       {
       m_CurrentMovingImage = resampler->GetOutput();
@@ -678,9 +663,9 @@ ImageToImageRegistrationHelper< TImage >
     {
     // Register using BSpline
     resampler->SetTransform( bTrans );
-    std::cout << "Resampling bspline start..." << std::endl;
+    std::cout << "...Resampling bspline start..." << std::endl;
     resampler->Update();
-    std::cout << "...Resampling bspline stop" << std::endl;
+    std::cout << "...Resampling bspline stop..." << std::endl;
     if( !passedImage )
       {
       m_CurrentMovingImage = resampler->GetOutput();
@@ -700,9 +685,9 @@ ImageToImageRegistrationHelper< TImage >
     typename RigidTransformType::Pointer tmpTransform = RigidTransformType::New();
     tmpTransform->SetIdentity();
     resampler->SetTransform( tmpTransform );
-    std::cout << "Resampling identity start..." << std::endl;
+    std::cout << "...Resampling identity start..." << std::endl;
     resampler->Update();
-    std::cout << "...Resampling identity stop" << std::endl;
+    std::cout << "...Resampling identity stop..." << std::endl;
 
     mImage = resampler->GetOutput();
     interpolator->SetInputImage( mImage );
