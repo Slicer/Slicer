@@ -1737,30 +1737,53 @@ void vtkSlicerVRGrayscaleHelper::DestroyLabelmap(void)
 }
 void vtkSlicerVRGrayscaleHelper::CreateLabelmap(void)
 {
+    vtkKWFrameWithLabel *labelmapFrame=vtkKWFrameWithLabel::New();
+    labelmapFrame->SetParent(this->NB_Details->GetFrame("Labelmaps"));
+    labelmapFrame->Create();
+    labelmapFrame->AllowFrameToCollapseOff();
+    labelmapFrame->SetLabelText("Labelmaps");
+    this->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+        labelmapFrame->GetWidgetName() );
+
+    this->CB_LabelmapMode=vtkKWCheckButtonWithLabel::New();
+    this->CB_LabelmapMode->SetParent(labelmapFrame->GetFrame());
+    this->CB_LabelmapMode->Create();
+    this->CB_LabelmapMode->SetLabelText("Enable/Disable labelmapMode");
+    this->CB_LabelmapMode->GetWidget()->SetCommand(this, "ProcessLabelmapMode");
+    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->CB_LabelmapMode->GetWidgetName());
+
+    vtkKWFrame *frameSelectDeselect=vtkKWFrame::New();
+    frameSelectDeselect->SetParent(labelmapFrame->GetFrame());
+    frameSelectDeselect->Create();
+    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",frameSelectDeselect->GetWidgetName());
     this->PB_LabelsSelectAll=vtkKWPushButton::New();
-    this->PB_LabelsSelectAll->SetParent(this->NB_Details->GetFrame("Labelmaps"));
+    this->PB_LabelsSelectAll->SetParent(frameSelectDeselect);
     this->PB_LabelsSelectAll->Create();
     this->PB_LabelsSelectAll->SetText("Select all");
     this->PB_LabelsSelectAll->SetCommand(this,"ProcessSelectAllLabels");
-    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->PB_LabelsSelectAll->GetWidgetName());
+    this->PB_LabelsSelectAll->EnabledOff();
+    this->Script("pack %s -side left -anchor nw -padx 10 -pady 10",this->PB_LabelsSelectAll->GetWidgetName());
 
     this->PB_LabelsDeselectAll=vtkKWPushButton::New();
-    this->PB_LabelsDeselectAll->SetParent(this->NB_Details->GetFrame("Labelmaps"));
+    this->PB_LabelsDeselectAll->SetParent(frameSelectDeselect);
     this->PB_LabelsDeselectAll->Create();
     this->PB_LabelsDeselectAll->SetText("Deselect all");
     this->PB_LabelsDeselectAll->SetCommand(this,"ProcessDeselectAllLabels");
-    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->PB_LabelsDeselectAll->GetWidgetName());
+    this->PB_LabelsDeselectAll->EnabledOff();
+    this->Script("pack %s -side left -anchor ne -padx 10 -pady 10",this->PB_LabelsDeselectAll->GetWidgetName());
 
     this->ColorDisplay=vtkSlicerColorDisplayWidget::New();
     this->ColorDisplay->SetMRMLScene(this->Gui->GetLogic()->GetMRMLScene() );
-    this->ColorDisplay->SetParent(this->NB_Details->GetFrame("Labelmaps"));
+    this->ColorDisplay->SetParent(labelmapFrame->GetFrame());
+    this->ColorDisplay->MultiSelectModeOn();
     this->ColorDisplay->Create();
-    this->ColorDisplay->GetMultiColumnList()->GetWidget()->SetSelectionModeToMultiple();
-    this->ColorDisplay->GetMultiColumnList()->GetWidget()->SetSelectionTypeToCell();
     this->ColorDisplay->GetMultiColumnList()->GetWidget()->SetSelectionChangedCommand(this,"ProcessSelection");
+    this->ColorDisplay->EnabledOff();
     this->ColorDisplay->AddObserver(vtkSlicerColorDisplayWidget::ColorIDModifiedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
-    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",
+    this->Script("pack %s -side bottom -anchor nw -fill x -padx 10 -pady 10",
         this->ColorDisplay->GetWidgetName()); 
+
+    labelmapFrame->Delete();
 
 }
 void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
@@ -1904,4 +1927,19 @@ void vtkSlicerVRGrayscaleHelper::ProcessSelectAllLabels(void)
     }
     this->ColorDisplay->GetMultiColumnList()->GetWidget()->SetSelectionChangedCommand(this,"ProcessSelection");
     this->ProcessSelection();
+}
+
+void vtkSlicerVRGrayscaleHelper::ProcessLabelmapMode(int cbSelectedState)
+{
+    vtkKWMultiColumnList *colorList=this->ColorDisplay->GetMultiColumnList()->GetWidget();
+    //That means nothing ist Selected
+    if(cbSelectedState&&colorList->GetNumberOfRows()==0)
+    {
+        this->ColorDisplay->SetColorNode(vtkMRMLColorNode::SafeDownCast(this->Gui->GetLogic()->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLColorNode")));
+        this->ProcessSelectAllLabels();
+    }
+    this->PB_LabelsDeselectAll->SetEnabled(cbSelectedState);
+    this->PB_LabelsSelectAll->SetEnabled(cbSelectedState);
+    this->ColorDisplay->SetEnabled(cbSelectedState);
+
 }

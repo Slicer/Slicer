@@ -65,6 +65,7 @@ public:
     void ProcessPauseResume(void);
     void ProcessSelectAllLabels(void);
     void ProcessDeselectAllLabels(void);
+    void ProcessLabelmapMode(int cbSelectedState);
 
 protected:
     vtkSlicerVRGrayscaleHelper(void);
@@ -94,6 +95,7 @@ protected:
     vtkKWCheckButtonWithLabel *CB_Clipping;
 
     //ColorDisplay Widget
+    vtkKWCheckButtonWithLabel *CB_LabelmapMode;
     vtkSlicerColorDisplayWidget *ColorDisplay;
     vtkKWPushButton *PB_LabelsSelectAll;
     vtkKWPushButton *PB_LabelsDeselectAll;
