@@ -6,6 +6,8 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerColorDisplayWidget.h"
 #include "vtkSlicerVolumePropertyWidget.h"
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 
 //VTK
 #include "vtkObjectFactory.h"
@@ -568,7 +570,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
 
         //Decide if this event is triggered by the vtkBoxWidget or by the sliders
         //if sliders don't trigger setRange->this would lead to an endless loop
-        if(!this->NoSetRangeNeeded)
+        /*if(!this->NoSetRangeNeeded)
         {
 
             vtkPolyData *vertices=vtkPolyData::New();
@@ -581,7 +583,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->RA_Cropping[0]->SetRange(pointA[0],pointB[0]);
             this->RA_Cropping[1]->SetRange(pointA[1],pointB[1]);
             this->RA_Cropping[2]->SetRange(pointA[2],pointB[2]);
-        }
+        }*/
         this->NoSetRangeNeeded=0;
         return;
     }
@@ -967,6 +969,19 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         return;
 
     }
+        vtkSlicerNodeSelectorWidget *callerNS=vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
+    if (eid==vtkSlicerNodeSelectorWidget::NodeSelectedEvent&&callerNS==this->NS_TransformNode)
+    {
+        vtkMRMLLinearTransformNode::SafeDownCast(this->NS_TransformNode->GetSelected())->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,this->VolumeRenderingCallbackCommand);
+        this->ProcessClippingModified();
+        return;
+    }
+    if(eid==vtkMRMLTransformableNode::TransformModifiedEvent)
+    {
+        this->ProcessClippingModified();
+        return;
+        
+    }
     //Check if caller equals mapper
     vtkAbstractMapper *callerMapper=vtkAbstractMapper::SafeDownCast(caller);
     if((this->Volume!=0)&&(callerMapper!=this->Volume->GetMapper()))
@@ -1009,6 +1024,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,100**progress);
         return;
     }
+
 
     vtkDebugMacro("observed event but didn't process it");
 }
@@ -1085,10 +1101,10 @@ void vtkSlicerVRGrayscaleHelper::UpdateGUIElements(void)
 {
     Superclass::UpdateGUIElements();
     this->UpdateSVP();
-    for(int i=0;i<3;i++)
-    {
-        this->RA_Cropping[i]->SetRange(this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i+1]);    
-    }
+    //for(int i=0;i<3;i++)
+    //{
+    //    this->RA_Cropping[i]->SetRange(this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i+1]);    
+    //}
     this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetcurrentNode()->GetCroppingEnabled());
     //this->ColorDisplay->SetMRMLScene(this->Gui->GetMRMLScene());
 
@@ -1203,13 +1219,13 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
     {
         return;
     }
-    this->BW_Clipping->PlaceWidget(
-        this->RA_Cropping[0]->GetRange()[0],
-        this->RA_Cropping[0]->GetRange()[1],
-        this->RA_Cropping[1]->GetRange()[0],
-        this->RA_Cropping[1]->GetRange()[1],
-        this->RA_Cropping[2]->GetRange()[0],
-        this->RA_Cropping[2]->GetRange()[1]);
+    //this->BW_Clipping->PlaceWidget(
+    //    this->RA_Cropping[0]->GetRange()[0],
+    //    this->RA_Cropping[0]->GetRange()[1],
+    //    this->RA_Cropping[1]->GetRange()[0],
+    //    this->RA_Cropping[1]->GetRange()[1],
+    //    this->RA_Cropping[2]->GetRange()[0],
+    //    this->RA_Cropping[2]->GetRange()[1]);
     this->NoSetRangeNeeded=1;
     this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::InteractionEvent,0);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
@@ -1227,6 +1243,15 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
 
 
     //Build GUI
+    this->NS_TransformNode=vtkSlicerNodeSelectorWidget::New();
+    this->NS_TransformNode->SetParent(croppingFrame);
+    this->NS_TransformNode->Create();
+    this->NS_TransformNode->SetLabelText("Transform Node for Clipping");
+    this->NS_TransformNode->SetNodeClass("vtkMRMLTransformNode",NULL,NULL,NULL);
+    this->NS_TransformNode->SetMRMLScene(this->Gui->GetLogic()->GetMRMLScene());
+    this->NS_TransformNode->NoneEnabledOn();
+    this->NS_TransformNode->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->NS_TransformNode->GetWidgetName());
 
     this->CB_Cropping=vtkKWCheckButtonWithLabel::New();
     this->CB_Cropping->SetParent(croppingFrame->GetFrame());
@@ -1247,34 +1272,34 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",
         this->CB_Clipping->GetWidgetName());
 
-    for(int i=0;i<3;i++)
-    {
-        this->RA_Cropping[i]=vtkKWRange::New();
-        this->RA_Cropping[i]->SetParent(croppingFrame->GetFrame());
-        this->RA_Cropping[i]->Create();
-        this->RA_Cropping[i]->SymmetricalInteractionOff();
-        std::stringstream str;
-        str<<"Cropping ";
-        str<<i;
-        this->RA_Cropping[i]->SetCommand(this,str.str().c_str());
-        this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->RA_Cropping[i]->GetWidgetName());
-    }
-    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
-    this->RA_Cropping[0]->SetLabelText("I");
-    this->RA_Cropping[0]->SetWholeRange(-500,500);
-    this->RA_Cropping[0]->SetSlider1Color(this->ColorsClippingHandles[0]);
-    this->RA_Cropping[0]->SetSlider2Color(this->ColorsClippingHandles[1]);
-    this->RA_Cropping[0]->SetRange(iData->GetOrigin()[0],iData->GetDimensions()[0]);
-    this->RA_Cropping[1]->SetLabelText("J");
-    this->RA_Cropping[1]->SetWholeRange(-500,500);
-    this->RA_Cropping[1]->SetSlider1Color(this->ColorsClippingHandles[2]);
-    this->RA_Cropping[1]->SetSlider2Color(this->ColorsClippingHandles[3]);
-    this->RA_Cropping[1]->SetRange(iData->GetOrigin()[1],iData->GetDimensions()[1]);
-    this->RA_Cropping[2]->SetLabelText("K");
-    this->RA_Cropping[2]->SetWholeRange(-500,500);
-    this->RA_Cropping[2]->SetSlider1Color(this->ColorsClippingHandles[4]);
-    this->RA_Cropping[2]->SetSlider2Color(this->ColorsClippingHandles[5]);
-    this->RA_Cropping[2]->SetRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
+    //for(int i=0;i<3;i++)
+    //{
+    //    this->RA_Cropping[i]=vtkKWRange::New();
+    //    this->RA_Cropping[i]->SetParent(croppingFrame->GetFrame());
+    //    this->RA_Cropping[i]->Create();
+    //    this->RA_Cropping[i]->SymmetricalInteractionOff();
+    //    std::stringstream str;
+    //    str<<"Cropping ";
+    //    str<<i;
+    //    this->RA_Cropping[i]->SetCommand(this,str.str().c_str());
+    //    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->RA_Cropping[i]->GetWidgetName());
+    //}
+    //vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+    //this->RA_Cropping[0]->SetLabelText("I");
+    //this->RA_Cropping[0]->SetWholeRange(-500,500);
+    //this->RA_Cropping[0]->SetSlider1Color(this->ColorsClippingHandles[0]);
+    //this->RA_Cropping[0]->SetSlider2Color(this->ColorsClippingHandles[1]);
+    //this->RA_Cropping[0]->SetRange(iData->GetOrigin()[0],iData->GetDimensions()[0]);
+    //this->RA_Cropping[1]->SetLabelText("J");
+    //this->RA_Cropping[1]->SetWholeRange(-500,500);
+    //this->RA_Cropping[1]->SetSlider1Color(this->ColorsClippingHandles[2]);
+    //this->RA_Cropping[1]->SetSlider2Color(this->ColorsClippingHandles[3]);
+    //this->RA_Cropping[1]->SetRange(iData->GetOrigin()[1],iData->GetDimensions()[1]);
+    //this->RA_Cropping[2]->SetLabelText("K");
+    //this->RA_Cropping[2]->SetWholeRange(-500,500);
+    //this->RA_Cropping[2]->SetSlider1Color(this->ColorsClippingHandles[4]);
+    //this->RA_Cropping[2]->SetSlider2Color(this->ColorsClippingHandles[5]);
+    //this->RA_Cropping[2]->SetRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
 
     //Now we have the cropping ranges
     this->ProcessEnableDisableCropping(0);
@@ -1517,7 +1542,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
     }
     for(int i=0;i<3;i++)
     {
-        this->RA_Cropping[i]->SetEnabled(cbSelectedState);
+        //this->RA_Cropping[i]->SetEnabled(cbSelectedState);
     }
     //There is not automatical enabling when
     //this->ProcessEnableDisableClippingPlanes(cbSelectedState);
@@ -1716,6 +1741,12 @@ void vtkSlicerVRGrayscaleHelper::DestroyTreshold(void)
 }
 void vtkSlicerVRGrayscaleHelper::DestroyLabelmap(void)
 {
+    if(this->CB_LabelmapMode)
+    {
+        this->CB_LabelmapMode->SetParent(NULL);
+        this->CB_LabelmapMode->Delete();
+        this->CB_LabelmapMode=NULL;
+    }
     if(this->ColorDisplay)
     {
         this->ColorDisplay->SetParent(NULL);
@@ -1942,4 +1973,14 @@ void vtkSlicerVRGrayscaleHelper::ProcessLabelmapMode(int cbSelectedState)
     this->PB_LabelsSelectAll->SetEnabled(cbSelectedState);
     this->ColorDisplay->SetEnabled(cbSelectedState);
 
+}
+
+void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
+{
+    vtkMatrix4x4 *matrix=vtkMRMLLinearTransformNode::SafeDownCast(this->NS_TransformNode->GetSelected())->GetMatrixTransformToParent();
+    vtkTransform *trans=vtkTransform::New();
+    trans->SetMatrix(matrix);
+    this->BW_Clipping->SetTransform(trans);
+    this->BW_Clipping->InvokeEvent(vtkCommand::InteractionEvent);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 }

@@ -66,6 +66,7 @@ public:
     void ProcessSelectAllLabels(void);
     void ProcessDeselectAllLabels(void);
     void ProcessLabelmapMode(int cbSelectedState);
+    void ProcessClippingModified(void);
 
 protected:
     vtkSlicerVRGrayscaleHelper(void);
@@ -90,7 +91,6 @@ protected:
     vtkSlicerNodeSelectorWidget *NS_TransformNode;
     vtkKWCheckButtonWithLabel *CB_Cropping;
     vtkKWRange *RA_Cropping[3];
-
     vtkBoxWidget *BW_Clipping;
     vtkKWCheckButtonWithLabel *CB_Clipping;
 
