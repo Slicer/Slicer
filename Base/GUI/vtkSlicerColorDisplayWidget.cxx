@@ -47,6 +47,8 @@ vtkSlicerColorDisplayWidget::vtkSlicerColorDisplayWidget ( )
     this->ShowOnlyNamedColorsCheckButton = NULL;
 
     this->SelectedColorLabel = NULL;
+
+    this->MultiSelectModeOff();
     
     //this->DebugOn();
 }
@@ -516,9 +518,18 @@ void vtkSlicerColorDisplayWidget::UpdateSelectedColor()
     int selectedColor = this->GetSelectedColorIndex();
     std::stringstream ss;
     ss << "Selected Color Label: ";
-    if (selectedColor != -1)
+
+    if(selectedColor==-2)
+      {
+      ss<<"Multiple colors selected";
+      }
+    else if (selectedColor != -1)
       {
       ss << selectedColor;
+      }
+    else
+      {
+      ss<<"No color selected";
       }
     this->SelectedColorLabel->SetText(ss.str().c_str());
     }
@@ -590,6 +601,7 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 this->ColorSelectorWidget->GetWidgetName(),
                 displayFrame->GetWidgetName());
+
   
   
   // type
@@ -625,7 +637,7 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->MultiColumnList->SetParent ( displayFrame );
   this->MultiColumnList->Create ( );
   this->MultiColumnList->SetHeight(4);
-  this->MultiColumnList->GetWidget()->SetSelectionTypeToCell();
+  this->MultiColumnList->GetWidget()->SetSelectionTypeToRow();
   this->MultiColumnList->GetWidget()->MovableRowsOff();
   this->MultiColumnList->GetWidget()->MovableColumnsOff();
   // set up the columns of data for each table entry
@@ -633,6 +645,12 @@ void vtkSlicerColorDisplayWidget::CreateWidget ( )
   this->MultiColumnList->GetWidget()->AddColumn("Entry");
   this->MultiColumnList->GetWidget()->AddColumn("Name");
   this->MultiColumnList->GetWidget()->AddColumn("Color");
+
+  
+  if(this->MultiSelectMode)
+  {
+      this->MultiColumnList->GetWidget()->SetSelectionModeToMultiple();
+  }
 
   
   // make the colour column editable by colour chooser
@@ -763,6 +781,13 @@ int vtkSlicerColorDisplayWidget::GetSelectedColorIndex()
     return -1;
     }
 
+  //Here we need different behaviors for MultiSelection and Single Selection
+  if(MultiSelectMode)
+  {
+    return -2;
+ 
+  
+  }
   int numRows = this->MultiColumnList->GetWidget()->GetNumberOfSelectedRows();
   int row;  
   if (numRows == 0 && this->MultiColumnList->GetWidget()->GetNumberOfRows() > 1)
@@ -794,3 +819,14 @@ void vtkSlicerColorDisplayWidget::SetSelectedColorIndex(int index)
   this->UpdateSelectedColor();
 }
 
+
+void vtkSlicerColorDisplayWidget::UpdateEnableState(void)
+{
+    this->PropagateEnableState(this->AddColorButton);
+    this->PropagateEnableState(this->ColorSelectorWidget);
+    this->PropagateEnableState(this->ColorNodeTypeLabel);
+    this->PropagateEnableState(this->NumberOfColorsLabel);
+    this->PropagateEnableState(this->SelectedColorLabel);
+    this->PropagateEnableState(this->MultiColumnList);
+    this->PropagateEnableState(this->ShowOnlyNamedColorsCheckButton);
+}

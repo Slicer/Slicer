@@ -46,6 +46,13 @@ public:
   vtkGetObjectMacro ( NumberOfColorsLabel, vtkKWLabel);
   vtkGetObjectMacro ( AddColorButton, vtkKWPushButton);
   vtkGetObjectMacro ( MultiColumnList, vtkKWMultiColumnListWithScrollbars );
+
+  //Description:
+  //Enable/Disable MultiSelect possibilities
+  //Call the set method before you call create. Otherwise there will be no effect
+  vtkBooleanMacro(MultiSelectMode,int);
+  vtkSetMacro(MultiSelectMode,int);
+
   // Description:
   // Set the selected node, the color id, and update the widgets
   void SetColorNode ( vtkMRMLColorNode *node );
@@ -94,6 +101,10 @@ public:
   // Description:
   // update a table entry
   void UpdateElement(int row, int col, char * str);  
+
+  // Description:
+  // Update the "enable" state of the object and its internal parts
+  virtual void UpdateEnableState(void);
 
   // Description:
   // Return the index of the currently selected colour in the multi column 
@@ -167,6 +178,10 @@ public:
   // display the colours in the table
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
   int NumberOfColumns;
+
+  // Description:
+  // Decides if MultipleColumns can be selected or not
+  int MultiSelectMode;
 
 //  vtkKWChangeColorButton *ChangeColorButton;
   //BTX
