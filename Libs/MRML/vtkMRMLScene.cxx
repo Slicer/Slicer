@@ -737,6 +737,10 @@ vtkMRMLNode*  vtkMRMLScene::CopyNode(vtkMRMLNode *n)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RemoveNode(vtkMRMLNode *n) 
 {
+  if (n == NULL)
+    {
+    return;
+    }
   n->Register(this);
   this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
   this->RemoveNodeReferences(n);
@@ -755,6 +759,10 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RemoveNodeNoNotify(vtkMRMLNode *n) 
 {
+  if (n == NULL)
+    {
+    return;
+    }
   n->Register(this);
   this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
   this->RemoveNodeReferences(n);
