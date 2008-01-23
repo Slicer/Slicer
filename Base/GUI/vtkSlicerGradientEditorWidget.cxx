@@ -54,6 +54,7 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
 //---------------------------------------------------------------------------
 vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
   {
+  this->RemoveWidgetObservers();
   if (this->GradientsFrame)
     {
     this->GradientsFrame->SetParent (NULL);
@@ -182,7 +183,6 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->BValues->Delete();
     this->BValues = NULL;
     }
-  this->RemoveWidgetObservers();
   }
 
 //---------------------------------------------------------------------------
@@ -628,7 +628,7 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->ROIMenu = vtkSlicerNodeSelectorWidget::New();
   this->ROIMenu->SetParent(this->TestFrame->GetFrame());
   this->ROIMenu->Create();
-  this->ROIMenu->SetLabelText("Input ROI: ");
+  this->ROIMenu->SetLabelText("Fiducial Mask: ");
   this->Script("pack %s -side top -anchor ne -padx 2 -pady 2", 
     this->ROIMenu->GetWidgetName());
 
