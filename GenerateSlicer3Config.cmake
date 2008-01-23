@@ -18,7 +18,7 @@ SET(Slicer3_USE_FILE_CONFIG ${Slicer3_BINARY_DIR}/UseSlicer3.cmake)
 SET(TCLAP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/tclap)
 SET(ModuleDescriptionParser_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionParser)
 SET(GenerateCLP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/GenerateCLP)
-SET(GenerateCLP_USE_FILE_CONFIG ${Slicer3_SOURCE_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
+SET(GenerateCLP_USE_FILE_CONFIG ${Slicer3_BINARY_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
 SET(Slicer3_INCLUDE_DIRS_CONFIG ${Slicer3_SOURCE_DIR}/Applications/CLI)
 SET(Slicer3_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin)
 

@@ -267,7 +267,10 @@ KWWidgets_INSTALL_TCL_TK_SUPPORT_FILES("/lib")
 #
 # use the command line utilities
 #
-INCLUDE(${Slicer3_SOURCE_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
+FIND_PACKAGE(GenerateCLP REQUIRED)
+IF(GenerateCLP_FOUND)
+  INCLUDE(${GenerateCLP_USE_FILE})
+ENDIF(GenerateCLP_FOUND)
 
 GENERATECLP(${SRC} Slicer3.xml)
 

@@ -4,17 +4,6 @@
 # Slicer3 modules built against a Slicer3 build tree or a Slicer3 installation.
 #
 
-
-FIND_PACKAGE(TCLAP REQUIRED)
-IF(TCLAP_FOUND)
-   INCLUDE(${TCLAP_USE_FILE})
-ENDIF(TCLAP_FOUND)
-
-FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
-IF(ModuleDescriptionParser_FOUND)
-   INCLUDE(${ModuleDescriptionParser_USE_FILE})
-ENDIF(ModuleDescriptionParser_FOUND)
-
 FIND_PACKAGE(GenerateCLP REQUIRED)
 IF(GenerateCLP_FOUND)
    INCLUDE(${GenerateCLP_USE_FILE})

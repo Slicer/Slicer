@@ -101,7 +101,9 @@ IF(BatchMake_DIR)
  
   # Find GenerateCLP
   FIND_PACKAGE(GenerateCLP REQUIRED)
-  INCLUDE(${GenerateCLP_SOURCE_DIR}/UseGenerateCLP.cmake)
+  IF(GenerateCLP_FOUND)
+    INCLUDE(${GenerateCLP_USE_FILE})
+  ENDIF(GenerateCLP_FOUND)
 
   IF(${Slicer3BatchModule_LOGO})
     GENERATECLP(Slicer3BatchModule_SOURCE 

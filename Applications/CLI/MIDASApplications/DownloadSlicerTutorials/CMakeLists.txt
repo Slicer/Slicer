@@ -24,9 +24,10 @@ INCLUDE(${SLICERLIBCURL_USE_FILE})
 #
 # Find GenerateCLP
 FIND_PACKAGE(GenerateCLP REQUIRED)
-INCLUDE(${GenerateCLP_SOURCE_DIR}/UseGenerateCLP.cmake)
+IF(GenerateCLP_FOUND)
+  INCLUDE(${GenerateCLP_USE_FILE})
+ENDIF(GenerateCLP_FOUND)
 
-                    
 #
 # Set and generate source
 SET(DownloadSlicerTutorials_SOURCE DownloadSlicerTutorials.cxx)

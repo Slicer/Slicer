@@ -1,6 +1,9 @@
 PROJECT (EMSegmentCommandLineExecutable)
 
-INCLUDE(${Slicer3_SOURCE_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
+FIND_PACKAGE(GenerateCLP REQUIRED)
+IF(GenerateCLP_FOUND)
+  INCLUDE(${GenerateCLP_USE_FILE})
+ENDIF(GenerateCLP_FOUND)
 
 INCLUDE_DIRECTORIES ( 
   ${EMSegment_SOURCE_DIR}

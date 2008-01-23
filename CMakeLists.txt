@@ -227,19 +227,26 @@ SET(TCLAP_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 
 OPTION(BUILD_CLI "Build Slicer3 CLI Plugins" ON)
 MARK_AS_ADVANCED(BUILD_CLI)
+SUBDIRS(
+  Libs
+)
+
+SUBDIRS(
+  Base
+)
 
 OPTION(BUILD_MODULES "Build Slicer3 Modules" ON)
 MARK_AS_ADVANCED(BUILD_MODULES)
 
-SUBDIRS(
-  Libs
-  Base
-  Applications
-  )
-
 IF(BUILD_MODULES)
   SUBDIRS(Modules)
 ENDIF(BUILD_MODULES)
+
+## Applications need to be built after Modules to capture the TractTracing in
+## the correct ordering.
+SUBDIRS(
+  Applications
+  )
 
 IF (Slicer3_BUILD_TESTING)
     SUBDIRS( Testing )

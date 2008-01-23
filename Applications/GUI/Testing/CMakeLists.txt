@@ -2,9 +2,12 @@ PROJECT( GUITesting )
 #####################
 
 FIND_PACKAGE(GenerateCLP REQUIRED)
+IF(GenerateCLP_FOUND)
+  INCLUDE(${GenerateCLP_USE_FILE})
+ENDIF(GenerateCLP_FOUND)
+
 FIND_PACKAGE(vtkITK REQUIRED)
 
-FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
 LINK_DIRECTORIES(${ModuleDescriptionParser_BINARY_DIR})
 
 FIND_PACKAGE(ITK REQUIRED)
@@ -13,8 +16,6 @@ INCLUDE(${ITK_USE_FILE})
 FIND_PACKAGE(VTK REQUIRED)
 INCLUDE(${VTK_USE_FILE})
 
-
-INCLUDE(${GenerateCLP_SOURCE_DIR}/UseGenerateCLP.cmake)
 
 SET (CLP EventBrokerTest)
 
