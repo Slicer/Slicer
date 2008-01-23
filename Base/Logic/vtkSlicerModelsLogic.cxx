@@ -149,6 +149,10 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
 {
    if (modelNode == NULL || filename == NULL)
     {
+    vtkErrorMacro("SaveModel: unable to proceed, filename is " <<
+                  (filename == NULL ? "null" : filename) <<
+                  ", model node is " <<
+                  (modelNode == NULL ? "null" : modelNode->GetID()));
     return 0;
     }
   
