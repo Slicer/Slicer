@@ -283,6 +283,8 @@ public:
     this->ReferencedIDChanges.clear();
   };
 
+  void RemoveReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode);
+
   void RemoveNodeReferences(vtkMRMLNode *node);
 
   // Description: 

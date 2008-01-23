@@ -49,7 +49,8 @@ virtual void Set##name (const char* _arg) \
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " << #name " to " << (_arg?_arg:"(null)") ); \
   if ( this->name == NULL && _arg == NULL) { return;} \
   if ( this->name && _arg && (!strcmp(this->name,_arg))) { return;} \
-  if (this->name) { delete [] this->name; } \
+  std::string oldValue; \
+  if (this->name) { oldValue = this->name; delete [] this->name;  } \
   if (_arg) \
     { \
     size_t n = strlen(_arg) + 1; \
@@ -65,6 +66,10 @@ virtual void Set##name (const char* _arg) \
   this->Modified(); \
   if (this->Scene && this->name) \
     { \
+    if (oldValue.size() > 0) \
+      { \
+      this->Scene->RemoveReferencedNodeID(oldValue.c_str(), this); \
+      } \
     this->Scene->AddReferencedNodeID(this->name, this); \
     } \
   } 
