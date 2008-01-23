@@ -202,7 +202,14 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
       {
           vtkDebugMacro(<< "ReadFSAnnotation: Read vertex # " << vertexIndex << " rgb = " << rgb << endl);
       }
-      rgbs[vertexIndex] = rgb;
+      if (vertexIndex >= numLabels)
+        {
+        vtkErrorMacro("ReadFSAnnotation: Read vertex # " << vertexIndex << " is out of bounds! Not in 0 to " << numLabels << " -1, rgb = " << rgb << endl);
+        }
+      else
+        {
+        rgbs[vertexIndex] = rgb;
+        }
     thisStep++;
     if (thisStep % 1000 == 0)
     {
