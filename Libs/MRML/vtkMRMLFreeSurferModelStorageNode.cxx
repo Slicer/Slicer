@@ -220,6 +220,12 @@ void vtkMRMLFreeSurferModelStorageNode::ProcessParentNode(vtkMRMLNode *parentNod
 //----------------------------------------------------------------------------
 int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
 {
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("vtkMRMLFreeSurferModelStorageNode::ReadData: Reference node is null.");
+    return 0;
+    }
+  
   if (!refNode->IsA("vtkMRMLModelNode") ) 
     {
     vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
@@ -400,6 +406,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
 
         reader->Delete();
         floatArray->Delete();
+        floatArray = NULL;
         this->AddOverlayFileName(fullName.c_str());
         }
       }
@@ -528,6 +535,10 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
         reader->SetColorTableOutput(lutNode->GetLookupTable());
         //try reading an internal colour table first
         reader->UseExternalColorTableFileOff();
+        if (this->GetDebug())
+          {
+          reader->DebugOn();
+          }
         int retval = reader->ReadFSAnnotation();
         if (retval == 6)
           {
@@ -535,7 +546,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
           // use the default annotation colours
           // colorLogic->GetDefaultFreeSurferSurfaceLabelsColorNodeID()
           
-          vtkCollection *labelNodes = this->Scene->GetNodesByName("FSSurfaceLabels");
+          vtkCollection *labelNodes = this->Scene->GetNodesByName("FSLabels");
           if (labelNodes->GetNumberOfItems() > 0)
             {
             labelNodes->InitTraversal();
