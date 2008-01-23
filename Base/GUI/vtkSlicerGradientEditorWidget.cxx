@@ -29,7 +29,6 @@ vtkCxxRevisionMacro (vtkSlicerGradientEditorWidget, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   {
-  this->EnableMatrixButton = NULL;
   this->MatrixGUI = NULL;
   this->Matrix = NULL;
   this->RotateButton = NULL;
@@ -150,12 +149,6 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->Matrix->Delete();
     this->Matrix = NULL;
     }
-  if (this->EnableMatrixButton)
-    {
-    this->EnableMatrixButton->SetParent (NULL);
-    this->EnableMatrixButton->Delete();
-    this->EnableMatrixButton = NULL;
-    }
   if (this->LoadGradientsButton)
     {
     this->LoadGradientsButton->SetParent (NULL);
@@ -195,7 +188,6 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
 //---------------------------------------------------------------------------
 void vtkSlicerGradientEditorWidget::AddWidgetObservers ( )
   {    
-  this->EnableMatrixButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->EnableGradientsButton->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->RotateButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NegativeButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -211,9 +203,8 @@ void vtkSlicerGradientEditorWidget::AddWidgetObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerGradientEditorWidget::RemoveWidgetObservers( )
   {
-  this->EnableMatrixButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->EnableGradientsButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->RotateButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->RotateButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->NegativeButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->SwapButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);    
   this->RunButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -239,6 +230,7 @@ void vtkSlicerGradientEditorWidget::ProcessMRMLEvents ( vtkObject *caller,
   if (this->Matrix == vtkMatrix4x4::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent)
     {
     vtkErrorMacro(" modified");
+    this->GetMRMLScene()->Undo();
     }
 }
 
@@ -246,9 +238,7 @@ void vtkSlicerGradientEditorWidget::ProcessMRMLEvents ( vtkObject *caller,
 void vtkSlicerGradientEditorWidget::ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData )
   {
   //import the current matrix values, when enabled, as the user could have changed it
-  if(this->EnableMatrixButton->GetSelectedState())
-    {
-    for(int i=0;i<3;i++)
+  for(int i=0;i<3;i++)
       {
       for(int j=0;j<3;j++)
         {
@@ -256,7 +246,6 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents ( vtkObject *caller, uns
         }
       }
     this->UpdateMatrix();
-    }
 
   //enable/disable buttons depending on how many checkbuttons are selected 
   if(event == vtkKWCheckButton::SelectedStateChangedEvent 
@@ -311,12 +300,6 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents ( vtkObject *caller, uns
   else if(this->EnableGradientsButton == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent)
     {
     this->GradientsTextfield->SetEnabled(this->EnableGradientsButton->GetSelectedState());
-    }
-
-  //enable matrix
-  else if(this->EnableMatrixButton == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent)
-    {
-    this->MatrixGUI->SetEnabled(this->EnableMatrixButton->GetSelectedState()); 
     }
 
   //rotate matrix
@@ -504,15 +487,8 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->MeasurementFrame->SetParent(this->GetParent());
   this->MeasurementFrame->Create();
   this->MeasurementFrame->SetLabelText ("Measurement Frame");
-  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", 
+  this->Script("pack %s -side top -anchor nw -fill x -padx 1 -pady 2", 
     this->MeasurementFrame->GetWidgetName());
-
-  //create enable MatrixGUI button
-  this->EnableMatrixButton = vtkKWCheckButton::New();
-  this->EnableMatrixButton->SetParent(this->MeasurementFrame->GetFrame());
-  this->EnableMatrixButton->SetText("Enable Matrix");
-  this->EnableMatrixButton->SelectedStateOn();
-  this->EnableMatrixButton->Create();
 
   //create MatrixGUI for measurement frame
   this->MatrixGUI = vtkKWMatrixWidget::New();
@@ -520,7 +496,7 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->MatrixGUI->Create();
   this->MatrixGUI->SetNumberOfColumns(3);
   this->MatrixGUI->SetNumberOfRows(3);
-  this->MatrixGUI->SetPadX(10);
+  this->MatrixGUI->SetPadX(2);
   this->MatrixGUI->SetEnabled(0);
   this->MatrixGUI->SetRestrictElementValueToDouble();
   this->MatrixGUI->SetElementWidth(7);
@@ -543,21 +519,21 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->NegativeButton->SetParent(this->MeasurementFrame->GetFrame());
   this->NegativeButton->Create();
   this->NegativeButton->SetText("Negative Selected");
-  this->NegativeButton->SetWidth(15);
+  this->NegativeButton->SetWidth(14);
   this->NegativeButton->SetEnabled(0);
 
   this->SwapButton = vtkKWPushButton::New();
   this->SwapButton->SetParent(this->MeasurementFrame->GetFrame());
   this->SwapButton->Create();
   this->SwapButton->SetText("Swap Selected");
-  this->SwapButton->SetWidth(15);
+  this->SwapButton->SetWidth(14);
   this->SwapButton->SetEnabled(0);
 
   this->RotateButton = vtkKWPushButton::New();
   this->RotateButton->SetParent(this->MeasurementFrame->GetFrame());
   this->RotateButton->Create();
   this->RotateButton->SetText("Rotate Selected");
-  this->RotateButton->SetWidth(15);
+  this->RotateButton->SetWidth(14);
   this->RotateButton->SetEnabled(0);
 
   //create AngleCombobox label
@@ -583,8 +559,8 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
     }
 
   //pack all elements
-  this->Script("grid %s -row 0 -column 0 -columnspan 3 -sticky n", 
-    this->EnableMatrixButton->GetWidgetName());
+  //this->Script("grid %s -row 0 -column 0 -columnspan 3 -sticky n", 
+  //  this->EnableMatrixButton->GetWidgetName());
   this->Script("grid %s -row 1 -column 0 -columnspan 3 -rowspan 3 -sticky nes", 
     this->MatrixGUI->GetWidgetName());
   this->Script("grid %s -row 3 -column 3 -sticky ne", 
@@ -620,31 +596,6 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->GradientsTextfield->SetEnabled(0);
   this->Script("pack %s -side top -anchor s -fill x -padx 2 -pady 2", 
     this->GradientsTextfield->GetWidgetName());
-
-  this->Gradients2 = vtkKWMultiColumnList::New();
-  this->Gradients2->SetParent(this->GradientsFrame->GetFrame());
-  this->Gradients2->Create();
-  int col_index;
-  col_index= this->Gradients2->AddColumn("Gradient");
-  this->Gradients2->SetColumnAlignmentToRight(col_index);
-  this->Gradients2->ResizableColumnsOff();
-  this->Gradients2->AddColumn("X");
-  this->Gradients2->AddColumn("Y");
-  this->Gradients2->AddColumn("Z");
-  this->Gradients2->MovableColumnsOff();
-  this->Gradients2->SortArrowVisibilityOff();
-  for(int i=1; i<this->Gradients2->GetNumberOfColumns(); i++)
-    {
-    this->Gradients2->SetColumnWidth(i, 14);
-    this->Gradients2->SetColumnAlignmentToRight(i);
-    }
-  this->Script("pack %s -side top -anchor s -fill x -padx 2 -pady 2", 
-    this->Gradients2->GetWidgetName());
-
-  this->Gradients2->InsertCellTextAsInt(0,0,1);
-  this->Gradients2->InsertCellTextAsInt(1,0,2);
-  this->Gradients2->InsertCellTextAsDouble(0,1, 0.99382);
-  this->Gradients2->InsertCellTextAsDouble(0,2, 0.23332);
 
   //create enable gradients textfield button
   this->EnableGradientsButton = vtkKWCheckButton::New();

@@ -73,13 +73,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     vtkKWComboBox *AngleCombobox;
     vtkKWTextWithScrollbars *GradientsTextfield;
     vtkSlicerNodeSelectorWidget *ROIMenu;
-    vtkKWCheckButton *EnableMatrixButton;
     vtkKWCheckButton *EnableGradientsButton;
     vtkKWCheckButton* Checkbuttons[3];
     vtkMatrix4x4 *Matrix;
     vtkDoubleArray *Gradients;
     vtkDoubleArray *BValues;
-    vtkKWMultiColumnList *Gradients2;
 
   private:
     vtkSlicerGradientEditorWidget ( const vtkSlicerGradientEditorWidget& ); // Not implemented.
