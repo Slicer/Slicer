@@ -663,6 +663,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         {
         this->VolumeDisplayWidget->TearDownWidget();
         tearDown = 1;
+        this->CreateScalarDisplayWidget();
         this->VolumeDisplayWidget = this->scalarVDW;
         this->VolumeDisplayFrame = this->ScalarDisplayFrame;
         }
@@ -670,6 +671,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         {
         this->VolumeDisplayWidget->TearDownWidget();
         tearDown = 1;
+        this->CreateLabelMapDisplayWidget();
         this->VolumeDisplayWidget = this->labelVDW;
         this->VolumeDisplayFrame = this->LabelMapDisplayFrame;
         }
@@ -685,6 +687,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         {
         this->VolumeDisplayWidget->TearDownWidget();
         tearDown = 1;
+        this->CreateVectorDisplayWidget();
         this->VolumeDisplayWidget = this->vectorVDW;
         this->VolumeDisplayFrame = this->VectorDisplayFrame;
         }
@@ -696,6 +699,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         {
         this->VolumeDisplayWidget->TearDownWidget();
         tearDown = 1;
+        this->CreateDWIDisplayWidget();
         this->VolumeDisplayWidget = this->dwiVDW;
         this->VolumeDisplayFrame = this->DWIDisplayFrame;
         }
@@ -710,6 +714,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         {
         this->VolumeDisplayWidget->TearDownWidget();
         tearDown = 1;
+        this->CreateDTIDisplayWidget();
         this->VolumeDisplayWidget = this->dtiVDW;
         this->VolumeDisplayFrame = this->DTIDisplayFrame;
         }
@@ -936,37 +941,11 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->DTIDisplayFrame->SetParent( this->DisplayFrame->GetFrame() );
     this->DTIDisplayFrame->Create( );
 
-    this->VolumeDisplayFrame = this->ScalarDisplayFrame;
 
 
     // Assign a scalar display widget by default.
-    this->labelVDW = vtkSlicerLabelMapVolumeDisplayWidget::New ( );
-    this->scalarVDW = vtkSlicerScalarVolumeDisplayWidget::New ( );
-    this->dwiVDW = vtkSlicerDiffusionWeightedVolumeDisplayWidget::New( );
-    this->dtiVDW = vtkSlicerDiffusionTensorVolumeDisplayWidget::New( );
-    this->labelVDW->SetParent( this->LabelMapDisplayFrame );
-    this->scalarVDW->SetParent( this->ScalarDisplayFrame );
-    this->dwiVDW->SetParent( this->DWIDisplayFrame );
-    this->dtiVDW->SetParent( this->DTIDisplayFrame );
-    // set the mrml scene before calling create so that the node selectors can
-    // be initialised properly
-    this->labelVDW->SetMRMLScene(this->GetMRMLScene());
-    this->scalarVDW->SetMRMLScene(this->GetMRMLScene());
-    this->dwiVDW->SetMRMLScene(this->GetMRMLScene());
-    this->dtiVDW->SetMRMLScene(this->GetMRMLScene());
-    this->labelVDW->Create();
-    this->scalarVDW->Create();
-    this->dwiVDW->Create();
-    this->dtiVDW->Create();
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                 labelVDW->GetWidgetName(), this->LabelMapDisplayFrame->GetWidgetName());
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                 scalarVDW->GetWidgetName(), this->ScalarDisplayFrame->GetWidgetName());
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                 dwiVDW->GetWidgetName(), this->DWIDisplayFrame->GetWidgetName());
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                 dtiVDW->GetWidgetName(), this->DTIDisplayFrame->GetWidgetName());
-
+    this->CreateScalarDisplayWidget();
+    this->VolumeDisplayFrame = this->ScalarDisplayFrame;
     this->VolumeDisplayWidget = this->scalarVDW;
 
     // ---
@@ -1053,5 +1032,64 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 
     this->ProcessGUIEvents (this->VolumeSelectorWidget,
                             vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::CreateScalarDisplayWidget ( )
+{
+    this->scalarVDW = vtkSlicerScalarVolumeDisplayWidget::New ( );
+    this->scalarVDW->SetParent( this->ScalarDisplayFrame );
+    this->scalarVDW->SetMRMLScene(this->GetMRMLScene());
+    this->scalarVDW->Create();
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                 scalarVDW->GetWidgetName(), this->ScalarDisplayFrame->GetWidgetName());
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::CreateVectorDisplayWidget ( )
+{
+// TODO fill in
+}
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::CreateLabelMapDisplayWidget ( )
+{
+  if (this->labelVDW == NULL)
+    {
+    this->labelVDW = vtkSlicerLabelMapVolumeDisplayWidget::New ( );
+    this->labelVDW->SetParent( this->LabelMapDisplayFrame );
+    this->labelVDW->SetMRMLScene(this->GetMRMLScene());
+    this->labelVDW->Create();
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                 labelVDW->GetWidgetName(), this->LabelMapDisplayFrame->GetWidgetName());
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::CreateDWIDisplayWidget ( )
+{
+  if (this->dwiVDW == NULL)
+    {
+    this->dwiVDW = vtkSlicerDiffusionWeightedVolumeDisplayWidget::New( );
+    this->dwiVDW->SetParent( this->DWIDisplayFrame );
+    this->dwiVDW->SetMRMLScene(this->GetMRMLScene());
+    this->dwiVDW->Create();
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                 dwiVDW->GetWidgetName(), this->DWIDisplayFrame->GetWidgetName());
+    }
+ }
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumesGUI::CreateDTIDisplayWidget ( )
+{
+  if (this->dtiVDW == NULL)
+    {
+    this->dtiVDW = vtkSlicerDiffusionTensorVolumeDisplayWidget::New( );
+    this->dtiVDW->SetParent( this->DTIDisplayFrame );
+    this->dtiVDW->SetMRMLScene(this->GetMRMLScene());
+    this->dtiVDW->Create();
+    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                 dtiVDW->GetWidgetName(), this->DTIDisplayFrame->GetWidgetName());    
+    }
 
 }

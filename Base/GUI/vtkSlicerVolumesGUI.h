@@ -102,7 +102,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     virtual void Enter ( );
     virtual void Exit ( );
 
- protected:
+    void CreateScalarDisplayWidget ( );
+    void CreateVectorDisplayWidget ( );
+    void CreateLabelMapDisplayWidget ( );
+    void CreateDWIDisplayWidget ( );
+    void CreateDTIDisplayWidget ( );
+
+protected:
     vtkSlicerVolumesGUI ( );
     virtual ~vtkSlicerVolumesGUI ( );
 
