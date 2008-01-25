@@ -114,6 +114,8 @@ public:
   int SetNthFiducialLabelText(int n, const char *text);
   int SetNthFiducialSelected(int n, int flag);
   int SetNthFiducialSelectedNoModified(int n, int flag);
+  int SetNthFiducialVisibility(int n, int flag);
+  int SetNthFiducialVisibilityNoModified(int n, int flag);
   int SetNthFiducialID(int n, const char *id);
 
   // Description:
@@ -121,15 +123,26 @@ public:
   int SetAllFiducialsSelected(int flag);
 
   // Description:
+  // Set all fiducials visible state to flag
+  int SetAllFiducialsVisibility(int flag);
+
+  // Description:
   // Get the elements of the fiducial points
   // Return a three element float holding the position
   float *GetNthFiducialXYZ(int n);
+  // Description:
   // get the orientation of the nth fiducial
   float *GetNthFiducialOrientation(int n);
+  // Description:
   // get the label text of the nth fiducial
   const char *GetNthFiducialLabelText(int n);
+  // Description:
   // get the selected state on the nth fiducial
   int GetNthFiducialSelected(int n);
+  // Description:
+  // get the visible state on the nth fiducial
+  int GetNthFiducialVisibility(int n);
+  // Description:
   // get the id of the nth fiducial
   const char *GetNthFiducialID(int n);
   
@@ -140,12 +153,22 @@ public:
   // Description:
   // Add a fiducial point to the list x, y, z
   int AddFiducialWithXYZ(float x, float y, float z, int selected);
-  
+
+  // Description:
+  // remove the passed in fiducial from the list
   void RemoveFiducial(vtkMRMLFiducial *o);
+  // Description:
+  // remove the fiducial at index i
   void RemoveFiducial(int i);
+  // Description:
+  // remove all fiducials from the list
   void RemoveAllFiducials();
+  // Description:
+  // is this fiducial on the list?
   int  IsFiducialPresent(vtkMRMLFiducial *o);
 
+  // Description:
+  // Process events from the MRML scene
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   //BTX
@@ -162,7 +185,6 @@ public:
 
   // Description:
   // Opacity of the fiducial surface expressed as a number from 0 to 1
-//  vtkSetMacro(Opacity, double);
   void SetOpacity(double opacity);
   vtkGetMacro(Opacity, double);
 
@@ -224,6 +246,8 @@ public:
   const char* GetGlyphTypeAsString(int g);
   void SetGlyphTypeFromString(const char *glyphString);
 
+  // Description:
+  // transform utility functions
   virtual bool CanApplyNonLinearTransforms() { return true; }
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);

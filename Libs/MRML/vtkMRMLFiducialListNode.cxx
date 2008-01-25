@@ -148,6 +148,9 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
+  // turn off modified events until done reading
+  this->DisableModifiedEventOn();
+  
   const char* attName;
   const char* attValue;
   while (*atts != NULL) 
@@ -235,7 +238,7 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       }
       else if (!strcmp(attName, "fiducials"))
       {
-          vtkDebugMacro("ReadXMLAttributes: found a fiducials list: " << (char*)attValue << endl);
+          vtkDebugMacro("ReadXMLAttributes: found a fiducials list: " << (char*)attValue << endl);          
           // need to add fiducials and parse out the list of fiducial points
           // assume labeltext is first, extract that part of the attValue
           char *fiducials = (char *)attValue;
@@ -275,13 +278,16 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
               }
               newPoint = NULL;
               labelTextPtr = strtok(NULL, "\n");
-          }
+          }          
       }
       else
       {
       vtkDebugMacro("ReadXMLAttributes: Unknown attribute name " << attName);
       }
   }
+  // turn on modified events
+  this->DisableModifiedEventOff();
+  this->Modified();
   vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
 }
 
@@ -291,6 +297,8 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
 {
+  this->DisableModifiedEventOn();
+  
   Superclass::Copy(anode);
   vtkMRMLFiducialListNode *node = (vtkMRMLFiducialListNode *) anode;
 
@@ -324,6 +332,8 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
     fidThis->Delete();
     fidThis = NULL;
     }
+  // turn on modified events
+  this->DisableModifiedEventOff();
   this->Modified();
 }
 
@@ -715,6 +725,82 @@ int vtkMRMLFiducialListNode::GetNthFiducialSelected(int n)
 }
 
 //----------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::SetAllFiducialsSelected(int flag)
+{
+
+  int numPoints = this->GetNumberOfFiducials();
+  int retVal = 0;
+  for (int f = 0; f < numPoints; f++)
+    {
+    retVal += this->SetNthFiducialSelectedNoModified(f, flag);
+    }
+  // now call modified
+  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+  return (retVal == 0 ? 0 : 1);
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::SetNthFiducialVisibility(int n, int flag)
+{
+    vtkMRMLFiducial *node = this->GetNthFiducial(n);
+    if (node == NULL)
+    {
+        vtkErrorMacro("Unable to get fiducial number " << n);
+        return 1;
+    }
+    node->SetVisibility((flag == 0 ? false : true));
+    node = NULL;
+    // the list contents have been modified
+    this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+    return 0;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::SetNthFiducialVisibilityNoModified(int n, int flag)
+{
+    vtkMRMLFiducial *node = this->GetNthFiducial(n);
+    if (node == NULL)
+    {
+        vtkErrorMacro("Unable to get fiducial number " << n);
+        return 1;
+    }
+    node->SetVisibility((flag == 0 ? false : true));
+    node = NULL;
+    return 0;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::GetNthFiducialVisibility(int n)
+{
+    vtkMRMLFiducial *node = this->GetNthFiducial(n);
+    if (node != NULL)
+      {
+      int visible = node->GetVisibility();
+      node = NULL;
+      return (visible ? 1 : 0);
+      }
+    else
+      {
+      return 0;
+      }
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::SetAllFiducialsVisibility(int flag)
+{
+
+  int numPoints = this->GetNumberOfFiducials();
+  int retVal = 0;
+  for (int f = 0; f < numPoints; f++)
+    {
+    retVal += this->SetNthFiducialVisibilityNoModified(f, flag);
+    }
+  // now call modified
+  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+  return (retVal == 0 ? 0 : 1);
+}
+
+//----------------------------------------------------------------------------
 int vtkMRMLFiducialListNode::SetNthFiducialID(int n, const char *id)
 {
     vtkMRMLFiducial *node = this->GetNthFiducial(n);
@@ -730,20 +816,6 @@ int vtkMRMLFiducialListNode::SetNthFiducialID(int n, const char *id)
     return 0;
 }
 
-//----------------------------------------------------------------------------
-int vtkMRMLFiducialListNode::SetAllFiducialsSelected(int flag)
-{
-
-  int numPoints = this->GetNumberOfFiducials();
-  int retVal = 0;
-  for (int f = 0; f < numPoints; f++)
-    {
-    retVal += this->SetNthFiducialSelectedNoModified(f, flag);
-    }
-  // now call modified
-  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
-  return (retVal == 0 ? 0 : 1);
-}
 
 //----------------------------------------------------------------------------
 const char *vtkMRMLFiducialListNode::GetNthFiducialID(int n)
@@ -834,6 +906,8 @@ int vtkMRMLFiducialListNode::AddFiducialWithXYZ(float x, float y, float z, int s
 
   fiducial->SetSelected((selected == 0 ? false : true));
 
+  fiducial->SetVisibility(true);
+  
   // add it to the collection
   this->FiducialList->vtkCollection::AddItem(fiducial);
   int itemIndex = this->FiducialList->vtkCollection::IsItemPresent(fiducial);

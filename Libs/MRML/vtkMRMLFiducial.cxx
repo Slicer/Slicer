@@ -49,6 +49,7 @@ vtkMRMLFiducial::vtkMRMLFiducial()
   this->ID = NULL;
   this->SetID("");
   this->Selected = false;
+  this->Visibility = true;
 }
 
 //----------------------------------------------------------------------------
@@ -94,6 +95,7 @@ void vtkMRMLFiducial::WriteXML(ostream& of, int nIndent)
                                 this->OrientationWXYZ[3];
   
   of << " selected " << this->Selected;
+  of << " visibility " << this->Visibility;
   
 }
 
@@ -145,6 +147,13 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
     // get the selected flag
     ss >> keyName;
     ss >> this->Selected;
+
+    // get the visibility flag
+    ss >> keyName;
+    if (keyName == std::string("visibility"))
+      {
+      ss >> this->Visibility;
+      }
 }
 
 //----------------------------------------------------------------------------
@@ -156,7 +165,7 @@ void vtkMRMLFiducial::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
 
-  std::cout << "vtkMRMLFiducial::ReadXMLAttributes\n";
+  //std::cout << "vtkMRMLFiducial::ReadXMLAttributes\n";
   
   while (*atts != NULL) 
     {
@@ -203,6 +212,22 @@ void vtkMRMLFiducial::ReadXMLAttributes(const char** atts)
           this->SetSelected(false);
           }
     }
+    else if (!strcmp(attName, "visibility"))
+    {
+        std::stringstream ss;
+        ss << attValue;
+        int vis;
+        ss >> vis;
+        std::cout << "visibility value = " << attValue << ", vis = " << vis << endl;
+        if (vis == 1)
+          {
+          this->SetVisibility(true);
+          }
+        else
+          {
+          this->SetVisibility(false);
+          }
+    }
   }
 }
 
@@ -221,6 +246,7 @@ void vtkMRMLFiducial::Copy(vtkObject *anode)
 
   this->SetLabelText(node->GetLabelText());
   this->SetSelected(node->GetSelected());
+  this->SetVisibility(node->GetVisibility());
 }
 
 //----------------------------------------------------------------------------
@@ -248,6 +274,8 @@ void vtkMRMLFiducial::PrintSelf(ostream& os, vtkIndent indent)
 
   // selected flag
   os << indent << "Selected: " << this->Selected << "\n";
+  // visibility flag
+  os << indent << "Visibility: " << this->Visibility << "\n";
 }
 
 
