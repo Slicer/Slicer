@@ -20,3 +20,4 @@
 #endif
 
 #include "vtkITKWin32Header.h"
+#include "vtkITKNumericTraits.h"
