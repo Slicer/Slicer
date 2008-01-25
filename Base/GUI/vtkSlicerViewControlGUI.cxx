@@ -1709,10 +1709,56 @@ void vtkSlicerViewControlGUI::SliceViewMagnify(int event, vtkSlicerInteractorSty
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewResetFocalPoint ( )
 {
-  this->MainViewSetFocalPoint ( 0.0, 0.0, 0.0);
+  double x_cen, y_cen, z_cen;
+  vtkRenderer *ren;
+  double bounds[6];
+
+  int boxVisible;
+  int axisLabelsVisible;
+  
+  // This method computes the visible scene bbox and
+  // recenters the camera around the bbox centroid.
+  
+  vtkMRMLViewNode *vn = this->GetActiveView();
+  if ( vn != NULL )
+    {
+    boxVisible = vn->GetBoxVisible();
+    axisLabelsVisible = vn->GetAxisLabelsVisible();
+
+    // if box is visible, turn its visibility temporarily off
+    if ( boxVisible )
+      {
+      vn->SetBoxVisible ( 0 );
+      }
+    // if axis actors are visible, turn their visibility temporarily off.
+    if ( axisLabelsVisible )
+      {
+      vn->SetAxisLabelsVisible ( 0 );
+      }
+
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    ren = p->GetViewerWidget()->GetMainViewer()->GetRenderer();
+    ren->ComputeVisiblePropBounds( bounds );
+    x_cen = (bounds[1] + bounds[0]) / 2.0;
+    y_cen = (bounds[3] + bounds[2]) / 2.0;
+    z_cen = (bounds[5] + bounds[4]) / 2.0;
+    this->MainViewSetFocalPoint ( x_cen, y_cen, z_cen);
+
+  // if box was visible, turn its visibility back on.
+    if ( boxVisible )
+      {
+      vn->SetBoxVisible ( 1 );
+      }
+  // if axis actors were visible, turn their visibility back on.
+    if ( axisLabelsVisible )
+      {
+      vn->SetAxisLabelsVisible ( 1 );
+      }
+    
+  // Code used to recenter the view around the origin.
+  //  this->MainViewSetFocalPoint ( 0.0, 0.0, 0.0);
+    }
 }
-
-
 
 
 //---------------------------------------------------------------------------
