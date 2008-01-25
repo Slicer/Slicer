@@ -301,6 +301,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
           if { [$fidListNode GetNthFiducialSelected $f] } {
             $seedSWidget configure -selected 1
           }
+          $seedSWidget configure -visibility [$fidListNode GetNthFiducialVisibility $f]
           lappend _seedSWidgets $seedSWidget
         }
       }

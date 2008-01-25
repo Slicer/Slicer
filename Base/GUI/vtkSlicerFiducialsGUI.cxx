@@ -52,7 +52,6 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->ListOpacity = NULL;
     
     this->MultiColumnList = NULL;
-    this->NumberOfColumns = 9;
 
     this->BIRNLabel = NULL;
     this->NCIGTLabel = NULL;
@@ -758,6 +757,12 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
         this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,this->SelectedColumn,(activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0));
         this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,this->SelectedColumn);
         }
+      // visible
+      if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->VisibilityColumn) != (activeFiducialListNode->GetNthFiducialVisibility(row) ? 1 : 0))
+        {
+        this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,this->VisibilityColumn,(activeFiducialListNode->GetNthFiducialVisibility(row) ? 1 : 0));
+        this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,this->VisibilityColumn);
+        }
       if (xyz != NULL)
         {
         // always set it if it's a new row added because all were
@@ -1178,6 +1183,9 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     // refer to the header file for order
     this->MultiColumnList->GetWidget()->AddColumn("Name");
     this->MultiColumnList->GetWidget()->AddColumn("Selected");
+    // add the visibility column with no text, use an icon
+    this->MultiColumnList->GetWidget()->AddColumn("");
+    this->MultiColumnList->GetWidget()->SetColumnLabelImageToIcon(this->VisibilityColumn, this->VisibilityIcons->GetVisibleIcon());
     this->MultiColumnList->GetWidget()->AddColumn("X");
     this->MultiColumnList->GetWidget()->AddColumn("Y");
     this->MultiColumnList->GetWidget()->AddColumn("Z");
@@ -1186,8 +1194,9 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->MultiColumnList->GetWidget()->AddColumn("OrY");
     this->MultiColumnList->GetWidget()->AddColumn("OrZ");
     
-    // make the selected column editable by checkbox
+    // make the selected, visible columns editable by checkbox
     this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(this->SelectedColumn);
+    this->MultiColumnList->GetWidget()->SetColumnEditWindowToCheckButton(this->VisibilityColumn);
     
     // now set the attributes that are equal across the columns
     int col;
@@ -1201,10 +1210,10 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
             this->MultiColumnList->GetWidget()->SetColumnEditWindowToSpinBox(col);
         }
     }
-    // set the name column width to be higher
+    // set some column widths to custom values
     this->MultiColumnList->GetWidget()->SetColumnWidth(this->NameColumn, 15);
-    // set the selected column width a bit higher
     this->MultiColumnList->GetWidget()->SetColumnWidth(this->SelectedColumn, 9);
+    this->MultiColumnList->GetWidget()->SetColumnWidth(this->VisibilityColumn, 4);
     
     app->Script ( "pack %s -fill both -expand true",
                   this->MultiColumnList->GetWidgetName());
@@ -1316,6 +1325,12 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
                 vtkDebugMacro("UpdateElement: setting node " <<  activeFiducialListNode->GetNthFiducialLabelText(row) << "'s selected flag to " << str << endl);
                 activeFiducialListNode->SetNthFiducialSelected(row, (atoi(str) == 1));
             }
+            else if (col == this->VisibilityColumn)
+              {
+              // visible
+              vtkDebugMacro("UpdateElement: setting node " <<  activeFiducialListNode->GetNthFiducialLabelText(row) << "'s visible flag to " << str << endl);
+              activeFiducialListNode->SetNthFiducialVisibility(row, (atoi(str) == 1));
+              } 
             else if (col >= this->XColumn && col <= this->ZColumn)
             {
                 // get the current xyz
@@ -1346,7 +1361,7 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
         }
     else
     {
-        vtkErrorMacro ("Invalid row " << row << " or column " << col <<  ", valid columns are 0-" << this->NumberOfColumns << "\n");
+        vtkErrorMacro ("Invalid row " << row << " or column " << col <<  ", valid columns are 0-" << this->NumberOfColumns-1 << "\n");
     }
 }
 

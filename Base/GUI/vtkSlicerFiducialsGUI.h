@@ -114,6 +114,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     virtual void Enter ( );
     virtual void Exit ( );
 
+    // Description:
+    // Set a value in the multi column list box at row,col to str
     virtual void UpdateElement(int row, int col, char * str);
 
     // Description:
@@ -151,7 +153,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Module logic and mrml pointers
     vtkSlicerFiducialsLogic *Logic;
 
-
     // Description:
     // The ID of the fiducial list node that is currently displayed in the GUI
     // TODO: probably redundant
@@ -173,32 +174,40 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkKWPushButton *SelectAllFiducialsButton;
     // deselect all fiducial points on this list
     vtkKWPushButton *DeselectAllFiducialsButton;
-    
-    // list visibility
+
+    // Description:
+    // list visibility, overrides individual point visibility
     vtkKWPushButton *VisibilityToggle;
     vtkSlicerVisibilityIcons *VisibilityIcons;
 
+    // Description:
     // list colour
     vtkKWChangeColorButton *ListColorButton;
 
+    // Description:
     // list selected fiducial colour
     vtkKWChangeColorButton *ListSelectedColorButton;
-    
+
+    // Description:
     // symbol scale
     vtkKWScaleWithEntry *ListSymbolScale;
+    // Description:
     // symbol type
     vtkKWMenuButtonWithLabel *ListSymbolTypeMenu;
+    // Description:
     // text scale
     vtkKWScaleWithEntry *ListTextScale;
 
+    // Description:
     // opacity
     vtkKWScaleWithEntry *ListOpacity;
-    
+
+    // Description:
     // display the points on the list
     vtkKWMultiColumnListWithScrollbars *MultiColumnList;
-    // the columns that hold the
-    // name, x, y, z, orientation x y z w, selected
-    int NumberOfColumns;
+
+    // Description:
+    // contributing logo widgets
     vtkKWLabel *NACLabel;
     vtkKWLabel *NAMICLabel;
     vtkKWLabel *NCIGTLabel;
@@ -211,13 +220,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     {
         NameColumn = 0,
         SelectedColumn = 1,
-        XColumn = 2,
-        YColumn = 3,
-        ZColumn = 4,
-        OrWColumn = 5,
-        OrXColumn = 6,
-        OrYColumn = 7,
-        OrZColumn = 8,
+        VisibilityColumn = 2,
+        XColumn = 3,
+        YColumn = 4,
+        ZColumn = 5,
+        OrWColumn = 6,
+        OrXColumn = 7,
+        OrYColumn = 8,
+        OrZColumn = 9,
+        NumberOfColumns = 10,
     };
     //ETX
 

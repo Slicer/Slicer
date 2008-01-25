@@ -39,6 +39,7 @@ if { [itcl::find class SeedSWidget] == "" } {
     public variable selectedColor "1 1 0"
     public variable opacity "1"
     public variable selected "0"
+    public variable visibility "1"
     public variable text ""
     public variable textScale "1"
 
@@ -168,6 +169,11 @@ itcl::configbody SeedSWidget::selected {
   [$sliceGUI GetSliceViewer] RequestRender
 }
 
+itcl::configbody SeedSWidget::visibility {
+  $this highlight
+  [$sliceGUI GetSliceViewer] RequestRender
+}
+
 itcl::configbody SeedSWidget::text {
   $o(textActor) SetInput $text
   [$sliceGUI GetSliceViewer] RequestRender
@@ -249,6 +255,10 @@ itcl::body SeedSWidget::highlight { } {
 
   set property [$o(actor) GetProperty]
   set textProperty [$o(textActor) GetTextProperty]
+
+  $o(actor) SetVisibility $visibility
+  $o(textActor) SetVisibility $visibility
+
   if { $selected } {
     eval $property SetColor $selectedColor
     eval $textProperty SetColor $selectedColor
