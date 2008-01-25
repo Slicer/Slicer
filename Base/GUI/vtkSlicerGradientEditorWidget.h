@@ -5,7 +5,7 @@
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 
 class vtkKWFrameWithLabel;
-class vtkKWCheckButtonSet;
+class vtkKWFrame;
 class vtkKWPushButton;
 class vtkKWLabel;
 class vtkKWComboBox;
@@ -16,7 +16,7 @@ class vtkKWLoadSaveButtonWithLabel;
 class vtkMatrix4x4;
 class vtkDoubleArray;
 class vtkKWMatrixWidget;
-class vtkKWMultiColumnList;
+class vtkMRMLDiffusionWeightedVolumeNode;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
   {
@@ -57,27 +57,27 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     // Method to update the GUI GradientsTextfield.
     void UpdateGradients();
 
-    vtkKWLoadSaveButtonWithLabel *SaveButton;
     vtkKWLoadSaveButtonWithLabel *LoadGradientsButton;
     vtkKWFrameWithLabel *MeasurementFrame;
     vtkKWFrameWithLabel *TestFrame;
     vtkKWFrameWithLabel *GradientsFrame;
-    vtkKWFrameWithLabel *LoadSaveFrame;
     vtkKWFrame *ButtonsFrame;
     vtkKWMatrixWidget *MatrixGUI;
     vtkKWPushButton *NegativeButton;
     vtkKWPushButton *SwapButton;    
     vtkKWPushButton *RunButton;
     vtkKWPushButton *RotateButton;
+    vtkKWPushButton *CancelButton;
     vtkKWLabel *AngleLabel;
     vtkKWComboBox *AngleCombobox;
     vtkKWTextWithScrollbars *GradientsTextfield;
-    vtkSlicerNodeSelectorWidget *ROIMenu;
+    vtkSlicerNodeSelectorWidget *Mask;
     vtkKWCheckButton *EnableGradientsButton;
     vtkKWCheckButton* Checkbuttons[3];
     vtkMatrix4x4 *Matrix;
     vtkDoubleArray *Gradients;
     vtkDoubleArray *BValues;
+    vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
 
   private:
     vtkSlicerGradientEditorWidget ( const vtkSlicerGradientEditorWidget& ); // Not implemented.

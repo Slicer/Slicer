@@ -4,7 +4,8 @@
 #include "vtkSlicerBaseLogic.h"
 #include "vtkSlicerLogic.h"
 
-#include "vtkMRMLDiffusionWeightedVolumeNode.h"
+class vtkMRMLDiffusionWeightedVolumeNode;
+class vtkDoubleArray;
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic 
   {
@@ -17,7 +18,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerGradientEditorLogic : public vtkSlic
 
     // Description:
     // Method to add gradients from files to the GUI.
-    void AddGradients(const char* filename, vtkMRMLDiffusionWeightedVolumeNode *dwiNode);
+    void AddGradients(const char *filename, vtkMRMLDiffusionWeightedVolumeNode *dwiNode);
+
+    void ParseGradients(const char  *oldGradients, vtkDoubleArray *newGradients);
 
   protected:
     vtkSlicerGradientEditorLogic(void);

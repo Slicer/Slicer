@@ -154,7 +154,6 @@ protected:
     vtkSlicerVolumeFileHeaderWidget *VolumeFileHeaderWidget;    
     vtkSlicerGradientEditorWidget *GradientEditorWidget;
 
-
     vtkKWLabel *NACLabel;
     vtkKWLabel *NAMICLabel;
     vtkKWLabel *NCIGTLabel;

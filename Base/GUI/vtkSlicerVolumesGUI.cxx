@@ -705,7 +705,8 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         }
         this->GradientFrame->EnabledOn();
         this->GradientFrame->SetAllowFrameToCollapse(1);
-        vtkMRMLDiffusionWeightedVolumeNode *dwiNode = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(refNode);
+        vtkMRMLDiffusionWeightedVolumeNode *dwiNode = 
+          vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(refNode);
         this->GradientEditorWidget->UpdateWidget(dwiNode);
       }
     else if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
@@ -949,7 +950,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->VolumeDisplayWidget = this->scalarVDW;
 
     // ---
-    // Gradient FRAME
+    // GradientEditor FRAME
     this->GradientFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     this->GradientFrame->SetParent ( page );
     this->GradientFrame->Create ( );
@@ -963,6 +964,9 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->GradientEditorWidget = vtkSlicerGradientEditorWidget::New ( );
     this->GradientEditorWidget->SetParent ( this->GradientFrame->GetFrame() );
     this->GradientEditorWidget->Create ( );
+    this->GradientEditorWidget->SetMRMLScene(this->GetMRMLScene());
+    this->GradientEditorWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
+    this->GradientEditorWidget->AddWidgetObservers();
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->GradientEditorWidget->GetWidgetName(), this->GradientFrame->GetFrame()->GetWidgetName());
 
@@ -1000,7 +1004,6 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->SaveFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->SaveFrame->GetWidgetName(), page->GetWidgetName());
-
 
     this->UseCompressionCheckButton = vtkKWCheckButton::New();
     this->UseCompressionCheckButton->SetParent(this->SaveFrame->GetFrame());

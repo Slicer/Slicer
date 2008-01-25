@@ -55,3 +55,8 @@ void vtkSlicerGradientEditorLogic::AddGradients (const char* filename, vtkMRMLDi
 
   storageNode->Delete();
   }
+
+
+void vtkSlicerGradientEditorLogic::ParseGradients(const char *oldGradients, vtkDoubleArray *newGradients)
+  {
+  }
