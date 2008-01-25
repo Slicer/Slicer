@@ -18,9 +18,37 @@
 #include "vtkEventBroker.h"
 #include "vtkObservation.h"
 
+vtkEventBroker *vtkEventBroker::Instance = NULL;
 
 vtkCxxRevisionMacro(vtkEventBroker, "$Revision: 1.9.12.1 $");
-vtkStandardNewMacro(vtkEventBroker);
+
+//----------------------------------------------------------------------------
+// Up the reference count so it behaves like New
+vtkEventBroker* vtkEventBroker::New()
+{
+  vtkEventBroker* ret = vtkEventBroker::GetInstance();
+  ret->Register(NULL);
+  return ret;
+}
+
+//----------------------------------------------------------------------------
+// Return the single instance of the vtkEventBroker
+vtkEventBroker* vtkEventBroker::GetInstance()
+{
+  if(!vtkEventBroker::Instance)
+    {
+    // Try the factory first
+    vtkEventBroker::Instance = (vtkEventBroker*)
+      vtkObjectFactory::CreateInstance("vtkEventBroker");
+    // if the factory did not provide one, then create it here
+    if(!vtkEventBroker::Instance)
+      {
+      vtkEventBroker::Instance = new vtkEventBroker;
+      }
+    }
+  // return the instance
+  return vtkEventBroker::Instance;
+}
 
 //----------------------------------------------------------------------------
 vtkEventBroker::vtkEventBroker()

@@ -48,10 +48,20 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   public:
   
   // The Usual vtk class functions
-  static vtkEventBroker *New();
   vtkTypeRevisionMacro(vtkEventBroker,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  // Description:
+  // This is a singleton pattern New.  There will only be ONE
+  // reference to a vtkSlicerApplication object per process.  Clients that
+  // call this must call Delete on the object so that the reference
+  // counting will work.   The single instance will be unreferenced when
+  // the program exits.
+  static vtkEventBroker* New();
+
+  // Description:
+  // Get the singleton
+  static vtkEventBroker* GetInstance();
 
   //// Adding and Removing Observation objects
 
@@ -206,6 +216,9 @@ protected:
   //BTX
   std::ofstream LogFile;
   //ETX
+  //
+
+  static vtkEventBroker* Instance;
 
 };
 

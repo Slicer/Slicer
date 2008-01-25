@@ -34,7 +34,7 @@ int main(int argc, char * argv[])
 {
   PARSE_ARGS;
 
-  vtkEventBroker *broker = vtkEventBroker::New();
+  vtkEventBroker *broker = vtkEventBroker::GetInstance();
   vtkCallbackCommand *callback = vtkCallbackCommand::New();
   vtkImageEllipsoidSource *ellip = vtkImageEllipsoidSource::New();
   vtkImageViewer *viewer = vtkImageViewer::New();
@@ -46,7 +46,7 @@ int main(int argc, char * argv[])
   callback->SetCallback( Callback ); 
   callback->SetClientData( reinterpret_cast<void *> (viewer) );
 
-  vtkObservation *observation = broker->AddObservation( ellip, vtkCommand::ModifiedEvent, viewer, callback);
+  broker->AddObservation( ellip, vtkCommand::ModifiedEvent, viewer, callback);
 
   if ( logFileName != "" )
     {
