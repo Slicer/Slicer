@@ -276,6 +276,7 @@ int vtkEventBroker::GenerateGraphFile ( const char *graphFile )
 
   file << "}\n";
   file.close();
+  return 0;
 }
 
 //----------------------------------------------------------------------------
