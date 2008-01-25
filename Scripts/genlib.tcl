@@ -371,7 +371,7 @@ if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
     } else {
         if { $isDarwin } {
             exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
-            exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
+            exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
         }
         runcmd ../incrTcl/configure --with-tcl=$SLICER_LIB/tcl-build/lib --with-tk=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build
         if { $isDarwin } {
