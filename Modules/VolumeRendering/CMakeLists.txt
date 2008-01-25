@@ -11,14 +11,14 @@ if(VOLUMERENDERINGMODULE)
   vtkSlicerVRHelper.cxx
   vtkSlicerVRGrayscaleHelper.cxx
   #LabelmapPart
-  vtkSlicerVRLabelmapHelper.cxx
-  vtkLabelMapColorTransferFunction.cxx
-  vtkLabelMapPiecewiseFunction.cxx
-  vtkSlicerLabelMapWidget.cxx
-  vtkSlicerLabelmapTree.cxx
-  vtkSlicerLabelmapElement.cxx
-  vtkSlicerBaseTree.cxx
-  vtkSlicerBaseTreeElement.cxx
+  #vtkSlicerVRLabelmapHelper.cxx
+  #vtkLabelMapColorTransferFunction.cxx
+  #vtkLabelMapPiecewiseFunction.cxx
+  #vtkSlicerLabelMapWidget.cxx
+  #vtkSlicerLabelmapTree.cxx
+  #vtkSlicerLabelmapElement.cxx
+  #vtkSlicerBaseTree.cxx
+  #vtkSlicerBaseTreeElement.cxx
   )
 #-----------------------------------------------
 # Include dirs
