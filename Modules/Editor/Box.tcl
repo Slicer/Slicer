@@ -258,7 +258,9 @@ itcl::body Box::togglePin {} {
     "popup" -
     "menu" {
       $this configure -mode "dialog"
-      after idle raise [$o(toplevel) GetWidgetName]
+      if { [info exists o(toplevel)] } {
+        after idle raise [$o(toplevel) GetWidgetName]
+      }
     }
     "dialog" {
       $this configure -mode "popup"
