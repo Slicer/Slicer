@@ -324,6 +324,16 @@ private:
    */
   int GenerateContrasts ( );
 
+
+  /**
+   * Flag set to true when the working directory has been created.
+   */
+  bool WorkingDirExists;
+  /**
+   * Create the working directory, sets the WorkingDirExists flag.
+   */
+  void MakeWorkingDirectory();
+  
 };
 
 #endif // QDECGLMDESIGN_H

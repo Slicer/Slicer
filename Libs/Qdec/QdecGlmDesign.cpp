@@ -64,6 +64,7 @@ QdecGlmDesign::QdecGlmDesign ( QdecDataTable* iDataTable )
   this->mfnFsgdfFile = "qdec.fsgd";
   this->mfnYdataFile = "y.mgh";
   this->mfnDefaultWorkingDir = "";
+  this->WorkingDirExists = false;
   if( NULL != getenv("QDEC_WORKING_DIR") )
   {
     this->mfnDefaultWorkingDir = getenv("QDEC_WORKING_DIR");
@@ -82,19 +83,6 @@ QdecGlmDesign::QdecGlmDesign ( QdecDataTable* iDataTable )
       }
   }
   this->mfnWorkingDir = this->mfnDefaultWorkingDir;
-
-#ifndef _WIN32
-  int err = mkdir( this->mfnWorkingDir.c_str(), 0777);
-#else
-  int err = mkdir( this->mfnWorkingDir.c_str());
-#endif
-  if( err != 0 && errno != EEXIST )
-    {
-    fprintf( stderr,
-             "ERROR: QdecGlmDesign::Constructor: "
-             "could not create directory %s\n",
-             this->mfnWorkingDir.c_str());
-    }
 }
 
 QdecGlmDesign::~QdecGlmDesign ( )
@@ -110,6 +98,33 @@ QdecGlmDesign::~QdecGlmDesign ( )
 // Methods
 //
 
+/**
+ *
+ * Make the working dir
+ */
+void QdecGlmDesign::MakeWorkingDirectory()
+{
+  if (strcmp(this->mfnWorkingDir.c_str(),"") != 0)
+    {
+#ifndef _WIN32
+    int err = mkdir( this->mfnWorkingDir.c_str(), 0777);
+#else
+    int err = mkdir( this->mfnWorkingDir.c_str());
+#endif
+    if( err != 0 && errno != EEXIST )
+      {
+      fprintf( stderr,
+               "ERROR: QdecGlmDesign::Constructor: "
+               "could not create directory %s\n",
+               this->mfnWorkingDir.c_str());
+      this->WorkingDirExists = false;
+      }
+    else
+      {
+      this->WorkingDirExists = true;
+      }
+    }
+}
 
 /**
  * Returns true if this design is valid (input parameters have been set and
@@ -276,27 +291,13 @@ int QdecGlmDesign::Create ( QdecDataTable* iDataTable,
       ( "Saving configuration design..." );
     this->mProgressUpdateGUI->UpdateProgressPercent( 20 );
   }
-  if (strcmp(this->mfnWorkingDir.c_str(),"") != 0)
+  this->MakeWorkingDirectory();
+  if (!this->WorkingDirExists)
     {
-#ifndef _WIN32
-    int err = mkdir( this->mfnWorkingDir.c_str(), 0777);
-#else
-    int err = mkdir ( this->mfnWorkingDir.c_str());
-#endif
-
-    if( err != 0 && errno != EEXIST )
-      {
-      fprintf( stderr,
-               "ERROR: QdecGlmDesign::Create: could not create directory %s\n",
-               this->mfnWorkingDir.c_str());
-      return(-6);
-      }
-    }
-  else
-    {
-    fprintf(stderr,
-            "ERROR: QdecGlmDesign::Create: working directory not set, cannot save fsgd file\n");
-    return (-7);
+    fprintf( stderr,
+             "ERROR: QdecGlmDesign::Create: could not create directory %s\n",
+             this->mfnWorkingDir.c_str());
+    return(-6);
     }
   
   if( this->mProgressUpdateGUI )
