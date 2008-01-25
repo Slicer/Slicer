@@ -20,6 +20,7 @@ Version:   $Revision: 5304 $
 #include "vtkCallbackCommand.h"
 #include "vtkImageEllipsoidSource.h"
 #include "vtkImageViewer.h"
+#include "vtkTimerLog.h"
 
 //----------------------------------------------------------------------------
 void Callback(vtkObject *caller, unsigned long eid, void *clientData, void *callData)
@@ -54,6 +55,9 @@ int main(int argc, char * argv[])
     broker->EventLoggingOn();
     }
 
+  double startTime = vtkTimerLog::GetUniversalTime();
+  std::cerr << "Starting at: " << startTime << "\n";
+
   std::cerr << "Three synchonous events:\n";
   broker->SetEventModeToSynchronous();
   ellip->Modified();
@@ -66,6 +70,11 @@ int main(int argc, char * argv[])
   ellip->Modified();
   ellip->Modified();
   broker->ProcessEventQueue();
+
+  double endTime = vtkTimerLog::GetUniversalTime();
+  double time = endTime - startTime;
+  std::cerr << "Ending at: " << endTime << "\n";
+  std::cerr << "Delta: " << time << "\n";
 
   if ( graphFile != "" )
     {
