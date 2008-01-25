@@ -5,18 +5,11 @@ ELSE(ITK_FOUND)
   MESSAGE(FATAL_ERROR "Cannot build without ITK. Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-#
-# If being build as part of Slicer3, we know where to find tclap include files
-
-# Propagate directories down to installed environment
-SET(TCLAP_DIR @TCLAP_DIR_CONFIG@)
 FIND_PACKAGE(TCLAP REQUIRED)
 IF(TCLAP_FOUND)
    INCLUDE(${TCLAP_USE_FILE})
 ENDIF(TCLAP_FOUND)
 
-# Propagate directories down to installed environment
-SET(ModuleDescriptionParser_DIR @ModuleDescriptionParser_DIR_CONFIG@)
 FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
 IF(ModuleDescriptionParser_FOUND)
    INCLUDE(${ModuleDescriptionParser_USE_FILE})

@@ -299,6 +299,6 @@ INSTALL(FILES
 #   ${Slicer3_BINARY_DIR}/Slicer3BuildSettings.cmake
    ${Slicer3_BINARY_DIR}/UseSlicer3.cmake
    ${Slicer3_BINARY_DIR}/Utilities/Slicer3Config.cmake
-   DESTINATION lib
+   DESTINATION lib/Slicer3
    COMPONENT Development
 )

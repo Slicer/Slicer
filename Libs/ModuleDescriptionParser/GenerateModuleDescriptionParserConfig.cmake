@@ -19,12 +19,7 @@ CONFIGURE_FILE(${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConf
 # Settings specific for installation trees
 #
 #
-SET(ModuleDescriptionParser_INCLUDE_DIRS_CONFIG ${CMAKE_INSTALL_PREFIX}/include/ModuleDescriptionParser)
-SET(ModuleDescriptionParser_LIBRARY_DIRS_CONFIG ${CMAKE_INSTALL_PREFIX}/lib/ModuleDescriptionParser)
-SET(ModuleDescriptionParser_USE_FILE_CONFIG ${CMAKE_INSTALL_PREFIX}/lib/ModuleDescriptionParser/UseModuleDescriptionParser.cmake)
-SET(ITK_DIR_CONFIG ${CMAKE_INSTALL_PREFIX}/lib/InsightToolkit)
-
 
 # Configure ModuleDescriptionParserConfig.cmake for the install tree.
-CONFIGURE_FILE(${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfig.cmake.in
+CONFIGURE_FILE(${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserInstallConfig.cmake.in
                ${ModuleDescriptionParser_BINARY_DIR}/install/ModuleDescriptionParserConfig.cmake @ONLY IMMEDIATE)
