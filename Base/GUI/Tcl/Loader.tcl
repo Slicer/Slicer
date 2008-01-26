@@ -374,6 +374,7 @@ itcl::body Loader::add { paths } {
       # look for unzip on the system, if not found try the 
       # tcl fallback
       #
+      set unzip ""
       set candidates {
         "c:/cygwin/bin/unzip.exe"
         /usr/bin/unzip /bin/unzip /usr/local/bin/unzip
