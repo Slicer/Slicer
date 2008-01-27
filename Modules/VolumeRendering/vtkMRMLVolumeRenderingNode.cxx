@@ -2,7 +2,6 @@
 #include "vtkMRMLNode.h"
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkPiecewiseFunction.h"
-#include "vtkLabelMapPiecewiseFunction.h"
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -247,18 +246,18 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
             }
         }
 
-        //special behavior for labelmaps
-        else if(!strcmp(attName,"opacityLabelMap"))
-        {
-            if(this->IsLabelMap==0)
-            {
-                vtkErrorMacro("grayscale volumes don't have a opacityLabelMap");
-            }
-            vtkLabelMapPiecewiseFunction *scalarOpacityLabelmap=vtkLabelMapPiecewiseFunction::New();
-            scalarOpacityLabelmap->FillFromString(attValue);
-            this->VolumeProperty->SetScalarOpacity(scalarOpacityLabelmap);
-            scalarOpacityLabelmap->Delete();
-        }
+        ////special behavior for labelmaps
+        //else if(!strcmp(attName,"opacityLabelMap"))
+        //{
+        //    if(this->IsLabelMap==0)
+        //    {
+        //        vtkErrorMacro("grayscale volumes don't have a opacityLabelMap");
+        //    }
+        //    vtkLabelMapPiecewiseFunction *scalarOpacityLabelmap=vtkLabelMapPiecewiseFunction::New();
+        //    scalarOpacityLabelmap->FillFromString(attValue);
+        //    this->VolumeProperty->SetScalarOpacity(scalarOpacityLabelmap);
+        //    scalarOpacityLabelmap->Delete();
+        //}
     }//while
     vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
 }

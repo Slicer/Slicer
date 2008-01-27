@@ -26,7 +26,6 @@ Version:   $Revision: 1.3 $
 #include "vtkKWHistogram.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWTkUtilities.h"
-#include "vtkSlicerLabelMapWidget.h"
 
 #include <string>
 
@@ -188,14 +187,6 @@ protected:
     //Other members
     vtkMRMLVolumeRenderingNode  *currentNode;
     vtkMRMLScene *presets;
-
-
-
-
-
-   
-    void PackLabelMapGUI(void);
-    void UnpackLabelMapGUI(void);
 
     void PackSvpGUI(void);
     void UnpackSvpGUI(void);

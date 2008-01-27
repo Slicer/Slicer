@@ -35,7 +35,6 @@
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkKWEvent.h"
 #include "vtkSlicerVRHelper.h"
-#include "vtkSlicerVRLabelmapHelper.h"
 #include "vtkSlicerVRGrayscaleHelper.h"
 #include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkKWMessageDialog.h"
@@ -366,7 +365,6 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
         if(this->NS_ImageData->GetSelected()==NULL)
         {
             //Unpack the details frame
-            this->UnpackLabelMapGUI();
             this->UnpackSvpGUI();
             this->GetApplicationGUI()->GetViewControlGUI()->GetEnableDisableNavButton()->SelectedStateOn();
             this->PreviousNS_ImageData="";
@@ -382,25 +380,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
             selectedImageData->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
             this->UnpackSvpGUI();
             this->PackSvpGUI();
-                        
 
-            //Change here for different Helper classes
-            ////This is a LabelMap
-            //if(selectedImageData->GetLabelMap()==1)
-            //{
-            //    this->UnpackLabelMapGUI();
-            //    this->PackLabelMapGUI();
-
-
-            //}
-            ////This is NO LabelMap
-            //else
-            //{
-            //    this->UnpackSvpGUI();
-            //    this->PackSvpGUI();
-
-
-            //}
             //Initialize the Pipeline
             this->InitializePipelineFromImageData();
 
@@ -639,26 +619,8 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
     this->Helper->UpdateRendering();
 }
 
-void vtkVolumeRenderingModuleGUI::PackLabelMapGUI()
-{
-    this->UnpackSvpGUI();
-    this->Helper=vtkSlicerVRLabelmapHelper::New();
-    this->Helper->Init(this);
-
-}
-
-void vtkVolumeRenderingModuleGUI::UnpackLabelMapGUI()
-{
-    if(this->Helper!=NULL)
-    {
-        this->Helper->Delete();
-        this->Helper=NULL;
-    }
-}
-
 void vtkVolumeRenderingModuleGUI::PackSvpGUI()
 {
-    this->UnpackLabelMapGUI();
     this->Helper=vtkSlicerVRGrayscaleHelper::New();
     this->Helper->Init(this);
 }
