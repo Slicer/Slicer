@@ -20,7 +20,7 @@ class vtkKWFrameWithLabel;
 class vtkKWNotebook;
 class vtkKWMenuButtonWithLabel;
 class vtkKWPushButton;
-class vtkBoxWidget;
+class vtkSlicerBoxWidget;
 class vtkSlicerColorDisplayWidget;
 class vtkSlicerNodeSelectorWidget;
 
@@ -91,7 +91,7 @@ protected:
     vtkSlicerNodeSelectorWidget *NS_TransformNode;
     vtkKWCheckButtonWithLabel *CB_Cropping;
     vtkKWRange *RA_Cropping[3];
-    vtkBoxWidget *BW_Clipping;
+    vtkSlicerBoxWidget *BW_Clipping;
     vtkKWCheckButtonWithLabel *CB_Clipping;
 
     //ColorDisplay Widget

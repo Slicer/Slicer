@@ -2,7 +2,6 @@ PROJECT(VolumeRenderingReplacements)
 # --------------------------------------------------------------------------
 # Sources
   SET(VolumeRenderingReplacements_SRCS
-  vtkSlicerVolumePropertyWidget.cxx
   vtkSlicerVolumeTextureMapper3D.cxx
   vtkSlicerOpenGLVolumeTextureMapper3D.cxx
   vtkSlicerVolumeRenderingFactory.cxx
@@ -17,7 +16,9 @@ PROJECT(VolumeRenderingReplacements)
   vtkSlicerFixedPointVolumeRayCastMIPHelper.cxx
   vtkSlicerRayCastImageDisplayHelper.cxx
   vtkSlicerOpenGLRayCastImageDisplayHelper.cxx
-  #LabelmapPart
+  #GUI
+  vtkSlicerBoxWidget.cxx
+  vtkSlicerVolumePropertyWidget.cxx
   )
 #-----------------------------------------------
 #Include DIRs

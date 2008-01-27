@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkBoxWidget.h,v $
+  Module:    $RCSfile: vtkSlicerBoxWidget.h,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkBoxWidget - orthogonal hexahedron 3D widget
+// .NAME vtkSlicerBoxWidget - orthogonal hexahedron 3D widget
 // .SECTION Description
 // This 3D widget defines a region of interest that is represented by an
 // arbitrarily oriented hexahedron with interior face angles of 90 degrees
@@ -20,17 +20,17 @@
 // manipulated. The first six correspond to the six faces, the seventh is in
 // the center of the hexahedron. In addition, a bounding box outline is shown,
 // the "faces" of which can be selected for object rotation or scaling. A
-// nice feature of the object is that the vtkBoxWidget, like any 3D widget,
-// will work with the current interactor style. That is, if vtkBoxWidget does
+// nice feature of the object is that the vtkSlicerBoxWidget, like any 3D widget,
+// will work with the current interactor style. That is, if vtkSlicerBoxWidget does
 // not handle an event, then all other registered observers (including the
 // interactor style) have an opportunity to process the event. Otherwise, the
-// vtkBoxWidget will terminate the processing of the event that it handles.
+// vtkSlicerBoxWidget will terminate the processing of the event that it handles.
 //
 // To use this object, just invoke SetInteractor() with the argument of the
 // method a vtkRenderWindowInteractor.  You may also wish to invoke
 // "PlaceWidget()" to initially position the widget. The interactor will act
 // normally until the "i" key (for "interactor") is pressed, at which point the
-// vtkBoxWidget will appear. (See superclass documentation for information
+// vtkSlicerBoxWidget will appear. (See superclass documentation for information
 // about changing this behavior.) By grabbing the six face handles (use the
 // left mouse button), faces can be moved. By grabbing the center handle
 // (with the left mouse button), the entire hexahedron can be
@@ -38,14 +38,14 @@
 // "shift-left-mouse-button" combination inside of the widget.) Scaling is
 // achieved by using the right mouse button "up" the render window (makes the
 // widget bigger) or "down" the render window (makes the widget smaller). To
-// rotate vtkBoxWidget, pick a face (but not a face handle) and move the left
+// rotate vtkSlicerBoxWidget, pick a face (but not a face handle) and move the left
 // mouse. (Note: the mouse button must be held down during manipulation.)
 // Events that occur outside of the widget (i.e., no part of the widget is
 // picked) are propagated to any other registered obsevers (such as the
 // interaction style).  Turn off the widget by pressing the "i" key again.
 // (See the superclass documentation on key press activiation.)
 //
-// The vtkBoxWidget is very flexible. It can be used to select, cut, clip, or
+// The vtkSlicerBoxWidget is very flexible. It can be used to select, cut, clip, or
 // perform any other operation that depends on an implicit function (use the
 // GetPlanes() method); or it can be used to transform objects using a linear
 // transformation (use the GetTransform() method). Typical usage of the
@@ -73,10 +73,11 @@
 // vtk3DWidget vtkPointWidget vtkLineWidget vtkPlaneWidget 
 // vtkImplicitPlaneWidget vtkImagePlaneWidget
 
-#ifndef __vtkBoxWidget_h
-#define __vtkBoxWidget_h
+#ifndef __vtkSlicerBoxWidget_h
+#define __vtkSlicerBoxWidget_h
 
 #include "vtk3DWidget.h"
+#include "vtkVolumeRenderingReplacements.h" 
 
 class vtkActor;
 class vtkCellPicker;
@@ -89,14 +90,14 @@ class vtkProperty;
 class vtkSphereSource;
 class vtkTransform;
 
-class VTK_WIDGETS_EXPORT vtkBoxWidget : public vtk3DWidget
+class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerBoxWidget : public vtk3DWidget
 {
 public:
   // Description:
   // Instantiate the object.
-  static vtkBoxWidget *New();
+  static vtkSlicerBoxWidget *New();
 
-  vtkTypeRevisionMacro(vtkBoxWidget,vtk3DWidget);
+  vtkTypeRevisionMacro(vtkSlicerBoxWidget,vtk3DWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -219,8 +220,8 @@ public:
   vtkBooleanMacro(RotationEnabled,int);
 
 protected:
-  vtkBoxWidget();
-  ~vtkBoxWidget();
+  vtkSlicerBoxWidget();
+  ~vtkSlicerBoxWidget();
 
 //BTX - manage the state of the widget
   int State;
@@ -329,8 +330,8 @@ protected:
   int RotationEnabled;
 
 private:
-  vtkBoxWidget(const vtkBoxWidget&);  //Not implemented
-  void operator=(const vtkBoxWidget&);  //Not implemented
+  vtkSlicerBoxWidget(const vtkSlicerBoxWidget&);  //Not implemented
+  void operator=(const vtkSlicerBoxWidget&);  //Not implemented
 };
 
 #endif

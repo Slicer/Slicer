@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkBoxWidget.cxx,v $
+  Module:    $RCSfile: vtkSlicerBoxWidget.cxx,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtkBoxWidget.h"
+#include "vtkSlicerBoxWidget.h"
 
 #include "vtkActor.h"
 #include "vtkAssemblyNode.h"
@@ -34,13 +34,13 @@
 #include "vtkSphereSource.h"
 #include "vtkTransform.h"
 
-vtkCxxRevisionMacro(vtkBoxWidget, "$Revision: 1.1 $");
-vtkStandardNewMacro(vtkBoxWidget);
+vtkCxxRevisionMacro(vtkSlicerBoxWidget, "$Revision: 1.1 $");
+vtkStandardNewMacro(vtkSlicerBoxWidget);
 
-vtkBoxWidget::vtkBoxWidget()
+vtkSlicerBoxWidget::vtkSlicerBoxWidget()
 {
-  this->State = vtkBoxWidget::Start;
-  this->EventCallbackCommand->SetCallback(vtkBoxWidget::ProcessEvents);
+  this->State = vtkSlicerBoxWidget::Start;
+  this->EventCallbackCommand->SetCallback(vtkSlicerBoxWidget::ProcessEvents);
   
   // Enable/disable the translation, rotation, and scaling of the widget
   this->TranslationEnabled = 1;
@@ -164,7 +164,7 @@ vtkBoxWidget::vtkBoxWidget()
   this->Transform = vtkTransform::New();
 }
 
-vtkBoxWidget::~vtkBoxWidget()
+vtkSlicerBoxWidget::~vtkSlicerBoxWidget()
 {
   this->HexActor->Delete();
   this->HexMapper->Delete();
@@ -206,7 +206,7 @@ vtkBoxWidget::~vtkBoxWidget()
   this->SelectedOutlineProperty->Delete();
 }
 
-void vtkBoxWidget::SetEnabled(int enabling)
+void vtkSlicerBoxWidget::SetEnabled(int enabling)
 {
   if ( ! this->Interactor )
     {
@@ -309,12 +309,12 @@ void vtkBoxWidget::SetEnabled(int enabling)
   this->Interactor->Render();
 }
 
-void vtkBoxWidget::ProcessEvents(vtkObject* vtkNotUsed(object), 
+void vtkSlicerBoxWidget::ProcessEvents(vtkObject* vtkNotUsed(object), 
                                  unsigned long event,
                                  void* clientdata, 
                                  void* vtkNotUsed(calldata))
 {
-  vtkBoxWidget* self = reinterpret_cast<vtkBoxWidget *>( clientdata );
+  vtkSlicerBoxWidget* self = reinterpret_cast<vtkSlicerBoxWidget *>( clientdata );
 
   //okay, let's do the right thing
   switch(event)
@@ -343,7 +343,7 @@ void vtkBoxWidget::ProcessEvents(vtkObject* vtkNotUsed(object),
     }
 }
 
-void vtkBoxWidget::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerBoxWidget::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
@@ -425,7 +425,7 @@ void vtkBoxWidget::PrintSelf(ostream& os, vtkIndent indent)
   c[1] = (a[1] + b[1])/2.0; \
   c[2] = (a[2] + b[2])/2.0;
 
-void vtkBoxWidget::PositionHandles()
+void vtkSlicerBoxWidget::PositionHandles()
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
   double *p0 = pts;
@@ -466,7 +466,7 @@ void vtkBoxWidget::PositionHandles()
 }
 #undef VTK_AVERAGE
 
-void vtkBoxWidget::HandlesOn()
+void vtkSlicerBoxWidget::HandlesOn()
 {
   for (int i=0; i<7; i++)
     {
@@ -474,7 +474,7 @@ void vtkBoxWidget::HandlesOn()
     }
 }
 
-void vtkBoxWidget::HandlesOff()
+void vtkSlicerBoxWidget::HandlesOff()
 {
   for (int i=0; i<7; i++)
     {
@@ -482,7 +482,7 @@ void vtkBoxWidget::HandlesOff()
     }
 }
 
-void vtkBoxWidget::SizeHandles()
+void vtkSlicerBoxWidget::SizeHandles()
 {
   double radius = this->vtk3DWidget::SizeHandles(1.5);
   for(int i=0; i<7; i++)
@@ -491,7 +491,7 @@ void vtkBoxWidget::SizeHandles()
     }
 }
 
-int vtkBoxWidget::HighlightHandle(vtkProp *prop)
+int vtkSlicerBoxWidget::HighlightHandle(vtkProp *prop)
 {
   // first unhighlight anything picked
   this->HighlightOutline(0);
@@ -526,7 +526,7 @@ int vtkBoxWidget::HighlightHandle(vtkProp *prop)
   return -1;
 }
 
-void vtkBoxWidget::HighlightFace(int cellId)
+void vtkSlicerBoxWidget::HighlightFace(int cellId)
 {
   if ( cellId >= 0 )
     {
@@ -550,7 +550,7 @@ void vtkBoxWidget::HighlightFace(int cellId)
     }
 }
 
-void vtkBoxWidget::HighlightOutline(int highlight)
+void vtkSlicerBoxWidget::HighlightOutline(int highlight)
 {
   if ( highlight )
     {
@@ -564,7 +564,7 @@ void vtkBoxWidget::HighlightOutline(int highlight)
     }
 }
 
-void vtkBoxWidget::OnLeftButtonDown()
+void vtkSlicerBoxWidget::OnLeftButtonDown()
 {
   int X = this->Interactor->GetEventPosition()[0];
   int Y = this->Interactor->GetEventPosition()[1];
@@ -573,7 +573,7 @@ void vtkBoxWidget::OnLeftButtonDown()
   // if no handles picked, then pick the bounding box.
   if (!this->CurrentRenderer || !this->CurrentRenderer->IsInViewport(X, Y))
     {
-    this->State = vtkBoxWidget::Outside;
+    this->State = vtkSlicerBoxWidget::Outside;
     return;
     }
   
@@ -582,7 +582,7 @@ void vtkBoxWidget::OnLeftButtonDown()
   path = this->HandlePicker->GetPath();
   if ( path != NULL )
     {
-    this->State = vtkBoxWidget::Moving;
+    this->State = vtkSlicerBoxWidget::Moving;
     this->HighlightFace(
       this->HighlightHandle(path->GetFirstNode()->GetViewProp()));
     this->HandlePicker->GetPickPosition(this->LastPickPosition);
@@ -594,7 +594,7 @@ void vtkBoxWidget::OnLeftButtonDown()
     path = this->HexPicker->GetPath();
     if ( path != NULL )
       {
-      this->State = vtkBoxWidget::Moving;
+      this->State = vtkSlicerBoxWidget::Moving;
       this->HexPicker->GetPickPosition(this->LastPickPosition);
       this->ValidPick = 1;
       if ( !this->Interactor->GetShiftKey() )
@@ -611,7 +611,7 @@ void vtkBoxWidget::OnLeftButtonDown()
     else
       {
       this->HighlightFace(this->HighlightHandle(NULL));
-      this->State = vtkBoxWidget::Outside;
+      this->State = vtkSlicerBoxWidget::Outside;
       return;
       }
     }
@@ -622,15 +622,15 @@ void vtkBoxWidget::OnLeftButtonDown()
   this->Interactor->Render();
 }
 
-void vtkBoxWidget::OnLeftButtonUp()
+void vtkSlicerBoxWidget::OnLeftButtonUp()
 {
-  if ( this->State == vtkBoxWidget::Outside ||
-       this->State == vtkBoxWidget::Start )
+  if ( this->State == vtkSlicerBoxWidget::Outside ||
+       this->State == vtkSlicerBoxWidget::Start )
     {
     return;
     }
 
-  this->State = vtkBoxWidget::Start;
+  this->State = vtkSlicerBoxWidget::Start;
   this->HighlightFace(this->HighlightHandle(NULL));
   this->SizeHandles();
 
@@ -641,7 +641,7 @@ void vtkBoxWidget::OnLeftButtonUp()
   
 }
 
-void vtkBoxWidget::OnMiddleButtonDown()
+void vtkSlicerBoxWidget::OnMiddleButtonDown()
 {
   int X = this->Interactor->GetEventPosition()[0];
   int Y = this->Interactor->GetEventPosition()[1];
@@ -650,7 +650,7 @@ void vtkBoxWidget::OnMiddleButtonDown()
   // if no handles picked, then pick the bounding box.
   if (!this->CurrentRenderer || !this->CurrentRenderer->IsInViewport(X, Y))
     {
-    this->State = vtkBoxWidget::Outside;
+    this->State = vtkSlicerBoxWidget::Outside;
     return;
     }
   
@@ -659,7 +659,7 @@ void vtkBoxWidget::OnMiddleButtonDown()
   path = this->HandlePicker->GetPath();
   if ( path != NULL )
     {
-    this->State = vtkBoxWidget::Moving;
+    this->State = vtkSlicerBoxWidget::Moving;
     this->CurrentHandle = this->Handle[6];
     this->HighlightOutline(1);
     this->HandlePicker->GetPickPosition(this->LastPickPosition);
@@ -671,7 +671,7 @@ void vtkBoxWidget::OnMiddleButtonDown()
     path = this->HexPicker->GetPath();
     if ( path != NULL )
       {
-      this->State = vtkBoxWidget::Moving;
+      this->State = vtkSlicerBoxWidget::Moving;
       this->CurrentHandle = this->Handle[6];
       this->HighlightOutline(1);
       this->HexPicker->GetPickPosition(this->LastPickPosition);
@@ -680,7 +680,7 @@ void vtkBoxWidget::OnMiddleButtonDown()
     else
       {
       this->HighlightFace(this->HighlightHandle(NULL));
-      this->State = vtkBoxWidget::Outside;
+      this->State = vtkSlicerBoxWidget::Outside;
       return;
       }
     }
@@ -691,15 +691,15 @@ void vtkBoxWidget::OnMiddleButtonDown()
   this->Interactor->Render();
 }
 
-void vtkBoxWidget::OnMiddleButtonUp()
+void vtkSlicerBoxWidget::OnMiddleButtonUp()
 {
-  if ( this->State == vtkBoxWidget::Outside ||
-       this->State == vtkBoxWidget::Start )
+  if ( this->State == vtkSlicerBoxWidget::Outside ||
+       this->State == vtkSlicerBoxWidget::Start )
     {
     return;
     }
 
-  this->State = vtkBoxWidget::Start;
+  this->State = vtkSlicerBoxWidget::Start;
   this->HighlightFace(this->HighlightHandle(NULL));
   this->SizeHandles();
 
@@ -710,7 +710,7 @@ void vtkBoxWidget::OnMiddleButtonUp()
   
 }
 
-void vtkBoxWidget::OnRightButtonDown()
+void vtkSlicerBoxWidget::OnRightButtonDown()
 {
   int X = this->Interactor->GetEventPosition()[0];
   int Y = this->Interactor->GetEventPosition()[1];
@@ -719,7 +719,7 @@ void vtkBoxWidget::OnRightButtonDown()
   // if no handles picked, then pick the bounding box.
   if (!this->CurrentRenderer || !this->CurrentRenderer->IsInViewport(X, Y))
     {
-    this->State = vtkBoxWidget::Outside;
+    this->State = vtkSlicerBoxWidget::Outside;
     return;
     }
   
@@ -728,7 +728,7 @@ void vtkBoxWidget::OnRightButtonDown()
   path = this->HandlePicker->GetPath();
   if ( path != NULL )
     {
-    this->State = vtkBoxWidget::Scaling;
+    this->State = vtkSlicerBoxWidget::Scaling;
     this->HighlightOutline(1);
     this->HandlePicker->GetPickPosition(this->LastPickPosition);
     this->ValidPick = 1;
@@ -739,14 +739,14 @@ void vtkBoxWidget::OnRightButtonDown()
     path = this->HexPicker->GetPath();
     if ( path != NULL )
       {
-      this->State = vtkBoxWidget::Scaling;
+      this->State = vtkSlicerBoxWidget::Scaling;
       this->HighlightOutline(1);
       this->HexPicker->GetPickPosition(this->LastPickPosition);
       this->ValidPick = 1;
       }
     else
       {
-      this->State = vtkBoxWidget::Outside;
+      this->State = vtkSlicerBoxWidget::Outside;
       return;
       }
     }
@@ -757,14 +757,14 @@ void vtkBoxWidget::OnRightButtonDown()
   this->Interactor->Render();
 }
 
-void vtkBoxWidget::OnRightButtonUp()
+void vtkSlicerBoxWidget::OnRightButtonUp()
 {
-  if ( this->State == vtkBoxWidget::Outside )
+  if ( this->State == vtkSlicerBoxWidget::Outside )
     {
     return;
     }
 
-  this->State = vtkBoxWidget::Start;
+  this->State = vtkSlicerBoxWidget::Start;
   this->HighlightOutline(0);
   this->SizeHandles();
   
@@ -774,11 +774,11 @@ void vtkBoxWidget::OnRightButtonUp()
   this->Interactor->Render();
 }
 
-void vtkBoxWidget::OnMouseMove()
+void vtkSlicerBoxWidget::OnMouseMove()
 {
   // See whether we're active
-  if ( this->State == vtkBoxWidget::Outside || 
-       this->State == vtkBoxWidget::Start )
+  if ( this->State == vtkSlicerBoxWidget::Outside || 
+       this->State == vtkSlicerBoxWidget::Start )
     {
     return;
     }
@@ -807,7 +807,7 @@ void vtkBoxWidget::OnMouseMove()
   this->ComputeDisplayToWorld(double(X), double(Y), z, pickPoint);
 
   // Process the motion
-  if ( this->State == vtkBoxWidget::Moving )
+  if ( this->State == vtkSlicerBoxWidget::Moving )
     {
     // Okay to process
     if ( this->CurrentHandle )
@@ -850,7 +850,7 @@ void vtkBoxWidget::OnMouseMove()
         }
       }
     }
-  else if ( this->ScalingEnabled && this->State == vtkBoxWidget::Scaling )
+  else if ( this->ScalingEnabled && this->State == vtkSlicerBoxWidget::Scaling )
     {
     this->Scale(prevPickPoint, pickPoint, X, Y);
     }
@@ -861,7 +861,7 @@ void vtkBoxWidget::OnMouseMove()
   this->Interactor->Render();
 }
 
-void vtkBoxWidget::MoveFace(double *p1, double *p2, double *dir, 
+void vtkSlicerBoxWidget::MoveFace(double *p1, double *p2, double *dir, 
                 double *x1, double *x2, double *x3, double *x4,
                 double *x5)
   {
@@ -890,7 +890,7 @@ void vtkBoxWidget::MoveFace(double *p1, double *p2, double *dir,
   this->PositionHandles();
 }
 
-void vtkBoxWidget::GetDirection(const double Nx[3],const double Ny[3], const double Nz[3], double dir[3])
+void vtkSlicerBoxWidget::GetDirection(const double Nx[3],const double Ny[3], const double Nz[3], double dir[3])
 {
   double dotNy, dotNz;
   double y[3];
@@ -927,7 +927,7 @@ void vtkBoxWidget::GetDirection(const double Nx[3],const double Ny[3], const dou
       }
     }
 }
-void vtkBoxWidget::MovePlusXFace(double *p1, double *p2)
+void vtkSlicerBoxWidget::MovePlusXFace(double *p1, double *p2)
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
 
@@ -944,7 +944,7 @@ void vtkBoxWidget::MovePlusXFace(double *p1, double *p2)
   this->MoveFace(p1,p2,dir,x1,x2,x3,x4,h1);
 }
 
-void vtkBoxWidget::MoveMinusXFace(double *p1, double *p2)
+void vtkSlicerBoxWidget::MoveMinusXFace(double *p1, double *p2)
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
 
@@ -962,7 +962,7 @@ void vtkBoxWidget::MoveMinusXFace(double *p1, double *p2)
   this->MoveFace(p1,p2,dir,x1,x2,x3,x4,h1);
 }
 
-void vtkBoxWidget::MovePlusYFace(double *p1, double *p2)
+void vtkSlicerBoxWidget::MovePlusYFace(double *p1, double *p2)
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
 
@@ -980,7 +980,7 @@ void vtkBoxWidget::MovePlusYFace(double *p1, double *p2)
   this->MoveFace(p1,p2,dir,x1,x2,x3,x4,h1);
 }
 
-void vtkBoxWidget::MoveMinusYFace(double *p1, double *p2)
+void vtkSlicerBoxWidget::MoveMinusYFace(double *p1, double *p2)
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
 
@@ -998,7 +998,7 @@ void vtkBoxWidget::MoveMinusYFace(double *p1, double *p2)
   this->MoveFace(p1,p2,dir,x1,x2,x3,x4,h1);
 }
 
-void vtkBoxWidget::MovePlusZFace(double *p1, double *p2)
+void vtkSlicerBoxWidget::MovePlusZFace(double *p1, double *p2)
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
 
@@ -1016,7 +1016,7 @@ void vtkBoxWidget::MovePlusZFace(double *p1, double *p2)
   this->MoveFace(p1,p2,dir,x1,x2,x3,x4,h1);
 }
 
-void vtkBoxWidget::MoveMinusZFace(double *p1, double *p2)
+void vtkSlicerBoxWidget::MoveMinusZFace(double *p1, double *p2)
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
 
@@ -1035,7 +1035,7 @@ void vtkBoxWidget::MoveMinusZFace(double *p1, double *p2)
 }
 
 // Loop through all points and translate them
-void vtkBoxWidget::Translate(double *p1, double *p2)
+void vtkSlicerBoxWidget::Translate(double *p1, double *p2)
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
   double v[3];
@@ -1054,7 +1054,7 @@ void vtkBoxWidget::Translate(double *p1, double *p2)
   this->PositionHandles();
 }
 
-void vtkBoxWidget::Scale(double* vtkNotUsed(p1), double* vtkNotUsed(p2), 
+void vtkSlicerBoxWidget::Scale(double* vtkNotUsed(p1), double* vtkNotUsed(p2), 
                          int vtkNotUsed(X), int Y)
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
@@ -1081,7 +1081,7 @@ void vtkBoxWidget::Scale(double* vtkNotUsed(p1), double* vtkNotUsed(p2),
   this->PositionHandles();
 }
 
-void vtkBoxWidget::ComputeNormals()
+void vtkSlicerBoxWidget::ComputeNormals()
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
   double *p0 = pts;
@@ -1107,7 +1107,7 @@ void vtkBoxWidget::ComputeNormals()
     }
 }
 
-void vtkBoxWidget::GetPlanes(vtkPlanes *planes)
+void vtkSlicerBoxWidget::GetPlanes(vtkPlanes *planes)
 {
   if ( ! planes )
     {
@@ -1139,7 +1139,7 @@ void vtkBoxWidget::GetPlanes(vtkPlanes *planes)
   normals->Delete();
 }
 
-void vtkBoxWidget::Rotate(int X, int Y, double *p1, double *p2, double *vpn)
+void vtkSlicerBoxWidget::Rotate(int X, int Y, double *p1, double *p2, double *vpn)
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
   double *center = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(3*14);
@@ -1181,7 +1181,7 @@ void vtkBoxWidget::Rotate(int X, int Y, double *p1, double *p2, double *vpn)
   this->PositionHandles();
 }
   
-void vtkBoxWidget::CreateDefaultProperties()
+void vtkSlicerBoxWidget::CreateDefaultProperties()
 {
   // Handle properties
   //this->HandleProperty = vtkProperty::New();
@@ -1224,7 +1224,7 @@ void vtkBoxWidget::CreateDefaultProperties()
   this->SelectedOutlineProperty->SetLineWidth(2.0);
 }
 
-void vtkBoxWidget::PlaceWidget(double bds[6])
+void vtkSlicerBoxWidget::PlaceWidget(double bds[6])
 {
   int i;
   double bounds[6], center[3];
@@ -1253,7 +1253,7 @@ void vtkBoxWidget::PlaceWidget(double bds[6])
   this->SizeHandles();
 }
 
-void vtkBoxWidget::GetTransform(vtkTransform *t)
+void vtkSlicerBoxWidget::GetTransform(vtkTransform *t)
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
   double *p0 = pts;
@@ -1323,7 +1323,7 @@ void vtkBoxWidget::GetTransform(vtkTransform *t)
   t->Translate(-InitialCenter[0], -InitialCenter[1], -InitialCenter[2]);
 }
 
-void vtkBoxWidget::SetTransform(vtkTransform* t)
+void vtkSlicerBoxWidget::SetTransform(vtkTransform* t)
 {
   double *pts = ((vtkDoubleArray *)this->Points->GetData())->GetPointer(0);
   double xIn[3];
@@ -1361,13 +1361,13 @@ void vtkBoxWidget::SetTransform(vtkTransform* t)
   this->PositionHandles();
 }
 
-void vtkBoxWidget::GetPolyData(vtkPolyData *pd)
+void vtkSlicerBoxWidget::GetPolyData(vtkPolyData *pd)
 {
   pd->SetPoints(this->HexPolyData->GetPoints());
   pd->SetPolys(this->HexPolyData->GetPolys());
 }
 
-void vtkBoxWidget::SetOutlineFaceWires(int newValue)
+void vtkSlicerBoxWidget::SetOutlineFaceWires(int newValue)
 {
   if (this->OutlineFaceWires != newValue)
     {
@@ -1378,7 +1378,7 @@ void vtkBoxWidget::SetOutlineFaceWires(int newValue)
     }
 }
 
-void vtkBoxWidget::SetOutlineCursorWires(int newValue)
+void vtkSlicerBoxWidget::SetOutlineCursorWires(int newValue)
 {
   if (this->OutlineCursorWires != newValue)
     {
@@ -1389,7 +1389,7 @@ void vtkBoxWidget::SetOutlineCursorWires(int newValue)
     }
 }
 
-void vtkBoxWidget::GenerateOutline()
+void vtkSlicerBoxWidget::GenerateOutline()
 {
   // Whatever the case may be, we have to reset the Lines of the
   // OutlinePolyData (i.e. nuke all current line data)
