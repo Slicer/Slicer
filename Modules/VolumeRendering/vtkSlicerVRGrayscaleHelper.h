@@ -23,6 +23,7 @@ class vtkKWPushButton;
 class vtkSlicerBoxWidget;
 class vtkSlicerColorDisplayWidget;
 class vtkSlicerNodeSelectorWidget;
+class vtkMRMLLinearTransformNode;
 
 
 
@@ -93,6 +94,8 @@ protected:
     vtkKWRange *RA_Cropping[3];
     vtkSlicerBoxWidget *BW_Clipping;
     vtkKWCheckButtonWithLabel *CB_Clipping;
+
+    vtkMRMLLinearTransformNode *CurrentTransformNodeCropping;
 
     //ColorDisplay Widget
     vtkKWCheckButtonWithLabel *CB_LabelmapMode;

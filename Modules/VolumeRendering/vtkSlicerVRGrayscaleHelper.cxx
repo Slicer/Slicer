@@ -101,6 +101,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     {
         this->RA_Cropping[i]=NULL;
     }
+    this->CurrentTransformNodeCropping=NULL;
 
     //ThresholdGUI
     this->MB_ThresholdMode=NULL;
@@ -169,15 +170,16 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperRaycast->RemoveObservers(vtkCommand::ProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperRenderProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::AbortCheckEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-    //Only needed if using performance enhancement
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::StartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveObservers(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    vtkKWRenderWidget *renderWidget=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer();
-    //Remove Observers
 
 
     //Remove Volume
@@ -472,6 +474,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperTexture->AddObserver(vtkCommand::VolumeMapperRenderProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+
     this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsStartEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
     this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsEndEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
@@ -570,7 +573,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
 
         //Decide if this event is triggered by the vtkBoxWidget or by the sliders
         //if sliders don't trigger setRange->this would lead to an endless loop
-        if(!this->NoSetRangeNeeded)
+      /*  if(!this->NoSetRangeNeeded)
         {
 
             vtkPolyData *vertices=vtkPolyData::New();
@@ -584,7 +587,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->RA_Cropping[1]->SetRange(pointA[1],pointB[1]);
             this->RA_Cropping[2]->SetRange(pointA[2],pointB[2]);
         }
-        this->NoSetRangeNeeded=0;
+        this->NoSetRangeNeeded=0;*/
         return;
     }
     //Check the checkbuttons
@@ -972,7 +975,15 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         vtkSlicerNodeSelectorWidget *callerNS=vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
     if (eid==vtkSlicerNodeSelectorWidget::NodeSelectedEvent&&callerNS==this->NS_TransformNode)
     {
-        vtkMRMLLinearTransformNode::SafeDownCast(this->NS_TransformNode->GetSelected())->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,this->VolumeRenderingCallbackCommand);
+        //Remove a potential observer from the old node
+        if(this->CurrentTransformNodeCropping!=NULL)
+        {
+            this->CurrentTransformNodeCropping->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent,this->VolumeRenderingCallbackCommand);
+        }
+        //Add an observer to the new node
+        this->CurrentTransformNodeCropping=vtkMRMLLinearTransformNode::SafeDownCast(this->NS_TransformNode->GetSelected());
+        this->CurrentTransformNodeCropping->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,this->VolumeRenderingCallbackCommand);
+
         this->ProcessClippingModified();
         return;
     }
@@ -1085,10 +1096,10 @@ void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
     else
     {
     
-        for(int i=0;i<3;i++)
-        {
-            this->RA_Cropping[i]->SetRange(this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i+1]);
-        }
+        //for(int i=0;i<3;i++)
+        //{
+        //    this->RA_Cropping[i]->SetRange(this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i+1]);
+        //}
         this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetcurrentNode()->GetCroppingEnabled());
         this->ProcessEnableDisableCropping(this->Gui->GetcurrentNode()->GetCroppingEnabled());
     }
@@ -1242,17 +1253,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
         croppingFrame->GetWidgetName() );
 
 
-    //Build GUI
-    this->NS_TransformNode=vtkSlicerNodeSelectorWidget::New();
-    this->NS_TransformNode->SetParent(croppingFrame);
-    this->NS_TransformNode->Create();
-    this->NS_TransformNode->SetLabelText("Transform Node for Clipping");
-    this->NS_TransformNode->SetNodeClass("vtkMRMLTransformNode",NULL,NULL,NULL);
-    this->NS_TransformNode->SetMRMLScene(this->Gui->GetLogic()->GetMRMLScene());
-    this->NS_TransformNode->NoneEnabledOn();
-    this->NS_TransformNode->SetSelected(NULL);
-    this->NS_TransformNode->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
-    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->NS_TransformNode->GetWidgetName());
+    
 
     this->CB_Cropping=vtkKWCheckButtonWithLabel::New();
     this->CB_Cropping->SetParent(croppingFrame->GetFrame());
@@ -1303,6 +1304,17 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->RA_Cropping[2]->SetRange(iData->GetOrigin()[2],iData->GetDimensions()[2]);
 
     //Now we have the cropping ranges
+    //Build GUI
+    this->NS_TransformNode=vtkSlicerNodeSelectorWidget::New();
+    this->NS_TransformNode->SetParent(croppingFrame->GetFrame());
+    this->NS_TransformNode->Create();
+    this->NS_TransformNode->SetLabelText("Transform Node for Clipping");
+    this->NS_TransformNode->SetNodeClass("vtkMRMLTransformNode",NULL,NULL,NULL);
+    this->NS_TransformNode->SetMRMLScene(this->Gui->GetLogic()->GetMRMLScene());
+    this->NS_TransformNode->NoneEnabledOn();
+    this->NS_TransformNode->SetSelected(NULL);
+    this->NS_TransformNode->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->NS_TransformNode->GetWidgetName());
     this->ProcessEnableDisableCropping(0);
     croppingFrame->Delete();
 }
@@ -1545,6 +1557,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
     {
         this->RA_Cropping[i]->SetEnabled(cbSelectedState);
     }
+    this->NS_TransformNode->SetEnabled(cbSelectedState);
     //There is not automatical enabling when
     //this->ProcessEnableDisableClippingPlanes(cbSelectedState);
     this->CB_Clipping->SetEnabled(cbSelectedState);
@@ -1583,7 +1596,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableClippingPlanes(int clipping
         this->BW_Clipping->SetProp3D(this->Volume);
         this->BW_Clipping->PlaceWidget();
         this->BW_Clipping->InsideOutOn();
-        this->BW_Clipping->RotationEnabledOn();
+        this->BW_Clipping->RotationEnabledOff();
+        this->BW_Clipping->TranslationEnabledOn();
         this->BW_Clipping->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
         interactor->UpdateSize(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[0],
             this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[1]);
@@ -1677,6 +1691,7 @@ void vtkSlicerVRGrayscaleHelper::DestroyCropping(void)
 {
     if(this->BW_Clipping)
     {
+        this->BW_Clipping->RemoveObservers(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
         this->BW_Clipping->Off();
         this->BW_Clipping->Delete();
         this->BW_Clipping=NULL;
@@ -1697,6 +1712,13 @@ void vtkSlicerVRGrayscaleHelper::DestroyCropping(void)
             this->RA_Cropping[i]->Delete();
             this->RA_Cropping[i]=NULL;
         }
+    }
+    if(this->NS_TransformNode!=NULL)
+    {
+        this->NS_TransformNode->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
+        this->NS_TransformNode->SetParent(NULL);
+        this->NS_TransformNode->Delete();
+        this->NS_TransformNode=NULL;
     }
 }
 void vtkSlicerVRGrayscaleHelper::DestroyTreshold(void)
@@ -1750,6 +1772,7 @@ void vtkSlicerVRGrayscaleHelper::DestroyLabelmap(void)
     }
     if(this->ColorDisplay)
     {
+        this->ColorDisplay->RemoveObservers(vtkSlicerColorDisplayWidget::ColorIDModifiedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
         this->ColorDisplay->SetParent(NULL);
         this->ColorDisplay->Delete();
         this->ColorDisplay=NULL;
@@ -1901,35 +1924,35 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
     }
     if(this->CB_RayCast!=NULL)
     {
-        this->CB_RayCast->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->CB_RayCast->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
         this->CB_RayCast->SetParent(NULL);
         this->CB_RayCast->Delete();
         this->CB_RayCast=NULL;
     }
     if(this->CB_TextureLow!=NULL)
     {
-        this->CB_TextureLow->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->CB_TextureLow->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
         this->CB_TextureLow->SetParent(NULL);
         this->CB_TextureLow->Delete();
         this->CB_TextureLow=NULL;
     }
     if(this->CB_TextureHigh!=NULL)
     {
-        this->CB_TextureHigh->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->CB_TextureHigh->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
         this->CB_TextureHigh->SetParent(NULL);
         this->CB_TextureHigh->Delete();
         this->CB_TextureHigh=NULL;
     }
     if(this->SC_Framerate!=NULL)
     {
-        this->SC_Framerate->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->SC_Framerate->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->SC_Framerate->SetParent(NULL);
         this->SC_Framerate->Delete();
         this->SC_Framerate=NULL;
     }
     if(this->CB_InteractiveFrameRate!=NULL)
     {
-        this->CB_InteractiveFrameRate->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
+        this->CB_InteractiveFrameRate->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent,(vtkCommand *) this->VolumeRenderingCallbackCommand);
         this->CB_InteractiveFrameRate->SetParent(NULL);
         this->CB_InteractiveFrameRate->Delete();
         this->CB_InteractiveFrameRate=NULL;

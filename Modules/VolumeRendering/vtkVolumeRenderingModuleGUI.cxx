@@ -364,6 +364,17 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
     {
         if(this->NS_ImageData->GetSelected()==NULL)
         {
+            //Remove the old observer for the imagedata
+            if(strcmp("",this->PreviousNS_ImageData.c_str())==0)
+            {
+                vtkMRMLNode *oldNode=this->GetLogic()->GetMRMLScene()->GetNodeByID(this->PreviousNS_ImageData.c_str());
+                if(oldNode!=NULL)
+                {
+                    oldNode->RemoveObservers(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->MRMLCallbackCommand);
+                }
+            
+            }
+            
             //Unpack the details frame
             this->UnpackSvpGUI();
             //Try to keep navigation render online
