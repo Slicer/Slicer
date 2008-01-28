@@ -89,6 +89,7 @@ class vtkProp;
 class vtkProperty;
 class vtkSphereSource;
 class vtkTransform;
+#define NUMBER_HANDLES 7
 
 class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerBoxWidget : public vtk3DWidget
 {
@@ -310,7 +311,7 @@ protected:
   // Properties used to control the appearance of selected objects and
   // the manipulator in general.
   //vtkProperty *HandleProperty;
-  vtkProperty *HandleProperties[6];
+  vtkProperty *HandleProperties[NUMBER_HANDLES];
   vtkProperty *SelectedHandleProperty;
   vtkProperty *FaceProperty;
   vtkProperty *SelectedFaceProperty;

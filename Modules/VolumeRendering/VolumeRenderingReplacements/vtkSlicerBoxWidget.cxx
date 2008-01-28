@@ -197,6 +197,7 @@ vtkSlicerBoxWidget::~vtkSlicerBoxWidget()
   for(int i=0;i<7;i++)
   {
       this->HandleProperties[i]->Delete();
+      this->HandleProperties[i]=NULL;
   }
   //this->HandleProperty->Delete();
   this->SelectedHandleProperty->Delete();
@@ -265,7 +266,7 @@ void vtkSlicerBoxWidget::SetEnabled(int enabling)
     this->HexFace->SetProperty(this->FaceProperty);
 
     // turn on the handles
-    for (int j=0; j<7; j++)
+    for (int j=0; j<NUMBER_HANDLES; j++)
       {
       this->CurrentRenderer->AddActor(this->Handle[j]);
       this->Handle[j]->SetProperty(this->HandleProperties[j]);
@@ -296,7 +297,7 @@ void vtkSlicerBoxWidget::SetEnabled(int enabling)
     this->CurrentRenderer->RemoveActor(this->HexFace);
 
     // turn off the handles
-    for (int i=0; i<7; i++)
+    for (int i=0; i<NUMBER_HANDLES; i++)
       {
       this->CurrentRenderer->RemoveActor(this->Handle[i]);
       }
@@ -355,7 +356,7 @@ void vtkSlicerBoxWidget::PrintSelf(ostream& os, vtkIndent indent)
 
   if ( this->HandleProperties )
     {
-    for(int i=0;i<7;i++)
+    for(int i=0;i<NUMBER_HANDLES;i++)
     {
         os << indent << "Handle Property: " <<i<< this->HandleProperties[i] << "\n";
     }
@@ -495,7 +496,7 @@ int vtkSlicerBoxWidget::HighlightHandle(vtkProp *prop)
 {
   // first unhighlight anything picked
   this->HighlightOutline(0);
-  for(int i=0;i<7;i++)
+  for(int i=0;i<NUMBER_HANDLES;i++)
   {
       this->Handle[i]->SetProperty(this->HandleProperties[i]);
   }
