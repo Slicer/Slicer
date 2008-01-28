@@ -17,10 +17,13 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerGradientEditorLogic : public vtkSlic
     void PrintSelf(ostream& os, vtkIndent indent);
 
     // Description:
-    // Method to add gradients from files to the GUI.
+    // Method to add gradients from a file to the GUI. 
+    // Filetypes are restricted to .txt/.nhdr .
     void AddGradients(const char *filename, vtkMRMLDiffusionWeightedVolumeNode *dwiNode);
 
-    void ParseGradients(const char  *oldGradients, vtkDoubleArray *newGradients);
+    // Description:
+    // Method to parse given ASCII gradients back into arrays of gradients and bValues.
+    bool ParseGradients(const char  *oldGradients, int numberOfGradients, vtkDoubleArray *newBValue, vtkDoubleArray *newGradients);
 
   protected:
     vtkSlicerGradientEditorLogic(void);

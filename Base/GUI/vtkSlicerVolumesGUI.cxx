@@ -956,8 +956,8 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->GradientFrame->Create ( );
     this->GradientFrame->SetLabelText ("DWI Gradient Editor");
     this->GradientFrame->CollapseFrame ( );
-   // this->GradientFrame->EnabledOff();
-   // this->GradientFrame->SetAllowFrameToCollapse(0);
+    this->GradientFrame->EnabledOff();
+    this->GradientFrame->SetAllowFrameToCollapse(0);
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->GradientFrame->GetWidgetName(), page->GetWidgetName());
 

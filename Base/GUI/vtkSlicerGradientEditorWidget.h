@@ -2,7 +2,6 @@
 #define __vtkSlicerGradientEditorWidget_h
 
 #include "vtkSlicerWidget.h"
-#include "vtkMRMLDiffusionWeightedVolumeNode.h"
 
 class vtkKWFrameWithLabel;
 class vtkKWFrame;
@@ -14,7 +13,6 @@ class vtkSlicerNodeSelectorWidget;
 class vtkKWCheckButton;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkMatrix4x4;
-class vtkDoubleArray;
 class vtkKWMatrixWidget;
 class vtkMRMLDiffusionWeightedVolumeNode;
 
@@ -54,7 +52,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     void UpdateMatrix();
 
     // Description:
-    // Method to update the GUI GradientsTextfield.
+    // Method to update the GUI GradientsTextfield containing bValue and gradients.
     void UpdateGradients();
 
     vtkKWLoadSaveButtonWithLabel *LoadGradientsButton;
@@ -75,8 +73,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     vtkKWCheckButton *EnableGradientsButton;
     vtkKWCheckButton* Checkbuttons[3];
     vtkMatrix4x4 *Matrix;
-    vtkDoubleArray *Gradients;
-    vtkDoubleArray *BValues;
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
 
   private:
