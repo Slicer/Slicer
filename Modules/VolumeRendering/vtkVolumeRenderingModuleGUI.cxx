@@ -524,7 +524,7 @@ void vtkVolumeRenderingModuleGUI::Enter(void)
         vtksys_stl::vector<vtksys_stl::string> filesVector;
         filesVector.push_back(""); // for relative path
         filesVector.push_back(slicerHome);
-        filesVector.push_back(vtksys_stl::string("Modules/VolumeRendering/Presets.xml"));
+        filesVector.push_back(vtksys_stl::string("Modules/VolumeRendering/presets.xml"));
         vtksys_stl::string presetFileName = vtksys::SystemTools::JoinPath(filesVector);
         this->Presets->SetURL(presetFileName.c_str());
         this->Presets->Connect();
