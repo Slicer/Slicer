@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Converters
+  </category>
+  <title>
+  Dicom DWI loader 
+  </title>
+  <description>
+  Load a diffusion weighted volume in Dicom format into Slicer.
+  </description>
+  <version>0.1.0.$Revision: 916 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Xiaodong Tao</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+
+    <directory>
+      <name>inputDicom</name>
+      <label>Dicom Directory</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Directory holding Dicom series</description>
+    </directory>
+
+    <image type="diffusion-weighted">
+      <name>dwiImage</name>
+      <label>dwiImage</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Diffusion Weighted Image</description>
+    </image>
+
+  </parameters>
+
+</executable>
