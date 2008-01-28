@@ -612,7 +612,7 @@ CloneVolume (vtkMRMLScene *scene,
              vtkMRMLVolumeNode *volumeNode, 
              const char *name)
 {
-  if ( volumeNode == NULL ) 
+  if ( scene == NULL || volumeNode == NULL ) 
     {
     return NULL;
     }
