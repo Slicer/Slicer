@@ -483,6 +483,10 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
           } 
         this->ApplicationLogic->PropagateVolumeSelection();
         this->VolumeSelectorWidget->SetSelected( volumeNode );
+        if (this->VolumeDisplayWidget == NULL)
+          {
+          this->UpdateFramesFromMRML();
+          }
         this->VolumeDisplayWidget->SetVolumeNode(volumeNode);
         }
       volumeLogic->RemoveObservers(vtkCommand::ProgressEvent,  this->GUICallbackCommand);
@@ -659,17 +663,23 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
     if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
       {
       vtkMRMLScalarVolumeNode *svol = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
-      if (!svol->GetLabelMap() && this->VolumeDisplayWidget != scalarVDW)
+      if (!svol->GetLabelMap() && (this->VolumeDisplayWidget == NULL || this->VolumeDisplayWidget != scalarVDW))
         {
-        this->VolumeDisplayWidget->TearDownWidget();
+        if (this->VolumeDisplayWidget != NULL)
+          {
+          this->VolumeDisplayWidget->TearDownWidget();
+         }
         tearDown = 1;
         this->CreateScalarDisplayWidget();
         this->VolumeDisplayWidget = this->scalarVDW;
         this->VolumeDisplayFrame = this->ScalarDisplayFrame;
         }
-      else if (svol->GetLabelMap() && this->VolumeDisplayWidget != labelVDW)
+      else if (svol->GetLabelMap() && (this->VolumeDisplayWidget == NULL || this->VolumeDisplayWidget != labelVDW))
         {
-        this->VolumeDisplayWidget->TearDownWidget();
+        if (this->VolumeDisplayWidget != NULL)
+          {
+          this->VolumeDisplayWidget->TearDownWidget();
+         }
         tearDown = 1;
         this->CreateLabelMapDisplayWidget();
         this->VolumeDisplayWidget = this->labelVDW;
@@ -685,7 +695,10 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
       /* TODO: 
       if (this->VolumeDisplayWidget != vectorVDW)
         {
-        this->VolumeDisplayWidget->TearDownWidget();
+        if (this->VolumeDisplayWidget != NULL)
+          {
+          this->VolumeDisplayWidget->TearDownWidget();
+         }
         tearDown = 1;
         this->CreateVectorDisplayWidget();
         this->VolumeDisplayWidget = this->vectorVDW;
@@ -695,9 +708,12 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
       }
     else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
       {
-      if (this->VolumeDisplayWidget != dwiVDW)
+      if (this->VolumeDisplayWidget == NULL || this->VolumeDisplayWidget != dwiVDW)
         {
-        this->VolumeDisplayWidget->TearDownWidget();
+        if (this->VolumeDisplayWidget != NULL)
+          {
+          this->VolumeDisplayWidget->TearDownWidget();
+         }
         tearDown = 1;
         this->CreateDWIDisplayWidget();
         this->VolumeDisplayWidget = this->dwiVDW;
@@ -711,9 +727,12 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
       }
     else if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
       { 
-      if (this->VolumeDisplayWidget != dtiVDW)
+      if (this->VolumeDisplayWidget == NULL || this->VolumeDisplayWidget != dtiVDW)
         {
-        this->VolumeDisplayWidget->TearDownWidget();
+        if (this->VolumeDisplayWidget != NULL)
+          {
+          this->VolumeDisplayWidget->TearDownWidget();
+         }
         tearDown = 1;
         this->CreateDTIDisplayWidget();
         this->VolumeDisplayWidget = this->dtiVDW;
@@ -1041,12 +1060,15 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::CreateScalarDisplayWidget ( )
 {
+  if (this->scalarVDW == NULL)
+    {
     this->scalarVDW = vtkSlicerScalarVolumeDisplayWidget::New ( );
     this->scalarVDW->SetParent( this->ScalarDisplayFrame );
     this->scalarVDW->SetMRMLScene(this->GetMRMLScene());
     this->scalarVDW->Create();
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                  scalarVDW->GetWidgetName(), this->ScalarDisplayFrame->GetWidgetName());
+    }
 }
 
 //---------------------------------------------------------------------------
