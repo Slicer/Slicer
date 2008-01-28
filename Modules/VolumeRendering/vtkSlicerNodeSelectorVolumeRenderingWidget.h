@@ -1,6 +1,6 @@
 // .NAME vtkSlicerNodeSelectorVolumeRenderingWidget - Extends vtkSlicerNodeSelector for Volume Rendering issues
 // .SECTION Description
-// Allows the filtering of the NodeSelectorWidget. Concrete this means, adding of an additional MRML Scene for presets and
+// Allows the filtering of the NodeSelectorWidget. Concrete this means, adding of an additional MRML Scene for Presets and
 // checking for conditions like referenced ID labelmap or not etc.
 #ifndef __vtkSlicerNodeSelectorVolumeRenderingWidget_h
 #define __vtkSlicerNodeSelectorVolumeRenderingWidget_h

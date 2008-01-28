@@ -62,14 +62,14 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->ScheduleMask[1]=1;
     this->ScheduleMask[2]=1;
     //this->MB_Quality=NULL;
-    this->renViewport=NULL;
-    this->renPlane=NULL;
+    this->RenViewport=NULL;
+    this->RenPlane=NULL;
     this->MapperTexture=NULL;
     this->MapperRaycast=NULL;
-    this->timer=vtkTimerLog::New();
+    this->Timer=vtkTimerLog::New();
     this->RenderPlane=0;
-    this->currentStage=0;
-    this->scheduled=0;
+    this->CurrentStage=0;
+    this->Scheduled=0;
     this->EventHandlerID="";
     this->InitialDropLowRes=0.2;
     this->FactorLastLowRes=0;
@@ -200,8 +200,10 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->Histograms->Delete();
         this->Histograms=NULL;
     }
-    //Don't delete the renViewport(allocated in Outside)
-
+    //Don't delete the RenViewport(allocated in Outside)
+    
+    //Delete the rendering pipeline
+    //this->volumeWillBeDeletedInSuperClass
     if(this->MapperTexture!=NULL)
     {
         this->MapperTexture->Delete();
@@ -215,16 +217,16 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
 
     this->ResetRenderingAlgorithm();
 
-    if(this->renPlane!=NULL)
+    if(this->RenPlane!=NULL)
     {
-        this->renPlane->Delete();
-        this->renPlane=NULL;
+        this->RenPlane->Delete();
+        this->RenPlane=NULL;
     }
-    if(this->timer!=NULL)
+    if(this->Timer!=NULL)
     {
-        this->timer->StopTimer();
-        this->timer->Delete();
-        this->timer=NULL;
+        this->Timer->StopTimer();
+        this->Timer->Delete();
+        this->Timer=NULL;
     }
     this->DestroyTreshold();
     this->DestroyPerformance();
@@ -265,7 +267,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     //TODO: Move Pause Resume Button to another Place
     //Pause Resume Button
     this->PB_PauseResume=vtkKWPushButton::New();
-    this->PB_PauseResume->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+    this->PB_PauseResume->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
     this->PB_PauseResume->Create();
     this->PB_PauseResume->SetText("Pause");
     this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",
@@ -275,7 +277,7 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 
     //Create a notebook
     this->NB_Details=vtkKWNotebook::New();
-    this->NB_Details->SetParent(this->Gui->GetdetailsFrame()->GetFrame());
+    this->NB_Details->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
     this->NB_Details->Create();
     this->NB_Details->AddPage("Mapping");
     this->NB_Details->AddPage("Performance");
@@ -320,7 +322,7 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
     std::stringstream autoname;
     autoname<<"autoVisualization";
     autoname<<this->Gui->GetNS_ImageData()->GetSelected()->GetName();
-    this->Gui->GetcurrentNode()->SetName(autoname.str().c_str());
+    this->Gui->GetCurrentNode()->SetName(autoname.str().c_str());
     this->Gui->GetLogic()->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent);
     vtkKWHistogram *histogram=this->Histograms->GetHistogramWithName("0");
     if(histogram==NULL)
@@ -351,14 +353,14 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
         thresholdHighIndex+=bin_width;
 
     }
-    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetInterpolationTypeToLinear();
-    vtkPiecewiseFunction *opacity=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetScalarOpacity();
+    this->Gui->GetCurrentNode()->GetVolumeProperty()->SetInterpolationTypeToLinear();
+    vtkPiecewiseFunction *opacity=this->Gui->GetCurrentNode()->GetVolumeProperty()->GetScalarOpacity();
     opacity->RemoveAllPoints();
     opacity->AddPoint(range[0],0.);
     opacity->AddPoint(thresholdLowIndex,0.0);
     opacity->AddPoint(thresholdHighIndex,0.2);
     opacity->AddPoint(range[1],0.2);
-    vtkColorTransferFunction *colorTransfer=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetRGBTransferFunction();
+    vtkColorTransferFunction *colorTransfer=this->Gui->GetCurrentNode()->GetVolumeProperty()->GetRGBTransferFunction();
     colorTransfer->RemoveAllPoints();
     colorTransfer->AddRGBPoint(range[0],.3,.3,1.);
     colorTransfer->AddRGBPoint(thresholdLowIndex,.3,.3,1.);
@@ -369,18 +371,18 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
 
     //Enable shading as default
 
-    this->Gui->GetcurrentNode()->GetVolumeProperty()->ShadeOn();
-    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetAmbient(.30);
-    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetDiffuse(.60);
-    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetSpecular(.50);
-    this->Gui->GetcurrentNode()->GetVolumeProperty()->SetSpecularPower(40);//this is really weird
+    this->Gui->GetCurrentNode()->GetVolumeProperty()->ShadeOn();
+    this->Gui->GetCurrentNode()->GetVolumeProperty()->SetAmbient(.30);
+    this->Gui->GetCurrentNode()->GetVolumeProperty()->SetDiffuse(.60);
+    this->Gui->GetCurrentNode()->GetVolumeProperty()->SetSpecular(.50);
+    this->Gui->GetCurrentNode()->GetVolumeProperty()->SetSpecularPower(40);//this is really weird
 
     //Set cropping
-    this->Gui->GetcurrentNode()->CroppingEnabledOff();
+    this->Gui->GetCurrentNode()->CroppingEnabledOff();
 
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
 
-    this->Gui->GetcurrentNode()->SetCroppingRegionPlanes(iData->GetOrigin()[0],iData->GetDimensions()[0],
+    this->Gui->GetCurrentNode()->SetCroppingRegionPlanes(iData->GetOrigin()[0],iData->GetDimensions()[0],
         iData->GetOrigin()[1],iData->GetDimensions()[1],
         iData->GetOrigin()[2],iData->GetDimensions()[2]);
 
@@ -405,7 +407,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
 
     this->Volume=vtkVolume::New();
     //TODO Dirty fix as Mapper
-    if(this->Gui->GetcurrentNode()->GetMapper()==vtkMRMLVolumeRenderingNode::Texture)
+    if(this->Gui->GetCurrentNode()->GetMapper()==vtkMRMLVolumeRenderingNode::Texture)
     {
         this->MapperTexture=vtkSlicerVolumeTextureMapper3D::New();
         this->MapperTexture->SetSampleDistance(2);
@@ -450,7 +452,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
 
     //check if texture mapping is supported important to do it after registry
     //otherwise show textmessage
-    int supportTexture=this->MapperTexture->IsRenderSupported(this->Gui->GetcurrentNode()->GetVolumeProperty());
+    int supportTexture=this->MapperTexture->IsRenderSupported(this->Gui->GetCurrentNode()->GetVolumeProperty());
 
     if(!supportTexture)
     {
@@ -466,6 +468,7 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         this->CB_TextureHigh->GetWidget()->SetSelectedState(0);
         this->CB_TextureLow->EnabledOff();
         this->CB_TextureHigh->EnabledOff();
+        errorText->Delete();
 
     }
 
@@ -486,14 +489,14 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
 
     //TODO This is not the right place for this
 
-    this->Volume->SetProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
+    this->Volume->SetProperty(this->Gui->GetCurrentNode()->GetVolumeProperty());
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
     this->CalculateMatrix(matrix);
     this->Volume->PokeMatrix(matrix);
 
     //For Performance
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->AddViewProp(this->Volume);
-    this->renViewport=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetNthRenderer(0);
+    this->RenViewport=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetNthRenderer(0);
     matrix->Delete();
     //Render
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
@@ -511,7 +514,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
     this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
     this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
     //Update Property
-    this->Volume->SetProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
+    this->Volume->SetProperty(this->Gui->GetCurrentNode()->GetVolumeProperty());
     //Update matrix
     vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
     this->CalculateMatrix(matrix);
@@ -519,20 +522,6 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
 
     matrix->Delete();
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-}
-void vtkSlicerVRGrayscaleHelper::ShutdownPipeline(void)
-{
-
-    if(this->MapperRaycast!=NULL)
-    {
-        this->MapperRaycast->Delete();
-        this->MapperRaycast=NULL;
-    }
-    if(this->MapperTexture!=NULL)
-    {
-        this->MapperTexture->Delete();
-        this->MapperTexture=NULL;
-    }
 }
 
 void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData)
@@ -586,8 +575,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->RA_Cropping[0]->SetRange(pointA[0],pointB[0]);
             this->RA_Cropping[1]->SetRange(pointA[1],pointB[1]);
             this->RA_Cropping[2]->SetRange(pointA[2],pointB[2]);
+            vertices->Delete();
         }
         this->NoSetRangeNeeded=0;*/
+        planes->Delete();
         return;
     }
     //Check the checkbuttons
@@ -660,12 +651,12 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->FactorLastLowRes=this->InitialDropLowRes;
 
         }
-        vtkSlicerVRHelperDebug("startevent scheduled %d",this->scheduled);
-        vtkSlicerVRHelperDebug("startevent currentstage %d",this->currentStage);
+        vtkSlicerVRHelperDebug("startevent Scheduled %d",this->Scheduled);
+        vtkSlicerVRHelperDebug("startevent currentstage %d",this->CurrentStage);
         vtkSlicerVRHelperDebug("startevent id %s",this->EventHandlerID.c_str());
 
-        //it is not a scheduled event so we use stage the quality stage and abort every existings scheduling
-        if(this->scheduled==0||this->ButtonDown==1)
+        //it is not a Scheduled event so we use stage the quality stage and abort every existings scheduling
+        if(this->Scheduled==0||this->ButtonDown==1)
         {
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using LowestResolution");
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
@@ -682,15 +673,15 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                 vtkSlicerVRHelperDebug("Result info: %s",resulta);
                 this->EventHandlerID="";
             }
-            this->currentStage=this->Quality;
+            this->CurrentStage=this->Quality;
         }//if
-        if(this->currentStage==0)
+        if(this->CurrentStage==0)
         {
 
             this->Volume->SetMapper(this->MapperTexture);
             //always got to less sample distance
             this->MapperTexture->SetSampleDistance(2);
-            this->currentStage=0;
+            this->CurrentStage=0;
             vtkSlicerVRHelperDebug("Stage 0 started","");
             //Decide if we REnder plane or not
             if(this->RenderPlane==1)
@@ -723,22 +714,22 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                 //this->IgnoreStepZero;
             }
             vtkSlicerVRHelperDebug("NEWFACTORLASTLOWRES %f",this->FactorLastLowRes);
-            timer->StartTimer();
+            this->Timer->StartTimer();
             vtkRenderWindow *renWin=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
 
             //We don't like to see, what we are doing here
             renWin->SwapBuffersOff();
             //get the viewport renderer up
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->RenPlane);
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->RenViewport);
             //Change viewport(simulation of "sample distance for "rays"" if using texture mapping)
-            this->renViewport->SetViewport(0,0,this->FactorLastLowRes,this->FactorLastLowRes);
+            this->RenViewport->SetViewport(0,0,this->FactorLastLowRes,this->FactorLastLowRes);
             return;
 
 
         }
         //Stage 1
-        if(this->currentStage==1)
+        if(this->CurrentStage==1)
         {
             this->Volume->SetMapper(MapperTexture);
             this->MapperTexture->SetSampleDistance(.1);
@@ -749,17 +740,17 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Using Middle Resolution");
             vtkSlicerVRHelperDebug("Stage 1 started","");
             //Remove plane Renderer and get viewport Renderer Up
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->RenPlane);
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->RenViewport);
             //Go to Fullsize
-            this->renViewport->SetViewport(0,0,1,1);
+            this->RenViewport->SetViewport(0,0,1,1);
             this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SwapBuffersOn();
-            this->scheduled=0;
+            this->Scheduled=0;
             return;
         }
 
         //Stage 2
-        if(this->currentStage==2)
+        if(this->CurrentStage==2)
         {
             vtkRenderWindowInteractor *interactor=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor();
             if(this->ButtonDown&&this->CB_InteractiveFrameRate->GetWidget()->GetSelectedState())
@@ -769,10 +760,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             }
             //Do the following code just in case we skipped stage 1
             //Remove plane Renderer and get viewport Renderer Up
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->RenPlane);
+            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->RenViewport);
             //Go to Fullsize
-            this->renViewport->SetViewport(0,0,1,1);
+            this->RenViewport->SetViewport(0,0,1,1);
             this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SwapBuffersOn();
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100);
@@ -782,7 +773,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Volume->SetMapper(this->MapperRaycast);
 
             this->EventHandlerID="";
-            this->scheduled=0;
+            this->Scheduled=0;
             return;
         }   
     }
@@ -800,9 +791,9 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->StageZeroEventHandlerID=this->Gui->Script("after 500 %s ScheduleStageZero", this->GetTclName());
             return;
         }
-        vtkSlicerVRHelperDebug("endevent scheduled %d",this->scheduled);
-        vtkSlicerVRHelperDebug("endevent currentstage %d",this->currentStage);
-        if(this->currentStage==1)
+        vtkSlicerVRHelperDebug("endevent Scheduled %d",this->Scheduled);
+        vtkSlicerVRHelperDebug("endevent currentstage %d",this->CurrentStage);
+        if(this->CurrentStage==1)
         {
             this->EventHandlerID=this->Gui->Script("after 100 %s ScheduleRender",this->GetTclName());
             vtkSlicerVRHelperDebug("Stage 1 ended","");
@@ -811,7 +802,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
             return;
         }
-        if(this->currentStage==2)
+        if(this->CurrentStage==2)
         {
             vtkSlicerVRHelperDebug("Stage 2 ended","");
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
@@ -820,7 +811,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             if(this->MapperRaycast->GetManualInteractive())
             {
                 this->MapperRaycast->SetManualInteractive(0);
-                this->scheduled=1;
+                this->Scheduled=1;
                 this->EventHandlerID=this->Gui->Script("after idle [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow] Render");
             }
             //We reached the highest Resolution, no scheduling
@@ -830,8 +821,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         if(this->RenderPlane==1)
         {
             this->RenderPlane=0;
-            this->timer->StopTimer();
-            this->LastTimeLowRes=this->timer->GetElapsedTime();
+            this->Timer->StopTimer();
+            this->LastTimeLowRes=this->Timer->GetElapsedTime();
             vtkSlicerVRHelperDebug("Last time low %f",this->LastTimeLowRes);
             //It's time to start for the Scheduled Rendering
             this->EventHandlerID=this->Gui->Script("after 100 %s ScheduleRender",this->GetTclName());
@@ -863,39 +854,39 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         vtkImageExtractComponents *components=vtkImageExtractComponents::New();
         components->SetInput(imageData);
         components->SetComponents(0,1,2);
-        if(this->renPlane==NULL)
+        if(this->RenPlane==NULL)
         {
-            this->renPlane=vtkRenderer::New();
+            this->RenPlane=vtkRenderer::New();
         }
 
-        this->renPlane->SetBackground(this->renViewport->GetBackground());
+        this->RenPlane->SetBackground(this->RenViewport->GetBackground());
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->Disable();
 
-        this->renPlane->SetActiveCamera(this->renViewport->GetActiveCamera());
+        this->RenPlane->SetActiveCamera(this->RenViewport->GetActiveCamera());
 
         //Get Our Renderer Up
-        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renViewport);
-        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renPlane);
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->RenViewport);
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->RenPlane);
 
-        this->renPlane->SetDisplayPoint(0,0,0.5);
-        this->renPlane->DisplayToWorld();
+        this->RenPlane->SetDisplayPoint(0,0,0.5);
+        this->RenPlane->DisplayToWorld();
         double coordinatesA[4];
-        this->renPlane->GetWorldPoint(coordinatesA);
+        this->RenPlane->GetWorldPoint(coordinatesA);
 
-        this->renPlane->SetDisplayPoint(size[0],0,0.5);
-        this->renPlane->DisplayToWorld();
+        this->RenPlane->SetDisplayPoint(size[0],0,0.5);
+        this->RenPlane->DisplayToWorld();
         double coordinatesB[4];
-        this->renPlane->GetWorldPoint(coordinatesB);
+        this->RenPlane->GetWorldPoint(coordinatesB);
 
-        this->renPlane->SetDisplayPoint(size[0],size[1],0.5);
-        this->renPlane->DisplayToWorld();
+        this->RenPlane->SetDisplayPoint(size[0],size[1],0.5);
+        this->RenPlane->DisplayToWorld();
         double coordinatesC[4];
-        this->renPlane->GetWorldPoint(coordinatesC);
+        this->RenPlane->GetWorldPoint(coordinatesC);
 
-        this->renPlane->SetDisplayPoint(0,size[1],0.5);
-        this->renPlane->DisplayToWorld();
+        this->RenPlane->SetDisplayPoint(0,size[1],0.5);
+        this->RenPlane->DisplayToWorld();
         double coordinatesD[4];
-        this->renPlane->GetWorldPoint(coordinatesD);
+        this->RenPlane->GetWorldPoint(coordinatesD);
 
         //Create the Polydata
         vtkPoints *points=vtkPoints::New();
@@ -946,9 +937,9 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         actor->SetTexture(atext);
 
         //Remove all old Actors
-        this->renPlane->RemoveAllViewProps();
+        this->RenPlane->RemoveAllViewProps();
 
-        this->renPlane->AddActor(actor);
+        this->RenPlane->AddActor(actor);
         //Remove the old Renderer
 
         renWin->SwapBuffersOn();
@@ -1019,7 +1010,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         }
         return;
     }
-    else if (eid==vtkCommand::VolumeMapperRenderProgressEvent&&this->currentStage==1)
+    else if (eid==vtkCommand::VolumeMapperRenderProgressEvent&&this->CurrentStage==1)
     {
         double *progress=(double*)callData;
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100**progress);
@@ -1042,27 +1033,27 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
 
 void vtkSlicerVRGrayscaleHelper::ScheduleRender(void)
 {
-    this->scheduled=1;
-    this->currentStage++;
+    this->Scheduled=1;
+    this->CurrentStage++;
 
     //Security if we ran out of range or an event occured in between
-    if(this->currentStage>2||vtkKWTkUtilities::CheckForPendingInteractionEvents(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow())!=0)
+    if(this->CurrentStage>2||vtkKWTkUtilities::CheckForPendingInteractionEvents(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow())!=0)
     {
-        this->currentStage=0;
-        this->scheduled=0;
+        this->CurrentStage=0;
+        this->Scheduled=0;
         //return;
     }
     else 
     {
-        while(!ScheduleMask[this->currentStage])
+        while(!ScheduleMask[this->CurrentStage])
         {
 
-            this->currentStage++;
+            this->CurrentStage++;
             //Nothing to schedule
-            if(this->currentStage==3)
+            if(this->CurrentStage==3)
             {
-                this->currentStage=0;
-                this->scheduled=0;
+                this->CurrentStage=0;
+                this->Scheduled=0;
                 return;
             }
         }
@@ -1082,7 +1073,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
     }
     //First of all set New Property, Otherwise all Histograms will be overwritten
     //First check if we really need to update
-    if(this->SVP_VolumeProperty->GetVolumeProperty()==this->Gui->GetcurrentNode()->GetVolumeProperty())
+    if(this->SVP_VolumeProperty->GetVolumeProperty()==this->Gui->GetCurrentNode()->GetVolumeProperty())
     {
         this->AdjustMapping();
         this->SVP_VolumeProperty->Update();
@@ -1098,12 +1089,12 @@ void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
     
         //for(int i=0;i<3;i++)
         //{
-        //    this->RA_Cropping[i]->SetRange(this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i+1]);
+        //    this->RA_Cropping[i]->SetRange(this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i+1]);
         //}
-        this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetcurrentNode()->GetCroppingEnabled());
-        this->ProcessEnableDisableCropping(this->Gui->GetcurrentNode()->GetCroppingEnabled());
+        this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetCurrentNode()->GetCroppingEnabled());
+        this->ProcessEnableDisableCropping(this->Gui->GetCurrentNode()->GetCroppingEnabled());
     }
-    this->SVP_VolumeProperty->SetVolumeProperty(this->Gui->GetcurrentNode()->GetVolumeProperty());
+    this->SVP_VolumeProperty->SetVolumeProperty(this->Gui->GetCurrentNode()->GetVolumeProperty());
     this->SVP_VolumeProperty->SetHSVColorSelectorVisibility(1);
     this->SVP_VolumeProperty->Update();
 }
@@ -1114,9 +1105,9 @@ void vtkSlicerVRGrayscaleHelper::UpdateGUIElements(void)
     this->UpdateSVP();
     for(int i=0;i<3;i++)
     {
-        this->RA_Cropping[i]->SetRange(this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetcurrentNode()->GetCroppingRegionPlanes()[2*i+1]);    
+        this->RA_Cropping[i]->SetRange(this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i+1]);    
     }
-    this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetcurrentNode()->GetCroppingEnabled());
+    this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetCurrentNode()->GetCroppingEnabled());
     //this->ColorDisplay->SetMRMLScene(this->Gui->GetMRMLScene());
 
     //Add update of gui here
@@ -1128,7 +1119,7 @@ void vtkSlicerVRGrayscaleHelper::CheckAbort(void)
     {
         vtkSlicerVRHelperDebug("got an abort","");
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
-        this->scheduled=0;
+        this->Scheduled=0;
         return;
     }
     int pendingGUI=vtkKWTkUtilities::CheckForPendingInteractionEvents(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow());
@@ -1136,7 +1127,7 @@ void vtkSlicerVRGrayscaleHelper::CheckAbort(void)
     {
         vtkSlicerVRHelperDebug("got an abort from gui","");
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->SetAbortRender(1);
-        this->scheduled=0;
+        this->Scheduled=0;
         return;
 
     }
@@ -1144,18 +1135,18 @@ void vtkSlicerVRGrayscaleHelper::CheckAbort(void)
 void vtkSlicerVRGrayscaleHelper::AdjustMapping(){
 
     //Update Color    
-    vtkColorTransferFunction *functionColor=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetRGBTransferFunction();
+    vtkColorTransferFunction *functionColor=this->Gui->GetCurrentNode()->GetVolumeProperty()->GetRGBTransferFunction();
     double rangeNew[2];
     vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange(rangeNew);
     functionColor->AdjustRange(rangeNew);
 
     //Update Opacity
-    vtkPiecewiseFunction *function=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetScalarOpacity();
+    vtkPiecewiseFunction *function=this->Gui->GetCurrentNode()->GetVolumeProperty()->GetScalarOpacity();
     function->AdjustRange(rangeNew);
     //Update
     rangeNew[1]=(rangeNew[1]-rangeNew[0])/4;
     rangeNew[0]=0;
-    function=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetGradientOpacity();
+    function=this->Gui->GetCurrentNode()->GetVolumeProperty()->GetGradientOpacity();
     function->RemovePoint(255);//Remove the standard value
     //this->Histograms->GetHistogramWithName("0gradient")->GetRange(rangeNew);
     function->AdjustRange(rangeNew);
@@ -1454,11 +1445,11 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdRange(double notUsed,double not
     }
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
     //Delete all old Mapping Points
-    vtkPiecewiseFunction *opacity=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetScalarOpacity();
+    vtkPiecewiseFunction *opacity=this->Gui->GetCurrentNode()->GetVolumeProperty()->GetScalarOpacity();
     opacity->RemoveAllPoints();
     //opacity->AdjustRange(iData->GetScalarRange());
 
-    vtkColorTransferFunction *colorTransfer=this->Gui->GetcurrentNode()->GetVolumeProperty()->GetRGBTransferFunction();
+    vtkColorTransferFunction *colorTransfer=this->Gui->GetCurrentNode()->GetVolumeProperty()->GetRGBTransferFunction();
     colorTransfer->RemoveAllPoints();
     //colorTransfer->AdjustRange(iData->GetScalarRange());
 
@@ -1561,9 +1552,9 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
     //There is not automatical enabling when
     //this->ProcessEnableDisableClippingPlanes(cbSelectedState);
     this->CB_Clipping->SetEnabled(cbSelectedState);
-    if(this->Gui->GetcurrentNode()!=NULL)
+    if(this->Gui->GetCurrentNode()!=NULL)
     {
-        this->Gui->GetcurrentNode()->SetCroppingEnabled(cbSelectedState);
+        this->Gui->GetCurrentNode()->SetCroppingEnabled(cbSelectedState);
     }
     if(cbSelectedState)
     {
@@ -1676,14 +1667,14 @@ void vtkSlicerVRGrayscaleHelper::ResetRenderingAlgorithm(void)
     //Ensure that Render is back to normal
     vtkRenderWindow *renWin=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow();
     //get the viewport renderer up
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->renPlane);
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->renViewport);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->RemoveRenderer(this->RenPlane);
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddRenderer(this->RenViewport);
     //this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("");
     this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,0);
     this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,0);
     this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,0);
     //Change viewport(simulation of "sample distance for "rays"" if using texture mapping)
-    this->renViewport->SetViewport(0,0,1,1);
+    this->RenViewport->SetViewport(0,0,1,1);
     renWin->SwapBuffersOn();
 }
 
@@ -1695,6 +1686,12 @@ void vtkSlicerVRGrayscaleHelper::DestroyCropping(void)
         this->BW_Clipping->Off();
         this->BW_Clipping->Delete();
         this->BW_Clipping=NULL;
+    }
+    if(this->CB_Clipping)
+    {
+        this->CB_Clipping->SetParent(NULL);
+        this->CB_Clipping->Delete();
+        this->CB_Clipping=NULL;
     }
 
     if(this->CB_Cropping)
@@ -1839,6 +1836,7 @@ void vtkSlicerVRGrayscaleHelper::CreateLabelmap(void)
         this->ColorDisplay->GetWidgetName()); 
 
     labelmapFrame->Delete();
+    frameSelectDeselect->Delete();
 
 }
 void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
@@ -2007,4 +2005,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
     this->BW_Clipping->SetTransform(trans);
     this->BW_Clipping->InvokeEvent(vtkCommand::InteractionEvent);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+
+    trans->Delete();
 }

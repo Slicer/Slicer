@@ -29,13 +29,13 @@ public:
     // Description:
     // Get a string representation of all points in the vtkPiecewiseFunction. 
     //format: <numberOfPoints> <XValue1> <OpacityValue1> ...<XValueN> <OpacityValueN> 
-    std::string getPiecewiseFunctionString(vtkPiecewiseFunction* function);
+    std::string GetPiecewiseFunctionString(vtkPiecewiseFunction* function);
     // Description:
     // Get a string representation of all points in the vtkColorTransferFunction. 
     //format: <numberOfPoints> <XValue1> <RValue1> <GValue1><BValue1> ...<XValueN> <RValueN> <GValueN><BValueN>
     std::string getColorTransferFunctionString(vtkColorTransferFunction* function);
     // Description:
-    // Put parameters described in a String into an existing vtkPiecewiseFunction, use together with getPiecewiseFunctionString
+    // Put parameters described in a String into an existing vtkPiecewiseFunction, use together with GetPiecewiseFunctionString
     void GetPiecewiseFunctionFromString(std::string str,vtkPiecewiseFunction* result);
     // Description:
     // Put parameters described in a String into an existing vtkColorTransferFunction, use together with getColorTransferFunctionString

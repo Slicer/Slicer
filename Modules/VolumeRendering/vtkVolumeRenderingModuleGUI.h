@@ -118,9 +118,9 @@ public:
     vtkGetObjectMacro (NS_VolumeRenderingDataSlicer,vtkSlicerNodeSelectorVolumeRenderingWidget);
     vtkGetObjectMacro (NS_VolumeRenderingDataScene,vtkSlicerNodeSelectorVolumeRenderingWidget);
     vtkGetObjectMacro (EWL_CreateNewVolumeRenderingNode,vtkKWEntryWithLabel);
-    vtkGetObjectMacro (detailsFrame,vtkSlicerModuleCollapsibleFrame);
-    vtkGetObjectMacro (currentNode,vtkMRMLVolumeRenderingNode);
-    vtkGetObjectMacro (presets, vtkMRMLScene);
+    vtkGetObjectMacro (DetailsFrame,vtkSlicerModuleCollapsibleFrame);
+    vtkGetObjectMacro (CurrentNode,vtkMRMLVolumeRenderingNode);
+    vtkGetObjectMacro (Presets, vtkMRMLScene);
 
 
 
@@ -181,12 +181,12 @@ protected:
     vtkKWEntryWithLabel *EWL_CreateNewVolumeRenderingNode;
 
     //Frame Details
-    vtkSlicerModuleCollapsibleFrame *detailsFrame;
+    vtkSlicerModuleCollapsibleFrame *DetailsFrame;
 
 
     //Other members
-    vtkMRMLVolumeRenderingNode  *currentNode;
-    vtkMRMLScene *presets;
+    vtkMRMLVolumeRenderingNode  *CurrentNode;
+    vtkMRMLScene *Presets;
 
     void PackSvpGUI(void);
     void UnpackSvpGUI(void);

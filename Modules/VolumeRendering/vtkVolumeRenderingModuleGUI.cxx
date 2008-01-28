@@ -45,7 +45,7 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
 {
     //In Debug Mode
     this->DebugOff();
-    this->presets=NULL;
+    this->Presets=NULL;
     this->PreviousNS_ImageData="";
     this->PreviousNS_VolumeRenderingDataScene="";
     this->PreviousNS_VolumeRenderingSlicer="";
@@ -57,11 +57,11 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
     this->EWL_CreateNewVolumeRenderingNode=NULL;
 
     //Frame Details
-    this->detailsFrame=NULL;
+    this->DetailsFrame=NULL;
 
     //Other members
-    this->currentNode=NULL;
-    this->presets=NULL;
+    this->CurrentNode=NULL;
+    this->Presets=NULL;
     this->Helper=NULL;
 }
 
@@ -72,7 +72,7 @@ vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
     //vtkVolumeRenderingModuleLogic *Logic;
     //vtkSlicerViewerWidget *ViewerWidget;
     //vtkSlicerViewerInteractorStyle *InteractorStyle;
-    //vtkMRMLVolumeRenderingNode  *currentNode;//really delete this
+    //vtkMRMLVolumeRenderingNode  *CurrentNode;//really delete this
 
     if(this->PB_Testing)
     {
@@ -117,26 +117,26 @@ vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
     }
 
 
-    if(this->presets)
+    if(this->Presets)
     {
-        this->presets->Delete();
-        this->presets=NULL;
+        this->Presets->Delete();
+        this->Presets=NULL;
     }
 
-    if(this->detailsFrame)
+    if(this->DetailsFrame)
     {
-        this->detailsFrame->Delete();
-        this->detailsFrame=NULL;
+        this->DetailsFrame->Delete();
+        this->DetailsFrame=NULL;
     }
     if(this->Helper)
     {
         this->Helper->Delete();
         this->Helper=NULL;
     }
-    if(this->currentNode)
+    if(this->CurrentNode)
     {
-        this->currentNode->Delete();
-        this->currentNode=NULL;
+        this->CurrentNode->Delete();
+        this->CurrentNode=NULL;
     }
 
     //Remove the MRML observer
@@ -247,13 +247,13 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     app->Script("pack %s -side top -anchor ne -padx 2 -pady 2",this->PB_CreateNewVolumeRenderingNode->GetWidgetName());
 
     //Details frame
-    this->detailsFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    this->detailsFrame->SetParent (this->UIPanel->GetPageWidget("VolumeRendering"));
-    this->detailsFrame->Create();
-    this->detailsFrame->ExpandFrame();
-    this->detailsFrame->SetLabelText("Details");
+    this->DetailsFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    this->DetailsFrame->SetParent (this->UIPanel->GetPageWidget("VolumeRendering"));
+    this->DetailsFrame->Create();
+    this->DetailsFrame->ExpandFrame();
+    this->DetailsFrame->SetLabelText("Details");
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-        this->detailsFrame->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
+        this->DetailsFrame->GetWidgetName(), this->UIPanel->GetPageWidget("VolumeRendering")->GetWidgetName());
 
 
     //set subnodes
@@ -334,9 +334,9 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
     //Create New VolumeRenderingNode
     else if (callerObject==this->PB_CreateNewVolumeRenderingNode&&event==vtkKWPushButton::InvokedEvent)
     {
-        //Get a new auto currentNode
+        //Get a new auto CurrentNode
         this->InitializePipelineNewCurrentNode();
-        this->currentNode->HideFromEditorsOff();
+        this->CurrentNode->HideFromEditorsOff();
         //Set the right name
         const char *name=this->EWL_CreateNewVolumeRenderingNode->GetWidget()->GetValue();
         if(!name)
@@ -345,7 +345,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
         }
         else 
         {
-            this->currentNode->SetName(name);
+            this->CurrentNode->SetName(name);
         }
         //Remove Text from Entry
         this->EWL_CreateNewVolumeRenderingNode->GetWidget()->SetValue("");
@@ -416,7 +416,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
         //Only proceed event,if new Node
         else if(strcmp(this->NS_VolumeRenderingDataScene->GetSelected()->GetID(),this->PreviousNS_VolumeRenderingDataScene.c_str())!=0)
         {
-            this->currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataScene->GetSelected());
+            this->CurrentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataScene->GetSelected());
             this->InitializePipelineFromMRMLScene();
             this->PreviousNS_VolumeRenderingDataScene=this->NS_VolumeRenderingDataScene->GetSelected()->GetID();
         }
@@ -434,18 +434,18 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
         {
             //check if we have a preset or a "normal VolumeRenderingNode
 
-            //We have a preset, we can find id in our presets
-            if(this->presets->GetNodeByID(this->NS_VolumeRenderingDataSlicer->GetSelected()->GetID())!=NULL)
+            //We have a preset, we can find id in our Presets
+            if(this->Presets->GetNodeByID(this->NS_VolumeRenderingDataSlicer->GetSelected()->GetID())!=NULL)
             {
                 //Copy Preset Information in current Node
-                this->currentNode->CopyParameterset(this->NS_VolumeRenderingDataSlicer->GetSelected());
+                this->CurrentNode->CopyParameterset(this->NS_VolumeRenderingDataSlicer->GetSelected());
                 this->Helper->UpdateGUIElements();
             }
             //It's not a preset so just update references, and select the new Added Node
             else 
             {
-                this->currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataSlicer->GetSelected());
-                this->currentNode->AddReference(this->NS_ImageData->GetSelected()->GetID());
+                this->CurrentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(this->NS_VolumeRenderingDataSlicer->GetSelected());
+                this->CurrentNode->AddReference(this->NS_ImageData->GetSelected()->GetID());
                 this->NS_VolumeRenderingDataScene->UpdateMenu();
                 this->NS_VolumeRenderingDataScene->SetSelected(this->NS_VolumeRenderingDataSlicer->GetSelected());
             }
@@ -471,7 +471,7 @@ void vtkVolumeRenderingModuleGUI::ProcessMRMLEvents(vtkObject *caller, unsigned 
         this->PreviousNS_ImageData="";
         this->PreviousNS_VolumeRenderingDataScene="";
         this->PreviousNS_VolumeRenderingSlicer="";
-        this->currentNode=NULL;
+        this->CurrentNode=NULL;
         this->UpdateGUI();
 
     }
@@ -493,13 +493,13 @@ void vtkVolumeRenderingModuleGUI::Enter(void)
     //Load Presets
 
 
-    if(!this->presets)
+    if(!this->Presets)
     {
             vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
         //Instance internal MRMLScene for Presets
-        this->presets=vtkMRMLScene::New();
+        this->Presets=vtkMRMLScene::New();
         //Register node class
-        this->presets->RegisterNodeClass(vrNode);
+        this->Presets->RegisterNodeClass(vrNode);
         vrNode->Delete();
 
 
@@ -524,13 +524,13 @@ void vtkVolumeRenderingModuleGUI::Enter(void)
         vtksys_stl::vector<vtksys_stl::string> filesVector;
         filesVector.push_back(""); // for relative path
         filesVector.push_back(slicerHome);
-        filesVector.push_back(vtksys_stl::string("Modules/VolumeRendering/presets.xml"));
+        filesVector.push_back(vtksys_stl::string("Modules/VolumeRendering/Presets.xml"));
         vtksys_stl::string presetFileName = vtksys::SystemTools::JoinPath(filesVector);
-        this->presets->SetURL(presetFileName.c_str());
-        this->presets->Connect();
-        this->NS_VolumeRenderingDataSlicer->SetAdditionalMRMLScene(this->presets);
+        this->Presets->SetURL(presetFileName.c_str());
+        this->Presets->Connect();
+        this->NS_VolumeRenderingDataSlicer->SetAdditionalMRMLScene(this->Presets);
     }
-    //End Load presets
+    //End Load Presets
 
     if ( this->Built == false )
     {
@@ -613,7 +613,7 @@ void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
         this->NS_VolumeRenderingDataScene->EnabledOff();
         this->NS_VolumeRenderingDataSlicer->EnabledOff();
     }
-    //In presets always "None" is selected
+    //In Presets always "None" is selected
     this->NS_VolumeRenderingDataSlicer->SetSelected(NULL);
 }
 void vtkVolumeRenderingModuleGUI::SetViewerWidget(vtkSlicerViewerWidget *viewerWidget)
@@ -649,17 +649,17 @@ void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
 void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
 {
     //TODO move this part
-    this->currentNode=vtkMRMLVolumeRenderingNode::New();
-    this->currentNode->HideFromEditorsOff();
+    this->CurrentNode=vtkMRMLVolumeRenderingNode::New();
+    this->CurrentNode->HideFromEditorsOff();
     //Add Node to Scene
-    this->GetLogic()->GetMRMLScene()->AddNode(this->currentNode);
-    this->currentNode->AddReference(this->NS_ImageData->GetSelected()->GetID());
+    this->GetLogic()->GetMRMLScene()->AddNode(this->CurrentNode);
+    this->CurrentNode->AddReference(this->NS_ImageData->GetSelected()->GetID());
 
     //Update the menu
-    this->PreviousNS_VolumeRenderingDataScene=this->currentNode->GetID();
-    this->NS_VolumeRenderingDataScene->SetSelected(this->currentNode);
+    this->PreviousNS_VolumeRenderingDataScene=this->CurrentNode->GetID();
+    this->NS_VolumeRenderingDataScene->SetSelected(this->CurrentNode);
     this->NS_VolumeRenderingDataScene->UpdateMenu(); 
-    //this->PreviousNS_VolumeRenderingDataScene=this->Gui->GetcurrentNode()->GetID();
+    //this->PreviousNS_VolumeRenderingDataScene=this->Gui->GetCurrentNode()->GetID();
     //The Helper has to do something too
     this->Helper->InitializePipelineNewCurrentNode();
     this->Helper->UpdateGUIElements();
@@ -686,7 +686,7 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineFromImageData()
             //Select first found Node
             //So everyting will be treated when InitializeFromMRMLScene
             this->PreviousNS_VolumeRenderingDataScene=tmp->GetID();
-            this->currentNode=tmp;
+            this->CurrentNode=tmp;
             this->NS_VolumeRenderingDataScene->SetSelected(tmp);
             //We will call the initialize on our own.
             this->InitializePipelineFromMRMLScene();

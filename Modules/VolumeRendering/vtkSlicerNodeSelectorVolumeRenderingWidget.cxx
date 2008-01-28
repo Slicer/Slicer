@@ -20,11 +20,11 @@ bool vtkSlicerNodeSelectorVolumeRenderingWidget::CheckAdditionalConditions(vtkMR
     {
         return true;
     }
-    vtkMRMLVolumeRenderingNode *currentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(node);
+    vtkMRMLVolumeRenderingNode *CurrentNode=vtkMRMLVolumeRenderingNode::SafeDownCast(node);
 
-    bool ret=currentNode->HasReference(this->Condition);
+    bool ret=CurrentNode->HasReference(this->Condition);
     //Enable this back for Labelmaps
-    //bool retA=(currentNode->GetIsLabelMap()==this->IsLabelmap);
+    //bool retA=(CurrentNode->GetIsLabelMap()==this->IsLabelmap);
     //if(ModeCondition)
     //{
     //    return (ret&&retA);
@@ -54,7 +54,7 @@ int vtkSlicerNodeSelectorVolumeRenderingWidget::AddAditionalNodes()
     vtkKWMenuButton *mb = this->GetWidget()->GetWidget();
     vtkKWMenu *m = mb->GetMenu();
 
-    //I think i don't need this because presets cannot be added
+    //I think i don't need this because Presets cannot be added
     int count = 0;
     vtkMRMLNode *node = NULL;
     vtkMRMLNode *selectedNode = NULL;
