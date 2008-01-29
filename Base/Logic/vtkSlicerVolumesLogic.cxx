@@ -267,7 +267,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     volumeNode = vectorNode;
     storageNode = storageNode1;
     }
-  else if (storageNode2->ReadData(vectorNode) && vectorNode->GetImageData()->GetNumberOfScalarComponents() == 3)
+  else if (storageNode2->ReadData(vectorNode))
     {
     vtkDebugMacro("Vector HAS BEEN READ WITH ARCHTYPE READER");
     vdisplayNode = vtkMRMLVectorVolumeDisplayNode::New();

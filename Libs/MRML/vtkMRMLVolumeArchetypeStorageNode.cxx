@@ -192,6 +192,12 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
       reader = readerSeries;
       readerFile->Delete();
       }
+    if (reader->GetNumberOfComponents() < 3)
+      {
+      reader->Delete();
+      return 0;
+      }
+
     }
 
   reader->AddObserver( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
