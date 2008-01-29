@@ -585,7 +585,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             for(int i=0; i<3;i++)
             {
                 double rangeFromImagedata=iData->GetDimensions()[i]/2.; 
-                this->RA_Cropping[i]->SetRange(pointA[i],pointB[i]);
                 if((-rangeFromImagedata)<pointA[i])
                 {
                     this->RA_Cropping[i]->SetWholeRange((-rangeFromImagedata),this->RA_Cropping[i]->GetWholeRange()[1]);
@@ -602,6 +601,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
                 {
                     this->RA_Cropping[i]->SetWholeRange(this->RA_Cropping[i]->GetWholeRange()[0],pointB[i]);
                 }
+                this->RA_Cropping[i]->SetRange(pointA[i],pointB[i]);
 
             }
             
@@ -1620,7 +1620,24 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableClippingPlanes(int clipping
         this->BW_Clipping->SetInteractor(interactor);
         this->BW_Clipping->SetPlaceFactor(1);
         this->BW_Clipping->SetProp3D(this->Volume);
-        this->BW_Clipping->PlaceWidget();
+        //data is saved in IJK->Convert to ras
+        vtkMatrix4x4 *ijkToRas=vtkMatrix4x4::New();
+        vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(ijkToRas);
+
+        double pointA[4];
+        pointA[0]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[0];
+            pointA[1]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2];
+            pointA[2]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[4];
+            pointA[3]=1;
+        ijkToRas->MultiplyPoint(pointA,pointA);
+        double pointB[4];
+        pointB[0]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[1];
+            pointB[1]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[3];
+            pointB[2]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[5];
+            pointB[3]=1;
+        ijkToRas->MultiplyPoint(pointB,pointB);
+
+        this->BW_Clipping->PlaceWidget(pointA[0],pointB[0],pointA[0],pointB[1],pointA[2],pointB[2]);
         this->BW_Clipping->InsideOutOn();
         this->BW_Clipping->RotationEnabledOff();
         this->BW_Clipping->TranslationEnabledOn();
@@ -2055,3 +2072,5 @@ void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
 }
 //TODO: Scaling,translation with transform (scaling part of transform or part or placewidget)->preferred: part of transform
 //TODO: Adjust initial range to size of volume, reduce until old volume is reached 
+
+//Note: we save clipping planes in ijk space, show it in ras and

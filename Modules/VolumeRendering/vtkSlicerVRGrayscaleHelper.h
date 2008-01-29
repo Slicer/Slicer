@@ -194,8 +194,5 @@ protected:
     int RenderingPaused;
 
 
-    void GetAdditionalClippingTransform();
-
-
 };
 #endif
