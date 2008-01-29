@@ -223,6 +223,8 @@ extern "C" int Queryatlas_Init(Tcl_Interp *interp);
 #endif
 #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Volumerenderingmodule_Init(Tcl_Interp *interp);
+//Also init the Replacements
+extern "C" int Volumerenderingreplacements_Init(Tcl_Interp *interp);
 #endif
 #if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
@@ -707,6 +709,8 @@ int Slicer3_main(int argc, char *argv[])
 #endif
  #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
     Volumerenderingmodule_Init(interp);
+    //Also the replacements
+    Volumerenderingreplacements_Init(interp),
 #endif
     
 #if !defined(GAD_DEBUG) && defined(BUILD_MODULES)
