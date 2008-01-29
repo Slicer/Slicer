@@ -562,7 +562,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
 
         //Decide if this event is triggered by the vtkBoxWidget or by the sliders
         //if sliders don't trigger setRange->this would lead to an endless loop
-      /*  if(!this->NoSetRangeNeeded)
+        if(!this->NoSetRangeNeeded)
         {
 
             vtkPolyData *vertices=vtkPolyData::New();
@@ -572,12 +572,17 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             double pointB[3];
             vertices->GetPoint(0,pointA);
             vertices->GetPoint(6,pointB);
+            //Include a possible transform in this calculation
+            vtkTransform *transform=vtkTransform::New();
+            this->BW_Clipping->GetTransform(transform);
+            transform->TransformPoint(pointA,pointA);
+            transform->TransformPoint(pointB,pointB);
             this->RA_Cropping[0]->SetRange(pointA[0],pointB[0]);
             this->RA_Cropping[1]->SetRange(pointA[1],pointB[1]);
             this->RA_Cropping[2]->SetRange(pointA[2],pointB[2]);
             vertices->Delete();
+            transform->Delete();
         }
-        this->NoSetRangeNeeded=0;*/
         planes->Delete();
         return;
     }
@@ -973,9 +978,11 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         }
         //Add an observer to the new node
         this->CurrentTransformNodeCropping=vtkMRMLLinearTransformNode::SafeDownCast(this->NS_TransformNode->GetSelected());
-        this->CurrentTransformNodeCropping->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,this->VolumeRenderingCallbackCommand);
-
-        this->ProcessClippingModified();
+        if(this->CurrentTransformNodeCropping!=NULL)
+        {
+            this->CurrentTransformNodeCropping->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,this->VolumeRenderingCallbackCommand);
+        }
+                    this->ProcessClippingModified();
         return;
     }
     if(eid==vtkMRMLTransformableNode::TransformModifiedEvent)
@@ -1221,6 +1228,8 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
     {
         return;
     }
+    vtkTransform *saveTransform=vtkTransform::New();
+    //this->BW_Clipping->GetTransform(saveTransform);
     this->BW_Clipping->PlaceWidget(
         this->RA_Cropping[0]->GetRange()[0],
         this->RA_Cropping[0]->GetRange()[1],
@@ -1228,8 +1237,11 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
         this->RA_Cropping[1]->GetRange()[1],
         this->RA_Cropping[2]->GetRange()[0],
         this->RA_Cropping[2]->GetRange()[1]);
-    this->NoSetRangeNeeded=1;
-    this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::InteractionEvent,0);
+        this->NoSetRangeNeeded=1;
+    //saveTransform->Scale(0,0,0);
+    //this->BW_Clipping->SetTransform(saveTransform);
+        this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::InteractionEvent,0);
+    this->NoSetRangeNeeded=0;
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 }
 
@@ -1999,12 +2011,23 @@ void vtkSlicerVRGrayscaleHelper::ProcessLabelmapMode(int cbSelectedState)
 
 void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
 {
-    vtkMatrix4x4 *matrix=vtkMRMLLinearTransformNode::SafeDownCast(this->NS_TransformNode->GetSelected())->GetMatrixTransformToParent();
     vtkTransform *trans=vtkTransform::New();
-    trans->SetMatrix(matrix);
-    this->BW_Clipping->SetTransform(trans);
+    if(this->CurrentTransformNodeCropping!=NULL)
+    {
+        vtkMatrix4x4 *matrix=this->CurrentTransformNodeCropping->GetMatrixTransformToParent();
+
+        trans->SetMatrix(matrix);
+        this->BW_Clipping->SetTransform(trans);
+    }
+    else
+    {
+        trans->Identity();
+        this->BW_Clipping->SetTransform(trans);
+
+    }
+    trans->Delete();
+    this->NoSetRangeNeeded=1;
     this->BW_Clipping->InvokeEvent(vtkCommand::InteractionEvent);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 
-    trans->Delete();
 }
