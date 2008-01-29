@@ -145,6 +145,11 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->PB_PauseResume=NULL;
     this->RenderingPaused=0;
 
+    this->AdditionalClippingTransform=vtkTransform::New();
+    this->AdditionalClippingTransform->Identity();
+    this->InverseAdditionalClippingTransform=vtkTransform::New();
+    this->InverseAdditionalClippingTransform->Identity();
+
 }
 
 vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
@@ -573,15 +578,36 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             vertices->GetPoint(0,pointA);
             vertices->GetPoint(6,pointB);
             //Include a possible transform in this calculation
-            vtkTransform *transform=vtkTransform::New();
-            this->BW_Clipping->GetTransform(transform);
-            transform->TransformPoint(pointA,pointA);
-            transform->TransformPoint(pointB,pointB);
-            this->RA_Cropping[0]->SetRange(pointA[0],pointB[0]);
-            this->RA_Cropping[1]->SetRange(pointA[1],pointB[1]);
-            this->RA_Cropping[2]->SetRange(pointA[2],pointB[2]);
+            this->InverseAdditionalClippingTransform->TransformPoint(pointA,pointA);
+            this->InverseAdditionalClippingTransform->TransformPoint(pointB,pointB);
+
+            vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+            for(int i=0; i<3;i++)
+            {
+                double rangeFromImagedata=iData->GetDimensions()[i]/2.; 
+                this->RA_Cropping[i]->SetRange(pointA[i],pointB[i]);
+                if((-rangeFromImagedata)<pointA[i])
+                {
+                    this->RA_Cropping[i]->SetWholeRange((-rangeFromImagedata),this->RA_Cropping[i]->GetWholeRange()[1]);
+                }
+                else
+                {
+                    this->RA_Cropping[i]->SetWholeRange(pointA[i],this->RA_Cropping[i]->GetWholeRange()[1]);
+                }
+                if(rangeFromImagedata>pointB[i])
+                {
+                    this->RA_Cropping[i]->SetWholeRange(this->RA_Cropping[i]->GetWholeRange()[0],rangeFromImagedata);
+                }
+                else
+                {
+                    this->RA_Cropping[i]->SetWholeRange(this->RA_Cropping[i]->GetWholeRange()[0],pointB[i]);
+                }
+
+            }
+            
+
             vertices->Delete();
-            transform->Delete();
+            //transform->Delete();
         }
         planes->Delete();
         return;
@@ -1228,8 +1254,6 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
     {
         return;
     }
-    vtkTransform *saveTransform=vtkTransform::New();
-    //this->BW_Clipping->GetTransform(saveTransform);
     this->BW_Clipping->PlaceWidget(
         this->RA_Cropping[0]->GetRange()[0],
         this->RA_Cropping[0]->GetRange()[1],
@@ -1237,10 +1261,9 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
         this->RA_Cropping[1]->GetRange()[1],
         this->RA_Cropping[2]->GetRange()[0],
         this->RA_Cropping[2]->GetRange()[1]);
-        this->NoSetRangeNeeded=1;
-    //saveTransform->Scale(0,0,0);
-    //this->BW_Clipping->SetTransform(saveTransform);
-        this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::InteractionEvent,0);
+    this->BW_Clipping->SetTransform(this->AdditionalClippingTransform);
+    this->NoSetRangeNeeded=1;
+    this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::InteractionEvent,0);
     this->NoSetRangeNeeded=0;
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 }
@@ -1602,8 +1625,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableClippingPlanes(int clipping
         this->BW_Clipping->RotationEnabledOff();
         this->BW_Clipping->TranslationEnabledOn();
         this->BW_Clipping->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
-        interactor->UpdateSize(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[0],
-            this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[1]);
+        //interactor->UpdateSize(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[0],
+        //    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[1]);
 
         this->BW_Clipping->AddObserver(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor()->ReInitialize();
@@ -2011,23 +2034,24 @@ void vtkSlicerVRGrayscaleHelper::ProcessLabelmapMode(int cbSelectedState)
 
 void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
 {
-    vtkTransform *trans=vtkTransform::New();
+    //If we have an additional Transform Node use it
     if(this->CurrentTransformNodeCropping!=NULL)
     {
         vtkMatrix4x4 *matrix=this->CurrentTransformNodeCropping->GetMatrixTransformToParent();
-
-        trans->SetMatrix(matrix);
-        this->BW_Clipping->SetTransform(trans);
+        this->AdditionalClippingTransform->SetMatrix(matrix);
+        this->InverseAdditionalClippingTransform->SetMatrix(matrix);
+        this->InverseAdditionalClippingTransform->Inverse();
     }
+    //Otherwise go back to Identity;
     else
     {
-        trans->Identity();
-        this->BW_Clipping->SetTransform(trans);
-
+        this->AdditionalClippingTransform->Identity();
+        this->InverseAdditionalClippingTransform->Identity();
     }
-    trans->Delete();
-    this->NoSetRangeNeeded=1;
+    this->BW_Clipping->SetTransform(this->AdditionalClippingTransform);
     this->BW_Clipping->InvokeEvent(vtkCommand::InteractionEvent);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 
 }
+//TODO: Scaling,translation with transform (scaling part of transform or part or placewidget)->preferred: part of transform
+//TODO: Adjust initial range to size of volume, reduce until old volume is reached 

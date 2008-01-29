@@ -24,7 +24,7 @@ class vtkSlicerBoxWidget;
 class vtkSlicerColorDisplayWidget;
 class vtkSlicerNodeSelectorWidget;
 class vtkMRMLLinearTransformNode;
-
+class vtkTransform;
 
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
@@ -95,6 +95,8 @@ protected:
     vtkKWCheckButtonWithLabel *CB_Clipping;
 
     vtkMRMLLinearTransformNode *CurrentTransformNodeCropping;
+     vtkTransform *AdditionalClippingTransform;
+     vtkTransform *InverseAdditionalClippingTransform;
 
     //ColorDisplay Widget
     vtkKWCheckButtonWithLabel *CB_LabelmapMode;
@@ -190,6 +192,9 @@ protected:
     //Description;
     //Indicates if the VolumeRendering is Paused or not
     int RenderingPaused;
+
+
+    void GetAdditionalClippingTransform();
 
 
 };
