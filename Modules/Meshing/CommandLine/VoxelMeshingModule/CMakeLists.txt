@@ -20,9 +20,7 @@ INCLUDE_DIRECTORIES( ${MimxMeshing_SOURCE_DIR}/Filter
                      ${CLI_SOURCE_DIR}
                      ${CLI_BINARY_DIR} ) 
                      
-SET (VoxelMeshModule_SOURCE 
-     VoxelMesh.cxx 
-     ${CLI_SOURCE_DIR}/vtkPluginFilterWatcher.cxx)
+SET (VoxelMeshModule_SOURCE VoxelMesh.cxx ${Slicer3_SOURCE_DIR}/Applications/CLI/vtkPluginFilterWatcher.cxx)
 
 GENERATECLP( VoxelMeshModule_SOURCE VoxelMesh.xml ${VoxelMeshModule_SOURCE_DIR}/Resources/mimxLogo.h )
 ADD_EXECUTABLE ( VoxelMeshModule ${VoxelMeshModule_SOURCE} )
