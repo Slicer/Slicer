@@ -193,6 +193,10 @@ protected:
     //Indicates if the VolumeRendering is Paused or not
     int RenderingPaused;
 
+    void CalculateAndSetSampleDistances();
+    double SampleDistanceHighRes;
+    double SampleDistanceLowRes;
+
 
 };
 #endif

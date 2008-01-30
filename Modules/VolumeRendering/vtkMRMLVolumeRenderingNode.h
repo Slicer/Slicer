@@ -54,21 +54,6 @@ public:
     //constant for software accelerated 3D raycast mapping
     static const int RayCast=1;
     //ETX
-    // Description:
-    // Set/Get mapper of this node. Use constants Texture and Raycast
-    void SetMapper(int mapper)
-    {
-        if(mapper!=0||mapper!=0)
-        {
-            vtkErrorMacro("wrong type of mapping");
-            return;
-        }
-        this->Mapper=mapper;
-    }
-    int GetMapper()
-    {
-        return this->Mapper;
-    }
     vtkGetObjectMacro(VolumeProperty,vtkVolumeProperty);
     // Description:
     // Set/get the vtkVolumeProperty of the MRML Node. The volume property holds all important visualization informations

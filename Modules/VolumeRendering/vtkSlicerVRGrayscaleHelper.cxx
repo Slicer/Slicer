@@ -411,25 +411,19 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
     }
 
     this->Volume=vtkVolume::New();
-    //TODO Dirty fix as Mapper
-    if(this->Gui->GetCurrentNode()->GetMapper()==vtkMRMLVolumeRenderingNode::Texture)
-    {
-        this->MapperTexture=vtkSlicerVolumeTextureMapper3D::New();
-        this->MapperTexture->SetSampleDistance(2);
-        this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
-        this->Volume->SetMapper(this->MapperTexture);
-        //Also take care about Ray Cast
-        this->MapperRaycast=vtkSlicerFixedPointVolumeRayCastMapper::New();
-        this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
-        this->MapperRaycast->SetAutoAdjustSampleDistances(0);
-        this->MapperRaycast->SetSampleDistance(0.1);
-        this->MapperTexture->SetCropping(this->CB_Cropping->GetWidget()->GetSelectedState());
-        this->MapperRaycast->SetCropping(this->CB_Cropping->GetWidget()->GetSelectedState());
-        this->MapperTexture->SetCroppingRegionFlagsToSubVolume();
-        this->MapperRaycast->SetCroppingRegionFlagsToSubVolume();
-
-
-    }
+    this->MapperTexture=vtkSlicerVolumeTextureMapper3D::New();
+    this->MapperTexture->SetSampleDistance(2);
+    this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+    this->Volume->SetMapper(this->MapperTexture);
+    //Also take care about Ray Cast
+    this->MapperRaycast=vtkSlicerFixedPointVolumeRayCastMapper::New();
+    this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+    this->MapperRaycast->SetAutoAdjustSampleDistances(0);
+    this->MapperRaycast->SetSampleDistance(0.1);
+    this->MapperTexture->SetCropping(this->CB_Cropping->GetWidget()->GetSelectedState());
+    this->MapperRaycast->SetCropping(this->CB_Cropping->GetWidget()->GetSelectedState());
+    this->MapperTexture->SetCroppingRegionFlagsToSubVolume();
+    this->MapperRaycast->SetCroppingRegionFlagsToSubVolume();
 
     //Try to load from the registry; do it here to ensure all objects are there
     if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_RayCast"))
@@ -2074,3 +2068,21 @@ void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
 //TODO: Adjust initial range to size of volume, reduce until old volume is reached 
 
 //Note: we save clipping planes in ijk space, show it in ras and
+
+void vtkSlicerVRGrayscaleHelper::CalculateAndSetSampleDistances(void)
+{
+    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+    double *spacing=iData->GetSpacing();
+    double minSpacing=10000;
+    for(int i=0;i<3;i++)
+    {
+        if(spacing[i]<minSpacing)
+        {
+            minSpacing=spacing[i];
+        }
+    }
+
+    this->SampleDistanceHighRes=minSpacing/10;
+    this->SampleDistanceLowRes=this->SampleDistanceHighRes*2;
+
+}

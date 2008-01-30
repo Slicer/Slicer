@@ -313,7 +313,6 @@ void vtkMRMLVolumeRenderingNode::CopyParameterset(vtkMRMLNode *anode)
         this->VolumeProperty->SetSpecular(node->VolumeProperty->GetSpecular(i));
         this->VolumeProperty->SetSpecularPower(node->VolumeProperty->GetSpecularPower(i));
     }
-    this->SetMapper(node->Mapper);
 }
 
 //----------------------------------------------------------------------------
