@@ -271,7 +271,7 @@ int main(int argc, char* argv[])
     }
   }    
 
-  // check ImageOrientationPatient and figure out Slice direction in
+  // check ImageOrientationPatient and figure out slice direction in
   // L-P-I (right-handed) system.
   // In Dicom, the coordinate frame is L-P by default. Look at
   // http://medical.nema.org/dicom/2007/07_03pu.pdf ,  page 301
@@ -294,9 +294,9 @@ int main(int argc, char* argv[])
   yRow *= -xRes;
   zRow *= -xRes;
 
-  xCol *= -xRes;
-  yCol *= -xRes;
-  zCol *= -xRes;
+  xCol *= -yRes;
+  yCol *= -yRes;
+  zCol *= -yRes;
 
   // figure out slice order
   bool SliceOrderIS = true;
@@ -352,7 +352,7 @@ int main(int argc, char* argv[])
 
   if ( vendor.find("GE") != std::string::npos )
     {
-    nSliceInVolume = static_cast<int> ((maxSliceLocation - minSliceLocation) / sliceSpacing + 1.5 ); 
+    nSliceInVolume = static_cast<int> ((maxSliceLocation - minSliceLocation) / fabs(zSlice) + 1.5 ); 
     // .5 is for rounding up, 1 is for adding one slice at one end.
     nVolume = nSlice/nSliceInVolume;
 
