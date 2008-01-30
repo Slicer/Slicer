@@ -125,7 +125,12 @@ int main(int argc, char * argv[])
 
     modelScene->SetURL(sceneFilename.c_str());
     modelScene->Import();
-    
+   
+    if (debug)
+      {
+      std::cout << "Imported model scene file " << sceneFilename.c_str() << std::endl;
+      }
+ 
     // make sure we have a model hierarchy node
     vtkMRMLNode *rnd = modelScene->GetNodeByID( modelHierarchyID );
     
@@ -135,7 +140,7 @@ int main(int argc, char * argv[])
                 << modelHierarchyID << "\"" << std::endl;
       return EXIT_FAILURE;
       }
-    
+    else { if (debug) { std::cout << "Got model hierarchy node " << rnd->GetID() << std::endl; } }    
 
     vtkMRMLModelHierarchyNode *rtnd = vtkMRMLModelHierarchyNode::SafeDownCast(rnd);
   
@@ -212,6 +217,7 @@ int main(int argc, char * argv[])
     else if (GenerateAll)
       {
       makeMultiple = true;
+      if (debug) { std::cout << "GenerateAll! set make mult to true" << std::endl; }
       }
     else if (EndLabel >= StartLabel && (EndLabel != -1 && StartLabel != -1))
       {
@@ -365,9 +371,18 @@ int main(int argc, char * argv[])
           }
         min[0]++;
         }
+      if (min[0] < 0)
+        {
+        if (debug)
+          {
+          std::cout << "Histogram min was less than zero: " << min[0] << ", resetting to 1\n";
+          }
+        min[0] = 1;
+        }
+        
       if (debug)
         {
-        std::cout << "Hist: Min = " << min[0] << " and max = " << max[0] << endl;
+        std::cout << "Hist: Min = " << min[0] << " and max = " << max[0] << " (image scalar type = "  << image->GetScalarType() << ")" << endl;
         }
       if (GenerateAll)
         {
@@ -610,18 +625,46 @@ int main(int argc, char * argv[])
         std::string stringI =    stream.str();
         if (colorNode != NULL)
           {
-          if (colorNode->GetColorNameWithoutSpaces(i, "_").c_str() != NULL)
+          std::string colorName = std::string(colorNode->GetColorNameWithoutSpaces(i, "_"));
+          if (colorName.c_str() != NULL)
             {
-            labelName = Name + std::string("_") + stringI + std::string("_") + std::string(colorNode->GetColorNameWithoutSpaces(i, "_"));
-            if (debug)
+            if (!SkipUnNamed ||
+                (SkipUnNamed && colorName.compare("invalid") != 0))
               {
-              std::cout << "Got color name, set label name = " << labelName.c_str() << " (color name w/o spaces = " << colorNode->GetColorNameWithoutSpaces(i, "_") << endl;
+              labelName = Name + std::string("_") + stringI + std::string("_") + colorName;
+              if (debug)
+                {
+                std::cout << "Got color name, set label name = " << labelName.c_str() << " (color name w/o spaces = " << colorName.c_str() << ")" << endl;
+                }
+              }
+            else
+              {
+              if (debug)
+                {
+                std::cout << "Invalid colour name for " << stringI.c_str() << " = " << colorName.c_str() << ", skipping.\n";
+                }
+              skippedModels.push_back(i);
+              madeModels.pop_back();
+              continue;
               }
             }
           else
             {
-            // colour is out of range
-            labelName = Name + std::string("_") + stringI;
+            if (SkipUnNamed)
+              {
+              if (debug)
+                {
+                std::cout << "Null color name for " << i << endl;
+                }
+              skippedModels.push_back(i);
+              madeModels.pop_back();
+              continue;
+              }
+            else
+              {
+              // colour is out of range
+              labelName = Name + std::string("_") + stringI;
+              }
             }
           }
         else
