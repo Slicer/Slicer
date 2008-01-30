@@ -195,6 +195,7 @@ protected:
 
     void CalculateAndSetSampleDistances();
     double SampleDistanceHighRes;
+    double SampleDistanceHighResImage;
     double SampleDistanceLowRes;
 
 

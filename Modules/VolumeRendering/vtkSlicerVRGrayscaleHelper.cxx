@@ -409,21 +409,23 @@ void vtkSlicerVRGrayscaleHelper::Rendering(void)
         vtkErrorMacro("Call init before calling rendering");
         return;
     }
-
+    //First of all set our sample distances right
+    this->CalculateAndSetSampleDistances();
+    
     this->Volume=vtkVolume::New();
+
+    //Init the texture mapper
     this->MapperTexture=vtkSlicerVolumeTextureMapper3D::New();
-    this->MapperTexture->SetSampleDistance(2);
+    this->MapperTexture->SetSampleDistance(this->SampleDistanceLowRes);
     this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
     this->Volume->SetMapper(this->MapperTexture);
+
     //Also take care about Ray Cast
     this->MapperRaycast=vtkSlicerFixedPointVolumeRayCastMapper::New();
     this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
     this->MapperRaycast->SetAutoAdjustSampleDistances(0);
-    this->MapperRaycast->SetSampleDistance(0.1);
-    this->MapperTexture->SetCropping(this->CB_Cropping->GetWidget()->GetSelectedState());
-    this->MapperRaycast->SetCropping(this->CB_Cropping->GetWidget()->GetSelectedState());
-    this->MapperTexture->SetCroppingRegionFlagsToSubVolume();
-    this->MapperRaycast->SetCroppingRegionFlagsToSubVolume();
+    this->MapperRaycast->SetSampleDistance(this->SampleDistanceHighRes);
+    this->MapperRaycast->SetImageSampleDistance(this->SampleDistanceHighResImage);
 
     //Try to load from the registry; do it here to ensure all objects are there
     if(this->Gui->GetApplication()->HasRegistryValue(2,"VolumeRendering","CB_RayCast"))
@@ -632,8 +634,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->MapperRaycast->SetAutoAdjustSampleDistances(callerObjectCheckButton->GetSelectedState());
         if(!callerObjectCheckButton->GetSelectedState())
         {
-            this->MapperRaycast->SetSampleDistance(.1);
-            this->MapperRaycast->SetImageSampleDistance(1);
+            this->MapperRaycast->SetSampleDistance(this->SampleDistanceHighRes);
+            this->MapperRaycast->SetImageSampleDistance(this->SampleDistanceHighResImage);
         }
 
         return;
@@ -705,7 +707,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
 
             this->Volume->SetMapper(this->MapperTexture);
             //always got to less sample distance
-            this->MapperTexture->SetSampleDistance(2);
+            this->MapperTexture->SetSampleDistance(this->SampleDistanceLowRes);
             this->CurrentStage=0;
             vtkSlicerVRHelperDebug("Stage 0 started","");
             //Decide if we REnder plane or not
@@ -757,7 +759,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         if(this->CurrentStage==1)
         {
             this->Volume->SetMapper(MapperTexture);
-            this->MapperTexture->SetSampleDistance(.1);
+            this->MapperTexture->SetSampleDistance(this->SampleDistanceHighRes);
 
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,1);
@@ -2071,8 +2073,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
 
 void vtkSlicerVRGrayscaleHelper::CalculateAndSetSampleDistances(void)
 {
-    vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
-    double *spacing=iData->GetSpacing();
+    
+    double *spacing=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetSpacing();
     double minSpacing=10000;
     for(int i=0;i<3;i++)
     {
@@ -2082,7 +2084,8 @@ void vtkSlicerVRGrayscaleHelper::CalculateAndSetSampleDistances(void)
         }
     }
 
-    this->SampleDistanceHighRes=minSpacing/10;
+    this->SampleDistanceHighRes=minSpacing/2.;
+    this->SampleDistanceHighResImage=this->SampleDistanceHighRes;
     this->SampleDistanceLowRes=this->SampleDistanceHighRes*2;
 
 }
