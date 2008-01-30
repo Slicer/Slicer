@@ -268,9 +268,9 @@ int main(int argc, char* argv[])
   float xRow, yRow, zRow, xCol, yCol, zCol, xSlice, ySlice, zSlice;
   sscanf( tag.c_str(), "%f\\%f\\%f\\%f\\%f\\%f", &xRow, &yRow, &zRow, &xCol, &yCol, &zCol );
   // Cross product, this gives I-axis direction
-  xSlice = (yRow*zCol-zRow*yCol)*sliceSpacing;
-  ySlice = (zRow*xCol-xRow*zCol)*sliceSpacing;
-  zSlice = (xRow*yCol-yRow*xCol)*sliceSpacing;
+  xSlice = (yRow*zCol-zRow*yCol);
+  ySlice = (zRow*xCol-xRow*zCol);
+  zSlice = (xRow*yCol-yRow*xCol);
 
   // In Dicom, the measurement frame is L-P by default. Look at
   // http://medical.nema.org/dicom/2007/07_03pu.pdf ,  page 301, in
@@ -278,13 +278,13 @@ int main(int argc, char* argv[])
   // multiply the direction cosines by the negatives of the resolution
   // (resolution is required by nrrd format). Direction cosine is not
   // affacted since the resulting frame is still a right-handed frame.
-  xRow *= -xRes;
-  yRow *= -xRes;
-  zRow *= -xRes;
+  xRow = -xRow;
+  yRow = -yRow;
+  zRow = -zRow;
 
-  xCol *= -xRes;
-  yCol *= -xRes;
-  zCol *= -xRes;
+  xCol = -xCol;
+  yCol = -yCol;
+  zCol = -zCol;
 
   // figure out slice order
   bool SliceOrderIS = true;
@@ -340,7 +340,7 @@ int main(int argc, char* argv[])
 
   if ( vendor.find("GE") != std::string::npos )
     {
-    nSliceInVolume = static_cast<int> ((maxSliceLocation - minSliceLocation) / sliceSpacing + 1.5 ); 
+    nSliceInVolume = static_cast<int> ((maxSliceLocation - minSliceLocation) / fabs(zSlice*sliceSpacing) + 1.5 ); 
     // .5 is for rounding up, 1 is for adding one slice at one end.
     nVolume = nSlice/nSliceInVolume;
 
@@ -574,6 +574,13 @@ int main(int argc, char* argv[])
   nrrdOrigin[1] = yOrigin;
   nrrdOrigin[2] = zOrigin;
   nrrdImage->SetOrigin( nrrdOrigin );
+
+  // set spacing
+  NRRDImageType::SpacingType nrrdSpacing;
+  nrrdSpacing[0] = xRes;
+  nrrdSpacing[1] = yRes;
+  nrrdSpacing[2] = sliceSpacing;
+  nrrdImage->SetSpacing( nrrdSpacing );
 
   // SetDirections
   NRRDImageType::DirectionType nrrdDirection;
