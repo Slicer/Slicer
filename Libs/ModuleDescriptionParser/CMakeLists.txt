@@ -111,8 +111,8 @@ CONFIGURE_FILE(${ModuleDescriptionParser_SOURCE_DIR}/UseModuleDescriptionParser.
 
 INSTALL(TARGETS ModuleDescriptionParser 
     RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION lib COMPONENT Development)
+    LIBRARY DESTINATION lib/ModuleDescriptionParser COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib/ModuleDescriptionParser COMPONENT Development)
 
 FILE(GLOB __files1 "${ModuleDescriptionParser_SOURCE_DIR}/*.h")
 INSTALL(FILES ${__files1} DESTINATION include/ModuleDescriptionParser COMPONENT Development)

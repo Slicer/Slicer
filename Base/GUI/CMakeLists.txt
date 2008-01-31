@@ -141,8 +141,8 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
 IF(BUILD_SHARED_LIBS)
   INSTALL(TARGETS ${LIB_NAME}
       RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib COMPONENT Development)
+      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
 ENDIF(BUILD_SHARED_LIBS)
 
 # The name of our executable and the corresponding source file.

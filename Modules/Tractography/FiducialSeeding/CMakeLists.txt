@@ -68,8 +68,8 @@ ADD_LIBRARY(SlicerTractographyFiducialSeeding
 IF(BUILD_SHARED_LIBS)
   INSTALL(TARGETS SlicerTractographyFiducialSeeding
       RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib COMPONENT Development)
+      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
 ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(SlicerTractographyFiducialSeeding

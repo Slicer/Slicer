@@ -13,10 +13,11 @@
 GET_FILENAME_COMPONENT(Slicer3_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 # The Slicer3 include file directories.
-SET(Slicer3_INCLUDE_DIRS "${Slicer3_CONFIG_DIR}/../../include/Slicer3")
+SET(Slicer3_INCLUDE_DIRS "${Slicer3_CONFIG_DIR}/../../include/Slicer3" "${Slicer3_CONFIG_DIR}/../../include/MRML" "${Slicer3_CONFIG_DIR}/../../include/vtk-5.0")
 
 # The Slicer3 library directories.
-SET(Slicer3_LIBRARY_DIRS "${Slicer3_CONFIG_DIR}/..")
+# ${Slicer3_CONFIG_DIR}/.. is needed for VTK and teem
+SET(Slicer3_LIBRARY_DIRS "${Slicer3_CONFIG_DIR}" "${Slicer3_CONFIG_DIR}/.." "${Slicer3_CONFIG_DIR}/../MRML")
 
 # The C and C++ flags added by Slicer3 to the cmake-configured flags.
 SET(Slicer3_REQUIRED_C_FLAGS "@Slicer3_REQUIRED_C_FLAGS@")

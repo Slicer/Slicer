@@ -64,8 +64,8 @@ ADD_LIBRARY(VolumeRenderingModule
 IF(BUILD_SHARED_LIBS)
   INSTALL(TARGETS VolumeRenderingModule
       RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib COMPONENT Development)
+      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
 ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(VolumeRenderingModule
