@@ -123,7 +123,7 @@ CONFIGURE_FILE(
 # Resources
 SET (COLORFILES
     ./Resources/ColorFiles/PelvisColor.txt
-    ./Resources/ColorFiles/64Color-Nonsemantic.txt 
+    ./Resources/ColorFiles/64Color-Nonsemantic.txt
     ./Resources/ColorFiles/SPL-BrainAtlas-ColorFile.txt
 )
 
