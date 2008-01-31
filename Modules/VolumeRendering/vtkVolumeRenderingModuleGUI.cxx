@@ -193,6 +193,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->PB_Testing->SetParent(loadSaveDataFrame->GetFrame());
     this->PB_Testing->Create();
     this->PB_Testing->SetText("Make All Models Invisible");
+    this->PB_Testing->SetBalloonHelpString("TODO");
     this->PB_Testing->SetWidth(labelWidth);
     app->Script("pack %s -side top -anchor ne -padx 2 -pady 2",this->PB_Testing->GetWidgetName());
 
@@ -202,6 +203,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->NS_ImageData->Create();
     this->NS_ImageData->NoneEnabledOn();
     this->NS_ImageData->SetLabelText("Source Volume: ");
+    this->NS_ImageData->SetBalloonHelpString("TODO");
     this->NS_ImageData->SetLabelWidth(labelWidth);
     this->NS_ImageData->SetNodeClass("vtkMRMLScalarVolumeNode","","","");
     app->Script("pack %s -side top -fill x -anchor nw -padx 2 -pady 2",this->NS_ImageData->GetWidgetName());
@@ -211,6 +213,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->NS_VolumeRenderingDataSlicer->SetParent(loadSaveDataFrame->GetFrame());
     this->NS_VolumeRenderingDataSlicer->Create();
     this->NS_VolumeRenderingDataSlicer->SetLabelText("Existing Parametersets: ");
+        this->NS_VolumeRenderingDataSlicer->SetBalloonHelpString("TODO");
     this->NS_VolumeRenderingDataSlicer->SetLabelWidth(labelWidth);
     this->NS_VolumeRenderingDataSlicer->EnabledOff();//By default off
     this->NS_VolumeRenderingDataSlicer->NoneEnabledOn();
@@ -223,6 +226,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->NS_VolumeRenderingDataScene->Create();
     this->NS_VolumeRenderingDataScene->NoneEnabledOn();
     this->NS_VolumeRenderingDataScene->SetLabelText("Current Parametersets: ");
+        this->NS_VolumeRenderingDataScene->SetBalloonHelpString("TODO");
     this->NS_VolumeRenderingDataScene->SetLabelWidth(labelWidth);
     this->NS_VolumeRenderingDataScene->EnabledOff();//By default off
     this->NS_VolumeRenderingDataScene->SetNodeClass("vtkMRMLVolumeRenderingNode","","","");
@@ -234,6 +238,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->EWL_CreateNewVolumeRenderingNode=vtkKWEntryWithLabel::New();
     this->EWL_CreateNewVolumeRenderingNode->SetParent(loadSaveDataFrame->GetFrame());
     this->EWL_CreateNewVolumeRenderingNode->Create();
+    this->EWL_CreateNewVolumeRenderingNode->SetBalloonHelpString("TODO");
     this->EWL_CreateNewVolumeRenderingNode->SetLabelText("Name New Parameterset: ");
     this->EWL_CreateNewVolumeRenderingNode->SetLabelWidth(labelWidth);
     this->EWL_CreateNewVolumeRenderingNode->EnabledOff();
@@ -243,6 +248,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->PB_CreateNewVolumeRenderingNode=vtkKWPushButton::New();
     this->PB_CreateNewVolumeRenderingNode->SetParent(loadSaveDataFrame->GetFrame());
     this->PB_CreateNewVolumeRenderingNode->Create();
+    this->PB_CreateNewVolumeRenderingNode->SetBalloonHelpString("TODO");
     this->PB_CreateNewVolumeRenderingNode->SetText("Create Visualization Parameterset");
     app->Script("pack %s -side top -anchor ne -padx 2 -pady 2",this->PB_CreateNewVolumeRenderingNode->GetWidgetName());
 

@@ -274,8 +274,11 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->PB_PauseResume=vtkKWPushButton::New();
     this->PB_PauseResume->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
     this->PB_PauseResume->Create();
-    this->PB_PauseResume->SetText("Pause");
-    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",
+    this->PB_PauseResume->SetBalloonHelpString("TODO");
+    this->PB_PauseResume->SetText("DON'T Display Volume Rendering");
+    this->PB_PauseResume->SetWidth(40);//Color: venetian Red, .78,
+    this->PB_PauseResume->SetBackgroundColor(.78,.03,.08);
+    this->Script("pack %s -side top -anchor nw -padx 10 -pady 10",
         this->PB_PauseResume->GetWidgetName());
     this->PB_PauseResume->SetCommand(this,"ProcessPauseResume");
 
@@ -284,15 +287,16 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->NB_Details=vtkKWNotebook::New();
     this->NB_Details->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
     this->NB_Details->Create();
-    this->NB_Details->AddPage("Mapping");
-    this->NB_Details->AddPage("Performance");
-    this->NB_Details->AddPage("Cropping");
-    this->NB_Details->AddPage("Labelmaps");
+    this->NB_Details->AddPage("Threshold","TODO");
+    this->NB_Details->AddPage("Performance","TODO");
+    this->NB_Details->AddPage("Cropping","TODO");
+    this->NB_Details->AddPage("Labelmaps","TODO");
+    this->NB_Details->AddPage("Advanced","TODO");
     this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
         this->NB_Details->GetWidgetName());
 
     this->SVP_VolumeProperty=vtkSlicerVolumePropertyWidget::New();
-    this->SVP_VolumeProperty->SetParent(this->NB_Details->GetFrame("Mapping"));
+    this->SVP_VolumeProperty->SetParent(this->NB_Details->GetFrame("Advanced"));
     this->SVP_VolumeProperty->Create();
     this->SVP_VolumeProperty->ScalarOpacityUnitDistanceVisibilityOff ();
     this->SVP_VolumeProperty->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
@@ -1274,14 +1278,16 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         croppingFrame->GetWidgetName() );
 
-
+    int labelwidth=20;
     
 
     this->CB_Cropping=vtkKWCheckButtonWithLabel::New();
     this->CB_Cropping->SetParent(croppingFrame->GetFrame());
     this->CB_Cropping->Create();
     this->CB_Cropping->GetWidget()->SetSelectedState(0);
-    this->CB_Cropping->SetLabelText("Enable /Disable Clipping in general");
+    this->CB_Cropping->SetBalloonHelpString("TODO");
+    this->CB_Cropping->SetLabelText("Clipping in general");
+    this->CB_Cropping->SetLabelWidth(labelwidth);
     this->CB_Cropping->GetWidget()->SetCommand(this, "ProcessEnableDisableCropping");
     this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",
         this->CB_Cropping->GetWidgetName());
@@ -1290,8 +1296,10 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->CB_Clipping=vtkKWCheckButtonWithLabel::New();
     this->CB_Clipping->SetParent(croppingFrame->GetFrame());
     this->CB_Clipping->Create();
+    this->CB_Clipping->SetBalloonHelpString("TODO");
     this->CB_Clipping->GetWidget()->SetSelectedState(0);
-    this->CB_Clipping->SetLabelText("Enable /Disable Clipping Box");
+    this->CB_Clipping->SetLabelText("Display Clipping Box");
+    this->CB_Clipping->SetLabelWidth(labelwidth);
     this->CB_Clipping->GetWidget()->SetCommand(this, "ProcessEnableDisableClippingPlanes");
     this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",
         this->CB_Clipping->GetWidgetName());
@@ -1301,6 +1309,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
         this->RA_Cropping[i]=vtkKWRange::New();
         this->RA_Cropping[i]->SetParent(croppingFrame->GetFrame());
         this->RA_Cropping[i]->Create();
+        this->RA_Cropping[i]->SetBalloonHelpString("TODO");
         this->RA_Cropping[i]->SymmetricalInteractionOff();
         std::stringstream str;
         str<<"Cropping ";
@@ -1331,6 +1340,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->NS_TransformNode->SetParent(croppingFrame->GetFrame());
     this->NS_TransformNode->Create();
     this->NS_TransformNode->SetLabelText("Transform Node for Clipping");
+    this->NS_TransformNode->SetBalloonHelpString("TODO");
     this->NS_TransformNode->SetNodeClass("vtkMRMLTransformNode",NULL,NULL,NULL);
     this->NS_TransformNode->SetMRMLScene(this->Gui->GetLogic()->GetMRMLScene());
     this->NS_TransformNode->NoneEnabledOn();
@@ -1344,7 +1354,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
 void vtkSlicerVRGrayscaleHelper::CreateThreshold()
 {
     vtkKWFrameWithLabel *thresholdFrame=vtkKWFrameWithLabel::New();
-    thresholdFrame->SetParent(this->NB_Details->GetFrame("Mapping"));
+    thresholdFrame->SetParent(this->NB_Details->GetFrame("Threshold"));
     thresholdFrame->Create();
     thresholdFrame->SetLabelText("Threshold");
     this->Script("pack %s -side top -anchor nw -fill both -expand yes -padx 0 -pady 2", 
@@ -1353,6 +1363,7 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->MB_ThresholdMode=vtkKWMenuButtonWithLabel::New();
     this->MB_ThresholdMode->SetParent(thresholdFrame->GetFrame());
     this->MB_ThresholdMode->Create();
+    this->MB_ThresholdMode->SetBalloonHelpString("TODO");
     this->MB_ThresholdMode->SetLabelText("Threshold:");
     this->MB_ThresholdMode->SetLabelWidth(10);
     this->MB_ThresholdMode->GetWidget()->GetMenu()->AddRadioButton("None");
@@ -1368,6 +1379,7 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->MB_ColorMode=vtkKWMenuButtonWithLabel::New();
     this->MB_ColorMode->SetParent(thresholdFrame->GetFrame());
     this->MB_ColorMode->Create();
+    this->MB_ColorMode->SetBalloonHelpString("TODO");
     this->MB_ColorMode->SetLabelText("Color Mode:"); 
     this->MB_ColorMode->SetLabelWidth(10);
     this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Grayscale dynamic");
@@ -1386,6 +1398,7 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->RA_RampRectangleHorizontal=vtkKWRange::New();
     this->RA_RampRectangleHorizontal->SetParent(thresholdFrame->GetFrame());
     this->RA_RampRectangleHorizontal->Create();
+    this->RA_RampRectangleHorizontal->SetBalloonHelpString("TODO");
     this->RA_RampRectangleHorizontal->SetLabelText("Threshold");
     this->RA_RampRectangleHorizontal->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
     this->RA_RampRectangleHorizontal->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
@@ -1397,6 +1410,7 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->PB_ThresholdZoomIn=vtkKWPushButton::New();
     this->PB_ThresholdZoomIn->SetParent(thresholdFrame->GetFrame());
     this->PB_ThresholdZoomIn->Create();
+    this->PB_ThresholdZoomIn->SetBalloonHelpString("TODO");
     this->PB_ThresholdZoomIn->SetText("Zoom In");
     this->PB_ThresholdZoomIn->EnabledOff();
     this->PB_ThresholdZoomIn->SetCommand(this,"ProcessThresholdZoomIn");
@@ -1406,6 +1420,7 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->PB_Reset=vtkKWPushButton::New();
     this->PB_Reset->SetParent(thresholdFrame->GetFrame());
     this->PB_Reset->Create();
+    this->PB_Reset->SetBalloonHelpString("TODO");
     this->PB_Reset->SetText("Reset");
     this->PB_Reset->EnabledOff();
     this->PB_Reset->SetCommand(this,"ProcessThresholdReset");
@@ -1415,6 +1430,7 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->RA_RampRectangleVertical=vtkKWRange::New();
     this->RA_RampRectangleVertical->SetParent(thresholdFrame->GetFrame());
     this->RA_RampRectangleVertical->Create();
+    this->RA_RampRectangleVertical->SetBalloonHelpString("TODO");
     this->RA_RampRectangleVertical->SetLabelText("Opacity");
     this->RA_RampRectangleVertical->SetOrientationToVertical();
     this->RA_RampRectangleVertical->SetWholeRange(1,0);
@@ -1687,7 +1703,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessPauseResume(void)
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
         this->Volume->VisibilityOn();
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-        this->PB_PauseResume->SetText("Pause");
+        this->PB_PauseResume->SetText("DON'T Display Volume Rendering");
+        this->PB_PauseResume->SetBackgroundColor(.78,.03,.08);
 
     }
     //Pause Rendering
@@ -1701,7 +1718,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessPauseResume(void)
 
         this->Volume->VisibilityOff();
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-        this->PB_PauseResume->SetText("Resume");
+        this->PB_PauseResume->SetText("Display Volume Rendering");
+        this->PB_PauseResume->SetBackgroundColor(.0,.5,.0);
     }
     else
     {
@@ -1848,6 +1866,7 @@ void vtkSlicerVRGrayscaleHelper::CreateLabelmap(void)
     this->CB_LabelmapMode=vtkKWCheckButtonWithLabel::New();
     this->CB_LabelmapMode->SetParent(labelmapFrame->GetFrame());
     this->CB_LabelmapMode->Create();
+    this->CB_LabelmapMode->SetBalloonHelpString("TODO");
     this->CB_LabelmapMode->SetLabelText("Enable/Disable labelmapMode");
     this->CB_LabelmapMode->GetWidget()->SetCommand(this, "ProcessLabelmapMode");
     this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->CB_LabelmapMode->GetWidgetName());
@@ -1859,6 +1878,7 @@ void vtkSlicerVRGrayscaleHelper::CreateLabelmap(void)
     this->PB_LabelsSelectAll=vtkKWPushButton::New();
     this->PB_LabelsSelectAll->SetParent(frameSelectDeselect);
     this->PB_LabelsSelectAll->Create();
+    this->PB_LabelsSelectAll->SetBalloonHelpString("TODO");
     this->PB_LabelsSelectAll->SetText("Select all");
     this->PB_LabelsSelectAll->SetCommand(this,"ProcessSelectAllLabels");
     this->PB_LabelsSelectAll->EnabledOff();
@@ -1867,6 +1887,7 @@ void vtkSlicerVRGrayscaleHelper::CreateLabelmap(void)
     this->PB_LabelsDeselectAll=vtkKWPushButton::New();
     this->PB_LabelsDeselectAll->SetParent(frameSelectDeselect);
     this->PB_LabelsDeselectAll->Create();
+    this->PB_LabelsDeselectAll->SetBalloonHelpString("TODO");
     this->PB_LabelsDeselectAll->SetText("Deselect all");
     this->PB_LabelsDeselectAll->SetCommand(this,"ProcessDeselectAllLabels");
     this->PB_LabelsDeselectAll->EnabledOff();
@@ -1901,6 +1922,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_TextureLow=vtkKWCheckButtonWithLabel::New();
     this->CB_TextureLow->SetParent(this->MappersFrame->GetFrame());
     this->CB_TextureLow->Create();
+    this->CB_TextureLow->SetBalloonHelpString("TODO");
     this->CB_TextureLow->SetLabelText("Use Texture Low");
     this->CB_TextureLow->SetLabelWidth(labelWidth);
     this->CB_TextureLow->GetWidget()->SetSelectedState(1);
@@ -1912,6 +1934,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_TextureHigh=vtkKWCheckButtonWithLabel::New();
     this->CB_TextureHigh->SetParent(this->MappersFrame->GetFrame());
     this->CB_TextureHigh->Create();
+    this->CB_TextureHigh->SetBalloonHelpString("TODO");
     this->CB_TextureHigh->SetLabelText("Use Texture High");
     this->CB_TextureHigh->SetLabelWidth(labelWidth);
     this->CB_TextureHigh->GetWidget()->SetSelectedState(1);
@@ -1922,6 +1945,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_RayCast=vtkKWCheckButtonWithLabel::New();
     this->CB_RayCast->SetParent(this->MappersFrame->GetFrame());
     this->CB_RayCast->Create();
+    this->CB_RayCast->SetBalloonHelpString("TODO");
     this->CB_RayCast->SetLabelText("Use Raycast      ");
     this->CB_RayCast->SetLabelWidth(labelWidth);
     this->CB_RayCast->GetWidget()->SetSelectedState(1);
@@ -1932,6 +1956,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_InteractiveFrameRate=vtkKWCheckButtonWithLabel::New();
     this->CB_InteractiveFrameRate->SetParent(this->MappersFrame->GetFrame());
     this->CB_InteractiveFrameRate->Create();
+    this->CB_InteractiveFrameRate->SetBalloonHelpString("TODO");
     this->CB_InteractiveFrameRate->SetLabelText("Raycast interactive?!");
     this->CB_InteractiveFrameRate->SetLabelWidth(labelWidth);
     this->CB_InteractiveFrameRate->EnabledOff();
@@ -1942,6 +1967,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->SC_Framerate=vtkKWScaleWithLabel::New();
     this->SC_Framerate->SetParent(this->MappersFrame->GetFrame());
     this->SC_Framerate->Create();
+    this->SC_Framerate->SetBalloonHelpString("TODO");
     this->SC_Framerate->SetLabelText("FPS (Interactive):");
     this->SC_Framerate->SetLabelWidth(labelWidth);
     this->SC_Framerate->GetWidget()->SetRange(1,20);

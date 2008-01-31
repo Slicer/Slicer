@@ -50,7 +50,6 @@ public:
         vtkSlicerVRHelperDebug("setbutton %d",_arg);
         this->ButtonDown=(_arg);
     }
-    //vtkSetMacro(ButtonDown,int);
 
     
     void Cropping(int index, double min,double max);
