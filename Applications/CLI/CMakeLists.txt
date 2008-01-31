@@ -21,6 +21,9 @@ IF (Slicer3_SOURCE_DIR)
   SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
 ENDIF (Slicer3_SOURCE_DIR)
 
+INCLUDE_DIRECTORIES( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
+LINK_DIRECTORIES(${SlicerBaseCLI_BINARY_DIR})
+
 #####################
 SET (CLP DiffusionTensorTest)
 
@@ -303,7 +306,7 @@ TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters)
 
 SET (CLP ModelMaker)
 
-SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPluginFilterWatcher.cxx )
+SET ( ${CLP}_SOURCE ${CLP}.cxx )
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 LINK_DIRECTORIES(${vtkITK_LIB_DIR})
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
@@ -314,6 +317,7 @@ TARGET_LINK_LIBRARIES (${CLP}
     ModuleDescriptionParser
     MRML
     SlicerBaseLogic
+    SlicerBaseCLI
 )
 INCLUDE_DIRECTORIES(
         ${vtkITK_SOURCE_DIR} 
@@ -325,7 +329,7 @@ INCLUDE_DIRECTORIES(
 
 SET (CLP MultipleModelsExample)
 
-SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPluginFilterWatcher.cxx )
+SET ( ${CLP}_SOURCE ${CLP}.cxx )
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 LINK_DIRECTORIES(${vtkITK_LIB_DIR})
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
@@ -336,6 +340,7 @@ TARGET_LINK_LIBRARIES (${CLP}
     ModuleDescriptionParser
     MRML
     SlicerBaseLogic
+    SlicerBaseCLI
 )
 INCLUDE_DIRECTORIES(
         ${vtkITK_SOURCE_DIR} 
@@ -347,7 +352,7 @@ INCLUDE_DIRECTORIES(
 #####################
 SET (CLP GrayscaleModelMaker)
 
-SET ( ${CLP}_SOURCE ${CLP}.cxx vtkPluginFilterWatcher.cxx)
+SET ( ${CLP}_SOURCE ${CLP}.cxx )
 GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 LINK_DIRECTORIES(${vtkITK_LIB_DIR})
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
@@ -355,6 +360,7 @@ TARGET_LINK_LIBRARIES (${CLP}
     vtkITK vtkImaging vtkGraphics vtkIO
     ITKIO
     ModuleDescriptionParser
+    SlicerBaseCLI
 )
 INCLUDE_DIRECTORIES(${vtkITK_SOURCE_DIR} ${vtkITK_BINARY_DIR})
 
@@ -496,7 +502,6 @@ IF (Slicer3_SOURCE_DIR)
     RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins COMPONENT RuntimeLibraries
     LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins COMPONENT RuntimeLibraries)
 
-  INSTALL(FILES itkPluginFilterWatcher.h vtkPluginFilterWatcher.h itkPluginUtilities.h DESTINATION include/Slicer3 COMPONENT Development)
 
 ENDIF (Slicer3_SOURCE_DIR)
 

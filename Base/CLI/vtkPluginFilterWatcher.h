@@ -5,6 +5,8 @@
 #include "vtkAlgorithm.h"
 #include "ModuleProcessInformation.h"
 
+#include "vtkSlicerBaseCLIWin32Header.h"
+
 #include <string>
 
 /** \class vtkPluginFilterWatcher
@@ -45,7 +47,7 @@ class vtkPluginWatcherStart;
 class vtkPluginWatcherEnd;
 class vtkPluginWatcherProgress;
 
-class vtkPluginFilterWatcher
+class VTK_SLICER_BASE_CLI_EXPORT vtkPluginFilterWatcher
 {
 public:
   /** Constructor. Takes a vtkAlgorithm to monitor and an optional

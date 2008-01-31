@@ -3,6 +3,7 @@ PROJECT( SlicerBase )
 SUBDIRS(
     Logic
     GUI
+    CLI
 )
 
 
