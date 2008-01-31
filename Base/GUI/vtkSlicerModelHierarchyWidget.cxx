@@ -127,6 +127,13 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       // For example, one could populate the node inspector
       this->SetSelectesLeaves();
+      if (this->SelectedLeaves.size() > 0 )
+        {
+        // temporay allow to call this again with the selector event
+        this->SetInWidgetCallbackFlag(0);
+        this->SelectNodeCallback(this->SelectedLeaves[0].c_str());
+        this->SetInWidgetCallbackFlag(1);
+        }
       }
 
     // Right click: context menu
@@ -625,13 +632,17 @@ void vtkSlicerModelHierarchyWidget::AddNodeToTree(vtkMRMLNode *node)
   vtksys_stl::string node_text(node->GetName());
   if (node_text.size())
     {
+    /**
     node_text += " (";
     node_text += ID;
     node_text += ")";
+    **/
     }
   else
     {
-    node_text = ID;
+    node_text = "(";
+    node_text += ID;
+    node_text += ")";
     }
   /*
   node_text += ": ";
