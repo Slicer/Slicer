@@ -79,6 +79,7 @@ vtkSlicerNodeSelectorWidget::vtkSlicerNodeSelectorWidget()
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
   this->MRMLCallbackCommand->SetCallback(MRMLCallback);
   this->InMRMLCallbackFlag = 0;
+  this->SetBalloonHelpString("Select a node");
 }
 
 //----------------------------------------------------------------------------
@@ -488,7 +489,6 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
       }
 
     // new value, set it and notify observers
-    this->SetBalloonHelpString(node->GetName());
     this->SelectedID = std::string(node->GetID());
     m->SetValue(name.c_str());
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
@@ -497,7 +497,6 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
     {
     this->SelectedID = std::string("");
     m->SetValue("");
-    this->SetBalloonHelpString("Select a node");
     }
 }
 
@@ -510,7 +509,6 @@ void vtkSlicerNodeSelectorWidget::SetSelectedNew(const char *className)
     std::stringstream ss;
     ss << "Create New " << name;
     this->GetWidget()->GetWidget()->SetValue(ss.str().c_str());
-    this->SetBalloonHelpString("Create a new node");
     }
 }
 //----------------------------------------------------------------------------
