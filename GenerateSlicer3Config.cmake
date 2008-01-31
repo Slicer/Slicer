@@ -26,7 +26,7 @@ SET(TCLAP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/tclap)
 SET(ModuleDescriptionParser_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionParser)
 SET(GenerateCLP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/GenerateCLP)
 SET(GenerateCLP_USE_FILE_CONFIG ${Slicer3_BINARY_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
-SET(Slicer3_INCLUDE_DIRS_CONFIG ${Slicer3_BINARY_DIR}/Libs/MRML ${Slicer3_SOURCE_DIR}/Libs/MRML ${Slicer3_SOURCE_DIR}/Base/CLI ${VTK_INCLUDE_DIRS})
+SET(Slicer3_INCLUDE_DIRS_CONFIG ${Slicer3_BINARY_DIR}/Libs/MRML ${Slicer3_SOURCE_DIR}/Libs/MRML ${Slicer3_BINARY_DIR}/Base/CLI ${Slicer3_SOURCE_DIR}/Base/CLI ${VTK_INCLUDE_DIRS})
 SET(Slicer3_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin ${VTK_LIBRARY_DIRS})
 
 
