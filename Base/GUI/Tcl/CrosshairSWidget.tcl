@@ -196,6 +196,9 @@ itcl::body CrosshairSWidget::updateCrosshair { } {
 
   set logic [$sliceGUI GetLogic]
   set sliceCompositeNode [$logic GetSliceCompositeNode]
+  if { $sliceCompositeNode == "" } {
+    return
+  }
 
   set tkwindow [$_renderWidget  GetWidgetName]
   set w [winfo width $tkwindow]
