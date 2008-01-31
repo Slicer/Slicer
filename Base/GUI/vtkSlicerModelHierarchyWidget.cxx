@@ -41,6 +41,7 @@ vtkSlicerModelHierarchyWidget::vtkSlicerModelHierarchyWidget ( )
 
   this->ModelDisplayNode = NULL;
   this->ModelHierarchyLogic = vtkSlicerModelHierarchyLogic::New();
+  this->UpdatingTree = 0;
 
 }
 
@@ -323,10 +324,43 @@ void vtkSlicerModelHierarchyWidget::OpenHierarchyCommand(const char *id)
 {
   vtkMRMLModelHierarchyNode *node = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(id));
   if (node != NULL) 
-  {
+    {
     node->SetExpanded(1);
-  }
+    
+    // make children visible
+    if (this->UpdatingTree == 0)
+      {
+      vtkMRMLModelHierarchyNode *hnode = NULL;
+      vtkMRMLModelNode *mnode = NULL;
+      vtkMRMLDisplayNode *dnode = NULL;
+      int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
 
+      for (int n=0; n<nnodes; n++)
+        {
+        hnode = vtkMRMLModelHierarchyNode::SafeDownCast (
+              this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLModelHierarchyNode"));
+        vtkMRMLModelHierarchyNode *pnode = vtkMRMLModelHierarchyNode::SafeDownCast (hnode->GetParentNode());
+        if (pnode == NULL || pnode != node)
+          {
+          continue;
+          }
+        
+        mnode = hnode->GetModelNode();
+        if (mnode)
+          {
+          dnode = mnode->GetDisplayNode();
+          }
+        else
+          {
+          dnode = hnode->GetDisplayNode();
+          }
+        if (dnode)
+          {
+          dnode->SetVisibility(1);
+          }
+        }
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -561,6 +595,7 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
 void vtkSlicerModelHierarchyWidget::UpdateTreeFromMRML()
   
 {
+  this->UpdatingTree = 1;
   this->ModelHierarchyLogic->SetMRMLScene(this->MRMLScene);
   this->ModelHierarchyLogic->CreateModelToHierarchyMap();
 
@@ -604,6 +639,8 @@ void vtkSlicerModelHierarchyWidget::UpdateTreeFromMRML()
     {
     this->TreeWidget->GetWidget()->OpenFirstNode ();
     }
+  this->UpdatingTree = 0;
+
 }
 
 //---------------------------------------------------------------------------

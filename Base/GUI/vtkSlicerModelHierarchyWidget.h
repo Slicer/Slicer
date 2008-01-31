@@ -99,6 +99,8 @@ protected:
   int IsLeafSelected(const char* leaf);
   void SetSelectesLeaves();
 
+  int UpdatingTree;
+  
   //BTX
   std::vector<vtksys_stl::string> SelectedLeaves;
   //ETX
