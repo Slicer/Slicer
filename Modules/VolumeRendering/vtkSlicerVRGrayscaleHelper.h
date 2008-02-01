@@ -64,9 +64,6 @@ public:
     void ProcessEnableDisableClippingPlanes(int clippingEnabled);
     void ProcessSelection(void);
     void ProcessPauseResume(void);
-    void ProcessSelectAllLabels(void);
-    void ProcessDeselectAllLabels(void);
-    void ProcessLabelmapMode(int cbSelectedState);
     void ProcessClippingModified(void);
 
 protected:

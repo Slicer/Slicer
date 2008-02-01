@@ -116,6 +116,8 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
 
     //Clipping
     this->BW_Clipping=NULL;
+    this->AdditionalClippingTransform=NULL;
+    this->InverseAdditionalClippingTransform=NULL;
 
     //Set Standard Clipping Colors
     ColorsClippingHandles[0][0]=1;
@@ -145,11 +147,9 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     //PauseResume
     this->PB_PauseResume=NULL;
     this->RenderingPaused=0;
+    this->VI_PauseResume=NULL;
 
-    this->AdditionalClippingTransform=vtkTransform::New();
-    this->AdditionalClippingTransform->Identity();
-    this->InverseAdditionalClippingTransform=vtkTransform::New();
-    this->InverseAdditionalClippingTransform->Identity();
+
 
 }
 
@@ -237,7 +237,6 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
     this->DestroyTreshold();
     this->DestroyPerformance();
     this->DestroyCropping();
-    this->DestroyLabelmap();
 
     if(this->NB_Details)
     {
@@ -254,6 +253,11 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
         this->PB_PauseResume->SetParent(NULL);
         this->PB_PauseResume->Delete();
         this->PB_PauseResume=NULL;
+    }
+    if(this->VI_PauseResume)
+    {
+        this->VI_PauseResume->Delete();
+        this->VI_PauseResume=NULL;
     }
 
 }
@@ -292,7 +296,6 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->NB_Details->AddPage("Threshold","Edit volume rendering mapping options by using a threshold mechanism.");
     this->NB_Details->AddPage("Performance","Influence the performance and quality of the rendering. Settings will still be available after starting Slicer3 again.");
     this->NB_Details->AddPage("Cropping","Crop the volume.Advantages: Volume rendering is much faster. You can blank out unnecessary parts of the volume.");
-    this->NB_Details->AddPage("Labelmaps","TODO");
     this->NB_Details->AddPage("Advanced","Change mapping functions, shading, interpolation etc.");
     this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
         this->NB_Details->GetWidgetName());
@@ -326,7 +329,6 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",this->SVP_VolumeProperty->GetWidgetName());
     this->CreatePerformance();
     this->CreateCropping();
-    this->CreateLabelmap();
 }
 void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
 {
@@ -1287,6 +1289,13 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
 
 void vtkSlicerVRGrayscaleHelper::CreateCropping()
 {
+
+        //Create our additional transforms
+    this->AdditionalClippingTransform=vtkTransform::New();
+    this->AdditionalClippingTransform->Identity();
+    this->InverseAdditionalClippingTransform=vtkTransform::New();
+    this->InverseAdditionalClippingTransform->Identity();
+
     vtkKWFrameWithLabel *croppingFrame=vtkKWFrameWithLabel::New();
     croppingFrame->SetParent(this->NB_Details->GetFrame("Cropping"));
     croppingFrame->Create();
@@ -1373,6 +1382,9 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
 
 void vtkSlicerVRGrayscaleHelper::CreateThreshold()
 {
+
+
+
     vtkKWFrameWithLabel *thresholdFrame=vtkKWFrameWithLabel::New();
     thresholdFrame->SetParent(this->NB_Details->GetFrame("Threshold"));
     thresholdFrame->Create();
@@ -1821,6 +1833,16 @@ void vtkSlicerVRGrayscaleHelper::DestroyCropping(void)
         this->NS_TransformNode->Delete();
         this->NS_TransformNode=NULL;
     }
+    if(this->AdditionalClippingTransform!=NULL)
+    {
+        this->AdditionalClippingTransform->Delete();
+        this->AdditionalClippingTransform=NULL;
+    }
+    if(this->InverseAdditionalClippingTransform!=NULL)
+    {
+        this->InverseAdditionalClippingTransform->Delete();
+        this->InverseAdditionalClippingTransform=NULL;
+    }
 }
 void vtkSlicerVRGrayscaleHelper::DestroyTreshold(void)
 {
@@ -1863,89 +1885,7 @@ void vtkSlicerVRGrayscaleHelper::DestroyTreshold(void)
         this->PB_ThresholdZoomIn=NULL;
     }
 }
-void vtkSlicerVRGrayscaleHelper::DestroyLabelmap(void)
-{
-    if(this->CB_LabelmapMode)
-    {
-        this->CB_LabelmapMode->SetParent(NULL);
-        this->CB_LabelmapMode->Delete();
-        this->CB_LabelmapMode=NULL;
-    }
-    if(this->ColorDisplay)
-    {
-        this->ColorDisplay->RemoveObservers(vtkSlicerColorDisplayWidget::ColorIDModifiedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
-        this->ColorDisplay->SetParent(NULL);
-        this->ColorDisplay->Delete();
-        this->ColorDisplay=NULL;
-    }
-    if(this->PB_LabelsSelectAll)
-    {
-        this->PB_LabelsSelectAll->SetParent(NULL);
-        this->PB_LabelsSelectAll->Delete();
-        this->PB_LabelsSelectAll=NULL;
-    }
-    if(this->PB_LabelsDeselectAll)
-    {
-        this->PB_LabelsDeselectAll->SetParent(NULL);
-        this->PB_LabelsDeselectAll->Delete();
-        this->PB_LabelsDeselectAll=NULL;
-    }
-}
-void vtkSlicerVRGrayscaleHelper::CreateLabelmap(void)
-{
-    vtkKWFrameWithLabel *labelmapFrame=vtkKWFrameWithLabel::New();
-    labelmapFrame->SetParent(this->NB_Details->GetFrame("Labelmaps"));
-    labelmapFrame->Create();
-    labelmapFrame->AllowFrameToCollapseOff();
-    labelmapFrame->SetLabelText("Labelmaps");
-    this->Script ("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-        labelmapFrame->GetWidgetName() );
 
-    this->CB_LabelmapMode=vtkKWCheckButtonWithLabel::New();
-    this->CB_LabelmapMode->SetParent(labelmapFrame->GetFrame());
-    this->CB_LabelmapMode->Create();
-    this->CB_LabelmapMode->SetBalloonHelpString("TODO");
-    this->CB_LabelmapMode->SetLabelText("Enable/Disable labelmapMode");
-    this->CB_LabelmapMode->GetWidget()->SetCommand(this, "ProcessLabelmapMode");
-    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->CB_LabelmapMode->GetWidgetName());
-
-    vtkKWFrame *frameSelectDeselect=vtkKWFrame::New();
-    frameSelectDeselect->SetParent(labelmapFrame->GetFrame());
-    frameSelectDeselect->Create();
-    this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",frameSelectDeselect->GetWidgetName());
-    this->PB_LabelsSelectAll=vtkKWPushButton::New();
-    this->PB_LabelsSelectAll->SetParent(frameSelectDeselect);
-    this->PB_LabelsSelectAll->Create();
-    this->PB_LabelsSelectAll->SetBalloonHelpString("TODO");
-    this->PB_LabelsSelectAll->SetText("Select all");
-    this->PB_LabelsSelectAll->SetCommand(this,"ProcessSelectAllLabels");
-    this->PB_LabelsSelectAll->EnabledOff();
-    this->Script("pack %s -side left -anchor nw -padx 10 -pady 10",this->PB_LabelsSelectAll->GetWidgetName());
-
-    this->PB_LabelsDeselectAll=vtkKWPushButton::New();
-    this->PB_LabelsDeselectAll->SetParent(frameSelectDeselect);
-    this->PB_LabelsDeselectAll->Create();
-    this->PB_LabelsDeselectAll->SetBalloonHelpString("TODO");
-    this->PB_LabelsDeselectAll->SetText("Deselect all");
-    this->PB_LabelsDeselectAll->SetCommand(this,"ProcessDeselectAllLabels");
-    this->PB_LabelsDeselectAll->EnabledOff();
-    this->Script("pack %s -side left -anchor ne -padx 10 -pady 10",this->PB_LabelsDeselectAll->GetWidgetName());
-
-    this->ColorDisplay=vtkSlicerColorDisplayWidget::New();
-    this->ColorDisplay->SetMRMLScene(this->Gui->GetLogic()->GetMRMLScene() );
-    this->ColorDisplay->SetParent(labelmapFrame->GetFrame());
-    this->ColorDisplay->MultiSelectModeOn();
-    this->ColorDisplay->Create();
-    this->ColorDisplay->GetMultiColumnList()->GetWidget()->SetSelectionChangedCommand(this,"ProcessSelection");
-    this->ColorDisplay->EnabledOff();
-    this->ColorDisplay->AddObserver(vtkSlicerColorDisplayWidget::ColorIDModifiedEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
-    this->Script("pack %s -side bottom -anchor nw -fill x -padx 10 -pady 10",
-        this->ColorDisplay->GetWidgetName()); 
-
-    labelmapFrame->Delete();
-    frameSelectDeselect->Delete();
-
-}
 void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
 {
     int labelWidth=15;
@@ -2070,44 +2010,6 @@ void vtkSlicerVRGrayscaleHelper::DestroyPerformance(void)
     }
 }
 
-void vtkSlicerVRGrayscaleHelper::ProcessDeselectAllLabels(void)
-{
-    //Disable the ProcessSelection
-    this->ColorDisplay->GetMultiColumnList()->GetWidget()->SetSelectionChangedCommand(NULL,"");
-
-    this->ColorDisplay->GetMultiColumnList()->GetWidget()->ClearSelection();
-    this->ColorDisplay->GetMultiColumnList()->GetWidget()->SetSelectionChangedCommand(this,"ProcessSelection");
-    this->ProcessSelection();
-
-}
-
-void vtkSlicerVRGrayscaleHelper::ProcessSelectAllLabels(void)
-{
-
-    this->ColorDisplay->GetMultiColumnList()->GetWidget()->SetSelectionChangedCommand(NULL,"");
-
-    for(int i=0;i<this->ColorDisplay->GetMultiColumnList()->GetWidget()->GetNumberOfRows();i++)
-    {
-        this->ColorDisplay->GetMultiColumnList()->GetWidget()->SelectRow(i);
-    }
-    this->ColorDisplay->GetMultiColumnList()->GetWidget()->SetSelectionChangedCommand(this,"ProcessSelection");
-    this->ProcessSelection();
-}
-
-void vtkSlicerVRGrayscaleHelper::ProcessLabelmapMode(int cbSelectedState)
-{
-    vtkKWMultiColumnList *colorList=this->ColorDisplay->GetMultiColumnList()->GetWidget();
-    //That means nothing ist Selected
-    if(cbSelectedState&&colorList->GetNumberOfRows()==0)
-    {
-        this->ColorDisplay->SetColorNode(vtkMRMLColorNode::SafeDownCast(this->Gui->GetLogic()->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLColorNode")));
-        this->ProcessSelectAllLabels();
-    }
-    this->PB_LabelsDeselectAll->SetEnabled(cbSelectedState);
-    this->PB_LabelsSelectAll->SetEnabled(cbSelectedState);
-    this->ColorDisplay->SetEnabled(cbSelectedState);
-
-}
 
 void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
 {
@@ -2118,6 +2020,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
         this->AdditionalClippingTransform->SetMatrix(matrix);
         this->InverseAdditionalClippingTransform->SetMatrix(matrix);
         this->InverseAdditionalClippingTransform->Inverse();
+        matrix->Delete();
     }
     //Otherwise go back to Identity;
     else
