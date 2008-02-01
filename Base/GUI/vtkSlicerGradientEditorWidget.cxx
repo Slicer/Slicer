@@ -22,6 +22,7 @@
 #include "vtkMatrix4x4.h"
 #include "vtkDoubleArray.h"
 #include "vtkTransform.h"
+#include "vtkTimerLog.h"
 #include <sstream>
 
 //---------------------------------------------------------------------------
@@ -204,15 +205,14 @@ void vtkSlicerGradientEditorWidget::RemoveWidgetObservers( )
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorWidget::PrintSelf ( ostream& os, vtkIndent indent )
+void vtkSlicerGradientEditorWidget::PrintSelf (ostream& os, vtkIndent indent)
   {
   this->vtkObject::PrintSelf ( os, indent );
   os << indent << "vtkSlicerGradientEditorWidget: " << this->GetClassName ( ) << "\n";
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                                       unsigned long event, void *callData )
+void vtkSlicerGradientEditorWidget::ProcessMRMLEvents (vtkObject *caller,unsigned long event, void *callData)
   {
   //if (this->Matrix == vtkMatrix4x4::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent)
   //  {
@@ -222,7 +222,7 @@ void vtkSlicerGradientEditorWidget::ProcessMRMLEvents ( vtkObject *caller,
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorWidget::ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData )
+void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
   {
 
   //import the current matrix values, when enabled, as the user could have changed it
@@ -238,21 +238,27 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents ( vtkObject *caller, uns
   //import current gradients
   if (this->EnableGradientsButton->GetSelectedState() && this->GradientsTextfield->GetWidget()->HasFocus())
     {
+    vtkTimerLog *timer = vtkTimerLog::New();
+    
     vtkSlicerGradientEditorLogic *myLogic = vtkSlicerGradientEditorLogic::New();
     vtkDoubleArray *newGradients = vtkDoubleArray::New();
     vtkDoubleArray *newBValue = vtkDoubleArray::New();
     const char *oldGradients = this->GradientsTextfield->GetWidget()->GetText();
     int numberOfGradients = this->ActiveVolumeNode->GetNumberOfGradients();
     
+    timer->StartTimer();
     if(!myLogic->ParseGradients(oldGradients, numberOfGradients, newBValue, newGradients))
       {
       vtkErrorMacro("parsing gradients failed");
       return;
       }
+    timer->StopTimer();
 
     this->ActiveVolumeNode->SetBValues(newBValue);
     this->ActiveVolumeNode->SetDiffusionGradients(newGradients);
     this->UpdateGradients();
+    
+    vtkWarningMacro("time: "<<timer->GetElapsedTime());
     
     newGradients->Delete();
     newBValue->Delete();
@@ -453,7 +459,7 @@ void vtkSlicerGradientEditorWidget::UpdateMatrix()
       }
     }
 
-  // write matrix back to node
+  // write internal matrix back to node
   if(this->ActiveVolumeNode != NULL)
     {
     this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
@@ -483,7 +489,7 @@ void vtkSlicerGradientEditorWidget::UpdateGradients()
     factor->InsertNextValue(sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]));
     }
 
-  // get range
+  // get range of factor array
   double range[2];
   factor->GetRange(range);
 

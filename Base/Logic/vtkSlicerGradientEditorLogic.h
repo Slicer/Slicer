@@ -23,7 +23,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerGradientEditorLogic : public vtkSlic
 
     // Description:
     // Method to parse given ASCII gradients back into arrays of gradients and bValues.
-    bool ParseGradients(const char  *oldGradients, int numberOfGradients, vtkDoubleArray *newBValue, vtkDoubleArray *newGradients);
+    int ParseGradients(const char  *oldGradients, int numberOfGradients, vtkDoubleArray *newBValue, 
+      vtkDoubleArray *newGradients);
+
+    // Description:
+    // Method to parse a string into a double value.
+    //BTX
+    int StringToDouble(const std::string &s, double &result);
+    //ETX
 
   protected:
     vtkSlicerGradientEditorLogic(void);
