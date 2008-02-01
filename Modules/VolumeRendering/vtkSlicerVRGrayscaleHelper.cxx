@@ -9,6 +9,7 @@
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkSlicerBoxWidget.h"
+#include "vtkSlicerVisibilityIcons.h"
 
 //VTK
 #include "vtkObjectFactory.h"
@@ -44,7 +45,7 @@
 #include "vtkKWPiecewiseFunctionEditor.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
 #include "vtkKWMultiColumnList.h"
-
+#include "vtkKWPushButtonWithLabel.h"
 //Compiler
 #include <math.h>
 
@@ -271,27 +272,28 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
 
     //TODO: Move Pause Resume Button to another Place
     //Pause Resume Button
-    this->PB_PauseResume=vtkKWPushButton::New();
+
+    this->VI_PauseResume=vtkSlicerVisibilityIcons::New();
+    this->PB_PauseResume=vtkKWPushButtonWithLabel::New();
     this->PB_PauseResume->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
     this->PB_PauseResume->Create();
-    this->PB_PauseResume->SetBalloonHelpString("TODO");
-    this->PB_PauseResume->SetText("DON'T Display Volume Rendering");
-    this->PB_PauseResume->SetWidth(40);//Color: venetian Red, .78,
-    this->PB_PauseResume->SetBackgroundColor(.78,.03,.08);
+    this->PB_PauseResume->SetBalloonHelpString("Toggle the visibility of volume rendering.");
+    this->PB_PauseResume->SetLabelText("Visiblity of Volume Rendering: ");
+    this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetVisibleIcon());
     this->Script("pack %s -side top -anchor nw -padx 10 -pady 10",
         this->PB_PauseResume->GetWidgetName());
-    this->PB_PauseResume->SetCommand(this,"ProcessPauseResume");
+    this->PB_PauseResume->GetWidget()->SetCommand(this,"ProcessPauseResume");
 
 
     //Create a notebook
     this->NB_Details=vtkKWNotebook::New();
     this->NB_Details->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
     this->NB_Details->Create();
-    this->NB_Details->AddPage("Threshold","TODO");
-    this->NB_Details->AddPage("Performance","TODO");
-    this->NB_Details->AddPage("Cropping","TODO");
+    this->NB_Details->AddPage("Threshold","Edit volume rendering mapping options by using a threshold mechanism.");
+    this->NB_Details->AddPage("Performance","Influence the performance and quality of the rendering. Settings will still be available after starting Slicer3 again.");
+    this->NB_Details->AddPage("Cropping","Crop the volume.Advantages: Volume rendering is much faster. You can blank out unnecessary parts of the volume.");
     this->NB_Details->AddPage("Labelmaps","TODO");
-    this->NB_Details->AddPage("Advanced","TODO");
+    this->NB_Details->AddPage("Advanced","Change mapping functions, shading, interpolation etc.");
     this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
         this->NB_Details->GetWidgetName());
 
@@ -390,14 +392,29 @@ void vtkSlicerVRGrayscaleHelper::InitializePipelineNewCurrentNode()
     this->Gui->GetCurrentNode()->CroppingEnabledOff();
 
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
-
-    this->Gui->GetCurrentNode()->SetCroppingRegionPlanes(iData->GetOrigin()[0],iData->GetDimensions()[0],
-        iData->GetOrigin()[1],iData->GetDimensions()[1],
-        iData->GetOrigin()[2],iData->GetDimensions()[2]);
+    vtkMRMLScalarVolumeNode *volumeNode=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected());
+    vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+    double pointA[4];
+    double pointB[4];
+    for(int i=0;i<3;i++)
+    {
+        pointA[i]=iData->GetOrigin()[i];
+        pointB[i]=iData->GetDimensions()[i];
+    }
+    pointA[3]=1;
+    pointB[3]=1;
+    this->CalculateMatrix(matrix);
+    matrix->MultiplyPoint(pointA,pointA);
+    matrix->MultiplyPoint(pointB,pointB);
+    
+    this->Gui->GetCurrentNode()->SetCroppingRegionPlanes(pointA[0],pointB[0],
+        pointA[1],pointB[1],
+        pointA[2],pointB[2]);
 
     //Disable Gradient Opacity
 
     this->UpdateGUIElements();
+    matrix->Delete();
     //this->UpdateSVP();
 }
 
@@ -1285,7 +1302,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->CB_Cropping->SetParent(croppingFrame->GetFrame());
     this->CB_Cropping->Create();
     this->CB_Cropping->GetWidget()->SetSelectedState(0);
-    this->CB_Cropping->SetBalloonHelpString("TODO");
+    this->CB_Cropping->SetBalloonHelpString("Enable/ Disable the configured clipping planes.");
     this->CB_Cropping->SetLabelText("Clipping in general");
     this->CB_Cropping->SetLabelWidth(labelwidth);
     this->CB_Cropping->GetWidget()->SetCommand(this, "ProcessEnableDisableCropping");
@@ -1296,7 +1313,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->CB_Clipping=vtkKWCheckButtonWithLabel::New();
     this->CB_Clipping->SetParent(croppingFrame->GetFrame());
     this->CB_Clipping->Create();
-    this->CB_Clipping->SetBalloonHelpString("TODO");
+    this->CB_Clipping->SetBalloonHelpString("Display or suppress the clipping box. The configured clipping planes will still be enabled");
     this->CB_Clipping->GetWidget()->SetSelectedState(0);
     this->CB_Clipping->SetLabelText("Display Clipping Box");
     this->CB_Clipping->SetLabelWidth(labelwidth);
@@ -1309,7 +1326,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
         this->RA_Cropping[i]=vtkKWRange::New();
         this->RA_Cropping[i]->SetParent(croppingFrame->GetFrame());
         this->RA_Cropping[i]->Create();
-        this->RA_Cropping[i]->SetBalloonHelpString("TODO");
+        this->RA_Cropping[i]->SetBalloonHelpString("Configure the clipping planes relative to the center of the volume. You can also use the clipping box to do this.");
         this->RA_Cropping[i]->SymmetricalInteractionOff();
         std::stringstream str;
         str<<"Cropping ";
@@ -1340,7 +1357,10 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->NS_TransformNode->SetParent(croppingFrame->GetFrame());
     this->NS_TransformNode->Create();
     this->NS_TransformNode->SetLabelText("Transform Node for Clipping");
-    this->NS_TransformNode->SetBalloonHelpString("TODO");
+    std::stringstream ss;
+    ss<<"Use a transform in addition to the clipping planes configured with the clipping box or the sliders above. ";
+    ss<<"Changes made to the sliders or to the clipping box will not change the transform node.";
+    this->NS_TransformNode->SetBalloonHelpString(ss.str().c_str());
     this->NS_TransformNode->SetNodeClass("vtkMRMLTransformNode",NULL,NULL,NULL);
     this->NS_TransformNode->SetMRMLScene(this->Gui->GetLogic()->GetMRMLScene());
     this->NS_TransformNode->NoneEnabledOn();
@@ -1363,7 +1383,10 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->MB_ThresholdMode=vtkKWMenuButtonWithLabel::New();
     this->MB_ThresholdMode->SetParent(thresholdFrame->GetFrame());
     this->MB_ThresholdMode->Create();
-    this->MB_ThresholdMode->SetBalloonHelpString("TODO");
+    std::stringstream ss;
+    ss<<"Select which kind of threshoding to use for transfer functions. ";
+    ss<<"\"Rectangle\" will result in sharp surface, while \"ramp\" creates a smoother result.";
+    this->MB_ThresholdMode->SetBalloonHelpString(ss.str().c_str());
     this->MB_ThresholdMode->SetLabelText("Threshold:");
     this->MB_ThresholdMode->SetLabelWidth(10);
     this->MB_ThresholdMode->GetWidget()->GetMenu()->AddRadioButton("None");
@@ -1379,7 +1402,10 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->MB_ColorMode=vtkKWMenuButtonWithLabel::New();
     this->MB_ColorMode->SetParent(thresholdFrame->GetFrame());
     this->MB_ColorMode->Create();
-    this->MB_ColorMode->SetBalloonHelpString("TODO");
+    ss.str("");
+    ss<<"Which color should the volume have, ";
+    ss<<"all \"static\" colors result in a single color for every gray value while \"dynamic\" produces a color gradient.";
+    this->MB_ColorMode->SetBalloonHelpString(ss.str().c_str());
     this->MB_ColorMode->SetLabelText("Color Mode:"); 
     this->MB_ColorMode->SetLabelWidth(10);
     this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Grayscale dynamic");
@@ -1398,7 +1424,7 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->RA_RampRectangleHorizontal=vtkKWRange::New();
     this->RA_RampRectangleHorizontal->SetParent(thresholdFrame->GetFrame());
     this->RA_RampRectangleHorizontal->Create();
-    this->RA_RampRectangleHorizontal->SetBalloonHelpString("TODO");
+    this->RA_RampRectangleHorizontal->SetBalloonHelpString("Apply thresholds to the gray values of volume.");
     this->RA_RampRectangleHorizontal->SetLabelText("Threshold");
     this->RA_RampRectangleHorizontal->SetWholeRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
     this->RA_RampRectangleHorizontal->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
@@ -1410,7 +1436,11 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->PB_ThresholdZoomIn=vtkKWPushButton::New();
     this->PB_ThresholdZoomIn->SetParent(thresholdFrame->GetFrame());
     this->PB_ThresholdZoomIn->Create();
-    this->PB_ThresholdZoomIn->SetBalloonHelpString("TODO");
+    ss.str("");
+    ss<<"Zoom into the threshold sliders. ";
+    ss<<"Use this if you need a higher resolution for adjusting the sliders. ";
+    ss<<"Use \"Reset\" to zoom out completely."; 
+    this->PB_ThresholdZoomIn->SetBalloonHelpString(ss.str().c_str());
     this->PB_ThresholdZoomIn->SetText("Zoom In");
     this->PB_ThresholdZoomIn->EnabledOff();
     this->PB_ThresholdZoomIn->SetCommand(this,"ProcessThresholdZoomIn");
@@ -1420,7 +1450,7 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->PB_Reset=vtkKWPushButton::New();
     this->PB_Reset->SetParent(thresholdFrame->GetFrame());
     this->PB_Reset->Create();
-    this->PB_Reset->SetBalloonHelpString("TODO");
+    this->PB_Reset->SetBalloonHelpString("Cancel \"Zoom In\".");
     this->PB_Reset->SetText("Reset");
     this->PB_Reset->EnabledOff();
     this->PB_Reset->SetCommand(this,"ProcessThresholdReset");
@@ -1430,7 +1460,10 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->RA_RampRectangleVertical=vtkKWRange::New();
     this->RA_RampRectangleVertical->SetParent(thresholdFrame->GetFrame());
     this->RA_RampRectangleVertical->Create();
-    this->RA_RampRectangleVertical->SetBalloonHelpString("TODO");
+    ss.str("");
+    ss<<"Set the lower and upper opacity levels for the ramp and the rectangle. ";
+    ss<<"Lower values make the volume more translucent.";
+    this->RA_RampRectangleVertical->SetBalloonHelpString(ss.str().c_str());
     this->RA_RampRectangleVertical->SetLabelText("Opacity");
     this->RA_RampRectangleVertical->SetOrientationToVertical();
     this->RA_RampRectangleVertical->SetWholeRange(1,0);
@@ -1633,27 +1666,34 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableClippingPlanes(int clipping
         this->BW_Clipping->SetPlaceFactor(1);
         this->BW_Clipping->SetProp3D(this->Volume);
         //data is saved in IJK->Convert to ras
-        vtkMatrix4x4 *ijkToRas=vtkMatrix4x4::New();
-        vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetIJKToRASMatrix(ijkToRas);
 
-        double pointA[4];
+        double pointA[3];
         pointA[0]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[0];
             pointA[1]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2];
             pointA[2]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[4];
-            pointA[3]=1;
-        ijkToRas->MultiplyPoint(pointA,pointA);
-        double pointB[4];
+
+        double pointB[3];
         pointB[0]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[1];
             pointB[1]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[3];
             pointB[2]=this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[5];
-            pointB[3]=1;
-        ijkToRas->MultiplyPoint(pointB,pointB);
-
+            this->NoSetRangeNeeded=1;
+        for(int i=0;i<3;i++)
+        {
+            if(pointA[i]<pointB[i])
+            {
+            this->RA_Cropping[i]->SetRange(pointA[i],pointB[i]);
+            }
+            else
+            {
+                this->RA_Cropping[i]->SetRange(pointB[i],pointA[i]);
+            }
+        }
         this->BW_Clipping->PlaceWidget(pointA[0],pointB[0],pointA[0],pointB[1],pointA[2],pointB[2]);
         this->BW_Clipping->InsideOutOn();
         this->BW_Clipping->RotationEnabledOff();
         this->BW_Clipping->TranslationEnabledOn();
         this->BW_Clipping->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
+        this->NoSetRangeNeeded=0;
         //interactor->UpdateSize(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[0],
         //    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[1]);
 
@@ -1703,8 +1743,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessPauseResume(void)
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->AddObserver(vtkCommand::EndEvent,(vtkCommand *)this->VolumeRenderingCallbackCommand);
         this->Volume->VisibilityOn();
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-        this->PB_PauseResume->SetText("DON'T Display Volume Rendering");
-        this->PB_PauseResume->SetBackgroundColor(.78,.03,.08);
+        this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetVisibleIcon());;
 
     }
     //Pause Rendering
@@ -1718,8 +1757,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessPauseResume(void)
 
         this->Volume->VisibilityOff();
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-        this->PB_PauseResume->SetText("Display Volume Rendering");
-        this->PB_PauseResume->SetBackgroundColor(.0,.5,.0);
+        this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetInvisibleIcon());
     }
     else
     {
@@ -1922,7 +1960,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_TextureLow=vtkKWCheckButtonWithLabel::New();
     this->CB_TextureLow->SetParent(this->MappersFrame->GetFrame());
     this->CB_TextureLow->Create();
-    this->CB_TextureLow->SetBalloonHelpString("TODO");
+    this->CB_TextureLow->SetBalloonHelpString("Enable very fast, lower quality GPU based rendering.");
     this->CB_TextureLow->SetLabelText("Use Texture Low");
     this->CB_TextureLow->SetLabelWidth(labelWidth);
     this->CB_TextureLow->GetWidget()->SetSelectedState(1);
@@ -1934,7 +1972,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_TextureHigh=vtkKWCheckButtonWithLabel::New();
     this->CB_TextureHigh->SetParent(this->MappersFrame->GetFrame());
     this->CB_TextureHigh->Create();
-    this->CB_TextureHigh->SetBalloonHelpString("TODO");
+    this->CB_TextureHigh->SetBalloonHelpString("Enable slow, high quality GPU based rendering.");
     this->CB_TextureHigh->SetLabelText("Use Texture High");
     this->CB_TextureHigh->SetLabelWidth(labelWidth);
     this->CB_TextureHigh->GetWidget()->SetSelectedState(1);
@@ -1945,7 +1983,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_RayCast=vtkKWCheckButtonWithLabel::New();
     this->CB_RayCast->SetParent(this->MappersFrame->GetFrame());
     this->CB_RayCast->Create();
-    this->CB_RayCast->SetBalloonHelpString("TODO");
+    this->CB_RayCast->SetBalloonHelpString("Enable highest quality software rendering. If you encouter problems with other method, this method shoul still work.");
     this->CB_RayCast->SetLabelText("Use Raycast      ");
     this->CB_RayCast->SetLabelWidth(labelWidth);
     this->CB_RayCast->GetWidget()->SetSelectedState(1);
@@ -1956,7 +1994,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->CB_InteractiveFrameRate=vtkKWCheckButtonWithLabel::New();
     this->CB_InteractiveFrameRate->SetParent(this->MappersFrame->GetFrame());
     this->CB_InteractiveFrameRate->Create();
-    this->CB_InteractiveFrameRate->SetBalloonHelpString("TODO");
+    this->CB_InteractiveFrameRate->SetBalloonHelpString("Enable low quality software rendering. Use together with check box above");
     this->CB_InteractiveFrameRate->SetLabelText("Raycast interactive?!");
     this->CB_InteractiveFrameRate->SetLabelWidth(labelWidth);
     this->CB_InteractiveFrameRate->EnabledOff();
@@ -1967,7 +2005,7 @@ void vtkSlicerVRGrayscaleHelper::CreatePerformance(void)
     this->SC_Framerate=vtkKWScaleWithLabel::New();
     this->SC_Framerate->SetParent(this->MappersFrame->GetFrame());
     this->SC_Framerate->Create();
-    this->SC_Framerate->SetBalloonHelpString("TODO");
+    this->SC_Framerate->SetBalloonHelpString("Influence the speed of interactive rendering methods. 20 very fast, 1 slow but higher quality.");
     this->SC_Framerate->SetLabelText("FPS (Interactive):");
     this->SC_Framerate->SetLabelWidth(labelWidth);
     this->SC_Framerate->GetWidget()->SetRange(1,20);
@@ -2114,4 +2152,11 @@ void vtkSlicerVRGrayscaleHelper::CalculateAndSetSampleDistances(void)
     this->SampleDistanceHighResImage=this->SampleDistanceHighRes;
     this->SampleDistanceLowRes=this->SampleDistanceHighRes*2;
 
+}
+
+void vtkSlicerVRGrayscaleHelper::ConvertWorldToBoxCoordinates(double *inputOutput)
+{
+}
+void vtkSlicerVRGrayscaleHelper::ConvertBoxCoordinatesToWorld(double* inputOutput)
+{
 }

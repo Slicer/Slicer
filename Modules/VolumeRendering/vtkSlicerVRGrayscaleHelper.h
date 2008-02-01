@@ -25,6 +25,8 @@ class vtkSlicerColorDisplayWidget;
 class vtkSlicerNodeSelectorWidget;
 class vtkMRMLLinearTransformNode;
 class vtkTransform;
+class vtkSlicerVisibilityIcons;
+class vtkKWPushButtonWithLabel;
 
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
@@ -116,7 +118,8 @@ protected:
     int ThresholdMode;
 
     //Pause Resume
-    vtkKWPushButton *PB_PauseResume;
+    vtkKWPushButtonWithLabel *PB_PauseResume;
+    vtkSlicerVisibilityIcons *VI_PauseResume;
 
 
     
@@ -196,6 +199,9 @@ protected:
     double SampleDistanceHighRes;
     double SampleDistanceHighResImage;
     double SampleDistanceLowRes;
+
+    void ConvertWorldToBoxCoordinates(double* inputOutput);
+    void ConvertBoxCoordinatesToWorld(double* inputOutput);
 
 
 };
