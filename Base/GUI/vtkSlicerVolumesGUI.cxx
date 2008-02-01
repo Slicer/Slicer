@@ -502,6 +502,10 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
 
         if (volume != NULL)
           {
+          // Deactivate GradientsEditor, as it is only enabled when activenode is a DWI
+          this->GradientFrame->EnabledOff();
+          this->GradientFrame->SetAllowFrameToCollapse(0);
+          this->GradientFrame->CollapseFrame();
           this->UpdateFramesFromMRML();
           }
         return;
