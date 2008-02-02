@@ -17,8 +17,8 @@ INCLUDE_DIRECTORIES( ${MimxMeshing_SOURCE_DIR}/Filter
                      ${MimxMeshing_BINARY_DIR}/IO
                      ${VoxelMeshModule_BINARY_DIR}
                      ${VoxelMeshModule_SOURCE_DIR}
-                     ${CLI_SOURCE_DIR}
-                     ${CLI_BINARY_DIR} ) 
+                     ${SlicerBaseCLI_BINARY_DIR}
+                     ${SlicerBaseCLI_SOURCE_DIR} ) 
                      
 SET (VoxelMeshModule_SOURCE VoxelMesh.cxx)
 
@@ -27,26 +27,28 @@ ADD_EXECUTABLE ( VoxelMeshModule ${VoxelMeshModule_SOURCE} )
 TARGET_LINK_LIBRARIES ( VoxelMeshModule 
   mimxFilter
   MimxMeshIO
+  SlicerBaseCLI
   ITKCommon 
   ITKBasicFilters 
   ITKIO 
   vtkIO 
   vtkHybrid 
   vtkFiltering 
-  vtkCommon )
+  vtkCommon)
 
 ADD_LIBRARY(VoxelMeshModuleLib SHARED ${VoxelMeshModule_SOURCE})
 SET_TARGET_PROPERTIES (VoxelMeshModuleLib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 TARGET_LINK_LIBRARIES (VoxelMeshModuleLib ITKIO 
   mimxFilter
   MimxMeshIO
+  SlicerBaseCLI
   ITKCommon 
   ITKBasicFilters 
   ITKIO 
   vtkIO 
   vtkHybrid 
   vtkFiltering 
-  vtkCommon SlicerBaseCLI)
+  vtkCommon)
 
 
 

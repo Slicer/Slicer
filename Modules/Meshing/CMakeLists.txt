@@ -3,7 +3,7 @@ PROJECT( MimxMeshing )
 SUBDIRS(
   IO
   Filter
-#  CommandLine
+  CommandLine
 )
 
 

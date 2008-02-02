@@ -932,7 +932,7 @@ if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
 #
 #
 
-if { 0 && ![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update) } {
+if { 0 && (![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update)) } {
     cd $::SLICER_LIB
 
     runcmd echo t | $::SVN co https://ariser.uio.no/svn/navitrack/trunk NaviTrack

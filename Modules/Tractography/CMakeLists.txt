@@ -1,8 +1,8 @@
 PROJECT( Tractography )
 
 SUBDIRS(
-#  Editor
-#  Seeding
+  Editor
+  Seeding
   Settings
   Display
   FiducialSeeding
