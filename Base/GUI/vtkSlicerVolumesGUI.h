@@ -69,6 +69,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     void SetAndObserveModuleLogic ( vtkSlicerVolumesLogic *logic )
         { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
+    vtkGetObjectMacro(GradientEditorWidget, vtkSlicerGradientEditorWidget);
+
     // Description:
     // This method builds the Volumes module GUI
     virtual void BuildGUI ( );

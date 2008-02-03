@@ -502,7 +502,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents ( vtkObject *caller,
 
         if (volume != NULL)
           {
-          // Deactivate GradientsEditor, as it is only enabled when activenode is a DWI
+          // Deactivate GradientsEditor, as it should only enabled when activenode is a DWI
           this->GradientFrame->EnabledOff();
           this->GradientFrame->SetAllowFrameToCollapse(0);
           this->GradientFrame->CollapseFrame();
@@ -965,8 +965,6 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->DTIDisplayFrame->SetParent( this->DisplayFrame->GetFrame() );
     this->DTIDisplayFrame->Create( );
 
-
-
     // Assign a scalar display widget by default.
     this->CreateScalarDisplayWidget();
     this->VolumeDisplayFrame = this->ScalarDisplayFrame;
@@ -1122,3 +1120,4 @@ void vtkSlicerVolumesGUI::CreateDTIDisplayWidget ( )
     }
 
 }
+

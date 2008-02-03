@@ -15,10 +15,15 @@ class vtkKWLoadSaveButtonWithLabel;
 class vtkMatrix4x4;
 class vtkKWMatrixWidget;
 class vtkMRMLDiffusionWeightedVolumeNode;
+class vtkKWLabel;
+class vtkDoubleArray;
 
+// Description:
+// This class implements Slicer's GradientsEditor GUI.
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
   {
   public:
+
     // Description:
     // Usual vtk class functions
     static vtkSlicerGradientEditorWidget* New();
@@ -39,6 +44,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     // Method to update the widget when a new node is loaded.
     void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node);
 
+    // Description:
+    // Method to propagate keypress-events generated in the textbox of gradients.
+    void TextFieldModifiedCallback();
+
+    vtkGetObjectMacro(GradientsTextbox, vtkKWTextWithScrollbars);
+
   protected:
     vtkSlicerGradientEditorWidget(void);
     virtual ~vtkSlicerGradientEditorWidget(void);
@@ -48,11 +59,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     virtual void CreateWidget();
 
     // Description:
-    // Method to update the GUI matrix.
+    // Method to update the matrix (GUI).
     void UpdateMatrix();
 
     // Description:
-    // Method to update the GUI GradientsTextfield containing bValue and gradients.
+    // Method to update the gradientsTextbox containing bValue and gradients (GUI).
     void UpdateGradients();
 
     vtkKWLoadSaveButtonWithLabel *LoadGradientsButton;
@@ -68,12 +79,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     vtkKWPushButton *CancelButton;
     vtkKWLabel *AngleLabel;
     vtkKWComboBox *AngleCombobox;
-    vtkKWTextWithScrollbars *GradientsTextfield;
+    vtkKWTextWithScrollbars *GradientsTextbox;
+    vtkKWLabel *StatusLabel;
     vtkSlicerNodeSelectorWidget *Mask;
     vtkKWCheckButton *EnableGradientsButton;
     vtkKWCheckButton* Checkbuttons[3];
     vtkMatrix4x4 *Matrix;
+    vtkDoubleArray *Gradients;
+    vtkDoubleArray *BValues;
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
+
 
   private:
     vtkSlicerGradientEditorWidget ( const vtkSlicerGradientEditorWidget& ); // Not implemented.

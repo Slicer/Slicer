@@ -14,6 +14,7 @@
 #include "vtkKWMatrixWidget.h"
 #include "vtkKWMultiColumnList.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkKWLabel.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerGradientEditorWidget.h"
@@ -40,7 +41,7 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   this->AngleLabel = NULL;
   this->RunButton = NULL;
   this->Mask = NULL;
-  this->GradientsTextfield = NULL;
+  this->GradientsTextbox = NULL;
   this->TestFrame = NULL;
   this->MeasurementFrame = NULL;
   this->GradientsFrame = NULL;
@@ -49,6 +50,9 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   this->ButtonsFrame = NULL;
   this->EnableGradientsButton = NULL;
   this->ActiveVolumeNode = NULL;
+  this->StatusLabel = NULL;
+  this->Gradients = NULL;
+  this->BValues = NULL;
   }
 
 //---------------------------------------------------------------------------
@@ -61,11 +65,11 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->GradientsFrame->Delete();
     this->GradientsFrame = NULL;
     }
-  if (this->GradientsTextfield)
+  if (this->GradientsTextbox)
     {
-    this->GradientsTextfield->SetParent (NULL);
-    this->GradientsTextfield->Delete();
-    this->GradientsTextfield = NULL;
+    this->GradientsTextbox->SetParent (NULL);
+    this->GradientsTextbox->Delete();
+    this->GradientsTextbox = NULL;
     }
   if (this->Mask)
     {
@@ -172,6 +176,21 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->Matrix->Delete();
     this->Matrix = NULL;
     }
+  if (this->Gradients)
+    {
+    this->Gradients->Delete();
+    this->Gradients = NULL;
+    }
+  if (this->BValues)
+    {
+    this->BValues->Delete();
+    this->BValues = NULL;
+    }
+  if (this->StatusLabel)
+    {
+    this->StatusLabel->Delete();
+    this->StatusLabel = NULL;
+    }
   }
 
 //---------------------------------------------------------------------------
@@ -183,6 +202,7 @@ void vtkSlicerGradientEditorWidget::AddWidgetObservers ( )
   this->SwapButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->RunButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->AddObserver(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->CancelButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   /*this->Matrix->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);*/
   for(int i=0; i<3;i ++)
     {
@@ -198,6 +218,7 @@ void vtkSlicerGradientEditorWidget::RemoveWidgetObservers( )
   this->SwapButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);    
   this->RunButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers(vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->CancelButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   for(int i=0; i<3;i ++)
     {
     this->Checkbuttons[i]->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -234,36 +255,6 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
       }
     }
   this->UpdateMatrix();
-
-  //import current gradients
-  if (this->EnableGradientsButton->GetSelectedState() && this->GradientsTextfield->GetWidget()->HasFocus())
-    {
-    vtkTimerLog *timer = vtkTimerLog::New();
-    
-    vtkSlicerGradientEditorLogic *myLogic = vtkSlicerGradientEditorLogic::New();
-    vtkDoubleArray *newGradients = vtkDoubleArray::New();
-    vtkDoubleArray *newBValue = vtkDoubleArray::New();
-    const char *oldGradients = this->GradientsTextfield->GetWidget()->GetText();
-    int numberOfGradients = this->ActiveVolumeNode->GetNumberOfGradients();
-    
-    timer->StartTimer();
-    if(!myLogic->ParseGradients(oldGradients, numberOfGradients, newBValue, newGradients))
-      {
-      vtkErrorMacro("parsing gradients failed");
-      return;
-      }
-    timer->StopTimer();
-
-    this->ActiveVolumeNode->SetBValues(newBValue);
-    this->ActiveVolumeNode->SetDiffusionGradients(newGradients);
-    this->UpdateGradients();
-    
-    vtkWarningMacro("time: "<<timer->GetElapsedTime());
-    
-    newGradients->Delete();
-    newBValue->Delete();
-    myLogic->Delete();
-    }
 
   //enable/disable buttons depending on how many checkbuttons are selected 
   if(event == vtkKWCheckButton::SelectedStateChangedEvent 
@@ -317,7 +308,7 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
   //enable the gradients textbox
   else if(this->EnableGradientsButton == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent)
     {
-    this->GradientsTextfield->SetEnabled(this->EnableGradientsButton->GetSelectedState());
+    this->GradientsTextbox->SetEnabled(this->EnableGradientsButton->GetSelectedState());
     }
 
   //rotate matrix
@@ -415,6 +406,12 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
       myLogic->Delete();
       }
     }
+  //cancel 
+  if (this->CancelButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
+    {
+    //TODO
+    //this->GetMRMLScene()->Undo();
+    }
 
   //run test
   if (this->RunButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
@@ -434,11 +431,17 @@ void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeN
     }
 
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode);
+  //this->GetMRMLScene()->SaveStateForUndo();
+  //this->GetMRMLScene()->ClearUndoStack();
+  //this->Modified();
   // update the measurement frame, gradients and bValues 
   // when the active node changes
   this->ActiveVolumeNode->GetMeasurementFrameMatrix(this->Matrix);
+  this->Gradients = this->ActiveVolumeNode->GetDiffusionGradients();
+  this->BValues = this->ActiveVolumeNode->GetBValues();
   this->UpdateMatrix();
   this->UpdateGradients();
+  this->TextFieldModifiedCallback();
   }
 
 //---------------------------------------------------------------------------
@@ -463,29 +466,21 @@ void vtkSlicerGradientEditorWidget::UpdateMatrix()
   if(this->ActiveVolumeNode != NULL)
     {
     this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
+    //this->ActiveVolumeNode->SetModifiedSinceRead(1);
     }
   }
 
 //---------------------------------------------------------------------------
 void vtkSlicerGradientEditorWidget::UpdateGradients()
   {
-  // check if active node is set
-  if (this->ActiveVolumeNode == NULL)
-    {
-    vtkErrorMacro(<< this->GetClassName() << ": ActiveVolumeNode is NULL");
-    return;
-    }
-
   std::stringstream output;
-  vtkDoubleArray *bValues = this->ActiveVolumeNode->GetBValues();
-  vtkDoubleArray *gradients = this->ActiveVolumeNode->GetDiffusionGradients();
   vtkDoubleArray *factor = vtkDoubleArray::New();
   double g[3];
 
   // compute factor of each gradient 
-  for(int i=0; i<gradients->GetNumberOfTuples();i++)
+  for(int i=0; i<this->Gradients->GetNumberOfTuples();i++)
     {
-    gradients->GetTuple(i,g);
+    this->Gradients->GetTuple(i,g);
     factor->InsertNextValue(sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]));
     }
 
@@ -495,9 +490,9 @@ void vtkSlicerGradientEditorWidget::UpdateGradients()
 
   // get bValue
   double bValue = -1;
-  for(int i = 0; i< bValues->GetSize(); i++)
+  for(int i = 0; i< this->BValues->GetSize(); i++)
     {
-    double numerator = bValues->GetValue(i)*range[1];
+    double numerator = this->BValues->GetValue(i)*range[1];
     double denominator = factor->GetValue(i);
     if(!numerator == 0 && !denominator == 0)
       {
@@ -510,22 +505,52 @@ void vtkSlicerGradientEditorWidget::UpdateGradients()
   output << "DWMRI_b-value:= " << bValue << endl; 
 
   // read in new gradients
-  for(int i=0; i < gradients->GetSize(); i=i+3)
+  for(int i=0; i < this->Gradients->GetSize(); i=i+3)
     {
     output << "DWMRI_gradient_" << setfill('0') << setw(4) << i/3 << ":=" << " ";
     for(int j=i; j<i+3; j++)
       {
-      output << gradients->GetValue(j) << " ";
+      output << this->Gradients->GetValue(j) << " ";
       }
     output << "\n";        
     }
 
   // write it on GUI
-  this->GradientsTextfield->GetWidget()->SetText(output.str().c_str());
+  this->GradientsTextbox->GetWidget()->SetText(output.str().c_str());
   factor->Delete();
   }
 
 //---------------------------------------------------------------------------
+void vtkSlicerGradientEditorWidget::TextFieldModifiedCallback()
+  {
+  vtkTimerLog *timer = vtkTimerLog::New();
+
+  vtkSlicerGradientEditorLogic *myLogic = vtkSlicerGradientEditorLogic::New();
+  const char *oldGradients = this->GradientsTextbox->GetWidget()->GetText();
+  int numberOfGradients = this->ActiveVolumeNode->GetNumberOfGradients();
+
+  timer->StartTimer();
+  if(!myLogic->ParseGradients(oldGradients, numberOfGradients, this->BValues, this->Gradients))
+    {
+    this->StatusLabel->SetBackgroundColor(1, 0, 0);      
+    this->StatusLabel->SetText("Gradients: INVALID");
+    return;
+    }
+  this->StatusLabel->SetBackgroundColor(0, 1, 0);    
+  this->StatusLabel->SetText("Gradients: VALID");
+
+  // write internal matrix back to node
+  if (this->ActiveVolumeNode != NULL)
+    {
+    this->ActiveVolumeNode->SetDiffusionGradients(this->Gradients);
+    this->ActiveVolumeNode->SetBValues(this->BValues);
+    //this->ActiveVolumeNode->SetModifiedSinceRead(1);
+    }
+  timer->StopTimer();
+  vtkWarningMacro("time: "<<timer->GetElapsedTime());
+  myLogic->Delete();
+  }
+
 void vtkSlicerGradientEditorWidget::CreateWidget( )
   {
   //check if already created
@@ -642,14 +667,21 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 1", 
     this->ButtonsFrame->GetWidgetName());
 
-  //create textfield for GradientsTextfield
-  this->GradientsTextfield = vtkKWTextWithScrollbars::New();
-  this->GradientsTextfield->SetParent(this->GradientsFrame->GetFrame());
-  this->GradientsTextfield->Create();
-  this->GradientsTextfield->SetEnabled(0);
-  this->GradientsTextfield->SetHeight(30);
+  //create textfield for GradientsTextbox
+  this->GradientsTextbox = vtkKWTextWithScrollbars::New();
+  this->GradientsTextbox->SetParent(this->GradientsFrame->GetFrame());
+  this->GradientsTextbox->Create();
+  this->GradientsTextbox->GetWidget()->SetBinding("<KeyRelease>", this, "TextFieldModifiedCallback");
+  this->GradientsTextbox->SetEnabled(0);
+  this->GradientsTextbox->SetHeight(30);
   this->Script("pack %s -side top -anchor s -fill x -padx 2 -pady 2", 
-    this->GradientsTextfield->GetWidgetName());
+    this->GradientsTextbox->GetWidgetName());
+
+  this->StatusLabel = vtkKWLabel::New();
+  this->StatusLabel->SetParent(this->GradientsFrame->GetFrame());
+  this->StatusLabel->Create();
+  this->Script("pack %s -side top -anchor s -fill x -padx 2 -pady 2", 
+    this->StatusLabel->GetWidgetName());
 
   //create enable gradients textfield button
   this->EnableGradientsButton = vtkKWCheckButton::New();
@@ -704,3 +736,6 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->Script("pack %s -side top -anchor ne -padx 2 -pady 2", 
     this->CancelButton->GetWidgetName());
   } 
+
+
+

@@ -7,9 +7,12 @@
 class vtkMRMLDiffusionWeightedVolumeNode;
 class vtkDoubleArray;
 
+// Description:
+// This class implements Slicer's GradientsEditor Logic.
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic 
   {
   public:
+
     // Description:
     // Usual vtk class functions.
     static vtkSlicerGradientEditorLogic *New();

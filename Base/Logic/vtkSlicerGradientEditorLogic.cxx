@@ -58,10 +58,13 @@ void vtkSlicerGradientEditorLogic::AddGradients (const char* filename, vtkMRMLDi
 //---------------------------------------------------------------------------
 int vtkSlicerGradientEditorLogic::StringToDouble(const std::string &s, double &result)
   {
-  std::istringstream stream (s);
+  std::stringstream stream (s);
   if(stream >> result)
     {
-    return 1;
+    if(stream.eof())
+      {
+      return 1;
+      }
     }
   return 0;
   }
@@ -96,7 +99,7 @@ int vtkSlicerGradientEditorLogic::ParseGradients(const char *oldGradients, int n
   // exit if too many or to less values are input
   if(vec.size() != numberOfGradients*3+1)
     {
-    vtkWarningMacro("given values "<<vec.size()<<" needed "<<numberOfGradients*3+1);
+    //vtkWarningMacro("given values "<<vec.size()<<" needed "<<numberOfGradients*3+1);
     return 0;
     }
 
@@ -106,7 +109,7 @@ int vtkSlicerGradientEditorLogic::ParseGradients(const char *oldGradients, int n
   newBValues->SetNumberOfTuples(numberOfGradients);
 
   // set gradients and factor values
-  for(int j = 1; j < vec.size(); j=j+3)
+  for(unsigned int j = 1; j < vec.size(); j=j+3)
     {
     for(int i=j; i<j+3;i++)
       {
