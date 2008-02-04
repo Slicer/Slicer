@@ -48,8 +48,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     // Method to propagate keypress-events generated in the textbox of gradients.
     void TextFieldModifiedCallback();
 
-    vtkGetObjectMacro(GradientsTextbox, vtkKWTextWithScrollbars);
-
   protected:
     vtkSlicerGradientEditorWidget(void);
     virtual ~vtkSlicerGradientEditorWidget(void);
@@ -85,10 +83,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     vtkKWCheckButton *EnableGradientsButton;
     vtkKWCheckButton* Checkbuttons[3];
     vtkMatrix4x4 *Matrix;
-    vtkDoubleArray *Gradients;
-    vtkDoubleArray *BValues;
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
-
 
   private:
     vtkSlicerGradientEditorWidget ( const vtkSlicerGradientEditorWidget& ); // Not implemented.
