@@ -583,6 +583,14 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         callerBox->GetPlanes(planes);
         this->MapperTexture->SetClippingPlanes(planes);
         this->MapperRaycast->SetClippingPlanes(planes);
+    }
+    if(caller==this->BW_Clipping&&eid==vtkCommand::EndInteractionEvent)
+    {
+        vtkPlanes *planes=vtkPlanes::New();
+        callerBox->GetPlanes(planes);
+        this->MapperTexture->SetClippingPlanes(planes);
+        this->MapperRaycast->SetClippingPlanes(planes);
+
 
         //Decide if this event is triggered by the vtkBoxWidget or by the sliders
         //if sliders don't trigger setRange->this would lead to an endless loop
@@ -1290,6 +1298,7 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
     this->BW_Clipping->SetTransform(this->AdditionalClippingTransform);
     this->NoSetRangeNeeded=1;
     this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::InteractionEvent,0);
+    this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::EndInteractionEvent,0);
     this->NoSetRangeNeeded=0;
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 }
@@ -1307,7 +1316,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     croppingFrame->SetParent(this->NB_Details->GetFrame("Cropping"));
     croppingFrame->Create();
     croppingFrame->AllowFrameToCollapseOff();
-    croppingFrame->SetLabelText("Cropping (IJK coordinates)");
+    croppingFrame->SetLabelText("Cropping (Coordinates are relative to image origin)");
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
         croppingFrame->GetWidgetName() );
 
@@ -1717,6 +1726,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableClippingPlanes(int clipping
         //    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[1]);
 
         this->BW_Clipping->AddObserver(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+        this->BW_Clipping->AddObserver(vtkCommand::EndInteractionEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor()->ReInitialize();
     }
     if(clippingEnabled)
@@ -1806,6 +1816,7 @@ void vtkSlicerVRGrayscaleHelper::DestroyCropping(void)
     if(this->BW_Clipping)
     {
         this->BW_Clipping->RemoveObservers(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+        this->BW_Clipping->RemoveObservers(vtkCommand::EndInteractionEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
         this->BW_Clipping->Off();
         this->BW_Clipping->Delete();
         this->BW_Clipping=NULL;
@@ -2036,7 +2047,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
         this->InverseAdditionalClippingTransform->Identity();
     }
     this->BW_Clipping->SetTransform(this->AdditionalClippingTransform);
-    this->BW_Clipping->InvokeEvent(vtkCommand::InteractionEvent);
+    this->BW_Clipping->InvokeEvent(vtkCommand::EndInteractionEvent);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 
 }
