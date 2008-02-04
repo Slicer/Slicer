@@ -10,6 +10,7 @@ if(VOLUMERENDERINGMODULE)
   vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
   vtkSlicerVRHelper.cxx
   vtkSlicerVRGrayscaleHelper.cxx
+  vtkSlicerVRMenuButtonColorMode.cxx
   #LabelmapPart
   #vtkSlicerVRLabelmapHelper.cxx
   #vtkLabelMapColorTransferFunction.cxx

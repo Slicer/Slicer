@@ -10,6 +10,7 @@
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkSlicerBoxWidget.h"
 #include "vtkSlicerVisibilityIcons.h"
+#include "vtkSlicerVRMenuButtonColorMode.h"
 
 //VTK
 #include "vtkObjectFactory.h"
@@ -106,7 +107,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
 
     //ThresholdGUI
     this->MB_ThresholdMode=NULL;
-    this->MB_ColorMode=NULL;
+    this->VRMB_ColorMode=NULL;
     this->RA_RampRectangleHorizontal=NULL;
     this->RA_RampRectangleVertical=NULL;
     this->ColorMode=0;
@@ -1047,8 +1048,14 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->ProcessClippingModified();
         return;
         
+    }    
+    vtkSlicerVRMenuButtonColorMode *callerVRMB=vtkSlicerVRMenuButtonColorMode::SafeDownCast(caller);
+    if(callerVRMB==this->VRMB_ColorMode&&eid==vtkSlicerVRMenuButtonColorMode::ColorModeChangedEvent)
+    {
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
     }
     //Check if caller equals mapper
+    //All other event catchers before
     vtkAbstractMapper *callerMapper=vtkAbstractMapper::SafeDownCast(caller);
     if((this->Volume!=0)&&(callerMapper!=this->Volume->GetMapper()))
     {
@@ -1090,6 +1097,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,100**progress);
         return;
     }
+
 
 
     vtkDebugMacro("observed event but didn't process it");
@@ -1172,6 +1180,8 @@ void vtkSlicerVRGrayscaleHelper::UpdateGUIElements(void)
         this->RA_Cropping[i]->SetRange(this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i+1]);    
     }
     this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetCurrentNode()->GetCroppingEnabled());
+    this->VRMB_ColorMode->SetColorTransferFunction(this->Gui->GetCurrentNode()->GetVolumeProperty()->GetRGBTransferFunction());
+    this->VRMB_ColorMode->SetRange(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange());
     //this->ColorDisplay->SetMRMLScene(this->Gui->GetMRMLScene());
 
     //Add update of gui here
@@ -1427,26 +1437,19 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 2 -pady 2", 
         this->MB_ThresholdMode->GetWidgetName());
 
-    this->MB_ColorMode=vtkKWMenuButtonWithLabel::New();
-    this->MB_ColorMode->SetParent(thresholdFrame->GetFrame());
-    this->MB_ColorMode->Create();
+    this->VRMB_ColorMode=vtkSlicerVRMenuButtonColorMode::New();
+    this->VRMB_ColorMode->SetParent(thresholdFrame->GetFrame());
+    this->VRMB_ColorMode->Create();
     ss.str("");
     ss<<"Which color should the volume have, ";
     ss<<"all \"static\" colors result in a single color for every gray value while \"dynamic\" produces a color gradient.";
-    this->MB_ColorMode->SetBalloonHelpString(ss.str().c_str());
-    this->MB_ColorMode->SetLabelText("Color Mode:"); 
-    this->MB_ColorMode->SetLabelWidth(10);
-    this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Grayscale dynamic");
-    this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(0,this,"ProcessColorModeEvents 0");
-    this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Grayscale static");
-    this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(1,this,"ProcessColorModeEvents 1");
-    this->MB_ColorMode->GetWidget()->GetMenu()->AddRadioButton("Rainbow");
-    this->MB_ColorMode->GetWidget()->GetMenu()->SetItemCommand(2,this,"ProcessColorModeEvents 2");
-    this->MB_ColorMode->GetWidget()->GetMenu()->SelectItem("Grayscale static");
-    this->ProcessColorModeEvents(1);
-    this->MB_ColorMode->EnabledOff();
+    this->VRMB_ColorMode->SetBalloonHelpString(ss.str().c_str());
+    this->VRMB_ColorMode->SetLabelText("Color Mode:"); 
+    this->VRMB_ColorMode->SetLabelWidth(10);
+    this->VRMB_ColorMode->EnabledOff();
+    this->VRMB_ColorMode->AddObserver(vtkSlicerVRMenuButtonColorMode::ColorModeChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
     this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 2 -pady 2", 
-        this->MB_ColorMode->GetWidgetName());
+        this->VRMB_ColorMode->GetWidgetName());
 
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
     this->RA_RampRectangleHorizontal=vtkKWRange::New();
@@ -1513,7 +1516,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdModeEvents(int id)
     vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
     if(id==0)
     {
-        this->MB_ColorMode->EnabledOff();
+        this->VRMB_ColorMode->EnabledOff();
 
         this->RA_RampRectangleHorizontal->SetRange(iData->GetScalarRange()[0],iData->GetScalarRange()[1]);
         this->RA_RampRectangleHorizontal->EnabledOff();
@@ -1524,7 +1527,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdModeEvents(int id)
         return;
     }
     //Before we continue enabled everything
-    this->MB_ColorMode->EnabledOn();
+    this->VRMB_ColorMode->EnabledOn();
     this->RA_RampRectangleHorizontal->EnabledOn();
     this->RA_RampRectangleVertical->EnabledOn();
     this->PB_Reset->EnabledOn();
@@ -1539,11 +1542,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdModeEvents(int id)
 
 }
 
-void vtkSlicerVRGrayscaleHelper::ProcessColorModeEvents(int id)
-{
-    this->ColorMode=id;
-    this->ProcessThresholdRange(0.,0.);
-}
 
 void vtkSlicerVRGrayscaleHelper::ProcessThresholdRange(double notUsed,double notUsedA)
 {
@@ -1583,34 +1581,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdRange(double notUsed,double not
         opacity->AddPoint(this->RA_RampRectangleHorizontal->GetRange()[1],this->RA_RampRectangleVertical->GetRange()[1]);
 
     }
-
-    if(!this->ColorMode)
-    {
-        colorTransfer->AddRGBPoint(iData->GetScalarRange()[0],.5,.5,.5);
-        colorTransfer->AddRGBPoint(iData->GetScalarRange()[1],1,1,1);
-
-        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0],.5,.5,.5);
-        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[1],1,1,1);
-    }
-    else if(this->ColorMode==1)
-    {
-        colorTransfer->AddRGBPoint(iData->GetScalarRange()[0],.5,.5,.5);
-        colorTransfer->AddRGBPoint(iData->GetScalarRange()[1],.5,.5,.5);
-
-        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0],.5,.5,.5);
-        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[1],.5,.5,.5);
-
-    }
-    else
-    {
-        colorTransfer->AddRGBPoint(iData->GetScalarRange()[0],.3,.3,1.);
-        colorTransfer->AddRGBPoint(iData->GetScalarRange()[1],1.,.3,.3);
-
-        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0],.3,.3,1.);
-        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[0]+.5*(this->RA_RampRectangleHorizontal->GetRange()[1]-this->RA_RampRectangleHorizontal->GetRange()[0]),.3,1.,.3);
-        colorTransfer->AddRGBPoint(this->RA_RampRectangleHorizontal->GetRange()[1],1.,.3,.3);
-    }
-
     this->SVP_VolumeProperty->Update();
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->Render();
 }
@@ -1872,11 +1842,12 @@ void vtkSlicerVRGrayscaleHelper::DestroyTreshold(void)
         this->MB_ThresholdMode=NULL;
 
     }
-    if(this->MB_ColorMode)
+    if(this->VRMB_ColorMode)
     {
-        this->MB_ColorMode->SetParent(NULL);
-        this->MB_ColorMode->Delete();
-        this->MB_ColorMode=NULL;
+        this->VRMB_ColorMode->RemoveObservers(vtkSlicerVRMenuButtonColorMode::ColorModeChangedEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->VRMB_ColorMode->SetParent(NULL);
+        this->VRMB_ColorMode->Delete();
+        this->VRMB_ColorMode=NULL;
     }
     if(this->RA_RampRectangleHorizontal)
     {

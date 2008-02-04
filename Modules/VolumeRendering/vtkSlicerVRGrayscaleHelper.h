@@ -27,6 +27,7 @@ class vtkMRMLLinearTransformNode;
 class vtkTransform;
 class vtkSlicerVisibilityIcons;
 class vtkKWPushButtonWithLabel;
+class vtkSlicerVRMenuButtonColorMode;
 
 
 class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
@@ -56,7 +57,6 @@ public:
     
     void Cropping(int index, double min,double max);
     void ProcessThresholdModeEvents(int id);
-    void ProcessColorModeEvents(int id);
     void ProcessThresholdRange(double notUsed,double notUsedA);
     void ProcessThresholdZoomIn(void);
     void ProcessThresholdReset(void);
@@ -105,7 +105,7 @@ protected:
 
     //ThresholdGUI
     vtkKWMenuButtonWithLabel *MB_ThresholdMode;
-    vtkKWMenuButtonWithLabel *MB_ColorMode;
+    vtkSlicerVRMenuButtonColorMode *VRMB_ColorMode;
     vtkKWRange *RA_RampRectangleHorizontal;
     vtkKWRange *RA_RampRectangleVertical;
 
