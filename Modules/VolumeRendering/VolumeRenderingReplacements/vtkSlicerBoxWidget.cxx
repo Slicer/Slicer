@@ -1193,7 +1193,7 @@ void vtkSlicerBoxWidget::CreateDefaultProperties()
   this->HandleProperties[0]->SetColor(1,0,1);
   this->HandleProperties[1]->SetColor(1,0,0);
   this->HandleProperties[2]->SetColor(1,1,1);
-  this->HandleProperties[3]->SetColor(0,1,0);
+  this->HandleProperties[3]->SetColor(.89,.6,.07);
   this->HandleProperties[4]->SetColor(0,0,1);
   this->HandleProperties[5]->SetColor(0,0,0);
   this->HandleProperties[6]->SetColor(1,1,1);

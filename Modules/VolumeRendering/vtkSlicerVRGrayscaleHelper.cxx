@@ -132,9 +132,9 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     ColorsClippingHandles[2][1]=1;
     ColorsClippingHandles[2][2]=1;
 
-    ColorsClippingHandles[3][0]=0;
-    ColorsClippingHandles[3][1]=1;
-    ColorsClippingHandles[3][2]=0;
+    ColorsClippingHandles[3][0]=.89;
+    ColorsClippingHandles[3][1]=.6;
+    ColorsClippingHandles[3][2]=.07;
 
     ColorsClippingHandles[4][0]=0;
     ColorsClippingHandles[4][1]=0;
@@ -599,6 +599,10 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             //Include a possible transform in this calculation
             this->InverseAdditionalClippingTransform->TransformPoint(pointA,pointA);
             this->InverseAdditionalClippingTransform->TransformPoint(pointB,pointB);
+            //Convert this stuff into the box coordinate system
+
+            this->ConvertWorldToBoxCoordinates(pointA);
+            this->ConvertWorldToBoxCoordinates(pointB);
 
             vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
             for(int i=0; i<3;i++)
@@ -1273,13 +1277,16 @@ void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
     {
         return;
     }
-    this->BW_Clipping->PlaceWidget(
-        this->RA_Cropping[0]->GetRange()[0],
-        this->RA_Cropping[0]->GetRange()[1],
-        this->RA_Cropping[1]->GetRange()[0],
-        this->RA_Cropping[1]->GetRange()[1],
-        this->RA_Cropping[2]->GetRange()[0],
-        this->RA_Cropping[2]->GetRange()[1]);
+    double pointA[3];
+    double pointB[3];
+    for(int i=0;i<3;i++)
+    {
+        pointA[i]=this->RA_Cropping[i]->GetRange()[0];
+        pointB[i]=this->RA_Cropping[i]->GetRange()[1];
+    }
+    this->ConvertBoxCoordinatesToWorld(pointA);
+    this->ConvertBoxCoordinatesToWorld(pointB);
+    this->BW_Clipping->PlaceWidget(pointA[0],pointB[0],pointA[1],pointB[1],pointA[2],pointB[2]);
     this->BW_Clipping->SetTransform(this->AdditionalClippingTransform);
     this->NoSetRangeNeeded=1;
     this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::InteractionEvent,0);
@@ -2059,7 +2066,38 @@ void vtkSlicerVRGrayscaleHelper::CalculateAndSetSampleDistances(void)
 
 void vtkSlicerVRGrayscaleHelper::ConvertWorldToBoxCoordinates(double *inputOutput)
 {
+    int pointAint[3];
+    double pointA[4];
+    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetDimensions(pointAint);
+    for(int i=0;i<3;i++)
+    {
+        pointA[i]=pointAint[i]/2.;
+    }
+    pointA[3]=1;
+    vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+    this->CalculateMatrix(matrix);
+    matrix->MultiplyPoint(pointA,pointA);
+
+    for(int i=0;i<3;i++)
+    {
+        inputOutput[i]=inputOutput[i]-pointA[i];
+    }
 }
 void vtkSlicerVRGrayscaleHelper::ConvertBoxCoordinatesToWorld(double* inputOutput)
 {
+    int pointAint[3];
+    double pointA[4];
+    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetDimensions(pointAint);
+    for(int i=0;i<3;i++)
+    {
+        pointA[i]=pointAint[i]/2.;
+    }
+    pointA[3]=1;
+    vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+    this->CalculateMatrix(matrix);
+    matrix->MultiplyPoint(pointA,pointA);
+    for(int i=0;i<3;i++)
+    {
+        inputOutput[i]=inputOutput[i]+pointA[i];
+    }
 }
