@@ -13,7 +13,7 @@
 GET_FILENAME_COMPONENT(Slicer3_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 # The Slicer3 include file directories.
-SET(Slicer3_INCLUDE_DIRS "${Slicer3_CONFIG_DIR}/../../include/Slicer3" "${Slicer3_CONFIG_DIR}/../../include/MRML" "${Slicer3_CONFIG_DIR}/../../include/vtk-5.0")
+SET(Slicer3_INCLUDE_DIRS "${Slicer3_CONFIG_DIR}/../../include/Slicer3" "${Slicer3_CONFIG_DIR}/../../include/MRML")
 
 # The Slicer3 library directories.
 # ${Slicer3_CONFIG_DIR}/.. is needed for VTK and teem
@@ -45,3 +45,7 @@ SET(ModuleDescriptionParser_DIR "${Slicer3_CONFIG_DIR}/../ModuleDescriptionParse
 SET(GenerateCLP_DIR "${Slicer3_CONFIG_DIR}/../GenerateCLP")
 SET(GenerateCLP_USE_FILE "${GenerateCLP_DIR}/UseGenerateCLP.cmake")
 SET(GENERATECLP_EXE "${Slicer3_CONFIG_DIR}/../../bin/GenerateCLP")
+SET(ITK_DIR "${Slicer3_CONFIG_DIR}/../InsightToolkit")
+# VTK_DIR needs to be an absolute path for the VTKConfig.cmake file to work
+SET(VTK_DIR "${Slicer3_CONFIG_DIR}/../vtk-5.0")
+GET_FILENAME_COMPONENT(VTK_DIR ${VTK_DIR} ABSOLUTE)
