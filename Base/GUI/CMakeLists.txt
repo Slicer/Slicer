@@ -95,6 +95,7 @@ SET(LIB_SRCS
   vtkSlicerROIGUI.cxx
   vtkSlicerGradientEditorWidget.cxx
   vtkSlicerMeasurementFrameWidget.cxx
+  vtkSlicerGradientsWidget.cxx
   )
 
 # Helper classes

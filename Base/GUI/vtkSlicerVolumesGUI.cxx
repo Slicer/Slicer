@@ -972,19 +972,19 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 
     // ---
     // GradientEditor FRAME
-    this->GradientFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    this->GradientFrame->SetParent ( page );
-    this->GradientFrame->Create ( );
-    this->GradientFrame->SetLabelText ("DWI Gradient Editor");
-    this->GradientFrame->CollapseFrame ( );
-    this->GradientFrame->EnabledOff();
-    this->GradientFrame->SetAllowFrameToCollapse(0);
+    this->GradientFrame = vtkSlicerModuleCollapsibleFrame::New();
+    this->GradientFrame->SetParent(page);
+    this->GradientFrame->Create();
+    this->GradientFrame->SetLabelText("DWI Gradient Editor");
+    this->GradientFrame->CollapseFrame();
+    /*this->GradientFrame->EnabledOff();
+    this->GradientFrame->SetAllowFrameToCollapse(0);*/
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->GradientFrame->GetWidgetName(), page->GetWidgetName());
 
-    this->GradientEditorWidget = vtkSlicerGradientEditorWidget::New ( );
-    this->GradientEditorWidget->SetParent ( this->GradientFrame->GetFrame() );
-    this->GradientEditorWidget->Create ( );
+    this->GradientEditorWidget = vtkSlicerGradientEditorWidget::New();
+    this->GradientEditorWidget->SetParent(this->GradientFrame->GetFrame());
+    this->GradientEditorWidget->Create();
     this->GradientEditorWidget->SetMRMLScene(this->GetMRMLScene());
     this->GradientEditorWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
     this->GradientEditorWidget->AddWidgetObservers();
