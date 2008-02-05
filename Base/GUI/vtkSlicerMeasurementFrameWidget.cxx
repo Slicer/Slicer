@@ -138,6 +138,7 @@ void vtkSlicerMeasurementFrameWidget::ProcessMRMLEvents (vtkObject *caller,unsig
 //---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::UpdateMatrix()
   {
+
   if(this->Matrix == NULL)
     {
     this->Matrix = vtkMatrix4x4::New();

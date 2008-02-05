@@ -98,8 +98,16 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
   //cancel 
   if (this->CancelButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
-    //TODO
-    //this->GetMRMLScene()->Undo();
+    vtkErrorMacro("undo numbers "<<this->GetMRMLScene()->GetNumberOfUndoLevels());
+    if(this->GetMRMLScene()->GetNumberOfUndoLevels()>1)
+      {
+      this->GetMRMLScene()->Undo();
+      if(this->ActiveVolumeNode)
+        {
+        this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
+        this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode);
+        }
+      }
     }
 
   //run test
@@ -118,8 +126,11 @@ void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeN
     return;
     }
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode);
+  this->GetMRMLScene()->SaveStateForUndo();
   // update the measurement frame, gradients and bValues 
   // when the active node changes
+  this->MeasurementFrameWidget->SetMRMLScene(this->GetMRMLScene());
+  this->GradientsWidget->SetMRMLScene(this->GetMRMLScene());
   this->MeasurementFrameWidget->UpdateWidget(dwiNode);
   this->GradientsWidget->UpdateWidget(dwiNode);
   }

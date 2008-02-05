@@ -216,6 +216,7 @@ void vtkSlicerGradientsWidget::TextFieldModifiedCallback()
     if (this->ActiveVolumeNode != NULL && gradients != NULL && bValues != NULL)
       {
       this->ActiveVolumeNode->DisableModifiedEventOn();
+      this->GetMRMLScene()->SaveStateForUndo();
       this->ActiveVolumeNode->SetDiffusionGradients(gradients);
       this->ActiveVolumeNode->SetBValues(bValues);
       this->ActiveVolumeNode->SetModifiedSinceRead(1);

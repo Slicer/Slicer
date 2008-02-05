@@ -977,15 +977,14 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->GradientFrame->Create();
     this->GradientFrame->SetLabelText("DWI Gradient Editor");
     this->GradientFrame->CollapseFrame();
-    /*this->GradientFrame->EnabledOff();
-    this->GradientFrame->SetAllowFrameToCollapse(0);*/
+    this->GradientFrame->EnabledOff();
+    this->GradientFrame->SetAllowFrameToCollapse(0);
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->GradientFrame->GetWidgetName(), page->GetWidgetName());
 
     this->GradientEditorWidget = vtkSlicerGradientEditorWidget::New();
     this->GradientEditorWidget->SetParent(this->GradientFrame->GetFrame());
     this->GradientEditorWidget->Create();
-    this->GradientEditorWidget->SetMRMLScene(this->GetMRMLScene());
     this->GradientEditorWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
     this->GradientEditorWidget->AddWidgetObservers();
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
@@ -1001,11 +1000,11 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->InfoFrame->GetWidgetName(), page->GetWidgetName());
 
-    this->VolumeHeaderWidget = vtkSlicerVolumeHeaderWidget::New ( );
+    this->VolumeHeaderWidget = vtkSlicerVolumeHeaderWidget::New();
     this->VolumeHeaderWidget->AddNodeSelectorWidgetOff();
-    this->VolumeHeaderWidget->SetMRMLScene(this->GetMRMLScene() );
-    this->VolumeHeaderWidget->SetParent ( this->InfoFrame->GetFrame() );
-    this->VolumeHeaderWidget->Create ( );
+    this->VolumeHeaderWidget->SetMRMLScene(this->GetMRMLScene());
+    this->VolumeHeaderWidget->SetParent(this->InfoFrame->GetFrame());
+    this->VolumeHeaderWidget->Create();
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->VolumeHeaderWidget->GetWidgetName(), this->InfoFrame->GetFrame()->GetWidgetName());
     // ---
