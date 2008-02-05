@@ -53,7 +53,7 @@ void vtkKWTextWithHyperlinksWithScrollbars::OpenLink(const char *url)
             #--- on mac you can easily open in any browser,\n\
             #--- but bookmarks will only be saved in Firefox Bookmark file format.\n\
             #--- so to use the bookmarks, you'll have to use firefox later....\n\
-            exec open $s\n\
+            exec open %s\n\
         } else {\n\
             set browser [ $::slicer3::Application GetWebBrowser ]\n\
 \
