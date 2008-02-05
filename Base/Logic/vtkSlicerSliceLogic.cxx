@@ -902,6 +902,7 @@ void vtkSlicerSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetOpacity(1);
     this->SliceModelDisplayNode->SetColor(1,1,1);
     this->SliceModelDisplayNode->SetAmbient(1);
+    this->SliceModelDisplayNode->SetBackfaceCulling(0);
     this->SliceModelDisplayNode->SetDiffuse(0);
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
     this->SliceModelDisplayNode->SetSaveWithScene(0);
