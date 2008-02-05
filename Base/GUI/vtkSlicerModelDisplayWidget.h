@@ -93,6 +93,7 @@ public:
   vtkKWMenuButtonWithLabel *ScalarMenu;
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
   vtkKWCheckButtonWithLabel *ClippingButton;
+  vtkKWCheckButtonWithLabel *BackfaceCullingButton;
   vtkKWScaleWithLabel  *OpacityScale;
   vtkKWSurfaceMaterialPropertyWidget *SurfaceMaterialPropertyWidget;
   vtkKWChangeColorButton *ChangeColorButton;
