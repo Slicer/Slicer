@@ -181,7 +181,16 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkITKArchetypeImageSeriesVectorReaderSeries *readerSeries = vtkITKArchetypeImageSeriesVectorReaderSeries::New();
 
     readerFile->SetArchetype(fullName.c_str());
-    readerFile->UpdateInformation();
+    try 
+      {
+      readerFile->UpdateInformation();
+      }
+    catch ( ... )
+      {
+      readerFile->Delete();
+      readerSeries->Delete();
+      return 0;
+      }
     if ( readerFile->GetNumberOfFileNames() == 1 )
       {
       reader = readerFile;
