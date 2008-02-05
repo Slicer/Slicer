@@ -1618,7 +1618,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
             }
             }
           }
-        
+        actor->GetProperty()->SetBackfaceCulling(dnode->GetBackfaceCulling());
         actor->GetProperty()->SetColor(dnode->GetColor());
         actor->GetProperty()->SetOpacity(dnode->GetOpacity());
         actor->GetProperty()->SetAmbient(dnode->GetAmbient());
