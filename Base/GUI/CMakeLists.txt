@@ -62,6 +62,7 @@ SET(LIB_SRCS
   vtkSlicerLogoDisplayGUI.cxx
   vtkSlicerApplicationGUI.cxx
   # KW Widgets
+  vtkKWTextWithHyperlinksWithScrollbars.cxx
   vtkSlicerModuleCollapsibleFrame.cxx
   vtkSlicerNodeSelectorWidget.cxx
   vtkSlicerWidget.cxx
