@@ -344,7 +344,7 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     vtkMatrix4x4 *xyToRAS = this->SliceNode->GetXYToRAS();
 
 
-#ifdef USE_IMAGE_ACTOR
+#ifdef USE_IMAGE_ACTOR // not defined
     // set the transform for the slice model for use by an image actor in the viewer
     this->SliceModelTransformNode->GetMatrixTransformToParent()->DeepCopy( xyToRAS );
 
@@ -364,8 +364,7 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     // set the transform for the slice model for use by an image actor in the viewer
     this->SliceModelTransformNode->GetMatrixTransformToParent()->Identity();
 
-    // set the plane corner point for use in a model (deprecated)
-    // TODO: remove this block
+    // set the plane corner point for use in a model
     double inPt[4]={0,0,0,1};
     double outPt[4];
     double *outPt3 = outPt;
