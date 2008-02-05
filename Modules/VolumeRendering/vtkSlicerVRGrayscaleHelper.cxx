@@ -110,7 +110,6 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->VRMB_ColorMode=NULL;
     this->RA_RampRectangleHorizontal=NULL;
     this->RA_RampRectangleVertical=NULL;
-    this->ColorMode=0;
     this->ThresholdMode=0;
     this->PB_Reset=NULL;
     this->PB_ThresholdZoomIn=NULL;
@@ -551,32 +550,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
 
 void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData)
 {
-    vtkSlicerColorDisplayWidget *callerColor=vtkSlicerColorDisplayWidget::SafeDownCast(caller);
-    if(caller==this->ColorDisplay&&eid==vtkSlicerColorDisplayWidget::ColorIDModifiedEvent)
-    {
 
-        //Trigger the update of
-        vtkLookupTable *lookup=this->ColorDisplay->GetColorNode()->GetLookupTable();
-        if(lookup==NULL)
-        {
-            vtkErrorMacro("No LookupTable");
-            return;
-        }
-        vtkColorTransferFunction *colorTransfer=this->SVP_VolumeProperty->GetVolumeProperty()->GetRGBTransferFunction();
-        colorTransfer->RemoveAllPoints();
-        //this->AdjustRange(lookup->GetTableRange());
-        double color[3];
-
-        for (int i=(int)lookup->GetTableRange()[0];i<lookup->GetTableRange()[1];i++)
-        {
-            lookup->GetColor(i,color);
-            colorTransfer->AddRGBPoint(i,color[0],color[1],color[2]);
-            colorTransfer->AddRGBPoint(i+.9999,color[0],color[1],color[2]);
-
-        }
-        this->UpdateGUIElements();
-        return;
-    }
     vtkSlicerBoxWidget *callerBox=vtkSlicerBoxWidget::SafeDownCast(caller);
     if(caller==this->BW_Clipping&&eid==vtkCommand::InteractionEvent)
     {
@@ -1288,7 +1262,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 }
 
-void vtkSlicerVRGrayscaleHelper::Cropping(int index, double min,double max)
+void vtkSlicerVRGrayscaleHelper::ProcessCropping(int index, double min,double max)
 {
 
     if(this->MapperTexture==NULL||this->MapperRaycast==NULL)
@@ -1352,7 +1326,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->CB_Clipping->GetWidget()->SetSelectedState(0);
     this->CB_Clipping->SetLabelText("Display Clipping Box");
     this->CB_Clipping->SetLabelWidth(labelwidth);
-    this->CB_Clipping->GetWidget()->SetCommand(this, "ProcessEnableDisableClippingPlanes");
+    this->CB_Clipping->GetWidget()->SetCommand(this, "ProcessDisplayClippingBox");
     this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",
         this->CB_Clipping->GetWidgetName());
 
@@ -1364,7 +1338,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
         this->RA_Cropping[i]->SetBalloonHelpString("Configure the clipping planes relative to the center of the volume. You can also use the clipping box to do this.");
         this->RA_Cropping[i]->SymmetricalInteractionOff();
         std::stringstream str;
-        str<<"Cropping ";
+        str<<"ProcessCropping ";
         str<<i;
         this->RA_Cropping[i]->SetCommand(this,str.str().c_str());
         this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->RA_Cropping[i]->GetWidgetName());
@@ -1628,7 +1602,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
     }
     this->NS_TransformNode->SetEnabled(cbSelectedState);
     //There is not automatical enabling when
-    //this->ProcessEnableDisableClippingPlanes(cbSelectedState);
+    //this->ProcessDisplayClippingBox(cbSelectedState);
     this->CB_Clipping->SetEnabled(cbSelectedState);
     if(this->Gui->GetCurrentNode()!=NULL)
     {
@@ -1637,14 +1611,14 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
     if(cbSelectedState)
     {
         //If we enable clipping we choose the current state of CB_Clipping
-        this->ProcessEnableDisableClippingPlanes(this->CB_Clipping->GetWidget()->GetSelectedState());
-        this->Cropping(0,0,0);
+        this->ProcessDisplayClippingBox(this->CB_Clipping->GetWidget()->GetSelectedState());
+        this->ProcessCropping(0,0,0);
         //PlaceWidget
 
     }
     else
     {
-        this->ProcessEnableDisableClippingPlanes(0);
+        this->ProcessDisplayClippingBox(0);
         this->MapperTexture->RemoveAllClippingPlanes();
         this->MapperRaycast->RemoveAllClippingPlanes();
     }
@@ -1654,7 +1628,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
 
 }
 
-void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableClippingPlanes(int clippingEnabled)
+void vtkSlicerVRGrayscaleHelper::ProcessDisplayClippingBox(int clippingEnabled)
 {
     if(this->BW_Clipping==NULL)
     {
@@ -1708,28 +1682,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableClippingPlanes(int clipping
         this->BW_Clipping->Off();
     }
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-}
-
-void vtkSlicerVRGrayscaleHelper::ProcessSelection(void)
-{
-    int selectedCount=this->ColorDisplay->GetMultiColumnList()->GetWidget()->GetNumberOfSelectedRows();
-    int *indices=new int[selectedCount];
-    this->ColorDisplay->GetMultiColumnList()->GetWidget()->GetSelectedRows(indices);
-    vtkPiecewiseFunction *piecewise=this->SVP_VolumeProperty->GetVolumeProperty()->GetScalarOpacity();
-    piecewise->RemoveAllPoints();
-    for(int i=0;i<selectedCount;i++)
-    {
-        int entry = this->ColorDisplay->GetMultiColumnList()->GetWidget()->GetCellTextAsInt(indices[i],0);
-        piecewise->AddPoint(entry-.5,0);
-        piecewise->AddPoint(entry-.49,1);
-        piecewise->AddPoint(entry+.5,0);
-        piecewise->AddPoint(entry+.49,1);
-    }
-    this->UpdateGUIElements();
-    this->ColorDisplay->GetMultiColumnList()->GetWidget()->SetSelectionType(0);
-    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
-
-    delete indices;
 }
 
 void vtkSlicerVRGrayscaleHelper::ProcessPauseResume(void)
