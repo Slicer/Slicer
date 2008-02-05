@@ -102,12 +102,7 @@ if { !$installed && [string match -nocase "windows*" $::tcl_platform(os)] } {
 if { $installed } {
 
   # if installed, everything is in the local tree
-
-  if {$::env(BUILD) == $::WINDOWS} {
-    set ::SLICER3_REAL $::SLICER_HOME/bin/Slicer3-real.exe
-  } else {
-    set ::SLICER3_REAL $::SLICER_HOME/bin/Slicer3-real
-  }
+  set ::SLICER3_REAL $::SLICER_HOME/bin/Slicer3-real$ext
   set ::env(VTK_DIR)           $::env(SLICER_HOME)/lib
   set ::env(VTK_BIN_DIR)       $::env(SLICER_HOME)/bin
   set ::env(KWWidgets_DIR)     $::env(SLICER_HOME)/lib/KWWidgets
@@ -117,7 +112,11 @@ if { $installed } {
   set ::env(SANDBOX_BIN_DIR)   ""
   set ::env(TCL_LIBRARY)       $::env(SLICER_HOME)/lib/Slicer3/tcl/lib
   set ::env(TCL_DIR)           $::env(SLICER_HOME)/lib/Slicer3/tcl
-  set ::env(TEEM_DIR)          $::env(SLICER_HOME)/lib
+  set ::env(TEEM_DIR)          $::env(SLICER_HOME)/lib/TEEM-1-9
+  set ::env(MRML_DIR)          $::env(SLICER_HOME)/lib/MRML
+  set ::env(PARSER_DIR)        $::env(SLICER_HOME)/lib/ModuleDescriptionParser
+  set ::env(SLICER_LIB_DIR)    $::env(SLICER_HOME)/lib/Slicer3
+
   set ::env(SLICER_BIN_DIR)    $::env(SLICER_HOME)/bin
 
 } else {
@@ -153,6 +152,9 @@ if { $installed } {
   set ::env(TCL_DIR)           [file normalize [file dirname [file dirname $::env(TCL_LIBRARY)]]]
   set ::env(TEEM_DIR)          [file normalize "@TEEM_DIR@/bin/$::BUILD_SUBDIR"]
   set ::env(SLICER_BIN_DIR)    [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(SLICER_LIB_DIR)    [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(MRML_DIR)          [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(PARSER_DIR)        [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
 
 }
 
@@ -250,7 +252,10 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(SLICER_BIN_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(MRML_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(VTK_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(PARSER_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(SLICER_LIB_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(PATH) "$::env(PATH):$::env(TEEM_DIR)"
             set ::env(PATH) "$::env(SLICER_BIN_DIR):$::env(PATH)"
             set ::env(PATH) "$::SLICER_HOME/lib/Slicer3/Plugins:$::env(PATH)"
@@ -261,7 +266,10 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(SLICER_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(MRML_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(VTK_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(PARSER_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(SLICER_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(PATH) $::env(PATH):$::env(TEEM_DIR)
             set ::env(PATH) "$::env(SLICER_BIN_DIR):$::env(PATH)"
             set ::env(PATH) "$::SLICER_HOME/lib/Slicer3/Plugins:$::env(PATH)"
@@ -272,7 +280,11 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(ITK_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(TCL_DIR)/bin\;$::env(Path)
             set ::env(Path) $::env(TEEM_DIR)\;$::env(Path)
+            set ::env(Path) $::env(MRML_DIR)\;$::env(Path)
+            set ::env(Path) $::env(VTK_DIR)\;$::env(Path)
+            set ::env(Path) $::env(PARSER_DIR)\;$::env(Path)
             set ::env(Path) $::env(SLICER_BIN_DIR)\;$::env(Path)
+            set ::env(Path) $::env(SLICER_LIB_DIR)\;$::env(Path)
         } else {
             puts stderr "Libraries: unknown build $::env(BUILD)"
         }
