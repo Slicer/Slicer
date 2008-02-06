@@ -76,13 +76,10 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->InitialDropLowRes=0.2;
     this->FactorLastLowRes=0;
     this->LastTimeLowRes=0;
-    this->LastTimeHighRes=0;
     this->GoalLowResTime=0.05;
     //.6 seems to be best
     this->PercentageNoChange=0.6;
     this->TimeToWaitForHigherStage=0.1;
-    this->NextRenderHighResolution=0;
-    this->IgnoreStepZero=0;
     this->Quality=0;
     this->StageZeroEventHandlerID="";
     this->ButtonDown=0;
@@ -95,7 +92,6 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->SC_Framerate=NULL;
     this->SVP_VolumeProperty=NULL;
     this->MappersFrame=NULL;
-    this->SavedStillRate=0;
 
     //Cropping:
     this->CB_Cropping=NULL;

@@ -169,15 +169,15 @@ protected:
     ~vtkSlicerVRGrayscaleHelper(void);
 
     // Description:
-    //
+    // Main notebook in the details frame
     vtkKWNotebook *NB_Details;
 
     // Description:
-    //
+    // Toggle the visibility of volume rendering
     vtkKWPushButtonWithLabel *PB_PauseResume;
 
     // Description:
-    //
+    // Icon for the visibility of volume rendering
     vtkSlicerVisibilityIcons *VI_PauseResume;
 
     //--------------------------------------------------------------------------
@@ -185,39 +185,39 @@ protected:
     //--------------------------------------------------------------------------
 
     // Description:
-    //
+    // Selection of the Treshold  mode
     vtkKWMenuButtonWithLabel *MB_ThresholdMode;
 
     // Description:
-    //
+    // Selection of the color mode
     vtkSlicerVRMenuButtonColorMode *VRMB_ColorMode;
 
     // Description:
-    //
+    // Threshold for gray value
     vtkKWRange *RA_RampRectangleHorizontal;
 
     // Description:
-    //
+    // Threshold settings for opacity
     vtkKWRange *RA_RampRectangleVertical;
 
     // Description:
-    //
+    // Zoom into the threshold sliders
     vtkKWPushButton *PB_ThresholdZoomIn;
 
     // Description:
-    //
+    // Reset the "Zoom" of the threshold sliders
     vtkKWPushButton *PB_Reset;
 
     // Description:
-    //
+    // internal saving of the threshold mode
     int ThresholdMode;
 
     // Description:
-    //
+    // Create the treshold page
     void CreateThreshold(void);
 
     // Description:
-    //
+    // Destroy the treshold page
     void DestroyTreshold(void);
 
     //--------------------------------------------------------------------------
@@ -225,35 +225,39 @@ protected:
     //--------------------------------------------------------------------------
 
     // Description:
-    //
+    // Frame to configure the mapping options
     vtkKWFrameWithLabel *MappersFrame;
 
     // Description:
-    //
+    // Enable/Disable low quality texture rendering
     vtkKWCheckButtonWithLabel *CB_TextureLow;
 
     // Description:
-    //
+    // Enable/Disable high quality texture rendering
     vtkKWCheckButtonWithLabel *CB_TextureHigh;
 
     // Description:
-    //
+    // Enable/Disable Ray Cast Mapping
     vtkKWCheckButtonWithLabel *CB_RayCast;
 
     // Description:
-    //
+    // Add interactive frame rates to ray cast mapping
     vtkKWCheckButtonWithLabel *CB_InteractiveFrameRate;
 
     // Description:
-    //
+    // Adjust the frame for interactive rendering methods
     vtkKWScaleWithLabel *SC_Framerate;
 
     // Description:
-    //
+    // Update the quality check boxes ( e.g. ensure that one cb is always enabled etc.)
+    void UpdateQualityCheckBoxes(void);
+
+    // Description:
+    // Create the performance page
     void CreatePerformance(void);
 
     // Description:
-    //
+    // Destroy the performance page
     void DestroyPerformance(void);
 
     //--------------------------------------------------------------------------
@@ -261,63 +265,59 @@ protected:
     //--------------------------------------------------------------------------
 
     // Description:
-    //
+    // Node selector to select a transform, that will be added to the clipping sliders
     vtkSlicerNodeSelectorWidget *NS_TransformNode;
 
     // Description:
-    //
+    // Enable/Disable cropping in general
     vtkKWCheckButtonWithLabel *CB_Cropping;
 
     // Description:
-    //
+    // Change the range of cropping in "BOX coordinates"
     vtkKWRange *RA_Cropping[3];
 
     // Description:
-    //
+    // The interactive clipping box.
     vtkSlicerBoxWidget *BW_Clipping;
 
     // Description:
-    //
+    // Enable/Disable the interactive clipping box
     vtkKWCheckButtonWithLabel *CB_Clipping;
 
     // Description:
-    //
+    //Transform node that can be used in addition to clipping sliders and box widget
     vtkMRMLLinearTransformNode *CurrentTransformNodeCropping;
 
     // Description:
-    //
+    // transform representation of the additionl transform node
     vtkTransform *AdditionalClippingTransform;
 
     // Description:
-    //
+    // inverse transform representation of the additional transform node
     vtkTransform *InverseAdditionalClippingTransform;
 
     // Description:
-    //
+    // Colors of the six clipping handles
     double ColorsClippingHandles[6][3];
 
     // Description:
-    //
+    // Flag to ensure that the clipping sliders are not adjusted, prevent endless loops
     int NoSetRangeNeeded;
 
     // Description:
-    //
+    // Create the cropping page
     void CreateCropping(void);
 
     // Description:
-    //
+    // Delete the cropping page
     void DestroyCropping(void);
 
     // Description:
-    //
-    void UpdateQualityCheckBoxes(void);
-
-    // Description:
-    //
+    // Convert a point in world coordinates to box coordinates. input=output
     void ConvertWorldToBoxCoordinates(double* inputOutput);
 
     // Description:
-    //
+    // Conver a point in box coordinates to world coordinates
     void ConvertBoxCoordinatesToWorld(double* inputOutput);
 
 
@@ -326,43 +326,47 @@ protected:
     //--------------------------------------------------------------------------
 
     // Description:
-    //
+    // A set of histograms used in the volume property widget
     vtkKWHistogramSet *Histograms;
 
     // Description:
-    //
+    // The volume property widget in the advanced page.
     vtkSlicerVolumePropertyWidget *SVP_VolumeProperty;
 
     // Description:
-    //
+    // Update the volume property widget
     void UpdateSVP(void);
+
+    // Description:
+    // Adjust the transfer functions to the current setting of vtkVolumeProperty
+    void AdjustMapping(void);
 
     //--------------------------------------------------------------------------
     // Rendering Logic
     //--------------------------------------------------------------------------
 
     // Description:
-    //
+    // Mask which rendering algorithms to use
     int ScheduleMask[3];
 
     // Description:
-    //
+    // Main renderer of the renderwidget. Used to reduce the viewport size
     vtkRenderer *RenViewport;
 
     // Description:
-    //
+    // Renderer used to render the plane
     vtkRenderer *RenPlane;
 
     // Description:
-    //
+    // Flag to signalize if the next rendering is to render the plane
     int RenderPlane;
 
     // Description:
-    //
+    // The hardware accelerated texture mapper.
     vtkSlicerVolumeTextureMapper3D *MapperTexture;
 
     // Description:
-    //
+    // The software accelerated software mapper
     vtkSlicerFixedPointVolumeRayCastMapper *MapperRaycast;
 
     // Description:
@@ -371,101 +375,85 @@ protected:
 
     // Description:
     //Factor during last low Resolution Rendering
-
     double FactorLastLowRes;
-
-    // Description:
-    //Time for the last High Resolution Rendering
-    double LastTimeHighRes;
 
     // Description:
     //Time for the last Low Resolution Rendering
     double LastTimeLowRes;
 
     // Description:
-    //Timer
+    // Timer to measure the duration of the low resolution rendering
     vtkTimerLog *Timer;
 
     // Description:
-    //Which time would we like to achieve
+    // Which time would we like to achieve
     double GoalLowResTime;
 
     // Description:
-    //Area in which no change in Factor will be made.
+    // Area in which no change in Factor will be made.
     double PercentageNoChange;
 
     // Description:
-    //How long to wait, before Rendering in High Resolution
+    //H ow long to wait, before Rendering in High Resolution
     double TimeToWaitForHigherStage;
 
     // Description:
-    //0 interactive, 1 High Resolution Texture VR, 2 SW Ray Cast
+    // 0 interactive, 1 High Resolution Texture VR, 2 SW Ray Cast
     int CurrentStage;
 
     // Description:
-    //
+    // Similiar to current stage, but describing the lowest stage
     int Quality;
 
     // Description:
-    //
+    // 1 mouse button is down at the moment
     int ButtonDown;
 
     // Description:
-    //
+    // Indicates if the next rendering comes from a scheduled rendering
     int Scheduled;
 
-    // Description:
-    //Flag if next Render is a High Resolution Render
-    int NextRenderHighResolution;
-
-    // Description:
-    //
-    int IgnoreStepZero;
     //BTX
 
     // Description:
-    //
+    // Event id of the next scheduled rendering (not necessary lowest quality)
     std::string EventHandlerID;
 
     // Description:
-    //
+    // Event id of the lowest quality scheduled rendering
     std::string StageZeroEventHandlerID;
     //ETX
 
-    // Description:
-    //
-    double SavedStillRate;
     //Description:
     //Indicates if the VolumeRendering is Paused or not
     int RenderingPaused;
     // Description:
-    //
+    // Sample distance for high resolution rendering
     double SampleDistanceHighRes;
 
     // Description:
-    //
+    // Image sample distance for high resolution rendering
     double SampleDistanceHighResImage;
 
     // Description:
-    //
+    // Sample distance for low resolution rendering
     double SampleDistanceLowRes;
 
     // Description:
-    //
+    // Calculate and set sample distances (SampleDistanceHighRes,SampleDistanceHighResImage,SampleDistanceLowRes).
+    // The current image spacing is the basis for the calculation
     void CalculateAndSetSampleDistances();
 
     // Description:
-    //
+    // Reset the rendering algorithm back to normal
     void ResetRenderingAlgorithm(void);
 
 
     // Description:
-    //
+    // Check if we have to abort the rendering because of interaction
     void CheckAbort(void);
 
-    // Description:
-    //
-    void AdjustMapping(void);
+
 
 
 
