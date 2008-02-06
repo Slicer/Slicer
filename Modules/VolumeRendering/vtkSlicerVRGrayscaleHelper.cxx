@@ -583,29 +583,36 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->ConvertWorldToBoxCoordinates(pointA);
             this->ConvertWorldToBoxCoordinates(pointB);
 
-            vtkImageData *iData=vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
-            for(int i=0; i<3;i++)
-            {
-                double rangeFromImagedata=iData->GetDimensions()[i]/2.; 
-                if((-rangeFromImagedata)<pointA[i])
-                {
-                    this->RA_Cropping[i]->SetWholeRange((-rangeFromImagedata),this->RA_Cropping[i]->GetWholeRange()[1]);
-                }
-                else
-                {
-                    this->RA_Cropping[i]->SetWholeRange(pointA[i],this->RA_Cropping[i]->GetWholeRange()[1]);
-                }
-                if(rangeFromImagedata>pointB[i])
-                {
-                    this->RA_Cropping[i]->SetWholeRange(this->RA_Cropping[i]->GetWholeRange()[0],rangeFromImagedata);
-                }
-                else
-                {
-                    this->RA_Cropping[i]->SetWholeRange(this->RA_Cropping[i]->GetWholeRange()[0],pointB[i]);
-                }
-                this->RA_Cropping[i]->SetRange(pointA[i],pointB[i]);
 
+            double pointSmallestValue[3];
+            double pointHighestValue[3];
+            for(int i=0;i<3;i++)
+            {
+                if(pointA[i]>pointB[i])
+                {
+                    pointSmallestValue[i]=pointB[i];
+                    pointHighestValue[i]=pointA[i];
+                }
+                else
+                {
+                    pointSmallestValue[i]=pointA[i];
+                    pointHighestValue[i]=pointB[i];
+                }
+                double valueLeft=this->VolumeBoundariesBoxCoordinates[0][i];
+                if(pointSmallestValue[i]<this->VolumeBoundariesBoxCoordinates[0][i])
+                {
+                    valueLeft=pointSmallestValue[i];
+                }
+                double valueRight=this->VolumeBoundariesBoxCoordinates[1][i];
+                if(pointHighestValue[i]>this->VolumeBoundariesBoxCoordinates[1][i])
+                {
+                    valueRight=pointHighestValue[i];
+                }
+                this->RA_Cropping[i]->SetWholeRange(valueLeft,valueRight);          
+                this->RA_Cropping[i]->SetRange(pointA[i],pointB[i]);
             }
+
+            
             
 
             vertices->Delete();
@@ -1281,6 +1288,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessCropping(int index, double min,double ma
     this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::EndInteractionEvent,0);
     this->NoSetRangeNeeded=0;
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+    this->CalculateBoxCoordinatesBoundaries();
 }
 
 void vtkSlicerVRGrayscaleHelper::CreateCropping()
@@ -2043,5 +2051,51 @@ void vtkSlicerVRGrayscaleHelper::ProcessConfigureCallback(void)
     vtkRenderWindowInteractor *interactor=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor();
     interactor->UpdateSize(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[0],
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[1]);
+
+}
+
+void vtkSlicerVRGrayscaleHelper::CalculateBoxCoordinatesBoundaries(void)
+{
+    //Calculate origin in box coordinates
+    //int pointAint[3];
+    double pointA[4];
+    //vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetOrigin(pointAint);
+    for(int i=0;i<3;i++)
+    {
+        pointA[i]=0;
+    }
+    pointA[3]=1;
+    vtkMatrix4x4 *matrix=vtkMatrix4x4::New();
+    this->CalculateMatrix(matrix);
+    matrix->MultiplyPoint(pointA,pointA);//Now we have point in world coordinates
+    this->ConvertWorldToBoxCoordinates(pointA);//Now we have point in box coordinates
+
+
+    //Calculate dimension in box coordinates
+    int pointBint[3];
+    double pointB[4];
+    vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetDimensions(pointBint);
+    for(int i=0;i<3;i++)
+    {
+        pointB[i]=pointBint[i];
+    }
+    pointB[3]=1;
+    matrix->MultiplyPoint(pointB,pointB);//Now we have point in world coordinates
+    this->ConvertWorldToBoxCoordinates(pointB);//Now we have point in box coordinates
+
+    for(int i=0;i<3;i++)
+    {
+        if(pointA[i]<0)
+        {
+            this->VolumeBoundariesBoxCoordinates[0][i]=pointA[i];
+            this->VolumeBoundariesBoxCoordinates[1][i]=pointB[i];
+        }
+        else
+        {
+            this->VolumeBoundariesBoxCoordinates[0][i]=pointB[i];
+            this->VolumeBoundariesBoxCoordinates[1][i]=pointA[i];
+        }
+    }
+
 
 }

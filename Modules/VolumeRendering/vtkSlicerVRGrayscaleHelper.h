@@ -309,6 +309,10 @@ protected:
     int NoSetRangeNeeded;
 
     // Description:
+    // The volume boundaries in box coordinates(two points).
+    double VolumeBoundariesBoxCoordinates[2][3];
+
+    // Description:
     // Create the cropping page
     void CreateCropping(void);
 
@@ -321,8 +325,13 @@ protected:
     void ConvertWorldToBoxCoordinates(double* inputOutput);
 
     // Description:
-    // Conver a point in box coordinates to world coordinates
+    // Convert a point in box coordinates to world coordinates
     void ConvertBoxCoordinatesToWorld(double* inputOutput);
+
+    // Description:
+    // Calculate and set the boundaries of the volume in box coordinates
+    void CalculateBoxCoordinatesBoundaries(void);
+
 
 
 
