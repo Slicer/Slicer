@@ -17,8 +17,8 @@ vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
     this->UIPanel = vtkKWUserInterfacePanel::New ( );
     this->HelpAndAboutNotebook = vtkKWNotebook::New ();
     this->HelpAndAboutFrame = vtkSlicerModuleCollapsibleFrame::New ();
-    this->HelpText = vtkKWTextWithScrollbars::New ( );
-    this->AboutText = vtkKWTextWithScrollbars::New ( );
+    this->HelpText = vtkKWTextWithHyperlinksWithScrollbars::New ( );
+    this->AboutText = vtkKWTextWithHyperlinksWithScrollbars::New ( );
     this->LogoFrame = vtkKWFrame::New ( );
 
     this->ApplicationGUI = NULL;
@@ -129,12 +129,12 @@ void vtkSlicerModuleGUI::BuildHelpAndAboutFrame ( vtkKWWidget *parent,
   this->HelpText->Create ( );
   this->HelpText->SetHorizontalScrollbarVisibility ( 0 );
   this->HelpText->SetVerticalScrollbarVisibility ( 1 );
-  this->HelpText->GetWidget()->SetText ( helptext );
   this->HelpText->GetWidget()->SetReliefToFlat ( );
   this->HelpText->GetWidget()->SetWrapToWord ( );
-  this->HelpText->GetWidget()->ReadOnlyOn ( );
   this->HelpText->GetWidget()->QuickFormattingOn ( );
-  this->HelpText->GetWidget()->SetBalloonHelpString ( "" );
+  this->HelpText->SetText ( helptext );
+  //Important that Read only after SetText otherwise it doesn't work
+  this->HelpText->GetWidget()->ReadOnlyOn ( );
   this->Script ( "pack %s -side top -fill x -expand y -anchor w -padx 2 -pady 4",
                 this->HelpText->GetWidgetName ( ) );
   
@@ -143,12 +143,12 @@ void vtkSlicerModuleGUI::BuildHelpAndAboutFrame ( vtkKWWidget *parent,
   this->AboutText->Create ( );
   this->AboutText->SetHorizontalScrollbarVisibility ( 0 );
   this->AboutText->SetVerticalScrollbarVisibility ( 1 );
-  this->AboutText->GetWidget()->SetText ( abouttext );
   this->AboutText->GetWidget()->SetReliefToFlat ( );
   this->AboutText->GetWidget()->SetWrapToWord ( );
-  this->AboutText->GetWidget()->ReadOnlyOn ( );
   this->AboutText->GetWidget()->QuickFormattingOn ( );
-  this->AboutText->GetWidget()->SetBalloonHelpString ( "" );
+  this->AboutText->SetText ( abouttext );
+  //Important that Read only after SetText otherwise it doesn't work
+  this->AboutText->GetWidget()->ReadOnlyOn ( );
 
   // configure the parent class's logo frame
   this->LogoFrame->SetParent ( this->HelpAndAboutNotebook->GetFrame("Acknowledgement") );

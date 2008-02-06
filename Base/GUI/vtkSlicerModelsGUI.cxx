@@ -448,7 +448,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     
     // Define your help text and build the help frame here.
     const char *help = "The Models Module loads, saves and adjusts display parameters of models.\nThe Load Model button will allow you to load any model that Slicer can read, Load Model Directory will load all the VTK models in a directory. Load FreeSurfer Overlay will load a scalar file and associate it with the currently active model.\nYou can adjust the display properties of the models in the Display pane. Select the model you wish to work on from the model selector drop down menu. Scalar overlays are loaded with a default colour look up table, but can be reassigned manually. Once a new scalar overlay is chosen, currently the old color map is still used, so that must be adjusted in conjunction with the overlay.\nClipping is turned on for a model in the Display pane, and the slice planes that will clip the model are selected in the Clipping pane.\nThe Model Hierarchy pane allows you to group models together and set the group's properties.";
-    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
+    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Models" );
     this->BuildHelpAndAboutFrame ( page, help, about );
 

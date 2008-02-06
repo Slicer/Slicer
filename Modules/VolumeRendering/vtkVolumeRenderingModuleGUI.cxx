@@ -174,7 +174,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
 
     // Define your help text and build the help frame here.
     const char *help = "Volume Rendering allows the rendering of volumes in 3D space and not only as 2D surfaces defined in 3D space. Tutorials are available at http://www.na-mic.org/Wiki/index.php/Slicer3:Volume_Rendering_Tutorials";
-    const char *about = "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details.";
+    const char *about = "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "VolumeRendering" );
     this->BuildHelpAndAboutFrame ( page, help, about );
     //

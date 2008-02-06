@@ -212,7 +212,7 @@ void vtkSlicerDataGUI::BuildGUI ( )
     
     // Define your help text and build the help frame here.
     const char *help = "The Data Module displays and permits operations on the MRML tree. ";
-    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
+    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Data" );
     this->BuildHelpAndAboutFrame ( page, help, about );
 

@@ -218,7 +218,7 @@ void vtkSlicerColorGUI::BuildGUI ( )
   
   // Define your help text and build the help frame here.
   const char *help = "The Color Module manages color look up tables.\nTables are used by mappers to translate between an integer and a colour value for display of models and volumes.\nSlicer supports three kinds of tables:\n1. Continuous scales, like the greyscale table.\n2. Parametric tables, defined by an equation, such as the FMRIPA table.\n3. Discreet tables, such as those read in from a file.\nUsers are only allowed to edit User type tables. TODO: allow copy from a standard one.";
-  const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
+  const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
   vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Color" );
   this->BuildHelpAndAboutFrame ( page, help, about );
   

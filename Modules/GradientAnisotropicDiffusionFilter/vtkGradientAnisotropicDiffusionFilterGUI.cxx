@@ -295,7 +295,7 @@ void vtkGradientAnisotropicDiffusionFilterGUI::BuildGUI ( )
   // ---
    // Define your help text and build the help frame here.
     const char *help = "The GradientAnisotropicDiffusionFilter module....";
-    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. ";
+    const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "GradientAnisotropicDiffusionFilter" );
     this->BuildHelpAndAboutFrame ( page, help, about );
     
