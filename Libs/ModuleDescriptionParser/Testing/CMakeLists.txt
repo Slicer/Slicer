@@ -12,12 +12,17 @@ INCLUDE_DIRECTORIES(
   ${ModuleDescriptionParser_SOURCE_DIR}
   )
 
-SET (TEST_DATA ${ModuleDescriptionParserTesting_SOURCE_DIR}/TestData)
-ADD_TEST(Parser1Test1 ${EXECUTABLE_OUTPUT_PATH}/Parser1Test ${TEST_DATA}/ParserTest1.xml)
+SET( EXE_PREFIX ${EXECUTABLE_OUTPUT_PATH} )
+IF (WIN32)
+  SET( EXE_PREFIX ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE})
+ENDIF (WIN32)
 
-ADD_TEST(Parser1Test2 ${EXECUTABLE_OUTPUT_PATH}/Parser1Test ${TEST_DATA}/ParserTest2.xml)
+SET (TEST_DATA ${ModuleDescriptionParserTesting_SOURCE_DIR}/TestData)
+ADD_TEST(Parser1Test1 ${LAUNCH_EXE} ${EXE_PREFIX}/Parser1Test ${TEST_DATA}/ParserTest1.xml)
+
+ADD_TEST(Parser1Test2 ${LAUNCH_EXE} ${EXE_PREFIX}/Parser1Test ${TEST_DATA}/ParserTest2.xml)
 
 IF(Slicer3_BINARY_DIR)
-ADD_TEST(ModuleFactoryTest ${EXECUTABLE_OUTPUT_PATH}/ModuleFactoryTest ${Slicer3_BINARY_DIR}/${SLICER_INSTALL_LIBRARIES_DIR}/Plugins/)
+ADD_TEST(ModuleFactoryTest ${LAUNCH_EXE} ${EXE_PREFIX}/ModuleFactoryTest ${Slicer3_BINARY_DIR}/${SLICER_INSTALL_LIBRARIES_DIR}/Plugins/)
 ENDIF(Slicer3_BINARY_DIR)
 
