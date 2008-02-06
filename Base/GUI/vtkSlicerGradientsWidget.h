@@ -10,6 +10,8 @@ class vtkKWLoadSaveButtonWithLabel;
 class vtkKWCheckButton;
 class vtkKWTextWithScrollbars ;
 class vtkKWLabel;
+class vtkDoubleArray;
+class vtkKWMessageDialog;
 
 // Description:
 // This class implements Slicer's DWI Gradients GUI.
@@ -52,6 +54,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidg
     // Method to update the gradientsTextbox containing bValue and gradients (GUI).
     void UpdateGradients();
 
+    // Description:
+    // Method to update the status label for the gradients (GUI).
+    void UpdateStatusLabel(int status);
+
+    // Description:
+    // Method to display message to the user (GUI).
+    void DisplayMessageDialog(const char* message);
+
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkKWFrameWithLabel *GradientsFrame;
     vtkKWFrame *ButtonsFrame;
@@ -59,6 +69,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidg
     vtkKWCheckButton *EnableGradientsButton;
     vtkKWTextWithScrollbars *GradientsTextbox;
     vtkKWLabel *StatusLabel;
+    vtkDoubleArray *Gradients;
+    vtkDoubleArray *BValues;
+    vtkKWMessageDialog *MessageDialog;
 
   private:
     vtkSlicerGradientsWidget ( const vtkSlicerGradientsWidget& ); // Not implemented.
