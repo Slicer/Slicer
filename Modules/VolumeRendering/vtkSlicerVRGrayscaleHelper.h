@@ -110,6 +110,10 @@ public:
     // Callback, that is processed when the clipping was modified e. g. because of transform node 
     void ProcessClippingModified(void);
 
+    // Description:
+    // Workaround to get knowledge about resize of the renderwidget. TODO: Should get into KWWidgets.
+    void ProcessConfigureCallback(void);
+
 
 
     //--------------------------------------------------------------------------
@@ -321,6 +325,8 @@ protected:
     void ConvertBoxCoordinatesToWorld(double* inputOutput);
 
 
+
+
     //--------------------------------------------------------------------------
     // Advanced
     //--------------------------------------------------------------------------
@@ -452,6 +458,8 @@ protected:
     // Description:
     // Check if we have to abort the rendering because of interaction
     void CheckAbort(void);
+
+
 
 
 

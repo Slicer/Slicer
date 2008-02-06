@@ -1374,6 +1374,10 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
     this->Script("pack %s -side top -anchor nw -fill x -padx 10 -pady 10",this->NS_TransformNode->GetWidgetName());
     this->ProcessEnableDisableCropping(0);
     croppingFrame->Delete();
+
+     //TODO this should be fixed after inclusion into KWWidgets
+        this->ProcessConfigureCallback();
+        this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->SetBinding("<Configure>", this, "ProcessConfigureCallback");
 }
 
 void vtkSlicerVRGrayscaleHelper::CreateThreshold()
@@ -1662,8 +1666,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessDisplayClippingBox(int clippingEnabled)
         this->BW_Clipping->TranslationEnabledOn();
         this->BW_Clipping->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
         this->NoSetRangeNeeded=0;
-        //interactor->UpdateSize(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[0],
-        //    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[1]);
+       
+
 
         this->BW_Clipping->AddObserver(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
         this->BW_Clipping->AddObserver(vtkCommand::EndInteractionEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
@@ -1731,6 +1735,7 @@ void vtkSlicerVRGrayscaleHelper::ResetRenderingAlgorithm(void)
 
 void vtkSlicerVRGrayscaleHelper::DestroyCropping(void)
 {
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->RemoveBinding("<Configure>", this, "ProcessConfigureCallback");
     if(this->BW_Clipping)
     {
         this->BW_Clipping->RemoveObservers(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
@@ -2030,4 +2035,13 @@ void vtkSlicerVRGrayscaleHelper::ConvertBoxCoordinatesToWorld(double* inputOutpu
     {
         inputOutput[i]=inputOutput[i]+pointA[i];
     }
+}
+
+
+void vtkSlicerVRGrayscaleHelper::ProcessConfigureCallback(void)
+{
+    vtkRenderWindowInteractor *interactor=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor();
+    interactor->UpdateSize(this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[0],
+    this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetSize()[1]);
+
 }
