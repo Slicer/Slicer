@@ -20,6 +20,7 @@ vtkSlicerVRMenuButtonColorMode::vtkSlicerVRMenuButtonColorMode(void)
 
 vtkSlicerVRMenuButtonColorMode::~vtkSlicerVRMenuButtonColorMode(void)
 {
+    this->SetColorTransferFunction(NULL);
 }
 void vtkSlicerVRMenuButtonColorMode::CreateWidget(void)
 {
