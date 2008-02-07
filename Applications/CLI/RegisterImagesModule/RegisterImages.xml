@@ -47,6 +47,7 @@
       <label>Save transform</label>
       <description>Save the transform that results from registration</description>
       <longflag>saveTransform</longflag>
+      <channel>output</channel>
     </file>
     <file>
       <name>loadParameters</name>
@@ -59,6 +60,7 @@
       <label>Save parameters</label>
       <description>Writed the parameters used for registration</description>
       <longflag>saveParameters</longflag>
+      <channel>output</channel>
     </file>
   </parameters>
   <parameters advanced="true">
