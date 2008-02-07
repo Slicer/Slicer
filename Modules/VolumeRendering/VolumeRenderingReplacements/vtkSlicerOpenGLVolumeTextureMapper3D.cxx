@@ -204,8 +204,8 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::Render(vtkRenderer *ren, vtkVolume *v
   glPopAttrib();
 
 
-  glFlush();
-  glFinish();
+  //glFlush();
+  //glFinish();
   
   
   this->Timer->StopTimer();      
@@ -512,8 +512,8 @@ void vtkSlicerOpenGLVolumeTextureMapper3D::RenderPolygons( vtkRenderer *ren,
       {
       if ( i%64 == 1 )
         {
-        glFlush();
-        glFinish();
+        //glFlush();
+        //glFinish();
         }
       
       if ( renWin->CheckAbortStatus() )
