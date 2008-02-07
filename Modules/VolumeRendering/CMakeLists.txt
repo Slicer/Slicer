@@ -105,7 +105,11 @@ CONFIGURE_FILE(
 )
 CONFIGURE_FILE(
   ${VolumeRenderingModule_SOURCE_DIR}/presets.xml
-  ${VolumeRenderingModule_BINARY_DIR}/presets.xml
+  ${Slicer3_BINARY_DIR}/lib/Slicer3/Modules/VolumeRendering/presets.xml
   COPYONLY
 )
+INSTALL(
+  FILES ${VolumeRenderingModule_SOURCE_DIR}/presets.xml
+  DESTINATION lib/Slicer3/Modules/VolumeRendering
+) 
 ENDIF(VOLUMERENDERINGMODULE)
