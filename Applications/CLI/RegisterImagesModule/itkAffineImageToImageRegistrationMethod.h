@@ -18,10 +18,10 @@
 #ifndef __AffineImageToImageRegistrationMethod_h
 #define __AffineImageToImageRegistrationMethod_h
 
-#include "itkImage.h"
+#include "itkOrientedImage.h"
 #include "itkAffineTransform.h"
 
-#include "itkImageToImageRegistrationMethod.h"
+#include "itkOptimizedImageToImageRegistrationMethod.h"
 
 namespace itk
 {
@@ -42,6 +42,10 @@ class AffineImageToImageRegistrationMethod
                   OptimizedImageToImageRegistrationMethod );
 
     itkNewMacro( Self );
+
+    itkStaticConstMacro( ImageDimension, unsigned int,
+                         TImage::ImageDimension );
+
 
     //
     // Typedefs from Superclass

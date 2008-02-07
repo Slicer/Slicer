@@ -47,6 +47,8 @@ class OptimizedImageToImageRegistrationMethod
     //
     typedef TImage                                     ImageType;
 
+    typedef typename ImageType::PixelType              PixelType;
+
     typedef typename Superclass::TransformType         TransformType;
 
     typedef typename TransformType::ParametersType     TransformParametersType;
@@ -95,6 +97,9 @@ class OptimizedImageToImageRegistrationMethod
     itkSetMacro( NumberOfSamples, unsigned int );
     itkGetConstMacro( NumberOfSamples, unsigned int );
 
+    itkSetMacro( FixedImageSamplesIntensityThreshold, PixelType );
+    itkGetConstMacro( FixedImageSamplesIntensityThreshold, PixelType );
+
     itkSetMacro( TargetError, double );
     itkGetConstMacro( TargetError, double );
 
@@ -108,6 +113,8 @@ class OptimizedImageToImageRegistrationMethod
 
     itkSetMacro( OptimizationMethodEnum, OptimizationMethodEnumType );
     itkGetConstMacro( OptimizationMethodEnum, OptimizationMethodEnumType );
+
+    itkGetMacro( FinalMetricValue, double );
 
   protected:
 
@@ -133,6 +140,8 @@ class OptimizedImageToImageRegistrationMethod
 
     unsigned int                        m_NumberOfSamples;
 
+    PixelType                           m_FixedImageSamplesIntensityThreshold;
+
     double                              m_TargetError;
 
     TransformMethodEnumType             m_TransformMethodEnum;
@@ -142,6 +151,8 @@ class OptimizedImageToImageRegistrationMethod
     InterpolationMethodEnumType         m_InterpolationMethodEnum;
 
     OptimizationMethodEnumType          m_OptimizationMethodEnum;
+
+    double                              m_FinalMetricValue;
   };
 
 } 

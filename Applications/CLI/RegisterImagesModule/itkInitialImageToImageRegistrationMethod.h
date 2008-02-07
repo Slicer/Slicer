@@ -48,6 +48,9 @@ class InitialImageToImageRegistrationMethod
     //
     // Typedefs from Superclass
     //
+    itkStaticConstMacro( ImageDimension, unsigned int,
+                         TImage::ImageDimension );
+
     typedef AffineTransform< double, itkGetStaticConstMacro( ImageDimension ) >
                                                       TransformType;
 

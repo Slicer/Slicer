@@ -36,6 +36,7 @@
 #include "itkOnePlusOneEvolutionaryOptimizer.h"
 #include "itkNormalVariateGenerator.h"
 #include "itkLBFGSBOptimizer.h"
+//#include "itkPowellOptimizer.h"
 #include "itkFRPROptimizer.h"
 
 namespace itk
@@ -147,7 +148,7 @@ class HierarchicalRegistrationLevelObserver
       else
         {
         OptimizerType::ParametersType tmpScales = optimizer->GetScales();
-        for(int i=0; i<tmpScales.size(); i++)
+        for(unsigned int i=0; i<tmpScales.size(); i++)
           {
           tmpScales[i] = tmpScales[i] / 2;
           }
@@ -181,14 +182,17 @@ OptimizedImageToImageRegistrationMethod< TImage >
   m_MaxIterations = 500;
   
   m_NumberOfSamples = 20000;
+  m_FixedImageSamplesIntensityThreshold = 0;
 
-  m_TargetError = 0.01;
+  m_TargetError = 0.001;
 
   m_TransformMethodEnum = RIGID_TRANSFORM;
 
   m_MetricMethodEnum = MATTES_MI_METRIC;
   m_InterpolationMethodEnum = LINEAR_INTERPOLATION;
   m_OptimizationMethodEnum = EVOLUTIONARY_OPTIMIZATION;
+
+  m_FinalMetricValue = 0;
 
 }
 
@@ -205,7 +209,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
 {
   this->Initialize();
 
-  std::cout << "UPDATE START" << std::endl;
+  if( this->GetReportProgress() )
+    {
+    std::cout << "UPDATE START" << std::endl;
+    }
 
   this->GetTransform()->SetParametersByValue( this->GetInitialTransformParameters() );
 
@@ -220,7 +227,6 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
       TypedMetricType * m = static_cast< TypedMetricType * >( metric.GetPointer() );
       m->SetNumberOfHistogramBins( 200 );
-      m->SetNumberOfSpatialSamples( this->GetNumberOfSamples() );
       break;
       }
     case NORMALIZED_CORRELATION_METRIC:
@@ -267,7 +273,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
     {
     case MULTIRESOLUTION_OPTIMIZATION:
       {
-      std::cout << "MULTIRESOLUTION START" << std::endl;
+      if( this->GetReportProgress() )
+        {
+        std::cout << "MULTIRESOLUTION START" << std::endl;
+        }
 
       typedef MultiResolutionImageRegistrationMethod< TImage, TImage > RegType;
       typedef MultiResolutionPyramidImageFilter< TImage, TImage >      PyramidType;
@@ -299,6 +308,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
         }
       else
         {
+        //typedef PowellOptimizer                  GradOptimizerType;
         typedef FRPROptimizer                  GradOptimizerType;
 
         gradOpt = GradOptimizerType::New();
@@ -307,22 +317,25 @@ OptimizedImageToImageRegistrationMethod< TImage >
         tmpOpt->SetMaximize( false );
         tmpOpt->SetStepLength( 2 );
         tmpOpt->SetStepTolerance( this->GetTargetError() );
-        tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() * 2 );
+        tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() * 4 );
         tmpOpt->SetMaximumLineIteration( (int)( this->GetMaxIterations() / (this->GetTransform()->GetNumberOfParameters() * 0.5) ) );
         tmpOpt->SetScales( this->GetTransformParametersScales() );
+        tmpOpt->SetUseUnitLengthGradient(true);
         }
  
-      typedef ImageRegistrationViewer ViewerCommandType;
-      typename ViewerCommandType::Pointer command = ViewerCommandType::New();
-      if( this->GetTransform()->GetNumberOfParameters() > 16)
+      if( this->GetReportProgress() )
         {
-        command->SetDontShowParameters( true );
+        typedef ImageRegistrationViewer ViewerCommandType;
+        typename ViewerCommandType::Pointer command = ViewerCommandType::New();
+        if( this->GetTransform()->GetNumberOfParameters() > 16)
+          {
+          command->SetDontShowParameters( true );
+          }
+        gradOpt->AddObserver( itk::IterationEvent(), command );
         }
-      gradOpt->AddObserver( itk::IterationEvent(), command );
 
       if( this->GetObserver() )
         {
-        std::cout << "Adding observer." << std::endl;
         gradOpt->AddObserver( itk::IterationEvent(), this->GetObserver() );
         }
 
@@ -349,12 +362,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
         {
         if( this->GetFixedImageMaskObject() )
           {
-          std::cout << "Adding fixed image mask." << std::endl;
           metric->SetFixedImageMask( this->GetFixedImageMaskObject() );
           }
         if( this->GetMovingImageMaskObject() )
           {
-          std::cout << "Adding moving image mask." << std::endl;
           metric->SetMovingImageMask( this->GetMovingImageMaskObject() );
           }
         }
@@ -370,12 +381,20 @@ OptimizedImageToImageRegistrationMethod< TImage >
       this->SetLastTransformParameters( reg->GetLastTransformParameters() );
       this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
-      std::cout << "MULTIRESOLUTION END" << std::endl;
+      m_FinalMetricValue = reg->GetOptimizer()->GetValue( this->GetLastTransformParameters() );
+
+      if( this->GetReportProgress() )
+        {
+        std::cout << "MULTIRESOLUTION END" << std::endl;
+        }
       break;
       }
     case EVOLUTIONARY_OPTIMIZATION:
       {
-      std::cout << "EVOLUTIONARY START" << std::endl;
+      if( this->GetReportProgress() )
+        {
+        std::cout << "EVOLUTIONARY START" << std::endl;
+        }
 
       typedef ImageRegistrationMethod< TImage, TImage >  RegType;
       typedef OnePlusOneEvolutionaryOptimizer            EvoOptimizerType;
@@ -414,6 +433,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
         }
       else
         {
+        //typedef PowellOptimizer                  GradOptimizerType;
         typedef FRPROptimizer                  GradOptimizerType;
 
         gradOpt = GradOptimizerType::New();
@@ -422,23 +442,26 @@ OptimizedImageToImageRegistrationMethod< TImage >
         tmpOpt->SetMaximize( false );
         tmpOpt->SetStepLength( 0.25 );
         tmpOpt->SetStepTolerance( this->GetTargetError() );
-        tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() );
+        tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() * 4 );
         tmpOpt->SetMaximumLineIteration( (int)( this->GetMaxIterations() / (this->GetTransform()->GetNumberOfParameters() * 0.5) ) );
         tmpOpt->SetScales( this->GetTransformParametersScales() );
+        tmpOpt->SetUseUnitLengthGradient(true);
         }
 
-      typedef ImageRegistrationViewer ViewerCommandType;
-      typename ViewerCommandType::Pointer command = ViewerCommandType::New();
-      if( this->GetTransform()->GetNumberOfParameters() > 16)
+      if( this->GetReportProgress() )
         {
-        command->SetDontShowParameters( true );
+        typedef ImageRegistrationViewer ViewerCommandType;
+        typename ViewerCommandType::Pointer command = ViewerCommandType::New();
+        if( this->GetTransform()->GetNumberOfParameters() > 16)
+          {
+          command->SetDontShowParameters( true );
+          }
+        evoOpt->AddObserver( itk::IterationEvent(), command );
+        gradOpt->AddObserver( itk::IterationEvent(), command );
         }
-      evoOpt->AddObserver( itk::IterationEvent(), command );
-      gradOpt->AddObserver( itk::IterationEvent(), command );
 
       if( this->GetObserver() )
         {
-        std::cout << "Adding observer." << std::endl;
         evoOpt->AddObserver( itk::IterationEvent(), this->GetObserver() );
         gradOpt->AddObserver( itk::IterationEvent(), this->GetObserver() );
         }
@@ -452,12 +475,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
         {
         if( this->GetFixedImageMaskObject() )
           {
-          std::cout << "Adding fixed image mask." << std::endl;
           metric->SetFixedImageMask( this->GetFixedImageMaskObject() );
           }
         if( this->GetMovingImageMaskObject() )
           {
-          std::cout << "Adding moving image mask." << std::endl;
           metric->SetMovingImageMask( this->GetMovingImageMaskObject() );
           }
         }
@@ -473,19 +494,39 @@ OptimizedImageToImageRegistrationMethod< TImage >
       this->SetLastTransformParameters( reg->GetLastTransformParameters() );
       this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
-      gradOpt->SetCostFunction( reg->GetMetric() );
+      m_FinalMetricValue = reg->GetOptimizer()->GetValue( this->GetLastTransformParameters() );
+
+      gradOpt->SetCostFunction( metric );
       gradOpt->SetInitialPosition( reg->GetLastTransformParameters() );
-      gradOpt->StartOptimization();
+
+      try
+        {
+        gradOpt->StartOptimization();
+        }
+      catch(...)
+        {
+        std::cout << "Exception caught...continuing using best previous values..." << std::endl;
+        std::cout << "  Pos = " << gradOpt->GetCurrentPosition() << std::endl << std::endl;
+        std::cout << "  Value = " << gradOpt->GetValue( gradOpt->GetCurrentPosition() ) << std::endl;;
+        }
+        
 
       this->SetLastTransformParameters( gradOpt->GetCurrentPosition() );
       this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
-      std::cout << "EVOLUTIONARY END" << std::endl;
+      m_FinalMetricValue = reg->GetOptimizer()->GetValue( this->GetLastTransformParameters() );
+      if( this->GetReportProgress() )
+        {
+        std::cout << "EVOLUTIONARY END" << std::endl;
+        }
       break;
       }
     case GRADIENT_OPTIMIZATION:
       {
-      std::cout << "GRADIENT START" << std::endl;
+      if( this->GetReportProgress() )
+        {
+        std::cout << "GRADIENT START" << std::endl;
+        }
 
       typedef SingleValuedNonLinearOptimizer            OptimizerType;
 
@@ -517,6 +558,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
         }
       else
         {
+        //typedef PowellOptimizer                  GradOptimizerType;
         typedef FRPROptimizer                  GradOptimizerType;
 
         gradOpt = GradOptimizerType::New();
@@ -525,22 +567,25 @@ OptimizedImageToImageRegistrationMethod< TImage >
         tmpOpt->SetMaximize( false );
         tmpOpt->SetStepLength( 0.25 );
         tmpOpt->SetStepTolerance( this->GetTargetError() );
-        tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() * 2 );
+        tmpOpt->SetMaximumIteration( this->GetTransform()->GetNumberOfParameters() * 4 );
         tmpOpt->SetMaximumLineIteration( (int)( this->GetMaxIterations() / (this->GetTransform()->GetNumberOfParameters() * 0.5) ) );
         tmpOpt->SetScales( this->GetTransformParametersScales() );
+        tmpOpt->SetUseUnitLengthGradient(true);
         }
 
-      typedef ImageRegistrationViewer ViewerCommandType;
-      typename ViewerCommandType::Pointer command = ViewerCommandType::New();
-      if( this->GetTransform()->GetNumberOfParameters() > 16)
+      if( this->GetReportProgress() )
         {
-        command->SetDontShowParameters( true );
+        typedef ImageRegistrationViewer ViewerCommandType;
+        typename ViewerCommandType::Pointer command = ViewerCommandType::New();
+        if( this->GetTransform()->GetNumberOfParameters() > 16)
+          {
+          command->SetDontShowParameters( true );
+          }
+        gradOpt->AddObserver( itk::IterationEvent(), command );
         }
-      gradOpt->AddObserver( itk::IterationEvent(), command );
 
       if( this->GetObserver() )
         {
-        std::cout << "Adding observer." << std::endl;
         gradOpt->AddObserver( itk::IterationEvent(), this->GetObserver() );
         }
 
@@ -553,12 +598,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
         {
         if( this->GetFixedImageMaskObject() )
           {
-          std::cout << "Adding fixed image mask." << std::endl;
           metric->SetFixedImageMask( this->GetFixedImageMaskObject() );
           }
         if( this->GetMovingImageMaskObject() )
           {
-          std::cout << "Adding moving image mask." << std::endl;
           metric->SetMovingImageMask( this->GetMovingImageMaskObject() );
           }
         }
@@ -574,12 +617,20 @@ OptimizedImageToImageRegistrationMethod< TImage >
       this->SetLastTransformParameters( reg->GetLastTransformParameters() );
       this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
-      std::cout << "GRADIENT END" << std::endl;
+      m_FinalMetricValue = reg->GetOptimizer()->GetValue( this->GetLastTransformParameters() );
+
+      if( this->GetReportProgress() )
+        {
+        std::cout << "GRADIENT END" << std::endl;
+        }
       break;
       }
     }
 
-  std::cout << "UPDATE END" << std::endl;
+  if( this->GetReportProgress() )
+    {
+    std::cout << "UPDATE END" << std::endl;
+    }
 }
 
 
@@ -599,6 +650,8 @@ OptimizedImageToImageRegistrationMethod< TImage >
   os << indent << "Max Iterations = " << m_MaxIterations << std::endl;
 
   os << indent << "Number of Samples = " << m_NumberOfSamples << std::endl;
+
+  os << indent << "Samples threshold = " << m_FixedImageSamplesIntensityThreshold << std::endl;
 
   os << indent << "Target Error = " << m_TargetError << std::endl;
 

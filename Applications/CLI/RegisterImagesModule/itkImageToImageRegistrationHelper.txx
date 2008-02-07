@@ -31,6 +31,8 @@
 #include "itkTransformFileReader.h"
 #include "itkTransformFileWriter.h"
 #include "itkTransformFactory.h"
+#include "itkSubtractImageFilter.h"
+#include "itkMinimumMaximumImageCalculator.h"
 
 namespace itk
 {
@@ -59,6 +61,8 @@ ImageToImageRegistrationHelper< TImage >
   m_ExpectedScaleMagnitude = 0.05;
   m_ExpectedSkewMagnitude = 0.005;
 
+  m_SamplingIntensityThreshold = 0;
+
   m_CompletedInitialization = false;
   m_CompletedStage = PRE_STAGE;
   m_CompletedResampling = false;
@@ -70,6 +74,9 @@ ImageToImageRegistrationHelper< TImage >
   m_LoadedTransformResampledImage = 0;
   m_MatrixTransformResampledImage = 0;
   m_BSplineTransformResampledImage = 0;
+
+  m_FinalMetricValue = 0;
+  m_ReportProgress = false;
 
   // Loaded
   m_LoadedMatrixTransform = 0;
@@ -87,6 +94,7 @@ ImageToImageRegistrationHelper< TImage >
   m_RigidMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_RigidInterpolationMethodEnum = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION;
   m_RigidOptimizationMethodEnum = OptimizedRegistrationMethodType::EVOLUTIONARY_OPTIMIZATION;
+  m_RigidMetricValue = 0;
 
 
   // Affine
@@ -97,6 +105,7 @@ ImageToImageRegistrationHelper< TImage >
   m_AffineMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_AffineInterpolationMethodEnum = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION;
   m_AffineOptimizationMethodEnum = OptimizedRegistrationMethodType::GRADIENT_OPTIMIZATION;
+  m_AffineMetricValue = 0;
 
   
   // BSpline
@@ -108,6 +117,7 @@ ImageToImageRegistrationHelper< TImage >
   m_BSplineMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_BSplineInterpolationMethodEnum = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION;
   m_BSplineOptimizationMethodEnum = OptimizedRegistrationMethodType::GRADIENT_OPTIMIZATION;
+  m_BSplineMetricValue = 0;
 
 }
 
@@ -191,6 +201,11 @@ ImageToImageRegistrationHelper< TImage >
   m_CurrentMatrixTransform = 0;
   m_CurrentBSplineTransform = 0;
 
+  m_FinalMetricValue = 0;
+  m_RigidMetricValue = 0;
+  m_AffineMetricValue = 0;
+  m_BSplineMetricValue = 0;
+
   if( m_InitialMethodEnum == INIT_WITH_CURRENT_RESULTS )
     {
     m_CurrentMovingImage = GetFinalMovingImage();
@@ -251,9 +266,13 @@ ImageToImageRegistrationHelper< TImage >
       && m_InitialMethodEnum != INIT_WITH_NONE
       && m_InitialMethodEnum != INIT_WITH_CURRENT_RESULTS )
     {
-    std::cout << "*** INITIAL REGISTRATION ***" << std::endl;
+    if( this->GetReportProgress() )
+      {
+      std::cout << "*** INITIAL REGISTRATION ***" << std::endl;
+      }
 
     typename InitialRegistrationMethodType::Pointer reg = InitialRegistrationMethodType::New();
+    reg->SetReportProgress( m_ReportProgress );
     reg->SetMovingImage( m_CurrentMovingImage );
     reg->SetFixedImage( m_FixedImage );
     if( m_UseMasks )
@@ -278,6 +297,8 @@ ImageToImageRegistrationHelper< TImage >
       case INIT_WITH_SECOND_MOMENTS:
         reg->SetNumberOfMoments( 2 );
         break;
+      default:
+        break;
       }
 
     reg->Update();
@@ -291,16 +312,35 @@ ImageToImageRegistrationHelper< TImage >
     }
 
   typename ImageType::SizeType fixedImageSize = m_FixedImage->GetLargestPossibleRegion().GetSize();
-  unsigned long fixedImageNumPixels = fixedImageSize[0] * fixedImageSize[1] * fixedImageSize[2];
+  unsigned long fixedImageNumPixels = m_FixedImage->GetLargestPossibleRegion().GetNumberOfPixels();
 
   if( m_EnableRigidRegistration )
     {
-    std::cout << "*** RIGID REGISTRATION ***" << std::endl;
+    if( this->GetReportProgress() )
+      {
+      std::cout << "*** RIGID REGISTRATION ***" << std::endl;
+      }
 
     typename RigidRegistrationMethodType::Pointer reg = RigidRegistrationMethodType::New();
+    reg->SetReportProgress( m_ReportProgress );
     reg->SetMovingImage( m_CurrentMovingImage );
     reg->SetFixedImage( m_FixedImage );
-    reg->SetNumberOfSamples( (unsigned int)(m_RigidSamplingRatio * fixedImageNumPixels) );
+    reg->SetNumberOfSamples( (unsigned int)( m_RigidSamplingRatio * fixedImageNumPixels ) );
+    if( m_SamplingIntensityThreshold > 0 )
+      {
+      typedef MinimumMaximumImageCalculator< ImageType >  MinMaxCalcType;
+      typename MinMaxCalcType::Pointer calc = MinMaxCalcType::New();
+      calc->SetImage( m_FixedImage );
+      calc->Compute();
+      PixelType fixedImageMax = calc->GetMaximum();
+      PixelType fixedImageMin = calc->GetMinimum();
+
+      reg->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>( 
+                                                   ( m_SamplingIntensityThreshold 
+                                                     * (fixedImageMax - fixedImageMin) )
+                                                   + fixedImageMin ) );
+      }
+
     reg->SetMaxIterations( m_RigidMaxIterations );
     reg->SetTargetError( m_RigidTargetError );
     if( m_UseMasks )
@@ -318,15 +358,29 @@ ImageToImageRegistrationHelper< TImage >
     reg->SetInterpolationMethodEnum( m_RigidInterpolationMethodEnum );
     reg->SetOptimizationMethodEnum( m_RigidOptimizationMethodEnum );
     typename RigidTransformType::ParametersType scales;
-    scales.set_size( 6 );
-    scales[0] = 1.0 / m_ExpectedRotationMagnitude;
-    scales[1] = 1.0 / m_ExpectedRotationMagnitude;
-    scales[2] = 1.0 / m_ExpectedRotationMagnitude;
-    scales[3] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
-    scales[4] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
-    scales[5] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
+    if( ImageDimension == 2 )
+      {
+      scales.set_size( 3 );
+      scales[0] = 1.0 / m_ExpectedRotationMagnitude;
+      scales[1] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
+      scales[2] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
+      }
+    else if( ImageDimension == 3 )
+      {
+      scales.set_size( 6 );
+      scales[0] = 1.0 / m_ExpectedRotationMagnitude;
+      scales[1] = 1.0 / m_ExpectedRotationMagnitude;
+      scales[2] = 1.0 / m_ExpectedRotationMagnitude;
+      scales[3] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
+      scales[4] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
+      scales[5] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
+      }
+    else
+      {
+      std::cerr << "ERROR: Only 2 and 3 dimensional images are supported due to rigid registration transforms limitations." << std::endl;
+      }
     double minS = scales[0];
-    for(int i=1; i<6; i++)
+    for(unsigned int i=1; i<scales.size(); i++)
       {
       if(scales[i] < minS)
         {
@@ -335,12 +389,13 @@ ImageToImageRegistrationHelper< TImage >
       }
     if(minS < 1)
       {
-      for(int i=0; i<6; i++)
+      for(unsigned int i=0; i<scales.size(); i++)
         {
         scales[i] /= minS;
         }
       }
     reg->SetTransformParametersScales( scales );
+    
     if( m_CurrentMatrixTransform.IsNotNull() )
       {
       reg->GetTypedTransform()->SetCenter( m_CurrentMatrixTransform->GetCenter() );
@@ -355,15 +410,22 @@ ImageToImageRegistrationHelper< TImage >
     m_CurrentMatrixTransform = reg->GetAffineTransform();
     m_CurrentBSplineTransform = 0;
 
+    m_FinalMetricValue = reg->GetFinalMetricValue();
+    m_RigidMetricValue = m_FinalMetricValue;
+
     m_CompletedStage = RIGID_STAGE;
     m_CompletedResampling = false;
     }
 
   if( m_EnableAffineRegistration )
     {
-    std::cout << "*** AFFINE REGISTRATION ***" << std::endl;
+    if( this->GetReportProgress() )
+      {
+      std::cout << "*** AFFINE REGISTRATION ***" << std::endl;
+      }
 
     typename AffineRegistrationMethodType::Pointer reg = AffineRegistrationMethodType::New();
+    reg->SetReportProgress( m_ReportProgress );
     reg->SetMovingImage( m_CurrentMovingImage );
     reg->SetFixedImage( m_FixedImage );
     reg->SetNumberOfSamples( (unsigned int)(m_AffineSamplingRatio * fixedImageNumPixels) );
@@ -384,24 +446,30 @@ ImageToImageRegistrationHelper< TImage >
     reg->SetInterpolationMethodEnum( m_AffineInterpolationMethodEnum );
     reg->SetOptimizationMethodEnum( m_AffineOptimizationMethodEnum );
     typename AffineTransformType::ParametersType scales;
-    scales.set_size( 12 );
-    scales[0] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedScaleMagnitude);
-    scales[1] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedSkewMagnitude);
-    scales[2] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedSkewMagnitude);
-
-    scales[3] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedSkewMagnitude);
-    scales[4] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedScaleMagnitude);
-    scales[5] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedSkewMagnitude);
-
-    scales[6] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedSkewMagnitude);
-    scales[7] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedSkewMagnitude);
-    scales[8] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedScaleMagnitude);
-
-    scales[9] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
-    scales[10] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
-    scales[11] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
+    scales.set_size( ImageDimension*ImageDimension + ImageDimension );
+    unsigned int scaleNum = 0;
+    for(int d1=0; d1<ImageDimension; d1++)
+      {
+      for(int d2=0; d2<ImageDimension; d2++)
+        {
+        if(d1 == d2)
+          {
+          scales[scaleNum] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedScaleMagnitude);
+          }
+        else
+          {
+          scales[scaleNum] = 1.0 / (m_ExpectedRotationMagnitude + m_ExpectedSkewMagnitude);
+          }
+        ++scaleNum;
+        }
+      }
+    for(int d1=0; d1<ImageDimension; d1++)
+      {
+      scales[scaleNum] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
+      ++scaleNum;
+      }
     double minS = scales[0];
-    for(int i=1; i<12; i++)
+    for(unsigned int i=1; i<scaleNum; i++)
       {
       if(scales[i] < minS)
         {
@@ -410,7 +478,7 @@ ImageToImageRegistrationHelper< TImage >
       }
     if(minS < 1)
       {
-      for(int i=0; i<12; i++)
+      for(unsigned int i=0; i<scaleNum; i++)
         {
         scales[i] /= minS;
         }
@@ -431,13 +499,19 @@ ImageToImageRegistrationHelper< TImage >
     m_CurrentMatrixTransform = reg->GetAffineTransform();
     m_CurrentBSplineTransform = 0;
 
+    m_FinalMetricValue = reg->GetFinalMetricValue();
+    m_AffineMetricValue = m_FinalMetricValue;
+
     m_CompletedStage = AFFINE_STAGE;
     m_CompletedResampling = false;
     }
 
   if( m_EnableBSplineRegistration )
     {
-    std::cout << "*** BSPLINE REGISTRATION ***" << std::endl;
+    if( this->GetReportProgress() )
+      {
+      std::cout << "*** BSPLINE REGISTRATION ***" << std::endl;
+      }
 
     if( m_CurrentMatrixTransform.IsNotNull() && !m_CompletedResampling )
       {
@@ -447,6 +521,7 @@ ImageToImageRegistrationHelper< TImage >
       }
 
     typename BSplineRegistrationMethodType::Pointer reg = BSplineRegistrationMethodType::New();
+    reg->SetReportProgress( m_ReportProgress );
     reg->SetMovingImage( m_CurrentMovingImage );
     reg->SetFixedImage( m_FixedImage );
     reg->SetNumberOfSamples( (unsigned int)(m_BSplineSamplingRatio * fixedImageNumPixels) );
@@ -472,6 +547,9 @@ ImageToImageRegistrationHelper< TImage >
 
     m_BSplineTransform = reg->GetTypedTransform();
     m_CurrentBSplineTransform = m_BSplineTransform;
+
+    m_FinalMetricValue = reg->GetFinalMetricValue();
+    m_BSplineMetricValue = m_FinalMetricValue;
 
     m_CompletedStage = BSPLINE_STAGE;
     m_CompletedResampling = false;
@@ -567,8 +645,8 @@ ImageToImageRegistrationHelper< TImage >
     doBSpline = true;
     }
 
-  typename AffineTransformType::ConstPointer aTrans = m_CurrentMatrixTransform;
-  typename BSplineTransformType::ConstPointer bTrans = m_CurrentBSplineTransform;
+  typename AffineTransformType::ConstPointer aTrans = m_CurrentMatrixTransform.GetPointer();
+  typename BSplineTransformType::ConstPointer bTrans = m_CurrentBSplineTransform.GetPointer();
   if( matrixTransform != NULL
       || bsplineTransform != NULL )
     {
@@ -602,9 +680,7 @@ ImageToImageRegistrationHelper< TImage >
       {
       // Register using LoadedMatrix
       resampler->SetTransform( m_LoadedMatrixTransform );
-      std::cout << "...Resampling loaded matrix start..." << std::endl;
       resampler->Update();
-      std::cout << "...Resampling loaded matrix stop..." << std::endl;
       if( !passedImage )
         {
         m_CurrentMovingImage = resampler->GetOutput();
@@ -622,9 +698,7 @@ ImageToImageRegistrationHelper< TImage >
       {
       // Register using LoadedMatrix
       resampler->SetTransform( m_LoadedBSplineTransform );
-      std::cout << "...Resampling loaded bspline start..." << std::endl;
       resampler->Update();
-      std::cout << "...Resampling loaded bspline stop..." << std::endl;
       if( !passedImage )
         {
         m_CurrentMovingImage = resampler->GetOutput();
@@ -643,9 +717,7 @@ ImageToImageRegistrationHelper< TImage >
     {
     // Register using Matrix
     resampler->SetTransform( aTrans );
-    std::cout << "...Resampling matrix start..." << std::endl;
     resampler->Update();
-    std::cout << "...Resampling matrix stop..." << std::endl;
     if( !passedImage )
       {
       m_CurrentMovingImage = resampler->GetOutput();
@@ -663,9 +735,7 @@ ImageToImageRegistrationHelper< TImage >
     {
     // Register using BSpline
     resampler->SetTransform( bTrans );
-    std::cout << "...Resampling bspline start..." << std::endl;
     resampler->Update();
-    std::cout << "...Resampling bspline stop..." << std::endl;
     if( !passedImage )
       {
       m_CurrentMovingImage = resampler->GetOutput();
@@ -685,9 +755,7 @@ ImageToImageRegistrationHelper< TImage >
     typename RigidTransformType::Pointer tmpTransform = RigidTransformType::New();
     tmpTransform->SetIdentity();
     resampler->SetTransform( tmpTransform );
-    std::cout << "...Resampling identity start..." << std::endl;
     resampler->Update();
-    std::cout << "...Resampling identity stop..." << std::endl;
 
     mImage = resampler->GetOutput();
     interpolator->SetInputImage( mImage );
@@ -709,6 +777,24 @@ ImageToImageRegistrationHelper< TImage >
 {
   return ResampleImage( interpolationMethod );
 }
+
+template< class TImage >
+typename TImage::ConstPointer
+ImageToImageRegistrationHelper< TImage >
+::GetFixedToFinalMovingDifferenceImage( InterpolationMethodEnumType interpolationMethod )
+{
+  typename ImageType::ConstPointer moving = ResampleImage( interpolationMethod );
+
+  typedef itk::SubtractImageFilter< TImage, TImage > SubtractFilterType;
+  typename SubtractFilterType::Pointer subtract = SubtractFilterType::New();
+  subtract->SetInput1( this->GetFixedImage() );
+  subtract->SetInput2( moving );
+  subtract->Update();
+
+  return subtract->GetOutput();
+}
+
+
 
 template< class TImage >
 void
@@ -943,6 +1029,13 @@ ImageToImageRegistrationHelper< TImage >
   os << indent << std::endl;
   os << indent << "Completed Initialization = " << m_CompletedInitialization << std::endl;
   os << indent << "Completed Resampling = " << m_CompletedResampling << std::endl;
+  os << indent << std::endl;
+  os << indent << "Rigid Metric Value = " << m_RigidMetricValue << std::endl;
+  os << indent << "Affine Metric Value = " << m_AffineMetricValue << std::endl;
+  os << indent << "BSpline Metric Value = " << m_BSplineMetricValue << std::endl;
+  os << indent << "Final Metric Value = " << m_FinalMetricValue << std::endl;
+  os << indent << std::endl;
+  os << indent << "Report Progress = " << m_ReportProgress << std::endl;
   os << indent << std::endl;
   if( m_CurrentMovingImage.IsNotNull() )
     {

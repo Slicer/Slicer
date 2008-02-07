@@ -28,7 +28,23 @@ template< class TImage >
 RigidImageToImageRegistrationMethod< TImage >
 ::RigidImageToImageRegistrationMethod( void )
 {
-  this->SetTransform( RigidTransformType::New() );
+  if( ImageDimension == 2 )
+    {
+    typename Rigid2DTransformType::Pointer tmpTrans = Rigid2DTransformType::New();
+    this->SetTransform( dynamic_cast< RigidTransformType *>( tmpTrans.GetPointer()) );
+    tmpTrans->Register();
+    }
+  else if( ImageDimension == 3 )
+    {
+    typename Rigid3DTransformType::Pointer tmpTrans = Rigid3DTransformType::New();
+    this->SetTransform( dynamic_cast< RigidTransformType *>( tmpTrans.GetPointer()) );
+    tmpTrans->Register();
+    }
+  else
+    {
+    std::cerr << "ERROR: Rigid registration only supported for 2D and 4D images." << std::endl;
+    }
+
   this->GetTypedTransform()->SetIdentity();
 
   this->SetInitialTransformParameters( this->GetTypedTransform()->GetParameters() );
@@ -36,7 +52,22 @@ RigidImageToImageRegistrationMethod< TImage >
 
   typename Superclass::TransformParametersScalesType scales;
   scales.set_size( this->GetTypedTransform()->GetNumberOfParameters() );
-  scales.fill( 1.0f );
+  if( ImageDimension == 2 )
+    {
+    scales[0] = 0.02;
+    scales[1] = 1;
+    scales[2] = 1;
+    }
+  else if( ImageDimension == 3 )
+    {
+    scales[0] = 0.02;
+    scales[1] = 0.02;
+    scales[2] = 0.02;
+    scales[3] = 1;
+    scales[4] = 1;
+    scales[5] = 1;
+    }
+
   this->SetTransformParametersScales( scales );
 
   this->SetTransformMethodEnum( Superclass::RIGID_TRANSFORM );

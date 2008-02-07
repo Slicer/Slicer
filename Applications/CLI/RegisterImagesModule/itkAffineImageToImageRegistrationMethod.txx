@@ -35,7 +35,31 @@ AffineImageToImageRegistrationMethod< TImage >
 
   typename Superclass::TransformParametersScalesType scales;
   scales.set_size( this->GetTypedTransform()->GetNumberOfParameters() );
-  scales.fill( 1.0f );
+  if( scales.size() != ImageDimension * (ImageDimension + 1) )
+    {
+    std::cerr << "ERROR: number of parameters not standard for affine transform" << std::endl;
+    }
+  unsigned int scaleNum = 0;
+  for(int d1=0; d1<ImageDimension; d1++)
+    {
+    for(int d2=0; d2<ImageDimension; d2++)
+      {
+      if(d1 == d2)
+        {
+        scales[scaleNum] = 0.02;
+        }
+      else
+        {
+        scales[scaleNum] = 0.01;
+        }
+      ++scaleNum;
+      }
+    }
+  for(int d1=0; d1<ImageDimension; d1++)
+    {
+    scales[scaleNum] = 1.0;
+    ++scaleNum;
+    }
   this->SetTransformParametersScales( scales );
 
   this->SetTransformMethodEnum( Superclass::AFFINE_TRANSFORM );

@@ -97,6 +97,9 @@ class ImageToImageRegistrationMethod
 
     unsigned long                   GetMTime( void ) const;
 
+    itkSetMacro( ReportProgress, bool );
+    itkGetMacro( ReportProgress, bool );
+
   protected:
 
     ImageToImageRegistrationMethod( void );
@@ -125,6 +128,8 @@ class ImageToImageRegistrationMethod
     bool                                   m_UseMasks;
     typename MaskObjectType::Pointer       m_FixedImageMaskObject;
     typename MaskObjectType::Pointer       m_MovingImageMaskObject;
+
+    bool                                   m_ReportProgress;
 
   };
 

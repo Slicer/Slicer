@@ -45,6 +45,8 @@ ImageToImageRegistrationMethod< TImage >
   m_MovingImageMaskObject = 0;
   m_Observer = 0;
 
+  m_ReportProgress = false;
+
 }
 
 template< class TImage >
@@ -250,6 +252,7 @@ ImageToImageRegistrationMethod< TImage >
     {
     os << indent << "Moving image mask = 0" << std::endl;
     }
+  os << indent << "Report progress = " << m_ReportProgress << std::endl;
 
 }
 

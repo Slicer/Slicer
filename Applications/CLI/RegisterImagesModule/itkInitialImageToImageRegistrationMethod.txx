@@ -60,26 +60,28 @@ InitialImageToImageRegistrationMethod< TImage >
     typename TImage::SizeType    size;
 
     //  Fixed image info
-    typename TImage::IndexType   fixedCenterIndex;
-    Point<double, 3>             fixedCenterPoint;
+    typename TImage::IndexType        fixedCenterIndex;
+    Point<double, ImageDimension>     fixedCenterPoint;
 
     size = this->GetFixedImage()->GetLargestPossibleRegion().GetSize();
 
-    fixedCenterIndex[0] = size[0]/2;
-    fixedCenterIndex[1] = size[1]/2;
-    fixedCenterIndex[2] = size[2]/2;
+    for(int i=0; i<ImageDimension; i++)
+      {
+      fixedCenterIndex[i] = size[i]/2;
+      }
     this->GetFixedImage()->TransformIndexToPhysicalPoint(fixedCenterIndex,
                                                          fixedCenterPoint);
 
     //  Moving image info
-    typename TImage::IndexType   movingCenterIndex;
-    Point<double, 3>             movingCenterPoint;
+    typename TImage::IndexType       movingCenterIndex;
+    Point<double, ImageDimension>    movingCenterPoint;
 
     size = this->GetMovingImage()->GetLargestPossibleRegion().GetSize();
 
-    movingCenterIndex[0] = size[0]/2;
-    movingCenterIndex[1] = size[1]/2;
-    movingCenterIndex[2] = size[2]/2;
+    for(int i=0; i<ImageDimension; i++)
+      {
+      movingCenterIndex[i] = size[i]/2;
+      }
     this->GetMovingImage()->TransformIndexToPhysicalPoint(movingCenterIndex,
                                                           movingCenterPoint);
 

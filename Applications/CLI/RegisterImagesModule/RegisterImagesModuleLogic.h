@@ -39,10 +39,7 @@ public:
   vtkSetMRMLNodeArgumentAsStringMacro(MovingVolumeNodeId, movingImage)
   vtkSetMRMLNodeArgumentAsStringMacro(ResampledVolumeNodeId, resampledImage)
 
-  // Advanced
-  vtkSetMRMLNodeArgumentAsBoolMacro(RigidRegistration, rigid);
-  vtkSetMRMLNodeArgumentAsBoolMacro(AffineRegistration, affine);
-  vtkSetMRMLNodeArgumentAsBoolMacro(BSplineRegistration, bspline);
+  vtkSetMRMLNodeArgumentAsBoolMacro(Registration, registration);
 
 protected:
 

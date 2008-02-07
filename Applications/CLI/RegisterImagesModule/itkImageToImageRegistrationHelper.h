@@ -51,6 +51,8 @@ class ImageToImageRegistrationHelper : public Object
     //
     typedef TImage                                 ImageType;
 
+    typedef typename ImageType::PixelType          PixelType;
+
     itkStaticConstMacro( ImageDimension, unsigned int, 
                          TImage::ImageDimension );
 
@@ -155,6 +157,8 @@ class ImageToImageRegistrationHelper : public Object
 
     typename ImageType::ConstPointer  GetFinalMovingImage( InterpolationMethodEnumType interp=OptimizedRegistrationMethodType::LINEAR_INTERPOLATION );
 
+    typename ImageType::ConstPointer  GetFixedToFinalMovingDifferenceImage( InterpolationMethodEnumType interp=OptimizedRegistrationMethodType::LINEAR_INTERPOLATION );
+
     //
     // Process Control
     //
@@ -186,6 +190,11 @@ class ImageToImageRegistrationHelper : public Object
     itkSetMacro( ExpectedSkewMagnitude, double );
     itkGetConstMacro( ExpectedSkewMagnitude, double );
 
+    itkSetMacro( SamplingIntensityThreshold, double );
+    itkGetConstMacro( SamplingIntensityThreshold, double );
+
+
+
     //
     itkGetConstObjectMacro( CurrentMatrixTransform, MatrixTransformType );
     itkGetConstObjectMacro( CurrentBSplineTransform, BSplineTransformType );
@@ -203,6 +212,11 @@ class ImageToImageRegistrationHelper : public Object
 
     void LoadParameters( const std::string filename );
     void SaveParameters( const std::string filename );
+
+    itkGetMacro( FinalMetricValue, double );
+
+    itkSetMacro( ReportProgress, bool );
+    itkGetMacro( ReportProgress, bool );
 
     //
     // Loaded transforms
@@ -243,6 +257,8 @@ class ImageToImageRegistrationHelper : public Object
     itkSetMacro( RigidOptimizationMethodEnum, OptimizationMethodEnumType );
     itkGetConstMacro( RigidOptimizationMethodEnum, OptimizationMethodEnumType );
 
+    itkGetConstObjectMacro( RigidTransform, RigidTransformType );
+    itkGetMacro( RigidMetricValue, double );
 
     //
     // Affine Parameters
@@ -264,6 +280,9 @@ class ImageToImageRegistrationHelper : public Object
 
     itkSetMacro( AffineOptimizationMethodEnum, OptimizationMethodEnumType );
     itkGetConstMacro( AffineOptimizationMethodEnum, OptimizationMethodEnumType );
+
+    itkGetConstObjectMacro( AffineTransform, AffineTransformType );
+    itkGetMacro( AffineMetricValue, double );
 
     //
     // BSpline Parameters
@@ -288,6 +307,9 @@ class ImageToImageRegistrationHelper : public Object
 
     itkSetMacro( BSplineOptimizationMethodEnum, OptimizationMethodEnumType );
     itkGetConstMacro( BSplineOptimizationMethodEnum, OptimizationMethodEnumType );
+
+    itkGetConstObjectMacro( BSplineTransform, BSplineTransformType );
+    itkGetMacro( BSplineMetricValue, double );
 
   protected:
 
@@ -326,6 +348,8 @@ class ImageToImageRegistrationHelper : public Object
     double                                m_ExpectedScaleMagnitude;
     double                                m_ExpectedSkewMagnitude;
 
+    double                                m_SamplingIntensityThreshold;
+
     bool                                  m_CompletedInitialization;
     RegistrationStageEnumType             m_CompletedStage;
     bool                                  m_CompletedResampling;
@@ -337,6 +361,10 @@ class ImageToImageRegistrationHelper : public Object
     typename ImageType::ConstPointer        m_LoadedTransformResampledImage;
     typename ImageType::ConstPointer        m_MatrixTransformResampledImage;
     typename ImageType::ConstPointer        m_BSplineTransformResampledImage;
+
+    double                                  m_FinalMetricValue;
+
+    bool                                    m_ReportProgress;
 
     //  Loaded Tansform
     typename MatrixTransformType::Pointer   m_LoadedMatrixTransform;
@@ -355,6 +383,8 @@ class ImageToImageRegistrationHelper : public Object
     InterpolationMethodEnumType             m_RigidInterpolationMethodEnum;
     OptimizationMethodEnumType              m_RigidOptimizationMethodEnum;
 
+    double                                  m_RigidMetricValue;
+
 
     //  Affine Parameters
     double                                  m_AffineSamplingRatio;
@@ -365,6 +395,7 @@ class ImageToImageRegistrationHelper : public Object
     InterpolationMethodEnumType             m_AffineInterpolationMethodEnum;
     OptimizationMethodEnumType              m_AffineOptimizationMethodEnum;
 
+    double                                  m_AffineMetricValue;
 
     //  BSpline Parameters
     double                                  m_BSplineSamplingRatio;
@@ -375,6 +406,8 @@ class ImageToImageRegistrationHelper : public Object
     MetricMethodEnumType                    m_BSplineMetricMethodEnum;
     InterpolationMethodEnumType             m_BSplineInterpolationMethodEnum;
     OptimizationMethodEnumType              m_BSplineOptimizationMethodEnum;
+
+    double                                  m_BSplineMetricValue;
 
   };
 

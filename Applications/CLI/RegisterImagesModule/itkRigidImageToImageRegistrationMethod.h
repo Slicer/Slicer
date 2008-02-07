@@ -21,6 +21,7 @@
 #include "itkImage.h"
 #include "itkAffineTransform.h"
 #include "itkVersorRigid3DTransform.h"
+#include "itkRigid2DTransform.h"
 
 #include "itkImageToImageRegistrationMethod.h"
 
@@ -48,15 +49,28 @@ class RigidImageToImageRegistrationMethod
     // Typedefs from Superclass
     //
 
+    itkStaticConstMacro( ImageDimension, unsigned int,
+                         TImage::ImageDimension );
+
     // Overrides the superclass' TransformType typedef
-    typedef VersorRigid3DTransform< double >     RigidTransformType;
+    // We must use MatrixOffsetTransformBase since no itk rigid transform is
+    //   templated over ImageDimension.
+    typedef MatrixOffsetTransformBase< double,
+                                       itkGetStaticConstMacro( ImageDimension ), 
+                                       itkGetStaticConstMacro( ImageDimension ) >
+                                                 RigidTransformType;
     typedef RigidTransformType                   TransformType;
 
     //
     //  Custom Typedefs
     //
-    typedef AffineTransform< double, itkGetStaticConstMacro( ImageDimension ) >
+    typedef Rigid2DTransform< double >           Rigid2DTransformType;
+    typedef VersorRigid3DTransform< double >     Rigid3DTransformType;
+
+    typedef AffineTransform< double,
+                             itkGetStaticConstMacro( ImageDimension ) >
                                                  AffineTransformType;
+
     //
     // Custom Methods
     //
