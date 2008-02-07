@@ -125,6 +125,7 @@ SET (COLORFILES
     ./Resources/ColorFiles/PelvisColor.txt
     ./Resources/ColorFiles/64Color-Nonsemantic.txt
     ./Resources/ColorFiles/SPL-BrainAtlas-ColorFile.txt
+    ./Resources/ColorFiles/AbdomenColors.txt
 )
 
 SET (Color_DIR ${SLICER_LIBRARIES_DIR}/Base/Logic)
