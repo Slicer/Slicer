@@ -280,7 +280,7 @@ protected:
 
   // Do the picking
   vtkCellPicker *HandlePicker;
-  vtkCellPicker *HexPicker;
+  //vtkCellPicker *HexPicker;
   vtkActor *CurrentHandle;
   int      CurrentHexFace;
   

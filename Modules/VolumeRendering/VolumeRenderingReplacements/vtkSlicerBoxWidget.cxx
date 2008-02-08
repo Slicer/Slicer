@@ -154,10 +154,10 @@ vtkSlicerBoxWidget::vtkSlicerBoxWidget()
     }
   this->HandlePicker->PickFromListOn();
 
-  this->HexPicker = vtkCellPicker::New();
-  this->HexPicker->SetTolerance(0.001);
-  this->HexPicker->AddPickList(HexActor);
-  this->HexPicker->PickFromListOn();
+  //this->HexPicker = vtkCellPicker::New();
+  //this->HexPicker->SetTolerance(0.001);
+  //this->HexPicker->AddPickList(HexActor);
+  //this->HexPicker->PickFromListOn();
   
   this->CurrentHandle = NULL;
 
@@ -190,7 +190,7 @@ vtkSlicerBoxWidget::~vtkSlicerBoxWidget()
   delete [] this->HandleGeometry;
   
   this->HandlePicker->Delete();
-  this->HexPicker->Delete();
+  //this->HexPicker->Delete();
 
   this->Transform->Delete();
   
@@ -588,8 +588,12 @@ void vtkSlicerBoxWidget::OnLeftButtonDown()
       this->HighlightHandle(path->GetFirstNode()->GetViewProp()));
     this->HandlePicker->GetPickPosition(this->LastPickPosition);
     this->ValidPick = 1;
-    }
+  }
   else
+  {
+      return;
+  }
+ /* else
     {
     this->HexPicker->Pick(X,Y,0.0,this->CurrentRenderer);
     path = this->HexPicker->GetPath();
@@ -615,7 +619,7 @@ void vtkSlicerBoxWidget::OnLeftButtonDown()
       this->State = vtkSlicerBoxWidget::Outside;
       return;
       }
-    }
+    }*/
   
   this->EventCallbackCommand->SetAbortFlag(1);
   this->StartInteraction();
@@ -667,24 +671,28 @@ void vtkSlicerBoxWidget::OnMiddleButtonDown()
     this->ValidPick = 1;
     }
   else
-    {
-    this->HexPicker->Pick(X,Y,0.0,this->CurrentRenderer);
-    path = this->HexPicker->GetPath();
-    if ( path != NULL )
-      {
-      this->State = vtkSlicerBoxWidget::Moving;
-      this->CurrentHandle = this->Handle[6];
-      this->HighlightOutline(1);
-      this->HexPicker->GetPickPosition(this->LastPickPosition);
-      this->ValidPick = 1;
-      }
-    else
-      {
-      this->HighlightFace(this->HighlightHandle(NULL));
-      this->State = vtkSlicerBoxWidget::Outside;
+  {
       return;
-      }
-    }
+  }
+  //else
+  //  {
+  //  this->HexPicker->Pick(X,Y,0.0,this->CurrentRenderer);
+  //  path = this->HexPicker->GetPath();
+  //  if ( path != NULL )
+  //    {
+  //    this->State = vtkSlicerBoxWidget::Moving;
+  //    this->CurrentHandle = this->Handle[6];
+  //    this->HighlightOutline(1);
+  //    this->HexPicker->GetPickPosition(this->LastPickPosition);
+  //    this->ValidPick = 1;
+  //    }
+  //  else
+  //    {
+  //    this->HighlightFace(this->HighlightHandle(NULL));
+  //    this->State = vtkSlicerBoxWidget::Outside;
+  //    return;
+  //    }
+  //  }
   
   this->EventCallbackCommand->SetAbortFlag(1);
   this->StartInteraction();
@@ -735,22 +743,26 @@ void vtkSlicerBoxWidget::OnRightButtonDown()
     this->ValidPick = 1;
     }
   else
-    {
-    this->HexPicker->Pick(X,Y,0.0,this->CurrentRenderer);
-    path = this->HexPicker->GetPath();
-    if ( path != NULL )
-      {
-      this->State = vtkSlicerBoxWidget::Scaling;
-      this->HighlightOutline(1);
-      this->HexPicker->GetPickPosition(this->LastPickPosition);
-      this->ValidPick = 1;
-      }
-    else
-      {
-      this->State = vtkSlicerBoxWidget::Outside;
+  {
       return;
-      }
-    }
+  }
+  //else
+  //  {
+  //  this->HexPicker->Pick(X,Y,0.0,this->CurrentRenderer);
+  //  path = this->HexPicker->GetPath();
+  //  if ( path != NULL )
+  //    {
+  //    this->State = vtkSlicerBoxWidget::Scaling;
+  //    this->HighlightOutline(1);
+  //    this->HexPicker->GetPickPosition(this->LastPickPosition);
+  //    this->ValidPick = 1;
+  //    }
+  //  else
+  //    {
+  //    this->State = vtkSlicerBoxWidget::Outside;
+  //    return;
+  //    }
+  //  }
   
   this->EventCallbackCommand->SetAbortFlag(1);
   this->StartInteraction();
