@@ -80,8 +80,11 @@ int vtkSlicerGradientEditorLogic::AddGradients (const char* filename, int number
       vtkWarningMacro("\n"<<content.str().c_str());
       return this->ParseGradients(content.str().c_str(), numberOfGradients, newBValue, newGradients);
       }
+    return 0;
     }
-   return 0;
+   storageNode->Delete();
+   dwiNode->Delete();
+   return 1;
   }
 
 //---------------------------------------------------------------------------

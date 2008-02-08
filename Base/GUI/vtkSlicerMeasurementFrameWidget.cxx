@@ -100,7 +100,7 @@ void vtkSlicerMeasurementFrameWidget::AddWidgetObservers ( )
   this->RotateButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NegativeButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->SwapButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  /*this->Matrix->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand);*/
+  this->MatrixWidget->AddObserver(vtkKWMatrixWidget::ElementChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   for(int i=0; i<3;i ++)
     {
     this->Checkbuttons[i]->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -111,7 +111,8 @@ void vtkSlicerMeasurementFrameWidget::RemoveWidgetObservers( )
   {
   this->RotateButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->NegativeButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->SwapButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);    
+  this->SwapButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand); 
+  this->MatrixWidget->RemoveObservers(vtkKWMatrixWidget::ElementChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   for(int i=0; i<3;i ++)
     {
     this->Checkbuttons[i]->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -126,36 +127,20 @@ void vtkSlicerMeasurementFrameWidget::PrintSelf (ostream& os, vtkIndent indent)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMeasurementFrameWidget::ProcessMRMLEvents (vtkObject *caller,unsigned long event, void *callData)
-  {
-  //if (this->Matrix == vtkMatrix4x4::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent)
-  //  {
-  //  //vtkErrorMacro(" modified" << this->GetMRMLScene()->GetClassName());
-  //  //this->GetMRMLScene()->Undo();
-  //  }
-  }
-
-//---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::UpdateMatrix()
   {
-
-  if(this->Matrix == NULL)
+  if(this->Matrix != NULL && this->ActiveVolumeNode != NULL)
     {
-    this->Matrix = vtkMatrix4x4::New();
-    }
-
-  // update gui values
-  for(int i=0;i<3;i++)
-    {
-    for(int j=0;j<3;j++)
+    // update gui values
+    for(int i=0;i<3;i++)
       {
-      this->MatrixWidget->SetElementValueAsDouble(j,i, this->Matrix->GetElement(j,i));
+      for(int j=0;j<3;j++)
+        {
+        this->MatrixWidget->SetElementValueAsDouble(j,i, this->Matrix->GetElement(j,i));
+        }
       }
-    }
 
-  // write internal matrix back to node
-  if(this->ActiveVolumeNode != NULL)
-    {
+    // write internal matrix back to node
     this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
     this->ActiveVolumeNode->SetModifiedSinceRead(1);
     }
@@ -164,6 +149,7 @@ void vtkSlicerMeasurementFrameWidget::UpdateMatrix()
 //---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode)
   {
+  this->Matrix = vtkMatrix4x4::New();
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode);
   this->ActiveVolumeNode->GetMeasurementFrameMatrix(this->Matrix);
   this->UpdateMatrix();
@@ -172,15 +158,21 @@ void vtkSlicerMeasurementFrameWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolum
 //---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
   {
-  //import the current matrix values, when enabled, as the user could have changed it
-  for(int i=0;i<3;i++)
+  
+  //import the current matrix values 
+  if(event == vtkKWMatrixWidget::ElementChangedEvent && this->MatrixWidget == vtkKWMatrixWidget::SafeDownCast(caller))
     {
-    for(int j=0;j<3;j++)
+    for(int i=0;i<3;i++)
       {
-      this->Matrix->SetElement(j,i,this->MatrixWidget->GetElementValueAsDouble(j,i));               
+      for(int j=0;j<3;j++)
+        {
+        this->Matrix->SetElement(j,i,this->MatrixWidget->GetElementValueAsDouble(j,i));               
+        }
       }
+    // write internal matrix back to node
+    this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
+    this->ActiveVolumeNode->SetModifiedSinceRead(1);
     }
-  this->UpdateMatrix();
 
   //enable/disable buttons depending on how many checkbuttons are selected 
   if(event == vtkKWCheckButton::SelectedStateChangedEvent 
@@ -341,9 +333,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->MatrixWidget->SetPadX(3);
   this->MatrixWidget->SetRestrictElementValueToDouble();
   this->MatrixWidget->SetElementWidth(7);
-
-  //set default matrix
-  this->UpdateMatrix();
+  this->MatrixWidget->SetElementChangedCommandTriggerToReturnKeyAndFocusOut();
 
   //create checkbuttons, one under each column of the matrix
   for(int i=0; i< 3; i++)

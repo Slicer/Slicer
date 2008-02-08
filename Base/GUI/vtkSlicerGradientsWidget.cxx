@@ -136,7 +136,7 @@ void vtkSlicerGradientsWidget::ProcessWidgetEvents (vtkObject *caller, unsigned 
       else
         {
         this->LoadGradientsButton->GetWidget()->SetText("");
-        this->DisplayMessageDialog("File is not valid!");
+        this->DisplayMessageDialog("File contains invalid values!");
         }
       myLogic->Delete();
       }

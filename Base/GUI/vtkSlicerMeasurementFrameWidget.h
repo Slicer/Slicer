@@ -32,7 +32,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSli
     // Description:
     // Method to propagate events generated in GUI to logic / mrml
     void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData);
-    void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
     // Description:
     // Method to update the widget when a new node is loaded.
