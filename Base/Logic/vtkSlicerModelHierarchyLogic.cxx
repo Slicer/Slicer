@@ -40,7 +40,7 @@ void vtkSlicerModelHierarchyLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerModelHierarchyLogic::CreateModelToHierarchyMap()
+int vtkSlicerModelHierarchyLogic::UpdateModelToHierarchyMap()
 {
   if (this->MRMLScene == NULL)
     {
@@ -77,7 +77,7 @@ vtkMRMLModelHierarchyNode* vtkSlicerModelHierarchyLogic::GetModelHierarchyNode(c
     {
     return NULL;
     }
-  this->CreateModelToHierarchyMap();
+  this->UpdateModelToHierarchyMap();
   
   std::map<std::string, vtkMRMLModelHierarchyNode *>::iterator iter;
   
@@ -91,4 +91,52 @@ vtkMRMLModelHierarchyNode* vtkSlicerModelHierarchyLogic::GetModelHierarchyNode(c
     return NULL;
     }
   
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerModelHierarchyLogic::UpdateHierarchyChildrenMap()
+{
+  std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> >::iterator iter;
+  for (iter  = this->HierarchyChildrenNodes.begin();
+       iter != this->HierarchyChildrenNodes.end();
+       iter++)
+    {
+    iter->second.clear();
+    }
+  this->HierarchyChildrenNodes.clear();
+    
+  if (this->MRMLScene->GetSceneModifiedTime() > this->ModelHierarchyNodesMTime)
+  {
+    if (this->MRMLScene == NULL)
+      {
+      return;
+      }
+    std::vector<vtkMRMLNode *> nodes;
+    int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
+  
+    for (int i=0; i<nnodes; i++)
+      {
+      vtkMRMLModelHierarchyNode *node =  vtkMRMLModelHierarchyNode::SafeDownCast(nodes[i]);
+      if (node)
+        {
+        vtkMRMLModelHierarchyNode *pnode = vtkMRMLModelHierarchyNode::SafeDownCast(node->GetParentNode());
+        if (pnode)
+          {
+          iter = this->HierarchyChildrenNodes.find(std::string(pnode->GetID()));
+          if (iter == this->HierarchyChildrenNodes.end())
+            {
+            std::vector< vtkMRMLModelHierarchyNode *> children;
+            children.push_back(node);
+            this->HierarchyChildrenNodes[std::string(pnode->GetID())] = children;
+            }
+          else
+            {
+            iter->second.push_back(node);
+            }
+          }
+        }
+      }
+    this->ModelHierarchyNodesMTime = this->MRMLScene->GetSceneModifiedTime();
+  }
 }
