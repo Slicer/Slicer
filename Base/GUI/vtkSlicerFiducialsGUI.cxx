@@ -34,6 +34,8 @@ vtkSlicerFiducialsGUI::vtkSlicerFiducialsGUI ( )
     this->FiducialListNodeID = NULL; // "(none)";
     this->FiducialListNode = NULL; // "(none)";
 
+    this->MeasurementLabel = NULL;
+    
     this->AddFiducialButton = NULL;
     this->RemoveFiducialButton = NULL;
     this->RemoveFiducialsButton = NULL;
@@ -74,7 +76,13 @@ vtkSlicerFiducialsGUI::~vtkSlicerFiducialsGUI ( )
         this->FiducialListSelectorWidget->Delete();
         this->FiducialListSelectorWidget = NULL;
     }
-     
+
+    if (this->MeasurementLabel)
+      {
+      this->MeasurementLabel->SetParent(NULL);
+      this->MeasurementLabel->Delete();
+      this->MeasurementLabel = NULL;
+      }
     if (this->AddFiducialButton ) {
         this->AddFiducialButton->SetParent (NULL );
         this->AddFiducialButton->Delete ( );
@@ -756,6 +764,7 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
         {
         this->MultiColumnList->GetWidget()->SetCellTextAsInt(row,this->SelectedColumn,(activeFiducialListNode->GetNthFiducialSelected(row) ? 1 : 0));
         this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row,this->SelectedColumn);
+        this->UpdateMeasurementLabel();
         }
       // visible
       if (deleteFlag || this->MultiColumnList->GetWidget()->GetCellTextAsInt(row,this->VisibilityColumn) != (activeFiducialListNode->GetNthFiducialVisibility(row) ? 1 : 0))
@@ -779,6 +788,7 @@ void vtkSlicerFiducialsGUI::SetGUIFromList(vtkMRMLFiducialListNode * activeFiduc
           {
           this->MultiColumnList->GetWidget()->SetCellTextAsDouble(row,this->ZColumn,xyz[2]);
           }
+        this->UpdateMeasurementLabel();
         }
       if (wxyz != NULL)
         {
@@ -969,7 +979,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->UIPanel->AddPage ( "Fiducials", "Fiducials", NULL );
     
     // Define your help text and build the help frame here.
-    const char *help = "The Fiducials Module creates and manages lists of Fiducial points. Click on the tool bar icon of an arrow pointing to a starburst fiducial to enter the 'place a new object mode', then click on 3D models or on 2D slices. You can also place fiducials while in 'tranform view' mode by positioning the mouse over a 2D slice plane in the Slice view windows (it must be the active window) and pressing the 'P' key. You can then click and drag the fiducial using the mouse in 'transform view' mode. 3D interactions are coming. You can reset the positions of the fiducials in the table below, and adjust selection (fiducials must be selected if they are to be passed into a command line module). To align slices with fiducials, move the fiducial while holding down the Control key. You can use the '`' key to jump to the next fiducial, Shift-` to jump backwards through the list. Use the backspace or delete key to delete a fiducial over which you are hovering in 2D.";
+    const char *help = "The Fiducials Module creates and manages lists of Fiducial points. Click on the tool bar icon of an arrow pointing to a starburst fiducial to enter the 'place a new object mode', then click on 3D models or on 2D slices. You can also place fiducials while in 'tranform view' mode by positioning the mouse over a 2D slice plane in the Slice view windows (it must be the active window) and pressing the 'P' key. You can then click and drag the fiducial using the mouse in 'transform view' mode. 3D interactions are coming. You can reset the positions of the fiducials in the table below, and adjust selection (fiducials must be selected if they are to be passed into a command line module). To align slices with fiducials, move the fiducial while holding down the Control key. You can use the '`' key to jump to the next fiducial, Shift-` to jump backwards through the list. Use the backspace or delete key to delete a fiducial over which you are hovering in 2D.\nThe distance between the first two selected fiducials in the list will be computed automatically and appear in a label below the list of fiducials.";
     const char *about = "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details. ";
     vtkKWWidget *page = this->UIPanel->GetPageWidget ( "Fiducials" );
     this->BuildHelpAndAboutFrame ( page, help, about );
@@ -1220,6 +1230,23 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
 //                  listFrame->GetWidgetName());
     this->MultiColumnList->GetWidget()->SetCellUpdatedCommand(this, "UpdateElement");
 
+    // measurement frame
+    vtkKWFrame *measurementFrame = vtkKWFrame::New();
+    measurementFrame->SetParent(listFrame);
+    measurementFrame->Create();
+    app->Script ("pack %s -side top -anchor nw -fill x -pady 0 -in %s",
+                 measurementFrame->GetWidgetName(),
+                 listFrame->GetWidgetName());
+
+    // add a label
+    this->MeasurementLabel = vtkKWLabel::New();
+    this->MeasurementLabel->SetParent( measurementFrame );
+    this->MeasurementLabel->Create();
+    this->MeasurementLabel->SetText("Distance: ");
+    this->MeasurementLabel->SetBalloonHelpString("Distance between first two selected fiducials");
+    app->Script("pack %s -side top -anchor nw -fill x -pady 0",
+                this->MeasurementLabel->GetWidgetName());
+    
     // button frame
     vtkKWFrame *buttonFrame = vtkKWFrame::New();
     buttonFrame->SetParent ( listFrame );
@@ -1286,6 +1313,7 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
                 this->DeselectAllFiducialsButton->GetWidgetName());
 
     // deleting frame widgets
+    measurementFrame->Delete();
     selectButtonFrame->Delete();
     buttonFrame->Delete ();
     colourFrame->Delete ();
@@ -1324,6 +1352,7 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
                 // selected
                 vtkDebugMacro("UpdateElement: setting node " <<  activeFiducialListNode->GetNthFiducialLabelText(row) << "'s selected flag to " << str << endl);
                 activeFiducialListNode->SetNthFiducialSelected(row, (atoi(str) == 1));
+                this->UpdateMeasurementLabel();
             }
             else if (col == this->VisibilityColumn)
               {
@@ -1342,6 +1371,7 @@ void vtkSlicerFiducialsGUI::UpdateElement(int row, int col, char * str)
                   if (col == this->XColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, newCoordinate, xyz[1], xyz[2]); }
                   if (col == this->YColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], newCoordinate, xyz[2]); }
                   if (col == this->ZColumn) { activeFiducialListNode->SetNthFiducialXYZ(row, xyz[0], xyz[1], newCoordinate); }
+                  this->UpdateMeasurementLabel();
                   }            
             }
             else if (col >= this->OrWColumn  && col <= this->OrZColumn)
@@ -1433,4 +1463,55 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
       vtkDebugMacro("Fid GUI: setting the active fid list id to " << this->FiducialListNodeID);
       this->ApplicationLogic->GetSelectionNode()->SetActiveFiducialListID( this->FiducialListNodeID );
       }
+}
+//---------------------------------------------------------------------------
+void vtkSlicerFiducialsGUI::UpdateMeasurementLabel()
+{
+  if (!this->MeasurementLabel)
+    {
+    return;
+    }
+  // get the fiducial list
+  vtkMRMLFiducialListNode * activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
+  if (activeFiducialListNode == NULL)
+    {
+    return;
+    }
+  
+  int numPoints = activeFiducialListNode->GetNumberOfFiducials();
+  int numSelected = 0;
+  int selectedIndices[2];
+  std::string newLabel = "Distance: ";
+  for (unsigned int n = 0; n < numPoints; n++)
+    {
+    if (activeFiducialListNode->GetNthFiducialSelected(n))
+      {
+      selectedIndices[numSelected] = n;
+      numSelected++;
+      
+      if (numSelected == 2)
+        {
+        std::stringstream ss;
+        ss << newLabel;
+        ss << activeFiducialListNode->GetNthFiducialLabelText(selectedIndices[0]);
+        ss << " to ";
+        ss << activeFiducialListNode->GetNthFiducialLabelText(selectedIndices[1]);
+        ss << " = ";
+        float *xyz1 = activeFiducialListNode->GetNthFiducialXYZ(selectedIndices[0]);
+        float *xyz2 = activeFiducialListNode->GetNthFiducialXYZ(selectedIndices[1]);
+        double dist = 0.0;
+        if (xyz1 != NULL && xyz2 != NULL)
+          {
+          dist = sqrt(pow(double(xyz2[0] - xyz1[0]),2) +
+                      pow(double(xyz2[1] - xyz1[1]),2) +
+                      pow(double(xyz2[2] - xyz1[2]),2));
+          }
+        ss << dist;
+        ss << " mm";
+        newLabel = ss.str();
+        continue;
+        }
+      }
+    }
+  this->MeasurementLabel->SetText(newLabel.c_str());
 }

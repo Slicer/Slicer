@@ -34,6 +34,7 @@ class vtkSlicerVisibilityIcons;
 class vtkKWChangeColorButton;
 class vtkKWScaleWithEntry;
 class vtkKWMenuButtonWithLabel;
+class vtkKWLabel;
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleGUI
 {
  public:
@@ -46,6 +47,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Description:
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( FiducialListSelectorWidget, vtkSlicerNodeSelectorWidget);
+    vtkGetObjectMacro ( MeasurementLabel, vtkKWLabel);
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialsButton, vtkKWPushButton);
@@ -145,6 +147,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     // Description:
     // Update the gui from the currently selected list, called on Enter
     void UpdateGUI();
+
+    // Description:
+    // Called when the selected state of some fids have changed, to update the
+    // measurement label
+    void UpdateMeasurementLabel();
     
  protected:
     vtkSlicerFiducialsGUI ( );
@@ -163,15 +170,25 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkMRMLFiducialListNode *FiducialListNode;
     
     // Widgets for the Fiducials module
+
+    // Description:
+    // Update this label with text about distance between selected fiducials
+    vtkKWLabel *MeasurementLabel;
+    
+    // Description:
     // add a point
     vtkKWPushButton *AddFiducialButton;
+    // Description:
     // remove the last selected (multi column list definition of selected)
     // point
     vtkKWPushButton *RemoveFiducialButton;
+    // Description:
     // remove all the fiducial points on this list
     vtkKWPushButton *RemoveFiducialsButton;
+    // Description:
     // select all fiducial points on this list
     vtkKWPushButton *SelectAllFiducialsButton;
+    // Description:
     // deselect all fiducial points on this list
     vtkKWPushButton *DeselectAllFiducialsButton;
 
