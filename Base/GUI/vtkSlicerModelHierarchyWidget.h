@@ -63,6 +63,8 @@ public:
   
   // Description::
   // Callbacks
+  virtual void ModelVisibiltyCallback(const char *id);
+  
   virtual void InsertHierarchyNodeCallback(const char *id);
 
   virtual void DeleteNodeCallback(const char *id);
@@ -77,7 +79,8 @@ public:
 
   virtual void NodeParentChangedCallback (const char *node, const char *new_parent, const char*);
   
-
+  virtual void ProcessRightClick(const char *id);
+  
 //BTX
   enum
     {

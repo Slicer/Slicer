@@ -21,6 +21,7 @@
 #include "vtkKWSimpleEntryDialog.h"
 #include "vtkKWEntry.h"
 #include "vtkKWTreeWithScrollbars.h"
+#include "vtkKWCheckButton.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerModelDisplayWidget.h"
 
@@ -196,6 +197,19 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
           {
           sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
           this->ContextMenu->AddCommand("Edit Display", this, command);
+          
+          vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(node);
+          vtkMRMLDisplayNode *dnode = mnode->GetDisplayNode();
+          if (dnode)
+            {
+            int visibility = dnode->GetVisibility();
+            sprintf(command, "ModelVisibiltyCallback {%s}", (const char *)callData);
+            int tag = this->ContextMenu->AddCheckButton ("Visibility", this, command);
+            if (visibility)
+              {
+              this->ContextMenu->SelectItem(tag);
+              }
+            }
           }
         }
       else if ( node == NULL )
@@ -231,6 +245,27 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
     }
 } 
 
+//---------------------------------------------------------------------------
+void vtkSlicerModelHierarchyWidget::ModelVisibiltyCallback(const char *id)
+{
+  // cout << "I want to delete MRML node " << id << endl;
+  // delete node, then repopulate tree
+  for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
+    {
+    vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[i].c_str());
+    if (node != NULL)
+      {
+      vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(node);
+      vtkMRMLDisplayNode *dnode = mnode->GetDisplayNode();
+      if (dnode)
+        {
+        int visibility = dnode->GetVisibility();
+        dnode->SetVisibility((int)(!visibility));
+        }
+      }
+    }
+  this->UpdateTreeFromMRML();
+}
 //---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::DeleteNodeCallback(const char *id)
 {
@@ -326,7 +361,7 @@ void vtkSlicerModelHierarchyWidget::OpenHierarchyCommand(const char *id)
   if (node != NULL) 
     {
     node->SetExpanded(1);
-    
+    /**
     // make children visible
     if (this->UpdatingTree == 0)
       {
@@ -360,6 +395,7 @@ void vtkSlicerModelHierarchyWidget::OpenHierarchyCommand(const char *id)
           }
         }
       }
+      **/
     }
 }
 
@@ -377,6 +413,10 @@ void vtkSlicerModelHierarchyWidget::CloseHierarchyCommand(const char *id)
 void vtkSlicerModelHierarchyWidget::NodeParentChangedCallback(
   const char *nodeID, const char *parentID, const char*)
 {
+  if (!strcmp(parentID, nodeID))
+    {
+    return;
+    }
   vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID));
   vtkMRMLModelHierarchyNode *hnode = vtkMRMLModelHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(nodeID));
   if (!strcmp(parentID, "Scene"))
@@ -502,8 +542,8 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
   this->TreeWidget->HorizontalScrollbarVisibilityOff();
   
   this->TreeWidget->Create ( );
-  this->TreeWidget->SetBalloonHelpString("MRML Tree");
-  ///  this->TreeWidget->SetBorderWidth(2);
+  //this->TreeWidget->SetBalloonHelpString("MRML Tree");
+  //this->TreeWidget->SetBorderWidth(2);
   //this->TreeWidget->SetReliefToGroove();
   this->Script ( "pack %s -side top -anchor nw -expand y -fill both -padx 2 -pady 2",
                  this->TreeWidget->GetWidgetName());
@@ -597,7 +637,6 @@ void vtkSlicerModelHierarchyWidget::UpdateTreeFromMRML()
 {
   this->UpdatingTree = 1;
   this->ModelHierarchyLogic->SetMRMLScene(this->MRMLScene);
-  this->ModelHierarchyLogic->CreateModelToHierarchyMap();
 
   vtksys_stl::string selected_node(
     this->TreeWidget->GetWidget()->GetSelection());
@@ -719,6 +758,17 @@ void vtkSlicerModelHierarchyWidget::AddNodeToTree(vtkMRMLNode *node)
   if (!mhnode || mhnode->GetModelNode() == NULL)
     {
     tree->AddNode(parent_node, ID, node_text.c_str());
+    /**
+    // add checkbox
+    vtkKWCheckButton *cbox = vtkKWCheckButton::New();
+    cbox->SetText(node_text.c_str());
+    cbox->SetParent ( tree );
+    cbox->Create ( );
+    tree->SetNodeWindow(ID, cbox);
+    this->Script("bind %s <ButtonPress-3> {%s ProcessRightClick %s}",  cbox->GetWidgetName(), this->GetTclName(), ID);
+
+    //cbox->Delete();
+    **/
     if (open)
       {
       tree->OpenNode(ID);
@@ -728,6 +778,11 @@ void vtkSlicerModelHierarchyWidget::AddNodeToTree(vtkMRMLNode *node)
       tree->CloseNode(ID);
       }
     }
+}
+
+void vtkSlicerModelHierarchyWidget::ProcessRightClick(const char *id)
+{
+std::cout << id << std::endl;
 }
 
 //---------------------------------------------------------------------------

@@ -94,11 +94,11 @@ void vtkMRMLModelHierarchyNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLModelHierarchyNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
-  if (!strcmp(oldID, this->ModelNodeID))
+  if (this->ModelNodeID == NULL || !strcmp(oldID, this->ModelNodeID))
     {
     this->SetModelNodeID(newID);
     }
-  if (!strcmp(oldID, this->DisplayNodeID))
+  if (this->DisplayNodeID == NULL || !strcmp(oldID, this->DisplayNodeID))
     {
     this->SetDisplayNodeID(newID);
     }

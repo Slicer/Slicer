@@ -193,6 +193,12 @@ public:
   // Get number of nodes of a specified class in the scene
   int GetNumberOfNodesByClass(const char* className);
   
+  // Description:
+  // Get vector of nodes of a specified class in the scene
+  //BTX
+  int GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes);
+  //ETX
+  
   //BTX
   std::list<std::string> GetNodeClassesList();
   //ETX
@@ -335,6 +341,20 @@ public:
     return (this->GetErrorMessage().c_str());
     }
 
+  unsigned long GetSceneModifiedTime()
+    {
+    if (this->CurrentScene && this->CurrentScene->GetMTime() > this->SceneModifiedTime)
+      {
+      this->SceneModifiedTime = this->CurrentScene->GetMTime();
+      }
+    return this->SceneModifiedTime;
+    };
+    
+  void IncrementSceneModifiedTime()
+    {
+    this->SceneModifiedTime ++;
+    };
+
 protected:
   vtkMRMLScene();
   ~vtkMRMLScene();
@@ -350,6 +370,9 @@ protected:
   void AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes);
 
   vtkCollection* CurrentScene;
+  
+  unsigned long SceneModifiedTime;
+  
   int UndoStackSize;
   bool UndoFlag;
   

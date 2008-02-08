@@ -23,6 +23,7 @@ vtkStandardNewMacro(vtkSlicerModelHierarchyLogic);
 //----------------------------------------------------------------------------
 vtkSlicerModelHierarchyLogic::vtkSlicerModelHierarchyLogic()
 {
+  this->ModeHierarchylNodesMTime = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -41,26 +42,32 @@ void vtkSlicerModelHierarchyLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
 //----------------------------------------------------------------------------
 int vtkSlicerModelHierarchyLogic::CreateModelToHierarchyMap()
 {
-  this->ModeHierarchylNodes.clear();
   if (this->MRMLScene == NULL)
     {
-    return 0;
+    this->ModeHierarchylNodes.clear();
     }
-
-  int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
-  for (int i=0; i<nnodes; i++)
-    {
-    vtkMRMLModelHierarchyNode *node =  vtkMRMLModelHierarchyNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(i, "vtkMRMLModelHierarchyNode"));
-    if (node)
+  else if (this->MRMLScene->GetSceneModifiedTime() > this->ModeHierarchylNodesMTime)
+  {
+    this->ModeHierarchylNodes.clear();
+    
+    std::vector<vtkMRMLNode *> nodes;
+    int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
+  
+    for (int i=0; i<nnodes; i++)
       {
-      vtkMRMLModelNode *mnode = node->GetModelNode();
-      if (mnode)
+      vtkMRMLModelHierarchyNode *node =  vtkMRMLModelHierarchyNode::SafeDownCast(nodes[i]);
+      if (node)
         {
-        this->ModeHierarchylNodes[std::string(mnode->GetID())] = node;
+        vtkMRMLModelNode *mnode = node->GetModelNode();
+        if (mnode)
+          {
+          this->ModeHierarchylNodes[std::string(mnode->GetID())] = node;
+          }
         }
       }
-    }
-  return nnodes;
+    this->ModeHierarchylNodesMTime = this->MRMLScene->GetSceneModifiedTime();
+  }
+  return ModeHierarchylNodes.size();
 }
 
 //---------------------------------------------------------------------------
@@ -70,6 +77,8 @@ vtkMRMLModelHierarchyNode* vtkSlicerModelHierarchyLogic::GetModelHierarchyNode(c
     {
     return NULL;
     }
+  this->CreateModelToHierarchyMap();
+  
   std::map<std::string, vtkMRMLModelHierarchyNode *>::iterator iter;
   
   iter = this->ModeHierarchylNodes.find(modelNodeID);

@@ -39,17 +39,20 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelHierarchyLogic : public vtkSlic
   static vtkSlicerModelHierarchyLogic *New();
   vtkTypeRevisionMacro(vtkSlicerModelHierarchyLogic,vtkObject);
 
-  // Description:
-  // Create model to hierarchy map, 
-  // return number of model hierarchy nodes
-  int CreateModelToHierarchyMap();
   
   // Description:
   // Given model id return it's hierarchy 
   // or NULL if it does not have one
-  // Should be used after CreateModelToHierarchyMap is called
   vtkMRMLModelHierarchyNode* GetModelHierarchyNode(const char *modelNodeID);
   
+  // Description:
+  // Return number of model that are in a hierarchy 
+  int GetNumberOfModelsInHierarchy()
+    {
+    this->CreateModelToHierarchyMap();
+    return this->ModeHierarchylNodes.size();
+    };
+
 
   // Description:
   // Update logic state when MRML scene chenges
@@ -61,10 +64,18 @@ protected:
   ~vtkSlicerModelHierarchyLogic();
   vtkSlicerModelHierarchyLogic(const vtkSlicerModelHierarchyLogic&);
   void operator=(const vtkSlicerModelHierarchyLogic&);
+  
+  // Description:
+  // Create model to hierarchy map, 
+  // return number of model hierarchy nodes
+  int CreateModelToHierarchyMap();
 
   //BTX
   std::map<std::string, vtkMRMLModelHierarchyNode *> ModeHierarchylNodes;
   //ETX
+  
+  unsigned long ModeHierarchylNodesMTime;
+
 };
 
 #endif

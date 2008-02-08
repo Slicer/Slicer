@@ -66,7 +66,8 @@ Version:   $Revision: 1.18 $
 vtkMRMLScene::vtkMRMLScene() 
 {
   this->NodeIDsMTime = 0;
-
+  this->SceneModifiedTime = 0;
+  
   this->ClassNameList = NULL;
   this->RegisteredNodeClasses.clear();
   this->UniqueIDByClass.clear();
@@ -841,6 +842,22 @@ int vtkMRMLScene::GetNumberOfNodesByClass(const char *className)
       }
     }
   return num;
+}
+
+//------------------------------------------------------------------------------
+int vtkMRMLScene::GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes)
+{
+  vtkMRMLNode *node;
+  int n;
+  for (n=0; n < this->CurrentScene->GetNumberOfItems(); n++) 
+    {
+    node = (vtkMRMLNode*)this->CurrentScene->GetItemAsObject(n);
+    if (node->IsA(className)) 
+      {
+      nodes.push_back(node);
+      }
+    }
+  return nodes.size();
 }
 
 //------------------------------------------------------------------------------

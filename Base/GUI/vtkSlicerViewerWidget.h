@@ -230,7 +230,8 @@ protected:
 
   void RemoveDisplayable(vtkMRMLDisplayableNode* model);
 
-
+  vtkMRMLDisplayNode*  GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model);
+  
   //BTX
 
   std::vector< vtkMRMLDisplayNode* > GetDisplayNode(vtkMRMLDisplayableNode *model);
