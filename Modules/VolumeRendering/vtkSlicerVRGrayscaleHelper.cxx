@@ -1406,7 +1406,7 @@ void vtkSlicerVRGrayscaleHelper::CreateThreshold()
     this->MB_ThresholdMode->SetParent(thresholdFrame->GetFrame());
     this->MB_ThresholdMode->Create();
     std::stringstream ss;
-    ss<<"Select which kind of threshoding to use for transfer functions. ";
+    ss<<"Select which kind of thresholding to use for transfer functions. ";
     ss<<"\"Rectangle\" will result in sharp surface, while \"ramp\" creates a smoother result.";
     this->MB_ThresholdMode->SetBalloonHelpString(ss.str().c_str());
     this->MB_ThresholdMode->SetLabelText("Threshold:");
@@ -1538,10 +1538,6 @@ void vtkSlicerVRGrayscaleHelper::ProcessThresholdRange(double notUsed,double not
     vtkPiecewiseFunction *opacity=this->Gui->GetCurrentNode()->GetVolumeProperty()->GetScalarOpacity();
     opacity->RemoveAllPoints();
     //opacity->AdjustRange(iData->GetScalarRange());
-
-    vtkColorTransferFunction *colorTransfer=this->Gui->GetCurrentNode()->GetVolumeProperty()->GetRGBTransferFunction();
-    colorTransfer->RemoveAllPoints();
-    //colorTransfer->AdjustRange(iData->GetScalarRange());
 
     opacity->AddPoint(iData->GetScalarRange()[0],this->RA_RampRectangleVertical->GetRange()[1]);
     opacity->AddPoint(iData->GetScalarRange()[1],this->RA_RampRectangleVertical->GetRange()[1]);
