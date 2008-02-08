@@ -554,6 +554,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         callerBox->GetPlanes(planes);
         this->MapperTexture->SetClippingPlanes(planes);
         this->MapperRaycast->SetClippingPlanes(planes);
+        planes->Delete();
     }
     if(caller==this->BW_Clipping&&eid==vtkCommand::EndInteractionEvent)
     {
@@ -2023,6 +2024,7 @@ void vtkSlicerVRGrayscaleHelper::ConvertWorldToBoxCoordinates(double *inputOutpu
     {
         inputOutput[i]=inputOutput[i]-pointA[i];
     }
+    matrix->Delete();
 }
 void vtkSlicerVRGrayscaleHelper::ConvertBoxCoordinatesToWorld(double* inputOutput)
 {
@@ -2041,6 +2043,7 @@ void vtkSlicerVRGrayscaleHelper::ConvertBoxCoordinatesToWorld(double* inputOutpu
     {
         inputOutput[i]=inputOutput[i]+pointA[i];
     }
+    matrix->Delete();
 }
 
 
@@ -2094,6 +2097,7 @@ void vtkSlicerVRGrayscaleHelper::CalculateBoxCoordinatesBoundaries(void)
             this->VolumeBoundariesBoxCoordinates[1][i]=pointA[i];
         }
     }
+    matrix->Delete();
 
 
 }
