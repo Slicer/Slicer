@@ -50,7 +50,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelHierarchyLogic : public vtkSlic
   int GetNumberOfModelsInHierarchy()
     {
     this->CreateModelToHierarchyMap();
-    return this->ModeHierarchylNodes.size();
+    return this->ModelHierarchyNodes.size();
     };
 
 
@@ -71,10 +71,10 @@ protected:
   int CreateModelToHierarchyMap();
 
   //BTX
-  std::map<std::string, vtkMRMLModelHierarchyNode *> ModeHierarchylNodes;
+  std::map<std::string, vtkMRMLModelHierarchyNode *> ModelHierarchyNodes;
   //ETX
   
-  unsigned long ModeHierarchylNodesMTime;
+  unsigned long ModelHierarchyNodesMTime;
 
 };
 

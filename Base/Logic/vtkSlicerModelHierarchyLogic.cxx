@@ -23,7 +23,7 @@ vtkStandardNewMacro(vtkSlicerModelHierarchyLogic);
 //----------------------------------------------------------------------------
 vtkSlicerModelHierarchyLogic::vtkSlicerModelHierarchyLogic()
 {
-  this->ModeHierarchylNodesMTime = 0;
+  this->ModelHierarchyNodesMTime = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -44,11 +44,11 @@ int vtkSlicerModelHierarchyLogic::CreateModelToHierarchyMap()
 {
   if (this->MRMLScene == NULL)
     {
-    this->ModeHierarchylNodes.clear();
+    this->ModelHierarchyNodes.clear();
     }
-  else if (this->MRMLScene->GetSceneModifiedTime() > this->ModeHierarchylNodesMTime)
+  else if (this->MRMLScene->GetSceneModifiedTime() > this->ModelHierarchyNodesMTime)
   {
-    this->ModeHierarchylNodes.clear();
+    this->ModelHierarchyNodes.clear();
     
     std::vector<vtkMRMLNode *> nodes;
     int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
@@ -61,13 +61,13 @@ int vtkSlicerModelHierarchyLogic::CreateModelToHierarchyMap()
         vtkMRMLModelNode *mnode = node->GetModelNode();
         if (mnode)
           {
-          this->ModeHierarchylNodes[std::string(mnode->GetID())] = node;
+          this->ModelHierarchyNodes[std::string(mnode->GetID())] = node;
           }
         }
       }
-    this->ModeHierarchylNodesMTime = this->MRMLScene->GetSceneModifiedTime();
+    this->ModelHierarchyNodesMTime = this->MRMLScene->GetSceneModifiedTime();
   }
-  return ModeHierarchylNodes.size();
+  return ModelHierarchyNodes.size();
 }
 
 //---------------------------------------------------------------------------
@@ -81,8 +81,8 @@ vtkMRMLModelHierarchyNode* vtkSlicerModelHierarchyLogic::GetModelHierarchyNode(c
   
   std::map<std::string, vtkMRMLModelHierarchyNode *>::iterator iter;
   
-  iter = this->ModeHierarchylNodes.find(modelNodeID);
-  if (iter != this->ModeHierarchylNodes.end())
+  iter = this->ModelHierarchyNodes.find(modelNodeID);
+  if (iter != this->ModelHierarchyNodes.end())
     {
     return iter->second;
     }
