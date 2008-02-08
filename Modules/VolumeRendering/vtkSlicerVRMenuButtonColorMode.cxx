@@ -48,7 +48,7 @@ vtkSlicerVRMenuButtonColorMode::ColorModeList vtkSlicerVRMenuButtonColorMode::Cr
     tmp.push_back(ColorEntry("Lime",0,1,0));
     tmp.push_back(ColorEntry("Maroon",0.5,0,0));
     tmp.push_back(ColorEntry("Navy",0,0,0.5));
-    tmp.push_back(ColorEntry("Olive",0.5,0.5,0.5));
+    tmp.push_back(ColorEntry("Olive",0.5,0.5,0));
     tmp.push_back(ColorEntry("Purple",0.5,0,0.5));
     tmp.push_back(ColorEntry("Red",1,0,0));
     tmp.push_back(ColorEntry("Silver",0.75,0.75,0.75));

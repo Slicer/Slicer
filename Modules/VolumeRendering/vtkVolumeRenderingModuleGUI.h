@@ -121,6 +121,7 @@ public:
     vtkGetObjectMacro (DetailsFrame,vtkSlicerModuleCollapsibleFrame);
     vtkGetObjectMacro (CurrentNode,vtkMRMLVolumeRenderingNode);
     vtkGetObjectMacro (Presets, vtkMRMLScene);
+    vtkGetObjectMacro (Helper, vtkSlicerVRHelper);
 
 
 
