@@ -159,6 +159,16 @@ public:
         vtkSlicerVRHelperDebug("setbutton %d",_arg);
         this->ButtonDown=(_arg);
     }
+    // Description:
+    // Set /Get methods for sample distance. Meant to influence the sample distance during runtime, in case artefacts occur.
+    vtkSetMacro(SampleDistanceHighRes, double);
+    vtkGetMacro(SampleDistanceHighRes, double);
+
+    vtkSetMacro(SampleDistanceHighResImage, double);
+    vtkGetMacro(SampleDistanceHighResImage, double);
+
+    vtkSetMacro(SampleDistanceLowRes, double);
+    vtkGetMacro(SampleDistanceLowRes, double);
 
 protected:
     //--------------------------------------------------------------------------
