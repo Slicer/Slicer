@@ -22,7 +22,7 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
 
   this->TestFrame = NULL;
   this->RunButton = NULL;
-  this->Mask = NULL;
+  this->FiducialSelector = NULL;
 
   this->CancelButton = NULL;
   }
@@ -52,11 +52,11 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->TestFrame->Delete();
     this->TestFrame = NULL;
     }
-  if (this->Mask)
+  if (this->FiducialSelector)
     {
-    this->Mask->SetParent (NULL);
-    this->Mask->Delete();
-    this->Mask = NULL;
+    this->FiducialSelector->SetParent (NULL);
+    this->FiducialSelector->Delete();
+    this->FiducialSelector = NULL;
     }
   if (this->RunButton)
     {
@@ -77,6 +77,7 @@ void vtkSlicerGradientEditorWidget::AddWidgetObservers ( )
   {    
   this->RunButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->CancelButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->FiducialSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand ); 
   }
 //---------------------------------------------------------------------------
 void vtkSlicerGradientEditorWidget::RemoveWidgetObservers( )
@@ -181,12 +182,24 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
     this->RunButton->GetWidgetName());
 
   //create fiducial list
-  this->Mask = vtkSlicerNodeSelectorWidget::New();
-  this->Mask->SetParent(this->TestFrame->GetFrame());
-  this->Mask->Create();
-  this->Mask->SetLabelText("Fiducial List:");
+  this->FiducialSelector = vtkSlicerNodeSelectorWidget::New();
+  this->FiducialSelector->SetNodeClass("vtkMRMLFiducialListNode", NULL, NULL, NULL);
+  this->FiducialSelector->SetNewNodeEnabled(0);
+  this->FiducialSelector->NoneEnabledOn();
+  this->FiducialSelector->SetShowHidden(1);
+
+  this->FiducialSelector->SetParent(this->TestFrame->GetFrame());
+  this->FiducialSelector->Create();
+
+  this->FiducialSelector->SetMRMLScene(this->GetMRMLScene());
+  this->FiducialSelector->UpdateMenu();
+
+  this->FiducialSelector->SetLabelText("Fiducial List:");
   this->Script("pack %s -side right -anchor ne -padx 3 -pady 2", 
-    this->Mask->GetWidgetName());
+    this->FiducialSelector->GetWidgetName());
+
+
+  
 
   //create save button
   this->CancelButton = vtkKWPushButton::New();

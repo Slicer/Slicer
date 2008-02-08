@@ -48,7 +48,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     vtkSlicerGradientsWidget *GradientsWidget;
     
     vtkKWFrameWithLabel *TestFrame;
-    vtkSlicerNodeSelectorWidget *Mask;
+    vtkSlicerNodeSelectorWidget *FiducialSelector;
     vtkKWPushButton *RunButton;
     
     vtkKWPushButton *CancelButton;
