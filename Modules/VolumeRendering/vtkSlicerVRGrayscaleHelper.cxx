@@ -840,6 +840,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(0,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(1,100);
             this->Gui->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetNthValue(2,1);
+            //Enable for debugging
+           // this->Script("puts \"Last render time: %e\"",this->RenViewport->GetLastRenderTimeInSeconds());
             return;
         }
         if(this->CurrentStage==2)
