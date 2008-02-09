@@ -354,32 +354,38 @@ StochasticTractographyFilter< TInputDWIImage, TInputWhiteMatterProbabilityImage,
     this->m_TransformedGradients, noisefreedwi );
   CalculateResidualVariance( dwipixel, noisefreedwi, W, 6, residualvariance );
   
-  //calculate the rotation matrix
-  //obtain the principle eigenvector (v)
-  vnl_vector_fixed< double, 3 > v( constrainedparams[3],
-    constrainedparams[4],
-    constrainedparams[5] );
+  if(m_RotateSampGrid){
+    //calculate the rotation matrix
+    //obtain the principle eigenvector (v)
+    vnl_vector_fixed< double, 3 > v( constrainedparams[3],
+      constrainedparams[4],
+      constrainedparams[5] );
+      
+    //obtain a vector different from v
+    vnl_vector_fixed< double, 3 > other( v(2), v(1), v(0) );
     
-  //obtain a vector different from v
-  vnl_vector_fixed< double, 3 > other( v(2), v(1), v(0) );
-  
-  //obtain a vector perpendicular to v and other
-  vnl_vector_fixed< double, 3 > right( vnl_cross_3d( v, other ) );
-  
-  //obtain a vector perpendicular to right and v
-  vnl_vector_fixed< double, 3 > up( vnl_cross_3d( v, right ) );
-  
-  right.normalize();
-  up.normalize();
-  
-  rotation.set_column( 0, up );
-  rotation.set_column( 1, right );
-  rotation.set_column( 2, v );
-  
+    //obtain a vector perpendicular to v and other
+    vnl_vector_fixed< double, 3 > right( vnl_cross_3d( v, other ) );
+    
+    //obtain a vector perpendicular to right and v
+    vnl_vector_fixed< double, 3 > up( vnl_cross_3d( v, right ) );
+    
+    right.normalize();
+    up.normalize();
+    
+    rotation.set_column( 0, up );
+    rotation.set_column( 1, right );
+    rotation.set_column( 2, v );
+  }
+  else{
+    //rotation is just identity which does nothing
+    rotation.set_identity();
+  }
+      
   //move gradients into ref frame of tensor
   GradientDirectionContainerType::Pointer aligned_gradients = 
     GradientDirectionContainerType::New();
-  
+      
   for(unsigned int i=0; i < this->m_TransformedGradients->Size(); i++ ){
     const GradientDirectionContainerType::Element& gorg=this->m_TransformedGradients->GetElement(i);
     GradientDirectionContainerType::Element gstar=

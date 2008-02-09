@@ -97,6 +97,16 @@
       <description>Ignore the origins of the ROI and WM mask and set it to be the same as the DWI image origin</description>
     </boolean>
     <boolean>
+      <name>rotatesampgridswitch</name>
+      <flag>x</flag>
+      <default>true</default>
+      <longflag>rotatesampgridswitch</longflag>
+      <label>Rotate Sampling Grid</label>
+      <description>Rotate the sampling grid so that one of the sampling directions
+        is guaranteed to point in the principal eigenvector direction
+      </description>
+    </boolean>
+    <boolean>
       <name>streamlineswitch</name>
       <flag>z</flag>
       <default>false</default>

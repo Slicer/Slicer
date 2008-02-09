@@ -145,6 +145,14 @@ public:
   itkSetMacro( NearestNeighborInterpolation, bool );
   itkGetMacro( NearestNeighborInterpolation, bool );
   
+  /** Set/Get RotateSampGrid flag
+      true: Rotate the sampling grid so that one of the sampling directions
+        is guaranteed to point in the principal eigenvector direction
+      false (default): Use same sampling grid orientation for every voxel
+  **/
+  itkSetMacro( RotateSampGrid, bool );
+  itkGetMacro( RotateSampGrid, bool );
+  
   /** Set/Get StreamlineTractography flag
       true: Perform simple major Eigenvector following streamline tractography
       false (default): Perform Stochastic Tractography
@@ -343,6 +351,7 @@ protected:
   
   bool m_NearestNeighborInterpolation;
   bool m_StreamlineTractography;
+  bool m_RotateSampGrid;
   
   RotationImageType::Pointer m_RotationImagePtr;
 };
