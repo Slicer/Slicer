@@ -222,6 +222,7 @@ void vtkSlicerGradientsWidget::TextFieldModifiedCallback()
   vtkSlicerGradientEditorLogic *myLogic = vtkSlicerGradientEditorLogic::New();
   const char *oldGradients = this->GradientsTextbox->GetWidget()->GetText();
   int numberOfGradients = this->ActiveVolumeNode->GetNumberOfGradients();
+  this->GetMRMLScene()->SaveStateForUndo();
 
   //parse new gradients and update status label
   this->UpdateStatusLabel(myLogic->ParseGradients(oldGradients, numberOfGradients, this->BValues, this->Gradients));
@@ -248,7 +249,6 @@ void vtkSlicerGradientsWidget::UpdateStatusLabel(int status)
       vtkTimerLog *timer = vtkTimerLog::New();
       timer->StartTimer();
       this->ActiveVolumeNode->DisableModifiedEventOn();
-      this->GetMRMLScene()->SaveStateForUndo();
       this->ActiveVolumeNode->SetDiffusionGradients(this->Gradients);
       this->ActiveVolumeNode->SetBValues(this->BValues);
       this->ActiveVolumeNode->SetModifiedSinceRead(1);
@@ -278,14 +278,14 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->GradientsFrame->SetParent(this->GetParent());
   this->GradientsFrame->Create();
   this->GradientsFrame->SetLabelText("Gradients");
-  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", 
+  this->Script("pack %s -side top -anchor n -fill x -padx 2 -pady 2", 
     this->GradientsFrame->GetWidgetName());
 
   //create gradient frame 
   this->ButtonsFrame = vtkKWFrame::New();
   this->ButtonsFrame->SetParent(this->GradientsFrame->GetFrame());
   this->ButtonsFrame->Create();
-  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 1", 
+  this->Script("pack %s -side top -anchor n -fill x -padx 1 -pady 1", 
     this->ButtonsFrame->GetWidgetName());
 
   //create enable gradientsTextbox button
@@ -293,7 +293,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->EnableGradientsButton->SetParent(this->ButtonsFrame);
   this->EnableGradientsButton->SetText("Enable Textbox");
   this->EnableGradientsButton->Create();
-  this->Script("pack %s -side left -anchor nw -padx 2 -pady 1", 
+  this->Script("pack %s -side left -anchor nw -padx 2 ", 
     this->EnableGradientsButton->GetWidgetName());
 
   //create load button
@@ -304,7 +304,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open .txt/.nhdr File");
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {NHDRfile} {.nhdr} }{ {Textfile} {.txt} }");
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
-  this->Script("pack %s -side right -anchor ne -padx 2 -pady 1", 
+  this->Script("pack %s -side right -anchor ne -padx 2 ", 
     this->LoadGradientsButton->GetWidgetName());
 
   //create textbox for gradients
@@ -314,7 +314,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->GradientsTextbox->GetWidget()->SetBinding("<KeyRelease>", this, "TextFieldModifiedCallback");
   this->GradientsTextbox->SetEnabled(0);
   this->GradientsTextbox->SetHeight(30);
-  this->Script("pack %s -side top -anchor s -fill x -padx 2 -pady 2", 
+  this->Script("pack %s -side top -anchor s -fill both -expand true -padx 2 -pady 2", 
     this->GradientsTextbox->GetWidgetName());
 
   //create status label

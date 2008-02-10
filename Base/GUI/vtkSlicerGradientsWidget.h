@@ -58,6 +58,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidg
     // Method to update the status label for the gradients (GUI).
     void UpdateStatusLabel(int status);
 
+    void SaveGradients(void);
+
     // Description:
     // Method to display message to the user (GUI).
     void DisplayMessageDialog(const char* message);

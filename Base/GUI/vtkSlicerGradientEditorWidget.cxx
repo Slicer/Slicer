@@ -17,14 +17,17 @@ vtkCxxRevisionMacro (vtkSlicerGradientEditorWidget, "$Revision: 1.0 $");
 vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   {
   this->ActiveVolumeNode = NULL;
+  this->OriginalNode = NULL;
   this->MeasurementFrameWidget = NULL;
   this->GradientsWidget = NULL;
 
+  //Testframe maybe as an extra widget later
   this->TestFrame = NULL;
   this->RunButton = NULL;
   this->FiducialSelector = NULL;
 
-  this->CancelButton = NULL;
+  this->RestoreButton = NULL;
+  this->UndoButton = NULL;
   }
 
 //---------------------------------------------------------------------------
@@ -35,6 +38,11 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     {
     this->ActiveVolumeNode->Delete();
     this->ActiveVolumeNode = NULL;
+    }
+  if (this->OriginalNode)
+    {
+    this->OriginalNode->Delete();
+    this->OriginalNode = NULL;
     }
   if (this->MeasurementFrameWidget)
     {
@@ -64,11 +72,17 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->RunButton->Delete();
     this->RunButton = NULL;
     }
-  if (this->CancelButton)
+  if (this->RestoreButton)
     {
-    this->CancelButton->SetParent (NULL);
-    this->CancelButton->Delete();
-    this->CancelButton = NULL;
+    this->RestoreButton->SetParent (NULL);
+    this->RestoreButton->Delete();
+    this->RestoreButton = NULL;
+    }
+  if (this->UndoButton)
+    {
+    this->UndoButton->SetParent (NULL);
+    this->UndoButton->Delete();
+    this->UndoButton = NULL;
     }
   }
 
@@ -76,14 +90,15 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
 void vtkSlicerGradientEditorWidget::AddWidgetObservers ( )
   {    
   this->RunButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->CancelButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->FiducialSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand ); 
+  this->RestoreButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand); 
+  this->UndoButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   }
 //---------------------------------------------------------------------------
 void vtkSlicerGradientEditorWidget::RemoveWidgetObservers( )
   {
   this->RunButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->CancelButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->RestoreButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->UndoButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   }
 
 //---------------------------------------------------------------------------
@@ -96,18 +111,23 @@ void vtkSlicerGradientEditorWidget::PrintSelf (ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
   {
-  //cancel 
-  if (this->CancelButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
+  //restore 
+  if (this->RestoreButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
-    vtkErrorMacro("undo numbers "<<this->GetMRMLScene()->GetNumberOfUndoLevels());
-    if(this->GetMRMLScene()->GetNumberOfUndoLevels()>1)
+    this->ActiveVolumeNode->Copy(this->OriginalNode);
+    this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
+    this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode);
+    }
+
+  //undo 
+  if (this->UndoButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
+    {
+    //if there are copys in the undoStack restore to previous version
+    if(this->MRMLScene->GetNumberOfUndoLevels() > 0)
       {
-      this->GetMRMLScene()->Undo();
-      if(this->ActiveVolumeNode)
-        {
-        this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
-        this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode);
-        }
+      this->MRMLScene->Undo();
+      this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
+      this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode);
       }
     }
 
@@ -127,13 +147,15 @@ void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeN
     return;
     }
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode);
-  this->GetMRMLScene()->SaveStateForUndo();
+  this->OriginalNode = vtkMRMLDiffusionWeightedVolumeNode::New();
+  this->OriginalNode->Copy(this->ActiveVolumeNode);
+  this->GetMRMLScene()->ClearUndoStack();
   // update the measurement frame, gradients and bValues 
   // when the active node changes
   this->MeasurementFrameWidget->SetMRMLScene(this->GetMRMLScene());
   this->GradientsWidget->SetMRMLScene(this->GetMRMLScene());
-  this->MeasurementFrameWidget->UpdateWidget(dwiNode);
-  this->GradientsWidget->UpdateWidget(dwiNode);
+  this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
+  this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode);
   }
 
 //---------------------------------------------------------------------------
@@ -161,7 +183,7 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->GradientsWidget->SetParent(this->GetParent());
   this->GradientsWidget->Create();
   this->GradientsWidget->AddWidgetObservers();
-  this->Script("pack %s -side top -anchor nw -fill x -padx 1 -pady 2", 
+  this->Script("pack %s -side top -anchor nw -fill both expand true -padx 1 -pady 2", 
     this->GradientsWidget->GetWidgetName());
 
   //create test frame 
@@ -178,8 +200,6 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->RunButton->Create();
   this->RunButton->SetText("Run");
   this->RunButton->SetWidth(7);
-  this->Script("pack %s -side right -anchor ne -padx 2 -pady 2", 
-    this->RunButton->GetWidgetName());
 
   //create fiducial list
   this->FiducialSelector = vtkSlicerNodeSelectorWidget::New();
@@ -187,26 +207,31 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->FiducialSelector->SetNewNodeEnabled(0);
   this->FiducialSelector->NoneEnabledOn();
   this->FiducialSelector->SetShowHidden(1);
-
   this->FiducialSelector->SetParent(this->TestFrame->GetFrame());
-  this->FiducialSelector->Create();
-
   this->FiducialSelector->SetMRMLScene(this->GetMRMLScene());
+  this->FiducialSelector->Create();  
   this->FiducialSelector->UpdateMenu();
-
   this->FiducialSelector->SetLabelText("Fiducial List:");
-  this->Script("pack %s -side right -anchor ne -padx 3 -pady 2", 
+
+  this->Script("pack %s %s -side right -anchor ne -padx 3 -pady 2", 
+    this->RunButton->GetWidgetName(),
     this->FiducialSelector->GetWidgetName());
 
-
-  
+  //create save button
+  this->RestoreButton = vtkKWPushButton::New();
+  this->RestoreButton->SetParent(this->GetParent());
+  this->RestoreButton->Create();
+  this->RestoreButton->SetText("Restore");
+  this->RestoreButton->SetWidth(10);
 
   //create save button
-  this->CancelButton = vtkKWPushButton::New();
-  this->CancelButton->SetParent(this->GetParent());
-  this->CancelButton->Create();
-  this->CancelButton->SetText("Cancel");
-  this->CancelButton->SetWidth(10);
-  this->Script("pack %s -side top -anchor ne -padx 2 -pady 2", 
-    this->CancelButton->GetWidgetName());
+  this->UndoButton = vtkKWPushButton::New();
+  this->UndoButton->SetParent(this->GetParent());
+  this->UndoButton->Create();
+  this->UndoButton->SetText("Undo");
+  this->UndoButton->SetWidth(10);
+
+  this->Script("pack %s %s -side right -anchor ne -padx 6 -pady 2", 
+    this->RestoreButton->GetWidgetName(),
+    this->UndoButton->GetWidgetName());
   } 

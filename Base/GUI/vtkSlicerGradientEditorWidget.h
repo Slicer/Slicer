@@ -44,6 +44,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     virtual void CreateWidget();
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
+    vtkMRMLDiffusionWeightedVolumeNode *OriginalNode;
     vtkSlicerMeasurementFrameWidget *MeasurementFrameWidget;
     vtkSlicerGradientsWidget *GradientsWidget;
     
@@ -51,7 +52,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     vtkSlicerNodeSelectorWidget *FiducialSelector;
     vtkKWPushButton *RunButton;
     
-    vtkKWPushButton *CancelButton;
+    vtkKWPushButton *RestoreButton;
+    vtkKWPushButton *UndoButton;
 
   private:
     vtkSlicerGradientEditorWidget ( const vtkSlicerGradientEditorWidget& ); // Not implemented.

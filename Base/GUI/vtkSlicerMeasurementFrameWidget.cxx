@@ -21,9 +21,9 @@ vtkCxxRevisionMacro (vtkSlicerMeasurementFrameWidget, "$Revision: 1.0 $");
 vtkSlicerMeasurementFrameWidget::vtkSlicerMeasurementFrameWidget(void)
   {
   this->ActiveVolumeNode = NULL;
+  this->Matrix = vtkMatrix4x4::New();
   this->MeasurementFrame = NULL;
   this->MatrixWidget = NULL;
-  this->Matrix = NULL;
   this->RotateButton = NULL;
   this->NegativeButton = NULL;
   this->SwapButton = NULL;
@@ -149,7 +149,6 @@ void vtkSlicerMeasurementFrameWidget::UpdateMatrix()
 //---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode)
   {
-  this->Matrix = vtkMatrix4x4::New();
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode);
   this->ActiveVolumeNode->GetMeasurementFrameMatrix(this->Matrix);
   this->UpdateMatrix();
@@ -393,8 +392,6 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
     }
 
   //pack all elements
-  //this->Script("grid %s -row 0 -column 0 -columnspan 3 -sticky n", 
-  //  this->EnableMatrixButton->GetWidgetName());
   this->Script("grid %s -row 1 -column 0 -columnspan 3 -rowspan 3", 
     this->MatrixWidget->GetWidgetName());
   this->Script("grid %s -row 3 -column 3 -sticky ne", 
