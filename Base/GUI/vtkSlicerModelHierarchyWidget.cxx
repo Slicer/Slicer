@@ -264,7 +264,6 @@ void vtkSlicerModelHierarchyWidget::ModelVisibiltyCallback(const char *id)
         }
       }
     }
-  this->UpdateTreeFromMRML();
 }
 //---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::DeleteNodeCallback(const char *id)
