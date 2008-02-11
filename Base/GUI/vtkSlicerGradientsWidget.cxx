@@ -5,6 +5,10 @@
 #include "vtkSlicerGradientEditorLogic.h"
 
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkDoubleArray.h"
+#include "vtkTimerLog.h"
+#include <sstream>
+//widgets
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWFrame.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
@@ -14,11 +18,7 @@
 #include "vtkKWTextWithScrollbars.h"
 #include "vtkKWText.h"
 #include "vtkKWLabel.h"
-
-#include "vtkDoubleArray.h"
-#include "vtkTimerLog.h"
 #include "vtkKWMessageDialog.h"
-#include <sstream>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerGradientsWidget);
@@ -28,7 +28,6 @@ vtkCxxRevisionMacro (vtkSlicerGradientsWidget, "$Revision: 1.0 $");
 vtkSlicerGradientsWidget::vtkSlicerGradientsWidget(void)
   {
   this->ActiveVolumeNode = NULL;
-  //KWWidgets
   this->GradientsFrame = NULL;
   this->GradientsTextbox = NULL;
   this->LoadGradientsButton = NULL;
@@ -127,22 +126,25 @@ void vtkSlicerGradientsWidget::ProcessWidgetEvents (vtkObject *caller, unsigned 
     if(filename)
       {
       vtkSlicerGradientEditorLogic *myLogic = vtkSlicerGradientEditorLogic::New();
-      //add gradients to gui, if valid
+
+      //check if file contains valid values
       int status = myLogic->AddGradients(filename, this->ActiveVolumeNode->GetNumberOfGradients(), this->BValues, this->Gradients);
       if(status)
         {
-        this->UpdateGradients();
+        this->UpdateGradients(); //add gradients to gui, if valid
+        this->SaveGradients(); //save to volumeNode
         }
+
       //show short message, that file has not valid values for gradients
       else
         {
-        this->LoadGradientsButton->GetWidget()->SetText("");
+        this->LoadGradientsButton->GetWidget()->SetText(""); //clear GUI text
         this->DisplayMessageDialog("File contains invalid values!");
         }
       myLogic->Delete();
       }
     }
-  
+
   }
 
 //---------------------------------------------------------------------------
@@ -160,10 +162,10 @@ void vtkSlicerGradientsWidget::DisplayMessageDialog(const char* message)
 //---------------------------------------------------------------------------
 void vtkSlicerGradientsWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode)
   {
-  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode);
-  this->Gradients = dwiNode->GetDiffusionGradients();
-  this->BValues = dwiNode->GetBValues();
-  this->UpdateGradients();
+  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode); //set ActiveVolumeNode
+  this->Gradients = dwiNode->GetDiffusionGradients(); //set internal gradients
+  this->BValues = dwiNode->GetBValues(); //set internal bValues
+  this->UpdateGradients(); //update GUI
   }
 
 //---------------------------------------------------------------------------
@@ -184,7 +186,7 @@ void vtkSlicerGradientsWidget::UpdateGradients()
   double range[2];
   factor->GetRange(range);
 
-  // get bValue
+  // compute bValue
   double bValue = -1;
   for(int i = 0; i< this->BValues->GetSize(); i++)
     {
@@ -226,7 +228,15 @@ void vtkSlicerGradientsWidget::TextFieldModifiedCallback()
   this->GetMRMLScene()->SaveStateForUndo();
 
   //parse new gradients and update status label
-  this->UpdateStatusLabel(myLogic->ParseGradients(oldGradients, numberOfGradients, this->BValues, this->Gradients));
+  int status = myLogic->ParseGradients(oldGradients, numberOfGradients, this->BValues, this->Gradients);
+  this->UpdateStatusLabel(status);
+
+  //only if parsing was successful save gradients in activeVolumneNode
+  if(status)
+    {
+    this->SaveGradients();
+    }
+
   myLogic->Delete();
   }
 
@@ -235,30 +245,33 @@ void vtkSlicerGradientsWidget::UpdateStatusLabel(int status)
   {
   if(!status)
     {
-    this->StatusLabel->SetBackgroundColor(1, 0, 0);      
+    this->StatusLabel->SetBackgroundColor(1, 0, 0); //set red     
     this->StatusLabel->SetText("Gradients: INVALID");
     }
   else
     {
-    this->StatusLabel->SetBackgroundColor(0, 1, 0);    
-    this->StatusLabel->SetText("Gradients: VALID");
+    this->StatusLabel->SetBackgroundColor(0, 1, 0); //set green   
+    this->StatusLabel->SetText("Gradients: VALID");    
+    }
+  }
 
-    // if valid write gradients/bValues back to node
-    //TODO: takes to much time!!
-    if (this->ActiveVolumeNode != NULL && this->Gradients != NULL && this->BValues != NULL)
-      {
-      vtkTimerLog *timer = vtkTimerLog::New();
-      timer->StartTimer();
-      this->ActiveVolumeNode->DisableModifiedEventOn();
-      this->ActiveVolumeNode->SetDiffusionGradients(this->Gradients);
-      this->ActiveVolumeNode->SetBValues(this->BValues);
-      this->ActiveVolumeNode->SetModifiedSinceRead(1);
-      this->ActiveVolumeNode->DisableModifiedEventOff();
-      this->ActiveVolumeNode->InvokePendingModifiedEvent();
-      timer->StopTimer();
-      vtkWarningMacro("time: "<<timer->GetElapsedTime());
-      timer->Delete();
-      }
+//---------------------------------------------------------------------------
+void vtkSlicerGradientsWidget::SaveGradients( )
+  {
+  //TODO: takes to much time!! delete timer
+  if (this->ActiveVolumeNode != NULL && this->Gradients != NULL && this->BValues != NULL)
+    {
+    vtkTimerLog *timer = vtkTimerLog::New();
+    timer->StartTimer();
+    this->ActiveVolumeNode->DisableModifiedEventOn();
+    this->ActiveVolumeNode->SetDiffusionGradients(this->Gradients);
+    this->ActiveVolumeNode->SetBValues(this->BValues);
+    this->ActiveVolumeNode->SetModifiedSinceRead(1);
+    this->ActiveVolumeNode->DisableModifiedEventOff();
+    this->ActiveVolumeNode->InvokePendingModifiedEvent();
+    timer->StopTimer();
+    vtkWarningMacro("time: "<<timer->GetElapsedTime());
+    timer->Delete();
     }
   }
 
@@ -294,6 +307,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->EnableGradientsButton->SetParent(this->ButtonsFrame);
   this->EnableGradientsButton->SetText("Enable Textbox");
   this->EnableGradientsButton->Create();
+  this->EnableGradientsButton->SetBalloonHelpString("Enable textbox to put in or change gradients manually.");
   this->Script("pack %s -side left -anchor nw -padx 2 ", 
     this->EnableGradientsButton->GetWidgetName());
 
@@ -305,6 +319,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open .txt/.nhdr File");
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {NHDRfile} {.nhdr} }{ {Textfile} {.txt} }");
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
+  this->LoadGradientsButton->SetBalloonHelpString("Load gradients from a plain text file or nhdr header.");
   this->Script("pack %s -side right -anchor ne -padx 2 ", 
     this->LoadGradientsButton->GetWidgetName());
 
@@ -314,7 +329,6 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->GradientsTextbox->Create();
   this->GradientsTextbox->GetWidget()->SetBinding("<KeyRelease>", this, "TextFieldModifiedCallback");
   this->GradientsTextbox->SetEnabled(0);
-  this->GradientsTextbox->SetHeight(30);
   this->Script("pack %s -side top -anchor s -fill both -expand true -padx 2 -pady 2", 
     this->GradientsTextbox->GetWidgetName());
 
@@ -322,6 +336,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->StatusLabel = vtkKWLabel::New();
   this->StatusLabel->SetParent(this->GradientsFrame->GetFrame());
   this->StatusLabel->Create();
+  this->StatusLabel->SetBalloonHelpString("Shows current status of the given gradients in the textbox");
   this->Script("pack %s -side top -anchor s -fill x -padx 2 -pady 2", 
     this->StatusLabel->GetWidgetName());
 

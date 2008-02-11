@@ -26,12 +26,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidg
     // Usual vtk class functions.
     static vtkSlicerGradientsWidget* New();
     vtkTypeRevisionMacro(vtkSlicerGradientsWidget,vtkSlicerWidget);
-    void PrintSelf (ostream& os, vtkIndent indent );
+    void PrintSelf(ostream& os, vtkIndent indent);
 
     // Description:
     // Add/Remove observers on widgets in the GUI.
-    virtual void AddWidgetObservers ( );
-    virtual void RemoveWidgetObservers ( );
+    virtual void AddWidgetObservers();
+    virtual void RemoveWidgetObservers();
 
     // Description:
     // Method to propagate events generated in GUI to logic / mrml.
@@ -67,7 +67,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidg
 
     // Description:
     // Method to save changes to the activeVolumeNode.
-    void SaveGradients(void);
+    void SaveGradients();
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkDoubleArray *Gradients;
