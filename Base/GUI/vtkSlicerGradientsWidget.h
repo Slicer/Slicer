@@ -1,37 +1,40 @@
+// .NAME vtkSlicerGradientsWidget 
+// .SECTION Description
+// This class implements Slicer's DWI Gradients widget, part of the GradientEditor GUI.
+// Inherits most behavior from vtkSlicerWidget.
 #ifndef __vtkSlicerGradientsWidget_h
 #define __vtkSlicerGradientsWidget_h
 
 #include "vtkSlicerWidget.h"
 
 class vtkMRMLDiffusionWeightedVolumeNode;
+class vtkDoubleArray;
+//widgets
 class vtkKWFrameWithLabel;
 class vtkKWFrame;
 class vtkKWLoadSaveButtonWithLabel;
 class vtkKWCheckButton;
 class vtkKWTextWithScrollbars ;
 class vtkKWLabel;
-class vtkDoubleArray;
 class vtkKWMessageDialog;
 
-// Description:
-// This class implements Slicer's DWI Gradients GUI.
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
   {
   public:
 
     // Description:
-    // Usual vtk class functions
+    // Usual vtk class functions.
     static vtkSlicerGradientsWidget* New();
     vtkTypeRevisionMacro(vtkSlicerGradientsWidget,vtkSlicerWidget);
     void PrintSelf (ostream& os, vtkIndent indent );
 
     // Description:
-    // Add/Remove observers on widgets in the GUI
+    // Add/Remove observers on widgets in the GUI.
     virtual void AddWidgetObservers ( );
     virtual void RemoveWidgetObservers ( );
 
     // Description:
-    // Method to propagate events generated in GUI to logic / mrml
+    // Method to propagate events generated in GUI to logic / mrml.
     void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData );
 
     // Description:
@@ -58,26 +61,29 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidg
     // Method to update the status label for the gradients (GUI).
     void UpdateStatusLabel(int status);
 
-    void SaveGradients(void);
-
     // Description:
-    // Method to display message to the user (GUI).
+    // Method to display a message dialog to the user (GUI).
     void DisplayMessageDialog(const char* message);
 
+    // Description:
+    // Method to save changes to the activeVolumeNode.
+    void SaveGradients(void);
+
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
+    vtkDoubleArray *Gradients;
+    vtkDoubleArray *BValues;
+    //widgets (GUI)
     vtkKWFrameWithLabel *GradientsFrame;
     vtkKWFrame *ButtonsFrame;
     vtkKWLoadSaveButtonWithLabel *LoadGradientsButton;
     vtkKWCheckButton *EnableGradientsButton;
     vtkKWTextWithScrollbars *GradientsTextbox;
     vtkKWLabel *StatusLabel;
-    vtkDoubleArray *Gradients;
-    vtkDoubleArray *BValues;
     vtkKWMessageDialog *MessageDialog;
 
   private:
-    vtkSlicerGradientsWidget ( const vtkSlicerGradientsWidget& ); // Not implemented.
-    void operator = ( const vtkSlicerGradientsWidget& ); //Not implemented.
+    vtkSlicerGradientsWidget (const vtkSlicerGradientsWidget&); // Not implemented.
+    void operator = (const vtkSlicerGradientsWidget&); //Not implemented.
   };
 
 #endif 

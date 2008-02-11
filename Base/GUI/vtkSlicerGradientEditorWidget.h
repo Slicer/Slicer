@@ -1,3 +1,7 @@
+// .NAME vtkSlicerGradientEditorWidget 
+// .SECTION Description
+// This class implements Slicer's main GradientsEditor GUI.
+// Inherits most behavior from vtkSlicerWidget.
 #ifndef __vtkSlicerGradientEditorWidget_h
 #define __vtkSlicerGradientEditorWidget_h
 
@@ -5,30 +9,29 @@
 #include "vtkSlicerMeasurementFrameWidget.h"
 #include "vtkSlicerGradientsWidget.h"
 
-class vtkKWFrameWithLabel;
-class vtkKWPushButton;
 class vtkSlicerNodeSelectorWidget;
 class vtkMRMLDiffusionWeightedVolumeNode;
+//widgets
+class vtkKWFrameWithLabel;
+class vtkKWPushButton;
 
-// Description:
-// This class implements Slicer's GradientsEditor GUI.
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
   {
-  
   public:
+  
     // Description:
-    // Usual vtk class functions
+    // Usual vtk class functions.
     static vtkSlicerGradientEditorWidget* New();
     vtkTypeRevisionMacro(vtkSlicerGradientEditorWidget,vtkSlicerWidget);
     void PrintSelf (ostream& os, vtkIndent indent );
 
     // Description:
-    // Add/Remove observers on widgets in the GUI
+    // Add/Remove observers on widgets in the GUI.
     virtual void AddWidgetObservers ( );
     virtual void RemoveWidgetObservers ( );
 
     // Description:
-    // Method to propagate events generated in GUI to logic / mrml
+    // Method to propagate events generated in GUI to logic / mrml.
     void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData );
 
     // Description:
@@ -45,19 +48,19 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkMRMLDiffusionWeightedVolumeNode *OriginalNode;
+    int NumberUndosAfterLoading;    
+    //widgets (GUI)
     vtkSlicerMeasurementFrameWidget *MeasurementFrameWidget;
     vtkSlicerGradientsWidget *GradientsWidget;
-    
     vtkKWFrameWithLabel *TestFrame;
     vtkSlicerNodeSelectorWidget *FiducialSelector;
-    vtkKWPushButton *RunButton;
-    
+    vtkKWPushButton *RunButton;    
     vtkKWPushButton *RestoreButton;
-    vtkKWPushButton *UndoButton;
+    vtkKWPushButton *UndoButton;    
 
   private:
-    vtkSlicerGradientEditorWidget ( const vtkSlicerGradientEditorWidget& ); // Not implemented.
-    void operator = ( const vtkSlicerGradientEditorWidget& ); //Not implemented.
+    vtkSlicerGradientEditorWidget (const vtkSlicerGradientEditorWidget&); // Not implemented.
+    void operator = (const vtkSlicerGradientEditorWidget&); //Not implemented.
   };
 
 #endif 

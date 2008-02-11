@@ -17,7 +17,7 @@ vtkCxxRevisionMacro (vtkSlicerGradientEditorWidget, "$Revision: 1.0 $");
 vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   {
   this->ActiveVolumeNode = NULL;
-  this->OriginalNode = NULL;
+  this->OriginalNode = vtkMRMLDiffusionWeightedVolumeNode::New();
   this->MeasurementFrameWidget = NULL;
   this->GradientsWidget = NULL;
 
@@ -123,7 +123,8 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
   if (this->UndoButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
     //if there are copys in the undoStack restore to previous version
-    if(this->MRMLScene->GetNumberOfUndoLevels() > 0)
+    vtkWarningMacro("undos "<<this->MRMLScene->GetNumberOfUndoLevels());
+    if(this->MRMLScene->GetNumberOfUndoLevels() > this->NumberUndosAfterLoading)
       {
       this->MRMLScene->Undo();
       this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
@@ -147,9 +148,9 @@ void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeN
     return;
     }
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode);
-  this->OriginalNode = vtkMRMLDiffusionWeightedVolumeNode::New();
+  this->OriginalNode;
   this->OriginalNode->Copy(this->ActiveVolumeNode);
-  this->GetMRMLScene()->ClearUndoStack();
+  this->NumberUndosAfterLoading = this->MRMLScene->GetNumberOfUndoLevels();
   // update the measurement frame, gradients and bValues 
   // when the active node changes
   this->MeasurementFrameWidget->SetMRMLScene(this->GetMRMLScene());

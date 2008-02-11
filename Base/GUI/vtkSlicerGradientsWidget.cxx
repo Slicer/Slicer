@@ -28,6 +28,7 @@ vtkCxxRevisionMacro (vtkSlicerGradientsWidget, "$Revision: 1.0 $");
 vtkSlicerGradientsWidget::vtkSlicerGradientsWidget(void)
   {
   this->ActiveVolumeNode = NULL;
+  //KWWidgets
   this->GradientsFrame = NULL;
   this->GradientsTextbox = NULL;
   this->LoadGradientsButton = NULL;
