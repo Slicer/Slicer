@@ -170,6 +170,16 @@ public:
     vtkSetMacro(SampleDistanceLowRes, double);
     vtkGetMacro(SampleDistanceLowRes, double);
 
+    vtkSetMacro(SampleDistanceFactor, double);
+    vtkGetMacro(SampleDistanceFactor, double);
+
+    // Description:
+    // Calculate and set sample distances (SampleDistanceHighRes,SampleDistanceHighResImage,SampleDistanceLowRes).
+    // The current image spacing is the basis for the calculation
+    void CalculateAndSetSampleDistances();
+
+
+
 protected:
     //--------------------------------------------------------------------------
     // General
@@ -465,9 +475,11 @@ protected:
     double SampleDistanceLowRes;
 
     // Description:
-    // Calculate and set sample distances (SampleDistanceHighRes,SampleDistanceHighResImage,SampleDistanceLowRes).
-    // The current image spacing is the basis for the calculation
-    void CalculateAndSetSampleDistances();
+    // Sample distance factor to determine the step size based on the 
+    // spacing of the input volume.  The minimum size of the volume is divided by this
+    // factor to calculate the sample distance.  See:
+    // void vtkSlicerVRGrayscaleHelper::CalculateAndSetSampleDistances
+    double SampleDistanceFactor;
 
     // Description:
     // Reset the rendering algorithm back to normal

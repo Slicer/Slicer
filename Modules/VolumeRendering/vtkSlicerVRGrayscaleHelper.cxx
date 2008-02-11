@@ -75,6 +75,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->EventHandlerID="";
     this->InitialDropLowRes=0.2;
     this->FactorLastLowRes=0;
+    this->SampleDistanceFactor=2.0;
     this->LastTimeLowRes=0;
     this->GoalLowResTime=0.05;
     //.6 seems to be best
@@ -2000,7 +2001,7 @@ void vtkSlicerVRGrayscaleHelper::CalculateAndSetSampleDistances(void)
         }
     }
 
-    this->SampleDistanceHighRes=minSpacing/2.;
+    this->SampleDistanceHighRes=minSpacing/this->GetSampleDistanceFactor();
     this->SampleDistanceHighResImage=this->SampleDistanceHighRes;
     this->SampleDistanceLowRes=this->SampleDistanceHighRes*2;
 
