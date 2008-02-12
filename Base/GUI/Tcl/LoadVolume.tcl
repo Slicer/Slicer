@@ -250,7 +250,7 @@ itcl::body LoadVolume::apply { } {
   }
 
   set volumeLogic [$::slicer3::VolumesGUI GetLogic]
-  set ret [catch "$volumeLogic AddArchetypeVolume \"$fileName\" $centered $labelMap $name" node]
+  set ret [catch [list $volumeLogic AddArchetypeVolume "$fileName" $centered $labelMap $name] node]
   if { $ret } {
     $this errorDialog "Could not load $fileName as a volume\n\nError is:\n$node"
     return
