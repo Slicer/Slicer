@@ -1670,7 +1670,11 @@ vtkCollection* vtkMRMLScene::GetReferencedNodes(vtkMRMLNode *node)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::UpdateNodeIDs()
 {
-  if (this->CurrentScene->GetMTime() > this->NodeIDsMTime)
+  if (this->CurrentScene->GetNumberOfItems() == 0)
+    {
+    this->NodeIDs.clear();
+    }
+  else if (this->CurrentScene->GetMTime() > this->NodeIDsMTime)
     {
     this->NodeIDs.clear();
     vtkMRMLNode *node;
