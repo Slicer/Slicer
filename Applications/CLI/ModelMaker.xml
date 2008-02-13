@@ -4,7 +4,16 @@
   <title>Model Maker</title>
   <description>
 Create 3D surface models from segmented data. Models are imported into Slicer under a model hierarchy node, and their colors are set by the color table associated with the input volume.
-If you specify a list of Labels, it will over ride any start/end label settings. If you click Generate All it will over ride the list of lables and any start/end label settings. 
+Create Multiple: 
+If you specify a list of Labels, it will over ride any start/end label settings. 
+If you click Generate All it will over ride the list of lables and any start/end label settings. 
+Model Maker Settings:
+You can set the number of smoothing iterations, target reduction in number of polygons (decimal percentage). Use 0 and 1 if you wish no smoothing nor decimation.
+You can set the flags to split normals or generate point normals in this pane as well.
+You can save a copy of the models after intermediate steps (marching cubes, smoothing, and decimation if not joint smoothing, otherwise just after decimation); these models are not saved in the mrml file, turn off deleting temporary files first in the tcl window:
+[$::slicer3::CommandLineModuleGUI_Model_Maker GetLogic] DeleteTemporaryFilesOff
+Anatomical Information:
+Here you can specify an external file linking label values with anatomical names.
 </description>
   <version>3.0</version>
   <documentation-url>http://www.slicer.org</documentation-url>
@@ -101,6 +110,15 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
      <minimum>0</minimum>
      </constraints>
    </integer>
+   <string-enumeration>
+     <name>FilterType</name>
+     <label>Filter Type</label>
+     <description>Controls the type of smoothing done on the model.</description>
+     <longflag>--filtertype</longflag>
+     <default>Sinc</default>
+     <element>Sinc</element>
+     <element>Laplacian</element>
+   </string-enumeration>
    <float>
      <name>Decimate</name>
      <label>Decimate</label>
@@ -126,15 +144,13 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
      <description>Calculate the Point Normals?</description>
      <default>true</default>
    </boolean>
-   <string-enumeration>
-     <name>FilterType</name>
-     <label>Filter Type</label>
-     <description>Controls the type of smoothing done after the model is built.</description>
-     <longflag>--filtertype</longflag>
-     <default>Sinc</default>
-     <element>Sinc</element>
-     <element>Laplacian</element>
-   </string-enumeration>
+   <boolean>
+     <name>SaveIntermediateModels</name>
+     <label>Save Intermediate Models</label>
+     <longflag>saveIntermediateModels</longflag>
+     <description>Save a copy of the model after intermediate steps.</description>
+     <default>false</default>
+   </boolean>
 </parameters>
 
 <parameters advanced="true">

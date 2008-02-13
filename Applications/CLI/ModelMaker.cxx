@@ -79,6 +79,7 @@ int main(int argc, char * argv[])
       std::cout << "Filter type: " << FilterType << std::endl;
       std::cout << "Output model scene file: " << (ModelSceneFile.size() > 0 ? ModelSceneFile[0].c_str() : "None") << std::endl;
       std::cout << "Color table file : " << ColorTable.c_str() << std::endl;
+      std::cout << "Save intermediate models: " << SaveIntermediateModels << std::endl;
       std::cout << "\nStarting..." << std::endl;
       }
 
@@ -258,6 +259,18 @@ int main(int argc, char * argv[])
       numRepeatedFilterSteps = 9;
       }
     numFilterSteps = numSingletonFilterSteps + (numRepeatedFilterSteps * numModelsToGenerate);
+    if (SaveIntermediateModels)
+      {
+      if (JointSmoothing)
+        {
+        numFilterSteps += numModelsToGenerate;
+        }
+      else
+        {
+        numFilterSteps += 3 * numModelsToGenerate;
+        }
+      }
+    
     if (debug)
       {
       std::cout << "useStartEnd = " << useStartEnd << ", numModelsToGenerate = "<< numModelsToGenerate << ", numFilterSteps " << numFilterSteps << endl;
@@ -392,6 +405,7 @@ int main(int argc, char * argv[])
           }
         StartLabel = (int)floor(min[0]);
         EndLabel = (int)floor(max[0]);
+        useStartEnd = true;
         // recalculate the number of filter steps, discount the labels with no
         // voxels       
         numModelsToGenerate = 0;
@@ -408,6 +422,24 @@ int main(int argc, char * argv[])
           std::cout << endl << "GenerateAll: there are " << numModelsToGenerate << " models to be generated." << endl;
           }
         numFilterSteps = numSingletonFilterSteps + (numRepeatedFilterSteps * numModelsToGenerate);
+        if (SaveIntermediateModels)
+          {
+          if (JointSmoothing)
+            {
+            // save after decimation
+            numFilterSteps += 1 * numModelsToGenerate;
+            }
+          else
+            {
+            // if not doing joint smoothing, save after marching cubes and
+            // smoothing as well as decimation
+            numFilterSteps += 3 * numModelsToGenerate;
+            }
+          }
+         if (debug)
+           {
+           std::cout << "Reset numFilterSteps to " << numFilterSteps << endl;
+           }
         }
       
        
@@ -428,7 +460,7 @@ int main(int argc, char * argv[])
         {
         if (debug)
           {
-          std::cout << "Using end label = " << EndLabel << ", start label = " << StartLabel << endl;
+          std::cout << "Marchign cubes: Using end label = " << EndLabel << ", start label = " << StartLabel << endl;
           }
         cubes->GenerateValues((EndLabel-StartLabel +1), StartLabel, EndLabel);
         }
@@ -436,7 +468,7 @@ int main(int argc, char * argv[])
         {
         if (debug)
           {
-          std::cout << "Using max = " << labelsMax << ", min = " << labelsMin << endl;
+          std::cout << "Marching cubes: Using max = " << labelsMax << ", min = " << labelsMin << endl;
           }
         cubes->GenerateValues((labelsMax - labelsMin + 1), labelsMin, labelsMax);
         }
@@ -446,7 +478,11 @@ int main(int argc, char * argv[])
         {
         float passBand = 0.001;
         smoother = vtkWindowedSincPolyDataFilter::New();
-        std::string comment = "Joint Smooth All Models";
+        std::stringstream stream;
+        stream << "Joint Smooth All Models (";
+        stream << numModelsToGenerate;
+        stream << " to process)";
+        std::string comment = stream.str();
         vtkPluginFilterWatcher watchSmoother(smoother,
                                              comment.c_str(),
                                              CLPProcessInformation,
@@ -567,9 +603,9 @@ int main(int argc, char * argv[])
     transformIJKtoRAS->SetMatrix(reader->GetRasToIjkMatrix());
     if (debug)
       {
-      std::cout << "RasToIjk matrix from file = ";
-      transformIJKtoRAS->GetMatrix()->Print(std::cout);
-      std::cout << endl;
+      //std::cout << "RasToIjk matrix from file = ";
+      //transformIJKtoRAS->GetMatrix()->Print(std::cout);
+      //std::cout << endl;
       }
     transformIJKtoRAS->Inverse();
 
@@ -629,7 +665,7 @@ int main(int argc, char * argv[])
           if (colorName.c_str() != NULL)
             {
             if (!SkipUnNamed ||
-                (SkipUnNamed && colorName.compare("invalid") != 0))
+                (SkipUnNamed && (colorName.compare("invalid") != 0 && colorName.compare("(none)") != 0)))
               {
               labelName = Name + std::string("_") + stringI + std::string("_") + colorName;
               if (debug)
@@ -830,6 +866,38 @@ int main(int argc, char * argv[])
           std::cout << "...continuing" << endl;
           continue;
           }
+        if (SaveIntermediateModels)
+          {
+          writer = vtkPolyDataWriter::New();
+          std::string commentSaveCubes = "Writing intermediate model after marching cubes " + labelName;
+          vtkPluginFilterWatcher watchWriter(writer,
+                                             commentSaveCubes.c_str(),
+                                             CLPProcessInformation,
+                                             1.0/numFilterSteps, 
+                                             currentFilterOffset/numFilterSteps);
+          currentFilterOffset += 1.0;          
+          writer->SetInput(cubes->GetOutput());
+          writer->SetFileType(2);
+          std::string fileName;
+          if (rootDir != "")
+            {
+            fileName = rootDir + std::string("/") + labelName + std::string("-MarchingCubes.vtk");
+            }
+          else
+            {
+            fileName = labelName + std::string("-MarchingCubes.vtk");
+            }
+          if (debug)
+            {
+            watchWriter.QuietOn();
+            std::cout << "Writing intermediate file " << fileName.c_str() << std::endl;
+            }
+          writer->SetFileName(fileName.c_str());
+          writer->Write();
+          writer->SetInput(NULL);
+          writer->Delete();
+          writer = NULL;        
+          }
         }
       else 
         {
@@ -879,6 +947,38 @@ int main(int argc, char * argv[])
         std::cout << "After decimation, number of polygons = " << (decimator->GetOutput())->GetNumberOfPolys() << endl;
         }
 
+      if (SaveIntermediateModels)
+        {
+        writer = vtkPolyDataWriter::New();
+        std::string commentSaveDecimation = "Writing intermediate model after decimation " + labelName;
+        vtkPluginFilterWatcher watchWriter(writer,
+                                           commentSaveDecimation.c_str(),
+                                           CLPProcessInformation,
+                                           1.0/numFilterSteps, 
+                                           currentFilterOffset/numFilterSteps);
+        currentFilterOffset += 1.0;        
+        writer->SetInput(decimator->GetOutput());
+        writer->SetFileType(2);
+        std::string fileName;
+        if (rootDir != "")
+          {
+          fileName = rootDir + std::string("/") + labelName + std::string("-Decimated.vtk");
+          }
+        else
+          {
+          fileName = labelName + std::string("-MarchingCubes.vtk");
+          }
+        if (debug)
+          {
+          watchWriter.QuietOn();
+          std::cout << "Writing intermediate file " << fileName.c_str() << std::endl;
+          }
+        writer->SetFileName(fileName.c_str());
+        writer->Write();
+        writer->SetInput(NULL);
+        writer->Delete();
+        writer = NULL;        
+        }
       if ((transformIJKtoRAS->GetMatrix())->Determinant() < 0) 
         {
         if (debug)
@@ -976,9 +1076,49 @@ int main(int argc, char * argv[])
           //smootherPoly->ReleaseDataFlagOn();
             
           smootherPoly->Update();
+          }       
+
+        if (SaveIntermediateModels)
+          {
+          writer = vtkPolyDataWriter::New();
+          std::string commentSaveSmoothed = "Writing intermediate model after smoothing " + labelName;
+          vtkPluginFilterWatcher watchWriter(writer,
+                                             commentSaveSmoothed.c_str(),
+                                             CLPProcessInformation,
+                                             1.0/numFilterSteps, 
+                                             currentFilterOffset/numFilterSteps);
+          currentFilterOffset += 1.0;
+          if (strcmp(FilterType.c_str(),"Sinc") == 0)
+            {
+            writer->SetInput(smootherSinc->GetOutput());
+            }
+          else
+            {
+            writer->SetInput(smootherPoly->GetOutput());
+            }
+          writer->SetFileType(2);
+          std::string fileName;
+          if (rootDir != "")
+            {
+            fileName = rootDir + std::string("/") + labelName + std::string("-Smoothed.vtk");
+            }
+          else
+            {
+            fileName = labelName + std::string("-Smoothed.vtk");
+            }
+           if (debug)
+            {
+            watchWriter.QuietOn();
+            std::cout << "Writing intermediate file " << fileName.c_str() << std::endl;
+            }          
+          writer->SetFileName(fileName.c_str());
+          writer->Write();
+          writer->SetInput(NULL);
+          writer->Delete();
+          writer = NULL;        
           }
         }
-
+      
       transformer = vtkTransformPolyDataFilter::New();
       std::string comment1 = "Transform " + labelName;
       vtkPluginFilterWatcher watchTransformer(transformer,
@@ -1017,7 +1157,7 @@ int main(int argc, char * argv[])
       transformer->SetTransform(transformIJKtoRAS);
       if (debug)
         {
-        transformIJKtoRAS->GetMatrix()->Print(std::cout);
+        //transformIJKtoRAS->GetMatrix()->Print(std::cout);
         }
 
       (transformer->GetOutput())->ReleaseDataFlagOn();
@@ -1070,7 +1210,6 @@ int main(int argc, char * argv[])
       (stripper->GetOutput())->Update();
 
       // but for now we're just going to write it out
-
       writer = vtkPolyDataWriter::New();
       std::string comment4 = "Write " + labelName;
       vtkPluginFilterWatcher watchWriter(writer,
