@@ -109,8 +109,8 @@ class VTK_COMMANDLINEMODULE_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRML
     {this->SetParameterAsString(std::string(name), std::string(value));}
   void SetParameterAsInt(const char *name, const int value)
     {this->SetParameterAsInt(std::string(name), value);}
-  void SetParameterAsBool(const char *name, const bool value)
-    {this->SetParameterAsBool(std::string(name), value);}
+  void SetParameterAsBool(const char *name, const int value)
+    {this->SetParameterAsBool(std::string(name), (value == 0 ? false : true));}
   void SetParameterAsDouble(const char *name, const double value)
     {this->SetParameterAsDouble(std::string(name), value);}
   void SetParameterAsFloat(const char *name, const float value)
