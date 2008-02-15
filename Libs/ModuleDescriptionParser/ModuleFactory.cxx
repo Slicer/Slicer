@@ -887,7 +887,7 @@ ModuleFactory
                                   itksysProcess_Option_Detach, 0);
           itksysProcess_SetOption(process,
                                   itksysProcess_Option_HideWindow, 1);
-          itksysProcess_SetTimeout(process, 5.0); // 5 seconds
+          itksysProcess_SetTimeout(process, 10.0); // seconds
 
           // execute the command
           itksysProcess_Execute(process);
@@ -913,6 +913,7 @@ ModuleFactory
                 }
               }
             }
+          itksysProcess_SetTimeout(process, 10.0);
           itksysProcess_WaitForExit(process, 0);
 
           // check the exit state / error state of the process
@@ -1586,7 +1587,7 @@ ModuleFactory
                           itksysProcess_Option_Detach, 0);
   itksysProcess_SetOption(process,
                           itksysProcess_Option_HideWindow, 1);
-  itksysProcess_SetTimeout(process, 5.0); // 5 seconds
+  itksysProcess_SetTimeout(process, 10.0); // seconds
   
   // execute the command
   itksysProcess_Execute(process);
