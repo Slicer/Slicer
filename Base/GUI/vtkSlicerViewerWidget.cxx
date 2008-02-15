@@ -85,7 +85,7 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
   this->SceneClosing = false;
 
   this->ModelHierarchiesPresent = false;
-  this->ModelHierarchyLogic = vtkSlicerModelHierarchyLogic::New();
+  this->ModelHierarchyLogic = NULL;
 
   this->ApplicationLogic = NULL;
   this->WorldPointPicker = vtkWorldPointPicker::New();
@@ -106,6 +106,8 @@ vtkSlicerViewerWidget::vtkSlicerViewerWidget ( )
 //---------------------------------------------------------------------------
 vtkSlicerViewerWidget::~vtkSlicerViewerWidget ( )
 {
+  this->SetModelHierarchyLogic(NULL);
+
   this->RemoveMRMLObservers();
 
   vtkSetMRMLNodeMacro(this->ClipModelsNode, NULL);

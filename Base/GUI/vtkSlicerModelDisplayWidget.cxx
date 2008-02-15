@@ -38,6 +38,8 @@ vtkSlicerModelDisplayWidget::vtkSlicerModelDisplayWidget ( )
 
     this->ModelDisplayNode = NULL;
     this->ModelNode = NULL;
+    this->ModelHierarchyNode = NULL;
+    this->ModelHierarchyLogic = NULL;
 
     this->VisibilityButton = NULL;
     this->ScalarVisibilityButton = NULL;
@@ -61,6 +63,7 @@ vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
 {
   this->RemoveMRMLObservers();
   this->RemoveWidgetObservers();
+  this->SetModelHierarchyLogic(NULL);
 
   if (this->VisibilityButton)
     {
@@ -117,6 +120,7 @@ vtkSlicerModelDisplayWidget::~vtkSlicerModelDisplayWidget ( )
     this->ChangeColorButton= NULL;
     }
   vtkSetAndObserveMRMLNodeMacro(this->ModelNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->ModelHierarchyNode, NULL);
   vtkSetAndObserveMRMLNodeMacro(this->ModelDisplayNode, NULL);
   this->SetMRMLScene ( NULL );
   
@@ -153,6 +157,20 @@ void vtkSlicerModelDisplayWidget::SetModelNode ( vtkMRMLModelNode *node )
   // Set the member variables and do a first process
   //
   vtkSetAndObserveMRMLNodeMacro(this->ModelNode, node);
+
+  if ( node )
+    {
+    this->UpdateWidget();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelDisplayWidget::SetModelHierarchyNode ( vtkMRMLModelHierarchyNode *node )
+{ 
+  // 
+  // Set the member variables and do a first process
+  //
+  vtkSetAndObserveMRMLNodeMacro(this->ModelHierarchyNode, node);
 
   if ( node )
     {
@@ -202,7 +220,39 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
 
   if ( this->ModelDisplayNode )
     {
-    this->ModelDisplayNode->SetVisibility(this->VisibilityButton->GetWidget()->GetSelectedState());
+    int visibility = this->VisibilityButton->GetWidget()->GetSelectedState();
+
+    this->ModelDisplayNode->SetVisibility(visibility);
+    // update hierarchy children visibility 
+    if (this->ModelHierarchyNode != NULL && this->ModelNode == NULL)
+      {
+      vtkMRMLDisplayNode *dnode = this->ModelHierarchyNode->GetDisplayNode();
+      if (dnode)
+        {
+        dnode->SetVisibility(visibility);
+        }
+      
+      // chnage children visibility 
+      std::vector< vtkMRMLModelHierarchyNode *> childrenNodes;
+      this->ModelHierarchyLogic->GetHierarchyChildrenNodes(this->ModelHierarchyNode, childrenNodes);
+      for (int i=0; i<childrenNodes.size(); i++)
+        {
+        vtkMRMLModelHierarchyNode *cnode = childrenNodes[i];
+        vtkMRMLDisplayNode *cdnode = cnode->GetDisplayNode();
+        if (cdnode)
+          {
+          cdnode->SetVisibility(visibility);
+          }
+        vtkMRMLModelNode *mnode = cnode->GetModelNode();
+        vtkMRMLDisplayNode *mdnode = mnode->GetDisplayNode();
+        if (mdnode)
+          {
+          mdnode->SetVisibility(visibility);
+          }
+        } //for
+     } //if
+    
+    
     this->ModelDisplayNode->SetScalarVisibility(this->ScalarVisibilityButton->GetWidget()->GetSelectedState());
     // get the value of the button, it's the selected item in the menu
     this->ModelDisplayNode->SetActiveScalarName(this->ScalarMenu->GetWidget()->GetValue());

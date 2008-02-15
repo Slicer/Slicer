@@ -37,6 +37,7 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 
+#include "vtkSlicerModelHierarchyLogic.h"
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelDisplayWidget : public vtkSlicerWidget
 {
@@ -53,6 +54,10 @@ public:
   // Description:
   // Set  MRML ModelNode for dscalar colors
   void SetModelNode ( vtkMRMLModelNode *node );
+  
+  // Description:
+  // Set  MRML ModelHierarchyNode 
+  void SetModelHierarchyNode ( vtkMRMLModelHierarchyNode *node );
   
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
@@ -74,6 +79,11 @@ public:
   // remove observers on display node
   virtual void RemoveMRMLObservers ( );
   
+  // Description:
+  // get/set vtkSlicerModelHierarchyLogic
+  vtkGetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
+  vtkSetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
+
  protected:
   vtkSlicerModelDisplayWidget();
   virtual ~vtkSlicerModelDisplayWidget();
@@ -87,6 +97,7 @@ public:
   
   vtkMRMLModelDisplayNode* ModelDisplayNode;
   vtkMRMLModelNode *ModelNode;
+  vtkMRMLModelHierarchyNode *ModelHierarchyNode;
   
   vtkKWCheckButtonWithLabel *VisibilityButton;
   vtkKWCheckButtonWithLabel *ScalarVisibilityButton;
@@ -97,6 +108,8 @@ public:
   vtkKWScaleWithLabel  *OpacityScale;
   vtkKWSurfaceMaterialPropertyWidget *SurfaceMaterialPropertyWidget;
   vtkKWChangeColorButton *ChangeColorButton;
+
+  vtkSlicerModelHierarchyLogic * ModelHierarchyLogic;
 
   // Description:
   // Set this when processing an event, since repopulate the scalars menu

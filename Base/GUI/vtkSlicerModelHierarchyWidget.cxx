@@ -41,7 +41,7 @@ vtkSlicerModelHierarchyWidget::vtkSlicerModelHierarchyWidget ( )
   this->ModelDisplayWidget = NULL;
 
   this->ModelDisplayNode = NULL;
-  this->ModelHierarchyLogic = vtkSlicerModelHierarchyLogic::New();
+  this->ModelHierarchyLogic = NULL;
   this->UpdatingTree = 0;
 
 }
@@ -50,6 +50,8 @@ vtkSlicerModelHierarchyWidget::vtkSlicerModelHierarchyWidget ( )
 //---------------------------------------------------------------------------
 vtkSlicerModelHierarchyWidget::~vtkSlicerModelHierarchyWidget ( )
 {
+  this->SetModelHierarchyLogic(NULL);
+
   if (this->TreeWidget)
     {
     this->TreeWidget->SetParent(NULL);
@@ -192,6 +194,19 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
 
           sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
           this->ContextMenu->AddCommand("Edit Display", this, command);
+          
+          vtkMRMLModelHierarchyNode *hnode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
+          vtkMRMLDisplayNode *dnode = hnode->GetDisplayNode();
+          if (dnode)
+            {
+            int visibility = dnode->GetVisibility();
+            sprintf(command, "HierarchyVisibiltyCallback {%s}", (const char *)callData);
+            int tag = this->ContextMenu->AddCheckButton ("Visibility", this, command);
+            if (visibility)
+              {
+              this->ContextMenu->SelectItem(tag);
+              }
+            }
           }
         else if (node != NULL && node->IsA("vtkMRMLModelNode"))
           {
@@ -235,15 +250,59 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       this->ModelDisplayWidget->SetModelDisplayNode(model->GetModelDisplayNode());
       this->ModelDisplayWidget->SetModelNode(model);
+      this->ModelDisplayWidget->SetModelHierarchyNode(NULL);
       }
     else if (hmodel != NULL && hmodel->GetDisplayNode() != NULL)
       {
       this->ModelDisplayWidget->SetModelDisplayNode(hmodel->GetDisplayNode());
       this->ModelDisplayWidget->SetModelNode(NULL);
+      this->ModelDisplayWidget->SetModelHierarchyNode(hmodel);
       }
     return;
     }
 } 
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelHierarchyWidget::HierarchyVisibiltyCallback(const char *id)
+{
+  // cout << "I want to delete MRML node " << id << endl;
+  // delete node, then repopulate tree
+  int visibility = 0;
+  for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
+    {
+    vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[i].c_str());
+    if (node != NULL)
+      {
+      vtkMRMLModelHierarchyNode *hnode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
+      vtkMRMLDisplayNode *dnode = hnode->GetDisplayNode();
+      if (dnode)
+        {
+        visibility = dnode->GetVisibility();
+        visibility = (int)(!visibility);
+        dnode->SetVisibility(visibility);
+        }
+      
+      // chnage children visibility 
+      std::vector< vtkMRMLModelHierarchyNode *> childrenNodes;
+      this->ModelHierarchyLogic->GetHierarchyChildrenNodes(hnode, childrenNodes);
+      for (int i=0; i<childrenNodes.size(); i++)
+        {
+        vtkMRMLModelHierarchyNode *cnode = childrenNodes[i];
+        vtkMRMLDisplayNode *cdnode = cnode->GetDisplayNode();
+        if (cdnode)
+          {
+          cdnode->SetVisibility(visibility);
+          }
+        vtkMRMLModelNode *mnode = cnode->GetModelNode();
+        vtkMRMLDisplayNode *mdnode = mnode->GetDisplayNode();
+        if (mdnode)
+          {
+          mdnode->SetVisibility(visibility);
+          }
+        } //for
+     } //if
+   }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::ModelVisibiltyCallback(const char *id)
@@ -594,6 +653,8 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
 
   this->ModelDisplayWidget = vtkSlicerModelDisplayWidget::New ( );
   this->ModelDisplayWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
+  this->ModelDisplayWidget->SetModelHierarchyLogic(this->GetModelHierarchyLogic());
+
   this->ModelDisplayWidget->SetParent ( dframe->GetFrame() );
   this->ModelDisplayWidget->Create ( );
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",

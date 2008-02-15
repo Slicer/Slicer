@@ -14,6 +14,7 @@
 #include "vtkSlicerSliceLogic.h"
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerModelsLogic.h"
+#include "vtkSlicerModelHierarchyLogic.h"
 #include "vtkSlicerFiducialsLogic.h"
 #include "vtkSlicerColorLogic.h"
 #include "vtkMRMLScene.h"
@@ -944,6 +945,7 @@ int Slicer3_main(int argc, char *argv[])
 
     // --- Models module    
     vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::New ( );
+    vtkSlicerModelHierarchyLogic *modelHierarchyLogic = vtkSlicerModelHierarchyLogic::New ( );
     modelsLogic->SetAndObserveMRMLScene ( scene );
     vtkSlicerModelsGUI *modelsGUI = vtkSlicerModelsGUI::New ( );
     modelsGUI->SetApplication ( slicerApp );
@@ -951,6 +953,8 @@ int Slicer3_main(int argc, char *argv[])
     modelsGUI->SetAndObserveApplicationLogic ( appLogic );
     modelsGUI->SetAndObserveMRMLScene ( scene );
     modelsGUI->SetModuleLogic ( modelsLogic );
+    modelsGUI->SetModelHierarchyLogic( modelHierarchyLogic );
+    appGUI->GetViewerWidget()->SetModelHierarchyLogic(modelHierarchyLogic);
     modelsGUI->SetGUIName( "Models" );
     modelsGUI->GetUIPanel()->SetName ( modelsGUI->GetGUIName ( ) );
     modelsGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
@@ -2249,6 +2253,9 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef MODELS_DEBUG
     modelsLogic->SetAndObserveMRMLScene ( NULL );
     modelsLogic->Delete();
+    
+    modelHierarchyLogic->SetAndObserveMRMLScene ( NULL );
+    modelHierarchyLogic->Delete();
 #endif
 #ifndef FIDUCIALS_DEBUG
     fiducialsLogic->SetAndObserveMRMLScene ( NULL );

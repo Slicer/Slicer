@@ -26,6 +26,8 @@
 
 #include "vtkSlicerWidget.h"
 #include "vtkSlicerApplicationLogic.h"
+#include "vtkSlicerModelHierarchyLogic.h"
+
 
 #include "vtkKWRenderWidget.h"
 #include "vtkKWFrame.h"
@@ -178,6 +180,12 @@ public:
   // Get/Set the picked point id, returns -1 if no pick
   vtkGetMacro( PickedPointID, vtkIdType);
   vtkSetMacro( PickedPointID, vtkIdType);
+  
+  // Description:
+  // get/set vtkSlicerModelHierarchyLogic
+  vtkGetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
+  vtkSetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
+
 protected:
   vtkSlicerViewerWidget();
   virtual ~vtkSlicerViewerWidget();

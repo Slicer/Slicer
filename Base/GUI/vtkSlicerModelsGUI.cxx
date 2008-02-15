@@ -31,6 +31,8 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
 
   // classes not yet defined!
   this->Logic = NULL;
+  this->ModelHierarchyLogic = NULL;
+
   //this->ModelNode = NULL;
   this->LoadModelButton = NULL;
   this->LoadModelDirectoryButton = NULL;
@@ -56,6 +58,7 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
   this->RemoveGUIObservers();
 
   this->SetModuleLogic ( NULL );
+  this->SetModelHierarchyLogic ( NULL );
 
   if (this->ModelDisplaySelectorWidget)
     {
@@ -552,6 +555,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
 
     this->ModelDisplayWidget = vtkSlicerModelDisplayWidget::New ( );
     this->ModelDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
+    this->ModelDisplayWidget->SetModelHierarchyLogic(this->GetModelHierarchyLogic());
     this->ModelDisplayWidget->SetParent ( this->ModelDisplayFrame->GetFrame() );
     this->ModelDisplayWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
@@ -625,6 +629,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
 
     this->ModelHierarchyWidget = vtkSlicerModelHierarchyWidget::New ( );
     this->ModelHierarchyWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
+    this->ModelHierarchyWidget->SetModelHierarchyLogic(this->GetModelHierarchyLogic());
     this->ModelHierarchyWidget->SetParent ( hierFrame->GetFrame() );
     this->ModelHierarchyWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",

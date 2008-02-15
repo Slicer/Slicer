@@ -24,6 +24,7 @@ vtkStandardNewMacro(vtkSlicerModelHierarchyLogic);
 vtkSlicerModelHierarchyLogic::vtkSlicerModelHierarchyLogic()
 {
   this->ModelHierarchyNodesMTime = 0;
+  this->HierarchyChildrenNodesMTime = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -92,26 +93,51 @@ vtkMRMLModelHierarchyNode* vtkSlicerModelHierarchyLogic::GetModelHierarchyNode(c
     }
   
 }
+//----------------------------------------------------------------------------
+void vtkSlicerModelHierarchyLogic::GetHierarchyChildrenNodes(vtkMRMLModelHierarchyNode *parentNode,
+                                                             std::vector< vtkMRMLModelHierarchyNode *> &childrenNodes)
+{
+  this->UpdateHierarchyChildrenMap();
+  
+  std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> >::iterator iter;
+  std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> > hierarchyChildrenNodes = this->HierarchyChildrenNodes;
+  iter = hierarchyChildrenNodes.find(std::string(parentNode->GetID()));
+  if (iter != hierarchyChildrenNodes.end()) 
+    {
+    for (int i=0; i<iter->second.size(); i++)
+      {
+      childrenNodes.push_back(iter->second[i]);
+      this->GetHierarchyChildrenNodes(iter->second[i], childrenNodes);
+      }
+    }
+}
 
 
 //----------------------------------------------------------------------------
 void vtkSlicerModelHierarchyLogic::UpdateHierarchyChildrenMap()
 {
   std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> >::iterator iter;
-  for (iter  = this->HierarchyChildrenNodes.begin();
-       iter != this->HierarchyChildrenNodes.end();
-       iter++)
+  if (this->MRMLScene == NULL)
     {
-    iter->second.clear();
-    }
-  this->HierarchyChildrenNodes.clear();
-    
-  if (this->MRMLScene->GetSceneModifiedTime() > this->ModelHierarchyNodesMTime)
-  {
-    if (this->MRMLScene == NULL)
+    for (iter  = this->HierarchyChildrenNodes.begin();
+         iter != this->HierarchyChildrenNodes.end();
+         iter++)
       {
-      return;
+      iter->second.clear();
       }
+    this->HierarchyChildrenNodes.clear();
+    }
+    
+  if (this->MRMLScene->GetSceneModifiedTime() > this->HierarchyChildrenNodesMTime)
+  {
+    for (iter  = this->HierarchyChildrenNodes.begin();
+         iter != this->HierarchyChildrenNodes.end();
+         iter++)
+      {
+      iter->second.clear();
+      }
+    this->HierarchyChildrenNodes.clear();
+    
     std::vector<vtkMRMLNode *> nodes;
     int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
   
@@ -137,6 +163,6 @@ void vtkSlicerModelHierarchyLogic::UpdateHierarchyChildrenMap()
           }
         }
       }
-    this->ModelHierarchyNodesMTime = this->MRMLScene->GetSceneModifiedTime();
+    this->HierarchyChildrenNodesMTime = this->MRMLScene->GetSceneModifiedTime();
   }
 }
