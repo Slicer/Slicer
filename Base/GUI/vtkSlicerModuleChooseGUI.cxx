@@ -838,11 +838,17 @@ void vtkSlicerModuleChooseGUI::Populate( )
 
       // build the all modules meny in sorted order
       AllMap::iterator allIt = allMap.begin();
+      int numLines = 0;
       while ( allIt != allMap.end() )
         {
         all->AddCommand( (*allIt).first.c_str(), this,
                          (*allIt).second.c_str());
         ++allIt;
+        numLines++;
+        if (numLines % 40 == 0)
+          {
+          all->SetItemColumnBreak(numLines - 1, 1);
+          }
         }
       
       }
