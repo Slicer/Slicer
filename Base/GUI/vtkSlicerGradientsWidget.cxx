@@ -19,6 +19,7 @@
 #include "vtkKWText.h"
 #include "vtkKWLabel.h"
 #include "vtkKWMessageDialog.h"
+#include "vtkKWPushButton.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerGradientsWidget);
@@ -37,6 +38,7 @@ vtkSlicerGradientsWidget::vtkSlicerGradientsWidget(void)
   this->Gradients = NULL;
   this->BValues = NULL;
   this->MessageDialog = NULL;
+  this->UndoButton = NULL;
   }
 
 //---------------------------------------------------------------------------
@@ -82,6 +84,11 @@ vtkSlicerGradientsWidget::~vtkSlicerGradientsWidget(void)
     {
     this->StatusLabel->Delete();
     this->StatusLabel = NULL;
+    }
+  if (this->UndoButton)
+    {
+    this->UndoButton->Delete();
+    this->UndoButton = NULL;
     }
   if (this->MessageDialog)
     {
@@ -295,7 +302,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->Script("pack %s -side top -anchor n -fill x -padx 2 -pady 2", 
     this->GradientsFrame->GetWidgetName());
 
-  //create gradient frame 
+  //create button frame 
   this->ButtonsFrame = vtkKWFrame::New();
   this->ButtonsFrame->SetParent(this->GradientsFrame->GetFrame());
   this->ButtonsFrame->Create();
@@ -336,8 +343,19 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->StatusLabel = vtkKWLabel::New();
   this->StatusLabel->SetParent(this->GradientsFrame->GetFrame());
   this->StatusLabel->Create();
+  this->StatusLabel->SetWidth(45);
   this->StatusLabel->SetBalloonHelpString("Shows current status of the given gradients in the textbox");
-  this->Script("pack %s -side top -anchor s -fill x -padx 2 -pady 2", 
-    this->StatusLabel->GetWidgetName());
 
+  //create enable gradientsTextbox button
+  this->UndoButton = vtkKWPushButton::New();
+  this->UndoButton->SetParent(this->GradientsFrame->GetFrame());
+  this->UndoButton->SetText("Undo");  
+  this->UndoButton->Create();
+  this->UndoButton->SetBalloonHelpString("");
+  this->UndoButton->SetWidth(11);
+
+  //pack statusLabel and undoButton
+  this->Script("pack %s %s -side right -anchor n -padx 4 -pady 2", 
+    this->UndoButton->GetWidgetName(),
+    this->StatusLabel->GetWidgetName());
   }

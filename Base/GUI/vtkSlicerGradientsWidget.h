@@ -17,6 +17,7 @@ class vtkKWCheckButton;
 class vtkKWTextWithScrollbars ;
 class vtkKWLabel;
 class vtkKWMessageDialog;
+class vtkKWPushButton;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
   {
@@ -80,6 +81,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidg
     vtkKWTextWithScrollbars *GradientsTextbox;
     vtkKWLabel *StatusLabel;
     vtkKWMessageDialog *MessageDialog;
+    vtkKWPushButton *UndoButton;
 
   private:
     vtkSlicerGradientsWidget (const vtkSlicerGradientsWidget&); // Not implemented.

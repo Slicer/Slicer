@@ -60,6 +60,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSli
     vtkKWPushButton *NegativeButton;
     vtkKWPushButton *SwapButton;    
     vtkKWPushButton *RotateButton;
+    vtkKWPushButton *IdentityButton;
+    vtkKWPushButton *UndoButton;
     vtkKWLabel *AngleLabel;
     vtkKWComboBox *AngleCombobox;
     vtkKWCheckButton* Checkbuttons[3];

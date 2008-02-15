@@ -27,6 +27,8 @@ vtkSlicerMeasurementFrameWidget::vtkSlicerMeasurementFrameWidget(void)
   this->MatrixWidget = NULL;
   this->RotateButton = NULL;
   this->NegativeButton = NULL;
+  this->IdentityButton = NULL;
+  this->UndoButton = NULL;
   this->SwapButton = NULL;
   this->AngleCombobox = NULL;
   this->AngleLabel = NULL;
@@ -77,6 +79,18 @@ vtkSlicerMeasurementFrameWidget::~vtkSlicerMeasurementFrameWidget(void)
     this->RotateButton->Delete();
     this->RotateButton = NULL;
     }
+  if (this->IdentityButton)
+    {
+    this->IdentityButton->SetParent (NULL);
+    this->IdentityButton->Delete();
+    this->IdentityButton = NULL;
+    }
+  if (this->UndoButton)
+    {
+    this->UndoButton->SetParent (NULL);
+    this->UndoButton->Delete();
+    this->UndoButton = NULL;
+    }
   if (this->MatrixWidget)
     {
     this->MatrixWidget->SetParent (NULL);
@@ -100,7 +114,9 @@ void vtkSlicerMeasurementFrameWidget::AddWidgetObservers ( )
   {
   this->RotateButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->NegativeButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->SwapButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->SwapButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);  
+  this->IdentityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);  
+  this->UndoButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MatrixWidget->AddObserver(vtkKWMatrixWidget::ElementChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   for(int i=0; i<3;i ++)
     {
@@ -113,7 +129,9 @@ void vtkSlicerMeasurementFrameWidget::RemoveWidgetObservers( )
   {
   this->RotateButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->NegativeButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->SwapButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand); 
+  this->SwapButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);   
+  this->IdentityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);  
+  this->UndoButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MatrixWidget->RemoveObservers(vtkKWMatrixWidget::ElementChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   for(int i=0; i<3;i ++)
     {
@@ -303,6 +321,27 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
     this->UpdateMatrix();
     }
 
+  //undo
+  else if(event == vtkKWPushButton::InvokedEvent && this->UndoButton == vtkKWPushButton::SafeDownCast(caller))
+    {
+  ////undo 
+  //if (this->UndoButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
+  //  {
+  //  //if there is a copy in the undoStack, that was made before loading
+  //  if(this->MRMLScene->GetNumberOfUndoLevels() > this->NumberUndosAfterLoading)
+  //    {
+  //    this->MRMLScene->Undo(); //undo last change
+  //    this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
+  //    this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
+  //    }
+  //  }
+    }
+
+  //set to identity
+  else if(event == vtkKWPushButton::InvokedEvent && this->IdentityButton == vtkKWPushButton::SafeDownCast(caller))
+    {
+
+    }
   }
 
 //---------------------------------------------------------------------------
@@ -322,7 +361,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->MeasurementFrame->SetParent(this->GetParent());
   this->MeasurementFrame->Create();
   this->MeasurementFrame->SetLabelText("Measurement Frame");
-  this->Script("pack %s -side top -anchor nw -fill x -padx 1 -pady 2", 
+  this->Script("pack %s -side top -anchor nw -fill x -pady 2", 
     this->MeasurementFrame->GetWidgetName());
 
   //create MatrixWidget for measurement frame
@@ -353,7 +392,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->NegativeButton->SetParent(this->MeasurementFrame->GetFrame());
   this->NegativeButton->Create();
   this->NegativeButton->SetText("Negative Selected");
-  this->NegativeButton->SetWidth(14);
+  this->NegativeButton->SetWidth(15);
   this->NegativeButton->SetEnabled(0);
   this->NegativeButton->SetBalloonHelpString("Negative selected columns.");
 
@@ -362,7 +401,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->SwapButton->SetParent(this->MeasurementFrame->GetFrame());
   this->SwapButton->Create();
   this->SwapButton->SetText("Swap Selected");
-  this->SwapButton->SetWidth(14);
+  this->SwapButton->SetWidth(15);
   this->SwapButton->SetEnabled(0);
   this->SwapButton->SetBalloonHelpString("Swap selected columns (two have to be selected).");
 
@@ -371,7 +410,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->RotateButton->SetParent(this->MeasurementFrame->GetFrame());
   this->RotateButton->Create();
   this->RotateButton->SetText("Rotate Selected");
-  this->RotateButton->SetWidth(14);
+  this->RotateButton->SetWidth(15);
   this->RotateButton->SetEnabled(0);
   this->RotateButton->SetBalloonHelpString("Rotate selected column by angle value (one has to be selected).");
 
@@ -390,6 +429,22 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->AngleCombobox->SetWidth(4);
   this->AngleCombobox->SetValue("+90");
   this->AngleCombobox->SetBalloonHelpString("Select given value or type in your one.");
+
+  //create identity button
+  this->IdentityButton = vtkKWPushButton::New();
+  this->IdentityButton->SetParent(this->MeasurementFrame->GetFrame());
+  this->IdentityButton->Create();
+  this->IdentityButton->SetText("Identity");
+  this->IdentityButton->SetWidth(11);
+  this->IdentityButton->SetBalloonHelpString("");
+
+  //create undo button
+  this->UndoButton = vtkKWPushButton::New();
+  this->UndoButton->SetParent(this->MeasurementFrame->GetFrame());
+  this->UndoButton->Create();
+  this->UndoButton->SetText("Undo");
+  this->UndoButton->SetBalloonHelpString("Undo last change of the gradients or measurement frame.");
+  this->UndoButton->SetWidth(11);
 
   //fill default angles in combobox
   const char *angleValues [] = {"+90", "-90", "+180", "-180", "+30", "-30"};
@@ -411,5 +466,9 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
     this->AngleLabel->GetWidgetName());
   this->Script("grid %s -row 1 -column 5 -sticky ne", 
     this->AngleCombobox->GetWidgetName());
+  this->Script("grid %s -row 2 -column 4 -columnspan 2 -sticky ne", 
+    this->IdentityButton->GetWidgetName());
+  this->Script("grid %s -row 3 -column 4 -columnspan 2 -sticky ne", 
+    this->UndoButton->GetWidgetName());
   } 
 
