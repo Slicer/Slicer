@@ -210,7 +210,8 @@ void vtkSlicerGradientsWidget::UpdateGradients()
   output << "DWMRI_b-value:= " << bValue << endl; 
 
   // read in new gradients
-  for(int i=0; i < this->Gradients->GetSize(); i=i+3)
+  // (this->Gradients->GetSize() is not always correct.)
+  for(int i=0; i < this->Gradients->GetNumberOfTuples()*3; i=i+3)
     {
     output << "DWMRI_gradient_" << setfill('0') << setw(4) << i/3 << ":=" << " ";
     for(int j=i; j<i+3; j++)
@@ -299,7 +300,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->GradientsFrame->SetParent(this->GetParent());
   this->GradientsFrame->Create();
   this->GradientsFrame->SetLabelText("Gradients");
-  this->Script("pack %s -side top -anchor n -fill x -padx 2 -pady 2", 
+  this->Script("pack %s -side top -anchor n -fill both -expand true -padx 2 -pady 2", 
     this->GradientsFrame->GetWidgetName());
 
   //create button frame 
@@ -335,6 +336,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->GradientsTextbox->SetParent(this->GradientsFrame->GetFrame());
   this->GradientsTextbox->Create();
   this->GradientsTextbox->GetWidget()->SetBinding("<KeyRelease>", this, "TextFieldModifiedCallback");
+  this->GradientsTextbox->SetHeight(100);
   this->GradientsTextbox->SetEnabled(0);
   this->Script("pack %s -side top -anchor s -fill both -expand true -padx 2 -pady 2", 
     this->GradientsTextbox->GetWidgetName());

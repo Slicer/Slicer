@@ -161,7 +161,7 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->GradientsWidget->SetParent(this->GetParent());
   this->GradientsWidget->Create();
   this->GradientsWidget->AddWidgetObservers();
-  this->Script("pack %s -side top -anchor nw -fill both expand true -padx 1 -pady 2", 
+  this->Script("pack %s -side top -anchor nw -fill both -expand true -padx 1 -pady 2", 
     this->GradientsWidget->GetWidgetName());
 
   //create test frame 
