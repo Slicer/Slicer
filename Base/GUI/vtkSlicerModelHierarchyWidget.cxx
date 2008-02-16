@@ -207,6 +207,8 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
               this->ContextMenu->SelectItem(tag);
               }
             }
+            sprintf(command, "ColorCallback {%s}", (const char *)callData);
+            this->ContextMenu->AddCheckButton ("Color...", this, command);
           }
         else if (node != NULL && node->IsA("vtkMRMLModelNode"))
           {
@@ -225,6 +227,8 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
               this->ContextMenu->SelectItem(tag);
               }
             }
+            sprintf(command, "ColorCallback {%s}", (const char *)callData);
+            this->ContextMenu->AddCheckButton ("Color...", this, command);
           }
         }
       else if ( node == NULL )
@@ -265,8 +269,6 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::HierarchyVisibiltyCallback(const char *id)
 {
-  // cout << "I want to delete MRML node " << id << endl;
-  // delete node, then repopulate tree
   int visibility = 0;
   for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
     {
@@ -310,8 +312,6 @@ void vtkSlicerModelHierarchyWidget::HierarchyVisibiltyCallback(const char *id)
 //---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::ModelVisibiltyCallback(const char *id)
 {
-  // cout << "I want to delete MRML node " << id << endl;
-  // delete node, then repopulate tree
   for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
     {
     vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[i].c_str());
@@ -326,6 +326,47 @@ void vtkSlicerModelHierarchyWidget::ModelVisibiltyCallback(const char *id)
         }
       }
     }
+}
+//---------------------------------------------------------------------------
+void vtkSlicerModelHierarchyWidget::ColorCallback(const char *id)
+{
+  vtkMRMLDisplayNode *dnode = NULL;
+
+  if ( this->SelectedLeaves.size() > 0)
+    {
+    vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[0].c_str());
+    if (node != NULL)
+      {
+      vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(node);
+      vtkMRMLModelHierarchyNode *hnode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
+      if (mnode)
+        {
+        dnode = mnode->GetDisplayNode();
+        }
+      else if (hnode)
+        {
+        dnode = hnode->GetDisplayNode();
+        }
+      if (dnode)
+        {
+        double *rgb = dnode->GetColor();
+        if (vtkKWTkUtilities::QueryUserForColor(
+              this->GetApplication(),
+              this->GetWidgetName(),
+              "Select Color",
+              rgb[0], rgb[1], rgb[2],
+              rgb, rgb+1, rgb+2) )
+          {
+          dnode->SetColor(rgb);
+          // TODO: need to call Modified, Set does not do it for some reason!!!
+          dnode->Modified();
+          }
+        } // if dnode
+      } // if (node 
+    } //for
+
+
+
 }
 //---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::DeleteNodeCallback(const char *id)

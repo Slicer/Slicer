@@ -66,6 +66,8 @@ public:
   // Description::
   // Callbacks
   virtual void ModelVisibiltyCallback(const char *id);
+
+  virtual void ColorCallback(const char *id);
   
   virtual void HierarchyVisibiltyCallback(const char *id);
 
