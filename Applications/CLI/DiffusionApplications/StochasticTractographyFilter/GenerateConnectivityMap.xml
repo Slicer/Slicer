@@ -12,7 +12,7 @@
 
   <parameters>
     <label>
-    Calculate Statistics Parameters
+    Generate Connectivity Map Parameters
     </label>
     <description>
     Parameters for the Stochastic Tractography algorithm
