@@ -61,6 +61,13 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModelHierarchyLogic : public vtkSlic
 //ETX
 
   // Description:
+  // Call this to update the cache when hierarchy is modified. 
+  void HierarchyIsModified()
+    {
+    ModelHierarchyNodesMTime = 0;
+    HierarchyChildrenNodesMTime = 0;
+    }
+  // Description:
   // Update logic state when MRML scene chenges
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                   unsigned long /*event*/, 

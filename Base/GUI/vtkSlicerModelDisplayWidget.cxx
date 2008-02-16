@@ -244,10 +244,13 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
           cdnode->SetVisibility(visibility);
           }
         vtkMRMLModelNode *mnode = cnode->GetModelNode();
-        vtkMRMLDisplayNode *mdnode = mnode->GetDisplayNode();
-        if (mdnode)
+        if (mnode)
           {
-          mdnode->SetVisibility(visibility);
+          vtkMRMLDisplayNode *mdnode = mnode->GetDisplayNode();
+          if (mdnode)
+            {
+            mdnode->SetVisibility(visibility);
+            }
           }
         } //for
      } //if

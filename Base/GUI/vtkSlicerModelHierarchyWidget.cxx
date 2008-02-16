@@ -294,10 +294,13 @@ void vtkSlicerModelHierarchyWidget::HierarchyVisibiltyCallback(const char *id)
           cdnode->SetVisibility(visibility);
           }
         vtkMRMLModelNode *mnode = cnode->GetModelNode();
-        vtkMRMLDisplayNode *mdnode = mnode->GetDisplayNode();
-        if (mdnode)
+        if (mnode)
           {
-          mdnode->SetVisibility(visibility);
+          vtkMRMLDisplayNode *mdnode = mnode->GetDisplayNode();
+          if (mdnode)
+            {
+            mdnode->SetVisibility(visibility);
+            }
           }
         } //for
      } //if
@@ -402,11 +405,12 @@ void vtkSlicerModelHierarchyWidget::InsertHierarchyNodeCallback(const char *id)
     if (parentNode != NULL)
       {
       node->SetParentNodeID(parentNode->GetID());
+      this->ModelHierarchyLogic->HierarchyIsModified();
       }
     vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::New();
     this->GetMRMLScene()->AddNodeNoNotify(dnode);
     node->SetAndObserveDisplayNodeID(dnode->GetID());
-    this->UpdateTreeFromMRML();
+    //this->UpdateTreeFromMRML();
     this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, node);
     }
 }
@@ -534,6 +538,7 @@ void vtkSlicerModelHierarchyWidget::NodeParentChangedCallback(
         }
       }
     }
+  this->ModelHierarchyLogic->HierarchyIsModified();
   this->UpdateTreeFromMRML();
 }
 
@@ -736,7 +741,8 @@ void vtkSlicerModelHierarchyWidget::UpdateTreeFromMRML()
 
   if ( selected_node == vtksys_stl::string("Scene"))
     {
-    this->TreeWidget->GetWidget()->OpenFirstNode ();
+    this->TreeWidget->GetWidget()->OpenNode("Scene");
+    //this->TreeWidget->GetWidget()->OpenFirstNode ();
     }
   this->UpdatingTree = 0;
 
