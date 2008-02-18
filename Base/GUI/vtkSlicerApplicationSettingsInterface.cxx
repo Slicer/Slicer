@@ -5,8 +5,10 @@
 #include "vtkKWMenu.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWEntryWithLabel.h"
+#include "vtkKWSpinBoxWithLabel.h"
 #include "vtkKWEntry.h"
 #include "vtkKWLabel.h"
+#include "vtkKWSpinBox.h"
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
@@ -45,6 +47,14 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->EnableDaemonCheckButton = NULL;
   this->FontSizeButtons = NULL;
   this->FontFamilyButtons = NULL;
+
+  this->RemoteCacheSettingsFrame = NULL;
+  this->EnableAsynchronousIOCheckButton = NULL;
+  this->EnableForceRedownloadCheckButton = NULL;
+  this->EnableRemoteCacheOverwritingCheckButton = NULL;
+  this->RemoteCacheDirectoryButton = NULL;
+  this->RemoteCacheLimitSpinBox = NULL;
+  this->RemoteCacheFreeBufferSizeSpinBox = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -144,6 +154,49 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     this->EnableDaemonCheckButton->Delete();
     this->EnableDaemonCheckButton = NULL;
     }
+
+  if (this->RemoteCacheSettingsFrame)
+    {
+    this->RemoteCacheSettingsFrame->Delete();
+    this->RemoteCacheSettingsFrame = NULL;
+    }
+
+  if (this->EnableAsynchronousIOCheckButton)
+    {
+    this->EnableAsynchronousIOCheckButton->Delete();
+    this->EnableAsynchronousIOCheckButton = NULL;
+    }
+
+  if (this->EnableForceRedownloadCheckButton)
+    {
+    this->EnableForceRedownloadCheckButton->Delete();
+    this->EnableForceRedownloadCheckButton = NULL;
+    }
+
+  if (this->EnableRemoteCacheOverwritingCheckButton)
+    {
+    this->EnableRemoteCacheOverwritingCheckButton->Delete();
+    this->EnableRemoteCacheOverwritingCheckButton = NULL;
+    }
+
+  if (this->RemoteCacheDirectoryButton)
+    {
+    this->RemoteCacheDirectoryButton->Delete();
+    this->RemoteCacheDirectoryButton = NULL;
+    }
+
+  if (this->RemoteCacheLimitSpinBox)
+    {
+    this->RemoteCacheLimitSpinBox->Delete();
+    this->RemoteCacheLimitSpinBox = NULL;
+    }
+
+  if (this->RemoteCacheFreeBufferSizeSpinBox)
+    {
+    this->RemoteCacheFreeBufferSizeSpinBox->Delete();
+    this->RemoteCacheFreeBufferSizeSpinBox = NULL;
+    }
+    
 }
 
 //----------------------------------------------------------------------------
@@ -565,6 +618,148 @@ void vtkSlicerApplicationSettingsInterface::Create()
 
   tk_cmd << "pack " << this->TemporaryDirectoryButton->GetWidgetName()
          << "  -side top -anchor w -expand no -padx 2 -pady 2" << endl;
+
+  // --------------------------------------------------------------
+  // Remote Data Handling settings : main frame
+
+  if (!this->RemoteCacheSettingsFrame)
+    {
+    this->RemoteCacheSettingsFrame = vtkKWFrameWithLabel::New();
+    }
+  this->RemoteCacheSettingsFrame->SetParent(this->GetPagesParentWidget());
+  this->RemoteCacheSettingsFrame->Create();
+  this->RemoteCacheSettingsFrame->SetLabelText("Remote Data Handling Settings");
+    
+  tk_cmd << "pack " << this->RemoteCacheSettingsFrame->GetWidgetName()
+         << " -side top -anchor nw -fill x -padx 2 -pady 2 " 
+         << " -in " << page->GetWidgetName() << endl;
+  
+  frame = this->RemoteCacheSettingsFrame->GetFrame();
+
+  // --------------------------------------------------------------
+  // Remote settings : Enable asynchronous IO ?
+
+  if (!this->EnableAsynchronousIOCheckButton)
+    {
+    this->EnableAsynchronousIOCheckButton = vtkKWCheckButton::New();
+    }
+  this->EnableAsynchronousIOCheckButton->SetParent(frame);
+  this->EnableAsynchronousIOCheckButton->Create();
+  this->EnableAsynchronousIOCheckButton->SetText(
+    "Enable Asynchronous I/O");
+  this->EnableAsynchronousIOCheckButton->SetCommand(
+    this, "EnableAsynchronousIOCallback");
+  this->EnableAsynchronousIOCheckButton->SetBalloonHelpString(
+    "Control if using asychronous IO, if false use blocking IO, if true, downloads and loading are forked off into a separate thread.");
+
+  tk_cmd << "pack " << this->EnableAsynchronousIOCheckButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill none" << endl;
+
+  // --------------------------------------------------------------
+  // Remote settings : Enable force redownload?
+
+  if (!this->EnableForceRedownloadCheckButton)
+    {
+    this->EnableForceRedownloadCheckButton = vtkKWCheckButton::New();
+    }
+  this->EnableForceRedownloadCheckButton->SetParent(frame);
+  this->EnableForceRedownloadCheckButton->Create();
+  this->EnableForceRedownloadCheckButton->SetText(
+    "Force re-download");
+  this->EnableForceRedownloadCheckButton->SetCommand(
+    this, "EnableForceRedownloadCallback");
+  this->EnableForceRedownloadCheckButton->SetBalloonHelpString(
+    "Control if the file is in the cache, if should download it again. If false, check for and use the cached copy.");
+
+  tk_cmd << "pack " << this->EnableForceRedownloadCheckButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill none" << endl;
+
+  // --------------------------------------------------------------
+  // Remote settings : remote cache over writing?
+
+  if (!this->EnableRemoteCacheOverwritingCheckButton)
+    {
+    this->EnableRemoteCacheOverwritingCheckButton = vtkKWCheckButton::New();
+    }
+  this->EnableRemoteCacheOverwritingCheckButton->SetParent(frame);
+  this->EnableRemoteCacheOverwritingCheckButton->Create();
+  this->EnableRemoteCacheOverwritingCheckButton->SetText(
+    "Overwrite cache files");
+  this->EnableRemoteCacheOverwritingCheckButton->SetCommand(
+    this, "EnableRemoteCacheOverwritingCallback");
+  this->EnableRemoteCacheOverwritingCheckButton->SetBalloonHelpString(
+    "Control if should overwrite copies in the cache when downloading a remote file. If false, rename the old copy..");
+
+  tk_cmd << "pack " << this->EnableRemoteCacheOverwritingCheckButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill none" << endl;
+
+  // --------------------------------------------------------------
+  // Module settings : Remote Cache Directory
+
+  if (!this->RemoteCacheDirectoryButton)
+    {
+    this->RemoteCacheDirectoryButton = vtkKWLoadSaveButtonWithLabel::New();
+    }
+
+  this->RemoteCacheDirectoryButton->SetParent(frame);
+  this->RemoteCacheDirectoryButton->Create();
+  this->RemoteCacheDirectoryButton->SetLabelText("Cache Directory:");
+  this->RemoteCacheDirectoryButton->SetLabelWidth(label_width);
+  this->RemoteCacheDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
+  this->RemoteCacheDirectoryButton->GetWidget()
+    ->SetCommand(this, "RemoteCacheDirectoryCallback");
+  this->RemoteCacheDirectoryButton->GetWidget()
+    ->GetLoadSaveDialog()->ChooseDirectoryOn();
+  this->RemoteCacheDirectoryButton->GetWidget()
+    ->GetLoadSaveDialog()->SaveDialogOff();
+  this->RemoteCacheDirectoryButton->GetWidget()
+    ->GetLoadSaveDialog()->SetTitle("Select a directory for cached files");
+  this->RemoteCacheDirectoryButton->SetBalloonHelpString(
+    "Remote Cache directory for downloded files.");
+
+  tk_cmd << "pack " << this->RemoteCacheDirectoryButton->GetWidgetName()
+         << "  -side top -anchor w -expand no -padx 2 -pady 2" << endl;
+
+  // --------------------------------------------------------------
+  // Remote settings : Cache limit
+
+  if (!this->RemoteCacheLimitSpinBox)
+    {
+    this->RemoteCacheLimitSpinBox = vtkKWSpinBoxWithLabel::New();
+    }
+
+  this->RemoteCacheLimitSpinBox->SetParent(frame);
+  this->RemoteCacheLimitSpinBox->Create();
+  this->RemoteCacheLimitSpinBox->SetLabelText("Cache Size Limit:");
+  this->RemoteCacheLimitSpinBox->SetLabelWidth(label_width);
+  this->RemoteCacheLimitSpinBox->GetWidget()->SetCommand(this, "RemoteCacheLimitCallback");
+  this->RemoteCacheLimitSpinBox->GetWidget()->SetRestrictValueToInteger();
+  this->RemoteCacheLimitSpinBox->GetWidget()->SetRange(0,1000);
+  this->RemoteCacheLimitSpinBox->SetBalloonHelpString("Set the upper limit on the size of the cache directory (Mb).");
+
+  tk_cmd << "pack " << this->RemoteCacheLimitSpinBox->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
+
+  // --------------------------------------------------------------
+  // Remote settings : Cache free buffer size
+
+  if (!this->RemoteCacheFreeBufferSizeSpinBox)
+    {
+    this->RemoteCacheFreeBufferSizeSpinBox = vtkKWSpinBoxWithLabel::New();
+    }
+
+  this->RemoteCacheFreeBufferSizeSpinBox->SetParent(frame);
+  this->RemoteCacheFreeBufferSizeSpinBox->Create();
+  this->RemoteCacheFreeBufferSizeSpinBox->SetLabelText("Cache Free Buffer Size:");
+  this->RemoteCacheFreeBufferSizeSpinBox->SetLabelWidth(label_width);
+  this->RemoteCacheFreeBufferSizeSpinBox->GetWidget()->SetCommand(this, "RemoteCacheFreeBufferSizeCallback");
+  this->RemoteCacheFreeBufferSizeSpinBox->GetWidget()->SetRestrictValueToInteger();
+  this->RemoteCacheFreeBufferSizeSpinBox->GetWidget()->SetRange(0,900);
+  this->RemoteCacheFreeBufferSizeSpinBox->SetBalloonHelpString("Set the amount of space in the cache directory that should remain free (Mb).");
+
+  tk_cmd << "pack " << this->RemoteCacheFreeBufferSizeSpinBox->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
+
   
   // --------------------------------------------------------------
   // Pack 
@@ -783,6 +978,7 @@ void vtkSlicerApplicationSettingsInterface::RmSelectCallback()
     app->SetRm(this->RmSelectButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
     }
 }
+
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::TemporaryDirectoryCallback()
 {
@@ -795,6 +991,95 @@ void vtkSlicerApplicationSettingsInterface::TemporaryDirectoryCallback()
     app->SetTemporaryDirectory(this->TemporaryDirectoryButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::EnableAsynchronousIOCallback(int state)
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if (app)
+    {
+    app->SetEnableAsynchronousIO(state ? 1 : 0);       
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::EnableForceRedownloadCallback(int state)
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if (app)
+    {
+    app->SetEnableForceRedownload(state ? 1 : 0);       
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::EnableRemoteCacheOverwritingCallback(int state)
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+  if (app)
+    {
+    app->SetEnableRemoteCacheOverwriting(state ? 1 : 0);       
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::RemoteCacheDirectoryCallback()
+{
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
+    {
+    // Store the setting in the application object
+    app->SetRemoteCacheDirectory(this->RemoteCacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->GetFileName());
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::RemoteCacheLimitCallback(int size)
+{
+  if (size < 0)
+    {
+    vtkErrorMacro("Please enter a cache size greater than zero");
+    return;
+    }
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
+    {
+    // Store the setting in the application object
+    app->SetRemoteCacheLimit(size);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::RemoteCacheFreeBufferSizeCallback(int size)
+{
+  if (size < 0)
+    {
+    vtkErrorMacro("Please enter a free buffer size greater than zero");
+    return;
+    }
+  vtkSlicerApplication *app
+    = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if (app)
+    {
+    // make sure it's not larger than the cache size
+    if (size > app->GetRemoteCacheLimit())
+      {
+      vtkErrorMacro("Please enter a free buffer size that is less than the cache limit " <<  app->GetRemoteCacheLimit());
+      return;
+      }
+    // Store the setting in the application object
+    app->SetRemoteCacheFreeBufferSize(size);
+    }
+}
+
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::Update()
@@ -890,5 +1175,37 @@ void vtkSlicerApplicationSettingsInterface::Update()
       {
       this->RmSelectButton->GetWidget()->SetText(app->GetRm());
       }
-    }
+    if (this->EnableAsynchronousIOCheckButton)
+      {
+      this->EnableAsynchronousIOCheckButton->SetSelectedState(
+        app->GetEnableAsynchronousIO() ? 1 : 0);
+      }
+    if (this->EnableForceRedownloadCheckButton)
+      {
+      this->EnableForceRedownloadCheckButton->SetSelectedState(
+        app->GetEnableForceRedownload() ? 1 : 0);
+      }
+    if (this->EnableRemoteCacheOverwritingCheckButton)
+      {
+      this->EnableRemoteCacheOverwritingCheckButton->SetSelectedState(
+        app->GetEnableRemoteCacheOverwriting() ? 1 : 0);
+      }
+    if (this->RemoteCacheDirectoryButton)
+      {
+      this->RemoteCacheDirectoryButton->GetWidget()
+        ->SetText(app->GetRemoteCacheDirectory());
+      this->RemoteCacheDirectoryButton->GetWidget()
+        ->GetLoadSaveDialog()->SetLastPath(app->GetRemoteCacheDirectory());
+      }
+    if (this->RemoteCacheLimitSpinBox)
+      {
+      this->RemoteCacheLimitSpinBox->GetWidget()
+        ->SetValue(app->GetRemoteCacheLimit());
+      }
+    if (this->RemoteCacheFreeBufferSizeSpinBox)
+      {
+      this->RemoteCacheFreeBufferSizeSpinBox->GetWidget()
+        ->SetValue(app->GetRemoteCacheFreeBufferSize());
+      }
+    }  
 }
