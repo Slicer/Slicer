@@ -340,7 +340,8 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
   //set to identity
   else if(event == vtkKWPushButton::InvokedEvent && this->IdentityButton == vtkKWPushButton::SafeDownCast(caller))
     {
-
+    this->Matrix->Identity();
+    this->UpdateMatrix();
     }
   }
 
