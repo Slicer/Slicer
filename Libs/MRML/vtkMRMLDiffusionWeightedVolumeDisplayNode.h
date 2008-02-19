@@ -26,7 +26,6 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLColorNode.h"
 
 #include "vtkMatrix4x4.h"

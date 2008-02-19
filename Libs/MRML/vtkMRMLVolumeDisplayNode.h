@@ -21,7 +21,6 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLDisplayNode.h"
 
 class vtkImageData;

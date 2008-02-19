@@ -24,7 +24,6 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLStorageNode.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"

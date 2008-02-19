@@ -22,7 +22,6 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLColorNode.h"
 
 #include "vtkImageData.h"

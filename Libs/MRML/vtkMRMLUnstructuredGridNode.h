@@ -31,7 +31,6 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLModelNode.h"
-#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
 
 class vtkCallbackCommand;
