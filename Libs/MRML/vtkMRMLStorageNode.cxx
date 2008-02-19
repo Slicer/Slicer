@@ -226,6 +226,10 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
 {
+  // for now, just set the write state to done
+  this->SetWriteStateDone();
+  return;
+  
   if (this->URI == NULL)
     {
     vtkWarningMacro("Cannot stage data for writing, URI is not set.");
@@ -242,9 +246,6 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
     vtkWarningMacro("StageWriteData: input mrml node is null, returning.");
     return;
     }
-
-  // for now, just set the write state to done
-  this->SetWriteStateDone();
 }
 
 //----------------------------------------------------------------------------
