@@ -1213,3 +1213,20 @@ void vtkMRMLColorTableNode::Reset()
     this->DisableModifiedEventOff();
     }
 }
+
+//---------------------------------------------------------------------------
+int vtkMRMLColorTableNode::GetColorIndexByName(const char *name)
+{
+  if (this->GetNamesInitialised() && name != NULL)
+    {
+    std::string strName = name;
+    for (unsigned int i = 0; (int)i < this->Names.size(); i++)
+      {
+      if (strName.compare(this->GetColorName(i)) == 0)
+        {
+        return i;
+        }
+      }
+    }
+    return -1;
+}

@@ -177,6 +177,11 @@ public:
   // Description:
   // reset when close the scene
   virtual void Reset();
+
+  // Description:
+  // return the index associated with this color name, which can then be used
+  // to get the colour. Returns -1 on failure.
+  int GetColorIndexByName(const char *name);
   
 protected:
   vtkMRMLColorTableNode();
