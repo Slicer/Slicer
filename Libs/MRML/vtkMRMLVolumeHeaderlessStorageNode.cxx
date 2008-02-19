@@ -337,6 +337,13 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
       return 0;
     }
 
+  Superclass::StageReadData(refNode);
+  if ( this->GetReadState() == this->Pending )
+    {
+    // remote file download hasn't finished
+    return 0;
+    }
+  
   vtkMRMLVolumeNode *volNode;
 
   if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
@@ -352,15 +359,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
     volNode->SetAndObserveImageData (NULL);
     }
 
-  std::string fullName;
-  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
-    {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
-    }
-  else 
-    {
-    fullName = std::string(this->GetFileName());
-    }
+  std::string fullName = this->GetFullNameFromFileName();
   
   if (fullName == std::string("")) 
     {
@@ -510,16 +509,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     }
   
-  std::string fullName;
-  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
-    {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
-    }
-  else 
-    {
-    fullName = std::string(this->GetFileName());
-    }
-  
+  std::string fullName = this->GetFullNameFromFileName();  
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
@@ -545,6 +535,8 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
     result = 0;
     }
   writer->Delete();    
+
+  Superclass::StageWriteData(refNode);
   
   return result;
 

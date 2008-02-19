@@ -129,15 +129,14 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;
     }
 
-  std::string fullName;
-  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
+  Superclass::StageReadData(refNode);
+  if ( this->GetReadState() == this->Pending )
     {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
+    // remote file download hasn't finished
+    return 0;
     }
-  else 
-    {
-    fullName = std::string(this->GetFileName());
-    }
+  
+  std::string fullName = this->GetFullNameFromFileName(); 
 
   if (fullName == std::string("")) 
     {
@@ -269,16 +268,7 @@ int vtkMRMLColorTableStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     }
 
-  std::string fullName;
-  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
-    {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
-    }
-  else 
-    {
-    fullName = std::string(this->GetFileName());
-    }
-
+  std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLColorTableStorageNode: File name not specified");
@@ -336,6 +326,8 @@ int vtkMRMLColorTableStorageNode::WriteData(vtkMRMLNode *refNode)
     }
   of.close();
 
+  Superclass::StageWriteData(refNode);
+  
   return 1;
   
 }

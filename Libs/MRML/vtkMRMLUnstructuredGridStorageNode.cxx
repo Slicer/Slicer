@@ -68,17 +68,16 @@ int vtkMRMLUnstructuredGridStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;
     }
 
+  Superclass::StageReadData(refNode);
+  if ( this->GetReadState() == this->Pending )
+    {
+    // remote file download hasn't finished
+    return 0;
+    }
+  
   vtkMRMLUnstructuredGridNode *modelNode = vtkMRMLUnstructuredGridNode::SafeDownCast (refNode);
 
-  std::string fullName;
-  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
-    {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
-    }
-  else 
-    {
-    fullName = std::string(this->GetFileName());
-    }
+  std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("ReadData: File name not specified");
@@ -148,15 +147,7 @@ int vtkMRMLUnstructuredGridStorageNode::WriteData(vtkMRMLNode *refNode)
   
   vtkMRMLUnstructuredGridNode *modelNode = vtkMRMLUnstructuredGridNode::SafeDownCast(refNode);
   
-  std::string fullName;
-  if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
-    {
-    fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
-    }
-  else 
-    {
-    fullName = std::string(this->GetFileName());
-    }  
+  std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("vtkMRMLModelNode: File name not specified");
@@ -187,6 +178,10 @@ int vtkMRMLUnstructuredGridStorageNode::WriteData(vtkMRMLNode *refNode)
     vtkErrorMacro( << "No file extension recognized: " << fullName.c_str() );
     }
 
+  if (result != 0)
+    {
+    Superclass::StageWriteData(refNode);
+    }
   
   return result;
 }

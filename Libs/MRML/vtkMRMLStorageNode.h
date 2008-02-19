@@ -69,9 +69,55 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   vtkSetMacro(UseCompression, int);
 
   // Description:
+  // Location of the remote copy of this file.
+  vtkSetStringMacro(URI);
+  vtkGetStringMacro(URI);
+  
+  // Description:
   // Propagate Progress Event generated in ReadData
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
+  // Description:
+  // If the URI is not null, fetch it and save it to the node's FileName location or
+  // load directly into the reference node.
+  void StageReadData ( vtkMRMLNode *refNode );
+  // Description:
+  // Copy data from the local file location (node->FileName) or node to the remote
+  // location specified by the URI
+  void StageWriteData ( vtkMRMLNode *refNode );
+
+  // Description:
+  // Possible Read and Write states 
+  //BTX
+  enum
+  {
+    Done,
+    Pending,
+  };
+  //ETX
+  // Description:
+  // Get/Set the state of reading 
+  vtkGetMacro(ReadState,int);
+  vtkSetMacro(ReadState,int);
+  void SetReadStatePending() { this->SetReadState(this->Pending); };
+  void SetReadStateDone() { this->SetReadState(this->Done); };
+  const char *GetStateAsString(int state);
+  const char *GetReadStateAsString() { this->GetStateAsString(this->ReadState); };
+  
+  // Description:
+  // Get/Set the state of writing 
+  vtkGetMacro(WriteState,int);
+  vtkSetMacro(WriteState,int);
+  void SetWriteStatePending() { this->SetWriteState(this->Pending); };
+  void SetWriteStateDone() { this->SetWriteState(this->Done); };
+  const char *GetWriteStateAsString() { this->GetStateAsString(this->WriteState); };
+
+  // Description:
+  // Get the file's absolute path from the file name and the mrml scene root
+  // dir
+  //BTX
+  std::string GetFullNameFromFileName();
+  //ETX
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode();
@@ -79,8 +125,11 @@ protected:
   void operator=(const vtkMRMLStorageNode&);
 
   char *FileName;
+  char *URI;
   int UseCompression;
-
+  int ReadState;
+  int WriteState;
+  
 };
 
 #endif
