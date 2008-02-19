@@ -26,7 +26,8 @@ Version:   $Revision: 1.1.1.1 $
 vtkMRMLStorageNode::vtkMRMLStorageNode()
 {
   this->FileName = NULL;
-  this->URI = NULL;
+  // set the URI prefix string to avoid warnings when try to stage the data
+  this->URI = "file://";
   this->UseCompression = 1;
   this->ReadState = this->Done;
   this->WriteState = this->Done;
