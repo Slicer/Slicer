@@ -102,7 +102,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   void SetReadStatePending() { this->SetReadState(this->Pending); };
   void SetReadStateDone() { this->SetReadState(this->Done); };
   const char *GetStateAsString(int state);
-  const char *GetReadStateAsString() { this->GetStateAsString(this->ReadState); };
+  const char *GetReadStateAsString() { return this->GetStateAsString(this->ReadState); };
   
   // Description:
   // Get/Set the state of writing 
@@ -110,7 +110,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   vtkSetMacro(WriteState,int);
   void SetWriteStatePending() { this->SetWriteState(this->Pending); };
   void SetWriteStateDone() { this->SetWriteState(this->Done); };
-  const char *GetWriteStateAsString() { this->GetStateAsString(this->WriteState); };
+  const char *GetWriteStateAsString() { return this->GetStateAsString(this->WriteState); };
 
   // Description:
   // Get the file's absolute path from the file name and the mrml scene root
