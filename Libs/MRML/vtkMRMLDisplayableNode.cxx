@@ -20,6 +20,7 @@ Version:   $Revision: 1.3 $
 
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLStorageNode.h"
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()

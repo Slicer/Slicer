@@ -28,7 +28,6 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLDisplayableNode.h"
-#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 
 

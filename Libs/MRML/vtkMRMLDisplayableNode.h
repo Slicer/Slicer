@@ -31,9 +31,9 @@
 #include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLDisplayNode.h"
 
-
 class vtkCallbackCommand;
 class vtkFloatArray;
+class vtkMRMLStorageNode;
 class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLTransformableNode
 {
 public:
