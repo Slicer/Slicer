@@ -26,8 +26,7 @@ Version:   $Revision: 1.1.1.1 $
 vtkMRMLStorageNode::vtkMRMLStorageNode()
 {
   this->FileName = NULL;
-  // set the URI prefix string to avoid warnings when try to stage the data
-  this->URI = "file://";
+  this->URI = NULL;
   this->UseCompression = 1;
   this->ReadState = this->Done;
   this->WriteState = this->Done;
@@ -158,30 +157,31 @@ void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject *caller, unsigned long ev
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
 {
-   if (this->URI == NULL)
+  // for now, just set the read state to done
+  this->SetReadStateDone();
+  return;
+   
+  if (this->URI == NULL)
     {
     vtkWarningMacro("Cannot stage data for reading, URI is not set.");
     return;
     }
-   // need to get URI handlers from the scene
-   if (this->Scene == NULL)
-     {
-     vtkWarningMacro("StageReadData: Cannot get mrml scene, unable to get remote file handlers.");
-     return;
-     }
-   if (refNode == NULL)
-     {
-     vtkWarningMacro("StageReadData: input mrml node is null, returning.");
-     return;
-     }
-
-   // for now, just set the read state to done
-   this->SetReadStateDone();
-
-   int asynch = 0;
-
-   /* To be finalised
-   // Get the data io manager
+  // need to get URI handlers from the scene
+  if (this->Scene == NULL)
+    {
+    vtkWarningMacro("StageReadData: Cannot get mrml scene, unable to get remote file handlers.");
+    return;
+    }
+  if (refNode == NULL)
+    {
+    vtkWarningMacro("StageReadData: input mrml node is null, returning.");
+    return;
+    }
+  
+  int asynch = 0;
+  
+  /* To be finalised
+  // Get the data io manager
    vtkMRMLDataIOManager *iomanager = this->Scene->GetDataIOManager();
    if (iomanager != NULL)
      {
