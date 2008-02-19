@@ -79,6 +79,10 @@ public:
 
   virtual void SelectNodeCallback(const char *id);
 
+  virtual void SelectReparentCallback(const char *id);
+
+  virtual void ReparentCallback(const char *id);
+
   virtual void OpenHierarchyCommand(const char *id);
 
   virtual void CloseHierarchyCommand(const char *id);
@@ -117,6 +121,7 @@ protected:
   
   //BTX
   std::vector<vtksys_stl::string> SelectedLeaves;
+  std::vector<vtksys_stl::string> SelectedForReparenting;
   //ETX
 
 private:

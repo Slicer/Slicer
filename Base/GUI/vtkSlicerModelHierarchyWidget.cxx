@@ -25,6 +25,7 @@
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkSlicerModelDisplayWidget.h"
 
+#include <sstream>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerModelHierarchyWidget );
@@ -184,7 +185,7 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
           {
           // hierarchy
           sprintf(command, "InsertHierarchyNodeCallback {%s}", (const char *)callData);
-          this->ContextMenu->AddCommand("Insert Model Hierarchy Node", this, command);
+          this->ContextMenu->AddCommand("Insert New Hierarchy Node", this, command);
 
           sprintf(command, "DeleteNodeCallback {%s}", (const char *)callData);
           this->ContextMenu->AddCommand("Delete", this, command);
@@ -195,6 +196,21 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
           sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
           this->ContextMenu->AddCommand("Edit Display", this, command);
           
+          sprintf(command, "SelectReparentCallback {%s}", (const char *)callData);
+          this->ContextMenu->AddCommand("Select for Reparenting", this, command);
+
+          if (this->SelectedForReparenting.size() > 0)
+            {
+            sprintf(command, "ReparentCallback {%s}", (const char *)callData);
+            std::stringstream ss;
+            vtkMRMLNode *rnode = this->GetMRMLScene()->GetNodeByID(this->SelectedForReparenting[0].c_str());
+            if (rnode)
+              {
+              ss << "Insert " << rnode->GetName();
+              this->ContextMenu->AddCommand(ss.str().c_str(), this, command);
+              }
+            }
+
           vtkMRMLModelHierarchyNode *hnode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
           vtkMRMLDisplayNode *dnode = hnode->GetDisplayNode();
           if (dnode)
@@ -214,7 +230,10 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
           {
           sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
           this->ContextMenu->AddCommand("Edit Display", this, command);
-          
+ 
+          sprintf(command, "SelectReparentCallback {%s}", (const char *)callData);
+          this->ContextMenu->AddCommand("Select for Reparenting", this, command);
+
           vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(node);
           vtkMRMLDisplayNode *dnode = mnode->GetDisplayNode();
           if (dnode)
@@ -235,7 +254,19 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
         {
         // Scene selected
         sprintf(command, "InsertHierarchyNodeCallback {%s}", (const char *)callData);
-        this->ContextMenu->AddCommand("Insert Model Hierarchy Node", this, command);
+        this->ContextMenu->AddCommand("Insert New Hierarchy Node", this, command);
+
+        if (this->SelectedForReparenting.size() > 0)
+          {
+          sprintf(command, "ReparentCallback {%s}", (const char *)callData);
+          std::stringstream ss;
+          vtkMRMLNode *rnode = this->GetMRMLScene()->GetNodeByID(this->SelectedForReparenting[0].c_str());
+          if (rnode)
+            {
+            ss << "Insert " << rnode->GetName();
+            this->ContextMenu->AddCommand(ss.str().c_str(), this, command);
+            }
+          }
         }
       this->ContextMenu->PopUp(px, py);
       }
@@ -265,6 +296,24 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
     return;
     }
 } 
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelHierarchyWidget::SelectReparentCallback(const char *id)
+{
+  this->SelectedForReparenting.clear();
+  this->SelectedForReparenting = this->SelectedLeaves;
+
+}
+//---------------------------------------------------------------------------
+void vtkSlicerModelHierarchyWidget::ReparentCallback(const char *id)
+{
+  for (unsigned int i=0; i<this->SelectedForReparenting.size(); i++)
+    {
+    this->NodeParentChangedCallback(this->SelectedForReparenting[i].c_str(), id, NULL);
+    }
+  this->SelectedForReparenting.clear();
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::HierarchyVisibiltyCallback(const char *id)
