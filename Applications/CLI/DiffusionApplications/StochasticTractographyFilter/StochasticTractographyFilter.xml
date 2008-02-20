@@ -99,7 +99,7 @@
     <boolean>
       <name>rotatesampgridswitch</name>
       <flag>x</flag>
-      <default>true</default>
+      <default>false</default>
       <longflag>rotatesampgridswitch</longflag>
       <label>Rotate Sampling Grid</label>
       <description>Rotate the sampling grid so that one of the sampling directions
