@@ -197,7 +197,7 @@ void vtkSlicerModelsGUI::AddGUIObservers ( )
   this->LoadModelDirectoryButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveModelButton->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
   this->LoadScalarsButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ModelDisplaySelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  //this->ModelDisplaySelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ModelHierarchyWidget->AddObserver(vtkSlicerModelHierarchyWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
 }
 
@@ -214,7 +214,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkMRMLModelNode *model = reinterpret_cast<vtkMRMLModelNode *>(callData);
     if (model != NULL && model->GetDisplayNode() != NULL)
       {
-      this->ModelDisplaySelectorWidget->SetSelected(model);
+      //this->ModelDisplaySelectorWidget->SetSelected(model);
       if (this->ModelDisplayFrame)
         {
         this->ModelDisplayFrame->ExpandFrame();
@@ -225,7 +225,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     return;
     }
-
+/**
   if (vtkSlicerNodeSelectorWidget::SafeDownCast(caller) == this->ModelDisplaySelectorWidget && 
         event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
     {
@@ -239,7 +239,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       }
     return;
     }
-
+**/
   if (this->LoadModelButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent)
     {
     // If a file has been selected for loading...
@@ -344,7 +344,7 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       // get the model from the display widget rather than this gui's save
       // model selector
-      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->ModelDisplaySelectorWidget->GetSelected());
+      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->ModelSelectorWidget->GetSelected());
       if (modelNode != NULL)
         {
         vtkDebugMacro("vtkSlicerModelsGUI: loading scalar for model " << modelNode->GetName());
@@ -535,32 +535,16 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->ModelDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
 
-    this->ModelDisplaySelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
-    this->ModelDisplaySelectorWidget->SetParent ( this->ModelDisplayFrame->GetFrame() );
-    this->ModelDisplaySelectorWidget->Create ( );
-    this->ModelDisplaySelectorWidget->SetNodeClass("vtkMRMLModelNode", NULL, NULL, NULL);
-    this->ModelDisplaySelectorWidget->SetChildClassesEnabled(0);
-    this->ModelDisplaySelectorWidget->SetMRMLScene(this->GetMRMLScene());
-    this->ModelDisplaySelectorWidget->SetBorderWidth(2);
-    // this->ModelDisplaySelectorWidget->SetReliefToGroove();
-    this->ModelDisplaySelectorWidget->SetPadX(2);
-    this->ModelDisplaySelectorWidget->SetPadY(2);
-    this->ModelDisplaySelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-    this->ModelDisplaySelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-    this->ModelDisplaySelectorWidget->SetLabelText( "Model Select: ");
-    this->ModelDisplaySelectorWidget->SetBalloonHelpString("select a model from the current mrml scene.");
-    this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                   this->ModelDisplaySelectorWidget->GetWidgetName());
-
-
-    this->ModelDisplayWidget = vtkSlicerModelDisplayWidget::New ( );
-    this->ModelDisplayWidget->SetMRMLScene(this->GetMRMLScene() );
-    this->ModelDisplayWidget->SetModelHierarchyLogic(this->GetModelHierarchyLogic());
-    this->ModelDisplayWidget->SetParent ( this->ModelDisplayFrame->GetFrame() );
-    this->ModelDisplayWidget->Create ( );
+ 
+    this->ModelHierarchyWidget = vtkSlicerModelHierarchyWidget::New ( );
+    this->ModelHierarchyWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
+    this->ModelHierarchyWidget->SetModelHierarchyLogic(this->GetModelHierarchyLogic());
+    this->ModelHierarchyWidget->SetParent ( this->ModelDisplayFrame->GetFrame() );
+    this->ModelHierarchyWidget->Create ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->ModelDisplayWidget->GetWidgetName(), 
+                  this->ModelHierarchyWidget->GetWidgetName(), 
                   this->ModelDisplayFrame->GetFrame()->GetWidgetName());
+
 
     // Clip FRAME  
     vtkSlicerModuleCollapsibleFrame *clipFrame = vtkSlicerModuleCollapsibleFrame::New ( );
@@ -618,42 +602,13 @@ void vtkSlicerModelsGUI::BuildGUI ( )
      app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
                 this->SaveModelButton->GetWidgetName());
 
-     // Hierarchy FRAME  
-    vtkSlicerModuleCollapsibleFrame *hierFrame = vtkSlicerModuleCollapsibleFrame::New ( );
-    hierFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
-    hierFrame->Create ( );
-    hierFrame->SetLabelText ("Model Hierarchy");
-    hierFrame->CollapseFrame ( );
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  hierFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
-
-    this->ModelHierarchyWidget = vtkSlicerModelHierarchyWidget::New ( );
-    this->ModelHierarchyWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
-    this->ModelHierarchyWidget->SetModelHierarchyLogic(this->GetModelHierarchyLogic());
-    this->ModelHierarchyWidget->SetParent ( hierFrame->GetFrame() );
-    this->ModelHierarchyWidget->Create ( );
-    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
-                  this->ModelHierarchyWidget->GetWidgetName(), 
-                  hierFrame->GetFrame()->GetWidgetName());
-    
-
-   this->ProcessGUIEvents (this->ModelDisplaySelectorWidget,
-                          vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
-
-
-    /*
-    vtkMRMLNode *selected = this->ModelDisplaySelectorWidget->GetSelected();
-    if (selected)
-      {
-      this->ModelSelectorWidget->SetSelected(NULL);
-      this->ModelSelectorWidget->SetSelected(selected);
-      }
-    */
+   //this->ProcessGUIEvents (this->ModelDisplaySelectorWidget,
+                          //vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
 
     modLoadFrame->Delete ( );
     clipFrame->Delete ( );
     modelSaveFrame->Delete();
-    hierFrame->Delete ( );
+    //hierFrame->Delete ( );
 }
 
 

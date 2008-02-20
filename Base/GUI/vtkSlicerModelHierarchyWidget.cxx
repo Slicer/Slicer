@@ -193,8 +193,8 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
           sprintf(command, "RenameNodeCallback {%s}", (const char *)callData);
           this->ContextMenu->AddCommand("Rename", this, command);
 
-          sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
-          this->ContextMenu->AddCommand("Edit Display", this, command);
+          //sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
+          //this->ContextMenu->AddCommand("Edit Display", this, command);
           
           sprintf(command, "SelectReparentCallback {%s}", (const char *)callData);
           this->ContextMenu->AddCommand("Select for Reparenting", this, command);
@@ -222,14 +222,19 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
               {
               this->ContextMenu->SelectItem(tag);
               }
-            }
             sprintf(command, "ColorCallback {%s}", (const char *)callData);
             this->ContextMenu->AddCheckButton ("Color...", this, command);
+            }
+
+          this->SetInWidgetCallbackFlag(0);
+          this->SelectNodeCallback(this->SelectedLeaves[0].c_str());
+          this->SetInWidgetCallbackFlag(1);
+
           }
         else if (node != NULL && node->IsA("vtkMRMLModelNode"))
           {
-          sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
-          this->ContextMenu->AddCommand("Edit Display", this, command);
+          //sprintf(command, "SelectNodeCallback {%s}", (const char *)callData);
+          //this->ContextMenu->AddCommand("Edit Display", this, command);
  
           sprintf(command, "SelectReparentCallback {%s}", (const char *)callData);
           this->ContextMenu->AddCommand("Select for Reparenting", this, command);
@@ -245,9 +250,13 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
               {
               this->ContextMenu->SelectItem(tag);
               }
-            }
+
             sprintf(command, "ColorCallback {%s}", (const char *)callData);
             this->ContextMenu->AddCheckButton ("Color...", this, command);
+            }
+          this->SetInWidgetCallbackFlag(0);
+          this->SelectNodeCallback(this->SelectedLeaves[0].c_str());
+          this->SetInWidgetCallbackFlag(1);
           }
         }
       else if ( node == NULL )
@@ -721,7 +730,7 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
   vtkKWFrameWithLabel *dframe = vtkKWFrameWithLabel::New ( );
   dframe->SetParent ( frame );
   dframe->Create ( );
-  dframe->SetLabelText ("Model Hierarchy Display");
+  dframe->SetLabelText ("Model Display");
  
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  dframe->GetWidgetName() );
@@ -740,7 +749,7 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
   this->ModelDisplaySelectorWidget->SetPadY(2);
   this->ModelDisplaySelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
   this->ModelDisplaySelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
-  this->ModelDisplaySelectorWidget->SetLabelText( "Select Hierarchy: ");
+  this->ModelDisplaySelectorWidget->SetLabelText( "Select Model or Hierarchy: ");
   this->ModelDisplaySelectorWidget->SetBalloonHelpString("select a model hierarchy.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->ModelDisplaySelectorWidget->GetWidgetName());
