@@ -72,6 +72,7 @@ int main(int argc, char * argv[])
       std::cout << "The ending label is: " << EndLabel << std::endl;
       std::cout << "The model name is: " << Name << std::endl;
       std::cout << "Do joint smoothing flag is: " << JointSmoothing << std::endl;
+      std::cout << "Generate all flag is: " << GenerateAll << std::endl;
       std::cout << "Number of smoothing iterations: " << Smooth << std::endl;
       std::cout << "Number of decimate iterations: " << Decimate << std::endl;
       std::cout << "Split normals? " << SplitNormals << std::endl;
@@ -472,8 +473,15 @@ int main(int argc, char * argv[])
           }
         cubes->GenerateValues((labelsMax - labelsMin + 1), labelsMin, labelsMax);
         }
-      cubes->Update();
-      
+      try
+        {
+        cubes->Update();
+        }
+      catch (...)
+        {
+        std::cerr << "ERROR while updating marching cubes filter." << std::endl;
+        return EXIT_FAILURE;  
+        }
       if (JointSmoothing)
         {
         float passBand = 0.001;
@@ -503,7 +511,15 @@ int main(int argc, char * argv[])
         smoother->NonManifoldSmoothingOn();
         smoother->NormalizeCoordinatesOn();
 
-        smoother->Update();
+        try
+          {
+          smoother->Update();
+          }
+        catch (...)
+          {
+          std::cerr << "ERROR while updating smoothing filter." << std::endl;
+          return EXIT_FAILURE;  
+          }
         //        smoother->ReleaseDataFlagOn();
         }
 /*
@@ -768,7 +784,15 @@ int main(int argc, char * argv[])
             
         imageToStructuredPoints = vtkImageToStructuredPoints::New();
         imageToStructuredPoints->SetInput(imageThreshold->GetOutput());
-        imageToStructuredPoints->Update();
+        try
+          {
+          imageToStructuredPoints->Update();
+          }
+        catch (...)
+          {
+          std::cerr << "ERROR while updating image to structured points for label " << i << std::endl;
+          return EXIT_FAILURE;
+          }
         imageToStructuredPoints->ReleaseDataFlagOn();
         } 
       else 
@@ -823,8 +847,15 @@ int main(int argc, char * argv[])
         mcubes->ComputeGradientsOff();
         mcubes->ComputeNormalsOff();
         (mcubes->GetOutput())->ReleaseDataFlagOn();
-        mcubes->Update();
-        
+        try
+          {
+          mcubes->Update();
+          }
+        catch (...)
+          {
+          std::cerr << "ERROR while running marching cubes, for label " << i << std::endl;
+          return EXIT_FAILURE;
+          }
         if (debug)
           {
           std::cout << "\nNumber of polygons = " << (mcubes->GetOutput())->GetNumberOfPolys() << endl;
@@ -941,7 +972,15 @@ int main(int argc, char * argv[])
       //decimator->SetErrorIncrement(0.002);
       (decimator->GetOutput())->ReleaseDataFlagOff();
 
-      decimator->Update();
+      try
+        {
+        decimator->Update();
+        }
+      catch (...)
+        {
+        std::cerr << "ERROR decimating model " << i << std::endl;
+        return EXIT_FAILURE;
+        }
       if (debug)
         {
         std::cout << "After decimation, number of polygons = " << (decimator->GetOutput())->GetNumberOfPolys() << endl;
@@ -1038,8 +1077,15 @@ int main(int argc, char * argv[])
           smootherSinc->BoundarySmoothingOff();
           (smootherSinc->GetOutput())->ReleaseDataFlagOn();
           // smootherSinc->ReleaseDataFlagOn();
-
-          smootherSinc->Update();
+          try
+            {
+            smootherSinc->Update();
+            }
+          catch (...)
+            {
+            std::cerr << "ERROR updating Sinc smoother for model " << i << std::endl;
+            return EXIT_FAILURE;
+            }
           }
         else 
           {
@@ -1074,8 +1120,15 @@ int main(int argc, char * argv[])
           smootherPoly->BoundarySmoothingOff();
           (smootherPoly->GetOutput())->ReleaseDataFlagOn();
           //smootherPoly->ReleaseDataFlagOn();
-            
-          smootherPoly->Update();
+          try
+            {
+            smootherPoly->Update();
+            }
+          catch (...)
+            {
+            std::cerr << "ERROR updating Poly smoother for model " << i << std::endl;
+            return EXIT_FAILURE;
+            }
           }       
 
         if (SaveIntermediateModels)
@@ -1206,9 +1259,18 @@ int main(int argc, char * argv[])
       
       (stripper->GetOutput())->ReleaseDataFlagOff();
       
-      // the poly data output from the stripper can be set as an input to a model's polydata
-      (stripper->GetOutput())->Update();
-
+      // the poly data output from the stripper can be set as an input to a
+      // model's polydata
+      try
+        {
+        (stripper->GetOutput())->Update();
+        }
+      catch (...)
+        {
+        std::cerr << "ERROR updating stripper for model " << i << std::endl;
+        return EXIT_FAILURE;
+        }
+      
       // but for now we're just going to write it out
       writer = vtkPolyDataWriter::New();
       std::string comment4 = "Write " + labelName;
