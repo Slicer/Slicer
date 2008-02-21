@@ -24,6 +24,7 @@ SET(TCLFILES
   Editor.tcl EditorNode.tcl EditorLogic.tcl EditorGUI.tcl
   Box.tcl EditBox.tcl EditColor.tcl ColorBox.tcl
   PaintEffect.tcl DrawEffect.tcl
+  MakeModelEffect.tcl
   EffectSWidget.tcl Labeler.tcl
   SaveIslandEffect.tcl ThresholdEffect.tcl RemoveIslandsEffect.tcl
   LevelTracingEffect.tcl

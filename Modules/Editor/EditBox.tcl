@@ -71,7 +71,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     ImplicitCube ImplicitEllipse ImplicitRectangle 
     Draw RemoveIslands ConnectedComponents 
     ThresholdBucket ThresholdPaintLabel SaveIsland SlurpColor Paint
-    DefaultTool LevelTracing Wand
+    DefaultTool LevelTracing Wand MakeModel
   }
 
   # effects that operate from the menu
@@ -80,7 +80,7 @@ itcl::body EditBox::findEffects { {path ""} } {
     ChangeLabel FiducialVisibilityOff
     FiducialVisibilityOn GoToEditorModule 
     IdentifyIslands
-    LabelVisibilityOff LabelVisibilityOn MakeModel NextFiducial 
+    LabelVisibilityOff LabelVisibilityOn NextFiducial 
     SnapToGridOff SnapToGridOn
     EraseLabel Threshold PinOpen PreviousFiducial  InterpolateLabels LabelOpacity
     ToggleLabelOutline Watershed
@@ -263,12 +263,6 @@ itcl::body EditBox::selectEffect { effect } {
     }
     "GoToEditorModule" {
       EditorSelectModule
-      EditorSetActiveToolLabel DefaultTool
-    }
-    "MakeModel" {
-      #TODO: invoke the real modelmaker.  Figure out which label map to use (each slice
-      # could have a different label layer -- for now use the red one...
-      EditorTestQuickModel
       EditorSetActiveToolLabel DefaultTool
     }
     "LabelCheckpoint" {
