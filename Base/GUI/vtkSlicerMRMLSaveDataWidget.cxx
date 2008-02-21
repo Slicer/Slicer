@@ -449,11 +449,12 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
     row++;
     }
   
-  
+#if !defined(MESHING_DEBUG) && defined(BUILD_MODULES)  
   // *** add UnstructuredGrid types 
   // An additional datatype, MRMLUnstructuredGrid and its subclasses are 
   // also searched in the MRML tree.  This is done so instances of FiniteElement
-  // meshes and other vtkUnstructuredGrid datatypes can be stored persistently. 
+  // meshes and other vtkUnstructuredGrid datatypes can be stored persistently.
+  // this code is gated by MESHING_DEBUG since the MEshing MRML modules 
   
   nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLUnstructuredGridNode");
   for (n=0; n<nnodes; n++)
@@ -521,7 +522,7 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
     row++;
     }
     // end of UGrid MRML node processing
-  
+#endif  
   
   this->IsProcessing = false;
 
