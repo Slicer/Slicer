@@ -46,6 +46,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidg
     // Method to propagate keypress-events generated in the textbox of gradients.
     void TextFieldModifiedCallback();
 
+    //BTX
+    enum
+      {
+      ChangedEvent = 1234,
+      };
+    //ETX
+
   protected:
     vtkSlicerGradientsWidget(void);
     virtual ~vtkSlicerGradientsWidget(void);
@@ -63,12 +70,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidg
     void UpdateStatusLabel(int status);
 
     // Description:
-    // Method to display a message dialog to the user (GUI).
-    void DisplayMessageDialog(const char* message);
+    // Method to save changes of the gradients/bValues to the activeVolumeNode.
+    void SaveGradients();
 
     // Description:
-    // Method to save changes to the activeVolumeNode.
-    void SaveGradients();
+    // Method to display a message dialog to the user (GUI).
+    void DisplayMessageDialog(const char* message);
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkDoubleArray *Gradients;
@@ -81,7 +88,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidg
     vtkKWTextWithScrollbars *GradientsTextbox;
     vtkKWLabel *StatusLabel;
     vtkKWMessageDialog *MessageDialog;
-    vtkKWPushButton *UndoButton;
 
   private:
     vtkSlicerGradientsWidget (const vtkSlicerGradientsWidget&); // Not implemented.

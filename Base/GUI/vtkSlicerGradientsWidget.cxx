@@ -38,7 +38,6 @@ vtkSlicerGradientsWidget::vtkSlicerGradientsWidget(void)
   this->Gradients = NULL;
   this->BValues = NULL;
   this->MessageDialog = NULL;
-  this->UndoButton = NULL;
   }
 
 //---------------------------------------------------------------------------
@@ -85,11 +84,6 @@ vtkSlicerGradientsWidget::~vtkSlicerGradientsWidget(void)
     this->StatusLabel->Delete();
     this->StatusLabel = NULL;
     }
-  if (this->UndoButton)
-    {
-    this->UndoButton->Delete();
-    this->UndoButton = NULL;
-    }
   if (this->MessageDialog)
     {
     this->MessageDialog = NULL;
@@ -124,6 +118,7 @@ void vtkSlicerGradientsWidget::ProcessWidgetEvents (vtkObject *caller, unsigned 
   if(this->EnableGradientsButton == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent)
     {
     this->GradientsTextbox->SetEnabled(this->EnableGradientsButton->GetSelectedState());
+    this->UpdateWidget(this->ActiveVolumeNode);
     }
 
   //load gradients from file
@@ -151,7 +146,6 @@ void vtkSlicerGradientsWidget::ProcessWidgetEvents (vtkObject *caller, unsigned 
       myLogic->Delete();
       }
     }
-
   }
 
 //---------------------------------------------------------------------------
@@ -169,7 +163,10 @@ void vtkSlicerGradientsWidget::DisplayMessageDialog(const char* message)
 //---------------------------------------------------------------------------
 void vtkSlicerGradientsWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode)
   {
-  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode); //set ActiveVolumeNode
+  if(this->ActiveVolumeNode != dwiNode)
+    {
+    vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode); //set activeVolumeNode
+    }
   this->Gradients = dwiNode->GetDiffusionGradients(); //set internal gradients
   this->BValues = dwiNode->GetBValues(); //set internal bValues
   this->UpdateGradients(); //update GUI
@@ -230,10 +227,13 @@ void vtkSlicerGradientsWidget::UpdateGradients()
 //---------------------------------------------------------------------------
 void vtkSlicerGradientsWidget::TextFieldModifiedCallback()
   {
+  //Save and tricker changed event for undo
+  this->GetMRMLScene()->SaveStateForUndo();
+  this->InvokeEvent(this->ChangedEvent);
+
   vtkSlicerGradientEditorLogic *myLogic = vtkSlicerGradientEditorLogic::New();
   const char *oldGradients = this->GradientsTextbox->GetWidget()->GetText();
   int numberOfGradients = this->ActiveVolumeNode->GetNumberOfGradients();
-  this->GetMRMLScene()->SaveStateForUndo();
 
   //parse new gradients and update status label
   int status = myLogic->ParseGradients(oldGradients, numberOfGradients, this->BValues, this->Gradients);
@@ -244,7 +244,6 @@ void vtkSlicerGradientsWidget::TextFieldModifiedCallback()
     {
     this->SaveGradients();
     }
-
   myLogic->Delete();
   }
 
@@ -345,19 +344,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->StatusLabel = vtkKWLabel::New();
   this->StatusLabel->SetParent(this->GradientsFrame->GetFrame());
   this->StatusLabel->Create();
-  this->StatusLabel->SetWidth(45);
   this->StatusLabel->SetBalloonHelpString("Shows current status of the given gradients in the textbox");
-
-  //create enable gradientsTextbox button
-  this->UndoButton = vtkKWPushButton::New();
-  this->UndoButton->SetParent(this->GradientsFrame->GetFrame());
-  this->UndoButton->SetText("Undo");  
-  this->UndoButton->Create();
-  this->UndoButton->SetBalloonHelpString("");
-  this->UndoButton->SetWidth(11);
-
-  //pack statusLabel and undoButton
-  this->Script("pack %s %s -side right -anchor n -padx 4 -pady 2", 
-    this->UndoButton->GetWidgetName(),
+  this->Script("pack %s -side top -anchor s -fill both -expand true -padx 2 -pady 2", 
     this->StatusLabel->GetWidgetName());
   }

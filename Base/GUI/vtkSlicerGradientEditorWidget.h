@@ -56,6 +56,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     vtkSlicerNodeSelectorWidget *FiducialSelector;
     vtkKWPushButton *RunButton;    
     vtkKWPushButton *RestoreButton;
+    vtkKWPushButton *UndoButton;
 
   private:
     vtkSlicerGradientEditorWidget (const vtkSlicerGradientEditorWidget&); // Not implemented.

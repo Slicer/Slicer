@@ -28,7 +28,6 @@ vtkSlicerMeasurementFrameWidget::vtkSlicerMeasurementFrameWidget(void)
   this->RotateButton = NULL;
   this->NegativeButton = NULL;
   this->IdentityButton = NULL;
-  this->UndoButton = NULL;
   this->SwapButton = NULL;
   this->AngleCombobox = NULL;
   this->AngleLabel = NULL;
@@ -85,12 +84,6 @@ vtkSlicerMeasurementFrameWidget::~vtkSlicerMeasurementFrameWidget(void)
     this->IdentityButton->Delete();
     this->IdentityButton = NULL;
     }
-  if (this->UndoButton)
-    {
-    this->UndoButton->SetParent (NULL);
-    this->UndoButton->Delete();
-    this->UndoButton = NULL;
-    }
   if (this->MatrixWidget)
     {
     this->MatrixWidget->SetParent (NULL);
@@ -116,7 +109,6 @@ void vtkSlicerMeasurementFrameWidget::AddWidgetObservers ( )
   this->NegativeButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->SwapButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);  
   this->IdentityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);  
-  this->UndoButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MatrixWidget->AddObserver(vtkKWMatrixWidget::ElementChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   for(int i=0; i<3;i ++)
     {
@@ -131,7 +123,6 @@ void vtkSlicerMeasurementFrameWidget::RemoveWidgetObservers( )
   this->NegativeButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->SwapButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);   
   this->IdentityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);  
-  this->UndoButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MatrixWidget->RemoveObservers(vtkKWMatrixWidget::ElementChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   for(int i=0; i<3;i ++)
     {
@@ -147,6 +138,17 @@ void vtkSlicerMeasurementFrameWidget::PrintSelf (ostream& os, vtkIndent indent)
   }
 
 //---------------------------------------------------------------------------
+void vtkSlicerMeasurementFrameWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode)
+  {
+  if(this->ActiveVolumeNode != dwiNode)
+    {
+    vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode); //set activeVolumeNode
+    }
+  this->ActiveVolumeNode->GetMeasurementFrameMatrix(this->Matrix); //set internal matrix
+  this->UpdateMatrix(); //update gui
+  }
+
+//---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::UpdateMatrix()
   {
   if(this->Matrix != NULL && this->ActiveVolumeNode != NULL)
@@ -159,25 +161,24 @@ void vtkSlicerMeasurementFrameWidget::UpdateMatrix()
         this->MatrixWidget->SetElementValueAsDouble(j,i, this->Matrix->GetElement(j,i));
         }
       }
-
-    // write internal matrix back to node
-    this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
-    // mark as modified in save menu
-    this->ActiveVolumeNode->SetModifiedSinceRead(1);
-    }
+    }//end if
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMeasurementFrameWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode)
+void vtkSlicerMeasurementFrameWidget::SaveMatrix()
   {
-  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode); //set activeVolumeNode
-  this->ActiveVolumeNode->GetMeasurementFrameMatrix(this->Matrix); //set internal matrix
-  this->UpdateMatrix(); //update gui
+  this->MRMLScene->SaveStateForUndo();
+  // write internal matrix back to node
+  this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
+  // mark as modified in save menu
+  this->ActiveVolumeNode->SetModifiedSinceRead(1);
+  this->InvokeEvent(this->ChangedEvent);
   }
 
 //---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
   {
+
   //import current matrix values 
   if(event == vtkKWMatrixWidget::ElementChangedEvent && this->MatrixWidget == vtkKWMatrixWidget::SafeDownCast(caller))
     {
@@ -189,8 +190,7 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
         }
       }
     // write internal matrix back to node
-    this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
-    this->ActiveVolumeNode->SetModifiedSinceRead(1);
+    this->SaveMatrix();
     }
 
   //enable/disable buttons depending on how many checkbuttons are selected 
@@ -262,8 +262,9 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
       }
     //copy transformed matrix back
     this->Matrix->DeepCopy(transform->GetMatrix());
-    this->UpdateMatrix();
     transform->Delete();
+    this->UpdateMatrix();
+    this->SaveMatrix();
     }
 
   //swap columns
@@ -296,6 +297,7 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
       this->Matrix->SetElement(j, secondSelectedCheckbox, value);
       }
     this->UpdateMatrix();
+    this->SaveMatrix();
     }
 
   //negative columns
@@ -319,22 +321,7 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
         }//end if selected
       }//end for1
     this->UpdateMatrix();
-    }
-
-  //undo
-  else if(event == vtkKWPushButton::InvokedEvent && this->UndoButton == vtkKWPushButton::SafeDownCast(caller))
-    {
-  ////undo 
-  //if (this->UndoButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
-  //  {
-  //  //if there is a copy in the undoStack, that was made before loading
-  //  if(this->MRMLScene->GetNumberOfUndoLevels() > this->NumberUndosAfterLoading)
-  //    {
-  //    this->MRMLScene->Undo(); //undo last change
-  //    this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
-  //    this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
-  //    }
-  //  }
+    this->SaveMatrix();
     }
 
   //set to identity
@@ -342,6 +329,7 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
     {
     this->Matrix->Identity();
     this->UpdateMatrix();
+    this->SaveMatrix();
     }
   }
 
@@ -439,14 +427,6 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->IdentityButton->SetWidth(11);
   this->IdentityButton->SetBalloonHelpString("");
 
-  //create undo button
-  this->UndoButton = vtkKWPushButton::New();
-  this->UndoButton->SetParent(this->MeasurementFrame->GetFrame());
-  this->UndoButton->Create();
-  this->UndoButton->SetText("Undo");
-  this->UndoButton->SetBalloonHelpString("Undo last change of the gradients or measurement frame.");
-  this->UndoButton->SetWidth(11);
-
   //fill default angles in combobox
   const char *angleValues [] = {"+90", "-90", "+180", "-180", "+30", "-30"};
   for (int i=0; i<sizeof(angleValues)/sizeof(angleValues[0]); i++)
@@ -469,7 +449,5 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
     this->AngleCombobox->GetWidgetName());
   this->Script("grid %s -row 2 -column 4 -columnspan 2 -sticky ne", 
     this->IdentityButton->GetWidgetName());
-  this->Script("grid %s -row 3 -column 4 -columnspan 2 -sticky ne", 
-    this->UndoButton->GetWidgetName());
   } 
 
