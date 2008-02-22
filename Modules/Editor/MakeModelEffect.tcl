@@ -103,11 +103,16 @@ itcl::body MakeModelEffect::apply {} {
 
   #
   # output 
+  # - make a new hierarchy node if needed
   #
-  set outHierarchy [$::slicer3::MRMLScene CreateNodeByClass "vtkMRMLModelHierarchyNode"]
-  $outHierarchy SetScene $::slicer3::MRMLScene
-  $outHierarchy SetName "Editor Models"
-  $::slicer3::MRMLScene AddNode $outHierarchy
+  set outHierarchy [[$::slicer3::MRMLScene GetNodesByClassByName "vtkMRMLModelHierarchyNode" "Editor Models"] GetItemAsObject 0]
+  if { $outHierarchy == "" } {
+    set outHierarchy [$::slicer3::MRMLScene CreateNodeByClass "vtkMRMLModelHierarchyNode"]
+    $outHierarchy SetScene $::slicer3::MRMLScene
+    $outHierarchy SetName "Editor Models"
+    $::slicer3::MRMLScene AddNode $outHierarchy
+  }
+
   $module SetParameterAsString "ModelSceneFile" [$outHierarchy GetID]
 
 
@@ -179,7 +184,7 @@ itcl::body MakeModelEffect::buildOptions {} {
   $o(cancel) SetParent [$this getOptionsFrame]
   $o(cancel) Create
   $o(cancel) SetText "Cancel"
-  $o(cancel) SetBalloonHelpString "Cancel current outline."
+  $o(cancel) SetBalloonHelpString "Cancel this effect."
   pack [$o(cancel) GetWidgetName] \
     -side right -anchor e -padx 2 -pady 2 
 
@@ -190,7 +195,7 @@ itcl::body MakeModelEffect::buildOptions {} {
   $o(help) SetParent [$this getOptionsFrame]
   $o(help) Create
   $o(help) SetHelpTitle "MakeModel"
-  $o(help) SetHelpText "Use this tool build a model."
+  $o(help) SetHelpText "Use this tool build a model.  A subset of model building options is provided here.  Go to the Model Maker module to expose a range of parameters."
   $o(help) SetBalloonHelpString "Bring up help window."
   pack [$o(help) GetWidgetName] \
     -side right -anchor sw -padx 2 -pady 2 
