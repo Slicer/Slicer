@@ -217,8 +217,8 @@ itcl::body LevelTracingEffect::buildOptions {} {
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
 
-  if { [$this getInputBackground] == "" || [$this getOutputLabel] == "" } {
-    $this errorDialog "Background and Label map needed for Threshold"
+  if { [$this getInputBackground] == "" || [$this getInputLabel] == "" } {
+    $this errorDialog "Background and Label map needed for Level Tracing"
     after idle ::EffectSWidget::RemoveAll
   }
 
