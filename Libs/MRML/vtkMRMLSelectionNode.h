@@ -55,6 +55,11 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
+  // Description:
+  // Updates this node if it depends on other nodes 
+  // when the node is deleted in the scene
+  virtual void UpdateReferences();
+
   // Note: the SetReferenceActive* routines are added because
   // the vtkSetReferenceStringMacro is not wrapped (vtkSetStringMacro
   // on which it is based is a special case in vtk's parser).
