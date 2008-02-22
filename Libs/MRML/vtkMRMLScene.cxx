@@ -743,9 +743,11 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     return;
     }
   n->Register(this);
-  this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
+  
   this->RemoveNodeReferences(n);
   this->RemoveReferencesToNode(n);
+  
+  this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
   this->InvokeEvent(this->NodeRemovedEvent, n);
   n->UnRegister(this);
 
@@ -766,8 +768,12 @@ void vtkMRMLScene::RemoveNodeNoNotify(vtkMRMLNode *n)
     return;
     }
   n->Register(this);
-  this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
+  
   this->RemoveNodeReferences(n);
+  this->RemoveReferencesToNode(n);
+
+  this->CurrentScene->vtkCollection::RemoveItem((vtkObject *)n);
+  
   n->UnRegister(this);
 
   vtkMRMLNode *node = NULL;
@@ -809,6 +815,11 @@ void vtkMRMLScene::RemoveReferencedNodeID(const char *id, vtkMRMLNode *refrencin
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RemoveNodeReferences(vtkMRMLNode *n) 
 {
+  if (n == NULL && n->GetID() == NULL)
+    {
+    return;
+    }
+
   std::vector< std::string > referencedIDs;
   std::vector< vtkMRMLNode* > referencingNodes;
   vtkMRMLNode *node = NULL;
@@ -818,7 +829,7 @@ void vtkMRMLScene::RemoveNodeReferences(vtkMRMLNode *n)
   for( i=0; i<nnodes; i++)
     {
     vtkMRMLNode *node = this->ReferencingNodes[i];
-    if (node && node->GetID() && n->GetID() && strcmp(node->GetID(), n->GetID())) 
+    if (node && node->GetID() && strcmp(node->GetID(), n->GetID())) 
       {
       referencedIDs.push_back(this->ReferencedIDs[i]);
       referencingNodes.push_back(this->ReferencingNodes[i]);
@@ -831,16 +842,27 @@ void vtkMRMLScene::RemoveNodeReferences(vtkMRMLNode *n)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::RemoveReferencesToNode(vtkMRMLNode *n) 
 {
-
+  if (n == NULL && n->GetID() == NULL)
+    {
+    return;
+    }
+  
+  std::vector< std::string > referencedIDs;
+  std::vector< vtkMRMLNode* > referencingNodes;
+  
   int nnodes = this->ReferencingNodes.size();
   int i=0;
   for( i=0; i<nnodes; i++)
     {
-    if (n->GetID() && this->ReferencedIDs[i].c_str() && !strcmp(this->ReferencedIDs[i].c_str(), n->GetID())) 
+    if ( this->ReferencedIDs[i].c_str() && strcmp(this->ReferencedIDs[i].c_str(), n->GetID())) 
       {
-      this->ReferencedIDs[i] = std::string("");
+      referencedIDs.push_back(this->ReferencedIDs[i]);
+      referencingNodes.push_back(this->ReferencingNodes[i]);
       }
     }
+  this->ReferencedIDs = referencedIDs;
+  this->ReferencingNodes = referencingNodes;
+
 }
 
 //------------------------------------------------------------------------------

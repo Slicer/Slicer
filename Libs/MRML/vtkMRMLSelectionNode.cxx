@@ -158,6 +158,10 @@ void vtkMRMLSelectionNode::UpdateReferences()
     {
     this->SetActiveViewID(NULL);
     }
+  if (this->ActiveCameraID != NULL && this->Scene->GetNodeByID(this->ActiveCameraID) == NULL)
+    {
+    this->SetActiveCameraID(NULL);
+    }
 
 }
 //----------------------------------------------------------------------------
