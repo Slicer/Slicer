@@ -66,10 +66,12 @@ public:
   // Description::
   // Callbacks
   virtual void ModelVisibiltyCallback(const char *id);
-
-  virtual void ColorCallback(const char *id);
   
   virtual void HierarchyVisibiltyCallback(const char *id);
+
+  virtual void AllVisibiltyCallback(int visibility);
+  
+  virtual void ColorCallback(const char *id);
 
   virtual void InsertHierarchyNodeCallback(const char *id);
 
@@ -90,6 +92,9 @@ public:
   virtual void NodeParentChangedCallback (const char *node, const char *new_parent, const char*);
   
   virtual void ProcessRightClick(const char *id);
+
+  virtual void SearchNodeCallback();
+ 
   
   // Description:
   // get/set vtkSlicerModelHierarchyLogic

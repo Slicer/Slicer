@@ -276,6 +276,16 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
             this->ContextMenu->AddCommand(ss.str().c_str(), this, command);
             }
           }
+          
+        sprintf(command, "AllVisibiltyCallback 1");
+        this->ContextMenu->AddCommand("Show All", this, command);
+        
+        sprintf(command, "AllVisibiltyCallback 0");
+        this->ContextMenu->AddCommand("Show None", this, command);
+        
+        sprintf(command, "SearchNodeCallback");
+        this->ContextMenu->AddCommand("Search...", this, command);
+
         }
       this->ContextMenu->PopUp(px, py);
       }
@@ -325,6 +335,58 @@ void vtkSlicerModelHierarchyWidget::ReparentCallback(const char *id)
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerModelHierarchyWidget::AllVisibiltyCallback(int visibility)
+{
+  std::vector<vtkMRMLNode *> hnodes;
+  int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelHierarchyNode", hnodes);
+ 
+  for (unsigned int i=0; i<hnodes.size(); i++)
+    {
+    vtkMRMLModelHierarchyNode *hnode = vtkMRMLModelHierarchyNode::SafeDownCast(hnodes[i]);
+    vtkMRMLDisplayNode *dnode = hnode->GetDisplayNode();
+    if (dnode)
+      {
+      dnode->SetVisibility(visibility);
+      }
+    
+    // chnage children visibility 
+    std::vector< vtkMRMLModelHierarchyNode *> childrenNodes;
+    this->ModelHierarchyLogic->GetHierarchyChildrenNodes(hnode, childrenNodes);
+    for (int i=0; i<childrenNodes.size(); i++)
+      {
+      vtkMRMLModelHierarchyNode *cnode = childrenNodes[i];
+      vtkMRMLDisplayNode *cdnode = cnode->GetDisplayNode();
+      if (cdnode)
+        {
+        cdnode->SetVisibility(visibility);
+        }
+      vtkMRMLModelNode *mnode = cnode->GetModelNode();
+      if (mnode)
+        {
+        vtkMRMLDisplayNode *mdnode = mnode->GetDisplayNode();
+        if (mdnode)
+          {
+          mdnode->SetVisibility(visibility);
+          }
+        }
+      } //for
+   }
+   
+  hnodes.clear();
+  nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelNode", hnodes);
+ 
+  for (unsigned int i=0; i<hnodes.size(); i++)
+    {
+    vtkMRMLModelNode *hnode = vtkMRMLModelNode::SafeDownCast(hnodes[i]);
+    vtkMRMLDisplayNode *dnode = hnode->GetDisplayNode();
+    if (dnode)
+      {
+      dnode->SetVisibility(visibility);
+      }
+   }
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::HierarchyVisibiltyCallback(const char *id)
 {
   int visibility = 0;
@@ -366,6 +428,7 @@ void vtkSlicerModelHierarchyWidget::HierarchyVisibiltyCallback(const char *id)
      } //if
    }
 }
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::ModelVisibiltyCallback(const char *id)
@@ -464,6 +527,64 @@ void vtkSlicerModelHierarchyWidget::RenameNodeCallback(const char *id)
   this->UpdateTreeFromMRML();
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerModelHierarchyWidget::SearchNodeCallback()
+{
+
+  vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+  if (this->SelectedLeaves.size() > 0)
+    {
+    entry->GetWidget()->SetValue("");
+    }
+    
+  int result = this->NameDialog->Invoke();
+  bool found = false;
+  if (result) 
+    {
+    std::string search = entry->GetWidget()->GetValue();
+    std::vector<vtkMRMLNode *> nodes;
+    int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
+    for (int i=0; i<nnodes; i++)
+      {
+      vtkMRMLModelHierarchyNode *node =  vtkMRMLModelHierarchyNode::SafeDownCast(nodes[i]);
+      if (node && node->GetName() && std::string(node->GetName()).find(search) != std::string::npos)
+        {
+        // ignore the extra hierarchy nodes above models
+        //if ( node->GetHideFromEditors())
+        if ( node->GetModelNodeID() != NULL)
+          {
+          continue;
+          }
+        this->SelectedLeaves.clear();
+        this->SelectedLeaves.push_back(node->GetID());
+        this->SelectNodeCallback(this->SelectedLeaves[0].c_str());
+        found = true;
+        break;
+        }
+      } // for
+    if (!found)
+      {
+      nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelNode", nodes);
+      for (int i=0; i<nnodes; i++)
+        {
+        vtkMRMLModelNode *node =  vtkMRMLModelNode::SafeDownCast(nodes[i]);
+        if (node && node->GetName() && std::string(node->GetName()).find(search) != std::string::npos)
+          {
+          if ( node->GetHideFromEditors())
+            {
+            continue;
+            }
+          this->SelectedLeaves.clear();
+          this->SelectedLeaves.push_back(node->GetID());
+          this->SelectNodeCallback(this->SelectedLeaves[0].c_str());
+          break;
+          }
+        } // for
+      } // if (!found)
+    } // if (result)
+}
+
 //---------------------------------------------------------------------------
 void vtkSlicerModelHierarchyWidget::SelectNodeCallback(const char *id)
 {
@@ -472,6 +593,7 @@ void vtkSlicerModelHierarchyWidget::SelectNodeCallback(const char *id)
     vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->SelectedLeaves[i].c_str());
     if (node != NULL)
       {
+      this->TreeWidget->GetWidget()->SelectNode(this->SelectedLeaves[i].c_str());
       this->ModelDisplaySelectorWidget->SetSelected(node);
       /**
        if (node->IsA("vtkMRMLModelNode")) 
@@ -501,6 +623,8 @@ void vtkSlicerModelHierarchyWidget::InsertHierarchyNodeCallback(const char *id)
   else 
     {
     node->SetName(entry->GetWidget()->GetValue());
+    node->SetHideFromEditors(0);
+    node->SetSelectable(1);
     if (parentNode != NULL)
       {
       node->SetParentNodeID(parentNode->GetID());
@@ -624,6 +748,7 @@ void vtkSlicerModelHierarchyWidget::NodeParentChangedCallback(
           {
           parentHierNode = vtkMRMLModelHierarchyNode::New();
           parentHierNode->SetSelectable(0);
+          parentHierNode->SetHideFromEditors(1);
           this->GetMRMLScene()->AddNode(parentHierNode);
           }
         vtkMRMLModelHierarchyNode *oldParentNode = vtkMRMLModelHierarchyNode::SafeDownCast(parentHierNode->GetParentNode());

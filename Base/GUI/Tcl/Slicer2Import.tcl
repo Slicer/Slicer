@@ -431,6 +431,8 @@ proc ImportNodeModelGroup {node} {
   }
 
   $hnode SetAndObserveDisplayNodeID [$dnode GetID]
+  $hnode SetHideFromEditors 0
+  $hnode SetSelectable 1
 
   set ::S2_HParent_ID [$hnode GetID]
 }
@@ -454,6 +456,9 @@ proc ImportNodeModelRef {node} {
     $hnode SetParentNodeIDReference $::S2_HParent_ID
   }
   $hnode SetModelNodeIDReference $id3
+
+  $hnode SetHideFromEditors 1
+  $hnode SetSelectable 0
 
   #$hnode SetAndObserveDisplayNodeID [$dnode GetID]
 
