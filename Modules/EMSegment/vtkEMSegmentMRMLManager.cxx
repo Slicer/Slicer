@@ -4057,7 +4057,7 @@ void
 vtkEMSegmentMRMLManager::
 PrintTree()
 {
-  this->PrintTree(this->GetTreeRootNodeID(), 0);
+  this->PrintTree(this->GetTreeRootNodeID(), static_cast<vtkIndent>(0));
 }
 
 //-----------------------------------------------------------------------------

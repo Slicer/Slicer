@@ -207,7 +207,7 @@ int main(int argc, char** argv)
       std::cerr << "Node ID/Name: " << nodeToPrint->GetID() 
                 << "/" << nodeToPrint->GetName() << std::endl;
       }
-    m->PrintTree(rootID, 2);
+    m->PrintTree(rootID, static_cast<vtkIndent>(2));
 
     //////////////////////////////////////////////////////////////////////
     // test parameter modification (we'll test structure changes later)
