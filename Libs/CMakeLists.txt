@@ -24,6 +24,7 @@ SUBDIRS(
       MRMLIDImageIO
       MGHImageIO
       IGT
+      RemoteIO
       #SIGN
 )
 
