@@ -27,6 +27,7 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   this->TestFrame = NULL;
   this->RunButton = NULL;
   this->FiducialSelector = NULL;
+  this->NumberOfChanges = 0;
   }
 
 //---------------------------------------------------------------------------
@@ -82,6 +83,10 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->UndoButton->Delete();
     this->UndoButton = NULL;
     }
+  if (this->NumberOfChanges)
+    {
+    this->NumberOfChanges = NULL;
+    }
   }
 
 //---------------------------------------------------------------------------
@@ -114,35 +119,43 @@ void vtkSlicerGradientEditorWidget::PrintSelf (ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
   {
-  //enable undo/restore button, when values are changed
+  //enable undo/restore button, when values were changed
   if((this->MeasurementFrameWidget == vtkSlicerMeasurementFrameWidget::SafeDownCast(caller) && 
     event == vtkSlicerMeasurementFrameWidget::ChangedEvent) ||( event == vtkSlicerGradientsWidget::ChangedEvent && 
     this->GradientsWidget == vtkSlicerGradientsWidget::SafeDownCast(caller)))
     {
     this->UndoButton->SetEnabled(1);
     this->RestoreButton->SetEnabled(1);
+    this->NumberOfChanges++; //increment changes
     }
 
   //restore to original
   else if (this->RestoreButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
+    this->MRMLScene->SaveStateForUndo();
+    this->NumberOfChanges++; //increment changes
     this->ActiveVolumeNode->Copy(this->OriginalNode); //copy original back
     this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
     this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
+    this->RestoreButton->SetEnabled(0); //disable restoreButton until next change
+    this->UndoButton->SetEnabled(1); //enable undoButton  
     }
 
   //undo
   else if(event == vtkKWPushButton::InvokedEvent && this->UndoButton == vtkKWPushButton::SafeDownCast(caller))
     {
     //if there is a copy in the undoStack, that was made before loading
-    if(this->MRMLScene->GetNumberOfUndoLevels()>0)
+    if(this->NumberOfChanges>0)
       {
       this->MRMLScene->Undo(); //undo
+      this->NumberOfChanges--; //decrement changes
       this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
-      this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode);
-      if(this->MRMLScene->GetNumberOfUndoLevels()==0)
+      this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
+      //disable buttons, when no changes are available
+      if(this->NumberOfChanges==0)
         {
         this->UndoButton->SetEnabled(0);
+        this->RestoreButton->SetEnabled(0);
         }
       }
     }
