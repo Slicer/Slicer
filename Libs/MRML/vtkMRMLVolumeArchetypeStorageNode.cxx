@@ -235,7 +235,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
     catch (...)
     {
-    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
+    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file: " << fullName.c_str() );
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     reader->Delete();
     return 0;
@@ -243,7 +243,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   if (reader->GetOutput() == NULL 
       || reader->GetOutput()->GetPointData()->GetScalars()->GetNumberOfTuples() == 0) 
     {
-    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
+    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file: " << fullName.c_str() );
     reader->Delete();
     return 0;
     }
@@ -260,7 +260,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 
   if (ici->GetOutput() == NULL)
     {
-    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file");
+    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode: Cannot read file: " << fullName.c_str() );
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     reader->Delete();
     ici->Delete();
