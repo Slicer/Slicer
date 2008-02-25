@@ -446,6 +446,8 @@ void vtkSlicerApplicationGUI::ProcessSaveSceneAsCommand()
 void vtkSlicerApplicationGUI::AddGUIObservers ( )
 {
 
+
+  vtkSlicerApplication::SafeDownCast ( this->GetApplication() )->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->GetMainSlicerWindow()->GetFileMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   // keep track of changes to Home Module set from Application Settings interface;
   // try trapping the View menu events, and just updating the home module from registry...
@@ -500,6 +502,8 @@ void vtkSlicerApplicationGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::RemoveGUIObservers ( )
 {
+
+  vtkSlicerApplication::SafeDownCast ( this->GetApplication() )->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->GetMainSlicerWindow()->GetFileMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->LoadSceneDialog->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *) this->GUICallbackCommand );
 
@@ -563,16 +567,24 @@ void vtkSlicerApplicationGUI::ProcessGUIEvents ( vtkObject *caller,
   // Observers on that logic should raise and lower the appropriate page.
   // So for now, the GUI is controlling the GUI instead of going thru the logic.
   //---
+
+  vtkKWLoadSaveDialog *filebrowse = vtkKWLoadSaveDialog::SafeDownCast(caller);
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
+  vtkSlicerGUILayout *layout = app->GetMainLayout ( );
+  vtkSlicerMRMLSaveDataWidget *saveDataWidget = vtkSlicerMRMLSaveDataWidget::SafeDownCast(caller);
+
+  // catch changes to ApplicationSettings, and update the ApplicationSettingsInterface
+  if ( event == vtkCommand::ModifiedEvent && vtkSlicerApplication::SafeDownCast(caller) == app )
+    {
+    this->MainSlicerWindow->GetApplicationSettingsInterface()->Update();
+    }
+  
   if (event == vtkSlicerModuleGUI::ModuleSelectedEvent) 
     {
     this->SelectModule((const char*)callData);
     return;
     }
-  vtkKWLoadSaveDialog *filebrowse = vtkKWLoadSaveDialog::SafeDownCast(caller);
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication() );
-  vtkSlicerGUILayout *layout = app->GetMainLayout ( );
-      
-  vtkSlicerMRMLSaveDataWidget *saveDataWidget = vtkSlicerMRMLSaveDataWidget::SafeDownCast(caller);
+
   if (saveDataWidget == this->SaveDataWidget && event == vtkSlicerMRMLSaveDataWidget::DataSavedEvent)
     {
     }
