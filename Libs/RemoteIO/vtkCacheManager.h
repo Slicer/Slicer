@@ -54,6 +54,10 @@ class VTK_RemoteIO_EXPORT vtkCacheManager : public vtkObject
   // Returns 1 if filename is in cache directory and is readable, 0 if not.
   int CachedFileCheck ( const char * filename);
     
+  void CacheSizeCheck();
+  void FreeBufferCheck();
+  int GetFreeSpaceRemaining();
+  
   // Description:
   vtkGetMacro ( MaximumCacheSize, int );
   vtkSetMacro ( MaximumCacheSize, int );
@@ -78,6 +82,13 @@ class VTK_RemoteIO_EXPORT vtkCacheManager : public vtkObject
       OldCachedFile,
       CachedFile,
     };
+
+  enum
+    {
+      InsufficientFreeBufferEvent =  21000,
+      CacheLimitExceededEvent = 21001,
+    };
+  
   //ETX
 
  protected:

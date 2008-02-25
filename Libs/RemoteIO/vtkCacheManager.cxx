@@ -105,10 +105,43 @@ void vtkCacheManager::ClearCache()
     {
     this->RemoveFileFromCache ( this->CachedFileList[i].c_str() );
     }
-  
+  this->Modified();
 }
 
   
+
+//----------------------------------------------------------------------------
+void vtkCacheManager::CacheSizeCheck()
+{
+  
+  // todo: this warns if you are already over.
+  if ( this->CurrentCacheSize > this->MaximumCacheSize )
+    {
+    // remove the file just downloaded?
+     this->InvokeEvent ( vtkCacheManager::CacheLimitExceededEvent );
+    }
+}
+
+//----------------------------------------------------------------------------
+int vtkCacheManager::GetFreeSpaceRemaining()
+{
+  //TODO: figure out how to compute
+  // for testing...
+  return ( this->FreeBufferSize );
+
+}
+
+
+//----------------------------------------------------------------------------
+void vtkCacheManager::FreeBufferCheck()
+{
+  int buf = this->GetFreeSpaceRemaining();
+  if ( buf < this->FreeBufferSize )
+    {
+    this->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
+    }
+}
+
 
 //----------------------------------------------------------------------------
 int vtkCacheManager::CachedFileCheck( const char * filename )

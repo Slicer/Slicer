@@ -49,6 +49,12 @@ class VTK_RemoteIO_EXPORT vtkDataIOManager : public vtkObject
   // Gets a unique id to assign to a new data transfer.
   int GetUniqueTransferID ( );
 
+  // Description:
+  // Get i/o settings.
+  vtkGetMacro ( Asynchronous, bool);
+  vtkSetMacro ( Asynchronous, bool);
+  virtual void Configure ();
+  
  private:
   vtkCollection *DataTransferCollection;
 
@@ -63,6 +69,7 @@ class VTK_RemoteIO_EXPORT vtkDataIOManager : public vtkObject
   // Holder for callback
   vtkCallbackCommand *CallbackCommand;
 
+  bool Asynchronous;
 };
 
 #endif

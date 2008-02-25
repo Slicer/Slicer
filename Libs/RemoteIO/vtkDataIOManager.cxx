@@ -30,6 +30,15 @@ vtkDataIOManager::~vtkDataIOManager()
     }
 }
 
+
+//----------------------------------------------------------------------------
+void vtkDataIOManager::Configure ( )
+{
+  this->Asynchronous = false;
+}
+
+
+
 //----------------------------------------------------------------------------
 void vtkDataIOManager::PrintSelf(ostream& os, vtkIndent indent)
 {
@@ -48,6 +57,7 @@ void vtkDataIOManager::AddDataTransfer ( vtkDataTransfer *transfer )
     this->DataTransferCollection = vtkCollection::New();
     }
   this->DataTransferCollection->AddItem ( transfer );
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -58,6 +68,7 @@ void vtkDataIOManager::RemoveDataTransfer ( vtkDataTransfer *transfer)
     this->DataTransferCollection = vtkCollection::New();
     }
   this->DataTransferCollection->RemoveItem ( transfer );
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -76,6 +87,7 @@ void vtkDataIOManager::RemoveDataTransfer ( int transferID )
     if ( dt->GetTransferID() == transferID )
       {
       this->DataTransferCollection->RemoveItem ( i );
+      this->Modified();
       break;
       }
     }
@@ -101,6 +113,7 @@ vtkDataTransfer * vtkDataIOManager::GetDataTransfer ( int transferID )
       return ( dt );
       }
     }
+  return ( NULL );
 }
 
 
@@ -109,13 +122,12 @@ vtkDataTransfer * vtkDataIOManager::GetDataTransfer ( int transferID )
 void vtkDataIOManager::ClearDataTransfers( )
 {
 
-  vtkDataTransfer *dt;
-
   if ( this->DataTransferCollection == NULL )
     {
     this->DataTransferCollection = vtkCollection::New();
     }
   this->DataTransferCollection->RemoveAllItems();
+  this->Modified();
 }
 
 
