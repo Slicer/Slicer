@@ -199,7 +199,8 @@ vtkCommandLineModuleGUI::SetModuleDescription(const ModuleDescription& descripti
 void
 vtkCommandLineModuleGUI::SetCommandLineModuleNode(vtkMRMLCommandLineModuleNode *node)
 {
-  vtkSetObjectBodyMacro(CommandLineModuleNode, vtkMRMLCommandLineModuleNode, node);
+  //vtkSetObjectBodyMacro(CommandLineModuleNode, vtkMRMLCommandLineModuleNode, node);
+  vtkSetAndObserveMRMLNodeMacro( this->CommandLineModuleNode, node);
 }
 
 void vtkCommandLineModuleGUI::RemoveMRMLNodeObservers()

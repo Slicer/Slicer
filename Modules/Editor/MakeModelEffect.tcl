@@ -71,9 +71,25 @@ itcl::body MakeModelEffect::apply {} {
   set layerLogic [$sliceLogic GetLabelLayer]
   set volumeNode [$layerLogic GetVolumeNode]
   if { $volumeNode == "" } {
-    errorDialog "cannot make model - no volume node for $layerLogic in $sliceLogic"
+    errorDialog "Cannot make model - no volume node for $layerLogic in $sliceLogic."
     return
   }
+
+  #
+  # find the Model Maker
+  #
+  set modelMaker ""
+  foreach gui [vtkCommandLineModuleGUI ListInstances] {
+    if { [$gui GetGUIName] == "Model Maker" } {
+      set modelMaker $gui
+    }
+  }
+
+  if { $modelMaker == "" } {
+    errorDialog "Cannot make model: no Model Maker module found."
+  }
+
+  $modelMaker Enter
 
   #
   # set up the model maker
@@ -119,16 +135,20 @@ itcl::body MakeModelEffect::apply {} {
   #
   # create a logic to run the module
   #
-  set logic [vtkCommandLineModuleLogic New]
-  $logic SetAndObserveMRMLScene $::slicer3::MRMLScene
-  $logic SetApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]
-  $logic SetTemporaryDirectory [$::slicer3::Application GetTemporaryDirectory]
+  #set logic [vtkCommandLineModuleLogic New]
+  #$logic SetAndObserveMRMLScene $::slicer3::MRMLScene
+  #$logic SetApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]
+  #$logic SetTemporaryDirectory [$::slicer3::Application GetTemporaryDirectory]
 
   # 
   # run the task (in the background)
   # - model will show up when the processing is finished
   #
-  $logic Apply $module
+  #$logic Apply $module
+  [$modelMaker GetLogic] SetCommandLineModuleNode $module
+  $modelMaker SetCommandLineModuleNode $module
+  [$modelMaker GetLogic] Apply $module
+  $modelMaker UpdateGUI
 
   $this statusText "Model Making Started..."
 
@@ -137,7 +157,8 @@ itcl::body MakeModelEffect::apply {} {
   #
   $module Delete
   $outHierarchy Delete
-  $logic Delete
+  #$logic Delete
+  $modelMaker Enter
 
 }
 
