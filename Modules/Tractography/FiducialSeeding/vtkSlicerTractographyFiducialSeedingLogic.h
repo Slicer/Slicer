@@ -44,7 +44,7 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingLogic : pub
   static int CreateTracts(vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                           vtkMRMLFiducialListNode *fiducialListNode,
                           vtkMRMLFiberBundleNode *fiberNode,
-                          const char * stoopinMode,
+                          const char * stoppinMode,
                           double stoppingValue, double stoppingCurvature, double integrationStepLength);
 protected:
   vtkSlicerTractographyFiducialSeedingLogic();
