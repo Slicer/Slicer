@@ -194,6 +194,11 @@ itcl::body DrawEffect::apply {} {
     return
   }
 
+  set lines [$o(polyData) GetLines]
+  if { [$lines GetNumberOfCells] == 0 } {
+    return
+  }
+
   $this applyPolyMask $o(polyData)
   $this resetPolyData
 
