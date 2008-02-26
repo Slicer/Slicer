@@ -1,6 +1,11 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 
+#include "vtkMRMLCommandLineModuleNode.h"
+#include "vtkCommandLineModuleLogic.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkSlicerGradientEditorLogic.h"
 //widgets
@@ -17,6 +22,8 @@ vtkCxxRevisionMacro (vtkSlicerGradientEditorWidget, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   {
+  this->Application = NULL;
+  this->ApplicationGUI = NULL;
   this->ActiveVolumeNode = NULL;
   this->OriginalNode = vtkMRMLDiffusionWeightedVolumeNode::New();
   this->MeasurementFrameWidget = NULL;
@@ -163,7 +170,64 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
   //run test
   else if (this->RunButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
-    //TODO
+    // create a command line module node
+    vtkMRMLCommandLineModuleNode* module = vtkMRMLCommandLineModuleNode::SafeDownCast(
+      this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
+
+    // set its name
+    /*for(int i=0; i<=module->GetNumberOfRegisteredModules();i++)
+      {
+      vtkWarningMacro("\n"<<module->GetRegisteredModuleNameByIndex(i));
+      }*/
+    module->SetModuleDescription("Diffusion Tensor Estimation");
+
+    // set the parameters
+    module->SetParameterAsString("estimationMethod", "Least Squares");
+    module->SetParameterAsDouble("otsuOmegaThreshold",0.5);
+    module->SetParameterAsBool("removeIslands", 0);
+    module->SetParameterAsBool("applyMask", 0);
+    module->SetParameterAsString("inputVolume", this->ActiveVolumeNode->GetID());
+
+    // create the output nodes
+    vtkMRMLDiffusionTensorVolumeNode* outnode= vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
+      this->MRMLScene->CreateNodeByClass("vtkMRMLDiffusionTensorVolumeNode"));
+    outnode->SetScene(this->GetMRMLScene());
+    outnode->SetName("Output Tensor Node");
+    this->MRMLScene->AddNode(outnode);
+
+    vtkMRMLScalarVolumeNode* baseline= vtkMRMLScalarVolumeNode::SafeDownCast(
+      this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
+    baseline->SetScene(this->GetMRMLScene());
+    baseline->SetName("Output Baseline Node");
+    this->MRMLScene->AddNode(baseline);
+
+    vtkMRMLScalarVolumeNode* mask = vtkMRMLScalarVolumeNode::SafeDownCast(
+      this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
+    mask->SetScene(this->GetMRMLScene());
+    mask->SetName("Output Threshold Mask");
+    this->MRMLScene->AddNode(mask);
+    
+    // set output parameters
+    module->SetParameterAsString("outputTensor", outnode->GetID());
+    module->SetParameterAsString("outputBaseline", baseline->GetID());
+    module->SetParameterAsString("thresholdMask", mask->GetID());
+
+    // execute the plugin
+    vtkCommandLineModuleLogic* logic = vtkCommandLineModuleLogic::New();
+    logic->SetAndObserveMRMLScene(this->GetMRMLScene());
+    logic->SetApplicationLogic(this->ApplicationGUI->GetApplicationLogic());
+    logic->SetTemporaryDirectory(this->Application->GetTemporaryDirectory());
+    logic->ApplyAndWait(module);
+
+    // check the status
+    const char* status = module->GetStatusString(); // if status is not "Completed", complain
+    vtkWarningMacro("status is: "<<status);
+
+    logic->Delete();
+    module->Delete();
+    outnode->Delete();
+    baseline->Delete();
+    mask->Delete();
     }
   }
 

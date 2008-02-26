@@ -125,6 +125,8 @@ INCLUDE_DIRECTORIES(
   ${ModuleDescriptionParser_BINARY_DIR}
   ${FreeSurfer_SOURCE_DIR}
   ${FreeSurfer_BINARY_DIR}
+  ${CommandLineModule_SOURCE_DIR}
+  ${CommandLineModule_BINARY_DIR}
   )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
@@ -139,7 +141,8 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   ${KWWidgets_LIBRARIES}
   ModuleDescriptionParser
   SlicerBaseLogic
-  FreeSurfer)
+  FreeSurfer
+  CommandLineModule)
 
 IF(BUILD_SHARED_LIBS)
   INSTALL(TARGETS ${LIB_NAME}

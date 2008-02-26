@@ -8,6 +8,8 @@
 #include "vtkSlicerWidget.h"
 #include "vtkSlicerMeasurementFrameWidget.h"
 #include "vtkSlicerGradientsWidget.h"
+#include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerApplication.h"
 
 class vtkSlicerNodeSelectorWidget;
 class vtkMRMLDiffusionWeightedVolumeNode;
@@ -38,6 +40,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
     // Method to update the widget when a new node is loaded.
     void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node);
 
+    vtkSetObjectMacro(ApplicationGUI, vtkSlicerApplicationGUI);
+    vtkSetObjectMacro(Application, vtkSlicerApplication);
+
   protected:
     vtkSlicerGradientEditorWidget(void);
     virtual ~vtkSlicerGradientEditorWidget(void);
@@ -48,6 +53,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientEditorWidget : public vtkSlice
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkMRMLDiffusionWeightedVolumeNode *OriginalNode;
+    vtkSlicerApplicationGUI *ApplicationGUI;
+    vtkSlicerApplication *Application;
     int NumberOfChanges;
     //widgets (GUI)
     vtkSlicerMeasurementFrameWidget *MeasurementFrameWidget;

@@ -987,6 +987,8 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->GradientEditorWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
     this->GradientEditorWidget->Create();
     this->GradientEditorWidget->AddWidgetObservers();
+    this->GradientEditorWidget->SetApplicationGUI(this->GetApplicationGUI());
+    this->GradientEditorWidget->SetApplication((vtkSlicerApplication *)this->GetApplication());
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->GradientEditorWidget->GetWidgetName(), this->GradientFrame->GetFrame()->GetWidgetName());
 
