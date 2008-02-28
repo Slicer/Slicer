@@ -60,6 +60,7 @@ if { [itcl::find class LoadVolume] == "" } {
 
     variable _volumeExtensions ".hdr .nhdr .nrrd .mhd .mha .vti .mgz"
     variable _observerRecords ""
+    variable _processingEvents 0
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
@@ -129,6 +130,21 @@ itcl::body LoadVolume::constructor {} {
   set tag [$fileTable AddObserver AnyEvent "$this processEvent $o(browser)"]
   lappend _observerRecords [list $fileTable $tag]
 
+  set directoryExplorer [$o(browser) GetDirectoryExplorer]
+  set tag [$directoryExplorer AddObserver AnyEvent "$this processEvent $o(browser)"]
+  lappend _observerRecords [list $fileTable $tag]
+
+  #
+  # the current Path
+  #
+  set o(path) [vtkNew vtkKWEntryWithLabel]
+  $o(path) SetParent $o(topFrame)
+  $o(path) SetLabelText "Path: "
+  $o(path) Create
+  set tag [[$o(path) GetWidget] AddObserver AnyEvent "$this processEvent $o(path)"]
+  lappend _observerRecords [list $fileTable $tag]
+
+
   #
   # the options frame
   #
@@ -139,6 +155,7 @@ itcl::body LoadVolume::constructor {} {
 
   pack \
     [$o(browser) GetWidgetName] \
+    [$o(path) GetWidgetName] \
     [$o(options) GetWidgetName] \
     -side top -anchor e -padx 2 -pady 2 -expand true -fill both
 
@@ -277,6 +294,10 @@ itcl::body LoadVolume::apply { } {
 #
 itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
 
+  if { $_processingEvents } {
+    return
+  }
+
   if { $caller == $o(apply) } {
     $this apply
     after idle "itcl::delete object $this"
@@ -289,11 +310,41 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
   }
 
   if { $caller == $o(browser) } {
+    set _processingEvents 1
     set fileTable [$o(browser) GetFileListTable]
     set fileName [$fileTable GetNthSelectedFileName 0]
-    $this status $fileName
-    set volName [file root [file tail $fileName]]
-    [$o(name) GetWidget] SetValue $volName
+    if { $fileName == "" } {
+      set directoryExplorer [$o(browser) GetDirectoryExplorer]
+      set directory [$directoryExplorer GetSelectedDirectory]
+      [$o(path) GetWidget] SetValue $directory
+      $this status "Directory: $directory"
+      [$o(name) GetWidget] SetValue ""
+    } else {
+      [$o(path) GetWidget] SetValue $fileName
+      $this status "File Name: $fileName"
+      set volName [file root [file tail $fileName]]
+      [$o(name) GetWidget] SetValue $volName
+    }
+    set _processingEvents 0
+    return
+  }
+
+  if { $caller == $o(path) } {
+    set _processingEvents 1
+    set path [[$o(path) GetWidget] GetValue]
+    set fileTable [$o(browser) GetFileListTable]
+    set directoryExplorer [$o(browser) GetDirectoryExplorer]
+
+    if { [file isdirectory $path] } {
+      set dir $path
+    } else {
+      set dir [file dirname $path]
+    }
+
+    $directoryExplorer SelectDirectory $dir
+    $fileTable ClearSelection
+    $fileTable SelectFileName $path
+    set _processingEvents 0
     return
   }
   
