@@ -127,6 +127,8 @@ INCLUDE_DIRECTORIES(
   ${FreeSurfer_BINARY_DIR}
   ${CommandLineModule_SOURCE_DIR}
   ${CommandLineModule_BINARY_DIR}
+  ${SlicerTractographyFiducialSeeding_SOURCE_DIR}
+  ${SlicerTractographyFiducialSeeding_BINARY_DIR}
   )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
@@ -142,7 +144,8 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   ModuleDescriptionParser
   SlicerBaseLogic
   FreeSurfer
-  CommandLineModule)
+  CommandLineModule
+  SlicerTractographyFiducialSeeding)
 
 IF(BUILD_SHARED_LIBS)
   INSTALL(TARGETS ${LIB_NAME}
