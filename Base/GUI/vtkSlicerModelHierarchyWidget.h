@@ -100,6 +100,10 @@ public:
   // get/set vtkSlicerModelHierarchyLogic
   vtkGetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
   vtkSetObjectMacro( ModelHierarchyLogic, vtkSlicerModelHierarchyLogic );
+
+  // Description:
+  // get at the node selector so can use it to assign scalars
+  vtkGetObjectMacro( ModelDisplaySelectorWidget, vtkSlicerNodeSelectorWidget);
   
 //BTX
   enum

@@ -344,7 +344,13 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       // get the model from the display widget rather than this gui's save
       // model selector
-      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(this->ModelSelectorWidget->GetSelected());
+      vtkMRMLModelNode *modelNode = NULL;
+      if (this->ModelHierarchyWidget != NULL &&
+          this->ModelHierarchyWidget->GetModelDisplaySelectorWidget() != NULL)
+        {
+        modelNode = vtkMRMLModelNode::SafeDownCast(this->ModelHierarchyWidget->GetModelDisplaySelectorWidget()->GetSelected());
+        }
+      else { vtkErrorMacro("Model hierarchy widget or it's model display selector widget is null, can't get the model node."); }
       if (modelNode != NULL)
         {
         vtkDebugMacro("vtkSlicerModelsGUI: loading scalar for model " << modelNode->GetName());
@@ -370,6 +376,10 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
           // set the active scalar in the display node to this one
           // - is done in the model storage node         
           }
+        }
+      else
+        {
+        vtkErrorMacro("Unable to get the model on which to load " << fileName );
         }
       }
     return;
