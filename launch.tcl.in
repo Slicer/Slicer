@@ -217,6 +217,8 @@ proc launch_ParseArgs {argv} {
         set ::LAUNCH(detach) 1
       }
       default {
+        # escape any pipe characters 
+        regsub -all "\\|" $arg "\\\\|" arg
         lappend newargs $arg
       }
     }
@@ -439,8 +441,10 @@ proc launch_RunProgram {} {
     # level of nesting
     # - change backslashes to forward slashes (for windows paths)
     # - escape the spaces in each of the arguments
+    # - handle any escaped | where the \ was changed to / by mistake
     #
     regsub -all "\\\\" $::argv "/" ::argv
+    regsub -all "/\\|" $::argv "\\\\|" ::argv
     set newargv ""
     foreach a $::argv {
         regsub -all " " $a "\\\ " a
