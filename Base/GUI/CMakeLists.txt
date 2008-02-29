@@ -145,7 +145,8 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   SlicerBaseLogic
   FreeSurfer
   #CommandLineModule
-  #SlicerTractographyFiducialSeeding)
+  #SlicerTractographyFiducialSeeding
+  )
 
 IF(BUILD_SHARED_LIBS)
   INSTALL(TARGETS ${LIB_NAME}
