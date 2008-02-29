@@ -65,6 +65,11 @@ itcl::body MakeModelEffect::processEvent { {caller ""} {event ""} } {
 itcl::body MakeModelEffect::apply {} {
 
   #
+  # create a model using the command line module
+  # based on the current editor parameters
+  #
+
+  #
   # get the image data for the label layer
   #
   set sliceLogic [lindex [vtkSlicerSliceLogic ListInstances] 0]
@@ -77,6 +82,7 @@ itcl::body MakeModelEffect::apply {} {
 
   #
   # find the Model Maker
+  # - call Enter to be sure GUI has been built
   #
   set modelMaker ""
   foreach gui [vtkCommandLineModuleGUI ListInstances] {
@@ -86,36 +92,37 @@ itcl::body MakeModelEffect::apply {} {
   }
 
   if { $modelMaker == "" } {
-    errorDialog "Cannot make model: no Model Maker module found."
+    errorDialog "Cannot make model: no Model Maker Module found."
   }
 
   $modelMaker Enter
 
   #
-  # set up the model maker
+  # set up the model maker node
   #
-  set module [$::slicer3::MRMLScene CreateNodeByClass "vtkMRMLCommandLineModuleNode"]
-  $module SetModuleDescription "Model Maker"
+  set moduleNode [$::slicer3::MRMLScene CreateNodeByClass "vtkMRMLCommandLineModuleNode"]
+  $::slicer3::MRMLScene AddNode $moduleNode
+  $moduleNode SetModuleDescription "Model Maker"
 
-  $module SetParameterAsString "Name" "Quick Model"
-  $module SetParameterAsString "FilterType" "Sinc"
-  $module SetParameterAsBool "GenerateAll" "0"
-  $module SetParameterAsString "Labels" [EditorGetPaintLabel]
-  $module SetParameterAsBool "JointSmooth" 1
-  $module SetParameterAsBool "SplitNormals" 1
-  $module SetParameterAsBool "PointNormals" 1
-  $module SetParameterAsBool "SkipUnNamed" 1
-  $module SetParameterAsInt "Start" -1
-  $module SetParameterAsInt "End" -1
+  $moduleNode SetParameterAsString "Name" "Quick Model"
+  $moduleNode SetParameterAsString "FilterType" "Sinc"
+  $moduleNode SetParameterAsBool "GenerateAll" "0"
+  $moduleNode SetParameterAsString "Labels" [EditorGetPaintLabel]
+  $moduleNode SetParameterAsBool "JointSmooth" 1
+  $moduleNode SetParameterAsBool "SplitNormals" 1
+  $moduleNode SetParameterAsBool "PointNormals" 1
+  $moduleNode SetParameterAsBool "SkipUnNamed" 1
+  $moduleNode SetParameterAsInt "Start" -1
+  $moduleNode SetParameterAsInt "End" -1
   if { [[$o(smooth) GetWidget] GetSelectedState] } {
-    $module SetParameterAsDouble "Decimate" 0.25
-    $module SetParameterAsDouble "Smooth" 10
+    $moduleNode SetParameterAsDouble "Decimate" 0.25
+    $moduleNode SetParameterAsDouble "Smooth" 10
   } else {
-    $module SetParameterAsDouble "Decimate" 0
-    $module SetParameterAsDouble "Smooth" 0
+    $moduleNode SetParameterAsDouble "Decimate" 0
+    $moduleNode SetParameterAsDouble "Smooth" 0
   }
 
-  $module SetParameterAsString "InputVolume" [$volumeNode GetID]
+  $moduleNode SetParameterAsString "InputVolume" [$volumeNode GetID]
 
   #
   # output 
@@ -129,25 +136,20 @@ itcl::body MakeModelEffect::apply {} {
     $::slicer3::MRMLScene AddNode $outHierarchy
   }
 
-  $module SetParameterAsString "ModelSceneFile" [$outHierarchy GetID]
+  $moduleNode SetParameterAsString "ModelSceneFile" [$outHierarchy GetID]
 
 
-  #
-  # create a logic to run the module
-  #
-  #set logic [vtkCommandLineModuleLogic New]
-  #$logic SetAndObserveMRMLScene $::slicer3::MRMLScene
-  #$logic SetApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]
-  #$logic SetTemporaryDirectory [$::slicer3::Application GetTemporaryDirectory]
 
   # 
   # run the task (in the background)
+  # - use the GUI to provide progress feedback
+  # - use the GUI's Logic to invoke the task
   # - model will show up when the processing is finished
   #
-  #$logic Apply $module
-  [$modelMaker GetLogic] SetCommandLineModuleNode $module
-  $modelMaker SetCommandLineModuleNode $module
-  [$modelMaker GetLogic] Apply $module
+  $modelMaker SetCommandLineModuleNode $moduleNode
+  [$modelMaker GetLogic] SetCommandLineModuleNode $moduleNode
+  $modelMaker SetCommandLineModuleNode $moduleNode
+  [$modelMaker GetLogic] Apply $moduleNode
   $modelMaker UpdateGUI
 
   $this statusText "Model Making Started..."
@@ -155,9 +157,8 @@ itcl::body MakeModelEffect::apply {} {
   #
   # clean up our references
   #
-  $module Delete
+  $moduleNode Delete
   $outHierarchy Delete
-  #$logic Delete
   $modelMaker Enter
 
 }
