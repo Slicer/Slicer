@@ -150,7 +150,6 @@ itcl::body MakeModelEffect::apply {} {
   [$modelMaker GetLogic] SetCommandLineModuleNode $moduleNode
   $modelMaker SetCommandLineModuleNode $moduleNode
   [$modelMaker GetLogic] Apply $moduleNode
-  $modelMaker UpdateGUI
 
   $this statusText "Model Making Started..."
 
