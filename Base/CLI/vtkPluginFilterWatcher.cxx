@@ -246,6 +246,9 @@ vtkPluginFilterWatcher
 
     this->Process->UnRegister(0);
     }
+  this->StartFilterCommand->Delete();
+  this->EndFilterCommand->Delete();
+  this->ProgressFilterCommand->Delete();
 }
 
 void vtkPluginFilterWatcher::SetQuiet(bool val)
