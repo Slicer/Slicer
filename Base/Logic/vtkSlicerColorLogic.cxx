@@ -545,7 +545,7 @@ void vtkSlicerColorLogic::FindColorFiles()
         }
       else
         {
-        vtkWarningMacro("Skipping potential colour file " << fileToCheck.c_str() << ", file type = " << fileType);
+        vtkDebugMacro("Skipping potential colour file " << fileToCheck.c_str() << ", file type = " << fileType);
         }
       // take this file off so that can build the next file name
       filesVector.pop_back();
