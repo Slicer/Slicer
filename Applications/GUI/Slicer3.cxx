@@ -18,6 +18,8 @@
 #include "vtkSlicerFiducialsLogic.h"
 #include "vtkSlicerColorLogic.h"
 #include "vtkMRMLScene.h"
+#include "vtkCacheManager.h"
+#include "vtkDataIOManager.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSlicesGUI.h"
@@ -903,11 +905,26 @@ int Slicer3_main(int argc, char *argv[])
 */
     slicerApp->SaveUserInterfaceGeometryOn();
 
+    // Create Remote I/O and Cache handling mechanisms
+    // and configure them using Application registry values
+    vtkDataIOManager *dataIOManager = vtkDataIOManager::New();
+    vtkCacheManager *cacheManager = vtkCacheManager::New();
+    cacheManager->SetRemoteCacheLimit ( slicerApp->GetRemoteCacheLimit() );
+    cacheManager->SetRemoteCacheFreeBufferSize ( slicerApp->GetRemoteCacheFreeBufferSize() );
+    cacheManager->SetEnableAsynchronousIO ( slicerApp->GetEnableAsynchronousIO () );
+    cacheManager->SetEnableForceRedownload ( slicerApp->GetEnableForceRedownload() );
+    cacheManager->SetEnableRemoteCacheOverwriting ( slicerApp->GetEnableRemoteCacheOverwriting() );
+
+    scene->SetDataIOManager ( dataIOManager );
+    scene->SetCacheManager( cacheManager );
+    vtkCollection *URIHandlerCollection = vtkCollection::New();
+    scene->SetURIHandlerCollection( URIHandlerCollection );
+    // register all existing uri handlers (add to collection
+  
+    // build the application GUI
     appGUI->BuildGUI ( );
     appGUI->AddGUIObservers ( );
     slicerApp->SetApplicationGUI ( appGUI );
-
-
     
     // ------------------------------
     // CREATE MODULE LOGICS & GUIS; add to GUI collection
@@ -1995,6 +2012,7 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->GetMainSlicerWindow()->PrepareForDelete();
     appGUI->GetMainSlicerWindow()->Close();
 
+
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
 #if !defined(GAD_DEBUG) && defined(BUILD_MODULES)
@@ -2121,6 +2139,24 @@ int Slicer3_main(int argc, char *argv[])
     // ------------------------------
     // DELETE 
     
+    //--- Remote data handling mechanisms
+    if ( dataIOManager != NULL )
+      {
+      dataIOManager->Delete();
+      dataIOManager = NULL;
+      }
+    if ( cacheManager != NULL )
+      {
+      cacheManager->Delete();
+      cacheManager = NULL;
+      }
+    if (URIHandlerCollection != NULL )
+      {
+      URIHandlerCollection->Delete();
+      URIHandlerCollection = NULL;
+      }
+
+
     //--- delete gui first, removing Refs to Logic and MRML
 #if !defined(GAD_DEBUG) && defined(BUILD_MODULES)
     gradientAnisotropicDiffusionFilterGUI->Delete ();
