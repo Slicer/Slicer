@@ -8,13 +8,23 @@ CONFIGURE_FILE(
 )
 
 
+#
+# Disable MSVC 8 warnings
+IF(WIN32)
+  OPTION(DISABLE_MSVC8_DEPRECATED_WARNINGS 
+         "Disable Visual Studio 8 deprecated warnings" ON)
+  MARK_AS_ADVANCED(FORCE DISABLE_MSVC8_DEPRECATED_WARNINGS)  
+  IF(DISABLE_MSVC8_DEPRECATED_WARNINGS)
+    ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
+  ENDIF(DISABLE_MSVC8_DEPRECATED_WARNINGS)
+ENDIF(WIN32)
+
+
+
 # --------------------------------------------------------------------------
 # Settings for options
 SET(RemoteIO_SRCS
-        vtkDataTransfer.cxx
-        vtkCacheManager.cxx
-        vtkDataIOManager.cxx
-        vtkPermissionPrompter.cxx
+#        vtkHTTPHandler.cxx
 )
 
 
@@ -26,6 +36,12 @@ INCLUDE_DIRECTORIES(
   ${RemoteIO_SOURCE_DIR}
   ${RemoteIO_BINARY_DIR}
   )
+
+
+# --------------------------------------------------------------------------
+# Find SLICERLIBCURL (slicercurl)
+FIND_PACKAGE(SLICERLIBCURL REQUIRED)
+INCLUDE(${SLICERLIBCURL_USE_FILE})
 
 
 # --------------------------------------------------------------------------
@@ -50,6 +66,7 @@ TARGET_LINK_LIBRARIES(RemoteIO
   vtkIO
   vtkIOTCL
   vtkCommonTCL
+  ${SLICERLIBCURL_LIBRARIES}
   )
 
 
