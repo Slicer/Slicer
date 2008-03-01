@@ -36,6 +36,8 @@ Version:   $Revision: 1.18 $
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
+#include "vtkCacheManager.h"
+#include "vtkDataIOManager.h"
 
 class vtkGeneralTransform;
 
@@ -357,6 +359,14 @@ public:
     this->SceneModifiedTime ++;
     };
 
+
+  vtkGetObjectMacro ( CacheManager, vtkCacheManager );
+  vtkSetObjectMacro ( CacheManager, vtkCacheManager );
+  vtkGetObjectMacro ( DataIOManager, vtkDataIOManager );
+  vtkSetObjectMacro ( DataIOManager, vtkDataIOManager );
+  vtkGetObjectMacro ( URIHandlerCollection, vtkCollection );
+  vtkSetObjectMacro ( URIHandlerCollection, vtkCollection );
+
 protected:
   vtkMRMLScene();
   ~vtkMRMLScene();
@@ -373,6 +383,11 @@ protected:
 
   vtkCollection* CurrentScene;
   
+  // data i/o handling members
+  vtkCacheManager *CacheManager;
+  vtkDataIOManager *DataIOManager;
+  vtkCollection *URIHandlerCollection;
+
   unsigned long SceneModifiedTime;
   
   int UndoStackSize;

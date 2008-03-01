@@ -182,7 +182,7 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
   
   /* To be finalised
   // Get the data io manager
-   vtkMRMLDataIOManager *iomanager = this->Scene->GetDataIOManager();
+   vtkDataIOManager *iomanager = this->Scene->GetDataIOManager();
    if (iomanager != NULL)
      {
      asynch = iomanger->GetAynchronousEnabled();

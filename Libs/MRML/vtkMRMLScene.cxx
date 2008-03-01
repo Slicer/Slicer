@@ -81,6 +81,11 @@ vtkMRMLScene::vtkMRMLScene()
   this->ReferencingNodes.clear();
   this->ReferencedIDChanges.clear();
 
+
+  this->CacheManager = NULL;
+  this->DataIOManager = NULL;
+  this->URIHandlerCollection = NULL;
+
   this->ErrorCode = 0;
 
   //
@@ -273,6 +278,25 @@ vtkMRMLScene::~vtkMRMLScene()
     {
     this->RegisteredNodeClasses[n]->Delete();
     }
+
+
+  if ( this->CacheManager != NULL )
+    {
+    this->CacheManager->Delete();
+    this->CacheManager = NULL;
+    }
+  if ( this->DataIOManager != NULL )
+    {
+    this->DataIOManager->Delete();
+    this->DataIOManager = NULL;
+    }
+  if ( this->URIHandlerCollection != NULL )
+    {
+    this->URIHandlerCollection->RemoveAllItems();
+    this->URIHandlerCollection->Delete();
+    this->URIHandlerCollection = NULL;
+    }
+
 }
 
 //------------------------------------------------------------------------------
