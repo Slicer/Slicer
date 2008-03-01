@@ -24,6 +24,7 @@
 #ifndef __vtkSlicerScalarVolumeDisplayWidget_h
 #define __vtkSlicerScalarVolumeDisplayWidget_h
 
+#include "vtkVolumes.h"
 #include "vtkSlicerVolumeDisplayWidget.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
@@ -34,7 +35,7 @@
 #include "vtkMRMLVolumeDisplayNode.h"
 
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerScalarVolumeDisplayWidget : public vtkSlicerVolumeDisplayWidget
+class VTK_VOLUMES_EXPORT vtkSlicerScalarVolumeDisplayWidget : public vtkSlicerVolumeDisplayWidget
 {
   
 public:

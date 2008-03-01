@@ -5,6 +5,7 @@
 #ifndef __vtkSlicerMeasurementFrameWidget_h
 #define __vtkSlicerMeasurementFrameWidget_h
 
+#include "vtkVolumes.h"
 #include "vtkSlicerWidget.h"
 
 class vtkMRMLDiffusionWeightedVolumeNode;
@@ -17,7 +18,7 @@ class vtkKWComboBox;
 class vtkKWCheckButton;
 class vtkKWFrameWithLabel;
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidget
+class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidget
   {
   public:
 

@@ -125,7 +125,7 @@ public:
   virtual void UpdateForegroundLayer ( int link );
   virtual void UpdateBackgroundLayer ( int link );
   virtual void UpdateLabelLayer ( int link );
-  virtual void RaiseVolumeDisplayPanel ( char *id );
+  //virtual void RaiseVolumeDisplayPanel ( char *id );
   virtual void FitSliceToBackground ( int link );
 
   //BTX

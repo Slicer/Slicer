@@ -21,10 +21,11 @@
 //
 
 
-#ifndef __vtkSlicerVolumeDisplayWidget_h
-#define __vtkSlicerVolumeDisplayWidget_h
+#ifndef __vtkSlicerLabelMapVolumeDisplayWidget_h
+#define __vtkSlicerLabelMapVolumeDisplayWidget_h
 
-#include "vtkSlicerWidget.h"
+#include "vtkVolumes.h"
+#include "vtkSlicerVolumeDisplayWidget.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWWindowLevelThresholdEditor.h"
@@ -34,25 +35,14 @@
 #include "vtkMRMLVolumeDisplayNode.h"
 
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumeDisplayWidget : public vtkSlicerWidget
+class VTK_VOLUMES_EXPORT vtkSlicerLabelMapVolumeDisplayWidget : public vtkSlicerVolumeDisplayWidget
 {
   
 public:
-  static vtkSlicerVolumeDisplayWidget* New();
-  vtkTypeRevisionMacro(vtkSlicerVolumeDisplayWidget,vtkSlicerWidget);
+  static vtkSlicerLabelMapVolumeDisplayWidget* New();
+  vtkTypeRevisionMacro(vtkSlicerLabelMapVolumeDisplayWidget,vtkSlicerVolumeDisplayWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // get current volume node
-  vtkGetObjectMacro(VolumeNode, vtkMRMLVolumeNode);
-
-  // Description:
-  // Keep track of changes in the volume node
-  void SetVolumeNode ( vtkMRMLVolumeNode *node )
-  {
-    vtkSetAndObserveMRMLNodeMacro( this->VolumeNode, node);
-  }
-  
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -61,7 +51,7 @@ public:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  // Description:
+ // Description:
   // add observers on widgets in the class
   virtual void AddWidgetObservers ( );
 
@@ -69,31 +59,29 @@ public:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
 
+ // Description:
+  // update the widget upon MRML change
   virtual void UpdateWidgetFromMRML();
-
-  // Description:
-  // This method releases references and removes observers.
-  virtual void TearDownWidget ( );
   
-  // Description:
-  // get current volume display node
-  vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode ();
 
 protected:
-  vtkSlicerVolumeDisplayWidget();
-  virtual ~vtkSlicerVolumeDisplayWidget();
+  vtkSlicerLabelMapVolumeDisplayWidget();
+  virtual ~vtkSlicerLabelMapVolumeDisplayWidget();
 
   // Description:
   // Create the widget.
   virtual void CreateWidget();
 
-  vtkMRMLVolumeNode *VolumeNode;
- 
+  vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
+
+  int UpdatingMRML;
+  int UpdatingWidget;
+
 private:
 
 
-  vtkSlicerVolumeDisplayWidget(const vtkSlicerVolumeDisplayWidget&); // Not implemented
-  void operator=(const vtkSlicerVolumeDisplayWidget&); // Not Implemented
+  vtkSlicerLabelMapVolumeDisplayWidget(const vtkSlicerLabelMapVolumeDisplayWidget&); // Not implemented
+  void operator=(const vtkSlicerLabelMapVolumeDisplayWidget&); // Not Implemented
 };
 
 #endif

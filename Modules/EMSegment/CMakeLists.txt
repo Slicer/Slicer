@@ -118,6 +118,8 @@ INCLUDE_DIRECTORIES(
   ${VTK_INCLUDE_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
+  ${Volumes_SOURCE_DIR}
+  ${Volumes_BINARY_DIR}
   )
 
 #
@@ -144,7 +146,8 @@ ENDIF(BUILD_SHARED_LIBS)
 
 TARGET_LINK_LIBRARIES(EMSegment
   SlicerBaseLogic 
-  SlicerBaseGUI 
+  SlicerBaseGUI
+  Volumes 
   MRML
   vtkITK
   vtkCommonTCL

@@ -239,6 +239,9 @@ extern "C" int Scriptedmodule_Init(Tcl_Interp *interp);
 #ifndef LABELSTATISTICS_DEBUG
 extern "C" int Labelstatistics_Init(Tcl_Interp *interp);
 #endif
+#ifndef VOLUMES_DEBUG
+extern "C" int Volumes_Init(Tcl_Interp *interp);
+#endif
 
 struct SpacesToUnderscores
 {
@@ -737,6 +740,9 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(LABELSTATISTICS_DEBUG) && defined(BUILD_MODULES)
     Labelstatistics_Init(interp);
 #endif
+    #if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
+    Volumes_Init(interp);
+#endif
 
   // first call to GetInstance will create the Application
   // 
@@ -922,7 +928,7 @@ int Slicer3_main(int argc, char *argv[])
     // (these require appGUI to be built):
     // --- Volumes module
 
-#ifndef VOLUMES_DEBUG
+#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
     slicerApp->SplashMessage("Initializing Volumes Module...");
 
     vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New ( );

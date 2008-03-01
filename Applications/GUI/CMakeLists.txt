@@ -58,6 +58,10 @@ SET(dir_list
   ${MRML_BINARY_DIR}
   ${IGT_SOURCE_DIR}
   ${IGT_BINARY_DIR}
+  ${Volumes_SOURCE_DIR}
+  ${Volumes_BINARY_DIR}
+  ${Volumes_Init_SOURCE_DIR}
+  ${Volumes_Init_BINARY_DIR}
   ${GradientAnisotropicDiffusionFilter_SOURCE_DIR}
   ${GradientAnisotropicDiffusionFilter_BINARY_DIR}
   ${GradientAnisotropicDiffusionFilter_Init_SOURCE_DIR}
@@ -202,6 +206,7 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
 
 IF(BUILD_MODULES)
   TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
+    Volumes
     GradientAnisotropicDiffusionFilter
     EMSegment
     #   RealTimeImaging

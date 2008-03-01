@@ -47,7 +47,6 @@ SET(LIB_SRCS
   vtkSlicerSliceViewer.cxx
   vtkSlicerSliceControllerWidget.cxx
   vtkSlicerSlicesGUI.cxx
-  vtkSlicerVolumesGUI.cxx
   vtkSlicerModelsGUI.cxx
   vtkSlicerFiducialsGUI.cxx
   vtkSlicerColorGUI.cxx
@@ -68,13 +67,7 @@ SET(LIB_SRCS
   vtkSlicerWidget.cxx
   vtkKWMatrix4x4.cxx
   vtkKWScriptedWidget.cxx
-  vtkKWWindowLevelThresholdEditor.cxx
   vtkKWProgressDialog.cxx
-  vtkSlicerVolumeDisplayWidget.cxx
-  vtkSlicerLabelMapVolumeDisplayWidget.cxx
-  vtkSlicerScalarVolumeDisplayWidget.cxx
-  vtkSlicerDiffusionWeightedVolumeDisplayWidget.cxx
-  vtkSlicerDiffusionTensorVolumeDisplayWidget.cxx
   vtkSlicerVolumeHeaderWidget.cxx
   vtkSlicerVolumeFileHeaderWidget.cxx
   vtkSlicerTransformManagerWidget.cxx
@@ -94,9 +87,6 @@ SET(LIB_SRCS
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx
   vtkSlicerROIGUI.cxx
-  vtkSlicerGradientEditorWidget.cxx
-  vtkSlicerMeasurementFrameWidget.cxx
-  vtkSlicerGradientsWidget.cxx
   )
 
 # Helper classes
@@ -125,10 +115,6 @@ INCLUDE_DIRECTORIES(
   ${ModuleDescriptionParser_BINARY_DIR}
   ${FreeSurfer_SOURCE_DIR}
   ${FreeSurfer_BINARY_DIR}
-  #${CommandLineModule_SOURCE_DIR}
-  #${CommandLineModule_BINARY_DIR}
-  #${SlicerTractographyFiducialSeeding_SOURCE_DIR}
-  #${SlicerTractographyFiducialSeeding_BINARY_DIR}
   )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
@@ -144,8 +130,6 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
   ModuleDescriptionParser
   SlicerBaseLogic
   FreeSurfer
-  #CommandLineModule
-  #SlicerTractographyFiducialSeeding
   )
 
 IF(BUILD_SHARED_LIBS)

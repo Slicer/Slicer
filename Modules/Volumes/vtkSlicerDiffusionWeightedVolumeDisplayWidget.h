@@ -21,30 +21,28 @@
 //
 
 
-#ifndef __vtkSlicerDiffusionTensorVolumeDisplayWidget_h
-#define __vtkSlicerDiffusionTensorVolumeDisplayWidget_h
+#ifndef __vtkSlicerDiffusionWeightedVolumeDisplayWidget_h
+#define __vtkSlicerDiffusionWeightedVolumeDisplayWidget_h
 
+#include "vtkVolumes.h"
 #include "vtkSlicerVolumeDisplayWidget.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWWindowLevelThresholdEditor.h"
 #include "vtkKWScaleWithEntry.h"
-#include "vtkKWMenuButtonWithSpinButtonsWithLabel.h"
-#include "vtkKWCheckButton.h"
-#include "vtkSlicerModuleCollapsibleFrame.h"
+
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
-class vtkDiffusionTensorMathematics;
 class vtkImageExtractComponents;
-class vtkAssignAttribute;
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDiffusionTensorVolumeDisplayWidget : public vtkSlicerVolumeDisplayWidget
+
+class VTK_VOLUMES_EXPORT vtkSlicerDiffusionWeightedVolumeDisplayWidget : public vtkSlicerVolumeDisplayWidget
 {
   
 public:
-  static vtkSlicerDiffusionTensorVolumeDisplayWidget* New();
-  vtkTypeRevisionMacro(vtkSlicerDiffusionTensorVolumeDisplayWidget,vtkSlicerVolumeDisplayWidget);
+  static vtkSlicerDiffusionWeightedVolumeDisplayWidget* New();
+  vtkTypeRevisionMacro(vtkSlicerDiffusionWeightedVolumeDisplayWidget,vtkSlicerVolumeDisplayWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -66,39 +64,29 @@ public:
   virtual void UpdateWidgetFromMRML();
 
 protected:
-  vtkSlicerDiffusionTensorVolumeDisplayWidget();
-  virtual ~vtkSlicerDiffusionTensorVolumeDisplayWidget();
+  vtkSlicerDiffusionWeightedVolumeDisplayWidget();
+  virtual ~vtkSlicerDiffusionWeightedVolumeDisplayWidget();
 
   // Description:
   // Create the widget.
   virtual void CreateWidget();
 
-  vtkKWMenuButtonWithSpinButtonsWithLabel* ScalarModeMenu;
-  vtkSlicerModuleCollapsibleFrame* ScalarOptionsFrame; 
-  vtkKWCheckButton* GlyphButton;
-  vtkKWMenuButtonWithSpinButtonsWithLabel* GlyphModeMenu; 
+  vtkKWScaleWithEntry* DiffusionSelectorWidget;
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
   vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
   vtkKWCheckButton* InterpolateButton;
 
-  vtkDiffusionTensorMathematics *DTIMathematics;
-  vtkImageExtractComponents *ExtractComponent;
-  
-  vtkAssignAttribute* AssignAttributeTensorsFromScalars;
-  vtkAssignAttribute* AssignAttributeScalarsFromTensors;
-
   int UpdatingMRML;
   int UpdatingWidget;
+  
+  vtkImageExtractComponents *ExtractComponent;
 
-  //BTX
-  std::map <std::string, int> ScalarModeMap;
-  std::map <std::string, int> GlyphModeMap;
-  //ETX
+
 private:
 
 
-  vtkSlicerDiffusionTensorVolumeDisplayWidget(const vtkSlicerDiffusionTensorVolumeDisplayWidget&); // Not implemented
-  void operator=(const vtkSlicerDiffusionTensorVolumeDisplayWidget&); // Not Implemented
+  vtkSlicerDiffusionWeightedVolumeDisplayWidget(const vtkSlicerDiffusionWeightedVolumeDisplayWidget&); // Not implemented
+  void operator=(const vtkSlicerDiffusionWeightedVolumeDisplayWidget&); // Not Implemented
 };
 
 #endif

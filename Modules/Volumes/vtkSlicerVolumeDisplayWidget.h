@@ -21,33 +21,43 @@
 //
 
 
-#ifndef __vtkSlicerDiffusionWeightedVolumeDisplayWidget_h
-#define __vtkSlicerDiffusionWeightedVolumeDisplayWidget_h
+#ifndef __vtkSlicerVolumeDisplayWidget_h
+#define __vtkSlicerVolumeDisplayWidget_h
 
-#include "vtkSlicerVolumeDisplayWidget.h"
+#include "vtkVolumes.h"
+#include "vtkSlicerWidget.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWWindowLevelThresholdEditor.h"
-#include "vtkKWScaleWithEntry.h"
+#include "vtkKWCheckButton.h"
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
-class vtkImageExtractComponents;
 
-
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDiffusionWeightedVolumeDisplayWidget : public vtkSlicerVolumeDisplayWidget
+class VTK_VOLUMES_EXPORT vtkSlicerVolumeDisplayWidget : public vtkSlicerWidget
 {
   
 public:
-  static vtkSlicerDiffusionWeightedVolumeDisplayWidget* New();
-  vtkTypeRevisionMacro(vtkSlicerDiffusionWeightedVolumeDisplayWidget,vtkSlicerVolumeDisplayWidget);
+  static vtkSlicerVolumeDisplayWidget* New();
+  vtkTypeRevisionMacro(vtkSlicerVolumeDisplayWidget,vtkSlicerWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
+  // get current volume node
+  vtkGetObjectMacro(VolumeNode, vtkMRMLVolumeNode);
+
+  // Description:
+  // Keep track of changes in the volume node
+  void SetVolumeNode ( vtkMRMLVolumeNode *node )
+  {
+    vtkSetAndObserveMRMLNodeMacro( this->VolumeNode, node);
+  }
+  
+  // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessWidgetEvents ( vtkObject *caller, unsigned long event, void *callData );
-
+  
   // Description:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
@@ -55,37 +65,35 @@ public:
   // Description:
   // add observers on widgets in the class
   virtual void AddWidgetObservers ( );
-  
+
   // Description:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
 
   virtual void UpdateWidgetFromMRML();
 
+  // Description:
+  // This method releases references and removes observers.
+  virtual void TearDownWidget ( );
+  
+  // Description:
+  // get current volume display node
+  vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode ();
+
 protected:
-  vtkSlicerDiffusionWeightedVolumeDisplayWidget();
-  virtual ~vtkSlicerDiffusionWeightedVolumeDisplayWidget();
+  vtkSlicerVolumeDisplayWidget();
+  virtual ~vtkSlicerVolumeDisplayWidget();
 
   // Description:
   // Create the widget.
   virtual void CreateWidget();
 
-  vtkKWScaleWithEntry* DiffusionSelectorWidget;
-  vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
-  vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
-  vtkKWCheckButton* InterpolateButton;
-
-  int UpdatingMRML;
-  int UpdatingWidget;
-  
-  vtkImageExtractComponents *ExtractComponent;
-
-
+  vtkMRMLVolumeNode *VolumeNode;
+ 
 private:
 
-
-  vtkSlicerDiffusionWeightedVolumeDisplayWidget(const vtkSlicerDiffusionWeightedVolumeDisplayWidget&); // Not implemented
-  void operator=(const vtkSlicerDiffusionWeightedVolumeDisplayWidget&); // Not Implemented
+  vtkSlicerVolumeDisplayWidget(const vtkSlicerVolumeDisplayWidget&); // Not implemented
+  void operator=(const vtkSlicerVolumeDisplayWidget&); // Not Implemented
 };
 
 #endif

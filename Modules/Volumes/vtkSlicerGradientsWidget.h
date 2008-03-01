@@ -5,6 +5,7 @@
 #ifndef __vtkSlicerGradientsWidget_h
 #define __vtkSlicerGradientsWidget_h
 
+#include "vtkVolumes.h"
 #include "vtkSlicerWidget.h"
 
 class vtkMRMLDiffusionWeightedVolumeNode;
@@ -19,7 +20,7 @@ class vtkKWLabel;
 class vtkKWMessageDialog;
 class vtkKWPushButton;
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
+class VTK_VOLUMES_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
   {
   public:
 

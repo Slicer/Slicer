@@ -17,7 +17,8 @@ SUBDIRS(
   QueryAtlas
   Tractography
   VolumeRendering
-  Statistics   
+  Statistics
+  Volumes
 )
 
 

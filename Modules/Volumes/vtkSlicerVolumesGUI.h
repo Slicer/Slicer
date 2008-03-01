@@ -6,7 +6,7 @@
 #ifndef __vtkSlicerVolumesGUI_h
 #define __vtkSlicerVolumesGUI_h
 
-#include "vtkSlicerBaseGUIWin32Header.h"
+#include "vtkVolumes.h"
 #include "vtkSlicerModuleGUI.h"
 
 #include "vtkSlicerVolumesLogic.h"
@@ -33,7 +33,7 @@ class vtkSlicerVolumeFileHeaderWidget;
 // Description:
 // This class implements Slicer's Volumes GUI
 //
-class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
+class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
 {
  public:
     // Description:

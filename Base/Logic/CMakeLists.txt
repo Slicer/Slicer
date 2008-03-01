@@ -31,7 +31,6 @@ SET(SlicerBaseLogic_SRCS
   vtkImageLabelChange.cxx 
   vtkImageErode.cxx 
   vtkImageNeighborhoodFilter.cxx
-  vtkSlicerGradientEditorLogic.cxx
 )
 
 # Abstract/pure virtual classes

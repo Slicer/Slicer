@@ -20,6 +20,7 @@
 #ifndef __vtkKWWindowLevelThresholdEditor_h
 #define __vtkKWWindowLevelThresholdEditor_h
 
+#include "vtkVolumes.h"
 #include "vtkKWCompositeWidget.h"
 
 #include "vtkImageData.h"
@@ -41,7 +42,7 @@
 
 #include "vtkSlicerBaseGUI.h"
 
-class VTK_SLICER_BASE_GUI_EXPORT vtkKWWindowLevelThresholdEditor : public vtkKWCompositeWidget
+class VTK_VOLUMES_EXPORT vtkKWWindowLevelThresholdEditor : public vtkKWCompositeWidget
 {
 public:
   static vtkKWWindowLevelThresholdEditor* New();

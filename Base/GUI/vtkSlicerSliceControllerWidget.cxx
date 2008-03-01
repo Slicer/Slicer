@@ -7,7 +7,7 @@
 #include "vtkSlicerSlicesGUI.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSlicesControlGUI.h"
-#include "vtkSlicerVolumesGUI.h"
+//#include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerTheme.h"
 #include "vtkSlicerGUILayout.h"
 
@@ -1030,24 +1030,24 @@ void vtkSlicerSliceControllerWidget::UpdateLabelLayer ( int link )
 
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceControllerWidget::RaiseVolumeDisplayPanel ( char *id )
-{
-  vtkSlicerVolumesGUI *vgui;
-  vtkSlicerApplication *app;
-  vtkSlicerApplicationGUI *appgui;
-    
-  app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
-  vgui = vtkSlicerVolumesGUI::SafeDownCast ( app->GetModuleGUIByName ("Volumes") );
-  appgui = vgui->GetApplicationGUI ( );
-  appgui->SelectModule ( "Volumes" );
-
-  vtkMRMLNode *volumeNode = this->GetMRMLScene()->GetNodeByID ( id );
-  vgui->GetVolumeSelectorWidget()->SetSelected(volumeNode);
-  vgui->GetApplicationLogic()->GetSelectionNode()->SetActiveVolumeID ( id );
-  vgui->GetVolumeDisplayWidget()->SetVolumeNode (vtkMRMLVolumeNode::SafeDownCast (this->GetMRMLScene()->GetNodeByID ( id )) );
-
-  vgui->GetDisplayFrame()->ExpandFrame();
-}
+//void vtkSlicerSliceControllerWidget::RaiseVolumeDisplayPanel ( char *id )
+//{
+//  vtkSlicerVolumesGUI *vgui;
+//  vtkSlicerApplication *app;
+//  vtkSlicerApplicationGUI *appgui;
+//    
+//  app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
+//  vgui = vtkSlicerVolumesGUI::SafeDownCast ( app->GetModuleGUIByName ("Volumes") );
+//  appgui = vgui->GetApplicationGUI ( );
+//  appgui->SelectModule ( "Volumes" );
+//
+//  vtkMRMLNode *volumeNode = this->GetMRMLScene()->GetNodeByID ( id );
+//  vgui->GetVolumeSelectorWidget()->SetSelected(volumeNode);
+//  vgui->GetApplicationLogic()->GetSelectionNode()->SetActiveVolumeID ( id );
+//  vgui->GetVolumeDisplayWidget()->SetVolumeNode (vtkMRMLVolumeNode::SafeDownCast (this->GetMRMLScene()->GetNodeByID ( id )) );
+//
+//  vgui->GetDisplayFrame()->ExpandFrame();
+//}
 
 
 
@@ -1331,30 +1331,30 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       this->MRMLScene->SaveStateForUndo ( this->SliceNode );
       // raise volumes module with foreground
       id = this->SliceCompositeNode->GetForegroundVolumeID( );
-      if ( id )
+      /*if ( id )
         {
         this->RaiseVolumeDisplayPanel ( id );
-        }
+        }*/
       }
     else if (!strcmp (this->VolumeDisplayMenuButton->GetValue(), "Background volume"))
       {
       this->MRMLScene->SaveStateForUndo ( this->SliceNode );
       // raise volumes module with background
       id = this->SliceCompositeNode->GetBackgroundVolumeID( );
-      if ( id )
+      /*if ( id )
         {
         this->RaiseVolumeDisplayPanel ( id );
-        }
+        }*/
       }
     else if (!strcmp(this->VolumeDisplayMenuButton->GetValue(), "Label map"))
       {
       this->MRMLScene->SaveStateForUndo ( this->SliceNode );
       // raise volumes module with label
       id = this->SliceCompositeNode->GetLabelVolumeID( );
-      if ( id )
+      /*if ( id )
         {
         this->RaiseVolumeDisplayPanel ( id );
-        }
+        }*/
       }
     }
   else if ( menu == this->ForegroundMenuButton->GetMenu() &&

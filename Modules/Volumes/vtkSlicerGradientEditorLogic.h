@@ -6,13 +6,13 @@
 #ifndef __vtkSlicerGradientEditorLogic_h
 #define __vtkSlicerGradientEditorLogic_h
 
-#include "vtkSlicerBaseLogic.h"
+#include "vtkVolumes.h"
 #include "vtkSlicerLogic.h"
 
 class vtkMRMLDiffusionWeightedVolumeNode;
 class vtkDoubleArray;
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic 
+class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic 
   {
   public:
 
