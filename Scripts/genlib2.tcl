@@ -271,8 +271,11 @@ if { ![file exists $::TCL_TEST_FILE] || $::GENLIB(update) } {
         # nothing to do for windows
     } else {
         cd $::SLICER_LIB/tcl/tcl/unix
-
-        runcmd ./configure --prefix=$::SLICER_LIB/tcl-build
+        if { $isDarwin } {
+            runcmd ./configure --prefix=$::SLICER_LIB/tcl-build --disable-corefoundation
+        } else {
+            runcmd ./configure --prefix=$::SLICER_LIB/tcl-build
+        }
         eval runcmd $::MAKE
         eval runcmd $::MAKE install
     }
@@ -288,7 +291,7 @@ if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
     } else {
         cd $::SLICER_LIB/tcl/tk/unix
 
-        runcmd ./configure --with-tcl=$::SLICER_LIB/tcl-build/lib --prefix=$::SLICER_LIB/tcl-build
+        runcmd ./configure --with-tcl=$::SLICER_LIB/tcl-build/lib --prefix=$::SLICER_LIB/tcl-build --disable-corefoundation
         eval runcmd $::MAKE
         eval runcmd $::MAKE install
 
@@ -307,6 +310,10 @@ if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
         # can't do windows
     } else {
         cd $::SLICER_LIB/tcl/incrTcl
+        if {$isDarwin} {
+            exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
+            exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure
+        }
         exec chmod +x ../incrTcl/configure
         runcmd ../incrTcl/configure --with-tcl=$::SLICER_LIB/tcl-build/lib --with-tk=$::SLICER_LIB/tcl-build/lib --prefix=$::SLICER_LIB/tcl-build
         if { $isDarwin } {
@@ -409,7 +416,7 @@ if {  ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
 # Get and build numpy and scipy
 #
 
-if { ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
+if { ( ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) ) } {
 
     set ::env(PYTHONHOME)        $::SLICER_LIB/python-build
     cd $::SLICER_LIB/python
@@ -442,16 +449,18 @@ if { ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
 
         # do scipy
 
-        # TODO: need to have a way to build the blas library...
-        cd $::SLICER_LIB/python
-        runcmd $::SVN co $::SCIPY_TAG scipy
-
-        cd $::SLICER_LIB/python/scipy
-        set ::env(ATLAS) None
-        set ::env(BLAS) None
-        set ::env(LAPACK) None
-        # skip scipy for now until we find a BLAS to link against
-        # runcmd $::SLICER_LIB/python-build/bin/python ./setup.py install
+        if { 0 } {
+          # TODO: need to have a way to build the blas library...
+          cd $::SLICER_LIB/python
+          runcmd $::SVN co $::SCIPY_TAG scipy
+          
+          cd $::SLICER_LIB/python/scipy
+          set ::env(ATLAS) None
+          set ::env(BLAS) None
+          set ::env(LAPACK) None
+          # skip scipy for now until we find a BLAS to link against
+          # runcmd $::SLICER_LIB/python-build/bin/python ./setup.py install
+        }
     }
 
 
@@ -460,7 +469,7 @@ if { ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) } {
 ################################################################################
 # Get and build matplotlib
 #
-if { 0 && (![file exists $::MATPLOTLIB_TEST_FILE] || $::GENLIB(update)) } {
+if { (![file exists $::MATPLOTLIB_TEST_FILE] || $::GENLIB(update)) } {
 
     set ::env(PYTHONHOME)        $SLICER_LIB/python-build
     cd $SLICER_LIB/python
@@ -570,6 +579,8 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DTK_LIBRARY:FILEPATH=$::VTK_TK_LIB \
             -DTCL_TCLSH:FILEPATH=$::VTK_TCLSH \
             -DOPENGL_gl_LIBRARY:STRING=$OpenGLString \
+            "-DCMAKE_SHARED_LINKER_FLAGS:STRING=-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
+            "-DCMAKE_EXE_LINKER_FLAGS:STRING=-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
             $USE_VTK_ANSI_STDLIB \
             ../VTK
     } else {
@@ -621,6 +632,13 @@ if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
     cd $::SLICER_LIB/KWWidgets-build
 
 
+    if {$isDarwin} {
+        set SharedLink "-DCMAKE_SHARED_LINKER_FLAGS:STRING=-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib "
+        set LinkFlags "-DCMAKE_EXE_LINKER_FLAGS:STRING=-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib "
+    } else {
+        set SharedLink ""
+        set LinkFlags ""
+    }
 
     runcmd $::CMAKE \
         -G$GENERATOR \
@@ -633,6 +651,7 @@ if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
         -DBUILD_TESTING:BOOL=ON \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
+        $SharedLink $LinkFlags\
         ../KWWidgets
 
     if {$isWindows} {
@@ -891,6 +910,8 @@ if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
         -DIGSTK_BUILD_TESTING:BOOL=OFF \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
+        "-DCMAKE_SHARED_LINKER_FLAGS:STRING=-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
+        "-DCMAKE_EXE_LINKER_FLAGS:STRING=-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
         ../IGSTK
     } else {
     runcmd $::CMAKE \
