@@ -136,8 +136,10 @@ set argc [llength $argv]
 if {$argc > 1 } {
 #    Usage
 #    exit 1
-    set ::GETBUILDTEST(buildList) $strippedargs
 }
+puts "getbuildtest: setting build list to $strippedargs"
+set ::GETBUILDTEST(buildList) $strippedargs
+
 
 
 ################################################################################
