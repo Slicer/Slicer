@@ -86,6 +86,7 @@ set ::ITCL_TAG "itcl-3-2-1"
 set ::IWIDGETS_TAG "iwidgets-4-0-1"
 set ::BLT_TAG "blt24z"
 set ::SANDBOX_TAG "http://svn.na-mic.org/svn/NAMICSandBox/branches/Slicer-2-6"
+set ::SLICERLIBCURL_TAG "HEAD"
 
 # Set library, binary, etc. paths...
 
@@ -126,6 +127,8 @@ set ::CMAKE_PATH $::SLICER_LIB/CMake-build
 set ::SOV_BINARY_DIR ""
 set ::XVNC_EXECUTABLE " "
 set ::IGSTK_DIR $::SLICER_LIB/IGSTK-build 
+set ::SLICERLIBCURL_SRC_DIR $::SLICER_LIB/cmcurl
+set ::SLICERLIBCURL_BUILD_DIR $::SLICER_LIB/cmcurl-build
 
 
 # Options for building IGT modules in Slicer
@@ -181,6 +184,7 @@ switch $::tcl_platform(os) {
         set ::BLT_PATCH $::SLICER_HOME/blt-patch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.$shared_lib_ext
+        set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
 
     }
     "Linux" {
@@ -205,6 +209,7 @@ switch $::tcl_platform(os) {
         set ::BLT_PATCH $::SLICER_HOME/blt-patch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.$shared_lib_ext
+        set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
 
     }
     "Windows NT" {
@@ -229,6 +234,7 @@ switch $::tcl_platform(os) {
         set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh84.exe
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/$::VTK_BUILD_TYPE/ITKCommon.dll
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/$::VTK_BUILD_TYPE/IGSTK.lib
+        set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/$::VTK_BUILD_TYPE/slicerlibcurl.lib
     }
     default {
         puts stderr "Could not match platform \"$::tcl_platform(os)\"."

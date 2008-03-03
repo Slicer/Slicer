@@ -319,6 +319,13 @@ if {0 && $isDarwin} {
    set ::GETBUILDTEST(cpack-extension) ".dmg"
 }
 
+# make verbose makefiles?
+if {$::GETBUILDTEST(verbose)} {
+   set ::GETBUILDTEST(cmake-verbose) "ON"
+} else {
+   set ::GETBUILDTEST(cmake-verbose) "OFF"
+}
+
 # build the slicer
 cd $::SLICER_BUILD
 runcmd $::CMAKE \
@@ -326,6 +333,7 @@ runcmd $::CMAKE \
         -DMAKECOMMAND:STRING=$::MAKE \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
         -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
         -DTEEM_DIR:FILEPATH=$SLICER_LIB/teem-build \
@@ -339,6 +347,8 @@ runcmd $::CMAKE \
         -DUSE_NAVITRACK=$::NAVITRACK \
         -DNAVITRACK_LIB_DIR:FILEPATH=$::NAVITRACK_LIB_DIR \
         -DNAVITRACK_INC_DIR:FILEPATH=$::NAVITRACK_INC_DIR \
+        -DSLICERLIBCURL_DIR:FILEPATH=$SLICER_LIB/cmcurl-build \
+        -DCMAKE_VERBOSE_MAKEFILE:BOOL=$::GETBUILDTEST(cmake-verbose) \
         $SLICER_HOME
 
 if { $isWindows } {

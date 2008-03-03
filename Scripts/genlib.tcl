@@ -39,6 +39,21 @@ if {[info exists ::env(SVN)]} {
     set ::SVN svn
 }
 
+################################################################################
+#
+# check to see if need to build a package
+# returns 1 if need to build, 0 else
+# if { [BuildThis  ""] == 1 } {
+proc BuildThis { testFile packageName } {
+    if {![file exists $testFile] || $::GENLIB(update) || [lsearch $::GENLIB(buildList) $packageName] != -1} {
+        # puts "Building $packageName"
+        return 1
+    } else {
+        # puts "Skipping $packageName"
+        return 0
+    }
+}
+#
 
 ################################################################################
 #
@@ -49,18 +64,20 @@ proc Usage { {msg ""} } {
     global SLICER
     
     set msg "$msg\nusage: genlib \[options\] \[target\]"
-    set msg "$msg\n  \[target\] is the SLICER_LIB directory"
+    set msg "$msg\n  \[target\] is the the SLICER_LIB directory"
     set msg "$msg\n             and is determined automatically if not specified"
     set msg "$msg\n  \[options\] is one of the following:"
     set msg "$msg\n   --help : prints this message and exits"
     set msg "$msg\n   --clean : delete the target first"
     set msg "$msg\n   --update : do a cvs update even if there's an existing build"
     set msg "$msg\n   --release : compile with optimization flags"
+    set msg "$msg\n   optional space separated list of packages to build (lower case)"
     puts stderr $msg
 }
 
 set GENLIB(clean) "false"
 set GENLIB(update) "false"
+set ::GENLIB(buildList) ""
 set isRelease 0
 set strippedargs ""
 set argc [llength $argv]
@@ -89,20 +106,21 @@ for {set i 0} {$i < $argc} {incr i} {
             exit 1
         }
         default {
-            lappend strippedargs $a
+            lappend strippedargs $a 
         }
     }
 }
 set argv $strippedargs
 set argc [llength $argv]
+puts "Stripped args = $argv"
 
 set ::SLICER_LIB ""
 if {$argc > 1 } {
-  Usage
-  exit 1
-} else {
-  set ::SLICER_LIB $argv
-}
+  #Usage
+  #exit 1
+    set ::GENLIB(buildList) [lrange $strippedargs 1 end]
+} 
+set ::SLICER_LIB $argv
 
 
 ################################################################################
@@ -263,7 +281,7 @@ if {$isDarwin} {
 #
 
 # set in slicer_vars
-if { ![file exists $::CMAKE] || $::GENLIB(update) } {
+if { [BuildThis $::CMAKE "cmake"] == 1 } {
     file mkdir $::CMAKE_PATH
     cd $SLICER_LIB
 
@@ -294,7 +312,7 @@ if { ![file exists $::CMAKE] || $::GENLIB(update) } {
 #
 
 # on windows, tcl won't build right, as can't configure, so save commands have to run
-if { ![file exists $::TCL_TEST_FILE] || $::GENLIB(update) } {
+if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
 
     if {$isWindows} {
       if { ! $::GENLIB(update) } {
@@ -320,7 +338,7 @@ if { ![file exists $::TCL_TEST_FILE] || $::GENLIB(update) } {
     }
 }
 
-if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
+if { [BuildThis $::TK_TEST_FILE "tk"] == 1 } {
     cd $SLICER_LIB/tcl
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
@@ -356,7 +374,7 @@ if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
     }
 }
 
-if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
+if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
     cd $SLICER_LIB/tcl
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
@@ -385,7 +403,7 @@ if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
     }
 }
 
-if { ![file exists $::IWIDGETS_TEST_FILE] || $::GENLIB(update) } {
+if { [BuildThis $::IWIDGETS_TEST_FILE "iwidgets"] == 1 } {
     cd $SLICER_LIB/tcl
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
@@ -409,7 +427,7 @@ if { ![file exists $::IWIDGETS_TEST_FILE] || $::GENLIB(update) } {
 # Get and build blt
 #
 
-if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
+if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
     cd $SLICER_LIB/tcl
     
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
@@ -449,7 +467,7 @@ if { ![file exists $::BLT_TEST_FILE] || $::GENLIB(update) } {
 # Get and build vtk
 #
 
-if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
+if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK login
@@ -571,7 +589,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
 # Get and build kwwidgets
 #
 
-if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
+if { [BuildThis $::KWWidgets_TEST_FILE "kwwidgets"] == 1 } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anoncvs:@www.kwwidgets.org:/cvsroot/KWWidgets login
@@ -616,7 +634,7 @@ if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
 # Get and build itk
 #
 
-if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
+if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anoncvs:@www.vtk.org:/cvsroot/Insight login
@@ -695,7 +713,7 @@ if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
 # -- relies on VTK's png and zlib
 #
 
-if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
+if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login 
@@ -763,7 +781,7 @@ if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
 ################################################################################
 # Get and build the sandbox
 
-if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FILE] || $::GENLIB(update) } {
+if { [BuildThis $::SANDBOX_TEST_FILE "sandbox"] == 1 && [BuildThis $::ALT_SANDBOX_TEST_FILE "sandbox"] == 1 } {
     cd $SLICER_LIB
 
     runcmd $::SVN checkout $::SANDBOX_TAG NAMICSandBox 
@@ -856,7 +874,7 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
 # Get and build igstk 
 #
 
-if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
+if { [BuildThis $::IGSTK_TEST_FILE "igstk"] == 1 } {
     cd $SLICER_LIB
 
     runcmd $::CVS -d:pserver:anonymous:igstk@public.kitware.com:/cvsroot/IGSTK login
@@ -918,6 +936,40 @@ if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
     }
 }
 
+################################################################################
+# Get and build SLICERLIBCURL (slicerlibcurl)
+#
+#
+
+if { [BuildThis $::SLICERLIBCURL_TEST_FILE "libcurl"] == 1 } {
+    cd $::SLICER_LIB
+
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/cmcurl cmcurl
+
+    file mkdir $::SLICER_LIB/cmcurl-build
+    cd $::SLICER_LIB/cmcurl-build
+
+    runcmd $::CMAKE \
+        -G$GENERATOR \
+        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
+        -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
+        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+        -DBUILD_SHARED_LIBS:BOOL=OFF \
+        -DBUILD_TESTING:BOOL=OFF \
+        ../cmcurl
+
+    if {$isWindows} {
+        if { $MSVC6 } {
+            runcmd $::MAKE SLICERLIBCURL.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
+        } else {
+            runcmd $::MAKE SLICERLIBCURL.SLN /build  $::VTK_BUILD_TYPE
+        }
+    } else {
+        eval runcmd $::MAKE
+    }
+}
 
 
 # Are all the test files present and accounted for?  If not, return error code
@@ -930,6 +982,9 @@ if { ![file exists $::TEEM_TEST_FILE] } {
 }
 if { ![file exists $::IGSTK_TEST_FILE] } {
     puts "IGSTK test file $::IGSTK_TEST_FILE not found."
+}
+if { ![file exists $::SLICERLIBCURL_TEST_FILE] } {
+    puts "SLICERLIBCURL test file $::SLICERLIBCURL_TEST_FILE not found."
 }
 if { ![file exists $::TCL_TEST_FILE] } {
     puts "Tcl test file $::TCL_TEST_FILE not found."
@@ -963,6 +1018,7 @@ if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FI
 # check for both regular and alternate sandbox file for linux builds
 if { ![file exists $::CMAKE] || \
          ![file exists $::TEEM_TEST_FILE] || \
+         ![file exists $::SLICERLIBCURL_TEST_FILE] || \
          ![file exists $::TCL_TEST_FILE] || \
          ![file exists $::TK_TEST_FILE] || \
          ![file exists $::ITCL_TEST_FILE] || \
