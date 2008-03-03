@@ -46,7 +46,7 @@ if {[info exists ::env(SVN)]} {
 # if { [BuildThis  ""] == 1 } {
 proc BuildThis { testFile packageName } {
     if {![file exists $testFile] || $::GENLIB(update) || [lsearch $::GENLIB(buildList) $packageName] != -1} {
-        # puts "Building $packageName"
+        # puts "Building $packageName (testFile = $testFile, update = $::GENLIB(update), buildlist = $::GENLIB(buildList) )"
         return 1
     } else {
         # puts "Skipping $packageName"
@@ -118,9 +118,12 @@ set ::SLICER_LIB ""
 if {$argc > 1 } {
   #Usage
   #exit 1
+    # the stripped args list now has the SLICER_LIB first and then the list of packages to build
     set ::GENLIB(buildList) [lrange $strippedargs 1 end]
+    set strippedargs [lindex $strippedargs 0]
+# puts "Got the list of package to build: '$::GENLIB(buildList)' , stripped args = $strippedargs"
 } 
-set ::SLICER_LIB $argv
+set ::SLICER_LIB $strippedargs
 
 
 ################################################################################

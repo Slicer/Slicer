@@ -52,6 +52,8 @@ set ::GETBUILDTEST(upload) "false"
 set ::GETBUILDTEST(uploadFlag) "nightly"
 set ::GETBUILDTEST(doxy) "false"
 set ::GETBUILDTEST(verbose) "false"
+set ::GETBUILDTEST(buildList) ""
+
 set strippedargs ""
 set argc [llength $argv]
 for {set i 0} {$i < $argc} {incr i} {
@@ -132,8 +134,9 @@ set argv $strippedargs
 set argc [llength $argv]
 
 if {$argc > 1 } {
-    Usage
-    exit 1
+#    Usage
+#    exit 1
+    set ::GETBUILDTEST(buildList) $strippedargs
 }
 
 
@@ -291,6 +294,11 @@ if { $::GETBUILDTEST(release) != "" } {
 if { $::GETBUILDTEST(update) != "" } {
    append cmd " $::GETBUILDTEST(update)"
 } 
+if { $::GETBUILDTEST(buildList) != "" } {
+    # puts "Passing $::GETBUILDTEST(buildList) to genlib"
+    append cmd " $::GETBUILDTEST(buildList)"
+}
+
 eval runcmd $cmd
 
 if { $::GETBUILDTEST(version-patch) == "" } {
