@@ -128,16 +128,16 @@
     <description>Parameters that apply to the images and data in each image</description>
 
     <double>
-       <name>rescaleIntersept</name>
-       <longflag>--rescaleIntersept</longflag>
-       <description>Rescale intersept [0028-1052]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntersept.  Default is 0.0. Data values are converted on write.</description>
+       <name>rescaleInterscept</name>
+       <longflag>--rescaleInterscept</longflag>
+       <description>Rescale interscept [0028-1052]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleInterscept.  Default is 0.0. Data values are converted on write.</description>
        <default>0.0</default>
     </double>
 
     <double>
        <name>rescaleSlope</name>
        <longflag>--rescaleSlope</longflag>
-       <description>Rescale slope [0028-1053]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntersept.  Default is 1.0. Data values are converted on write.</description>
+       <description>Rescale slope [0028-1053]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleInterscept.  Default is 1.0. Data values are converted on write.</description>
        <default>1.0</default>
     </double>
  </parameters>
