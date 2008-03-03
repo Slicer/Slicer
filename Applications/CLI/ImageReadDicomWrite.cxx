@@ -1,41 +1,25 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: ImageReadDicomWrite.cxx,v $
-  Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
-
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
+This plugin is based on the Insight Toolkit example
+ImageReadDicomWrite. It has been modified for GenerateCLP style
+command line processing and additional features have been added.
 
 =========================================================================*/
 #if defined(_MSC_VER)
 #pragma warning ( disable : 4786 )
 #endif
 
-//  Software Guide : BeginLatex
-//
-//  This example illustrates how to read a 3D Meta Image and then save
-//  this volume into a series of Dicom files.
-//
-//  Software Guide : EndLatex 
-
-
-// Software Guide : BeginCodeSnippet
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkExtractImageFilter.h"
+#include "itkShiftScaleImageFilter.h"
 #include "itkGDCMImageIO.h"
 #include "itkMetaDataObject.h"
+#include "itkNumericTraits.h"
+
 #include <string>
 #include <itksys/ios/sstream>
 #include <itksys/Base64.h>
-// Software Guide : EndCodeSnippet
 
 #include <vector>
 #include <itksys/SystemTools.hxx>
@@ -45,37 +29,23 @@ int main( int argc, char* argv[] )
 {
   PARSE_ARGS;
 
-  //  Software Guide : BeginLatex
-  //
-  //  First we define the image type to be used in this example. From the image
-  //  type we can define the type of the reader. We also declare types for the
-  //  \doxygen{GDCMImageIO} object that will actually write the DICOM
-  //  images.
-  //
-  //  Software Guide : EndLatex 
 
-
-  // Software Guide : BeginCodeSnippet
   typedef itk::Image<short,3>               Image3DType;
   typedef itk::Image<short,2>               Image2DType;
   typedef itk::ImageFileReader< Image3DType > ReaderType;
   typedef itk::ExtractImageFilter< Image3DType, Image2DType > ExtractType;
+  typedef itk::ShiftScaleImageFilter< Image3DType, Image3DType > ShiftScaleType;
   typedef itk::ImageFileWriter< Image2DType > WriterType;
   typedef itk::GDCMImageIO                  ImageIOType;
-  // Software Guide : EndCodeSnippet
 
-
-  // Software Guide : BeginCodeSnippet
-  // Software Guide : EndCodeSnippet
-
+  Image3DType::Pointer image;
   ReaderType::Pointer reader = ReaderType::New();
-
-  // Software Guide : EndCodeSnippet
 
   try
     {
     reader->SetFileName(inputVolume.c_str());
     reader->Update();
+    image = reader->GetOutput();
     }
   catch (itk::ExceptionObject &excp)
     {
@@ -85,8 +55,34 @@ int main( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
+  // Shift scale the data if necessary based on the rescale slope and
+  // rescale interscept prescribed.
+  if (fabs(rescaleIntersept) > itk::NumericTraits<double>::epsilon()
+      || fabs(rescaleSlope - 1.0) > itk::NumericTraits<double>::epsilon())
+    {
+    reader->ReleaseDataFlagOn();
+    
+    ShiftScaleType::Pointer shiftScale = ShiftScaleType::New();
+    shiftScale->SetInput( reader->GetOutput() );
+    shiftScale->SetShift( -rescaleIntersept );
+
+    if (fabs(rescaleSlope) < itk::NumericTraits<double>::epsilon())
+      {
+      // too close to zero, ignore
+      std::cerr << "Rescale slope too close to zero (" << rescaleSlope
+                << "). Using the default value of 1.0" << std::endl;
+
+      rescaleSlope = 1.0;
+      }
+    shiftScale->SetScale( 1.0/rescaleSlope );
+
+    shiftScale->Update();
+    image = shiftScale->GetOutput();
+    }
+
+
   typedef itk::MetaDataDictionary   DictionaryType;
-  unsigned int numberOfSlices = reader->GetOutput()->GetLargestPossibleRegion().GetSize()[2];
+  unsigned int numberOfSlices = image->GetLargestPossibleRegion().GetSize()[2];
 
   ImageIOType::Pointer gdcmIO = ImageIOType::New();
   DictionaryType dictionary;
@@ -119,7 +115,7 @@ int main( int argc, char* argv[] )
     Image3DType::IndexType index;
     index.Fill(0);
     index[2] = i;
-    reader->GetOutput()->TransformIndexToPhysicalPoint(index, origin);
+    image->TransformIndexToPhysicalPoint(index, origin);
 
     // Set all required DICOM fields
     value.str("");
@@ -193,10 +189,22 @@ int main( int argc, char* argv[] )
       {
       itk::EncapsulateMetaData<std::string>(dictionary, "0008|103e", seriesDescription);
       }
+
+
+    // Always set the rescale intersept and rescale slope (even if
+    // they are at their defaults of 0 and 1 respectively).
+    value.str("");
+    value << rescaleIntersept;
+    itk::EncapsulateMetaData<std::string>(dictionary, "0028|1052", value.str());
+    value.str("");
+    value << rescaleSlope;
+    itk::EncapsulateMetaData<std::string>(dictionary, "0028|1053", value.str());
+    
+    
     Image3DType::RegionType extractRegion;
     Image3DType::SizeType extractSize;
     Image3DType::IndexType extractIndex;
-    extractSize = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
+    extractSize = image->GetLargestPossibleRegion().GetSize();
       extractIndex.Fill(0);
       if (reverseImages)
         {
@@ -211,7 +219,7 @@ int main( int argc, char* argv[] )
       extractRegion.SetIndex(extractIndex);
 
     ExtractType::Pointer extract = ExtractType::New();
-      extract->SetInput(reader->GetOutput());
+      extract->SetInput(image );
       extract->SetExtractionRegion(extractRegion);
       extract->GetOutput()->SetMetaDataDictionary(dictionary);
 
@@ -241,7 +249,7 @@ int main( int argc, char* argv[] )
   std::cout << "</filter-end>";
   std::cout << std::flush;
 
-  // Software Guide : EndCodeSnippet
+
   return EXIT_SUCCESS;
 }
 
