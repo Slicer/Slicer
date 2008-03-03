@@ -3,15 +3,15 @@
 
 //MRML nodes
 #include "vtkMRMLNode.h"
-//#include "vtkMRMLCommandLineModuleNode.h"
+#include "vtkMRMLCommandLineModuleNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiducialListNode.h"
 //logics
-//#include "vtkCommandLineModuleLogic.h"
-//#include "vtkSlicerTractographyFiducialSeedingLogic.h"
+#include "vtkCommandLineModuleLogic.h"
+#include "vtkSlicerTractographyFiducialSeedingLogic.h"
 #include "vtkSlicerGradientEditorLogic.h"
 //widgets
 #include "vtkKWFrameWithLabel.h"
@@ -99,6 +99,11 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     {
     this->NumberOfChanges = NULL;
     }
+  if (this->Application)
+    {
+    this->Application->Delete();
+    this->Application = NULL;
+    }
   }
 
 //---------------------------------------------------------------------------
@@ -175,88 +180,90 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
   //run test
   else if (this->RunButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
-    //// create a command line module node
-    //vtkMRMLCommandLineModuleNode* module = vtkMRMLCommandLineModuleNode::SafeDownCast(
-    //  this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
+    // create a command line module node
+    vtkMRMLCommandLineModuleNode* module = vtkMRMLCommandLineModuleNode::SafeDownCast(
+      this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
 
-    //// set its name
-    ///*for(int i=0; i<=module->GetNumberOfRegisteredModules();i++)
-    //  {
-    //  vtkWarningMacro("\n"<<module->GetRegisteredModuleNameByIndex(i));
-    //  }*/
-    //module->SetModuleDescription("Diffusion Tensor Estimation");
+    // set its name
+    /*for(int i=0; i<=module->GetNumberOfRegisteredModules();i++)
+      {
+      vtkWarningMacro("\n"<<module->GetRegisteredModuleNameByIndex(i));
+      }*/
+    module->SetModuleDescription("Diffusion Tensor Estimation");
 
-    //// set the parameters
-    //module->SetParameterAsString("estimationMethod", "Least Squares");
-    //module->SetParameterAsDouble("otsuOmegaThreshold",0.5);
-    //module->SetParameterAsBool("removeIslands", 0);
-    //module->SetParameterAsBool("applyMask", 0);
-    //module->SetParameterAsString("inputVolume", this->ActiveVolumeNode->GetID());
+    // set the parameters
+    module->SetParameterAsString("estimationMethod", "Least Squares");
+    module->SetParameterAsDouble("otsuOmegaThreshold",0.5);
+    module->SetParameterAsBool("removeIslands", 0);
+    module->SetParameterAsBool("applyMask", 0);
+    module->SetParameterAsString("inputVolume", this->ActiveVolumeNode->GetID());
 
-    //// create the output nodes
-    //vtkMRMLDiffusionTensorVolumeNode* tensorNode= vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
-    //  this->MRMLScene->CreateNodeByClass("vtkMRMLDiffusionTensorVolumeNode"));
-    //tensorNode->SetScene(this->GetMRMLScene());
-    //tensorNode->SetName("Output Tensor Node");
-    //this->MRMLScene->AddNode(tensorNode);
+    // create the output nodes
+    vtkMRMLDiffusionTensorVolumeNode* tensorNode= vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
+      this->MRMLScene->CreateNodeByClass("vtkMRMLDiffusionTensorVolumeNode"));
+    tensorNode->SetScene(this->GetMRMLScene());
+    tensorNode->SetName("Output Tensor Node");
+    this->MRMLScene->AddNode(tensorNode);
 
-    //vtkMRMLScalarVolumeNode* baseline= vtkMRMLScalarVolumeNode::SafeDownCast(
-    //  this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
-    //baseline->SetScene(this->GetMRMLScene());
-    //baseline->SetName("Output Baseline Node");
-    //this->MRMLScene->AddNode(baseline);
+    vtkMRMLScalarVolumeNode* baseline= vtkMRMLScalarVolumeNode::SafeDownCast(
+      this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
+    baseline->SetScene(this->GetMRMLScene());
+    baseline->SetName("Output Baseline Node");
+    this->MRMLScene->AddNode(baseline);
 
-    //vtkMRMLScalarVolumeNode* mask = vtkMRMLScalarVolumeNode::SafeDownCast(
-    //  this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
-    //mask->SetScene(this->GetMRMLScene());
-    //mask->SetName("Output Threshold Mask");
-    //this->MRMLScene->AddNode(mask);
+    vtkMRMLScalarVolumeNode* mask = vtkMRMLScalarVolumeNode::SafeDownCast(
+      this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
+    mask->SetScene(this->GetMRMLScene());
+    mask->SetName("Output Threshold Mask");
+    this->MRMLScene->AddNode(mask);
 
     //tensorNode->Copy(this->ActiveVolumeNode);
-    //tensorNode->SetBaselineNodeID(baseline->GetID());
-    //tensorNode->SetMaskNodeID(mask->GetID());
-    ////tensorNode->SetImageData(this->ActiveVolumeNode->GetImageData());
-    //
-    //// set output parameters
-    //module->SetParameterAsString("outputTensor", tensorNode->GetID());
-    //module->SetParameterAsString("outputBaseline", baseline->GetID());
-    //module->SetParameterAsString("thresholdMask", mask->GetID());
+    tensorNode->SetBaselineNodeID(baseline->GetID());
+    tensorNode->SetMaskNodeID(mask->GetID());
+    //tensorNode->SetImageData(this->ActiveVolumeNode->GetImageData());
+    
+    // set output parameters
+    module->SetParameterAsString("outputTensor", tensorNode->GetID());
+    module->SetParameterAsString("outputBaseline", baseline->GetID());
+    module->SetParameterAsString("thresholdMask", mask->GetID());
 
-    //// execute the plugin
-    //vtkCommandLineModuleLogic* logic = vtkCommandLineModuleLogic::New();
-    //logic->SetAndObserveMRMLScene(this->GetMRMLScene());
-    //logic->SetApplicationLogic(this->ApplicationGUI->GetApplicationLogic());
-    //logic->SetTemporaryDirectory(this->Application->GetTemporaryDirectory());
-    //logic->ApplyAndWait(module);
+    // execute the plugin
+    vtkCommandLineModuleLogic* clmLogic = vtkCommandLineModuleLogic::New();
+    clmLogic->SetAndObserveMRMLScene(this->GetMRMLScene());
+    clmLogic->SetApplicationLogic(this->Application->GetApplicationGUI()->GetApplicationLogic());
+    clmLogic->SetTemporaryDirectory(this->Application->GetTemporaryDirectory());
+    clmLogic->ApplyAndWait(module);
 
-    //// check the status
-    //const char* status = module->GetStatusString(); // if status is not "Completed", complain
-    //vtkWarningMacro("status is: "<<status);
+    // check the status
+    const char* status = module->GetStatusString(); // if status is not "Completed", complain
+    vtkWarningMacro("status is: "<<status);
 
-    //// tractography seeding
-    //vtkMRMLFiducialListNode* fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(
-    //  this->FiducialSelector->GetSelected());
-    //
-    //vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::New();
-    //fiberNode->SetScene(this->GetMRMLScene());
-    //fiberNode->SetName("Fiber Node");
-    //this->MRMLScene->AddNode(fiberNode);
+    /* //tractography seeding
+    vtkMRMLFiducialListNode* fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(
+      this->FiducialSelector->GetSelected());
+    
+    vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::New();
+    fiberNode->SetScene(this->GetMRMLScene());
+    fiberNode->SetName("Fiber Node");
+    this->MRMLScene->AddNode(fiberNode);
 
-    //vtkSlicerTractographyFiducialSeedingLogic* tractLogic = vtkSlicerTractographyFiducialSeedingLogic::New();
+    vtkSlicerTractographyFiducialSeedingLogic* tractLogic = vtkSlicerTractographyFiducialSeedingLogic::New();
 
-    //if(tensorNode != NULL && fiducialListNode != NULL && fiberNode != NULL)
-    //  {
-    //  tractLogic->CreateTracts(tensorNode, fiducialListNode, fiberNode, "Linear Measurement", 0.1,0.8,0.5);
-    //  }
-    //
-    ////clean up
-    //logic->Delete();
-    //module->Delete();
-    //tensorNode->Delete();
-    //baseline->Delete();
-    //mask->Delete();
+    if(tensorNode != NULL && fiducialListNode != NULL && fiberNode != NULL)
+      {
+      tractLogic->CreateTracts(tensorNode, fiducialListNode, fiberNode, "Linear Measurement", 0.1,0.8,0.5);
+      }*/
+    char* id = tensorNode->GetID();
+    //clean up
+    clmLogic->Delete();
+    module->Delete();
+    tensorNode->Delete();
+    baseline->Delete();
+    mask->Delete();
     //fiberNode->Delete();
     //tractLogic->Delete();
+    vtkMRMLNode* test = this->GetMRMLScene()->GetNodeByID(id);
+    test->Delete();
     }
   }
 

@@ -34,10 +34,12 @@ INCLUDE_DIRECTORIES(
   ${TEEM_INCLUDE_DIR}
   ${vtkTeem_SOURCE_DIR}
   ${vtkTeem_BINARY_DIR}
-  #${CommandLineModule_SOURCE_DIR}
-  #${CommandLineModule_BINARY_DIR}
-  #${SlicerTractographyFiducialSeeding_SOURCE_DIR}
-  #${SlicerTractographyFiducialSeeding_BINARY_DIR}
+  ${CommandLineModule_SOURCE_DIR}
+  ${CommandLineModule_BINARY_DIR}
+  ${SlicerTractographyFiducialSeeding_SOURCE_DIR}
+  ${SlicerTractographyFiducialSeeding_BINARY_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR}
+  ${ModuleDescriptionParser_BINARY_DIR}
   )
 
 
@@ -69,8 +71,9 @@ TARGET_LINK_LIBRARIES(Volumes
   SlicerBaseLogic 
   SlicerBaseGUI
   MRML
-  #CommandLineModule
-  #SlicerTractographyFiducialSeeding
+  CommandLineModule
+  SlicerTractographyFiducialSeeding
+  ModuleDescriptionParser
   )
 
 
