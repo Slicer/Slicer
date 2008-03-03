@@ -54,10 +54,11 @@ int vtkSlicerGradientEditorLogic::AddGradients (const char* filename, int number
     {
     storageNode->Delete();
     dwiNode->Delete();
+
     //check if txt file
-    std::string a(".txt");
-    std::string::size_type i = fileString.find(a);
-    if(i=0)
+    std::string suffix(".txt");
+    std::string::size_type pos = fileString.find(suffix);
+    if(pos == std::string::npos)
       {
       //no txt file or valid nhdr
       vtkWarningMacro("no valid file");
