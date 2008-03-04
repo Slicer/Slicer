@@ -125,74 +125,53 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
 
   //--- construct and add a record of the transfer
   //--- which includes the ID of associated node
-  vtkDataTransfer *dt = this->GetDataIOManager()->AddNewDataTransfer ( node );
-  if ( dt == NULL )
+  vtkDataTransfer *transfer = this->GetDataIOManager()->AddNewDataTransfer ( node );
+  if ( transfer == NULL )
     {
     return 0;
     }
-  dt->SetSourceURI ( source );
-  dt->SetDestinationURI ( dest );
-  dt->SetHandler ( handler );
-  dt->SetTransferType ( vtkDataTransfer::RemoteDownload );
-  this->GetDataIOManager()->SetTransferStatus ( dt, vtkDataTransfer::Unspecified, true );
-  this->ScheduleRead ( dt );
-  return 1;
-
-}
+  transfer->SetSourceURI ( source );
+  transfer->SetDestinationURI ( dest );
+  transfer->SetHandler ( handler );
+  transfer->SetTransferType ( vtkDataTransfer::RemoteDownload );
+  this->GetDataIOManager()->SetTransferStatus ( transfer, vtkDataTransfer::Unspecified, true );
 
 
-
-
-//----------------------------------------------------------------------------
-void vtkDataIOManagerLogic::ScheduleRead (  vtkDataTransfer *transfer )
-{
-   bool ret;
-
-   if ( this->GetDataIOManager()->GetEnableAsynchronousIO() )
-     {
-
-     vtkSlicerTask *task = vtkSlicerTask::New();
-     // Pass the current data transfer, which has a pointer to the associated
-     // mrml node, as client data to the task.
-     task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
-                           &vtkDataIOManagerLogic::ApplyTransfer, transfer);
-  
-     // Client data on the task is just a regular pointer, up the
-     // reference count on the node, we'll decrease the reference count
-     // once the task actually runs
-     //  node->Register(this);
-  
-     // Schedule the transfer
-     ret = this->GetApplicationLogic()->ScheduleTask( task );
-  
-     if (!ret)
-       {
-       vtkWarningMacro( << "Could not schedule transfer" );
-       }
-     else
-       {
-       this->DataIOManager->SetTransferStatus(transfer, vtkDataTransfer::Scheduled, true);
-       }
-     task->Delete();
-     }
-   else
-     {
-     this->ApplyReadAndWait ( transfer );
-     }
-
-}
-
-
-
-//----------------------------------------------------------------------------
-void vtkDataIOManagerLogic:: ApplyReadAndWait ( vtkDataTransfer *transfer )
-{
-  // Just execute and wait.
-  //node->Register(this);
-  if ( transfer != NULL )
+  if ( this->GetDataIOManager()->GetEnableAsynchronousIO() )
     {
-    vtkDataIOManagerLogic::ApplyTransfer ( transfer );
+    //--- Schedule an Asynchronous data transfer
+
+    vtkSlicerTask *task = vtkSlicerTask::New();
+    // Pass the current data transfer, which has a pointer 
+    // to the associated mrml node, as client data to the task.
+    if ( !task )
+      {
+      return 0;
+      }
+    task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
+                          &vtkDataIOManagerLogic::ApplyTransfer, transfer);
+  
+    // Schedule the transfer
+    bool ret;
+    if (ret = this->GetApplicationLogic()->ScheduleTask( task ) )
+      {
+      this->DataIOManager->SetTransferStatus(transfer, vtkDataTransfer::Scheduled, true);
+      task->Delete();
+      return 1;
+      }
+    else
+      {
+      task->Delete();
+      return 0;
+      }
     }
+  else
+    {
+    //--- asynchronous IO is not enabled...
+    //--- so call this method directly without scheduling.
+    this->ApplyTransfer ( transfer );
+    }
+  return 1;
 }
 
 
@@ -205,16 +184,6 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
 }
 
 
-//----------------------------------------------------------------------------
-void vtkDataIOManagerLogic::ScheduleWrite( vtkDataTransfer *transfer )
-{
-}
-
-
-//----------------------------------------------------------------------------
-void vtkDataIOManagerLogic::ApplyWriteAndWait ( vtkDataTransfer *transfer )
-{
-}
 
 
 //----------------------------------------------------------------------------
@@ -228,11 +197,19 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
     return;
     }
 
-  //--- do we need to reinterpret each specific subclass of displayable node or will this work?
+  //--- get the DataTransfer from the clientdata
   vtkDataTransfer *dt = reinterpret_cast < vtkDataTransfer*> (clientdata);
   if ( dt == NULL )
     {
     return;
+    }
+
+  //assume synchronous io if no data manager exists.
+  int asynchIO = 0;
+  vtkDataIOManager *iom = this->GetDataIOManager();
+  if (iom != NULL)
+    {
+    asynchIO = iom->GetEnableAsynchronousIO();
     }
 
   
@@ -242,52 +219,48 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
     return;
     }
 
-  std::string cmdString = "node->GetStorageNode()->ReadData()";
-  char **command;
+  const char *source = dt->GetSourceURI();
+  const char *dest = dt->GetDestinationURI();
   if ( dt->GetTransferType() == vtkDataTransfer::RemoteDownload  )
     {
     //--- create a ReadData command
+     vtkURIHandler *handler = dt->GetHandler();
+     if ( handler != NULL && source != NULL && dest != NULL )
+      {
+      if ( asynchIO )
+        {
+        //--- CREATE NEW THREAD AND EXECUTE THESE METHODS ---
+        handler->StageFileRead( source, dest);
+//        this->GetApplicationLogic()->RequestReadData( node, file );
+        //--- end thread
+        }
+      else
+        {
+        handler->StageFileRead( source, dest);
+//        this->GetApplicationLogic()->RequestReadData( node, file );
+        }
+      }
     }
   else if ( dt->GetTransferType() == vtkDataTransfer::RemoteUpload  )
     {
     //--- create a WriteData command
+    vtkURIHandler *handler = dt->GetHandler();
+    if ( handler != NULL && source != NULL && dest != NULL )
+      {
+      if ( asynchIO )
+        {
+        //--- NEW THREAD ---
+        //handler->StageFileWrite( source, dest);
+        //this->GetApplicationLogic()->RequestReadData( node, file );
+        //--- end thread
+        }
+      else
+        {
+        //handler->StageFileWrite( source, dest);
+        //this->GetApplicationLogic()->RequestReadData( node, file );
+        }
+      }
     }
-
-  //--- An example of what we want here is in vtkCommandLineModuleLogic.cxx.
-  //--- it appears as though, for SharedObjectModules, each module's
-  //--- ProcessInformation contains certain definitions about EntryPoints, etc.
-  //--- These seem to be set up in the ModuleFactory, using kwsys DynamicLoader
-  //--- to open a library, get relevant things (?) symbol addresses, and creates entry points.
-  //--- Then, CommandLineModuleLogic builds a command string, and a
-  //--- 'commandLineAsString' using the processinformation,
-  //--- and tries to run the module using the a call like that below:
-  // if (entryPoint != NULL ) {
-  // (*entryPoint)commandLineAsString.size(), command);}
-  
-  //--- TODO: set up some kind of progress feedback...
-  // Set the callback for progress.  This will only be used for the
-  // scope of this function.
-  //--- TODO: kill self. How will this work?
-  //TransferNodePair lnp( dt, node );
-  //node->GetModuleDescription().GetProcessInformation()->SetProgressCallback( vtkDataIOManagerLogic::ProgressCallback, &lnp );
-  // Check for Cancelled!
-  // Check for timeout!
-
-
-  // Check for Cancelled
-  // Check for timeout
-
-/*
-  if ( all went well...)
-    {
-    node->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
-    this->GetApplicationLogic()->RequestModified( node );
-    }
-*/
-  
-  // clean up
-  delete [] command;
-  //  node->Unregister ( this );
 }
 
 

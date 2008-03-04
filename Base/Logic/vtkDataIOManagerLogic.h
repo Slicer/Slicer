@@ -41,22 +41,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkDataIOManagerLogic : public vtkSlicerModul
   // Description:
   // Methods that Queues the read
   virtual int QueueRead ( vtkMRMLNode *node );
-  // Description:
-  // Method that schedules the read 
-  virtual void ScheduleRead ( vtkDataTransfer *transfer );
-  // Description:
-  // Method that applies the read and blocks until done.
-  virtual void ApplyReadAndWait ( vtkDataTransfer *transfer );
 
   // Description:
   // Method that queues the write 
   virtual int QueueWrite ( vtkMRMLNode *node );
-  // Description:
-  // Method that schedules the write 
-  virtual void ScheduleWrite( vtkDataTransfer *transfer );
-  // Description:
-  // Method that applies the write and blocks until done.
-  virtual void ApplyWriteAndWait ( vtkDataTransfer *transfer);
 
   // Description:
   // The method that executes the data transfer in another thread
