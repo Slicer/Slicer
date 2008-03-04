@@ -52,11 +52,7 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   //--- Methods to configure and close transfer
   // NOTE: Subclasses should implement these method
   virtual void InitTransfer ( ) {};
-  virtual void CloseTransfer ( ) {};
-  // local file
-  //BTX
-  std::ofstream* LocalFile;
-  //ETX
+  virtual int CloseTransfer ( ) {};
 
  protected:
   vtkURIHandler();
@@ -64,6 +60,11 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   vtkURIHandler(const vtkURIHandler&);
   void operator=(const vtkURIHandler&);
 
+  // Description:
+  // local file
+  //BTX
+  std::ofstream* LocalFile;
+  //ETX
 };
 
 #endif
