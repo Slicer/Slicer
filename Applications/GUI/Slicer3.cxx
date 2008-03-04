@@ -20,6 +20,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
+#include "vtkDataIOManagerLogic.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSlicesGUI.h"
@@ -907,13 +908,20 @@ int Slicer3_main(int argc, char *argv[])
 
     // Create Remote I/O and Cache handling mechanisms
     // and configure them using Application registry values
-    vtkDataIOManager *dataIOManager = vtkDataIOManager::New();
     vtkCacheManager *cacheManager = vtkCacheManager::New();
     cacheManager->SetRemoteCacheLimit ( slicerApp->GetRemoteCacheLimit() );
     cacheManager->SetRemoteCacheFreeBufferSize ( slicerApp->GetRemoteCacheFreeBufferSize() );
-    cacheManager->SetEnableAsynchronousIO ( slicerApp->GetEnableAsynchronousIO () );
     cacheManager->SetEnableForceRedownload ( slicerApp->GetEnableForceRedownload() );
     cacheManager->SetEnableRemoteCacheOverwriting ( slicerApp->GetEnableRemoteCacheOverwriting() );
+    //--- MRML collection of data transfers with access to cache manager
+    vtkDataIOManager *dataIOManager = vtkDataIOManager::New();
+    dataIOManager->SetCacheManager ( cacheManager );
+    dataIOManager->SetEnableAsynchronousIO ( slicerApp->GetEnableAsynchronousIO () );
+    //--- Data transfer logic
+    vtkDataIOManagerLogic *dataIOManagerLogic = vtkDataIOManagerLogic::New();
+    dataIOManagerLogic->SetApplicationLogic ( appLogic );
+    dataIOManagerLogic->SetAndObserveDataIOManager ( dataIOManager );
+
 
     scene->SetDataIOManager ( dataIOManager );
     scene->SetCacheManager( cacheManager );
@@ -2140,6 +2148,12 @@ int Slicer3_main(int argc, char *argv[])
     // DELETE 
     
     //--- Remote data handling mechanisms
+    if ( dataIOManagerLogic != NULL )
+      {
+      dataIOManagerLogic->SetAndObserveDataIOManager ( NULL );
+      dataIOManagerLogic->Delete();
+      dataIOManagerLogic = NULL;
+      }
     if ( dataIOManager != NULL )
       {
       dataIOManager->Delete();
