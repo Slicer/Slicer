@@ -15,20 +15,20 @@
 #include <vtksys/Process.h>
 
 //--- derived from libMRML class
-#include "vtkURLHandler.h"
+#include "vtkURIHandler.h"
 
 #include <math.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
 
-class VTK_RemoteIO_EXPORT vtkHTTPHandler : public vtkURLHandler 
+class VTK_RemoteIO_EXPORT vtkHTTPHandler : public vtkURIHandler 
 {
   public:
   
   // The Usual vtk class functions
   static vtkHTTPHandler *New();
-  vtkTypeRevisionMacro(vtkHTTPHandler, vtkURLHandler);
+  vtkTypeRevisionMacro(vtkHTTPHandler, vtkURIHandler);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -40,11 +40,11 @@ class VTK_RemoteIO_EXPORT vtkHTTPHandler : public vtkURLHandler
   // This function wraps curl functionality to download a specified URL to a specified dir
   void StageFileRead(const char * source, const char * destination);
   void StageFileWrite(const char * source, const char * destination);
-  CURL* CurlHandle = NULL;  
+  CURL* CurlHandle;  
 
  private:
   virtual void InitTransfer ( );
-  virtual void CloseTransfer ( );
+  virtual int CloseTransfer ( );
 
  protected:
   vtkHTTPHandler();
