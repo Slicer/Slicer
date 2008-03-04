@@ -10,16 +10,12 @@
 #include "vtkCacheManager.h"
 #include "vtkCollection.h"
 #include "vtkMRML.h"
-
-#include <list>
-#include <string>
-
-class vtkCallbackCommand;
-class vtkMRMLDisplayableNode;
+#include "vtkMRMLNode.h"
 
 #ifndef vtkObjectPointer
 #define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
 #endif
+
 
 
 class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject 
@@ -34,7 +30,14 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   vtkSetObjectMacro ( DataTransferCollection, vtkCollection );
   vtkGetObjectMacro ( CacheManager, vtkCacheManager );
   vtkSetObjectMacro ( CacheManager, vtkCacheManager );
+  vtkGetMacro ( EnableAsynchronousIO, int );
+  vtkSetMacro ( EnableAsynchronousIO, int );
+
   
+  // Description:
+  // Creates and adds a new data transfer object to the collection
+  vtkDataTransfer *AddNewDataTransfer ( );
+  vtkDataTransfer *AddNewDataTransfer ( vtkMRMLNode *node);
 
   // Description:
   // Adds a new data transfer object to the collection
@@ -54,29 +57,46 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   // Gets a unique id to assign to a new data transfer.
   int GetUniqueTransferID ( );
 
-  virtual int QueueRead ( vtkMRMLDisplayableNode *node );
-  virtual int QueueWrite ( vtkMRMLDisplayableNode *node );
+  // Description:
+  // Invokes a RemoteReadEvent on the node 
+  // so that logic can take care of scheduling and applying it
+  void QueueRead ( vtkMRMLNode *node );
+  
+  // Description:
+  // Invokes a RemoteWriteEvent on the node 
+  // so that logic can take care of scheduling and applying it
+  void QueueWrite ( vtkMRMLNode *node );
 
   // Description:
-  // Get i/o settings.
-  vtkGetMacro ( Asynchronous, bool);
-  vtkSetMacro ( Asynchronous, bool);
-  virtual void Configure ();
-  
+  // Set the status of a data transfer (Idle, Scheduled, Cancelled Running,
+  // Completed).  The "modify" parameter indicates whether the object
+  // can be modified by the call.
+  void SetTransferStatus(vtkDataTransfer *transfer, int status, bool modify);
+  int GetTransferStatus( vtkDataTransfer *transfer);
+
+  const char* GetTransferStatusString( vtkDataTransfer *transfer )
+    {
+    return (transfer->GetTransferStatusString () );
+    };
+
+  //BTX
+  enum
+    {
+      RemoteReadEvent = 19001,
+      RemoteWriteEvent,
+    };
+  //ETX
+
  private:
   vtkCollection *DataTransferCollection;
   vtkCacheManager *CacheManager;
+  int EnableAsynchronousIO;
 
  protected:
   vtkDataIOManager();
   virtual ~vtkDataIOManager();
   vtkDataIOManager(const vtkDataIOManager&);
   void operator=(const vtkDataIOManager&);
-
-  // Description:
-  // Holder for callback
-  vtkCallbackCommand *CallbackCommand;
-  bool Asynchronous;
 
 };
 

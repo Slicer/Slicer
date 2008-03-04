@@ -79,8 +79,6 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   vtkSetMacro ( CurrentCacheSize, int );
   vtkGetMacro ( RemoteCacheFreeBufferSize, int );
   vtkSetMacro ( RemoteCacheFreeBufferSize, int );
-  vtkGetMacro ( EnableAsynchronousIO, int );
-  vtkSetMacro ( EnableAsynchronousIO, int );
   vtkGetMacro ( EnableForceRedownload, int );
   vtkSetMacro ( EnableForceRedownload, int );
   vtkGetMacro ( EnableRemoteCacheOverwriting, int );
@@ -105,7 +103,6 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   int RemoteCacheLimit;
   int CurrentCacheSize;
   int RemoteCacheFreeBufferSize;
-  int EnableAsynchronousIO;
   int EnableForceRedownload;
   int EnableRemoteCacheOverwriting;
 

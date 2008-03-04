@@ -1,21 +1,25 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 
 #include "vtkDataIOManager.h"
-#include "vtkMRMLDisplayableNode.h"
-#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLNode.h"
+
+#include <list>
+#include <string>
+#include <algorithm>
+#include <set>
 
 vtkStandardNewMacro ( vtkDataIOManager );
 vtkCxxRevisionMacro(vtkDataIOManager, "$Revision: 1.9.12.1 $");
 
+
 //----------------------------------------------------------------------------
 vtkDataIOManager::vtkDataIOManager()
 {
-  this->CallbackCommand = vtkCallbackCommand::New();
   this->DataTransferCollection = vtkCollection::New();
   this->CacheManager = NULL;
+  this->EnableAsynchronousIO = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -29,151 +33,13 @@ vtkDataIOManager::~vtkDataIOManager()
     this->DataTransferCollection = NULL;
     }
 
-  if (this->CallbackCommand)
+  if ( this->CacheManager )
     {
-    this->CallbackCommand->Delete();
+    this->CacheManager->Delete();
+    this->CacheManager = NULL;
     }
-  this->CacheManager = NULL;
-
+  this->EnableAsynchronousIO = 0;
 }
-
-
-//----------------------------------------------------------------------------
-int vtkDataIOManager::QueueWrite ( vtkMRMLDisplayableNode *node )
-{
-    if ( !node )
-    {
-    return (0);
-    }
-  if ( !node->GetStorageNode() )
-    {
-    return (0);
-    }
-
-
-//  const char *uri = node->GetURI ( );
-  const char *uri = "http://www.media.mit.edu/~wjp/dingle.tst";
-  const char *filename;
-  
-  //--- manage cache if there is a cache manager
-  if ( this->GetCacheManager() != NULL )
-    {
-    filename = this->GetCacheManager()->GetFilenameFromURI(uri);
-    if ( this->GetCacheManager()->GetEnableForceRedownload() )
-      {
-      this->GetCacheManager()->RemoveFromCache (filename);
-      }
-    }
-
-  //--- spawn new thread of control and handle the read.
-/*
-  vtkURIHandler *handler = node->GetStorageNode()->GetURIHandler();
-  if ( handler )
-  {
-    node->GetStorageNode()->AddObserver();
-    //--- create new thread and call this:
-    node->GetStorageNode()->WriteData ( node );
-    }
-    else
-    {
-    return (0);
-    }
-*/
-
-  //--- create and configure a data transfer object for tracking
-  vtkDataTransfer *dt = vtkDataTransfer::New ( );
-  dt->SetTransferStatus ( vtkDataTransfer::Initialized );
-  if ( !strcmp ( uri, filename ))
-    {
-    dt->SetTransferType ( vtkDataTransfer::LocalSave );
-    }
-  else
-    {
-    dt->SetTransferType ( vtkDataTransfer::RemoteUpload );
-    }
-  dt->SetTransferID ( this->GetUniqueTransferID() );
-  dt->Modified();
-  this->AddDataTransfer ( dt  );
-  return (1);
-
-}
-
-
-
-//----------------------------------------------------------------------------
-int vtkDataIOManager::QueueRead ( vtkMRMLDisplayableNode *node )
-{
-  
-  if ( !node )
-    {
-    return (0);
-    }
-  if ( !node->GetStorageNode() )
-    {
-    return (0);
-    }
-
-
-//  const char *uri = node->GetURI ( );
-  const char *uri = "http://www.media.mit.edu/~wjp/dingle.tst";
-  const char *filename;
-  
-  //--- manage cache if there is a cache manager
-  if ( this->GetCacheManager() != NULL )
-    {
-    filename = this->GetCacheManager()->GetFilenameFromURI(uri);
-    if ( this->GetCacheManager()->GetEnableForceRedownload() )
-      {
-      this->GetCacheManager()->RemoveFromCache (filename);
-      }
-    }
-
-  //--- spawn new thread of control and handle the read.
-/*
-  vtkURIHandler *handler = node->GetStorageNode()->GetURIHandler();
-  if ( handler )
-  {
-    node->GetStorageNode()->AddObserver();
-    //--- create new thread and call this:
-    node->GetStorageNode()->ReadData ( node );
-    }
-    else
-    {
-    return (0);
-    }
-*/
-
-  //--- create and configure a data transfer object for tracking
-  vtkDataTransfer *dt = vtkDataTransfer::New ( );
-  dt->SetTransferStatus ( vtkDataTransfer::Initialized );
-  if ( !strcmp ( uri, filename ))
-    {
-    dt->SetTransferType ( vtkDataTransfer::LocalLoad );
-    }
-  else
-    {
-    dt->SetTransferType ( vtkDataTransfer::RemoteDownload );
-    }
-  dt->SetTransferID ( this->GetUniqueTransferID() );
-  dt->Modified();
-  this->AddDataTransfer ( dt  );
-  return (1);
-}
-
-
-
-
-
-
-
-
-
-//----------------------------------------------------------------------------
-void vtkDataIOManager::Configure ( )
-{
-  this->Asynchronous = false;
-}
-
 
 
 //----------------------------------------------------------------------------
@@ -181,7 +47,57 @@ void vtkDataIOManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
   os << indent << "DataTransferCollection: " << this->GetDataTransferCollection() << "\n";
+  os << indent << "CacheManager: " << this->GetCacheManager() << "\n";
+  os << indent << "EnableAsynchronousIO: " << this->GetEnableAsynchronousIO() << "\n";
 
+}
+
+
+//----------------------------------------------------------------------------
+void vtkDataIOManager::SetTransferStatus(vtkDataTransfer *transfer, int status, bool modify)
+{
+  if ( transfer != NULL )
+    {
+    if ( transfer->GetTransferStatus() != status )
+      {
+      transfer->SetTransferStatus(status);
+      if ( modify )
+        {
+        //--- for whoever is observing.
+        transfer->Modified();
+        this->Modified();
+        }
+      }
+    }
+}
+
+
+//----------------------------------------------------------------------------
+int vtkDataIOManager::GetTransferStatus( vtkDataTransfer *transfer)
+{
+  return ( transfer->GetTransferStatus() );
+}
+
+
+
+//----------------------------------------------------------------------------
+vtkDataTransfer *vtkDataIOManager::AddNewDataTransfer ( )
+{
+  vtkDataTransfer *transfer = vtkDataTransfer::New();
+  transfer->SetTransferID ( this->GetUniqueTransferID() );
+  this->AddDataTransfer ( transfer );
+  return (transfer );
+}
+
+
+//----------------------------------------------------------------------------
+vtkDataTransfer *vtkDataIOManager::AddNewDataTransfer ( vtkMRMLNode *node )
+{
+  vtkDataTransfer *transfer = vtkDataTransfer::New();
+  transfer->SetTransferID ( this->GetUniqueTransferID() );
+  transfer->SetTransferNodeID ( node->GetID() );
+  this->AddDataTransfer ( transfer );
+  return (transfer );
 }
 
 
@@ -267,6 +183,18 @@ void vtkDataIOManager::ClearDataTransfers( )
   this->Modified();
 }
 
+
+//----------------------------------------------------------------------------
+void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
+{
+  node->InvokeEvent ( vtkDataIOManager::RemoteReadEvent );
+}
+
+//----------------------------------------------------------------------------
+void vtkDataIOManager::QueueWrite ( vtkMRMLNode *node )
+{
+  node->InvokeEvent ( vtkDataIOManager::RemoteWriteEvent );
+}
 
 
 //----------------------------------------------------------------------------

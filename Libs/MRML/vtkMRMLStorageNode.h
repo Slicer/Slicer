@@ -21,7 +21,7 @@
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLScene.h"
-
+#include "vtkURIHandler.h"
 
 class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 {
@@ -72,6 +72,9 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   // Location of the remote copy of this file.
   vtkSetStringMacro(URI);
   vtkGetStringMacro(URI);
+  
+  vtkGetObjectMacro (URIHandler, vtkURIHandler);
+  vtkSetObjectMacro (URIHandler, vtkURIHandler);
   
   // Description:
   // Propagate Progress Event generated in ReadData
@@ -126,6 +129,7 @@ protected:
 
   char *FileName;
   char *URI;
+  vtkURIHandler *URIHandler;
   int UseCompression;
   int ReadState;
   int WriteState;

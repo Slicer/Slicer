@@ -27,6 +27,7 @@ vtkMRMLStorageNode::vtkMRMLStorageNode()
 {
   this->FileName = NULL;
   this->URI = NULL;
+  this->URIHandler = NULL;
   this->UseCompression = 1;
   this->ReadState = this->Done;
   this->WriteState = this->Done;
@@ -44,6 +45,11 @@ vtkMRMLStorageNode::~vtkMRMLStorageNode()
     {
     delete [] this->URI;
     this->URI = NULL;
+    }
+  if ( this->URIHandler )
+    {
+    this->URIHandler->Delete();
+    this->URIHandler = NULL;
     }
 }
 

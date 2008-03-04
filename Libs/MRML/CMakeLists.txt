@@ -76,11 +76,11 @@ SET(MRML_SRCS
         vtkMRMLDisplayNode.cxx
         vtkMRMLDisplayableNode.cxx
         # Classes for remote data handling:
+        vtkDataIOManager.cxx
         vtkDataTransfer.cxx
         vtkURIHandler.cxx
         vtkPermissionPrompter.cxx
         vtkCacheManager.cxx
-        vtkDataIOManager.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )
