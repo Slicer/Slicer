@@ -1773,9 +1773,10 @@ vtkURIHandler * vtkMRMLScene::FindURIHandler(const char *URI)
     vtkWarningMacro("No URI handlers registered on the scene.");
     return NULL;
     }
-  for (int i = 0; i = this->GetURIHandlerCollection()->GetNumberOfItems(); i++)
+  for (int i = 0; i < this->GetURIHandlerCollection()->GetNumberOfItems(); i++)
     {
-    if (vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i))->CanHandleURI(URI))
+    if (vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i)) &&
+        vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i))->CanHandleURI(URI))
       {
       return vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i));
       }
