@@ -214,6 +214,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
     this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
     }
 
+
 }
 
 //----------------------------------------------------------------------------

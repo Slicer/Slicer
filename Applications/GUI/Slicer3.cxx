@@ -919,6 +919,7 @@ int Slicer3_main(int argc, char *argv[])
     dataIOManager->SetEnableAsynchronousIO ( slicerApp->GetEnableAsynchronousIO () );
     //--- Data transfer logic
     vtkDataIOManagerLogic *dataIOManagerLogic = vtkDataIOManagerLogic::New();
+    dataIOManagerLogic->SetMRMLScene ( scene );
     dataIOManagerLogic->SetApplicationLogic ( appLogic );
     dataIOManagerLogic->SetAndObserveDataIOManager ( dataIOManager );
 
@@ -2151,6 +2152,7 @@ int Slicer3_main(int argc, char *argv[])
     if ( dataIOManagerLogic != NULL )
       {
       dataIOManagerLogic->SetAndObserveDataIOManager ( NULL );
+      dataIOManagerLogic->SetMRMLScene ( NULL );
       dataIOManagerLogic->Delete();
       dataIOManagerLogic = NULL;
       }

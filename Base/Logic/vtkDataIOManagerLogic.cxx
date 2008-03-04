@@ -124,6 +124,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   const char *dest = this->GetDataIOManager()->GetCacheManager()->GetFilenameFromURI ( source );
 
   //--- construct and add a record of the transfer
+  //--- which includes the ID of associated node
   vtkDataTransfer *dt = this->GetDataIOManager()->AddNewDataTransfer ( node );
   if ( dt == NULL )
     {
@@ -134,7 +135,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   dt->SetHandler ( handler );
   dt->SetTransferType ( vtkDataTransfer::RemoteDownload );
   this->GetDataIOManager()->SetTransferStatus ( dt, vtkDataTransfer::Unspecified, true );
-  this->ScheduleRead ( node, dt->GetTransferID() );
+  this->ScheduleRead ( dt );
   return 1;
 
 }
@@ -143,46 +144,55 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
 
 
 //----------------------------------------------------------------------------
-void vtkDataIOManagerLogic::ScheduleRead ( vtkMRMLNode *node, int transferID )
+void vtkDataIOManagerLogic::ScheduleRead (  vtkDataTransfer *transfer )
 {
    bool ret;
 
-   vtkDataTransfer *transfer = this->DataIOManager->GetDataTransfer ( transferID );
+   if ( this->GetDataIOManager()->GetEnableAsynchronousIO() )
+     {
 
-   vtkSlicerTask *task = vtkSlicerTask::New();
-   // Pass the current data transfer, which has a pointer to the associated
-   // mrml node, as client data to the task.
-   task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
-                        &vtkDataIOManagerLogic::ApplyTransfer, transfer);
+     vtkSlicerTask *task = vtkSlicerTask::New();
+     // Pass the current data transfer, which has a pointer to the associated
+     // mrml node, as client data to the task.
+     task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
+                           &vtkDataIOManagerLogic::ApplyTransfer, transfer);
   
-  // Client data on the task is just a regular pointer, up the
-  // reference count on the node, we'll decrease the reference count
-  // once the task actually runs
-  //  node->Register(this);
+     // Client data on the task is just a regular pointer, up the
+     // reference count on the node, we'll decrease the reference count
+     // once the task actually runs
+     //  node->Register(this);
   
-  // Schedule the transfer
-   ret = this->GetApplicationLogic()->ScheduleTask( task );
+     // Schedule the transfer
+     ret = this->GetApplicationLogic()->ScheduleTask( task );
   
-  if (!ret)
-    {
-    vtkWarningMacro( << "Could not schedule transfer" );
-    }
-  else
-    {
-      this->DataIOManager->SetTransferStatus(transfer, vtkDataTransfer::Scheduled, true);
-    }
-  task->Delete();
+     if (!ret)
+       {
+       vtkWarningMacro( << "Could not schedule transfer" );
+       }
+     else
+       {
+       this->DataIOManager->SetTransferStatus(transfer, vtkDataTransfer::Scheduled, true);
+       }
+     task->Delete();
+     }
+   else
+     {
+     this->ApplyReadAndWait ( transfer );
+     }
 
 }
 
 
 
 //----------------------------------------------------------------------------
-void vtkDataIOManagerLogic:: ApplyReadAndWait ( vtkMRMLNode *node, int transferID )
+void vtkDataIOManagerLogic:: ApplyReadAndWait ( vtkDataTransfer *transfer )
 {
   // Just execute and wait.
   //node->Register(this);
-  vtkDataIOManagerLogic::ApplyTransfer ( node );
+  if ( transfer != NULL )
+    {
+    vtkDataIOManagerLogic::ApplyTransfer ( transfer );
+    }
 }
 
 
@@ -196,13 +206,13 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
 
 
 //----------------------------------------------------------------------------
-void vtkDataIOManagerLogic::ScheduleWrite( vtkMRMLNode *node, int transferID )
+void vtkDataIOManagerLogic::ScheduleWrite( vtkDataTransfer *transfer )
 {
 }
 
 
 //----------------------------------------------------------------------------
-void vtkDataIOManagerLogic::ApplyWriteAndWait ( vtkMRMLNode *node, int transferID )
+void vtkDataIOManagerLogic::ApplyWriteAndWait ( vtkDataTransfer *transfer )
 {
 }
 
@@ -220,49 +230,68 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
 
   //--- do we need to reinterpret each specific subclass of displayable node or will this work?
   vtkDataTransfer *dt = reinterpret_cast < vtkDataTransfer*> (clientdata);
+  if ( dt == NULL )
+    {
+    return;
+    }
+
+  
+  vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID ((dt->GetTransferNodeID() ));
+  if ( node == NULL )
+    {
+    return;
+    }
+
+  std::string cmdString = "node->GetStorageNode()->ReadData()";
+  char **command;
+  if ( dt->GetTransferType() == vtkDataTransfer::RemoteDownload  )
+    {
+    //--- create a ReadData command
+    }
+  else if ( dt->GetTransferType() == vtkDataTransfer::RemoteUpload  )
+    {
+    //--- create a WriteData command
+    }
 
 
-/*
   //--- TODO: set up some kind of progress feedback...
   // Set the callback for progress.  This will only be used for the
   // scope of this function.
   //--- TODO: kill self. How will this work?
-  TransferNodePair lnp( dt, node );
-  node->GetModuleDescription().GetProcessInformation()
-    ->SetProgressCallback( vtkDataIOManagerLogic::ProgressCallback, &lnp );
-
+  //TransferNodePair lnp( dt, node );
+  //node->GetModuleDescription().GetProcessInformation()->SetProgressCallback( vtkDataIOManagerLogic::ProgressCallback, &lnp );
   // Check for Cancelled!
   // Check for timeout!
 
   //--- encode this as a command: node->GetStorageNode()->ReadData();
 
-  //--- set up thread
+  //--- set up thread and execute
+  /*
   itksysProcess *process = itksysProcess_New();
   itksysProcess_SetCommand ( process, command );
   itksysProcess_SetOption ( process,   itksysProcess_Option_Detach, 0);
   itksysProcess_SetOption ( process,   itksysProcess_Option_HideWindow, 1 );
   itksysProcess_SetTimeout (process, 600.0); //  10 minutes...
-
-  // execute the command
   itksysProcess_Execute ( process );  
+
 
   // Check for Cancelled
   // Check for timeout
   
   itksysProcess_WaitForExit(process, 0);
   itksysProcess_Delete(process);
-  
+  */  
+/*
   if ( all went well...)
     {
     node->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
     this->GetApplicationLogic()->RequestModified( node );
     }
-    
+*/
+  
   // clean up
   delete [] command;
   //  node->Unregister ( this );
-*/
-
 }
 
 
