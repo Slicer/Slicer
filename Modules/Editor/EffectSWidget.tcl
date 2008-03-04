@@ -88,38 +88,34 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
 
   $this processEvent
 
-  set _guiObserverTags ""
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  foreach event "LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent KeyPressEvent EnterEvent LeaveEvent" {
-    lappend _guiObserverTags \
-              [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI"]
+  set tag [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _observerRecords "$sliceGUI $tag"
+  set events {
+    LeftButtonPressEvent LeftButtonReleaseEvent 
+    MouseMoveEvent KeyPressEvent EnterEvent LeaveEvent
+  }
+  foreach event $events {
+    set tag [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI"]
+    lappend _observerRecords "$sliceGUI $tag"
   }
 
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
+  set tag [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _observerRecords "$node $tag"
+  set tag [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
+  lappend _observerRecords "$node $tag"
 
   set node [EditorGetParameterNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
+  set tag [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  lappend _observerRecords "$node $tag"
+  set tag [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
+  lappend _observerRecords "$node $tag"
 }
 
 itcl::body EffectSWidget::destructor {} {
 
   $this animateCursor off
   $this tearDownOptions
-
-  if { [info command $sliceGUI] != "" } {
-    foreach tag $_guiObserverTags {
-      $sliceGUI RemoveObserver $tag
-    }
-  }
-
-  if { [info command $_sliceNode] != "" } {
-    foreach tag $_nodeObserverTags {
-      $_sliceNode RemoveObserver $tag
-    }
-  }
 
   foreach record $_observerRecords {
     foreach {obj tag} $record {
