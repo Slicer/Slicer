@@ -846,6 +846,7 @@ void vtkCommandLineModuleGUI::UpdateGUI ()
             splitFilenames(value, names);
             //vtkWarningMacro(<<"Filenames being set: " << value);
             lsb->GetWidget()->GetLoadSaveDialog()->SetInitialSelectedFileNames(names);
+            names->Delete();
             }
           else if (rbs)
             {
@@ -1662,6 +1663,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         vtkSmartPointer<vtkStringArray> names = vtkStringArray::New();
         splitFilenames((*pit).GetDefault(), names);
         tparameter->GetWidget()->GetLoadSaveDialog()->SetInitialSelectedFileNames( names );
+        names->Delete();
         if ((*pit).GetFileExtensions().size() != 0)
           {
           std::string extensionVector;
