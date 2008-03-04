@@ -3,6 +3,7 @@
 
 #include "vtkDataIOManagerLogic.h"
 #include "vtkMRMLStorageNode.h"
+#include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkCommand.h"
 
@@ -102,49 +103,42 @@ void vtkDataIOManagerLogic::SetAndObserveDataIOManager ( vtkDataIOManager *ioman
 int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
 {
 
-  //--- do some checking first.
+  //--- do some node nullchecking first.
+  if ( node == NULL )
+    {
+    return 0;
+    }
   vtkMRMLDisplayableNode *dnode = vtkMRMLDisplayableNode::SafeDownCast ( node );
   if ( dnode == NULL )
     {
     return 0;
     }
 
-  vtkCacheManager *cm = this->DataIOManager->GetCacheManager();
-  if ( cm != NULL )
-    {
-    //--- check to see if RemoteCacheLimit is exceeded
-    //--- check to see if FreeBufferSize is exceeded.
-    }
-
-  vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
-  const char *source = dnode->GetStorageNode()->GetURI();
-  const char *dest = this->DataIOManager->GetCacheManager()->GetFilenameFromURI ( source );
-    
   //--- if handler is good and there's enough cache space, queue the read
-  if ( (handler != NULL) && ( cm->GetCurrentCacheSize() < cm->GetRemoteCacheLimit() ))
-    {
-    //--- construct and add a record of the transfer
-    vtkDataTransfer *dt = this->DataIOManager->AddNewDataTransfer ( node );
-    //---TODO: Figure out what's source and what's destination
-    dt->SetSourceURI ( source );
-    dt->SetDestinationURI ( dest );
-    dt->SetHandler ( handler );
-    dt->SetTransferType ( vtkDataTransfer::RemoteDownload );
-    this->DataIOManager->SetTransferStatus ( dt, vtkDataTransfer::Unspecified, true );
-
-    //--- if force redownload is enabled, remove the old file from cache.
-    if (cm->GetEnableForceRedownload () )
-      {
-      this->DataIOManager->GetCacheManager()->RemoveFromCache ( dest );
-      }
-    this->ScheduleRead ( node, dt->GetTransferID() );
-    return 1;
-    }
-  else
+  vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
+  if ( handler == NULL)
     {
     return 0;
     }
+  const char *source = dnode->GetStorageNode()->GetURI();
+  const char *dest = this->GetDataIOManager()->GetCacheManager()->GetFilenameFromURI ( source );
+
+  //--- construct and add a record of the transfer
+  vtkDataTransfer *dt = this->GetDataIOManager()->AddNewDataTransfer ( node );
+  if ( dt == NULL )
+    {
+    return 0;
+    }
+  dt->SetSourceURI ( source );
+  dt->SetDestinationURI ( dest );
+  dt->SetHandler ( handler );
+  dt->SetTransferType ( vtkDataTransfer::RemoteDownload );
+  this->GetDataIOManager()->SetTransferStatus ( dt, vtkDataTransfer::Unspecified, true );
+  this->ScheduleRead ( node, dt->GetTransferID() );
+  return 1;
+
 }
+
 
 
 

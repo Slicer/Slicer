@@ -4,6 +4,9 @@
 #include "vtkDataIOManager.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
+#include "vtkMRMLStorageNode.h"
+#include "vtkMRMLDisplayableNode.h"
+#include "vtkURIHandler.h"
 
 #include <list>
 #include <string>
@@ -187,7 +190,30 @@ void vtkDataIOManager::ClearDataTransfers( )
 //----------------------------------------------------------------------------
 void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
 {
-  this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
+  vtkMRMLDisplayableNode *dnode = vtkMRMLDisplayableNode::SafeDownCast ( node );
+  vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
+  const char *source = dnode->GetStorageNode()->GetURI();
+  const char *dest = this->GetCacheManager()->GetFilenameFromURI ( source );
+    
+  vtkCacheManager *cm = this->GetCacheManager();
+  if ( cm != NULL )
+    {
+    //--- check to see if RemoteCacheLimit is exceeded
+    //--- check to see if FreeBufferSize is exceeded.
+    }
+
+  //--- if force redownload is enabled, remove the old file from cache.
+  if (cm->GetEnableForceRedownload () )
+    {
+    this->GetCacheManager()->RemoveFromCache ( dest );
+    }
+
+  //--- trigger logic to download, if there's cache space.
+  if ( cm->GetCurrentCacheSize() < cm->GetRemoteCacheLimit() )
+    {
+    this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
+    }
+
 }
 
 //----------------------------------------------------------------------------
