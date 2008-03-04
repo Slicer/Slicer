@@ -253,7 +253,17 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
     //--- create a WriteData command
     }
 
-
+  //--- An example of what we want here is in vtkCommandLineModuleLogic.cxx.
+  //--- it appears as though, for SharedObjectModules, each module's
+  //--- ProcessInformation contains certain definitions about EntryPoints, etc.
+  //--- These seem to be set up in the ModuleFactory, using kwsys DynamicLoader
+  //--- to open a library, get relevant things (?) symbol addresses, and creates entry points.
+  //--- Then, CommandLineModuleLogic builds a command string, and a
+  //--- 'commandLineAsString' using the processinformation,
+  //--- and tries to run the module using the a call like that below:
+  // if (entryPoint != NULL ) {
+  // (*entryPoint)commandLineAsString.size(), command);}
+  
   //--- TODO: set up some kind of progress feedback...
   // Set the callback for progress.  This will only be used for the
   // scope of this function.
@@ -263,24 +273,10 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
   // Check for Cancelled!
   // Check for timeout!
 
-  //--- encode this as a command: node->GetStorageNode()->ReadData();
-
-  //--- set up thread and execute
-  /*
-  itksysProcess *process = itksysProcess_New();
-  itksysProcess_SetCommand ( process, command );
-  itksysProcess_SetOption ( process,   itksysProcess_Option_Detach, 0);
-  itksysProcess_SetOption ( process,   itksysProcess_Option_HideWindow, 1 );
-  itksysProcess_SetTimeout (process, 600.0); //  10 minutes...
-  itksysProcess_Execute ( process );  
-
 
   // Check for Cancelled
   // Check for timeout
-  
-  itksysProcess_WaitForExit(process, 0);
-  itksysProcess_Delete(process);
-  */  
+
 /*
   if ( all went well...)
     {
@@ -300,6 +296,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
 void vtkDataIOManagerLogic::ProgressCallback ( void *who )
 {
 
+  //---TODO: figure out how to make this guy work and wire him into the rest of the mechanism
     TransferNodePair *lnp = reinterpret_cast<TransferNodePair*>(who);
     //--- get a pointer back to DataIOManagerLogic (?) dunno.
     //--- use its RequestModified method to call update on the DataIOManager (?)
