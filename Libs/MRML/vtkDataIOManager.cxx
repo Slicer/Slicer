@@ -187,13 +187,13 @@ void vtkDataIOManager::ClearDataTransfers( )
 //----------------------------------------------------------------------------
 void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
 {
-  node->InvokeEvent ( vtkDataIOManager::RemoteReadEvent );
+  this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
 }
 
 //----------------------------------------------------------------------------
 void vtkDataIOManager::QueueWrite ( vtkMRMLNode *node )
 {
-  node->InvokeEvent ( vtkDataIOManager::RemoteWriteEvent );
+  this->InvokeEvent ( vtkDataIOManager::RemoteWriteEvent, node );
 }
 
 

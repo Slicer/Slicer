@@ -58,24 +58,34 @@ void vtkDataIOManagerLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkDataIOManagerLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
 {
-  vtkMRMLNode *node = vtkMRMLNode::SafeDownCast ( caller );
-  
-  // ignore node events that aren't volumes or slice nodes
-  if ( (node != NULL) && (event == vtkDataIOManager::RemoteReadEvent ) )
+
+  vtkDataIOManager *m = vtkDataIOManager::SafeDownCast ( caller );
+  if ( m != NULL )
     {
-    this->QueueRead ( node );
-    }  
-  else if ( (node != NULL) && (event == vtkDataIOManager::RemoteWriteEvent ) )
-    {
-    this->QueueWrite ( node );
-    }  
+    vtkMRMLNode *node = reinterpret_cast <vtkMRMLNode *> (callData);
+    // ignore node events that aren't volumes or slice nodes
+    if ( (node != NULL) && (event == vtkDataIOManager::RemoteReadEvent ) )
+      {
+      this->QueueRead ( node );
+      }  
+    else if ( (node != NULL) && (event == vtkDataIOManager::RemoteWriteEvent ) )
+      {
+      this->QueueWrite ( node );
+      }
+    }
 }
 
 
 //----------------------------------------------------------------------------
 void vtkDataIOManagerLogic::SetAndObserveDataIOManager ( vtkDataIOManager *iomanager )
 {
-  if ( this->DataIOManager )
+  //--- remove all observers and delete if we need to reset the iomanager
+  if ( this->DataIOManager!= NULL )
+    {
+    vtkSetAndObserveMRMLNodeMacro ( this->DataIOManager, NULL );
+    }
+  //--- if we're resetting to a new value
+  if ( iomanager != NULL )
     {
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue ( vtkDataIOManager::RemoteReadEvent );
@@ -86,51 +96,54 @@ void vtkDataIOManagerLogic::SetAndObserveDataIOManager ( vtkDataIOManager *ioman
 }
 
 
+
+
 //----------------------------------------------------------------------------
 int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
 {
 
   //--- do some checking first.
   vtkMRMLDisplayableNode *dnode = vtkMRMLDisplayableNode::SafeDownCast ( node );
-  if ( dnode != NULL )
+  if ( dnode == NULL )
     {
-    vtkCacheManager *cm = this->DataIOManager->GetCacheManager();
-    if ( cm != NULL )
-      {
-      //--- check to see if RemoteCacheLimit is exceeded
-      //--- check to see if FreeBufferSize is exceeded.
-      }
+    return 0;
+    }
 
-    vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
-    const char *source = dnode->GetStorageNode()->GetURI();
-    const char *dest = this->DataIOManager->GetCacheManager()->GetFilenameFromURI ( source );
+  vtkCacheManager *cm = this->DataIOManager->GetCacheManager();
+  if ( cm != NULL )
+    {
+    //--- check to see if RemoteCacheLimit is exceeded
+    //--- check to see if FreeBufferSize is exceeded.
+    }
+
+  vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
+  const char *source = dnode->GetStorageNode()->GetURI();
+  const char *dest = this->DataIOManager->GetCacheManager()->GetFilenameFromURI ( source );
     
-    //--- if handler is good and there's enough cache space, queue the read
-    if ( (handler != NULL) && ( cm->GetCurrentCacheSize() < cm->GetRemoteCacheLimit() ))
-      {
-      //--- construct and add a record of the transfer
-      vtkDataTransfer *dt = this->DataIOManager->AddNewDataTransfer ( node );
-      //---TODO: Figure out what's source and what's destination
-      dt->SetSourceURI ( source );
-      dt->SetDestinationURI ( dest );
-      dt->SetHandler ( handler );
-      dt->SetTransferType ( vtkDataTransfer::RemoteDownload );
-      this->DataIOManager->SetTransferStatus ( dt, vtkDataTransfer::Unspecified, true );
+  //--- if handler is good and there's enough cache space, queue the read
+  if ( (handler != NULL) && ( cm->GetCurrentCacheSize() < cm->GetRemoteCacheLimit() ))
+    {
+    //--- construct and add a record of the transfer
+    vtkDataTransfer *dt = this->DataIOManager->AddNewDataTransfer ( node );
+    //---TODO: Figure out what's source and what's destination
+    dt->SetSourceURI ( source );
+    dt->SetDestinationURI ( dest );
+    dt->SetHandler ( handler );
+    dt->SetTransferType ( vtkDataTransfer::RemoteDownload );
+    this->DataIOManager->SetTransferStatus ( dt, vtkDataTransfer::Unspecified, true );
 
-      //--- if force redownload is enabled, remove the old file from cache.
-      if (cm->GetEnableForceRedownload () )
-        {
-        this->DataIOManager->GetCacheManager()->RemoveFromCache ( dest );
-        }
-      this->ScheduleRead ( node, dt->GetTransferID() );
-      return 1;
+    //--- if force redownload is enabled, remove the old file from cache.
+    if (cm->GetEnableForceRedownload () )
+      {
+      this->DataIOManager->GetCacheManager()->RemoveFromCache ( dest );
       }
+    this->ScheduleRead ( node, dt->GetTransferID() );
+    return 1;
     }
   else
     {
     return 0;
     }
-  
 }
 
 
@@ -142,7 +155,7 @@ void vtkDataIOManagerLogic::ScheduleRead ( vtkMRMLNode *node, int transferID )
 
    vtkDataTransfer *transfer = this->DataIOManager->GetDataTransfer ( transferID );
 
-   vtkSlicerTask *task;
+   vtkSlicerTask *task = vtkSlicerTask::New();
    // Pass the current data transfer, which has a pointer to the associated
    // mrml node, as client data to the task.
    task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
