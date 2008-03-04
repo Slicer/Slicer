@@ -61,6 +61,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLUnstructuredGridStorageNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
+#include "vtkURIHandler.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
@@ -1748,5 +1749,38 @@ void vtkMRMLScene::UpdateNodeIDs()
       }
     }
   this->NodeIDsMTime = this->CurrentScene->GetMTime();
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::AddURIHandler(vtkURIHandler *handler)
+{
+  if (this->GetURIHandlerCollection() == NULL)
+    {
+    return;
+    }
+  if (handler == NULL)
+    {
+    return;
+    }
+  this->GetURIHandlerCollection()->AddItem(handler);
+}
+
+//------------------------------------------------------------------------------
+vtkURIHandler * vtkMRMLScene::FindURIHandler(const char *URI)
+{
+  if (this->GetURIHandlerCollection() == NULL)
+    {
+    vtkWarningMacro("No URI handlers registered on the scene.");
+    return NULL;
+    }
+  for (int i = 0; i = this->GetURIHandlerCollection()->GetNumberOfItems(); i++)
+    {
+    if (vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i))->CanHandleURI(URI))
+      {
+      return vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i));
+      }
+    }
+  vtkWarningMacro("FindURIHandler: unable to find a URI handler in the collection of " << this->GetURIHandlerCollection()->GetNumberOfItems() << " handlers to handle " << URI);
+  return NULL;
 }
 
