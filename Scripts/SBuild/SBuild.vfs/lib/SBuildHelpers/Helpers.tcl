@@ -2,6 +2,7 @@ package provide SBuildHelpers 1.0
 
 proc FindFile { Queue filelist } {
   set Dir $Queue
+  Debug "FindFile starting $Queue $filelist"
   # Look for a file in the list filelist
   while { [llength $Queue] != 0 } \
   {
@@ -17,6 +18,7 @@ proc FindFile { Queue filelist } {
       Trace "FindFile: matching $Filename and $f" 
       set idx [lsearch -glob [file tail $Filename] $f]
       if { $idx != -1 } {
+        Debug "Returning $Filename"
         return $Filename
       }
     }
@@ -24,7 +26,6 @@ proc FindFile { Queue filelist } {
   set msg "Failed to find \"$filelist\" in $Dir"
   tk_messageBox -parent . -title "Failed to find file" -message $msg -type ok -icon error
   Error $msg
-  # error $msg
 }
 
 proc ExecutePluginMethod { plugin m } {
@@ -60,6 +61,7 @@ proc LoadPreferences {} {
 
 proc SavePreferences {} {
   global SBuild env
+  catch {  set SBuild(CurrentTab) [$SBuild(Notebook) select] }
   set fid [open [file join $env(HOME) .SBuildPrefs] "w"]
   puts $fid [array get SBuild]
   close $fid

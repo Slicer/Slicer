@@ -49,6 +49,8 @@ proc Initialize {} {
 proc BuildGUI {} {
     global SBuild
 
+  wm title . SBuild
+
   # Build the menu
   set mb [menu .mb]
   . configure -menu $mb
@@ -83,6 +85,7 @@ proc BuildGUI {} {
     grid $logframe -row 1 -column 0 -sticky nsew
 
     set nb [::ttk::notebook .book]
+  set SBuild(Notebook) $nb
     grid $nb -row 0 -column 0 -sticky nsew
 
     # Build a page for the base, required and optional
@@ -137,7 +140,7 @@ proc BuildGUI {} {
   }
   bind . <Configure> WindowAdjusted
   catch { $nb select $SBuild(CurrentTab) }
-  bind $nb <<NotebookTabChanged>> [list "set SBuild(CurrentTab) \[$nb select]" SavePreferences]
+  bind $nb <<NotebookTabChanged>> SavePreferences
 }
 
 proc WindowAdjusted {} {

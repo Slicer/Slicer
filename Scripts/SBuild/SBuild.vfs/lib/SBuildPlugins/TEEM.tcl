@@ -13,7 +13,7 @@ proc TEEM-Setup {} {
 
 proc TEEM-ConfigureExternal {} {
   global SBuild
-  set SBuild(TEEM,LibPath) [file dirname [FindFile $::SBuild(TEEM,ExternalBuildPath) [list libTEEMCommon* TEEMCommon*.lib TEEMCommon*.dll]]]
+  set SBuild(TEEM,LibPath) [file dirname [FindFile $::SBuild(TEEM,ExternalBuildPath) [list libteem* teem*.lib teem*.dll]]]
 }
 
 proc TEEM-ConfigureSlicer {} {

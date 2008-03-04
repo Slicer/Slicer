@@ -14,7 +14,7 @@ proc Tk-Setup {} {
 proc Tk-ConfigureExternal {} {
   global SBuild
   set SBuild(Tk,LibPath) [file dirname [FindFile $::SBuild(Tk,ExternalBuildPath) [list libtk* tk*.lib tk*.dll]]]
-  set SBuild(Tk,Lib) [FindFile $::SBuild(Tcl,ExternalBuildPath) [list libtk* tk*.lib tk*.dll]]
+  set SBuild(Tk,Lib) [FindFile $::SBuild(Tk,ExternalBuildPath) [list libtk* tk*.lib tk*.dll]]
 }
 
 proc Tk-ConfigureSlicer {} {

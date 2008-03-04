@@ -8,4 +8,4 @@
 # script is sourced, the variable $dir must contain the
 # full path name of this file's directory.
 
-package ifneeded SBuildPlugins 1.0 [list source [file join $dir BuildTcl.tcl]]\n[list source [file join $dir CMake.tcl]]\n[list source [file join $dir ITK.tcl]]\n[list source [file join $dir KWWidgets.tcl]]\n[list source [file join $dir Tcl.tcl]]\n[list source [file join $dir TEEM.tcl]]\n[list source [file join $dir Tk.tcl]]\n[list source [file join $dir VTK.tcl]]
+package ifneeded SBuildPlugins 1.0 [list source [file join $dir CMake.tcl]]\n[list source [file join $dir ITK.tcl]]\n[list source [file join $dir KWWidgets.tcl]]\n[list source [file join $dir Mythical.tcl]]\n[list source [file join $dir Tcl.tcl]]\n[list source [file join $dir TEEM.tcl]]\n[list source [file join $dir Tk.tcl]]\n[list source [file join $dir VTK.tcl]]

@@ -13,7 +13,9 @@ proc Tcl-Setup {} {
 
 proc Tcl-ConfigureExternal {} {
   global SBuild
+  Debug "Tcl-ConfigureExternal -- $::SBuild(Tcl,ExternalBuildPath)"
   set SBuild(Tcl,LibPath) [file dirname [FindFile $::SBuild(Tcl,ExternalBuildPath) [list libtcl* tcl*.lib tcl*.dll]]]
+  Debug "Tcl-ConfigureExternal -- $::SBuild(Tcl,ExternalBuildPath)"
   set SBuild(Tcl,IncludePath) [file dirname [FindFile $::SBuild(Tcl,ExternalBuildPath) tcl.h]]
   set SBuild(Tcl,Lib) [FindFile $::SBuild(Tcl,ExternalBuildPath) [list libtcl* tcl*.lib tcl*.dll]]
   set SBuild(Tcl,tclsh) [FindFile $::SBuild(Tcl,ExternalBuildPath) tclsh*]
