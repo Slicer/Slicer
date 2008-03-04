@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>filtering</category>
+  <category>Filtering</category>
   <title>Calculate Volume Statistics</title>
   <description>
     Extracts statistics from an ROI.
