@@ -882,7 +882,8 @@ startElement(void *userData, const char *element, const char **attrs)
         }
       else if ((strcmp(attrs[2*attr], "type") == 0))
         {
-        if ((strcmp(attrs[2*attr+1], "scalar") == 0) ||
+        if ((strcmp(attrs[2*attr+1], "any") == 0) ||
+            (strcmp(attrs[2*attr+1], "scalar") == 0) ||
             (strcmp(attrs[2*attr+1], "label") == 0) ||
             (strcmp(attrs[2*attr+1], "tensor") == 0) ||
             (strcmp(attrs[2*attr+1], "diffusion-weighted") == 0) ||
@@ -892,7 +893,7 @@ startElement(void *userData, const char *element, const char **attrs)
           }
         else
           {
-          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid value for the attribute \"" + "type" + "\". Only \"scalar\", \"label\" , \"tensor\", \"diffusion-weighted\"  and \"vector\" are accepted.");
+          std::string error("ModuleDescriptionParser Error: \"" + std::string(attrs[2*attr+1]) + "\" is not a valid value for the attribute \"" + "type" + "\". Only \"scalar\", \"label\" , \"tensor\", \"diffusion-weighted\", \"vector\" and \"any\" are accepted.");
           if (ps->ErrorDescription.size() == 0)
             {
             ps->ErrorDescription = error;
