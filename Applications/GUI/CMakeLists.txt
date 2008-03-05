@@ -123,6 +123,8 @@ SET(dir_list
   ${SlicerDaemon_Init_SOURCE_DIR}
   ${SlicerDaemon_Init_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
+  ${LoadableModule_SOURCE_DIR}
+  ${LoadableModule_BINARY_DIR}
   ${VTK_INCLUDE_DIR}
   ${NAVITRACK_INC}
   ${IGSTK_INCLUDE_DIRS}
@@ -197,6 +199,7 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     MRML
     IGT
     ModuleDescriptionParser
+    LoadableModule
     vtkITK
     ITKCommon 
     ITKIO

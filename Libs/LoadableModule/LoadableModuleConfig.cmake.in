@@ -1,0 +1,5 @@
+# 
+SET(LoadableModule_INCLUDE_DIRS "@LoadableModule_INCLUDE_DIRS_CONFIG@")
+SET(LoadableModule_LIBRARY_DIRS "@LoadableModule_LIBRARY_DIRS_CONFIG@")
+SET(LoadableModule_USE_FILE "@LoadableModule_USE_FILE_CONFIG@")
+SET(ITK_DIR "@ITK_DIR_CONFIG@")

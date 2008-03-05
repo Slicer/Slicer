@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<loadable>
+  <name>Gradient Anisotropic Module</name>
+  <shortname>GradientAnisotropicFilter</shortname>
+  <guiname>GradientAnisotropicFilter</guiname>
+  <tclinitname>Gradientanisotropicdiffusionfilter_Init</tclinitname>
+  <message>Initializing Gradient Anisotropic Module...</message>
+
+</loadable>
+

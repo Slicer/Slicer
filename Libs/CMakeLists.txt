@@ -5,6 +5,7 @@ SUBDIRS(
       tclap
       ModuleDescriptionParser
       GenerateCLP
+      LoadableModule
 )
 # Note: Order of of SUBDIRS is important if your projects depend
 # on code in other projects (put dependent project later).

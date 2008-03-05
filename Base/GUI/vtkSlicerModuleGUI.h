@@ -70,6 +70,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
   // Description:
   // Get a logo for the module
   virtual vtkKWIcon* GetLogo() const;
+
+  // Description:
+  // Set the module logic
+  virtual void SetModuleLogic( vtkSlicerLogic *logic ) { }; 
   
   // Description:
   // Configures a module's help frame, with acknowledgment

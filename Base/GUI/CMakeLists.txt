@@ -116,6 +116,8 @@ INCLUDE_DIRECTORIES(
   ${vtkTeem_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
+  ${LoadableModule_SOURCE_DIR}
+  ${LoadableModule_BINARY_DIR}
   ${FreeSurfer_SOURCE_DIR}
   ${FreeSurfer_BINARY_DIR}
   )

@@ -60,6 +60,8 @@ VTK_WRAP_TCL3(GradientAnisotropicDiffusionFilter GradientAnisotropicDiffusionFil
 ADD_LIBRARY(GradientAnisotropicDiffusionFilter
   ${GradientAnisotropicDiffusionFilter_SRCS}
   ${GradientAnisotropicDiffusionFilter_TCL_SRCS}
+  #loadable module support
+  GradientAnisotropicDiffusionFilterModuleLib.cxx
   )
 
 IF(BUILD_SHARED_LIBS)

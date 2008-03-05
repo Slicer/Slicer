@@ -1576,7 +1576,7 @@ ModuleDescriptionParser::Parse( const std::string& xml, ModuleDescription& descr
   if (strncmp(xml.c_str(),"<?xml ", 6) != 0)
     {
     std::string required("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    std::cerr << "ModuleDesriptionParser: first line must be " << std::endl;
+    std::cerr << "ModuleDescriptionParser: first line must be " << std::endl;
     std::cerr << required << std::endl;
     return 1;
     }

@@ -34,10 +34,19 @@ class VTK_GRADIENTANISOTROPICDIFFUSIONFILTER_EXPORT vtkGradientAnisotropicDiffus
   vtkTypeMacro(vtkGradientAnisotropicDiffusionFilterGUI,vtkSlicerModuleGUI);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-   // Description: Get/Set MRML node
+  // Description: Get/Set MRML node
   vtkGetObjectMacro (Logic, vtkGradientAnisotropicDiffusionFilterLogic);
   vtkSetObjectMacro (Logic, vtkGradientAnisotropicDiffusionFilterLogic);
-  
+
+  // Description:
+  // Set the logic pointer from parent class pointer.
+  // Overloads implementation in vtkSlicerModulesGUI
+  // to allow loadable modules.
+  virtual void SetModuleLogic ( vtkSlicerLogic *logic )
+  {
+    this->SetLogic(reinterpret_cast<vtkGradientAnisotropicDiffusionFilterLogic*> (logic)); 
+  }
+
   // Description: Get/Set MRML node
   vtkGetObjectMacro (GradientAnisotropicDiffusionFilterNode, vtkMRMLGradientAnisotropicDiffusionFilterNode);
 
