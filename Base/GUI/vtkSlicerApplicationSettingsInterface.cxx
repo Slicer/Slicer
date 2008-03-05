@@ -51,7 +51,7 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->RemoteCacheSettingsFrame = NULL;
   this->EnableAsynchronousIOCheckButton = NULL;
   this->EnableForceRedownloadCheckButton = NULL;
-  this->EnableRemoteCacheOverwritingCheckButton = NULL;
+//  this->EnableRemoteCacheOverwritingCheckButton = NULL;
   this->RemoteCacheDirectoryButton = NULL;
   this->RemoteCacheLimitSpinBox = NULL;
   this->RemoteCacheFreeBufferSizeSpinBox = NULL;
@@ -173,11 +173,11 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     this->EnableForceRedownloadCheckButton = NULL;
     }
 
-  if (this->EnableRemoteCacheOverwritingCheckButton)
-    {
-    this->EnableRemoteCacheOverwritingCheckButton->Delete();
-    this->EnableRemoteCacheOverwritingCheckButton = NULL;
-    }
+//  if (this->EnableRemoteCacheOverwritingCheckButton)
+//    {
+//    this->EnableRemoteCacheOverwritingCheckButton->Delete();
+//    this->EnableRemoteCacheOverwritingCheckButton = NULL;
+//    }
 
   if (this->RemoteCacheDirectoryButton)
     {
@@ -677,6 +677,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   // --------------------------------------------------------------
   // Remote settings : remote cache over writing?
 
+/*
   if (!this->EnableRemoteCacheOverwritingCheckButton)
     {
     this->EnableRemoteCacheOverwritingCheckButton = vtkKWCheckButton::New();
@@ -693,6 +694,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   tk_cmd << "pack " << this->EnableRemoteCacheOverwritingCheckButton->GetWidgetName()
          << "  -side top -anchor w -expand no -fill none" << endl;
 
+*/
   // --------------------------------------------------------------
   // Module settings : Remote Cache Directory
 
@@ -1015,6 +1017,7 @@ void vtkSlicerApplicationSettingsInterface::EnableForceRedownloadCallback(int st
 }
 
 //----------------------------------------------------------------------------
+/*
 void vtkSlicerApplicationSettingsInterface::EnableRemoteCacheOverwritingCallback(int state)
 {
   vtkSlicerApplication *app
@@ -1024,7 +1027,7 @@ void vtkSlicerApplicationSettingsInterface::EnableRemoteCacheOverwritingCallback
     app->SetEnableRemoteCacheOverwriting(state ? 1 : 0);       
     }
 }
-
+*/
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::RemoteCacheDirectoryCallback()
 {
@@ -1185,11 +1188,13 @@ void vtkSlicerApplicationSettingsInterface::Update()
       this->EnableForceRedownloadCheckButton->SetSelectedState(
         app->GetEnableForceRedownload() ? 1 : 0);
       }
+/*
     if (this->EnableRemoteCacheOverwritingCheckButton)
       {
       this->EnableRemoteCacheOverwritingCheckButton->SetSelectedState(
         app->GetEnableRemoteCacheOverwriting() ? 1 : 0);
       }
+*/
     if (this->RemoteCacheDirectoryButton)
       {
       this->RemoteCacheDirectoryButton->GetWidget()

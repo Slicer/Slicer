@@ -57,7 +57,7 @@ const char *vtkSlicerApplication::ApplicationSlicesFrameHeightRegKey = "Applicat
 const char *vtkSlicerApplication::ApplicationLayoutTypeRegKey = "ApplicationLayoutType";
 const char *vtkSlicerApplication::EnableAsynchronousIORegKey = "EnableAsynchronousIO";
 const char *vtkSlicerApplication::EnableForceRedownloadRegKey = "EnableForceRedownload";
-const char *vtkSlicerApplication::EnableRemoteCacheOverwritingRegKey = "EnableRemoteCacheOverwriting";
+//const char *vtkSlicerApplication::EnableRemoteCacheOverwritingRegKey = "EnableRemoteCacheOverwriting";
 const char *vtkSlicerApplication::RemoteCacheDirectoryRegKey = "RemoteCacheDirectory";
 const char *vtkSlicerApplication::RemoteCacheLimitRegKey = "RemoteCacheLimit";
 const char *vtkSlicerApplication::RemoteCacheFreeBufferSizeRegKey = "RemoteCacheFreeBufferSize";
@@ -208,7 +208,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     //strcpy ( this->RemoteCacheDirectory, "");
     this->EnableAsynchronousIO = 0;
     this->EnableForceRedownload = 0;
-    this->EnableRemoteCacheOverwriting = 1;
+//    this->EnableRemoteCacheOverwriting = 1;
     this->RemoteCacheLimit = 20;
     this->RemoteCacheFreeBufferSize = 10;
     
@@ -679,12 +679,14 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     this->EnableForceRedownload = this->GetIntRegistryValue(
       2, "RunTime", vtkSlicerApplication::EnableForceRedownloadRegKey);
     }
+/*
    if (this->HasRegistryValue(
          2, "RunTime", vtkSlicerApplication::EnableRemoteCacheOverwritingRegKey))
     {
     this->EnableRemoteCacheOverwriting = this->GetIntRegistryValue(
       2, "RunTime", vtkSlicerApplication::EnableRemoteCacheOverwritingRegKey);
     }
+*/
    if (this->HasRegistryValue(
          2, "RunTime", vtkSlicerApplication::RemoteCacheLimitRegKey))
     {
@@ -793,9 +795,11 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
                          2, "RunTime", vtkSlicerApplication::EnableForceRedownloadRegKey, "%d", 
                          this->EnableForceRedownload);
+/*
   this->SetRegistryValue(
                          2, "RunTime", vtkSlicerApplication::EnableRemoteCacheOverwritingRegKey, "%d", 
                          this->EnableRemoteCacheOverwriting);
+*/
   this->SetRegistryValue(
                          2, "RunTime", vtkSlicerApplication::RemoteCacheLimitRegKey, "%d", 
                          this->RemoteCacheLimit);
