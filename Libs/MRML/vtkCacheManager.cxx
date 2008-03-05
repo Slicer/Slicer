@@ -47,7 +47,9 @@ void vtkCacheManager::SetRemoteCacheDirectory (const char *dir )
   if ( len > 0 )
     {
     std::string tst = dirstring.substr(len-1);
-
+    //---
+    //--- make sure we have a backslash on the end of the dirstring.
+    //---
     if ( tst != "/" )
       {
       dirstring += "/";
@@ -56,6 +58,7 @@ void vtkCacheManager::SetRemoteCacheDirectory (const char *dir )
     }
   else
     {
+    vtkWarningMacro ( "Setting RemoteCacheDirectory to be a null string." );      
     this->RemoteCacheDirectory = "";
     }
 }
@@ -301,6 +304,11 @@ const char* vtkCacheManager::AddCachePathToFilename ( const char *filename )
 //----------------------------------------------------------------------------
 const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
 {
+  //--- this method should return the absolute path of the
+  //--- file that a storage node will read from in cache
+  //--- (the download destination file).
+
+
   if (uri == NULL)
     {
     return "(null)";
@@ -327,11 +335,13 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   vtksys::SystemTools::ReplaceString(kwInString,
                                      "%25", "%");
 
-  //--- Now strip off the prefix (does this work?)
+  //--- Now strip off all the uri prefix (does this work?)
   vtksys_stl::string filename = vtksys::SystemTools::GetFilenameName ( kwInString );
 
+  //--- Create absolute path
+  filename = this->GetRemoteCacheDirectory() + filename;
   
-   const char *inStr = filename.c_str();
+  const char *inStr = filename.c_str();
   char *returnString = NULL;
   size_t n = strlen(inStr) + 1;
   char *cp1 = new char[n];
@@ -340,8 +350,6 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   do { *cp1++ = *cp2++; } while ( --n );
 
   return returnString;
-
-
 }
 
 
