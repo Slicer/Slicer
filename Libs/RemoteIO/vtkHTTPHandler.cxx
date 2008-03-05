@@ -90,13 +90,14 @@ int vtkHTTPHandler::CanHandleURI ( const char *uri )
   //--- get all characters up to (and not including) the '://'
   if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
     {
-    //--- check to see if any bracketed characters are in this part of the string.
-    prefix = uriString.substr ( 0, index );
+    prefix = uriString.substr ( 0, index-1 );
+    //--- check to see if any bracketed characters are in
+    //--- this part of the string.
     if ( (index = prefix.find ( "]:", 0 ) ) != std::string::npos )
       {
-      //--- if so, strip off the bracketed characters in case
+      //--- if so, strip off the leading bracketed characters in case
       //--- we adopt the gwe "[filename.ext]:" prefix.
-      prefix = prefix.substr ( 0, index+1 );
+      prefix = prefix.substr ( index+2 );
       }
     if ( prefix == "http" )
       {

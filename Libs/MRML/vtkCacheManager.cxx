@@ -39,6 +39,107 @@ vtkCacheManager::~vtkCacheManager()
 
 
 //----------------------------------------------------------------------------
+int vtkCacheManager::IsRemoteReference ( const char *uri )
+{
+  int index;
+  std::string uriString (uri);
+  std::string prefix;
+
+  //--- get all characters up to (and not including) the '://'
+  if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
+    {
+    prefix = uriString.substr ( 0, index-1 );
+    //--- check to see if any leading bracketed characters are
+    //--- in this part of the string.
+    if ( (index = prefix.find ( "]:", 0 ) ) != std::string::npos )
+      {
+      //--- if so, strip off the bracketed characters in case
+      //--- we adopt the gwe "[filename.ext]:" prefix.
+      prefix = prefix.substr ( index+2);
+      }
+    if ( prefix == "file" )
+      {
+      return (0);
+      }
+    else
+      {
+      return (1);      
+      }
+    }
+  else
+    {
+    vtkWarningMacro ( "URI " << uri << " contains no file:// or other prefix." );      
+    //--- doesn't seem to be a :// in the string.
+    return (0);
+    }
+}
+
+//----------------------------------------------------------------------------
+int vtkCacheManager::IsLocalReference ( const char *uri )
+{
+  int index;
+  std::string uriString (uri);
+  std::string prefix;
+
+  //--- get all characters up to (and not including) the '://'
+  if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
+    {
+    prefix = uriString.substr ( 0, index-1 );
+    //--- check to see if any leading bracketed characters are
+    //--- in this part of the string.
+    if ( (index = prefix.find ( "]:", 0 ) ) != std::string::npos )
+      {
+      //--- if so, strip off the bracketed characters in case
+      //--- we adopt the gwe "[filename.ext]:" prefix.
+      prefix = prefix.substr ( index+2);
+      }
+    if ( prefix == "file" )
+      {
+      return (1);
+      }
+    else
+      {
+      return (0);      
+      }
+    }
+  else
+    {
+    vtkWarningMacro ( "URI " << uri << " contains no file:// or other prefix." );      
+    return (0);
+    }  
+}
+
+//----------------------------------------------------------------------------
+int vtkCacheManager::LocalFileExists ( const char *uri )
+{
+  int index;
+  std::string uriString (uri);
+  std::string prefix;
+  std::string filename;
+
+  //--- get all characters up to (and not including) the '://'
+  if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
+    {
+    //--- is this the correct index???
+    filename = uriString.substr ( index+3 );
+    }
+  else
+    {
+    filename = uri;
+    }
+
+  if ( vtksys::SystemTools::FileExists ( filename.c_str() ) )
+    {
+    return ( 1 );
+    }
+  else
+    {
+    return (0);      
+    }
+}
+
+
+//----------------------------------------------------------------------------
 void vtkCacheManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);

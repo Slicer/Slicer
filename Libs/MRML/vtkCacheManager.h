@@ -60,6 +60,16 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   void ClearCache ( );
   
   // Description:
+  // Checks to see if a uri appears to point to remote location
+  // and returns true if so.
+  virtual int IsRemoteReference ( const char *uri );
+  virtual int IsLocalReference ( const char *uri );
+  // Description:
+  // Checks to see if a uri is a file on disk and returns 
+  // true if so.
+  virtual int LocalFileExists ( const char *uri );
+    
+  // Description:
   // Returns the full path of a file or dir in the cache if it's present
   const char* CachedFileFind ( const char * target, const char *dirname );
   virtual int CachedFileExists ( const char *filename );
