@@ -63,7 +63,7 @@ void vtkDataIOManager::SetTransferStatus(vtkDataTransfer *transfer, int status, 
     {
     if ( transfer->GetTransferStatus() != status )
       {
-      transfer->SetTransferStatus(status);
+      transfer->SetTransferStatus(status, modify);
       if ( modify )
         {
         //--- for whoever is observing.

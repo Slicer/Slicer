@@ -10,9 +10,9 @@ vtkDataTransfer::vtkDataTransfer()
   this->SourceURI = NULL;
   this->DestinationURI = NULL;
   this->Handler = NULL;
-  this->TransferStatus = vtkDataTransfer::Unspecified;
+  this->TransferStatus = vtkDataTransfer::Ready;
   this->TransferID = -1;
-  this->TransferType = vtkDataTransfer::Initialized;
+  this->TransferType = vtkDataTransfer::Unspecified;
   this->TransferNodeID = NULL;
   this->Progress = 0;
 }
@@ -25,9 +25,9 @@ vtkDataTransfer::~vtkDataTransfer()
   this->SourceURI = NULL;
   this->DestinationURI = NULL;
   this->Handler = NULL;
-  this->TransferStatus = vtkDataTransfer::Unspecified;
+  this->TransferStatus = vtkDataTransfer::Ready;
   this->TransferID = -1;
-  this->TransferType = vtkDataTransfer::Initialized;
+  this->TransferType = vtkDataTransfer::Unspecified;
   this->TransferNodeID = NULL;
   this->Progress = 0;
 }
@@ -47,4 +47,20 @@ void vtkDataTransfer::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "TransferType: " << this->GetTransferType() << "\n";
   os << indent << "TransferNodeID: " << this->GetTransferNodeID() << "\n";
   os << indent << "Progress: " << this->GetProgress() << "\n";
+}
+
+
+//----------------------------------------------------------------------------
+void vtkDataTransfer::SetTransferStatus(int status, bool modify)
+{
+  
+  if ( this->TransferStatus != status )
+    {
+    this->TransferStatus = status;
+    if ( modify )
+      {
+      //--- for whoever is observing.
+      this->Modified();
+      }
+    }
 }

@@ -20,8 +20,6 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   vtkSetStringMacro ( DestinationURI );
   vtkGetObjectMacro ( Handler, vtkURIHandler );
   vtkSetObjectMacro ( Handler, vtkURIHandler );
-  vtkGetMacro ( TransferStatus, int );
-  vtkSetMacro ( TransferStatus, int );
   vtkGetMacro ( TransferType, int );
   vtkSetMacro ( TransferType, int );
   vtkGetMacro ( TransferID, int );
@@ -30,8 +28,13 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   vtkSetStringMacro ( TransferNodeID);  
   vtkGetMacro ( Progress, int );
   vtkSetMacro ( Progress, int );
+  vtkGetMacro ( TransferStatus, int );
 
-
+  // Description:
+  // Set the status of a data transfer (Idle, Scheduled, Cancelled Running,
+  // Completed).  The "modify" parameter indicates whether the object
+  // can be modified by the call.
+  void SetTransferStatus(int status, bool modify);
   
   const char* GetTransferStatusString( ) {
     switch (this->TransferStatus)
@@ -42,7 +45,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       case Completed: return "Completed";
       case CompletedWithErrors: return "CompletedWithErrors";
       case Cancelled: return "Cancelled";
-      case Unspecified: return "Unspecified";
+      case Ready: return "Ready";
       }
     return "Unknown";
   }
@@ -54,7 +57,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       case RemoteUpload: return "RemoteUpload";
       case LocalLoad: return "LocalUpload";
       case LocalSave: return "LocalSave";
-      case Initialized: return "Initialized";
+      case Unspecified: return "Unspecified";
       }
     return "Unknown";
   }
@@ -69,7 +72,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       Completed=3,
       CompletedWithErrors=4,
       Cancelled=5,
-      Unspecified=6,
+      Ready=6,
     };
   enum
     {
@@ -77,7 +80,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       RemoteUpload,
       LocalLoad,
       LocalSave,
-      Initialized,
+      Unspecified,
     };
   //ETX
 
