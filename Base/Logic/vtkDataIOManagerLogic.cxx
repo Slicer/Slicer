@@ -127,6 +127,11 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     return 0;
     }
 
+  if ( dnode->GetStorageNode() == NULL )
+    {
+    return 0;
+    }
+
   //--- if handler is good and there's enough cache space, queue the read
   vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
   if ( handler == NULL)

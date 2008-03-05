@@ -90,7 +90,7 @@ int vtkHTTPHandler::CanHandleURI ( const char *uri )
   //--- get all characters up to (and not including) the '://'
   if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
     {
-    prefix = uriString.substr ( 0, index-1 );
+    prefix = uriString.substr ( 0, index );
     //--- check to see if any bracketed characters are in
     //--- this part of the string.
     if ( (index = prefix.find ( "]:", 0 ) ) != std::string::npos )

@@ -39,6 +39,32 @@ vtkCacheManager::~vtkCacheManager()
 
 
 //----------------------------------------------------------------------------
+void vtkCacheManager::SetRemoteCacheDirectory (const char *dir )
+{
+  std::string dirstring = dir ;
+  int len = dirstring.size();
+
+  if ( len > 0 )
+    {
+    std::string tst = dirstring.substr(len-1);
+
+    if ( tst != "/" )
+      {
+      dirstring += "/";
+      }
+    this->RemoteCacheDirectory = dirstring;
+    }
+  else
+    {
+    this->RemoteCacheDirectory = "";
+    }
+}
+
+
+
+
+
+//----------------------------------------------------------------------------
 int vtkCacheManager::IsRemoteReference ( const char *uri )
 {
   int index;
@@ -48,7 +74,7 @@ int vtkCacheManager::IsRemoteReference ( const char *uri )
   //--- get all characters up to (and not including) the '://'
   if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
     {
-    prefix = uriString.substr ( 0, index-1 );
+    prefix = uriString.substr ( 0, index );
     //--- check to see if any leading bracketed characters are
     //--- in this part of the string.
     if ( (index = prefix.find ( "]:", 0 ) ) != std::string::npos )
@@ -84,7 +110,7 @@ int vtkCacheManager::IsLocalReference ( const char *uri )
   //--- get all characters up to (and not including) the '://'
   if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
     {
-    prefix = uriString.substr ( 0, index-1 );
+    prefix = uriString.substr ( 0, index );
     //--- check to see if any leading bracketed characters are
     //--- in this part of the string.
     if ( (index = prefix.find ( "]:", 0 ) ) != std::string::npos )
