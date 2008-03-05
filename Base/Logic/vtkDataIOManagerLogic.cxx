@@ -119,16 +119,19 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   //--- do some node nullchecking first.
   if ( node == NULL )
     {
+    vtkErrorMacro("QueueRead: null input node!");
     return 0;
     }
   vtkMRMLDisplayableNode *dnode = vtkMRMLDisplayableNode::SafeDownCast ( node );
   if ( dnode == NULL )
     {
+    vtkErrorMacro("QueueRead: unable to cast input mrml node " << node->GetID() << " to a displayable node");
     return 0;
     }
 
   if ( dnode->GetStorageNode() == NULL )
     {
+    vtkErrorMacro("QueueRead: unable to get storage node from the displayable node " << dnode->GetID() << ", returning");
     return 0;
     }
 
