@@ -8,12 +8,14 @@ proc filterVolumeInThread { volumeNode } {
 
   set filter [vtkITKGradientAnisotropicDiffusionImageFilter New]
   $filter SetInput [$volumeNode GetImageData]
-  $filter SetTimeStep 0.001
-  $filter SetNumberOfIterations 10
+  $filter SetTimeStep 0.0625
+  $filter SetConductanceParameter 1
+  $filter SetNumberOfIterations 14
   $filter Update
 
   $volumeNode SetDisableModifiedEvent 1
   $volumeNode SetAndObserveImageData [$filter GetOutput]
+  $volumeNode SetDisableModifiedEvent 0
   $filter SetOutput ""
   $filter Delete
 
