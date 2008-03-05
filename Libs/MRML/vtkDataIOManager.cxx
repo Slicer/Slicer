@@ -203,7 +203,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
     }
   if (dnode->GetStorageNode() == NULL)
     {
-    vtkErrorMacro("QueueRead: unable to get storage node from the display node " << dnode->GetID() << ", returning");
+    vtkErrorMacro("QueueRead: unable to get storage node from the displayable node " << dnode->GetID() << ", returning");
     return;
     }
   vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
