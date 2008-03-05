@@ -52,7 +52,10 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   //--- Methods to configure and close transfer
   // NOTE: Subclasses should implement these method
   virtual void InitTransfer ( ) {};
-  virtual int CloseTransfer ( ) {};
+  virtual int CloseTransfer ( )
+      {
+      return 0;
+      }
 
  protected:
   vtkURIHandler();

@@ -139,8 +139,9 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
 
   if ( this->GetDataIOManager()->GetEnableAsynchronousIO() )
     {
-    //--- Schedule an Asynchronous data transfer
-
+    //---
+    //--- Schedule an ASYNCHRONOUS data transfer
+    //---
     vtkSlicerTask *task = vtkSlicerTask::New();
     // Pass the current data transfer, which has a pointer 
     // to the associated mrml node, as client data to the task.
@@ -152,23 +153,22 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
                           &vtkDataIOManagerLogic::ApplyTransfer, transfer);
   
     // Schedule the transfer
-    bool ret;
+    bool ret = 0;
     if (ret = this->GetApplicationLogic()->ScheduleTask( task ) )
       {
       this->DataIOManager->SetTransferStatus(transfer, vtkDataTransfer::Scheduled, true);
-      task->Delete();
-      return 1;
       }
-    else
+    task->Delete();
+    if ( !ret )
       {
-      task->Delete();
       return 0;
       }
     }
   else
     {
-    //--- asynchronous IO is not enabled...
-    //--- so call this method directly without scheduling.
+    //---
+    //--- Execute a SYNCHRONOUS data transfer
+    //---
     this->ApplyTransfer ( transfer );
     }
   return 1;
@@ -223,41 +223,38 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
   const char *dest = dt->GetDestinationURI();
   if ( dt->GetTransferType() == vtkDataTransfer::RemoteDownload  )
     {
-    //--- create a ReadData command
+    //---
+    //--- Download data
+    //---
      vtkURIHandler *handler = dt->GetHandler();
      if ( handler != NULL && source != NULL && dest != NULL )
       {
       if ( asynchIO )
         {
-        //--- CREATE NEW THREAD AND EXECUTE THESE METHODS ---
         handler->StageFileRead( source, dest);
-//        this->GetApplicationLogic()->RequestReadData( node, file );
-        //--- end thread
+        this->GetApplicationLogic()->RequestReadData( node->GetID(), dest, 0, 0 );
         }
       else
         {
         handler->StageFileRead( source, dest);
-//        this->GetApplicationLogic()->RequestReadData( node, file );
         }
       }
     }
   else if ( dt->GetTransferType() == vtkDataTransfer::RemoteUpload  )
     {
-    //--- create a WriteData command
+    //---
+    //--- Upload data
+    //---
     vtkURIHandler *handler = dt->GetHandler();
     if ( handler != NULL && source != NULL && dest != NULL )
       {
       if ( asynchIO )
         {
-        //--- NEW THREAD ---
         //handler->StageFileWrite( source, dest);
-        //this->GetApplicationLogic()->RequestReadData( node, file );
-        //--- end thread
         }
       else
         {
         //handler->StageFileWrite( source, dest);
-        //this->GetApplicationLogic()->RequestReadData( node, file );
         }
       }
     }
