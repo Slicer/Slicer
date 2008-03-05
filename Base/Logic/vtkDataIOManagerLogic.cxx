@@ -120,9 +120,40 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     {
     return 0;
     }
-  const char *source = dnode->GetStorageNode()->GetURI();
-  const char *dest = this->GetDataIOManager()->GetCacheManager()->GetFilenameFromURI ( source );
 
+  if ( this->DataIOManager == NULL )
+    {
+    return 0;
+    }
+
+  vtkCacheManager *cm = this->GetDataIOManager()->GetCacheManager();
+  if ( cm == NULL )
+    {
+    return 0;
+    }
+
+  const char *source = dnode->GetStorageNode()->GetURI();
+  const char *dest = cm->GetFilenameFromURI ( source );
+  
+
+  //--- set the destination filename in the node.
+  dnode->GetStorageNode()->SetFileName ( dest );
+  
+  //--- if the filename already exists in cache and
+  //--- user has selected not to redownload cached files
+  //--- just return.
+  if ( (cm->CachedFileExists ( dest )) && ( !(cm->GetEnableForceRedownload())) )
+    {
+    return 1;
+    }
+
+  //--- Otherwise, just do the data transfer whether
+  //--- the file already exists in cache or not
+  //--- (download or redownload)
+  //---
+  //--- TODO: build out the logic to handle creating
+  //--- new versions of the dataset in cache.
+  
   //--- construct and add a record of the transfer
   //--- which includes the ID of associated node
   vtkDataTransfer *transfer = this->GetDataIOManager()->AddNewDataTransfer ( node );

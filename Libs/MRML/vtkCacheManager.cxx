@@ -343,6 +343,18 @@ void vtkCacheManager::FreeBufferCheck()
 
 
 
+//----------------------------------------------------------------------------
+int vtkCacheManager::CachedFileExists ( const char *filename )
+{
+  if ( vtksys::SystemTools::FileExists ( filename ) )
+    {
+    return 1;
+    }
+  else
+    {
+    return 0;
+    }
+}
 
 //----------------------------------------------------------------------------
 const char* vtkCacheManager::CachedFileFind ( const char * target, const char *dirname )

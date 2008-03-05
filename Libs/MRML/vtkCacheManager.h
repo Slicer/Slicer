@@ -62,7 +62,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   // Description:
   // Returns the full path of a file or dir in the cache if it's present
   const char* CachedFileFind ( const char * target, const char *dirname );
-
+  virtual int CachedFileExists ( const char *filename );
   const char* GetFilenameFromURI ( const char *uri );
   const char* AddCachePathToFilename ( const char *filename );
   const char* EncodeURI ( const char *uri );
