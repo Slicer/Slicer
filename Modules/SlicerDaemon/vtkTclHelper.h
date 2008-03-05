@@ -40,6 +40,9 @@ public:
 
     static vtkTclHelper *New();
 
+    // Description
+    // hook for script to tell this instance what interpreter to use
+    // - call it with the tag returned from AddObserver on this instance
     void SetInterpFromCommand(unsigned long tag);
 
     vtkSetObjectMacro(ImageData, vtkImageData);

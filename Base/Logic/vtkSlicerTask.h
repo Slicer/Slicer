@@ -23,7 +23,7 @@ public:
   
   // Description:
   // Execute the task.
-  void Execute();
+  virtual void Execute();
   
 protected:
   vtkSlicerTask();
