@@ -190,30 +190,50 @@ void vtkDataIOManager::ClearDataTransfers( )
 //----------------------------------------------------------------------------
 void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
 {
+  if (node == NULL)
+    {
+    vtkErrorMacro("QueueRead: null input node!");
+    return;
+    }
   vtkMRMLDisplayableNode *dnode = vtkMRMLDisplayableNode::SafeDownCast ( node );
+  if (dnode == NULL)
+    {
+    vtkErrorMacro("QueueRead: unable to cast input mrml node " << node->GetID() << " to a displayable node");
+    return;
+    }
+  if (dnode->GetStorageNode() == NULL)
+    {
+    vtkErrorMacro("QueueRead: unable to get storage node from the display node " << dnode->GetID() << ", returning");
+    return;
+    }
   vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
   const char *source = dnode->GetStorageNode()->GetURI();
-  const char *dest = this->GetCacheManager()->GetFilenameFromURI ( source );
+  const char *dest; 
     
   vtkCacheManager *cm = this->GetCacheManager();
   if ( cm != NULL )
     {
+    dest = cm->GetFilenameFromURI(source);
     //--- check to see if RemoteCacheLimit is exceeded
     //--- check to see if FreeBufferSize is exceeded.
+   
+    //--- if force redownload is enabled, remove the old file from cache.
+    if (cm->GetEnableForceRedownload () )
+      {
+      this->GetCacheManager()->RemoveFromCache ( dest );
+      }
+    
+    //--- trigger logic to download, if there's cache space.
+    if ( cm->GetCurrentCacheSize() < cm->GetRemoteCacheLimit() )
+      {
+      vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
+      this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
+      }
     }
-
-  //--- if force redownload is enabled, remove the old file from cache.
-  if (cm->GetEnableForceRedownload () )
+  else
     {
-    this->GetCacheManager()->RemoveFromCache ( dest );
+    vtkErrorMacro("QueueRead: cache manager is null.");
     }
-
-  //--- trigger logic to download, if there's cache space.
-  if ( cm->GetCurrentCacheSize() < cm->GetRemoteCacheLimit() )
-    {
-    this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
-    }
-
 
 }
 
