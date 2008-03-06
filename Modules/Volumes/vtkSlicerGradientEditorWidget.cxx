@@ -95,15 +95,12 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->UndoButton->Delete();
     this->UndoButton = NULL;
     }
-  if (this->NumberOfChanges)
-    {
-    this->NumberOfChanges = NULL;
-    }
   if (this->Application)
     {
     this->Application->Delete();
     this->Application = NULL;
     }
+  this->NumberOfChanges = 0;
   }
 
 //---------------------------------------------------------------------------

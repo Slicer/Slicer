@@ -141,7 +141,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject
                                                          unsigned long event, void *callData )
 {
   vtkDebugWithObjectMacro(this,"Process Widget Events");
-  vtkErrorWithObjectMacro(this,"Process WIDGET... Events!!!!!!!!!!!!!!!!!!!!!!!!!  ;)");
+  vtkErrorWithObjectMacro(this,"Process WIDGET... Events!!!!!!!!!!!!!!!!!!!!!!!!!");
 
   vtkMRMLDiffusionTensorDisplayPropertiesNode *displayNode = 
     vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(this->MRMLScene->GetNodeByID(
@@ -151,13 +151,13 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject
     return;
     }
 
-  vtkErrorWithObjectMacro(this,"Process WIDGET... Events, got display node!  ;)");
+  vtkErrorWithObjectMacro(this,"Process WIDGET... Events, got display node!");
 
   // process glyph geometry menu events
   vtkKWMenu *glyphMenuButton = 
       vtkKWMenu::SafeDownCast(caller);
   if (glyphMenuButton == this->GlyphGeometryMenu->GetWidget()->GetMenu())
-    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, glyph menu event!  ;)" << event);
+    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, glyph menu event!" << event);
 
   if (glyphMenuButton == this->GlyphGeometryMenu->GetWidget()->GetMenu() && 
         event == vtkKWMenu::MenuItemInvokedEvent)
@@ -178,7 +178,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject
   if ( vtkKWScale::SafeDownCast(caller) == this->GlyphResolutionScale->GetWidget() && 
         event == vtkKWScale::ScaleValueChangedEvent)
     {
-    displayNode->SetLineGlyphResolution(this->GlyphResolutionScale->GetWidget()->GetValue());
+        displayNode->SetLineGlyphResolution((int)(this->GlyphResolutionScale->GetWidget()->GetValue()));
     return;
     }
 
@@ -188,13 +188,13 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject
   vtkKWMenu *lineEigMenuButton = 
       vtkKWMenu::SafeDownCast(caller);
   if (lineEigMenuButton == this->LineGlyphEigenvectorMenu->GetWidget()->GetMenu())
-    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, line eig menu event!  ;)" << event);
+    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, line eig menu event!" << event);
 
   if (lineEigMenuButton == this->LineGlyphEigenvectorMenu->GetWidget()->GetMenu() && 
         event == vtkKWMenu::MenuItemInvokedEvent)
     {
     displayNode->SetGlyphEigenvector(this->GlyphEigenvectorMap[std::string(this->LineGlyphEigenvectorMenu->GetWidget()->GetValue())]);
-    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, display node glyph set!  ;)");
+    vtkErrorWithObjectMacro(this,"Process WIDGET... Events, display node glyph set!");
     return;
     }
 
@@ -227,11 +227,11 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessMRMLEvents ( vtkObject *
 {
   vtkDebugWithObjectMacro(this,"Process MRML Events");
 
-  vtkErrorWithObjectMacro(this,"Process MRML Events!!!!!!!!!!!!!!!!!!!!!!!!!  ;)");
+  vtkErrorWithObjectMacro(this,"Process MRML Events!!!!!!!!!!!!!!!!!!!!!!!!! ");
 
   if ( !this->DiffusionTensorDisplayPropertiesNodeID )
     {
-    vtkErrorWithObjectMacro(this,"Process MRML Events null display node  ;)");
+    vtkErrorWithObjectMacro(this,"Process MRML Events null display node ");
     return;
     }
 
@@ -241,7 +241,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessMRMLEvents ( vtkObject *
   if (node == this->MRMLScene->GetNodeByID(this->DiffusionTensorDisplayPropertiesNodeID) && 
       node != NULL && event == vtkCommand::ModifiedEvent)
     {
-    vtkErrorWithObjectMacro(this,"Process MRML Events updating widget  ;)");
+    vtkErrorWithObjectMacro(this,"Process MRML Events updating widget ");
 
     // stop observing display node
     //this->RemoveMRMLObservers();
@@ -365,7 +365,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::UpdateMRML()
       displayNode->SetGlyphGeometry(this->GlyphGeometryMap[std::string(this->GlyphGeometryMenu->GetWidget()->GetValue())]);
       displayNode->SetGlyphEigenvector(this->GlyphEigenvectorMap[std::string(this->LineGlyphEigenvectorMenu->GetWidget()->GetValue())]);
       displayNode->SetGlyphScaleFactor(this->GlyphScale->GetWidget()->GetValue());
-      displayNode->SetLineGlyphResolution(this->GlyphResolutionScale->GetWidget()->GetValue());
+      displayNode->SetLineGlyphResolution((int)(this->GlyphResolutionScale->GetWidget()->GetValue()));
       displayNode->SetTubeGlyphNumberOfSides((int) this->TubeNumberOfSidesScale->GetWidget()->GetValue());
       }
     else 
