@@ -187,6 +187,8 @@ private:
 //---------------------------------------------------------------------------
 vtkSlicerApplication::vtkSlicerApplication ( ) {
 
+    this->ApplicationGUI = NULL;
+
     strcpy(this->ConfirmDelete, "");
     
     strcpy(this->ModulePath, "");
