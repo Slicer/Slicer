@@ -543,9 +543,6 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   //--- rm
   strcpy(this->Rm, "");
 
-  //-- remote cache dir, use the temporary directory for now
-  strcpy(this->RemoteCacheDirectory,this->TemporaryDirectory);
-  
   Superclass::RestoreApplicationSettingsFromRegistry();
   
   
@@ -679,6 +676,13 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     this->EnableForceRedownload = this->GetIntRegistryValue(
       2, "RunTime", vtkSlicerApplication::EnableForceRedownloadRegKey);
     }
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::RemoteCacheDirectoryRegKey))
+    {
+    this->GetRegistryValue(
+      2, "RunTime", vtkSlicerApplication::RemoteCacheDirectoryRegKey,
+      this->RemoteCacheDirectory);
+    }
 /*
    if (this->HasRegistryValue(
          2, "RunTime", vtkSlicerApplication::EnableRemoteCacheOverwritingRegKey))
@@ -698,7 +702,20 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     {
     this->RemoteCacheFreeBufferSize = this->GetIntRegistryValue(
       2, "RunTime", vtkSlicerApplication::RemoteCacheFreeBufferSizeRegKey);
-    }  
+    }
+   this->RelayRemoteIOSettingsFromRegistry();
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::RelayRemoteIOSettingsFromRegistry()
+{
+  if ( this->ApplicationGUI )
+    {
+    //--- propagate this value through the GUI into MRML's CacheManager
+    this->ApplicationGUI->SetRemoteCacheDirectory ( this->RemoteCacheDirectory );
+    }
+  
 }
 
 
@@ -1335,6 +1352,11 @@ void vtkSlicerApplication::SetRemoteCacheDirectory(const char* path)
         && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
       {
       strcpy(this->RemoteCacheDirectory, path);
+      if ( this->ApplicationGUI )
+        {
+        //--- propagate this value through the GUI into MRML's CacheManager
+        this->ApplicationGUI->SetRemoteCacheDirectory ( this->RemoteCacheDirectory );
+        }
       this->Modified();
       }
     }

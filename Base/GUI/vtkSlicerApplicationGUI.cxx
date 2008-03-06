@@ -2092,3 +2092,31 @@ void vtkSlicerApplicationGUI::BuildGUIFrames ( )
 
 }
 
+
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::SetRemoteCacheDirectory( const char *dir )
+{
+  vtkMRMLScene *scene = this->GetMRMLScene();
+  if ( scene != NULL )
+    {
+    if ( scene->GetCacheManager() != NULL )
+      {
+      scene->GetCacheManager()->SetRemoteCacheDirectory(dir);
+      }
+    }
+}
+
+
+//---------------------------------------------------------------------------
+const char* vtkSlicerApplicationGUI::GetRemoteCacheDirectory()
+{
+  vtkMRMLScene *scene = this->GetMRMLScene();
+  if ( scene != NULL )
+    {
+    if ( scene->GetCacheManager() != NULL )
+      {
+      return scene->GetCacheManager()->GetRemoteCacheDirectory();
+      }
+    }
+  return ( NULL );
+}

@@ -43,6 +43,8 @@
 #include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerSliceGUICollection.h"
 
+#include "vtkCacheManager.h"
+
 class vtkObject;
 class vtkLogoWidget;
 class vtkKWLabel;
@@ -256,6 +258,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
                        dims[0], dims[1], nComps,
                        dims[0] * dims[1] * nComps, vtkKWIcon::ImageOptionFlipVertical);
       };
+
+    void SetRemoteCacheDirectory( const char *dir );
+    const char* GetRemoteCacheDirectory();
 
 protected:
     vtkSlicerApplicationGUI ( );
