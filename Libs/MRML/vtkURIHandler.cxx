@@ -26,14 +26,14 @@ void vtkURIHandler::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-void vtkURIHandler::SetLocalFile (std::ofstream *localFile )
+void vtkURIHandler::SetLocalFile (FILE *localFile )
 {
   this->LocalFile = localFile;
 }
 
 
 //----------------------------------------------------------------------------
-int vtkURIHandler::ProgressCallback ( std::ofstream *outputFile, double dltotal,
+int vtkURIHandler::ProgressCallback ( FILE *outputFile, double dltotal,
                               double dlnow, double ultotal, double ulnow )
 {
     if(ultotal == 0)
@@ -57,7 +57,8 @@ size_t vtkURIHandler::BufferedWrite ( char *buffer, size_t size, size_t nitems )
 {
   if ( this->LocalFile != NULL )
     {
-    this->LocalFile->write(buffer,size*nitems);
+    //this->LocalFile->write(buffer,size*nitems);
+    fwrite(buffer, sizeof(char), size*nitems, this->LocalFile);
     size *= nitems;
     return size;
     }

@@ -39,11 +39,12 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
 
   // Description:
   // Use this function to set LocalFile
-  virtual void SetLocalFile ( std::ofstream * localFile );
+  //virtual void SetLocalFile ( std::ofstream * localFile );
+  virtual void SetLocalFile (FILE *localFile);
 
   // Description:
   // This function gives us some feedback on how our download is going.
-  int ProgressCallback(std::ofstream* outputFile, double dltotal, double dlnow, double ultotal, double ulnow);
+  int ProgressCallback(FILE* outputFile, double dltotal, double dlnow, double ultotal, double ulnow);
   //ETX
 
   
@@ -64,10 +65,11 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   void operator=(const vtkURIHandler&);
 
   // Description:
-  // local file
+  // local file, it gets passed to C functions in libcurl 
   //BTX
-  std::ofstream* LocalFile;
+  //std::ofstream* LocalFile;
   //ETX
+  FILE *LocalFile;
 };
 
 #endif
