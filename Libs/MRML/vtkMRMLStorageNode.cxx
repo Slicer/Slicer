@@ -20,7 +20,7 @@ Version:   $Revision: 1.1.1.1 $
 #include "vtkCommand.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLScene.h"
-
+#include "vtkURIHandler.h"
 
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode::vtkMRMLStorageNode()
@@ -29,8 +29,9 @@ vtkMRMLStorageNode::vtkMRMLStorageNode()
   this->URI = NULL;
   this->URIHandler = NULL;
   this->UseCompression = 1;
-  this->ReadState = this->Done;
-  this->WriteState = this->Done;
+  this->ReadState = this->Ready;
+  this->WriteState = this->Ready;
+  this->URIHandler = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -48,7 +49,7 @@ vtkMRMLStorageNode::~vtkMRMLStorageNode()
     }
   if ( this->URIHandler )
     {
-    this->URIHandler->Delete();
+    // don't delete it, it's obtained from the scene, it's just a pointer
     this->URIHandler = NULL;
     }
 }
@@ -163,12 +164,30 @@ void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject *caller, unsigned long ev
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
 {
-  // for now, just set the read state to done
-  this->SetReadStateDone();
-  return;
-   
+  // if the URI is null, assume the file name is set and return
+  if (this->GetURI() == NULL)
+    {
+    this->SetReadStateReady();
+    return;
+    }
+  
+  if (refNode == NULL)
+    {
+    vtkWarningMacro("StageReadData: input mrml node is null, returning.");
+    return;
+    }
+  
+  if (!this->SupportedFileType(this->GetURI()))
+    {
+    // can't read this kind of file, so return
+    this->SetReadStateReady();
+    vtkWarningMacro("StageReadData: can't read file type for URI : " << this->GetURI());
+    return;
+    }
+    
   if (this->URI == NULL)
     {
+    // shouldn't get here, as the supported file type check will fail
     vtkWarningMacro("Cannot stage data for reading, URI is not set.");
     return;
     }
@@ -178,20 +197,47 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
     vtkWarningMacro("StageReadData: Cannot get mrml scene, unable to get remote file handlers.");
     return;
     }
-  if (refNode == NULL)
-    {
-    vtkWarningMacro("StageReadData: input mrml node is null, returning.");
-    return;
-    }
   
-  int asynch = 0;
   
-  /* To be finalised
+  //int asynch = 0;
+  
+  // To be finalised
   // Get the data io manager
    vtkDataIOManager *iomanager = this->Scene->GetDataIOManager();
    if (iomanager != NULL)
      {
-     asynch = iomanger->GetAynchronousEnabled();
+     if (this->GetReadState() != this->Pending)
+       {
+       vtkDebugMacro("StageReadData: setting read state to pending, finding a URI handler and queuing read on the io manager");
+       this->SetReadStatePending();
+       // set up the data handler
+       this->URIHandler = this->Scene->FindURIHandler(this->URI);
+       if (this->URIHandler != NULL)
+         {
+         vtkDebugMacro("StageReadData: got a URI Handler");
+         }
+       else
+         {
+         vtkErrorMacro("StageReadData: unable to get a URI handler for " << this->URI << ", resetting stage to ready");
+         this->SetReadStateReady();
+         return;
+         }
+       iomanager->QueueRead(refNode);
+       }
+     else
+       {
+       vtkDebugMacro("StageReadData: Read state is not pending, returning.");
+       }
+     }
+   else
+     {
+     vtkWarningMacro("StageReadData: No IO Manager on the scene, returning.");
+     }
+
+   /*
+   if (iomanager != NULL)
+     {
+     asynch = iomanager->GetEnableAsynchronousIO();
      }
    
    if (iomanager != NULL &&
@@ -201,7 +247,7 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
      this->SetReadStatePending();
      // set up the data handler
      this->URIHandler = this->Scene->FindURIHandler(this->URI);
-     iomanager->Queue(node);
+     iomanager->QueueRead(refNode);
      }
    else
      {
@@ -217,8 +263,11 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
        }
      if (this->URIHandler)
        {
-       this->URIHandler->StageFile(this->URI, cacheFileName);
-       this->SetReadState(this->Done);
+       // this isn't implemented yet
+       // once here, in a separate thread - may be called from the data io
+       // manager instead...
+       //this->URIHandler->StageFileRead(this->URI, cacheFileName.c_str());
+       this->SetReadState(this->Ready);
        }
      else
        {
@@ -227,29 +276,30 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
        }
      }
    */
+   vtkDebugMacro("StageReadData: done");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
 {
   // for now, just set the write state to done
-  this->SetWriteStateDone();
+  this->SetWriteStateReady();
   return;
   
   if (this->URI == NULL)
     {
-    vtkWarningMacro("Cannot stage data for writing, URI is not set.");
+    vtkDebugMacro("Cannot stage data for writing, URI is not set.");
     return;
     }
   // need to get URI handlers from the scene
   if (this->Scene == NULL)
     {
-    vtkWarningMacro("StageWriteData: Cannot get mrml scene, unable to get remote file handlers.");
+    vtkDebugMacro("StageWriteData: Cannot get mrml scene, unable to get remote file handlers.");
     return;
     }
   if (refNode == NULL)
     {
-    vtkWarningMacro("StageWriteData: input mrml node is null, returning.");
+    vtkDebugMacro("StageWriteData: input mrml node is null, returning.");
     return;
     }
 }
@@ -261,9 +311,9 @@ const char * vtkMRMLStorageNode::GetStateAsString(int state)
     {
     return "Pending";
     }
-  if (state = this->Done)
+  if (state = this->Ready)
     {
-    return "Done";
+    return "Ready";
     }
   return "(undefined)";
 }
@@ -272,6 +322,12 @@ const char * vtkMRMLStorageNode::GetStateAsString(int state)
 std::string vtkMRMLStorageNode::GetFullNameFromFileName()
 {
   std::string fullName = std::string("");
+  if (this->GetFileName() == NULL)
+    {
+    vtkDebugMacro("GetFullNameFromFileName: filename is null, returning empty string");
+    return fullName;
+    }
+  
   if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 
     {
     fullName = std::string(this->SceneRootDir) + std::string(this->GetFileName());
@@ -281,4 +337,11 @@ std::string vtkMRMLStorageNode::GetFullNameFromFileName()
     fullName = std::string(this->GetFileName());
     }
   return fullName;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLStorageNode::SupportedFileType(const char *fileName)
+{
+  vtkErrorMacro("SupportedFileType: sub class didn't define this method! (fileName = '" << fileName << "')");
+  return 0;
 }

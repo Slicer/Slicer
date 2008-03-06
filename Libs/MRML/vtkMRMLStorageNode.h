@@ -23,6 +23,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkURIHandler.h"
 
+class vtkURIHandler;
 class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 {
   public:
@@ -94,7 +95,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   //BTX
   enum
   {
-    Done,
+    Ready,
     Pending,
   };
   //ETX
@@ -103,7 +104,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   vtkGetMacro(ReadState,int);
   vtkSetMacro(ReadState,int);
   void SetReadStatePending() { this->SetReadState(this->Pending); };
-  void SetReadStateDone() { this->SetReadState(this->Done); };
+  void SetReadStateReady() { this->SetReadState(this->Ready); };
   const char *GetStateAsString(int state);
   const char *GetReadStateAsString() { return this->GetStateAsString(this->ReadState); };
   
@@ -112,7 +113,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   vtkGetMacro(WriteState,int);
   vtkSetMacro(WriteState,int);
   void SetWriteStatePending() { this->SetWriteState(this->Pending); };
-  void SetWriteStateDone() { this->SetWriteState(this->Done); };
+  void SetWriteStateReady() { this->SetWriteState(this->Ready); };
   const char *GetWriteStateAsString() { return this->GetStateAsString(this->WriteState); };
 
   // Description:
@@ -121,6 +122,14 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   //BTX
   std::string GetFullNameFromFileName();
   //ETX
+
+  // Description:
+  // Check to see if this storage node can handle the file type in the input
+  // string. If input string is null, check URI, then check FileName. Returns
+  // 1 if is supported, 0 otherwise.
+  // Subclasses should implement this method.
+  virtual int SupportedFileType(const char *fileName);
+  
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode();
