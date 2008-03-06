@@ -180,7 +180,9 @@ proc ImportNodeVolume {node} {
       }
 
       set logic [$::slicer3::VolumesGUI GetLogic]
-      set volumeNode [$logic AddArchetypeVolume $fileName 1 $labelMap $n(name)]
+      ##      set volumeNode [$logic AddArchetypeVolume $fileName 1 $labelMap $n(name)]
+      set loadingOptions $labelMap
+      set volumeNode [$logic AddArchetypeVolume $fileName $n(name) $loadingOptions]
       set volumeNodeID [$volumeNode GetID]
 
     }

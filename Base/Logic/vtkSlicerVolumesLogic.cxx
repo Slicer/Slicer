@@ -87,6 +87,49 @@ void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
   this->Modified();
 }
 
+
+//----------------------------------------------------------------------------
+// int loadingOptions is bit-coded as following:
+// bit 0: label map
+// bit 1: centered
+// bit 2: loading signal file
+// higher bits are reserved for future use
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename, const char* volname, 
+                                                           vtkMRMLVolumeHeaderlessStorageNode *headerStorage,
+                                                           int loadingOptions)
+{
+
+  vtkMRMLVolumeNode *volumeNode = NULL;
+
+  int centerImage = 0;
+  int labelMap = 0;
+  int singleFile = 0;
+  if ( loadingOptions & 1 )    // labelMap is true
+  {
+    labelMap = 1;
+  }
+  if ( loadingOptions & 2 )    // centerImage is true
+  {
+    centerImage = 1;
+  }
+  if ( loadingOptions & 4 )    // singleFile is true
+  {
+    singleFile = 1;
+  }
+
+  if ( singleFile == 0 )  // call legacy code 
+  {
+    volumeNode = this->AddHeaderVolume( filename, centerImage, labelMap, volname, headerStorage);
+    return volumeNode;
+  }
+
+  //  need implementation, we are asked for just one file.
+  volumeNode = this->AddHeaderVolume( filename, centerImage, labelMap, volname, headerStorage); 
+  return volumeNode;
+
+}
+
+
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename, int centerImage, int labelMap, const char* volname, 
                                                            vtkMRMLVolumeHeaderlessStorageNode *headerStorage)
@@ -205,6 +248,45 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
     displayNode->Delete();
     }
   return volumeNode;
+}
+
+//----------------------------------------------------------------------------
+// int loadingOptions is bit-coded as following:
+// bit 0: label map
+// bit 1: centered
+// bit 2: loading signal file
+// higher bits are reserved for future use
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions)
+{
+
+  vtkMRMLVolumeNode *volumeNode = NULL;
+
+  int centerImage = 0;
+  int labelMap = 0;
+  int singleFile = 0;
+  if ( loadingOptions & 1 )    // labelMap is true
+  {
+    labelMap = 1;
+  }
+  if ( loadingOptions & 2 )    // centerImage is true
+  {
+    centerImage = 1;
+  }
+  if ( loadingOptions & 4 )    // singleFile is true
+  {
+    singleFile = 1;
+  }
+
+  if ( singleFile == 0 )  // call legacy code 
+  {
+    volumeNode = this->AddArchetypeVolume( filename, centerImage, labelMap, volname);
+    return volumeNode;
+  }
+
+  //  need implementation, we are asked for just one file.
+  volumeNode = this->AddArchetypeVolume( filename, centerImage, labelMap, volname); 
+  return volumeNode;
+
 }
 
 //----------------------------------------------------------------------------

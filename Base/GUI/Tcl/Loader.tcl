@@ -68,7 +68,10 @@ namespace eval Loader {
     }
 
     set volumeLogic [$::slicer3::VolumesGUI GetLogic]
-    set node [$volumeLogic AddArchetypeVolume $archetype $centered $labelMap $name]
+    ## set node [$volumeLogic AddArchetypeVolume $archetype $centered $labelMap $name]
+    ## There is no need to provide single file loading option when "Add Data"
+    set loadingOptions [expr $labelMap * 1 + $centered * 2]
+    set node [$volumeLogic AddArchetypeVolume $path $name $loadingOptions]
     set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
 
     if { $node == "" } {
@@ -481,7 +484,9 @@ itcl::body Loader::apply { } {
           set centered [$w GetCellTextAsInt $row $col(Centered)]
           set labelMap [$w GetCellTextAsInt $row $col(LabelMap)]
           set volumeLogic [$::slicer3::VolumesGUI GetLogic]
-          set node [$volumeLogic AddArchetypeVolume $path $centered $labelMap $name]
+          ## set node [$volumeLogic AddArchetypeVolume $path $centered $labelMap $name]
+          set loadingOptions [expr $labelMap * 1 + $centered * 2]
+          set node [$volumeLogic AddArchetypeVolume $path $name $loadingOptions]
           set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
           if { $node == "" } {
             $this errorDialog "Could not open $path"

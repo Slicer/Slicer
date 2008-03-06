@@ -128,6 +128,7 @@ protected:
     vtkKWEntryWithLabel  *NameEntry;
     vtkKWMenuButtonWithLabel *CenterImageMenu;
     vtkKWCheckButton *LabelMapCheckButton;
+    vtkKWCheckButton *SingleFileCheckButton;
     vtkKWCheckButton *UseCompressionCheckButton;
     vtkKWPushButton *ApplyButton;
 

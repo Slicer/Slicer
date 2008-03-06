@@ -68,6 +68,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
   this->NameEntry = NULL;
   this->CenterImageMenu = NULL;
   this->LabelMapCheckButton = NULL;
+  this->SingleFileCheckButton = NULL;
   this->UseCompressionCheckButton = NULL;
   this->ApplyButton=NULL;
 
@@ -124,6 +125,11 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     {
     this->LabelMapCheckButton->SetParent(NULL );
     this->LabelMapCheckButton->Delete ( );
+    }
+  if (this->SingleFileCheckButton)
+    {
+    this->SingleFileCheckButton->SetParent(NULL );
+    this->SingleFileCheckButton->Delete ( );
     }
   if (this->UseCompressionCheckButton)
     {
@@ -362,29 +368,27 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
     {
     const char *fileName = this->LoadVolumeButton->GetWidget()->GetFileName();
     vtkKWMenuButton *mb = this->CenterImageMenu->GetWidget();
-    int centered;
+    int loadingOptions = 0;
     if ( !strcmp (mb->GetValue(), "Centered") )
       {
-      centered = 1;
+      loadingOptions += 2;
       }
-    else 
-      {
-      centered = 0;
-      }
-    int labelMap;
+
     if ( this->LabelMapCheckButton->GetSelectedState() )
       {
-      labelMap = 1;
+      loadingOptions += 1;
       }
-    else
+
+    if ( this->SingleFileCheckButton->GetSelectedState() )
       {
-      labelMap = 0;
+      loadingOptions += 4;
       }
+
     vtkSlicerVolumesLogic* volumeLogic = this->Logic;
     vtkMRMLVolumeHeaderlessStorageNode* snode = this->VolumeFileHeaderWidget->GetVolumeHeaderlessStorageNode();
 
-    this->VolumeNode = volumeLogic->AddHeaderVolume(fileName, centered, labelMap,  
-      this->NameEntry->GetWidget()->GetValue(), snode);
+    this->VolumeNode = volumeLogic->AddHeaderVolume( fileName, this->NameEntry->GetWidget()->GetValue(), 
+                                                     snode, loadingOptions );
     return;
     }
   if (this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
@@ -410,25 +414,22 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       {
 
       vtkKWMenuButton *mb = this->CenterImageMenu->GetWidget();
-      int centered;
-      if ( !strcmp (mb->GetValue(), "Centered") )
-        {
-        centered = 1;
-        }
-      else 
-        {
-        centered = 0;
-        }
 
-      int labelMap;
+      int loadingOptions = 0;
+      if ( !strcmp (mb->GetValue(), "Centered") )
+      {
+        loadingOptions += 2;
+      }
+
       if ( this->LabelMapCheckButton->GetSelectedState() )
-        {
-        labelMap = 1;
-        }
-      else
-        {
-        labelMap = 0;
-        }
+      {
+        loadingOptions += 1;
+      }
+
+      if ( this->SingleFileCheckButton->GetSelectedState() )
+      {
+        loadingOptions += 4;
+      }
 
       std::string fileString(fileName);
       for (unsigned int i = 0; i < fileString.length(); i++)
@@ -444,7 +445,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
 
       vtkMRMLVolumeNode *volumeNode = NULL;
       std::string archetype( this->NameEntry->GetWidget()->GetValue() );
-      volumeNode = volumeLogic->AddArchetypeVolume( fileString.c_str(), centered, labelMap, archetype.c_str() );
+      volumeNode = volumeLogic->AddArchetypeVolume( fileString.c_str(), archetype.c_str(), loadingOptions );
       if ( volumeNode == NULL ) 
         {
         this->VolumeNode = NULL;
@@ -469,7 +470,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
       if (volumeNode)
         {
-        if (labelMap)
+        if ( loadingOptions & 1 )   // volume loaded as a label map
           {
           this->ApplicationLogic->GetSelectionNode()->SetActiveLabelVolumeID( volumeNode->GetID() );
           } 
@@ -886,8 +887,17 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->LabelMapCheckButton->Create();
   this->LabelMapCheckButton->SelectedStateOff();
   this->LabelMapCheckButton->SetText("Label Map");
-  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+  this->Script("pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
     this->LabelMapCheckButton->GetWidgetName());
+
+  // Single File button (Do we load a file or a series?)
+  this->SingleFileCheckButton = vtkKWCheckButton::New();
+  this->SingleFileCheckButton->SetParent(this->LoadFrame->GetFrame());
+  this->SingleFileCheckButton->Create();
+  this->SingleFileCheckButton->SelectedStateOff();
+  this->SingleFileCheckButton->SetText("Single File");
+  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    this->SingleFileCheckButton->GetWidgetName());
 
   // Apply button
   this->ApplyButton = vtkKWPushButton::New();

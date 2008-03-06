@@ -294,6 +294,9 @@ proc XcedeCatalogImportEntryVolume {node} {
 
     set centered 1
     set labelmap 0
+    set singleFile 0
+    set loadingOptions [expr $labelMap * 1 + $centered * 2 + $singleFile * 4]
+
     if { [info exists n(labelmap) ] } {
         set labelmap 1
     }
@@ -303,7 +306,7 @@ proc XcedeCatalogImportEntryVolume {node} {
         puts "XcedeCatalogImportEntryVolume: Unable to access Volumes Logic. $n(uri) not imported."
         return
     }
-    set volumeNode [$logic AddArchetypeVolume $n(uri) $centered $labelmap $n(name) ]
+    set volumeNode [$logic AddArchetypeVolume $n(uri) $n(name) $loadingOptions]
     if { $volumeNode == "" } {
         puts "XcedeCatalogImportEntryVolume: Unable to add Volume Node for $n(uri)."
         return
