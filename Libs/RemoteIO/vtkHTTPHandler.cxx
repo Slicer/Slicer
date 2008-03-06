@@ -33,11 +33,16 @@ size_t read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
 
 size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
 {
+  if (stream == NULL)
+    {
+    std::cerr << "write_callback: can't write, stream is null. size = " << size << std::endl;
+    return -1;
+    }
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
   return written;
 }
 
-size_t ProgressCallback(void *prt /*std::ofstream* outputFile*/, double dltotal, double dlnow, double ultotal, double ulnow)
+size_t ProgressCallback(FILE* outputFile, double dltotal, double dlnow, double ultotal, double ulnow)
 {
   if(ultotal == 0)
     {
@@ -101,12 +106,13 @@ int vtkHTTPHandler::CanHandleURI ( const char *uri )
       }
     if ( prefix == "http" )
       {
+      vtkDebugMacro("vtkHTTPHandler: CanHandleURI: can handle this file: " << uriString.c_str());
       return (1);
       }
     }
   else
     {
-    vtkDebugMacro ( "vtkHTTPHandler::CanHandleURI: unrecognized uri format: " << uri );
+    vtkDebugMacro ( "vtkHTTPHandler::CanHandleURI: unrecognized uri format: " << uriString.c_str() );
     }
   return ( 0 );
 }
@@ -116,8 +122,13 @@ int vtkHTTPHandler::CanHandleURI ( const char *uri )
 //----------------------------------------------------------------------------
 void vtkHTTPHandler::InitTransfer( )
 {
-  curl_global_init(CURL_GLOBAL_ALL); 
+  curl_global_init(CURL_GLOBAL_ALL);
+  vtkDebugMacro("vtkHTTPHandler: InitTransfer: initialising CurlHandle");
   this->CurlHandle = curl_easy_init();
+  if (this->CurlHandle == NULL)
+    {
+    vtkErrorMacro("InitTransfer: unable to initialise");
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -131,6 +142,12 @@ int vtkHTTPHandler::CloseTransfer( )
 //----------------------------------------------------------------------------
 void vtkHTTPHandler::StageFileRead(const char * source, const char * destination)
 {
+  if (source == NULL || destination == NULL)
+    {
+    vtkErrorMacro("StageFileRead: source or dest is null!");
+    return;
+    }
+  /*
   if (this->LocalFile)
     {
     this->LocalFile->close();
@@ -138,19 +155,48 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
     this->LocalFile = NULL;
     }
   this->LocalFile = new std::ofstream(destination, std::ios::binary);
+*/
+  this->InitTransfer( );
+  
   curl_easy_setopt(this->CurlHandle, CURLOPT_HTTPGET, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
 //  curl_easy_setopt(this->CurlHandle, CURLOPT_NOPROGRESS, false);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, write_callback);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, NULL);
+  // use the default curl write call back
+  curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
+  this->LocalFile = fopen(destination, "wb");
+  // output goes into LocalFile, must be  FILE*
+  curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, this->LocalFile);
 //  curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSDATA, NULL);
 //  curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
-  curl_easy_perform(this->CurlHandle);
+  vtkDebugMacro("StageFileRead: about to do the curl download... source = " << source << ", dest = " << destination);
+  CURLcode retval = curl_easy_perform(this->CurlHandle);
 
+  if (retval == CURLE_OK)
+    {
+    vtkDebugMacro("StageFileRead: successful return from curl");
+    }
+  else if (retval == CURLE_BAD_FUNCTION_ARGUMENT)
+    {
+    vtkErrorMacro("StageFileRead: bad function argument to curl, did you init CurlHandle?");
+    }
+  else if (retval == CURLE_OUT_OF_MEMORY)
+    {
+    vtkErrorMacro("StageFileRead: curl ran out of memory!");
+    }
+  else
+    {
+    const char *stringError = curl_easy_strerror(retval);
+    vtkErrorMacro("StageFileRead: error running curl: " << stringError);
+    }
+  this->CloseTransfer();
+
+  /*
   this->LocalFile->close();
   delete this->LocalFile;
   this->LocalFile = NULL;
+  */
+  fclose(this->LocalFile);
 }
 
 
@@ -158,6 +204,7 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
 void vtkHTTPHandler::StageFileWrite(const char * source, const char * destination)
 {
   //--- check these arguments...
+  /*
   if (this->LocalFile)
     {
     this->LocalFile->close();
@@ -165,18 +212,37 @@ void vtkHTTPHandler::StageFileWrite(const char * source, const char * destinatio
     this->LocalFile = NULL;
     }
   this->LocalFile = new std::ofstream(destination, std::ios::binary);
+  */
+  this->LocalFile = fopen(source, "r");
+
+  this->InitTransfer( );
+  
   curl_easy_setopt(this->CurlHandle, CURLOPT_PUT, 1);
   curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
 //  curl_easy_setopt(this->CurlHandle, CURLOPT_NOPROGRESS, false);
   curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
   curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, read_callback);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, NULL);
+  curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, this->LocalFile);
 //  curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSDATA, NULL);
   //curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
-  curl_easy_perform(this->CurlHandle);
+  CURLcode retval = curl_easy_perform(this->CurlHandle);
 
+   if (retval == CURLE_OK)
+    {
+    vtkDebugMacro("StageFileWrite: successful return from curl");
+    }
+   else
+    {
+    const char *stringError = curl_easy_strerror(retval);
+    vtkErrorMacro("StageFileWrite: error running curl: " << stringError);
+    }
+   
+  this->CloseTransfer();
+  
+  fclose(this->LocalFile);
+  /*
   this->LocalFile->close();
   delete this->LocalFile;
   this->LocalFile = NULL;
-
+  */
 }
