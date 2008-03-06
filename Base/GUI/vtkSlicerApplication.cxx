@@ -518,6 +518,59 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
                     << this->TemporaryDirectory);
     }
   
+
+
+  // Make a good guess before we read from the registry.  Default to a
+  // subdirectory called Slicer3Cache in a standard temp location.
+#ifdef _WIN32
+  GetTempPath(vtkKWRegistryHelper::RegistryKeyValueSizeMax,
+              this->RemoteCacheDirectory);
+#else
+  strcpy(this->RemoteCacheDirectory, "/cache");
+#endif
+
+
+  // Tk does not understand Windows short path names, so convert to
+  // long path names and unix slashes
+  std::string remoteCacheDirectory = this->RemoteCacheDirectory;
+  remoteCacheDirectory
+    = itksys::SystemTools::GetActualCaseForPath(remoteCacheDirectory.c_str());
+  itksys::SystemTools::ConvertToUnixSlashes( remoteCacheDirectory );
+  
+  itksys::SystemTools::SplitPath(remoteCacheDirectory.c_str(), pathcomponents);
+#ifdef _WIN32
+  pathcomponents.push_back("Slicer3Cache");
+#else
+  std::string dirName("Slicer3Cache");
+  if ( getenv("USER") != NULL )
+    {
+    dirName = dirName + getenv("USER");
+    }
+  pathcomponents.push_back(dirName);
+#endif
+  pathWithSlicer = itksys::SystemTools::JoinPath(pathcomponents);
+  
+  itksys::SystemTools::MakeDirectory(pathWithSlicer.c_str());
+  if (pathWithSlicer.size() < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+    {
+    strcpy(this->RemoteCacheDirectory, pathWithSlicer.c_str());
+    }
+  else
+    {
+    // path with "Slicer3Cache" attached is too long. Try it without
+    // "Slicer3Cache". If still too long, use the original path. (This path
+    // may have short names in it and hence will not work with Tk).
+    if (remoteCacheDirectory.size()
+        < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->RemoteCacheDirectory, remoteCacheDirectory.c_str());
+      }
+    vtkWarningMacro("Default remoteCache directory path " << pathWithSlicer.c_str()
+                    << " is too long to be stored in the registry."
+                    << " Using unmodified remoteCache directory path "
+                    << this->RemoteCacheDirectory);
+    }
+
   //--- web browser
   // start with no browser...
   strcpy(this->WebBrowser, "");
@@ -675,8 +728,6 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::RemoteCacheDirectoryRegKey))
     {
-
-
     this->GetRegistryValue(
       2, "RunTime", vtkSlicerApplication::RemoteCacheDirectoryRegKey,
       this->RemoteCacheDirectory);
