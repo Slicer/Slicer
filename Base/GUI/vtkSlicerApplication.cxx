@@ -703,7 +703,6 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     this->RemoteCacheFreeBufferSize = this->GetIntRegistryValue(
       2, "RunTime", vtkSlicerApplication::RemoteCacheFreeBufferSizeRegKey);
     }
-   this->RelayRemoteIOSettingsFromRegistry();
 }
 
 

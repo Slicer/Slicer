@@ -908,6 +908,7 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->SetApplication ( slicerApp );
     appGUI->SetAndObserveApplicationLogic ( appLogic );
     appGUI->SetAndObserveMRMLScene ( scene );
+    slicerApp->RelayRemoteIOSettingsFromRegistry();
 
     // set fonts from registry before building GUI...
     /*
