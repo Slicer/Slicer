@@ -2,6 +2,7 @@
 #define __vtkSlicerDataTransferWidget_h
 
 #include "vtkSlicerWidget.h"
+#include "vtkDataTransfer.h"
 
 //widgets
 class vtkKWIcon;
@@ -11,6 +12,7 @@ class vtkKWFrame;
 class vtkKWTopLevel;
 class vtkSlicerDataTransferIcons;
 class vtkKWTextWithScrollbars;
+
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerWidget
   {
@@ -35,10 +37,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     vtkGetObjectMacro (InformationText, vtkKWTextWithScrollbars );
     vtkGetObjectMacro (DataTransferIcons, vtkSlicerDataTransferIcons );
     vtkGetObjectMacro (InformationCloseButton, vtkKWPushButton );
-    vtkGetMacro ( TransferType, int );
-    vtkSetMacro ( TransferType, int );
-    vtkGetMacro ( Status, int );
-    vtkSetMacro ( Status, int );
+    vtkGetObjectMacro ( DataTransfer, vtkDataTransfer);
+    vtkSetObjectMacro ( DataTransfer, vtkDataTransfer);
 
     // Description:
     // Add/Remove observers on widgets in the GUI.
@@ -82,30 +82,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     vtkKWFrame *InformationFrame;
     vtkKWTextWithScrollbars *InformationText;
     vtkKWPushButton *InformationCloseButton;
-    int TransferType;
-    int Status;
-
-    //BTX
-    enum {
-      StatusUnspecified = 0,
-      StatusGoing,
-      StatusCancelled,
-      StatusDone,
-    };
-    enum {
-      Unspecified = 0,
-      Download,
-      Upload,
-      Load,
-      Save,
-      DownloadToCache,
-      UploadFromCache,
-      LoadFromCache,
-      SaveToCache,
-      LoadFromDisk,
-      SaveToDisk,
-    };
-    //ETX
+    vtkDataTransfer *DataTransfer;
 
   private:
     vtkSlicerDataTransferWidget (const vtkSlicerDataTransferWidget&); // Not implemented.

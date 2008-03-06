@@ -33,8 +33,7 @@ vtkSlicerDataTransferWidget::vtkSlicerDataTransferWidget(void)
     this->InformationFrame = NULL;
     this->InformationText = NULL;
     this->InformationCloseButton = NULL;
-    this->Status = 0;
-    this->TransferType = 0;
+    this->DataTransfer = NULL;
   }
 
 
@@ -54,8 +53,10 @@ void vtkSlicerDataTransferWidget::PrintSelf (ostream& os, vtkIndent indent)
   os << indent << "InformationFrame: " << this->GetInformationFrame ( ) << "\n";
   os << indent << "InformationText: " << this->GetInformationText ( ) << "\n";
   os << indent << "InformationCloseButton: " << this->GetInformationCloseButton ( ) << "\n";
-  os << indent << "TransferType: " << this->GetTransferType() << "\n";
-  os << indent << "Status: " << this->GetTransferType() << "\n";
+  if ( this->DataTransfer )
+    {
+    this->GetDataTransfer()->PrintSelf(os, indent.GetNextIndent() );
+    }
   }
 
 //---------------------------------------------------------------------------
@@ -128,6 +129,11 @@ vtkSlicerDataTransferWidget::~vtkSlicerDataTransferWidget(void)
       this->DataTransferFrame->Delete();
       this->DataTransferFrame = NULL;
       }
+    if ( this->DataTransfer )
+      {
+      vtkSetAndObserveMRMLNodeMacro ( this->DataTransfer, NULL);
+      this->DataTransfer->Delete();
+      }
   }
 
 //---------------------------------------------------------------------------
@@ -178,7 +184,9 @@ void vtkSlicerDataTransferWidget::ProcessWidgetEvents (vtkObject *caller, unsign
   // cancel data transfer
   if (this->CancelButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent)
     {
+    this->DataTransfer->SetCancelRequested ( 1 );
     this->InvokeTransferCancelEvent ( );
+    
     this->UpdateWidget();
     }
 
@@ -256,5 +264,5 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
   this->InformationCloseButton->SetParent ( this->InformationFrame );
   this->InformationCloseButton->Create();
   this->InformationCloseButton->SetText ( "Close" );
-  
+
   }
