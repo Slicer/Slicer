@@ -67,6 +67,7 @@ void vtkDataIOManagerLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     // ignore node events that aren't volumes or slice nodes
     if ( (node != NULL) && (event == vtkDataIOManager::RemoteReadEvent ) )
       {
+      vtkDebugMacro("ProcessMRMLEvents: calling queue read on the node " << node->GetID());
       this->QueueRead ( node );
       }  
     else if ( (node != NULL) && (event == vtkDataIOManager::RemoteWriteEvent ) )
@@ -102,6 +103,7 @@ vtkDataTransfer* vtkDataIOManagerLogic::AddNewDataTransfer ( vtkMRMLNode *node )
 {
   if ( this->GetDataIOManager() == NULL )
     {
+    vtkErrorMacro("AddNewDataTransfer: node is null");
     return (NULL);
     }
   else
@@ -142,22 +144,26 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     vtkErrorMacro("QueueRead: null URI handler!");
     return 0;
     }
-
+  else
+    {
+    vtkDebugMacro("QueueRead: got the handler");
+    }
   if ( this->DataIOManager == NULL )
     {
-    vtkErrorMacro("QueueRead: null DataManager!");
+    vtkErrorMacro("QueueRead: DataIOManager is null");
     return 0;
     }
 
   vtkCacheManager *cm = this->GetDataIOManager()->GetCacheManager();
   if ( cm == NULL )
     {
+    vtkErrorMacro("QueueRead: CacheManager is null");
     return 0;
     }
 
   const char *source = dnode->GetStorageNode()->GetURI();
   const char *dest = cm->GetFilenameFromURI ( source );
-  
+  vtkDebugMacro("QueueRead: got the source " << source << " and dest " << dest);
 
   //--- set the destination filename in the node.
   dnode->GetStorageNode()->SetFileName ( dest );
@@ -167,6 +173,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   //--- just return.
   if ( (cm->CachedFileExists ( dest )) && ( !(cm->GetEnableForceRedownload())) )
     {
+    vtkDebugMacro("QueueRead: the destination file is there and we're not forceing redownload");
     return 1;
     }
 
@@ -182,6 +189,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   vtkDataTransfer *transfer = this->AddNewDataTransfer ( node );
   if ( transfer == NULL )
     {
+    vtkErrorMacro("QueueRead: failed to add new data transfer");
     return 0;
     }
   transfer->SetSourceURI ( source );
@@ -190,9 +198,16 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   transfer->SetTransferType ( vtkDataTransfer::RemoteDownload );
   transfer->SetTransferStatus ( vtkDataTransfer::Unspecified, true );
 
-
+  /*
+  if (this->GetDataIOManager()->GetEnableAsynchronousIO() )
+    {
+    vtkWarningMacro("QueueRead: disabling asynch mode!!!");
+    this->GetDataIOManager()->SetEnableAsynchronousIO(0);
+    }
+  */
   if ( this->GetDataIOManager()->GetEnableAsynchronousIO() )
     {
+    vtkDebugMacro("QueueRead: Schedule an ASYNCHRONOUS data transfer");
     //---
     //--- Schedule an ASYNCHRONOUS data transfer
     //---
@@ -220,10 +235,13 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     }
   else
     {
+    vtkDebugMacro("QueueRead: Schedule a SYNCHRONOUS data transfer");
     //---
     //--- Execute a SYNCHRONOUS data transfer
     //---
     this->ApplyTransfer ( transfer );
+    // now set the node's storage node state to ready
+    dnode->GetStorageNode()->SetReadStateReady();
     }
   return 1;
 }
@@ -259,6 +277,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
   vtkDataTransfer *dt = reinterpret_cast < vtkDataTransfer*> (clientdata);
   if ( dt == NULL )
     {
+    vtkErrorMacro("ApplyTransfer: data transfer is null");
     return;
     }
 
@@ -274,6 +293,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
   vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID ((dt->GetTransferNodeID() ));
   if ( node == NULL )
     {
+    vtkErrorMacro("ApplyTransfer: can't get mrml node from transfer node id " << dt->GetTransferNodeID());
     return;
     }
 
@@ -294,6 +314,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
         }
       else
         {
+        vtkDebugMacro("ApplyTransfer: stage file read on the handler..., source = " << source << ", dest = " << dest);
         handler->StageFileRead( source, dest);
         }
       }
