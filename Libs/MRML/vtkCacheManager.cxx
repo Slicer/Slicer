@@ -48,11 +48,12 @@ void vtkCacheManager::SetRemoteCacheDirectory (const char *dir )
     {
     std::string tst = dirstring.substr(len-1);
     //---
-    //--- make sure we have a backslash on the end of the dirstring.
+    //--- make sure to remove backslash on the end of the dirstring.
     //---
-    if ( tst != "/" )
+    if ( tst == "/" )
       {
-      dirstring += "/";
+      dirstring = dirstring.substr( 0, len-1 );
+      //dirstring += "/";
       }
     this->RemoteCacheDirectory = dirstring;
     }
@@ -194,6 +195,7 @@ std::vector< std::string > vtkCacheManager::GetAllCachedFiles ( )
 int vtkCacheManager::GetCachedFileList ( const char *dirname )
 {
 
+//  vtksys_stl::string convdir = vtksys::SystemTools::ConvertToOutputPath ( dirname );
   if ( vtksys::SystemTools::FileIsDirectory ( dirname ) )
     {
     vtksys::Directory dir;
@@ -291,7 +293,7 @@ const char* vtkCacheManager::AddCachePathToFilename ( const char *filename )
   if ( cachedir.c_str() != NULL )
     {
     vtksys_stl::string comp ( filename );
-    vtksys_stl::string ret = cachedir + comp;
+    vtksys_stl::string ret = cachedir + "/" + comp;
     return ( ret.c_str() );
     }
   else
@@ -342,7 +344,10 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   vtkDebugMacro("GetFilenameFromURI: got filename name " << filename.c_str());
 
   //--- Create absolute path
-  filename = this->GetRemoteCacheDirectory() + filename;
+  vtksys_stl::string absolute = this->GetRemoteCacheDirectory();
+  absolute += "/";
+  absolute += filename;
+  filename = absolute;
   
   const char *inStr = filename.c_str();
   char *returnString = NULL;

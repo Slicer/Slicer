@@ -34,8 +34,8 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   // Description:
   // Sets the name of the directory to use for local file caching
   // Does some checking to make sure this is a valid directory
-  // on the local system. Makes sure there's a "/" at the end
-  // of the string.
+  // on the local system. Makes sure there's NO "/" at the end
+  // of the string, or kwsys/SystemTools will not see as a valid dir.
   virtual void SetRemoteCacheDirectory (const char *dir );
 
   // Description:
