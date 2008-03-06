@@ -311,6 +311,7 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
 
   if (uri == NULL)
     {
+    vtkDebugMacro("GetFilenameFromURI: input uri is null");
     return "(null)";
     }
   vtksys_stl::string kwInString = vtksys_stl::string(uri);
@@ -338,6 +339,8 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   //--- Now strip off all the uri prefix (does this work?)
   vtksys_stl::string filename = vtksys::SystemTools::GetFilenameName ( kwInString );
 
+  vtkDebugMacro("GetFilenameFromURI: got filename name " << filename.c_str());
+
   //--- Create absolute path
   filename = this->GetRemoteCacheDirectory() + filename;
   
@@ -349,6 +352,8 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   returnString = cp1;
   do { *cp1++ = *cp2++; } while ( --n );
 
+  vtkDebugMacro("GetFilenameFromURI: returning " << returnString);
+  
   return returnString;
 }
 
@@ -395,9 +400,17 @@ void vtkCacheManager::RemoveFromCachedFileList ( const char * target )
 //----------------------------------------------------------------------------
 void vtkCacheManager::RemoveFromCache( const char *target )
 {
+  if (target == NULL)
+    {
+    return;
+    }
 
+  if (this->CachedFileFind( target, this->GetRemoteCacheDirectory() ) == NULL)
+    {
+    vtkErrorMacro("RemoveFromCache: nothing to do, returning.");
+    return;
+    }
   std::string str = this->CachedFileFind( target, this->GetRemoteCacheDirectory() );
-
   if ( str.c_str() != NULL )
     {
     //--- remove the file or directory in str....
@@ -494,12 +507,18 @@ int vtkCacheManager::CachedFileExists ( const char *filename )
 //----------------------------------------------------------------------------
 const char* vtkCacheManager::CachedFileFind ( const char * target, const char *dirname )
 {
-
   std::string testFile;
   const char *result = NULL;
-    
+
+  if (target == NULL || dirname == NULL)
+    {
+    vtkErrorMacro("CachedFileFind: target or dirname null");
+    return result;
+    }   
+
   if ( vtksys::SystemTools::FileIsDirectory ( dirname ) )
     {
+    vtkDebugMacro("CachedFileFind: dirname is a directory: " << dirname);
     vtksys::Directory dir;
     dir.Load( dirname );
     size_t fileNum;
