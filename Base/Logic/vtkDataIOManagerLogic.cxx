@@ -139,11 +139,13 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
   if ( handler == NULL)
     {
+    vtkErrorMacro("QueueRead: null URI handler!");
     return 0;
     }
 
   if ( this->DataIOManager == NULL )
     {
+    vtkErrorMacro("QueueRead: null DataManager!");
     return 0;
     }
 
