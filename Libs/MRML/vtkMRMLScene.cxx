@@ -292,7 +292,7 @@ vtkMRMLScene::~vtkMRMLScene()
     this->DataIOManager = NULL;
     }
   if ( this->URIHandlerCollection != NULL )
-    {
+    {    
     this->URIHandlerCollection->RemoveAllItems();
     this->URIHandlerCollection->Delete();
     this->URIHandlerCollection = NULL;
@@ -557,6 +557,30 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection)
     {
     vtkErrorMacro("Need URL specified");
     return 0;
+    }
+  // check to see if the mrml file lives on a remote disk
+  if (this->GetCacheManager())
+    {
+    int remote = this->GetCacheManager()->IsRemoteReference(this->URL.c_str());
+    if (remote)
+      {
+      vtkDebugMacro("LoadIntoScene: mrml file lives on a remote disk: " << this->URL.c_str());
+      // do a synchronous download for now
+      vtkURIHandler *handler = this->FindURIHandler(this->URL.c_str());
+      if (handler != NULL)
+        {
+        // put it on disk somewhere
+        const char *localURL = this->GetCacheManager()->GetFilenameFromURI(this->URL.c_str());
+        handler->StageFileRead(this->URL.c_str(), localURL);
+        // now over ride the URL setting
+        vtkDebugMacro("LoadIntoScene: downloaded the remote MRML file " << this->URL.c_str() << ", resetting URL to local file " << localURL);
+        this->SetURL(localURL);
+        }
+      else
+        {
+        vtkErrorMacro("LoadIntoScene: unable to find a file handler for uri " << this->URL.c_str());
+        }
+      }
     }
   this->RootDirectory = vtksys::SystemTools::GetParentDirectory(this->GetURL());   
   if ( this->RootDirectory[0] != '\0' )
@@ -1778,6 +1802,7 @@ vtkURIHandler * vtkMRMLScene::FindURIHandler(const char *URI)
     if (vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i)) &&
         vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i))->CanHandleURI(URI))
       {
+      vtkDebugMacro("FindURIHandler: found a handler for URI " << URI << " at index " << i << " in the handler collection");
       return vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i));
       }
     }
