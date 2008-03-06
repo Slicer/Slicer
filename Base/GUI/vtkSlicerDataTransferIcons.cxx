@@ -14,7 +14,7 @@ vtkSlicerDataTransferIcons::vtkSlicerDataTransferIcons ( )
     this->TransferTypeLoadIcon = vtkKWIcon::New ( );
     this->TransferTypeSaveIcon = vtkKWIcon::New ( );
 
-    this->TransferStatusUnspecifiedIcon = vtkKWIcon::New ( );
+    this->TransferStatusReadyIcon = vtkKWIcon::New ( );
     this->TransferStatusGoingIcon = vtkKWIcon::New ( );
     this->TransferStatusGoing0Icon = vtkKWIcon::New ( );
     this->TransferStatusGoing1Icon = vtkKWIcon::New ( );
@@ -54,10 +54,10 @@ vtkSlicerDataTransferIcons::~vtkSlicerDataTransferIcons ( )
     this->TransferTypeSaveIcon = NULL;
     }
 
-  if ( this->TransferStatusUnspecifiedIcon )
+  if ( this->TransferStatusReadyIcon )
     {
-    this->TransferStatusUnspecifiedIcon->Delete();
-    this->TransferStatusUnspecifiedIcon = NULL;
+    this->TransferStatusReadyIcon->Delete();
+    this->TransferStatusReadyIcon = NULL;
     }
   if ( this->TransferStatusGoingIcon )
     {
@@ -153,11 +153,11 @@ void vtkSlicerDataTransferIcons::AssignImageDataToIcons ( )
                                 image_TransferTypeSave_length, 0);
 
   
-  this->TransferStatusUnspecifiedIcon->SetImage( image_TransferStatusUnspecified,
-                                image_TransferStatusUnspecified_width,
-                                image_TransferStatusUnspecified_height,
-                                image_TransferStatusUnspecified_pixel_size,
-                                image_TransferStatusUnspecified_length, 0);
+  this->TransferStatusReadyIcon->SetImage( image_TransferStatusReady,
+                                image_TransferStatusReady_width,
+                                image_TransferStatusReady_height,
+                                image_TransferStatusReady_pixel_size,
+                                image_TransferStatusReady_length, 0);
   this->TransferStatusGoingIcon->SetImage( image_TransferStatusGoing,
                                 image_TransferStatusGoing_width,
                                 image_TransferStatusGoing_height,
@@ -244,7 +244,7 @@ void vtkSlicerDataTransferIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "TransferTypeLoadIcon: " << this->GetTransferTypeLoadIcon ( ) << "\n";
     os << indent << "TransferTypeSaveIcon: " << this->GetTransferTypeSaveIcon ( ) << "\n";
 
-    os << indent << "TransferStatusUnspecifiedIcon: " << this->GetTransferStatusUnspecifiedIcon ( ) << "\n";
+    os << indent << "TransferStatusReadyIcon: " << this->GetTransferStatusReadyIcon ( ) << "\n";
     os << indent << "TransferStatusGoingIcon: " << this->GetTransferStatusGoingIcon ( ) << "\n";
     os << indent << "TransferStatusGoing0Icon: " << this->GetTransferStatusGoing0Icon ( ) << "\n";
     os << indent << "TransferStatusGoing1Icon: " << this->GetTransferStatusGoing1Icon ( ) << "\n";
