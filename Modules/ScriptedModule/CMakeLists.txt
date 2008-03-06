@@ -7,7 +7,6 @@ SET(ScriptedModule_SRCS
   vtkScriptedModuleLogic.cxx
   vtkScriptedModuleGUI.cxx
   vtkMRMLScriptedModuleNode.cxx
-  vtkScriptedTask.cxx
 )
 
 # Abstract/pure virtual classes
