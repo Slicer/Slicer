@@ -30,6 +30,9 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   vtkSetMacro ( Progress, int );
   vtkGetMacro ( TransferStatus, int );
 
+  vtkGetMacro ( CancelRequested, int );
+  vtkSetMacro ( CancelRequested, int );
+
   // Description:
   // Set the status of a data transfer (Idle, Scheduled, Cancelled Running,
   // Completed).  The "modify" parameter indicates whether the object
@@ -101,6 +104,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   int TransferType;
   char* TransferNodeID;
   int Progress;
+  int CancelRequested;
 
 };
 

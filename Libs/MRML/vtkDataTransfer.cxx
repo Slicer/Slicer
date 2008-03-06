@@ -15,6 +15,8 @@ vtkDataTransfer::vtkDataTransfer()
   this->TransferType = vtkDataTransfer::Unspecified;
   this->TransferNodeID = NULL;
   this->Progress = 0;
+  this->CancelRequested = 0;
+
 }
 
 
@@ -30,6 +32,7 @@ vtkDataTransfer::~vtkDataTransfer()
   this->TransferType = vtkDataTransfer::Unspecified;
   this->TransferNodeID = NULL;
   this->Progress = 0;
+  this->CancelRequested = 0;
 }
 
 
@@ -43,6 +46,7 @@ void vtkDataTransfer::PrintSelf(ostream& os, vtkIndent indent)
     ( this->DestinationURI ? this->DestinationURI : "(none)") << "\n";
   os << indent << "Handler: " << this->GetHandler() << "\n";
   os << indent << "TransferStatus: " << this->GetTransferStatus() << "\n";
+  os << indent << "CancelRequested: " << this->GetCancelRequested() << "\n";
   os << indent << "TransferID: " << this->GetTransferID() << "\n";
   os << indent << "TransferType: " << this->GetTransferType() << "\n";
   os << indent << "TransferNodeID: " << this->GetTransferNodeID() << "\n";
