@@ -18,7 +18,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferIcons : public vtkSlicerIc
     vtkGetObjectMacro ( TransferTypeLoadIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferTypeSaveIcon, vtkKWIcon);
 
-    vtkGetObjectMacro ( TransferStatusUnspecifiedIcon, vtkKWIcon);
+    vtkGetObjectMacro ( TransferStatusReadyIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferStatusGoingIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferStatusGoing0Icon, vtkKWIcon);
     vtkGetObjectMacro ( TransferStatusGoing1Icon, vtkKWIcon);
@@ -45,7 +45,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferIcons : public vtkSlicerIc
     vtkKWIcon *TransferTypeLoadIcon;
     vtkKWIcon *TransferTypeSaveIcon;
 
-    vtkKWIcon *TransferStatusUnspecifiedIcon;
+    vtkKWIcon *TransferStatusReadyIcon;
     vtkKWIcon *TransferStatusGoingIcon;
     vtkKWIcon *TransferStatusGoing0Icon;
     vtkKWIcon *TransferStatusGoing1Icon;
