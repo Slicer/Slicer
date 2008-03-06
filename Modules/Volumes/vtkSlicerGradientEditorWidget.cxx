@@ -40,6 +40,7 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   this->RunButton = NULL;
   this->FiducialSelector = NULL;
   this->NumberOfChanges = 0;
+  this->TensorNode = NULL;
   }
 
 //---------------------------------------------------------------------------
@@ -100,6 +101,11 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->Application->Delete();
     this->Application = NULL;
     }
+  if (this->TensorNode)
+    {
+    this->TensorNode->Delete();
+    this->TensorNode = NULL;
+    }
   this->NumberOfChanges = 0;
   }
 
@@ -133,6 +139,7 @@ void vtkSlicerGradientEditorWidget::PrintSelf (ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
   {
+
   //enable undo/restore button, when values were changed
   if((this->MeasurementFrameWidget == vtkSlicerMeasurementFrameWidget::SafeDownCast(caller) && 
     event == vtkSlicerMeasurementFrameWidget::ChangedEvent) ||( event == vtkSlicerGradientsWidget::ChangedEvent && 
@@ -183,9 +190,9 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
 
     // set its name
     /*for(int i=0; i<=module->GetNumberOfRegisteredModules();i++)
-      {
-      vtkWarningMacro("\n"<<module->GetRegisteredModuleNameByIndex(i));
-      }*/
+    {
+    vtkWarningMacro("\n"<<module->GetRegisteredModuleNameByIndex(i));
+    }*/
     module->SetModuleDescription("Diffusion Tensor Estimation");
 
     // set the parameters
@@ -196,11 +203,11 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     module->SetParameterAsString("inputVolume", this->ActiveVolumeNode->GetID());
 
     // create the output nodes
-    vtkMRMLDiffusionTensorVolumeNode* tensorNode= vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
+    this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
       this->MRMLScene->CreateNodeByClass("vtkMRMLDiffusionTensorVolumeNode"));
-    tensorNode->SetScene(this->GetMRMLScene());
-    tensorNode->SetName("Output Tensor Node");
-    this->MRMLScene->AddNode(tensorNode);
+    this->TensorNode->SetScene(this->GetMRMLScene());
+    this->TensorNode->SetName("Output Tensor Node");
+    this->MRMLScene->AddNode(this->TensorNode);
 
     vtkMRMLScalarVolumeNode* baseline= vtkMRMLScalarVolumeNode::SafeDownCast(
       this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
@@ -214,13 +221,11 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     mask->SetName("Output Threshold Mask");
     this->MRMLScene->AddNode(mask);
 
-    //tensorNode->Copy(this->ActiveVolumeNode);
-    tensorNode->SetBaselineNodeID(baseline->GetID());
-    tensorNode->SetMaskNodeID(mask->GetID());
-    //tensorNode->SetImageData(this->ActiveVolumeNode->GetImageData());
-    
+    this->TensorNode->SetBaselineNodeID(baseline->GetID());
+    this->TensorNode->SetMaskNodeID(mask->GetID());
+
     // set output parameters
-    module->SetParameterAsString("outputTensor", tensorNode->GetID());
+    module->SetParameterAsString("outputTensor", this->TensorNode->GetID());
     module->SetParameterAsString("outputBaseline", baseline->GetID());
     module->SetParameterAsString("thresholdMask", mask->GetID());
 
@@ -231,36 +236,54 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     clmLogic->SetTemporaryDirectory(this->Application->GetTemporaryDirectory());
     clmLogic->ApplyAndWait(module);
 
-    // check the status
-    const char* status = module->GetStatusString(); // if status is not "Completed", complain
-    vtkWarningMacro("status is: "<<status);
+    //clean up
+    clmLogic->Delete();
+    module->Delete();
+    baseline->Delete();
+    mask->Delete();
 
-    /* //tractography seeding
+    //check status
+    if(module->GetStatus() != module->Completed)
+      {
+      vtkErrorMacro("CLM call from GradientEditor: status is: "<<module->GetStatusString()); //if status is not "Completed", complain      
+      }
+    else
+      {
+      this->CreateTracts(); //start tractography seeding
+      }
+    }
+  }
+
+void vtkSlicerGradientEditorWidget::CreateTracts ( )
+  {
+  //wait untill ImageData is set in other thread
+  if(this->TensorNode->GetImageData() == NULL)
+    {
+    this->Script ( "update idletasks" );
+    this->Script ( "after 5 \"%s CreateTracts \"",  this->GetTclName() );
+    }
+  else
+    {
+    //get fiducial list
     vtkMRMLFiducialListNode* fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(
       this->FiducialSelector->GetSelected());
-    
+
+    //create new fiber node
     vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::New();
     fiberNode->SetScene(this->GetMRMLScene());
     fiberNode->SetName("Fiber Node");
     this->MRMLScene->AddNode(fiberNode);
 
+    //create tracts
     vtkSlicerTractographyFiducialSeedingLogic* tractLogic = vtkSlicerTractographyFiducialSeedingLogic::New();
-
-    if(tensorNode != NULL && fiducialListNode != NULL && fiberNode != NULL)
+    if(this->TensorNode != NULL && fiducialListNode != NULL && fiberNode != NULL && this->TensorNode->GetImageData() != NULL)
       {
-      tractLogic->CreateTracts(tensorNode, fiducialListNode, fiberNode, "Linear Measurement", 0.1,0.8,0.5);
-      }*/
-    char* id = tensorNode->GetID();
+      tractLogic->CreateTracts(this->TensorNode, fiducialListNode, fiberNode, "Linear Measurement", 0.1,0.8,0.5);
+      }
+
     //clean up
-    clmLogic->Delete();
-    module->Delete();
-    tensorNode->Delete();
-    baseline->Delete();
-    mask->Delete();
-    //fiberNode->Delete();
-    //tractLogic->Delete();
-    vtkMRMLNode* test = this->GetMRMLScene()->GetNodeByID(id);
-    test->Delete();
+    fiberNode->Delete();
+    tractLogic->Delete();
     }
   }
 

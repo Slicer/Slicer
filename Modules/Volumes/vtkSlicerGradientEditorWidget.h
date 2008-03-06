@@ -41,6 +41,10 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     // Method to update the widget when a new node is loaded.
     void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node);
 
+    // Description:
+    // Method to create tracts with calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
+    void CreateTracts();
+
     vtkSetObjectMacro(ApplicationGUI, vtkSlicerApplicationGUI);
     vtkSetObjectMacro(Application, vtkSlicerApplication);
 
@@ -57,6 +61,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     vtkSlicerApplicationGUI *ApplicationGUI;
     vtkSlicerApplication *Application;
     int NumberOfChanges;
+    vtkMRMLDiffusionTensorVolumeNode *TensorNode;
     //widgets (GUI)
     vtkSlicerMeasurementFrameWidget *MeasurementFrameWidget;
     vtkSlicerGradientsWidget *GradientsWidget;
@@ -65,7 +70,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     vtkKWPushButton *RunButton;    
     vtkKWPushButton *RestoreButton;
     vtkKWPushButton *UndoButton;
-    
+       
   private:
     vtkSlicerGradientEditorWidget (const vtkSlicerGradientEditorWidget&); // Not implemented.
     void operator = (const vtkSlicerGradientEditorWidget&); //Not implemented.
