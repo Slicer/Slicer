@@ -908,7 +908,6 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->SetApplication ( slicerApp );
     appGUI->SetAndObserveApplicationLogic ( appLogic );
     appGUI->SetAndObserveMRMLScene ( scene );
-    slicerApp->RelayRemoteIOSettingsFromRegistry();
 
     // set fonts from registry before building GUI...
     /*
@@ -947,6 +946,7 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->BuildGUI ( );
     appGUI->AddGUIObservers ( );
     slicerApp->SetApplicationGUI ( appGUI );
+    slicerApp->ConfigureRemoteIOSettingsFromRegistry();
 
     // Set cache paths for modules
 
@@ -2125,7 +2125,6 @@ int Slicer3_main(int argc, char *argv[])
 
     appGUI->GetMainSlicerWindow()->PrepareForDelete();
     appGUI->GetMainSlicerWindow()->Close();
-
 
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
