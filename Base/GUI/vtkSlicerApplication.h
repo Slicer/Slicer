@@ -91,7 +91,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // proper registry level set (if any).
   virtual void RestoreApplicationSettingsFromRegistry();
   virtual void SaveApplicationSettingsToRegistry();
-  virtual void RelayRemoteIOSettingsFromRegistry();
+  virtual void ConfigureRemoteIOSettingsFromRegistry();
+  virtual void UpdateRemoteIOSettingsForRegistry();
 
   // Description:
   // Some constants

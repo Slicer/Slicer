@@ -44,6 +44,7 @@
 #include "vtkSlicerSliceGUICollection.h"
 
 #include "vtkCacheManager.h"
+#include "vtkDataIOManager.h"
 
 class vtkObject;
 class vtkLogoWidget;
@@ -259,8 +260,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
                        dims[0] * dims[1] * nComps, vtkKWIcon::ImageOptionFlipVertical);
       };
 
-    void SetRemoteCacheDirectory( const char *dir );
-    const char* GetRemoteCacheDirectory();
+    virtual void SaveRemoteIOConfigurationToRegistry();
+
+    //---Description:
+    //--- Called by main application to propagate registry
+    //--- values through the ApplicationGUI to CacheManager.
+    virtual void ConfigureRemoteIOSettingsFromRegistry();
 
 protected:
     vtkSlicerApplicationGUI ( );

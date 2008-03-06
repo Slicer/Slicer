@@ -2094,29 +2094,59 @@ void vtkSlicerApplicationGUI::BuildGUIFrames ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::SetRemoteCacheDirectory( const char *dir )
+void vtkSlicerApplicationGUI::ConfigureRemoteIOSettingsFromRegistry()
 {
   vtkMRMLScene *scene = this->GetMRMLScene();
-  if ( scene != NULL )
+  if ( this->GetApplication() != NULL )
     {
-    if ( scene->GetCacheManager() != NULL )
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+    if ( scene != NULL )
       {
-      scene->GetCacheManager()->SetRemoteCacheDirectory(dir);
+      vtkCacheManager *cm = scene->GetCacheManager();
+      if ( cm != NULL )
+        {
+        cm->SetRemoteCacheDirectory (app->GetRemoteCacheDirectory() );
+        cm->SetEnableForceRedownload (app->GetEnableForceRedownload() );
+        //cm->SetEnableRemoteCacheOverwriting (app->GetEnableRemoteCacheOverwriting() );
+        cm->SetRemoteCacheLimit (app->GetRemoteCacheLimit() );
+        cm->SetRemoteCacheFreeBufferSize (app->GetRemoteCacheFreeBufferSize() );
+      }
+      vtkDataIOManager *dm = scene->GetDataIOManager();
+      if ( dm != NULL )
+        {
+        dm->SetEnableAsynchronousIO (app->GetEnableAsynchronousIO() );
+        }
       }
     }
 }
 
 
+
+
 //---------------------------------------------------------------------------
-const char* vtkSlicerApplicationGUI::GetRemoteCacheDirectory()
+void vtkSlicerApplicationGUI::SaveRemoteIOConfigurationToRegistry()
 {
+
   vtkMRMLScene *scene = this->GetMRMLScene();
-  if ( scene != NULL )
+  if ( this->GetApplication() != NULL )
     {
-    if ( scene->GetCacheManager() != NULL )
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+    if ( scene != NULL )
       {
-      return scene->GetCacheManager()->GetRemoteCacheDirectory();
+      vtkCacheManager *cm = scene->GetCacheManager();
+      if ( cm != NULL )
+        {
+        app->SetRemoteCacheDirectory (cm->GetRemoteCacheDirectory() );
+        app->SetEnableForceRedownload (cm->GetEnableForceRedownload() );
+        //app->SetEnableRemoteCacheOverwriting (cm->GetEnableRemoteCacheOverwriting() );
+        app->SetRemoteCacheLimit (cm->GetRemoteCacheLimit() );
+        app->SetRemoteCacheFreeBufferSize (cm->GetRemoteCacheFreeBufferSize() );
+        }
+      vtkDataIOManager *dm = scene->GetDataIOManager();
+      if ( dm != NULL )
+        {
+        app->SetEnableAsynchronousIO (dm->GetEnableAsynchronousIO() );
+        }
       }
     }
-  return ( NULL );
 }
