@@ -14,6 +14,7 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkSmartPointer.h"
+#include "vtkStringArray.h"
 #include "vtkSlicerApplicationLogic.h"
 
 #include "vtkSlicerColorLogic.h"
@@ -509,6 +510,7 @@ int vtkSlicerApplicationLogic::RequestModified( vtkObject *obj )
 
   if (active)
     {
+    obj->Register(this); // hold the object and release it when processed
     this->ModifiedQueueLock->Lock();
     (*this->InternalModifiedQueue).push( obj );
 //     std::cout << " [" << (*this->InternalModifiedQueue).size()
@@ -597,6 +599,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
   
   if (active)
     {
+
     // pull an object off the queue to modify
     this->ModifiedQueueLock->Lock();
     if ((*this->InternalModifiedQueue).size() > 0)
@@ -609,17 +612,44 @@ void vtkSlicerApplicationLogic::ProcessModified()
                     && (obj == (*this->InternalModifiedQueue).front()))
         {
         (*this->InternalModifiedQueue).pop();
+        obj->Delete(); // decrement ref count
         }
       }
     this->ModifiedQueueLock->Unlock();
     
+    // if this is a string array, try to evaluate the entries in the interp
+    //  - this allows threads to indirectly access the interpreter
+    vtkStringArray *stringArray = vtkStringArray::SafeDownCast( obj );
+    if ( stringArray != NULL )
+      {
+      Tcl_Interp *interp = vtkKWApplication::GetMainInterp();
+      int numValues = stringArray->GetNumberOfValues();
+      for (int i = 0; i < numValues; i++)
+        {
+        const char *script = stringArray->GetValue( i ).c_str();
+        int returnCode;
+#if TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION <= 2
+        returnCode = Tcl_GlobalEval(interp, script);
+#else
+        returnCode = Tcl_EvalEx(interp, script, -1, TCL_EVAL_GLOBAL);
+#endif  
+        if ( returnCode != TCL_OK )
+          {
+          vtkErrorMacro ("Error evaluating message from script.\n" << 
+            script << "\n" <<Tcl_GetStringResult (interp) );
+          }
+        }
+      }
+
     // Modify the object
+    //  - decrement reference count that was increased when it was added to the queue
     if (obj)
       {
       obj->Modified();
+      obj->Delete();
       obj = 0;
       }
-    }
+  }
   
   // schedule the next timer
   if ((*this->InternalModifiedQueue).size() > 0)
