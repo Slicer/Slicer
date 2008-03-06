@@ -81,6 +81,13 @@ vtkMRMLFreeSurferModelStorageNode::vtkMRMLFreeSurferModelStorageNode()
 {
   this->SurfaceFileName = NULL;
   this->UseStripper = 1;
+  // set up the list of known surface file extensions
+  this->AddFileExtension(std::string(".orig"));
+  this->AddFileExtension(std::string(".inflated"));
+  this->AddFileExtension(std::string(".sphere"));
+  this->AddFileExtension(std::string(".white"));
+  this->AddFileExtension(std::string(".smoothwm"));
+  this->AddFileExtension(std::string(".pial"));
   // set up the list of known surface overlay file extensions
   this->AddOverlayFileExtension(std::string(".w"));
   this->AddOverlayFileExtension(std::string(".thickness"));
@@ -277,12 +284,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
   int result = 1;
   try
     {
-    if ( extension == std::string(".orig") ||
-         extension == std::string(".inflated") ||
-         extension == std::string(".sphere") ||
-         extension == std::string(".white") ||
-         extension == std::string(".smoothwm") ||
-         extension == std::string(".pial") ) 
+    if ( this->IsKnownFileExtension(extension))
       {
       vtkDebugMacro("Reading in a freesurfer surface file, extension = " << extension.c_str());
 
@@ -880,6 +882,7 @@ void vtkMRMLFreeSurferModelStorageNode::AddOverlayFileExtension(std::string ext)
     this->KnownOverlayFileExtensions.push_back(ext);
     }
 }
+
 //----------------------------------------------------------------------------
 bool vtkMRMLFreeSurferModelStorageNode::IsKnownOverlayFileExtension(std::string ext)
 {
@@ -892,4 +895,71 @@ bool vtkMRMLFreeSurferModelStorageNode::IsKnownOverlayFileExtension(std::string 
       }
     }
   return false;  
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLFreeSurferModelStorageNode::AddFileExtension(std::string ext)
+{
+  if (!IsKnownFileExtension(ext))
+    {
+    this->KnownFileExtensions.push_back(ext);
+    }
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLFreeSurferModelStorageNode::IsKnownFileExtension(std::string ext)
+{
+  std::vector< std::string >::iterator iter;
+  for (iter = this->KnownFileExtensions.begin(); iter != this->KnownFileExtensions.end(); ++iter)
+    {
+    if ((*iter) == ext)
+      {
+      return true;
+      }
+    }
+  return false;  
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLFreeSurferModelStorageNode::SupportedFileType(const char *fileName)
+{
+  // check to see which file name we need to check
+  std::string name;
+  if (fileName)
+    {
+    name = std::string(fileName);
+    }
+  else if (this->FileName != NULL)
+    {
+    name = std::string(this->FileName);
+    }
+  else if (this->URI != NULL)
+    {
+    name = std::string(this->URI);
+    }
+  else
+    {
+    vtkWarningMacro("SupportedFileType: no file name to check");
+    return 0;
+    }
+  
+  std::string::size_type loc = name.find_last_of(".");
+  if( loc == std::string::npos ) 
+    {
+    vtkErrorMacro("SupportedFileType: no file extension specified");
+    return 0;
+    }
+  std::string extension = name.substr(loc);
+
+  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
+  if ( this->IsKnownOverlayFileExtension(extension) ||
+       this->IsKnownFileExtension(extension))
+    {
+    return 1;
+    }
+  else
+    {
+    return 0;
+    }
 }

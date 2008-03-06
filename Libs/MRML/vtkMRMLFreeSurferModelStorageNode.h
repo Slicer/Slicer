@@ -107,7 +107,20 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   // Description:
   // returns true if on the list, false otherwise
   bool IsKnownOverlayFileExtension(std::string ext);
+  // Description:
+  // Add a known file extension
+  void AddFileExtension(std::string ext);
+  // Description:
+  // returns true if on the list, false otherwise
+  bool IsKnownFileExtension(std::string ext);
 //ETX
+
+  // Description:
+  // Check to see if this storage node can handle the file type in the input
+  // string. If input string is null, check URI, then check FileName. Returns
+  // 1 if is supported, 0 otherwise.
+  // Subclasses should implement this method.
+  virtual int SupportedFileType(const char *fileName);
   
 protected:
   vtkMRMLFreeSurferModelStorageNode();
@@ -121,7 +134,10 @@ protected:
   std::vector< std::string > OverlayFiles;
   // Description:
   // a list of valid overlay file extensions
-  std::vector< std::string > KnownOverlayFileExtensions; 
+  std::vector< std::string > KnownOverlayFileExtensions;
+  // Description:
+  // a list of valid file extensions
+  std::vector< std::string > KnownFileExtensions;
   //ETX
 
   char *SurfaceFileName;
