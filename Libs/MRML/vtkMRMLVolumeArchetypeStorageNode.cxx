@@ -129,7 +129,6 @@ void vtkMRMLVolumeArchetypeStorageNode::ProcessParentNode(vtkMRMLNode *parentNod
 }
 
 //----------------------------------------------------------------------------
-
 int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 {
 
@@ -139,23 +138,29 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return 0;         
     }
-  if (this->GetFileName() == NULL) 
+  if (this->GetFileName() == NULL && this->GetURI() == NULL) 
     {
-      return 0;
-    }
-
-  std::string fullName = this->GetFullNameFromFileName();
-
-  if (fullName == std::string("")) 
-    {
-    vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
+    vtkErrorMacro("ReadData: both filename and uri are null.");
     return 0;
     }
-
+  
   Superclass::StageReadData(refNode);
   if ( this->GetReadState() == this->Pending )
     {
     // remote file download hasn't finished
+    vtkWarningMacro("ReadData: read state is pending, remote download hasn't finished yet");
+    return 0;
+    }
+  else
+    {
+    vtkDebugMacro("ReadData: read state is ready, URI = " << (this->GetURI() == NULL ? "null" : this->GetURI()) << ", filename = " << (this->GetFileName() == NULL ? "null" : this->GetFileName()));
+    }
+  
+  std::string fullName = this->GetFullNameFromFileName();
+
+  if (fullName == std::string("")) 
+    {
+    vtkErrorMacro("ReadData: File name not specified");
     return 0;
     }
   
@@ -311,7 +316,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
   std::string fullName = this->GetFullNameFromFileName();  
   if (fullName == std::string("")) 
     {
-    vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
+    vtkErrorMacro("WriteData: File name not specified");
     return 0;
     }
   vtkITKImageWriter *writer = vtkITKImageWriter::New();
@@ -341,4 +346,31 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
   
   return result;
 
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLVolumeArchetypeStorageNode::SupportedFileType(const char *fileName)
+{
+  // check to see which file name we need to check
+  std::string name;
+  if (fileName)
+    {
+    name = std::string(fileName);
+    }
+  else if (this->FileName != NULL)
+    {
+    name = std::string(this->FileName);
+    }
+  else if (this->URI != NULL)
+    {
+    name = std::string(this->URI);
+    }
+  else
+    {
+    vtkWarningMacro("SupportedFileType: no file name to check");
+    return 0;
+    }
+
+  // for now, return 1
+  return 1;
 }
