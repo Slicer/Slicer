@@ -96,10 +96,16 @@ vtkDataTransfer *vtkDataIOManager::AddNewDataTransfer ( )
 //----------------------------------------------------------------------------
 vtkDataTransfer *vtkDataIOManager::AddNewDataTransfer ( vtkMRMLNode *node )
 {
+  if (node == NULL)
+    {
+    vtkErrorMacro("AddNewDataTransfer: node is null");
+    return NULL;
+    }
   vtkDataTransfer *transfer = vtkDataTransfer::New();
   transfer->SetTransferID ( this->GetUniqueTransferID() );
   transfer->SetTransferNodeID ( node->GetID() );
   this->AddDataTransfer ( transfer );
+  vtkDebugMacro("AddNewDataTransfer: returning new transfer");
   return (transfer );
 }
 
@@ -108,10 +114,16 @@ vtkDataTransfer *vtkDataIOManager::AddNewDataTransfer ( vtkMRMLNode *node )
 void vtkDataIOManager::AddDataTransfer ( vtkDataTransfer *transfer )
 {
 
+  if (transfer == NULL)
+    {
+    vtkErrorMacro("AddDataTransfer: can't add a null transfer");
+    return;
+    }
   if ( this->DataTransferCollection == NULL )
     {
     this->DataTransferCollection = vtkCollection::New();
     }
+  vtkDebugMacro("AddDataTransfer: adding item");
   this->DataTransferCollection->AddItem ( transfer );
   this->Modified();
 }
@@ -198,28 +210,44 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
   vtkMRMLDisplayableNode *dnode = vtkMRMLDisplayableNode::SafeDownCast ( node );
   if (dnode == NULL)
     {
-    vtkErrorMacro("QueueRead: unable to cast input mrml node " << node->GetID() << " to a displayable node");
+    vtkErrorMacro("QueueRead: unable to cast input mrml node to a displayable node");
     return;
     }
   if (dnode->GetStorageNode() == NULL)
     {
-    vtkErrorMacro("QueueRead: unable to get storage node from the displayable node " << dnode->GetID() << ", returning");
+    vtkErrorMacro("QueueRead: unable to get storage node from the displayable node, returning");
     return;
     }
   vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
+  vtkDebugMacro("QueueRead: got the uri handler from the storage node");
   const char *source = dnode->GetStorageNode()->GetURI();
   const char *dest; 
-    
+
+  if (source == NULL)
+    {
+    vtkDebugMacro("QueueRead: storage node's URI is null, returning.");
+    return;
+    }
   vtkCacheManager *cm = this->GetCacheManager();
   if ( cm != NULL )
     {
     dest = cm->GetFilenameFromURI(source);
+    if (dest == NULL)
+      {
+      vtkDebugMacro("QueueRead: unable to get file name from source URI " << source);
+      return;
+      }
+    else
+      {
+      vtkDebugMacro("QueueRead: got destination: " << dest);
+      }
     //--- check to see if RemoteCacheLimit is exceeded
     //--- check to see if FreeBufferSize is exceeded.
    
     //--- if force redownload is enabled, remove the old file from cache.
     if (cm->GetEnableForceRedownload () )
       {
+      vtkDebugMacro("QueueRead: Calling remove from cache");
       this->GetCacheManager()->RemoveFromCache ( dest );
       }
     
@@ -262,12 +290,14 @@ int vtkDataIOManager::GetUniqueTransferID ( )
   // loop until found or return.
   while ( !exists )
     {
+    
     // loop thru the existing data transfers
     int n = this->DataTransferCollection->GetNumberOfItems();
+    vtkDebugMacro("GetUniqueTransferID: in loop, id = " << id << ", n = " << n);
     for ( int i=0; i < n; i++ )
       {
       dt = vtkDataTransfer::SafeDownCast(this->DataTransferCollection->GetItemAsObject ( i ) );
-      if  ( id == dt->GetTransferID() )
+      if  ( dt != NULL && id == dt->GetTransferID() )
         {
         exists = 1;
         break;
@@ -280,7 +310,13 @@ int vtkDataIOManager::GetUniqueTransferID ( )
       id++;
       exists = 0;
       }
+    else
+      {
+      vtkDebugMacro("GetUniqueTransferID: in loop, returning id = " << id);
+      return (id);
+      }
     }
+  vtkDebugMacro("GetUniqueTransferID: returning id = " << id);
   return ( id );
 }
 
