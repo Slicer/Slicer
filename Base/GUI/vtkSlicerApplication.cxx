@@ -541,7 +541,6 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
 #ifdef _WIN32
   pathcomponents.push_back("Slicer3Cache");
 #else
-  std::string dirName("Slicer3Cache");
   if ( getenv("USER") != NULL )
     {
     dirName = dirName + getenv("USER");
