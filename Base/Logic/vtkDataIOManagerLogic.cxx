@@ -173,6 +173,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   //--- just return.
   if ( (cm->CachedFileExists ( dest )) && ( !(cm->GetEnableForceRedownload())) )
     {
+    dnode->GetStorageNode()->SetReadStateReady();
     vtkDebugMacro("QueueRead: the destination file is there and we're not forceing redownload");
     return 1;
     }
