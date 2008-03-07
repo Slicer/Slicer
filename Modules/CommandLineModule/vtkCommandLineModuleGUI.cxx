@@ -913,6 +913,7 @@ void vtkCommandLineModuleGUI::Enter ( )
     this->BuildGUI();
     this->Built = true;
     this->AddGUIObservers();
+    this->Logic->SetTemporaryDirectory( ((vtkSlicerApplication*)this->GetApplication())->GetTemporaryDirectory() );
     }
     this->CreateModuleEventBindings();
 }
