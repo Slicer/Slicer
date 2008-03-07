@@ -292,9 +292,19 @@ const char* vtkCacheManager::AddCachePathToFilename ( const char *filename )
   vtksys_stl::string cachedir ( this->GetRemoteCacheDirectory() );
   if ( cachedir.c_str() != NULL )
     {
-    vtksys_stl::string comp ( filename );
-    vtksys_stl::string ret = cachedir + "/" + comp;
-    return ( ret.c_str() );
+    vtksys_stl::string ret = cachedir;
+    ret += "/";
+    ret += filename;
+
+    const char *outStr = ret.c_str();
+    char *absoluteName = NULL;
+    size_t n = strlen(outStr) + 1;
+    char *cp1 = new char[n];
+    const char *cp2 = (outStr);
+    absoluteName = cp1;
+    do { *cp1++ = *cp2++; } while ( --n );
+    return  absoluteName ;
+
     }
   else
     {
@@ -505,7 +515,18 @@ int vtkCacheManager::CachedFileExists ( const char *filename )
     }
   else
     {
-    return 0;
+    //--- check to see if RemoteCacheDirectory/filename exists.
+    std::string testFile = this->RemoteCacheDirectory;
+    testFile += "/";
+    testFile += filename;
+    if ( vtksys::SystemTools::FileExists ( testFile.c_str() ))
+      {
+      return 1;
+      }
+    else
+      {
+      return 0;
+      }
     }
 }
 

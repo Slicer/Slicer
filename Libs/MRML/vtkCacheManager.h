@@ -62,17 +62,30 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   
   // Description:
   // Checks to see if a uri appears to point to remote location
-  // and returns true if so.
+  // and returns true if so. Looks for a '://' and if present,
+  // checks to see if the prefix is 'file'. If not 'file' but the
+  // thing:// pattern exists, then returns true.
   virtual int IsRemoteReference ( const char *uri );
+  // Description:
+  // Looks for a 'file://' in the uri and if present, returns true.
   virtual int IsLocalReference ( const char *uri );
+
   // Description:
   // Checks to see if a uri is a file on disk and returns 
-  // true if so.
+  // true if so. Strips off a file:// prefix if present, and
+  // expects an absolute path.
   virtual int LocalFileExists ( const char *uri );
     
   // Description:
-  // Returns the full path of a file or dir in the cache if it's present
+  // Takes a filename and a dirname (usually called with the
+  // RemoteCachedDirectory) and returns the full path of
+  // the filename if it exists under the dirname.
   const char* CachedFileFind ( const char * target, const char *dirname );
+  // Description:
+  // Checks to see if the The uri provided exists on disk.
+  // If not, it appends the Remote Cache Directory path
+  // and checks again, in case no path was provided.
+  // If neither exists, returns 0. If one exists, returns 1.
   virtual int CachedFileExists ( const char *filename );
   const char* GetFilenameFromURI ( const char *uri );
   const char* AddCachePathToFilename ( const char *filename );
@@ -96,13 +109,15 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   //vtkSetMacro ( EnableRemoteCacheOverwriting, int );
 
   //BTX
-    enum
+  // in case we need these.
+  enum
     {
       NoCachedFile=0,
       OldCachedFile,
       CachedFile,
     };
 
+  // in case we need these.
   enum
     {
       InsufficientFreeBufferEvent =  21000,
@@ -122,6 +137,9 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   std::string RemoteCacheDirectory;
   std::vector< std::string > GetAllCachedFiles();
   // This array contains a list of cached file names (without paths)
+  // in case it's faster to search thru this list than to
+  // snuffle thru a large cache dir. Must keep current
+  // with every download, remove from cache, and clearcache call.
   std::vector< std::string > CachedFileList;
   //ETX
 
