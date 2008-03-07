@@ -10,12 +10,9 @@
 # different. So, the two configured files not only have different
 # settings, they have a different structure.
 
-
 # Settings that are the same for build trees and installation trees
 #
 #
-
-
 
 # Settings specific to build trees
 #
@@ -35,3 +32,12 @@ SET(VTK_DIR_CONFIG ${VTK_DIR})
 # Configure Slicer3Config.cmake for the install tree.
 CONFIGURE_FILE(${Slicer3_SOURCE_DIR}/Slicer3Config.cmake.in
                ${Slicer3_BINARY_DIR}/Slicer3Config.cmake @ONLY IMMEDIATE)
+
+# Settings specific for installation trees      
+#      
+# (Note we configure from a different file than use for the build tree)      
+           
+# Configure Slicer3Config.cmake for the install tree.      
+CONFIGURE_FILE(${Slicer3_SOURCE_DIR}/Slicer3InstallConfig.cmake.in      
+               ${Slicer3_BINARY_DIR}/Utilities/Slicer3Config.cmake @ONLY IMMEDIATE)      
+     
