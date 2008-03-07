@@ -1,6 +1,10 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 
+#include "vtkSlicerModuleGUI.h"
+#include "vtkSlicerGUICollection.h"
+#include "vtkCommandLineModuleGUI.h"
+#include "vtkSlicerTractographyFiducialSeedingGUI.h"
 //MRML nodes
 #include "vtkMRMLNode.h"
 #include "vtkMRMLCommandLineModuleNode.h"
@@ -28,7 +32,6 @@ vtkCxxRevisionMacro (vtkSlicerGradientEditorWidget, "$Revision: 1.0 $");
 vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   {
   this->Application = NULL;
-  this->ApplicationGUI = NULL;
   this->ActiveVolumeNode = NULL;
   this->OriginalNode = vtkMRMLDiffusionWeightedVolumeNode::New();
   this->MeasurementFrameWidget = NULL;
@@ -188,12 +191,9 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     vtkMRMLCommandLineModuleNode* module = vtkMRMLCommandLineModuleNode::SafeDownCast(
       this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
 
-    // set its name
-    /*for(int i=0; i<=module->GetNumberOfRegisteredModules();i++)
-    {
-    vtkWarningMacro("\n"<<module->GetRegisteredModuleNameByIndex(i));
-    }*/
+    // set its name  
     module->SetModuleDescription("Diffusion Tensor Estimation");
+    module->SetName("GradientEditor: Tensor Estimation");
 
     // set the parameters
     module->SetParameterAsString("estimationMethod", "Least Squares");
@@ -229,15 +229,19 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     module->SetParameterAsString("outputBaseline", baseline->GetID());
     module->SetParameterAsString("thresholdMask", mask->GetID());
 
-    // execute the plugin
-    vtkCommandLineModuleLogic* clmLogic = vtkCommandLineModuleLogic::New();
-    clmLogic->SetAndObserveMRMLScene(this->GetMRMLScene());
-    clmLogic->SetApplicationLogic(this->Application->GetApplicationGUI()->GetApplicationLogic());
-    clmLogic->SetTemporaryDirectory(this->Application->GetTemporaryDirectory());
-    clmLogic->ApplyAndWait(module);
+    //get the existing gui of the "Diffusion Tensor Estimation Command Line Module" 
+    vtkCommandLineModuleGUI *moduleGUI = vtkCommandLineModuleGUI::SafeDownCast(
+      this->Application->GetModuleGUIByName("Diffusion Tensor Estimation"));
+    moduleGUI->Enter();
+
+    //set command line node to gui an logic
+    moduleGUI->SetCommandLineModuleNode(module);
+    moduleGUI->GetLogic()->SetCommandLineModuleNode(module);
+    
+    //estimate tensors
+    moduleGUI->GetLogic()->ApplyAndWait(module);
 
     //clean up
-    clmLogic->Delete();
     module->Delete();
     baseline->Delete();
     mask->Delete();
@@ -274,16 +278,21 @@ void vtkSlicerGradientEditorWidget::CreateTracts ( )
     fiberNode->SetName("Fiber Node");
     this->MRMLScene->AddNode(fiberNode);
 
+    //get the existing gui of the "Tractography Fiducial Seeding Module"
+    vtkSlicerTractographyFiducialSeedingGUI *moduleGUI = vtkSlicerTractographyFiducialSeedingGUI::SafeDownCast(
+      this->Application->GetModuleGUIByName("FiducialSeeding"));    
+    moduleGUI->Enter(); 
+    
+    //set the selectors to my nodes
+    moduleGUI->SetVolumeSelector(this->TensorNode);
+    moduleGUI->SetFiducialSelector(fiducialListNode);
+    moduleGUI->SetOutFiberSelector(fiberNode);
+
     //create tracts
-    vtkSlicerTractographyFiducialSeedingLogic* tractLogic = vtkSlicerTractographyFiducialSeedingLogic::New();
-    if(this->TensorNode != NULL && fiducialListNode != NULL && fiberNode != NULL && this->TensorNode->GetImageData() != NULL)
-      {
-      tractLogic->CreateTracts(this->TensorNode, fiducialListNode, fiberNode, "Linear Measurement", 0.1,0.8,0.5);
-      }
+    moduleGUI->CreateTracts();
 
     //clean up
     fiberNode->Delete();
-    tractLogic->Delete();
     }
   }
 

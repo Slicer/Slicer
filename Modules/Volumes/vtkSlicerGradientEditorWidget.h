@@ -45,7 +45,6 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     // Method to create tracts with calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
     void CreateTracts();
 
-    vtkSetObjectMacro(ApplicationGUI, vtkSlicerApplicationGUI);
     vtkSetObjectMacro(Application, vtkSlicerApplication);
 
   protected:
@@ -58,7 +57,6 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkMRMLDiffusionWeightedVolumeNode *OriginalNode;
-    vtkSlicerApplicationGUI *ApplicationGUI;
     vtkSlicerApplication *Application;
     int NumberOfChanges;
     vtkMRMLDiffusionTensorVolumeNode *TensorNode;
