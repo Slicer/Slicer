@@ -283,6 +283,7 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
     {
     return;
     }
+  
   vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeSelector->GetSelected());
   vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(this->FiducialSelector->GetSelected());
   vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(this->OutFiberSelector->GetSelected());
@@ -411,3 +412,18 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
 
   
 }
+
+void vtkSlicerTractographyFiducialSeedingGUI::SetVolumeSelector(vtkMRMLNode *node)
+  {
+  this->VolumeSelector->SetSelected(node);
+  }
+
+void vtkSlicerTractographyFiducialSeedingGUI::SetFiducialSelector(vtkMRMLNode *node)
+  {
+  this->FiducialSelector->SetSelected(node);
+  }
+
+void vtkSlicerTractographyFiducialSeedingGUI::SetOutFiberSelector(vtkMRMLNode *node)
+  {
+  this->OutFiberSelector->SetSelected(node);
+  }

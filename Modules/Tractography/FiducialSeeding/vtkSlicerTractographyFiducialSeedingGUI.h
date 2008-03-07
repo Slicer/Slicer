@@ -92,16 +92,19 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   vtkSetClampMacro(MaximumPropagationDistance,double,0.0,VTK_DOUBLE_MAX);
   vtkGetMacro(MaximumPropagationDistance,double);
 
+  // Description:
+  // Create tracts from fiducuials
+  void CreateTracts();
+
+  void SetVolumeSelector(vtkMRMLNode *node);
+  void SetFiducialSelector(vtkMRMLNode *node);
+  void SetOutFiberSelector(vtkMRMLNode *node);
   
 protected:
   vtkSlicerTractographyFiducialSeedingGUI();
   virtual ~vtkSlicerTractographyFiducialSeedingGUI();
   vtkSlicerTractographyFiducialSeedingGUI(const vtkSlicerTractographyFiducialSeedingGUI&);
   void operator=(const vtkSlicerTractographyFiducialSeedingGUI&);
-
-  // Description:
-  // Create tracts from fiducuials
-  void CreateTracts();
 
   char* StoppingMode;
   vtkFloatingPointType StoppingThreshold;
