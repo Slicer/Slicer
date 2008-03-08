@@ -280,7 +280,6 @@ const char* vtkCacheManager::EncodeURI ( const char *uri )
   const char *cp2 = (inStr);
   returnString = cp1;
   do { *cp1++ = *cp2++; } while ( --n );
-
   return (returnString);
 }
 
@@ -366,7 +365,6 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   const char *cp2 = (inStr);
   returnString = cp1;
   do { *cp1++ = *cp2++; } while ( --n );
-
   vtkDebugMacro("GetFilenameFromURI: returning " << returnString);
   
   return returnString;
@@ -391,7 +389,7 @@ void vtkCacheManager::UpdateCacheInformation ( )
 
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::RemoveFromCachedFileList ( const char * target )
+void vtkCacheManager::DeleteFromCachedFileList ( const char * target )
 {
   
   std::string tstring = target;
@@ -413,19 +411,22 @@ void vtkCacheManager::RemoveFromCachedFileList ( const char * target )
 
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::RemoveFromCache( const char *target )
+void vtkCacheManager::DeleteFromCache( const char *target )
 {
   if (target == NULL)
     {
     return;
     }
 
-  if (this->CachedFileFind( target, this->GetRemoteCacheDirectory() ) == NULL)
+  //--- discover if target already has Remote Cache Directory prepended to path.
+  //--- if not, put it there.
+
+  if (this->FindCachedFile( target, this->GetRemoteCacheDirectory() ) == NULL)
     {
-    vtkErrorMacro("RemoveFromCache: nothing to do, returning.");
+    vtkErrorMacro("DeleteFromCache: nothing to do, returning.");
     return;
     }
-  std::string str = this->CachedFileFind( target, this->GetRemoteCacheDirectory() );
+  std::string str = this->FindCachedFile( target, this->GetRemoteCacheDirectory() );
   if ( str.c_str() != NULL )
     {
     //--- remove the file or directory in str....
@@ -438,7 +439,7 @@ void vtkCacheManager::RemoveFromCache( const char *target )
         }
       else
         {
-        this->RemoveFromCachedFileList ( str.c_str() );
+        this->DeleteFromCachedFileList ( str.c_str() );
         this->UpdateCacheInformation ( );
         }
       }
@@ -450,7 +451,7 @@ void vtkCacheManager::RemoveFromCache( const char *target )
         }
       else
         {
-        this->RemoveFromCachedFileList ( str.c_str() );
+        this->DeleteFromCachedFileList ( str.c_str() );
         this->UpdateCacheInformation ( );
         }
       }
@@ -459,24 +460,97 @@ void vtkCacheManager::RemoveFromCache( const char *target )
 
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::ClearCache()
+int vtkCacheManager::ClearCache()
 {
 
-  for (unsigned int i=0; i < this->CachedFileList.size(); i++ )
+  //--- Careful! Before making this call, prompt user
+  //--- with the RemoteCacheDirectory name and
+  //--- ask for confirmation whether to delete the
+  //--- directory and all of its contents... 
+  //--- Removes the CacheDirectory all together
+  //--- and then creates the directory again.
+  if ( this->RemoteCacheDirectory.c_str() != NULL )
     {
-    this->RemoveFromCache ( this->CachedFileList[i].c_str() );
+    vtksys::SystemTools::RemoveADirectory ( this->RemoteCacheDirectory.c_str() );
+    }
+  if ( vtksys::SystemTools::MakeDirectory ( this->RemoteCacheDirectory.c_str() ) == false )
+    {
+    return 0;
     }
   this->UpdateCacheInformation();
   this->Modified();
+  return 1;
 }
 
   
 
 //----------------------------------------------------------------------------
+unsigned long vtkCacheManager::ComputeCacheSize( const char *dirName, unsigned long sz )
+{
+
+  //--- Traverses cache directory and computes the combined size
+  //--- of all files. I guess this is a reasonable guess to the cache size,
+  //--- subdirectory size notwithstanding.
+  //--- TODO: is there a more accurate way to assess?
+
+  unsigned long cachesize = sz;
+  std::string testFile;
+  std::string longName;;
+  std::string subdirString;
+  if ( vtksys::SystemTools::FileIsDirectory ( dirName ) )
+    {
+    vtkDebugMacro("FindCachedFile: dirName is a directory: " << dirName);
+    vtksys::Directory dir;
+    dir.Load( dirName );
+    size_t fileNum;
+    cachesize += vtksys::SystemTools::FileLength (dirName );
+    
+    //--- get files in cache dir and add to vector of strings.
+    for ( fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum )
+      {
+      if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".") &&
+          strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
+        {
+        //--- test to see if the file is a directory;  
+        //--- if so, go inside and count up file sizes, return value
+        subdirString = dirName;
+        subdirString += "/";
+        subdirString += dir.GetFile  (static_cast<unsigned long>(fileNum));
+        if (vtksys::SystemTools::FileIsDirectory(subdirString.c_str()))
+          {
+          ///---compute dir and filename for recursive hunt
+          cachesize += this->ComputeCacheSize (subdirString.c_str(), 0);
+          }
+        else
+          {
+          longName = dirName;
+          longName += "/";
+          testFile = dir.GetFile (static_cast<unsigned long>(fileNum));
+          longName += testFile;
+          //--- get its size
+          cachesize += vtksys::SystemTools::FileLength (longName.c_str() );
+          }
+        }
+      }
+    }
+  else
+    {
+    vtkDebugMacro ( "vtkCacheManager::ComputeCacheSize: Cache Directory "
+                    << this->GetRemoteCacheDirectory() <<
+                    " doesn't look like a directory. \n" );
+    return (-1);
+    }
+  this->CurrentCacheSize = static_cast<int>(cachesize);
+  return (cachesize);
+}
+
+//----------------------------------------------------------------------------
 void vtkCacheManager::CacheSizeCheck()
 {
   
-  // todo: this warns if you are already over.
+  //--- Compute size of the current cache
+  this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
+  //--- Invoke an event if cache size is exceeded.
   if ( this->CurrentCacheSize > this->RemoteCacheLimit )
     {
     // remove the file just downloaded?
@@ -485,19 +559,21 @@ void vtkCacheManager::CacheSizeCheck()
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::GetFreeSpaceRemaining()
+int vtkCacheManager::GetFreeCacheSpaceRemaining()
 {
-  //TODO: figure out how to compute
-  // for testing...
-  return ( this->RemoteCacheFreeBufferSize );
+
+  int cachesize = this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
+  int diff = ( this->RemoteCacheFreeBufferSize - cachesize );
+  return ( diff );
 
 }
 
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::FreeBufferCheck()
+void vtkCacheManager::FreeCacheBufferCheck()
 {
-  int buf = this->GetFreeSpaceRemaining();
+
+  int buf = this->GetFreeCacheSpaceRemaining();
   if ( buf < this->RemoteCacheFreeBufferSize )
     {
     this->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
@@ -531,20 +607,24 @@ int vtkCacheManager::CachedFileExists ( const char *filename )
 }
 
 //----------------------------------------------------------------------------
-const char* vtkCacheManager::CachedFileFind ( const char * target, const char *dirname )
+const char* vtkCacheManager::FindCachedFile ( const char * target, const char *dirname )
 {
   std::string testFile;
   const char *result = NULL;
-
+  char *returnString;
+  size_t n;
+  char *cp1;
+  const char *cp2;
+  
   if (target == NULL || dirname == NULL)
     {
-    vtkErrorMacro("CachedFileFind: target or dirname null");
-    return result;
+    vtkErrorMacro("FindCachedFile: target or dirname null");
+    return ( NULL );
     }   
 
   if ( vtksys::SystemTools::FileIsDirectory ( dirname ) )
     {
-    vtkDebugMacro("CachedFileFind: dirname is a directory: " << dirname);
+    vtkDebugMacro("FindCachedFile: dirname is a directory: " << dirname);
     vtksys::Directory dir;
     dir.Load( dirname );
     size_t fileNum;
@@ -556,24 +636,39 @@ const char* vtkCacheManager::CachedFileFind ( const char * target, const char *d
           strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
         {
         testFile = dir.GetFile (static_cast<unsigned long>(fileNum));
-        vtksys_stl::string fullName = dirname;
+        //--- Check for match to target
+        //--- does the file or directory match the target?
+        if ( !strcmp ( target, testFile.c_str() ))
+          {
+          //--- append the directory
+          std::string accum = dirname;
+          accum += "/";
+          testFile = accum + testFile;
+          result = testFile.c_str();
+          n = strlen(result) + 1;
+          cp1 = new char [n];
+          cp2 = (result);
+          returnString = cp1;
+          do { *cp1++ = *cp2++; } while ( --n );
+          return returnString;
+          }
+        //--- does the file or directory match the target with full path?
         //--- add backslash if missing
+        vtksys_stl::string fullName = dirname;
         if ( ( fullName.rfind ( "/", 0 )) != (fullName.size()-1) )
           {
           fullName += "/";
           }
         fullName += testFile;
-          
-        //--- Check for match to target
-        //--- does the file or directory match the target?
-        if ( !strcmp ( target, testFile.c_str() ))
-          {
-          return ( fullName.c_str() );
-          }
-        //--- does the file or directory match the target with full path?
         if ( !strcmp ( target, fullName.c_str() ))
           {
-          return ( fullName.c_str() );
+          result = fullName.c_str();
+          n = strlen(result) + 1;
+          cp1 = new char[n];
+          cp2 = (result);
+          returnString = cp1;
+          do { *cp1++ = *cp2++; } while ( --n );
+          return returnString;
           }
 
         //--- if no match, and the file is a directory, go inside and
@@ -581,9 +676,14 @@ const char* vtkCacheManager::CachedFileFind ( const char * target, const char *d
         if(vtksys::SystemTools::FileIsDirectory(fullName.c_str()))
           {
           ///---compute dir and filename for recursive hunt
-          if ( (result = this->CachedFileFind ( target, fullName.c_str() )) != NULL )
+          if ( (result = this->FindCachedFile ( target, fullName.c_str() )) != NULL )
             {
-            return ( result );
+            n = strlen(result) + 1;
+            cp1 = new char[n];
+            cp2 = (result);
+            returnString = cp1;
+            do { *cp1++ = *cp2++; } while ( --n );
+            return returnString;
             }
           }
         }
@@ -596,5 +696,19 @@ const char* vtkCacheManager::CachedFileFind ( const char * target, const char *d
                     " doesn't look like a directory. \n" );
     return (NULL);
     }
-  return ( result );
+
+  if ( result != NULL )
+    {
+    n = strlen(result) + 1;
+    cp1 = new char[n];
+    cp2 = (result);
+    returnString = cp1;
+    do { *cp1++ = *cp2++; } while ( --n );
+    return returnString;
+    }
+  else
+    {
+    return (NULL);
+    }
+
 }

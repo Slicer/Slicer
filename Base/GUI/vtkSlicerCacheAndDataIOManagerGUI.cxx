@@ -200,6 +200,9 @@ vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Done processing mrml events...
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::SetDataIOManager( vtkDataIOManager *iomanager )
 {
+
+
+
   vtkDataIOManager *oldValue = this->DataIOManager;
   this->MRMLObserverManager->SetObject ( vtkObjectPointer( &this->DataIOManager), iomanager );
   if ( oldValue != this->DataIOManager )
@@ -213,12 +216,15 @@ void vtkSlicerCacheAndDataIOManagerGUI::SetDataIOManager( vtkDataIOManager *ioma
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::SetAndObserveDataIOManager( vtkDataIOManager *iomanager )
 {
-  vtkDataIOManager *oldManager = this->DataIOManager;
-  this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &this->DataIOManager), iomanager );
-  if ( oldManager != this->DataIOManager )
-    {
-    this->InvokeEvent (vtkCommand::ModifiedEvent);
-    }
+  vtkIntArray  *events = vtkIntArray::New();
+  events->InsertNextValue( vtkDataIOManager::RemoteReadEvent);
+  events->InsertNextValue( vtkDataIOManager::RemoteWriteEvent);
+  events->InsertNextValue( vtkDataIOManager::TransferDoneEvent);
+  events->InsertNextValue( vtkDataIOManager::TransferRunningEvent);
+  events->InsertNextValue( vtkDataIOManager::TransferCancelledEvent);
+  vtkSetAndObserveMRMLNodeEventsMacro ( this->DataIOManager, iomanager, events );
+  events->Delete();
+  events = NULL;
 }
 
 
@@ -239,12 +245,13 @@ void vtkSlicerCacheAndDataIOManagerGUI::SetCacheManager( vtkCacheManager *manage
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::SetAndObserveCacheManager( vtkCacheManager *manager )
 {
-  vtkCacheManager *oldManager = this->CacheManager;
-  this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &this->CacheManager), manager );
-  if ( oldManager != this->CacheManager )
-    {
-    this->InvokeEvent (vtkCommand::ModifiedEvent);
-    }
+
+  vtkIntArray  *events = vtkIntArray::New();
+  events->InsertNextValue( vtkCacheManager::CacheLimitExceededEvent);
+  events->InsertNextValue( vtkCacheManager::InsufficientFreeBufferEvent);
+  vtkSetAndObserveMRMLNodeEventsMacro ( this->CacheManager, manager, events );
+  events->Delete();
+  events = NULL;
 }
 
 

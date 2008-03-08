@@ -49,16 +49,16 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   void UpdateCacheInformation ( );
   // Description:
   // Removes a target from the list of locally cached files and directories
-  void RemoveFromCachedFileList ( const char * target );
+  void DeleteFromCachedFileList ( const char * target );
 
   //Description:
   // Remove a target directory or file from the cache.
-  void RemoveFromCache( const char *target );
+  void DeleteFromCache( const char *target );
 
   // Description:
   // Removes all files from the cachedir
   // and removes all filenames from CachedFileList
-  void ClearCache ( );
+  int ClearCache ( );
   
   // Description:
   // Checks to see if a uri appears to point to remote location
@@ -80,21 +80,27 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   // Takes a filename and a dirname (usually called with the
   // RemoteCachedDirectory) and returns the full path of
   // the filename if it exists under the dirname.
-  const char* CachedFileFind ( const char * target, const char *dirname );
+  const char* FindCachedFile ( const char * target, const char *dirname );
+
   // Description:
   // Checks to see if the The uri provided exists on disk.
   // If not, it appends the Remote Cache Directory path
   // and checks again, in case no path was provided.
   // If neither exists, returns 0. If one exists, returns 1.
   virtual int CachedFileExists ( const char *filename );
+
+  // Description:
+  // Extracts the filename from the URI and prepends the
+  // Remote Cache Directory path to it. Returns the full path.
   const char* GetFilenameFromURI ( const char *uri );
   const char* AddCachePathToFilename ( const char *filename );
   const char* EncodeURI ( const char *uri );
     
   void CacheSizeCheck();
-  void FreeBufferCheck();
-  int GetFreeSpaceRemaining();
+  void FreeCacheBufferCheck();
+  int GetFreeCacheSpaceRemaining();
   int GetCachedFileList(const char *dirname);
+  unsigned long ComputeCacheSize( const char *dirname, unsigned long size );
   
   // Description:
   vtkGetMacro ( RemoteCacheLimit, int );

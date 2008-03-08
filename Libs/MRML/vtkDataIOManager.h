@@ -84,6 +84,9 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
     {
       RemoteReadEvent = 19001,
       RemoteWriteEvent,
+      TransferDoneEvent,
+      TransferRunningEvent,
+      TransferCancelledEvent,
     };
   //ETX
 

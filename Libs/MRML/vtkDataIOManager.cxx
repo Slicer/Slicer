@@ -248,7 +248,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
     if (cm->GetEnableForceRedownload () )
       {
       vtkDebugMacro("QueueRead: Calling remove from cache");
-      this->GetCacheManager()->RemoveFromCache ( dest );
+      this->GetCacheManager()->DeleteFromCache ( dest );
       }
     
     //--- trigger logic to download, if there's cache space.
