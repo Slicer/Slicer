@@ -264,6 +264,7 @@ proc ChooseDir { t var } {
         if { [tk_messageBox -message "Directory $Directory does not exist, Ok to create?" -icon question -type yesno] == "no" } {
             return
         }
+      file mkdir $Directory
     }
     set SBuild($var) $Directory
     set SBuild(LastDir) $Directory
