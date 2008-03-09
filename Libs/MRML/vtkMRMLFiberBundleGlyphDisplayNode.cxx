@@ -176,7 +176,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
       
       this->DiffusionTensorGlyphFilter->SetSource( DTDisplayNode->GetGlyphSource( ) );
       
-      vtkErrorMacro("setting glyph geometry" << DTDisplayNode->GetGlyphGeometry( ) );
+      vtkDebugMacro("setting glyph geometry" << DTDisplayNode->GetGlyphGeometry( ) );
       
       // set glyph coloring
       if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
@@ -193,61 +193,61 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
             {
             case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
               {
-                vtkErrorMacro("coloring with FA==============================");
+                vtkDebugMacro("coloring with FA==============================");
                 this->DiffusionTensorGlyphFilter->ColorGlyphsByFractionalAnisotropy( );
               }
               break;
             case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
               {
-                vtkErrorMacro("coloring with Cl=============================");
+                vtkDebugMacro("coloring with Cl=============================");
                 this->DiffusionTensorGlyphFilter->ColorGlyphsByLinearMeasure( );
               }
               break;
             case vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace:
               {
-                vtkErrorMacro("coloring with trace =================");
+                vtkDebugMacro("coloring with trace =================");
                 this->DiffusionTensorGlyphFilter->ColorGlyphsByTrace( );
               }
               break;
             case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
               {
-                vtkErrorMacro("coloring with direction (re-implement)");
+                vtkDebugMacro("coloring with direction (re-implement)");
                 this->DiffusionTensorGlyphFilter->ColorGlyphsByOrientation( );
               }
               break;
             case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:
               {
-                vtkErrorMacro("coloring with planar");
+                vtkDebugMacro("coloring with planar");
                 this->DiffusionTensorGlyphFilter->ColorGlyphsByPlanarMeasure( );
               }
               break;
             case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue:
               {
-                vtkErrorMacro("coloring with max eigenval");
+                vtkDebugMacro("coloring with max eigenval");
                 this->DiffusionTensorGlyphFilter->ColorGlyphsByMaxEigenvalue( );
               }
               break;
             case vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue:
               {
-                vtkErrorMacro("coloring with mid eigenval");
+                vtkDebugMacro("coloring with mid eigenval");
                 this->DiffusionTensorGlyphFilter->ColorGlyphsByMidEigenvalue( );
               }
               break;
             case vtkMRMLDiffusionTensorDisplayPropertiesNode::MinEigenvalue:
               {
-                vtkErrorMacro("coloring with min eigenval");
+                vtkDebugMacro("coloring with min eigenval");
                 this->DiffusionTensorGlyphFilter->ColorGlyphsByMinEigenvalue( );
               }
               break;
             case vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy:
               {
-                vtkErrorMacro("coloring with relative anisotropy");
+                vtkDebugMacro("coloring with relative anisotropy");
                 this->DiffusionTensorGlyphFilter->ColorGlyphsByRelativeAnisotropy( );
               }
               break;
           default:
             {
-            vtkErrorMacro("coloring with relative anisotropy");
+            vtkDebugMacro("coloring with relative anisotropy");
             this->ScalarVisibilityOff( );
             }
             break;

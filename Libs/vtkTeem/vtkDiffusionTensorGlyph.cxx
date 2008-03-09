@@ -324,7 +324,7 @@ int vtkDiffusionTensorGlyph::RequestData(
 
   vtkDebugMacro(<<"Generating tensor glyphs: TRAVERSE POINTS");
 
-  vtkErrorMacro("Scalar coloring (" <<  this->ColorMode << ")  ["<< vtkTensorGlyph::COLOR_BY_EIGENVALUES << "] is evals. Scalar Invariant (" << this->ScalarInvariant << ")") ;
+  vtkDebugMacro("Scalar coloring (" <<  this->ColorMode << ")  ["<< vtkTensorGlyph::COLOR_BY_EIGENVALUES << "] is evals. Scalar Invariant (" << this->ScalarInvariant << ")") ;
 
   //
   // Traverse all Input points, transforming glyph in this->Source by tensor, 

@@ -153,55 +153,55 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
           {
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
             {
-              vtkErrorMacro("coloring with FA==============================");
+              vtkDebugMacro("coloring with FA==============================");
               this->TensorToColor->ColorGlyphsByFractionalAnisotropy( );
             }
             break;
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
             {
-              vtkErrorMacro("coloring with Cl=============================");
+              vtkDebugMacro("coloring with Cl=============================");
               this->TensorToColor->ColorGlyphsByLinearMeasure( );
             }
             break;
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace:
             {
-              vtkErrorMacro("coloring with trace =================");
+              vtkDebugMacro("coloring with trace =================");
               this->TensorToColor->ColorGlyphsByTrace( );
             }
             break;
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:
             {
-              vtkErrorMacro("coloring with planar");
+              vtkDebugMacro("coloring with planar");
               this->TensorToColor->ColorGlyphsByPlanarMeasure( );
             }
             break;
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue:
             {
-              vtkErrorMacro("coloring with max eigenval");
+              vtkDebugMacro("coloring with max eigenval");
               this->TensorToColor->ColorGlyphsByMaxEigenvalue( );
             }
             break;
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue:
             {
-              vtkErrorMacro("coloring with mid eigenval");
+              vtkDebugMacro("coloring with mid eigenval");
               this->TensorToColor->ColorGlyphsByMidEigenvalue( );
             }
             break;
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::MinEigenvalue:
             {
-              vtkErrorMacro("coloring with min eigenval");
+              vtkDebugMacro("coloring with min eigenval");
               this->TensorToColor->ColorGlyphsByMinEigenvalue( );
             }
             break;
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy:
             {
-              vtkErrorMacro("coloring with relative anisotropy");
+              vtkDebugMacro("coloring with relative anisotropy");
               this->TensorToColor->ColorGlyphsByRelativeAnisotropy( );
             }
             break;
           default:
             {
-            vtkErrorMacro("coloring with relative anisotropy");
+            vtkDebugMacro("coloring with relative anisotropy");
             this->ScalarVisibilityOff( );
             this->TensorToColor->SetExtractScalar(0);
             }
