@@ -111,6 +111,18 @@ vtkDataTransfer *vtkDataIOManager::AddNewDataTransfer ( vtkMRMLNode *node )
 
 
 //----------------------------------------------------------------------------
+void vtkDataIOManager::AddNewDataTransfer ( vtkDataTransfer *transfer, vtkMRMLNode *node )
+{
+  if (node != NULL && transfer != NULL )
+    {
+    this->AddDataTransfer ( transfer );
+    this->InvokeEvent (vtkDataIOManager::NewTransferEvent, transfer );
+    vtkDebugMacro("AddNewDataTransfer: added data transfer to dataIOManager's collection");
+    }
+}
+
+
+//----------------------------------------------------------------------------
 void vtkDataIOManager::AddDataTransfer ( vtkDataTransfer *transfer )
 {
 
@@ -255,6 +267,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
     if ( cm->GetCurrentCacheSize() < cm->GetRemoteCacheLimit() )
       {
       vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
+      //--- send this off to Logic.
       this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
       }
     }

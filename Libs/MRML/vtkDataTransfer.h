@@ -42,13 +42,14 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   const char* GetTransferStatusString( ) {
     switch (this->TransferStatus)
       {
-      case Idle: return "Idle";
-      case Scheduled: return "Scheduled";
-      case Running: return "Running";
-      case Completed: return "Completed";
-      case CompletedWithErrors: return "CompletedWithErrors";
-      case Cancelled: return "Cancelled";
-      case Ready: return "Ready";
+      case vtkDataTransfer::Idle: return "Idle";
+      case vtkDataTransfer::CancelPending: return "CancelPending";
+      case vtkDataTransfer::Running: return "Running";
+      case vtkDataTransfer::Completed: return "Completed";
+      case vtkDataTransfer::CompletedWithErrors: return "CompletedWithErrors";
+      case vtkDataTransfer::TimedOut: return "TimedOut";
+      case vtkDataTransfer::Cancelled: return "Cancelled";
+      case vtkDataTransfer::Ready: return "Ready";
       }
     return "Unknown";
   }
@@ -56,11 +57,11 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   const char* GetTransferTypeString( ) {
     switch (this->TransferStatus)
       {
-      case RemoteDownload: return "RemoteDownload";
-      case RemoteUpload: return "RemoteUpload";
-      case LocalLoad: return "LocalUpload";
-      case LocalSave: return "LocalSave";
-      case Unspecified: return "Unspecified";
+      case vtkDataTransfer::RemoteDownload: return "RemoteDownload";
+      case vtkDataTransfer::RemoteUpload: return "RemoteUpload";
+      case vtkDataTransfer::LocalLoad: return "LocalUpload";
+      case vtkDataTransfer::LocalSave: return "LocalSave";
+      case vtkDataTransfer::Unspecified: return "Unspecified";
       }
     return "Unknown";
   }
@@ -70,13 +71,15 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   enum
     {
       Idle=0,
-      Scheduled=1,
-      Running=2,
-      Completed=3,
-      CompletedWithErrors=4,
-      Cancelled=5,
-      Ready=6,
+      Running,
+      Completed,
+      CompletedWithErrors,
+      CancelPending,
+      Cancelled,
+      Ready,
+      TimedOut,
     };
+  
   enum
     {
       RemoteDownload=0,

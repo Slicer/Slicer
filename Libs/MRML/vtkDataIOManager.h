@@ -38,6 +38,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   // Creates and adds a new data transfer object to the collection
   vtkDataTransfer *AddNewDataTransfer ( );
   vtkDataTransfer *AddNewDataTransfer ( vtkMRMLNode *node);
+  void AddNewDataTransfer ( vtkDataTransfer *transfer, vtkMRMLNode *node);
 
   // Description:
   // Adds a new data transfer object to the collection
@@ -84,9 +85,10 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
     {
       RemoteReadEvent = 19001,
       RemoteWriteEvent,
-      TransferDoneEvent,
-      TransferRunningEvent,
-      TransferCancelledEvent,
+      LocalReadEvent,
+      LocalWriteEvent,
+      NewTransferEvent,
+      TransferUpdateEvent,
     };
   //ETX
 
