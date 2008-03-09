@@ -92,6 +92,8 @@ void vtkDataIOManagerLogic::SetAndObserveDataIOManager ( vtkDataIOManager *ioman
     vtkIntArray *events = vtkIntArray::New();
     events->InsertNextValue ( vtkDataIOManager::RemoteReadEvent );
     events->InsertNextValue ( vtkDataIOManager::RemoteWriteEvent );
+    events->InsertNextValue ( vtkDataIOManager::LocalReadEvent );
+    events->InsertNextValue ( vtkDataIOManager::LocalWriteEvent );
     vtkSetAndObserveMRMLNodeEventsMacro ( this->DataIOManager, iomanager, events );
     events->Delete();
     }
@@ -99,16 +101,11 @@ void vtkDataIOManagerLogic::SetAndObserveDataIOManager ( vtkDataIOManager *ioman
 
 
 //----------------------------------------------------------------------------
-vtkDataTransfer* vtkDataIOManagerLogic::AddNewDataTransfer ( vtkMRMLNode *node )
+void vtkDataIOManagerLogic::AddNewDataTransfer ( vtkDataTransfer *dt, vtkMRMLNode *node )
 {
-  if ( this->GetDataIOManager() == NULL )
+  if ( this->GetDataIOManager() != NULL )
     {
-    vtkErrorMacro("AddNewDataTransfer: node is null");
-    return (NULL);
-    }
-  else
-    {
-    return ( this->GetDataIOManager()->AddNewDataTransfer ( node ));
+    this->GetDataIOManager()->AddNewDataTransfer ( dt, node );
     }
 }
 
@@ -187,17 +184,20 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   
   //--- construct and add a record of the transfer
   //--- which includes the ID of associated node
-  vtkDataTransfer *transfer = this->AddNewDataTransfer ( node );
+  vtkDataTransfer *transfer = vtkDataTransfer::New();
   if ( transfer == NULL )
     {
     vtkErrorMacro("QueueRead: failed to add new data transfer");
     return 0;
     }
+  transfer->SetTransferID ( this->GetDataIOManager()->GetUniqueTransferID() );
+  transfer->SetTransferNodeID ( node->GetID() );
   transfer->SetSourceURI ( source );
   transfer->SetDestinationURI ( dest );
   transfer->SetHandler ( handler );
   transfer->SetTransferType ( vtkDataTransfer::RemoteDownload );
   transfer->SetTransferStatus ( vtkDataTransfer::Unspecified, true );
+  this->AddNewDataTransfer ( transfer, node );
 
   /*
   if (this->GetDataIOManager()->GetEnableAsynchronousIO() )
@@ -217,6 +217,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     // to the associated mrml node, as client data to the task.
     if ( !task )
       {
+      transfer->Delete();
       return 0;
       }
     task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
@@ -226,11 +227,12 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     bool ret = 0;
     if (ret = this->GetApplicationLogic()->ScheduleTask( task ) )
       {
-      transfer->SetTransferStatus( vtkDataTransfer::Scheduled, true);
+      transfer->SetTransferStatus( vtkDataTransfer::Ready, true);
       }
     task->Delete();
     if ( !ret )
       {
+      transfer->Delete();
       return 0;
       }
     }
@@ -244,6 +246,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     // now set the node's storage node state to ready
     dnode->GetStorageNode()->SetReadStateReady();
     }
+  transfer->Delete();
   return 1;
 }
 
