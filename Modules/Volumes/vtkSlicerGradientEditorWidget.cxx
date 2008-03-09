@@ -43,7 +43,9 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   this->RunButton = NULL;
   this->FiducialSelector = NULL;
   this->NumberOfChanges = 0;
+  this->ModifiedForNewTensor = 1;
   this->TensorNode = NULL;
+  this->FiberNode = NULL;
   }
 
 //---------------------------------------------------------------------------
@@ -109,7 +111,13 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->TensorNode->Delete();
     this->TensorNode = NULL;
     }
+  if (this->FiberNode)
+    {
+    this->FiberNode->Delete();
+    this->FiberNode = NULL;
+    }
   this->NumberOfChanges = 0;
+  this->ModifiedForNewTensor = 0;
   }
 
 //---------------------------------------------------------------------------
@@ -150,7 +158,8 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     {
     this->UndoButton->SetEnabled(1);
     this->RestoreButton->SetEnabled(1);
-    this->NumberOfChanges++; //increment changes
+    this->NumberOfChanges++; //increment changes    
+    this->ModifiedForNewTensor = 1; //tensor has to be estimated newly
     }
 
   //restore to original
@@ -162,7 +171,8 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
     this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
     this->RestoreButton->SetEnabled(0); //disable restoreButton until next change
-    this->UndoButton->SetEnabled(1); //enable undoButton  
+    this->UndoButton->SetEnabled(1); //enable undoButton
+    this->ModifiedForNewTensor = 1; //tensor has to be estimated newly
     }
 
   //undo
@@ -187,74 +197,74 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
   //run test
   else if (this->RunButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
-    // create a command line module node
-    vtkMRMLCommandLineModuleNode* module = vtkMRMLCommandLineModuleNode::SafeDownCast(
-      this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
-
-    // set its name  
-    module->SetModuleDescription("Diffusion Tensor Estimation");
-    module->SetName("GradientEditor: Tensor Estimation");
-
-    // set the parameters
-    module->SetParameterAsString("estimationMethod", "Least Squares");
-    module->SetParameterAsDouble("otsuOmegaThreshold",0.5);
-    module->SetParameterAsBool("removeIslands", 0);
-    module->SetParameterAsBool("applyMask", 0);
-    module->SetParameterAsString("inputVolume", this->ActiveVolumeNode->GetID());
-
-    // create the output nodes
-    this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
-      this->MRMLScene->CreateNodeByClass("vtkMRMLDiffusionTensorVolumeNode"));
-    this->TensorNode->SetScene(this->GetMRMLScene());
-    this->TensorNode->SetName("Output Tensor Node");
-    this->MRMLScene->AddNode(this->TensorNode);
-
-    vtkMRMLScalarVolumeNode* baseline= vtkMRMLScalarVolumeNode::SafeDownCast(
-      this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
-    baseline->SetScene(this->GetMRMLScene());
-    baseline->SetName("Output Baseline Node");
-    this->MRMLScene->AddNode(baseline);
-
-    vtkMRMLScalarVolumeNode* mask = vtkMRMLScalarVolumeNode::SafeDownCast(
-      this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
-    mask->SetScene(this->GetMRMLScene());
-    mask->SetName("Output Threshold Mask");
-    this->MRMLScene->AddNode(mask);
-
-    this->TensorNode->SetBaselineNodeID(baseline->GetID());
-    this->TensorNode->SetMaskNodeID(mask->GetID());
-
-    // set output parameters
-    module->SetParameterAsString("outputTensor", this->TensorNode->GetID());
-    module->SetParameterAsString("outputBaseline", baseline->GetID());
-    module->SetParameterAsString("thresholdMask", mask->GetID());
-
-    //get the existing gui of the "Diffusion Tensor Estimation Command Line Module" 
-    vtkCommandLineModuleGUI *moduleGUI = vtkCommandLineModuleGUI::SafeDownCast(
-      this->Application->GetModuleGUIByName("Diffusion Tensor Estimation"));
-    moduleGUI->Enter();
-
-    //set command line node to gui an logic
-    moduleGUI->SetCommandLineModuleNode(module);
-    moduleGUI->GetLogic()->SetCommandLineModuleNode(module);
-    
-    //estimate tensors
-    moduleGUI->GetLogic()->ApplyAndWait(module);
-
-    //clean up
-    module->Delete();
-    baseline->Delete();
-    mask->Delete();
-
-    //check status
-    if(module->GetStatus() != module->Completed)
+    this->RunButton->SetEnabled(0);
+    if(this->ModifiedForNewTensor)
       {
-      vtkErrorMacro("CLM call from GradientEditor: status is: "<<module->GetStatusString()); //if status is not "Completed", complain      
+      // create a command line module node
+      vtkMRMLCommandLineModuleNode* module = vtkMRMLCommandLineModuleNode::SafeDownCast(
+        this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
+
+      // set its name  
+      module->SetModuleDescription("Diffusion Tensor Estimation");
+      module->SetName("GradientEditor: Tensor Estimation");
+
+      // set the parameters
+      module->SetParameterAsString("estimationMethod", "Least Squares");
+      module->SetParameterAsDouble("otsuOmegaThreshold",0.5);
+      module->SetParameterAsBool("removeIslands", 0);
+      module->SetParameterAsBool("applyMask", 0);
+      module->SetParameterAsString("inputVolume", this->ActiveVolumeNode->GetID());
+
+      // create the output nodes
+      if(this->TensorNode)
+        {
+        this->TensorNode->Delete(); //delete previous data
+        }
+      this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
+        this->MRMLScene->CreateNodeByClass("vtkMRMLDiffusionTensorVolumeNode"));
+      this->TensorNode->SetScene(this->GetMRMLScene());
+      this->TensorNode->SetName("GradientenEditor: Tensor Node");
+      this->MRMLScene->AddNode(this->TensorNode);
+
+      vtkMRMLScalarVolumeNode* baseline= vtkMRMLScalarVolumeNode::SafeDownCast(
+        this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
+      baseline->SetScene(this->GetMRMLScene());
+      baseline->SetName("GradientenEditor: Baseline Node");
+      this->MRMLScene->AddNode(baseline);
+
+      vtkMRMLScalarVolumeNode* mask = vtkMRMLScalarVolumeNode::SafeDownCast(
+        this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
+      mask->SetScene(this->GetMRMLScene());
+      mask->SetName("GradientenEditor: Threshold Mask");
+      this->MRMLScene->AddNode(mask);
+
+      this->TensorNode->SetBaselineNodeID(baseline->GetID());
+      this->TensorNode->SetMaskNodeID(mask->GetID());
+
+      // set output parameters
+      module->SetParameterAsString("outputTensor", this->TensorNode->GetID());
+      module->SetParameterAsString("outputBaseline", baseline->GetID());
+      module->SetParameterAsString("thresholdMask", mask->GetID());
+
+      //get the existing gui of the "Diffusion Tensor Estimation Command Line Module" 
+      vtkCommandLineModuleGUI *moduleGUI = vtkCommandLineModuleGUI::SafeDownCast(
+        this->Application->GetModuleGUIByName("Diffusion Tensor Estimation"));
+      moduleGUI->Enter();
+
+      //set command line node to gui an logic
+      moduleGUI->SetCommandLineModuleNode(module);
+      moduleGUI->GetLogic()->SetCommandLineModuleNode(module);
+
+      //estimate tensors
+      moduleGUI->GetLogic()->Apply(module);
+
+      //clean up
+      module->Delete();
+      baseline->Delete();
+      mask->Delete();
+      this->ModifiedForNewTensor = 0;
       }
-    else
-      {
-      this->CreateTracts(); //start tractography seeding
-      }
+    this->CreateTracts();  //start tractography seeding, with old or new tensor
     }
   }
 
@@ -273,26 +283,27 @@ void vtkSlicerGradientEditorWidget::CreateTracts ( )
       this->FiducialSelector->GetSelected());
 
     //create new fiber node
-    vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::New();
-    fiberNode->SetScene(this->GetMRMLScene());
-    fiberNode->SetName("Fiber Node");
-    this->MRMLScene->AddNode(fiberNode);
+    if(this->FiberNode == NULL)
+      {
+      this->FiberNode = vtkMRMLFiberBundleNode::New();
+      this->FiberNode->SetScene(this->GetMRMLScene());
+      this->FiberNode->SetName("GradientenEditor: Fiber Node");
+      this->MRMLScene->AddNode(this->FiberNode);
+      }
 
     //get the existing gui of the "Tractography Fiducial Seeding Module"
     vtkSlicerTractographyFiducialSeedingGUI *moduleGUI = vtkSlicerTractographyFiducialSeedingGUI::SafeDownCast(
       this->Application->GetModuleGUIByName("FiducialSeeding"));    
     moduleGUI->Enter(); 
-    
+
     //set the selectors to my nodes
     moduleGUI->SetVolumeSelector(this->TensorNode);
     moduleGUI->SetFiducialSelector(fiducialListNode);
-    moduleGUI->SetOutFiberSelector(fiberNode);
+    moduleGUI->SetOutFiberSelector(this->FiberNode);
 
     //create tracts
     moduleGUI->CreateTracts();
-
-    //clean up
-    fiberNode->Delete();
+    this->RunButton->SetEnabled(1);
     }
   }
 

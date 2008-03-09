@@ -14,6 +14,7 @@
 
 class vtkSlicerNodeSelectorWidget;
 class vtkMRMLDiffusionWeightedVolumeNode;
+class vtkMRMLFiberBundleNode;
 //widgets
 class vtkKWFrameWithLabel;
 class vtkKWPushButton;
@@ -57,9 +58,19 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkMRMLDiffusionWeightedVolumeNode *OriginalNode;
-    vtkSlicerApplication *Application;
-    int NumberOfChanges;
     vtkMRMLDiffusionTensorVolumeNode *TensorNode;
+    vtkMRMLFiberBundleNode *FiberNode;
+    vtkSlicerApplication *Application;
+
+    // Description:
+    // Number of changes in gradients/measurement frame of ActiveVolumeNode.
+    int NumberOfChanges;
+    
+    // Description:
+    // Is 1, if tensor has to be newly estimated.
+    // Is 0, if parameters have not changed and old tensor can be used for tractography.
+    int ModifiedForNewTensor;
+    
     //widgets (GUI)
     vtkSlicerMeasurementFrameWidget *MeasurementFrameWidget;
     vtkSlicerGradientsWidget *GradientsWidget;
