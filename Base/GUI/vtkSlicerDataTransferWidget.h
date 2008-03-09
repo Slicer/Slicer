@@ -31,6 +31,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     vtkGetObjectMacro (TransferTypeLabel, vtkKWLabel );
     vtkGetObjectMacro (TransferStatusLabel, vtkKWLabel );
     vtkGetObjectMacro (CancelButton, vtkKWPushButton );
+    vtkGetObjectMacro (DeleteButton, vtkKWPushButton );
     vtkGetObjectMacro (InformationButton, vtkKWPushButton );
     vtkGetObjectMacro (InformationTopLevel, vtkKWTopLevel );
     vtkGetObjectMacro (InformationFrame, vtkKWFrame );
@@ -50,7 +51,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData);
 
     // Description:
+    // Methods to update content in the information text widget
+    // and to display and hide it.
+    virtual void DisplayInformationWindow();
+    virtual void HideInformationWindow();
+    virtual void UpdateInformationText();
+    
+    // Description:
     // Method to update the widget when a new node is loaded.
+    // Or when a Data Transfer's state may have changed.
     void UpdateWidget();
 
   protected:
@@ -61,15 +70,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     // Method to create the widget.
     virtual void CreateWidget();
 
-    // Description:
-    virtual void InvokeTransferCancelEvent();
-
-    virtual void PopulateInformationDisplay ( );
-
-    // Description:
-    // Method to update the data transfer information
-    void UpdateInfo();
-
     //widgets (GUI)
     vtkKWFrame *DataTransferFrame;
     vtkKWLabel *URILabel;
@@ -77,6 +77,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     vtkKWLabel *TransferStatusLabel;
     vtkKWPushButton *CancelButton;
     vtkKWPushButton *InformationButton;
+    vtkKWPushButton *DeleteButton;
     vtkSlicerDataTransferIcons *DataTransferIcons;
     vtkKWTopLevel *InformationTopLevel;
     vtkKWFrame *InformationFrame;

@@ -10,11 +10,14 @@ vtkCxxRevisionMacro ( vtkSlicerDataTransferIcons, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerDataTransferIcons::vtkSlicerDataTransferIcons ( )
 {
+    //--- Transfer type
     this->TransferTypeUnspecifiedIcon = vtkKWIcon::New ( );
     this->TransferTypeLoadIcon = vtkKWIcon::New ( );
     this->TransferTypeSaveIcon = vtkKWIcon::New ( );
+    this->TransferTypeRemoteLoadIcon = vtkKWIcon::New ( );
+    this->TransferTypeRemoteSaveIcon = vtkKWIcon::New ( );
 
-    this->TransferStatusReadyIcon = vtkKWIcon::New ( );
+    //--- Transfer Status going
     this->TransferStatusGoingIcon = vtkKWIcon::New ( );
     this->TransferStatusGoing0Icon = vtkKWIcon::New ( );
     this->TransferStatusGoing1Icon = vtkKWIcon::New ( );
@@ -24,12 +27,26 @@ vtkSlicerDataTransferIcons::vtkSlicerDataTransferIcons ( )
     this->TransferStatusGoing5Icon = vtkKWIcon::New ( );
     this->TransferStatusGoing6Icon = vtkKWIcon::New ( );
     this->TransferStatusGoing7Icon = vtkKWIcon::New ( );
+
+    //--- Other transfer status
+    this->TransferStatusReadyIcon = vtkKWIcon::New ( );
     this->TransferStatusCancelledIcon = vtkKWIcon::New ( );
     this->TransferStatusDoneIcon = vtkKWIcon::New ( );
     this->TransferStatusTimedOutIcon = vtkKWIcon::New ( );
+    this->TransferStatusIdleIcon = vtkKWIcon::New();
+    this->TransferStatusWaitIcon = vtkKWIcon::New();
 
+    //--- Transfer conditions
+    this->TransferStatusErrorIcon = vtkKWIcon::New();
+    this->TransferStatusCancelRequestedIcon = vtkKWIcon::New();
+
+    //--- Button icons
     this->TransferCancelIcon = vtkKWIcon::New ( );
     this->TransferInformationIcon = vtkKWIcon::New ( );
+    this->DeleteFromCacheIcon = vtkKWIcon::New();
+    this->TransferCancelDisabledIcon = vtkKWIcon::New();
+    this->DeleteFromCacheDisabledIcon = vtkKWIcon::New();
+
     this->AssignImageDataToIcons ( );
 }
 
@@ -53,7 +70,21 @@ vtkSlicerDataTransferIcons::~vtkSlicerDataTransferIcons ( )
     this->TransferTypeSaveIcon->Delete();
     this->TransferTypeSaveIcon = NULL;
     }
-
+  if ( this->TransferTypeRemoteLoadIcon )
+    {
+    this->TransferTypeRemoteLoadIcon->Delete();
+    this->TransferTypeRemoteLoadIcon = NULL;
+    }
+  if ( this->TransferTypeRemoteSaveIcon )
+    {
+    this->TransferTypeRemoteSaveIcon->Delete();
+    this->TransferTypeRemoteSaveIcon = NULL;
+    }
+  if ( this->TransferStatusWaitIcon )
+    {
+    this->TransferStatusWaitIcon->Delete();
+    this->TransferStatusWaitIcon = NULL;
+    }
   if ( this->TransferStatusReadyIcon )
     {
     this->TransferStatusReadyIcon->Delete();
@@ -120,6 +151,16 @@ vtkSlicerDataTransferIcons::~vtkSlicerDataTransferIcons ( )
     this->TransferStatusTimedOutIcon = NULL;
     }
 
+  if ( this->TransferCancelDisabledIcon )
+    {
+    this->TransferCancelDisabledIcon->Delete();
+    this->TransferCancelDisabledIcon = NULL;
+    }
+  if ( this->DeleteFromCacheDisabledIcon )
+    {
+    this->DeleteFromCacheDisabledIcon->Delete();
+    this->DeleteFromCacheDisabledIcon = NULL;
+    }
   if ( this->TransferCancelIcon )
     {
     this->TransferCancelIcon->Delete();
@@ -129,6 +170,26 @@ vtkSlicerDataTransferIcons::~vtkSlicerDataTransferIcons ( )
     {
     this->TransferInformationIcon->Delete();
     this->TransferInformationIcon = NULL;
+    }
+  if ( this->TransferStatusIdleIcon )
+    {
+    this->TransferStatusIdleIcon->Delete();
+    this->TransferStatusIdleIcon = NULL;
+    }
+  if ( this->TransferStatusErrorIcon )
+    {
+    this->TransferStatusErrorIcon->Delete();
+    this->TransferStatusErrorIcon = NULL;
+    }
+  if ( this->TransferStatusCancelRequestedIcon )
+    {
+    this->TransferStatusCancelRequestedIcon->Delete();
+    this->TransferStatusCancelRequestedIcon = NULL;    
+    }
+  if ( this->DeleteFromCacheIcon )
+    {
+    this->DeleteFromCacheIcon->Delete();
+    this->DeleteFromCacheIcon = NULL;
     }
 }
 
@@ -151,8 +212,17 @@ void vtkSlicerDataTransferIcons::AssignImageDataToIcons ( )
                                 image_TransferTypeSave_height,
                                 image_TransferTypeSave_pixel_size,
                                 image_TransferTypeSave_length, 0);
+  this->TransferTypeRemoteLoadIcon->SetImage( image_TransferTypeRemoteLoad,
+                                image_TransferTypeRemoteLoad_width,
+                                image_TransferTypeRemoteLoad_height,
+                                image_TransferTypeRemoteLoad_pixel_size,
+                                image_TransferTypeRemoteLoad_length, 0);
+  this->TransferTypeRemoteSaveIcon->SetImage( image_TransferTypeRemoteSave,
+                                image_TransferTypeRemoteSave_width,
+                                image_TransferTypeRemoteSave_height,
+                                image_TransferTypeRemoteSave_pixel_size,
+                                image_TransferTypeRemoteSave_length, 0);
 
-  
   this->TransferStatusReadyIcon->SetImage( image_TransferStatusReady,
                                 image_TransferStatusReady_width,
                                 image_TransferStatusReady_height,
@@ -218,7 +288,21 @@ void vtkSlicerDataTransferIcons::AssignImageDataToIcons ( )
                                 image_TransferStatusTimedOut_height,
                                 image_TransferStatusTimedOut_pixel_size,
                                 image_TransferStatusTimedOut_length, 0);
-  
+  this->TransferStatusWaitIcon->SetImage (image_TransferStatusWait,
+                                          image_TransferStatusWait_width,
+                                          image_TransferStatusWait_height,
+                                          image_TransferStatusWait_pixel_size,
+                                          image_TransferStatusWait_length, 0);                                          
+  this->TransferCancelDisabledIcon->SetImage ( image_TransferCancelDisabled,
+                                               image_TransferCancelDisabled_width,
+                                               image_TransferCancelDisabled_height,
+                                               image_TransferCancelDisabled_pixel_size,
+                                               image_TransferCancelDisabled_length, 0);
+  this->DeleteFromCacheDisabledIcon->SetImage ( image_DeleteFromCacheDisabled,
+                                                image_DeleteFromCacheDisabled_width,
+                                                image_DeleteFromCacheDisabled_height,
+                                                image_DeleteFromCacheDisabled_pixel_size,
+                                                image_DeleteFromCacheDisabled_length, 0);                                                
   this->TransferCancelIcon->SetImage( image_TransferCancel,
                                 image_TransferCancel_width,
                                 image_TransferCancel_height,
@@ -229,7 +313,26 @@ void vtkSlicerDataTransferIcons::AssignImageDataToIcons ( )
                                 image_TransferInformation_height,
                                 image_TransferInformation_pixel_size,
                                 image_TransferInformation_length, 0);
-
+  this->TransferStatusIdleIcon->SetImage ( image_TransferStatusWait,
+                                           image_TransferStatusWait_width,
+                                           image_TransferStatusWait_height,
+                                           image_TransferStatusWait_pixel_size,
+                                           image_TransferStatusWait_length, 0);
+  this->TransferStatusErrorIcon->SetImage ( image_TransferError,
+                                      image_TransferError_width,
+                                      image_TransferError_height,
+                                      image_TransferError_pixel_size,
+                                      image_TransferError_length, 0);
+  this->TransferStatusCancelRequestedIcon->SetImage ( image_TransferCancelRequested,
+                                                image_TransferCancelRequested_width,
+                                                image_TransferCancelRequested_height,
+                                                image_TransferCancelRequested_pixel_size,
+                                                image_TransferCancelRequested_length, 0);                                                
+  this->DeleteFromCacheIcon->SetImage ( image_DeleteFromCache,
+                                        image_DeleteFromCache_width,
+                                        image_DeleteFromCache_height,
+                                        image_DeleteFromCache_pixel_size,
+                                        image_DeleteFromCache_length, 0);
 }
 
 
@@ -243,8 +346,9 @@ void vtkSlicerDataTransferIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "TransferTypeUnspecifiedIcon: " << this->GetTransferTypeUnspecifiedIcon ( ) << "\n";
     os << indent << "TransferTypeLoadIcon: " << this->GetTransferTypeLoadIcon ( ) << "\n";
     os << indent << "TransferTypeSaveIcon: " << this->GetTransferTypeSaveIcon ( ) << "\n";
+    os << indent << "TransferTypeRemoteLoadIcon: " << this->GetTransferTypeRemoteLoadIcon ( ) << "\n";
+    os << indent << "TransferTypeRemoteSaveIcon: " << this->GetTransferTypeRemoteSaveIcon ( ) << "\n";
 
-    os << indent << "TransferStatusReadyIcon: " << this->GetTransferStatusReadyIcon ( ) << "\n";
     os << indent << "TransferStatusGoingIcon: " << this->GetTransferStatusGoingIcon ( ) << "\n";
     os << indent << "TransferStatusGoing0Icon: " << this->GetTransferStatusGoing0Icon ( ) << "\n";
     os << indent << "TransferStatusGoing1Icon: " << this->GetTransferStatusGoing1Icon ( ) << "\n";
@@ -254,10 +358,19 @@ void vtkSlicerDataTransferIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "TransferStatusGoing5Icon: " << this->GetTransferStatusGoing5Icon ( ) << "\n";
     os << indent << "TransferStatusGoing6Icon: " << this->GetTransferStatusGoing6Icon ( ) << "\n";
     os << indent << "TransferStatusGoing7Icon: " << this->GetTransferStatusGoing7Icon ( ) << "\n";
+
+    os << indent << "TransferStatusReadyIcon: " << this->GetTransferStatusReadyIcon ( ) << "\n";
     os << indent << "TransferStatusCancelledIcon: " << this->GetTransferStatusCancelledIcon ( ) << "\n";
     os << indent << "TransferStatusDoneIcon: " << this->GetTransferStatusDoneIcon ( ) << "\n";
     os << indent << "TransferStatusTimedOutIcon: " << this->GetTransferStatusTimedOutIcon ( ) << "\n";
+    os << indent << "TransferStatusIdleIcon: " << this->GetTransferStatusIdleIcon() << "\n";
+    os << indent << "TransferStatusWaitIcon: " << this->GetTransferStatusWaitIcon() << "\n";
+    os << indent << "TransferStatusErrorIcon: " << this->GetTransferStatusErrorIcon() << "\n";
+    os << indent << "TransferStatusCancelRequestedIcon: " << this->GetTransferStatusCancelRequestedIcon() << "\n";
 
     os << indent << "TransferCancelIcon: " << this->GetTransferCancelIcon ( ) << "\n";
+    os << indent << "TransferCancelDisabledIcon: " << this->GetTransferCancelDisabledIcon() << "\n";
     os << indent << "TransferInformationIcon: " << this->GetTransferInformationIcon ( ) << "\n";
+    os << indent << "DeleteFromCacheIcon: " << this->GetDeleteFromCacheIcon() << "\n";
+    os << indent << "DeleteFromCacheDisabledIcon: " << this->GetDeleteFromCacheDisabledIcon() << "\n";
 }

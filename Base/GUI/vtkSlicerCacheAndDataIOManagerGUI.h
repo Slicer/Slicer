@@ -9,6 +9,7 @@
 #include "vtkObserverManager.h"
 #include "vtkMRMLScene.h"
 #include "vtkDataIOManager.h"
+#include "vtkCollection.h"
 
 #include "vtkKWFrame.h"
 #include "vtkKWPushButton.h"
@@ -34,7 +35,8 @@ public:
   // tracks cache
   vtkGetObjectMacro ( CacheManager, vtkCacheManager );
   
-  vtkGetObjectMacro ( CacheFullLabel, vtkKWLabel );
+  vtkGetObjectMacro ( CacheSizeLabel, vtkKWLabel );
+  vtkGetObjectMacro ( CacheFreeLabel, vtkKWLabel );
   vtkGetObjectMacro ( CloseButton, vtkKWPushButton );
   vtkGetObjectMacro ( ClearCacheButton, vtkKWPushButton );
   vtkGetObjectMacro ( ForceReloadCheckButton, vtkKWCheckButton );
@@ -43,9 +45,11 @@ public:
   vtkGetObjectMacro ( TimeOutCheckButton, vtkKWCheckButton );
   vtkGetObjectMacro ( ManagerTopLevel, vtkKWTopLevel );
   vtkGetObjectMacro ( ControlFrame, vtkKWFrame );
+  vtkGetObjectMacro ( ButtonFrame, vtkKWFrame );
   vtkGetObjectMacro ( TransfersFrame, vtkKWFrameWithScrollbar );
   vtkSetMacro ( Built, bool );
   vtkGetMacro ( Built, bool );
+  vtkGetObjectMacro ( TransferWidgetCollection, vtkCollection );
 
   // Description:
   // This method builds the DataIOManager module GUI
@@ -97,6 +101,11 @@ public:
   void SetAndObserveCacheManager ( vtkCacheManager *cmanager );
   
   // Description:
+  // Creates a data transfer widget to represent a transfer.
+  void AddNewDataTransfer ( vtkDataTransfer *transfer );
+  void DeleteDataTransfer ( vtkDataTransfer *transfer );
+
+  // Description:
   // Methods for displaying and hiding the Cache and DataIO Manager
   // Internal callbacks; do not use.
   virtual void DisplayManagerWindow ( );
@@ -108,7 +117,8 @@ protected:
 
   // Widgets for the DataIOManager module
   // add a point
-  vtkKWLabel *CacheFullLabel;
+  vtkKWLabel *CacheSizeLabel;
+  vtkKWLabel *CacheFreeLabel;
   vtkKWPushButton *CloseButton;
   vtkKWPushButton *ClearCacheButton;
   vtkKWCheckButton *ForceReloadCheckButton;
@@ -117,10 +127,12 @@ protected:
   vtkKWCheckButton *TimeOutCheckButton;
   vtkKWTopLevel *ManagerTopLevel;
   vtkKWFrame *ControlFrame;
+  vtkKWFrame *ButtonFrame;
   vtkKWFrameWithScrollbar *TransfersFrame;
   
   vtkDataIOManager *DataIOManager;
   vtkCacheManager *CacheManager;
+  vtkCollection *TransferWidgetCollection;
 
     // Description:
     // Describes whether the GUI has been built or not.

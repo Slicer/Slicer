@@ -357,3 +357,159 @@ static const unsigned char image_TransferTypeUnspecified[] =
   "eNr7/38UDEPg4uJChq6Ojo4zZ84AGQwMDEBy9+7dM2fOJF47UD3Q3rS0NKD2UDC4e/cuSQ"
   "549+4dUBdEO5BNquONjY2BDgZqB5JA9qpVq0hyPMRGiN+BbEhQkBGGo8lvWAIAYoD2qA==";
 
+
+/* 
+ * Resource generated for file:
+ *    TransferCancelRequested.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_TransferCancelRequested_width          = 21;
+static const unsigned int  image_TransferCancelRequested_height         = 21;
+static const unsigned int  image_TransferCancelRequested_pixel_size     = 3;
+static const unsigned long image_TransferCancelRequested_length         = 672;
+static const unsigned long image_TransferCancelRequested_decoded_length = 1323;
+
+static const unsigned char image_TransferCancelRequested[] = 
+  "eNqtlD1LQmEUxxeXCIwy7cWM6BO4ibg6tfg1XFwcHUVHRykiEBR0EnRxcRcd/AANIWZ0o/"
+  "uC+YoK2o8OPMi9IhHd4fC/5/zPc8/L/7mbjf3p9/utVqtWqxUKhXw+jwXjwb/Z+wwGg2az"
+  "Wa1W2+025PF4vF6vsWA8+InC2Zk7mUzq9Xq324W/k4CfKJz5fG4LiWc2m2EtyyqXy/F4PB"
+  "wOBwIBLBgPfqKLxQK7XC63a+ZM8Q+Hw0QikUwm6bfX661WKywYD34qlFz4qgs6oiqpH2ua"
+  "5s7iR6ORqhM+WTJnZkJf1Mb5wrF0/TGTiQWDhy4X9imbtX7OnE6ncGDCJ0t2xFQJ0R0VAg"
+  "xdL5VKsVjs9fxkeHX6dn4cjUYrlYplGEThwASQJfuVhTIfMOAhkwmFQgA2/nnrz+Vy4Egk"
+  "8pjNAuDAlLJFG7IpJsyUAHfB4MulJ5VKgTudDhased34wXBgyh5FV2iDV3bEnAEHLpfu9+"
+  "gBrwyn0WhoNxfatQ8/r3BgAsgSTTq//u51277+7Pft/Lqzd3pUvVvXZ6r3+3Ta2btz8qZh"
+  "yOQ139GX3/PhO2LyxWLR1HXn5G17F82wI3at9o4GZGtEbXvfVh2K3aM6NKM4SnVK83Jf9m"
+  "te3axtzSu1/+bGyV0T/t/u+/Zt/a+/zd/+dd/lYhVo";
+
+
+
+/* 
+ * Resource generated for file:
+ *    TransferError.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_TransferError_width          = 21;
+static const unsigned int  image_TransferError_height         = 21;
+static const unsigned int  image_TransferError_pixel_size     = 3;
+static const unsigned long image_TransferError_length         = 664;
+static const unsigned long image_TransferError_decoded_length = 1323;
+
+static const unsigned char image_TransferError[] = 
+  "eNrdlM9Lk3Ecx/+OWMv1OB97dD7Npzl/lGukS5YHh7fVobQyJfWiHqSsU2UTiSQiIaLSMa"
+  "FgFDMqL7oadjAYgXkRL3WRZlniYYf4+PoKHeIRd9+Hhw9vXu/X5zk9m0hxzZ9NSb+TRzEZ"
+  "vixdEbXJEHjB+fJZxkYkGpJoi5z795AhcNp9JrskA13SFpD2k9IelP7zMnFHes6qDIHT4u"
+  "w5v37KzUFpqZNwvbQ2SOtxeftKcTYZAqfFwbTN31RSgpac8kmTT5r9EvLLbFIVbDIEThu0"
+  "lGmbjZGhHw3m1omj+YBXAtXqVZMTqmCTA9VwWhxM+/lK5PSKv2KttvJ7nWe9vkq96vognE"
+  "2GwGlxMO3nC8eMRat8yTqS9RnLNQbat96LcDYZAqfFwbSfvw8H35juObNs3qunvXrGqy9a"
+  "+teeDnZml8BpcTDt5+mBvkTF4ZeVWtKjvfZoqSp3ynTPmmqTIXBaHEz7+fKLxKR+6HF5yV"
+  "PD9dxwTRuu7Pho/vcme3qXwGlxMO3n2xu5ZHfnPbfzfpnzge58iDYTV6+diZMhcFoczD0/"
+  "nLXMhyeRM7c0x6jmuFvqiJUefNYWZpMhcFqcfT7b1Y/pqUsXrpUcuOH674HAaQv+aLZyuU"
+  "+J+NTVK7cba4c0B5sMgRfZX8sOp5MA4g==";
+
+/* 
+ * Resource generated for file:
+ *    TransferStatusWait.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_TransferStatusWait_width          = 21;
+static const unsigned int  image_TransferStatusWait_height         = 21;
+static const unsigned int  image_TransferStatusWait_pixel_size     = 3;
+static const unsigned long image_TransferStatusWait_length         = 408;
+static const unsigned long image_TransferStatusWait_decoded_length = 1323;
+
+static const unsigned char image_TransferStatusWait[] = 
+  "eNrNk6+Lg3AYxu/f8D8ZrhgnLlkuaLMMq820MmVoMqwYNC0rjlXFwWB1CwaTbUlkEx0K7p"
+  "5DuHTwVYTjXvDl8ZEPL74/3u9/FB+kIOLb7db3/ePxeL1esyxDhoaz2+2G4DzPf/4W8Il4"
+  "XdeqqpZl+Xw+8dp1HTL06/WCj6/E3xcEIU3TXrdt24vb7SaK4pDuWZa12WyC4BAEQZ7nh8"
+  "O3NE0T/sD+7/d71OKWS47j8EiSBGfUBF3XZVkWvUJ2HGfsAjwej9lsRlEUTdP3+30sjoqL"
+  "xQI4wzC2bY9iFUU5n89N0yRJgtnFcQxnIOt53ul0AltVFQbdzy6KIizeEHw+nxdFAfZyua"
+  "B1YRhC9z6RRbnVaqVpmmEYP2eyXq91XZdlmbh1E3d++sVNufc/ji/NaDyv";
+
+
+
+/* 
+ * Resource generated for file:
+ *    TransferTypeRemoteLoad.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_TransferTypeRemoteLoad_width          = 21;
+static const unsigned int  image_TransferTypeRemoteLoad_height         = 21;
+static const unsigned int  image_TransferTypeRemoteLoad_pixel_size     = 3;
+static const unsigned long image_TransferTypeRemoteLoad_length         = 296;
+static const unsigned long image_TransferTypeRemoteLoad_decoded_length = 1323;
+
+static const unsigned char image_TransferTypeRemoteLoad[] = 
+  "eNr7/5+aoDaCAT/Cr70znqErjaE7naErgQHIxkT4tc/KYIaiPCQSSfA/LUF/iVVflU1fOQ"
+  "oCCcLY+LXPbfMEonkt7mgILohf+5pJoWsnhUDQuqmhcAQUXz85eM2UUJr6/dS6zBNrsk6s"
+  "zDq+Jufkhuzj63OAXCADKA5kAxF+7Ze3F1/eVQwhr2wphHIhItuLL+4owa/91r5K/Og/7c"
+  "G/f/+YmBgiJ1pAEJANFyfSBLj2KCTtxAOstpOqERkRbwimCWpqqngCihLH//nzB5cbyAs3"
+  "OODi4sCvAAB0aTI1";
+
+/* 
+ * Resource generated for file:
+ *    TransferTypeRemoteSave.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_TransferTypeRemoteSave_width          = 21;
+static const unsigned int  image_TransferTypeRemoteSave_height         = 21;
+static const unsigned int  image_TransferTypeRemoteSave_pixel_size     = 3;
+static const unsigned long image_TransferTypeRemoteSave_length         = 292;
+static const unsigned long image_TransferTypeRemoteSave_decoded_length = 1323;
+
+static const unsigned char image_TransferTypeRemoteSave[] = 
+  "eNr7/5+a4Na+SvwIv/bL24sv7yqGkFe2FEK5EJHtxRd3lODXfmpd5ok1WSdWZh1fk3NyQ/"
+  "bx9TlALpABFAeygeg/LcGaSaFrJ4VA0LqpoXAEFF8/OXjNlFD82ue2eQLRvBZ3NAQXxK+9"
+  "v8Sqr8qmrxwFgQRhbJr6fVYGMxTlIZFIgvi1d8YzdKUxdKczdCUwANmYCL/22ggG/Og/HQ"
+  "EXFwfZepmYGKImWgBJ8vRGTrSAIFJNQNYLQWpqqmTrJcMNxDv+379/eLQTDL0/f/5gGojV"
+  "dkyLAFqzMjU=";
+
+
+/* 
+ * Resource generated for file:
+ *    DeleteFromCache.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_DeleteFromCache_width          = 21;
+static const unsigned int  image_DeleteFromCache_height         = 21;
+static const unsigned int  image_DeleteFromCache_pixel_size     = 3;
+static const unsigned long image_DeleteFromCache_length         = 368;
+static const unsigned long image_DeleteFromCache_decoded_length = 1323;
+
+static const unsigned char image_DeleteFromCache[] = 
+  "eNqlVEsOgkAMTfj/RAmgHtDEnefgBCaAa/caFxoXcAluAMcAfUmTCXaQCE6aZqb08Tqdto"
+  "qiKz3RNNO2Pc9buq5vmg4shmE7zgJHXbfwVVUN2C3LpT0cXnMXMY5/HXdAbLK9bVvo8zEX"
+  "enABi5vKdOMi/JETBmf/r+v6eX+QzrM8SZK+DzLcD34qO+BIPstG13VlWWIP3TRNmqakq6"
+  "pi4QHOLHQUcIQNIGkZvlqFMvvv8DBco3hmw6Now959EjwIogF2kbqiGIf7fvBP6sCO9pnN"
+  "jruj9Wazx/F2AP4zO95dTl35uW6XK+lTmslVx8oG7XnY7b8Ja15Q/z9taMRhlOEVUEW0QU"
+  "4gOJJFTDYmb7DJTuA=";
+
+/* 
+ * Resource generated for file:
+ *    DeleteFromCacheDisabled.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_DeleteFromCacheDisabled_width          = 21;
+static const unsigned int  image_DeleteFromCacheDisabled_height         = 21;
+static const unsigned int  image_DeleteFromCacheDisabled_pixel_size     = 3;
+static const unsigned long image_DeleteFromCacheDisabled_length         = 228;
+static const unsigned long image_DeleteFromCacheDisabled_decoded_length = 1323;
+
+static const unsigned char image_DeleteFromCacheDisabled[] = 
+  "eNrNVLsOwyAQ+/8h/QaeH5EO3dl6LF0SpQorGzst6kkoJcmlCa1U62QJhLERHFovQylFDK"
+  "d4HAUtb5oTFiFPqebzMcbEt6vN/Ik829FFyIv9Qwj3YUC2YI0x0zXqhW+55wDOOeTkCwDI"
+  "3vsiXqUcH8NhuZTyf+Xj+NOzCyFq3DnnNe6MsRr3Rbl7R991yBZgM3xqz0t7XquieecXtw"
+  "v5B8PW0/vxBFwcZXA=";
+
+
+/* 
+ * Resource generated for file:
+ *    TransferCancelDisabled.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_TransferCancelDisabled_width          = 21;
+static const unsigned int  image_TransferCancelDisabled_height         = 21;
+static const unsigned int  image_TransferCancelDisabled_pixel_size     = 3;
+static const unsigned long image_TransferCancelDisabled_length         = 504;
+static const unsigned long image_TransferCancelDisabled_decoded_length = 1323;
+
+static const unsigned char image_TransferCancelDisabled[] = 
+  "eNq9k8lqAkEQht//NURHR9EgMTpuySwyqIjoQUT0pgcFFRH3heSjCwdJg5pI8h+Grpr6qq"
+  "urqyORZ/X5W/0Rvl6ve71erVazbbtarXa73dVq9SBO8MdF70qlUqlQKHQ6nbt4u90WSsdR"
+  "vV6/gQ8GA8dxWMxmM8oOMoBPp1P8+Xz+uoZr/HQ62UrH4xFzsViISQbWeJbLZS6Xy2azu9"
+  "1Ox4fDoaPkuq5kIB5TmsaX4i3LIkO/39fxZrMpLPI8TzKINptNuVwuFouC81fHcboXeUoB"
+  "zhHA2Z3KX5V0nPslRlrNec/nc4Bvt1uaJmw6naaTOs6cWEpEHg4HPHSbgufzufQBMJVKJZ"
+  "PJVqul4yCZTIb8+/0eczwevynhnEwmcpumacZisWACv917o9FgCxaj0ejlIrZLJBLcC37Y"
+  "SqVyY+o4fjweN5WChWEY4XCYL8e/O/Pkj0ajhpIEwIZCIfr/4ItjzHzfp3Iy0C4SSgP/57"
+  "3/CH9GX9/UY+c=";

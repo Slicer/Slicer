@@ -17,8 +17,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferIcons : public vtkSlicerIc
     vtkGetObjectMacro ( TransferTypeUnspecifiedIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferTypeLoadIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferTypeSaveIcon, vtkKWIcon);
+    vtkGetObjectMacro ( TransferTypeRemoteLoadIcon, vtkKWIcon);
+    vtkGetObjectMacro ( TransferTypeRemoteSaveIcon, vtkKWIcon);
 
-    vtkGetObjectMacro ( TransferStatusReadyIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferStatusGoingIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferStatusGoing0Icon, vtkKWIcon);
     vtkGetObjectMacro ( TransferStatusGoing1Icon, vtkKWIcon);
@@ -28,12 +29,22 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferIcons : public vtkSlicerIc
     vtkGetObjectMacro ( TransferStatusGoing5Icon, vtkKWIcon);
     vtkGetObjectMacro ( TransferStatusGoing6Icon, vtkKWIcon);
     vtkGetObjectMacro ( TransferStatusGoing7Icon, vtkKWIcon);
+
     vtkGetObjectMacro ( TransferStatusCancelledIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferStatusDoneIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferStatusTimedOutIcon, vtkKWIcon);
+    vtkGetObjectMacro ( TransferStatusIdleIcon, vtkKWIcon );
+    vtkGetObjectMacro ( TransferStatusWaitIcon, vtkKWIcon );
+    vtkGetObjectMacro ( TransferStatusReadyIcon, vtkKWIcon);
+    vtkGetObjectMacro ( TransferStatusErrorIcon, vtkKWIcon );
+    vtkGetObjectMacro ( TransferStatusCancelRequestedIcon, vtkKWIcon );
 
     vtkGetObjectMacro ( TransferCancelIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferInformationIcon, vtkKWIcon);
+    vtkGetObjectMacro ( DeleteFromCacheIcon, vtkKWIcon);
+    vtkGetObjectMacro ( TransferCancelDisabledIcon, vtkKWIcon );
+    vtkGetObjectMacro ( DeleteFromCacheDisabledIcon, vtkKWIcon );
+
 
     void AssignImageDataToIcons ( );
     
@@ -42,10 +53,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferIcons : public vtkSlicerIc
     ~vtkSlicerDataTransferIcons ( );
 
     vtkKWIcon *TransferTypeUnspecifiedIcon;
+    vtkKWIcon *TransferTypeRemoteLoadIcon;
+    vtkKWIcon *TransferTypeRemoteSaveIcon;
     vtkKWIcon *TransferTypeLoadIcon;
     vtkKWIcon *TransferTypeSaveIcon;
 
-    vtkKWIcon *TransferStatusReadyIcon;
+
     vtkKWIcon *TransferStatusGoingIcon;
     vtkKWIcon *TransferStatusGoing0Icon;
     vtkKWIcon *TransferStatusGoing1Icon;
@@ -55,12 +68,21 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferIcons : public vtkSlicerIc
     vtkKWIcon *TransferStatusGoing5Icon;
     vtkKWIcon *TransferStatusGoing6Icon;
     vtkKWIcon *TransferStatusGoing7Icon;
+
+    vtkKWIcon *TransferStatusReadyIcon;
     vtkKWIcon *TransferStatusCancelledIcon;
     vtkKWIcon *TransferStatusDoneIcon;
     vtkKWIcon *TransferStatusTimedOutIcon;
+    vtkKWIcon *TransferStatusIdleIcon;
+    vtkKWIcon *TransferStatusWaitIcon;
+    vtkKWIcon *TransferStatusCancelRequestedIcon;
+    vtkKWIcon *TransferStatusErrorIcon;
 
     vtkKWIcon *TransferCancelIcon;
     vtkKWIcon *TransferInformationIcon;
+    vtkKWIcon *DeleteFromCacheIcon;
+    vtkKWIcon *TransferCancelDisabledIcon;
+    vtkKWIcon *DeleteFromCacheDisabledIcon;
     
  private:
     vtkSlicerDataTransferIcons (const vtkSlicerDataTransferIcons&); // Not implemented
