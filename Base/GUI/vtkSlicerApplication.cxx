@@ -526,7 +526,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
   GetTempPath(vtkKWRegistryHelper::RegistryKeyValueSizeMax,
               this->RemoteCacheDirectory);
 #else
-  strcpy(this->RemoteCacheDirectory, "/cache");
+  strcpy(this->RemoteCacheDirectory, "/tmp/cache");
 #endif
 
 
