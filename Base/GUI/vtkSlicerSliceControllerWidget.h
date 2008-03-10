@@ -83,8 +83,12 @@ public:
 
   // Description:
   // slice logic controlling the slice to be manipulated
-  vtkSetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
   vtkGetObjectMacro ( SliceLogic, vtkSlicerSliceLogic );
+  void SetAndObserveSliceLogic (vtkSlicerSliceLogic *sLogic)
+    {
+    // treat the logic as a MRML node (it will be passing on changes to volumes and layers)
+    vtkSetAndObserveMRMLNodeMacro(this->SliceLogic, sLogic );
+    }
 
   // Description:
   // TODO: Use this flag to determine how to display

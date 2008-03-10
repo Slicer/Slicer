@@ -247,7 +247,7 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
     }
   this->SetSliceNode ( NULL );
   this->SetSliceCompositeNode ( NULL );
-  this->SetSliceLogic ( NULL );
+  this->SetAndObserveSliceLogic ( NULL );
 }
 
 

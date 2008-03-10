@@ -437,7 +437,7 @@ void vtkSlicerSliceGUI::SetupViewerAndController()
     vtkMRMLSliceCompositeNode *scnode = this->GetLogic()->GetSliceCompositeNode();
     this->GetSliceController()->SetSliceCompositeNode (scnode);
     
-    this->GetSliceController()->SetSliceLogic( this->GetLogic() );
+    this->GetSliceController()->SetAndObserveSliceLogic( this->GetLogic() );
     }
 
   if ( this->GetSliceViewer() && this->GetSliceViewer()->GetImageMapper() )
