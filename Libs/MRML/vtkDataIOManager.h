@@ -6,6 +6,8 @@
 #include "vtkObjectFactory.h"
 #include "vtkUnsignedLongArray.h"
 #include "vtkIntArray.h"
+#include "vtkCallbackCommand.h"
+
 #include "vtkDataTransfer.h"
 #include "vtkCacheManager.h"
 #include "vtkCollection.h"
@@ -32,13 +34,15 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   vtkSetObjectMacro ( CacheManager, vtkCacheManager );
   vtkGetMacro ( EnableAsynchronousIO, int );
   vtkSetMacro ( EnableAsynchronousIO, int );
-
+  vtkGetMacro ( InUpdateCallbackFlag, int );
+  vtkSetMacro ( InUpdateCallbackFlag, int );
   
   // Description:
   // Creates and adds a new data transfer object to the collection
   vtkDataTransfer *AddNewDataTransfer ( );
   vtkDataTransfer *AddNewDataTransfer ( vtkMRMLNode *node);
   void AddNewDataTransfer ( vtkDataTransfer *transfer, vtkMRMLNode *node);
+  void AllTransfersClearedFromCache();
 
   // Description:
   // Adds a new data transfer object to the collection
@@ -47,6 +51,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   // Removes a data transfer object from the collection
   void RemoveDataTransfer ( vtkDataTransfer *transfer );
   void RemoveDataTransfer ( int transferID );
+  int GetNumberOfDataTransfers();
   // Description:
   // Returns an individual data transfer by id
   vtkDataTransfer *GetDataTransfer ( int transferID );
@@ -72,7 +77,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   // Set the status of a data transfer (Idle, Scheduled, Cancelled Running,
   // Completed).  The "modify" parameter indicates whether the object
   // can be modified by the call.
-  void SetTransferStatus(vtkDataTransfer *transfer, int status, bool modify);
+  void SetTransferStatus(vtkDataTransfer *transfer, int status);
   int GetTransferStatus( vtkDataTransfer *transfer);
 
   const char* GetTransferStatusString( vtkDataTransfer *transfer )
@@ -80,6 +85,8 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
     return (transfer->GetTransferStatusString () );
     };
 
+  virtual void ProcessTransferUpdates ( vtkObject *caller, unsigned long event, void *callData );
+  
   //BTX
   enum
     {
@@ -90,8 +97,16 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
       NewTransferEvent,
       TransferUpdateEvent,
     };
+
+  // function that gets called when a data transfer has been updated.
+  static void TransferUpdateCallback ( vtkObject *__caller,
+                                       unsigned long eid, void *__clientData, void *callData );
   //ETX
 
+  // Holder for update callback
+  vtkCallbackCommand *TransferUpdateCommand;
+  int InUpdateCallbackFlag;
+  
  private:
   vtkCollection *DataTransferCollection;
   vtkCacheManager *CacheManager;

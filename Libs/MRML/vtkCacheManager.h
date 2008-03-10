@@ -127,7 +127,9 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   enum
     {
       InsufficientFreeBufferEvent =  21000,
-      CacheLimitExceededEvent = 21001,
+      CacheLimitExceededEvent,
+      CacheDeleteEvent,
+      CacheClearEvent,
     };
   //ETX
   

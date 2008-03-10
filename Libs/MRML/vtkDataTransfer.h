@@ -29,21 +29,25 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   vtkGetMacro ( Progress, int );
   vtkSetMacro ( Progress, int );
   vtkGetMacro ( TransferStatus, int );
+  vtkSetMacro ( TransferStatus, int );
 
   vtkGetMacro ( CancelRequested, int );
   vtkSetMacro ( CancelRequested, int );
 
-  // Description:
-  // Set the status of a data transfer (Idle, Scheduled, Cancelled Running,
-  // Completed).  The "modify" parameter indicates whether the object
-  // can be modified by the call.
-  void SetTransferStatus(int status, bool modify);
-  
+  vtkGetMacro (TransferCached, int );
+  vtkSetMacro (TransferCached, int );
+
+  void SetTransferStatusNoModify ( int val)
+      {
+      this->TransferStatus = val;
+      }
+
   const char* GetTransferStatusString( ) {
     switch (this->TransferStatus)
       {
       case vtkDataTransfer::Idle: return "Idle";
       case vtkDataTransfer::CancelPending: return "CancelPending";
+      case vtkDataTransfer::Pending: return "Pending";
       case vtkDataTransfer::Running: return "Running";
       case vtkDataTransfer::Completed: return "Completed";
       case vtkDataTransfer::CompletedWithErrors: return "CompletedWithErrors";
@@ -68,9 +72,12 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
 
 
   //BTX
+  // transfer status values
+  // ready means ready to read into storage node
   enum
     {
       Idle=0,
+      Pending,
       Running,
       Completed,
       CompletedWithErrors,
@@ -79,7 +86,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       Ready,
       TimedOut,
     };
-  
+  // transfer type values
   enum
     {
       RemoteDownload=0,
@@ -105,6 +112,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   int TransferStatus;
   int TransferID;
   int TransferType;
+  int TransferCached;
   char* TransferNodeID;
   int Progress;
   int CancelRequested;
