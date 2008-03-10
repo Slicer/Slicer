@@ -227,18 +227,27 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
     else if ( event == vtkDataIOManager::TransferUpdateEvent )
       {
       vtkDataTransfer *dt = reinterpret_cast < vtkDataTransfer*> (callData);
-      this->UpdateGUI();
+      this->UpdateEntireGUI();
       }
     }
   else if ( cm == this->CacheManager && dm != NULL )
     {
     if ( event == vtkCacheManager::CacheLimitExceededEvent )
       {
-      this->UpdateGUI();
+      this->UpdateOverviewPanel();
       }
     else if ( event == vtkCacheManager::InsufficientFreeBufferEvent )
       {
-      this->UpdateGUI();
+      this->UpdateOverviewPanel();
+      }
+    else if ( event == vtkCacheManager::CacheClearEvent )
+      {
+      this->UpdateEntireGUI();
+      }
+    else if ( event == vtkCacheManager::CacheDeleteEvent )
+      {
+      this->UpdateTransfersPanel();
+
       }
     }
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Done processing mrml events...");
@@ -272,6 +281,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::SetAndObserveDataIOManager( vtkDataIOMan
   events->InsertNextValue( vtkDataIOManager::RemoteWriteEvent);
   events->InsertNextValue( vtkDataIOManager::LocalReadEvent);
   events->InsertNextValue( vtkDataIOManager::LocalWriteEvent);
+  events->InsertNextValue ( vtkDataIOManager::NewTransferEvent );
   events->InsertNextValue( vtkDataIOManager::TransferUpdateEvent);
   vtkSetAndObserveMRMLNodeEventsMacro ( this->DataIOManager, iomanager, events );
   events->Delete();
@@ -300,6 +310,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::SetAndObserveCacheManager( vtkCacheManag
   vtkIntArray  *events = vtkIntArray::New();
   events->InsertNextValue( vtkCacheManager::CacheLimitExceededEvent);
   events->InsertNextValue( vtkCacheManager::InsufficientFreeBufferEvent);
+  events->InsertNextValue( vtkCacheManager::CacheDeleteEvent);
+  events->InsertNextValue( vtkCacheManager::CacheClearEvent);
   vtkSetAndObserveMRMLNodeEventsMacro ( this->CacheManager, manager, events );
   events->Delete();
   events = NULL;
@@ -308,9 +320,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::SetAndObserveCacheManager( vtkCacheManag
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerCacheAndDataIOManagerGUI::UpdateGUI()
+void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
 {
-
   int intsz;
   char *txt = new char[256];
   
@@ -353,9 +364,12 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateGUI()
     this->AsynchronousCheckButton->SetSelectedState ( this->DataIOManager->GetEnableAsynchronousIO() );
     }
   delete [] txt;  
+}
 
+//---------------------------------------------------------------------------
+void vtkSlicerCacheAndDataIOManagerGUI::UpdateTransfersPanel()
+{
   //--- update widgets
-
   if ( this->TransferWidgetCollection != NULL )
     {
     int numW = this->TransferWidgetCollection->GetNumberOfItems();
@@ -370,6 +384,14 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateGUI()
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerCacheAndDataIOManagerGUI::UpdateEntireGUI()
+{
+  this->UpdateOverviewPanel();
+  this->UpdateTransfersPanel();
+}
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::AddNewDataTransfer ( vtkDataTransfer *transfer )
 {
   if ( this->TransferWidgetCollection == NULL )
@@ -379,9 +401,11 @@ void vtkSlicerCacheAndDataIOManagerGUI::AddNewDataTransfer ( vtkDataTransfer *tr
   vtkSlicerDataTransferWidget *w = vtkSlicerDataTransferWidget::New();
   if ( w != NULL )
     {
+    w->SetTransferID ( transfer->GetTransferID() );
     w->SetDataTransfer ( transfer );
     w->UpdateWidget();
     w->SetParent ( this->TransfersFrame );
+    w->SetCacheManager ( this->CacheManager);
     this->Script ( "pack %s -side top -anchor nw -padx 1 -pady 1", w->GetWidgetName() );
     }
 }
@@ -410,6 +434,33 @@ void vtkSlicerCacheAndDataIOManagerGUI::DeleteDataTransfer ( vtkDataTransfer *tr
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerCacheAndDataIOManagerGUI::DeleteDataTransfer ( int ID )
+{
+  if ( this->TransferWidgetCollection == NULL )
+    {
+    return;
+    }
+  int numW = this->TransferWidgetCollection->GetNumberOfItems();
+  for (int i =0; i < numW; i++)
+    {
+    vtkSlicerDataTransferWidget *w =
+      vtkSlicerDataTransferWidget::SafeDownCast (this->TransferWidgetCollection->GetItemAsObject ( i ));
+    if ( w != NULL )
+      {
+      if ( w->GetDataTransfer()->GetTransferID() == ID )
+        {
+        this->Script ( "pack forget %s", w->GetWidgetName() );
+        w->SetParent ( NULL );
+        w->Delete();
+        w = NULL;
+        }
+      }
+    }
+}
+
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::CreateModuleEventBindings ( )
@@ -434,7 +485,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::Enter ( )
     this->AddGUIObservers();
     }
   this->CreateModuleEventBindings();
-  this->UpdateGUI();
+  this->UpdateEntireGUI();
 }
 
 //---------------------------------------------------------------------------
@@ -498,6 +549,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
     this->Script ( "pack %s -side top -anchor nw -padx 0 -pady 0", this->TransfersFrame->GetWidgetName() );  
     this->Script ( "pack %s -side top -anchor nw -padx 0 -pady 0", this->ButtonFrame->GetWidgetName() );
 
+
     // all widgets in the Button Frame
     this->CloseButton = vtkKWPushButton::New();
     this->CloseButton->SetParent ( this->ButtonFrame );
@@ -512,6 +564,52 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
     this->Script ( "pack %s %s -side top -anchor c -padx 4 -pady 4",
                    this->ClearCacheButton->GetWidgetName(),
                    this->CloseButton->GetWidgetName() );
+    
+    // all title widgets in the Transfer Frame
+    vtkKWLabel *l;
+    l = vtkKWLabel::New();
+    l->SetParent (this->TransfersFrame);
+    l->Create();
+    l->SetText ("type");
+    this->Script ( "grid %s -row 0 -col 0 -sticky news -padx 2 -pady 2 ", l->GetWidgetName());
+    l->Delete();
+    l = vtkKWLabel::New();
+    l->SetParent (this->TransfersFrame);
+    l->Create();
+    l->SetText ("status");
+    this->Script ( "grid %s -row 0 -col 1 -sticky news -padx 2 -pady 2 ", l->GetWidgetName());
+    l->Delete();
+    l = vtkKWLabel::New();
+    l->SetParent (this->TransfersFrame);
+    l->Create();
+    l->SetText ("cancel");
+    this->Script ( "grid %s -row 0 -col 2 -sticky news -padx 2 -pady 2 ", l->GetWidgetName());
+    l->Delete();
+    l = vtkKWLabel::New();
+    l->SetParent (this->TransfersFrame);
+    l->Create();
+    l->SetText ("clear");
+    this->Script ( "grid %s -row 0 -col 3 -sticky news -padx 2 -pady 2 ", l->GetWidgetName());
+    l->Delete();
+    l = vtkKWLabel::New();
+    l->SetParent (this->TransfersFrame);
+    l->Create();
+    l->SetText ("info");
+    this->Script ( "grid %s -row 0 -col 4 -sticky news -padx 2 -pady 2 ", l->GetWidgetName());
+    l->Delete();
+    l = vtkKWLabel::New();
+    l->SetParent (this->TransfersFrame);
+    l->Create();
+    l->SetText ("source uri");
+    this->Script ( "grid %s -row 0 -col 5 -sticky news -padx 2 -pady 2 ", l->GetWidgetName());
+    l->Delete();
+
+    this->Script ( "grid columnconfigure %s 0 -weight 1", this->TransfersFrame->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 1 -weight 1", this->TransfersFrame->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 2 -weight 1", this->TransfersFrame->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 3 -weight 1", this->TransfersFrame->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 4 -weight 1", this->TransfersFrame->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 5 -weight 1", this->TransfersFrame->GetWidgetName() );
     
     // all widgets in the Control Frame
     this->CacheSizeLabel = vtkKWLabel::New();

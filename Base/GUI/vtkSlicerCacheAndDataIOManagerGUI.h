@@ -86,7 +86,9 @@ public:
 
   // Description:
   // Update the gui from the currently selected DataIOManager node, called on Enter
-  void UpdateGUI();
+  void UpdateEntireGUI();
+  void UpdateOverviewPanel();
+  void UpdateTransfersPanel();
 
   // Description:
   // API for setting DataIOManager, and for
@@ -104,6 +106,7 @@ public:
   // Creates a data transfer widget to represent a transfer.
   void AddNewDataTransfer ( vtkDataTransfer *transfer );
   void DeleteDataTransfer ( vtkDataTransfer *transfer );
+  void DeleteDataTransfer ( int ID );
 
   // Description:
   // Methods for displaying and hiding the Cache and DataIO Manager

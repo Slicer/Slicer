@@ -3,6 +3,7 @@
 
 #include "vtkSlicerWidget.h"
 #include "vtkDataTransfer.h"
+#include "vtkCacheManager.h"
 
 //widgets
 class vtkKWIcon;
@@ -26,6 +27,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
 
     // Description:
     // Get/Set on members
+    // associated transfer
+    vtkGetMacro ( TransferID, int );
+    vtkSetMacro ( TransferID, int );
+    // widgets
     vtkGetObjectMacro (DataTransferFrame, vtkKWFrame );
     vtkGetObjectMacro (URILabel, vtkKWLabel );
     vtkGetObjectMacro (TransferTypeLabel, vtkKWLabel );
@@ -40,6 +45,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     vtkGetObjectMacro (InformationCloseButton, vtkKWPushButton );
     vtkGetObjectMacro ( DataTransfer, vtkDataTransfer);
     vtkSetObjectMacro ( DataTransfer, vtkDataTransfer);
+    // timer things
+    vtkGetMacro ( TimerCount, int );
+    vtkSetMacro ( TimerCount, int );
+    vtkGetMacro ( TimerSteps, int );
+    vtkGetMacro ( TimerRunning, int );
+    vtkSetMacro ( TimerRunning, int);
+    // managers
+    vtkGetObjectMacro (CacheManager, vtkCacheManager);
+    vtkSetObjectMacro (CacheManager, vtkCacheManager);
 
     // Description:
     // Add/Remove observers on widgets in the GUI.
@@ -58,9 +72,27 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     virtual void UpdateInformationText();
     
     // Description:
+    // Methods to handle the animated "transfer running" status display
+    virtual void StartTransferTimer();
+    virtual void KillTransferTimer();
+    virtual void UpdateTransferFeedback();
+
+    virtual void DeleteTransferFromCache();
+    virtual void DisableDeleteButton();
+    virtual void EnableDeleteButton();
+    virtual void DisableCancelButton();
+    virtual void EnableCancelButton();
+    virtual void DisableURILabel();
+    virtual void EnableURILabel();
+
+    // Description:
     // Method to update the widget when a new node is loaded.
     // Or when a Data Transfer's state may have changed.
     void UpdateWidget();
+    const char *GetTimerID ()
+        {
+        return this->TimerID;
+        }
 
   protected:
     vtkSlicerDataTransferWidget(void);
@@ -70,6 +102,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     // Method to create the widget.
     virtual void CreateWidget();
 
+    // Description:
+    // members to animate transfer running icons.
+    int TimerCount;
+    int TimerSteps;
+    int TimerRunning;
+    const char *TimerID;
+    int TransferID;
+    vtkCacheManager *CacheManager;
+    
     //widgets (GUI)
     vtkKWFrame *DataTransferFrame;
     vtkKWLabel *URILabel;
@@ -84,6 +125,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     vtkKWTextWithScrollbars *InformationText;
     vtkKWPushButton *InformationCloseButton;
     vtkDataTransfer *DataTransfer;
+
 
   private:
     vtkSlicerDataTransferWidget (const vtkSlicerDataTransferWidget&); // Not implemented.
