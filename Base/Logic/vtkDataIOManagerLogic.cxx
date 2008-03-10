@@ -109,6 +109,58 @@ void vtkDataIOManagerLogic::AddNewDataTransfer ( vtkDataTransfer *dt, vtkMRMLNod
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkDataIOManagerLogic::DeleteDataTransferFromCache ( vtkDataTransfer *dt )
+{
+  if ( dt != NULL )
+    {
+    vtkDataIOManager *dm = this->GetDataIOManager();
+    if ( dm )
+      {
+      vtkCacheManager *cm = dm->GetCacheManager();
+      if ( cm != NULL )
+        {
+        if ( cm->CachedFileExists( dt->GetDestinationURI() ) )
+          {
+          cm->DeleteFromCache ( dt->GetDestinationURI() );        
+          dt->SetTransferCached (0);
+          cm->InvokeEvent ( vtkCacheManager::CacheDeleteEvent );
+          }
+        }
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkDataIOManagerLogic::ClearCache ()
+{
+  vtkDataIOManager *dm = this->GetDataIOManager();
+  if ( dm )
+    {
+    vtkCacheManager *cm = dm->GetCacheManager();
+    if ( cm != NULL )
+      {
+      cm->ClearCache();
+      dm->AllTransfersClearedFromCache();
+      cm->InvokeEvent ( vtkCacheManager::CacheClearEvent );
+      }
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkDataIOManagerLogic::CancelDataTransfer ( vtkDataTransfer *dt )
+{
+  if ( dt != NULL )
+    {
+    dt->SetCancelRequested ( 1 );
+    dt->SetTransferStatus ( vtkDataTransfer::CancelPending );
+    vtkDataIOManager *dm = this->GetDataIOManager();
+    }
+}
+
+
+
 
 
 //----------------------------------------------------------------------------
@@ -196,9 +248,10 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   transfer->SetDestinationURI ( dest );
   transfer->SetHandler ( handler );
   transfer->SetTransferType ( vtkDataTransfer::RemoteDownload );
-  transfer->SetTransferStatus ( vtkDataTransfer::Idle, true );
+  transfer->SetTransferStatus ( vtkDataTransfer::Idle );
+  transfer->SetCancelRequested ( 0 );
   this->AddNewDataTransfer ( transfer, node );
-
+  
   /*
   if (this->GetDataIOManager()->GetEnableAsynchronousIO() )
     {
@@ -220,13 +273,16 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
       transfer->Delete();
       return 0;
       }
-    transfer->SetTransferStatus ( vtkDataTransfer::Running, true );
+    transfer->SetTransferStatus ( vtkDataTransfer::Pending );
     task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
                           &vtkDataIOManagerLogic::ApplyTransfer, transfer);
   
     // Schedule the transfer
     bool ret = 0;
-    ret = this->GetApplicationLogic()->ScheduleTask( task );
+    if (ret = this->GetApplicationLogic()->ScheduleTask( task ) )
+      {
+      transfer->SetTransferStatus( vtkDataTransfer::CompletedWithErrors);
+      }
     task->Delete();
     if ( !ret )
       {
@@ -241,7 +297,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     //--- Execute a SYNCHRONOUS data transfer
     //---
     this->ApplyTransfer ( transfer );
-    transfer->SetTransferStatus( vtkDataTransfer::Completed, true);
+    transfer->SetTransferStatus( vtkDataTransfer::Completed);
     // now set the node's storage node state to ready
     dnode->GetStorageNode()->SetReadStateReady();
     }
@@ -310,10 +366,14 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
      vtkURIHandler *handler = dt->GetHandler();
      if ( handler != NULL && source != NULL && dest != NULL )
       {
-      if ( asynchIO && dt->GetTransferStatus() == vtkDataTransfer::Running )
+      if ( asynchIO && dt->GetTransferStatus() == vtkDataTransfer::Pending)
         {
+        dt->SetTransferStatusNoModify ( vtkDataTransfer::Running );
+        this->GetApplicationLogic()->RequestModified( dt );
         handler->StageFileRead( source, dest);
-        dt->SetTransferStatus ( vtkDataTransfer::Completed, false );
+        dt->SetTransferStatusNoModify ( vtkDataTransfer::Completed );
+        this->GetApplicationLogic()->RequestModified( dt );
+
         vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast( node );
         if ( !displayableNode )
           {

@@ -58,10 +58,13 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkDataIOManagerLogic : public vtkSlicerModul
   // Convenience method that goes through vtkDataIOManager
   // to create a new DataTransfer object.
   virtual void AddNewDataTransfer ( vtkDataTransfer *transfer, vtkMRMLNode *node );
+  virtual void CancelDataTransfer ( vtkDataTransfer *transfer );
+  virtual void ClearCache();
+  virtual void DeleteDataTransferFromCache ( vtkDataTransfer *transfer);
 
  private:
   vtkDataIOManager *DataIOManager;
-
+  
  protected:
   vtkDataIOManagerLogic();
   virtual ~vtkDataIOManagerLogic();
