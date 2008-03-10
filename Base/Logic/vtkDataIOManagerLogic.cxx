@@ -196,7 +196,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   transfer->SetDestinationURI ( dest );
   transfer->SetHandler ( handler );
   transfer->SetTransferType ( vtkDataTransfer::RemoteDownload );
-  transfer->SetTransferStatus ( vtkDataTransfer::Unspecified, true );
+  transfer->SetTransferStatus ( vtkDataTransfer::Idle, true );
   this->AddNewDataTransfer ( transfer, node );
 
   /*
@@ -220,15 +220,13 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
       transfer->Delete();
       return 0;
       }
+    transfer->SetTransferStatus ( vtkDataTransfer::Running, true );
     task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
                           &vtkDataIOManagerLogic::ApplyTransfer, transfer);
   
     // Schedule the transfer
     bool ret = 0;
-    if (ret = this->GetApplicationLogic()->ScheduleTask( task ) )
-      {
-      transfer->SetTransferStatus( vtkDataTransfer::Ready, true);
-      }
+    ret = this->GetApplicationLogic()->ScheduleTask( task );
     task->Delete();
     if ( !ret )
       {
@@ -243,6 +241,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     //--- Execute a SYNCHRONOUS data transfer
     //---
     this->ApplyTransfer ( transfer );
+    transfer->SetTransferStatus( vtkDataTransfer::Completed, true);
     // now set the node's storage node state to ready
     dnode->GetStorageNode()->SetReadStateReady();
     }
@@ -311,9 +310,25 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
      vtkURIHandler *handler = dt->GetHandler();
      if ( handler != NULL && source != NULL && dest != NULL )
       {
-      if ( asynchIO )
+      if ( asynchIO && dt->GetTransferStatus() == vtkDataTransfer::Running )
         {
         handler->StageFileRead( source, dest);
+        dt->SetTransferStatus ( vtkDataTransfer::Completed, false );
+        vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast( node );
+        if ( !displayableNode )
+          {
+          vtkErrorMacro( "could not get displayable node for scheduled data transfer" );
+          return;
+          }
+        vtkMRMLStorageNode *storageNode = displayableNode->GetStorageNode();
+        if ( !storageNode )
+          {
+          vtkErrorMacro( "no storage node for scheduled data transfer" );
+          return;
+          }
+        storageNode->SetDisableModifiedEvent( 1 );
+        storageNode->SetReadStateReady();
+        storageNode->SetDisableModifiedEvent( 0 );
         this->GetApplicationLogic()->RequestReadData( node->GetID(), dest, 0, 0 );
         }
       else

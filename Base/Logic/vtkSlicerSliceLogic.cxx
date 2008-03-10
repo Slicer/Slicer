@@ -387,7 +387,7 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     points->SetPoint(3, outPt3);
 #endif
 
-    this->UpdateImageData();
+    this->UpdatePipeline();
     this->SliceModelNode->GetPolyData()->Modified();
     vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetModelDisplayNode();
     if ( modelDisplayNode )

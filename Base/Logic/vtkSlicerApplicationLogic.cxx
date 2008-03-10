@@ -798,7 +798,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         {
         vtkMRMLDisplayableNode *displayableNode = 
           vtkMRMLDisplayableNode::SafeDownCast(nd);
-        if (displayableNode)
+        if ( displayableNode && displayableNode->GetStorageNode() == NULL )
           {
           this->MRMLScene->AddNode( in );
           displayableNode->SetReferenceStorageNodeID( in->GetID() );

@@ -183,7 +183,8 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
     return;
     }
 
-  if (this->VolumeDisplayNodeObserved == vtkMRMLVolumeDisplayNode::SafeDownCast(caller) &&
+  if (this->VolumeDisplayNodeObserved != NULL && 
+      this->VolumeDisplayNodeObserved == vtkMRMLVolumeDisplayNode::SafeDownCast(caller) &&
       event == vtkCommand::ModifiedEvent)
     {
       if (this->VolumeDisplayNode && this->VolumeDisplayNodeObserved)
