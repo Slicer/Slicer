@@ -132,7 +132,7 @@ int vtkSlicerGradientEditorLogic::ParseGradients(const char *oldGradients, int n
   // exit if too many or to less values are input
   if(vec.size() != numberOfGradients*3+1)
     {
-    vtkWarningMacro("given values "<<vec.size()<<" needed "<<numberOfGradients*3+1);
+    vtkWarningMacro("given values "<<vec.size()<<", needed "<<numberOfGradients*3+1);
     return 0;
     }
 

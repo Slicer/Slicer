@@ -426,6 +426,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->IdentityButton->SetText("Identity");
   this->IdentityButton->SetWidth(11);
   this->IdentityButton->SetBalloonHelpString("");
+  this->IdentityButton->SetBalloonHelpString("Change to identity matrix.");
 
   //fill default angles in combobox
   const char *angleValues [] = {"+90", "-90", "+180", "-180", "+30", "-30"};

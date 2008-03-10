@@ -246,14 +246,14 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
       module->SetParameterAsString("outputBaseline", baseline->GetID());
       module->SetParameterAsString("thresholdMask", mask->GetID());
 
-      //get the existing gui of the "Diffusion Tensor Estimation Command Line Module" 
+      //get the existing GUI of the "Diffusion Tensor Estimation Command Line Module" 
       vtkCommandLineModuleGUI *moduleGUI = vtkCommandLineModuleGUI::SafeDownCast(
         this->Application->GetModuleGUIByName("Diffusion Tensor Estimation"));
       moduleGUI->Enter();
 
-      //set command line node to gui an logic
+      //set command line node to GUI an logic
       moduleGUI->SetCommandLineModuleNode(module);
-      moduleGUI->GetLogic()->SetCommandLineModuleNode(module);
+      moduleGUI->GetLogic()->SetCommandLineModuleNode(module); //use the GUI's Logic to invoke the task
 
       //estimate tensors
       moduleGUI->GetLogic()->Apply(module);
@@ -357,7 +357,7 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->TestFrame = vtkKWFrameWithLabel::New();
   this->TestFrame->SetParent(this->GetParent());
   this->TestFrame->Create();
-  this->TestFrame->SetLabelText("Test");
+  this->TestFrame->SetLabelText("Test (Tensor Estimation & Tractography Fiducial Seeding)");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", 
     this->TestFrame->GetWidgetName());
 
@@ -394,6 +394,7 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->UndoButton->SetBalloonHelpString("");
   this->UndoButton->SetWidth(10);
   this->UndoButton->SetEnabled(0);
+  this->UndoButton->SetBalloonHelpString("Undo the last change in measurement frame/gradient values.");
 
   //create restore  button
   this->RestoreButton = vtkKWPushButton::New();
