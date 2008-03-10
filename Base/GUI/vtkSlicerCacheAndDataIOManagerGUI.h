@@ -3,6 +3,7 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
+#include "vtkSlicerApplicationGUI.h"
 
 #include "vtkCacheManager.h"
 
@@ -34,11 +35,15 @@ public:
   // Description:
   // tracks cache
   vtkGetObjectMacro ( CacheManager, vtkCacheManager );
+
+  vtkGetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
+  vtkSetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
   
   vtkGetObjectMacro ( CacheSizeLabel, vtkKWLabel );
   vtkGetObjectMacro ( CacheFreeLabel, vtkKWLabel );
   vtkGetObjectMacro ( CloseButton, vtkKWPushButton );
   vtkGetObjectMacro ( ClearCacheButton, vtkKWPushButton );
+  vtkGetObjectMacro ( CancelAllButton, vtkKWPushButton );
   vtkGetObjectMacro ( ForceReloadCheckButton, vtkKWCheckButton );
   vtkGetObjectMacro ( OverwriteCacheCheckButton, vtkKWCheckButton );
   vtkGetObjectMacro ( AsynchronousCheckButton, vtkKWCheckButton );
@@ -107,6 +112,7 @@ public:
   void AddNewDataTransfer ( vtkDataTransfer *transfer );
   void DeleteDataTransfer ( vtkDataTransfer *transfer );
   void DeleteDataTransfer ( int ID );
+  void CancelAllDataTransfers();
 
   // Description:
   // Methods for displaying and hiding the Cache and DataIO Manager
@@ -124,6 +130,7 @@ protected:
   vtkKWLabel *CacheFreeLabel;
   vtkKWPushButton *CloseButton;
   vtkKWPushButton *ClearCacheButton;
+  vtkKWPushButton *CancelAllButton;
   vtkKWCheckButton *ForceReloadCheckButton;
   vtkKWCheckButton *OverwriteCacheCheckButton;
   vtkKWCheckButton *AsynchronousCheckButton;
@@ -136,6 +143,7 @@ protected:
   vtkDataIOManager *DataIOManager;
   vtkCacheManager *CacheManager;
   vtkCollection *TransferWidgetCollection;
+  vtkSlicerApplicationGUI *ApplicationGUI;
 
     // Description:
     // Describes whether the GUI has been built or not.
