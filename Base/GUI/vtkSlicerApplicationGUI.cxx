@@ -93,67 +93,70 @@ vtkCxxRevisionMacro(vtkSlicerApplicationGUI, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 {
-    //---  
-    // widgets used in the Slice module
-    //---
+
+  this->MRMLScene = NULL;
+
+  //---  
+  // widgets used in the Slice module
+  //---
+
+  //--- slicer main window
+  this->MainSlicerWindow = vtkSlicerWindow::New ( );
+
+  // Frames that comprise the Main Slicer GUI
+
+  this->TopFrame = vtkKWFrame::New();
+  this->LogoFrame = vtkKWFrame::New();
+  this->SlicesControlFrame = vtkSlicerModuleCollapsibleFrame::New();
+  this->ViewControlFrame = vtkSlicerModuleCollapsibleFrame::New();
+  this->DropShadowFrame = vtkKWFrame::New();
+  this->GridFrame1 = vtkKWFrame::New ( );
+  this->GridFrame2 = vtkKWFrame::New ( );
+
+  // initialize in case any are not defined.
+  this->ApplicationToolbar = NULL;
+  this->ViewControlGUI = NULL;
+  this->SlicesControlGUI = NULL;
+  this->LogoDisplayGUI = NULL;
   
-    //--- slicer main window
-    this->MainSlicerWindow = vtkSlicerWindow::New ( );
-
-    // Frames that comprise the Main Slicer GUI
-
-    this->TopFrame = vtkKWFrame::New();
-    this->LogoFrame = vtkKWFrame::New();
-    this->SlicesControlFrame = vtkSlicerModuleCollapsibleFrame::New();
-    this->ViewControlFrame = vtkSlicerModuleCollapsibleFrame::New();
-    this->DropShadowFrame = vtkKWFrame::New();
-    this->GridFrame1 = vtkKWFrame::New ( );
-    this->GridFrame2 = vtkKWFrame::New ( );
-
-    // initialize in case any are not defined.
-    this->ApplicationToolbar = NULL;
-    this->ViewControlGUI = NULL;
-    this->SlicesControlGUI = NULL;
-    this->LogoDisplayGUI = NULL;
-    
-    //--- GUIs containing components packed inside the Frames
+  //--- GUIs containing components packed inside the Frames
 #ifndef TOOLBAR_DEBUG
-    this->ApplicationToolbar = vtkSlicerToolbarGUI::New ( );
+  this->ApplicationToolbar = vtkSlicerToolbarGUI::New ( );
 #endif
 #ifndef VIEWCONTROL_DEBUG
-    this->ViewControlGUI = vtkSlicerViewControlGUI::New ( );
+  this->ViewControlGUI = vtkSlicerViewControlGUI::New ( );
 #endif
 #ifndef SLICESCONTROL_DEBUG
-    this->SlicesControlGUI = vtkSlicerSlicesControlGUI::New ( );
+  this->SlicesControlGUI = vtkSlicerSlicesControlGUI::New ( );
 #endif
 #ifndef LOGODISPLAY_DEBUG    
-    this->LogoDisplayGUI = vtkSlicerLogoDisplayGUI::New ( );
+  this->LogoDisplayGUI = vtkSlicerLogoDisplayGUI::New ( );
 #endif
-    
-    //--- Main viewer, 3 main slice viewers and collection.
-    this->ViewerWidget = NULL;
-    this->FiducialListWidget = NULL;
+  
+  //--- Main viewer, 3 main slice viewers and collection.
+  this->ViewerWidget = NULL;
+  this->FiducialListWidget = NULL;
 
-    this->MainSliceGUI0 = NULL;
-    this->MainSliceGUI1 = NULL;
-    this->MainSliceGUI2 = NULL;
-    this->SliceGUICollection = NULL;
-    
-    //--- Save the main slice logic in these.
-    this->MainSliceLogic0 = NULL;
-    this->MainSliceLogic1 = NULL;
-    this->MainSliceLogic2 = NULL;
+  this->MainSliceGUI0 = NULL;
+  this->MainSliceGUI1 = NULL;
+  this->MainSliceGUI2 = NULL;
+  this->SliceGUICollection = NULL;
+  
+  //--- Save the main slice logic in these.
+  this->MainSliceLogic0 = NULL;
+  this->MainSliceLogic1 = NULL;
+  this->MainSliceLogic2 = NULL;
 
 
-    //--- Save and load scene dialogs, widgets
-    this->LoadSceneDialog = vtkKWLoadSaveDialog::New();
+  //--- Save and load scene dialogs, widgets
+  this->LoadSceneDialog = vtkKWLoadSaveDialog::New();
 
-    this->SaveDataWidget = vtkSlicerMRMLSaveDataWidget::New();
+  this->SaveDataWidget = vtkSlicerMRMLSaveDataWidget::New();
 
-    //--- unique tag used to mark all view notebook pages
-    //--- so that they can be identified and deleted when 
-    //--- viewer is reformatted.
-    this->ViewerPageTag = 1999;
+  //--- unique tag used to mark all view notebook pages
+  //--- so that they can be identified and deleted when 
+  //--- viewer is reformatted.
+  this->ViewerPageTag = 1999;
 }
 
 
