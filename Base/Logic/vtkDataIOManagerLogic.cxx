@@ -3,7 +3,7 @@
 
 #include "vtkDataIOManagerLogic.h"
 #include "vtkMRMLStorageNode.h"
-#include "vtkMRMLDisplayableNode.h"
+#include "vtkMRMLStorableNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkCommand.h"
 
@@ -173,16 +173,16 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     vtkErrorMacro("QueueRead: null input node!");
     return 0;
     }
-  vtkMRMLDisplayableNode *dnode = vtkMRMLDisplayableNode::SafeDownCast ( node );
+  vtkMRMLStorableNode *dnode = vtkMRMLStorableNode::SafeDownCast ( node );
   if ( dnode == NULL )
     {
-    vtkErrorMacro("QueueRead: unable to cast input mrml node " << node->GetID() << " to a displayable node");
+    vtkErrorMacro("QueueRead: unable to cast input mrml node " << node->GetID() << " to a storable node");
     return 0;
     }
 
   if ( dnode->GetStorageNode() == NULL )
     {
-    vtkErrorMacro("QueueRead: unable to get storage node from the displayable node " << dnode->GetID() << ", returning");
+    vtkErrorMacro("QueueRead: unable to get storage node from the storable node " << dnode->GetID() << ", returning");
     return 0;
     }
 
@@ -252,13 +252,8 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   transfer->SetCancelRequested ( 0 );
   this->AddNewDataTransfer ( transfer, node );
   
-  /*
-  if (this->GetDataIOManager()->GetEnableAsynchronousIO() )
-    {
-    vtkWarningMacro("QueueRead: disabling asynch mode!!!");
-    this->GetDataIOManager()->SetEnableAsynchronousIO(0);
-    }
-  */
+  vtkDebugMacro("QueueRead: asynchronous enabled = " << this->GetDataIOManager()->GetEnableAsynchronousIO());
+  
   if ( this->GetDataIOManager()->GetEnableAsynchronousIO() )
     {
     vtkDebugMacro("QueueRead: Schedule an ASYNCHRONOUS data transfer");
@@ -374,13 +369,13 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
         dt->SetTransferStatusNoModify ( vtkDataTransfer::Completed );
         this->GetApplicationLogic()->RequestModified( dt );
 
-        vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast( node );
-        if ( !displayableNode )
+        vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast( node );
+        if ( !storableNode )
           {
-          vtkErrorMacro( "could not get displayable node for scheduled data transfer" );
+          vtkErrorMacro( "could not get storable node for scheduled data transfer" );
           return;
           }
-        vtkMRMLStorageNode *storageNode = displayableNode->GetStorageNode();
+        vtkMRMLStorageNode *storageNode = storableNode->GetStorageNode();
         if ( !storageNode )
           {
           vtkErrorMacro( "no storage node for scheduled data transfer" );
