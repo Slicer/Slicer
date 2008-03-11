@@ -203,22 +203,7 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 
 void vtkMRMLColorNode::UpdateScene(vtkMRMLScene *scene)
 {
-    Superclass::UpdateScene(scene);
-    /*
-    if (this->GetStorageNodeID() == NULL) 
-    {
-        //vtkErrorMacro("No reference StorageNodeID found");
-        return;
-    }
-
-    vtkMRMLNode* mnode = scene->GetNodeByID(this->StorageNodeID);
-    if (mnode) 
-    {
-        vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
-        node->ReadData(this);
-        //this->SetAndObservePolyData(this->GetPolyData());
-    }
-    */
+    Superclass::UpdateScene(scene);    
 }
 
 
