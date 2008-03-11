@@ -256,6 +256,8 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       }
     inputImageFileGenerator->SetDirectory( fileNamePath );
 
+    // determine if the file is diffusion weighted MR file
+
     // Find the series that contains the archetype
     candidateSeries = inputImageFileGenerator->GetSeriesUIDs();
     int found = 0;
@@ -273,8 +275,9 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
         }
       }
 
-    if (candidateFiles.size() == 0)
+    if (candidateFiles.size() == 0 || this->GetSingleFile() == 1)
       {
+      candidateFiles.resize(0);
       candidateFiles.push_back(this->Archetype);
       }
     }

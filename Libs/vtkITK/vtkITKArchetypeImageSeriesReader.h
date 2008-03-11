@@ -34,6 +34,10 @@
 #include <string>
 
 #include "itkMetaDataDictionary.h"
+#include "gdcmDictSet.h"        // access to dictionary
+#include "gdcmDict.h"           // access to dictionary
+#include "gdcmDictEntry.h"      // access to dictionary
+#include "gdcmGlobal.h"         // access to dictionary
 
 #include "vtkITK.h"
 
@@ -212,6 +216,11 @@ public:
   vtkGetMacro(NumberOfComponents, int);
 
   // Description:
+  // Whether load in a single file or a series
+  vtkSetMacro(SingleFile, int);
+  vtkGetMacro(SingleFile, int);
+
+  // Description:
   // Returns an IJK to RAS transformation matrix
   vtkMatrix4x4* GetRasToIjkMatrix();
 
@@ -234,6 +243,7 @@ protected:
   ~vtkITKArchetypeImageSeriesReader();
 
   char *Archetype;
+  int SingleFile;
   int DataExtent[6];
 
   int OutputScalarType;
@@ -267,6 +277,21 @@ protected:
 private:
   vtkITKArchetypeImageSeriesReader(const vtkITKArchetypeImageSeriesReader&);  // Not implemented.
   void operator=(const vtkITKArchetypeImageSeriesReader&);  // Not implemented.
+
+  // relevant GE private tags
+  //static gdcm::DictEntry GEDictBValue( 0x0043, 0x1039, "IS", "1", "B Value of diffusion weighting" );
+  //static gdcm::DictEntry GEDictXGradient( 0x0019, 0x10bb, "DS", "1", "X component of gradient direction" );
+  //static gdcm::DictEntry GEDictYGradient( 0x0019, 0x10bc, "DS", "1", "Y component of gradient direction" );
+  //static gdcm::DictEntry GEDictZGradient( 0x0019, 0x10bd, "DS", "1", "Z component of gradient direction" );
+
+  //// relevant Siemens private tags
+  //static gdcm::DictEntry SiemensMosiacParameters( 0x0051, 0x100b, "IS", "1", "Mosiac Matrix Size" );
+  //static gdcm::DictEntry SiemensDictNMosiac( 0x0019, 0x100a, "US", "1", "Number of Images In Mosaic" );     
+  //static gdcm::DictEntry SiemensDictBValue( 0x0019, 0x100c, "IS", "1", "B Value of diffusion weighting" );       
+  //static gdcm::DictEntry SiemensDictDiffusionDirection( 0x0019, 0x100e, "FD", "3", "Diffusion Gradient Direction" );    
+  //static gdcm::DictEntry SiemensDictDiffusionMatrix( 0x0019, 0x1027, "FD", "6", "Diffusion Matrix" );       
+
+
 };
 
 #endif

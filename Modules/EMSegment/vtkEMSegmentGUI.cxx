@@ -570,8 +570,11 @@ void vtkEMSegmentGUI::PopulateTestingData()
       if (vtksys::SystemTools::FileExists(fullName.c_str()) &&
           !vtksys::SystemTools::FileIsDirectory(fullName.c_str()))
         {
-        volume_logic->AddArchetypeVolume((char*)(fullName.c_str()), 1, 0, 
-                                         filename.c_str()); 
+        //volume_logic->AddArchetypeVolume((char*)(fullName.c_str()), 1, 0, 
+        //                                 filename.c_str()); 
+        int loadingOption = 2;
+        volume_logic->AddArchetypeVolume((char*)(fullName.c_str()), filename.c_str(), loadingOption); 
+
         }
       }
     dir->Delete();

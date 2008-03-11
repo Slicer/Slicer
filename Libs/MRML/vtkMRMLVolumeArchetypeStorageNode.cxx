@@ -171,6 +171,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
     reader = vtkITKArchetypeImageSeriesScalarReader::New();  
+    reader->SetSingleFile( this->GetSingleFile() );
     }
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
     {
@@ -183,6 +184,9 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     //
     vtkITKArchetypeImageSeriesVectorReaderFile *readerFile = vtkITKArchetypeImageSeriesVectorReaderFile::New();
     vtkITKArchetypeImageSeriesVectorReaderSeries *readerSeries = vtkITKArchetypeImageSeriesVectorReaderSeries::New();
+
+    readerFile->SetSingleFile( this->GetSingleFile() );
+    readerSeries->SetSingleFile( this->GetSingleFile() );
 
     readerFile->SetArchetype(fullName.c_str());
     try 

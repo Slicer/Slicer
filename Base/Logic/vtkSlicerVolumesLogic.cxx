@@ -99,8 +99,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
                                                            int loadingOptions)
 {
 
-  vtkMRMLVolumeNode *volumeNode = NULL;
-
   int centerImage = 0;
   int labelMap = 0;
   int singleFile = 0;
@@ -117,23 +115,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
     singleFile = 1;
   }
 
-  if ( singleFile == 0 )  // call legacy code 
-  {
-    volumeNode = this->AddHeaderVolume( filename, centerImage, labelMap, volname, headerStorage);
-    return volumeNode;
-  }
-
-  //  need implementation, we are asked for just one file.
-  volumeNode = this->AddHeaderVolume( filename, centerImage, labelMap, volname, headerStorage); 
-  return volumeNode;
-
-}
-
-
-//----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename, int centerImage, int labelMap, const char* volname, 
-                                                           vtkMRMLVolumeHeaderlessStorageNode *headerStorage)
-{
   vtkMRMLVolumeNode *volumeNode = NULL;
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
 
@@ -258,9 +239,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
 // higher bits are reserved for future use
 vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions)
 {
-
-  vtkMRMLVolumeNode *volumeNode = NULL;
-
   int centerImage = 0;
   int labelMap = 0;
   int singleFile = 0;
@@ -277,21 +255,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     singleFile = 1;
   }
 
-  if ( singleFile == 0 )  // call legacy code 
-  {
-    volumeNode = this->AddArchetypeVolume( filename, centerImage, labelMap, volname);
-    return volumeNode;
-  }
-
-  //  need implementation, we are asked for just one file.
-  volumeNode = this->AddArchetypeVolume( filename, centerImage, labelMap, volname); 
-  return volumeNode;
-
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filename, int centerImage, int labelMap, const char* volname)
-{
   vtkMRMLVolumeNode *volumeNode = NULL;
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
   vtkMRMLDiffusionTensorDisplayPropertiesNode *displayPropertiesNode = NULL;
@@ -317,6 +280,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
 
   storageNode2->SetFileName(filename);
   storageNode2->SetCenterImage(centerImage);
+  storageNode2->SetSingleFile(singleFile);
   storageNode2->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
   // Try to read first with NRRD reader (look if file is a dwi or a tensor)
