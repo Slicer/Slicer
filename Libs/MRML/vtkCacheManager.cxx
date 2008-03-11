@@ -98,7 +98,7 @@ int vtkCacheManager::IsRemoteReference ( const char *uri )
     }
   else
     {
-    vtkWarningMacro ( "URI " << uri << " contains no file:// or other prefix." );      
+    vtkDebugMacro ( "URI " << uri << " contains no file:// or other prefix." );      
     //--- doesn't seem to be a :// in the string.
     return (0);
     }
@@ -353,6 +353,11 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   vtkDebugMacro("GetFilenameFromURI: got filename name " << filename.c_str());
 
   //--- Create absolute path
+  if (this->GetRemoteCacheDirectory() == NULL ||
+      strcmp(this->GetRemoteCacheDirectory(), "") == 0)
+    {
+    vtkErrorMacro("GetFilenameFromURI: remote cache dir is not set! The file will appear in the current working dir.");
+    }
   vtksys_stl::string absolute = this->GetRemoteCacheDirectory();
   absolute += "/";
   absolute += filename;
@@ -423,14 +428,14 @@ void vtkCacheManager::DeleteFromCache( const char *target )
 
   if (this->FindCachedFile( target, this->GetRemoteCacheDirectory() ) == NULL)
     {
-    vtkErrorMacro("DeleteFromCache: nothing to do, returning.");
+    vtkErrorMacro("RemoveFromCache: can't find the target file " << target << ", so there's nothing to do, returning.");
     return;
     }
   std::string str = this->FindCachedFile( target, this->GetRemoteCacheDirectory() );
   if ( str.c_str() != NULL )
     {
     //--- remove the file or directory in str....
-    vtkWarningMacro ( "Removing " << str.c_str() << "from disk and from record of cached files." );
+    vtkWarningMacro ( "Removing " << str.c_str() << " from disk and from record of cached files." );
     if ( vtksys::SystemTools::FileIsDirectory ( str.c_str() ) )
       {
       if ( !vtksys::SystemTools::RemoveADirectory ( str.c_str() ))
