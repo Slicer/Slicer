@@ -28,17 +28,16 @@
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-#include "vtkMRMLTransformableNode.h"
+#include "vtkMRMLStorableNode.h"
 #include "vtkMRMLDisplayNode.h"
 
 class vtkCallbackCommand;
 class vtkFloatArray;
-class vtkMRMLStorageNode;
-class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLTransformableNode
+class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLStorableNode
 {
 public:
   static vtkMRMLDisplayableNode *New(){return NULL;};
-  vtkTypeMacro(vtkMRMLDisplayableNode,vtkMRMLTransformableNode);
+  vtkTypeMacro(vtkMRMLDisplayableNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
@@ -67,7 +66,8 @@ public:
   virtual void UpdateReferences();
 
   // Description:
-  // Finds the storage node and read the data
+  // Clears out the list of display nodes, and updates them from teh lsit of
+  // display node ids
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   // Description:
@@ -119,15 +119,6 @@ public:
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-  // Description:
-  // String ID of the storage MRML node
-  vtkSetReferenceStringMacro(StorageNodeID);
-  void SetReferenceStorageNodeID(const char *id) { this->SetStorageNodeID(id); }
-  vtkGetStringMacro(StorageNodeID);
-
-  // Description:
-  // Get associated storage MRML node
-  vtkMRMLStorageNode* GetStorageNode();
   
 //BTX
   // Description:
@@ -156,8 +147,7 @@ public:
 
   // Data
   vtkPolyData *PolyData;
-  
-  char *StorageNodeID;
+
 //BTX
   std::vector<std::string> DisplayNodeIDs;
  

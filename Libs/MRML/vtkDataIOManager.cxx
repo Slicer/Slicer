@@ -5,7 +5,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"
-#include "vtkMRMLDisplayableNode.h"
+#include "vtkMRMLStorableNode.h"
 #include "vtkURIHandler.h"
 
 #include <list>
@@ -293,15 +293,15 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
     vtkErrorMacro("QueueRead: null input node!");
     return;
     }
-  vtkMRMLDisplayableNode *dnode = vtkMRMLDisplayableNode::SafeDownCast ( node );
+  vtkMRMLStorableNode *dnode = vtkMRMLStorableNode::SafeDownCast ( node );
   if (dnode == NULL)
     {
-    vtkErrorMacro("QueueRead: unable to cast input mrml node to a displayable node");
+    vtkErrorMacro("QueueRead: unable to cast input mrml node to a storable node");
     return;
     }
   if (dnode->GetStorageNode() == NULL)
     {
-    vtkErrorMacro("QueueRead: unable to get storage node from the displayable node, returning");
+    vtkErrorMacro("QueueRead: unable to get storage node from the storable node, returning");
     return;
     }
   vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();

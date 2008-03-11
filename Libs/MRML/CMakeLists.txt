@@ -75,6 +75,7 @@ SET(MRML_SRCS
         vtkMRMLUnstructuredGridStorageNode.cxx
         vtkMRMLDisplayNode.cxx
         vtkMRMLDisplayableNode.cxx
+        vtkMRMLStorableNode.cxx
         # Classes for remote data handling:
         vtkDataIOManager.cxx
         vtkDataTransfer.cxx

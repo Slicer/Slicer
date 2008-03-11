@@ -27,14 +27,15 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
+#include "vtkMRMLStorableNode.h"
 
 #include "vtkLookupTable.h"
 
-class VTK_MRML_EXPORT vtkMRMLColorNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLColorNode : public vtkMRMLStorableNode
 {
 public:
   static vtkMRMLColorNode *New();
-  vtkTypeMacro(vtkMRMLColorNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLColorNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
@@ -143,7 +144,10 @@ public:
   vtkGetMacro(NamesInitialised, int);
   vtkSetMacro(NamesInitialised, int);
   vtkBooleanMacro(NamesInitialised, int);
-  
+
+  virtual bool CanApplyNonLinearTransforms() { return false; }
+  virtual void ApplyTransform(vtkAbstractTransform* transform) { return; };
+
 protected:
   vtkMRMLColorNode();
   virtual ~vtkMRMLColorNode();

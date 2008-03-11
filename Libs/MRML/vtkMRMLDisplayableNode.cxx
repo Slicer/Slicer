@@ -20,13 +20,11 @@ Version:   $Revision: 1.3 $
 
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLStorageNode.h"
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
 {
   this->PolyData = NULL;
-  this->StorageNodeID = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -35,12 +33,6 @@ vtkMRMLDisplayableNode::~vtkMRMLDisplayableNode()
   this->SetAndObserveDisplayNodeID( NULL);
 
   this->SetAndObservePolyData(NULL);
-
-  if (this->StorageNodeID) 
-    {
-    delete [] this->StorageNodeID;
-    this->StorageNodeID = NULL;
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -65,12 +57,6 @@ void vtkMRMLDisplayableNode::WriteXML(ostream& of, int nIndent)
   if (this->DisplayNodeIDs.size() > 0) 
     {
     of << indent << " displayNodeRef=\"" << ss.str().c_str() << "\"";
-    }
-
-
-  if (this->StorageNodeID != NULL) 
-    {
-    of << indent << " storageNodeRef=\"" << this->StorageNodeID << "\"";
     }
 }
 
@@ -100,11 +86,6 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 
       //this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
       }    
-    else if (!strcmp(attName, "storageNodeRef")) 
-      {
-      this->SetStorageNodeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->StorageNodeID, this);
-      }
     }  
 }
 
@@ -118,11 +99,6 @@ void vtkMRMLDisplayableNode::UpdateReferenceID(const char *oldID, const char *ne
       {
       this->SetNthDisplayNodeID(i, newID);
       }
-    }
-  if (this->StorageNodeID && !strcmp(oldID, this->StorageNodeID))
-    {
-    this->SetStorageNodeID(newID);
-    return;
     }
 }
 //----------------------------------------------------------------------------
@@ -143,7 +119,6 @@ void vtkMRMLDisplayableNode::Copy(vtkMRMLNode *anode)
     {
     this->SetPolyData(node->PolyData);
     }
-  this->SetStorageNodeID(node->StorageNodeID);
 
 }
 
@@ -161,36 +136,14 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
   if (this->PolyData) 
     {
     this->PolyData->PrintSelf(os, indent.GetNextIndent());
-    }
-  os << indent << "StorageNodeID: " <<
-    (this->StorageNodeID ? this->StorageNodeID : "(none)") << "\n";
-  
+    }  
 }
 
 //-----------------------------------------------------------
 void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
-   
-  if (this->GetStorageNodeID() == NULL) 
-    {
-    //vtkErrorMacro("No reference StorageNodeID found");
-    return;
-    }
   
-  vtkMRMLNode* mnode = scene->GetNodeByID(this->StorageNodeID);
-  if (mnode) 
-    {
-    vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
-    if (node->ReadData(this) == 0)
-      {
-      scene->SetErrorCode(1);
-      std::string msg = std::string("Error reading model file ") + std::string(node->GetFileName());
-      scene->SetErrorMessage(msg);
-      }
-    this->SetAndObservePolyData(this->GetPolyData());
-    } 
-
   for (unsigned int i=0; i<this->DisplayNodes.size(); i++)
     {
     this->DisplayNodes[i]->Delete();
@@ -218,12 +171,6 @@ void vtkMRMLDisplayableNode::UpdateReferences()
       this->SetAndObserveNthDisplayNodeID(i, NULL);
       }    
     }
-
-  if (this->StorageNodeID != NULL && this->Scene->GetNodeByID(this->StorageNodeID) == NULL)
-    {
-    this->SetStorageNodeID(NULL);
-    }
-
 }
 
 
@@ -386,19 +333,6 @@ if (this->PolyData != NULL)
     this->InvokeEvent( vtkMRMLDisplayableNode::PolyDataModifiedEvent , this);
     }
 }
-
-//----------------------------------------------------------------------------
-vtkMRMLStorageNode* vtkMRMLDisplayableNode::GetStorageNode()
-{
-  vtkMRMLStorageNode* node = NULL;
-  if (this->GetScene() && this->GetStorageNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->StorageNodeID);
-    node = vtkMRMLStorageNode::SafeDownCast(snode);
-    }
-  return node;
-}
-
 
 //---------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,

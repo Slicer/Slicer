@@ -61,7 +61,6 @@ vtkMRMLColorTableNode::vtkMRMLColorTableNode()
   this->SetName("");
   this->LookupTable = NULL;
   this->LastAddedColor = -1;
-  this->StorageNodeID = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -70,11 +69,6 @@ vtkMRMLColorTableNode::~vtkMRMLColorTableNode()
   if (this->LookupTable)
     {
     this->LookupTable->Delete();
-    }
-  if (this->StorageNodeID)
-    {
-    delete [] this->StorageNodeID;
-    this->StorageNodeID = NULL;
     }
 }
 
@@ -99,7 +93,7 @@ void vtkMRMLColorTableNode::WriteXML(ostream& of, int nIndent)
       of <<  i << " '" << this->GetColorNameWithoutSpaces(i, "_") << "' " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << " ";
       }
     of << "\"";
-    }
+    } 
 }
 
 //----------------------------------------------------------------------------
@@ -163,25 +157,10 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> type;
       this->SetType(type);
-      }
-      else if (!strcmp(attName, "filename"))
-        {
-        vtkMRMLStorageNode *storageNode = this->GetStorageNode();
-        if (!storageNode)
-          {
-          vtkErrorMacro("ReadFile: unable to get storage node to read file");
-          }
-        else
-          {
-          storageNode->SetFileName(attValue);
-          // read in the file with the colours
-          std::cout << "Reading file " << storageNode->GetFileName() << endl;
-          storageNode->ReadData(this);
-          }
-        }
+      }      
       else
       {
-          vtkErrorMacro ("Unknown attribute name " << attName << endl);
+          vtkDebugMacro ("Unknown attribute name " << attName << endl);
       }
   }
   vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
@@ -242,22 +221,9 @@ void vtkMRMLColorTableNode::PrintSelf(ostream& os, vtkIndent indent)
 
 void vtkMRMLColorTableNode::UpdateScene(vtkMRMLScene *scene)
 {
-    Superclass::UpdateScene(scene);
-    /*
-    if (this->GetStorageNodeID() == NULL) 
-    {
-        //vtkErrorMacro("No reference StorageNodeID found");
-        return;
-    }
-
-    vtkMRMLNode* mnode = scene->GetNodeByID(this->StorageNodeID);
-    if (mnode) 
-    {
-        vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
-        node->ReadData(this);
-        //this->SetAndObservePolyData(this->GetPolyData());
-    }
-    */
+  // UpdateScene on the displayable node superclass will set up the storage
+  // node and call ReadData
+  Superclass::UpdateScene(scene); 
 }
 
 //----------------------------------------------------------------------------
@@ -1186,18 +1152,6 @@ void vtkMRMLColorTableNode::ClearNames()
 {
   this->Names.clear();
   this->NamesInitialisedOff();
-}
-
-//---------------------------------------------------------------------------
-vtkMRMLStorageNode* vtkMRMLColorTableNode::GetStorageNode()
-{
-  vtkMRMLStorageNode* node = NULL;
-  if (this->GetScene() && this->GetStorageNodeID() )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->StorageNodeID);
-    node = vtkMRMLStorageNode::SafeDownCast(snode);
-    }
-  return node;
 }
 
 //---------------------------------------------------------------------------

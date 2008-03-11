@@ -252,6 +252,10 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass ( nrrd );
   nrrd->Delete();
 
+  vtkMRMLColorTableNode *ctn = vtkMRMLColorTableNode::New();
+  this->RegisterNodeClass (ctn);
+  ctn->Delete();
+  
   vtkMRMLColorTableStorageNode *ctsn = vtkMRMLColorTableStorageNode::New();
   this->RegisterNodeClass ( ctsn );
   ctsn->Delete();
