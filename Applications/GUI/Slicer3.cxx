@@ -21,7 +21,7 @@
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
 #include "vtkDataIOManagerLogic.h"
-#include "vtkHTTPHandler.h"
+//#include "vtkHTTPHandler.h"
 #include "vtkSlicerCacheAndDataIOManagerGUI.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -943,13 +943,16 @@ int Slicer3_main(int argc, char *argv[])
     scene->SetDataIOManager ( dataIOManager );
     scene->SetCacheManager( cacheManager );
     vtkCollection *URIHandlerCollection = vtkCollection::New();
+    // add some new handlers
+    
+    
     scene->SetURIHandlerCollection( URIHandlerCollection );
-    // register all existing uri handlers (add to collection
-  
+    // register all existing uri handlers (add to collection)
+    /*
     vtkHTTPHandler *httpHandler = vtkHTTPHandler::New();
-    scene->AddURIHandler( httpHandler );
+    scene->AddURIHandler(httpHandler);
     httpHandler->Delete();
-
+    */
     // build the application GUI
     appGUI->BuildGUI ( );
     appGUI->AddGUIObservers ( );
