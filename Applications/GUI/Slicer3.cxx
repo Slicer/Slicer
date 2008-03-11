@@ -21,6 +21,7 @@
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
 #include "vtkDataIOManagerLogic.h"
+#include "vtkHTTPHandler.h"
 #include "vtkSlicerCacheAndDataIOManagerGUI.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -945,6 +946,10 @@ int Slicer3_main(int argc, char *argv[])
     scene->SetURIHandlerCollection( URIHandlerCollection );
     // register all existing uri handlers (add to collection
   
+    vtkHTTPHandler *httpHandler = vtkHTTPHandler::New();
+    scene->AddURIHandler( httpHandler );
+    httpHandler->Delete();
+
     // build the application GUI
     appGUI->BuildGUI ( );
     appGUI->AddGUIObservers ( );
@@ -2065,15 +2070,8 @@ int Slicer3_main(int argc, char *argv[])
           appLogic->GetMRMLScene()->SetURL(fileName.c_str());
           // and then load it
           slicerApp->SplashMessage("Set scene url, connecting...");
-          int errorCode = appLogic->GetMRMLScene()->Connect();
-          if (errorCode != 1)
-            {
-            slicerCerr("ERROR loading MRML file " << fileName << ", error code = " << errorCode << endl);
-            }
-          else
-            {
-            slicerApp->SplashMessage("Connected to scene.");
-            }
+          std::string cmd = "after idle $::slicer3::MRMLScene Connect";
+          res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
           }                    
         else if (fileName.find(".xml",0) != std::string::npos
                  || fileName.find(".XML",0) != std::string::npos)
