@@ -111,7 +111,6 @@ void vtkMRMLColorTableStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 }
 
 //----------------------------------------------------------------------------
-
 int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
 {
   vtkDebugMacro("Reading ColorTable data");
@@ -123,9 +122,9 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;         
     }
 
-  if (this->GetFileName() == NULL) 
+  if (this->GetFileName() == NULL && this->GetURI() == NULL) 
     {
-    vtkErrorMacro("ReadData: file name is not set");
+    vtkErrorMacro("ReadData: file name and uri not set");
     return 0;
     }
 
@@ -133,6 +132,7 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
   if ( this->GetReadState() == this->Pending )
     {
     // remote file download hasn't finished
+    vtkWarningMacro("ReadData: Read state is pending, returning.");
     return 0;
     }
   
@@ -330,4 +330,47 @@ int vtkMRMLColorTableStorageNode::WriteData(vtkMRMLNode *refNode)
   
   return 1;
   
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLColorTableStorageNode::SupportedFileType(const char *fileName)
+{
+  // check to see which file name we need to check
+  std::string name;
+  if (fileName)
+    {
+    name = std::string(fileName);
+    }
+  else if (this->FileName != NULL)
+    {
+    name = std::string(this->FileName);
+    }
+  else if (this->URI != NULL)
+    {
+    name = std::string(this->URI);
+    }
+  else
+    {
+    vtkWarningMacro("SupportedFileType: no file name to check");
+    return 0;
+    }
+  
+  std::string::size_type loc = name.find_last_of(".");
+  if( loc == std::string::npos ) 
+    {
+    vtkErrorMacro("SupportedFileType: no file extension specified");
+    return 0;
+    }
+  std::string extension = name.substr(loc);
+
+  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
+  if (extension.compare(".ctbl") == 0 ||
+      extension.compare(".txt") == 0)
+    {
+    return 1;
+    }
+  else
+    {
+    return 0;
+    }
 }
