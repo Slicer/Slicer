@@ -76,6 +76,12 @@ class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
   // Access the nrrd header fields to create a diffusion gradient table
   int ParseDiffusionInformation(vtkNRRDReader *reader,vtkDoubleArray *grad,vtkDoubleArray *bvalues);
 
+  // Description:
+  // Check to see if this storage node can handle the file type in the input
+  // string. If input string is null, check URI, then check FileName. 
+  // Subclasses should implement this method.
+  virtual int SupportedFileType(const char *fileName);
+  
 protected:
 
 

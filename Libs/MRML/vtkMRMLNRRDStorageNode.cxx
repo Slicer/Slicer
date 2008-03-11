@@ -140,16 +140,22 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkErrorMacro("Reference node is not a proper vtkMRMLVolumeNode");
     return 0;         
     }
-  if (this->GetFileName() == NULL) 
+  if (this->GetFileName() == NULL && this->GetURI() == NULL) 
     {
-      return 0;
+    vtkErrorMacro("ReadData: file name and uri are null.");
+    return 0;
     }
 
   Superclass::StageReadData(refNode);
   if ( this->GetReadState() == this->Pending )
     {
     // remote file download hasn't finished
+    vtkWarningMacro("ReadData: read state is pending, remote download hasn't finished yet");
     return 0;
+    }
+  else
+    {
+    vtkDebugMacro("ReadData: read state is ready, URI = " << (this->GetURI() == NULL ? "null" : this->GetURI()) << ", filename = " << (this->GetFileName() == NULL ? "null" : this->GetFileName()));
     }
   
   vtkMRMLVolumeNode *volNode;
@@ -194,7 +200,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
 
   if (fullName == std::string("")) 
     {
-    vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
+    vtkErrorMacro("ReadData: File name not specified");
     reader->Delete();
     return 0;
     }
@@ -391,7 +397,7 @@ int vtkMRMLNRRDStorageNode::WriteData(vtkMRMLNode *refNode)
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
-    vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
+    vtkErrorMacro("WriteData: File name not specified");
     return 0;
     }
   // Use here the NRRD Writer
@@ -416,7 +422,7 @@ int vtkMRMLNRRDStorageNode::WriteData(vtkMRMLNode *refNode)
   int writeFlag = 1;
   if (writer->GetWriteError())
     {
-    vtkErrorMacro("ERROR writing NRRD file " << writer->GetFileName());    
+    vtkErrorMacro("ERROR writing NRRD file " << (writer->GetFileName() == NULL ? "null" : writer->GetFileName()));    
     writeFlag = 0;
     }
   writer->Delete();
@@ -532,4 +538,48 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
     }
   factor->Delete();
   return 1;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLNRRDStorageNode::SupportedFileType(const char *fileName)
+{
+  // check to see which file name we need to check
+  std::string name;
+  if (fileName)
+    {
+    name = std::string(fileName);
+    }
+  else if (this->FileName != NULL)
+    {
+    name = std::string(this->FileName);
+    }
+  else if (this->URI != NULL)
+    {
+    name = std::string(this->URI);
+    }
+  else
+    {
+    vtkWarningMacro("SupportedFileType: no file name to check");
+    return 0;
+    }
+  
+  std::string::size_type loc = name.find_last_of(".");
+  if( loc == std::string::npos ) 
+    {
+    vtkErrorMacro("SupportedFileType: no file extension specified");
+    return 0;
+    }
+  std::string extension = name.substr(loc);
+
+  vtkWarningMacro("SupportedFileType: extension = " << extension.c_str());
+  if (extension.compare(".nrrd") == 0 ||
+      extension.compare(".nhdr") == 0)
+    {
+    return 1;
+    }
+  else
+    {
+    vtkWarningMacro("SupportedFileType: can't read files with extension " << extension.c_str());
+    return 0;
+    }
 }
