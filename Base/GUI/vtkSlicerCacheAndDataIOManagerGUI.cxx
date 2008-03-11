@@ -31,6 +31,9 @@ vtkSlicerCacheAndDataIOManagerGUI::vtkSlicerCacheAndDataIOManagerGUI ( )
   this->Built = false;
   this->TransferWidgetCollection = NULL;
   this->ApplicationGUI = NULL;
+  this->DataIOManager = NULL;
+  this->CacheManager = NULL;
+
 }
 
 //---------------------------------------------------------------------------
@@ -41,6 +44,7 @@ vtkSlicerCacheAndDataIOManagerGUI::~vtkSlicerCacheAndDataIOManagerGUI ( )
     {
     this->TransferWidgetCollection->RemoveAllItems();
     this->TransferWidgetCollection->Delete();
+    this->TransferWidgetCollection = NULL;
     }
   if ( this->CacheSizeLabel )
     {
@@ -114,6 +118,8 @@ vtkSlicerCacheAndDataIOManagerGUI::~vtkSlicerCacheAndDataIOManagerGUI ( )
     this->ManagerTopLevel->Delete();
     this->ManagerTopLevel = NULL;    
     }
+  this->DataIOManager = NULL;
+  this->CacheManager = NULL;
   this->ApplicationGUI = NULL;
   this->Built = false;
 }
@@ -594,12 +600,16 @@ void vtkSlicerCacheAndDataIOManagerGUI::Exit ( )
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::TearDownGUI ( )
 {
+  this->WithdrawManagerWindow();
   this->Exit();
   if ( this->Built )
     {
     this->RemoveGUIObservers();
     }
-  this->TransferWidgetCollection->RemoveAllItems();
+  if ( this->TransferWidgetCollection != NULL )
+    {
+    this->TransferWidgetCollection->RemoveAllItems();
+    }
 }
 
 

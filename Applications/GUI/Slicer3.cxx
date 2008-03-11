@@ -21,6 +21,7 @@
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
 #include "vtkDataIOManagerLogic.h"
+#include "vtkSlicerCacheAndDataIOManagerGUI.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerSlicesGUI.h"
@@ -95,6 +96,7 @@ extern "C" {
 //#define QDEC_DEBUG
 //#define COMMANDLINE_DEBUG
 //#define DEAMON_DEBUG
+#define REMOTEIO_DEBUG
 
 // comment out next line to enable Loadable Modules support
 #define LOADABLEMODULES_DEBUG
@@ -918,6 +920,7 @@ int Slicer3_main(int argc, char *argv[])
     */
     slicerApp->SaveUserInterfaceGeometryOn();
 
+
     // Create Remote I/O and Cache handling mechanisms
     // and configure them using Application registry values
     vtkCacheManager *cacheManager = vtkCacheManager::New();
@@ -1629,6 +1632,19 @@ int Slicer3_main(int argc, char *argv[])
     labelStatsGUI->AddGUIObservers ( );
 #endif
 
+
+    //
+    //--- Cache and RemoteIO ManagerGUI
+    //
+#if !defined (REMOTEIO_DEBUG)
+    vtkSlicerCacheAndDataIOManagerGUI *RemoteIOGUI = vtkSlicerCacheAndDataIOManagerGUI::New();
+    RemoteIOGUI->SetApplication ( slicerApp);
+    RemoteIOGUI->SetApplicationGUI ( appGUI );
+    RemoteIOGUI->SetAndObserveCacheManager ( scene->GetCacheManager() );
+    RemoteIOGUI->SetAndObserveDataIOManager ( scene->GetDataIOManager() );
+    RemoteIOGUI->Enter();
+#endif
+
 #if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
     //
     // --- SlicerDaemon Module
@@ -2267,6 +2283,16 @@ int Slicer3_main(int argc, char *argv[])
     // ------------------------------
     // DELETE 
     
+    //
+    //--- Cache and RemoteIO ManagerGUI
+    //
+#if !defined (REMOTEIO_DEBUG)
+    RemoteIOGUI->SetAndObserveDataIOManager ( NULL );
+    RemoteIOGUI->SetAndObserveCacheManager ( NULL );
+    RemoteIOGUI->TearDownGUI();
+    RemoteIOGUI->Delete();
+#endif
+
     //--- Remote data handling mechanisms
     if ( dataIOManagerLogic != NULL )
       {
@@ -2291,6 +2317,7 @@ int Slicer3_main(int argc, char *argv[])
       URIHandlerCollection = NULL;
       }
 
+    
 //--- delete gui first, removing Refs to Logic and MRML
     
 #ifndef LOADABLEMODULES_DEBUG
