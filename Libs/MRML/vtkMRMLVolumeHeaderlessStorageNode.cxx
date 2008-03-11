@@ -542,3 +542,32 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
 
 }
 
+//----------------------------------------------------------------------------
+int vtkMRMLVolumeHeaderlessStorageNode::SupportedFileType(const char *fileName)
+{
+  // check to see which file name we need to check
+  std::string name;
+  if (fileName)
+    {
+    name = std::string(fileName);
+    }
+  else if (this->FileName != NULL)
+    {
+    name = std::string(this->FileName);
+    }
+  else if (this->URI != NULL)
+    {
+    name = std::string(this->URI);
+    }
+  else
+    {
+    vtkWarningMacro("SupportedFileType: no file name to check");
+    return 0;
+    }
+
+  // for now, return 1
+  return 1;
+  
+}
+
+
