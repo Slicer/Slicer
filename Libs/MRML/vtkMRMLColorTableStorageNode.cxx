@@ -300,7 +300,7 @@ int vtkMRMLColorTableStorageNode::WriteData(vtkMRMLNode *refNode)
     }
 
   // put down a header
-  of << "# Color table file " << this->GetFileName() << endl;
+  of << "# Color table file " << (this->GetFileName() != NULL ? this->GetFileName() : "null") << endl;
   of << "# " << colorNode->GetLookupTable()->GetNumberOfTableValues() << " values" << endl;
   for (int i = 0; i < colorNode->GetLookupTable()->GetNumberOfTableValues(); i++)
     {
