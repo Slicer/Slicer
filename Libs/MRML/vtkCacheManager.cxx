@@ -3,6 +3,9 @@
 #include "vtkCallbackCommand.h"
 #include "vtksys/Directory.hxx"
 #include "vtkCommand.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLStorableNode.h"
+#include "vtkMRMLStorageNode.h"
 
 vtkStandardNewMacro ( vtkCacheManager );
 vtkCxxRevisionMacro ( vtkCacheManager, "$Revision: 1.0 $" );
@@ -12,6 +15,7 @@ vtkCxxRevisionMacro ( vtkCacheManager, "$Revision: 1.0 $" );
 //----------------------------------------------------------------------------
 vtkCacheManager::vtkCacheManager()
 {
+  this->MRMLScene = NULL;
   this->CallbackCommand = vtkCallbackCommand::New();
   this->CachedFileList.clear();
   this->RemoteCacheLimit = 0;
@@ -19,7 +23,6 @@ vtkCacheManager::vtkCacheManager()
   this->RemoteCacheFreeBufferSize = 0;
   this->EnableForceRedownload = 0;
   // this->EnableRemoteCacheOverwriting = 1;
-
 }
 
 
@@ -27,6 +30,7 @@ vtkCacheManager::vtkCacheManager()
 vtkCacheManager::~vtkCacheManager()
 {
    
+  this->MRMLScene = NULL;
   if (this->CallbackCommand)
     {
     this->CallbackCommand->Delete();
@@ -457,6 +461,9 @@ void vtkCacheManager::DeleteFromCachedFileList ( const char * target )
 }
 
 
+
+
+
 //----------------------------------------------------------------------------
 void vtkCacheManager::DeleteFromCache( const char *target )
 {
@@ -473,9 +480,12 @@ void vtkCacheManager::DeleteFromCache( const char *target )
     vtkErrorMacro("RemoveFromCache: can't find the target file " << target << ", so there's nothing to do, returning.");
     return;
     }
+
   std::string str = this->FindCachedFile( target, this->GetRemoteCacheDirectory() );
   if ( str.c_str() != NULL )
     {
+    this->MarkNodesBeforeDeletingDataFromCache ( target );
+
     //--- remove the file or directory in str....
     vtkWarningMacro ( "Removing " << str.c_str() << " from disk and from record of cached files." );
     if ( vtksys::SystemTools::FileIsDirectory ( str.c_str() ) )
@@ -488,7 +498,7 @@ void vtkCacheManager::DeleteFromCache( const char *target )
         {
         this->UpdateCacheInformation ( );
         this->InvokeEvent ( vtkCacheManager::CacheDeleteEvent );
-       }
+        }
       }
     else
       {
@@ -519,6 +529,7 @@ int vtkCacheManager::ClearCache()
   //--- and then creates the directory again.
   if ( this->RemoteCacheDirectory.c_str() != NULL )
     {
+    this->MarkNodesBeforeDeletingDataFromCache ( this->RemoteCacheDirectory.c_str() );
     vtksys::SystemTools::RemoveADirectory ( this->RemoteCacheDirectory.c_str() );
     }
   if ( vtksys::SystemTools::MakeDirectory ( this->RemoteCacheDirectory.c_str() ) == false )
@@ -546,6 +557,97 @@ float vtkCacheManager::GetCurrentCacheSize ()
   return ( this->CurrentCacheSize );
 
 }
+
+
+//----------------------------------------------------------------------------
+void vtkCacheManager::MarkNode ( std::string str )
+{
+  //--- Find the MRML node that points to this file in cache.
+  //--- If such a node exists, mark it as modified since read,
+  //--- so that a user will be prompted to save the
+  //--- data elsewhere (since it'll be deleted from cache.)
+  int nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLStorableNode" );
+  vtkMRMLStorableNode *node;
+  std::string uri;
+  for ( int n=0; n < nnodes; n++ )
+    {
+    node = vtkMRMLStorableNode::SafeDownCast ( this->MRMLScene->GetNthNodeByClass (n, "vtkMRMLStorableNode" ));
+    if ( node != NULL )
+      {
+      if (node->GetStorageNode() != NULL )
+        {
+        uri = node->GetStorageNode()->GetFullNameFromFileName();
+        if ( str == uri )
+          {
+          node->ModifiedSinceReadOn();
+          }
+        }
+      }
+    }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkCacheManager::MarkNodesBeforeDeletingDataFromCache (const char *target )
+{
+  //--- Target is a file or directory marked for deletion in cache.
+  //--- If target is a file, this method finds any node holding a
+  //--- reference to it and marks that node as ModifiedSinceRead.
+  //--- If target is a directory, the method traverses the directory
+  //--- and any subdirectories, and marks nodes holding references
+  //--- to any of the files within as ModifiedSinceRead.
+  //--- might be a slow performer....(?)
+
+
+  if ( target != NULL )
+    {
+    std::string testFile;
+    std::string longName;;
+    std::string subdirString;
+    if ( vtksys::SystemTools::FileIsDirectory ( target ) )
+      {
+      vtkDebugMacro("MarkNodesBeforeDeletingDataFromCache: target is a directory: " << target);
+      vtksys::Directory dir;
+      dir.Load( target );
+      size_t fileNum;
+      //--- get files in cache dir and add to vector of strings.
+      for ( fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum )
+        {
+        if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".") &&
+            strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
+          {
+          //--- test to see if the file is a directory;  
+          //--- if so, go inside and count up file sizes, return value
+          subdirString = target;
+          subdirString += "/";
+          subdirString += dir.GetFile  (static_cast<unsigned long>(fileNum));
+          if (vtksys::SystemTools::FileIsDirectory(subdirString.c_str()))
+            {
+            ///--- check in subdir too...
+            this->MarkNodesBeforeDeletingDataFromCache( subdirString.c_str());
+            }
+          else
+            {
+            //--- mark any nodes that point to this file as modified since read.
+            longName = target;
+            longName += "/";
+            testFile = dir.GetFile (static_cast<unsigned long>(fileNum));
+            longName += testFile;
+            this->MarkNode ( longName );
+            }
+          }
+        }
+      }
+    else
+      {
+      if ( vtksys::SystemTools::FileExists ( target ))
+        {
+        this->MarkNode ( target );
+        }
+      }
+    }
+}
+
 
 
 //----------------------------------------------------------------------------

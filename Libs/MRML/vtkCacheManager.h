@@ -7,15 +7,14 @@
 #include "vtkIntArray.h"
 #include "vtksys/SystemTools.hxx"
 #include "vtksys/RegularExpression.hxx"
-
 #include "vtkMRML.h"
-
 
 #include <string>
 #include <vector>
 #include <iterator>
 
 class vtkCallbackCommand;
+class vtkMRMLScene;
 
 #ifndef vtkObjectPointer
 #define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
@@ -60,6 +59,12 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   // and removes all filenames from CachedFileList
   int ClearCache ( );
   
+  // Description:
+  // Before a file or directory is deleted,
+  // Marks any nodes that hold the uri as
+  // a reference as modified since read.
+  void MarkNodesBeforeDeletingDataFromCache (const char *);
+
   // Description:
   // Checks to see if a uri appears to point to remote location
   // and returns true if so. Looks for a '://' and if present,
@@ -115,8 +120,13 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   void SetEnableForceRedownload(int );
   //vtkGetMacro ( EnableRemoteCacheOverwriting, int );
   //void SetEnableRemoteCacheOverwriting(int );
+  void SetMRMLScene ( vtkMRMLScene *scene )
+      {
+      this->MRMLScene = scene;
+      }
   
   //BTX
+  void MarkNode ( std::string );
   // in case we need these.
   enum
     {
@@ -142,7 +152,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   int RemoteCacheFreeBufferSize;
   int EnableForceRedownload;
   //int EnableRemoteCacheOverwriting;
-
+  vtkMRMLScene *MRMLScene;
 
   //BTX
   std::string RemoteCacheDirectory;

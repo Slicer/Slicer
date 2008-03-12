@@ -353,7 +353,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
     if ( (cm->GetCurrentCacheSize()*1000000.0) < ((float)(cm->GetRemoteCacheLimit())*1000000.0) )
       {
       vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
-      //--- send this off to Logic.
+      //--- signal this remote read event to Logic and GUI.
       this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
       }
     }

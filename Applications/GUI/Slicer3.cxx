@@ -930,6 +930,7 @@ int Slicer3_main(int argc, char *argv[])
     cacheManager->SetRemoteCacheLimit ( slicerApp->GetRemoteCacheLimit() );
     cacheManager->SetRemoteCacheFreeBufferSize ( slicerApp->GetRemoteCacheFreeBufferSize() );
     cacheManager->SetEnableForceRedownload ( slicerApp->GetEnableForceRedownload() );
+    cacheManager->SetMRMLScene ( scene );
     //cacheManager->SetEnableRemoteCacheOverwriting ( slicerApp->GetEnableRemoteCacheOverwriting() );
     //--- MRML collection of data transfers with access to cache manager
     vtkDataIOManager *dataIOManager = vtkDataIOManager::New();
@@ -2316,6 +2317,7 @@ int Slicer3_main(int argc, char *argv[])
       }
     if ( cacheManager != NULL )
       {
+      cacheManager->SetMRMLScene ( NULL );
       cacheManager->Delete();
       cacheManager = NULL;
       }
