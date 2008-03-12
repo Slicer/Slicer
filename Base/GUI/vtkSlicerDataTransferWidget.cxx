@@ -608,7 +608,7 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
     this->DataTransferFrame = vtkKWFrame::New();
     this->DataTransferFrame->SetParent ( this->GetParent () );
     this->DataTransferFrame->Create();
-    this->Script ( "grid %s -side top -sticky news -columnspan 6 -padx 1 -pady 1",
+    this->Script ( "pack %s -side top -fill x -padx 1 -pady 1",
                    this->DataTransferFrame->GetWidgetName() );
 
     this->DataTransferIcons = vtkSlicerDataTransferIcons::New();
@@ -739,12 +739,12 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
 
     //--- grid everything up.
 
-    this->Script ( "grid %s -row 0 -column0 -sticky news -padx 2 -pady 2 ", this->TransferTypeLabel->GetWidgetName() );
-    this->Script ( "grid %s -row 0 -column1 -sticky news -padx 2 -pady 2 ", this->TransferStatusLabel->GetWidgetName() );
-    this->Script ( "grid %s -row 0 -column2 -sticky news -padx 2 -pady 2 ", this->CancelButton->GetWidgetName() );
-    this->Script ( "grid %s -row 0 -column3 -sticky news -padx 2 -pady 2 ", this->DeleteButton->GetWidgetName() );
-    this->Script ( "grid %s -row 0 -column4 -sticky news -padx 2 -pady 2 ", this->InformationButton->GetWidgetName() );
-    this->Script ( "grid %s -row 0 -column5 -sticky news -padx 2 -pady 2 ", this->URILabel->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 0 -sticky news -padx 2 -pady 2 ", this->TransferTypeLabel->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 1 -sticky news -padx 2 -pady 2 ", this->TransferStatusLabel->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 2 -sticky news -padx 2 -pady 2 ", this->CancelButton->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 3 -sticky news -padx 2 -pady 2 ", this->DeleteButton->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 4 -sticky news -padx 2 -pady 2 ", this->InformationButton->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 5 -sticky news -padx 2 -pady 2 ", this->URILabel->GetWidgetName() );
     this->Script ( "grid columnconfigure %s 0 -weight 1", this->DataTransferFrame->GetWidgetName() );
     this->Script ( "grid columnconfigure %s 1 -weight 1", this->DataTransferFrame->GetWidgetName() );
     this->Script ( "grid columnconfigure %s 2 -weight 1", this->DataTransferFrame->GetWidgetName() );
@@ -752,4 +752,5 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
     this->Script ( "grid columnconfigure %s 4 -weight 1", this->DataTransferFrame->GetWidgetName() );
     this->Script ( "grid columnconfigure %s 5 -weight 1", this->DataTransferFrame->GetWidgetName() );
 }
+
 

@@ -571,17 +571,19 @@ void vtkSlicerCacheAndDataIOManagerGUI::AddNewDataTransfer ( vtkDataTransfer *tr
 {
   if ( this->TransferWidgetCollection == NULL )
     {
-    return;
+    this->TransferWidgetCollection = vtkCollection::New();
     }
   vtkSlicerDataTransferWidget *w = vtkSlicerDataTransferWidget::New();
   if ( w != NULL )
     {
-    w->SetTransferID ( transfer->GetTransferID() );
-    w->SetDataTransfer ( transfer );
-    w->UpdateWidget();
     w->SetParent ( this->TransfersFrame );
+    w->SetDataTransfer ( transfer );
+    w->SetTransferID ( transfer->GetTransferID() );
     w->SetCacheManager ( this->CacheManager);
+    w->Create();
+    w->UpdateWidget();
     this->Script ( "pack %s -side top -anchor nw -padx 1 -pady 1", w->GetWidgetName() );
+    this->TransferWidgetCollection->AddItem ( w );
     }
 }
 
