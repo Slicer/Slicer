@@ -15,6 +15,8 @@
 class vtkSlicerNodeSelectorWidget;
 class vtkMRMLDiffusionWeightedVolumeNode;
 class vtkMRMLFiberBundleNode;
+class vtkMRMLCommandLineModuleNode;
+class vtkImageData;
 //widgets
 class vtkKWFrameWithLabel;
 class vtkKWPushButton;
@@ -59,8 +61,11 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkMRMLDiffusionWeightedVolumeNode *OriginalNode;
     vtkMRMLDiffusionTensorVolumeNode *TensorNode;
+    vtkMRMLScalarVolumeNode *BaselineNode;
+    vtkMRMLScalarVolumeNode *MaskNode;
     vtkMRMLFiberBundleNode *FiberNode;
     vtkSlicerApplication *Application;
+    vtkMRMLCommandLineModuleNode *TensorCML;
 
     // Description:
     // Number of changes in gradients/measurement frame of ActiveVolumeNode.
