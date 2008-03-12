@@ -34,6 +34,7 @@ public:
   // Refresh the interface given the current value of the Window and its
   // views/composites/widgets.
   virtual void Update();
+  virtual void UpdateRemoteIOSettings();
 
   // Description:
   // Callbacks for the Module application settings. Internal, do not use.

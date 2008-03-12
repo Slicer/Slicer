@@ -2,9 +2,12 @@
 #include "vtkCacheManager.h"
 #include "vtkCallbackCommand.h"
 #include "vtksys/Directory.hxx"
+#include "vtkCommand.h"
 
 vtkStandardNewMacro ( vtkCacheManager );
 vtkCxxRevisionMacro ( vtkCacheManager, "$Revision: 1.0 $" );
+
+#define MB 1000000.0
 
 //----------------------------------------------------------------------------
 vtkCacheManager::vtkCacheManager()
@@ -34,9 +37,47 @@ vtkCacheManager::~vtkCacheManager()
   this->RemoteCacheFreeBufferSize = 0;
   this->EnableForceRedownload = 0;
 //  this->EnableRemoteCacheOverwriting = 1;
-
 }
 
+
+//----------------------------------------------------------------------------
+//void vtkCacheManager::SetEnableRemoteCacheOverwriting(int )
+//{
+//  if ( val != this->EnableRemoteCacheOverwriting )
+//   {
+//   this->EnableRemoteCacheOverwriting = val;
+//   this->InvokeEvent ( vtkCacheManager::SettingsUpdateEvent );
+//   }
+//   }
+
+//----------------------------------------------------------------------------
+void vtkCacheManager::SetEnableForceRedownload( int val )
+{
+  if ( val != this->EnableForceRedownload )
+    {
+    this->EnableForceRedownload = val;
+    this->InvokeEvent ( vtkCacheManager::SettingsUpdateEvent );
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkCacheManager::SetRemoteCacheLimit ( int val )
+{
+  if ( val != this->RemoteCacheLimit  )
+    {
+    this->RemoteCacheLimit = val;
+    this->InvokeEvent ( vtkCacheManager::SettingsUpdateEvent );
+    }
+}
+//----------------------------------------------------------------------------
+void vtkCacheManager::SetRemoteCacheFreeBufferSize ( int val )
+{
+  if ( val != this->RemoteCacheFreeBufferSize )
+    {
+    this->RemoteCacheFreeBufferSize = val;
+    this->InvokeEvent ( vtkCacheManager::SettingsUpdateEvent );
+    }
+}
 
 //----------------------------------------------------------------------------
 void vtkCacheManager::SetRemoteCacheDirectory (const char *dir )
@@ -62,6 +103,7 @@ void vtkCacheManager::SetRemoteCacheDirectory (const char *dir )
     vtkWarningMacro ( "Setting RemoteCacheDirectory to be a null string." );      
     this->RemoteCacheDirectory = "";
     }
+  this->InvokeEvent ( vtkCacheManager::SettingsUpdateEvent );
 }
 
 
@@ -490,7 +532,21 @@ int vtkCacheManager::ClearCache()
   
 
 //----------------------------------------------------------------------------
-unsigned long vtkCacheManager::ComputeCacheSize( const char *dirName, unsigned long sz )
+float vtkCacheManager::GetCurrentCacheSize ()
+{
+  if ( this->RemoteCacheDirectory.c_str() == NULL )
+    {
+    return (0.0);
+    }
+  float size = this->ComputeCacheSize ( this->RemoteCacheDirectory.c_str(), 0 );
+  this->SetCurrentCacheSize ( size );
+  return ( this->CurrentCacheSize );
+
+}
+
+
+//----------------------------------------------------------------------------
+float vtkCacheManager::ComputeCacheSize( const char *dirName, unsigned long sz )
 {
 
   //--- Traverses cache directory and computes the combined size
@@ -545,8 +601,10 @@ unsigned long vtkCacheManager::ComputeCacheSize( const char *dirName, unsigned l
                     " doesn't look like a directory. \n" );
     return (-1);
     }
-  this->CurrentCacheSize = static_cast<int>(cachesize);
-  return (cachesize);
+
+  int byteSize = static_cast<int>(cachesize );
+  this->CurrentCacheSize =  (float)byteSize / MB;
+  return (this->CurrentCacheSize);
 }
 
 //----------------------------------------------------------------------------
@@ -556,7 +614,7 @@ void vtkCacheManager::CacheSizeCheck()
   //--- Compute size of the current cache
   this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
   //--- Invoke an event if cache size is exceeded.
-  if ( this->CurrentCacheSize > this->RemoteCacheLimit )
+  if ( this->CurrentCacheSize > (float) (this->RemoteCacheLimit) )
     {
     // remove the file just downloaded?
      this->InvokeEvent ( vtkCacheManager::CacheLimitExceededEvent );
@@ -564,12 +622,15 @@ void vtkCacheManager::CacheSizeCheck()
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::GetFreeCacheSpaceRemaining()
+float vtkCacheManager::GetFreeCacheSpaceRemaining()
 {
 
-  int cachesize = this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
-  int diff = ( this->RemoteCacheFreeBufferSize - cachesize );
-  return ( diff );
+  float cachesize = this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
+  // cache limit - current cache size = total space left in cache.
+  // total space in cache - free buffer size = amount that can be used.
+  float diff = ( float (this->RemoteCacheLimit) - cachesize );
+  diff = diff - (float)this->RemoteCacheFreeBufferSize;
+  return ( diff  );
 
 }
 
@@ -578,8 +639,8 @@ int vtkCacheManager::GetFreeCacheSpaceRemaining()
 void vtkCacheManager::FreeCacheBufferCheck()
 {
 
-  int buf = this->GetFreeCacheSpaceRemaining();
-  if ( buf < this->RemoteCacheFreeBufferSize )
+  float buf = this->GetFreeCacheSpaceRemaining();
+  if ( (buf*MB) < (float) (this->RemoteCacheFreeBufferSize)*MB )
     {
     this->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
     }

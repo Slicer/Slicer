@@ -3,8 +3,6 @@
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
-#include "vtkSlicerApplicationGUI.h"
-
 #include "vtkCacheManager.h"
 
 #include "vtkObserverManager.h"
@@ -35,10 +33,6 @@ public:
   // Description:
   // tracks cache
   vtkGetObjectMacro ( CacheManager, vtkCacheManager );
-
-  vtkGetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
-  vtkSetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
-  
   vtkGetObjectMacro ( CacheSizeLabel, vtkKWLabel );
   vtkGetObjectMacro ( CacheFreeLabel, vtkKWLabel );
   vtkGetObjectMacro ( CloseButton, vtkKWPushButton );
@@ -143,7 +137,6 @@ protected:
   vtkDataIOManager *DataIOManager;
   vtkCacheManager *CacheManager;
   vtkCollection *TransferWidgetCollection;
-  vtkSlicerApplicationGUI *ApplicationGUI;
 
     // Description:
     // Describes whether the GUI has been built or not.

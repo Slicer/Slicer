@@ -97,7 +97,7 @@ extern "C" {
 //#define QDEC_DEBUG
 //#define COMMANDLINE_DEBUG
 //#define DEAMON_DEBUG
-#define REMOTEIO_DEBUG
+//#define REMOTEIO_DEBUG
 
 // comment out next line to enable Loadable Modules support
 #define LOADABLEMODULES_DEBUG
@@ -1645,12 +1645,11 @@ int Slicer3_main(int argc, char *argv[])
     //--- Cache and RemoteIO ManagerGUI
     //
 #if !defined (REMOTEIO_DEBUG)
-    vtkSlicerCacheAndDataIOManagerGUI *RemoteIOGUI = vtkSlicerCacheAndDataIOManagerGUI::New();
-    RemoteIOGUI->SetApplication ( slicerApp);
-    RemoteIOGUI->SetApplicationGUI ( appGUI );
-    RemoteIOGUI->SetAndObserveCacheManager ( scene->GetCacheManager() );
-    RemoteIOGUI->SetAndObserveDataIOManager ( scene->GetDataIOManager() );
-    RemoteIOGUI->Enter();
+    vtkSlicerCacheAndDataIOManagerGUI *remoteIOGUI = vtkSlicerCacheAndDataIOManagerGUI::New();
+    remoteIOGUI->SetApplication ( slicerApp);
+    remoteIOGUI->SetAndObserveCacheManager ( scene->GetCacheManager() );
+    remoteIOGUI->SetAndObserveDataIOManager ( scene->GetDataIOManager() );
+    remoteIOGUI->Enter();
 #endif
 
 #if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
@@ -1799,6 +1798,11 @@ int Slicer3_main(int argc, char *argv[])
       }
 #endif
 
+#ifndef REMOTEIO_DEBUG
+    name = remoteIOGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set RemoteIOGUI %s", name);
+#endif
+    
 #ifndef SLICES_DEBUG
     name = slicesGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set SlicesGUI %s", name);
@@ -2288,10 +2292,10 @@ int Slicer3_main(int argc, char *argv[])
     //--- Cache and RemoteIO ManagerGUI
     //
 #if !defined (REMOTEIO_DEBUG)
-    RemoteIOGUI->SetAndObserveDataIOManager ( NULL );
-    RemoteIOGUI->SetAndObserveCacheManager ( NULL );
-    RemoteIOGUI->TearDownGUI();
-    RemoteIOGUI->Delete();
+    remoteIOGUI->SetAndObserveDataIOManager ( NULL );
+    remoteIOGUI->SetAndObserveCacheManager ( NULL );
+    remoteIOGUI->TearDownGUI();
+    remoteIOGUI->Delete();
 #endif
 
     //--- Remote data handling mechanisms

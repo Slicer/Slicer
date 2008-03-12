@@ -760,7 +760,7 @@ void vtkSlicerApplication::ConfigureRemoteIOSettingsFromRegistry()
   if ( this->ApplicationGUI )
     {
     //--- propagate this value through the GUI into MRML's CacheManager
-    this->ApplicationGUI->ConfigureRemoteIOSettingsFromRegistry();
+    this->ApplicationGUI->ConfigureRemoteIOSettings();
     }
 }
 
@@ -772,7 +772,7 @@ void vtkSlicerApplication::UpdateRemoteIOSettingsForRegistry()
   if ( this->ApplicationGUI )
     {
     //--- update values from MRML, through the GUI 
-    this->ApplicationGUI->SaveRemoteIOConfigurationToRegistry();
+    this->ApplicationGUI->UpdateRemoteIOConfigurationForRegistry();
     }
 }
 
@@ -1393,6 +1393,8 @@ void vtkSlicerApplication::DisplayLogDialog(vtkKWTopLevel* master)
     }
 }
 
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplication::SplashMessage (const char *message)
 {
   if (this->GetUseSplashScreen())
@@ -1402,18 +1404,97 @@ void vtkSlicerApplication::SplashMessage (const char *message)
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplication::SetEnableAsynchronousIO ( int val )
+{
+  if ( val != this->EnableAsynchronousIO )
+    {
+    if ( val == 0 || val == 1 )
+      {
+      this->EnableAsynchronousIO = val;
+      this->ConfigureRemoteIOSettingsFromRegistry();
+      }
+    }
+  return;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetEnableForceRedownload ( int val )
+{
+  if ( val != this->EnableForceRedownload )
+    {
+    if ( val == 0 || val == 1 )
+      {
+      this->EnableForceRedownload = val;
+      this->ConfigureRemoteIOSettingsFromRegistry();    
+      }
+    }
+  return;
+
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetEnableRemoteCacheOverwriting ( int val )
+{
+  if ( val != this->EnableRemoteCacheOverwriting )
+    {
+    if ( val == 0 || val == 1 )
+      {
+      this->EnableRemoteCacheOverwriting = val;
+      this->ConfigureRemoteIOSettingsFromRegistry();    
+      }
+    }
+  return;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetRemoteCacheLimit ( int val )
+{
+  if ( val != this->RemoteCacheLimit )
+    {
+    if ( val > 0 )
+      {
+      this->RemoteCacheLimit = val;
+      this->ConfigureRemoteIOSettingsFromRegistry();
+      }
+    }
+  return;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetRemoteCacheFreeBufferSize ( int val )
+{
+
+  if ( val != this->RemoteCacheFreeBufferSize )
+    {
+    if ( val >= 0 )
+      {
+      this->RemoteCacheFreeBufferSize = val;
+      this->ConfigureRemoteIOSettingsFromRegistry();
+      }
+    }
+  return;
+}
+
+
+
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplication::SetRemoteCacheDirectory(const char* path)
 {
   if (path)
     {
     if ( strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
       {
-      strcpy(this->RemoteCacheDirectory, path);
-      //--- propagate this value through the GUI into MRML's CacheManager
-      this->ConfigureRemoteIOSettingsFromRegistry();
-      this->Modified();
+      if ( strcmp ( this->RemoteCacheDirectory, path ) )
+        {
+        strcpy(this->RemoteCacheDirectory, path);
+        //--- propagate this value through the GUI into MRML's CacheManager
+        this->ConfigureRemoteIOSettingsFromRegistry();
+        this->Modified();
+        }
       }
     }
+  return;
 }
 
 //----------------------------------------------------------------------------

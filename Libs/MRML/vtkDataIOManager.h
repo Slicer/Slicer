@@ -33,10 +33,11 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
   vtkGetObjectMacro ( CacheManager, vtkCacheManager );
   vtkSetObjectMacro ( CacheManager, vtkCacheManager );
   vtkGetMacro ( EnableAsynchronousIO, int );
-  vtkSetMacro ( EnableAsynchronousIO, int );
   vtkGetMacro ( InUpdateCallbackFlag, int );
   vtkSetMacro ( InUpdateCallbackFlag, int );
   
+  void SetEnableAsynchronousIO ( int );
+
   // Description:
   // Creates and adds a new data transfer object to the collection
   vtkDataTransfer *AddNewDataTransfer ( );
@@ -96,6 +97,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
       LocalWriteEvent,
       NewTransferEvent,
       TransferUpdateEvent,
+      SettingsUpdateEvent,
     };
 
   // function that gets called when a data transfer has been updated.

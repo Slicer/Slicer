@@ -1085,6 +1085,65 @@ void vtkSlicerApplicationSettingsInterface::RemoteCacheFreeBufferSizeCallback(in
 
 
 //----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::UpdateRemoteIOSettings()
+{
+
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
+
+  if ( app != NULL )
+    {
+    if (this->EnableAsynchronousIOCheckButton)
+      {
+      if ( this->EnableAsynchronousIOCheckButton->GetSelectedState() != app->GetEnableAsynchronousIO() )
+        {
+        this->EnableAsynchronousIOCheckButton->SetSelectedState( app->GetEnableAsynchronousIO() ? 1 : 0);
+        }
+      }
+
+    if (this->EnableForceRedownloadCheckButton)
+      {
+      if ( this->EnableForceRedownloadCheckButton->GetSelectedState() != app->GetEnableForceRedownload() )
+        {
+        this->EnableForceRedownloadCheckButton->SetSelectedState(app->GetEnableForceRedownload() ? 1 : 0);
+        }
+      }
+/*
+  if (this->EnableRemoteCacheOverwritingCheckButton)
+  {
+  if ( this->EnableRemoteCacheOverwritingCheckButton->GetSelectedState() != app->GetEnableRemoteCacheOverwriting() )
+  {
+  this->EnableRemoteCacheOverwritingCheckButton->SetSelectedState(app->GetEnableRemoteCacheOverwriting() ? 1 : 0);
+  }
+  }
+*/
+    if (this->RemoteCacheDirectoryButton)
+      {
+      if ( strcmp ( this->RemoteCacheDirectoryButton->GetWidget()->GetText(), app->GetRemoteCacheDirectory() ) )
+        {
+        this->RemoteCacheDirectoryButton->GetWidget()->SetText(app->GetRemoteCacheDirectory());
+        this->RemoteCacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetLastPath(app->GetRemoteCacheDirectory());
+        }
+      }
+    if (this->RemoteCacheLimitSpinBox)
+      {
+      if ( this->RemoteCacheLimitSpinBox->GetWidget()->GetValue() != app->GetRemoteCacheLimit() )
+        {
+        this->RemoteCacheLimitSpinBox->GetWidget()->SetValue(app->GetRemoteCacheLimit());
+        }
+      }
+    if (this->RemoteCacheFreeBufferSizeSpinBox)
+      {
+      if ( this->RemoteCacheFreeBufferSizeSpinBox->GetWidget()->GetValue() != app->GetRemoteCacheFreeBufferSize() )
+        {
+        this->RemoteCacheFreeBufferSizeSpinBox->GetWidget()->SetValue(app->GetRemoteCacheFreeBufferSize());
+        }
+      }
+    }  
+}
+
+
+
+//----------------------------------------------------------------------------
 void vtkSlicerApplicationSettingsInterface::Update()
 {
   vtkSlicerApplication *app
@@ -1178,6 +1237,7 @@ void vtkSlicerApplicationSettingsInterface::Update()
       {
       this->RmSelectButton->GetWidget()->SetText(app->GetRm());
       }
+
     if (this->EnableAsynchronousIOCheckButton)
       {
       this->EnableAsynchronousIOCheckButton->SetSelectedState(

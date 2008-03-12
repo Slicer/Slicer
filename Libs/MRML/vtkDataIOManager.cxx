@@ -286,6 +286,17 @@ void vtkDataIOManager::ClearDataTransfers( )
 
 
 //----------------------------------------------------------------------------
+void vtkDataIOManager::SetEnableAsynchronousIO ( int val )
+{
+  if ( val == 1 || val == 0 )
+    {
+    this->EnableAsynchronousIO = val;
+    this->InvokeEvent ( vtkDataIOManager::SettingsUpdateEvent );
+    }
+}
+
+
+//----------------------------------------------------------------------------
 void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
 {
   if (node == NULL)
@@ -338,7 +349,8 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
       }
     
     //--- trigger logic to download, if there's cache space.
-    if ( cm->GetCurrentCacheSize() < cm->GetRemoteCacheLimit() )
+    //--- need to convert to bytes to get a more conservative guess.
+    if ( (cm->GetCurrentCacheSize()*1000000.0) < ((float)(cm->GetRemoteCacheLimit())*1000000.0) )
       {
       vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
       //--- send this off to Logic.

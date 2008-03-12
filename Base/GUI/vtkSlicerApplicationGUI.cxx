@@ -848,6 +848,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             //
             // View Menu
             //
+
             this->MainSlicerWindow->GetViewMenu()->InsertCascade( 2, "Font size",  this->MainSlicerWindow->GetFontSizeMenu());
             int zz;
             const char *size;
@@ -888,6 +889,10 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
                 this->MainSlicerWindow->GetFontFamilyMenu()->SetItemSelectedState ( rindex, 0 );
                 }
               }
+
+            this->GetMainSlicerWindow()->GetViewMenu()->InsertCommand (
+                                                                       this->GetMainSlicerWindow()->GetViewMenuInsertPosition(),
+                                                                       "Cache & Remote I/O Manager", NULL, "$::slicer3::RemoteIOGUI DisplayManagerWindow");
 
             //
             // Help Menu
@@ -2097,7 +2102,7 @@ void vtkSlicerApplicationGUI::BuildGUIFrames ( )
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::ConfigureRemoteIOSettingsFromRegistry()
+void vtkSlicerApplicationGUI::ConfigureRemoteIOSettings()
 {
   vtkMRMLScene *scene = this->GetMRMLScene();
   if ( this->GetApplication() != NULL )
@@ -2105,19 +2110,50 @@ void vtkSlicerApplicationGUI::ConfigureRemoteIOSettingsFromRegistry()
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
     if ( scene != NULL )
       {
+      //--- update CacheManager
       vtkCacheManager *cm = scene->GetCacheManager();
       if ( cm != NULL )
         {
-        cm->SetRemoteCacheDirectory (app->GetRemoteCacheDirectory() );
-        cm->SetEnableForceRedownload (app->GetEnableForceRedownload() );
-        //cm->SetEnableRemoteCacheOverwriting (app->GetEnableRemoteCacheOverwriting() );
-        cm->SetRemoteCacheLimit (app->GetRemoteCacheLimit() );
-        cm->SetRemoteCacheFreeBufferSize (app->GetRemoteCacheFreeBufferSize() );
-      }
+        if ( strcmp (cm->GetRemoteCacheDirectory(), app->GetRemoteCacheDirectory() ))
+          {
+          cm->SetRemoteCacheDirectory (app->GetRemoteCacheDirectory() );
+          }
+        if ( cm->GetEnableForceRedownload() != app->GetEnableForceRedownload() )
+          {
+          cm->SetEnableForceRedownload (app->GetEnableForceRedownload() );
+          }
+        /*
+          if ( cm->GetEnableRemoteCacheOverwriting () != app->GetEnableRemoteCacheOverwriting() )
+          {
+          cm->SetEnableRemoteCacheOverwriting (app->GetEnableRemoteCacheOverwriting() );
+          }
+        */
+        if ( cm->GetRemoteCacheLimit() != app->GetRemoteCacheLimit() )
+          {
+          cm->SetRemoteCacheLimit (app->GetRemoteCacheLimit() );
+          }
+        if ( cm->GetRemoteCacheFreeBufferSize() != app->GetRemoteCacheFreeBufferSize() )
+          {
+          cm->SetRemoteCacheFreeBufferSize (app->GetRemoteCacheFreeBufferSize() );
+          }
+        }
+      //---- update DataIOManager
       vtkDataIOManager *dm = scene->GetDataIOManager();
       if ( dm != NULL )
         {
-        dm->SetEnableAsynchronousIO (app->GetEnableAsynchronousIO() );
+        if ( dm->GetEnableAsynchronousIO() != app->GetEnableAsynchronousIO() )
+          {
+          dm->SetEnableAsynchronousIO (app->GetEnableAsynchronousIO() );
+          }
+        }
+
+      //---- update application settings interface if required...
+      if ( this->GetMainSlicerWindow() != NULL )
+        {
+        if ( this->GetMainSlicerWindow()->GetApplicationSettingsInterface() != NULL )
+          {
+          (vtkSlicerApplicationSettingsInterface::SafeDownCast (this->GetMainSlicerWindow()->GetApplicationSettingsInterface()))->UpdateRemoteIOSettings();
+          }
         }
       }
     }
@@ -2127,7 +2163,7 @@ void vtkSlicerApplicationGUI::ConfigureRemoteIOSettingsFromRegistry()
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::SaveRemoteIOConfigurationToRegistry()
+void vtkSlicerApplicationGUI::UpdateRemoteIOConfigurationForRegistry()
 {
 
   vtkMRMLScene *scene = this->GetMRMLScene();

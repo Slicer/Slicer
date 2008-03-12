@@ -260,12 +260,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
                        dims[0] * dims[1] * nComps, vtkKWIcon::ImageOptionFlipVertical);
       };
 
-    virtual void SaveRemoteIOConfigurationToRegistry();
+    virtual void UpdateRemoteIOConfigurationForRegistry();
 
     //---Description:
-    //--- Called by main application to propagate registry
-    //--- values through the ApplicationGUI to CacheManager.
-    virtual void ConfigureRemoteIOSettingsFromRegistry();
+    //--- Called by main application to propagate initial registry
+    //--- and subsequent Application Settings changes for remoteio
+    //--- through the ApplicationGUI to CacheManager.
+    virtual void ConfigureRemoteIOSettings();
 
 protected:
     vtkSlicerApplicationGUI ( );

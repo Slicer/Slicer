@@ -215,30 +215,30 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 
   // Description:
   // Set/Get if asynch IO should be used
-  vtkSetMacro(EnableAsynchronousIO, int);
+  void SetEnableAsynchronousIO ( int );
   vtkGetMacro(EnableAsynchronousIO, int);
   vtkBooleanMacro(EnableAsynchronousIO, int);
 
   // Description:
   // Set/Get if re-downloads to the cache should be forced
-  vtkSetMacro(EnableForceRedownload, int);
+  void SetEnableForceRedownload (int);
   vtkGetMacro(EnableForceRedownload, int);
   vtkBooleanMacro(EnableForceRedownload, int);
 
   // Description:
   // Set/Get if should force overwriting cache files
-  vtkSetMacro(EnableRemoteCacheOverwriting, int);
+  void SetEnableRemoteCacheOverwriting (int);
   vtkGetMacro(EnableRemoteCacheOverwriting, int);
   vtkBooleanMacro(EnableRemoteCacheOverwriting, int);
 
   // Description:
   // Control the remote cache directory size, in Mb
-  vtkSetMacro (RemoteCacheLimit, int);
+  void SetRemoteCacheLimit ( int);
   vtkGetMacro (RemoteCacheLimit, int);
 
   // Description:
   // Control the remote cache directory free buffer size, in Mb
-  vtkSetMacro (RemoteCacheFreeBufferSize, int);
+  void SetRemoteCacheFreeBufferSize ( int );
   vtkGetMacro (RemoteCacheFreeBufferSize, int);  
 
   // Description:

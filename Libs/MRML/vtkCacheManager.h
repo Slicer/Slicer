@@ -98,22 +98,24 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
     
   void CacheSizeCheck();
   void FreeCacheBufferCheck();
-  int GetFreeCacheSpaceRemaining();
   int GetCachedFileList(const char *dirname);
-  unsigned long ComputeCacheSize( const char *dirname, unsigned long size );
+  float ComputeCacheSize( const char *dirname, unsigned long size );
+  float GetCurrentCacheSize();
+  float GetFreeCacheSpaceRemaining();
   
+  
+
   // Description:
   vtkGetMacro ( RemoteCacheLimit, int );
-  vtkSetMacro ( RemoteCacheLimit, int );
-  vtkGetMacro ( CurrentCacheSize, int );
-  vtkSetMacro ( CurrentCacheSize, int );
+  void SetRemoteCacheLimit ( int );
+  vtkSetMacro ( CurrentCacheSize, float );
   vtkGetMacro ( RemoteCacheFreeBufferSize, int );
-  vtkSetMacro ( RemoteCacheFreeBufferSize, int );
+  void SetRemoteCacheFreeBufferSize ( int );
   vtkGetMacro ( EnableForceRedownload, int );
-  vtkSetMacro ( EnableForceRedownload, int );
+  void SetEnableForceRedownload(int );
   //vtkGetMacro ( EnableRemoteCacheOverwriting, int );
-  //vtkSetMacro ( EnableRemoteCacheOverwriting, int );
-
+  //void SetEnableRemoteCacheOverwriting(int );
+  
   //BTX
   // in case we need these.
   enum
@@ -130,12 +132,13 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
       CacheLimitExceededEvent,
       CacheDeleteEvent,
       CacheClearEvent,
+      SettingsUpdateEvent,
     };
   //ETX
   
  private:
   int RemoteCacheLimit;
-  int CurrentCacheSize;
+  float CurrentCacheSize;
   int RemoteCacheFreeBufferSize;
   int EnableForceRedownload;
   //int EnableRemoteCacheOverwriting;
