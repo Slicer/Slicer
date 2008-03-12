@@ -486,9 +486,9 @@ void vtkCacheManager::DeleteFromCache( const char *target )
         }
       else
         {
-        this->DeleteFromCachedFileList ( str.c_str() );
         this->UpdateCacheInformation ( );
-        }
+        this->InvokeEvent ( vtkCacheManager::CacheDeleteEvent );
+       }
       }
     else
       {
@@ -498,10 +498,11 @@ void vtkCacheManager::DeleteFromCache( const char *target )
         }
       else
         {
-        this->DeleteFromCachedFileList ( str.c_str() );
         this->UpdateCacheInformation ( );
+        this->InvokeEvent ( vtkCacheManager::CacheDeleteEvent );
         }
       }
+    this->DeleteFromCachedFileList ( str.c_str() );
     }
 }
 
@@ -522,9 +523,11 @@ int vtkCacheManager::ClearCache()
     }
   if ( vtksys::SystemTools::MakeDirectory ( this->RemoteCacheDirectory.c_str() ) == false )
     {
+    vtkWarningMacro ( "Cache cleared: Error: unable to recreate cache directory after deleting its contents." );      
     return 0;
     }
   this->UpdateCacheInformation();
+  this->InvokeEvent ( vtkCacheManager::CacheClearEvent );
   this->Modified();
   return 1;
 }

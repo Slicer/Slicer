@@ -20,6 +20,7 @@ vtkSlicerCacheAndDataIOManagerGUI::vtkSlicerCacheAndDataIOManagerGUI ( )
   this->CacheSizeLabel = NULL;
   this->CacheFreeLabel = NULL;
   this->CloseButton = NULL;
+  this->RefreshButton = NULL;
   this->ClearCacheButton = NULL;
   this->ForceReloadCheckButton = NULL;
   this->OverwriteCacheCheckButton = NULL;
@@ -56,6 +57,12 @@ vtkSlicerCacheAndDataIOManagerGUI::~vtkSlicerCacheAndDataIOManagerGUI ( )
     this->CacheFreeLabel->SetParent ( NULL );
     this->CacheFreeLabel->Delete();
     this->CacheFreeLabel = NULL;
+    }
+  if ( this->RefreshButton )
+    {
+    this->RefreshButton->SetParent ( NULL );
+    this->RefreshButton->Delete();
+    this->RefreshButton = NULL;    
     }
   if ( this->CloseButton )
     {
@@ -136,6 +143,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::PrintSelf ( ostream& os, vtkIndent inden
   os << indent << "SlicerCacheAndDataIOManagerGUI: " << this->GetClassName ( ) << "\n";
   os << indent << "CacheSizeLabel: " << this->GetCacheSizeLabel ( ) << "\n";
   os << indent << "CacheFreeLabel: " << this->GetCacheFreeLabel ( ) << "\n";
+  os << indent << "RefreshButton: " << this->GetRefreshButton () << "\n";
   os << indent << "CloseButton: " << this->GetCloseButton () << "\n";
   os << indent << "ClearCacheButton: " << this->GetClearCacheButton () << "\n";
   os << indent << "ForceReloadCheckButton: " << this->GetForceReloadCheckButton () << "\n";
@@ -155,6 +163,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::RemoveGUIObservers ( )
 {
 
   this->CancelAllButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->RefreshButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->CloseButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->ClearCacheButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->ForceReloadCheckButton->RemoveObservers ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -168,6 +177,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::RemoveGUIObservers ( )
 void vtkSlicerCacheAndDataIOManagerGUI::AddGUIObservers ( )
 {
   this->CancelAllButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->RefreshButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->CloseButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->ClearCacheButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->ForceReloadCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -189,13 +199,19 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessGUIEvents ( vtkObject *caller,
       {
       this->WithdrawManagerWindow();
       }
-    else if ( b == this->ClearCacheButton && event == vtkKWPushButton::InvokedEvent )
+    else if ( b == this->RefreshButton && event == vtkKWPushButton::InvokedEvent )
+      {
+      this->UpdateEntireGUI();
+      }
+    else if ( b == this->ClearCacheButton && event == vtkKWPushButton::InvokedEvent && this->CacheManager != NULL)
       {
       //--- prompt to make sure user wants to do this.
       vtkKWMessageDialog *d = vtkKWMessageDialog::New();
       d->SetParent ( this->ManagerTopLevel );
       d->SetStyleToYesNo();
-      std::string msg = "Are you sure you want to delete all files in your remote cache directory?";
+      std::string msg = "Are you sure you want to delete all cached files in: ";
+      msg += this->CacheManager->GetRemoteCacheDirectory();
+      msg += "?";
       d->SetText ( msg.c_str());
       d->Create();
       ret = d->Invoke();
@@ -688,8 +704,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
   this->ManagerTopLevel->SetBorderWidth ( 2 );
   this->ManagerTopLevel->SetReliefToFlat();
   this->ManagerTopLevel->SetDisplayPositionToPointer();
-  this->ManagerTopLevel->SetSize ( 900, 300 );
-  this->ManagerTopLevel->SetMinimumSize ( 900, 100 );
+  this->ManagerTopLevel->SetSize ( 910, 300 );
+  this->ManagerTopLevel->SetMinimumSize ( 910, 100 );
   this->ManagerTopLevel->Withdraw();
   this->ManagerTopLevel->SetDeleteWindowProtocolCommand ( this, "WithdrawManagerWindow" );
     
@@ -790,6 +806,14 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
   this->ClearCacheButton->SetReliefToFlat();
   this->ClearCacheButton->SetBalloonHelpString ("Delete all files in cache." );
 
+  this->RefreshButton = vtkKWPushButton::New();
+  this->RefreshButton->SetParent ( this->ControlFrame );
+  this->RefreshButton->Create();
+  this->RefreshButton->SetImageToIcon ( i->GetRefreshSettingsIcon() );
+  this->RefreshButton->SetBorderWidth (0);
+  this->RefreshButton->SetReliefToFlat ();
+  this->RefreshButton->SetBalloonHelpString ("Refresh cache space report in panel." );  
+  
   this->CancelAllButton = vtkKWPushButton::New();
   this->CancelAllButton->SetParent ( this->ControlFrame );
   this->CancelAllButton->Create();
@@ -799,15 +823,16 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
   this->CancelAllButton->SetBalloonHelpString ( "Cancel all pending and running data transfers." );
   i->Delete();
 
-  this->Script ( "pack %s %s %s %s %s %s %s -side left -anchor nw -padx 4 -pady 4",
+  this->Script ( "pack %s %s %s %s %s %s %s %s -side left -anchor nw -padx 4 -pady 4",
                  this->CacheSizeLabel->GetWidgetName(),
                  this->CacheFreeLabel->GetWidgetName(),
                  this->ForceReloadCheckButton->GetWidgetName(),
                  this->AsynchronousCheckButton->GetWidgetName(),
                  this->OverwriteCacheCheckButton->GetWidgetName(),
-                 this->ClearCacheButton->GetWidgetName(),
-                 this->CancelAllButton->GetWidgetName());
-    
+                 this->CancelAllButton->GetWidgetName(),
+                 this->RefreshButton->GetWidgetName(),
+                 this->ClearCacheButton->GetWidgetName());
+
 
   // all title widgets in the Transfer Frame
   vtkKWLabel *l;

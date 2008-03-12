@@ -38,6 +38,7 @@ public:
   vtkGetObjectMacro ( CloseButton, vtkKWPushButton );
   vtkGetObjectMacro ( ClearCacheButton, vtkKWPushButton );
   vtkGetObjectMacro ( CancelAllButton, vtkKWPushButton );
+  vtkGetObjectMacro ( RefreshButton, vtkKWPushButton );
   vtkGetObjectMacro ( ForceReloadCheckButton, vtkKWCheckButton );
   vtkGetObjectMacro ( OverwriteCacheCheckButton, vtkKWCheckButton );
   vtkGetObjectMacro ( AsynchronousCheckButton, vtkKWCheckButton );
@@ -125,6 +126,7 @@ protected:
   vtkKWPushButton *CloseButton;
   vtkKWPushButton *ClearCacheButton;
   vtkKWPushButton *CancelAllButton;
+  vtkKWPushButton *RefreshButton;
   vtkKWCheckButton *ForceReloadCheckButton;
   vtkKWCheckButton *OverwriteCacheCheckButton;
   vtkKWCheckButton *AsynchronousCheckButton;

@@ -46,7 +46,8 @@ vtkSlicerDataTransferIcons::vtkSlicerDataTransferIcons ( )
     this->DeleteFromCacheIcon = vtkKWIcon::New();
     this->TransferCancelDisabledIcon = vtkKWIcon::New();
     this->DeleteFromCacheDisabledIcon = vtkKWIcon::New();
-
+    this->RefreshSettingsIcon = vtkKWIcon::New();
+    
     this->AssignImageDataToIcons ( );
 }
 
@@ -160,6 +161,11 @@ vtkSlicerDataTransferIcons::~vtkSlicerDataTransferIcons ( )
     {
     this->DeleteFromCacheDisabledIcon->Delete();
     this->DeleteFromCacheDisabledIcon = NULL;
+    }
+  if ( this->RefreshSettingsIcon )
+    {
+    this->RefreshSettingsIcon->Delete();
+    this->RefreshSettingsIcon = NULL;
     }
   if ( this->TransferCancelIcon )
     {
@@ -303,6 +309,11 @@ void vtkSlicerDataTransferIcons::AssignImageDataToIcons ( )
                                                 image_DeleteFromCacheDisabled_height,
                                                 image_DeleteFromCacheDisabled_pixel_size,
                                                 image_DeleteFromCacheDisabled_length, 0);                                                
+  this->RefreshSettingsIcon->SetImage ( image_Refresh,
+                                        image_Refresh_width,
+                                        image_Refresh_height,
+                                        image_Refresh_pixel_size,
+                                        image_Refresh_length, 0 );                                        
   this->TransferCancelIcon->SetImage( image_TransferCancel,
                                 image_TransferCancel_width,
                                 image_TransferCancel_height,
@@ -368,6 +379,7 @@ void vtkSlicerDataTransferIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "TransferStatusErrorIcon: " << this->GetTransferStatusErrorIcon() << "\n";
     os << indent << "TransferStatusCancelRequestedIcon: " << this->GetTransferStatusCancelRequestedIcon() << "\n";
 
+    os << indent << "RefreshSettingsIcon: " << this->GetRefreshSettingsIcon ( ) << "\n";
     os << indent << "TransferCancelIcon: " << this->GetTransferCancelIcon ( ) << "\n";
     os << indent << "TransferCancelDisabledIcon: " << this->GetTransferCancelDisabledIcon() << "\n";
     os << indent << "TransferInformationIcon: " << this->GetTransferInformationIcon ( ) << "\n";

@@ -44,6 +44,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferIcons : public vtkSlicerIc
     vtkGetObjectMacro ( DeleteFromCacheIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferCancelDisabledIcon, vtkKWIcon );
     vtkGetObjectMacro ( DeleteFromCacheDisabledIcon, vtkKWIcon );
+    vtkGetObjectMacro ( RefreshSettingsIcon, vtkKWIcon );
 
 
     void AssignImageDataToIcons ( );
@@ -83,6 +84,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferIcons : public vtkSlicerIc
     vtkKWIcon *DeleteFromCacheIcon;
     vtkKWIcon *TransferCancelDisabledIcon;
     vtkKWIcon *DeleteFromCacheDisabledIcon;
+    vtkKWIcon *RefreshSettingsIcon;
     
  private:
     vtkSlicerDataTransferIcons (const vtkSlicerDataTransferIcons&); // Not implemented
