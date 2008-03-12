@@ -77,6 +77,15 @@ void vtkSlicerDataTransferWidget::KillTransferTimer ( )
 void vtkSlicerDataTransferWidget::UpdateTransferFeedback()
 {
 
+  //--- if the transfer has been completed in an asynchronous
+  //--- thread, its status has been modified without triggering
+  //--- an event. So always check this here to capture
+  //--- completed or canceled events and kill the timer.
+  if ( this->DataTransfer->GetTransferStatus() == vtkDataTransfer::Completed)
+    {
+    this->UpdateWidget();
+    return;
+    }
   //--- todo: yuk, make this less hardcoded to 8 icons...
   switch ( this->TimerCount )
     {

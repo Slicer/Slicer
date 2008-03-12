@@ -318,7 +318,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
     if ( event == vtkDataIOManager::NewTransferEvent )
       {
       vtkDataTransfer *dt = reinterpret_cast < vtkDataTransfer*> (callData);
-//      this->AddNewDataTransfer ( dt );
+//     this->AddNewDataTransfer ( dt );
       }
     else if ( event == vtkDataIOManager::TransferUpdateEvent )
       {
@@ -733,21 +733,6 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
   this->Script ( "grid columnconfigure %s 0 -weight 1", this->ManagerTopLevel->GetWidgetName() );
 
   // all widgets in the Control Frame
-  this->CacheSizeLabel = vtkKWLabel::New();
-  this->CacheSizeLabel->SetParent ( this->ControlFrame );
-  this->CacheSizeLabel->Create();
-  this->CacheSizeLabel->SetWidth (20);
-  this->CacheSizeLabel->SetText ( "Cache size: ");
-  this->CacheSizeLabel->SetAnchorToWest ();
-  this->CacheSizeLabel->SetBalloonHelpString ("Use View->Application Settings Interface->RemoteIO Settings to adjust cache size");
-
-  this->CacheFreeLabel = vtkKWLabel::New();
-  this->CacheFreeLabel->SetParent ( this->ControlFrame );
-  this->CacheFreeLabel->Create();
-  this->CacheFreeLabel->SetWidth ( 20 );
-  this->CacheFreeLabel->SetText ( "Cache free: ");
-  this->CacheFreeLabel->SetAnchorToWest ();
-  this->CacheFreeLabel->SetBalloonHelpString ("Use View->Application Settings Interface->RemoteIO Settings to adjust cache free buffer size");
 
   this->ForceReloadCheckButton = vtkKWCheckButton::New();
   this->ForceReloadCheckButton->SetParent ( this->ControlFrame );
@@ -792,6 +777,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
     this->AsynchronousCheckButton->SetSelectedState(0);
     }
 
+  // not packed for now.
   this->TimeOutCheckButton = vtkKWCheckButton::New();
   this->TimeOutCheckButton->SetParent ( this->ControlFrame );
   this->TimeOutCheckButton->Create();
@@ -823,12 +809,11 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
   this->CancelAllButton->SetBalloonHelpString ( "Cancel all pending and running data transfers." );
   i->Delete();
 
-  this->Script ( "pack %s %s %s %s %s %s %s %s -side left -anchor nw -padx 4 -pady 4",
-                 this->CacheSizeLabel->GetWidgetName(),
-                 this->CacheFreeLabel->GetWidgetName(),
+  this->Script ( "pack %s %s %s -side left -anchor n -padx 4 -pady 4",
                  this->ForceReloadCheckButton->GetWidgetName(),
                  this->AsynchronousCheckButton->GetWidgetName(),
-                 this->OverwriteCacheCheckButton->GetWidgetName(),
+                 this->OverwriteCacheCheckButton->GetWidgetName() );
+  this->Script ( "pack %s %s %s -side right -anchor n -padx 4 -pady 4",
                  this->CancelAllButton->GetWidgetName(),
                  this->RefreshButton->GetWidgetName(),
                  this->ClearCacheButton->GetWidgetName());
@@ -887,12 +872,32 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
 
 
   // all widgets in the Button Frame
+  this->CacheSizeLabel = vtkKWLabel::New();
+  this->CacheSizeLabel->SetParent ( this->ButtonFrame );
+  this->CacheSizeLabel->Create();
+  this->CacheSizeLabel->SetWidth (20);
+  this->CacheSizeLabel->SetText ( "Cache size: ");
+  this->CacheSizeLabel->SetAnchorToWest ();
+  this->CacheSizeLabel->SetBalloonHelpString ("Use View->Application Settings Interface->RemoteIO Settings to adjust cache size");
+
+  this->CacheFreeLabel = vtkKWLabel::New();
+  this->CacheFreeLabel->SetParent ( this->ButtonFrame );
+  this->CacheFreeLabel->Create();
+  this->CacheFreeLabel->SetWidth ( 20 );
+  this->CacheFreeLabel->SetText ( "Cache free: ");
+  this->CacheFreeLabel->SetAnchorToWest ();
+  this->CacheFreeLabel->SetBalloonHelpString ("Use View->Application Settings Interface->RemoteIO Settings to adjust cache free buffer size");
+
   this->CloseButton = vtkKWPushButton::New();
   this->CloseButton->SetParent ( this->ButtonFrame );
   this->CloseButton->Create();
   this->CloseButton->SetText ( "Close");
   this->CloseButton->SetWidth ( 10 );
-  this->Script ( "pack %s -side top -anchor c -padx 4 -pady 4", this->CloseButton->GetWidgetName() );
+
+  this->Script ( "pack %s %s -side left -anchor n -padx 4 -pady 4",
+                 this->CacheSizeLabel->GetWidgetName(),
+                 this->CacheFreeLabel->GetWidgetName() );
+  this->Script ( "pack %s -side right -anchor n -padx 4 -pady 4", this->CloseButton->GetWidgetName() );
 }
 
 
