@@ -21,7 +21,6 @@
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
 #include "vtkDataIOManagerLogic.h"
-//#include "vtkHTTPHandler.h"
 #include "vtkSlicerCacheAndDataIOManagerGUI.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkSlicerApplicationGUI.h"
@@ -174,6 +173,9 @@ extern "C" {
 #include "vtkLabelStatisticsLogic.h"
 #endif
 
+#if !defined(REMOTEIO_DEBUG)
+#include "vtkHTTPHandler.h"
+#endif
 
 //
 // note: always write to cout rather than cerr so log messages will
@@ -947,12 +949,13 @@ int Slicer3_main(int argc, char *argv[])
     
     
     scene->SetURIHandlerCollection( URIHandlerCollection );
+#if !defined(REMOTEIO_DEBUG)
     // register all existing uri handlers (add to collection)
-    /*
     vtkHTTPHandler *httpHandler = vtkHTTPHandler::New();
     scene->AddURIHandler(httpHandler);
     httpHandler->Delete();
-    */
+#endif
+
     // build the application GUI
     appGUI->BuildGUI ( );
     appGUI->AddGUIObservers ( );

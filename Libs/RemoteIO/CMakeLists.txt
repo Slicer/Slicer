@@ -24,7 +24,7 @@ ENDIF(WIN32)
 # --------------------------------------------------------------------------
 # Settings for options
 SET(RemoteIO_SRCS
-#        vtkHTTPHandler.cxx
+        vtkHTTPHandler.cxx
 )
 
 

@@ -44,6 +44,11 @@ SET (SRC
 )
 
 # --------------------------------------------------------------------------
+# Find SLICERLIBCURL (slicercurl)
+FIND_PACKAGE(SLICERLIBCURL REQUIRED)
+INCLUDE(${SLICERLIBCURL_USE_FILE})
+
+# --------------------------------------------------------------------------
 # Include dirs
 # MESSAGE(STATUS "Setting up dir_list, Qdec bin dir = ${Qdec_BINARY_DIR}, Qdec src dir = ${Qdec_SOURCE_DIR}")
 
@@ -128,6 +133,9 @@ SET(dir_list
   ${VTK_INCLUDE_DIR}
   ${NAVITRACK_INC}
   ${IGSTK_INCLUDE_DIRS}
+  ${RemoteIO_SOURCE_DIR}
+  ${RemoteIO_BINARY_DIR}
+  ${SLICERLIBCURL_INCLUDE_DIRS}
   )
 
 IF(BUILD_MODULES)
@@ -193,6 +201,7 @@ ELSE(LABELSTATISTICS)
  ADD_DEFINITIONS(-DLABELSTATISTICS_DEBUG)
 ENDIF(LABELSTATISTICS)
 
+
 TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     SlicerBaseLogic
     SlicerBaseGUI
@@ -205,7 +214,13 @@ TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
     ITKIO
     ${KWWidgets_LIBRARIES}
     Qdec
+    RemoteIO
+    ${SLICERLIBCURL_LIBRARIES}
 )
+
+# MESSAGE(STATUS "Slicer lib curl libs = ${SLICERLIBCURL_LIBRARIES}")
+# MESSAGE(STATUS "Slicer lib curl library dirs = ${SLICERLIBCURL_LIBRARY_DIRS}")
+
 
 IF(BUILD_MODULES)
   TARGET_LINK_LIBRARIES( Slicer3${SLICER_EXE_SUFFIX}
