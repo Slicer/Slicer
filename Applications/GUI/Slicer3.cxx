@@ -175,6 +175,7 @@ extern "C" {
 
 #if !defined(REMOTEIO_DEBUG)
 #include "vtkHTTPHandler.h"
+#include "vtkSRBHandler.h"
 #endif
 
 //
@@ -955,6 +956,10 @@ int Slicer3_main(int argc, char *argv[])
     vtkHTTPHandler *httpHandler = vtkHTTPHandler::New();
     scene->AddURIHandler(httpHandler);
     httpHandler->Delete();
+
+    vtkSRBHandler *srbHandler = vtkSRBHandler::New();
+    scene->AddURIHandler(srbHandler);
+    srbHandler->Delete();
 #endif
 
     // build the application GUI
