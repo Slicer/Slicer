@@ -123,10 +123,19 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
   if (mnode) 
     {
     vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
-    if (node->ReadData(this) == 0)
+    if (node && node->ReadData(this) == 0)
       {
       scene->SetErrorCode(1);
-      std::string msg = std::string("Error reading model file ") + std::string(node->GetFileName());
+      std::string fname;
+      if (node->GetFileName() != NULL)
+        {
+        fname = std::string(node->GetFileName());
+        }
+      else
+        {
+        fname = std::string("(null)");
+        }
+      std::string msg = std::string("Error reading file ") + fname;
       scene->SetErrorMessage(msg);
       }
 //    this->SetAndObservePolyData(this->GetPolyData());
