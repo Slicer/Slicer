@@ -2086,14 +2086,14 @@ int Slicer3_main(int argc, char *argv[])
           appLogic->GetMRMLScene()->SetURL(fileName.c_str());
           // and then load it
           slicerApp->SplashMessage("Set scene url, connecting...");
-          std::string cmd = "after idle $::slicer3::MRMLScene Connect";
+          std::string cmd = "after idle {update; $::slicer3::MRMLScene Connect}";
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
           }                    
         else if (fileName.find(".xml",0) != std::string::npos
                  || fileName.find(".XML",0) != std::string::npos)
           {
           // if it's an xml file, load it
-          std::string cmd = "after idle {ImportSlicer2Scene \"" + *argit + "\"}";
+          std::string cmd = "after idle {update; ImportSlicer2Scene \"" + *argit + "\"}";
           slicerApp->SplashMessage("Importing Slicer2 scene...");
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
           slicerApp->SplashMessage("Imported scene.");
@@ -2103,20 +2103,20 @@ int Slicer3_main(int argc, char *argv[])
           {
           // if it's an xcede file, load it
           slicerApp->SplashMessage("Importing Xcede catalog ...");
-          std::string cmd = "after idle {XcedeCatalogImport \"" + *argit + "\"}";
+          std::string cmd = "after idle {update; XcedeCatalogImport \"" + *argit + "\"}";
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
           slicerApp->SplashMessage("Imported catalog.");
           }
         else if (fileName.find(".tcl",0) != std::string::npos)
           {
           // if it's a tcl file source it after the app starts
-          std::string cmd = "after idle {source " + *argit + "}";
+          std::string cmd = "after idle {update; source " + *argit + "}";
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
           }
         else
           {
           // if we're not sure, assume it is data to load...
-          std::string cmd = "::Loader::ShowDialog \"" + *argit + "\"";
+          std::string cmd = "after idle {update; ::Loader::ShowDialog \"" + *argit + "\"}";
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
           }
         ++argit;
@@ -2129,7 +2129,7 @@ int Slicer3_main(int argc, char *argv[])
     if ( LoadDicomDir != "" )
       {    
       // load either a directory or an archetype
-      std::string cmd = "::Loader::LoadArchetype " + LoadDicomDir;
+      std::string cmd = "after idle {update; ::Loader::LoadArchetype \"" + LoadDicomDir + "\"}";
       res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       }
 
