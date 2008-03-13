@@ -318,7 +318,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     bvalue->Delete();
     }
 
-  volNode->SetStorageNodeID(this->GetID());
+  volNode->SetAndObserveStorageNodeID(this->GetID());
   //TODO update scene to send Modified event
  
   vtkImageChangeInformation *ici = vtkImageChangeInformation::New();

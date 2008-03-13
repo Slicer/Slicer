@@ -122,7 +122,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 
     this->GetMRMLScene()->AddNodeNoNotify(storageNode);  
     this->GetMRMLScene()->AddNodeNoNotify(displayNode);
-    modelNode->SetStorageNodeID(storageNode->GetID());
+    modelNode->SetAndObserveStorageNodeID(storageNode->GetID());
     modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
     displayNode->SetPolyData(modelNode->GetPolyData());
     
@@ -167,7 +167,7 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
     storageNode = vtkMRMLModelStorageNode::New();
     storageNode->SetScene(this->GetMRMLScene());
     this->GetMRMLScene()->AddNode(storageNode);  
-    modelNode->SetStorageNodeID(storageNode->GetID());
+    modelNode->SetAndObserveStorageNodeID(storageNode->GetID());
     storageNode->Delete();
     }
 

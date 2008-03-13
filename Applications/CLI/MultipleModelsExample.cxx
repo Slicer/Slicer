@@ -93,7 +93,7 @@ int main(int argc, char * argv[])
   colorStorageNode = vtkMRMLColorTableStorageNode::New();
   colorStorageNode->SetFileName(ColorTable.c_str());
   modelScene->AddNode(colorStorageNode);
-  colorNode->SetStorageNodeID(colorStorageNode->GetID());
+  colorNode->SetAndObserveStorageNodeID(colorStorageNode->GetID());
   if (!colorStorageNode->ReadData(colorNode))
     {
     std::cerr << "Error reading colour file " << colorStorageNode->GetFileName() << endl;
@@ -154,7 +154,7 @@ int main(int argc, char * argv[])
     dnd->SetVisibility(1);
     modelScene->AddNode(dnd);
 
-    mnd->SetStorageNodeID(snd->GetID());        
+    mnd->SetAndObserveStorageNodeID(snd->GetID());        
     mnd->SetAndObserveDisplayNodeID(dnd->GetID());
 
     // force the storage node to write out its data
@@ -206,7 +206,7 @@ int main(int argc, char * argv[])
     dnd->SetVisibility(1);
     modelScene->AddNode(dnd);
 
-    mnd->SetStorageNodeID(snd->GetID());        
+    mnd->SetAndObserveStorageNodeID(snd->GetID());        
     mnd->SetAndObserveDisplayNodeID(dnd->GetID());
 
     // force the storage node to write out its data
@@ -259,7 +259,7 @@ int main(int argc, char * argv[])
     dnd->SetVisibility(1);
     modelScene->AddNode(dnd);
 
-    mnd->SetStorageNodeID(snd->GetID());        
+    mnd->SetAndObserveStorageNodeID(snd->GetID());        
     mnd->SetAndObserveDisplayNodeID(dnd->GetID());
 
     // force the storage node to write out its data

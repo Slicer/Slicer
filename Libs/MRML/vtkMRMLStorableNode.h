@@ -72,12 +72,13 @@ public:
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   // Description:
-  // alternative method to propagate events generated in Display nodes
+  // alternative method to propagate events generated in Storage nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
   // Description:
   // String ID of the storage MRML node
+  /*
   vtkSetReferenceStringMacro(StorageNodeID);
   void SetReferenceStorageNodeID(const char *id) { this->SetStorageNodeID(id); }
   vtkGetStringMacro(StorageNodeID);
@@ -85,14 +86,59 @@ public:
   // Description:
   // Get associated storage MRML node
   vtkMRMLStorageNode* GetStorageNode();
+  */
+  // Description:
+  // String ID of the storage MRML node
+  void SetAndObserveStorageNodeID(const char *StorageNodeID);
+  void AddAndObserveStorageNodeID(const char *StorageNodeID);
+  void SetAndObserveNthStorageNodeID(int n, const char *StorageNodeID);
 
+  int GetNumberOfStorageNodes()
+    {
+    return this->StorageNodeIDs.size();
+    };
+
+  const char *GetNthStorageNodeID(int n)
+  {
+      if (n < 0 || n >= (int)this->StorageNodeIDs.size())
+      {
+          return NULL;
+      }
+      return this->StorageNodeIDs[n].c_str();
+  };
+
+  const char *GetStorageNodeID()
+    {
+    return this->GetNthStorageNodeID(0);
+    };
+
+  // Description:
+  // Get associated display MRML node
+  vtkMRMLStorageNode* GetNthStorageNode(int n);
+
+  vtkMRMLStorageNode* GetStorageNode()
+    {
+    return this->GetNthStorageNode(0);
+    };
+  
  protected:
   vtkMRMLStorableNode();
   ~vtkMRMLStorableNode();
   vtkMRMLStorableNode(const vtkMRMLStorableNode&);
   void operator=(const vtkMRMLStorableNode&);
-  
-  char *StorageNodeID;
+
+  void SetStorageNodeID(const char* id) ;
+  void SetNthStorageNodeID(int n, const char* id);
+  void AddStorageNodeID(const char* id);
+  void AddAndObserveStorageNode(vtkMRMLStorageNode *dnode);
+
+//BTX
+  std::vector<std::string> StorageNodeIDs;
+ 
+  std::vector<vtkMRMLStorageNode *> StorageNodes;
+//ETX
+
+  //char *StorageNodeID;
 };
 
 #endif

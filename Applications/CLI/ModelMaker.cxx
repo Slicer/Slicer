@@ -330,7 +330,7 @@ int main(int argc, char * argv[])
         {
         std::cout << "Setting the colour node's storage node id to " << colorStorageNode->GetID() << ", it's file name = " << colorStorageNode->GetFileName() << std::endl;
         }
-      colorNode->SetStorageNodeID(colorStorageNode->GetID());
+      colorNode->SetAndObserveStorageNodeID(colorStorageNode->GetID());
       if (!colorStorageNode->ReadData(colorNode))
         {
         std::cerr << "Error reading colour file " << colorStorageNode->GetFileName() << endl;
@@ -1353,7 +1353,7 @@ int main(int argc, char * argv[])
           std::cout << "Added display node: id = " << (dnode->GetID() == NULL ? "(null)" : dnode->GetID()) << endl;
           std::cout << "Setting model's storage node: id = " << (snode->GetID() == NULL ? "(null)" : snode->GetID()) << endl;
           }
-        mnode->SetReferenceStorageNodeID(snode->GetID());        
+        mnode->SetAndObserveStorageNodeID(snode->GetID());        
         mnode->SetAndObserveDisplayNodeID(dnode->GetID());
         modelScene->AddNode(mnode);
 

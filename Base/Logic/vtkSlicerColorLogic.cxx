@@ -204,7 +204,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   if (this->GetMRMLScene())
     {
     this->GetMRMLScene()->AddNode(colorStorageNode);
-    node->SetStorageNodeID(colorStorageNode->GetID());
+    node->SetAndObserveStorageNodeID(colorStorageNode->GetID());
     }
   colorStorageNode->Delete();
   
@@ -255,7 +255,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
   if (this->GetMRMLScene())
     {
     this->GetMRMLScene()->AddNode(colorStorageNode);
-    node->SetStorageNodeID(colorStorageNode->GetID());
+    node->SetAndObserveStorageNodeID(colorStorageNode->GetID());
     }
   colorStorageNode->Delete();
   node->SetName("FSSurfaceLabels");
@@ -303,7 +303,7 @@ void vtkSlicerColorLogic::AddDefaultColorNodes()
     if (this->GetMRMLScene())
       {
       this->GetMRMLScene()->AddNode(colorStorageNode);
-      node->SetStorageNodeID(colorStorageNode->GetID());
+      node->SetAndObserveStorageNodeID(colorStorageNode->GetID());
       }
     colorStorageNode->Delete();
     node->GetStorageNode()->SetFileName(this->ColorFiles[i].c_str());
@@ -598,7 +598,7 @@ vtkMRMLColorNode * vtkSlicerColorLogic::LoadColorFile(const char *fileName)
   if (this->GetMRMLScene())
     {
     this->GetMRMLScene()->AddNode(colorStorageNode);
-    node->SetStorageNodeID(colorStorageNode->GetID());
+    node->SetAndObserveStorageNodeID(colorStorageNode->GetID());
     }
   
   node->SetFileName(fileName);

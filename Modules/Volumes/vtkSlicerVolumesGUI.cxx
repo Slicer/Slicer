@@ -341,7 +341,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
           snode = vtkMRMLVolumeArchetypeStorageNode::New();
           snode->SetScene(this->GetMRMLScene());
           this->GetMRMLScene()->AddNode(snode);
-          refNode->SetStorageNodeID(snode->GetID());
+          refNode->SetAndObserveStorageNodeID(snode->GetID());
           snode->Delete();
           }
         snode->SetUseCompression(this->UseCompressionCheckButton->GetSelectedState());
@@ -356,7 +356,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
           snode = vtkMRMLNRRDStorageNode::New();
           snode->SetScene(this->GetMRMLScene());
           this->GetMRMLScene()->AddNode(snode);
-          refNode->SetStorageNodeID(snode->GetID());
+          refNode->SetAndObserveStorageNodeID(snode->GetID());
           snode->Delete();
           }
         snode->SetUseCompression(this->UseCompressionCheckButton->GetSelectedState());
@@ -601,7 +601,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         snode = vtkMRMLVolumeArchetypeStorageNode::New();
         snode->SetScene(this->GetMRMLScene());
         this->GetMRMLScene()->AddNode(snode);
-        refNode->SetStorageNodeID(snode->GetID());
+        refNode->SetAndObserveStorageNodeID(snode->GetID());
         snode->Delete();
         }
       this->UseCompressionCheckButton->SetSelectedState(snode->GetUseCompression());
@@ -632,7 +632,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         snode = vtkMRMLNRRDStorageNode::New();
         snode->SetScene(this->GetMRMLScene());
         this->GetMRMLScene()->AddNode(snode);
-        refNode->SetStorageNodeID(snode->GetID());
+        refNode->SetAndObserveStorageNodeID(snode->GetID());
         snode->Delete();
         }
       this->UseCompressionCheckButton->SetSelectedState(snode->GetUseCompression());

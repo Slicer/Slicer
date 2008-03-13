@@ -227,13 +227,16 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
       ss >> g;
       ss >> b;
       ss >> a;
-      vtkDebugMacro("id " << id << ", name = " << name.c_str() << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a);
+      
       // the file values are 0-255, colour look up table needs 0-1
       r = r / 255.0;
       g = g / 255.0;
       b = b / 255.0;
       a = a / 255.0;
-      vtkDebugMacro("Adding colour at id " << id << " and then pushing name " << name.c_str());
+      if (i < 10)
+        {
+        vtkDebugMacro("(first ten) Adding colour at id " << id << ", name = " << name.c_str() << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a);
+        }
       colorNode->GetLookupTable()->SetTableValue(id, r, g, b, a);
       colorNode->SetColorName(id, name.c_str());
       }
@@ -246,7 +249,7 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   // make sure that the color node points to this storage node
-  colorNode->SetStorageNodeID(this->GetID());
+  colorNode->SetAndObserveStorageNodeID(this->GetID());
   
   return 1;
 }

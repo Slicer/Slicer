@@ -61,7 +61,7 @@ AddNewScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
   mrmlScene->AddNodeNoNotify(storageNode);  
   mrmlScene->AddNodeNoNotify(volumeNode);
 
-  volumeNode->SetStorageNodeID(storageNode->GetID());
+  volumeNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
   if (scalarNode)
     {
@@ -127,7 +127,7 @@ AddScalarArchetypeVolume(vtkMRMLScene* mrmlScene,
     mrmlScene->AddNodeNoNotify(displayNode);  
     mrmlScene->AddNodeNoNotify(volumeNode);
 
-    volumeNode->SetStorageNodeID(storageNode->GetID());
+    volumeNode->SetAndObserveStorageNodeID(storageNode->GetID());
     volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
     }
 

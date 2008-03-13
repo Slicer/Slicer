@@ -336,7 +336,7 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
       this->SetMRMLScene(this->GetMRMLScene());
       this->GetMRMLScene()->AddNode(storageNode);  
       this->SetAndObserveMRMLScene(this->GetMRMLScene());
-      vnode->SetStorageNodeID(storageNode->GetID());
+      vnode->SetAndObserveStorageNodeID(storageNode->GetID());
       storageNode->Delete();
       snode = storageNode;
       }
@@ -404,7 +404,7 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
       this->SetMRMLScene(this->GetMRMLScene());
       this->GetMRMLScene()->AddNode(storageNode);  
       this->SetAndObserveMRMLScene(this->GetMRMLScene());
-      vnode->SetStorageNodeID(storageNode->GetID());
+      vnode->SetAndObserveStorageNodeID(storageNode->GetID());
       storageNode->Delete();
       snode = storageNode;
       }
@@ -477,7 +477,7 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
       this->SetMRMLScene(this->GetMRMLScene());
       this->GetMRMLScene()->AddNode(storageNode);  
       this->SetAndObserveMRMLScene(this->GetMRMLScene());
-      vnode->SetStorageNodeID(storageNode->GetID());
+      vnode->SetAndObserveStorageNodeID(storageNode->GetID());
       storageNode->Delete();
       snode = storageNode;
       }

@@ -182,7 +182,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     this->GetMRMLScene()->AddNode(displayLineNode);
     this->GetMRMLScene()->AddNode(displayTubeNode);
     this->GetMRMLScene()->AddNode(displayGlyphNode);
-    fiberBundleNode->SetStorageNodeID(storageNode->GetID());
+    fiberBundleNode->SetAndObserveStorageNodeID(storageNode->GetID());
     
     displayLineNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
     displayTubeNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
@@ -242,7 +242,7 @@ int vtkSlicerFiberBundleLogic::SaveFiberBundle (const char* filename, vtkMRMLFib
     storageNode = vtkMRMLFiberBundleStorageNode::New();
     storageNode->SetScene(this->GetMRMLScene());
     this->GetMRMLScene()->AddNode(storageNode);  
-    fiberBundleNode->SetStorageNodeID(storageNode->GetID());
+    fiberBundleNode->SetAndObserveStorageNodeID(storageNode->GetID());
     storageNode->Delete();
     }
 

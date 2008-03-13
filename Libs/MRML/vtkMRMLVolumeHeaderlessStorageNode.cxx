@@ -441,7 +441,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   archNames->Delete();
 
   // set volume attributes
-  volNode->SetStorageNodeID(this->GetID());
+  volNode->SetAndObserveStorageNodeID(this->GetID());
   //TODO update scene to send Modified event
  
   vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
