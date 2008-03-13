@@ -142,6 +142,84 @@ protected:
 };
 class ReadDataQueue : public std::queue<ReadDataRequest> {} ;
 
+class WriteDataRequest
+{
+public:
+  WriteDataRequest(const std::string& node, const std::string& filename,
+                  int displayData, int deleteFile)
+    {
+      m_TargetNodes.clear();
+      m_SourceNodes.clear();
+      m_IsScene = false;
+      
+      m_TargetNodes.push_back(node);
+      m_Filename = filename;
+      m_DisplayData = displayData;
+      m_DeleteFile = deleteFile;
+    }
+
+  WriteDataRequest(const char *node, const char *filename, int displayData,
+                  int deleteFile)
+    {
+      m_TargetNodes.clear();
+      m_SourceNodes.clear();
+      m_IsScene = false;
+      
+      m_TargetNodes.push_back(node);
+      m_Filename = filename;
+      m_DisplayData = displayData;
+      m_DeleteFile = deleteFile;
+    }
+
+  WriteDataRequest(const std::vector<std::string>& targetNodes,
+                  const std::vector<std::string>& sourceNodes,
+                  const std::string& filename,
+                  int displayData, int deleteFile)
+    {
+      m_IsScene = true;
+
+      m_TargetNodes = targetNodes;
+      m_SourceNodes = sourceNodes;
+      m_Filename = filename;
+      m_DisplayData = displayData;
+      m_DeleteFile = deleteFile;
+    }
+
+  WriteDataRequest()
+    : m_Filename(""), m_DisplayData( false ), m_DeleteFile( false ),
+      m_IsScene( false )
+    {
+    }
+
+  const std::string& GetNode() const
+    {
+      static const std::string empty;
+      if (m_TargetNodes.size() > 0)
+        {
+        return m_TargetNodes[0];
+        }
+      
+      return empty;
+    }
+  
+  const std::vector<std::string>& GetSourceNodes() const {return m_SourceNodes;}
+  const std::vector<std::string>& GetTargetNodes() const {return m_TargetNodes;}
+  const std::string& GetFilename() const { return m_Filename; }
+  int GetDisplayData() const { return m_DisplayData; }
+  int GetDeleteFile() const { return m_DeleteFile; }
+  int GetIsScene() const { return m_IsScene; };
+  
+protected:
+  std::vector<std::string> m_TargetNodes;
+  std::vector<std::string> m_SourceNodes;
+  std::string m_Filename;
+  int m_DisplayData;
+  int m_DeleteFile;
+  bool m_IsScene;
+  
+};
+class WriteDataQueue : public std::queue<WriteDataRequest> {} ;
+
 
 
 //----------------------------------------------------------------------------
@@ -168,10 +246,15 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
     this->ReadDataQueueActiveLock = itk::MutexLock::New();
     this->ReadDataQueueLock = itk::MutexLock::New();
 
+    this->WriteDataQueueActive = false;
+    this->WriteDataQueueActiveLock = itk::MutexLock::New();
+    this->WriteDataQueueLock = itk::MutexLock::New();
+    
     this->InternalTaskQueue = new ProcessingTaskQueue;
     this->InternalModifiedQueue = new ModifiedQueue;
 
     this->InternalReadDataQueue = new ReadDataQueue;
+    this->InternalWriteDataQueue = new WriteDataQueue;
     
 }
 
@@ -221,6 +304,9 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
   
   delete this->InternalReadDataQueue;
   this->InternalReadDataQueue = 0;
+
+  delete this->InternalWriteDataQueue;
+  this->InternalWriteDataQueue = 0;
 
   // TODO - unregister/delete ivars
 }
@@ -374,11 +460,16 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
     this->ReadDataQueueActiveLock->Lock();
     this->ReadDataQueueActive = true;
     this->ReadDataQueueActiveLock->Unlock();
+    this->WriteDataQueueActiveLock->Lock();
+    this->WriteDataQueueActive = true;
+    this->WriteDataQueueActiveLock->Unlock();
 
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessModified");
     vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
                                          100, this, "ProcessReadData");
+    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
+                                         100, this, "ProcessWriteData");
     }
 }
 
@@ -394,6 +485,10 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
     this->ReadDataQueueActiveLock->Lock();
     this->ReadDataQueueActive = false;
     this->ReadDataQueueActiveLock->Unlock();
+
+    this->WriteDataQueueActiveLock->Lock();
+    this->WriteDataQueueActive = false;
+    this->WriteDataQueueActiveLock->Unlock();
     
     this->ProcessingThreadActiveLock->Lock();
     this->ProcessingThreadActive = false;
@@ -544,6 +639,34 @@ int vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char 
 //     std::cout << " [" << (*this->InternalReadDataQueue).size()
 //               << "] " << std::endl;
     this->ReadDataQueueLock->Unlock();
+    
+    return true;
+    }
+
+  // could not request the record be added to the queue
+  return false;
+}
+
+int vtkSlicerApplicationLogic::RequestWriteData( const char *refNode, const char *filename, int displayData, int deleteFile )
+{
+  int active;
+
+//  std::cout << "Requesting " << filename << " be read from node " << refNode << ", display data = " << (displayData?"true":"false") <<  std::endl;
+
+  // only request to write a file if the WriteData queue is up
+  this->WriteDataQueueActiveLock->Lock();
+  active = this->WriteDataQueueActive;
+  this->WriteDataQueueActiveLock->Unlock();
+
+  if (active)
+    {
+    this->WriteDataQueueLock->Lock();
+    (*this->InternalWriteDataQueue).push( WriteDataRequest(refNode, filename,
+                                                         displayData,
+                                                         deleteFile) );
+//     std::cout << " [" << (*this->InternalWriteDataQueue).size()
+//               << "] " << std::endl;
+    this->WriteDataQueueLock->Unlock();
     
     return true;
     }
@@ -716,6 +839,56 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     }
 }
 
+void vtkSlicerApplicationLogic::ProcessWriteData()
+{
+  int active = true;
+  WriteDataRequest req;
+  
+  // Check to see if we should be shutting down
+  this->WriteDataQueueActiveLock->Lock();
+  active = this->WriteDataQueueActive;
+  this->WriteDataQueueActiveLock->Unlock();
+  
+  if (active)
+    {
+    // pull an object off the queue 
+    this->WriteDataQueueLock->Lock();
+    if ((*this->InternalWriteDataQueue).size() > 0)
+      {
+      req = (*this->InternalWriteDataQueue).front();
+      (*this->InternalWriteDataQueue).pop();
+
+      }
+    this->WriteDataQueueLock->Unlock();
+
+    if (!req.GetNode().empty())
+      {
+      if (req.GetIsScene())
+        {
+        this->ProcessWriteSceneData(req);
+        }
+      else
+        {
+        this->ProcessWriteNodeData(req);
+        }
+      }
+    }
+  
+  // schedule the next timer
+  if ((*this->InternalWriteDataQueue).size() > 0)
+    {
+    // schedule the next timer sooner in case there is stuff in the queue
+    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
+                                         5, this, "ProcessWriteData");
+    }
+  else
+    {
+    // schedule the next timer for a while later
+    vtkKWTkUtilities::CreateTimerHandler(vtkKWApplication::GetMainInterp(),
+                                         100, this, "ProcessWriteData");
+    }
+}
+
 
 void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
 {
@@ -796,12 +969,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       {
       try
         {
-        vtkMRMLDisplayableNode *displayableNode = 
-          vtkMRMLDisplayableNode::SafeDownCast(nd);
-        if ( displayableNode && displayableNode->GetStorageNode() == NULL )
+        vtkMRMLStorableNode *storableNode = 
+          vtkMRMLStorableNode::SafeDownCast(nd);
+        if ( storableNode && storableNode->GetStorageNode() == NULL )
           {
           this->MRMLScene->AddNode( in );
-          displayableNode->SetReferenceStorageNodeID( in->GetID() );
+          storableNode->SetAndObserveStorageNodeID( in->GetID() );
           }
         in->SetFileName( req.GetFilename().c_str() );
         in->ReadData( nd );
@@ -980,6 +1153,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     }
 }
 
+void vtkSlicerApplicationLogic::ProcessWriteNodeData(WriteDataRequest& req)
+{
+    vtkWarningMacro("ProcessWriteNodeData: we just wrote out, not doing anything here...");
+}
+
 void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
 {
   if (req.GetSourceNodes().size() != req.GetTargetNodes().size())
@@ -1153,6 +1331,49 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
     ++tit;
     }
 
+  // Delete the file if requested
+  if (req.GetDeleteFile())
+    {
+    int removed;
+    removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
+    if (!removed)
+      {
+      std::stringstream information;
+      information << "Unable to delete temporary file "
+                  << req.GetFilename() << std::endl;
+      vtkWarningMacro( << information.str().c_str() );
+      }
+    }
+}
+
+void vtkSlicerApplicationLogic::ProcessWriteSceneData(WriteDataRequest& req)
+{
+  if (req.GetSourceNodes().size() != req.GetTargetNodes().size())
+    {
+    // Can't do ID remapping if the two node lists are different
+    // sizes. Just commit the scene. (This is where we would put to
+    // the code to load into a node heirarchy (with a corresponding
+    // change in the conditional above)).
+    this->MRMLScene->SetURL( req.GetFilename().c_str() );
+    this->MRMLScene->Commit();
+
+    // Delete the file if requested
+    if (req.GetDeleteFile())
+      {
+      int removed;
+      removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
+      if (!removed)
+        {
+        std::stringstream information;
+        information << "Unable to delete temporary file "
+                    << req.GetFilename() << std::endl;
+        vtkWarningMacro( << information.str().c_str() );
+        }
+      }
+    
+    return;
+    }
+  
   // Delete the file if requested
   if (req.GetDeleteFile())
     {

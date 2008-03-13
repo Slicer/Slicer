@@ -197,95 +197,45 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
     vtkWarningMacro("StageReadData: Cannot get mrml scene, unable to get remote file handlers.");
     return;
     }
-  
-  
-  //int asynch = 0;
-  
-  // To be finalised
-  // Get the data io manager
-   vtkDataIOManager *iomanager = this->Scene->GetDataIOManager();
-   if (iomanager != NULL)
-     {
-     if (this->GetReadState() != this->Pending)
-       {
-       vtkDebugMacro("StageReadData: setting read state to pending, finding a URI handler and queuing read on the io manager");
-       this->SetReadStatePending();
-       // set up the data handler
-       this->URIHandler = this->Scene->FindURIHandler(this->URI);
-       if (this->URIHandler != NULL)
-         {
-         vtkDebugMacro("StageReadData: got a URI Handler");
-         }
-       else
-         {
-         vtkErrorMacro("StageReadData: unable to get a URI handler for " << this->URI << ", resetting stage to ready");
-         this->SetReadStateReady();
-         return;
-         }
-       iomanager->QueueRead(refNode);
-       }
-     else
-       {
-       vtkDebugMacro("StageReadData: Read state is not pending, returning.");
-       }
-     }
-   else
-     {
-     vtkWarningMacro("StageReadData: No IO Manager on the scene, returning.");
-     }
 
-   /*
-   if (iomanager != NULL)
-     {
-     asynch = iomanager->GetEnableAsynchronousIO();
-     }
-   
-   if (iomanager != NULL &&
-       asynch &&
-       this->GetReadState() != this->Pending)
-     {
-     this->SetReadStatePending();
-     // set up the data handler
-     this->URIHandler = this->Scene->FindURIHandler(this->URI);
-     iomanager->QueueRead(refNode);
-     }
-   else
-     {
-     std::string cacheFileName;
-     if (this->Scene->GetCacheManager() != NULL)
-       {
-       cacheFileName = this->Scene->GetCacheManager()->GetFilenameFromURI(this->URI);
-       }
-     else
-       {
-       vtkWarningMacro("Couldn't get the cache manager, using filename = " << this->GetFileName());
-       cacheFileName = this->GetFileName();
-       }
-     if (this->URIHandler)
-       {
-       // this isn't implemented yet
-       // once here, in a separate thread - may be called from the data io
-       // manager instead...
-       //this->URIHandler->StageFileRead(this->URI, cacheFileName.c_str());
-       this->SetReadState(this->Ready);
-       }
-     else
-       {
-       vtkWarningMacro("No URI Handler!");
-       return;
-       }
-     }
-   */
-   vtkDebugMacro("StageReadData: done");
+  // Get the data io manager
+  vtkDataIOManager *iomanager = this->Scene->GetDataIOManager();
+  if (iomanager != NULL)
+    {
+    if (this->GetReadState() != this->Pending)
+      {
+      vtkDebugMacro("StageReadData: setting read state to pending, finding a URI handler and queuing read on the io manager");
+      this->SetReadStatePending();
+      // set up the data handler
+      this->URIHandler = this->Scene->FindURIHandler(this->URI);
+      if (this->URIHandler != NULL)
+        {
+        vtkDebugMacro("StageReadData: got a URI Handler");
+        }
+      else
+        {
+        vtkErrorMacro("StageReadData: unable to get a URI handler for " << this->URI << ", resetting stage to ready");
+        this->SetReadStateReady();
+        return;
+        }
+      vtkDebugMacro("StageReadData: calling QueueRead on the io manager.");
+      iomanager->QueueRead(refNode);
+      }
+    else
+      {
+      vtkDebugMacro("StageReadData: Read state is not pending, returning.");
+      }
+    }
+  else
+    {
+    vtkWarningMacro("StageReadData: No IO Manager on the scene, returning.");
+    }
+  vtkDebugMacro("StageReadData: done");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
 {
-  // for now, just set the write state to done
-  this->SetWriteStateReady();
-  return;
-  
   if (this->URI == NULL)
     {
     vtkDebugMacro("Cannot stage data for writing, URI is not set.");
@@ -302,6 +252,38 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
     vtkDebugMacro("StageWriteData: input mrml node is null, returning.");
     return;
     }
+
+   // Get the data io manager
+   vtkDataIOManager *iomanager = this->Scene->GetDataIOManager();
+   if (iomanager != NULL)
+     {
+     if (this->GetWriteState() != this->Pending)
+       {
+       vtkDebugMacro("StageWriteData: setting write state to pending, finding a URI handler and queuing write on the io manager");
+       this->SetWriteStatePending();
+       // set up the data handler
+       this->URIHandler = this->Scene->FindURIHandler(this->URI);
+       if (this->URIHandler != NULL)
+         {
+         vtkDebugMacro("StageWriteData: got a URI Handler");
+         }
+       else
+         {
+         vtkErrorMacro("StageWriteData: unable to get a URI handler for " << this->URI << ", resetting stage to ready");
+         this->SetWriteStateReady();
+         return;
+         }
+       iomanager->QueueWrite(refNode);
+       }
+     else
+       {
+       vtkDebugMacro("StageWriteData: Write state is not pending, returning.");
+       }
+     }
+   else
+     {
+     vtkWarningMacro("StageWriteData: No IO Manager on the scene, returning.");
+     }
 }
 
 //----------------------------------------------------------------------------

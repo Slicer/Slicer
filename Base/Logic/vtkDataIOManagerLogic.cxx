@@ -72,6 +72,7 @@ void vtkDataIOManagerLogic::ProcessMRMLEvents(vtkObject *caller, unsigned long e
       }  
     else if ( (node != NULL) && (event == vtkDataIOManager::RemoteWriteEvent ) )
       {
+      vtkDebugMacro("ProcessMRMLEvents: calling queue write on teh node " << node->GetID());
       this->QueueWrite ( node );
       }
     }
@@ -310,7 +311,95 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
 //----------------------------------------------------------------------------
 int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
 {
-  return 0;
+    //--- do some node nullchecking first.
+  if ( node == NULL )
+    {
+    vtkErrorMacro("QueueWrite: null input node!");
+    return 0;
+    }
+  vtkMRMLStorableNode *dnode = vtkMRMLStorableNode::SafeDownCast ( node );
+  if ( dnode == NULL )
+    {
+    vtkErrorMacro("QueueWrite: unable to cast input mrml node " << node->GetID() << " to a storable node");
+    return 0;
+    }
+
+  if ( dnode->GetStorageNode() == NULL )
+    {
+    vtkErrorMacro("QueueWrite: unable to get storage node from the storable node " << dnode->GetID() << ", returning");
+    return 0;
+    }
+
+  //--- if handler is good and there's enough cache space, queue the read
+  vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
+  if ( handler == NULL)
+    {
+    vtkErrorMacro("QueueWrite: null URI handler!");
+    return 0;
+    }
+  else
+    {
+    vtkDebugMacro("QueueWrite: got the handler");
+    }
+  if ( this->DataIOManager == NULL )
+    {
+    vtkErrorMacro("QueueWrite: DataIOManager is null");
+    return 0;
+    }
+
+  vtkCacheManager *cm = this->GetDataIOManager()->GetCacheManager();
+  if ( cm == NULL )
+    {
+    vtkErrorMacro("QueueWrite: CacheManager is null");
+    return 0;
+    }
+
+  // this may just have to be GetFileName()
+  const char *source = dnode->GetStorageNode()->GetFileName();
+  const char *dest = dnode->GetStorageNode()->GetURI();
+  vtkDebugMacro("QueueWrite: got the source " << source << " and dest " << dest);
+  
+  // don't need to check the cache manager
+
+  //--- Otherwise, just do the data transfer 
+  //---
+  //--- construct and add a record of the transfer
+  //--- which includes the ID of associated node
+  vtkDataTransfer *transfer = vtkDataTransfer::New();
+  if ( transfer == NULL )
+    {
+    vtkErrorMacro("QueueWrite: failed to add new data transfer");
+    return 0;
+    }
+  transfer->SetTransferID ( this->GetDataIOManager()->GetUniqueTransferID() );
+  transfer->SetTransferNodeID ( node->GetID() );
+  transfer->SetSourceURI ( source );
+  transfer->SetDestinationURI ( dest );
+  transfer->SetHandler ( handler );
+  transfer->SetTransferType ( vtkDataTransfer::RemoteUpload );
+  transfer->SetTransferStatus ( vtkDataTransfer::Idle );
+  transfer->SetCancelRequested ( 0 );
+  this->AddNewDataTransfer ( transfer, node );
+  
+  vtkDebugMacro("QueueWrite: asynchronous enabled = " << this->GetDataIOManager()->GetEnableAsynchronousIO());
+  
+  if ( this->GetDataIOManager()->GetEnableAsynchronousIO() )
+    {
+    vtkErrorMacro("QueueWrite: NOT IMPLEMENTED to schedule an ASYNCHRONOUS data transfer");
+    }
+  else
+    {
+    vtkDebugMacro("QueueWrite: Schedule a SYNCHRONOUS data transfer");
+    //---
+    //--- Execute a SYNCHRONOUS data transfer
+    //---
+    this->ApplyTransfer ( transfer );
+    transfer->SetTransferStatus( vtkDataTransfer::Completed);
+    // now set the node's storage node state to ready
+    dnode->GetStorageNode()->SetWriteStateReady();
+    }
+  transfer->Delete();
+  return 1;
 }
 
 
@@ -401,15 +490,45 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
     vtkURIHandler *handler = dt->GetHandler();
     if ( handler != NULL && source != NULL && dest != NULL )
       {
-      if ( asynchIO )
+      if ( asynchIO && dt->GetTransferStatus() == vtkDataTransfer::Pending)
         {
-        //handler->StageFileWrite( source, dest);
+        dt->SetTransferStatusNoModify ( vtkDataTransfer::Running );
+        this->GetApplicationLogic()->RequestModified( dt );
+        handler->StageFileWrite( source, dest);
+        dt->SetTransferStatusNoModify ( vtkDataTransfer::Completed );
+        this->GetApplicationLogic()->RequestModified( dt );
+
+        vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast( node );
+        if ( !storableNode )
+          {
+          vtkErrorMacro( "ApplyTransfer: Upload: could not get storable node for scheduled data transfer" );
+          return;
+          }
+        vtkMRMLStorageNode *storageNode = storableNode->GetStorageNode();
+        if ( !storageNode )
+          {
+          vtkErrorMacro( "ApplyTransfer: Upload: no storage node for scheduled data transfer" );
+          return;
+          }
+        storageNode->SetDisableModifiedEvent( 1 );
+        storageNode->SetWriteStateReady();
+        storageNode->SetDisableModifiedEvent( 0 );
+        this->GetApplicationLogic()->RequestWriteData( node->GetID(), dest, 0, 0 );
         }
       else
         {
-        //handler->StageFileWrite( source, dest);
+        vtkDebugMacro("ApplyTransfer: Upload: stage file write on the handler, source = " << source << ", dest = " << dest);
+        handler->StageFileWrite( source, dest);
         }
       }
+    else
+      {
+      vtkErrorMacro("ApplyTransfer: Upload: either no handler, or source or dest are null.");
+      }
+    }
+  else
+    {
+    vtkErrorMacro("ApplyTransfer: unknonw transfer type " <<  dt->GetTransferType() );
     }
 }
 

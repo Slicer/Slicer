@@ -75,6 +75,7 @@ void vtkDataIOManager::TransferUpdateCallback ( vtkObject *caller,
 //----------------------------------------------------------------------------
 void vtkDataIOManager::ProcessTransferUpdates ( vtkObject *caller, unsigned long event, void *callData )
 {
+  vtkDebugMacro("ProcessTransferUpdates: invoking transfer update event.");
   this->InvokeEvent ( vtkDataIOManager::TransferUpdateEvent);
 }
 
@@ -156,7 +157,7 @@ void vtkDataIOManager::AddNewDataTransfer ( vtkDataTransfer *transfer, vtkMRMLNo
     {
     this->AddDataTransfer ( transfer );
     this->InvokeEvent (vtkDataIOManager::NewTransferEvent, transfer );
-    vtkDebugMacro("AddNewDataTransfer: added data transfer to dataIOManager's collection");
+    vtkDebugMacro("AddNewDataTransfer: added data transfer to dataIOManager's collection, invoked the new transfer event");
     }
 }
 
@@ -367,7 +368,45 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
 //----------------------------------------------------------------------------
 void vtkDataIOManager::QueueWrite ( vtkMRMLNode *node )
 {
-  this->InvokeEvent ( vtkDataIOManager::RemoteWriteEvent, node );
+  if (node == NULL)
+    {
+    vtkErrorMacro("QueueWrite: null input node!");
+    return;
+    }
+  vtkMRMLStorableNode *dnode = vtkMRMLStorableNode::SafeDownCast ( node );
+  if (dnode == NULL)
+    {
+    vtkErrorMacro("QueueWrite: unable to cast input mrml node to a storable node");
+    return;
+    }
+  if (dnode->GetStorageNode() == NULL)
+    {
+    vtkErrorMacro("QueueWrite: unable to get storage node from the storable node, returning");
+    return;
+    }
+  vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
+  vtkDebugMacro("QueueWrite: got the uri handler from the storage node");
+  const char *source = dnode->GetStorageNode()->GetFileName();
+  const char *dest = dnode->GetStorageNode()->GetURI();
+
+  if (source == NULL)
+    {
+    vtkDebugMacro("QueueWrite: storage node's file is null, returning.");
+    return;
+    }
+  if (dest == NULL)
+    {
+    vtkDebugMacro("QueueWrite: unable to get destination URI, source = " << source);
+    return;
+    }
+  else
+    {
+    vtkDebugMacro("QueueWrite: got destination: " << dest);
+    }
+ 
+  vtkDebugMacro("QueueWrite: invoking a remote write event on the data io manager");
+  //--- signal this remote write event to Logic and GUI.
+  this->InvokeEvent ( vtkDataIOManager::RemoteWriteEvent, node);
 }
 
 
