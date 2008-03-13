@@ -222,8 +222,31 @@ proc XcedeCatalogImportGetEntry {element } {
     set plist [ file split $fname ]
     set len [ llength $plist ]
     set fname [ lindex $plist [ expr $len - 1 ] ]
+
+    #--- check to see if it's a remote file
+    set cacheManager [$::slicer3::MRMLScene GetCacheManager]
+    if {$cacheManager != ""} {
+        set isRemote [$cacheManager IsRemoteReference $node(uri)]
+        if {$isRemote == 1} {
+            $::XcedeCatalog_mainWindow SetStatusText "Loading remote $node(uri)..."
+            # puts "Trying to find URI handler for $node(uri)"
+            set uriHandler [$::slicer3::MRMLScene FindURIHandler $node(uri)]
+            if {$uriHandler != ""} {
+                # for now, do a synchronous download
+                puts "Found a file handler, doing a synchronous download from $node(uri) to $node($uriAttName)"
+                $uriHandler StageFileRead $node(uri) $::XcedeCatalog_Dir/$fname
+            } else {
+                puts "Unable to find a file handler for $node(uri)"
+            }
+        } else {
+           # puts "have a local file  $node(uri)"
+        }
+    } else {
+        # puts "Can't find the cache manager on the scene, assuming local file"
+    }
+
     set node($uriAttName) $::XcedeCatalog_Dir/$fname
-    
+
     #--- make sure the uri exists
     set node($uriAttName) [ file normalize $node($uriAttName) ]
     if {![ file exists $node($uriAttName) ] } {
@@ -295,7 +318,7 @@ proc XcedeCatalogImportEntryVolume {node} {
     set centered 1
     set labelmap 0
     set singleFile 0
-    set loadingOptions [expr $labelMap * 1 + $centered * 2 + $singleFile * 4]
+    set loadingOptions [expr $labelmap * 1 + $centered * 2 + $singleFile * 4]
 
     if { [info exists n(labelmap) ] } {
         set labelmap 1
