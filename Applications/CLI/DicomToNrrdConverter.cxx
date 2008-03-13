@@ -88,6 +88,7 @@ const gdcm::DictEntry SiemensDictNMosiac( 0x0019, 0x100a, "US", "1", "Number of 
 const gdcm::DictEntry SiemensDictBValue( 0x0019, 0x100c, "IS", "1", "B Value of diffusion weighting" );       
 const gdcm::DictEntry SiemensDictDiffusionDirection( 0x0019, 0x100e, "FD", "3", "Diffusion Gradient Direction" );       
 const gdcm::DictEntry SiemensDictDiffusionMatrix( 0x0019, 0x1027, "FD", "6", "Diffusion Matrix" );       
+const gdcm::DictEntry SiemensDictShadowInfo( 0x0029, 0x1010, "LT", "1", "Siemens DWI Info" );       
 
 // add relevant private tags from other vendors
 
@@ -151,6 +152,7 @@ int main(int argc, char* argv[])
   // 0a) read one slice and figure out vendor
   ImageIOType::Pointer gdcmIO = ImageIOType::New();
   gdcmIO->LoadPrivateTagsOn();
+  gdcmIO->SetMaxSizeLoadEntry( 65535 );
 
   InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
   inputNames->SetInputDirectory( inputDicom.c_str() );
@@ -203,6 +205,7 @@ int main(int argc, char* argv[])
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictBValue);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictDiffusionDirection);
     gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictDiffusionMatrix);
+    gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictShadowInfo);
 
     if ( ImageType.find("MOSAIC") != std::string::npos )
       {
@@ -331,10 +334,6 @@ int main(int argc, char* argv[])
   yCol *= yRes;
   zCol *= yRes;
 
-  std::cout << "Row: " << xRow << ", " << yRow << ", " << zRow << std::endl;
-  std::cout << "Col: " << xCol << ", " << yCol << ", " << zCol << std::endl;
-  std::cout << "Sli: " << xSlice << ", " << ySlice << ", " << zSlice << std::endl;
-    
   // figure out slice order
   if ( vendor.find("GE") != std::string::npos ||
        (vendor.find("SIEMENS") != std::string::npos && !SliceMosaic) )
@@ -361,14 +360,47 @@ int main(int argc, char* argv[])
     }
   else if ( vendor.find("SIEMENS") != std::string::npos && SliceMosaic )
     {
-    // for siemens mosaic image, we have not figured out the slice
-    // order yet, from the example provided by Vince, the slice order
-    // within mosaic is SI.
-    SliceOrderIS = false;
-    }
+      SliceOrderIS = false;
+
+      // for siemens mosaic image, figure out mosaic slice order from 0029|1010
+
+      tag.clear();
+      itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0029|1010", tag );
+
+      int atPosition = tag.find( "SliceNormalVector" );
+      if ( atPosition != std::string::npos)
+      {
+
+        std::string infoAsString = tag.substr( atPosition, tag.size()-atPosition+1 );
+        const char * infoAsCharPtr = infoAsString.c_str();
+
+        std::string fieldName = "SliceNormalVector";
+        int vm = *(infoAsCharPtr+64);
+        std::string vr = infoAsString.substr( 68, 4 );
+        int syngodt = *(infoAsCharPtr+72);
+        int nItems = *(infoAsCharPtr+76);
+        int localDummy = *(infoAsCharPtr+80);
+
+        int offset = 84;
+        float sliceNorm[3];
+        for (int k = 0; k < vm; k++)
+        {
+          int itemLength = *(infoAsCharPtr+offset+4);
+          int strideSize = ceil(static_cast<double>(itemLength)/4) * 4;
+          std::string valueString = infoAsString.substr( offset+16, itemLength );
+          sliceNorm[k] = atof( valueString.c_str() );
+          offset += 16+strideSize;
+        }
+
+        if ( sliceNorm[2] > 0 )
+        {
+          SliceOrderIS = true;        
+        }
+      }
+  }
   else
-    {
-    }
+  {
+  }
   
   if ( SliceOrderIS )
     {
@@ -387,6 +419,10 @@ int main(int argc, char* argv[])
     zSlice = -zSlice;
     }
 
+  std::cout << "Row: " << xRow << ", " << yRow << ", " << zRow << std::endl;
+  std::cout << "Col: " << xCol << ", " << yCol << ", " << zCol << std::endl;
+  std::cout << "Sli: " << xSlice << ", " << ySlice << ", " << zSlice << std::endl;
+    
   orthoSliceSpacing = fabs(zSlice);
   
   int nSliceInVolume;
@@ -474,14 +510,16 @@ int main(int argc, char* argv[])
     
       DiffusionVectors.push_back(vect3d);
 
-      std::cout << "Dicom Image Number: " << k << " B Value; " << b << " Gradient direction: " << vect3d << std::endl;
+      std::cout << "Image#: " << k << " BV: " << b << " GD: " << vect3d << std::endl;
       
       }
     }
   else if ( vendor.find("SIEMENS") != std::string::npos && SliceMosaic )
     {
     // each slice is a volume in mosiac form
+
     std::cout << "Data in Siemens Mosaic Format\n";
+
     nVolume = nSlice;
     nSliceInVolume = 1;
 
@@ -513,7 +551,7 @@ int main(int argc, char* argv[])
       memcpy( &vect3d[2], tag.c_str()+16, 8 );
     
       DiffusionVectors.push_back(vect3d);      
-      std::cout << "Dicom Image Number: " << k << " B Value; " << b << " Gradient direction: " << vect3d << std::endl;
+      std::cout << "Image#: " << k << " BV: " << b << " GD: " << vect3d << std::endl;
       }
       
     }
@@ -569,7 +607,9 @@ int main(int argc, char* argv[])
     nRows /= mMosaic;
     nCols /= nMosaic;
 
-    nSliceInVolume =  mMosaic*nMosaic;
+    tag.clear();
+    itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0019|100a",  tag);
+    nSliceInVolume = atoi( tag.c_str() );
 
     // center the volume since the image position patient given in the
     // dicom header was useless
@@ -585,7 +625,7 @@ int main(int argc, char* argv[])
     VolumeType::SizeType dmSize = size;
     dmSize[0] /= mMosaic;
     dmSize[1] /= nMosaic;
-    dmSize[2] *= (mMosaic*nMosaic);
+    dmSize[2] *= nSliceInVolume;
 
     region.SetSize( dmSize );
     VolumeType::Pointer dmImage = VolumeType::New();
@@ -612,8 +652,8 @@ int main(int argc, char* argv[])
       int sliceIndex = k;
       
       int nBlockPerSlice = mMosaic*nMosaic;
-      int slcMosaic = sliceIndex/(nBlockPerSlice);
-      sliceIndex -= slcMosaic*nBlockPerSlice;
+      int slcMosaic = sliceIndex/(nSliceInVolume);
+      sliceIndex -= slcMosaic*nSliceInVolume;
       int colMosaic = sliceIndex/mMosaic;
       int rawMosaic = sliceIndex - mMosaic*colMosaic;
       region.SetIndex( 0, rawMosaic*dmSize[0] );
@@ -708,4 +748,6 @@ int main(int argc, char* argv[])
 
   return EXIT_SUCCESS;  
 }
+
+
 
