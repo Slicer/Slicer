@@ -53,6 +53,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       case vtkDataTransfer::CompletedWithErrors: return "CompletedWithErrors";
       case vtkDataTransfer::TimedOut: return "TimedOut";
       case vtkDataTransfer::Cancelled: return "Cancelled";
+      case vtkDataTransfer::Deleted: return "Deleted";
       case vtkDataTransfer::Ready: return "Ready";
       }
     return "Unknown";
@@ -84,6 +85,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
       CancelPending,
       Cancelled,
       Ready,
+      Deleted,
       TimedOut,
     };
   // transfer type values

@@ -42,6 +42,19 @@ vtkSlicerCacheAndDataIOManagerGUI::~vtkSlicerCacheAndDataIOManagerGUI ( )
 
   if ( this->TransferWidgetCollection )
     {
+    vtkSlicerDataTransferWidget *w;
+    int num = this->TransferWidgetCollection->GetNumberOfItems();
+    for (int i = 0; i < num; i ++ )
+      {
+      w = vtkSlicerDataTransferWidget::SafeDownCast ( this->TransferWidgetCollection->GetItemAsObject( i ) );
+      w->RemoveWidgetObservers();
+      w->SetParent ( NULL );
+      w->SetCacheManager ( NULL );
+      w->SetDataTransfer ( NULL );
+      w->SetApplication ( NULL );
+      w->Delete();
+      w = NULL;
+      }
     this->TransferWidgetCollection->RemoveAllItems();
     this->TransferWidgetCollection->Delete();
     this->TransferWidgetCollection = NULL;
@@ -218,7 +231,17 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessGUIEvents ( vtkObject *caller,
       d->Delete();
       if ( ret )
         {
-        this->GetCacheManager()->ClearCache();
+        int numW = this->TransferWidgetCollection->GetNumberOfItems();
+        for (int i =0; i < numW; i++)
+          {
+          vtkSlicerDataTransferWidget *w =
+            vtkSlicerDataTransferWidget::SafeDownCast (this->TransferWidgetCollection->GetItemAsObject ( i ));
+          if ( w != NULL )
+            {
+            w->DeleteTransferFromCache();
+            }
+          }
+        this->UpdateEntireGUI();
         }
       }
     else if ( b == this->CancelAllButton && event == vtkKWPushButton::InvokedEvent )
@@ -235,6 +258,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( ret )
         {
         this->CancelAllDataTransfers();
+        this->UpdateTransfersPanel();
         }
       }
     vtkKWCheckButton *c = vtkKWCheckButton::SafeDownCast ( caller );
@@ -313,6 +337,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
   vtkDataIOManager *dm = vtkDataIOManager::SafeDownCast ( caller );
   vtkCacheManager *cm = vtkCacheManager::SafeDownCast ( caller );
   
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Processing mrml events...");
   if ( dm == this->DataIOManager && dm != NULL )
     {
     if ( event == vtkDataIOManager::NewTransferEvent )
@@ -337,7 +362,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
       {
       if ( this->AsynchronousCheckButton->GetSelectedState() != this->DataIOManager->GetEnableAsynchronousIO() )
         {
-        this->UpdateOverviewPanel();
+              this->UpdateOverviewPanel();
         }
       }
     }
@@ -364,7 +389,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
       this->UpdateOverviewPanel();
       }
     }
-  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Done processing mrml events...");
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: DONE processing mrml events...");
 }    
 
 
@@ -441,6 +466,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
   float sz;
   char *txt = new char[256];
   
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Updating Overview Panel");
   if ( this->CacheManager != NULL )
     {
     //---CacheSize:
@@ -536,7 +562,16 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
     }
 
   i->Delete();
-  delete [] txt;  
+  delete [] txt;
+
+  //--- update the GUI
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+  if ( app != NULL )
+    {
+    app->ProcessIdleTasks();
+    }
+
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: DONE Updating Overview Panel");  
 }
 
 
@@ -545,6 +580,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
 void vtkSlicerCacheAndDataIOManagerGUI::UpdateTransfersPanel()
 {
   //--- update widgets
+
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Updating Transfers Panel");
   if ( this->TransferWidgetCollection != NULL )
     {
     int numW = this->TransferWidgetCollection->GetNumberOfItems();
@@ -555,6 +592,15 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateTransfersPanel()
       w->UpdateWidget();
       }
     }
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: DONE Updating Transfers Panel");
+
+  //--- update the GUI
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+  if ( app != NULL )
+    {
+    app->ProcessIdleTasks();
+    }
+
 }
 
 
@@ -569,6 +615,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateEntireGUI()
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::AddNewDataTransfer ( vtkDataTransfer *transfer )
 {
+
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Adding new data transfer");
   if ( this->TransferWidgetCollection == NULL )
     {
     this->TransferWidgetCollection = vtkCollection::New();
@@ -576,25 +624,30 @@ void vtkSlicerCacheAndDataIOManagerGUI::AddNewDataTransfer ( vtkDataTransfer *tr
   vtkSlicerDataTransferWidget *w = vtkSlicerDataTransferWidget::New();
   if ( w != NULL )
     {
-    w->SetParent ( this->TransfersFrame );
+    w->SetParent ( this->TransfersFrame->GetFrame() );
     w->SetDataTransfer ( transfer );
     w->SetTransferID ( transfer->GetTransferID() );
     w->SetCacheManager ( this->CacheManager);
+    w->SetApplication ( this->GetApplication() );
     w->Create();
     w->UpdateWidget();
-    this->Script ( "pack %s -side top -anchor nw -padx 1 -pady 1", w->GetWidgetName() );
+    w->AddWidgetObservers();
     this->TransferWidgetCollection->AddItem ( w );
     }
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: DONE adding new data transfer");
+
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::DeleteDataTransfer ( vtkDataTransfer *transfer )
 {
+
   if ( this->TransferWidgetCollection == NULL )
     {
     return;
     }
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Deleting new data transfer");
   int numW = this->TransferWidgetCollection->GetNumberOfItems();
   for (int i =0; i < numW; i++)
     {
@@ -602,12 +655,14 @@ void vtkSlicerCacheAndDataIOManagerGUI::DeleteDataTransfer ( vtkDataTransfer *tr
       vtkSlicerDataTransferWidget::SafeDownCast (this->TransferWidgetCollection->GetItemAsObject ( i ));
     if ( w->GetDataTransfer() == transfer )
       {
+      w->RemoveWidgetObservers();
       this->Script ( "pack forget %s", w->GetWidgetName() );
       w->SetParent ( NULL );
       w->Delete();
       w = NULL;
       }
     }
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Done deleting new data transfer");
 }
 
 
@@ -627,6 +682,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::DeleteDataTransfer ( int ID )
       {
       if ( w->GetDataTransfer()->GetTransferID() == ID )
         {
+        w->RemoveWidgetObservers();
         this->Script ( "pack forget %s", w->GetWidgetName() );
         w->SetParent ( NULL );
         w->Delete();
@@ -697,7 +753,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
 
   this->ManagerTopLevel = vtkKWTopLevel::New();
   this->ManagerTopLevel->SetApplication ( app );
-  vtksys_stl::string title = "Cache & Data I/O Manager Window";
+  vtksys_stl::string title = "Cache & Remote Data I/O Manager Window";
   
   this->ManagerTopLevel->SetTitle(title.c_str());
 //    this->ManagerTopLevel->SetMasterWindow(master);
@@ -906,12 +962,15 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::DisplayManagerWindow ( )
 {
+
   if (! this->Built )
     {
     return;
     }
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Displaying Manager Window");
   this->ManagerTopLevel->DeIconify();
   this->ManagerTopLevel->Raise();
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: DONE displaying Manager Window");
 }
 
 //---------------------------------------------------------------------------
@@ -921,6 +980,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::WithdrawManagerWindow ( )
     {
     return;
     }
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Withdrawing Manager Window");
   this->ManagerTopLevel->Withdraw();
+  vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Done withdrawing Manager Window.");
 }
 

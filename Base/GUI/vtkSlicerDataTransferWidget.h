@@ -84,6 +84,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     virtual void EnableCancelButton();
     virtual void DisableURILabel();
     virtual void EnableURILabel();
+    virtual void UpdateURILabel ( const char* );
 
     // Description:
     // Method to update the widget when a new node is loaded.
