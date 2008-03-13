@@ -41,6 +41,8 @@ class ProcessingTaskQueue;
 class ModifiedQueue;
 class ReadDataQueue;
 class ReadDataRequest;
+class WriteDataQueue;
+class WriteDataRequest;
 class vtkSlicerTask;
 //ETX
 
@@ -199,6 +201,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
                        int deleteFile=false);
 
   // Description:
+  // Request that data be written from a file to a remote destination.
+  int RequestWriteData(const char *refNode, const char *filename,
+                       int displayData = false,
+                       int deleteFile=false);
+  // Description:
   // Request that a scene be read from a file. Mappings of node IDs in
   // the file (sourceIDs) to node IDs in the main scene
   // (targetIDs) can be specified. Only nodes listed in sourceIDs are
@@ -227,7 +234,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
   // because calls to load data will cause a Modified() on a node
   // which can force a render.
   void ProcessReadData();
-
+  // Description:
+  // Process a request to write data from a referenced node.
+  void ProcessWriteData();
 
   //
   // Transient Application State
@@ -271,7 +280,9 @@ protected:
   // which can force a render.
   //BTX
   void ProcessReadNodeData( ReadDataRequest &req );
+  void ProcessWriteNodeData( WriteDataRequest &req );
   //EXT
+  
 
   // Description:
   // Process a request to read data into a scene.  This method is
@@ -280,6 +291,7 @@ protected:
   // which can force a render.
   //BTX
   void ProcessReadSceneData( ReadDataRequest &req );
+  void ProcessWriteSceneData( WriteDataRequest &req );
   //EXT
   
 private:
@@ -304,15 +316,19 @@ private:
   itk::MutexLock::Pointer ModifiedQueueLock;
   itk::MutexLock::Pointer ReadDataQueueActiveLock;
   itk::MutexLock::Pointer ReadDataQueueLock;
+  itk::MutexLock::Pointer WriteDataQueueActiveLock;
+  itk::MutexLock::Pointer WriteDataQueueLock;
   //ETX
   int ProcessingThreadId;
   int ProcessingThreadActive;
   int ModifiedQueueActive;
   int ReadDataQueueActive;
+  int WriteDataQueueActive;
 
   ProcessingTaskQueue* InternalTaskQueue;
   ModifiedQueue* InternalModifiedQueue;
   ReadDataQueue* InternalReadDataQueue;
+  WriteDataQueue* InternalWriteDataQueue;
   
   // Transient Application State
   
