@@ -80,10 +80,6 @@ TARGET_LINK_LIBRARIES(Volumes
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
-
 CONFIGURE_FILE(
   ${Volumes_SOURCE_DIR}/vtkVolumesConfigure.h.in 
   ${Volumes_BINARY_DIR}/vtkVolumesConfigure.h
