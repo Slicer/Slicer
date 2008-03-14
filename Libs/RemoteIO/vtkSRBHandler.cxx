@@ -126,6 +126,7 @@ void vtkSRBHandler::StageFileRead(const char * source, const char * destination)
 
   // strip off the srb:// at the front of source
   int index;
+  std::string quote ("\"");
   std::string sourceString (source);
   std::string prefix;
   if ( ( index = sourceString.find ( "srb://", 0 ) ) != std::string::npos )
@@ -133,10 +134,11 @@ void vtkSRBHandler::StageFileRead(const char * source, const char * destination)
     sourceString = sourceString.substr ( 6 );
     }
   vtkDebugMacro("StageFileRead: using source value " << sourceString.c_str());
+  sourceString = quote + sourceString + quote;
   cmd += sourceString;
     
   // add the destination
-  cmd += std::string(" ") + std::string(destination);
+  cmd += std::string(" ") + std::string(quote + destination + quote);
   
   // execute the command
   vtkDebugMacro("StageFileRead: calling command: " << cmd.c_str());
@@ -147,6 +149,7 @@ void vtkSRBHandler::StageFileRead(const char * source, const char * destination)
     }
   this->CloseTransfer();
 
+  // TODO: we should use the retval to set a flag for the GUI
 }
 
 
@@ -166,10 +169,11 @@ void vtkSRBHandler::StageFileWrite(const char * source, const char * destination
 
   this->InitTransfer();
   
+  std::string quote ("\"");
   std::string cmd = std::string("Sput ");
 
   // add the local file
-  cmd += std::string(source);
+  cmd += quote + std::string(source) + quote;
   
   // strip off the srb:// at the front of destination
   int index;
@@ -180,7 +184,7 @@ void vtkSRBHandler::StageFileWrite(const char * source, const char * destination
     destinationString = destinationString.substr ( 6 );
     }
   vtkDebugMacro("StageFileWrite: using destination value " << destinationString.c_str());
-  cmd += std::string(" ") + destinationString;
+  cmd += std::string(" ") + quote + destinationString + quote;
 
   // execute the command
   vtkDebugMacro("StageFileWrite: calling command: " << cmd.c_str());
@@ -190,4 +194,5 @@ void vtkSRBHandler::StageFileWrite(const char * source, const char * destination
     vtkErrorMacro("StageFileWrite: error when running command '" << cmd.c_str() << "', return value = " << retval);
     }
   this->CloseTransfer();
+  // TODO: we should use the retval to set a flag for the GUI
 }
