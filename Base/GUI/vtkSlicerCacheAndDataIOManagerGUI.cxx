@@ -250,6 +250,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessGUIEvents ( vtkObject *caller,
             if ( w != NULL )
               {
               w->DeleteTransferFromCache();
+              w->GetDataTransfer()->SetTransferStatus ( vtkDataTransfer::Deleted );
               }
             }
           //--- and get rid of anything else there...
