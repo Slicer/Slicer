@@ -293,6 +293,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     //---
     //--- Execute a SYNCHRONOUS data transfer
     //---
+    transfer->SetTransferStatus( vtkDataTransfer::Running);
     this->ApplyTransfer ( transfer );
     transfer->SetTransferStatus( vtkDataTransfer::Completed);
     // now set the node's storage node state to ready
@@ -394,6 +395,7 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
     //---
     //--- Execute a SYNCHRONOUS data transfer
     //---
+    transfer->SetTransferStatus( vtkDataTransfer::Running);
     this->ApplyTransfer ( transfer );
     transfer->SetTransferStatus( vtkDataTransfer::Completed);
     // now set the node's storage node state to ready
