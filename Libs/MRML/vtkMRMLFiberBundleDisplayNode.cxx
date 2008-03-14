@@ -37,7 +37,7 @@ vtkMRMLNode* vtkMRMLFiberBundleDisplayNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
 {
-
+  this->BackfaceCulling = 0;
 
   // Enumerated
   this->ColorMode = this->colorModeSolid;
