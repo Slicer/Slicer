@@ -321,6 +321,7 @@ void vtkSlicerDataTransferWidget::ProcessWidgetEvents (vtkObject *caller, unsign
     {
     this->HideInformationWindow();
     }
+  
   else if ( this->DeleteButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent )
     {
 
@@ -344,6 +345,32 @@ void vtkSlicerDataTransferWidget::ProcessWidgetEvents (vtkObject *caller, unsign
       dialog->SetParent ( this->GetParent() );
       dialog->SetStyleToMessage();
       msg = "A cancel is pending on this transfer. Please wait until the cancel is complete before deleting from cache.";
+      dialog->SetText (msg);
+      dialog->Create();
+      dialog->Invoke();
+      dialog->Delete();
+      return;
+      }
+    else if (( this->GetDataTransfer()->GetTransferStatus() == vtkDataTransfer::Idle ) || 
+             ( this->GetDataTransfer()->GetTransferStatus() == vtkDataTransfer::Pending ))
+      {
+      // put up message dialog asking user to cancel the thing first.
+      dialog = vtkKWMessageDialog::New();
+      dialog->SetParent ( this->GetParent() );
+      dialog->SetStyleToMessage();
+      msg = "This transfer is currently pending or idle. Please cancel it before deleting from cache.";
+      dialog->SetText (msg);
+      dialog->Create();
+      dialog->Invoke();
+      dialog->Delete();
+      return;
+      }
+    else if ( this->GetDataTransfer()->GetTransferStatus() == vtkDataTransfer::Ready )
+      {
+      dialog = vtkKWMessageDialog::New();
+      dialog->SetParent ( this->GetParent() );
+      dialog->SetStyleToMessage();
+      msg = "This transfer is currently being loaded from cache. To avoid errors, please wait until the load is finished to delete it.";
       dialog->SetText (msg);
       dialog->Create();
       dialog->Invoke();
@@ -440,6 +467,8 @@ void vtkSlicerDataTransferWidget::DeleteTransferFromCache()
         this->CacheManager->DeleteFromCache ( this->GetDataTransfer()->GetDestinationURI() );
         this->UpdateURILabel ( "(cleared): ");
         this->DisableURILabel();
+        this->DisableDeleteButton();
+        this->DisableCancelButton();
         this->DataTransfer->SetTransferStatus(vtkDataTransfer::Deleted );
         }
       }
@@ -509,16 +538,19 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
   switch ( this->DataTransfer->GetTransferStatus() )
     {
     case vtkDataTransfer::Idle:
+      this->DisableDeleteButton();
       this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusIdleIcon());
       this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: idle.");
       this->UpdateURILabel ( "(...): ");
       break;
     case vtkDataTransfer::Pending:
+      this->DisableDeleteButton();
       this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusIdleIcon());
       this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: idle.");
       this->UpdateURILabel ( "(...): ");
       break;
     case vtkDataTransfer::Running:
+      this->DisableDeleteButton();
       this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: running.");
       this->UpdateURILabel ( "(running): ");
       break;
@@ -531,39 +563,25 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
       //--- label it as cleared.
       if ( this->DataTransfer->GetTransferType() == vtkDataTransfer::RemoteDownload )
         {
-        if ( this->CacheManager->LocalFileExists ( this->DataTransfer->GetDestinationURI() ))
-          {
           this->UpdateURILabel ( "(cached): ");
-          }
-        else
-          {
-          this->UpdateURILabel ( "(cleared): ");
-          this->DisableURILabel();
-          this->DisableDeleteButton();
-          }
+          this->EnableDeleteButton();
         }
       if ( this->DataTransfer->GetTransferType() == vtkDataTransfer::RemoteUpload )
         {
-        if ( this->CacheManager->LocalFileExists ( this->DataTransfer->GetSourceURI() ))
-          {
           this->UpdateURILabel ( "(cached): ");
-          }
-        else
-          {
-          this->UpdateURILabel ( "(cleared): ");
-          this->DisableURILabel();
-          this->DisableDeleteButton();
-          }
+          this->EnableDeleteButton();
         }
       break;
     case vtkDataTransfer::CompletedWithErrors:
       this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusErrorIcon());
       this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: error!");
+      this->EnableDeleteButton();
       this->DisableCancelButton();
       this->UpdateURILabel ( "(error): ");
       this->DisableURILabel();
       break;
     case vtkDataTransfer::CancelPending:
+      this->DisableDeleteButton();
       this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusCancelRequestedIcon());
       this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: cancel requested.");
       this->UpdateURILabel ( "(cancelling...): ");
@@ -584,11 +602,13 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
       this->DisableURILabel();
       break;
     case vtkDataTransfer::Ready:
+      this->DisableDeleteButton();
       this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: loading from cache...");
       this->UpdateURILabel ( "(...): ");
       break;
     case vtkDataTransfer::TimedOut:
       this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusTimedOutIcon());
+      this->EnableDeleteButton();
       this->DisableCancelButton();
       this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: timed out.");
       this->UpdateURILabel ( "(timed out): ");
@@ -597,6 +617,8 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
     default:
       this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusIdleIcon());
       this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: unknown.");
+      this->EnableDeleteButton();
+      this->EnableCancelButton();
       this->UpdateURILabel ( "(??): ");
       this->DisableURILabel();
       break;
