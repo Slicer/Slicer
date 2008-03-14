@@ -55,6 +55,7 @@ vtkMRMLColorNode::vtkMRMLColorNode()
   this->SetName("");
   this->FileName = NULL;
   this->Type = -1;
+  this->HideFromEditors = 1;
 
   this->NoName = NULL;
   this->SetNoName("(none)");
