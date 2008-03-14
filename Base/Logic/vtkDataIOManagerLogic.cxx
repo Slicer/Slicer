@@ -274,18 +274,13 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
                           &vtkDataIOManagerLogic::ApplyTransfer, transfer);
   
     // Schedule the transfer
-    bool ret = 0;
-    ret = this->GetApplicationLogic()->ScheduleTask( task );
-    if ( !ret  )
+    if ( ! this->GetApplicationLogic()->ScheduleTask( task ) )
       {
       transfer->SetTransferStatus( vtkDataTransfer::CompletedWithErrors);
+      task->Delete();
+      return 0;      
       }
     task->Delete();
-    if ( !ret )
-      {
-      transfer->Delete();
-      return 0;
-      }
     }
   else
     {
@@ -387,7 +382,30 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
   
   if ( this->GetDataIOManager()->GetEnableAsynchronousIO() )
     {
-    vtkErrorMacro("QueueWrite: NOT IMPLEMENTED to schedule an ASYNCHRONOUS data transfer");
+    vtkDebugMacro("QueueWrite: Schedule an ASYNCHRONOUS data transfer");
+    //---
+    //--- Schedule an ASYNCHRONOUS data transfer
+    //---
+    vtkSlicerTask *task = vtkSlicerTask::New();
+    // Pass the current data transfer, which has a pointer 
+    // to the associated mrml node, as client data to the task.
+    if ( !task )
+      {
+      transfer->Delete();
+      return 0;
+      }
+    transfer->SetTransferStatus ( vtkDataTransfer::Pending );
+    task->SetTaskFunction(this, (vtkSlicerTask::TaskFunctionPointer)
+                          &vtkDataIOManagerLogic::ApplyTransfer, transfer);
+  
+    // Schedule the transfer
+    if ( ! this->GetApplicationLogic()->ScheduleTask( task ) )
+      {
+      transfer->SetTransferStatus( vtkDataTransfer::CompletedWithErrors);
+      task->Delete();
+      return 0;      
+      }
+    task->Delete();
     }
   else
     {
@@ -516,7 +534,6 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
         storageNode->SetDisableModifiedEvent( 1 );
         storageNode->SetWriteStateReady();
         storageNode->SetDisableModifiedEvent( 0 );
-        this->GetApplicationLogic()->RequestWriteData( node->GetID(), dest, 0, 0 );
         }
       else
         {
