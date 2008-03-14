@@ -213,9 +213,17 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
     storageNode->Delete();
     }
 
-  //storageNode->SetAbsoluteFileName(true);
-  storageNode->SetFileName(filename);
-
+  // check for a remote file
+  if ((this->GetMRMLScene()->GetCacheManager() != NULL) &&
+      this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename))
+    {
+    storageNode->SetURI(filename);
+    }
+  else
+    {
+    storageNode->SetFileName(filename);
+    }
+  
   int res = storageNode->WriteData(modelNode);
 
   
