@@ -336,7 +336,9 @@ int vtkMRMLModelStorageNode::SupportedFileType(const char *fileName)
 
   vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
   if (extension.compare(".vtk") == 0 ||
-      extension.compare(".vtp") == 0)
+      extension.compare(".vtp") == 0 ||
+      extension.compare(".g") == 0 ||
+      extension.compare(".stl") == 0 )
     {
     return 1;
     }
