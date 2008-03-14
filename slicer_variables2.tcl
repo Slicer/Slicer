@@ -218,6 +218,7 @@ switch $::tcl_platform(os) {
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
         set ::PYTHON_TEST_FILE $::SLICER_LIB/python-build/bin/python
+        set ::MATPLOTLIB_TEST_FILE $::SLICER_LIB/python-build/bin/bar
         set ::NUMPY_TEST_FILE $::SLICER_LIB/python-build/lib/python2.5/site-packages/numpy/lib/_compiled_base.so
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
@@ -258,6 +259,7 @@ switch $::tcl_platform(os) {
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.2/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/BLT24.dll
         set ::PYTHON_TEST_FILE $::SLICER_LIB/python-build/bin/python
+        set ::MATPLOTLIB_TEST_FILE $::SLICER_LIB/python-build/bin/bar
         set ::NUMPY_TEST_FILE $::SLICER_LIB/python-build/lib/python2.5/site-packages/numpy/lib/_compiled_base.dll
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu.exe
         set ::VTK_TEST_FILE $::VTK_DIR/bin/$::VTK_BUILD_TYPE/vtk.exe
