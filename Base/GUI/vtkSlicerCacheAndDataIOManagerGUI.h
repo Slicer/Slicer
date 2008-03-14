@@ -4,6 +4,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkCacheManager.h"
+#include "vtkSlicerDataTransferIcons.h"
 
 #include "vtkObserverManager.h"
 #include "vtkMRMLScene.h"
@@ -50,6 +51,7 @@ public:
   vtkSetMacro ( Built, bool );
   vtkGetMacro ( Built, bool );
   vtkGetObjectMacro ( TransferWidgetCollection, vtkCollection );
+  vtkGetObjectMacro ( DataTransferIcons, vtkSlicerDataTransferIcons );
 
   // Description:
   // This method builds the DataIOManager module GUI
@@ -139,6 +141,7 @@ protected:
   vtkDataIOManager *DataIOManager;
   vtkCacheManager *CacheManager;
   vtkCollection *TransferWidgetCollection;
+  vtkSlicerDataTransferIcons *DataTransferIcons;
 
     // Description:
     // Describes whether the GUI has been built or not.

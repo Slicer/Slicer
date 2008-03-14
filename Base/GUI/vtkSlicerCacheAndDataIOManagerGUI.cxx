@@ -34,6 +34,7 @@ vtkSlicerCacheAndDataIOManagerGUI::vtkSlicerCacheAndDataIOManagerGUI ( )
   this->TransferWidgetCollection = NULL;
   this->DataIOManager = NULL;
   this->CacheManager = NULL;
+  this->DataTransferIcons = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -142,6 +143,12 @@ vtkSlicerCacheAndDataIOManagerGUI::~vtkSlicerCacheAndDataIOManagerGUI ( )
     this->ManagerTopLevel->Delete();
     this->ManagerTopLevel = NULL;    
     }
+  if ( this->DataTransferIcons )
+    {
+    this->DataTransferIcons->Delete();
+    this->DataTransferIcons = NULL;
+    }
+  
   this->DataIOManager = NULL;
   this->CacheManager = NULL;
   this->Built = false;
@@ -351,7 +358,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
     if ( event == vtkDataIOManager::NewTransferEvent )
       {
       vtkDataTransfer *dt = reinterpret_cast < vtkDataTransfer*> (callData);
-//      this->AddNewDataTransfer ( dt );
+      this->AddNewDataTransfer ( dt );
       }
     else if ( event == vtkDataIOManager::TransferUpdateEvent )
       {
@@ -516,15 +523,14 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
     }
 
 
-  vtkSlicerDataTransferIcons *i = vtkSlicerDataTransferIcons::New();
   if ( this->CacheManager->GetCurrentCacheSize() == 0 )
     {
-    this->ClearCacheButton->SetImageToIcon ( i->GetDeleteFromCacheDisabledIcon() );
+    this->ClearCacheButton->SetImageToIcon ( this->DataTransferIcons->GetDeleteFromCacheDisabledIcon() );
     this->ClearCacheButton->SetStateToDisabled();
     }
   else
     {
-    this->ClearCacheButton->SetImageToIcon ( i->GetDeleteFromCacheIcon() );
+    this->ClearCacheButton->SetImageToIcon ( this->DataTransferIcons->GetDeleteFromCacheIcon() );
     this->ClearCacheButton->SetStateToNormal();
     }
 
@@ -560,16 +566,15 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
     }
   if ( !anyTransfersRunning )
     {
-    this->CancelAllButton->SetImageToIcon ( i->GetTransferCancelDisabledIcon() );
+    this->CancelAllButton->SetImageToIcon ( this->DataTransferIcons->GetTransferCancelDisabledIcon() );
     this->CancelAllButton->SetStateToDisabled();
     }
   else
     {
-    this->CancelAllButton->SetImageToIcon ( i->GetTransferCancelIcon() );
+    this->CancelAllButton->SetImageToIcon ( this->DataTransferIcons->GetTransferCancelIcon() );
     this->CancelAllButton->SetStateToNormal();
     }
 
-  i->Delete();
   delete [] txt;
 
   //--- update the GUI
@@ -771,6 +776,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
   this->ManagerTopLevel->Withdraw();
   this->ManagerTopLevel->SetDeleteWindowProtocolCommand ( this, "WithdrawManagerWindow" );
     
+  this->DataTransferIcons = vtkSlicerDataTransferIcons::New();
+  
   this->ControlFrame = vtkKWFrame::New();
   this->ControlFrame->SetParent ( this->ManagerTopLevel );
   this->ControlFrame->Create();
@@ -845,11 +852,10 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
   this->TimeOutCheckButton->Create();
   this->TimeOutCheckButton->SetSelectedState(0);
 
-  vtkSlicerDataTransferIcons *i = vtkSlicerDataTransferIcons::New();
   this->ClearCacheButton = vtkKWPushButton::New();
   this->ClearCacheButton->SetParent ( this->ControlFrame );
   this->ClearCacheButton->Create(); 
- this->ClearCacheButton->SetImageToIcon ( i->GetDeleteFromCacheIcon() );
+ this->ClearCacheButton->SetImageToIcon ( this->DataTransferIcons->GetDeleteFromCacheIcon() );
   this->ClearCacheButton->SetBorderWidth ( 0);
   this->ClearCacheButton->SetReliefToFlat();
   this->ClearCacheButton->SetBalloonHelpString ("Delete all files in cache." );
@@ -857,7 +863,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
   this->RefreshButton = vtkKWPushButton::New();
   this->RefreshButton->SetParent ( this->ControlFrame );
   this->RefreshButton->Create();
-  this->RefreshButton->SetImageToIcon ( i->GetRefreshSettingsIcon() );
+  this->RefreshButton->SetImageToIcon ( this->DataTransferIcons->GetRefreshSettingsIcon() );
   this->RefreshButton->SetBorderWidth (0);
   this->RefreshButton->SetReliefToFlat ();
   this->RefreshButton->SetBalloonHelpString ("Refresh cache space report in panel." );  
@@ -865,11 +871,10 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
   this->CancelAllButton = vtkKWPushButton::New();
   this->CancelAllButton->SetParent ( this->ControlFrame );
   this->CancelAllButton->Create();
-  this->CancelAllButton->SetImageToIcon ( i->GetTransferCancelIcon() );
+  this->CancelAllButton->SetImageToIcon ( this->DataTransferIcons->GetTransferCancelIcon() );
   this->CancelAllButton->SetBorderWidth(0);
   this->CancelAllButton->SetReliefToFlat();
   this->CancelAllButton->SetBalloonHelpString ( "Cancel all pending and running data transfers." );
-  i->Delete();
 
   this->Script ( "pack %s %s %s -side left -anchor n -padx 4 -pady 4",
                  this->ForceReloadCheckButton->GetWidgetName(),
