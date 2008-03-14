@@ -275,7 +275,8 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   
     // Schedule the transfer
     bool ret = 0;
-    if (ret = this->GetApplicationLogic()->ScheduleTask( task ) )
+    ret = this->GetApplicationLogic()->ScheduleTask( task );
+    if ( !ret  )
       {
       transfer->SetTransferStatus( vtkDataTransfer::CompletedWithErrors);
       }

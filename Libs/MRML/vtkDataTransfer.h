@@ -60,7 +60,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   }
 
   const char* GetTransferTypeString( ) {
-    switch (this->TransferStatus)
+    switch (this->TransferType)
       {
       case vtkDataTransfer::RemoteDownload: return "RemoteDownload";
       case vtkDataTransfer::RemoteUpload: return "RemoteUpload";

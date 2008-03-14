@@ -44,16 +44,15 @@ vtkSlicerCacheAndDataIOManagerGUI::~vtkSlicerCacheAndDataIOManagerGUI ( )
     {
     vtkSlicerDataTransferWidget *w;
     int num = this->TransferWidgetCollection->GetNumberOfItems();
-    for (int i = 0; i < num; i ++ )
+    while ( num > 0 )
       {
-      w = vtkSlicerDataTransferWidget::SafeDownCast ( this->TransferWidgetCollection->GetItemAsObject( i ) );
+      w = vtkSlicerDataTransferWidget::SafeDownCast ( this->TransferWidgetCollection->GetItemAsObject( 0 ) );
+      this->TransferWidgetCollection->RemoveItem ( 0 );
       w->RemoveWidgetObservers();
       w->SetParent ( NULL );
-      w->SetCacheManager ( NULL );
-      w->SetDataTransfer ( NULL );
-      w->SetApplication ( NULL );
       w->Delete();
       w = NULL;
+      num = this->TransferWidgetCollection->GetNumberOfItems();      
       }
     this->TransferWidgetCollection->RemoveAllItems();
     this->TransferWidgetCollection->Delete();
@@ -231,17 +230,26 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessGUIEvents ( vtkObject *caller,
       d->Delete();
       if ( ret )
         {
-        int numW = this->TransferWidgetCollection->GetNumberOfItems();
-        for (int i =0; i < numW; i++)
+        this->CacheManager->ClearCache();
+        //--- delete all current data transfers
+        //--- which causes the transfer panel to update...
+        if ( this->TransferWidgetCollection != NULL )
           {
-          vtkSlicerDataTransferWidget *w =
-            vtkSlicerDataTransferWidget::SafeDownCast (this->TransferWidgetCollection->GetItemAsObject ( i ));
-          if ( w != NULL )
+          int numW = this->TransferWidgetCollection->GetNumberOfItems();
+          for (int i =0; i < numW; i++)
             {
-            w->DeleteTransferFromCache();
+            vtkSlicerDataTransferWidget *w =
+              vtkSlicerDataTransferWidget::SafeDownCast (this->TransferWidgetCollection->GetItemAsObject ( i ));
+            if ( w != NULL )
+              {
+              w->DeleteTransferFromCache();
+              }
             }
+          //--- and get rid of anything else there...
+          //--- which will trigger a CacheClearEvent
+          //--- that causes this overview panel to update.
+          this->UpdateEntireGUI();
           }
-        this->UpdateEntireGUI();
         }
       }
     else if ( b == this->CancelAllButton && event == vtkKWPushButton::InvokedEvent )
@@ -343,7 +351,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
     if ( event == vtkDataIOManager::NewTransferEvent )
       {
       vtkDataTransfer *dt = reinterpret_cast < vtkDataTransfer*> (callData);
-//     this->AddNewDataTransfer ( dt );
+//      this->AddNewDataTransfer ( dt );
       }
     else if ( event == vtkDataIOManager::TransferUpdateEvent )
       {
@@ -737,10 +745,6 @@ void vtkSlicerCacheAndDataIOManagerGUI::TearDownGUI ( )
   if ( this->Built )
     {
     this->RemoveGUIObservers();
-    }
-  if ( this->TransferWidgetCollection != NULL )
-    {
-    this->TransferWidgetCollection->RemoveAllItems();
     }
 }
 

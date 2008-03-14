@@ -45,7 +45,6 @@ vtkSlicerDataTransferWidget::vtkSlicerDataTransferWidget(void)
     this->TimerCount = 0;
     this->TimerSteps = 8;
     this->TimerRunning = 0;
-    this->TimerID = "";
     this->CacheManager = NULL;
   }
 
@@ -58,7 +57,7 @@ void vtkSlicerDataTransferWidget::StartTransferTimer ()
   if ( app )
     {
     vtkDebugMacro ("vtkSlicerDataTransferWidget: Turning on TransferTimer...");
-    this->TimerID = vtkKWTkUtilities::CreateTimerHandler ( app->GetMainInterp(), 500, this, "UpdateTransferFeedback");
+    this->SetTimerID ( vtkKWTkUtilities::CreateTimerHandler ( app->GetMainInterp(), 500, this, "UpdateTransferFeedback") );
     }
     this->TimerRunning = 1;
 }
@@ -68,12 +67,13 @@ void vtkSlicerDataTransferWidget::StartTransferTimer ()
 void vtkSlicerDataTransferWidget::KillTransferTimer ( )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-  if ( app != NULL && this->TimerID != NULL )
+  if ( (app != NULL) && (this->GetTimerID() != NULL) )
     {
     vtkDebugMacro ("vtkSlicerDataTransferWidget: Killing TransferTimer...");
-    vtkKWTkUtilities::CancelTimerHandler ( app->GetMainInterp(), this->TimerID );
+    vtkKWTkUtilities::CancelTimerHandler ( app->GetMainInterp(), this->GetTimerID() );
     }
-    this->TimerRunning = 0;
+  this->SetTimerID ("" );
+  this->TimerRunning = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -171,11 +171,11 @@ vtkSlicerDataTransferWidget::~vtkSlicerDataTransferWidget(void)
       }
     this->TimerRunning = 0;
     this->TimerCount = 0;
-    this->TimerID = "";
-    this->CacheManager = NULL;
+    this->SetTimerID ( "" );
+    this->SetParent ( NULL );
+    this->SetCacheManager ( NULL );
+    this->SetDataTransfer ( NULL );
 
-
-    this->RemoveWidgetObservers();
     if ( this->InformationCloseButton )
       {
       this->InformationCloseButton->SetParent ( NULL );
@@ -202,7 +202,6 @@ vtkSlicerDataTransferWidget::~vtkSlicerDataTransferWidget(void)
       }
     if ( this->InformationButton )
       {
-
       this->InformationButton->SetParent ( NULL );
       this->InformationButton->Delete();
       this->InformationButton = NULL;
@@ -237,23 +236,18 @@ vtkSlicerDataTransferWidget::~vtkSlicerDataTransferWidget(void)
       this->URILabel->Delete();
       this->URILabel = NULL;
       }
-    if ( this->DataTransferIcons )
-      {
-      this->DataTransferIcons->Delete();
-      this->DataTransferIcons = NULL;
-      }
     if ( this->DataTransferFrame )
       {
       this->DataTransferFrame->SetParent ( NULL );
       this->DataTransferFrame->Delete();
       this->DataTransferFrame = NULL;
       }
-    if ( this->DataTransfer )
+    if ( this->DataTransferIcons )
       {
-      vtkSetAndObserveMRMLNodeMacro ( this->DataTransfer, NULL);
-      this->DataTransfer->Delete();
+      this->DataTransferIcons->Delete();
+      this->DataTransferIcons = NULL;
       }
-
+    this->SetApplication ( NULL );
   }
 
 //---------------------------------------------------------------------------
@@ -351,7 +345,10 @@ void vtkSlicerDataTransferWidget::ProcessWidgetEvents (vtkObject *caller, unsign
       // delete the particular data transfer from cache 
       this->DeleteTransferFromCache();
       // and disable the buttons.
+      this->DisableCancelButton();
       this->DisableDeleteButton();
+      this->UpdateURILabel ( "(cleared): ");
+      this->DisableURILabel();
       }
     }
   }
@@ -517,6 +514,7 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
     case vtkDataTransfer::CompletedWithErrors:
       this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusErrorIcon());
       this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: error!");
+      this->DisableCancelButton();
       this->UpdateURILabel ( "(error): ");
       this->DisableURILabel();
       break;
@@ -526,6 +524,7 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
       this->UpdateURILabel ( "(cancelling...): ");
       break;
     case vtkDataTransfer::Deleted:
+      this->DisableDeleteButton();
       this->DisableCancelButton();
       this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: cleared from cache.");      
       this->UpdateURILabel ( "(cleared): ");
@@ -574,31 +573,34 @@ void vtkSlicerDataTransferWidget::UpdateInformationText( )
     {
     return;
     }
-  vtkDebugMacro ("vtkSlicerDataTransferWidget: updating information text.");  
-  std::string infoString = "Data transfer ";
-  char *cmd;
 
-  cmd = new char [1024];
-  sprintf ( cmd, "%d \n", this->DataTransfer->GetTransferID() );
-  infoString += cmd;
-  
-  infoString += "Transfer type: ";
+  char *cmd = new char [1024];
+  std::string infoString;
+
+  vtkDebugMacro ("vtkSlicerDataTransferWidget: updating information text.");  
+  this->InformationText->GetWidget()->QuickFormattingOn();
+
+  infoString = "**Transfer type: **";
   infoString += this->DataTransfer->GetTransferTypeString ( );
   infoString += "\n";
 
-  infoString += "Transfer status: ";
+  infoString += "**Transfer status: **";
   infoString += this->DataTransfer->GetTransferStatusString ( );
   infoString += "\n";
 
-  infoString += "Source URI: ";
+  infoString += "**Source URI: **";
   infoString += this->DataTransfer->GetSourceURI();
   infoString += "\n";  
   
-  infoString += "Destination URI: ";
+  infoString += "**Destination URI: **";
   infoString += this->DataTransfer->GetDestinationURI();
   infoString += "\n";  
   
-  infoString += "Destination MRMLNode ID: ";
+  infoString += "**Data transfer ID: **";
+  sprintf ( cmd, "%d \n", this->DataTransfer->GetTransferID() );
+  infoString += cmd;
+
+  infoString += "**Destination MRMLNode ID: **";
   infoString += this->DataTransfer->GetTransferNodeID();
   infoString += "\n";  
 
@@ -683,7 +685,8 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
     //call the superclass to create the whole widget
     this->Superclass::CreateWidget();
 
-    
+    this->SetTimerID ("" );
+
     this->DataTransferFrame = vtkKWFrame::New();
     this->DataTransferFrame->SetParent ( this->GetParent () );
     this->DataTransferFrame->Create();
@@ -828,7 +831,7 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
     this->InformationTopLevel->SetBorderWidth(2);
     this->InformationTopLevel->SetDisplayPositionToPointer();
     this->InformationTopLevel->SetTitle ("Data transfer information");
-    this->InformationTopLevel->SetSize ( 200, 250 );
+    this->InformationTopLevel->SetSize ( 600, 150 );
     this->InformationTopLevel->Withdraw();
     this->InformationTopLevel->SetDeleteWindowProtocolCommand ( this, "HideInformationWindow" );
 
@@ -845,15 +848,17 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
     this->InformationCloseButton->SetParent ( this->InformationFrame );
     this->InformationCloseButton->Create();
     this->InformationCloseButton->SetText ( "Close" );
-    this->InformationCloseButton->SetReliefToFlat();
-    this->InformationCloseButton->SetBorderWidth(0);
+    this->InformationCloseButton->SetWidth (10);
     this->InformationCloseButton->SetBalloonHelpString ("Dismiss this information window.");
 
     //--- pack up the information window.
     this->Script ( "pack %s -side top -anchor nw -fill both -padx 2 -pady 2",
-                   this->InformationText->GetWidgetName() );
+                   this->InformationFrame->GetWidgetName() );
     this->Script ( "pack %s -side bottom -anchor c -padx 2 -pady 2",
                    this->InformationCloseButton->GetWidgetName() );
+    this->Script ( "pack %s -side top -anchor nw -fill both -padx 2 -pady 2",
+                   this->InformationText->GetWidgetName() );
+
 
     //--- grid everything up.
 

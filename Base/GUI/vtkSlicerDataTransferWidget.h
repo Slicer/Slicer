@@ -4,6 +4,7 @@
 #include "vtkSlicerWidget.h"
 #include "vtkDataTransfer.h"
 #include "vtkCacheManager.h"
+#include <string>
 
 //widgets
 class vtkKWIcon;
@@ -13,6 +14,7 @@ class vtkKWFrame;
 class vtkKWTopLevel;
 class vtkSlicerDataTransferIcons;
 class vtkKWTextWithScrollbars;
+
 
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerWidget
@@ -76,6 +78,17 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     virtual void StartTransferTimer();
     virtual void KillTransferTimer();
     virtual void UpdateTransferFeedback();
+//BTX
+    const char *GetTimerID ()
+        {
+        return (this->TimerID.c_str() );
+        }
+
+    void SetTimerID ( const char *val)
+        {
+        this->TimerID = val;
+        }
+//ETX
 
     virtual void DeleteTransferFromCache();
     virtual void DisableDeleteButton();
@@ -90,10 +103,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     // Method to update the widget when a new node is loaded.
     // Or when a Data Transfer's state may have changed.
     void UpdateWidget();
-    const char *GetTimerID ()
-        {
-        return this->TimerID;
-        }
 
   protected:
     vtkSlicerDataTransferWidget(void);
@@ -108,7 +117,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     int TimerCount;
     int TimerSteps;
     int TimerRunning;
-    const char *TimerID;
+
+    //BTX
+    std::string TimerID;
+    //ETX
+    
     int TransferID;
     vtkCacheManager *CacheManager;
     
