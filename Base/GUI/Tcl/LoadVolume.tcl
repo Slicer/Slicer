@@ -127,12 +127,16 @@ itcl::body LoadVolume::constructor {} {
 
   set fileTable [$o(browser) GetFileListTable]
   $fileTable SetSelectionModeToSingle
+  set tag [$fileTable AddObserver DeleteEvent "itcl::delete $this"]
+  lappend _observerRecords [list $fileTable $tag]
   set tag [$fileTable AddObserver AnyEvent "$this processEvent $o(browser)"]
   lappend _observerRecords [list $fileTable $tag]
 
   set directoryExplorer [$o(browser) GetDirectoryExplorer]
+  set tag [$directoryExplorer AddObserver DeleteEvent "itcl::delete $this"]
+  lappend _observerRecords [list $directoryExplorer $tag]
   set tag [$directoryExplorer AddObserver AnyEvent "$this processEvent $o(browser)"]
-  lappend _observerRecords [list $fileTable $tag]
+  lappend _observerRecords [list $directoryExplorer $tag]
 
   #
   # the current Path
@@ -141,8 +145,10 @@ itcl::body LoadVolume::constructor {} {
   $o(path) SetParent $o(topFrame)
   $o(path) SetLabelText "Path: "
   $o(path) Create
+  set tag [[$o(path) GetWidget] AddObserver DeleteEvent "itcl::delete $this"]
+  lappend _observerRecords [list [$o(path) GetWidget] $tag]
   set tag [[$o(path) GetWidget] AddObserver AnyEvent "$this processEvent $o(path)"]
-  lappend _observerRecords [list $fileTable $tag]
+  lappend _observerRecords [list [$o(path) GetWidget] $tag]
 
 
   #
