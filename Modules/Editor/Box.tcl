@@ -36,9 +36,13 @@ namespace eval Box {
       }
     } 
     # only get here if no toplevel box exists yet
+
+    [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText "Creating Popup Box..."
+    $::slicer3::Application ProcessPendingEvents
     set box [$class #auto]
     $box configure -mode "popup"
     $box create
+    [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText ""
   }
 }
 
@@ -201,6 +205,7 @@ itcl::body Box::create { } {
   bind [$o(toplevel) GetWidgetName] <Key-space> "$this hide"
 
   $this setMode $mode
+
 
   $o(toplevel) Display
 }
