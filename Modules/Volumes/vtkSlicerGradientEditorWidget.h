@@ -81,9 +81,13 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     vtkSlicerGradientsWidget *GradientsWidget;
     vtkKWFrameWithLabel *TestFrame;
     vtkSlicerNodeSelectorWidget *FiducialSelector;
-    vtkKWPushButton *RunButton;    
+    vtkSlicerNodeSelectorWidget *DTISelector;
+    vtkKWPushButton *RunButton; 
+    vtkKWFrame *RunFrame;
+    vtkKWFrame *ButtonFrame;
     vtkKWPushButton *RestoreButton;
     vtkKWPushButton *UndoButton;
+    vtkKWPushButton *RedoButton;
        
   private:
     vtkSlicerGradientEditorWidget (const vtkSlicerGradientEditorWidget&); // Not implemented.

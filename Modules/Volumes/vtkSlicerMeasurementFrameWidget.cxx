@@ -350,7 +350,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->MeasurementFrame->SetParent(this->GetParent());
   this->MeasurementFrame->Create();
   this->MeasurementFrame->SetLabelText("Measurement Frame");
-  this->Script("pack %s -side top -anchor nw -fill x -pady 2", 
+  this->Script("pack %s -side top -anchor nw -fill x -pady 2 -padx 2", 
     this->MeasurementFrame->GetWidgetName());
 
   //create MatrixWidget for measurement frame

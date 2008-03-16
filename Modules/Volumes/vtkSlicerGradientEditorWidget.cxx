@@ -39,10 +39,14 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   this->GradientsWidget = NULL;
   this->RestoreButton = NULL;
   this->UndoButton = NULL;
+  this->RedoButton = NULL;
+  this->ButtonFrame = NULL;
   //Testframe maybe as an extra widget later
   this->TestFrame = NULL;
   this->RunButton = NULL;
   this->FiducialSelector = NULL;
+  this->RunFrame = NULL;
+  this->DTISelector = NULL;
   this->NumberOfChanges = 0;
   this->ModifiedForNewTensor = 1;
   this->TensorNode = NULL;
@@ -91,6 +95,18 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->RunButton->Delete();
     this->RunButton = NULL;
     }
+  if (this->DTISelector)
+    {
+    this->DTISelector->SetParent (NULL);
+    this->DTISelector->Delete();
+    this->DTISelector = NULL;
+    }
+  if (this->RunFrame)
+    {
+    this->RunFrame->SetParent (NULL);
+    this->RunFrame->Delete();
+    this->RunFrame = NULL;
+    }
   if (this->RestoreButton)
     {
     this->RestoreButton->SetParent (NULL);
@@ -99,8 +115,21 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     }
   if (this->UndoButton)
     {
+    this->UndoButton->SetParent (NULL);
     this->UndoButton->Delete();
     this->UndoButton = NULL;
+    }
+  if (this->RedoButton)
+    {
+    this->RedoButton->SetParent (NULL);
+    this->RedoButton->Delete();
+    this->RedoButton = NULL;
+    }
+  if (this->ButtonFrame)
+    {
+    this->ButtonFrame->SetParent (NULL);
+    this->ButtonFrame->Delete();
+    this->ButtonFrame = NULL;
     }
   if (this->Application)
     {
@@ -117,6 +146,7 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->FiberNode->Delete();
     this->FiberNode = NULL;
     }
+
   this->NumberOfChanges = 0;
   this->ModifiedForNewTensor = 0;
   }
@@ -344,7 +374,7 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->MeasurementFrameWidget->SetParent(this->GetParent());
   this->MeasurementFrameWidget->Create();
   this->MeasurementFrameWidget->AddWidgetObservers();
-  this->Script("pack %s -side top -anchor nw -fill x -padx 1 -pady 2", 
+  this->Script("pack %s -side top -anchor n -fill x -padx 2 -pady 2", 
     this->MeasurementFrameWidget->GetWidgetName());
 
   //create gradient widget 
@@ -352,20 +382,68 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->GradientsWidget->SetParent(this->GetParent());
   this->GradientsWidget->Create();
   this->GradientsWidget->AddWidgetObservers();
-  this->Script("pack %s -side top -anchor nw -fill both -expand true -padx 1 -pady 2", 
+  this->Script("pack %s -side top -anchor n -fill both -expand true -padx 2 -pady 2", 
     this->GradientsWidget->GetWidgetName());
+
+  //create frame for undo, redo and restore button
+  this->ButtonFrame = vtkKWFrame::New();
+  this->ButtonFrame->SetParent(this->GetParent());
+  this->ButtonFrame->Create();
+  this->Script("pack %s -side top -anchor ne ", 
+    this->ButtonFrame->GetWidgetName());
+
+  //create undoButton
+  this->UndoButton = vtkKWPushButton::New();
+  this->UndoButton->SetParent(this->ButtonFrame);
+  this->UndoButton->SetText("Undo");  
+  this->UndoButton->Create();
+  this->UndoButton->SetWidth(10);
+  this->UndoButton->SetEnabled(0);
+  this->UndoButton->SetBalloonHelpString("Undo the last change in measurement frame/gradient values.");
+
+  //create redoButton
+  this->RedoButton = vtkKWPushButton::New();
+  this->RedoButton->SetParent(this->ButtonFrame);
+  this->RedoButton->SetText("Redo");  
+  this->RedoButton->Create();
+  this->RedoButton->SetWidth(10);
+  this->RedoButton->SetEnabled(0);
+  this->RedoButton->SetBalloonHelpString("Redo the last change in measurement frame/gradient values.");
+
+  //create restore  button
+  this->RestoreButton = vtkKWPushButton::New();
+  this->RestoreButton->SetParent(this->ButtonFrame);
+  this->RestoreButton->Create();
+  this->RestoreButton->SetText("Restore");
+  this->RestoreButton->SetBalloonHelpString("Restore to original values.");
+  this->RestoreButton->SetWidth(10);
+  this->RestoreButton->SetEnabled(0);
+
+  //pack restoreButton and undoButton
+  this->Script("pack %s %s %s -side right -anchor ne -fill x -padx 4 -pady 2", 
+    this->RestoreButton->GetWidgetName(),
+    this->RedoButton->GetWidgetName(),
+    this->UndoButton->GetWidgetName());
 
   //create test frame 
   this->TestFrame = vtkKWFrameWithLabel::New();
   this->TestFrame->SetParent(this->GetParent());
   this->TestFrame->Create();
+  this->TestFrame->CollapseFrame();
   this->TestFrame->SetLabelText("Test (Tensor Estimation & Tractography Fiducial Seeding)");
-  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2", 
+  this->Script("pack %s -side top -anchor n -fill x -padx 2 -pady 4", 
     this->TestFrame->GetWidgetName());
+
+  //create frame for run button and fiducial list
+  this->RunFrame = vtkKWFrame::New();
+  this->RunFrame->SetParent(this->TestFrame->GetFrame());
+  this->RunFrame->Create();
+  this->Script("pack %s -side top -anchor ne -padx 2 -pady 2", 
+    this->RunFrame->GetWidgetName());
 
   //create run button
   this->RunButton = vtkKWPushButton::New();
-  this->RunButton->SetParent(this->TestFrame->GetFrame());
+  this->RunButton->SetParent(this->RunFrame);
   this->RunButton->Create();
   this->RunButton->SetText("Run");
   this->RunButton->SetWidth(7);
@@ -377,38 +455,28 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->FiducialSelector->SetNewNodeEnabled(0);
   this->FiducialSelector->NoneEnabledOn();
   this->FiducialSelector->SetShowHidden(1);
-  this->FiducialSelector->SetParent(this->TestFrame->GetFrame());
+  this->FiducialSelector->SetParent(this->RunFrame);
   this->FiducialSelector->SetMRMLScene(this->GetMRMLScene());
   this->FiducialSelector->Create();  
   this->FiducialSelector->UpdateMenu();
+  this->FiducialSelector->SetWidth(20);
   this->FiducialSelector->SetLabelText("Fiducial List:");
   this->FiducialSelector->SetBalloonHelpString("Set Fiducial List for tractography seeding.");
 
-  this->Script("pack %s %s -side right -anchor ne -padx 3 -pady 2", 
+  this->Script("pack %s %s -side right -anchor ne -padx 2 -pady 2", 
     this->RunButton->GetWidgetName(),
     this->FiducialSelector->GetWidgetName());
 
-  //create undoButton
-  this->UndoButton = vtkKWPushButton::New();
-  this->UndoButton->SetParent(this->GetParent());
-  this->UndoButton->SetText("Undo");  
-  this->UndoButton->Create();
-  this->UndoButton->SetBalloonHelpString("");
-  this->UndoButton->SetWidth(10);
-  this->UndoButton->SetEnabled(0);
-  this->UndoButton->SetBalloonHelpString("Undo the last change in measurement frame/gradient values.");
-
-  //create restore  button
-  this->RestoreButton = vtkKWPushButton::New();
-  this->RestoreButton->SetParent(this->GetParent());
-  this->RestoreButton->Create();
-  this->RestoreButton->SetText("Restore");
-  this->RestoreButton->SetBalloonHelpString("Restore to original values.");
-  this->RestoreButton->SetWidth(10);
-  this->RestoreButton->SetEnabled(0);
-
-  //pack restoreButton and undoButton
-  this->Script("pack %s %s -side right -anchor n -padx 4 -pady 2", 
-    this->RestoreButton->GetWidgetName(),
-    this->UndoButton->GetWidgetName());
+  //create dti selector
+  this->DTISelector = vtkSlicerNodeSelectorWidget::New();
+  this->DTISelector->SetNodeClass("vtkMRMLDiffusionTensorVolumeNode", NULL, NULL, NULL);
+  this->DTISelector->SetParent(this->TestFrame->GetFrame());
+  this->DTISelector->Create();
+  this->DTISelector->NoneEnabledOn();
+  this->DTISelector->SetMRMLScene(this->GetMRMLScene());
+  this->DTISelector->UpdateMenu();
+  this->DTISelector->SetLabelText( "Display a DTI Volume: ");
+  this->DTISelector->SetBalloonHelpString("Select a DTI volume from the current mrml scene and see its tracts.");
+  this->Script("pack %s -side top -anchor ne -padx 2 -pady 4 ", 
+    this->DTISelector->GetWidgetName()); 
   } 
