@@ -159,6 +159,9 @@ void vtkSlicerGradientEditorWidget::AddWidgetObservers ( )
   this->UndoButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MeasurementFrameWidget->AddObserver(vtkSlicerMeasurementFrameWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->GradientsWidget->AddObserver(vtkSlicerGradientsWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->DTISelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+
+  
   }
 
 //---------------------------------------------------------------------------
@@ -169,6 +172,7 @@ void vtkSlicerGradientEditorWidget::RemoveWidgetObservers( )
   this->UndoButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MeasurementFrameWidget->RemoveObservers(vtkSlicerMeasurementFrameWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->GradientsWidget->RemoveObservers(vtkSlicerGradientsWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->DTISelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   }
 
 //---------------------------------------------------------------------------
@@ -296,6 +300,15 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
       this->ModifiedForNewTensor = 0;
       }
     this->CreateTracts();  //start tractography seeding, with old or new tensor
+    this->DTISelector->SetSelected(this->TensorNode);
+    this->RunButton->SetEnabled(1);
+    }
+
+  if (this->DTISelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+      this->DTISelector->GetSelected() != NULL) 
+    {
+    this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->DTISelector->GetSelected());
+    this->CreateTracts();
     }
   }
 
@@ -334,7 +347,6 @@ void vtkSlicerGradientEditorWidget::CreateTracts ( )
 
     //create tracts
     moduleGUI->CreateTracts();
-    this->RunButton->SetEnabled(1);
     this->Application->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Done");
     }
   }
@@ -415,7 +427,7 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->RestoreButton->SetParent(this->ButtonFrame);
   this->RestoreButton->Create();
   this->RestoreButton->SetText("Restore");
-  this->RestoreButton->SetBalloonHelpString("Restore to original values.");
+  this->RestoreButton->SetBalloonHelpString("All parameters are restored to original");
   this->RestoreButton->SetWidth(10);
   this->RestoreButton->SetEnabled(0);
 
@@ -472,10 +484,9 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->DTISelector->SetNodeClass("vtkMRMLDiffusionTensorVolumeNode", NULL, NULL, NULL);
   this->DTISelector->SetParent(this->TestFrame->GetFrame());
   this->DTISelector->Create();
-  this->DTISelector->NoneEnabledOn();
   this->DTISelector->SetMRMLScene(this->GetMRMLScene());
   this->DTISelector->UpdateMenu();
-  this->DTISelector->SetLabelText( "Display a DTI Volume: ");
+  this->DTISelector->SetLabelText("Display a DTI Volume: ");
   this->DTISelector->SetBalloonHelpString("Select a DTI volume from the current mrml scene and see its tracts.");
   this->Script("pack %s -side top -anchor ne -padx 2 -pady 4 ", 
     this->DTISelector->GetWidgetName()); 
