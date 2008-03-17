@@ -146,7 +146,10 @@ void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
   
   for (unsigned int i=0; i<this->DisplayNodes.size(); i++)
     {
-    this->DisplayNodes[i]->Delete();
+    if (this->DisplayNodes[i])
+      {
+      this->DisplayNodes[i]->Delete();
+      }
     }
   this->DisplayNodes.clear();
 
