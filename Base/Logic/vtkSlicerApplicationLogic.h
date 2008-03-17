@@ -268,10 +268,18 @@ protected:
   // Description:
   // Callback used by a MultiThreader to start a processing thread
   static ITK_THREAD_RETURN_TYPE ProcessingThreaderCallback( void * );
+
+  // Description:
+  // Callback used by a MultiThreader to start a networking thread
+  static ITK_THREAD_RETURN_TYPE NetworkingThreaderCallback( void * );
   
   // Description:
   // Task processing loop that is run in the processing thread
-  void ProcessTasks();
+  void ProcessProcessingTasks();
+
+  // Description:
+  // Networking Task processing loop that is run in a networking thread
+  void ProcessNetworkingTasks();
 
   // Description:
   // Process a request to read data into a node.  This method is
@@ -320,6 +328,9 @@ private:
   itk::MutexLock::Pointer WriteDataQueueLock;
   //ETX
   int ProcessingThreadId;
+  //BTX
+  std::vector<int> NetworkingThreadIDs;
+  //ETX
   int ProcessingThreadActive;
   int ModifiedQueueActive;
   int ReadDataQueueActive;

@@ -24,7 +24,34 @@ public:
   // Description:
   // Execute the task.
   virtual void Execute();
-  
+
+  // Description:
+  // The type of task - this can be used, for example, to decide
+  // how many concurrent threads should be allowed
+  //BTX
+  enum
+    {
+    Undefined = 0,
+    Processing,
+    Networking
+    };
+  //ETX
+ 
+  vtkSetClampMacro (Type, int, vtkSlicerTask::Undefined, vtkSlicerTask::Networking);
+  vtkGetMacro (Type, int);
+  void SetTypeToProcessing() {this->SetType(vtkSlicerTask::Processing);};
+  void SetTypeToNetworking() {this->SetType(vtkSlicerTask::Networking);};
+
+  const char* GetTypeAsString( ) {
+    switch (this->Type)
+      {
+      case vtkSlicerTask::Undefined: return "Undefined";
+      case vtkSlicerTask::Processing: return "Processing";
+      case vtkSlicerTask::Networking: return "Networking";
+      }
+    return "Unknown";
+  }
+
 protected:
   vtkSlicerTask();
   virtual ~vtkSlicerTask();
@@ -37,6 +64,8 @@ private:
   vtkSlicerLogic::TaskFunctionPointer TaskFunction;
   void *TaskClientData;
   //ETX
+  
+  int Type;
   
 };
 #endif

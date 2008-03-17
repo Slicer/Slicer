@@ -453,6 +453,26 @@ void vtkSlicerApplicationLogic::CreateProcessingThread()
       ->SpawnThread(vtkSlicerApplicationLogic::ProcessingThreaderCallback,
                     this);
 
+    // Start four network threads (TODO: make the number of threads a setting)
+    this->NetworkingThreadIDs.push_back ( this->ProcessingThreader
+          ->SpawnThread(vtkSlicerApplicationLogic::NetworkingThreaderCallback,
+                    this) );
+    /*
+     * TODO: it looks like curl is not thread safe by default
+     * - maybe there's a setting that cmcurl can have
+     *   similar to the --enable-threading of the standard curl build
+     *
+    this->NetworkingThreadIDs.push_back ( this->ProcessingThreader
+          ->SpawnThread(vtkSlicerApplicationLogic::NetworkingThreaderCallback,
+                    this) );
+    this->NetworkingThreadIDs.push_back ( this->ProcessingThreader
+          ->SpawnThread(vtkSlicerApplicationLogic::NetworkingThreaderCallback,
+                    this) );
+    this->NetworkingThreadIDs.push_back ( this->ProcessingThreader
+          ->SpawnThread(vtkSlicerApplicationLogic::NetworkingThreaderCallback,
+                    this) );
+    */
+
     // Setup the communication channel back to the main thread
     this->ModifiedQueueActiveLock->Lock();
     this->ModifiedQueueActive = true;
@@ -495,8 +515,17 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
     this->ProcessingThreadActiveLock->Unlock();
 
     this->ProcessingThreader->TerminateThread( this->ProcessingThreadId );
-
     this->ProcessingThreadId = -1;
+
+    std::vector<int>::const_iterator idIterator;
+    idIterator = this->NetworkingThreadIDs.begin();
+    while (idIterator != this->NetworkingThreadIDs.end())
+      {
+      this->ProcessingThreader->TerminateThread( *idIterator );
+      ++idIterator;
+      }
+    this->NetworkingThreadIDs.clear();
+
     }
 }
 
@@ -524,12 +553,86 @@ vtkSlicerApplicationLogic
 
   // Tell the app to start processing any tasks slated for the
   // processing thread
-  appLogic->ProcessTasks();
+  appLogic->ProcessProcessingTasks();
 
   return ITK_THREAD_RETURN_VALUE;
 }
 
-void vtkSlicerApplicationLogic::ProcessTasks()
+void vtkSlicerApplicationLogic::ProcessProcessingTasks()
+{
+  int active = true;
+  vtkSmartPointer<vtkSlicerTask> task = 0;
+  
+  while (active)
+    {
+    // Check to see if we should be shutting down
+    this->ProcessingThreadActiveLock->Lock();
+    active = this->ProcessingThreadActive;
+    this->ProcessingThreadActiveLock->Unlock();
+
+    if (active)
+      {
+      // pull a task off the queue
+      this->ProcessingTaskQueueLock->Lock();
+      if ((*this->InternalTaskQueue).size() > 0)
+        {
+        // std::cout << "Number of queued tasks: " << (*this->InternalTaskQueue).size() << std::endl;
+        
+        // only handle processing tasks in this thread
+        task = (*this->InternalTaskQueue).front();
+        if ( task->GetType() == vtkSlicerTask::Processing )
+          {
+          (*this->InternalTaskQueue).pop();
+          }
+        else 
+          {
+          task = NULL;
+          }
+        }
+      this->ProcessingTaskQueueLock->Unlock();
+      
+      // process the task (should this be in a separate thread?)
+      if (task)
+        {
+        task->Execute();
+        task = 0;
+        }
+      }
+
+    // busy wait
+    itksys::SystemTools::Delay(100);
+    }
+}
+
+ITK_THREAD_RETURN_TYPE
+vtkSlicerApplicationLogic
+::NetworkingThreaderCallback( void *arg )
+{
+  
+#ifdef ITK_USE_WIN32_THREADS
+  // Adjust the priority of this thread
+  SetThreadPriority(GetCurrentThread(),
+                    THREAD_PRIORITY_BELOW_NORMAL);
+#endif
+
+#ifdef ITK_USE_PTHREADS
+  // Adjust the priority of all PROCESS level threads.  Not a perfect solution.
+  nice(20);
+#endif
+    
+  // pull out the reference to the appLogic
+  vtkSlicerApplicationLogic *appLogic
+    = (vtkSlicerApplicationLogic*)
+    (((itk::MultiThreader::ThreadInfoStruct *)(arg))->UserData);
+
+  // Tell the app to start processing any tasks slated for the
+  // processing thread
+  appLogic->ProcessNetworkingTasks();
+
+  return ITK_THREAD_RETURN_VALUE;
+}
+
+void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
 {
   int active = true;
   vtkSmartPointer<vtkSlicerTask> task = 0;
@@ -549,7 +652,14 @@ void vtkSlicerApplicationLogic::ProcessTasks()
         {
         // std::cout << "Number of queued tasks: " << (*this->InternalTaskQueue).size() << std::endl;
         task = (*this->InternalTaskQueue).front();
-        (*this->InternalTaskQueue).pop();
+        if ( task->GetType() == vtkSlicerTask::Networking )
+          {
+          (*this->InternalTaskQueue).pop();
+          }
+        else 
+          {
+          task = NULL;
+          }
         }
       this->ProcessingTaskQueueLock->Unlock();
       

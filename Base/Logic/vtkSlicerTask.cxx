@@ -20,6 +20,7 @@ vtkSlicerTask
 {
   this->TaskObject = 0;
   this->TaskFunction = 0;
+  this->Type = vtkSlicerTask::Undefined;
 }
 
 vtkSlicerTask

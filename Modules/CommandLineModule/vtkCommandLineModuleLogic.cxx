@@ -313,6 +313,7 @@ void vtkCommandLineModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node )
 
 
   vtkSlicerTask* task = vtkSlicerTask::New();
+  task->SetTypeToProcessing();
 
   // Pass the current node as client data to the task.  This allows
   // the user to switch to another parameter set after the task is

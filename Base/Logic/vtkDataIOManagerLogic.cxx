@@ -262,6 +262,8 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     //--- Schedule an ASYNCHRONOUS data transfer
     //---
     vtkSlicerTask *task = vtkSlicerTask::New();
+    task->SetTypeToNetworking();
+
     // Pass the current data transfer, which has a pointer 
     // to the associated mrml node, as client data to the task.
     if ( !task )
@@ -387,6 +389,8 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
     //--- Schedule an ASYNCHRONOUS data transfer
     //---
     vtkSlicerTask *task = vtkSlicerTask::New();
+    task->SetTypeToNetworking();
+
     // Pass the current data transfer, which has a pointer 
     // to the associated mrml node, as client data to the task.
     if ( !task )
