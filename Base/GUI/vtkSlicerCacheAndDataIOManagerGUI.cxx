@@ -642,6 +642,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::AddNewDataTransfer ( vtkDataTransfer *tr
     w->SetDataTransfer ( transfer );
     w->SetTransferID ( transfer->GetTransferID() );
     w->SetCacheManager ( this->CacheManager);
+    w->SetDataIOManager ( this->DataIOManager );
     w->SetApplication ( this->GetApplication() );
     w->Create();
     w->UpdateWidget();

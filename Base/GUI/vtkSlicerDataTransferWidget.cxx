@@ -46,40 +46,14 @@ vtkSlicerDataTransferWidget::vtkSlicerDataTransferWidget(void)
     this->TimerSteps = 8;
     this->TimerRunning = 0;
     this->CacheManager = NULL;
+    this->DataIOManager = NULL;
   }
 
 
-//---------------------------------------------------------------------------
-void vtkSlicerDataTransferWidget::StartTransferTimer ()
-{
-
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-  if ( app )
-    {
-    vtkDebugMacro ("vtkSlicerDataTransferWidget: Turning on TransferTimer...");
-    this->SetTimerID ( vtkKWTkUtilities::CreateTimerHandler ( app->GetMainInterp(), 10, this, "UpdateTransferFeedback") );
-    }
-    this->TimerRunning = 1;
-}
-
 
 //---------------------------------------------------------------------------
-void vtkSlicerDataTransferWidget::KillTransferTimer ( )
+void vtkSlicerDataTransferWidget::DisplayRunningAnimation()
 {
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-  if ( (app != NULL) && (this->GetTimerID() != NULL) )
-    {
-    vtkDebugMacro ("vtkSlicerDataTransferWidget: Killing TransferTimer...");
-    vtkKWTkUtilities::CancelTimerHandler ( app->GetMainInterp(), this->GetTimerID() );
-    }
-  this->SetTimerID ("" );
-  this->TimerRunning = 0;
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerDataTransferWidget::UpdateTransferFeedback()
-{
-
 
   vtkDebugMacro ("vtkSlicerDataTransferWidget: Updating transfer feedback.");
   //--- if the transfer has been completed in an asynchronous
@@ -90,61 +64,81 @@ void vtkSlicerDataTransferWidget::UpdateTransferFeedback()
     {
     return;
     }
-  if ( this->DataTransfer->GetTransferStatus() == vtkDataTransfer::Completed)
+  //--- for some reason, the timer doesn't seem to work in the
+  //--- main thread. Works fine for asynchronous transfers.
+  //--- TODO: figure this out and use the same behavior in either case.
+
+  if ( !(this->DataIOManager->GetEnableAsynchronousIO() ))
     {
-    this->TimerCount = 0;
-    this->UpdateWidget();
+    return;
     }
-  else
+
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+  if ( app != NULL && this->TimerRunning )
     {
-    //--- todo: yuk, make this less hardcoded to 8 icons...
-    switch ( this->TimerCount )
-      {
-      case 0:
-        this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing0Icon());
-        break;
-      case 1:
-        this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing1Icon());
-        break;
-      case 2:
-        this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing2Icon());
-        break;
-      case 3:
-        this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing3Icon());
-        break;
-      case 4:
-        this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing4Icon());
-        break;
-      case 5:
-        this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing5Icon());
-        break;
-      case 6:
-        this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing6Icon());
-        break;
-      case 7:
-        this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing7Icon());
-        break;
-      default:
-        this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoingIcon());
-        break;
-      }
-    if ( this->TimerCount == 7 )
+    //--- if the process is completed now, jump out.
+    if ( this->DataTransfer->GetTransferStatus() == vtkDataTransfer::Completed)
       {
       this->TimerCount = 0;
+      this->UpdateWidget();
       }
     else
       {
-      this->TimerCount++;
-      }
+      switch ( this->TimerCount )
+        {
+        case 0:
+          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing0Icon());
+          break;
+        case 1:
+          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing1Icon());
+          break;
+        case 2:
+          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing2Icon());
+          break;
+        case 3:
+          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing3Icon());
+          break;
+        case 4:
+          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing4Icon());
+          break;
+        case 5:
+          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing5Icon());
+          break;
+        case 6:
+          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing6Icon());
+          break;
+        case 7:
+          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing7Icon());
+          break;
+        default:
+          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoingIcon());
+          break;
+        }
 
-    //--- update the GUI
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-    if ( app != NULL )
-      {
-//      app->ProcessIdleTasks();
+      if ( this->TimerCount == 7 )
+        {
+        this->TimerCount = 0;
+        }
+      else
+        {
+        this->TimerCount++;
+        }
+
+      if ( this->DataIOManager->GetEnableAsynchronousIO() )
+        {
+        vtkKWTkUtilities::CreateTimerHandler ( vtkKWApplication::GetMainInterp(), 100, this, "DisplayRunningAnimation");
+        }
+/*
+      else
+        {
+        vtkKWTkUtilities::CreateIdleTimerHandler ( vtkKWApplication::GetMainInterp(), this, "DisplayRunningAnimation");        
+        app->ProcessIdleTasks();
+        }
+*/
       }
     }
 }
+
 
 
 
@@ -175,15 +169,13 @@ void vtkSlicerDataTransferWidget::PrintSelf (ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 vtkSlicerDataTransferWidget::~vtkSlicerDataTransferWidget(void)
   {
-    if ( this->TimerRunning )
-      {
-      this->KillTransferTimer();
-      }
+
     this->TimerRunning = 0;
     this->TimerCount = 0;
     this->SetTimerID ( "" );
     this->SetParent ( NULL );
     this->SetCacheManager ( NULL );
+    this->SetDataIOManager ( NULL );
     this->SetDataTransfer ( NULL );
 
     if ( this->InformationCloseButton )
@@ -524,14 +516,15 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
     {
     if ( !this->TimerRunning )
       {
-      this->StartTransferTimer();
+      this->TimerRunning = 1;
+      this->DisplayRunningAnimation();
       }
     }
   else
     {
       if (  this->TimerRunning )
         {
-        this->KillTransferTimer();
+        this->TimerRunning = 0;
         }
     }
   
@@ -624,7 +617,11 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
       break;
     }
   this->UpdateInformationText();
-
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+  if ( app )
+    {
+    app->ProcessIdleTasks();
+    }
 }
 
 
@@ -941,6 +938,9 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
     this->Script ( "grid columnconfigure %s 4 -weight 0", this->DataTransferFrame->GetWidgetName() );
     this->Script ( "grid columnconfigure %s 5 -weight 1", this->DataTransferFrame->GetWidgetName() );
 
+    //--- put this here to enforce a nice white background beneath the row of icons.
+    app->ProcessIdleTasks();
+    
     this->Script ( "place %s -in %s -relx 0.5 -rely 0.5 -relheight 1.0 -anchor c -height 21 -bordermode inside",
                    this->TransferTypeLabel->GetWidgetName(), l1->GetWidgetName() );
     this->Script ( "place %s -in %s  -relx 0.5 -rely 0.5 -relheight 1.0 -anchor c -height 21 -bordermode inside",
