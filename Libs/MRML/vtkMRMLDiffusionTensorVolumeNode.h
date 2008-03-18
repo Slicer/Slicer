@@ -27,6 +27,7 @@
 
 #include "vtkMRMLDiffusionImageVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
 class vtkDoubleArray;
 
@@ -85,7 +86,16 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusion
   {
     return vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
   }
+//BTX
+  // Description:
+  // get associated slice glyph display node or NULL if not set
+  std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> GetSliceGlyphDisplayNodes();
 
+
+  // Description:
+  // add slice glyph display nodes if not already present and return it
+  std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*>  AddSliceGlyphDisplayNodes();
+//ETX
 
 protected:
   vtkMRMLDiffusionTensorVolumeNode();

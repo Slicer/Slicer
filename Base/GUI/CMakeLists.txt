@@ -1,3 +1,4 @@
+
 PROJECT(SlicerBaseGUI)
 
 # If we are not in the KWWidgets source tree, make sure we can find KWWidgets
@@ -86,6 +87,7 @@ SET(LIB_SRCS
   vtkSlicerSceneSnapshotWidget.cxx
   vtkSlicerRecordSnapshotWidget.cxx
   vtkSlicerModelHierarchyWidget.cxx
+  vtkSlicerDiffusionTensorGlyphDisplayWidget.cxx
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx

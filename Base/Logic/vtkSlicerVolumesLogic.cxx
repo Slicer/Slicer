@@ -42,6 +42,7 @@
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
 vtkCxxRevisionMacro(vtkSlicerVolumesLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerVolumesLogic);
@@ -437,6 +438,11 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     vtkDebugMacro("Display node "<<displayNode->GetClassName());
     this->GetMRMLScene()->AddNode(volumeNode);
     vtkDebugMacro("Node added to scene");
+    
+    if (tensorNode)
+      {
+      tensorNode->AddSliceGlyphDisplayNodes();
+      }
 
     // now read it
 //    storageNode->ReadData();

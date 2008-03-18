@@ -59,6 +59,11 @@ vtkDiffusionTensorGlyph::vtkDiffusionTensorGlyph()
   // Default to highest rendering resolution
   this->Resolution = 1;
 
+  this->Dimensions[0] = 0;
+  this->Dimensions[1] = 0;
+  this->DimensionResolution[0] = 20;
+  this->DimensionResolution[1] = 20;
+
   // Default large scalar factor for diffusion data. 
   // Display small magnitude eigenvalues in mm space.
   this->ScaleFactor = 1000;
@@ -333,9 +338,34 @@ int vtkDiffusionTensorGlyph::RequestData(
   //
   trans->PreMultiply();
 
-  for (inPtId=0; inPtId < numPts; inPtId += this->Resolution)
+  // Compute steps along dimensions
+  int skipRows = 0;
+  int skipCols = this->Resolution;
+  int rowLength = numPts;
+  int colLength = 1;
+  int row = 0;
+  int col = 0;
+  if (this->Dimensions[0] > 1 && this->Dimensions[1] > 1)
     {
+    skipRows = DimensionResolution[1];
+    skipCols = DimensionResolution[0];
+    rowLength = Dimensions[0];
+    colLength = Dimensions[1];
+    }
 
+  for (inPtId=0; inPtId < numPts; inPtId += skipCols)
+    {
+    if (col >= rowLength)
+      {
+      row += skipRows;
+      inPtId = row * rowLength;
+      col = 0;
+      if (inPtId >= numPts)
+        {
+        break;
+        }
+      }
+    col += skipCols;
     // progress notification
     if ( ! (inPtId % 10000) ) 
       {

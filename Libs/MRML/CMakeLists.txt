@@ -58,6 +58,7 @@ SET(MRML_SRCS
         vtkMRMLDiffusionImageVolumeNode.cxx
         vtkMRMLDiffusionTensorVolumeNode.cxx
         vtkMRMLDiffusionTensorVolumeDisplayNode.cxx
+        vtkMRMLDiffusionTensorVolumeSliceDisplayNode.cxx
         vtkMRMLVectorVolumeDisplayNode.cxx
         vtkMRMLFiberBundleNode.cxx
         vtkMRMLFiberBundleDisplayNode.cxx
@@ -151,6 +152,7 @@ TARGET_LINK_LIBRARIES(MRML
   vtkIOTCL
   vtkGraphicsTCL
   vtkRenderingTCL
+  vtkHybridTCL
   ITKAlgorithms
   ITKNumerics 
   ITKCommon

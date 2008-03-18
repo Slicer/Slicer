@@ -153,6 +153,22 @@ public:
   vtkSetClampMacro(Resolution,int,1,VTK_LARGE_INTEGER);
   vtkGetMacro(Resolution,int);
 
+  // Description:
+  // If the points in the image are organized into a 2D array (image),
+  // The dimensions of that array. 
+  // Two numbers: the number of columns and rows of pixels in each image.
+  // If any of the numbers are < 1 a 1D point structure is assumed.
+  vtkGetVector2Macro(Dimensions, int);
+  vtkSetVector2Macro(Dimensions, int);
+
+  // Description:
+  // Resolution of the output glyphs in each dimension. 
+  // It is used only if Dimensions is set > 1 .
+  // This parameter is a integer value
+  // that sets the number of tensors (points) that are skipped before a glyph is rendered.
+  // 1 is the finest level meaning that every input point a glyph is rendered.
+  vtkGetVector2Macro(DimensionResolution, int);
+  vtkSetVector2Macro(DimensionResolution, int);
 
   // Description:
   // When determining the modified time of the filter, 
@@ -171,6 +187,9 @@ protected:
   int ScalarInvariant;  // which function of eigenvalues to use for coloring
   int MaskGlyphs;  // mask glyphs outside of the brain for example, using the Mask
   int Resolution; // allows skipping some tensors for lower resolution glyphing
+
+  int Dimensions[2];
+  int DimensionResolution[2];
 
   vtkMatrix4x4 *VolumePositionMatrix;
   vtkMatrix4x4 *TensorRotationMatrix;

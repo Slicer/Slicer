@@ -21,8 +21,6 @@
 #ifndef __vtkSlicerDiffusionTensorGlyphDisplayWidget_h
 #define __vtkSlicerDiffusionTensorGlyphDisplayWidget_h
 
-#include "vtkSlicerTractographyDisplay.h"
-
 #include "vtkSlicerWidget.h"
 
 #include "vtkKWCheckButtonWithLabel.h"
@@ -32,7 +30,7 @@
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
 
-class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerDiffusionTensorGlyphDisplayWidget : public vtkSlicerWidget
+class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDiffusionTensorGlyphDisplayWidget : public vtkSlicerWidget
 {
   
 public:

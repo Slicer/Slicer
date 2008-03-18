@@ -185,6 +185,8 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
 
   void DiffusionTensorVolumeNodeUpdateTransforms();
 
+  void UpdateGlyphs(vtkImageData *sliceImage); 
+
 
   // Description:
   // Check that we are observing the correct display node
