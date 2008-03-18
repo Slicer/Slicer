@@ -368,7 +368,11 @@ if { [BuildThis $::TK_TEST_FILE "tk"] == 1 } {
     } else {
         cd $SLICER_LIB/tcl/tk/unix
 
-        runcmd ./configure --with-tcl=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build
+        if { $isDarwin } {
+            runcmd ./configure --with-tcl=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
+        } else {
+            runcmd ./configure --with-tcl=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build
+        }
         eval runcmd $::MAKE
         eval runcmd $::MAKE install
 
@@ -453,7 +457,7 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
         }
 
         cd $SLICER_LIB/tcl/blt
-        runcmd ./configure --with-tcl=$SLICER_LIB/tcl/tcl/unix --with-tk=$SLICER_LIB/tcl-build --prefix=$SLICER_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --with-cflags=-fno-common
+        runcmd ./configure --with-tcl=$SLICER_LIB/tcl/tcl/unix --with-tk=$SLICER_LIB/tcl-build --prefix=$SLICER_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common
         
         eval runcmd $::MAKE
         eval runcmd $::MAKE install
