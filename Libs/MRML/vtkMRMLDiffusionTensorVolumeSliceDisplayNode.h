@@ -62,7 +62,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   
   // Description:
   // Get node XML tag name (like Volume, UnstructuredGrid)
-  virtual const char* GetNodeTagName ( ) {return "FiberBundleGlyphDisplayNode";};
+  virtual const char* GetNodeTagName ( ) {return "DiffusionTensorVolumeSliceDisplayNode";};
 
   // Description:
   // Sets polydata for glyph input (usually stored in FiberBundle node)
