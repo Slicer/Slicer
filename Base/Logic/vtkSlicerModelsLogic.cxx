@@ -24,6 +24,7 @@
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkSlicerColorLogic.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
+#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 
 vtkCxxRevisionMacro(vtkSlicerModelsLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerModelsLogic);
@@ -253,20 +254,36 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
     return 0;
     }  
 
-   // get the storage node and use it to read the scalar file
-  vtkMRMLFreeSurferModelStorageNode *storageNode = NULL;
-  vtkMRMLStorageNode *snode = modelNode->GetStorageNode();
-  if (snode != NULL)
+  vtkMRMLFreeSurferModelOverlayStorageNode *fsmoStorageNode = vtkMRMLFreeSurferModelOverlayStorageNode::New();
+  vtkMRMLStorageNode *storageNode = NULL;
+  
+  // check for local or remote files
+  bool useURI = false;
+  if (this->GetMRMLScene()->GetCacheManager() != NULL)
     {
-    storageNode = vtkMRMLFreeSurferModelStorageNode::SafeDownCast(snode);
+    useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
+    vtkDebugMacro("AddModel: file name is remote: " << filename);
     }
-  if (storageNode == NULL)
+
+  const char *localFile;
+  if (useURI)
     {
-    vtkErrorMacro("Model "  << modelNode->GetName() << " does not have a freesurfer storage node associated with it, cannot load scalar overlay.");
-    return 0;
+    fsmoStorageNode->SetURI(filename);
+    // add other overlay storage nodes here
+    localFile = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
     }
-  storageNode->SetFileName(filename);
-  storageNode->ReadData(modelNode);
+  else
+    {
+    fsmoStorageNode->SetFileName(filename);
+    // add other overlay storage nodes here
+    localFile = filename;
+    }
+
+  // check to see if it can read it
+  if (fsmoStorageNode->SupportedFileType(filename))
+    {
+    storageNode = fsmoStorageNode;
+    }
 
   // check to see if the model display node has a colour node already
   vtkMRMLModelDisplayNode *displayNode = modelNode->GetModelDisplayNode();
@@ -283,7 +300,22 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
       displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultModelColorNodeID());
       colorLogic->Delete();
       }
-    
     }
+
+  if (storageNode != NULL)
+    {
+    this->GetMRMLScene()->SaveStateForUndo();
+    storageNode->SetScene(this->GetMRMLScene());
+    this->GetMRMLScene()->AddNodeNoNotify(storageNode);
+    // now add this as another storage node on the model
+    modelNode->AddAndObserveStorageNodeID(storageNode->GetID());
+
+    // now read, since all the id's are set up
+    vtkDebugMacro("AddScalar: calling read data now.");
+    if (this->GetDebug()) { storageNode->DebugOn(); }
+    storageNode->ReadData(modelNode);
+    }
+  fsmoStorageNode->Delete();
+  
   return 1;
 }
