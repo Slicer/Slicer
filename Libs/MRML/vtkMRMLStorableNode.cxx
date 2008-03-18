@@ -169,7 +169,7 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
       }
     else
       {
-      vtkErrorMacro("UpdateScene: error getting a storage node from i = " << i << ", id = " << (this->GetNthStorageNodeID(i) == NULL ? "null" : this->GetNthStorageNodeID(i)));
+      vtkErrorMacro("UpdateScene: error getting " << i << "th storage node, id = " << (this->GetNthStorageNodeID(i) == NULL ? "null" : this->GetNthStorageNodeID(i)));
       }
     }
 }
