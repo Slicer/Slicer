@@ -61,9 +61,9 @@ public:
     };
     
     enum{
-        ERR = -1,
-        FAIL = 0,
-        SUCC = 1        
+        PARAMETER_WIDGET_ERR = -1,
+        PARAMETER_WIDGET_FAIL = 0,
+        PARAMETER_WIDGET_SUCC = 1        
     };
     //ETX
 protected:

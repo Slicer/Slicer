@@ -102,20 +102,20 @@ int vtkSlicerParameterWidget::CreateWidgets()
     if(!this->GetApplication())
     {
         std::cout<<"vtkSlicerParameterWidget: Application is not set!"<<std::endl;
-        return ERR;
+        return PARAMETER_WIDGET_ERR;
     }    
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     
     if(!this->m_ModuleDescription)
     {
         std::cout<<"vtkSlicerParameterWidget: ModuleDescription is not set!"<<std::endl;
-        return FAIL;
+        return PARAMETER_WIDGET_FAIL;
     }
     
     if(!this->GetMRMLNode())
     {
         std::cout<<"vtkSlicerParameterWidget: MRMLNode is not set!"<<std::endl;
-        return ERR;
+        return PARAMETER_WIDGET_ERR;
     }
     
     if(!this->m_ParentWidget)
@@ -124,7 +124,7 @@ int vtkSlicerParameterWidget::CreateWidgets()
         vtkKWWindowBase *parentWindows = this->GetApplication()->GetNthWindow(0);
         vtkKWWidget *parentWidget = parentWindows->GetViewFrame();
         if(!parentWidget)
-            return ERR;
+            return PARAMETER_WIDGET_ERR;
         else
             this->m_ParentWidget = parentWidget;
     }
@@ -551,7 +551,7 @@ int vtkSlicerParameterWidget::CreateWidgets()
     this->m_Created = true;
     this->m_End = false;
     
-    return SUCC;
+    return PARAMETER_WIDGET_SUCC;
 }
 
 vtkKWWidget *vtkSlicerParameterWidget::GetNextWidget()
