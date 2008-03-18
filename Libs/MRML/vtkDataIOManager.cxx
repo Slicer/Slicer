@@ -311,14 +311,31 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
     vtkErrorMacro("QueueRead: unable to cast input mrml node to a storable node");
     return;
     }
+  // look for a pending storage node
+  int storageNodeIndex = -1;
   if (dnode->GetStorageNode() == NULL)
     {
     vtkErrorMacro("QueueRead: unable to get storage node from the storable node, returning");
     return;
     }
-  vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
+  for (int i = 0; i < dnode->GetNumberOfStorageNodes(); i++)
+    {
+    if (dnode->GetNthStorageNode(i)->GetReadState() == vtkMRMLStorageNode::Pending)
+      {
+      vtkDebugMacro("QueueRead: found a pending storage node at index " << i << ", setting it to scheduled");
+      dnode->GetNthStorageNode(i)->SetReadStateScheduled();
+      storageNodeIndex = i;
+      continue;
+      }
+    }
+  if (storageNodeIndex == -1)
+    {
+    vtkErrorMacro("QueueRead: unable to find a pending storage node!");
+    return;
+    }
+  vtkURIHandler *handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   vtkDebugMacro("QueueRead: got the uri handler from the storage node");
-  const char *source = dnode->GetStorageNode()->GetURI();
+  const char *source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
   const char *dest; 
 
   if (source == NULL)
@@ -384,10 +401,26 @@ void vtkDataIOManager::QueueWrite ( vtkMRMLNode *node )
     vtkErrorMacro("QueueWrite: unable to get storage node from the storable node, returning");
     return;
     }
-  vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
+  int storageNodeIndex = -1;
+  for (int i = 0; i < dnode->GetNumberOfStorageNodes(); i++)
+    {
+    if (dnode->GetNthStorageNode(i)->GetWriteState() == vtkMRMLStorageNode::Pending)
+      {
+      vtkDebugMacro("QueueWrite: found a pending storage node at index " << i << ", changing it to scheduled");
+      dnode->GetNthStorageNode(i)->SetWriteStateScheduled();
+      storageNodeIndex = i;
+      continue;
+      }
+    }
+  if (storageNodeIndex == -1)
+    {
+    vtkErrorMacro("QueueWrite: unable to find a pending storage node!");
+    return;
+    }
+  vtkURIHandler *handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   vtkDebugMacro("QueueWrite: got the uri handler from the storage node");
-  const char *source = dnode->GetStorageNode()->GetFileName();
-  const char *dest = dnode->GetStorageNode()->GetURI();
+  const char *source = dnode->GetNthStorageNode(storageNodeIndex)->GetFileName();
+  const char *dest = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
 
   if (source == NULL)
     {

@@ -574,12 +574,16 @@ void vtkCacheManager::MarkNode ( std::string str )
     node = vtkMRMLStorableNode::SafeDownCast ( this->MRMLScene->GetNthNodeByClass (n, "vtkMRMLStorableNode" ));
     if ( node != NULL )
       {
-      if (node->GetStorageNode() != NULL )
+      int numStorageNodes = node->GetNumberOfStorageNodes();
+      for (int i = 0; i < numStorageNodes; i++)
         {
-        uri = node->GetStorageNode()->GetFullNameFromFileName();
-        if ( str == uri )
+        if (node->GetNthStorageNode(i) != NULL )
           {
-          node->ModifiedSinceReadOn();
+          uri = node->GetNthStorageNode(i)->GetFullNameFromFileName();
+          if ( str == uri )
+            {
+            node->ModifiedSinceReadOn();
+            }
           }
         }
       }
