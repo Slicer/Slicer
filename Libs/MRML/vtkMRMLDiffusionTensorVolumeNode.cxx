@@ -160,6 +160,7 @@ std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> vtkMRMLDiffusionTens
     for (int i=0; i<3; i++)
       {
       vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New();
+      node->SetVisibility(0);
       if (this->GetScene())
         {
         this->GetScene()->AddNode(node);

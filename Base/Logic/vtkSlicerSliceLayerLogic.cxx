@@ -573,8 +573,6 @@ void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
       vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dnode = dnodes[i];
       if (!strcmp(this->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
         {
-        // TODO for now invisble
-        dnode->SetVisibility(0);
         dnode->SetSliceImage(sliceImage);
         dnode->SetSlicePositionMatrix(this->SliceNode->GetXYToRAS());
         }
