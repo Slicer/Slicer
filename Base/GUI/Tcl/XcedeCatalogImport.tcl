@@ -223,42 +223,26 @@ proc XcedeCatalogImportGetEntry {element } {
     set len [ llength $plist ]
     set fname [ lindex $plist [ expr $len - 1 ] ]
 
+    #set node($uriAttName) $::XcedeCatalog_Dir/$fname
+    set node(localFileName)  $::XcedeCatalog_Dir/$fname
+
     #--- check to see if it's a remote file
     set cacheManager [$::slicer3::MRMLScene GetCacheManager]
-    if {$cacheManager != ""} {
-        set isRemote [$cacheManager IsRemoteReference $node(uri)]
-        if {$isRemote == 1} {
-            $::XcedeCatalog_mainWindow SetStatusText "Loading remote $node(uri)..."
-            # puts "Trying to find URI handler for $node(uri)"
-            set uriHandler [$::slicer3::MRMLScene FindURIHandler $node(uri)]
-            if {$uriHandler != ""} {
-                # for now, do a synchronous download
-                puts "Found a file handler, doing a synchronous download from $node(uri) to $node($uriAttName)"
-                $uriHandler StageFileRead $node(uri) $::XcedeCatalog_Dir/$fname
-            } else {
-                puts "Unable to find a file handler for $node(uri)"
-            }
-        } else {
-           # puts "have a local file  $node(uri)"
-        }
-    } else {
-        # puts "Can't find the cache manager on the scene, assuming local file"
-    }
 
-    set node($uriAttName) $::XcedeCatalog_Dir/$fname
-
-    #--- make sure the uri exists
-    set node($uriAttName) [ file normalize $node($uriAttName) ]
-    if {![ file exists $node($uriAttName) ] } {
-        puts "can't find file $node($uriAttName)."
+    if {0} {
+    #--- make sure the local file exists
+    set node(localFileName) [ file normalize $node(localFileName) ]
+    if {![ file exists $node(localFileName) ] } {
+        puts "can't find file $node(localFileName)."
         return
     }
 
-    #--- make sure the uri is a file (and not a directory)
-    if { ![file isfile $node($uriAttName) ] } {
-        puts "$node($uriAttName) doesn't appear to be a file. Not trying to import."
+    #--- make sure the local file is a file (and not a directory)
+    if { ![file isfile $node(localFileName) ] } {
+        puts "$node(localFileName) doesn't appear to be a file. Not trying to import."
         return
     }
+  }
 
     #--- get the file format
     set gotformat 0
@@ -286,6 +270,27 @@ proc XcedeCatalogImportGetEntry {element } {
     if { $fileformat == 0 } {
         puts "$node($formatAttName) is an unsupported format. Cannot import entry."
         return
+    } elseif { $fileformat == 1 } {
+#        puts "$node($formatAttName) can handle downloads automatically"
+    } elseif { $fileformat == 2 } {
+#        puts "$node($formatAttName) is something we have to download manually if it has a remote uri"
+        if {$cacheManager != ""} {
+            set isRemote [$cacheManager IsRemoteReference $node($uriAttName)]
+            if {$isRemote == 1} {
+                $::XcedeCatalog_mainWindow SetStatusText "Loading remote $node($uriAttName)..."
+                # puts "Trying to find URI handler for $node($uriAttName)"
+                set uriHandler [$::slicer3::MRMLScene FindURIHandler $node($uriAttName)]
+                if {$uriHandler != ""} {
+                    # for now, do a synchronous download
+#                    puts "Found a file handler, doing a synchronous download from $node($uriAttName) to $node(localFileName)"
+                    $uriHandler StageFileRead $node($uriAttName) $node(localFileName)
+#                    puts "\tNow resetting uri to local file name so can read from disk"
+                    set node($uriAttName) $node(localFileName)
+                } else {
+                    puts "Unable to find a file handler for $node($uriAttName)"
+                }
+            }
+        }
     }
     
     #--- finally, create the node
@@ -742,10 +747,11 @@ proc XcedeCatalogImportFormatCheck { format } {
     #--- TODO: Add more as we know what their
     #--- XCEDE definitions are (analyze, etc.)
     
+# return 1 if have a valid storage node that can deal with remote uri's, return 2 if need to synch download
     if {$format == "FreeSurfer:mgz-1" } {
-        return 1
+        return 2
     } elseif {$format == "nifti:nii-1" } {
-        return 1
+        return 2
     } elseif { $format == "FreeSurfer:w-1" } {
         return 1
     } elseif { $format == "FreeSurfer:thickness-1" } {
@@ -761,13 +767,13 @@ proc XcedeCatalogImportFormatCheck { format } {
     } elseif { $format == "FreeSurfer:annot-1" } {
         return 1
     } elseif { $format == "FreeSurfer:mgh-1" } {
-        return 1
+        return 2
     } elseif { $format == "FreeSurfer:surface-1" } {
         return 1
     } elseif { $format == "FreeSurfer:overlay-1" } {
         return 1
     } elseif { $format == "FreeSurfer:matrix-1" } {
-        return 1
+        return 2
     }  else {
         return 0
     }
