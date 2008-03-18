@@ -102,6 +102,7 @@ itcl::body MakeModelEffect::apply {} {
   #
   set moduleNode [$::slicer3::MRMLScene CreateNodeByClass "vtkMRMLCommandLineModuleNode"]
   $::slicer3::MRMLScene AddNode $moduleNode
+  $moduleNode SetName "Editor Make Model"
   $moduleNode SetModuleDescription "Model Maker"
 
   $moduleNode SetParameterAsString "Name" "Quick Model"
