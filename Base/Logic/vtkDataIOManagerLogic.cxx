@@ -186,9 +186,26 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     vtkErrorMacro("QueueRead: unable to get storage node from the storable node " << dnode->GetID() << ", returning");
     return 0;
     }
-
+  //--- find the storage node that's in the scheduled state
+  int numStorageNodes = dnode->GetNumberOfStorageNodes();
+  int storageNodeIndex = -1;
+  for (int n = 0; n < numStorageNodes; n++)
+    {
+    if (dnode->GetNthStorageNode(n)->GetReadState() == vtkMRMLStorageNode::Scheduled)
+      {
+      vtkDebugMacro("QueueRead: found storage node in scheduled state, n = " << n);
+      storageNodeIndex = n;
+      continue;
+      }
+    }
+  if (storageNodeIndex == -1)
+    {
+    vtkWarningMacro("QueueRead: no storage nodes found in scheduled state, checked " << numStorageNodes);
+    return 0;
+    }
+  
   //--- if handler is good and there's enough cache space, queue the read
-  vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
+  vtkURIHandler *handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   if ( handler == NULL)
     {
     vtkErrorMacro("QueueRead: null URI handler!");
@@ -211,19 +228,19 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     return 0;
     }
 
-  const char *source = dnode->GetStorageNode()->GetURI();
+  const char *source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
   const char *dest = cm->GetFilenameFromURI ( source );
   vtkDebugMacro("QueueRead: got the source " << source << " and dest " << dest);
 
   //--- set the destination filename in the node.
-  dnode->GetStorageNode()->SetFileName ( dest );
+  dnode->GetNthStorageNode(storageNodeIndex)->SetFileName ( dest );
   
   //--- if the filename already exists in cache and
   //--- user has selected not to redownload cached files
   //--- just return.
   if ( (cm->CachedFileExists ( dest )) && ( !(cm->GetEnableForceRedownload())) )
     {
-    dnode->GetStorageNode()->SetReadStateReady();
+    dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateReady();
     vtkDebugMacro("QueueRead: the destination file is there and we're not forceing redownload");
     return 1;
     }
@@ -294,7 +311,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     this->ApplyTransfer ( transfer );
     transfer->SetTransferStatus( vtkDataTransfer::Completed);
     // now set the node's storage node state to ready
-    dnode->GetStorageNode()->SetReadStateReady();
+    dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateReady();
     }
   transfer->Delete();
   return 1;
@@ -328,9 +345,25 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
     vtkErrorMacro("QueueWrite: unable to get storage node from the storable node " << dnode->GetID() << ", returning");
     return 0;
     }
-
+  //--- find the storage node in scheduled state
+  int storageNodeIndex = -1;
+  for (int i = 0; i < dnode->GetNumberOfStorageNodes(); i++)
+    {
+    if (dnode->GetNthStorageNode(i)->GetWriteState() == vtkMRMLStorageNode::Scheduled)
+      {
+      storageNodeIndex = i;
+      vtkDebugMacro("QueueWrite: found a scheduled storage node at index " << i);
+      continue;
+      }
+    }
+  if (storageNodeIndex == -1)
+    {
+    vtkErrorMacro("QueueWrite: Could not find a scheduled storage node.");
+    return 0;
+    }
+      
   //--- if handler is good and there's enough cache space, queue the read
-  vtkURIHandler *handler = dnode->GetStorageNode()->GetURIHandler();
+  vtkURIHandler *handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   if ( handler == NULL)
     {
     vtkErrorMacro("QueueWrite: null URI handler!");
@@ -354,8 +387,8 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
     }
 
   // this may just have to be GetFileName()
-  const char *source = dnode->GetStorageNode()->GetFileName();
-  const char *dest = dnode->GetStorageNode()->GetURI();
+  const char *source = dnode->GetNthStorageNode(storageNodeIndex)->GetFileName();
+  const char *dest = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
   vtkDebugMacro("QueueWrite: got the source " << source << " and dest " << dest);
   
   // don't need to check the cache manager
@@ -421,7 +454,7 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
     this->ApplyTransfer ( transfer );
     transfer->SetTransferStatus( vtkDataTransfer::Completed);
     // now set the node's storage node state to ready
-    dnode->GetStorageNode()->SetWriteStateReady();
+    dnode->GetNthStorageNode(storageNodeIndex)->SetWriteStateReady();
     }
   transfer->Delete();
   return 1;
@@ -486,13 +519,26 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
         vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast( node );
         if ( !storableNode )
           {
-          vtkErrorMacro( "could not get storable node for scheduled data transfer" );
+          vtkErrorMacro( "ApplyTransfer: could not get storable node for scheduled data transfer" );
           return;
           }
-        vtkMRMLStorageNode *storageNode = storableNode->GetStorageNode();
+        // find the storage node that's scheduled
+        int storageNodeIndex = -1;
+        for (int i = 0; i < storableNode->GetNumberOfStorageNodes(); i++)
+          {
+          if (storableNode->GetNthStorageNode(i)->GetReadState() == vtkMRMLStorageNode::Scheduled)
+            {
+            storageNodeIndex = i;
+            }
+          }
+        if (storageNodeIndex == -1)
+          {
+          vtkErrorMacro("ApplyTransfer: unable to find a storage node in scheduled state.");
+          }
+        vtkMRMLStorageNode *storageNode = storableNode->GetNthStorageNode(storageNodeIndex);
         if ( !storageNode )
           {
-          vtkErrorMacro( "no storage node for scheduled data transfer" );
+          vtkErrorMacro( "ApplyTransfer: no storage node for scheduled data transfer" );
           return;
           }
         storageNode->SetDisableModifiedEvent( 1 );
@@ -529,7 +575,20 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
           vtkErrorMacro( "ApplyTransfer: Upload: could not get storable node for scheduled data transfer" );
           return;
           }
-        vtkMRMLStorageNode *storageNode = storableNode->GetStorageNode();
+        // find the storage node that's scheduled
+        int storageNodeIndex = -1;
+        for (int i = 0; i < storableNode->GetNumberOfStorageNodes(); i++)
+          {
+          if (storableNode->GetNthStorageNode(i)->GetWriteState() == vtkMRMLStorageNode::Scheduled)
+            {
+            storageNodeIndex = i;
+            }
+          }
+        if (storageNodeIndex == -1)
+          {
+          vtkErrorMacro("ApplyTransfer: upload: unable to find a storage node in scheduled state.");
+          }
+        vtkMRMLStorageNode *storageNode = storableNode->GetNthStorageNode(storageNodeIndex);
         if ( !storageNode )
           {
           vtkErrorMacro( "ApplyTransfer: Upload: no storage node for scheduled data transfer" );
