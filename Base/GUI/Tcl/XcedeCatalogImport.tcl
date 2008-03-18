@@ -284,15 +284,15 @@ proc XcedeCatalogImportGetEntry {element } {
                     # for now, do a synchronous download
 #                    puts "Found a file handler, doing a synchronous download from $node($uriAttName) to $node(localFileName)"
                     $uriHandler StageFileRead $node($uriAttName) $node(localFileName)
-#                    puts "\tNow resetting uri to local file name so can read from disk"
-                    set node($uriAttName) $node(localFileName)
                 } else {
                     puts "Unable to find a file handler for $node($uriAttName)"
                 }
             }
         }
     }
-    
+    # puts "\tNow resetting uri to local file name so can read from disk"
+    set node($uriAttName) $node(localFileName)
+
     #--- finally, create the node
     set handler XcedeCatalogImportEntry$nodeType
     
