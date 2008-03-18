@@ -69,7 +69,7 @@ int vtkMRMLUnstructuredGridStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   Superclass::StageReadData(refNode);
-  if ( this->GetReadState() == this->Pending )
+  if ( this->GetReadState() != this->Ready )
     {
     // remote file download hasn't finished
     return 0;

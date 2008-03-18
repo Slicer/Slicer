@@ -97,6 +97,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   {
     Ready,
     Pending,
+    Scheduled,
   };
   //ETX
   // Description:
@@ -105,6 +106,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   vtkSetMacro(ReadState,int);
   void SetReadStatePending() { this->SetReadState(this->Pending); };
   void SetReadStateReady() { this->SetReadState(this->Ready); };
+  void SetReadStateScheduled() { this->SetReadState(this->Scheduled); };
   const char *GetStateAsString(int state);
   const char *GetReadStateAsString() { return this->GetStateAsString(this->ReadState); };
   
@@ -114,6 +116,7 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   vtkSetMacro(WriteState,int);
   void SetWriteStatePending() { this->SetWriteState(this->Pending); };
   void SetWriteStateReady() { this->SetWriteState(this->Ready); };
+  void SetWriteStateScheduled() { this->SetWriteState(this->Scheduled); };
   const char *GetWriteStateAsString() { return this->GetStateAsString(this->WriteState); };
 
   // Description:

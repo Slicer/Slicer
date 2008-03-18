@@ -147,7 +147,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   Superclass::StageReadData(refNode);
-  if ( this->GetReadState() == this->Pending )
+  if ( this->GetReadState() != this->Ready )
     {
     // remote file download hasn't finished
     vtkWarningMacro("ReadData: read state is pending, remote download hasn't finished yet");

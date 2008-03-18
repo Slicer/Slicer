@@ -202,7 +202,7 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
   vtkDataIOManager *iomanager = this->Scene->GetDataIOManager();
   if (iomanager != NULL)
     {
-    if (this->GetReadState() != this->Pending)
+    if (this->GetReadState() == this->Ready)
       {
       vtkDebugMacro("StageReadData: setting read state to pending, finding a URI handler and queuing read on the io manager");
       this->SetReadStatePending();
@@ -257,7 +257,7 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
    vtkDataIOManager *iomanager = this->Scene->GetDataIOManager();
    if (iomanager != NULL)
      {
-     if (this->GetWriteState() != this->Pending)
+     if (this->GetWriteState() == this->Ready)
        {
        vtkDebugMacro("StageWriteData: setting write state to pending, finding a URI handler and queuing write on the io manager");
        this->SetWriteStatePending();
@@ -293,9 +293,13 @@ const char * vtkMRMLStorageNode::GetStateAsString(int state)
     {
     return "Pending";
     }
-  if (state = this->Ready)
+  if (state == this->Ready)
     {
     return "Ready";
+    }
+  if (state == this->Scheduled)
+    {
+    return "Scheduled";
     }
   return "(undefined)";
 }
