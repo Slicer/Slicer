@@ -3,6 +3,7 @@
 
 #include "vtkSlicerMeasurementFrameWidget.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkSlicerGradientEditorLogic.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
@@ -31,6 +32,7 @@ vtkSlicerMeasurementFrameWidget::vtkSlicerMeasurementFrameWidget(void)
   this->SwapButton = NULL;
   this->AngleCombobox = NULL;
   this->AngleLabel = NULL;
+  this->Logic = NULL;
   }
 
 //---------------------------------------------------------------------------
@@ -100,6 +102,11 @@ vtkSlicerMeasurementFrameWidget::~vtkSlicerMeasurementFrameWidget(void)
     this->Matrix->Delete();
     this->Matrix = NULL;
     }
+  if (this->Logic)
+    {
+    this->Logic->Delete();
+    this->Logic = NULL;
+    }
   }
 
 //---------------------------------------------------------------------------
@@ -167,18 +174,17 @@ void vtkSlicerMeasurementFrameWidget::UpdateMatrix()
 //---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::SaveMatrix()
   {
-  this->MRMLScene->SaveStateForUndo();
+  this->InvokeEvent(this->ChangedEvent);
+  this->Logic->SaveStateForUndoRedo();
   // write internal matrix back to node
   this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
   // mark as modified in save menu
-  this->ActiveVolumeNode->SetModifiedSinceRead(1);
-  this->InvokeEvent(this->ChangedEvent);
+  this->ActiveVolumeNode->SetModifiedSinceRead(1);  
   }
 
 //---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
   {
-
   //import current matrix values 
   if(event == vtkKWMatrixWidget::ElementChangedEvent && this->MatrixWidget == vtkKWMatrixWidget::SafeDownCast(caller))
     {
@@ -331,6 +337,12 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
     this->UpdateMatrix();
     this->SaveMatrix();
     }
+  }
+
+//---------------------------------------------------------------------------
+void vtkSlicerMeasurementFrameWidget::SetLogic(vtkSlicerGradientEditorLogic *logic)
+  {
+  this->Logic = logic;
   }
 
 //---------------------------------------------------------------------------

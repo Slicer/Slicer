@@ -127,10 +127,8 @@ void vtkSlicerGradientsWidget::ProcessWidgetEvents (vtkObject *caller, unsigned 
     const char *filename = this->LoadGradientsButton->GetWidget()->GetFileName();
     if(filename)
       {
-      vtkSlicerGradientEditorLogic *myLogic = vtkSlicerGradientEditorLogic::New();
-
       //check if file contains valid values
-      int status = myLogic->AddGradients(filename, this->ActiveVolumeNode->GetNumberOfGradients(), this->BValues, this->Gradients);
+      int status = this->Logic->AddGradients(filename, this->ActiveVolumeNode->GetNumberOfGradients(), this->BValues, this->Gradients);
       if(status)
         {
         this->UpdateGradients(); //add gradients to gui, if valid
@@ -143,9 +141,9 @@ void vtkSlicerGradientsWidget::ProcessWidgetEvents (vtkObject *caller, unsigned 
         this->LoadGradientsButton->GetWidget()->SetText(""); //clear GUI text
         this->DisplayMessageDialog("File contains invalid values!");
         }
-      myLogic->Delete();
       }
-    }
+    }//end load gradients from file
+
   }
 
 //---------------------------------------------------------------------------
@@ -228,15 +226,14 @@ void vtkSlicerGradientsWidget::UpdateGradients()
 void vtkSlicerGradientsWidget::TextFieldModifiedCallback()
   {
   //Save and tricker changed event for undo
-  this->GetMRMLScene()->SaveStateForUndo();
+  this->Logic->SaveStateForUndoRedo();
   this->InvokeEvent(this->ChangedEvent);
 
-  vtkSlicerGradientEditorLogic *myLogic = vtkSlicerGradientEditorLogic::New();
   const char *oldGradients = this->GradientsTextbox->GetWidget()->GetText();
   int numberOfGradients = this->ActiveVolumeNode->GetNumberOfGradients();
 
   //parse new gradients and update status label
-  int status = myLogic->ParseGradients(oldGradients, numberOfGradients, this->BValues, this->Gradients);
+  int status = this->Logic->ParseGradients(oldGradients, numberOfGradients, this->BValues, this->Gradients);
   this->UpdateStatusLabel(status);
 
   //only if parsing was successful save gradients in activeVolumneNode
@@ -244,7 +241,6 @@ void vtkSlicerGradientsWidget::TextFieldModifiedCallback()
     {
     this->SaveGradients();
     }
-  myLogic->Delete();
   }
 
 //---------------------------------------------------------------------------
@@ -280,6 +276,12 @@ void vtkSlicerGradientsWidget::SaveGradients( )
     vtkWarningMacro("time: "<<timer->GetElapsedTime());
     timer->Delete();
     }
+  }
+
+//---------------------------------------------------------------------------
+void vtkSlicerGradientsWidget::SetLogic(vtkSlicerGradientEditorLogic *logic)
+  {
+  this->Logic = logic;
   }
 
 //---------------------------------------------------------------------------

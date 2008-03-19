@@ -13,6 +13,7 @@
 #include "vtkSlicerApplication.h"
 
 class vtkSlicerNodeSelectorWidget;
+class vtkSlicerGradientEditorLogic;
 class vtkMRMLDiffusionWeightedVolumeNode;
 class vtkMRMLFiberBundleNode;
 class vtkMRMLCommandLineModuleNode;
@@ -49,7 +50,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     void CreateTracts();
 
     vtkSetObjectMacro(Application, vtkSlicerApplication);
-
+    
   protected:
     vtkSlicerGradientEditorWidget(void);
     virtual ~vtkSlicerGradientEditorWidget(void);
@@ -58,24 +59,22 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     // Method to create the widget.
     virtual void CreateWidget();
 
-    vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
-    vtkMRMLDiffusionWeightedVolumeNode *OriginalNode;
-    vtkMRMLDiffusionTensorVolumeNode *TensorNode;
-    vtkMRMLScalarVolumeNode *BaselineNode;
-    vtkMRMLScalarVolumeNode *MaskNode;
-    vtkMRMLFiberBundleNode *FiberNode;
-    vtkSlicerApplication *Application;
-    vtkMRMLCommandLineModuleNode *TensorCML;
-
-    // Description:
-    // Number of changes in gradients/measurement frame of ActiveVolumeNode.
-    int NumberOfChanges;
-    
     // Description:
     // Is 1, if tensor has to be newly estimated.
     // Is 0, if parameters have not changed and old tensor can be used for tractography.
     int ModifiedForNewTensor;
+
+    vtkSlicerApplication *Application;
+    vtkSlicerGradientEditorLogic *Logic;
     
+    //nodes
+    vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
+    vtkMRMLDiffusionTensorVolumeNode *TensorNode;
+    vtkMRMLScalarVolumeNode *BaselineNode;
+    vtkMRMLScalarVolumeNode *MaskNode;
+    vtkMRMLFiberBundleNode *FiberNode;
+    vtkMRMLCommandLineModuleNode *TensorCML;
+  
     //widgets (GUI)
     vtkSlicerMeasurementFrameWidget *MeasurementFrameWidget;
     vtkSlicerGradientsWidget *GradientsWidget;
@@ -88,7 +87,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     vtkKWPushButton *RestoreButton;
     vtkKWPushButton *UndoButton;
     vtkKWPushButton *RedoButton;
-       
+
   private:
     vtkSlicerGradientEditorWidget (const vtkSlicerGradientEditorWidget&); // Not implemented.
     void operator = (const vtkSlicerGradientEditorWidget&); //Not implemented.

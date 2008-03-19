@@ -34,20 +34,19 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   {
   this->Application = NULL;
   this->ActiveVolumeNode = NULL;
-  this->OriginalNode = vtkMRMLDiffusionWeightedVolumeNode::New();
   this->MeasurementFrameWidget = NULL;
   this->GradientsWidget = NULL;
   this->RestoreButton = NULL;
   this->UndoButton = NULL;
   this->RedoButton = NULL;
   this->ButtonFrame = NULL;
+  this->Logic = vtkSlicerGradientEditorLogic::New();
   //Testframe maybe as an extra widget later
   this->TestFrame = NULL;
   this->RunButton = NULL;
   this->FiducialSelector = NULL;
   this->RunFrame = NULL;
   this->DTISelector = NULL;
-  this->NumberOfChanges = 0;
   this->ModifiedForNewTensor = 1;
   this->TensorNode = NULL;
   this->FiberNode = NULL;
@@ -61,11 +60,6 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     {
     this->ActiveVolumeNode->Delete();
     this->ActiveVolumeNode = NULL;
-    }
-  if (this->OriginalNode)
-    {
-    this->OriginalNode->Delete();
-    this->OriginalNode = NULL;
     }
   if (this->MeasurementFrameWidget)
     {
@@ -146,8 +140,6 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     this->FiberNode->Delete();
     this->FiberNode = NULL;
     }
-
-  this->NumberOfChanges = 0;
   this->ModifiedForNewTensor = 0;
   }
 
@@ -157,11 +149,10 @@ void vtkSlicerGradientEditorWidget::AddWidgetObservers ( )
   this->RunButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->RestoreButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->UndoButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->RedoButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MeasurementFrameWidget->AddObserver(vtkSlicerMeasurementFrameWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->GradientsWidget->AddObserver(vtkSlicerGradientsWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->DTISelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
-
-  
   }
 
 //---------------------------------------------------------------------------
@@ -170,6 +161,7 @@ void vtkSlicerGradientEditorWidget::RemoveWidgetObservers( )
   this->RunButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->RestoreButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->UndoButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->RedoButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MeasurementFrameWidget->RemoveObservers(vtkSlicerMeasurementFrameWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->GradientsWidget->RemoveObservers(vtkSlicerGradientsWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->DTISelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -192,17 +184,15 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     this->GradientsWidget == vtkSlicerGradientsWidget::SafeDownCast(caller)))
     {
     this->UndoButton->SetEnabled(1);
-    this->RestoreButton->SetEnabled(1);
-    this->NumberOfChanges++; //increment changes    
+    this->RestoreButton->SetEnabled(1);   
     this->ModifiedForNewTensor = 1; //tensor has to be estimated newly
     }
 
   //restore to original
   else if (this->RestoreButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
-    this->MRMLScene->SaveStateForUndo();
-    this->NumberOfChanges++; //increment changes
-    this->ActiveVolumeNode->Copy(this->OriginalNode); //copy original back
+    this->Logic->SaveStateForUndoRedo();
+    this->Logic->Restore();
     this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
     this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
     this->RestoreButton->SetEnabled(0); //disable restoreButton until next change
@@ -214,18 +204,35 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
   else if(event == vtkKWPushButton::InvokedEvent && this->UndoButton == vtkKWPushButton::SafeDownCast(caller))
     {
     //if there is a copy in the undoStack, that was made before loading
-    if(this->NumberOfChanges>0)
+    if(this->Logic->GetUndoRedoStackSize() > 0)
       {
-      this->MRMLScene->Undo(); //undo
-      this->NumberOfChanges--; //decrement changes
+      this->Logic->Undo();
       this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
       this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
-      //disable buttons, when no changes are available
-      if(this->NumberOfChanges==0)
-        {
-        this->UndoButton->SetEnabled(0);
-        this->RestoreButton->SetEnabled(0);
-        }
+      this->RedoButton->SetEnabled(1);
+      ///*disable buttons, when no changes are available
+      //if(this->Logic->GetUndoRedoStackSize()==0)
+      //  {
+      //  this->UndoButton->SetEnabled(0);
+      //  this->RestoreButton->SetEnabled(0);
+      //  }*/
+      }
+    }
+
+  //redo
+  else if(event == vtkKWPushButton::InvokedEvent && this->RedoButton == vtkKWPushButton::SafeDownCast(caller))
+    {
+    if(this->Logic->GetUndoRedoStackSize() > 0)
+      {
+      this->Logic->Redo();
+      this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
+      this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
+      ///*disable buttons, when no changes are available
+      //if(this->Logic->GetUndoRedoStackSize()==0)
+      //  {
+      //  this->UndoButton->SetEnabled(0);
+      //  this->RestoreButton->SetEnabled(0);
+      //  }*/
       }
     }
 
@@ -305,7 +312,7 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     }
 
   if (this->DTISelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
-      this->DTISelector->GetSelected() != NULL) 
+    this->DTISelector->GetSelected() != NULL) 
     {
     this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->DTISelector->GetSelected());
     this->CreateTracts();
@@ -360,13 +367,12 @@ void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeN
     return;
     }
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode); //set ActiveVolumeNode
-  this->OriginalNode->Copy(this->ActiveVolumeNode); //make private copy before changing
-  // update the measurement frame, gradients and bValues 
-  // when the active node changes
+  // update all when the active node changes
   this->MeasurementFrameWidget->SetMRMLScene(this->GetMRMLScene());
-  this->GradientsWidget->SetMRMLScene(this->GetMRMLScene());
   this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
+  this->GradientsWidget->SetMRMLScene(this->GetMRMLScene());
   this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode);
+  this->Logic->SetActiveVolumeNode(this->ActiveVolumeNode);
   }
 
 //---------------------------------------------------------------------------
@@ -386,6 +392,7 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->MeasurementFrameWidget->SetParent(this->GetParent());
   this->MeasurementFrameWidget->Create();
   this->MeasurementFrameWidget->AddWidgetObservers();
+  this->MeasurementFrameWidget->SetLogic(this->Logic);
   this->Script("pack %s -side top -anchor n -fill x -padx 2 -pady 2", 
     this->MeasurementFrameWidget->GetWidgetName());
 
@@ -394,6 +401,7 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->GradientsWidget->SetParent(this->GetParent());
   this->GradientsWidget->Create();
   this->GradientsWidget->AddWidgetObservers();
+  this->GradientsWidget->SetLogic(this->Logic);
   this->Script("pack %s -side top -anchor n -fill both -expand true -padx 2 -pady 2", 
     this->GradientsWidget->GetWidgetName());
 

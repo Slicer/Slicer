@@ -7,6 +7,7 @@
 
 #include "vtkVolumes.h"
 #include "vtkSlicerWidget.h"
+#include "vtkSlicerGradientEditorLogic.h"
 
 class vtkMRMLDiffusionWeightedVolumeNode;
 class vtkMatrix4x4;
@@ -48,6 +49,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
       };
     //ETX
 
+    void SetLogic(vtkSlicerGradientEditorLogic *logic);
+
   protected:
     vtkSlicerMeasurementFrameWidget(void);
     virtual ~vtkSlicerMeasurementFrameWidget(void);
@@ -66,6 +69,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkMatrix4x4 *Matrix;
+    vtkSlicerGradientEditorLogic *Logic;
     //widgets (GUI)
     vtkKWFrameWithLabel *MeasurementFrame;
     vtkKWMatrixWidget *MatrixWidget;    

@@ -8,8 +8,9 @@
 
 #include "vtkVolumes.h"
 #include "vtkSlicerLogic.h"
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include <vtkstd/vector>
 
-class vtkMRMLDiffusionWeightedVolumeNode;
 class vtkDoubleArray;
 
 class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic 
@@ -42,9 +43,29 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
     int StringToDouble(const std::string &s, double &result);
     //ETX
 
+    void SaveStateForUndoRedo();
+
+    void Redo();
+
+    void Undo();
+
+    void Restore();
+
+    int GetUndoRedoStackSize();
+
+    void SetActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
+
   protected:
     vtkSlicerGradientEditorLogic(void);
     virtual ~vtkSlicerGradientEditorLogic(void);
+
+    vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
+    
+    // Description:
+    // Stack holds all references of createt tensors.
+    //BTX
+    vtkstd::vector<vtkMRMLDiffusionWeightedVolumeNode*> UndoRedoStack;
+    //ETX
 
   private:
     vtkSlicerGradientEditorLogic (const vtkSlicerGradientEditorLogic&); // Not implemented.

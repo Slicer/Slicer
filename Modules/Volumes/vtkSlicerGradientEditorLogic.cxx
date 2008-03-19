@@ -15,11 +15,17 @@ vtkStandardNewMacro(vtkSlicerGradientEditorLogic);
 //---------------------------------------------------------------------------
 vtkSlicerGradientEditorLogic::vtkSlicerGradientEditorLogic(void)
   {
+  this->ActiveVolumeNode = NULL;
   }
 
 //---------------------------------------------------------------------------
 vtkSlicerGradientEditorLogic::~vtkSlicerGradientEditorLogic(void)
   {
+  if (this->ActiveVolumeNode)
+    {
+    this->ActiveVolumeNode->Delete();
+    this->ActiveVolumeNode = NULL;
+    }
   }
 
 //---------------------------------------------------------------------------
@@ -31,7 +37,7 @@ void vtkSlicerGradientEditorLogic::PrintSelf ( ostream& os, vtkIndent indent )
 
 //---------------------------------------------------------------------------
 int vtkSlicerGradientEditorLogic::AddGradients (const char* filename, int numberOfGradients, vtkDoubleArray *newBValue, 
-      vtkDoubleArray *newGradients)
+                                                vtkDoubleArray *newGradients)
   {
   // format the filename
   std::string fileString(filename);
@@ -64,7 +70,7 @@ int vtkSlicerGradientEditorLogic::AddGradients (const char* filename, int number
       vtkWarningMacro("no valid file");
       return 0;
       }
-     
+
     ifstream file;
     file.open(fileString.c_str(), ios::in);
 
@@ -83,9 +89,9 @@ int vtkSlicerGradientEditorLogic::AddGradients (const char* filename, int number
       }
     return 0;
     }
-   storageNode->Delete();
-   dwiNode->Delete();
-   return 1;
+  storageNode->Delete();
+  dwiNode->Delete();
+  return 1;
   }
 
 //---------------------------------------------------------------------------
@@ -104,7 +110,7 @@ int vtkSlicerGradientEditorLogic::StringToDouble(const std::string &s, double &r
 
 //---------------------------------------------------------------------------
 int vtkSlicerGradientEditorLogic::ParseGradients(const char *oldGradients, int numberOfGradients,
-                                                  vtkDoubleArray *newBValues, vtkDoubleArray *newGradients)
+                                                 vtkDoubleArray *newBValues, vtkDoubleArray *newGradients)
   {
   if (oldGradients == NULL || oldGradients == "")
     {
@@ -163,5 +169,47 @@ int vtkSlicerGradientEditorLogic::ParseGradients(const char *oldGradients, int n
 
   factor->Delete();
   return 1;
+  }
+
+//---------------------------------------------------------------------------
+void vtkSlicerGradientEditorLogic::SetActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node)
+  {
+  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, node); //set activeVolumeNode
+  }
+
+//---------------------------------------------------------------------------
+void vtkSlicerGradientEditorLogic::SaveStateForUndoRedo()
+  {
+  vtkMRMLDiffusionWeightedVolumeNode *nodeToSave = vtkMRMLDiffusionWeightedVolumeNode::New();
+  nodeToSave->Copy(this->ActiveVolumeNode);
+  this->UndoRedoStack.push_back(nodeToSave);
+  //if(!this->UndoRedoStack.empty)
+  //    {
+  //    for(unsigned int i = 0; i < this->UndoRedoStack->size(); i++) 
+  //      {
+  //      if(this->ActiveVolumeNode == UndoRedoStack->at(i) && i<this->UndoRedoStack->size()-1
+  //        )
+  //        {
+  //        vtkMRMLDiffusionWeightedVolumeNode *test = this->UndoRedoStack->at(i+1);
+  //        }
+  //      }
+  //    }
+  }
+
+void vtkSlicerGradientEditorLogic::Redo()
+  {
+  }
+
+void vtkSlicerGradientEditorLogic::Undo()
+  {
+  }
+
+void vtkSlicerGradientEditorLogic::Restore()
+  {
+  }
+
+int vtkSlicerGradientEditorLogic::GetUndoRedoStackSize()
+  {
+  return this->UndoRedoStack.size();
   }
 
