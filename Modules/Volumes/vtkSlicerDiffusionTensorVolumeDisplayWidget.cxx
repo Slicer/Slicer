@@ -8,6 +8,7 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWScale.h"
 
+#include "vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget.h"
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
@@ -46,11 +47,11 @@ vtkSlicerDiffusionTensorVolumeDisplayWidget::vtkSlicerDiffusionTensorVolumeDispl
 
     this->ScalarModeMenu = NULL;
     this->ScalarOptionsFrame=NULL;
-    this->GlyphButton = NULL;
-    this->GlyphModeMenu = NULL;
     this->InterpolateButton = NULL;
     this->ColorSelectorWidget = NULL;
     this->WindowLevelThresholdEditor = NULL;
+    
+    this->GlyphDisplayWidget = NULL;
     
     this->UpdatingMRML = 0;
     this->UpdatingWidget = 0;
@@ -83,18 +84,6 @@ vtkSlicerDiffusionTensorVolumeDisplayWidget::~vtkSlicerDiffusionTensorVolumeDisp
     this->ScalarOptionsFrame->Delete();
     this->ScalarOptionsFrame = NULL;
     }
-  if (this->GlyphButton)
-    {
-    this->GlyphButton->SetParent(NULL);
-    this->GlyphButton->Delete();
-    this->GlyphButton = NULL;
-    }
-  if (this->GlyphModeMenu)
-    {
-    this->GlyphModeMenu->SetParent(NULL);
-    this->GlyphModeMenu->Delete();
-    this->GlyphModeMenu = NULL;
-    }
 
   if (this->ColorSelectorWidget)
     {
@@ -113,6 +102,12 @@ vtkSlicerDiffusionTensorVolumeDisplayWidget::~vtkSlicerDiffusionTensorVolumeDisp
     this->WindowLevelThresholdEditor->SetParent(NULL);
     this->WindowLevelThresholdEditor->Delete();
     this->WindowLevelThresholdEditor = NULL;
+    }
+  if (this->GlyphDisplayWidget)
+    {
+    this->GlyphDisplayWidget->SetParent(NULL);
+    this->GlyphDisplayWidget->Delete();
+    this->GlyphDisplayWidget = NULL;
     }
   this->SetMRMLScene ( NULL );
 }
@@ -171,52 +166,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
     return;
     }
 
-  //
-  // process glyph mode menu events
-  //
-  vtkKWMenu *glyphMenu = 
-      vtkKWMenu::SafeDownCast(caller);
-
-
-  if (glyphMenu == this->GlyphModeMenu->GetWidget()->GetWidget()->GetMenu() && 
-        event == vtkKWMenu::MenuItemInvokedEvent)
-    {
-    vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
-    if (displayNode != NULL)
-      {
-      const char *glyphSelection = this->GlyphModeMenu->GetWidget()->GetWidget()->GetValue();
-      if (displayNode->GetDiffusionTensorDisplayPropertiesNode())
-        {
-        displayNode->GetDiffusionTensorDisplayPropertiesNode()->SetGlyphGeometry(this->GlyphModeMap[std::string(glyphSelection)]);
-        }
-      }
-    this->UpdatingWidget = 0;
-    return;
-    }
-
-  // process glyph button event
-  vtkKWCheckButton *glyphButton = vtkKWCheckButton::SafeDownCast(caller);
-
-  if (glyphButton == this->GlyphButton &&
-        event == vtkKWCheckButton::SelectedStateChangedEvent)
-    {
-     vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
-      if (displayNode != NULL)
-        {
-        if (this->GlyphButton->GetSelectedState() )
-          {
-          displayNode->SetVisualizationModeToBoth();
-          }
-        else
-          {
-          displayNode->SetVisualizationModeToScalarVolume();
-          }
-        }
-      this->UpdatingWidget = 0;
-      return;
-      }
-
-  // Widgets that apply to Scalar Invariant Display properties
+ // Widgets that apply to Scalar Invariant Display properties
 
   //
   // process color selector events
@@ -379,12 +329,12 @@ if (this->UpdatingMRML || this->UpdatingWidget)
     return;
     }
 
-  vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(caller);
+  vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(caller);
   if (volumeNode == curVolumeNode && 
       volumeNode != NULL && event == vtkCommand::ModifiedEvent)
     {
     this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
-
+    this->GlyphDisplayWidget->SetDiffusionTensorVolumeNode(volumeNode);
     //--- check the interpolation which may have been modified from the SliceGUI
     vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
     if (displayNode && this->InterpolateButton )
@@ -412,7 +362,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::UpdateWidgetFromMRML ()
   vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
 
   vtkMRMLDiffusionTensorDisplayPropertiesNode *propNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(displayNode->GetDiffusionTensorDisplayPropertiesNode());
-
+  
   if ( this->ScalarModeMenu )
     {
     if (propNode != NULL)
@@ -420,31 +370,14 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::UpdateWidgetFromMRML ()
       this->ScalarModeMenu->GetWidget()->GetWidget()->SetValue(propNode->GetScalarInvariantAsString());
       }
     }
-  if ( this->GlyphModeMenu )
-    {
-    if (propNode != NULL)
-      {
-      this->GlyphModeMenu->GetWidget()->GetWidget()->SetValue(propNode->GetGlyphGeometryAsString());
-      }
-    }
-  if ( this->GlyphButton )
-    {
-    if (displayNode != NULL)
-      {
-      if (displayNode->GetVisualizationMode() == 2)
-        {
-        this->GlyphButton->SetSelectedState(1);
-        }
-      else
-        {
-        this->GlyphButton->SetSelectedState(0);
-        }
-      }
-    }
-    
     
 
-  vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+  vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->GetVolumeNode());
+  
+  if (volumeNode != NULL && this->GlyphDisplayWidget)
+    {
+    this->GlyphDisplayWidget->SetDiffusionTensorVolumeNode(volumeNode);
+    }
   if (volumeNode != NULL && displayNode != NULL && this->WindowLevelThresholdEditor)
     {
     if (displayNode->GetDiffusionTensorDisplayPropertiesNode())
@@ -473,6 +406,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::UpdateWidgetFromMRML ()
   
   if (displayNode != NULL) 
     {
+
     this->WindowLevelThresholdEditor->SetWindowLevel(
           displayNode->GetWindow(), displayNode->GetLevel() );
     this->WindowLevelThresholdEditor->SetThreshold(
@@ -502,8 +436,6 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::AddWidgetObservers ( )
   this->Superclass::AddWidgetObservers();
 
   this->ScalarModeMenu->GetWidget()->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GlyphModeMenu->GetWidget()->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GlyphButton->AddObserver( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand); 
   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->WindowLevelThresholdEditor->AddObserver(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -516,8 +448,6 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::RemoveWidgetObservers ( )
   this->Superclass::RemoveWidgetObservers();
 
   this->ScalarModeMenu->GetWidget()->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GlyphModeMenu->GetWidget()->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->GlyphButton->RemoveObservers (vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand); 
   this->ColorSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -597,29 +527,6 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
     "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
   this->InterpolateButton->GetWidgetName());
 
-  this->WindowLevelThresholdEditor = vtkKWWindowLevelThresholdEditor::New();
-  this->WindowLevelThresholdEditor->SetParent ( scalarFrame->GetFrame());
-  this->WindowLevelThresholdEditor->Create ( );
-  vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
-  if (volumeNode != NULL)
-    {
-    this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
-    }
-  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-    this->WindowLevelThresholdEditor->GetWidgetName());
-
- 
-
-  vtkKWCheckButton *glyphButton = vtkKWCheckButton::New();
-  this->GlyphButton = glyphButton;
-  glyphButton->SetParent( volDisplayFrame );
-  glyphButton->Create();
-
-  vtkKWMenuButtonWithSpinButtonsWithLabel *glyphMenuButton = vtkKWMenuButtonWithSpinButtonsWithLabel::New();
-  this->GlyphModeMenu = glyphMenuButton;
-  glyphMenuButton->SetParent( volDisplayFrame );
-  glyphMenuButton->Create();
-
   vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
   vtkMRMLDiffusionTensorDisplayPropertiesNode *propNode = NULL;
 
@@ -666,30 +573,36 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::CreateWidget ( )
         propNode->SetGlyphGeometry(k);
         const char *tag = propNode->GetGlyphGeometryAsString();
         this->GlyphModeMap[std::string(tag)]=k;
-        glyphMenuButton->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(tag);
         }
       //Restore inital scalar Invariant value
       propNode->SetScalarInvariant(currentVal);
-      glyphMenuButton->GetWidget()->GetWidget()->SetValue(propNode->GetGlyphGeometryAsString());
       }
     //Set glyph button
-    if (displayNode->GetVisualizationMode() == vtkMRMLDiffusionTensorVolumeDisplayNode::visModeBoth)
-      {
-      glyphButton->SetSelectedState(1);
-      }
-    else
-      {
-      glyphButton->SetSelectedState(0);
-      }
     }
 
-    //Packing
-    glyphButton->SetText("Active glyphs");
-    this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 glyphButton->GetWidgetName());
-    glyphMenuButton->SetLabelText("Glyph Type");
-    this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 glyphMenuButton->GetWidgetName());
+    this->GlyphDisplayWidget = vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::New();
+    this->GlyphDisplayWidget->SetParent( volDisplayFrame );
+    this->GlyphDisplayWidget->SetMRMLScene(this->MRMLScene);
+    this->GlyphDisplayWidget->Create();
+    vtkMRMLDiffusionTensorVolumeNode *dtvolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->GetVolumeNode());
+    if (dtvolumeNode != NULL)
+      {
+      this->GlyphDisplayWidget->SetDiffusionTensorVolumeNode(dtvolumeNode);
+      }
+    this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+    this->GlyphDisplayWidget->GetWidgetName());
+
+    this->WindowLevelThresholdEditor = vtkKWWindowLevelThresholdEditor::New();
+    this->WindowLevelThresholdEditor->SetParent ( scalarFrame->GetFrame());
+    this->WindowLevelThresholdEditor->Create ( );
+    vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+    if (volumeNode != NULL)
+      {
+      this->WindowLevelThresholdEditor->SetImageData(volumeNode->GetImageData());
+      }
+    this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+    this->WindowLevelThresholdEditor->GetWidgetName());
+
 
     this->AddWidgetObservers();
     if (this->MRMLScene != NULL)

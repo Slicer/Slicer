@@ -157,6 +157,10 @@ std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> vtkMRMLDiffusionTens
   std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> nodes = this->GetSliceGlyphDisplayNodes();
   if (nodes.size() == 0)
     {
+    vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+    this->GetScene()->AddNode(glyphDTDPN);
+    glyphDTDPN->Delete();
+    
     for (int i=0; i<3; i++)
       {
       vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New();
@@ -166,10 +170,7 @@ std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> vtkMRMLDiffusionTens
         this->GetScene()->AddNode(node);
         node->Delete();
 
-        vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
-        this->GetScene()->AddNode(glyphDTDPN);
         node->SetAndObserveDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
-        glyphDTDPN->Delete();
         node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
 
         this->AddAndObserveDisplayNodeID(node->GetID());
@@ -190,7 +191,7 @@ std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> vtkMRMLDiffusionTens
         nodes.push_back(node);
         }
       }
-    }
+   }
   return nodes;
 }
 

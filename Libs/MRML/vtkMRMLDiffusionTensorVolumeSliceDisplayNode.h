@@ -82,24 +82,13 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
  
   virtual void SetSlicePositionMatrix(vtkMatrix4x4 *matrix);
 
-  // Description:
-  // Resolution of the output glyphs. This parameter is a integer value
-  // that sets the number of tensors (points) that are skipped in each slice dimension before a glyph is rendered.
-  // 1 is the finest level meaning that every input point a glyph is rendered.
-  vtkGetVector2Macro(DimensionResolution, int);
-  vtkSetVector2Macro(DimensionResolution, int);
-
  protected:
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( );
   ~vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( );
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
   void operator= ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
 
-  
-
-  // dispaly pipeline
-  int DimensionResolution[2];
-  vtkDiffusionTensorGlyph  *DiffusionTensorGlyphFilter;
+    vtkDiffusionTensorGlyph  *DiffusionTensorGlyphFilter;
 };
 
 #endif

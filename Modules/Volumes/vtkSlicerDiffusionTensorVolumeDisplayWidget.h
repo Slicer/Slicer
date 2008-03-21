@@ -36,6 +36,8 @@
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLVolumeDisplayNode.h"
 
+class vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget;
+
 class vtkDiffusionTensorMathematics;
 class vtkImageExtractComponents;
 class vtkAssignAttribute;
@@ -76,12 +78,11 @@ protected:
 
   vtkKWMenuButtonWithSpinButtonsWithLabel* ScalarModeMenu;
   vtkSlicerModuleCollapsibleFrame* ScalarOptionsFrame; 
-  vtkKWCheckButton* GlyphButton;
-  vtkKWMenuButtonWithSpinButtonsWithLabel* GlyphModeMenu; 
   vtkSlicerNodeSelectorWidget* ColorSelectorWidget;
   vtkKWWindowLevelThresholdEditor* WindowLevelThresholdEditor;
   vtkKWCheckButton* InterpolateButton;
 
+  vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget *GlyphDisplayWidget;
   vtkDiffusionTensorMathematics *DTIMathematics;
   vtkImageExtractComponents *ExtractComponent;
   

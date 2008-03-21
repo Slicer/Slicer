@@ -58,8 +58,6 @@ vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceD
   this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
   this->DiffusionTensorGlyphFilter->SetResolution (1);
 
-  this->DimensionResolution[0] = 20;
-  this->DimensionResolution[1] = 20;
   this->ColorMode = vtkMRMLFiberBundleDisplayNode::colorModeScalar;
 }
 
@@ -79,9 +77,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::WriteXML(ostream& of, int nIn
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
-    
-  of << indent << " dimensionResolution=\"" << this->DimensionResolution[0] << " "
-    << this->DimensionResolution[1] << "\"";
+
 }
 
 
@@ -91,20 +87,6 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ReadXMLAttributes(const char*
 
   Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL) 
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "dimensionResolution")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> DimensionResolution[0];
-      ss >> DimensionResolution[1];
-      }
-    }  
 }
 
 
@@ -116,7 +98,6 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = (vtkMRMLDiffusionTensorVolumeSliceDisplayNode *) anode;
 
-  this->SetDimensionResolution(node->DimensionResolution);
 }
 
 //----------------------------------------------------------------------------
@@ -125,12 +106,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::PrintSelf(ostream& os, vtkInd
   //int idx;
   
   Superclass::PrintSelf(os,indent);
-  os << "DimensionResolution:\n";
-  for (int idx = 0; idx < 2; ++idx) 
-    {
-    os << indent << ", " << this->DimensionResolution[idx];
-    }
-  os << ")\n";}
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMatrix4x4 *matrix)
@@ -194,7 +170,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline()
       
       // TO DO: implement max # ellipsoids, random sampling features
       this->DiffusionTensorGlyphFilter->SetResolution(1);
-      this->DiffusionTensorGlyphFilter->SetDimensionResolution(this->GetDimensionResolution() );
+      this->DiffusionTensorGlyphFilter->SetDimensionResolution( DTDisplayNode->GetLineGlyphResolution(), DTDisplayNode->GetLineGlyphResolution());
       this->DiffusionTensorGlyphFilter->SetScaleFactor( DTDisplayNode->GetGlyphScaleFactor( ) );
       
       this->DiffusionTensorGlyphFilter->SetSource( DTDisplayNode->GetGlyphSource( ) );

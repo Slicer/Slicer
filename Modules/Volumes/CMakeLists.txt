@@ -15,6 +15,7 @@ PROJECT(Volumes)
   vtkSlicerScalarVolumeDisplayWidget.cxx
   vtkSlicerDiffusionWeightedVolumeDisplayWidget.cxx
   vtkSlicerDiffusionTensorVolumeDisplayWidget.cxx
+  vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget.cxx
   vtkKWWindowLevelThresholdEditor.cxx
   )
 #-----------------------------------------------

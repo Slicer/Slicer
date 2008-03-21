@@ -425,6 +425,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
         dtiDisplayNode->SetUpperThreshold(0);
         dtiDisplayNode->SetLowerThreshold(0);
         dtiDisplayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(displayPropertiesNode->GetID());
+        tensorNode->AddSliceGlyphDisplayNodes();
         }
       }
       
@@ -439,13 +440,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     this->GetMRMLScene()->AddNode(volumeNode);
     vtkDebugMacro("Node added to scene");
     
-    if (tensorNode)
-      {
-      tensorNode->AddSliceGlyphDisplayNodes();
-      }
-
     // now read it
-//    storageNode->ReadData();
+    //    storageNode->ReadData();
     
     this->SetActiveVolumeNode(volumeNode);
 

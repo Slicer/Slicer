@@ -215,6 +215,11 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass (dtdpn);
   dtdpn->Delete();
 
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode *dtvsdn =
+                         vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New();
+  this->RegisterNodeClass (dtvsdn);
+  dtvsdn->Delete();
+
 
   vtkMRMLFiberBundleStorageNode *fbsn =
                          vtkMRMLFiberBundleStorageNode::New();
