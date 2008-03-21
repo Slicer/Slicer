@@ -1249,6 +1249,10 @@ void vtkSlicerFiducialListWidget::UpdateFiducialsFromMRML()
       {
       pointWidgetExists = 1;
       }
+    else
+      {
+      pointWidgetExists = 0;
+      }
     if (pointWidgetExists)
       {
       vtkDebugMacro("point widget exists " << fid.c_str() << ", update...");
