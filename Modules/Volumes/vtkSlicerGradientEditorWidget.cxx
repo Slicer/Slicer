@@ -50,6 +50,8 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   this->ModifiedForNewTensor = 1;
   this->TensorNode = NULL;
   this->FiberNode = NULL;
+  this->BaselineNode = NULL;
+  this->MaskNode = NULL;
   }
 
 //---------------------------------------------------------------------------
@@ -60,6 +62,11 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     {
     this->ActiveVolumeNode->Delete();
     this->ActiveVolumeNode = NULL;
+    }
+  if (this->Logic)
+    {
+    this->Logic->Delete();
+    this->Logic = NULL;
     }
   if (this->MeasurementFrameWidget)
     {
@@ -139,6 +146,16 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
     {
     this->FiberNode->Delete();
     this->FiberNode = NULL;
+    }
+  if (this->BaselineNode)
+    {
+    this->BaselineNode->Delete();
+    this->BaselineNode = NULL;
+    }
+  if (this->MaskNode)
+    {
+    this->MaskNode->Delete();
+    this->MaskNode = NULL;
     }
   this->ModifiedForNewTensor = 0;
   }
@@ -243,19 +260,19 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     if(this->ModifiedForNewTensor)
       {
       // create a command line module node
-      this->TensorCML = vtkMRMLCommandLineModuleNode::SafeDownCast(
+     vtkMRMLCommandLineModuleNode *tensorCML = vtkMRMLCommandLineModuleNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
 
       // set its name  
-      this->TensorCML->SetModuleDescription("Diffusion Tensor Estimation");
-      this->TensorCML->SetName("GradientEditor: Tensor Estimation");
+      tensorCML->SetModuleDescription("Diffusion Tensor Estimation");
+      tensorCML->SetName("GradientEditor: Tensor Estimation");
 
       // set the parameters
-      this->TensorCML->SetParameterAsString("estimationMethod", "Least Squares");
-      this->TensorCML->SetParameterAsDouble("otsuOmegaThreshold",0.5);
-      this->TensorCML->SetParameterAsBool("removeIslands", 0);
-      this->TensorCML->SetParameterAsBool("applyMask", 0);
-      this->TensorCML->SetParameterAsString("inputVolume", this->ActiveVolumeNode->GetID());
+      tensorCML->SetParameterAsString("estimationMethod", "Least Squares");
+      tensorCML->SetParameterAsDouble("otsuOmegaThreshold",0.5);
+      tensorCML->SetParameterAsBool("removeIslands", 0);
+      tensorCML->SetParameterAsBool("applyMask", 0);
+      tensorCML->SetParameterAsString("inputVolume", this->ActiveVolumeNode->GetID());
 
       // create the output nodes
       if(this->TensorNode)
@@ -284,9 +301,9 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
       this->TensorNode->SetMaskNodeID(this->MaskNode->GetID());
 
       // set output parameters
-      this->TensorCML->SetParameterAsString("outputTensor", this->TensorNode->GetID());
-      this->TensorCML->SetParameterAsString("outputBaseline", this->BaselineNode->GetID());
-      this->TensorCML->SetParameterAsString("thresholdMask", this->MaskNode->GetID());
+      tensorCML->SetParameterAsString("outputTensor", this->TensorNode->GetID());
+      tensorCML->SetParameterAsString("outputBaseline", this->BaselineNode->GetID());
+      tensorCML->SetParameterAsString("thresholdMask", this->MaskNode->GetID());
 
       //get the existing GUI of the "Diffusion Tensor Estimation Command Line Module" 
       vtkCommandLineModuleGUI *moduleGUI = vtkCommandLineModuleGUI::SafeDownCast(
@@ -294,14 +311,14 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
       moduleGUI->Enter();
 
       //set command line node to GUI an logic
-      moduleGUI->SetCommandLineModuleNode( this->TensorCML);
-      moduleGUI->GetLogic()->SetCommandLineModuleNode( this->TensorCML); //use the GUI's Logic to invoke the task
+      moduleGUI->SetCommandLineModuleNode( tensorCML);
+      moduleGUI->GetLogic()->SetCommandLineModuleNode( tensorCML); //use the GUI's Logic to invoke the task
 
       //estimate tensors
-      moduleGUI->GetLogic()->Apply( this->TensorCML);
+      moduleGUI->GetLogic()->Apply( tensorCML);
 
       //clean up
-      this->TensorCML->Delete();
+      tensorCML->Delete();
       this->BaselineNode->Delete();
       this->MaskNode->Delete();
       this->ModifiedForNewTensor = 0;

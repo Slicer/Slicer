@@ -38,6 +38,7 @@ vtkSlicerGradientsWidget::vtkSlicerGradientsWidget(void)
   this->Gradients = NULL;
   this->BValues = NULL;
   this->MessageDialog = NULL;
+  this->Logic = NULL;
   }
 
 //---------------------------------------------------------------------------

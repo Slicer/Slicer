@@ -73,7 +73,6 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     vtkMRMLScalarVolumeNode *BaselineNode;
     vtkMRMLScalarVolumeNode *MaskNode;
     vtkMRMLFiberBundleNode *FiberNode;
-    vtkMRMLCommandLineModuleNode *TensorCML;
   
     //widgets (GUI)
     vtkSlicerMeasurementFrameWidget *MeasurementFrameWidget;

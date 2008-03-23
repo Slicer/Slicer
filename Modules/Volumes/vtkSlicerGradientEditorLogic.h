@@ -59,6 +59,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
     vtkSlicerGradientEditorLogic(void);
     virtual ~vtkSlicerGradientEditorLogic(void);
 
+    void UpdateActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
+
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     
     // Description:

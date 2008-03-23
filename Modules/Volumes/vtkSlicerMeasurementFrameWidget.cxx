@@ -102,11 +102,6 @@ vtkSlicerMeasurementFrameWidget::~vtkSlicerMeasurementFrameWidget(void)
     this->Matrix->Delete();
     this->Matrix = NULL;
     }
-  if (this->Logic)
-    {
-    this->Logic->Delete();
-    this->Logic = NULL;
-    }
   }
 
 //---------------------------------------------------------------------------
