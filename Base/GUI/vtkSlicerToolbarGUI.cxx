@@ -1167,13 +1167,6 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Green slice only layout", vtkSlicerGUILayout::SlicerLayoutOneUpGreenSliceView);
 
-  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ("Comparison view layout");
-  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ("Comparison view layout");
-  imageName = "SlicerComparisonViewLayoutImage";
-  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetComparisonViewIcon(), 0);
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName );
-  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
-
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Tabbed 3D layout" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Tabbed 3D layout");
   imageName = "SlicerTabbed3DLayoutImage";
@@ -1189,6 +1182,13 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed slice layout", vtkSlicerGUILayout::SlicerLayoutTabbedSliceView);
+
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ("Compare view layout");
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ("Compare view layout");
+  imageName = "SlicerCompareViewLayoutImage";
+  vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetCompareViewIcon(), 0);
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName );
+  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Toggle GUI panel visibility" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Toggle GUI panel visibility");

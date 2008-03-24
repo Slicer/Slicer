@@ -24,7 +24,7 @@ vtkSlicerToolbarIcons::vtkSlicerToolbarIcons ( )
     this->LoadSceneIcon = vtkKWIcon::New();
     this->ChooseLayoutIcon = vtkKWIcon::New ( );
     this->ConventionalViewIcon = vtkKWIcon::New();
-    this->ComparisonViewIcon = vtkKWIcon::New();
+    this->CompareViewIcon = vtkKWIcon::New();
     this->OneUp3DViewIcon = vtkKWIcon::New();
     this->OneUpSliceViewIcon = vtkKWIcon::New();
     this->OneUpRedSliceViewIcon = vtkKWIcon::New();
@@ -133,10 +133,10 @@ vtkSlicerToolbarIcons::~vtkSlicerToolbarIcons ( )
     this->ConventionalViewIcon->Delete ( );
     this->ConventionalViewIcon = NULL;
     }
-  if ( this->ComparisonViewIcon )
+  if ( this->CompareViewIcon )
     {
-    this->ComparisonViewIcon->Delete();
-    this->ComparisonViewIcon = NULL;
+    this->CompareViewIcon->Delete();
+    this->CompareViewIcon = NULL;
     }
   if ( this->OneUp3DViewIcon )
     {
@@ -347,11 +347,11 @@ void vtkSlicerToolbarIcons::AssignImageDataToIcons ( )
                                           image_ToolbarChooseView_pixel_size,
                                           image_ToolbarChooseView_length, 0);
 
-    this->ComparisonViewIcon->SetImage (image_ToolbarComparisonView,
-                                        image_ToolbarComparisonView_width,
-                                        image_ToolbarComparisonView_height,
-                                        image_ToolbarComparisonView_pixel_size,
-                                        image_ToolbarComparisonView_length, 0);
+    this->CompareViewIcon->SetImage (image_ToolbarCompareView,
+                                        image_ToolbarCompareView_width,
+                                        image_ToolbarCompareView_height,
+                                        image_ToolbarCompareView_pixel_size,
+                                        image_ToolbarCompareView_length, 0);
 
     this->OneUp3DViewIcon->SetImage( image_ToolbarOneUp3DView,
                                      image_ToolbarOneUp3DView_width,
@@ -505,7 +505,7 @@ void vtkSlicerToolbarIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "LoadSceneIcon" << this->GetLoadSceneIcon ( ) << "\n";
     os << indent << "ConventionalViewIcon" << this->GetConventionalViewIcon ( ) << "\n";
     os << indent << "ChooseLayoutIcon" << this->GetChooseLayoutIcon ( ) << "\n";
-    os << indent << "ComparisonViewIcon" << this->GetComparisonViewIcon() << "\n";
+    os << indent << "CompareViewIcon" << this->GetCompareViewIcon() << "\n";
     os << indent << "OneUp3DViewIcon" << this->GetOneUp3DViewIcon ( ) << "\n";
     os << indent << "OneUpSliceViewIcon" << this->GetOneUpSliceViewIcon ( ) << "\n";
     os << indent << "OneUpRedSliceViewIcon" << this->GetOneUpRedSliceViewIcon ( ) << "\n";
