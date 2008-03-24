@@ -304,8 +304,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       # - first update the annotation
       # - then handle modifying the view
       #
-      $this updateAnnotation $x $y $r $a $s
-
       if { [$_interactor GetShiftKey] } {
         $this jumpOtherSlices $r $a $s
         # need to render to show the annotation
@@ -449,19 +447,16 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     "MouseWheelForwardEvent" { 
       $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
       $this incrementSlice 
-      $this updateAnnotation $x $y $r $a $s
     }
     "MouseWheelBackwardEvent" {
       $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
       $this decrementSlice 
-      $this updateAnnotation $x $y $r $a $s
     }
     "ExposeEvent" { }
     "ConfigureEvent" {
       $this resizeSliceNode
     }
     "EnterEvent" { 
-      $this updateAnnotation $x $y $r $a $s
       $_renderWidget CornerAnnotationVisibilityOn
       [$::slicer3::ApplicationGUI GetMainSlicerWindow]  SetStatusText "Middle Button: Pan; Right Button: Zoom"
     }
@@ -486,11 +481,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           }
           "b" - "Left" - "Down" {
             $this decrementSlice
-            $this updateAnnotation $x $y $r $a $s
           }
           "f" - "Right" - "Up" {
             $this incrementSlice
-            $this updateAnnotation $x $y $r $a $s
           }
           "space" {
             ::Box::ShowDialog EditBox
@@ -521,6 +514,12 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
     }
     "ExitEvent" { }
   }
+
+  set xyToRAS [$_sliceNode GetXYToRAS]
+  set ras [$xyToRAS MultiplyPoint $x $y $z 1]
+  foreach {r a s t} $ras {}
+  $this updateAnnotation $x $y $r $a $s
+
 }
 
 
