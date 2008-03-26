@@ -27,9 +27,12 @@
 #include "vtkSlicerWidget.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
+#include "vtkSlicerFoundationIcons.h"
 #include "vtkKWPushButton.h"
 
 #include "vtkMRMLSceneSnapshotNode.h"
+
+#include "vtkCallbackCommand.h"
 
 class vtkKWSimpleEntryDialog;
 
@@ -54,6 +57,13 @@ public:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
 
+  // Description:
+  // removes observers on node deleted events 
+  virtual void AddMRMLObservers();
+  virtual void RemoveMRMLObservers();
+
+  vtkGetObjectMacro ( Icons, vtkSlicerFoundationIcons );
+
 protected:
   vtkSlicerSceneSnapshotWidget();
   virtual ~vtkSlicerSceneSnapshotWidget();
@@ -61,11 +71,19 @@ protected:
   // Description:
   // Create the widget.
   virtual void CreateWidget();
+  vtkCallbackCommand *MRMLExtraCallbackCommand;
 
+  //BTX
+  static void MRMLExtraCallback(  vtkObject *__caller,
+                                unsigned long eid, void *__clientData, void *callData );    
+  //ETX
+
+  
   vtkSlicerNodeSelectorWidget* SnapshotSelectorWidget;
   vtkKWPushButton* CreateSnapshotButton;
   vtkKWPushButton* RestoreSceneButton;
   vtkKWSimpleEntryDialog *NameDialog;
+  vtkSlicerFoundationIcons *Icons;
   
 private:
 

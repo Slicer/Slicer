@@ -34,6 +34,7 @@ SET(LIB_SRCS
   vtkSlicerVisibilityIcons.cxx
   vtkSlicerModuleNavigationIcons.cxx
   vtkSlicerToolbarIcons.cxx
+  vtkSlicerFoundationIcons.cxx
   vtkSlicerViewControlIcons.cxx
   vtkSlicerSlicesControlIcons.cxx
   vtkSlicerCheckRadioButtonIcons.cxx

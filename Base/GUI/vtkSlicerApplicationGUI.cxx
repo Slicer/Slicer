@@ -118,6 +118,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
   this->ViewControlGUI = NULL;
   this->SlicesControlGUI = NULL;
   this->LogoDisplayGUI = NULL;
+  this->SlicerFoundationIcons = NULL;
   
   //--- GUIs containing components packed inside the Frames
 #ifndef TOOLBAR_DEBUG
@@ -243,6 +244,12 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       {
       this->SaveDataWidget->SetParent ( NULL );
       this->SaveDataWidget->Delete();
+      }
+
+    if ( this->SlicerFoundationIcons )
+      {
+      this->SlicerFoundationIcons->Delete();
+      this->SlicerFoundationIcons =  NULL;
       }
 
     this->SetApplication(NULL);
@@ -694,6 +701,8 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
                                              app->GetApplicationWindowHeight(),
                                              app->GetApplicationSlicesFrameHeight());
 
+        this->SlicerFoundationIcons = vtkSlicerFoundationIcons::New();
+        
         if ( this->MainSlicerWindow != NULL ) {
 
             // set up Slicer's main window

@@ -96,13 +96,14 @@ void vtkSlicerDataGUI::PrintSelf ( ostream& os, vtkIndent indent )
 void vtkSlicerDataGUI::RemoveGUIObservers ( )
 {
   this->MRMLTreeWidget->RemoveObservers (vtkSlicerMRMLTreeWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SceneSnapshotWidget->RemoveMRMLObservers();
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataGUI::AddGUIObservers ( )
 {
   this->MRMLTreeWidget->AddObserver (vtkSlicerMRMLTreeWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+  this->SceneSnapshotWidget->AddMRMLObservers();
 }
 
 
@@ -267,6 +268,7 @@ void vtkSlicerDataGUI::BuildGUI ( )
     this->SceneSnapshotWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
     this->SceneSnapshotWidget->SetParent ( snapshotFrame->GetFrame() );
     this->SceneSnapshotWidget->Create ( );
+    this->SceneSnapshotWidget->SetApplication( this->GetApplication() );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->SceneSnapshotWidget->GetWidgetName(), snapshotFrame->GetFrame()->GetWidgetName());
 

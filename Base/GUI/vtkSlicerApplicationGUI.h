@@ -42,6 +42,7 @@
 #include "vtkSlicerViewerWidget.h"
 #include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerSliceGUICollection.h"
+#include "vtkSlicerFoundationIcons.h"
 
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
@@ -139,7 +140,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Get the main slicer window.
     vtkGetObjectMacro ( MainSlicerWindow, vtkSlicerWindow );
     // Description:
-
+    // Basic icons for the slicer application.
+    vtkGetObjectMacro ( SlicerFoundationIcons, vtkSlicerFoundationIcons );
+    
     // Description:
     // This method builds Slicer's main GUI
     virtual void BuildGUI ( );
@@ -327,6 +330,10 @@ protected:
     // Collection of SliceViewers
     vtkSlicerSliceGUICollection *SliceGUICollection;
 
+    // Description:
+    // Collection of Icons all GUIs can have access to.
+    // TODO: move basic icons from misc icon collections into here.
+    vtkSlicerFoundationIcons *SlicerFoundationIcons;
 
     // Description:
     // Used to tag all pages added to the tabbed notebook
