@@ -211,8 +211,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->EnableAsynchronousIO = 0;
     this->EnableForceRedownload = 0;
 //    this->EnableRemoteCacheOverwriting = 1;
-    this->RemoteCacheLimit = 20;
-    this->RemoteCacheFreeBufferSize = 10;
+    this->RemoteCacheLimit = 50;
+    this->RemoteCacheFreeBufferSize = 5;
     
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Beta" );
