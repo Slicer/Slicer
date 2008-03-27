@@ -233,6 +233,144 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const char* filename, const char* volname, int loadingOptions)
+{
+  int centerImage = 0;
+  int labelMap = 0;
+  int singleFile = 0;
+  if ( loadingOptions & 1 )    // labelMap is true
+  {
+    labelMap = 1;
+  }
+  if ( loadingOptions & 2 )    // centerImage is true
+  {
+    centerImage = 1;
+  }
+  if ( loadingOptions & 4 )    // singleFile is true
+  {
+    singleFile = 1;
+  }
+
+  vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::New();
+  vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
+  vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+
+  bool useURI = false;
+  vtksys_stl::string name;
+  const char *localFile;
+
+  if (this->GetMRMLScene() &&
+      this->GetMRMLScene()->GetCacheManager())
+    {
+    useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
+    }
+  if (useURI)
+    {
+    vtkDebugMacro("AddArchetypeScalarVolume: input filename '" << filename << "' is a URI");
+    storageNode->SetURI(filename);
+    storageNode->SetScene(this->GetMRMLScene());
+    localFile = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(filename);
+    vtkDebugMacro("AddArchetypeScalarVolume: local file name = " << localFile);
+    }
+  else
+    {
+      storageNode->SetFileName(filename);
+      localFile = filename;
+    }
+
+  // check to see if can read this type of file
+  if (storageNode->SupportedFileType(filename) == 0)
+    {
+      vtkErrorMacro("LoadArchetypeScalarVolume: volume archetype storage node can't read this kind of file: " << filename);
+      return NULL;
+    }
+  else { vtkDebugMacro("LoadArchetypeVolume: filename is a supported type"); }
+
+  storageNode->SetCenterImage(centerImage);
+  storageNode->SetSingleFile(singleFile);
+  storageNode->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+
+  if (volname == NULL)
+    {
+      const vtksys_stl::string fname(filename);
+      vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
+      scalarNode->SetName(name.c_str());
+    }
+  else
+    {
+      scalarNode->SetName(volname);
+    }
+  vtkDebugMacro("LoadArchetypeScalarVolume: set scalar node name: " << scalarNode->GetName());
+  scalarNode->SetLabelMap(labelMap);
+  
+  this->GetMRMLScene()->SaveStateForUndo();
+  
+  scalarNode->SetScene(this->GetMRMLScene());
+  displayNode->SetScene(this->GetMRMLScene());
+
+  this->GetMRMLScene()->AddNode(storageNode); // NoNotify(storageNode);  
+  this->GetMRMLScene()->AddNode(displayNode); // NoNotify(displayNode);
+  
+  scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
+  scalarNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+
+  this->GetMRMLScene()->AddNode(scalarNode);
+
+
+  // now read
+  vtkDebugMacro("AddArchetypeScalarVolume: about to read data into scalar node " << scalarNode->GetName() << ", asynch = " << this->GetMRMLScene()->GetDataIOManager()->GetEnableAsynchronousIO() << ", read state = " << storageNode->GetReadState());
+  if (this->GetDebug())
+    {
+    storageNode->DebugOn();
+    }
+  storageNode->ReadData(scalarNode);
+
+
+  vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+  if (labelMap) 
+    {
+    if (this->IsFreeSurferVolume(filename))
+      {
+      displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
+      }
+    else
+      {
+      displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultLabelMapColorNodeID());
+      }
+    }
+  else
+    {
+    displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+    }
+  colorLogic->Delete();
+
+  storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
+    
+  vtkMRMLScalarVolumeDisplayNode *sdn = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
+  if (sdn && scalarNode)
+    {
+    vtkDebugMacro("AddArchetypeScalarVolume: calculating auto levels " << scalarNode->GetName() << ", scalar node image data is " << ( scalarNode->GetImageData() == NULL ? "null" : "not null"));
+    this->CalculateAutoLevels( scalarNode->GetImageData(), sdn );
+    vtkDebugMacro("AddArchetypeScalarVolume: got auto window =" << sdn->GetWindow() << ", level = " << sdn->GetLevel());
+    }
+
+  if (storageNode->GetReadState() == vtkMRMLStorageNode::Ready)
+    {
+      vtkDebugMacro("AddArchetypeScalarVolume: setting active volume node " << scalarNode->GetName());
+
+      this->SetActiveVolumeNode(scalarNode);
+    }
+  else {vtkDebugMacro("AddArchetypeScalarVollume: not setting this volume as the active node, dl not finished yet: " << scalarNode->GetName()); }
+  this->Modified();
+
+  scalarNode->Delete();
+  storageNode->Delete();
+  displayNode->Delete();
+
+  return scalarNode;
+}
+
+//----------------------------------------------------------------------------
 // int loadingOptions is bit-coded as following:
 // bit 0: label map
 // bit 1: centered
@@ -283,7 +421,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     }
   if (useURI)
     {
-    vtkWarningMacro("AddArchetypeVolume: input filename '" << filename << "' is a URI");
+    vtkDebugMacro("AddArchetypeVolume: input filename '" << filename << "' is a URI");
     // need to set the scene on the storage node so that it can look for file handlers
     storageNode1->SetURI(filename);
     storageNode1->SetScene(this->GetMRMLScene());
@@ -439,10 +577,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     vtkDebugMacro("Display node "<<displayNode->GetClassName());
     this->GetMRMLScene()->AddNode(volumeNode);
     vtkDebugMacro("Node added to scene");
-    
-    // now read it
-    //    storageNode->ReadData();
-    
+        
     this->SetActiveVolumeNode(volumeNode);
 
     this->Modified();
@@ -547,6 +682,7 @@ void vtkSlicerVolumesLogic::CalculateAutoLevels(vtkImageData *imageData, vtkMRML
 {
   if ( !imageData || !displayNode) 
     {
+//    std::cout << "CalculateAutoLevels: image data or display node are null";
     return;
     }
   vtkImageData *imageDataScalar = imageData;
@@ -627,6 +763,7 @@ void vtkSlicerVolumesLogic::CalculateScalarAutoLevels(vtkImageData *imageData, v
       imageDataScalar->GetScalarRange(range);
       double min = range[0];
       double max = range[1];
+//      std::cout << "CalculateScalarAutoLevels: Window and Level are 0, using image scalar range, " << min << ", " << max << std::endl;
       displayNode->SetWindow (max-min);
       displayNode->SetLevel (0.5*(max+min));
       displayNode->SetLowerThreshold (displayNode->GetLevel());
@@ -638,6 +775,8 @@ void vtkSlicerVolumesLogic::CalculateScalarAutoLevels(vtkImageData *imageData, v
       displayNode->SetLevel (bimodal->GetLevel());
       displayNode->SetLowerThreshold (bimodal->GetThreshold());
       displayNode->SetUpperThreshold (bimodal->GetMax());
+      double range[2]; imageDataScalar->GetScalarRange(range);
+//      std::cout << "CalculateScalarAutoLevels: set display node window to " << bimodal->GetWindow() << ", level to " << bimodal->GetLevel() << " (scalar range " << range[0] << ", " << range[1] << ")" <<  std::endl;
       }
 
     accumulate->Delete();
@@ -781,12 +920,26 @@ void vtkSlicerVolumesLogic::ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode *VNode
     double Nc, Ns, Nr;
     int dim[3];
 
-
+    if (!VNode)
+      {
+      vtkErrorMacro("ComputeTkRegVox2RASMatrix: input volume node is null");
+      return;
+      }
+    if (!M)
+      {
+      vtkErrorMacro("ComputeTkRegVox2RASMatrix: input matrix is null");
+      return;
+      }
     double *spacing = VNode->GetSpacing();
     dC = spacing[0];
     dR = spacing[1];
     dS = spacing[2];
 
+    if (VNode->GetImageData() == NULL)
+      {
+      vtkErrorMacro("ComputeTkRegVox2RASMatrix: input volume's image data is null");
+      return;
+      }
     VNode->GetImageData()->GetDimensions(dim);
     Nc = dim[0] * dC;
     Nr = dim[1] * dR;

@@ -48,6 +48,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerLogic
   void SetActiveVolumeNode (vtkMRMLVolumeNode *ActiveVolumeNode);
 
   // Description:
+  // Sub type of loading an archetype volume that is known to be a scalar
+  vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume (const char *filename, const char* volname, int loadingOptions);
+
+  // Description:
   // Overloaded function of AddArchetypeVolume to provide more 
   // loading options, where variable loadingOptions is bit-coded as following:
   // bit 0: label map
