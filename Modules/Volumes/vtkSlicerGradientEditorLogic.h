@@ -43,6 +43,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
     int StringToDouble(const std::string &s, double &result);
     //ETX
 
+    void SetActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
+
     void SaveStateForUndoRedo();
 
     void Redo();
@@ -51,23 +53,29 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
 
     void Restore();
 
-    int GetUndoRedoStackSize();
-
-    void SetActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
+    int IsUndoable();
+    
+    int IsRedoable();
 
   protected:
     vtkSlicerGradientEditorLogic(void);
     virtual ~vtkSlicerGradientEditorLogic(void);
 
-    void UpdateActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
-
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
+
+    void UpdateActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
     
     // Description:
     // Stack holds all references of createt tensors.
     //BTX
     vtkstd::vector<vtkMRMLDiffusionWeightedVolumeNode*> UndoRedoStack;
     //ETX
+
+    // Description:
+    // Points to the current node in the UndoRedoStack.
+    unsigned int StackPosition;
+
+    int UndoFlag;
 
   private:
     vtkSlicerGradientEditorLogic (const vtkSlicerGradientEditorLogic&); // Not implemented.

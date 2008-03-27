@@ -180,6 +180,7 @@ void vtkSlicerMeasurementFrameWidget::SaveMatrix()
 //---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
   {
+
   //import current matrix values 
   if(event == vtkKWMatrixWidget::ElementChangedEvent && this->MatrixWidget == vtkKWMatrixWidget::SafeDownCast(caller))
     {
@@ -369,7 +370,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->MatrixWidget->SetPadX(3);
   this->MatrixWidget->SetRestrictElementValueToDouble();
   this->MatrixWidget->SetElementWidth(7);
-  this->MatrixWidget->SetElementChangedCommandTriggerToReturnKeyAndFocusOut();
+  this->MatrixWidget->SetElementChangedCommandTrigger(2);
 
   //create checkbuttons, one under each column of the matrix
   for(int i=0; i< 3; i++)
@@ -387,7 +388,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->NegativeButton = vtkKWPushButton::New();
   this->NegativeButton->SetParent(this->MeasurementFrame->GetFrame());
   this->NegativeButton->Create();
-  this->NegativeButton->SetText("Negative Selected");
+  this->NegativeButton->SetText("Negate Selected");
   this->NegativeButton->SetWidth(15);
   this->NegativeButton->SetEnabled(0);
   this->NegativeButton->SetBalloonHelpString("Negative selected columns.");

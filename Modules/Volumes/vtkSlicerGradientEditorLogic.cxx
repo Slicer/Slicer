@@ -17,6 +17,8 @@ vtkStandardNewMacro(vtkSlicerGradientEditorLogic);
 vtkSlicerGradientEditorLogic::vtkSlicerGradientEditorLogic(void)
   {
   this->ActiveVolumeNode = NULL;
+  this->StackPosition = 0;
+  this->UndoFlag = 0;
   }
 
 //---------------------------------------------------------------------------
@@ -36,6 +38,8 @@ vtkSlicerGradientEditorLogic::~vtkSlicerGradientEditorLogic(void)
       }
     }
   this->UndoRedoStack.clear();
+  this->StackPosition = 0;
+  this->UndoFlag = 0;
   }
 
 //---------------------------------------------------------------------------
@@ -53,10 +57,7 @@ int vtkSlicerGradientEditorLogic::AddGradients (const char* filename, int number
   std::string fileString(filename);
   for (unsigned int i = 0; i < fileString.length(); i++)
     {
-    if (fileString[i] == '\\')
-      {
-      fileString[i] = '/';
-      }
+    if (fileString[i] == '\\') fileString[i] = '/';
     }
 
   // Instanciation of the I/O mechanism
@@ -110,10 +111,7 @@ int vtkSlicerGradientEditorLogic::StringToDouble(const std::string &s, double &r
   std::stringstream stream (s);
   if(stream >> result)
     {
-    if(stream.eof())
-      {
-      return 1;
-      }
+    if(stream.eof()) return 1;
     }
   return 0;
   }
@@ -187,30 +185,28 @@ void vtkSlicerGradientEditorLogic::SetActiveVolumeNode(vtkMRMLDiffusionWeightedV
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, node); //set activeVolumeNode
   }
 
-
-
+//---------------------------------------------------------------------------
 void vtkSlicerGradientEditorLogic::SaveStateForUndoRedo()
   {
-  vtkTimerLog *timer = vtkTimerLog::New();
-  timer->StartTimer();
-  vtkMRMLDiffusionWeightedVolumeNode *nodeToSave = vtkMRMLDiffusionWeightedVolumeNode::New();
+  //new node comes in, delete nodes in stack that are no longer reachable 
+  //meaning: all nodes after current StackPosition
+  if(!this->UndoRedoStack.empty() && this->StackPosition != this->UndoRedoStack.size())
+    {
+    while(this->StackPosition != this->UndoRedoStack.size())
+      {
+      this->UndoRedoStack.pop_back();
+      }
+    }
+  if(!this->UndoFlag)
+    {
+    //create node and save it in stack
+    vtkMRMLDiffusionWeightedVolumeNode *nodeToSave = vtkMRMLDiffusionWeightedVolumeNode::New();
+    nodeToSave->Copy(this->ActiveVolumeNode);
+    this->UndoRedoStack.push_back(nodeToSave);
+    this->StackPosition = this->UndoRedoStack.size(); //update StackPosition
 
-  timer->StopTimer();
-  vtkWarningMacro("time SaveStateForUndoRedo: "<<timer->GetElapsedTime());
-  timer->StartTimer();
-
-  nodeToSave->Copy(this->ActiveVolumeNode);
-
-  timer->StopTimer();
-  vtkWarningMacro("time SaveStateForUndoRedo: "<<timer->GetElapsedTime());
-  timer->StartTimer();
-
-  this->UndoRedoStack.push_back(nodeToSave);
-
-  timer->StopTimer();
-  vtkWarningMacro("time SaveStateForUndoRedo: "<<timer->GetElapsedTime());
-  timer->Delete();
-
+    }
+  this->UndoFlag = 0;
   }
 
 //---------------------------------------------------------------------------
@@ -223,33 +219,21 @@ void vtkSlicerGradientEditorLogic::UpdateActiveVolumeNode(vtkMRMLDiffusionWeight
   node->GetMeasurementFrameMatrix(m);
   this->ActiveVolumeNode->SetMeasurementFrameMatrix(m);
 
-  /*std::stringstream output;
-  for(int i=0; i < node->GetDiffusionGradients()->GetNumberOfTuples()*3; i=i+3)
-  {
-  output << "DWMRI_gradient_" << setfill('0') << setw(4) << i/3 << ":=" << " ";
-  for(int j=i; j<i+3; j++)
-  {
-  output << node->GetDiffusionGradients()->GetValue(j) << " ";
-  }
-  output << "\n";        
-  }
-  vtkWarningMacro(<<output.str().c_str());*/
-
   timer->StopTimer();
-  vtkWarningMacro("time: "<<timer->GetElapsedTime());
+  vtkWarningMacro("time1: "<<timer->GetElapsedTime());
   timer->StartTimer();
 
   this->ActiveVolumeNode->SetDiffusionGradients(node->GetDiffusionGradients());
 
   timer->StopTimer();
-  vtkWarningMacro("time: "<<timer->GetElapsedTime());
+  vtkWarningMacro("time2: "<<timer->GetElapsedTime());
   timer->StartTimer();
 
   this->ActiveVolumeNode->SetBValues(node->GetBValues());
 
 
   timer->StopTimer();
-  vtkWarningMacro("time: "<<timer->GetElapsedTime());
+  vtkWarningMacro("time3: "<<timer->GetElapsedTime());
   timer->Delete();
 
   m->Delete();
@@ -262,25 +246,57 @@ void vtkSlicerGradientEditorLogic::Restore()
     {
     vtkMRMLDiffusionWeightedVolumeNode *node = this->UndoRedoStack.at(0);
     this->UpdateActiveVolumeNode(node);
+    this->UndoRedoStack.clear();
+    this->StackPosition = 0;
+    vtkErrorMacro("size: "<<this->UndoRedoStack.size()<<" pos: "<<this->StackPosition);
     }
   }
 
-void vtkSlicerGradientEditorLogic::Redo()
-  {
-  }
-
+//---------------------------------------------------------------------------
 void vtkSlicerGradientEditorLogic::Undo()
   {
-  if(!this->UndoRedoStack.empty())
+  //the first time you click undo, save the parmeters
+  vtkErrorMacro("size: "<<this->UndoRedoStack.size()<<" pos: "<<this->StackPosition<<", in undo: "<<this->UndoFlag);
+  if(this->StackPosition == this->UndoRedoStack.size() && !this->UndoFlag)
     {
-    int lastone = this->UndoRedoStack.size()-1;
-    vtkMRMLDiffusionWeightedVolumeNode *node = this->UndoRedoStack.at(lastone);
+    this->SaveStateForUndoRedo();
+    this->UndoFlag = 1;
+    }
+
+  if(!this->UndoRedoStack.empty() && this->IsUndoable())
+    {
+    this->StackPosition--;
+    vtkMRMLDiffusionWeightedVolumeNode *node = this->UndoRedoStack.at(this->StackPosition-1);
     this->UpdateActiveVolumeNode(node);
+    vtkErrorMacro("size: "<<this->UndoRedoStack.size()<<" pos: "<<this->StackPosition);
     }
   }
 
-int vtkSlicerGradientEditorLogic::GetUndoRedoStackSize()
+//---------------------------------------------------------------------------
+void vtkSlicerGradientEditorLogic::Redo()
   {
-  return this->UndoRedoStack.size();
+  if(!this->UndoRedoStack.empty() && this->IsRedoable())
+    {
+    this->StackPosition++;
+    vtkMRMLDiffusionWeightedVolumeNode *node;
+    node = this->UndoRedoStack.at(this->StackPosition-1);
+    this->UpdateActiveVolumeNode(node);
+    vtkErrorMacro("size: "<<this->UndoRedoStack.size()<<" pos: "<<this->StackPosition);
+    }
   }
+
+//---------------------------------------------------------------------------
+int vtkSlicerGradientEditorLogic::IsUndoable()
+  {
+  if((this->UndoRedoStack.size()+1 > this->StackPosition && this->StackPosition > 1) || !this->UndoFlag) return 1;
+  else return 0;
+  }
+
+//---------------------------------------------------------------------------
+int vtkSlicerGradientEditorLogic::IsRedoable()
+  {
+  if(0 < this->StackPosition && this->StackPosition < this->UndoRedoStack.size()) return 1;
+  else return 0;
+  }
+
 

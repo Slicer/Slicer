@@ -201,55 +201,60 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     this->GradientsWidget == vtkSlicerGradientsWidget::SafeDownCast(caller)))
     {
     this->UndoButton->SetEnabled(1);
-    this->RestoreButton->SetEnabled(1);   
+    this->RestoreButton->SetEnabled(1);
+    this->RedoButton->SetEnabled(0);
     this->ModifiedForNewTensor = 1; //tensor has to be estimated newly
     }
 
   //restore to original
   else if (this->RestoreButton == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
-    this->Logic->SaveStateForUndoRedo();
     this->Logic->Restore();
     this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
     this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
     this->RestoreButton->SetEnabled(0); //disable restoreButton until next change
-    this->UndoButton->SetEnabled(1); //enable undoButton
+    this->UndoButton->SetEnabled(0); //disable undoButton until next change
+    this->RedoButton->SetEnabled(0);
     this->ModifiedForNewTensor = 1; //tensor has to be estimated newly
     }
 
   //undo
   else if(event == vtkKWPushButton::InvokedEvent && this->UndoButton == vtkKWPushButton::SafeDownCast(caller))
     {
-    //if there is a copy in the undoStack, that was made before loading
-    if(this->Logic->GetUndoRedoStackSize() > 0)
+    //if there are more copys in the undoStack
+    if(this->Logic->IsUndoable())
       {
       this->Logic->Undo();
       this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
       this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
       this->RedoButton->SetEnabled(1);
-      ///*disable buttons, when no changes are available
-      //if(this->Logic->GetUndoRedoStackSize()==0)
-      //  {
-      //  this->UndoButton->SetEnabled(0);
-      //  this->RestoreButton->SetEnabled(0);
-      //  }*/
+      //disable buttons, when no more copys are in the stack
+      if(!this->Logic->IsUndoable())
+        {
+        this->UndoButton->SetEnabled(0); //disable undoButton until next change
+        this->RestoreButton->SetEnabled(0); //disable restoreButton until next change
+        }
+      this->ModifiedForNewTensor = 1; //tensor has to be estimated newly
       }
     }
 
   //redo
   else if(event == vtkKWPushButton::InvokedEvent && this->RedoButton == vtkKWPushButton::SafeDownCast(caller))
     {
-    if(this->Logic->GetUndoRedoStackSize() > 0)
+    //if there are more copys in the undoStack
+    if(this->Logic->IsRedoable())
       {
       this->Logic->Redo();
       this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
       this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode); //update GUI
-      ///*disable buttons, when no changes are available
-      //if(this->Logic->GetUndoRedoStackSize()==0)
-      //  {
-      //  this->UndoButton->SetEnabled(0);
-      //  this->RestoreButton->SetEnabled(0);
-      //  }*/
+      this->UndoButton->SetEnabled(1);
+      this->RestoreButton->SetEnabled(1);
+      //disable buttons, when no more copys are in the stack
+      if(!this->Logic->IsRedoable())
+        {
+        this->RedoButton->SetEnabled(0); //disable undoButton until next change
+        }
+      this->ModifiedForNewTensor = 1; //tensor has to be estimated newly
       }
     }
 
@@ -260,7 +265,7 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     if(this->ModifiedForNewTensor)
       {
       // create a command line module node
-     vtkMRMLCommandLineModuleNode *tensorCML = vtkMRMLCommandLineModuleNode::SafeDownCast(
+      vtkMRMLCommandLineModuleNode *tensorCML = vtkMRMLCommandLineModuleNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
 
       // set its name  
