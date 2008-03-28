@@ -444,6 +444,7 @@ SET( SLICER_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 SUBDIRS ( Realign )
 SUBDIRS( DiffusionApplications )
 SUBDIRS( ExtractSkeleton )
+SUBDIRS( UtahBSpline )
 
 IF(USE_MIDAS)
   SUBDIRS( MIDASApplications )

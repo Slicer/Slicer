@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration</category>
+  <title>(Utah) Deformable BSpline registration</title>
+  <description>Registers two images together using a normalized correlation metric and BSpline transform</description>
+  <version>0.1.0.$Revision: 5746 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Sam Gerber, Jim Miller, Steve Pieper, Ross Whitaker</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
+
+  <parameters>
+    <label>Registration Parameters</label>
+    <description>Parameters used for registration</description>
+
+    <integer>
+      <name>gridSize</name>
+      <flag>g</flag>
+      <longflag>gridSize</longflag>
+      <description>Number of grid points on interior of image.</description>
+      <label>Grid Size</label>
+      <default>5</default>
+      <constraints>
+        <minimum>3</minimum>
+        <maximum>20</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+
+    <double>
+      <name>alpha</name>
+      <flag>a</flag>
+      <longflag>alpha</longflag>
+      <description>Regularization term.  0 is no regularization, 1 is maximum.</description>
+      <label>Regularization (alpha)</label>
+      <default>0</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>1</maximum>
+        <step>0.01</step>
+      </constraints>
+    </double>
+
+    <double>
+      <name>sigma</name>
+      <flag>s</flag>
+      <longflag>sigma</longflag>
+      <description>Standard deviation of image smoothing kernel in mm.</description>
+      <label>Std. Dev. of Smoothing (sigma)</label>
+      <default>0</default>
+      <constraints>
+        <minimum>0</minimum>
+      </constraints>
+    </double>
+
+    <double>
+      <name>step</name>
+      <flag>p</flag>
+      <longflag>stepSize</longflag>
+      <description>Initial step size of the optimizer (will be adjusted dynamically downward).</description>
+      <label>Initial Step Size</label>
+      <default>1</default>
+      <constraints>
+        <minimum>0</minimum>
+      </constraints>
+    </double>
+
+    <double>
+      <name>tolerance</name>
+      <flag>t</flag>
+      <longflag>tolerance</longflag>
+      <description>Convergence criterion.  Optimization will stop with step size reaches tolerance.</description>
+      <label>Tolerance</label>
+      <default>0.001</default>
+      <constraints>
+        <minimum>0</minimum>
+      </constraints>
+    </double>
+
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image>
+      <name>FixedImageFileName</name>
+      <label>Fixed Image</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Fixed image to which to register</description>
+    </image>
+    <image>
+      <name>MovingImageFileName</name>
+      <label>Moving Image</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Moving image</description>
+    </image>
+    <image>
+      <name>ResampledImageFileName</name>
+      <longflag>resampledmovingfilename</longflag>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <description>Resampled Moving Image. Optional.</description>
+    </image>
+  </parameters>
+
+</executable>
