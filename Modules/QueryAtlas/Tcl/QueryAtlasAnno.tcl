@@ -392,9 +392,10 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
                     set dnodeID [ $node GetDisplayNodeID ]
                     set dnode [ $node GetDisplayNode ]
                     set snode [ $node GetStorageNode ]
-
+                    # there are now more than one storage nodes on the model node, each overlay has it's own storage node. The annotations have been already added 
+                    if {0} {
                     if { $snode != "" } {
-                        set numOverlays [ $snode GetNumberOfOverlayFiles ]
+                        set numOverlays [expr [ $node GetNumberOfStorageNodes ] - 1]
                         if { $numOverlays == 0 } {
                                 #--- add the scalar onto the node
                                 $mlogic AddScalar $annoFileName $node                                                        
@@ -408,7 +409,7 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
                                 }
                             }
                     }
-
+                    }
                     #--- progress feedback
                     set p [expr $progress + ( $pinc/9.0 ) ]
                     $prog SetValue $p
@@ -763,15 +764,13 @@ proc QueryAtlasConfirmFreeSurferAnnotations { } {
     set n [ $::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode" ]
     for { set i 0 } { $i < $n } { incr i } {
         #--- for each model, check its overlays for an annotation overlay
-        set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLModelNode" ]            
-        set snode [ $node GetStorageNode ]
-        if { $snode != "" } {
-            set numOverlays [ $snode GetNumberOfOverlayFiles ]
-            for { set j 0 } { $j < $numOverlays } { incr j } {
-                set oname   [ $snode GetOverlayFileName $j ]
-                if { ( [ string first "lh.aparc.annot" $oname ] >= 0 ) || ( [ string first "rh.aparc.annot" $oname] >= 0 ) } {
-                    set retval 1
-                }
+        set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLModelNode" ]  
+        # node changed, it now has GetNumberOfStorageNodes on it, the first one will contain the polydata, search the others (or all) for the GetFileName call that returns a string matching the annots.          
+        set numOverlays [ $node GetNumberOfStorageNodes ]
+        for { set j 0 } { $j < $numOverlays } { incr j } {
+            set oname   [ [ $node GetNthStorageNode $j ] GetFileName]
+            if { ( [ string first "lh.aparc.annot" $oname ] >= 0 ) || ( [ string first "rh.aparc.annot" $oname] >= 0 ) } {
+              set retval 1
             }
         }
     }
