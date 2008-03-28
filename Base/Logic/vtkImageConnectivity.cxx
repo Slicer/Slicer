@@ -862,6 +862,7 @@ void vtkImageConnectivity::ExecuteData(vtkDataObject *)
     {
     vtkErrorMacro("Warning: Input scalars are type "<<s 
       << " instead of "<<VTK_SHORT);
+    return;
     }
 
   vtkImageConnectivityExecute(this, inData, (short *)inPtr, 
