@@ -87,6 +87,7 @@ itcl::body ThresholdEffect::apply {} {
   $thresh SetInValue [EditorGetPaintLabel]
   $thresh SetOutValue 0
   $thresh SetOutput [$this getOutputLabel]
+  $thresh SetOutputScalarType [[$this getInputLabel] GetScalarType]
   $this setProgressFilter $thresh "Threshold"
   $thresh Update
   $thresh Delete
