@@ -13,14 +13,40 @@ class VTK_MRML_EXPORT vtkPermissionPrompter : public vtkObject
   static vtkPermissionPrompter *New();
   vtkTypeRevisionMacro(vtkPermissionPrompter, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
- private:
 
+  // Description:
+  // Member for storing a host name, if required
+  vtkGetStringMacro ( Host );
+  vtkSetStringMacro ( Host );
+
+  // Description:
+  // Member for storing a user name, if required
+  vtkGetStringMacro ( UserName );
+  vtkSetStringMacro ( UserName );
+
+  // Description:
+  // Member for storing a password, if required
+  vtkGetStringMacro ( Password );
+  vtkSetStringMacro ( Password );  
+  
+  // Description:
+  // When set, a user won't be prompted again during a given session.
+  // If not set (default) a user will be prompted for each transaction.
+  vtkGetMacro ( Remember, int );
+  vtkSetMacro ( Remember, int );
+
+ private:
+  char *Host;
+  char *UserName;
+  char *Password;
+  int Remember;
+    
  protected:
   vtkPermissionPrompter();
   virtual ~vtkPermissionPrompter();
   vtkPermissionPrompter(const vtkPermissionPrompter&);
   void operator=(const vtkPermissionPrompter&);
+
 };
 
 #endif
