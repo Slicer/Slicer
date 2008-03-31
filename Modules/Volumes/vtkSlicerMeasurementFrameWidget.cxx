@@ -149,6 +149,7 @@ void vtkSlicerMeasurementFrameWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolum
     }
   this->ActiveVolumeNode->GetMeasurementFrameMatrix(this->Matrix); //set internal matrix
   this->UpdateMatrix(); //update gui
+  this->CheckDeterminant();
   }
 
 //---------------------------------------------------------------------------
@@ -170,11 +171,8 @@ void vtkSlicerMeasurementFrameWidget::UpdateMatrix()
 //---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::SaveMatrix()
   {
-  double det = this->Matrix->Determinant();
-  if(det==1 || det==-1)
+  if(this->CheckDeterminant())
     {
-    this->MeasurementFrame->SetLabelText("Measurement Frame");
-    this->MeasurementFrame->GetLabel()->SetBackgroundColor(1,1,1);
     this->InvokeEvent(this->ChangedEvent);
     this->Logic->SaveStateForUndoRedo();
     // write internal matrix back to node
@@ -182,10 +180,25 @@ void vtkSlicerMeasurementFrameWidget::SaveMatrix()
     // mark as modified in save menu
     this->ActiveVolumeNode->SetModifiedSinceRead(1);
     }
+  }
+
+//---------------------------------------------------------------------------
+int vtkSlicerMeasurementFrameWidget::CheckDeterminant()
+  {
+  double det = this->Matrix->Determinant();
+  double delta = 0.001;
+  
+  if((det<=1+delta && det>=1-delta) || (det>=-1-delta && det<=-1+delta))
+    {
+    this->MeasurementFrame->SetLabelText("Measurement Frame");
+    this->MeasurementFrame->GetLabel()->SetBackgroundColor(1,1,1);
+    return 1;
+    }
   else
     {
     this->MeasurementFrame->SetLabelText("Measurement Frame   ** Determinant not 1 **");
     this->MeasurementFrame->GetLabel()->SetBackgroundColor(1,0,0);
+    return 0;
     }
   }
 

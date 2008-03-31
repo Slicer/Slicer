@@ -69,6 +69,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
     // Saves changes of the matrix to the ActiveVolumeNode.
     void SaveMatrix();
 
+    int CheckDeterminant();
+
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkMatrix4x4 *Matrix;
     vtkSlicerGradientEditorLogic *Logic;
