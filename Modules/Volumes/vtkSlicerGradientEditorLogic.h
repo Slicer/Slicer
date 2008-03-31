@@ -1,8 +1,9 @@
 // .NAME vtkSlicerGradientEditorLogic 
 // .SECTION Description
-// This class implements Slicer's main GradientsEditor Logic. Inherits most behavior from 
+// This class implements Slicer's main GradientsEditor Logic, inherits most behavior from 
 // vtkSlicerLogic. This class manages the logic associated with loading gradients from files 
-// and testing given gradients for validity.
+// and testing given gradients for validity. It also holds the logic for the undo/redo/restore 
+// mechanism of the GradientEditor.
 #ifndef __vtkSlicerGradientEditorLogic_h
 #define __vtkSlicerGradientEditorLogic_h
 
@@ -24,38 +25,51 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
     void PrintSelf(ostream& os, vtkIndent indent);
 
     // Description:
-    // Method to add gradients from a file to the GUI. Filetypes are restricted to .txt/.nhdr.
+    // Adds gradients from a file to the GUI. Filetypes are restricted to .txt/.nhdr.
     // Return value is 0 when file contains invalid values; otherwise 1.
     int AddGradients(const char *filename, int numberOfGradients, vtkDoubleArray *newBValue, 
       vtkDoubleArray *newGradients);
 
     // Description:
-    // Method to parse given ASCII gradients back into arrays of gradients and bValues.
+    // Parses given ASCII gradients back into arrays of gradients and bValues.
     // Return value is 0 when given gradients can't be parsed or contain invalid/not enough
     // values; otherwise 1.
     int ParseGradients(const char  *gradients, int numberOfGradients, vtkDoubleArray *newBValue, 
       vtkDoubleArray *newGradients);
 
     // Description:
-    // Method to parse a string into a double value.
+    // Parses a string into a double value.
     // Return value is 0 when parsing was not successful; otherwise 1.
     //BTX
     int StringToDouble(const std::string &s, double &result);
     //ETX
 
-    void SetActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
-
+    // Description:
+    // Pushes the current ActiveVolumeNode onto the UndoRedoStack, and makes a backup 
+    // copy of the node so that changes are undoable/redoable; 
     void SaveStateForUndoRedo();
 
+    // Description:
+    // Redo the last change of measurement/gradient values (after undo).
     void Redo();
 
+    // Description:
+    // Undo the last change of measurement/gradient values.
     void Undo();
 
+    // Description:
+    // All parameters of measurement/gradient are restored to original.
     void Restore();
 
+    // Description:
+    // Return value is 1 if there is still a node in the stack for undo; otherwise 0.
     int IsUndoable();
-    
+
+    // Description:
+    // Return value is 1 if there is still a node in the stack for redo; otherwise 0.
     int IsRedoable();
+
+    void SetActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
 
   protected:
     vtkSlicerGradientEditorLogic(void);
@@ -63,18 +77,22 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
 
-    void UpdateActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
-    
     // Description:
-    // Stack holds all references of createt tensors.
+    // Updates the values of the current ActiveVolumeNode after undo/redo/restore.
+    void UpdateActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
+
+    // Description:
+    // Stack holds all references of created DWINodes.
     //BTX
     vtkstd::vector<vtkMRMLDiffusionWeightedVolumeNode*> UndoRedoStack;
     //ETX
 
     // Description:
-    // Points to the current node in the UndoRedoStack.
+    // Points to the current node in the UndoRedoStack (node that is displayed in the GUI).
     unsigned int StackPosition;
 
+    // Description:
+    // Return value is 1 if editor is in undo mode; otherwise 0.
     int UndoFlag;
 
   private:

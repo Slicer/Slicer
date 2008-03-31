@@ -38,25 +38,25 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     virtual void RemoveWidgetObservers();
 
     // Description:
-    // Method to propagate events generated in GUI to logic / mrml.
+    // Propagates events generated in GUI to logic / mrml.
     void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData );
 
     // Description:
-    // Method to update the widget when a new node is loaded.
+    // Updates the widget when a new node is loaded.
     void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node);
 
     // Description:
-    // Method to create tracts with calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
+    // Creates tracts by calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
     void CreateTracts();
 
     vtkSetObjectMacro(Application, vtkSlicerApplication);
-    
+
   protected:
     vtkSlicerGradientEditorWidget(void);
     virtual ~vtkSlicerGradientEditorWidget(void);
 
     // Description:
-    // Method to create the widget.
+    // Creates the widget.
     virtual void CreateWidget();
 
     // Description:
@@ -66,14 +66,14 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
 
     vtkSlicerApplication *Application;
     vtkSlicerGradientEditorLogic *Logic;
-    
+
     //nodes
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkMRMLDiffusionTensorVolumeNode *TensorNode;
     vtkMRMLScalarVolumeNode *BaselineNode;
     vtkMRMLScalarVolumeNode *MaskNode;
     vtkMRMLFiberBundleNode *FiberNode;
-  
+
     //widgets (GUI)
     vtkSlicerMeasurementFrameWidget *MeasurementFrameWidget;
     vtkSlicerGradientsWidget *GradientsWidget;

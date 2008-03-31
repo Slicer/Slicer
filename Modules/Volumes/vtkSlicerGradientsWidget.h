@@ -37,17 +37,19 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
     virtual void RemoveWidgetObservers();
 
     // Description:
-    // Method to propagate events generated in GUI to logic / mrml.
+    // Propagates events generated in GUI to logic / mrml.
     void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData );
 
     // Description:
-    // Method to update the widget when a new node is loaded.
+    // Updates the widget when a new node is loaded.
     void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode);
 
     // Description:
-    // Method to propagate keypress-events generated in the textbox of gradients.
+    // Propagates keypress-events generated in the gradientsTextbox.
     void TextFieldModifiedCallback();
 
+    // Description:
+    // Event is invoked when a matrix value changed.
     //BTX
     enum
       {
@@ -62,23 +64,23 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
     virtual ~vtkSlicerGradientsWidget(void);
 
     // Description:
-    // Method to create the widget.
+    // Creates the widget.
     virtual void CreateWidget();
 
     // Description:
-    // Method to update the gradientsTextbox containing bValue and gradients (GUI).
+    // Updates the gradientsTextbox containing bValue and gradients (GUI).
     void UpdateGradients();
 
     // Description:
-    // Method to update the status label for the gradients (GUI).
+    // Updates the status label for the gradients (GUI).
     void UpdateStatusLabel(int status);
 
     // Description:
-    // Method to save changes of the gradients/bValues to the activeVolumeNode.
+    // Saves changes of the gradients/bValues to the ActiveVolumeNode.
     void SaveGradients();
 
     // Description:
-    // Method to display a message dialog to the user (GUI).
+    // Displays a message dialog to the user (GUI).
     void DisplayMessageDialog(const char* message);
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;

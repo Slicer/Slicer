@@ -35,13 +35,15 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
     virtual void RemoveWidgetObservers();
 
     // Description:
-    // Method to propagate events generated in GUI to logic / mrml.
+    // Propagates events generated in GUI to logic / mrml.
     virtual void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData);
 
     // Description:
-    // Method to update the widget when a new node is loaded.
+    // Updates the widget when a new node is loaded.
     void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode);
 
+    // Description:
+    // Event is invoked when a matrix value changed.
     //BTX
     enum
       {
@@ -56,15 +58,15 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
     virtual ~vtkSlicerMeasurementFrameWidget(void);
 
     // Description:
-    // Method to create the widget.
+    // Creates the widget.
     virtual void CreateWidget();
 
     // Description:
-    // Method to update the matrixWidget (GUI).
+    // Updates the matrixWidget (GUI).
     void UpdateMatrix();
 
     // Description:
-    // Method to save changes of the matrix to the activeVolumeNode.
+    // Saves changes of the matrix to the ActiveVolumeNode.
     void SaveMatrix();
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
