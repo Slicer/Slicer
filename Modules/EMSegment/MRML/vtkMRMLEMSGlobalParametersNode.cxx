@@ -54,7 +54,7 @@ vtkMRMLEMSGlobalParametersNode::vtkMRMLEMSGlobalParametersNode()
 
   this->SaveIntermediateResults       = 0;
   this->SaveSurfaceModels             = 0;
-  this->MultithreadingEnabled         = 0;
+  this->MultithreadingEnabled         = 1;
   this->UpdateIntermediateData        = 1;
 
   this->SegmentationBoundaryMin[0] = 0;
