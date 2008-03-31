@@ -238,10 +238,7 @@ void vtkSlicerGradientsWidget::TextFieldModifiedCallback()
   this->UpdateStatusLabel(status);
 
   //only if parsing was successful save gradients in activeVolumneNode
-  if(status)
-    {
-    this->SaveGradients();
-    }
+  if(status) this->SaveGradients();
   }
 
 //---------------------------------------------------------------------------

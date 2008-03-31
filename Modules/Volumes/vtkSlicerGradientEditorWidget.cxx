@@ -401,7 +401,8 @@ void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeN
 void vtkSlicerGradientEditorWidget::CreateWidget( )
   {
   //check if already created
-  if (this->IsCreated()){
+  if (this->IsCreated())
+    {
     vtkErrorMacro(<< this->GetClassName() << " already created");
     return;
     }
