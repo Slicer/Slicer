@@ -89,6 +89,8 @@ SET(LIB_SRCS
   vtkSlicerRecordSnapshotWidget.cxx
   vtkSlicerModelHierarchyWidget.cxx
   vtkSlicerDiffusionTensorGlyphDisplayWidget.cxx
+  vtkSlicerPermissionPrompterWidget.cxx
+  vtkSlicerXNATPermissionPrompterWidget.cxx
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx
