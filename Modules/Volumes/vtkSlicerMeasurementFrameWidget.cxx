@@ -4,6 +4,7 @@
 #include "vtkSlicerMeasurementFrameWidget.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkSlicerGradientEditorLogic.h"
+#include "vtkDiffusionTensorMathematicsSimple.h"
 
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
@@ -169,12 +170,23 @@ void vtkSlicerMeasurementFrameWidget::UpdateMatrix()
 //---------------------------------------------------------------------------
 void vtkSlicerMeasurementFrameWidget::SaveMatrix()
   {
-  this->InvokeEvent(this->ChangedEvent);
-  this->Logic->SaveStateForUndoRedo();
-  // write internal matrix back to node
-  this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
-  // mark as modified in save menu
-  this->ActiveVolumeNode->SetModifiedSinceRead(1);  
+  double det = this->Matrix->Determinant();
+  if(det==1 || det==-1)
+    {
+    this->MeasurementFrame->SetLabelText("Measurement Frame");
+    this->MeasurementFrame->GetLabel()->SetBackgroundColor(1,1,1);
+    this->InvokeEvent(this->ChangedEvent);
+    this->Logic->SaveStateForUndoRedo();
+    // write internal matrix back to node
+    this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
+    // mark as modified in save menu
+    this->ActiveVolumeNode->SetModifiedSinceRead(1);
+    }
+  else
+    {
+    this->MeasurementFrame->SetLabelText("Measurement Frame   ** Determinant not 1 **");
+    this->MeasurementFrame->GetLabel()->SetBackgroundColor(1,0,0);
+    }
   }
 
 //---------------------------------------------------------------------------
@@ -249,6 +261,7 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
     {
     vtkTransform* transform = vtkTransform::New();
     transform->SetMatrix(this->Matrix);
+
     //rotate
     if(this->Checkbuttons[0]->GetSelectedState())
       {
