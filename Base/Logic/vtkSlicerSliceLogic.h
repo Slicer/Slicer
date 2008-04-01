@@ -300,7 +300,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
 //BTX                                            
   // Description:
   // Get  all slice displaynodes creating PolyData models like glyphs etc.
-  std::vector< vtkMRMLDisplayNode*> vtkSlicerSliceLogic::GetPolyDataDisplayNodes();
+  std::vector< vtkMRMLDisplayNode*> GetPolyDataDisplayNodes();
 //ETX
 
 protected:
