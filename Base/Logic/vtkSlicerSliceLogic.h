@@ -49,6 +49,8 @@ class vtkImageData;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLLinearTransformNode;
 class vtkImageReslice;
+class vtkPolyDataCollection;
+class vtkCollection;
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic 
 {
@@ -84,14 +86,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // Description:
   // The background slice glyph layer
   // TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (BackgroundGlyphLayer, vtkSlicerSliceGlyphLogic);
-  void SetBackgroundGlyphLayer (vtkSlicerSliceGlyphLogic *BackgroundLayer);
+  //vtkGetObjectMacro (BackgroundGlyphLayer, vtkSlicerSliceGlyphLogic);
+  //void SetBackgroundGlyphLayer (vtkSlicerSliceGlyphLogic *BackgroundLayer);
 
   // Description:
   // The forground slice layer
   // TODO: this will eventually be generalized to a list of layers
-  vtkGetObjectMacro (ForegroundGlyphLayer, vtkSlicerSliceGlyphLogic);
-  void SetForegroundGlyphLayer (vtkSlicerSliceGlyphLogic *ForegroundGlyphLayer);
+  //vtkGetObjectMacro (ForegroundGlyphLayer, vtkSlicerSliceGlyphLogic);
+  //void SetForegroundGlyphLayer (vtkSlicerSliceGlyphLogic *ForegroundGlyphLayer);
 
   // Description:
   // The Label slice layer
@@ -290,6 +292,16 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // Make a slice model with the current configuration
   void CreateSliceModel();
   void DeleteSliceModel();
+  
+  // Description:
+  // Get PolyData models like glyphs etc.
+  void GetPolyDataAndLookUpTableCollections(vtkPolyDataCollection *PolyDataCollection,
+                                            vtkCollection *LookupTableCollection);
+//BTX                                            
+  // Description:
+  // Get  all slice displaynodes creating PolyData models like glyphs etc.
+  std::vector< vtkMRMLDisplayNode*> vtkSlicerSliceLogic::GetPolyDataDisplayNodes();
+//ETX
 
 protected:
   vtkSlicerSliceLogic();
@@ -305,8 +317,8 @@ protected:
   vtkSlicerSliceLayerLogic *ForegroundLayer;
   vtkSlicerSliceLayerLogic *LabelLayer;
 
-  vtkSlicerSliceGlyphLogic *ForegroundGlyphLayer;
-  vtkSlicerSliceGlyphLogic *BackgroundGlyphLayer;
+  //vtkSlicerSliceGlyphLogic *ForegroundGlyphLayer;
+  //vtkSlicerSliceGlyphLogic *BackgroundGlyphLayer;
 
   double ForegroundOpacity;
   double LabelOpacity;
@@ -321,6 +333,8 @@ protected:
   vtkMRMLModelDisplayNode *SliceModelDisplayNode;
   vtkMRMLLinearTransformNode *SliceModelTransformNode;
   double SliceSpacing[3];
+  
+  void AddSLiceGlyphs(vtkSlicerSliceLayerLogic *layerLogic);
 
 };
 

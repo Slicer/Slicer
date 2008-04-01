@@ -32,7 +32,8 @@
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
 class vtkDiffusionTensorGlyph;
-
+class vtkTransform;
+class vtkTransformPolyDataFilter;
 
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkMRMLFiberBundleDisplayNode
 {
@@ -69,8 +70,12 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   void SetPolyData(vtkPolyData *glyphPolyData);
 
   // Description:
-  // Gets resultin glyph PolyData 
+  // Gets resulting glyph PolyData 
   virtual vtkPolyData* GetPolyData();
+  
+  // Description:
+  // Gets resulting glyph PolyData transfomed to slice XY
+  virtual vtkPolyData* GetPolyDataTransformedToSlice();
    
   // Description:
   // Update the pipeline based on this node attributes
@@ -80,7 +85,13 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   // Set ImageData for a volume slice
   virtual void SetSliceImage(vtkImageData *image);
  
+  // Description:
+  // Set slice to RAS transformation
   virtual void SetSlicePositionMatrix(vtkMatrix4x4 *matrix);
+
+  // Description:
+  // Set slice to IJK transformation
+  virtual void SetSliceTensorRotationMatrix(vtkMatrix4x4 *matrix);
 
  protected:
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( );
@@ -89,6 +100,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   void operator= ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
 
     vtkDiffusionTensorGlyph  *DiffusionTensorGlyphFilter;
+    vtkTransform             *SliceToXYTransform;
+    vtkTransformPolyDataFilter *SliceToXYTransformer;
 };
 
 #endif

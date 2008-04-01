@@ -568,13 +568,25 @@ void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
   if (volumeNode)
     {
     std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> dnodes  = volumeNode->GetSliceGlyphDisplayNodes();
-    for (unsigned int i=0; i<dnodes.size(); i++)
+    for (unsigned int n=0; n<dnodes.size(); n++)
       {
-      vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dnode = dnodes[i];
+      vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dnode = dnodes[n];
       if (!strcmp(this->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
         {
         dnode->SetSliceImage(sliceImage);
         dnode->SetSlicePositionMatrix(this->SliceNode->GetXYToRAS());
+        double dirs[3][3];
+        volumeNode->GetIJKToRASDirections(dirs);
+        vtkMatrix4x4 *trot = vtkMatrix4x4::New();
+        trot->Identity();
+        for (int i=0; i<3; i++) 
+          {
+          for (int j=0; j<3; j++)
+            {
+            trot->SetElement(i, j, dirs[i][j]);
+            }
+          }
+        dnode->SetSliceTensorRotationMatrix(trot);
         }
       }
     }

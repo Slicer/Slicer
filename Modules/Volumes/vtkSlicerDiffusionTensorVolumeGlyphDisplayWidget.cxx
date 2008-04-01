@@ -343,13 +343,14 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
 */
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  this->DisplayFrame->GetWidgetName() );  
+  char* sliceNames[] = {"Red", "Yellow", "Green"};
   for (i=0; i<3; i++)
     {
     this->VisibilityButton[i] = vtkKWCheckButtonWithLabel::New();
     this->VisibilityButton[i]->SetParent ( this->DisplayFrame->GetFrame());
     this->VisibilityButton[i]->Create ( );
     std::stringstream ss;
-    ss << "Visibility " << i; 
+    ss << "Visibility " << sliceNames[i]; 
     this->VisibilityButton[i]->SetLabelText(ss.str().c_str());
     this->VisibilityButton[i]->SetBalloonHelpString("set fiberBundle visibility.");
     this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",

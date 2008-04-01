@@ -20,6 +20,8 @@
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
 #include "vtkSlicerSliceLogic.h"
 
@@ -43,8 +45,8 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->BackgroundLayer = NULL;
   this->ForegroundLayer = NULL;
   this->LabelLayer = NULL;
-  this->BackgroundGlyphLayer = NULL;
-  this->ForegroundGlyphLayer = NULL;
+  //this->BackgroundGlyphLayer = NULL;
+  //this->ForegroundGlyphLayer = NULL;
   this->SliceNode = NULL;
   this->SliceCompositeNode = NULL;
   this->ForegroundOpacity = 0.5; // Start by blending fg/bg
@@ -90,8 +92,8 @@ vtkSlicerSliceLogic::~vtkSlicerSliceLogic()
   this->SetBackgroundLayer (NULL);
   this->SetForegroundLayer (NULL);
   this->SetLabelLayer (NULL);
-  this->SetBackgroundGlyphLayer (NULL);
-  this->SetForegroundGlyphLayer (NULL);
+  //this->SetBackgroundGlyphLayer (NULL);
+  //this->SetForegroundGlyphLayer (NULL);
  
   if ( this->SliceCompositeNode ) 
     {
@@ -319,6 +321,7 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     this->SetLabelLayer (layer);
     layer->Delete();
     }
+  /*
   if ( this->BackgroundGlyphLayer == NULL )
     {
     vtkSlicerSliceGlyphLogic *layer = vtkSlicerSliceGlyphLogic::New();
@@ -331,7 +334,7 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
     this->SetForegroundGlyphLayer (layer);
     layer->Delete();
     }
-
+   */
   // Update slice plane geometry
   if (this->SliceNode != NULL && this->GetSliceModelNode() != NULL 
       && this->MRMLScene->GetNodeByID( this->SliceModelNode->GetID() ) != NULL && 
@@ -422,7 +425,7 @@ void vtkSlicerSliceLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
     {
     this->LabelLayer->SetSliceNode(sliceNode);
     }
-
+  /*
   if (this->BackgroundGlyphLayer)
     {
     this->BackgroundGlyphLayer->SetSliceNode(sliceNode);
@@ -431,6 +434,7 @@ void vtkSlicerSliceLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
     {
     this->ForegroundGlyphLayer->SetSliceNode(sliceNode);
     }
+    */
 
   this->Modified();
 
@@ -535,6 +539,8 @@ void vtkSlicerSliceLogic::SetLabelLayer(vtkSlicerSliceLayerLogic *LabelLayer)
 
   this->Modified();
 }
+
+/***
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::SetBackgroundGlyphLayer(vtkSlicerSliceGlyphLogic *BackgroundGlyphLayer)
 {
@@ -594,7 +600,7 @@ void vtkSlicerSliceLogic::SetForegroundGlyphLayer(vtkSlicerSliceGlyphLogic *Fore
 
   this->Modified();
 }
-
+****/
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::SetForegroundOpacity(double ForegroundOpacity)
@@ -652,6 +658,7 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         modified = 1;
         }
       }
+    /***
     if (this->BackgroundGlyphLayer)
       {
       if ( bgnode && (bgnode->GetDisplayNode()) && (bgnode->GetDisplayNode()->IsA("vtkMRMLVolumeGlyphDisplayNode")) && (this->BackgroundGlyphLayer->GetVolumeNode() != bgnode) ) 
@@ -661,7 +668,8 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         modified = 1;
         }
       }
-
+    **/
+    
     // Foreground
     id = this->SliceCompositeNode->GetForegroundVolumeID();
     vtkMRMLVolumeNode *fgnode = NULL;
@@ -678,18 +686,18 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         modified = 1;
         }
       }
-
+    /**
     if (this->ForegroundGlyphLayer)
       {
 
       if (  fgnode && (fgnode->GetDisplayNode()) && (fgnode->GetDisplayNode()->IsA("vtkMRMLVolumeGlyphDisplayNode")) && (this->ForegroundGlyphLayer->GetVolumeNode() != fgnode) ) 
         {
-  std::cout<<"Foreground node is a glyph\n";
-  std::cout.flush();
         this->ForegroundGlyphLayer->SetVolumeNode (bgnode);
         modified = 1;
         }
       }
+      **/
+      
     // Label
     id = this->SliceCompositeNode->GetLabelVolumeID();
     vtkMRMLVolumeNode *lbnode = NULL;
@@ -764,10 +772,10 @@ void vtkSlicerSliceLogic::UpdatePipeline()
 
    //Glyphs
 
-    PolyDataCollection->RemoveAllItems();
-    LookupTableCollection->RemoveAllItems();
 
     /* ++++ Remove Glyphs for now untill they work correctly
+    PolyDataCollection->RemoveAllItems();
+    LookupTableCollection->RemoveAllItems();
     if ( this->BackgroundGlyphLayer && this->BackgroundGlyphLayer->GetPolyData() )
     {
       if (this->BackgroundGlyphLayer->GetPolyData())
@@ -840,10 +848,10 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
     (this->Blend ? "not null" : "(none)") << "\n";
   os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
   os << indent << "LabelOpacity: " << this->LabelOpacity << "\n";
-  os << indent << "BackgroundGlyphLayer: " <<
-    (this->BackgroundGlyphLayer ? "not null" : "(none)") << "\n";
-  os << indent << "ForegroundGlyphLayer: " <<
-    (this->ForegroundGlyphLayer ? "not null" : "(none)") << "\n"; 
+  //os << indent << "BackgroundGlyphLayer: " <<
+    //(this->BackgroundGlyphLayer ? "not null" : "(none)") << "\n";
+  //os << indent << "ForegroundGlyphLayer: " <<
+    //(this->ForegroundGlyphLayer ? "not null" : "(none)") << "\n"; 
 
 }
 
@@ -1425,4 +1433,75 @@ void vtkSlicerSliceLogic::SetSliceOffset(double offset)
   sliceToRAS->Delete();
 }
 
+void vtkSlicerSliceLogic::GetPolyDataAndLookUpTableCollections(vtkPolyDataCollection *polyDataCollection,
+                                                               vtkCollection *lookupTableCollection)
+{
+  this->PolyDataCollection->RemoveAllItems();
+  this->LookupTableCollection->RemoveAllItems();
+  
+  // Add glyphs. Get them from Background or Foreground slice layers.
+  vtkSlicerSliceLayerLogic *layerLogic = this->GetBackgroundLayer();
+  this->AddSLiceGlyphs(layerLogic);
+  
+  layerLogic = this->GetForegroundLayer();
+  this->AddSLiceGlyphs(layerLogic);
+  
+  polyDataCollection = this->PolyDataCollection;
+  lookupTableCollection = this->LookupTableCollection;
+} 
+
+void vtkSlicerSliceLogic::AddSLiceGlyphs(vtkSlicerSliceLayerLogic *layerLogic)
+{
+ if (layerLogic && layerLogic->GetVolumeNode()) 
+    {
+    vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast (layerLogic->GetVolumeNode());
+    if (volumeNode)
+      {
+      std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> dnodes  = volumeNode->GetSliceGlyphDisplayNodes();
+      for (unsigned int i=0; i<dnodes.size(); i++)
+        {
+        vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dnode = dnodes[i];
+        if (dnode->GetVisibility() && !strcmp(layerLogic->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
+          {
+          this->PolyDataCollection->AddItem(dnode->GetPolyDataTransformedToSlice());
+          if (dnode->GetColorNode() && dnode->GetColorNode()->GetLookupTable()) 
+            {
+            this->LookupTableCollection->AddItem(dnode->GetColorNode()->GetLookupTable());
+            }
+          break;
+          }
+        }
+      }//  if (volumeNode)
+    }// if (layerLogic && layerLogic->GetVolumeNode()) 
+    
+}
+
+std::vector< vtkMRMLDisplayNode*> vtkSlicerSliceLogic::GetPolyDataDisplayNodes()
+{
+  std::vector< vtkMRMLDisplayNode*> nodes;
+  std::vector<vtkSlicerSliceLayerLogic *> layerLogics;
+  layerLogics.push_back(this->GetBackgroundLayer());
+  layerLogics.push_back(this->GetForegroundLayer());
+  for (unsigned int i=0; i<layerLogics.size(); i++) 
+    {
+    vtkSlicerSliceLayerLogic *layerLogic = layerLogics[i];
+    if (layerLogic && layerLogic->GetVolumeNode()) 
+      {
+      vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast (layerLogic->GetVolumeNode());
+      if (volumeNode)
+        {
+        std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> dnodes  = volumeNode->GetSliceGlyphDisplayNodes();
+        for (unsigned int n=0; n<dnodes.size(); n++)
+          {
+          vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dnode = dnodes[n];
+          if (!strcmp(layerLogic->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
+            {
+            nodes.push_back(dnode);
+            }
+          }
+        }//  if (volumeNode)
+      }// if (layerLogic && layerLogic->GetVolumeNode()) 
+    }
+  return nodes;
+}
 

@@ -20,7 +20,7 @@ Version:   $Revision: 1.3 $
 
 #include "vtkDiffusionTensorGlyph.h"
 
-#include "vtkDiffusionTensorGlyph.h"
+#include "vtkTransformPolyDataFilter.h"
 
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 #include "vtkMRMLScene.h"
@@ -59,6 +59,13 @@ vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceD
   this->DiffusionTensorGlyphFilter->SetResolution (1);
 
   this->ColorMode = vtkMRMLFiberBundleDisplayNode::colorModeScalar;
+  
+  this->SliceToXYTransformer = vtkTransformPolyDataFilter::New();
+
+  this->SliceToXYTransform = vtkTransform::New();
+
+  this->SliceToXYTransformer->SetInput(this->DiffusionTensorGlyphFilter->GetOutput());
+  this->SliceToXYTransformer->SetTransform(this->SliceToXYTransform);
 }
 
 
@@ -67,6 +74,8 @@ vtkMRMLDiffusionTensorVolumeSliceDisplayNode::~vtkMRMLDiffusionTensorVolumeSlice
 {
   this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
   this->DiffusionTensorGlyphFilter->Delete();
+  this->SliceToXYTransform->Delete();
+  this->SliceToXYTransformer->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -107,6 +116,14 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::PrintSelf(ostream& os, vtkInd
   
   Superclass::PrintSelf(os,indent);
 }
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceTensorRotationMatrix(vtkMatrix4x4 *matrix)
+{
+  if (this->DiffusionTensorGlyphFilter)
+    {
+    this->DiffusionTensorGlyphFilter->SetTensorRotationMatrix(matrix);
+    }
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMatrix4x4 *matrix)
@@ -115,6 +132,15 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMat
     {
     this->DiffusionTensorGlyphFilter->SetVolumePositionMatrix(matrix);
     }
+  vtkMatrix4x4 *matrixInv = vtkMatrix4x4::New();
+  matrixInv->DeepCopy(matrix);
+  matrixInv->Invert();
+  if (this->SliceToXYTransform)
+    {
+    this->SliceToXYTransform->SetMatrix(matrixInv);
+    this->SliceToXYTransform->PreMultiply();
+    }
+  matrixInv->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -147,6 +173,21 @@ vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyData()
     }
 }
 
+//----------------------------------------------------------------------------
+vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyDataTransformedToSlice()
+{
+  if (this->DiffusionTensorGlyphFilter)
+    {
+    this->UpdatePolyDataPipeline();
+    this->DiffusionTensorGlyphFilter->Update();
+    this->SliceToXYTransformer->Update();
+    return this->SliceToXYTransformer->GetOutput();
+    }
+  else
+    {
+    return NULL;
+    }
+}
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline() 
 {
