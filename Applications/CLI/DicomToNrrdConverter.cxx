@@ -71,6 +71,9 @@ This is also the space for NRRD header.
 #include "itkVectorImage.h"
 #include "gdcmDictSet.h"        // access to dictionary
 #include "gdcmDict.h"           // access to dictionary
+#include "gdcmFile.h"           // access to dictionary
+#include "gdcmDocEntry.h"       //internal of gdcm
+#include "gdcmBinEntry.h"       //internal of gdcm
 #include "gdcmDictEntry.h"      // access to dictionary
 #include "gdcmGlobal.h"         // access to dictionary
 
@@ -88,7 +91,7 @@ const gdcm::DictEntry SiemensDictNMosiac( 0x0019, 0x100a, "US", "1", "Number of 
 const gdcm::DictEntry SiemensDictBValue( 0x0019, 0x100c, "IS", "1", "B Value of diffusion weighting" );       
 const gdcm::DictEntry SiemensDictDiffusionDirection( 0x0019, 0x100e, "FD", "3", "Diffusion Gradient Direction" );       
 const gdcm::DictEntry SiemensDictDiffusionMatrix( 0x0019, 0x1027, "FD", "6", "Diffusion Matrix" );       
-const gdcm::DictEntry SiemensDictShadowInfo( 0x0029, 0x1010, "LT", "1", "Siemens DWI Info" );       
+const gdcm::DictEntry SiemensDictShadowInfo( 0x0029, 0x1010, "OB", "1", "Siemens DWI Info" );       
 
 // add relevant private tags from other vendors
 
@@ -106,22 +109,22 @@ void InsertUnique( std::vector<float> & vec, float value )
   int n = vec.size();
   if (n == 0)
     {
-    vec.push_back( value );
-    return;
+      vec.push_back( value );
+      return;
     }
 
   for (int k = 0; k < n ; k++)
     {
-    if (vec[k] == value)
-      {
-      return;
-      }
+      if (vec[k] == value)
+        {
+          return;
+        }
     }
 
   // if we get here, it means value is not in vec.
   vec.push_back( value );
   return;
-  
+
 }
 
 int main(int argc, char* argv[])
@@ -137,22 +140,22 @@ int main(int argc, char* argv[])
   std::string nhdrname = outputFileName;
   std::string dataname;
   {
-  int i;
-  i = nhdrname.find(".nhdr");
-  if (i == std::string::npos)
-    {
-    std::cerr << "Output file must be a nrrd header file.\n";
-    std::cerr << "Version:   $Revision: 1.2 $" << std::endl;
-    return EXIT_FAILURE;
-    }
-  dataname = nhdrname.substr(0, i) + ".raw";
+    int i;
+    i = nhdrname.find(".nhdr");
+    if (i == std::string::npos)
+      {
+        std::cerr << "Output file must be a nrrd header file.\n";
+        std::cerr << "Version:   $Revision: 1.2 $" << std::endl;
+        return EXIT_FAILURE;
+      }
+    dataname = nhdrname.substr(0, i) + ".raw";
   }
 
   //////////////////////////////////////////////////  
   // 0a) read one slice and figure out vendor
   ImageIOType::Pointer gdcmIO = ImageIOType::New();
   gdcmIO->LoadPrivateTagsOn();
-  gdcmIO->SetMaxSizeLoadEntry( 65535 );
+  gdcmIO->SetMaxSizeLoadEntry( 163840 );
 
   InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
   inputNames->SetInputDirectory( inputDicom.c_str() );
@@ -168,13 +171,13 @@ int main(int argc, char* argv[])
   sReader->SetFileName( filenames[0] );
   try
     {
-    sReader->Update();
+      sReader->Update();
     }
   catch (itk::ExceptionObject &excp)
     {
-    std::cerr << "Exception thrown while reading the first file in the series" << std::endl;
-    std::cerr << excp << std::endl;
-    return EXIT_FAILURE;
+      std::cerr << "Exception thrown while reading the first file in the series" << std::endl;
+      std::cerr << excp << std::endl;
+      return EXIT_FAILURE;
     }
 
   // check the tag 0008|0070 for vendor information
@@ -191,42 +194,42 @@ int main(int argc, char* argv[])
   //  0b) Add private dictionary
   if ( vendor.find("GE") != std::string::npos )
     {
-    // for GE data
-    gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictBValue);
-    gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictXGradient);
-    gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictYGradient);
-    gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictZGradient);
+      // for GE data
+      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictBValue);
+      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictXGradient);
+      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictYGradient);
+      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(GEDictZGradient);
     }
   else if( vendor.find("SIEMENS") != std::string::npos )
     {
-    // for Siemens data
-    gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensMosiacParameters);
-    gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictNMosiac);
-    gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictBValue);
-    gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictDiffusionDirection);
-    gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictDiffusionMatrix);
-    gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictShadowInfo);
+      // for Siemens data
+      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensMosiacParameters);
+      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictNMosiac);
+      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictBValue);
+      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictDiffusionDirection);
+      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictDiffusionMatrix);
+      gdcm::Global::GetDicts()->GetDefaultPubDict()->AddEntry(SiemensDictShadowInfo);
 
-    if ( ImageType.find("MOSAIC") != std::string::npos )
-      {
-      std::cout << "Siemens Mosaic format\n";
-      SliceMosaic = true;
-      }
-    else
-      {
-      std::cout << "Siemens split format\n";
-      SliceMosaic = false;
-      }
-
+      if ( ImageType.find("MOSAIC") != std::string::npos )
+        {
+          std::cout << "Siemens Mosaic format\n";
+          SliceMosaic = true;
+        }
+      else
+        {
+          std::cout << "Siemens split format\n";
+          SliceMosaic = false;
+        }
     }
   else if( vendor.find("PHILIPS") != std::string::npos )
     {
-    // for philips data
+      // for philips data
     }
   else
     {
-    std::cerr << "Unrecognized vendor.\n" << std::endl;
+      std::cerr << "Unrecognized vendor.\n" << std::endl;
     }
+
 
   //////////////////////////////////////////////////  
   // 1) Read the input series as an array of slices
@@ -235,13 +238,13 @@ int main(int argc, char* argv[])
   reader->SetFileNames( filenames );
   try
     {
-    reader->Update();
+      reader->Update();
     }
   catch (itk::ExceptionObject &excp)
     {
-    std::cerr << "Exception thrown while reading the series" << std::endl;
-    std::cerr << excp << std::endl;
-    return EXIT_FAILURE;
+      std::cerr << "Exception thrown while reading the series" << std::endl;
+      std::cerr << excp << std::endl;
+      return EXIT_FAILURE;
     }
 
   /////////////////////////////////////////////////////
@@ -289,14 +292,12 @@ int main(int argc, char* argv[])
   std::vector<float> sliceLocations(0);
   for (int k = 0; k < nSlice; k++)
     {
-    tag.clear();
-    itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0020|1041",  tag);
-    float sliceLocation = atof( tag.c_str() );
-    InsertUnique( sliceLocations, sliceLocation );
+      tag.clear();
+      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0020|1041",  tag);
+      float sliceLocation = atof( tag.c_str() );
+      InsertUnique( sliceLocations, sliceLocation );
     }    
-  
-  
-  
+
   // check ImageOrientationPatient and figure out slice direction in
   // L-P-I (right-handed) system.
   // In Dicom, the coordinate frame is L-P by default. Look at
@@ -308,7 +309,7 @@ int main(int argc, char* argv[])
   std::cout << "ImageOrientationPatient (0020:0037): ";
   std::cout << xRow << ", " << yRow << ", " << zRow << "; ";
   std::cout << xCol << ", " << yCol << ", " << zCol << "\n";
-  
+
   // In Dicom, the measurement frame is L-P by default. Look at
   // http://medical.nema.org/dicom/2007/07_03pu.pdf ,  page 301, in
   // order to make this compatible with Slicer's RAS frame, we
@@ -334,101 +335,159 @@ int main(int argc, char* argv[])
   yCol *= yRes;
   zCol *= yRes;
 
-  // figure out slice order
+  int mMosaic;   // number of raws in each mosaic block;
+  int nMosaic;   // number of columns in each mosaic block
+  int nSliceInVolume;
+
+  // figure out slice order and mosaic arrangement.
   if ( vendor.find("GE") != std::string::npos ||
        (vendor.find("SIEMENS") != std::string::npos && !SliceMosaic) )
     {
-    float x0, y0, z0;
-    float x1, y1, z1;
-    tag.clear();
-    itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0032", tag );
-    sscanf( tag.c_str(), "%f\\%f\\%f", &x0, &y0, &z0 );
-    std::cout << "Slice 0: " << tag << std::endl;
-    tag.clear();
+      float x0, y0, z0;
+      float x1, y1, z1;
+      tag.clear();
+      itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0020|0032", tag );
+      sscanf( tag.c_str(), "%f\\%f\\%f", &x0, &y0, &z0 );
+      std::cout << "Slice 0: " << tag << std::endl;
+      tag.clear();
 
-    // assume volume interleaving, i.e. the second dicom file stores
-    // the second slice in the same volume as the first dicom file
-    itk::ExposeMetaData<std::string> ( *(*inputDict)[1], "0020|0032", tag );
-    sscanf( tag.c_str(), "%f\\%f\\%f", &x1, &y1, &z1 );
-    std::cout << "Slice 1: " << tag << std::endl;
-    x1 -= x0; y1 -= y0; z1 -= z0;
-    x0 = x1*xSlice + y1*ySlice + z1*zSlice;
-    if (x0 < 0)
-      {
-      SliceOrderIS = false;
-      }
+      // assume volume interleaving, i.e. the second dicom file stores
+      // the second slice in the same volume as the first dicom file
+      itk::ExposeMetaData<std::string> ( *(*inputDict)[1], "0020|0032", tag );
+      sscanf( tag.c_str(), "%f\\%f\\%f", &x1, &y1, &z1 );
+      std::cout << "Slice 1: " << tag << std::endl;
+      x1 -= x0; y1 -= y0; z1 -= z0;
+      x0 = x1*xSlice + y1*ySlice + z1*zSlice;
+      if (x0 < 0)
+        {
+          SliceOrderIS = false;
+        }
     }
   else if ( vendor.find("SIEMENS") != std::string::npos && SliceMosaic )
     {
+      std::cout << "Siemens SliceMosaic......" << std::endl;
+
       SliceOrderIS = false;
 
       // for siemens mosaic image, figure out mosaic slice order from 0029|1010
-
       tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0029|1010", tag );
+      gdcm::File *header0 = new gdcm::File;
+      gdcm::BinEntry* binEntry;
+    
+      header0->SetMaxSizeLoadEntry(163840);
+      header0->SetFileName( filenames[0] );
+      header0->SetLoadMode( gdcm::LD_ALL );
+      header0->Load();
+      
+      gdcm::DocEntry* docEntry = header0->GetFirstEntry();
+      while(docEntry)
+        {
+          if ( docEntry->GetKey() == "0029|1010"  )
+            {
+              binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
+              int binLength = binEntry->GetFullLength();
+              tag.resize( binLength );
+              uint8_t * tagString = binEntry->GetBinArea();
+            
+              for (int k = 0; k < binLength; k++)
+                {
+                  tag[k] = *(tagString+k);
+                }
+              break;
+            }
+          docEntry = header0->GetNextEntry();
+        }
+
 
       int atPosition = tag.find( "SliceNormalVector" );
       if ( atPosition != std::string::npos)
-      {
-
-        std::string infoAsString = tag.substr( atPosition, tag.size()-atPosition+1 );
-        const char * infoAsCharPtr = infoAsString.c_str();
-
-        std::string fieldName = "SliceNormalVector";
-        int vm = *(infoAsCharPtr+64);
-        std::string vr = infoAsString.substr( 68, 4 );
-        int syngodt = *(infoAsCharPtr+72);
-        int nItems = *(infoAsCharPtr+76);
-        int localDummy = *(infoAsCharPtr+80);
-
-        int offset = 84;
-        float sliceNorm[3];
-        for (int k = 0; k < vm; k++)
         {
+
+          std::string infoAsString = tag.substr( atPosition, tag.size()-atPosition+1 );
+          const char * infoAsCharPtr = infoAsString.c_str();
+
+          std::string fieldName = "SliceNormalVector";
+          int vm = *(infoAsCharPtr+64);
+          std::string vr = infoAsString.substr( 68, 4 );
+          int syngodt = *(infoAsCharPtr+72);
+          int nItems = *(infoAsCharPtr+76);
+          int localDummy = *(infoAsCharPtr+80);
+
+          int offset = 84;
+          float sliceNorm[3];
           int itemLength = *(infoAsCharPtr+offset+4);
           int strideSize = ceil(static_cast<double>(itemLength)/4) * 4;
-          std::string valueString = infoAsString.substr( offset+16, itemLength );
-          sliceNorm[k] = atof( valueString.c_str() );
-          offset += 16+strideSize;
+          for (int k = 0; k < vm; k++)
+            {
+              std::string valueString = infoAsString.substr( offset+16, itemLength );
+              sliceNorm[k] = atof( valueString.c_str() );
+              offset += 16+strideSize;
+            }
+          std::cout << "Mosaic Slice Norm: (" << sliceNorm[0] << ", " << sliceNorm[1] << ", " << sliceNorm[2] << ")\n";
+
+          if (sliceNorm[2] > 0)
+            {
+              SliceOrderIS = true;
+            }
         }
 
-        if ( sliceNorm[2] > 0 )
+      atPosition = tag.find( "NumberOfImagesInMosaic" );
+      if ( atPosition != std::string::npos)
         {
-          SliceOrderIS = true;        
+
+          std::string infoAsString = tag.substr( atPosition, tag.size()-atPosition+1 );
+          const char * infoAsCharPtr = infoAsString.c_str();
+
+          std::string fieldName = "NumberOfImagesInMosaic";
+          int vm = *(infoAsCharPtr+64);
+          std::string vr = infoAsString.substr( 68, 4 );
+          int syngodt = *(infoAsCharPtr+72);
+          int nItems = *(infoAsCharPtr+76);
+          int localDummy = *(infoAsCharPtr+80);
+
+          int offset = 84;
+          int itemLength = *(infoAsCharPtr+offset+4);
+          int strideSize = ceil(static_cast<double>(itemLength)/4) * 4;
+
+          std::string valueString = infoAsString.substr( offset+16, itemLength );
+          double value = atoi( valueString.c_str() );
+
+          nSliceInVolume = atoi( valueString.c_str() );
+          mMosaic = static_cast<int> (sqrt(value)+0.5);
+          nMosaic = mMosaic;
         }
-      }
-  }
+      std::cout << "Mosaic in " << mMosaic << " X " << nMosaic << " blocks (total number of blocks = " << nSliceInVolume << ").\n"; 
+    }
   else
-  {
-  }
-  
+    {
+    }
+
   if ( SliceOrderIS )
     {
-    std::cout << "Slice order is IS\n";
+      std::cout << "Slice order is IS\n";
     }
   else
     {
-    std::cout << "Slice order is SI\n";
+      std::cout << "Slice order is SI\n";
     }
-
 
   if (!SliceOrderIS)
     {
-    xSlice = -xSlice;
-    ySlice = -ySlice;
-    zSlice = -zSlice;
+      xSlice = -xSlice;
+      ySlice = -ySlice;
+      zSlice = -zSlice;
     }
 
   std::cout << "Row: " << xRow << ", " << yRow << ", " << zRow << std::endl;
   std::cout << "Col: " << xCol << ", " << yCol << ", " << zCol << std::endl;
   std::cout << "Sli: " << xSlice << ", " << ySlice << ", " << zSlice << std::endl;
-    
+
   orthoSliceSpacing = fabs(zSlice);
-  
-  int nSliceInVolume;
+
   int nVolume;
 
   std::vector<float> bValues(0);
+  float maxBvalue = 0;
   int nBaseline = 0;
 
   std::vector< vnl_vector_fixed<double, 3> > DiffusionVectors;
@@ -438,122 +497,121 @@ int main(int argc, char* argv[])
 
   if ( vendor.find("GE") != std::string::npos )
     {
-    nSliceInVolume = sliceLocations.size();
-    nVolume = nSlice/nSliceInVolume;
+      nSliceInVolume = sliceLocations.size();
+      nVolume = nSlice/nSliceInVolume;
 
-    // assume volume interleaving
-    std::cout << "Number of Slices: " << nSlice << std::endl;
-    std::cout << "Number of Volume: " << nVolume << std::endl;
-    std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
+      // assume volume interleaving
+      std::cout << "Number of Slices: " << nSlice << std::endl;
+      std::cout << "Number of Volume: " << nVolume << std::endl;
+      std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
 
-    for (int k = 0; k < nSlice; k += nSliceInVolume)
-      {
-      tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0043|1039",  tag);
-      float b = atof( tag.c_str() );
-      bValues.push_back(b);
-
-      vnl_vector_fixed<double, 3> vect3d;
-      if (b == 0)
+      for (int k = 0; k < nSlice; k += nSliceInVolume)
         {
-        vect3d.fill( 0 );
-        DiffusionVectors.push_back(vect3d);      
-        continue;
+          tag.clear();
+          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0043|1039",  tag);
+          float b = atof( tag.c_str() );
+          bValues.push_back(b);
+
+          vnl_vector_fixed<double, 3> vect3d;
+          if (b == 0)
+            {
+              vect3d.fill( 0 );
+              DiffusionVectors.push_back(vect3d);      
+              continue;
+            }
+
+          tag.clear();
+          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bb",  tag);
+          vect3d[0] = atof( tag.c_str() );
+
+          tag.clear();
+          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bc",  tag);
+          vect3d[1] = atof( tag.c_str() );
+
+          tag.clear();
+          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bd",  tag);
+          vect3d[2] = atof( tag.c_str() );
+
+          DiffusionVectors.push_back(vect3d);      
         }
-
-      tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bb",  tag);
-      vect3d[0] = atof( tag.c_str() );
-
-      tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bc",  tag);
-      vect3d[1] = atof( tag.c_str() );
-  
-      tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bd",  tag);
-      vect3d[2] = atof( tag.c_str() );
-  
-      DiffusionVectors.push_back(vect3d);      
-      }
     }
   else if ( vendor.find("SIEMENS") != std::string::npos && !SliceMosaic )
     {
-    std::cout << orthoSliceSpacing << std::endl;
-    
-    nSliceInVolume = sliceLocations.size();
-    nVolume = nSlice/nSliceInVolume;
+      std::cout << orthoSliceSpacing << std::endl;
 
-    std::cout << "Number of Slices: " << nSlice << std::endl;
-    std::cout << "Number of Volume: " << nVolume << std::endl;
-    std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
-    
-    for (int k = 0; k < nSlice; k += nSliceInVolume)
-      {
-      tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100c",  tag);
-      float b = atof( tag.c_str() );
-      bValues.push_back(b);
+      nSliceInVolume = sliceLocations.size();
+      nVolume = nSlice/nSliceInVolume;
 
-      vnl_vector_fixed<double, 3> vect3d;
-      if (b == 0)
+      std::cout << "Number of Slices: " << nSlice << std::endl;
+      std::cout << "Number of Volume: " << nVolume << std::endl;
+      std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
+
+      for (int k = 0; k < nSlice; k += nSliceInVolume)
         {
-        vect3d.fill( 0 );
-        DiffusionVectors.push_back(vect3d);      
-        continue;
+          tag.clear();
+          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100c",  tag);
+          float b = atof( tag.c_str() );
+          bValues.push_back(b);
+
+          vnl_vector_fixed<double, 3> vect3d;
+          if (b == 0)
+            {
+              vect3d.fill( 0 );
+              DiffusionVectors.push_back(vect3d);      
+              continue;
+            }
+
+          tag.clear();
+          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100e",  tag);
+          memcpy( &vect3d[0], tag.c_str()+0, 8 );
+          memcpy( &vect3d[1], tag.c_str()+8, 8 );
+          memcpy( &vect3d[2], tag.c_str()+16, 8 );
+
+          DiffusionVectors.push_back(vect3d);
+
+          std::cout << "Image#: " << k << " BV: " << b << " GD: " << vect3d << std::endl;
+
         }
-
-      tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100e",  tag);
-      memcpy( &vect3d[0], tag.c_str()+0, 8 );
-      memcpy( &vect3d[1], tag.c_str()+8, 8 );
-      memcpy( &vect3d[2], tag.c_str()+16, 8 );
-    
-      DiffusionVectors.push_back(vect3d);
-
-      std::cout << "Image#: " << k << " BV: " << b << " GD: " << vect3d << std::endl;
-      
-      }
     }
   else if ( vendor.find("SIEMENS") != std::string::npos && SliceMosaic )
     {
-    // each slice is a volume in mosiac form
+      // each slice is a volume in mosiac form
 
-    std::cout << "Data in Siemens Mosaic Format\n";
+      std::cout << "Data in Siemens Mosaic Format\n";
 
-    nVolume = nSlice;
-    nSliceInVolume = 1;
+      nVolume = nSlice;
 
-    std::cout << "Number of Slices: " << nSlice << std::endl;
-    std::cout << "Number of Volume: " << nVolume << std::endl;
-    std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
-    
-    for ( int k = 0; k < nSlice; k += nSliceInVolume )
-      {
-      tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100c",  tag);
-      
-      float b = atof( tag.c_str() );
-      bValues.push_back(b);
+      std::cout << "Number of Slices: " << nSlice << std::endl;
+      std::cout << "Number of Volume: " << nVolume << std::endl;
+      std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
 
-      vnl_vector_fixed<double, 3> vect3d;
-      if (b == 0)
+      for ( int k = 0; k < nSlice; k ++ )
         {
-        vect3d.fill( 0 );
-        DiffusionVectors.push_back(vect3d);      
-        continue;
+          tag.clear();
+          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100c",  tag);
+
+          float b = atof( tag.c_str() );
+          bValues.push_back(b);
+
+          vnl_vector_fixed<double, 3> vect3d;
+          if (b == 0)
+            {
+              vect3d.fill( 0 );
+              DiffusionVectors.push_back(vect3d);      
+              continue;
+            }
+
+          tag.clear();
+          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100e",  tag);
+
+          memcpy( &vect3d[0], tag.c_str()+0, 8 );
+          memcpy( &vect3d[1], tag.c_str()+8, 8 );
+          memcpy( &vect3d[2], tag.c_str()+16, 8 );
+
+          DiffusionVectors.push_back(vect3d);      
+          std::cout << "Image#: " << k << " BV: " << b << " GD: " << vect3d << std::endl;
         }
 
-      tag.clear();
-      itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100e",  tag);
-      
-      memcpy( &vect3d[0], tag.c_str()+0, 8 );
-      memcpy( &vect3d[1], tag.c_str()+8, 8 );
-      memcpy( &vect3d[2], tag.c_str()+16, 8 );
-    
-      DiffusionVectors.push_back(vect3d);      
-      std::cout << "Image#: " << k << " BV: " << b << " GD: " << vect3d << std::endl;
-      }
-      
     }
   else
     {
@@ -562,10 +620,10 @@ int main(int argc, char* argv[])
 
   for (int k = 0; k < nVolume; k++)
     {
-    if ( !SliceOrderIS )
-      {
-      DiffusionVectors[k][2] = -DiffusionVectors[k][2];  // I -> S
-      }
+      if ( !SliceOrderIS )
+        {
+          DiffusionVectors[k][2] = -DiffusionVectors[k][2];  // I -> S
+        }
     }
 
   ///////////////////////////////////////////////
@@ -580,104 +638,91 @@ int main(int argc, char* argv[])
   if ( vendor.find("GE") != std::string::npos ||
        (vendor.find("SIEMENS") != std::string::npos && !SliceMosaic) )
     {
-    rawWriter->SetInput( reader->GetOutput() );
-    try
-      {
-      rawWriter->Update();
-      }
-    catch (itk::ExceptionObject &excp)
-      {
-      std::cerr << "Exception thrown while reading the series" << std::endl;
-      std::cerr << excp << std::endl;
-      return EXIT_FAILURE;
-      }
+      rawWriter->SetInput( reader->GetOutput() );
+      try
+        {
+          rawWriter->Update();
+        }
+      catch (itk::ExceptionObject &excp)
+        {
+          std::cerr << "Exception thrown while reading the series" << std::endl;
+          std::cerr << excp << std::endl;
+          return EXIT_FAILURE;
+        }
     }
   else if ( vendor.find("SIEMENS") != std::string::npos && SliceMosaic)
     {
-    // de-mosaic
-    tag.clear();
-    itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0051|100b",  tag);
-    int mMosaic;   // number of raws in each mosaic block;
-    int nMosaic;   // number of columns in each mosaic block
-    sscanf( tag.c_str(), "%dp*%ds", &mMosaic, &nMosaic);
+      // de-mosaic
+      nRows /= mMosaic;
+      nCols /= nMosaic;
 
-    mMosaic = nRows/mMosaic;    // number of block rows in one dicom slice
-    nMosaic = nCols/nMosaic;    // number of block columns in one
-                                // dicom slice
-    nRows /= mMosaic;
-    nCols /= nMosaic;
+      // center the volume since the image position patient given in the
+      // dicom header was useless
+      xOrigin = -(nRows*xRow + nCols*xCol + nSliceInVolume*xSlice)/2.0;
+      yOrigin = -(nRows*yRow + nCols*yCol + nSliceInVolume*ySlice)/2.0;
+      zOrigin = -(nRows*zRow + nCols*zCol + nSliceInVolume*zSlice)/2.0;
 
-    tag.clear();
-    itk::ExposeMetaData<std::string> ( *(*inputDict)[0], "0019|100a",  tag);
-    nSliceInVolume = atoi( tag.c_str() );
+      VolumeType::Pointer img = reader->GetOutput();
 
-    // center the volume since the image position patient given in the
-    // dicom header was useless
-    xOrigin = -(nRows*xRow + nCols*xCol + nSliceInVolume*xSlice)/2.0;
-    yOrigin = -(nRows*yRow + nCols*yCol + nSliceInVolume*ySlice)/2.0;
-    zOrigin = -(nRows*zRow + nCols*zCol + nSliceInVolume*zSlice)/2.0;
-    
-    VolumeType::Pointer img = reader->GetOutput();
+      VolumeType::RegionType region = img->GetLargestPossibleRegion();
+      VolumeType::SizeType size = region.GetSize();
 
-    VolumeType::RegionType region = img->GetLargestPossibleRegion();
-    VolumeType::SizeType size = region.GetSize();
+      VolumeType::SizeType dmSize = size;
+      dmSize[0] /= mMosaic;
+      dmSize[1] /= nMosaic;
+      dmSize[2] *= nSliceInVolume;
 
-    VolumeType::SizeType dmSize = size;
-    dmSize[0] /= mMosaic;
-    dmSize[1] /= nMosaic;
-    dmSize[2] *= nSliceInVolume;
+      region.SetSize( dmSize );
+      VolumeType::Pointer dmImage = VolumeType::New();
+      dmImage->CopyInformation( img );
+      dmImage->SetRegions( region );
+      dmImage->Allocate();
 
-    region.SetSize( dmSize );
-    VolumeType::Pointer dmImage = VolumeType::New();
-    dmImage->CopyInformation( img );
-    dmImage->SetRegions( region );
-    dmImage->Allocate();
+      VolumeType::RegionType dmRegion = dmImage->GetLargestPossibleRegion();
+      dmRegion.SetSize(2, 1);
+      region.SetSize(0, dmSize[0]);
+      region.SetSize(1, dmSize[1]);
+      region.SetSize(2, 1);
 
-    VolumeType::RegionType dmRegion = dmImage->GetLargestPossibleRegion();
-    dmRegion.SetSize(2, 1);
-    region.SetSize(0, dmSize[0]);
-    region.SetSize(1, dmSize[1]);
-    region.SetSize(2, 1);
+      int rawMosaic = 0;
+      int colMosaic = 0;
+      int slcMosaic = 0;
 
-    int rawMosaic = 0;
-    int colMosaic = 0;
-    int slcMosaic = 0;
-
-    for (int k = 0; k < dmSize[2]; k++)
-      {
-      dmRegion.SetIndex(2, k);
-      itk::ImageRegionIteratorWithIndex<VolumeType> dmIt( dmImage, dmRegion );
-
-      // figure out the mosaic region for this slice
-      int sliceIndex = k;
-      
-      int nBlockPerSlice = mMosaic*nMosaic;
-      int slcMosaic = sliceIndex/(nSliceInVolume);
-      sliceIndex -= slcMosaic*nSliceInVolume;
-      int colMosaic = sliceIndex/mMosaic;
-      int rawMosaic = sliceIndex - mMosaic*colMosaic;
-      region.SetIndex( 0, rawMosaic*dmSize[0] );
-      region.SetIndex( 1, colMosaic*dmSize[1] );
-      region.SetIndex( 2, slcMosaic );
-
-      itk::ImageRegionConstIteratorWithIndex<VolumeType> imIt( img, region );
-
-      for ( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt)
+      for (int k = 0; k < dmSize[2]; k++)
         {
-        dmIt.Set( imIt.Get() );
+          dmRegion.SetIndex(2, k);
+          itk::ImageRegionIteratorWithIndex<VolumeType> dmIt( dmImage, dmRegion );
+
+          // figure out the mosaic region for this slice
+          int sliceIndex = k;
+
+          int nBlockPerSlice = mMosaic*nMosaic;
+          int slcMosaic = sliceIndex/(nSliceInVolume);
+          sliceIndex -= slcMosaic*nSliceInVolume;
+          int colMosaic = sliceIndex/mMosaic;
+          int rawMosaic = sliceIndex - mMosaic*colMosaic;
+          region.SetIndex( 0, rawMosaic*dmSize[0] );
+          region.SetIndex( 1, colMosaic*dmSize[1] );
+          region.SetIndex( 2, slcMosaic );
+
+          itk::ImageRegionConstIteratorWithIndex<VolumeType> imIt( img, region );
+
+          for ( dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt)
+            {
+              dmIt.Set( imIt.Get() );
+            }
         }
-      }
-    rawWriter->SetInput( dmImage );
-    try
-      {
-      rawWriter->Update();
-      }
-    catch (itk::ExceptionObject &excp)
-      {
-      std::cerr << "Exception thrown while reading the series" << std::endl;
-      std::cerr << excp << std::endl;
-      return EXIT_FAILURE;
-      }
+      rawWriter->SetInput( dmImage );
+      try
+        {
+          rawWriter->Update();
+        }
+      catch (itk::ExceptionObject &excp)
+        {
+          std::cerr << "Exception thrown while reading the series" << std::endl;
+          std::cerr << excp << std::endl;
+          return EXIT_FAILURE;
+        }
     }
   else
     {
@@ -726,23 +771,26 @@ int main(int argc, char* argv[])
   float bValue = 0;
   for (int k = 0; k < nVolume; k++)
     {
-    if (bValues[k] > 0)
-      {
-      bValue = bValues[k];
-      break;
-      }
+      if (bValues[k] > maxBvalue)
+        {
+          maxBvalue = bValues[k];
+        }
     }
-  
-  header << "DWMRI_b-value:=" << bValue << std::endl;
+
+  // this is the norminal BValue, i.e. the largest one.
+  header << "DWMRI_b-value:=" << maxBvalue << std::endl;   
 
   //  header << "DWMRI_gradient_0000:=0  0  0" << std::endl;
   //  header << "DWMRI_NEX_0000:=" << nBaseline << std::endl;
   //  need to check
   for (int k = 0; k < nVolume; k++)
     {
-    header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":=" 
-           << DiffusionVectors[k-nBaseline][0] << "   " << DiffusionVectors[k-nBaseline][1] << "   " << DiffusionVectors[k-nBaseline][2]
-           << std::endl;
+      float scaleFactor = sqrt( bValues[k]/maxBvalue );
+      //std::cout << "For Multiple BValues: " << k << ": " << scaleFactor << std::endl;
+      header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":=" 
+             << DiffusionVectors[k-nBaseline][0] * scaleFactor << "   " 
+             << DiffusionVectors[k-nBaseline][1] * scaleFactor << "   " 
+             << DiffusionVectors[k-nBaseline][2] * scaleFactor << std::endl;
     }
   header.close();
 
