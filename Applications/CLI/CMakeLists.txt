@@ -414,6 +414,17 @@ INCLUDE_DIRECTORIES(
         ${vtkITK_BINARY_DIR} 
         ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR} 
         ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
+#####################
+SET (CLP ResampleVolume2)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKBasicFilters ITKCommon ITKAlgorithms)
+
+ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
+SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKBasicFilters ITKCommon ITKAlgorithms)
 
 #####################
 SET (CLP ZeroCrossingBasedEdgeDetectionImageFilter)

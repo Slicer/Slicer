@@ -62,6 +62,9 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLUnstructuredGridStorageNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
+#include "vtkMRMLTransformStorageNode.h"
+#include "vtkMRMLNonlinearTransformNode.h"
+#include "vtkMRMLGridTransformNode.h"
 #include "vtkURIHandler.h"
 
 //------------------------------------------------------------------------------
@@ -269,6 +272,19 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLColorTableStorageNode *ctsn = vtkMRMLColorTableStorageNode::New();
   this->RegisterNodeClass ( ctsn );
   ctsn->Delete();
+
+  vtkMRMLTransformStorageNode *tsn = vtkMRMLTransformStorageNode::New();
+  this->RegisterNodeClass( tsn );
+  tsn->Delete();
+
+  vtkMRMLNonlinearTransformNode *ntn = vtkMRMLNonlinearTransformNode::New();
+  this->RegisterNodeClass( ntn );
+  ntn->Delete();
+
+  vtkMRMLGridTransformNode *gtn = vtkMRMLGridTransformNode::New();
+  this->RegisterNodeClass( gtn );
+  gtn->Delete();
+  
 
 }
 

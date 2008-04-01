@@ -94,6 +94,7 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->Label = parameter.Label;
   this->CPPType = parameter.CPPType;
   this->Type = parameter.Type;
+  this->Reference = parameter.Reference;
   this->Hidden = parameter.Hidden;
   this->ArgType = parameter.ArgType;
   this->StringToType = parameter.StringToType;

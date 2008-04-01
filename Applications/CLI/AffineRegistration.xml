@@ -20,7 +20,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <longflag>histogrambins</longflag>
       <description>Number of histogram bins to use for Mattes Mutual Information</description>
       <label>Histogram Bins</label>
-      <default>100</default>
+      <default>30</default>
       <constraints>
         <minimum>1</minimum>
         <maximum>500</maximum>
@@ -34,10 +34,10 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <longflag>spatialsamples</longflag>
       <description>Number of spatial samples to use in estimating Mattes Mutual Information</description>
       <label>Spatial Samples</label>
-      <default>50000</default>
+      <default>10000</default>
       <constraints>
         <minimum>1000</minimum>
-        <maximum>500000</maximum>
+        <maximum>50000</maximum>
         <step>1000</step>
       </constraints>
     </integer>
@@ -48,7 +48,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <longflag>iterations</longflag>
       <description>Number of iterations</description>
       <label>Iterations</label>
-      <default>200</default>
+      <default>2000</default>
     </integer>
 
     <double>
@@ -69,22 +69,36 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
+    <transform fileExtensions=".txt">
+      <name>InitialTransform</name>
+      <longflag>initialtransform</longflag>
+      <description>Initial transform for aligning the fixed and moving image.</description>
+      <label>Initial transform</label>
+      <channel>input</channel>
+    </transform>
+    <transform fileExtensions=".txt" reference="movingImageFileName">
+      <name>OutputTransform</name>
+      <longflag>outputtransform</longflag>
+      <description>Transform calculated that aligns the fixed and moving image.</description>
+      <label>Output transform</label>
+      <channel>output</channel>
+    </transform>
     <image>
-      <name>fixedImageFileName</name>
+      <name>FixedImageFileName</name>
       <label>Fixed Image</label>
       <channel>input</channel>
       <index>0</index>
       <description>Fixed image to which to register</description>
     </image>
     <image>
-      <name>movingImageFileName</name>
+      <name>MovingImageFileName</name>
       <label>Moving Image</label>
       <channel>input</channel>
       <index>1</index>
       <description>Moving image</description>
     </image>
     <image>
-      <name>resampledImageFileName</name>
+      <name>ResampledImageFileName</name>
       <longflag>resampledmovingfilename</longflag>
       <label>Output Volume</label>
       <channel>output</channel>

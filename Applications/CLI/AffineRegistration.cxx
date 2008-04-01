@@ -15,12 +15,12 @@
 
 #include "AffineRegistrationCLP.h"
 
-// ITK Stuff
-// Registration
 #include "itkOrientedImage.h"
+#include "itkOrientImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkOrientImageFilter.h"
+#include "itkTransformFileReader.h"
+#include "itkTransformFileWriter.h"
 
 #include "itkRegularStepGradientDescentOptimizer.h"
 #include "itkImageFileWriter.h"
@@ -81,15 +81,15 @@ public:
         }
       else
         {
-        std::cout << "<filter-comment>"
-                  << " \"" 
-                  << "Optimizer Iteration: "
-                  << optimizer->GetCurrentIteration()
-                  << " Metric: "
-                  << optimizer->GetValue()
-                  << "\" "
-                  << "</filter-comment>"
-                  << std::endl;
+//         std::cout << "<filter-comment>"
+//                   << " \"" 
+//                   << "Optimizer Iteration: "
+//                   << optimizer->GetCurrentIteration()
+//                   << " Metric: "
+//                   << optimizer->GetValue()
+//                   << "\" "
+//                   << "</filter-comment>"
+//                   << std::endl;
         std::cout << "<filter-progress>"
                   << (static_cast<double>(optimizer->GetCurrentIteration()) /
                       static_cast<double>(optimizer->GetNumberOfIterations()))
@@ -127,6 +127,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef itk::ResampleImageFilter<ImageType,ImageType> ResampleType;
   typedef itk::LinearInterpolateImageFunction<ImageType, double> ResampleInterpolatorType;
   typedef itk::ImageFileWriter<ImageType> WriterType;
+  typedef itk::ContinuousIndex<double, 3> ContinuousIndexType;
 
   bool DoInitializeTransform = false;
   int RandomSeed = 1234567;
@@ -134,11 +135,11 @@ template<class T> int DoIt( int argc, char * argv[], T )
   // Add a time probe
   itk::TimeProbesCollectorBase collector;
 
-  /////////////////////////////////////////////////////////////////////////////
   // Read the fixed and moving volumes
   //
+  //
   typename FileReaderType::Pointer fixedReader = FileReaderType::New();
-    fixedReader->SetFileName ( fixedImageFileName.c_str() );
+    fixedReader->SetFileName ( FixedImageFileName.c_str() );
 
   try
     {
@@ -154,7 +155,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
     }
 
   typename FileReaderType::Pointer movingReader = FileReaderType::New();
-    movingReader->SetFileName ( movingImageFileName.c_str() );
+    movingReader->SetFileName ( MovingImageFileName.c_str() );
 
   try
     {
@@ -169,37 +170,66 @@ template<class T> int DoIt( int argc, char * argv[], T )
     return EXIT_FAILURE;
     }
 
-  /////////////////////////////////////////////////////////////////////////////
-  // Reorient the volumes to a consistent acquisition direction
+  // If an initial transform was specified, read it
   //
+  //
+  typedef itk::TransformFileReader TransformReaderType;
+  TransformReaderType::Pointer initialTransform;
+
+  if (InitialTransform != "")
+    {
+    initialTransform= TransformReaderType::New();
+    initialTransform->SetFileName( InitialTransform );
+    try
+      {
+      initialTransform->Update();
+      }
+    catch (itk::ExceptionObject &err)
+      {
+      std::cerr << err << std::endl;
+      return  EXIT_FAILURE;
+      }
+    }
+
+  
+  // Reorient to axials to avoid issues with registration metrics not
+  // transforming image gradients with the image orientation in
+  // calculating the derivative of metric wrt transformation
+  // parameters.
+  //
+  // Forcing image to be axials avoids this problem. Note, that
+  // reorientation only affects the internal mapping from index to
+  // physical coordinates.  The reoriented data spans the same
+  // physical space as the original data.  Thus, the registration
+  // transform calculated on the reoriented data is also the
+  // transform forthe original un-reoriented data. 
   typename OrientFilterType::Pointer orientFixed = OrientFilterType::New();
   itk::PluginFilterWatcher watchOrientFixed(orientFixed,
                                             "Orient Fixed Image",
                                             CLPProcessInformation,
                                             1.0/3.0, 0.0);
-    orientFixed->UseImageDirectionOn();
-    orientFixed->SetDesiredCoordinateOrientationToAxial();
-    orientFixed->SetInput (fixedReader->GetOutput());
-    collector.Start( "Orient fixed volume" );
-    orientFixed->Update();
-    collector.Stop( "Orient fixed volume" );
-
+  orientFixed->UseImageDirectionOn();
+  orientFixed->SetDesiredCoordinateOrientationToAxial();
+  orientFixed->SetInput (fixedReader->GetOutput());
+  collector.Start( "Orient fixed volume" );
+  orientFixed->Update();
+  collector.Stop( "Orient fixed volume" );
+  
   typename OrientFilterType::Pointer orientMoving = OrientFilterType::New();
   itk::PluginFilterWatcher watchOrientMoving(orientMoving,
-                                            "Orient Moving Image",
+                                             "Orient Moving Image",
                                              CLPProcessInformation,
-                                            1.0/3.0, 1.0/3.0);
-    orientMoving->UseImageDirectionOn();
-    orientMoving->SetDesiredCoordinateOrientationToAxial();
-    orientMoving->SetInput (movingReader->GetOutput());
-    collector.Start( "Orient moving volume" );
-    orientMoving->Update();
-    collector.Stop( "Orient moving volume" );
+                                             1.0/3.0, 1.0/3.0);
+  orientMoving->UseImageDirectionOn();
+  orientMoving->SetDesiredCoordinateOrientationToAxial();
+  orientMoving->SetInput (movingReader->GetOutput());
+  collector.Start( "Orient moving volume" );
+  orientMoving->Update();
+  collector.Stop( "Orient moving volume" );
 
-  /////////////////////////////////////////////////////////////////////////////
-  // Register the volumes
+  // Set up the optimizer
   //
-
+  //
   typename OptimizerType::Pointer      optimizer     = OptimizerType::New();
     optimizer->SetNumberOfIterations ( Iterations );
     optimizer->SetMinimumStepLength ( .0005 );
@@ -222,38 +252,93 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
     optimizer->AddObserver( itk::IterationEvent(), observer );
 
-  /////////////////////////////////////////////////////////////////////////////
   // Initialize the transform
+  //
   //
   typename TransformType::InputPointType centerFixed;
   typename ImageType::RegionType::SizeType sizeFixed = orientFixed->GetOutput()->GetLargestPossibleRegion().GetSize();
   // Find the center
-  typename ImageType::IndexType indexFixed;
+  ContinuousIndexType indexFixed;
   for ( unsigned j = 0; j < 3; j++ )
     {
-    indexFixed[j] = (long) ( (sizeFixed[j]-1) / 2.0 );
+    indexFixed[j] = (sizeFixed[j]-1) / 2.0;
     }
-  orientFixed->GetOutput()->TransformIndexToPhysicalPoint ( indexFixed, centerFixed );
+  orientFixed->GetOutput()->TransformContinuousIndexToPhysicalPoint ( indexFixed, centerFixed );
 
   typename TransformType::InputPointType centerMoving;
   typename ImageType::RegionType::SizeType sizeMoving = orientMoving->GetOutput()->GetLargestPossibleRegion().GetSize();
   // Find the center
-  typename ImageType::IndexType indexMoving;
+  ContinuousIndexType indexMoving;
   for ( unsigned j = 0; j < 3; j++ )
     {
-    indexMoving[j] = (long) ( (sizeMoving[j]-1) / 2.0 );
+    indexMoving[j] = (sizeMoving[j]-1) / 2.0;
     }
-  orientMoving->GetOutput()->TransformIndexToPhysicalPoint ( indexMoving, centerMoving );
+  orientMoving->GetOutput()->TransformContinuousIndexToPhysicalPoint ( indexMoving, centerMoving );
 
+  transform->SetCenter( centerFixed );
   transform->Translate(centerMoving-centerFixed);
-  std::cout << "---------------" << centerMoving-centerFixed << std::endl;
+  std::cout << "Centering transform: "; transform->Print( std::cout );
+
+  // If an initial transformation was provided, then use it instead.
+  // (Should this be instead of the centering transform or composed
+  // with the centering transform.)
+  //
+  if (InitialTransform != ""
+      && initialTransform->GetTransformList()->size() != 0)
+    {
+    TransformReaderType::TransformType::Pointer initial
+      = *(initialTransform->GetTransformList()->begin());
+    
+    // most likely, the transform coming in is a subclass of
+    // MatrixOffsetTransformBase 
+    typedef itk::MatrixOffsetTransformBase<double,3,3> DoubleMatrixOffsetType;
+    typedef itk::MatrixOffsetTransformBase<float,3,3> FloatMatrixOffsetType;
+    
+    DoubleMatrixOffsetType::Pointer da
+      = dynamic_cast<DoubleMatrixOffsetType*>(initial.GetPointer());
+    FloatMatrixOffsetType::Pointer fa
+      = dynamic_cast<FloatMatrixOffsetType*>(initial.GetPointer());
+
+    if (da)
+      {
+      transform->SetMatrix( da->GetMatrix() );
+      transform->SetOffset( da->GetOffset() );
+      }
+    else if (fa)
+      {
+      vnl_matrix<double> t(3,3);
+      for (int i=0; i < 3; ++i)
+        {
+        for (int j=0; j <3; ++j)
+          {
+          t.put(i, j, fa->GetMatrix().GetVnlMatrix().get(i, j));
+          }
+        }
+
+      transform->SetMatrix( t );
+      transform->SetOffset( fa->GetOffset() );
+      }
+    else
+      {
+      std::cout << "Initial transform is an unsupported type." << std::endl;
+      }
+
+    std::cout << "Initial transform: "; transform->Print ( std::cout );
+    }
+
   
+  // Set up the metric
+  //
   typename MetricType::Pointer  metric        = MetricType::New();
     metric->SetNumberOfHistogramBins ( HistogramBins );
     metric->SetNumberOfSpatialSamples( SpatialSamples );
 
+  // Create the interpolator
+  //
   typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
+  // Set up the registration
+  //
   typename RegistrationType::Pointer registration = RegistrationType::New();
     registration->SetTransform ( transform );
     registration->SetInitialTransformParameters ( transform->GetParameters() );
@@ -265,8 +350,12 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   try
     {
+    itk::PluginFilterWatcher watchRegistration(registration,
+                                               "Registering",
+                                               CLPProcessInformation,
+                                               1.0/3.0, 2.0/3.0);
     collector.Start( "Register" );
-    registration->StartRegistration();     
+    registration->Update();     
     collector.Stop( "Register" );
     } 
   catch( itk::ExceptionObject & err )
@@ -280,11 +369,32 @@ template<class T> int DoIt( int argc, char * argv[], T )
     exit ( EXIT_FAILURE );
     }
 
-  if (resampledImageFileName != "")
+  transform->SetParameters ( registration->GetLastTransformParameters() );
+
+  if (OutputTransform != "")
     {
-    //////////////////////////////////////////////////////////////////////////
-    // Resample using the registration results
-    //
+    typedef itk::TransformFileWriter TransformWriterType;
+    TransformWriterType::Pointer outputTransformWriter;
+
+    outputTransformWriter= TransformWriterType::New();
+    outputTransformWriter->SetFileName( OutputTransform );
+    outputTransformWriter->SetInput( transform );
+    try
+      {
+      outputTransformWriter->Update();
+      }
+    catch (itk::ExceptionObject &err)
+      {
+      std::cerr << err << std::endl;
+      exit( EXIT_FAILURE );
+      }
+    }
+  
+  // Resample to the original coordinate frame (not the reoriented
+  // axial coordinate frame) of the fixed image
+  //
+  if (ResampledImageFileName != "")
+    {
     typename ResampleType::Pointer resample = ResampleType::New();
     typename ResampleInterpolatorType::Pointer Interpolator = ResampleInterpolatorType::New();
     itk::PluginFilterWatcher watchResample(resample,
@@ -292,24 +402,17 @@ template<class T> int DoIt( int argc, char * argv[], T )
                                            CLPProcessInformation,
                                            1.0/3.0, 2.0/3.0);
     
-    transform->SetParameters ( registration->GetLastTransformParameters() );
-
-    resample->SetInput ( orientMoving->GetOutput() ); 
+    resample->SetInput ( movingReader->GetOutput() ); 
     resample->SetTransform ( transform );
     resample->SetInterpolator ( Interpolator );
-    resample->SetOutputOrigin ( orientFixed->GetOutput()->GetOrigin() );
-    resample->SetOutputSpacing ( orientFixed->GetOutput()->GetSpacing() );
-    resample->SetOutputDirection ( orientFixed->GetOutput()->GetDirection() );
-    resample->SetSize ( orientFixed->GetOutput()->GetLargestPossibleRegion().GetSize() );
+    resample->SetOutputParametersFromImage ( fixedReader->GetOutput() );
+
     collector.Start( "Resample" );
     resample->Update();
     collector.Stop( "Resample" );
     
-    //////////////////////////////////////////////////////////////////////////
-    // Write the registerded volume
-    //
     typename WriterType::Pointer resampledWriter = WriterType::New();
-    resampledWriter->SetFileName ( resampledImageFileName.c_str() );
+    resampledWriter->SetFileName ( ResampledImageFileName.c_str() );
     resampledWriter->SetInput ( resample->GetOutput() );
     try
       {
@@ -341,7 +444,7 @@ int main( int argc, char * argv[] )
 
   try
     {
-    itk::GetImageType (fixedImageFileName, pixelType, componentType);
+    itk::GetImageType (FixedImageFileName, pixelType, componentType);
 
     // This filter handles all types
     

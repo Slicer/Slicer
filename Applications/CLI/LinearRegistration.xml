@@ -78,22 +78,36 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
+    <transform fileExtensions=".txt">
+      <name>InitialTransform</name>
+      <longflag>initialtransform</longflag>
+      <description>Initial transform for aligning the fixed and moving image.</description>
+      <label>Initial transform</label>
+      <channel>input</channel>
+    </transform>
+    <transform fileExtensions=".txt" reference="movingImageFileName">
+      <name>OutputTransform</name>
+      <longflag>outputtransform</longflag>
+      <description>Transform calculated that aligns the fixed and moving image.</description>
+      <label>Output transform</label>
+      <channel>output</channel>
+    </transform>
     <image>
-      <name>fixedImageFileName</name>
+      <name>FixedImageFileName</name>
       <label>Fixed Image</label>
       <channel>input</channel>
       <index>0</index>
       <description>Fixed image to which to register</description>
     </image>
     <image>
-      <name>movingImageFileName</name>
+      <name>MovingImageFileName</name>
       <label>Moving Image</label>
       <channel>input</channel>
       <index>1</index>
       <description>Moving image</description>
     </image>
     <image>
-      <name>resampledImageFileName</name>
+      <name>ResampledImageFileName</name>
       <longflag>resampledmovingfilename</longflag>
       <label>Output Volume</label>
       <channel>output</channel>

@@ -1096,6 +1096,14 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
       // switch on the type of the parameter...
       vtkKWCoreWidget *parameter;
 
+      // parameters with flags can support the None node because they
+      // are optional
+      int noneEnabled = 0;
+      if ((*pit).GetLongFlag() != "" || (*pit).GetFlag() != "")
+        {
+        noneEnabled = 1;
+        }
+      
       if ((*pit).GetTag() == "integer")
         {
         if ((*pit).GetConstraints() == "")
@@ -1296,7 +1304,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  NULL,
                                  (title + " FiducialList").c_str());
         tparameter->SetNewNodeEnabled(1);
-        tparameter->SetNoneEnabled(1);
+        tparameter->SetNoneEnabled(noneEnabled);
         // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
@@ -1318,7 +1326,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  NULL,
                                  (title + " RegionList").c_str());
         tparameter->SetNewNodeEnabled(1);
-        tparameter->SetNoneEnabled(1);
+        tparameter->SetNoneEnabled(noneEnabled);
         // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
@@ -1368,6 +1376,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
 
         tparameter->SetNodeClass(nodeClass.c_str(), attrName, attrValue, 
                                  (title + " Volume").c_str());
+        tparameter->SetNoneEnabled(noneEnabled);
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
         tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -1426,7 +1435,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                    (title + " DiffusionWeightedVolume").c_str());
           }
         tparameter->SetNewNodeEnabled(1);
-        tparameter->SetNoneEnabled(1);
+        tparameter->SetNoneEnabled(noneEnabled);
         // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
@@ -1459,6 +1468,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  NULL,
                                  NULL,
                                  (title + " Model").c_str());
+        tparameter->SetNoneEnabled(noneEnabled);
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
         tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -1491,7 +1501,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  NULL,
                                  (title + " Model").c_str());
         tparameter->SetNewNodeEnabled(1);
-        tparameter->SetNoneEnabled(1);
+        tparameter->SetNoneEnabled(noneEnabled);
         // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
@@ -1590,13 +1600,14 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           }
         else if ((*pit).GetType() == "nonlinear")
           {
-          // no nonlinear nodes are currently, so default to TransformNode
+          nodeClass = "vtkMRMLGridTransformNode";
           }
 
         tparameter->SetNodeClass(nodeClass.c_str(),
                                  NULL,
                                  NULL,
                                  (title + " Transform").c_str());
+        tparameter->SetNoneEnabled(noneEnabled);
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();
         tparameter->SetMRMLScene(this->Logic->GetMRMLScene());
@@ -1623,7 +1634,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           }
         else if ((*pit).GetType() == "nonlinear")
           {
-          // no nonlinear nodes are currently, default to LinearTransformNode
+          nodeClass = "vtkMRMLGridTransformNode";
           }
 
 
@@ -1632,7 +1643,7 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
                                  NULL,
                                  (title + " Transform").c_str());
         tparameter->SetNewNodeEnabled(1);
-        tparameter->SetNoneEnabled(1);
+        tparameter->SetNoneEnabled(noneEnabled);
         // tparameter->SetNewNodeName((title+" output").c_str());
         tparameter->SetParent( parameterGroupFrame->GetFrame() );
         tparameter->Create();

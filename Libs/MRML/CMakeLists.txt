@@ -36,6 +36,7 @@ SET(MRML_SRCS
         vtkMRMLVolumeGlyphDisplayNode.cxx
         vtkMRMLTransformableNode.cxx
         vtkMRMLTransformNode.cxx
+        vtkMRMLTransformStorageNode.cxx
         vtkMRMLLinearTransformNode.cxx
         vtkMRMLFiducial.cxx
         vtkMRMLFiducialListNode.cxx
@@ -85,6 +86,8 @@ SET(MRML_SRCS
         vtkCacheManager.cxx
         vtkPermissionPrompter.cxx
         vtkXNATPermissionPrompter.cxx
+        vtkMRMLNonlinearTransformNode.cxx
+        vtkMRMLGridTransformNode.cxx
         # Note: when you add new node types, add
         # register code to the vtkMRMLScene constructor
 )

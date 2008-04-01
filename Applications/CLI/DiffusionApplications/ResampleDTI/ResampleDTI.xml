@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Diffusion Tensor</category>
+  <title>Resample DTI Volume</title>
+  <description>
+Resampling an image is a very important task in image analysis.It is
+especially important in the frame of image registration. This module
+implements DT image resampling through the use of itk Transforms.
+The resampling is controlled by the Output Spacing. "Resampling" is
+performed in space coordinates, not pixel/grid coordinates. It is 
+quite important to ensure that image spacing is properly set on the
+images involved. The interpolator is required since the mapping from
+one space to the other will often require evaluation of the intensity
+of the image at non-grid positions.
+</description>
+  <version>0.1</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Francois Budin</contributor>
+<acknowledgements>
+</acknowledgements>
+<parameters>
+  <label>Input/Ouput</label>
+  <description>Input/output parameters</description>
+    <image type="tensor">
+      <name>inputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input volume to be resampled</description>
+    </image>
+    <image type="tensor">
+      <name>outputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Resampled Volume</description>
+    </image>
+    <image type="tensor">
+      <name>referenceVolume</name>
+      <label>Reference Volume (To Set Output Parameters)</label>
+      <channel>input</channel>
+      <flag>-R</flag>
+      <longflag>--Reference</longflag>
+      <description>Reference Volume (spacing,size,orientation,origin)</description>
+      <default></default>
+    </image>
+</parameters>
+
+<parameters advanced="true">
+    <label>Resampling Parameters</label>
+    <description>Parameters used for resampling</description>
+    <integer>
+      <name>numberOfThread</name>
+      <flag>-n</flag>
+      <longflag>--number_of_thread</longflag>
+      <description>Number of thread used to compute the output image</description>
+      <label>Number Of Threads</label>
+      <default>0</default>
+    </integer>
+    <string-enumeration>
+      <name>correction</name>
+      <longflag>--correction</longflag>
+      <description>Correct the tensors if computed tensor is not semi-definite positive</description>
+      <label>Correction</label>
+      <element>zero</element>
+      <element>none</element>
+      <element>abs</element>
+      <element>nearest</element>
+      <default>none</default>
+    </string-enumeration>
+</parameters>
+
+
+<parameters>
+  <label>Transform Parameters</label>
+  <description>Parameters used to transform the input image into the output image</description>
+    <transform fileExtensions=".txt">
+      <name>transformationFile</name>
+      <label>Transform Node</label>
+      <flag>-f</flag>
+      <longflag>--transformationFile</longflag>
+      <default></default>
+      <channel>input</channel>
+    </transform>
+</parameters>
+<parameters advanced="true">
+    <label>Manual Transform (Used only if no transform node set)</label>
+    <double-vector>
+      <name>transformMatrix</name>
+      <flag>-m</flag>
+      <longflag>--transform_matrix</longflag>
+      <description>12 parameters of the transform matrix by rows ( --last 3 being translation-- )</description>
+      <label>Transform Matrix</label>
+      <default>1,0,0,0,1,0,0,0,1,0,0,0</default>
+    </double-vector>
+    <string-enumeration>
+      <name>transformType</name>
+      <flag>-t</flag>
+      <longflag>--transform</longflag>
+      <description>Transform algorithm\nrt = Rigid Transform\na = Affine Transform</description>
+      <label>Transform Type</label>
+      <element>rt</element>
+      <element>a</element>
+      <default>a</default>
+    </string-enumeration>
+    <string-enumeration>
+      <name>space</name>
+      <longflag>--space</longflag>
+      <description>Space Orientation: RAS/LPS (warning: if the transform is a Transform Node in Slicer3, use LPS)</description>
+      <label>Transform Space Orientation</label>
+      <element>RAS</element>
+      <element>LPS</element>
+      <default>LPS</default>
+    </string-enumeration>
+</parameters>
+<parameters advanced="true">
+    <label>Rigid/Affine Parameters</label>
+    <point multiple="false" coordinateSystem="lps">
+      <name>rotationPoint</name>
+      <flag>-r</flag>
+      <longflag>--rotation_point</longflag>
+      <description>Center of rotation</description>
+      <label>Rotation Center</label>
+      <default>0,0,0</default>
+    </point>
+    <boolean>
+      <name>centeredTransform</name>
+      <flag>-c</flag>
+      <longflag>--centered_transform</longflag>
+      <description>Set the center of the transformation to the middle of the image</description>
+      <label>Centered Transform</label>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>inverseITKTransformation</name>
+      <flag>-b</flag>
+      <longflag>--Inverse_ITK_Transformation</longflag>
+      <description>Inverse the transformation before applying it from output image to input image (only for rigid and affine transforms)</description>
+      <label>Inverse Transformation</label>
+      <default>false</default>
+    </boolean>
+</parameters>
+
+<parameters advanced="true">
+  <label>Affine Transform Parameters</label>
+    <boolean>
+      <name>ppd</name>
+      <longflag>--ppd</longflag>
+      <description>Use the Preservation of the Principal Direction to compute the affine transform</description>
+      <label>Preservation of Principal Direction</label>
+      <default>false</default>
+    </boolean>
+</parameters>
+
+
+
+<parameters>
+  <label>Interpolation Type</label>
+  <string-enumeration>
+      <name>interpolationType</name>
+      <flag>-i</flag>
+      <longflag>--interpolation</longflag>
+      <description>Sampling algorithm (linear , nn (nearest neighborhoor), ws (WindowedSinc), bs (BSpline) )</description>
+      <label>Interpolation</label>
+      <element>linear</element>
+      <element>nn</element>
+      <element>ws</element>
+      <element>bs</element>
+      <default>linear</default>
+  </string-enumeration>
+</parameters>
+
+<parameters advanced="true">
+    <label>Windowed Sinc Interpolate Function Parameters</label>
+    <description>Parameters used for the Windowed Sinc interpolation</description>
+    <string-enumeration>
+      <name>windowFunction</name>
+      <flag>-W</flag>
+      <longflag>--window_function</longflag>
+      <description>Window Function \nh = Hamming \nc = Cosine \nw = Welch \nl = Lanczos \nb = Blackman</description>
+      <label>Window Function</label>
+      <element>h</element>
+      <element>c</element>
+      <element>w</element>
+      <element>l</element>
+      <element>b</element>
+      <default>c</default>
+     </string-enumeration>
+</parameters>
+
+<parameters advanced="true">
+    <label>BSpline Interpolate Function Parameters</label>
+    <description>Parameters used for the BSpline interpolation</description>
+    <integer>
+      <name>splineOrder</name>
+      <flag>-o</flag>
+      <longflag>--spline_order</longflag>
+      <description>Spline Order</description>
+      <label>Spline Order</label>
+      <default>3</default>
+    </integer>
+</parameters>
+
+
+<parameters advanced="true">
+  <label>Output Parameters</label>
+  <description>Parameters of the output image</description>
+    <double-vector>
+      <name>outputImageSpacing</name>
+      <flag>-s</flag>
+      <longflag>--spacing</longflag>
+      <description>Spacing along each dimension (0 means use input spacing)</description>
+      <label>Spacing</label>
+      <default>0,0,0</default>
+    </double-vector>
+    <double-vector>
+      <name>outputImageSize</name>
+      <flag>-z</flag>
+      <longflag>--size</longflag>
+      <description>Size along each dimension (0 means use input size)</description>
+      <label>Size</label>
+      <default>0,0,0</default>
+    </double-vector>
+    <point multiple="false" coordinateSystem="lps">
+      <name>outputImageOrigin</name>
+      <flag>-O</flag>
+      <longflag>--origin</longflag>
+      <description>Origin of the output Image</description>
+      <label>Origin</label>
+      <default></default>
+    </point>
+    <double-vector>
+      <name>directionMatrix</name>
+      <flag>-d</flag>
+      <longflag>--direction_matrix</longflag>
+      <description>9 parameters of the direction matrix by rows (ijk to LPS if LPS transform, ijk to RAS if RAS transform)</description>
+      <label>Direction Matrix</label>
+      <default>0,0,0,0,0,0,0,0,0</default>
+    </double-vector>
+</parameters>
+
+</executable>

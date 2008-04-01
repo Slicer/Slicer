@@ -18,30 +18,31 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#include "BSplineDeformableRegistrationCLP.h"
+
+
+#include "itkCommand.h"
+
 #include "itkImageRegistrationMethod.h"
 #include "itkMattesMutualInformationImageToImageMetric.h"
 #include "itkLinearInterpolateImageFunction.h"
+#include "itkBSplineDeformableTransform.h"
+#include "itkLBFGSBOptimizer.h"
+
+#include "itkOrientedImage.h"
+#include "itkOrientImageFilter.h"
+#include "itkResampleImageFilter.h"
+
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+#include "itkTransformFileReader.h"
+#include "itkTransformFileWriter.h"
 
 #include "itkPluginUtilities.h"
 
 #include "itkTimeProbesCollectorBase.h"
 
-#include "itkBSplineDeformableTransform.h"
-#include "itkLBFGSBOptimizer.h"
-#include "itkOnePlusOneEvolutionaryOptimizer.h"
-#include "itkNormalVariateGenerator.h" 
-#include "itkOrientedImage.h"
-#include "itkOrientImageFilter.h"
 
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-
-#include "itkResampleImageFilter.h"
-#include "itkSquaredDifferenceImageFilter.h"
-
-#include "BSplineDeformableRegistrationCLP.h"
-
-#include "itkCommand.h"
 class CommandIterationUpdate : public itk::Command 
 {
 public:
@@ -49,13 +50,19 @@ public:
   typedef  itk::Command             Superclass;
   typedef itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
+  typedef itk::SingleValuedCostFunction CostFunctionType;
   void SetProcessInformation (ModuleProcessInformation * info)
     {
     m_ProcessInformation = info; 
     }
+  void SetCostFunction(CostFunctionType* fn)
+    {
+      m_CostFunction = fn;
+    }
 protected:
   CommandIterationUpdate() {};
   ModuleProcessInformation *m_ProcessInformation;
+  CostFunctionType::Pointer m_CostFunction;
 public:
   typedef itk::LBFGSBOptimizer  OptimizerType;
   typedef OptimizerType   *OptimizerPointer;
@@ -74,8 +81,6 @@ public:
         return;
         }
       
-      std::cout << optimizer->GetCurrentIteration() << "   ";
-      std::cout << optimizer->GetValue() << std::endl;
       if (m_ProcessInformation)
         {
         m_ProcessInformation->Progress = 
@@ -84,21 +89,24 @@ public:
         }
       else
         {
-        std::cout << "<filter-comment>"
-                  << " \"" 
-                  << "Optimizer Iteration: "
-                  << optimizer->GetCurrentIteration()
+        std::cout << "Optimizer Iteration: "
+                  << optimizer->GetCurrentIteration() << ", "
                   << " Metric: "
-                  << optimizer->GetValue()
-                  << "\" "
-                  << "</filter-comment>"
+                  << m_CostFunction->GetValue(optimizer->GetCurrentPosition())
                   << std::endl;
-        std::cout << "<filter-progress>"
-                  << (static_cast<double>(optimizer->GetCurrentIteration()) /
-                      static_cast<double>(optimizer->GetMaximumNumberOfIterations()))
+//         std::cout << "<filter-comment>"
+//                   << "Optimizer Iteration: "
+//                   << optimizer->GetCurrentIteration() << ", "
+//                   << " Metric: "
+//                   << optimizer->GetValue()
+//                   << "</filter-comment>"
+//                   << std::endl;
+//         std::cout << "<filter-progress>"
+//                   << (static_cast<double>(optimizer->GetCurrentIteration()) /
+//                       static_cast<double>(optimizer->GetMaximumNumberOfIterations()))
         
-                  << "</filter-progress>"
-                  << std::endl;
+//                   << "</filter-progress>"
+//                   << std::endl;
         std::cout << std::flush;
         }
     }
@@ -127,11 +135,13 @@ template<class T> int DoIt( int argc, char * argv[], T )
   const unsigned int SpaceDimension = ImageDimension;
   const unsigned int SplineOrder = 3;
   typedef double CoordinateRepType;
+  typedef itk::ContinuousIndex<CoordinateRepType, ImageDimension> ContinuousIndexType;
 
   typedef itk::BSplineDeformableTransform<
                             CoordinateRepType,
                             SpaceDimension,
-                            SplineOrder >     TransformType;
+                              SplineOrder >     TransformType;
+  typedef itk::AffineTransform<CoordinateRepType> AffineTransformType;
   typedef itk::LBFGSBOptimizer       OptimizerType;
   typedef itk::MattesMutualInformationImageToImageMetric< 
                                     InputImageType, 
@@ -154,19 +164,49 @@ template<class T> int DoIt( int argc, char * argv[], T )
   typedef TransformType::OriginType OriginType;
   typedef TransformType::ParametersType     ParametersType;  
 
-  //////////////////////////////////////////////////////////////////
 
+  // Read fixed and moving images
   //
-  // 1) Read fixed and moving images
   //
   typename FixedImageReaderType::Pointer  fixedImageReader  = FixedImageReaderType::New();
   typename MovingImageReaderType::Pointer movingImageReader = MovingImageReaderType::New();
 
-  fixedImageReader->SetFileName(  fixedImageFileName.c_str() );
-  movingImageReader->SetFileName( movingImageFileName.c_str() );
+  fixedImageReader->SetFileName(  FixedImageFileName.c_str() );
+  movingImageReader->SetFileName( MovingImageFileName.c_str() );
 
+  // If an initial transform was specified, read it
   //
-  // 2) Orient the images to a common orientation (axial)
+  //
+  typedef itk::TransformFileReader TransformReaderType;
+  TransformReaderType::Pointer initialTransform;
+
+  if (InitialTransform != "")
+    {
+    initialTransform= TransformReaderType::New();
+    initialTransform->SetFileName( InitialTransform );
+    try
+      {
+      initialTransform->Update();
+      }
+    catch (itk::ExceptionObject &err)
+      {
+      std::cerr << err << std::endl;
+      return  EXIT_FAILURE;
+      }
+    }
+
+  
+  // Reorient to axials to avoid issues with registration metrics not
+  // transforming image gradients with the image orientation in
+  // calculating the derivative of metric wrt transformation
+  // parameters.
+  //
+  // Forcing image to be axials avoids this problem. Note, that
+  // reorientation only affects the internal mapping from index to
+  // physical coordinates.  The reoriented data spans the same
+  // physical space as the original data.  Thus, the registration
+  // transform calculated on the reoriented data is also the
+  // transform forthe original un-reoriented data. 
   //
   typename OrientFilterType::Pointer fixedOrient = OrientFilterType::New();
   typename OrientFilterType::Pointer movingOrient = OrientFilterType::New();
@@ -183,29 +223,27 @@ template<class T> int DoIt( int argc, char * argv[], T )
   itk::TimeProbesCollectorBase collector;
 
   collector.Start( "Read fixed volume" );
-  itk::PluginFilterWatcher watchOrientFixed(fixedOrient,
-                                            "Orient Fixed Image",
-                                            CLPProcessInformation,
-                                            1.0/3.0, 0.0);
+//   itk::PluginFilterWatcher watchOrientFixed(fixedOrient,
+//                                             "Orient Fixed Image",
+//                                             CLPProcessInformation,
+//                                             1.0/3.0, 0.0);
   fixedOrient->Update();
   collector.Stop( "Read fixed volume" );
 
   collector.Start( "Read moving volume" );
-  itk::PluginFilterWatcher watchOrientMoving(movingOrient,
-                                            "Orient Moving Image",
-                                             CLPProcessInformation,
-                                            1.0/3.0, 1.0/3.0);
+//   itk::PluginFilterWatcher watchOrientMoving(movingOrient,
+//                                             "Orient Moving Image",
+//                                              CLPProcessInformation,
+//                                             1.0/3.0, 1.0/3.0);
   movingOrient->Update();
   collector.Stop( "Read moving volume" );
 
-  //
-  // 3) Setup BSpline deformation
-  //
-  //  Here we define the parameters of the BSplineDeformableTransform grid.
-  //  The reader should note that the B-spline computation requires a
-  //  finite support region ( 1 grid node at the lower borders and 2
-  //  grid nodes at upper borders).
 
+  // Setup BSpline deformation
+  //
+  //  Note that the B-spline computation requires a finite support
+  //  region ( 1 grid node at the lower borders and 2 grid nodes at
+  //  upper borders).
   RegionType bsplineRegion;
   typename RegionType::SizeType   gridSizeOnImage;
   typename RegionType::SizeType   gridBorderSize;
@@ -244,8 +282,67 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   transform->SetParameters  ( parameters );
 
+  // Initialize the transform with a bulk transform using either a
+  // transform that aligns the centers of the volumes or a specified
+  // bulk transform 
   //
-  // 4) Setup optimizer
+  //
+  typename TransformType::InputPointType centerFixed;
+  typename InputImageType::RegionType::SizeType sizeFixed = fixedOrient->GetOutput()->GetLargestPossibleRegion().GetSize();
+  // Find the center
+  ContinuousIndexType indexFixed;
+  for ( unsigned j = 0; j < 3; j++ )
+    {
+    indexFixed[j] = (sizeFixed[j]-1) / 2.0;
+    }
+  fixedOrient->GetOutput()->TransformContinuousIndexToPhysicalPoint ( indexFixed, centerFixed );
+
+  typename TransformType::InputPointType centerMoving;
+  typename InputImageType::RegionType::SizeType sizeMoving = movingOrient->GetOutput()->GetLargestPossibleRegion().GetSize();
+  // Find the center
+  ContinuousIndexType indexMoving;
+  for ( unsigned j = 0; j < 3; j++ )
+    {
+    indexMoving[j] = (sizeMoving[j]-1) / 2.0;
+    }
+  movingOrient->GetOutput()->TransformContinuousIndexToPhysicalPoint ( indexMoving, centerMoving );
+
+  typename AffineTransformType::Pointer centeringTransform;
+  centeringTransform = AffineTransformType::New();
+
+  centeringTransform->SetIdentity();
+  centeringTransform->SetCenter( centerFixed );
+  centeringTransform->Translate(centerMoving-centerFixed);
+  std::cout << "Centering transform: "; centeringTransform->Print( std::cout );
+
+  transform->SetBulkTransform( centeringTransform );
+
+  // If an initial transformation was provided, then use it instead.
+  //
+  if (InitialTransform != ""
+      && initialTransform->GetTransformList()->size() != 0)
+    {
+    TransformReaderType::TransformType::Pointer initial
+      = *(initialTransform->GetTransformList()->begin());
+
+    TransformType::BulkTransformType::Pointer
+      bulk = dynamic_cast<TransformType::BulkTransformType*>(initial.GetPointer());
+
+    if (bulk)
+      {
+      transform->SetBulkTransform( bulk );
+      }
+    else
+      {
+      std::cout << "Initial transform is an unsupported type." << std::endl;
+      }
+    
+    std::cout << "Initial transform: "; initial->Print ( std::cout );
+    }
+
+  
+  // Setup optimizer
+  //
   //
   typename OptimizerType::BoundSelectionType boundSelect( transform->GetNumberOfParameters() );
   typename OptimizerType::BoundValueType upperBound( transform->GetNumberOfParameters() );
@@ -273,19 +370,17 @@ template<class T> int DoIt( int argc, char * argv[], T )
   optimizer->SetMaximumNumberOfEvaluations    ( 500 );
   optimizer->SetMaximumNumberOfCorrections    ( 12 );
 
+  
   // Create the Command observer and register it with the optimizer.
   //
   typename CommandIterationUpdate::Pointer observer = CommandIterationUpdate::New();
-    observer->SetProcessInformation (CLPProcessInformation);
+  observer->SetProcessInformation (CLPProcessInformation);
+  observer->SetCostFunction( metric );
 
   optimizer->AddObserver( itk::IterationEvent(), observer );
 
+  // Setup metric
   //
-  // 5) Setup metric
-  //
-  //  Given that the Mattes Mutual Information metric uses a random iterator in
-  //  order to collect the samples from the images, it is usually convenient to
-  //  initialize the seed of the random number generator.
   //
   metric->ReinitializeSeed( 76926294 );
   metric->SetNumberOfHistogramBins( HistogramBins );
@@ -293,8 +388,8 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   std::cout << std::endl << "Starting Registration" << std::endl;
 
+  // Registration
   //
-  // 6) Setup registration
   //
   registration->SetFixedImage  ( fixedOrient->GetOutput()  );
   registration->SetMovingImage ( movingOrient->GetOutput() );
@@ -306,8 +401,12 @@ template<class T> int DoIt( int argc, char * argv[], T )
 
   try 
     { 
+//     itk::PluginFilterWatcher watchRegistration(registration,
+//                                                "Registering",
+//                                                CLPProcessInformation,
+//                                                1.0/3.0, 2.0/3.0);
     collector.Start( "Registration" );
-    registration->StartRegistration(); 
+    registration->Update();
     collector.Stop( "Registration" );
     } 
   catch( itk::ExceptionObject & err ) 
@@ -317,14 +416,36 @@ template<class T> int DoIt( int argc, char * argv[], T )
     return EXIT_FAILURE;
     } 
   
+  typename OptimizerType::ParametersType finalParameters = 
+    registration->GetLastTransformParameters();
+  std::cout << "Final parameters: " << finalParameters[50] << std::endl;
+  transform->SetParameters      ( finalParameters );
+
+  if (OutputTransform != "")
+    {
+    typedef itk::TransformFileWriter TransformWriterType;
+    TransformWriterType::Pointer outputTransformWriter;
+
+    outputTransformWriter= TransformWriterType::New();
+    outputTransformWriter->SetFileName( OutputTransform );
+    outputTransformWriter->SetInput( transform );
+    try
+      {
+      outputTransformWriter->Update();
+      }
+    catch (itk::ExceptionObject &err)
+      {
+      std::cerr << err << std::endl;
+      exit( EXIT_FAILURE );
+      }
+    }
+
+  // Resample to the original coordinate frame (not the reoriented
+  // axial coordinate frame) of the fixed image
   //
-  // 7) Resample
-  //
-  if (resampledImageFileName != "")
+  if (ResampledImageFileName != "")
     {
     typename ResampleFilterType::Pointer resample = ResampleFilterType::New();
-    typename OptimizerType::ParametersType finalParameters = 
-      registration->GetLastTransformParameters();
     
     itk::PluginFilterWatcher watcher(
       resample,
@@ -332,21 +453,17 @@ template<class T> int DoIt( int argc, char * argv[], T )
       CLPProcessInformation,
       1.0/3.0, 2.0/3.0);
     
-    transform->SetParameters      ( finalParameters );
     resample->SetTransform        ( transform );
-    resample->SetInput            ( movingOrient->GetOutput() );
+    resample->SetInput            ( movingImageReader->GetOutput() );
     resample->SetDefaultPixelValue( DefaultPixelValue );
-    resample->SetOutputParametersFromImage ( fixedOrient->GetOutput() );
+    resample->SetOutputParametersFromImage ( fixedImageReader->GetOutput() );
     
     collector.Start( "Resample" );
     resample->Update();
     collector.Stop( "Resample" );
 
-    //
-    // 8) Write the resampled image
-    //
     typename WriterType::Pointer      writer =  WriterType::New();
-    writer->SetFileName( resampledImageFileName.c_str() );
+    writer->SetFileName( ResampledImageFileName.c_str() );
     writer->SetInput( resample->GetOutput()   );
 
     try
@@ -372,6 +489,15 @@ template<class T> int DoIt( int argc, char * argv[], T )
 int main( int argc, char * argv[] )
 {
   
+  // Print out the arguments (need to add --echo to the argument list 
+  // 
+  std::vector<char *> vargs;
+  for (int vi=0; vi < argc; ++vi) vargs.push_back(argv[vi]);
+  vargs.push_back("--echo");
+  
+  argc = vargs.size();
+  argv = &(vargs[0]);
+
   PARSE_ARGS;
 
   itk::ImageIOBase::IOPixelType pixelType;
@@ -379,7 +505,7 @@ int main( int argc, char * argv[] )
 
   try
     {
-    itk::GetImageType (fixedImageFileName, pixelType, componentType);
+    itk::GetImageType (FixedImageFileName, pixelType, componentType);
 
     // This filter handles all types
     
