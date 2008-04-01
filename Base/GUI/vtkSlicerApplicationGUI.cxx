@@ -920,7 +920,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             
             this->LoadSceneDialog->SetParent ( this->MainSlicerWindow );
             this->LoadSceneDialog->Create ( );
-            this->LoadSceneDialog->SetFileTypes("{ {Scenes} {.mrml .xml} } { {MRML Scene} {.mrml} } { {Slicer2 Scene} {.xml} } { {Xcede Catalog} {.xcat} } { {All} {.*} }");
+            this->LoadSceneDialog->SetFileTypes("{ {Scenes} {.mrml .xml .xcat} } { {MRML Scene} {.mrml} } { {Slicer2 Scene} {.xml} } { {Xcede Catalog} {.xcat} } { {All} {.*} }");
             this->LoadSceneDialog->RetrieveLastPathFromRegistry("OpenPath");
 
 #endif
