@@ -62,11 +62,11 @@ void vtkSlicerXNATPermissionPrompterWidget::ProcessWidgetEvents( vtkObject *call
 
   if ( e == this->HostNameEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
     {
-    //this->PermissionInfo->SetUserName ( this->HostNameEntry->GetWidget()->GetValue() );
+    //this->XNATPermissionInfo->SetUserName ( this->HostNameEntry->GetWidget()->GetValue() );
     }
   if ( b == this->OKButton && event == vtkKWPushButton::InvokedEvent )
     {
-    this->PermissionInfo->SetHost ( this->HostNameEntry->GetWidget()->GetValue() );
+    this->XNATPermissionInfo->SetHost ( this->HostNameEntry->GetWidget()->GetValue() );
     this->HidePermissionPrompter();
     }
 

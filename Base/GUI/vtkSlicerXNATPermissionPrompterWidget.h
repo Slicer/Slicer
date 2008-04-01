@@ -5,6 +5,9 @@
 #include "vtkSlicerPermissionPrompterWidget.h"
 #include "vtkKWEntryWithLabel.h"
 
+//--- MRML storage 
+#include "vtkXNATPermissionPrompter.h"
+
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXNATPermissionPrompterWidget : public vtkSlicerPermissionPrompterWidget
 {
  public:
@@ -13,6 +16,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXNATPermissionPrompterWidget : public 
   void PrintSelf ( ostream& os, vtkIndent indent );
   
   vtkGetObjectMacro ( HostNameEntry, vtkKWEntryWithLabel);
+
+  // Description:
+  // Get the MRML PermissionPrompter
+  vtkGetObjectMacro ( XNATPermissionInfo, vtkXNATPermissionPrompter );
+  vtkSetObjectMacro ( XNATPermissionInfo, vtkXNATPermissionPrompter );
 
   // Description:
   // methods that also call the superclass methods.
@@ -26,6 +34,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXNATPermissionPrompterWidget : public 
   virtual ~vtkSlicerXNATPermissionPrompterWidget ( );
 
   vtkKWEntryWithLabel *HostNameEntry;
+  vtkXNATPermissionPrompter *XNATPermissionInfo;
 
  
  private:
