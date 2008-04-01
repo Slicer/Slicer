@@ -26,6 +26,7 @@ ENDIF(WIN32)
 SET(RemoteIO_SRCS
         vtkHTTPHandler.cxx
         vtkSRBHandler.cxx
+        vtkXNATHandler.cxx
 )
 
 

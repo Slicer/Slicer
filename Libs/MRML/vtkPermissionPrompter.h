@@ -15,11 +15,6 @@ class VTK_MRML_EXPORT vtkPermissionPrompter : public vtkObject
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Member for storing a host name, if required
-  vtkGetStringMacro ( Host );
-  vtkSetStringMacro ( Host );
-
-  // Description:
   // Member for storing a user name, if required
   vtkGetStringMacro ( UserName );
   vtkSetStringMacro ( UserName );
@@ -36,7 +31,6 @@ class VTK_MRML_EXPORT vtkPermissionPrompter : public vtkObject
   vtkSetMacro ( Remember, int );
 
  private:
-  char *Host;
   char *UserName;
   char *Password;
   int Remember;
