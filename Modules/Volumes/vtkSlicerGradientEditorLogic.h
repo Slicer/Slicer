@@ -34,13 +34,17 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
     // Parses given ASCII gradients back into arrays of gradients and bValues.
     // Return value is 0 when given gradients can't be parsed or contain invalid/not enough
     // values; otherwise 1.
-    int ParseGradients(const char  *gradients, int numberOfGradients, vtkDoubleArray *newBValue, 
+    int ParseGradients(const char  *gradients, int numberOfGradients, vtkDoubleArray *newBValues, 
       vtkDoubleArray *newGradients);
+    
+    //BTX
+    // Description:
+    // Parses given gradients and bValues back into a string and returns it.
+    std::string GetGradientsAsString(vtkDoubleArray *BValues, vtkDoubleArray *Gradients);
 
     // Description:
     // Parses a string into a double value.
     // Return value is 0 when parsing was not successful; otherwise 1.
-    //BTX
     int StringToDouble(const std::string &s, double &result);
     //ETX
 

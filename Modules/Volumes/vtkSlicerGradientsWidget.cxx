@@ -174,53 +174,10 @@ void vtkSlicerGradientsWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *
 //---------------------------------------------------------------------------
 void vtkSlicerGradientsWidget::UpdateGradients()
   {
-  std::stringstream output;
-  vtkDoubleArray *factor = vtkDoubleArray::New();
-  double g[3];
-
-  // compute norm of each gradient 
-  for(int i=0; i<this->Gradients->GetNumberOfTuples();i++)
-    {
-    this->Gradients->GetTuple(i,g);
-    factor->InsertNextValue(sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]));
-    }
-
-  // get range of norm array
-  double range[2];
-  factor->GetRange(range);
-
-  // compute bValue
-  double bValue = -1;
-  for(int i = 0; i< this->BValues->GetSize(); i++)
-    {
-    double numerator = this->BValues->GetValue(i)*range[1];
-    double denominator = factor->GetValue(i);
-    if(!numerator == 0 && !denominator == 0)
-      {
-      bValue = numerator/denominator;
-      break;
-      }
-    }
-
-  // read in new bValue
-  output << "DWMRI_b-value:= " << bValue << endl; 
-
-  // read in new gradients
-  // (this->Gradients->GetSize() is not always correct.)
-  for(int i=0; i < this->Gradients->GetNumberOfTuples()*3; i=i+3)
-    {
-    output << "DWMRI_gradient_" << setfill('0') << setw(4) << i/3 << ":=" << " ";
-    for(int j=i; j<i+3; j++)
-      {
-      output << this->Gradients->GetValue(j) << " ";
-      }
-    output << "\n";        
-    }
-
+  std::string output = this->Logic->GetGradientsAsString(this->BValues, this->Gradients);
   // write it on GUI
-  this->GradientsTextbox->GetWidget()->SetText(output.str().c_str());
+  this->GradientsTextbox->GetWidget()->SetText(output.c_str());
   this->UpdateStatusLabel(1);
-  factor->Delete();
   }
 
 //---------------------------------------------------------------------------

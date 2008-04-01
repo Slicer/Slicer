@@ -69,6 +69,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
     // Saves changes of the matrix to the ActiveVolumeNode.
     void SaveMatrix();
 
+    // Description:
+    // Return value is 1 if Determinat is +1 or -1; otherwise 0;
     int CheckDeterminant();
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;

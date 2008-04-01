@@ -179,6 +179,55 @@ int vtkSlicerGradientEditorLogic::ParseGradients(const char *oldGradients, int n
   }
 
 //---------------------------------------------------------------------------
+std::string vtkSlicerGradientEditorLogic::GetGradientsAsString(vtkDoubleArray *BValues, vtkDoubleArray *Gradients)
+  {
+  std::stringstream output;
+  vtkDoubleArray *factor = vtkDoubleArray::New();
+  double g[3];
+
+  // compute norm of each gradient 
+  for(int i=0; i<Gradients->GetNumberOfTuples();i++)
+    {
+    Gradients->GetTuple(i,g);
+    factor->InsertNextValue(sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]));
+    }
+
+  // get range of norm array
+  double range[2];
+  factor->GetRange(range);
+
+  // compute bValue
+  double bValue = -1;
+  for(int i = 0; i< BValues->GetSize(); i++)
+    {
+    double numerator = BValues->GetValue(i)*range[1];
+    double denominator = factor->GetValue(i);
+    if(!numerator == 0 && !denominator == 0)
+      {
+      bValue = numerator/denominator;
+      break;
+      }
+    }
+
+  // read in new bValue
+  output << "DWMRI_b-value:= " << bValue << endl; 
+
+  // read in new gradients
+  // (this->Gradients->GetSize() is not always correct.)
+  for(int i=0; i < Gradients->GetNumberOfTuples()*3; i=i+3)
+    {
+    output << "DWMRI_gradient_" << setfill('0') << setw(4) << i/3 << ":=" << " ";
+    for(int j=i; j<i+3; j++)
+      {
+      output << Gradients->GetValue(j) << " ";
+      }
+    output << "\n";        
+    }
+  factor->Delete();
+  return output.str();
+  }
+
+//---------------------------------------------------------------------------
 void vtkSlicerGradientEditorLogic::SetActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node)
   {
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, node);

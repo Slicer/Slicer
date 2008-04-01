@@ -186,8 +186,8 @@ void vtkSlicerMeasurementFrameWidget::SaveMatrix()
 int vtkSlicerMeasurementFrameWidget::CheckDeterminant()
   {
   double det = this->Matrix->Determinant();
-  double delta = 0.001;
-  
+  const double delta = 0.001;
+
   if((det<=1+delta && det>=1-delta) || (det>=-1-delta && det<=-1+delta))
     {
     this->MeasurementFrame->SetLabelText("Measurement Frame");
@@ -230,10 +230,7 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
     int numberSelected = 0;
     for(int i=0; i<3;i++)
       {
-      if(this->Checkbuttons[i]->GetSelectedState())
-        {
-        numberSelected++;
-        }
+      if(this->Checkbuttons[i]->GetSelectedState()) numberSelected++;
       }
     //enable/disable buttons
     if (numberSelected >= 1)
@@ -298,25 +295,10 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
   //swap columns
   else if (this->SwapButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent)
     {
-    int firstSelectedCheckbox  = -1;        
-    int secondSelectedCheckbox = -1;
     //seek for selected checkboxes
-    for(int i=0; i<3;i++)
-      {
-      if(this->Checkbuttons[i]->GetSelectedState())
-        {
-        firstSelectedCheckbox = i;
-        break;
-        }
-      }
-    for(int i=3-1; i>=0;i--)
-      {
-      if(this->Checkbuttons[i]->GetSelectedState())
-        {
-        secondSelectedCheckbox = i;
-        break;
-        }
-      }
+    int firstSelectedCheckbox  = (this->Checkbuttons[0]->GetSelectedState() == 1) ? 0 : 1;        
+    int secondSelectedCheckbox = (this->Checkbuttons[2]->GetSelectedState() == 1) ? 2 : 1;
+
     //swap values
     for(int j=0; j<3; j++)
       {
@@ -342,7 +324,7 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
           //change sign of values != 0
           if(currentValue != 0)
             {
-            currentValue = currentValue-(2*currentValue);
+            currentValue *= -1;
             this->Matrix->SetElement(i,j,currentValue);
             }
           }//end for2
