@@ -330,12 +330,15 @@ proc XcedeCatalogImportEntryVolume {node} {
     set centered 1
     set labelmap 0
     set singleFile 0
-   
+    set autoLevel 1
 
     if { [info exists n(labelmap) ] } {
         set labelmap 1
     }
-    set loadingOptions [expr $labelmap * 1 + $centered * 2 + $singleFile * 4]
+    if { [ string first "stat" $n(uri) ] >= 0 } {
+        # set autoLevel 0
+    }
+    set loadingOptions [expr $labelmap * 1 + $centered * 2 + $singleFile * 4 + $autoLevel * 8]
  
     set logic [$::slicer3::VolumesGUI GetLogic]
     if { $logic == "" } {
