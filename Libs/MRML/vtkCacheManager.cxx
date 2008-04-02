@@ -689,7 +689,7 @@ float vtkCacheManager::ComputeCacheSize( const char *dirName, unsigned long sz )
         if (vtksys::SystemTools::FileIsDirectory(subdirString.c_str()))
           {
           ///---compute dir and filename for recursive hunt
-          cachesize += this->ComputeCacheSize (subdirString.c_str(), 0);
+          cachesize += (long unsigned int)ceil(this->ComputeCacheSize (subdirString.c_str(), 0));
           }
         else
           {
