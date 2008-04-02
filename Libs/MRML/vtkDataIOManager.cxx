@@ -325,7 +325,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
       vtkDebugMacro("QueueRead: found a pending storage node at index " << i << ", setting it to scheduled");
       dnode->GetNthStorageNode(i)->SetReadStateScheduled();
       storageNodeIndex = i;
-      continue;
+      break;
       }
     }
   if (storageNodeIndex == -1)
