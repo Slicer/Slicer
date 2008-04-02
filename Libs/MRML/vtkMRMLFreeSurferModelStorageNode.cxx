@@ -165,7 +165,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->Ready )
+  if ( this->GetReadState() != this->TransferDone )
     {
     // remote file download hasn't finished
     return 0;
@@ -258,7 +258,9 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     }
   */
-   
+
+  this->SetReadStateIdle();
+  
   modelNode->SetModifiedSinceRead(0);
   return result;
 }

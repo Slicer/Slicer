@@ -91,13 +91,22 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   void StageWriteData ( vtkMRMLNode *refNode );
 
   // Description:
-  // Possible Read and Write states 
+  // Possible Read and Write states
+  // Idle: not currently working on any data, ready for the next transfer
+  // Pending: the data is remote, waiting for a transfer to be scheduled
+  // Scheduled: the data is remote, and is scheduled for download
+  // Transferring: data is remote, and the transfer is working to completion
+  // TransferDone: the data is on disk and ready to be read
+  // Cancelled: the user cancelled the remote data transfer
   //BTX
   enum
   {
-    Ready,
+    Idle,
     Pending,
     Scheduled,
+    Transferring,
+    TransferDone,
+    Cancelled,
   };
   //ETX
   // Description:
@@ -105,8 +114,11 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   vtkGetMacro(ReadState,int);
   vtkSetMacro(ReadState,int);
   void SetReadStatePending() { this->SetReadState(this->Pending); };
-  void SetReadStateReady() { this->SetReadState(this->Ready); };
+  void SetReadStateIdle() { this->SetReadState(this->Idle); }; 
   void SetReadStateScheduled() { this->SetReadState(this->Scheduled); };
+  void SetReadStateTransferring() { this->SetReadState(this->Transferring); }; 
+  void SetReadStateTransferDone() { this->SetReadState(this->TransferDone); }; 
+  void SetReadStateCancelled() { this->SetReadState(this->Cancelled); }; 
   const char *GetStateAsString(int state);
   const char *GetReadStateAsString() { return this->GetStateAsString(this->ReadState); };
   
@@ -115,8 +127,11 @@ class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
   vtkGetMacro(WriteState,int);
   vtkSetMacro(WriteState,int);
   void SetWriteStatePending() { this->SetWriteState(this->Pending); };
-  void SetWriteStateReady() { this->SetWriteState(this->Ready); };
+  void SetWriteStateIdle() { this->SetWriteState(this->Idle); };
   void SetWriteStateScheduled() { this->SetWriteState(this->Scheduled); };
+  void SetWriteStateTransferring() { this->SetWriteState(this->Transferring); };
+  void SetWriteStateTransferDone() { this->SetWriteState(this->TransferDone); };
+  void SetWriteStateCancelled() { this->SetWriteState(this->Cancelled); }; 
   const char *GetWriteStateAsString() { return this->GetStateAsString(this->WriteState); };
 
   // Description:

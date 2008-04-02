@@ -29,8 +29,8 @@ vtkMRMLStorageNode::vtkMRMLStorageNode()
   this->URI = NULL;
   this->URIHandler = NULL;
   this->UseCompression = 1;
-  this->ReadState = this->Ready;
-  this->WriteState = this->Ready;
+  this->ReadState = this->Idle;
+  this->WriteState = this->Idle;
   this->URIHandler = NULL;
 }
 
@@ -167,34 +167,29 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
   // if the URI is null, assume the file name is set and return
   if (this->GetURI() == NULL)
     {
-    this->SetReadStateReady();
+    vtkDebugMacro("StageReadData: uri is null, setting state to transfer done");
+    this->SetReadStateTransferDone();
     return;
     }
   
   if (refNode == NULL)
     {
-    vtkWarningMacro("StageReadData: input mrml node is null, returning.");
+    vtkDebugMacro("StageReadData: input mrml node is null, returning.");
     return;
     }
   
   if (!this->SupportedFileType(this->GetURI()))
     {
     // can't read this kind of file, so return
-    this->SetReadStateReady();
-    vtkWarningMacro("StageReadData: can't read file type for URI : " << this->GetURI());
+    this->SetReadStateIdle();
+    vtkDebugMacro("StageReadData: can't read file type for URI : " << this->GetURI());
     return;
     }
-    
-  if (this->URI == NULL)
-    {
-    // shouldn't get here, as the supported file type check will fail
-    vtkWarningMacro("Cannot stage data for reading, URI is not set.");
-    return;
-    }
+
   // need to get URI handlers from the scene
   if (this->Scene == NULL)
     {
-    vtkWarningMacro("StageReadData: Cannot get mrml scene, unable to get remote file handlers.");
+    vtkDebugMacro("StageReadData: Cannot get mrml scene, unable to get remote file handlers.");
     return;
     }
 
@@ -202,7 +197,7 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
   vtkDataIOManager *iomanager = this->Scene->GetDataIOManager();
   if (iomanager != NULL)
     {
-    if (this->GetReadState() == this->Ready)
+    if (this->GetReadState() == this->Idle)
       {
       vtkDebugMacro("StageReadData: setting read state to pending, finding a URI handler and queuing read on the io manager");
       this->SetReadStatePending();
@@ -215,7 +210,7 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
       else
         {
         vtkErrorMacro("StageReadData: unable to get a URI handler for " << this->URI << ", resetting stage to ready");
-        this->SetReadStateReady();
+        this->SetReadStateIdle();
         return;
         }
       vtkDebugMacro("StageReadData: calling QueueRead on the io manager.");
@@ -238,6 +233,7 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
 {
   if (this->URI == NULL)
     {
+    this->SetWriteStateTransferDone();
     vtkDebugMacro("Cannot stage data for writing, URI is not set.");
     return;
     }
@@ -257,7 +253,7 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
    vtkDataIOManager *iomanager = this->Scene->GetDataIOManager();
    if (iomanager != NULL)
      {
-     if (this->GetWriteState() == this->Ready)
+     if (this->GetWriteState() == this->Idle)
        {
        vtkDebugMacro("StageWriteData: setting write state to pending, finding a URI handler and queuing write on the io manager");
        this->SetWriteStatePending();
@@ -269,8 +265,8 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
          }
        else
          {
-         vtkErrorMacro("StageWriteData: unable to get a URI handler for " << this->URI << ", resetting stage to ready");
-         this->SetWriteStateReady();
+         vtkErrorMacro("StageWriteData: unable to get a URI handler for " << this->URI << ", resetting stage to idle");
+         this->SetWriteStateIdle();
          return;
          }
        iomanager->QueueWrite(refNode);
@@ -293,13 +289,25 @@ const char * vtkMRMLStorageNode::GetStateAsString(int state)
     {
     return "Pending";
     }
-  if (state == this->Ready)
+  if (state == this->Idle)
     {
-    return "Ready";
+    return "Idle";
     }
   if (state == this->Scheduled)
     {
     return "Scheduled";
+    }
+  if (state == this->Transferring)
+    {
+    return  "Transferring";
+    }
+  if (state == this->TransferDone)
+    {
+    return "TransferDone";
+    }
+  if (state == this->Cancelled)
+    {
+    return "Cancelled";
     }
   return "(undefined)";
 }

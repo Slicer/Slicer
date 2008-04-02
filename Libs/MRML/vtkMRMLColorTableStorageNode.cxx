@@ -129,7 +129,7 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->Ready )
+  if ( this->GetReadState() != this->TransferDone )
     {
     // remote file download hasn't finished
     vtkWarningMacro("ReadData: Read state is pending, returning.");
@@ -247,7 +247,9 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkErrorMacro("ERROR opening colour file " << this->FileName << endl);
     return 0;
     }
-
+  
+  this->SetReadStateIdle();
+  
   // make sure that the color node points to this storage node
   colorNode->SetAndObserveStorageNodeID(this->GetID());
   

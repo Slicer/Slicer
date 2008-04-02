@@ -50,3 +50,8 @@ vtkMRMLNode* vtkMRMLFiberBundleStorageNode::CreateNodeInstance()
   return new vtkMRMLFiberBundleStorageNode;
 }
 
+//----------------------------------------------------------------------------
+int vtkMRMLFiberBundleStorageNode::SupportedFileType(const char *fileName)
+{
+  return 0;
+}

@@ -123,6 +123,13 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;
     }
 
+  Superclass::StageReadData(refNode);
+  if ( this->GetReadState() != this->TransferDone )
+    {
+    // remote file download hasn't finished
+    return 0;
+    }
+  
   vtkMRMLTransformNode *transformNode = dynamic_cast <vtkMRMLTransformNode *> (refNode);
 
   std::string fullName;
@@ -428,6 +435,8 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
   lps2ras->Delete();
   ras2lps->Delete();
 
+  this->SetReadStateIdle();
+   
   return result;
 }
 

@@ -338,7 +338,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->Ready )
+  if ( this->GetReadState() != this->TransferDone )
     {
     // remote file download hasn't finished
     return 0;
@@ -483,6 +483,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
   appender->Delete();
   ici->Delete();
 
+  this->SetReadStateIdle();
   return result;
 }
 

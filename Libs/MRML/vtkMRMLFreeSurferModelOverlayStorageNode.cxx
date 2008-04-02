@@ -204,7 +204,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->Ready )
+  if ( this->GetReadState() != this->TransferDone )
     {
     // remote file download hasn't finished
     vtkDebugMacro("ReadData: remote file download hasn't finished");
@@ -298,7 +298,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
 
         reader->ReadFSScalars();
 
-        std::cout << "Finished reading model overlay file " << fullName.c_str() << "\n\tscalars called " << scalarName.c_str() << ", adding point scalars to model node " << modelNode->GetName() << endl;
+        vtkDebugMacro("Finished reading model overlay file " << fullName.c_str() << "\n\tscalars called " << scalarName.c_str() << ", adding point scalars to model node " << modelNode->GetName());;
         modelNode->AddPointScalars(floatArray);
         if (displayNode)
           {
@@ -668,7 +668,10 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     modelNode->GetPolyData()->Modified();
     }
-   
+
+  // now reset read state to idle
+  this->SetReadStateIdle();
+  
   modelNode->SetModifiedSinceRead(0);
   return result;
 }

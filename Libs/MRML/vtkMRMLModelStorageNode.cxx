@@ -125,7 +125,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->Ready )
+  if ( this->GetReadState() != this->TransferDone )
     {
     // remote file download hasn't finished
     return 0;
@@ -205,7 +205,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     else 
       {
-      vtkWarningMacro("Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
+      vtkDebugMacro("Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
       return 0;
       }
     }
@@ -214,6 +214,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     result = 0;
     }
 
+  this->SetReadStateIdle();
   if (modelNode->GetPolyData() != NULL) 
     {
     modelNode->GetPolyData()->Modified();
