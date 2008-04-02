@@ -52,6 +52,14 @@
       <default>false</default>
       <label>Delete the Command Line Module Cache On/Off</label>
       </boolean>
+        
+      <boolean>
+      <name>VerboseModuleDiscovery</name>
+      <longflag>--verbose_module_discovery</longflag>
+      <description>Enable verbose output during module discovery process.</description>
+      <default>false</default>
+      <label>Verbose module discovery</label>
+      </boolean>
 
       <boolean>
       <name>Daemon</name>

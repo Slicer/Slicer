@@ -1074,10 +1074,16 @@ int Slicer3_main(int argc, char *argv[])
     LoadableModuleFactory loadableModuleFactory;
     loadableModuleFactory.SetName("Slicer");
     loadableModuleFactory.SetSearchPath( slicerModulePath );
-    loadableModuleFactory.SetWarningMessageCallback( WarningMessage );
-    loadableModuleFactory.SetErrorMessageCallback( ErrorMessage );
-    loadableModuleFactory.SetInformationMessageCallback( InformationMessage );
-    loadableModuleFactory.SetModuleDiscoveryMessageCallback( SplashMessage );
+    if (VerboseModuleDiscovery)
+      {
+      loadableModuleFactory.SetWarningMessageCallback( WarningMessage );
+      loadableModuleFactory.SetErrorMessageCallback( ErrorMessage );
+      loadableModuleFactory.SetInformationMessageCallback( InformationMessage);
+      }
+    if (!NoSplash)
+      {
+      loadableModuleFactory.SetModuleDiscoveryMessageCallback( SplashMessage );
+      }
     loadableModuleFactory.Scan();
     
     std::vector<std::string> loadableModuleNames = 
@@ -1726,10 +1732,16 @@ int Slicer3_main(int argc, char *argv[])
       moduleFactory.SetName("Slicer");
       moduleFactory.SetSearchPath( packagePath );
       moduleFactory.SetCachePath( cachePath );
-      moduleFactory.SetWarningMessageCallback( WarningMessage );
-      moduleFactory.SetErrorMessageCallback( ErrorMessage );
-      moduleFactory.SetInformationMessageCallback( InformationMessage );
-      moduleFactory.SetModuleDiscoveryMessageCallback( SplashMessage );
+      if (VerboseModuleDiscovery)
+        {
+        moduleFactory.SetWarningMessageCallback( WarningMessage );
+        moduleFactory.SetErrorMessageCallback( ErrorMessage );
+        moduleFactory.SetInformationMessageCallback( InformationMessage );
+        }
+      if (!NoSplash)
+        {
+        moduleFactory.SetModuleDiscoveryMessageCallback( SplashMessage );
+        }      
       moduleFactory.Scan();
 
       // Register the node type for the command line modules
