@@ -487,7 +487,7 @@ void vtkCacheManager::DeleteFromCache( const char *target )
     this->MarkNodesBeforeDeletingDataFromCache ( target );
 
     //--- remove the file or directory in str....
-    vtkWarningMacro ( "Removing " << str.c_str() << " from disk and from record of cached files." );
+    vtkDebugMacro ( "Removing " << str.c_str() << " from disk and from record of cached files." );
     if ( vtksys::SystemTools::FileIsDirectory ( str.c_str() ) )
       {
       if ( !vtksys::SystemTools::RemoveADirectory ( str.c_str() ))
