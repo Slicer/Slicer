@@ -238,6 +238,8 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   int centerImage = 0;
   int labelMap = 0;
   int singleFile = 0;
+  int autoLevel = 0;
+  
   if ( loadingOptions & 1 )    // labelMap is true
   {
     labelMap = 1;
@@ -250,7 +252,10 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   {
     singleFile = 1;
   }
-
+  if ( loadingOptions & 8 ) // calculate window level automaticaly
+    {
+    autoLevel = 1;
+    }
   vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::New();
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
   vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
@@ -345,16 +350,19 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   colorLogic->Delete();
 
   storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
-    
-  vtkMRMLScalarVolumeDisplayNode *sdn = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
-  if (sdn && scalarNode)
+
+  if (autoLevel)
     {
-    vtkDebugMacro("AddArchetypeScalarVolume: calculating auto levels " << scalarNode->GetName() << ", scalar node image data is " << ( scalarNode->GetImageData() == NULL ? "null" : "not null"));
-    this->CalculateAutoLevels( scalarNode->GetImageData(), sdn );
-    vtkDebugMacro("AddArchetypeScalarVolume: got auto window =" << sdn->GetWindow() << ", level = " << sdn->GetLevel());
+    vtkMRMLScalarVolumeDisplayNode *sdn = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
+    if (sdn && scalarNode)
+      {
+      vtkDebugMacro("AddArchetypeScalarVolume: calculating auto levels " << scalarNode->GetName() << ", scalar node image data is " << ( scalarNode->GetImageData() == NULL ? "null" : "not null"));
+      this->CalculateAutoLevels( scalarNode->GetImageData(), sdn );
+      vtkDebugMacro("AddArchetypeScalarVolume: got auto window =" << sdn->GetWindow() << ", level = " << sdn->GetLevel());
+      }
     }
 
-  if (storageNode->GetReadState() == vtkMRMLStorageNode::Ready)
+  if (storageNode->GetReadState() == vtkMRMLStorageNode::TransferDone)
     {
       vtkDebugMacro("AddArchetypeScalarVolume: setting active volume node " << scalarNode->GetName());
 

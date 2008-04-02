@@ -52,6 +52,8 @@
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 #include "vtkSlicerTask.h"
 #include "vtkMRMLNRRDStorageNode.h"
+#include "vtkMRMLFreeSurferModelStorageNode.h"
+#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 
 #ifdef linux 
 #include "unistd.h"
@@ -735,7 +737,7 @@ int vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char 
 {
   int active;
 
-//  std::cout << "Requesting " << filename << " be read into node " << refNode << ", display data = " << (displayData?"true":"false") <<  std::endl;
+  //std::cout << "RequestReadData: Requesting " << filename << " be read into node " << refNode << ", display data = " << (displayData?"true":"false") <<  std::endl;
 
   // only request to read a file if the ReadData queue is up
   this->ReadDataQueueActiveLock->Lock();
@@ -1007,7 +1009,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   // What type of node is the data really? Or is it a scene
   vtkMRMLNode *nd = 0;
   vtkMRMLDisplayNode *disp = 0;
-  vtkMRMLStorageNode *in = 0;
+  vtkMRMLStorageNode *storageNode = 0;
   vtkMRMLScalarVolumeNode *svnd = 0;
   vtkMRMLVectorVolumeNode *vvnd = 0;
   vtkMRMLDiffusionTensorVolumeNode *dtvnd = 0;
@@ -1020,6 +1022,8 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLColorTableNode *cnd = 0;
   
   nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
+
+  vtkDebugMacro("ProcessReadNodeData: read data request node id = " << nd->GetID());
   
   svnd  = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
   vvnd  = vtkMRMLVectorVolumeNode::SafeDownCast(nd);
@@ -1031,45 +1035,135 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   fbnd  = vtkMRMLFiberBundleNode::SafeDownCast(nd);
   cnd = vtkMRMLColorTableNode::SafeDownCast(nd);
   
-  // Read the data into the referenced node
-  if (itksys::SystemTools::FileExists( req.GetFilename().c_str() ))
+  bool useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(req.GetFilename().c_str());
+  bool storageNodeExists = false;
+  int numStorageNodes = 0;
+
+  vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast(nd);
+  if (storableNode)
     {
-    if (svnd || vvnd)
+    numStorageNodes = storableNode->GetNumberOfStorageNodes();
+    for (int n = 0; n < numStorageNodes; n++)
       {
-      // Load a scalar or vector volume node
-      //
-      // Need to maintain the original coordinate frame established by 
-      // the images sent to the execution model 
-      vtkMRMLVolumeArchetypeStorageNode *vin 
-        = vtkMRMLVolumeArchetypeStorageNode::New();
-      vin->SetCenterImage(0);
-      in = vin;
+      vtkMRMLStorageNode *testStorageNode = storableNode->GetNthStorageNode(n);
+      if (testStorageNode)
+        {
+        if (useURI)
+          {
+          if (req.GetFilename().compare(testStorageNode->GetURI()) == 0)
+            {
+            // found a storage node for the remote file
+            vtkDebugMacro("ProcessReadNodeData: found a storage node with the right URI: " << testStorageNode->GetURI());
+            storageNode = testStorageNode;
+            storageNodeExists = true;
+            break;
+            }
+          }
+        else if (req.GetFilename().compare(testStorageNode->GetFileName()) == 0)
+          {
+          // found the right storage node for a local file
+          vtkDebugMacro("ProcessReadNodeData: found a storage node with the right filename: " << testStorageNode->GetFileName());
+          storageNode = testStorageNode;
+          storageNodeExists = true;
+          break;
+          }
+        }
       }
-    else if (dtvnd || dwvnd)
+    }
+
+  // if there wasn't already a matching storage node on the node, make one
+  if (!storageNodeExists)
+    {
+    // Read the data into the referenced node
+    if (itksys::SystemTools::FileExists( req.GetFilename().c_str() ))
       {
-      // Load a diffusion tensor or a diffusion weighted node
-      //
-      // Need to maintain the original coordinate frame established by 
-      // the images sent to the execution model 
-      vtkMRMLNRRDStorageNode *nin = vtkMRMLNRRDStorageNode::New();
-      nin->SetCenterImage(0);
-      in = nin;
-      }
-    else if (fbnd)
-      {
-      // Load a fiber bundle node
-      in = vtkMRMLFiberBundleStorageNode::New();
-      }
-    else if (cnd)
-      {
-      // load in a color node
-      in = vtkMRMLColorTableStorageNode::New();
-      }
-    else if (mnd)
-      {
-      // Load a model node
-      in = vtkMRMLModelStorageNode::New();
-      }
+      if (svnd || vvnd)
+        {
+        // Load a scalar or vector volume node
+        //
+        // Need to maintain the original coordinate frame established by 
+        // the images sent to the execution model 
+        vtkMRMLVolumeArchetypeStorageNode *vin 
+          = vtkMRMLVolumeArchetypeStorageNode::New();
+        vin->SetCenterImage(0);
+        storageNode = vin;
+        }
+      else if (dtvnd || dwvnd)
+        {
+        // Load a diffusion tensor or a diffusion weighted node
+        //
+        // Need to maintain the original coordinate frame established by 
+        // the images sent to the execution model 
+        vtkMRMLNRRDStorageNode *nin = vtkMRMLNRRDStorageNode::New();
+        nin->SetCenterImage(0);
+        storageNode = nin;
+        }
+      else if (fbnd)
+        {
+        // Load a fiber bundle node
+        storageNode = vtkMRMLFiberBundleStorageNode::New();
+        }
+      else if (cnd)
+        {
+        // load in a color node
+        storageNode = vtkMRMLColorTableStorageNode::New();
+        }
+      else if (mnd)
+        {
+        // Load a model node
+        // first determine if the model node has a storage node that already points to this file
+        /*
+        int numStorageNodes = mnd->GetNumberOfStorageNodes();
+        storageNode = NULL;
+        for (int n = 0; n < numStorageNodes; n++)
+          {
+          vtkMRMLStorageNode *testStorageNode = mnd->GetNthStorageNode(n);
+          if (testStorageNode)
+            {
+            if (useURI)
+              {
+              if (req.GetFilename().compare(testStorageNode->GetURI()) == 0)
+                {
+                // found a storage node for the remote file
+                vtkDebugMacro("ProcessReadNodeData: found a storage node with the right URI: " << testStorageNode->GetURI());
+                storageNode = testStorageNode;
+                break;
+                }
+              }
+              else if (req.GetFilename().compare(testStorageNode->GetFileName()) == 0)
+              {
+              // found the right storage node for a local file
+               vtkDebugMacro("ProcessReadNodeData: found a storage node with the right filename: " << testStorageNode->GetFileName());
+              storageNode = testStorageNode;
+              break;
+              }
+            }
+          }
+         */
+        // first determine if it's free surfer file name
+        vtkWarningMacro("ProcessReadNodeData: making a new model storage node");
+        vtkMRMLFreeSurferModelStorageNode *fssn = vtkMRMLFreeSurferModelStorageNode::New();
+        vtkMRMLModelStorageNode *msn = vtkMRMLModelStorageNode::New();
+        vtkMRMLFreeSurferModelOverlayStorageNode *fson = vtkMRMLFreeSurferModelOverlayStorageNode::New();
+        if (fssn->SupportedFileType(req.GetFilename().c_str()))
+          {
+          storageNode = fssn;
+          msn->Delete();
+          fson->Delete();
+          }
+        else if (fson->SupportedFileType(req.GetFilename().c_str()))
+          {
+          storageNode = fson;
+          msn->Delete();
+          fssn->Delete();
+          }
+        else if (msn->SupportedFileType(req.GetFilename().c_str()))
+          {
+          storageNode = msn;
+          fssn->Delete();
+          fson->Delete();
+          }
+        }
     else if (ltnd || nltnd)
       {
       // Load a linear transform node
@@ -1078,24 +1172,48 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       // in scenes.  we handle the former here.  the latter is handled
       // by ProcessReadSceneData()
 
-      in = vtkMRMLTransformStorageNode::New();
+      storageNode = vtkMRMLTransformStorageNode::New();
       }
-    
+      // file is there on disk
+      }
+     // done making a new storage node
+    }
+  
     // Have the storage node read the data into the current node
-    if (in)
+    if (storageNode)
       {
       try
         {
         vtkMRMLStorableNode *storableNode = 
           vtkMRMLStorableNode::SafeDownCast(nd);
-        if ( storableNode && storableNode->GetStorageNode() == NULL )
+        if ( storableNode && storableNode->GetStorageNode() == NULL  &&
+             !storageNodeExists)
           {
-          this->MRMLScene->AddNode( in );
-          storableNode->SetAndObserveStorageNodeID( in->GetID() );
+          vtkDebugMacro("ProcessReadNodeData: found a storable node's storage node, it didn't exist already, adding the storage node " << storageNode->GetID());
+          this->MRMLScene->AddNode( storageNode );
+          storableNode->SetAndObserveStorageNodeID( storageNode->GetID() );
           }
-        in->SetFileName( req.GetFilename().c_str() );
-        in->ReadData( nd );
-        in->SetFileName( NULL ); // clear temp file name
+        vtkDebugMacro("ProcessReadNodeData: about to call read data, storage node's read state is " << storageNode->GetReadStateAsString());
+        if (useURI)
+          {
+          storageNode->SetURI(req.GetFilename().c_str());
+          vtkDebugMacro("ProcessReadNodeData: calling ReadData on the storage node " << storageNode->GetID() << ", uri = " << storageNode->GetURI());
+          storageNode->ReadData( nd );
+          if (!storageNodeExists)
+            {
+            storageNode->SetURI(NULL);
+            }
+          }
+        else
+          {
+          storageNode->SetFileName( req.GetFilename().c_str() );
+           vtkDebugMacro("ProcessReadNodeData: calling ReadData on the storage node " << storageNode->GetID() << ", filename = " << storageNode->GetFileName());
+          storageNode->ReadData( nd );
+          if (!storageNodeExists)
+            {
+            storageNode->SetFileName( NULL ); // clear temp file name
+            }
+          }
         // since this was read from a temp location, 
         // mark it as needing to be saved when the scene is saved
         nd->SetModifiedSinceRead(1); 
@@ -1114,7 +1232,10 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
                     << req.GetFilename();
         vtkErrorMacro( << information.str().c_str() );
         }
-      in->Delete();
+      if (!storageNodeExists)
+        {
+        storageNode->Delete();
+        }
       }
     
     // Delete the file if requested
@@ -1130,7 +1251,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         vtkWarningMacro( << information.str().c_str() );
         }
       }
-    }
 
 
   // Get the right type of display node. Only create a display node

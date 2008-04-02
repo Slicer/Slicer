@@ -167,7 +167,7 @@ void vtkDataIOManagerLogic::CancelDataTransfer ( vtkDataTransfer *dt )
 //----------------------------------------------------------------------------
 int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
 {
-
+//  this->DebugOn();
   //--- do some node nullchecking first.
   if ( node == NULL )
     {
@@ -189,19 +189,31 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   //--- find the storage node that's in the scheduled state
   int numStorageNodes = dnode->GetNumberOfStorageNodes();
   int storageNodeIndex = -1;
+  int numScheduledNodes = 0;
   for (int n = 0; n < numStorageNodes; n++)
     {
     if (dnode->GetNthStorageNode(n)->GetReadState() == vtkMRMLStorageNode::Scheduled)
       {
       vtkDebugMacro("QueueRead: found storage node in scheduled state, n = " << n);
-      storageNodeIndex = n;
-      continue;
+      if (storageNodeIndex == -1)
+        {
+        storageNodeIndex = n;
+        }
+      numScheduledNodes++;
       }
     }
+  vtkDebugMacro("QueueRead: there are " << numScheduledNodes << " storage nodes scheduled to be read on " << node->GetID());
   if (storageNodeIndex == -1)
     {
-    vtkWarningMacro("QueueRead: no storage nodes found in scheduled state, checked " << numStorageNodes);
+    vtkDebugMacro("QueueRead: no storage nodes found in scheduled state, checked " << numStorageNodes);
     return 0;
+    }
+  else
+    {
+    // set it to working, the storage node will wait to read until it's ready
+    // (ApplyTransfer will set it to ready when it's done)
+    vtkDebugMacro("QueueRead: setting " << storageNodeIndex << " storage node read state to working, uri = " <<  dnode->GetNthStorageNode(storageNodeIndex)->GetURI());
+    dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateTransferring();
     }
   
   //--- if handler is good and there's enough cache space, queue the read
@@ -240,7 +252,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   //--- just return.
   if ( (cm->CachedFileExists ( dest )) && ( !(cm->GetEnableForceRedownload())) )
     {
-    dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateReady();
+    dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateTransferDone();
     vtkDebugMacro("QueueRead: the destination file is there and we're not forceing redownload");
     return 1;
     }
@@ -311,9 +323,11 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     this->ApplyTransfer ( transfer );
     transfer->SetTransferStatus( vtkDataTransfer::Completed);
     // now set the node's storage node state to ready
-    dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateReady();
+    vtkDebugMacro("QueueRead: setting storage node state to transferdone: " << dnode->GetNthStorageNode(storageNodeIndex)->GetURI());
+    dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateTransferDone();
     }
   transfer->Delete();
+//  this->DebugOff();
   return 1;
 }
 
@@ -353,7 +367,7 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
       {
       storageNodeIndex = i;
       vtkDebugMacro("QueueWrite: found a scheduled storage node at index " << i);
-      continue;
+      break;
       }
     }
   if (storageNodeIndex == -1)
@@ -454,7 +468,7 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode *node )
     this->ApplyTransfer ( transfer );
     transfer->SetTransferStatus( vtkDataTransfer::Completed);
     // now set the node's storage node state to ready
-    dnode->GetNthStorageNode(storageNodeIndex)->SetWriteStateReady();
+    dnode->GetNthStorageNode(storageNodeIndex)->SetWriteStateTransferDone();
     }
   transfer->Delete();
   return 1;
@@ -522,13 +536,16 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
           vtkErrorMacro( "ApplyTransfer: could not get storable node for scheduled data transfer" );
           return;
           }
-        // find the storage node that's scheduled
+        // find the storage node that's been scheduled  and we're working on it
         int storageNodeIndex = -1;
         for (int i = 0; i < storableNode->GetNumberOfStorageNodes(); i++)
           {
-          if (storableNode->GetNthStorageNode(i)->GetReadState() == vtkMRMLStorageNode::Scheduled)
+          if (storableNode->GetNthStorageNode(i)->GetReadState() == vtkMRMLStorageNode::Transferring &&
+              strcmp(storableNode->GetNthStorageNode(i)->GetURI(),source) == 0)
             {
+            vtkDebugMacro("ApplyTransfer: found a working storage node who's uri matches source " << source << " at " << i);
             storageNodeIndex = i;
+            break;
             }
           }
         if (storageNodeIndex == -1)
@@ -542,7 +559,9 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
           return;
           }
         storageNode->SetDisableModifiedEvent( 1 );
-        storageNode->SetReadStateReady();
+        // let the storage node know that the remote transfer is done
+        vtkDebugMacro("ApplyTransfer: setting storage node read state to transfer done for uri " << storageNode->GetURI());
+        storageNode->SetReadStateTransferDone();
         storageNode->SetDisableModifiedEvent( 0 );
         this->GetApplicationLogic()->RequestReadData( node->GetID(), dest, 0, 0 );
         }
@@ -595,7 +614,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void *clientdata )
           return;
           }
         storageNode->SetDisableModifiedEvent( 1 );
-        storageNode->SetWriteStateReady();
+        storageNode->SetWriteStateTransferDone();
         storageNode->SetDisableModifiedEvent( 0 );
         }
       else
