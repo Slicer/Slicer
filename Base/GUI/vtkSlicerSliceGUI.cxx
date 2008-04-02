@@ -52,6 +52,7 @@ vtkSlicerSliceGUI::~vtkSlicerSliceGUI ( ) {
 
     
     this->RemoveGUIObservers ();
+    this->RemoveMRMLObservers();
 
     // Unpack and set parents to be NULL
     this->SliceController->SetParent ( NULL );
@@ -291,13 +292,16 @@ void vtkSlicerSliceGUI::ProcessLogicEvents ( vtkObject *caller,
     LookupTableCollection->Delete();
     
     // add mrml display node observers
+    this->RemoveMRMLObservers();
     std::vector< vtkMRMLDisplayNode*> dnodes = sliceLogic->GetPolyDataDisplayNodes();
     for (unsigned int i=0; i< dnodes.size(); i++)
       {
       vtkMRMLDisplayNode* dnode = dnodes[i];
       if (!dnode->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand))
         {
+        dnode->Register(this);
         dnode->AddObserver ( vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
+        this->DisplayNodes.push_back(dnode);
         }
       }
     //rw->ResetCamera ( );
@@ -351,10 +355,19 @@ void vtkSlicerSliceGUI::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 
-//void vtkSlicerSliceGUI::RemoveMRMLObservers ( )
-//{
-//TODO store observing glyph display nodes in a map and remove them here
-//}
+void vtkSlicerSliceGUI::RemoveMRMLObservers ( )
+{
+  for(unsigned int i=0; i<this->DisplayNodes.size(); i++)
+    {
+    vtkMRMLDisplayNode* dnode = this->DisplayNodes[i];
+    if (dnode)
+      {
+      dnode->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand *)this->MRMLCallbackCommand );
+      dnode->UnRegister(this);
+      }
+    }
+  this->DisplayNodes.clear();
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::Enter ( )

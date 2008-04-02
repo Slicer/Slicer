@@ -587,6 +587,7 @@ void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
             }
           }
         dnode->SetSliceTensorRotationMatrix(trot);
+        trot->Delete();
         }
       }
     }

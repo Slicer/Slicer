@@ -102,6 +102,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
     vtkDiffusionTensorGlyph  *DiffusionTensorGlyphFilter;
     vtkTransform             *SliceToXYTransform;
     vtkTransformPolyDataFilter *SliceToXYTransformer;
+    vtkMatrix4x4             *SliceToXYMatrix;
 };
 
 #endif
