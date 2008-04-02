@@ -163,7 +163,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
   ImagePointer movingImage = gaussian2->GetOutput();
 
   ImageReaderPointer maskImageReader = ImageReader::New();
-  maskImageReader->SetFileName( argv[3] );
+  maskImageReader->SetFileName( MovingImageFileName.c_str() );
   maskImageReader->Update();
   ImagePointer maskImage = maskImageReader->GetOutput();
   // typedefs
