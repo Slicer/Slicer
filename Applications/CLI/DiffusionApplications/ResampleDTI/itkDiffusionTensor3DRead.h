@@ -27,6 +27,7 @@ public:
   typedef Matrix< double , 3 , 3 > MatrixType ;
   typedef DiffusionTensor3D< DataType > TensorDataType ;
   typedef OrientedImage< TensorDataType , 3 > DiffusionImageType ;
+  typedef typename DiffusionImageType::Pointer DiffusionImagePointer ;
   typedef ImageFileReader< DiffusionImageType > FileReaderType ;
   typedef MetaDataDictionary DictionaryType ;
   typedef MetaDataObject< std::string > MetaDataStringType ;
@@ -42,7 +43,7 @@ public:
   ///Get the MetaDataDictionary of the image
   DictionaryType GetMetaDataDictionary() const ;
   ///Get the output of the reader, the pixels of the image being of the DiffusionTensor3D type
-  typename DiffusionImageType::Pointer GetOutput() const ;
+  typename DiffusionImagePointer GetOutput() const ;
   ///Set Number Of Threads
   itkSetMacro( NumberOfThreads , unsigned int);
 private:

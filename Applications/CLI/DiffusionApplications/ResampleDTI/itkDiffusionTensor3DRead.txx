@@ -17,7 +17,7 @@ DiffusionTensor3DRead< TData >
 
 
 template< class TData >
-typename DiffusionTensor3DRead< TData >::DiffusionImageType::Pointer
+typename DiffusionTensor3DRead< TData >::DiffusionImagePointer
 DiffusionTensor3DRead< TData >
 ::GetOutput() const
 {
