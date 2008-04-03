@@ -1049,7 +1049,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       vtkMRMLStorageNode *testStorageNode = storableNode->GetNthStorageNode(n);
       if (testStorageNode)
         {
-        if (useURI)
+            if (useURI && testStorageNode->GetURI() != NULL)
           {
           if (req.GetFilename().compare(testStorageNode->GetURI()) == 0)
             {
@@ -1060,7 +1060,8 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
             break;
             }
           }
-        else if (req.GetFilename().compare(testStorageNode->GetFileName()) == 0)
+            else if (testStorageNode->GetFileName() != NULL &&
+                     req.GetFilename().compare(testStorageNode->GetFileName()) == 0)
           {
           // found the right storage node for a local file
           vtkDebugMacro("ProcessReadNodeData: found a storage node with the right filename: " << testStorageNode->GetFileName());
