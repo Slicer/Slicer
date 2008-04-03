@@ -85,7 +85,6 @@ SET(MRML_SRCS
         vtkURIHandler.cxx
         vtkCacheManager.cxx
         vtkPermissionPrompter.cxx
-        vtkXNATPermissionPrompter.cxx
         vtkMRMLNonlinearTransformNode.cxx
         vtkMRMLGridTransformNode.cxx
         # Note: when you add new node types, add

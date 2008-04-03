@@ -8,6 +8,9 @@ vtkCxxRevisionMacro ( vtkURIHandler, "$Revision: 1.0 $" );
 vtkURIHandler::vtkURIHandler()
 {
   this->LocalFile = NULL;
+  this->RequiresPermission = 0;
+  this->PermissionPrompter = NULL;
+  this->Prefix = NULL;
 }
 
 
@@ -15,6 +18,15 @@ vtkURIHandler::vtkURIHandler()
 vtkURIHandler::~vtkURIHandler()
 {
   this->LocalFile = NULL;
+  if ( this->PermissionPrompter != NULL )
+    {
+    this->PermissionPrompter->Delete();
+    this->PermissionPrompter = NULL;
+    }
+  if ( this->Prefix != NULL )
+    {
+    this->SetPrefix ( NULL );
+    }
 }
 
 

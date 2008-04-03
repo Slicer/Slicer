@@ -5,6 +5,7 @@
 #include <vtksys/Process.h>
 #include "vtkObject.h"
 #include "vtkMRML.h"
+#include "vtkPermissionPrompter.h"
 
 #include <math.h>
 #include <iostream>
@@ -47,7 +48,13 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   int ProgressCallback(FILE* outputFile, double dltotal, double dlnow, double ultotal, double ulnow);
   //ETX
 
-  
+  vtkGetMacro ( RequiresPermission, int );
+  vtkSetMacro ( RequiresPermission, int );
+  vtkGetObjectMacro ( PermissionPrompter, vtkPermissionPrompter );
+  vtkSetObjectMacro ( PermissionPrompter, vtkPermissionPrompter );
+  vtkGetStringMacro ( Prefix );
+  vtkSetStringMacro ( Prefix );
+
  private:
 
   //--- Methods to configure and close transfer
@@ -57,6 +64,10 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
       {
       return 0;
       }
+
+  int RequiresPermission;
+  vtkPermissionPrompter *PermissionPrompter;
+
 
  protected:
   vtkURIHandler();
@@ -70,6 +81,7 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   //std::ofstream* LocalFile;
   //ETX
   FILE *LocalFile;
+  char *Prefix;
 };
 
 #endif

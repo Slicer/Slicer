@@ -367,13 +367,9 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
       }
     
     //--- trigger logic to download, if there's cache space.
-    //--- need to convert to bytes to get a more conservative guess.
-    if ( (cm->GetCurrentCacheSize()*1000000.0) < ((float)(cm->GetRemoteCacheLimit())*1000000.0) )
-      {
-      vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
-      //--- signal this remote read event to Logic and GUI.
-      this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
-      }
+    //--- and signal this remote read event to Logic and GUI.
+    vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
+    this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
     }
   else
     {
