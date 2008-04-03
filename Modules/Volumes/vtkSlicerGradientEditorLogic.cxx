@@ -7,7 +7,7 @@
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkDoubleArray.h"
 #include "vtkNRRDReader.h"
-#include <string.h>
+#include <string>
 #include "vtkTimerLog.h"
 
 vtkCxxRevisionMacro(vtkSlicerGradientEditorLogic, "$Revision: 1.9.12.1 $");
@@ -136,10 +136,13 @@ int vtkSlicerGradientEditorLogic::ParseGradients(const char *oldGradients, int n
     std::string dummy = "";
     double newValue = -1;
     grad >> dummy;
-    if(StringToDouble(dummy, newValue))
+    if(StringToDouble(dummy, newValue))  vec.push_back(newValue);
+    else
       {
-      vec.push_back(newValue);
-      }      
+      std::string::size_type pos = dummy.find_first_of("=",0);
+      std::string dummy2 = dummy.substr(pos+1);
+      if(StringToDouble(dummy2, newValue))  vec.push_back(newValue);
+      }
     }
 
   // exit if too many or to less values are input
