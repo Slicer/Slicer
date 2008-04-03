@@ -151,6 +151,14 @@ void vtkXNATHandler::StageFileRead(const char * source,
   if (retval != 0)
     {
     vtkErrorMacro("StageFileRead: error when running command '" << cmd.c_str() << "', return value = " << retval);
+    //--- in case the permissions were not correct and that's
+    //--- the reason the read command failed,
+    //--- reset the 'remember check' in the permissions
+    //--- prompter so that new login info  will be prompted.
+    if ( this->GetPermissionPrompter() != NULL )
+      {
+      this->GetPermissionPrompter()->SetRemember ( 0 );
+      }
     }
 
   // TODO: we should use the retval to set a flag for the GUI

@@ -188,6 +188,14 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
     {
     const char *stringError = curl_easy_strerror(retval);
     vtkErrorMacro("StageFileRead: error running curl: " << stringError);
+    //--- in case the permissions were not correct and that's
+    //--- the reason the read command failed,
+    //--- reset the 'remember check' in the permissions
+    //--- prompter so that new login info  will be prompted.
+    if ( this->GetPermissionPrompter() != NULL )
+      {
+      this->GetPermissionPrompter()->SetRemember ( 0 );
+      }
     }
   this->CloseTransfer();
 
@@ -235,6 +243,14 @@ void vtkHTTPHandler::StageFileWrite(const char * source, const char * destinatio
     {
     const char *stringError = curl_easy_strerror(retval);
     vtkErrorMacro("StageFileWrite: error running curl: " << stringError);
+    //--- in case the permissions were not correct and that's
+    //--- the reason the read command failed,
+    //--- reset the 'remember check' in the permissions
+    //--- prompter so that new login info  will be prompted.
+    if ( this->GetPermissionPrompter() != NULL )
+      {
+      this->GetPermissionPrompter()->SetRemember ( 0 );
+      }
     }
    
   this->CloseTransfer();
