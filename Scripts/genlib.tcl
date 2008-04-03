@@ -26,6 +26,7 @@
 # - sp - 2004-06-20
 #
 
+
 if {[info exists ::env(CVS)]} {
     set ::CVS "{$::env(CVS)}"
 } else {
@@ -71,13 +72,16 @@ proc Usage { {msg ""} } {
     set msg "$msg\n   --clean : delete the target first"
     set msg "$msg\n   --update : do a cvs update even if there's an existing build"
     set msg "$msg\n   --release : compile with optimization flags"
+    set msg "$msg\n   --nobuild : only download and/or update, but don't build"
     set msg "$msg\n   optional space separated list of packages to build (lower case)"
     puts stderr $msg
 }
 
 set GENLIB(clean) "false"
 set GENLIB(update) "false"
+set GENLIB(buildit) "true"
 set ::GENLIB(buildList) ""
+
 set isRelease 0
 set strippedargs ""
 set argc [llength $argv]
@@ -95,6 +99,9 @@ for {set i 0} {$i < $argc} {incr i} {
         "--release" {
             set isRelease 1
             set ::VTK_BUILD_TYPE "Release"
+        }
+        "--nobuild" {
+            set ::GENLIB(buildit) "false"
         }
         "--help" -
         "-h" {
@@ -298,14 +305,16 @@ if { [BuildThis $::CMAKE "cmake"] == 1 } {
         runcmd $::CVS -d :pserver:anonymous:cmake@www.cmake.org:/cvsroot/CMake login
         eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous@www.cmake.org:/cvsroot/CMake checkout -r $::CMAKE_TAG CMake"
 
-        cd $::CMAKE_PATH
-        if { $isSolaris } {
-            # make sure to pick up curses.h in /local/os/include
-            runcmd $SLICER_LIB/CMake/bootstrap --init=$SLICER_HOME/Scripts/spl.cmake.init
-        } else {
-            runcmd $SLICER_LIB/CMake/bootstrap
-        } 
-        eval runcmd $::MAKE
+    if {$::GENLIB(buildit)} {
+          cd $::CMAKE_PATH
+          if { $isSolaris } {
+              # make sure to pick up curses.h in /local/os/include
+              runcmd $SLICER_LIB/CMake/bootstrap --init=$SLICER_HOME/Scripts/spl.cmake.init
+          } else {
+              runcmd $SLICER_LIB/CMake/bootstrap
+          } 
+          eval runcmd $::MAKE
+       }
     }
 }
 
@@ -330,14 +339,16 @@ if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TCL_TAG tcl"
 
-    if {$isWindows} {
-        # can't do windows
-    } else {
-        cd $SLICER_LIB/tcl/tcl/unix
+    if {$::GENLIB(buildit)} {
+      if {$isWindows} {
+          # can't do windows
+      } else {
+          cd $SLICER_LIB/tcl/tcl/unix
 
-        runcmd ./configure --prefix=$SLICER_LIB/tcl-build
-        eval runcmd $::MAKE
-        eval runcmd $::MAKE install
+          runcmd ./configure --prefix=$SLICER_LIB/tcl-build
+          eval runcmd $::MAKE
+          eval runcmd $::MAKE install
+      }
     }
 }
 
@@ -363,22 +374,23 @@ if { [BuildThis $::TK_TEST_FILE "tk"] == 1 } {
         }
     }
 
-    if {$isWindows} {
-        # can't do windows
-    } else {
-        cd $SLICER_LIB/tcl/tk/unix
-
-        if { $isDarwin } {
-            runcmd ./configure --with-tcl=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
-        } else {
-            runcmd ./configure --with-tcl=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build
-        }
-        eval runcmd $::MAKE
-        eval runcmd $::MAKE install
-
-        file copy -force $SLICER_LIB/tcl/tk/generic/default.h $SLICER_LIB/tcl-build/include
-        file copy -force $SLICER_LIB/tcl/tk/unix/tkUnixDefault.h $SLICER_LIB/tcl-build/include
-    }
+    if {$::GENLIB(buildit)} {
+      if {$isWindows} {
+         # can't do windows
+      } else {
+         cd $SLICER_LIB/tcl/tk/unix
+         if { $isDarwin } {
+                  runcmd ./configure --with-tcl=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
+               } else {
+                  runcmd ./configure --with-tcl=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build
+               }
+         eval runcmd $::MAKE
+         eval runcmd $::MAKE install
+         
+         file copy -force $SLICER_LIB/tcl/tk/generic/default.h $SLICER_LIB/tcl-build/include
+         file copy -force $SLICER_LIB/tcl/tk/unix/tkUnixDefault.h $SLICER_LIB/tcl-build/include
+      }
+   }
 }
 
 if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
@@ -390,24 +402,25 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
     cd $SLICER_LIB/tcl/incrTcl
 
     exec chmod +x ../incrTcl/configure 
-
-    if {$isWindows} {
+    if {$::GENLIB(buildit)} {
+      if {$isWindows} {
         # can't do windows
-    } else {
+      } else {
         if { $isDarwin } {
-            exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
-            exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
-        }
-        runcmd ../incrTcl/configure --with-tcl=$SLICER_LIB/tcl-build/lib --with-tk=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build
-        if { $isDarwin } {
-            # need to run ranlib separately on lib for Darwin
-            # file is created and ranlib is needed inside make all
-            catch "eval runcmd $::MAKE all"
-            runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
-        }
-        eval runcmd $::MAKE all
-        eval runcmd $::SERIAL_MAKE install
+          exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
+          exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
+      }
+      runcmd ../incrTcl/configure --with-tcl=$SLICER_LIB/tcl-build/lib --with-tk=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build
+      if { $isDarwin } {
+        # need to run ranlib separately on lib for Darwin
+        # file is created and ranlib is needed inside make all
+        catch "eval runcmd $::MAKE all"
+        runcmd ranlib ../incrTcl/itcl/libitclstub3.2.a
+      }
+      eval runcmd $::MAKE all
+      eval runcmd $::SERIAL_MAKE install
     }
+  }
 }
 
 if { [BuildThis $::IWIDGETS_TEST_FILE "iwidgets"] == 1 } {
@@ -417,9 +430,10 @@ if { [BuildThis $::IWIDGETS_TEST_FILE "iwidgets"] == 1 } {
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::IWIDGETS_TAG iwidgets"
 
 
-    if {$isWindows} {
-        # can't do windows
-    } else {
+    if {$::GENLIB(buildit)} {
+      if {$isWindows} {
+         # can't do windows
+      } else {
         cd $SLICER_LIB/tcl/iwidgets
         runcmd ../iwidgets/configure --with-tcl=$SLICER_LIB/tcl-build/lib --with-tk=$SLICER_LIB/tcl-build/lib --with-itcl=$SLICER_LIB/tcl/incrTcl --prefix=$SLICER_LIB/tcl-build
         # make all doesn't do anything... 
@@ -427,6 +441,7 @@ if { [BuildThis $::IWIDGETS_TEST_FILE "iwidgets"] == 1 } {
         eval runcmd $::SERIAL_MAKE all
         eval runcmd $::SERIAL_MAKE install
     }
+  }
 }
 
 
@@ -440,9 +455,10 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer co -r $::BLT_TAG blt"
 
-    if { $isWindows } {
+    if {$::GENLIB(buildit)} {
+      if { $isWindows } {
         # can't do Windows
-    } elseif { $isDarwin } {
+      } elseif { $isDarwin } {
         if { ![file exists $SLICER_LIB/tcl/isPatchedBLT] } {
             puts "Patching..."
             runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch
@@ -452,21 +468,21 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
             # create a file to make sure BLT isn't patched twice
             runcmd touch $SLICER_LIB/tcl/isPatchedBLT
             file delete $SLICER_LIB/tcl/bltpatch
-        } else {
+      } else {
             puts "BLT already patched."
-        }
-
+      }
         cd $SLICER_LIB/tcl/blt
         runcmd ./configure --with-tcl=$SLICER_LIB/tcl/tcl/unix --with-tk=$SLICER_LIB/tcl-build --prefix=$SLICER_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common
         
         eval runcmd $::MAKE
         eval runcmd $::MAKE install
-    } else {
+      } else {
         cd $SLICER_LIB/tcl/blt
         runcmd ./configure --with-tcl=$SLICER_LIB/tcl/tcl/unix --with-tk=$SLICER_LIB/tcl-build --prefix=$SLICER_LIB/tcl-build 
         eval runcmd $::SERIAL_MAKE
         eval runcmd $::SERIAL_MAKE install
-    }
+      }
+  }
 }
 
 
@@ -485,22 +501,23 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
     if { !$isWindows } {
         catch "file attributes $SLICER_LIB/VTK/VTKConfig.cmake.in -permissions a+rw"
     }
+    if {$::GENLIB(buildit)} {
 
-    file mkdir $SLICER_LIB/VTK-build
-    cd $SLICER_LIB/VTK-build
+      file mkdir $SLICER_LIB/VTK-build
+      cd $SLICER_LIB/VTK-build
 
-    set USE_VTK_ANSI_STDLIB ""
-    if { $isWindows } {
+      set USE_VTK_ANSI_STDLIB ""
+      if { $isWindows } {
         if {$MSVC6} {
             set USE_VTK_ANSI_STDLIB "-DVTK_USE_ANSI_STDLIB:BOOL=ON"
         }
-    }
+      }
 
-    #
-    # Note - the two banches are identical down to the line starting -DOPENGL...
-    # -- the text needs to be duplicated to avoid quoting problems with paths that have spaces
-    #
-    if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
+      #
+      # Note - the two banches are identical down to the line starting -DOPENGL...
+      # -- the text needs to be duplicated to avoid quoting problems with paths that have spaces
+      #
+      if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
         runcmd $::CMAKE \
             -G$GENERATOR \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
@@ -530,7 +547,7 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
             -DVTK_USE_64BIT_IDS:BOOL=ON \
             ../VTK
-    } elseif { $isDarwin } {
+      } elseif { $isDarwin } {
         set OpenGLString "-framework OpenGL;/usr/X11R6/lib/libGL.dylib"
         runcmd $::CMAKE \
             -G$GENERATOR \
@@ -557,7 +574,7 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DOPENGL_gl_LIBRARY:STRING=$OpenGLString \
             $USE_VTK_ANSI_STDLIB \
             ../VTK
-    } else {
+      } else {
         runcmd $::CMAKE \
             -G$GENERATOR \
             -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
@@ -579,17 +596,18 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DTCL_TCLSH:FILEPATH=$::VTK_TCLSH \
             $USE_VTK_ANSI_STDLIB \
             ../VTK
-    }
+      }
 
-    if { $isWindows } {
+      if { $isWindows } {
         if { $MSVC6 } {
             runcmd $::MAKE VTK.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
             runcmd $::MAKE VTK.SLN /build  $::VTK_BUILD_TYPE
         }
-    } else {
+      } else {
         eval runcmd $::MAKE 
     }
+  }
 }
 
 ################################################################################
@@ -602,12 +620,13 @@ if { [BuildThis $::KWWidgets_TEST_FILE "kwwidgets"] == 1 } {
     runcmd $::CVS -d :pserver:anoncvs:@www.kwwidgets.org:/cvsroot/KWWidgets login
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anoncvs@www.kwwidgets.org:/cvsroot/KWWidgets checkout -r $::KWWidgets_TAG KWWidgets"
 
-    file mkdir $SLICER_LIB/KWWidgets-build
-    cd $SLICER_LIB/KWWidgets-build
+    if {$::GENLIB(buildit)} {
+      file mkdir $SLICER_LIB/KWWidgets-build
+      cd $SLICER_LIB/KWWidgets-build
 
 
 
-    runcmd $::CMAKE \
+      runcmd $::CMAKE \
         -G$GENERATOR \
         -DVTK_DIR:PATH=$SLICER_LIB/VTK-build \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
@@ -619,22 +638,23 @@ if { [BuildThis $::KWWidgets_TEST_FILE "kwwidgets"] == 1 } {
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         ../KWWidgets
 
-    if { $isDarwin } {
-      runcmd $::CMAKE \
+      if { $isDarwin } {
+        runcmd $::CMAKE \
           -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
           -DCMAKE_EXE_LINKER_FLAGS="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
           ../KWWidgets
-    }
+      }
 
-    if {$isWindows} {
+      if {$isWindows} {
         if { $MSVC6 } {
             runcmd $::MAKE KWWidgets.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
             runcmd $::MAKE KWWidgets.SLN /build  $::VTK_BUILD_TYPE
         }
-    } else {
+      } else {
         eval runcmd $::MAKE 
-    }
+      }
+  }
 }
 
 ################################################################################
@@ -647,12 +667,13 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
     runcmd $::CVS -d :pserver:anoncvs:@www.vtk.org:/cvsroot/Insight login
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anoncvs@www.vtk.org:/cvsroot/Insight checkout -r $::ITK_TAG Insight"
 
-    file mkdir $SLICER_LIB/Insight-build
-    cd $SLICER_LIB/Insight-build
+    if {$::GENLIB(buildit)} {
+      file mkdir $SLICER_LIB/Insight-build
+      cd $SLICER_LIB/Insight-build
 
 
-    if {$isDarwin} {
-    runcmd $::CMAKE \
+      if {$isDarwin} {
+      runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
@@ -662,8 +683,8 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
         -DBUILD_TESTING:BOOL=OFF \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         ../Insight
-    } else {
-    runcmd $::CMAKE \
+      } else {
+      runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
@@ -673,18 +694,17 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
         -DBUILD_TESTING:BOOL=OFF \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         ../Insight
-    }
+      }
 
-    if {$isWindows} {
+      if {$isWindows} {
         if { $MSVC6 } {
             runcmd $::MAKE ITK.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
             runcmd $::MAKE ITK.SLN /build  $::VTK_BUILD_TYPE
         }
-    } else {
+      } else {
         eval runcmd $::MAKE 
     }
-
     puts "Patching ITK..."
 
     set fp1 [open "$SLICER_LIB/Insight-build/Utilities/nifti/niftilib/cmake_install.cmake" r]
@@ -712,6 +732,7 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
  
     close $fw1
     close $fw2
+  }
 }
 
 
@@ -726,16 +747,17 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login 
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TEEM_TAG teem"
 
-    file mkdir $SLICER_LIB/teem-build
-    cd $SLICER_LIB/teem-build
+    if {$::GENLIB(buildit)} {
+      file mkdir $SLICER_LIB/teem-build
+      cd $SLICER_LIB/teem-build
 
-    if { $isDarwin } {
+      if { $isDarwin } {
         set C_FLAGS -DCMAKE_C_FLAGS:STRING=-fno-common \
-    } else {
+      } else {
         set C_FLAGS ""
-    }
+      }
 
-    switch $::tcl_platform(os) {
+      switch $::tcl_platform(os) {
         "SunOS" -
         "Linux" {
             set zlib "libvtkzlib.so"
@@ -749,9 +771,9 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
             set zlib "vtkzlib.lib"
             set png "vtkpng.lib"
         }
-    }
+      }
 
-    runcmd $::CMAKE \
+      runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
@@ -772,15 +794,16 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
         -DPNG_LIBRARY:FILEPATH=$::SLICER_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
         ../teem
 
-    if {$isWindows} {
+      if {$isWindows} {
         if { $MSVC6 } {
             runcmd $::MAKE teem.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
             runcmd $::MAKE teem.SLN /build  $::VTK_BUILD_TYPE
         }
-    } else {
+      } else {
         eval runcmd $::MAKE 
-    }
+      }
+  }
 }
 
 
@@ -793,10 +816,11 @@ if { [BuildThis $::SANDBOX_TEST_FILE "sandbox"] == 1 && [BuildThis $::ALT_SANDBO
 
     runcmd $::SVN checkout $::SANDBOX_TAG NAMICSandBox 
 
-    file mkdir $SLICER_LIB/NAMICSandBox-build
-    cd $SLICER_LIB/NAMICSandBox-build
+    if {$::GENLIB(buildit)} {
+      file mkdir $SLICER_LIB/NAMICSandBox-build
+      cd $SLICER_LIB/NAMICSandBox-build
 
-    if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
+      if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
         # to build correctly, 64 bit linux requires shared libs for the sandbox
         runcmd $::CMAKE \
             -G$GENERATOR \
@@ -811,7 +835,7 @@ if { [BuildThis $::SANDBOX_TEST_FILE "sandbox"] == 1 && [BuildThis $::ALT_SANDBO
             -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
             -DOPENGL_glu_LIBRARY:FILEPATH=\" \" \
             ../NAMICSandBox
-    } else {
+      } else {
         # windows and mac require static libs for the sandbox
         runcmd $::CMAKE \
             -G$GENERATOR \
@@ -826,9 +850,9 @@ if { [BuildThis $::SANDBOX_TEST_FILE "sandbox"] == 1 && [BuildThis $::ALT_SANDBO
             -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
             -DOPENGL_glu_LIBRARY:FILEPATH=\" \" \
             ../NAMICSandBox
-    }
+      }
 
-    if {$isWindows} {
+      if {$isWindows} {
         if { $MSVC6 } {
             runcmd $::MAKE NAMICSandBox.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
@@ -855,7 +879,7 @@ if { [BuildThis $::SANDBOX_TEST_FILE "sandbox"] == 1 && [BuildThis $::ALT_SANDBO
             cd $SLICER_LIB/NAMICSandBox-build/MGHImageIOConverter
             runcmd $::MAKE MGHImageIOConverter.SLN /build $::VTK_BUILD_TYPE
         }
-    } else {
+      } else {
 
         # Just build the two libraries we need, not the rest of the sandbox.
         # This line builds the SlicerClustering library.
@@ -873,7 +897,8 @@ if { [BuildThis $::SANDBOX_TEST_FILE "sandbox"] == 1 && [BuildThis $::ALT_SANDBO
         cd $SLICER_LIB/NAMICSandBox-build/MGHImageIOConverter
         eval runcmd $::MAKE
         cd $SLICER_LIB/NAMICSandBox-build
-    }
+      }
+  }
 }
 
 
@@ -887,52 +912,53 @@ if { [BuildThis $::IGSTK_TEST_FILE "igstk"] == 1 } {
     runcmd $::CVS -d:pserver:anonymous:igstk@public.kitware.com:/cvsroot/IGSTK login
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous@public.kitware.com:/cvsroot/IGSTK co -r IGSTK-2-0 IGSTK"
 
-    file mkdir $SLICER_LIB/IGSTK-build
-    cd $SLICER_LIB/IGSTK-build
+    if {$::GENLIB(buildit)} {
+      file mkdir $SLICER_LIB/IGSTK-build
+      cd $SLICER_LIB/IGSTK-build
 
 
-    if {$isDarwin} {
-    runcmd $::CMAKE \
-        -G$GENERATOR \
-        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
-        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
-        -DVTK_DIR:PATH=$VTK_DIR \
-        -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
-        -DBUILD_SHARED_LIBS:BOOL=ON \
-        -DCMAKE_SKIP_RPATH:BOOL=OFF \
-        -DIGSTK_BUILD_EXAMPLES:BOOL=OFF \
-        -DIGSTK_BUILD_TESTING:BOOL=OFF \
-        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
-        ../IGSTK
-    } else {
-    runcmd $::CMAKE \
-        -G$GENERATOR \
-        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
-        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
-        -DVTK_DIR:PATH=$VTK_DIR \
-        -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
-        -DBUILD_SHARED_LIBS:BOOL=ON \
-        -DCMAKE_SKIP_RPATH:BOOL=ON \
-        -DIGSTK_BUILD_EXAMPLES:BOOL=OFF \
-        -DIGSTK_BUILD_TESTING:BOOL=OFF \
-        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
-        ../IGSTK
-    }
+      if {$isDarwin} {
+        runcmd $::CMAKE \
+            -G$GENERATOR \
+            -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+            -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+            -DVTK_DIR:PATH=$VTK_DIR \
+            -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
+            -DBUILD_SHARED_LIBS:BOOL=ON \
+            -DCMAKE_SKIP_RPATH:BOOL=OFF \
+            -DIGSTK_BUILD_EXAMPLES:BOOL=OFF \
+            -DIGSTK_BUILD_TESTING:BOOL=OFF \
+            -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+            ../IGSTK
+      } else {
+        runcmd $::CMAKE \
+            -G$GENERATOR \
+            -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+            -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+            -DVTK_DIR:PATH=$VTK_DIR \
+            -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
+            -DBUILD_SHARED_LIBS:BOOL=ON \
+            -DCMAKE_SKIP_RPATH:BOOL=ON \
+            -DIGSTK_BUILD_EXAMPLES:BOOL=OFF \
+            -DIGSTK_BUILD_TESTING:BOOL=OFF \
+            -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+            ../IGSTK
+      }
 
-    if { $isDarwin } {
-      runcmd $::CMAKE \
+      if { $isDarwin } {
+        runcmd $::CMAKE \
           -DCMAKE_SHARED_LINKER_FLAGS:STRING="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
           -DCMAKE_EXE_LINKER_FLAGS="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
           ../IGSTK
-    }
+      }
 
-    if {$isWindows} {
+      if {$isWindows} {
         if { $MSVC6 } {
             runcmd $::MAKE IGSTK.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
             runcmd $::MAKE IGSTK.SLN /build  $::VTK_BUILD_TYPE
         }
-    } else {
+      } else {
         # Running this cmake again will populate those CMake variables 
         # in IGSTK/CMakeLists.txt marked as MARK_AS_ADVANCED with their 
         # default values. For instance, IGSTK_SERIAL_PORT_0, IGSTK_SERIAL_PORT_1,
@@ -940,7 +966,8 @@ if { [BuildThis $::IGSTK_TEST_FILE "igstk"] == 1 } {
         eval runcmd $::CMAKE ../IGSTK 
 
         eval runcmd $::MAKE 
-    }
+      }
+  }
 }
 
 ################################################################################
@@ -952,11 +979,12 @@ if { [BuildThis $::SLICERLIBCURL_TEST_FILE "libcurl"] == 1 } {
     cd $::SLICER_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/cmcurl cmcurl
+    if {$::GENLIB(buildit)} {
 
-    file mkdir $::SLICER_LIB/cmcurl-build
-    cd $::SLICER_LIB/cmcurl-build
+      file mkdir $::SLICER_LIB/cmcurl-build
+      cd $::SLICER_LIB/cmcurl-build
 
-    runcmd $::CMAKE \
+      runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
@@ -966,17 +994,22 @@ if { [BuildThis $::SLICERLIBCURL_TEST_FILE "libcurl"] == 1 } {
         -DBUILD_TESTING:BOOL=OFF \
         ../cmcurl
 
-    if {$isWindows} {
+      if {$isWindows} {
         if { $MSVC6 } {
             runcmd $::MAKE SLICERLIBCURL.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
         } else {
             runcmd $::MAKE SLICERLIBCURL.SLN /build  $::VTK_BUILD_TYPE
         }
-    } else {
+      } else {
         eval runcmd $::MAKE
-    }
+      }
+  }
 }
 
+
+if {! $::GENLIB(buildit)} {
+ exit 0
+}
 
 # Are all the test files present and accounted for?  If not, return error code
 
