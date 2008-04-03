@@ -44,6 +44,7 @@
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -1351,12 +1352,29 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
           volumesLogic->Delete();
         }
       } 
-    if (svnd) svnd->SetAndObserveDisplayNodeID( disp->GetID() );
-    else if (vvnd) vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-    else if (dtvnd) dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-    else if (dwvnd) dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-    else if (mnd) mnd->SetAndObserveDisplayNodeID( disp->GetID() );
-    
+    if (svnd) 
+      {
+      svnd->SetAndObserveDisplayNodeID( disp->GetID() );
+      }
+    else if (vvnd) 
+      {
+      vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+      }
+    else if (dtvnd) 
+      {
+      dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+      // add slice display nodes
+      dtvnd->AddSliceGlyphDisplayNodes();
+
+      }
+    else if (dwvnd) 
+      {
+      dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+      }
+    else if (mnd) 
+      {
+      mnd->SetAndObserveDisplayNodeID( disp->GetID() );
+      }
     disp->Delete();
     }
     
