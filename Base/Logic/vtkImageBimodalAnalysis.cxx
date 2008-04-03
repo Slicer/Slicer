@@ -36,7 +36,22 @@ vtkImageBimodalAnalysis* vtkImageBimodalAnalysis::New()
 // Constructor sets default values
 vtkImageBimodalAnalysis::vtkImageBimodalAnalysis()
 {
-  this->Modality = VTK_BIMODAL_MODALITY_CT;
+  this->Modality  = VTK_BIMODAL_MODALITY_CT;
+  this->Threshold = 0;
+  this->Window    = 0;
+  this->Level     = 0;
+  this->Min       = 0;
+  this->Max       = 0;
+  this->Offset    = 0;
+  
+  for (int i = 0; i < 2; ++i)
+    {
+    this->SignalRange[i] = 0;
+    }
+  for (int i = 0; i < 6; ++i)
+    {
+    this->ClipExtent[i] = 0;
+    }
 }
 
 //----------------------------------------------------------------------------

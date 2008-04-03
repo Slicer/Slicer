@@ -88,7 +88,8 @@ vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 {
-  this->Archetype = NULL;
+  this->Archetype  = NULL;
+  this->SingleFile = 1;
   this->RasToIjkMatrix = NULL;
   this->SetDesiredCoordinateOrientationToAxial();
   this->UseNativeCoordinateOrientation = 0;

@@ -65,6 +65,7 @@ vtkMRMLNode* vtkMRMLVolumeArchetypeStorageNode::CreateNodeInstance()
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
   this->CenterImage = 0;
+  this->SingleFile  = 1;
 }
 
 //----------------------------------------------------------------------------
