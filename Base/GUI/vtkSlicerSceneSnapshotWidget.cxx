@@ -326,7 +326,7 @@ void vtkSlicerSceneSnapshotWidget::CreateWidget ( )
   //this->SnapshotSelectorWidget->SetPadX(2);
   //this->SnapshotSelectorWidget->SetPadY(2);
   this->SnapshotSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->SnapshotSelectorWidget->GetWidget()->GetWidget()->SetWidth(38);
+  this->SnapshotSelectorWidget->GetWidget()->GetWidget()->SetWidth(30);
   this->SnapshotSelectorWidget->SetLabelText( "");
   this->SnapshotSelectorWidget->SetBalloonHelpString("select a scene snapshot.");
   this->Script ( "pack %s -side left -anchor nw -padx 2 -pady 2",
