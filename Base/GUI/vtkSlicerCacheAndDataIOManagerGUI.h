@@ -8,6 +8,7 @@
 
 #include "vtkObserverManager.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLNode.h"
 #include "vtkDataIOManager.h"
 #include "vtkCollection.h"
 

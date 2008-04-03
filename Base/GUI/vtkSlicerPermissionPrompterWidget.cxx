@@ -9,39 +9,76 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerPermissionPrompterWidget );
-vtkCxxRevisionMacro ( vtkSlicerPermissionPrompterWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro (vtkSlicerPermissionPrompterWidget, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 vtkSlicerPermissionPrompterWidget::vtkSlicerPermissionPrompterWidget()
 {
-  this->PromptWindow = NULL;
-  this->OKButton = NULL;
-  this->CancelButton = NULL;
+  this->PromptDialog = NULL;
   this->RememberCheck = NULL;
   this->LogoLabel = NULL;
   this->LogoIcon = NULL;
   this->UserNameEntry = NULL;
   this->PasswordEntry = NULL;
-  this->PermissionInfo = NULL;
+  this->Application = NULL;
+  this->SetPromptMessage("Please provide the following credentials for the data transfer.");
 
 }
 
 //---------------------------------------------------------------------------
 vtkSlicerPermissionPrompterWidget::~vtkSlicerPermissionPrompterWidget ( )
 {
-  if ( this->OKButton )
+  this->DestroyPrompter();
+  this->SetApplication (NULL );  
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerPermissionPrompterWidget::GetRememberStatusFromWidget ( )
+{
+  if ( this->GetRememberCheck() != NULL )
     {
-    this->OKButton->SetParent (NULL );
-    this->OKButton->Delete();
-    this->OKButton = NULL;
+    return ( this->GetRememberCheck()->GetWidget()->GetSelectedState());
     }
-  if ( this->CancelButton )
+  return (-1 );
+}
+
+
+//---------------------------------------------------------------------------
+const char* vtkSlicerPermissionPrompterWidget::GetPasswordFromWidget()
+{
+  if ( this->GetPasswordEntry() != NULL )
     {
-    this->CancelButton->SetParent ( NULL);
-    this->CancelButton->Delete();
-    this->CancelButton = NULL;
+    return (this->GetPasswordEntry()->GetWidget()->GetValue());
     }
-  if ( this->RememberCheck )
+  return ( "" );
+}
+
+
+//---------------------------------------------------------------------------
+const char* vtkSlicerPermissionPrompterWidget::GetUserFromWidget ( )
+{
+  if (this->GetUserNameEntry() != NULL )
+    {
+    return ( this->GetUserNameEntry()->GetWidget()->GetValue() );
+    }
+  return ("");
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerPermissionPrompterWidget::SetLogoIcon( vtkKWIcon *icon )
+{
+  this->LogoLabel->SetImageToIcon ( icon );
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerPermissionPrompterWidget::DestroyPrompter ()
+{
+
+    if ( this->RememberCheck )
     {
     this->RememberCheck->SetParent ( NULL );
     this->RememberCheck->Delete();
@@ -70,161 +107,35 @@ vtkSlicerPermissionPrompterWidget::~vtkSlicerPermissionPrompterWidget ( )
     this->PasswordEntry->Delete();
     this->PasswordEntry = NULL;
     }
-  if ( this->PromptWindow )
+  if ( this->PromptDialog )
     {
-    this->PromptWindow->SetParent ( NULL );
-    this->PromptWindow->Delete();
-    this->PromptWindow = NULL;
+    this->PromptDialog->SetParent ( NULL );
+    this->PromptDialog->Delete();
+    this->PromptDialog = NULL;
     }
 
-  this->SetPermissionInfo (NULL);
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerPermissionPrompterWidget::PrintSelf( ostream& os, vtkIndent indent )
-{
-  this->Superclass::PrintSelf (os, indent );
-  this->vtkObject::PrintSelf ( os, indent );
-  os << indent << "vtkSlicerPermissionPrompterWidget: " << this->GetClassName ( ) << "\n";
-    
-  os << indent << "PromptWindow: " << this->GetPromptWindow ( ) << "\n";
-  os << indent << "OKButton: " << this->GetOKButton ( ) << "\n";
-  os << indent << "CancelButton: " << this->GetCancelButton ( ) << "\n";
-  os << indent << "RememberCheck: " << this->GetRememberCheck ( ) << "\n";
-  os << indent << "LogoLabel: " << this->GetLogoLabel ( ) << "\n";
-  os << indent << "LogoIcon: " << this->GetLogoIcon ( ) << "\n";
-  os << indent << "UserNameEntry: " << this->GetUserNameEntry ( ) << "\n";
-  os << indent << "PasswordEntry: " << this->GetPasswordEntry ( ) << "\n";
-  os << indent << "PermissionInfo: " << this->GetPermissionInfo ( ) << "\n";
-}
-
-
-
-
-//---------------------------------------------------------------------------
-const char* vtkSlicerPermissionPrompterWidget::GetPassword()
-{
-  return (this->GetPasswordEntry()->GetWidget()->GetValue());
 }
 
 //---------------------------------------------------------------------------
-const char* vtkSlicerPermissionPrompterWidget::GetUser ( )
-{
-  return ( this->GetUserNameEntry()->GetWidget()->GetValue() );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerPermissionPrompterWidget::SetLogoIcon( vtkKWIcon *icon )
-{
-  this->LogoLabel->SetImageToIcon ( icon );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerPermissionPrompterWidget::SetTitle ( const char *title )
-{
-  if ( this->PromptWindow )
-    {
-    this->PromptWindow->SetTitle ( title );
-    }
-}
-
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerPermissionPrompterWidget::AddWidgetObservers()
-{
-  this->OKButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CancelButton->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->RememberCheck->GetWidget()->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->UserNameEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->PasswordEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerPermissionPrompterWidget::RemoveWidgetObservers()
-{
-  this->OKButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->CancelButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->RememberCheck->GetWidget()->RemoveObservers ( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->UserNameEntry->GetWidget()->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->PasswordEntry->GetWidget()->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerPermissionPrompterWidget::ProcessWidgetEvents( vtkObject *caller, unsigned long event, void *callData)
-{
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
-  vtkKWCheckButton *cb = vtkKWCheckButton::SafeDownCast ( caller );
-  vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
-
-  if ( cb == this->RememberCheck->GetWidget() && event == vtkKWCheckButton::SelectedStateChangedEvent )
-    {
-    //--- Set MRML flag so we prompt at each data transfer.
-    this->PermissionInfo->SetRemember ( this->RememberCheck->GetWidget()->GetSelectedState() );
-    }
-
-  if ( e == this->UserNameEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
-    {
-    //this->PermissionInfo->SetUserName ( this->UserNameEntry->GetWidget()->GetValue() );
-    }
-  else if ( e == this->PasswordEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
-    {
-    //this->PermissionInfo->SetPassword ( this->PasswordEntry->GetWidget()->GetValue() );
-    }
-
-  if ( b == this->OKButton && event == vtkKWPushButton::InvokedEvent )
-    {
-    this->PermissionInfo->SetUserName ( this->UserNameEntry->GetWidget()->GetValue() );    
-    this->PermissionInfo->SetPassword ( this->PasswordEntry->GetWidget()->GetValue() );
-    this->HidePermissionPrompter();
-    }
-  else if ( b == this->CancelButton && event == vtkKWPushButton::InvokedEvent )
-    {
-//    this->PermissionInfo->SetUserName ( "" );    
-//    this->PermissionInfo->SetPassword ( "" );
-    this->HidePermissionPrompter();
-    }
-
-  return;
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerPermissionPrompterWidget::CreateWidget()
+void vtkSlicerPermissionPrompterWidget::CreatePrompter (const char *messageText, const char *title)
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
 
-  //--- top level
-  this->PromptWindow = vtkKWTopLevel::New();
-  this->PromptWindow->SetApplication ( app );
-  this->PromptWindow->SetTitle ( "Permission Prompt" );
-  this->PromptWindow->Create();
-  this->PromptWindow->SetBorderWidth ( 2 );
-  this->PromptWindow->SetReliefToFlat();
-  this->PromptWindow->SetDisplayPositionToPointer();
-  this->PromptWindow->SetSize ( 500, 300 );
-  this->PromptWindow->SetMinimumSize ( 500, 300 );
-  this->PromptWindow->Withdraw();
-  this->PromptWindow->SetDeleteWindowProtocolCommand ( this, "HidePermissionPrompter" );
+  //--- dialog
+  this->PromptDialog = vtkKWMessageDialog::New();
+  this->PromptDialog->SetParent(app->GetApplicationGUI()->GetMainSlicerWindow()->GetViewFrame());
+  this->PromptDialog->SetMasterWindow ( app->GetApplicationGUI()->GetMainSlicerWindow() );
+  this->PromptDialog->SetStyleToOkCancel();
+  this->PromptDialog->Create();
+  this->PromptDialog->SetDisplayPositionToScreenCenter();
+  this->PromptDialog->SetSize( 500, 300 );
+  this->PromptDialog->SetTitle ( title );
+  this->PromptDialog->SetText ( messageText );
     
-  this->OKButton = vtkKWPushButton::New();
-  this->OKButton->SetParent ( this->PromptWindow );
-  this->OKButton->Create();
-  this->OKButton->SetText ( "OK");
-  this->OKButton->SetBalloonHelpString ( "Use the values entered and close the window." );
-
-  this->CancelButton = vtkKWPushButton::New();
-  this->CancelButton->SetParent ( this->PromptWindow );
-  this->CancelButton->Create();
-  this->CancelButton->SetText ( "Cancel ");
-  this->CancelButton->SetBalloonHelpString ( "Don't use values entered, close window." );
-
   this->RememberCheck = vtkKWCheckButtonWithLabel::New();
-  this->RememberCheck->SetParent (this->PromptWindow );
+  this->RememberCheck->SetParent (this->PromptDialog->GetMessageDialogFrame() );
   this->RememberCheck->Create();
-  this->RememberCheck->GetWidget()->SetSelectedState (1);
+  this->RememberCheck->GetWidget()->SetSelectedState (this->GetRemember() );
   this->RememberCheck->GetLabel()->SetText ( "Remember this user name and password for this session." );
   
   this->LogoIcon = vtkKWIcon::New();
@@ -245,27 +156,27 @@ void vtkSlicerPermissionPrompterWidget::CreateWidget()
                            image_LogoBlank_length, 0);
 
   this->LogoLabel = vtkKWLabel::New();
-  this->LogoLabel->SetParent ( this->PromptWindow );
+  this->LogoLabel->SetParent ( this->PromptDialog->GetMessageDialogFrame() );
   this->LogoLabel->Create();
   this->LogoLabel->SetImageToIcon ( this->LogoIcon );
 
   this->UserNameEntry = vtkKWEntryWithLabel::New();
-  this->UserNameEntry->SetParent ( this->PromptWindow );
+  this->UserNameEntry->SetParent ( this->PromptDialog->GetMessageDialogFrame() );
   this->UserNameEntry->Create();
   this->UserNameEntry->GetLabel()->SetText ("User Name: " );
   this->UserNameEntry->GetLabel()->SetBalloonHelpString ( "Enter user name" );
-  this->UserNameEntry->GetWidget()->SetValue ( "" );
+  this->UserNameEntry->GetWidget()->SetValue ( this->GetUsername() );
   this->UserNameEntry->GetWidget()->SetCommandTriggerToReturnKeyAndFocusOut();
   this->UserNameEntry->SetLabelWidth ( 20 );
   this->UserNameEntry->GetWidget()->SetWidth ( 30 );
   this->UserNameEntry->SetLabelPositionToLeft();
 
   this->PasswordEntry = vtkKWEntryWithLabel::New();
-  this->PasswordEntry->SetParent ( this->PromptWindow );
+  this->PasswordEntry->SetParent (  this->PromptDialog->GetMessageDialogFrame() );
   this->PasswordEntry->Create();
   this->PasswordEntry->GetLabel()->SetText ("Password: " );
   this->PasswordEntry->GetLabel()->SetBalloonHelpString ( "Enter password" );
-  this->PasswordEntry->GetWidget()->SetValue ( "" );
+  this->PasswordEntry->GetWidget()->SetValue ( this->GetPassword() );
   this->PasswordEntry->GetWidget()->PasswordModeOn();
   this->PasswordEntry->SetLabelWidth ( 20 );
   this->PasswordEntry->GetWidget()->SetWidth ( 30 );
@@ -273,41 +184,73 @@ void vtkSlicerPermissionPrompterWidget::CreateWidget()
   this->PasswordEntry->SetLabelPositionToLeft();
   
   //--- pack it up.
-  this->Script ( "pack %s %s -side top -padx 4 -pady 4 -expand n",
+  app->Script ( "pack %s %s -side top -padx 4 -pady 4 -expand n",
                  this->LogoLabel->GetWidgetName(),
                  this->RememberCheck->GetWidgetName());
-  this->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",
+  app->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",
                  this->UserNameEntry->GetWidgetName() );
-  this->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",
+  app->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",
                  this->PasswordEntry->GetWidgetName() );
-
-  //--- set 'built' flag true
-  this->Built = true;
 }
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerPermissionPrompterWidget::DisplayPermissionPrompter()
+int vtkSlicerPermissionPrompterWidget::Prompt( const char *message )
 {
-   if (! this->Built )
+  if ( !this->GetRemember() || this->GetUsername()==NULL || this->GetPassword()==NULL )
     {
-    return;
+    //--- create all widgets in prompt and customize message
+    if ( message != NULL )
+      {
+      this->CreatePrompter(message, this->GetPromptTitle() );
+      }
+    else
+      {
+      this->CreatePrompter(this->GetPromptMessage(), this->GetPromptTitle() );
+      }
+    //--- Invoke and process result
+    if ( this->PromptDialog != NULL )
+      {
+      this->PromptDialog->Invoke();
+      if ( this->PromptDialog->GetStatus() == vtkKWDialog::StatusOK )
+        {
+        this->SetUsername( this->GetUserFromWidget() );
+        this->SetPassword ( this->GetPasswordFromWidget() );
+        this->SetRemember ( this->GetRememberStatusFromWidget() );
+        this->DestroyPrompter();        
+        if (  this->GetUsername() == "" || this->GetPassword() == "" )
+          {
+          //--- return -1 if not enough info was provided
+          return -1;
+          }
+        }
+      else if ( this->PromptDialog->GetStatus() == vtkKWDialog::StatusCanceled )
+        {
+        this->DestroyPrompter();
+        //--- return 0 if the transfer is cancelled.
+        return 0;
+        }
+      }
+    this->DestroyPrompter();
     }
-   vtkDebugMacro("vtkSlicerPermissionPrompterWidget: Displaying PermissionPrompter.");
-  this->PromptWindow->DeIconify();
-  this->PromptWindow->Raise();
-  vtkDebugMacro("vtkSlicerPermissionPrompterWidget: DONE displaying PermissionPrompter.");
+  //--- return 1 if everything looks complete.
+  return 1;
 }
 
 
+
+
 //---------------------------------------------------------------------------
-void vtkSlicerPermissionPrompterWidget::HidePermissionPrompter()
+void vtkSlicerPermissionPrompterWidget::PrintSelf( ostream& os, vtkIndent indent )
 {
-    if ( ! this->Built )
-    {
-    return;
-    }
-    vtkDebugMacro("vtkSlicerPermissionPrompter: Withdrawing PermissionPrompter.");
-  this->PromptWindow->Withdraw();
-  vtkDebugMacro("vtkSlicerPermissionPrompter: Done withdrawing Permission Prompter.");
+
+  this->Superclass::PrintSelf (os, indent );
+  os << indent << "vtkSlicerPermissionPrompterWidget: " << this->GetClassName ( ) << "\n";
+  os << indent << "PromptDialog: " << this->GetPromptDialog ( ) << "\n";
+  os << indent << "RememberCheck: " << this->GetRememberCheck ( ) << "\n";
+  os << indent << "LogoLabel: " << this->GetLogoLabel ( ) << "\n";
+  os << indent << "LogoIcon: " << this->GetLogoIcon ( ) << "\n";
+  os << indent << "UserNameEntry: " << this->GetUserNameEntry ( ) << "\n";
+  os << indent << "PasswordEntry: " << this->GetPasswordEntry ( ) << "\n";
+
 }

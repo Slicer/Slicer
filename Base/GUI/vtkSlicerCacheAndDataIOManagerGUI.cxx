@@ -4,9 +4,15 @@
 #include "vtkKWWidget.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkSlicerApplication.h"
+#include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerWindow.h"
+#include "vtkKWFrame.h"
 #include "vtkSlicerCacheAndDataIOManagerGUI.h"
 #include "vtkSlicerDataTransferWidget.h"
 #include "vtkSlicerDataTransferIcons.h"
+#include "vtkMRMLStorableNode.h"
+#include "vtkMRMLStorageNode.h"
+#include "vtkURIHandler.h"
 
 //---------------------------------------------------------------------------
 vtkCxxRevisionMacro ( vtkSlicerCacheAndDataIOManagerGUI, "$Revision: 1.0 $");
@@ -360,6 +366,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
       {
       vtkDataTransfer *dt = reinterpret_cast < vtkDataTransfer*> (callData);
       this->AddNewDataTransfer ( dt );
+      this->UpdateEntireGUI();
       }
     else if ( event == vtkDataIOManager::TransferUpdateEvent )
       {
@@ -390,6 +397,28 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
       }
     else if ( event == vtkCacheManager::InsufficientFreeBufferEvent )
       {
+      //--- pop up dialog. --/
+
+      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication());
+      if ( app != NULL )
+        {
+        vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+        if ( appGUI != NULL )
+          {
+          vtkSlicerWindow *win = appGUI->GetMainSlicerWindow();
+          if ( win != NULL )
+            {
+            vtkKWMessageDialog *d = vtkKWMessageDialog::New();
+            d->SetParent ( win->GetViewFrame() );
+            d->SetStyleToMessage();
+            std::string msg = "The download of this dataset can't be performed because the cache is full. If a cached version of this dataset exists, Slicer will load that instead. Try clearing the cache (from the View->Cache And Remote Data Handling panel), or increasing the Remote Cache size (from the View->Application Settings panel).";
+            d->SetText ( msg.c_str());
+            d->Create();
+            d->Invoke();
+            d->Delete();
+            }
+          }
+        }
       this->UpdateOverviewPanel();
       }
     else if ( event == vtkCacheManager::CacheClearEvent )
@@ -405,6 +434,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
       this->UpdateOverviewPanel();
       }
     }
+  
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: DONE processing mrml events...");
 }    
 
@@ -981,6 +1011,14 @@ void vtkSlicerCacheAndDataIOManagerGUI::DisplayManagerWindow ( )
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Displaying Manager Window");
   this->ManagerTopLevel->DeIconify();
   this->ManagerTopLevel->Raise();
+
+  //--- refresh the GUI
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+  if ( app != NULL )
+    {
+    app->ProcessIdleTasks();
+    }
+
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: DONE displaying Manager Window");
 }
 

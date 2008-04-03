@@ -3,18 +3,19 @@
 #include "vtkCommand.h"
 
 #include "vtkKWPushButton.h"
-
+#include "vtkSlicerApplication.h"
 #include "vtkSlicerXNATPermissionPrompterWidget.h"
 
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerXNATPermissionPrompterWidget );
-vtkCxxRevisionMacro ( vtkSlicerXNATPermissionPrompterWidget, "$Revision: 1.0 $");
+vtkCxxRevisionMacro (vtkSlicerXNATPermissionPrompterWidget, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 vtkSlicerXNATPermissionPrompterWidget::vtkSlicerXNATPermissionPrompterWidget()
 {
   this->HostNameEntry = NULL;
+  this->SetPromptMessage ("Please provide the following credentials for the data transfer.");
 }
 
 //---------------------------------------------------------------------------
@@ -39,44 +40,83 @@ void vtkSlicerXNATPermissionPrompterWidget::PrintSelf(ostream& os, vtkIndent ind
 }
 
 
-
 //---------------------------------------------------------------------------
-void vtkSlicerXNATPermissionPrompterWidget::AddWidgetObservers()
+const char* vtkSlicerXNATPermissionPrompterWidget::GetHostFromWidget ( )
 {
-  this->Superclass::AddWidgetObservers();
-   this->HostNameEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerXNATPermissionPrompterWidget::RemoveWidgetObservers()
-{
-  this->Superclass::RemoveWidgetObservers();
-   this->HostNameEntry->GetWidget()->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerXNATPermissionPrompterWidget::ProcessWidgetEvents( vtkObject *caller, unsigned long event, void *callData)
-{
-  vtkKWEntry *e = vtkKWEntry::SafeDownCast ( caller );
-  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
-
-  if ( e == this->HostNameEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
+  if (this->GetHostNameEntry() != NULL )
     {
-    //this->XNATPermissionInfo->SetUserName ( this->HostNameEntry->GetWidget()->GetValue() );
+    return ( this->GetHostNameEntry()->GetWidget()->GetValue() );
     }
-  if ( b == this->OKButton && event == vtkKWPushButton::InvokedEvent )
-    {
-    this->XNATPermissionInfo->SetHost ( this->HostNameEntry->GetWidget()->GetValue() );
-    this->HidePermissionPrompter();
-    }
-
-  return;
 }
 
+
+
 //---------------------------------------------------------------------------
-void vtkSlicerXNATPermissionPrompterWidget::CreateWidget()
+int vtkSlicerXNATPermissionPrompterWidget::Prompt( const char *message)
 {
-  this->Superclass::CreateWidget();
+  if ( !this->GetRemember() || this->GetUsername()==NULL ||
+       this->GetPassword()==NULL || this->GetHostName() == NULL )
+    {
+    //--- create all widgets in prompt and customize message
+    if ( message != NULL )
+      {
+      this->CreatePrompter(message, this->GetPromptTitle() );
+      }
+    else
+      {
+      this->CreatePrompter(this->GetPromptMessage(), this->GetPromptTitle() );
+      }
+    
+    //--- Invoke and process result
+    if ( this->PromptDialog != NULL )
+      {
+      this->PromptDialog->Invoke();
+      if ( this->PromptDialog->GetStatus() == vtkKWDialog::StatusOK )
+        {
+        this->SetUsername( this->GetUserFromWidget() );
+        this->SetPassword ( this->GetPasswordFromWidget() );
+        this->SetHostName ( this->GetHostFromWidget() );
+        this->SetRemember ( this->GetRememberStatusFromWidget() );
+        this->DestroyPrompter();        
+        if (  this->GetUsername() == "" || this->GetPassword() == "" )
+          {
+          //--- return -1 if not enough info was provided
+          return -1;
+          }
+        }
+      else if ( this->PromptDialog->GetStatus() == vtkKWDialog::StatusCanceled )
+        {
+        this->DestroyPrompter();
+        //--- return 0 if the transfer is cancelled.
+        return 0;
+        }
+      }
+    this->DestroyPrompter();
+    }
+  //--- return 1 if everything looks complete.
+  return 1;
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerXNATPermissionPrompterWidget::DestroyPrompter()
+{
+
+  if ( this->HostNameEntry )
+    {
+    this->HostNameEntry->SetParent (NULL );
+    this->HostNameEntry->Delete();
+    this->HostNameEntry = NULL;
+    }
+  this->Superclass::DestroyPrompter();
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerXNATPermissionPrompterWidget::CreatePrompter(const char *messageText, const char *title)
+{
+  this->Superclass::CreatePrompter( messageText, title);
   
   //--- Resource for XNAT logo
   static const unsigned int  image_XNATLogo_width          = 100;
@@ -136,15 +176,15 @@ void vtkSlicerXNATPermissionPrompterWidget::CreateWidget()
     "Tpw4AcEZZgSJBGcQnPbmzZtd7FMyWWBgIDcWvKdEIqE3XPJiQUFBpjYIS9SM62c+iklJ/x"
     "k3XcRMXSlB/rK27i7jwMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTE"
     "9H+i/wEcz2za";
-  this->LogoIcon->SetImage ( image_XNATLogo,
+  this->GetLogoIcon()->SetImage ( image_XNATLogo,
                            image_XNATLogo_width,
                            image_XNATLogo_height,
                            image_XNATLogo_pixel_size,
                            image_XNATLogo_length, 0);
-  this->LogoLabel->SetImageToIcon ( this->LogoIcon );
+  this->GetLogoLabel()->SetImageToIcon ( this->LogoIcon );
 
   this->HostNameEntry = vtkKWEntryWithLabel::New();
-  this->HostNameEntry->SetParent ( this->PromptWindow);
+  this->HostNameEntry->SetParent ( this->GetPromptDialog()->GetMessageDialogFrame() );
   this->HostNameEntry->Create();
   this->HostNameEntry->GetLabel()->SetText ("Host name: " );
   this->HostNameEntry->GetLabel()->SetBalloonHelpString ( "Enter name of the host." );
@@ -154,9 +194,9 @@ void vtkSlicerXNATPermissionPrompterWidget::CreateWidget()
   this->HostNameEntry->GetWidget()->SetWidth ( 30 );
   this->HostNameEntry->SetLabelPositionToLeft();
 
-  this->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+  app->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",
                  this->HostNameEntry->GetWidgetName() );
 
-  this->Built = true;
 }
 
