@@ -211,8 +211,8 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->EnableAsynchronousIO = 0;
     this->EnableForceRedownload = 0;
 //    this->EnableRemoteCacheOverwriting = 1;
-    this->RemoteCacheLimit = 50;
-    this->RemoteCacheFreeBufferSize = 5;
+    this->RemoteCacheLimit = 200;
+    this->RemoteCacheFreeBufferSize = 10;
     
     // configure the application before creating
     this->SetName ( "3D Slicer Version 3.0 Beta" );
@@ -518,57 +518,8 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
                     << this->TemporaryDirectory);
     }
   
-
-
-  // Make a good guess before we read from the registry.  Default to a
-  // subdirectory called Slicer3Cache in a standard temp location.
-#ifdef _WIN32
-  GetTempPath(vtkKWRegistryHelper::RegistryKeyValueSizeMax,
-              this->RemoteCacheDirectory);
-#else
-  strcpy(this->RemoteCacheDirectory, "/tmp/cache");
-#endif
-
-
-  // Tk does not understand Windows short path names, so convert to
-  // long path names and unix slashes
-  std::string remoteCacheDirectory = this->RemoteCacheDirectory;
-  remoteCacheDirectory
-    = itksys::SystemTools::GetActualCaseForPath(remoteCacheDirectory.c_str());
-  itksys::SystemTools::ConvertToUnixSlashes( remoteCacheDirectory );
-  
-  itksys::SystemTools::SplitPath(remoteCacheDirectory.c_str(), pathcomponents);
-#ifdef _WIN32
-  pathcomponents.push_back("Slicer3Cache");
-#else
-  if ( getenv("USER") != NULL )
-    {
-    dirName = dirName + getenv("USER");
-    }
-  pathcomponents.push_back(dirName);
-#endif
-  pathWithSlicer = itksys::SystemTools::JoinPath(pathcomponents);
-  
-  itksys::SystemTools::MakeDirectory(pathWithSlicer.c_str());
-  if (pathWithSlicer.size() < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
-    {
-    strcpy(this->RemoteCacheDirectory, pathWithSlicer.c_str());
-    }
-  else
-    {
-    // path with "Slicer3Cache" attached is too long. Try it without
-    // "Slicer3Cache". If still too long, use the original path. (This path
-    // may have short names in it and hence will not work with Tk).
-    if (remoteCacheDirectory.size()
-        < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
-      {
-      strcpy(this->RemoteCacheDirectory, remoteCacheDirectory.c_str());
-      }
-    vtkWarningMacro("Default remoteCache directory path " << pathWithSlicer.c_str()
-                    << " is too long to be stored in the registry."
-                    << " Using unmodified remoteCache directory path "
-                    << this->RemoteCacheDirectory);
-    }
+  //--- Set up the cache directory -- use the temporary directory initially.
+  strcpy ( this->RemoteCacheDirectory, this->TemporaryDirectory);
 
   //--- web browser
   // start with no browser...
