@@ -472,6 +472,8 @@ IF (Slicer3_SOURCE_DIR)
   SET(TARGETS
         ResampleVolume
         ResampleVolumeLib
+        ResampleVolume2
+        ResampleVolume2Lib
         ExecutionModelTour
         ImageReadDicomWrite
         ImageReadDicomWriteLib
@@ -495,7 +497,6 @@ IF (Slicer3_SOURCE_DIR)
         VotingBinaryHoleFillingImageFilterLib
         ModelMaker
         GrayscaleModelMaker
-        CheckerBoardLib
         GrayscaleFillHoleImageFilter
         GrayscaleFillHoleImageFilterLib
         GrayscaleGrindPeakImageFilter
@@ -506,8 +507,22 @@ IF (Slicer3_SOURCE_DIR)
         AffineRegistration
         BSplineDeformableRegistration
         LabelMapSmoothing
+        LabelMapSmoothingLib
         OrientImage
         OrientImageLib
+        CheckerBoardLib
+        GaussianBlurImageFilter
+        GaussianBlurImageFilterLib
+        DicomToNrrdConverter
+        DicomToNrrdConverterLib
+        DWIDicomLoad
+        DWIDicomLoadLib
+        FreesurferSurfaceSectionExtraction
+        ZeroCrossingBasedEdgeDetectionImageFilter
+        ZeroCrossingBasedEdgeDetectionImageFilterLib
+        ProbeVolumeWithModel
+        DiffusionTensorMathematics
+        DiffusionTensorEstimation
   )
 
   INSTALL(TARGETS ${TARGETS}
