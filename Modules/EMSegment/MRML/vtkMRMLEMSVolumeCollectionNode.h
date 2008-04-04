@@ -31,6 +31,10 @@ public:
   virtual void Copy(vtkMRMLNode *node);
 
   // Description:
+  // clone the volumes of rhs
+  virtual void CloneVolumes(const vtkMRMLNode *node);
+
+  // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "EMSVolumeCollection";}
 
@@ -44,24 +48,24 @@ public:
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   virtual void   AddVolume(const char* key, const char* volumeNodeID);
-  virtual int    GetNumberOfVolumes();
+  virtual int    GetNumberOfVolumes() const;
 
   virtual void   RemoveAllVolumes();
   virtual void   RemoveVolumeByKey(const char* key);
   virtual void   RemoveVolumeByNodeID(const char* key);
   virtual void   RemoveNthVolume(int n);
 
-  virtual const char*        GetVolumeNodeIDByKey(const char* key);
-  virtual const char*        GetKeyByVolumeNodeID(const char* nodeID);
+  virtual const char*        GetVolumeNodeIDByKey(const char* key) const;
+  virtual const char*        GetKeyByVolumeNodeID(const char* nodeID) const;
 
-  virtual int                GetIndexByKey(const char* key);
-  virtual int                GetIndexByVolumeNodeID(const char* nodeID);
+  virtual int                GetIndexByKey(const char* key) const;
+  virtual int                GetIndexByVolumeNodeID(const char* nodeID) const;
 
-  virtual const char*        GetNthVolumeNodeID(int n);
+  virtual const char*        GetNthVolumeNodeID(int n) const;
   virtual void               SetNthVolumeNodeID(int n, const char* nodeID);
 
-  virtual const char*        GetNthKey(int n);
-  virtual vtkMRMLVolumeNode* GetNthVolumeNode(int n);
+  virtual const char*        GetNthKey(int n) const;
+  virtual vtkMRMLVolumeNode* GetNthVolumeNode(int n) const;
 
   virtual void  MoveNthVolume(int n, int toIndex);
 
@@ -76,14 +80,14 @@ protected:
   typedef vtkstd::string                    KeyType;
   typedef vtkstd::string                    ValueType;
   typedef vtkstd::map<KeyType, ValueType>   MapType;
-  MapType                             KeyToVolumeNodeIDMap;
-  MapType                             VolumeNodeIDToKeyMap;
+  mutable MapType                           KeyToVolumeNodeIDMap;
+  mutable MapType                           VolumeNodeIDToKeyMap;
 
   // maintain order of keys
   typedef vtkstd::list<KeyType>             KeyListType;
   typedef KeyListType::iterator             KeyIterator;
   typedef KeyListType::const_iterator       KeyConstIterator;  
-  KeyListType                               KeyList;
+  mutable KeyListType                       KeyList;
   //ETX
 };
 

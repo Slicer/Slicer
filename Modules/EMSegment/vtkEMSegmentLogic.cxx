@@ -189,12 +189,13 @@ bool
 vtkEMSegmentLogic::
 StartPreprocessingInitializeInputData()
 {
-  // set the input to the working data
-  // when do we return false? !!!
-  this->MRMLManager->GetWorkingDataNode()->SetInputTargetNodeID
-    (this->MRMLManager->GetSegmenterNode()->GetTargetNodeID());
-  this->MRMLManager->GetWorkingDataNode()->SetInputAtlasNodeID
-    (this->MRMLManager->GetSegmenterNode()->GetAtlasNodeID());
+  this->MRMLManager->GetWorkingDataNode()->SetInputTargetNodeIsValid(1);
+  this->MRMLManager->GetWorkingDataNode()->SetInputAtlasNodeIsValid(1);
+
+  this->MRMLManager->GetWorkingDataNode()->SetNormalizedTargetNodeIsValid(0);
+  this->MRMLManager->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(0);
+  this->MRMLManager->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(0);
+
   return true;
 }
 
@@ -214,6 +215,11 @@ StartPreprocessingTargetIntensityNormalization()
   if (inputTarget == NULL)
     {
     vtkWarningMacro("Input target node is null, aborting!");
+    return false;
+    }
+  if (!m->GetWorkingDataNode()->GetInputTargetNodeIsValid())
+    {
+    vtkWarningMacro("Input target node is invalid, aborting!");
     return false;
     }
   
@@ -240,17 +246,27 @@ StartPreprocessingTargetIntensityNormalization()
     }
   else
     {
-    if (!m->GetUpdateIntermediateData())
-      {
-      std::cerr << "  Using current normalized images." << std::endl;
-      return true;
-      }
+    std::cerr << "  Synchronizing normalized target node...";
+    m->SynchronizeTargetNode(inputTarget, normalizedTarget, "NormalizedTarget");
+    std::cerr << "Done" << std::endl;    
     }
+  // enable this to speed things up
+//   else if (true || normalizedTarget->GetNumberOfVolumes() != inputTarget->GetNumberOfVolumes())
+//     {
+//     std::cerr << "  Synchronizing normalized target node...";
+//     m->SynchronizeTargetNode(inputTarget, normalizedTarget, "NormalizedTarget");
+//     std::cerr << "Done" << std::endl;
+//     }
+//   else
+//     {
+//     if (!m->GetUpdateIntermediateData())
+//       {
+//       std::cerr << "  Using current normalized images." << std::endl;
+//       m->GetWorkingDataNode()->SetNormalizedTargetNodeIsValid(1);
+//       return true;
+//       }
+//     }
   
-  //
-  // check that the number of target images did not change
-  // !!! todo !!!
-
   //
   // apply normalization
   for (int i = 0; i < normalizedTarget->GetNumberOfVolumes(); ++i)
@@ -313,6 +329,7 @@ StartPreprocessingTargetIntensityNormalization()
     }
     
   std::cerr << " EMSEG: Normalization complete." << std::endl;
+  m->GetWorkingDataNode()->SetNormalizedTargetNodeIsValid(1);
 
   // intensity statistics, if computed from data, must be updated
   m->UpdateIntensityDistributions();
@@ -1103,6 +1120,11 @@ StartPreprocessingTargetToTargetRegistration()
     vtkWarningMacro("Normalized target node is null, aborting!");
     return false;
     }
+  if (!m->GetWorkingDataNode()->GetNormalizedTargetNodeIsValid())
+    {
+    vtkWarningMacro("Normalized target node is invalid, aborting!");
+    return false;
+    }
   
   // check that global parameters exist
   if (!this->MRMLManager->GetGlobalParametersNode())
@@ -1127,17 +1149,25 @@ StartPreprocessingTargetToTargetRegistration()
     }
   else
     {
-    if (!m->GetUpdateIntermediateData())
-      {
-      std::cerr << "  Using current target-to-target registered images." 
-                << std::endl;
-      return true;
-      }
+    std::cerr << "  Synchronizing aligned target node...";
+    m->SynchronizeTargetNode(normalizedTarget, alignedTarget, "AlignedTarget");
+    std::cerr << "Done" << std::endl;    
     }
-  
-  //
-  // check that the number of target images did not change
-  // !!! todo !!!
+
+//   else if (alignedTarget->GetNumberOfVolumes() != normalizedTarget->GetNumberOfVolumes())
+//     {
+//     m->SynchronizeTargetNode(normalizedTarget, alignedTarget, "AlignedTarget");
+//     }
+//   else
+//     {
+//     if (!m->GetUpdateIntermediateData())
+//       {
+//       std::cerr << "  Using current target-to-target registered images." 
+//                 << std::endl;
+//       m->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(1);
+//       return true;
+//       }
+//     }
   
   //
   // apply registration
@@ -1255,6 +1285,7 @@ StartPreprocessingTargetToTargetRegistration()
       }
     }    
   std::cerr << " EMSEG: Target-to-target registration complete." << std::endl;
+  m->GetWorkingDataNode()->SetAlignedTargetNodeIsValid(1);
   
   // intensity statistics, if computed from data, must be updated
   m->UpdateIntensityDistributions();
@@ -1281,6 +1312,11 @@ StartPreprocessingAtlasToTargetRegistration()
     vtkWarningMacro("Aligned target node is null, aborting!");
     return false;
     }
+  if (!m->GetWorkingDataNode()->GetAlignedTargetNodeIsValid())
+    {
+    vtkWarningMacro("Aligned target node is invalid, aborting!");
+    return false;
+    }
 
   // get input atlas from working node
   vtkMRMLEMSAtlasNode* inputAtlas = 
@@ -1288,6 +1324,11 @@ StartPreprocessingAtlasToTargetRegistration()
   if (inputAtlas == NULL)
     {
     vtkWarningMacro("Input atlas node is null, aborting!");
+    return false;
+    }
+  if (!m->GetWorkingDataNode()->GetInputAtlasNodeIsValid())
+    {
+    vtkWarningMacro("Input atlas node is invalid, aborting!");
     return false;
     }
 
@@ -1298,12 +1339,6 @@ StartPreprocessingAtlasToTargetRegistration()
     return false;
     }
 
-  // check that an atlas was selected for registration
-  std::string atlasRegistrationVolumeKey(m->GetGlobalParametersNode()->
-                                         GetRegistrationAtlasVolumeKey());
-  int atlasRegistrationVolumeIndex = 
-    inputAtlas->GetIndexByKey(atlasRegistrationVolumeKey.c_str());
-  
   // set up the aligned atlas node
   vtkMRMLEMSAtlasNode* alignedAtlas = 
     m->GetWorkingDataNode()->GetAlignedAtlasNode();
@@ -1322,23 +1357,42 @@ StartPreprocessingAtlasToTargetRegistration()
     }
   else
     {
-    if (!m->GetUpdateIntermediateData())
-      {
-      std::cerr << "  Using current atlas-to-target registered images." 
-                << std::endl;
-      return true;
-      }
+    std::cerr << "  Synchronizing aligned atlas node...";
+    m->SynchronizeAtlasNode(inputAtlas, alignedAtlas, "AlignedAtlas");
+    std::cerr << "Done" << std::endl;    
     }
+//   else if (alignedAtlas->GetNumberOfVolumes() != inputAtlas->GetNumberOfVolumes())
+//     {
+//     m->SynchronizeAtlasNode(inputAtlas, alignedAtlas, "AlignedAtlas");
+//     }
+//   else
+//     {
+//     if (!m->GetUpdateIntermediateData())
+//       {
+//       std::cerr << "  Using current atlas-to-target registered images." 
+//                 << std::endl;
+//       m->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(1);
+//       return true;
+//       }
+//     }
   
-  //
-  // check that the number of target images did not change
-  // !!! todo !!!
+  // check that an atlas was selected for registration
+  int atlasRegistrationVolumeIndex = -1;
+  if (m->GetGlobalParametersNode()->GetRegistrationAtlasVolumeKey() != NULL)
+    {
+    std::string atlasRegistrationVolumeKey(m->GetGlobalParametersNode()->
+                                           GetRegistrationAtlasVolumeKey());
+    atlasRegistrationVolumeIndex = 
+      inputAtlas->GetIndexByKey(atlasRegistrationVolumeKey.c_str());
+    }
 
+  // get target image data
   int fixedTargetImageIndex = 0;
   vtkMRMLVolumeNode* fixedTargetVolumeNode = 
     alignedTarget->GetNthVolumeNode(fixedTargetImageIndex);
   vtkImageData* fixedTargetImageData = fixedTargetVolumeNode->GetImageData();
 
+  // create transforms
   vtkTransform* fixedRASToMovingRASTransformAffine = vtkTransform::New();
   vtkGridTransform* fixedRASToMovingRASTransformDeformable = NULL;
 
@@ -1507,6 +1561,7 @@ StartPreprocessingAtlasToTargetRegistration()
     fixedRASToMovingRASTransformDeformable->Delete();
     }
   std::cerr << " EMSEG: Atlas-to-target registration complete." << std::endl;
+  m->GetWorkingDataNode()->SetAlignedAtlasNodeIsValid(1);
 
   // everything was OK
   return true;
@@ -1527,6 +1582,12 @@ StartSegmentation()
   if (!preprocessingOK)
     {
     vtkErrorMacro("Preprocessing Failed!  Aborting Segmentation.");
+    return;
+    }
+  if (!this->MRMLManager->GetWorkingDataNode()->GetAlignedTargetNodeIsValid() ||
+      !this->MRMLManager->GetWorkingDataNode()->GetAlignedAtlasNodeIsValid())
+    {
+    vtkErrorMacro("Preprocessing pipeline not up to date!  Aborting Segmentation.");
     return;
     }
 
@@ -1555,7 +1616,7 @@ StartSegmentation()
   
   // get attributes from first target input volume
   const char* inMRLMID = 
-    this->MRMLManager->GetTargetNode()->GetNthVolumeNodeID(0);
+    this->MRMLManager->GetTargetInputNode()->GetNthVolumeNodeID(0);
   vtkMRMLScalarVolumeNode *inVolume = vtkMRMLScalarVolumeNode::
     SafeDownCast(this->GetMRMLScene()->GetNodeByID(inMRLMID));
   if (inVolume == NULL)
@@ -1820,8 +1881,10 @@ CopyTargetDataToSegmenter(vtkImageEMLocalSegmenter* segmenter)
 {
   // !!! todo: TESTING HERE!!!
   vtkMRMLEMSTargetNode* workingTarget = 
-    this->MRMLManager->GetWorkingDataNode()->GetWorkingTargetNode();
+    this->MRMLManager->GetWorkingDataNode()->GetAlignedTargetNode();
   unsigned int numTargetImages = workingTarget->GetNumberOfVolumes();
+  std::cerr << "Setting number of target images: " << numTargetImages 
+            << std::endl;
   segmenter->SetNumInputImages(numTargetImages);
 
   for (unsigned int i = 0; i < numTargetImages; ++i)
@@ -1990,7 +2053,7 @@ CopyTreeGenericDataToSegmenter(vtkImageEMLocalGenericClass* node,
 
   // get dimensions of target image
   int targetImageDimensions[3];
-  this->MRMLManager->GetTargetNode()->GetNthVolumeNode(0)->
+  this->MRMLManager->GetTargetInputNode()->GetNthVolumeNode(0)->
     GetImageData()->GetDimensions(targetImageDimensions);
 
   this->MRMLManager->GetSegmentationBoundaryMin(boundMin);
@@ -2054,9 +2117,13 @@ CopyTreeGenericDataToSegmenter(vtkImageEMLocalGenericClass* node,
   // get working atlas
   // !!! error checking!
   vtkMRMLEMSAtlasNode* workingAtlas = 
-    this->MRMLManager->GetWorkingDataNode()->GetWorkingAtlasNode();
+    this->MRMLManager->GetWorkingDataNode()->GetAlignedAtlasNode();
+  std::string atlasVolumeKey = 
+    this->MRMLManager->GetTreeParametersNode(nodeID)->
+    GetSpatialPriorVolumeName() ?
+    this->MRMLManager->GetTreeParametersNode(nodeID)->
+    GetSpatialPriorVolumeName() : "";
 
-  std::string atlasVolumeKey = this->MRMLManager->GetTreeParametersNode(nodeID)->GetSpatialPriorVolumeName();
   int atlasVolumeIndex       = workingAtlas->GetIndexByKey(atlasVolumeKey.c_str());
 
   if (atlasVolumeIndex >= 0)

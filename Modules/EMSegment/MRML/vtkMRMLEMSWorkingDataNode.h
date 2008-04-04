@@ -64,8 +64,23 @@ public:
   vtkSetReferenceStringMacro(AlignedAtlasNodeID);
   vtkMRMLEMSAtlasNode* GetAlignedAtlasNode();
 
-  vtkMRMLEMSAtlasNode*  GetWorkingAtlasNode();
-  vtkMRMLEMSTargetNode* GetWorkingTargetNode();
+  //  vtkMRMLEMSAtlasNode*  GetWorkingAtlasNode();
+  //vtkMRMLEMSTargetNode* GetWorkingTargetNode();
+
+  vtkGetMacro(InputTargetNodeIsValid, int);
+  vtkSetMacro(InputTargetNodeIsValid, int);
+
+  vtkGetMacro(NormalizedTargetNodeIsValid, int);
+  vtkSetMacro(NormalizedTargetNodeIsValid, int);
+
+  vtkGetMacro(AlignedTargetNodeIsValid, int);
+  vtkSetMacro(AlignedTargetNodeIsValid, int);
+
+  vtkGetMacro(InputAtlasNodeIsValid, int);
+  vtkSetMacro(InputAtlasNodeIsValid, int);
+
+  vtkGetMacro(AlignedAtlasNodeIsValid, int);
+  vtkSetMacro(AlignedAtlasNodeIsValid, int);
 
 protected:
   vtkMRMLEMSWorkingDataNode();
@@ -78,6 +93,12 @@ protected:
   char*                AlignedTargetNodeID;
   char*                InputAtlasNodeID;
   char*                AlignedAtlasNodeID;
+
+  int                  InputTargetNodeIsValid;
+  int                  NormalizedTargetNodeIsValid;  
+  int                  AlignedTargetNodeIsValid;  
+  int                  InputAtlasNodeIsValid;  
+  int                  AlignedAtlasNodeIsValid;  
 };
 
 #endif

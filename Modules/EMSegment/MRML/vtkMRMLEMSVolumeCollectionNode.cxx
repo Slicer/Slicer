@@ -1,7 +1,9 @@
 #include "vtkMRMLEMSVolumeCollectionNode.h"
+#include "vtkSlicerVolumesLogic.h"
 #include <sstream>
 #include "vtkMRMLScene.h"
 #include <algorithm>
+#include "vtkMRMLScalarVolumeNode.h"
 
 vtkMRMLEMSVolumeCollectionNode* 
 vtkMRMLEMSVolumeCollectionNode::
@@ -152,6 +154,28 @@ void vtkMRMLEMSVolumeCollectionNode::Copy(vtkMRMLNode *rhs)
   this->KeyList               = node->KeyList;
 }
 
+void vtkMRMLEMSVolumeCollectionNode::CloneVolumes(const vtkMRMLNode *rhs)
+{
+  vtkMRMLEMSVolumeCollectionNode* node = 
+    (vtkMRMLEMSVolumeCollectionNode*) rhs;
+
+  this->KeyToVolumeNodeIDMap  = node->KeyToVolumeNodeIDMap;
+  this->VolumeNodeIDToKeyMap  = node->VolumeNodeIDToKeyMap;
+  this->KeyList               = node->KeyList;
+
+  // clone each image
+  vtkSlicerVolumesLogic* volumeLogic = vtkSlicerVolumesLogic::New();
+  for (int i = 0; i < node->GetNumberOfVolumes(); ++i)
+  {    
+    vtkMRMLScalarVolumeNode* clonedVolume = 
+      volumeLogic->CloneVolume(this->GetScene(),
+                               this->GetNthVolumeNode(i),
+                               this->GetNthVolumeNode(i)->GetName());
+    this->SetNthVolumeNodeID(i, clonedVolume->GetID());
+  }
+  volumeLogic->Delete();
+}
+
 void vtkMRMLEMSVolumeCollectionNode::PrintSelf(ostream& os, 
                                                vtkIndent indent)
 {
@@ -190,7 +214,7 @@ SetNthVolumeNodeID(int n, const char* volumeNodeID)
 
 int
 vtkMRMLEMSVolumeCollectionNode::
-GetNumberOfVolumes()
+GetNumberOfVolumes() const
 {
   return this->KeyList.size();
 }
@@ -246,21 +270,21 @@ RemoveNthVolume(int n)
 
 const char*
 vtkMRMLEMSVolumeCollectionNode::
-GetVolumeNodeIDByKey(const char* key)
+GetVolumeNodeIDByKey(const char* key) const
 {
   return this->KeyToVolumeNodeIDMap[key].c_str();
 }
 
 const char*
 vtkMRMLEMSVolumeCollectionNode::
-GetKeyByVolumeNodeID(const char* nodeID)
+GetKeyByVolumeNodeID(const char* nodeID) const
 {
   return this->VolumeNodeIDToKeyMap[nodeID].c_str();
 }
 
 int
 vtkMRMLEMSVolumeCollectionNode::
-GetIndexByKey(const char* key)
+GetIndexByKey(const char* key) const
 {
   KeyIterator location = vtkstd::find(this->KeyList.begin(),
                                       this->KeyList.end(), key);
@@ -276,14 +300,14 @@ GetIndexByKey(const char* key)
 
 int
 vtkMRMLEMSVolumeCollectionNode::
-GetIndexByVolumeNodeID(const char* nodeID)
+GetIndexByVolumeNodeID(const char* nodeID) const
 {
   return this->GetIndexByKey(this->VolumeNodeIDToKeyMap[nodeID].c_str());
 }
 
 const char*
 vtkMRMLEMSVolumeCollectionNode::
-GetNthVolumeNodeID(int n)
+GetNthVolumeNodeID(int n) const
 {
   KeyIterator i = this->KeyList.begin();
   vtksys_stl::advance(i, n);
@@ -292,7 +316,7 @@ GetNthVolumeNodeID(int n)
 
 const char*
 vtkMRMLEMSVolumeCollectionNode::
-GetNthKey(int n)
+GetNthKey(int n) const
 {
   KeyIterator i = this->KeyList.begin();
   vtksys_stl::advance(i, n);
@@ -301,13 +325,14 @@ GetNthKey(int n)
 
 vtkMRMLVolumeNode*
 vtkMRMLEMSVolumeCollectionNode::
-GetNthVolumeNode(int n)
+GetNthVolumeNode(int n) const
 {
   vtkMRMLVolumeNode* node = NULL;
-  if (this->GetScene() && this->GetNthVolumeNodeID(n))
+  if (const_cast<vtkMRMLEMSVolumeCollectionNode*>(this)->GetScene() && 
+      this->GetNthVolumeNodeID(n))
     {
-    vtkMRMLNode* snode = this->GetScene()->
-      GetNodeByID(this->GetNthVolumeNodeID(n));
+    vtkMRMLNode* snode = const_cast<vtkMRMLEMSVolumeCollectionNode*>(this)->
+      GetScene()->GetNodeByID(this->GetNthVolumeNodeID(n));
     node = vtkMRMLVolumeNode::SafeDownCast(snode);
     }
   return node;  

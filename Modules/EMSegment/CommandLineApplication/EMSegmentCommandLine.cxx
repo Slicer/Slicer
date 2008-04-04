@@ -627,13 +627,13 @@ int main(int argc, char** argv)
     // set the target images
     if (useDefaultTarget)
       {
-      if (!emMRMLManager->GetTargetNode())
+      if (!emMRMLManager->GetTargetInputNode())
         {
         throw std::runtime_error("ERROR: no default target node available.");
         }
       if (verbose) 
         std::cerr << "Using default target node named: " 
-                  << emMRMLManager->GetTargetNode()->GetName()
+                  << emMRMLManager->GetTargetInputNode()->GetName()
                   << std::endl;
       }
     else
@@ -648,11 +648,11 @@ int main(int argc, char** argv)
         mrmlScene->AddNodeNoNotify(targetNode);        
 
         // remove default target node
-        mrmlScene->RemoveNode(emMRMLManager->GetTargetNode());
+        mrmlScene->RemoveNode(emMRMLManager->GetTargetInputNode());
 
         // connect target node to segmenter
-        emMRMLManager->GetSegmenterNode()->
-          SetTargetNodeID(targetNode->GetID());
+        emMRMLManager->GetSegmenterNode()->GetWorkingDataNode()->
+          SetInputTargetNodeID(targetNode->GetID());
 
         if (verbose) 
           std::cerr << targetNode->GetID() << " DONE" << std::endl;
@@ -661,7 +661,7 @@ int main(int argc, char** argv)
 
         if (verbose)
           std::cerr << "Segmenter's target node is now: " 
-                    << emMRMLManager->GetTargetNode()->GetID()
+                    << emMRMLManager->GetTargetInputNode()->GetID()
                     << std::endl;
         }
       catch (...)
@@ -693,8 +693,8 @@ int main(int argc, char** argv)
             }
        
           // set volume name and ID in map
-          emMRMLManager->GetTargetNode()->AddVolume(volumeNode->GetID(), 
-                                                    volumeNode->GetID());
+          emMRMLManager->GetTargetInputNode()->AddVolume(volumeNode->GetID(), 
+                                                         volumeNode->GetID());
           }
         catch(...)
           {
@@ -711,11 +711,11 @@ int main(int argc, char** argv)
     // value in the parameters
     if (emMRMLManager->GetGlobalParametersNode()->
         GetNumberOfTargetInputChannels() !=
-        emMRMLManager->GetTargetNode()->GetNumberOfVolumes())
+        emMRMLManager->GetTargetInputNode()->GetNumberOfVolumes())
       {
       vtkstd::stringstream ss;
       ss << "ERROR: Number of input channels (" << 
-        emMRMLManager->GetTargetNode()->GetNumberOfVolumes()
+        emMRMLManager->GetTargetInputNode()->GetNumberOfVolumes()
          << ") does not match expected value from parameters (" << 
         emMRMLManager->GetGlobalParametersNode()->
         GetNumberOfTargetInputChannels() 
@@ -726,7 +726,7 @@ int main(int argc, char** argv)
       {
       if (verbose)
         std::cerr << "Number of input channels (" <<
-          emMRMLManager->GetTargetNode()->GetNumberOfVolumes()
+          emMRMLManager->GetTargetInputNode()->GetNumberOfVolumes()
                   << ") matches expected value from parameters (" <<
           emMRMLManager->GetGlobalParametersNode()->
           GetNumberOfTargetInputChannels() 
@@ -740,24 +740,24 @@ int main(int argc, char** argv)
     // set the atlas images
     if (useDefaultAtlas)
       {
-      if (!emMRMLManager->GetAtlasNode())
+      if (!emMRMLManager->GetAtlasInputNode())
         {
         throw std::runtime_error("ERROR: no default atlas node available.");
         }
       if (verbose) 
         std::cerr << "Using default atlas node named: " 
-                  << emMRMLManager->GetAtlasNode()->GetName()
+                  << emMRMLManager->GetAtlasInputNode()->GetName()
                   << std::endl;
       }
     else
       {
-      if (!emMRMLManager->GetAtlasNode())
+      if (!emMRMLManager->GetAtlasInputNode())
         {
         throw std::runtime_error("ERROR: parameters must already "
                                  "contain an atlas node if you wish "
                                  "to speficy atlas volumes.");
         }
-      vtkMRMLEMSAtlasNode* oldAtlasNode = emMRMLManager->GetAtlasNode();
+      vtkMRMLEMSAtlasNode* oldAtlasNode = emMRMLManager->GetAtlasInputNode();
       
       try 
         {
@@ -771,8 +771,8 @@ int main(int argc, char** argv)
         mrmlScene->AddNode(atlasNode);        
 
         // connect atlas node to segmenter
-        emMRMLManager->GetSegmenterNode()->
-          SetAtlasNodeID(atlasNode->GetID());
+        emMRMLManager->GetSegmenterNode()->GetWorkingDataNode()->
+          SetInputAtlasNodeID(atlasNode->GetID());
 
         if (verbose) 
           std::cerr << atlasNode->GetID() << " DONE" << std::endl;
@@ -781,7 +781,7 @@ int main(int argc, char** argv)
 
         if (verbose)
           std::cerr << "Segmenter's atlas node is now: " 
-                    << emMRMLManager->GetAtlasNode()->GetID()
+                    << emMRMLManager->GetAtlasInputNode()->GetID()
                     << std::endl;
         }
       catch (...)
@@ -813,7 +813,7 @@ int main(int argc, char** argv)
             }
        
           // set volume name and ID in map
-          emMRMLManager->GetAtlasNode()->
+          emMRMLManager->GetAtlasInputNode()->
             AddVolume(oldAtlasNode->GetNthKey(imageIndex), 
                       volumeNode->GetID());
           }
@@ -830,11 +830,11 @@ int main(int argc, char** argv)
       // make sure the number of atlas volumes matches the expected
       // value in the parameters
       if (oldAtlasNode->GetNumberOfVolumes() !=
-          emMRMLManager->GetAtlasNode()->GetNumberOfVolumes())
+          emMRMLManager->GetAtlasInputNode()->GetNumberOfVolumes())
         {
         vtkstd::stringstream ss;
         ss << "ERROR: Number of atlas volumes (" << 
-          emMRMLManager->GetAtlasNode()->GetNumberOfVolumes()
+          emMRMLManager->GetAtlasInputNode()->GetNumberOfVolumes()
            << ") does not match expected value from parameters (" << 
           oldAtlasNode->GetNumberOfVolumes() << ")";
         throw std::runtime_error(ss.str());
@@ -843,7 +843,7 @@ int main(int argc, char** argv)
         {
         if (verbose)
           std::cerr << "Number of atlas volumes (" <<
-            emMRMLManager->GetAtlasNode()->GetNumberOfVolumes()
+            emMRMLManager->GetAtlasInputNode()->GetNumberOfVolumes()
                     << ") matches expected value from parameters (" <<
             oldAtlasNode->GetNumberOfVolumes() << ")" << std::endl;
         }

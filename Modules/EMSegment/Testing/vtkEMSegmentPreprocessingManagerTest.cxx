@@ -125,8 +125,8 @@ int main(int argc, char** argv)
       m->GetWorkingDataNode()->GetNormalizedTargetNode();
     vtkMRMLEMSTargetNode* alignedTargetNode = 
       m->GetWorkingDataNode()->GetAlignedTargetNode();
-    vtkMRMLEMSTargetNode* workingTargetNode =
-      m->GetWorkingDataNode()->GetWorkingTargetNode();
+    //vtkMRMLEMSTargetNode* workingTargetNode =
+    //  m->GetWorkingDataNode()->GetWorkingTargetNode();
 
     if (inTargetNode == NULL)
       {
@@ -134,14 +134,14 @@ int main(int argc, char** argv)
       pass = false;
       localPass = false;
       }
-    if (inTargetNode != workingTargetNode)
-      {
-      std::cerr 
-        << "Input target node should be working target node, but isn't" 
-        << std::endl;
-      pass = false;
-      localPass = false;
-      }
+//     if (inTargetNode != workingTargetNode)
+//       {
+//       std::cerr 
+//         << "Input target node should be working target node, but isn't" 
+//         << std::endl;
+//       pass = false;
+//       localPass = false;
+//       }
     if (inTargetNode->GetNumberOfVolumes() != 2)
       {
       std::cerr 
@@ -171,8 +171,6 @@ int main(int argc, char** argv)
       m->GetWorkingDataNode()->GetNormalizedTargetNode();
     alignedTargetNode = 
       m->GetWorkingDataNode()->GetAlignedTargetNode();
-    workingTargetNode =
-      m->GetWorkingDataNode()->GetWorkingTargetNode();
       
     if (inTargetNode == NULL)
       {
@@ -186,14 +184,7 @@ int main(int argc, char** argv)
       pass = false;
       localPass = false;
       }
-    if (normTargetNode != workingTargetNode)
-      {
-      std::cerr 
-        << "Normed target node should be working target node, but isn't" 
-        << std::endl;
-      pass = false;
-      localPass = false;
-      }
+
     if (alignedTargetNode)
       {
       std::cerr 
@@ -241,8 +232,6 @@ int main(int argc, char** argv)
       m->GetWorkingDataNode()->GetNormalizedTargetNode();
     alignedTargetNode = 
       m->GetWorkingDataNode()->GetAlignedTargetNode();
-    workingTargetNode =
-      m->GetWorkingDataNode()->GetWorkingTargetNode();
       
     if (inTargetNode == NULL)
       {
@@ -262,14 +251,7 @@ int main(int argc, char** argv)
       pass = false;
       localPass = false;
       }
-    if (alignedTargetNode != workingTargetNode)
-      {
-      std::cerr 
-        << "Aligned target node should be working target node, but isn't" 
-        << std::endl;
-      pass = false;
-      localPass = false;
-      }
+
     if (inTargetNode->GetNumberOfVolumes() != 2)
       {
       std::cerr 

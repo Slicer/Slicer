@@ -587,8 +587,6 @@ void vtkEMSegmentGUI::PopulateTestingData()
       this->MRMLManager->GetVolumeNthID(0));
     this->MRMLManager->AddTargetSelectedVolume(
       this->MRMLManager->GetVolumeNthID(1));
-    this->MRMLManager->SetRegistrationTargetVolumeID(
-      this->MRMLManager->GetVolumeNthID(1));
 
     this->MRMLManager->SetSaveWorkingDirectory(file_path.c_str());
     this->MRMLManager->

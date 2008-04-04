@@ -437,9 +437,6 @@ public:
   virtual vtkIdType GetRegistrationAtlasVolumeID();
   virtual void      SetRegistrationAtlasVolumeID(vtkIdType volumeID);
 
-  virtual vtkIdType GetRegistrationTargetVolumeID();
-  virtual void      SetRegistrationTargetVolumeID(vtkIdType volumeID);
-
   //
   // save parameters
   //
@@ -499,8 +496,8 @@ public:
   // convienince functions for managing MRML nodes
   //
   virtual vtkMRMLEMSTemplateNode*         GetTemplateNode();
-  virtual vtkMRMLEMSTargetNode*           GetTargetNode();
-  virtual vtkMRMLEMSAtlasNode*            GetAtlasNode();
+  virtual vtkMRMLEMSTargetNode*           GetTargetInputNode();
+  virtual vtkMRMLEMSAtlasNode*            GetAtlasInputNode();
   virtual vtkMRMLScalarVolumeNode*        GetOutputVolumeNode();
   virtual vtkMRMLEMSGlobalParametersNode* GetGlobalParametersNode();
   virtual vtkMRMLEMSTreeNode*             GetTreeRootNode();
@@ -519,9 +516,15 @@ public:
 
   virtual vtkMRMLEMSTargetNode* CloneTargetNode(vtkMRMLEMSTargetNode* target,
                                                 const char* name);
-
   virtual vtkMRMLEMSAtlasNode*  CloneAtlasNode(vtkMRMLEMSAtlasNode* target,
                                                const char* name);
+
+  virtual void SynchronizeTargetNode(const vtkMRMLEMSTargetNode* templateNode,
+                                     vtkMRMLEMSTargetNode* changingNode,
+                                     const char* name);
+  virtual void SynchronizeAtlasNode(const vtkMRMLEMSAtlasNode* templateNode,
+                                    vtkMRMLEMSAtlasNode* changingNode,
+                                    const char* name);
 
 private:
   vtkEMSegmentMRMLManager();

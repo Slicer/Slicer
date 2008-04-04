@@ -248,7 +248,7 @@ void vtkEMSegmentIntensityImagesStep::Validate()
     this->GetGUI()->GetWizardWidget()->GetWizardWorkflow();
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   
-  if (mrmlManager->GetTargetNode() != NULL)
+  if (mrmlManager->GetTargetInputNode() != NULL)
     {
     // decide if the number of target volumes changed
     unsigned int nb_of_parameter_target_volumes = 

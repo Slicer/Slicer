@@ -44,6 +44,12 @@ vtkMRMLEMSWorkingDataNode::vtkMRMLEMSWorkingDataNode()
   this->AlignedTargetNodeID              = NULL;
   this->InputAtlasNodeID                 = NULL;
   this->AlignedAtlasNodeID               = NULL;
+
+  this->InputTargetNodeIsValid           = 0;
+  this->NormalizedTargetNodeIsValid      = 0;  
+  this->AlignedTargetNodeIsValid         = 0;  
+  this->InputAtlasNodeIsValid            = 0;  
+  this->AlignedAtlasNodeIsValid          = 0;  
 }
 
 //-----------------------------------------------------------------------------
@@ -298,30 +304,4 @@ GetAlignedAtlasNode()
   return node;
 }
 
-//-----------------------------------------------------------------------------
-vtkMRMLEMSTargetNode*
-vtkMRMLEMSWorkingDataNode::
-GetWorkingTargetNode()
-{
-  if (this->GetAlignedTargetNode())
-    {
-    return this->GetAlignedTargetNode();
-    }
-  if (this->GetNormalizedTargetNode())
-    {
-    return this->GetNormalizedTargetNode();
-    }
-  return this->GetInputTargetNode();
-}
 
-//-----------------------------------------------------------------------------
-vtkMRMLEMSAtlasNode*
-vtkMRMLEMSWorkingDataNode::
-GetWorkingAtlasNode()
-{
-  if (this->GetAlignedAtlasNode())
-    {
-    return this->GetAlignedAtlasNode();
-    }
-  return this->GetInputAtlasNode();
-}

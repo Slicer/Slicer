@@ -51,14 +51,6 @@ public:
   vtkSetReferenceStringMacro(TemplateNodeID);
   vtkMRMLEMSTemplateNode* GetTemplateNode();
 
-  vtkGetStringMacro(AtlasNodeID);
-  vtkSetReferenceStringMacro(AtlasNodeID);
-  vtkMRMLEMSAtlasNode* GetAtlasNode();
-
-  vtkGetStringMacro(TargetNodeID);
-  vtkSetReferenceStringMacro(TargetNodeID);
-  vtkMRMLEMSTargetNode* GetTargetNode();
-
   vtkGetStringMacro(OutputVolumeNodeID);
   vtkSetReferenceStringMacro(OutputVolumeNodeID);
   vtkMRMLScalarVolumeNode* GetOutputVolumeNode();
@@ -77,8 +69,6 @@ protected:
   void operator=(const vtkMRMLEMSSegmenterNode&);
 
   char*                               TemplateNodeID;
-  char*                               AtlasNodeID;
-  char*                               TargetNodeID;
   char*                               OutputVolumeNodeID;
   char*                               WorkingDataNodeID;
 

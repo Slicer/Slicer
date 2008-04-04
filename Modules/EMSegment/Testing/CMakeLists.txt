@@ -33,7 +33,7 @@ MARK_AS_ADVANCED(EMSEG_RUN_EXTRA_LONG_TESTS)
 
 MARK_AS_ADVANCED(EMSEG_RUN_REG_TESTS)
 SET(EMSEG_RUN_REG_TESTS   OFF
-  CACHE BOOL "Enable EMSegment extra, registration tests." 
+  CACHE BOOL "Enable EMSegment extra, registration tests."
   )
 
 # Set to 1 to remove temporary test output files
@@ -53,6 +53,17 @@ IF( NOT DISABLE_CXX_TESTING )
     )
   TARGET_LINK_LIBRARIES(
     vtkEMSegmentBlackBoxSegmentationTest
+    EMSegment
+    vtkCommon
+    )
+
+  ADD_EXECUTABLE(
+    vtkEMSegmentBuildAndRunNewSegmentatationParameters001
+    vtkEMSegmentBuildAndRunNewSegmentatationParameters001.cxx
+    vtkEMSegmentTestUtilities.cxx
+    )
+  TARGET_LINK_LIBRARIES(
+    vtkEMSegmentBuildAndRunNewSegmentatationParameters001
     EMSegment
     vtkCommon
     )
@@ -132,6 +143,16 @@ IF( NOT DISABLE_CXX_TESTING )
     ${EMSegment_TUTORIAL_DIR}
     "EMSegment Tutorial Template"
     ${EMSegment_TUTORIAL_DIR}/StandardData/StandardSegmentationResult_small.mhd
+    )
+
+  # Build parameters from scratch and run the segmentation
+  ADD_TEST(
+    vtkEMSegmentBuildAndRunNewSegmentatationParameters001
+    ${SLICER_EXE} ${WRAPPED_EXE_PREFIX}/vtkEMSegmentBuildAndRunNewSegmentatationParameters001
+    ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/R.mhd
+    ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/G.mhd
+    ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/B.mhd
+    ${EMSegment_TEST_DIR}/RGBSegmentationResult.mhd
     )
 
   # Does help work right?

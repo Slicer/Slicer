@@ -53,7 +53,7 @@ Key vtkMRMLEMSTreeNode6 VolumeNodeID vtkMRMLScalarVolumeNode6" NumberOfTrainingS
 Key targetT1Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode1
 Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget>
 <EMSWorkingData
- id="vtkMRMLEMSWorkingDataNode1" name="vtkMRMLEMSWorkingDataNode1"  hideFromEditors="false"  selectable="true" VolumeNodeIDs="" InputTargetNodeID="NULL" NormalizedTargetNodeID="NULL" AlignedTargetNodeID="NULL" InputAtlasNodeID="NULL" AlignedAtlasNodeID="NULL" ></EMSWorkingData>
+ id="vtkMRMLEMSWorkingDataNode1" name="vtkMRMLEMSWorkingDataNode1"  hideFromEditors="false"  selectable="true" VolumeNodeIDs="" InputTargetNodeID="vtkMRMLEMSTargetNode1" NormalizedTargetNodeID="NULL" AlignedTargetNodeID="NULL" InputAtlasNodeID="vtkMRMLEMSAtlasNode1" AlignedAtlasNodeID="NULL" ></EMSWorkingData>
 <EMSGlobalParameters
  id="vtkMRMLEMSGlobalParametersNode1" name="vtkMRMLEMSGlobalParametersNode1"  hideFromEditors="false"  selectable="true" NumberOfTargetInputChannels="2" WorkingDirectory="NULL" SegmentationBoundaryMin="1 1 1" SegmentationBoundaryMax="64 64 31" RegistrationAffineType="0" RegistrationDeformableType="0" RegistrationInterpolationType="0" RegistrationAtlasVolumeKey="" RegistrationTargetVolumeKey="" SaveIntermediateResults="0" SaveSurfaceModels="0" MultithreadingEnabled="1" IntensityNormalizationParameterNodeIDs="vtkMRMLEMSIntensityNormalizationParametersNode1 vtkMRMLEMSIntensityNormalizationParametersNode2 " ></EMSGlobalParameters>
 <EMSTreeParametersLeaf
@@ -69,7 +69,7 @@ Key targetT2Normed_small.mhd VolumeNodeID vtkMRMLScalarVolumeNode2" ></EMSTarget
 <EMSTemplate
  id="vtkMRMLEMSTemplateNode1" name="vtkMRMLEMSTemplateNode1"  hideFromEditors="false"  selectable="true" TreeNodeID="vtkMRMLEMSTreeNode1" GlobalParametersNodeID="vtkMRMLEMSGlobalParametersNode1" ></EMSTemplate>
 <EMSSegmenter
- id="vtkMRMLEMSSegmenterNode1" name="vtkMRMLEMSSegmenterNode1"  hideFromEditors="false"  selectable="true" TemplateNodeID="vtkMRMLEMSTemplateNode1" AtlasNodeID="vtkMRMLEMSAtlasNode1" TargetNodeID="vtkMRMLEMSTargetNode1" OutputVolumeNodeID="vtkMRMLScalarVolumeNode7" WorkingDataNodeID="vtkMRMLEMSWorkingDataNode1" WorkingDirectory="NULL" ></EMSSegmenter>
+ id="vtkMRMLEMSSegmenterNode1" name="vtkMRMLEMSSegmenterNode1"  hideFromEditors="false"  selectable="true" TemplateNodeID="vtkMRMLEMSTemplateNode1" OutputVolumeNodeID="vtkMRMLScalarVolumeNode7" WorkingDataNodeID="vtkMRMLEMSWorkingDataNode1" WorkingDirectory="NULL" ></EMSSegmenter>
 <EMS
  id="vtkMRMLEMSNode1" name="EMSegment Tutorial Template"  hideFromEditors="false"  selectable="true" SegmenterNodeID="vtkMRMLEMSSegmenterNode1" TemplateFilename="NULL" SaveTemplateAfterSegmentation="0" ></EMS>
 <EMSTreeParametersLeaf

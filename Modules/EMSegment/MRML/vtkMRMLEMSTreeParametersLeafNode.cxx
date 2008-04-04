@@ -437,6 +437,10 @@ void
 vtkMRMLEMSTreeParametersLeafNode::
 GetNthSamplePoint(int n, double xyz[3]) const
 {
+  if (n >= static_cast<int>(this->DistributionSamplePointsRAS.size()))
+    {
+    std::cerr << "ERROR: invalid sample number" << n << std::endl;
+    }
   xyz[0] = this->DistributionSamplePointsRAS[n][0];
   xyz[1] = this->DistributionSamplePointsRAS[n][1];
   xyz[2] = this->DistributionSamplePointsRAS[n][2];
