@@ -43,7 +43,7 @@ public:
   ///Get the MetaDataDictionary of the image
   DictionaryType GetMetaDataDictionary() const ;
   ///Get the output of the reader, the pixels of the image being of the DiffusionTensor3D type
-  typename DiffusionImagePointer GetOutput() const ;
+  DiffusionImagePointer GetOutput() const ;
   ///Set Number Of Threads
   itkSetMacro( NumberOfThreads , unsigned int);
 private:
