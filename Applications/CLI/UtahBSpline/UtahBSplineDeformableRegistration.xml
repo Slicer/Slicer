@@ -24,7 +24,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <default>5</default>
       <constraints>
         <minimum>3</minimum>
-        <maximum>20</maximum>
         <step>1</step>
       </constraints>
     </integer>
