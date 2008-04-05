@@ -1461,14 +1461,20 @@ void vtkSlicerSliceLogic::AddSLiceGlyphs(vtkSlicerSliceLayerLogic *layerLogic)
       for (unsigned int i=0; i<dnodes.size(); i++)
         {
         vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dnode = dnodes[i];
-        if (dnode->GetVisibility() && !strcmp(layerLogic->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
+        if (dnode->GetVisibility() && layerLogic->GetSliceNode() 
+          && layerLogic->GetSliceNode()->GetLayoutName() 
+          &&!strcmp(layerLogic->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
           {
-          this->PolyDataCollection->AddItem(dnode->GetPolyDataTransformedToSlice());
-          if (dnode->GetColorNode() && dnode->GetColorNode()->GetLookupTable()) 
+          vtkPolyData* poly = dnode->GetPolyDataTransformedToSlice();
+          if (poly)
             {
-            this->LookupTableCollection->AddItem(dnode->GetColorNode()->GetLookupTable());
+            this->PolyDataCollection->AddItem(poly);
+            if (dnode->GetColorNode() && dnode->GetColorNode()->GetLookupTable()) 
+              {
+              this->LookupTableCollection->AddItem(dnode->GetColorNode()->GetLookupTable());
+              }
             }
-          break;
+            break;
           }
         }
       }//  if (volumeNode)
@@ -1494,7 +1500,9 @@ std::vector< vtkMRMLDisplayNode*> vtkSlicerSliceLogic::GetPolyDataDisplayNodes()
         for (unsigned int n=0; n<dnodes.size(); n++)
           {
           vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dnode = dnodes[n];
-          if (!strcmp(layerLogic->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
+          if (layerLogic->GetSliceNode() 
+            && layerLogic->GetSliceNode()->GetLayoutName()
+            && !strcmp(layerLogic->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
             {
             nodes.push_back(dnode);
             }
