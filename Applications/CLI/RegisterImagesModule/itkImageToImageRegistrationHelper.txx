@@ -56,10 +56,10 @@ ImageToImageRegistrationHelper< TImage >
   m_EnableAffineRegistration = true;
   m_EnableBSplineRegistration = true;
 
-  m_ExpectedOffsetPixelMagnitude = 10;
-  m_ExpectedRotationMagnitude = 0.02;
-  m_ExpectedScaleMagnitude = 0.05;
-  m_ExpectedSkewMagnitude = 0.005;
+  m_ExpectedOffsetPixelMagnitude = 20;
+  m_ExpectedRotationMagnitude = 0.2;
+  m_ExpectedScaleMagnitude = 0.1;
+  m_ExpectedSkewMagnitude = 0.01;
 
   m_SamplingIntensityThreshold = 0;
 
@@ -111,11 +111,11 @@ ImageToImageRegistrationHelper< TImage >
   // BSpline
   m_BSplineSamplingRatio = 0.20;
   m_BSplineTargetError = 0.0001;
-  m_BSplineMaxIterations = 1000;
-  m_BSplineControlPointPixelSpacing = 30;
+  m_BSplineMaxIterations = 50;
+  m_BSplineControlPointPixelSpacing = 10;
   m_BSplineTransform = 0;
   m_BSplineMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
-  m_BSplineInterpolationMethodEnum = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION;
+  m_BSplineInterpolationMethodEnum = OptimizedRegistrationMethodType::BSPLINE_INTERPOLATION;
   m_BSplineOptimizationMethodEnum = OptimizedRegistrationMethodType::GRADIENT_OPTIMIZATION;
   m_BSplineMetricValue = 0;
 
@@ -303,8 +303,8 @@ ImageToImageRegistrationHelper< TImage >
 
     reg->Update();
 
-    m_InitialTransform = reg->GetTypedTransform();
-    m_CurrentMatrixTransform = reg->GetAffineTransform();
+    m_InitialTransform = reg->GetAffineTransform();
+    m_CurrentMatrixTransform = m_InitialTransform;
     m_CurrentBSplineTransform = 0;
 
     m_CompletedStage = INIT_STAGE;
@@ -379,6 +379,7 @@ ImageToImageRegistrationHelper< TImage >
       {
       std::cerr << "ERROR: Only 2 and 3 dimensional images are supported due to rigid registration transforms limitations." << std::endl;
       }
+    /*
     double minS = scales[0];
     for(unsigned int i=1; i<scales.size(); i++)
       {
@@ -393,7 +394,7 @@ ImageToImageRegistrationHelper< TImage >
         {
         scales[i] /= minS;
         }
-      }
+      }*/
     reg->SetTransformParametersScales( scales );
     
     if( m_CurrentMatrixTransform.IsNotNull() )
@@ -406,7 +407,9 @@ ImageToImageRegistrationHelper< TImage >
 
     reg->Update();
 
-    m_RigidTransform = reg->GetTypedTransform();
+    m_RigidTransform = RigidTransformType::New();
+    m_RigidTransform->SetFixedParameters(reg->GetTypedTransform()->GetFixedParameters() );
+    m_RigidTransform->SetParametersByValue(reg->GetTypedTransform()->GetParameters() );
     m_CurrentMatrixTransform = reg->GetAffineTransform();
     m_CurrentBSplineTransform = 0;
 
@@ -468,6 +471,7 @@ ImageToImageRegistrationHelper< TImage >
       scales[scaleNum] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
       ++scaleNum;
       }
+    /*
     double minS = scales[0];
     for(unsigned int i=1; i<scaleNum; i++)
       {
@@ -482,7 +486,7 @@ ImageToImageRegistrationHelper< TImage >
         {
         scales[i] /= minS;
         }
-      }
+      }*/
     reg->SetTransformParametersScales( scales );
 
     if( m_CurrentMatrixTransform.IsNotNull() )
@@ -495,8 +499,8 @@ ImageToImageRegistrationHelper< TImage >
 
     reg->Update();
 
-    m_AffineTransform = reg->GetTypedTransform();
-    m_CurrentMatrixTransform = reg->GetAffineTransform();
+    m_AffineTransform = reg->GetAffineTransform();
+    m_CurrentMatrixTransform = m_AffineTransform;
     m_CurrentBSplineTransform = 0;
 
     m_FinalMetricValue = reg->GetFinalMetricValue();
@@ -517,7 +521,7 @@ ImageToImageRegistrationHelper< TImage >
       {
       m_CurrentMovingImage = this->ResampleImage();
       m_CompletedResampling = true;
-      this->SaveImage("affineResampled.mha", m_CurrentMovingImage);
+      //this->SaveImage("affineResampled.mha", m_CurrentMovingImage);
       }
 
     typename BSplineRegistrationMethodType::Pointer reg = BSplineRegistrationMethodType::New();
@@ -541,11 +545,11 @@ ImageToImageRegistrationHelper< TImage >
     reg->SetMetricMethodEnum( m_BSplineMetricMethodEnum );
     reg->SetInterpolationMethodEnum( m_BSplineInterpolationMethodEnum );
     reg->SetOptimizationMethodEnum( m_BSplineOptimizationMethodEnum );
-    reg->SetNumberOfControlPoints( (int)(fixedImageSize[0] / m_BSplineControlPointPixelSpacing) );
+    reg->SetNumberOfControlPoints( (int)(fixedImageSize[0] / m_BSplineControlPointPixelSpacing) + 3 );
 
     reg->Update();
 
-    m_BSplineTransform = reg->GetTypedTransform();
+    m_BSplineTransform = reg->GetBSplineTransform();
     m_CurrentBSplineTransform = m_BSplineTransform;
 
     m_FinalMetricValue = reg->GetFinalMetricValue();
@@ -900,7 +904,7 @@ ImageToImageRegistrationHelper< TImage >
   m_LoadedBSplineTransform->SetGridRegion( tfm.GetGridRegion() );
   m_LoadedBSplineTransform->SetGridSpacing( tfm.GetGridSpacing() );
   m_LoadedBSplineTransform->SetGridOrigin( tfm.GetGridOrigin() );
-  m_LoadedBSplineTransform->SetParameters( tfm.GetParameters() );
+  m_LoadedBSplineTransform->SetParametersByValue( tfm.GetParameters() );
 
   m_EnableLoadedRegistration = true;
   m_LoadedTransformResampledImage = 0;

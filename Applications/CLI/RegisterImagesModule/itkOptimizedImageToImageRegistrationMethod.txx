@@ -57,6 +57,7 @@ class ImageRegistrationViewer
     typedef itk::SingleValuedNonLinearOptimizer  OptimizerType;
   
     itkSetMacro(DontShowParameters, bool);
+    itkSetMacro(UpdateInterval, int);
   
     void Execute( itk::Object * caller, const itk::EventObject & event )
       {
@@ -72,16 +73,20 @@ class ImageRegistrationViewer
   
       const OptimizerType * opt = dynamic_cast<const OptimizerType *>(object);
   
-      if(!m_DontShowParameters)
+      if(++m_Iteration > m_UpdateInterval)
         {
-        std::cout << "   " << opt->GetCurrentPosition() << " : "
-          << opt->GetValue( opt->GetCurrentPosition() )
-          << std::endl;
-        }
-      else
-        {
-        std::cout << "   " << opt->GetValue( opt->GetCurrentPosition() )
-          << std::endl;
+        m_Iteration = 0;
+        if(!m_DontShowParameters)
+          {
+          std::cout << "   " << opt->GetCurrentPosition() << " : "
+            << opt->GetValue( opt->GetCurrentPosition() )
+            << std::endl;
+          }
+        else
+          {
+          std::cout << "   " << opt->GetValue( opt->GetCurrentPosition() )
+            << std::endl;
+          }
         }
       }
 
@@ -92,9 +97,16 @@ class ImageRegistrationViewer
 
   protected:
 
+    int  m_Iteration;
+    int  m_UpdateInterval;
     bool m_DontShowParameters;
 
-    ImageRegistrationViewer() { m_DontShowParameters = false; };
+    ImageRegistrationViewer() 
+      { 
+      m_Iteration = 0;
+      m_UpdateInterval = 10;
+      m_DontShowParameters = false; 
+      };
     ~ImageRegistrationViewer() {};
 
 };
@@ -378,10 +390,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
       reg->StartRegistration();
 
+      m_FinalMetricValue = reg->GetOptimizer()->GetValue( reg->GetLastTransformParameters() );
+
       this->SetLastTransformParameters( reg->GetLastTransformParameters() );
       this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
-
-      m_FinalMetricValue = reg->GetOptimizer()->GetValue( this->GetLastTransformParameters() );
 
       if( this->GetReportProgress() )
         {
@@ -402,9 +414,14 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
       EvoOptimizerType::Pointer evoOpt = EvoOptimizerType::New();
       evoOpt->SetNormalVariateGenerator( Statistics::NormalVariateGenerator::New() );
-      evoOpt->SetEpsilon( 1e-10 );
+      //evoOpt->SetEpsilon( 1e-10 );
       evoOpt->Initialize( 1.01 );
-      evoOpt->SetScales( this->GetTransformParametersScales() );
+      EvoOptimizerType::ParametersType scales = this->GetTransformParametersScales();
+      for(int i=0; i<scales.size(); i++)
+        {
+        scales[i] = 1.0/sqrt(1.0/scales[i]);
+        }
+      evoOpt->SetScales( scales ); //this->GetTransformParametersScales() );
       evoOpt->SetMaximumIteration( this->GetMaxIterations() / 2 );
 
       int numberOfParameters = this->GetTransform()->GetNumberOfParameters();
@@ -491,13 +508,18 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
       reg->StartRegistration();
 
+      m_FinalMetricValue = reg->GetOptimizer()->GetValue( reg->GetLastTransformParameters() );
+
       this->SetLastTransformParameters( reg->GetLastTransformParameters() );
       this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
-      m_FinalMetricValue = reg->GetOptimizer()->GetValue( this->GetLastTransformParameters() );
-
       gradOpt->SetCostFunction( metric );
       gradOpt->SetInitialPosition( reg->GetLastTransformParameters() );
+
+      if( this->GetReportProgress() )
+        {
+        std::cout << "EVOLUTIONARY GRADIENT START" << std::endl;
+        }
 
       try
         {
@@ -510,11 +532,11 @@ OptimizedImageToImageRegistrationMethod< TImage >
         std::cout << "  Value = " << gradOpt->GetValue( gradOpt->GetCurrentPosition() ) << std::endl;;
         }
         
+      m_FinalMetricValue = gradOpt->GetValue( gradOpt->GetCurrentPosition() );
 
       this->SetLastTransformParameters( gradOpt->GetCurrentPosition() );
       this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
 
-      m_FinalMetricValue = reg->GetOptimizer()->GetValue( this->GetLastTransformParameters() );
       if( this->GetReportProgress() )
         {
         std::cout << "EVOLUTIONARY END" << std::endl;
@@ -614,10 +636,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
       reg->StartRegistration();
 
+      m_FinalMetricValue = reg->GetOptimizer()->GetValue( reg->GetLastTransformParameters() );
+
       this->SetLastTransformParameters( reg->GetLastTransformParameters() );
       this->GetTransform()->SetParametersByValue( this->GetLastTransformParameters() );
-
-      m_FinalMetricValue = reg->GetOptimizer()->GetValue( this->GetLastTransformParameters() );
 
       if( this->GetReportProgress() )
         {

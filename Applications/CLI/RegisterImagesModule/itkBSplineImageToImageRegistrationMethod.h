@@ -76,6 +76,8 @@ class BSplineImageToImageRegistrationMethod
     itkSetMacro( NumberOfControlPoints, unsigned int );
     itkGetConstMacro( NumberOfControlPoints, unsigned int );
 
+    typename TransformType::Pointer GetBSplineTransform( void );
+
   protected:
 
     BSplineImageToImageRegistrationMethod( void );

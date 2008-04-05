@@ -27,7 +27,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "vtkSharedModuleLogic.h"
 
-class RegisterImagesModuleLogic : public vtkSharedModuleLogic
+class VTK_EXPORT RegisterImagesModuleLogic : public vtkSharedModuleLogic
 {
 public:
 

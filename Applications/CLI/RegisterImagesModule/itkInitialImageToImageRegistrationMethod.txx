@@ -109,7 +109,18 @@ InitialImageToImageRegistrationMethod< TImage >
       }
     // HELP: ImageMomentsCalculator isn't multi-threaded :(
     //momCalc->SetNumberOfThreads( this->GetRegistrationNumberOfThreads() );
-    momCalc->Compute();
+    try
+      {
+      momCalc->Compute();
+      }
+    catch( ... )
+      {
+      std::cout << "Exception thrown when computing moments of fixed image." << std::endl;
+      std::cout << "Initialization returning identity." << std::endl;
+      newTransform->SetIdentity();
+      this->SetTransform(newTransform);
+      return;
+      }
 
     typename MomentsCalculatorType::AffineTransformType::Pointer 
           fixedImageAxesTransform;
@@ -130,7 +141,19 @@ InitialImageToImageRegistrationMethod< TImage >
         momCalc->SetSpatialObjectMask( this->GetMovingImageMaskObject() );
         }
       }
-    momCalc->Compute();
+
+    try
+      {
+      momCalc->Compute();
+      }
+    catch( ... )
+      {
+      std::cout << "Exception thrown when computing moments of moving image." << std::endl;
+      std::cout << "Initialization returning identity." << std::endl;
+      newTransform->SetIdentity();
+      this->SetTransform(newTransform);
+      return;
+      }
 
     typename MomentsCalculatorType::AffineTransformType::Pointer 
           movingImageAxesTransform;

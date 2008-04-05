@@ -54,18 +54,18 @@ RigidImageToImageRegistrationMethod< TImage >
   scales.set_size( this->GetTypedTransform()->GetNumberOfParameters() );
   if( ImageDimension == 2 )
     {
-    scales[0] = 0.02;
-    scales[1] = 1;
-    scales[2] = 1;
+    scales[0] = 0.25;
+    scales[1] = 10;
+    scales[2] = 10;
     }
   else if( ImageDimension == 3 )
     {
-    scales[0] = 0.02;
-    scales[1] = 0.02;
-    scales[2] = 0.02;
-    scales[3] = 1;
-    scales[4] = 1;
-    scales[5] = 1;
+    scales[0] = 0.25;
+    scales[1] = 0.25;
+    scales[2] = 0.25;
+    scales[3] = 10;
+    scales[4] = 10;
+    scales[5] = 10;
     }
 
   this->SetTransformParametersScales( scales );

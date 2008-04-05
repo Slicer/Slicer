@@ -108,7 +108,6 @@ class ImageToImageRegistrationHelper : public Object
     typedef typename InitialRegistrationMethodType::TransformType
                                                    InitialTransformType;
 
-    // TEMP - until the corresponding registrators are implemented
     typedef typename RigidRegistrationMethodType::TransformType
                                                    RigidTransformType;
 

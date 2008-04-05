@@ -66,6 +66,8 @@ int DoIt( int argc, char *argv[] )
 
   typename RegerType::Pointer reger = RegerType::New();
 
+  reger->SetReportProgress( true );
+
   reger->LoadFixedImage( fixedImage );
   reger->LoadMovingImage( movingImage );
 
@@ -138,22 +140,12 @@ int DoIt( int argc, char *argv[] )
     reger->SetRigidMetricMethodEnum( RegerType::OptimizedRegistrationMethodType::MATTES_MI_METRIC );
     }
 
-  if( reger->GetEnableBSplineRegistration() )
-    {
-    reger->SetBSplineMaxIterations( bsplineMaxIterations );
-    }
-  else if( reger->GetEnableAffineRegistration() )
-    {
-    reger->SetAffineMaxIterations( affineMaxIterations );
-    }
-  else
-    {
-    reger->SetRigidMaxIterations( affineMaxIterations );
-    }
+  reger->SetRigidMaxIterations( rigidMaxIterations );
+  reger->SetAffineMaxIterations( affineMaxIterations );
+  reger->SetBSplineMaxIterations( bsplineMaxIterations );
 
-  reger->SetRigidSamplingRatio( affineSamplingRatio );
+  reger->SetRigidSamplingRatio( rigidSamplingRatio );
   reger->SetAffineSamplingRatio( affineSamplingRatio );
-
   reger->SetBSplineSamplingRatio( bsplineSamplingRatio );
 
   reger->SetExpectedOffsetPixelMagnitude( expectedOffset );
@@ -165,13 +157,32 @@ int DoIt( int argc, char *argv[] )
 
   reger->Update();
 
+  typename ImageType::ConstPointer resultImage;
   if(useWindowedSinc)
     {
-    reger->SaveImage( resampledImage, reger->ResampleImage( RegerType::OptimizedRegistrationMethodType::SINC_INTERPOLATION ) );
+    resultImage = reger->ResampleImage( RegerType::OptimizedRegistrationMethodType::SINC_INTERPOLATION );
+    reger->SaveImage( resampledImage, resultImage );
     }
   else
     {
+    resultImage = reger->ResampleImage();
     reger->SaveImage( resampledImage, reger->ResampleImage() );
+    }
+
+  if(differenceImage.size() > 1)
+    {
+    typedef itk::OrientedImage< float, 3 > OutputImageType;
+    typedef itk::SubtractImageFilter< ImageType, ImageType, OutputImageType > FilterType;
+    typename FilterType::Pointer filter = FilterType::New();
+    filter->SetInput1( reger->GetFixedImage() );
+    filter->SetInput2( resultImage );
+    filter->Update();
+    
+    typedef itk::ImageFileWriter< OutputImageType > WriterType;
+    WriterType::Pointer writer = WriterType::New();
+    writer->SetInput( filter->GetOutput() );
+    writer->SetFileName( differenceImage.c_str() );
+    writer->Update();
     }
 
   if( saveTransform.size() > 1 )
