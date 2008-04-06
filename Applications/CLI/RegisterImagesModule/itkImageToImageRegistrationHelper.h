@@ -217,6 +217,9 @@ class ImageToImageRegistrationHelper : public Object
     itkSetMacro( ReportProgress, bool );
     itkGetMacro( ReportProgress, bool );
 
+    itkSetMacro( MinimizeMemory, bool );
+    itkGetMacro( MinimizeMemory, bool );
+
     //
     // Loaded transforms
     //
@@ -364,6 +367,8 @@ class ImageToImageRegistrationHelper : public Object
     double                                  m_FinalMetricValue;
 
     bool                                    m_ReportProgress;
+
+    bool                                    m_MinimizeMemory;
 
     //  Loaded Tansform
     typename MatrixTransformType::Pointer   m_LoadedMatrixTransform;

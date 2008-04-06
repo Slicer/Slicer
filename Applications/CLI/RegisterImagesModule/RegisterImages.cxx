@@ -140,6 +140,8 @@ int DoIt( int argc, char *argv[] )
     reger->SetRigidMetricMethodEnum( RegerType::OptimizedRegistrationMethodType::MATTES_MI_METRIC );
     }
 
+  reger->SetMinimizeMemory( minimizeMemory );
+
   reger->SetRigidMaxIterations( rigidMaxIterations );
   reger->SetAffineMaxIterations( affineMaxIterations );
   reger->SetBSplineMaxIterations( bsplineMaxIterations );

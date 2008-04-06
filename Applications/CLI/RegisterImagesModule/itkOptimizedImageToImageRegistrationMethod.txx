@@ -192,6 +192,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
   m_TransformParametersScales.Fill( 1.0f );
 
   m_MaxIterations = 500;
+  m_MinimizeMemory = false;
   
   m_NumberOfSamples = 20000;
   m_FixedImageSamplesIntensityThreshold = 0;
@@ -238,7 +239,12 @@ OptimizedImageToImageRegistrationMethod< TImage >
       metric = TypedMetricType::New();
 
       TypedMetricType * m = static_cast< TypedMetricType * >( metric.GetPointer() );
-      m->SetNumberOfHistogramBins( 200 );
+      m->SetNumberOfHistogramBins( 100 );
+      if( m_MinimizeMemory && m_TransformMethodEnum == BSPLINE_TRANSFORM )
+        {
+        m->SetUseExplicitPDFDerivatives( false );
+        m->SetUseCachingOfBSplineWeights( false );
+        }
       break;
       }
     case NORMALIZED_CORRELATION_METRIC:

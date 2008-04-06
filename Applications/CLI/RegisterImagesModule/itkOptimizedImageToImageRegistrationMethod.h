@@ -91,6 +91,9 @@ class OptimizedImageToImageRegistrationMethod
     itkSetMacro( TransformParametersScales, TransformParametersScalesType );
     itkGetConstMacro( TransformParametersScales, TransformParametersScalesType );
 
+    itkSetMacro( MinimizeMemory, bool );
+    itkGetConstMacro( MinimizeMemory, bool );
+
     itkSetMacro( MaxIterations, unsigned int );
     itkGetConstMacro( MaxIterations, unsigned int );
 
@@ -130,11 +133,14 @@ class OptimizedImageToImageRegistrationMethod
     OptimizedImageToImageRegistrationMethod( const Self & );  // Purposely not implemented
     void operator = ( const Self & );                         // Purposely not implemented
 
+
     TransformParametersType             m_InitialTransformParameters;
 
     TransformParametersType             m_LastTransformParameters;
 
     TransformParametersScalesType       m_TransformParametersScales;
+
+    bool                                m_MinimizeMemory;
 
     unsigned int                        m_MaxIterations;
 

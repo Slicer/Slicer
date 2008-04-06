@@ -180,6 +180,13 @@
       <longflag>useWindowedSinc</longflag>
       <default>false</default>
     </boolean>
+    <boolean>
+      <name>minimizeMemory</name>
+      <description>Reduce the amount of memory required at the cost of increased computation time</description>
+      <label>Minimize memory</label>
+      <longflag>minimizeMemory</longflag>
+      <default>false</default>
+    </boolean>
     <integer>
       <name>numberOfThreads</name>
       <description>Number of CPU threads to use</description>

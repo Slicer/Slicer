@@ -77,6 +77,7 @@ ImageToImageRegistrationHelper< TImage >
 
   m_FinalMetricValue = 0;
   m_ReportProgress = false;
+  m_MinimizeMemory = false;
 
   // Loaded
   m_LoadedMatrixTransform = 0;
@@ -341,6 +342,7 @@ ImageToImageRegistrationHelper< TImage >
                                                    + fixedImageMin ) );
       }
 
+    reg->SetMinimizeMemory( m_MinimizeMemory );
     reg->SetMaxIterations( m_RigidMaxIterations );
     reg->SetTargetError( m_RigidTargetError );
     if( m_UseMasks )
@@ -432,6 +434,7 @@ ImageToImageRegistrationHelper< TImage >
     reg->SetMovingImage( m_CurrentMovingImage );
     reg->SetFixedImage( m_FixedImage );
     reg->SetNumberOfSamples( (unsigned int)(m_AffineSamplingRatio * fixedImageNumPixels) );
+    reg->SetMinimizeMemory( m_MinimizeMemory );
     reg->SetMaxIterations( m_AffineMaxIterations );
     reg->SetTargetError( m_AffineTargetError );
     if( m_UseMasks )
@@ -529,6 +532,7 @@ ImageToImageRegistrationHelper< TImage >
     reg->SetMovingImage( m_CurrentMovingImage );
     reg->SetFixedImage( m_FixedImage );
     reg->SetNumberOfSamples( (unsigned int)(m_BSplineSamplingRatio * fixedImageNumPixels) );
+    reg->SetMinimizeMemory( m_MinimizeMemory );
     reg->SetMaxIterations( m_BSplineMaxIterations );
     reg->SetTargetError( m_BSplineTargetError );
     if( m_UseMasks )
