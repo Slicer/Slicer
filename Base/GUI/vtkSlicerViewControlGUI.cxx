@@ -1995,9 +1995,203 @@ void vtkSlicerViewControlGUI::MainViewSetProjection ( )
 
 
 //---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewRotateAround ( const char *axis )
+{
+  double deg;
+  // axis vector
+  double a[3];
+  // look-at point
+  double fp[3];
+  // camera position
+  double p[3];
+  // camera up
+  double up[3];
+  double magup;
+  // view vector and its magnitude
+  double v[3];
+  double nv[3];
+  double magv;
+  // center of circle around which to rotate
+  double c[3];
+  // radial vector of circle around which to rotate.
+  double r[3];
+  double magr;
+  // vector along which to translate camera
+  double q[3];
+  double magp;
+  // angular offset from axis to rotate around.
+  double theta;
+  double dot;
+
+  if ( this->ApplicationGUI)
+    {
+   vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+   vtkMRMLViewNode *vn = this->GetActiveView();
+    if ( vn != NULL )  
+      {
+      deg = vn->GetRotateDegrees ( );
+
+      vtkMRMLCameraNode *cn = this->GetActiveCamera();
+      if ( cn != NULL )
+        {
+        vtkCamera *cam = cn->GetCamera();
+        // get camera position
+        cam->GetPosition(p);
+        cam->GetFocalPoint(fp);
+        
+        // magnitude of view vector should be | p-fp | 
+        v[0] = p[0] - fp[0];
+        v[1] = p[1] - fp[1];
+        v[2] = p[2] - fp[2];
+        magv = vtkMath::Norm( v );
+        nv[0] = v[0]/magv;
+        nv[1] = v[1]/magv;
+        nv[2] = v[2]/magv;        
+        
+        if ( (!strcmp (axis, "R")) || !(strcmp(axis, "L")) )
+          {
+          // unit normal vector for plane of rotation 
+          a[0] = 1.0;
+          a[1] = 0.0;
+          a[2] = 0.0;
+          // find angle to the unit R-L axis.
+          dot = vtkMath::Dot(nv,a);
+          theta = acos ( dot );
+          // center of rotation
+          c[0] = fp[0] + ( magv*cos(theta) );
+          c[1] = fp[1];
+          c[2] = fp[2];
+          }
+        if ( (!strcmp (axis, "A")) || !(strcmp(axis, "P")) )
+          {
+          // unit normal vector for plane of rotation 
+          a[0] = 0.0;
+          a[1] = 1.0;
+          a[2] = 0.0;
+          // find angle to the unit A-P axis.
+          dot = vtkMath::Dot(nv,a);
+          theta = acos ( dot );
+          // center of rotation
+          c[0] = fp[0];
+          c[1] = fp[1] + ( magv*cos(theta) );
+          c[2] = fp[2];
+          }
+        if ( (!strcmp (axis, "S")) || !(strcmp(axis, "I")) )
+          {
+          // unit normal vector for plane of rotation 
+          a[0] = 0.0;
+          a[1] = 0.0;
+          a[2] = 1.0;
+          // find angle to the unit S-I axis.
+          dot = vtkMath::Dot(nv,a);
+          theta = acos ( dot );
+          // center of rotation
+          c[0] = fp[0];
+          c[1] = fp[1];
+          c[2] = fp[2] + (magv*cos(theta) );
+          }
+
+        // if the current viewvector is along the axis,
+        // then just roll.
+        // right now, this doesn't seem to capture
+        // all cases.
+        if ( theta == 0.0 )
+          {
+            cam->Roll (deg);
+            cam->OrthogonalizeViewUp();
+          }
+        else
+          {
+          deg *= vtkMath::DoubleDegreesToRadians();
+          this->ArbitraryRotate( p, deg, fp, c, q);
+          cam->SetPosition(q);
+          cam->SetFocalPoint(fp);
+          // now rotate up vector.
+          cam->GetViewUp(up);
+          this->ArbitraryRotate ( up, deg, fp, c, q);
+          magup = vtkMath::Norm(q);
+          q[0]/=magup;
+          q[1]/=magup;
+          q[2]/=magup;
+          cam->SetViewUp(q);
+          cam->GetViewUp(up);
+          vtkDebugMacro( "ViewUp is: " << up[0] << up[1] << up[2] );          
+          }
+        appGUI->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+        appGUI->GetViewerWidget()->GetMainViewer()->Render();
+        this->RequestNavigationRender();
+        }
+      }
+    }
+}
+
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::ArbitraryRotate(double *p, double theta, double *p1, double *p2, double *q)
+{
+/*
+   Rotate a point p by angle theta around an arbitrary line segment p1-p2
+   Return the rotated point.
+   Positive angles are anticlockwise looking down the axis
+   towards the origin.
+   Assume right hand coordinate system.  
+*/
+   double costheta,sintheta;
+   double r[3];
+   double mag;
+
+   q[0] = q[1] = q[2] = 0.0;
+   r[0] = p2[0] - p1[0];
+   r[1] = p2[1] - p1[1];
+   r[2] = p2[2] - p1[2];
+
+   // shift back to the origin
+   p[0] -= p1[0];
+   p[1] -= p1[1];
+   p[2] -= p1[2];
+
+   mag = vtkMath::Norm(r);
+   if (mag != 0.0)
+     {
+     r[0]/=mag;
+     r[1]/=mag;
+     r[2]/=mag;
+     }
+
+   costheta = cos(theta);
+   sintheta = sin(theta);
+
+   q[0] += (costheta + (1 - costheta) * r[0] * r[0]) * p[0];
+   q[0] += ((1 - costheta) * r[0] * r[1] - r[2] * sintheta) * p[1];
+   q[0] += ((1 - costheta) * r[0] * r[2] + r[1] * sintheta) * p[2];
+
+   q[1] += ((1 - costheta) * r[0] * r[1] + r[2] * sintheta) * p[0];
+   q[1] += (costheta + (1 - costheta) * r[1] * r[1]) * p[1];
+   q[1] += ((1 - costheta) * r[1] * r[2] - r[0] * sintheta) * p[2];
+
+   q[2] += ((1 - costheta) * r[0] * r[2] - r[1] * sintheta) * p[0];
+   q[2] += ((1 - costheta) * r[1] * r[2] + r[0] * sintheta) * p[1];
+   q[2] += (costheta + (1 - costheta) * r[2] * r[2]) * p[2];
+
+   // translate back to original position
+   q[0] += p1[0];
+   q[1] += p1[1];
+   q[2] += p1[2];
+}
+
+
+
+
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::MainViewRotateAround ( int axis )
 {
   double deg, negdeg;
+  double fp[3];
+
   if ( this->ApplicationGUI)
     {
    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
@@ -2011,6 +2205,8 @@ void vtkSlicerViewControlGUI::MainViewRotateAround ( int axis )
       if ( cn != NULL )
         {
         vtkCamera *cam = cn->GetCamera();
+        cam->GetFocalPoint(fp);
+        
         switch ( axis )
           {
           case vtkMRMLViewNode::PitchDown:
@@ -2035,6 +2231,7 @@ void vtkSlicerViewControlGUI::MainViewRotateAround ( int axis )
             break;
           }
         cam->OrthogonalizeViewUp();
+        cam->GetFocalPoint(fp);
         p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
         p->GetViewerWidget()->GetMainViewer()->Render();
         this->RequestNavigationRender();
@@ -2374,7 +2571,8 @@ void vtkSlicerViewControlGUI::ViewControlACallback ( )
        {
        if ( vn->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
          {
-         this->MainViewRotateAround ( vtkMRMLViewNode::RollLeft );
+//         this->MainViewRotateAround ( vtkMRMLViewNode::RollLeft );
+         this->MainViewRotateAround ( "A" );
          }
        else
          {
@@ -2396,7 +2594,8 @@ void vtkSlicerViewControlGUI::ViewControlPCallback ( )
        {
        if ( vn->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
          {
-         this->MainViewRotateAround ( vtkMRMLViewNode::RollRight );
+//         this->MainViewRotateAround ( vtkMRMLViewNode::RollRight );
+         this->MainViewRotateAround ( "A" );
          }
        else
          {
@@ -2418,7 +2617,8 @@ void vtkSlicerViewControlGUI::ViewControlSCallback ( )
        {
        if ( vn->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
          {
-         this->MainViewRotateAround ( vtkMRMLViewNode::YawLeft );
+//         this->MainViewRotateAround ( vtkMRMLViewNode::YawLeft );
+         this->MainViewRotateAround ( "S" );
          }
        else
          {
@@ -2441,7 +2641,8 @@ void vtkSlicerViewControlGUI::ViewControlICallback ( )
 
       if ( vn->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
         {
-        this->MainViewRotateAround ( vtkMRMLViewNode::YawRight );
+//        this->MainViewRotateAround ( vtkMRMLViewNode::YawRight );
+         this->MainViewRotateAround ( "S" );
         }
       else
         {
@@ -2464,7 +2665,8 @@ void vtkSlicerViewControlGUI::ViewControlRCallback ( )
 
       if ( vn->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
         {
-        this->MainViewRotateAround ( vtkMRMLViewNode::PitchUp );
+//        this->MainViewRotateAround ( vtkMRMLViewNode::PitchUp );
+         this->MainViewRotateAround ( "R" );
         }
       else
         {
@@ -2486,7 +2688,8 @@ void vtkSlicerViewControlGUI::ViewControlLCallback ( )
       {
       if ( vn->GetViewAxisMode() == vtkMRMLViewNode::RotateAround )
         {
-        this->MainViewRotateAround (vtkMRMLViewNode::PitchDown);
+//        this->MainViewRotateAround (vtkMRMLViewNode::PitchDown);
+         this->MainViewRotateAround ( "R" );
         }
       else
         {

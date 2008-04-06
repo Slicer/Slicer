@@ -281,6 +281,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   // Description:
   // Rotates camera about selected axis by an increment in MainViewer
   virtual void MainViewRotateAround ( int axis );
+  virtual void MainViewRotateAround ( const char *axis );
+  virtual void ArbitraryRotate(double *p, double theta, double *p1, double *p2, double *q);
+
   // Description:
   // Sets either Parallel or Perspective Projection in MainViewer
   virtual void MainViewSetProjection ( );
