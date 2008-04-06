@@ -13,7 +13,6 @@ class vtkKWLabel;
 class vtkKWPushButton;
 class vtkKWFrame;
 class vtkKWTopLevel;
-class vtkSlicerDataTransferIcons;
 class vtkKWTextWithScrollbars;
 
 
@@ -44,7 +43,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     vtkGetObjectMacro (InformationTopLevel, vtkKWTopLevel );
     vtkGetObjectMacro (InformationFrame, vtkKWFrame );
     vtkGetObjectMacro (InformationText, vtkKWTextWithScrollbars );
-    vtkGetObjectMacro (DataTransferIcons, vtkSlicerDataTransferIcons );
     vtkGetObjectMacro (InformationCloseButton, vtkKWPushButton );
     vtkGetObjectMacro ( DataTransfer, vtkDataTransfer);
     vtkSetObjectMacro ( DataTransfer, vtkDataTransfer);
@@ -136,7 +134,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferWidget : public vtkSlicerW
     vtkKWPushButton *CancelButton;
     vtkKWPushButton *InformationButton;
     vtkKWPushButton *DeleteButton;
-    vtkSlicerDataTransferIcons *DataTransferIcons;
     vtkKWTopLevel *InformationTopLevel;
     vtkKWFrame *InformationFrame;
     vtkKWTextWithScrollbars *InformationText;

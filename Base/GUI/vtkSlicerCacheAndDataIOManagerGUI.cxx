@@ -9,7 +9,6 @@
 #include "vtkKWFrame.h"
 #include "vtkSlicerCacheAndDataIOManagerGUI.h"
 #include "vtkSlicerDataTransferWidget.h"
-#include "vtkSlicerDataTransferIcons.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkURIHandler.h"
@@ -27,6 +26,7 @@ vtkSlicerCacheAndDataIOManagerGUI::vtkSlicerCacheAndDataIOManagerGUI ( )
   this->CacheFreeLabel = NULL;
   this->CloseButton = NULL;
   this->RefreshButton = NULL;
+  this->ClearDisplayButton = NULL;
   this->ClearCacheButton = NULL;
   this->ForceReloadCheckButton = NULL;
   this->OverwriteCacheCheckButton = NULL;
@@ -40,7 +40,6 @@ vtkSlicerCacheAndDataIOManagerGUI::vtkSlicerCacheAndDataIOManagerGUI ( )
   this->TransferWidgetCollection = NULL;
   this->DataIOManager = NULL;
   this->CacheManager = NULL;
-  this->DataTransferIcons = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -76,6 +75,12 @@ vtkSlicerCacheAndDataIOManagerGUI::~vtkSlicerCacheAndDataIOManagerGUI ( )
     this->CacheFreeLabel->SetParent ( NULL );
     this->CacheFreeLabel->Delete();
     this->CacheFreeLabel = NULL;
+    }
+  if ( this->ClearDisplayButton )
+    {
+    this->ClearDisplayButton->SetParent ( NULL );
+    this->ClearDisplayButton->Delete();
+    this->ClearDisplayButton = NULL;
     }
   if ( this->RefreshButton )
     {
@@ -149,11 +154,6 @@ vtkSlicerCacheAndDataIOManagerGUI::~vtkSlicerCacheAndDataIOManagerGUI ( )
     this->ManagerTopLevel->Delete();
     this->ManagerTopLevel = NULL;    
     }
-  if ( this->DataTransferIcons )
-    {
-    this->DataTransferIcons->Delete();
-    this->DataTransferIcons = NULL;
-    }
   
   this->DataIOManager = NULL;
   this->CacheManager = NULL;
@@ -168,6 +168,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::PrintSelf ( ostream& os, vtkIndent inden
   os << indent << "SlicerCacheAndDataIOManagerGUI: " << this->GetClassName ( ) << "\n";
   os << indent << "CacheSizeLabel: " << this->GetCacheSizeLabel ( ) << "\n";
   os << indent << "CacheFreeLabel: " << this->GetCacheFreeLabel ( ) << "\n";
+  os << indent << "ClearDisplayButton: " << this->GetClearDisplayButton () << "\n";
   os << indent << "RefreshButton: " << this->GetRefreshButton () << "\n";
   os << indent << "CloseButton: " << this->GetCloseButton () << "\n";
   os << indent << "ClearCacheButton: " << this->GetClearCacheButton () << "\n";
@@ -188,6 +189,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::RemoveGUIObservers ( )
 {
 
   this->CancelAllButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->ClearDisplayButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->RefreshButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->CloseButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->ClearCacheButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -202,6 +204,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::RemoveGUIObservers ( )
 void vtkSlicerCacheAndDataIOManagerGUI::AddGUIObservers ( )
 {
   this->CancelAllButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->ClearDisplayButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->RefreshButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->CloseButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->ClearCacheButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
@@ -223,6 +226,10 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessGUIEvents ( vtkObject *caller,
     if ( b == this->CloseButton && event == vtkKWPushButton::InvokedEvent )
       {
       this->WithdrawManagerWindow();
+      }
+    else if ( b == this->ClearDisplayButton && event == vtkKWPushButton::InvokedEvent )
+      {
+      // nothing yet.
       }
     else if ( b == this->RefreshButton && event == vtkKWPushButton::InvokedEvent )
       {
@@ -512,6 +519,13 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
   float sz;
   char *txt = new char[256];
   
+  vtkSlicerApplicationGUI *appGUI = NULL;
+  vtkSlicerApplication *app = NULL;
+  if ( (app = vtkSlicerApplication::SafeDownCast ( this->GetApplication()) ) != NULL )
+    {
+    appGUI = app->GetApplicationGUI();
+    }
+  
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Updating Overview Panel");
   if ( this->CacheManager != NULL )
     {
@@ -553,16 +567,18 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
     //    this->OverwriteCacheCheckbutton->SetSelectedState ( this->CacheManager->GetEnableRemoteCacheOverwriting() );
     }
 
-
-  if ( this->CacheManager->GetCurrentCacheSize() == 0 )
+  if ( appGUI != NULL )
     {
-    this->ClearCacheButton->SetImageToIcon ( this->DataTransferIcons->GetDeleteFromCacheDisabledIcon() );
-    this->ClearCacheButton->SetStateToDisabled();
-    }
-  else
-    {
-    this->ClearCacheButton->SetImageToIcon ( this->DataTransferIcons->GetDeleteFromCacheIcon() );
-    this->ClearCacheButton->SetStateToNormal();
+    if ( this->CacheManager->GetCurrentCacheSize() == 0 )
+      {
+      this->ClearCacheButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerDeleteDisabledIcon() );
+      this->ClearCacheButton->SetStateToDisabled();
+      }
+    else
+      {
+      this->ClearCacheButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerDeleteIcon() );
+      this->ClearCacheButton->SetStateToNormal();
+      }
     }
 
   //--- DataIO options:
@@ -595,21 +611,24 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
         }
       }
     }
-  if ( !anyTransfersRunning )
-    {
-    this->CancelAllButton->SetImageToIcon ( this->DataTransferIcons->GetTransferCancelDisabledIcon() );
-    this->CancelAllButton->SetStateToDisabled();
-    }
-  else
-    {
-    this->CancelAllButton->SetImageToIcon ( this->DataTransferIcons->GetTransferCancelIcon() );
-    this->CancelAllButton->SetStateToNormal();
-    }
 
+
+  if ( appGUI != NULL )
+    {
+    if ( !anyTransfersRunning )
+      {
+      this->CancelAllButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerCancelDisabledIcon() );
+      this->CancelAllButton->SetStateToDisabled();
+      }
+    else
+      {
+      this->CancelAllButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerCancelIcon() );
+      this->CancelAllButton->SetStateToNormal();
+      }
+    }
   delete [] txt;
 
   //--- update the GUI
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
   if ( app != NULL )
     {
     app->ProcessIdleTasks();
@@ -759,11 +778,13 @@ void vtkSlicerCacheAndDataIOManagerGUI::Enter ( )
   if ( this->Built == false )
     {
     this->BuildGUI();
-    this->Built = true;
-    this->AddGUIObservers();
     }
-  this->CreateModuleEventBindings();
-  this->UpdateEntireGUI();
+  if ( this->Built == true )
+    {
+    this->AddGUIObservers();
+    this->CreateModuleEventBindings();
+    this->UpdateEntireGUI();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -789,214 +810,231 @@ void vtkSlicerCacheAndDataIOManagerGUI::TearDownGUI ( )
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
 {
-  vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
+  vtkSlicerApplication *app = NULL;
+  vtkSlicerApplicationGUI *appGUI = NULL;
+  app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+  if ( app != NULL )
+    {
+    appGUI = app->GetApplicationGUI();
+    }
+  if ( appGUI != NULL )
+    {
 
-  this->ManagerTopLevel = vtkKWTopLevel::New();
-  this->ManagerTopLevel->SetApplication ( app );
-  vtksys_stl::string title = "Cache & Remote Data I/O Manager Window";
+    this->ManagerTopLevel = vtkKWTopLevel::New();
+    this->ManagerTopLevel->SetApplication ( app );
+    vtksys_stl::string title = "Cache & Remote Data I/O Manager Window";
   
-  this->ManagerTopLevel->SetTitle(title.c_str());
+    this->ManagerTopLevel->SetTitle(title.c_str());
 //    this->ManagerTopLevel->SetMasterWindow(master);
-  this->ManagerTopLevel->SetApplication ( app );
-  this->ManagerTopLevel->Create();
-  this->ManagerTopLevel->SetBorderWidth ( 2 );
-  this->ManagerTopLevel->SetReliefToFlat();
-  this->ManagerTopLevel->SetDisplayPositionToPointer();
-  this->ManagerTopLevel->SetSize ( 910, 300 );
-  this->ManagerTopLevel->SetMinimumSize ( 910, 100 );
-  this->ManagerTopLevel->Withdraw();
-  this->ManagerTopLevel->SetDeleteWindowProtocolCommand ( this, "WithdrawManagerWindow" );
+    this->ManagerTopLevel->SetApplication ( app );
+    this->ManagerTopLevel->Create();
+    this->ManagerTopLevel->SetBorderWidth ( 2 );
+    this->ManagerTopLevel->SetReliefToFlat();
+    this->ManagerTopLevel->SetDisplayPositionToPointer();
+    this->ManagerTopLevel->SetSize ( 910, 300 );
+    this->ManagerTopLevel->SetMinimumSize ( 910, 100 );
+    this->ManagerTopLevel->Withdraw();
+    this->ManagerTopLevel->SetDeleteWindowProtocolCommand ( this, "WithdrawManagerWindow" );
     
-  this->DataTransferIcons = vtkSlicerDataTransferIcons::New();
-  
-  this->ControlFrame = vtkKWFrame::New();
-  this->ControlFrame->SetParent ( this->ManagerTopLevel );
-  this->ControlFrame->Create();
-  this->TransfersFrame = vtkKWFrameWithScrollbar::New();
-  this->TransfersFrame->SetParent ( this->ManagerTopLevel );
-  this->TransfersFrame->Create();
-  this->ButtonFrame = vtkKWFrame::New();
-  this->ButtonFrame->SetParent ( this->ManagerTopLevel );
-  this->ButtonFrame->Create();
-  vtkKWFrame *f = vtkKWFrame::New();
-  f->SetParent ( this->ManagerTopLevel );
-  f->Create();
-  f->SetBackgroundColor ( 0.7, 0.7, 0.7);
-  this->Script ( "grid %s -row 0 -column 0 -sticky ew -padx 0 -pady 0", this->ControlFrame->GetWidgetName() );
-  this->Script ( "grid %s -row 1 -column 0 -sticky ew -padx 0 -pady 0", f->GetWidgetName() );
-  this->Script ( "grid %s -row 3 -column 0 -sticky ew -padx 0 -pady 0", this->ButtonFrame->GetWidgetName() );
-  this->Script ( "grid %s -row 2 -column 0 -sticky news -padx 0 -pady 0", this->TransfersFrame->GetWidgetName() );  
-  this->Script ( "grid rowconfigure %s 0 -weight 0", this->ManagerTopLevel->GetWidgetName() );
-  this->Script ( "grid rowconfigure %s 1 -weight 0", this->ManagerTopLevel->GetWidgetName() );
-  this->Script ( "grid rowconfigure %s 2 -weight 1", this->ManagerTopLevel->GetWidgetName() );
-  this->Script ( "grid rowconfigure %s 3 -weight 0", this->ManagerTopLevel->GetWidgetName() );
-  this->Script ( "grid columnconfigure %s 0 -weight 1", this->ManagerTopLevel->GetWidgetName() );
+    this->ControlFrame = vtkKWFrame::New();
+    this->ControlFrame->SetParent ( this->ManagerTopLevel );
+    this->ControlFrame->Create();
+    this->TransfersFrame = vtkKWFrameWithScrollbar::New();
+    this->TransfersFrame->SetParent ( this->ManagerTopLevel );
+    this->TransfersFrame->Create();
+    this->ButtonFrame = vtkKWFrame::New();
+    this->ButtonFrame->SetParent ( this->ManagerTopLevel );
+    this->ButtonFrame->Create();
+    vtkKWFrame *f = vtkKWFrame::New();
+    f->SetParent ( this->ManagerTopLevel );
+    f->Create();
+    f->SetBackgroundColor ( 0.7, 0.7, 0.7);
+    this->Script ( "grid %s -row 0 -column 0 -sticky ew -padx 0 -pady 0", this->ControlFrame->GetWidgetName() );
+    this->Script ( "grid %s -row 1 -column 0 -sticky ew -padx 0 -pady 0", f->GetWidgetName() );
+    this->Script ( "grid %s -row 3 -column 0 -sticky ew -padx 0 -pady 0", this->ButtonFrame->GetWidgetName() );
+    this->Script ( "grid %s -row 2 -column 0 -sticky news -padx 0 -pady 0", this->TransfersFrame->GetWidgetName() );  
+    this->Script ( "grid rowconfigure %s 0 -weight 0", this->ManagerTopLevel->GetWidgetName() );
+    this->Script ( "grid rowconfigure %s 1 -weight 0", this->ManagerTopLevel->GetWidgetName() );
+    this->Script ( "grid rowconfigure %s 2 -weight 1", this->ManagerTopLevel->GetWidgetName() );
+    this->Script ( "grid rowconfigure %s 3 -weight 0", this->ManagerTopLevel->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 0 -weight 1", this->ManagerTopLevel->GetWidgetName() );
 
-  // all widgets in the Control Frame
+    // all widgets in the Control Frame
 
-  this->ForceReloadCheckButton = vtkKWCheckButton::New();
-  this->ForceReloadCheckButton->SetParent ( this->ControlFrame );
-  this->ForceReloadCheckButton->Create();
-  this->ForceReloadCheckButton->SetText ( "Always re-download");
-  if ( this->CacheManager != NULL )
-    {
-    this->ForceReloadCheckButton->SetSelectedState(this->CacheManager->GetEnableForceRedownload() );
-    }
-  else
-    {
-    this->ForceReloadCheckButton->SetSelectedState(0);
-    }
+    this->ForceReloadCheckButton = vtkKWCheckButton::New();
+    this->ForceReloadCheckButton->SetParent ( this->ControlFrame );
+    this->ForceReloadCheckButton->Create();
+    this->ForceReloadCheckButton->SetText ( "Always re-download");
+    if ( this->CacheManager != NULL )
+      {
+      this->ForceReloadCheckButton->SetSelectedState(this->CacheManager->GetEnableForceRedownload() );
+      }
+    else
+      {
+      this->ForceReloadCheckButton->SetSelectedState(0);
+      }
     
-  this->OverwriteCacheCheckButton = vtkKWCheckButton::New();
-  this->OverwriteCacheCheckButton->SetParent ( this->ControlFrame );
-  this->OverwriteCacheCheckButton->Create();
-  this->OverwriteCacheCheckButton->SetText ("Overwrite cached files");
+    this->OverwriteCacheCheckButton = vtkKWCheckButton::New();
+    this->OverwriteCacheCheckButton->SetParent ( this->ControlFrame );
+    this->OverwriteCacheCheckButton->Create();
+    this->OverwriteCacheCheckButton->SetText ("Overwrite cached files");
 /*
   if ( this->CacheManager != NULL )
-    {
-    this->OverwriteCacheCheckButton->SetSelectedState(this->CacheManager->GetEnableRemoteCacheOverwriting() );
-    }
+  {
+  this->OverwriteCacheCheckButton->SetSelectedState(this->CacheManager->GetEnableRemoteCacheOverwriting() );
+  }
   else
-    {
-    this->OverwriteCacheCheckButton->SetSelectedState(0);
-    }
-*/
-  this->OverwriteCacheCheckButton->SetStateToDisabled();
+  {
   this->OverwriteCacheCheckButton->SetSelectedState(0);
+  }
+*/
+    this->OverwriteCacheCheckButton->SetStateToDisabled();
+    this->OverwriteCacheCheckButton->SetSelectedState(0);
 
-  this->AsynchronousCheckButton = vtkKWCheckButton::New();
-  this->AsynchronousCheckButton->SetParent ( this->ControlFrame );
-  this->AsynchronousCheckButton->Create();
-  this->AsynchronousCheckButton->SetText ("Use asynchronous I/O");
-  if ( this->DataIOManager != NULL )
-    {
-    this->AsynchronousCheckButton->SetSelectedState(this->DataIOManager->GetEnableAsynchronousIO() );
-    }
-  else
-    {
-    this->AsynchronousCheckButton->SetSelectedState(0);
-    }
+    this->AsynchronousCheckButton = vtkKWCheckButton::New();
+    this->AsynchronousCheckButton->SetParent ( this->ControlFrame );
+    this->AsynchronousCheckButton->Create();
+    this->AsynchronousCheckButton->SetText ("Use asynchronous I/O");
+    if ( this->DataIOManager != NULL )
+      {
+      this->AsynchronousCheckButton->SetSelectedState(this->DataIOManager->GetEnableAsynchronousIO() );
+      }
+    else
+      {
+      this->AsynchronousCheckButton->SetSelectedState(0);
+      }
 
-  // not packed for now.
-  this->TimeOutCheckButton = vtkKWCheckButton::New();
-  this->TimeOutCheckButton->SetParent ( this->ControlFrame );
-  this->TimeOutCheckButton->Create();
-  this->TimeOutCheckButton->SetSelectedState(0);
+    // not packed for now.
+    this->TimeOutCheckButton = vtkKWCheckButton::New();
+    this->TimeOutCheckButton->SetParent ( this->ControlFrame );
+    this->TimeOutCheckButton->Create();
+    this->TimeOutCheckButton->SetSelectedState(0);
 
-  this->ClearCacheButton = vtkKWPushButton::New();
-  this->ClearCacheButton->SetParent ( this->ControlFrame );
-  this->ClearCacheButton->Create(); 
- this->ClearCacheButton->SetImageToIcon ( this->DataTransferIcons->GetDeleteFromCacheIcon() );
-  this->ClearCacheButton->SetBorderWidth ( 0);
-  this->ClearCacheButton->SetReliefToFlat();
-  this->ClearCacheButton->SetBalloonHelpString ("Delete all files in cache." );
+    this->ClearCacheButton = vtkKWPushButton::New();
+    this->ClearCacheButton->SetParent ( this->ControlFrame );
+    this->ClearCacheButton->Create(); 
+    this->ClearCacheButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerDeleteIcon() );
+    this->ClearCacheButton->SetBorderWidth ( 0);
+    this->ClearCacheButton->SetReliefToFlat();
+    this->ClearCacheButton->SetBalloonHelpString ("Delete all files in cache." );
 
-  this->RefreshButton = vtkKWPushButton::New();
-  this->RefreshButton->SetParent ( this->ControlFrame );
-  this->RefreshButton->Create();
-  this->RefreshButton->SetImageToIcon ( this->DataTransferIcons->GetRefreshSettingsIcon() );
-  this->RefreshButton->SetBorderWidth (0);
-  this->RefreshButton->SetReliefToFlat ();
-  this->RefreshButton->SetBalloonHelpString ("Refresh cache space report in panel." );  
+    this->RefreshButton = vtkKWPushButton::New();
+    this->RefreshButton->SetParent ( this->ControlFrame );
+    this->RefreshButton->Create();
+    this->RefreshButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerRefreshIcon() );
+    this->RefreshButton->SetBorderWidth (0);
+    this->RefreshButton->SetReliefToFlat ();
+    this->RefreshButton->SetBalloonHelpString ("Refresh cache space report in panel." );  
   
-  this->CancelAllButton = vtkKWPushButton::New();
-  this->CancelAllButton->SetParent ( this->ControlFrame );
-  this->CancelAllButton->Create();
-  this->CancelAllButton->SetImageToIcon ( this->DataTransferIcons->GetTransferCancelIcon() );
-  this->CancelAllButton->SetBorderWidth(0);
-  this->CancelAllButton->SetReliefToFlat();
-  this->CancelAllButton->SetBalloonHelpString ( "Cancel all pending and running data transfers." );
+    this->ClearDisplayButton = vtkKWPushButton::New();
+    this->ClearDisplayButton->SetParent ( this->ControlFrame);
+    this->ClearDisplayButton->Create();
+    this->ClearDisplayButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerCleanUpIcon() );
+    this->ClearDisplayButton->SetBorderWidth ( 0);
+    this->ClearDisplayButton->SetReliefToFlat();
+    this->ClearDisplayButton->SetBalloonHelpString ("Clean up the transfer panel without clearing the cache.");
+  
+    this->CancelAllButton = vtkKWPushButton::New();
+    this->CancelAllButton->SetParent ( this->ControlFrame );
+    this->CancelAllButton->Create();
+    this->CancelAllButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerCancelIcon() );
+    this->CancelAllButton->SetBorderWidth(0);
+    this->CancelAllButton->SetReliefToFlat();
+    this->CancelAllButton->SetBalloonHelpString ( "Cancel all pending and running data transfers." );
 
-  this->Script ( "pack %s %s %s -side left -anchor n -padx 4 -pady 4",
-                 this->ForceReloadCheckButton->GetWidgetName(),
-                 this->AsynchronousCheckButton->GetWidgetName(),
-                 this->OverwriteCacheCheckButton->GetWidgetName() );
-  this->Script ( "pack %s %s %s -side right -anchor n -padx 4 -pady 4",
-                 this->CancelAllButton->GetWidgetName(),
-                 this->RefreshButton->GetWidgetName(),
-                 this->ClearCacheButton->GetWidgetName());
-
-
-  // all title widgets in the Transfer Frame
-  vtkKWLabel *l;
-  l = vtkKWLabel::New();
-  l->SetParent (f);
-  l->Create();
-  l->SetWidth ( 6 );
-  l->SetText ("type");
-  this->Script ( "grid %s -row 0 -column 0 -sticky w -padx 1 -pady 2 ", l->GetWidgetName());
-  this->Script ( "grid columnconfigure %s 0 -weight 0", f->GetWidgetName() );
-  l->Delete();
-  l = vtkKWLabel::New();
-  l->SetParent (f);
-  l->Create();
-  l->SetWidth ( 6 );
-  l->SetText ("status");
-  this->Script ( "grid %s -row 0 -column 1 -sticky w -padx 1 -pady 2 ", l->GetWidgetName());
-  this->Script ( "grid columnconfigure %s 1 -weight 0", f->GetWidgetName() );
-  l->Delete();
-  l = vtkKWLabel::New();
-  l->SetParent (f);
-  l->Create();
-  l->SetWidth ( 6 );
-  l->SetText ("cancel");
-  this->Script ( "grid %s -row 0 -column 2 -sticky w -padx 1 -pady 2 ", l->GetWidgetName());
-  this->Script ( "grid columnconfigure %s 2 -weight 0", f->GetWidgetName() );
-  l->Delete();
-  l = vtkKWLabel::New();
-  l->SetParent (f);
-  l->Create();
-  l->SetWidth ( 6 );
-  l->SetText ("clear");
-  this->Script ( "grid %s -row 0 -column 3 -sticky w -padx 1 -pady 2 ", l->GetWidgetName());
-  this->Script ( "grid columnconfigure %s 3 -weight 0", f->GetWidgetName() );
-  l->Delete();
-  l = vtkKWLabel::New();
-  l->SetParent (f);
-  l->Create();
-  l->SetWidth ( 6 );
-  l->SetText ("info");
-  this->Script ( "grid %s -row 0 -column 4 -sticky w -padx 1 -pady 2 ", l->GetWidgetName());
-  this->Script ( "grid columnconfigure %s 4 -weight 0", f->GetWidgetName() );
-  l->Delete();
-  l = vtkKWLabel::New();
-  l->SetParent (f);
-  l->Create();
-  l->SetText ("source uri");
-  this->Script ( "grid %s -row 0 -column 5 -sticky news -padx 1 -pady 2 ", l->GetWidgetName());
-  this->Script ( "grid columnconfigure %s 5 -weight 1", f->GetWidgetName() );
-  l->Delete();
-  f->Delete();
+    this->Script ( "pack %s %s %s -side left -anchor n -padx 4 -pady 4",
+                   this->ForceReloadCheckButton->GetWidgetName(),
+                   this->AsynchronousCheckButton->GetWidgetName(),
+                   this->OverwriteCacheCheckButton->GetWidgetName() );
+    this->Script ( "pack %s %s %s %s -side right -anchor n -padx 4 -pady 4",
+                   this->CancelAllButton->GetWidgetName(),
+                   this->RefreshButton->GetWidgetName(),
+                   this->ClearDisplayButton->GetWidgetName(),
+                   this->ClearCacheButton->GetWidgetName());
 
 
-  // all widgets in the Button Frame
-  this->CacheSizeLabel = vtkKWLabel::New();
-  this->CacheSizeLabel->SetParent ( this->ButtonFrame );
-  this->CacheSizeLabel->Create();
-  this->CacheSizeLabel->SetWidth (20);
-  this->CacheSizeLabel->SetText ( "Cache size: ");
-  this->CacheSizeLabel->SetAnchorToWest ();
-  this->CacheSizeLabel->SetBalloonHelpString ("Use View->Application Settings Interface->RemoteIO Settings to adjust cache size");
+    // all title widgets in the Transfer Frame
+    vtkKWLabel *l;
+    l = vtkKWLabel::New();
+    l->SetParent (f);
+    l->Create();
+    l->SetWidth ( 6 );
+    l->SetText ("type");
+    this->Script ( "grid %s -row 0 -column 0 -sticky w -padx 1 -pady 2 ", l->GetWidgetName());
+    this->Script ( "grid columnconfigure %s 0 -weight 0", f->GetWidgetName() );
+    l->Delete();
+    l = vtkKWLabel::New();
+    l->SetParent (f);
+    l->Create();
+    l->SetWidth ( 6 );
+    l->SetText ("status");
+    this->Script ( "grid %s -row 0 -column 1 -sticky w -padx 1 -pady 2 ", l->GetWidgetName());
+    this->Script ( "grid columnconfigure %s 1 -weight 0", f->GetWidgetName() );
+    l->Delete();
+    l = vtkKWLabel::New();
+    l->SetParent (f);
+    l->Create();
+    l->SetWidth ( 6 );
+    l->SetText ("cancel");
+    this->Script ( "grid %s -row 0 -column 2 -sticky w -padx 1 -pady 2 ", l->GetWidgetName());
+    this->Script ( "grid columnconfigure %s 2 -weight 0", f->GetWidgetName() );
+    l->Delete();
+    l = vtkKWLabel::New();
+    l->SetParent (f);
+    l->Create();
+    l->SetWidth ( 6 );
+    l->SetText ("clear");
+    this->Script ( "grid %s -row 0 -column 3 -sticky w -padx 1 -pady 2 ", l->GetWidgetName());
+    this->Script ( "grid columnconfigure %s 3 -weight 0", f->GetWidgetName() );
+    l->Delete();
+    l = vtkKWLabel::New();
+    l->SetParent (f);
+    l->Create();
+    l->SetWidth ( 6 );
+    l->SetText ("info");
+    this->Script ( "grid %s -row 0 -column 4 -sticky w -padx 1 -pady 2 ", l->GetWidgetName());
+    this->Script ( "grid columnconfigure %s 4 -weight 0", f->GetWidgetName() );
+    l->Delete();
+    l = vtkKWLabel::New();
+    l->SetParent (f);
+    l->Create();
+    l->SetText ("source uri");
+    this->Script ( "grid %s -row 0 -column 5 -sticky news -padx 1 -pady 2 ", l->GetWidgetName());
+    this->Script ( "grid columnconfigure %s 5 -weight 1", f->GetWidgetName() );
+    l->Delete();
+    f->Delete();
 
-  this->CacheFreeLabel = vtkKWLabel::New();
-  this->CacheFreeLabel->SetParent ( this->ButtonFrame );
-  this->CacheFreeLabel->Create();
-  this->CacheFreeLabel->SetWidth ( 20 );
-  this->CacheFreeLabel->SetText ( "Cache free: ");
-  this->CacheFreeLabel->SetAnchorToWest ();
-  this->CacheFreeLabel->SetBalloonHelpString ("Use View->Application Settings Interface->RemoteIO Settings to adjust cache free buffer size");
 
-  this->CloseButton = vtkKWPushButton::New();
-  this->CloseButton->SetParent ( this->ButtonFrame );
-  this->CloseButton->Create();
-  this->CloseButton->SetText ( "Close");
-  this->CloseButton->SetWidth ( 10 );
+    // all widgets in the Button Frame
+    this->CacheSizeLabel = vtkKWLabel::New();
+    this->CacheSizeLabel->SetParent ( this->ButtonFrame );
+    this->CacheSizeLabel->Create();
+    this->CacheSizeLabel->SetWidth (20);
+    this->CacheSizeLabel->SetText ( "Cache size: ");
+    this->CacheSizeLabel->SetAnchorToWest ();
+    this->CacheSizeLabel->SetBalloonHelpString ("Use View->Application Settings Interface->RemoteIO Settings to adjust cache size");
 
-  this->Script ( "pack %s %s -side left -anchor n -padx 4 -pady 4",
-                 this->CacheSizeLabel->GetWidgetName(),
-                 this->CacheFreeLabel->GetWidgetName() );
-  this->Script ( "pack %s -side right -anchor n -padx 4 -pady 4", this->CloseButton->GetWidgetName() );
+    this->CacheFreeLabel = vtkKWLabel::New();
+    this->CacheFreeLabel->SetParent ( this->ButtonFrame );
+    this->CacheFreeLabel->Create();
+    this->CacheFreeLabel->SetWidth ( 20 );
+    this->CacheFreeLabel->SetText ( "Cache free: ");
+    this->CacheFreeLabel->SetAnchorToWest ();
+    this->CacheFreeLabel->SetBalloonHelpString ("Use View->Application Settings Interface->RemoteIO Settings to adjust cache free buffer size");
+
+    this->CloseButton = vtkKWPushButton::New();
+    this->CloseButton->SetParent ( this->ButtonFrame );
+    this->CloseButton->Create();
+    this->CloseButton->SetText ( "Close");
+    this->CloseButton->SetWidth ( 10 );
+
+    this->Script ( "pack %s %s -side left -anchor n -padx 4 -pady 4",
+                   this->CacheSizeLabel->GetWidgetName(),
+                   this->CacheFreeLabel->GetWidgetName() );
+    this->Script ( "pack %s -side right -anchor n -padx 4 -pady 4", this->CloseButton->GetWidgetName() );
+    this->Built = true;
+    }
 }
 
 

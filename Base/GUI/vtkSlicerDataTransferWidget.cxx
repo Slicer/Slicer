@@ -15,8 +15,8 @@
 #include "vtkKWMessageDialog.h"
 
 #include "vtkSlicerApplication.h"
-#include "vtkSlicerDataTransferIcons.h"
-
+#include "vtkSlicerFoundationIcons.h"
+#include "vtkSlicerApplicationGUI.h"
 #include <string>
 
 //---------------------------------------------------------------------------
@@ -34,7 +34,6 @@ vtkSlicerDataTransferWidget::vtkSlicerDataTransferWidget(void)
     this->TransferStatusLabel = NULL;
     this->CancelButton = NULL;
     this->DeleteButton = NULL;
-    this->DataTransferIcons = NULL;
     this->InformationButton = NULL;  
     // pop-up information frame
     this->InformationTopLevel = NULL;
@@ -55,86 +54,96 @@ vtkSlicerDataTransferWidget::vtkSlicerDataTransferWidget(void)
 void vtkSlicerDataTransferWidget::DisplayRunningAnimation()
 {
 
-  vtkDebugMacro ("vtkSlicerDataTransferWidget: Updating transfer feedback.");
-  //--- if the transfer has been completed in an asynchronous
-  //--- thread, its status has been modified without triggering
-  //--- an event. So always check this here to capture
-  //--- completed or canceled events and kill the timer.
-  if ( this->DataTransfer == NULL)
+  vtkSlicerApplication *app = NULL;
+  vtkSlicerApplicationGUI *appGUI = NULL;
+  app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+  if ( app != NULL )
     {
-    return;
+    appGUI = app->GetApplicationGUI();
     }
-  //--- for some reason, the timer doesn't seem to work in the
-  //--- main thread. Works fine for asynchronous transfers.
-  //--- TODO: figure this out and use the same behavior in either case.
-
-  if ( !(this->DataIOManager->GetEnableAsynchronousIO() ))
+  if ( appGUI != NULL )
     {
-    return;
-    }
-
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-  if ( app != NULL && this->TimerRunning )
-    {
-    //--- if the process is completed now, jump out.
-    if ( this->DataTransfer->GetTransferStatus() == vtkDataTransfer::Completed)
+    vtkDebugMacro ("vtkSlicerDataTransferWidget: Updating transfer feedback.");
+    //--- if the transfer has been completed in an asynchronous
+    //--- thread, its status has been modified without triggering
+    //--- an event. So always check this here to capture
+    //--- completed or canceled events and kill the timer.
+    if ( this->DataTransfer == NULL)
       {
-      this->TimerCount = 0;
-      this->UpdateWidget();
+      return;
       }
-    else
-      {
-      switch ( this->TimerCount )
-        {
-        case 0:
-          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing0Icon());
-          break;
-        case 1:
-          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing1Icon());
-          break;
-        case 2:
-          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing2Icon());
-          break;
-        case 3:
-          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing3Icon());
-          break;
-        case 4:
-          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing4Icon());
-          break;
-        case 5:
-          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing5Icon());
-          break;
-        case 6:
-          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing6Icon());
-          break;
-        case 7:
-          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoing7Icon());
-          break;
-        default:
-          this->TransferStatusLabel->SetImageToIcon( this->DataTransferIcons->GetTransferStatusGoingIcon());
-          break;
-        }
+    //--- for some reason, the timer doesn't seem to work in the
+    //--- main thread. Works fine for asynchronous transfers.
+    //--- TODO: figure this out and use the same behavior in either case.
 
-      if ( this->TimerCount == 7 )
+    if ( !(this->DataIOManager->GetEnableAsynchronousIO() ))
+      {
+      return;
+      }
+
+    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
+    if ( app != NULL && this->TimerRunning )
+      {
+      //--- if the process is completed now, jump out.
+      if ( this->DataTransfer->GetTransferStatus() == vtkDataTransfer::Completed)
         {
         this->TimerCount = 0;
+        this->UpdateWidget();
         }
       else
         {
-        this->TimerCount++;
-        }
+        switch ( this->TimerCount )
+          {
+          case 0:
+            this->TransferStatusLabel->SetImageToIcon( appGUI->GetSlicerFoundationIcons()->GetSlicerGoing0Icon());
+            break;
+          case 1:
+            this->TransferStatusLabel->SetImageToIcon( appGUI->GetSlicerFoundationIcons()->GetSlicerGoing1Icon());
+            break;
+          case 2:
+            this->TransferStatusLabel->SetImageToIcon( appGUI->GetSlicerFoundationIcons()->GetSlicerGoing2Icon());
+            break;
+          case 3:
+            this->TransferStatusLabel->SetImageToIcon( appGUI->GetSlicerFoundationIcons()->GetSlicerGoing3Icon());
+            break;
+          case 4:
+            this->TransferStatusLabel->SetImageToIcon( appGUI->GetSlicerFoundationIcons()->GetSlicerGoing4Icon());
+            break;
+          case 5:
+            this->TransferStatusLabel->SetImageToIcon( appGUI->GetSlicerFoundationIcons()->GetSlicerGoing5Icon());
+            break;
+          case 6:
+            this->TransferStatusLabel->SetImageToIcon( appGUI->GetSlicerFoundationIcons()->GetSlicerGoing6Icon());
+            break;
+          case 7:
+            this->TransferStatusLabel->SetImageToIcon( appGUI->GetSlicerFoundationIcons()->GetSlicerGoing7Icon());
+            break;
+          default:
+            this->TransferStatusLabel->SetImageToIcon( appGUI->GetSlicerFoundationIcons()->GetSlicerWaitIcon());
+            break;
+          }
 
-      if ( this->DataIOManager->GetEnableAsynchronousIO() )
-        {
-        vtkKWTkUtilities::CreateTimerHandler ( vtkKWApplication::GetMainInterp(), 100, this, "DisplayRunningAnimation");
-        }
-/*
-      else
+        if ( this->TimerCount == 7 )
+          {
+          this->TimerCount = 0;
+          }
+        else
+          {
+          this->TimerCount++;
+          }
+
+        if ( this->DataIOManager->GetEnableAsynchronousIO() )
+          {
+          vtkKWTkUtilities::CreateTimerHandler ( vtkKWApplication::GetMainInterp(), 100, this, "DisplayRunningAnimation");
+          }
+          /*
+         else
         {
         vtkKWTkUtilities::CreateIdleTimerHandler ( vtkKWApplication::GetMainInterp(), this, "DisplayRunningAnimation");        
         app->ProcessIdleTasks();
+         }
+        */
         }
-*/
       }
     }
 }
@@ -154,7 +163,6 @@ void vtkSlicerDataTransferWidget::PrintSelf (ostream& os, vtkIndent indent)
   os << indent << "TransferStatusLabel: " << this->GetTransferStatusLabel ( ) << "\n";
   os << indent << "CancelButton: " << this->GetCancelButton ( ) << "\n";
   os << indent << "DeleteButton: " << this->GetDeleteButton ( ) << "\n";
-  os << indent << "DataTransferIcons: " << this->GetDataTransferIcons ( ) << "\n";
   os << indent << "InformationButton: " << this->GetInformationButton ( ) << "\n";
   os << indent << "InformationTopLevel: " << this->GetInformationTopLevel ( ) << "\n";
   os << indent << "InformationFrame: " << this->GetInformationFrame ( ) << "\n";
@@ -243,11 +251,6 @@ vtkSlicerDataTransferWidget::~vtkSlicerDataTransferWidget(void)
       this->DataTransferFrame->SetParent ( NULL );
       this->DataTransferFrame->Delete();
       this->DataTransferFrame = NULL;
-      }
-    if ( this->DataTransferIcons )
-      {
-      this->DataTransferIcons->Delete();
-      this->DataTransferIcons = NULL;
       }
     this->SetApplication ( NULL );
   }
@@ -386,32 +389,75 @@ void vtkSlicerDataTransferWidget::ProcessWidgetEvents (vtkObject *caller, unsign
 //---------------------------------------------------------------------------
 void vtkSlicerDataTransferWidget::DisableDeleteButton ()
 {
-  this->DeleteButton->SetImageToIcon ( this->DataTransferIcons->GetDeleteFromCacheDisabledIcon() );
-  this->DeleteButton->SetStateToDisabled();
+  vtkSlicerApplication *app = NULL;
+  vtkSlicerApplicationGUI *appGUI = NULL;
+  app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+  if ( app != NULL )
+    {
+    appGUI = app->GetApplicationGUI();
+    }
+  if ( appGUI != NULL )
+    {
+    this->DeleteButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerDeleteDisabledIcon() );
+    this->DeleteButton->SetStateToDisabled();
+    }
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataTransferWidget::EnableDeleteButton()
 {
-  this->DeleteButton->SetImageToIcon ( this->DataTransferIcons->GetDeleteFromCacheIcon() );
-  this->DeleteButton->SetStateToNormal();
+  vtkSlicerApplication *app = NULL;
+  vtkSlicerApplicationGUI *appGUI = NULL;
+  app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+  if ( app != NULL )
+    {
+    appGUI = app->GetApplicationGUI();
+    }
+  if ( appGUI != NULL )
+    {
+    this->DeleteButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerDeleteIcon() );
+    this->DeleteButton->SetStateToNormal();
+    }
+
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataTransferWidget::DisableCancelButton ()
 {
-  this->CancelButton->SetImageToIcon ( this->DataTransferIcons->GetTransferCancelDisabledIcon() );
-  this->CancelButton->SetStateToDisabled();
+  vtkSlicerApplication *app = NULL;
+  vtkSlicerApplicationGUI *appGUI = NULL;
+  app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+  if ( app != NULL )
+    {
+    appGUI = app->GetApplicationGUI();
+    }
+  if ( appGUI != NULL )
+    {
+
+    this->CancelButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerCancelDisabledIcon() );
+    this->CancelButton->SetStateToDisabled();
+    }
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataTransferWidget::EnableCancelButton()
 {
-  this->CancelButton->SetImageToIcon ( this->DataTransferIcons->GetTransferCancelIcon() );
-  this->CancelButton->SetStateToNormal();
+  vtkSlicerApplication *app = NULL;
+  vtkSlicerApplicationGUI *appGUI = NULL;
+  app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+  if ( app != NULL )
+    {
+    appGUI = app->GetApplicationGUI();
+    }
+  if ( appGUI != NULL )
+    {
+
+    this->CancelButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerCancelIcon() );
+    this->CancelButton->SetStateToNormal();
+    }
 }
 
 
@@ -480,147 +526,157 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
     return;
     }
 
-  switch ( this->DataTransfer->GetTransferType() )
+  vtkSlicerApplication *app = NULL;
+  vtkSlicerApplicationGUI *appGUI = NULL;
+  app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+  if ( app != NULL )
     {
-    case vtkDataTransfer::RemoteDownload:
-      this->TransferTypeLabel->SetImageToIcon (this->DataTransferIcons->GetTransferTypeRemoteLoadIcon());
-      this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: Remote download.");
-      break;
-    case vtkDataTransfer::RemoteUpload:
-      this->TransferTypeLabel->SetImageToIcon (this->DataTransferIcons->GetTransferTypeRemoteSaveIcon());
-      this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: Remote upload.");
-      break;
-    case vtkDataTransfer::LocalLoad:
-      this->TransferTypeLabel->SetImageToIcon (this->DataTransferIcons->GetTransferTypeLoadIcon());
-      this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: Load from local disk.");
-      break;
-    case vtkDataTransfer::LocalSave:
-      this->TransferTypeLabel->SetImageToIcon (this->DataTransferIcons->GetTransferTypeSaveIcon());
-      this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: Save to local disk.");
-      break;
-    case vtkDataTransfer::Unspecified:
-      this->TransferTypeLabel->SetImageToIcon (this->DataTransferIcons->GetTransferTypeUnspecifiedIcon());
-      this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: unspecified.");
-      break;
-    default:
-      this->TransferTypeLabel->SetImageToIcon (this->DataTransferIcons->GetTransferTypeUnspecifiedIcon());
-      this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: unknown.");
-      break;
+    appGUI = app->GetApplicationGUI();
     }
+  if ( appGUI != NULL )
+    {
 
-  //--- make sure Timer is running if the transfer is running, ready (loading from cache)
-  // or cancel is pending... make sure Timer is killed if the transfer is done, or stopped.
-  if ( (this->DataTransfer->GetTransferStatus() == vtkDataTransfer::Running ) ||
-       (this->DataTransfer->GetTransferStatus() == vtkDataTransfer::CancelPending ) ||
-       (this->DataTransfer->GetTransferStatus() == vtkDataTransfer::Ready ))
-    {
-    if ( !this->TimerRunning )
+    switch ( this->DataTransfer->GetTransferType() )
       {
-      this->TimerRunning = 1;
-      this->DisplayRunningAnimation();
+      case vtkDataTransfer::RemoteDownload:
+        this->TransferTypeLabel->SetImageToIcon (appGUI->GetSlicerFoundationIcons()->GetSlicerDownloadIcon());
+        this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: Remote download.");
+        break;
+      case vtkDataTransfer::RemoteUpload:
+        this->TransferTypeLabel->SetImageToIcon (appGUI->GetSlicerFoundationIcons()->GetSlicerUploadIcon());
+        this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: Remote upload.");
+        break;
+      case vtkDataTransfer::LocalLoad:
+        this->TransferTypeLabel->SetImageToIcon (appGUI->GetSlicerFoundationIcons()->GetSlicerLoadIcon());
+        this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: Load from local disk.");
+        break;
+      case vtkDataTransfer::LocalSave:
+        this->TransferTypeLabel->SetImageToIcon (appGUI->GetSlicerFoundationIcons()->GetSlicerSaveIcon());
+        this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: Save to local disk.");
+        break;
+      case vtkDataTransfer::Unspecified:
+        this->TransferTypeLabel->SetImageToIcon (appGUI->GetSlicerFoundationIcons()->GetSlicerBlankIcon());
+        this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: unspecified.");
+        break;
+      default:
+        this->TransferTypeLabel->SetImageToIcon (appGUI->GetSlicerFoundationIcons()->GetSlicerBlankIcon());
+        this->TransferTypeLabel->SetBalloonHelpString ("Transfer type: unknown.");
+        break;
       }
-    }
-  else
-    {
+
+    //--- make sure Timer is running if the transfer is running, ready (loading from cache)
+    // or cancel is pending... make sure Timer is killed if the transfer is done, or stopped.
+    if ( (this->DataTransfer->GetTransferStatus() == vtkDataTransfer::Running ) ||
+         (this->DataTransfer->GetTransferStatus() == vtkDataTransfer::CancelPending ) ||
+         (this->DataTransfer->GetTransferStatus() == vtkDataTransfer::Ready ))
+      {
+      if ( !this->TimerRunning )
+        {
+        this->TimerRunning = 1;
+        this->DisplayRunningAnimation();
+        }
+      }
+    else
+      {
       if (  this->TimerRunning )
         {
         this->TimerRunning = 0;
         }
-    }
+      }
   
-  switch ( this->DataTransfer->GetTransferStatus() )
-    {
-    case vtkDataTransfer::Idle:
-      this->DisableDeleteButton();
-      this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusIdleIcon());
-      this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: idle.");
-      this->UpdateURILabel ( "(...): ");
-      break;
-    case vtkDataTransfer::Pending:
-      this->DisableDeleteButton();
-      this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusIdleIcon());
-      this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: idle.");
-      this->UpdateURILabel ( "(...): ");
-      break;
-    case vtkDataTransfer::Running:
-      this->DisableDeleteButton();
-      this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: running.");
-      this->UpdateURILabel ( "(running): ");
-      break;
-    case vtkDataTransfer::Completed:
-      this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusDoneIcon());
-      this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: completed.");
-      this->DisableCancelButton();
-      //--- check to see if the transfer is still cached....
-      //--- if present, label it as so. if not present,
-      //--- label it as cleared.
-      if ( this->DataTransfer->GetTransferType() == vtkDataTransfer::RemoteDownload )
-        {
+    switch ( this->DataTransfer->GetTransferStatus() )
+      {
+      case vtkDataTransfer::Idle:
+        this->DisableDeleteButton();
+        this->TransferStatusLabel->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerWaitIcon());
+        this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: idle.");
+        this->UpdateURILabel ( "(...): ");
+        break;
+      case vtkDataTransfer::Pending:
+        this->DisableDeleteButton();
+        this->TransferStatusLabel->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerWaitIcon());
+        this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: idle.");
+        this->UpdateURILabel ( "(...): ");
+        break;
+      case vtkDataTransfer::Running:
+        this->DisableDeleteButton();
+        this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: running.");
+        this->UpdateURILabel ( "(running): ");
+        break;
+      case vtkDataTransfer::Completed:
+        this->TransferStatusLabel->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerDoneIcon());
+        this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: completed.");
+        this->DisableCancelButton();
+        //--- check to see if the transfer is still cached....
+        //--- if present, label it as so. if not present,
+        //--- label it as cleared.
+        if ( this->DataTransfer->GetTransferType() == vtkDataTransfer::RemoteDownload )
+          {
           this->UpdateURILabel ( "(cached): ");
           this->EnableDeleteButton();
-        }
-      if ( this->DataTransfer->GetTransferType() == vtkDataTransfer::RemoteUpload )
-        {
+          }
+        if ( this->DataTransfer->GetTransferType() == vtkDataTransfer::RemoteUpload )
+          {
           this->UpdateURILabel ( "(cached): ");
           this->EnableDeleteButton();
-        }
-      break;
-    case vtkDataTransfer::CompletedWithErrors:
-      this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusErrorIcon());
-      this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: error!");
-      this->EnableDeleteButton();
-      this->DisableCancelButton();
-      this->UpdateURILabel ( "(error): ");
-      this->DisableURILabel();
-      break;
-    case vtkDataTransfer::CancelPending:
-      this->DisableDeleteButton();
-      this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusCancelRequestedIcon());
-      this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: cancel requested.");
-      this->UpdateURILabel ( "(cancelling...): ");
-      break;
-    case vtkDataTransfer::Deleted:
-      this->DisableDeleteButton();
-      this->DisableCancelButton();
-      this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: cleared from cache.");      
-      this->UpdateURILabel ( "(cleared): ");
-      this->DisableURILabel();
-      break;
-    case vtkDataTransfer::Cancelled:
-      this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusCancelledIcon());
-      this->DisableCancelButton();
-      this->DisableURILabel();
-      this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: cancelled.");
-      this->UpdateURILabel ( "(cancelled): ");
-      this->DisableURILabel();
-      break;
-    case vtkDataTransfer::Ready:
-      this->DisableDeleteButton();
-      this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: loading from cache...");
-      this->UpdateURILabel ( "(...): ");
-      break;
-    case vtkDataTransfer::TimedOut:
-      this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusTimedOutIcon());
-      this->EnableDeleteButton();
-      this->DisableCancelButton();
-      this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: timed out.");
-      this->UpdateURILabel ( "(timed out): ");
-      this->DisableURILabel();
-      break;
-    default:
-      this->TransferStatusLabel->SetImageToIcon(this->DataTransferIcons->GetTransferStatusIdleIcon());
-      this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: unknown.");
-      this->EnableDeleteButton();
-      this->EnableCancelButton();
-      this->UpdateURILabel ( "(??): ");
-      this->DisableURILabel();
-      break;
-    }
-  this->UpdateInformationText();
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-  if ( app )
-    {
-    app->ProcessIdleTasks();
+          }
+        break;
+      case vtkDataTransfer::CompletedWithErrors:
+        this->TransferStatusLabel->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerErrorIcon());
+        this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: error!");
+        this->EnableDeleteButton();
+        this->DisableCancelButton();
+        this->UpdateURILabel ( "(error): ");
+        this->DisableURILabel();
+        break;
+      case vtkDataTransfer::CancelPending:
+        this->DisableDeleteButton();
+        this->TransferStatusLabel->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerCancelRequestedIcon());
+        this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: cancel requested.");
+        this->UpdateURILabel ( "(cancelling...): ");
+        break;
+      case vtkDataTransfer::Deleted:
+        this->DisableDeleteButton();
+        this->DisableCancelButton();
+        this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: cleared from cache.");      
+        this->UpdateURILabel ( "(cleared): ");
+        this->DisableURILabel();
+        break;
+      case vtkDataTransfer::Cancelled:
+        this->TransferStatusLabel->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerCancelledIcon());
+        this->DisableCancelButton();
+        this->DisableURILabel();
+        this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: cancelled.");
+        this->UpdateURILabel ( "(cancelled): ");
+        this->DisableURILabel();
+        break;
+      case vtkDataTransfer::Ready:
+        this->DisableDeleteButton();
+        this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: loading from cache...");
+        this->UpdateURILabel ( "(...): ");
+        break;
+      case vtkDataTransfer::TimedOut:
+        this->TransferStatusLabel->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerTimedOutIcon());
+        this->EnableDeleteButton();
+        this->DisableCancelButton();
+        this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: timed out.");
+        this->UpdateURILabel ( "(timed out): ");
+        this->DisableURILabel();
+        break;
+      default:
+        this->TransferStatusLabel->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerWaitIcon());
+        this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: unknown.");
+        this->EnableDeleteButton();
+        this->EnableCancelButton();
+        this->UpdateURILabel ( "(??): ");
+        this->DisableURILabel();
+        break;
+      }
+    this->UpdateInformationText();
+    if ( app )
+      {
+      app->ProcessIdleTasks();
+      }
     }
 }
 
@@ -734,15 +790,19 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
       vtkErrorMacro(<< this->GetClassName() << " already created");
       return;
       }
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
-    if ( !app )
-      {
-      return;
-      }
     if ( this->DataTransfer == NULL )
       {
       return;
       }
+  vtkSlicerApplication *app = NULL;
+  vtkSlicerApplicationGUI *appGUI = NULL;
+  app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+  if ( app != NULL )
+    {
+    appGUI = app->GetApplicationGUI();
+    }
+  if ( appGUI != NULL )
+    {
 
     vtkDebugMacro ("vtkSlicerDataTransferWidget: Creating widget.");
     //call the superclass to create the whole widget
@@ -792,9 +852,6 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
     l5->SetWidth (6);
     l5->SetBorderWidth (0);
     l5->SetReliefToFlat();
-
-    
-    this->DataTransferIcons = vtkSlicerDataTransferIcons::New();
   
     this->URILabel = vtkKWLabel::New();
     this->URILabel->SetParent ( this->DataTransferFrame );
@@ -810,19 +867,19 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
     switch ( this->DataTransfer->GetTransferType() )
       {
       case vtkDataTransfer::RemoteDownload:
-        this->TransferTypeLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferTypeRemoteLoadIcon() );
+        this->TransferTypeLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerDownloadIcon() );
         break;
       case vtkDataTransfer::RemoteUpload:
-        this->TransferTypeLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferTypeRemoteSaveIcon() );
+        this->TransferTypeLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerUploadIcon() );
         break;
       case vtkDataTransfer::LocalLoad:
-        this->TransferTypeLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferTypeLoadIcon() );
+        this->TransferTypeLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerLoadIcon() );
         break;
       case vtkDataTransfer::LocalSave:
-        this->TransferTypeLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferTypeSaveIcon() );
+        this->TransferTypeLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerSaveIcon() );
         break;
       case vtkDataTransfer::Unspecified:
-        this->TransferTypeLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferTypeUnspecifiedIcon() );
+        this->TransferTypeLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerBlankIcon() );
         break;
       default:
         break;
@@ -835,28 +892,28 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
     switch ( this->DataTransfer->GetTransferStatus() )
       {
       case vtkDataTransfer::Idle:
-        this->TransferStatusLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferStatusIdleIcon() );
+        this->TransferStatusLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerWaitIcon() );
         break;
       case vtkDataTransfer::Ready:
-        this->TransferStatusLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferStatusReadyIcon() );
+        this->TransferStatusLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerWaitIcon() );
         break;
       case vtkDataTransfer::Running:
-        this->TransferStatusLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferStatusGoingIcon() );      
+        this->TransferStatusLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerWaitIcon() );      
         break;
       case vtkDataTransfer::Completed:
-        this->TransferStatusLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferStatusDoneIcon() );
+        this->TransferStatusLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerDoneIcon() );
         break;
       case vtkDataTransfer::CompletedWithErrors:
-        this->TransferStatusLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferStatusErrorIcon() );
+        this->TransferStatusLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerErrorIcon() );
         break;
       case vtkDataTransfer::Cancelled:
-        this->TransferStatusLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferStatusCancelledIcon() );
+        this->TransferStatusLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerCancelledIcon() );
         break;
       case vtkDataTransfer::CancelPending:
-        this->TransferStatusLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferStatusCancelRequestedIcon() );
+        this->TransferStatusLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerCancelRequestedIcon() );
         break;
       case vtkDataTransfer::TimedOut:
-        this->TransferStatusLabel->SetImageToIcon ( this->DataTransferIcons->GetTransferStatusTimedOutIcon() );
+        this->TransferStatusLabel->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerTimedOutIcon() );
         break;
       default:
         break;
@@ -884,7 +941,7 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
     this->InformationButton->SetReliefToFlat();
     this->InformationButton->SetBorderWidth(0);
     this->InformationButton->SetBalloonHelpString ( "View more detailed information about this data transfer." );
-    this->InformationButton->SetImageToIcon ( this->DataTransferIcons->GetTransferInformationIcon() );
+    this->InformationButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerInformationIcon() );
 
     this->InformationTopLevel = vtkKWTopLevel::New();
     this->InformationTopLevel->SetApplication (app );
@@ -957,6 +1014,7 @@ void vtkSlicerDataTransferWidget::CreateWidget( )
     l3->Delete();
     l4->Delete();
     l5->Delete();
+    }
 }
 
 

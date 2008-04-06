@@ -4,7 +4,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerComponentGUI.h"
 #include "vtkCacheManager.h"
-#include "vtkSlicerDataTransferIcons.h"
+#include "vtkSlicerFoundationIcons.h"
 
 #include "vtkObserverManager.h"
 #include "vtkMRMLScene.h"
@@ -39,6 +39,7 @@ public:
   vtkGetObjectMacro ( CacheFreeLabel, vtkKWLabel );
   vtkGetObjectMacro ( CloseButton, vtkKWPushButton );
   vtkGetObjectMacro ( ClearCacheButton, vtkKWPushButton );
+  vtkGetObjectMacro ( ClearDisplayButton, vtkKWPushButton );
   vtkGetObjectMacro ( CancelAllButton, vtkKWPushButton );
   vtkGetObjectMacro ( RefreshButton, vtkKWPushButton );
   vtkGetObjectMacro ( ForceReloadCheckButton, vtkKWCheckButton );
@@ -52,7 +53,6 @@ public:
   vtkSetMacro ( Built, bool );
   vtkGetMacro ( Built, bool );
   vtkGetObjectMacro ( TransferWidgetCollection, vtkCollection );
-  vtkGetObjectMacro ( DataTransferIcons, vtkSlicerDataTransferIcons );
 
   // Description:
   // This method builds the DataIOManager module GUI
@@ -130,6 +130,7 @@ protected:
   vtkKWPushButton *ClearCacheButton;
   vtkKWPushButton *CancelAllButton;
   vtkKWPushButton *RefreshButton;
+  vtkKWPushButton *ClearDisplayButton;
   vtkKWCheckButton *ForceReloadCheckButton;
   vtkKWCheckButton *OverwriteCacheCheckButton;
   vtkKWCheckButton *AsynchronousCheckButton;
@@ -142,7 +143,6 @@ protected:
   vtkDataIOManager *DataIOManager;
   vtkCacheManager *CacheManager;
   vtkCollection *TransferWidgetCollection;
-  vtkSlicerDataTransferIcons *DataTransferIcons;
 
     // Description:
     // Describes whether the GUI has been built or not.

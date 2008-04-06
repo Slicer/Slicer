@@ -6,6 +6,7 @@
 #include "vtkKWIcon.h"
 #include "vtkSlicerIcons.h"
 #include "./Resources/vtkSlicerDataTransfer_ImageData.h"
+#include "./Resources/vtkSlicerFoundation_ImageData.h"
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferIcons : public vtkSlicerIcons
 {
@@ -19,6 +20,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferIcons : public vtkSlicerIc
     vtkGetObjectMacro ( TransferTypeSaveIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferTypeRemoteLoadIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferTypeRemoteSaveIcon, vtkKWIcon);
+    vtkGetObjectMacro ( ClearDisplayIcon, vtkKWIcon );
 
     vtkGetObjectMacro ( TransferStatusGoingIcon, vtkKWIcon);
     vtkGetObjectMacro ( TransferStatusGoing0Icon, vtkKWIcon);
@@ -80,6 +82,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerDataTransferIcons : public vtkSlicerIc
     vtkKWIcon *TransferStatusErrorIcon;
 
     vtkKWIcon *TransferCancelIcon;
+    vtkKWIcon *ClearDisplayIcon;
     vtkKWIcon *TransferInformationIcon;
     vtkKWIcon *DeleteFromCacheIcon;
     vtkKWIcon *TransferCancelDisabledIcon;
