@@ -40,7 +40,6 @@ vtkSlicerFiberBundleDisplayWidget::vtkSlicerFiberBundleDisplayWidget ( )
     this->DisplayFrame = NULL;
     this->GeometryColorMenu = NULL;
 
-
     this->UpdatingMRML = 0;
     this->UpdatingWidget = 0;
 }
@@ -479,12 +478,7 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   this->FiberBundleSelectorWidget->Create ( );
   this->FiberBundleSelectorWidget->SetNodeClass("vtkMRMLFiberBundleNode", NULL, NULL, NULL);
   this->FiberBundleSelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->FiberBundleSelectorWidget->SetBorderWidth(2);
-  // this->FiberBundleSelectorWidget->SetReliefToGroove();
-  this->FiberBundleSelectorWidget->SetPadX(2);
-  this->FiberBundleSelectorWidget->SetPadY(2);
   this->FiberBundleSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->FiberBundleSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
   this->FiberBundleSelectorWidget->SetLabelText( "FiberBundle Select: ");
   this->FiberBundleSelectorWidget->SetBalloonHelpString("select a fiberBundle from the current mrml scene.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
@@ -495,11 +489,11 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   this->GeometryMenu = vtkKWMenuButtonWithLabel::New();
   this->GeometryMenu->SetParent( fiberBundleDisplayFrame );
   this->GeometryMenu->Create();
-  this->GeometryMenu->GetWidget()->GetMenu()->AddRadioButton("Line");
   this->GeometryMenu->GetWidget()->GetMenu()->AddRadioButton("Tube");
+  this->GeometryMenu->GetWidget()->GetMenu()->AddRadioButton("Line");
   this->GeometryMenu->GetWidget()->GetMenu()->AddRadioButton("Glyph");
-  this->GeometryMenu->GetWidget()->SetValue("Line");
-  this->CurrentGeometry = "Line";
+  this->GeometryMenu->GetWidget()->SetValue("Tube");
+  this->CurrentGeometry = "Tube";
   
   // pack geom menu
   this->GeometryMenu->SetLabelText("Display For:");
@@ -509,7 +503,7 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
 
   this->DisplayFrame = vtkKWFrameWithLabel::New ( );
   this->DisplayFrame->SetParent ( fiberBundleDisplayFrame );
-  std::string label = this->CurrentGeometry + std::string(" Display");
+  std::string label = this->CurrentGeometry + std::string("Display");
   this->DisplayFrame->SetLabelText (label.c_str());
   this->DisplayFrame->Create ( );
   
@@ -565,12 +559,7 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
   this->ColorSelectorWidget->SetNodeClass("vtkMRMLColorNode", NULL, NULL, NULL);
   this->ColorSelectorWidget->ShowHiddenOn();
   this->ColorSelectorWidget->SetMRMLScene(this->GetMRMLScene());
-  this->ColorSelectorWidget->SetBorderWidth(2);
-  // this->ColorSelectorWidget->SetReliefToGroove();
-  this->ColorSelectorWidget->SetPadX(2);
-  this->ColorSelectorWidget->SetPadY(2);
   this->ColorSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();
-  this->ColorSelectorWidget->GetWidget()->GetWidget()->SetWidth(24);
   this->ColorSelectorWidget->SetLabelText( "Scalar Color Map");
   this->ColorSelectorWidget->SetBalloonHelpString("select a color node from the current mrml scene.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
@@ -633,8 +622,6 @@ void vtkSlicerFiberBundleDisplayWidget::CreateWidget ( )
 
   // TODO glyph widget
   // TODO color node, opacity and color for glyphs and tubes
-
-
 
   fiberBundleDisplayFrame->Delete();
     
