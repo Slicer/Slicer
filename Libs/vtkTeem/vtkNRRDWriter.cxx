@@ -204,7 +204,7 @@ void vtkNRRDWriter::WriteData()
     // Fill in image information.
   this->GetInput()->UpdateInformation();
   
-  vtkImageData *input = this->GetInput();
+  //vtkImageData *input = this->GetInput();
 
   // Find Pixel type from data and select a buffer.
   this->vtkImageDataInfoToNrrdInfo(this->GetInput(),kind[0],size[0],vtkType, &buffer); 
@@ -231,7 +231,7 @@ void vtkNRRDWriter::WriteData()
     size[axi+baseDim] = this->GetInput()->GetDimensions()[axi];
     kind[axi+baseDim] = nrrdKindDomain;
     origin[axi] = this->IJKToRASMatrix->GetElement((int) axi,3);
-    double spacing = this->GetInput()->GetSpacing()[axi];
+    //double spacing = this->GetInput()->GetSpacing()[axi];
     for (unsigned int saxi=0; saxi < spaceDim; saxi++)
       {
       spaceDir[axi+baseDim][saxi] = this->IJKToRASMatrix->GetElement(saxi,axi);
@@ -279,8 +279,8 @@ void vtkNRRDWriter::WriteData()
   // 2. Take care about diffusion data
   if (this->DiffusionWeigthedData)
     {
-    int numGrad = this->DiffusionGradients->GetNumberOfTuples();
-    int numBValues = this->BValues->GetNumberOfTuples();
+    unsigned int numGrad = this->DiffusionGradients->GetNumberOfTuples();
+    unsigned int numBValues = this->BValues->GetNumberOfTuples();
 
     if (kind[0] == nrrdKindList && numGrad == size[0] && numBValues == size[0])
       {
@@ -295,9 +295,10 @@ void vtkNRRDWriter::WriteData()
       nrrdKeyValueAdd(nrrd, key, value);
 
       strcpy(key,"DWMRI_b-value");
-      sprintf(value,"%f",maxbVal,1024);
+      //sprintf(value,"%f",maxbVal,1024);
+      sprintf(value,"%f",maxbVal);
       nrrdKeyValueAdd(nrrd,key, value);
-      for (int ig =0; ig< numGrad; ig++)
+      for (unsigned int ig =0; ig< numGrad; ig++)
         {
         grad=this->DiffusionGradients->GetTuple3(ig);
         bVal = this->BValues->GetValue(ig);
