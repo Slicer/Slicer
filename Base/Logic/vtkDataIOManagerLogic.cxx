@@ -240,12 +240,39 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
     return 0;
     }
 
+
   const char *source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
   const char *dest = cm->GetFilenameFromURI ( source );
   vtkDebugMacro("QueueRead: got the source " << source << " and dest " << dest);
 
+
   //--- set the destination filename in the node.
   dnode->GetNthStorageNode(storageNodeIndex)->SetFileName ( dest );
+  
+  //---
+  //--- WJPtest:
+  //--- Test for space to download the file.
+  //---
+  float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) -  (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
+  if ( (cm->GetCurrentCacheSize()*1000000.0) >= bufsize )
+    {
+    //--- No space left in cache.
+    if ( cm->CachedFileExists (dest) )
+      {
+      //--- Load the cached version as a last resort.
+      dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateTransferDone();
+      }
+    //--- Invoke an event that will trigger
+    //--- GUI to post a message box telling
+    //--- user that there's insufficient space in the cache,
+    //--- to download new data, but that Slicer is loading
+    //--- a cached version IF one is available.
+    cm->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
+    return 1;
+    }
+  //---
+  //---END WJPtest
+  ///---
   
   //--- if the filename already exists in cache and
   //--- user has selected not to redownload cached files
@@ -263,6 +290,25 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   //---
   //--- TODO: build out the logic to handle creating
   //--- new versions of the dataset in cache.
+
+  //--- if permissions are required, invoke the permissions prompter.
+  int retval = -1;
+  if ( handler->GetPermissionPrompter() != NULL )
+    {
+    while (retval < 0 )
+      {
+      //--- keep prompting until user provides all information, or user cancels.
+      handler->GetPermissionPrompter()->Prompt(NULL);
+      }
+    }
+  if ( retval == 0)
+    {
+    //--- no permission fields were completed.
+    //--- Transfer should be cancelled -- how do we do this?
+    dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateCancelled();
+    vtkDebugMacro("QueueRead: cancelling data transfer.");
+    return 0;
+    }
   
   //--- construct and add a record of the transfer
   //--- which includes the ID of associated node
@@ -280,6 +326,9 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   transfer->SetTransferType ( vtkDataTransfer::RemoteDownload );
   transfer->SetTransferStatus ( vtkDataTransfer::Idle );
   transfer->SetCancelRequested ( 0 );
+  //--- Add the data transfer to the collection, and
+  //--- the resulting mrml call will trigger an event
+  //--- that causes GUI to refresh.
   this->AddNewDataTransfer ( transfer, node );
   
   vtkDebugMacro("QueueRead: asynchronous enabled = " << this->GetDataIOManager()->GetEnableAsynchronousIO());
