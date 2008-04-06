@@ -107,7 +107,7 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
   //
   if (this->SnapshotSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event ==  vtkSlicerNodeSelectorWidget::NodeSelectedEvent)
     {
-    this->RestoreSceneButton->SetImageToIcon ( this->Icons->GetGoIcon() );
+    this->RestoreSceneButton->SetImageToIcon ( this->Icons->GetSlicerGoIcon() );
     this->RestoreSceneButton->SetBalloonHelpString ("Restore a scene snapshot." );
     this->RestoreSceneButton->SetStateToNormal();
     }
@@ -135,7 +135,7 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
     if (snapshotNode)
       {
       snapshotNode->StoreScene();
-      this->RestoreSceneButton->SetImageToIcon ( this->Icons->GetGoIcon() );
+      this->RestoreSceneButton->SetImageToIcon ( this->Icons->GetSlicerGoIcon() );
       this->RestoreSceneButton->SetBalloonHelpString ("Restore a scene snapshot." );
       this->RestoreSceneButton->SetStateToNormal();
       //snapshotNode->Delete();
@@ -150,7 +150,7 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
       {
       this->MRMLScene->SaveStateForUndo();
       snapshotNode->RestoreScene();
-//      this->RestoreSceneButton->SetImageToIcon ( this->Icons->GetDoneIcon() );
+//      this->RestoreSceneButton->SetImageToIcon ( this->Icons->GetSlicerDoneIcon() );
       }
     }
 } 
@@ -183,7 +183,7 @@ void vtkSlicerSceneSnapshotWidget::MRMLExtraCallback( vtkObject *caller, unsigne
     {
     if  (eid == vtkMRMLScene::SceneCloseEvent )
       {
-        self->RestoreSceneButton->SetImageToIcon (self->Icons->GetGoIcon() );
+        self->RestoreSceneButton->SetImageToIcon (self->Icons->GetSlicerGoIcon() );
         self->RestoreSceneButton->SetBalloonHelpString ("Restore a scene snapshot (no snapshots currently available)." );
         self->RestoreSceneButton->SetStateToDisabled();
       }
@@ -195,7 +195,7 @@ void vtkSlicerSceneSnapshotWidget::MRMLExtraCallback( vtkObject *caller, unsigne
       int num = self->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSnapshotNode");
       if ( num <= 0 )
         {
-        self->RestoreSceneButton->SetImageToIcon (self->Icons->GetGoIcon() );
+        self->RestoreSceneButton->SetImageToIcon (self->Icons->GetSlicerGoIcon() );
         self->RestoreSceneButton->SetBalloonHelpString ("Restore a scene snapshot (no snapshots currently available)." );
         self->RestoreSceneButton->SetStateToDisabled();
         }
@@ -305,7 +305,7 @@ void vtkSlicerSceneSnapshotWidget::CreateWidget ( )
   this->CreateSnapshotButton = vtkKWPushButton::New();
   this->CreateSnapshotButton->SetParent(frame);
   this->CreateSnapshotButton->Create();
-  this->CreateSnapshotButton->SetImageToIcon (this->Icons->GetCameraIcon() );
+  this->CreateSnapshotButton->SetImageToIcon (this->Icons->GetSlicerCameraIcon() );
   this->CreateSnapshotButton->SetReliefToFlat();
   this->CreateSnapshotButton->SetBorderWidth(0);
   this->CreateSnapshotButton->SetBalloonHelpString ( "Capture a scene snapshot." );
@@ -336,7 +336,7 @@ void vtkSlicerSceneSnapshotWidget::CreateWidget ( )
   this->RestoreSceneButton = vtkKWPushButton::New();
   this->RestoreSceneButton->SetParent(frame);
   this->RestoreSceneButton->Create();
-  this->RestoreSceneButton->SetImageToIcon (this->Icons->GetGoIcon() );
+  this->RestoreSceneButton->SetImageToIcon (this->Icons->GetSlicerGoIcon() );
   this->RestoreSceneButton->SetReliefToFlat();
   this->RestoreSceneButton->SetBorderWidth(0);
   this->RestoreSceneButton->SetStateToDisabled();
