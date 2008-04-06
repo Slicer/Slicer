@@ -62,7 +62,6 @@ SET(LIB_SRCS
   vtkSlicerModuleChooseGUI.cxx
   vtkSlicerLogoDisplayGUI.cxx
   vtkSlicerApplicationGUI.cxx
-  vtkSlicerDataTransferIcons.cxx
   vtkSlicerDataTransferWidget.cxx
   vtkSlicerCacheAndDataIOManagerGUI.cxx
   # KW Widgets
