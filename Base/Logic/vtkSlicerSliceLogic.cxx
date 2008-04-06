@@ -963,7 +963,6 @@ vtkMRMLVolumeNode *vtkSlicerSliceLogic::GetLayerVolumeNode(int layer)
 {
   vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
   vtkMRMLSliceCompositeNode *compositeNode = this->GetSliceCompositeNode();
-  vtkMRMLVolumeNode *backgroundNode = NULL;
 
   if ( !sliceNode || !compositeNode )
     {
