@@ -368,7 +368,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         in[3] = out[3] = 1.0;
         
         for (vtkIdType id=0;
-             id < grids[0]->GetBufferedRegion().GetNumberOfPixels() ; ++id)
+             id < (vtkIdType)(grids[0]->GetBufferedRegion().GetNumberOfPixels()) ; ++id)
           {
           // convert each control point of the B-spline grid to RAS
           in[0] = xit.Get();
@@ -450,7 +450,7 @@ int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     }
   
-  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  //vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
   
   std::string fullName;
   if (this->SceneRootDir != NULL && this->Scene->IsFilePathRelative(this->GetFileName())) 

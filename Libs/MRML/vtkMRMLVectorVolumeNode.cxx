@@ -78,7 +78,7 @@ void vtkMRMLVectorVolumeNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLVectorVolumeNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLVectorVolumeNode *node = (vtkMRMLVectorVolumeNode *) anode;
+  //vtkMRMLVectorVolumeNode *node = (vtkMRMLVectorVolumeNode *) anode;
 }
 
 //----------------------------------------------------------------------------

@@ -71,7 +71,7 @@ void vtkMRMLVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLVolumeDisplayNode *node = (vtkMRMLVolumeDisplayNode *) anode;
+  //vtkMRMLVolumeDisplayNode *node = (vtkMRMLVolumeDisplayNode *) anode;
 
 }
 

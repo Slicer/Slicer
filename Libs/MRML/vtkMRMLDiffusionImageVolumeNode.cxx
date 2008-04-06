@@ -143,7 +143,7 @@ void vtkMRMLDiffusionImageVolumeNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLDiffusionImageVolumeNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLDiffusionImageVolumeNode *node = (vtkMRMLDiffusionImageVolumeNode *) anode;
+  //vtkMRMLDiffusionImageVolumeNode *node = (vtkMRMLDiffusionImageVolumeNode *) anode;
 
 }
 

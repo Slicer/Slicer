@@ -78,7 +78,7 @@ void vtkMRMLUnstructuredGridNode::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLUnstructuredGridNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLUnstructuredGridNode *node = (vtkMRMLUnstructuredGridNode *) anode;
+  //vtkMRMLUnstructuredGridNode *node = (vtkMRMLUnstructuredGridNode *) anode;
 
 }
 

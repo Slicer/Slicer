@@ -95,7 +95,7 @@ void vtkMRMLColorTableStorageNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLColorTableStorageNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLColorTableStorageNode *node = (vtkMRMLColorTableStorageNode *) anode;
+  //vtkMRMLColorTableStorageNode *node = (vtkMRMLColorTableStorageNode *) anode;
 }
 
 //----------------------------------------------------------------------------

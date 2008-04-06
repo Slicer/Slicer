@@ -234,7 +234,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
   // from a SceneUpdate with geometry and scalar files set
   // if it's a geometry file and the scalar overlay list isn't empty, re-read
   // those
-  int isSurfaceFile = 0;
+  //int isSurfaceFile = 0;
   
   vtkDebugMacro("ReadData: reading " << fullName.c_str());
   
@@ -265,7 +265,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
           modelNode->GetPolyData()->GetPointData() != NULL)
         {
         vtkMRMLModelDisplayNode *displayNode = modelNode->GetModelDisplayNode();
-        int numVertices = modelNode->GetPolyData()->GetPointData()->GetNumberOfTuples();
+        //int numVertices = modelNode->GetPolyData()->GetPointData()->GetNumberOfTuples();
 
         vtkFSSurfaceScalarReader *reader = vtkFSSurfaceScalarReader::New();
         reader->SetFileName(fullName.c_str());
@@ -554,7 +554,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
         reader->SetArchetype(fullName.c_str());
         reader->SetOutputScalarTypeToNative();
         reader->SetDesiredCoordinateOrientationToNative();
-        int result = 1;
+        //int result = 1;
         try
           {
           reader->Update();
@@ -690,7 +690,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     }
   
-  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
+  //vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
   
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 

@@ -89,7 +89,7 @@ void vtkMRMLFiberBundleLineDisplayNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLFiberBundleLineDisplayNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLFiberBundleLineDisplayNode *node = (vtkMRMLFiberBundleLineDisplayNode *) anode;
+  //vtkMRMLFiberBundleLineDisplayNode *node = (vtkMRMLFiberBundleLineDisplayNode *) anode;
 
 }
 

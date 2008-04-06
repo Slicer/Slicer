@@ -105,7 +105,7 @@ void vtkMRMLDiffusionTensorVolumeNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLDiffusionTensorVolumeNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLDiffusionTensorVolumeNode *node = (vtkMRMLDiffusionTensorVolumeNode *) anode;
+  //vtkMRMLDiffusionTensorVolumeNode *node = (vtkMRMLDiffusionTensorVolumeNode *) anode;
 }
 
 //----------------------------------------------------------------------------

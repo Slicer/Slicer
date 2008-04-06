@@ -210,7 +210,7 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
       }
     }
   std::vector<vtkMRMLNode*> removedNodes;
-  int nnodesScene = this->Scene->GetNumberOfNodes();
+  unsigned int nnodesScene = this->Scene->GetNumberOfNodes();
   for (n=0; n<nnodesScene; n++)
     {
     node = this->Scene->GetNthNode(n);

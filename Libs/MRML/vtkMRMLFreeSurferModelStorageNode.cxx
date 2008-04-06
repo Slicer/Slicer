@@ -279,7 +279,7 @@ int vtkMRMLFreeSurferModelStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     }
   
-  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
+  //vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
   
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 

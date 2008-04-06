@@ -334,7 +334,7 @@ void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* mat)
       }
     }
 
-  int row, i=0;
+  int row;
   for (row=0; row<3; row++) 
     {
     for (col=0; col<3; col++) 
@@ -366,7 +366,7 @@ void vtkMRMLVolumeNode::GetIJKToRASMatrix(vtkMatrix4x4* mat)
 {
   // this is the full matrix including the spacing and origin
   mat->Identity();
-  int row, col, i=0;
+  int row, col;
   for (row=0; row<3; row++) 
     {
     for (col=0; col<3; col++) 

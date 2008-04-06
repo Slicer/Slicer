@@ -126,7 +126,7 @@ void vtkMRMLSnapshotClipNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLSnapshotClipNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLSnapshotClipNode *snode = (vtkMRMLSnapshotClipNode *) anode;
+  //vtkMRMLSnapshotClipNode *snode = (vtkMRMLSnapshotClipNode *) anode;
 
   if (this->SceneSnapshotNodes == NULL)
     {

@@ -96,7 +96,7 @@ void vtkMRMLProceduralColorNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLProceduralColorNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLProceduralColorNode *node = (vtkMRMLProceduralColorNode *) anode;
+  //vtkMRMLProceduralColorNode *node = (vtkMRMLProceduralColorNode *) anode;
 }
 
 //----------------------------------------------------------------------------

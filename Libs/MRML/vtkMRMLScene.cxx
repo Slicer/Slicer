@@ -366,12 +366,14 @@ void vtkMRMLScene::RemoveAllNodesExceptSingletons()
   vtkMRMLNode *node;
   this->InitTraversal();
   std::vector<vtkMRMLNode *> removeNodes;
-  while (node = this->GetNextNode()) 
+  node = this->GetNextNode();
+  while(node)
     {
     if (node->GetSingletonTag() == NULL)
       {
       removeNodes.push_back(node);
       }
+    node = this->GetNextNode();
     }
     for(unsigned int i=0; i<removeNodes.size(); i++)
       {
@@ -390,9 +392,11 @@ void vtkMRMLScene::ResetNodes()
   vtkMRMLNode *node;
   std::vector <vtkMRMLNode *> nodes;
   this->InitTraversal();
-  while (node = this->GetNextNode()) 
+  node = this->GetNextNode();
+  while(node)
     {
     nodes.push_back(node);
+    node = this->GetNextNode();
     }
   for(unsigned int i=0; i<nodes.size(); i++) 
     {
@@ -568,7 +572,7 @@ int vtkMRMLScene::Import()
 
     for (n=0; n<nnodes; n++) 
       {
-      double progress = n / (1. * nnodes);
+      //double progress = n / (1. * nnodes);
       //this->InvokeEvent(vtkCommand::ProgressEvent,(void *)&progress);
 
       node = (vtkMRMLNode *)scene->GetItemAsObject(n);
@@ -916,7 +920,7 @@ void vtkMRMLScene::RemoveReferencedNodeID(const char *id, vtkMRMLNode *refrencin
     }
   std::vector< std::string > referencedIDs;
   std::vector< vtkMRMLNode* > referencingNodes;
-  vtkMRMLNode *node = NULL;
+  //vtkMRMLNode *node = NULL;
 
   int nnodes = this->ReferencingNodes.size();
   int i=0;
@@ -950,7 +954,7 @@ void vtkMRMLScene::RemoveNodeReferences(vtkMRMLNode *n)
 
   std::vector< std::string > referencedIDs;
   std::vector< vtkMRMLNode* > referencingNodes;
-  vtkMRMLNode *node = NULL;
+  //vtkMRMLNode *node = NULL;
 
   int nnodes = this->ReferencingNodes.size();
   int i=0;

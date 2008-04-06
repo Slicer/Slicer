@@ -333,7 +333,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
     vtkErrorMacro("QueueRead: unable to find a pending storage node!");
     return;
     }
-  vtkURIHandler *handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
+  //vtkURIHandler *handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   vtkDebugMacro("QueueRead: got the uri handler from the storage node");
   const char *source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
   const char *dest; 
@@ -413,7 +413,7 @@ void vtkDataIOManager::QueueWrite ( vtkMRMLNode *node )
     vtkErrorMacro("QueueWrite: unable to find a pending storage node!");
     return;
     }
-  vtkURIHandler *handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
+  //vtkURIHandler *handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   vtkDebugMacro("QueueWrite: got the uri handler from the storage node");
   const char *source = dnode->GetNthStorageNode(storageNodeIndex)->GetFileName();
   const char *dest = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
@@ -445,7 +445,6 @@ int vtkDataIOManager::GetUniqueTransferID ( )
   
   //--- keep looping until we find an id that is unique
   int id = 1;
-  int i = 0;
   int exists = 0;
   vtkDataTransfer *dt;
     
