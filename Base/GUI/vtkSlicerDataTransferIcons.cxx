@@ -41,6 +41,7 @@ vtkSlicerDataTransferIcons::vtkSlicerDataTransferIcons ( )
     this->TransferStatusCancelRequestedIcon = vtkKWIcon::New();
 
     //--- Button icons
+    this->ClearDisplayIcon = vtkKWIcon::New( );
     this->TransferCancelIcon = vtkKWIcon::New ( );
     this->TransferInformationIcon = vtkKWIcon::New ( );
     this->DeleteFromCacheIcon = vtkKWIcon::New();
@@ -56,6 +57,11 @@ vtkSlicerDataTransferIcons::vtkSlicerDataTransferIcons ( )
 vtkSlicerDataTransferIcons::~vtkSlicerDataTransferIcons ( )
 {
 
+  if (this->ClearDisplayIcon )
+    {
+    this->ClearDisplayIcon->Delete();
+    this->ClearDisplayIcon = NULL;
+    }
   if ( this->TransferTypeUnspecifiedIcon )
     {
     this->TransferTypeUnspecifiedIcon->Delete();
@@ -229,121 +235,126 @@ void vtkSlicerDataTransferIcons::AssignImageDataToIcons ( )
                                 image_TransferTypeRemoteSave_pixel_size,
                                 image_TransferTypeRemoteSave_length, 0);
 
-  this->TransferStatusReadyIcon->SetImage( image_TransferStatusReady,
-                                image_TransferStatusReady_width,
-                                image_TransferStatusReady_height,
-                                image_TransferStatusReady_pixel_size,
-                                image_TransferStatusReady_length, 0);
-  this->TransferStatusGoingIcon->SetImage( image_TransferStatusGoing,
-                                image_TransferStatusGoing_width,
-                                image_TransferStatusGoing_height,
-                                image_TransferStatusGoing_pixel_size,
-                                image_TransferStatusGoing_length, 0);
-  this->TransferStatusGoing0Icon->SetImage( image_TransferStatusGoing0,
-                                image_TransferStatusGoing0_width,
-                                image_TransferStatusGoing0_height,
-                                image_TransferStatusGoing0_pixel_size,
-                                image_TransferStatusGoing0_length, 0);
-  this->TransferStatusGoing1Icon->SetImage( image_TransferStatusGoing1,
-                                image_TransferStatusGoing1_width,
-                                image_TransferStatusGoing1_height,
-                                image_TransferStatusGoing1_pixel_size,
-                                image_TransferStatusGoing1_length, 0);
-  this->TransferStatusGoing2Icon->SetImage( image_TransferStatusGoing2,
-                                image_TransferStatusGoing2_width,
-                                image_TransferStatusGoing2_height,
-                                image_TransferStatusGoing2_pixel_size,
-                                image_TransferStatusGoing2_length, 0);
-  this->TransferStatusGoing3Icon->SetImage( image_TransferStatusGoing3,
-                                image_TransferStatusGoing3_width,
-                                image_TransferStatusGoing3_height,
-                                image_TransferStatusGoing3_pixel_size,
-                                image_TransferStatusGoing3_length, 0);
-  this->TransferStatusGoing4Icon->SetImage( image_TransferStatusGoing4,
-                                image_TransferStatusGoing4_width,
-                                image_TransferStatusGoing4_height,
-                                image_TransferStatusGoing4_pixel_size,
-                                image_TransferStatusGoing4_length, 0);
-  this->TransferStatusGoing5Icon->SetImage( image_TransferStatusGoing5,
-                                image_TransferStatusGoing5_width,
-                                image_TransferStatusGoing5_height,
-                                image_TransferStatusGoing5_pixel_size,
-                                image_TransferStatusGoing5_length, 0);
-  this->TransferStatusGoing6Icon->SetImage( image_TransferStatusGoing6,
-                                image_TransferStatusGoing6_width,
-                                image_TransferStatusGoing6_height,
-                                image_TransferStatusGoing6_pixel_size,
-                                image_TransferStatusGoing6_length, 0);
-  this->TransferStatusGoing7Icon->SetImage( image_TransferStatusGoing7,
-                                image_TransferStatusGoing7_width,
-                                image_TransferStatusGoing7_height,
-                                image_TransferStatusGoing7_pixel_size,
-                                image_TransferStatusGoing7_length, 0);
-  this->TransferStatusCancelledIcon->SetImage( image_TransferStatusCancelled,
-                                image_TransferStatusCancelled_width,
-                                image_TransferStatusCancelled_height,
-                                image_TransferStatusCancelled_pixel_size,
-                                image_TransferStatusCancelled_length, 0);
-  this->TransferStatusDoneIcon->SetImage( image_TransferStatusDone,
-                                image_TransferStatusDone_width,
-                                image_TransferStatusDone_height,
-                                image_TransferStatusDone_pixel_size,
-                                image_TransferStatusDone_length, 0);
-  this->TransferStatusTimedOutIcon->SetImage( image_TransferStatusTimedOut,
-                                image_TransferStatusTimedOut_width,
-                                image_TransferStatusTimedOut_height,
-                                image_TransferStatusTimedOut_pixel_size,
-                                image_TransferStatusTimedOut_length, 0);
-  this->TransferStatusWaitIcon->SetImage (image_TransferStatusWait,
-                                          image_TransferStatusWait_width,
-                                          image_TransferStatusWait_height,
-                                          image_TransferStatusWait_pixel_size,
-                                          image_TransferStatusWait_length, 0);                                          
-  this->TransferCancelDisabledIcon->SetImage ( image_TransferCancelDisabled,
-                                               image_TransferCancelDisabled_width,
-                                               image_TransferCancelDisabled_height,
-                                               image_TransferCancelDisabled_pixel_size,
-                                               image_TransferCancelDisabled_length, 0);
-  this->DeleteFromCacheDisabledIcon->SetImage ( image_DeleteFromCacheDisabled,
-                                                image_DeleteFromCacheDisabled_width,
-                                                image_DeleteFromCacheDisabled_height,
-                                                image_DeleteFromCacheDisabled_pixel_size,
-                                                image_DeleteFromCacheDisabled_length, 0);                                                
-  this->RefreshSettingsIcon->SetImage ( image_Refresh,
-                                        image_Refresh_width,
-                                        image_Refresh_height,
-                                        image_Refresh_pixel_size,
-                                        image_Refresh_length, 0 );                                        
-  this->TransferCancelIcon->SetImage( image_TransferCancel,
-                                image_TransferCancel_width,
-                                image_TransferCancel_height,
-                                image_TransferCancel_pixel_size,
-                                image_TransferCancel_length, 0);
-  this->TransferInformationIcon->SetImage( image_TransferInformation,
-                                image_TransferInformation_width,
-                                image_TransferInformation_height,
-                                image_TransferInformation_pixel_size,
-                                image_TransferInformation_length, 0);
-  this->TransferStatusIdleIcon->SetImage ( image_TransferStatusWait,
-                                           image_TransferStatusWait_width,
-                                           image_TransferStatusWait_height,
-                                           image_TransferStatusWait_pixel_size,
-                                           image_TransferStatusWait_length, 0);
-  this->TransferStatusErrorIcon->SetImage ( image_TransferError,
-                                      image_TransferError_width,
-                                      image_TransferError_height,
-                                      image_TransferError_pixel_size,
-                                      image_TransferError_length, 0);
-  this->TransferStatusCancelRequestedIcon->SetImage ( image_TransferCancelRequested,
-                                                image_TransferCancelRequested_width,
-                                                image_TransferCancelRequested_height,
-                                                image_TransferCancelRequested_pixel_size,
-                                                image_TransferCancelRequested_length, 0);                                                
-  this->DeleteFromCacheIcon->SetImage ( image_DeleteFromCache,
-                                        image_DeleteFromCache_width,
-                                        image_DeleteFromCache_height,
-                                        image_DeleteFromCache_pixel_size,
-                                        image_DeleteFromCache_length, 0);
+  this->TransferStatusReadyIcon->SetImage( image_SlicerWait,
+                                image_SlicerWait_width,
+                                image_SlicerWait_height,
+                                image_SlicerWait_pixel_size,
+                                image_SlicerWait_length, 0);
+  this->TransferStatusGoingIcon->SetImage( image_SlicerWait,
+                                image_SlicerWait_width,
+                                image_SlicerWait_height,
+                                image_SlicerWait_pixel_size,
+                                image_SlicerWait_length, 0);
+  this->TransferStatusGoing0Icon->SetImage( image_SlicerGoing0,
+                                image_SlicerGoing0_width,
+                                image_SlicerGoing0_height,
+                                image_SlicerGoing0_pixel_size,
+                                image_SlicerGoing0_length, 0);
+  this->TransferStatusGoing1Icon->SetImage( image_SlicerGoing1,
+                                image_SlicerGoing1_width,
+                                image_SlicerGoing1_height,
+                                image_SlicerGoing1_pixel_size,
+                                image_SlicerGoing1_length, 0);
+  this->TransferStatusGoing2Icon->SetImage( image_SlicerGoing2,
+                                image_SlicerGoing2_width,
+                                image_SlicerGoing2_height,
+                                image_SlicerGoing2_pixel_size,
+                                image_SlicerGoing2_length, 0);
+  this->TransferStatusGoing3Icon->SetImage( image_SlicerGoing3,
+                                image_SlicerGoing3_width,
+                                image_SlicerGoing3_height,
+                                image_SlicerGoing3_pixel_size,
+                                image_SlicerGoing3_length, 0);
+  this->TransferStatusGoing4Icon->SetImage( image_SlicerGoing4,
+                                image_SlicerGoing4_width,
+                                image_SlicerGoing4_height,
+                                image_SlicerGoing4_pixel_size,
+                                image_SlicerGoing4_length, 0);
+  this->TransferStatusGoing5Icon->SetImage( image_SlicerGoing5,
+                                image_SlicerGoing5_width,
+                                image_SlicerGoing5_height,
+                                image_SlicerGoing5_pixel_size,
+                                image_SlicerGoing5_length, 0);
+  this->TransferStatusGoing6Icon->SetImage( image_SlicerGoing6,
+                                image_SlicerGoing6_width,
+                                image_SlicerGoing6_height,
+                                image_SlicerGoing6_pixel_size,
+                                image_SlicerGoing6_length, 0);
+  this->TransferStatusGoing7Icon->SetImage( image_SlicerGoing7,
+                                image_SlicerGoing7_width,
+                                image_SlicerGoing7_height,
+                                image_SlicerGoing7_pixel_size,
+                                image_SlicerGoing7_length, 0);
+  this->TransferStatusCancelledIcon->SetImage( image_SlicerCancelled,
+                                image_SlicerCancelled_width,
+                                image_SlicerCancelled_height,
+                                image_SlicerCancelled_pixel_size,
+                                image_SlicerCancelled_length, 0);
+  this->TransferStatusDoneIcon->SetImage( image_SlicerDone,
+                                image_SlicerDone_width,
+                                image_SlicerDone_height,
+                                image_SlicerDone_pixel_size,
+                                image_SlicerDone_length, 0);
+  this->TransferStatusTimedOutIcon->SetImage( image_SlicerTimedOut,
+                                image_SlicerTimedOut_width,
+                                image_SlicerTimedOut_height,
+                                image_SlicerTimedOut_pixel_size,
+                                image_SlicerTimedOut_length, 0);
+  this->TransferStatusWaitIcon->SetImage (image_SlicerWait,
+                                          image_SlicerWait_width,
+                                          image_SlicerWait_height,
+                                          image_SlicerWait_pixel_size,
+                                          image_SlicerWait_length, 0);                                          
+  this->TransferCancelDisabledIcon->SetImage ( image_SlicerCancelDisabled,
+                                               image_SlicerCancelDisabled_width,
+                                               image_SlicerCancelDisabled_height,
+                                               image_SlicerCancelDisabled_pixel_size,
+                                               image_SlicerCancelDisabled_length, 0);
+  this->DeleteFromCacheDisabledIcon->SetImage ( image_SlicerDeleteDisabled,
+                                                image_SlicerDeleteDisabled_width,
+                                                image_SlicerDeleteDisabled_height,
+                                                image_SlicerDeleteDisabled_pixel_size,
+                                                image_SlicerDeleteDisabled_length, 0);                                                
+  this->RefreshSettingsIcon->SetImage ( image_SlicerRefresh,
+                                        image_SlicerRefresh_width,
+                                        image_SlicerRefresh_height,
+                                        image_SlicerRefresh_pixel_size,
+                                        image_SlicerRefresh_length, 0 );                                        
+  this->ClearDisplayIcon->SetImage ( image_SlicerCleanUp,
+                                     image_SlicerCleanUp_width,
+                                     image_SlicerCleanUp_height,
+                                     image_SlicerCleanUp_pixel_size,
+                                     image_SlicerCleanUp_length, 0);                                     
+  this->TransferCancelIcon->SetImage( image_SlicerCancel,
+                                image_SlicerCancel_width,
+                                image_SlicerCancel_height,
+                                image_SlicerCancel_pixel_size,
+                                image_SlicerCancel_length, 0);
+  this->TransferInformationIcon->SetImage( image_SlicerInformation,
+                                image_SlicerInformation_width,
+                                image_SlicerInformation_height,
+                                image_SlicerInformation_pixel_size,
+                                image_SlicerInformation_length, 0);
+  this->TransferStatusIdleIcon->SetImage ( image_SlicerWait,
+                                           image_SlicerWait_width,
+                                           image_SlicerWait_height,
+                                           image_SlicerWait_pixel_size,
+                                           image_SlicerWait_length, 0);
+  this->TransferStatusErrorIcon->SetImage ( image_SlicerError,
+                                      image_SlicerError_width,
+                                      image_SlicerError_height,
+                                      image_SlicerError_pixel_size,
+                                      image_SlicerError_length, 0);
+  this->TransferStatusCancelRequestedIcon->SetImage ( image_SlicerCancelRequested,
+                                                image_SlicerCancelRequested_width,
+                                                image_SlicerCancelRequested_height,
+                                                image_SlicerCancelRequested_pixel_size,
+                                                image_SlicerCancelRequested_length, 0);                                                
+  this->DeleteFromCacheIcon->SetImage ( image_SlicerDelete,
+                                        image_SlicerDelete_width,
+                                        image_SlicerDelete_height,
+                                        image_SlicerDelete_pixel_size,
+                                        image_SlicerDelete_length, 0);
 }
 
 
@@ -381,6 +392,7 @@ void vtkSlicerDataTransferIcons::PrintSelf ( ostream& os, vtkIndent indent )
 
     os << indent << "RefreshSettingsIcon: " << this->GetRefreshSettingsIcon ( ) << "\n";
     os << indent << "TransferCancelIcon: " << this->GetTransferCancelIcon ( ) << "\n";
+    os << indent << "ClearDisplayIcon: " << this->GetClearDisplayIcon ( ) << "\n";
     os << indent << "TransferCancelDisabledIcon: " << this->GetTransferCancelDisabledIcon() << "\n";
     os << indent << "TransferInformationIcon: " << this->GetTransferInformationIcon ( ) << "\n";
     os << indent << "DeleteFromCacheIcon: " << this->GetDeleteFromCacheIcon() << "\n";
