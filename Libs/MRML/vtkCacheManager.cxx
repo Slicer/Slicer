@@ -118,7 +118,7 @@ void vtkCacheManager::SetRemoteCacheDirectory (const char *dir )
 //----------------------------------------------------------------------------
 int vtkCacheManager::IsRemoteReference ( const char *uri )
 {
-  unsigned int index;
+  int index;
   std::string uriString (uri);
   std::string prefix;
 
@@ -154,7 +154,7 @@ int vtkCacheManager::IsRemoteReference ( const char *uri )
 //----------------------------------------------------------------------------
 int vtkCacheManager::IsLocalReference ( const char *uri )
 {
-  unsigned int index;
+  int index;
   std::string uriString (uri);
   std::string prefix;
 
@@ -189,7 +189,7 @@ int vtkCacheManager::IsLocalReference ( const char *uri )
 //----------------------------------------------------------------------------
 int vtkCacheManager::LocalFileExists ( const char *uri )
 {
-  unsigned int index;
+  int index;
   std::string uriString (uri);
   std::string prefix;
   std::string filename;
