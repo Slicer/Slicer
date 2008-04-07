@@ -61,6 +61,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     vtkGetObjectMacro ( VolumeDisplayWidget, vtkSlicerVolumeDisplayWidget );
     vtkGetObjectMacro ( VolumeSelectorWidget, vtkSlicerNodeSelectorWidget );
 
+    vtkGetObjectMacro ( dtiVDW, vtkSlicerDiffusionTensorVolumeDisplayWidget );
+
     // Description:
     // API for setting VolumeNode, VolumeLogic and
     // for both setting and observing them.

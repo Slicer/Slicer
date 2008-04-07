@@ -39,6 +39,8 @@ INCLUDE_DIRECTORIES(
   ${CommandLineModule_BINARY_DIR}
   ${SlicerTractographyFiducialSeeding_SOURCE_DIR}
   ${SlicerTractographyFiducialSeeding_BINARY_DIR}
+  ${SlicerTractographyDisplay_SOURCE_DIR}
+  ${SlicerTractographyDisplay_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
   )
@@ -74,6 +76,7 @@ TARGET_LINK_LIBRARIES(Volumes
   MRML
   CommandLineModule
   SlicerTractographyFiducialSeeding
+  SlicerTractographyDisplay
   ModuleDescriptionParser
   )
 

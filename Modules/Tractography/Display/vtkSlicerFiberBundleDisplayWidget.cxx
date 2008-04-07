@@ -685,3 +685,8 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkSlicerFiberBundleDisplayWidget::
     }
   return dpnode;
 }
+
+void vtkSlicerFiberBundleDisplayWidget::SetTractVisibility(int visibility)
+  {
+  this->VisibilityButton->GetWidget()->SetSelectedState(visibility);
+  }

@@ -60,8 +60,9 @@ public:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-
- protected:
+  void SetGlyphVisibility(int visibility);
+ 
+protected:
   vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget();
   virtual ~vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget();
 

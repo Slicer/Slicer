@@ -21,33 +21,33 @@ vtkCxxRevisionMacro ( vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget, "$Revisi
 
 //---------------------------------------------------------------------------
 vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget ( )
-{
+  {
 
-    this->DiffusionTensorVolumeNode = NULL;
+  this->DiffusionTensorVolumeNode = NULL;
 
-    this->ColorSelectorWidget = NULL;
-    this->OpacityScale = NULL;
-    this->VisibilityButton[0] = NULL;
-    this->VisibilityButton[1] = NULL;
-    this->VisibilityButton[2] = NULL;
-    this->GeometryColorMenu = NULL;
+  this->ColorSelectorWidget = NULL;
+  this->OpacityScale = NULL;
+  this->VisibilityButton[0] = NULL;
+  this->VisibilityButton[1] = NULL;
+  this->VisibilityButton[2] = NULL;
+  this->GeometryColorMenu = NULL;
 
-    this->GlyphDisplayWidget = NULL;
-    this->DisplayFrame = NULL;
+  this->GlyphDisplayWidget = NULL;
+  this->DisplayFrame = NULL;
 
 
-    this->UpdatingMRML = 0;
-    this->UpdatingWidget = 0;
-}
+  this->UpdatingMRML = 0;
+  this->UpdatingWidget = 0;
+  }
 
 
 //---------------------------------------------------------------------------
 vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::~vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget ( )
-{
+  {
   this->RemoveMRMLObservers();
   this->RemoveWidgetObservers();
 
-   if (this->ColorSelectorWidget)
+  if (this->ColorSelectorWidget)
     {
     this->ColorSelectorWidget->SetParent(NULL);
     this->ColorSelectorWidget->Delete();
@@ -75,7 +75,7 @@ vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::~vtkSlicerDiffusionTensorVolum
     this->GlyphDisplayWidget->Delete();
     this->GlyphDisplayWidget = NULL;
     }
-    
+
   if (this->DisplayFrame)
     {
     this->DisplayFrame->SetParent(NULL);
@@ -90,22 +90,22 @@ vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::~vtkSlicerDiffusionTensorVolum
     }
   vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, NULL);
   this->SetMRMLScene ( NULL );
-  
-}
+
+  }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::PrintSelf ( ostream& os, vtkIndent indent )
-{
-    this->vtkObject::PrintSelf ( os, indent );
+  {
+  this->vtkObject::PrintSelf ( os, indent );
 
-    os << indent << "vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget: " << this->GetClassName ( ) << "\n";
-    // print widgets?
-}
+  os << indent << "vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget: " << this->GetClassName ( ) << "\n";
+  // print widgets?
+  }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::SetDiffusionTensorVolumeNode ( vtkMRMLDiffusionTensorVolumeNode *node )
-{ 
+  { 
   if (node == this->DiffusionTensorVolumeNode)
     {
     return;
@@ -117,21 +117,21 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::SetDiffusionTensorVolumeN
     this->GlypDisplayNodes = this->DiffusionTensorVolumeNode->GetSliceGlyphDisplayNodes();
     this->UpdateWidget();
     }
-}
+  }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
-                                                         unsigned long event, void *callData )
-{
-  
+                                                                            unsigned long event, void *callData )
+  {
+
   if (this->MRMLScene && this->DiffusionTensorVolumeNode != NULL  &&
     !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangingEvent) &&
     !(vtkKWScale::SafeDownCast(caller) == this->OpacityScale->GetWidget() && event == vtkKWScale::ScaleValueChangedEvent))
     {
-      for (unsigned int i=0; i<this->GlypDisplayNodes.size(); i++)
-        {
-        this->MRMLScene->SaveStateForUndo(this->GlypDisplayNodes[i]);
-        }
+    for (unsigned int i=0; i<this->GlypDisplayNodes.size(); i++)
+      {
+      this->MRMLScene->SaveStateForUndo(this->GlypDisplayNodes[i]);
+      }
     }
 
 
@@ -141,7 +141,7 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessWidgetEvents ( vtk
   vtkSlicerNodeSelectorWidget *colSelector = 
     vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
   if (colSelector == this->ColorSelectorWidget && 
-      event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent) 
+    event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent) 
     {
     vtkMRMLColorNode *color =
       vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
@@ -154,7 +154,7 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessWidgetEvents ( vtk
           {
           // set and observe it's colour node id
           if (dnode->GetColorNodeID() == NULL ||
-              strcmp(dnode->GetColorNodeID(), color->GetID()) != 0)
+            strcmp(dnode->GetColorNodeID(), color->GetID()) != 0)
             {
             dnode->SetAndObserveColorNodeID(color->GetID());
             }
@@ -165,11 +165,11 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessWidgetEvents ( vtk
     }
   this->UpdateMRML();
 
-}
+  }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::UpdateMRML()
-{
+  {
   if (this->DiffusionTensorVolumeNode == NULL)
     {
     return;
@@ -196,18 +196,18 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::UpdateMRML()
     dnode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
     dnode->SetVisibility(this->VisibilityButton[i]->GetWidget()->GetSelectedState());
     }
-      
+
   this->UpdatingMRML = 0;
-    
-}
+
+  }
 
 
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
-                                              unsigned long event, void *callData )
-{
+                                                                          unsigned long event, void *callData )
+  {
   vtkDebugWithObjectMacro(this,"Process MRML Events");
 
   if ( !this->DiffusionTensorVolumeNode )
@@ -216,46 +216,46 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessMRMLEvents ( vtkOb
     }
 
   vtkMRMLDiffusionTensorVolumeNode *node = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(caller);
-  
+
   // if this event comes from our fiberBundleNode, it is not null, and has been modified
   if (node != NULL && event == vtkCommand::ModifiedEvent)
     {
     this->SetDiffusionTensorVolumeNode(node);
     }
-  
+
   this->UpdateWidget();
-  
-}
+
+  }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::AddMRMLObservers ( )
-{
+  {
   if (this->DiffusionTensorVolumeNode != NULL)
     {
     this->DiffusionTensorVolumeNode->AddObserver(vtkCommand::ModifiedEvent,
-                            (vtkCommand *)this->MRMLCallbackCommand );      
+      (vtkCommand *)this->MRMLCallbackCommand );      
     }
-}
+  }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::RemoveMRMLObservers ( )
-{
+  {
   if (this->DiffusionTensorVolumeNode != NULL)
     {
     this->DiffusionTensorVolumeNode->RemoveObservers(vtkCommand::ModifiedEvent,
-                            (vtkCommand *)this->MRMLCallbackCommand );      
+      (vtkCommand *)this->MRMLCallbackCommand );      
     }
-}
+  }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::UpdateWidget()
-{
+  {
   if (this->UpdatingMRML || this->UpdatingWidget)
     {
     return;
     }
   this->UpdatingWidget = 1;
-  
+
 
   vtkMRMLDiffusionTensorDisplayPropertiesNode* propNode = this->GetCurrentDTDisplayPropertyNode();
 
@@ -266,7 +266,7 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::UpdateWidget()
     }
 
   for (unsigned int i=0; i<this->GlypDisplayNodes.size(); i++)
-   {
+    {
     vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dnode = this->GlypDisplayNodes[i];
 
     this->VisibilityButton[i]->GetWidget()->SetSelectedState(dnode->GetVisibility());
@@ -278,26 +278,26 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::UpdateWidget()
         vtkMRMLColorNode *color =
           vtkMRMLColorNode::SafeDownCast(this->ColorSelectorWidget->GetSelected());
         if (color == NULL ||
-            strcmp(dnode->GetColorNodeID(), color->GetID()) != 0)
+          strcmp(dnode->GetColorNodeID(), color->GetID()) != 0)
           {
           this->ColorSelectorWidget->SetSelected(dnode->GetColorNode());
           }
         }
       }
-   }
+    }
 
 
   vtkMRMLDiffusionTensorDisplayPropertiesNode *dpnode = this->GetCurrentDTDisplayPropertyNode();
   this->GlyphDisplayWidget->SetDiffusionTensorDisplayPropertiesNode(dpnode);
-  
-  // TODO glyph widget
-   this->UpdatingWidget = 0;
 
-}
+  // TODO glyph widget
+  this->UpdatingWidget = 0;
+
+  }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::RemoveWidgetObservers ( ) {
-  
+
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -309,16 +309,16 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::RemoveWidgetObservers ( )
     {
     this->VisibilityButton[i]->GetWidget()->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
-    
+
   this->GeometryColorMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   // TO DO glyph widget
-}
+  }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
-{
+  {
   // Check if already created
 
   if (this->IsCreated())
@@ -326,9 +326,9 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
     vtkErrorMacro(<< this->GetClassName() << " already created");
     return;
     }
-  
+
   // Call the superclass to create the whole widget
-  
+
   this->Superclass::CreateWidget();
   int i;
   // ---
@@ -337,12 +337,12 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
   this->DisplayFrame->SetParent ( this->GetParent() );
   this->DisplayFrame->SetLabelText ("Glyphs on Slices Display");
   this->DisplayFrame->Create ( );
-/*
+  /*
   displayFrame->SetLabelText ("Display");
   displayFrame->CollapseFrame ( );
-*/
+  */
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->DisplayFrame->GetWidgetName() );  
+    this->DisplayFrame->GetWidgetName() );  
   char* sliceNames[] = {"Red", "Yellow", "Green"};
   for (i=0; i<3; i++)
     {
@@ -354,7 +354,7 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
     this->VisibilityButton[i]->SetLabelText(ss.str().c_str());
     this->VisibilityButton[i]->SetBalloonHelpString("set fiberBundle visibility.");
     this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                   this->VisibilityButton[i]->GetWidgetName() );
+      this->VisibilityButton[i]->GetWidgetName() );
     }
   // color by menu
 
@@ -388,7 +388,7 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
   // pack color menu
   colorMenuButton->SetLabelText("Color By Scalar");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-               colorMenuButton->GetWidgetName());
+    colorMenuButton->GetWidgetName());
 
   // a selector to change the color node associated with this display
   this->ColorSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
@@ -406,9 +406,9 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
   this->ColorSelectorWidget->SetLabelText( "Scalar Color Map");
   this->ColorSelectorWidget->SetBalloonHelpString("select a color node from the current mrml scene.");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
-                 this->ColorSelectorWidget->GetWidgetName());
-  
-  
+    this->ColorSelectorWidget->GetWidgetName());
+
+
   this->OpacityScale = vtkKWScaleWithLabel::New();
   this->OpacityScale->SetParent ( this->DisplayFrame->GetFrame() );
   this->OpacityScale->Create ( );
@@ -417,7 +417,7 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
   this->OpacityScale->GetWidget()->SetResolution(0.1);
   this->OpacityScale->SetBalloonHelpString("set fiberBundle opacity value.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->OpacityScale->GetWidgetName() );
+    this->OpacityScale->GetWidgetName() );
 
   this->GlyphDisplayWidget = vtkSlicerDiffusionTensorGlyphDisplayWidget::New();
   this->GlyphDisplayWidget->SetParent ( this->DisplayFrame );
@@ -425,17 +425,17 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
   this->GlyphDisplayWidget->Create ( );
   this->GlyphDisplayWidget->SetBalloonHelpString("set glyph display parameters.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
-                 this->GlyphDisplayWidget->GetWidgetName() );
+    this->GlyphDisplayWidget->GetWidgetName() );
 
   // add observers
-  
+
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->OpacityScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-  
+
 
   this->ColorSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-   
+
   for (i=0; i<3; i++) 
     {
     this->VisibilityButton[i]->GetWidget()->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -443,12 +443,12 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
 
   this->GeometryColorMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-    
-}
+
+  }
 
 //---------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::GetCurrentDTDisplayPropertyNode()
-{
+  {
   vtkMRMLDiffusionTensorDisplayPropertiesNode *dpnode = NULL;
   if (this->GlypDisplayNodes.size() > 0)
     {
@@ -456,4 +456,20 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkSlicerDiffusionTensorVolumeGlyph
     dpnode = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast( dnode->GetDTDisplayPropertiesNode() );
     }
   return dpnode;
-}
+  }
+
+void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::SetGlyphVisibility(int visibility)
+  {
+  if(visibility)
+    {
+    this->VisibilityButton[0]->GetWidget()->SetSelectedState(visibility);
+    }
+  else
+    {
+    for (unsigned int i=0; i<this->GlypDisplayNodes.size(); i++)
+      {
+      this->VisibilityButton[i]->GetWidget()->SetSelectedState(visibility);
+      }
+    }
+  }
+

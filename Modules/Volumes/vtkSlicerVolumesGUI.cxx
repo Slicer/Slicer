@@ -708,6 +708,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
           this->VolumeDisplayWidget->TearDownWidget();
           }
         tearDown = 1;
+        this->CreateDTIDisplayWidget();
         this->CreateDWIDisplayWidget();
         this->VolumeDisplayWidget = this->dwiVDW;
         this->VolumeDisplayFrame = this->DWIDisplayFrame;

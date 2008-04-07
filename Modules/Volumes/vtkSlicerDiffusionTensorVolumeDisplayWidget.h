@@ -64,9 +64,11 @@ public:
   
   // Description:
   // removes observers on widgets in the class
-  virtual void RemoveWidgetObservers ( );
+  virtual void RemoveWidgetObservers();
 
   virtual void UpdateWidgetFromMRML();
+
+  vtkGetObjectMacro(GlyphDisplayWidget, vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget);
 
 protected:
   vtkSlicerDiffusionTensorVolumeDisplayWidget();

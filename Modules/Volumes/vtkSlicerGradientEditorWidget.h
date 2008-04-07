@@ -21,6 +21,8 @@ class vtkImageData;
 //widgets
 class vtkKWFrameWithLabel;
 class vtkKWPushButton;
+class vtkKWPushButtonWithLabel;
+class vtkKWCheckButton;
 
 class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
   {
@@ -80,12 +82,14 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     vtkKWFrameWithLabel *TestFrame;
     vtkSlicerNodeSelectorWidget *FiducialSelector;
     vtkSlicerNodeSelectorWidget *DTISelector;
-    vtkKWPushButton *RunButton; 
+    vtkKWPushButtonWithLabel *RunButton; 
     vtkKWFrame *RunFrame;
     vtkKWFrame *ButtonFrame;
     vtkKWPushButton *RestoreButton;
     vtkKWPushButton *UndoButton;
     vtkKWPushButton *RedoButton;
+    vtkKWCheckButton *ViewGlyphs;
+    vtkKWCheckButton *ViewTracts;
 
   private:
     vtkSlicerGradientEditorWidget (const vtkSlicerGradientEditorWidget&); // Not implemented.

@@ -69,6 +69,8 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : pub
     virtual void Enter ( );
     virtual void Exit ( );
 
+    vtkGetObjectMacro (FiberBundleDisplayWidget, vtkSlicerFiberBundleDisplayWidget);
+
  protected:
     vtkSlicerTractographyDisplayGUI ( );
     virtual ~vtkSlicerTractographyDisplayGUI ( );
