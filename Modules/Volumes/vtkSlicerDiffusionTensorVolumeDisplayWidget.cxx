@@ -361,6 +361,8 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::UpdateWidgetFromMRML ()
   vtkDebugMacro("UpdateWidgetFromMRML");
   vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetVolumeDisplayNode());
 
+  if(displayNode == NULL) return;
+
   vtkMRMLDiffusionTensorDisplayPropertiesNode *propNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(displayNode->GetDiffusionTensorDisplayPropertiesNode());
   
   if ( this->ScalarModeMenu )

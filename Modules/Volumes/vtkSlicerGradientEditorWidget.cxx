@@ -187,6 +187,7 @@ void vtkSlicerGradientEditorWidget::AddWidgetObservers ( )
   this->MeasurementFrameWidget->AddObserver(vtkSlicerMeasurementFrameWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->GradientsWidget->AddObserver(vtkSlicerGradientsWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->DTISelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
+  this->FiducialSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ViewGlyphs->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ViewTracts->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   }
@@ -201,6 +202,7 @@ void vtkSlicerGradientEditorWidget::RemoveWidgetObservers( )
   this->MeasurementFrameWidget->RemoveObservers(vtkSlicerMeasurementFrameWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->GradientsWidget->RemoveObservers(vtkSlicerGradientsWidget::ChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->DTISelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->FiducialSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->ViewGlyphs->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ViewTracts->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   }
@@ -283,7 +285,7 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
   else if (this->RunButton->GetWidget() == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
     this->RunButton->SetEnabled(0);
-    if(this->ModifiedForNewTensor)
+    if(this->ModifiedForNewTensor || this->MRMLScene->GetNodesByName("GradientenEditor_Tensor_Node")->GetNumberOfItems() == 0 )
       {
       // create a command line module node
       vtkMRMLCommandLineModuleNode *tensorCML = vtkMRMLCommandLineModuleNode::SafeDownCast(
@@ -304,13 +306,13 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
       this->BaselineNode = vtkMRMLScalarVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
       this->BaselineNode->SetScene(this->GetMRMLScene());
-      this->BaselineNode->SetName("GradientenEditor: Baseline Node");
+      this->BaselineNode->SetName("GradientenEditor_Baseline_Node");
       this->MRMLScene->AddNode(this->BaselineNode);
 
       this->MaskNode = vtkMRMLScalarVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
       this->MaskNode->SetScene(this->GetMRMLScene());
-      this->MaskNode->SetName("GradientenEditor: Threshold Mask");
+      this->MaskNode->SetName("GradientenEditor_Threshold_Mask");
       this->MRMLScene->AddNode(this->MaskNode);
 
       if(this->TensorNode)
@@ -320,7 +322,7 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
       this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLDiffusionTensorVolumeNode"));
       this->TensorNode->SetScene(this->GetMRMLScene());
-      this->TensorNode->SetName("GradientenEditor: Tensor Node");
+      this->TensorNode->SetName("GradientenEditor_Tensor_Node");
       this->MRMLScene->AddNode(this->TensorNode);
 
       this->TensorNode->SetBaselineNodeID(this->BaselineNode->GetID());
@@ -351,6 +353,15 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
       }
     this->DTISelector->SetSelected(this->TensorNode);
     this->RunButton->SetEnabled(1);
+    if(this->ViewGlyphs->GetSelectedState())
+      {
+      //TODO 
+      }
+    if(this->ViewTracts->GetSelectedState())
+      {
+      this->CreateTracts(); //start tractography seeding
+      }
+
     }
 
   if (this->DTISelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
@@ -358,6 +369,15 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     {
     this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->DTISelector->GetSelected());
     this->CreateTracts();
+    }
+
+  if (this->FiducialSelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+    this->FiducialSelector->GetSelected() != NULL) 
+    {
+    if(this->ViewTracts->GetSelectedState() && this->DTISelector->GetSelected())
+      {
+      this->CreateTracts();
+      }
     }
 
   //view of glyphs
@@ -372,22 +392,23 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
     }
 
   //view of tracts
-  if(this->ViewTracts == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent)
+  if(this->ViewTracts == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent
+    && this->FiducialSelector->GetSelected() != NULL)
     {
     //get the existing GUI of the "Tractography Display Module"
     vtkSlicerTractographyDisplayGUI *tractGUI = vtkSlicerTractographyDisplayGUI::SafeDownCast(
       this->Application->GetModuleGUIByName("DisplayLoadSave"));
     tractGUI->Enter();
-    if(this->ViewTracts->GetSelectedState())
+    if(this->ViewTracts->GetSelectedState() && this->DTISelector->GetSelected() != NULL)
       {
       //visibility of tracts on
-      tractGUI->GetFiberBundleDisplayWidget()->SetTractVisibility(this->ViewTracts->GetSelectedState());
-      this->CreateTracts(); //start tractography seeding      
+      tractGUI->GetFiberBundleDisplayWidget()->SetTractVisibility(1);
+      this->CreateTracts(); //start tractography seeding
       }
     else
       {
       //visibility of tracts off
-      tractGUI->GetFiberBundleDisplayWidget()->SetTractVisibility(this->ViewTracts->GetSelectedState());  
+      tractGUI->GetFiberBundleDisplayWidget()->SetTractVisibility(0);  
       }
     }
   }
@@ -407,12 +428,16 @@ void vtkSlicerGradientEditorWidget::CreateTracts ( )
     vtkMRMLFiducialListNode* fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(
       this->FiducialSelector->GetSelected());
 
+    if(fiducialListNode == NULL) return;
+
     //create new fiber node
-    if(this->FiberNode == NULL)
+    //also check if FiberNode is in the MRML scene (needed, when node is deleated in the data modul)
+    if(this->FiberNode == NULL || this->MRMLScene->GetNodesByName("GradientenEditor_Fiber_Node")->GetNumberOfItems() == 0)
       {
+      if(this->FiberNode != NULL) this->FiberNode->Delete();
       this->FiberNode = vtkMRMLFiberBundleNode::New();
       this->FiberNode->SetScene(this->GetMRMLScene());
-      this->FiberNode->SetName("GradientenEditor: Fiber Node");
+      this->FiberNode->SetName("GradientenEditor_Fiber_Node");
       this->MRMLScene->AddNode(this->FiberNode);
       }
 
@@ -429,7 +454,6 @@ void vtkSlicerGradientEditorWidget::CreateTracts ( )
     //create tracts
     moduleGUI->CreateTracts();
     this->Application->GetApplicationGUI()->GetMainSlicerWindow()->SetStatusText("Done");
-
     }
   }
 

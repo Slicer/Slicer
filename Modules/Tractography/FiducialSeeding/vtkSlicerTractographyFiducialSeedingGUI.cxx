@@ -290,6 +290,8 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
   
   std::string stopingMode = this->StoppingModeMenu->GetWidget()->GetValue ();
 
+  if(volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL) return;
+
   vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(volumeNode, fiducialListNode, fiberNode,
                                                           stopingMode.c_str(),
                                                           this->StoppingValueScale->GetWidget()->GetValue(),

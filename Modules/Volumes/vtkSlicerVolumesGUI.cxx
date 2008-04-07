@@ -388,7 +388,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
     vtkMRMLVolumeHeaderlessStorageNode* snode = this->VolumeFileHeaderWidget->GetVolumeHeaderlessStorageNode();
 
     this->VolumeNode = volumeLogic->AddHeaderVolume( fileName, this->NameEntry->GetWidget()->GetValue(), 
-                                                     snode, loadingOptions );
+      snode, loadingOptions );
     return;
     }
   if (this->LoadVolumeButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) && event == vtkKWTopLevel::WithdrawEvent )
@@ -417,19 +417,19 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
 
       int loadingOptions = 0;
       if ( !strcmp (mb->GetValue(), "Centered") )
-      {
+        {
         loadingOptions += 2;
-      }
+        }
 
       if ( this->LabelMapCheckButton->GetSelectedState() )
-      {
+        {
         loadingOptions += 1;
-      }
+        }
 
       if ( this->SingleFileCheckButton->GetSelectedState() )
-      {
+        {
         loadingOptions += 4;
-      }
+        }
 
       std::string fileString(fileName);
       for (unsigned int i = 0; i < fileString.length(); i++)
@@ -541,7 +541,6 @@ void vtkSlicerVolumesGUI::ProcessLogicEvents ( vtkObject *caller, unsigned long 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumesGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData )
   {
-  // Fill in
   }
 
 //---------------------------------------------------------------------------
@@ -564,6 +563,7 @@ void vtkSlicerVolumesGUI::Enter ( )
     this->AddGUIObservers();
     }
   this->CreateModuleEventBindings();
+  this->UpdateFramesFromMRML();
   }
 
 //---------------------------------------------------------------------------
@@ -777,6 +777,16 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         this->NameEntry->GetWidget()->SetValue(volName);
         }       
       }
+    }
+
+  if(refNode == NULL)
+    {
+    // Deactivate GradientsEditor, as it should only enabled when ActiveVolumeNode is a DWI
+    this->GradientFrame->EnabledOff();
+    this->GradientFrame->SetAllowFrameToCollapse(0);
+    this->GradientFrame->CollapseFrame();
+    //delete nameEntry
+    this->NameEntry->GetWidget()->SetValue(""); 
     }
 
   // update the image origin
@@ -1108,6 +1118,5 @@ void vtkSlicerVolumesGUI::CreateDTIDisplayWidget ( )
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
       dtiVDW->GetWidgetName(), this->DTIDisplayFrame->GetWidgetName());    
     }
-
   }
 
