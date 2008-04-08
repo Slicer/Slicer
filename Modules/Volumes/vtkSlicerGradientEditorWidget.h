@@ -7,22 +7,16 @@
 
 #include "vtkVolumes.h"
 #include "vtkSlicerWidget.h"
-#include "vtkSlicerMeasurementFrameWidget.h"
-#include "vtkSlicerGradientsWidget.h"
-#include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerApplication.h"
 
-class vtkSlicerNodeSelectorWidget;
 class vtkSlicerGradientEditorLogic;
 class vtkMRMLDiffusionWeightedVolumeNode;
-class vtkMRMLFiberBundleNode;
-class vtkMRMLCommandLineModuleNode;
-class vtkImageData;
+class vtkSlicerMeasurementFrameWidget;
+class vtkSlicerDWITestingWidget;
+class vtkSlicerGradientsWidget;
 //widgets
-class vtkKWFrameWithLabel;
+class vtkKWFrame;
 class vtkKWPushButton;
-class vtkKWPushButtonWithLabel;
-class vtkKWCheckButton;
 
 class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
   {
@@ -48,9 +42,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node);
 
     // Description:
-    // Creates tracts by calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
-    void CreateTracts();
-
+    // Sets the Application to the current vtkSlicerApplication.
     vtkSetObjectMacro(Application, vtkSlicerApplication);
 
   protected:
@@ -61,35 +53,20 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     // Creates the widget.
     virtual void CreateWidget();
 
-    // Description:
-    // Is 1, if tensor has to be newly estimated.
-    // Is 0, if parameters have not changed and old tensor can be used for tractography.
-    int ModifiedForNewTensor;
-
     vtkSlicerApplication *Application;
     vtkSlicerGradientEditorLogic *Logic;
 
     //nodes
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
-    vtkMRMLDiffusionTensorVolumeNode *TensorNode;
-    vtkMRMLScalarVolumeNode *BaselineNode;
-    vtkMRMLScalarVolumeNode *MaskNode;
-    vtkMRMLFiberBundleNode *FiberNode;
 
     //widgets (GUI)
     vtkSlicerMeasurementFrameWidget *MeasurementFrameWidget;
     vtkSlicerGradientsWidget *GradientsWidget;
-    vtkKWFrameWithLabel *TestFrame;
-    vtkSlicerNodeSelectorWidget *FiducialSelector;
-    vtkSlicerNodeSelectorWidget *DTISelector;
-    vtkKWPushButtonWithLabel *RunButton; 
-    vtkKWFrame *RunFrame;
+    vtkSlicerDWITestingWidget *TestingWidget;
     vtkKWFrame *ButtonFrame;
     vtkKWPushButton *RestoreButton;
     vtkKWPushButton *UndoButton;
     vtkKWPushButton *RedoButton;
-    vtkKWCheckButton *ViewGlyphs;
-    vtkKWCheckButton *ViewTracts;
 
   private:
     vtkSlicerGradientEditorWidget (const vtkSlicerGradientEditorWidget&); // Not implemented.

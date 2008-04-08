@@ -4,10 +4,11 @@ PROJECT(Volumes)
 # Sources
   SET(Volumes_SRCS
   vtkSlicerVolumesGUI.cxx
-  #gradient editor
+  #dwi/dti editor
   vtkSlicerGradientEditorWidget.cxx
   vtkSlicerMeasurementFrameWidget.cxx
   vtkSlicerGradientsWidget.cxx
+  vtkSlicerDWITestingWidget.cxx
   vtkSlicerGradientEditorLogic.cxx
   #display widgets
   vtkSlicerVolumeDisplayWidget.cxx
