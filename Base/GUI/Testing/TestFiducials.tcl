@@ -46,14 +46,19 @@ proc CreateFiducials {} {
   }
 }
 
-set ret [ catch {
-  $::slicer3::Application TraceScript CreateFiducials
-  $::slicer3::Application TraceScript TestFiducial
-} res]
 
-if { $ret } {
-  puts stderr $res
-  exit 1
+proc runtest {} {
+ set ret [ catch {
+   $::slicer3::Application TraceScript CreateFiducials
+   $::slicer3::Application TraceScript TestFiducial
+ } res]
+
+ if { $ret } {
+   puts stderr $res
+   exit 1
+ }
+ exit 0
 }
 
-exit 0
+update 
+after idle runtest
