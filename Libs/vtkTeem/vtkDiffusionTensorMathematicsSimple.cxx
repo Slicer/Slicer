@@ -104,7 +104,7 @@ int vtkDiffusionTensorMathematicsSimple::RequestInformation (
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   //vtkInformation *inInfo2 = inputVector[1]->GetInformationObject(0);
 
-  int ext[6], ext2[6], idx;
+  int ext[6];
 
   inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),ext);
  
@@ -169,7 +169,6 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1(vtkDiffusionTensorMathem
  // image variables
   // progress
   unsigned long count = 0;
-  unsigned long target;
 
   // math operation
   int op = self->GetOperation();
@@ -180,16 +179,13 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1(vtkDiffusionTensorMathem
   tStart = clock();
 
   // working matrices
-  double *m[3], w[3], *v[3];
+  double *m[3], *v[3];
   double m0[3], m1[3], m2[3];
   double v0[3], v1[3], v2[3];
   m[0] = m0; m[1] = m1; m[2] = m2; 
   v[0] = v0; v[1] = v1; v[2] = v2;
 
-  int i, j;
-  double r, g, b;
-  int extractEigenvalues;
-  double cl;
+
   // scaling
   double scaleFactor = self->GetScaleFactor();
   // transformation of tensor orientations for coloring
@@ -302,7 +298,7 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1Eigen(vtkDiffusionTensorM
   // image variables
   // progress
   unsigned long count = 0;
-  unsigned long target;
+
 
   // math operation
   int op = self->GetOperation();

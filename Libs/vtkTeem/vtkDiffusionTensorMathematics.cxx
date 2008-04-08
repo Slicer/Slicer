@@ -95,7 +95,7 @@ int vtkDiffusionTensorMathematics::RequestInformation (
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   //vtkInformation *inInfo2 = inputVector[1]->GetInformationObject(0);
 
-  int ext[6], ext2[6], idx;
+  int ext[6];
 
   inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),ext);
  
