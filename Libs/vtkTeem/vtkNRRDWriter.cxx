@@ -101,8 +101,8 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, 
         nrrdKind = nrrdKindRGBAColor;
         break;
       default:
-        int numGrad = this->DiffusionGradients->GetNumberOfTuples();
-        int numBValues = this->BValues->GetNumberOfTuples();
+        size_t numGrad = this->DiffusionGradients->GetNumberOfTuples();
+        size_t numBValues = this->BValues->GetNumberOfTuples();
         if (numGrad == numBValues && numGrad == numComp && numGrad>6)
           {
           nrrdKind = nrrdKindList;

@@ -99,7 +99,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
   vtkMRMLStorageNode *storageNode = NULL;
 
   // check for local or remote files
-  bool useURI = false;
+  int useURI = 0; // false;
   if (this->GetMRMLScene()->GetCacheManager() != NULL)
     {
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
@@ -258,7 +258,7 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
   vtkMRMLStorageNode *storageNode = NULL;
   
   // check for local or remote files
-  bool useURI = false;
+  int useURI = 0; //false ;
   if (this->GetMRMLScene()->GetCacheManager() != NULL)
     {
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);

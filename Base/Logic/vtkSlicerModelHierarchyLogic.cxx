@@ -104,7 +104,7 @@ void vtkSlicerModelHierarchyLogic::GetHierarchyChildrenNodes(vtkMRMLModelHierarc
   iter = hierarchyChildrenNodes.find(std::string(parentNode->GetID()));
   if (iter != hierarchyChildrenNodes.end()) 
     {
-    for (int i=0; i<iter->second.size(); i++)
+    for (unsigned int i=0; i<iter->second.size(); i++)
       {
       childrenNodes.push_back(iter->second[i]);
       this->GetHierarchyChildrenNodes(iter->second[i], childrenNodes);

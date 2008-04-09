@@ -168,7 +168,7 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1(vtkDiffusionTensorMathem
 
  // image variables
   // progress
-  unsigned long count = 0;
+  //unsigned long count = 0;
 
   // math operation
   int op = self->GetOperation();
@@ -192,8 +192,8 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1(vtkDiffusionTensorMathem
 
   // map 0..1 values into the range a char takes on
   // but use scaleFactor so user can bump up the brightness
-  const double rgb_scale = (double)VTK_UNSIGNED_CHAR_MAX * scaleFactor / 1000.;
-  double rgb_temp = 0.;
+  //const double rgb_scale = (double)VTK_UNSIGNED_CHAR_MAX * scaleFactor / 1000.;
+  //double rgb_temp = 0.;
 
   // find the input region to loop over
   vtkPointData *pd = input->GetPointData();
@@ -214,7 +214,7 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1(vtkDiffusionTensorMathem
     }
 
   vtkTransform *trans = vtkTransform::New();
-  int useTransform = 0;
+  //int useTransform = 0;
 
   int doMasking = 0;
   vtkDataArray *inMask = NULL;
@@ -561,7 +561,7 @@ void vtkDiffusionTensorMathematicsSimple::SimpleExecute(vtkImageData* input,
                                                         vtkImageData* output)
 {
 
-  void* inPtr = input->GetScalarPointer();
+  //void* inPtr = input->GetScalarPointer();
   void* outPtr = output->GetScalarPointer();
 
   switch (this->GetOperation()) 
