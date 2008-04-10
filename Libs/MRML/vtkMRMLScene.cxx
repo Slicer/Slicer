@@ -529,10 +529,12 @@ int vtkMRMLScene::Connect()
   int res = this->Import();
 
 
-  this->SetErrorCode (!res);  // XML Parser return 0 on error, but scene error code of 0 is normal
-  this->SetErrorMessage (std::string("Error loading scene"));
+  if (!res)
+    {
+    this->InvokeEvent(vtkMRMLScene::SceneLoadingErrorEvent);
+    }
+    
   this->SetUndoFlag(undoFlag);
-  
   return res;
 }
 
@@ -596,7 +598,21 @@ int vtkMRMLScene::Import()
   this->SetUndoFlag(undoFlag);
   //this->ClearReferencedNodeID();
 
-  return res;
+  int returnCode = 1;
+  if (this->GetErrorCode() == 0) 
+    {
+    // report parser error
+    if (res == 0)
+      {
+      this->SetErrorMessage (std::string("Error parsing scene file"));
+      }
+    returnCode = res;
+    }
+  else
+    {
+    returnCode = 0;
+    }
+  return returnCode;
 }
 
 //------------------------------------------------------------------------------

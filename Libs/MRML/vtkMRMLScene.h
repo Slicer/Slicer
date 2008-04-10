@@ -316,6 +316,7 @@ public:
       NewSceneEvent = 66002,
       SceneCloseEvent = 66003,
       SceneClosingEvent = 66004,
+      SceneLoadingErrorEvent = 66005,
     };
 //ETX
 
