@@ -31,6 +31,7 @@ SET(TCLFILES
   ImplicitRectangleEffect.tcl
   WandEffect.tcl
   ChangeIslandEffect.tcl ChangeLabelEffect.tcl
+  ErodeLabelEffect.tcl DilateLabelEffect.tcl
 )
 
 FOREACH(tclfile ${TCLFILES})

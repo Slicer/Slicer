@@ -92,7 +92,6 @@ itcl::body EditBox::findEffects { {path ""} } {
     ConnectedComponents 
     SlurpColor  Wand 
     ThresholdPaintLabel ThresholdBucket
-    ErodeLabel DilateLabel
     DeleteFiducials LabelOpacity
     FiducialVisibilityOff
     FiducialVisibilityOn 
