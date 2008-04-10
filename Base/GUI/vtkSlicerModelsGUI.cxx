@@ -540,7 +540,7 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->ModelDisplayFrame = vtkSlicerModuleCollapsibleFrame::New ( );
     this->ModelDisplayFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
     this->ModelDisplayFrame->Create ( );
-    this->ModelDisplayFrame->SetLabelText ("Display");
+    this->ModelDisplayFrame->SetLabelText ("Hierarchy & Display");
     this->ModelDisplayFrame->CollapseFrame ( );
     app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                   this->ModelDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());

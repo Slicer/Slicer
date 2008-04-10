@@ -819,7 +819,7 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
   vtkKWFrameWithLabel *frame = vtkKWFrameWithLabel::New ( );
   frame->SetParent ( this->GetParent() );
   frame->Create ( );
-  frame->SetLabelText ("Model Hierarchy Tree");
+  frame->SetLabelText ("Model Hierarchy");
   this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
                  frame->GetWidgetName() );
 
@@ -843,7 +843,6 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
   tree->SetOpenCommand(this, "OpenHierarchyCommand");
   tree->SetCloseCommand(this, "CloseHierarchyCommand");
   tree->EnableReparentingOn();
-  tree->SetHeight(12);
 
   tree->AddObserver(
     vtkKWTree::SelectionChangedEvent, 
