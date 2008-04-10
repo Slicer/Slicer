@@ -606,7 +606,8 @@ void vtkSlicerModelsGUI::BuildGUI ( )
     this->SaveModelButton->SetText ("Save Model");
     this->SaveModelButton->GetLoadSaveDialog()->SaveDialogOn();
     this->SaveModelButton->GetLoadSaveDialog()->SetFileTypes(
-                                                              "{ {Model} {.*} }");
+          "{{vtk PolyData} {.vtk .vtp}} {{stl} {.stl}}");
+    this->SaveModelButton->GetLoadSaveDialog()->SetDefaultExtension("vtk");
     this->SaveModelButton->GetLoadSaveDialog()->RetrieveLastPathFromRegistry(
       "OpenPath");
      app->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
