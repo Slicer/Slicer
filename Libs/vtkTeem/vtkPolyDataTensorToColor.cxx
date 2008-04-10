@@ -237,7 +237,7 @@ int vtkPolyDataTensorToColor::RequestData(
 
     // Decide whether this tensor will be glyphed:
     // Threshold by trace ( must be > 0)
-    double trace = vtkDiffusionTensorMathematics::Trace(tensor);
+    //double trace = vtkDiffusionTensorMathematics::Trace(tensor);
 
     //outPD->CopyData(pd,ptId,pts[0]);
     //verts->InsertNextCell(1,pts);

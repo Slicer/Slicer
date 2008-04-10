@@ -169,6 +169,7 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1(vtkDiffusionTensorMathem
  // image variables
   // progress
   //unsigned long count = 0;
+  //unsigned long target;
 
   // math operation
   int op = self->GetOperation();
@@ -297,7 +298,8 @@ static void vtkDiffusionTensorMathematicsSimpleExecute1Eigen(vtkDiffusionTensorM
 
   // image variables
   // progress
-  unsigned long count = 0;
+  //unsigned long count = 0;
+  //unsigned long target;
 
 
   // math operation
