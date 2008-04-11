@@ -809,100 +809,6 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
 
 
 ################################################################################
-# Get and build the sandbox
-
-if { 0 && [BuildThis $::SANDBOX_TEST_FILE "sandbox"] == 1 && [BuildThis $::ALT_SANDBOX_TEST_FILE "sandbox"] == 1 } {
-    cd $SLICER_LIB
-
-    runcmd $::SVN checkout $::SANDBOX_TAG NAMICSandBox 
-
-    if {$::GENLIB(buildit)} {
-      file mkdir $SLICER_LIB/NAMICSandBox-build
-      cd $SLICER_LIB/NAMICSandBox-build
-
-      if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
-        # to build correctly, 64 bit linux requires shared libs for the sandbox
-        runcmd $::CMAKE \
-            -G$GENERATOR \
-            -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
-            -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
-            -DBUILD_SHARED_LIBS:BOOL=ON \
-            -DCMAKE_SKIP_RPATH:BOOL=ON \
-            -DBUILD_EXAMPLES:BOOL=OFF \
-            -DBUILD_TESTING:BOOL=OFF \
-            -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
-            -DVTK_DIR:PATH=$VTK_DIR \
-            -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
-            -DOPENGL_glu_LIBRARY:FILEPATH=\" \" \
-            ../NAMICSandBox
-      } else {
-        # windows and mac require static libs for the sandbox
-        runcmd $::CMAKE \
-            -G$GENERATOR \
-            -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
-            -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
-            -DBUILD_SHARED_LIBS:BOOL=OFF \
-            -DCMAKE_SKIP_RPATH:BOOL=ON \
-            -DBUILD_EXAMPLES:BOOL=OFF \
-            -DBUILD_TESTING:BOOL=OFF \
-            -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
-            -DVTK_DIR:PATH=$VTK_DIR \
-            -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
-            -DOPENGL_glu_LIBRARY:FILEPATH=\" \" \
-            ../NAMICSandBox
-      }
-
-      if {$isWindows} {
-        if { $MSVC6 } {
-            runcmd $::MAKE NAMICSandBox.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"
-        } else {
-            #runcmd $::MAKE NAMICSandBox.SLN /build  $::VTK_BUILD_TYPE
-
-            # These two lines fail on windows because the .sln file has a problem.
-            # Perhaps this is a cmake issue.
-            #cd $SLICER_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation
-            #runcmd $::MAKE SlicerClustering.SLN /build  $::VTK_BUILD_TYPE
-
-            # Building within the subdirectory works
-            cd $SLICER_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation/Code
-            runcmd $::MAKE SlicerClustering.vcproj /build  $::VTK_BUILD_TYPE
-            cd $SLICER_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation/Code
-            runcmd $::MAKE SlicerClustering.vcproj /build  $::VTK_BUILD_TYPE
-            # However then it doesn't pick up this needed library
-            cd $SLICER_LIB/NAMICSandBox-build/SpectralClustering
-            runcmd $::MAKE SpectralClustering.SLN /build  $::VTK_BUILD_TYPE
-            # this one is independent
-            # TODO Distributions broken with ITK 3.0 f2c
-            #cd $SLICER_LIB/NAMICSandBox-build/Distributions
-            #runcmd $::MAKE Distributions.SLN /build  $::VTK_BUILD_TYPE
-            # this one is independent
-            cd $SLICER_LIB/NAMICSandBox-build/MGHImageIOConverter
-            runcmd $::MAKE MGHImageIOConverter.SLN /build $::VTK_BUILD_TYPE
-        }
-      } else {
-
-        # Just build the two libraries we need, not the rest of the sandbox.
-        # This line builds the SlicerClustering library.
-        # It also causes the SpectralClustering lib to build, 
-        # since SlicerClustering depends on it.
-        # Later in the slicer Module build process, 
-        # vtkDTMRI links to SlicerClustering.
-        # At some point in the future, the classes in these libraries
-        # will become part of ITK and this will no longer be needed.
-        cd $SLICER_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation   
-        eval runcmd $::MAKE 
-        # TODO Distributions broken with ITK 3.0 f2c
-        #cd $SLICER_LIB/NAMICSandBox-build/Distributions
-        #eval runcmd $::MAKE
-        cd $SLICER_LIB/NAMICSandBox-build/MGHImageIOConverter
-        eval runcmd $::MAKE
-        cd $SLICER_LIB/NAMICSandBox-build
-      }
-  }
-}
-
-
-################################################################################
 # Get and build igstk 
 #
 
@@ -1046,13 +952,6 @@ if { ![file exists $::VTK_TEST_FILE] } {
 if { ![file exists $::ITK_TEST_FILE] } {
     puts "ITK test file $::ITK_TEST_FILE not found."
 }
-if { ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FILE] } { 
-    if {$isLinux} { 
-    puts "Sandbox test file $::SANDBOX_TEST_FILE or $::ALT_SANDBOX_TEST_FILE not found." 
-    } else { 
-    puts "Sandbox test file $::SANDBOX_TEST_FILE not found." 
-    }
-}
 
 # check for both regular and alternate sandbox file for linux builds
 if { ![file exists $::CMAKE] || \
@@ -1064,12 +963,9 @@ if { ![file exists $::CMAKE] || \
          ![file exists $::IWIDGETS_TEST_FILE] || \
          ![file exists $::BLT_TEST_FILE] || \
          ![file exists $::VTK_TEST_FILE] || \
-         ![file exists $::ITK_TEST_FILE] || \
-         ![file exists $::SANDBOX_TEST_FILE] } {
-    if { ![file exists $::ALT_SANDBOX_TEST_FILE] } {
+         ![file exists $::ITK_TEST_FILE] } {
     puts "Not all packages compiled; check errors and run genlib.tcl again."
     exit 1 
-    }
 } else { 
     puts "All packages compiled."
     exit 0 
