@@ -225,6 +225,29 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     return;
     }
+
+  vtkKWEntry *entry = vtkKWEntry::SafeDownCast(caller);
+  if (entry)
+    {
+    double origin[3], spacing[3];
+    origin[0] = this->OriginEntry0->GetWidget()->GetValueAsDouble();
+    origin[1] = this->OriginEntry1->GetValueAsDouble();
+    origin[2] = this->OriginEntry2->GetValueAsDouble();
+    spacing[0] = this->SpacingEntry0->GetWidget()->GetValueAsDouble();
+    spacing[1] = this->SpacingEntry1->GetValueAsDouble();
+    spacing[2] = this->SpacingEntry2->GetValueAsDouble();
+
+    vtkMRMLVolumeNode *volumeNode;
+    if (volumeNode == this->GetVolumeNode ()) 
+      {
+      volumeNode->SetDisableModifiedEvent(1);
+      volumeNode->SetSpacing(spacing);
+      volumeNode->SetOrigin(origin);
+      volumeNode->SetDisableModifiedEvent(0);
+      volumeNode->InvokePendingModifiedEvent();
+      }
+    }
+
 }
 
 
@@ -302,6 +325,25 @@ void vtkSlicerVolumeHeaderWidget::AddWidgetObservers ( )
       this->VolumeSelectorWidget->SetMRMLScene(this->MRMLScene);
       }
     this->VolumeSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+
+  if (this->SpacingEntry0)
+    {
+    this->SpacingEntry0->GetWidget()->AddObserver(
+        vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SpacingEntry1->AddObserver(
+        vtkKWEntry::EntryValueChangedEvent , (vtkCommand *)this->GUICallbackCommand );
+    this->SpacingEntry2->AddObserver(
+        vtkKWEntry::EntryValueChangedEvent , (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->OriginEntry0)
+    {
+    this->OriginEntry0->GetWidget()->AddObserver(
+        vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->OriginEntry1->AddObserver(
+        vtkKWEntry::EntryValueChangedEvent , (vtkCommand *)this->GUICallbackCommand );
+    this->OriginEntry2->AddObserver(
+        vtkKWEntry::EntryValueChangedEvent , (vtkCommand *)this->GUICallbackCommand );
     }
 }
 
@@ -422,21 +464,21 @@ void vtkSlicerVolumeHeaderWidget::CreateWidget ( )
   this->SpacingEntry0->GetWidget()->SetValueAsInt(0);
   this->SpacingEntry0->SetLabelWidth(18);
   this->SpacingEntry0->GetWidget()->SetWidth(8);
-  this->SpacingEntry0->GetWidget()->SetStateToDisabled();
+  this->SpacingEntry0->GetWidget()->SetRestrictValueToDouble();
  
   this->SpacingEntry1 = vtkKWEntry::New();
   this->SpacingEntry1->SetParent(spacingFrame);
   this->SpacingEntry1->Create();
   this->SpacingEntry1->SetValueAsInt(0);
   this->SpacingEntry1->SetWidth(8);
-  this->SpacingEntry1->SetStateToDisabled();
+  this->SpacingEntry1->SetRestrictValueToDouble();
   
   this->SpacingEntry2 = vtkKWEntry::New();
   this->SpacingEntry2->SetParent(spacingFrame);
   this->SpacingEntry2->Create();
   this->SpacingEntry2->SetValueAsInt(0);
   this->SpacingEntry2->SetWidth(8);
-  this->SpacingEntry2->SetStateToDisabled();
+  this->SpacingEntry2->SetRestrictValueToDouble();
   
   this->Script ( "pack %s %s %s -side left -anchor nw -padx 2 -pady 2 -expand n",
                  this->SpacingEntry0->GetWidgetName ( ),
@@ -444,27 +486,27 @@ void vtkSlicerVolumeHeaderWidget::CreateWidget ( )
                  this->SpacingEntry2->GetWidgetName());
   
   this->OriginEntry0 = vtkKWEntryWithLabel::New();
-  this->OriginEntry0->SetParent(volumeHeaderFrame);
+  this->OriginEntry0->SetParent(originFrame);
   this->OriginEntry0->Create();
   this->OriginEntry0->SetLabelText("Image Origin:");
   this->OriginEntry0->GetWidget()->SetValueAsInt(0);
   this->OriginEntry0->SetLabelWidth(18);
   this->OriginEntry0->GetWidget()->SetWidth(8);
-  this->OriginEntry0->GetWidget()->SetStateToDisabled();
+  this->OriginEntry0->GetWidget()->SetRestrictValueToDouble();
   
   this->OriginEntry1 = vtkKWEntry::New();
-  this->OriginEntry1->SetParent(volumeHeaderFrame);
+  this->OriginEntry1->SetParent(originFrame);
   this->OriginEntry1->Create();
   this->OriginEntry1->SetValueAsInt(0);
   this->OriginEntry1->SetWidth(8);
-  this->OriginEntry1->SetStateToDisabled();
+  this->OriginEntry1->SetRestrictValueToDouble();
   
   this->OriginEntry2 = vtkKWEntry::New();
-  this->OriginEntry2->SetParent(volumeHeaderFrame);
+  this->OriginEntry2->SetParent(originFrame);
   this->OriginEntry2->Create();
   this->OriginEntry2->SetValueAsInt(0);
   this->OriginEntry2->SetWidth(8);
-  this->OriginEntry2->SetStateToDisabled();
+  this->OriginEntry2->SetRestrictValueToDouble();
 
   this->Script ( "pack %s %s %s -side left -anchor nw -padx 2 -pady 2 -expand n",
                  this->OriginEntry0->GetWidgetName ( ),
