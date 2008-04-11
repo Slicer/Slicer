@@ -109,8 +109,8 @@ itcl::body ErodeLabelEffect::buildOptions {} {
   [$o(fill) GetWidget] SetValueAsInt 0
   $o(fill) SetLabelText "Fill Label: "
   $o(fill) SetBalloonHelpString "Eroded pixels will be replaced with this value."
-  pack [$o(fill) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+  # TODO: figure out what the fill value is meant to do
+  #pack [$o(fill) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
 
   set o(iterations) [vtkKWEntryWithLabel New]
   $o(iterations) SetParent [$this getOptionsFrame]
@@ -158,8 +158,8 @@ itcl::body ErodeLabelEffect::buildOptions {} {
   $o(erode) SetValue "Erode"
   $o(erode) SetText "Erode"
   $o(erode) SetBalloonHelpString "Treat diagonally adjacent voxels as neighbors."
-  pack [$o(erode) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+  # TODO: support erode and dilate
+  #pack [$o(erode) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
 
   set o(erodeDilate) [vtkKWRadioButton New]
   $o(erodeDilate) SetParent [$this getOptionsFrame]
@@ -167,8 +167,8 @@ itcl::body ErodeLabelEffect::buildOptions {} {
   $o(erodeDilate) SetValue "ErodeDilate"
   $o(erodeDilate) SetText "Erode&Dilate"
   $o(erodeDilate) SetBalloonHelpString "Do not treat diagonally adjacent voxels as neighbors."
-  pack [$o(erodeDilate) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+  # TODO: support erode and dilate
+  #pack [$o(erodeDilate) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
 
   $o(erode) SetSelectedState 1
   $o(erodeDilate) SetVariableName [$o(erode) GetVariableName] 
