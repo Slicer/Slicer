@@ -28,8 +28,6 @@ if { [itcl::find class ErodeLabelEffect] == "" } {
 
     inherit EffectSWidget
 
-    variable _fillColor
-
     constructor {sliceGUI} {Labeler::constructor $sliceGUI} {}
     destructor {}
 
@@ -66,28 +64,114 @@ itcl::body ErodeLabelEffect::processEvent { {caller ""} {event ""} } {
 
 itcl::body ErodeLabelEffect::apply {} {
 
+  if { [$this getInputLabel] == "" } {
+    $this errorDialog "Label map needed for Erode"
+    return
+  }
+
+
+  set erode [vtkImageErode New]
+  $erode SetInput [$this getInputLabel]
+  $erode SetOutput [$this getOutputLabel]
+
+  $erode SetForeground [EditorGetPaintLabel]
+  $erode SetBackground [[$o(fill) GetWidget] GetValue]
+  set neighborhood [set ::[$o(fourNeighbors) GetVariableName]]
+  $erode SetNeighborTo$neighborhood
+
+  set iterations [[$o(iterations) GetWidget] GetValue]
+  for {set i 0} {$i < $iterations} {incr i} {
+    $this setProgressFilter $erode "Erode ($i)"
+    $erode Update
+  }
+
+  $erode SetOutput [$this getOutputLabel]
+
+  $erode Delete
+
+  $this postApply
+
 }
 
 itcl::body ErodeLabelEffect::buildOptions {} {
 
-  tk_messageBox -message "in $this"
-
   # call superclass version of buildOptions
   chain
 
-  # create the edit box and the color picker - note these aren't kwwidgets
-  #  but helper classes that create kwwidgets in the given frame
-  set _fillColor [::EditColor #auto]
-  $_fillColor configure -frame [$this getOptionsFrame]
-  $_fillColor create
+  #
+  # iterations and label value
+  #
 
-  set o(smooth) [vtkKWCheckButtonWithLabel New]
-  $o(smooth) SetParent [$this getOptionsFrame]
-  $o(smooth) Create
-  $o(smooth) SetLabelText "Smooth Model: "
-  $o(smooth) SetBalloonHelpString "When smoothed, the model will look better, but some details of the label map will not be visible on the model.  When not smoothed you will see individual voxel boundaries in the model.  Smoothing here corresponds to Decimation of 0.25 and Smooting iterations of 10."
-  pack [$o(smooth) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 
+  set o(fill) [vtkKWEntryWithLabel New]
+  $o(fill) SetParent [$this getOptionsFrame]
+  $o(fill) Create
+  [$o(fill) GetWidget] SetRestrictValueToInteger
+  [$o(fill) GetWidget] SetValueAsInt 0
+  $o(fill) SetLabelText "Fill Label: "
+  $o(fill) SetBalloonHelpString "Eroded pixels will be replaced with this value."
+  pack [$o(fill) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+
+  set o(iterations) [vtkKWEntryWithLabel New]
+  $o(iterations) SetParent [$this getOptionsFrame]
+  $o(iterations) Create
+  [$o(iterations) GetWidget] SetRestrictValueToInteger
+  [$o(iterations) GetWidget] SetValueAsInt 1
+  $o(iterations) SetLabelText "Iterations: "
+  $o(iterations) SetBalloonHelpString "Number of times to apply selected operation."
+  # TODO: support iterations
+  #pack [$o(iterations) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 
+
+
+  #
+  # 4 or 8 neighbors
+  #
+
+  set o(eightNeighbors) [vtkKWRadioButton New]
+  $o(eightNeighbors) SetParent [$this getOptionsFrame]
+  $o(eightNeighbors) Create
+  $o(eightNeighbors) SetValueAsInt 8
+  $o(eightNeighbors) SetText "Eight Neighbors"
+  $o(eightNeighbors) SetBalloonHelpString "Treat diagonally adjacent voxels as neighbors."
+  pack [$o(eightNeighbors) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+
+  set o(fourNeighbors) [vtkKWRadioButton New]
+  $o(fourNeighbors) SetParent [$this getOptionsFrame]
+  $o(fourNeighbors) Create
+  $o(fourNeighbors) SetValueAsInt 4
+  $o(fourNeighbors) SetText "Four Neighbors"
+  $o(fourNeighbors) SetBalloonHelpString "Do not treat diagonally adjacent voxels as neighbors."
+  pack [$o(fourNeighbors) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+
+  $o(fourNeighbors) SetSelectedState 1
+  $o(eightNeighbors) SetVariableName [$o(fourNeighbors) GetVariableName] 
+
+  #
+  # erode or erode then dilate
+  #
+
+  set o(erode) [vtkKWRadioButton New]
+  $o(erode) SetParent [$this getOptionsFrame]
+  $o(erode) Create
+  $o(erode) SetValue "Erode"
+  $o(erode) SetText "Erode"
+  $o(erode) SetBalloonHelpString "Treat diagonally adjacent voxels as neighbors."
+  pack [$o(erode) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+
+  set o(erodeDilate) [vtkKWRadioButton New]
+  $o(erodeDilate) SetParent [$this getOptionsFrame]
+  $o(erodeDilate) Create
+  $o(erodeDilate) SetValue "ErodeDilate"
+  $o(erodeDilate) SetText "Erode&Dilate"
+  $o(erodeDilate) SetBalloonHelpString "Do not treat diagonally adjacent voxels as neighbors."
+  pack [$o(erodeDilate) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+
+  $o(erode) SetSelectedState 1
+  $o(erodeDilate) SetVariableName [$o(erode) GetVariableName] 
 
   #
   # an apply button
@@ -96,7 +180,7 @@ itcl::body ErodeLabelEffect::buildOptions {} {
   $o(apply) SetParent [$this getOptionsFrame]
   $o(apply) Create
   $o(apply) SetText "Apply"
-  $o(apply) SetBalloonHelpString "Build a model for the current label value of the label map being edited in the Red slice window.  Model will be created in the background."
+  $o(apply) SetBalloonHelpString "Run the selected operation."
   pack [$o(apply) GetWidgetName] \
     -side right -anchor e -padx 2 -pady 2 
 
@@ -119,7 +203,7 @@ itcl::body ErodeLabelEffect::buildOptions {} {
   $o(help) SetParent [$this getOptionsFrame]
   $o(help) Create
   $o(help) SetHelpTitle "ErodeLabel"
-  $o(help) SetHelpText "Use this tool build a model.  A subset of model building options is provided here.  Go to the Model Maker module to expose a range of parameters."
+  $o(help) SetHelpText "Use this tool to remove pixels from the boundary of the current label."
   $o(help) SetBalloonHelpString "Bring up help window."
   pack [$o(help) GetWidgetName] \
     -side right -anchor sw -padx 2 -pady 2 
@@ -145,9 +229,7 @@ itcl::body ErodeLabelEffect::tearDownOptions { } {
   # call superclass version of tearDownOptions
   chain
 
-  itcl::delete object $_fillColor
-
-  foreach w "smooth help cancel apply" {
+  foreach w "fill iterations fourNeighbors eightNeighbors erode erodeDilate help cancel apply" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 
@@ -155,8 +237,3 @@ itcl::body ErodeLabelEffect::tearDownOptions { } {
   }
 }
 
-itcl::body ErodeLabelEffect::goToModelMaker { } {
-  set toolbar [$::slicer3::ApplicationGUI GetApplicationToolbar]
-  [$toolbar GetModuleChooseGUI] SelectModule "Model Maker"
-  after idle ::EffectSWidget::RemoveAll
-}

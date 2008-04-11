@@ -21,4 +21,6 @@ package ifneeded Editor 3.0 [list
   source [file join $dir WandEffect.tcl]
   source [file join $dir ImplicitRectangleEffect.tcl]
   source [file join $dir MakeModelEffect.tcl]
+  source [file join $dir ErodeLabelEffect.tcl]
+  source [file join $dir DilateLabelEffect.tcl]
 ]
