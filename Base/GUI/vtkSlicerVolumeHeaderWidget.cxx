@@ -6,6 +6,8 @@
 #include "vtkKWFrame.h"
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
+#include "vtkKWPushButton.h"
+#include "vtkKWPushButtonWithLabel.h"
 
 #include <itksys/SystemTools.hxx> 
 
@@ -32,6 +34,8 @@ vtkSlicerVolumeHeaderWidget::vtkSlicerVolumeHeaderWidget ( )
   this->SpacingEntry0 = NULL;
   this->SpacingEntry1 = NULL;
   this->SpacingEntry2 = NULL;
+
+  this->CenterButton = NULL;
   
   this->ScanOrderEntry = NULL;
   
@@ -42,6 +46,8 @@ vtkSlicerVolumeHeaderWidget::vtkSlicerVolumeHeaderWidget ( )
   this->FileNameEntry = NULL;
 
   this->AddNodeSelectorWidget = 0;
+
+  this->UpdatingFromMRML = 0;
 }
 
 
@@ -84,6 +90,12 @@ vtkSlicerVolumeHeaderWidget::~vtkSlicerVolumeHeaderWidget ( )
     {
     this->SpacingEntry2->SetParent(NULL);
     this->SpacingEntry2->Delete();
+    }
+
+  if (this->CenterButton)
+    {
+    this->CenterButton->SetParent(NULL);
+    this->CenterButton->Delete();
     }
    
   if (this->OriginEntry0)
@@ -226,6 +238,7 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
     return;
     }
 
+  // assume that we need to do this update for any entry event
   vtkKWEntry *entry = vtkKWEntry::SafeDownCast(caller);
   if (entry)
     {
@@ -237,8 +250,8 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
     spacing[1] = this->SpacingEntry1->GetValueAsDouble();
     spacing[2] = this->SpacingEntry2->GetValueAsDouble();
 
-    vtkMRMLVolumeNode *volumeNode;
-    if (volumeNode == this->GetVolumeNode ()) 
+    vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+    if ( volumeNode && !this->UpdatingFromMRML )
       {
       volumeNode->SetDisableModifiedEvent(1);
       volumeNode->SetSpacing(spacing);
@@ -248,6 +261,42 @@ void vtkSlicerVolumeHeaderWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     }
 
+  vtkKWPushButton *button = vtkKWPushButton::SafeDownCast(caller);
+  if ( button == this->CenterButton->GetWidget() )
+    {
+    vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
+    if ( volumeNode )
+      {
+      vtkImageData *image = volumeNode->GetImageData();
+      if (image) 
+        {
+        vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
+        volumeNode->GetIJKToRASMatrix(ijkToRAS);
+
+        double dimsH[4];
+        double rasCorner[4];
+        int *dims = image->GetDimensions();
+        dimsH[0] = dims[0] - 1;
+        dimsH[1] = dims[1] - 1;
+        dimsH[2] = dims[2] - 1;
+        dimsH[3] = 0.;
+        ijkToRAS->MultiplyPoint(dimsH, rasCorner);
+
+        double origin[3];
+        int i;
+        for (i = 0; i < 3; i++)
+          {
+          origin[i] = -0.5 * rasCorner[i];
+          }
+        volumeNode->SetDisableModifiedEvent(1);
+        volumeNode->SetOrigin(origin);
+        volumeNode->SetDisableModifiedEvent(0);
+        volumeNode->InvokePendingModifiedEvent();
+
+        ijkToRAS->Delete();
+        }
+      }
+    }
 }
 
 
@@ -262,6 +311,8 @@ void vtkSlicerVolumeHeaderWidget::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerVolumeHeaderWidget::UpdateWidgetFromMRML ()
 {
+  this->UpdatingFromMRML = 1;
+
   vtkMRMLVolumeNode *volumeNode = this->GetVolumeNode();
   if (volumeNode != NULL)
     {
@@ -312,6 +363,8 @@ void vtkSlicerVolumeHeaderWidget::UpdateWidgetFromMRML ()
     {
     this->FileNameEntry->GetWidget()->SetValue("");
     }
+
+  this->UpdatingFromMRML = 0;
   return;
 }
 
@@ -345,6 +398,13 @@ void vtkSlicerVolumeHeaderWidget::AddWidgetObservers ( )
     this->OriginEntry2->AddObserver(
         vtkKWEntry::EntryValueChangedEvent , (vtkCommand *)this->GUICallbackCommand );
     }
+
+  if (this->CenterButton)
+    {
+    this->CenterButton->GetWidget()->AddObserver(
+        vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+
 }
 
 //---------------------------------------------------------------------------
@@ -354,6 +414,31 @@ void vtkSlicerVolumeHeaderWidget::RemoveWidgetObservers ( )
     {
     this->VolumeSelectorWidget->SetMRMLScene(NULL);
     this->VolumeSelectorWidget->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
+    }
+
+  if (this->SpacingEntry0)
+    {
+    this->SpacingEntry0->GetWidget()->RemoveObservers(
+        vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SpacingEntry1->RemoveObservers(
+        vtkKWEntry::EntryValueChangedEvent , (vtkCommand *)this->GUICallbackCommand );
+    this->SpacingEntry2->RemoveObservers(
+        vtkKWEntry::EntryValueChangedEvent , (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->OriginEntry0)
+    {
+    this->OriginEntry0->GetWidget()->RemoveObservers(
+        vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->OriginEntry1->RemoveObservers(
+        vtkKWEntry::EntryValueChangedEvent , (vtkCommand *)this->GUICallbackCommand );
+    this->OriginEntry2->RemoveObservers(
+        vtkKWEntry::EntryValueChangedEvent , (vtkCommand *)this->GUICallbackCommand );
+    }
+
+  if (this->CenterButton)
+    {
+    this->CenterButton->GetWidget()->RemoveObservers(
+        vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
 }
 
@@ -512,6 +597,17 @@ void vtkSlicerVolumeHeaderWidget::CreateWidget ( )
                  this->OriginEntry0->GetWidgetName ( ),
                  this->OriginEntry1->GetWidgetName(),
                  this->OriginEntry2->GetWidgetName());
+
+  this->CenterButton = vtkKWPushButtonWithLabel::New();
+  this->CenterButton->SetParent(frame);
+  this->CenterButton->Create();
+  this->CenterButton->SetLabelText("");
+  this->CenterButton->GetWidget()->SetText("Center Volume");
+  this->CenterButton->SetLabelWidth(18);
+  this->CenterButton->SetWidth(48);
+  this->Script(
+               "pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+               this->CenterButton->GetWidgetName());
 
   this->ScanOrderEntry = vtkKWEntryWithLabel::New();
   this->ScanOrderEntry->SetParent(frame);

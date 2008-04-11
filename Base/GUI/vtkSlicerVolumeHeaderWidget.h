@@ -33,6 +33,7 @@
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLStorageNode.h"
 
+class vtkKWPushButtonWithLabel;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerVolumeHeaderWidget : public vtkSlicerWidget
 {
@@ -102,6 +103,8 @@ protected:
   vtkKWEntry          *OriginEntry1;
   vtkKWEntry          *OriginEntry2;
 
+  vtkKWPushButtonWithLabel *CenterButton;
+
   vtkKWEntryWithLabel *ScanOrderEntry;
 
   vtkKWEntryWithLabel *NumScalarsEntry;
@@ -112,6 +115,9 @@ protected:
 
 private:
 
+  // internal flag to prevent widget updates from triggering 
+  // a feedback loop
+  int UpdatingFromMRML;
 
   vtkSlicerVolumeHeaderWidget(const vtkSlicerVolumeHeaderWidget&); // Not implemented
   void operator=(const vtkSlicerVolumeHeaderWidget&); // Not Implemented
