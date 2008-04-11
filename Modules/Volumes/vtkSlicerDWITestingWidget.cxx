@@ -51,6 +51,7 @@ vtkSlicerDWITestingWidget::vtkSlicerDWITestingWidget(void)
   this->MaskNode = NULL;
   this->ViewGlyphs = NULL;
   this->ViewTracts = NULL;
+  this->RunFrame = NULL;
   }
 
 //---------------------------------------------------------------------------
