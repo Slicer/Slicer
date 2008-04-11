@@ -811,7 +811,7 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
 ################################################################################
 # Get and build the sandbox
 
-if { [BuildThis $::SANDBOX_TEST_FILE "sandbox"] == 1 && [BuildThis $::ALT_SANDBOX_TEST_FILE "sandbox"] == 1 } {
+if { 0 && [BuildThis $::SANDBOX_TEST_FILE "sandbox"] == 1 && [BuildThis $::ALT_SANDBOX_TEST_FILE "sandbox"] == 1 } {
     cd $SLICER_LIB
 
     runcmd $::SVN checkout $::SANDBOX_TAG NAMICSandBox 
