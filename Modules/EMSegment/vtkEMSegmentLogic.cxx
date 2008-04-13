@@ -2076,6 +2076,8 @@ CopyTreeGenericDataToSegmenter(vtkImageEMLocalGenericClass* node,
     std::cerr 
       << std::endl
       << "Warning: the segmentation ROI was bogus, setting ROI to entire image"
+      << std::endl
+      << "NOTE: The above warning about ROI should not lead to poor segmentation results;  the entire image shold be segmented.  It only indicates an error if you intended to segment a subregion of the image."
       << std::endl;
     for (unsigned int i = 0; i < 3; ++i)
       {
