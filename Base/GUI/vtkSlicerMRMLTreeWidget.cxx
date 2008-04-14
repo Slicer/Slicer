@@ -43,6 +43,7 @@ vtkSlicerMRMLTreeWidget::vtkSlicerMRMLTreeWidget ( )
 //---------------------------------------------------------------------------
 vtkSlicerMRMLTreeWidget::~vtkSlicerMRMLTreeWidget ( )
 {
+  this->RemoveMRMLObservers();
   if (this->TreeWidget)
     {
     this->TreeWidget->SetParent(NULL);
@@ -429,7 +430,8 @@ void vtkSlicerMRMLTreeWidget::ProcessMRMLEvents ( vtkObject *caller,
 {
   vtkMRMLNode *node = reinterpret_cast<vtkMRMLNode *>(callData);
   vtkMRMLTransformableNode *tnode = vtkMRMLTransformableNode::SafeDownCast(node);
-  if (this->MRMLScene && vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene && tnode) 
+  if (this->MRMLScene && (event == vtkMRMLScene::SceneCloseEvent || 
+                         vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene && tnode)) 
     {
     this->UpdateTreeFromMRML();
     }
