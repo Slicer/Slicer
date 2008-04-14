@@ -121,8 +121,13 @@ void vtkSlicerSceneSnapshotWidget::ProcessWidgetEvents ( vtkObject *caller,
     }
   else if ( this->DeleteSnapshotButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {
-    //--- delete the selected snapshot.
-    //--- fill in.
+    vtkMRMLSceneSnapshotNode *snapshotNode = 
+      vtkMRMLSceneSnapshotNode::SafeDownCast(this->SnapshotSelectorWidget->GetSelected());
+    if (snapshotNode)
+      {
+      this->MRMLScene->SaveStateForUndo();
+      this->MRMLScene->RemoveNode(snapshotNode);
+      }
     }
   else if (this->CreateSnapshotButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent )
     {

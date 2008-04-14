@@ -58,6 +58,12 @@ public:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
   
+  // Description:
+  // removes observers on node deleted events 
+  virtual void AddMRMLObservers();
+  virtual void RemoveMRMLObservers();
+
+  
   // Description::
   // Callbacks
   virtual void DeleteNodeCallback(const char *id);

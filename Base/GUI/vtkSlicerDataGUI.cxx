@@ -104,6 +104,7 @@ void vtkSlicerDataGUI::AddGUIObservers ( )
 {
   this->MRMLTreeWidget->AddObserver (vtkSlicerMRMLTreeWidget::SelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SceneSnapshotWidget->AddMRMLObservers();
+  this->MRMLTreeWidget->AddMRMLObservers();
 }
 
 
