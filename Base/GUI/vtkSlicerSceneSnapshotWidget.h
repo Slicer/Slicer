@@ -81,6 +81,7 @@ protected:
   
   vtkSlicerNodeSelectorWidget* SnapshotSelectorWidget;
   vtkKWPushButton* CreateSnapshotButton;
+  vtkKWPushButton *DeleteSnapshotButton;
   vtkKWPushButton* RestoreSceneButton;
   vtkKWSimpleEntryDialog *NameDialog;
   vtkSlicerFoundationIcons *Icons;
