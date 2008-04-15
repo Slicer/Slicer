@@ -276,6 +276,15 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
   foreach {x y z} [$this dcToXYZ $windowx $windowy] {}
 
+  if { $x < 0 } { 
+    puts "$this: clamping negative X coordinate!"
+    set x 0
+  }
+  if { $y < 0 } { 
+    puts "$this: clamping negative Y coordinate!"
+    set y 0
+  }
+
   # We should really use the pokedrenderer's size for these calculations.
   # However, viewports in the LightBox can differ in size by a pixel.  So 
   # set the image size based on the size of renderer zero.
@@ -573,7 +582,7 @@ itcl::body SliceSWidget::updateAnnotation {x y r a s} {
       $_annotation SetText 0 "${labelText}\n${voxelText}"
       $_annotation SetText 1 $spaceText0
       $_annotation SetText 2 $spaceText1
-      $_annotation SetText 3 ""
+      $_annotation SetText 3 "$xyText"
     }
     "2" {
       $_annotation SetText 0 "${labelText}"
