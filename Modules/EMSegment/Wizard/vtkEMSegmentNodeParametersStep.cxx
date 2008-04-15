@@ -13,6 +13,7 @@
 #include "vtkKWMenu.h"
 #include "vtkKWMenuButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWMessageDialog.h"
 #include "vtkKWMultiColumnListWithScrollbarsWithLabel.h"
 #include "vtkKWMultiColumnListWithScrollbars.h"
 #include "vtkKWMultiColumnList.h"
@@ -1861,6 +1862,43 @@ void vtkEMSegmentNodeParametersStep::GenerateBackgroundProbabilityCallback(
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   mrmlManager->SetTreeNodeGenerateBackgroundProbability(sel_vol_id, state);
+}
+
+//----------------------------------------------------------------------------
+void vtkEMSegmentNodeParametersStep::Validate()
+{
+  vtkKWWizardWorkflow *wizard_workflow = 
+    this->GetGUI()->GetWizardWidget()->GetWizardWorkflow();
+  vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+
+  // make sure that the probability for each set of sibling nodes sums
+  // to unity
+
+  if (mrmlManager->GetTreeRootNode() != NULL)
+    {
+      vtkIdType firstBadTreeID = 
+        mrmlManager->GetTreeNodeFirstIDWithChildProbabilityError();
+      if (firstBadTreeID >= 0)
+        {
+        std::string parentNodeName = 
+          mrmlManager->GetTreeNodeName(firstBadTreeID);
+        std::string errorMessage   = parentNodeName  + 
+          ": Child probabilities must sum to one!  " +
+          "Please fix before continuing.";
+        vtkKWMessageDialog::PopupMessage(this->GetApplication(),
+                                         NULL,
+                                         "Node Parameters Error",
+                                         errorMessage.c_str(),
+                                         vtkKWMessageDialog::ErrorIcon | 
+                                         vtkKWMessageDialog::InvokeAtPointer);
+        
+        // there was an error; stay on this step
+        wizard_workflow->
+          PushInput(vtkKWWizardStep::GetValidationFailedInput());
+        wizard_workflow->ProcessInputs();
+        }
+    }
+  this->Superclass::Validate();
 }
 
 //----------------------------------------------------------------------------

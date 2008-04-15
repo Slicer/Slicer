@@ -230,6 +230,8 @@ public:
   virtual double   GetTreeNodeClassProbability(vtkIdType nodeID);
   virtual void     SetTreeNodeClassProbability(vtkIdType nodeID, double value);
 
+  virtual double   GetTreeNodeChildrenSumClassProbability(vtkIdType nodeID);
+
   virtual double   GetTreeNodeSpatialPriorWeight(vtkIdType nodeID);
   virtual void     SetTreeNodeSpatialPriorWeight(vtkIdType nodeID, 
                                                  double value);
@@ -275,6 +277,11 @@ public:
   // Step 6 does not depend on tree structure
 
   // Step 7 does not depend on tree structure
+
+  //
+  // functions for checking tree node parameters
+  //
+  virtual vtkIdType GetTreeNodeFirstIDWithChildProbabilityError();
 
   //
   // functions for accessing volumes

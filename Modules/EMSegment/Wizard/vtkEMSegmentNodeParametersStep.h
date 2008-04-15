@@ -58,6 +58,10 @@ public:
   virtual void ExcludeIncompleteEStepCallback(vtkIdType, int state);
   virtual void GenerateBackgroundProbabilityCallback(vtkIdType, int state);
 
+  // Description:
+  // Reimplement the superclass's method.
+  virtual void Validate();
+
 protected:
   vtkEMSegmentNodeParametersStep();
   ~vtkEMSegmentNodeParametersStep();
