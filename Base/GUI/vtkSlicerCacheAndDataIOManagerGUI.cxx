@@ -31,6 +31,9 @@ vtkSlicerCacheAndDataIOManagerGUI::vtkSlicerCacheAndDataIOManagerGUI ( )
   this->ForceReloadCheckButton = NULL;
   this->OverwriteCacheCheckButton = NULL;
   this->AsynchronousCheckButton = NULL;
+  this->CacheDirectoryButton = NULL;
+  this->CacheLimitSpinBox = NULL;
+  this->CacheFreeBufferSizeSpinBox = NULL;
   this->TimeOutCheckButton = NULL;
   this->ManagerTopLevel = NULL;
   this->ControlFrame = NULL;
@@ -118,6 +121,24 @@ vtkSlicerCacheAndDataIOManagerGUI::~vtkSlicerCacheAndDataIOManagerGUI ( )
     this->OverwriteCacheCheckButton->Delete();
     this->OverwriteCacheCheckButton = NULL;    
     }
+  if ( this->CacheDirectoryButton )
+    {
+    this->CacheDirectoryButton->SetParent ( NULL );
+    this->CacheDirectoryButton->Delete();
+    this->CacheDirectoryButton=NULL;
+    }
+  if ( this->CacheLimitSpinBox )
+    {
+    this->CacheLimitSpinBox->SetParent ( NULL );
+    this->CacheLimitSpinBox->Delete();
+    this->CacheLimitSpinBox=NULL;    
+    }
+  if ( this->CacheFreeBufferSizeSpinBox )
+    {
+    this->CacheFreeBufferSizeSpinBox->SetParent ( NULL );
+    this->CacheFreeBufferSizeSpinBox->Delete();
+    this->CacheFreeBufferSizeSpinBox=NULL;    
+    }
   if ( this->AsynchronousCheckButton )
     {
     this->AsynchronousCheckButton->SetParent ( NULL );
@@ -175,6 +196,9 @@ void vtkSlicerCacheAndDataIOManagerGUI::PrintSelf ( ostream& os, vtkIndent inden
   os << indent << "ForceReloadCheckButton: " << this->GetForceReloadCheckButton () << "\n";
   os << indent << "OverwriteCacheCheckButton: " << this->GetOverwriteCacheCheckButton () << "\n";
   os << indent << "AsynchronousCheckButton: " << this->GetAsynchronousCheckButton () << "\n";
+  os << indent << "CacheDirectoryButton: " << this->GetCacheDirectoryButton() << "\n";
+  os << indent << "CacheLimitSpinBox: " << this->GetCacheLimitSpinBox() << "\n";
+  os << indent << "CacheFreeBufferSizeSpinBox: " << this->GetCacheFreeBufferSizeSpinBox() << "\n";
   os << indent << "TimeOutCheckButton: " << this->GetTimeOutCheckButton () << "\n";
   os << indent << "ControlFrame: " << this->GetControlFrame () << "\n";
   os << indent << "ButtonFrame: " << this->GetButtonFrame () << "\n";
@@ -197,6 +221,10 @@ void vtkSlicerCacheAndDataIOManagerGUI::RemoveGUIObservers ( )
   this->OverwriteCacheCheckButton->RemoveObservers ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->AsynchronousCheckButton->RemoveObservers ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->TimeOutCheckButton->RemoveObservers ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->CacheLimitSpinBox->GetWidget()->RemoveObservers ( vtkKWSpinBox::SpinBoxValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CacheFreeBufferSizeSpinBox->GetWidget()->RemoveObservers ( vtkKWSpinBox::SpinBoxValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+
   
 }
 
@@ -212,108 +240,148 @@ void vtkSlicerCacheAndDataIOManagerGUI::AddGUIObservers ( )
   this->OverwriteCacheCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->AsynchronousCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->TimeOutCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->CacheLimitSpinBox->GetWidget()->AddObserver ( vtkKWSpinBox::SpinBoxValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CacheFreeBufferSizeSpinBox->GetWidget()->AddObserver( vtkKWSpinBox::SpinBoxValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+
 
 }
 
 
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::ProcessGUIEvents ( vtkObject *caller,
-                                        unsigned long event, void *callData )
-  {
-    vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
-    int ret=0;
-    
-    if ( b == this->CloseButton && event == vtkKWPushButton::InvokedEvent )
+                                                           unsigned long event, void *callData )
+{
+  vtkKWPushButton *b = vtkKWPushButton::SafeDownCast ( caller );
+
+  vtkKWSpinBox *sb = vtkKWSpinBox::SafeDownCast ( caller );
+  vtkKWTopLevel *lsb = vtkKWTopLevel::SafeDownCast ( caller );
+
+
+  int ret=0;
+
+  if ( b == this->CloseButton && event == vtkKWPushButton::InvokedEvent )
+    {
+    this->WithdrawManagerWindow();
+    }
+  else if ( b == this->ClearDisplayButton && event == vtkKWPushButton::InvokedEvent )
+    {
+    // nothing yet.
+    //--- remove all data transfers.
+    //--- refresh display.
+    if ( this->TransferWidgetCollection )
       {
-      this->WithdrawManagerWindow();
-      }
-    else if ( b == this->ClearDisplayButton && event == vtkKWPushButton::InvokedEvent )
-      {
-      // nothing yet.
-      }
-    else if ( b == this->RefreshButton && event == vtkKWPushButton::InvokedEvent )
-      {
+      vtkSlicerDataTransferWidget *w;
+      int num = this->TransferWidgetCollection->GetNumberOfItems();
+      while ( num > 0 )
+        {
+        w = vtkSlicerDataTransferWidget::SafeDownCast ( this->TransferWidgetCollection->GetItemAsObject( 0 ) );
+        this->TransferWidgetCollection->RemoveItem ( 0 );
+        w->RemoveWidgetObservers();
+        w->SetParent ( NULL );
+        w->Delete();
+        w = NULL;
+        num = this->TransferWidgetCollection->GetNumberOfItems();      
+        }
+      this->TransferWidgetCollection->RemoveAllItems();
       this->UpdateEntireGUI();
       }
-    else if ( b == this->ClearCacheButton && event == vtkKWPushButton::InvokedEvent && this->CacheManager != NULL)
+    }
+  else if ( b == this->RefreshButton && event == vtkKWPushButton::InvokedEvent )
+    {
+    this->UpdateEntireGUI();
+    }
+  else if ( b == this->ClearCacheButton && event == vtkKWPushButton::InvokedEvent && this->CacheManager != NULL)
+    {
+    //--- prompt to make sure user wants to do this.
+    vtkKWMessageDialog *d = vtkKWMessageDialog::New();
+    d->SetParent ( this->ManagerTopLevel );
+    d->SetStyleToYesNo();
+    std::string msg = "Are you sure you want to delete all cached files in: ";
+    msg += this->CacheManager->GetRemoteCacheDirectory();
+    msg += "?";
+    d->SetText ( msg.c_str());
+    d->Create();
+    ret = d->Invoke();
+    d->Delete();
+    if ( ret )
       {
-      //--- prompt to make sure user wants to do this.
-      vtkKWMessageDialog *d = vtkKWMessageDialog::New();
-      d->SetParent ( this->ManagerTopLevel );
-      d->SetStyleToYesNo();
-      std::string msg = "Are you sure you want to delete all cached files in: ";
-      msg += this->CacheManager->GetRemoteCacheDirectory();
-      msg += "?";
-      d->SetText ( msg.c_str());
-      d->Create();
-      ret = d->Invoke();
-      d->Delete();
-      if ( ret )
+      this->CacheManager->ClearCache();
+      //--- delete all current data transfers
+      //--- which causes the transfer panel to update...
+      if ( this->TransferWidgetCollection != NULL )
         {
-        this->CacheManager->ClearCache();
-        //--- delete all current data transfers
-        //--- which causes the transfer panel to update...
-        if ( this->TransferWidgetCollection != NULL )
+        int numW = this->TransferWidgetCollection->GetNumberOfItems();
+        for (int i =0; i < numW; i++)
           {
-          int numW = this->TransferWidgetCollection->GetNumberOfItems();
-          for (int i =0; i < numW; i++)
+          vtkSlicerDataTransferWidget *w =
+            vtkSlicerDataTransferWidget::SafeDownCast (this->TransferWidgetCollection->GetItemAsObject ( i ));
+          if ( w != NULL )
             {
-            vtkSlicerDataTransferWidget *w =
-              vtkSlicerDataTransferWidget::SafeDownCast (this->TransferWidgetCollection->GetItemAsObject ( i ));
-            if ( w != NULL )
-              {
-              w->DeleteTransferFromCache();
-              w->GetDataTransfer()->SetTransferStatus ( vtkDataTransfer::Deleted );
-              }
+            w->DeleteTransferFromCache();
+            w->GetDataTransfer()->SetTransferStatus ( vtkDataTransfer::Deleted );
             }
-          //--- and get rid of anything else there...
-          //--- which will trigger a CacheClearEvent
-          //--- that causes this overview panel to update.
-          this->UpdateEntireGUI();
           }
+        //--- and get rid of anything else there...
+        //--- which will trigger a CacheClearEvent
+        //--- that causes this overview panel to update.
+        this->UpdateEntireGUI();
         }
       }
-    else if ( b == this->CancelAllButton && event == vtkKWPushButton::InvokedEvent )
+    }
+  else if ( b == this->CancelAllButton && event == vtkKWPushButton::InvokedEvent )
+    {
+    //--- prompt to make sure user wants to do this.
+    vtkKWMessageDialog *d = vtkKWMessageDialog::New();
+    d->SetParent ( this->ManagerTopLevel );
+    d->SetStyleToYesNo();
+    std::string msg = "Are you sure you want to cancel all running and pending data transfers?";
+    d->SetText ( msg.c_str());
+    d->Create();
+    ret = d->Invoke();
+    d->Delete();
+    if ( ret )
       {
-      //--- prompt to make sure user wants to do this.
-      vtkKWMessageDialog *d = vtkKWMessageDialog::New();
-      d->SetParent ( this->ManagerTopLevel );
-      d->SetStyleToYesNo();
-      std::string msg = "Are you sure you want to cancel all running and pending data transfers?";
-      d->SetText ( msg.c_str());
-      d->Create();
-      ret = d->Invoke();
-      d->Delete();
-      if ( ret )
-        {
-        this->CancelAllDataTransfers();
-        this->UpdateTransfersPanel();
-        }
+      this->CancelAllDataTransfers();
+      this->UpdateTransfersPanel();
       }
+    }
     vtkKWCheckButton *c = vtkKWCheckButton::SafeDownCast ( caller );
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
     if ( app != NULL && this->DataIOManager != NULL && this->CacheManager != NULL )
       {
-      if ( c == this->ForceReloadCheckButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
-        {
-        //--- application will update only if the value has changed;
-        app->SetEnableForceRedownload(this->ForceReloadCheckButton->GetSelectedState());
-        }
-      else if ( c == this->OverwriteCacheCheckButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
-        {
-        //--- application will update only if the value has changed;
-        app->SetEnableRemoteCacheOverwriting(this->OverwriteCacheCheckButton->GetSelectedState());
-        }
-      else if ( c == this->AsynchronousCheckButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
-        {
-        //--- application will update only if the value has changed;
-        app->SetEnableAsynchronousIO(this->AsynchronousCheckButton->GetSelectedState());
-        }
-      else if ( c == this->TimeOutCheckButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
-        {
-        //--- nothing for now.
-        }
+    if ( sb == this->CacheLimitSpinBox->GetWidget() && event == vtkKWSpinBox::SpinBoxValueChangedEvent )
+      {
+      app->SetRemoteCacheLimit (this->CacheLimitSpinBox->GetWidget()->GetValue() );
       }
+    else if ( sb == this->CacheFreeBufferSizeSpinBox->GetWidget() && event == vtkKWSpinBox::SpinBoxValueChangedEvent )
+      {
+      app->SetRemoteCacheFreeBufferSize(this->CacheFreeBufferSizeSpinBox->GetWidget()->GetValue() );
+      }
+    if ( lsb == this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog() && event == vtkKWTopLevel::WithdrawEvent )
+      {
+      app->SetRemoteCacheDirectory ( this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->GetFileName() );
+      }
+    if ( c == this->ForceReloadCheckButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
+      {
+      //--- application will update only if the value has changed;
+      app->SetEnableForceRedownload(this->ForceReloadCheckButton->GetSelectedState());
+      }
+    else if ( c == this->OverwriteCacheCheckButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
+      {
+      //--- application will update only if the value has changed;
+      app->SetEnableRemoteCacheOverwriting(this->OverwriteCacheCheckButton->GetSelectedState());
+      }
+    else if ( c == this->AsynchronousCheckButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
+      {
+      //--- application will update only if the value has changed;
+      app->SetEnableAsynchronousIO(this->AsynchronousCheckButton->GetSelectedState());
+      }
+    else if ( c == this->TimeOutCheckButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
+      {
+      //--- nothing for now.
+      }
+    }
 
 }
 
@@ -346,7 +414,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::CancelAllDataTransfers ( )
 
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::ProcessLogicEvents ( vtkObject *caller,
-                                          unsigned long event, void *callData )
+                                                             unsigned long event, void *callData )
 {
   // If any of the logic state changes, update GUI to show.
   // Force reload?
@@ -360,11 +428,12 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessLogicEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
-                                         unsigned long event, void *callData )
+                                                            unsigned long event, void *callData )
 {
 
   vtkDataIOManager *dm = vtkDataIOManager::SafeDownCast ( caller );
   vtkCacheManager *cm = vtkCacheManager::SafeDownCast ( caller );
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
   
   vtkDebugMacro("vtkSlicerCacheAndDataIOManagerGUI: Processing mrml events...");
   if ( dm == this->DataIOManager && dm != NULL )
@@ -392,41 +461,57 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessMRMLEvents ( vtkObject *caller,
       {
       if ( this->AsynchronousCheckButton->GetSelectedState() != this->DataIOManager->GetEnableAsynchronousIO() )
         {
-              this->UpdateOverviewPanel();
+        this->UpdateOverviewPanel();
         }
       }
     }
-  else if ( cm == this->CacheManager && cm != NULL && this->DataIOManager != NULL)
+  else if ( cm == this->CacheManager && cm != NULL && this->DataIOManager != NULL && app != NULL)
     {
     if ( event == vtkCacheManager::CacheLimitExceededEvent )
       {
       this->UpdateOverviewPanel();
       }
+    else if ( event == vtkCacheManager::SettingsUpdateEvent )
+      {
+      this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetFileName( app->GetRemoteCacheDirectory() );
+      this->CacheLimitSpinBox->GetWidget()->SetValue(app->GetRemoteCacheLimit() );
+      this->CacheFreeBufferSizeSpinBox->GetWidget()->SetValue( app->GetRemoteCacheFreeBufferSize() );
+      }
     else if ( event == vtkCacheManager::InsufficientFreeBufferEvent )
       {
-      //--- pop up dialog. --/
-
-      vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication());
-      if ( app != NULL )
+      //--- WJPtest: may want to take this out...
+      //--- if a user has already been notified that they're out of
+      //--- cache space, then we don't notify them again.
+      //--- This is so that remote downloads of big MRML scenes
+      //--- don't result in many, many annoying pop-up dialogs.
+      //--- The dialog should pop up once, only.
+      //--- After the user clears some cache space, the flag should
+      //--- get reset in the DataIOManager.
+      if ( cm->GetInsufficientFreeBufferNotificationFlag() == 0 )
         {
-        vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
-        if ( appGUI != NULL )
+        //--- pop up dialog. --/
+        vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication());
+        if ( app != NULL )
           {
-          vtkSlicerWindow *win = appGUI->GetMainSlicerWindow();
-          if ( win != NULL )
+          vtkSlicerApplicationGUI *appGUI = app->GetApplicationGUI();
+          if ( appGUI != NULL )
             {
-            vtkKWMessageDialog *d = vtkKWMessageDialog::New();
-            d->SetParent ( win->GetViewFrame() );
-            d->SetStyleToMessage();
-            std::string msg = "The download of this dataset can't be performed because the cache is full. If a cached version of this dataset exists, Slicer will load that instead. Try clearing the cache (from the View->Cache And Remote Data Handling panel), or increasing the Remote Cache size (from the View->Application Settings panel).";
-            d->SetText ( msg.c_str());
-            d->Create();
-            d->Invoke();
-            d->Delete();
+            vtkSlicerWindow *win = appGUI->GetMainSlicerWindow();
+            if ( win != NULL )
+              {
+              vtkKWMessageDialog *d = vtkKWMessageDialog::New();
+              d->SetParent ( win->GetViewFrame() );
+              d->SetStyleToMessage();
+              std::string msg = "The download of this dataset can't be performed because the cache is full. If a cached version of this dataset exists, Slicer will load that instead. Try clearing the cache (from the View->Cache And Remote Data Handling panel), or increasing the Remote Cache size (from the View->Application Settings panel). This message will not be displayed again.";
+              d->SetText ( msg.c_str());
+              d->Create();
+              d->Invoke();
+              d->Delete();
+              }
             }
           }
+        this->UpdateOverviewPanel();
         }
-      this->UpdateOverviewPanel();
       }
     else if ( event == vtkCacheManager::CacheClearEvent )
       {
@@ -536,11 +621,11 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
       sz = this->CacheManager->ComputeCacheSize(this->CacheManager->GetRemoteCacheDirectory(), 0);
       if ( sz > this->CacheManager->GetRemoteCacheLimit() )
         {
-        sprintf ( txt, "Cache size: %6.2f (FULL!)", sz);
+        sprintf ( txt, "(%6fMB --FULL!)   ", sz);
         }
       else
         {
-        sprintf ( txt, "Cache size: %6.2f", sz);
+        sprintf ( txt, "(%6fMB used)   ", sz);
         }
       this->CacheSizeLabel->SetText ( txt );
 
@@ -549,17 +634,17 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
       sprintf ( txt, "" );
       if ( sz < 0 )
         {
-        sprintf ( txt, "Cache free: %6.2f (None!)", sz);
+        sprintf ( txt, "(%6fMB --FULL!)", sz);
         }
       else
         {
-        sprintf ( txt, "Cache free: %6.2f", sz);
+        sprintf ( txt, "(%6fMB) free", sz);
         }
       this->CacheFreeLabel->SetText ( txt );
       }
     else
       {
-      this->CacheSizeLabel->SetText ( "-" );
+      this->CacheSizeLabel->SetText ( "-   " );
       this->CacheFreeLabel->SetText ( "-");
       }
     //--- cache options:
@@ -821,6 +906,8 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
   if ( appGUI != NULL )
     {
 
+    int label_width = 10;
+    
     this->ManagerTopLevel = vtkKWTopLevel::New();
     this->ManagerTopLevel->SetApplication ( app );
     vtksys_stl::string title = "Cache & Remote Data I/O Manager Window";
@@ -1010,30 +1097,88 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
     this->CacheSizeLabel = vtkKWLabel::New();
     this->CacheSizeLabel->SetParent ( this->ButtonFrame );
     this->CacheSizeLabel->Create();
-    this->CacheSizeLabel->SetWidth (20);
-    this->CacheSizeLabel->SetText ( "Cache size: ");
+    this->CacheSizeLabel->SetText ( "()");
+    this->CacheSizeLabel->SetForegroundColor ( 0.3, 0.0, 1.0 );
     this->CacheSizeLabel->SetAnchorToWest ();
     this->CacheSizeLabel->SetBalloonHelpString ("Use View->Application Settings Interface->RemoteIO Settings to adjust cache size");
 
     this->CacheFreeLabel = vtkKWLabel::New();
     this->CacheFreeLabel->SetParent ( this->ButtonFrame );
     this->CacheFreeLabel->Create();
-    this->CacheFreeLabel->SetWidth ( 20 );
-    this->CacheFreeLabel->SetText ( "Cache free: ");
+    this->CacheFreeLabel->SetText ( "()");
+    this->CacheFreeLabel->SetForegroundColor ( 0.3, 0.0, 1.0 );
     this->CacheFreeLabel->SetAnchorToWest ();
     this->CacheFreeLabel->SetBalloonHelpString ("Use View->Application Settings Interface->RemoteIO Settings to adjust cache free buffer size");
 
-    this->CloseButton = vtkKWPushButton::New();
-    this->CloseButton->SetParent ( this->ButtonFrame );
-    this->CloseButton->Create();
-    this->CloseButton->SetText ( "Close");
-    this->CloseButton->SetWidth ( 10 );
 
-    this->Script ( "pack %s %s -side left -anchor n -padx 4 -pady 4",
-                   this->CacheSizeLabel->GetWidgetName(),
-                   this->CacheFreeLabel->GetWidgetName() );
-    this->Script ( "pack %s -side right -anchor n -padx 4 -pady 4", this->CloseButton->GetWidgetName() );
-    this->Built = true;
+    //--- CacheDirectoryButton
+    if (!this->CacheDirectoryButton)
+      {
+      this->CacheDirectoryButton = vtkKWLoadSaveButtonWithLabel::New();
+      }
+
+    this->CacheDirectoryButton->SetParent(this->ButtonFrame);
+    this->CacheDirectoryButton->Create();
+    this->CacheDirectoryButton->SetLabelText("Cache Directory:");
+    this->CacheDirectoryButton->GetWidget()->TrimPathFromFileNameOff();
+    this->CacheDirectoryButton->GetWidget()
+      ->GetLoadSaveDialog()->ChooseDirectoryOn();
+    this->CacheDirectoryButton->GetWidget()
+      ->GetLoadSaveDialog()->SaveDialogOff();
+    this->CacheDirectoryButton->GetWidget()
+      ->GetLoadSaveDialog()->SetTitle("Select a directory for cached files");
+    this->CacheDirectoryButton->SetBalloonHelpString(
+                                                           "Remote Cache directory for downloded files.");
+    this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog()->SetFileName( app->GetRemoteCacheDirectory() );
+
+    //--- CacheLimitSpinBox
+     if (!this->CacheLimitSpinBox)
+    {
+    this->CacheLimitSpinBox = vtkKWSpinBoxWithLabel::New();
+    }
+     this->CacheLimitSpinBox->SetParent(this->ButtonFrame);
+     this->CacheLimitSpinBox->Create();
+     this->CacheLimitSpinBox->SetLabelText("Cache Limit:");
+     this->CacheLimitSpinBox->GetWidget()->SetRestrictValueToInteger();
+     this->CacheLimitSpinBox->GetWidget()->SetWidth (6);
+     this->CacheLimitSpinBox->GetWidget()->SetRange(0,1000);
+     this->CacheLimitSpinBox->SetBalloonHelpString("Set the upper limit on the size of the cache directory (Mb).");
+     this->CacheLimitSpinBox->GetWidget()->SetValue(app->GetRemoteCacheLimit() );
+
+     //--- CacheFreeBufferSizeSpinBox
+     if (!this->CacheFreeBufferSizeSpinBox)
+       {
+       this->CacheFreeBufferSizeSpinBox = vtkKWSpinBoxWithLabel::New();
+       }
+     this->CacheFreeBufferSizeSpinBox->SetParent(this->ButtonFrame);
+     this->CacheFreeBufferSizeSpinBox->Create();
+     this->CacheFreeBufferSizeSpinBox->SetLabelText("Cache Free Buffer:");
+     this->CacheFreeBufferSizeSpinBox->GetWidget()->SetRestrictValueToInteger();
+     this->CacheFreeBufferSizeSpinBox->GetWidget()->SetRange(0,900);
+     this->CacheFreeBufferSizeSpinBox->GetWidget()->SetWidth ( 6 );
+     this->CacheFreeBufferSizeSpinBox->SetBalloonHelpString("Set the amount of space in the cache directory that should remain free (Mb).");
+     this->CacheFreeBufferSizeSpinBox->GetWidget()->SetValue( app->GetRemoteCacheFreeBufferSize() );
+
+
+     this->CloseButton = vtkKWPushButton::New();
+     this->CloseButton->SetParent ( this->ButtonFrame );
+     this->CloseButton->Create();
+     this->CloseButton->SetText ( "Close");
+     this->CloseButton->SetWidth ( 10 );
+
+     this->Script ( "pack %s -side left -anchor n -padx 4 -pady 4",
+                    this->CacheDirectoryButton->GetWidgetName());
+    
+     this->Script ( "pack %s %s -side left -anchor n -padx 2 -pady 4",
+                    this->CacheLimitSpinBox->GetWidgetName(),
+                    this->CacheSizeLabel->GetWidgetName() );
+    
+     this->Script ( "pack %s %s -side left -anchor n -padx 2 -pady 4",
+                    this->CacheFreeBufferSizeSpinBox->GetWidgetName(),
+                    this->CacheFreeLabel->GetWidgetName());
+    
+     this->Script ( "pack %s -side right -anchor n -padx 4 -pady 4", this->CloseButton->GetWidgetName() );
+     this->Built = true;
     }
 }
 

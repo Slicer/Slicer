@@ -365,11 +365,32 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
       vtkDebugMacro("QueueRead: Calling remove from cache");
       this->GetCacheManager()->DeleteFromCache ( dest );
       }
-    
-    //--- trigger logic to download, if there's cache space.
-    //--- and signal this remote read event to Logic and GUI.
-    vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
-    this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
+    //---
+    //--- WJPtest
+    //--- Test for space to download the file. If no space,
+    //--- check for InsufficientFreeBufferNotificationFlag.
+    //--- if set, do nothing.
+    //--- if not yet set, send event, then set it.
+    //--- This flag is here to help us avoid bugging the user if
+    //--- they are downloading a large scene.
+    float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) -  (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
+    if ( (cm->GetCurrentCacheSize()*1000000.0) >= bufsize )
+      {
+      //--- No space left in cache. Don't trigger logic to download;
+      //--- let GUI post a pop-up dialog to inform user.
+      cm->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
+      cm->SetInsufficientFreeBufferNotificationFlag(1);
+      }
+    else
+      {
+      //--- reset the cachemanager's flag -- looks like enough cache space
+      //--- exists to do the download.
+      cm->SetInsufficientFreeBufferNotificationFlag(0);
+      //--- trigger logic to download, if there's cache space.
+      //--- and signal this remote read event to Logic and GUI.
+      vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
+      this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
+      }
     }
   else
     {

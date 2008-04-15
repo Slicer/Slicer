@@ -18,6 +18,10 @@
 #include "vtkKWLabel.h"
 #include "vtkKWTopLevel.h"
 #include "vtkKWFrameWithScrollbar.h"
+#include "vtkKWSpinBox.h"
+#include "vtkKWSpinBoxWithLabel.h"
+#include "vtkKWLoadSaveButton.h"
+#include "vtkKWLoadSaveButtonWithLabel.h"
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerCacheAndDataIOManagerGUI : public vtkSlicerComponentGUI
 {
@@ -45,6 +49,9 @@ public:
   vtkGetObjectMacro ( ForceReloadCheckButton, vtkKWCheckButton );
   vtkGetObjectMacro ( OverwriteCacheCheckButton, vtkKWCheckButton );
   vtkGetObjectMacro ( AsynchronousCheckButton, vtkKWCheckButton );
+  vtkGetObjectMacro ( CacheDirectoryButton, vtkKWLoadSaveButtonWithLabel );
+  vtkGetObjectMacro ( CacheLimitSpinBox, vtkKWSpinBoxWithLabel );
+  vtkGetObjectMacro ( CacheFreeBufferSizeSpinBox, vtkKWSpinBoxWithLabel );
   vtkGetObjectMacro ( TimeOutCheckButton, vtkKWCheckButton );
   vtkGetObjectMacro ( ManagerTopLevel, vtkKWTopLevel );
   vtkGetObjectMacro ( ControlFrame, vtkKWFrame );
@@ -144,9 +151,13 @@ protected:
   vtkCacheManager *CacheManager;
   vtkCollection *TransferWidgetCollection;
 
-    // Description:
-    // Describes whether the GUI has been built or not.
-    bool Built;
+  vtkKWLoadSaveButtonWithLabel *CacheDirectoryButton;
+  vtkKWSpinBoxWithLabel *CacheLimitSpinBox;
+  vtkKWSpinBoxWithLabel *CacheFreeBufferSizeSpinBox;
+  
+  // Description:
+  // Describes whether the GUI has been built or not.
+  bool Built;
 
 private:
   vtkSlicerCacheAndDataIOManagerGUI ( const vtkSlicerCacheAndDataIOManagerGUI& ); // Not implemented.

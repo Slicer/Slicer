@@ -23,6 +23,7 @@ vtkCacheManager::vtkCacheManager()
   this->RemoteCacheFreeBufferSize = 10;
   this->CurrentCacheSize = 0;
   this->EnableForceRedownload = 0;
+  this->InsufficientFreeBufferNotificationFlag = 0;
   // this->EnableRemoteCacheOverwriting = 1;
 }
 
@@ -41,6 +42,7 @@ vtkCacheManager::~vtkCacheManager()
   this->CurrentCacheSize = 0;
   this->RemoteCacheFreeBufferSize = 0;
   this->EnableForceRedownload = 0;
+  this->InsufficientFreeBufferNotificationFlag = 0;
 //  this->EnableRemoteCacheOverwriting = 1;
 }
 

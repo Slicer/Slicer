@@ -215,7 +215,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->RemoteCacheFreeBufferSize = 10;
     
     // configure the application before creating
-    this->SetName ( "3D Slicer Version 3.0 Beta" );
+    this->SetName ( "3D Slicer Version 3.0" );
 
 #ifdef _WIN32
     vtkKWWin32RegistryHelper *regHelper = 

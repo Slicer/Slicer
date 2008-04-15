@@ -30,6 +30,9 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   vtkTypeRevisionMacro(vtkCacheManager, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  vtkGetMacro (InsufficientFreeBufferNotificationFlag, int );
+  vtkSetMacro (InsufficientFreeBufferNotificationFlag, int );
+
   // Description:
   // Sets the name of the directory to use for local file caching
   // Does some checking to make sure this is a valid directory
@@ -147,6 +150,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   //ETX
   
  private:
+  int InsufficientFreeBufferNotificationFlag;
   int RemoteCacheLimit;
   float CurrentCacheSize;
   int RemoteCacheFreeBufferSize;
