@@ -621,11 +621,11 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
       sz = this->CacheManager->ComputeCacheSize(this->CacheManager->GetRemoteCacheDirectory(), 0);
       if ( sz > this->CacheManager->GetRemoteCacheLimit() )
         {
-        sprintf ( txt, "(%6fMB --FULL!)   ", sz);
+        sprintf ( txt, "(%dMB --FULL!)   ", static_cast<int>( floor(sz)));
         }
       else
         {
-        sprintf ( txt, "(%6fMB used)   ", sz);
+        sprintf ( txt, "(%dMB used)   ", static_cast<int>( floor(sz)));
         }
       this->CacheSizeLabel->SetText ( txt );
 
@@ -634,11 +634,11 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
       sprintf ( txt, "" );
       if ( sz < 0 )
         {
-        sprintf ( txt, "(%6fMB --FULL!)", sz);
+        sprintf ( txt, "(%dMB --FULL!)", static_cast<int>( floor(sz)));
         }
       else
         {
-        sprintf ( txt, "(%6fMB) free", sz);
+        sprintf ( txt, "(%dMB) free", static_cast<int>( floor(sz)));
         }
       this->CacheFreeLabel->SetText ( txt );
       }
@@ -690,7 +690,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
               w->GetDataTransfer()->GetTransferStatus() == vtkDataTransfer::Idle )            
             {
             anyTransfersRunning = 1;
-            return;
+//            return;
             }
           }
         }
@@ -1012,7 +1012,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
     this->RefreshButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerRefreshIcon() );
     this->RefreshButton->SetBorderWidth (0);
     this->RefreshButton->SetReliefToFlat ();
-    this->RefreshButton->SetBalloonHelpString ("Refresh cache space report in panel." );  
+    this->RefreshButton->SetBalloonHelpString ("Refresh cache space report in bottom panel." );  
   
     this->ClearDisplayButton = vtkKWPushButton::New();
     this->ClearDisplayButton->SetParent ( this->ControlFrame);
@@ -1028,7 +1028,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
     this->CancelAllButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerCancelIcon() );
     this->CancelAllButton->SetBorderWidth(0);
     this->CancelAllButton->SetReliefToFlat();
-    this->CancelAllButton->SetBalloonHelpString ( "Cancel all pending and running data transfers." );
+    this->CancelAllButton->SetBalloonHelpString ( "Cancel all pending and running data transfers (not yet implemented)." );
 
     this->Script ( "pack %s %s %s -side left -anchor n -padx 4 -pady 4",
                    this->ForceReloadCheckButton->GetWidgetName(),
@@ -1158,7 +1158,6 @@ void vtkSlicerCacheAndDataIOManagerGUI::BuildGUI ( )
      this->CacheFreeBufferSizeSpinBox->GetWidget()->SetWidth ( 6 );
      this->CacheFreeBufferSizeSpinBox->SetBalloonHelpString("Set the amount of space in the cache directory that should remain free (Mb).");
      this->CacheFreeBufferSizeSpinBox->GetWidget()->SetValue( app->GetRemoteCacheFreeBufferSize() );
-
 
      this->CloseButton = vtkKWPushButton::New();
      this->CloseButton->SetParent ( this->ButtonFrame );

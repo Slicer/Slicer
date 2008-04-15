@@ -251,7 +251,9 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
   
   //---
   //--- WJPtest:
-  //--- Test for space to download the file.
+  //--- Again, test for space to download the file.
+  //--- This test has been done in MRML (DataIOManager), but with asynchIO,
+  //--- Cache may have become full since the remote read was queued.
   //---
   float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) -  (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
   if ( (cm->GetCurrentCacheSize()*1000000.0) >= bufsize )
@@ -262,18 +264,27 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode *node )
       //--- Load the cached version as a last resort.
       dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateTransferDone();
       }
-    //--- Invoke an event that will trigger
-    //--- GUI to post a message box telling
+    else
+      {
+      //--- Mark the node's read state as cancelled.
+      dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateCancelled();
+      }
+    //--- Invoke an event that will trigger GUI to post
+    //--- a message box telling if one hasn't been posted already
     //--- user that there's insufficient space in the cache,
     //--- to download new data, but that Slicer is loading
     //--- a cached version IF one is available.
-    cm->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
+    if ( cm->GetInsufficientFreeBufferNotificationFlag() == 0 )
+      {
+      cm->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
+      cm->SetInsufficientFreeBufferNotificationFlag(1);
+      }
     return 1;
     }
   //---
   //---END WJPtest
+
   ///---
-  
   //--- if the filename already exists in cache and
   //--- user has selected not to redownload cached files
   //--- just return.

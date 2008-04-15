@@ -44,6 +44,7 @@ vtkSlicerDataTransferWidget::vtkSlicerDataTransferWidget(void)
     this->TimerCount = 0;
     this->TimerSteps = 8;
     this->TimerRunning = 0;
+    this->TimerID = "";
     this->CacheManager = NULL;
     this->DataIOManager = NULL;
   }
@@ -134,7 +135,7 @@ void vtkSlicerDataTransferWidget::DisplayRunningAnimation()
 
         if ( this->DataIOManager->GetEnableAsynchronousIO() )
           {
-          vtkKWTkUtilities::CreateTimerHandler ( vtkKWApplication::GetMainInterp(), 100, this, "DisplayRunningAnimation");
+          this->TimerID = vtkKWTkUtilities::CreateTimerHandler ( vtkKWApplication::GetMainInterp(), 100, this, "DisplayRunningAnimation");
           }
           /*
          else
@@ -178,6 +179,10 @@ void vtkSlicerDataTransferWidget::PrintSelf (ostream& os, vtkIndent indent)
 vtkSlicerDataTransferWidget::~vtkSlicerDataTransferWidget(void)
   {
 
+    if ( this->TimerID != "" ) 
+      {
+      vtkKWTkUtilities::CancelTimerHandler ( vtkKWApplication::GetMainInterp(), this->TimerID.c_str() );
+      }
     this->TimerRunning = 0;
     this->TimerCount = 0;
     this->SetTimerID ( "" );
@@ -299,10 +304,21 @@ void vtkSlicerDataTransferWidget::ProcessWidgetEvents (vtkObject *caller, unsign
         {
         this->DataTransfer->SetCancelRequested ( 1 );
         this->DataTransfer->SetTransferStatus ( vtkDataTransfer::CancelPending );
+        vtkSlicerApplication *app = NULL;
+        vtkSlicerApplicationGUI *appGUI = NULL;
+        app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
+        if ( app != NULL )
+          {
+          appGUI = app->GetApplicationGUI();
+          }
+        if ( appGUI != NULL )
+          {
+          this->CancelButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerCancelRequestedIcon() );
+          this->CancelButton->SetBalloonHelpString ("Cancel requested for this data transfer..." );
+          }
         }
       }
     }
-
   // display information about data transfer
   else if (this->InformationButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent)
     {
@@ -567,7 +583,6 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
     //--- make sure Timer is running if the transfer is running, ready (loading from cache)
     // or cancel is pending... make sure Timer is killed if the transfer is done, or stopped.
     if ( (this->DataTransfer->GetTransferStatus() == vtkDataTransfer::Running ) ||
-         (this->DataTransfer->GetTransferStatus() == vtkDataTransfer::CancelPending ) ||
          (this->DataTransfer->GetTransferStatus() == vtkDataTransfer::Ready ))
       {
       if ( !this->TimerRunning )
@@ -631,7 +646,7 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
         break;
       case vtkDataTransfer::CancelPending:
         this->DisableDeleteButton();
-        this->TransferStatusLabel->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerCancelRequestedIcon());
+        this->TransferStatusLabel->SetImageToIcon(appGUI->GetSlicerFoundationIcons()->GetSlicerWaitIcon());
         this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: cancel requested.");
         this->UpdateURILabel ( "(cancelling...): ");
         break;

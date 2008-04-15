@@ -365,27 +365,45 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
       vtkDebugMacro("QueueRead: Calling remove from cache");
       this->GetCacheManager()->DeleteFromCache ( dest );
       }
+
     //---
     //--- WJPtest
     //--- Test for space to download the file. If no space,
-    //--- check for InsufficientFreeBufferNotificationFlag.
-    //--- if set, do nothing.
-    //--- if not yet set, send event, then set it.
-    //--- This flag is here to help us avoid bugging the user if
-    //--- they are downloading a large scene.
+    //--- then mark the node's read state as cancelled and
+    //--- Then,  check for InsufficientFreeBufferNotificationFlag.
+    //--- If it's already set, the user has already been notified, so do nothing.
+    //--- If not yet set, send an event, that will cause GUI to post
+    //--- a pop-up dialog notifying user that Cache is full. then set the flag.
+    //--- This flag is here to help us avoid bugging the user
+    //--- with multiple pop-up warnings if they are downloading
+    //--- a large scene that consists of multiple datasets.
+    //--- ***The risk with this implementation  is that they may
+    //--- forget to adjust the cache size, but aren't notified again... 
     float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) -  (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
     if ( (cm->GetCurrentCacheSize()*1000000.0) >= bufsize )
       {
       //--- No space left in cache. Don't trigger logic to download;
-      //--- let GUI post a pop-up dialog to inform user.
-      cm->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
-      cm->SetInsufficientFreeBufferNotificationFlag(1);
+      //--- by invoking a RemoteReadEvent.
+      //--- And trigger GUI to post a pop-up dialog to inform user.
+      //--- Mark the node cancelled.
+      if ( cm->GetInsufficientFreeBufferNotificationFlag() == 0 )
+        {
+        cm->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
+        cm->SetInsufficientFreeBufferNotificationFlag(1);
+        dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateCancelled();
+        }
       }
     else
       {
-      //--- reset the cachemanager's flag -- looks like enough cache space
-      //--- exists to do the download.
-      cm->SetInsufficientFreeBufferNotificationFlag(0);
+      //--- reset the cachemanager's flag if it's set.
+      //--- since it appears there's enough cache space
+      //--- to do the download.
+      if ( cm->GetInsufficientFreeBufferNotificationFlag() == 1 )
+        {
+        cm->SetInsufficientFreeBufferNotificationFlag(0);
+        }
+      //---END WJPtest
+      
       //--- trigger logic to download, if there's cache space.
       //--- and signal this remote read event to Logic and GUI.
       vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
