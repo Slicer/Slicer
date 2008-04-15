@@ -1765,14 +1765,7 @@ SetTreeNodeSpatialPriorVolumeID(vtkIdType nodeID,
     
     // use tree node label (or mrml id if label is not specified)
     vtksys_stl::string priorVolumeName;
-    if (n->GetLabel() == NULL || strlen(n->GetLabel()) == 0)
-      {
-      priorVolumeName = n->GetID();
-      }
-    else
-      {
-      priorVolumeName = n->GetLabel();
-      }
+    priorVolumeName = n->GetID();
     
     // add key value pair to atlas
     this->GetAtlasInputNode()->AddVolume(priorVolumeName.c_str(), volumeMRMLID);
