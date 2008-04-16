@@ -625,7 +625,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
         }
       else
         {
-        sprintf ( txt, "(%dMB used)   ", static_cast<int>( floor(sz)));
+        sprintf ( txt, "(< %dMB used)   ", static_cast<int>( floor(sz)));
         }
       this->CacheSizeLabel->SetText ( txt );
 
@@ -638,7 +638,7 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
         }
       else
         {
-        sprintf ( txt, "(%dMB) free", static_cast<int>( floor(sz)));
+        sprintf ( txt, "(~%dMB) free", static_cast<int>( floor(sz)));
         }
       this->CacheFreeLabel->SetText ( txt );
       }
