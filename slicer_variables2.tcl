@@ -248,6 +248,7 @@ switch $::tcl_platform(os) {
     # Windows NT currently covers WinNT, Win2000, XP Home, XP Pro
 
         set ::VTK_BUILD_SUBDIR $::VTK_BUILD_TYPE
+        set ::CMAKE_CXX_FLAGS_DEBUG ""
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin/$::VTK_BUILD_TYPE
 
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
