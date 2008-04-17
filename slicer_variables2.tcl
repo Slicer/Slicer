@@ -120,7 +120,7 @@ set ::TEEM_SRC_DIR  $::SLICER_LIB/teem
 set ::TEEM_BUILD_DIR  $::SLICER_LIB/teem-build
 set ::VTK_DIR  $::SLICER_LIB/VTK-build
 set ::VTK_SRC_DIR $::SLICER_LIB/VTK
-f { ![info exists ::VTK_BUILD_TYPE] } {
+if { ![info exists ::VTK_BUILD_TYPE] } {
   # set a default if it hasn't already been specified
   set ::VTK_BUILD_TYPE "Debug" ;# options: Release, RelWithDebInfo, Debug
 }
