@@ -473,7 +473,7 @@ void vtkSlicerModelHierarchyWidget::ColorCallback(const char *id)
         double *rgb = dnode->GetColor();
         if (vtkKWTkUtilities::QueryUserForColor(
               this->GetApplication(),
-              this->GetWidgetName(),
+              this,
               "Select Color",
               rgb[0], rgb[1], rgb[2],
               rgb, rgb+1, rgb+2) )

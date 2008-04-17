@@ -2106,7 +2106,7 @@ void vtkSlicerVolumePropertyWidget::DoubleClickOnScalarOpacityPointCallback(int 
       this->ScalarColorFunctionEditor->GetPointColorAsRGB(sce_id, rgb) &&
       vtkKWTkUtilities::QueryUserForColor(
         this->GetApplication(),
-        this->GetWidgetName(),
+        this,
         NULL,
         rgb[0], rgb[1], rgb[2],
         &rgb[0], &rgb[1], &rgb[2]))
