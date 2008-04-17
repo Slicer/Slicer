@@ -185,6 +185,7 @@ switch $::tcl_platform(os) {
 switch $::tcl_platform(os) {
     "SunOS" -
     "Darwin" {
+        set ::VTK_BUILD_SUBDIR ""
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
@@ -213,6 +214,7 @@ switch $::tcl_platform(os) {
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.a
     }
     "Linux" {
+        set ::VTK_BUILD_SUBDIR ""
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
 
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4

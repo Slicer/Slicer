@@ -469,7 +469,7 @@ if { ( ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) ) } {
 ################################################################################
 # Get and build matplotlib
 #
-if { (![file exists $::MATPLOTLIB_TEST_FILE] || $::GENLIB(update)) } {
+if { 0 && (![file exists $::MATPLOTLIB_TEST_FILE] || $::GENLIB(update)) } {
 
     set ::env(PYTHONHOME)        $SLICER_LIB/python-build
     cd $SLICER_LIB/python
@@ -547,11 +547,6 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DTCL_TCLSH:FILEPATH=$::VTK_TCLSH \
             $USE_VTK_ANSI_STDLIB \
             -DOPENGL_INCLUDE_DIR:PATH=/usr/include \
-            -DOPENGL_gl_LIBRARY:FILEPATH=/usr/lib64/libGL.so \
-            -DOPENGL_glu_LIBRARY:FILEPATH=/usr/lib64/libGLU.so \
-            -DX11_X11_LIB:FILEPATH=/usr/X11R6/lib64/libX11.a \
-            -DX11_Xext_LIB:FILEPATH=/usr/X11R6/lib64/libXext.a \
-            -DCMAKE_MODULE_LINKER_FLAGS:STRING=-L/usr/X11R6/lib64 \
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
             -DVTK_USE_64BIT_IDS:BOOL=ON \
             ../VTK
