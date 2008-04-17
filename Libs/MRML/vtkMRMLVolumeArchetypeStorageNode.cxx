@@ -65,7 +65,7 @@ vtkMRMLNode* vtkMRMLVolumeArchetypeStorageNode::CreateNodeInstance()
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
   this->CenterImage = 0;
-  this->SingleFile  = 1;
+  this->SingleFile  = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -81,6 +81,11 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
   std::stringstream ss;
   ss << this->CenterImage;
   of << indent << " centerImage=\"" << ss.str() << "\"";
+  }
+  {
+  std::stringstream ss;
+  ss << this->SingleFile;
+  of << indent << " singleFile=\"" << ss.str() << "\"";
   }
 }
 
@@ -102,6 +107,12 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->CenterImage;
       }
+    if (!strcmp(attName, "singleFile")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->SingleFile;
+      }
     }
 }
 
@@ -114,6 +125,7 @@ void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode *anode)
   vtkMRMLVolumeArchetypeStorageNode *node = (vtkMRMLVolumeArchetypeStorageNode *) anode;
 
   this->SetCenterImage(node->CenterImage);
+  this->SetSingleFile(node->SingleFile);
 }
 
 //----------------------------------------------------------------------------
@@ -121,6 +133,7 @@ void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkMRMLStorageNode::PrintSelf(os,indent);
   os << indent << "CenterImage:   " << this->CenterImage << "\n";
+  os << indent << "SingleFile:   " << this->SingleFile << "\n";
 }
 
 //----------------------------------------------------------------------------
