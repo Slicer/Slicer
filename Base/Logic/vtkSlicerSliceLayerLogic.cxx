@@ -356,7 +356,7 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::UpdateTransforms()
 {
-  int labelMap = 0;  // keep track so label maps don't get interpolated
+  //int labelMap = 0;  // keep track so label maps don't get interpolated
 
   // Ensure display node matches the one we are observing
   this->UpdateNodeReferences();
@@ -613,13 +613,13 @@ void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::VectorVolumeNodeUpdateTransforms()
 {
-  double window = 0;
-  double level = 0;
+  //double window = 0;  UNUSED
+  //double level = 0;  UNUSED
   int interpolate = 0;
-  int applyThreshold = 0;
-  double lowerThreshold = 0;
-  double upperThreshold = 0;
-  vtkLookupTable *lookupTable = NULL;
+  //int applyThreshold = 0;  UNUSED
+  //double lowerThreshold = 0;  UNUSED
+  //double upperThreshold = 0;  UNUSED
+  //vtkLookupTable *lookupTable = NULL;  UNUSED
   vtkMRMLVectorVolumeNode *vectorVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast (this->VolumeNode);
 
   vtkMRMLVectorVolumeDisplayNode *vectorVolumeDisplayNode = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
