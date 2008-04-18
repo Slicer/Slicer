@@ -342,7 +342,7 @@ void vtkSlicerSliceGlyphLogic::UpdatePipeline()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceGlyphLogic::UpdateTransforms()
 {
-  int labelMap = 0;  // keep track so label maps don't get interpolated
+  //int labelMap = 0; UNUSED // keep track so label maps don't get interpolated
 
   // Ensure display node matches the one we are observing
   this->UpdateNodeReferences();
@@ -454,8 +454,8 @@ void vtkSlicerSliceGlyphLogic::ScalarVolumeNodeUpdateTransforms()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceGlyphLogic::VectorVolumeNodeUpdateTransforms()
 {
-  int interpolate = 0;
-  vtkMRMLVectorVolumeNode *vectorVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast (this->VolumeNode);
+  // int interpolate = 0; UNUSED
+  // vtkMRMLVectorVolumeNode *vectorVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast (this->VolumeNode); UNUSED
 
   vtkMRMLVectorVolumeDisplayNode *vectorVolumeDisplayNode = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
 
@@ -506,12 +506,12 @@ void vtkSlicerSliceGlyphLogic::DiffusionWeightedVolumeNodeUpdateTransforms()
 void vtkSlicerSliceGlyphLogic::DiffusionTensorVolumeNodeUpdateTransforms()
 {
 
-  double window = 0;
+  // double window = 0; UNUSED
   double level = 0;
   int interpolate = 0;
-  int applyThreshold = 0;
-  double lowerThreshold = 0;
-  double upperThreshold = 0;
+  // int applyThreshold = 0; UNUSED
+  // double lowerThreshold = 0; UNUSED
+  // double upperThreshold = 0; UNUSED
   vtkImageData *inVol;
 
   vtkMRMLDiffusionTensorVolumeNode *dtiVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast (this->VolumeNode);

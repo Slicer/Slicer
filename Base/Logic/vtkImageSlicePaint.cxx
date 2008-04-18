@@ -90,11 +90,11 @@ int paintRound (double in)
   return (static_cast<int> (floor(in)));
 }
 
-static
-int paintFloor (double in)
-{
-  return (static_cast<int> (floor(in)));
-}
+// static  UNUSED
+// int paintFloor (double in)
+// {
+  // return (static_cast<int> (floor(in)));
+// }
 
 
 template <class T>

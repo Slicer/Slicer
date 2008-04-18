@@ -765,7 +765,7 @@ void vtkImageFillROI::ExecuteData(vtkDataObject *out)
     return;
     }
     
-  vtkImageData *outData = this->AllocateOutputData(out);
+  // vtkImageData *outData = this->AllocateOutputData(out); UNUSED
 
   if ( this->GetInput()->GetDataObjectType() != VTK_IMAGE_DATA )
     {
