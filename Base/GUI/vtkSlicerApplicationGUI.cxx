@@ -345,7 +345,7 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
           }
         else if ( this->GetMRMLScene() && fl.find(".xcat") != std::string::npos )
           {
-          this->Script ( "XcedeCatalogImport %s", fileName);
+          this->Script ( "XcatalogImport %s", fileName);
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
           }
 
@@ -389,7 +389,7 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
           }
         else if ( this->GetMRMLScene() && fl.find(".xcat") != std::string::npos )
           {
-          this->Script ( "XcedeCatalogImport %s", fileName);
+          this->Script ( "XCatalogImport %s", fileName);
           this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
           }
 
