@@ -508,7 +508,7 @@ itcl::body Loader::apply { } {
           }
         }
         "XCEDE" {
-          set pass [ XcedeCatalogImport $path ]
+          set pass [ XcatalogImport $path ]
           if { $pass == 0 } {
             $this errorDialog "Could not load XCEDE catalog at $path."
           }

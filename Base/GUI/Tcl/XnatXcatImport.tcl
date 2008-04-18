@@ -1,20 +1,13 @@
 
-#
-# test of importing data wrapped in xcede 2.0 CATALOG xml
-# vtk xml data parser mechanism
-#
-
-#######
-
-
 #------------------------------------------------------------------------------
 # main entry point...
 #------------------------------------------------------------------------------
-proc XcedeCatalogImport { xcedeFile } {
+proc XnatXcatImport { xnatxcatFile } {
 
     #--- create a parser and parse the file
+
     set parser [vtkXMLDataParser New]
-    $parser SetFileName $xcedeFile
+    $parser SetFileName $xnatxcatFile
     set retval [ $parser Parse ]
 
     if { $retval == 0 } {
@@ -22,153 +15,158 @@ proc XcedeCatalogImport { xcedeFile } {
         return $retval
     } else {
         #--- display to progress guage and status bar.
-        set ::XcedeCatalog_mainWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
-        set ::XcedeCatalog_progressGauge [$::XcedeCatalog_mainWindow GetProgressGauge]
-        $::XcedeCatalog_progressGauge SetValue 0
-        $::XcedeCatalog_mainWindow SetStatusText "Parsing $xcedeFile"
-
-        #--- get the XCEDE root
-        set root [$parser GetRootElement]
-
-        #--- get the directory of the normalized xcede file.
-        set ::XcedeCatalog_Dir [file dirname [file normalize $xcedeFile]]
-        puts "Reading file $xcedeFile from $::XcedeCatalog_Dir..."
+        set ::XnatXcat_mainWindow [ $::slicer3::ApplicationGUI GetMainSlicerWindow]
+        set ::XnatXcat_ProgressGauge [ $::XnatXcat_mainWindow GetProgressGauge ]
+        $::XnatXcat_ProgressGauge SetValue 0
+        $::XnatXcat_mainWindow SetStatusText "Parsing $xnatxcatFile"
 
         #--- initialize some globals
-        set ::XcedeCatalog(transformIDStack) ""
-        set ::XcedeCatalog_HParent_ID ""
-        set ::XcedeCatalogMrmlID(LHmodel) ""
-        set ::XcedeCatalogMrmlID(RHmodel) ""
-        set ::XcedeCatalog_MrmlID(anat2exf) ""
-        set ::XcedeCatalog_MrmlID(FSBrain) ""
-        set ::XcedeCatalog_MrmlID(ExampleFunc) ""
-        set ::XcedeCatalog_MrmlID(StatisticsToBrainXform) ""
-        set ::XcedeCatalog_MrmlID(StatFileList) ""
-        set ::XcedeCatalog_AnnotationFiles ""
-        set ::XcedeCatalog_NumberOfElements 0
-        set ::XcedeCatalog_WhichElement 0
-        set ::XcedeCatalog_RAS2RASTransformCreated 0
-        array unset ::XcedeCatalog_MrmlID ""
-        set ::XcedeCatalog(transformIDStack) ""
-        set ::XcedeCatalog_HParent_ID ""
-        
-        #--- recursively import cataloged datasets 
-        XcedeCatalogImportGetNumberOfElements $root
+        array unset ::XnatXcat_MrmlID ""
+        set ::XnatXcat_HParent_ID ""
+        set ::XnatXcat_NumberOfElements 0
+        set ::XnatXcat_WhichElement 0
+        set ::XnatXcat_MrmlID(Volumes) ""
 
-        #--- recursively import cataloged datasets 
-        set ::XcedeCatalog(transformIDStack) ""
-        set ::XcedeCatalog_HParent_ID ""
-        set root [$parser GetRootElement]
+        set ::XnatXcat(transformIDStack) ""
+        set ::XnatXcat_MrmlID(LHmodel) ""
+        set ::XnatXcat_MrmlID(RHmodel) ""
+        set ::XnatXcat_MrmlID(anat2exf) ""
+        set ::XnatXcat_MrmlID(FSBrain) ""
+        set ::XnatXcat_MrmlID(ExampleFunc) ""
+        set ::XnatXcat_MrmlID(StatisticsToBrainXform) ""
+        set ::XnatXcat_MrmlID(StatFileList) ""
+        set ::XnatXcat_AnnotationFiles ""
+        set ::XnatXcat_NumberOfElements 0
+        set ::XnatXcat_WhichElement 0
+        set ::XnatXcat_RAS2RASTransformCreated 0
+        set ::XnatXcat(transformIDStack) ""
 
-        XcedeCatalogImportGetElement $root
+        #--- get the root
+        set root [ $parser GetRootElement ]
+        XnatXcatImportGetNumberOfElements $root
+
+        #--- get the directory of the normalized catalog.
+
+        if { $::XnatXcat_NumberOfElements > 0 } {
+
+            #--- get the directory
+            set ::XnatXcat_Dir [ file dirname [ file normalize $xnatxcatFile]]
+
+            #--- recursively import datasets
+            set root [ $parser GetRootElement ]
+            XnatXcatImportGetElement $root
 
         #--- if the catalog includes a brain.mgz, example_func.nii and
         #--- anat2exf.dat, we assume this is a FreeSurfer/FIPS catalog
         #--- and convert FreeSurfer tkRegister2's registration matrix
         #--- to a Slicer RAS2RAS registration matrix. 
-        XcedeCatalogImportComputeFIPS2SlicerTransformCorrection
+        XnatXcatImportComputeFIPS2SlicerTransformCorrection
 
         #--- if the Correction transform node is created,
         #--- place all statistics volumes inside that.
-        XcedeCatalogImportApplyFIPS2SlicerTransformCorrection
+        XnatXcatImportApplyFIPS2SlicerTransformCorrection
         
-        #--- reset the feedback things
-        $::XcedeCatalog_progressGauge SetValue 0
-        $::XcedeCatalog_mainWindow SetStatusText ""
+            #--- reset feedback things
+            $::XnatXcat_ProgressGauge SetValue 0
+            $::XnatXcat_mainWindow SetStatusText ""
+
+            #--- update main viewer and slice viewers
+            $::slicer3::MRMLScene Modified
+            [$::slicer3::ApplicationGUI GetViewerWidget ] RequestRender
+            [ [$::slicer3::ApplicationGUI GetMainSliceGUI0 ] GetSliceViewer ]  RequestRender
+            [ [$::slicer3::ApplicationGUI GetMainSliceGUI1 ] GetSliceViewer ]  RequestRender
+            [ [$::slicer3::ApplicationGUI GetMainSliceGUI2 ] GetSliceViewer ]  RequestRender
         
-        #--- update main viewer and slice viewers.
-        $::slicer3::MRMLScene Modified
-        [$::slicer3::ApplicationGUI GetViewerWidget ] RequestRender
-        [ [$::slicer3::ApplicationGUI GetMainSliceGUI0 ] GetSliceViewer ]  RequestRender
-        [ [$::slicer3::ApplicationGUI GetMainSliceGUI1 ] GetSliceViewer ]  RequestRender
-        [ [$::slicer3::ApplicationGUI GetMainSliceGUI2 ] GetSliceViewer ]  RequestRender
-        
-        #--- clean up.
-        $parser Delete
-        $::slicer3::MRMLScene SetErrorCode 0
-        puts "...done reading $xcedeFile."
-        return $retval
+            #--- clean up.
+            $parser Delete
+            $::slicer3::MRMLScene SetErrorCode 0
+            return $retval            
+        }
     }
+
 }
 
 
 #------------------------------------------------------------------------------
+# main entry point...
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportGetNumberOfElements { element } {
+proc XnatXcatImportGetNumberOfElements { element } {
 
-  #--- save current parent locally
-  set parent $::XcedeCatalog_HParent_ID
+ #--- save current parent locally
+  set parent $::XnatXcat_HParent_ID
 
   #--- increment count
-  incr ::XcedeCatalog_NumberOfElements
+  incr ::XnatXcat_NumberOfElements
 
-  #---TODO: probably don't need this...
-  # leave a place holder in case we are a group node
-  lappend ::XcedeCatalog(transformIDStack) "NestingMarker"
-
-  # process all the sub nodes, which may include a sequence of matrices
-  # and/or nested transforms
+  # process all the sub nodes
   set nNested [$element GetNumberOfNestedElements]
   for {set i 0} {$i < $nNested} {incr i} {
     set nestElement [$element GetNestedElement $i]
-    XcedeCatalogImportGetNumberOfElements $nestElement
+    XnatXcatImportGetNumberOfElements $nestElement
   }
-
-  #---TODO: probably don't need this...
-  # strip away any accumulated transform ids
-  while { $::XcedeCatalog(transformIDStack) != "" && [lindex $::XcedeCatalog(transformIDStack) end] != "NestingMarker" } {
-    set ::XcedeCatalog(transformIDStack) [lrange $::XcedeCatalog(transformIDStack) 0 end-1]
-  }
-  # strip away the nesting marker
-  set ::XcedeCatalog(transformIDStack) [lrange $::XcedeCatalog(transformIDStack) 0 end-1]
 
   # restore parent locally
-  set ::XcedeCatalog_HParent_ID $parent
+  set ::XnatXcat_HParent_ID $parent
 
 }
-
 
 
 #------------------------------------------------------------------------------
 # recursive routine to import all elements and their
 # nested parts
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportGetElement { element } {
-  # save current parent locally
-  set parent $::XcedeCatalog_HParent_ID
+proc XnatXcatImportGetElement { element } {
+    
+ # save current parent locally
+  set parent $::XnatXcat_HParent_ID
 
   #--- update progress bar 
   #set elementType [$element GetName]
-  #$::XcedeCatalog_mainWindow SetStatusText "Parsing $elementType..."
+  #$::XnatXcat_mainWindow SetStatusText "Parsing $elementType..."
 
-  incr ::XcedeCatalog_WhichElement
-  $::XcedeCatalog_progressGauge SetValue [expr 100 * $::XcedeCatalog_WhichElement / (1. * $::XcedeCatalog_NumberOfElements)]
+  incr ::XnatXcat_WhichElement
+  set val [expr 100 * $::XnatXcat_WhichElement / (1. * $::XnatXcat_NumberOfElements)]
+  $::XnatXcat_ProgressGauge SetValue $val
 
   # import this element if it contains an entry of the correct type
-  XcedeCatalogImportGetEntry $element 
+  XnatXcatImportGetEntry $element 
   
-  #---TODO: probably don't need this...
-  # leave a place holder in case we are a group node
-  lappend ::XcedeCatalog(transformIDStack) "NestingMarker"
-
   # process all the sub nodes, which may include a sequence of matrices
   # and/or nested transforms
   set nNested [$element GetNumberOfNestedElements]
   for {set i 0} {$i < $nNested} {incr i} {
     set nestElement [$element GetNestedElement $i]
-    XcedeCatalogImportGetElement $nestElement
+    XnatXcatImportGetElement $nestElement
   }
-
-  #---TODO: probably don't need this...
-  # strip away any accumulated transform ids
-  while { $::XcedeCatalog(transformIDStack) != "" && [lindex $::XcedeCatalog(transformIDStack) end] != "NestingMarker" } {
-    set ::XcedeCatalog(transformIDStack) [lrange $::XcedeCatalog(transformIDStack) 0 end-1]
-  }
-  # strip away the nesting marker
-  set ::XcedeCatalog(transformIDStack) [lrange $::XcedeCatalog(transformIDStack) 0 end-1]
 
   # restore parent locally
-  set ::XcedeCatalog_HParent_ID $parent
+  set ::XnatXcat_HParent_ID $parent
+}
+
+
+#------------------------------------------------------------------------------
+# recursive routine to import all metaFields
+#------------------------------------------------------------------------------
+proc XnatXcatImportGetMetaFields { element node } {
+
+    set parent $::XnatXcat_ParentEntry
+
+    set nNested [$element GetNumberOfNestedElements ]
+    for {set i 0} {$i < $nNested} {incr i} {
+        set nestElement [$element GetNestedElement $i]
+        set elementType [$element GetName]
+        if { $elementType != "cat:metaField" && $elementType != "cat:METAFIELD" } {
+            #--- get attributes
+            set nAtts [$element GetNumberOfAttributes]
+            for {set i 0} {$i < $nAtts} {incr i} {
+                set attName [$element GetAttributeName $i]
+                set node($attName) [$element GetAttributeValue $i]
+                puts "got $node($attName)"
+            }
+        }
+    }
+    # restore parent locally
+    set ::XnatXcat_ParentEntry $parent
 }
 
 
@@ -180,25 +178,35 @@ proc XcedeCatalogImportGetElement { element } {
 # parse the attributes of a node into a tcl array
 # and then invoke the type-specific handler
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportGetEntry {element } {
+proc XnatXcatImportGetEntry { element } {
 
-    #--- is this a catalog entry that contains a file or reference?
+    #---
+    #--- Check to see if this is a catalog entry
+    #---
     set elementType [$element GetName]
-    if { $elementType != "entry" && $elementType != "Entry" } {
-        #--- only process catalog entry tags
+    if { $elementType != "cat:entry" && $elementType != "cat:Entry" } {
+        #--- only process xcat entry tags
         return 
     }
-    
-    #--- get attributes
+
+
+    #---
+    #--- get attributes and values of the entry
+    #--- so far, we will use only a few in xnatxcats:
+    #--- uri, and name. We store values for attributes 
+    #--- in node($attName), notably node(URI)
+    #--- and node(name) 
     set nAtts [$element GetNumberOfAttributes]
     for {set i 0} {$i < $nAtts} {incr i} {
         set attName [$element GetAttributeName $i]
         set node($attName) [$element GetAttributeValue $i]
-    } 
+    }
 
-    
-    #--- make sure the entry has a "uri" attribute by searching
-    #--- all attributes to find one with a name that matches "uri"
+    #--- Don't continue if we don't have both a
+    #--- node(uri) and node(name).
+    #--- The uri should contain a link to the file, and hopefully
+    #--- ticket information which encapsulates permissions to
+    #--- access the data.
     set hasuri 0
     set uriAttName ""
     for {set i 0} {$i < $nAtts} {incr i} {
@@ -209,65 +217,79 @@ proc XcedeCatalogImportGetEntry {element } {
             set uriAttName $attName
         }
     }
-    
     if { $hasuri == 0 } {
-        puts "can't find an attribute called URI in $element"
+        XnatXcatImportMessage "can't find an attribute called URI in $element"
+        return
+    }    
+
+    #--- node(name) should define the filename
+    set hasname 0
+    set nameAtt ""
+    for {set i 0} {$i < $nAtts} {incr i} {
+        set attName [$element GetAttributeName $i]
+        if { $attName == "name" || $attName == "Name" } {
+            #--- mark as found and capture its case (upper or lower)
+            set hasname 1
+            set nameAtt $attName
+        }
+    }
+    if { $hasname == 0 } {
+        XnatXcatImportMessage "can't find an attribute called 'name' in $element"
+        return
+    }    
+    set ext [ file extension $node(name) ]
+    if { $ext == ".xml" } {
+        puts "skipping entry $node(name)"
         return
     }
-    
-    $::XcedeCatalog_mainWindow SetStatusText "Loading $node(uri)..."
-    
+
+
+    #---
+    #--- TODO: grab any metaField data present for this entry.
+    #---
+    $::XnatXcat_mainWindow SetStatusText "Working on $node($uriAttName)..."
     #--- strip off the entry's relative path, and add the 
     #--- absolute path of the Xcede file to it.
-    set fname [ file normalize $node($uriAttName) ]
+    set fname [ file normalize $node(name) ]
     set plist [ file split $fname ]
     set len [ llength $plist ]
     set fname [ lindex $plist [ expr $len - 1 ] ]
 
-    #set node($uriAttName) $::XcedeCatalog_Dir/$fname
-    set node(localFileName)  $::XcedeCatalog_Dir/$fname
+    set node(localFileName)  $::XnatXcat_Dir/$fname
 
-    #--- check to see if it's a remote file
+    
+    #--- get cache manager in case the file is remote resource
     set cacheManager [$::slicer3::MRMLScene GetCacheManager]
+    $cacheManager MapFileToURI $node($uriAttName) $node(localFileName)
 
-    #--- get the file format
-    set gotformat 0
-    set formatAttName ""
-    for {set i 0} {$i < $nAtts} {incr i} {
-        set attName [$element GetAttributeName $i]
-        if { $attName == "format" || $attName == "Format" } {
-            #--- mark as found and capture its case (upper or lower)
-            set gotformat 1    
-            set formatAttName $attName
-        }
-    }
-    if { $gotformat == 0 } {
-        puts "description for entry contains no format information. Cannot import entry."
-        return
-    }
+    #--- test:
+    set testy [$cacheManager GetFilenameFromURI $node($uriAttName)]
+    
     #--- what kind of node is it?
-    set nodeType [ XcedeCatalogImportGetNodeType $node($formatAttName) ]
+    set nodeType [ XnatXcatImportGetNodeType $node(name) ]
+
     if { $nodeType == "Unknown" } {
-        puts "$node($formatAttName) is an unsupported format. Cannot import entry."
+        puts "$node($uriAttName) is an unsupported format. Cannot import entry."
         return
     }
+
     #--- make sure the file is a supported format
-    set fileformat [ XcedeCatalogImportFormatCheck $node($formatAttName) ]
+    set gotformat 0
+    set fileformat [ XnatXcatImportFormatCheck $node(name) ]
     if { $fileformat == 0 } {
-        puts "$node($formatAttName) is an unsupported format. Cannot import entry."
+        puts "$node($uriAttName) is an unsupported format. Cannot import entry."
         return
     } elseif { $fileformat == 1 } {
-#        puts "$node($formatAttName) can handle downloads automatically"
         if {$cacheManager != ""} {
             set isRemote [$cacheManager IsRemoteReference $node($uriAttName)]
+
+            #--- If the uri points to a local file, just read off of disk.
             if {$isRemote == 0} {
-                #--- make sure the local file exists
                 set node(localFileName) [ file normalize $node(localFileName) ]
                 if {![ file exists $node(localFileName) ] } {
                     puts "can't find file $node(localFileName)."
                     return
                 }
-
                 #--- make sure the local file is a file (and not a directory)
                 if { ![file isfile $node(localFileName) ] } {
                     puts "$node(localFileName) doesn't appear to be a file. Not trying to import."
@@ -278,30 +300,25 @@ proc XcedeCatalogImportGetEntry {element } {
             }
         }
     } elseif { $fileformat == 2 } {
-#        puts "$node($formatAttName) is something we have to download manually if it has a remote uri"
         if {$cacheManager != ""} {
-#            puts "Asynch Enabled = [[$::slicer3::MRMLScene GetDataIOManager] GetEnableAsynchronousIO]"
             set isRemote [$cacheManager IsRemoteReference $node($uriAttName)]
             if {$isRemote == 1} {
-                $::XcedeCatalog_mainWindow SetStatusText "Loading remote $node($uriAttName)..."
-#                puts "Trying to find URI handler for $node($uriAttName)"
+                $::XnatXcat_mainWindow SetStatusText "Downloading remote $node($uriAttName)..."
+                # puts "Trying to find URI handler for $node($uriAttName)"
                 set uriHandler [$::slicer3::MRMLScene FindURIHandler $node($uriAttName)]
                 if {$uriHandler != ""} {
                     # for now, do a synchronous download
-                    # puts "Found a file handler, doing a synchronous download from $node($uriAttName) to $node(localFileName)"
                     $uriHandler StageFileRead $node($uriAttName) $node(localFileName)
                 } else {
                     puts "Unable to find a file handler for $node($uriAttName)"
                 }
             }
         }
-        # puts "\tNow resetting uri $node($uriAttName) to local file name $node(localFileName) so can read from disk"
         set node($uriAttName) $node(localFileName)
     }
-    
 
     #--- finally, create the node
-    set handler XcedeCatalogImportEntry$nodeType
+    set handler XnatXcatImportEntry$nodeType
     
     if { [info command $handler] == "" } {
         set err [$::slicer3::MRMLScene GetErrorMessagePointer]
@@ -310,20 +327,23 @@ proc XcedeCatalogImportGetEntry {element } {
     }
 
     # call the handler for this element
-    puts "Importing $nodeType"
     $handler node
+
+    
 }
 
 
+
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportEntryVolume {node} {
+proc XnatXcatImportEntryVolume {node} {
   upvar $node n
 
 
     #--- ditch if there's no file in the uri
-    if { ![info exists n(uri) ] } {
-        puts "XcedeCatalogImportEntryVolume: no uri specified for node $n(uri)"
+    if { ![info exists n(URI) ] } {
+        puts "XnatXcatImportEntryVolume: no uri specified for node $n(URI)"
         return
     }
 
@@ -335,21 +355,21 @@ proc XcedeCatalogImportEntryVolume {node} {
     if { [info exists n(labelmap) ] } {
         set labelmap 1
     }
-    if { [ string first "stat" $n(uri) ] >= 0 } {
+    if { [ string first "stat" $n(name) ] >= 0 } {
         # set autoLevel 0
     }
     set loadingOptions [expr $labelmap * 1 + $centered * 2 + $singleFile * 4 + $autoLevel * 8]
  
     set logic [$::slicer3::VolumesGUI GetLogic]
     if { $logic == "" } {
-        puts "XcedeCatalogImportEntryVolume: Unable to access Volumes Logic. $n(uri) not imported."
+        puts "XnatXcatImportEntryVolume: Unable to access Volumes Logic. $n(URI) not imported."
         return
     }
-#    puts "Calling volumes logic add archetype scalar volume with uri = $n(uri) and name = $n(name)"
-#    set volumeNode [$logic AddArchetypeVolume $n(uri) $n(name) $loadingOptions]
-    set volumeNode [$logic AddArchetypeScalarVolume $n(uri) $n(name) $loadingOptions]
+#    puts "Calling volumes logic add archetype scalar volume with uri = $n(URI) and name = $n(name)"
+#    set volumeNode [$logic AddArchetypeVolume $n(URI) $n(name) $loadingOptions]
+    set volumeNode [$logic AddArchetypeScalarVolume $n(URI) $n(name) $loadingOptions]
     if { $volumeNode == "" } {
-        puts "XcedeCatalogImportEntryVolume: Unable to add Volume Node for $n(uri)."
+        puts "XnatXcatImportEntryVolume: Unable to add Volume Node for $n(URI)."
         return
     }
 
@@ -361,24 +381,24 @@ proc XcedeCatalogImportEntryVolume {node} {
 
     #--- try using xcede differently than the slicer2 xform descrption
     # use the current top of stack (might be "" if empty, but that's okay)
-    #set transformID [lindex $::XcedeCatalog(transformIDStack) end]
+    #set transformID [lindex $::XnatXcat(transformIDStack) end]
     #$volumeNode SetAndObserveTransformNodeID $transformID
 
     set volumeDisplayNode [$volumeNode GetDisplayNode]
     if { $volumeDisplayNode == ""  } {
-        puts "XcedeCatalogImportEntryVolume: Unable to access Volume Display Node for  $n(uri). Volume display not configured."
+        puts "XnatXcatImportEntryVolume: Unable to access Volume Display Node for  $n(URI). Volume display not configured."
         return
     }
 
     #--- make some good guesses about what color node to set
     #--- and what window/level/threshold properties to set
-    if { [ string first "stat" $n(uri) ] >= 0 } {
+    if { [ string first "stat" $n(name) ] >= 0 } {
         #--- this is likely a statistical volume.
         $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodefMRIPA"
         #$volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeIron"
         $volumeDisplayNode SetAutoWindowLevel 0
         #$volumeDisplayNode SetThresholdType 1
-    } elseif { [ string first "aseg" $n(uri) ] >= 0 } {
+    } elseif { [ string first "aseg" $n(name) ] >= 0 } {
         #--- this is likely a freesurfer label map volume
         set colorLogic [ $::slicer3::ColorGUI GetLogic ]
         if { $colorLogic != "" } {
@@ -405,14 +425,14 @@ proc XcedeCatalogImportEntryVolume {node} {
     #--- potential functional or statistical volumes
     #--- that may need to be registered to the brain
     #--- image via the anat2exf.register.dat xform.
-    if { [ string first "brain.mgz" $n(uri) ] >= 0 } {
-        set ::XcedeCatalog_MrmlID(FSBrain) $volumeNodeID
+    if { [ string first "brain.mgz" $n(name) ] >= 0 } {
+        set ::XnatXcat_MrmlID(FSBrain) $volumeNodeID
     }
 
     #--- If volume is an example_func image (used for
     #--- registration with the anatomical), set a global.
-    if { [ string first "example_func" $n(uri) ] >= 0 } {
-        set ::XcedeCatalog_MrmlID(ExampleFunc) $volumeNodeID
+    if { [ string first "example_func" $n(name) ] >= 0 } {
+        set ::XnatXcat_MrmlID(ExampleFunc) $volumeNodeID
     }
 
     #--- If volume is a statistics volume, add to a
@@ -420,12 +440,11 @@ proc XcedeCatalogImportEntryVolume {node} {
     #--- a transform to register them to brain.mgz
     #--- if that transform is created.
     #--- this is weak; need a better test.
-    if { [ string first "stat" $n(uri) ] >= 0 } {
-        lappend ::XcedeCatalog_MrmlID(StatFileList) $volumeNodeID
+    if { [ string first "stat" $n(name) ] >= 0 } {
+        lappend ::XnatXcat_MrmlID(StatFileList) $volumeNodeID
     }
-    
 
-    if { $labelmap } {
+      if { $labelmap } {
       [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveLabelVolumeID [$volumeNode GetID]
     } else {
       [[$::slicer3::VolumesGUI GetApplicationLogic] GetSelectionNode] SetReferenceActiveVolumeID [$volumeNode GetID]
@@ -433,25 +452,28 @@ proc XcedeCatalogImportEntryVolume {node} {
     [$::slicer3::VolumesGUI GetApplicationLogic] PropagateVolumeSelection
 
 }
+    
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportEntryModel {node} {
+proc XnatXcatImportEntryModel {node} {
   upvar $node n
 
     #--- ditch if there's no file in the uri
-    if { ! [info exists n(uri) ] } {
-        puts "XcedeCatalogImportEntryModel: no uri specified for node $n(uri). No model imported."
+    if { ! [info exists n(URI) ] } {
+        puts "XnatXcatImportEntryModel: no uri specified for node $n(URI). No model imported."
         return
     }
 
     set logic [$::slicer3::ModelsGUI GetLogic]
     if {$logic == "" } {
-        puts "XcedeCatalogImportEntryModel: couldn't retrieve Models Logic. Model $n(name) not imported."
+        puts "XnatXcatImportEntryModel: couldn't retrieve Models Logic. Model $n(name) not imported."
         return
     }
-    puts "importing model for $n(uri)"
-    set mnode [$logic AddModel $n(uri)]
+
+    #--- is the reference remote?
+    set mnode [$logic AddModel $n(URI) ]
+
     #--- maybe don't need this?
     #set snode [ $mnode GetModelStorageNode ]
     #set type [ $snode IsA ]
@@ -460,7 +482,7 @@ proc XcedeCatalogImportEntryModel {node} {
     #}
 
     if { $mnode == "" } {
-        puts "XcedeCatalogImportEntryModel: couldn't created Model Node. Model $n(name) not imported."
+        puts "XnatXcatImportEntryModel: couldn't created Model Node. Model $n(name) not imported."
         return
     }
 
@@ -469,40 +491,97 @@ proc XcedeCatalogImportEntryModel {node} {
         $mnode SetDescription $n(description)
     }
 
-    if { [info exists n(name) ] } {
-        $mnode SetName $n(name)
-    }
-
     #--- we assume catalogs will contain a single LH model
     #--- with which all LHoverlays will be associated.
     #--- and/or a single RH model with which RH overlays are associated.
     #--- left hemisphere models
-    if { [ string first "lh." $n(uri) ] >= 0 } {
-        if { $::XcedeCatalogMrmlID(LHmodel) == "" } {
-            set ::XcedeCatalogMrmlID(LHmodel) [ $mnode GetID ]
+    if { [ string first "lh." $n(name) ] >= 0 } {
+        if { $::XnatXcat_MrmlID(LHmodel) == "" } {
+            set id [ $mnode GetID]
+            set ::XnatXcat_MrmlID(LHmodel) $id
         } else {
             puts "Warning: Xcede catalogs for slicer should contain at single LH model to which LH scalar overlays will be associated. This xcede file appears to contain multiple left hemisphere models: all scalar overlays will be associated with the first LH model."
         }
     }
     #--- right hemisphere models
-    if { [ string first "rh." $n(uri) ] >= 0 } {
-        if { $::XcedeCatalogMrmlID(RHmodel) == "" } {
-            set ::XcedeCatalogMrmlID(RHmodel) [ $mnode GetID ]
+    if { [ string first "rh." $n(name) ] >= 0 } {
+        if { $::XnatXcat_MrmlID(RHmodel) == "" } {
+            set id [ $mnode GetID]
+            set ::XnatXcat_MrmlID(RHmodel) $id
         } else {
             puts "Warning: Xcede catalogs for slicer should contain at single RH model to which RH scalar overlays will be associated. This xcede file appears to contain multiple right hemisphere models: all scalar overlays will be associated with the first RH model."
         }
+    }
+}
 
+
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+proc XnatXcatImportEntryOverlay {node} {
+  upvar $node n
+
+    #--- not really a node, per se...
+    #--- ditch if there's no file in the uri
+    
+    if { ! [info exists n(URI) ] } {
+        puts "XnatXcatImportEntryOverlay: no uri specified for node $n(name). No overlay imported."
+        return
+    }
+
+    set mid ""
+    set mnode ""
+
+    #--- what model node should these scalars be applied to?
+    if { [ string first "lh." $n(name) ] >= 0 } {
+        if { ![info exists ::XnatXcat_MrmlID(LHmodel) ] } {
+            puts "XnatXcatImportEntryOverlay: no model ID specified for overlay $n(URI). No overlay imported."
+            return
+        }
+        set mid $::XnatXcat_MrmlID(LHmodel)
+        set mnode [$::slicer3::MRMLScene GetNodeByID $mid]
     }
 
 
+
+    if { [ string first "rh." $n(name) ] >= 0 } {
+        if { ![info exists ::XnatXcat_MrmlID(RHmodel) ] } {
+            puts "XnatXcatImportEntryOverlay: no model ID specified for overlay $n(URI). No overlay imported."
+            return
+        }
+        set mid $::XnatXcat_MrmlID(RHmodel)
+        set mnode [$::slicer3::MRMLScene GetNodeByID $mid]
+    }
+
+
+    if { $mnode == "" } {
+        puts "XnatXcatImportEntryOverlay: Model MRML Node corresponding to ID=$mid not found. No overlay imported."
+        return
+    }
+    
+    set logic [$::slicer3::ModelsGUI GetLogic]
+    if { $logic == "" } {
+        puts "XnatXcatImportEntryOverlay: cannot access Models Logic class. No overlay imported."
+        return
+    }
+    
+    #--- add the scalar to the node
+    $logic AddScalar $n(URI) $mnode 
+
+    #--- keep track of all annotation files loaded.
+    if { [ string first "annot" $n(name) ] >= 0 } {
+        lappend ::XnatXcat_AnnotationFiles $n(name)
+    }
 }
+
+
 
 
 #------------------------------------------------------------------------------
 # helper function adds new transform node to mrml scene
 # and returns the node id
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportCreateIdentityTransformNode { name } {
+proc XnatXcatImportCreateIdentityTransformNode { name } {
 
     set tnode [$::slicer3::MRMLScene CreateNodeByClass vtkMRMLLinearTransformNode ]
     $tnode SetScene $::slicer3::MRMLScene
@@ -515,24 +594,24 @@ proc XcedeCatalogImportCreateIdentityTransformNode { name } {
     
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportSetMatrixFromURI { id filename }    {
+proc XnatXcatImportSetMatrixFromURI { id filename }    {
 
     set tnode [ $::slicer3::MRMLScene GetNodeByID $id ]
     if { $tnode == "" } {
-        puts "XcedeCatalogImportSetMatrixFromURI: transform ID=$id not found in scene. No elements set."
+        puts "XnatXcatImportSetMatrixFromURI: transform ID=$id not found in scene. No elements set."
         return
     }
 
     set matrix [ $tnode GetMatrixTransformToParent ]
     if { $matrix == "" } {
-        puts "XcedeCatalogImportSetMatrixFromURI: matrix for transform ID=$id not found. No elements set."
+        puts "XnatXcatImportSetMatrixFromURI: matrix for transform ID=$id not found. No elements set."
         return
     }
     
     #--- if filename contains ".register.dat" then we know what to do
     set check [ string first "register.dat" $filename ]
     if { $check < 0 } {
-        puts "XcedeCatalogImportSetMatrixFromURI: $filename is unknown filetype, No elements set."
+        puts "XnatXcatImportSetMatrixFromURI: $filename is unknown filetype, No elements set."
         return
     }
 
@@ -566,21 +645,21 @@ proc XcedeCatalogImportSetMatrixFromURI { id filename }    {
 #------------------------------------------------------------------------------
 #-- TODO: something in this proc is causing debug leaks. WHAT?
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportEntryTransform {node} {
+proc XnatXcatImportEntryTransform {node} {
   upvar $node n
 
 
     #--- ditch if there's no file in the uri
-    if { ! [info exists n(uri) ] } {
-        puts "XcedeCatalogImportEntryTransform: no uri specified for node $n(uri). No transform imported."
+    if { ! [info exists n(URI) ] } {
+        puts "XnatXcatImportEntryTransform: no uri specified for node $n(URI). No transform imported."
         return
     }
 
     #--- if filename contains ".register.dat" then we know what to do
-    set check [ string first "register.dat" $n(uri) ]
+    set check [ string first "register.dat" $n(name) ]
     if { $check < 0 } {
-        puts "XcedeCatalogImportSetMatrixFromURI: $filename is unknown filetype, No transform imported."
-        tk_messageBox -message "XcedeCatalogImportSetMatrixFromURI: $filename is unknown filetype, No transform imported."
+        puts "XnatXcatImportSetMatrixFromURI: $filename is unknown filetype, No transform imported."
+        tk_messageBox -message "XnatXcatImportSetMatrixFromURI: $filename is unknown filetype, No transform imported."
         return
     } 
 
@@ -592,8 +671,8 @@ proc XcedeCatalogImportEntryTransform {node} {
     set tid [ $tnode GetID ]
 
     if { $tid == "" } {
-        puts "XcedeCatalogImportEntryTransform: unable to add Transform Node. No transform imported."
-       tk_messageBox -message "XcedeCatalogImportEntryTransform: unable to add Transform Node. No transform imported."
+        puts "XnatXcatImportEntryTransform: unable to add Transform Node. No transform imported."
+       tk_messageBox -message "XnatXcatImportEntryTransform: unable to add Transform Node. No transform imported."
         return
     }
 
@@ -603,7 +682,7 @@ proc XcedeCatalogImportEntryTransform {node} {
 
     #--- open register.dat file and read 
     set matrix [ vtkMatrix4x4 New ]
-    set fid [ open $n(uri) r ]
+    set fid [ open $n(URI) r ]
     set row 0
     set col 0
     while { ! [ eof $fid ] } {
@@ -631,8 +710,8 @@ proc XcedeCatalogImportEntryTransform {node} {
     #--- read the uri and translate matrix element values into place.
     set M [ $tnode GetMatrixTransformToParent ]
     if { $M == "" } {
-        puts "XcedeCatalogImportSetMatrixFromURI: matrix for transform ID=$id not found. No elements set."
-       tk_messageBox -message "XcedeCatalogImportSetMatrixFromURI: matrix for transform ID=$id not found. No elements set."
+        puts "XnatXcatImportSetMatrixFromURI: matrix for transform ID=$id not found. No elements set."
+       tk_messageBox -message "XnatXcatImportSetMatrixFromURI: matrix for transform ID=$id not found. No elements set."
         return
     }
 
@@ -641,8 +720,9 @@ proc XcedeCatalogImportEntryTransform {node} {
     $tnode Delete
     
     #--- this is for help with FIPS registration correction
-    if { $n(name) == "anat2exf" } {
-        set ::XcedeCatalog_MrmlID(anat2exf) $tid
+    set check [ string first "anat2exf" $n(name) ]
+    if { $check >= 0 } {
+        set ::XnatXcat_MrmlID(anat2exf) $tid
     }
 
 }
@@ -652,97 +732,34 @@ proc XcedeCatalogImportEntryTransform {node} {
 
 
 
-
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-proc XcedeCatalogImportEntryOverlay {node} {
-  upvar $node n
-
-    #--- not really a node, per se...
-    #--- ditch if there's no file in the uri
-    
-    if { ! [info exists n(uri) ] } {
-        puts "XcedeCatalogImportEntryOverlay: no uri specified for node $n(name). No overlay imported."
-        return
-    }
-
-    #--- what model node should these scalars be applied to?
-    if { [ string first "lh." $n(uri) ] >= 0 } {
-        if { ![info exists ::XcedeCatalogMrmlID(LHmodel) ] } {
-            puts "XcedeCatalogImportEntryOverlay: no model ID specified for overlay $n(uri). No overlay imported."
-            return
-        }
-        set mid $::XcedeCatalogMrmlID(LHmodel)
-        set mnode [$::slicer3::MRMLScene GetNodeByID $mid]
-    }
-
-
-
-    if { [ string first "rh." $n(uri) ] >= 0 } {
-        if { ![info exists ::XcedeCatalogMrmlID(RHmodel) ] } {
-            puts "XcedeCatalogImportEntryOverlay: no model ID specified for overlay $n(uri). No overlay imported."
-            return
-        }
-        set mid $::XcedeCatalogMrmlID(RHmodel)
-        set mnode [$::slicer3::MRMLScene GetNodeByID $mid]
-    }
-
-
-    if { $mnode == "" } {
-        puts "XcedeCatalogImportEntryOverlay: Model MRML Node corresponding to ID=$mid not found. No overlay imported."
-        return
-    }
-    
-    set logic [$::slicer3::ModelsGUI GetLogic]
-    if { $logic == "" } {
-        puts "XcedeCatalogImportEntryOverlay: cannot access Models Logic class. No overlay imported."
-        return
-    }
-    
-    #--- add the scalar to the node
-    $logic AddScalar $n(uri) $mnode 
-
-    #--- keep track of all annotation files loaded.
-    if { [ string first "annot" $n(uri) ] >= 0 } {
-        lappend ::XcedeCatalog_AnnotationFiles $n(uri)
-    }
-}
 
 
 
 #------------------------------------------------------------------------------
 # and returns the nodeType associated with that format
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportGetNodeType { format } {
-    if {$format == "FreeSurfer:mgz-1" } {
+proc XnatXcatImportGetNodeType { fname } {
+
+    set ext [ file extension $fname ]
+
+    #--- brawny, not brainy, approach.
+    
+    if {$fname == "aseg.mgz" } {
         return "Volume"
-    } elseif {$format == "nifti:nii-1" } {
+    } elseif { $fname == "aparc+aseg.mgz" } {
         return "Volume"
-    } elseif { $format == "FreeSurfer:w-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:thickness-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:curv-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:avg_curv-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:sulc-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:area-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:annot-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:mgh-1" } {
+    } elseif {$ext == ".mgz" } {
         return "Volume"
-    } elseif { $format == "FreeSufer:mat-1" } {
+    } elseif {$ext == ".nii" } {
+        return "Volume"
+    } elseif { $ext == ".annot" } {
+        return "Overlay"
+    } elseif { $ext == ".dat" } {
         return "Transform"
-    } elseif { $format == "FreeSurfer:surface-1" } {
+    } elseif { $ext == ".pial" } {
         return "Model"
-    } elseif { $format == "FreeSurfer:overlay-1" } {
-        return "Overlay"
-    } elseif { $format == "FreeSurfer:matrix-1" } {
-        return "Transform"
+    } elseif { $ext == ".vtk" } {
+        return "Model"
     }  else {
         return "Unknown"
     }
@@ -752,46 +769,32 @@ proc XcedeCatalogImportGetNodeType { format } {
 #------------------------------------------------------------------------------
 # checking to see if Slicer can read this file format
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportFormatCheck { format } {
+proc XnatXcatImportFormatCheck { fname } {
 
     #--- check format against known formats
-    #--- TODO: Once these values are formally defined for
-    #--- all freesurfer data, we will have to change.
-    #--- matrix-1 and overlay-1 are made up!
-    #--- TODO: Add more as we know what their
-    #--- XCEDE definitions are (analyze, etc.)
+    
+    set ext [ file extension $fname ]
     
 # return 1 if have a valid storage node that can deal with remote uri's, return 2 if need to synch download
-    if {$format == "FreeSurfer:mgz-1" } {
+    if {$fname == "aseg.mgz" } {
         return 1
-    } elseif {$format == "nifti:nii-1" } {
+    } elseif { $fname == "aparc+aseg.mgz" } {
         return 1
-    } elseif { $format == "FreeSurfer:w-1" } {
+    } elseif {$ext == ".mgz" } {
         return 1
-    } elseif { $format == "FreeSurfer:thickness-1" } {
+    } elseif {$ext == ".nii" } {
         return 1
-    } elseif { $format == "FreeSurfer:curv-1" } {
+    } elseif { $ext == ".annot" } {
         return 1
-    } elseif { $format == "FreeSurfer:avg_curv-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:sulc-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:area-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:annot-1" } {
-        return 1
-    } elseif { $format == "FreeSurfer:mgh-1" } {
+    } elseif { $ext == ".dat" } {
         return 2
-    } elseif { $format == "FreeSurfer:surface-1" } {
+    } elseif { $ext == ".pial" } {
         return 1
-    } elseif { $format == "FreeSurfer:overlay-1" } {
+    } elseif { $ext == ".vtk" } {
         return 1
-    } elseif { $format == "FreeSurfer:matrix-1" } {
-        return 2
     }  else {
         return 0
     }
-
 }
 
 
@@ -799,25 +802,29 @@ proc XcedeCatalogImportFormatCheck { format } {
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportComputeFIPS2SlicerTransformCorrection { } {
+proc XnatXcatImportComputeFIPS2SlicerTransformCorrection { } {
 
-    if { $::XcedeCatalog_MrmlID(anat2exf) == "" } {
+    if { $::XnatXcat_MrmlID(anat2exf) == "" } {
+        puts "cant find anat2exf"
         return
     }
-    if { $::XcedeCatalog_MrmlID(FSBrain) == "" } {
+    if { $::XnatXcat_MrmlID(FSBrain) == "" } {
+        puts "can't find FSBrain"
         return
     }
-    if { $::XcedeCatalog_MrmlID(ExampleFunc) == "" } {
+    if { $::XnatXcat_MrmlID(ExampleFunc) == "" } {
+        puts "can't find exampelFun"
         return
     }
+
 
     #--- find a brain.mgz, an example_func.nii, and an anat2exf.register.dat.
-    $::XcedeCatalog_mainWindow SetStatusText "Computing corrected registration matrix."
+    $::XnatXcat_mainWindow SetStatusText "Computing corrected registration matrix."
     #--- get required nodes from scene
-    set v1 [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(FSBrain) ]
-    set v2 [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(ExampleFunc) ]
+    set v1 [ $::slicer3::MRMLScene GetNodeByID $::XnatXcat_MrmlID(FSBrain) ]
+    set v2 [ $::slicer3::MRMLScene GetNodeByID $::XnatXcat_MrmlID(ExampleFunc) ]
 
-    set anat2exfT [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(anat2exf) ]
+    set anat2exfT [ $::slicer3::MRMLScene GetNodeByID $::XnatXcat_MrmlID(anat2exf) ]
 
     #--- get FSregistration matrix from node
     set anat2exf [ $anat2exfT GetMatrixTransformToParent ]
@@ -827,7 +834,7 @@ proc XcedeCatalogImportComputeFIPS2SlicerTransformCorrection { } {
     $ras2rasT SetName StatisticsToBrainXform
     $::slicer3::MRMLScene AddNode $ras2rasT
 
-    set ::XcedeCatalog_MrmlID(StatisticsToBrainXform) [ $ras2rasT GetID ]
+    set ::XnatXcat_MrmlID(StatisticsToBrainXform) [ $ras2rasT GetID ]
 
     #--- get access to methods we need thru logic
     set volumesLogic [ $::slicer3::VolumesGUI GetLogic ]
@@ -848,7 +855,7 @@ proc XcedeCatalogImportComputeFIPS2SlicerTransformCorrection { } {
     $ras2rasT Delete
 
     #--- mark the transform as created 
-    set ::XcedeCatalog_RAS2RASTransformCreated 1
+    set ::XnatXcat_RAS2RASTransformCreated 1
 
 }
 
@@ -856,19 +863,19 @@ proc XcedeCatalogImportComputeFIPS2SlicerTransformCorrection { } {
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-proc XcedeCatalogImportApplyFIPS2SlicerTransformCorrection { } {
+proc XnatXcatImportApplyFIPS2SlicerTransformCorrection { } {
     
-    if { $::XcedeCatalog_RAS2RASTransformCreated == 1 } {
-        $::XcedeCatalog_mainWindow SetStatusText "Applying registration matrix to statistics volumes"
+    if { $::XnatXcat_RAS2RASTransformCreated == 1 } {
+        $::XnatXcat_mainWindow SetStatusText "Applying registration matrix to statistics volumes"
         #--- move all the detected stats files under the new registration xform
-        foreach id  $::XcedeCatalog_MrmlID(StatFileList) {
+        foreach id  $::XnatXcat_MrmlID(StatFileList) {
             set vnode [ $::slicer3::MRMLScene GetNodeByID $id ]
-            $vnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(StatisticsToBrainXform) 
+            $vnode SetAndObserveTransformNodeID $::XnatXcat_MrmlID(StatisticsToBrainXform) 
             $vnode Modified
         }
         #--- move the example func also into the new registration xform
-        set vnode [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(ExampleFunc) ]
-        $vnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(StatisticsToBrainXform) 
+        set vnode [ $::slicer3::MRMLScene GetNodeByID $::XnatXcat_MrmlID(ExampleFunc) ]
+        $vnode SetAndObserveTransformNodeID $::XnatXcat_MrmlID(StatisticsToBrainXform) 
         $vnode Modified        
     }
 }
@@ -877,6 +884,20 @@ proc XcedeCatalogImportApplyFIPS2SlicerTransformCorrection { } {
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-proc XcedeCataLogImportTest  { } {
+proc XnatXcatImportMessage { msg } {
+
+    set dialog [ vtkKWMessageDialog New ]
+    $dialog SetParent [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+    $dialog SetStyleToMessage
+    $dialog SetText $msg
+    $dialog Create
+    $dialog Invoke
+    $dialog Delete
+}
+
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+proc XnatXcatImportTest  { } {
     #no op.
 }
