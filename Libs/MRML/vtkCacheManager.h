@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <iterator>
+#include <map>
 
 class vtkCallbackCommand;
 class vtkMRMLScene;
@@ -127,7 +128,8 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
       {
       this->MRMLScene = scene;
       }
-  
+  void MapFileToURI ( const char *uri, const char *fname );
+
   //BTX
   void MarkNode ( std::string );
   // in case we need these.
@@ -147,6 +149,9 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
       CacheClearEvent,
       SettingsUpdateEvent,
     };
+
+  std::map<std::string, std::string> uriMap;
+  const char *GetFileFromURIMap (const char *uri );
   //ETX
   
  private:

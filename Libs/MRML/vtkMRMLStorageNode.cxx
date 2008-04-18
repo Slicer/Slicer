@@ -178,11 +178,18 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
     return;
     }
   
-  if (!this->SupportedFileType(this->GetURI()))
+  vtkCacheManager *cacheManager = this->Scene->GetCacheManager();
+  const char *fname = NULL;
+  if ( cacheManager != NULL )
+    {
+    fname = cacheManager->GetFilenameFromURI( this->GetURI() );
+    }
+
+  if (!this->SupportedFileType(fname))
     {
     // can't read this kind of file, so return
     this->SetReadStateIdle();
-    vtkDebugMacro("StageReadData: can't read file type for URI : " << this->GetURI());
+    vtkDebugMacro("StageReadData: can't read file type for URI : " << fname);
     return;
     }
 

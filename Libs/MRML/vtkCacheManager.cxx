@@ -25,6 +25,7 @@ vtkCacheManager::vtkCacheManager()
   this->EnableForceRedownload = 0;
   this->InsufficientFreeBufferNotificationFlag = 0;
   // this->EnableRemoteCacheOverwriting = 1;
+  this->uriMap.clear();
 }
 
 
@@ -33,6 +34,7 @@ vtkCacheManager::~vtkCacheManager()
 {
    
   this->MRMLScene = NULL;
+  this->uriMap.clear();
   if (this->CallbackCommand)
     {
     this->CallbackCommand->Delete();
@@ -56,6 +58,57 @@ vtkCacheManager::~vtkCacheManager()
 //   this->InvokeEvent ( vtkCacheManager::SettingsUpdateEvent );
 //   }
 //   }
+
+//----------------------------------------------------------------------------
+const char* vtkCacheManager::GetFileFromURIMap (const char *uri )
+{
+  std::string uriString (uri);
+
+    //--- URI is first, local name is second
+    std::map<std::string, std::string>::iterator iter = this->uriMap.find(uriString);
+    if (iter != this->uriMap.end() )
+      {
+      return iter->second.c_str();
+      }
+
+  return NULL;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkCacheManager::MapFileToURI ( const char *uri, const char *fname )
+{
+  if ( uri == NULL || fname == NULL )
+    {
+    vtkErrorMacro ( "MapFileToURI: got two null strings." );
+    return;
+    }
+
+  std::string remote(uri);
+  std::string local(fname);
+
+  std::map <std::string, std::string>::iterator iter;
+  //--- see if it's already here and update if so.
+
+    //--- URI is first, local name is second
+  int added = 0;
+  for (iter = this->uriMap.begin();
+       iter != this->uriMap.end();
+       iter++)
+    {
+    if (iter->first == remote )
+      {
+      iter->second = local;
+      added = 1;
+      }
+    }
+  if ( !added )
+    {
+    this->uriMap.insert (std::make_pair (remote, local ));
+    }
+}
+
+
 
 //----------------------------------------------------------------------------
 void vtkCacheManager::SetEnableForceRedownload( int val )
@@ -374,6 +427,13 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
     vtkDebugMacro("GetFilenameFromURI: input uri is null");
     return "(null)";
     }
+
+  const char *mapcheck = this->GetFileFromURIMap( uri );
+  if ( mapcheck != NULL )
+    {
+    return (mapcheck);
+    }
+
   vtksys_stl::string kwInString = vtksys_stl::string(uri);
 
   //--- First decode special characters
