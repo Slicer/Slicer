@@ -125,12 +125,12 @@ int vtkCacheManager::IsRemoteReference ( const char *uri )
   std::string prefix;
 
   //--- get all characters up to (and not including) the '://'
-  if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
+  if ( ( index = (int)(uriString.find ( "://", 0 )) ) != (int)(std::string::npos) )
     {
     prefix = uriString.substr ( 0, index );
     //--- check to see if any leading bracketed characters are
     //--- in this part of the string.
-    if ( (index = prefix.find ( "]:", 0 ) ) != std::string::npos )
+    if ( (index = (int)(prefix.find ( "]:", 0 )) ) != (int)(std::string::npos) )
       {
       //--- if so, strip off the bracketed characters in case
       //--- we adopt the gwe "[filename.ext]:" prefix.
@@ -161,12 +161,12 @@ int vtkCacheManager::IsLocalReference ( const char *uri )
   std::string prefix;
 
   //--- get all characters up to (and not including) the '://'
-  if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
+  if ( ( index = (int)(uriString.find ( "://", 0 )) ) != (int)(std::string::npos) )
     {
     prefix = uriString.substr ( 0, index );
     //--- check to see if any leading bracketed characters are
     //--- in this part of the string.
-    if ( (index = prefix.find ( "]:", 0 ) ) != std::string::npos )
+    if ( (index = (int)(prefix.find ( "]:", 0 )) ) != (int)(std::string::npos) )
       {
       //--- if so, strip off the bracketed characters in case
       //--- we adopt the gwe "[filename.ext]:" prefix.
@@ -197,7 +197,7 @@ int vtkCacheManager::LocalFileExists ( const char *uri )
   std::string filename;
 
   //--- get all characters up to (and not including) the '://'
-  if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
+  if ( ( index = (int)(uriString.find ( "://", 0 )) ) != (int)(std::string::npos) )
     {
     //--- is this the correct index???
     filename = uriString.substr ( index+3 );
