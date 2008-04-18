@@ -88,6 +88,8 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
   return res;
 }
 
+
+
 //----------------------------------------------------------------------------
 vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 {
@@ -128,11 +130,11 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
   vtkDebugMacro("AddModel: got model name = " << name.c_str());
   
   // check to see which node can read this type of file
-  if (mStorageNode->SupportedFileType(filename))
+  if (mStorageNode->SupportedFileType(name.c_str()))
     {
     storageNode = mStorageNode;
     }
-  else if (fsmStorageNode->SupportedFileType(filename))
+  else if (fsmStorageNode->SupportedFileType(name.c_str()))
     {
     vtkDebugMacro("AddModel: have a freesurfer type model file.");
     storageNode = fsmStorageNode;
@@ -280,7 +282,7 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
     }
 
   // check to see if it can read it
-  if (fsmoStorageNode->SupportedFileType(filename))
+  if (fsmoStorageNode->SupportedFileType(localFile))
     {
     storageNode = fsmoStorageNode;
     }
@@ -319,3 +321,5 @@ int vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRMLModelNode *mode
   
   return 1;
 }
+
+
