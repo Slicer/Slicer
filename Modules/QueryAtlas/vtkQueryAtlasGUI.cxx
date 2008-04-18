@@ -1544,7 +1544,7 @@ void vtkQueryAtlasGUI::LoadXcedeCatalogCallback ( )
 
     if ( this->GetMRMLScene() && fl.find(".xcat") != std::string::npos )
       {
-      this->Script ( "XcedeCatalogImport %s", filen);
+      this->Script ( "XcatalogImport %s", filen);
       this->LoadFIPSFSCatalogButton->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
       }
 

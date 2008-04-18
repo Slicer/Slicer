@@ -2131,7 +2131,7 @@ int Slicer3_main(int argc, char *argv[])
           {
           // if it's an xcede file, load it
           slicerApp->SplashMessage("Importing Xcede catalog ...");
-          std::string cmd = "after idle {update; XcedeCatalogImport \"" + *argit + "\"}";
+          std::string cmd = "after idle {update; XcatalogImport \"" + *argit + "\"}";
           res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
           slicerApp->SplashMessage("Imported catalog.");
           }
