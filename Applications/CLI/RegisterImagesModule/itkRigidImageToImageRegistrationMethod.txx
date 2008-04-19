@@ -30,42 +30,51 @@ RigidImageToImageRegistrationMethod< TImage >
 {
   if( ImageDimension == 2 )
     {
-    typename Rigid2DTransformType::Pointer tmpTrans = Rigid2DTransformType::New();
-    this->SetTransform( dynamic_cast< RigidTransformType *>( tmpTrans.GetPointer()) );
+    typename Rigid2DTransformType::Pointer tmpTrans = 
+                                                   Rigid2DTransformType::New();
+    this->SetTransform( dynamic_cast< RigidTransformType *>( 
+                                                      tmpTrans.GetPointer()) );
     tmpTrans->Register();
     }
   else if( ImageDimension == 3 )
     {
-    typename Rigid3DTransformType::Pointer tmpTrans = Rigid3DTransformType::New();
-    this->SetTransform( dynamic_cast< RigidTransformType *>( tmpTrans.GetPointer()) );
+    typename Rigid3DTransformType::Pointer tmpTrans = 
+                                                   Rigid3DTransformType::New();
+    this->SetTransform( dynamic_cast< RigidTransformType *>( 
+                                                      tmpTrans.GetPointer()) );
     tmpTrans->Register();
     }
   else
     {
-    std::cerr << "ERROR: Rigid registration only supported for 2D and 4D images." << std::endl;
+    std::cerr << "ERROR: Rigid registration only supported for 2D & 3D images."
+              << std::endl;
     }
 
   this->GetTypedTransform()->SetIdentity();
 
-  this->SetInitialTransformParameters( this->GetTypedTransform()->GetParameters() );
-  this->SetLastTransformParameters( this->GetTypedTransform()->GetParameters() );
+  this->SetInitialTransformParameters( this->GetTypedTransform()
+                                           ->GetParameters() );
+  this->SetInitialTransformFixedParameters( this->GetTypedTransform()
+                                                ->GetFixedParameters() );
+  this->SetLastTransformParameters( this->GetTypedTransform()
+                                        ->GetParameters() );
 
   typename Superclass::TransformParametersScalesType scales;
   scales.set_size( this->GetTypedTransform()->GetNumberOfParameters() );
   if( ImageDimension == 2 )
     {
-    scales[0] = 0.25;
-    scales[1] = 10;
-    scales[2] = 10;
+    scales[0] = 10;
+    scales[1] = 0.1;
+    scales[2] = 0.1;
     }
   else if( ImageDimension == 3 )
     {
-    scales[0] = 0.25;
-    scales[1] = 0.25;
-    scales[2] = 0.25;
-    scales[3] = 10;
-    scales[4] = 10;
-    scales[5] = 10;
+    scales[0] = 10;
+    scales[1] = 10;
+    scales[2] = 10;
+    scales[3] = 0.1;
+    scales[4] = 0.1;
+    scales[5] = 0.1;
     }
 
   this->SetTransformParametersScales( scales );
@@ -77,6 +86,7 @@ template< class TImage >
 RigidImageToImageRegistrationMethod< TImage >
 ::~RigidImageToImageRegistrationMethod( void )
 {
+  this->m_Transform->UnRegister();
 }
 
 template< class TImage >

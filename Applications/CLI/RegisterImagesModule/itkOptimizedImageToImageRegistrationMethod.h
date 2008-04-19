@@ -55,6 +55,9 @@ class OptimizedImageToImageRegistrationMethod
 
     typedef typename TransformType::ParametersType     TransformParametersScalesType;
 
+    itkStaticConstMacro( ImageDimension, unsigned int,
+                         TImage::ImageDimension );
+
     //
     // Custom Typedefs
     //
@@ -85,11 +88,17 @@ class OptimizedImageToImageRegistrationMethod
     itkSetMacro( InitialTransformParameters, TransformParametersType );
     itkGetConstMacro( InitialTransformParameters, TransformParametersType );
 
+    itkSetMacro( InitialTransformFixedParameters, TransformParametersType );
+    itkGetConstMacro( InitialTransformFixedParameters, TransformParametersType );
+
     itkSetMacro( LastTransformParameters, TransformParametersType );
     itkGetConstMacro( LastTransformParameters, TransformParametersType );
 
     itkSetMacro( TransformParametersScales, TransformParametersScalesType );
     itkGetConstMacro( TransformParametersScales, TransformParametersScalesType );
+
+    itkSetMacro( UseOverlapAsROI, bool );
+    itkGetConstMacro( UseOverlapAsROI, bool );
 
     itkSetMacro( MinimizeMemory, bool );
     itkGetConstMacro( MinimizeMemory, bool );
@@ -135,10 +144,13 @@ class OptimizedImageToImageRegistrationMethod
 
 
     TransformParametersType             m_InitialTransformParameters;
+    TransformParametersType             m_InitialTransformFixedParameters;
 
     TransformParametersType             m_LastTransformParameters;
 
     TransformParametersScalesType       m_TransformParametersScales;
+
+    bool                                m_UseOverlapAsROI;
 
     bool                                m_MinimizeMemory;
 

@@ -31,13 +31,17 @@ AffineImageToImageRegistrationMethod< TImage >
   this->SetTransform( AffineTransformType::New() );
   this->GetTypedTransform()->SetIdentity();
 
-  this->SetInitialTransformParameters( this->GetTypedTransform()->GetParameters() );
+  this->SetInitialTransformParameters( this->GetTypedTransform()
+                                           ->GetParameters() );
+  this->SetInitialTransformFixedParameters( this->GetTypedTransform()
+                                                ->GetFixedParameters() );
 
   typename Superclass::TransformParametersScalesType scales;
   scales.set_size( this->GetTypedTransform()->GetNumberOfParameters() );
   if( scales.size() != ImageDimension * (ImageDimension + 1) )
     {
-    std::cerr << "ERROR: number of parameters not standard for affine transform" << std::endl;
+    std::cerr << "ERROR: number of parameters not standard for affine transform"
+              << std::endl;
     }
   unsigned int scaleNum = 0;
   for(int d1=0; d1<ImageDimension; d1++)
@@ -46,18 +50,18 @@ AffineImageToImageRegistrationMethod< TImage >
       {
       if(d1 == d2)
         {
-        scales[scaleNum] = 0.02;
+        scales[scaleNum] = 100;
         }
       else
         {
-        scales[scaleNum] = 0.01;
+        scales[scaleNum] = 1000;
         }
       ++scaleNum;
       }
     }
   for(int d1=0; d1<ImageDimension; d1++)
     {
-    scales[scaleNum] = 1.0;
+    scales[scaleNum] = 1;
     ++scaleNum;
     }
   this->SetTransformParametersScales( scales );

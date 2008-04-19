@@ -46,14 +46,18 @@ class BSplineImageToImageRegistrationMethod
     //
     // Typedefs from Superclass
     //
+    itkStaticConstMacro( ImageDimension, unsigned int,
+                         TImage::ImageDimension );
+
 
     // Overrides the superclass' TransformType typedef
     typedef BSplineDeformableTransform< double,
                                         itkGetStaticConstMacro( ImageDimension ),
                                         itkGetStaticConstMacro( ImageDimension ) >
-                                                  BSplineTransformType;
+                                                       BSplineTransformType;
 
-    typedef BSplineTransformType                  TransformType;
+    typedef BSplineTransformType                           TransformType;
+    typedef typename BSplineTransformType::ParametersType  ParametersType;
 
     //
     // Methods from Superclass
@@ -73,10 +77,19 @@ class BSplineImageToImageRegistrationMethod
      **/
     TransformType * GetTypedTransform( void );
 
-    itkSetMacro( NumberOfControlPoints, unsigned int );
+    itkSetClampMacro( NumberOfControlPoints, unsigned int, 2, 2000 );
     itkGetConstMacro( NumberOfControlPoints, unsigned int );
 
     typename TransformType::Pointer GetBSplineTransform( void );
+
+    void ComputeGridRegion( int numberOfControlPoints,
+                 typename TransformType::RegionType::SizeType & regionSize,
+                 typename TransformType::SpacingType & regionSpacing,
+                 typename TransformType::OriginType & regionOrigin,
+                 typename TransformType::DirectionType & regionDirection);
+
+    void ResampleControlGrid(int newNumberOfControlPoints,
+                             ParametersType & newParameters );
 
   protected:
 

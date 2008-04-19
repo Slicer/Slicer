@@ -100,7 +100,7 @@ InitialImageToImageRegistrationMethod< TImage >
     momCalc = MomentsCalculatorType::New();
 
     momCalc->SetImage( this->GetFixedImage() );
-    if( this->GetUseMasks() )
+    if( this->GetUseFixedImageMaskObject() )
       {
       if( this->GetFixedImageMaskObject() )
         {
@@ -134,7 +134,7 @@ InitialImageToImageRegistrationMethod< TImage >
       }
 
     momCalc->SetImage( this->GetMovingImage() );
-    if( this->GetUseMasks() )
+    if( this->GetUseMovingImageMaskObject() )
       {
       if( this->GetMovingImageMaskObject() )
         {

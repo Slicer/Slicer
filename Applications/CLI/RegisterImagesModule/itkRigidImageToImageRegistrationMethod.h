@@ -23,7 +23,7 @@
 #include "itkVersorRigid3DTransform.h"
 #include "itkRigid2DTransform.h"
 
-#include "itkImageToImageRegistrationMethod.h"
+#include "itkOptimizedImageToImageRegistrationMethod.h"
 
 namespace itk
 {

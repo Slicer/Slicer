@@ -41,7 +41,9 @@ ImageToImageRegistrationMethod< TImage >
 
   m_FixedImage = 0;
   m_MovingImage = 0;
+  m_UseFixedImageMaskObject = false;
   m_FixedImageMaskObject = 0;
+  m_UseMovingImageMaskObject = false;
   m_MovingImageMaskObject = 0;
   m_Observer = 0;
 
@@ -58,14 +60,14 @@ ImageToImageRegistrationMethod< TImage >
 template< class TImage >
 void
 ImageToImageRegistrationMethod< TImage >
-::SetFixedImage( const ImageType * fixedImage )
+::SetFixedImage( typename ImageType::ConstPointer & fixedImage )
 {
-  if( this->m_FixedImage.GetPointer() != fixedImage )
+  if( this->m_FixedImage.GetPointer() != fixedImage.GetPointer() )
     {
     this->m_FixedImage = fixedImage;
 
     this->ProcessObject::SetNthInput(0,
-                                     const_cast< ImageType * >( fixedImage ) );
+                                     const_cast< ImageType * >( fixedImage.GetPointer() ) );
     this->Modified();
     }
 }
@@ -73,15 +75,59 @@ ImageToImageRegistrationMethod< TImage >
 template< class TImage >
 void
 ImageToImageRegistrationMethod< TImage >
-::SetMovingImage( const ImageType * fixedImage )
+::SetMovingImage( typename ImageType::ConstPointer & movingImage )
 {
-  if( this->m_MovingImage.GetPointer() != fixedImage )
+  if( this->m_MovingImage.GetPointer() != movingImage.GetPointer() )
     {
-    this->m_MovingImage = fixedImage;
+    this->m_MovingImage = movingImage;
 
     this->ProcessObject::SetNthInput(1,
-                                     const_cast< ImageType * >( fixedImage ) );
+                                     const_cast< ImageType * >( movingImage.GetPointer() ) );
     this->Modified();
+    }
+}
+
+template< class TImage >
+void
+ImageToImageRegistrationMethod< TImage >
+::SetFixedImageMaskObject( typename MaskObjectType::ConstPointer & maskObject )
+{
+  if( this->m_FixedImageMaskObject.GetPointer() != maskObject.GetPointer() )
+    {
+    this->m_FixedImageMaskObject = maskObject;
+
+    this->Modified();
+
+    if( maskObject.IsNotNull() )
+      {
+      m_UseFixedImageMaskObject = true;
+      }
+    else
+      {
+      m_UseFixedImageMaskObject = false;
+      }
+    }
+}
+
+template< class TImage >
+void
+ImageToImageRegistrationMethod< TImage >
+::SetMovingImageMaskObject( typename MaskObjectType::ConstPointer & maskObject )
+{
+  if( this->m_MovingImageMaskObject.GetPointer() != maskObject.GetPointer() )
+    {
+    this->m_MovingImageMaskObject = maskObject;
+
+    this->Modified();
+
+    if( maskObject.IsNotNull() )
+      {
+      m_UseMovingImageMaskObject = true;
+      }
+    else
+      {
+      m_UseMovingImageMaskObject = false;
+      }
     }
 }
 

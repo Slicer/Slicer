@@ -29,7 +29,7 @@
       <name>resampledImage</name>
       <label>Resample image</label>
       <channel>output</channel>
-      <index>2</index>
+      <longflag>resampledImage</longflag>
       <description>Registration results</description>
     </image>
   </parameters>
@@ -60,10 +60,6 @@
       <description>Writed the parameters used for registration</description>
       <longflag>saveParameters</longflag>
     </file>
-  </parameters>
-  <parameters advanced="true">
-    <label>Advanced Registration Parameters</label>
-    <description>Parameters that determine how registration is performed</description>
     <string-enumeration>
       <name>initialization</name>
       <description>Method to prime the registration process</description>
@@ -81,10 +77,14 @@
       <label>Registration</label>
       <longflag>registration</longflag>
       <element>None</element>
+      <element>Initial</element>
       <element>Rigid</element>
       <element>Affine</element>
       <element>BSpline</element>
-      <default>BSpline</default>
+      <element>PipelineRigid</element>
+      <element>PipelineAffine</element>
+      <element>PipelineBSpline</element>
+      <default>PipelineBSpline</default>
     </string-enumeration>
     <string-enumeration>
       <name>metric</name>
@@ -96,48 +96,6 @@
       <element>MeanSqrd</element>
       <default>MattesMI</default>
     </string-enumeration>
-    <integer>
-      <name>rigidMaxIterations</name>
-      <description>Maximum number of rigid optimization iterations</description>
-      <label>Rigid Max Iterations</label>
-      <longflag>rigidMaxIterations</longflag>
-      <default>200</default>
-    </integer>
-    <integer>
-      <name>affineMaxIterations</name>
-      <description>Maximum number of affine optimization iterations</description>
-      <label>Affine Max Iterations</label>
-      <longflag>affineMaxIterations</longflag>
-      <default>100</default>
-    </integer>
-    <integer>
-      <name>bsplineMaxIterations</name>
-      <description>Maximum number of bspline optimization iterations</description>
-      <label>BSpline Max Iterations</label>
-      <longflag>bsplineMaxIterations</longflag>
-      <default>50</default>
-    </integer>
-    <float>
-      <name>rigidSamplingRatio</name>
-      <description>Portion of the image to use in computing the metric during rigid registration</description>
-      <label>Rigid sampling ratio</label>
-      <longflag>rigidSamplingRatio</longflag>
-      <default>0.025</default>
-    </float>
-    <float>
-      <name>affineSamplingRatio</name>
-      <description>Portion of the image to use in computing the metric during affine registration</description>
-      <label>Affine sampling ratio</label>
-      <longflag>affineSamplingRatio</longflag>
-      <default>0.05</default>
-    </float>
-    <float>
-      <name>bsplineSamplingRatio</name>
-      <description>Portion of the image to use in computing the metric during BSpline registration</description>
-      <label>BSpline sampling ratio</label>
-      <longflag>bsplineSamplingRatio</longflag>
-      <default>0.20</default>
-    </float>
     <float>
       <name>expectedOffset</name>
       <description>Expected mis-alignment after initialization</description>
@@ -166,26 +124,16 @@
       <longflag>expectedSkew</longflag>
       <default>0.01</default>
     </float>
-    <integer>
-      <name>controlPointSpacing</name>
-      <description>Number of pixels between control points</description>
-      <label>Control point spacing (pixels)</label>
-      <longflag>controlPointSpacing</longflag>
-      <default>20</default>
-    </integer>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced Registration Parameters</label>
+    <description>Parameters that determine how registration is performed</description>
     <boolean>
-      <name>useWindowedSinc</name>
-      <description>Use Windowed Sinc interpolation for final resampling</description>
-      <label>Use windowed sinc</label>
-      <longflag>useWindowedSinc</longflag>
-      <default>false</default>
-    </boolean>
-    <boolean>
-      <name>minimizeMemory</name>
-      <description>Reduce the amount of memory required at the cost of increased computation time</description>
-      <label>Minimize memory</label>
-      <longflag>minimizeMemory</longflag>
-      <default>false</default>
+      <name>useOverlapAsROI</name>
+      <description>Limit metric evaluation to the fixed image region overlapped by the moving image</description>
+      <label>Use overlap as ROI</label>
+      <longflag>useOverlapAsROI</longflag>
+      <default>true</default>
     </boolean>
     <integer>
       <name>numberOfThreads</name>
@@ -194,6 +142,20 @@
       <longflag>numberOfThreads</longflag>
       <default>0</default>
     </integer>
+    <boolean>
+      <name>minimizeMemory</name>
+      <description>Reduce the amount of memory required at the cost of increased computation time</description>
+      <label>Minimize memory</label>
+      <longflag>minimizeMemory</longflag>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>useWindowedSinc</name>
+      <description>Use Windowed Sinc interpolation for final resampling</description>
+      <label>Use windowed sinc</label>
+      <longflag>useWindowedSinc</longflag>
+      <default>false</default>
+    </boolean>
     <image>
       <name>differenceImage</name>
       <label>Difference Image</label>
@@ -201,5 +163,66 @@
       <channel>output</channel>
       <description>Result from subtracting the registered moving image from the fixed image</description>
     </image>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced Rigid Registration Parameters</label>
+    <description>Parameters that determine how registration is performed</description>
+    <integer>
+      <name>rigidMaxIterations</name>
+      <description>Maximum number of rigid optimization iterations</description>
+      <label>Rigid Max Iterations</label>
+      <longflag>rigidMaxIterations</longflag>
+      <default>200</default>
+    </integer>
+    <float>
+      <name>rigidSamplingRatio</name>
+      <description>Portion of the image to use in computing the metric during rigid registration</description>
+      <label>Rigid sampling ratio</label>
+      <longflag>rigidSamplingRatio</longflag>
+      <default>0.025</default>
+    </float>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced Affine Registration Parameters</label>
+    <description>Parameters that determine how registration is performed</description>
+    <integer>
+      <name>affineMaxIterations</name>
+      <description>Maximum number of affine optimization iterations</description>
+      <label>Affine Max Iterations</label>
+      <longflag>affineMaxIterations</longflag>
+      <default>100</default>
+    </integer>
+    <float>
+      <name>affineSamplingRatio</name>
+      <description>Portion of the image to use in computing the metric during affine registration</description>
+      <label>Affine sampling ratio</label>
+      <longflag>affineSamplingRatio</longflag>
+      <default>0.05</default>
+    </float>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced BSpline Registration Parameters</label>
+    <description>Parameters that determine how registration is performed</description>
+    <integer>
+      <name>bsplineMaxIterations</name>
+      <description>Maximum number of bspline optimization iterations</description>
+      <label>BSpline Max Iterations</label>
+      <longflag>bsplineMaxIterations</longflag>
+      <default>50</default>
+    </integer>
+    <float>
+      <name>bsplineSamplingRatio</name>
+      <description>Portion of the image to use in computing the metric during BSpline registration</description>
+      <label>BSpline sampling ratio</label>
+      <longflag>bsplineSamplingRatio</longflag>
+      <default>0.80</default>
+    </float>
+    <integer>
+      <name>controlPointSpacing</name>
+      <description>Number of pixels between control points</description>
+      <label>Control point spacing (pixels)</label>
+      <longflag>controlPointSpacing</longflag>
+      <default>10</default>
+    </integer>
   </parameters>
 </executable>

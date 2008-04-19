@@ -124,24 +124,27 @@ class ImageToImageRegistrationHelper : public Object
     //
     void LoadFixedImage( const std::string filename );
 
-    itkSetObjectMacro( FixedImage, ImageType );
+    itkSetConstObjectMacro( FixedImage, ImageType );
     itkGetConstObjectMacro( FixedImage, ImageType );
 
     void LoadMovingImage( const std::string filename );
 
-    itkSetObjectMacro( MovingImage, ImageType );
+    itkSetConstObjectMacro( MovingImage, ImageType );
     itkGetConstObjectMacro( MovingImage, ImageType );
 
     void SaveImage( const std::string filename, const ImageType * image );
 
     //
-    itkSetMacro( UseMasks, bool );
-    itkGetConstMacro( UseMasks, bool );
+    itkSetMacro( UseFixedImageMaskObject, bool );
+    itkGetConstMacro( UseFixedImageMaskObject, bool );
 
-    itkSetObjectMacro( FixedImageMaskObject, MaskObjectType );
+    void SetFixedImageMaskObject( typename MaskObjectType::ConstPointer & mask );
     itkGetConstObjectMacro( FixedImageMaskObject, MaskObjectType );
 
-    itkSetObjectMacro( MovingImageMaskObject, MaskObjectType );
+    itkSetMacro( UseMovingImageMaskObject, bool );
+    itkGetConstMacro( UseMovingImageMaskObject, bool );
+
+    void SetMovingImageMaskObject( typename MaskObjectType::ConstPointer & mask );
     itkGetConstObjectMacro( MovingImageMaskObject, MaskObjectType );
 
     void Initialize( void );
@@ -216,6 +219,9 @@ class ImageToImageRegistrationHelper : public Object
 
     itkSetMacro( ReportProgress, bool );
     itkGetMacro( ReportProgress, bool );
+
+    itkSetMacro( UseOverlapAsROI, bool );
+    itkGetMacro( UseOverlapAsROI, bool );
 
     itkSetMacro( MinimizeMemory, bool );
     itkGetMacro( MinimizeMemory, bool );
@@ -331,12 +337,13 @@ class ImageToImageRegistrationHelper : public Object
     void operator = ( const Self & );               // Purposely not implemented
 
     //  Data
-    typename ImageType::Pointer           m_FixedImage;
-    typename ImageType::Pointer           m_MovingImage;
+    typename ImageType::ConstPointer      m_FixedImage;
+    typename ImageType::ConstPointer      m_MovingImage;
 
-    bool                                  m_UseMasks;
-    typename MaskObjectType::Pointer      m_FixedImageMaskObject;
-    typename MaskObjectType::Pointer      m_MovingImageMaskObject;
+    bool                                  m_UseFixedImageMaskObject;
+    typename MaskObjectType::ConstPointer m_FixedImageMaskObject;
+    bool                                  m_UseMovingImageMaskObject;
+    typename MaskObjectType::ConstPointer m_MovingImageMaskObject;
 
     //  Process
     bool                                  m_EnableLoadedRegistration;
@@ -367,6 +374,8 @@ class ImageToImageRegistrationHelper : public Object
     double                                  m_FinalMetricValue;
 
     bool                                    m_ReportProgress;
+
+    bool                                    m_UseOverlapAsROI;
 
     bool                                    m_MinimizeMemory;
 

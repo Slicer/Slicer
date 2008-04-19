@@ -22,7 +22,7 @@ void GetImageType (std::string fileName,
                    itk::ImageIOBase::IOPixelType &pixelType,
                    itk::ImageIOBase::IOComponentType &componentType)
 {
-  typedef itk::Image<short, 3> ImageType;
+  typedef itk::OrientedImage<short, 3> ImageType;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
         itk::ImageFileReader<ImageType>::New();
   imageReader->SetFileName(fileName.c_str());
@@ -84,44 +84,72 @@ int DoIt( int argc, char *argv[] )
   if( initialization == "None" )
     {
     reger->SetInitialMethodEnum( RegerType::INIT_WITH_NONE );
-    reger->SetEnableInitialRegistration( false );
     }
   else if( initialization == "ImageCenters")
     {
     reger->SetInitialMethodEnum( RegerType::INIT_WITH_IMAGE_CENTERS );
-    reger->SetEnableInitialRegistration( true );
     }
   else if( initialization == "SecondMoments")
     {
     reger->SetInitialMethodEnum( RegerType::INIT_WITH_SECOND_MOMENTS );
-    reger->SetEnableInitialRegistration( true );
     }
   else //if( initialization == "CentersOfMass")
     {
     reger->SetInitialMethodEnum( RegerType::INIT_WITH_CENTERS_OF_MASS );
-    reger->SetEnableInitialRegistration( true );
     }
 
   if( registration == "None" )
     {
+    reger->SetEnableInitialRegistration( false );
+    reger->SetEnableRigidRegistration( false );
+    reger->SetEnableAffineRegistration( false );
+    reger->SetEnableBSplineRegistration( false );
+    }
+  else if( registration == "Initial" )
+    {
+    reger->SetEnableInitialRegistration( true );
     reger->SetEnableRigidRegistration( false );
     reger->SetEnableAffineRegistration( false );
     reger->SetEnableBSplineRegistration( false );
     }
   else if( registration == "Rigid" )
     {
+    reger->SetEnableInitialRegistration( false );
     reger->SetEnableRigidRegistration( true );
     reger->SetEnableAffineRegistration( false );
     reger->SetEnableBSplineRegistration( false );
     }
   else if( registration == "Affine" )
     {
+    reger->SetEnableInitialRegistration( false );
+    reger->SetEnableRigidRegistration( false );
+    reger->SetEnableAffineRegistration( true );
+    reger->SetEnableBSplineRegistration( false );
+    }
+  else if( registration == "BSpline" )
+    {
+    reger->SetEnableInitialRegistration( false );
+    reger->SetEnableRigidRegistration( false );
+    reger->SetEnableAffineRegistration( false );
+    reger->SetEnableBSplineRegistration( true );
+    }
+  else if( registration == "PipelineRigid" )
+    {
+    reger->SetEnableInitialRegistration( true );
+    reger->SetEnableRigidRegistration( true );
+    reger->SetEnableAffineRegistration( false );
+    reger->SetEnableBSplineRegistration( false );
+    }
+  else if( registration == "PipelineAffine" )
+    {
+    reger->SetEnableInitialRegistration( true );
     reger->SetEnableRigidRegistration( true );
     reger->SetEnableAffineRegistration( true );
     reger->SetEnableBSplineRegistration( false );
     }
-  else //if( registration == "BSpline" )
+  else if( registration == "PipelineBSpline" )
     {
+    reger->SetEnableInitialRegistration( true );
     reger->SetEnableRigidRegistration( true );
     reger->SetEnableAffineRegistration( true );
     reger->SetEnableBSplineRegistration( true );
@@ -140,6 +168,8 @@ int DoIt( int argc, char *argv[] )
     reger->SetRigidMetricMethodEnum( RegerType::OptimizedRegistrationMethodType::MATTES_MI_METRIC );
     }
 
+  reger->SetUseOverlapAsROI( useOverlapAsROI );
+
   reger->SetMinimizeMemory( minimizeMemory );
 
   reger->SetRigidMaxIterations( rigidMaxIterations );
@@ -157,48 +187,114 @@ int DoIt( int argc, char *argv[] )
 
   reger->SetBSplineControlPointPixelSpacing( controlPointSpacing );
 
-  reger->Update();
+  try
+    {
+    reger->Update();
+    }
+  catch( itk::ExceptionObject &excep)
+    {
+    std::cout << "Exception caught during helper class registration." 
+              << excep << std::endl;
+    std::cout << "Current Matrix Transform = " << std::endl; 
+    reger->GetCurrentMatrixTransform()->Print(std::cout , 2);
+    return EXIT_FAILURE;
+    }
+  catch( ... )
+    {
+    std::cout << "Uncaught exception during helper class registration." 
+              << std::endl;
+    return EXIT_FAILURE;
+    }
 
   typename ImageType::ConstPointer resultImage;
   if(useWindowedSinc)
     {
-    resultImage = reger->ResampleImage( RegerType::OptimizedRegistrationMethodType::SINC_INTERPOLATION );
-    reger->SaveImage( resampledImage, resultImage );
+    try
+      {
+      resultImage = reger->ResampleImage( 
+              RegerType::OptimizedRegistrationMethodType::SINC_INTERPOLATION );
+      }
+    catch( itk::ExceptionObject &excep)
+      {
+      std::cout << "Exception caught during helper class resampling." 
+                << excep << std::endl;
+      std::cout << "Current Matrix Transform = " << std::endl; 
+      reger->GetCurrentMatrixTransform()->Print(std::cout , 2);
+      return EXIT_FAILURE;
+      }
+    catch( ... )
+      {
+      std::cout << "Uncaught exception during helper class resampling." 
+                << std::endl;
+      return EXIT_FAILURE;
+      }
     }
   else
     {
-    resultImage = reger->ResampleImage();
-    reger->SaveImage( resampledImage, reger->ResampleImage() );
+    try
+      {
+      resultImage = reger->ResampleImage();
+      }
+    catch( itk::ExceptionObject &excep)
+      {
+      std::cout << "Exception caught during helper class resampling." 
+                << excep << std::endl;
+      std::cout << "Current Matrix Transform = " << std::endl; 
+      reger->GetCurrentMatrixTransform()->Print(std::cout , 2);
+      return EXIT_FAILURE;
+      }
+    catch( ... )
+      {
+      std::cout << "Uncaught exception during helper class resampling." 
+                << std::endl;
+      return EXIT_FAILURE;
+      }
     }
 
-  if(differenceImage.size() > 1)
+  try
     {
-    typedef itk::OrientedImage< float, 3 > OutputImageType;
-    typedef itk::SubtractImageFilter< ImageType, ImageType, OutputImageType > FilterType;
-    typename FilterType::Pointer filter = FilterType::New();
-    filter->SetInput1( reger->GetFixedImage() );
-    filter->SetInput2( resultImage );
-    filter->Update();
-    
-    typedef itk::ImageFileWriter< OutputImageType > WriterType;
-    WriterType::Pointer writer = WriterType::New();
-    writer->SetInput( filter->GetOutput() );
-    writer->SetFileName( differenceImage.c_str() );
-    writer->Update();
-    }
+    reger->SaveImage( resampledImage, resultImage );
+  
+    if(differenceImage.size() > 1)
+      {
+      typedef itk::OrientedImage< float, 3 > OutputImageType;
+      typedef itk::SubtractImageFilter< ImageType,
+                                        ImageType, OutputImageType > FilterType;
+      typename FilterType::Pointer filter = FilterType::New();
+      filter->SetInput1( reger->GetFixedImage() );
+      filter->SetInput2( resultImage );
+      filter->Update();
+      
+      typedef itk::ImageFileWriter< OutputImageType > WriterType;
+      WriterType::Pointer writer = WriterType::New();
+      writer->SetInput( filter->GetOutput() );
+      writer->SetFileName( differenceImage.c_str() );
+      writer->Update();
+      }
 
-  if( saveTransform.size() > 1 )
-    {
-    reger->SaveTransform( saveTransform );
-    }
+    if( saveTransform.size() > 1 )
+      {
+      reger->SaveTransform( saveTransform );
+      }
 
-  if( saveParameters.size() > 1 )
+    if( saveParameters.size() > 1 )
+      {
+      reger->SaveParameters( saveParameters );
+      }
+    }
+  catch( itk::ExceptionObject &excep)
     {
-    reger->SaveParameters( saveParameters );
+    std::cout << "Exception caught during helper class saving." 
+              << excep << std::endl;
+    return EXIT_FAILURE;
+    }
+  catch( ... )
+    {
+    std::cout << "Uncaught exception during helper class saving." << std::endl;
+    return EXIT_FAILURE;
     }
 
   return EXIT_SUCCESS;
-
 }
 
 int main( int argc, char * argv[] )
@@ -215,26 +311,18 @@ int main( int argc, char * argv[] )
     switch (componentType)
       {
       case itk::ImageIOBase::UCHAR:
-        return DoIt<unsigned char>( argc, argv );
-        break;
       case itk::ImageIOBase::CHAR:
-        return DoIt<char>( argc, argv );
-        break;
-      case itk::ImageIOBase::USHORT:
-        return DoIt<unsigned short>( argc, argv );
-        break;
       case itk::ImageIOBase::SHORT:
         return DoIt<short>( argc, argv );
         break;
+      case itk::ImageIOBase::USHORT:
       case itk::ImageIOBase::UINT:
       case itk::ImageIOBase::INT:
       case itk::ImageIOBase::ULONG:
       case itk::ImageIOBase::LONG:
       case itk::ImageIOBase::FLOAT:
-        return DoIt<float>( argc, argv );
-        break;
       case itk::ImageIOBase::DOUBLE:
-        return DoIt<double>( argc, argv );
+        return DoIt<float>( argc, argv );
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
       default:

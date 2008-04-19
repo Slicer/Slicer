@@ -73,20 +73,23 @@ class ImageToImageRegistrationMethod
     itkSetObjectMacro( Observer, Command );
     itkGetObjectMacro( Observer, Command );
 
-    void SetFixedImage( const ImageType * fixedImage );
+    void SetFixedImage( typename ImageType::ConstPointer & fixedImage );
     itkGetConstObjectMacro( FixedImage, ImageType );
 
-    void SetMovingImage( const ImageType * movingImage );
+    void SetMovingImage( typename ImageType::ConstPointer & movingImage );
     itkGetConstObjectMacro( MovingImage, ImageType );
 
-    itkSetMacro( UseMasks, bool );
-    itkGetMacro( UseMasks, bool );
+    void SetFixedImageMaskObject( typename MaskObjectType::ConstPointer & maskObject );
+    itkGetConstObjectMacro( FixedImageMaskObject, MaskObjectType );
 
-    itkSetObjectMacro( FixedImageMaskObject, MaskObjectType );
-    itkGetObjectMacro( FixedImageMaskObject, MaskObjectType );
+    itkSetMacro( UseFixedImageMaskObject, bool );
+    itkGetMacro( UseFixedImageMaskObject, bool );
 
-    itkSetObjectMacro( MovingImageMaskObject, MaskObjectType );
-    itkGetObjectMacro( MovingImageMaskObject, MaskObjectType );
+    void SetMovingImageMaskObject( typename MaskObjectType::ConstPointer & maskObject );
+    itkGetConstObjectMacro( MovingImageMaskObject, MaskObjectType );
+
+    itkSetMacro( UseMovingImageMaskObject, bool );
+    itkGetMacro( UseMovingImageMaskObject, bool );
 
     itkSetObjectMacro( Transform, TransformType );
     itkGetObjectMacro( Transform, TransformType );
@@ -111,6 +114,10 @@ class ImageToImageRegistrationMethod
 
     void PrintSelf( std::ostream & os, Indent indent ) const;
 
+  protected:
+
+    typename TransformType::Pointer        m_Transform;
+
   private:
 
     ImageToImageRegistrationMethod( const Self & ); // Purposely not implemented
@@ -118,16 +125,16 @@ class ImageToImageRegistrationMethod
 
     unsigned int                           m_RegistrationNumberOfThreads;
 
-    typename TransformType::Pointer        m_Transform;
-
     Command::Pointer                       m_Observer;
 
     typename ImageType::ConstPointer       m_FixedImage;
     typename ImageType::ConstPointer       m_MovingImage;
 
-    bool                                   m_UseMasks;
-    typename MaskObjectType::Pointer       m_FixedImageMaskObject;
-    typename MaskObjectType::Pointer       m_MovingImageMaskObject;
+    bool                                   m_UseFixedImageMaskObject;
+    typename MaskObjectType::ConstPointer  m_FixedImageMaskObject;
+
+    bool                                   m_UseMovingImageMaskObject;
+    typename MaskObjectType::ConstPointer  m_MovingImageMaskObject;
 
     bool                                   m_ReportProgress;
 
