@@ -29,6 +29,8 @@
 #include "vtkSlicerDWITestingWidget.h"
 #include "vtkSlicerMeasurementFrameWidget.h"
 #include "vtkKWCheckButton.h"
+#include "vtkKWScale.h"
+#include "vtkKWScaleWithLabel.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDWITestingWidget);
@@ -49,9 +51,12 @@ vtkSlicerDWITestingWidget::vtkSlicerDWITestingWidget(void)
   this->FiberNode = NULL;
   this->BaselineNode = NULL;
   this->MaskNode = NULL;
-  this->ViewGlyphs = NULL;
+  this->GlyphFrame = NULL;
+  this->ViewGlyphsRed = NULL;
+  this->ViewGlyphsGreen = NULL;
+  this->ViewGlyphsYellow = NULL;
   this->ViewTracts = NULL;
-  this->RunFrame = NULL;
+  this->VolumesGUI = NULL;
   }
 
 //---------------------------------------------------------------------------
@@ -63,7 +68,7 @@ vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
     this->ActiveVolumeNode->Delete();
     this->ActiveVolumeNode = NULL;
     }
-    if (this->Application)
+  if (this->Application)
     {
     this->Application->Delete();
     this->Application = NULL;
@@ -92,13 +97,12 @@ vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
     this->DTISelector->Delete();
     this->DTISelector = NULL;
     }
-  if (this->RunFrame)
+  if (this->GlyphFrame)
     {
-    this->RunFrame->SetParent (NULL);
-    this->RunFrame->Delete();
-    this->RunFrame = NULL;
+    this->GlyphFrame->SetParent (NULL);
+    this->GlyphFrame->Delete();
+    this->GlyphFrame = NULL;
     }
-
   if (this->TensorNode)
     {
     this->TensorNode->Delete();
@@ -119,15 +123,35 @@ vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
     this->MaskNode->Delete();
     this->MaskNode = NULL;
     }
-  if (this->ViewGlyphs)
+  if (this->ViewGlyphsRed)
     {
-    this->ViewGlyphs->Delete();
-    this->ViewGlyphs = NULL;
+    this->ViewGlyphsRed->SetParent (NULL);
+    this->ViewGlyphsRed->Delete();
+    this->ViewGlyphsRed = NULL;
+    }
+  if (this->ViewGlyphsGreen)
+    {
+    this->ViewGlyphsGreen->SetParent (NULL);
+    this->ViewGlyphsGreen->Delete();
+    this->ViewGlyphsGreen = NULL;
+    }
+  if (this->ViewGlyphsYellow)
+    {
+    this->ViewGlyphsYellow->SetParent (NULL);
+    this->ViewGlyphsYellow->Delete();
+    this->ViewGlyphsYellow = NULL;
     }
   if (this->ViewTracts)
     {
+    this->ViewTracts->SetParent (NULL);
     this->ViewTracts->Delete();
     this->ViewTracts = NULL;
+    }
+  if (this->GlyphResolutionScale)
+    {
+    this->GlyphResolutionScale->SetParent (NULL);
+    this->GlyphResolutionScale->Delete();
+    this->GlyphResolutionScale = NULL;
     }
   this->ModifiedForNewTensor = 0;
   }
@@ -138,8 +162,11 @@ void vtkSlicerDWITestingWidget::AddWidgetObservers ( )
   this->RunButton->GetWidget()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->DTISelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
   this->FiducialSelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ViewGlyphs->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ViewGlyphsRed->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ViewGlyphsGreen->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ViewGlyphsYellow->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ViewTracts->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->GlyphResolutionScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   }
 
 //---------------------------------------------------------------------------
@@ -148,8 +175,11 @@ void vtkSlicerDWITestingWidget::RemoveWidgetObservers( )
   this->RunButton->GetWidget()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->DTISelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
   this->FiducialSelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->ViewGlyphs->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ViewGlyphsRed->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ViewGlyphsGreen->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->ViewGlyphsYellow->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ViewTracts->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->GlyphResolutionScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   }
 
 //---------------------------------------------------------------------------
@@ -234,29 +264,28 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
       }
     this->DTISelector->SetSelected(this->TensorNode);
     this->RunButton->SetEnabled(1);
-    if(this->ViewGlyphs->GetSelectedState())
-      {
-      //TODO 
-      }
-    if(this->ViewTracts->GetSelectedState())
-      {
-      this->CreateTracts(); //start tractography seeding
-      }
-
+    //create tracts and glyphs
+    if(this->ViewTracts->GetSelectedState()) this->CreateTracts();
+    if(this->ViewGlyphsRed->GetSelectedState()) this->CreateGlyphs(this->ViewGlyphsRed);
+    if(this->ViewGlyphsYellow->GetSelectedState()) this->CreateGlyphs(this->ViewGlyphsYellow);
+    if(this->ViewGlyphsGreen->GetSelectedState()) this->CreateGlyphs(this->ViewGlyphsGreen);
     }
 
-  if (this->DTISelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+  //dti selected (update tracts)
+  else if (this->DTISelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
     this->DTISelector->GetSelected() != NULL) 
     {
     //set internal tensorNode
     this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->DTISelector->GetSelected());
-    //create tracts
+    //create tracts and glyphs
     if(this->ViewTracts->GetSelectedState()) this->CreateTracts();
-    //create glyphs
-    if(this->ViewGlyphs->GetSelectedState()) this->CreateTracts();
+    if(this->ViewGlyphsRed->GetSelectedState()) this->CreateGlyphs(this->ViewGlyphsRed);
+    if(this->ViewGlyphsYellow->GetSelectedState()) this->CreateGlyphs(this->ViewGlyphsYellow);
+    if(this->ViewGlyphsGreen->GetSelectedState()) this->CreateGlyphs(this->ViewGlyphsGreen);
     }
 
-  if (this->FiducialSelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
+  //create tracts when fiducials list is selected 
+  else if (this->FiducialSelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
     this->FiducialSelector->GetSelected() != NULL) 
     {
     if(this->ViewTracts->GetSelectedState() && this->DTISelector->GetSelected())
@@ -266,28 +295,27 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
     }
 
   //view of glyphs
-  if(this->ViewGlyphs == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent)
+  else if(event == vtkKWCheckButton::SelectedStateChangedEvent && this->TensorNode != NULL)
+    {
+    vtkKWCheckButton *calledGlyph = vtkKWCheckButton::SafeDownCast(caller);
+    this->CreateGlyphs(calledGlyph);
+    }
+
+  //glyph resolution
+  else if (vtkKWScale::SafeDownCast(caller) == this->GlyphResolutionScale->GetWidget() && 
+    event == vtkKWScale::ScaleValueChangedEvent && this->TensorNode != NULL && 
+    (this->ViewGlyphsYellow->GetSelectedState() || this->ViewGlyphsRed->GetSelectedState() 
+    || this->ViewGlyphsGreen->GetSelectedState()))
     {
     //get the existing GUI of the "Volumes Module"
-    vtkSlicerVolumesGUI *volumesGUI = vtkSlicerVolumesGUI::SafeDownCast(
-      this->Application->GetModuleGUIByName("Volumes"));
-    volumesGUI->Enter(); 
-    if(this->ViewGlyphs->GetSelectedState())
-      {
-      volumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphVisibility(0);
-      volumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetDiffusionTensorVolumeNode(this->TensorNode);
-      volumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphVisibility(1);
-      this->Application->GetApplicationGUI()->GetApplicationLogic()->GetSelectionNode()->SetActiveVolumeID(this->TensorNode->GetID());
-      this->Application->GetApplicationGUI()->GetApplicationLogic()->PropagateVolumeSelection();
-      }
-    else
-      {
-      volumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphVisibility(0);
-      }
+    if(!this->VolumesGUI) this->CreateVolumesGUI();
+    //set new resolution
+    this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphRosolution(
+      this->GlyphResolutionScale->GetWidget()->GetValue());
     }
 
   //view of tracts
-  if(this->ViewTracts == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent
+  else if(this->ViewTracts == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent
     && this->FiducialSelector->GetSelected() != NULL)
     {
     //get the existing GUI of the "Tractography Display Module"
@@ -305,6 +333,35 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
       //visibility of tracts off
       tractGUI->GetFiberBundleDisplayWidget()->SetTractVisibility(0);  
       }
+    }
+  }
+
+void vtkSlicerDWITestingWidget::CreateGlyphs(vtkKWCheckButton *calledGlyph)
+  {
+  //get the existing GUI of the "Volumes Module"
+  if(!this->VolumesGUI) this->CreateVolumesGUI();  
+  // which plane should change its visibility
+  int plane = -1;
+  if (this->ViewGlyphsRed == calledGlyph) plane = 0;
+  else if (this->ViewGlyphsYellow == calledGlyph) plane = 1;
+  else if (this->ViewGlyphsGreen == calledGlyph) plane = 2;
+  if (plane == -1) return;
+
+  if(calledGlyph->GetSelectedState())
+    {
+    //necessary when tensor node changed to switch off previous glyphs
+    this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphVisibility(plane,0);
+    //view glyphs on
+    this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetDiffusionTensorVolumeNode(this->TensorNode);
+    this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphVisibility(plane,1);
+    //change current node to TensorNode in the main GUI
+    this->Application->GetApplicationGUI()->GetApplicationLogic()->GetSelectionNode()->SetActiveVolumeID(this->TensorNode->GetID());
+    this->Application->GetApplicationGUI()->GetApplicationLogic()->PropagateVolumeSelection();
+    }
+  else
+    {
+    //view glyphs off
+    this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphVisibility(plane,0);
     }
   }
 
@@ -381,28 +438,20 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->TestFrame->SetParent(this->GetParent());
   this->TestFrame->Create();
   this->TestFrame->CollapseFrame();
-  this->TestFrame->SetLabelText("Test (Tensor Estimation & Tractography Fiducial Seeding)");
+  this->TestFrame->SetLabelText("Testing (Tensor Estimation & TractographySeeding & Glyphs)");
   this->Script("pack %s -side top -anchor n -fill x -padx 2 -pady 4", 
     this->TestFrame->GetWidgetName());
-
-  ////create frame for run button and fiducial list
-  //this->RunFrame = vtkKWFrame::New();
-  //this->RunFrame->SetParent(this->TestFrame->GetFrame());
-  //this->RunFrame->Create();
-  //this->Script("pack %s -side top -anchor ne -padx 2 -pady 2", 
-  //  this->RunFrame->GetWidgetName());
 
   //create run button
   this->RunButton = vtkKWPushButtonWithLabel::New();
   this->RunButton->SetParent(this->TestFrame->GetFrame());
   this->RunButton->Create();
-  this->RunButton->SetLabelText("Estimate new Tensor: ");
+  this->RunButton->SetLabelText("Estimate new tensor: ");
   this->RunButton->GetWidget()->SetText("Run");
   this->RunButton->GetWidget()->SetWidth(10);
   this->RunButton->SetBalloonHelpString("Run test by computing tensors and tractography seeding.");
   this->Script("pack %s -side top -anchor nw -padx 2 -pady 4 ", 
     this->RunButton->GetWidgetName()); 
-
 
   //create dti selector
   this->DTISelector = vtkSlicerNodeSelectorWidget::New();
@@ -411,18 +460,56 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->DTISelector->Create();
   this->DTISelector->SetMRMLScene(this->GetMRMLScene());
   this->DTISelector->UpdateMenu();
-  this->DTISelector->SetLabelText("Display a DTI Volume: ");
-  this->DTISelector->SetBalloonHelpString("Select a DTI volume from the current mrml scene and see its tracts.");
+  this->DTISelector->SetLabelText("Display a DTI volume: ");
+  this->DTISelector->SetBalloonHelpString("Select a DTI volume from the current mrml scene and see its tracts or glyphs.");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 4 ", 
-    this->DTISelector->GetWidgetName()); 
+    this->DTISelector->GetWidgetName());
 
-  this->ViewGlyphs = vtkKWCheckButton::New();
-  this->ViewGlyphs->SetParent(this->TestFrame->GetFrame());
-  this->ViewGlyphs->Create();
-  this->ViewGlyphs->SetText("View Glyphs ");
-  this->Script("pack %s -side top -anchor nw -padx 2 ", 
-    this->ViewGlyphs->GetWidgetName());
+  //create frame for glyphs 
+  this->GlyphFrame = vtkKWFrame::New();
+  this->GlyphFrame->SetParent(this->TestFrame->GetFrame());
+  this->GlyphFrame->Create();
+  this->Script("pack %s -side top -anchor nw -pady 2", 
+    this->GlyphFrame->GetWidgetName());
 
+  //create view red glyphs
+  this->ViewGlyphsRed = vtkKWCheckButton::New();
+  this->ViewGlyphsRed->SetParent(this->GlyphFrame);
+  this->ViewGlyphsRed->Create();
+  this->ViewGlyphsRed->SetText("View red glyphs.");
+  this->Script("pack %s -side left -anchor nw -padx 2 ", 
+    this->ViewGlyphsRed->GetWidgetName());
+
+  //create view yellow glyphs
+  this->ViewGlyphsYellow = vtkKWCheckButton::New();
+  this->ViewGlyphsYellow->SetParent(this->GlyphFrame);
+  this->ViewGlyphsYellow->Create();
+  this->ViewGlyphsYellow->SetText("View yellow glyphs.");
+  this->Script("pack %s -side left -anchor nw -padx 2 ", 
+    this->ViewGlyphsYellow->GetWidgetName());
+
+  //create view green glyphs
+  this->ViewGlyphsGreen = vtkKWCheckButton::New();
+  this->ViewGlyphsGreen->SetParent(this->GlyphFrame);
+  this->ViewGlyphsGreen->Create();
+  this->ViewGlyphsGreen->SetText("View green glyphs.");
+  this->Script("pack %s -side left -anchor nw -padx 2 ", 
+    this->ViewGlyphsGreen->GetWidgetName());
+
+  //create resolution scale
+  this->GlyphResolutionScale = vtkKWScaleWithLabel::New();
+  this->GlyphResolutionScale->SetParent(this->TestFrame->GetFrame());
+  this->GlyphResolutionScale->Create();
+  this->GlyphResolutionScale->SetLabelText("Resolution of glyphs: ");
+  this->GlyphResolutionScale->SetLabelPositionToLeft();
+  this->GlyphResolutionScale->GetWidget()->SetRange(1,50);
+  this->GlyphResolutionScale->GetWidget()->SetResolution(1);
+  this->GlyphResolutionScale->GetWidget()->SetValue(20);
+  this->GlyphResolutionScale->SetBalloonHelpString("Skip step for glyphs.");
+  this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 6",
+    this->GlyphResolutionScale->GetWidgetName());
+
+  //create view tracts
   this->ViewTracts = vtkKWCheckButton::New();
   this->ViewTracts->SetParent(this->TestFrame->GetFrame());
   this->ViewTracts->Create();
@@ -449,8 +536,17 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
     this->FiducialSelector->GetWidgetName());
   } 
 
+void vtkSlicerDWITestingWidget::CreateVolumesGUI()
+  {
+  if(!this->VolumesGUI)
+    {
+    //get the existing GUI of the "Volumes Module"
+    this->VolumesGUI = vtkSlicerVolumesGUI::SafeDownCast(this->Application->GetModuleGUIByName("Volumes"));
+    this->VolumesGUI->Enter();
+    }
+  }
 
- void vtkSlicerDWITestingWidget::SetModifiedForNewTensor(int modified)
-   {
-   this->ModifiedForNewTensor = modified;
-   }
+void vtkSlicerDWITestingWidget::SetModifiedForNewTensor(int modified)
+  {
+  this->ModifiedForNewTensor = modified;
+  }

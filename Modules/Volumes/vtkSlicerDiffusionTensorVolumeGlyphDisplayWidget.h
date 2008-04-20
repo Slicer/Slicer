@@ -60,7 +60,16 @@ public:
   // alternative method to propagate events generated in GUI to logic / mrml
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
   
-  void SetGlyphVisibility(int visibility);
+  // Description:
+  // Sets the glyph visibility of each plane.
+  // 0 = red/axial 
+  // 1 = yellow/sagittal
+  // 2 = green/coronal
+  void SetGlyphVisibility(int plane, int visibility);
+
+  // Description:
+  // Sets the glyph resolution.
+  void SetGlyphRosolution(int value);
  
 protected:
   vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget();

@@ -169,7 +169,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject
     return;
     }
 
-  // process glyph reolution events
+  // process glyph resolution events
   if ( vtkKWScale::SafeDownCast(caller) == this->GlyphResolutionScale->GetWidget() && 
     event == vtkKWScale::ScaleValueChangedEvent)
     {
@@ -538,7 +538,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
     this->GlyphEigenvectorMap[std::string(tag)]=k;
     lineEigMenuButton->GetWidget()->GetMenu()->AddRadioButton(tag);
     }
-  
+
   // init to class default value
   propNode->SetGlyphEigenvector(currentVal);
   lineEigMenuButton->GetWidget()->SetValue(propNode->GetGlyphEigenvectorAsString());
@@ -580,7 +580,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
     this->GlyphEigenvectorMap[std::string(tag)]=k;
     tubeEigMenuButton->GetWidget()->GetMenu()->AddRadioButton(tag);
     }
- 
+
   // init to class default value
   propNode->SetGlyphEigenvector(currentVal);
   tubeEigMenuButton->GetWidget()->SetValue(propNode->GetGlyphEigenvectorAsString());
@@ -623,3 +623,19 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
   frame->Delete();
   propNode->Delete();
   }
+
+void vtkSlicerDiffusionTensorGlyphDisplayWidget::SetGlyphResolution(int value)
+  {
+   if ( this->DiffusionTensorDisplayPropertiesNodeID )
+    {
+    vtkMRMLDiffusionTensorDisplayPropertiesNode *displayNode = 
+      vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(this->MRMLScene->GetNodeByID(
+      this->DiffusionTensorDisplayPropertiesNodeID));
+    if (displayNode != NULL) 
+      {
+  this->GlyphResolutionScale->GetWidget()->SetValue(value);
+  displayNode->SetLineGlyphResolution(value);
+      }
+     }
+  }
+

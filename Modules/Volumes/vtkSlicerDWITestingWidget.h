@@ -1,6 +1,6 @@
 // .NAME vtkSlicerDWITestingWidget 
 // .SECTION Description
-// This class implements Slicer's main GradientsEditor GUI.
+// This class implements Slicer's main DWI Testing Widget, part of the GradientEditor GUI.
 // Inherits most behavior from vtkSlicerWidget.
 #ifndef __vtkSlicerDWITestingWidget_h
 #define __vtkSlicerDWITestingWidget_h
@@ -23,6 +23,8 @@ class vtkKWFrameWithLabel;
 class vtkKWPushButton;
 class vtkKWPushButtonWithLabel;
 class vtkKWCheckButton;
+class vtkKWScaleWithLabel;
+class vtkSlicerVolumesGUI;
 
 class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
   {
@@ -51,9 +53,16 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     // Creates tracts by calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
     void CreateTracts();
 
+    //BTX
+    // Description:
+    // Creates glyphs by invoking events in the vtkSlicerDiffusionTensorGlyphDisplayWidget.
+    void CreateGlyphs(vtkKWCheckButton *calledGlyph);
+    
     // Description:
     // Sets the internal value ModifiedForNewTensor when a new tensor has to be estimated.
+    // That means parameters (Measurement Frame or Gradients) have changed.
     void SetModifiedForNewTensor(int modified);
+    //ETX
 
     // Description:
     // Sets the Application to the current vtkSlicerApplication.
@@ -66,6 +75,10 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     // Description:
     // Creates the widget.
     virtual void CreateWidget();
+
+    // Description:
+    // Creates private Volumes GUI.
+    void CreateVolumesGUI();
 
     // Description:
     // Is 1, if tensor has to be newly estimated.
@@ -86,9 +99,14 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     vtkSlicerNodeSelectorWidget *FiducialSelector;
     vtkSlicerNodeSelectorWidget *DTISelector;
     vtkKWPushButtonWithLabel *RunButton; 
-    vtkKWCheckButton *ViewGlyphs;
+    vtkKWCheckButton *ViewGlyphsRed;
+    vtkKWCheckButton *ViewGlyphsGreen;
+    vtkKWCheckButton *ViewGlyphsYellow;
     vtkKWCheckButton *ViewTracts;
-    vtkKWFrame *RunFrame;
+    vtkKWFrame *GlyphFrame;
+    vtkKWScaleWithLabel *GlyphResolutionScale;
+    //GUI
+    vtkSlicerVolumesGUI *VolumesGUI;
 
   private:
     vtkSlicerDWITestingWidget (const vtkSlicerDWITestingWidget&); // Not implemented.
