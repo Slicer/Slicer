@@ -141,11 +141,11 @@ void vtkSlicerMeasurementFrameWidget::PrintSelf (ostream& os, vtkIndent indent)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMeasurementFrameWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode)
+void vtkSlicerMeasurementFrameWidget::UpdateWidget(vtkMRMLVolumeNode *node)
   {
-  if(this->ActiveVolumeNode != dwiNode)
+  if(this->ActiveVolumeNode != node)
     {
-    vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode); //set activeVolumeNode
+    vtkSetMRMLNodeMacro(this->ActiveVolumeNode, node); //set activeVolumeNode
     }
   this->ActiveVolumeNode->GetMeasurementFrameMatrix(this->Matrix); //set internal matrix
   this->UpdateMatrix(); //update gui

@@ -40,7 +40,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
 
     // Description:
     // Updates the widget when a new node is loaded.
-    void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode);
+    void UpdateWidget(vtkMRMLVolumeNode *node);
 
     // Description:
     // Event is invoked when a matrix value changed.

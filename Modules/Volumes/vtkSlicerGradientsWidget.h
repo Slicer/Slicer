@@ -59,6 +59,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
 
     void SetLogic(vtkSlicerGradientEditorLogic *logic);
 
+    void SetStatus(int status);
+
   protected:
     vtkSlicerGradientsWidget(void);
     virtual ~vtkSlicerGradientsWidget(void);

@@ -10,6 +10,7 @@
 #include "vtkVolumes.h"
 #include "vtkSlicerLogic.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include <vtkstd/vector>
 
 class vtkDoubleArray;
@@ -73,22 +74,23 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
     // Return value is 1 if there is still a node in the stack for redo; otherwise 0.
     int IsRedoable();
 
-    void SetActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
+    void SetActiveVolumeNode(vtkMRMLVolumeNode *node);
 
   protected:
     vtkSlicerGradientEditorLogic(void);
     virtual ~vtkSlicerGradientEditorLogic(void);
 
-    vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
+    vtkMRMLDiffusionWeightedVolumeNode *ActiveDWINode;
+    vtkMRMLDiffusionTensorVolumeNode *ActiveDTINode;
 
     // Description:
     // Updates the values of the current ActiveVolumeNode after undo/redo/restore.
-    void UpdateActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node);
+    void UpdateActiveVolumeNode(vtkMRMLVolumeNode *node);
 
     // Description:
     // Stack holds all references of created DWINodes.
     //BTX
-    vtkstd::vector<vtkMRMLDiffusionWeightedVolumeNode*> UndoRedoStack;
+    vtkstd::vector<vtkMRMLVolumeNode*> UndoRedoStack;
     //ETX
 
     // Description:

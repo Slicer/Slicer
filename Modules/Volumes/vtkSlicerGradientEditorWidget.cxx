@@ -185,19 +185,32 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode)
+void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLVolumeNode *node)
   {
-  if (dwiNode == NULL)
+  if (node == NULL)
     {
     vtkErrorMacro(<< this->GetClassName() << ": dwiNode in UpdateWidget() is NULL");
     return;
     }
-  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode); //set ActiveVolumeNode
-  //-- update all when the active node changes
-  //measurement frame
-  this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
+  
+  //set ActiveVolumeNode
+  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, node); 
+  
+  if(node->IsA("vtkMRMLDiffusionTensorVolumeNode"))
+    {
+    this->GradientsWidget->SetStatus(0);
+    }
+
+  if(node->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
+    {
+    //-- update all when the active node changes
+    this->GradientsWidget->SetStatus(1);
   //gradients widget
   this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode);
+  
+    }
+  //measurement frame
+  this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
   //testing widget
   this->TestingWidget->UpdateWidget(this->ActiveVolumeNode);
   this->TestingWidget->SetApplication(this->Application);

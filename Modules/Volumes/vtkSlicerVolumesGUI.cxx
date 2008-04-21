@@ -733,6 +733,11 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         this->VolumeDisplayWidget = this->dtiVDW;
         this->VolumeDisplayFrame = this->DTIDisplayFrame;
         }
+      this->GradientFrame->EnabledOn();
+      this->GradientFrame->SetAllowFrameToCollapse(1);
+       vtkMRMLDiffusionTensorVolumeNode *dtiNode = 
+        vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(refNode);
+      this->GradientEditorWidget->UpdateWidget(dtiNode);
       }
     else 
       {
@@ -977,7 +982,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->GradientFrame = vtkSlicerModuleCollapsibleFrame::New();
   this->GradientFrame->SetParent(page);
   this->GradientFrame->Create();
-  this->GradientFrame->SetLabelText("DWI Gradient Editor");
+  this->GradientFrame->SetLabelText("DWI & DTI Editor");
   this->GradientFrame->CollapseFrame();
   this->GradientFrame->EnabledOff();
   this->GradientFrame->SetAllowFrameToCollapse(0);

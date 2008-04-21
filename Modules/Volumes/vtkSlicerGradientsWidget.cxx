@@ -162,6 +162,7 @@ void vtkSlicerGradientsWidget::DisplayMessageDialog(const char* message)
 //---------------------------------------------------------------------------
 void vtkSlicerGradientsWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode)
   {
+  if(!dwiNode->IsA("vtkMRMLDiffusionWeightedVolumeNode")) return;
   if(this->ActiveVolumeNode != dwiNode)
     {
     vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode); //set activeVolumeNode
@@ -237,6 +238,24 @@ void vtkSlicerGradientsWidget::SaveGradients( )
 void vtkSlicerGradientsWidget::SetLogic(vtkSlicerGradientEditorLogic *logic)
   {
   this->Logic = logic;
+  }
+
+//---------------------------------------------------------------------------
+void vtkSlicerGradientsWidget::SetStatus(int status)
+  {
+  //this->GradientsFrame->SetAllowFrameToCollapse(status);
+  this->GradientsFrame->SetEnabled(status);
+
+  if(status) 
+    {
+    this->GradientsFrame->ExpandFrame();
+    this->GradientsFrame->AllowFrameToCollapseOn();
+    }
+  else 
+    {
+    this->GradientsFrame->CollapseFrame();
+    this->GradientsFrame->AllowFrameToCollapseOff();
+    }
   }
 
 //---------------------------------------------------------------------------

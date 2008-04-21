@@ -39,7 +39,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
 
     // Description:
     // Updates the widget when a new node is loaded.
-    void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node);
+    void UpdateWidget(vtkMRMLVolumeNode *node);
 
     // Description:
     // Sets the Application to the current vtkSlicerApplication.

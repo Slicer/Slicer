@@ -4,6 +4,7 @@
 #include "vtkSlicerGradientEditorLogic.h"
 
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkDoubleArray.h"
 #include "vtkNRRDReader.h"
@@ -16,7 +17,8 @@ vtkStandardNewMacro(vtkSlicerGradientEditorLogic);
 //---------------------------------------------------------------------------
 vtkSlicerGradientEditorLogic::vtkSlicerGradientEditorLogic(void)
   {
-  this->ActiveVolumeNode = NULL;
+  this->ActiveDTINode = NULL;
+  this->ActiveDWINode = NULL;
   this->StackPosition = 0;
   this->UndoFlag = 0;
   }
@@ -24,10 +26,15 @@ vtkSlicerGradientEditorLogic::vtkSlicerGradientEditorLogic(void)
 //---------------------------------------------------------------------------
 vtkSlicerGradientEditorLogic::~vtkSlicerGradientEditorLogic(void)
   {
-  if (this->ActiveVolumeNode)
+  if (this->ActiveDTINode)
     {
-    this->ActiveVolumeNode->Delete();
-    this->ActiveVolumeNode = NULL;
+    this->ActiveDTINode->Delete();
+    this->ActiveDTINode = NULL;
+    }
+  if (this->ActiveDWINode)
+    {
+    this->ActiveDWINode->Delete();
+    this->ActiveDWINode = NULL;
     }
   if (!this->UndoRedoStack.empty())
     {
@@ -231,9 +238,16 @@ std::string vtkSlicerGradientEditorLogic::GetGradientsAsString(vtkDoubleArray *B
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorLogic::SetActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node)
+void vtkSlicerGradientEditorLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *node)
   {
-  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, node);
+  if(node->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
+    {
+    vtkSetMRMLNodeMacro(this->ActiveDWINode, node);
+    }
+  else if(node->IsA("vtkMRMLDiffusionTensorVolumeNode"))
+    {
+    vtkSetMRMLNodeMacro(this->ActiveDTINode, node);
+    }
   }
 
 //---------------------------------------------------------------------------
@@ -253,41 +267,43 @@ void vtkSlicerGradientEditorLogic::SaveStateForUndoRedo()
   if(!this->UndoFlag)
     {
     //create node and save it in stack
-    vtkMRMLDiffusionWeightedVolumeNode *nodeToSave = vtkMRMLDiffusionWeightedVolumeNode::New();
-    nodeToSave->Copy(this->ActiveVolumeNode);
-    this->UndoRedoStack.push_back(nodeToSave);
+    if(this->ActiveDWINode != NULL)
+      {
+      vtkMRMLDiffusionWeightedVolumeNode *nodeToSave = vtkMRMLDiffusionWeightedVolumeNode::New();
+      nodeToSave->Copy(this->ActiveDWINode);
+      this->UndoRedoStack.push_back(nodeToSave);
+      }
+    else if(ActiveDTINode != NULL)
+      {
+      vtkMRMLDiffusionTensorVolumeNode *nodeToSave = vtkMRMLDiffusionTensorVolumeNode::New();
+      nodeToSave->Copy(this->ActiveDTINode);
+      this->UndoRedoStack.push_back(nodeToSave);
+      }
     this->StackPosition = this->UndoRedoStack.size(); //update StackPosition
     }
   this->UndoFlag = 0; //no longer in undo mode
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorLogic::UpdateActiveVolumeNode(vtkMRMLDiffusionWeightedVolumeNode *node)
+void vtkSlicerGradientEditorLogic::UpdateActiveVolumeNode(vtkMRMLVolumeNode *node)
   {
-  vtkTimerLog *timer = vtkTimerLog::New();
-  timer->StartTimer();
-
   vtkMatrix4x4 *m = vtkMatrix4x4::New();
-  node->GetMeasurementFrameMatrix(m);
-  this->ActiveVolumeNode->SetMeasurementFrameMatrix(m);
-
-  timer->StopTimer();
-  vtkWarningMacro("time1: "<<timer->GetElapsedTime());
-  timer->StartTimer();
-
-  this->ActiveVolumeNode->SetDiffusionGradients(node->GetDiffusionGradients());
-
-  timer->StopTimer();
-  vtkWarningMacro("time2: "<<timer->GetElapsedTime());
-  timer->StartTimer();
-
-  this->ActiveVolumeNode->SetBValues(node->GetBValues());
-
-
-  timer->StopTimer();
-  vtkWarningMacro("time3: "<<timer->GetElapsedTime());
-  timer->Delete();
-
+  if(node->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
+    {
+    vtkMRMLDiffusionWeightedVolumeNode *dwiNode = 
+      vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node);
+    dwiNode->GetMeasurementFrameMatrix(m);
+    this->ActiveDWINode->SetMeasurementFrameMatrix(m);
+    this->ActiveDWINode->SetDiffusionGradients(dwiNode->GetDiffusionGradients());
+    this->ActiveDWINode->SetBValues(dwiNode->GetBValues());
+    }
+  else if(node->IsA("vtkMRMLDiffusionTensorVolumeNode"))
+    {
+    vtkMRMLDiffusionTensorVolumeNode *dtiNode = 
+      vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node);
+    dtiNode->GetMeasurementFrameMatrix(m);
+    this->ActiveDTINode->SetMeasurementFrameMatrix(m);
+    }
   m->Delete();
   }
 
@@ -296,7 +312,7 @@ void vtkSlicerGradientEditorLogic::Restore()
   {
   if(!this->UndoRedoStack.empty())
     {
-    vtkMRMLDiffusionWeightedVolumeNode *node = this->UndoRedoStack.at(0);
+    vtkMRMLVolumeNode *node = this->UndoRedoStack.at(0);
     this->UpdateActiveVolumeNode(node); //display original node
     //delete all previous changes
     this->UndoRedoStack.clear();
@@ -318,7 +334,7 @@ void vtkSlicerGradientEditorLogic::Undo()
   if(!this->UndoRedoStack.empty() && this->IsUndoable())
     {
     this->StackPosition--; //go to previous node
-    vtkMRMLDiffusionWeightedVolumeNode *node = this->UndoRedoStack.at(this->StackPosition-1);
+    vtkMRMLVolumeNode *node = this->UndoRedoStack.at(this->StackPosition-1);
     this->UpdateActiveVolumeNode(node); //display node
     }
   }
@@ -329,7 +345,7 @@ void vtkSlicerGradientEditorLogic::Redo()
   if(!this->UndoRedoStack.empty() && this->IsRedoable())
     {
     this->StackPosition++; //go to next node
-    vtkMRMLDiffusionWeightedVolumeNode *node;
+    vtkMRMLVolumeNode *node;
     node = this->UndoRedoStack.at(this->StackPosition-1);
     this->UpdateActiveVolumeNode(node); //display node
     }

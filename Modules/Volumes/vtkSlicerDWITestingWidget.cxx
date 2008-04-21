@@ -438,7 +438,7 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->TestFrame->SetParent(this->GetParent());
   this->TestFrame->Create();
   this->TestFrame->CollapseFrame();
-  this->TestFrame->SetLabelText("Testing (Tensor Estimation & TractographySeeding & Glyphs)");
+  this->TestFrame->SetLabelText("Testing (Tensor Estimation & Glyphs & TractographySeeding)");
   this->Script("pack %s -side top -anchor n -fill x -padx 2 -pady 4", 
     this->TestFrame->GetWidgetName());
 
@@ -476,7 +476,7 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->ViewGlyphsRed = vtkKWCheckButton::New();
   this->ViewGlyphsRed->SetParent(this->GlyphFrame);
   this->ViewGlyphsRed->Create();
-  this->ViewGlyphsRed->SetText("View red glyphs.");
+  this->ViewGlyphsRed->SetText("View red glyphs");
   this->Script("pack %s -side left -anchor nw -padx 2 ", 
     this->ViewGlyphsRed->GetWidgetName());
 
@@ -484,7 +484,7 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->ViewGlyphsYellow = vtkKWCheckButton::New();
   this->ViewGlyphsYellow->SetParent(this->GlyphFrame);
   this->ViewGlyphsYellow->Create();
-  this->ViewGlyphsYellow->SetText("View yellow glyphs.");
+  this->ViewGlyphsYellow->SetText("View yellow glyphs");
   this->Script("pack %s -side left -anchor nw -padx 2 ", 
     this->ViewGlyphsYellow->GetWidgetName());
 
@@ -492,7 +492,7 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->ViewGlyphsGreen = vtkKWCheckButton::New();
   this->ViewGlyphsGreen->SetParent(this->GlyphFrame);
   this->ViewGlyphsGreen->Create();
-  this->ViewGlyphsGreen->SetText("View green glyphs.");
+  this->ViewGlyphsGreen->SetText("View green glyphs");
   this->Script("pack %s -side left -anchor nw -padx 2 ", 
     this->ViewGlyphsGreen->GetWidgetName());
 
