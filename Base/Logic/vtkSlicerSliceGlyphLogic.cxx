@@ -507,7 +507,7 @@ void vtkSlicerSliceGlyphLogic::DiffusionTensorVolumeNodeUpdateTransforms()
 {
 
   // double window = 0; UNUSED
-  double level = 0;
+  // double level = 0; UNUSED
   int interpolate = 0;
   // int applyThreshold = 0; UNUSED
   // double lowerThreshold = 0; UNUSED
