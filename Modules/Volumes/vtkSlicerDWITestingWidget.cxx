@@ -442,7 +442,6 @@ void vtkSlicerDWITestingWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode 
     {
     //get the existing GUI of the "Volumes Module"
     this->VolumesGUI = vtkSlicerVolumesGUI::SafeDownCast(this->Application->GetModuleGUIByName("Volumes"));
-    this->VolumesGUI->Enter();
     }
   if(!this->TractDisplayGUI)
     {
