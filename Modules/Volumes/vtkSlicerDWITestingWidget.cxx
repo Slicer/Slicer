@@ -417,7 +417,12 @@ void vtkSlicerDWITestingWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode 
     vtkErrorMacro(<< this->GetClassName() << ": dwiNode in UpdateWidget() is NULL");
     return;
     }
+  this->RunButton->EnabledOn();
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode); //set ActiveVolumeNode
+  if (dwiNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
+    {
+    this->RunButton->EnabledOff(); //deactivate tensor estimation button
+    }
   }
 
 //---------------------------------------------------------------------------
@@ -459,6 +464,8 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->DTISelector->SetParent(this->TestFrame->GetFrame());
   this->DTISelector->Create();
   this->DTISelector->SetMRMLScene(this->GetMRMLScene());
+  this->DTISelector->NoneEnabledOn();
+  this->DTISelector->SetNewNodeEnabled(0);
   this->DTISelector->UpdateMenu();
   this->DTISelector->SetLabelText("Display a DTI volume: ");
   this->DTISelector->SetBalloonHelpString("Select a DTI volume from the current mrml scene and see its tracts or glyphs.");
@@ -527,8 +534,7 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->FiducialSelector->SetMRMLScene(this->GetMRMLScene());
   this->FiducialSelector->Create();  
   this->FiducialSelector->UpdateMenu();
-  this->FiducialSelector->SetWidth(20);
-  this->FiducialSelector->SetLabelPositionToRight();
+  this->FiducialSelector->SetWidth(25);
   this->FiducialSelector->SetBalloonHelpString("Set Fiducial List for tractography seeding.");
 
   this->Script("pack %s %s -side left -anchor ne -padx 2 -pady 2", 
