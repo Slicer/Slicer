@@ -2013,12 +2013,8 @@ void vtkSlicerViewControlGUI::MainViewRotateAround ( const char *axis )
   double magv;
   // center of circle around which to rotate
   double c[3];
-  // radial vector of circle around which to rotate.
-  double r[3];
-  double magr;
   // vector along which to translate camera
   double q[3];
-  double magp;
   // angular offset from axis to rotate around.
   double theta;
   double dot;

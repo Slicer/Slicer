@@ -238,7 +238,6 @@ vtkTclHelper::SendImageDataTensors_UndoSlicerTransform(char *sockname)
   vtkFloatingPointType tensor[3][3];
   vtkDataArray *tensorArray;
   vtkMatrix4x4 *RASToVTK;
-  vtkMatrix4x4 *measurementFrame_T;
   vtkMatrix4x4 *measurementFrame_inv;
   vtkMatrix4x4 *measurementFrame_T_inv;
   vtkMatrix4x4 *RASToVTK_inv;

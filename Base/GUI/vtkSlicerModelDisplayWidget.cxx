@@ -235,7 +235,7 @@ void vtkSlicerModelDisplayWidget::UpdateMRML()
       // chnage children visibility 
       std::vector< vtkMRMLModelHierarchyNode *> childrenNodes;
       this->ModelHierarchyLogic->GetHierarchyChildrenNodes(this->ModelHierarchyNode, childrenNodes);
-      for (int i=0; i<childrenNodes.size(); i++)
+      for (unsigned int i=0; i<childrenNodes.size(); i++)
         {
         vtkMRMLModelHierarchyNode *cnode = childrenNodes[i];
         vtkMRMLDisplayNode *cdnode = cnode->GetDisplayNode();

@@ -47,6 +47,7 @@ const char* vtkSlicerXNATPermissionPrompterWidget::GetHostFromWidget ( )
     {
     return ( this->GetHostNameEntry()->GetWidget()->GetValue() );
     }
+  return NULL;
 }
 
 
