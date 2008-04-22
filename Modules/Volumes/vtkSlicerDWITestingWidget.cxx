@@ -154,16 +154,6 @@ vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
     this->GlyphResolutionScale->Delete();
     this->GlyphResolutionScale = NULL;
     }
-  if (this->VolumesGUI)
-    {
-    this->VolumesGUI->Delete();
-    this->VolumesGUI = NULL;
-    }
-  if (this->TractDisplayGUI)
-    {
-    this->TractDisplayGUI->Delete();
-    this->TractDisplayGUI = NULL;
-    }
   this->ModifiedForNewTensor = 0;
   }
 
