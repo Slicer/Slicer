@@ -181,7 +181,7 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
         }
       }
     }
-    this->TestingWidget->SetModifiedForNewTensor(1);
+  this->TestingWidget->SetModifiedForNewTensor(1);
   }
 
 //---------------------------------------------------------------------------
@@ -192,10 +192,10 @@ void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLVolumeNode *node)
     vtkErrorMacro(<< this->GetClassName() << ": dwiNode in UpdateWidget() is NULL");
     return;
     }
-  
+
   //set ActiveVolumeNode
   vtkSetMRMLNodeMacro(this->ActiveVolumeNode, node); 
-  
+
   if(node->IsA("vtkMRMLDiffusionTensorVolumeNode"))
     {
     this->GradientsWidget->SetStatus(0);
@@ -205,15 +205,15 @@ void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLVolumeNode *node)
     {
     //-- update all when the active node changes
     this->GradientsWidget->SetStatus(1);
-  //gradients widget
-  this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode);
-  
+    //gradients widget
+    this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode);
     }
+
   //measurement frame
   this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
   //testing widget
-  this->TestingWidget->UpdateWidget(this->ActiveVolumeNode);
   this->TestingWidget->SetApplication(this->Application);
+  this->TestingWidget->UpdateWidget(this->ActiveVolumeNode);
   //editor logic
   this->Logic->SetActiveVolumeNode(this->ActiveVolumeNode);
   }
@@ -281,9 +281,9 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->RestoreButton->SetParent(this->ButtonFrame);
   this->RestoreButton->Create();
   this->RestoreButton->SetText("Restore");
-  this->RestoreButton->SetBalloonHelpString("All parameters are restored to original");
   this->RestoreButton->SetWidth(10);
   this->RestoreButton->SetEnabled(0);
+  this->RestoreButton->SetBalloonHelpString("All parameters are restored to original");
 
   //pack restoreButton, redoButton, undoButton
   this->Script("pack %s %s %s -side right -anchor ne -fill x -padx 4 -pady 2", 
@@ -299,5 +299,4 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->TestingWidget->AddWidgetObservers();
   this->Script("pack %s -side top -anchor n -fill both -expand true -padx 2 -pady 2", 
     this->TestingWidget->GetWidgetName());
-
   } 

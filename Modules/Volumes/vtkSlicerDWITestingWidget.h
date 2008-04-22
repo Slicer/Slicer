@@ -25,6 +25,7 @@ class vtkKWPushButtonWithLabel;
 class vtkKWCheckButton;
 class vtkKWScaleWithLabel;
 class vtkSlicerVolumesGUI;
+class vtkSlicerTractographyDisplayGUI;
 
 class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
   {
@@ -64,6 +65,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     void SetModifiedForNewTensor(int modified);
     //ETX
 
+    void SetWidgetToDefault();
+
     // Description:
     // Sets the Application to the current vtkSlicerApplication.
     vtkSetObjectMacro(Application, vtkSlicerApplication);
@@ -75,10 +78,6 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     // Description:
     // Creates the widget.
     virtual void CreateWidget();
-
-    // Description:
-    // Creates private Volumes GUI.
-    void CreateVolumesGUI();
 
     // Description:
     // Is 1, if tensor has to be newly estimated.
@@ -107,6 +106,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     vtkKWScaleWithLabel *GlyphResolutionScale;
     //GUI
     vtkSlicerVolumesGUI *VolumesGUI;
+    vtkSlicerTractographyDisplayGUI *TractDisplayGUI;
 
   private:
     vtkSlicerDWITestingWidget (const vtkSlicerDWITestingWidget&); // Not implemented.
