@@ -21,7 +21,7 @@ vtkSlicerPermissionPrompterWidget::vtkSlicerPermissionPrompterWidget()
   this->UserNameEntry = NULL;
   this->PasswordEntry = NULL;
   this->Application = NULL;
-  this->SetPromptMessage("Please provide the following credentials for the data transfer.");
+  this->SetPromptMessage("Please provide the requested credentials.");
 
 }
 
@@ -48,7 +48,7 @@ const char* vtkSlicerPermissionPrompterWidget::GetPasswordFromWidget()
 {
   if ( this->GetPasswordEntry() != NULL )
     {
-    return (this->GetPasswordEntry()->GetWidget()->GetValue());
+      return (this->GetPasswordEntry()->GetWidget()->GetValue());
     }
   return ( "" );
 }
@@ -61,7 +61,7 @@ const char* vtkSlicerPermissionPrompterWidget::GetUserFromWidget ( )
     {
     return ( this->GetUserNameEntry()->GetWidget()->GetValue() );
     }
-  return ("");
+  return ( "" );
 }
 
 
@@ -121,6 +121,22 @@ void vtkSlicerPermissionPrompterWidget::CreatePrompter (const char *messageText,
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
 
+  if ( this->GetUsername() == NULL )
+    {
+    this->SetUsername ( "" );
+    }
+  if ( this->GetPassword() == NULL )
+    {
+    this->SetPassword ( "" );
+    }
+  if ( this->GetHostName() == NULL )
+    {
+    this->SetHostName ( "" );
+    }
+
+  this->SetPromptMessage (messageText);
+  this->SetPromptTitle (title);
+
   //--- dialog
   this->PromptDialog = vtkKWMessageDialog::New();
   this->PromptDialog->SetParent(app->GetApplicationGUI()->GetMainSlicerWindow()->GetViewFrame());
@@ -129,14 +145,14 @@ void vtkSlicerPermissionPrompterWidget::CreatePrompter (const char *messageText,
   this->PromptDialog->Create();
   this->PromptDialog->SetDisplayPositionToScreenCenter();
   this->PromptDialog->SetSize( 500, 300 );
-  this->PromptDialog->SetTitle ( title );
-  this->PromptDialog->SetText ( messageText );
+  this->PromptDialog->SetTitle ( this->GetPromptTitle() );
+  this->PromptDialog->SetText ( this->GetPromptMessage() );
     
   this->RememberCheck = vtkKWCheckButtonWithLabel::New();
-  this->RememberCheck->SetParent (this->PromptDialog->GetMessageDialogFrame() );
+  this->RememberCheck->SetParent (this->PromptDialog->GetTopFrame() );
   this->RememberCheck->Create();
   this->RememberCheck->GetWidget()->SetSelectedState (this->GetRemember() );
-  this->RememberCheck->GetLabel()->SetText ( "Remember this user name and password for this session." );
+  this->RememberCheck->GetLabel()->SetText ( "Remember this user name and password for this work session." );
   
   this->LogoIcon = vtkKWIcon::New();
   //--- Resource generated for file:
@@ -156,27 +172,27 @@ void vtkSlicerPermissionPrompterWidget::CreatePrompter (const char *messageText,
                            image_LogoBlank_length, 0);
 
   this->LogoLabel = vtkKWLabel::New();
-  this->LogoLabel->SetParent ( this->PromptDialog->GetMessageDialogFrame() );
+  this->LogoLabel->SetParent ( this->PromptDialog->GetTopFrame() );
   this->LogoLabel->Create();
   this->LogoLabel->SetImageToIcon ( this->LogoIcon );
 
   this->UserNameEntry = vtkKWEntryWithLabel::New();
-  this->UserNameEntry->SetParent ( this->PromptDialog->GetMessageDialogFrame() );
+  this->UserNameEntry->SetParent ( this->PromptDialog->GetTopFrame() );
   this->UserNameEntry->Create();
   this->UserNameEntry->GetLabel()->SetText ("User Name: " );
   this->UserNameEntry->GetLabel()->SetBalloonHelpString ( "Enter user name" );
-  this->UserNameEntry->GetWidget()->SetValue ( this->GetUsername() );
+  this->UserNameEntry->GetWidget()->SetValue (this->GetUsername());
   this->UserNameEntry->GetWidget()->SetCommandTriggerToReturnKeyAndFocusOut();
   this->UserNameEntry->SetLabelWidth ( 20 );
   this->UserNameEntry->GetWidget()->SetWidth ( 30 );
   this->UserNameEntry->SetLabelPositionToLeft();
 
   this->PasswordEntry = vtkKWEntryWithLabel::New();
-  this->PasswordEntry->SetParent (  this->PromptDialog->GetMessageDialogFrame() );
+  this->PasswordEntry->SetParent (  this->PromptDialog->GetTopFrame() );
   this->PasswordEntry->Create();
   this->PasswordEntry->GetLabel()->SetText ("Password: " );
   this->PasswordEntry->GetLabel()->SetBalloonHelpString ( "Enter password" );
-  this->PasswordEntry->GetWidget()->SetValue ( this->GetPassword() );
+  this->PasswordEntry->GetWidget()->SetValue ( this->GetPassword());
   this->PasswordEntry->GetWidget()->PasswordModeOn();
   this->PasswordEntry->SetLabelWidth ( 20 );
   this->PasswordEntry->GetWidget()->SetWidth ( 30 );
@@ -184,7 +200,7 @@ void vtkSlicerPermissionPrompterWidget::CreatePrompter (const char *messageText,
   this->PasswordEntry->SetLabelPositionToLeft();
   
   //--- pack it up.
-  app->Script ( "pack %s %s -side top -padx 4 -pady 4 -expand n",
+  app->Script ( "pack %s %s -side top -padx 4 -pady 1 -expand n",
                  this->LogoLabel->GetWidgetName(),
                  this->RememberCheck->GetWidgetName());
   app->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",

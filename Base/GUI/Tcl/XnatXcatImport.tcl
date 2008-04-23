@@ -111,6 +111,7 @@ proc XnatXcatImportGetNumberOfElements { element } {
 }
 
 
+
 #------------------------------------------------------------------------------
 # recursive routine to import all elements and their
 # nested parts
@@ -180,17 +181,35 @@ proc XnatXcatImportGetMetaFields { element node } {
 #------------------------------------------------------------------------------
 proc XnatXcatImportGetEntry { element } {
 
+
     #---
-    #--- Check to see if this is a catalog entry
+    #--- Check to see if this is an item of interest.
     #---
     set elementType [$element GetName]
-    if { $elementType != "cat:entry" && $elementType != "cat:Entry" } {
-        #--- only process xcat entry tags
+    if { $elementType != "cat:entry" && $elementType != "cat:Entry" && $elementType != "cat:catalog" && $elementType != "cat:Catalog" } {
         return 
     }
 
+    #--- Set the MRsessionID in the XNAT PermissionPrompter
+    if { $elementType == "cat:Catalog" || $elementType == "cat:catalog" } {
+        set nAtts [$element GetNumberOfAttributes]
+        for {set i 0} {$i < $nAtts} {incr i} {
+            set attName [$element GetAttributeName $i]
+            if { $attName == "ID" } {
+                set handler [ $::slicer3::MRMLScene FindURIHandler "xnat://" ]
+                if { $handler != "" } {
+                    set prompter [ $handler GetPermissionPrompter ]
+                    if { $prompter != "" } {
+                        $prompter SetMRsessionID [ $element GetAttributeValue $i]
+                        puts "Set SessionID to [$element GetAttributeValue $i]"
+                    }
+                }
+            }
+        }
+        return
+    }
 
-    #---
+    #--- Parse entries.
     #--- get attributes and values of the entry
     #--- so far, we will use only a few in xnatxcats:
     #--- uri, and name. We store values for attributes 
@@ -257,7 +276,30 @@ proc XnatXcatImportGetEntry { element } {
 
     set node(localFileName)  $::XnatXcat_Dir/$fname
 
-    
+    #--- try to pull the XNAT host out of the uri.
+    set i_end [ string first  ".org" $node($uriAttName) ]
+    if { $i_end < 0 } {
+        set i_end [ string first  ".com" $node($uriAttName) ]
+        if { $i_end < 0 } {
+            set i_end [ string first  ".net" $node($uriAttName)  ]
+            if { $i_end < 0 } {
+                set i_end [ string first  ".gov" $node($uriAttName)  ]
+            }
+        }
+    }
+    if { $i_end >= 0 } {
+        set host [ string range $node($uriAttName) 0 [expr $i_end + 4 ]]
+        set handler [ $::slicer3::MRMLScene FindURIHandler "xnat://" ]
+        if { $handler != "" } {
+            set prompter [ $handler GetPermissionPrompter ]
+            if { $prompter != "" } {
+                $prompter SetHostName $host
+                puts "Set HostName to $host"
+            }
+        }
+    }
+
+
     #--- get cache manager in case the file is remote resource
     set cacheManager [$::slicer3::MRMLScene GetCacheManager]
     $cacheManager MapFileToURI $node($uriAttName) $node(localFileName)
