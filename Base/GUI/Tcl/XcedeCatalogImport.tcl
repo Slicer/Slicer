@@ -334,6 +334,8 @@ proc XcedeCatalogImportEntryVolume {node} {
 
     if { [info exists n(labelmap) ] } {
         set labelmap 1
+        # don't do auto level calc if it's a label map
+        set autoLevel 0
     }
     if { [ string first "stat" $n(uri) ] >= 0 } {
         # set autoLevel 0
@@ -359,7 +361,7 @@ proc XcedeCatalogImportEntryVolume {node} {
         $volumeNode SetDescription $n(description)
     }
 
-    #--- try using xcede differently than the slicer2 xform descrption
+    #--- try using xcede differently than the slicer2 xform description
     # use the current top of stack (might be "" if empty, but that's okay)
     #set transformID [lindex $::XcedeCatalog(transformIDStack) end]
     #$volumeNode SetAndObserveTransformNodeID $transformID
@@ -376,8 +378,10 @@ proc XcedeCatalogImportEntryVolume {node} {
         #--- this is likely a statistical volume.
         $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodefMRIPA"
         #$volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeIron"
-        $volumeDisplayNode SetAutoWindowLevel 0
+#        $volumeDisplayNode SetAutoWindowLevel 0
+        $volumeDisplayNode SetAutoWindowLevel 1
         #$volumeDisplayNode SetThresholdType 1
+       
     } elseif { [ string first "aseg" $n(uri) ] >= 0 } {
         #--- this is likely a freesurfer label map volume
         set colorLogic [ $::slicer3::ColorGUI GetLogic ]
@@ -833,6 +837,7 @@ proc XcedeCatalogImportComputeFIPS2SlicerTransformCorrection { } {
     set volumesLogic [ $::slicer3::VolumesGUI GetLogic ]
 
     #--- compute some matrices.
+    #--- todo: deal with delayed read due to remote storage of data
     set mat [ vtkMatrix4x4 New]
     $volumesLogic ComputeTkRegVox2RASMatrix $v1 $mat
     $volumesLogic TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix $v1 $v2 $anat2exf $mat
