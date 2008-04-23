@@ -2,6 +2,10 @@ PROJECT(GenerateCLP)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
+IF(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+ENDIF(COMMAND cmake_policy)
+
 FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
 IF(ModuleDescriptionParser_FOUND)
   INCLUDE(${ModuleDescriptionParser_USE_FILE})
