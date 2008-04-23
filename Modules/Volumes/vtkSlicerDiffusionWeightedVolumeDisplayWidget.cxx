@@ -124,7 +124,11 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessWidgetEvents ( vtkObj
         this->ExtractComponent->SetInput(volumeNode->GetImageData());
         this->ExtractComponent->SetComponents(displayNode->GetDiffusionComponent());
         this->ExtractComponent->Update();
-        vtkSlicerVolumesLogic::CalculateScalarAutoLevels(this->ExtractComponent->GetOutput(), displayNode);
+        if (vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode) != NULL)
+          {
+          vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode)->CalculateScalarAutoLevelsWithData(displayNode, this->ExtractComponent->GetOutput());
+          }
+        else { vtkWarningMacro("Failed to calculate scalar levels, volume node is not a scalar"); }
         this->WindowLevelThresholdEditor->SetImageData(this->ExtractComponent->GetOutput());
         }
       }

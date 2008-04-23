@@ -22,8 +22,6 @@ SET(SlicerBaseLogic_SRCS
   # slicer's vtk extensions (filters)
   vtkImageSlicePaint.cxx 
   vtkImageSlice.cxx 
-  vtkImageAccumulateDiscrete.cxx
-  vtkImageBimodalAnalysis.cxx
   vtkImageFillROI.cxx
   vtkSlicerGlyphSource2D.cxx
   vtkSlicerROILogic.cxx

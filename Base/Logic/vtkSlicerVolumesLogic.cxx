@@ -81,6 +81,7 @@ void vtkSlicerVolumesLogic::ProcessLogicEvents(vtkObject *caller,
     }
 }
 
+//#include "vtkMRMLScalarVolumeDisplayNode.h"
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 {
@@ -234,15 +235,17 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const char* filename, const char* volname, int loadingOptions)
-{
+{ 
   int centerImage = 0;
   int labelMap = 0;
   int singleFile = 0;
   int autoLevel = 0;
+  int interpolate = 1;
   
   if ( loadingOptions & 1 )    // labelMap is true
   {
     labelMap = 1;
+    interpolate = 0;
   }
   if ( loadingOptions & 2 )    // centerImage is true
   {
@@ -254,12 +257,18 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   }
   if ( loadingOptions & 8 ) // calculate window level automaticaly
     {
-    autoLevel = 1;
+    if (!labelMap)
+      {
+      autoLevel = 1;
+      }
     }
   vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::New();
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
   vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
 
+  displayNode->SetAutoWindowLevel(autoLevel);
+  displayNode->SetInterpolate(interpolate);
+  
   bool useURI = false;
   vtksys_stl::string name;
   const char *localFile;
@@ -289,7 +298,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
       vtkErrorMacro("LoadArchetypeScalarVolume: volume archetype storage node can't read this kind of file: " << filename);
       return NULL;
     }
-  else { vtkDebugMacro("LoadArchetypeVolume: filename is a supported type"); }
+  else { vtkDebugMacro("LoadArchetypeScalarVolume: filename is a supported type"); }
 
   storageNode->SetCenterImage(centerImage);
   storageNode->SetSingleFile(singleFile);
@@ -297,13 +306,13 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
 
   if (volname == NULL)
     {
-      const vtksys_stl::string fname(filename);
-      vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
-      scalarNode->SetName(name.c_str());
+    const vtksys_stl::string fname(filename);
+    vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
+    scalarNode->SetName(name.c_str());
     }
   else
     {
-      scalarNode->SetName(volname);
+    scalarNode->SetName(volname);
     }
   vtkDebugMacro("LoadArchetypeScalarVolume: set scalar node name: " << scalarNode->GetName());
   scalarNode->SetLabelMap(labelMap);
@@ -312,24 +321,6 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   
   scalarNode->SetScene(this->GetMRMLScene());
   displayNode->SetScene(this->GetMRMLScene());
-
-  this->GetMRMLScene()->AddNode(storageNode); // NoNotify(storageNode);  
-  this->GetMRMLScene()->AddNode(displayNode); // NoNotify(displayNode);
-  
-  scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
-  scalarNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-
-  this->GetMRMLScene()->AddNode(scalarNode);
-
-
-  // now read
-  vtkDebugMacro("AddArchetypeScalarVolume: about to read data into scalar node " << scalarNode->GetName() << ", asynch = " << this->GetMRMLScene()->GetDataIOManager()->GetEnableAsynchronousIO() << ", read state = " << storageNode->GetReadState());
-  if (this->GetDebug())
-    {
-    storageNode->DebugOn();
-    }
-  storageNode->ReadData(scalarNode);
-
 
   vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
   if (labelMap) 
@@ -348,33 +339,43 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
     displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
     }
   colorLogic->Delete();
+  
+  vtkDebugMacro("LoadArchetypeScalarVolume: adding storage node to the scene");
+  this->GetMRMLScene()->AddNode(storageNode);
+  vtkDebugMacro("LoadArchetypeScalarVolume: adding display node to the scene");
+  this->GetMRMLScene()->AddNode(displayNode);
+  
+  scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
+  scalarNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+
+  vtkDebugMacro("LoadArchetypeScalarVolume: adding scalar node to the scene");
+  this->GetMRMLScene()->AddNode(scalarNode);
+
+
+  // now read
+  vtkDebugMacro("AddArchetypeScalarVolume: about to read data into scalar node " << scalarNode->GetName() << ", asynch = " << this->GetMRMLScene()->GetDataIOManager()->GetEnableAsynchronousIO() << ", read state = " << storageNode->GetReadState());
+  if (this->GetDebug())
+    {
+    storageNode->DebugOn();
+    }
+  storageNode->ReadData(scalarNode);
+  vtkDebugMacro("AddArchetypeScalarVolume: finished reading data into scalarNode");
 
   storageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
-
-  if (autoLevel)
-    {
-    vtkMRMLScalarVolumeDisplayNode *sdn = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
-    if (sdn && scalarNode)
-      {
-      vtkDebugMacro("AddArchetypeScalarVolume: calculating auto levels " << scalarNode->GetName() << ", scalar node image data is " << ( scalarNode->GetImageData() == NULL ? "null" : "not null"));
-      this->CalculateAutoLevels( scalarNode->GetImageData(), sdn );
-      vtkDebugMacro("AddArchetypeScalarVolume: got auto window =" << sdn->GetWindow() << ", level = " << sdn->GetLevel());
-      }
-    }
-
-  if (storageNode->GetReadState() == vtkMRMLStorageNode::TransferDone)
+ 
+  if (storageNode->GetReadState() == vtkMRMLStorageNode::TransferDone ||
+      storageNode->GetReadState() == vtkMRMLStorageNode::Idle)
     {
       vtkDebugMacro("AddArchetypeScalarVolume: setting active volume node " << scalarNode->GetName());
-
       this->SetActiveVolumeNode(scalarNode);
     }
-  else {vtkDebugMacro("AddArchetypeScalarVollume: not setting this volume as the active node, dl not finished yet: " << scalarNode->GetName()); }
+  else {vtkDebugMacro("AddArchetypeScalarVollume: not setting this volume as the active node, dl not flagged as finished yet on node " << scalarNode->GetName() << ", read flag = " << storageNode->GetReadStateAsString()); }
   this->Modified();
 
   scalarNode->Delete();
   storageNode->Delete();
   displayNode->Delete();
-
+  
   return scalarNode;
 }
 
@@ -574,13 +575,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
         tensorNode->AddSliceGlyphDisplayNodes();
         }
       }
-      
-    vtkMRMLScalarVolumeDisplayNode *sdn = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
-    if (sdn && volumeNode)
-      {
-      this->CalculateAutoLevels( volumeNode->GetImageData(), sdn );
-      }
-
+    
     vtkDebugMacro("Name vol node "<<volumeNode->GetClassName());
     vtkDebugMacro("Display node "<<displayNode->GetClassName());
     this->GetMRMLScene()->AddNode(volumeNode);
@@ -686,96 +681,46 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
   return res;
 }
 
-void vtkSlicerVolumesLogic::CalculateAutoLevels(vtkImageData *imageData, vtkMRMLScalarVolumeDisplayNode *displayNode)
-{
-  if ( !imageData || !displayNode) 
-    {
-//    std::cout << "CalculateAutoLevels: image data or display node are null";
-    return;
-    }
-  vtkImageData *imageDataScalar = imageData;
-  
-  vtkImageExtractComponents *extractComp = NULL;
-  vtkDiffusionTensorMathematics *DTIMathematics = NULL;  
-  vtkAssignAttribute *AssignAttributeTensorsFromScalars = NULL;
-
-  vtkMRMLDiffusionTensorVolumeDisplayNode *dtDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(displayNode);
-  vtkMRMLDiffusionWeightedVolumeDisplayNode *dwDisplayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(displayNode);
- 
- if (dtDisplayNode != NULL ) 
-    {
-    if (dtDisplayNode->GetDiffusionTensorDisplayPropertiesNode())
-      {
-      DTIMathematics = vtkDiffusionTensorMathematics::New();    
-      AssignAttributeTensorsFromScalars= vtkAssignAttribute::New();
-      AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
-      
-      DTIMathematics->SetInput(imageData);
-      DTIMathematics->SetOperation(dtDisplayNode->GetDiffusionTensorDisplayPropertiesNode()->
-                                     GetScalarInvariant());
-      DTIMathematics->Update();
-      imageDataScalar = DTIMathematics->GetOutput();
-      }
-    else
-      {
-      imageDataScalar = NULL;
-      }
-    }
-  else if (dwDisplayNode != NULL) 
-    {
-    extractComp = vtkImageExtractComponents::New();
-    extractComp->SetInput(imageData);
-    extractComp->SetComponents(dwDisplayNode->GetDiffusionComponent());
-    imageDataScalar = extractComp->GetOutput();
-    }
-  
-  vtkSlicerVolumesLogic::CalculateScalarAutoLevels(imageDataScalar, displayNode);
-    
-  if (extractComp)
-    {
-    extractComp->Delete();
-    }
-  if (DTIMathematics)
-    {
-    DTIMathematics->Delete();
-    }
-  if (AssignAttributeTensorsFromScalars)
-    {
-    AssignAttributeTensorsFromScalars->Delete();
-    }
-}
-
+/*
 void vtkSlicerVolumesLogic::CalculateScalarAutoLevels(vtkImageData *imageData, vtkMRMLScalarVolumeDisplayNode *displayNode)
 {
   if ( !imageData || !displayNode) 
     {
+    std::cout << "CalculateScalarAutoLevels: image data or display node are null" << std::endl;
     return;
     }
   vtkImageData *imageDataScalar = imageData;
 
-  //if (imageDataScalar) 
   if (imageDataScalar && imageDataScalar->GetNumberOfScalarComponents() == 1) 
     {
+    // check the scalar type, bimodal analysis only works on int
+    if (imageDataScalar->GetScalarType() != VTK_INT)
+      {
+      std::cout << "CalculateScalarAutoLevels: image data scalar type is not integer, doing ad hoc calc of window/level." << std::endl;
+      }
+      
     vtkImageAccumulateDiscrete *accumulate = vtkImageAccumulateDiscrete::New();
     vtkImageBimodalAnalysis *bimodal = vtkImageBimodalAnalysis::New();
-
+    
     accumulate->SetInput(imageDataScalar);
     bimodal->SetInput(accumulate->GetOutput());
     bimodal->Update();
 
     // Workaround for image data where all accumulate samples fall
     // within the same histogram bin
-    if (bimodal->GetWindow() == 0.0 && bimodal->GetLevel() == 0.0) 
+    if (bimodal->GetWindow() == 0.0 && bimodal->GetLevel() == 0.0 ||
+        imageDataScalar->GetScalarType() != VTK_INT) 
       {
       double range[2];
       imageDataScalar->GetScalarRange(range);
       double min = range[0];
       double max = range[1];
-//      std::cout << "CalculateScalarAutoLevels: Window and Level are 0, using image scalar range, " << min << ", " << max << std::endl;
+      //std::cout << "CalculateScalarAutoLevels: Window and Level are 0, or type is not int, using image scalar range, " << min << ", " << max << std::endl;
       displayNode->SetWindow (max-min);
       displayNode->SetLevel (0.5*(max+min));
       displayNode->SetLowerThreshold (displayNode->GetLevel());
       displayNode->SetUpperThreshold (range[1]);
+      // std::cout << "CalculateScalarAutoLevels: set display node window to " << displayNode->GetWindow() << ", level to " << displayNode->GetLevel() << ", lower threshold to " << displayNode->GetLowerThreshold() << ", upper threshold to " << displayNode->GetUpperThreshold() << " (scalar range " << range[0] << ", " << range[1] << "), displayNode id = " << displayNode->GetID() <<  std::endl;
       }
     else
       {
@@ -784,7 +729,7 @@ void vtkSlicerVolumesLogic::CalculateScalarAutoLevels(vtkImageData *imageData, v
       displayNode->SetLowerThreshold (bimodal->GetThreshold());
       displayNode->SetUpperThreshold (bimodal->GetMax());
       double range[2]; imageDataScalar->GetScalarRange(range);
-//      std::cout << "CalculateScalarAutoLevels: set display node window to " << bimodal->GetWindow() << ", level to " << bimodal->GetLevel() << " (scalar range " << range[0] << ", " << range[1] << ")" <<  std::endl;
+//      std::cout << "CalculateScalarAutoLevels: set display node window to " << bimodal->GetWindow() << ", level to " << bimodal->GetLevel() << ", lower threshold to " << displayNode->GetLowerThreshold() << ", upper threshold to " << displayNode->GetUpperThreshold() << " (scalar range " << range[0] << ", " << range[1] << "), displayNode id = " << displayNode->GetID() <<  std::endl;
       }
 
     accumulate->Delete();
@@ -793,6 +738,7 @@ void vtkSlicerVolumesLogic::CalculateScalarAutoLevels(vtkImageData *imageData, v
     
 }
 
+*/
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, char *name)

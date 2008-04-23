@@ -66,11 +66,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerLogic
   // vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, int centerImage, int labelMap, const char* volname);
 
   // Description:
-  // Calculate good deafult viewing parameters 
-  static void CalculateAutoLevels(vtkImageData *imageData, vtkMRMLScalarVolumeDisplayNode *displayNode);
-  static void CalculateScalarAutoLevels(vtkImageData *imageData, vtkMRMLScalarVolumeDisplayNode *displayNode);
-
-  // Description:
   // Overloaded function of AddHeaderVolume to provide more 
   // loading options, where variable loadingOptions is bit-coded as following:
   // bit 0: label map

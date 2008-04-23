@@ -21,6 +21,9 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLScene.h"
 
+// when change the display node, update the scalars
+#include "vtkMRMLVolumeNode.h"
+
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
 {
@@ -311,6 +314,16 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode)
     vtkSetAndObserveMRMLObjectMacro(pnode, dnode);
     this->DisplayNodes.push_back(pnode);
     //pnode->Delete();
+    if (this->IsA("vtkMRMLVolumeNode"))
+      {
+      // set up the display node
+      vtkDebugMacro("AddAndObserveDisplayNode: " << (this->GetID() == NULL ? "null self id" : this->GetID()) << ": a display node was added " << (dnode->GetID() == NULL ? "null disp node id" : dnode->GetID()) << ", have a volume node, setting up the display node");
+      if (pnode->IsA("vtkMRMLVolumeDisplayNode"))
+        {
+        vtkDebugMacro("AddAndObserveDisplayNode: have a volume display node, calc auto levels");
+        vtkMRMLVolumeNode::SafeDownCast(this)->CalculateAutoLevels(vtkMRMLVolumeDisplayNode::SafeDownCast(pnode));
+        }
+      }
     }
 }
 //----------------------------------------------------------------------------

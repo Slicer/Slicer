@@ -162,6 +162,11 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
+
+  // Description:
+  // Calculate good default viewing parameters, uses this node's image data
+  // and adjusts the display node. If no display node passed in, uses the 0th one
+  void CalculateAutoLevels(vtkMRMLVolumeDisplayNode *refNode = NULL);
   
 protected:
   vtkMRMLVolumeNode();

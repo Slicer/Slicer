@@ -75,6 +75,16 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
     return vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
   }
 
+  // Description:
+  // Calculate good default viewing parameters, uses this node's image data
+  // and adjusts the display node, calls CalculateScalarAutoLevelsWithData
+  void CalculateScalarAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode = NULL);
+  // Description:
+  // Calculate good default viewing parameters, uses input image data if not
+  // null, otherwise this node's image data
+  void CalculateScalarAutoLevelsWithData( vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *imageData = NULL);
+  
+  
 protected:
   vtkMRMLScalarVolumeNode();
   ~vtkMRMLScalarVolumeNode();

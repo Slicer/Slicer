@@ -15,6 +15,8 @@ SET(MRML_SRCS
         vtkObserverManager.cxx
         vtkEventBroker.cxx
         vtkObservation.cxx
+        vtkImageBimodalAnalysis.cxx
+        vtkImageAccumulateDiscrete.cxx
         vtkMRMLScene.cxx
         vtkMRMLParser.cxx
         vtkMRMLNode.cxx

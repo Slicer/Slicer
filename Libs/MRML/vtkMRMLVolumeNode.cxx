@@ -24,6 +24,23 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScene.h"
 
+// for calculating auto win/level
+//#include "vtkImageAccumulateDiscrete.h"
+//#include "vtkImageBimodalAnalysis.h"
+//#include "vtkImageExtractComponents.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkDiffusionTensorMathematics.h"
+#include "vtkAssignAttribute.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLLabelMapVolumeDisplayNode.h"
+#include "vtkMRMLVectorVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
+
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 {
@@ -593,6 +610,11 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *ImageData)
 
   if ( this->ImageData != oldImageData )
     {
+    if (this->ImageData != NULL)
+      {
+      vtkDebugMacro("SetAndObserveImageData: calling calculate auto levels");
+      this->CalculateAutoLevels();
+      }
     this->Modified();
     }
     
@@ -635,12 +657,14 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
   return;
 }
 
+//---------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetMetaDataDictionary( const itk::MetaDataDictionary& dictionary )
 {
   this->Dictionary = dictionary;
   this->Modified();
 }
 
+//---------------------------------------------------------------------------
 const
 itk::MetaDataDictionary&
 vtkMRMLVolumeNode::GetMetaDataDictionary() const
@@ -648,6 +672,7 @@ vtkMRMLVolumeNode::GetMetaDataDictionary() const
   return this->Dictionary;
 }
 
+//---------------------------------------------------------------------------
 void vtkMRMLVolumeNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
 {
   vtkMatrix4x4* ijkToRASMatrix = vtkMatrix4x4::New();
@@ -661,6 +686,7 @@ void vtkMRMLVolumeNode::ApplyTransform(vtkMatrix4x4* transformMatrix)
   newIJKToRASMatrix->Delete();
 }
 
+//---------------------------------------------------------------------------
 void vtkMRMLVolumeNode::ApplyTransform(vtkAbstractTransform* transform)
 {
   if (!transform->IsA("vtkLinearTransform"))
@@ -668,5 +694,92 @@ void vtkMRMLVolumeNode::ApplyTransform(vtkAbstractTransform* transform)
     vtkErrorMacro(<<"Only linear transforms can be hardened in volumes. Image resampling is required for nonlinear transforms.");
     }
   this->ApplyTransform(vtkLinearTransform::SafeDownCast(transform)->GetMatrix());
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeNode::CalculateAutoLevels(vtkMRMLVolumeDisplayNode *refNode)
+{
+  if ( !this->ImageData ) 
+    {
+    vtkDebugMacro("CalculateAutoLevels: image data is null");
+    return;
+    } else {vtkDebugMacro("CalculateAutoLevels: image data is NOT null"); }
+
+  if (!refNode && !this->GetDisplayNode())
+    {
+    vtkDebugMacro("CalculateAutoLevels: input display node is null, and cannot get local display node");
+    return;
+    }
+  vtkDebugMacro("CalculateAutoLevels: starting...");
+  vtkMRMLVolumeDisplayNode *displayNode;
+  if (refNode == NULL)
+    {
+    displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+    if (!displayNode)
+      {
+      vtkDebugMacro("CalculateAutoLevels: this node doesn't have a volume display node, can't calculate win/level/thresh");
+      return;
+      }
+    }
+  else
+    {
+    displayNode = refNode;
+    }
+  vtkImageData *imageDataScalar = this->ImageData;
+  
+  vtkImageExtractComponents *extractComp = NULL;
+  vtkDiffusionTensorMathematics *DTIMathematics = NULL;  
+  vtkAssignAttribute *AssignAttributeTensorsFromScalars = NULL;
+
+  vtkMRMLDiffusionTensorVolumeDisplayNode *dtDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(displayNode);
+  vtkMRMLDiffusionWeightedVolumeDisplayNode *dwDisplayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(displayNode);
+ 
+ if (dtDisplayNode != NULL ) 
+    {
+    if (dtDisplayNode->GetDiffusionTensorDisplayPropertiesNode())
+      {
+      DTIMathematics = vtkDiffusionTensorMathematics::New();    
+      AssignAttributeTensorsFromScalars= vtkAssignAttribute::New();
+      AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
+      
+      DTIMathematics->SetInput(this->ImageData);
+      DTIMathematics->SetOperation(dtDisplayNode->GetDiffusionTensorDisplayPropertiesNode()->
+                                     GetScalarInvariant());
+      DTIMathematics->Update();
+      imageDataScalar = DTIMathematics->GetOutput();
+      }
+    else
+      {
+      imageDataScalar = NULL;
+      }
+    }
+  else if (dwDisplayNode != NULL) 
+    {
+    extractComp = vtkImageExtractComponents::New();
+    extractComp->SetInput(this->ImageData);
+    extractComp->SetComponents(dwDisplayNode->GetDiffusionComponent());
+    imageDataScalar = extractComp->GetOutput();
+    }
+
+ if (this->IsA("vtkMRMLScalarVolumeNode") && displayNode->IsA("vtkMRMLScalarVolumeDisplayNode"))
+   {
+   vtkDebugMacro("CalculateAutoLevels: calling calc scalar auto levels");
+   vtkMRMLScalarVolumeNode::SafeDownCast(this)->CalculateScalarAutoLevels(vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode));
+   }
+ else
+   { vtkDebugMacro("CalculateAutoLevels: this is not a scalar volume node, skipping calc scalar auto levels"); }
+ 
+  if (extractComp)
+    {
+    extractComp->Delete();
+    }
+  if (DTIMathematics)
+    {
+    DTIMathematics->Delete();
+    }
+  if (AssignAttributeTensorsFromScalars)
+    {
+    AssignAttributeTensorsFromScalars->Delete();
+    }
 }
 
