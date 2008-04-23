@@ -214,7 +214,7 @@ void TimeSeriesDatabase<TPixel>::GenerateData()
 
   Size<3> BlockStart, BlockCount;
   for ( unsigned int i = 0; i < 3; i++ ) {
-    BlockStart[i] = (int) floor ( Region.GetIndex(i) / TimeSeriesBlockSize );
+    BlockStart[i] = (int) floor ( Region.GetIndex(i) / (double)TimeSeriesBlockSize );
     BlockCount[i] = (int) TSD_MAX ( 1.0, ceil ( (Region.GetIndex(i)+Region.GetSize(i)) / (double)TimeSeriesBlockSize ) - BlockStart[i] );
   }
 
