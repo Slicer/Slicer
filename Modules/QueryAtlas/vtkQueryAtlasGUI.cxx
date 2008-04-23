@@ -1572,6 +1572,9 @@ void vtkQueryAtlasGUI::AutoWinLevThreshStatisticsVolume ( vtkMRMLScalarVolumeNod
 {
   int i;
   double win, level, upT, lowT;
+
+  vtkWarningMacro("AutoWinLevThreshStatisticsVolume: aborting...");
+  return;
   
   //--- look at the nnode's name; if it contains the substring "stat"
   //--- then assume this is a statistics file and auto win/lev/thresh it.
@@ -2022,11 +2025,13 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
        && (event == vtkMRMLScene::NodeAddedEvent ))
     {
     vtkMRMLScalarVolumeNode *node = vtkMRMLScalarVolumeNode::SafeDownCast ( (vtkObjectBase *)callData );
-    if ( node != NULL )
+    /*
+      if ( node != NULL )
       {
       //--- apply ballpark threshold if the node appears to be a statistics volume.
       AutoWinLevThreshStatisticsVolume ( node );
       }
+    */
     this->Script ( "QueryAtlasNodeAddedUpdate" );
     this->UpdateScalarOverlayMenu();
     this->UpdateAnnoVisibilityMenu();
