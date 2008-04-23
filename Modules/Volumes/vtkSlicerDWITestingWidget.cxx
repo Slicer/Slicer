@@ -197,7 +197,7 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
   if (this->RunButton->GetWidget() == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
     this->RunButton->SetEnabled(0);
-    if(this->ModifiedForNewTensor || this->MRMLScene->GetNodesByName("GradientenEditor_Tensor_Node")->GetNumberOfItems() == 0 )
+    if(this->ModifiedForNewTensor || this->MRMLScene->GetNodesByName("DiffusionEditor_Tensor_Node")->GetNumberOfItems() == 0 )
       {
       // create a command line module node
       vtkMRMLCommandLineModuleNode *tensorCML = vtkMRMLCommandLineModuleNode::SafeDownCast(
@@ -218,13 +218,13 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
       this->BaselineNode = vtkMRMLScalarVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
       this->BaselineNode->SetScene(this->GetMRMLScene());
-      this->BaselineNode->SetName("GradientenEditor_Baseline_Node");
+      this->BaselineNode->SetName("DiffusionEditor_Baseline_Node");
       this->MRMLScene->AddNode(this->BaselineNode);
 
       this->MaskNode = vtkMRMLScalarVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
       this->MaskNode->SetScene(this->GetMRMLScene());
-      this->MaskNode->SetName("GradientenEditor_Threshold_Mask");
+      this->MaskNode->SetName("DiffusionEditor_Threshold_Mask");
       this->MRMLScene->AddNode(this->MaskNode);
 
       if(this->TensorNode)
@@ -234,7 +234,7 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
       this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLDiffusionTensorVolumeNode"));
       this->TensorNode->SetScene(this->GetMRMLScene());
-      this->TensorNode->SetName("GradientenEditor_Tensor_Node");
+      this->TensorNode->SetName("DiffusionEditor_Tensor_Node");
       this->MRMLScene->AddNode(this->TensorNode);
 
       this->TensorNode->SetBaselineNodeID(this->BaselineNode->GetID());
@@ -263,20 +263,19 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
       this->MaskNode->Delete();
       this->ModifiedForNewTensor = 0;
       }
-    this->DTISelector->SetSelected(this->TensorNode);
+    //this->DTISelector->SetSelected(this->TensorNode);
     this->RunButton->SetEnabled(1);
     //create tracts and glyphs
-    if(this->ViewTracts->GetSelectedState()) this->CreateTracts();
+    /*if(this->ViewTracts->GetSelectedState()) this->CreateTracts();
     if(this->ViewGlyphsRed->GetSelectedState()) this->CreateGlyphs(this->ViewGlyphsRed);
     if(this->ViewGlyphsYellow->GetSelectedState()) this->CreateGlyphs(this->ViewGlyphsYellow);
-    if(this->ViewGlyphsGreen->GetSelectedState()) this->CreateGlyphs(this->ViewGlyphsGreen);
+    if(this->ViewGlyphsGreen->GetSelectedState()) this->CreateGlyphs(this->ViewGlyphsGreen);*/
     }
 
   //dti selected (update tracts)
   else if (this->DTISelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
     this->DTISelector->GetSelected() != NULL) 
     {
-    this->SetWidgetToDefault();
     //set internal tensorNode
     this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->DTISelector->GetSelected());
     //create tracts and glyphs
@@ -366,8 +365,12 @@ void vtkSlicerDWITestingWidget::SetWidgetToDefault()
   this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphVisibility(0,0);
   this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphVisibility(1,0);
   this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphVisibility(2,0);
+  this->ViewGlyphsGreen->SelectedStateOff();
+  this->ViewGlyphsRed->SelectedStateOff();
+  this->ViewGlyphsYellow->SelectedStateOff();
   //visibility of tracts off
-  this->TractDisplayGUI->GetFiberBundleDisplayWidget()->SetTractVisibility(0);  
+  this->TractDisplayGUI->GetFiberBundleDisplayWidget()->SetTractVisibility(0);
+  this->ViewTracts->SelectedStateOff();
   }
 
 void vtkSlicerDWITestingWidget::CreateTracts()
