@@ -1346,6 +1346,10 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       displayNode->SetDefaultColorMap();
       vtkMRMLVolumeNode *vnd = vtkMRMLVolumeNode::SafeDownCast(nd);
       vtkMRMLScalarVolumeDisplayNode *svdnd = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
+      if (vnd)
+        {
+        vnd->CalculateAutoLevels (svdnd);
+        }
       } 
     if (svnd) 
       {
