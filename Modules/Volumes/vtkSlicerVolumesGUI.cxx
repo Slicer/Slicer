@@ -982,7 +982,7 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->GradientFrame = vtkSlicerModuleCollapsibleFrame::New();
   this->GradientFrame->SetParent(page);
   this->GradientFrame->Create();
-  this->GradientFrame->SetLabelText("DWI & DTI Editor");
+  this->GradientFrame->SetLabelText("Diffusion Editor");
   this->GradientFrame->CollapseFrame();
   this->GradientFrame->EnabledOff();
   this->GradientFrame->SetAllowFrameToCollapse(0);
