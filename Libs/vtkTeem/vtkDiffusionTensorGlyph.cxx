@@ -503,6 +503,7 @@ int vtkDiffusionTensorGlyph::RequestData(
               }
             // TO DO: here output as RGB. Need to allocate 3-component scalars first.
             s = 0;
+            this->RGBToIndex(fabs(v_maj[0]),fabs(v_maj[1]),fabs(v_maj[2]),s);
             break;
           case vtkDiffusionTensorMathematics::VTK_TENS_RELATIVE_ANISOTROPY:
             s = vtkDiffusionTensorMathematics::RelativeAnisotropy(w);
@@ -811,4 +812,91 @@ unsigned long int vtkDiffusionTensorGlyph::GetMTime()
   return mTime;
 }
 
+
+// This is sort of the inverse of code from Gordon Kindlmann for mapping
+// the mode (index value) to RGB. See vtkTensorMathematics for that code.
+// There may be a simpler way to do this but this works.
+// Note this expects a "0 1" Hue Range in the vtkLookupTable used to
+// display the glyphs.
+void vtkDiffusionTensorGlyph::RGBToIndex(double R, double G, 
+                                         double B, double &index) 
+{
+  if (fabs(R-G) < 0.00001 && 
+      fabs(R-B) < 0.00001)
+    {
+    index = 0;
+    return;
+    }
+
+  // remove the gray part of the color.
+  // this is so we can use the model where either R,G, or B is 0.
+  // then we scale so that the max of the other two is one.
+  double min = R;
+  int minIdx = 0;
+  if (G < min)
+    {
+      min = G;
+      minIdx = 1;
+    }
+  if (B < min)
+    {
+      min = B;
+      minIdx = 2;
+    }
+
+  // make the smallest of R,G,B equal 0
+  R = R - min;
+  G = G - min;
+  B = B - min;
+
+  // now take the max, and scale it to be 1.
+  double max = R;
+  int maxIdx = 0;
+  if (G > max)
+    {
+      max = G;
+      maxIdx = 1;
+    }
+  if (B > max)
+    {
+      max = B;
+      maxIdx = 2;
+    }
+
+  R = R/max;
+  G = G/max;
+  B = B/max;
+
+
+  // now using the inverse sextants, map this into an index.
+  // switch (sextant) {
+  //   case 0: { R = 1;      G = frac;   B = 0;      break; }
+  //   case 1: { R = 1-frac; G = 1;      B = 0;      break; }
+  //   case 2: { R = 0;      G = 1;      B = frac;   break; }
+  //   case 3: { R = 0;      G = 1-frac; B = 1;      break; }
+  //   case 4: { R = frac;   G = 0;      B = 1;      break; }
+  //   case 5: { R = 1;      G = 0;      B = 1-frac; break; }
+  // }
+  int sextant;
+  if (maxIdx == 0 && minIdx == 2) sextant = 0;
+  if (maxIdx == 1 && minIdx == 2) sextant = 1;
+  if (maxIdx == 1 && minIdx == 0) sextant = 2;
+  if (maxIdx == 2 && minIdx == 0) sextant = 3;
+  if (maxIdx == 2 && minIdx == 1) sextant = 4;
+  if (maxIdx == 0 && minIdx == 1) sextant = 5;
+
+  double offset;
+  offset = 256/6;
+
+  switch (sextant) 
+    {
+    case 0: { index =  G*offset;     break; }
+    case 1: { index = offset + (1-R)*offset;      break; }
+    case 2: { index = offset*2 + B*offset;   break; }
+    case 3: { index = offset*3 + (1-G)*offset;      break; }
+    case 4: { index = offset*4 + R*offset;      break; }
+    case 5: { index = offset*5 + (1-B)*offset; break; }
+    }
+
+}
 

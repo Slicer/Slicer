@@ -261,6 +261,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
 
     if ( displayNode )
       {
+      displayNode->DisableModifiedEventOn();
       displayNode->SetWindow(this->WindowLevelThresholdEditor->GetWindow());
       displayNode->SetLevel(this->WindowLevelThresholdEditor->GetLevel());
       displayNode->SetUpperThreshold(this->WindowLevelThresholdEditor->GetUpperThreshold());
@@ -281,6 +282,8 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
         displayNode->SetApplyThreshold(1);
         displayNode->SetAutoThreshold(0);
         }
+     displayNode->DisableModifiedEventOff();
+     displayNode->InvokePendingModifiedEvent();
      this->UpdatingWidget = 0;
      return;
       }

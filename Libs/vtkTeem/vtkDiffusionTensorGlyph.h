@@ -170,6 +170,9 @@ public:
   vtkGetVector2Macro(DimensionResolution, int);
   vtkSetVector2Macro(DimensionResolution, int);
 
+  static void RGBToIndex(double R, double G, 
+                  double B, double &index);
+
   // Description:
   // When determining the modified time of the filter, 
   // this checks the modified time of the mask input,

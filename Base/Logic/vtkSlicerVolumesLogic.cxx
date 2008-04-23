@@ -566,7 +566,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
       vtkMRMLDiffusionTensorVolumeDisplayNode *dtiDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(displayNode);
       if (dtiDisplayNode)
         {
-        dtiDisplayNode->SetAutoWindowLevel(0);
+        dtiDisplayNode->SetAutoWindowLevel(1);
         dtiDisplayNode->SetWindow(0);
         dtiDisplayNode->SetLevel(0);
         dtiDisplayNode->SetUpperThreshold(0);
