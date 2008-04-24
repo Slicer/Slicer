@@ -172,7 +172,7 @@ int vtkSlicerXNATPermissionPrompterWidget::Prompt( const char *message, vtkMRMLS
           {
           this->GetSceneNameEntry()->GetWidget()->SetValue(scene->GetURL());
           }
-        if ( !strcmp(this->GetMRsessionID(), "") )
+        if ( this->GetMRsessionID() && !strcmp(this->GetMRsessionID(), "") )
           {
           this->GetMRsessionIDEntry()->GetWidget()->SetValue(this->GetMRsessionID());
           }
