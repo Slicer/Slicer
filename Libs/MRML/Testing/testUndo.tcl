@@ -38,6 +38,11 @@ puts Undo
 sc Undo
 puts "GetFileName = [$n GetFileName]"
 
+# use this to free the singleton and avoid a leak
+set broker [vtkEventBroker New]
+$broker UnRegister sc
+$broker Delete
+
 vs Delete
 sc Delete
 
