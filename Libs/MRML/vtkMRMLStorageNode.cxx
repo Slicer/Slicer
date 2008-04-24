@@ -164,10 +164,16 @@ void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject *caller, unsigned long ev
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
 {
-  // if the URI is null, assume the file name is set and return
-  if (this->GetURI() == NULL)
+  // if the URI is null, or emtpy assume the file name is set and return
+  if ( this->GetURI() == NULL )
     {
     vtkDebugMacro("StageReadData: uri is null, setting state to transfer done");
+    this->SetReadStateTransferDone();
+    return;
+    }
+  if ( !(strcmp(this->GetURI(), "")) )
+    {
+    vtkDebugMacro("StageReadData: uri is empty, setting state to transfer done");
     this->SetReadStateTransferDone();
     return;
     }
@@ -241,9 +247,16 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
   if (this->URI == NULL)
     {
     this->SetWriteStateTransferDone();
-    vtkDebugMacro("Cannot stage data for writing, URI is not set.");
+    vtkDebugMacro("StageWriteData: uri is null, setting state to transfer done");
     return;
     }
+  if ( !(strcmp(this->GetURI(), "")) )
+    {
+    vtkDebugMacro("StageWriteData: uri is empty, setting state to transfer done");
+    this->SetReadStateTransferDone();
+    return;
+    }
+
   // need to get URI handlers from the scene
   if (this->Scene == NULL)
     {

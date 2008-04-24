@@ -29,7 +29,7 @@ proc XnatPublish_TimeStampString { str } {
 #------------------------------------------------------------------------------
 proc XnatPublish_PromptUser { } {
 
-    set handler [$::slicer3::MRMLScene FindURIHandler "xnat://"]
+    set handler [ $::slicer3::MRMLScene FindURIHandler "xnat://" ]
     if { $handler == "" } {
         #--- pop up error message.
         set dialog [ vtkKWMessageDialog New ]
@@ -41,6 +41,8 @@ proc XnatPublish_PromptUser { } {
         $dialog Delete
         return -1
     }
+
+
     set prompter [ $handler GetPermissionPrompter ]
     if { $prompter == "" } {
         #--- pop up error message.
@@ -54,6 +56,8 @@ proc XnatPublish_PromptUser { } {
         return -1
     }
     set retval [ $prompter Prompt "Please provide the requested credentials." $::slicer3::MRMLScene ]
+
+
     return $retval
 }
 
@@ -127,6 +131,7 @@ proc XnatPublish_PopulateLists { } {
 proc XnatPublish_PublishScene {} {
     
     #--- make sure we have the proper handler and permission prompter.
+    #--- get the xnat handler
     set handler [ $::slicer3::MRMLScene FindURIHandler "xnat://" ]
     if { $handler == "" } {
         set dialog [ vtkKWMessageDialog New ]
@@ -152,7 +157,6 @@ proc XnatPublish_PublishScene {} {
 
     #--- get info
     set promptStat [ XnatPublish_PromptUser ]
-    puts "Prompt returned $promptStat"
     
     if { $promptStat <= 0 } {
         #--- no reason for an error message here.
@@ -161,6 +165,15 @@ proc XnatPublish_PublishScene {} {
         #--- need to timestamp Scene name and all datasets.
         unset -nocomplain ::XnatPublish_Time
         set ::XnatPublish_Time [ XnatPublish_TimeStampString "" ]
+        
+        set ::XnatPublish_Tags [ $prompter GetResourceTag]
+        if { $::XnatPublish_Tags == "" } {
+            set ::XnatPublish_Tags "Slicer3_Upload"
+        }
+        set ::XnatPublish_CatalogID [ $prompter GetResourceSetName ]
+        if { $::XnatPublish_CatalogID == "" } {
+            set ::XnatPublish_CatalogID $::XnatPublish_Time
+        }
         
         set sceneName [ $prompter GetSceneName ]
         set sceneName $::XnatPublish_Time$sceneName
@@ -200,43 +213,51 @@ proc XnatPublish_PublishScene {} {
             #--- convert all dataset paths to the cache directory
             #--- temporarily,  timestamp the filenames
             #--- save to cache, and restore original filenames
-            puts "SAVING DATA."
             set scene $::slicer3::MRMLScene
             unset -nocomplain ::XnatPublish_NodeList
             unset -nocomplain ::XnatPublish_StorageNodeList
             XnatPublish_PopulateLists
 
-            puts "storagenodes: $::XnatPublish_StorageNodeList"
-            
             set nnodes [ llength $::XnatPublish_NodeList ]
             set nsnodes [ llength $::XnatPublish_StorageNodeList ]
             for { set n 0 } { $n < $nnodes } { incr n } {
                 set node [ lindex $::XnatPublish_NodeList $n ]
                 set snode [ lindex $::XnatPublish_StorageNodeList $n]
                 if { $node != "" && $snode != "" } {
+                    set saveURI [ $snode GetURI ]
                     set savename [ $snode GetFileName ]                
                     if { $savename != "" } {
-                        set cachename $savename
-                        set cachename [ file tail $cachename ]
+                        set cachedname $savename
+                        set cachedname [ file tail $cachedname ]
                         #--- put a timestamp on the name.
 
-                        set cachename $::XnatPublish_Time-$cachename
-                        set cachename [ file join $cdir $cachename ]
-
-                        puts "Temporarily renaming $savename to $cachename"
+                        set cachedname $::XnatPublish_Time-$cachedname
+                        set cachedname [ file join $cdir $cachedname ]
 
                         #--- temporarily swap in cache filename
-                        $snode SetFileName $cachename 
+                        $snode SetURI ""
+                        $snode SetFileName $cachedname 
                         set res [ $snode WriteData $node]
                         
-                        XnatPublish_CreateUploadCatalog
-                        XnatPublish_ZipData
-                        XnatPublish_Upload
+                        #--- update the CacheAndDataIOManagerGUI                        
 
                         #--- and then restore after writing.
+                        $snode SetURI $saveURI
                         $snode SetFileName $savename
                     }
                 }
+            }
+
+            unset -nocomplain ::XnatPublish_FileList
+            XnatPublish_CreateUploadCatalog $cdir
+            set z [ XnatPublish_CreateZippedArchive $cdir ]
+            #--- create the xml for upload and zip data together.
+            #--- upload to xnat database
+            if { $z != "" } {
+                set z [ file tail $z  ]
+                set z [ file join $cdir $z ]
+                puts "calling Upload of $z"
+                XnatPublish_Upload $z
             }
         }
     } 
@@ -245,19 +266,177 @@ proc XnatPublish_PublishScene {} {
 #------------------------------------------------------------------------------
 #---
 #------------------------------------------------------------------------------
-proc XnatPublish_CreateUploadCatalog { } {
+proc XnatPublish_CreateUploadCatalog { cdir } {
+
+    if { $cdir != "" } {
+        set fname [ file join $cdir "$::XnatPublish_CatalogID.xml" ]
+        set fp [ open "$fname" w ]
+        set headerStr "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        puts $fp $headerStr
+
+        set catStr "<cat:Catalog ID=\"$::XnatPublish_CatalogID\" xmlns:arc=\"http://nrg.wustl.edu/arc\" xmlns:behavioral=\"http://nrg.wustl.edu/behavioral\" xmlns:cat=\"http://nrg.wustl.edu/catalog\" xmlns:cnda=\"http://nrg.wustl.edu/cnda\" xmlns:fs=\"http://nrg.wustl.edu/fs\" xmlns:ls2=\"http://nrg.wustl.edu/ls2\" xmlns:prov=\"http://www.nbirn.net/prov\" xmlns:wrk=\"http://nrg.wustl.edu/workflow\" xmlns:xdat=\"http://nrg.wustl.edu/security\" xmlns:xnat=\"http://nrg.wustl.edu/xnat\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+        puts $fp $catStr
+
+        puts $fp "<cat:tags>"
+
+        if { $::XnatPublish_Tags == "" } {
+            puts $fp "<cat:tag>Slicer3</cat:tag>"
+        } else {
+            puts $fp "<cat:tag>$::XnatPublish_Tags</cat:tag>"
+        }
+
+        puts $fp "</cat:tags>"
+        puts $fp "<cat:entries>"
+
+        #--- get list of files in the cache directory with the timestamp.
+        set ::XnatPublish_FileList [ glob -directory $cdir -type f *$::XnatPublish_Time*]
+        set listlen [ llength $::XnatPublish_FileList ]
+
+        for { set i 0 } { $i < $listlen } { incr i } {
+            set f [ lindex $::XnatPublish_FileList $i ]
+            set f [ file normalize $f ]
+            set f [ file tail $f ]
+            set f "./$f"
+            set uriStr "<cat:entry URI=\"$f\" />"
+            puts $fp $uriStr
+        }
+
+        puts $fp "</cat:entries>"        
+        puts $fp "</cat:Catalog>"        
+        close $fp
+    }
+    #--- update the CacheAndDataIOManagerGUI    
 }
+
+
 
 #------------------------------------------------------------------------------
 #---
 #------------------------------------------------------------------------------
-proc XnatPublish_ZipData { } {
+proc XnatPublish_CreateZippedArchive { cdir } {
+
+    if { $cdir != "" } {
+        #
+        # look for zip on the system, if not found try the 
+        # tcl fallback
+        #
+        set zip ""
+        set candidates {
+            "c:/cygwin/bin/zip.exe"
+            /usr/bin/zip /bin/zip /usr/local/bin/zip
+        }
+        foreach c $candidates {
+            if { [file exists $c] } {
+                set zip $c
+                break
+            }
+        }
+        
+        set listlen [ llength $::XnatPublish_FileList ]
+        for { set i 0 } { $i < $listlen } { incr i } {
+            set f [ lindex $::XnatPublish_FileList $i ]
+            set f [ file normalize $f ]
+            set f [ file tail $f ]
+            lappend fl $f
+        }
+
+        if { [file exists $zip] } {
+            set zip [ file normalize $zip ]
+            set cwd [pwd]
+            cd $cdir
+
+            set listlen [ llength $fl ]
+            for { set i 0 } { $i < $listlen } { incr i } {
+                set f [ lindex $fl $i ]
+                puts "zipping $f"
+                exec $zip -b . $::XnatPublish_CatalogID $f
+            }
+
+            cd $cwd
+            #--- update the CacheAndDataIOManagerGUI
+            
+        } else {
+            set dialog [vtkKWMessageDialog New]
+            $dialog SetParent $o(toplevel)
+            $dialog SetStyleToMessage
+            $dialog SetText "Cannot find zipfile reader, cannot process $path"
+            $dialog Create
+            $dialog Invoke
+            $dialog Delete
+            return ""
+        }
+        
+        #--- did the zip archive get created?
+        set chk [ file join $cdir $::XnatPublish_CatalogID.zip ]
+        if { [file exists $chk] } {
+            return $chk
+        } else {
+            set dialog [vtkKWMessageDialog New]
+            $dialog SetParent $o(toplevel)
+            $dialog SetStyleToMessage
+            $dialog SetText "Error creating zipfile. nothing to upload."
+            $dialog Create
+            $dialog Invoke
+            $dialog Delete
+            return ""
+        }
+    }
+
 }
 
 
 #------------------------------------------------------------------------------
 #---
 #------------------------------------------------------------------------------
-proc XnatPublish_Upload { } {
+proc XnatPublish_Upload { zfile } {
+
+    if { $zfile != "" } {
+
+        set handler [ $::slicer3::MRMLScene FindURIHandler "xnat://" ]
+        if { $handler == "" } {
+            set dialog [ vtkKWMessageDialog New ]
+            $dialog SetParent [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+            $dialog SetStyleToMessage
+            $dialog SetText "XnatPublishScene: can't find URI Handler for XNAT. No data was published."
+            $dialog Create
+            $dialog Invoke
+            $dialog Delete
+            return -1
+        } 
+        
+        set prompter [ $handler GetPermissionPrompter ]
+        if { $prompter == "" } {
+            set dialog [ vtkKWMessageDialog New ]
+            $dialog SetParent [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+            $dialog SetStyleToMessage
+            $dialog SetText "XnatPublishScene: can't find Permission Prompter for XNAT. No data was published."
+            $dialog Create
+            $dialog Invoke
+            $dialog Delete
+            return -1
+        }
+
+        set u [ $prompter GetUsername ]
+        set p [ $prompter GetPassword ]
+        set h [ $prompter GetHostName ]
+        set id [ $prompter GetMRsessionID ]
+        if { [file exists $zfile] } {
+            #--- schedule the upload
+            puts "calling with $zfile $u $p $h $id"
+            $handler StageFileWrite $zfile $u $p $h $id
+        } else {
+            set dialog [ vtkKWMessageDialog New ]
+            $dialog SetParent [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
+            $dialog SetStyleToMessage
+            $dialog SetText "XnatPublishScene: can't find Permission Prompter for XNAT. No data was published."
+            $dialog Create
+            $dialog Invoke
+            $dialog Delete
+            return -1
+        }
+        return 1
+    }
+    return -1;
 }
+
 

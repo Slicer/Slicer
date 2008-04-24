@@ -26,6 +26,20 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
   virtual void StageFileRead ( const char *source, const char * destination ) { };
   virtual void StageFileWrite ( const char *source, const char * destination ) { };
 
+  // Description:
+  // various Read/Write method footprints useful to redefine in specific handlers.
+  virtual void StageFileRead(const char * source,
+                             const char * destination,
+                             const char *username,
+                             const char *password,
+                             const char *hostname) { };
+
+  virtual void StageFileWrite(const char *source,
+                              const char *username,
+                              const char *password,
+                              const char *hostname,
+                              const char *sessionID ) { };
+
   // need something that goes the other way too...
 
   //BTX

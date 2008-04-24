@@ -623,6 +623,10 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
         {
         sprintf ( txt, "(%dMB --FULL!)   ", static_cast<int>( floor(sz)));
         }
+      else if ( sz < 1.0 )
+        {
+        sprintf ( txt, "(< 1MB used)   ");
+        }
       else
         {
         sprintf ( txt, "(< %dMB used)   ", static_cast<int>( floor(sz)));
@@ -650,20 +654,6 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
     //--- cache options:
     this->ForceReloadCheckButton->SetSelectedState ( this->CacheManager->GetEnableForceRedownload() );
     //    this->OverwriteCacheCheckbutton->SetSelectedState ( this->CacheManager->GetEnableRemoteCacheOverwriting() );
-    }
-
-  if ( appGUI != NULL )
-    {
-    if ( this->CacheManager->GetCurrentCacheSize() == 0 )
-      {
-      this->ClearCacheButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerDeleteDisabledIcon() );
-      this->ClearCacheButton->SetStateToDisabled();
-      }
-    else
-      {
-      this->ClearCacheButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerDeleteIcon() );
-      this->ClearCacheButton->SetStateToNormal();
-      }
     }
 
   //--- DataIO options:
@@ -697,9 +687,18 @@ void vtkSlicerCacheAndDataIOManagerGUI::UpdateOverviewPanel()
       }
     }
 
-
   if ( appGUI != NULL )
     {
+    if ( this->CacheManager->ComputeCacheSize(this->CacheManager->GetRemoteCacheDirectory(), 0) == 0.0 )
+      {
+      this->ClearCacheButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerDeleteDisabledIcon() );
+      this->ClearCacheButton->SetStateToDisabled();
+      }
+    else
+      {
+      this->ClearCacheButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerDeleteIcon() );
+      this->ClearCacheButton->SetStateToNormal();
+      }
     if ( !anyTransfersRunning )
       {
       this->CancelAllButton->SetImageToIcon ( appGUI->GetSlicerFoundationIcons()->GetSlicerCancelDisabledIcon() );

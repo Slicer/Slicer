@@ -368,7 +368,7 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessPublishToXnatCommand()
 {
-//  this->Script ("XnatPublish_PublishScene");
+  this->Script ("XnatPublish_PublishScene");
 }
 
  

@@ -81,34 +81,34 @@ int vtkXNATHandler::CanHandleURI ( const char *uri )
 
 //----------------------------------------------------------------------------
 void vtkXNATHandler::StageFileRead(const char * source,
-                                   const char * destination,
+                                   const char *destination,
                                    const char *username,
                                    const char *password,
                                    const char *hostname)
 {
    if (source == NULL)
     {
-    vtkErrorMacro("StageFileWrite: source file name is null");
+    vtkErrorMacro("StageFileRead: source file name is null");
     return;
     }
   if (destination == NULL)
     {
-    vtkErrorMacro("StageFileWrite: destination file name is null");
+    vtkErrorMacro("StageFileRead: destination file name is null");
     return;
     }
   if ( username == NULL )
     {
-    vtkErrorMacro("StageFileWrite: username is null");
+    vtkErrorMacro("StageFileRead: username is null");
     return;
     }
   if ( password == NULL )
     {
-    vtkErrorMacro("StageFileWrite: password is null");
+    vtkErrorMacro("StageFileRead: password is null");
     return;
     }
   if ( hostname == NULL )
     {
-    vtkErrorMacro("StageFileWrite: hostname is null");
+    vtkErrorMacro("StageFileRead: hostname is null");
     return;    
     }
   
@@ -150,7 +150,7 @@ void vtkXNATHandler::StageFileRead(const char * source,
   int retval = system(cmd.c_str());
   if (retval != 0)
     {
-    vtkErrorMacro("StageFileRead: error when running command '" << cmd.c_str() << "', return value = " << retval);
+    vtkErrorMacro("StageReadWrite: error when running command '" << cmd.c_str() << "': maybe XNAT tools are not installed or path is not set.");
     //--- in case the permissions were not correct and that's
     //--- the reason the read command failed,
     //--- reset the 'remember check' in the permissions
@@ -166,17 +166,70 @@ void vtkXNATHandler::StageFileRead(const char * source,
 
 
 //----------------------------------------------------------------------------
-void vtkXNATHandler::StageFileWrite(const char * source, const char * destination)
+void vtkXNATHandler::StageFileWrite(const char * zipfile,
+                                    const char * username, const char *password,
+                                    const char *hostname, const char *sessionID )
 {
-  if (source == NULL)
+
+  if (zipfile == NULL)
     {
     vtkErrorMacro("StageFileWrite: source file name is null");
     return;
     }
-  if (destination == NULL)
+  if ( username == NULL )
     {
-    vtkErrorMacro("StageFileWrite: destination file name is null");
+    vtkErrorMacro("StageFileWrite: username is null");
     return;
     }
-  // use StoreXAR?
+  if ( password == NULL )
+    {
+    vtkErrorMacro("StageFileWrite: password is null");
+    return;
+    }
+  if ( hostname == NULL )
+    {
+    vtkErrorMacro("StageFileWrite: hostname is null");
+    return;    
+    }
+  if ( sessionID == NULL )
+    {
+    vtkErrorMacro("StageFileWrite: sessionID is null");
+    return;    
+    }
+  
+  //--- example command:
+  //--- ArcGet -host www.xnathost.org -u user -p password -s session1 
+  //---
+  std::string cmd = std::string("ArcPut ");
+  //--- build the command
+  cmd += "-s ";
+  cmd += sessionID;
+  cmd += " -host ";
+  cmd += hostname;
+  cmd += " -u ";
+  cmd += username;
+  cmd += " -p ";
+  cmd += password;
+  cmd += " -f ";
+  cmd += zipfile;
+  
+
+  // execute the command
+  vtkDebugMacro("StageFileWrite: calling command: " << cmd.c_str());
+  int retval = system(cmd.c_str());
+  if (retval != 0)
+    {
+    vtkErrorMacro("StageFileWrite: error when running command '" << cmd.c_str() << "': maybe XNAT tools are not installed or path is not set.");
+    //--- in case the permissions were not correct and that's
+    //--- the reason the read command failed,
+    //--- reset the 'remember check' in the permissions
+    //--- prompter so that new login info  will be prompted.
+    if ( this->GetPermissionPrompter() != NULL )
+      {
+      this->GetPermissionPrompter()->SetRemember ( 0 );
+      }
+    }
+
 }
+
+

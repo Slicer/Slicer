@@ -50,7 +50,11 @@ proc XnatXcatImport { xnatxcatFile } {
         if { $::XnatXcat_NumberOfElements > 0 } {
 
             #--- get the directory
-            set ::XnatXcat_Dir [ file dirname [ file normalize $xnatxcatFile]]
+            #set ::XnatXcat_Dir [ file dirname [ file normalize $xnatxcatFile]]
+            set cacheManager [ $::slicer3::MRMLScene GetCacheManager ]
+            set ::XnatXcat_Dir [ $cacheManager GetRemoteCacheDirectory ]
+            set ::XnatXcat_Dir [ file normalize $::XnatXcat_Dir ]
+
 
             #--- recursively import datasets
             set root [ $parser GetRootElement ]
@@ -190,6 +194,7 @@ proc XnatXcatImportGetEntry { element } {
         return 
     }
 
+    
     #--- Set the MRsessionID in the XNAT PermissionPrompter
     if { $elementType == "cat:Catalog" || $elementType == "cat:catalog" } {
         set nAtts [$element GetNumberOfAttributes]
@@ -201,7 +206,6 @@ proc XnatXcatImportGetEntry { element } {
                     set prompter [ $handler GetPermissionPrompter ]
                     if { $prompter != "" } {
                         $prompter SetMRsessionID [ $element GetAttributeValue $i]
-                        puts "Set SessionID to [$element GetAttributeValue $i]"
                     }
                 }
             }
@@ -226,21 +230,6 @@ proc XnatXcatImportGetEntry { element } {
     #--- The uri should contain a link to the file, and hopefully
     #--- ticket information which encapsulates permissions to
     #--- access the data.
-    set hasuri 0
-    set uriAttName ""
-    for {set i 0} {$i < $nAtts} {incr i} {
-        set attName [$element GetAttributeName $i]
-        if { $attName == "uri" || $attName == "URI" } {
-            #--- mark as found and capture its case (upper or lower)
-            set hasuri 1
-            set uriAttName $attName
-        }
-    }
-    if { $hasuri == 0 } {
-        XnatXcatImportMessage "can't find an attribute called URI in $element"
-        return
-    }    
-
     #--- node(name) should define the filename
     set hasname 0
     set nameAtt ""
@@ -258,9 +247,30 @@ proc XnatXcatImportGetEntry { element } {
     }    
     set ext [ file extension $node(name) ]
     if { $ext == ".xml" } {
-        puts "skipping entry $node(name)"
+        #--- seems like the catalog lists itself.. don't try to import
         return
     }
+
+    set hasuri 0
+    set uriAttName ""
+    for {set i 0} {$i < $nAtts} {incr i} {
+        set attName [$element GetAttributeName $i]
+        if { $attName == "uri" || $attName == "URI" } {
+            #--- mark as found and capture its case (upper or lower)
+            set hasuri 1
+            set uriAttName $attName
+
+            #--- map the uri and local file name
+            set node(localFileName)  $::XnatXcat_Dir/$node($nameAtt)
+            set cacheManager [ $::slicer3::MRMLScene GetCacheManager ]
+            $cacheManager MapFileToURI $node($uriAttName) $node(localFileName)
+        }
+    }
+    if { $hasuri == 0 } {
+        XnatXcatImportMessage "can't find an attribute called URI in $element"
+        return
+    }    
+
 
 
     #---
@@ -274,7 +284,7 @@ proc XnatXcatImportGetEntry { element } {
     set len [ llength $plist ]
     set fname [ lindex $plist [ expr $len - 1 ] ]
 
-    set node(localFileName)  $::XnatXcat_Dir/$fname
+
 
     #--- try to pull the XNAT host out of the uri.
     set i_end [ string first  ".org" $node($uriAttName) ]
@@ -294,19 +304,13 @@ proc XnatXcatImportGetEntry { element } {
             set prompter [ $handler GetPermissionPrompter ]
             if { $prompter != "" } {
                 $prompter SetHostName $host
-                puts "Set HostName to $host"
             }
         }
     }
 
 
-    #--- get cache manager in case the file is remote resource
     set cacheManager [$::slicer3::MRMLScene GetCacheManager]
-    $cacheManager MapFileToURI $node($uriAttName) $node(localFileName)
 
-    #--- test:
-    set testy [$cacheManager GetFilenameFromURI $node($uriAttName)]
-    
     #--- what kind of node is it?
     set nodeType [ XnatXcatImportGetNodeType $node(name) ]
 
@@ -394,8 +398,11 @@ proc XnatXcatImportEntryVolume {node} {
     set singleFile 0
     set autoLevel 1
 
-    if { [info exists n(labelmap) ] } {
+    #--- don't really have a way to know label maps on XNAT yet...
+    if { [ string first "aseg" $n(name) ] >= 0 } {
         set labelmap 1
+        # don't do auto level calc if it's a label map
+        set autoLevel 0
     }
     if { [ string first "stat" $n(name) ] >= 0 } {
         # set autoLevel 0
@@ -438,7 +445,7 @@ proc XnatXcatImportEntryVolume {node} {
         #--- this is likely a statistical volume.
         $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodefMRIPA"
         #$volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeIron"
-        $volumeDisplayNode SetAutoWindowLevel 0
+        $volumeDisplayNode SetAutoWindowLevel 1
         #$volumeDisplayNode SetThresholdType 1
     } elseif { [ string first "aseg" $n(name) ] >= 0 } {
         #--- this is likely a freesurfer label map volume

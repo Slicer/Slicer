@@ -36,14 +36,22 @@ class VTK_RemoteIO_EXPORT vtkXNATHandler : public vtkURIHandler
   virtual int CanHandleURI ( const char *uri );
 
   // Description:
-  // This function wraps SCommand functionality to download a specified URI to
+  // This function wraps ArcGet Command functionality to download a specified URI to
   // a specified destination file
-  void StageFileRead(const char * source,
+  virtual void StageFileRead(const char * source,
                                    const char * destination,
                                    const char *username,
                                    const char *password,
                                    const char *hostname);
-  void StageFileWrite(const char * source, const char * destination);
+
+  // Description:
+  // This function wraps ArcPut Command functionality to download a specified URI to
+  // a specified destination file
+  virtual void StageFileWrite(const char * zipfile,
+                      const char *username,
+                      const char *password,
+                      const char *hostname,
+                      const char *sessionID );
 
  private:
 

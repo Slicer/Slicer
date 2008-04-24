@@ -200,9 +200,10 @@ void vtkSlicerPermissionPrompterWidget::CreatePrompter (const char *messageText,
   this->PasswordEntry->SetLabelPositionToLeft();
   
   //--- pack it up.
-  app->Script ( "pack %s %s -side top -padx 4 -pady 1 -expand n",
-                 this->LogoLabel->GetWidgetName(),
-                 this->RememberCheck->GetWidgetName());
+//  app->Script ( "pack %s %s -side top -padx 4 -pady 1 -expand n",
+//                 this->LogoLabel->GetWidgetName(),
+  app->Script ( "pack %s -side top -padx 4 -pady 4 -expand n",
+                 this->RememberCheck->GetWidgetName());                
   app->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",
                  this->UserNameEntry->GetWidgetName() );
   app->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",

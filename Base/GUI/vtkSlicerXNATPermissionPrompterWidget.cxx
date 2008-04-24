@@ -17,9 +17,13 @@ vtkSlicerXNATPermissionPrompterWidget::vtkSlicerXNATPermissionPrompterWidget()
   this->HostNameEntry = NULL;
   this->SceneNameEntry = NULL;
   this->MRsessionIDEntry = NULL;
+  this->ResourceSetNameEntry = NULL;
+  this->ResourceTagEntry = NULL;
   this->SetPromptMessage ("Please provide the following credentials for the data transfer.");
   this->SceneName =NULL;
   this->MRsessionID=NULL;
+  this->ResourceSetName = NULL;
+  this->ResourceTag = NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -43,6 +47,24 @@ vtkSlicerXNATPermissionPrompterWidget::~vtkSlicerXNATPermissionPrompterWidget()
     this->MRsessionIDEntry->Delete();
     this->MRsessionIDEntry = NULL;    
     }
+  if ( this->ResourceSetNameEntry )
+    {
+    this->ResourceSetNameEntry->SetParent (NULL );
+    this->ResourceSetNameEntry->Delete();
+    this->ResourceSetNameEntry = NULL;
+    }
+  if ( this->ResourceTagEntry )
+    {
+    this->ResourceTagEntry->SetParent ( NULL);
+    this->ResourceTagEntry->Delete();
+    this->ResourceTagEntry = NULL;
+    }
+
+  this->SetSceneName("");
+  this->SetMRsessionID("");
+  this->SetResourceSetName("");
+  this->SetResourceTag("");
+
 }
 
 
@@ -55,6 +77,12 @@ void vtkSlicerXNATPermissionPrompterWidget::PrintSelf(ostream& os, vtkIndent ind
   os << indent << "HostNameEntry: " << this->GetHostNameEntry() << "\n";
   os << indent << "SceneNameEntry: " << this->GetSceneNameEntry() << "\n";
   os << indent << "MRsessionIDEntry: " << this->GetMRsessionIDEntry() << "\n";
+  os << indent << "ResourceSetNameEntry: " << this->GetResourceSetNameEntry() << "\n";
+  os << indent << "ResourceTagEntry: " << this->GetResourceTagEntry() << "\n";
+  os << indent << "SceneName: " << this->GetSceneName() << "\n";
+  os << indent << "MRsessionID: " << this->GetMRsessionID() << "\n";
+  os << indent << "ResourceSetName: " << this->GetResourceSetName() << "\n";
+  os << indent << "ResourceTag: " << this->GetResourceTag() << "\n";
 }
 
 
@@ -84,6 +112,28 @@ const char* vtkSlicerXNATPermissionPrompterWidget::GetMRsessionIDFromWidget()
   if (this->GetMRsessionIDEntry() != NULL )
     {
       return ( this->GetMRsessionIDEntry()->GetWidget()->GetValue() );
+    }
+  return ("");
+}
+
+
+//---------------------------------------------------------------------------
+const char* vtkSlicerXNATPermissionPrompterWidget::GetResourceSetNameFromWidget ( )
+{
+  if (this->GetResourceSetNameEntry() != NULL )
+    {
+    return ( this->GetResourceSetNameEntry()->GetWidget()->GetValue() );
+    }
+  return ("");
+}
+
+
+//---------------------------------------------------------------------------
+const char* vtkSlicerXNATPermissionPrompterWidget::GetResourceTagFromWidget ( )
+{
+  if (this->GetResourceTagEntry() != NULL )
+    {
+    return ( this->GetResourceTagEntry()->GetWidget()->GetValue() );
     }
   return ("");
 }
@@ -190,6 +240,19 @@ void vtkSlicerXNATPermissionPrompterWidget::DestroyPrompter()
     this->MRsessionIDEntry->Delete();
     this->MRsessionIDEntry = NULL;    
     }
+  if ( this->ResourceSetNameEntry )
+    {
+    this->ResourceSetNameEntry->SetParent (NULL );
+    this->ResourceSetNameEntry->Delete();
+    this->ResourceSetNameEntry = NULL;
+    }
+  if ( this->ResourceTagEntry )
+    {
+    this->ResourceTagEntry->SetParent ( NULL);
+    this->ResourceTagEntry->Delete();
+    this->ResourceTagEntry = NULL;
+    }
+
   this->Superclass::DestroyPrompter();
 }
 
@@ -199,7 +262,7 @@ void vtkSlicerXNATPermissionPrompterWidget::CreatePrompter(const char *messageTe
 {
   this->Superclass::CreatePrompter( messageText, title);
   int h = this->GetPromptDialog()->GetMessageDialogFrame()->GetHeight();
-  this->GetPromptDialog()->GetMessageDialogFrame()->SetHeight ( h+100);
+  this->GetPromptDialog()->GetMessageDialogFrame()->SetHeight ( h+150);
 
 
 /* 
@@ -299,7 +362,6 @@ void vtkSlicerXNATPermissionPrompterWidget::CreatePrompter(const char *messageTe
     "R0DKPSqTGjNXWFSUxiEpOYxCQm6Yz8P8j9NFs=";
 
   this->SetSceneName ("");
-  this->SetMRsessionID("");
   
   this->GetLogoIcon()->SetImage ( image_XNATLogo,
                            image_XNATLogo_width,
@@ -313,6 +375,7 @@ void vtkSlicerXNATPermissionPrompterWidget::CreatePrompter(const char *messageTe
   this->HostNameEntry->Create();
   this->HostNameEntry->GetLabel()->SetText ("Host name: " );
   this->HostNameEntry->GetLabel()->SetBalloonHelpString ( "Enter name of the host." );
+  this->HostNameEntry->GetWidget()->SetBalloonHelpString ( "Enter name of the host." );
   this->HostNameEntry->GetWidget()->SetValue ( this->GetHostName() );
   this->HostNameEntry->GetWidget()->SetCommandTriggerToReturnKeyAndFocusOut();
   this->HostNameEntry->SetLabelWidth ( 20 );
@@ -324,6 +387,7 @@ void vtkSlicerXNATPermissionPrompterWidget::CreatePrompter(const char *messageTe
   this->SceneNameEntry->Create();
   this->SceneNameEntry->GetLabel()->SetText ("Scene name: " );
   this->SceneNameEntry->GetLabel()->SetBalloonHelpString ( "Entery the name of the scene.");
+  this->SceneNameEntry->GetWidget()->SetBalloonHelpString ( "Entery the name of the scene.");
   this->SceneNameEntry->GetWidget()->SetValue ( this->GetSceneName() );
   this->SceneNameEntry->GetWidget()->SetCommandTriggerToReturnKeyAndFocusOut();
   this->SceneNameEntry->SetLabelWidth ( 20 );
@@ -335,17 +399,46 @@ void vtkSlicerXNATPermissionPrompterWidget::CreatePrompter(const char *messageTe
   this->MRsessionIDEntry->Create();
   this->MRsessionIDEntry->GetLabel()->SetText ("MR session ID: " );
   this->MRsessionIDEntry->GetLabel()->SetBalloonHelpString ( "Enter the ID (XNAT Accession #) of the MR session to which data will be added." );
+  this->MRsessionIDEntry->GetWidget()->SetBalloonHelpString ( "Enter the ID (XNAT Accession #) of the MR session to which data will be added." );  
   this->MRsessionIDEntry->GetWidget()->SetValue ( this->GetMRsessionID() );
   this->MRsessionIDEntry->GetWidget()->SetCommandTriggerToReturnKeyAndFocusOut();
   this->MRsessionIDEntry->SetLabelWidth ( 20 );
   this->MRsessionIDEntry->GetWidget()->SetWidth ( 30 );
   this->MRsessionIDEntry->SetLabelPositionToLeft();
 
+  this->ResourceSetNameEntry = vtkKWEntryWithLabel::New();
+  this->ResourceSetNameEntry->SetParent ( this->GetPromptDialog()->GetTopFrame() );
+  this->ResourceSetNameEntry->Create();
+  this->ResourceSetNameEntry->GetLabel()->SetText ("Resource set name: " );
+  this->ResourceSetNameEntry->GetLabel()->SetBalloonHelpString ( "(optional) Provide a name for the set of resources to uplaod. If none is provided, the name will default to a timestamp." );
+    this->ResourceSetNameEntry->GetWidget()->SetBalloonHelpString ( "(optional) Provide a name for the set of resources to upload. If none is provided, the name will default to a timestamp." );
+  this->ResourceSetNameEntry->GetWidget()->SetValue ( this->GetResourceSetName() );
+  this->ResourceSetNameEntry->GetWidget()->SetCommandTriggerToReturnKeyAndFocusOut();
+  this->ResourceSetNameEntry->SetLabelWidth ( 20 );
+  this->ResourceSetNameEntry->GetWidget()->SetWidth ( 30 );
+  this->ResourceSetNameEntry->SetLabelPositionToLeft();
+
+  this->ResourceTagEntry = vtkKWEntryWithLabel::New();
+  this->ResourceTagEntry->SetParent ( this->GetPromptDialog()->GetTopFrame() );
+  this->ResourceTagEntry->Create();
+  this->ResourceTagEntry->GetLabel()->SetText ("Resource set tags: " );
+  this->ResourceTagEntry->GetLabel()->SetBalloonHelpString ( "(optional) Enter tags that describe the set of resources to upload." );
+  this->ResourceTagEntry->GetWidget()->SetBalloonHelpString ( "(optional) Enter tags that describe the set of resources to upload." );  
+  this->ResourceTagEntry->GetWidget()->SetValue ( this->GetResourceTag() );
+  this->ResourceTagEntry->GetWidget()->SetCommandTriggerToReturnKeyAndFocusOut();
+  this->ResourceTagEntry->SetLabelWidth ( 20 );
+  this->ResourceTagEntry->GetWidget()->SetWidth ( 30 );
+  this->ResourceTagEntry->SetLabelPositionToLeft();
+
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication() );
   app->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",
                 this->HostNameEntry->GetWidgetName());
   app->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",
                 this->MRsessionIDEntry->GetWidgetName());
+  app->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",
+                this->ResourceSetNameEntry->GetWidgetName());
+  app->Script ( "pack %s -side top -padx 4 -pady 2 -expand y",
+                this->ResourceTagEntry->GetWidgetName());
 
 }
 

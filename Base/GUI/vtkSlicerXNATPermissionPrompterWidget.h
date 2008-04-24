@@ -18,7 +18,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXNATPermissionPrompterWidget : public 
   vtkGetObjectMacro ( HostNameEntry, vtkKWEntryWithLabel);
   vtkGetObjectMacro ( SceneNameEntry, vtkKWEntryWithLabel);
   vtkGetObjectMacro ( MRsessionIDEntry, vtkKWEntryWithLabel );
+  vtkGetObjectMacro ( ResourceSetNameEntry, vtkKWEntryWithLabel );
+  vtkGetObjectMacro ( ResourceTagEntry, vtkKWEntryWithLabel);
 
+  vtkGetStringMacro ( ResourceSetName);
+  vtkSetStringMacro ( ResourceSetName);  
+
+  vtkGetStringMacro ( ResourceTag );
+  vtkSetStringMacro ( ResourceTag );
+  
   vtkGetStringMacro ( SceneName );
   vtkSetStringMacro ( SceneName );
 
@@ -36,6 +44,14 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXNATPermissionPrompterWidget : public 
   // Description:
   // Convenience method for getting the MRsessionID string from widget.
   const char* GetMRsessionIDFromWidget();
+  
+  // Description:
+  // Convenience method for getting the name of the Resource Set from widget.
+  const char* GetResourceSetNameFromWidget ( );
+
+  // Description:
+  // Convenience method for getting the Resource Tags from widget.
+  const char* GetResourceTagFromWidget ( );
   
   // Description:
   // Creates, configures and packs the widgets in the prompt
@@ -57,8 +73,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerXNATPermissionPrompterWidget : public 
   vtkKWEntryWithLabel *HostNameEntry;
   vtkKWEntryWithLabel *SceneNameEntry;
   vtkKWEntryWithLabel *MRsessionIDEntry;
+  vtkKWEntryWithLabel *ResourceSetNameEntry;
+  vtkKWEntryWithLabel *ResourceTagEntry;
   char *SceneName;
   char *MRsessionID;
+  char *ResourceSetName;
+  char *ResourceTag;
  
  private:
   vtkSlicerXNATPermissionPrompterWidget(const vtkSlicerXNATPermissionPrompterWidget&); // Not implemented
