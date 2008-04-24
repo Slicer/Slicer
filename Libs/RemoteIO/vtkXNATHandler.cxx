@@ -211,7 +211,9 @@ void vtkXNATHandler::StageFileWrite(const char * zipfile,
   cmd += " -p ";
   cmd += password;
   cmd += " -f ";
+  cmd += "\"";
   cmd += zipfile;
+  cmd += "\"";
   
 
   // execute the command
