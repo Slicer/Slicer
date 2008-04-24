@@ -310,7 +310,7 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
     {
     //set new resolution
     this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphRosolution(
-      this->GlyphResolutionScale->GetWidget()->GetValue());
+        (int)(this->GlyphResolutionScale->GetWidget()->GetValue()));
     }
 
   //view of tracts
@@ -350,7 +350,7 @@ void vtkSlicerDWITestingWidget::CreateGlyphs(vtkKWCheckButton *calledGlyph)
     this->Application->GetApplicationGUI()->GetApplicationLogic()->PropagateVolumeSelection();
     //adjust resolution
     this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphRosolution(
-      this->GlyphResolutionScale->GetWidget()->GetValue());
+      (int)(this->GlyphResolutionScale->GetWidget()->GetValue()));
     }
   else
     {
