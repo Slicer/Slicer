@@ -223,7 +223,6 @@ int main( int argc, const char * argv[] )
     //clean up
     if (reader)
       {  
-      reader->SetInput(NULL);
       reader->Delete();
       reader = NULL;
       }
