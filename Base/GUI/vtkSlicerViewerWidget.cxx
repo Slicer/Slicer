@@ -340,7 +340,8 @@ void vtkSlicerViewerWidget::AddAxisActors()
       }
     for (unsigned int i=0; i<this->AxisLabelActors.size(); i++)
       {
-      this->AxisLabelActors[i]->SetCamera(this->MainViewer->GetRenderer()->GetActiveCamera());
+      vtkCamera *camera = this->MainViewer->GetRenderer()->GetActiveCamera();
+      this->AxisLabelActors[i]->SetCamera(camera);
       this->MainViewer->AddViewProp( this->AxisLabelActors[i]);
       }
     }
@@ -594,7 +595,7 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
     this->RequestRender();
     this->UpdateFromMRML();
     //this->MainViewer->RemoveAllViewProps();
-    this->Render();
+    this->RequestRender();
     }
   else 
     {
@@ -698,7 +699,6 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         {
         this->UpdateClipSlicesFormMRML();
         this->UpdateModifiedModel(modelNode);
-        //this->Render();
         this->RequestRender( );
         }
       if (updateMRML)
@@ -924,6 +924,7 @@ void vtkSlicerViewerWidget::UpdateFromMRML()
   this->UpdateAxis();
 
   this->UpdateCameraNode();
+  this->AddAxisActors();
 
   this->UpdateClipSlicesFormMRML();
 

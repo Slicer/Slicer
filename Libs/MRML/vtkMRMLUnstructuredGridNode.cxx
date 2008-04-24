@@ -87,7 +87,8 @@ void vtkMRMLUnstructuredGridNode::SetAndObserveUnstructuredGrid(vtkUnstructuredG
 {
 if (this->UnstructuredGrid != NULL)
     {
-    this->UnstructuredGrid->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->RemoveObservations( 
+      this->UnstructuredGrid, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
   unsigned long mtime1, mtime2;
@@ -97,7 +98,8 @@ if (this->UnstructuredGrid != NULL)
 
   if (this->UnstructuredGrid != NULL)
     {
-    this->UnstructuredGrid->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->AddObservation( 
+      this->UnstructuredGrid, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
   if (mtime1 != mtime2)

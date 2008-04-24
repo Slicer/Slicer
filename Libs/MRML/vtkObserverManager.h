@@ -61,6 +61,14 @@ class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
   // add observers for specified events
   void AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events);
   
+  // accessors for the owner class
+  // - note we do not hold a registered pointer to the owner
+  //   to avoid reference loops
+  // - the owner must be careful to always clean up the 
+  //   ObserverManager in the destructor (this is the standard use case)
+  vtkGetObjectMacro (Owner, vtkObject);
+  void AssignOwner (vtkObject *owner) { this->Owner = owner; };
+
   vtkGetObjectMacro (CallbackCommand, vtkCallbackCommand);
 
 protected:
@@ -69,7 +77,9 @@ protected:
   vtkObserverManager(const vtkObserverManager&);
   void operator=(const vtkObserverManager&);
 
-  //ETX
+  // Description:
+  // The owner of the observer manager (e.g. the vtkMRMLNode)
+  vtkObject *Owner;
 
   // Description:
   // Holder for callback

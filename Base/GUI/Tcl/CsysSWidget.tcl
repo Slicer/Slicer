@@ -73,30 +73,18 @@ itcl::body CsysSWidget::constructor {sliceGUI} {
   
   $this processEvent
 
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
   set events {LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent EnterEvent LeaveEvent} 
   foreach event $events { 
-    lappend _guiObserverTags [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent"]
+   $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
 
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent"]
+  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 }
 
 itcl::body CsysSWidget::destructor {} {
-
-  if { [info command $sliceGUI] != "" } {
-    foreach tag $_guiObserverTags {
-      $sliceGUI RemoveObserver $tag
-    }
-  }
-
-  if { [info command $_sliceNode] != "" } {
-    foreach tag $_nodeObserverTags {
-      $_sliceNode RemoveObserver $tag
-    }
-  }
 
   set renderer [[[$sliceGUI GetSliceViewer] GetRenderWidget] GetRenderer]
   foreach a $_actors {
@@ -344,7 +332,6 @@ itcl::body CsysSWidget::processEvent { {caller ""} {event ""} } {
   set renderWidget [[$sliceGUI GetSliceViewer] GetRenderWidget]
   set interactor [$renderWidget GetRenderWindowInteractor]
   set _currentXYPosition [$interactor GetEventPosition]
-  set event [$sliceGUI GetCurrentGUIEvent] 
 
   switch $event {
     "EnterEvent" {

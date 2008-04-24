@@ -329,9 +329,10 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::SetAndObservePolyData(vtkPolyData *polyData)
 {
-if (this->PolyData != NULL)
+  if (this->PolyData != NULL)
     {
-    this->PolyData->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->RemoveObservations ( 
+      this->PolyData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
   unsigned long mtime1, mtime2;
@@ -341,7 +342,8 @@ if (this->PolyData != NULL)
 
   if (this->PolyData != NULL)
     {
-    this->PolyData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->AddObservation( 
+      this->PolyData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
   if (mtime1 != mtime2)

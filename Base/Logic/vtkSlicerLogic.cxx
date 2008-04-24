@@ -28,6 +28,7 @@ vtkSlicerLogic::vtkSlicerLogic()
   this->InLogicCallbackFlag = 0;
 
   this->MRMLObserverManager = vtkObserverManager::New();
+  this->MRMLObserverManager->AssignOwner( this );
   this->MRMLObserverManager->GetCallbackCommand()->SetClientData( reinterpret_cast<void *> (this) );
   this->MRMLObserverManager->GetCallbackCommand()->SetCallback(vtkSlicerLogic::MRMLCallback);
 
@@ -45,6 +46,7 @@ vtkSlicerLogic::~vtkSlicerLogic()
 
   if (this->MRMLObserverManager)
     {
+    this->MRMLObserverManager->AssignOwner( NULL );
     this->MRMLObserverManager->Delete();
     }
 

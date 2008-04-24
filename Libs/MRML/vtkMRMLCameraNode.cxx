@@ -231,13 +231,13 @@ void vtkMRMLCameraNode::SetAndObserveCamera(vtkCamera *camera)
 {
   if (this->Camera != NULL)
     {
-    this->Camera->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     this->SetCamera(NULL);
     }
   this->SetCamera(camera);
   if ( this->Camera )
     {
-    this->Camera->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->AddObservation (
+      this->Camera, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 }
 

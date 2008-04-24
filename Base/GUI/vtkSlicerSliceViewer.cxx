@@ -32,8 +32,15 @@ vtkCxxRevisionMacro ( vtkSlicerSliceViewer, "$Revision: 1.0 $");
 vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
 
     //---  
-    // widgets comprising the SliceViewer for now.
+    // widgets comprising the SliceViewer
+    //
+    
+    // tell the render widget not to respond to the Render() method
+    // - this class turns on rendering explicitly when it's own
+    //   Render() method is called.  This avoids redundant renders
+    //   when, for example, the annotation is changed.
     this->RenderWidget = vtkKWRenderWidget::New ( );
+    this->RenderWidget->RenderStateOff();
 
     this->ImageMapper = vtkImageMapper::New();
     this->ImageMapper->SetColorWindow(255);
@@ -222,7 +229,9 @@ void vtkSlicerSliceViewer::RequestRender()
 //---------------------------------------------------------------------------
 void vtkSlicerSliceViewer::Render()
 {
+  this->GetRenderWidget()->RenderStateOn();
   this->GetRenderWidget()->Render();
+  this->GetRenderWidget()->RenderStateOff();
   this->SetRenderPending(0);
 }
 

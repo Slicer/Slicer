@@ -14,6 +14,8 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkObserverManager.h"
+#include "vtkEventBroker.h"
+#include "vtkObservation.h"
 
 #include "vtkCallbackCommand.h"
 
@@ -24,6 +26,7 @@ vtkStandardNewMacro(vtkObserverManager);
 vtkObserverManager::vtkObserverManager()
 {
   this->CallbackCommand = vtkCallbackCommand::New();
+  this->Owner = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -147,12 +150,13 @@ void vtkObserverManager::RemoveObjectEvents(vtkObject *nodePtr)
   if (nodePtr)
     {
     std::map< vtkObject*, vtkUnsignedLongArray*>::iterator it =  this->ObserverTags.find(nodePtr); 
+    vtkEventBroker *broker = vtkEventBroker::GetInstance();
     if (it != this->ObserverTags.end()) 
       { 
       vtkUnsignedLongArray* objTags = it->second;
       for (int i=0; i < objTags->GetNumberOfTuples(); i++)
         {
-        (nodePtr)->RemoveObserver(objTags->GetValue(i) );
+        broker->RemoveObservationsForSubjectByTag( nodePtr, objTags->GetValue(i) );
         }
       objTags->Reset();
       }
@@ -176,9 +180,18 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
       this->ObserverTags[nodePtr] = objTags;  
       }
 
+    vtkEventBroker *broker = vtkEventBroker::GetInstance();
+    vtkObject *observer = this->GetOwner();
+    if ( observer == NULL ) 
+      {
+      observer = this;
+      }
     for (int i=0; i<events->GetNumberOfTuples(); i++)
       {
-      unsigned long tag = nodePtr->AddObserver(events->GetValue(i), this->CallbackCommand );
+
+      vtkObservation *observation = broker->AddObservation (nodePtr, events->GetValue(i), observer, this->CallbackCommand );
+      unsigned long tag = observation->GetEventTag();
+
       objTags->InsertNextValue(tag);
       }
     }

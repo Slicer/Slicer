@@ -58,8 +58,9 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
 
   this->ActiveScalarName = NULL;
 
-  // add observer to process visulization pipeline
-  this->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+  // add observer to process visualization pipeline
+  vtkEventBroker::GetInstance()->AddObservation( 
+    this, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
 
 }
 
@@ -358,13 +359,15 @@ void vtkMRMLDisplayNode::SetAndObserveTextureImageData(vtkImageData *ImageData)
 {
   if (this->TextureImageData != NULL)
     {
-    this->TextureImageData->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->RemoveObservations( 
+      this->TextureImageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
   this->SetTextureImageData(ImageData);
   if (this->TextureImageData != NULL)
     {
-    this->TextureImageData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->AddObservation( 
+      this->TextureImageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 }
 

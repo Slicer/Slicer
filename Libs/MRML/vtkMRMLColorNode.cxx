@@ -188,7 +188,7 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
   if (this->Names.size() > 0)
     {
     os << indent << "Color Names:\n";
-    for (unsigned int i = 0; i < this->Names.size(); i++)
+    for (unsigned int i = 0; (int)i < this->Names.size(); i++)
       {
       os << indent << indent << i << " " << this->GetColorName(i) << endl;
       if ( i > 10 )

@@ -248,7 +248,7 @@ itcl::body SWidget::getPixel { image i j k } {
     }
   } else {
     # directly access the scalars to get pixel value
-    # - need to compensate because increments already include the pixel size
+    # - need to compensate because the increments already include the pixel size
     set scalars [[$image GetPointData] GetScalars]
     foreach "w h d" [$image GetDimensions] {}
     set sliceSize [expr $w * $h]

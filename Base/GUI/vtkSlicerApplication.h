@@ -52,6 +52,12 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
     static vtkSlicerApplication* GetInstance();
 
     // Description:
+    // Do one tcl event and enter the event loop, allowing the application
+    // interface to actually run.
+    // - override the virtual method from vtkKWApplication to add event broker
+    virtual void DoOneTclEvent();
+
+    // Description:
     // Get the layout, theme, GUI collection and main application GUI 
     vtkGetObjectMacro ( MainLayout, vtkSlicerGUILayout );
     vtkGetObjectMacro ( SlicerTheme, vtkSlicerTheme );

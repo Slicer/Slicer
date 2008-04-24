@@ -28,6 +28,7 @@
 
 #include "vtkMRML.h"
 #include "vtkObserverManager.h"
+#include "vtkEventBroker.h"
 
 #ifndef vtkSetMRMLObjectMacro
 #define vtkSetMRMLObjectMacro(node,value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};

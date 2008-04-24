@@ -53,7 +53,7 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
 
   // Description:
   // This is a singleton pattern New.  There will only be ONE
-  // reference to a vtkSlicerApplication object per process.  Clients that
+  // reference to a vtkEventBroker object per process.  Clients that
   // call this must call Delete on the object so that the reference
   // counting will work.   The single instance will be unreferenced when
   // the program exits.
@@ -62,6 +62,15 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   // Description:
   // Get the singleton
   static vtkEventBroker* GetInstance();
+
+  // Description:
+  // the static function used by the command callback (used by vtkObservation)
+  // - each observation has a vtkCallbackCommand method which stores 
+  //   the pointer to the vtkObservation class as the clientData
+  // - the vtkObservation has a pointer to vtkEventBroker,
+  //   which knows how to process that event for that Observation
+  static void Callback(vtkObject *caller, 
+      unsigned long eid, void *clientData, void *callData);
 
   //// Adding and Removing Observation objects
 
@@ -84,6 +93,25 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   // Description:
   // Remove observation from the broker and event queue
   void RemoveObservation (vtkObservation *observation);
+
+  // Description:
+  // Remove all observations that match
+  // - various signatures provided as helpers
+  //BTX
+  void RemoveObservations (std::vector< vtkObservation *>observations);
+  //ETX
+  void RemoveObservations (vtkObject *observer);
+  void RemoveObservations (vtkObject *subject, vtkObject *observer);
+  void RemoveObservations (vtkObject *subject, unsigned long event, vtkObject *observer);
+  void RemoveObservations (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify);
+  void RemoveObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
+  //BTX
+  std::vector< vtkObservation *> GetObservations (vtkObject *observer);
+  std::vector< vtkObservation *> GetObservations (vtkObject *subject, vtkObject *observer);
+  std::vector< vtkObservation *> GetObservations (vtkObject *subject, unsigned long event, vtkObject *observer);
+  std::vector< vtkObservation *> GetObservations (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify);
+  std::vector< vtkObservation *> GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
+  //ETX
 
   // Description
   // Accessors for intropsection
@@ -118,6 +146,11 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   vtkGetStringMacro (LogFileName);
 
   // Description:
+  // Open and close the log file
+  void OpenLogFile ();
+  void CloseLogFile ();
+
+  // Description:
   // actually write to the log file (also manages state of the LogFile ivar
   // based on the filename and the EventLogging variable)
   void LogEvent (vtkObservation *observation);
@@ -142,7 +175,16 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   };
   //ETX
   vtkGetMacro(EventMode, int);
-  vtkSetMacro(EventMode, int);
+  void SetEventMode(int eventMode)
+  {
+    if (eventMode != this->EventMode)
+     {
+     this->EventMode = eventMode;
+     this->ProcessEventQueue();
+     this->Modified();
+     }
+  };
+
   void SetEventModeToSynchronous() {this->SetEventMode(vtkEventBroker::Synchronous);};
   void SetEventModeToAsynchronous() {this->SetEventMode(vtkEventBroker::Asynchronous);};
   const char * GetEventModeAsString() {
@@ -162,22 +204,28 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
   // the callData field of the event back)
   // TODO: if the callData is needed, we will need another class/struct to 
   // go into the event queue that saves them
-  void QueueObservation (vtkObservation *observation); 
+  void QueueObservation (vtkObservation *observation, void *callData); 
   int GetNumberOfQueuedObservations (); 
   vtkObservation *GetNthQueuedObservation (int n); 
   vtkObservation *DequeueObservation (); 
-  void InvokeObservation (vtkObservation *observation); 
+  void InvokeObservation (vtkObservation *observation, void *callData); 
   void ProcessEventQueue (); 
 
   // Description:
-  // the static function used by the command callback
-  static void Callback(vtkObject *caller, 
-      unsigned long eid, void *clientData, void *callData);
+  // two modes - 
+  //  - CompressCallDataOn: only keep the most recent call data.  this means that if the
+  //    observation is in the queue, replace the call data with the current value
+  //  - CompressCallDataOff: maintain the list of all call data values, but only
+  //    one unique entry for each
+  //  Compression is ON by default
+  vtkBooleanMacro (CompressCallData, int);
+  vtkGetMacro (CompressCallData, int);
+  vtkSetMacro (CompressCallData, int);
 
   // Description:
   // Sets the method pointer to be used for processing script observations
   //BTX
-  void SetScriptHandler ( const char* (*scriptHandler) (const char* script) )
+  void SetScriptHandler ( void (*scriptHandler) (const char* script) )
     {
     this->ScriptHandler = scriptHandler;
     }
@@ -190,12 +238,6 @@ protected:
   vtkEventBroker(const vtkEventBroker&);
   void operator=(const vtkEventBroker&);
 
-  // Description:
-  // Holder for generic callback used by the broker
-  // - this catches all the registered events for a subject
-  // - this also catched delete events from subjects and observers
-  vtkCallbackCommand *CallbackCommand;
-
   //BTX
   std::vector< vtkObservation * > Observations;
   std::deque< vtkObservation * > EventQueue;
@@ -205,13 +247,14 @@ protected:
   //ETX
   
   //BTX
-  const char* (*ScriptHandler) (const char* script);
+  void (*ScriptHandler) (const char* script);
   //ETX
 
   int EventLogging;
   char *LogFileName;
 
   int EventMode;
+  int CompressCallData;
 
   //BTX
   std::ofstream LogFile;

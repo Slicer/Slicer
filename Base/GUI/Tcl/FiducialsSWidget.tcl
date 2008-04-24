@@ -31,7 +31,6 @@ if { [itcl::find class FiducialsSWidget] == "" } {
     
     # a list of seeds - the callback info includes the mapping to list and index
     variable _seedSWidgets ""
-    variable _sceneObserverTags ""
     variable _fiducialListObserverTagPairs ""
 
     # methods
@@ -55,24 +54,21 @@ itcl::body FiducialsSWidget::constructor {sliceGUI} {
   # - track them so they can be removed in the destructor
   #
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
+  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
 
   set scene [$sliceGUI GetMRMLScene]
-  lappend _sceneObserverTags [$scene AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _sceneObserverTags [$scene AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $scene"]
+  $::slicer3::Broker AddObservation $scene DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $scene AnyEvent "::SWidget::ProtectedCallback $this processEvent $scene"
 
 
-  set _guiObserverTags ""
-
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-
+  $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
   set events {  
     "KeyPressEvent" 
     }
   foreach event $events {
-   lappend _guiObserverTags [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI"]    
+   $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
 
   $this processEvent $scene
@@ -81,31 +77,10 @@ itcl::body FiducialsSWidget::constructor {sliceGUI} {
 
 itcl::body FiducialsSWidget::destructor {} {
 
-  if { [info command $sliceGUI] != "" } {
-    foreach tag $_guiObserverTags {
-      $sliceGUI RemoveObserver $tag
-    }
-  }
-
   foreach pair $_fiducialListObserverTagPairs {
     foreach {fidListNode tag} $pair {}
     if { [info command $fidListNode] != "" } {
       $fidListNode RemoveObserver $tag
-    }
-  }
-
-  if { [info command $_sliceNode] != "" } {
-    foreach tag $_nodeObserverTags {
-      $_sliceNode RemoveObserver $tag
-    }
-  }
-
-  if { [info command $sliceGUI] != "" } {
-    set scene [$sliceGUI GetMRMLScene]
-    if { [info command $scene] != "" } {
-      foreach tag $_sceneObserverTags {
-        $scene RemoveObserver $tag
-      }
     }
   }
 }
@@ -136,7 +111,6 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
   }
 
   if { $caller == $sliceGUI } {
-    set event [$sliceGUI GetCurrentGUIEvent] 
     switch $event {
       "KeyPressEvent" { 
         set key [$_interactor GetKeySym]

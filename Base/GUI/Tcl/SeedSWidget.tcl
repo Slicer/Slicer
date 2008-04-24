@@ -90,13 +90,13 @@ itcl::body SeedSWidget::constructor {sliceGUI} {
 
   $this processEvent
 
-  set _guiObserverTags ""
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
   foreach event {LeftButtonPressEvent LeftButtonReleaseEvent MouseMoveEvent} {
-    lappend _guiObserverTags [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent"]    }
+    $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
+  }
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent"]
+  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
 }
 
@@ -105,18 +105,6 @@ itcl::body SeedSWidget::destructor {} {
   $o(glyphTransformFilter) SetInput ""
   $o(glyphTransformFilter) SetTransform ""
   $o(glyph) Delete
-
-  if { [info command $sliceGUI] != "" } {
-    foreach tag $_guiObserverTags {
-      $sliceGUI RemoveObserver $tag
-    }
-  }
-
-  if { [info command $_sliceNode] != "" } {
-    foreach tag $_nodeObserverTags {
-      $_sliceNode RemoveObserver $tag
-    }
-  }
 
   if { [info command $_renderer] != "" } {
     foreach a $_actors {
@@ -311,8 +299,6 @@ itcl::body SeedSWidget::processEvent { {caller ""} {event ""} } {
     # when the mouse moves quickly)
     $this pick
   }
-
-  set event [$sliceGUI GetCurrentGUIEvent] 
 
   switch $_pickState {
     "outside" {

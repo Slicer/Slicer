@@ -62,42 +62,27 @@ itcl::body GridSWidget::constructor {sliceGUI} {
 
   #
   # set up observers on sliceGUI and on sliceNode
-  # - track them so they can be removed in the destructor
   #
-  set _guiObserverTags ""
-
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
 
   set events {  "MouseMoveEvent" "UserEvent" }
   foreach event $events {
-    lappend _guiObserverTags [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI"]    
+    $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
 
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
+  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
   set node [[$sliceGUI GetLogic] GetSliceCompositeNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "after idle ::SWidget::ProtectedCallback $this processEvent $node"]
+  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
   after idle $this processEvent $node
 }
 
 
 itcl::body GridSWidget::destructor {} {
-
-  if { [info command $sliceGUI] != "" } {
-    foreach tag $_guiObserverTags {
-      $sliceGUI RemoveObserver $tag
-    }
-  }
-
-  if { [info command $_sliceNode] != "" } {
-    foreach tag $_nodeObserverTags {
-      $_sliceNode RemoveObserver $tag
-    }
-  }
 
   if { [info command $_renderer] != "" } {
     foreach a $_actors {
@@ -142,7 +127,6 @@ itcl::body GridSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
-  set event [$sliceGUI GetCurrentGUIEvent] 
   if { $caller == $sliceGUI } {
 
     switch $event {

@@ -32,7 +32,6 @@ if { [itcl::find class SliceSWidget] == "" } {
     variable _actionStartViewportOrigin "0 0"
     variable _actionStartWindowXY "0 0"
     variable _actionStartFOV "250 250 250"
-    variable _kwObserverTags ""
     variable _fiducialsSWidget ""
     variable _gridSWidget ""
     variable _crosshairSWidget ""
@@ -94,11 +93,9 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   #
   # set up observers on sliceGUI and on sliceNode
-  # - track them so they can be removed in the destructor
   #
-  set _guiObserverTags ""
 
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
 
   set events {  "MouseMoveEvent" "RightButtonPressEvent" "RightButtonReleaseEvent"
     "LeftButtonPressEvent" "LeftButtonReleaseEvent" "MiddleButtonPressEvent"
@@ -107,12 +104,12 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
     "TimerEvent" "KeyPressEvent" "KeyReleaseEvent"
     "CharEvent" "ExitEvent" "UserEvent" }
   foreach event $events {
-   lappend _guiObserverTags [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent"]    
+    $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
 
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent"]
+  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 }
 
 
@@ -125,18 +122,6 @@ itcl::body SliceSWidget::destructor {} {
   ::SWidget::ProtectedDelete $_crosshairSWidget
 
   ::SWidget::ProtectedDelete $_regionsSWidget
-
-  if { [info command $sliceGUI] != "" } {
-    foreach tag $_guiObserverTags {
-      $sliceGUI RemoveObserver $tag
-    }
-  }
-
-  if { [info command $_sliceNode] != "" } {
-    foreach tag $_nodeObserverTags {
-      $_sliceNode RemoveObserver $tag
-    }
-  }
 
   $_renderWidget RemoveAllRenderers
 }
@@ -216,7 +201,6 @@ itcl::body SliceSWidget::resizeSliceNode {} {
 #
 itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
-
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
     # self destruct
@@ -238,7 +222,6 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   # - fill the layers info with local info
   # - get the RAS space location of the event
   #
-  set event [$sliceGUI GetCurrentGUIEvent] 
   if { $event != "ConfigureEvent" } {
     set tkwindow [$_renderWidget  GetWidgetName]
     $_interactor UpdateSize [winfo width $tkwindow] [winfo height $tkwindow]
@@ -274,14 +257,14 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
   set renderer0 [$_renderWidget GetRenderer]
 
-  foreach {x y z} [$this dcToXYZ $windowx $windowy] {}
+  foreach {x y z} [$this dcToXYZ $windowx $windowy] {}  
 
   if { $x < 0 } { 
-    puts "$this: clamping negative X coordinate!"
+    puts "$this: clamping negative X coordinate $x! event is $event"
     set x 0
   }
   if { $y < 0 } { 
-    puts "$this: clamping negative Y coordinate!"
+    puts "$this: clamping negative Y coordinate $y! event is $event"
     set y 0
   }
 
@@ -461,7 +444,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
       $this decrementSlice 
     }
-    "ExposeEvent" { }
+    "ExposeEvent" { 
+      [$sliceGUI GetSliceViewer] RequestRender
+    }
     "ConfigureEvent" {
       $this resizeSliceNode
     }
@@ -582,7 +567,7 @@ itcl::body SliceSWidget::updateAnnotation {x y r a s} {
       $_annotation SetText 0 "${labelText}\n${voxelText}"
       $_annotation SetText 1 $spaceText0
       $_annotation SetText 2 $spaceText1
-      $_annotation SetText 3 "$xyText"
+      $_annotation SetText 3 ""
     }
     "2" {
       $_annotation SetText 0 "${labelText}"
@@ -625,3 +610,4 @@ itcl::body SliceSWidget::jumpOtherSlices { r a s } {
   set sliceNode [$logic GetSliceNode]
   $sliceNode JumpAllSlices $r $a $s
 }
+

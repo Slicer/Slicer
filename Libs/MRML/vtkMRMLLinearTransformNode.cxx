@@ -303,13 +303,15 @@ void vtkMRMLLinearTransformNode::SetAndObserveMatrixTransformToParent(vtkMatrix4
 {
   if (this->MatrixTransformToParent != NULL)
     {
-    this->MatrixTransformToParent->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->RemoveObservations( 
+      this->MatrixTransformToParent, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     this->SetMatrixTransformToParent(NULL);
     }
   this->SetMatrixTransformToParent(matrix);
   if ( this->MatrixTransformToParent )
     {
-    this->MatrixTransformToParent->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->AddObservation( 
+      this->MatrixTransformToParent, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 }
 

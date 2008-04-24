@@ -77,6 +77,10 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   vtkGetMacro (ObserverDeleteEventTag, unsigned long);
   vtkSetMacro (ObserverDeleteEventTag, unsigned long);
 
+  //BTX
+  std::deque<void *> *GetCallDataList() {return &(this->CallDataList);};
+  //ETX
+
 protected:
   vtkObservation();
   virtual ~vtkObservation();
@@ -113,6 +117,12 @@ protected:
   // Description:
   // Holder for callback that the Observer wants to have run when Event happens
   vtkCallbackCommand *CallbackCommand;
+
+  // Description:
+  // data passed to the observation by the subject
+  //BTX
+  std::deque<void *> CallDataList;
+  //ETX
 
   // Description:
   // Holder for script as an alternative to the callback command

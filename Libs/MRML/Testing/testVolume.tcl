@@ -71,6 +71,12 @@ puts "[mm0 Print]"
 
 mm0 Delete
 mm1 Delete
+
+# use this to free the singleton and avoid a leak
+set broker [vtkEventBroker New]
+$broker UnRegister sc
+$broker Delete
+
 sc Delete
 
 exit 0

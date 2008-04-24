@@ -17,6 +17,7 @@ vtkSlicerWidget::vtkSlicerWidget ( )
 {
   // Set up callbacks
   this->MRMLObserverManager = vtkObserverManager::New();
+  this->MRMLObserverManager->AssignOwner( this );
   this->MRMLObserverManager->GetCallbackCommand()->SetClientData( reinterpret_cast<void *> (this) );
   this->MRMLObserverManager->GetCallbackCommand()->SetCallback(vtkSlicerWidget::MRMLCallback);
   this->MRMLCallbackCommand = this->MRMLObserverManager->GetCallbackCommand();
@@ -41,6 +42,7 @@ vtkSlicerWidget::~vtkSlicerWidget ( )
 
   if (this->MRMLObserverManager)
     {
+    this->MRMLObserverManager->AssignOwner( NULL );
     this->MRMLObserverManager->Delete();
     }  
 

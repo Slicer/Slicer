@@ -28,7 +28,6 @@ if { [itcl::find class CrosshairSWidget] == "" } {
     #public variable rgba ".5 .9 .5 .6"  ;# crosshair color
     public variable rgba "1.0 0.8 0.1 .6"  ;# crosshair color
 
-    variable _compositeNodeObserverTags
     variable _compositeNode
 
     # methods
@@ -64,48 +63,28 @@ itcl::body CrosshairSWidget::constructor {sliceGUI} {
 
   #
   # set up observers on sliceGUI and on sliceNode
-  # - track them so they can be removed in the destructor
   #
-  set _guiObserverTags ""
 
-  lappend _guiObserverTags [$sliceGUI AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
+  $::slicer3::Broker AddObservation $sliceGUI DeleteEvent "::SWidget::ProtectedDelete $this"
 
   set events {  "MouseMoveEvent" "UserEvent" }
   foreach event $events {
-    lappend _guiObserverTags [$sliceGUI AddObserver $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI"]    
+    $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
 
   set node [[$sliceGUI GetLogic] GetSliceNode]
-  lappend _nodeObserverTags [$node AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _nodeObserverTags [$node AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $node"]
+  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
   set _compositeNode [[$sliceGUI GetLogic] GetSliceCompositeNode]
-  lappend _compositeNodeObserverTags [$_compositeNode AddObserver DeleteEvent "::SWidget::ProtectedDelete $this"]
-  lappend _compositeNodeObserverTags [$_compositeNode AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $_compositeNode"]
+  $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
+  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
 
   $this updateCrosshair
 }
 
 
 itcl::body CrosshairSWidget::destructor {} {
-
-  if { [info command $sliceGUI] != "" } {
-    foreach tag $_guiObserverTags {
-      $sliceGUI RemoveObserver $tag
-    }
-  }
-
-  if { [info command $_sliceNode] != "" } {
-    foreach tag $_nodeObserverTags {
-      $_sliceNode RemoveObserver $tag
-    }
-  }
-
-  if { [info command $_compositeNode] != "" } {
-    foreach tag $_compositeNodeObserverTags {
-      $_compositeNode RemoveObserver $tag
-    }
-  }
 
   if { [info command $_renderer] != "" } {
     foreach a $_actors {
@@ -141,7 +120,6 @@ itcl::body CrosshairSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
-  set event [$sliceGUI GetCurrentGUIEvent] 
   if { $caller == $sliceGUI } {
 
     switch $event {

@@ -798,6 +798,7 @@ int main(int argc, char** argv)
   // clean up
   mrmlScene->Clear(true);
   mrmlScene->Delete();
+  vtkEventBroker::GetInstance()->Delete(); 
   emLogic->SetAndObserveMRMLScene(NULL);
   emLogic->Delete();
   

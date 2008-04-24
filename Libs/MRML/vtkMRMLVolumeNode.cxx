@@ -599,13 +599,15 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *ImageData)
 
   if (this->ImageData != NULL)
     {
-    this->ImageData->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->RemoveObservations(
+      ImageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
   this->SetImageData(ImageData);
   if (ImageData != NULL)
     {
-    ImageData->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+    vtkEventBroker::GetInstance()->AddObservation(
+      ImageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
   if ( this->ImageData != oldImageData )

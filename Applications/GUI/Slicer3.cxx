@@ -290,6 +290,11 @@ int Slicer3_Tcl_Eval ( Tcl_Interp *interp, const char *script )
   return 0;
 }
 
+void Slicer3_BrokerScriptHandler ( const char *script )
+{
+  vtkSlicerApplication::GetInstance()->Script( script );
+}
+
 void printAllInfo(int argc, char **argv)
 {
   int i;
@@ -892,6 +897,14 @@ int Slicer3_main(int argc, char *argv[])
         slicerApp->SetStereoEnabled(0);
       }
     
+    // -- event broker
+    // - script handler to pass callback strings to the tcl interp
+    // - synchronous mode so that redunant events do not get collapsed
+    //   (this is compatible with standard vtk event behavior, but adds
+    //   the ability to trace event execution).
+    vtkEventBroker::GetInstance()->SetScriptHandler( Slicer3_BrokerScriptHandler ); 
+    vtkEventBroker::GetInstance()->SetEventModeToSynchronous(); 
+
 
     // Create MRML scene
     vtkMRMLScene *scene = vtkMRMLScene::New();
@@ -1913,6 +1926,11 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set ApplicationLogic [$::slicer3::ApplicationGUI GetApplicationLogic]");
     slicerApp->Script ("namespace eval slicer3 set MRMLScene [$::slicer3::ApplicationLogic GetMRMLScene]");
 
+    // Get the global event broker (same as returned by vtkEventBroker::GetInstance()
+    // - since the singleton method is not exposed to tcl, access it this way
+    //   and then delete it at the end.
+    slicerApp->Script ("namespace eval slicer3 set Broker [vtkEventBroker New]");
+
 #if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
     if ( appGUI->GetViewerWidget() &&
          appGUI->GetViewerWidget()->GetMainViewer() &&
@@ -2616,6 +2634,12 @@ int Slicer3_main(int argc, char *argv[])
     //--- scene next;
     scene->Clear(1);
     scene->Delete ();
+
+    // -- event broker
+    // - free up the reference from the interpeter
+    // - free the actual singleton instance
+    slicerApp->Script ("$::slicer3::Broker Delete");
+    vtkEventBroker::GetInstance()->Delete(); 
 
     //--- application last
     slicerApp->Delete ();
