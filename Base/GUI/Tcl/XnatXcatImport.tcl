@@ -801,6 +801,8 @@ proc XnatXcatImportGetNodeType { fname } {
         return "Volume"
     } elseif {$ext == ".nii" } {
         return "Volume"
+    } elseif {$ext == ".nrrd" } {
+        return "Volume"
     } elseif { $ext == ".annot" } {
         return "Overlay"
     } elseif { $ext == ".dat" } {
@@ -832,6 +834,8 @@ proc XnatXcatImportFormatCheck { fname } {
     } elseif {$ext == ".mgz" } {
         return 1
     } elseif {$ext == ".nii" } {
+        return 1
+    } elseif {$ext == ".nrrd" } {
         return 1
     } elseif { $ext == ".annot" } {
         return 1
