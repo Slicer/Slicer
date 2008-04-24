@@ -37,7 +37,7 @@ vtkStandardNewMacro(vtkSlicerOpenGLRayCastImageDisplayHelper);
 // Construct a new vtkSlicerOpenGLRayCastImageDisplayHelper with default values
 vtkSlicerOpenGLRayCastImageDisplayHelper::vtkSlicerOpenGLRayCastImageDisplayHelper()
 {
-
+  this->PreviousImage = NULL;
 }
 
 // Destruct a vtkSlicerOpenGLRayCastImageDisplayHelper - clean up any memory used
@@ -422,14 +422,14 @@ void vtkSlicerOpenGLRayCastImageDisplayHelper::RenderTextureInternal( vtkVolume 
             if ( imageScalarType == VTK_UNSIGNED_CHAR )
               {
               memcpy( newTextureChar + 4*loop*newTextureSize[0],
-                      static_cast<unsigned char *>(this->PreviousImage) + 
+                      static_cast<unsigned char *>(image) + 
                       4*(py1+loop)*imageMemorySize[0] + 4*px1,
                       pxSize * sizeof(unsigned char) * 4 );
               }
             else
               {
               memcpy( newTextureShort + 4*loop*newTextureSize[0],
-                      static_cast<unsigned short *>(this->PreviousImage) + 
+                      static_cast<unsigned short *>(image) + 
                       4*(py1+loop)*imageMemorySize[0] + 4*px1,
                       pxSize * sizeof(unsigned short) * 4 );
               }
