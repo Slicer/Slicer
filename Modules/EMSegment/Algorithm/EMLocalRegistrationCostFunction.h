@@ -433,13 +433,13 @@ inline void EMLocalRegistrationCostFunction_DefineROI_ProbDataValues(EMLocalRegi
       else ROI_ProbData->ClassOutside = i;
     }
   }
-  //  cout << "Here " << endl;
+  //  std::cerr << "Here " << endl;
   for (int z = 0; z < Image_Length[2] ; z++) {
-    // cout << z << endl;
+    // std::cerr << z << endl;
     ProbDataFlagZ = 0;
     for (int y = 0; y <  Image_Length[1] ; y++) {
       ProbDataFlagY = 0;
-      // cout << y << endl;
+      // std::cerr << y << endl;
       for (int x = 0; x < Image_Length[0]; x++) {
     index = (self->GetGenerateBackgroundProbability() ? NumChildClasses[0] : 0);
         *MAP = -1;

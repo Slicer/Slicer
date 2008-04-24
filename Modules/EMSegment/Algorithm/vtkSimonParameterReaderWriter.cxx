@@ -440,7 +440,7 @@ template  <class T> void convertParmsToTransformTemplate(double *theta, T *trans
 
   /* Convert theta into a 12 parameter transform */
   if (compute2Dregistration && (paraType == 2)) {
-    cout << "ERROR: convertParmsToTransformTemplate: Did not update parametersetting for 2D resampling!" << endl; 
+    std::cerr << "ERROR: convertParmsToTransformTemplate: Did not update parametersetting for 2D resampling!" << endl; 
   }
 
   /* IF we are only doing a 2D registration - assume we have 6 
@@ -514,7 +514,7 @@ void TurnParameteresIntoRotationTranslationTemplate( double Xtranslate, double Y
   memcpy(RotationMatrix, transform, sizeof(T)* 9);
   
   matvect_multTemplate(RotationMatrix,&transform[9],DeformationVector);
-  cout << "DeformationVector: " << DeformationVector[0] << " " << DeformationVector[1] << " " << DeformationVector[2] << endl;
+  std::cerr << "DeformationVector: " << DeformationVector[0] << " " << DeformationVector[1] << " " << DeformationVector[2] << endl;
 }
 
 void vtkSimonParameterReaderWriter::convertParmsToTransform(double *theta, float *transform, int numparms, int compute2Dregistration) {
@@ -636,7 +636,7 @@ int readParametersFromFile(char *fname, double *parameters)
 
 int writeParametersToFile(char *fname, double *parameters, int numparms)
 {
-  cout << "Write results to " << fname << endl; 
+  std::cerr << "Write results to " << fname << endl; 
   int i = 0;
   FILE *fp = fopen(fname,"w");
   if (fp == NULL) {
@@ -660,7 +660,7 @@ int writeParametersToFile(char *fname, double *parameters, int numparms)
 
 int writeParametersToGuimondFile(char *fname, double transform[12])
 {
-  cout << "Write results to " << fname << endl; 
+  std::cerr << "Write results to " << fname << endl; 
   FILE *fp = fopen(fname,"w");
   if (fp == NULL) {
     return -1; /* Failure */

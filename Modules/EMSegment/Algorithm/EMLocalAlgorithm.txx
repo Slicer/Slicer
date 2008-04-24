@@ -243,7 +243,7 @@ VTK_THREAD_RETURN_TYPE EMLocalAlgorithm_E_Step_Threader_Function(void *arg) {
   switch (SelfPointer->DataType) {
     vtkTemplateMacro(((EMLocalAlgorithm<VTK_TT>*) self)->E_Step_Threader_FunctionStart(CurrentThread));
     default :
-      cout << "Warning: EMLocalAlgorithm_E_Step_Threader_Function: unknown data type " << SelfPointer->DataType << endl;
+      std::cerr << "Warning: EMLocalAlgorithm_E_Step_Threader_Function: unknown data type " << SelfPointer->DataType << endl;
       exit(0);
 
   }
@@ -464,9 +464,9 @@ template <class T> void EMLocalAlgorithm<T>::UpdatePCASpecificParameters(int ite
     if ((this->RegistrationType ==  EMSEGMENT_REGISTRATION_GLOBAL_ONLY) || (this->RegistrationType == EMSEGMENT_REGISTRATION_SEQUENTIAL)) {
       EMLocalRegistrationCostFunction_DefineROI_ProbDataValues(this->RegistrationParameters, this->ProbDataPtrStart);
     }
-    cout << "Min " << this->Registration_ROI_ProbData.MinCoord[0] << " " << this->Registration_ROI_ProbData.MinCoord[1] << " "<< this->Registration_ROI_ProbData.MinCoord[2] 
+    std::cerr << "Min " << this->Registration_ROI_ProbData.MinCoord[0] << " " << this->Registration_ROI_ProbData.MinCoord[1] << " "<< this->Registration_ROI_ProbData.MinCoord[2] 
      << endl;
-    cout << "Max " << this->Registration_ROI_ProbData.MaxCoord[0] << " " << this->Registration_ROI_ProbData.MaxCoord[1] << " "<< this->Registration_ROI_ProbData.MaxCoord[2] 
+    std::cerr << "Max " << this->Registration_ROI_ProbData.MaxCoord[0] << " " << this->Registration_ROI_ProbData.MaxCoord[1] << " "<< this->Registration_ROI_ProbData.MaxCoord[2] 
      << endl;
   }
 }
@@ -486,10 +486,10 @@ template  <class T> void EMLocalAlgorithm<T>::E_Step_ExecuteMultiThread() {
   if (1) 
     this->E_Step_Threader->SingleMethodExecute();
   else {
-    cout << "===================================" << endl;
-    cout << "Debug Threading" << endl;
+    std::cerr << "===================================" << endl;
+    std::cerr << "Debug Threading" << endl;
     for (int i = 0; i < this->E_Step_Threader_Number ; i++ ) {
-      cout << "Execute Thread " << i << endl;
+      std::cerr << "Execute Thread " << i << endl;
       this->E_Step_Threader_FunctionStart(i);
     } 
   }
@@ -518,7 +518,7 @@ template  <class T> void EMLocalAlgorithm<T>::E_Step_ExecuteMultiThread() {
      }
 
    }
-   if (IncompleteModelVoxelCount) cout <<"Warning: E-Step counted "<< IncompleteModelVoxelCount <<" voxels not properly captured by the Model !" <<endl;
+   if (IncompleteModelVoxelCount) std::cerr <<"Warning: E-Step counted "<< IncompleteModelVoxelCount <<" voxels not properly captured by the Model !" <<endl;
 }
 
 //----------------------------------------------------------------------------
@@ -601,19 +601,19 @@ template  <class T> int EMLocalAlgorithm<T>::CalcWeightedCovariance(double** Wei
 //----------------------------------------------------------------------------
 
 template <class T> void EMLocalAlgorithm<T>::InfoOnPrintFlags() { 
-  cout << "Print labelmaps:                         " << (this->actSupCl->GetPrintLabelMap() ? "On" : "Off") << endl;
+  std::cerr << "Print labelmaps:                         " << (this->actSupCl->GetPrintLabelMap() ? "On" : "Off") << endl;
   int WeightFlag     = 0;
   for (int c = 0 ; c < NumClasses; c++) {
     if (((ClassListType[c] == CLASS)      && (((vtkImageEMLocalClass*) this->ClassList[c])->GetPrintWeights())) ||
     ((ClassListType[c] == SUPERCLASS) && (((vtkImageEMLocalSuperClass*) this->ClassList[c])->GetPrintWeights()))) WeightFlag = 1;
   }
   
-  cout << "Print Weights (Type: Floats):            " << (WeightFlag ? "On" : "Off") << endl;
+  std::cerr << "Print Weights (Type: Floats):            " << (WeightFlag ? "On" : "Off") << endl;
  
-  cout << "Print Shape Parameters:                  " << (this->PCAFile ? "On" : "Off") << endl;
-  cout << "Print Quality Parameters:                " << (this->QualityFile ? "On" : "Off") << endl;
-  cout << "Print Registration Parameters:           " << (this->RegistrationParameterFile ? "On" : "Off") << endl;
-  cout << "Print Simularity Measure (Type: Double): " << (this->actSupCl->GetPrintRegistrationSimularityMeasure() ? "On" : "Off")  << endl;
+  std::cerr << "Print Shape Parameters:                  " << (this->PCAFile ? "On" : "Off") << endl;
+  std::cerr << "Print Quality Parameters:                " << (this->QualityFile ? "On" : "Off") << endl;
+  std::cerr << "Print Registration Parameters:           " << (this->RegistrationParameterFile ? "On" : "Off") << endl;
+  std::cerr << "Print Simularity Measure (Type: Double): " << (this->actSupCl->GetPrintRegistrationSimularityMeasure() ? "On" : "Off")  << endl;
 }
 
 template  <class T> void EMLocalAlgorithm<T>::Expectation_Step(int iter) {
@@ -656,7 +656,7 @@ template  <class T> void EMLocalAlgorithm<T>::Expectation_Step(int iter) {
   // If we have boundary dinfed on change than check now 
   if (this->StopEMType || this->PrintEMLabelMapConvergence || this->PrintEMWeightsConvergence) {
     // This is the convergence between different EM steps 
-    if (iter > 1) cout << "-------- EM Convergence ------- " << endl;
+    if (iter > 1) std::cerr << "-------- EM Convergence ------- " << endl;
     
     this->DifferenceMeassure(StopEMType, PrintEMLabelMapConvergence, PrintEMWeightsConvergence, iter, CurrentEMLabelMap, this->w_mPtr, 
                  LabelMapEMDifferenceAbsolut, LabelMapEMDifferencePercent, CurrentEMWeights, WeightsEMDifferenceAbsolut, 
@@ -666,9 +666,9 @@ template  <class T> void EMLocalAlgorithm<T>::Expectation_Step(int iter) {
   // Print Out Intermediate Results
   // ----------------------------------------------------------- 
   if  (this->PrintIntermediateFlag || ((this->PrintFrequency == -1) && (this->EMStopFlag || (iter == NumIter )))) {
-    cout << "PrintIntermediateResultsToFile " << endl;
+    std::cerr << "PrintIntermediateResultsToFile " << endl;
     this->Print_E_StepResultsToFile(iter); 
-    cout << "End of printing " << endl;
+    std::cerr << "End of printing " << endl;
   }
  }
 
@@ -872,10 +872,10 @@ template <class T> void EMLocalAlgorithm<T>::E_Step_Weight_Calculation_Threaded(
       for (; x < BoundaryMaxX ; x++) {
 #if (EMVERBOSE) 
           if (y > 26 && x > 80) { 
-        cout << "============================================================" << endl;
-        cout << "Z:" << z << "Y:" << y << "X:" << x << "  cY_M: "; 
+        std::cerr << "============================================================" << endl;
+        std::cerr << "Z:" << z << "Y:" << y << "X:" << x << "  cY_M: "; 
         for (int l= 0 ; l <  NumInputImages; l ++) {
-           cout << cY_M[l] << " " ;
+           std::cerr << cY_M[l] << " " ;
         }        
         fprintf(stdout, "\nw_m               class SubCl ClaIdx  PrbMinus  PWeight   PrbData  TisProb  IntensProb\n"); 
       }
@@ -1121,7 +1121,7 @@ template <class T> void EMLocalAlgorithm<T>::E_Step_Weight_Calculation_Threaded(
     delete[] w_m_output;
    
 #if (EMVERBOSE)
-  cout << "End of E-Step  " << endl;    
+  std::cerr << "End of E-Step  " << endl;    
 #endif   
 }
 
@@ -1373,7 +1373,7 @@ int EMLocalAlgorithm<T>::EstimateRegistrationParameters(int iter, float &Registr
           return 0 ;      
         }
       }
-    } else { cout << "Jump over registration "<< endl; }
+    } else { std::cerr << "Jump over registration "<< endl; }
   } else {
     // ---------------------------------------------------------------------------------------------------------------
     // SEQUENTIAL REGISTRATION
@@ -1381,7 +1381,7 @@ int EMLocalAlgorithm<T>::EstimateRegistrationParameters(int iter, float &Registr
     // ---------------------------------------------------------------------------------------------------------------
     // Global Registration
     int OrigNumberOfParaSets  =  this->RegistrationParameters->GetNumberOfParameterSets();
-    cout << "Kilian: Don't the next to lines go hand in hand" << endl;
+    std::cerr << "Kilian: Don't the next to lines go hand in hand" << endl;
     this->RegistrationParameters->SetRegistrationType(EMSEGMENT_REGISTRATION_GLOBAL_ONLY); 
     this->RegistrationParameters->SetNumberOfParameterSets(1);
     this->RegistrationInterface(RegistrationCost);
@@ -1392,7 +1392,7 @@ int EMLocalAlgorithm<T>::EstimateRegistrationParameters(int iter, float &Registr
     }
   
     // Structure specific Registration
-    cout << "Kilian: Don't the next to lines go hand in hand" << endl;
+    std::cerr << "Kilian: Don't the next to lines go hand in hand" << endl;
     this->RegistrationParameters->SetRegistrationType(EMSEGMENT_REGISTRATION_CLASS_ONLY);
     this->RegistrationParameters->SetNumberOfParameterSets(OrigNumberOfParaSets - 1); 
   
@@ -1406,7 +1406,7 @@ int EMLocalAlgorithm<T>::EstimateRegistrationParameters(int iter, float &Registr
     this->RegistrationRotation --;
     this->RegistrationScale --;
   
-    cout << "Kilian: Don't the next to lines go hand in hand" << endl;
+    std::cerr << "Kilian: Don't the next to lines go hand in hand" << endl;
     this->RegistrationParameters->SetRegistrationType(EMSEGMENT_REGISTRATION_SEQUENTIAL);
     this->RegistrationParameters->SetNumberOfParameterSets(OrigNumberOfParaSets);
   
@@ -1475,10 +1475,10 @@ float EMLocalAlgorithm<T>::EstimateShapeParameters(int iter) {
 
 template  <class T> void EMLocalAlgorithm<T>::RunAlgorithm(EMTriVolume& iv_m, EMVolume *r_m, int &SegmentLevelSucessfullFlag) {
 
-  cout << endl << "========== vtkImageEMLocalAlgorithm: Start Initialize Variables "<< endl;;
-  //cout << "-------------------------------------------------" << endl;
-  //cout << "         DEVELOPER VERSION" << endl;
-  //cout << "-------------------------------------------------" << endl;
+  std::cerr << endl << "========== vtkImageEMLocalAlgorithm: Start Initialize Variables "<< endl;;
+  //std::cerr << "-------------------------------------------------" << endl;
+  //std::cerr << "         DEVELOPER VERSION" << endl;
+  //std::cerr << "-------------------------------------------------" << endl;
 
   SegmentLevelSucessfullFlag = 1;
   int iter = 0;
@@ -1520,20 +1520,20 @@ template  <class T> void EMLocalAlgorithm<T>::RunAlgorithm(EMTriVolume& iv_m, EM
     // -----------------------------------------------------------
     // E-Step
     // -----------------------------------------------------------
-    if (this->StopEMType) cout << "--------------------------------------" << endl;  
-    cout << endl << "vtkImageEMLocalAlgorithm: "<< iter << ". E-Step " << endl;
+    if (this->StopEMType) std::cerr << "--------------------------------------" << endl;  
+    std::cerr << endl << "vtkImageEMLocalAlgorithm: "<< iter << ". E-Step " << endl;
     this->Expectation_Step(iter);
     // -----------------------------------------------------------
     // M-step Part 
     // -----------------------------------------------------------
     if ((iter < NumIter) &&  !this->EMStopFlag) {
   
-      cout << "vtkImageEMLocalAlgorithm: M-Step " << endl; 
+      std::cerr << "vtkImageEMLocalAlgorithm: M-Step " << endl; 
       // Image Inhomogeneity
       if ((StopBiasCalculation < 0)  ||  (iter <= StopBiasCalculation)) {
         this->EstimateImageInhomegeneity(skern, iv_m, r_m);
         this->IntensityCorrection(PrintIntermediateFlag, iter, iv_m, r_m, cY_MPtr);
-      } else cout << "Bias calculation disabled " << endl; 
+      } else std::cerr << "Bias calculation disabled " << endl; 
      
       // Registration
       if (RegistrationType > EMSEGMENT_REGISTRATION_APPLY) {
@@ -1573,7 +1573,7 @@ template  <class T> void EMLocalAlgorithm<T>::RunAlgorithm(EMTriVolume& iv_m, EM
   }
 
   delete[] skern;
-  cout << "EMLocalAlgorithm::RunAlgorithm: Finished " << endl;
+  std::cerr << "EMLocalAlgorithm::RunAlgorithm: Finished " << endl;
 }
 
 

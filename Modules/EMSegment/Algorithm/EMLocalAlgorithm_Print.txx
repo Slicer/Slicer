@@ -60,13 +60,13 @@ void* EMLocalAlgorithm_GetPointerToVtkImageData(vtkImageData *Image, int DataTyp
 
 template <class T>
 void EMLocalAlgorithm_PrintVector(T* parameters, int Min,  int Max) {
-  for (int i = Min; i <= Max ; i++)  cout << parameters[i] << " ";
-  cout << endl;
+  for (int i = Min; i <= Max ; i++)  std::cerr << parameters[i] << " ";
+  std::cerr << endl;
 }
 
 void EMLocalAlgorithm_PrintVectorPrecise(float *parameters, int Min,  int Max) {
   for (int i = Min; i <= Max ; i++)  fprintf(stdout,"%12f ",parameters[i]);
-  cout << endl;
+  std::cerr << endl;
 }
 
 template <class T>
@@ -158,7 +158,7 @@ static void EMLocalAlgorithm_TransfereDataToOutputExtension(EMLocalAlgorithm<T> 
 
 //----------------------------------------------------------------------------
 int EMLocalAlgorithm_GEImageWriter(vtkImageData *Volume, char *FileName,int PrintFlag) {
-  if (PrintFlag) cout << "Write to file " <<  FileName << endl;
+  if (PrintFlag) std::cerr << "Write to file " <<  FileName << endl;
 
 #ifdef _WIN32 
   // Double or Float is not correctly printed out in windwos 
@@ -391,7 +391,7 @@ template <class T> void EMLocalAlgorithm<T>::Print_E_StepResultsToFile(int iter)
 
     // -------------------------------------------------
     // Measure Quality Meatric
-    cout << "===================================================" << endl;
+    std::cerr << "===================================================" << endl;
     int index = 0;
     for ( int c = 0 ; c < this->NumClasses; c++) {
       if (this->QualityFlagList[c]) {
@@ -409,7 +409,7 @@ template <class T> void EMLocalAlgorithm<T>::Print_E_StepResultsToFile(int iter)
          }
         // Fill in other quality standards if needed
       }
-      cout << endl;
+      std::cerr << endl;
 
     }
     // Fill the other spaces 
@@ -418,7 +418,7 @@ template <class T> void EMLocalAlgorithm<T>::Print_E_StepResultsToFile(int iter)
     index += this->NumChildClasses[c];
       }
     }
-    cout << "===================================================" << endl;
+    std::cerr << "===================================================" << endl;
     // -------------------------------------------------
     // Print To file and clean up
     for (int i = 0; i < EMSEGMENT_NUM_OF_QUALITY_MEASURE ; i++) if (this->QualityFile[i]) {fprintf(this->QualityFile[i],"\n"); fflush(this->QualityFile[i]);}
@@ -524,10 +524,10 @@ void EMLocalAlgorithm<T>::PrintRegistrationData(int SimularityFlag, double **Sim
 
   // if (RegistrationParameters->MAPAlgorithm == EMSEGMENT_REGISTRATION_SIMPLEX) FinalParameters --;
   if (this->RegistrationType < EMSEGMENT_REGISTRATION_SEQUENTIAL) {
-    // cout << "Debug " << endl;
+    // std::cerr << "Debug " << endl;
     // FinalParameters[0] = 1;
     cost = this->RegistrationParameters->ComputeCostFunction(FinalParameters);
-    if (!iter) cout << "Initial Cost:       " << cost << endl;   
+    if (!iter) std::cerr << "Initial Cost:       " << cost << endl;   
   } else {
     this->RegistrationParameters->SetRegistrationType(EMSEGMENT_REGISTRATION_GLOBAL_ONLY);
     int OrigNumberOfParaSets = this->RegistrationParameters->GetNumberOfParameterSets();
@@ -541,7 +541,7 @@ void EMLocalAlgorithm<T>::PrintRegistrationData(int SimularityFlag, double **Sim
       EMLocalAlgorithm_PrintDataToOutputExtension(this,RegistrationParameters->GetSpatialCostFunction(),VTK_DOUBLE,FileName,0,0,0);
     } 
     if (!iter) {
-      cout << "Initial Cost:       " << cost << endl;
+      std::cerr << "Initial Cost:       " << cost << endl;
       // this is not the cleanest way but the fastest right now 
       // if (RegistrationParameters->MAPAlgorithm == EMSEGMENT_REGISTRATION_SIMPLEX) FinalParameters ++;
       delete[] FinalParameters;
@@ -633,10 +633,10 @@ void EMLocalAlgorithm<T>::Print_M_StepRegistrationToFile(int iter, float Registr
 template <class T>
 float EMLocalAlgorithm<T>::PrintShapeData(float **PCAShapeParameters, int iter , int PrintSimulatingFlag) {
   if (this->ShapeParameters->PCAShapeModelType == EMSEGMENT_PCASHAPE_APPLY) return 0.0;
-  // cout << "Total " << this->PCATotalNumOfShapeParameters << endl;
+  // std::cerr << "Total " << this->PCATotalNumOfShapeParameters << endl;
   double *parameters = new double[this->PCATotalNumOfShapeParameters];
   int ShapeIndex = 0;
-  // cout << "Start Printing Shape Data " << endl;
+  // std::cerr << "Start Printing Shape Data " << endl;
   for (int i = 0 ; i < this->NumTotalTypeCLASS; i++) {
     for (int k = 0 ; k < this->PCANumberOfEigenModes[i]; k++) {
       parameters[ShapeIndex] = double(PCAShapeParameters[i][k]);
@@ -647,9 +647,9 @@ float EMLocalAlgorithm<T>::PrintShapeData(float **PCAShapeParameters, int iter ,
 
   if (PrintSimulatingFlag) this->ShapeParameters->SpatialCostFunctionOn();
 
-  //cout << "Super Debug " << endl;
+  //std::cerr << "Super Debug " << endl;
   //parameters[0] = 2.0; 
-  // cout << "Start Threading" << endl;
+  // std::cerr << "Start Threading" << endl;
   float cost = this->ShapeParameters->ComputeCostFunction(parameters);
 
   if (PrintSimulatingFlag) {
@@ -676,22 +676,22 @@ void EMLocalAlgorithm_PrintPCAParameters(EMLocalShapeCostFunction *ShapeParamete
   int *NumChildClasses          = ShapeParameters->GetNumChildClasses();
   float **PCAInverseEigenValues = ShapeParameters->PCAInverseEigenValues;
 
-  cout << "---------- PCA -----------" << endl;   
-  cout << "Gaussian Peanlity: " << ShapeParameters->GetGaussianPenalty() << endl;
-  cout << "Image Peanlity:    " << ShapeParameters->GetImagePenalty() << endl;
-  cout << "Total Cost:        " << PCACost << endl;
+  std::cerr << "---------- PCA -----------" << endl;   
+  std::cerr << "Gaussian Peanlity: " << ShapeParameters->GetGaussianPenalty() << endl;
+  std::cerr << "Image Peanlity:    " << ShapeParameters->GetImagePenalty() << endl;
+  std::cerr << "Total Cost:        " << PCACost << endl;
   for (int c = 0; c < NumClasses; c++) {
     if (PCAFile[c]) {
       for (int i = 0 ; i <  NumChildClasses[c]; i++) {
-    cout << "Parameters "<< c << " with Label" << LabelList[index] << " (B Value):  ";
+    std::cerr << "Parameters "<< c << " with Label" << LabelList[index] << " (B Value):  ";
     for (int k = 0 ; k < ShapeParameters->GetPCANumberOfEigenModes(index); k++) {
-      cout << PCAShapeParameters[index][k] << " (" << PCAShapeParameters[index][k] * sqrt(PCAInverseEigenValues[index][k])<< ") | ";
+      std::cerr << PCAShapeParameters[index][k] << " (" << PCAShapeParameters[index][k] * sqrt(PCAInverseEigenValues[index][k])<< ") | ";
       fprintf(PCAFile[c],"%12f ",PCAShapeParameters[index][k] *sqrt(PCAInverseEigenValues[index][k]));
     }
     fprintf(PCAFile[c],"\n");
     fprintf(PCAFile[c],"Cost: %f \n",PCACost);
 
-    cout << endl;
+    std::cerr << endl;
     index ++;
       }
     } else {
@@ -716,9 +716,9 @@ void EMLocalAlgorithm_PrintPCAParameters(EMLocalShapeCostFunction *ShapeParamete
   // index = 0 ;
   // for ( int c = 0 ; c < NumClasses; c++) {
   //   if (PCAFile[c]) {
-  //     cout << "PCAShapeParameters (B Value) " << c << " :  ";
-  //     for (int l = 0; l < PCANumberOfEigenModes[index]; l++) cout <<  PCAValues[index][l] * sqrt(PCAEigenValues[index][l]) << " ("<<  PCAValues[index][l] << ") |";
-  //     cout << endl;     
+  //     std::cerr << "PCAShapeParameters (B Value) " << c << " :  ";
+  //     for (int l = 0; l < PCANumberOfEigenModes[index]; l++) std::cerr <<  PCAValues[index][l] * sqrt(PCAEigenValues[index][l]) << " ("<<  PCAValues[index][l] << ") |";
+  //     std::cerr << endl;     
   //   }
   //   index += NumChildClasses[c];
   // }
@@ -729,7 +729,7 @@ void EMLocalAlgorithm_PrintPCAParameters(EMLocalShapeCostFunction *ShapeParamete
   // }
   // delete[] PCAValues;
 
-  cout << "---------------------" << endl;    
+  std::cerr << "---------------------" << endl;    
 }
 
 template <class T> void EMLocalAlgorithm<T>::Print_M_StepShapeToFile(int iter, float PCACost) {

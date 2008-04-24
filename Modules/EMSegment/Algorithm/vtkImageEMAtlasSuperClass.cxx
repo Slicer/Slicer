@@ -342,7 +342,7 @@ void vtkImageEMAtlasSuperClass::PrintSelf(ostream& os,vtkIndent indent) {
 // the datas data types.
 void vtkImageEMAtlasSuperClass::ExecuteData(vtkDataObject *)
 {
-  // cout << "start vtkImageEMAtlasSuperClass::ExecuteData" << endl; 
+  // std::cerr << "start vtkImageEMAtlasSuperClass::ExecuteData" << endl; 
    vtkDebugMacro(<<"ExecuteData()"); 
    // ==================================================
    // Check existence of subclasses and update them 

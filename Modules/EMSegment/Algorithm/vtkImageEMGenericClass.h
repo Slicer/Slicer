@@ -93,31 +93,31 @@ private:
 
 #ifdef _WIN32
 #define vtkEMAddErrorMessage(x) {\
-   vtkEMAddMessage(cout, (&this->ErrorMessage), "- Error: " << x) ; \
+   vtkEMAddMessage(std::cerr, (&this->ErrorMessage), "- Error: " << x) ; \
  }
 
 #else  
 #define vtkEMAddErrorMessage(x) {\
-    vtkEMAddMessage(cerr, (&this->ErrorMessage), "- Error: " << x) ; \
+    vtkEMAddMessage(std::cerr, (&this->ErrorMessage), "- Error: " << x) ; \
   }
 #endif
 
 #ifdef _WIN32
 #define vtkEMAddErrorMessageSelf(x) {\
-    vtkEMAddMessage(cout,self->GetErrorMessagePtr(), "- Error: " << x); \
+    vtkEMAddMessage(std::cerr,self->GetErrorMessagePtr(), "- Error: " << x); \
   }
 #else  
 #define vtkEMAddErrorMessageSelf(x) {\
-    vtkEMAddMessage(cerr,self->GetErrorMessagePtr(), "- Error: " << x); \
+    vtkEMAddMessage(std::cerr,self->GetErrorMessagePtr(), "- Error: " << x); \
   }
 #endif 
 
 #define vtkEMAddWarningMessage(x) {\
-   vtkEMAddMessage(cout, (&this->WarningMessage), "- Warning: " << x) ; \
+   vtkEMAddMessage(std::cerr, (&this->WarningMessage), "- Warning: " << x) ; \
  }
 
 #define vtkEMAddWarningMessageSelf(x) {\
-   vtkEMAddMessage(cout,self->GetWarningMessagePtr(), "- Warning: " << x); \
+   vtkEMAddMessage(std::cerr,self->GetWarningMessagePtr(), "- Warning: " << x); \
 }
 //ETX
 

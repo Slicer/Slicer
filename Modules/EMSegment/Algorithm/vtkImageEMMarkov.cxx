@@ -272,7 +272,7 @@ void vtkImageEMMarkov::SetLabel(int index, int Label){
 void vtkImageEMMarkov::TrainMarkovMatrix(int ***Image, int Ydim, int Xdim, float *outPtr) {
   // Nothing to do
   if (this->NumClasses == 0 ) return;
-  cout << "vtkImageEMMarkov::TrainMarkovMatrix" << endl; 
+  std::cerr << "vtkImageEMMarkov::TrainMarkovMatrix" << endl; 
   int z,x,y,i,j, search;
   int NumSlices = this->EndSlice - this->StartSlice +1;
   int missfits = 0;
@@ -310,7 +310,7 @@ void vtkImageEMMarkov::TrainMarkovMatrix(int ***Image, int Ydim, int Xdim, float
   }
 
   if (flag) {
-    cout << "vtkImageEMMarkov::TrainMarkovMatrix::Error: Cannot compute CIM Matrix, because classes does not have unique labels ! "<< endl;
+    std::cerr << "vtkImageEMMarkov::TrainMarkovMatrix::Error: Cannot compute CIM Matrix, because classes does not have unique labels ! "<< endl;
     return; 
   }
   
@@ -379,7 +379,7 @@ void vtkImageEMMarkov::TrainMarkovMatrix(int ***Image, int Ydim, int Xdim, float
   }
   // Rows have to be normalized to 1 !
   // Normalize and round up MarkovMatrix and stationary prios
-  if (missfits) {cout << "vtkImageEMMarkov::TrainMarkovMatrix: Number of missifts: " <<  missfits << endl;}
+  if (missfits) {std::cerr << "vtkImageEMMarkov::TrainMarkovMatrix: Number of missifts: " <<  missfits << endl;}
   NormProb = Ydim*Xdim*NumSlices - missfits;
   index = 0;
   for (y=0; y < this->NumClasses; y++) {
@@ -407,7 +407,7 @@ void vtkImageEMMarkov::TrainMarkovMatrix(int ***Image, int Ydim, int Xdim, float
       index += outDimXY;
     }
   }
-   cout << "End vtkImageEMMarkov::TrainMarkovMatrix" << endl; 
+   std::cerr << "End vtkImageEMMarkov::TrainMarkovMatrix" << endl; 
 }
 
 //----------------------------------------

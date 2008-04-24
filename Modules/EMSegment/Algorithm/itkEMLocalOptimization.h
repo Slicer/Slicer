@@ -122,7 +122,7 @@ private:
 /* Run optimzation */
 // Seperate from itk function bc it is only a wrapper around 
 void  itkEMLocalOptimization_Registration_Start(EMLocalRegistrationCostFunction* RegCostFunction, double* Parameters, float &Cost) {
-  cout << "==================== Start Registration =========================== " << endl;
+  std::cerr << "==================== Start Registration =========================== " << endl;
 
   RegCostFunction->InitializeCostFunction();
   int NumOfFunctionEvaluations;
@@ -157,10 +157,10 @@ void  itkEMLocalOptimization_Registration_Start(EMLocalRegistrationCostFunction*
      }
      catch( itk::ExceptionObject & e )
      {
-       std::cout << "Exception thrown ! " << std::endl;
-       std::cout << "An error ocurred during Optimization" << std::endl;
-       std::cout << "Location    = " << e.GetLocation()    << std::endl;
-       std::cout << "Description = " << e.GetDescription() << std::endl;
+       std::cerr << "Exception thrown ! " << std::endl;
+       std::cerr << "An error ocurred during Optimization" << std::endl;
+       std::cerr << "Location    = " << e.GetLocation()    << std::endl;
+       std::cerr << "Description = " << e.GetDescription() << std::endl;
        return;
      }
 
@@ -170,7 +170,7 @@ void  itkEMLocalOptimization_Registration_Start(EMLocalRegistrationCostFunction*
      memcpy(Parameters,finalPosition.data_block(), sizeof(double) *  NumPara);
   }
   RegCostFunction->FinalizeCostFunction(Parameters, NumOfFunctionEvaluations);
-  cout << "==================== End Registration =========================== " << endl;
+  std::cerr << "==================== End Registration =========================== " << endl;
 }
 
 
@@ -179,8 +179,8 @@ void  itkEMLocalOptimization_Shape_Start(EMLocalShapeCostFunction* ShapeCostFunc
                        int Boundary_LengthX, int Boundary_LengthY, float** w_m, unsigned char* PCA_ROI, void  **initProbDataPtr, 
                        float** initPCAMeanShapePtr, int* initPCAMeanShapeIncY, int *initPCAMeanShapeIncZ, float*** initPCAEigenVectorsPtr, 
                        int **initPCAEigenVectorsIncY,  int** initPCAEigenVectorsIncZ, float& Cost) {
-  cout << "==================== Start Shape Deformation  =========================== " << endl;
-  cout << "Implementation: ITK" << endl;
+  std::cerr << "==================== Start Shape Deformation  =========================== " << endl;
+  std::cerr << "Implementation: ITK" << endl;
 
   ShapeCostFunction->InitializeCostFunction(PCAMaxX, PCAMinX, PCAMaxY, PCAMinY, PCAMaxZ, PCAMinZ, BoundaryMinX, BoundaryMinY, BoundaryMinZ,
                       Boundary_LengthX, Boundary_LengthY, w_m, PCA_ROI, initProbDataPtr, initPCAMeanShapePtr, initPCAMeanShapeIncY, 
@@ -219,15 +219,15 @@ void  itkEMLocalOptimization_Shape_Start(EMLocalShapeCostFunction* ShapeCostFunc
     }
   catch( itk::ExceptionObject & e )
     {
-      std::cout << "Exception thrown ! " << std::endl;
-      std::cout << "An error ocurred during Optimization" << std::endl;
-      std::cout << "Location    = " << e.GetLocation()    << std::endl;
-      std::cout << "Description = " << e.GetDescription() << std::endl;
+      std::cerr << "Exception thrown ! " << std::endl;
+      std::cerr << "An error ocurred during Optimization" << std::endl;
+      std::cerr << "Location    = " << e.GetLocation()    << std::endl;
+      std::cerr << "Description = " << e.GetDescription() << std::endl;
       return;
     }
 
   Cost = float(optimizer->GetCurrentCost()); 
-  cout << "Number of Evaluations :" << optimizer->GetCurrentIteration() << endl;
+  std::cerr << "Number of Evaluations :" << optimizer->GetCurrentIteration() << endl;
 
   
   const double* finalPosition_db = optimizer->GetCurrentPosition().data_block();
@@ -237,7 +237,7 @@ void  itkEMLocalOptimization_Shape_Start(EMLocalShapeCostFunction* ShapeCostFunc
 
   delete[] PCAParameters;
 
-  cout << "==================== End Shape Deformation =========================== " << endl;
+  std::cerr << "==================== End Shape Deformation =========================== " << endl;
 }
 
 

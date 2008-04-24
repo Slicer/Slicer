@@ -335,22 +335,22 @@ void vtkImageEMGeneral::PrintMatrix(double **mat, int yMax,int xMax) {
   int i;
   for (int y = 0; y < yMax; y++) {
       for (i = 0; i < xMax; i++)
-    cout << mat[y][i] << " ";
-      cout << endl;
+    std::cerr << mat[y][i] << " ";
+      std::cerr << endl;
   }
-  cout << endl;
+  std::cerr << endl;
 }
 
 void vtkImageEMGeneral::PrintMatrix3D(double ***mat, int zMax,int yMax,int xMax) {
   int y,x,z;
   for (z = 0; z < zMax; z++) {
-    cout << "mat3D[" << z+1 << "] = ["; 
+    std::cerr << "mat3D[" << z+1 << "] = ["; 
     for (y = 0; y < yMax; y++) {
       for (x = 0; x < xMax; x++)
-    cout << mat[z][y][x] << " ";
-      cout << ";" << endl;
+    std::cerr << mat[z][y][x] << " ";
+      std::cerr << ";" << endl;
     }
-    cout << " ]; " << endl;
+    std::cerr << " ]; " << endl;
   }
 }
 
@@ -427,7 +427,7 @@ void vtkImageEMGeneral::SquareMatrix(double **Input,double **Output,int dim) {
 //       and i ranges from [0,SequenceMax]   
 // -------------------------------------------------------------------------------------------------------------------
 int vtkImageEMGeneral::CalculateLogMeanandLogCovariance(double **Mu, double ***CovMatrix, double **LogMu, double ***LogCov,int NumberOfInputImages, int  NumberOfClasses, int SequenceMax) { 
-  cout <<"vtkImageEMGeneral::CalculateLogMeanandLogCovariance start " << endl;
+  std::cerr <<"vtkImageEMGeneral::CalculateLogMeanandLogCovariance start " << endl;
   int i,j,k,l,m;
   int flag = 1;
   int VleftDim = (NumberOfInputImages < 3 ? 1 : NumberOfInputImages -2);
@@ -513,7 +513,7 @@ int vtkImageEMGeneral::CalculateLogMeanandLogCovariance(double **Mu, double ***C
   delete[] LogTestSequence;
   for(i = 0; i < NumberOfInputImages; i++) delete[] inv_cov[i];
   delete[] inv_cov;
-  cout <<"vtkImageEMGeneral::CalculateLogMeanandLogCovariance end" << endl;
+  std::cerr <<"vtkImageEMGeneral::CalculateLogMeanandLogCovariance end" << endl;
   return flag; // Everything went OK => flag == 1
 }    
 
@@ -564,7 +564,7 @@ FILE* vtkImageEMGeneral::OpenTextFile(const char* FileDir, const char FileName[]
   OpenFile= fopen(OpenFileName, "w");
 #endif
 
-  if (OpenFile && FileSucessMessage) cout << FileSucessMessage  << OpenFileName << endl;
+  if (OpenFile && FileSucessMessage) std::cerr << FileSucessMessage  << OpenFileName << endl;
   return OpenFile;
 }
 
@@ -580,7 +580,7 @@ void* vtkImageEMGeneral::GetPointerToVtkImageData(vtkImageData *Image, int DataT
 //----------------------------------------------------------------------------
 //Could not put it into another file like vtkImageGeneral - then it would seg falt - do not ask me why 
 void vtkImageEMGeneral::GEImageReader(vtkImageReader *VOLUME, const char FileName[], int Zmin, int Zmax, int ScalarType) {
-  cout << "Load file " <<  FileName << endl;
+  std::cerr << "Load file " <<  FileName << endl;
   VOLUME->ReleaseDataFlagOff();
   VOLUME->SetDataScalarType(ScalarType);
   VOLUME->SetDataSpacing(0.9375,0.9375,1.5);
@@ -594,7 +594,7 @@ void vtkImageEMGeneral::GEImageReader(vtkImageReader *VOLUME, const char FileNam
 
 //----------------------------------------------------------------------------
 int vtkImageEMGeneral::GEImageWriter(vtkImageData *Volume, char *FileName,int PrintFlag) {
-  if (PrintFlag) cout << "Write to file " <<  FileName << endl;
+  if (PrintFlag) std::cerr << "Write to file " <<  FileName << endl;
 
 #ifdef _WIN32 
   // Double or Float is not correctly printed out in windwos 
@@ -709,17 +709,17 @@ void vtkImageEMGeneral::TestMatrixFunctions(int MatrixDim,int iter) {
       for (k=0;k < NumberOfInputImages; k++)  CovMatrix[i][j][k] = ((j==k) ? ((i+1) + k):0.2);
     }
   }
-  cout << "Calculate LogMean and Coveriance" << endl;
-  cout << "Mu = [" ;
+  std::cerr << "Calculate LogMean and Coveriance" << endl;
+  std::cerr << "Mu = [" ;
   this->PrintMatrix(Mu,NumberOfClasses,NumberOfInputImages);
-  cout << "Covariance" ;
+  std::cerr << "Covariance" ;
   this->PrintMatrix3D(CovMatrix,NumberOfClasses,NumberOfInputImages,NumberOfInputImages);
   this->CalculateLogMeanandLogCovariance(Mu,CovMatrix, LogMu,LogCov,NumberOfInputImages, NumberOfClasses, SequenceMax); 
-  cout << "LogMu = [" ;
+  std::cerr << "LogMu = [" ;
   this->PrintMatrix(LogMu,NumberOfClasses,NumberOfInputImages);
-  cout << "LogCovariance" ;
+  std::cerr << "LogCovariance" ;
   this->PrintMatrix3D(LogCov,NumberOfClasses,NumberOfInputImages,NumberOfInputImages);
-  cout <<" Type in a number :";
+  std::cerr <<" Type in a number :";
   cin >> a;
 
   for (i=0;i < NumberOfClasses; i++) { 
@@ -746,9 +746,9 @@ void vtkImageEMGeneral::TestMatrixFunctions(int MatrixDim,int iter) {
     sprintf(name,"TestDet%d.m",k+1);
     vtkFileOps write;
     write.WriteMatrixMatlabFile(name,"mat",mat,MatrixDim,MatrixDim);
-    cout << "Result of " << k << endl;
-    cout <<" Determinant: " << vtkImageEMGeneral::determinant(mat,MatrixDim) << endl;
-    cout <<" Square: " << endl;
+    std::cerr << "Result of " << k << endl;
+    std::cerr <<" Determinant: " << vtkImageEMGeneral::determinant(mat,MatrixDim) << endl;
+    std::cerr <<" Square: " << endl;
     vtkImageEMGeneral::SquareMatrix(mat,out,MatrixDim);
     this->PrintMatrix(out,MatrixDim,MatrixDim);
 
@@ -820,11 +820,11 @@ float vtkImageEMGeneral::CalcSimularityMeasure (vtkImageData *Image1, vtkImageDa
   if (DivMeasure > 0) result = 2.0*NumMeasure / DivMeasure;
   else result = -1.0;
   if (PrintRes) {
-    cout << "Label:                 " << val << endl; 
-    cout << "Total Union Sum:       " << DivMeasure - NumMeasure << endl; 
-    cout << "Total Interaction Sum: " << NumMeasure << endl;
-    //  cout << "Jakobien sim measure:  " << ((DivMeasure - NumMeasure) > 0.0 ? NumMeasure / (DivMeasure - NumMeasure) : -1) << endl;
-    cout << "Dice sim measure:      " << result << endl;
+    std::cerr << "Label:                 " << val << endl; 
+    std::cerr << "Total Union Sum:       " << DivMeasure - NumMeasure << endl; 
+    std::cerr << "Total Interaction Sum: " << NumMeasure << endl;
+    //  std::cerr << "Jakobien sim measure:  " << ((DivMeasure - NumMeasure) > 0.0 ? NumMeasure / (DivMeasure - NumMeasure) : -1) << endl;
+    std::cerr << "Dice sim measure:      " << result << endl;
   }
   ROI1->Delete();
   ROI2->Delete();
@@ -856,11 +856,11 @@ float vtkImageEMGeneral::CalcSimularityMeasure (vtkImageData *Image1, vtkImageDa
   if (DivMeasure > 0) result = 2.0*NumMeasure / DivMeasure;
   else result = -1.0;
   if (PrintRes) {
-    cout << "Label:                 " << val << endl; 
-    cout << "Total Union Sum:       " << DivMeasure - NumMeasure << endl; 
-    cout << "Total Interaction Sum: " << NumMeasure << endl;
-    //  cout << "Jakobien sim measure:  " << ((DivMeasure - NumMeasure) > 0.0 ? NumMeasure / (DivMeasure - NumMeasure) : -1) << endl;
-    cout << "Dice sim measure:      " << result << endl;
+    std::cerr << "Label:                 " << val << endl; 
+    std::cerr << "Total Union Sum:       " << DivMeasure - NumMeasure << endl; 
+    std::cerr << "Total Interaction Sum: " << NumMeasure << endl;
+    //  std::cerr << "Jakobien sim measure:  " << ((DivMeasure - NumMeasure) > 0.0 ? NumMeasure / (DivMeasure - NumMeasure) : -1) << endl;
+    std::cerr << "Dice sim measure:      " << result << endl;
   }
   Trash1->Delete();
   Trash2->Delete();

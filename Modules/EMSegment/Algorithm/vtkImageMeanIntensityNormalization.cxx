@@ -141,8 +141,8 @@ int vtkImageMeanIntensityNormalization::DetermineFilterMin(const int* HIST_PTR, 
     int SmoothWidth = HIST_Length / SmoothWidthPara;
     int HIST_SMOOTH_Length;
     if (this->PrintInfo) {
-      cout << "  " << iter << ". Histogram Smoothing" << endl;
-      cout << "     Width:         " << SmoothWidth  << endl;
+      std::cerr << "  " << iter << ". Histogram Smoothing" << endl;
+      std::cerr << "     Width:         " << SmoothWidth  << endl;
       iter++;
     }
 
@@ -238,11 +238,11 @@ void vtkImageMeanIntensityNormalization::MeanMRI(vtkImageData *Input, vtkImageDa
   HIST_PTR = this->InitializeHistogram(HIST,Input, ImageIntensityMin, ImageIntensityMax);
 
   if (this->PrintInfo) {
-    cout << "vtkImageMeanIntensityNormalization::MeanMRI " << endl;
-    cout << "Histogram Parameters:" << endl;
-    cout << "  Image Intensity Min: " <<  ImageIntensityMin << " Max: " << ImageIntensityMax << endl;
-    cout << "  Initial Histogram Smoothig Width: " << this->InitialHistogramSmoothingWidth << endl;
-    cout << "  Maximum Histogram Smoothig Width: " << this->MaxHistogramSmoothingWidth << endl;
+    std::cerr << "vtkImageMeanIntensityNormalization::MeanMRI " << endl;
+    std::cerr << "Histogram Parameters:" << endl;
+    std::cerr << "  Image Intensity Min: " <<  ImageIntensityMin << " Max: " << ImageIntensityMax << endl;
+    std::cerr << "  Initial Histogram Smoothig Width: " << this->InitialHistogramSmoothingWidth << endl;
+    std::cerr << "  Maximum Histogram Smoothig Width: " << this->MaxHistogramSmoothingWidth << endl;
   }
 
   // Go through Histogram and detect intensity value which combines NumVoxels * this->RelativeMaxVoxelNum
@@ -281,12 +281,12 @@ void vtkImageMeanIntensityNormalization::MeanMRI(vtkImageData *Input, vtkImageDa
   Output->DeepCopy(CORRECTED->GetOutput());
 
   if (this->PrintInfo) {
-    cout << "Bounds for Expected Value Calculation:" << endl;
-    cout << "  Lower Bound: " << FilterHistogramMin + ImageIntensityMin << endl;
-    cout << "  Upper Bound: " << FilterHistogramMax + ImageIntensityMin << endl;
-    cout << "Results of Filter:" << endl;
-    cout << "  Expect Image Intensity: " << ImageIntensityMean << endl;
-    cout << "  Normalization Factor:   " << ImageIntensityCorrectionRatio << endl;
+    std::cerr << "Bounds for Expected Value Calculation:" << endl;
+    std::cerr << "  Lower Bound: " << FilterHistogramMin + ImageIntensityMin << endl;
+    std::cerr << "  Upper Bound: " << FilterHistogramMax + ImageIntensityMin << endl;
+    std::cerr << "Results of Filter:" << endl;
+    std::cerr << "  Expect Image Intensity: " << ImageIntensityMean << endl;
+    std::cerr << "  Normalization Factor:   " << ImageIntensityCorrectionRatio << endl;
   }
 
   // -------------------------------------

@@ -197,7 +197,7 @@ static void vtkImageEMAtlasSegmenterReadInputChannel(vtkImageEMAtlasSegmenter *s
 
   in1Ptr += jump;
 
-  // cout << "jump " << jump << "BoundaryDataIncY " << BoundaryDataIncY << " BoundaryDataIncZ " << BoundaryDataIncZ << endl;
+  // std::cerr << "jump " << jump << "BoundaryDataIncY " << BoundaryDataIncY << " BoundaryDataIncZ " << BoundaryDataIncZ << endl;
 
   for (idxZ = 0; idxZ < ImageMaxZ ; idxZ++) { 
     for (idxY = 0; idxY <  ImageMaxY; idxY++) {
@@ -677,7 +677,7 @@ static void vtkImageEMAtlasSegmenter_MeanFieldApproximation3DPrivate(int id,
           ClassIndex ++;
         }
       }
-      // cout << "Result " << i << " " << *wxp << " " <<  *wxn  << " " << *wyn << " " << *wyp << " " << *wzn << " " << *wzp << endl;      
+      // std::cerr << "Result " << i << " " << *wxp << " " <<  *wxn  << " " << *wyn << " " << *wyp << " " << *wzn << " " << *wzp << endl;      
 
       wxn++;wxp++;wyn++;wyp++;wzn++;wzp++;
     }
@@ -691,13 +691,13 @@ static void vtkImageEMAtlasSegmenter_MeanFieldApproximation3DPrivate(int id,
       // w have to be normalized !
       normRow = 0;
       index = 0;
-      // if ((j == 13891) || (j == 13946)) cout << "duda0 " << j << " " << ((*MapVector&EMSEGMENT_WEST) ? 1 : 0) << " " << ((*MapVector&EMSEGMENT_EAST) ? 1 : 0) << " - " << ((*MapVector&EMSEGMENT_FIRST) ? 1 : 0)<< " " << ((*MapVector&EMSEGMENT_LAST) ? 1 : 0) << " " << ((*MapVector&EMSEGMENT_SOUTH) ? 1 : 0) << " " << ((*MapVector&EMSEGMENT_NORTH) ? 1 : 0) << endl;
+      // if ((j == 13891) || (j == 13946)) std::cerr << "duda0 " << j << " " << ((*MapVector&EMSEGMENT_WEST) ? 1 : 0) << " " << ((*MapVector&EMSEGMENT_EAST) ? 1 : 0) << " - " << ((*MapVector&EMSEGMENT_FIRST) ? 1 : 0)<< " " << ((*MapVector&EMSEGMENT_LAST) ? 1 : 0) << " " << ((*MapVector&EMSEGMENT_SOUTH) ? 1 : 0) << " " << ((*MapVector&EMSEGMENT_NORTH) ? 1 : 0) << endl;
 
       for (i=0; i<NumClasses; i++) {
         // Goes a little bit further in the branches - like it better
         // it should be exp(*ProbData)[i] from Tina's thesis I say now bc values with zero probability will be still displayed
         // Kilian May 2002: I believe the form underneath is correct - Tina's PhD thesis displays it exactly like underneath 
-    // if (((j == 13891) || (j == 13946)) && i == 0) cout << "duda1 " << i << " " << j << " " << *wxp  << " " <<  *wxn  <<  " " << *wyp  << " " <<  *wyn  <<  " " << *wzp  << " " <<  *wzn  <<  endl;
+    // if (((j == 13891) || (j == 13946)) && i == 0) std::cerr << "duda1 " << i << " " << j << " " << *wxp  << " " <<  *wxn  <<  " " << *wyp  << " " <<  *wyn  <<  " " << *wzp  << " " <<  *wzn  <<  endl;
     // Kilian Mar 06: The following line is not correct - compare with vtkEMLocalSegment. I have not changed this yet bc I would need to alter the template file, which I am hesitent to do.  
 
     NeighborhoodEnergy = (1-Alpha+Alpha*exp((*wxp++) + (*wxn++) + (*wyp++) + (*wyn++) + (*wzp++) + (*wzn++)));
@@ -706,9 +706,9 @@ static void vtkImageEMAtlasSegmenter_MeanFieldApproximation3DPrivate(int id,
            SpatialTissueDistribution    = ProbDataMinusWeight[i] + ProbDataWeight[i]*(ProbDataPtr[index] == NULL ? 0.0 : double(*ProbDataPtr[index]));
            w_m_output[index][j] = (float) NeighborhoodEnergy *  SpatialTissueDistribution *  ConditionalTissueProbability;
           // if (((j == 13891) || (j == 13946)) && i == 0) {
-        // cout << "duda2 " << index << " " << j << " " << w_m_output[index][j]  << " " <<  mp   << " " << TissueProbability[i] << " " << ProbDataMinusWeight[i] << " " <<ProbDataWeight[i]  << " " << *ProbDataPtr[index]  << " ";
-          //  for (int blub2=0; blub2 < 2; blub2++) cout <<  cY_M[blub2] << " "; 
-      //  cout << endl;
+        // std::cerr << "duda2 " << index << " " << j << " " << w_m_output[index][j]  << " " <<  mp   << " " << TissueProbability[i] << " " << ProbDataMinusWeight[i] << " " <<ProbDataWeight[i]  << " " << *ProbDataPtr[index]  << " ";
+          //  for (int blub2=0; blub2 < 2; blub2++) std::cerr <<  cY_M[blub2] << " "; 
+      //  std::cerr << endl;
       // }
       normRow += w_m_output[index][j];
       index ++;
@@ -828,7 +828,7 @@ void vtkImageEMAtlasSegmenter::PrintIntermediateResultsToFile(int iter, float **
       vtkEMAddErrorMessage( "Could not create the follwoing directory :" << this->PrintDir << "/weights");
       return;
     } 
-    cout << "Weights will be printed in directory "<< this->PrintDir << "/weights" << endl;
+    std::cerr << "Weights will be printed in directory "<< this->PrintDir << "/weights" << endl;
    
     int index =0;
     float *outputWeight = NULL;
@@ -904,7 +904,7 @@ void vtkImageEMAtlasSegmenter::PrintIntermediateResultsToFile(int iter, float **
   if (actSupCl->GetPrintLabelMap()) {
     // Define File
     char FileName[250];
-    cout << "Labelmap will be printed in directory "<< this->PrintDir << "/labelmaps" << endl;
+    std::cerr << "Labelmap will be printed in directory "<< this->PrintDir << "/labelmaps" << endl;
     sprintf(FileName,"%s/labelmaps/EMLabelMapL%sI%d",this->PrintDir,LevelName,iter); 
     if (vtkFileOps::makeDirectoryIfNeeded(FileName) == -1) {
       vtkEMAddErrorMessage( "Could not create the directory :" << this->PrintDir << "/LabelMaps");
@@ -944,7 +944,7 @@ void vtkImageEMAtlasSegmenter::PrintIntermediateResultsToFile(int iter, float **
 
 
     // Write into the file
-    cout << "===================================================" << endl;
+    std::cerr << "===================================================" << endl;
     int index = 0;
     for ( int c = 0 ; c < NumClasses; c++) {
       if (ClassListType[c] == CLASS) {
@@ -965,7 +965,7 @@ void vtkImageEMAtlasSegmenter::PrintIntermediateResultsToFile(int iter, float **
       }
         // Fill in other quality standards if needed
       }
-      cout << endl;
+      std::cerr << endl;
 
       }
     // Fill the other spaces 
@@ -974,7 +974,7 @@ void vtkImageEMAtlasSegmenter::PrintIntermediateResultsToFile(int iter, float **
          index += NumChildClasses[c];
       }
     }
-    cout << "===================================================" << endl;
+    std::cerr << "===================================================" << endl;
     for (int i = 0; i < EMSEGMENT_NUM_OF_QUALITY_MEASURE ; i++) if (QualityFile[i]) fprintf(QualityFile[i],"\n");
     OriginalExtension_Data->Delete();
   }
@@ -1005,16 +1005,16 @@ void vtkImageEMAtlasSegmenter::DetermineLabelMap(short* LabelMap, int NumTotalTy
       ClassIndex = 0;
       for (l=0; l< NumClasses; l++) {
     temp = 0;
-        // cout << " | ";
+        // std::cerr << " | ";
     for (k=0; k < NumChildClasses[l]; k++) {
       temp += *w_m[ClassIndex];
-          // cout << *w_m[ClassIndex] << " " ;
+          // std::cerr << *w_m[ClassIndex] << " " ;
           w_m[ClassIndex]++;
           ClassIndex ++;
     }
-        // cout << endl;
+        // std::cerr << endl;
     if (!(temp == temp)) {
-      cout << "Error in index "<< idx << " Produced a nan " << endl;
+      std::cerr << "Error in index "<< idx << " Produced a nan " << endl;
       exit(1);
     }
           if ( temp > MaxProbValue) {MaxProbValue = temp; MaxProbIndex = l;}
@@ -1065,7 +1065,7 @@ int vtkImageEMAtlasSegmenter::MF_Approx_Workpile(float **w_m_input,unsigned char
 
   numthreads = 1;
   // numthreads = vtkMultiThreader::GetGlobalDefaultNumberOfThreads(); 
-  // cout << "Debug: Kilian: Number of Threads: " <<   numthreads << endl;
+  // std::cerr << "Debug: Kilian: Number of Threads: " <<   numthreads << endl;
 
   jobsize = this->ImageProd/numthreads;
   for (i = 0; i < numthreads; i++) {
@@ -1106,7 +1106,7 @@ int vtkImageEMAtlasSegmenter::MF_Approx_Workpile(float **w_m_input,unsigned char
           case VTK_CHAR:           job[i].ProbDataPtr[j] =  (void *) ((char *) ProbDataPtr[j] + StartPointer); break;
           case VTK_UNSIGNED_CHAR:  job[i].ProbDataPtr[j] =  (void *) ((unsigned char *) ProbDataPtr[j] + StartPointer); break;
     default:
-      cout << "Execute: Unknown ScalarType" << endl;
+      std::cerr << "Execute: Unknown ScalarType" << endl;
       return 1;
     }
       } else {
@@ -1143,7 +1143,7 @@ int vtkImageEMAtlasSegmenter::MF_Approx_Workpile(float **w_m_input,unsigned char
 template  <class Tin>
 static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDataPtrStart, float** InputVector, short *ROI, EMTriVolume& iv_m, 
                      EMVolume *r_m, float **w_m, char *LevelName,  int &SegmentLevelSucessfullFlag) {
-  cout << "vtkImageEMAtlasAlgorithm: Initialize Variables for " << LevelName <<  endl;
+  std::cerr << "vtkImageEMAtlasAlgorithm: Initialize Variables for " << LevelName <<  endl;
 
   SegmentLevelSucessfullFlag = 1;
   // ------------------------------------------------------
@@ -1253,30 +1253,30 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
  
       if (EMAtlasSegment_CalcWeightedCovariance(self,InverseWeightedLogCov[index], InvSqrtDetWeightedLogCov[index], InputChannelWeights, LogCovariance[index], VirtualNumInputImages[i],NumInputImages) == 0) {
     vtkEMAddErrorMessageSelf("vtkImageEMAtlasAlgorithm: weighted covariance has a non positive determinante  for class with index "<< index << ". See shell for more specific output!");
-    cout << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl  << "LogCovariance :";  
+    std::cerr << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl  << "LogCovariance :";  
     for (x =0 ; x <NumInputImages; x ++ ) {
-      for (y =0 ; y <NumInputImages; y ++ ) cout << LogCovariance[index][x][y] << " ";
-      cout << " | ";
+      for (y =0 ; y <NumInputImages; y ++ ) std::cerr << LogCovariance[index][x][y] << " ";
+      std::cerr << " | ";
     }
-    cout << endl << "Weighted LogCovariance : "; 
+    std::cerr << endl << "Weighted LogCovariance : "; 
     for (x =0 ; x <NumInputImages; x ++ ) {
-      for (y =0 ; y <NumInputImages; y ++ ) cout << LogCovariance[index][x][y]*InputChannelWeights[x]*InputChannelWeights[y] << " ";
-      cout << " | ";
+      for (y =0 ; y <NumInputImages; y ++ ) std::cerr << LogCovariance[index][x][y]*InputChannelWeights[x]*InputChannelWeights[y] << " ";
+      std::cerr << " | ";
     }
          
-        cout << endl;  
+        std::cerr << endl;  
  
     SegmentLevelSucessfullFlag = 0;
       }
 
 #if (EMVERBOSE)
-      cout << "=========== "<< index << " =============" << endl;
-      cout << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl  << "InverseWeightedLogCov :";  ;
+      std::cerr << "=========== "<< index << " =============" << endl;
+      std::cerr << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl  << "InverseWeightedLogCov :";  ;
       for (x =0 ; x <NumInputImages; x ++ ) {
     for (y =0 ; y <NumInputImages; y ++ ) fprintf(stdout, "%8.5f ", InverseWeightedLogCov[index][x][y]);
-    cout << " | ";
+    std::cerr << " | ";
       }
-      cout << endl;
+      std::cerr << endl;
 #endif
       index ++;
 
@@ -1292,28 +1292,28 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
       for (k = 0;k < NumChildClasses[i]; k++) {
     if (EMAtlasSegment_CalcWeightedCovariance(self,InverseWeightedLogCov[index], InvSqrtDetWeightedLogCov[index], InputChannelWeights, LogCovariance[index], VirtualNumInputImages[i],NumInputImages) == 0) {
           vtkEMAddErrorMessageSelf("vtkImageEMAtlasAlgorithm: weighted covariance has a non positive determinante  for class with index "<< index << ". See shell for more specific output!");
-          cout << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl  << "LogCovariance :";  
+          std::cerr << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl  << "LogCovariance :";  
           for (x =0 ; x <NumInputImages; x ++ ) {
-         for (y =0 ; y <NumInputImages; y ++ ) cout << LogCovariance[index][x][y] << " ";
-          cout << " | ";
+         for (y =0 ; y <NumInputImages; y ++ ) std::cerr << LogCovariance[index][x][y] << " ";
+          std::cerr << " | ";
            }
-      cout << endl << "Weighted LogCovariance : "; 
+      std::cerr << endl << "Weighted LogCovariance : "; 
           for (x =0 ; x <NumInputImages; x ++ ) {
-         for (y =0 ; y <NumInputImages; y ++ ) cout << LogCovariance[index][x][y]*InputChannelWeights[x]*InputChannelWeights[y] << " ";
-          cout << " | ";
+         for (y =0 ; y <NumInputImages; y ++ ) std::cerr << LogCovariance[index][x][y]*InputChannelWeights[x]*InputChannelWeights[y] << " ";
+          std::cerr << " | ";
            }
            
-          cout << endl;  
+          std::cerr << endl;  
       SegmentLevelSucessfullFlag = 0;
     }
 #if (EMVERBOSE)
-    cout << "=========== "<< index << " =============" << endl;
-    cout << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl << "InverseWeightedLogCov: ";  
+    std::cerr << "=========== "<< index << " =============" << endl;
+    std::cerr << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl << "InverseWeightedLogCov: ";  
     for (x =0 ; x <NumInputImages; x ++ ) {
       for (y =0 ; y <NumInputImages; y ++ ) fprintf(stdout, "%8.5f ", InverseWeightedLogCov[index][x][y]);
-      cout << " | ";
+      std::cerr << " | ";
     }
-    cout << endl;
+    std::cerr << endl;
 #endif
     index ++; 
       }
@@ -1369,7 +1369,7 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
         vtkEMAddErrorMessageSelf("Could not open file " << FileName);
         return;
       }
-      cout << "Quality Parameters will be saved in : " << FileName << endl;
+      std::cerr << "Quality Parameters will be saved in : " << FileName << endl;
       for (k= 0 ; k < NumClasses ; k++) 
         if ((ClassListType[k]== CLASS) && (((vtkImageEMAtlasClass*) ClassList[k])->GetPrintQuality() == PrintQuality) )
           fprintf(QualityFile[PrintQuality-1],"     %2d    ", LabelList[k]);
@@ -1476,7 +1476,7 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
       // -----------------------------------------------------------
       // Intensity Correction 
       // -----------------------------------------------------------
-      // cout << "Iter " << iter << endl;
+      // std::cerr << "Iter " << iter << endl;
       // estimate the smoothed image inhomoginities (bias + resiuduum)
       // transform r (smoothed weighted residuals) by iv (smoother inv covariances)
       // b_m = r_m./iv_m ;
@@ -1484,7 +1484,7 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
       // Kilian - Jan 06 : changed this line bc we now calculate iv_m anr r_m even if ROI = NULL and NumIter = 1  
       // Now the exception is called if iter == 0 and InitialBias_FilePrefix is defined or ROI is not defined 
       if (((ROI) && (!InitialBias_FilePrefix)) || (iter > 1)) {
-          // cout << "-------------------- Bias Field Correction -------------------" << endl; 
+          // std::cerr << "-------------------- Bias Field Correction -------------------" << endl; 
           // Kilian - Jan 06 : changed this line bc Bias is also defined in areas outside the ROI 
           char** BiasFileName       = NULL;
           double* BiasSlice         = NULL;
@@ -1501,7 +1501,7 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
           vtkEMAddErrorMessageSelf( "Could not create the directory :" << self->GetPrintDir() << "/Bias");
           PrintBiasFlag = 0;
         } else {
-          cout << "vtkImageEMAtlasAlgorithm: Print Bias (Type: Double) to " << self->GetPrintDir() << "/Bias" << endl;
+          std::cerr << "vtkImageEMAtlasAlgorithm: Print Bias (Type: Double) to " << self->GetPrintDir() << "/Bias" << endl;
 
           BiasSlicePtr = BiasSlice = new double[ImageProd*NumInputImages];
           memset(BiasSlice, 0, sizeof(double)*ImageProd*NumInputImages);
@@ -1609,20 +1609,20 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
         } else {
       // Option 1. : Bias Field is initialized with outside source
       if (InitialBias_FilePrefix) {
-        cout << "Initializing Bias field with volumes defined by " << InitialBias_FilePrefix << endl;
+        std::cerr << "Initializing Bias field with volumes defined by " << InitialBias_FilePrefix << endl;
         // Make sure that the bias field are written with little Endian
             // The initial volumes have to defined as following <>Ch%d.%03d , 
         // e.g. InitialBias_FilePrefix = "Bias_1.0" => For first input channel Volume has to exists with the name Bias_1.0Ch0.*
         char *PrefixName = new char[int(strlen(InitialBias_FilePrefix)) + 5];
     int ChangedExtent[6] = {self->GetExtent()[0],self->GetExtent()[1],self->GetExtent()[2],self->GetExtent()[3], self->GetExtent()[4] + 1 ,self->GetExtent()[5] + 1 };
-    cout <<"Loading initial Image Inhomogoneity setting from slices " << ChangedExtent[4] << " to " << ChangedExtent[5] << endl;
+    std::cerr <<"Loading initial Image Inhomogoneity setting from slices " << ChangedExtent[4] << " to " << ChangedExtent[5] << endl;
         for (j = 0 ; j < NumInputImages; j ++ ) {
            vtkImageReader  *InitialBias = vtkImageReader::New(); 
            sprintf(PrefixName,"%sCh%d",InitialBias_FilePrefix,j);
 
            self->GEImageReader(InitialBias,PrefixName,ChangedExtent[4],ChangedExtent[5],VTK_DOUBLE);
            double* InitialBiasPtr = (double*) self->GetPointerToVtkImageData(InitialBias->GetOutput(),VTK_DOUBLE,ChangedExtent);
-       cout << "Initializing Image inhomogeneity for channel " << j << endl;
+       std::cerr << "Initializing Image inhomogeneity for channel " << j << endl;
            cY_M += j;
            for (i=0; i< ImageProd; i++) {
              *cY_M = fabs((*InputVector)[j] - *InitialBiasPtr);
@@ -1652,7 +1652,7 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
         iv_m.SetValue(0.0); 
         for (m=0; m<NumInputImages; m++) r_m[m].SetValue(0.0);
       }
-          // cout << "-------------------- Bias Field Correction -------------------" << endl; 
+          // std::cerr << "-------------------- Bias Field Correction -------------------" << endl; 
  
 
         }
@@ -1667,16 +1667,16 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
     // This is the EM Algorithm with out MF Part -> The Regulizing part is the part where 
     // the MF part is added
   
-    cout << "vtkImageEMAtlasAlgorithm: "<< iter << ". Estep " << endl;
+    std::cerr << "vtkImageEMAtlasAlgorithm: "<< iter << ". Estep " << endl;
     if ((iter == 1) || (Alpha == 0)) { 
       for (z = 0; z < ImageMaxZ ; z++) {
         for (y = 0; y < ImageMaxY ; y++) {
           for (x = 0; x < ImageMaxX ; x++) {
 #if (EMVERBOSE)
-        cout << "============================================================" << endl;
-        cout << "Z:" << z << "Y:" << y << "X:" << x << "  cY_M: "; 
+        std::cerr << "============================================================" << endl;
+        std::cerr << "Z:" << z << "Y:" << y << "X:" << x << "  cY_M: "; 
         for (l= 0 ; l <  NumInputImages; l ++) {
-          cout << cY_M[l] << " " ;
+          std::cerr << cY_M[l] << " " ;
         }
         
         fprintf(stdout, "\nw_m               class SubCl ClaIdx  PrbMinus  PWeight   PrbData  TisProb  IntensProb\n"); 
@@ -1705,7 +1705,7 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
               normRow += *w_m[index];
 #if (EMVERBOSE)
               fprintf(stdout, "w_m: %12g i:%2d  k:%2d  ind:%2d  PMW:%3.2f  PDW:%3.2f  PDP:", *w_m[index],i,k,index,ProbDataMinusWeight[i], ProbDataWeight[i]); 
-              if (ProbDataPtrCopy[index] == NULL) cout << "NULL ";
+              if (ProbDataPtrCopy[index] == NULL) std::cerr << "NULL ";
               else  fprintf(stdout, "%3d ", *ProbDataPtrCopy[index]);
               fprintf(stdout, " TP:%3.2f  GID:%5.4f \n", TissueProbability[i], 
                   (float)vtkImageEMGeneral::FastGaussMulti(InvSqrtDetWeightedLogCov[index], cY_M, LogMu[index],InverseWeightedLogCov[index],
@@ -1800,7 +1800,7 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
     // -----------------------------------------------------------
     if (Alpha > 0) {
       for (regiter=1; regiter <= NumRegIter; regiter++) {
-        cout << "vtkImageEMAtlasAlgorithm: "<< regiter << ". EM - MF Iteration" << endl;
+        std::cerr << "vtkImageEMAtlasAlgorithm: "<< regiter << ". EM - MF Iteration" << endl;
         if (regiter%2) self->MF_Approx_Workpile(w_m,OutputVector,cY_M,imgXY,InverseWeightedLogCov,InvSqrtDetWeightedLogCov,NumTotalTypeCLASS,
                             NumChildClasses,NumClasses,(void**) ProbDataPtrStart, ProbDataIncY,ProbDataIncZ,
                             ProbDataWeight, ProbDataMinusWeight, LogMu,TissueProbability,VirtualNumInputImages, actSupCl, w_m_second);
@@ -1814,14 +1814,14 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
       }
     }
 #if (EMVERBOSE)
-    cout << "End of E-Step with MFA " << endl;    
+    std::cerr << "End of E-Step with MFA " << endl;    
 #endif   
     // -----------------------------------------------------------
     // M-step
     // -----------------------------------------------------------
     if (iter < NumIter) {
-      cout << "vtkImageEMAtlasAlgorithm: Determine Image Inhomogeneity" << endl;
-      // cout << "vtkImageEMAtlasAlgorithm: Mstep " << endl;
+      std::cerr << "vtkImageEMAtlasAlgorithm: Determine Image Inhomogeneity" << endl;
+      // std::cerr << "vtkImageEMAtlasAlgorithm: Mstep " << endl;
       // compute weighted residuals 
       // r_m  = (w_m.*(repmat(cY_M,[1 num_classes]) - repmat(mu,[prod(imS) 1])))*(ivar)';
       // iv_m = w_m * ivar';
@@ -1879,21 +1879,21 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
       for (i=0; i<NumInputImages; i++) r_m[i].Conv(skern,SmoothingWidth);  
     } // End of M-Step (if (iter < NumIter) ..)
 #if (EMVERBOSE)
-    cout << "End of M-Step " << endl;
+    std::cerr << "End of M-Step " << endl;
 #endif   
     // -----------------------------------------------------------
     // Print out Parameters
     // -----------------------------------------------------------
     if ( ( (actSupCl->GetPrintFrequency() > 0) && (iter % (actSupCl->GetPrintFrequency()) == 0) ) || ((iter == NumIter ) && (actSupCl->GetPrintFrequency() == -1)) ) {
-      cout << "vtkImageEMAtlasAlgorithm: Print intermediate result to " <<self->GetPrintDir() << endl;
+      std::cerr << "vtkImageEMAtlasAlgorithm: Print intermediate result to " <<self->GetPrintDir() << endl;
       self->PrintIntermediateResultsToFile(iter, w_m, ROI, OutputVector, NumTotalTypeCLASS, NumChildClasses, actSupCl, LevelName, ClassList, ClassListType, LabelList, QualityFile);
-      cout << "vtkImageEMAtlasAlgorithm: Return to Algorithm " << endl;
+      std::cerr << "vtkImageEMAtlasAlgorithm: Return to Algorithm " << endl;
     }
       } // End Of EM-Algorithm ( for (iter=1; iter <= NumIter;iter++) ....
   } //  if (SegmentLevelSucessfullFlag)  ...
 
 #if (EMVERBOSE)
-  cout << "Start Deleting Classes " << endl;   
+  std::cerr << "Start Deleting Classes " << endl;   
 #endif
 
   if (QualityFile) {
@@ -1944,14 +1944,14 @@ static void vtkImageEMAtlasAlgorithm(vtkImageEMAtlasSegmenter *self,Tin **ProbDa
   delete[] iv_mat;
   delete[] inv_iv_mat;
 
-  // cout << "vtkImageEMAtlasAlgorithm: Finished " << endl;
+  // std::cerr << "vtkImageEMAtlasAlgorithm: Finished " << endl;
  }
 //------------------------------------------------------------------------------
 // Needed to define hierarchies! => this will be done at a later point int time at vtkImageEMAtlasSuperClass
 // I did this design to multi thread it later
 // If you start it always set ROI == NULL
 int vtkImageEMAtlasSegmenter::HierarchicalSegmentation(vtkImageEMAtlasSuperClass* head, float** InputVector,short *ROI, short *OutputVector, EMTriVolume & iv_m, EMVolume *r_m,char* LevelName) {
-  cout << "Start vtkImageEMAtlasSegmenter::HierarchicalSegmentation"<< endl;  
+  std::cerr << "Start vtkImageEMAtlasSegmenter::HierarchicalSegmentation"<< endl;  
   // Nothing to segment
   if (head->GetNumClasses() ==0) {
     if (ROI == NULL) memset(OutputVector,0, sizeof(short)*this->ImageProd);
@@ -1961,7 +1961,7 @@ int vtkImageEMAtlasSegmenter::HierarchicalSegmentation(vtkImageEMAtlasSuperClass
   // ---------------------------------------------------------------
   // 1. Define Variables
   // ---------------------------------------------------------------
-  cout <<"====================================== Segmenting Level " << LevelName << " ==========================================" << endl;
+  std::cerr <<"====================================== Segmenting Level " << LevelName << " ==========================================" << endl;
   int       i;
   void      **ClassList = head->GetClassList();
   classType *ClassListType = head->GetClassListType();
@@ -1986,13 +1986,13 @@ int vtkImageEMAtlasSegmenter::HierarchicalSegmentation(vtkImageEMAtlasSuperClass
 
     // Make sure it is of type short and little endian
      int ChangedExtent[6] = {this->Extent[0],this->Extent[1],this->Extent[2],this->Extent[3], this->Extent[4] +1 ,this->Extent[5] + 1 };
-    cout <<"Loading Predefined LabelMap from slices " << ChangedExtent[4] << " to " << ChangedExtent[5] << endl;
+    std::cerr <<"Loading Predefined LabelMap from slices " << ChangedExtent[4] << " to " << ChangedExtent[5] << endl;
     vtkImageReader *PredefinedLabelMap = vtkImageReader::New();
     this->GEImageReader(PredefinedLabelMap,head->GetPredefinedLabelMapPrefix(),ChangedExtent[4],ChangedExtent[5], VTK_SHORT);
 
     memcpy(SegmentationResult,this->GetPointerToVtkImageData(PredefinedLabelMap->GetOutput(),VTK_SHORT,ChangedExtent),sizeof(short)*this->ImageProd);
     PredefinedLabelMap->Delete();
-    cout << "Skipping segmentation" << endl;
+    std::cerr << "Skipping segmentation" << endl;
 
   } else {
     // Run EM Algorithm and determine labelmap 
@@ -2068,7 +2068,7 @@ int vtkImageEMAtlasSegmenter::HierarchicalSegmentation(vtkImageEMAtlasSuperClass
 
   }
   delete []SegmentationResult;
-  cout << "End vtkImageEMAtlasSegmenter::HierachicalSegmentation"<< endl; 
+  std::cerr << "End vtkImageEMAtlasSegmenter::HierachicalSegmentation"<< endl; 
   return SegmentLevelSucessfullFlag;
 }
 
@@ -2094,7 +2094,7 @@ static void vtkImageEMAtlasSegmenterExecute(vtkImageEMAtlasSegmenter *self,float
   // Print information
 
   if ( (DimensionX != (outExt[1] - outExt[0] +1)) ||(DimensionY != (outExt[3] - outExt[2] +1)) ||(DimensionZ != (outExt[5] - outExt[4] +1)))  
-    cout << "Segmentation Boundary is activated (" <<DimensionX  <<"," << DimensionY << "," << DimensionZ <<") !" << endl;    
+    std::cerr << "Segmentation Boundary is activated (" <<DimensionX  <<"," << DimensionY << "," << DimensionZ <<") !" << endl;    
 
   // Label All SuperClasses 
   {
@@ -2132,7 +2132,7 @@ static void vtkImageEMAtlasSegmenterExecute(vtkImageEMAtlasSegmenter *self,float
   delete[] OutputVector;
   delete[] r_m;
 
-  cout << "End vtkImageEMAtlasSegmenterExecute "<< endl;
+  std::cerr << "End vtkImageEMAtlasSegmenterExecute "<< endl;
 }
 
 
@@ -2144,7 +2144,7 @@ static void vtkImageEMAtlasSegmenterExecute(vtkImageEMAtlasSegmenter *self,float
 // the datas data types.
 void vtkImageEMAtlasSegmenter::ExecuteData(vtkDataObject *)
 {
-  cout << "EMAtlasBrainClassifier Version" << endl;
+  std::cerr << "EMAtlasBrainClassifier Version" << endl;
   void *outPtr;
   int idx1, i;
   int NumProbMap = 0;
@@ -2260,7 +2260,7 @@ void vtkImageEMAtlasSegmenter::ExecuteData(vtkDataObject *)
 #if (EMVERBOSE)
  {
     vtkIndent indent;
-    this->PrintSelf(cout,indent); 
+    this->PrintSelf(std::cerr,indent); 
  }
 #endif
   // -----------------------------------------------------

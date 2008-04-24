@@ -53,7 +53,7 @@ VTK_THREAD_RETURN_TYPE EMLocalShapeCostFunction_ShapeCostFunctionMultiThreaded_F
               ThreadedParameters->NumberOfVoxels, ThreadedParameters->DataJump, ThreadedParameters->PCAMeanShapeJump, ThreadedParameters->PCAEigenVectorsJump, 
               ThreadedParameters->ProbDataJump, ThreadedParameters->Result)); 
     default :
-     cout << "Warning: EMLocalShapeCostFunction_ShapeCostFunctionMultiThreaded_Function : unknown data type " << shape->GetProbDataType() << endl;
+     std::cerr << "Warning: EMLocalShapeCostFunction_ShapeCostFunctionMultiThreaded_Function : unknown data type " << shape->GetProbDataType() << endl;
   }
   return VTK_THREAD_RETURN_VALUE;
 }
@@ -68,7 +68,7 @@ template  <class Tin>
 inline void EMLocalShapeCostFunction_CalculateCostFunction(EMLocalShapeCostFunction *Shape, Tin **ProbDataPtrOrig, int *VoxelStart, int NumberOfVoxels, 
                                  int DataJump, int *PCAMeanShapeJump, int **PCAEigenVectorsJump, int *ProbDataJump, float &result) {
 
-  // cout << "Start vtkImageEMLocalSegmenter_CalculateCostFunction " << endl;
+  // std::cerr << "Start vtkImageEMLocalSegmenter_CalculateCostFunction " << endl;
   // --------------------------------------
   // Registration Parameters 
   // --------------------------------------
@@ -96,10 +96,10 @@ inline void EMLocalShapeCostFunction_CalculateCostFunction(EMLocalShapeCostFunct
   int weightsIncZ = Shape->GetweightsIncZ();
 
 
-  //cout << "Class parameters" << endl;
+  //std::cerr << "Class parameters" << endl;
   //for (int j = 0; j  < NumClasses; j++) {
-     // cout << j << endl;
-  //  cout << "Class " << j << " " ; vtkImageEMLocalSegmenter_PrintVector(ClassToAtlasRotationMatrix[j],0,8); 
+     // std::cerr << j << endl;
+  //  std::cerr << "Class " << j << " " ; vtkImageEMLocalSegmenter_PrintVector(ClassToAtlasRotationMatrix[j],0,8); 
   //  vtkImageEMLocalSegmenter_PrintVector(ClassToAtlasTranslationVector[j],0,2); 
   // }
 
@@ -188,18 +188,18 @@ inline void EMLocalShapeCostFunction_CalculateCostFunction(EMLocalShapeCostFunct
   float targetX, targetY, targetZ;
   float VoxelDistanceMapValue;
 
-  // cout << "---- " << RegistrationType << " " << targetmidcol << " " <<  targetmidrow << " " << targetmidslice << " [[[[ " << ROI_MinZ << " " << ROI_MinY << " " << ROI_MinX <<" +++ " << ROI_MaxZ - ROI_MinZ +1 << " " << ROI_MaxY - ROI_MinY + 1<< " " << ROI_MaxX - ROI_MinX +1 << " " << VoxelIndex << " " << NumberOfVoxels << " " << z << " " << y << " " << x << " " << endl;
+  // std::cerr << "---- " << RegistrationType << " " << targetmidcol << " " <<  targetmidrow << " " << targetmidslice << " [[[[ " << ROI_MinZ << " " << ROI_MinY << " " << ROI_MinX <<" +++ " << ROI_MaxZ - ROI_MinZ +1 << " " << ROI_MaxY - ROI_MinY + 1<< " " << ROI_MaxX - ROI_MinX +1 << " " << VoxelIndex << " " << NumberOfVoxels << " " << z << " " << y << " " << x << " " << endl;
 
-  // cout << " Take out debugging stuff " << endl;
-  // cout << "NumClassses " << NumClasses << endl;
+  // std::cerr << " Take out debugging stuff " << endl;
+  // std::cerr << "NumClassses " << NumClasses << endl;
   //if (RegistrationType >  EMSEGMENT_REGISTRATION_DISABLED) {
-  //  cout << "Registration Applied to Atlas Space:" << endl;
-  //  cout << "Global Matrix: "; vtkImageEMLocalSegmenter_PrintVector(ClassToAtlasRotationMatrix[NumClasses -1],0,8); vtkImageEMLocalSegmenter_PrintVector(ClassToAtlasTranslationVector[NumClasses -1],0,2);
+  //  std::cerr << "Registration Applied to Atlas Space:" << endl;
+  //  std::cerr << "Global Matrix: "; vtkImageEMLocalSegmenter_PrintVector(ClassToAtlasRotationMatrix[NumClasses -1],0,8); vtkImageEMLocalSegmenter_PrintVector(ClassToAtlasTranslationVector[NumClasses -1],0,2);
   // }
   
   while (VoxelIndex < NumberOfVoxels) {
     // Debugging right now 
-    // cout << VoxelIndex << endl;
+    // std::cerr << VoxelIndex << endl;
     if (*ROI) {
       ShapeIndex = 0;
       // The Numerator of the weighted sum in dependency of the voxel
@@ -213,7 +213,7 @@ inline void EMLocalShapeCostFunction_CalculateCostFunction(EMLocalShapeCostFunct
       }
       ClassIndex = 0;
       for (int j = 0; j  < NumClasses; j++) {
-    // cout << j << endl;
+    // std::cerr << j << endl;
     if ((RegistrationType >  EMSEGMENT_REGISTRATION_DISABLED) && (RegistrationType !=  EMSEGMENT_REGISTRATION_GLOBAL_ONLY)) {
       EMLocalInterface_findCoordInTargetOfMatchingSourceCentreTarget(ClassToAtlasRotationMatrix[j], ClassToAtlasTranslationVector[j], 
                                         x, y, z, targetX, targetY, targetZ,targetmidcol, targetmidrow, targetmidslice);
@@ -221,7 +221,7 @@ inline void EMLocalShapeCostFunction_CalculateCostFunction(EMLocalShapeCostFunct
       VoxelJump = EMLocalInterface_InterpolationNearestNeighbourVoxelIndex(targetX, targetY, targetZ, 0,0, Shape->GetImage_Length());
     }
     for (int k = 0; k  < NumChildClasses[j]; k++) {
-      // cout << k << endl;
+      // std::cerr << k << endl;
           if (PCANumberOfEigenModes[ClassIndex]) {
         // Kilian: Later create a map of the coordinates that can just be looked up
         // define all these parameters - just do nearest neighbor instead does not matter so much- or recaluclate spatial priors and then just look it up
@@ -249,7 +249,7 @@ inline void EMLocalShapeCostFunction_CalculateCostFunction(EMLocalShapeCostFunct
           ClassIndex ++;
     }
       }
-      // cout << "Finshed " << endl;
+      // std::cerr << "Finshed " << endl;
       // Only considere those voxels, where the weights of structures with shape parameters are greater zero 
       // Sumvoxeldenominator not correctly de
       if (SumVoxelDenominator > 0.0) { 
@@ -322,7 +322,7 @@ inline void EMLocalShapeCostFunction_CalculateCostFunction(EMLocalShapeCostFunct
   }
   SumImagePenalty += SumSlicePenalty + SumRowPenalty; 
 
-  // cout <<"============================== finished "<< endl;
+  // std::cerr <<"============================== finished "<< endl;
   // --------------------------------------
   // Return the Cost Function
   // --------------------------------------
@@ -363,7 +363,7 @@ EMLocalShapeCostFunction::EMLocalShapeCostFunction(EMLocal_Hierarchical_Class_Pa
 
   // Initialize Multi Threading
   this->NumOfThreads = EMLocalInterface_GetDefaultNumberOfThreads(DisableMultiThreading);
-  //cout << "====================================== Debug "<< this->NumOfThreads << endl;
+  //std::cerr << "====================================== Debug "<< this->NumOfThreads << endl;
 
   this->Threader = vtkMultiThreader::New();
   this->Threader->SetNumberOfThreads(this->NumOfThreads);
@@ -627,7 +627,7 @@ void EMLocalShapeCostFunction::InitializeCostFunction(int PCAMaxX, int PCAMinX, 
                         int *initPCAMeanShapeIncZ, float*** initPCAEigenVectorsPtr, int **initPCAEigenVectorsIncY, 
                         int** initPCAEigenVectorsIncZ) {
 
-  // cout << "Start vtkImageEMLocalSegmenter_ShapeInterface  " << endl;
+  // std::cerr << "Start vtkImageEMLocalSegmenter_ShapeInterface  " << endl;
    // ---------------------------------------------------
    // Initialize
   int RegistrationActive = (this->RegistrationType > EMSEGMENT_REGISTRATION_DISABLED);
@@ -647,7 +647,7 @@ void EMLocalShapeCostFunction::InitializeCostFunction(int PCAMaxX, int PCAMinX, 
    this->ROI_LengthY = PCAMaxY - PCAMinY + 1; 
    this->ROI_LengthX = PCAMaxX - PCAMinX + 1; 
    this->DefinePCADataPtr(PCAMinX, PCAMinY, PCAMinZ, Boundary_LengthX, Boundary_LengthY, 0, 0, this->DataJump, this->DataIncY, this->DataIncZ);
-   // cout << "DataJump " << PCAMaxY << " " <<  PCAMinY << endl; 
+   // std::cerr << "DataJump " << PCAMaxY << " " <<  PCAMinY << endl; 
 
    for (int i= 0 ; i < this->NumberOfTotalTypeCLASS; i++) { this->weights[i]            = w_m[i] + this->DataJump; }
    this->weightsIncY             = this->DataIncY;
@@ -675,7 +675,7 @@ void EMLocalShapeCostFunction::InitializeCostFunction(int PCAMaxX, int PCAMinX, 
              vtkTemplateMacro(EMLocalShapeCostFunction_AssignProbDataPtr(this, (VTK_TT**) initProbDataPtr,DataJump,i));
 
          default :
-               cout << "EMLocalShapeCostFunction::CalculateOptimalParameters Unknown ScalarType " << this->GetProbDataType() << endl;
+               std::cerr << "EMLocalShapeCostFunction::CalculateOptimalParameters Unknown ScalarType " << this->GetProbDataType() << endl;
            return;
        }
 
@@ -718,11 +718,11 @@ void EMLocalShapeCostFunction::InitializeCostFunction(int PCAMaxX, int PCAMinX, 
    int ROI_LengthXY       = this->ROI_LengthX * this->ROI_LengthY;
    int ROI_LengthXYZ      = ROI_LengthXY * this->ROI_LengthZ;
    int JobSize     = ROI_LengthXYZ/this->NumOfThreads;
-   // cout << "Jobsize " << JobSize << " " << ROI_LengthXYZ << endl;
+   // std::cerr << "Jobsize " << JobSize << " " << ROI_LengthXYZ << endl;
    int VoxelOffset = 0;
    int VoxelLeftOver;
    for (int i= 0; i < this->NumOfThreads; i++) {
-     // cout << "Thread " << i <<  endl;
+     // std::cerr << "Thread " << i <<  endl;
      int *VoxelStart = MultiThreadedParameters[i].VoxelStart;
      VoxelStart[2] = VoxelOffset/ROI_LengthXY;
      VoxelLeftOver = VoxelOffset % ROI_LengthXY;
@@ -733,18 +733,18 @@ void EMLocalShapeCostFunction::InitializeCostFunction(int PCAMaxX, int PCAMinX, 
      else MultiThreadedParameters[i].NumberOfVoxels = JobSize +  ROI_LengthXYZ%this->NumOfThreads;
  
      MultiThreadedParameters[i].DataJump = EMLocalInterface_DefineMultiThreadJump(VoxelStart,this->ROI_LengthX, this->ROI_LengthY, this->DataIncY, this->DataIncZ);
-     // cout << "DataJump " <<  MultiThreadedParameters[i].DataJump << endl;
-     // cout << "Jump " << MultiThreadedParameters[i].DataJump <<  " " << ROI_LengthX << " " <<  ROI_LengthY << " " <<  this->DataIncY << " " << this->DataIncZ << " " << VoxelOffset << endl; 
+     // std::cerr << "DataJump " <<  MultiThreadedParameters[i].DataJump << endl;
+     // std::cerr << "Jump " << MultiThreadedParameters[i].DataJump <<  " " << ROI_LengthX << " " <<  ROI_LengthY << " " <<  this->DataIncY << " " << this->DataIncZ << " " << VoxelOffset << endl; 
 
      for (int j= 0 ; j < this->NumberOfTotalTypeCLASS; j++) {
-       // cout << "Class " << j << " " ;
+       // std::cerr << "Class " << j << " " ;
 
        if (initProbDataPtr[j]) {
      if (RegistrationActive) {
        MultiThreadedParameters[i].ProbDataJump[j] = 0;
      } else {
        MultiThreadedParameters[i].ProbDataJump[j] = EMLocalInterface_DefineMultiThreadJump(VoxelStart,this->ROI_LengthX, this->ROI_LengthY, this->ProbDataIncY[j], this->ProbDataIncZ[j]);
-          // cout << MultiThreadedParameters[i].ProbDataJump[j] << " " ;
+          // std::cerr << MultiThreadedParameters[i].ProbDataJump[j] << " " ;
      }
        }
        if (initPCAMeanShapePtr[j]) {
@@ -755,17 +755,17 @@ void EMLocalShapeCostFunction::InitializeCostFunction(int PCAMaxX, int PCAMinX, 
        }
      } else {
        MultiThreadedParameters[i].PCAMeanShapeJump[j] = EMLocalInterface_DefineMultiThreadJump(VoxelStart,this->ROI_LengthX, this->ROI_LengthY, this->PCAMeanShapeIncY[j], this->PCAMeanShapeIncZ[j]);
-      // cout << MultiThreadedParameters[i].PCAMeanShapeJump[j] << " " ;
+      // std::cerr << MultiThreadedParameters[i].PCAMeanShapeJump[j] << " " ;
 
        for (int k= 0 ; k < this->PCANumberOfEigenModes[j]; k++) {
          MultiThreadedParameters[i].PCAEigenVectorsJump[j][k] =  EMLocalInterface_DefineMultiThreadJump(VoxelStart,this->ROI_LengthX, this->ROI_LengthY, this->PCAEigenVectorsIncY[j][k], this->PCAEigenVectorsIncZ[j][k]);
-        // cout << MultiThreadedParameters[i].PCAEigenVectorsJump[j][k] << " " ;
+        // std::cerr << MultiThreadedParameters[i].PCAEigenVectorsJump[j][k] << " " ;
        }
      }
        }
-       // cout << endl; 
+       // std::cerr << endl; 
      }
-     // cout << "Finished threadding " << endl;
+     // std::cerr << "Finished threadding " << endl;
      //Now put it into ROI region 
      VoxelStart[2] += this->ROI_MinZ;
      VoxelStart[1] += this->ROI_MinY;
@@ -895,7 +895,7 @@ void EMLocalShapeCostFunction::InitializeCostFunction(int PCAMaxX, int PCAMinX, 
 //           VoxelSpatialPrior[i] = vtkImageEMSegment_Transfere_DistanceMap_Into_SpatialPrior(VoxelDistanceMap,ShapeParameters.PCADistanceVariance);  
 //           VoxelDeriveSpatialPrior[i]   = vtkImageEMSegment_PartOf_DeriveOf_ShapeBased_SpatialPrior(VoxelDistanceMap);
 // 
-//           // if ((VoxelSpatialPrior[i] > 0.0) ||  (VoxelDeriveSpatialPrior[i]  > 0.0 )) cout << VoxelSpatialPrior[i] << " ----- " << VoxelDeriveSpatialPrior[i] << " " << VoxelDistanceMap << endl;
+//           // if ((VoxelSpatialPrior[i] > 0.0) ||  (VoxelDeriveSpatialPrior[i]  > 0.0 )) std::cerr << VoxelSpatialPrior[i] << " ----- " << VoxelDeriveSpatialPrior[i] << " " << VoxelDistanceMap << endl;
 //           if ((VoxelSpatialPrior[i] != 0.0) &&  (VoxelDeriveSpatialPrior[i]  != 0.0 )) VoxelCalcDerivative = 1;
 //               SumVoxelSpatialPrior += VoxelSpatialPrior[i];
 //         } else if (ProbDataPtr[i]) {
@@ -916,7 +916,7 @@ void EMLocalShapeCostFunction::InitializeCostFunction(int PCAMaxX, int PCAMinX, 
 //               SumImagePenalty[ShapeIndex] += VoxelDerivativeTerm * (*PCAEigenVectorsPtr[i][j]);
 //               if (DerivedResultVolume) {
 //             *DerivedResultVolume[ShapeIndex] =  VoxelDerivativeTerm * (*PCAEigenVectorsPtr[i][j]);
-//             // cout << *DerivedResultVolume[ShapeIndex] << " " ;
+//             // std::cerr << *DerivedResultVolume[ShapeIndex] << " " ;
 //               }
 //               ShapeIndex ++;
 //             } 
@@ -964,10 +964,10 @@ void EMLocalShapeCostFunction::InitializeCostFunction(int PCAMaxX, int PCAMinX, 
 //   // Return the Cost Function
 //   // --------------------------------------
 //   // Because we look for the maximum and powel defines the minimum
-//   // cout << "---------" << endl;
+//   // std::cerr << "---------" << endl;
 //   for (int k= 0; k < PCATotalNumOfShapeParameters; k++)  {
 //     result[k] =  PCAPenalty[k] - SumImagePenalty[k];
-//     // cout << "Blub " << result[k] << endl;
+//     // std::cerr << "Blub " << result[k] << endl;
 //   }
 //   
 //   if (DerivedResultVolume) delete[] DerivedResultVolume;

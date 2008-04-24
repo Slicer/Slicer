@@ -242,7 +242,7 @@ static void vtkImageEMLocalSegmenterReadInputChannel(vtkImageEMLocalSegmenter *s
 
   in1Ptr += jump;
 
-  // cout << "-- jump " << jump << "BoundaryDataIncY " << BoundaryDataIncY << " BoundaryDataIncZ " << BoundaryDataIncZ << endl;
+  // std::cerr << "-- jump " << jump << "BoundaryDataIncY " << BoundaryDataIncY << " BoundaryDataIncZ " << BoundaryDataIncZ << endl;
   for (idxZ = 0; idxZ < ImageMaxZ ; idxZ++) { 
   for (idxY = 0; idxY <  ImageMaxY; idxY++) {
   for (idxR = 0; idxR < ImageMaxX; idxR++) {
@@ -412,7 +412,7 @@ void vtkImageEMLocalSegment_RunEMAlgorithm(vtkImageEMLocalSegmenter *self, T** P
 // If you start it always set ROI == NULL
 int vtkImageEMLocalSegmenter::HierarchicalSegmentation(vtkImageEMLocalSuperClass* head, float** InputVector,short *ROI, short *OutputVector, EMTriVolume & iv_m, 
                                                        EMVolume *r_m,char* LevelName, float GlobalRegInvRotation[9], float GlobalRegInvTranslation[3]) {
-  cout << "Start vtkImageEMLocalSegmenter::HierarchicalSegmentation"<< endl;  
+  std::cerr << "Start vtkImageEMLocalSegmenter::HierarchicalSegmentation"<< endl;  
   // Nothing to segment
   if (head->GetNumClasses() ==0) {
   if (ROI == NULL) memset(OutputVector,0, sizeof(short)*this->ImageProd);
@@ -422,7 +422,7 @@ int vtkImageEMLocalSegmenter::HierarchicalSegmentation(vtkImageEMLocalSuperClass
   // ---------------------------------------------------------------
   // 1. Define Variables
   // ---------------------------------------------------------------
-  cout <<"====================================== Segmenting Level " << LevelName << " ==========================================" << endl;
+  std::cerr <<"====================================== Segmenting Level " << LevelName << " ==========================================" << endl;
 
   char      *NewLevelName = new char[strlen(LevelName)+5];
   void      **ClassList = head->GetClassList();
@@ -458,19 +458,19 @@ int vtkImageEMLocalSegmenter::HierarchicalSegmentation(vtkImageEMLocalSuperClass
   }
   }
 
-  cout << "Registration Type: ";
+  std::cerr << "Registration Type: ";
   switch (RegistrationType)  {
-  case EMSEGMENT_REGISTRATION_DISABLED     : cout << "Disabled" << endl; break;
-  case EMSEGMENT_REGISTRATION_APPLY        : cout << "Apply" << endl; break;
-  case EMSEGMENT_REGISTRATION_GLOBAL_ONLY  : cout << "Global only " << endl; break;
-  case EMSEGMENT_REGISTRATION_CLASS_ONLY   : cout << "Class only " << endl; break;
-  case EMSEGMENT_REGISTRATION_SIMULTANEOUS : cout << "Simultaneously " << endl; break;
-  case EMSEGMENT_REGISTRATION_SEQUENTIAL   : cout << "Sequential " << endl; break;
+  case EMSEGMENT_REGISTRATION_DISABLED     : std::cerr << "Disabled" << endl; break;
+  case EMSEGMENT_REGISTRATION_APPLY        : std::cerr << "Apply" << endl; break;
+  case EMSEGMENT_REGISTRATION_GLOBAL_ONLY  : std::cerr << "Global only " << endl; break;
+  case EMSEGMENT_REGISTRATION_CLASS_ONLY   : std::cerr << "Class only " << endl; break;
+  case EMSEGMENT_REGISTRATION_SIMULTANEOUS : std::cerr << "Simultaneously " << endl; break;
+  case EMSEGMENT_REGISTRATION_SEQUENTIAL   : std::cerr << "Sequential " << endl; break;
   default : 
     vtkEMAddErrorMessage("Unknown Registration Type " << RegistrationType) ;
     return 0;
   } 
-  cout << "GenerateBackgroundProbability: " << (head->GetGenerateBackgroundProbability() ? "On" : "Off" ) << endl;
+  std::cerr << "GenerateBackgroundProbability: " << (head->GetGenerateBackgroundProbability() ? "On" : "Off" ) << endl;
 
 
   // The follwoing division is done for multi threading purposes -> even though it is currently not implemented 
@@ -514,7 +514,7 @@ int vtkImageEMLocalSegmenter::HierarchicalSegmentation(vtkImageEMLocalSuperClass
  
   // If ProbDataScalarType == 2 => non of the structures have a spatial distribution defined
   int ProbDataScalarType = (head->GetProbDataScalarType() > -1 ? head->GetProbDataScalarType() : VTK_CHAR) ;
-  // cout << "Probability data is of type " << vtkImageScalarTypeNameMacro(ProbDataScalarType) << endl;
+  // std::cerr << "Probability data is of type " << vtkImageScalarTypeNameMacro(ProbDataScalarType) << endl;
   
   switch (ProbDataScalarType) 
     {
@@ -571,7 +571,7 @@ int vtkImageEMLocalSegmenter::HierarchicalSegmentation(vtkImageEMLocalSuperClass
   delete []SegmentationResult;
   delete []NewLevelName;
   delete []ProbDataPtr;
-  cout << "End vtkImageEMLocalSegmenter::HierachicalSegmentation"<< endl; 
+  std::cerr << "End vtkImageEMLocalSegmenter::HierachicalSegmentation"<< endl; 
   return SegmentLevelSucessfullFlag;
 }
 
@@ -595,16 +595,18 @@ static void vtkImageEMLocalSegmenterExecute(vtkImageEMLocalSegmenter *self,float
   EMVolume *r_m  = new EMVolume[NumInputImages]; // weighted residuals
   for (int i=0; i < NumInputImages; i++) r_m[i].Resize(DimensionZ,DimensionY,DimensionX);
   // Print information
-  cout << "Multi Threading is " ;
-  if (self->GetDisableMultiThreading()) cout << "disabled." << endl;
-  else cout << "working (" << vtkMultiThreader::GetGlobalDefaultNumberOfThreads() << " cpus)" << endl;
+  std::cerr << "Multi Threading is " ;
+  if (self->GetDisableMultiThreading()) std::cerr << "disabled." << endl;
+  else std::cerr << "working (" << vtkMultiThreader::GetGlobalDefaultNumberOfThreads() << " cpus)" << endl;
 
   if ( (DimensionX != (outExt[1] - outExt[0] +1)) ||(DimensionY != (outExt[3] - outExt[2] +1)) ||(DimensionZ != (outExt[5] - outExt[4] +1)))  
-    cout << "Segmentation Boundary is activated (" <<DimensionX  <<"," << DimensionY << "," << DimensionZ <<") !" << endl;    
+    std::cerr << "Segmentation Boundary is activated (" <<DimensionX  <<"," << DimensionY << "," << DimensionZ <<") !" << endl;    
 
-  cout << "Print intermediate result to " << self->GetPrintDir() << endl;
+  std::cerr << "Print intermediate result to " 
+            << (self->GetPrintDir() ? self->GetPrintDir() : "(NULL)")
+            << std::endl;
   if (self->GetRegistrationInterpolationType()) 
-    cout << "Registration Interpolation Type: " << ( self->GetRegistrationInterpolationType() ==  EMSEGMENT_REGISTRATION_INTERPOLATION_LINEAR ? "Linear" : "Nearest Neighbour") << endl;
+    std::cerr << "Registration Interpolation Type: " << ( self->GetRegistrationInterpolationType() ==  EMSEGMENT_REGISTRATION_INTERPOLATION_LINEAR ? "Linear" : "Nearest Neighbour") << endl;
 
   // Label All SuperClasses 
     {
@@ -649,7 +651,7 @@ static void vtkImageEMLocalSegmenterExecute(vtkImageEMLocalSegmenter *self,float
     delete[] OutputVector;
     delete[] r_m;
 
-    cout << "End vtkImageEMLocalSegmenterExecute "<< endl;
+    std::cerr << "End vtkImageEMLocalSegmenterExecute "<< endl;
 }
 
 
@@ -664,7 +666,7 @@ void vtkImageEMLocalSegmenter::ExecuteData(vtkDataObject *)
   //std::cerr << "###vtkImageEMLocalSegmenter::ExecuteData" << std::endl;
   //this->PrintSelf(vtkstd::cerr, 0);
 
-  cout << "Local Version" << endl;
+  std::cerr << "Local Version" << endl;
   void *outPtr;
   int idx1, i;
   vtkNotUsed(int NumProbMap = 0;);
@@ -781,11 +783,11 @@ void vtkImageEMLocalSegmenter::ExecuteData(vtkDataObject *)
     this->DebugImage = new short*[this->NumberOfInputs - idx1];
     i = 0;
     while (idx1 < this->NumberOfInputs) {
-    cout << "Loading EMDEBUG Volume ("<< idx1 << ") into EMAlgorithm .....................";
+    std::cerr << "Loading EMDEBUG Volume ("<< idx1 << ") into EMAlgorithm .....................";
     this->DebugImage[i] = (short*) inData[idx1]->GetScalarPointerForExtent(this->Extent);
     idx1 ++;
     i++;
-    cout << "Finshed" << endl;
+    std::cerr << "Finshed" << endl;
     }
     } else {
     this->DebugImage = NULL; 
@@ -793,9 +795,9 @@ void vtkImageEMLocalSegmenter::ExecuteData(vtkDataObject *)
 
 #if (EMVERBOSE)
       {
-      cout << "Kilian - For Debugging purposes " << endl; 
+      std::cerr << "Kilian - For Debugging purposes " << endl; 
       vtkIndent indent;
-      this->PrintSelf(cout,indent); 
+      this->PrintSelf(std::cerr,indent); 
       }
 #endif
 

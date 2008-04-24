@@ -382,7 +382,7 @@ int vtkImageEMLocalSuperClass::GetPCAPtrFlag() {
 
 //------------------------------------------------------------------------------
 int vtkImageEMLocalSuperClass::GetPCAParametersPtr(void** PCAMeanShapePtr, void*** PCAEigenVectorPtr, int index, int BoundaryType) {
-  // cout << "Start vtkImageEMLocalSuperClass::GetPCAParametersPtr" << endl;
+  // std::cerr << "Start vtkImageEMLocalSuperClass::GetPCAParametersPtr" << endl;
   for (int i = 0; i <this->NumClasses; i++) {
     if (this->ClassListType[i] == CLASS) {
       PCAMeanShapePtr[index]    = ((vtkImageEMLocalClass*) this->ClassList[i])->GetPCAMeanShapePtr(BoundaryType);
@@ -394,7 +394,7 @@ int vtkImageEMLocalSuperClass::GetPCAParametersPtr(void** PCAMeanShapePtr, void*
       index ++;
     } else index = ((vtkImageEMLocalSuperClass*) this->ClassList[i])->GetPCAParametersPtr(PCAMeanShapePtr, PCAEigenVectorPtr, index,BoundaryType);
   }
-  // cout << "End vtkImageEMLocalSuperClass::GetPCAParametersPtr" << endl;
+  // std::cerr << "End vtkImageEMLocalSuperClass::GetPCAParametersPtr" << endl;
   return index;
 }
 // BoundaryType = do we want to consider the segmentation boundary or not 
@@ -505,7 +505,7 @@ void vtkImageEMLocalSuperClass::GetRegistrationClassSpecificParameterList(int *R
   for (int i = 0; i < this->NumClasses; i++) {
     if  (this->ClassListType[i] == SUPERCLASS) {
       RegistrationIndependentSubClassFlag[i] = ((vtkImageEMLocalSuperClass*) this->ClassList[i])->GetRegistrationIndependentSubClassFlag();
-      cout << "Registration Indepdent Sub Class Flag  " << i << ": " << ( (RegistrationIndependentSubClassFlag[i] == 1) ? "On" : "Off" ) << endl;
+      std::cerr << "Registration Indepdent Sub Class Flag  " << i << ": " << ( (RegistrationIndependentSubClassFlag[i] == 1) ? "On" : "Off" ) << endl;
       RegistrationClassSpecificRegistrationFlag[i] = ((vtkImageEMLocalSuperClass*) this->ClassList[i])->GetRegistrationClassSpecificRegistrationFlag();
     } else {
       RegistrationIndependentSubClassFlag[i] = 0;
@@ -513,12 +513,12 @@ void vtkImageEMLocalSuperClass::GetRegistrationClassSpecificParameterList(int *R
     }
     // Only add a new parameter set if the registration includes strucutre specific registration and structure specific registration is activated 
     if (RegistrationType > EMSEGMENT_REGISTRATION_GLOBAL_ONLY) {
-      cout << "Registration Class Specific Registration Flag " << i << ": "  ;
+      std::cerr << "Registration Class Specific Registration Flag " << i << ": "  ;
       if (RegistrationClassSpecificRegistrationFlag[i] && (i || !GenerateBackgroundProbability)) {
     NumParaSets ++;
-    cout << "On " << endl;
+    std::cerr << "On " << endl;
       } else {
-    cout << "Off " << endl;
+    std::cerr << "Off " << endl;
       }
     }
   }
@@ -605,7 +605,7 @@ void vtkImageEMLocalSuperClass::PrintSelf(ostream& os,vtkIndent indent) {
 // the datas data types.
 void vtkImageEMLocalSuperClass::ExecuteData(vtkDataObject *)
 {
-  // cout << "start vtkImageEMLocalSuperClass::ExecuteData" << endl; 
+  // std::cerr << "start vtkImageEMLocalSuperClass::ExecuteData" << endl; 
    vtkDebugMacro(<<"ExecuteData()"); 
    // ==================================================
    // Check existence of subclasses and update them 
@@ -690,10 +690,10 @@ void vtkImageEMLocalSuperClass::ExecuteData(vtkDataObject *)
        }
      }
    } else {
-     cout << "Warning:: Probability Data of SuperClass activated - Class specific probability maps are overwritten!" << endl; 
+     std::cerr << "Warning:: Probability Data of SuperClass activated - Class specific probability maps are overwritten!" << endl; 
      // Kilian: Currently we also disreagard the the SHAPE model - change this later  
      if (this->GetTotalNumberOfEigenModes()) {
-       cout << "Error::vtkImageEMLocalSuperClass:: SuperClass has Probability Data but sub classes have PCAShape model activated - Conflict of interest !" << endl;
+       std::cerr << "Error::vtkImageEMLocalSuperClass:: SuperClass has Probability Data but sub classes have PCAShape model activated - Conflict of interest !" << endl;
        exit(1);
      }
      
@@ -800,5 +800,5 @@ void vtkImageEMLocalSuperClass::ExecuteData(vtkDataObject *)
        } 
      }
    }
-   // cout << "End vtkImageEMLocalSuperClass::ExecuteData" << endl; 
+   // std::cerr << "End vtkImageEMLocalSuperClass::ExecuteData" << endl; 
 }

@@ -34,8 +34,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 template <class T> void EMLocalRegistrationCostFunction_PrintVector(T* parameters, int Min,  int Max) {
-  for (int i = Min; i <= Max ; i++)  cout << parameters[i] << " ";
-  cout << endl;
+  for (int i = Min; i <= Max ; i++)  std::cerr << parameters[i] << " ";
+  std::cerr << endl;
 }
 
 
@@ -49,7 +49,7 @@ void EMLocalRegistrationCostFunction_ROI::CreateMAP(int size)  {
 //------------------------------------------------------
 
 void EMLocalRegistrationCostFunction::InitializeParameters() {
-  // cout << "EMLocalRegistrationCostFunction::InitializeParameters initialize with all the ProbData stuff" << endl;
+  // std::cerr << "EMLocalRegistrationCostFunction::InitializeParameters initialize with all the ProbData stuff" << endl;
 
   ProbDataPtr                        = NULL;
   GlobalToAtlasRotationMatrix        = NULL;
@@ -203,9 +203,9 @@ void EMLocalRegistrationCostFunction::ClassInvCovariance_Define(classType* Class
 
 void EMLocalRegistrationCostFunction::ClassInvCovariance_Print() {
      for (int i = this->GenerateBackgroundProbability; i < this->EMHierarchyParameters.NumClasses; i ++) {
-       cout << "Class " << i << " " ; 
-       for (int j = 0; j < 9 ; j++) cout << this->ClassInvCovariance[i][j] << " "; 
-       cout << endl;
+       std::cerr << "Class " << i << " " ; 
+       for (int j = 0; j < 9 ; j++) std::cerr << this->ClassInvCovariance[i][j] << " "; 
+       std::cerr << endl;
      }
 }
 
@@ -247,7 +247,7 @@ void EMLocalRegistrationCostFunction::DefineRegistrationParametersForThreadedCos
   int ROI_JobSize           = ROI_LengthXYZ/this->NumberOfThreads;
   vtkNotUsed(int ROI_JobSizeXY         = ROI_JobSize % ROI_LengthXY;);
 
-  // cout << " nlun " <<  " " << ROI_MinX << " " << ROI_MinY << " " << ROI_MinZ << " " << ROI_MaxX << " " << ROI_MaxY << " " << ROI_MaxZ  << endl;
+  // std::cerr << " nlun " <<  " " << ROI_MinX << " " << ROI_MinY << " " << ROI_MinZ << " " << ROI_MaxX << " " << ROI_MaxY << " " << ROI_MaxZ  << endl;
 
   // --------------------------------------------------
   // Define Real Image Space Parameters (For ProbData) - SegmentationBoundary is ignored
@@ -359,7 +359,7 @@ void EMLocalRegistrationCostFunction::MultiThreadDefine(int DisableFlag) {
   
   this->NumberOfThreads = EMLocalInterface_GetDefaultNumberOfThreads(DisableFlag); 
  
-  //cout << "Registration Debug NumverOf Treads " << NumberOfThreads << endl;
+  //std::cerr << "Registration Debug NumverOf Treads " << NumberOfThreads << endl;
   this->MultiThreadedParameters = new EMLocalRegistrationCostFunction_MultiThreadedParameters[this->NumberOfThreads];
   this->Threader = vtkMultiThreader::New();
   this->Threader->SetNumberOfThreads(NumberOfThreads);
@@ -468,7 +468,7 @@ inline void EMLocalRegistrationCostFunction::CostFunction_Sum_WeightxProbability
   // -----------------------------------------------------------
   for (int voxel = 0; voxel < ROI_NumVoxels; voxel++) {
     if (*Boundary_ROIVectorPtr < EMSEGMENT_INCORRECT_MODEL) {
-      // cout << voxel << endl;
+      // std::cerr << voxel << endl;
       ClassIndex =  NumTotalTypeCLASS - 1;
       SumOverAlignedProbData           = 0.0;
       SumOverWeightsAndAlignedProbData = 0.0;
@@ -518,7 +518,7 @@ inline void EMLocalRegistrationCostFunction::CostFunction_Sum_WeightxProbability
           }
         }
           }
-              // if ((x == 201) && (y == 118) && ( z == 3)) cout << ClassIndex << " ++++ " << SumOverClassAlignedProbData << " " << (*WeightsCopy[ClassIndex]) << endl;
+              // if ((x == 201) && (y == 118) && ( z == 3)) std::cerr << ClassIndex << " ++++ " << SumOverClassAlignedProbData << " " << (*WeightsCopy[ClassIndex]) << endl;
           ClassIndex --;
         }
       } else {
@@ -558,7 +558,7 @@ inline void EMLocalRegistrationCostFunction::CostFunction_Sum_WeightxProbability
       if (VoxelResult < -0.0001) {
         RowResult += VoxelResult;
         if (SpatialCostFunctionPtr) *SpatialCostFunctionPtr =  -VoxelResult; 
-        // if (x == 201 && y == 118 & z == 3) cout << z << " " <<  y << " " << x << " " << SumOverWeightsAndAlignedProbData << " - " << log(SumOverAlignedProbData) << " " << SumOverAlignedProbData << " " << VoxelResult << " ===== " << targetX <<  " " << targetY << " " << targetZ << endl; 
+        // if (x == 201 && y == 118 & z == 3) std::cerr << z << " " <<  y << " " << x << " " << SumOverWeightsAndAlignedProbData << " - " << log(SumOverAlignedProbData) << " " << SumOverAlignedProbData << " " << VoxelResult << " ===== " << targetX <<  " " << targetY << " " << targetZ << endl; 
         // It is negative bc we look at minus values later to find minimum even though we really search of positive maximimum
 
         // if (DebugMin[0] > x)  DebugMin[0] = x;
@@ -619,12 +619,12 @@ inline void EMLocalRegistrationCostFunction::CostFunction_Sum_WeightxProbability
 
   result += SliceResult + RowResult;
 
-  // cout << "ggggggggggggr " << x << " " << y << " " << z << endl;
+  // std::cerr << "ggggggggggggr " << x << " " << y << " " << z << endl;
   // -----------------------------------------------------------
   // Clean up 
   delete[] WeightsCopy;
 
-  // cout << "Cost function of class " << result << endl; 
+  // std::cerr << "Cost function of class " << result << endl; 
 }
 
 
@@ -633,7 +633,7 @@ inline void EMLocalRegistrationCostFunction::CostFunction_Sum_WeightxProbability
 // Remember: The parameters describe the mapping from global to SuperClass  but the Matrices are inverted and therefore describe the relationship from SuperClass to Global 
 // the way things are interpolated are always the following : input is image or better  superclass coordinate system - output are the coordinate in atlas space 
 float EMLocalRegistrationCostFunction::ComputeCostFunction(const double* parameters) const  {
-  // if (this->Debug)  cout << "============ Start EMLocalRegistrationCostFunction::RegistrationCostFunction ===============" << endl;
+  // if (this->Debug)  std::cerr << "============ Start EMLocalRegistrationCostFunction::RegistrationCostFunction ===============" << endl;
 
   // --------------------------------------------------------------------------------------------------
   // Check Scaling Parameters  
@@ -675,7 +675,7 @@ float EMLocalRegistrationCostFunction::ComputeCostFunction(const double* paramet
     float SuperClassToGlobalTranslationVector[3];
 
     if (vtkSimonParameterReaderWriter::TurnParameteresIntoInverseRotationTranslation(parameters, SuperClassToGlobalRotationMatrix, SuperClassToGlobalTranslationVector, 2, this->TwoDFlag,this->RigidFlag)) {
-      cout << "inline float EMLocalRegistrationCostFunction::RegistrationCostFunction:: Could not calculate inverse of the following parameter setting :" << endl;
+      std::cerr << "inline float EMLocalRegistrationCostFunction::RegistrationCostFunction:: Could not calculate inverse of the following parameter setting :" << endl;
       EMLocalRegistrationCostFunction_PrintVector(parameters,0,this->NumberOfParameterPerSet-1);
       exit(1);
     } 
@@ -743,7 +743,7 @@ float EMLocalRegistrationCostFunction::ComputeCostFunction(const double* paramet
       // To make sure you get the same result bc of rounding errors we just include two more dimensions than necessary
       Aligned_ProbData_MinCoord = int(ROI_Aligned_ProbData_MinCoord[i]) -2;
       Aligned_ProbData_MaxCoord = int(ceil(ROI_Aligned_ProbData_MaxCoord[i])) + 2; 
-      // cout <<  Aligned_ProbData_MinCoord << " " <<  Aligned_ProbData_MaxCoord << endl;
+      // std::cerr <<  Aligned_ProbData_MinCoord << " " <<  Aligned_ProbData_MaxCoord << endl;
       BoundaryMin[i] = (Aligned_ProbData_MinCoord < this->ROI_Weight->MinCoord[i] ?  Aligned_ProbData_MinCoord :  this->ROI_Weight->MinCoord[i]);
       BoundaryMax[i] = (Aligned_ProbData_MaxCoord > this->ROI_Weight->MaxCoord[i] ?  Aligned_ProbData_MaxCoord :  this->ROI_Weight->MaxCoord[i]);
       assert(BoundaryMax[i] >= BoundaryMin[i]);
@@ -767,7 +767,7 @@ float EMLocalRegistrationCostFunction::ComputeCostFunction(const double* paramet
     this->ParaDepVar->ClassToAtlasTranslationVector[h] = new float[3];
 
     if (vtkSimonParameterReaderWriter::TurnParameteresIntoInverseRotationTranslation(&parameters[ParameterIndex], ClassToSuperClassRotationMatrix, ClassToSuperClassTranslationVector, 2, this->TwoDFlag,this->RigidFlag)) {
-      cout << "inline float EMLocalRegistrationCostFunction::RegistrationCostFunction:: Could not calculate inverse of the following parameter setting :" << endl;
+      std::cerr << "inline float EMLocalRegistrationCostFunction::RegistrationCostFunction:: Could not calculate inverse of the following parameter setting :" << endl;
       EMLocalRegistrationCostFunction_PrintVector(&parameters[ParameterIndex],0,this->NumberOfParameterPerSet-1);
       exit(1);
     }
@@ -788,7 +788,7 @@ float EMLocalRegistrationCostFunction::ComputeCostFunction(const double* paramet
 
   if (this->SpatialCostFunction) memset(this->SpatialCostFunction,0,this->Boundary_LengthXYZ*sizeof(double));
   // Call Thread to start cost function
-  // cout << "We start now " << endl;
+  // std::cerr << "We start now " << endl;
   this->Threader->SingleMethodExecute();
   double result = 0.0; 
   for (int i = 0; i < this->NumberOfThreads; i++) result += this->MultiThreadedParameters[i].Result;
@@ -873,11 +873,11 @@ void  EMLocalRegistrationCostFunction::InitializeCostFunction() {
   // Info 
   // ----------------------------------------------
   switch (this->RegistrationType)  {
-    case EMSEGMENT_REGISTRATION_GLOBAL_ONLY  : cout << "Global Registration " << endl; break;
-    case EMSEGMENT_REGISTRATION_CLASS_ONLY   : cout << "Class Registration " << endl; break;
-    case EMSEGMENT_REGISTRATION_SIMULTANEOUS : cout << "Global + Class Registration " << endl; break;
+    case EMSEGMENT_REGISTRATION_GLOBAL_ONLY  : std::cerr << "Global Registration " << endl; break;
+    case EMSEGMENT_REGISTRATION_CLASS_ONLY   : std::cerr << "Class Registration " << endl; break;
+    case EMSEGMENT_REGISTRATION_SIMULTANEOUS : std::cerr << "Global + Class Registration " << endl; break;
     default : 
-      cout << "Unknown Registration Type " << endl;
+      std::cerr << "Unknown Registration Type " << endl;
       return;
   }
   
@@ -893,9 +893,9 @@ void  EMLocalRegistrationCostFunction::InitializeCostFunction() {
      this->ROI_Weight->MaxCoord[0] += this->Boundary_Min[0]; 
      this->ROI_Weight->MaxCoord[1] += this->Boundary_Min[1]; 
      this->ROI_Weight->MaxCoord[2] += this->Boundary_Min[2];
-     cout << "EMLocalRegistrationCostFunction::StartRegistration:this->ROI_Weight->MinCoord " 
+     std::cerr << "EMLocalRegistrationCostFunction::StartRegistration:this->ROI_Weight->MinCoord " 
           << this->ROI_Weight->MinCoord[0] << " " << this->ROI_Weight->MinCoord[1] << " " << " " << this->ROI_Weight->MinCoord[2] << endl;
-     cout << "EMLocalRegistrationCostFunction::StartRegistration:this->ROI_Weight->MaxCoord " 
+     std::cerr << "EMLocalRegistrationCostFunction::StartRegistration:this->ROI_Weight->MaxCoord " 
           << this->ROI_Weight->MaxCoord[0] << " " << this->ROI_Weight->MaxCoord[1] << " " << " " << this->ROI_Weight->MaxCoord[2] << endl;
   }
 
@@ -908,21 +908,21 @@ void  EMLocalRegistrationCostFunction::FinalizeCostFunction(double* Parameters, 
   // ----------------------------------------------
   // Print out results
   // ----------------------------------------------
-  cout << "Number of Evaluations :" << NumOfFunctionEvaluations << endl;
-  cout << "Final Result:" << endl;
+  std::cerr << "Number of Evaluations :" << NumOfFunctionEvaluations << endl;
+  std::cerr << "Final Result:" << endl;
   if (this->RegistrationType != EMSEGMENT_REGISTRATION_CLASS_ONLY) {
-    cout << "Global Parameters:    " ;EMLocalRegistrationCostFunction_PrintVector(Parameters,0,this->NumberOfParameterPerSet-1);
+    std::cerr << "Global Parameters:    " ;EMLocalRegistrationCostFunction_PrintVector(Parameters,0,this->NumberOfParameterPerSet-1);
   }
 
   if (this->RegistrationType > EMSEGMENT_REGISTRATION_GLOBAL_ONLY) {
     for (int i = (RegistrationType > EMSEGMENT_REGISTRATION_CLASS_ONLY ? 1 : 0) ; i <  this->NumberOfParameterSets ; i++) {
-        cout << "Structure Parameter " << i << ": ";  EMLocalRegistrationCostFunction_PrintVector(Parameters,i*this->NumberOfParameterPerSet,(i+1)*this->NumberOfParameterPerSet-1);
+        std::cerr << "Structure Parameter " << i << ": ";  EMLocalRegistrationCostFunction_PrintVector(Parameters,i*this->NumberOfParameterPerSet,(i+1)*this->NumberOfParameterPerSet-1);
     }
   }
 
-  cout << "WeightAtlas Cost: " << this->GetMinWeightAtlasCost() << endl;
-  cout << "GaussianPenality: " << this->GetMinGaussianCost() << endl;
-  cout << "Min Cost :        " << this->GetMinCost() << endl;
+  std::cerr << "WeightAtlas Cost: " << this->GetMinWeightAtlasCost() << endl;
+  std::cerr << "GaussianPenality: " << this->GetMinGaussianCost() << endl;
+  std::cerr << "Min Cost :        " << this->GetMinCost() << endl;
 }
 
 // The idea is MAP defines the class, to which the voxel is assigned already 
@@ -945,11 +945,11 @@ void  EMLocalRegistrationCostFunction::FinalizeCostFunction(double* Parameters, 
 // // Generating intital simplex for the simplex algorithm
 // void vtkImageEMLocalSegmenter::SimplexInterface(float *FinalParameters, float &ParameterOffset, float &ParameterTolerance, float &ParameterMaxDifference, float &FinalCost) {
 //   if (RegistrationParameters.GetRigidFlag()) {
-//     cout << "Have not updated this function for Rigid registration " << endl; 
+//     std::cerr << "Have not updated this function for Rigid registration " << endl; 
 //     exit(0);
 //   }
 // 
-//   cout << "Activate Simplex Algorithm" << endl;
+//   std::cerr << "Activate Simplex Algorithm" << endl;
 //   int NumParaSets      =  RegistrationParameters.GetNumberOfParameterSets();
 //   int NumParaPerSet    =  RegistrationParameters.GetNumberOfParameterPerSet();
 //   int RegistrationType =  RegistrationParameters.GetRegistrationType();
@@ -969,8 +969,8 @@ void  EMLocalRegistrationCostFunction::FinalizeCostFunction(double* Parameters, 
 //   float SimplexOffset = ParameterOffset;
 // 
 //   if (Debug) {
-//     cout << "ParameterOffset: "  << ParameterOffset << " Tolerance: " << ParameterTolerance << " ParameterMaxDifference: " << ParameterMaxDifference << endl;
-//     cout << "Initial Parameters: "; vtkImageEMLocalSegmenter_PrintVector(FinalParameters,0, NumParaSets*NumParaPerSet-1);
+//     std::cerr << "ParameterOffset: "  << ParameterOffset << " Tolerance: " << ParameterTolerance << " ParameterMaxDifference: " << ParameterMaxDifference << endl;
+//     std::cerr << "Initial Parameters: "; vtkImageEMLocalSegmenter_PrintVector(FinalParameters,0, NumParaSets*NumParaPerSet-1);
 //   }
 // 
 //   float *InitialParameters = new float[NumParaTotal];
@@ -1019,7 +1019,7 @@ void  EMLocalRegistrationCostFunction::FinalizeCostFunction(double* Parameters, 
 //     // Run simplex
 //     // ----------------------------------------------
 //     ResultFlag = Simplex::amoeba(SimplexParameter, SimplexCost, NumParaTotal, ParameterTolerance, RegistrationParameters.RegistrationCostFunction,  &NumOfFunctionEvaluations); 
-//     cout << "Number of Evaluations for " << Iterations << ". Iteration: "  << NumOfFunctionEvaluations << endl;  
+//     std::cerr << "Number of Evaluations for " << Iterations << ". Iteration: "  << NumOfFunctionEvaluations << endl;  
 //     
 //     SimplexParameter[1] ++ ;
 //     this->ScaleRotationValues(SimplexParameter[1]);
@@ -1047,7 +1047,7 @@ void  EMLocalRegistrationCostFunction::FinalizeCostFunction(double* Parameters, 
 //     if (!changed && 0 && (SimplexCost[1] > FinalCost)) {
 //       // Try opposite direction
 //       // currently disabled - lets see if we needed 
-//       cout << ">>>> Try different Direction" << endl;
+//       std::cerr << ">>>> Try different Direction" << endl;
 //       SimplexOffset = -SimplexOffset;
 //       memcpy(&SimplexParameter[1][1], FinalParameters,sizeof(float)*NumParaTotal);
 //       SimplexCost[1] = FinalCost -1.0;
@@ -1078,7 +1078,7 @@ void  EMLocalRegistrationCostFunction::FinalizeCostFunction(double* Parameters, 
 //   // ----------------------------------------------
 //   // Clean Up  
 //   // ----------------------------------------------
-//   cout << "Kilian: Change abosulte parameter difference to account for scaling" << endl;
+//   std::cerr << "Kilian: Change abosulte parameter difference to account for scaling" << endl;
 //   float AbsoluteParameterDifference = 0.0;
 //   for (int j = 0; j < NumParaTotal; j++) AbsoluteParameterDifference += fabs(InitialParameters[j] - FinalParameters[j]);
 // 

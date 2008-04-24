@@ -26,7 +26,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 template <class T>
 void EMLocalAlgorithm<T>::DetermineLabelMap(short* LabelMap) { 
 #if (0) 
-    cout << "EMLocalAlgorithm<T>::DetermineLabelMap LabelMap " << LabelMap << " NumTotalTypeCLASS " << this->NumTotalTypeCLASS << " NumChildClasses  " 
+    std::cerr << "EMLocalAlgorithm<T>::DetermineLabelMap LabelMap " << LabelMap << " NumTotalTypeCLASS " << this->NumTotalTypeCLASS << " NumChildClasses  " 
          << this->NumChildClasses << " head " << this->actSupCl << " ROI " << this->ROIPtr << " ImageProd " << this->ImageProd  << " w_m  " << this->w_mPtr << endl;
 #endif
 
@@ -45,16 +45,16 @@ void EMLocalAlgorithm<T>::DetermineLabelMap(short* LabelMap) {
       ClassIndex = 0;
       for (l=0; l< this->NumClasses; l++) {
     temp = 0;
-        // cout << " | ";
+        // std::cerr << " | ";
     for (k=0; k < NumChildClasses[l]; k++) {
       temp += *w_m[ClassIndex];
-          // cout << *w_m[ClassIndex] << " " ;
+          // std::cerr << *w_m[ClassIndex] << " " ;
           w_m[ClassIndex]++;
           ClassIndex ++;
     }
-        // cout << endl;
+        // std::cerr << endl;
     if (!(temp == temp)) {
-      cout << ":Error: EMLocalAlgorithm::DetermineLabelMap: in index "<< idx << " Produced a nan " << endl;
+      std::cerr << ":Error: EMLocalAlgorithm::DetermineLabelMap: in index "<< idx << " Produced a nan " << endl;
       exit(1);
     }
           if ( temp > MaxProbValue) {MaxProbValue = temp; MaxProbIndex = l;}
@@ -69,7 +69,7 @@ void EMLocalAlgorithm<T>::DetermineLabelMap(short* LabelMap) {
 
   delete[] w_m;
  
-  //   if (DebugImage) cout << " ---------------------------- End of Error index ------------------" << endl;
+  //   if (DebugImage) std::cerr << " ---------------------------- End of Error index ------------------" << endl;
 }
 
 // -----------------------------------------------------------
@@ -97,7 +97,7 @@ void EMLocalAlgorithm<T>::DifferenceMeassure(int StopType, int PrintLabelMapConv
       else LabelMapDifferencePercent = 0.0;
       
       delete[] LastLabelMap;
-      cout << "LabelMapDifferenceAbsolut: " << LabelMapDifferenceAbsolut << " LabelMapDifferencePercent: " << LabelMapDifferencePercent << endl;
+      std::cerr << "LabelMapDifferenceAbsolut: " << LabelMapDifferenceAbsolut << " LabelMapDifferencePercent: " << LabelMapDifferencePercent << endl;
       
     }  else {
       LabelMapDifferenceAbsolut = -1;      
@@ -135,7 +135,7 @@ void EMLocalAlgorithm<T>::DifferenceMeassure(int StopType, int PrintLabelMapConv
       if (this->NumROIVoxels) WeightsDifferencePercent = float(WeightsDifferenceAbsolut) / float(this->NumROIVoxels); 
       else WeightsDifferencePercent = 0.0;
       delete[] LastWeights; 
-      cout << "WeightsDifferenceAbsolut: " << WeightsDifferenceAbsolut << " WeightsDifferencePercent: " << WeightsDifferencePercent << endl;
+      std::cerr << "WeightsDifferenceAbsolut: " << WeightsDifferenceAbsolut << " WeightsDifferencePercent: " << WeightsDifferencePercent << endl;
     } else {
       WeightsDifferenceAbsolut = -1.0;      
       WeightsDifferencePercent  = 2.0;

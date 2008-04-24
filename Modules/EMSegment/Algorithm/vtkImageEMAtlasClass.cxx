@@ -251,7 +251,7 @@ int vtkImageEMAtlasClass::CheckInputImage(vtkImageData * inData,int DataTypeOrig
 // the datas data types.
 void vtkImageEMAtlasClass::ExecuteData(vtkDataObject *)
 {
-  // cout << "Start vtkImageEMAtlasClass::ExecuteData " << endl;
+  // std::cerr << "Start vtkImageEMAtlasClass::ExecuteData " << endl;
    vtkDebugMacro(<<"ExecuteData()");
 
    // ==================================================
@@ -340,9 +340,9 @@ void vtkImageEMAtlasClass::ExecuteData(vtkDataObject *)
      {
        // If ProbDataPtr points to weired values then do an Update of the orignal source of the data before assinging it to this class 
        // e.g. vtkImageReader Blub ; Blub Update ; EMClass SetProbDataPtr [Blub GetOutput]
-       cout << "------------------ ProbabilityData ------------------------- " << endl;
+       std::cerr << "------------------ ProbabilityData ------------------------- " << endl;
        vtkIndent indent;
-       inData[1]->PrintSelf(cout,indent); 
+       inData[1]->PrintSelf(std::cerr,indent); 
      }
 #endif
 

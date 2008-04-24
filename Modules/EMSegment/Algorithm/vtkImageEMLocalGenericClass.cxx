@@ -85,7 +85,7 @@ void* vtkImageEMLocalGenericClass::GetDataPtr(vtkImageData* ImageData,int Bounda
   int extent[6];
   ImageData->GetWholeExtent(extent);
   //vtkIndent indent;
-  //ImageData->PrintSelf(cout, indent);
+  //ImageData->PrintSelf(std::cerr, indent);
   if (BoundaryType) {
     vtkIdType DataIncX, DataIncY, DataIncZ;
     ImageData->GetContinuousIncrements(extent, DataIncX, DataIncY, DataIncZ);
@@ -108,7 +108,7 @@ void* vtkImageEMLocalGenericClass::GetDataPtr(vtkImageData* ImageData,int Bounda
       case VTK_CHAR:           return  (void*) (((char*)ImageData->GetScalarPointerForExtent(extent)) + jump);
       case VTK_UNSIGNED_CHAR:  return  (void*) (((unsigned char*)ImageData->GetScalarPointerForExtent(extent)) + jump);
       default:
-    cout << "vtkImageEMLocalSegmenter::HierarchicalSegmentation Unknown ScalarType" << endl;
+    std::cerr << "vtkImageEMLocalSegmenter::HierarchicalSegmentation Unknown ScalarType" << endl;
       return NULL;
     }
   } else {
@@ -179,7 +179,7 @@ int vtkImageEMLocalGenericClass::CheckInputImage(vtkImageData * inData, int Data
   inData->GetSpacing(DataSpacingNew);
   if ((this->DataSpacing[0] !=  float(DataSpacingNew[0])) || (this->DataSpacing[1] !=  float(DataSpacingNew[1])) || (this->DataSpacing[2] !=  float(DataSpacingNew[2]))) {
     vtkEMAddErrorMessage("CheckInputImage: Data Spacing of input images is unequal" );
-    cout << this->DataSpacing[0] << " " << DataSpacingNew[0] << " + " << this->DataSpacing[1] << " " << DataSpacingNew[1] << " + " << this->DataSpacing[2] << " " << DataSpacingNew[2] << endl;
+    std::cerr << this->DataSpacing[0] << " " << DataSpacingNew[0] << " + " << this->DataSpacing[1] << " " << DataSpacingNew[1] << " + " << this->DataSpacing[2] << " " << DataSpacingNew[2] << endl;
     return 1;
   }
   // Kilian Check for orientation has to be done in TCL !!!!
@@ -202,7 +202,7 @@ int vtkImageEMLocalGenericClass::CheckAndAssignProbImageData(vtkImageData *inDat
 //----------------------------------------------------------------------------
 void  vtkImageEMLocalGenericClass::ExecuteData(vtkDataObject*) {
     // Check All Values that are defined here 
-    // cout << "vtkImageEMGenericClass::ExecuteData" << endl; 
+    // std::cerr << "vtkImageEMGenericClass::ExecuteData" << endl; 
 
     // -----------------------------------------------------
     // Check Generic Class Setting 
@@ -245,9 +245,9 @@ void  vtkImageEMLocalGenericClass::ExecuteData(vtkDataObject*) {
       {
         // If ProbDataPtr points to weired values then do an Update of the orignal source of the data before assinging it to this class 
         // e.g. vtkImageReader Blub ; Blub Update ; EMClass SetProbDataPtr [Blub GetOutput]
-        cout << "------------------ ProbabilityData ------------------------- " << endl;
+        std::cerr << "------------------ ProbabilityData ------------------------- " << endl;
         vtkIndent indent;
-        inData[1]->PrintSelf(cout,indent); 
+        inData[1]->PrintSelf(std::cerr,indent); 
       }
 #endif
       if (this->ProbDataWeight > 0.0) {

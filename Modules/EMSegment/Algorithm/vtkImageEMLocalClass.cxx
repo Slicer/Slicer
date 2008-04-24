@@ -102,8 +102,8 @@ void vtkImageEMLocalClass::PrintSelf(ostream& os,vtkIndent indent) {
   os << indent << "------------------------------------------ CLASS ----------------------------------------------" << endl;
   this->vtkImageEMLocalGenericClass::PrintSelf(os,indent);  
   os << indent << "ProbImageData:           "; 
-  if (this->ProbImageData) { cout << endl; this->ProbImageData->PrintSelf(os,indent.GetNextIndent());}
-  else cout << "(None)" << endl;
+  if (this->ProbImageData) { std::cerr << endl; this->ProbImageData->PrintSelf(os,indent.GetNextIndent());}
+  else std::cerr << "(None)" << endl;
 
   os << indent << "LogMu:                   ";
   for (x= 0 ; x < this->NumInputImages; x ++) os << this->LogMu[x] << " ";
@@ -195,7 +195,7 @@ void vtkImageEMLocalClass::SetLogCovariance(double value, int y, int x){
 // PCA Stuff 
 //----------------------------------------------------------------------------
 void vtkImageEMLocalClass::SetPCANumberOfEigenModes(int init)  {
-     // cout << "EMLocalClass::SetPCANumberOfEigenModes : Currently : " << this->PCANumberOfEigenModes << " New One: " << init << endl; 
+     // std::cerr << "EMLocalClass::SetPCANumberOfEigenModes : Currently : " << this->PCANumberOfEigenModes << " New One: " << init << endl; 
      if (this->PCANumberOfEigenModes != init) {
         this->DeletePCAParameters();
         this->PCANumberOfEigenModes =  init;
@@ -208,7 +208,7 @@ void vtkImageEMLocalClass::SetPCANumberOfEigenModes(int init)  {
 
 //----------------------------------------------------------------------------
 void vtkImageEMLocalClass::SetPCAEigenVector(vtkImageData *image, int index) {
-  // cout << "vtkImageEMLocalClass::SetPCAEigenVector" << endl;
+  // std::cerr << "vtkImageEMLocalClass::SetPCAEigenVector" << endl;
     if (index < 1 || index > this->PCANumberOfEigenModes ) {
       vtkEMAddErrorMessage("Error:SetPCAEigenVector: index has to be greater 0 and not greater than NumberOfEigenModes(" << this->PCANumberOfEigenModes << ")");
       return;
@@ -246,8 +246,8 @@ int vtkImageEMLocalClass::CheckAndAssignPCAImageData(vtkImageData *inData, int D
 // the datas data types.
 void vtkImageEMLocalClass::ExecuteData(vtkDataObject *)
 {
-  // cout << "Start vtkImageEMLocalClass::ExecuteData " << endl;
-  // cout << "PCANumberOfEigenModes " << this->PCANumberOfEigenModes << endl;
+  std::cerr << "Start vtkImageEMLocalClass::ExecuteData " << endl;
+  // std::cerr << "PCANumberOfEigenModes " << this->PCANumberOfEigenModes << endl;
 
    vtkDebugMacro(<<"ExecuteData()");
 

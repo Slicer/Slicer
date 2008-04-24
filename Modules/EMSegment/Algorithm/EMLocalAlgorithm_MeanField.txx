@@ -50,7 +50,8 @@ template <class T> void EMLocalAlgorithm<T>::RegularizeWeightsWithMeanField(int 
     // -----------------------------------------------------------
     // Initialization
     regiter ++;
-    cout << "EMLocalAlgorithm: "<< regiter << ". EM - MF Iteration" << endl;
+    std::cerr << "EMLocalAlgorithm: " << regiter 
+    << ". EM - MF Iteration" << std::endl;
 
     this->w_m_inputPtr  = (regiter%2 ? w_mPtr  : w_mCopy);
     this->w_m_outputPtr = (regiter%2 ? w_mCopy : w_mPtr);

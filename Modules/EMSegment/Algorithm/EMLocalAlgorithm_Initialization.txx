@@ -214,7 +214,11 @@ template  <class T> int EMLocalAlgorithm<T>::InitializeClass(vtkImageEMLocalSupe
       CurrentLabelList[i]               = ((vtkImageEMLocalSuperClass*) this->ClassList[i])->GetLabel();
       ExcludeFromIncompleteEStepFlag[i] = ((vtkImageEMLocalSuperClass*) ClassList[i])->GetExcludeFromIncompleteEStepFlag();
     }                      
-    if (ExcludeFromIncompleteEStepFlag[i]) { cout << "Class "<< i << " is excluded from Incomplete E-Step ! " << endl;}
+    if (ExcludeFromIncompleteEStepFlag[i]) 
+      { 
+      std::cerr << "Class "<< i << " is excluded from Incomplete E-Step ! " 
+                << std::endl;
+      }
 
   }
   
@@ -231,7 +235,7 @@ template  <class T> int EMLocalAlgorithm<T>::InitializeClass(vtkImageEMLocalSupe
 #if (0)
  {
     vtkIndent indent;
-    actSupCl->PrintSelf(cout,indent); 
+    actSupCl->PrintSelf(std::cerr,indent); 
  }
 #endif
 
@@ -259,77 +263,147 @@ template  <class T> int EMLocalAlgorithm<T>::InitializeClass(vtkImageEMLocalSupe
 
       InputChannelWeights = ((vtkImageEMLocalClass*) ClassList[i])->GetInputChannelWeights();
  
-      if (this->CalcWeightedCovariance(InverseWeightedLogCov[index], InvSqrtDetWeightedLogCov[index], InputChannelWeights, LogCovariance[index], this->VirtualNumInputImages[i],NumInputImages) == 0) {
-    vtkEMAddErrorMessage("vtkImageEMLocalAlgorithm: weighted covariance has a non positive determinante  for class with index "<< index << ". See shell for more specific output!");
-    cout << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl  << "LogCovariance :";  
-    for (int x =0 ; x <NumInputImages; x ++ ) {
-      for (int y =0 ; y <NumInputImages; y ++ ) cout << LogCovariance[index][x][y] << " ";
-      cout << " | ";
-    }
-    cout << endl << "Weighted LogCovariance : "; 
-    for (int x =0 ; x <NumInputImages; x ++ ) {
-      for (int y =0 ; y <NumInputImages; y ++ ) cout << LogCovariance[index][x][y]*InputChannelWeights[x]*InputChannelWeights[y] << " ";
-      cout << " | ";
-    }
-         
-        cout << endl;  
-    SuccessFlag = 0;
-      }
+      if (this->CalcWeightedCovariance(InverseWeightedLogCov[index], InvSqrtDetWeightedLogCov[index], InputChannelWeights, LogCovariance[index], this->VirtualNumInputImages[i],NumInputImages) == 0) 
+        {
+        vtkEMAddErrorMessage("vtkImageEMLocalAlgorithm: weighted covariance has a non positive determinante  for class with index "<< index << ". See shell for more specific output!");
+        std::cerr << "InvSqrtDetWeightedLogCov: " 
+                  << InvSqrtDetWeightedLogCov[index] 
+                  << " VirtualNumInputImages: " 
+                  << VirtualNumInputImages[i] 
+                  << std::endl  
+                  << "LogCovariance :";  
+        for (int x =0 ; x <NumInputImages; x ++ ) 
+          {
+          for (int y =0 ; y <NumInputImages; y ++ ) 
+            {
+            std::cerr << LogCovariance[index][x][y] << " ";
+            }
+          std::cerr << " | ";
+          }
+        std::cerr << std::endl << "Weighted LogCovariance : "; 
+        for (int x =0 ; x <NumInputImages; x ++ ) 
+          {
+          for (int y =0 ; y <NumInputImages; y ++ ) 
+            {
+            std::cerr << LogCovariance[index][x][y]*
+              InputChannelWeights[x]*InputChannelWeights[y] << " ";
+            }
+          std::cerr << " | ";
+          }
+        
+        std::cerr << std::endl;  
+        SuccessFlag = 0;
+        }
 
 #if (0)
-      cout << "=========== "<< index << " =============" << endl;
-      cout << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl  << "InverseWeightedLogCov :";  ;
-      for (int x =0 ; x <NumInputImages; x ++ ) {
-    for (int y =0 ; y <NumInputImages; y ++ ) fprintf(stdout, "%8.5f ", InverseWeightedLogCov[index][x][y]);
-    cout << " | ";
-      }
-      cout << endl;
+      std::cerr << "=========== "<< index << " =============" << std::endl;
+      std::cerr << "InvSqrtDetWeightedLogCov: " 
+                << InvSqrtDetWeightedLogCov[index] 
+                << " VirtualNumInputImages: " 
+                << VirtualNumInputImages[i] 
+                << std::endl  
+                << "InverseWeightedLogCov :";
+      for (int x =0 ; x <NumInputImages; x ++ ) 
+        {
+        for (int y =0 ; y <NumInputImages; y ++ ) 
+          {
+          fprintf(stderr, "%8.5f ", InverseWeightedLogCov[index][x][y]);
+          }
+        std::cerr << " | ";
+        }
+      std::cerr << std::endl;
 #endif
       index ++;
 
-    } else  {
-      NumChildClasses[i]   = ((vtkImageEMLocalSuperClass*) ClassList[i])->GetTotalNumberOfClasses(false);
-      TissueProbability[i] = ((vtkImageEMLocalSuperClass*) ClassList[i])->GetTissueProbability();
-      ProbDataWeight[i]    = ((vtkImageEMLocalSuperClass*) ClassList[i])->GetProbDataWeight();
-      if (NumChildClasses[i]) ProbDataMinusWeight[i] =  float(NumberOfTrainingSamples)* (1.0 - ProbDataWeight[i])/float(NumChildClasses[i]);
-      else ProbDataMinusWeight[i] = 0.0;
+    } 
+    else  
+      {
+      NumChildClasses[i]   = ((vtkImageEMLocalSuperClass*) 
+                              ClassList[i])->GetTotalNumberOfClasses(false);
+      TissueProbability[i] = ((vtkImageEMLocalSuperClass*) 
+                              ClassList[i])->GetTissueProbability();
+      ProbDataWeight[i]    = ((vtkImageEMLocalSuperClass*) 
+                              ClassList[i])->GetProbDataWeight();
+      if (NumChildClasses[i]) 
+        {
+        ProbDataMinusWeight[i] =  float(NumberOfTrainingSamples)* 
+          (1.0 - ProbDataWeight[i])/float(NumChildClasses[i]);
+        }
+      else 
+        {
+        ProbDataMinusWeight[i] = 0.0;
+        }
 
-      InputChannelWeights = ((vtkImageEMLocalSuperClass*) ClassList[i])->GetInputChannelWeights();
+      InputChannelWeights = ((vtkImageEMLocalSuperClass*) 
+                             ClassList[i])->GetInputChannelWeights();
 
-      for (int k = 0;k < NumChildClasses[i]; k++) {
-    if (this->CalcWeightedCovariance(InverseWeightedLogCov[index], InvSqrtDetWeightedLogCov[index], InputChannelWeights, LogCovariance[index], VirtualNumInputImages[i],NumInputImages) == 0) {
+      for (int k = 0;k < NumChildClasses[i]; k++) 
+        {
+        if (this->CalcWeightedCovariance(InverseWeightedLogCov[index], 
+                                         InvSqrtDetWeightedLogCov[index], 
+                                         InputChannelWeights, 
+                                         LogCovariance[index], 
+                                         VirtualNumInputImages[i],
+                                         NumInputImages) == 0) 
+          {
           vtkEMAddErrorMessage("vtkImageEMLocalAlgorithm: weighted covariance has a non positive determinante  for class with index "<< index << ". See shell for more specific output!");
-          cout << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl  << "LogCovariance :";  
-          for (int x =0 ; x <NumInputImages; x ++ ) {
-         for (int y =0 ; y <NumInputImages; y ++ ) cout << LogCovariance[index][x][y] << " ";
-          cout << " | ";
+          std::cerr << "InvSqrtDetWeightedLogCov: " 
+                    << InvSqrtDetWeightedLogCov[index] 
+                    << " VirtualNumInputImages: " 
+                    <<  VirtualNumInputImages[i] << std::endl  
+                    << "LogCovariance :";  
+          for (int x =0 ; x <NumInputImages; x ++ ) 
+            {
+            for (int y =0 ; y <NumInputImages; y ++ ) 
+              {
+              std::cerr << LogCovariance[index][x][y] << " ";
+              }
+            std::cerr << " | ";
            }
-      cout << endl << "Weighted LogCovariance : "; 
-          for (int x =0 ; x <NumInputImages; x ++ ) {
-         for (int y =0 ; y <NumInputImages; y ++ ) cout << LogCovariance[index][x][y]*InputChannelWeights[x]*InputChannelWeights[y] << " ";
-          cout << " | ";
-           }
+          std::cerr << std::endl << "Weighted LogCovariance : "; 
+          for (int x =0 ; x <NumInputImages; x ++ ) 
+            {
+            for (int y =0 ; y <NumInputImages; y ++ ) 
+              {
+              std::cerr << LogCovariance[index][x][y]*InputChannelWeights[x]*
+                InputChannelWeights[y] << " ";
+              }
+            std::cerr << " | ";
+            }
            
-          cout << endl;  
-      SuccessFlag = 0;
-    }
+          std::cerr << std::endl;  
+          SuccessFlag = 0;
+          }
 #if (0)
-    cout << "=========== "<< index << " =============" << endl;
-    cout << "InvSqrtDetWeightedLogCov: " << InvSqrtDetWeightedLogCov[index] << " VirtualNumInputImages: " <<  VirtualNumInputImages[i] << endl << "InverseWeightedLogCov: ";  
-    for (int x =0 ; x <NumInputImages; x ++ ) {
-      for (int y =0 ; y <NumInputImages; y ++ ) fprintf(stdout, "%8.5f ", InverseWeightedLogCov[index][x][y]);
-      cout << " | ";
-    }
-    cout << endl;
+        std::cerr << "=========== "<< index << " =============" << std::endl;
+        std::cerr << "InvSqrtDetWeightedLogCov: " 
+                  << InvSqrtDetWeightedLogCov[index] 
+                  << " VirtualNumInputImages: " 
+                  <<  VirtualNumInputImages[i] 
+                  << std::endl 
+                  << "InverseWeightedLogCov: ";  
+        for (int x =0 ; x <NumInputImages; x ++ ) 
+          {
+          for (int y =0 ; y <NumInputImages; y ++ ) 
+            {
+            fprintf(stdout, "%8.5f ", InverseWeightedLogCov[index][x][y]);
+            }
+          std::cerr << " | ";
+          }
+        std::cerr << std::endl;
 #endif
-    index ++; 
+        index ++; 
+        }
       }
-    }
 
 
-    for (int k= 0; k < NumInputImages; k++) { 
-       if (InputChannelWeights[k] > 0.0) VirtualOveralInputChannelFlag[k] = 1; 
-    }
+    for (int k= 0; k < NumInputImages; k++) 
+      { 
+      if (InputChannelWeights[k] > 0.0) 
+        {
+        VirtualOveralInputChannelFlag[k] = 1; 
+        }
+      }
   } 
 
   this->VirtualOveralInputChannelNum = 0;
@@ -374,12 +448,17 @@ template  <class T> void EMLocalAlgorithm<T>::InitializeBias() {
     if (this->PrintDir != NULL) sprintf(BiasDirectory,"%s/Bias/blub",this->PrintDir);
     else sprintf(BiasDirectory,"Bias");
 
-    if (vtkFileOps::makeDirectoryIfNeeded(BiasDirectory) == -1) {
-      vtkEMAddErrorMessage( "Could not create the directory :" << this->PrintDir << "/Bias");
+    if (vtkFileOps::makeDirectoryIfNeeded(BiasDirectory) == -1) 
+      {
+      vtkEMAddErrorMessage( "Could not create the directory :" 
+                            << this->PrintDir << "/Bias");
       this->BiasPrint = 0;
-    } else {
-      cout << "vtkImageEMLocalAlgorithm: Print Bias (Type: Float) to " << this->PrintDir << "/Bias" << endl;
-    }
+      } 
+    else 
+      {
+      std::cerr << "vtkImageEMLocalAlgorithm: Print Bias (Type: Float) to " 
+                << this->PrintDir << "/Bias" << std::endl;
+      }
     delete[] BiasDirectory;
   }
 }
@@ -406,7 +485,7 @@ template <class T> void EMLocalAlgorithm<T>::InitializePrint() {
   }
 
   if (QualityFlag) {
-    cout << "Open Quality File" << endl;
+    std::cerr << "Open Quality File" << std::endl;
     this->QualityFile = new FILE*[EMSEGMENT_NUM_OF_QUALITY_MEASURE];
     for (int i = 0; i < EMSEGMENT_NUM_OF_QUALITY_MEASURE ; i++) this->QualityFile[i] = NULL;
     for (int c = 0; c < this->NumClasses; c++) {
@@ -434,7 +513,7 @@ template <class T> void EMLocalAlgorithm<T>::InitializePrint() {
     }
       }
     }
-    cout << "End open Quality File" << endl;
+    std::cerr << "End open Quality File" << std::endl;
   }
 
   // -----------------------------------------------------------
@@ -546,7 +625,7 @@ template <class T> int EMLocalAlgorithm<T>::InitializeShape() {
         vtkEMAddWarningMessage("Because PCA Shape Parameters are acitvated we will set Alpha to 0!");
         this->Alpha = 0.0;
       } 
-      cout << "Class " << i << " has ShapePtr defined" << endl;
+      std::cerr << "Class " << i << " has ShapePtr defined" << std::endl;
 
       if (this->PCAShapeModelType)  {
     this->PCATotalNumOfShapeParameters         +=  this->PCANumberOfEigenModes[i];
@@ -570,15 +649,23 @@ template <class T> int EMLocalAlgorithm<T>::InitializeShape() {
       // Voxels x NumberOfEigenVectors
    
 #if (0)
-    vtkIndent indent; 
-        ((vtkImageEMLocalClass*)  ClassList[i])->PrintPCAParameters(cout,indent);
-        cout << indent << "PCANumberOfEigenModes : " << PCANumberOfEigenModes[i] << endl;
-        cout << indent << "PCAShapeParameters    : ";
-        for (int j = 0 ; j < PCANumberOfEigenModes[i]; j++) cout << PCAShapeParameters[i][j] << " " ;
-        cout << endl;
-        cout << indent << "PCAInverseEigenValues : ";
-        for (int j = 0 ; j < PCANumberOfEigenModes[i]; j++) cout << PCAInverseEigenValues[i][j] << " " ;
-        cout << endl;
+      vtkIndent indent; 
+      ((vtkImageEMLocalClass*)ClassList[i])->
+        PrintPCAParameters(std::cerr,indent);
+      std::cerr << indent << "PCANumberOfEigenModes : " 
+                << PCANumberOfEigenModes[i] << std::endl;
+      std::cerr << indent << "PCAShapeParameters    : ";
+      for (int j = 0 ; j < PCANumberOfEigenModes[i]; j++) 
+        {
+        std::cerr << PCAShapeParameters[i][j] << " " ;
+        }
+        std::cerr << endl;
+        std::cerr << indent << "PCAInverseEigenValues : ";
+        for (int j = 0 ; j < PCANumberOfEigenModes[i]; j++) 
+          {
+          std::cerr << PCAInverseEigenValues[i][j] << " " ;
+          }
+        std::cerr << std::endl;
 #endif
     } else {
       this->PCAInverseEigenValues[i]      = NULL;
@@ -639,13 +726,19 @@ template <class T> int EMLocalAlgorithm<T>::InitializeShape() {
     ShapeParameters->PCAInverseEigenValues        = this->PCAInverseEigenValues;
     ShapeParameters->PCATotalNumOfShapeParameters = this->PCATotalNumOfShapeParameters;
     ShapeParameters->PCAShapeModelType            = this->PCAShapeModelType;
-    cout << "Current Shape Modelling Type : ";
-    switch (this->PCAShapeModelType) {
-       case EMSEGMENT_PCASHAPE_DEPENDENT    : cout << "Dependent"; break;
-       case EMSEGMENT_PCASHAPE_INDEPENDENT  : cout << "Independent"; break;
-       case EMSEGMENT_PCASHAPE_APPLY        : cout << "Apply"; break;
-    }
-    cout << endl;
+    std::cerr << "Current Shape Modelling Type : ";
+    switch (this->PCAShapeModelType) 
+      {
+      case EMSEGMENT_PCASHAPE_DEPENDENT    : 
+        std::cerr << "Dependent"; break;
+      case EMSEGMENT_PCASHAPE_INDEPENDENT  : 
+        std::cerr << "Independent"; break;
+      case EMSEGMENT_PCASHAPE_APPLY        : 
+        std::cerr << "Apply"; break;
+      default                              :
+        std::cerr << "Unknown"; break;
+      }
+    std::cerr << endl;
   
     ShapeParameters->PCALogisticSlope    = this->PCALogisticSlope ;
     ShapeParameters->PCALogisticBoundary = this->PCALogisticBoundary;
@@ -761,7 +854,7 @@ template <class T> int EMLocalAlgorithm<T>::InitializeRegistration(float initGlo
 
        this->RegistrationParameters->SetIndependentSubClassFlag(this->RegistrationIndependentSubClassFlag);
        this->RegistrationParameters->SetClassSpecificRegistrationFlag(this->RegistrationClassSpecificRegistrationFlag);
-       cout << "Number Of Parametersets " << NumParaSets << endl;
+       std::cerr << "Number Of Parametersets " << NumParaSets << std::endl;
        this->RegistrationParameters->SetDimensionOfParameter(NumParaSets,this->TwoDFlag, this->RigidFlag);
  
        if (!this->DefineGlobalAndStructureRegistrationMatrix()) SuccessFlag = 0; 
@@ -770,7 +863,9 @@ template <class T> int EMLocalAlgorithm<T>::InitializeRegistration(float initGlo
        this->RegistrationParameters->SetGlobalToAtlasRotationMatrix(this->GlobalRegInvRotation);
        this->RegistrationParameters->SetSuperClassToAtlasTranslationVector(SuperClassToAtlasTranslationVector);
        this->RegistrationParameters->SetSuperClassToAtlasRotationMatrix(SuperClassToAtlasRotationMatrix);
-       cout << "NumberOfVoxels in the region of interest : "<< this->RegistrationParameters->GetBoundary_NumberOfROIVoxels() << endl;
+       std::cerr << "NumberOfVoxels in the region of interest : " << 
+         this->RegistrationParameters->GetBoundary_NumberOfROIVoxels() 
+                 << std::endl;
     
        this->RegistrationParameters->ClassInvCovariance_Define(ClassListType,ClassList); 
        this->RegistrationParameters->ClassInvCovariance_Print();
@@ -790,19 +885,21 @@ template <class T> int EMLocalAlgorithm<T>::InitializeRegistration(float initGlo
        vtkEMAddErrorMessage("Could not create the follwoing directory :" << makedirectory);
        SuccessFlag = 0 ;
      } else if (actSupCl->GetPrintRegistrationParameters()) {
-       //cout << "Open Registratation ParameterFiles" << endl;
+     //std::cerr << "Open Registratation ParameterFiles" << std::endl;
        RegistrationParameterFile = new FILE*[NumParaSets];
        if (!this->DefinePrintRegistrationParameters(NumParaSets))  SuccessFlag = 0;
-       // cout << "End" << endl;
+       // std::cerr << "End" << std::endl;
      }
        }
     } else { 
       // We only apply registration and wont optimize over it 
       if (!this->DefineGlobalAndStructureRegistrationMatrix())  SuccessFlag = 0;
     }
-    cout << "Registration Applied to Atlas Space:" << endl;
-    cout << "Global Matrix: "; EMLocalAlgorithm_PrintVector(GlobalRegInvRotation,0,8); EMLocalAlgorithm_PrintVector(GlobalRegInvTranslation,0,2);
-    cout << "Head Parameters: " << endl;
+    std::cerr << "Registration Applied to Atlas Space:" << std::endl;
+    std::cerr << "Global Matrix: "; 
+    EMLocalAlgorithm_PrintVector(GlobalRegInvRotation,0,8); 
+    EMLocalAlgorithm_PrintVector(GlobalRegInvTranslation,0,2);
+    std::cerr << "Head Parameters: " << std::endl;
     EMLocalAlgorithm_PrintVector(actSupCl->GetRegistrationTranslation(),0,2);
     EMLocalAlgorithm_PrintVector(actSupCl->GetRegistrationRotation(),0,2);
     EMLocalAlgorithm_PrintVector(actSupCl->GetRegistrationScale(),0,2);
@@ -814,26 +911,33 @@ template <class T> int EMLocalAlgorithm<T>::InitializeRegistration(float initGlo
   // -----------------------------------------------------------
 
   // If necessary baisically create probability maps out of the shape prior so that for the registration approach there is now difference so that there is no difference
-  if (PCATotalNumOfShapeParameters && (RegistrationType > EMSEGMENT_REGISTRATION_DISABLED)) {
-    cout << "Joint Shape Analysis and Registration" << endl;
+  if (PCATotalNumOfShapeParameters && (RegistrationType > EMSEGMENT_REGISTRATION_DISABLED)) 
+    {
+    std::cerr << "Joint Shape Analysis and Registration" << std::endl;
     ShapeParameters->ClassToAtlasRotationMatrix    =  ClassToAtlasRotationMatrix;
     ShapeParameters->ClassToAtlasTranslationVector =  ClassToAtlasTranslationVector;
 
     int Real_LengthXYZ             = this->RealMaxX*this->RealMaxY*this->RealMaxZ;
  
 
-    for (int i = 0; i < NumTotalTypeCLASS; i++) {
-      if (PCANumberOfEigenModes[i]) {
-        if (this->ProbDataPtrStart[i]) cout << "Warning: I am not useing spatial prior for class " << i << " because shape priors are defined " << endl;
-
-    this->ProbDataPtrStart[i] = new T[Real_LengthXYZ];
-        // cout << " Real_LengthXYZ " << Real_LengthXYZ << endl;
-    this->ProbDataIncY[i] = ProbDataIncZ[i] = 0;
-
+    for (int i = 0; i < NumTotalTypeCLASS; i++) 
+      {
+      if (PCANumberOfEigenModes[i]) 
+        {
+        if (this->ProbDataPtrStart[i]) 
+          {
+          std::cerr << "Warning: I am not useing spatial prior for class " 
+                    << i << " because shape priors are defined " << std::endl;
+          }
+        
+        this->ProbDataPtrStart[i] = new T[Real_LengthXYZ];
+        // std::cerr << " Real_LengthXYZ " << Real_LengthXYZ << std::endl;
+        this->ProbDataIncY[i] = ProbDataIncZ[i] = 0;
+        
         // define values of spatial prior
         this->Transfere_ShapePara_Into_SpatialPrior(i); 
+        }
       }
-    }
 
     // Currently shape model cannot handle background probability
     assert(!this->GenerateBackgroundProbability);
@@ -854,8 +958,8 @@ template <class T> int EMLocalAlgorithm<T>::InitializeRegistration(float initGlo
     // Initialize it once than we can just later use it all the time 
     this->RegistrationParameters->SetROI_ProbData(&Registration_ROI_ProbData);
     EMLocalRegistrationCostFunction_DefineROI_ProbDataValues(RegistrationParameters,this->ProbDataPtrStart); 
-    //cout << "Min " << Registration_ROI_ProbData.MinCoord[0] << " " << Registration_ROI_ProbData.MinCoord[1] << " "<< Registration_ROI_ProbData.MinCoord[2] << endl;
-    //cout << "Max " << Registration_ROI_ProbData.MaxCoord[0] << " " << Registration_ROI_ProbData.MaxCoord[1] << " "<< Registration_ROI_ProbData.MaxCoord[2] << endl;
+    //std::cerr << "Min " << Registration_ROI_ProbData.MinCoord[0] << " " << Registration_ROI_ProbData.MinCoord[1] << " "<< Registration_ROI_ProbData.MinCoord[2] << std::endl;
+    //std::cerr << "Max " << Registration_ROI_ProbData.MaxCoord[0] << " " << Registration_ROI_ProbData.MaxCoord[1] << " "<< Registration_ROI_ProbData.MaxCoord[2] << std::endl;
   }
   return SuccessFlag;
 }
@@ -868,7 +972,7 @@ template <class T> void EMLocalAlgorithm<T>::InitializeEStepMultiThreader(int Da
   // Initialize Multithreading
   this->E_Step_Threader_Number = EMLocalInterface_GetDefaultNumberOfThreads(this->DisableMultiThreading);
 
-  // cout << "Threader Number: " << this->E_Step_Threader_Number << endl;
+  // std::cerr << "Threader Number: " << this->E_Step_Threader_Number << std::endl;
 
   this->E_Step_Threader = vtkMultiThreader::New();
   this->E_Step_Threader->SetNumberOfThreads(this->E_Step_Threader_Number);
@@ -879,13 +983,14 @@ template <class T> void EMLocalAlgorithm<T>::InitializeEStepMultiThreader(int Da
   int JobSize = this->ImageProd / this->E_Step_Threader_Number;
   int VoxelOffset = 0;
   int VoxelLeftOver;
-  for (int i= 0; i < this->E_Step_Threader_Number; i++) {
-     // cout << "Thread " << i <<  endl;
-     int *VoxelStart = this->E_Step_Threader_Parameters[i].VoxelStart;
-     VoxelStart[2] = VoxelOffset/this->imgXY;
-     VoxelLeftOver = VoxelOffset % this->imgXY;
-     VoxelStart[1] = VoxelLeftOver / this->BoundaryMaxX;
-     VoxelStart[0] = VoxelLeftOver % this->BoundaryMaxX;
+  for (int i= 0; i < this->E_Step_Threader_Number; i++) 
+    {
+    // std::cerr << "Thread " << i <<  std::endl;
+    int *VoxelStart = this->E_Step_Threader_Parameters[i].VoxelStart;
+    VoxelStart[2] = VoxelOffset/this->imgXY;
+    VoxelLeftOver = VoxelOffset % this->imgXY;
+    VoxelStart[1] = VoxelLeftOver / this->BoundaryMaxX;
+    VoxelStart[0] = VoxelLeftOver % this->BoundaryMaxX;
  
      if (i < this->E_Step_Threader_Number -1) this->E_Step_Threader_Parameters[i].NumberOfVoxels = JobSize;
      else this->E_Step_Threader_Parameters[i].NumberOfVoxels = JobSize +  this->ImageProd % this->E_Step_Threader_Number;
@@ -904,7 +1009,7 @@ template <class T> void EMLocalAlgorithm<T>::InitializeEStepMultiThreader(int Da
 
      this->E_Step_Threader_Parameters[i].PCAEigenVectorsJump = new int*[NumTotalTypeCLASS]; 
 
-     //cout << i << " Image: " <<  this->ImageProd << " Job : " << this->E_Step_Threader_Parameters[i].NumberOfVoxels << " VoxelStart :" <<  VoxelStart[0] << " " 
+     //std::cerr << i << " Image: " <<  this->ImageProd << " Job : " << this->E_Step_Threader_Parameters[i].NumberOfVoxels << " VoxelStart :" <<  VoxelStart[0] << " " 
      //      <<  VoxelStart[1] << " " << VoxelStart[2] << " DataJump " << this->E_Step_Threader_Parameters[i].DataJump << " ProbDataJump: " <<  endl; 
 
      for (int j= 0 ; j < this->NumTotalTypeCLASS; j++) {

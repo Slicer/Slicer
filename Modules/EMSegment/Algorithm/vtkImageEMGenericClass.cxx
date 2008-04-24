@@ -148,7 +148,7 @@ void vtkImageEMGenericClass::SetNumInputImages(int number) {
 //----------------------------------------------------------------------------
 void  vtkImageEMGenericClass::ExecuteData(vtkDataObject*) {
     // Check All Values that are defined here 
-    // cout << "vtkImageEMGenericClass::ExecuteData" << endl;
+    // std::cerr << "vtkImageEMGenericClass::ExecuteData" << endl;
 
     // This must be performed in the subclasses  
     // this->ResetErrorMessage();
