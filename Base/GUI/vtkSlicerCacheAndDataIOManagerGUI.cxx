@@ -352,11 +352,11 @@ void vtkSlicerCacheAndDataIOManagerGUI::ProcessGUIEvents ( vtkObject *caller,
       {
     if ( sb == this->CacheLimitSpinBox->GetWidget() && event == vtkKWSpinBox::SpinBoxValueChangedEvent )
       {
-      app->SetRemoteCacheLimit (this->CacheLimitSpinBox->GetWidget()->GetValue() );
+      app->SetRemoteCacheLimit ((int)(this->CacheLimitSpinBox->GetWidget()->GetValue()) );
       }
     else if ( sb == this->CacheFreeBufferSizeSpinBox->GetWidget() && event == vtkKWSpinBox::SpinBoxValueChangedEvent )
       {
-      app->SetRemoteCacheFreeBufferSize(this->CacheFreeBufferSizeSpinBox->GetWidget()->GetValue() );
+      app->SetRemoteCacheFreeBufferSize((int)(this->CacheFreeBufferSizeSpinBox->GetWidget()->GetValue()) );
       }
     if ( lsb == this->CacheDirectoryButton->GetWidget()->GetLoadSaveDialog() && event == vtkKWTopLevel::WithdrawEvent )
       {
