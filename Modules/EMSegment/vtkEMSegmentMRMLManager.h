@@ -312,6 +312,8 @@ public:
   virtual void        MoveTargetSelectedVolume(vtkIdType volumeID,
                                                int toIndex);
 
+  virtual bool        DoTargetAndAtlasDataTypesMatch();
+
   //
   // target volume normalization
   virtual void  

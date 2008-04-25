@@ -2014,6 +2014,58 @@ MoveTargetSelectedVolume(vtkIdType volumeID, int toIndex)
 }
 
 //----------------------------------------------------------------------------
+bool
+vtkEMSegmentMRMLManager::
+DoTargetAndAtlasDataTypesMatch()
+{
+  vtkMRMLEMSTargetNode* targetNode = 
+    this->GetWorkingDataNode()->GetInputTargetNode();
+  vtkMRMLEMSAtlasNode* atlasNode = 
+    this->GetWorkingDataNode()->GetInputAtlasNode();  
+
+  if (targetNode == NULL || atlasNode == NULL)
+    {
+    std::cerr << "Target or atlas node is null!" << std::endl;
+    return false;
+    }
+
+  if (targetNode->GetNumberOfVolumes() == 0)
+    {
+    std::cerr << "Target node is empty!" << std::endl;
+    return (atlasNode->GetNumberOfVolumes() == 0);
+    }
+
+  int standardScalarDataType = 
+    targetNode->GetNthVolumeNode(0)->GetImageData()->GetScalarType();
+
+  for (int i = 1; i < targetNode->GetNumberOfVolumes(); ++i)
+    {
+    int currentScalarDataType =
+      targetNode->GetNthVolumeNode(i)->GetImageData()->GetScalarType();      
+    if (currentScalarDataType != standardScalarDataType)
+      {
+      std::cerr << "Target volume " << i << ": scalar type does not match!" 
+                << std::endl;
+      return false;
+      }
+    }
+
+  for (int i = 0; i < atlasNode->GetNumberOfVolumes(); ++i)
+    {
+    int currentScalarDataType =
+      atlasNode->GetNthVolumeNode(i)->GetImageData()->GetScalarType();      
+    if (currentScalarDataType != standardScalarDataType)
+      {
+      std::cerr << "Atlas volume " << i << ": scalar type does not match!" 
+                << std::endl;
+      return false;
+      }
+    }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
 void
 vtkEMSegmentMRMLManager::
 SetNthTargetVolumeIntensityNormalizationToDefaultT1SPGR(int n)

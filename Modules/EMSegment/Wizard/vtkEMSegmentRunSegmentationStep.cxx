@@ -14,6 +14,7 @@
 #include "vtkKWLoadSaveDialog.h"
 #include "vtkKWMatrixWidget.h"
 #include "vtkKWMatrixWidgetWithLabel.h"
+#include "vtkKWMessageDialog.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWWizardStep.h"
 #include "vtkKWWizardWidget.h"
@@ -787,6 +788,26 @@ void vtkEMSegmentRunSegmentationStep::MultiThreadingCallback(int state)
 void vtkEMSegmentRunSegmentationStep::StartSegmentationCallback()
 {
   vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
+  vtkEMSegmentMRMLManager* mrmlManager = this->GetGUI()->GetMRMLManager();
+  
+  // make sure that data types are the same
+  if (!mrmlManager->DoTargetAndAtlasDataTypesMatch())
+    {
+    // popup an error message
+    std::string errorMessage = 
+      "Scalar type mismatch for input images; all image scalar types must be "
+      "the same (including input channels and atlas images).";
+
+    vtkKWMessageDialog::PopupMessage(this->GetApplication(),
+                                     NULL,
+                                     "Input Image Error",
+                                     errorMessage.c_str(),
+                                     vtkKWMessageDialog::ErrorIcon | 
+                                     vtkKWMessageDialog::InvokeAtPointer);    
+    return;
+    }
+
+  // start the segmentation
   logic->StartSegmentation();
 }
 
