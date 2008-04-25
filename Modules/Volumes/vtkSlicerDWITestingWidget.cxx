@@ -66,8 +66,7 @@ vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
   this->RemoveWidgetObservers();
   if (this->ActiveVolumeNode)
     {
-    this->ActiveVolumeNode->Delete();
-    this->ActiveVolumeNode = NULL;
+    vtkSetMRMLNodeMacro(this->ActiveVolumeNode, NULL);
     }
   if (this->Application)
     {
