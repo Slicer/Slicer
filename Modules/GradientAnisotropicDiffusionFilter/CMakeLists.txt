@@ -68,6 +68,7 @@ endif(BUILD_SHARED_LIBS)
 target_link_libraries(GradientAnisotropicDiffusionFilter
   ${Slicer3_LIBRARIES}
   ${KWWidgets_LIBRARIES}
+  ${ITK_LIBRARIES}
   )
 
 # --------------------------------------------------------------------------
