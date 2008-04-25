@@ -1,6 +1,6 @@
-PROJECT( Modules )
+project(Modules)
 
-SUBDIRS(
+subdirs(
   NeuroNav
   RealTimeImaging
   WFEngineModule
@@ -19,7 +19,7 @@ SUBDIRS(
   VolumeRendering
   Statistics
   Volumes
-)
+  )
 
 ## SLICES_DEBUG
 ## GAD_DEBUG
@@ -38,12 +38,10 @@ SUBDIRS(
 ## COMMANDLINE_DEBUG
 ## DEAMON_DEBUG
 
+if(Slicer3_BUILD_TESTING)
+  subdirs(Testing)
+endif(Slicer3_BUILD_TESTING)
 
-
-IF (Slicer3_BUILD_TESTING)
-    SUBDIRS( Testing )
-ENDIF (Slicer3_BUILD_TESTING)
-
-IF ( USE_PYTHON AND PYTHON_INCLUDE_PATH )
-  INCLUDE_DIRECTORIES (${PYTHON_INCLUDE_PATH})
-ENDIF ( USE_PYTHON AND PYTHON_INCLUDE_PATH )
+if(USE_PYTHON AND PYTHON_INCLUDE_PATH)
+  include_directories(${PYTHON_INCLUDE_PATH})
+endif(USE_PYTHON AND PYTHON_INCLUDE_PATH)

@@ -7,12 +7,6 @@
 # or a Slicer3 installation.
 #
 
-# The Slicer3 include file directories.
-SET(Slicer3_INCLUDE_DIRS "@Slicer3_INCLUDE_DIRS_CONFIG@")
-
-# The Slicer3 library directories.
-SET(Slicer3_LIBRARY_DIRS "@Slicer3_LIBRARY_DIRS_CONFIG@")
-
 # The C and C++ flags added by Slicer3 to the cmake-configured flags.
 SET(Slicer3_REQUIRED_C_FLAGS "@Slicer3_REQUIRED_C_FLAGS@")
 SET(Slicer3_REQUIRED_CXX_FLAGS "@Slicer3_REQUIRED_CXX_FLAGS@")
@@ -23,14 +17,24 @@ SET(Slicer3_VERSION_MAJOR "@Slicer3_VERSION_MAJOR@")
 SET(Slicer3_VERSION_MINOR "@Slicer3_VERSION_MINOR@")
 SET(Slicer3_VERSION_PATCH "@Slicer3_VERSION_PATCH@")
 
+# Whether Slicer3 was built with shared libraries.
+SET(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
+
+# A list of all libraries for Slicer3.  Those listed here should
+# automatically pull in their dependencies.
+SET(Slicer3_LIBRARIES "@Slicer3_LIBRARIES@")
+
+# The Slicer3 include file directories.
+SET(Slicer3_INCLUDE_DIRS "@Slicer3_INCLUDE_DIRS_CONFIG@")
+
+# The Slicer3 library directories.
+SET(Slicer3_LIBRARY_DIRS "@Slicer3_LIBRARY_DIRS_CONFIG@")
+
 # The location of the UseSlicer3.cmake file.
 SET(Slicer3_USE_FILE "@Slicer3_USE_FILE_CONFIG@")
 
 # The build settings file.
 SET(Slicer3_BUILD_SETTINGS_FILE "@Slicer3_BUILD_SETTINGS_FILE@")
-
-# Whether Slicer3 was built with shared libraries.
-SET(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
 
 # Components needed to build modules from outside a Slicer3 build tree or 
 # from outside a Slicer3 installation tree
@@ -41,3 +45,4 @@ SET(GenerateCLP_USE_FILE "@GenerateCLP_USE_FILE_CONFIG@")
 SET(GENERATECLP_EXE "@GENERATECLP_EXE_CONFIG@")
 SET(ITK_DIR "@ITK_DIR_CONFIG@")
 SET(VTK_DIR "@VTK_DIR_CONFIG@")
+SET(KWWidgets_DIR "@KWWidgets_DIR_CONFIG@")

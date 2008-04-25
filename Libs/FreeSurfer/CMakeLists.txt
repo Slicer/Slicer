@@ -1,22 +1,21 @@
-PROJECT(FreeSurfer)
+project(FreeSurfer)
 
-CONFIGURE_FILE(
+configure_file(
   ${FreeSurfer_SOURCE_DIR}/FreeSurferConfigure.h.in
   ${FreeSurfer_BINARY_DIR}/FreeSurferConfigure.h
-)
+  )
 
 # --------------------------------------------------------------------------
 # Sources
 
-
-SET(FreeSurfer_SRCS
-        vtkFSIO.cxx
-        vtkFSSurfaceReader.cxx
-        vtkFSSurfaceAnnotationReader.cxx
-        vtkFSSurfaceScalarReader.cxx
-        vtkFSSurfaceWFileReader.cxx
-        vtkFSLookupTable.cxx
-)
+set(FreeSurfer_SRCS
+  vtkFSIO.cxx
+  vtkFSSurfaceReader.cxx
+  vtkFSSurfaceAnnotationReader.cxx
+  vtkFSSurfaceScalarReader.cxx
+  vtkFSSurfaceWFileReader.cxx
+  vtkFSLookupTable.cxx
+  )
 
 # Abstract/pure virtual classes
 
@@ -28,56 +27,63 @@ SET(FreeSurfer_SRCS
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
+set(include_dirs
   ${FreeSurfer_SOURCE_DIR}
   ${FreeSurfer_BINARY_DIR}
-  ${VTK_INCLUDE_DIR}
   )
+
+include_directories(${include_dirs})
+
+GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 # --------------------------------------------------------------------------
 # Wrapping
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(FreeSurfer FreeSurfer_TCL_SRCS "${FreeSurfer_SRCS}" "")
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(FreeSurfer FreeSurfer_TCL_SRCS "${FreeSurfer_SRCS}" "")
 
 # Build the library
 
-ADD_LIBRARY(FreeSurfer 
+add_library(FreeSurfer 
   ${FreeSurfer_SRCS} ${FreeSurfer_TCL_SRCS}
   )
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS FreeSurfer
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
 
-TARGET_LINK_LIBRARIES(FreeSurfer 
+if(BUILD_SHARED_LIBS)
+  install(TARGETS FreeSurfer
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
+endif(BUILD_SHARED_LIBS)
+
+target_link_libraries(FreeSurfer 
   vtkIO
   vtkCommonTCL
   vtkIOTCL
   )
 
+GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} FreeSurfer)
+
 # Copy the colour files to the build directory
-SET (COLORFILES
-    FreeSurferColorLUT.txt
-    Simple_surface_labels2002.txt    
-)
+set(COLORFILES
+  FreeSurferColorLUT.txt
+  Simple_surface_labels2002.txt    
+  )
 
-SET (Color_DIR  ${SLICER_LIBRARIES_DIR}/Libs/FreeSurfer)
+set(Color_DIR  ${SLICER_LIBRARIES_DIR}/Libs/FreeSurfer)
 
-FOREACH ( colorfile ${COLORFILES})
-  CONFIGURE_FILE(
+foreach(colorfile ${COLORFILES})
+  configure_file(
     ${FreeSurfer_SOURCE_DIR}/${colorfile}
     ${Color_DIR}/${colorfile}
     COPYONLY
-)
-  INSTALL(
+    )
+  install(
     FILES ${Color_DIR}/${colorfile}
-  DESTINATION lib/Slicer3/Libs/FreeSurfer
-)
-ENDFOREACH(colorfile)
+    DESTINATION lib/Slicer3/Libs/FreeSurfer
+    )
+endforeach(colorfile)
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)

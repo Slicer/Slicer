@@ -1,106 +1,83 @@
-PROJECT(GradientAnisotropicDiffusionFilter)
+project(GradientAnisotropicDiffusionFilter)
+
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+endif(NOT Slicer3_SOURCE_DIR)
 
 # --------------------------------------------------------------------------
 # Sources
 
-SET(GradientAnisotropicDiffusionFilter_SRCS
+set(GradientAnisotropicDiffusionFilter_SRCS
   vtkGradientAnisotropicDiffusionFilterLogic.cxx
   vtkGradientAnisotropicDiffusionFilterGUI.cxx
   vtkMRMLGradientAnisotropicDiffusionFilterNode.cxx
-)
+  )
 
 # Abstract/pure virtual classes
 
 #SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #ABSTRACT "TRUE"
-  #)
+#vtkModule.cxx
+#PROPERTIES
+#ABSTRACT "TRUE"
+#)
 
 # Helper classes
 
 #SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #WRAP_EXCLUDE "TRUE"
-  #)
+#vtkModule.cxx
+#PROPERTIES
+#WRAP_EXCLUDE "TRUE"
+#)
 
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
+include_directories(
   ${GradientAnisotropicDiffusionFilter_SOURCE_DIR}
   ${GradientAnisotropicDiffusionFilter_BINARY_DIR}
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
+  ${Slicer3_INCLUDE_DIRS}
   )
-
 
 # --------------------------------------------------------------------------
 # Wrapping
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(GradientAnisotropicDiffusionFilter GradientAnisotropicDiffusionFilter_TCL_SRCS "${GradientAnisotropicDiffusionFilter_SRCS}" "")
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(GradientAnisotropicDiffusionFilter 
+  GradientAnisotropicDiffusionFilter_TCL_SRCS 
+  "${GradientAnisotropicDiffusionFilter_SRCS}" "")
 
 # --------------------------------------------------------------------------
 # Build the library
 
-ADD_LIBRARY(GradientAnisotropicDiffusionFilter
+add_library(GradientAnisotropicDiffusionFilter
   ${GradientAnisotropicDiffusionFilter_SRCS}
   ${GradientAnisotropicDiffusionFilter_TCL_SRCS}
   #loadable module support
   GradientAnisotropicDiffusionFilterModuleLib.cxx
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS GradientAnisotropicDiffusionFilter
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
+  install(TARGETS GradientAnisotropicDiffusionFilter
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
+endif(BUILD_SHARED_LIBS)
 
-TARGET_LINK_LIBRARIES(GradientAnisotropicDiffusionFilter
-  SlicerBaseLogic 
-  SlicerBaseGUI 
-  MRML
-  vtkITK
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  ITKAlgorithms
-  ITKNumerics 
-  ITKCommon
-  ITKBasicFilters
-  ITKNumerics
-  ITKStatistics
-  ITKBasicFilters
-  ITKIO
-  ITKDICOMParser
-  ${KWWidgets_LIBRARIES} )
-
-
+target_link_libraries(GradientAnisotropicDiffusionFilter
+  ${Slicer3_LIBRARIES}
+  ${KWWidgets_LIBRARIES}
+  )
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  subdirs(Testing)
+endif(BUILD_TESTING)
 
-CONFIGURE_FILE(
+configure_file(
   ${GradientAnisotropicDiffusionFilter_SOURCE_DIR}/vtkGradientAnisotropicDiffusionFilterConfigure.h.in 
   ${GradientAnisotropicDiffusionFilter_BINARY_DIR}/vtkGradientAnisotropicDiffusionFilterConfigure.h
-)
+  )

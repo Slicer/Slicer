@@ -1,18 +1,17 @@
-PROJECT(vtkTeem)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+project(vtkTeem)
+cmake_minimum_required(VERSION 2.4)
 
 # --------------------------------------------------------------------------
 # Sources
 
 # include a test for endianness (used to be done by default)
-INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
-TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
+include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
+test_big_endian(CMAKE_WORDS_BIGENDIAN)
 
-FIND_PACKAGE(VTK REQUIRED)
-INCLUDE(${VTK_USE_FILE})
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
 
-
-SET(vtkTeem_SRCS
+set(vtkTeem_SRCS
   vtkNRRDReader.cxx
   vtkNRRDWriter.cxx
   vtkDiffusionTensorMathematics.cxx
@@ -31,7 +30,7 @@ SET(vtkTeem_SRCS
   vtkTensorImplicitFunctionToFunctionSet.cxx
   vtkTractographyPointAndArray.cxx
   vtkTensorMask.cxx
-)
+  )
 
 # Abstract/pure virtual classes
 
@@ -41,7 +40,7 @@ SET(vtkTeem_SRCS
 
 # Helper classes
 
-SET_SOURCE_FILES_PROPERTIES(
+set_source_files_properties(
   vtkHyperPointandArray.cxx
   vtkTractographyPointAndArray.cxx
   WRAP_EXCLUDE
@@ -50,49 +49,54 @@ SET_SOURCE_FILES_PROPERTIES(
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
+set(include_dirs
   ${vtkTeem_SOURCE_DIR}
   ${vtkTeem_BINARY_DIR}
-  ${TEEM_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
   )
+
+include_directories(${include_dirs})
+
+GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 # --------------------------------------------------------------------------
 # Wrapping
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(vtkTeem vtkTeem_TCL_SRCS "${vtkTeem_SRCS}" "")
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(vtkTeem vtkTeem_TCL_SRCS "${vtkTeem_SRCS}" "")
 
 # --------------------------------------------------------------------------
 # Build the library
 
-ADD_LIBRARY(vtkTeem 
+add_library(vtkTeem 
   ${vtkTeem_SRCS} 
   ${vtkTeem_TCL_SRCS} 
   )
 
-IF(Slicer3_SOURCE_DIR)
-  IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS vtkTeem
+GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} vtkTeem)
+
+if(Slicer3_SOURCE_DIR)
+  if(BUILD_SHARED_LIBS)
+    install(TARGETS vtkTeem
       RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
       LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
       ARCHIVE DESTINATION lib COMPONENT Development)
-  ENDIF(BUILD_SHARED_LIBS)
-ENDIF(Slicer3_SOURCE_DIR)
+  endif(BUILD_SHARED_LIBS)
+endif(Slicer3_SOURCE_DIR)
 
 # after teem 1.9, all the teem libraries are groups in one big libteem.so
-IF ( ${TEEM_VERSION_MAJOR} GREATER 1 )
-  SET(TEEM_LIBRARIES teem)
-ELSE ( ${TEEM_VERSION_MAJOR} GREATER 1 )
-  IF ( ${TEEM_VERSION_MINOR} LESS 10 )
-    SET(TEEM_LIBRARIES air biff nrrd ten ell)
-  ELSE ( ${TEEM_VERSION_MINOR} LESS 10 )
-    SET(TEEM_LIBRARIES teem)
-  ENDIF ( ${TEEM_VERSION_MINOR} LESS 10 )
-ENDIF ( ${TEEM_VERSION_MAJOR} GREATER 1 )
+if ( ${TEEM_VERSION_MAJOR} GREATER 1 )
+  set(TEEM_LIBRARIES teem)
+else ( ${TEEM_VERSION_MAJOR} GREATER 1 )
+  if ( ${TEEM_VERSION_MINOR} LESS 10 )
+    set(TEEM_LIBRARIES air biff nrrd ten ell)
+  else ( ${TEEM_VERSION_MINOR} LESS 10 )
+    set(TEEM_LIBRARIES teem)
+  endif ( ${TEEM_VERSION_MINOR} LESS 10 )
+endif ( ${TEEM_VERSION_MAJOR} GREATER 1 )
 
-TARGET_LINK_LIBRARIES(vtkTeem 
+target_link_libraries(vtkTeem 
   vtkCommon
   vtkFiltering
   vtkImagingTCL
@@ -101,20 +105,19 @@ TARGET_LINK_LIBRARIES(vtkTeem
   ${TEEM_LIBRARIES}
   )
 
-
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  subdirs(Testing)
+endif(BUILD_TESTING)
 
-CONFIGURE_FILE(
+configure_file(
   ${vtkTeem_SOURCE_DIR}/vtkTeemConfigure.h.in 
   ${vtkTeem_BINARY_DIR}/vtkTeemConfigure.h
-)
+  )
 
-CONFIGURE_FILE(
+configure_file(
   ${vtkTeem_SOURCE_DIR}/vtkTeemConfig.cmake.in 
   ${vtkTeem_BINARY_DIR}/vtkTeemConfig.cmake
-)
+  )

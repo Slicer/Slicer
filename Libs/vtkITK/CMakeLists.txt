@@ -1,42 +1,41 @@
-PROJECT(vtkITK)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+project(vtkITK)
+cmake_minimum_required(VERSION 2.4)
 
 # --------------------------------------------------------------------------
 # Sources
 
 # include a test for endianness (used to be done by default)
-INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
-TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
+include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
+test_big_endian(CMAKE_WORDS_BIGENDIAN)
 
-FIND_PACKAGE(VTK REQUIRED)
-INCLUDE(${VTK_USE_FILE})
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
 
-FIND_PACKAGE(ITK REQUIRED)
-INCLUDE(${ITK_USE_FILE})
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
 
-
-SET(vtkITK_SRCS
-    vtkITKNumericTraits.cxx
-    vtkITKArchetypeImageSeriesReader.cxx
-    vtkITKArchetypeImageSeriesScalarReader.cxx
-    vtkITKArchetypeImageSeriesVectorReaderFile.cxx
-    vtkITKArchetypeImageSeriesVectorReaderSeries.cxx
-    vtkITKImageWriter.cxx
-    vtkITKImageToImageFilter.h
-    vtkITKImageToImageFilter2DFF.h
-    vtkITKImageToImageFilterFF.h
-    vtkITKImageToImageFilterFUL.h
-    vtkITKImageToImageFilterULUL.h
-    vtkITKImageToImageFilterUSUL.h
-    vtkITKImageToImageFilterUSUS.h
-    vtkITKImageToImageFilterSS.h
-    vtkITKGradientAnisotropicDiffusionImageFilter.cxx
-    vtkITKLevelTracingImageFilter.cxx
-    vtkITKLevelTracing3DImageFilter.cxx
-    vtkITKWandImageFilter.cxx
-    vtkITKNewOtsuThresholdImageFilter.cxx
-    vtkITKTimeSeriesDatabase.cxx
-)
+set(vtkITK_SRCS
+  vtkITKNumericTraits.cxx
+  vtkITKArchetypeImageSeriesReader.cxx
+  vtkITKArchetypeImageSeriesScalarReader.cxx
+  vtkITKArchetypeImageSeriesVectorReaderFile.cxx
+  vtkITKArchetypeImageSeriesVectorReaderSeries.cxx
+  vtkITKImageWriter.cxx
+  vtkITKImageToImageFilter.h
+  vtkITKImageToImageFilter2DFF.h
+  vtkITKImageToImageFilterFF.h
+  vtkITKImageToImageFilterFUL.h
+  vtkITKImageToImageFilterULUL.h
+  vtkITKImageToImageFilterUSUL.h
+  vtkITKImageToImageFilterUSUS.h
+  vtkITKImageToImageFilterSS.h
+  vtkITKGradientAnisotropicDiffusionImageFilter.cxx
+  vtkITKLevelTracingImageFilter.cxx
+  vtkITKLevelTracing3DImageFilter.cxx
+  vtkITKWandImageFilter.cxx
+  vtkITKNewOtsuThresholdImageFilter.cxx
+  vtkITKTimeSeriesDatabase.cxx
+  )
 
 # Abstract/pure virtual classes
 
@@ -46,46 +45,68 @@ SET(vtkITK_SRCS
 
 # Helper classes
 
-SET_SOURCE_FILES_PROPERTIES(
+set_source_files_properties(
   vtkITKNumericTraits.cxx
   WRAP_EXCLUDE
-)
+  )
+
+configure_file(
+  ${vtkITK_SOURCE_DIR}/vtkITKConfigure.h.in 
+  ${vtkITK_BINARY_DIR}/vtkITKConfigure.h
+  )
+
+configure_file(
+  ${vtkITK_SOURCE_DIR}/vtkITKConfig.cmake.in 
+  ${vtkITK_BINARY_DIR}/vtkITKConfig.cmake
+  )
 
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
+set(include_dirs
   ${vtkITK_SOURCE_DIR}
   ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
+  )
+
+include_directories(${include_dirs})
+
+GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
+
+file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/*.h") 
+install(FILES 
+  ${files}
+  ${vtkITK_BINARY_DIR}/vtkITKConfigure.h
+  DESTINATION include/vtkITK COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
 # Wrapping
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(vtkITK vtkITK_TCL_SRCS "${vtkITK_SRCS}" "")
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(vtkITK vtkITK_TCL_SRCS "${vtkITK_SRCS}" "")
 
 # --------------------------------------------------------------------------
 # Build the library
 
-ADD_LIBRARY(vtkITK 
+add_library(vtkITK 
   ${vtkITK_SRCS} 
   ${vtkITK_TCL_SRCS} 
   )
 
-IF(Slicer3_SOURCE_DIR)
-  IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS vtkITK
+GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} vtkITK)
+
+if(Slicer3_SOURCE_DIR)
+  if(BUILD_SHARED_LIBS)
+    install(TARGETS vtkITK
       RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
       LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
       ARCHIVE DESTINATION lib COMPONENT Development)
-  ENDIF(BUILD_SHARED_LIBS)
-ENDIF(Slicer3_SOURCE_DIR)
+  endif(BUILD_SHARED_LIBS)
+endif(Slicer3_SOURCE_DIR)
 
-TARGET_LINK_LIBRARIES(vtkITK 
+target_link_libraries(vtkITK 
   vtkCommonTCL
   vtkFilteringTCL
   vtkImagingTCL
@@ -100,20 +121,9 @@ TARGET_LINK_LIBRARIES(vtkITK
   ITKDICOMParser
   )
 
-
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
-
-CONFIGURE_FILE(
-  ${vtkITK_SOURCE_DIR}/vtkITKConfigure.h.in 
-  ${vtkITK_BINARY_DIR}/vtkITKConfigure.h
-)
-
-CONFIGURE_FILE(
-  ${vtkITK_SOURCE_DIR}/vtkITKConfig.cmake.in 
-  ${vtkITK_BINARY_DIR}/vtkITKConfig.cmake
-)
+if(BUILD_TESTING)
+  subdirs(Testing)
+endif(BUILD_TESTING)

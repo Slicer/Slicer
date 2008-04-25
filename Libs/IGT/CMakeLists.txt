@@ -1,23 +1,21 @@
-PROJECT(IGT)
+project(IGT)
 
 # --------------------------------------------------------------------------
 # Special build configs (to handle linking on windows)
-CONFIGURE_FILE(
+configure_file(
   ${IGT_SOURCE_DIR}/vtkIGTConfigure.h.in 
   ${IGT_BINARY_DIR}/vtkIGTConfigure.h
-)
-
+  )
 
 # --------------------------------------------------------------------------
 # Settings for options
-SET(IGT_SRCS
+set(IGT_SRCS
   vtkIGTDataManager.cxx
   vtkIGTDataStream.cxx
   vtkIGTMatrixState.cxx
   vtkIGTPat2ImgRegistration.cxx
-)
-SET(TRACKING_INTERFACE_LIBRARY "")
-
+  )
+set(TRACKING_INTERFACE_LIBRARY "")
 
 #--- NH took out the following section in an effot to remove Navitrak
 #--- 10/16/07
@@ -38,56 +36,58 @@ SET(TRACKING_INTERFACE_LIBRARY "")
 #  )
 #ENDIF(USE_NAVITRACK)
 
-IF(USE_IGSTK)
-  SET(IGT_SRCS
+if(USE_IGSTK)
+  set(IGT_SRCS
     vtkIGTDataManager.cxx
     vtkIGTDataStream.cxx
     vtkIGTMatrixState.cxx
     vtkIGTPat2ImgRegistration.cxx
     vtkIGTIGSTKStream.cxx
-  )
-  SET(TRACKING_INTERFACE_INCLUDE_DIR
+    )
+  set(TRACKING_INTERFACE_INCLUDE_DIR
     ${IGSTK_INCLUDE_DIRS}
-  )
-  SET(TRACKING_INTERFACE_LIB  
+    )
+  set(TRACKING_INTERFACE_LIB  
     ${IGSTK_LIBRARIES}
-  )
-ENDIF(USE_IGSTK)
-
+    )
+endif(USE_IGSTK)
 
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
-  ${MRML_BINARY_DIR}
-  ${MRML_SOURCE_DIR}
+set(include_dirs
   ${IGT_BINARY_DIR}
   ${IGT_SOURCE_DIR}
-  ${ITK_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
-  ${TRACKING_INTERFACE_INCLUDE_DIR}
+  ${MRML_BINARY_DIR}
+  ${MRML_SOURCE_DIR}
   )
 
+include_directories(${include_dirs})
+
+GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 # --------------------------------------------------------------------------
 # Wrapping
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(IGT IGT_TCL_SRCS "${IGT_SRCS}" "")
-
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(IGT IGT_TCL_SRCS "${IGT_SRCS}" "")
 
 # Build the library
-ADD_LIBRARY(IGT 
+add_library(IGT 
   ${IGT_SRCS} ${IGT_TCL_SRCS}
   )
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS IGT
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
 
-TARGET_LINK_LIBRARIES(IGT
+GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} IGT)
+
+if(BUILD_SHARED_LIBS)
+  install(TARGETS IGT
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
+endif(BUILD_SHARED_LIBS)
+
+target_link_libraries(IGT
   MRML
   vtkCommonTCL
   vtkImagingTCL
@@ -109,11 +109,9 @@ TARGET_LINK_LIBRARIES(IGT
   ${TRACKING_INTERFACE_LIB}
   )
 
-
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
-
+if(BUILD_TESTING)
+  subdirs(Testing)
+endif(BUILD_TESTING)

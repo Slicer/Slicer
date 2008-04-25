@@ -1,9 +1,9 @@
-PROJECT(SlicerBaseLogic)
+project(SlicerBaseLogic)
 
 # --------------------------------------------------------------------------
 # Sources
 
-SET(SlicerBaseLogic_SRCS
+set(SlicerBaseLogic_SRCS
   # Logic classes (data management and calculation)
   vtkSlicerLogic.cxx 
   vtkSlicerApplicationLogic.cxx 
@@ -30,67 +30,81 @@ SET(SlicerBaseLogic_SRCS
   vtkImageLabelChange.cxx 
   vtkImageErode.cxx 
   vtkImageNeighborhoodFilter.cxx
-)
+  )
 
 # Abstract/pure virtual classes
 
 #SET_SOURCE_FILES_PROPERTIES(
-  # <classname>.cxx
-  #PROPERTIES
-  #ABSTRACT "TRUE"
-  #)
+# <classname>.cxx
+#PROPERTIES
+#ABSTRACT "TRUE"
+#)
 
 # Helper classes
 
 #SET_SOURCE_FILES_PROPERTIES(
-  # <classname>.cxx
-  #PROPERTIES
-  #WRAP_EXCLUDE "TRUE"
-  #)
+# <classname>.cxx
+#PROPERTIES
+#WRAP_EXCLUDE "TRUE"
+#)
+
+configure_file(
+  ${SlicerBaseLogic_SOURCE_DIR}/vtkSlicerBaseLogicConfigure.h.in 
+  ${SlicerBaseLogic_BINARY_DIR}/vtkSlicerBaseLogicConfigure.h
+  )
 
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
+set(include_dirs
   ${SlicerBaseLogic_SOURCE_DIR}
   ${SlicerBaseLogic_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
-  ${VTK_INCLUDE_DIR}  
   ${vtkTeem_SOURCE_DIR}
   ${vtkTeem_BINARY_DIR}
-  ${SlicerBase_BINARY_DIR}
   ${OPENTRACKER_INC_DIR}
   ${FreeSurfer_SOURCE_DIR}
   ${FreeSurfer_BINARY_DIR}
   )
 
+include_directories(${include_dirs})
 
+GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
+
+file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/*.h") 
+install(FILES 
+  ${files}
+  ${SlicerBaseLogic_BINARY_DIR}/vtkSlicerBaseLogicConfigure.h
+  DESTINATION include/Slicer3 COMPONENT Development
+  )
 
 # --------------------------------------------------------------------------
 # Wrapping
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-SET(VTK_WRAP_HINTS ${SlicerBaseLogic_SOURCE_DIR}/Wrapping/Tcl/hints)
-VTK_WRAP_TCL3(SlicerBaseLogic SlicerBaseLogic_TCL_SRCS "${SlicerBaseLogic_SRCS}" "")
-
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+set(VTK_WRAP_HINTS ${SlicerBaseLogic_SOURCE_DIR}/Wrapping/Tcl/hints)
+vtk_wrap_tcl3(SlicerBaseLogic SlicerBaseLogic_TCL_SRCS "${SlicerBaseLogic_SRCS}" "")
 
 # --------------------------------------------------------------------------
 # Build the library
 
-ADD_LIBRARY(SlicerBaseLogic 
+add_library(SlicerBaseLogic 
   ${SlicerBaseLogic_SRCS} ${SlicerBaseLogic_TCL_SRCS} 
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS SlicerBaseLogic
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
+GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} SlicerBaseLogic)
 
-TARGET_LINK_LIBRARIES(SlicerBaseLogic 
+if(BUILD_SHARED_LIBS)
+  install(TARGETS SlicerBaseLogic
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
+endif(BUILD_SHARED_LIBS)
+
+target_link_libraries(SlicerBaseLogic 
   MRML
   ${KWWidgets_LIBRARIES}
   vtkITK
@@ -104,41 +118,35 @@ TARGET_LINK_LIBRARIES(SlicerBaseLogic
   vtkTeem
   )
 
-
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
-
-CONFIGURE_FILE(
-  ${SlicerBaseLogic_SOURCE_DIR}/vtkSlicerBaseLogicConfigure.h.in 
-  ${SlicerBaseLogic_BINARY_DIR}/vtkSlicerBaseLogicConfigure.h
-)
+if(BUILD_TESTING)
+  subdirs(Testing)
+endif(BUILD_TESTING)
 
 # --------------------------------------------------------------------------
 # Resources
-SET (COLORFILES
-    ./Resources/ColorFiles/PelvisColor.txt
-    ./Resources/ColorFiles/64Color-Nonsemantic.txt
-    ./Resources/ColorFiles/SPL-BrainAtlas-ColorFile.txt
-    ./Resources/ColorFiles/AbdomenColors.txt
-)
+set(COLORFILES
+  ./Resources/ColorFiles/PelvisColor.txt
+  ./Resources/ColorFiles/64Color-Nonsemantic.txt
+  ./Resources/ColorFiles/SPL-BrainAtlas-ColorFile.txt
+  ./Resources/ColorFiles/AbdomenColors.txt
+  )
 
-SET (Color_DIR ${SLICER_LIBRARIES_DIR}/Base/Logic)
-IF (NOT EXISTS ${Color_DIR})
-   FILE(MAKE_DIRECTORY ${Color_DIR})
-ENDIF (NOT EXISTS ${Color_DIR})
+set(Color_DIR ${SLICER_LIBRARIES_DIR}/Base/Logic)
+if(NOT EXISTS ${Color_DIR})
+  file(MAKE_DIRECTORY ${Color_DIR})
+endif(NOT EXISTS ${Color_DIR})
 
-FOREACH ( colorfile ${COLORFILES})
-   CONFIGURE_FILE(
-        ${SlicerBaseLogic_SOURCE_DIR}/${colorfile}
-        ${Color_DIR}/${colorfile}
-        COPYONLY
-)
-   INSTALL(
-        FILES ${Color_DIR}/${colorfile}
-        DESTINATION lib/Slicer3/Base/Logic/Resources/ColorFiles
-)
-ENDFOREACH(colorfile)
+foreach(colorfile ${COLORFILES})
+  configure_file(
+    ${SlicerBaseLogic_SOURCE_DIR}/${colorfile}
+    ${Color_DIR}/${colorfile}
+    COPYONLY
+    )
+  install(
+    FILES ${Color_DIR}/${colorfile}
+    DESTINATION lib/Slicer3/Base/Logic/Resources/ColorFiles
+    )
+endforeach(colorfile)

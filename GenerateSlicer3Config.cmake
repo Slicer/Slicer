@@ -24,20 +24,23 @@ SET(ModuleDescriptionParser_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/ModuleDescript
 SET(LoadableModule_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/LoadableModule)
 SET(GenerateCLP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/GenerateCLP)
 SET(GenerateCLP_USE_FILE_CONFIG ${Slicer3_BINARY_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
-SET(Slicer3_INCLUDE_DIRS_CONFIG ${Slicer3_BINARY_DIR}/Libs/MRML ${Slicer3_SOURCE_DIR}/Libs/MRML ${Slicer3_BINARY_DIR}/Base/CLI ${Slicer3_SOURCE_DIR}/Base/CLI)
+SET(Slicer3_INCLUDE_DIRS_CONFIG ${Slicer3_INCLUDE_DIRS})
 SET(Slicer3_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin)
+
 SET(ITK_DIR_CONFIG ${ITK_DIR})
 SET(VTK_DIR_CONFIG ${VTK_DIR})
+SET(KWWidgets_DIR_CONFIG ${KWWidgets_DIR})
 
 # Configure Slicer3Config.cmake for the install tree.
-CONFIGURE_FILE(${Slicer3_SOURCE_DIR}/Slicer3Config.cmake.in
-               ${Slicer3_BINARY_DIR}/Slicer3Config.cmake @ONLY IMMEDIATE)
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Slicer3Config.cmake.in
+  ${Slicer3_BINARY_DIR}/Slicer3Config.cmake @ONLY IMMEDIATE)
 
 # Settings specific for installation trees      
 #      
 # (Note we configure from a different file than use for the build tree)      
-           
+
 # Configure Slicer3Config.cmake for the install tree.      
-CONFIGURE_FILE(${Slicer3_SOURCE_DIR}/Slicer3InstallConfig.cmake.in      
-               ${Slicer3_BINARY_DIR}/Utilities/Slicer3Config.cmake @ONLY IMMEDIATE)      
-     
+CONFIGURE_FILE(
+  ${Slicer3_SOURCE_DIR}/Slicer3InstallConfig.cmake.in      
+  ${Slicer3_BINARY_DIR}/Utilities/Slicer3Config.cmake @ONLY IMMEDIATE)      

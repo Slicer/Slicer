@@ -1,48 +1,48 @@
-PROJECT(GenerateCLP)
+project(GenerateCLP)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+cmake_minimum_required(VERSION 2.4)
 
-IF(COMMAND cmake_policy)
+if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
-ENDIF(COMMAND cmake_policy)
+endif(COMMAND cmake_policy)
 
-FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
-IF(ModuleDescriptionParser_FOUND)
-  INCLUDE(${ModuleDescriptionParser_USE_FILE})
-ENDIF(ModuleDescriptionParser_FOUND)
+find_package(ModuleDescriptionParser REQUIRED)
+if(ModuleDescriptionParser_FOUND)
+  include(${ModuleDescriptionParser_USE_FILE})
+endif(ModuleDescriptionParser_FOUND)
 
-FIND_PACKAGE(TCLAP REQUIRED)
-IF(TCLAP_FOUND)
-  INCLUDE(${TCLAP_USE_FILE})
-ENDIF(TCLAP_FOUND)
+find_package(TCLAP REQUIRED)
+if(TCLAP_FOUND)
+  include(${TCLAP_USE_FILE})
+endif(TCLAP_FOUND)
 
-FIND_PACKAGE(ITK REQUIRED)
-IF(ITK_FOUND)
-  INCLUDE(${ITK_USE_FILE})
-ENDIF(ITK_FOUND)
+find_package(ITK REQUIRED)
+if(ITK_FOUND)
+  include(${ITK_USE_FILE})
+endif(ITK_FOUND)
 
-SET (GENERATECLP_SOURCE GenerateCLP.cxx)
-ADD_EXECUTABLE ( GenerateCLP ${GENERATECLP_SOURCE})
-GET_TARGET_PROPERTY( GenerateCLP_EXE_PATH GenerateCLP LOCATION )
+set(GENERATECLP_SOURCE GenerateCLP.cxx)
+add_executable(GenerateCLP ${GENERATECLP_SOURCE})
+get_target_property(GenerateCLP_EXE_PATH GenerateCLP LOCATION)
 
-TARGET_LINK_LIBRARIES ( GenerateCLP
+target_link_libraries(GenerateCLP
   ModuleDescriptionParser
   itksys
   ITKEXPAT)
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  subdirs(Testing)
+endif(BUILD_TESTING)
 
 
-INCLUDE(GenerateGenerateCLPConfig.cmake)
+include(GenerateGenerateCLPConfig.cmake)
 
-INSTALL(TARGETS GenerateCLP RUNTIME DESTINATION bin COMPONENT Development)
-INSTALL(FILES ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake_install
-              DESTINATION lib/GenerateCLP
-              COMPONENT Development
-              RENAME GenerateCLPConfig.cmake)
-INSTALL(FILES ${GenerateCLP_BINARY_DIR}/UseGenerateCLP.cmake_install
-              DESTINATION lib/GenerateCLP
-              COMPONENT Development
-              RENAME UseGenerateCLP.cmake)
+install(TARGETS GenerateCLP RUNTIME DESTINATION bin COMPONENT Development)
+install(FILES ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake_install
+  DESTINATION lib/GenerateCLP
+  COMPONENT Development
+  RENAME GenerateCLPConfig.cmake)
+install(FILES ${GenerateCLP_BINARY_DIR}/UseGenerateCLP.cmake_install
+  DESTINATION lib/GenerateCLP
+  COMPONENT Development
+  RENAME UseGenerateCLP.cmake)

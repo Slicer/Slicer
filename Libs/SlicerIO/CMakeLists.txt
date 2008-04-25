@@ -1,32 +1,32 @@
-PROJECT(SlicerIO)
+project(SlicerIO)
 
 # look for the Tcl library
-IF (TCL_LIBRARY)
-ELSE(TCL_LIBRARY)
-    MESSAGE(FATAL_ERROR "Could not find tcl")
-ENDIF (TCL_LIBRARY)
+if (TCL_LIBRARY)
+else(TCL_LIBRARY)
+  message(FATAL_ERROR "Could not find tcl")
+endif (TCL_LIBRARY)
 
-ADD_LIBRARY(slicerio STATIC utilities.c slicerio.c)
+add_library(slicerio STATIC utilities.c slicerio.c)
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS slicerio
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
+  install(TARGETS slicerio
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib COMPONENT Development)
+endif(BUILD_SHARED_LIBS)
 
-TARGET_LINK_LIBRARIES (slicerio ${TCL_LIBRARY})
+target_link_libraries (slicerio ${TCL_LIBRARY})
 
-ADD_EXECUTABLE(testSlicerIO testSlicerIO.c)
-TARGET_LINK_LIBRARIES(testSlicerIO slicerio ${TCL_LIBRARY})
+add_executable(testSlicerIO testSlicerIO.c)
+target_link_libraries(testSlicerIO slicerio ${TCL_LIBRARY})
 
-ADD_EXECUTABLE(scat scat.c)
-TARGET_LINK_LIBRARIES(scat slicerio ${TCL_LIBRARY})
+add_executable(scat scat.c)
+target_link_libraries(scat slicerio ${TCL_LIBRARY})
 
 # This seems to be required for a static build against a static Tcl/Tk
 
-IF(NOT WIN32 AND VTK_TCL_TK_STATIC)
-  TARGET_LINK_LIBRARIES(scat m dl)
-  TARGET_LINK_LIBRARIES(testSlicerIO m dl)
-ENDIF(NOT WIN32 AND VTK_TCL_TK_STATIC)
+if(NOT WIN32 AND VTK_TCL_TK_STATIC)
+  target_link_libraries(scat m dl)
+  target_link_libraries(testSlicerIO m dl)
+endif(NOT WIN32 AND VTK_TCL_TK_STATIC)
 

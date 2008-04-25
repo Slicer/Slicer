@@ -1,36 +1,46 @@
-PROJECT(SlicerBaseCLI)
+project(SlicerBaseCLI)
 
-CONFIGURE_FILE(
+configure_file(
   ${SlicerBaseCLI_SOURCE_DIR}/vtkSlicerBaseCLIConfigure.h.in 
   ${SlicerBaseCLI_BINARY_DIR}/vtkSlicerBaseCLIConfigure.h
-)
+  )
 
-
-INCLUDE_DIRECTORIES(
-  ${ModuleDescriptionParser_BINARY_DIR}
-  ${ModuleDescriptionParser_SOURCE_DIR}
+set(include_dirs
   ${SlicerBaseCLI_BINARY_DIR}
   ${SlicerBaseCLI_SOURCE_DIR}
-)
+  ${ModuleDescriptionParser_BINARY_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR}
+  )
+
+include_directories(${include_dirs})
+
+GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 #
-# Single library target. Down the road, we may want to have one library that only depends 
-# on ITK and a second library that only depends on VTK
+# Single library target. Down the road, we may want to have one library that
+# only depends on ITK and a second library that only depends on VTK
 #
-SET(SlicerBaseCLI_SRCS 
-      vtkPluginFilterWatcher.cxx)
-ADD_LIBRARY(SlicerBaseCLI ${SlicerBaseCLI_SRCS})
-TARGET_LINK_LIBRARIES(SlicerBaseCLI vtkCommon ModuleDescriptionParser)
+set(SlicerBaseCLI_SRCS 
+  vtkPluginFilterWatcher.cxx)
+add_library(SlicerBaseCLI ${SlicerBaseCLI_SRCS})
+target_link_libraries(SlicerBaseCLI vtkCommon ModuleDescriptionParser)
 
+GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} SlicerBaseCLI)
 
-IF(BUILD_SHARED_LIBS)
-   INSTALL(TARGETS SlicerBaseCLI
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
+  install(TARGETS SlicerBaseCLI
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
+endif(BUILD_SHARED_LIBS)
 
-INSTALL(FILES itkPluginFilterWatcher.h itkPluginUtilities.h vtkPluginFilterWatcher.h vtkSlicerBaseCLIWin32Header.h
-        ${SlicerBaseCLI_BINARY_DIR}/vtkSlicerBaseCLIConfigure.h
-        DESTINATION include/Slicer3 COMPONENT Development)
+install(FILES 
+  itkPluginFilterWatcher.h 
+  itkPluginUtilities.h 
+  vtkPluginFilterWatcher.h 
+  vtkSlicerBaseCLIWin32Header.h
+  ${SlicerBaseCLI_BINARY_DIR}/vtkSlicerBaseCLIConfigure.h
+  DESTINATION include/Slicer3 COMPONENT Development)
 

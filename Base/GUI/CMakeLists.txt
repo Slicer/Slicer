@@ -1,23 +1,22 @@
-
-PROJECT(SlicerBaseGUI)
+project(SlicerBaseGUI)
 
 # If we are not in the KWWidgets source tree, make sure we can find KWWidgets
 # as an external package, and use it.
 
-FIND_PACKAGE(KWWidgets REQUIRED)
-INCLUDE(${KWWidgets_USE_FILE})
+find_package(KWWidgets REQUIRED)
+include(${KWWidgets_USE_FILE})
 
 # The name of our targets (executable or libraries) will simply be based
 # on the project name, with an extra prefix and suffix.
 
-SET(TARGET_BASE_NAME "Slicer3${PROJECT_NAME}Test")
+set(TARGET_BASE_NAME "Slicer3${PROJECT_NAME}Test")
 
 # We actually define a class in this example, and we want to be able to
 # use its callbacks from our user interface. To do so, we need to create
 # a library and wrap it automatically for the Tcl language.
 
-SET(LIB_NAME "SlicerBaseGUI")
-SET(LIB_SRCS 
+set(LIB_NAME "SlicerBaseGUI")
+set(LIB_SRCS 
   vtkSlicerStyle.cxx
   vtkSlicerWindow.cxx
   vtkSlicerApplicationSettingsInterface.cxx
@@ -99,70 +98,87 @@ SET(LIB_SRCS
 # Helper classes
 
 #SET_SOURCE_FILES_PROPERTIES(
- # none yet
- # vtkSlicerGUIUpdate.cxx
- # vtkSlicerLogicUpdate.cxx
- # vtkSlicerMRMLUpdate.cxx
- # WRAP_EXCLUDE
- # )
+# none yet
+# vtkSlicerGUIUpdate.cxx
+# vtkSlicerLogicUpdate.cxx
+# vtkSlicerMRMLUpdate.cxx
+# WRAP_EXCLUDE
+# )
 
-INCLUDE_DIRECTORIES(
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
+configure_file(
+  ${SlicerBaseGUI_SOURCE_DIR}/vtkSlicerBaseGUIConfigure.h.in 
+  ${SlicerBaseGUI_BINARY_DIR}/vtkSlicerBaseGUIConfigure.h
+  )
+
+set(include_dirs
+  ${SlicerBaseGUI_SOURCE_DIR}
+  ${SlicerBaseGUI_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
   ${SlicerBaseLogic_BINARY_DIR}
   ${MRML_SOURCE_DIR}
   ${MRML_BINARY_DIR}
-  ${VTKITK_SOURCE_DIR}/Libs/vtkITK
-  ${VTK_INCLUDE_DIR}
-  ${TEEM_INCLUDE_DIR}
-  ${vtkTeem_SOURCE_DIR}
-  ${vtkTeem_BINARY_DIR}
   ${ModuleDescriptionParser_SOURCE_DIR}
   ${ModuleDescriptionParser_BINARY_DIR}
-  ${LoadableModule_SOURCE_DIR}
-  ${LoadableModule_BINARY_DIR}
   ${FreeSurfer_SOURCE_DIR}
   ${FreeSurfer_BINARY_DIR}
+  ${OPENTRACKER_INC_DIR}
   )
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
-KWWidgets_WRAP_TCL(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
+include_directories(${include_dirs})
 
+GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
+
+file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/*.h") 
+install(FILES 
+  ${files}
+  ${SlicerBaseGUI_BINARY_DIR}/vtkSlicerBaseGUIConfigure.h
+  DESTINATION include/Slicer3 COMPONENT Development
+  )
+file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h") 
+install(FILES 
+  ${files}
+  DESTINATION include/Slicer3/Resources COMPONENT Development
+  )
+
+include("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
+kwwidgets_wrap_tcl(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
 
 # Create the library.
 
-ADD_LIBRARY(${LIB_NAME} ${LIB_TCL_SRCS} ${LIB_SRCS})
-TARGET_LINK_LIBRARIES(${LIB_NAME} 
+add_library(${LIB_NAME} ${LIB_TCL_SRCS} ${LIB_SRCS})
+GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} ${LIB_NAME})
+
+target_link_libraries(${LIB_NAME} 
   ${KWWidgets_LIBRARIES}
   ModuleDescriptionParser
   SlicerBaseLogic
   FreeSurfer
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS ${LIB_NAME}
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
+  install(TARGETS ${LIB_NAME}
+    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+    LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
+    ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
+endif(BUILD_SHARED_LIBS)
 
 # The name of our executable and the corresponding source file.
 
-SET(EXE_NAME "${TARGET_BASE_NAME}")
-SET(EXE_SRCS "${EXE_NAME}.cxx")
+set(EXE_NAME "${TARGET_BASE_NAME}")
+set(EXE_SRCS "${EXE_NAME}.cxx")
 
 # On Win32 platforms, let's configure the KWWidgets sample resource file
 # to get a nice application icon and some additional information.
 
-IF(WIN32 AND NOT BORLAND AND NOT CYGWIN)
-  INCLUDE_DIRECTORIES(${VTK_TK_RESOURCES_DIR})
-  SET(RES_FILE "${CMAKE_CURRENT_BINARY_DIR}/${EXE_NAME}.rc")
-  SET(KWWidgets_RESOURCE_APPLICATION_NAME "${EXE_NAME}")
-  SET(KWWidgets_RESOURCE_FILE_NAME "${EXE_NAME}")
-  CONFIGURE_FILE(${KWWidgets_RESOURCES_DIR}/KWWidgets.rc.in ${RES_FILE})
-ENDIF(WIN32 AND NOT BORLAND AND NOT CYGWIN)
+if(WIN32 AND NOT BORLAND AND NOT CYGWIN)
+  include_directories(${VTK_TK_RESOURCES_DIR})
+  set(RES_FILE "${CMAKE_CURRENT_BINARY_DIR}/${EXE_NAME}.rc")
+  set(KWWidgets_RESOURCE_APPLICATION_NAME "${EXE_NAME}")
+  set(KWWidgets_RESOURCE_FILE_NAME "${EXE_NAME}")
+  configure_file(${KWWidgets_RESOURCES_DIR}/KWWidgets.rc.in ${RES_FILE})
+endif(WIN32 AND NOT BORLAND AND NOT CYGWIN)
 
 # Create the executable, and link it against the KWWidgets libraries and our
 # own library.
@@ -174,11 +190,11 @@ ENDIF(WIN32 AND NOT BORLAND AND NOT CYGWIN)
 ####   ADD_TEST(Test${EXE_NAME} ${EXECUTABLE_OUTPUT_PATH}/${EXE_NAME} --test)
 #### ENDIF(BUILD_TESTING)
 
-IF(BUILD_TESTING)
-  ADD_TEST(Slicer3GUITest1 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestSliceController.tcl)
-  ADD_TEST(Slicer3GUITest2 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestProgressDialog.tcl)
-  ADD_TEST(Slicer3FiducialsTest1 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestFiducials.tcl)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_test(Slicer3GUITest1 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestSliceController.tcl)
+  add_test(Slicer3GUITest2 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestProgressDialog.tcl)
+  add_test(Slicer3FiducialsTest1 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestFiducials.tcl)
+endif(BUILD_TESTING)
 
 # If needed, copy the Tcl/Tk support files required at run-time 
 # to initialize Tcl/Tk. This is only triggered if VTK was built
@@ -200,62 +216,53 @@ ENDIF(BUILD_TESTING)
 # based on KWWidgets, you can most likely omit this section too, unless
 # your application supports that feature too.
 
-INCLUDE_DIRECTORIES(
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${OPENTRACKER_INC_DIR}
-)
-CONFIGURE_FILE(
-  ${SlicerBaseGUI_SOURCE_DIR}/vtkSlicerBaseGUIConfigure.h.in 
-  ${SlicerBaseGUI_BINARY_DIR}/vtkSlicerBaseGUIConfigure.h
-)
-
 #
 # install the tcl package for the gui
 #
-SET(SlicerBaseGUITcl_DIR "${SLICER_LIBRARIES_DIR}/SlicerBaseGUITcl")
+set(SlicerBaseGUITcl_DIR "${SLICER_LIBRARIES_DIR}/SlicerBaseGUITcl")
 
-FILE(MAKE_DIRECTORY ${SlicerBaseGUITcl_DIR})
+file(MAKE_DIRECTORY ${SlicerBaseGUITcl_DIR})
 
-SET(TCLFILES
+set(TCLFILES
   pkgIndex.tcl SliceViewerInteractor.tcl
   SWidget.tcl SliceSWidget.tcl SeedSWidget.tcl CsysSWidget.tcl
   FiducialsSWidget.tcl GridSWidget.tcl CrosshairSWidget.tcl RegionsSWidget.tcl 
   Slicer2Import.tcl XcedeCatalogImport.tcl XcatalogImport.tcl
   XnatXcatImport.tcl Loader.tcl LoadVolume.tcl FilteredDirectoryDialog.tcl
   XnatPublishScene.tcl MRMLWatcher.tcl
-)
+  )
 
-FOREACH(tclfile ${TCLFILES})
-  CONFIGURE_FILE(
+foreach(tclfile ${TCLFILES})
+  configure_file(
     ${Slicer3_SOURCE_DIR}/Base/GUI/Tcl/${tclfile}
     ${SlicerBaseGUITcl_DIR}/${tclfile}
     COPYONLY
-  )
-ENDFOREACH(tclfile)
+    )
+endforeach(tclfile)
 
 
 # Python settings
-IF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
-  SUBDIRS(Python)
-  ADD_DEFINITIONS(-DUSE_PYTHON)
-  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-  IF (WIN32 AND PYTHON_DEBUG_LIBRARIES)
-     TARGET_LINK_LIBRARIES( ${LIB_NAME}
-                            debug ${PYTHON_DEBUG_LIBRARIES}
-                            optimized ${PYTHON_LIBRARIES})
-  ELSE (WIN32 AND PYTHON_DEBUG_LIBRARIES)
-     TARGET_LINK_LIBRARIES( ${LIB_NAME} ${PYTHON_LIBRARIES})
-  ENDIF (WIN32 AND PYTHON_DEBUG_LIBRARIES)
-  IF(NOT WIN32)
-    IF (APPLE)
-     TARGET_LINK_LIBRARIES( ${LIB_NAME} ${PYTHON_LIBRARIES} )
-    ELSE (APPLE)
-     TARGET_LINK_LIBRARIES( ${LIB_NAME} ${PYTHON_LIBRARIES} util)
-    ENDIF (APPLE)
-  ENDIF(NOT WIN32)
-ENDIF(USE_PYTHON AND PYTHON_INCLUDE_PATH)
+if(USE_PYTHON AND PYTHON_INCLUDE_PATH)
+  subdirs(Python)
+  add_definitions(-DUSE_PYTHON)
+  include_directories(${PYTHON_INCLUDE_PATH})
+  if (WIN32 AND PYTHON_DEBUG_LIBRARIES)
+    target_link_libraries(${LIB_NAME}
+      debug ${PYTHON_DEBUG_LIBRARIES}
+      optimized ${PYTHON_LIBRARIES})
+  else (WIN32 AND PYTHON_DEBUG_LIBRARIES)
+    target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
+  endif (WIN32 AND PYTHON_DEBUG_LIBRARIES)
+  if(NOT WIN32)
+    if (APPLE)
+      target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES})
+    else (APPLE)
+      target_link_libraries(${LIB_NAME} ${PYTHON_LIBRARIES} util)
+    endif (APPLE)
+  endif(NOT WIN32)
+endif(USE_PYTHON AND PYTHON_INCLUDE_PATH)
 
 # CMAke 2.4 does not have INSTALL(DIRECTORY ...) do it manually
 #INSTALL(DIRECTORY "${Slicer3_BINARY_DIR}/SlicerBaseGUITcl"
 #  DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR})
-INSTALL(CODE "EXECUTE_PROCESS\(COMMAND \"${CMAKE_COMMAND}\" -E copy_directory \"${SLICER_LIBRARIES_DIR}/SlicerBaseGUITcl\" \"\${CMAKE_INSTALL_PREFIX}/${SLICER_INSTALL_LIBRARIES_DIR}/SlicerBaseGUITcl\"\)")
+install(CODE "EXECUTE_PROCESS\(COMMAND \"${CMAKE_COMMAND}\" -E copy_directory \"${SLICER_LIBRARIES_DIR}/SlicerBaseGUITcl\" \"\${CMAKE_INSTALL_PREFIX}/${SLICER_INSTALL_LIBRARIES_DIR}/SlicerBaseGUITcl\"\)")

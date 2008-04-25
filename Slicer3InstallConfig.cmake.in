@@ -7,18 +7,6 @@
 # or a Slicer3 installation.
 #
 
-# Slicer could be installed anywhere, so set all paths based on where 
-# this file was found (which should be the lib/Slicer3 directory of the 
-# installation)
-GET_FILENAME_COMPONENT(Slicer3_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-
-# The Slicer3 include file directories.
-SET(Slicer3_INCLUDE_DIRS "${Slicer3_CONFIG_DIR}/../../include/Slicer3" "${Slicer3_CONFIG_DIR}/../../include/MRML")
-
-# The Slicer3 library directories.
-# ${Slicer3_CONFIG_DIR}/.. is needed for VTK and teem
-SET(Slicer3_LIBRARY_DIRS "${Slicer3_CONFIG_DIR}" "${Slicer3_CONFIG_DIR}/.." "${Slicer3_CONFIG_DIR}/../MRML")
-
 # The C and C++ flags added by Slicer3 to the cmake-configured flags.
 SET(Slicer3_REQUIRED_C_FLAGS "@Slicer3_REQUIRED_C_FLAGS@")
 SET(Slicer3_REQUIRED_CXX_FLAGS "@Slicer3_REQUIRED_CXX_FLAGS@")
@@ -29,14 +17,39 @@ SET(Slicer3_VERSION_MAJOR "@Slicer3_VERSION_MAJOR@")
 SET(Slicer3_VERSION_MINOR "@Slicer3_VERSION_MINOR@")
 SET(Slicer3_VERSION_PATCH "@Slicer3_VERSION_PATCH@")
 
+# Whether Slicer3 was built with shared libraries.
+SET(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
+
+# A list of all libraries for Slicer3.  Those listed here should
+# automatically pull in their dependencies.
+SET(Slicer3_LIBRARIES "@Slicer3_LIBRARIES@")
+
+# Slicer could be installed anywhere, so set all paths based on where 
+# this file was found (which should be the lib/Slicer3 directory of the 
+# installation)
+GET_FILENAME_COMPONENT(Slicer3_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+# The Slicer3 include file directories.
+SET(Slicer3_INCLUDE_DIRS 
+  "${Slicer3_CONFIG_DIR}/../../include/Slicer3" 
+  "${Slicer3_CONFIG_DIR}/../../include/MRML"
+  "${Slicer3_CONFIG_DIR}/../../include/vtkITK"
+)
+
+# The Slicer3 library directories.
+# ${Slicer3_CONFIG_DIR}/.. is needed for VTK and teem
+SET(Slicer3_LIBRARY_DIRS 
+  "${Slicer3_CONFIG_DIR}" 
+  "${Slicer3_CONFIG_DIR}/.." 
+  "${Slicer3_CONFIG_DIR}/../MRML"
+)
+
 # The location of the UseSlicer3.cmake file.
 SET(Slicer3_USE_FILE "${Slicer3_CONFIG_DIR}/UseSlicer3.cmake")
 
 # The build settings file.
-SET(Slicer3_BUILD_SETTINGS_FILE "${Slicer3_CONFIG_DIR}/Slicer3BuildSettings.cmake")
-
-# Whether Slicer3 was built with shared libraries.
-SET(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
+SET(Slicer3_BUILD_SETTINGS_FILE 
+  "${Slicer3_CONFIG_DIR}/Slicer3BuildSettings.cmake")
 
 # Components needed to build modules from outside a Slicer3 build tree or 
 # from outside a Slicer3 installation tree
@@ -49,3 +62,5 @@ SET(ITK_DIR "${Slicer3_CONFIG_DIR}/../InsightToolkit")
 # VTK_DIR needs to be an absolute path for the VTKConfig.cmake file to work
 SET(VTK_DIR "${Slicer3_CONFIG_DIR}/../vtk-5.0")
 GET_FILENAME_COMPONENT(VTK_DIR ${VTK_DIR} ABSOLUTE)
+SET(KWWidgets_DIR "${Slicer3_CONFIG_DIR}/../KWWidgets")
+GET_FILENAME_COMPONENT(KWWidgets_DIR ${KWWidgets_DIR} ABSOLUTE)

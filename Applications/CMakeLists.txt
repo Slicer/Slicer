@@ -1,14 +1,13 @@
-PROJECT( Applications )
+project(Applications)
 
-IF(BUILD_CLI)
-  SUBDIRS(CLI)
-ENDIF(BUILD_CLI)
+if(BUILD_CLI)
+  subdirs(CLI)
+endif(BUILD_CLI)
 
-SUBDIRS(
+subdirs(
   GUI
-  #SIGN
-)
+  )
 
-IF (Slicer3_BUILD_TESTING)
-    SUBDIRS( Testing )
-ENDIF (Slicer3_BUILD_TESTING)
+if(Slicer3_BUILD_TESTING)
+  subdirs(Testing)
+endif(Slicer3_BUILD_TESTING)

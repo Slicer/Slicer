@@ -1,121 +1,123 @@
-PROJECT(LoadableModule)
+project(LoadableModule)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+cmake_minimum_required(VERSION 2.4)
 
-CONFIGURE_FILE(
+configure_file(
   ${LoadableModule_SOURCE_DIR}/LoadableModuleConfigure.h.in 
   ${LoadableModule_BINARY_DIR}/LoadableModuleConfigure.h
-)
+  )
 
 ## ITK is required for expat.h
-FIND_PACKAGE(ITK REQUIRED)
-INCLUDE(${ITK_USE_FILE})
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
 
-SET(LoadableModule_SRCS
+set(LoadableModule_SRCS
   LoadableModuleDescription.cxx
   LoadableModuleDescriptionParser.cxx
   LoadableModuleFactory.cxx
-)
+  )
 
-IF (USE_BFD)
-  IF (NOT WIN32)
-    INCLUDE(CheckIncludeFile)
-    CHECK_INCLUDE_FILE(bfd.h HAVE_BFD_HEADER)
+if(USE_BFD)
+  if(NOT WIN32)
+    include(CheckIncludeFile)
+    check_include_file(bfd.h HAVE_BFD_HEADER)
 
-    IF (HAVE_BFD_HEADER)
-       # make sure we can build with libbfd
-       MESSAGE(STATUS "Testing libbfd")
-       TRY_COMPILE(HAVE_BFD
-                   ${LoadableModule_BINARY_DIR}/CMake
-                   ${LoadableModule_SOURCE_DIR}/CMake
-                   TestBFD
-                   CMAKE_FLAGS 
-                      -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-                      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                   OUTPUT_VARIABLE OUTPUT)
-       MESSAGE(${OUTPUT})
-       IF (HAVE_BFD)
-         MESSAGE(STATUS "Testing libbfd - ok. ModuleFactory will look for global symbols in plugin executables.")
-       ELSE (HAVE_BFD)
-         MESSAGE(STATUS "Testing libbfd - error.  ModuleFactory will not look for global symbols in plugin executables.")
-       ENDIF (HAVE_BFD)
-    ENDIF (HAVE_BFD_HEADER)
+    if(HAVE_BFD_HEADER)
+      # make sure we can build with libbfd
+      message(STATUS "Testing libbfd")
+      try_compile(HAVE_BFD
+        ${LoadableModule_BINARY_DIR}/CMake
+        ${LoadableModule_SOURCE_DIR}/CMake
+        TestBFD
+        CMAKE_FLAGS 
+        -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        OUTPUT_VARIABLE OUTPUT)
+      message(${OUTPUT})
+      if(HAVE_BFD)
+        message(STATUS "Testing libbfd - ok. ModuleFactory will look for global symbols in plugin executables.")
+      else(HAVE_BFD)
+        message(STATUS "Testing libbfd - error.  ModuleFactory will not look for global symbols in plugin executables.")
+      endif(HAVE_BFD)
+    endif(HAVE_BFD_HEADER)
 
-    IF (HAVE_BFD)
-      SET(LoadableModule_SRCS 
-            ${LoadableModule_SRCS} 
-            BinaryFileDescriptor.cxx)
-    ENDIF (HAVE_BFD)
-  ENDIF (NOT WIN32)
-ENDIF (USE_BFD)
+    if(HAVE_BFD)
+      set(LoadableModule_SRCS 
+        ${LoadableModule_SRCS} 
+        BinaryFileDescriptor.cxx)
+    endif(HAVE_BFD)
+  endif(NOT WIN32)
+endif(USE_BFD)
 
-
-INCLUDE_DIRECTORIES(
+set(include_dirs
   ${LoadableModule_BINARY_DIR}
   ${LoadableModule_SOURCE_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-)
+  )
 
-IF(USE_PYTHON)
-  FIND_PACKAGE(PythonLibs)
-ENDIF(USE_PYTHON)
+if(USE_PYTHON)
+  find_package(PythonLibs)
+endif(USE_PYTHON)
 
-IF(USE_PYTHON)
-# Python requires a pointer to the Slicer Application
-INCLUDE_DIRECTORIES(
-  ${PYTHON_INCLUDE_PATH}
-)
-ENDIF(USE_PYTHON)
+if(USE_PYTHON)
+  # Python requires a pointer to the Slicer Application
+  set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH})
+endif(USE_PYTHON)
 
-ADD_LIBRARY(LoadableModule ${LoadableModule_SRCS})
-IF(USE_PYTHON)
-ADD_DEFINITIONS(-DUSE_PYTHON)
-ENDIF(USE_PYTHON)
+include_directories(${include_dirs})
 
-IF ( NOT WIN32 )
-  IF(NOT APPLE)
-    TARGET_LINK_LIBRARIES( LoadableModule util)
-  ENDIF(NOT APPLE)
-ENDIF ( NOT WIN32 )
+GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
 
-TARGET_LINK_LIBRARIES(LoadableModule
+add_library(LoadableModule ${LoadableModule_SRCS})
+
+GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} LoadableModule)
+
+if(USE_PYTHON)
+  add_definitions(-DUSE_PYTHON)
+endif(USE_PYTHON)
+
+if(NOT WIN32)
+  if(NOT APPLE)
+    target_link_libraries(LoadableModule util)
+  endif(NOT APPLE)
+endif(NOT WIN32)
+
+target_link_libraries(LoadableModule
   ITKEXPAT
   itksys
-)
-IF(USE_PYTHON)
-   TARGET_LINK_LIBRARIES(LoadableModule
-     ${PYTHON_LIBRARIES}
   )
-ENDIF(USE_PYTHON)
+if(USE_PYTHON)
+  target_link_libraries(LoadableModule
+    ${PYTHON_LIBRARIES}
+    )
+endif(USE_PYTHON)
 
-IF (NOT WIN32)
-  IF (HAVE_BFD)
-    TARGET_LINK_LIBRARIES(LoadableModule bfd iberty)
-  ENDIF(HAVE_BFD)
-ENDIF (NOT WIN32)
+if(NOT WIN32)
+  if(HAVE_BFD)
+    target_link_libraries(LoadableModule bfd iberty)
+  endif(HAVE_BFD)
+endif(NOT WIN32)
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  subdirs(Testing)
+endif(BUILD_TESTING)
 
+include(GenerateLoadableModuleConfig.cmake) 
 
-INCLUDE (GenerateLoadableModuleConfig.cmake) 
+configure_file(${LoadableModule_SOURCE_DIR}/UseLoadableModule.cmake.in
+  ${LoadableModule_BINARY_DIR}/UseLoadableModule.cmake COPYONLY IMMEDIATE)
 
-CONFIGURE_FILE(${LoadableModule_SOURCE_DIR}/UseLoadableModule.cmake.in
-               ${LoadableModule_BINARY_DIR}/UseLoadableModule.cmake COPYONLY IMMEDIATE)
+install(TARGETS LoadableModule 
+  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION lib COMPONENT Development)
 
+file(GLOB __files1 "${LoadableModule_SOURCE_DIR}/*.h")
+install(FILES ${__files1} DESTINATION include/LoadableModule COMPONENT Development)
+install(FILES ${LoadableModule_BINARY_DIR}/LoadableModuleConfigure.h DESTINATION include/LoadableModule COMPONENT Development)
 
-INSTALL(TARGETS LoadableModule 
-    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION lib COMPONENT Development)
-
-FILE(GLOB __files1 "${LoadableModule_SOURCE_DIR}/*.h")
-INSTALL(FILES ${__files1} DESTINATION include/LoadableModule COMPONENT Development)
-INSTALL(FILES ${LoadableModule_BINARY_DIR}/LoadableModuleConfigure.h DESTINATION include/LoadableModule COMPONENT Development)
-
-INSTALL(FILES 
-     ${LoadableModule_BINARY_DIR}/UseLoadableModule.cmake 
-     ${LoadableModule_BINARY_DIR}/install/LoadableModuleConfig.cmake 
-     DESTINATION lib/LoadableModule COMPONENT Development)
+install(FILES 
+  ${LoadableModule_BINARY_DIR}/UseLoadableModule.cmake 
+  ${LoadableModule_BINARY_DIR}/install/LoadableModuleConfig.cmake 
+  DESTINATION lib/LoadableModule COMPONENT Development)
