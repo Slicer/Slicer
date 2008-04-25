@@ -488,7 +488,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
   this->GlyphResolutionScale = vtkKWScaleWithLabel::New();
   this->GlyphResolutionScale->SetParent ( frame->GetFrame() );
   this->GlyphResolutionScale->Create ( );
-  this->GlyphResolutionScale->SetLabelText("Resolution");
+  this->GlyphResolutionScale->SetLabelText("Spacing");
   this->GlyphResolutionScale->GetWidget()->SetRange(1,50);
   this->GlyphResolutionScale->GetWidget()->SetResolution(1);
   this->GlyphResolutionScale->SetBalloonHelpString("skip step for glyphs.");
