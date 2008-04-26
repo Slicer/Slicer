@@ -80,6 +80,10 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     virtual void CreateWidget();
 
     // Description:
+    // Enables all buttons for visibility options of DTIs. 
+    void SetAllVisibilityButtons(int status);
+
+    // Description:
     // Is 1, if tensor has to be newly estimated.
     // Is 0, if parameters have not changed and old tensor can be used for tractography.
     int ModifiedForNewTensor;

@@ -272,9 +272,15 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
     }
 
   //dti selected (update tracts)
-  else if (this->DTISelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
-    this->DTISelector->GetSelected() != NULL) 
+  else if (this->DTISelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && 
+    event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent) 
     {
+    if(this->DTISelector->GetSelected() == NULL)
+      {
+      this->SetAllVisibilityButtons(0);
+      return;
+      }
+    this->SetAllVisibilityButtons(1);
     //set internal tensorNode
     this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->DTISelector->GetSelected());
     //create tracts and glyphs
@@ -295,7 +301,9 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
     }
 
   //view of glyphs
-  else if(event == vtkKWCheckButton::SelectedStateChangedEvent && this->TensorNode != NULL)
+  else if((this->ViewGlyphsYellow == vtkKWCheckButton::SafeDownCast(caller)|| this->ViewGlyphsRed == vtkKWCheckButton::SafeDownCast(caller) 
+    || this->ViewGlyphsGreen == vtkKWCheckButton::SafeDownCast(caller)) && this->TensorNode != NULL && 
+    event == vtkKWCheckButton::SelectedStateChangedEvent )
     {
     vtkKWCheckButton *calledGlyph = vtkKWCheckButton::SafeDownCast(caller);
     this->CreateGlyphs(calledGlyph);
@@ -314,7 +322,7 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
 
   //view of tracts
   else if(this->ViewTracts == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent
-    && this->FiducialSelector->GetSelected() != NULL)
+    && this->FiducialSelector->GetSelected() != NULL && this->TensorNode != NULL)
     {
     if(this->ViewTracts->GetSelectedState() && this->DTISelector->GetSelected() != NULL)
       {
@@ -342,6 +350,7 @@ void vtkSlicerDWITestingWidget::CreateGlyphs(vtkKWCheckButton *calledGlyph)
   if(calledGlyph->GetSelectedState())
     {
     //view glyphs on
+    this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphVisibility(plane,0);
     this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetDiffusionTensorVolumeNode(this->TensorNode);
     this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphVisibility(plane,1);
     //change current node to TensorNode in the main GUI
@@ -358,6 +367,7 @@ void vtkSlicerDWITestingWidget::CreateGlyphs(vtkKWCheckButton *calledGlyph)
     }
   }
 
+//---------------------------------------------------------------------------
 void vtkSlicerDWITestingWidget::SetWidgetToDefault()
   {
   //switch off glyphs
@@ -370,8 +380,24 @@ void vtkSlicerDWITestingWidget::SetWidgetToDefault()
   //visibility of tracts off
   this->TractDisplayGUI->GetFiberBundleDisplayWidget()->SetTractVisibility(0);
   this->ViewTracts->SelectedStateOff();
+  //dti selector to default
+  //this->DTISelector->SetSelected(NULL);
+  this->DTISelector->GetWidget()->GetWidget()->SetValue("None");
+  this->SetAllVisibilityButtons(0);
   }
 
+//---------------------------------------------------------------------------
+void vtkSlicerDWITestingWidget::SetAllVisibilityButtons(int status)
+  {
+  this->ViewGlyphsGreen->SetEnabled(status);
+  this->ViewGlyphsRed->SetEnabled(status);
+  this->ViewGlyphsYellow->SetEnabled(status);
+  this->ViewTracts->SetEnabled(status);
+  this->GlyphResolutionScale->SetEnabled(status);
+  this->FiducialSelector->SetEnabled(status);
+  }
+
+//---------------------------------------------------------------------------
 void vtkSlicerDWITestingWidget::CreateTracts()
   {
   if(this->TensorNode == NULL) return;
