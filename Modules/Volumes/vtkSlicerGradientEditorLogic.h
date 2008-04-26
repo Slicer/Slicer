@@ -37,20 +37,15 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
     // values; otherwise 1.
     int ParseGradients(const char  *gradients, int numberOfGradients, vtkDoubleArray *newBValues, 
       vtkDoubleArray *newGradients);
-    
+
     //BTX
     // Description:
     // Parses given gradients and bValues back into a string and returns it.
     std::string GetGradientsAsString(vtkDoubleArray *BValues, vtkDoubleArray *Gradients);
-
-    // Description:
-    // Parses a string into a double value.
-    // Return value is 0 when parsing was not successful; otherwise 1.
-    int StringToDouble(const std::string &s, double &result);
     //ETX
 
     // Description:
-    // Pushes the current ActiveVolumeNode onto the UndoRedoStack, and makes a backup 
+    // Pushes the current ActiveVolumeNode onto the UndoRedoStack, makes a backup 
     // copy of the node so that changes are undoable/redoable; 
     void SaveStateForUndoRedo();
 
@@ -74,24 +69,35 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
     // Return value is 1 if there is still a node in the stack for redo; otherwise 0.
     int IsRedoable();
 
+    // Description:
+    // Sets the ActiveVolumeNode; can be DWI or DTI.
     void SetActiveVolumeNode(vtkMRMLVolumeNode *node);
 
   protected:
     vtkSlicerGradientEditorLogic(void);
     virtual ~vtkSlicerGradientEditorLogic(void);
 
-    vtkMRMLDiffusionWeightedVolumeNode *ActiveDWINode;
-    vtkMRMLDiffusionTensorVolumeNode *ActiveDTINode;
-
     // Description:
     // Updates the values of the current ActiveVolumeNode after undo/redo/restore.
     void UpdateActiveVolumeNode(vtkMRMLVolumeNode *node);
 
     // Description:
-    // Stack holds all references of created DWINodes.
+    // Clears stack from all saved nodes.
+    void ClearStack();
+
     //BTX
+    // Description:
+    // Stack holds all references of created nodes.
     vtkstd::vector<vtkMRMLVolumeNode*> UndoRedoStack;
+
+    // Description:
+    // Parses a string into a double value.
+    // Return value is 0 when parsing was not successful; otherwise 1.
+    int StringToDouble(const std::string &s, double &result);
     //ETX
+
+    vtkMRMLDiffusionWeightedVolumeNode *ActiveDWINode;
+    vtkMRMLDiffusionTensorVolumeNode *ActiveDTINode;
 
     // Description:
     // Points to the current node in the UndoRedoStack (node that is displayed in the GUI).

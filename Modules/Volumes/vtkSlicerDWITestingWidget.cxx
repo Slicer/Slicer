@@ -309,7 +309,7 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
     {
     //set new resolution
     this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphRosolution(
-        (int)(this->GlyphResolutionScale->GetWidget()->GetValue()));
+      (int)(this->GlyphResolutionScale->GetWidget()->GetValue()));
     }
 
   //view of tracts
@@ -474,7 +474,7 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->RunButton->SetLabelText("Estimate new tensor: ");
   this->RunButton->GetWidget()->SetText("Run");
   this->RunButton->GetWidget()->SetWidth(10);
-  this->RunButton->SetBalloonHelpString("Run test by computing tensors and tractography seeding.");
+  this->RunButton->SetBalloonHelpString("Compute new tensors.");
   this->Script("pack %s -side top -anchor nw -padx 2 -pady 4 ", 
     this->RunButton->GetWidgetName()); 
 
@@ -487,7 +487,7 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->DTISelector->NoneEnabledOn();
   this->DTISelector->SetNewNodeEnabled(0);
   this->DTISelector->UpdateMenu();
-  this->DTISelector->SetLabelText("Display a DTI volume: ");
+  this->DTISelector->SetLabelText("Display a DTI node: ");
   this->DTISelector->SetBalloonHelpString("Select a DTI volume from the current mrml scene and see its tracts or glyphs.");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 4 ", 
     this->DTISelector->GetWidgetName());
@@ -533,7 +533,7 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->GlyphResolutionScale->GetWidget()->SetResolution(1);
   this->GlyphResolutionScale->GetWidget()->SetValue(20);
   this->GlyphResolutionScale->SetBalloonHelpString("Skip step for glyphs.");
-  this->Script( "pack %s -side top -anchor nw -fill x -padx 2 -pady 6",
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 6",
     this->GlyphResolutionScale->GetWidgetName());
 
   //create view tracts

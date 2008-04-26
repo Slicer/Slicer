@@ -42,8 +42,7 @@ vtkSlicerMeasurementFrameWidget::~vtkSlicerMeasurementFrameWidget(void)
   this->RemoveWidgetObservers();
   if (this->ActiveVolumeNode)
     {
-    this->ActiveVolumeNode->Delete();
-    this->ActiveVolumeNode = NULL;
+    vtkSetMRMLNodeMacro(this->ActiveVolumeNode, NULL);
     }
   if (this->MeasurementFrame)
     {
@@ -179,6 +178,7 @@ void vtkSlicerMeasurementFrameWidget::SaveMatrix()
     this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
     // mark as modified in save menu
     this->ActiveVolumeNode->SetModifiedSinceRead(1);
+    this->ActiveVolumeNode;
     }
   }
 

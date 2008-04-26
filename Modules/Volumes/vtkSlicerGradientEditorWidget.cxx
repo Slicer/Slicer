@@ -39,8 +39,7 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
   this->RemoveWidgetObservers();
   if (this->ActiveVolumeNode)
     {
-    this->ActiveVolumeNode->Delete();
-    this->ActiveVolumeNode = NULL;
+    vtkSetMRMLNodeMacro(this->ActiveVolumeNode, NULL);
     }
   if (this->Application)
     {
@@ -198,24 +197,29 @@ void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLVolumeNode *node)
 
   if(node->IsA("vtkMRMLDiffusionTensorVolumeNode"))
     {
+    //gradients widget will be inaktiv
     this->GradientsWidget->SetStatus(0);
     }
 
   if(node->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
     {
-    //-- update all when the active node changes
+    //gradients widget will be aktiv
     this->GradientsWidget->SetStatus(1);
-    //gradients widget
+    //update gradients widget
     this->GradientsWidget->UpdateWidget(this->ActiveVolumeNode);
     }
 
-  //measurement frame
+  //update measurement frame
   this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
-  //testing widget
+  //update testing widget
   this->TestingWidget->SetApplication(this->Application);
   this->TestingWidget->UpdateWidget(this->ActiveVolumeNode);
-  //editor logic
+  //update editor logic
   this->Logic->SetActiveVolumeNode(this->ActiveVolumeNode);
+  //undo/redo/restore are enabled at the beginning
+  this->RedoButton->EnabledOff();
+  this->UndoButton->EnabledOff();
+  this->RestoreButton->EnabledOff();
   }
 
 //---------------------------------------------------------------------------
@@ -264,7 +268,6 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->UndoButton->SetText("Undo");  
   this->UndoButton->Create();
   this->UndoButton->SetWidth(10);
-  this->UndoButton->SetEnabled(0);
   this->UndoButton->SetBalloonHelpString("Undo the last change in measurement frame/gradient values.");
 
   //create redoButton
@@ -273,7 +276,6 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->RedoButton->SetText("Redo");  
   this->RedoButton->Create();
   this->RedoButton->SetWidth(10);
-  this->RedoButton->SetEnabled(0);
   this->RedoButton->SetBalloonHelpString("Redo the last change in measurement frame/gradient values.");
 
   //create restoreButton
@@ -282,7 +284,6 @@ void vtkSlicerGradientEditorWidget::CreateWidget( )
   this->RestoreButton->Create();
   this->RestoreButton->SetText("Restore");
   this->RestoreButton->SetWidth(10);
-  this->RestoreButton->SetEnabled(0);
   this->RestoreButton->SetBalloonHelpString("All parameters are restored to original");
 
   //pack restoreButton, redoButton, undoButton

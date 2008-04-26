@@ -28,25 +28,13 @@ vtkSlicerGradientEditorLogic::~vtkSlicerGradientEditorLogic(void)
   {
   if (this->ActiveDTINode)
     {
-    this->ActiveDTINode->Delete();
-    this->ActiveDTINode = NULL;
+    vtkSetMRMLNodeMacro(this->ActiveDTINode, NULL)
     }
   if (this->ActiveDWINode)
     {
-    this->ActiveDWINode->Delete();
-    this->ActiveDWINode = NULL;
+    vtkSetMRMLNodeMacro(this->ActiveDWINode, NULL);
     }
-  if (!this->UndoRedoStack.empty())
-    {
-    for(unsigned int i = 0; i<this->UndoRedoStack.size(); i++)
-      {
-      this->UndoRedoStack.at(i)->Delete();
-      this->UndoRedoStack.at(i) = NULL;
-      }
-    }
-  this->UndoRedoStack.clear();
-  this->StackPosition = 0;
-  this->UndoFlag = 0;
+  this->ClearStack();
   }
 
 //---------------------------------------------------------------------------
@@ -96,7 +84,7 @@ int vtkSlicerGradientEditorLogic::AddGradients (const char* filename, int number
       {
       std::stringstream content;
       file.seekg(0L, ios::beg);
-      while (!file.eof())
+      while (!file.eof()) //as long as more characters are in the file
         {
         char c;
         file.get(c);
@@ -117,7 +105,7 @@ int vtkSlicerGradientEditorLogic::StringToDouble(const std::string &s, double &r
   std::stringstream stream (s);
   if(stream >> result)
     {
-    if(stream.eof()) return 1;
+    if(stream.eof()) return 1; //if no more characters are in the stream
     }
   return 0;
   }
@@ -240,13 +228,17 @@ std::string vtkSlicerGradientEditorLogic::GetGradientsAsString(vtkDoubleArray *B
 //---------------------------------------------------------------------------
 void vtkSlicerGradientEditorLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *node)
   {
+  //clear stack bevor new node is activ
+  this->ClearStack();
   if(node->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
     {
     vtkSetMRMLNodeMacro(this->ActiveDWINode, node);
+    vtkSetMRMLNodeMacro(this->ActiveDTINode, NULL); //set other node NULL
     }
   else if(node->IsA("vtkMRMLDiffusionTensorVolumeNode"))
     {
     vtkSetMRMLNodeMacro(this->ActiveDTINode, node);
+    vtkSetMRMLNodeMacro(this->ActiveDWINode, NULL); //set other node NULL
     }
   }
 
@@ -273,7 +265,7 @@ void vtkSlicerGradientEditorLogic::SaveStateForUndoRedo()
       nodeToSave->Copy(this->ActiveDWINode);
       this->UndoRedoStack.push_back(nodeToSave);
       }
-    else if(ActiveDTINode != NULL)
+    else if(this->ActiveDTINode != NULL)
       {
       vtkMRMLDiffusionTensorVolumeNode *nodeToSave = vtkMRMLDiffusionTensorVolumeNode::New();
       nodeToSave->Copy(this->ActiveDTINode);
@@ -315,8 +307,7 @@ void vtkSlicerGradientEditorLogic::Restore()
     vtkMRMLVolumeNode *node = this->UndoRedoStack.at(0);
     this->UpdateActiveVolumeNode(node); //display original node
     //delete all previous changes
-    this->UndoRedoStack.clear();
-    this->StackPosition = 0;
+    this->ClearStack();
     }
   }
 
@@ -365,3 +356,18 @@ int vtkSlicerGradientEditorLogic::IsRedoable()
   else return 0;
   }
 
+//---------------------------------------------------------------------------
+void vtkSlicerGradientEditorLogic::ClearStack()
+  {
+  if (!this->UndoRedoStack.empty())
+    {
+    for(unsigned int i = 0; i<this->UndoRedoStack.size(); i++)
+      {
+      this->UndoRedoStack.at(i)->Delete();
+      this->UndoRedoStack.at(i) = NULL;
+      }
+    }
+  this->UndoRedoStack.clear();
+  this->StackPosition = 0;
+  this->UndoFlag = 0;
+  }
