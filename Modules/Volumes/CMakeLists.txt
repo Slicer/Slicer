@@ -89,3 +89,9 @@ CONFIGURE_FILE(
   ${Volumes_SOURCE_DIR}/vtkVolumesConfigure.h.in 
   ${Volumes_BINARY_DIR}/vtkVolumesConfigure.h
 )
+
+if(BUILD_TESTING)
+  add_test(Slicer3DiffusionEditorTest1 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditorTest.tcl)
+  #add_test(Slicer3GUITest2 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestProgressDialog.tcl)
+  #add_test(Slicer3FiducialsTest1 ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Base/GUI/Testing/TestFiducials.tcl)
+endif(BUILD_TESTING)
