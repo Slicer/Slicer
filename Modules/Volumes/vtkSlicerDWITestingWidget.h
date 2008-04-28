@@ -107,7 +107,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     vtkKWCheckButton *ViewGlyphsYellow;
     vtkKWCheckButton *ViewTracts;
     vtkKWFrame *GlyphFrame;
-    vtkKWScaleWithLabel *GlyphResolutionScale;
+    vtkKWScaleWithLabel *GlyphSpacingScale;
     //GUI
     vtkSlicerVolumesGUI *VolumesGUI;
     vtkSlicerTractographyDisplayGUI *TractDisplayGUI;

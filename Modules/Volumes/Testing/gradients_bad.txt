@@ -1,0 +1,9 @@
+DWMRI_b-value:=10
+DWMRI_gradient_0000:=0 2 3
+DWMRI_gradient_0001:=0 5t 6
+DWMRI_gradient_0002:=0 8 9
+DWMRI_gradient_0003:=00 11r 12
+DWMRI_gradient_0004:=13 14 15
+DWMRI_gradient_0005:=16 17 18
+DWMRI_gradient_0006:=193 20 21gg
+

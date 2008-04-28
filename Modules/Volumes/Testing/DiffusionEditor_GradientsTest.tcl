@@ -12,17 +12,29 @@ editor Create
 
 set grads $::env(SLICER_HOME)/../Slicer3/Modules/Volumes/Testing/gradients.txt
 
-vtkDoubleArray newBValue 
+set grads2 $::env(SLICER_HOME)/../Slicer3/Modules/Volumes/Testing/gradients_bad.txt
+
+vtkDoubleArray newBValue
 vtkDoubleArray newGradients
 
 
 set ret [[editor GetLogic] AddGradients $grads 7 newBValue newGradients]
 
-if { $ret != 0 } {
+if { $ret != 1 } {
   error "did not get expected return value"
 }
 
-[editor GetLogic] AddGradients $grads 8 newBValue newGradients
+set ret2 [[editor GetLogic] AddGradients $grads 8 newBValue newGradients]
+
+if { $ret2 != 0 } {
+  error "did not get expected return value"
+}
+
+set ret3 [[editor GetLogic] AddGradients $grads2 7 newBValue newGradients]
+
+if { $ret2 != 0 } {
+  error "did not get expected return value"
+}
 
 
 t Delete

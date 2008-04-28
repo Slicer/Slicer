@@ -147,11 +147,11 @@ vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
     this->ViewTracts->Delete();
     this->ViewTracts = NULL;
     }
-  if (this->GlyphResolutionScale)
+  if (this->GlyphSpacingScale)
     {
-    this->GlyphResolutionScale->SetParent (NULL);
-    this->GlyphResolutionScale->Delete();
-    this->GlyphResolutionScale = NULL;
+    this->GlyphSpacingScale->SetParent (NULL);
+    this->GlyphSpacingScale->Delete();
+    this->GlyphSpacingScale = NULL;
     }
   this->ModifiedForNewTensor = 0;
   }
@@ -166,7 +166,7 @@ void vtkSlicerDWITestingWidget::AddWidgetObservers ( )
   this->ViewGlyphsGreen->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ViewGlyphsYellow->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ViewTracts->AddObserver(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->GlyphResolutionScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->GlyphSpacingScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   }
 
 //---------------------------------------------------------------------------
@@ -179,7 +179,7 @@ void vtkSlicerDWITestingWidget::RemoveWidgetObservers( )
   this->ViewGlyphsGreen->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ViewGlyphsYellow->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->ViewTracts->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->GlyphResolutionScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->GlyphSpacingScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   }
 
 //---------------------------------------------------------------------------
@@ -310,14 +310,14 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
     }
 
   //glyph resolution
-  else if (vtkKWScale::SafeDownCast(caller) == this->GlyphResolutionScale->GetWidget() && 
+  else if (vtkKWScale::SafeDownCast(caller) == this->GlyphSpacingScale->GetWidget() && 
     event == vtkKWScale::ScaleValueChangedEvent && this->TensorNode != NULL && 
     (this->ViewGlyphsYellow->GetSelectedState() || this->ViewGlyphsRed->GetSelectedState() 
     || this->ViewGlyphsGreen->GetSelectedState()))
     {
     //set new resolution
     this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphRosolution(
-      (int)(this->GlyphResolutionScale->GetWidget()->GetValue()));
+      (int)(this->GlyphSpacingScale->GetWidget()->GetValue()));
     }
 
   //view of tracts
@@ -358,7 +358,7 @@ void vtkSlicerDWITestingWidget::CreateGlyphs(vtkKWCheckButton *calledGlyph)
     this->Application->GetApplicationGUI()->GetApplicationLogic()->PropagateVolumeSelection();
     //adjust resolution
     this->VolumesGUI->GetdtiVDW()->GetGlyphDisplayWidget()->SetGlyphRosolution(
-      (int)(this->GlyphResolutionScale->GetWidget()->GetValue()));
+      (int)(this->GlyphSpacingScale->GetWidget()->GetValue()));
     }
   else
     {
@@ -393,7 +393,10 @@ void vtkSlicerDWITestingWidget::SetAllVisibilityButtons(int status)
   this->ViewGlyphsRed->SetEnabled(status);
   this->ViewGlyphsYellow->SetEnabled(status);
   this->ViewTracts->SetEnabled(status);
-  this->GlyphResolutionScale->SetEnabled(status);
+  this->GlyphSpacingScale->SetEnabled(status);
+  this->GlyphSpacingScale->GetWidget()->SetActiveBackgroundColor(0.5,0.5,0.5);
+  this->GlyphSpacingScale->GetWidget()->SetValueVisibility(status);
+  this->GlyphSpacingScale->GetWidget()->SetEnabled(status);
   this->FiducialSelector->SetEnabled(status);
   }
 
@@ -550,17 +553,17 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
     this->ViewGlyphsGreen->GetWidgetName());
 
   //create resolution scale
-  this->GlyphResolutionScale = vtkKWScaleWithLabel::New();
-  this->GlyphResolutionScale->SetParent(this->TestFrame->GetFrame());
-  this->GlyphResolutionScale->Create();
-  this->GlyphResolutionScale->SetLabelText("Resolution of glyphs: ");
-  this->GlyphResolutionScale->SetLabelPositionToLeft();
-  this->GlyphResolutionScale->GetWidget()->SetRange(1,50);
-  this->GlyphResolutionScale->GetWidget()->SetResolution(1);
-  this->GlyphResolutionScale->GetWidget()->SetValue(20);
-  this->GlyphResolutionScale->SetBalloonHelpString("Skip step for glyphs.");
+  this->GlyphSpacingScale = vtkKWScaleWithLabel::New();
+  this->GlyphSpacingScale->SetParent(this->TestFrame->GetFrame());
+  this->GlyphSpacingScale->Create();
+  this->GlyphSpacingScale->SetLabelText("Spacing of glyphs: ");
+  this->GlyphSpacingScale->SetLabelPositionToLeft();
+  this->GlyphSpacingScale->GetWidget()->SetRange(1,50);
+  this->GlyphSpacingScale->GetWidget()->SetResolution(1);
+  this->GlyphSpacingScale->GetWidget()->SetValue(20);
+  this->GlyphSpacingScale->SetBalloonHelpString("Skip step for glyphs.");
   this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 6",
-    this->GlyphResolutionScale->GetWidgetName());
+    this->GlyphSpacingScale->GetWidgetName());
 
   //create view tracts
   this->ViewTracts = vtkKWCheckButton::New();
