@@ -109,8 +109,7 @@ itcl::body ErodeLabelEffect::buildOptions {} {
   [$o(fill) GetWidget] SetValueAsInt 0
   $o(fill) SetLabelText "Fill Label: "
   $o(fill) SetBalloonHelpString "Eroded pixels will be replaced with this value."
-  # TODO: figure out what the fill value is meant to do
-  #pack [$o(fill) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+  pack [$o(fill) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
 
   set o(iterations) [vtkKWEntryWithLabel New]
   $o(iterations) SetParent [$this getOptionsFrame]

@@ -5,7 +5,7 @@ package require Itcl
 #
 if {0} { ;# comment
 
-  MakeModelEffect an editor effect
+  DilateLabelEffect an editor effect
 
 
 # TODO : 
@@ -17,14 +17,14 @@ if {0} { ;# comment
 #
 #########################################################
 # ------------------------------------------------------------------
-#                             MakeModelEffect
+#                             DilateLabelEffect
 # ------------------------------------------------------------------
 #
 # The class definition - define if needed (not when re-sourcing)
 #
-if { [itcl::find class MakeModelEffect] == "" } {
+if { [itcl::find class DilateLabelEffect] == "" } {
 
-  itcl::class MakeModelEffect {
+  itcl::class DilateLabelEffect {
 
     inherit EffectSWidget
 
@@ -44,17 +44,17 @@ if { [itcl::find class MakeModelEffect] == "" } {
 # ------------------------------------------------------------------
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
-itcl::body MakeModelEffect::constructor {sliceGUI} {
+itcl::body DilateLabelEffect::constructor {sliceGUI} {
 }
 
-itcl::body MakeModelEffect::destructor {} {
+itcl::body DilateLabelEffect::destructor {} {
 }
 
 # ------------------------------------------------------------------
 #                             METHODS
 # ------------------------------------------------------------------
 
-itcl::body MakeModelEffect::processEvent { {caller ""} {event ""} } {
+itcl::body DilateLabelEffect::processEvent { {caller ""} {event ""} } {
 
   if { [$this preProcessEvent $caller $event] } {
     # superclass processed the event, so we don't
@@ -62,130 +62,115 @@ itcl::body MakeModelEffect::processEvent { {caller ""} {event ""} } {
   }
 }
 
-itcl::body MakeModelEffect::apply {} {
+itcl::body DilateLabelEffect::apply {} {
 
-  #
-  # create a model using the command line module
-  # based on the current editor parameters
-  #
-
-  #
-  # get the image data for the label layer
-  #
-  set sliceLogic [lindex [vtkSlicerSliceLogic ListInstances] 0]
-  set layerLogic [$sliceLogic GetLabelLayer]
-  set volumeNode [$layerLogic GetVolumeNode]
-  if { $volumeNode == "" } {
-    errorDialog "Cannot make model - no volume node for $layerLogic in $sliceLogic."
+  if { [$this getInputLabel] == "" } {
+    $this errorDialog "Label map needed for Dilate"
     return
   }
 
-  #
-  # find the Model Maker
-  # - call Enter to be sure GUI has been built
-  #
-  set modelMaker ""
-  foreach gui [vtkCommandLineModuleGUI ListInstances] {
-    if { [$gui GetGUIName] == "Model Maker" } {
-      set modelMaker $gui
-    }
+
+  set erode [vtkImageErode New]
+  $erode SetInput [$this getInputLabel]
+  $erode SetOutput [$this getOutputLabel]
+
+  $erode SetBackground [EditorGetPaintLabel]
+  $erode SetForeground [[$o(fill) GetWidget] GetValue]
+  set neighborhood [set ::[$o(fourNeighbors) GetVariableName]]
+  $erode SetNeighborTo$neighborhood
+
+  set iterations [[$o(iterations) GetWidget] GetValue]
+  for {set i 0} {$i < $iterations} {incr i} {
+    $this setProgressFilter $erode "Dilate ($i)"
+    $erode Update
   }
 
-  if { $modelMaker == "" } {
-    errorDialog "Cannot make model: no Model Maker Module found."
-  }
+  $erode SetOutput [$this getOutputLabel]
 
-  $modelMaker Enter
+  $erode Delete
 
-  #
-  # set up the model maker node
-  #
-  set moduleNode [$::slicer3::MRMLScene CreateNodeByClass "vtkMRMLCommandLineModuleNode"]
-  $::slicer3::MRMLScene AddNode $moduleNode
-  $moduleNode SetName "Editor Make Model"
-  $moduleNode SetModuleDescription "Model Maker"
-
-  $moduleNode SetParameterAsString "Name" "Quick Model"
-  $moduleNode SetParameterAsString "FilterType" "Sinc"
-  $moduleNode SetParameterAsBool "GenerateAll" "0"
-  $moduleNode SetParameterAsString "Labels" [EditorGetPaintLabel]
-  $moduleNode SetParameterAsBool "JointSmooth" 1
-  $moduleNode SetParameterAsBool "SplitNormals" 1
-  $moduleNode SetParameterAsBool "PointNormals" 1
-  $moduleNode SetParameterAsBool "SkipUnNamed" 1
-  $moduleNode SetParameterAsInt "Start" -1
-  $moduleNode SetParameterAsInt "End" -1
-  if { [[$o(smooth) GetWidget] GetSelectedState] } {
-    $moduleNode SetParameterAsDouble "Decimate" 0.25
-    $moduleNode SetParameterAsDouble "Smooth" 10
-  } else {
-    $moduleNode SetParameterAsDouble "Decimate" 0
-    $moduleNode SetParameterAsDouble "Smooth" 0
-  }
-
-  $moduleNode SetParameterAsString "InputVolume" [$volumeNode GetID]
-
-  #
-  # output 
-  # - make a new hierarchy node if needed
-  #
-  set outHierarchy [[$::slicer3::MRMLScene GetNodesByClassByName "vtkMRMLModelHierarchyNode" "Editor Models"] GetItemAsObject 0]
-  if { $outHierarchy == "" } {
-    set outHierarchy [$::slicer3::MRMLScene CreateNodeByClass "vtkMRMLModelHierarchyNode"]
-    $outHierarchy SetScene $::slicer3::MRMLScene
-    $outHierarchy SetName "Editor Models"
-    $::slicer3::MRMLScene AddNode $outHierarchy
-  }
-
-  $moduleNode SetParameterAsString "ModelSceneFile" [$outHierarchy GetID]
-
-
-
-  # 
-  # run the task (in the background)
-  # - use the GUI to provide progress feedback
-  # - use the GUI's Logic to invoke the task
-  # - model will show up when the processing is finished
-  #
-  $modelMaker SetCommandLineModuleNode $moduleNode
-  [$modelMaker GetLogic] SetCommandLineModuleNode $moduleNode
-  $modelMaker SetCommandLineModuleNode $moduleNode
-  [$modelMaker GetLogic] Apply $moduleNode
-
-  $this statusText "Model Making Started..."
-
-  #
-  # clean up our references
-  #
-  $moduleNode Delete
-  $outHierarchy Delete
-  $modelMaker Enter
+  $this postApply
 
 }
 
-itcl::body MakeModelEffect::buildOptions {} {
+itcl::body DilateLabelEffect::buildOptions {} {
 
   # call superclass version of buildOptions
   chain
 
   #
-  # go directly to model maker button
+  # iterations and label value
   #
-  set o(goToModelMaker) [vtkNew vtkKWPushButton]
-  $o(goToModelMaker) SetParent [$this getOptionsFrame]
-  $o(goToModelMaker) Create
-  $o(goToModelMaker) SetText "Go To Model Maker"
-  $o(goToModelMaker) SetBalloonHelpString "The Model Maker interface contains a whole range of options for building sets of models and controlling the parameters."
-  pack [$o(goToModelMaker) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 
 
-  set o(smooth) [vtkKWCheckButtonWithLabel New]
-  $o(smooth) SetParent [$this getOptionsFrame]
-  $o(smooth) Create
-  $o(smooth) SetLabelText "Smooth Model: "
-  $o(smooth) SetBalloonHelpString "When smoothed, the model will look better, but some details of the label map will not be visible on the model.  When not smoothed you will see individual voxel boundaries in the model.  Smoothing here corresponds to Decimation of 0.25 and Smooting iterations of 10."
-  pack [$o(smooth) GetWidgetName] \
-    -side top -anchor e -fill x -padx 2 -pady 2 
+  set o(fill) [vtkKWEntryWithLabel New]
+  $o(fill) SetParent [$this getOptionsFrame]
+  $o(fill) Create
+  [$o(fill) GetWidget] SetRestrictValueToInteger
+  [$o(fill) GetWidget] SetValueAsInt 0
+  $o(fill) SetLabelText "Background Label: "
+  $o(fill) SetBalloonHelpString "Dilated pixels will replace this value."
+  pack [$o(fill) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+
+  set o(iterations) [vtkKWEntryWithLabel New]
+  $o(iterations) SetParent [$this getOptionsFrame]
+  $o(iterations) Create
+  [$o(iterations) GetWidget] SetRestrictValueToInteger
+  [$o(iterations) GetWidget] SetValueAsInt 1
+  $o(iterations) SetLabelText "Iterations: "
+  $o(iterations) SetBalloonHelpString "Number of times to apply selected operation."
+  # TODO: support iterations
+  #pack [$o(iterations) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 
+
+
+  #
+  # 4 or 8 neighbors
+  #
+
+  set o(eightNeighbors) [vtkKWRadioButton New]
+  $o(eightNeighbors) SetParent [$this getOptionsFrame]
+  $o(eightNeighbors) Create
+  $o(eightNeighbors) SetValueAsInt 8
+  $o(eightNeighbors) SetText "Eight Neighbors"
+  $o(eightNeighbors) SetBalloonHelpString "Treat diagonally adjacent voxels as neighbors."
+  pack [$o(eightNeighbors) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+
+  set o(fourNeighbors) [vtkKWRadioButton New]
+  $o(fourNeighbors) SetParent [$this getOptionsFrame]
+  $o(fourNeighbors) Create
+  $o(fourNeighbors) SetValueAsInt 4
+  $o(fourNeighbors) SetText "Four Neighbors"
+  $o(fourNeighbors) SetBalloonHelpString "Do not treat diagonally adjacent voxels as neighbors."
+  pack [$o(fourNeighbors) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+
+  $o(fourNeighbors) SetSelectedState 1
+  $o(eightNeighbors) SetVariableName [$o(fourNeighbors) GetVariableName] 
+
+  #
+  # erode or erode then dilate
+  #
+
+  set o(erode) [vtkKWRadioButton New]
+  $o(erode) SetParent [$this getOptionsFrame]
+  $o(erode) Create
+  $o(erode) SetValue "Dilate"
+  $o(erode) SetText "Dilate"
+  $o(erode) SetBalloonHelpString "Treat diagonally adjacent voxels as neighbors."
+  # TODO: support erode and dilate
+  #pack [$o(erode) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+
+  set o(erodeDilate) [vtkKWRadioButton New]
+  $o(erodeDilate) SetParent [$this getOptionsFrame]
+  $o(erodeDilate) Create
+  $o(erodeDilate) SetValue "Dilate&Erode"
+  $o(erodeDilate) SetText "Dilate&Erode"
+  $o(erodeDilate) SetBalloonHelpString "Do not treat diagonally adjacent voxels as neighbors."
+  # TODO: support erode and dilate
+  #pack [$o(erodeDilate) GetWidgetName] -side top -anchor e -fill x -padx 2 -pady 2 -expand true
+
+  $o(erode) SetSelectedState 1
+  $o(erodeDilate) SetVariableName [$o(erode) GetVariableName] 
 
   #
   # an apply button
@@ -194,7 +179,7 @@ itcl::body MakeModelEffect::buildOptions {} {
   $o(apply) SetParent [$this getOptionsFrame]
   $o(apply) Create
   $o(apply) SetText "Apply"
-  $o(apply) SetBalloonHelpString "Build a model for the current label value of the label map being edited in the Red slice window.  Model will be created in the background."
+  $o(apply) SetBalloonHelpString "Run the selected operation."
   pack [$o(apply) GetWidgetName] \
     -side right -anchor e -padx 2 -pady 2 
 
@@ -216,8 +201,8 @@ itcl::body MakeModelEffect::buildOptions {} {
   set o(help) [vtkNew vtkSlicerPopUpHelpWidget]
   $o(help) SetParent [$this getOptionsFrame]
   $o(help) Create
-  $o(help) SetHelpTitle "MakeModel"
-  $o(help) SetHelpText "Use this tool build a model.  A subset of model building options is provided here.  Go to the Model Maker module to expose a range of parameters."
+  $o(help) SetHelpTitle "DilateLabel"
+  $o(help) SetHelpText "Use this tool to remove pixels from the boundary of the current label."
   $o(help) SetBalloonHelpString "Bring up help window."
   pack [$o(help) GetWidgetName] \
     -side right -anchor sw -padx 2 -pady 2 
@@ -225,27 +210,25 @@ itcl::body MakeModelEffect::buildOptions {} {
   #
   # event observers - TODO: if there were a way to make these more specific, I would...
   #
-  set tag [$o(goToModelMaker) AddObserver AnyEvent "$this goToModelMaker"]
-  lappend _observerRecords "$o(goToModelMaker) $tag"
   set tag [$o(apply) AddObserver AnyEvent "$this apply"]
   lappend _observerRecords "$o(apply) $tag"
   set tag [$o(cancel) AddObserver AnyEvent "after idle ::EffectSWidget::RemoveAll"]
   lappend _observerRecords "$o(cancel) $tag"
 
   if { [$this getOutputLabel] == "" } {
-    $this errorDialog "Label map needed for MakeModeling"
+    $this errorDialog "Label map needed for DilateLabeling"
     after idle ::EffectSWidget::RemoveAll
   }
 
   $this updateGUIFromMRML
 }
 
-itcl::body MakeModelEffect::tearDownOptions { } {
+itcl::body DilateLabelEffect::tearDownOptions { } {
 
   # call superclass version of tearDownOptions
   chain
 
-  foreach w "smooth goToModelMaker help cancel apply" {
+  foreach w "fill iterations fourNeighbors eightNeighbors erode erodeDilate help cancel apply" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 
@@ -253,8 +236,3 @@ itcl::body MakeModelEffect::tearDownOptions { } {
   }
 }
 
-itcl::body MakeModelEffect::goToModelMaker { } {
-  set toolbar [$::slicer3::ApplicationGUI GetApplicationToolbar]
-  [$toolbar GetModuleChooseGUI] SelectModule "Model Maker"
-  after idle ::EffectSWidget::RemoveAll
-}
