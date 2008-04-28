@@ -436,8 +436,8 @@ InverseTransformPointHelper( typename itk::BSplineDeformableTransform<double, 3,
                              const T in[3], T out[3] )
 {
   typedef itk::BSplineDeformableTransform<double, 3, O> BSplineType;
-  typedef BSplineType::OutputPointType OutputPointType;
-  typedef BSplineType::InputPointType InputPointType;
+  typedef typename BSplineType::OutputPointType OutputPointType;
+  typedef typename BSplineType::InputPointType InputPointType;
 
   //iterative inverse bSpline transform
   int const MaxIterationNumber = 10;
@@ -491,8 +491,8 @@ InverseTransformDerivativeHelper( typename itk::BSplineDeformableTransform<doubl
                                   const T in[3], T out[3], T derivative[3][3] )
 {
   typedef itk::BSplineDeformableTransform<double, 3, O> BSplineType;
-  typedef BSplineType::InputPointType InputPointType;
-  typedef BSplineType::JacobianType JacobianType;
+  typedef typename BSplineType::InputPointType InputPointType;
+  typedef typename BSplineType::JacobianType JacobianType;
 
   InverseTransformPointHelper<T,O>( BSpline, in, out );
 

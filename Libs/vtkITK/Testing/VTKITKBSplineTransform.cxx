@@ -35,25 +35,21 @@ int main( int, char** )
     itkBSplineType::OriginType origin;
     itkBSplineType::SpacingType spacing;
 
-    assert( origin.Size() == 3 );
     origin[0] = -100;
     origin[1] = -100;
     origin[2] = -100;
 
-    assert( spacing.Size() == 3 );
     spacing[0] = 100;
     spacing[1] = 100;
     spacing[2] = 100;
 
     itkBSplineType::RegionType::SizeType sz;
-    assert( sz.Size() == 3 );
     sz[0] = 7;
     sz[1] = 8;
     sz[2] = 7;
     region.SetSize( sz );
 
     itkBSplineType::RegionType::IndexType idx;
-    assert( idx.Size() == 3 );
     idx[0] = idx[1] = idx[2] = 0;
     region.SetIndex( idx );
 
