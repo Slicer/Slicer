@@ -20,7 +20,7 @@
 //logics
 #include "vtkCommandLineModuleLogic.h"
 #include "vtkSlicerTractographyFiducialSeedingLogic.h"
-#include "vtkSlicerGradientEditorLogic.h"
+#include "vtkSlicerDiffusionEditorLogic.h"
 //widgets
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWPushButton.h"

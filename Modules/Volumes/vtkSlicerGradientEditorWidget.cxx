@@ -4,7 +4,7 @@
 //MRML nodes
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 //logics
-#include "vtkSlicerGradientEditorLogic.h"
+#include "vtkSlicerDiffusionEditorLogic.h"
 //widgets
 #include "vtkSlicerMeasurementFrameWidget.h"
 #include "vtkSlicerGradientsWidget.h"
@@ -25,7 +25,7 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   this->MeasurementFrameWidget = NULL;
   this->GradientsWidget = NULL;
   this->TestingWidget = NULL;
-  this->Logic = vtkSlicerGradientEditorLogic::New();
+  this->Logic = vtkSlicerDiffusionEditorLogic::New();
   //buttons
   this->ButtonFrame = NULL;
   this->RestoreButton = NULL;

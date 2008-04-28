@@ -1,7 +1,7 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 
-#include "vtkSlicerGradientEditorLogic.h"
+#include "vtkSlicerDiffusionEditorLogic.h"
 
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
@@ -11,11 +11,11 @@
 #include <string>
 #include "vtkTimerLog.h"
 
-vtkCxxRevisionMacro(vtkSlicerGradientEditorLogic, "$Revision: 1.9.12.1 $");
-vtkStandardNewMacro(vtkSlicerGradientEditorLogic);
+vtkCxxRevisionMacro(vtkSlicerDiffusionEditorLogic, "$Revision: 1.9.12.1 $");
+vtkStandardNewMacro(vtkSlicerDiffusionEditorLogic);
 
 //---------------------------------------------------------------------------
-vtkSlicerGradientEditorLogic::vtkSlicerGradientEditorLogic(void)
+vtkSlicerDiffusionEditorLogic::vtkSlicerDiffusionEditorLogic(void)
   {
   this->ActiveDTINode = NULL;
   this->ActiveDWINode = NULL;
@@ -24,7 +24,7 @@ vtkSlicerGradientEditorLogic::vtkSlicerGradientEditorLogic(void)
   }
 
 //---------------------------------------------------------------------------
-vtkSlicerGradientEditorLogic::~vtkSlicerGradientEditorLogic(void)
+vtkSlicerDiffusionEditorLogic::~vtkSlicerDiffusionEditorLogic(void)
   {
   if (this->ActiveDTINode)
     {
@@ -38,14 +38,14 @@ vtkSlicerGradientEditorLogic::~vtkSlicerGradientEditorLogic(void)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorLogic::PrintSelf ( ostream& os, vtkIndent indent )
+void vtkSlicerDiffusionEditorLogic::PrintSelf ( ostream& os, vtkIndent indent )
   {
   this->vtkObject::PrintSelf ( os, indent );
-  os << indent << "vtkSlicerGradientEditorLogic: " << this->GetClassName ( ) << "\n";
+  os << indent << "vtkSlicerDiffusionEditorLogic: " << this->GetClassName ( ) << "\n";
   }
 
 //---------------------------------------------------------------------------
-int vtkSlicerGradientEditorLogic::AddGradients (const char* filename, int numberOfGradients, vtkDoubleArray *newBValue, 
+int vtkSlicerDiffusionEditorLogic::AddGradients (const char* filename, int numberOfGradients, vtkDoubleArray *newBValue, 
                                                 vtkDoubleArray *newGradients)
   {
   // format the filename
@@ -100,7 +100,7 @@ int vtkSlicerGradientEditorLogic::AddGradients (const char* filename, int number
   }
 
 //---------------------------------------------------------------------------
-int vtkSlicerGradientEditorLogic::StringToDouble(const std::string &s, double &result)
+int vtkSlicerDiffusionEditorLogic::StringToDouble(const std::string &s, double &result)
   {
   std::stringstream stream (s);
   if(stream >> result)
@@ -111,7 +111,7 @@ int vtkSlicerGradientEditorLogic::StringToDouble(const std::string &s, double &r
   }
 
 //---------------------------------------------------------------------------
-int vtkSlicerGradientEditorLogic::ParseGradients(const char *oldGradients, int numberOfGradients,
+int vtkSlicerDiffusionEditorLogic::ParseGradients(const char *oldGradients, int numberOfGradients,
                                                  vtkDoubleArray *newBValues, vtkDoubleArray *newGradients)
   {
   if (oldGradients == NULL || oldGradients == "")
@@ -177,7 +177,7 @@ int vtkSlicerGradientEditorLogic::ParseGradients(const char *oldGradients, int n
   }
 
 //---------------------------------------------------------------------------
-std::string vtkSlicerGradientEditorLogic::GetGradientsAsString(vtkDoubleArray *BValues, vtkDoubleArray *Gradients)
+std::string vtkSlicerDiffusionEditorLogic::GetGradientsAsString(vtkDoubleArray *BValues, vtkDoubleArray *Gradients)
   {
   std::stringstream output;
   vtkDoubleArray *factor = vtkDoubleArray::New();
@@ -226,7 +226,7 @@ std::string vtkSlicerGradientEditorLogic::GetGradientsAsString(vtkDoubleArray *B
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *node)
+void vtkSlicerDiffusionEditorLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *node)
   {
   //clear stack bevor new node is activ
   this->ClearStack();
@@ -243,7 +243,7 @@ void vtkSlicerGradientEditorLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *node)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorLogic::SaveStateForUndoRedo()
+void vtkSlicerDiffusionEditorLogic::SaveStateForUndoRedo()
   {
   //new node comes in, delete nodes in stack that are no longer reachable 
   //meaning: all nodes after current StackPosition
@@ -277,7 +277,7 @@ void vtkSlicerGradientEditorLogic::SaveStateForUndoRedo()
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorLogic::UpdateActiveVolumeNode(vtkMRMLVolumeNode *node)
+void vtkSlicerDiffusionEditorLogic::UpdateActiveVolumeNode(vtkMRMLVolumeNode *node)
   {
   vtkMatrix4x4 *m = vtkMatrix4x4::New();
   if(node->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
@@ -300,7 +300,7 @@ void vtkSlicerGradientEditorLogic::UpdateActiveVolumeNode(vtkMRMLVolumeNode *nod
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorLogic::Restore()
+void vtkSlicerDiffusionEditorLogic::Restore()
   {
   if(!this->UndoRedoStack.empty())
     {
@@ -312,7 +312,7 @@ void vtkSlicerGradientEditorLogic::Restore()
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorLogic::Undo()
+void vtkSlicerDiffusionEditorLogic::Undo()
   {
   //the first time you click undo, save the parmeters
   //necessary for redo to go to the last state
@@ -331,7 +331,7 @@ void vtkSlicerGradientEditorLogic::Undo()
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorLogic::Redo()
+void vtkSlicerDiffusionEditorLogic::Redo()
   {
   if(!this->UndoRedoStack.empty() && this->IsRedoable())
     {
@@ -343,21 +343,21 @@ void vtkSlicerGradientEditorLogic::Redo()
   }
 
 //---------------------------------------------------------------------------
-int vtkSlicerGradientEditorLogic::IsUndoable()
+int vtkSlicerDiffusionEditorLogic::IsUndoable()
   {
   if((this->UndoRedoStack.size()+1 > this->StackPosition && this->StackPosition > 1) || !this->UndoFlag) return 1;
   else return 0;
   }
 
 //---------------------------------------------------------------------------
-int vtkSlicerGradientEditorLogic::IsRedoable()
+int vtkSlicerDiffusionEditorLogic::IsRedoable()
   {
   if(0 < this->StackPosition && this->StackPosition < this->UndoRedoStack.size()) return 1;
   else return 0;
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorLogic::ClearStack()
+void vtkSlicerDiffusionEditorLogic::ClearStack()
   {
   if (!this->UndoRedoStack.empty())
     {

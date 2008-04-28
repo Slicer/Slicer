@@ -9,7 +9,7 @@ PROJECT(Volumes)
   vtkSlicerMeasurementFrameWidget.cxx
   vtkSlicerGradientsWidget.cxx
   vtkSlicerDWITestingWidget.cxx
-  vtkSlicerGradientEditorLogic.cxx
+  vtkSlicerDiffusionEditorLogic.cxx
   #display widgets
   vtkSlicerVolumeDisplayWidget.cxx
   vtkSlicerLabelMapVolumeDisplayWidget.cxx

@@ -13,7 +13,7 @@
 #include "vtkSlicerApplication.h"
 
 class vtkSlicerNodeSelectorWidget;
-class vtkSlicerGradientEditorLogic;
+class vtkSlicerDiffusionEditorLogic;
 class vtkMRMLDiffusionWeightedVolumeNode;
 class vtkMRMLFiberBundleNode;
 class vtkMRMLCommandLineModuleNode;

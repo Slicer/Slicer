@@ -3,7 +3,7 @@
 
 #include "vtkSlicerMeasurementFrameWidget.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
-#include "vtkSlicerGradientEditorLogic.h"
+#include "vtkSlicerDiffusionEditorLogic.h"
 #include "vtkDiffusionTensorMathematicsSimple.h"
 
 #include "vtkMatrix4x4.h"
@@ -344,7 +344,7 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerMeasurementFrameWidget::SetLogic(vtkSlicerGradientEditorLogic *logic)
+void vtkSlicerMeasurementFrameWidget::SetLogic(vtkSlicerDiffusionEditorLogic *logic)
   {
   this->Logic = logic;
   }

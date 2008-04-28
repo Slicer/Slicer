@@ -2,7 +2,7 @@
 #include "vtkObjectFactory.h"
 
 #include "vtkSlicerGradientsWidget.h"
-#include "vtkSlicerGradientEditorLogic.h"
+#include "vtkSlicerDiffusionEditorLogic.h"
 
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkDoubleArray.h"
@@ -234,7 +234,7 @@ void vtkSlicerGradientsWidget::SaveGradients( )
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientsWidget::SetLogic(vtkSlicerGradientEditorLogic *logic)
+void vtkSlicerGradientsWidget::SetLogic(vtkSlicerDiffusionEditorLogic *logic)
   {
   this->Logic = logic;
   }

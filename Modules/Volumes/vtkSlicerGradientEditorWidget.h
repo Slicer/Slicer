@@ -9,7 +9,7 @@
 #include "vtkSlicerWidget.h"
 #include "vtkSlicerApplication.h"
 
-class vtkSlicerGradientEditorLogic;
+class vtkSlicerDiffusionEditorLogic;
 class vtkMRMLDiffusionWeightedVolumeNode;
 class vtkSlicerMeasurementFrameWidget;
 class vtkSlicerDWITestingWidget;
@@ -45,7 +45,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     // Sets the Application to the current vtkSlicerApplication.
     vtkSetObjectMacro(Application, vtkSlicerApplication);
 
-    vtkGetObjectMacro(Logic, vtkSlicerGradientEditorLogic);
+    vtkGetObjectMacro(Logic, vtkSlicerDiffusionEditorLogic);
 
   protected:
     vtkSlicerGradientEditorWidget(void);
@@ -56,7 +56,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     virtual void CreateWidget();
 
     vtkSlicerApplication *Application;
-    vtkSlicerGradientEditorLogic *Logic;
+    vtkSlicerDiffusionEditorLogic *Logic;
 
     //nodes
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;

@@ -1,11 +1,11 @@
-// .NAME vtkSlicerGradientEditorLogic 
+// .NAME vtkSlicerDiffusionEditorLogic 
 // .SECTION Description
 // This class implements Slicer's main GradientsEditor Logic, inherits most behavior from 
 // vtkSlicerLogic. This class manages the logic associated with loading gradients from files 
 // and testing given gradients for validity. It also holds the logic for the undo/redo/restore 
 // mechanism of the GradientEditor.
-#ifndef __vtkSlicerGradientEditorLogic_h
-#define __vtkSlicerGradientEditorLogic_h
+#ifndef __vtkSlicerDiffusionEditorLogic_h
+#define __vtkSlicerDiffusionEditorLogic_h
 
 #include "vtkVolumes.h"
 #include "vtkSlicerLogic.h"
@@ -15,14 +15,14 @@
 
 class vtkDoubleArray;
 
-class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic 
+class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorLogic : public vtkSlicerLogic 
   {
   public:
 
     // Description:
     // Usual vtk class functions.
-    static vtkSlicerGradientEditorLogic *New();
-    vtkTypeRevisionMacro(vtkSlicerGradientEditorLogic, vtkObject);
+    static vtkSlicerDiffusionEditorLogic *New();
+    vtkTypeRevisionMacro(vtkSlicerDiffusionEditorLogic, vtkObject);
     void PrintSelf(ostream& os, vtkIndent indent);
 
     // Description:
@@ -74,8 +74,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
     void SetActiveVolumeNode(vtkMRMLVolumeNode *node);
 
   protected:
-    vtkSlicerGradientEditorLogic(void);
-    virtual ~vtkSlicerGradientEditorLogic(void);
+    vtkSlicerDiffusionEditorLogic(void);
+    virtual ~vtkSlicerDiffusionEditorLogic(void);
 
     // Description:
     // Updates the values of the current ActiveVolumeNode after undo/redo/restore.
@@ -108,8 +108,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorLogic : public vtkSlicerLogic
     int UndoFlag;
 
   private:
-    vtkSlicerGradientEditorLogic (const vtkSlicerGradientEditorLogic&); // Not implemented.
-    void operator = (const vtkSlicerGradientEditorLogic&); //Not implemented.
+    vtkSlicerDiffusionEditorLogic (const vtkSlicerDiffusionEditorLogic&); // Not implemented.
+    void operator = (const vtkSlicerDiffusionEditorLogic&); //Not implemented.
   };
 #endif
 
