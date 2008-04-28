@@ -16,7 +16,11 @@ vtkDoubleArray newBValue
 vtkDoubleArray newGradients
 
 
-[editor GetLogic] AddGradients $grads 7 newBValue newGradients
+set ret [[editor GetLogic] AddGradients $grads 7 newBValue newGradients]
+
+if { $ret != 0 } {
+  error "did not get expected return value"
+}
 
 [editor GetLogic] AddGradients $grads 8 newBValue newGradients
 
