@@ -125,7 +125,7 @@ int main(int argc, char** argv)
   vtkMatrix4x4* ijkToras = vtkMatrix4x4::New();
   //ijkToras->Identity();
   targetVolumeNode0->GetIJKToRASMatrix(ijkToras);
-  ijkToras->PrintSelf(std::cerr, 0);
+  ijkToras->PrintSelf(std::cerr, static_cast<vtkIndent>(0));
 
   std::cerr << "Adding point 1" << std::endl;
   ijkPoint[0] = 10.0; ijkPoint[1] = 10.0; ijkPoint[2] = 5.0; ijkPoint[3] = 1.0;
