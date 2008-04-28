@@ -73,7 +73,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
   this->ApplyButton=NULL;
 
   this->VolumeFileHeaderWidget = NULL;
-  this->GradientEditorWidget = NULL;
+  this->DiffusionEditorWidget = NULL;
 
   NACLabel = NULL;
   NAMICLabel = NULL;
@@ -216,11 +216,11 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     this->GradientFrame->Delete ( );
     this->GradientFrame = NULL;
     }
-  if ( this->GradientEditorWidget )
+  if ( this->DiffusionEditorWidget )
     {
-    this->GradientEditorWidget->SetParent ( NULL );
-    this->GradientEditorWidget->Delete ( );
-    this->GradientEditorWidget = NULL;
+    this->DiffusionEditorWidget->SetParent ( NULL );
+    this->DiffusionEditorWidget->Delete ( );
+    this->DiffusionEditorWidget = NULL;
     }
   if ( this->InfoFrame )
     {
@@ -718,7 +718,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
       this->GradientFrame->SetAllowFrameToCollapse(1);
       vtkMRMLDiffusionWeightedVolumeNode *dwiNode = 
         vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(refNode);
-      this->GradientEditorWidget->UpdateWidget(dwiNode);
+      this->DiffusionEditorWidget->UpdateWidget(dwiNode);
       }
     else if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
       { 
@@ -737,7 +737,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
       this->GradientFrame->SetAllowFrameToCollapse(1);
        vtkMRMLDiffusionTensorVolumeNode *dtiNode = 
         vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(refNode);
-      this->GradientEditorWidget->UpdateWidget(dtiNode);
+      this->DiffusionEditorWidget->UpdateWidget(dtiNode);
       }
     else 
       {
@@ -989,14 +989,14 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
     this->GradientFrame->GetWidgetName(), page->GetWidgetName());
 
-  this->GradientEditorWidget = vtkSlicerGradientEditorWidget::New();
-  this->GradientEditorWidget->SetParent(this->GradientFrame->GetFrame());
-  this->GradientEditorWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
-  this->GradientEditorWidget->Create();
-  this->GradientEditorWidget->AddWidgetObservers();
-  this->GradientEditorWidget->SetApplication((vtkSlicerApplication *)this->GetApplication());
+  this->DiffusionEditorWidget = vtkSlicerDiffusionEditorWidget::New();
+  this->DiffusionEditorWidget->SetParent(this->GradientFrame->GetFrame());
+  this->DiffusionEditorWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
+  this->DiffusionEditorWidget->Create();
+  this->DiffusionEditorWidget->AddWidgetObservers();
+  this->DiffusionEditorWidget->SetApplication((vtkSlicerApplication *)this->GetApplication());
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s", 
-    this->GradientEditorWidget->GetWidgetName(), this->GradientFrame->GetFrame()->GetWidgetName());
+    this->DiffusionEditorWidget->GetWidgetName(), this->GradientFrame->GetFrame()->GetWidgetName());
 
   // ---
   // Info FRAME            

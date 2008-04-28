@@ -10,15 +10,15 @@
 #include "vtkSlicerGradientsWidget.h"
 #include "vtkSlicerDWITestingWidget.h"
 #include "vtkKWPushButton.h"
-#include "vtkSlicerGradientEditorWidget.h"
+#include "vtkSlicerDiffusionEditorWidget.h"
 #include "vtkSlicerMeasurementFrameWidget.h"
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkSlicerGradientEditorWidget);
-vtkCxxRevisionMacro (vtkSlicerGradientEditorWidget, "$Revision: 1.0 $");
+vtkStandardNewMacro (vtkSlicerDiffusionEditorWidget);
+vtkCxxRevisionMacro (vtkSlicerDiffusionEditorWidget, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
-vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
+vtkSlicerDiffusionEditorWidget::vtkSlicerDiffusionEditorWidget(void)
   {
   this->Application = NULL;
   this->ActiveVolumeNode = NULL;
@@ -34,7 +34,7 @@ vtkSlicerGradientEditorWidget::vtkSlicerGradientEditorWidget(void)
   }
 
 //---------------------------------------------------------------------------
-vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
+vtkSlicerDiffusionEditorWidget::~vtkSlicerDiffusionEditorWidget(void)
   {
   this->RemoveWidgetObservers();
   if (this->ActiveVolumeNode)
@@ -93,7 +93,7 @@ vtkSlicerGradientEditorWidget::~vtkSlicerGradientEditorWidget(void)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorWidget::AddWidgetObservers ( )
+void vtkSlicerDiffusionEditorWidget::AddWidgetObservers ( )
   {    
   this->RestoreButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->UndoButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -103,7 +103,7 @@ void vtkSlicerGradientEditorWidget::AddWidgetObservers ( )
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorWidget::RemoveWidgetObservers( )
+void vtkSlicerDiffusionEditorWidget::RemoveWidgetObservers( )
   {
   this->RestoreButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->UndoButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -113,14 +113,14 @@ void vtkSlicerGradientEditorWidget::RemoveWidgetObservers( )
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorWidget::PrintSelf (ostream& os, vtkIndent indent)
+void vtkSlicerDiffusionEditorWidget::PrintSelf (ostream& os, vtkIndent indent)
   {
   this->vtkObject::PrintSelf ( os, indent );
-  os << indent << "vtkSlicerGradientEditorWidget: " << this->GetClassName ( ) << "\n";
+  os << indent << "vtkSlicerDiffusionEditorWidget: " << this->GetClassName ( ) << "\n";
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
+void vtkSlicerDiffusionEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
   {
   //enable undo/restore button, when values were changed
   if((this->MeasurementFrameWidget == vtkSlicerMeasurementFrameWidget::SafeDownCast(caller) && 
@@ -184,7 +184,7 @@ void vtkSlicerGradientEditorWidget::ProcessWidgetEvents (vtkObject *caller, unsi
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLVolumeNode *node)
+void vtkSlicerDiffusionEditorWidget::UpdateWidget(vtkMRMLVolumeNode *node)
   {
   if (node == NULL)
     {
@@ -223,7 +223,7 @@ void vtkSlicerGradientEditorWidget::UpdateWidget(vtkMRMLVolumeNode *node)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGradientEditorWidget::CreateWidget( )
+void vtkSlicerDiffusionEditorWidget::CreateWidget( )
   {
   //check if already created
   if (this->IsCreated())

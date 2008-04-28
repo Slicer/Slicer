@@ -1,9 +1,9 @@
-// .NAME vtkSlicerGradientEditorWidget 
+// .NAME vtkSlicerDiffusionEditorWidget 
 // .SECTION Description
 // This class implements Slicer's main GradientsEditor GUI.
 // Inherits most behavior from vtkSlicerWidget.
-#ifndef __vtkSlicerGradientEditorWidget_h
-#define __vtkSlicerGradientEditorWidget_h
+#ifndef __vtkSlicerDiffusionEditorWidget_h
+#define __vtkSlicerDiffusionEditorWidget_h
 
 #include "vtkVolumes.h"
 #include "vtkSlicerWidget.h"
@@ -18,14 +18,14 @@ class vtkSlicerGradientsWidget;
 class vtkKWFrame;
 class vtkKWPushButton;
 
-class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
+class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorWidget : public vtkSlicerWidget
   {
   public:
 
     // Description:
     // Usual vtk class functions.
-    static vtkSlicerGradientEditorWidget* New();
-    vtkTypeRevisionMacro(vtkSlicerGradientEditorWidget,vtkSlicerWidget);
+    static vtkSlicerDiffusionEditorWidget* New();
+    vtkTypeRevisionMacro(vtkSlicerDiffusionEditorWidget,vtkSlicerWidget);
     void PrintSelf(ostream& os, vtkIndent indent);
 
     // Description:
@@ -48,8 +48,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     vtkGetObjectMacro(Logic, vtkSlicerDiffusionEditorLogic);
 
   protected:
-    vtkSlicerGradientEditorWidget(void);
-    virtual ~vtkSlicerGradientEditorWidget(void);
+    vtkSlicerDiffusionEditorWidget(void);
+    virtual ~vtkSlicerDiffusionEditorWidget(void);
 
     // Description:
     // Creates the widget.
@@ -71,8 +71,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientEditorWidget : public vtkSlicerWidget
     vtkKWPushButton *RedoButton;
 
   private:
-    vtkSlicerGradientEditorWidget (const vtkSlicerGradientEditorWidget&); // Not implemented.
-    void operator = (const vtkSlicerGradientEditorWidget&); //Not implemented.
+    vtkSlicerDiffusionEditorWidget (const vtkSlicerDiffusionEditorWidget&); // Not implemented.
+    void operator = (const vtkSlicerDiffusionEditorWidget&); //Not implemented.
   };
 
 #endif 

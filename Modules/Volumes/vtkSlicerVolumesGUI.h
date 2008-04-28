@@ -18,7 +18,7 @@
 #include "vtkSlicerDiffusionTensorVolumeDisplayWidget.h"
 #include "vtkSlicerScalarVolumeDisplayWidget.h"
 #include "vtkSlicerLabelMapVolumeDisplayWidget.h"
-#include "vtkSlicerGradientEditorWidget.h"
+#include "vtkSlicerDiffusionEditorWidget.h"
 
 #include "vtkSlicerVolumeHeaderWidget.h"
 
@@ -71,7 +71,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     void SetAndObserveModuleLogic ( vtkSlicerVolumesLogic *logic )
         { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
-    vtkGetObjectMacro(GradientEditorWidget, vtkSlicerGradientEditorWidget);
+    vtkGetObjectMacro(DiffusionEditorWidget, vtkSlicerDiffusionEditorWidget);
 
     // Description:
     // This method builds the Volumes module GUI
@@ -157,7 +157,7 @@ protected:
     vtkSlicerDiffusionTensorVolumeDisplayWidget *dtiVDW;
     vtkSlicerVolumeHeaderWidget *VolumeHeaderWidget;
     vtkSlicerVolumeFileHeaderWidget *VolumeFileHeaderWidget;    
-    vtkSlicerGradientEditorWidget *GradientEditorWidget;
+    vtkSlicerDiffusionEditorWidget *DiffusionEditorWidget;
 
     vtkKWLabel *NACLabel;
     vtkKWLabel *NAMICLabel;

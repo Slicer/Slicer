@@ -5,7 +5,7 @@ vtkKWTopLevel t
 t SetApplication app
 t Create
 
-vtkSlicerGradientEditorWidget editor
+vtkSlicerDiffusionEditorWidget editor
 editor SetParent t
 editor SetAndObserveMRMLScene scene
 editor Create

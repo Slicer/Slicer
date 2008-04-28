@@ -5,7 +5,7 @@ PROJECT(Volumes)
   SET(Volumes_SRCS
   vtkSlicerVolumesGUI.cxx
   #dwi/dti editor
-  vtkSlicerGradientEditorWidget.cxx
+  vtkSlicerDiffusionEditorWidget.cxx
   vtkSlicerMeasurementFrameWidget.cxx
   vtkSlicerGradientsWidget.cxx
   vtkSlicerDWITestingWidget.cxx
