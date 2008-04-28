@@ -818,7 +818,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->MainSlicerWindow->GetFileMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
             i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
-                                                                           "Publish to XNAT host", this, "ProcessPublishToXnatCommand");
+                                                                           "Publish to XNAT Host...", this, "ProcessPublishToXnatCommand");
 
             i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                "Close Scene", this, "ProcessCloseSceneCommand");
@@ -913,6 +913,12 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->GetMainSlicerWindow()->GetViewMenu()->InsertCommand (
                                                                        this->GetMainSlicerWindow()->GetViewMenuInsertPosition(),
                                                                        "Cache & Remote I/O Manager", NULL, "$::slicer3::RemoteIOGUI DisplayManagerWindow");
+
+            i = this->GetMainSlicerWindow()->GetViewMenu()->InsertCommand (
+                                                                       this->GetMainSlicerWindow()->GetViewMenuInsertPosition(),
+                                                                       "Module Search", NULL, "::ModuleSearch::ShowDialog");
+            this->GetMainSlicerWindow()->GetViewMenu()->SetItemAccelerator ( i, "slash");
+            this->GetMainSlicerWindow()->GetViewMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
             //
             // Help Menu
