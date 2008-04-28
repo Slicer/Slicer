@@ -18,7 +18,6 @@ namespace itk {
      */
     /* For ANSI-challenged compilers, you may want to #define
      * NO_MEMBER_TEMPLATES or explicit */
-#if 0
 #define NO_MEMBER_TEMPLATES
     template <class X> class counted_ptr
       {
@@ -86,7 +85,6 @@ namespace itk {
         }
       };
 
-#endif
     // LRU Cache
 
     using namespace std;

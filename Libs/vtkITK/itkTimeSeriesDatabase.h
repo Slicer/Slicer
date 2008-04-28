@@ -61,10 +61,12 @@ namespace itk {
     /** Create a new TimeSeriesDatabase from an Archetype filename
      * Find all the volumes matching the archetype pattern, loading
      * and checking that they are all the same size.  Write the data
-     * into one big file (and later, series of files).
+     * into a series of files.  The default filesize is 1 GiB, but may
+     * be changed using the overloaded method.
      * A call to Connect in required to open the newly created TimeSeriesDatabase.
      */
     static void CreateFromFileArchetype ( const char* filename, const char* archetype );
+    static void CreateFromFileArchetype ( const char* filename, const char* archetype, unsigned long BlocksPerFile );
 
     /** Set the image to be read when GenerateData is called.
      * This method selects the image to be returned by an Update
@@ -110,10 +112,15 @@ namespace itk {
     typename OutputImageType::RegionType m_OutputRegion;
     typename OutputImageType::PointType m_OutputOrigin;
     typename OutputImageType::DirectionType m_OutputDirection;
+    typedef itk::TimeSeriesDatabaseHelper::counted_ptr<std::fstream> StreamPtr;
 
-    std::streampos CalculatePosition ( Size<3> Position, int ImageCount );
-    std::streampos CalculatePosition ( unsigned long index );
+    static std::streampos CalculatePosition ( unsigned long index, unsigned long BlocksPerFile );
+
+    unsigned int CalculateFileIndex ( unsigned long Index );
+    static unsigned int CalculateFileIndex ( unsigned long Index, unsigned long BlocksPerFile );
+
     unsigned long CalculateIndex ( Size<3> Position, int ImageCount );
+    static unsigned long CalculateIndex ( Size<3> Position, int ImageCount, unsigned int BlocksPerImage[3] );
     // Return true if this is a full block, false otherwise.  Assumes there is overlap!
     bool CalculateIntersection ( Size<3> BlockIndex, typename OutputImageType::RegionType RequestedRegion, 
                                  typename OutputImageType::RegionType& BlockRegion,
@@ -122,12 +129,16 @@ namespace itk {
 
     // How many pixels are in the last block?
     Array<unsigned int> m_PixelRemainder;
-    std::fstream m_File;
     std::string m_Filename;
     unsigned int m_CurrentImage;
 
+    std::vector<StreamPtr> m_DatabaseFiles;
+    std::vector<std::string> m_DatabaseFileNames;
+    unsigned long m_BlocksPerFile;
+
     // our cache
-    struct CacheBlock {
+    struct CacheBlock 
+    {
       TPixel data[TimeSeriesBlockSize*TimeSeriesBlockSize*TimeSeriesBlockSize];
     };
     TimeSeriesDatabaseHelper::LRUCache<unsigned long, CacheBlock> m_Cache;
