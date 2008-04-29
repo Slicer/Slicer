@@ -266,36 +266,29 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
       return;
       }
     this->SetAllVisibilityButtons(1);
-    //set internal tensorNode
-
+    //set old tensorNode
     if(this->TensorNode != NULL)
       {
-
       std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glypDisplayNodes = this->TensorNode->GetSliceGlyphDisplayNodes();
       vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node;
-
       for (unsigned int i=0; i<glypDisplayNodes.size(); i++)
         {
         node = glypDisplayNodes[i];
         node->SetVisibility(0);
         }
       }
-
-
+    //set new tensorNode
     this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->DTISelector->GetSelected());
     //create tracts and glyphs
-    if(this->ViewTracts->GetSelectedState()) this->CreateTracts();
+    this->CreateTracts();
     this->CreateGlyphs();
     }
 
   //create tracts when fiducials list is selected 
   else if (this->FiducialSelector == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent &&
-    this->FiducialSelector->GetSelected() != NULL) 
+    this->FiducialSelector->GetSelected() != NULL && this->DTISelector->GetSelected()) 
     {
-    if(this->ViewTracts->GetSelectedState() && this->DTISelector->GetSelected())
-      {
-      this->CreateTracts();
-      }
+    this->CreateTracts();
     }
 
   //view of glyphs
@@ -315,9 +308,9 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
 
   //view of tracts
   else if(this->ViewTracts == vtkKWCheckButton::SafeDownCast(caller) && event == vtkKWCheckButton::SelectedStateChangedEvent
-    && this->FiducialSelector->GetSelected() != NULL && this->TensorNode != NULL)
+     && this->TensorNode != NULL)
     {
-    if(this->ViewTracts->GetSelectedState() && this->DTISelector->GetSelected() != NULL)
+    if(this->FiducialSelector->GetSelected() != NULL && this->ViewTracts->GetSelectedState())
       {
       //visibility of tracts on
       this->TractDisplayGUI->GetFiberBundleDisplayWidget()->SetTractVisibility(1);
@@ -404,7 +397,7 @@ void vtkSlicerDWITestingWidget::SetAllVisibilityButtons(int status)
 //---------------------------------------------------------------------------
 void vtkSlicerDWITestingWidget::CreateTracts()
   {
-  if(this->TensorNode == NULL) return;
+  if(this->TensorNode == NULL || !this->ViewTracts->GetSelectedState()) return;
   //wait untill ImageData is set in other thread
   if(this->TensorNode->GetImageData() == NULL)
     {
@@ -493,7 +486,7 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->TestFrame->SetParent(this->GetParent());
   this->TestFrame->Create();
   this->TestFrame->CollapseFrame();
-  this->TestFrame->SetLabelText("Testing (Tensor Estimation & Glyphs & TractographySeeding)");
+  this->TestFrame->SetLabelText("Testing (Tensor Estimation & Glyphs & Tractography Seeding)");
   this->Script("pack %s -side top -anchor n -fill x -padx 2 -pady 4", 
     this->TestFrame->GetWidgetName());
 
@@ -538,7 +531,7 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
     this->VisibilityButton[i]->SetParent(this->GlyphFrame);
     this->VisibilityButton[i]->Create();
     this->VisibilityButton[i]->SetText(glyphNames[i]);
-    this->VisibilityButton[i]->SetBalloonHelpString("Set fiberBundle visibility.");
+    this->VisibilityButton[i]->SetBalloonHelpString("Set visibility of glyphs.");
     this->Script("pack %s -side left -anchor nw -padx 2 ",
       this->VisibilityButton[i]->GetWidgetName());
     }
@@ -560,7 +553,8 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->ViewTracts = vtkKWCheckButton::New();
   this->ViewTracts->SetParent(this->TestFrame->GetFrame());
   this->ViewTracts->Create();
-  this->ViewTracts->SetText("View Tracts based on Fiducial List");
+  this->ViewTracts->SetText("View tracts based on fiducial list");
+  this->ViewTracts->SetBalloonHelpString("Set visibility of tracts.");
   this->Script("pack %s -side left -anchor nw -padx 2 ", 
     this->ViewTracts->GetWidgetName());
 
@@ -575,7 +569,7 @@ void vtkSlicerDWITestingWidget::CreateWidget( )
   this->FiducialSelector->Create();  
   this->FiducialSelector->UpdateMenu();
   this->FiducialSelector->SetWidth(25);
-  this->FiducialSelector->SetBalloonHelpString("Set Fiducial List for tractography seeding.");
+  this->FiducialSelector->SetBalloonHelpString("Set fiducial list for tractography seeding.");
 
   this->Script("pack %s %s -side left -anchor ne -padx 2 -pady 2", 
     this->ViewTracts->GetWidgetName(),

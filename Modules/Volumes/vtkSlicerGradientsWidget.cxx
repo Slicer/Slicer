@@ -301,7 +301,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->SetTitle("Open .txt/.nhdr File");
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->SetFileTypes("{ {NHDRfile} {.nhdr} }{ {Textfile} {.txt} }");
   this->LoadGradientsButton->GetWidget()->GetLoadSaveDialog()->RetrieveLastPathFromRegistry("OpenPath");
-  this->LoadGradientsButton->SetBalloonHelpString("Load gradients from a plain text file or nhdr header.");
+  this->LoadGradientsButton->SetBalloonHelpString("Load gradients from a text file or nhdr header.");
   this->Script("pack %s -side right -anchor ne -padx 2 ", 
     this->LoadGradientsButton->GetWidgetName());
 
@@ -312,6 +312,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->GradientsTextbox->GetWidget()->SetBinding("<KeyRelease>", this, "TextFieldModifiedCallback");
   this->GradientsTextbox->SetHeight(100);
   this->GradientsTextbox->SetEnabled(0);
+  this->GradientsTextbox->SetBalloonHelpString("These are the current gradients. Look at the status label if they are valid.");
   this->Script("pack %s -side top -anchor s -fill both -expand true -padx 2 -pady 2", 
     this->GradientsTextbox->GetWidgetName());
 
@@ -319,7 +320,7 @@ void vtkSlicerGradientsWidget::CreateWidget( )
   this->StatusLabel = vtkKWLabel::New();
   this->StatusLabel->SetParent(this->GradientsFrame->GetFrame());
   this->StatusLabel->Create();
-  this->StatusLabel->SetBalloonHelpString("Shows current status of the given gradients in the textbox");
+  this->StatusLabel->SetBalloonHelpString("Shows current status of the given gradients in the textbox.");
   this->Script("pack %s -side top -anchor s -fill both -expand true -padx 2 -pady 2", 
     this->StatusLabel->GetWidgetName());
   }

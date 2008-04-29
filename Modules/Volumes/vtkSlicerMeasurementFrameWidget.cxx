@@ -387,7 +387,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
     this->Checkbuttons[i] = checkButton;
     this->Checkbuttons[i]->SetParent(this->MeasurementFrame->GetFrame());
     this->Checkbuttons[i]->Create();
-    this->Checkbuttons[i]->SetBalloonHelpString("Enable column for negative/rotate/swap option.");
+    this->Checkbuttons[i]->SetBalloonHelpString("Enable column for negate/rotate/swap option.");
     this->Script("grid %s -row 4 -column %d -sticky n", 
       checkButton->GetWidgetName(), i);
     }
@@ -399,7 +399,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->NegativeButton->SetText("Negate Selected");
   this->NegativeButton->SetWidth(15);
   this->NegativeButton->SetEnabled(0);
-  this->NegativeButton->SetBalloonHelpString("Negative selected columns.");
+  this->NegativeButton->SetBalloonHelpString("Negate selected columns.");
 
   //create swap button
   this->SwapButton = vtkKWPushButton::New();
@@ -433,7 +433,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->AngleCombobox->SetEnabled(0);
   this->AngleCombobox->SetWidth(4);
   this->AngleCombobox->SetValue("+90");
-  this->AngleCombobox->SetBalloonHelpString("Select given value or type in your one.");
+  this->AngleCombobox->SetBalloonHelpString("Select given value or type in your own.");
 
   //create identity button
   this->IdentityButton = vtkKWPushButton::New();
