@@ -1047,18 +1047,26 @@ int Slicer3_main(int argc, char *argv[])
     LoadableModuleFactory loadableModuleFactory;
     loadableModuleFactory.SetName("Slicer");
     loadableModuleFactory.SetSearchPath( slicerModulePath );
+
     if (VerboseModuleDiscovery)
-      {
+    {
       loadableModuleFactory.SetWarningMessageCallback( WarningMessage );
       loadableModuleFactory.SetErrorMessageCallback( ErrorMessage );
       loadableModuleFactory.SetInformationMessageCallback( InformationMessage);
-      }
+    }
     if (!NoSplash)
-      {
+    {
       loadableModuleFactory.SetModuleDiscoveryMessageCallback( SplashMessage );
-      }
-    loadableModuleFactory.Scan();
-    
+    }
+
+    // obey the NoModules command line argument
+    // without scanning, downstream iterators will be empty
+
+    if (!NoModules)
+    {
+      loadableModuleFactory.Scan();
+    }
+
     std::vector<std::string> loadableModuleNames = 
       loadableModuleFactory.GetModuleNames();
     std::vector<std::string>::const_iterator lmit =
