@@ -65,6 +65,7 @@ public:
   virtual void InverseTransformPoint( const double in[3], double out[3] );
 private:
   typename BSplineType::Pointer BSpline;
+  typename BSplineType::ParametersType parameters;
 };
 
 
@@ -324,10 +325,10 @@ vtkITKBSplineTransformHelperImpl<O>
 ::SetParameters( vtkDoubleArray& param )
 {
   unsigned numberOfParam = BSpline->GetNumberOfParameters();
-  typename BSplineType::ParametersType parameters( numberOfParam );
+  this->parameters.SetSize( numberOfParam );
                                          
   for( unsigned int i=0; i<numberOfParam; ++i )
-    parameters.SetElement( i, param.GetTuple1(i) );
+    this->parameters.SetElement( i, param.GetTuple1(i) );
 
   BSpline->SetParameters( parameters );
 }
@@ -338,10 +339,10 @@ vtkITKBSplineTransformHelperImpl<O>
 ::SetParameters( double* param )
 {
   unsigned numberOfParam = BSpline->GetNumberOfParameters();
-  typename BSplineType::ParametersType parameters( numberOfParam );
+  this->parameters.SetSize( numberOfParam );
                                          
   for( unsigned int i=0; i<numberOfParam; ++i )
-    parameters.SetElement( i, param[i] );
+    this->parameters.SetElement( i, param[i] );
 
   BSpline->SetParameters( parameters );
 }

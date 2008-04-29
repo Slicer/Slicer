@@ -26,10 +26,13 @@ int main( int, char** )
   //  |  |  |  |  |  |  |
   //  o--o--o--o--o--o--o
 
+  typedef itk::BSplineDeformableTransform<double,3,3> itkBSplineType;
+
+  // this is the output from directly calling the ITK transform. It'll
+  // serve as the reference.
+  itkBSplineType::OutputPointType itkOutputPoint;
   {
     std::cout << "ITK:\n";
-
-    typedef itk::BSplineDeformableTransform<double,3,3> itkBSplineType;
 
     itkBSplineType::RegionType region;
     itkBSplineType::OriginType origin;
@@ -81,10 +84,10 @@ int main( int, char** )
 
     itkBSplineType::InputPointType inputPoint;
     inputPoint[0] = 100; inputPoint[1] = 200; inputPoint[2] = 0;
-    itkBSplineType::OutputPointType outputPoint = 
+    itkOutputPoint = 
       bspline->TransformPoint( inputPoint );
     std::cout << " InputPoint: " << inputPoint << std::endl;
-    std::cout << " outputPoint: " << outputPoint << std::endl;
+    std::cout << " outputPoint: " << itkOutputPoint << std::endl;
   }
 
 
@@ -124,16 +127,39 @@ int main( int, char** )
               << outputPoint[1] << " "
               << outputPoint[2] << std::endl;
 
+    itk::Point<double,3> vtkInputPoint( inputPoint );
+    itk::Point<double,3> vtkOutputPoint( outputPoint );
+    
+    if( itkOutputPoint.EuclideanDistanceTo( vtkOutputPoint ) > 1e-6 )
+    {
+      std::cout << "Mismatch with ITK result\n";
+      parameters->Delete();
+      vtkBSpline->Delete();
+      return 1;
+    }
+
     double inversePoint[3] = { -1, -1, -1 };
     vtkBSpline->Inverse();
     vtkBSpline->TransformPoint( outputPoint, inversePoint );
+
+    itk::Point<double,3> vtkInversePoint( inversePoint );
 
     std::cout << " inversePoint: " << inversePoint[0] << " "
               << inversePoint[1] << " "
               << inversePoint[2] << std::endl;
 
+    if( vtkInputPoint.EuclideanDistanceTo( vtkInversePoint ) > 1e-3 )
+    {
+      std::cout << "Inverse doesn't match original result. Error = "
+                << vtkInputPoint.EuclideanDistanceTo( vtkInversePoint ) << "\n";
+      parameters->Delete();
+      vtkBSpline->Delete();
+      return 1;
+    }
+
     parameters->Delete();
     vtkBSpline->Delete();
   }
 
+  return 0;
 }
