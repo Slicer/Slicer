@@ -561,14 +561,3 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkSlicerDiffusionTensorVolumeGlyph
   return dpnode;
   }
 
-void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::SetGlyphVisibility(int plane, int visibility)
-  {
-  this->VisibilityButton[plane]->GetWidget()->SetSelectedState(visibility);
-  }
-
-void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::SetGlyphRosolution(int value)
-  {
-  this->GlyphDisplayWidget->SetGlyphResolution(value);
-  }
-
-

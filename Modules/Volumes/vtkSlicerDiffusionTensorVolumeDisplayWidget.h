@@ -68,8 +68,6 @@ public:
 
   virtual void UpdateWidgetFromMRML();
 
-  vtkGetObjectMacro(GlyphDisplayWidget, vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget);
-
 protected:
   vtkSlicerDiffusionTensorVolumeDisplayWidget();
   virtual ~vtkSlicerDiffusionTensorVolumeDisplayWidget();

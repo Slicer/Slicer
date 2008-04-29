@@ -56,10 +56,6 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
 
     //BTX
     // Description:
-    // Creates glyphs by invoking events in the vtkSlicerDiffusionTensorGlyphDisplayWidget.
-    void CreateGlyphs(vtkKWCheckButton *calledGlyph);
-    
-    // Description:
     // Sets the internal value ModifiedForNewTensor when a new tensor has to be estimated.
     // That means parameters (Measurement Frame or Gradients) have changed.
     void SetModifiedForNewTensor(int modified);
@@ -78,6 +74,12 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     // Description:
     // Creates the widget.
     virtual void CreateWidget();
+
+    // Description:
+    // Creates glyphs by invoking events in the vtkSlicerDiffusionTensorGlyphDisplayWidget.
+    void CreateGlyphs();
+
+    void UpdateGlyphSpacing();
 
     // Description:
     // Enables all buttons for visibility options of DTIs. 
@@ -101,10 +103,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     vtkKWFrameWithLabel *TestFrame;
     vtkSlicerNodeSelectorWidget *FiducialSelector;
     vtkSlicerNodeSelectorWidget *DTISelector;
-    vtkKWPushButtonWithLabel *RunButton; 
-    vtkKWCheckButton *ViewGlyphsRed;
-    vtkKWCheckButton *ViewGlyphsGreen;
-    vtkKWCheckButton *ViewGlyphsYellow;
+    vtkKWPushButtonWithLabel *RunButton;
+    vtkKWCheckButton *VisibilityButton[3];
     vtkKWCheckButton *ViewTracts;
     vtkKWFrame *GlyphFrame;
     vtkKWScaleWithLabel *GlyphSpacingScale;
