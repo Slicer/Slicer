@@ -45,6 +45,10 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   virtual void BuildGUI ( );
 
   // Description:
+  // Module initialization
+  virtual void Init ( );
+
+  // Description:
   // Add obsereves to GUI widgets
   virtual void AddGUIObservers ( );
   

@@ -20,6 +20,7 @@ SUBDIRS(
       FreeSurfer
       Qdec
       MRML
+      GenerateLM
       SlicerIO
       ITKCommandIO
       MRMLIDImageIO

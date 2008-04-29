@@ -75,6 +75,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
   // Set the module logic
   virtual void SetModuleLogic( vtkSlicerLogic *logic ) { }; 
   
+  //Description:
+  // Implemented module initialization if needed
+  virtual void Init() { };
+
   // Description:
   // Configures a module's help frame, with acknowledgment
   // in a consistent manner

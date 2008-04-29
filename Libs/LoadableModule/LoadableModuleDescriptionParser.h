@@ -28,6 +28,8 @@ public:
   ~LoadableModuleDescriptionParser() {};
 
   int Parse( const std::string& xml, LoadableModuleDescription& description);
+
+  int ParseText( const std::string& txt, LoadableModuleDescription& description);
 };
 
 #endif

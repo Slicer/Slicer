@@ -1796,7 +1796,7 @@ void vtkQueryAtlasGUI::UpdateAnnoVisibilityMenu ( )
 void vtkQueryAtlasGUI::UpdateScalarOverlayMenu ( )
 {
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication() );
-  vtkQdecModuleLogic *qLogic;
+  vtkQdecModuleLogic *qLogic = NULL;
   if ( app )
     {
     if ( vtkQdecModuleGUI::SafeDownCast ( app->GetModuleGUIByName("QdecModule")) != NULL )

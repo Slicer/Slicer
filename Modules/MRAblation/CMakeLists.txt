@@ -54,6 +54,10 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(MRAblation MRAblation_TCL_SRCS "${MRAblation_SRCS}" "")
 
+# --------------------------------------------------------------------------
+# Loadable Module support, do after TCL Wrapping
+
+GENERATELM(MRAblation_SRCS MRAblation.xml)
 
 # --------------------------------------------------------------------------
 # Build the library

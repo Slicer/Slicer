@@ -226,10 +226,12 @@ endif(VTKsource_revision LESS 1.2196)
 #
 # These packages exist within the Slicer3 source tree
 #
-set(GenerateCLP_DIR ${Slicer3_BINARY_DIR}/Libs/GenerateCLP)
-set(ModuleDescriptionParser_DIR ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionParser)
-set(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
-set(TCLAP_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
+SET(GenerateCLP_DIR ${Slicer3_BINARY_DIR}/Libs/GenerateCLP)
+SET(GenerateLM_DIR ${Slicer3_BINARY_DIR}/Libs/GenerateLM)
+SET(ModuleDescriptionParser_DIR ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionParser)
+SET(LoadableModule_DIR ${Slicer3_BINARY_DIR}/Libs/LoadableModule)
+SET(vtkITK_DIR ${Slicer3_BINARY_DIR}/Libs/vtkITK)
+SET(TCLAP_DIR ${Slicer3_BINARY_DIR}/Libs/tclap)
 
 #
 # Subdirectories

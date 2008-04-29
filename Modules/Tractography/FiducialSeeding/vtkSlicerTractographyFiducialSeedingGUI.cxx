@@ -429,3 +429,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::SetOutFiberSelector(vtkMRMLNode *n
   {
   this->OutFiberSelector->SetSelected(node);
   }
+
+//---------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingGUI::Init ( ) 
+{
+}

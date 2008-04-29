@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>points</category>
+  <title>Test CLP points</title>
+  <description>Access points as seeds</description>
+  <version>0.1.0.$Revision$(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+
+  <parameters>
+    <label>Region Growing Parameters</label>
+    <description>Parameters used for region growing</description>
+    <point multiple="true" coordinateSystem="ras">
+      <name>seed</name>
+      <longflag>--seed</longflag>
+      <description>Seed points</description>
+      <label>Seed Points</label>
+    </point>
+    <region multiple="false" coordinateSystem="ijk">
+      <name>region</name>
+      <longflag>--region</longflag>
+      <description>Region of interest</description>
+      <label>Region of interest</label>
+    </region>
+    <float-vector multiple="true">
+      <name>vec</name>
+      <longflag>--vec</longflag>
+      <description>Vector</description>
+      <label>Vector</label>
+    </float-vector>
+    <string multiple="true">
+      <name>multistring</name>
+      <longflag>--multiString</longflag>
+      <description>Multi String</description>
+      <label>MultiString</label>
+    </string>
+    <float multiple="true">
+      <name>multifloat</name>
+      <longflag>--multiFloat</longflag>
+      <description>Multi Float</description>
+      <label>MultiFloat</label>
+    </float>
+  </parameters>
+</executable>

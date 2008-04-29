@@ -49,8 +49,16 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayGUI : pub
     vtkSetObjectMacro ( Logic, vtkSlicerFiberBundleLogic);
 
     // Description:
+    // Set the module logic
+    virtual void SetModuleLogic( vtkSlicerLogic *logic ); 
+
+    // Description:
     // This method builds the Tractography module GUI
     virtual void BuildGUI ( ) ;
+
+    // Description:
+    // Initialize module
+    virtual void Init ( ) ;
 
     // Description:
     // Add/Remove observers on widgets in the GUI

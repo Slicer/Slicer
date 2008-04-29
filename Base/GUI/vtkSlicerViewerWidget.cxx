@@ -1251,10 +1251,9 @@ void vtkSlicerViewerWidget::UpdateModelHierarchyVisibility(vtkMRMLModelHierarchy
 //----------------------------
 void vtkSlicerViewerWidget::UpdateModelHierarchyDisplay(vtkMRMLDisplayableNode *model)
 {
-  if (model)
+  if (model && this->ModelHierarchyLogic)
     {
     vtkMRMLModelHierarchyNode* mhnode = this->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
-    mhnode = this->ModelHierarchyLogic->GetModelHierarchyNode(model->GetID());
 
     if (mhnode) 
       {

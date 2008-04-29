@@ -125,6 +125,16 @@ public:
     return this->TclInitFunction;
   }
 
+  void AddDependency(const std::string& dependency)
+  {
+    this->Dependencies.push_back(dependency);
+  }
+
+  std::vector<std::string> GetDependencies() const
+  {
+    return this->Dependencies;
+  }
+
   void SetDescription(const std::string &description)
   {
     this->Description = description;
@@ -308,6 +318,8 @@ public:
   vtkSlicerModuleLogic* LogicPtr;
 
   TclInit TclInitFunction;
+
+  std::vector<std::string> Dependencies;
 
   std::string Category;
   std::string Description;

@@ -48,14 +48,17 @@ vtk_wrap_tcl3(GradientAnisotropicDiffusionFilter
   GradientAnisotropicDiffusionFilter_TCL_SRCS 
   "${GradientAnisotropicDiffusionFilter_SRCS}" "")
 
+#---------------------------------------------------------------------------
+# Add Loadable Module support
+
+GENERATELM(GradientAnisotropicDiffusionFilter_SRCS GradientAnisotropicDiffusionFilter.txt)
+
 # --------------------------------------------------------------------------
 # Build the library
 
 add_library(GradientAnisotropicDiffusionFilter
   ${GradientAnisotropicDiffusionFilter_SRCS}
   ${GradientAnisotropicDiffusionFilter_TCL_SRCS}
-  #loadable module support
-  GradientAnisotropicDiffusionFilterModuleLib.cxx
   )
 
 if(BUILD_SHARED_LIBS)

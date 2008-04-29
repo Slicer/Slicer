@@ -55,6 +55,10 @@ public:
   virtual void BuildGUI();
 
   // Description:
+  // Initialize module
+  virtual void Init();
+
+  // Description:
   // Delete Widgets
   virtual void TearDownGUI();
 

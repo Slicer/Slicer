@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Application</category>
+  <title>Slicer3 Example</title>
+  <description>The ultimate 3D Segmentation, Registration and Visualization System</description>
+  <version>0.1.0.$Revision$(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>NA-MIC</contributor>
+
+  <parameters>
+    <label>Command Line Parameters</label>
+    <description>Parameters used to start up Slicer3</description>
+
+      <boolean>
+      <name>Threads</name>
+      <longflag>--no_threads</longflag>
+      <flag>-t</flag>
+      <description>Disables multi threading</description>
+      <default>false</default>
+      <label>Threads On/Off</label>
+      </boolean>
+
+      <boolean>
+      <name>Tkcon</name>
+      <longflag>--no_tkon</longflag>
+      <flag>-k</flag>
+      <description>Disables tk console</description>
+      <default>false</default>
+      <label>Tkcon On/Off</label>
+      </boolean>
+
+      <string>
+      <name>LoadDicomDir</name>
+      <longflag>--load_dicom</longflag>
+      <flag>-d</flag>
+      <description>Read dicom files from dir</description>
+      <label>Load Dicom</label>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferVolume</name>
+      <longflag>--load_freesurfer_volume</longflag>
+      <flag>-y</flag>
+      <description>Read freesurfer file</description>
+      <label>Load Freesurfer</label>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferLabelVolume</name>
+      <longflag>--load_freesurfer_label_volume</longflag>
+      <flag>-l</flag>
+      <description>Read freesurfer label file</description>
+      <label>Load Freesurfer Label Volume</label>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferModel</name>
+      <longflag>--load_freesurfer_model</longflag>
+      <flag>-m</flag>
+      <description>Read freesurfer model file</description>
+      <label>Read Freesurfer Model File</label>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferScalar</name>
+      <longflag>--load_freesurfer_scalar</longflag>
+      <flag>-s</flag>
+      <description>Read freesurfer scalar file</description>
+      <label>Read Freesurfer Scalar File</label>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferAnnot</name>
+      <longflag>--load_freesurfer_annot</longflag>
+      <flag>-n</flag>
+      <description>Read freesurfer annotation file</description>
+      <label>Load Freesurfer Annotation File</label>
+      </string>
+
+      <string>
+      <name>LoadFreeSurferQA</name>
+      <longflag>--load_freesurfer_qa</longflag>
+      <flag>-q</flag>
+      <description>Read freesurfer QA subjects.csh file</description>
+      <label>Read Freesurfer QA subjects</label>
+      </string>
+
+      <string>
+      <name>LoadBXH</name>
+      <longflag>--load_bxh</longflag>
+      <flag>-x</flag>
+      <description>Read bxh file</description>
+      <label>Read BXH file</label>
+      </string>
+
+      <string>
+      <name>Script</name>
+      <longflag>--script</longflag>
+      <flag>-p</flag>
+      <description>Script to execute after slicer loads</description>
+      <label>Script to load</label>
+      </string>
+
+      <string>
+      <name>Exec</name>
+      <longflag>--exec</longflag>
+      <flag>-e</flag>
+      <description>Some code to execute after slicer loads. (note: cannot specify scene after --exec) (note: use ,. instead of ; between tcl statements)</description>
+      <label>Some code to execute</label>
+      </string>
+
+      <string>
+      <name>Eval</name>
+      <longflag>--eval</longflag>
+      <flag>-v</flag>
+      <description>Like --exec, but doesn't load slicer first</description>
+      <label>Some code to execute (don't load slicer)</label>
+      </string>
+
+      <boolean>
+      <name>AllInfo</name>
+      <longflag>--all_info</longflag>
+      <flag>-a</flag>
+      <description>Print out all of the version info and continue</description>
+      <label>Print all info</label>
+      <default>10</default>
+      </boolean>
+
+      <boolean>
+      <name>Stereo</name>
+      <longflag>--stereo</longflag>
+      <flag>-3</flag>
+      <description>Set the flag to allow use of frame sequential stereo</description>
+      <default>false</default>
+      <label>Stereo On/Off</label>
+      </boolean>
+
+      <boolean>
+      <name>OldVoxelShift</name>
+      <longflag>--old_voxel_shift</longflag>
+      <flag>-o</flag>
+      <description>start slicer with voxel coords in corner not center of image pixel</description>
+      <default>false</default>
+      <label>Old Voxel Shift On/Off</label>
+      </boolean>
+
+      <boolean>
+      <name>ImmediateMode</name>
+      <longflag>--immediate_mode</longflag>
+      <flag>-i</flag>
+      <description>Turn on immediate mode rendering (slower)</description>
+      <default>true</default>
+      <label>Immediate Mode On/Off</label>
+      </boolean>
+
+
+    </parameters>
+
+</executable>

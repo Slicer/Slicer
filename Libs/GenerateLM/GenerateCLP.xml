@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>utility</category>
+  <title>NAMIC Command Line Processing Code Generator</title>
+  <description>Generates C++ code that will parse command lines</description>
+  <version>1.0</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Bill Lorensen</contributor>
+
+  <parameters>
+    <label>Parameters</label>
+    <description>Parameters used for command line processing</description>
+    <boolean>
+      <name>UseTCLAP</name>
+      <longflag>--TCLAP</longflag>
+      <description>Generate TCLAP Code</description>
+      <label>Generate TCLAP Code</label>
+      <default>true</default>
+    </boolean>
+  </parameters>
+  <parameters>
+    <label>IO</label>
+    <description>Input/Output parameters</description>
+    <file multiple="true">
+      <name>logoFiles</name>
+      <label>Logo Files XML</label>
+      <longflag>--logoFiles</longflag>
+      <description>Logo files</description>
+    </file>
+    <file>
+      <name>InputXML</name>
+      <label>Input XML</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>XML description of interface</description>
+    </file>
+    <file>
+      <name>OutputCxx</name>
+      <label>Output C++</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>C++ Code to process command line arguments</description>
+    </file>
+  </parameters>
+</executable>
+

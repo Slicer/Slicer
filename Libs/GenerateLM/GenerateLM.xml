@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>utility</category>
+  <title>NAMIC Loadable Module Code Generator</title>
+  <description>Generates source and header files that enable a module to be loaded dynamically at Slicer3 runtime</description>
+  <version>0.1</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Terry Lorber</contributor>
+  <acknowledgements>
+This implementation based on Bill Lorensen's GenerateCLP utility.
+    </acknowledgements>
+
+  <parameters>
+    <file>
+      <name>InputTxt</name>
+      <label>Input Text</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Text file containing key:value description of module</description>
+    </file>
+    <file>
+      <name>OutputHeader</name>
+      <label>Output Header</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>C++ header to declare loadable module entry points</description>
+    </file>
+    <file>
+      <name>OutputCxx</name>
+      <label>Output C++</label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>C++ source to implement entry points required to dynamically load the module</description>
+    </file>
+  </parameters>
+</executable>
+

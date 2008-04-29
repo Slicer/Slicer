@@ -47,6 +47,11 @@ INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(NeuroNav NeuroNav_TCL_SRCS "${NeuroNav_SRCS}" "")
 
 #
+# Loadable Module
+#
+GENERATELM(NeuroNav_SRCS NeuroNav.xml)
+
+#
 # Build the library
 #
 ADD_LIBRARY(NeuroNav

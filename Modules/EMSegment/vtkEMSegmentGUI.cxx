@@ -593,3 +593,15 @@ void vtkEMSegmentGUI::PopulateTestingData()
       SetSaveTemplateFilename(file_path.append("EMSTemplate.mrml").c_str());
     }
 } 
+
+//---------------------------------------------------------------------------
+void vtkEMSegmentGUI::Init()
+{
+  vtkMRMLScene *scene = this->Logic->GetMRMLScene();
+
+  vtkIntArray *emsEvents = vtkIntArray::New();
+  emsEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  emsEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  this->Logic->SetAndObserveMRMLSceneEvents(scene, emsEvents);
+  emsEvents->Delete();
+}

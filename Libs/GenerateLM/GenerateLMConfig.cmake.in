@@ -1,0 +1,6 @@
+%# The GenerateLM source tree.
+SET(GenerateLM_INCLUDE_DIRS "@GenerateLM_INCLUDE_DIRS_CONFIG@")
+SET(GenerateLM_LIBRARY_DIRS "@GenerateLM_LIBRARY_DIRS_CONFIG@")
+SET(GenerateLM_USE_FILE "@GenerateLM_USE_FILE_CONFIG@")
+SET(GENERATELM_EXE "@GENERATELM_EXE_CONFIG@")
+SET(LoadableModule_DIR "@LoadableModule_DIR_CONFIG@")

@@ -81,7 +81,6 @@ extern "C" {
 //#define CLIMODULES_DEBUG
 //#define TCLMODULES_DEBUG
 //#define SLICES_DEBUG
-//#define GAD_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
 //#define QUERYATLAS_DEBUG
@@ -91,19 +90,12 @@ extern "C" {
 //#define EMSEG_DEBUG
 #define REALTIMEIMAGING_DEBUG
 #define MRABLATION_DEBUG
-//#define NEURONAV_DEBUG
 //#define TRACTOGRAPHY_DEBUG
-//#define QDEC_DEBUG
 //#define COMMANDLINE_DEBUG
 //#define DEAMON_DEBUG
 //#define REMOTEIO_DEBUG
 
-// comment out next line to enable Loadable Modules support
-#define LOADABLEMODULES_DEBUG
-
-#if !defined(LOADABLEMODULES_DEBUG)
 #include <LoadableModuleFactory.h>
-#endif
 
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
 #include "vtkSlicerFiberBundleLogic.h"
@@ -117,11 +109,6 @@ extern "C" {
 #include "vtkEMSegmentMRMLManager.h"
 #endif
 
-#if !defined(GAD_DEBUG) && defined(BUILD_MODULES)
-#include "vtkGradientAnisotropicDiffusionFilterLogic.h"
-#include "vtkGradientAnisotropicDiffusionFilterGUI.h"
-#endif
-
 #if !defined(REALTIMEIMAGING_DEBUG) && defined(BUILD_MODULES)
 #include "vtkRealTimeImagingLogic.h"
 #include "vtkRealTimeImagingGUI.h"
@@ -130,21 +117,6 @@ extern "C" {
 #if !defined(MRABLATION_DEBUG) && defined(BUILD_MODULES)
 #include "vtkMRAblationLogic.h"
 #include "vtkMRAblationGUI.h"
-#endif
-
-#if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
-#include "vtkNeuroNavLogic.h"
-#include "vtkNeuroNavGUI.h"
-#endif
-
-#if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
-#include "vtkWFEngineModuleLogic.h"
-#include "vtkWFEngineModuleGUI.h"
-#endif
-
-#if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
-#include "vtkQdecModuleLogic.h"
-#include "vtkQdecModuleGUI.h"
 #endif
 
 #if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
@@ -219,20 +191,8 @@ extern "C" int Vtkteem_Init(Tcl_Interp *interp);
 #if !defined(EMSEG_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Emsegment_Init(Tcl_Interp *interp);
 #endif
-#if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
-extern "C" int Neuronav_Init(Tcl_Interp *interp);
-#endif
 #if !defined(REALTIMEIMAGING_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Realtimeimaging_Init(Tcl_Interp *interp);
-#endif
-#if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
-extern "C" int Wfenginemodule_Init(Tcl_Interp *interp);
-#endif
-#if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
-extern "C" int Qdecmodule_Init(Tcl_Interp *interp);
-#endif
-#if !defined(GAD_DEBUG) && defined(BUILD_MODULES)
-extern "C" int Gradientanisotropicdiffusionfilter_Init(Tcl_Interp *interp);
 #endif
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Slicertractographydisplay_Init(Tcl_Interp *interp);
@@ -720,32 +680,13 @@ int Slicer3_main(int argc, char *argv[])
     Igt_Init(interp);
     Vtkteem_Init(interp);
 
-// if defined, then call explicitly, otherwise, loadable module support
-// will handle these LM-compatible modules
-#ifdef LOADABLEMODULES_DEBUG
-
-#if !defined(GAD_DEBUG) && defined(BUILD_MODULES)
-    Gradientanisotropicdiffusionfilter_Init(interp);
-#endif
-    
-#endif // LOADABLEMODULES_DEBUG
-
 #if !defined(EMSEG_DEBUG) && defined(BUILD_MODULES)
     Emsegment_Init(interp);
-#endif
-#if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
-    Neuronav_Init(interp);
 #endif
 #if !defined(REALTIMEIMAGING_DEBUG) && defined(BUILD_MODULES)
     Realtimeimaging_Init(interp);
 #endif
-#if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
-    Wfenginemodule_Init(interp);
-#endif
-#if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
-    Qdecmodule_Init(interp);
-#endif
- #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
     Volumerenderingmodule_Init(interp);
     //Also the replacements
     Volumerenderingreplacements_Init(interp),
@@ -1079,7 +1020,8 @@ int Slicer3_main(int argc, char *argv[])
     
     // ------------------------------
     // CREATE MODULE LOGICS & GUIS; add to GUI collection
-    // (presumably these will be auto-detected, not listed out as below...)
+    // (those modules not made using the LM library must
+    // must be listed individually, as below...)
     // ---
     // Note on vtkSlicerApplication's ModuleGUICollection:
     // right now the vtkSlicerApplication's ModuleGUICollection
@@ -1092,7 +1034,9 @@ int Slicer3_main(int argc, char *argv[])
     // If we need to collect them at some point, we should define 
     // other collections in the vtkSlicerApplication class.
 
-#if !defined(LOADABLEMODULES_DEBUG)
+
+    // LOADABLE MODULES
+
     std::string slicerModulePath = slicerBinDir;
 
     if (hasIntDir)
@@ -1126,30 +1070,23 @@ int Slicer3_main(int argc, char *argv[])
 
         slicerApp->SplashMessage(desc.GetMessage().c_str());
 
-        vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
         vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
-
         logic->SetAndObserveMRMLScene( scene );
-        logic->SetApplicationLogic( appLogic );
-        logic->SetMRMLScene( scene );
+        vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
 
-        gui->SetModuleLogic ( logic );
         gui->SetApplication( slicerApp );
-        gui->SetApplicationLogic( appLogic );
         gui->SetApplicationGUI( appGUI );
+        gui->SetAndObserveApplicationLogic( appLogic );
+        gui->SetAndObserveMRMLScene( scene );
+        gui->SetModuleLogic ( logic );
         gui->SetGUIName( desc.GetGUIName().c_str() );
         gui->GetUIPanel()->SetName( gui->GetGUIName ( ) );
         gui->GetUIPanel()->SetUserInterfaceManager( appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
         gui->GetUIPanel()->Create( );
-        
         slicerApp->AddModuleGUI( gui );
-        
         gui->BuildGUI ( );
         gui->AddGUIObservers ( );
- 
-        // add the pointer to the viewer widget, for observing pick events
-        // gui->SetViewerWidget(appGUI->GetViewerWidget());
-        // gui->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
+        gui->Init();
 
         // Initialize TCL
 
@@ -1162,30 +1099,8 @@ int Slicer3_main(int argc, char *argv[])
 
         lmit++;
       }
-#else
 
-#if !defined(GAD_DEBUG) && defined(BUILD_MODULES)
-    // --- Gradient anisotropic diffusion filter module
-    slicerApp->SplashMessage("Initializing Gradient Anisotropic Module...");
-    vtkGradientAnisotropicDiffusionFilterGUI *gradientAnisotropicDiffusionFilterGUI = vtkGradientAnisotropicDiffusionFilterGUI::New ( );
-    vtkGradientAnisotropicDiffusionFilterLogic *gradientAnisotropicDiffusionFilterLogic  = vtkGradientAnisotropicDiffusionFilterLogic::New ( );
-    gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( scene );
-    gradientAnisotropicDiffusionFilterLogic->SetApplicationLogic ( appLogic );
-    //    gradientAnisotropicDiffusionFilterLogic->SetMRMLScene(scene);
-    gradientAnisotropicDiffusionFilterGUI->SetLogic ( gradientAnisotropicDiffusionFilterLogic );
-    gradientAnisotropicDiffusionFilterGUI->SetApplication ( slicerApp );
-    gradientAnisotropicDiffusionFilterGUI->SetApplicationLogic ( appLogic );
-    gradientAnisotropicDiffusionFilterGUI->SetApplicationGUI ( appGUI );
-    gradientAnisotropicDiffusionFilterGUI->SetGUIName( "GradientAnisotropicDiffusionFilter" );
-    gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetName ( gradientAnisotropicDiffusionFilterGUI->GetGUIName ( ) );
-    gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-    gradientAnisotropicDiffusionFilterGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( gradientAnisotropicDiffusionFilterGUI );
-    gradientAnisotropicDiffusionFilterGUI->BuildGUI ( );
-    gradientAnisotropicDiffusionFilterGUI->AddGUIObservers ( );
-#endif
 
-#endif // LOADABLEMODULES_DEBUG
 
     // ADD INDIVIDUAL MODULES
     // (these require appGUI to be built):
@@ -1208,6 +1123,7 @@ int Slicer3_main(int argc, char *argv[])
     volumesGUI->GetUIPanel()->Create ( );
     slicerApp->AddModuleGUI ( volumesGUI );
 #endif
+
 
 #ifndef MODELS_DEBUG
     slicerApp->SplashMessage("Initializing Models Module...");
@@ -1334,28 +1250,6 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->AddModuleGUI ( ablationGUI );
     ablationGUI->BuildGUI ( );
     ablationGUI->AddGUIObservers ( );
-#endif 
-
-
-#if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
-    // -- NeuroNav module
-    vtkNeuroNavLogic *neuronavLogic = vtkNeuroNavLogic::New(); 
-    neuronavLogic->SetAndObserveMRMLScene ( scene );
-    vtkNeuroNavGUI *neuronavGUI = vtkNeuroNavGUI::New();
-
-    neuronavGUI->SetApplication ( slicerApp );
-    neuronavGUI->SetApplicationGUI ( appGUI );
-    neuronavGUI->SetAndObserveApplicationLogic ( appLogic );
-    neuronavGUI->SetAndObserveMRMLScene ( scene );
-    neuronavGUI->SetModuleLogic ( neuronavLogic );
-    neuronavGUI->SetGUIName( "NeuroNav" );
-    neuronavGUI->GetUIPanel()->SetName ( neuronavGUI->GetGUIName ( ) );
-    neuronavGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-    neuronavGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( neuronavGUI );
-    neuronavGUI->BuildGUI ( );
-    neuronavGUI->AddGUIObservers ( );
-    neuronavGUI->Init();
 #endif 
 
     // --- Transforms module
@@ -1589,51 +1483,6 @@ int Slicer3_main(int argc, char *argv[])
 
 #endif
     
-#if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
-    slicerApp->SplashMessage("Initializing WFEngine Module...");
-    //--- WFEngine Module
-    vtkWFEngineModuleGUI *wfEngineModuleGUI = vtkWFEngineModuleGUI::New ( );
-    vtkWFEngineModuleLogic *wfEngineModuleLogic  = vtkWFEngineModuleLogic::New ( );
-    wfEngineModuleLogic->SetAndObserveMRMLScene ( scene );
-    wfEngineModuleLogic->SetApplicationLogic ( appLogic );
-    wfEngineModuleLogic->SetMRMLScene(scene);
-    wfEngineModuleGUI->SetAndObserveModuleLogic(wfEngineModuleLogic);
-    wfEngineModuleGUI->SetApplication ( slicerApp );
-    wfEngineModuleGUI->SetApplicationLogic ( appLogic );
-    wfEngineModuleGUI->SetApplicationGUI ( appGUI );
-    wfEngineModuleGUI->SetGUIName( "WFEngineModule" );
-    wfEngineModuleGUI->GetUIPanel()->SetName ( wfEngineModuleGUI->GetGUIName ( ) );
-    wfEngineModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-    wfEngineModuleGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( wfEngineModuleGUI );
-    wfEngineModuleGUI->BuildGUI ( );
-    wfEngineModuleGUI->AddGUIObservers ( );
-#endif
-
-#if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
-    slicerApp->SplashMessage("Initializing Qdec Module...");
-    //--- QDEC Module
-    vtkQdecModuleGUI *qdecModuleGUI = vtkQdecModuleGUI::New ( );
-    vtkQdecModuleLogic *qdecModuleLogic  = vtkQdecModuleLogic::New ( );
-    qdecModuleLogic->SetAndObserveMRMLScene ( scene );
-    qdecModuleLogic->SetApplicationLogic ( appLogic );
-    qdecModuleLogic->SetMRMLScene(scene);
-    qdecModuleGUI->SetAndObserveModuleLogic(qdecModuleLogic);
-    qdecModuleGUI->SetApplication ( slicerApp );
-    qdecModuleGUI->SetApplicationLogic ( appLogic );
-    qdecModuleGUI->SetApplicationGUI ( appGUI );
-    qdecModuleGUI->SetGUIName( "QdecModule" );
-    qdecModuleGUI->GetUIPanel()->SetName ( qdecModuleGUI->GetGUIName ( ) );
-    qdecModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-    qdecModuleGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( qdecModuleGUI );
-    qdecModuleGUI->BuildGUI ( );
-    qdecModuleGUI->AddGUIObservers ( );
-    // add the pointer to the viewer widget, for observing pick events
-    qdecModuleGUI->SetViewerWidget(appGUI->GetViewerWidget());
-    qdecModuleGUI->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
-#endif
-
 #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
 
     slicerApp->SplashMessage("Initializing Volume Rendering Module...");
@@ -1815,6 +1664,7 @@ int Slicer3_main(int argc, char *argv[])
       }
 #endif // CLIMODULES_DEBUG
 
+
     //
     // get the Tcl name so the vtk class will be registered in the interpreter
     // as a byproduct
@@ -1828,7 +1678,6 @@ int Slicer3_main(int argc, char *argv[])
     name = appGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set ApplicationGUI %s", name);
 
-#ifndef LOADABLEMODULES_DEBUG
     lmit = loadableModuleNames.begin();
     
     while (lmit != loadableModuleNames.end())
@@ -1846,7 +1695,6 @@ int Slicer3_main(int argc, char *argv[])
 
         lmit++;
       }
-#endif
 
 #ifndef REMOTEIO_DEBUG
     name = remoteIOGUI->GetTclName();
@@ -1888,11 +1736,6 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set MRAblationGUI %s", name);
 #endif
 
-#if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
-    name = neuronavGUI->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set NeuroNavGUI %s", name);
-#endif
-
     name = transformsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
 #if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
@@ -1902,16 +1745,6 @@ int Slicer3_main(int argc, char *argv[])
 #endif
    
     
-#if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
-    name = wfEngineModuleGUI->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set WFEngineModuleGUI %s", name);
-#endif
-
-
-#if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
-    name = qdecModuleGUI->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set QdecModuleGUI %s", name);
-#endif
 #if !defined (VOLUMERENDERINGMODULE_DEBUG) && defined (BUILD_MODULES)
     name = vrModuleGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set VRModuleGUI %s", name);
@@ -1930,22 +1763,6 @@ int Slicer3_main(int argc, char *argv[])
     // - since the singleton method is not exposed to tcl, access it this way
     //   and then delete it at the end.
     slicerApp->Script ("namespace eval slicer3 set Broker [vtkEventBroker New]");
-
-#if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
-    if ( appGUI->GetViewerWidget() &&
-         appGUI->GetViewerWidget()->GetMainViewer() &&
-         appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor() &&
-         appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle() )
-      {
-      // set up the qdec module with a pointer to the interactor style so it can get pick events
-      qdecModuleGUI->SetViewerWidget(appGUI->GetViewerWidget());
-      qdecModuleGUI->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
-      }
-    else
-      {
-      std::cerr << "Unable to set up the QDEC Module GUI with a pointer to the interactor style." << std::endl;
-      }
-#endif
 
 #if !defined(CLIMODULES_DEBUG) && defined(BUILD_MODULES)
     mit = moduleNames.begin();
@@ -2205,7 +2022,6 @@ int Slicer3_main(int argc, char *argv[])
     // ------------------------------
     // REMOVE OBSERVERS and references to MRML and Logic
 
-#ifndef LOADABLEMODULES_DEBUG
   lmit = loadableModuleNames.begin();
   while (lmit != loadableModuleNames.end()) {
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
@@ -2215,13 +2031,6 @@ int Slicer3_main(int argc, char *argv[])
 
     lmit++;
   }
-#else
-
-#if !defined(GAD_DEBUG) && defined(BUILD_MODULES)
-    gradientAnisotropicDiffusionFilterGUI->RemoveGUIObservers ( );
-#endif
-    
-#endif// LOADABLEMODULES_DEBUG
 
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
     slicerTractographyDisplayGUI->RemoveGUIObservers ( );
@@ -2260,21 +2069,9 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(MRABLATION_DEBUG) && defined(BUILD_MODULES)
     ablationGUI->TearDownGUI ( );
 #endif
-#if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
-    neuronavGUI->TearDownGUI ( );
-#endif
-    
-#if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
-    wfEngineModuleGUI->TearDownGUI ( );
-#endif
-
 #if !defined(LABELSTATISTICS_DEBUG) && defined(BUILD_MODULES)
     labelStatsGUI->RemoveGUIObservers ( );
     labelStatsGUI->TearDownGUI ( );
-#endif
-
-#if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
-    qdecModuleGUI->TearDownGUI ( );
 #endif
 #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
     vrModuleGUI->TearDownGUI ( );
@@ -2381,7 +2178,6 @@ int Slicer3_main(int argc, char *argv[])
     
 //--- delete gui first, removing Refs to Logic and MRML
     
-#ifndef LOADABLEMODULES_DEBUG
   lmit = loadableModuleNames.begin();
   while (lmit != loadableModuleNames.end()) {
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
@@ -2390,13 +2186,6 @@ int Slicer3_main(int argc, char *argv[])
 
     lmit++;
   }
-#else
-
-#if !defined(GAD_DEBUG) && defined(BUILD_MODULES)
-    gradientAnisotropicDiffusionFilterGUI->Delete ();
-#endif
-    
-#endif// LOADABLEMODULES_DEBUG
 
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
     slicerTractographyDisplayGUI->Delete ();
@@ -2433,22 +2222,9 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(MRABLATION_DEBUG) && defined(BUILD_MODULES)
     ablationGUI->Delete();
 #endif    
-#if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
-    neuronavGUI->Delete();
-#endif
-    
-#if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
-    wfEngineModuleGUI->Delete ( );
-#endif
-
 #if !defined(LABELSTATISTICS_DEBUG) && defined(BUILD_MODULES)
     labelStatsGUI->Delete ( );
 #endif
-
-#if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
-    qdecModuleGUI->Delete ( );
-#endif
-
 #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
     vrModuleGUI->Delete ( );
 #endif
@@ -2503,7 +2279,6 @@ int Slicer3_main(int argc, char *argv[])
     //--- delete logic next, removing Refs to MRML
     appLogic->ClearCollections ( );
 
-#ifndef LOADABLEMODULES_DEBUG
   lmit = loadableModuleNames.begin();
   while (lmit != loadableModuleNames.end()) {
     LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
@@ -2515,14 +2290,6 @@ int Slicer3_main(int argc, char *argv[])
 
     lmit++;
   }
-#else
-
-#if !defined(GAD_DEBUG) && defined(BUILD_MODULES)
-    gradientAnisotropicDiffusionFilterLogic->SetAndObserveMRMLScene ( NULL );
-    gradientAnisotropicDiffusionFilterLogic->Delete ();
-#endif
-
-#endif// LOADABLEMODULES_DEBUG
 
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
     slicerFiberBundleLogic->SetAndObserveMRMLScene ( NULL );
@@ -2573,37 +2340,23 @@ int Slicer3_main(int argc, char *argv[])
     ablationLogic->SetAndObserveMRMLScene ( NULL );
     ablationLogic->Delete();
 #endif    
-#if !defined(NEURONAV_DEBUG) && defined(BUILD_MODULES)
-    neuronavLogic->SetAndObserveMRMLScene ( NULL );
-    neuronavLogic->Delete();
-#endif
-    
-#if !defined(WFENGINE_DEBUG) && defined(BUILD_MODULES)
-    wfEngineModuleLogic->SetAndObserveMRMLScene ( NULL );
-    wfEngineModuleLogic->Delete ( );
-#endif
- 
 #if !defined(LABELSTATISTICS_DEBUG) && defined(BUILD_MODULES)
     labelStatsLogic->SetAndObserveMRMLScene ( NULL );
     labelStatsLogic->Delete ( );
 #endif
 
-#if !defined(QDEC_DEBUG) && defined(BUILD_MODULES)
-    qdecModuleLogic->SetAndObserveMRMLScene ( NULL );
-    qdecModuleLogic->Delete ( );
-#endif
-    #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
     vrModuleLogic->SetAndObserveMRMLScene ( NULL );
     vrModuleLogic->Delete ( );
 #endif
 
+#ifndef SLICES_DEBUG
     sliceLogic2->SetAndObserveMRMLScene ( NULL );
     sliceLogic2->Delete ();
     sliceLogic1->SetAndObserveMRMLScene ( NULL );
     sliceLogic1->Delete ();
     sliceLogic0->SetAndObserveMRMLScene ( NULL );
     sliceLogic0->Delete ();
-#ifndef SLICES_DEBUG
 #endif
     appLogic->SetAndObserveMRMLScene ( NULL );
     appLogic->TerminateProcessingThread();

@@ -155,6 +155,10 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(QueryAtlas QueryAtlas_TCL_SRCS "${QueryAtlas_SRCS}" "")
 
+# --------------------------------------------------------------------------
+# Add support for loadable modules, must be after TCL Wrapping
+
+#GENERATELM(QueryAtlas_SRCS QueryAtlas.txt)
 
 # --------------------------------------------------------------------------
 # Build the library

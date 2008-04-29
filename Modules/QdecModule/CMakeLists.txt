@@ -59,6 +59,11 @@ VTK_WRAP_TCL3(QdecModule QdecModule_TCL_SRCS "${QdecModule_SRCS}" "")
 # MESSAGE(STATUS "QdecModule: MODULE = QdecModule\nSandbox dir = ${SandBox_DIR}\nadding link dir = ${SandBox_DIR}-build/bin")
 
 # --------------------------------------------------------------------------
+# Loadable Module support, do after TCL Wrapping
+
+GENERATELM(QdecMOdule_SRCS QdecModule.txt)
+
+# --------------------------------------------------------------------------
 # Build the library
 
 # differentiate between the Module's library file and the Slicer3-lib NAMIC SandBox Qdec library file

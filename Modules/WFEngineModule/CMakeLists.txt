@@ -84,6 +84,7 @@ VTK_WRAP_TCL3(WFEngineModule WFEngineModule_TCL_SRCS "${WFEngineModule_SRCS}" ""
 
 SET(WFEngineModule_SRCS ${WFEngineModule_SRCS} WFStateConverter.cxx)
 
+GENERATELM(WFEngineModule_SRCS WFEngine.txt)
  
 # --------------------------------------------------------------------------
 # Build the library

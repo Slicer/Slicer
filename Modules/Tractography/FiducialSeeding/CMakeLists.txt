@@ -56,6 +56,10 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(SlicerTractographyFiducialSeeding SlicerTractographyFiducialSeeding_TCL_SRCS "${SlicerTractographyFiducialSeeding_SRCS}" "")
 
+# --------------------------------------------------------------------------
+# Loadable Module support, must be done after TCL Wrapping
+
+#GENERATELM(SlicertTractographyFiducialSeeding_SRCS SlicerTractographyFiducialSeeding.txt)
 
 # --------------------------------------------------------------------------
 # Build the library

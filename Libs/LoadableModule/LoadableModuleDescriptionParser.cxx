@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 #include <stack>
+#include <cctype>
+#include <algorithm>
 #include "expat.h"
 
 /*********************
@@ -312,4 +314,40 @@ LoadableModuleDescriptionParser::Parse( const std::string& xml, LoadableModuleDe
   description = parserState.CurrentDescription;
   return status;
 
+}
+
+int
+LoadableModuleDescriptionParser::ParseText( const std::string& txt, LoadableModuleDescription& description)
+{
+  int status = 0;
+  std::string::size_type pos = 0;
+  std::string::size_type colon = txt.find(":", pos);
+  std::string::size_type newline = txt.find("\n", pos);
+  
+  while (colon != std::string::npos) {
+    std::string key(txt.substr(pos, colon - pos));
+    std::string value(txt.substr(colon + 1, newline - (colon + 1)));
+    
+    std::transform(key.begin(), key.end(), key.begin(), (int(*)(int)) std::toupper);
+
+    trimLeadingAndTrailing(value);
+
+    if (key.compare("NAME") == 0) {
+      description.SetName(value);
+    } else if (key.compare("GUINAME") == 0) {
+      description.SetGUIName(value);
+    }
+
+    pos = newline + 1;
+
+    colon = txt.find(":", pos);
+    newline = txt.find("\n", pos);
+
+  }
+
+  if (description.GetGUIName().empty()) {
+    description.SetGUIName(description.GetName());
+  }
+
+  return status;
 }

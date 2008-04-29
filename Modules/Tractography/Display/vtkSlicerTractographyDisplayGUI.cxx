@@ -231,6 +231,11 @@ void vtkSlicerTractographyDisplayGUI::Exit ( )
 
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerTractographyDisplayGUI::SetModuleLogic ( vtkSlicerLogic *logic )
+{
+  this->SetLogic( dynamic_cast<vtkSlicerFiberBundleLogic*> (logic) );
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
@@ -379,6 +384,14 @@ void vtkSlicerTractographyDisplayGUI::BuildGUI ( )
 }
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerTractographyDisplayGUI::Init ( )
+{
+  vtkMRMLScene *scene = this->Logic->GetMRMLScene();
 
-
+  vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+  this->Logic->SetAndObserveMRMLSceneEvents(scene, events);
+  events->Delete();
+}
 
