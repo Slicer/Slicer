@@ -164,7 +164,8 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetPolyData(vtkPolyData *glyp
 //----------------------------------------------------------------------------
 vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyData()
 {
-  if (this->DiffusionTensorGlyphFilter && this->Visibility != 0)
+ // if (this->DiffusionTensorGlyphFilter && this->Visibility != 0)
+  if (this->DiffusionTensorGlyphFilter)
     {
     this->UpdatePolyDataPipeline();
     this->DiffusionTensorGlyphFilter->Update();
@@ -305,7 +306,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline()
     this->ScalarVisibilityOff( );
     }
    
- if (this->GetScalarVisibility())
+ if (this->GetScalarVisibility() && this->GetAutoScalarRange())
   {
   //this->DiffusionTensorGlyphFilter->Update();
   double *range = this->DiffusionTensorGlyphFilter->GetOutput()->GetScalarRange();

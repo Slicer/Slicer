@@ -1623,14 +1623,15 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
               }
             actor->GetMapper()->SelectColorArray(mdnode->GetActiveScalarName());
             }
-          if (!(dnode->IsA("vtkMRMLFiberBundleDisplayNode")))
-            {
-            // still debugging fibre bundle display nodes
           if (!cellScalarsActive)
             {
             // set the scalar range
             actor->GetMapper()->SetScalarRange(mdnode->GetScalarRange());
-            actor->GetMapper()->SetScalarModeToUsePointFieldData();
+            if (!(dnode->IsA("vtkMRMLFiberBundleDisplayNode")))
+              {
+              // WHY need this, does not show glyph colors otherwise
+              actor->GetMapper()->SetScalarModeToUsePointFieldData();
+              }
             actor->GetMapper()->SetColorModeToMapScalars();            
             }
           else
@@ -1639,8 +1640,8 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
             actor->GetMapper()->SetColorModeToDefault();
             actor->GetMapper()->UseLookupTableScalarRangeOff();
             }
-            }
           }
+         //// }
         actor->GetProperty()->SetBackfaceCulling(dnode->GetBackfaceCulling());
         actor->GetProperty()->SetColor(dnode->GetColor());
         actor->GetProperty()->SetOpacity(dnode->GetOpacity());

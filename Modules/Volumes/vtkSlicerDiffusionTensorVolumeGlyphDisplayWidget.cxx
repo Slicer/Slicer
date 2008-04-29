@@ -31,7 +31,10 @@ vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::vtkSlicerDiffusionTensorVolume
   this->VisibilityButton[1] = NULL;
   this->VisibilityButton[2] = NULL;
   this->GeometryColorMenu = NULL;
-
+  this->AutoScalarRangeMenu = NULL;
+  this->ScalarRange = NULL;
+  this->MinRangeEntry = NULL;
+  this->MaxRangeEntry = NULL;
   this->GlyphDisplayWidget = NULL;
   this->DisplayFrame = NULL;
 
@@ -88,6 +91,30 @@ vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::~vtkSlicerDiffusionTensorVolum
     this->GeometryColorMenu->Delete();
     this->GeometryColorMenu = NULL;
     }
+  if (this->AutoScalarRangeMenu)
+    {
+    this->AutoScalarRangeMenu->SetParent(NULL);
+    this->AutoScalarRangeMenu->Delete();
+    this->AutoScalarRangeMenu = NULL;
+    }
+  if (this->ScalarRange)
+    {
+    this->ScalarRange->SetParent(NULL);
+    this->ScalarRange->Delete();
+    this->ScalarRange = NULL;
+    }
+  if (this->MinRangeEntry)
+    {
+    this->MinRangeEntry->SetParent(NULL);
+    this->MinRangeEntry->Delete();
+    this->MinRangeEntry = NULL;
+    }
+  if (this->MaxRangeEntry)
+    {
+    this->MaxRangeEntry->SetParent(NULL);
+    this->MaxRangeEntry->Delete();
+    this->MaxRangeEntry = NULL;
+    }
   vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, NULL);
   this->SetMRMLScene ( NULL );
 
@@ -134,7 +161,6 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessWidgetEvents ( vtk
       }
     }
 
-
   //
   // process color selector events
   //
@@ -164,6 +190,7 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessWidgetEvents ( vtk
     return;
     }
   this->UpdateMRML();
+  this->UpdateWidget();
 
   }
 
@@ -195,6 +222,18 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::UpdateMRML()
     vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dnode = this->GlypDisplayNodes[i];
     dnode->SetOpacity(this->OpacityScale->GetWidget()->GetValue());
     dnode->SetVisibility(this->VisibilityButton[i]->GetWidget()->GetSelectedState());
+
+    std::string autoRange(this->AutoScalarRangeMenu->GetWidget()->GetValue());
+    if (autoRange == "Auto")
+      {
+      dnode->SetAutoScalarRange(1);
+      }
+    else
+      {
+      dnode->SetAutoScalarRange(0);
+      }
+    dnode->SetScalarRange(this->MinRangeEntry->GetValueAsDouble(), 
+                          this->MaxRangeEntry->GetValueAsDouble());
     }
 
   this->UpdatingMRML = 0;
@@ -273,6 +312,27 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::UpdateWidget()
     if (i == 0)
       {
       this->OpacityScale->GetWidget()->SetValue(dnode->GetOpacity());
+      
+      double range[2];
+      if (dnode->GetAutoScalarRange())
+        {
+        if (dnode->GetPolyData())
+          {
+          dnode->GetPolyData()->GetScalarRange(range);
+          this->MinRangeEntry->SetValueAsDouble(range[0]);
+          this->MaxRangeEntry->SetValueAsDouble(range[1]);
+          }
+        this->MinRangeEntry->SetEnabled(0);
+        this->MaxRangeEntry->SetEnabled(0);
+        }
+      else 
+        {
+        dnode->GetScalarRange(range);
+        this->MinRangeEntry->SetValueAsDouble(range[0]);
+        this->MaxRangeEntry->SetValueAsDouble(range[1]);
+        this->MinRangeEntry->SetEnabled(1);
+        this->MaxRangeEntry->SetEnabled(1);
+        }
       if (dnode->GetColorNode() != NULL)
         {
         vtkMRMLColorNode *color =
@@ -283,8 +343,8 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::UpdateWidget()
           this->ColorSelectorWidget->SetSelected(dnode->GetColorNode());
           }
         }
-      }
-    }
+      } // if (i==0)
+    } // for
 
 
   vtkMRMLDiffusionTensorDisplayPropertiesNode *dpnode = this->GetCurrentDTDisplayPropertyNode();
@@ -311,6 +371,9 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::RemoveWidgetObservers ( )
     }
 
   this->GeometryColorMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->AutoScalarRangeMenu->GetWidget()->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MinRangeEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MaxRangeEntry->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   // TO DO glyph widget
   }
@@ -419,6 +482,42 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
     this->OpacityScale->GetWidgetName() );
 
+
+  this->AutoScalarRangeMenu = vtkKWMenuButtonWithLabel::New();
+  this->AutoScalarRangeMenu->SetParent(this->DisplayFrame->GetFrame());
+  this->AutoScalarRangeMenu->Create();
+  this->AutoScalarRangeMenu->SetLabelWidth(12);
+  this->AutoScalarRangeMenu->SetLabelText("Scalar Range:");
+  this->AutoScalarRangeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Manual");
+  this->AutoScalarRangeMenu->GetWidget()->GetMenu()->AddRadioButton ( "Auto");
+  this->AutoScalarRangeMenu->GetWidget()->SetValue ( "Auto" );
+  //this->AutoScalarRangeMenu->GetWidget()->GetMenu()->SetItemCommand(0, this, "ProcessButtonsCommand");
+  //this->AutoScalarRangeMenu->GetWidget()->GetMenu()->SetItemCommand(1, this, "ProcessButtonsCommand");
+  this->AutoScalarRangeMenu->GetWidget()->SetWidth ( 7 );
+  this->Script(
+    "pack %s -side left -anchor nw -expand n -fill x -padx 2 -pady 2", 
+    this->AutoScalarRangeMenu->GetWidgetName());
+
+
+  this->MinRangeEntry = vtkKWEntry::New();
+  this->MinRangeEntry->SetParent(this->DisplayFrame->GetFrame());
+  this->MinRangeEntry->Create();
+  this->MinRangeEntry->SetWidth(10);
+  //this->MinRangeEntry->SetCommand(this, "ProcessMinRangeEntryCommand");
+  //this->Script("grid %s -row 0 -column 3 -sticky w",
+  this->Script("pack %s -side left -anchor nw -expand yes -fill x -padx 2 -pady 2", 
+               this->MinRangeEntry->GetWidgetName() );
+
+  this->MaxRangeEntry = vtkKWEntry::New();
+  this->MaxRangeEntry->SetParent(this->DisplayFrame->GetFrame());
+  this->MaxRangeEntry->Create();
+  this->MaxRangeEntry->SetWidth(10);
+  //this->MaxRangeEntry->SetCommand(this, "ProcessMinRangeEntryCommand");
+  //this->Script("grid %s -row 0 -column 3 -sticky w",
+  this->Script("pack %s -side left -anchor nw -expand yes -fill x -padx 2 -pady 2", 
+               this->MaxRangeEntry->GetWidgetName() );
+
+
   this->GlyphDisplayWidget = vtkSlicerDiffusionTensorGlyphDisplayWidget::New();
   this->GlyphDisplayWidget->SetParent ( this->DisplayFrame );
   this->GlyphDisplayWidget->SetMRMLScene(this->GetMRMLScene());
@@ -442,8 +541,12 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::CreateWidget ( )
     }
 
   this->GeometryColorMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->AutoScalarRangeMenu->GetWidget()->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
+  this->MinRangeEntry->AddObserver (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->MaxRangeEntry->AddObserver (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-
+  this->UpdateWidget();
   }
 
 //---------------------------------------------------------------------------

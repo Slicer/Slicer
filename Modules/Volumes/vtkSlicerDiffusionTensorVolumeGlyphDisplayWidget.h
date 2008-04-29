@@ -30,9 +30,11 @@
 
 #include "vtkKWCheckButtonWithLabel.h"
 #include "vtkKWScaleWithLabel.h"
+#include "vtkKWRange.h"
 #include "vtkKWChangeColorButton.h"
 #include "vtkKWMenuButtonWithLabel.h"
 #include "vtkKWFrameWithLabel.h"
+#include "vtkKWEntry.h"
 
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
@@ -105,6 +107,11 @@ protected:
   vtkKWMenuButtonWithLabel     *GeometryColorMenu;
   vtkSlicerNodeSelectorWidget  *ColorSelectorWidget;
   vtkKWScaleWithLabel          *OpacityScale;
+
+  vtkKWMenuButtonWithLabel     *AutoScalarRangeMenu;
+  vtkKWRange                   *ScalarRange;
+  vtkKWEntry                   *MinRangeEntry;
+  vtkKWEntry                   *MaxRangeEntry;
 
   vtkSlicerDiffusionTensorGlyphDisplayWidget *GlyphDisplayWidget;
 

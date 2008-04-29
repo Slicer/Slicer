@@ -47,7 +47,8 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->Diffuse = 1.0;
   this->Specular = 0;
   this->Power = 1;
-  
+  this->AutoScalarRange = 1;
+
   // Arrays
   this->ScalarRange[0] = 0;
   this->ScalarRange[1] = 100;
@@ -109,6 +110,8 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " vectorVisibility=\"" << (this->VectorVisibility ? "true" : "false") << "\"";
 
   of << indent << " tensorVisibility=\"" << (this->TensorVisibility ? "true" : "false") << "\"";
+
+  of << indent << " autoScalarRange=\"" << (this->AutoScalarRange ? "true" : "false") << "\"";
 
   of << indent << " scalarRange=\"" << this->ScalarRange[0] << " "
      << this->ScalarRange[1] << "\"";
@@ -258,6 +261,17 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
         this->TensorVisibility = 0;
         }
       }
+    else if (!strcmp(attName, "autoScalarRange")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->AutoScalarRange = 1;
+        }
+      else
+        {
+        this->AutoScalarRange = 0;
+        }
+      }
     else if (!strcmp(attName, "colorNodeRef")) 
       {
       this->SetColorNodeID(attValue);
@@ -280,6 +294,8 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLDisplayNode *node = (vtkMRMLDisplayNode *) anode;
 
+  this->DisableModifiedEventOn();
+
   // Strings
 
   this->SetColor(node->Color);
@@ -295,11 +311,18 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetPower(node->Power);
   this->SetVisibility(node->Visibility);
   this->SetScalarVisibility(node->ScalarVisibility);
+  this->SetVectorVisibility(node->VectorVisibility);
+  this->SetTensorVisibility(node->TensorVisibility);
+  this->SetAutoScalarRange(node->AutoScalarRange);
   this->SetBackfaceCulling(node->BackfaceCulling);
   this->SetClipping(node->Clipping);
   this->SetAndObserveTextureImageData(node->TextureImageData);
   this->SetColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
+
+  this->DisableModifiedEventOff();
+  this->InvokePendingModifiedEvent();
+
 }
 
 //----------------------------------------------------------------------------
@@ -317,6 +340,9 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Power:             " << this->Power << "\n";
   os << indent << "Visibility:        " << this->Visibility << "\n";
   os << indent << "ScalarVisibility:  " << this->ScalarVisibility << "\n";
+  os << indent << "VectorVisibility:  " << this->VectorVisibility << "\n";
+  os << indent << "TensorVisibility:  " << this->TensorVisibility << "\n";
+  os << indent << "AutoScalarRange:   " << this->AutoScalarRange << "\n";
   os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
   os << indent << "Clipping:          " << this->Clipping << "\n";
 

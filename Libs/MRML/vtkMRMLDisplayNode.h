@@ -159,6 +159,13 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   vtkGetMacro(TensorVisibility, int);
   vtkSetMacro(TensorVisibility, int);
 
+
+  // Description:
+  // Indicates whether to use scalar range from polydata or the one specidied by ScalarRange
+  vtkBooleanMacro(AutoScalarRange, int);
+  vtkGetMacro(AutoScalarRange, int);
+  vtkSetMacro(AutoScalarRange, int);
+
   // Description:
   // Range of scalar values to render rather than the single color designated by colorName
   vtkSetVector2Macro(ScalarRange, double);
@@ -229,6 +236,7 @@ protected:
   int ScalarVisibility;
   int VectorVisibility;
   int TensorVisibility;
+  int AutoScalarRange;
 
   // Arrays
   double ScalarRange[2];
