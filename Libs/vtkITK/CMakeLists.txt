@@ -71,8 +71,8 @@ set(include_dirs
 
 include_directories(${include_dirs})
 
-# GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
-# SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
+GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/*.h") 
 install(FILES 
@@ -95,8 +95,8 @@ add_library(vtkITK
   ${vtkITK_TCL_SRCS} 
   )
 
-# GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
-# SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} vtkITK)
+GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
+SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} vtkITK)
 
 if(Slicer3_SOURCE_DIR)
   if(BUILD_SHARED_LIBS)
