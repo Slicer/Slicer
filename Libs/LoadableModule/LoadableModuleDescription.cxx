@@ -15,13 +15,42 @@
 #include "LoadableModuleDescription.h"
 
 
-LoadableModuleDescription::LoadableModuleDescription()
+LoadableModuleDescription::LoadableModuleDescription() :
+  Name(""),
+  ShortName(""),
+  GUIName(""),
+  TclInitName(""),
+  Message(""),
+  GUIPtr(NULL),
+  LogicPtr(NULL),
+  TclInitFunction(NULL),
+  Dependencies(0),
+  Type("Unknown"),
+  Target(""),
+  Location(""),
+  AlternativeType(""),
+  AlternativeTarget(""),
+  AlternativeLocation("")
 {
-  this->Type = "Unknown";
 }
 
 
-LoadableModuleDescription::LoadableModuleDescription(const LoadableModuleDescription &md)
+LoadableModuleDescription::LoadableModuleDescription(const LoadableModuleDescription &md) :
+  Name(""),
+  ShortName(""),
+  GUIName(""),
+  TclInitName(""),
+  Message(""),
+  GUIPtr(NULL),
+  LogicPtr(NULL),
+  TclInitFunction(NULL),
+  Dependencies(0),
+  Type("Unknown"),
+  Target(""),
+  Location(""),
+  AlternativeType(""),
+  AlternativeTarget(""),
+  AlternativeLocation("")
 {
   this->Name = md.Name;
   this->ShortName = md.ShortName;
@@ -35,7 +64,9 @@ LoadableModuleDescription::LoadableModuleDescription(const LoadableModuleDescrip
  
   this->TclInitFunction = md.TclInitFunction;
 
-  this->Dependencies = md.Dependencies;
+  std::copy(md.Dependencies.begin(),
+            md.Dependencies.end(),
+            std::back_inserter(this->Dependencies));
 
   this->Type = md.Type;
   this->Target = md.Target;
@@ -61,7 +92,9 @@ LoadableModuleDescription::operator=(const LoadableModuleDescription &md)
 
   this->TclInitFunction = md.TclInitFunction;
 
-  this->Dependencies = md.Dependencies;
+  std::copy(md.Dependencies.begin(),
+            md.Dependencies.end(),
+            std::back_inserter(this->Dependencies));
 
   this->Type = md.Type;
   this->Target = md.Target;
