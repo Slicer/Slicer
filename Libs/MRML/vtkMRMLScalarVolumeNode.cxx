@@ -286,7 +286,7 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevelsWithData(vtkMRMLScalarVol
     std::string nname ( this->GetName() );
     if ( nname != "" )
       {
-      int i = nname.find ( "stat", 0 );
+      unsigned int i = nname.find ( "stat", 0 );
       if ( i != std::string::npos )
         {
         if ( displayNode != NULL ) 

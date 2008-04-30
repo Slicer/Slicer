@@ -250,7 +250,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
   else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
     {
     vtkDebugMacro("Checking we have right info in file");
-    char *value = reader->GetHeaderValue("modality");
+    const char *value = reader->GetHeaderValue("modality");
     if (value == NULL)
       {
       reader->Delete();

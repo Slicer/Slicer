@@ -205,7 +205,7 @@ void vtkMRMLColorTableNode::PrintSelf(ostream& os, vtkIndent indent)
   if (this->Names.size() > 0)
     {
     os << indent << "Color Names:\n";
-    for (unsigned int i = 0; (int)i < this->Names.size(); i++)
+    for (unsigned int i = 0; i < this->Names.size(); i++)
       {
       os << indent << indent << i << " " << this->GetColorName(i) << endl;
       if ( i > 10 )
@@ -1090,7 +1090,7 @@ void vtkMRMLColorTableNode::SetNumberOfColors(int n)
     this->GetLookupTable()->SetNumberOfTableValues(n);
     }
 
-  if (this->Names.size() != n)
+  if (this->Names.size() != (unsigned int)n)
     {
     this->Names.resize(n);
     }
@@ -1174,7 +1174,7 @@ int vtkMRMLColorTableNode::GetColorIndexByName(const char *name)
   if (this->GetNamesInitialised() && name != NULL)
     {
     std::string strName = name;
-    for (unsigned int i = 0; (int)i < this->Names.size(); i++)
+    for (unsigned int i = 0; i < this->Names.size(); i++)
       {
       if (strName.compare(this->GetColorName(i)) == 0)
         {
