@@ -1,6 +1,6 @@
 // .NAME vtkSlicerMeasurementFrameWidget 
 // .SECTION Description
-// This class implements Slicer's DWI Measurement Frame widget, part of the GradientEditor GUI.
+// This class implements Slicer's DWI Measurement Frame widget, part of the DiffusionEditor GUI.
 // Inherits most behavior from vtkSlicerWidget.
 #ifndef __vtkSlicerMeasurementFrameWidget_h
 #define __vtkSlicerMeasurementFrameWidget_h
@@ -39,7 +39,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
     virtual void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData);
 
     // Description:
-    // Updates the widget when a new node is loaded.
+    // Updates the widget when a new ActiveVolumeNode is loaded.
     void UpdateWidget(vtkMRMLVolumeNode *node);
 
     // Description:
@@ -51,6 +51,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
       };
     //ETX
 
+    // Description:
+    // Sets the Logic to the current vtkSlicerDiffusionEditorLogic of the editor.
     void SetLogic(vtkSlicerDiffusionEditorLogic *logic);
 
   protected:
@@ -62,15 +64,15 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
     virtual void CreateWidget();
 
     // Description:
-    // Updates the matrixWidget (GUI).
+    // Updates the MatrixWidget (GUI).
     void UpdateMatrix();
 
     // Description:
-    // Saves changes of the matrix to the ActiveVolumeNode.
+    // Saves changes of the Matrix to the ActiveVolumeNode.
     void SaveMatrix();
 
     // Description:
-    // Return value is 1 if Determinat is +1 or -1; otherwise 0;
+    // Return value is 1 if determinat is +1 or -1; otherwise 0;
     int CheckDeterminant();
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
@@ -79,7 +81,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
     //widgets (GUI)
     vtkKWFrameWithLabel *MeasurementFrame;
     vtkKWMatrixWidget *MatrixWidget;    
-    vtkKWPushButton *NegativeButton;
+    vtkKWPushButton *InvertButton;
     vtkKWPushButton *SwapButton;    
     vtkKWPushButton *RotateButton;
     vtkKWPushButton *IdentityButton;

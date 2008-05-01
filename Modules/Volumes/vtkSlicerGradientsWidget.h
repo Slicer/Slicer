@@ -1,6 +1,6 @@
 // .NAME vtkSlicerGradientsWidget 
 // .SECTION Description
-// This class implements Slicer's DWI Gradients widget, part of the GradientEditor GUI.
+// This class implements Slicer's DWI Gradients widget, part of the DiffusionEditor GUI.
 // Inherits most behavior from vtkSlicerWidget.
 #ifndef __vtkSlicerGradientsWidget_h
 #define __vtkSlicerGradientsWidget_h
@@ -8,6 +8,7 @@
 #include "vtkVolumes.h"
 #include "vtkSlicerWidget.h"
 #include "vtkSlicerDiffusionEditorLogic.h"
+#include "vtkSlicerApplication.h"
 
 class vtkMRMLDiffusionWeightedVolumeNode;
 class vtkDoubleArray;
@@ -41,11 +42,11 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
     void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData );
 
     // Description:
-    // Updates the widget when a new node is loaded.
+    // Updates the widget when a new ActiveVolumeNode is loaded.
     void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode);
 
     // Description:
-    // Propagates keypress-events generated in the gradientsTextbox.
+    // Propagates keypress-events generated in the GradientsTextbox.
     void TextFieldModifiedCallback();
 
     // Description:
@@ -57,9 +58,17 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
       };
     //ETX
 
+    // Description:
+    // Sets the Logic to the current vtkSlicerDiffusionEditorLogic of the editor.
     void SetLogic(vtkSlicerDiffusionEditorLogic *logic);
 
+    // Description:
+    // Enables/Disables the whole widget, also collapses the widget.
     void SetStatus(int status);
+
+    // Description:
+    // Sets the Application to the current vtkSlicerApplication.
+    vtkSetObjectMacro(Application, vtkSlicerApplication);
 
   protected:
     vtkSlicerGradientsWidget(void);
@@ -70,11 +79,11 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
     virtual void CreateWidget();
 
     // Description:
-    // Updates the gradientsTextbox containing bValue and gradients (GUI).
+    // Updates the GradientsTextbox containing bValue and gradients (GUI).
     void UpdateGradients();
 
     // Description:
-    // Updates the status label for the gradients (GUI).
+    // Updates the StatusLabel for the gradients (GUI).
     void UpdateStatusLabel(int status);
 
     // Description:
@@ -84,6 +93,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
     // Description:
     // Displays a message dialog to the user (GUI).
     void DisplayMessageDialog(const char* message);
+
+    vtkSlicerApplication *Application;
 
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkDoubleArray *Gradients;

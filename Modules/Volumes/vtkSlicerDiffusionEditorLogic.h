@@ -1,9 +1,9 @@
 // .NAME vtkSlicerDiffusionEditorLogic 
 // .SECTION Description
-// This class implements Slicer's main GradientsEditor Logic, inherits most behavior from 
+// This class implements Slicer's DiffusionEditor Logic, inherits most behavior from 
 // vtkSlicerLogic. This class manages the logic associated with loading gradients from files 
 // and testing given gradients for validity. It also holds the logic for the undo/redo/restore 
-// mechanism of the GradientEditor.
+// mechanism of the DiffusionEditor.
 #ifndef __vtkSlicerDiffusionEditorLogic_h
 #define __vtkSlicerDiffusionEditorLogic_h
 
@@ -27,13 +27,13 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorLogic : public vtkSlicerLogic
 
     // Description:
     // Adds gradients from a file to the GUI. Filetypes are restricted to .txt/.nhdr.
-    // Return value is 0 when file contains invalid values; otherwise 1.
+    // Return value is 0 if file contains invalid values; otherwise 1.
     int AddGradients(const char *filename, int numberOfGradients, vtkDoubleArray *newBValue, 
       vtkDoubleArray *newGradients);
 
     // Description:
     // Parses given ASCII gradients back into arrays of gradients and bValues.
-    // Return value is 0 when given gradients can't be parsed or contain invalid/not enough
+    // Return value is 0 if given gradients can't be parsed or contain invalid/not enough
     // values; otherwise 1.
     int ParseGradients(const char  *gradients, int numberOfGradients, vtkDoubleArray *newBValues, 
       vtkDoubleArray *newGradients);
@@ -45,7 +45,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorLogic : public vtkSlicerLogic
     //ETX
 
     // Description:
-    // Pushes the current ActiveVolumeNode onto the UndoRedoStack, makes a backup 
+    // Pushes the current ActiveVolumeNode into the UndoRedoStack, makes a backup 
     // copy of the node so that changes are undoable/redoable; 
     void SaveStateForUndoRedo();
 
@@ -92,12 +92,9 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorLogic : public vtkSlicerLogic
 
     // Description:
     // Parses a string into a double value.
-    // Return value is 0 when parsing was not successful; otherwise 1.
+    // Return value is 0 if parsing was not successful; otherwise 1.
     int StringToDouble(const std::string &s, double &result);
     //ETX
-
-    vtkMRMLDiffusionWeightedVolumeNode *ActiveDWINode;
-    vtkMRMLDiffusionTensorVolumeNode *ActiveDTINode;
 
     // Description:
     // Points to the current node in the UndoRedoStack (node that is displayed in the GUI).
@@ -106,6 +103,9 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorLogic : public vtkSlicerLogic
     // Description:
     // Return value is 1 if editor is in undo mode; otherwise 0.
     int UndoFlag;
+
+    vtkMRMLDiffusionWeightedVolumeNode *ActiveDWINode;
+    vtkMRMLDiffusionTensorVolumeNode *ActiveDTINode;
 
   private:
     vtkSlicerDiffusionEditorLogic (const vtkSlicerDiffusionEditorLogic&); // Not implemented.

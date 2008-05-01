@@ -7,6 +7,7 @@
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkDoubleArray.h"
 #include "vtkTimerLog.h"
+#include "vtkSlicerTheme.h"
 #include <sstream>
 //widgets
 #include "vtkKWFrameWithLabel.h"
@@ -28,6 +29,7 @@ vtkCxxRevisionMacro (vtkSlicerGradientsWidget, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerGradientsWidget::vtkSlicerGradientsWidget(void)
   {
+  this->Application = NULL;
   this->ActiveVolumeNode = NULL;
   this->GradientsFrame = NULL;
   this->GradientsTextbox = NULL;
@@ -48,6 +50,11 @@ vtkSlicerGradientsWidget::~vtkSlicerGradientsWidget(void)
   if (this->ActiveVolumeNode)
     {
     vtkSetMRMLNodeMacro(this->ActiveVolumeNode, NULL);
+    }
+   if (this->Application)
+    {
+    this->Application->Delete();
+    this->Application = NULL;
     }
   if (this->GradientsFrame)
     {
@@ -203,12 +210,12 @@ void vtkSlicerGradientsWidget::UpdateStatusLabel(int status)
   {
   if(!status)
     {
-    this->StatusLabel->SetBackgroundColor(1, 0, 0); //set red     
+    this->StatusLabel->SetBackgroundColor(this->Application->GetSlicerTheme()->GetSlicerColors()->SliceGUIRed); //set red     
     this->StatusLabel->SetText("Gradients: INVALID");
     }
   else
     {
-    this->StatusLabel->SetBackgroundColor(0, 1, 0); //set green   
+    this->StatusLabel->SetBackgroundColor(this->Application->GetSlicerTheme()->GetSlicerColors()->SliceGUIGreen); //set green   
     this->StatusLabel->SetText("Gradients: VALID");    
     }
   }

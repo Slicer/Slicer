@@ -1,6 +1,6 @@
 // .NAME vtkSlicerDiffusionEditorWidget 
 // .SECTION Description
-// This class implements Slicer's main GradientsEditor GUI.
+// This class implements Slicer's main DiffusionEditor GUI.
 // Inherits most behavior from vtkSlicerWidget.
 #ifndef __vtkSlicerDiffusionEditorWidget_h
 #define __vtkSlicerDiffusionEditorWidget_h
@@ -29,7 +29,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorWidget : public vtkSlicerWidget
     void PrintSelf(ostream& os, vtkIndent indent);
 
     // Description:
-    // Add/Remove observers on widgets in the GUI.
+    // Add/Remove observers on KWwidgets in the GUI.
     virtual void AddWidgetObservers();
     virtual void RemoveWidgetObservers();
 
@@ -38,13 +38,15 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorWidget : public vtkSlicerWidget
     void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData );
 
     // Description:
-    // Updates the widget when a new node is loaded.
+    // Updates the widget if a new ActiveVolumeNode is loaded.
     void UpdateWidget(vtkMRMLVolumeNode *node);
 
     // Description:
     // Sets the Application to the current vtkSlicerApplication.
     vtkSetObjectMacro(Application, vtkSlicerApplication);
 
+    // Description:
+    // Returns the logic of the DiffusionEditor.
     vtkGetObjectMacro(Logic, vtkSlicerDiffusionEditorLogic);
 
   protected:

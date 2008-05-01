@@ -28,7 +28,7 @@ vtkSlicerMeasurementFrameWidget::vtkSlicerMeasurementFrameWidget(void)
   this->MeasurementFrame = NULL;
   this->MatrixWidget = NULL;
   this->RotateButton = NULL;
-  this->NegativeButton = NULL;
+  this->InvertButton = NULL;
   this->IdentityButton = NULL;
   this->SwapButton = NULL;
   this->AngleCombobox = NULL;
@@ -68,11 +68,11 @@ vtkSlicerMeasurementFrameWidget::~vtkSlicerMeasurementFrameWidget(void)
     this->SwapButton->Delete();
     this->SwapButton = NULL;
     }
-  if (this->NegativeButton)
+  if (this->InvertButton)
     {
-    this->NegativeButton->SetParent (NULL);
-    this->NegativeButton->Delete();
-    this->NegativeButton = NULL;
+    this->InvertButton->SetParent (NULL);
+    this->InvertButton->Delete();
+    this->InvertButton = NULL;
     }
   if (this->RotateButton)
     {
@@ -108,7 +108,7 @@ vtkSlicerMeasurementFrameWidget::~vtkSlicerMeasurementFrameWidget(void)
 void vtkSlicerMeasurementFrameWidget::AddWidgetObservers ( )
   {
   this->RotateButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-  this->NegativeButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->InvertButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->SwapButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);  
   this->IdentityButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);  
   this->MatrixWidget->AddObserver(vtkKWMatrixWidget::ElementChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -122,7 +122,7 @@ void vtkSlicerMeasurementFrameWidget::AddWidgetObservers ( )
 void vtkSlicerMeasurementFrameWidget::RemoveWidgetObservers( )
   {
   this->RotateButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
-  this->NegativeButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->InvertButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->SwapButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);   
   this->IdentityButton->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);  
   this->MatrixWidget->RemoveObservers(vtkKWMatrixWidget::ElementChangedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -235,7 +235,7 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
     //enable/disable buttons
     if (numberSelected >= 1)
       {
-      this->NegativeButton->SetEnabled(1);
+      this->InvertButton->SetEnabled(1);
       if(numberSelected == 2)
         {
         this->SwapButton->SetEnabled(1);
@@ -259,7 +259,7 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
       }
     else 
       {
-      this->NegativeButton->SetEnabled(0);
+      this->InvertButton->SetEnabled(0);
       this->RotateButton->SetEnabled(0);
       this->AngleLabel->SetEnabled(0);
       this->AngleCombobox->SetEnabled(0);
@@ -310,8 +310,8 @@ void vtkSlicerMeasurementFrameWidget::ProcessWidgetEvents (vtkObject *caller, un
     this->SaveMatrix();
     }
 
-  //negative columns
-  else if (this->NegativeButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent)
+  //invert columns
+  else if (this->InvertButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent)
     {
     for(unsigned int j=0; j<3; j++)
       {
@@ -387,26 +387,26 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
     this->Checkbuttons[i] = checkButton;
     this->Checkbuttons[i]->SetParent(this->MeasurementFrame->GetFrame());
     this->Checkbuttons[i]->Create();
-    this->Checkbuttons[i]->SetBalloonHelpString("Enable column for negate/rotate/swap option.");
+    this->Checkbuttons[i]->SetBalloonHelpString("Enable column for invert/rotate/swap option.");
     this->Script("grid %s -row 4 -column %d -sticky n", 
       checkButton->GetWidgetName(), i);
     }
 
-  //create neagative button
-  this->NegativeButton = vtkKWPushButton::New();
-  this->NegativeButton->SetParent(this->MeasurementFrame->GetFrame());
-  this->NegativeButton->Create();
-  this->NegativeButton->SetText("Negate Selected");
-  this->NegativeButton->SetWidth(15);
-  this->NegativeButton->SetEnabled(0);
-  this->NegativeButton->SetBalloonHelpString("Negate selected columns.");
+  //create invert button
+  this->InvertButton = vtkKWPushButton::New();
+  this->InvertButton->SetParent(this->MeasurementFrame->GetFrame());
+  this->InvertButton->Create();
+  this->InvertButton->SetText("Invert Selected");
+  this->InvertButton->SetWidth(14);
+  this->InvertButton->SetEnabled(0);
+  this->InvertButton->SetBalloonHelpString("Invert selected columns.");
 
   //create swap button
   this->SwapButton = vtkKWPushButton::New();
   this->SwapButton->SetParent(this->MeasurementFrame->GetFrame());
   this->SwapButton->Create();
   this->SwapButton->SetText("Swap Selected");
-  this->SwapButton->SetWidth(15);
+  this->SwapButton->SetWidth(14);
   this->SwapButton->SetEnabled(0);
   this->SwapButton->SetBalloonHelpString("Swap selected columns (two have to be selected).");
 
@@ -415,7 +415,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->RotateButton->SetParent(this->MeasurementFrame->GetFrame());
   this->RotateButton->Create();
   this->RotateButton->SetText("Rotate Selected");
-  this->RotateButton->SetWidth(15);
+  this->RotateButton->SetWidth(14);
   this->RotateButton->SetEnabled(0);
   this->RotateButton->SetBalloonHelpString("Rotate selected column by angle value (one has to be selected).");
 
@@ -455,7 +455,7 @@ void vtkSlicerMeasurementFrameWidget::CreateWidget( )
   this->Script("grid %s -row 1 -column 0 -columnspan 3 -rowspan 3", 
     this->MatrixWidget->GetWidgetName());
   this->Script("grid %s -row 3 -column 3 -sticky ne", 
-    this->NegativeButton->GetWidgetName());
+    this->InvertButton->GetWidgetName());
   this->Script("grid %s -row 2 -column 3 -sticky ne", 
     this->SwapButton->GetWidgetName());
   this->Script("grid %s -row 1 -column 3 -sticky ne", 

@@ -212,7 +212,6 @@ void vtkSlicerDiffusionEditorWidget::UpdateWidget(vtkMRMLVolumeNode *node)
   //update measurement frame
   this->MeasurementFrameWidget->UpdateWidget(this->ActiveVolumeNode);
   //update testing widget
-  this->TestingWidget->SetApplication(this->Application);
   this->TestingWidget->UpdateWidget(this->ActiveVolumeNode);
   //update editor logic
   this->Logic->SetActiveVolumeNode(this->ActiveVolumeNode);
@@ -249,6 +248,7 @@ void vtkSlicerDiffusionEditorWidget::CreateWidget( )
   this->GradientsWidget = vtkSlicerGradientsWidget::New();
   this->GradientsWidget->SetParent(this->GetParent());
   this->GradientsWidget->SetMRMLScene(this->GetMRMLScene());
+  this->GradientsWidget->SetApplication(this->Application);
   this->GradientsWidget->Create();
   this->GradientsWidget->AddWidgetObservers();
   this->GradientsWidget->SetLogic(this->Logic);
@@ -265,9 +265,9 @@ void vtkSlicerDiffusionEditorWidget::CreateWidget( )
   //create undoButton
   this->UndoButton = vtkKWPushButton::New();
   this->UndoButton->SetParent(this->ButtonFrame);
-  this->UndoButton->SetText("Undo");  
   this->UndoButton->Create();
   this->UndoButton->SetWidth(10);
+  this->UndoButton->SetText("Undo");
   this->UndoButton->SetBalloonHelpString("Undo the last change in measurement frame/gradient values.");
 
   //create redoButton
@@ -296,6 +296,7 @@ void vtkSlicerDiffusionEditorWidget::CreateWidget( )
   this->TestingWidget = vtkSlicerDWITestingWidget::New();
   this->TestingWidget->SetParent(this->GetParent());
   this->TestingWidget->SetMRMLScene(this->GetMRMLScene());
+  this->TestingWidget->SetApplication(this->Application);
   this->TestingWidget->Create();
   this->TestingWidget->AddWidgetObservers();
   this->Script("pack %s -side top -anchor n -fill both -expand true -padx 2 -pady 2", 

@@ -1,6 +1,6 @@
 // .NAME vtkSlicerDWITestingWidget 
 // .SECTION Description
-// This class implements Slicer's main DWI Testing Widget, part of the GradientEditor GUI.
+// This class implements Slicer's main DWI Testing Widget, part of the DiffusionEditor GUI.
 // Inherits most behavior from vtkSlicerWidget.
 #ifndef __vtkSlicerDWITestingWidget_h
 #define __vtkSlicerDWITestingWidget_h
@@ -20,12 +20,10 @@ class vtkMRMLCommandLineModuleNode;
 class vtkImageData;
 //widgets
 class vtkKWFrameWithLabel;
-class vtkKWPushButton;
 class vtkKWPushButtonWithLabel;
-class vtkKWCheckButton;
 class vtkKWScaleWithLabel;
-class vtkSlicerVolumesGUI;
-class vtkSlicerTractographyDisplayGUI;
+class vtkKWLabel;
+class vtkSlicerVisibilityIcons;
 
 class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
   {
@@ -47,25 +45,31 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     void ProcessWidgetEvents(vtkObject *caller, unsigned long event, void *callData );
 
     // Description:
-    // Updates the widget when a new node is loaded.
+    // Updates the widget if a new ActiveVolumeNode is loaded.
     void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node);
-
-    // Description:
-    // Creates tracts by calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
-    void CreateTracts();
 
     //BTX
     // Description:
-    // Sets the internal value ModifiedForNewTensor when a new tensor has to be estimated.
-    // That means parameters (Measurement Frame or Gradients) have changed.
+    // Sets the internal value ModifiedForNewTensor if a new tensor has to be estimated.
+    // That means parameters (measurement frame or gradients) have changed.
     void SetModifiedForNewTensor(int modified);
     //ETX
 
+    // Description:
+    // Sets the widget to its default status.
     void SetWidgetToDefault();
 
     // Description:
     // Sets the Application to the current vtkSlicerApplication.
     vtkSetObjectMacro(Application, vtkSlicerApplication);
+
+    // Description:
+    // Sets TractVisibility and changes the icon of TractVisibilityButton accordingly.
+    void SetTractVisibility(int status);
+
+    // Description:
+    // Sets GlyphVisibility and changes the icon of GlyphVisibilityButton accordingly.
+    void SetGlyphVisibility(int plane, int status);
 
   protected:
     vtkSlicerDWITestingWidget(void);
@@ -76,19 +80,33 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     virtual void CreateWidget();
 
     // Description:
-    // Creates glyphs by invoking events in the vtkSlicerDiffusionTensorGlyphDisplayWidget.
+    // Creates tracts by calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
+    void CreateTracts();
+
+    // Description:
+    // Creates glyphs by setting the visibility of the vtkMRMLDiffusionTensorVolumeSliceDisplayNode.
     void CreateGlyphs();
 
+    // Description:
+    // Update glyph spacing by setting parameters of the vtkMRMLDiffusionTensorDisplayPropertiesNode.
     void UpdateGlyphSpacing();
 
     // Description:
-    // Enables all buttons for visibility options of DTIs. 
+    // Enables/Disables all buttons for visibility of glyphs and tracts. 
     void SetAllVisibilityButtons(int status);
 
     // Description:
-    // Is 1, if tensor has to be newly estimated.
-    // Is 0, if parameters have not changed and old tensor can be used for tractography.
+    // Is 1 if TensorNode has to be newly estimated.
+    // Is 0 if parameters have not changed and existing TensorNode can be used for tractography/glyphs.
     int ModifiedForNewTensor;
+
+    // Description:
+    // Is 1 if tracts are visible; otherwise 0;
+    int TractVisibility;
+
+    // Description:
+    // Is 1 if glyphs are visible; otherwise 0;
+    int GlyphVisibility[3];
 
     vtkSlicerApplication *Application;
 
@@ -104,13 +122,13 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     vtkSlicerNodeSelectorWidget *FiducialSelector;
     vtkSlicerNodeSelectorWidget *DTISelector;
     vtkKWPushButtonWithLabel *RunButton;
-    vtkKWCheckButton *VisibilityButton[3];
-    vtkKWCheckButton *ViewTracts;
+    vtkKWLabel *TractVisibilityLabel;
+    vtkKWPushButtonWithLabel *TractVisibilityButton;
     vtkKWFrame *GlyphFrame;
+    vtkKWLabel *GlyphVisibilityLabel;
+    vtkKWPushButtonWithLabel *GlyphVisibilityButton[3];
     vtkKWScaleWithLabel *GlyphSpacingScale;
-    //GUI
-    vtkSlicerVolumesGUI *VolumesGUI;
-    vtkSlicerTractographyDisplayGUI *TractDisplayGUI;
+    vtkSlicerVisibilityIcons *VisibilityIcons;
 
   private:
     vtkSlicerDWITestingWidget (const vtkSlicerDWITestingWidget&); // Not implemented.

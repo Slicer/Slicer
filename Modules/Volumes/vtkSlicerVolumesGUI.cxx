@@ -990,11 +990,11 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
     this->GradientFrame->GetWidgetName(), page->GetWidgetName());
 
   this->DiffusionEditorWidget = vtkSlicerDiffusionEditorWidget::New();
+  this->DiffusionEditorWidget->SetApplication((vtkSlicerApplication *)this->GetApplication());
   this->DiffusionEditorWidget->SetParent(this->GradientFrame->GetFrame());
   this->DiffusionEditorWidget->SetAndObserveMRMLScene(this->GetMRMLScene());
   this->DiffusionEditorWidget->Create();
   this->DiffusionEditorWidget->AddWidgetObservers();
-  this->DiffusionEditorWidget->SetApplication((vtkSlicerApplication *)this->GetApplication());
   app->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s", 
     this->DiffusionEditorWidget->GetWidgetName(), this->GradientFrame->GetFrame()->GetWidgetName());
 
