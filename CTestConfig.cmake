@@ -3,5 +3,5 @@ set(CTEST_NIGHTLY_START_TIME "2:00:00 EDT")
 
 set(CTEST_DROP_METHOD "http")
 set(CTEST_DROP_SITE "www.cdash.org")
-set(CTEST_DROP_LOCATION "/CDash/submit.php?project=Slicer")
+set(CTEST_DROP_LOCATION "/CDash/submit.php?project=Slicer3")
 set(CTEST_DROP_SITE_CDASH TRUE)
