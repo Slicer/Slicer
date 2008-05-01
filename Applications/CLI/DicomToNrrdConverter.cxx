@@ -77,6 +77,10 @@ This is also the space for NRRD header.
 #include "gdcmDictEntry.h"      // access to dictionary
 #include "gdcmGlobal.h"         // access to dictionary
 
+#include "itksys/RegularExpression.hxx"
+#include "itksys/Directory.hxx"
+#include "itksys/SystemTools.hxx"
+
 #include "DicomToNrrdConverterCLP.h"
 
 // relevant GE private tags
@@ -166,6 +170,7 @@ int main(int argc, char* argv[])
   bool SliceOrderIS = true;
   std::string vendor;
   bool SliceMosaic = false;
+  bool SingleSeries = true;
 
   // check if the file name is valid
   std::string nhdrname = outputFileName;
@@ -184,18 +189,74 @@ int main(int argc, char* argv[])
 
   //////////////////////////////////////////////////  
   // 0a) read one slice and figure out vendor
-  ImageIOType::Pointer gdcmIO = ImageIOType::New();
-  gdcmIO->LoadPrivateTagsOn();
-  gdcmIO->SetMaxSizeLoadEntry( 65536 );
-
   InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
   inputNames->SetInputDirectory( inputDicom.c_str() );
 
-  const ReaderType::FileNamesContainer & filenames = 
+  ReaderType::FileNamesContainer filenames;
+
+  const ReaderType::FileNamesContainer & filenamesInSeries = 
     inputNames->GetInputFileNames();
+
+  // If there are just one file in the serires returned above, it is obvious that the series is 
+  // not complete. There is no way to put diffusion weighted images in one file, even for mosaic 
+  // format. We, then, need to find all files in that directory and treate them as a single series
+  // of diffusion weighted image.
+
+  if ( filenamesInSeries.size() > 1 ) 
+  { 
+    int nFiles = filenamesInSeries.size(); 
+    filenames.resize( 0 ); 
+    for (int k = 0; k < nFiles; k++) 
+    { 
+      filenames.push_back( filenamesInSeries[k] ); 
+    } 
+  } 
+  else 
+  { 
+    std::cout << "gdcm returned just one file. \n"; 
+    SingleSeries = false; 
+    filenames.resize( 0 ); 
+    itksys::Directory directory; 
+    directory.Load( itksys::SystemTools::CollapseFullPath(inputDicom.c_str()).c_str() ); 
+    ImageIOType::Pointer gdcmIOTest = ImageIOType::New();
+ 
+    // for each patient directory 
+    for ( int k = 0; k < directory.GetNumberOfFiles(); k++) 
+    { 
+      std::string subdirectory( inputDicom.c_str() ); 
+      subdirectory = subdirectory + "/" + directory.GetFile(k); 
+ 
+      std::string sqDir( directory.GetFile(k) ); 
+      if (sqDir.length() == 1 && directory.GetFile(k)[0] == '.')   // skip self 
+      { 
+        continue; 
+      } 
+      else if (sqDir.length() == 2 && sqDir.find( ".." ) != std::string::npos)    // skip parent  
+      { 
+        continue; 
+      } 
+      else if (!itksys::SystemTools::FileIsDirectory( subdirectory.c_str() ))     // load only files 
+      { 
+        if ( gdcmIOTest->CanReadFile(subdirectory.c_str()) ) 
+        { 
+          filenames.push_back( subdirectory ); 
+        } 
+      } 
+    }
+    for (int k = 0; k < filenames.size(); k++)
+    {
+      std::cout << "itksys file names: " << filenames[k] << std::endl;
+    }
+  }
+
+ 
 
   typedef itk::OrientedImage< PixelValueType, 2 > SliceType;
   typedef itk::ImageFileReader< SliceType > SliceReaderType;
+
+  ImageIOType::Pointer gdcmIO = ImageIOType::New();
+  gdcmIO->LoadPrivateTagsOn();
+  gdcmIO->SetMaxSizeLoadEntry( 65536 );
 
   SliceReaderType::Pointer sReader = SliceReaderType::New();
   sReader->SetImageIO( gdcmIO );
@@ -454,7 +515,7 @@ int main(int argc, char* argv[])
       else 
       {
         nSliceInVolume = static_cast<int>(valueArray[0]);
-        mMosaic = static_cast<int>(sqrt(valueArray[0])+0.5);
+        mMosaic = static_cast<int> (ceil(sqrt(valueArray[0])));
         nMosaic = mMosaic;
       }
       std::cout << "Mosaic in " << mMosaic << " X " << nMosaic << " blocks (total number of blocks = " << valueArray[0] << ").\n"; 
@@ -594,22 +655,102 @@ int main(int argc, char* argv[])
       std::cout << "Number of Volume: " << nVolume << std::endl;
       std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
 
-      for ( int k = 0; k < nSlice; k ++ )
+      if (!SingleSeries)
+      {
+        std::cout << "Using 0029,1010; This is much slower" << std::endl;
+        for ( int k = 0; k < nSlice; k ++ )
+        {
+
+          gdcm::File *header0 = new gdcm::File;
+          gdcm::BinEntry* binEntry;
+
+          header0->SetMaxSizeLoadEntry(65536);
+          header0->SetFileName( filenames[k] );
+          header0->SetLoadMode( gdcm::LD_ALL );
+          header0->Load();
+
+          // copy information stored in 0029,1010 into a string for parsing
+          gdcm::DocEntry* docEntry = header0->GetFirstEntry();
+          while(docEntry)
+          {
+            if ( docEntry->GetKey() == "0029|1010"  )
+            {
+              binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
+              int binLength = binEntry->GetFullLength();
+              tag.resize( binLength );
+              uint8_t * tagString = binEntry->GetBinArea();
+
+              for (int k = 0; k < binLength; k++)
+              {
+                tag[k] = *(tagString+k);
+              }
+              break;
+            }
+            docEntry = header0->GetNextEntry();
+          }
+
+          // parse B_value from 0029,1010 tag
+          std::vector<double> valueArray(0);
+          vnl_vector_fixed<double, 3> vect3d;
+          int nItems = ExtractSiemensDiffusionInformation(tag, "B_value", valueArray);
+          if (nItems != 1 || valueArray[0] == 0)  // did not find enough information
+          {
+            std::cout << "Warning: Cannot find complete information on B_value in 0029|1010\n";
+            bValues.push_back( 0.0 );
+            vect3d.fill( 0.0 );
+            DiffusionVectors.push_back(vect3d);      
+            DiffusionVectorsOrig.push_back(vect3d);    
+            continue;
+          }
+          else 
+          {
+            bValues.push_back( valueArray[0] );
+          }
+
+          // parse DiffusionGradientDirection from 0029,1010 tag
+          valueArray.resize(0);
+          nItems = ExtractSiemensDiffusionInformation(tag, "DiffusionGradientDirection", valueArray);
+          if (nItems != 3)  // did not find enough information
+          {
+            std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010\n";
+            vect3d.fill( 0 );
+            DiffusionVectors.push_back(vect3d);      
+            DiffusionVectorsOrig.push_back(vect3d);      
+          }
+          else 
+          {
+            vect3d[0] = valueArray[0];
+            vect3d[1] = valueArray[1];
+            vect3d[2] = valueArray[2];
+            DiffusionVectorsOrig.push_back(vect3d);      
+            vect3d.normalize();
+            DiffusionVectors.push_back(vect3d);      
+            std::cout << "Image#: " << k << " BV: " << bValues[k] << " GD: " << DiffusionVectors[k] << std::endl;
+          }
+        }
+      }
+      else
+      {
+        // old code using 0019 tags.
+        std::cout << "Using 0019,100x" << std::endl;
+        for ( int k = 0; k < nSlice; k++ )
         {
           tag.clear();
           itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100c",  tag);
+          std::cout << "B_value as string: " << tag << " Tag length: " << tag.size();
 
           float b = atof( tag.c_str() );
           bValues.push_back(b);
+          std::cout << " B_value: " << b << std::endl;
 
           vnl_vector_fixed<double, 3> vect3d;
           if (b == 0)
-            {
-              vect3d.fill( 0 );
-              DiffusionVectors.push_back(vect3d);      
-              DiffusionVectorsOrig.push_back(vect3d);      
-              continue;
-            }
+          {
+            vect3d.fill( 0 );
+            DiffusionVectors.push_back(vect3d);      
+            DiffusionVectorsOrig.push_back(vect3d);      
+            continue;
+          }
 
           tag.clear();
           itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100e",  tag);
@@ -623,7 +764,7 @@ int main(int argc, char* argv[])
           DiffusionVectors.push_back(vect3d);      
           std::cout << "Image#: " << k << " BV: " << b << " GD: " << vect3d << std::endl;
         }
-
+      }
     }
   else
     {
@@ -808,72 +949,6 @@ int main(int argc, char* argv[])
              << DiffusionVectors[k-nBaseline][2] * scaleFactor << std::endl;
     }
   header.close();
-
-//  // for debug:
-//   for (int m = 0; m < filenames.size(); m++)
-//   {
-//     std::cout << "\n------File: " << filenames[m] << std::endl;
-//     gdcm::File *header0 = new gdcm::File;
-//     gdcm::BinEntry* binEntry;
-
-//     header0->SetMaxSizeLoadEntry(65536);
-//     header0->SetFileName( filenames[m] );
-//     header0->SetLoadMode( gdcm::LD_ALL );
-//     header0->Load();
-
-//     gdcm::DocEntry* docEntry = header0->GetFirstEntry();
-//     while(docEntry)
-//     {
-//       if ( docEntry->GetKey() == "0029|1010"  )
-//       {
-//         binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-//         int binLength = binEntry->GetFullLength();
-//         tag.resize( binLength );
-//         uint8_t * tagString = binEntry->GetBinArea();
-
-//         for (int k = 0; k < binLength; k++)
-//         {
-//           tag[k] = *(tagString+k);
-//         }
-//         break;
-//       }
-//       docEntry = header0->GetNextEntry();
-//     }
-
-//     std::vector<double> valueArray;
-
-//     valueArray.resize(0);
-//     int nItems = ExtractSiemensDiffusionInformation(tag, "SliceNormalVector", valueArray);
-//     std::cout << "SliceNormalVector in 0029|1010: ";
-//     for (int k = 0; k < nItems; k++)
-//     {
-//       std::cout << valueArray[k] << "     ";
-//     }
-//     std::cout << std::endl;
-
-//     valueArray.resize(0);
-//     nItems = ExtractSiemensDiffusionInformation(tag, "B_value", valueArray);
-//     std::cout << "B_value in 0029|1010: ";
-//     for (int k = 0; k < nItems; k++)
-//     {
-//       std::cout << valueArray[k] << " ";
-//     }
-//     std::cout << std::endl << "B_value in 0019|100c: " << bValues[m] << std::endl;
-
-//     valueArray.resize(0);
-//     nItems = ExtractSiemensDiffusionInformation(tag, "DiffusionGradientDirection", valueArray);
-//     std::cout << "GD in 0029|1010: ";
-//     for (int k = 0; k < nItems; k++)
-//     {
-//       std::cout << valueArray[k] << "  ";
-//     }
-
-//     std::cout << "\nGD In 0019|100e: "
-//              << DiffusionVectorsOrig[m][0] << "  " 
-//              << DiffusionVectorsOrig[m][1] << "  " 
-//              << DiffusionVectorsOrig[m][2] << std::endl;
-//   }
-
 
   return EXIT_SUCCESS;  
 }
