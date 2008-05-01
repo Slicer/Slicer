@@ -572,12 +572,12 @@ int main(int argc, char* argv[])
       for (int k = 0; k < nSlice; k += nSliceInVolume)
         {
           tag.clear();
-          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0043|1039",  tag);
+          bool exist = itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0043|1039",  tag);
           float b = atof( tag.c_str() );
           bValues.push_back(b);
 
           vnl_vector_fixed<double, 3> vect3d;
-          if (b == 0)
+          if (!exist || b == 0)
             {
               vect3d.fill( 0 );
               DiffusionVectors.push_back(vect3d);      
@@ -585,6 +585,7 @@ int main(int argc, char* argv[])
               continue;
             }
 
+          vect3d.fill( 0 );
           tag.clear();
           itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|10bb",  tag);
           vect3d[0] = atof( tag.c_str() );
@@ -602,173 +603,105 @@ int main(int argc, char* argv[])
           DiffusionVectors.push_back(vect3d);      
         }
     }
-  else if ( vendor.find("SIEMENS") != std::string::npos && !SliceMosaic )
+  else if ( vendor.find("SIEMENS") != std::string::npos )
+  {
+
+    int nStride = 1;
+    if ( !SliceMosaic )
     {
       std::cout << orthoSliceSpacing << std::endl;
-
       nSliceInVolume = sliceLocations.size();
       nVolume = nSlice/nSliceInVolume;
-
       std::cout << "Number of Slices: " << nSlice << std::endl;
       std::cout << "Number of Volume: " << nVolume << std::endl;
       std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
-
-      for (int k = 0; k < nSlice; k += nSliceInVolume)
-        {
-          tag.clear();
-          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100c",  tag);
-          float b = atof( tag.c_str() );
-          bValues.push_back(b);
-
-          vnl_vector_fixed<double, 3> vect3d;
-          if (b == 0)
-            {
-              vect3d.fill( 0 );
-              DiffusionVectors.push_back(vect3d);      
-              DiffusionVectorsOrig.push_back(vect3d);      
-              continue;
-            }
-
-          tag.clear();
-          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100e",  tag);
-          memcpy( &vect3d[0], tag.c_str()+0, 8 );
-          memcpy( &vect3d[1], tag.c_str()+8, 8 );
-          memcpy( &vect3d[2], tag.c_str()+16, 8 );
-
-          DiffusionVectorsOrig.push_back(vect3d);      
-          vect3d.normalize();
-          DiffusionVectors.push_back(vect3d);
-
-          //std::cout << "Image#: " << k << " BV: " << b << " GD: " << vect3d << std::endl;
-          std::cout << b << " " << vect3d << std::endl;
-
-        }
+      nStride = nSliceInVolume;
     }
-  else if ( vendor.find("SIEMENS") != std::string::npos && SliceMosaic )
+    else
     {
-      // each slice is a volume in mosiac form
-
       std::cout << "Data in Siemens Mosaic Format\n";
-
       nVolume = nSlice;
-
       std::cout << "Number of Volume: " << nVolume << std::endl;
       std::cout << "Number of Slices in each volume: " << nSliceInVolume << std::endl;
-
-      if (!SingleSeries)
-      {
-        std::cout << "Using 0029,1010; This is much slower" << std::endl;
-        for ( int k = 0; k < nSlice; k ++ )
-        {
-
-          gdcm::File *header0 = new gdcm::File;
-          gdcm::BinEntry* binEntry;
-
-          header0->SetMaxSizeLoadEntry(65536);
-          header0->SetFileName( filenames[k] );
-          header0->SetLoadMode( gdcm::LD_ALL );
-          header0->Load();
-
-          // copy information stored in 0029,1010 into a string for parsing
-          gdcm::DocEntry* docEntry = header0->GetFirstEntry();
-          while(docEntry)
-          {
-            if ( docEntry->GetKey() == "0029|1010"  )
-            {
-              binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
-              int binLength = binEntry->GetFullLength();
-              tag.resize( binLength );
-              uint8_t * tagString = binEntry->GetBinArea();
-
-              for (int k = 0; k < binLength; k++)
-              {
-                tag[k] = *(tagString+k);
-              }
-              break;
-            }
-            docEntry = header0->GetNextEntry();
-          }
-
-          // parse B_value from 0029,1010 tag
-          std::vector<double> valueArray(0);
-          vnl_vector_fixed<double, 3> vect3d;
-          int nItems = ExtractSiemensDiffusionInformation(tag, "B_value", valueArray);
-          if (nItems != 1 || valueArray[0] == 0)  // did not find enough information
-          {
-            std::cout << "Warning: Cannot find complete information on B_value in 0029|1010\n";
-            bValues.push_back( 0.0 );
-            vect3d.fill( 0.0 );
-            DiffusionVectors.push_back(vect3d);      
-            DiffusionVectorsOrig.push_back(vect3d);    
-            continue;
-          }
-          else 
-          {
-            bValues.push_back( valueArray[0] );
-          }
-
-          // parse DiffusionGradientDirection from 0029,1010 tag
-          valueArray.resize(0);
-          nItems = ExtractSiemensDiffusionInformation(tag, "DiffusionGradientDirection", valueArray);
-          if (nItems != 3)  // did not find enough information
-          {
-            std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010\n";
-            vect3d.fill( 0 );
-            DiffusionVectors.push_back(vect3d);      
-            DiffusionVectorsOrig.push_back(vect3d);      
-          }
-          else 
-          {
-            vect3d[0] = valueArray[0];
-            vect3d[1] = valueArray[1];
-            vect3d[2] = valueArray[2];
-            DiffusionVectorsOrig.push_back(vect3d);      
-            vect3d.normalize();
-            DiffusionVectors.push_back(vect3d);      
-            std::cout << "Image#: " << k << " BV: " << bValues[k] << " GD: " << DiffusionVectors[k] << std::endl;
-          }
-        }
-      }
-      else
-      {
-        // old code using 0019 tags.
-        std::cout << "Using 0019,100x" << std::endl;
-        for ( int k = 0; k < nSlice; k++ )
-        {
-          tag.clear();
-          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100c",  tag);
-          std::cout << "B_value as string: " << tag << " Tag length: " << tag.size();
-
-          float b = atof( tag.c_str() );
-          bValues.push_back(b);
-          std::cout << " B_value: " << b << std::endl;
-
-          vnl_vector_fixed<double, 3> vect3d;
-          if (b == 0)
-          {
-            vect3d.fill( 0 );
-            DiffusionVectors.push_back(vect3d);      
-            DiffusionVectorsOrig.push_back(vect3d);      
-            continue;
-          }
-
-          tag.clear();
-          itk::ExposeMetaData<std::string> ( *(*inputDict)[k], "0019|100e",  tag);
-
-          memcpy( &vect3d[0], tag.c_str()+0, 8 );
-          memcpy( &vect3d[1], tag.c_str()+8, 8 );
-          memcpy( &vect3d[2], tag.c_str()+16, 8 );
-
-          DiffusionVectorsOrig.push_back(vect3d);      
-          vect3d.normalize();
-          DiffusionVectors.push_back(vect3d);      
-          std::cout << "Image#: " << k << " BV: " << b << " GD: " << vect3d << std::endl;
-        }
-      }
+      nStride = 1;
     }
-  else
+
+
+    for (int k = 0; k < nSlice; k += nStride )
     {
+
+      gdcm::File *header0 = new gdcm::File;
+      gdcm::BinEntry* binEntry;
+
+      header0->SetMaxSizeLoadEntry(65536);
+      header0->SetFileName( filenames[k] );
+      header0->SetLoadMode( gdcm::LD_ALL );
+      header0->Load();
+
+      // copy information stored in 0029,1010 into a string for parsing
+      gdcm::DocEntry* docEntry = header0->GetFirstEntry();
+      while(docEntry)
+      {
+        if ( docEntry->GetKey() == "0029|1010"  )
+        {
+          binEntry = dynamic_cast<gdcm::BinEntry*> ( docEntry );
+          int binLength = binEntry->GetFullLength();
+          tag.resize( binLength );
+          uint8_t * tagString = binEntry->GetBinArea();
+
+          for (int n = 0; n < binLength; n++)
+          {
+            tag[n] = *(tagString+n);
+          }
+          break;
+        }
+        docEntry = header0->GetNextEntry();
+      }
+
+      // parse B_value from 0029,1010 tag
+      std::vector<double> valueArray(0);
+      vnl_vector_fixed<double, 3> vect3d;
+      int nItems = ExtractSiemensDiffusionInformation(tag, "B_value", valueArray);
+      if (nItems != 1 || valueArray[0] == 0)  // did not find enough information
+      {
+        std::cout << "Warning: Cannot find complete information on B_value in 0029|1010\n";
+        bValues.push_back( 0.0 );
+        vect3d.fill( 0.0 );
+        DiffusionVectors.push_back(vect3d);      
+        DiffusionVectorsOrig.push_back(vect3d);    
+        continue;
+      }
+      else 
+      {
+        bValues.push_back( valueArray[0] );
+      }
+
+      // parse DiffusionGradientDirection from 0029,1010 tag
+      valueArray.resize(0);
+      nItems = ExtractSiemensDiffusionInformation(tag, "DiffusionGradientDirection", valueArray);
+      if (nItems != 3)  // did not find enough information
+      {
+        std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010\n";
+        vect3d.fill( 0 );
+        DiffusionVectors.push_back(vect3d);      
+        DiffusionVectorsOrig.push_back(vect3d);      
+      }
+      else 
+      {
+        vect3d[0] = valueArray[0];
+        vect3d[1] = valueArray[1];
+        vect3d[2] = valueArray[2];
+        DiffusionVectorsOrig.push_back(vect3d);      
+        vect3d.normalize();
+        DiffusionVectors.push_back(vect3d);      
+        int p = bValues.size();
+        std::cout << "Image#: " << k << " BV: " << bValues[p-1] << " GD: " << DiffusionVectors[p-1] << std::endl;
+      }
     }
+  }
+  else
+  {
+  }
 
   // transform gradient directions into RAS frame 
   for (int k = 0; k < nVolume; k++)
@@ -941,7 +874,11 @@ int main(int argc, char* argv[])
   //  need to check
   for (int k = 0; k < nVolume; k++)
     {
-      float scaleFactor = sqrt( bValues[k]/maxBvalue );
+      float scaleFactor = 0;
+      if (maxBvalue > 0)
+      {
+        scaleFactor = sqrt( bValues[k]/maxBvalue );
+      }
       //std::cout << "For Multiple BValues: " << k << ": " << scaleFactor << std::endl;
       header << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << k << ":=" 
              << DiffusionVectors[k-nBaseline][0] * scaleFactor << "   " 
