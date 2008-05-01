@@ -218,7 +218,7 @@ extern "C" int Scriptedmodule_Init(Tcl_Interp *interp);
 #ifndef LABELSTATISTICS_DEBUG
 extern "C" int Labelstatistics_Init(Tcl_Interp *interp);
 #endif
-#ifndef VOLUMES_DEBUG
+#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Volumes_Init(Tcl_Interp *interp);
 #endif
 
@@ -1716,7 +1716,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set SlicesGUI %s", name);
 #endif
 
-#ifndef VOLUMES_DEBUG
+#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
     name = volumesGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
 #endif
@@ -2057,7 +2057,7 @@ int Slicer3_main(int argc, char *argv[])
     queryAtlasGUI->RemoveGUIObservers ( );
 #endif
 
-#ifndef VOLUMES_DEBUG
+#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
 //    volumesGUI->RemoveGUIObservers ( );
     volumesGUI->TearDownGUI ( );
 #endif
@@ -2211,7 +2211,7 @@ int Slicer3_main(int argc, char *argv[])
     queryAtlasGUI->Delete ( );
 #endif
     
-#ifndef VOLUMES_DEBUG
+#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
     volumesGUI->Delete ();
 #endif
 #ifndef MODELS_DEBUG
@@ -2317,7 +2317,7 @@ int Slicer3_main(int argc, char *argv[])
     queryAtlasLogic->Delete ( );
 #endif
     
-#ifndef VOLUMES_DEBUG
+#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
     volumesLogic->SetAndObserveMRMLScene ( NULL );
     volumesLogic->Delete();
 #endif
