@@ -117,6 +117,7 @@ public:
   // tubes frame
   vtkKWMenuButtonWithLabel  *TubeGlyphEigenvectorMenu;
   vtkKWScaleWithLabel  *TubeNumberOfSidesScale;
+  vtkKWScaleWithLabel  *TubeRadiusScale;
 
   // ellipsoids frame
 

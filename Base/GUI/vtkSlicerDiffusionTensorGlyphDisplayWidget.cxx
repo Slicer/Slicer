@@ -33,6 +33,7 @@ vtkSlicerDiffusionTensorGlyphDisplayWidget::vtkSlicerDiffusionTensorGlyphDisplay
   this->GlyphResolutionScale = NULL;
 
   this->TubeNumberOfSidesScale = NULL;
+  this->TubeRadiusScale = NULL;
   }
 
 
@@ -85,6 +86,13 @@ vtkSlicerDiffusionTensorGlyphDisplayWidget::~vtkSlicerDiffusionTensorGlyphDispla
     this->TubeNumberOfSidesScale->SetParent(NULL);
     this->TubeNumberOfSidesScale->Delete();
     this->TubeNumberOfSidesScale = NULL;
+    }
+
+  if (this->TubeRadiusScale)
+    {
+    this->TubeRadiusScale->SetParent(NULL);
+    this->TubeRadiusScale->Delete();
+    this->TubeRadiusScale = NULL;
     }
 
 
@@ -204,12 +212,18 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::ProcessWidgetEvents ( vtkObject
     return;
     }
   // process number of sides scale events
-  vtkKWScale *tubeSidesScale = vtkKWScale::SafeDownCast(caller);
+  vtkKWScale *scale = vtkKWScale::SafeDownCast(caller);
 
-  if (tubeSidesScale == this->TubeNumberOfSidesScale->GetWidget() && 
+  if (scale && scale == this->TubeNumberOfSidesScale->GetWidget() && 
     event == vtkKWScale::ScaleValueChangedEvent)
     {
     displayNode->SetTubeGlyphNumberOfSides((int) this->TubeNumberOfSidesScale->GetWidget()->GetValue());
+    return;
+    }
+  if (scale && scale == this->TubeRadiusScale->GetWidget() && 
+    event == vtkKWScale::ScaleValueChangedEvent)
+    {
+    displayNode->SetTubeGlyphRadius(this->TubeRadiusScale->GetWidget()->GetValue());
     return;
     }
   }
@@ -326,6 +340,8 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::UpdateWidget()
 
       this->TubeNumberOfSidesScale->GetWidget()->SetValue(displayNode->GetTubeGlyphNumberOfSides());
 
+      this->TubeRadiusScale->GetWidget()->SetValue(displayNode->GetTubeGlyphRadius());
+
       } 
     else 
       {
@@ -354,6 +370,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::UpdateMRML()
       displayNode->SetGlyphScaleFactor(this->GlyphScale->GetWidget()->GetValue());
       displayNode->SetLineGlyphResolution((int)(this->GlyphResolutionScale->GetWidget()->GetValue()));
       displayNode->SetTubeGlyphNumberOfSides((int) this->TubeNumberOfSidesScale->GetWidget()->GetValue());
+      displayNode->SetTubeGlyphRadius(this->TubeRadiusScale->GetWidget()->GetValue());
       }
     else 
       {
@@ -380,6 +397,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::AddWidgetObservers ( ) {
   this->GlyphResolutionScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->TubeNumberOfSidesScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->TubeRadiusScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   }
 
@@ -400,6 +418,7 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::RemoveWidgetObservers ( ) {
   this->GlyphResolutionScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   this->TubeNumberOfSidesScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->TubeRadiusScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
   }
 
@@ -599,6 +618,16 @@ void vtkSlicerDiffusionTensorGlyphDisplayWidget::CreateWidget ( )
   this->TubeNumberOfSidesScale->SetBalloonHelpString("set number of sides of the tube.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
     this->TubeNumberOfSidesScale->GetWidgetName() );
+
+  this->TubeRadiusScale = vtkKWScaleWithLabel::New();
+  this->TubeRadiusScale->SetParent ( tubeFrame->GetFrame() );
+  this->TubeRadiusScale->Create ( );
+  this->TubeRadiusScale->SetLabelText("Radius");
+  this->TubeRadiusScale->GetWidget()->SetRange(0.1,1.0);
+  this->TubeRadiusScale->GetWidget()->SetResolution(0.1);
+  this->TubeRadiusScale->SetBalloonHelpString("set radius of the tube.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+    this->TubeRadiusScale->GetWidgetName() );
 
 
   // ---
