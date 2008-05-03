@@ -113,8 +113,6 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     //nodes
     vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
     vtkMRMLDiffusionTensorVolumeNode *TensorNode;
-    vtkMRMLScalarVolumeNode *BaselineNode;
-    vtkMRMLScalarVolumeNode *MaskNode;
     vtkMRMLFiberBundleNode *FiberNode;
 
     //widgets (GUI)

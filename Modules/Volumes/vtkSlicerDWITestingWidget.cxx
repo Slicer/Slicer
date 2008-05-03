@@ -30,6 +30,7 @@
 #include "vtkKWScale.h"
 #include "vtkKWScaleWithLabel.h"
 #include "vtkKWLabel.h"
+#include "vtkKWMessageDialog.h"
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerDWITestingWidget);
@@ -47,8 +48,6 @@ vtkSlicerDWITestingWidget::vtkSlicerDWITestingWidget(void)
   this->DTISelector = NULL;
   this->TensorNode = NULL;
   this->FiberNode = NULL;
-  this->BaselineNode = NULL;
-  this->MaskNode = NULL;
   this->TractVisibilityButton = NULL;
   this->GlyphFrame = NULL;
   this->GlyphVisibilityLabel = NULL;
@@ -106,25 +105,10 @@ vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
     this->GlyphFrame->Delete();
     this->GlyphFrame = NULL;
     }
-  if (this->TensorNode)
-    {
-    this->TensorNode->Delete();
-    this->TensorNode = NULL;
-    }
   if (this->FiberNode)
     {
     this->FiberNode->Delete();
     this->FiberNode = NULL;
-    }
-  if (this->BaselineNode)
-    {
-    this->BaselineNode->Delete();
-    this->BaselineNode = NULL;
-    }
-  if (this->MaskNode)
-    {
-    this->MaskNode->Delete();
-    this->MaskNode = NULL;
     }
   for (int i=0; i<3; i++)
     {
@@ -217,50 +201,46 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
     if(this->ModifiedForNewTensor || this->MRMLScene->GetNodesByName("DiffusionEditor_Tensor_Node")->GetNumberOfItems() == 0 )
       {
       // create a command line module node
-      vtkMRMLCommandLineModuleNode *tensorCML = vtkMRMLCommandLineModuleNode::SafeDownCast(
+      vtkMRMLCommandLineModuleNode *tensorCLM = vtkMRMLCommandLineModuleNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
 
       // set its name  
-      tensorCML->SetModuleDescription("Diffusion Tensor Estimation");
-      tensorCML->SetName("GradientEditor: Tensor Estimation");
+      tensorCLM->SetModuleDescription("Diffusion Tensor Estimation");
+      tensorCLM->SetName("GradientEditor: Tensor Estimation");
 
       // set the parameters
-      tensorCML->SetParameterAsString("estimationMethod", "Least Squares");
-      tensorCML->SetParameterAsDouble("otsuOmegaThreshold",0.5);
-      tensorCML->SetParameterAsBool("removeIslands", 0);
-      tensorCML->SetParameterAsBool("applyMask", 0);
-      tensorCML->SetParameterAsString("inputVolume", this->ActiveVolumeNode->GetID());
+      tensorCLM->SetParameterAsString("estimationMethod", "Least Squares");
+      tensorCLM->SetParameterAsDouble("otsuOmegaThreshold",0.5);
+      tensorCLM->SetParameterAsBool("removeIslands", 0);
+      tensorCLM->SetParameterAsBool("applyMask", 0);
+      tensorCLM->SetParameterAsString("inputVolume", this->ActiveVolumeNode->GetID());
 
       // create the output nodes
-      this->BaselineNode = vtkMRMLScalarVolumeNode::SafeDownCast(
+      vtkMRMLScalarVolumeNode *baselineNodeCLM = vtkMRMLScalarVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
-      this->BaselineNode->SetScene(this->GetMRMLScene());
-      this->BaselineNode->SetName("DiffusionEditor_Baseline_Node");
-      this->MRMLScene->AddNode(this->BaselineNode);
+      baselineNodeCLM->SetScene(this->GetMRMLScene());
+      baselineNodeCLM->SetName("DiffusionEditor_Baseline_Node");
+      this->MRMLScene->AddNode(baselineNodeCLM);
 
-      this->MaskNode = vtkMRMLScalarVolumeNode::SafeDownCast(
+      vtkMRMLScalarVolumeNode *maskNodeCLM = vtkMRMLScalarVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
-      this->MaskNode->SetScene(this->GetMRMLScene());
-      this->MaskNode->SetName("DiffusionEditor_Threshold_Mask");
-      this->MRMLScene->AddNode(this->MaskNode);
+      maskNodeCLM->SetScene(this->GetMRMLScene());
+      maskNodeCLM->SetName("DiffusionEditor_Threshold_Mask");
+      this->MRMLScene->AddNode(maskNodeCLM);
 
-      if(this->TensorNode)
-        {
-        this->TensorNode->Delete(); //delete previous data to avoid leaks
-        }
-      this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
+      vtkMRMLDiffusionTensorVolumeNode *tensorNodeCLM = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLDiffusionTensorVolumeNode"));
-      this->TensorNode->SetScene(this->GetMRMLScene());
-      this->TensorNode->SetName("DiffusionEditor_Tensor_Node");
-      this->MRMLScene->AddNode(this->TensorNode);
+      tensorNodeCLM->SetScene(this->GetMRMLScene());
+      tensorNodeCLM->SetName("DiffusionEditor_Tensor_Node");
+      this->MRMLScene->AddNode(tensorNodeCLM);
 
-      this->TensorNode->SetBaselineNodeID(this->BaselineNode->GetID());
-      this->TensorNode->SetMaskNodeID(this->MaskNode->GetID());
+      tensorNodeCLM->SetBaselineNodeID(baselineNodeCLM->GetID());
+      tensorNodeCLM->SetMaskNodeID(maskNodeCLM->GetID());
 
       // set output parameters
-      tensorCML->SetParameterAsString("outputTensor", this->TensorNode->GetID());
-      tensorCML->SetParameterAsString("outputBaseline", this->BaselineNode->GetID());
-      tensorCML->SetParameterAsString("thresholdMask", this->MaskNode->GetID());
+      tensorCLM->SetParameterAsString("outputTensor", tensorNodeCLM->GetID());
+      tensorCLM->SetParameterAsString("outputBaseline", baselineNodeCLM->GetID());
+      tensorCLM->SetParameterAsString("thresholdMask", maskNodeCLM->GetID());
 
       //get the existing GUI of the "Diffusion Tensor Estimation Command Line Module" 
       vtkCommandLineModuleGUI *moduleGUI = vtkCommandLineModuleGUI::SafeDownCast(
@@ -268,16 +248,17 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
       moduleGUI->Enter();
 
       //set command line node to GUI an logic
-      moduleGUI->SetCommandLineModuleNode( tensorCML);
-      moduleGUI->GetLogic()->SetCommandLineModuleNode( tensorCML); //use the GUI's Logic to invoke the task
+      moduleGUI->SetCommandLineModuleNode(tensorCLM);
+      moduleGUI->GetLogic()->SetCommandLineModuleNode(tensorCLM); //use the GUI's Logic to invoke the task
 
       //estimate tensors
-      moduleGUI->GetLogic()->Apply( tensorCML);
+      moduleGUI->GetLogic()->Apply(tensorCLM);
 
       //clean up
-      tensorCML->Delete();
-      this->BaselineNode->Delete();
-      this->MaskNode->Delete();
+      tensorCLM->Delete();
+      tensorNodeCLM->Delete();
+      baselineNodeCLM->Delete();
+      maskNodeCLM->Delete();
       this->ModifiedForNewTensor = 0;
       }
     this->RunButton->SetEnabled(1);
@@ -287,26 +268,43 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
   //dti selected (update tracts)
   else if (selector == this->DTISelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent) 
     {
-    if(this->DTISelector->GetSelected() == NULL)
+    vtkMRMLDiffusionTensorVolumeNode *selected = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->DTISelector->GetSelected());
+
+    if(selected == NULL)
       {
       this->SetAllVisibilityButtons(0);
       return;
       }
-    this->SetAllVisibilityButtons(1);
+
+    std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glypDisplayNodes = selected->GetSliceGlyphDisplayNodes();
+    if(glypDisplayNodes.size() != 3) 
+      {
+      vtkKWMessageDialog *MessageDialog = vtkKWMessageDialog::New();
+      MessageDialog->SetParent(this->Application->GetApplicationGUI()->GetMainSlicerWindow());
+      MessageDialog->SetDisplayPositionToMasterWindowCenter();
+      MessageDialog->Create();
+      MessageDialog->SetText("Tensor Estimation not completed!");
+      MessageDialog->Invoke();
+      MessageDialog->Delete();
+      this->SetWidgetToDefault();
+      return;
+      }
+
     //set old tensorNode
     if(this->TensorNode != NULL)
       {
-      std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glypDisplayNodes = this->TensorNode->GetSliceGlyphDisplayNodes();
-      for (unsigned int i=0; i<glypDisplayNodes.size(); i++)
+      std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glypDisplayNodesOld = this->TensorNode->GetSliceGlyphDisplayNodes();
+      for (unsigned int i=0; i<glypDisplayNodesOld.size(); i++)
         {
-        glypDisplayNodes[i]->SetVisibility(0);
+        glypDisplayNodesOld[i]->SetVisibility(0);
         }
       }
     //set new tensorNode
-    this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->DTISelector->GetSelected());
+    this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(selected);
     //create tracts and glyphs
     this->CreateTracts();
     this->CreateGlyphs();
+    this->SetAllVisibilityButtons(1);
     }
 
   //---------
@@ -334,7 +332,7 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
       {
       if (button == this->GlyphVisibilityButton[i]->GetWidget()) break;
       }
-    
+
     if (i == -1) return;
 
     if(!this->GlyphVisibility[i])
@@ -374,11 +372,11 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
 void vtkSlicerDWITestingWidget::CreateGlyphs()
   {
   std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glypDisplayNodes = this->TensorNode->GetSliceGlyphDisplayNodes();
+  if(glypDisplayNodes.size() != 3) return;
   for (unsigned int i=0; i<3; i++)
     {
     if(this->GlyphVisibility[i])
       {
-      glypDisplayNodes[i]->SetVisibility(1); //glyphs on for plane i
       //change current node to TensorNode in the main GUI
       char* currentID = this->Application->GetApplicationGUI()->GetApplicationLogic()->GetSelectionNode()->GetActiveVolumeID();
       if(currentID != this->TensorNode->GetID())
@@ -386,8 +384,8 @@ void vtkSlicerDWITestingWidget::CreateGlyphs()
         this->Application->GetApplicationGUI()->GetApplicationLogic()->GetSelectionNode()->SetActiveVolumeID(this->TensorNode->GetID());
         this->Application->GetApplicationGUI()->GetApplicationLogic()->PropagateVolumeSelection();
         }
-      //adjust glyph spacing
-      this->UpdateGlyphSpacing();
+      glypDisplayNodes[i]->SetVisibility(1); //glyphs on for plane i
+      this->UpdateGlyphSpacing(); //adjust glyph spacing
       }
     else
       {
@@ -424,21 +422,22 @@ void vtkSlicerDWITestingWidget::CreateTracts()
   vtkMRMLFiducialListNode* fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(
     this->FiducialSelector->GetSelected());
 
-  //create new fiber node
-  //also check if FiberNode is in the MRML scene (needed, when node is deleated in the data modul)
-  if(this->FiberNode == NULL || this->MRMLScene->GetNodesByName("GradientenEditor_Fiber_Node")->GetNumberOfItems() == 0)
-    {
-    if(this->FiberNode != NULL) this->FiberNode->Delete();
-    this->FiberNode = vtkMRMLFiberBundleNode::New();
-    this->FiberNode->SetScene(this->GetMRMLScene());
-    this->FiberNode->SetName("GradientenEditor_Fiber_Node");
-    this->MRMLScene->AddNode(this->FiberNode);
-    }
-
   //get the existing GUI of the "Tractography Fiducial Seeding Module"
   vtkSlicerTractographyFiducialSeedingGUI *moduleGUI = vtkSlicerTractographyFiducialSeedingGUI::SafeDownCast(
     this->Application->GetModuleGUIByName("FiducialSeeding"));    
-  moduleGUI->Enter(); 
+  moduleGUI->Enter();
+
+  //create new fiber node
+  //also check if FiberNode is in the MRML scene (needed, when node is deleated in the data modul)
+  if(this->FiberNode == NULL || !this->MRMLScene->GetNodeByID(this->FiberNode->GetID()))
+    {
+    vtkMRMLFiberBundleNode *fiberNodeTract = vtkMRMLFiberBundleNode::New();
+    fiberNodeTract->SetScene(this->GetMRMLScene());
+    fiberNodeTract->SetName("GradientenEditor_Fiber_Node");
+    this->MRMLScene->AddNode(fiberNodeTract);
+    vtkSetMRMLNodeMacro(this->FiberNode, fiberNodeTract);
+    fiberNodeTract->Delete();
+    }
 
   //set the selectors to my nodes
   moduleGUI->SetVolumeSelector(this->TensorNode);
