@@ -1064,9 +1064,7 @@ int Slicer3_main(int argc, char *argv[])
 
     if (!NoModules)
     {
-      // TODO: figure out why this crashes on some gcc but not windows
-      ErrorMessage ("SKIPPING LOADABLE MODULES");
-      // loadableModuleFactory.Scan();
+      loadableModuleFactory.Scan();
     }
 
     std::vector<std::string> loadableModuleNames = 

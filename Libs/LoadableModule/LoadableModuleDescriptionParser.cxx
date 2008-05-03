@@ -23,6 +23,8 @@
 #include <algorithm>
 #include "expat.h"
 
+
+
 /*********************
  * Utility procedures for strings
  *********************/
@@ -95,10 +97,7 @@ trimLeadingAndTrailing(std::string& s, const char* extraneousChars = " \t\n")
   trimTrailing(s, extraneousChars);
 }
 
-/* ParserState: A class to keep state information for the parser. This
- * is passed to the expat code as user data.
- */
-class ParserState
+class LMParserState
 {
 public:
   XML_Parser Parser;                           /* The XML parser */
@@ -113,16 +112,18 @@ public:
   int ErrorLine;                               /* Error line number */
   int Depth;                                   /* The depth of the tag */
 
-  ParserState():Debug(false),Error(false),Depth(-1),LastData(10){};
+
+  LMParserState() : LastData(10),Debug(false),Error(false),Depth(-1){};
 };
+
 
 /***************************
  * expat callbacks to process the XML
  ***************************/
 void
-startElement(void *userData, const char *element, const char **attrs)
+lmStartElement(void *userData, const char *element, const char **attrs)
 {
-  ParserState *ps = reinterpret_cast<ParserState *>(userData);
+  LMParserState *ps = reinterpret_cast<LMParserState *>(userData);
   std::string name(element);
 
   ps->Depth++;
@@ -193,9 +194,9 @@ startElement(void *userData, const char *element, const char **attrs)
 }
 
 void
-endElement(void *userData, const char *element)
+lmEndElement(void *userData, const char *element)
 {
-  ParserState *ps = reinterpret_cast<ParserState *>(userData);
+  LMParserState *ps = reinterpret_cast<LMParserState *>(userData);
   std::string name(element);
 
   if (name == "name")
@@ -250,9 +251,9 @@ endElement(void *userData, const char *element)
 }
 
 void
-charData(void *userData, const char *s, int len)
+lmCharData(void *userData, const char *s, int len)
 {
-  ParserState *ps = reinterpret_cast<ParserState *>(userData);
+  LMParserState *ps = reinterpret_cast<LMParserState *>(userData);
   if (len)
     {
     std::string str(s,len);
@@ -272,7 +273,7 @@ LoadableModuleDescriptionParser::Parse( const std::string& xml, LoadableModuleDe
     return 1;
     }
 
-  ParserState parserState;
+  LMParserState parserState;
   parserState.CurrentDescription = description;
   
   XML_Parser parser = XML_ParserCreate(NULL);
@@ -281,8 +282,8 @@ LoadableModuleDescriptionParser::Parse( const std::string& xml, LoadableModuleDe
   parserState.Parser = parser;
 
   XML_SetUserData(parser, static_cast<void *>(&parserState));
-  XML_SetElementHandler(parser, startElement, endElement);
-  XML_SetCharacterDataHandler(parser, charData);
+  XML_SetElementHandler(parser, lmStartElement, lmEndElement);
+  XML_SetCharacterDataHandler(parser, lmCharData);
 
   // Parse the XML
   done = true;
