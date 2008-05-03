@@ -139,6 +139,37 @@ int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, const char*
 }
 
 //----------------------------------------------------------------------------
+int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, std::vector< std::string > suffix )
+{
+  itksys::Directory dir;
+  dir.Load(dirname);
+ 
+  int nfiles = dir.GetNumberOfFiles();
+  int res = 1;
+  for (int i=0; i<nfiles; i++) {
+    const char* filename = dir.GetFile(i);
+    std::string sname = filename;
+    if (!itksys::SystemTools::FileIsDirectory(filename))
+      {
+      for (int s=0; s<suffix.size(); s++)
+        {
+        std::string ssuf = suffix[s];
+        if ( sname.find(ssuf) != std::string::npos )
+          {
+          std::string fullPath = std::string(dir.GetPath())
+              + "/" + filename;
+          if (this->AddFiberBundle((char *)fullPath.c_str()) == NULL) 
+            {
+            res = 0;
+            }
+          } //if (sname
+        } // for (int s=0;
+      }
+  }
+  return res;
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* filename)
 {
   vtkErrorMacro("Adding fiber bundle from filename " << filename);

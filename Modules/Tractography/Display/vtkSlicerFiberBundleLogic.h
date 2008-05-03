@@ -46,9 +46,16 @@ class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleLogic : public vt
 
   // Description:
   // Create fiber bundle nodes and read their polydata from a specified directory.
+  // Files matching suffix are read
   // Internally calls AddFiberBundle for each file.
   int AddFiberBundles (const char* dirname, const char* suffix );
-
+//BTX
+  // Description:
+  // Create fiber bundle nodes and read their polydata from a specified directory.
+  // Files matching all suffixes are read
+  // Internally calls AddFiberBundle for each file.
+  int AddFiberBundles (const char* dirname, std::vector< std::string > suffix );
+//ETX
   // Description:
   // Write fiber bundle's polydata  to a specified file.
   int SaveFiberBundle (const char* filename, vtkMRMLFiberBundleNode *fiberBundleNode);

@@ -151,7 +151,7 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
 
     }
   else if (loadSaveDialog && loadSaveDialog == this->LoadTractographyDirectoryButton->GetLoadSaveDialog() &&
-           event == vtkKWPushButton::InvokedEvent )
+           event == vtkKWTopLevel::WithdrawEvent )
     {
 
     // If a directory has been selected for loading...
@@ -159,8 +159,10 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
     if ( fileName ) 
       {
       vtkSlicerFiberBundleLogic* fiberBundleLogic = this->Logic;
-
-      if (fiberBundleLogic->AddFiberBundles( fileName, ".vtk") == 0)
+      std::vector<std::string> suffix;
+      suffix.push_back(std::string(".vtk"));
+      suffix.push_back(std::string(".vtp"));
+      if (fiberBundleLogic->AddFiberBundles( fileName, suffix) == 0)
         {
         // TODO: generate an error...
         }

@@ -222,12 +222,16 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
     vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(this->OutFiberSelector->GetSelected());
     
     int createFiber = 1;
-    if (this->OverwritePolyDataWarning && fiberNode->GetPolyData() != NULL)
+    vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeSelector->GetSelected());
+    vtkMRMLFiducialListNode *fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(this->FiducialSelector->GetSelected());
+  
+
+    if (this->OverwritePolyDataWarning && volumeNode && fiducialListNode && fiberNode && fiberNode->GetPolyData() != NULL)
       {
       vtkKWMessageDialog *message = vtkKWMessageDialog::New();
       message->SetParent ( this->UIPanel->GetPageWidget ( "Tractography" ) );
       message->SetStyleToYesNo();
-      std::string msg = "Fiber Bundle " + std::string(fiberNode->GetName()) + " contains polydata. Do you want to override it?";
+      std::string msg = "TractographyFiducialSeeding is about to create new tracks for " + std::string(fiberNode->GetName()) + " which contains polydata. Do you want to override it?";
       message->SetText(msg.c_str());
       message->Create();
       createFiber = message->Invoke();
