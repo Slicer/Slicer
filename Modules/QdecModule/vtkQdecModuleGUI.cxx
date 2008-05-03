@@ -122,7 +122,7 @@ vtkQdecModuleGUI::~vtkQdecModuleGUI()
     }
   this->RemoveMRMLNodeObservers ( );
   this->RemoveLogicObservers ( );
-  this->SetModuleLogic (NULL);
+  this->SetLogic( vtkObjectPointer(&this->Logic), NULL );
  
   if ( this->NAMICLabel )
     {

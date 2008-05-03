@@ -50,7 +50,11 @@ public:
    
   void SetAndObserveModuleLogic ( vtkQdecModuleLogic *logic )
   { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
-  
+
+  // override method in parent class
+  virtual void SetModuleLogic ( vtkSlicerLogic *logic )
+  { this->SetModuleLogic( dynamic_cast<vtkQdecModuleLogic*> (logic) ); }
+
   // Description:
   // Create widgets
   virtual void BuildGUI ( );
