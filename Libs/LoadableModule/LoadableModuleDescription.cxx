@@ -14,7 +14,6 @@
 
 #include "LoadableModuleDescription.h"
 
-
 LoadableModuleDescription::LoadableModuleDescription() :
   Name(""),
   ShortName(""),
@@ -32,7 +31,7 @@ LoadableModuleDescription::LoadableModuleDescription() :
   AlternativeTarget(""),
   AlternativeLocation("")
 {
-}
+}// LoadableModuleDescription
 
 
 LoadableModuleDescription::LoadableModuleDescription(const LoadableModuleDescription &md) :
@@ -75,11 +74,15 @@ LoadableModuleDescription::LoadableModuleDescription(const LoadableModuleDescrip
   this->AlternativeType = md.AlternativeType;
   this->AlternativeTarget = md.AlternativeTarget;
   this->AlternativeLocation = md.AlternativeLocation;
-}
+}// LoadableModuleDescription
 
-void
+LoadableModuleDescription&
 LoadableModuleDescription::operator=(const LoadableModuleDescription &md)
 {
+  if (this == &md) {
+    return *this;
+  }
+
   this->Name = md.Name;
   this->ShortName = md.ShortName;
   this->GUIName = md.GUIName;
@@ -103,7 +106,9 @@ LoadableModuleDescription::operator=(const LoadableModuleDescription &md)
   this->AlternativeType = md.AlternativeType;
   this->AlternativeTarget = md.AlternativeTarget;
   this->AlternativeLocation = md.AlternativeLocation;
-}
+
+  return *this;
+}// operator=
 
 std::ostream & operator<<(std::ostream &os, const LoadableModuleDescription &module)
 {
@@ -114,9 +119,10 @@ std::ostream & operator<<(std::ostream &os, const LoadableModuleDescription &mod
 
   os << "Message: " << module.GetMessage() << std::endl;
 
-  std::vector<std::string>::iterator iter = module.GetDependencies().begin();
+  std::vector<std::string>::const_iterator iter = module.GetDependencies().begin();
   while (iter != module.GetDependencies().end()) {
     os << "Dependency: " << (*iter) << std::endl;
+    iter++;
   }
 
   os << "Type: " <<  module.GetType() << std::endl;
@@ -128,6 +134,6 @@ std::ostream & operator<<(std::ostream &os, const LoadableModuleDescription &mod
   os << "AlternativeLocation: " << module.GetAlternativeLocation() << std::endl;
 
   return os;
-}
+}// operator<<
 
 

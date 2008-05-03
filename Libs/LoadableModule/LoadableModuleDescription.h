@@ -33,7 +33,7 @@ public:
   LoadableModuleDescription();
   LoadableModuleDescription(const LoadableModuleDescription &md);
 
-  void operator=(const LoadableModuleDescription &md);
+  LoadableModuleDescription& operator=(const LoadableModuleDescription &md);
   
   void SetName(const std::string &name)
   {
@@ -115,12 +115,12 @@ public:
     return this->TclInitFunction;
   }
 
-  void AddDependency(const std::string& dependency)
+  void AddDependency(const std::string &depend)
   {
-    this->Dependencies.push_back(dependency);
+    this->Dependencies.push_back(depend);
   }
 
-  std::vector<std::string> GetDependencies() const
+  const std::vector<std::string>& GetDependencies() const
   {
     return this->Dependencies;
   }
