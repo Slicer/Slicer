@@ -59,6 +59,7 @@ vtkSlicerDWITestingWidget::vtkSlicerDWITestingWidget(void)
     }
   this->ModifiedForNewTensor = 1;
   this->TractVisibility = 0;
+  this->NumberOfTensorEstimations = 0;
   this->VisibilityIcons = NULL;
   }
 
@@ -147,6 +148,7 @@ vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
     this->VisibilityIcons = NULL;
     }
   this->ModifiedForNewTensor = 0;
+  this->NumberOfTensorEstimations = 0;
   this->TractVisibility = 0;
   }
 
@@ -198,7 +200,7 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
   if (this->RunButton->GetWidget() == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
     {
     this->RunButton->SetEnabled(0);
-    if(this->ModifiedForNewTensor || this->MRMLScene->GetNodesByName("DiffusionEditor_Tensor_Node")->GetNumberOfItems() == 0 )
+    if(this->ModifiedForNewTensor)
       {
       // create a command line module node
       vtkMRMLCommandLineModuleNode *tensorCLM = vtkMRMLCommandLineModuleNode::SafeDownCast(
@@ -215,23 +217,33 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
       tensorCLM->SetParameterAsBool("applyMask", 0);
       tensorCLM->SetParameterAsString("inputVolume", this->ActiveVolumeNode->GetID());
 
+      this->NumberOfTensorEstimations++;
+      std::stringstream nodeName1;
+      nodeName1 << "DiffusionEditor_" << this->NumberOfTensorEstimations <<"._" << "BaselineNode";
+
       // create the output nodes
       vtkMRMLScalarVolumeNode *baselineNodeCLM = vtkMRMLScalarVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
       baselineNodeCLM->SetScene(this->GetMRMLScene());
-      baselineNodeCLM->SetName("DiffusionEditor_Baseline_Node");
+      baselineNodeCLM->SetName(nodeName1.str().c_str());
       this->MRMLScene->AddNode(baselineNodeCLM);
+
+      std::stringstream nodeName2;
+      nodeName2 << "DiffusionEditor_" << this->NumberOfTensorEstimations <<"._" << "ThresholdMask";
 
       vtkMRMLScalarVolumeNode *maskNodeCLM = vtkMRMLScalarVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLScalarVolumeNode"));
       maskNodeCLM->SetScene(this->GetMRMLScene());
-      maskNodeCLM->SetName("DiffusionEditor_Threshold_Mask");
+      maskNodeCLM->SetName(nodeName2.str().c_str());
       this->MRMLScene->AddNode(maskNodeCLM);
+
+      std::stringstream nodeName3;
+      nodeName3 << "DiffusionEditor_" << this->NumberOfTensorEstimations <<"._" << "TensorNode";
 
       vtkMRMLDiffusionTensorVolumeNode *tensorNodeCLM = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
         this->MRMLScene->CreateNodeByClass("vtkMRMLDiffusionTensorVolumeNode"));
       tensorNodeCLM->SetScene(this->GetMRMLScene());
-      tensorNodeCLM->SetName("DiffusionEditor_Tensor_Node");
+      tensorNodeCLM->SetName(nodeName3.str().c_str());
       this->MRMLScene->AddNode(tensorNodeCLM);
 
       tensorNodeCLM->SetBaselineNodeID(baselineNodeCLM->GetID());
@@ -518,6 +530,7 @@ void vtkSlicerDWITestingWidget::SetWidgetToDefault()
   //dti selector to default
   this->DTISelector->GetWidget()->GetWidget()->SetValue("None");
   this->SetAllVisibilityButtons(0);
+  this->ModifiedForNewTensor = 1;
   }
 
 //---------------------------------------------------------------------------

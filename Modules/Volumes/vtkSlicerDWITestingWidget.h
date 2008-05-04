@@ -108,6 +108,10 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     // Is 1 if glyphs are visible; otherwise 0;
     int GlyphVisibility[3];
 
+    // Description:
+    // Counts the number of estimated tensors, needed for naming of nodes.
+    int NumberOfTensorEstimations;
+
     vtkSlicerApplication *Application;
 
     //nodes
