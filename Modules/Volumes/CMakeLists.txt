@@ -93,4 +93,5 @@ CONFIGURE_FILE(
 if(BUILD_TESTING)
   add_test(DiffusionEditorTest ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditorTest.tcl)
   add_test(DiffusionEditorGradientsTest ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditor_GradientsTest.tcl)
+  add_test(DiffusionEditorGlyphsTracts ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditorTest2.tcl)
 endif(BUILD_TESTING)
