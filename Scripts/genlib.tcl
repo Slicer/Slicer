@@ -526,7 +526,6 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
             -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
             -DBUILD_TESTING:BOOL=OFF \
-            -DVTK_USE_CARBON:BOOL=OFF \
             -DVTK_USE_X:BOOL=ON \
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
@@ -560,6 +559,7 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DCMAKE_EXE_LINKER_FLAGS="-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" \
             -DBUILD_TESTING:BOOL=OFF \
             -DVTK_USE_CARBON:BOOL=OFF \
+            -DVTK_USE_COCOA:BOOL=OFF \
             -DVTK_USE_X:BOOL=ON \
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
