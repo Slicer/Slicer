@@ -106,8 +106,6 @@ INCLUDE_DIRECTORIES(
   ${EMSegment_SOURCE_DIR}/MRML
   ${EMSegment_SOURCE_DIR}/Algorithm
   ${EMSegment_SOURCE_DIR}/Registration
-  ${Volumes_SOURCE_DIR}
-  ${Volumes_BINARY_DIR}
   ${SlicerBase_SOURCE_DIR}
   ${SlicerBase_BINARY_DIR}
   ${SlicerBaseLogic_SOURCE_DIR}
