@@ -1,6 +1,7 @@
 project(Modules)
 
 subdirs(
+  Volumes
   NeuroNav
   RealTimeImaging
   WFEngineModule
@@ -18,7 +19,6 @@ subdirs(
   Tractography
   VolumeRendering
   Statistics
-  Volumes
   )
 
 ## SLICES_DEBUG
