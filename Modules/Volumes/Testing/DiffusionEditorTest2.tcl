@@ -10,21 +10,24 @@ $volumesGUI Enter
 
 set editor [$volumesGUI GetDiffusionEditorWidget] 
 
-$editor UpdateWidget [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLDiffusionWeightedVolumeNode]
+$editor UpdateWidget [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLDiffusionTensorVolumeNode]
 
-  
+
 set testWidget [$::editor  GetTestingWidget] 
 
+$testWidget SetTensorNode [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLDiffusionTensorVolumeNode]
 
-set runButton [$testWidget GetRunButton]
 
-#$testWidget SetGlyphVisibility 0 1
+[$testWidget GetFiducialSelector] SetSelected [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLFiducialListNode]
 
-#$testWidget SetGlyphVisibility 1 1
+$testWidget SetTractVisibility 1
 
-#$testWidget SetGlyphVisibility 2 1
+$testWidget SetGlyphVisibility 0 1
 
-  
-#[$testWidget GetFiducialSelector] SetSelected [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLFiducialListNode]
+$testWidget SetGlyphVisibility 1 1
+
+$testWidget SetGlyphVisibility 2 1
+
 
 exit 0
+
