@@ -62,7 +62,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     // Description:
     // Sets the Application to the current vtkSlicerApplication.
     vtkSetObjectMacro(Application, vtkSlicerApplication);
-
+    
+    vtkSetObjectMacro(TensorNode, vtkMRMLDiffusionTensorVolumeNode);
     vtkGetObjectMacro(FiducialSelector, vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro(RunButton, vtkKWPushButtonWithLabel);
 
@@ -73,6 +74,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     // Description:
     // Sets GlyphVisibility and changes the icon of GlyphVisibilityButton accordingly.
     void SetGlyphVisibility(int plane, int status);
+
+    void RunTensor();
 
   protected:
     vtkSlicerDWITestingWidget(void);
@@ -93,6 +96,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     // Description:
     // Update glyph spacing by setting parameters of the vtkMRMLDiffusionTensorDisplayPropertiesNode.
     void UpdateGlyphSpacing();
+
+    
 
     // Description:
     // Enables/Disables all buttons for visibility of glyphs and tracts. 
