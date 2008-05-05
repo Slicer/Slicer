@@ -63,6 +63,9 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     // Sets the Application to the current vtkSlicerApplication.
     vtkSetObjectMacro(Application, vtkSlicerApplication);
 
+    vtkGetObjectMacro(FiducialSelector, vtkSlicerNodeSelectorWidget);
+    vtkGetObjectMacro(RunButton, vtkKWPushButtonWithLabel);
+
     // Description:
     // Sets TractVisibility and changes the icon of TractVisibilityButton accordingly.
     void SetTractVisibility(int status);

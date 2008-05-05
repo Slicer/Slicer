@@ -1,34 +1,30 @@
-vtkSlicerApplication app
-vtkMRMLScene scene
 
-vtkKWTopLevel t
-t SetApplication app
-t Create
+set sceneFileName $::env(SLICER_HOME)/../Slicer3/Libs/MRML/Testing/diffusionEditor.mrml
 
-vtkSlicerDiffusionEditorWidget editor
-editor SetParent t
-editor SetAndObserveMRMLScene scene
-editor Create
+$::slicer3::MRMLScene SetURL $sceneFileName
+$::slicer3::MRMLScene Connect
+update
 
-#set sceneFileName $::env(SLICER_HOME)/../Slicer3/Modules/Volumes/Testing/diffusionScene.mrml
- 
-#scene SetURL $sceneFileName
-#scene Connect
-#update
+set volumesGUI [$::slicer3::Application GetModuleGUIByName Volumes] 
+$volumesGUI Enter
 
-#editor UpdateWidget [scene GetNthNodeByClass 0 vtkMRMLDiffusionWeightedVolumeNode]
+set editor [$volumesGUI GetDiffusionEditorWidget] 
 
-#set fiducialSelector [testWidget GetFiducialSelector] 
+$editor UpdateWidget [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLDiffusionWeightedVolumeNode]
 
-#fiducialSelector SetSelected [scene GetNextNodeByClass "vtkMRMLFiducialListNode"]
+  
+set testWidget [$::editor  GetTestingWidget] 
 
-#set runButton [testWidget GetRunButton]
 
-#[editor  GetTestingWidget] ProcessWidgetEvents runButton vtkKWPushButton::InvokedEvent 0
+set runButton [$testWidget GetRunButton]
 
-t Delete
-editor Delete
-scene Delete
-app Delete
+#$testWidget SetGlyphVisibility 0 1
+
+#$testWidget SetGlyphVisibility 1 1
+
+#$testWidget SetGlyphVisibility 2 1
+
+  
+#[$testWidget GetFiducialSelector] SetSelected [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLFiducialListNode]
 
 exit 0

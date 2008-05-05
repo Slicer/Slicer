@@ -49,6 +49,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorWidget : public vtkSlicerWidget
     // Returns the logic of the DiffusionEditor.
     vtkGetObjectMacro(Logic, vtkSlicerDiffusionEditorLogic);
 
+    vtkGetObjectMacro(TestingWidget, vtkSlicerDWITestingWidget);
+
   protected:
     vtkSlicerDiffusionEditorWidget(void);
     virtual ~vtkSlicerDiffusionEditorWidget(void);
