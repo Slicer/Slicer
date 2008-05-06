@@ -434,6 +434,8 @@ void vtkSlicerDWITestingWidget::UpdateGlyphSpacing()
 //---------------------------------------------------------------------------
 void vtkSlicerDWITestingWidget::CreateTracts()
   {
+  if(this->TensorNode == NULL || this->FiducialSelector->GetSelected() == NULL 
+    || !this->TractVisibility) return;
   //wait untill ImageData is set in other thread
   if(this->TensorNode->GetImageData() == NULL)
     {
@@ -442,9 +444,6 @@ void vtkSlicerDWITestingWidget::CreateTracts()
     }
   else
     {
-    if(this->TensorNode == NULL || this->TensorNode->GetImageData() == NULL 
-      || this->FiducialSelector->GetSelected() == NULL || !this->TractVisibility) return;
-
     //get fiducial list
     vtkMRMLFiducialListNode* fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(
       this->FiducialSelector->GetSelected());

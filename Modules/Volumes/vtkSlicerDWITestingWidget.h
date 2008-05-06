@@ -60,14 +60,6 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     void SetWidgetToDefault();
 
     // Description:
-    // Sets the Application to the current vtkSlicerApplication.
-    vtkSetObjectMacro(Application, vtkSlicerApplication);
-    
-    vtkSetObjectMacro(TensorNode, vtkMRMLDiffusionTensorVolumeNode);
-    vtkGetObjectMacro(FiducialSelector, vtkSlicerNodeSelectorWidget);
-    vtkGetObjectMacro(RunButton, vtkKWPushButtonWithLabel);
-
-    // Description:
     // Sets TractVisibility and changes the icon of TractVisibilityButton accordingly.
     void SetTractVisibility(int status);
 
@@ -75,7 +67,19 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     // Sets GlyphVisibility and changes the icon of GlyphVisibilityButton accordingly.
     void SetGlyphVisibility(int plane, int status);
 
+    // Description:
+    // Computes Tensor by calling Tensor Estimation CLM. (Is public because of tcl testing.)
     void RunTensor();
+
+    // Description:
+    // Creates tracts by calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
+    // (Is public because of tcl testing.)
+    void CreateTracts();
+
+    vtkSetObjectMacro(Application, vtkSlicerApplication);    
+    vtkSetObjectMacro(TensorNode, vtkMRMLDiffusionTensorVolumeNode);
+    vtkGetObjectMacro(FiducialSelector, vtkSlicerNodeSelectorWidget);
+    vtkGetObjectMacro(RunButton, vtkKWPushButtonWithLabel);
 
   protected:
     vtkSlicerDWITestingWidget(void);
@@ -83,11 +87,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
 
     // Description:
     // Creates the widget.
-    virtual void CreateWidget();
-
-    // Description:
-    // Creates tracts by calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
-    void CreateTracts();
+    virtual void CreateWidget();   
 
     // Description:
     // Creates glyphs by setting the visibility of the vtkMRMLDiffusionTensorVolumeSliceDisplayNode.
@@ -95,9 +95,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
 
     // Description:
     // Update glyph spacing by setting parameters of the vtkMRMLDiffusionTensorDisplayPropertiesNode.
-    void UpdateGlyphSpacing();
-
-    
+    void UpdateGlyphSpacing();    
 
     // Description:
     // Enables/Disables all buttons for visibility of glyphs and tracts. 
