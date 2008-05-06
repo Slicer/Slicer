@@ -71,6 +71,11 @@ vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
     {
     vtkSetMRMLNodeMacro(this->ActiveVolumeNode, NULL);
     }
+  if (this->TensorNode)
+    {
+    this->TensorNode->Delete();
+    this->TensorNode = NULL;
+    }
   if (this->Application)
     {
     this->Application->Delete();
@@ -241,9 +246,11 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
         {
         glypDisplayNodesOld[i]->SetVisibility(0);
         }
+      this->TensorNode->Delete();
       }
     //set new tensorNode
     this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(selected);
+    this->TensorNode->Register(this);
     //create tracts and glyphs
     this->CreateTracts();
     this->CreateGlyphs();
