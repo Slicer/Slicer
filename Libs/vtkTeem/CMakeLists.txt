@@ -34,6 +34,7 @@ set(vtkTeem_SRCS
   vtkTensorImplicitFunctionToFunctionSet.cxx
   vtkTractographyPointAndArray.cxx
   vtkTensorMask.cxx
+  vtkTensorRotate.cxx
   )
 
 # Abstract/pure virtual classes
