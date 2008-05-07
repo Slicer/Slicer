@@ -45,6 +45,9 @@ vtkSlicerMRMLSaveDataWidget::vtkSlicerMRMLSaveDataWidget ( )
   this->SaveSceneCheckBox = NULL;
   this->SaveDataButton = NULL;
 
+  this->SaveAllDataButton = NULL;
+  this->SaveNoDataButton = NULL;
+  
   this->DataDirectoryName = NULL;
   this->OkButton = NULL;
   this->CancelButton = NULL;
@@ -78,6 +81,16 @@ vtkSlicerMRMLSaveDataWidget::~vtkSlicerMRMLSaveDataWidget ( )
     {
     this->SaveDialog->SetParent(NULL);
     this->SaveDialog->Delete();
+    }
+  if (this->SaveAllDataButton)
+    {
+    this->SaveAllDataButton->SetParent(NULL);
+    this->SaveAllDataButton->Delete();
+    }
+  if (this->SaveNoDataButton)
+    {
+    this->SaveNoDataButton->SetParent(NULL);
+    this->SaveNoDataButton->Delete();
     }
   if (this->SaveSceneButton)
     {
@@ -152,6 +165,24 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
         }
       this->SetDataDirectoryName(name.c_str());
       this->UpdateDataDirectory();
+      }
+    }
+  else if (this->SaveAllDataButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
+    {
+    int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
+    for (int row=0; row<nrows; row++)
+      {
+      this->MultiColumnList->GetWidget()->SetCellTextAsInt(row, 2, 1);
+      this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row, 2);
+      }
+    }
+  else if (this->SaveNoDataButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
+    {
+    int nrows = this->MultiColumnList->GetWidget()->GetNumberOfRows();
+    for (int row=0; row<nrows; row++)
+      {
+      this->MultiColumnList->GetWidget()->SetCellTextAsInt(row, 2, 0);
+      this->MultiColumnList->GetWidget()->SetCellWindowCommandToCheckButton(row, 2);
       }
     }
   else if (this->OkButton ==  vtkKWPushButton::SafeDownCast(caller) && event ==  vtkKWPushButton::InvokedEvent)
@@ -608,6 +639,16 @@ void vtkSlicerMRMLSaveDataWidget::RemoveWidgetObservers ( )
     this->SaveDataButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent,
         (vtkCommand *)this->GUICallbackCommand );
     }
+  if (this->SaveAllDataButton)
+    {
+    this->SaveAllDataButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
+        (vtkCommand *)this->GUICallbackCommand );
+    }
+  if (this->SaveNoDataButton)
+    {
+    this->SaveNoDataButton->RemoveObservers ( vtkKWPushButton::InvokedEvent,  
+        (vtkCommand *)this->GUICallbackCommand );
+    }
 
 }
 
@@ -705,6 +746,24 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                  this->SaveDataButton->GetWidgetName());
 
+  // add a button to change all the save flags to on
+  this->SaveAllDataButton = vtkKWPushButton::New();
+  this->SaveAllDataButton->SetParent ( dataFrame->GetFrame() );
+  this->SaveAllDataButton->Create ( );
+  this->SaveAllDataButton->SetText ("Save All Data");
+  this->SaveAllDataButton->SetBalloonHelpString("Check all save boxes");
+  this->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+              this->SaveAllDataButton->GetWidgetName());
+
+  // add a button to change all the save flags to off
+  this->SaveNoDataButton = vtkKWPushButton::New();
+  this->SaveNoDataButton->SetParent ( dataFrame->GetFrame() );
+  this->SaveNoDataButton->Create ( );
+  this->SaveNoDataButton->SetText ("Save No Data");
+  this->SaveNoDataButton->SetBalloonHelpString("Uncheck all save boxes");
+  this->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+              this->SaveNoDataButton->GetWidgetName());
+  
   // add the multicolumn list to show the points
   this->MultiColumnList = vtkKWMultiColumnListWithScrollbars::New ( );
   this->MultiColumnList->SetParent ( dataFrame->GetFrame() );
@@ -777,6 +836,8 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->CancelButton->AddObserver ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
   this->SaveSceneButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
   this->SaveDataButton->GetWidget()->GetLoadSaveDialog()->AddObserver ( vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->SaveAllDataButton->AddObserver(  vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
+  this->SaveNoDataButton->AddObserver(  vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 
   
   this->MultiColumnList->SetEnabled(1);

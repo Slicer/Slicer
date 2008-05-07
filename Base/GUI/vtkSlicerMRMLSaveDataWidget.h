@@ -109,12 +109,19 @@ private:
 
   vtkKWCheckButton *SaveSceneCheckBox;
 
+ 
+  
   vtkKWLoadSaveButtonWithLabel *SaveDataButton;
 
+  // Description:
+  // change all the save flags on the data
+  vtkKWPushButton *SaveAllDataButton;
+  vtkKWPushButton *SaveNoDataButton;
+  
   vtkKWPushButton *OkButton;
 
   vtkKWPushButton *CancelButton;
-
+  
   vtkKWMultiColumnListWithScrollbars *MultiColumnList;
 
 
