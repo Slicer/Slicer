@@ -144,7 +144,7 @@ private:
   void operator=(const vtkKWWindowLevelThresholdEditor&); // Not implemented
   
   vtkKWMenuButtonWithLabel *WindowLevelAutoManual;
-  vtkKWMenuButtonWithLabel *TresholdAutoManual;
+  vtkKWMenuButtonWithLabel *ThresholdAutoManual;
   vtkImageData *ImageData;
   vtkKWHistogram *Histogram;
   vtkColorTransferFunction *TransferFunction;

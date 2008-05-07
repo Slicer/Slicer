@@ -37,7 +37,7 @@ vtkKWWindowLevelThresholdEditor::vtkKWWindowLevelThresholdEditor()
   this->ImageData = NULL;
 
   this->WindowLevelAutoManual = vtkKWMenuButtonWithLabel::New() ;
-  this->TresholdAutoManual = vtkKWMenuButtonWithLabel::New();
+  this->ThresholdAutoManual = vtkKWMenuButtonWithLabel::New();
    
   this->Accumulate = vtkImageAccumulateDiscrete::New();
   this->Bimodal = vtkImageBimodalAnalysis::New();
@@ -86,11 +86,11 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
     this->WindowLevelAutoManual->Delete();
     this->WindowLevelAutoManual = NULL ;
     }
-  if ( this->TresholdAutoManual ) 
+  if ( this->ThresholdAutoManual ) 
     {
-    this->TresholdAutoManual->SetParent(NULL);
-    this->TresholdAutoManual->Delete();
-    this->TresholdAutoManual = NULL;
+    this->ThresholdAutoManual->SetParent(NULL);
+    this->ThresholdAutoManual->Delete();
+    this->ThresholdAutoManual = NULL;
     }
   if ( this->WindowLevelRange ) 
     {
@@ -126,10 +126,11 @@ vtkKWWindowLevelThresholdEditor::~vtkKWWindowLevelThresholdEditor()
   this->ExtractComponents->Delete();
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
 {
-  //if (this->ImageData != imageData || (imageData != NULL && imageData->GetMTime() > this->ImageData->GetMTime()) ) 
-   // {
+  if (this->ImageData != imageData || (imageData != NULL && imageData->GetMTime() > this->ImageData->GetMTime()) ) 
+    {
     vtkImageData* tempImageData = this->ImageData;
     if (this->ImageData == NULL)
       {
@@ -156,46 +157,50 @@ void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
 
       this->Modified();
       }
-    //}
+    }
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::UpdateAutoLevels()
 {
-  if (this->ImageData == NULL ||
-    (this->GetAutoWindowLevel() == 0 && this->GetThresholdType() != vtkKWWindowLevelThresholdEditor::ThresholdAuto)) 
-    {
-    return;
-    }
-    
-  this->ExtractComponents->SetInput(this->ImageData);
-  this->ExtractComponents->SetComponents(0);
-  this->Accumulate->SetInput(this->ExtractComponents->GetOutput());
-  this->Accumulate->Update();
-  this->Bimodal->SetInput(this->Accumulate->GetOutput());
-  this->Bimodal->Update();
-
-  if (this->GetAutoWindowLevel())
-  {
-    this->SetWindowLevel(this->Bimodal->GetWindow(), this->Bimodal->GetLevel());
-  }
-
-  // Auto Threshold
-  if (this->GetThresholdType() == vtkKWWindowLevelThresholdEditor::ThresholdAuto)
-  {
-    this->SetThreshold(this->Bimodal->GetThreshold(), this->Bimodal->GetMax());
-  }
-
+  vtkWarningMacro("UpdateAutoLevels: returning, call should be made on the volume/display node.");
+  return;
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::SetWindowLevel(double window, double level)
 {
-  
-  this->WindowLevelRange->SetRange(level - 0.5*window, level + 0.5*window);
-  this->WindowEntry->SetValueAsDouble(window);
-  this->LevelEntry->SetValueAsDouble(level);
-  this->UpdateTransferFunction();
+
+  double range[2];
+  range[0] = level - 0.5*window;
+  range[1] = level + 0.5*window;
+  double *oldRange = this->WindowLevelRange->GetRange();
+
+  bool changed = false;
+  if (oldRange == NULL ||
+      range[0] != oldRange[0] ||
+      range[1] != oldRange[1])
+    {
+    this->WindowLevelRange->SetRange(range[0], range[1]);
+    changed = true;
+    }
+  if (window != this->WindowEntry->GetValueAsDouble())
+    {
+    this->WindowEntry->SetValueAsDouble(window);
+    changed = true;
+    }
+  if (level != this->LevelEntry->GetValueAsDouble())
+    {
+    this->LevelEntry->SetValueAsDouble(level);
+    changed = true;
+    }
+  if (changed)
+    {
+    this->UpdateTransferFunction();
+    }
 }
 
+//----------------------------------------------------------------------------
 double vtkKWWindowLevelThresholdEditor::GetWindow()
 {
   //double *range = this->WindowLevelRange->GetRange();
@@ -203,6 +208,7 @@ double vtkKWWindowLevelThresholdEditor::GetWindow()
   return this->WindowEntry->GetValueAsDouble();
 }
 
+//----------------------------------------------------------------------------
 double vtkKWWindowLevelThresholdEditor::GetLevel()
 {
   //double *range = this->WindowLevelRange->GetRange();
@@ -210,27 +216,32 @@ double vtkKWWindowLevelThresholdEditor::GetLevel()
   return this->LevelEntry->GetValueAsDouble();
 }
 
- 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::SetThreshold(double lower, double upper)
 {
-  this->ThresholdRange->SetRange(lower, upper);
-  this->UpdateTransferFunction();
+  double *range = this->ThresholdRange->GetRange();
+  if (range == NULL ||
+      range[0] != lower ||
+      range[1] != upper)
+    {
+    this->ThresholdRange->SetRange(lower, upper);
+    this->UpdateTransferFunction();
+    }
 }
 
+//----------------------------------------------------------------------------
 double vtkKWWindowLevelThresholdEditor::GetLowerThreshold()
 {
   double *range = this->ThresholdRange->GetRange();
   return range[0];
 }
 
-
+//----------------------------------------------------------------------------
 double vtkKWWindowLevelThresholdEditor::GetUpperThreshold()
 {
   double *range = this->ThresholdRange->GetRange();
   return range[1];
 }
-
-
 
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::CreateWidget()
@@ -302,22 +313,22 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
     "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2", 
     threshFrame->GetWidgetName());
 
-  this->TresholdAutoManual->SetParent(threshFrame);
-  this->TresholdAutoManual->Create();
-  this->TresholdAutoManual->SetLabelWidth(12);
-  this->TresholdAutoManual->GetLabel()->SetJustificationToRight();
-  this->TresholdAutoManual->GetWidget()->SetWidth ( 7 );
-  this->TresholdAutoManual->SetLabelText("Threshold:");
-  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual");
-  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto"); 
-  this->TresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Off");
-  this->TresholdAutoManual->GetWidget()->SetValue ( "Manual" );
-  this->TresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(0, this, "ProcessButtonsCommand");
-  this->TresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(1, this, "ProcessButtonsCommand");
-  this->TresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(2, this, "ProcessButtonsCommand");
+  this->ThresholdAutoManual->SetParent(threshFrame);
+  this->ThresholdAutoManual->Create();
+  this->ThresholdAutoManual->SetLabelWidth(12);
+  this->ThresholdAutoManual->GetLabel()->SetJustificationToRight();
+  this->ThresholdAutoManual->GetWidget()->SetWidth ( 7 );
+  this->ThresholdAutoManual->SetLabelText("Threshold:");
+  this->ThresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual");
+  this->ThresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto"); 
+  this->ThresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Off");
+  this->ThresholdAutoManual->GetWidget()->SetValue ( "Manual" );
+  this->ThresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(0, this, "ProcessButtonsCommand");
+  this->ThresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(1, this, "ProcessButtonsCommand");
+  this->ThresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(2, this, "ProcessButtonsCommand");
   this->Script(
     "pack %s -side left -anchor nw -expand n -padx 2 -pady 2", 
-    this->TresholdAutoManual->GetWidgetName());
+    this->ThresholdAutoManual->GetWidgetName());
 
   this->ThresholdRange->SetParent(threshFrame);
   this->ThresholdRange->Create();
@@ -397,6 +408,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
 
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
 {
   if (this->ImageData != NULL)
@@ -429,6 +441,7 @@ void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
     }
   }
 }
+
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
 {
@@ -508,14 +521,11 @@ void vtkKWWindowLevelThresholdEditor::UpdateTransferFunction()
   this->ColorTransferFunctionEditor->Update();
 }
 
-
-
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::SetCommand(vtkObject *object, const char *method)
 {
   this->SetObjectMethodCommand(&this->Command, object, method);
 }
-
 
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::PrintSelf(ostream& os, vtkIndent indent)
@@ -525,7 +535,7 @@ void vtkKWWindowLevelThresholdEditor::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ColorTransferFunctionEditor: " << this->ColorTransferFunctionEditor << endl;
 }
 
-
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelCommand(double min, double max)
 {
   double range[2];
@@ -538,33 +548,57 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelCommand(double min, doub
     {
     return;
     }
-  this->WindowEntry->SetValueAsDouble(window);
-  this->LevelEntry->SetValueAsDouble(level);
-  this->UpdateTransferFunction();
-  this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
+  bool changed = false;
+  if (this->WindowEntry->GetValueAsDouble() != window)
+    {
+    this->WindowEntry->SetValueAsDouble(window);
+    changed = true;
+    }
+  if (this->LevelEntry->GetValueAsDouble() != level)
+    {
+    this->LevelEntry->SetValueAsDouble(level);
+    changed = true;
+    }
+  if (changed)
+    {
+    this->UpdateTransferFunction();
+    this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
+    }
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelStartCommand(double min, double max)
 {
   double range[2];
   range[0] = min;
   range[1] = max;
-  this->WindowEntry->SetValueAsDouble(max-min);
-  this->LevelEntry->SetValueAsDouble(0.5*(min+max));
+  if (this->WindowEntry->GetValueAsDouble() != max-min)
+    {
+    this->WindowEntry->SetValueAsDouble(max-min);
+    }
+  if ( this->LevelEntry->GetValueAsDouble() != 0.5*(min+max))
+    {
+    this->LevelEntry->SetValueAsDouble(0.5*(min+max));
+    }
   this->UpdateTransferFunction();
   this->SetAutoWindowLevel(0);
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, range);
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessThresholdCommand(double min, double max)
 {
   double range[2];
-  range[0] = min;
-  range[1] = max;
-  this->UpdateTransferFunction();
-  this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
+  if (range[0] != min || range[1] != max)
+    {
+    range[0] = min;
+    range[1] = max;
+    this->UpdateTransferFunction();
+    this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
+    }
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessThresholdStartCommand(double min, double max)
 {
   double range[2];
@@ -578,8 +612,11 @@ void vtkKWWindowLevelThresholdEditor::ProcessThresholdStartCommand(double min, d
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, range);
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessWindowEntryCommand(double window)
 {
+  vtkDebugMacro("ProcessWindowEntryCommand: win = " << window);
+  
   double *wrange = this->WindowLevelRange->GetRange();
 
   if (fabs(window - (wrange[1]-wrange[0]) ) < MIN_RESOLUTION)
@@ -590,14 +627,21 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowEntryCommand(double window)
   double level = this->GetLevel();
   range[0] = window - 0.5*level;
   range[1] = window + 0.5*level;
-   
-  this->WindowLevelRange->SetRange(level - 0.5*window, level + 0.5*window);
-  this->UpdateTransferFunction();
-  this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
+
+  if (wrange[0] != level - 0.5*window||
+      wrange[1] != level + 0.5*window)
+    {
+    this->WindowLevelRange->SetRange(level - 0.5*window, level + 0.5*window);   
+    this->UpdateTransferFunction();
+    this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
+    }
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessLevelEntryCommand(double level)
 {
+  vtkDebugMacro("ProcessLevelEntryCommand: level = " << level);
+  
   double *wrange = this->WindowLevelRange->GetRange();
   if (fabs(level - 0.5*(wrange[1]+wrange[0]) ) < MIN_RESOLUTION)
     {
@@ -607,14 +651,17 @@ void vtkKWWindowLevelThresholdEditor::ProcessLevelEntryCommand(double level)
   double window = this->GetWindow();
   range[0] = window - 0.5*level;
   range[1] = window + 0.5*level;
-   
-  this->WindowLevelRange->SetRange(level - 0.5*window, level + 0.5*window);
-  this->UpdateTransferFunction();
-  this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
+
+  if (wrange[0] != level - 0.5*window ||
+      wrange[1] != level + 0.5*window)
+    {
+    this->WindowLevelRange->SetRange(level - 0.5*window, level + 0.5*window);
+    this->UpdateTransferFunction();
+    this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, range);
+    }
 }
 
 //--------------------------------------------------
-
 int vtkKWWindowLevelThresholdEditor::GetAutoWindowLevel()
 {
   if (!strcmp(this->WindowLevelAutoManual->GetWidget()->GetValue(), "Auto"))
@@ -627,30 +674,32 @@ int vtkKWWindowLevelThresholdEditor::GetAutoWindowLevel()
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::SetAutoWindowLevel(int value)
 {
-  if (value == 1)
+  if (value == 1 && strcmp(this->WindowLevelAutoManual->GetWidget()->GetValue(), "Auto") != 0)
     {
     this->WindowLevelAutoManual->GetWidget()->SetValue("Auto");
     this->UpdateAutoLevels();
     }
-  else if (value == 0)
+  else if (value == 0 && strcmp(this->WindowLevelAutoManual->GetWidget()->GetValue(), "Manual") != 0)
     {
     this->WindowLevelAutoManual->GetWidget()->SetValue("Manual");
     }
 }
 
+//----------------------------------------------------------------------------
 int vtkKWWindowLevelThresholdEditor::GetThresholdType()
 {
-  if (!strcmp(this->TresholdAutoManual->GetWidget()->GetValue(), "Off"))
+  if (!strcmp(this->ThresholdAutoManual->GetWidget()->GetValue(), "Off"))
     {
     return this->ThresholdOff;
     }
-  else if (!strcmp(this->TresholdAutoManual->GetWidget()->GetValue(), "Auto"))
+  else if (!strcmp(this->ThresholdAutoManual->GetWidget()->GetValue(), "Auto"))
     {
     return this->ThresholdAuto;
     }
-  else if (!strcmp(this->TresholdAutoManual->GetWidget()->GetValue(), "Manual"))
+  else if (!strcmp(this->ThresholdAutoManual->GetWidget()->GetValue(), "Manual"))
     {
     return this->ThresholdManual;
     }
@@ -660,31 +709,36 @@ int vtkKWWindowLevelThresholdEditor::GetThresholdType()
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::SetThresholdType(int value)
 {
-  if (value == ThresholdAuto)
+  if (value == ThresholdAuto && strcmp(this->ThresholdAutoManual->GetWidget()->GetValue(), "Auto") != 0)
     {
-    this->TresholdAutoManual->GetWidget()->SetValue("Auto");
+    this->ThresholdAutoManual->GetWidget()->SetValue("Auto");
     this->UpdateAutoLevels();
     }
-  if (value == ThresholdOff) 
+  if (value == ThresholdOff && strcmp(this->ThresholdAutoManual->GetWidget()->GetValue(), "Off") != 0) 
     {
-    this->TresholdAutoManual->GetWidget()->SetValue("Off");
+    this->ThresholdAutoManual->GetWidget()->SetValue("Off");
     }
-  else if (value == ThresholdManual)
+  if (value == ThresholdManual && strcmp(this->ThresholdAutoManual->GetWidget()->GetValue(), "Manual") != 0)
     {
-    this->TresholdAutoManual->GetWidget()->SetValue("Manual");
+    this->ThresholdAutoManual->GetWidget()->SetValue("Manual");
     }
 
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessButtonsCommand()
 {
+  vtkDebugMacro("ProcessButtonsCommand: calling update auto levels");
   this->UpdateAutoLevels();
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, NULL);
 }
 
+//----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessCheckButtonCommand(int state)
 {
+  vtkDebugMacro("ProcessCheckButtonCommand: invoking value changed event");
   this->InvokeEvent(vtkKWWindowLevelThresholdEditor::ValueChangedEvent, NULL);
 }
