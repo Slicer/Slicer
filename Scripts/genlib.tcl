@@ -14,7 +14,7 @@
 # - configure (or cmake) with needed options
 # - build for this platform
 #
-# Packages: cmake, tcl, itcl, ITK, VTK, blt, teem, NA-MIC sandbox
+# Packages: cmake, tcl, itcl, ITK, VTK, teem
 # 
 # Usage:
 #   genlib [options] [target]
@@ -251,9 +251,6 @@ if { $GENLIB(clean) } {
             runcmd rm $SLICER_LIB/tcl/isPatched
         }
 
-        if { [file exists $SLICER_LIB/tcl/isPatchedBLT] } {
-            runcmd rm $SLICER_LIB/tcl/isPatchedBLT
-        }
     } else {
         file delete -force $SLICER_LIB
     }
@@ -263,17 +260,6 @@ if { ![file exists $SLICER_LIB] } {
     file mkdir $SLICER_LIB
 }
 
-################################################################################
-# Get and unzip Slicer Lib file if Windows
-#
-
-if {$isWindows} {
-    if {![file exists $::CMAKE]} {
-        cd $SLICER_LIB
-        runcmd curl -k -O http://www.na-mic.org/Slicer/Download/External/Slicer3-lib_win32.zip
-        runcmd unzip ./Slicer3-lib_win32.zip
-    }
-}
 
 ################################################################################
 # If is Darwin, don't use cvs compression to get around bug in cvs 1.12.13
@@ -297,15 +283,12 @@ if { [BuildThis $::CMAKE "cmake"] == 1 } {
 
 
     if {$isWindows} {
-      if { ! $::GENLIB(update) } {
-        puts stderr "Slicer3-lib_win32.zip did not download and unzip CMAKE correctly."
-        exit
-      }
+      runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Binaries/Windows/CMake-build CMake-build
     } else {
         runcmd $::CVS -d :pserver:anonymous:cmake@www.cmake.org:/cvsroot/CMake login
         eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous@www.cmake.org:/cvsroot/CMake checkout -r $::CMAKE_TAG CMake"
 
-    if {$::GENLIB(buildit)} {
+        if {$::GENLIB(buildit)} {
           cd $::CMAKE_PATH
           if { $isSolaris } {
               # make sure to pick up curses.h in /local/os/include
@@ -322,23 +305,19 @@ if { [BuildThis $::CMAKE "cmake"] == 1 } {
 ################################################################################
 # Get and build tcl, tk, itcl, widgets
 #
+#
 
 # on windows, tcl won't build right, as can't configure, so save commands have to run
 if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
 
     if {$isWindows} {
-      if { ! $::GENLIB(update) } {
-        puts stderr "Slicer3-lib_win32.zip did not download and unzip Tcl correctly."
-        exit
-      }
+      runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build tcl-build
     }
 
     file mkdir $SLICER_LIB/tcl
     cd $SLICER_LIB/tcl
 
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TCL_TAG tcl"
-
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/tcl tcl
     if {$::GENLIB(buildit)} {
       if {$isWindows} {
           # can't do windows
@@ -355,28 +334,11 @@ if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
 if { [BuildThis $::TK_TEST_FILE "tk"] == 1 } {
     cd $SLICER_LIB/tcl
 
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TK_TAG tk"
-
-    if {$isDarwin} {
-        if { ![file exists $SLICER_LIB/tcl/isPatched] } {
-                puts "Patching..."
-                runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/tkEventPatch.diff
-                runcmd cp tkEventPatch.diff $SLICER_LIB/tcl/tk/generic 
-                cd $SLICER_LIB/tcl/tk/generic
-                runcmd patch -i tkEventPatch.diff
-
-                # create a file to make sure tkEvent.c isn't patched twice
-                runcmd touch $SLICER_LIB/tcl/isPatched
-                file delete $SLICER_LIB/tcl/tk/generic/tkEventPatch.diff
-        } else {
-            puts "tkEvent.c already patched."
-        }
-    }
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/tk tk
 
     if {$::GENLIB(buildit)} {
       if {$isWindows} {
-         # can't do windows
+         # ignore, already downloaded with tcl
       } else {
          cd $SLICER_LIB/tcl/tk/unix
          if { $isDarwin } {
@@ -394,17 +356,17 @@ if { [BuildThis $::TK_TEST_FILE "tk"] == 1 } {
 }
 
 if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
+
     cd $SLICER_LIB/tcl
 
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::ITCL_TAG incrTcl"
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/incrTcl incrTcl
 
     cd $SLICER_LIB/tcl/incrTcl
 
     exec chmod +x ../incrTcl/configure 
     if {$::GENLIB(buildit)} {
       if {$isWindows} {
-        # can't do windows
+         # ignore, already downloaded with tcl
       } else {
         if { $isDarwin } {
           exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
@@ -422,69 +384,6 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
     }
   }
 }
-
-if { [BuildThis $::IWIDGETS_TEST_FILE "iwidgets"] == 1 } {
-    cd $SLICER_LIB/tcl
-
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::IWIDGETS_TAG iwidgets"
-
-
-    if {$::GENLIB(buildit)} {
-      if {$isWindows} {
-         # can't do windows
-      } else {
-        cd $SLICER_LIB/tcl/iwidgets
-        runcmd ../iwidgets/configure --with-tcl=$SLICER_LIB/tcl-build/lib --with-tk=$SLICER_LIB/tcl-build/lib --with-itcl=$SLICER_LIB/tcl/incrTcl --prefix=$SLICER_LIB/tcl-build
-        # make all doesn't do anything... 
-        # iwidgets won't compile in parallel (with -j flag)
-        eval runcmd $::SERIAL_MAKE all
-        eval runcmd $::SERIAL_MAKE install
-    }
-  }
-}
-
-
-################################################################################
-# Get and build blt
-#
-
-if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
-    cd $SLICER_LIB/tcl
-    
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer co -r $::BLT_TAG blt"
-
-    if {$::GENLIB(buildit)} {
-      if { $isWindows } {
-        # can't do Windows
-      } elseif { $isDarwin } {
-        if { ![file exists $SLICER_LIB/tcl/isPatchedBLT] } {
-            puts "Patching..."
-            runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch
-            cd $SLICER_LIB/tcl/blt
-            runcmd patch -p2 < ../bltpatch
-            
-            # create a file to make sure BLT isn't patched twice
-            runcmd touch $SLICER_LIB/tcl/isPatchedBLT
-            file delete $SLICER_LIB/tcl/bltpatch
-      } else {
-            puts "BLT already patched."
-      }
-        cd $SLICER_LIB/tcl/blt
-        runcmd ./configure --with-tcl=$SLICER_LIB/tcl/tcl/unix --with-tk=$SLICER_LIB/tcl-build --prefix=$SLICER_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common
-        
-        eval runcmd $::MAKE
-        eval runcmd $::MAKE install
-      } else {
-        cd $SLICER_LIB/tcl/blt
-        runcmd ./configure --with-tcl=$SLICER_LIB/tcl/tcl/unix --with-tk=$SLICER_LIB/tcl-build --prefix=$SLICER_LIB/tcl-build 
-        eval runcmd $::SERIAL_MAKE
-        eval runcmd $::SERIAL_MAKE install
-      }
-  }
-}
-
 
 ################################################################################
 # Get and build vtk
@@ -526,6 +425,7 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
             -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
             -DBUILD_TESTING:BOOL=OFF \
+            -DVTK_USE_CARBON:BOOL=OFF \
             -DVTK_USE_X:BOOL=ON \
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
@@ -537,12 +437,6 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
             -DTK_LIBRARY:FILEPATH=$::VTK_TK_LIB \
             -DTCL_TCLSH:FILEPATH=$::VTK_TCLSH \
             $USE_VTK_ANSI_STDLIB \
-            -DOPENGL_INCLUDE_DIR:PATH=/usr/include \
-            -DOPENGL_gl_LIBRARY:FILEPATH=/usr/lib64/libGL.so \
-            -DOPENGL_glu_LIBRARY:FILEPATH=/usr/lib64/libGLU.so \
-            -DX11_X11_LIB:FILEPATH=/usr/X11R6/lib64/libX11.a \
-            -DX11_Xext_LIB:FILEPATH=/usr/X11R6/lib64/libXext.a \
-            -DCMAKE_MODULE_LINKER_FLAGS:STRING=-L/usr/X11R6/lib64 \
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
             -DVTK_USE_64BIT_IDS:BOOL=ON \
             ../VTK
@@ -940,12 +834,6 @@ if { ![file exists $::TK_TEST_FILE] } {
 if { ![file exists $::ITCL_TEST_FILE] } {
     puts "incrTcl test file $::ITCL_TEST_FILE not found."
 }
-if { ![file exists $::IWIDGETS_TEST_FILE] } {
-    puts "iwidgets test file $::IWIDGETS_TEST_FILE not found."
-}
-if { ![file exists $::BLT_TEST_FILE] } {
-    puts "BLT test file $::BLT_TEST_FILE not found."
-}
 if { ![file exists $::VTK_TEST_FILE] } {
     puts "VTK test file $::VTK_TEST_FILE not found."
 }
@@ -953,15 +841,12 @@ if { ![file exists $::ITK_TEST_FILE] } {
     puts "ITK test file $::ITK_TEST_FILE not found."
 }
 
-# check for both regular and alternate sandbox file for linux builds
 if { ![file exists $::CMAKE] || \
          ![file exists $::TEEM_TEST_FILE] || \
          ![file exists $::SLICERLIBCURL_TEST_FILE] || \
          ![file exists $::TCL_TEST_FILE] || \
          ![file exists $::TK_TEST_FILE] || \
          ![file exists $::ITCL_TEST_FILE] || \
-         ![file exists $::IWIDGETS_TEST_FILE] || \
-         ![file exists $::BLT_TEST_FILE] || \
          ![file exists $::VTK_TEST_FILE] || \
          ![file exists $::ITK_TEST_FILE] } {
     puts "Not all packages compiled; check errors and run genlib.tcl again."
