@@ -24,22 +24,7 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScene.h"
 
-// for calculating auto win/level
-//#include "vtkImageAccumulateDiscrete.h"
-//#include "vtkImageBimodalAnalysis.h"
-//#include "vtkImageExtractComponents.h"
-#include "vtkMRMLScalarVolumeNode.h"
-#include "vtkDiffusionTensorMathematics.h"
-#include "vtkAssignAttribute.h"
-#include "vtkMRMLDiffusionTensorVolumeNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLLabelMapVolumeDisplayNode.h"
-#include "vtkMRMLVectorVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
-#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::vtkMRMLVolumeNode()
@@ -176,7 +161,7 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
     }
   if (node->ImageData != NULL)
     {
-    this->SetImageData(node->ImageData);
+    this->SetAndObserveImageData(node->ImageData);
     }
 }
 
@@ -614,8 +599,9 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *ImageData)
     {
     if (this->ImageData != NULL)
       {
-      vtkDebugMacro("SetAndObserveImageData: calling calculate auto levels");
-      this->CalculateAutoLevels();
+      this->ImageData->Modified();
+      // calculating auto levels will be triggered by process mrml events
+      //calling UpdateFromMRML
       }
     this->Modified();
     }
@@ -651,13 +637,35 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
+  // did the image data change?
   if (this->ImageData && this->ImageData == vtkImageData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
     this->ModifiedSinceRead = true;
     this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
+    // update from mrml / calc auto levels
+    this->UpdateFromMRML();
+    return;
+    }
+
+  // did the one ofthe display nodes change?
+  for (unsigned int i=0; i<this->GetNumberOfDisplayNodes(); i++)
+    {
+    vtkMRMLDisplayNode *dnode = this->GetNthDisplayNode(i);
+    if (dnode != NULL && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
+        event ==  vtkCommand::ModifiedEvent)
+      {
+      vtkDebugMacro("ProcessMRMLEvents: got display node modified event on the " << i << "th display node");
+      this->UpdateFromMRML();
+      }
     }
   return;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeNode::UpdateFromMRML()
+{
+  vtkWarningMacro("UpdateFromMRML: subclass hasn't defined this yet...");
 }
 
 //---------------------------------------------------------------------------
@@ -699,90 +707,4 @@ void vtkMRMLVolumeNode::ApplyTransform(vtkAbstractTransform* transform)
   this->ApplyTransform(vtkLinearTransform::SafeDownCast(transform)->GetMatrix());
 }
 
-//---------------------------------------------------------------------------
-void vtkMRMLVolumeNode::CalculateAutoLevels(vtkMRMLVolumeDisplayNode *refNode)
-{
-  if ( !this->ImageData ) 
-    {
-    vtkDebugMacro("CalculateAutoLevels: image data is null");
-    return;
-    } else {vtkDebugMacro("CalculateAutoLevels: image data is NOT null"); }
-
-  if (!refNode && !this->GetDisplayNode())
-    {
-    vtkDebugMacro("CalculateAutoLevels: input display node is null, and cannot get local display node");
-    return;
-    }
-  vtkDebugMacro("CalculateAutoLevels: starting...");
-  vtkMRMLVolumeDisplayNode *displayNode;
-  if (refNode == NULL)
-    {
-    displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
-    if (!displayNode)
-      {
-      vtkDebugMacro("CalculateAutoLevels: this node doesn't have a volume display node, can't calculate win/level/thresh");
-      return;
-      }
-    }
-  else
-    {
-    displayNode = refNode;
-    }
-  vtkImageData *imageDataScalar = this->ImageData;
-  
-  vtkImageExtractComponents *extractComp = NULL;
-  vtkDiffusionTensorMathematics *DTIMathematics = NULL;  
-  vtkAssignAttribute *AssignAttributeTensorsFromScalars = NULL;
-
-  vtkMRMLDiffusionTensorVolumeDisplayNode *dtDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(displayNode);
-  vtkMRMLDiffusionWeightedVolumeDisplayNode *dwDisplayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(displayNode);
- 
- if (dtDisplayNode != NULL ) 
-    {
-    if (dtDisplayNode->GetDiffusionTensorDisplayPropertiesNode())
-      {
-      DTIMathematics = vtkDiffusionTensorMathematics::New();    
-      AssignAttributeTensorsFromScalars= vtkAssignAttribute::New();
-      AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
-      
-      DTIMathematics->SetInput(this->ImageData);
-      DTIMathematics->SetOperation(dtDisplayNode->GetDiffusionTensorDisplayPropertiesNode()->
-                                     GetScalarInvariant());
-      DTIMathematics->Update();
-      imageDataScalar = DTIMathematics->GetOutput();
-      }
-    else
-      {
-      imageDataScalar = NULL;
-      }
-    }
-  else if (dwDisplayNode != NULL) 
-    {
-    extractComp = vtkImageExtractComponents::New();
-    extractComp->SetInput(this->ImageData);
-    extractComp->SetComponents(dwDisplayNode->GetDiffusionComponent());
-    imageDataScalar = extractComp->GetOutput();
-    }
-
- if (this->IsA("vtkMRMLScalarVolumeNode") && displayNode->IsA("vtkMRMLScalarVolumeDisplayNode"))
-   {
-   vtkDebugMacro("CalculateAutoLevels: calling calc scalar auto levels");
-   vtkMRMLScalarVolumeNode::SafeDownCast(this)->CalculateScalarAutoLevels(vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode));
-   }
- else
-   { vtkDebugMacro("CalculateAutoLevels: this is not a scalar volume node, skipping calc scalar auto levels"); }
- 
-  if (extractComp)
-    {
-    extractComp->Delete();
-    }
-  if (DTIMathematics)
-    {
-    DTIMathematics->Delete();
-    }
-  if (AssignAttributeTensorsFromScalars)
-    {
-    AssignAttributeTensorsFromScalars->Delete();
-    }
-}
 

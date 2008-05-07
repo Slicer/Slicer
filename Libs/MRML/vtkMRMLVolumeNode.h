@@ -164,9 +164,9 @@ class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
   // Description:
-  // Calculate good default viewing parameters, uses this node's image data
-  // and adjusts the display node. If no display node passed in, uses the 0th one
-  void CalculateAutoLevels(vtkMRMLVolumeDisplayNode *refNode = NULL);
+  // Subclasses can define actions to take when the mrml scene passes an event
+  // that the image data has changed, usually call CalculateAutoLevels
+  virtual void UpdateFromMRML();
   
 protected:
   vtkMRMLVolumeNode();

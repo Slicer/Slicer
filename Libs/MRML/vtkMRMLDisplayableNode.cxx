@@ -314,6 +314,7 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode)
     vtkSetAndObserveMRMLObjectMacro(pnode, dnode);
     this->DisplayNodes.push_back(pnode);
     //pnode->Delete();
+    /*
     if (this->IsA("vtkMRMLVolumeNode"))
       {
       // set up the display node
@@ -324,6 +325,7 @@ void vtkMRMLDisplayableNode::AddAndObserveDisplayNode(vtkMRMLDisplayNode *dnode)
         vtkMRMLVolumeNode::SafeDownCast(this)->CalculateAutoLevels(vtkMRMLVolumeDisplayNode::SafeDownCast(pnode));
         }
       }
+    */
     }
 }
 //----------------------------------------------------------------------------

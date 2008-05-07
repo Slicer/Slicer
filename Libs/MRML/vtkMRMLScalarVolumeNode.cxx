@@ -29,6 +29,9 @@ Version:   $Revision: 1.14 $
 #include "vtkImageBimodalAnalysis.h"
 #include "vtkImageExtractComponents.h"
 
+// temporary fix for finding stats volumes
+#include "vtkMRMLStorageNode.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* vtkMRMLScalarVolumeNode::New()
 {
@@ -58,11 +61,23 @@ vtkMRMLNode* vtkMRMLScalarVolumeNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
 {
+  this->Bimodal = vtkImageBimodalAnalysis::New();
+  this->Accumulate = vtkImageAccumulateDiscrete::New();
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::~vtkMRMLScalarVolumeNode()
 {
+  if (this->Bimodal)
+    {
+    this->Bimodal->Delete();
+    this->Bimodal = NULL;
+    }
+  if (this->Accumulate)
+    {
+    this->Accumulate->Delete();
+    this->Accumulate = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -164,11 +179,13 @@ int vtkMRMLScalarVolumeNode::GetLabelMap()
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeNode::LabelMapOn()
 {
   this->SetLabelMap(1);
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeNode::LabelMapOff()
 {
   this->SetLabelMap(0);
@@ -222,28 +239,40 @@ void vtkMRMLScalarVolumeNode::SetLabelMap(int flag)
     this->Modified();
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLScalarVolumeNode::UpdateFromMRML()
+{
+  vtkDebugMacro("UpdateFromMRML: calling calculate auto levels");
+  // check for a stats volume - name or storage node's file name
+  std::string nodeName = std::string(this->GetName());
+  std::string fileName = "";
+  if (this->GetStorageNode() != NULL)
+    {
+    fileName = std::string(this->GetStorageNode()->GetFileName());
+    }
+  if ((nodeName != "" && nodeName.find("stat",0) != std::string::npos) ||
+      (fileName != "" && fileName.find("stat",0) != std::string::npos))
+    {
+    vtkMRMLScalarVolumeDisplayNode *sdNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+    this->CalculateStatisticsAutoLevels(sdNode, this->GetImageData());
+    }
+  else
+    {
+    this->CalculateScalarAutoLevels(NULL, NULL);
+    }
+}
 
 //---------------------------------------------------------------------------
-void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode)
+void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode, vtkImageData *refData)
 {
-  if ( !this->ImageData )
-    {
-    vtkDebugMacro("CalculateScalarAutoLevels: image data is null");
-    return;
-    }
   if (refNode == NULL &&  !this->GetScalarVolumeDisplayNode())
     {
     vtkDebugMacro("CalculateScalarAutoLevels: input display node is null and can't get local display node");
     return;
     }
-  this->CalculateScalarAutoLevelsWithData(refNode, NULL);
-}
-//---------------------------------------------------------------------------
-void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevelsWithData(vtkMRMLScalarVolumeDisplayNode *refNode, vtkImageData *refData)
-{
-  if (refNode == NULL &&  !this->GetScalarVolumeDisplayNode())
+  if (refData == NULL && !this->GetImageData())
     {
-    vtkDebugMacro("CalculateScalarAutoLevels: input display node is null and can't get local display node");
+    vtkDebugMacro("CalculateScalarAutoLevels: input image data is null, and can't get local image data");
     return;
     }
   
@@ -278,73 +307,7 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevelsWithData(vtkMRMLScalarVol
     vtkDebugMacro("CalculateScalarAutoLevels: " << (this->GetID() == NULL ? "nullid" : this->GetID()) << ": Auto window level not turned on, returning.");
     return;
     }
-  
-  // special case for a statistics volume
-  vtkMRMLScalarVolumeNode *scalarVolume = vtkMRMLScalarVolumeNode::SafeDownCast(this);
-  if (scalarVolume != NULL)
-    {
-    std::string nname ( this->GetName() );
-    if ( nname != "" )
-      {
-      unsigned int i = nname.find ( "stat", 0 );
-      if ( i != std::string::npos )
-        {
-        if ( displayNode != NULL ) 
-          {
-          double win, level, upT, lowT;
-          vtkDebugMacro("CalculateScalarAutoLevels: have a scalar volume, with stats in name");
-          displayNode->SetAutoThreshold (0);
-          displayNode->SetAutoWindowLevel (0);
-          win = displayNode->GetWindow();
-          if (win == 256)
-            {
-            // it may not have been set yet.
-            vtkImageAccumulateDiscrete *accumulate = vtkImageAccumulateDiscrete::New();
-            vtkImageBimodalAnalysis *bimodal = vtkImageBimodalAnalysis::New();
-    
-            accumulate->SetInput(imageDataScalar);
-            bimodal->SetInput(accumulate->GetOutput());
-            bimodal->Update();
-            
-            displayNode->SetWindow (bimodal->GetWindow());
-            displayNode->SetLevel (bimodal->GetLevel());
-            displayNode->SetLowerThreshold (bimodal->GetThreshold());
-            displayNode->SetUpperThreshold (bimodal->GetMax());
-            
-            bimodal->Delete();
-            accumulate->Delete();
 
-            win = displayNode->GetWindow();
-            vtkDebugMacro("CalculateScalarAutoLevels: rehacked stuff");
-            }
-          level = displayNode->GetLevel();
-          upT = displayNode->GetUpperThreshold();
-          lowT = displayNode->GetLowerThreshold();
-
-          //--- set window... a guess
-          displayNode->SetWindow ( win/2.6 );
-          win = displayNode->GetWindow();
-          displayNode->SetLevel ( upT - (win/2.0) );
-          
-          //--- set lower threshold
-          displayNode->SetLowerThreshold ( upT - ( (upT-lowT)/2.5));
-          displayNode->SetUpperThreshold ( upT );
-
-          //-- apply the settings
-          displayNode->SetApplyThreshold(1);
-          displayNode->SetAutoThreshold( 0 );
-          vtkDebugMacro("CalculateScalarAutoLevels: reset display node win/level/thresh! window = " << displayNode->GetWindow() << ", level = " << displayNode->GetLevel());
-          
-          return;
-          }
-        else { vtkDebugMacro("CalculateScalarAutoLevels: no scalar volume display node"); }
-        }
-      else { vtkDebugMacro("CalculateScalarAutoLevels: not a stat volume"); }
-      }
-    else { vtkDebugMacro("CalculateScalarAutoLevels: name is an empty string, can't check for a stat volume"); }
-    }
-  else { vtkDebugMacro("CalculateScalarAutoLevels: scalar volume is null, should not be possible"); }
-  
   if (imageDataScalar && imageDataScalar->GetNumberOfScalarComponents() == 1) 
     {
     // check the scalar type, bimodal analysis only works on int
@@ -352,17 +315,22 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevelsWithData(vtkMRMLScalarVol
       {
       vtkDebugMacro("CalculateScalarAutoLevels: image data scalar type is not integer, doing ad hoc calc of window/level.");
       }
-      
-    vtkImageAccumulateDiscrete *accumulate = vtkImageAccumulateDiscrete::New();
-    vtkImageBimodalAnalysis *bimodal = vtkImageBimodalAnalysis::New();
-    
-    accumulate->SetInput(imageDataScalar);
-    bimodal->SetInput(accumulate->GetOutput());
-    bimodal->Update();
+
+    if (this->Bimodal == NULL)
+      {
+      this->Bimodal = vtkImageBimodalAnalysis::New();
+      }
+    if (this->Accumulate == NULL)
+      {
+      this->Accumulate = vtkImageAccumulateDiscrete::New();
+      }
+    this->Accumulate->SetInput(imageDataScalar);
+    this->Bimodal->SetInput(this->Accumulate->GetOutput());
+    this->Bimodal->Update();
 
     // Workaround for image data where all accumulate samples fall
     // within the same histogram bin
-    if (bimodal->GetWindow() == 0.0 && bimodal->GetLevel() == 0.0 ||
+    if (this->Bimodal->GetWindow() == 0.0 && this->Bimodal->GetLevel() == 0.0 ||
         imageDataScalar->GetScalarType() != VTK_INT) 
       {
       double range[2];
@@ -378,15 +346,108 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevelsWithData(vtkMRMLScalarVol
       }
     else
       {
-      displayNode->SetWindow (bimodal->GetWindow());
-      displayNode->SetLevel (bimodal->GetLevel());
-      displayNode->SetLowerThreshold (bimodal->GetThreshold());
-      displayNode->SetUpperThreshold (bimodal->GetMax());
-      vtkDebugMacro("CalculateScalarAutoLevels: set display node window to " << bimodal->GetWindow() << ", level to " << bimodal->GetLevel() << ", lower threshold to " << displayNode->GetLowerThreshold() << ", upper threshold to " << displayNode->GetUpperThreshold() << ", displayNode id = " << displayNode->GetID());
+      displayNode->SetWindow (this->Bimodal->GetWindow());
+      displayNode->SetLevel (this->Bimodal->GetLevel());
+      displayNode->SetLowerThreshold (this->Bimodal->GetThreshold());
+      displayNode->SetUpperThreshold (this->Bimodal->GetMax());
+      vtkDebugMacro("CalculateScalarAutoLevels: set display node window to " << this->Bimodal->GetWindow() << ", level to " << this->Bimodal->GetLevel() << ", lower threshold to " << displayNode->GetLowerThreshold() << ", upper threshold to " << displayNode->GetUpperThreshold() << ", displayNode id = " << displayNode->GetID());
       }
-
-    accumulate->Delete();
-    bimodal->Delete();
     }
-  else { vtkDebugMacro("CalculateScalarAutoLevels: scalar image data is null, or number of scalar components != 1"); }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeNode::CalculateStatisticsAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode, vtkImageData *refData)
+{
+  if (refNode == NULL && !this->GetScalarVolumeDisplayNode())
+    {
+    vtkDebugMacro("CalculateStatisticsAutoLevels: input display node is null and can't get local display node");
+    return;
+    }
+
+  vtkMRMLScalarVolumeDisplayNode *displayNode;
+  if (refNode == NULL)
+    {
+    displayNode = this->GetScalarVolumeDisplayNode();
+    }
+  else
+    {
+    displayNode = refNode;
+    }
+
+  if (!displayNode)
+    {
+    vtkDebugMacro("CalculateStatisticsAutoLevels: can't get display node.");
+    return;
+    }
+                  
+  vtkImageData *imageDataScalar;
+  if (refData == NULL)
+    {
+    imageDataScalar = this->GetImageData();
+    }
+  else
+    {
+    imageDataScalar = refData;
+    }
+
+  if ( !imageDataScalar )
+    {
+    vtkDebugMacro("CalculateStatisticsAutoLevels: image data is null");
+    return;
+    }
+  
+  if (!displayNode->GetAutoWindowLevel())
+    {
+    vtkDebugMacro("CalculateStatisticsAutoLevels: " << (this->GetID() == NULL ? "nullid" : this->GetID()) << ": Auto window level not turned on, returning.");
+    return;
+    }
+
+  if ( displayNode != NULL ) 
+    {
+    double win, level, upT, lowT;
+    displayNode->SetAutoThreshold (0);
+    displayNode->SetAutoWindowLevel (0);
+    win = displayNode->GetWindow();
+//    if (win == 256)
+      {
+      // it probably was not set yet. just do it
+      if (this->Bimodal == NULL)
+        {
+        this->Bimodal = vtkImageBimodalAnalysis::New();
+        }
+      if (this->Accumulate == NULL)
+        {
+        this->Accumulate = vtkImageAccumulateDiscrete::New();
+        }
+      this->Accumulate->SetInput(imageDataScalar);
+      this->Bimodal->SetInput(this->Accumulate->GetOutput());
+      this->Bimodal->Update();
+            
+      displayNode->SetWindow (this->Bimodal->GetWindow());
+      displayNode->SetLevel (this->Bimodal->GetLevel());
+      displayNode->SetLowerThreshold (this->Bimodal->GetThreshold());
+      displayNode->SetUpperThreshold (this->Bimodal->GetMax());
+            
+      win = displayNode->GetWindow();
+      vtkDebugMacro("CalculateStatisticsAutoLevels: rehacked stuff");
+      }
+    level = displayNode->GetLevel();
+    upT = displayNode->GetUpperThreshold();
+    lowT = displayNode->GetLowerThreshold();
+    
+    //--- set window... a guess
+    displayNode->SetWindow ( win/2.6 );
+    win = displayNode->GetWindow();
+    displayNode->SetLevel ( upT - (win/2.0) );
+    
+    //--- set lower threshold
+    displayNode->SetLowerThreshold ( upT - ( (upT-lowT)/2.5));
+    displayNode->SetUpperThreshold ( upT );
+    
+    //-- apply the settings
+    displayNode->SetApplyThreshold(1);
+    displayNode->SetAutoThreshold( 0 );
+    displayNode->SetAutoWindowLevel(0);
+    vtkDebugMacro("CalculateStatisticsAutoLevels: reset display node win/level/thresh! window = " << displayNode->GetWindow() << ", level = " << displayNode->GetLevel() << ", upper thresh = " << displayNode->GetUpperThreshold() << ", lower thresh = " << displayNode->GetLowerThreshold());
+    }
 }

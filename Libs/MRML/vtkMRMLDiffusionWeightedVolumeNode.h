@@ -25,13 +25,14 @@
 #define __vtkMRMLDiffusionWeightedVolumeNode_h
 
 
-#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 
 class vtkImageData;
 class vtkDoubleArray;
+class vtkImageExtractComponents;
 
-class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLVolumeNode
+class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarVolumeNode
 {
   public:
   static vtkMRMLDiffusionWeightedVolumeNode *New();
@@ -91,6 +92,13 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLVolumeN
     return vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
   }
 
+  // Description:
+  // Call CalculateAutoLevels
+  virtual void UpdateFromMRML();
+  
+  // Description:
+  // Extract the diffusion component and pass it to CalculateScalarAutoLevel
+  virtual void CalculateAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL);
 
 protected:
   vtkMRMLDiffusionWeightedVolumeNode();
@@ -104,6 +112,8 @@ protected:
   vtkDoubleArray *BValues;
   
   int NumberOfGradients;
+
+  vtkImageExtractComponents *ExtractComponents;
 
 };
 

@@ -65,10 +65,14 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   
   // Description:
   // Specifies whether windowing and leveling are to be performed automatically
-  vtkBooleanMacro(AutoWindowLevel, int);
+  //vtkBooleanMacro(AutoWindowLevel, int);
   vtkGetMacro(AutoWindowLevel, int);
-  vtkSetMacro(AutoWindowLevel, int);
+  //vtkSetMacro(AutoWindowLevel, int);
+  void SetAutoWindowLevel(int);
+  void AutoWindowLevelOn() { this->SetAutoWindowLevel(1); };
+  void AutoWindowLevelOff() { this->SetAutoWindowLevel(0); };
 
+  
   // Description:
   // The window value to use when autoWindowLevel is 'no'
   vtkGetMacro(Window, double);
@@ -143,7 +147,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
     };
 
   virtual void UpdateImageDataPipeline();
-
+  
 protected:
   vtkMRMLScalarVolumeDisplayNode();
   ~vtkMRMLScalarVolumeDisplayNode();

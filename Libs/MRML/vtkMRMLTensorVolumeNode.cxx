@@ -22,6 +22,12 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLScene.h"
 #include "vtkMatrix4x4.h"
 
+
+#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkDiffusionTensorMathematics.h"
+#include "vtkAssignAttribute.h"
+#include "vtkMRMLScalarVolumeNode.h"
+
 //------------------------------------------------------------------------------
 vtkMRMLTensorVolumeNode* vtkMRMLTensorVolumeNode::New()
 {
@@ -59,12 +65,26 @@ vtkMRMLTensorVolumeNode::vtkMRMLTensorVolumeNode()
       this->MeasurementFrameMatrix[i][j] = (i == j) ? 1.0 : 0.0;
       }
     }
-  this->Order = -1; //Tensor order   
+  this->Order = -1; //Tensor order
+
+  this->DTIMathematics = NULL;
+  this->AssignAttributeTensorsFromScalars = NULL;
+  
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLTensorVolumeNode::~vtkMRMLTensorVolumeNode()
 {
+  if (DTIMathematics)
+    {
+    DTIMathematics->Delete();
+    DTIMathematics = NULL;
+    }
+  if (AssignAttributeTensorsFromScalars)
+    {
+    AssignAttributeTensorsFromScalars->Delete();
+    AssignAttributeTensorsFromScalars = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -229,5 +249,95 @@ void vtkMRMLTensorVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLTensorVolumeNode::UpdateFromMRML()
+{
+  this->CalculateAutoLevels();
+}
 
- 
+//----------------------------------------------------------------------------
+void vtkMRMLTensorVolumeNode::CalculateAutoLevels(vtkMRMLVolumeDisplayNode *refNode, vtkImageData *refData)
+{
+  if (!refNode && !this->GetDisplayNode())
+    {
+    vtkDebugMacro("CalculateAutoLevels: input display node is null, and cannot get local display node");
+    return;
+    }
+
+  vtkMRMLDiffusionTensorVolumeDisplayNode *displayNode;
+  if (refNode == NULL)
+    {
+    displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+    if (!displayNode)
+      {
+      vtkDebugMacro("CalculateAutoLevels: this node doesn't have a volume display node, can't calculate win/level/thresh");
+      return;
+      }
+    }
+  else
+    {
+    displayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(refNode);
+    }
+
+  if (displayNode == NULL)
+    {
+    vtkWarningMacro("CalculateAutoLevels: unable to get a dt volume display node.");
+    return;
+    }
+
+  if (!displayNode->GetAutoWindowLevel())
+    {
+    vtkDebugMacro("CalculateAutoLevels: " << (this->GetID() == NULL ? "nullid" : this->GetID()) << ": Auto window level not turned on, returning.");
+    return;
+    }
+    
+  vtkImageData *imageDataScalar;
+  if (refData == NULL)
+    {
+    // this is going to fail, for tensors, we really need to have the image
+    // data passed in
+    imageDataScalar = this->GetImageData();
+    }
+  else
+    {
+    imageDataScalar = refData;
+    }
+
+  if ( !imageDataScalar )
+    {
+    vtkDebugMacro("CalculateAutoLevels: image data is null");
+    return;
+    }
+
+  if (displayNode != NULL ) 
+    {
+    if (displayNode->GetDiffusionTensorDisplayPropertiesNode())
+      {
+      if (this->AssignAttributeTensorsFromScalars == NULL)
+        {
+        this->AssignAttributeTensorsFromScalars = vtkAssignAttribute::New();
+        }
+      if (this->DTIMathematics == NULL)
+        {
+        this->DTIMathematics = vtkDiffusionTensorMathematics::New();
+        }
+      this->AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
+      
+      this->DTIMathematics->SetInput(imageDataScalar);
+      this->DTIMathematics->SetOperation(displayNode->GetDiffusionTensorDisplayPropertiesNode()->
+                                   GetScalarInvariant());
+      this->DTIMathematics->Update();
+      imageDataScalar = this->DTIMathematics->GetOutput();
+      }
+    else
+      {
+      imageDataScalar = NULL;
+      }
+    }
+  if (imageDataScalar != NULL)
+    {
+    // pass it up to the superclass
+    this->CalculateScalarAutoLevels(displayNode, imageDataScalar);
+    }
+}
+

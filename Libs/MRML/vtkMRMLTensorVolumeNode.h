@@ -25,13 +25,15 @@
 #define __vtkMRMLTensorVolumeNode_h
 
 
-#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 class vtkImageData;
 class vtkDoubleArray;
 class vtkMatrix4x4;
+class vtkDiffusionTensorMathematics;
+class vtkAssignAttribute;
 
-class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLVolumeNode
+class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
 {
   public:
   static vtkMRMLTensorVolumeNode *New();
@@ -72,17 +74,30 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLVolumeNode
   vtkSetMacro(Order,int);
   
   // Description:
+  // Set the Measurement frame matrix from 3x3 array
   void SetMeasurementFrameMatrix(const double mf[3][3]);
+  // Description
+  // Set the measurement frame matrix from doubles
   void SetMeasurementFrameMatrix(const double xr, const double xa, const double xs,
                            const double yr, const double ya, const double ys,
                            const double zr, const double za, const double zs);
 
   void GetMeasurementFrameMatrix(double mf[3][3]);
   
-  // Description
+  // Description:
+  // Set/Get the measurement frame matrix from a vtk 4x4 matrix
   void SetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
   void GetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
 
+  // Description:
+  // response to update event, call calcualte auto levels
+  virtual void UpdateFromMRML();
+  
+  // Description:
+  // Extract the component defined by the diffusion tensor dispaly properties
+  // node, and pass it on to CalculateScalarAutoLevels.
+  virtual void CalculateAutoLevels(vtkMRMLVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL);
+  
 protected:
   vtkMRMLTensorVolumeNode();
   ~vtkMRMLTensorVolumeNode();
@@ -91,6 +106,9 @@ protected:
   
   double MeasurementFrameMatrix[3][3];
   int Order;
+
+  vtkDiffusionTensorMathematics *DTIMathematics;  
+  vtkAssignAttribute *AssignAttributeTensorsFromScalars ;
   
 };
 

@@ -21,6 +21,7 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkDoubleArray.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 //------------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionWeightedVolumeNode::New()
@@ -67,6 +68,8 @@ vtkMRMLDiffusionWeightedVolumeNode::vtkMRMLDiffusionWeightedVolumeNode()
       this->MeasurementFrameMatrix[i][j] = (i == j) ? 1.0 : 0.0;
       }
     }
+
+  this->ExtractComponents = NULL; 
 }
 
 //----------------------------------------------------------------------------
@@ -74,6 +77,12 @@ vtkMRMLDiffusionWeightedVolumeNode::~vtkMRMLDiffusionWeightedVolumeNode()
 {
   this->DiffusionGradients->Delete();
   this->BValues->Delete();
+
+  if (this->ExtractComponents)
+    {
+    this->ExtractComponents->Delete();
+    this->ExtractComponents = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -217,6 +226,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrameMatrix(const double 
   MeasurementFrameMatrix[2][2] = zs;
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
 {
   for (int i=0; i<3; i++)
@@ -228,6 +238,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4 
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::GetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
 {
 
@@ -240,7 +251,6 @@ void vtkMRMLDiffusionWeightedVolumeNode::GetMeasurementFrameMatrix(vtkMatrix4x4 
       }
     }
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::SetNumberOfGradients(int val)
@@ -409,5 +419,75 @@ void vtkMRMLDiffusionWeightedVolumeNode::PrintSelf(ostream& os, vtkIndent indent
   for(int k=0; k<this->BValues->GetNumberOfTuples(); k++) 
     {
     os << indent << " " << this->BValues->GetValue(k);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionWeightedVolumeNode::UpdateFromMRML()
+{
+  this->CalculateAutoLevels(NULL, NULL);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionWeightedVolumeNode:: CalculateAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode, vtkImageData *refData)
+{
+  if (refNode == NULL &&  !this->GetDisplayNode())
+    {
+    vtkDebugMacro("CalculateAutoLevels: input display node is null and can't get local display node");
+    return;
+    }
+
+  vtkMRMLDiffusionWeightedVolumeDisplayNode *displayNode;
+  if (refNode == NULL)
+    {
+    displayNode =  vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+    }
+  else
+    {
+    displayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(refNode);
+    }
+  if (displayNode == NULL)
+    {
+    vtkErrorMacro("CalculateAutoLevels: unable to get dw volume display node.");
+    return;
+    }
+
+  if (!displayNode->GetAutoWindowLevel())
+    {
+    vtkDebugMacro("CalculateAutoLevels: " << (this->GetID() == NULL ? "nullid" : this->GetID()) << ": Auto window level not turned on, returning.");
+    return;
+    }
+   
+  vtkImageData *imageDataScalar = NULL;
+  if (refData == NULL)
+    {
+    imageDataScalar = this->GetImageData();
+    }
+  else
+    {
+    imageDataScalar = refData;
+    }
+
+  if ( !imageDataScalar )
+    {
+    vtkDebugMacro("CalculateAutoLevels: image data is null");
+    return;
+    }
+
+  if (displayNode != NULL) 
+    {
+    if (this->ExtractComponents == NULL)
+      {
+      this->ExtractComponents = vtkImageExtractComponents::New();
+      }
+    this->ExtractComponents->SetInput(this->ImageData);
+    this->ExtractComponents->SetComponents(displayNode->GetDiffusionComponent());
+    imageDataScalar = this->ExtractComponents->GetOutput();
+    }
+
+   if (imageDataScalar != NULL)
+    {
+    // pass it up to the superclass
+    this->CalculateScalarAutoLevels(displayNode, imageDataScalar);
     }
 }

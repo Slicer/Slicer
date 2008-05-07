@@ -308,3 +308,21 @@ void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetAutoWindowLevel (int flag)
+{
+  if (this->AutoWindowLevel == flag)
+    {
+    return;
+    }
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting AutoWindowLevel to " << flag);
+  this->AutoWindowLevel = flag;
+
+  // invoke a modified event
+  this->Modified();
+
+  // TODO: make sure trigger update of the auto win/level
+  
+  return;
+}
