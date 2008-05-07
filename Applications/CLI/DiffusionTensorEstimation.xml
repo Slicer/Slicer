@@ -38,7 +38,7 @@
       <label>Output Baseline Volume</label>
       <channel>output</channel>
       <index>2</index>
-      <description>Estimated DTI volume</description>
+      <description>Estimated baseline volume</description>
     </image>
     <image type ="label">
       <name>thresholdMask</name>
