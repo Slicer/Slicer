@@ -1281,11 +1281,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       disp = dtvdn; // assign to superclass pointer
       dwdpn = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
       this->MRMLScene->AddNode( dwdpn );
-      dtvdn->SetAutoWindowLevel(0);
-      dtvdn->SetWindow(0);
-      dtvdn->SetLevel(0);
-      dtvdn->SetUpperThreshold(0);
-      dtvdn->SetLowerThreshold(0);
       dtvdn->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(dwdpn->GetID());
       dwdpn->Delete();
       }
@@ -1346,10 +1341,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       displayNode->SetDefaultColorMap();
       vtkMRMLVolumeNode *vnd = vtkMRMLVolumeNode::SafeDownCast(nd);
       vtkMRMLScalarVolumeDisplayNode *svdnd = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode);
-      if (vnd)
-        {
-        vnd->CalculateAutoLevels (svdnd);
-        }
       } 
     if (svnd) 
       {
