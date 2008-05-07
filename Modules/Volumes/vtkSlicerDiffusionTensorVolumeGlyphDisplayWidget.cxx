@@ -161,6 +161,43 @@ void vtkSlicerDiffusionTensorVolumeGlyphDisplayWidget::ProcessWidgetEvents ( vtk
       }
     }
 
+  // process colr by events
+
+  if (vtkKWMenu::SafeDownCast(caller) && vtkKWMenu::SafeDownCast(caller) == this->GeometryColorMenu->GetWidget()->GetMenu() &&
+      event == vtkKWMenu::MenuItemInvokedEvent)
+    {
+    std::string colorBy (this->GeometryColorMenu->GetWidget()->GetValue());
+
+    // treat color orientation specailly
+    std::string::size_type loc = colorBy.find("ColorOrientation", 0);
+    if( loc != std::string::npos ) 
+      {
+      vtkMRMLNode *color = this->MRMLScene->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
+      if (color)
+        {
+        this->ColorSelectorWidget->SetSelected(color);
+        }
+      for (unsigned int i=0; i<this->GlypDisplayNodes.size(); i++)
+        {
+        vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dnode = this->GlypDisplayNodes[i];
+        if (dnode != NULL)
+          {
+          dnode->SetScalarRange(0,255);
+          dnode->SetAutoScalarRange(0);
+          if (color)
+            {
+           dnode->SetAndObserveColorNodeID(color->GetID());
+            }
+          }
+        }
+      this->AutoScalarRangeMenu->GetWidget()->SetValue ( "Manual" );
+      this->MinRangeEntry->SetValueAsDouble(0);
+      this->MaxRangeEntry->SetValueAsDouble(255);
+
+      } // if( loc != std::string::npos ) 
+
+    }
+
   //
   // process color selector events
   //

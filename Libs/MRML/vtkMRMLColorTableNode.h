@@ -73,6 +73,7 @@ public:
   // Get/Set for Type
   void SetType(int type);
   vtkGetMacro(Type,int);
+  void SetTypeToFullRainbow();
   void SetTypeToGrey();
   void SetTypeToIron();
   void SetTypeToRainbow();
@@ -104,7 +105,7 @@ public:
   // ReverseRainbow - inverted Rainbow
   // FMRI - fMRI map
   // FMRIPA - fMRI Positive Activation map
-  // Labels - the Slicer2 default editor labels
+  // Labels - the Slicer2 FullRainbow editor labels
   // SPLBrainAtlas - the SPL Brain atlas labels
   // Random - 255 random colors
   // User - user defined in the GUI
@@ -112,6 +113,7 @@ public:
 
   enum
     {
+      FullRainbow = 0,
       Grey = 1,
       Iron = 2,
       Rainbow = 3,
@@ -131,7 +133,7 @@ public:
 
   // Description:
   // Return the lowest and highest integers, for use in looping
-  int GetFirstType () { return this->Grey; };
+  int GetFirstType () { return this->FullRainbow; };
   int GetLastType () { return this->File; };
   
   // Description:

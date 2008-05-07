@@ -75,7 +75,7 @@ vtkMRMLColorTableNode::~vtkMRMLColorTableNode()
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableNode::WriteXML(ostream& of, int nIndent)
 {
-  // Write all attributes not equal to their defaults
+  // Write all attributes not equal to their FullRainbows
   
   Superclass::WriteXML(of, nIndent);
   
@@ -227,6 +227,12 @@ void vtkMRMLColorTableNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLColorTableNode::SetTypeToFullRainbow()
+{
+    this->SetType(this->FullRainbow);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLColorTableNode::SetTypeToGrey()
 {
     this->SetType(this->Grey);
@@ -314,6 +320,10 @@ void vtkMRMLColorTableNode::SetTypeToFile()
 //----------------------------------------------------------------------------
 const char* vtkMRMLColorTableNode::GetTypeAsIDString()
 {
+  if (this->Type == this->FullRainbow)
+    {
+    return "vtkMRMLColorTableNodeFullRainbow";
+    }
   if (this->Type == this->Grey)
     {
     return "vtkMRMLColorTableNodeGrey";
@@ -376,6 +386,10 @@ const char* vtkMRMLColorTableNode::GetTypeAsIDString()
 //----------------------------------------------------------------------------
 const char* vtkMRMLColorTableNode::GetTypeAsString()
 {
+  if (this->Type == this->FullRainbow)
+    {
+    return "FullRainbow";
+    }
   if (this->Type == this->Grey)
     {
     return "Grey";
@@ -473,12 +487,24 @@ void vtkMRMLColorTableNode::SetType(int type)
       vtkLookupTable *table = vtkLookupTable::New();
       this->SetLookupTable(table);
       table->Delete();
-      // as a default, set the table range to 255
+      // as a FullRainbow, set the table range to 255
       this->GetLookupTable()->SetTableRange(0, 255);
       }
 
     // delay setting names from colours until asked for one
-    if (this->Type == this->Grey)
+    if (this->Type == this->FullRainbow)
+      {
+      // from vtkSlicerSliceLayerLogic.cxx
+      this->GetLookupTable()->SetRampToLinear();
+      this->GetLookupTable()->SetTableRange(0, 255);
+      this->GetLookupTable()->SetHueRange(0, 1);
+      this->GetLookupTable()->SetSaturationRange(1, 1);
+      this->GetLookupTable()->SetValueRange(1, 1);
+      this->GetLookupTable()->SetAlphaRange(1, 1); // not used
+      this->GetLookupTable()->Build();
+      this->SetNamesFromColors();
+      }
+    else if (this->Type == this->Grey)
       {
       // from vtkSlicerSliceLayerLogic.cxx
       this->GetLookupTable()->SetRampToLinear();
