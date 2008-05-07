@@ -273,7 +273,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->WindowLevelAutoManual->SetLabelText("Window/Level:");
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual");
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto");
-  this->WindowLevelAutoManual->GetWidget()->SetValue ( "Manual" );
+  this->WindowLevelAutoManual->GetWidget()->SetValue ( "Auto" );
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->SetItemCommand(0, this, "ProcessButtonsCommand");
   this->WindowLevelAutoManual->GetWidget()->GetMenu()->SetItemCommand(1, this, "ProcessButtonsCommand");
   this->WindowLevelAutoManual->GetWidget()->SetWidth ( 7 );
@@ -322,7 +322,7 @@ void vtkKWWindowLevelThresholdEditor::CreateWidget()
   this->ThresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Manual");
   this->ThresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Auto"); 
   this->ThresholdAutoManual->GetWidget()->GetMenu()->AddRadioButton ( "Off");
-  this->ThresholdAutoManual->GetWidget()->SetValue ( "Manual" );
+  this->ThresholdAutoManual->GetWidget()->SetValue ( "Off" );
   this->ThresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(0, this, "ProcessButtonsCommand");
   this->ThresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(1, this, "ProcessButtonsCommand");
   this->ThresholdAutoManual->GetWidget()->GetMenu()->SetItemCommand(2, this, "ProcessButtonsCommand");
@@ -417,7 +417,7 @@ void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
       {
       this->Histogram->BuildHistogram( this->ImageData->GetPointData()->GetScalars(), 0);
       double *range = this->Histogram->GetRange();
-
+/***
       double w = this->GetWindow();
       double l = this->GetLevel();
       double r0 = l - 0.5*w;
@@ -435,6 +435,7 @@ void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
         {
         this->SetThreshold(range[0], range[1]);
         }
+***/
       // avoid crash when Image not set for histogram
       this->ColorTransferFunctionEditor->SetHistogram(NULL);
       this->ColorTransferFunctionEditor->SetHistogram(this->Histogram);
@@ -588,7 +589,7 @@ void vtkKWWindowLevelThresholdEditor::ProcessWindowLevelStartCommand(double min,
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::ProcessThresholdCommand(double min, double max)
 {
-  double range[2];
+  double *range = this->ThresholdRange->GetRange();
   if (range[0] != min || range[1] != max)
     {
     range[0] = min;

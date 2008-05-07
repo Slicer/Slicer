@@ -408,7 +408,7 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::RemoveWidgetObservers ( )
   this->WindowLevelThresholdEditor->RemoveObservers(vtkKWWindowLevelThresholdEditor::ValueStartChangingEvent, (vtkCommand *)this->GUICallbackCommand );
   this->InterpolateButton->RemoveObservers(vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
-  this->WindowLevelThresholdEditor->SetImageData(NULL);
+  //this->WindowLevelThresholdEditor->SetImageData(NULL);
 }
 
 
