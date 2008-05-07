@@ -68,12 +68,17 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     void SetGlyphVisibility(int plane, int status);
 
     // Description:
-    // Computes Tensor by calling Tensor Estimation CLM. (Is public because of tcl testing.)
+    // Computes a new tensor for a DWI by calling Tensor Estimation CLM.
+    // (Method is public because of tcl testing.)
     void RunTensor();
 
     // Description:
+    // Computes a new tensor by rotating a DTI. The measurement frame is applyed to the DTI.
+    void RotateTensor();
+
+    // Description:
     // Creates tracts by calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
-    // (Is public because of tcl testing.)
+    // (Methos is public because of tcl testing.)
     void CreateTracts();
 
     vtkSetObjectMacro(Application, vtkSlicerApplication);    

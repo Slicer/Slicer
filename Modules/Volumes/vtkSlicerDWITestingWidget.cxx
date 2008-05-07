@@ -73,8 +73,7 @@ vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
     }
   if (this->TensorNode)
     {
-    this->TensorNode->Delete();
-    this->TensorNode = NULL;
+     vtkSetMRMLNodeMacro(this->TensorNode, NULL);
     }
   if (this->Application)
     {
@@ -193,6 +192,27 @@ void vtkSlicerDWITestingWidget::PrintSelf (ostream& os, vtkIndent indent)
   }
 
 //---------------------------------------------------------------------------
+void vtkSlicerDWITestingWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node)
+  {
+  if (node == NULL)
+    {
+    vtkErrorMacro(<< this->GetClassName() << ": node in UpdateWidget() is NULL");
+    return;
+    }
+  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, node); //set ActiveVolumeNode
+
+  //deactivate tensor estimation button
+  if (node->IsA("vtkMRMLDiffusionTensorVolumeNode")) 
+    {
+    this->RunButton->EnabledOff(); 
+    }
+  else this->RunButton->EnabledOn(); //activate tensor estimation button
+
+  //set widegt to default status
+  this->SetWidgetToDefault();
+  }
+
+//---------------------------------------------------------------------------
 void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
   {
   // possible caller (widgets)
@@ -202,7 +222,7 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
 
   //---------
   //run tensor test
-  if (this->RunButton->GetWidget() == vtkKWPushButton::SafeDownCast(caller) && event == vtkKWPushButton::InvokedEvent)
+  if (button == this->RunButton->GetWidget() && event == vtkKWPushButton::InvokedEvent)
     {
     this->RunButton->SetEnabled(0);
     if(this->ModifiedForNewTensor)
@@ -224,8 +244,9 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
       return;
       }
 
-    std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glypDisplayNodes = selected->GetSliceGlyphDisplayNodes();
-    if(glypDisplayNodes.size() != 3) 
+    //check if selected node is already finished, if still in tensor estimation show dialog
+    std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glyphDisplayNodes = selected->GetSliceGlyphDisplayNodes();
+    if(glyphDisplayNodes.size() != 3) 
       {
       vtkKWMessageDialog *MessageDialog = vtkKWMessageDialog::New();
       MessageDialog->SetParent(this->Application->GetApplicationGUI()->GetMainSlicerWindow());
@@ -239,18 +260,19 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
       }
 
     //set old tensorNode
-    if(this->TensorNode != NULL)
+    if(this->TensorNode != NULL && selected == this->TensorNode)
       {
-      std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glypDisplayNodesOld = this->TensorNode->GetSliceGlyphDisplayNodes();
-      for (unsigned int i=0; i<glypDisplayNodesOld.size(); i++)
+      //switch off glyphs from old tensorNode
+      std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glyphDisplayNodesOld = this->TensorNode->GetSliceGlyphDisplayNodes();
+      for (unsigned int i=0; i<glyphDisplayNodesOld.size(); i++)
         {
-        glypDisplayNodesOld[i]->SetVisibility(0);
+        glyphDisplayNodesOld[i]->SetVisibility(0);
         }
-      this->TensorNode->Delete();
       }
+
     //set new tensorNode
-    this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(selected);
-    this->TensorNode->Register(this);
+    vtkSetMRMLNodeMacro(this->TensorNode, selected);
+
     //create tracts and glyphs
     this->CreateTracts();
     this->CreateGlyphs();
@@ -384,13 +406,20 @@ void vtkSlicerDWITestingWidget::RunTensor()
   //estimate tensors
   moduleGUI->GetLogic()->Apply(tensorCLM);
 
-  this->TensorNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(tensorNodeCLM);
+  vtkSetMRMLNodeMacro(this->TensorNode, vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(tensorNodeCLM));
+
   //clean up
   tensorCLM->Delete();
   tensorNodeCLM->Delete();
   baselineNodeCLM->Delete();
   maskNodeCLM->Delete();
   this->ModifiedForNewTensor = 0;
+  }
+
+//---------------------------------------------------------------------------
+void vtkSlicerDWITestingWidget::RotateTensor()
+  {
+  
   }
 
 //---------------------------------------------------------------------------
@@ -482,23 +511,7 @@ void vtkSlicerDWITestingWidget::CreateTracts()
     }
   }
 
-//---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *dwiNode)
-  {
-  if (dwiNode == NULL)
-    {
-    vtkErrorMacro(<< this->GetClassName() << ": dwiNode in UpdateWidget() is NULL");
-    return;
-    }
-  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, dwiNode); //set ActiveVolumeNode
 
-  //deactivate tensor estimation button
-  if (dwiNode->IsA("vtkMRMLDiffusionTensorVolumeNode")) this->RunButton->EnabledOff(); 
-  else this->RunButton->EnabledOn(); //activate tensor estimation button
-
-  //set widegt to default status
-  this->SetWidgetToDefault();
-  }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDWITestingWidget::SetModifiedForNewTensor(int modified)
