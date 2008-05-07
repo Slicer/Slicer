@@ -25,7 +25,7 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWPushButtonWithLabel.h"
 #include "vtkSlicerNodeSelectorWidget.h"
-#include "vtkSlicerDWITestingWidget.h"
+#include "vtkSlicerDiffusionTestingWidget.h"
 #include "vtkSlicerMeasurementFrameWidget.h"
 #include "vtkKWScale.h"
 #include "vtkKWScaleWithLabel.h"
@@ -33,11 +33,11 @@
 #include "vtkKWMessageDialog.h"
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkSlicerDWITestingWidget);
-vtkCxxRevisionMacro (vtkSlicerDWITestingWidget, "$Revision: 1.0 $");
+vtkStandardNewMacro (vtkSlicerDiffusionTestingWidget);
+vtkCxxRevisionMacro (vtkSlicerDiffusionTestingWidget, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
-vtkSlicerDWITestingWidget::vtkSlicerDWITestingWidget(void)
+vtkSlicerDiffusionTestingWidget::vtkSlicerDiffusionTestingWidget(void)
   {
   this->Application = NULL;
   this->ActiveVolumeNode = NULL;
@@ -64,7 +64,7 @@ vtkSlicerDWITestingWidget::vtkSlicerDWITestingWidget(void)
   }
 
 //---------------------------------------------------------------------------
-vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
+vtkSlicerDiffusionTestingWidget::~vtkSlicerDiffusionTestingWidget(void)
   {
   this->RemoveWidgetObservers();
   if (this->ActiveVolumeNode)
@@ -157,7 +157,7 @@ vtkSlicerDWITestingWidget::~vtkSlicerDWITestingWidget(void)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::AddWidgetObservers ( )
+void vtkSlicerDiffusionTestingWidget::AddWidgetObservers ( )
   {
   this->RunButton->GetWidget()->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->DTISelector->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
@@ -171,7 +171,7 @@ void vtkSlicerDWITestingWidget::AddWidgetObservers ( )
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::RemoveWidgetObservers( )
+void vtkSlicerDiffusionTestingWidget::RemoveWidgetObservers( )
   {
   this->RunButton->GetWidget()->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->DTISelector->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -185,14 +185,14 @@ void vtkSlicerDWITestingWidget::RemoveWidgetObservers( )
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::PrintSelf (ostream& os, vtkIndent indent)
+void vtkSlicerDiffusionTestingWidget::PrintSelf (ostream& os, vtkIndent indent)
   {
   this->vtkObject::PrintSelf ( os, indent );
-  os << indent << "vtkSlicerDWITestingWidget: " << this->GetClassName ( ) << "\n";
+  os << indent << "vtkSlicerDiffusionTestingWidget: " << this->GetClassName ( ) << "\n";
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node)
+void vtkSlicerDiffusionTestingWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node)
   {
   if (node == NULL)
     {
@@ -213,7 +213,7 @@ void vtkSlicerDWITestingWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode 
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
+void vtkSlicerDiffusionTestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned long event, void *callData)
   {
   // possible caller (widgets)
   vtkSlicerNodeSelectorWidget *selector = vtkSlicerNodeSelectorWidget::SafeDownCast(caller);
@@ -340,7 +340,7 @@ void vtkSlicerDWITestingWidget::ProcessWidgetEvents (vtkObject *caller, unsigned
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::RunTensor()
+void vtkSlicerDiffusionTestingWidget::RunTensor()
   {
   // create a command line module node
   vtkMRMLCommandLineModuleNode *tensorCLM = vtkMRMLCommandLineModuleNode::SafeDownCast(
@@ -417,13 +417,13 @@ void vtkSlicerDWITestingWidget::RunTensor()
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::RotateTensor()
+void vtkSlicerDiffusionTestingWidget::RotateTensor()
   {
   
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::CreateGlyphs()
+void vtkSlicerDiffusionTestingWidget::CreateGlyphs()
   {
   if(this->TensorNode == NULL) return;
   std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glypDisplayNodes = this->TensorNode->GetSliceGlyphDisplayNodes();
@@ -450,7 +450,7 @@ void vtkSlicerDWITestingWidget::CreateGlyphs()
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::UpdateGlyphSpacing()
+void vtkSlicerDiffusionTestingWidget::UpdateGlyphSpacing()
   {
   if(this->TensorNode == NULL) return;
 
@@ -468,7 +468,7 @@ void vtkSlicerDWITestingWidget::UpdateGlyphSpacing()
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::CreateTracts()
+void vtkSlicerDiffusionTestingWidget::CreateTracts()
   {
   if(this->TensorNode == NULL || this->FiducialSelector->GetSelected() == NULL 
     || !this->TractVisibility) return;
@@ -514,13 +514,13 @@ void vtkSlicerDWITestingWidget::CreateTracts()
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::SetModifiedForNewTensor(int modified)
+void vtkSlicerDiffusionTestingWidget::SetModifiedForNewTensor(int modified)
   {
   this->ModifiedForNewTensor = modified;
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::SetGlyphVisibility(int plane, int status)
+void vtkSlicerDiffusionTestingWidget::SetGlyphVisibility(int plane, int status)
   {
   if(status)
     {
@@ -536,7 +536,7 @@ void vtkSlicerDWITestingWidget::SetGlyphVisibility(int plane, int status)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::SetTractVisibility(int status)
+void vtkSlicerDiffusionTestingWidget::SetTractVisibility(int status)
   {
   if(status)
     {
@@ -554,7 +554,7 @@ void vtkSlicerDWITestingWidget::SetTractVisibility(int status)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::SetWidgetToDefault()
+void vtkSlicerDiffusionTestingWidget::SetWidgetToDefault()
   {
   //switch off glyphs
   for (int i=0; i<3; i++)
@@ -570,7 +570,7 @@ void vtkSlicerDWITestingWidget::SetWidgetToDefault()
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::SetAllVisibilityButtons(int status)
+void vtkSlicerDiffusionTestingWidget::SetAllVisibilityButtons(int status)
   {
   for (int i=0; i<3; i++)
     {
@@ -586,7 +586,7 @@ void vtkSlicerDWITestingWidget::SetAllVisibilityButtons(int status)
   }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDWITestingWidget::CreateWidget( )
+void vtkSlicerDiffusionTestingWidget::CreateWidget( )
   {
   //check if already created
   if (this->IsCreated())

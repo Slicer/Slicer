@@ -1,9 +1,9 @@
-// .NAME vtkSlicerDWITestingWidget 
+// .NAME vtkSlicerDiffusionTestingWidget 
 // .SECTION Description
 // This class implements Slicer's main DWI Testing Widget, part of the DiffusionEditor GUI.
 // Inherits most behavior from vtkSlicerWidget.
-#ifndef __vtkSlicerDWITestingWidget_h
-#define __vtkSlicerDWITestingWidget_h
+#ifndef __vtkSlicerDiffusionTestingWidget_h
+#define __vtkSlicerDiffusionTestingWidget_h
 
 #include "vtkVolumes.h"
 #include "vtkSlicerWidget.h"
@@ -25,14 +25,14 @@ class vtkKWScaleWithLabel;
 class vtkKWLabel;
 class vtkSlicerVisibilityIcons;
 
-class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
+class VTK_VOLUMES_EXPORT vtkSlicerDiffusionTestingWidget : public vtkSlicerWidget
   {
   public:
 
     // Description:
     // Usual vtk class functions.
-    static vtkSlicerDWITestingWidget* New();
-    vtkTypeRevisionMacro(vtkSlicerDWITestingWidget,vtkSlicerWidget);
+    static vtkSlicerDiffusionTestingWidget* New();
+    vtkTypeRevisionMacro(vtkSlicerDiffusionTestingWidget,vtkSlicerWidget);
     void PrintSelf(ostream& os, vtkIndent indent);
 
     // Description:
@@ -87,8 +87,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     vtkGetObjectMacro(RunButton, vtkKWPushButtonWithLabel);
 
   protected:
-    vtkSlicerDWITestingWidget(void);
-    virtual ~vtkSlicerDWITestingWidget(void);
+    vtkSlicerDiffusionTestingWidget(void);
+    virtual ~vtkSlicerDiffusionTestingWidget(void);
 
     // Description:
     // Creates the widget.
@@ -144,8 +144,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerDWITestingWidget : public vtkSlicerWidget
     vtkSlicerVisibilityIcons *VisibilityIcons;
 
   private:
-    vtkSlicerDWITestingWidget (const vtkSlicerDWITestingWidget&); // Not implemented.
-    void operator = (const vtkSlicerDWITestingWidget&); //Not implemented.
+    vtkSlicerDiffusionTestingWidget (const vtkSlicerDiffusionTestingWidget&); // Not implemented.
+    void operator = (const vtkSlicerDiffusionTestingWidget&); //Not implemented.
   };
 
 #endif 

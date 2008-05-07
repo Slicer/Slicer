@@ -8,7 +8,7 @@
 //widgets
 #include "vtkSlicerMeasurementFrameWidget.h"
 #include "vtkSlicerGradientsWidget.h"
-#include "vtkSlicerDWITestingWidget.h"
+#include "vtkSlicerDiffusionTestingWidget.h"
 #include "vtkKWPushButton.h"
 #include "vtkSlicerDiffusionEditorWidget.h"
 #include "vtkSlicerMeasurementFrameWidget.h"
@@ -293,7 +293,7 @@ void vtkSlicerDiffusionEditorWidget::CreateWidget( )
     this->UndoButton->GetWidgetName());
 
   //create testing widget 
-  this->TestingWidget = vtkSlicerDWITestingWidget::New();
+  this->TestingWidget = vtkSlicerDiffusionTestingWidget::New();
   this->TestingWidget->SetParent(this->GetParent());
   this->TestingWidget->SetMRMLScene(this->GetMRMLScene());
   this->TestingWidget->SetApplication(this->Application);
