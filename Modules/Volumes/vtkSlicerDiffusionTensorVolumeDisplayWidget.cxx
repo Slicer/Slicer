@@ -160,7 +160,7 @@ void vtkSlicerDiffusionTensorVolumeDisplayWidget::ProcessWidgetEvents ( vtkObjec
         vtkImageData* image = this->DTIMathematics->GetOutput();
         if (vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode) != NULL)
           {
-          vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode)->CalculateScalarAutoLevelsWithData(displayNode, image);
+          vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode)->CalculateScalarAutoLevels(displayNode, image);
           } else { vtkWarningMacro("Failed to calculate scalar levels, volume node is not a scalar"); }
         this->WindowLevelThresholdEditor->SetImageData(image);
         }
