@@ -260,11 +260,9 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
   foreach {x y z} [$this dcToXYZ $windowx $windowy] {}  
 
   if { $x < 0 } { 
-    puts "$this: clamping negative X coordinate $x! event is $event"
     set x 0
   }
   if { $y < 0 } { 
-    puts "$this: clamping negative Y coordinate $y! event is $event"
     set y 0
   }
 
