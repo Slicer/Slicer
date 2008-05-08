@@ -433,6 +433,23 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   vtkMRMLVolumeArchetypeStorageNode *storageNode2 = vtkMRMLVolumeArchetypeStorageNode::New();
   vtkMRMLStorageNode *storageNode = NULL;
 
+  // set the volume name
+  std::string volumeName;
+  if (volname != NULL)
+    {
+    volumeName = std::string(volname);
+    }
+  else
+    {
+    const vtksys_stl::string fname(filename);
+    volumeName = vtksys::SystemTools::GetFilenameName(fname);
+    }
+  // now set all the volume names, before add the volumes to the scene
+  scalarNode->SetName(volumeName.c_str());
+  vectorNode->SetName(volumeName.c_str());
+  tensorNode->SetName(volumeName.c_str());
+  dwiNode->SetName(volumeName.c_str());
+
   bool useURI = false;
   if (this->GetMRMLScene() &&
       this->GetMRMLScene()->GetCacheManager())
@@ -628,17 +645,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   
   if (volumeNode != NULL)
     {
-    if (volname == NULL)
-      {
-      const vtksys_stl::string fname(filename);
-      vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
-      volumeNode->SetName(name.c_str());
-      }
-    else
-      {
-      volumeNode->SetName(volname);
-      }
-
     vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
     if (labelMap) 
       {
