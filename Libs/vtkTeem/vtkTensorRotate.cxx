@@ -30,10 +30,9 @@ vtkStandardNewMacro(vtkTensorRotate);
 //----------------------------------------------------------------------------
 vtkTensorRotate::vtkTensorRotate()
 {
-
   this->TensorType = VTK_VOID;
   this->SetTensorType(VTK_FLOAT);
-  vtkTransform *Transform = vtkTransform::New();
+  this->Transform = vtkTransform::New();
 }
 
 vtkTensorRotate::~vtkTensorRotate()
