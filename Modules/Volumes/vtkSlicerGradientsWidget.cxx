@@ -51,7 +51,7 @@ vtkSlicerGradientsWidget::~vtkSlicerGradientsWidget(void)
     {
     vtkSetMRMLNodeMacro(this->ActiveVolumeNode, NULL);
     }
-   if (this->Application)
+  if (this->Application)
     {
     this->Application->Delete();
     this->Application = NULL;

@@ -55,6 +55,8 @@ class VTK_VOLUMES_EXPORT vtkSlicerMeasurementFrameWidget : public vtkSlicerWidge
     // Sets the Logic to the current vtkSlicerDiffusionEditorLogic of the editor.
     void SetLogic(vtkSlicerDiffusionEditorLogic *logic);
 
+    vtkGetObjectMacro(Matrix, vtkMatrix4x4);
+
   protected:
     vtkSlicerMeasurementFrameWidget(void);
     virtual ~vtkSlicerMeasurementFrameWidget(void);

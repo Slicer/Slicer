@@ -11,6 +11,7 @@
 #include "vtkSlicerGradientsWidget.h"
 #include "vtkSlicerApplicationGUI.h"
 #include "vtkSlicerApplication.h"
+#include "vtkTensorRotate.h"
 
 class vtkSlicerNodeSelectorWidget;
 class vtkSlicerDiffusionEditorLogic;
@@ -46,7 +47,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionTestingWidget : public vtkSlicerWidge
 
     // Description:
     // Updates the widget if a new ActiveVolumeNode is loaded.
-    void UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *node);
+    void UpdateWidget(vtkMRMLVolumeNode *node);
 
     //BTX
     // Description:
@@ -70,19 +71,26 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionTestingWidget : public vtkSlicerWidge
     // Description:
     // Computes a new tensor for a DWI by calling Tensor Estimation CLM.
     // (Method is public because of tcl testing.)
-    void RunTensor();
+    void RunDWI();
 
     // Description:
-    // Computes a new tensor by rotating a DTI. The measurement frame is applyed to the DTI.
-    void RotateTensor();
+    // Computes a new tensor by rotating a DTI with the vtkTensorRotate filter. 
+    // Basically the measurement frame is applied to the DTI.
+    void RunTensor();
 
     // Description:
     // Creates tracts by calling CreateTracts from vtkSlicerTractographyFiducialSeedingLogic.
     // (Methos is public because of tcl testing.)
     void CreateTracts();
 
-    vtkSetObjectMacro(Application, vtkSlicerApplication);    
+    //set macros
     vtkSetObjectMacro(TensorNode, vtkMRMLDiffusionTensorVolumeNode);
+    vtkSetObjectMacro(ActiveDTINode, vtkMRMLDiffusionTensorVolumeNode);
+    vtkSetObjectMacro(ActiveDWINode, vtkMRMLDiffusionWeightedVolumeNode);    
+    vtkSetObjectMacro(Application, vtkSlicerApplication);  
+    vtkSetObjectMacro(NewMeasurementFrame, vtkMatrix4x4);
+
+    //get macros
     vtkGetObjectMacro(FiducialSelector, vtkSlicerNodeSelectorWidget);
     vtkGetObjectMacro(RunButton, vtkKWPushButtonWithLabel);
 
@@ -125,10 +133,28 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionTestingWidget : public vtkSlicerWidge
 
     vtkSlicerApplication *Application;
 
+    // Description:
+    // Is the current measurement frame (changed by the user) of the active node. 
+    vtkMatrix4x4 *NewMeasurementFrame;
+
+    //filter
+    vtkTensorRotate *RotateFilter;
+
     //nodes
-    vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
-    vtkMRMLDiffusionTensorVolumeNode *TensorNode;
     vtkMRMLFiberBundleNode *FiberNode;
+
+    // Description:
+    // Is set, if the active node of the volumes module is a DWI.
+    vtkMRMLDiffusionWeightedVolumeNode *ActiveDWINode;
+
+    // Description:
+    // Is set, if the active node of the volumes module is a DTI.
+    vtkMRMLDiffusionTensorVolumeNode *ActiveDTINode;
+
+    // Description:
+    // This is the node, that is currently active in the DTISelector. 
+    // Its glyphs, tracts are displayed.   
+    vtkMRMLDiffusionTensorVolumeNode *TensorNode;
 
     //widgets (GUI)
     vtkKWFrameWithLabel *TestFrame;

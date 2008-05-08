@@ -173,12 +173,13 @@ void vtkSlicerMeasurementFrameWidget::SaveMatrix()
   if(this->CheckDeterminant())
     {
     this->InvokeEvent(this->ChangedEvent);
+    //if its a DTI do not save changes to original node
+    if(this->ActiveVolumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode")) return;
     this->Logic->SaveStateForUndoRedo();
     // write internal matrix back to node
     this->ActiveVolumeNode->SetMeasurementFrameMatrix(this->Matrix);
     // mark as modified in save menu
     this->ActiveVolumeNode->SetModifiedSinceRead(1);
-    this->ActiveVolumeNode;
     }
   }
 

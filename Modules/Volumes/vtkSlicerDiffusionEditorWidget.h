@@ -63,7 +63,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorWidget : public vtkSlicerWidget
     vtkSlicerDiffusionEditorLogic *Logic;
 
     //nodes
-    vtkMRMLDiffusionWeightedVolumeNode *ActiveVolumeNode;
+    vtkMRMLVolumeNode *ActiveVolumeNode;
 
     //widgets (GUI)
     vtkSlicerMeasurementFrameWidget *MeasurementFrameWidget;
