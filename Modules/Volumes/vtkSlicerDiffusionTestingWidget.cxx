@@ -220,7 +220,7 @@ void vtkSlicerDiffusionTestingWidget::UpdateWidget(vtkMRMLVolumeNode *node)
   if (node->IsA("vtkMRMLDiffusionWeightedVolumeNode")) 
     {
     vtkSetMRMLNodeMacro(this->ActiveDWINode, node); //set ActiveDWINode
-    //vtkSetMRMLNodeMacro(this->ActiveDTINode, NULL); //set ActiveDTINode NULL
+    vtkSetMRMLNodeMacro(this->ActiveDTINode, NULL); //set ActiveDTINode NULL
     this->RunButton->SetLabelText("Estimate New Tensor: "); //change label
     this->RunButton->EnabledOn();
     }
@@ -228,7 +228,7 @@ void vtkSlicerDiffusionTestingWidget::UpdateWidget(vtkMRMLVolumeNode *node)
     {
     this->RunButton->EnabledOff();
     vtkSetMRMLNodeMacro(this->ActiveDTINode, node); //set ActiveDWINode
-    //vtkSetMRMLNodeMacro(this->ActiveDWINode, NULL); //set ActiveDTINode NULL
+    vtkSetMRMLNodeMacro(this->ActiveDWINode, NULL); //set ActiveDTINode NULL
     this->RunButton->SetLabelText("Rotate Tensor: "); //change label
     this->DTISelector->UpdateMenu();
     }
