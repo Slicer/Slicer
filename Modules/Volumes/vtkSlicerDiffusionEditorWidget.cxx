@@ -128,9 +128,12 @@ void vtkSlicerDiffusionEditorWidget::ProcessWidgetEvents (vtkObject *caller, uns
     this->GradientsWidget == vtkSlicerGradientsWidget::SafeDownCast(caller)))
     {
     this->TestingWidget->SetNewMeasurementFrame(this->MeasurementFrameWidget->GetMatrix());
-    this->UndoButton->SetEnabled(1);
-    this->RestoreButton->SetEnabled(1);
-    this->RedoButton->SetEnabled(0);
+    if(this->ActiveVolumeNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
+      {
+      this->UndoButton->SetEnabled(1);
+      this->RestoreButton->SetEnabled(1);
+      this->RedoButton->SetEnabled(0);
+      }
     }
 
   ////////////////////////////////////////////////////////////////
