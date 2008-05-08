@@ -2069,6 +2069,17 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::Enter ( )
 {
+    std::string qaTclCommand =  "set ::QA_PACKAGE {}; ";
+                qaTclCommand += "package forget QueryAtlas; ";
+                qaTclCommand += "set dir \"$::SLICER_BIN/../";
+                qaTclCommand += SLICER_INSTALL_LIBRARIES_DIR;
+                qaTclCommand += "/Modules/Packages/QueryAtlas/Tcl\" ; ";
+                qaTclCommand += "  if { [ file exists $dir/pkgIndex.tcl ] } { ";
+                qaTclCommand += "    lappend ::auto_path $dir; ";
+                qaTclCommand += "    package require QueryAtlas ";
+                qaTclCommand += "  }";
+    this->Script ( qaTclCommand.c_str() ); 
+
     vtkDebugMacro("vtkQueryAtlasGUI: Enter\n");
     this->Script ( "QueryAtlasCullOldModelAnnotations");
     this->Script ( "QueryAtlasCullOldLabelMapAnnotations");
