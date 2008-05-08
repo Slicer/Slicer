@@ -16,7 +16,7 @@ $editor UpdateWidget [$::slicer3::MRMLScene GetNthNodeByClass 0 vtkMRMLDiffusion
 set testWidget [$::editor  GetTestingWidget] 
 
 
-$testWidget RunTensor
+$testWidget RunDWI
 
 $testWidget SetGlyphVisibility 0 1
 
