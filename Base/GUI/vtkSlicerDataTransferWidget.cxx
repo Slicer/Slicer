@@ -683,7 +683,7 @@ void vtkSlicerDataTransferWidget::UpdateWidget()
         this->TransferStatusLabel->SetBalloonHelpString ("Transfer status: unknown.");
         this->EnableDeleteButton();
         this->EnableCancelButton();
-        this->UpdateURILabel ( "(??): ");
+        this->UpdateURILabel ( "[??]: ");
         this->DisableURILabel();
         break;
       }
