@@ -39,7 +39,7 @@ public:
   void SetTensorTypeToFloat(){this->SetTensorType(VTK_FLOAT);};
   void SetTensorTypeToDouble(){this->SetTensorType(VTK_DOUBLE);};
   vtkSetMacro(TensorType, int);
-  int GetTensorType();
+  vtkGetMacro(TensorType, int);
 
   // Set/Get transformation to use to rotate the tensor
   vtkSetObjectMacro(Transform,vtkTransform);
