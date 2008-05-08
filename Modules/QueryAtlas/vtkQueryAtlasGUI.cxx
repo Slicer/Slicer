@@ -228,6 +228,7 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
 vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 {
 
+  this->LoadTclPackage();
   vtkDebugMacro("vtkQueryAtlasGUI: Tearing down Tcl callbacks \n");
   this->Script ( "QueryAtlasTearDown" );
 
@@ -2065,9 +2066,8 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
   this->ProcessingMRMLEvent = 0;
 }
 
-
 //---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::Enter ( )
+void vtkQueryAtlasGUI::LoadTclPackage ( )
 {
     std::string qaTclCommand =  "set ::QA_PACKAGE {}; ";
                 qaTclCommand += "package forget QueryAtlas; ";
@@ -2079,6 +2079,12 @@ void vtkQueryAtlasGUI::Enter ( )
                 qaTclCommand += "    package require QueryAtlas ";
                 qaTclCommand += "  }";
     this->Script ( qaTclCommand.c_str() ); 
+}
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::Enter ( )
+{
+    this->LoadTclPackage();
 
     vtkDebugMacro("vtkQueryAtlasGUI: Enter\n");
     this->Script ( "QueryAtlasCullOldModelAnnotations");

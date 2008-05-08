@@ -268,6 +268,12 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
     // Description:
+    // load the tcl routines into the interpreter (uses the 
+    // SLICER_BIN global variable to find the path to the 
+    // pkgIndex.tcl file in the binary/installation tree
+    void LoadTclPackage();
+
+    // Description:
     // Methods describe behavior at module enter and exit.
     virtual void Enter ( );
     virtual void Exit ( );
