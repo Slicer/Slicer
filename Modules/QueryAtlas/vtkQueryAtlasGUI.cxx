@@ -2071,7 +2071,7 @@ void vtkQueryAtlasGUI::LoadTclPackage ( )
 {
     std::string qaTclCommand =  "set ::QA_PACKAGE {}; ";
                 qaTclCommand += "package forget QueryAtlas; ";
-                qaTclCommand += "set dir \"$::SLICER_BIN/../";
+                qaTclCommand += "set dir \"$::SLICER_BUILD/";
                 qaTclCommand += SLICER_INSTALL_LIBRARIES_DIR;
                 qaTclCommand += "/Modules/Packages/QueryAtlas/Tcl\" ; ";
                 qaTclCommand += "  if { [ file exists $dir/pkgIndex.tcl ] } { ";
