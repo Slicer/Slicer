@@ -73,7 +73,7 @@ vtkSlicerDiffusionTestingWidget::~vtkSlicerDiffusionTestingWidget(void)
     }
   if (this->TensorNode)
     {
-     vtkSetMRMLNodeMacro(this->TensorNode, NULL);
+    vtkSetMRMLNodeMacro(this->TensorNode, NULL);
     }
   if (this->Application)
     {
@@ -225,6 +225,13 @@ void vtkSlicerDiffusionTestingWidget::ProcessWidgetEvents (vtkObject *caller, un
   if (button == this->RunButton->GetWidget() && event == vtkKWPushButton::InvokedEvent)
     {
     this->RunButton->SetEnabled(0);
+    //switch existing tracts and glyphs off
+    this->SetTractVisibility(0);
+    for (unsigned int i=0; i<3; i++)
+      {
+      this->SetGlyphVisibility(i,0);
+      }
+    //estimate new tensor
     if(this->ModifiedForNewTensor)
       {
       this->RunTensor();
@@ -240,7 +247,15 @@ void vtkSlicerDiffusionTestingWidget::ProcessWidgetEvents (vtkObject *caller, un
 
     if(selected == NULL)
       {
+      //deactivate all buttons
       this->SetAllVisibilityButtons(0);
+      if(this->TensorNode == NULL) return;
+      //switch off glyphs from old tensorNode
+      std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glyphDisplayNodesOld = this->TensorNode->GetSliceGlyphDisplayNodes();
+      for (unsigned int i=0; i<glyphDisplayNodesOld.size(); i++)
+        {
+        glyphDisplayNodesOld[i]->SetVisibility(0);
+        }
       return;
       }
 
@@ -260,7 +275,7 @@ void vtkSlicerDiffusionTestingWidget::ProcessWidgetEvents (vtkObject *caller, un
       }
 
     //set old tensorNode
-    if(this->TensorNode != NULL && selected == this->TensorNode)
+    if(this->TensorNode != NULL || selected != this->TensorNode)
       {
       //switch off glyphs from old tensorNode
       std::vector<vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> glyphDisplayNodesOld = this->TensorNode->GetSliceGlyphDisplayNodes();
@@ -419,7 +434,7 @@ void vtkSlicerDiffusionTestingWidget::RunTensor()
 //---------------------------------------------------------------------------
 void vtkSlicerDiffusionTestingWidget::RotateTensor()
   {
-  
+
   }
 
 //---------------------------------------------------------------------------
