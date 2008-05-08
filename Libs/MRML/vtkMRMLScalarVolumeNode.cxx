@@ -248,7 +248,14 @@ void vtkMRMLScalarVolumeNode::UpdateFromMRML()
   std::string fileName = "";
   if (this->GetStorageNode() != NULL)
     {
-    fileName = std::string(this->GetStorageNode()->GetFileName());
+    if ( this->GetStorageNode()->GetFileName() != NULL )
+      {
+      fileName = std::string(this->GetStorageNode()->GetFileName());
+      }
+    else
+      {
+      fileName = std::string("");
+      }
     }
   if ((nodeName != "" && nodeName.find("stat",0) != std::string::npos) ||
       (fileName != "" && fileName.find("stat",0) != std::string::npos))
