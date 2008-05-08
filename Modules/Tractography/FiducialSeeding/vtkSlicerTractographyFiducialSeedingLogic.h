@@ -24,7 +24,7 @@
 
 #include <stdlib.h>
 
-#include "vtkSlicerLogic.h"
+#include "vtkSlicerModuleLogic.h"
 
 #include "vtkSlicerTractographyFiducialSeeding.h"
 
@@ -32,13 +32,13 @@ class vtkMRMLDiffusionTensorVolumeNode;
 class vtkMRMLFiducialListNode;
 class vtkMRMLFiberBundleNode;
 
-class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingLogic : public vtkSlicerLogic 
+class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingLogic : public vtkSlicerModuleLogic 
 {
   public:
   
   // The Usual vtk class functions
   static vtkSlicerTractographyFiducialSeedingLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic,vtkSlicerLogic);
+  vtkTypeRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static int CreateTracts(vtkMRMLDiffusionTensorVolumeNode *volumeNode,

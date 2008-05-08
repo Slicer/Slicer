@@ -45,6 +45,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasLogic : public vtkSlicerModuleLogic
   // The method that creates and runs VTK or ITK pipeline
   void Apply() { };
 
+  virtual vtkIntArray* NewObservableEvents();
+
 protected:
   vtkQueryAtlasLogic();
   ~vtkQueryAtlasLogic();

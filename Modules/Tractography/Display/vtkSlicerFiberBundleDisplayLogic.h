@@ -1,3 +1,4 @@
+
 /*=auto=========================================================================
 
   Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
@@ -24,7 +25,7 @@
 
 #include <stdlib.h>
 
-#include "vtkSlicerLogic.h"
+#include "vtkSlicerModuleLogic.h"
 
 #include "vtkSlicerTractographyDisplay.h"
 
@@ -34,7 +35,7 @@
 #include "vtkDiffusionTensorGlyph.h"
 
 
-class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleDisplayLogic : public vtkSlicerLogic 
+class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerFiberBundleDisplayLogic : public vtkSlicerModuleLogic 
 {
   public:
   

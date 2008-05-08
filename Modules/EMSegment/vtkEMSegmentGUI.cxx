@@ -149,6 +149,12 @@ vtkEMSegmentGUI::~vtkEMSegmentGUI()
 }
 
 //----------------------------------------------------------------------------
+void vtkEMSegmentGUI::SetModuleLogic(vtkSlicerLogic* logic)
+{
+  this->SetLogic( dynamic_cast<vtkEMSegmentLogic*> (logic) );
+}
+
+//----------------------------------------------------------------------------
 void vtkEMSegmentGUI::RemoveMRMLNodeObservers()
 {
 }

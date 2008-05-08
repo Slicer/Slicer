@@ -54,6 +54,10 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(Volumes Volumes_TCL_SRCS "${Volumes_SRCS}" "")
 
+# --------------------------------------------------------------------------
+# Loadable Module support
+
+#GENERATELM(Volumes_SRC SlicerVolumes.txt)
 
 # --------------------------------------------------------------------------
 # Build the library
@@ -76,8 +80,6 @@ TARGET_LINK_LIBRARIES(Volumes
   SlicerBaseGUI
   MRML
   CommandLineModule
-  SlicerTractographyFiducialSeeding
-  SlicerTractographyDisplay
   ModuleDescriptionParser
   )
 

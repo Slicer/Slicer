@@ -277,6 +277,51 @@ LoadableModuleFactory
     {
     this->WarningMessage( ("No loadable modules found. Check your module search path and your " + this->Name + " installation.").c_str() );
     }
+  else
+    {
+      // check Dependencies of each module, remove from list if
+      // dependencies not met
+
+      std::map<std::string, LoadableModuleDescription>::iterator mit = this->InternalMap->begin();
+      while (mit != this->InternalMap->end())
+        {
+          std::vector<std::string> deps = (*mit).second.GetDependencies();
+          if (0 == deps.size())
+            {
+              // no dependencies, continue
+              ++mit;
+              continue;
+            }
+
+          bool found_all = true;
+          std::vector<std::string>::iterator iter;
+          for (iter = deps.begin();
+               iter != deps.end();
+               ++iter)
+            {
+              LoadableModuleDescription desc = this->GetModuleDescription(*iter);
+              if (desc.GetName().empty()) {
+                found_all = false;
+                break;
+              }
+            }
+
+          if (!found_all)
+            {
+              this->WarningMessage( ("Dependency (" + (*iter) + ") for module " + (*mit).second.GetName()  + " not met, will not load.").c_str() );
+              this->InternalMap->erase(mit++);
+            }
+          else
+            {
+              ++mit;
+            }
+        }// mit != this->InternalMap.end()
+
+      // reorder so that modules without dependencies loaded first
+
+    }// numberShared == 0
+
+
 }
 
 long
@@ -356,9 +401,8 @@ LoadableModuleFactory
           if ( lib )
             {
             // Look for the entry points and symbols to get an XML
-            // description of the module, execute the module, and
-            // define a logo.  Symbols (constants) are used if they
-            // exist, otherwise entry points are used.
+            // description of the module.  Symbols (constants) are
+            // used if they exist, otherwise entry points are used.
             char *xmlSymbol = 0;
             ModuleDescriptionFunction descFunction = 0;
             ModuleGUIFunction guiFunction = 0;
@@ -425,14 +469,15 @@ LoadableModuleFactory
                 LoadableModuleDescriptionParser parser;
                 parser.Parse(xml, module);
 
-                // :KLUGE: 20080225 tlorber: The name of the TCL initializer function is in the description.
+                // :KLUGE: 20080225 tgl: The name of the TCL
+                // initializer function is in the description.
 
                 module.SetTclInitFunction( (TclInit)itksys::DynamicLoader::GetSymbolAddress(lib, module.GetTclInitName().c_str()) );
 
                 // Check to make sure the module is not already in the
                 // lists
                 LoadableModuleDescriptionMap::iterator mit
-                  = this->InternalMap->find(module.GetShortName());
+                  = this->InternalMap->find(module.GetName());
 
                 std::string splash_msg("Discovered ");
                 splash_msg +=  module.GetShortName();
@@ -443,7 +488,7 @@ LoadableModuleFactory
                   {
 
                   // Store the module in the list
-                  (*this->InternalMap)[module.GetShortName()] =  module ;
+                  (*this->InternalMap)[module.GetName()] =  module ;
                   
                   information << "A loadable module named \"" << module.GetName()
                               << "\" has been discovered at "

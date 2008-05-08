@@ -34,6 +34,9 @@ public:
   // Get/Set logic node
   vtkGetObjectMacro(Logic, vtkEMSegmentLogic);
   virtual void SetLogic(vtkEMSegmentLogic*);
+
+  /// Implement setter for vtkLogic* pointer
+  virtual void SetModuleLogic(vtkSlicerLogic*);
   
   // Get/Set mrml manager node
   vtkGetObjectMacro(MRMLManager, vtkEMSegmentMRMLManager);

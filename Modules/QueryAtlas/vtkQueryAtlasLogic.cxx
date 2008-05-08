@@ -58,3 +58,12 @@ void vtkQueryAtlasLogic::PrintSelf(ostream& os, vtkIndent indent)
 
 }
 
+//----------------------------------------------------------------------------
+vtkIntArray* vtkQueryAtlasLogic::NewObservableEvents()
+{
+  vtkIntArray* events = vtkIntArray::New();
+  events->InsertNextValue ( vtkMRMLScene::SceneCloseEvent );
+  events->InsertNextValue ( vtkMRMLScene::NodeAddedEvent );
+  events->InsertNextValue ( vtkMRMLScene::NodeRemovedEvent );
+  return events;
+}

@@ -20,15 +20,18 @@
 #ifndef __vtkSlicerTractographyDisplayLogic_h
 #define __vtkSlicerTractographyDisplayLogic_h
 
-#include "vtkSlicerFiberBundleDisplayLogic.h"
+#include "vtkSlicerFiberBundleLogic.h"
 
-class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayLogic : public vtkSlicerFiberBundleDisplayLogic 
+class VTK_SLICERTRACTOGRAPHYDISPLAY_EXPORT vtkSlicerTractographyDisplayLogic : public vtkSlicerFiberBundleLogic 
 {
   public:
   
   // The Usual vtk class functions
   static vtkSlicerTractographyDisplayLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerTractographyDisplayLogic,vtkSlicerFiberBundleDisplayLogic);
+  vtkTypeRevisionMacro(vtkSlicerTractographyDisplayLogic,vtkSlicerFiberBundleLogic);
+
+  // Implement MRML events to observe
+  virtual vtkIntArray* NewObservableEvents();
 
   protected:
   vtkSlicerTractographyDisplayLogic();

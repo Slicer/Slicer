@@ -57,6 +57,10 @@ VTK_WRAP_TCL3(LabelStatistics LabelStatistics_TCL_SRCS "${LabelStatistics_SRCS}"
 
 
 # --------------------------------------------------------------------------
+# Loadable Module
+GENERATELM(LabelStatistics_SRCS LabelStatistics.txt)
+
+# --------------------------------------------------------------------------
 # Build the library
 
 ADD_LIBRARY(LabelStatistics

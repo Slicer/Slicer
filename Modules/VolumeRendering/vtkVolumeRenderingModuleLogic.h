@@ -15,13 +15,18 @@ public:
     //                               void *callData ){};
 
   
-
+  // Overload the scene setter, this is needed for module creation
+  // via LoadableModuleFactory
+  virtual void SetMRMLScene(vtkMRMLScene *scene);
 
 protected:
   vtkVolumeRenderingModuleLogic();
   ~vtkVolumeRenderingModuleLogic();
   vtkVolumeRenderingModuleLogic(const vtkVolumeRenderingModuleLogic&);
   void operator=(const vtkVolumeRenderingModuleLogic&);
+
+  static bool First;
+
 };
 
 #endif

@@ -192,17 +192,9 @@ target_link_libraries(Slicer3${SLICER_EXE_SUFFIX}
 if(BUILD_MODULES)
   target_link_libraries(Slicer3${SLICER_EXE_SUFFIX}
     Volumes
-    GradientAnisotropicDiffusionFilter
-    EMSegment
-    #   RealTimeImaging
-    #   MRAblation
-    ${VOLUMERENDERINGMODULE_LINK_LIB}
-    ${LABELSTATISTICS_LINK_LIB} 
-    NeuroNav
     CommandLineModule
     ScriptedModule
     SlicerDaemon
-    ${WFENGINE_LINK_LIB}
     SlicerTractographyDisplay
     SlicerTractographyFiducialSeeding
     )

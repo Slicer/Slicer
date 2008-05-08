@@ -974,7 +974,7 @@ void vtkWFEngineModuleGUI::UpdateGUI()
     this->m_curParameterWidgets->SetModuleDescription(this->m_wfEngineHandler->GetCurrentModuleDescription());
     this->m_curParameterWidgets->SetErrorMap(this->m_wfEngineHandler->GetValidationErrorMap());
     
-    if(this->m_curParameterWidgets->CreateWidgets() != vtkSlicerParameterWidget::SUCC 
+    if(this->m_curParameterWidgets->CreateWidgets() != vtkSlicerParameterWidget::PARAMETER_WIDGET_SUCC 
             || this->m_curParameterWidgets->size() == 0)
     {
         if(this->m_curNameToValueMap)

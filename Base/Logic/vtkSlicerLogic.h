@@ -148,7 +148,11 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerLogic : public vtkObject
   vtkGetMacro(InMRMLCallbackFlag, int);
 
   // Additional functionality:
-    
+
+  // Overload in modules that observe events, used during Loadable Module
+  // discovery. CLIENT MUST DELETE!
+  virtual vtkIntArray* NewObservableEvents() { return vtkIntArray::New(); };
+
 protected:
   vtkSlicerLogic();
   virtual ~vtkSlicerLogic();

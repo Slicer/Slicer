@@ -206,11 +206,18 @@ void GenerateModuleDataSymbols(std::ofstream &sout, const LoadableModuleDescript
   sout << "Module_EXPORT char " << classname << "ModuleDescription[] = " << std::endl;
   sout << "\"<?xml version=\\\"1.0\\\" encoding=\\\"utf-8\\\"?>\\n\"" << std::endl;
   sout << "\"<loadable>\\n\"" << std::endl;
-  sout << "\"  <name>" << module.GetName() << " Module</name>\\n\"" << std::endl;
+  sout << "\"  <name>" << module.GetName() << "</name>\\n\"" << std::endl;
   sout << "\"  <shortname>" << module.GetShortName() << "</shortname>\\n\"" << std::endl;
   sout << "\"  <guiname>" << module.GetGUIName() << "</guiname>\\n\"" << std::endl;
   sout << "\"  <tclinitname>" << module.GetTclInitName() << "</tclinitname>\\n\"" << std::endl;
   sout << "\"  <message>Initializing " << module.GetName() << " Module...</message>\\n\"" << std::endl;
+
+  std::vector<std::string>::const_iterator iter = module.GetDependencies().begin();
+  while (iter != module.GetDependencies().end()) {
+    sout << "\"  <dependency>" << (*iter) << "</dependency?\\n\"" << std::endl;
+    iter++;
+  }
+
   sout << "\"</loadable>\\n\"" << std::endl;
   sout << "\"\\n\"" << std::endl;
   sout << ";" << std::endl;

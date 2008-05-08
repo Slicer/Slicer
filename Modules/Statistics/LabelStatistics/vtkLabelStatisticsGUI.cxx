@@ -124,6 +124,12 @@ vtkLabelStatisticsGUI::~vtkLabelStatisticsGUI()
 }
 
 //----------------------------------------------------------------------------
+void vtkLabelStatisticsGUI::SetModuleLogic(vtkSlicerLogic *logic)
+{
+  this->SetLogic( dynamic_cast<vtkLabelStatisticsLogic*> (logic) );
+}
+
+//----------------------------------------------------------------------------
 void vtkLabelStatisticsGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
   

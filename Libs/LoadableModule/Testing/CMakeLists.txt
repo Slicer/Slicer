@@ -21,6 +21,5 @@ ADD_TEST(LMParser1Test1 ${EXECUTABLE_OUTPUT_PATH}/LMParser1Test ${TEST_DATA}/Par
 
 ADD_TEST(LMParser1Test2 ${EXECUTABLE_OUTPUT_PATH}/LMParser1Test ${TEST_DATA}/ParserTest2.xml)
 
-# TODO: hangs on windows
-# ADD_TEST(LoadableModuleFactoryTest ${EXECUTABLE_OUTPUT_PATH}/LoadableModuleFactoryTest ${Slicer3_BINARY_DIR}/${SLICER_INSTALL_LIBRARIES_DIR}/Plugins/)
+ADD_TEST(LoadableModuleFactoryTest ${EXECUTABLE_OUTPUT_PATH}/LoadableModuleFactoryTest ${Slicer3_BINARY_DIR}/${SLICER_INSTALL_LIBRARIES_DIR}/Plugins/)
 

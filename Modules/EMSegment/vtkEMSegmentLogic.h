@@ -85,6 +85,9 @@ public:
   virtual void      PopulateTestingData();
   virtual void      SpecialTestingFunction();
 
+  // events to observe
+  virtual vtkIntArray* NewObservableEvents();
+
 private:
   vtkEMSegmentLogic();
   ~vtkEMSegmentLogic();

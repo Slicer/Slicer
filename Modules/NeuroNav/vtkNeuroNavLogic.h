@@ -22,11 +22,10 @@
 #define __vtkNeuroNavLogic_h
 
 #include "vtkNeuroNavWin32Header.h"
-#include "vtkSlicerBaseLogic.h"
-#include "vtkSlicerLogic.h"
+#include "vtkSlicerModuleLogic.h"
 
 
-class VTK_NEURONAV_EXPORT vtkNeuroNavLogic : public vtkSlicerLogic 
+class VTK_NEURONAV_EXPORT vtkNeuroNavLogic : public vtkSlicerModuleLogic 
 {
 public:
 

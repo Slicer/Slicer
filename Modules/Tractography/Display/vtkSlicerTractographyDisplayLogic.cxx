@@ -26,6 +26,17 @@ vtkStandardNewMacro(vtkSlicerTractographyDisplayLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerTractographyDisplayLogic::vtkSlicerTractographyDisplayLogic() :
-  vtkSlicerFiberBundleDisplayLogic()
+  vtkSlicerFiberBundleLogic()
 {
+}
+
+//-----------------------------------------------------------------------------
+vtkIntArray*
+vtkSlicerTractographyDisplayLogic::
+NewObservableEvents()
+{
+  vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+
+  return events;
 }

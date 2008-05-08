@@ -49,6 +49,11 @@ VTK_WRAP_TCL3(RealTimeImaging RealTimeImaging_TCL_SRCS "${RealTimeImaging_SRCS}"
 #KWWidgets_WRAP_TCL(RealTimeImaging RealTimeImaging_TCL_SRCS "${RealTimeImaging_SRCS}" "")
 
 #
+# Make as a loadable module
+#
+GENERATELM(RealTimeImaging_SRCS RealTimeImaging.txt)
+
+#
 # Build the library
 #
 ADD_LIBRARY(RealTimeImaging

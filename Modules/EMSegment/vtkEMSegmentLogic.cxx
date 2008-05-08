@@ -1831,6 +1831,18 @@ SpecialTestingFunction()
 }
 
 //-----------------------------------------------------------------------------
+vtkIntArray*
+vtkEMSegmentLogic::
+NewObservableEvents()
+{
+  vtkIntArray *events = vtkIntArray::New();
+  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+
+  return events;
+}
+
+//-----------------------------------------------------------------------------
 void
 vtkEMSegmentLogic::
 CopyDataToSegmenter(vtkImageEMLocalSegmenter* segmenter)

@@ -1,0 +1,2 @@
+Name: EMSegment
+GUIName: EMSegment Template Builder

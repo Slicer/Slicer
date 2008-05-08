@@ -127,7 +127,7 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
     const char *fileName = this->LoadTractographyButton->GetFileName();
     if ( fileName ) 
       {
-      vtkSlicerFiberBundleLogic* fiberBundleLogic = this->Logic;
+      vtkSlicerTractographyDisplayLogic* fiberBundleLogic = this->Logic;
       
       vtkMRMLFiberBundleNode *fiberBundleNode = fiberBundleLogic->AddFiberBundle( fileName );
 
@@ -158,7 +158,7 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
     const char *fileName = this->LoadTractographyDirectoryButton->GetFileName();
     if ( fileName ) 
       {
-      vtkSlicerFiberBundleLogic* fiberBundleLogic = this->Logic;
+      vtkSlicerTractographyDisplayLogic* fiberBundleLogic = this->Logic;
       std::vector<std::string> suffix;
       suffix.push_back(std::string(".vtk"));
       suffix.push_back(std::string(".vtp"));
@@ -186,7 +186,7 @@ void vtkSlicerTractographyDisplayGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( fileName ) 
       {
  
-      vtkSlicerFiberBundleLogic* fiberBundleLogic = this->Logic;
+      vtkSlicerTractographyDisplayLogic* fiberBundleLogic = this->Logic;
         vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(this->FiberBundleSelectorWidget->GetSelected());
 
         if ( !fiberBundleLogic->SaveFiberBundle( fileName, fiberBundleNode ))
@@ -236,7 +236,7 @@ void vtkSlicerTractographyDisplayGUI::Exit ( )
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyDisplayGUI::SetModuleLogic ( vtkSlicerLogic *logic )
 {
-  this->SetLogic( dynamic_cast<vtkSlicerFiberBundleLogic*> (logic) );
+  this->SetLogic( dynamic_cast<vtkSlicerTractographyDisplayLogic*> (logic) );
 }
 
 //---------------------------------------------------------------------------

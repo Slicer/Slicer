@@ -1,6 +1,6 @@
 FIND_PATH(XERCESC_INCLUDE_DIR xercesc/dom/DOM.hpp /usr/include /usr/local/include)
 
-FIND_LIBRARY(XERCESC_LIBRARY NAMES xercesc PATH /usr/lib /usr/local/lib) 
+FIND_LIBRARY(XERCESC_LIBRARY NAMES xerces-c PATH /usr/lib /usr/local/lib) 
 
 IF (XERCESC_INCLUDE_DIR)
    SET(XERCESC_FOUND TRUE)

@@ -2,7 +2,7 @@ PROJECT(WFEngineModule)
 
 OPTION(WFENGINEMODULE "Do you want to build the WFEngineModule?")
 IF(WFENGINEMODULE)
-  
+
 # --------------------------------------------------------------------------
 # Sources
 
@@ -84,7 +84,7 @@ VTK_WRAP_TCL3(WFEngineModule WFEngineModule_TCL_SRCS "${WFEngineModule_SRCS}" ""
 
 SET(WFEngineModule_SRCS ${WFEngineModule_SRCS} WFStateConverter.cxx)
 
-GENERATELM(WFEngineModule_SRCS WFEngine.txt)
+GENERATELM(WFEngineModule_SRCS WFEngineModule.txt)
  
 # --------------------------------------------------------------------------
 # Build the library

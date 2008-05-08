@@ -2,6 +2,10 @@
 #include "vtkObjectFactory.h"
 #include "vtkObject.h"
 
+#include "vtkMRMLVolumeRenderingNode.h"
+
+bool vtkVolumeRenderingModuleLogic::First = true;
+
 vtkVolumeRenderingModuleLogic::vtkVolumeRenderingModuleLogic(void)
 {
 }
@@ -23,4 +27,18 @@ vtkVolumeRenderingModuleLogic* vtkVolumeRenderingModuleLogic::New()
 void vtkVolumeRenderingModuleLogic::PrintSelf(std::ostream &os, vtkIndent indent)
 {
     os<<indent<<"Print logic"<<endl;
+}
+
+
+void vtkVolumeRenderingModuleLogic::SetMRMLScene(vtkMRMLScene *scene)
+{
+  vtkSlicerModuleLogic::SetMRMLScene(scene);
+
+  if (this->First) {
+    // Guard this so it is only registered once.
+    vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
+    scene->RegisterNodeClass(vrNode);
+    vrNode->Delete();
+    this->First = false;
+  }
 }

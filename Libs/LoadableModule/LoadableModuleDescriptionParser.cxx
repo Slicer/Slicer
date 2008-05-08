@@ -231,8 +231,17 @@ lmEndElement(void *userData, const char *element)
     trimLeadingAndTrailing(temp);
 
     ps->CurrentDescription.SetMessage(temp);
+    } 
+  else if (name ==  "dependency")
+    {
+    std::string temp = ps->LastData[ps->Depth];
+    replaceSubWithSub(temp, "\"", "'");
+    replaceSubWithSub(temp, "\n", " ");
+    trimLeadingAndTrailing(temp);
+
+    ps->CurrentDescription.AddDependency(temp);
     }
-  else if(name != "loadable")
+ else if(name != "loadable")
     {
     std::string error("LoadableModuleDescriptionParser Error: Unrecognized element <" + name + std::string("> was found."));
     if (ps->ErrorDescription.size() == 0)
@@ -337,6 +346,8 @@ LoadableModuleDescriptionParser::ParseText( const std::string& txt, LoadableModu
       description.SetName(value);
     } else if (key.compare("GUINAME") == 0) {
       description.SetGUIName(value);
+    } else if (key.compare("DEPENDENCY") == 0) {
+      description.AddDependency(value);
     }
 
     pos = newline + 1;

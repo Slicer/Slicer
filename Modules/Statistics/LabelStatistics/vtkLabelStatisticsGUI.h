@@ -48,7 +48,10 @@ class VTK_LABELSTATISTICS_EXPORT vtkLabelStatisticsGUI : public vtkSlicerModuleG
    // Description: Get/Set MRML node
   vtkGetObjectMacro (Logic, vtkLabelStatisticsLogic);
   vtkSetObjectMacro (Logic, vtkLabelStatisticsLogic);
-  
+
+  // Description: implement setter method for logic class's parent
+  virtual void SetModuleLogic(vtkSlicerLogic*);
+
   // Description: Get/Set MRML node
   vtkGetObjectMacro (LabelStatisticsNode, vtkMRMLLabelStatisticsNode);
 

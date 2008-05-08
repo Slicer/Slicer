@@ -129,6 +129,8 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 VTK_WRAP_TCL3(EMSegment EMSegment_TCL_SRCS "${EMSegment_SRCS}" "")
 
+#GENERATELM(EMSegment_SRCS EMSegment.txt)
+
 #
 # Build the library
 #
@@ -147,7 +149,6 @@ ENDIF(BUILD_SHARED_LIBS)
 TARGET_LINK_LIBRARIES(EMSegment
   SlicerBaseLogic 
   SlicerBaseGUI
-  Volumes 
   MRML
   vtkITK
   vtkCommonTCL

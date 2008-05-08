@@ -57,7 +57,7 @@ VTK_WRAP_TCL3(MRAblation MRAblation_TCL_SRCS "${MRAblation_SRCS}" "")
 # --------------------------------------------------------------------------
 # Loadable Module support, do after TCL Wrapping
 
-GENERATELM(MRAblation_SRCS MRAblation.xml)
+GENERATELM(MRAblation_SRCS MRAblation.txt)
 
 # --------------------------------------------------------------------------
 # Build the library
