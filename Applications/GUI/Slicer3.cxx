@@ -83,7 +83,6 @@ extern "C" {
 //#define SLICES_DEBUG
 //#define MODELS_DEBUG
 //#define VOLUMES_DEBUG
-//#define QUERYATLAS_DEBUG
 //#define COLORS_DEBUG
 //#define FIDUCIALS_DEBUG
 #define CAMERA_DEBUG
@@ -127,11 +126,6 @@ extern "C" {
 #if !defined(COMMANDLINE_DEBUG) && defined(BUILD_MODULES)
 #include "vtkCommandLineModuleLogic.h"
 #include "vtkCommandLineModuleGUI.h"
-#endif
-
-#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
-#include "vtkQueryAtlasLogic.h"
-#include "vtkQueryAtlasGUI.h"
 #endif
 
 #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
@@ -197,9 +191,6 @@ extern "C" int Realtimeimaging_Init(Tcl_Interp *interp);
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Slicertractographydisplay_Init(Tcl_Interp *interp);
 extern "C" int Slicertractographyfiducialseeding_Init(Tcl_Interp *interp);
-#endif
-#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
-extern "C" int Queryatlas_Init(Tcl_Interp *interp);
 #endif
 #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Volumerenderingmodule_Init(Tcl_Interp *interp);
@@ -695,9 +686,6 @@ int Slicer3_main(int argc, char *argv[])
     Slicertractographydisplay_Init(interp);
     Slicertractographyfiducialseeding_Init(interp);
 #endif
-#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
-    Queryatlas_Init(interp);
-#endif
 #if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
     Slicerdaemon_Init(interp);
 #endif
@@ -1075,7 +1063,6 @@ int Slicer3_main(int argc, char *argv[])
     while (lmit != loadableModuleNames.end())
       {
         LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
-
         slicerApp->SplashMessage(desc.GetMessage().c_str());
 
         vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
@@ -1452,45 +1439,6 @@ int Slicer3_main(int argc, char *argv[])
     //
 #endif
 
-#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
-//#ifndef QUERYATLAS_DEBUG
-    slicerApp->SplashMessage("Initializing Query Atlas Module...");
-
-    //--- Incorporate the tcl QueryAtlas components
-    std::string qaTclCommand = "set ::QA_PACKAGE {};";
-    qaTclCommand += "set dir \"" + slicerBinDir + "/../" +
-      SLICER_INSTALL_LIBRARIES_DIR + "/Modules/Packages/QueryAtlas/Tcl\" ; ";
-    qaTclCommand += "  if { [ file exists $dir/pkgIndex.tcl ] } {";
-    qaTclCommand += "    lappend ::QA_PACKAGE [ file tail $dir ];";
-    qaTclCommand += "    lappend ::auto_path $dir;";
-    qaTclCommand += "    package require $::QA_PACKAGE;";
-    qaTclCommand += "  }";
-    Slicer3_Tcl_Eval( interp, qaTclCommand.c_str() );
-
-    //--- Query Atlas Module
-    vtkQueryAtlasGUI *queryAtlasGUI = vtkQueryAtlasGUI::New ( );
-    vtkQueryAtlasLogic *queryAtlasLogic  = vtkQueryAtlasLogic::New ( );
-    queryAtlasLogic->SetApplicationLogic ( appLogic );
-    queryAtlasGUI->SetApplication ( slicerApp );
-    queryAtlasGUI->SetApplicationLogic ( appLogic );
-    queryAtlasGUI->SetApplicationGUI ( appGUI );
-    queryAtlasGUI->SetGUIName( "QueryAtlas" );
-    queryAtlasGUI->GetUIPanel()->SetName ( queryAtlasGUI->GetGUIName ( ) );
-    queryAtlasGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-    queryAtlasGUI->GetUIPanel()->Create ( );
-    slicerApp->AddModuleGUI ( queryAtlasGUI );
-    // add mrml observers
-    vtkIntArray *qaEvents = vtkIntArray::New();
-    qaEvents->InsertNextValue ( vtkMRMLScene::SceneCloseEvent );
-    qaEvents->InsertNextValue ( vtkMRMLScene::NodeAddedEvent );
-    qaEvents->InsertNextValue ( vtkMRMLScene::NodeRemovedEvent );
-    queryAtlasGUI->SetAndObserveMRMLSceneEvents (scene, qaEvents );
-    qaEvents->Delete();
-    queryAtlasGUI->BuildGUI ( );
-    queryAtlasGUI->AddGUIObservers ( );
-
-#endif
-    
 #if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
 
     slicerApp->SplashMessage("Initializing Volume Rendering Module...");
@@ -1746,11 +1694,6 @@ int Slicer3_main(int argc, char *argv[])
 
     name = transformsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
-#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
-//#ifndef QUERYATLAS_DEBUG
-    name = queryAtlasGUI->GetTclName();
-    slicerApp->Script ("namespace eval slicer3 set QueryAtlasGUI %s", name);
-#endif
    
     
 #if !defined (VOLUMERENDERINGMODULE_DEBUG) && defined (BUILD_MODULES)
@@ -1905,6 +1848,8 @@ int Slicer3_main(int argc, char *argv[])
     // DISPLAY WINDOW AND RUN
     slicerApp->SplashMessage("Finalizing Startup...");
     appGUI->DisplayMainSlicerWindow ( );
+
+    Slicer3_Tcl_Eval( interp, "update" ) ;
     
     // More command line arguments:
     // use the startup script passed on command line if it exists
@@ -2048,11 +1993,6 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(EMSEG_DEBUG) && defined(BUILD_MODULES)
     emSegmentGUI->TearDownGUI();
     emSegmentGUI->RemoveGUIObservers();
-#endif
-
-#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
-//#ifndef QUERYATLAS_DEBUG
-    queryAtlasGUI->RemoveGUIObservers ( );
 #endif
 
 #if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
@@ -2204,11 +2144,6 @@ int Slicer3_main(int argc, char *argv[])
     emSegmentGUI->Delete();
 #endif
 
-#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
-//#ifndef QUERYATLAS_DEBUG
-    queryAtlasGUI->Delete ( );
-#endif
-    
 #if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
     volumesGUI->Delete ();
 #endif
@@ -2309,12 +2244,6 @@ int Slicer3_main(int argc, char *argv[])
     emSegmentLogic->Delete();
 #endif
         
-#if !defined(QUERYATLAS_DEBUG) && defined(BUILD_MODULES)
-//#ifndef QUERYATLAS_DEBUG
-    queryAtlasLogic->SetAndObserveMRMLScene ( NULL );
-    queryAtlasLogic->Delete ( );
-#endif
-    
 #if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
     volumesLogic->SetAndObserveMRMLScene ( NULL );
     volumesLogic->Delete();

@@ -88,14 +88,6 @@ set(dir_list
   ${NeuroNav_BINARY_DIR}
   ${NeuroNav_Init_SOURCE_DIR}
   ${NeuroNav_Init_BINARY_DIR}
-  ${QdecModule_SOURCE_DIR}
-  ${QdecModule_BINARY_DIR}
-  ${QdecModule_Init_SOURCE_DIR}
-  ${QdecModule_Init_BINARY_DIR}
-  ${QueryAtlas_SOURCE_DIR}
-  ${QueryAtlas_BINARY_DIR}
-  ${QueryAtlas_Init_SOURCE_DIR}
-  ${QueryAtlas_Init_BINARY_DIR}
   ${VolumeRenderingModule_SOURCE_DIR}
   ${VolumeRenderingModule_BINARY_DIR}
   ${VolumeRenderingModule_Init_SOURCE_DIR}
@@ -207,12 +199,10 @@ if(BUILD_MODULES)
     ${VOLUMERENDERINGMODULE_LINK_LIB}
     ${LABELSTATISTICS_LINK_LIB} 
     NeuroNav
-    QueryAtlas
     CommandLineModule
     ScriptedModule
     SlicerDaemon
     ${WFENGINE_LINK_LIB}
-    QdecModule
     SlicerTractographyDisplay
     SlicerTractographyFiducialSeeding
     )

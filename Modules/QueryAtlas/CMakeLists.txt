@@ -158,7 +158,7 @@ VTK_WRAP_TCL3(QueryAtlas QueryAtlas_TCL_SRCS "${QueryAtlas_SRCS}" "")
 # --------------------------------------------------------------------------
 # Add support for loadable modules, must be after TCL Wrapping
 
-#GENERATELM(QueryAtlas_SRCS QueryAtlas.txt)
+GENERATELM(QueryAtlas_SRCS QueryAtlas.txt)
 
 # --------------------------------------------------------------------------
 # Build the library
