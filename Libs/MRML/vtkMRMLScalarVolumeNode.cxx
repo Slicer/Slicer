@@ -257,6 +257,7 @@ void vtkMRMLScalarVolumeNode::UpdateFromMRML()
       fileName = std::string("");
       }
     }
+  // TODO: checking the name for 'stat' -- should be an attrbute like labelMap.
   if ((nodeName != "" && nodeName.find("stat",0) != std::string::npos) ||
       (fileName != "" && fileName.find("stat",0) != std::string::npos))
     {
