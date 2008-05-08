@@ -273,13 +273,13 @@ static void vtkTensorRotateExecute(vtkTensorRotate *self, int outExt[6],
 {
   int num0, num1, num2;
   int idx0, idx1, idx2;
-  int outInc0, outInc1, outInc2;
+  vtkIdType outInc0, outInc1, outInc2;
   unsigned long count = 0;
   unsigned long target;
 
   int maxY, maxZ;
-  int outIncX, outIncY, outIncZ;
-  int inIncX, inIncY, inIncZ;
+  vtkIdType inInc[3];
+  int inFullUpdateExt[6];
 
   int idxZ, idxY, idxR;
 
@@ -310,7 +310,7 @@ static void vtkTensorRotateExecute(vtkTensorRotate *self, int outExt[6],
   //Rotation matrix transpose
   rotMatrix->Transpose(rotMatrix,rotMatrixT);
 
-  int inInc[3],inFullUpdateExt[6];
+
   inData->GetIncrements(inInc);
   inData->GetUpdateExtent(inFullUpdateExt); //We are only working over the update extent
   ptId = ((outExt[0] - inFullUpdateExt[0]) * inInc[0]
