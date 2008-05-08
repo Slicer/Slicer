@@ -746,22 +746,29 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
                  this->SaveDataButton->GetWidgetName());
 
+  // add a button frame
+  vtkKWFrame *buttonFrame = vtkKWFrame::New();
+  buttonFrame->SetParent(dataFrame->GetFrame());
+  buttonFrame->Create();
+  this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2",
+                 buttonFrame->GetWidgetName() );
+  
   // add a button to change all the save flags to on
   this->SaveAllDataButton = vtkKWPushButton::New();
-  this->SaveAllDataButton->SetParent ( dataFrame->GetFrame() );
+  this->SaveAllDataButton->SetParent ( buttonFrame );
   this->SaveAllDataButton->Create ( );
-  this->SaveAllDataButton->SetText ("Save All Data");
+  this->SaveAllDataButton->SetText ("Save All");
   this->SaveAllDataButton->SetBalloonHelpString("Check all save boxes");
-  this->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
               this->SaveAllDataButton->GetWidgetName());
 
   // add a button to change all the save flags to off
   this->SaveNoDataButton = vtkKWPushButton::New();
-  this->SaveNoDataButton->SetParent ( dataFrame->GetFrame() );
+  this->SaveNoDataButton->SetParent ( buttonFrame );
   this->SaveNoDataButton->Create ( );
-  this->SaveNoDataButton->SetText ("Save No Data");
+  this->SaveNoDataButton->SetText ("Save None");
   this->SaveNoDataButton->SetBalloonHelpString("Uncheck all save boxes");
-  this->Script("pack %s -side top -anchor w -padx 2 -pady 4", 
+  this->Script("pack %s -side left -anchor w -padx 2 -pady 4", 
               this->SaveNoDataButton->GetWidgetName());
   
   // add the multicolumn list to show the points
@@ -853,6 +860,7 @@ void vtkSlicerMRMLSaveDataWidget::CreateWidget ( )
   frame->Delete();
   dataFrame->Delete();
   saveFrame->Delete();
+  buttonFrame->Delete();
   
 }
 
