@@ -111,6 +111,7 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
   }
 
   if { $caller == $sliceGUI } {
+
     switch $event {
       "KeyPressEvent" { 
         set key [$_interactor GetKeySym]
@@ -212,14 +213,14 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
   #
   set scene [$sliceGUI GetMRMLScene]
   set nLists [$scene GetNumberOfNodesByClass "vtkMRMLFiducialListNode"]
+  set node [[$sliceGUI GetLogic] GetSliceNode]
 
-  if { $nLists > 0 } {
+  if { $node != "" && $nLists > 0 } {
 
     #
     # get the rasToSlice for the SliceNode - transforming the fiducial
     # by this matrix will let us easily check the distance from the slice plane
     #
-    set node [[$sliceGUI GetLogic] GetSliceNode]
     set rasToSlice [vtkMatrix4x4 New]
     $rasToSlice DeepCopy [$node GetSliceToRAS]
     $rasToSlice Invert
