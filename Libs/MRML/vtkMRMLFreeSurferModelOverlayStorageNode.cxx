@@ -460,7 +460,6 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
         // set up a look up table
         vtkMRMLColorTableNode *lutNode = vtkMRMLColorTableNode::New();
         lutNode->SetTypeToUser();
-        this->Scene->AddNode(lutNode);
         
         vtkFSSurfaceAnnotationReader *reader = vtkFSSurfaceAnnotationReader::New();
         reader->SetFileName(fullName.c_str());
@@ -476,6 +475,11 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
         if (retval == 6)
           {
           vtkDebugMacro("No Internal Color Table in " << fullName.c_str() << ", trying the default colours");
+
+          // clear up the internal one
+          lutNode->Delete();
+          lutNode = NULL;
+          
           // use the default annotation colours
           // colorLogic->GetDefaultFreeSurferSurfaceLabelsColorNodeID()
           
@@ -534,9 +538,13 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
               }
             endBracketIndex = colorString.find( "}", startBracketIndex);
             }
+          this->Scene->AddNode(lutNode);
           modelNode->GetModelDisplayNode()->SetAndObserveColorNodeID(lutNode->GetID());
           }
-        lutNode->Delete();
+        if (lutNode)
+          {
+          lutNode->Delete();
+          }
         reader->Delete();
         }
       }
