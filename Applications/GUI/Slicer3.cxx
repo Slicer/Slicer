@@ -110,6 +110,12 @@ extern "C" {
 #include "vtkCommandLineModuleGUI.h"
 #endif
 
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+#include "vtkMRMLVolumeRenderingNode.h"
+#include "vtkVolumeRenderingModuleGUI.h"
+#include "vtkVolumeRenderingModuleLogic.h"
+#endif
+
 #if !defined(REMOTEIO_DEBUG)
 #include "vtkHTTPHandler.h"
 #include "vtkSRBHandler.h"
@@ -156,6 +162,11 @@ extern "C" int Vtkteem_Init(Tcl_Interp *interp);
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Slicertractographydisplay_Init(Tcl_Interp *interp);
 extern "C" int Slicertractographyfiducialseeding_Init(Tcl_Interp *interp);
+#endif
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+extern "C" int Volumerenderingmodule_Init(Tcl_Interp *interp);
+//Also init the Replacements
+extern "C" int Volumerenderingreplacements_Init(Tcl_Interp *interp);
 #endif
 #if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
@@ -628,6 +639,11 @@ int Slicer3_main(int argc, char *argv[])
     Igt_Init(interp);
     Vtkteem_Init(interp);
 
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+    Volumerenderingmodule_Init(interp);
+    //Also the replacements
+    Volumerenderingreplacements_Init(interp),
+#endif
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
     Slicertractographydisplay_Init(interp);
     Slicertractographyfiducialseeding_Init(interp);
@@ -1308,6 +1324,35 @@ int Slicer3_main(int argc, char *argv[])
     slicerTractographyFiducialSeedingGUI->AddGUIObservers ( );
 #endif
 
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+
+    slicerApp->SplashMessage("Initializing Volume Rendering Module...");
+    //VolumeRenderingModule
+    vtkVolumeRenderingModuleGUI *vrModuleGUI = vtkVolumeRenderingModuleGUI::New ( );
+    vtkVolumeRenderingModuleLogic *vrModuleLogic  = vtkVolumeRenderingModuleLogic::New ( );
+    vrModuleLogic->SetAndObserveMRMLScene ( scene );
+    vrModuleLogic->SetApplicationLogic ( appLogic );
+    vrModuleLogic->SetMRMLScene(scene);
+        //TODO Quick and dirty
+     vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
+     scene->RegisterNodeClass(vrNode);
+  vrNode->Delete();
+    vrModuleGUI->SetLogic(vrModuleLogic);
+    vrModuleGUI->SetApplication ( slicerApp );
+    vrModuleGUI->SetApplicationLogic ( appLogic );
+    vrModuleGUI->SetApplicationGUI ( appGUI );
+    vrModuleGUI->SetGUIName( "VolumeRendering" );
+    vrModuleGUI->GetUIPanel()->SetName ( vrModuleGUI->GetGUIName ( ) );
+    vrModuleGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
+    vrModuleGUI->GetUIPanel()->Create ( );
+    slicerApp->AddModuleGUI ( vrModuleGUI );
+    vrModuleGUI->BuildGUI ( );
+    vrModuleGUI->AddGUIObservers ( );
+    // add the pointer to the viewer widget, for observing pick events
+    vrModuleGUI->SetViewerWidget(appGUI->GetViewerWidget());
+    vrModuleGUI->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
+#endif
+
     //
     //--- Cache and RemoteIO ManagerGUI
     //
@@ -1504,6 +1549,11 @@ int Slicer3_main(int argc, char *argv[])
 
     name = transformsGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set TransformsGUI %s", name);
+
+#if !defined (VOLUMERENDERINGMODULE_DEBUG) && defined (BUILD_MODULES)
+    name = vrModuleGUI->GetTclName();
+    slicerApp->Script ("namespace eval slicer3 set VRModuleGUI %s", name);
+#endif
     
     if ( appGUI->GetViewerWidget() )
       {
@@ -1809,6 +1859,9 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef COLORS_DEBUG
     colorGUI->TearDownGUI ( );
 #endif
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+    vrModuleGUI->TearDownGUI ( );
+#endif
 
     transformsGUI->TearDownGUI ( );
 #ifndef CAMERA_DEBUG
@@ -2029,6 +2082,11 @@ int Slicer3_main(int argc, char *argv[])
 #ifndef COLORS_DEBUG
     colorLogic->SetAndObserveMRMLScene ( NULL );
     colorLogic->Delete();
+#endif
+
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+    vrModuleLogic->SetAndObserveMRMLScene ( NULL );
+    vrModuleLogic->Delete ( );
 #endif
 
 #ifndef SLICES_DEBUG

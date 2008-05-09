@@ -197,6 +197,7 @@ if(BUILD_MODULES)
     SlicerDaemon
     SlicerTractographyDisplay
     SlicerTractographyFiducialSeeding
+    VolumeRenderingModule
     )
 endif(BUILD_MODULES)
 

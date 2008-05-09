@@ -56,7 +56,7 @@ VTK_WRAP_TCL3(VolumeRenderingModule VolumeRenderingModule_TCL_SRCS "${VolumeRend
 # --------------------------------------------------------------------------
 # Add loadable module support (not yet)
 
-GENERATELM(VolumeRenderingModule_SRCS VolumeRenderingModule.txt)
+#GENERATELM(VolumeRenderingModule_SRCS VolumeRenderingModule.txt)
 
 # --------------------------------------------------------------------------
 # Build the library
