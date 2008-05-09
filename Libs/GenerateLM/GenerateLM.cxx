@@ -214,7 +214,7 @@ void GenerateModuleDataSymbols(std::ofstream &sout, const LoadableModuleDescript
 
   std::vector<std::string>::const_iterator iter = module.GetDependencies().begin();
   while (iter != module.GetDependencies().end()) {
-    sout << "\"  <dependency>" << (*iter) << "</dependency?\\n\"" << std::endl;
+    sout << "\"  <dependency>" << (*iter) << "</dependency>\\n\"" << std::endl;
     iter++;
   }
 
