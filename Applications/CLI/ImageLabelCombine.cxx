@@ -29,18 +29,18 @@ int main( int argc, const char * argv[] ){
   PARSE_ARGS;
 
   // Read in label volume inputs
-  vtkNRRDReader *reader_A = vtkNRRDReader::New();
-  reader_A->SetFileName(InputLabelMap_A.c_str());
-  reader_A->Update();
+  vtkNRRDReader *readerA = vtkNRRDReader::New();
+  readerA->SetFileName(InputLabelMap_A.c_str());
+  readerA->Update();
  
-  vtkNRRDReader *reader_B = vtkNRRDReader::New();
-  reader_B->SetFileName(InputLabelMap_B.c_str());
-  reader_B->Update();
+  vtkNRRDReader *readerB = vtkNRRDReader::New();
+  readerB->SetFileName(InputLabelMap_B.c_str());
+  readerB->Update();
   
   // combine labels
   vtkImageLabelCombine *labelCombine = vtkImageLabelCombine::New();
-  labelCombine->SetInput1(reader_A->GetOutput());
-  labelCombine->SetInput2(reader_A->GetOutput());
+  labelCombine->AddInputConnection( readerA->GetOutputPort() );
+  labelCombine->AddInputConnection( readerB->GetOutputPort() );
   labelCombine->Update();
 
   // Output
@@ -50,8 +50,8 @@ int main( int argc, const char * argv[] ){
   writer->Write();
 
   //Delete everything
-  reader_A->Delete();
-  reader_B->Delete();
+  readerA->Delete();
+  readerB->Delete();
   labelCombine->Delete();
   writer->Delete();
 
