@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+  Tractography.Editor
+  </category>
+  <title>
+  ImageLabelCombine
+  </title>
+  <description>
+  Combine two label maps into one
+  </description>
+  <version>0.1.0</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Alex Yarmarkovich</contributor>
+  <acknowledgements></acknowledgements>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <image type ="label">
+      <name>InputLabelMap_A</name>
+      <label>Input Label Map A</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Label map image</description>
+    </image>
+    <image type ="label">
+      <name>InputLabelMap_B</name>
+      <label>Input Label Map B</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Label map image</description>
+    </image>
+    <image type ="label">
+      <name>OutputLabelMap</name>
+      <label>Output Label Map </label>
+      <channel>output</channel>
+      <index>2</index>
+      <description>Resulting Label map image</description>
+    </image>
+  </parameters>
+  
+  <parameters>
+    <label>Label combination options</label>
+    <description>Selection of how to combine label maps</description>
+
+    <boolean>
+      <name>FirstOverwrites</name>
+      <flag>-f</flag>
+      <longflag>--first_overwrites</longflag>
+      <description>Use first or second label when both are present</description>
+      <label>First Label Overwrites Second</label>
+      <default>true</default>
+    </boolean>
+  </parameters>  
+</executable>

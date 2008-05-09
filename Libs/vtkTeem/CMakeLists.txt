@@ -35,6 +35,7 @@ set(vtkTeem_SRCS
   vtkTractographyPointAndArray.cxx
   vtkTensorMask.cxx
   vtkTensorRotate.cxx
+  vtkImageLabelCombine.cxx
   )
 
 # Abstract/pure virtual classes

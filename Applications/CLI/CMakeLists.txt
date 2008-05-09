@@ -402,6 +402,23 @@ SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoi
 TARGET_LINK_LIBRARIES (${CLP}Lib ITKIO ITKAlgorithms ITKBasicFilters)
 
 #####################
+SET (CLP ImageLabelCombine)
+
+SET ( ${CLP}_SOURCE ${CLP}.cxx)
+GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/ITKLogo.h)
+ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
+LINK_DIRECTORIES(${vtkTeem_LIB_DIR})
+TARGET_LINK_LIBRARIES (${CLP} vtkITK vtkImaging vtkGraphics vtkIO vtkTeem)
+INCLUDE_DIRECTORIES(
+        ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
+
+ADD_LIBRARY(${CLP}Lib SHARED ${${CLP}_SOURCE})
+SET_TARGET_PROPERTIES (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+TARGET_LINK_LIBRARIES (${CLP}Lib vtkITK vtkImaging vtkGraphics vtkIO vtkTeem)
+INCLUDE_DIRECTORIES(
+        ${vtkTeem_SOURCE_DIR}  ${vtkTeem_BINARY_DIR})
+
+#####################
 SET (CLP ProbeVolumeWithModel)
 
 SET ( ${CLP}_SOURCE ${CLP}.cxx)
@@ -509,6 +526,8 @@ IF (Slicer3_SOURCE_DIR)
         BSplineDeformableRegistration
         LabelMapSmoothing
         LabelMapSmoothingLib
+        ImageLabelCombine
+        ImageLabelCombineLib
         OrientImage
         OrientImageLib
         CheckerBoardLib
