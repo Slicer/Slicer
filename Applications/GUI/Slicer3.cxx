@@ -1026,8 +1026,8 @@ int Slicer3_main(int argc, char *argv[])
 
         vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
         vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
-
         logic->SetAndObserveMRMLScene( scene );
+
         vtkIntArray* events = logic->NewObservableEvents();
         logic->SetAndObserveMRMLSceneEvents(scene, events);
         events->Delete();
@@ -1993,6 +1993,11 @@ int Slicer3_main(int argc, char *argv[])
     colorGUI->Delete();
 #endif
 
+
+#if !defined(VOLUMERENDERINGMODULE_DEBUG) && defined(BUILD_MODULES)
+   vrModuleGUI->Delete();
+#endif
+
     transformsGUI->Delete ();
 
 #ifndef CAMERA_DEBUG
@@ -2121,7 +2126,6 @@ int Slicer3_main(int argc, char *argv[])
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 #endif
-    
 
     //--- scene next;
     scene->Clear(1);
