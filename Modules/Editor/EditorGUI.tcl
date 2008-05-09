@@ -110,8 +110,8 @@ proc EditorBuildGUI {this} {
   set ::Editor($this,volumesSelect) [vtkSlicerNodeSelectorWidget New]
   $::Editor($this,volumesSelect) SetParent [$::Editor($this,volumesFrame) GetFrame]
   $::Editor($this,volumesSelect) Create
-  $::Editor($this,volumesSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $::Editor($this,volumesSelect) SetNodeClass "vtkMRMLScalarVolumeNode" "" "" ""
+  $::Editor($this,volumesSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $::Editor($this,volumesSelect) UpdateMenu
   $::Editor($this,volumesSelect) SetLabelText "Source Volume:"
   $::Editor($this,volumesSelect) SetBalloonHelpString "The Source Volume will define the dimensions and directions for the new label map"
@@ -448,6 +448,7 @@ proc EditorEnter {this} {
     puts "EditorEnter: Adding mrml observer on selection node, modified event"
   }
   $this AddMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode] 31
+  $::Editor($this,volumesSelect) UpdateMenu
 }
 
 proc EditorExit {this} {
