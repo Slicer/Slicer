@@ -163,7 +163,7 @@ void vtkKWWindowLevelThresholdEditor::SetImageData(vtkImageData* imageData)
 //----------------------------------------------------------------------------
 void vtkKWWindowLevelThresholdEditor::UpdateAutoLevels()
 {
-  vtkWarningMacro("UpdateAutoLevels: returning, call should be made on the volume/display node.");
+  vtkDebugMacro("UpdateAutoLevels: returning, call should be made on the volume/display node.");
   return;
 }
 
