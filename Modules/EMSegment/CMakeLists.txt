@@ -165,6 +165,7 @@ TARGET_LINK_LIBRARIES(EMSegment
   ITKIO
   ITKDICOMParser
   ${KWWidgets_LIBRARIES} 
+  Volumes
   )
 
 #
