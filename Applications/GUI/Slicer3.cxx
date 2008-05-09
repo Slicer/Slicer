@@ -1709,7 +1709,7 @@ int Slicer3_main(int argc, char *argv[])
     // use the startup script passed on command line if it exists
     if ( Script != "" )
       {    
-      std::string cmd = "source " + Script;
+      std::string cmd = "after idle source " + Script;
       Slicer3_Tcl_Eval( interp, cmd.c_str() ) ;
       }
 
@@ -1725,7 +1725,7 @@ int Slicer3_main(int argc, char *argv[])
       std::string cmd = "set ::SLICER(exec) \"" + Exec + "\" ; ";
       cmd += "regsub -all {\\.,} $::SLICER(exec) \";\" ::SLICER(exec); ";
       cmd += "regsub -all {,\\.} $::SLICER(exec) \";\" ::SLICER(exec); ";
-      cmd += "eval $::SLICER(exec);";
+      cmd += "after idle eval $::SLICER(exec);";
       res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       }
 
