@@ -49,7 +49,10 @@ vtkTeemEstimateDiffusionTensor::vtkTeemEstimateDiffusionTensor()
   this->BValues->SetNumberOfComponents(1);
   this->BValues->SetNumberOfTuples(this->NumberOfGradients);
   for (int i=0; i<this->NumberOfGradients;i++)
+    {
     this->BValues->SetValue(i,1000);
+    }
+  this->MaxB = 1000;
  
   // Scalar Factor for the tensor values
   //this->ScaleFactor = 1;
@@ -123,7 +126,14 @@ void vtkTeemEstimateDiffusionTensor::SetDiffusionGradients(vtkDoubleArray *grad)
 void vtkTeemEstimateDiffusionTensor::SetBValues(vtkDoubleArray *bValues)
 {
   this->BValues->DeepCopy(bValues);
+  this->CalculateMaxB();
   this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkTeemEstimateDiffusionTensor::CalculateMaxB()
+{
+  this->SetMaxB( this->BValues->GetRange()[1] );
 }
 
 //----------------------------------------------------------------------------
@@ -433,11 +443,10 @@ int vtkTeemEstimateDiffusionTensor::SetGradientsToContext(tenEstimateContext *te
   }
   
   // To accomodate different b-values we might have to rescale the gradients
-  double maxB = this->BValues->GetRange()[1];
   data = (double *) (ngrad ->data);
   double factor;
   for (unsigned int i=0; i< size[1]; i++) {
-   factor =  sqrt(this->BValues->GetValue(i)/maxB);
+   factor =  sqrt(this->BValues->GetValue(i)/this->MaxB);
    data[0] = data[0] * factor;
    data[1] = data[1] * factor;
    data[2] = data[2] * factor;
@@ -452,7 +461,7 @@ int vtkTeemEstimateDiffusionTensor::SetGradientsToContext(tenEstimateContext *te
     return 1;
   }
 
-  tenEstimateBMatricesSet(tec,nbmat,maxB,!this->knownB0);
+  tenEstimateBMatricesSet(tec,nbmat,this->MaxB,!this->knownB0);
   tec->knownB0 = this->knownB0;
   return 0;
 }

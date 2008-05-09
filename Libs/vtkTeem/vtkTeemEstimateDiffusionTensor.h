@@ -63,10 +63,17 @@ class VTK_TEEM_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
   void SetBValue(int num,double b)
    {
      this->BValues->SetValue(num,b);
+     this->CalculateMaxB();
      this->Modified();
    } 
   void SetBValues(vtkDoubleArray *bValues);
   vtkGetObjectMacro(BValues,vtkDoubleArray);
+
+  // Description
+  // need to calculate max B (using GetRange) outside threaded execute
+  void CalculateMaxB();
+  vtkSetMacro(MaxB, double);
+  vtkGetMacro(MaxB, double);
 
   // Description:
   // Get Baseline Image
@@ -129,6 +136,8 @@ class VTK_TEEM_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
 
   vtkDoubleArray *BValues;
   vtkDoubleArray *DiffusionGradients;
+  // Maximum of the B values
+  double MaxB;
 
   vtkImageData *Baseline;
   vtkImageData *AverageDWI;
@@ -147,6 +156,7 @@ class VTK_TEEM_EXPORT vtkTeemEstimateDiffusionTensor : public vtkImageToImageFil
 
   // Matrices for LS fitting
   int knownB0;
+
 
   // Number of iterations for WLS estimation
   int NumberOfWLSIterations;
