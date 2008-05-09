@@ -1024,6 +1024,15 @@ int Slicer3_main(int argc, char *argv[])
         LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
         slicerApp->SplashMessage(desc.GetMessage().c_str());
 
+        // Initialize TCL
+
+        TclInit Tcl_Init = desc.GetTclInitFunction();
+
+        if (Tcl_Init != 0)
+        {
+          (*Tcl_Init)(interp);
+        }
+
         vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
         vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
         logic->SetAndObserveMRMLScene( scene );
@@ -1046,15 +1055,6 @@ int Slicer3_main(int argc, char *argv[])
         gui->BuildGUI ( );
         gui->AddGUIObservers ( );
         gui->Init();
-
-        // Initialize TCL
-
-        TclInit Tcl_Init = desc.GetTclInitFunction();
-
-        if (Tcl_Init != 0)
-        {
-          (*Tcl_Init)(interp);
-        }
 
         lmit++;
       }
@@ -1498,22 +1498,23 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set ApplicationGUI %s", name);
 
     lmit = loadableModuleNames.begin();
-    
-    while (lmit != loadableModuleNames.end())
-      {
-        LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
+     
+     while (lmit != loadableModuleNames.end())
+       {
+       LoadableModuleDescription desc = loadableModuleFactory.GetModuleDescription(*lmit);
 
-        vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
+       vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
 
-        name = gui->GetTclName();
-        std::string format("namespace eval slicer3 set ");
-        format += desc.GetShortName();
-        format += "GUI %s";
+       name = gui->GetTclName();
+       std::string format("namespace eval slicer3 set ");
+       format += desc.GetShortName();
+       format += "GUI %s";
 
-        slicerApp->Script (format.c_str(), name);        
+       slicerApp->Script (format.c_str(), name);        
 
-        lmit++;
-      }
+       lmit++;
+       }
+
 
 #ifndef REMOTEIO_DEBUG
     name = remoteIOGUI->GetTclName();

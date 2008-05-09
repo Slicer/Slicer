@@ -228,7 +228,6 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
 vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 {
 
-  this->LoadTclPackage();
   vtkDebugMacro("vtkQueryAtlasGUI: Tearing down Tcl callbacks \n");
   this->Script ( "QueryAtlasTearDown" );
 
@@ -2084,7 +2083,6 @@ void vtkQueryAtlasGUI::LoadTclPackage ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::Enter ( )
 {
-    this->LoadTclPackage();
 
     vtkDebugMacro("vtkQueryAtlasGUI: Enter\n");
     this->Script ( "QueryAtlasCullOldModelAnnotations");
@@ -2116,6 +2114,7 @@ void vtkQueryAtlasGUI::RemoveMRMLObservers()
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::BuildGUI ( )
 {
+
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
   // Define your help text here.
 
@@ -2151,6 +2150,8 @@ void vtkQueryAtlasGUI::BuildGUI ( )
     this->BuildQueriesGUI ( );
 #endif
 //    this->BuildDisplayAndNavigationGUI ( );
+
+    this->LoadTclPackage();
 }
 
 

@@ -418,6 +418,7 @@ void vtkSlicerDiffusionTestingWidget::RunDWI()
   // create a command line module node
   vtkMRMLCommandLineModuleNode *tensorCLM = vtkMRMLCommandLineModuleNode::SafeDownCast(
     this->MRMLScene->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
+  this->MRMLScene->AddNode (tensorCLM);
 
   // set its name  
   tensorCLM->SetModuleDescription("Diffusion Tensor Estimation");
