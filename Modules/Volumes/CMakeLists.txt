@@ -81,6 +81,7 @@ TARGET_LINK_LIBRARIES(Volumes
   MRML
   CommandLineModule
   ModuleDescriptionParser
+  SlicerTractographyFiducialSeeding
   )
 
 
