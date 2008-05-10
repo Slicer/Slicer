@@ -130,7 +130,7 @@ int ExtractSiemensDiffusionInformation( std::string tagString, std::string nameS
     for (int k = 0; k < vm; k++)
     {
       int itemLength = *(infoAsCharPtr+offset+4);
-      int strideSize = ceil(static_cast<double>(itemLength)/4) * 4;
+      int strideSize = static_cast<int> (ceil(static_cast<double>(itemLength)/4) * 4);
       std::string valueString = infoAsString.substr( offset+16, itemLength );
       valueArray.push_back( atof(valueString.c_str()) );
       offset += 16+strideSize;
