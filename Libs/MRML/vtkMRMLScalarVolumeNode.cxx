@@ -244,8 +244,12 @@ void vtkMRMLScalarVolumeNode::UpdateFromMRML()
 {
   vtkDebugMacro("UpdateFromMRML: calling calculate auto levels");
   // check for a stats volume - name or storage node's file name
-  std::string nodeName = std::string(this->GetName());
+  std::string nodeName = "";
   std::string fileName = "";
+  if ( this->GetName() != NULL )
+    {
+    nodeName = std::string(this->GetName());
+    }
   if (this->GetStorageNode() != NULL)
     {
     if ( this->GetStorageNode()->GetFileName() != NULL )
