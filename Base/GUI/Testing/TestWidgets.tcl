@@ -182,6 +182,16 @@ foreach w $widgets {
   pack [$pushButton GetWidgetName]
 }
 
+proc TestPlaneWidget {} {
+
+  set rwi [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindowInteractor]
+
+  set planeWidget [vtkImplicitPlaneWidget New]
+  $planeWidget SetInteractor $rwi
+  $planeWidget PlaceWidget -75 75  -75 75  -75 75
+  $planeWidget On
+}
+
 
 vwait ::quit
 
