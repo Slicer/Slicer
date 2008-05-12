@@ -555,7 +555,7 @@ int main(int argc, char* argv[])
   
   // set proper regions
   NRRDImageType::RegionType nrrdRegion;
-  NRRDImageType::IndexType nrrdIndex;
+  //NRRDImageType::IndexType nrrdIndex;
   nrrdRegion.SetIndex( 0, 0 );
   nrrdRegion.SetIndex( 1, 0 );
   nrrdRegion.SetIndex( 2, 0 );

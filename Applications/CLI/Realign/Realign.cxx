@@ -78,12 +78,13 @@ int main(int argc, char * argv[])
       std::cout << "The output volume is " << OutputVolume.c_str() << std::endl;
       std::cout << "The reference volume is " << ReferenceVolume.c_str() << std::endl;
       std::cout << "The ACPC fiducial list is " <<  std::endl;
-      for (int i = 0; i<ACPC.size(); i++)
+      int i;
+      for (i = 0; i<ACPC.size(); i++)
         {
         std::cout << i << ": " << ACPC[i][0] << ", " << ACPC[i][1] << ", " << ACPC[i][2] << std::endl;
         }
       std::cout << "The midline fiducial list is: " << std::endl;
-      for (int i= 0; i < Midline.size(); i++ )
+      for (i= 0; i < Midline.size(); i++ )
         {
         std::cout << i << ": " << Midline[i][0] << ", " << Midline[i][1] << ", " << Midline[i][2] << std::endl;
         }
@@ -207,7 +208,8 @@ int main(int argc, char * argv[])
           std::cout << "Total number of midline points " << x << ", points data type = " << points->GetDataType() << std::endl;
           }
         points->SetNumberOfPoints(x);
-        for (int i = 0; i < x; i++)
+        int i;
+        for (i = 0; i < x; i++)
           {
           points->SetPoint(i, Midline[i][0], Midline[i][1], Midline[i][2]);
           if (debugSwitch)
@@ -264,7 +266,7 @@ int main(int argc, char * argv[])
         // prepare the rotation matrix
         vtkMatrix4x4 *mat = vtkMatrix4x4::New();
         mat->Identity();
-        int i = 0;
+        i = 0;
         for (int p = 0; p < 4; p++)
           {
           vtkFloatingPointType point = normal[p];
