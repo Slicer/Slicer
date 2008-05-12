@@ -27,6 +27,7 @@ vtkStandardNewMacro(vtkImageLabelCombine);
 //----------------------------------------------------------------------------
 vtkImageLabelCombine::vtkImageLabelCombine()
 {
+  this->SetNumberOfInputPorts(2);
   this->OverwriteInput = 0;
 }
 
@@ -126,7 +127,7 @@ void vtkImageLabelCombineExecute2(vtkImageLabelCombine *self,
         // Pixel operation
         v1 = *in1Ptr;
         v2 = *in2Ptr;
-        if (op)
+        if (op == 0)
           {
           if (v1 > 0) 
             {
@@ -135,6 +136,10 @@ void vtkImageLabelCombineExecute2(vtkImageLabelCombine *self,
           else if (v2 > 0 && v1 == 0) 
             {
             *outPtr = v2;
+            }
+          else
+            {
+            *outPtr = 0;
             }
           }
         else
@@ -146,6 +151,10 @@ void vtkImageLabelCombineExecute2(vtkImageLabelCombine *self,
           else if (v1 > 0 && v2 == 0) 
             {
             *outPtr = v1;
+            }
+          else
+            {
+            *outPtr = 0;
             }
           }
         outPtr++;
@@ -182,7 +191,6 @@ void vtkImageLabelCombine::ThreadedRequestData(
   inPtr1 = inData[0][0]->GetScalarPointerForExtent(outExt);
   outPtr = outData[0]->GetScalarPointerForExtent(outExt);
   
-
   void *inPtr2;
 
   if (!inData[1] || ! inData[1][0])
@@ -202,7 +210,7 @@ void vtkImageLabelCombine::ThreadedRequestData(
                     << outData[0]->GetScalarType());
       return;
     }
-  
+  /**
   if (inData[1][0]->GetScalarType() != outData[0]->GetScalarType())
     {
       vtkErrorMacro(<< "Execute: input2 ScalarType, "
@@ -211,7 +219,7 @@ void vtkImageLabelCombine::ThreadedRequestData(
                     << outData[0]->GetScalarType());
       return;
     }
-  
+  **/
   // this filter expects that inputs that have the same number of components
   if (inData[0][0]->GetNumberOfScalarComponents() != 
       inData[1][0]->GetNumberOfScalarComponents())
@@ -240,7 +248,8 @@ int vtkImageLabelCombine::FillInputPortInformation(
   int port, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
-  return 1;
+  info->Set(vtkAlgorithm::INPUT_IS_REPEATABLE(), 1);
+  return this->Superclass::FillInputPortInformation(port,info);
 }
 
 void vtkImageLabelCombine::PrintSelf(ostream& os, vtkIndent indent)

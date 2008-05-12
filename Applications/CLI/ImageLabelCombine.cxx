@@ -39,14 +39,19 @@ int main( int argc, const char * argv[] ){
   
   // combine labels
   vtkImageLabelCombine *labelCombine = vtkImageLabelCombine::New();
-  labelCombine->AddInputConnection( readerA->GetOutputPort() );
-  labelCombine->AddInputConnection( readerB->GetOutputPort() );
+  labelCombine->SetOverwriteInput(!FirstOverwrites);
+  labelCombine->SetInput1( readerA->GetOutput() );
+  labelCombine->SetInput2( readerB->GetOutput() );
   labelCombine->Update();
 
   // Output
   vtkNRRDWriter *writer = vtkNRRDWriter::New();
   writer->SetFileName(OutputLabelMap.c_str());
   writer->SetInput( labelCombine->GetOutput() );
+  
+  readerA->GetRasToIjkMatrix()->Invert();
+  writer->SetIJKToRASMatrix( readerA->GetRasToIjkMatrix() );
+  writer->Write();
   writer->Write();
 
   //Delete everything
