@@ -70,7 +70,7 @@ itcl::body SlicePlaneSWidget::constructor {sliceGUI} {
   $o(plane) SetDrawPlane 0
   $o(plane) PlaceWidget -100 100 -100 100 -100 100
 
-  after idle $this processEvent $sliceNode
+  after idle $this processEvent $node
 
 }
 
