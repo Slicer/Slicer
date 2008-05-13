@@ -7,7 +7,7 @@
 
 #include "vtkSmartPointer.h"
 #include "vtkKWCompositeWidget.h"
-#include "vtkKWRenderWidget.h"
+#include "vtkSlicerRenderWidget.h"
 #include "vtkKWGenericRenderWindowInteractor.h"
 #include <vector>
 //#include "vtkImageMapper.h"
@@ -36,7 +36,7 @@ public:
   vtkGetObjectMacro ( PolyDataCollection, vtkPolyDataCollection );
 
 
-  vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
+  vtkGetObjectMacro ( RenderWidget, vtkSlicerRenderWidget );
 
   // Description:
   // Used to set the PolyData/LookupTable pairs to show arbitrary object in the 2D slices
@@ -76,7 +76,7 @@ protected:
   virtual void CreateWidget( );
 
   // Slice viewer widgets
-  vtkKWRenderWidget *RenderWidget;
+  vtkSlicerRenderWidget *RenderWidget;
   vtkImageMapper *ImageMapper;
   vtkActor2D *Actor2D;
 

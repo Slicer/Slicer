@@ -29,7 +29,7 @@
 #include "vtkSlicerModelHierarchyLogic.h"
 
 
-#include "vtkKWRenderWidget.h"
+#include "vtkSlicerRenderWidget.h"
 #include "vtkKWFrame.h"
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLSliceNode.h"
@@ -87,8 +87,8 @@ public:
   vtkGetObjectMacro (ApplicationLogic, vtkSlicerApplicationLogic );
   vtkSetObjectMacro (ApplicationLogic, vtkSlicerApplicationLogic );
 
-  vtkGetObjectMacro(MainViewer, vtkKWRenderWidget);
-  vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);
+  vtkGetObjectMacro(MainViewer, vtkSlicerRenderWidget);
+  vtkSetObjectMacro(MainViewer, vtkSlicerRenderWidget);
   vtkGetObjectMacro (ViewerFrame, vtkKWFrame );
 
   // Description:
@@ -198,7 +198,7 @@ protected:
   void UpdateViewNode();
 
   vtkSlicerApplicationLogic *ApplicationLogic;
-  vtkKWRenderWidget *MainViewer;
+  vtkSlicerRenderWidget *MainViewer;
   vtkKWFrame *ViewerFrame;
   int RenderPending;
   int UpdateFromMRMLRequested;

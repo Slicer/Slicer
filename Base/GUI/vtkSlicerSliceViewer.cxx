@@ -14,7 +14,7 @@
 #include "vtkSlicerGUILayout.h"
 
 #include "vtkKWWidget.h"
-#include "vtkKWRenderWidget.h"
+#include "vtkSlicerRenderWidget.h"
 #include "vtkKWFrame.h"
 
 #include "vtkImageMapper.h"
@@ -39,7 +39,7 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
     // - this class turns on rendering explicitly when it's own
     //   Render() method is called.  This avoids redundant renders
     //   when, for example, the annotation is changed.
-    this->RenderWidget = vtkKWRenderWidget::New ( );
+    this->RenderWidget = vtkSlicerRenderWidget::New ( );
     this->RenderWidget->RenderStateOff();
 
     this->ImageMapper = vtkImageMapper::New();

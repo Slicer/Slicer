@@ -89,10 +89,11 @@ set(LIB_SRCS
   vtkSlicerDiffusionTensorGlyphDisplayWidget.cxx
   vtkSlicerPermissionPrompterWidget.cxx
   vtkSlicerXNATPermissionPrompterWidget.cxx
+  vtkSlicerROIGUI.cxx
   # VTK Replacement classes
   vtkSlicerInteractorStyle.cxx
   vtkSlicerViewerInteractorStyle.cxx
-  vtkSlicerROIGUI.cxx
+  vtkSlicerRenderWidget.cxx
   )
 
 # Helper classes

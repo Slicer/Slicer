@@ -80,6 +80,7 @@ public:
 
   virtual void OnEnter();
   virtual void OnLeave();
+  virtual void OnExpose();
 
 
   // Description:

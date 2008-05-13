@@ -317,6 +317,16 @@ void vtkSlicerViewerInteractorStyle::OnMouseWheelBackward()
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerViewerInteractorStyle::OnExpose()
+{
+  if ( this->GetViewerWidget() != NULL )
+    {
+    this->GetViewerWidget()->RequestRender();
+    }
+
+}
+
+//----------------------------------------------------------------------------
 void vtkSlicerViewerInteractorStyle::Rotate()
 {
   if (this->CurrentRenderer == NULL)

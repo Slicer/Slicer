@@ -871,7 +871,7 @@ void vtkSlicerViewerWidget::CreateWidget ( )
                                                    c[0], c[1], c[2]);
 
   
-  this->MainViewer = vtkKWRenderWidget::New ( );  
+  this->MainViewer = vtkSlicerRenderWidget::New ( );  
   this->MainViewer->SetParent (this->ViewerFrame );
   this->MainViewer->Create ( );
 
