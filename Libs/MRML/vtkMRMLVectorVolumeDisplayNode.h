@@ -114,6 +114,11 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLVolumeGlyph
     {
     this->ShiftScale->SetInput( imageData );
     this->RGBToHSI->SetInput( imageData );
+
+    this->AppendComponents->RemoveAllInputs();
+    //this->AppendComponents->SetInputConnection(0, this->ShiftScale->GetOutput()->GetProducerPort());
+    this->AppendComponents->SetInput(0, imageData);
+    this->AppendComponents->SetInput(1, this->Threshold->GetOutput());
     };
 
   // Description:
