@@ -182,7 +182,7 @@ foreach w $widgets {
   pack [$pushButton GetWidgetName]
 }
 
-proc SlicePlaneCallback {planeWidget} {
+proc SlicePlaneWidgetCallback {planeWidget} {
 
   set sliceNode [lindex [vtkMRMLSliceNode ListInstances] 0]
   set sliceToRAS [$sliceNode GetSliceToRAS]
@@ -195,6 +195,18 @@ proc SlicePlaneCallback {planeWidget} {
   $sliceNode UpdateMatrices
 }
 
+proc SlicePlaneNodeCallback {planeWidget} {
+
+  set sliceNode [lindex [vtkMRMLSliceNode ListInstances] 0]
+  set sliceToRAS [$sliceNode GetSliceToRAS]
+  set p [vtkPlane New]
+  $planeWidget GetPlane $p
+  $sliceToRAS SetElement 0 3 [lindex [$p GetOrigin] 0]
+  $sliceToRAS SetElement 1 3 [lindex [$p GetOrigin] 1]
+  $sliceToRAS SetElement 2 3 [lindex [$p GetOrigin] 2]
+  $p Delete
+  $sliceNode UpdateMatrices
+}
 
 proc TestPlaneWidget {} {
 

@@ -228,6 +228,7 @@ set(TCLFILES
   pkgIndex.tcl SliceViewerInteractor.tcl
   SWidget.tcl SliceSWidget.tcl SeedSWidget.tcl CsysSWidget.tcl
   FiducialsSWidget.tcl GridSWidget.tcl CrosshairSWidget.tcl RegionsSWidget.tcl 
+  SlicePlaneSWidget.tcl
   Slicer2Import.tcl XcedeCatalogImport.tcl XcatalogImport.tcl
   XnatXcatImport.tcl Loader.tcl LoadVolume.tcl FilteredDirectoryDialog.tcl
   XnatPublishScene.tcl MRMLWatcher.tcl
