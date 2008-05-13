@@ -77,6 +77,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->Dimensions[1] = 256;
   this->Dimensions[2] = 1;
   this->SliceVisible = 0;
+  this->WidgetVisible = 0;
 
   this->LayoutGridColumns = 1;
   this->LayoutGridRows = 1;
@@ -395,6 +396,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
   of << indent << " orientation=\"" << this->OrientationString << "\"";
   of << indent << " sliceVisibility=\"" << (this->SliceVisible ? "true" : "false") << "\"";
+  of << indent << " widgetVisibility=\"" << (this->WidgetVisible ? "true" : "false") << "\"";
 
 
 }
@@ -450,6 +452,17 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       else
         {
         this->SliceVisible = 0;
+        }
+      }
+    else if (!strcmp(attName, "widgetVisibility")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->WidgetVisible = 1;
+        }
+      else
+        {
+        this->WidgetVisible = 0;
         }
       }
    else if (!strcmp(attName, "orientation")) 
@@ -538,6 +551,8 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "SliceVisible: " <<
     (this->SliceVisible ? "not null" : "(none)") << "\n";
+  os << indent << "WidgetVisible: " <<
+    (this->WidgetVisible ? "not null" : "(none)") << "\n";
   
   os << indent << "SliceToRAS: \n";
   this->SliceToRAS->PrintSelf(os, indent.GetNextIndent());
