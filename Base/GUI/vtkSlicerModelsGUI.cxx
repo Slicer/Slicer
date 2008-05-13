@@ -270,6 +270,12 @@ void vtkSlicerModelsGUI::ProcessGUIEvents ( vtkObject *caller,
          const itksys_stl::string fname(fileName);
          itksys_stl::string name = itksys::SystemTools::GetFilenameName(fname);
          this->LoadModelButton->GetWidget()->SetText (name.c_str());
+
+         // set it to be the active model, two places
+         // set the save model
+         this->ModelSelectorWidget->SetSelected(modelNode);
+         // set the display model
+         this->ModelHierarchyWidget->GetModelDisplaySelectorWidget()->SetSelected(modelNode);
         }
       }
     return;
