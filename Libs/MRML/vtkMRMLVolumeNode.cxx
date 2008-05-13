@@ -578,21 +578,21 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *ijkToR
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *ImageData)
+void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
 {
   vtkImageData *oldImageData = this->ImageData;
 
   if (this->ImageData != NULL)
     {
     vtkEventBroker::GetInstance()->RemoveObservations(
-      ImageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+      this->ImageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
-  this->SetImageData(ImageData);
-  if (ImageData != NULL)
+  this->SetImageData(imageData);
+  if (imageData != NULL)
     {
     vtkEventBroker::GetInstance()->AddObservation(
-      ImageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+      imageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
   if ( this->ImageData != oldImageData )
