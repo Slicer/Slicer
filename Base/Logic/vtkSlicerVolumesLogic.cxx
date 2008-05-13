@@ -669,6 +669,9 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     this->SetActiveVolumeNode(volumeNode);
 
     this->Modified();
+    // since added the node w/o notification, let the scene know now that it
+    // has a new node
+    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, volumeNode);
     }
 
   if (scalarNode)
