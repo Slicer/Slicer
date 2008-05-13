@@ -1,2 +1,2 @@
-Name: Gradient Anisotropic
+Name: Gradient Anisotropic Diffusion Filter
 GuiName: GradientAnisotropicFilter
