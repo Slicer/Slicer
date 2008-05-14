@@ -203,9 +203,10 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     readerSeries->SetSingleFile( this->GetSingleFile() );
 
     readerFile->SetArchetype(fullName.c_str());
+    readerSeries->SetArchetype(fullName.c_str());
     try 
       {
-      readerFile->UpdateInformation();
+      readerSeries->UpdateInformation();
       }
     catch ( ... )
       {
@@ -213,9 +214,10 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
       readerSeries->Delete();
       return 0;
       }
-    if ( readerFile->GetNumberOfFileNames() == 1 )
+    if ( readerSeries->GetNumberOfFileNames() == 1 )
       {
       reader = readerFile;
+      reader->UpdateInformation();
       readerSeries->Delete();
       }
     else
