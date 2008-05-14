@@ -48,6 +48,13 @@ public:
     {
         this->Logic=log;
     }
+
+    // Description: Implements vtkSlicerModuleGUI::SetModuleLogic for this GUI
+    virtual void SetModuleLogic(vtkSlicerLogic *logic)
+    {
+      this->SetLogic( dynamic_cast<vtkVolumeRenderingModuleLogic*> (logic) );
+    }
+
     //vtkSetObjectMacro (Logic, vtkVolumeRenderingModuleLogic);
     // Description:
     // Create widgets

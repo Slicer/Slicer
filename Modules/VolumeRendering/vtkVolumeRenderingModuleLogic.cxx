@@ -34,13 +34,12 @@ void vtkVolumeRenderingModuleLogic::SetMRMLScene(vtkMRMLScene *scene)
 {
   vtkSlicerModuleLogic::SetMRMLScene(scene);
 
-  // TODO I think this is needed for loadable module support
-  //   tgl@rideside.net
-//   if (this->First) {
-//     // Guard this so it is only registered once.
-//     vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
-//     scene->RegisterNodeClass(vrNode);
-//     vrNode->Delete();
-//     this->First = false;
-//  }
+  if (this->First)
+    {
+      // :NOTE: 20050513 tgl: Guard this so it is only registered once.
+      vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
+      scene->RegisterNodeClass(vrNode);
+      vrNode->Delete();
+      this->First = false;
+    }
 }

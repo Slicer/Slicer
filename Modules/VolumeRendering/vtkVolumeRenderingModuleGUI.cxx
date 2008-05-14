@@ -41,6 +41,8 @@
 #include "vtkKWCheckButton.h"
 #include "vtkSlicerVolumePropertyWidget.h"
 
+extern "C" int Volumerenderingreplacements_Init(Tcl_Interp *interp);
+
 vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
 {
     //In Debug Mode
@@ -63,6 +65,16 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
     this->CurrentNode=NULL;
     this->Presets=NULL;
     this->Helper=NULL;
+
+    // :NOTE: 20080515 tgl: To use as a loadable module, initialize
+    // the volume rendering replacements TCL wrappers.
+    Tcl_Interp *interp = NULL;
+    interp = vtkKWApplication::GetMainInterp();
+    if (NULL != interp)
+    {
+      Volumerenderingreplacements_Init(interp);
+    }
+
 }
 
 vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
