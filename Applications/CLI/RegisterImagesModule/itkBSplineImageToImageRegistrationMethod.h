@@ -77,6 +77,9 @@ class BSplineImageToImageRegistrationMethod
      **/
     TransformType * GetTypedTransform( void );
 
+    itkSetMacro( ExpectedDeformationMagnitude, double );
+    itkGetConstMacro( ExpectedDeformationMagnitude, double );
+
     itkSetClampMacro( NumberOfControlPoints, unsigned int, 2, 2000 );
     itkGetConstMacro( NumberOfControlPoints, unsigned int );
 
@@ -103,6 +106,7 @@ class BSplineImageToImageRegistrationMethod
     BSplineImageToImageRegistrationMethod( const Self & );  // Purposely not implemented
     void operator = ( const Self & );                     // Purposely not implemented
 
+    double       m_ExpectedDeformationMagnitude;
     unsigned int m_NumberOfControlPoints;
 
 };

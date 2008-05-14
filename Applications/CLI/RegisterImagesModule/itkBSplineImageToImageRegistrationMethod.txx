@@ -34,8 +34,10 @@ BSplineImageToImageRegistrationMethod< TImage >
 ::BSplineImageToImageRegistrationMethod( void )
 {
   m_NumberOfControlPoints = 10;
+  m_ExpectedDeformationMagnitude = 10;
   this->SetOptimizationMethodEnum( Superclass::MULTIRESOLUTION_OPTIMIZATION );
   this->SetTransformMethodEnum( Superclass::BSPLINE_TRANSFORM );
+  this->SetUseOverlapAsROI( true );
 }
 
 template< class TImage >
@@ -85,8 +87,8 @@ BSplineImageToImageRegistrationMethod< TImage >
 
   for(unsigned int r=0; r<ImageDimension; r++)
     {
-    gridSpacing[r] *= floor( static_cast<double>(fixedImageSize[r] - 1)  /
-                         static_cast<double>(gridSizeOnImage[r] - 1) );
+    gridSpacing[r] *=  static_cast<double>(fixedImageSize[r] - 1)  /
+                         static_cast<double>(gridSizeOnImage[r] - 1);
     }
 
   typename TransformType::SpacingType gridOriginOffset;
@@ -94,10 +96,10 @@ BSplineImageToImageRegistrationMethod< TImage >
 
   gridOrigin = gridOrigin - gridOriginOffset;
 
-  std::cout << "gridSize = " << gridSize << std::endl;
-  std::cout << "gridSpacing = " << gridSpacing << std::endl;
-  std::cout << "gridOrigin = " << gridOrigin << std::endl;
-  std::cout << "gridDirection = " << gridDirection << std::endl;
+  //std::cout << "gridSize = " << gridSize << std::endl;
+  //std::cout << "gridSpacing = " << gridSpacing << std::endl;
+  //std::cout << "gridOrigin = " << gridOrigin << std::endl;
+  //std::cout << "gridDirection = " << gridDirection << std::endl;
 }
 
  
@@ -142,7 +144,8 @@ BSplineImageToImageRegistrationMethod< TImage >
   typename Superclass::TransformParametersType params( numberOfParameters );
   typename TImage::SizeType fixedImageSize = this->GetFixedImage()->GetLargestPossibleRegion().GetSize();
   typename TransformType::SpacingType spacing   = this->GetFixedImage()->GetSpacing();
-  double scale = 10.0 / ((fixedImageSize[0] * spacing[0]) / m_NumberOfControlPoints);
+  double scale = 2.0 / (m_ExpectedDeformationMagnitude * spacing[0]);
+  std::cout << "BSpline Parameter Scale = " << scale << std::endl;
   params.Fill( scale );
   this->SetTransformParametersScales( params );
 
@@ -196,22 +199,43 @@ BSplineImageToImageRegistrationMethod< TImage >
   parameters.SetSize( numberOfParameters );
     
   int parameterCounter = 0;
+
+  typedef typename BSplineTransformType::ImageType  ParametersImageType;
+  typedef ResampleImageFilter< ParametersImageType, ParametersImageType> 
+                                                      ResamplerType;
+  typedef BSplineResampleImageFunction< ParametersImageType, double > 
+                                                      FunctionType;
+  typedef IdentityTransform< double, ImageDimension > IdentityTransformType;
+  typedef itk::ImageFileWriter< ParametersImageType > WriterType;
+
   for( unsigned int k = 0; k < ImageDimension; k++ )
     {
-    typedef typename BSplineTransformType::ImageType  ParametersImageType;
-
-    typedef ResampleImageFilter< ParametersImageType, ParametersImageType> 
-                                                      ResamplerType;
     typename ResamplerType::Pointer upsampler = ResamplerType::New();
  
-    typedef BSplineResampleImageFunction< ParametersImageType, double > 
-                                                      FunctionType;
     typename FunctionType::Pointer function = FunctionType::New();
+    function->SetSplineOrder(3);
  
-    typedef IdentityTransform< double, ImageDimension > 
-                                                      IdentityTransformType;
     typename IdentityTransformType::Pointer identity = 
                                                IdentityTransformType::New();
+
+    if( this->GetReportProgress() )
+      {
+      typename WriterType::Pointer writer = WriterType::New();
+      std::stringstream ss;
+      std::string name;
+      ss << "inCoeImage" << k << ".mha";
+      ss >> name;
+      writer->SetInput( this->GetTypedTransform()->GetCoefficientImage()[k] );
+      writer->SetFileName( name );
+      try
+        {
+        writer->Update();
+        }
+      catch( ... )
+        {
+        std::cout << "Error writing coefficient image.  Ignoring." << std::endl;
+        }
+      }
  
     upsampler->SetInput( this->GetTypedTransform()
                              ->GetCoefficientImage()[k] );
@@ -258,6 +282,25 @@ BSplineImageToImageRegistrationMethod< TImage >
     typename ParametersImageType::Pointer newCoefficients =
                                         decomposition->GetOutput();
  
+    if( this->GetReportProgress() )
+      {
+      typename WriterType::Pointer writer = WriterType::New();
+      std::stringstream ss;
+      std::string name;
+      ss << "outCoeImage" << k << ".mha";
+      ss >> name;
+      writer->SetInput( newCoefficients );
+      writer->SetFileName( name );
+      try
+        {
+        writer->Update();
+        }
+      catch( ... )
+        {
+        std::cout << "Error while writing coefficient image.  Ignoring." << std::endl;
+        }
+      }
+
     // copy the coefficients into the parameter array
     typedef ImageRegionIterator<ParametersImageType> Iterator;
     Iterator it( newCoefficients, 

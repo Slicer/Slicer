@@ -76,6 +76,9 @@ class InitialImageToImageRegistrationMethod
     itkSetMacro( NumberOfMoments, unsigned int );
     itkGetConstMacro( NumberOfMoments, unsigned int );
 
+    itkSetMacro( ComputeCenterOfRotationOnly, bool );
+    itkGetConstMacro( ComputeCenterOfRotationOnly, bool );
+
   protected:
 
     InitialImageToImageRegistrationMethod( void );
@@ -89,6 +92,7 @@ class InitialImageToImageRegistrationMethod
     void operator = ( const Self & );                       // Purposely not implemented
 
     unsigned int            m_NumberOfMoments;
+    bool                    m_ComputeCenterOfRotationOnly;
 
   };
 
