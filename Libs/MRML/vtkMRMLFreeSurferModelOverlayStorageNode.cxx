@@ -26,6 +26,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkFSSurfaceReader.h"
 #include "vtkFSSurfaceWFileReader.h"
+#include "vtkFSSurfaceLabelReader.h"
 #include "vtkFSSurfaceScalarReader.h"
 #include "vtkFSSurfaceAnnotationReader.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
@@ -89,6 +90,7 @@ vtkMRMLFreeSurferModelOverlayStorageNode::vtkMRMLFreeSurferModelOverlayStorageNo
   this->AddFileExtension(std::string(".annot"));
   this->AddFileExtension(std::string(".mgz"));
   this->AddFileExtension(std::string(".mgh"));
+  this->AddFileExtension(std::string(".label"));
 }
 
 //----------------------------------------------------------------------------
@@ -428,6 +430,93 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
         {
         vtkErrorMacro("Cannot read scalar overlay file '" << name.c_str() << "', as there are no points in the model " << modelNode->GetID() << " to associate it with.");
         result = 1;
+        }
+      }
+    else if (extension == std::string(".label"))
+      {
+      // read in freesurfer label file scalar overlay
+      // does the model node have point data?
+      if (modelNode->GetPolyData() != NULL &&
+          modelNode->GetPolyData()->GetPointData() != NULL)
+        {
+        int numVertices = modelNode->GetPolyData()->GetPointData()->GetNumberOfTuples();
+
+        // read in a freesurfer label scalar overlay file
+        vtkFSSurfaceLabelReader *reader = vtkFSSurfaceLabelReader::New();
+        reader->SetFileName(fullName.c_str());
+        
+        // the array to read into
+        vtkFloatArray *floatArray = vtkFloatArray::New();
+        std::string::size_type ptr = name.find_last_of(std::string("/"));
+        std::string scalarName;
+        if (ptr != std::string::npos)
+          {
+          scalarName = name.substr(++ptr);
+          }
+        else
+          {
+          scalarName = name;
+          }
+        floatArray->SetName(scalarName.c_str());
+        reader->SetOutput(floatArray);
+        
+        reader->SetNumberOfVertices(numVertices);
+        // set the scalar values for the label overlay being read in, unknown
+        // for off and cerebral cortex for on, from the freesurfer labels
+        // colour file
+        reader->SetLabelOff(1000.0);
+        reader->SetLabelOn(3.0);
+        
+        int retval = reader->ReadLabel();
+        result = retval;
+        if (retval != 0)
+          {
+          vtkErrorMacro ("Error reading FreeSurfer label overlay file " << fullName.c_str() << ": ");
+          if (retval == 1)
+            {
+            vtkErrorMacro ("Output is null\n");
+            }
+          if (retval == 2)
+            {
+            vtkErrorMacro ("FileName not specified\n");
+            }
+          if (retval == 3)
+            {
+            vtkErrorMacro ("Could not open file\n");
+            }
+          if (retval == 4)
+            {
+            vtkErrorMacro ("Number of values in the file is 0 or negative, or greater than number of vertices in the associated scalar file\n");
+            }
+          if (retval == 5) 
+            {
+            vtkErrorMacro (" Error allocating the array of floats\n");
+            }
+          if (retval == 6)
+            {
+            vtkErrorMacro ("Unexpected EOF\n");
+            }
+          }
+        else
+          {
+          std::cout << "Finished reading model overlay file " << fullName.c_str() << "\n\tscalars called " << scalarName.c_str() << ", adding point scalars to model node" << endl;
+          modelNode->AddPointScalars(floatArray);
+          vtkMRMLModelDisplayNode *displayNode = modelNode->GetModelDisplayNode();
+          // set the colour look up table
+          vtkMRMLFreeSurferProceduralColorNode *colorNode = vtkMRMLFreeSurferProceduralColorNode::New();
+          colorNode->SetTypeToLabels();
+          if (displayNode)
+            {
+            displayNode->SetActiveScalarName(scalarName.c_str());
+            // make sure scalars are visible
+            displayNode->SetScalarVisibility(1);
+            displayNode->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
+            }
+          colorNode->Delete();
+          colorNode = NULL;
+          }
+        reader->Delete();
+        floatArray->Delete();
         }
       }
     else if (extension == std::string(".annot"))

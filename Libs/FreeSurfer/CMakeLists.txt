@@ -14,6 +14,7 @@ set(FreeSurfer_SRCS
   vtkFSSurfaceAnnotationReader.cxx
   vtkFSSurfaceScalarReader.cxx
   vtkFSSurfaceWFileReader.cxx
+  vtkFSSurfaceLabelReader.cxx
   vtkFSLookupTable.cxx
   )
 
