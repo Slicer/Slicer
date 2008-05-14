@@ -29,6 +29,8 @@ if { [itcl::find class SlicePlaneSWidget] == "" } {
     
     # methods
     method processEvent {{caller ""} {event ""}} {}
+    method updateWidgetFromNode {sliceNode planeWidget} {}
+    method updateNodeFromWidget {sliceNode planeWidget} {}
   }
 }
 
@@ -62,15 +64,12 @@ itcl::body SlicePlaneSWidget::constructor {sliceGUI} {
   }
 
   set o(plane) [vtkNew vtkImplicitPlaneWidget]
-  $::slicer3::Broker AddObservation $o(plane) AnyEvent "::SWidget::ProtectedCallback $this processEvent $o(plane) AnyEvent"
-
-  # TODO: generalize for multiple viewers
   set rwi [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindowInteractor]
   $o(plane) SetInteractor $rwi
   $o(plane) SetDrawPlane 0
   $o(plane) PlaceWidget -100 100 -100 100 -100 100
 
-  after idle $this processEvent $node
+  $::slicer3::Broker AddObservation $o(plane) AnyEvent "::SWidget::ProtectedCallback $this processEvent $o(plane) AnyEvent"
 
 }
 
@@ -86,8 +85,6 @@ itcl::body SlicePlaneSWidget::destructor {} {
 
 #
 # handle scene and slice node events
-# - for now, we need to always review fiducials lists in scene
-# - create SeedSWidgets for any SlicePlane that are close enough to slice
 #
 
 itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
@@ -103,6 +100,8 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  set sliceNode [[$sliceGUI GetLogic] GetSliceNode]
+
   if { $caller == $sliceGUI } {
 
     switch $event {
@@ -115,6 +114,9 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
           switch [$_interactor GetKeySym] {
             "o" {
               # toggle widget on off
+              $this updateWidgetFromNode $sliceNode $o(plane)
+              set visible [$sliceNode GetWidgetVisible]
+              $sliceNode SetWidgetVisible [expr !$visible]
             }
           }
         }
@@ -131,44 +133,12 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
 
 
   set scene [$sliceGUI GetMRMLScene]
-  set sliceNode [[$sliceGUI GetLogic] GetSliceNode]
 
   #
   # widget manipulated, so update the slice node to match
   #
   if { $caller == $o(plane) } {
-    set sliceToRAS [$sliceNode GetSliceToRAS]
-
-    # zero out current translation
-    $sliceToRAS SetElement 0 3  0
-    $sliceToRAS SetElement 1 3  0
-    $sliceToRAS SetElement 2 3  0
-
-    #
-    # rotate so slice normal matches widget normal
-    #
-    set sliceNormal [list \
-      [$sliceToRAS GetElement 0 2] \
-      [$sliceToRAS GetElement 1 2] \
-      [$sliceToRAS GetElement 2 2] ]
-    set widgetNormal [$o(plane) GetNormal]
-
-    set radiansToDegrees 57.2957795131
-    set xyz [SlicePlaneSWidget::Cross $sliceNormal $widgetNormal]
-    set w [expr  1. * $radiansToDegrees * acos([SlicePlaneSWidget::Dot $sliceNormal $widgetNormal])]
-
-    #set transform [vtkTransform New]
-    #$transform SetMatrix $sliceToRAS
-    #eval $transform RotateWXYZ $w $xyz
-    #$transform GetMatrix $sliceToRAS
-    #$transform Delete
-
-    # insert widget translation
-    $sliceToRAS SetElement 0 3 [lindex [$o(plane) GetOrigin] 0]
-    $sliceToRAS SetElement 1 3 [lindex [$o(plane) GetOrigin] 1]
-    $sliceToRAS SetElement 2 3 [lindex [$o(plane) GetOrigin] 2]
-
-    $sliceNode UpdateMatrices
+    $this updateNodeFromWidget $sliceNode $o(plane)
   }
 
   #
@@ -177,21 +147,66 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
   if { $caller == $sliceNode } {
     if { [$sliceNode GetWidgetVisible] } {
       $o(plane) On
-      set sliceToRAS [$sliceNode GetSliceToRAS]
-      $o(plane) SetOrigin \
-        [$sliceToRAS GetElement 0 3] \
-        [$sliceToRAS GetElement 1 3] \
-        [$sliceToRAS GetElement 2 3]
-      $o(plane) SetNormal \
-        [$sliceToRAS GetElement 0 2] \
-        [$sliceToRAS GetElement 1 2] \
-        [$sliceToRAS GetElement 2 2]
     } else {
-      $o(plane) On
+      $o(plane) Off
     }
+    $this updateWidgetFromNode $sliceNode $o(plane)
   }
 
 }
+
+itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeWidget} {
+
+  set sliceToRAS [$sliceNode GetSliceToRAS]
+
+  # zero out current translation
+  $sliceToRAS SetElement 0 3  0
+  $sliceToRAS SetElement 1 3  0
+  $sliceToRAS SetElement 2 3  0
+
+  #
+  # rotate so slice normal matches widget normal
+  #
+  set sliceNormal [list \
+    [$sliceToRAS GetElement 0 2] \
+    [$sliceToRAS GetElement 1 2] \
+    [$sliceToRAS GetElement 2 2] ]
+  set widgetNormal [$o(plane) GetNormal]
+
+  set radiansToDegrees 57.2957795131
+  set xyz [SlicePlaneSWidget::Cross $sliceNormal $widgetNormal]
+  set w [expr  1. * $radiansToDegrees * acos([SlicePlaneSWidget::Dot $sliceNormal $widgetNormal])]
+
+  set transform [vtkTransform New]
+  $transform PostMultiply
+  $transform SetMatrix $sliceToRAS
+  eval $transform RotateWXYZ $w $xyz
+  $transform GetMatrix $sliceToRAS
+  $transform Delete
+
+  # insert widget translation
+  $sliceToRAS SetElement 0 3 [lindex [$o(plane) GetOrigin] 0]
+  $sliceToRAS SetElement 1 3 [lindex [$o(plane) GetOrigin] 1]
+  $sliceToRAS SetElement 2 3 [lindex [$o(plane) GetOrigin] 2]
+
+  $sliceNode UpdateMatrices
+}
+
+itcl::body SlicePlaneSWidget::updateWidgetFromNode {sliceNode planeWidget} {
+
+  set sliceToRAS [$sliceNode GetSliceToRAS]
+  $planeWidget SetOrigin \
+    [$sliceToRAS GetElement 0 3] \
+    [$sliceToRAS GetElement 1 3] \
+    [$sliceToRAS GetElement 2 3]
+  $planeWidget SetNormal \
+    [$sliceToRAS GetElement 0 2] \
+    [$sliceToRAS GetElement 1 2] \
+    [$sliceToRAS GetElement 2 2]
+}
+
+#-------------------------------------------------------------------------------
+#- Helper procs
 
 proc SlicePlaneSWidget::Cross { x y } {
   foreach {x0 x1 x2} $x {}
