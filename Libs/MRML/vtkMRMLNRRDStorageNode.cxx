@@ -137,7 +137,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
           refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
      )
     {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLVolumeNode");
+    //vtkErrorMacro("Reference node is not a proper vtkMRMLVolumeNode");
     return 0;         
     }
   if (this->GetFileName() == NULL && this->GetURI() == NULL) 

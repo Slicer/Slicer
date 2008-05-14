@@ -199,7 +199,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
   
   if (!refNode->IsA("vtkMRMLModelNode") ) 
     {
-    vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
+    //vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
     return 0;
     }
 

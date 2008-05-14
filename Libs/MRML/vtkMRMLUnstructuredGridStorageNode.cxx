@@ -64,7 +64,7 @@ int vtkMRMLUnstructuredGridStorageNode::ReadData(vtkMRMLNode *refNode)
 {
   if (!refNode->IsA("vtkMRMLUnstructuredGridNode") ) 
     {
-    vtkErrorMacro("Reference node is not a vtkMRMLUnstructuredGridNode");
+    //vtkErrorMacro("Reference node is not a vtkMRMLUnstructuredGridNode");
     return 0;
     }
 
