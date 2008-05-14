@@ -11,6 +11,7 @@
 #include "vtkKWNotebook.h"
 #include "vtkKWFrame.h"
 #include "vtkSmartPointer.h"
+#include "vtkIntArray.h"
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
@@ -102,6 +103,11 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
     // alternative method to propagate events generated in GUI to logic / mrml
     virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
       unsigned long /*event*/, void * /*callData*/ ) { };
+
+  // Overload in modules that observe events, used during Loadable Module
+  // discovery. CLIENT MUST DELETE!
+  virtual vtkIntArray* NewObservableEvents() { return vtkIntArray::New(); };
+
  //BTX
   enum
     {

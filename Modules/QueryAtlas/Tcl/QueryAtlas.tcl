@@ -121,11 +121,24 @@ proc QueryAtlasTearDownAnnoCursor { } {
         $::QA(cursor,mapper) Delete
         unset -nocomplain ::QA(cursor,mapper)
     }
-    
+
     if { [info exists ::QA(cursor,actor)] } {
         $::QA(cursor,actor) Delete
+        puts "deleting cursor"
         unset -nocomplain ::QA(cursor,actor)
     }
+    
+    if { [info exists ::QA(cursor,shmapper)] } {
+        $::QA(cursor,shmapper) Delete
+        unset -nocomplain ::QA(cursor,shmapper)
+    }
+    
+    if { [info exists ::QA(cursor,shadow)] } {
+        $::QA(cursor,shadow) Delete
+        puts "deleting shadow"
+        unset -nocomplain ::QA(cursor,shadow)
+    }
+
 }
 
 
@@ -229,6 +242,7 @@ proc QueryAtlasInitializeGlobals { } {
     if { ![info exists ::QA(globalsInitialized) ] } {
         set ::QA(globalsInitialized) 1
     }
+
 
 }
 
@@ -769,7 +783,6 @@ proc QueryAtlasAddAnnotations {LHAnnoFileName RHAnnoFileName } {
                 if { [scan $line "%d %s %d %d %d" label name r g b] == 5 } {
                     set ::QAFS($label,name) $name
                     set ::QAFS($label,rgb) "$r $g $b"
-                   puts "$name -- $r $g $b"
                 }
             }
             close $fp
@@ -1569,7 +1582,7 @@ proc QueryAtlasPickCallback {} {
     if { $transLabel != $::QA(lastLabels) } {
         set ::QA(lastLabels) $transLabel
     }
-    
+
     QueryAtlasUpdateCursor
 }
 
@@ -1580,27 +1593,47 @@ proc QueryAtlasPickCallback {} {
 proc QueryAtlasUpdateCursor {} {
 
   set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
+  set renderWidget [$viewer GetMainViewer]
+  set renderer [$renderWidget GetRenderer]
 
-  # create the text actor if needed
+  #--- create the text actor and a shadown if needed.
+  #--- the vtkTextActor's shadow looks very bad, so
+  #--- create a false shadow with another shifted version
+  #--- of the vtkTextActor.
   if { ![info exists ::QA(cursor,actor)] } {
+      set ::QA(cursor,shadow) [vtkTextActor New]
+      set ::QA(cursor,shmapper) [ vtkTextMapper New ]
       set ::QA(cursor,actor) [vtkTextActor New]
       set ::QA(cursor,mapper) [vtkTextMapper New]
-      $::QA(cursor,actor) SetMapper $::QA(cursor,mapper)
-      [$::QA(cursor,actor) GetTextProperty] ShadowOn
+      #--- shadow
+      $::QA(cursor,shadow) ScaledTextOff
+      [$::QA(cursor,shadow) GetTextProperty ] ShadowOff
+      [$::QA(cursor,shadow) GetTextProperty ] SetFontSize 20
+      [$::QA(cursor,shadow) GetTextProperty ] SetFontFamilyToArial
+      [$::QA(cursor,shadow) GetTextProperty ] SetColor 0.2 0.2 0.2
+      #--- text actor
+      $::QA(cursor,actor) ScaledTextOff 
+      [$::QA(cursor,actor) GetTextProperty] ShadowOff
       [$::QA(cursor,actor) GetTextProperty] SetFontSize 20
-      [$::QA(cursor,actor) GetTextProperty] SetFontFamilyToTimes
-
-      set renderWidget [$viewer GetMainViewer]
-      set renderer [$renderWidget GetRenderer]
-      $renderer AddActor2D $::QA(cursor,actor)
+      [$::QA(cursor,actor) GetTextProperty] SetFontFamilyToArial
+      [$::QA(cursor,actor) GetTextProperty] SetColor 1.0 1.0 1.0
+      
+      $::QA(cursor,shadow) SetMapper $::QA(cursor,shmapper)
+      $::QA(cursor,actor) SetMapper $::QA(cursor,mapper)
+      $renderer AddViewProp $::QA(cursor,shadow)
+      $renderer AddViewProp $::QA(cursor,actor)
   }
 
-  # update the actor and render
+  # update the text actor, its shadow and render
   if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] && [info exists ::QA(cursor,mapper)] } {
-      $::QA(cursor,mapper) SetInput $::QA(lastLabels) 
+      $::QA(cursor,shadow) SetInput $::QA(lastLabels)
+      $::QA(cursor,actor) SetInput $::QA(lastLabels) 
+                                 
       #--- position the text label just higher than the cursor
       foreach {x y} $::QA(lastWindowXY) {}
       set y [expr $y + 15]
+      puts "$::QA(lastLabels) at $x $y"
+      $::QA(cursor,shadow) SetPosition [expr $x+1] [expr $y-1]
       $::QA(cursor,actor) SetPosition $x $y
       $viewer Render
   } 
@@ -1695,15 +1728,24 @@ proc QueryAtlasCursorVisibility { onoff } {
             if { [ info exists ::QA(cursor,actor) ] } {
                 $::QA(cursor,actor) SetVisibility 1
             }
+            if { [ info exists ::QA(cursor,shadow) ] } {
+                $::QA(cursor,shadow) SetVisibility 1
+            }            
         } else {
             if { [ info exists ::QA(cursor,actor) ] } {
                 $::QA(cursor,actor) SetVisibility 0
+            }
+            if { [ info exists ::QA(cursor,shadow) ] } {
+                $::QA(cursor,shadow) SetVisibility 0
             }
         }
     } else {
         if { [ info exists ::QA(cursor,actor) ] } {
             $::QA(cursor,actor) SetVisibility 0
         }
+        if { [ info exists ::QA(cursor,shadow) ] } {
+            $::QA(cursor,shadow) SetVisibility 0
+        }        
     }
 
     set viewer [$::slicer3::ApplicationGUI GetViewerWidget]

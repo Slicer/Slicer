@@ -1024,6 +1024,11 @@ int Slicer3_main(int argc, char *argv[])
         vtkIntArray* events = logic->NewObservableEvents();
         logic->SetAndObserveMRMLSceneEvents(scene, events);
         events->Delete();
+        
+        events = gui->NewObservableEvents();
+        gui->SetAndObserveMRMLSceneEvents(scene, events);
+        events->Delete();
+        
         logic->SetApplicationLogic(appLogic);
 
         gui->SetApplication( slicerApp );

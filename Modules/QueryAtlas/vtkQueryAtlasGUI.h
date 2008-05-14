@@ -13,6 +13,7 @@
 #include "vtkQueryAtlasLogic.h"
 #include "vtkQueryAtlasCollaboratorIcons.h"
 #include "vtkQueryAtlasIcons.h"
+#include "vtkIntArray.h"
 
 class vtkKWPushButton;
 class vtkKWPushButtonWithLabel;
@@ -31,6 +32,7 @@ class vtkKWListBox;
 class vtkKWListBoxWithScrollbars;
 class vtkQueryAtlasUseSearchTermWidget;
 class vtkQueryAtlasSearchTermWidget;
+
 
 // Description:
 // This class implements Slicer's QueryAtlas GUI
@@ -231,7 +233,7 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     // Description:
     // Add/Remove observers on MRML
     virtual void AddMRMLObservers ( );
-    virtual void RemoveMRMLObservers ( );
+    virtual void TearDownGUI ( );
     
     // Description:
     // Get terms from the Diagosis panel
@@ -266,6 +268,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+
+    virtual vtkIntArray* NewObservableEvents();
 
     // Description:
     // load the tcl routines into the interpreter (uses the 

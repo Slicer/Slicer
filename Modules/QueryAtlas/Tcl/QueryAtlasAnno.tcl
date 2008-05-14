@@ -547,6 +547,10 @@ proc QueryAtlasAddNewLabelMapAnnotations { } {
     $win SetStatusText "Adding any new label map annotations..."
     $prog SetValue 0
 
+    #--- WJP test: try just starting fresh each time...
+    set ::QA(annoLabelMapIDs) ""
+    #--- end WJP test.
+    
     if {[ info exists ::QA(annoLabelMapIDs) ] } { 
         #---
         #--- LABEL MAPS
@@ -626,17 +630,25 @@ proc QueryAtlasAddNewLabelMapAnnotations { } {
                 } else {
                     #--- this uses some non-freesurfer lut
                     #--- TODO: get its LUT file, read it, and go....
-                    set dnode [ $node GetScalarVolumeDisplayNode ]
+                    set dnode [ $node GetDisplayNode ]
                     if { $dnode != "" } {
-                        set cid [ $dnode GetColorNodeID ]
-                        if { $cid != "" } {
-                            set cnode [ $::slicer3::MRMLScene GetNodeByID $cid ]
-                            if { $cnode != "" } {
-                                set lut [ $cnode GetLookupTable ]
-                                #...
+                        set cnode [ $dnode GetColorNode ]
+                        if { $cnode != "" } {
+                            set lut [ $cnode GetLookupTable ]
+                            if { $lut != "" } {
+                                set numColors [ $lut GetNumberOfColors ]
+                                for {set zz 0 } {$zz<$numColors } {incr zz} {
+                                    set ::QAFS($zz,name) [ $cnode GetColorName $zz ]
+                                    set colorList [ $lut GetTableValue $zz ]
+                                    set r [ lindex $colorList 0 ]
+                                    set g [ lindex $colorList 1 ]                                    
+                                    set b [ lindex $colorList 2 ]
+                                    set ::QAFS($zz,rgb) "$r $g $b"
+                                }
                             }
                         }
                     }
+                    lappend ::QA(annoLabelMapIDs) $id
                 }
             }
         }

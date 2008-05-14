@@ -224,14 +224,11 @@ vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
 }
 
 
+
 //---------------------------------------------------------------------------
 vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 {
 
-  vtkDebugMacro("vtkQueryAtlasGUI: Tearing down Tcl callbacks \n");
-  this->Script ( "QueryAtlasTearDown" );
-
-  this->RemoveMRMLObservers ( );
     this->SetModuleLogic ( NULL );
     //---
     // help and acknowledgment frame
@@ -796,6 +793,18 @@ vtkQueryAtlasGUI::~vtkQueryAtlasGUI ( )
 #endif
 
 }
+
+//---------------------------------------------------------------------------
+void vtkQueryAtlasGUI::TearDownGUI ( )
+{
+
+  vtkDebugMacro("vtkQueryAtlasGUI: Tearing down Tcl callbacks \n");
+  this->Script ( "QueryAtlasTearDown" );
+  this->SetAndObserveMRMLScene ( NULL );
+
+}
+
+
 
 
 //---------------------------------------------------------------------------
@@ -2065,6 +2074,19 @@ void vtkQueryAtlasGUI::ProcessMRMLEvents ( vtkObject *caller,
   this->ProcessingMRMLEvent = 0;
 }
 
+
+//----------------------------------------------------------------------------
+vtkIntArray* vtkQueryAtlasGUI::NewObservableEvents()
+{
+  vtkIntArray* events = vtkIntArray::New();
+  events->InsertNextValue ( vtkMRMLScene::SceneCloseEvent );
+  events->InsertNextValue ( vtkMRMLScene::NodeAddedEvent );
+  events->InsertNextValue ( vtkMRMLScene::NodeRemovedEvent );
+  return events;
+}
+
+
+  
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::LoadTclPackage ( )
 {
@@ -2102,12 +2124,6 @@ void vtkQueryAtlasGUI::Exit ( )
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::AddMRMLObservers()
 {
-}
-
-//---------------------------------------------------------------------------
-void vtkQueryAtlasGUI::RemoveMRMLObservers()
-{
-  this->SetAndObserveMRMLScene ( NULL );
 }
 
 
