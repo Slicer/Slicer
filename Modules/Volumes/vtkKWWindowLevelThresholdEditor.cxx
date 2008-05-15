@@ -417,7 +417,6 @@ void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
       {
       this->Histogram->BuildHistogram( this->ImageData->GetPointData()->GetScalars(), 0);
       double *range = this->Histogram->GetRange();
-/***
       double w = this->GetWindow();
       double l = this->GetLevel();
       double r0 = l - 0.5*w;
@@ -427,6 +426,7 @@ void vtkKWWindowLevelThresholdEditor::UpdateFromImage()
       
       this->ThresholdRange->SetWholeRange(range[0], range[1]);
       this->WindowLevelRange->SetWholeRange(range[0] - 0.5 * (range[0] + range[1]), range[1] + 0.5 * (range[0] + range[1]));
+/***
       if (this->GetAutoWindowLevel() == 1 || range[0] > r0 || range[1] < r1) 
         {
         this->SetWindowLevel(range[1] - range[0], 0.5 * (range[0] + range[1]) );
