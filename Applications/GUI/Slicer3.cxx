@@ -30,7 +30,6 @@
 #include "vtkKWUserInterfaceManagerNotebook.h"
 #include "vtkKWLogDialog.h"
 #include "vtkSlicerGUICollection.h"
-#include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerModelsGUI.h"
 #include "vtkSlicerFiducialsGUI.h"
 #include "vtkSlicerColorGUI.h"
@@ -108,6 +107,10 @@ extern "C" {
 #if !defined(COMMANDLINE_DEBUG) && defined(BUILD_MODULES)
 #include "vtkCommandLineModuleLogic.h"
 #include "vtkCommandLineModuleGUI.h"
+#endif
+
+#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
+#include "vtkSlicerVolumesGUI.h"
 #endif
 
 #if !defined(REMOTEIO_DEBUG)
