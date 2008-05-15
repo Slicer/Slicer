@@ -400,7 +400,6 @@ template< class PixelType > int Rotate( parameters list )
   std::vector< typename ImageType::Pointer > vectorImage ;
   std::vector< typename ImageType::Pointer > vectorOutputImage ;
   SeparateImages< PixelType >( reader->GetOutput() , vectorImage ) ;
-  
   ////////////////////////////////////////////////////
   typename NearestNeighborInterpolateType::Pointer interpolator = NearestNeighborInterpolateType::New() ;
   typename LinearInterpolateType::Pointer linearinterpolator = LinearInterpolateType::New() ;
@@ -482,17 +481,30 @@ template< class PixelType > int Rotate( parameters list )
       typename TransformType::Pointer transform ;
       itk::Matrix< double , 4 , 4 > transformMatrix4x4 ;
       transformMatrix4x4.SetIdentity() ;
-      int size = list.transformMatrix.size() ;
+      //int size = list.transformMatrix.size() ;
       if( list.transformationFile.compare( "" ) )//Get transformation matrix from command line if no file given
         {
         list.transformMatrix.resize( 0 ) ;
         list.rotationPoint.resize( 0 ) ;
-        size = transformFile->GetTransformList()->front()->GetParameters().GetSize() ;
+        //size = transformFile->GetTransformList()->front()->GetParameters().GetSize() ;
         AffineTransformType::Pointer affinetransform
            = dynamic_cast< AffineTransformType* > ( transformFile->GetTransformList()->front().GetPointer() ) ;
-        if( affinetransform )
-          {
-          list.transformType.assign( "a" ) ;
+          if( affinetransform )
+            {
+            list.transformType.assign( "a" ) ;
+            //std::cout<<rigid3dtransform->GetMatrix()<<std::endl;
+            for( int i = 0 ; i < 3 ; i++ )
+             {
+             for( int j = 0 ; j < 3 ; j++)
+                {
+                list.transformMatrix.push_back(affinetransform->GetMatrix()[i][j]);
+                }
+             }
+            for(int i = 0 ; i < 3 ; i++)
+               {
+               list.transformMatrix.push_back(affinetransform->GetTranslation()[i]) ;
+               list.rotationPoint.push_back( affinetransform->GetCenter()[i] );
+               }
           }
         else
           {
@@ -501,6 +513,18 @@ template< class PixelType > int Rotate( parameters list )
           if( rigid3dtransform )
             {
             list.transformType.assign( "rt" ) ;
+            for( int i = 0 ; i < 3 ; i++ )
+             {
+             for( int j = 0 ; j < 3 ; j++)
+                {
+                list.transformMatrix.push_back(rigid3dtransform->GetMatrix()[i][j]);
+                }
+             }
+            for(int i = 0 ; i < 3 ; i++)
+               {
+               list.transformMatrix.push_back(rigid3dtransform->GetTranslation()[i]) ;
+               list.rotationPoint.push_back( rigid3dtransform->GetCenter()[i] );
+               }
             }
           else//if non-rigid
             {
@@ -512,28 +536,29 @@ template< class PixelType > int Rotate( parameters list )
               }
             else//something else
               {
-              std::cerr<< "Transformation type not yet implemented for tensors"
+              std::cerr<< "Transformation type not yet implemented"
                    << std::endl ;
               return -1 ;
               }
             }
           }     
-        if( list.transformType.compare( "nr" ) ) //if non-rigid or affine transform
+        if( list.transformType.compare( "nr" ) ) //if rigid or affine transform
           {
           //get transform matrix and translation vector
-          for( int i = 0 ; i < size ; i++ )
-            { list.transformMatrix.push_back( 
+          /*for( int i = 0 ; i < transformFile->GetTransformList()->front()->GetParameters().GetSize() ; i++ )
+            { 
+            list.transformMatrix.push_back( 
                 transformFile->GetTransformList()->front()->GetParameters().GetElement( i ) ) ;
-            }
+            }*/
             //Get center of transform
-          for( int i = 0 ; 
+/*          for( int i = 0 ; 
              i < transformFile->GetTransformList()->front()->GetFixedParameters().GetSize() ;
              i++ )
             { list.rotationPoint.push_back( 
                transformFile->GetTransformList()->front()->GetFixedParameters().GetElement( i ) ) ;
-            }
+            }*/
             //if problem in the number of parameters
-          if( size != 12 || list.rotationPoint.size() != 3 )
+          if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
             {
             std::cerr<< "Error in the file containing the matrix transformation"
                  << std::endl ;
@@ -542,16 +567,16 @@ template< class PixelType > int Rotate( parameters list )
           }
         transformFile->GetTransformList()->pop_front() ;
         }
-      if( list.transformType.compare( "nr" ) ) //if non-rigid or affine transform
+      if( list.transformType.compare( "nr" ) ) //if rigid or affine transform
         {  
-        for( int i = 0 ; i < 3 ; i++ )
+        /*for( int i = 0 ; i < 3 ; i++ )
           {
           for( int j = 0 ; j < 3 ; j++ )
             {
             transformMatrix4x4[ i ][ j ] = ( double ) list.transformMatrix[ i + j * 3 ] ;
             }
           transformMatrix4x4[ i ][ 3 ] = ( double ) list.transformMatrix[ 9 + i ] ;
-          }
+          }*/
         itk::Point< double > center ;
         itk::Vector< double > translation ;
         if( list.centeredTransform )
@@ -612,12 +637,28 @@ template< class PixelType > int Rotate( parameters list )
       }
     if( !list.transformType.compare( "rt" ) ) //Rotation around a selected point
       {
+      try
+         {
       typename RotationType::Pointer rotation = RotationType::New() ;
       rotation->SetRotationMatrix( transformMatrix ) ;
       rotation->SetTranslation( vec ) ;
       transform = rotation ;
+         }
+      catch(itk::ExceptionObject exp)
+         {
+         std::string exception = exp.GetDescription();
+         if( exception.find("Attempting to set a non-orthogonal rotation matrix") != -1 )
+            {
+            list.transformType = "a" ;
+            std::cerr<<"Non-orthogonal rotation matrix: uses affine transform"<<std::endl;
+            }
+         else
+            {
+            throw exp;
+            }
+         }
       }
-    else if( !list.transformType.compare( "a" ) ) //Affine transform
+    if( !list.transformType.compare( "a" ) ) //Affine transform
       {
       typename AffineTransformType::Pointer affine = AffineTransformType::New() ;
       affine->SetMatrix( transformMatrix ) ;
@@ -642,6 +683,7 @@ template< class PixelType > int Rotate( parameters list )
     resample->SetTransform( transform ) ;
     resample->Update() ;
     image = resample->GetOutput() ;
+    image->DisconnectPipeline();
     if( idx == 0 )
       { CheckDWMRI< PixelType >( dico , transform , list ) ; }
     }while( list.transformationFile.compare( "" ) && transformFile->GetTransformList()->size() ) ;
