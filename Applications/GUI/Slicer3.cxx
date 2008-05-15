@@ -383,7 +383,7 @@ int Slicer3_main(int argc, char *argv[])
   bool hasIntDir = false;
   std::string intDir = "";
   
-  std::string tmpName = slicerBinDir + "/../lib/Slicer3/slicerd.tcl";
+  std::string tmpName = slicerBinDir + "/../lib/Slicer3/SlicerBaseGUITcl/Loader.tcl";
   if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
     {
     // Handle Visual Studio IntDir
@@ -391,7 +391,7 @@ int Slicer3_main(int argc, char *argv[])
     vtksys::SystemTools::SplitPath(slicerBinDir.c_str(), pathComponents);
 
     slicerBinDir = slicerBinDir + "/..";
-    tmpName = slicerBinDir + "/../lib/Slicer3/slicerd.tcl";
+    tmpName = slicerBinDir + "/../lib/Slicer3/SlicerBaseGUITcl/Loader.tcl";
     if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
       {
       slicerCerr("Error: Cannot find Slicer3 libraries" << endl);
