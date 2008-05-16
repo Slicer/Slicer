@@ -30,6 +30,14 @@
       </boolean>
 
       <boolean>
+      <name>TestMode</name>
+      <longflag>--test_mode</longflag>
+      <description>Disables registry and exit confirmation dialogs (forces --no-splash)</description>
+      <default>false</default>
+      <label>Registry and Exit Confirmation Dialogs Off/On</label>
+      </boolean>
+
+      <boolean>
       <name>NoModules</name>
       <longflag>--no_modules</longflag>
       <description>Disables the loading of Command Line Modules</description>

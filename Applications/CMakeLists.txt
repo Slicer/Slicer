@@ -6,6 +6,7 @@ endif(BUILD_CLI)
 
 subdirs(
   GUI
+  CLI
   )
 
 if(Slicer3_BUILD_TESTING)

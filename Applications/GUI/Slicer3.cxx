@@ -177,12 +177,12 @@ struct SpacesToUnderscores
 {
   char operator() (char in)
     {
-      if (in == ' ' )
-        {
-        return '_';
-        }
+    if (in == ' ' )
+      {
+      return '_';
+      }
 
-      return in;
+    return in;
     }
 };
 
@@ -656,26 +656,33 @@ int Slicer3_main(int argc, char *argv[])
   //
   vtkSlicerApplication *slicerApp = vtkSlicerApplication::GetInstance ( );
 
+  if (TestMode)
     {
-    std::string cmd, slicerAppName;
-
-    slicerAppName = slicerApp->GetTclName();
-
-    slicerApp->Script ("namespace eval slicer3 set Application %s", slicerAppName.c_str());
-
-    cmd = "rename exit tcl_exit; ";
-
-    cmd += 
-     "proc exit {args} { \
-        if { $args != {} && [string is integer $args] == \"1\" } { \
-          " + slicerAppName + " SetExitStatus $args \
-        } else { \
-          " + slicerAppName + " SetExitStatus 0 \
-        } ;\
-        after idle {" + slicerAppName + " Exit}; \
-      }";
-      Slicer3_Tcl_Eval( interp, cmd.c_str() );
+    slicerApp->SetRegistryLevel(0);
+    slicerApp->PromptBeforeExitOff();
+    NoSplash = true;
     }
+
+  {
+  std::string cmd, slicerAppName;
+
+  slicerAppName = slicerApp->GetTclName();
+
+  slicerApp->Script ("namespace eval slicer3 set Application %s", slicerAppName.c_str());
+
+  cmd = "rename exit tcl_exit; ";
+
+  cmd += 
+   "proc exit {args} { \
+      if { $args != {} && [string is integer $args] == \"1\" } { \
+        " + slicerAppName + " SetExitStatus $args \
+      } else { \
+        " + slicerAppName + " SetExitStatus 0 \
+      } ;\
+      after idle {" + slicerAppName + " Exit}; \
+    }";
+    Slicer3_Tcl_Eval( interp, cmd.c_str() );
+  }
 
     //
     // use the startup script passed on command line if it exists

@@ -94,8 +94,8 @@ CONFIGURE_FILE(
 )
 
 if(BUILD_TESTING)
-  add_test(DiffusionEditorTest ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditorTest.tcl)
-  add_test(DiffusionEditorGradients ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditor_GradientsTest.tcl)
-  add_test(DiffusionEditorGlyphsTracts ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditorGlyphsTractsTest.tcl)
-  add_test(DiffusionEditorTensor ${Slicer3_BINARY_DIR}/Slicer3 --no-splash --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditorTensorTest.tcl)
+  add_test(DiffusionEditorTest ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditorTest.tcl)
+  add_test(DiffusionEditorGradients ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditor_GradientsTest.tcl)
+  add_test(DiffusionEditorGlyphsTracts ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditorGlyphsTractsTest.tcl)
+  add_test(DiffusionEditorTensor ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Modules/Volumes/Testing/DiffusionEditorTensorTest.tcl)
 endif(BUILD_TESTING)
