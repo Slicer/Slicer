@@ -1,7 +1,8 @@
 # test adding 200 fiducials to a new list
 # renameFlag int set to 1 if want to test time renaming
 # visibilityFlag int set to 0 if wish to see how fast it works w/o the 3d display widget in the way
-proc TestFiducialAdd { {renameFlag 1} {visibilityFlag 1} } {
+# numToAdd int number of fiducials to add
+proc TestFiducialAdd { {renameFlag 1} {visibilityFlag 1} {numToAdd 100} } {
     set fidLogic [ $::slicer3::FiducialsGUI GetLogic ]
     set fidList [$fidLogic AddFiducialList]
     if {$visibilityFlag} {
@@ -24,7 +25,7 @@ proc TestFiducialAdd { {renameFlag 1} {visibilityFlag 1} } {
         puts  "Index\tTime to add fid\tDelta between adds"
         puts "i\tt\tdt"
     }
-    while { $r < 200} {
+    while { $r < $numToAdd} {
         set str [time "$fidList AddFiducialWithXYZ $r $a $s 0"]        
         set t2 [lindex $str 0]        
         set dt [expr $t2 - $t1]
@@ -43,6 +44,7 @@ proc TestFiducialAdd { {renameFlag 1} {visibilityFlag 1} } {
         incr s
         set t1 $t2
     }
+    $fidList DisableModifiedEventOff
     $fidList Modified
 } 
 time "TestFiducialAdd"
