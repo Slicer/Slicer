@@ -227,12 +227,34 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessWidgetEvents ( vtkObj
 
     if ( displayNode )
       {
+      if (displayNode->GetAutoWindowLevel() != this->WindowLevelThresholdEditor->GetAutoWindowLevel() ||
+        this->WindowLevelThresholdEditor->GetAutoWindowLevel())
+        {
+        // Auto is turned on
+        // this will cause window/level recompute in the display node
+        displayNode->SetAutoWindowLevel(this->WindowLevelThresholdEditor->GetAutoWindowLevel());
+
+        //update sliders with recomputed values
+        this->WindowLevelThresholdEditor->SetWindowLevel(displayNode->GetWindow(), displayNode->GetLevel());
+        }
+
+      int thresholdType = this->WindowLevelThresholdEditor->GetThresholdType();
+      if (thresholdType == vtkKWWindowLevelThresholdEditor::ThresholdAuto && !displayNode->GetAutoThreshold())
+        {
+        // Auto is turned on
+        // this will cause window/level recompute in the display node
+        displayNode->SetAutoThreshold(1);
+
+        //update sliders with recomputed values
+        this->WindowLevelThresholdEditor->SetThreshold(displayNode->GetLowerThreshold(),
+                                                       displayNode->GetUpperThreshold());
+        }
+      displayNode->DisableModifiedEventOn();
       displayNode->SetWindow(this->WindowLevelThresholdEditor->GetWindow());
       displayNode->SetLevel(this->WindowLevelThresholdEditor->GetLevel());
       displayNode->SetUpperThreshold(this->WindowLevelThresholdEditor->GetUpperThreshold());
       displayNode->SetLowerThreshold(this->WindowLevelThresholdEditor->GetLowerThreshold());
       displayNode->SetAutoWindowLevel(this->WindowLevelThresholdEditor->GetAutoWindowLevel());
-      int thresholdType = this->WindowLevelThresholdEditor->GetThresholdType();
       if (thresholdType == vtkKWWindowLevelThresholdEditor::ThresholdOff) 
         {
         displayNode->SetApplyThreshold(0);
@@ -247,6 +269,9 @@ void vtkSlicerDiffusionWeightedVolumeDisplayWidget::ProcessWidgetEvents ( vtkObj
         displayNode->SetApplyThreshold(1);
         displayNode->SetAutoThreshold(0);
         }
+      displayNode->DisableModifiedEventOff();
+      displayNode->InvokePendingModifiedEvent();
+
       this->UpdatingWidget = 0;      
       return;
       }
