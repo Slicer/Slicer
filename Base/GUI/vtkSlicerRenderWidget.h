@@ -31,7 +31,14 @@ public:
   vtkTypeRevisionMacro(vtkSlicerRenderWidget, vtkKWRenderWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
   
+  // Description:
+  // Override 'update' behavior in superclass
   virtual void ExposeCallback();
+
+  // Description:
+  // Update the render window interactor size
+  // override bug with 10 x 10 window size
+  virtual void UpdateRenderWindowInteractorSize(int width, int height);
 
 protected:
   vtkSlicerRenderWidget();
