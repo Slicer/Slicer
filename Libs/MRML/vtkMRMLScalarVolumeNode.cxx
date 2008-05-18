@@ -320,6 +320,8 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDispl
     return;
     }
 
+   displayNode->DisableModifiedEventOn();
+
   if (imageDataScalar && imageDataScalar->GetNumberOfScalarComponents() == 1) 
     {
     // check the scalar type, bimodal analysis only works on int
@@ -365,6 +367,9 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDispl
       vtkDebugMacro("CalculateScalarAutoLevels: set display node window to " << this->Bimodal->GetWindow() << ", level to " << this->Bimodal->GetLevel() << ", lower threshold to " << displayNode->GetLowerThreshold() << ", upper threshold to " << displayNode->GetUpperThreshold() << ", displayNode id = " << displayNode->GetID());
       }
     }
+    displayNode->DisableModifiedEventOff();
+    displayNode->InvokePendingModifiedEvent();
+
 }
 
 //---------------------------------------------------------------------------

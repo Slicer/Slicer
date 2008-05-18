@@ -752,7 +752,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
     // set the mrml scene before adding observers
     this->VolumeDisplayWidget->SetMRMLScene(this->GetMRMLScene());
     this->VolumeDisplayWidget->AddWidgetObservers();
-    this->VolumeDisplayWidget->UpdateWidgetFromMRML();
+    //this->VolumeDisplayWidget->UpdateWidgetFromMRML();
     this->Script("pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -before %s",
       this->VolumeDisplayFrame->GetWidgetName(), oldFrame->GetWidgetName());
 
