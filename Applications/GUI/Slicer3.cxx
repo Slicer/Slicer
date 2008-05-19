@@ -77,7 +77,7 @@ extern "C" {
 #include "Resources/vtkSlicerSplashScreen_ImageData.h"
 
 // uncomment these lines to disable a particular module (handy for debugging)
-//#define CLIMODULES_DEBUG
+#define CLIMODULES_DEBUG
 //#define TCLMODULES_DEBUG
 //#define SLICES_DEBUG
 //#define MODELS_DEBUG
