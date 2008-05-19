@@ -134,8 +134,11 @@ vtkITKBSplineTransform
   vtkITKBSplineTransform* N = new vtkITKBSplineTransform;
   if( Helper ) 
   {
-    N->SetSplineOrder( Helper->GetOrder() );
-    N->Helper->SetParameters( Helper->GetParameters() );
+    N->SetSplineOrder( this->GetSplineOrder() );
+    N->SetFixedParameters( this->GetFixedParameters(),
+                           this->GetNumberOfFixedParameters() );
+    N->SetParameters( this->GetParameters() );
+    N->SetSwitchCoordinateSystem( this->GetSwitchCoordinateSystem() );
   }
   return N;
 }
