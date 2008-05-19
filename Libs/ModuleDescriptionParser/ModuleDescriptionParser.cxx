@@ -793,7 +793,8 @@ startElement(void *userData, const char *element, const char **attrs)
       else if ((strcmp(attrs[2*attr], "type") == 0))
         {
         if ((strcmp(attrs[2*attr+1], "linear") == 0) ||
-            (strcmp(attrs[2*attr+1], "nonlinear") == 0))
+            (strcmp(attrs[2*attr+1], "nonlinear") == 0) ||
+            (strcmp(attrs[2*attr+1], "bspline") == 0))
           {
           parameter->SetType(attrs[2*attr+1]);
           }

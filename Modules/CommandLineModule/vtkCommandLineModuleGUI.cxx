@@ -1602,6 +1602,10 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
           {
           nodeClass = "vtkMRMLGridTransformNode";
           }
+        else if ((*pit).GetType() == "bspline")
+          {
+          nodeClass = "vtkMRMLBSplineTransformNode";
+          }
 
         tparameter->SetNodeClass(nodeClass.c_str(),
                                  NULL,
@@ -1635,6 +1639,10 @@ void vtkCommandLineModuleGUI::BuildGUI ( )
         else if ((*pit).GetType() == "nonlinear")
           {
           nodeClass = "vtkMRMLGridTransformNode";
+          }
+        else if ((*pit).GetType() == "bspline")
+          {
+          nodeClass = "vtkMRMLBSplineTransformNode";
           }
 
 

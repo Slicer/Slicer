@@ -102,7 +102,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Initial transform</label>
       <channel>input</channel>
     </transform>
-    <transform fileExtensions=".txt" type="nonlinear" reference="movingImageFileName">
+    <transform fileExtensions=".txt" type="bspline" reference="movingImageFileName">
       <name>OutputTransform</name>
       <longflag>outputtransform</longflag>
       <description>Transform calculated that aligns the fixed and moving image.</description>

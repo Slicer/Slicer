@@ -80,34 +80,9 @@ void vtkMRMLNonlinearTransformNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkIndent indent(nIndent);
-
-  if (this->WarpTransformToParent != NULL) 
-    {
-    std::stringstream ss;
-
-    // jvm - push off to a TransformStorageNode?
-    //
-    //
-//     for (int row=0; row<4; row++) 
-//       {
-//       for (int col=0; col<4; col++) 
-//         {
-//         ss << this->MatrixTransformToParent->GetElement(row, col);
-//         if (!(row==3 && col==3)) 
-//           {
-//           ss << " ";
-//           }
-//         }
-//       if ( row != 3 )
-//         {
-//         ss << " ";
-//         }
-//       }
-    
-    of << indent << " warpTransformToParent=\"" << ss.str() << "\"";
-    }
-
+  // The different derived nonlinear transformation classes are going
+  // to be so different that it doesn't make sense to write anything
+  // here.  Let the derived classes do the work.
 }
 
 //----------------------------------------------------------------------------
@@ -116,38 +91,9 @@ void vtkMRMLNonlinearTransformNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL) 
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "warpTransformToParent")) 
-      {
-      // jvm - use a TransformStorageNode?
-      //
-      //
-//       vtkMatrix4x4 *matrix  = vtkMatrix4x4::New();
-//       matrix->Identity();
-//       if (this->MatrixTransformToParent != NULL) 
-//         {
-//         this->SetAndObserveMatrixTransformToParent(NULL);
-//         }
-//       std::stringstream ss;
-//       double val;
-//       ss << attValue;
-//       for (int row=0; row<4; row++) 
-//         {
-//         for (int col=0; col<4; col++) 
-//           {
-//           ss >> val;
-//           matrix->SetElement(row, col, val);
-//           }
-//         }
-//       this->SetAndObserveMatrixTransformToParent(matrix);
-//       matrix->Delete();
-      }
-    }  
+  // The different derived nonlinear transformation classes are going
+  // to be so different that it doesn't make sense to read anything
+  // here.  Let the derived classes do the work.
 }
 
 //----------------------------------------------------------------------------

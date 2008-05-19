@@ -65,6 +65,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLNonlinearTransformNode.h"
 #include "vtkMRMLGridTransformNode.h"
+#include "vtkMRMLBSplineTransformNode.h"
 #include "vtkURIHandler.h"
 
 //------------------------------------------------------------------------------
@@ -284,7 +285,10 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLGridTransformNode *gtn = vtkMRMLGridTransformNode::New();
   this->RegisterNodeClass( gtn );
   gtn->Delete();
-  
+
+  vtkMRMLBSplineTransformNode *btn = vtkMRMLBSplineTransformNode::New();
+  this->RegisterNodeClass( btn );
+  btn->Delete();
 
 }
 

@@ -88,6 +88,7 @@ set(MRML_SRCS
   vtkPermissionPrompter.cxx
   vtkMRMLNonlinearTransformNode.cxx
   vtkMRMLGridTransformNode.cxx
+  vtkMRMLBSplineTransformNode.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )
