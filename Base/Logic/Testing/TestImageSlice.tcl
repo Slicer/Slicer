@@ -1,6 +1,6 @@
 # run the timing test with:
 
-# ./bin/Slicer3-real -e "source ../Slicer3/Base/Logic/Testing/TestImageSlice.tcl ,. slicePerfTest ../Slicer3/Libs/MRML/Testing/TestData/fixed.nrrd"
+# ./bin/Slicer3-real -e "source ../Slicer3/Base/Logic/Testing/TestImageSlice.tcl ,. slicePerfTest share/MRML/Testing/TestData/fixed.nrrd"
 
 proc slicePerfTest { fileName } {
 
@@ -91,5 +91,5 @@ proc timeTest { {iter 10} } {
   timeSlices off $iter
 }
 
-slicePerfTest ../Slicer3/Libs/MRML/Testing/TestData/fixed.nrrd
+slicePerfTest share/MRML/Testing/TestData/fixed.nrrd
 exit

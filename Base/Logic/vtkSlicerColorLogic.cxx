@@ -25,6 +25,8 @@
 
 #include "vtkMRMLColorTableStorageNode.h"
 
+#include "vtkSlicerConfigure.h" // for Slicer3_INSTALL_SHARE_DIR
+
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -496,7 +498,7 @@ void vtkSlicerColorLogic::FindColorFiles()
 {
     // get the slicer home dir
   vtksys_stl::string slicerHome;
-  if (vtksys::SystemTools::GetEnv("SLICER_HOME") == NULL)
+  if (vtksys::SystemTools::GetEnv("Slicer3_HOME") == NULL)
     {
     if (vtksys::SystemTools::GetEnv("PWD") != NULL)
       {
@@ -509,14 +511,13 @@ void vtkSlicerColorLogic::FindColorFiles()
     }
   else
     {
-    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
+    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("Slicer3_HOME"));
     }
   // build up the vector
   vtksys_stl::vector<vtksys_stl::string> filesVector;
   filesVector.push_back(""); // for relative path
   filesVector.push_back(slicerHome);
-  filesVector.push_back(vtksys_stl::string("lib/Slicer3/Base/Logic/Resources/ColorFiles"));
-
+  filesVector.push_back(vtksys_stl::string(Slicer3_INSTALL_SHARE_DIR) + "/SlicerBaseLogic/Resources/ColorFiles");
    
   // get the list of colour files in this dir
   vtksys_stl::string dirString = vtksys::SystemTools::JoinPath(filesVector);

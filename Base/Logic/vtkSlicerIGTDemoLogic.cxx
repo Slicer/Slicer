@@ -21,6 +21,7 @@
 #include "vtkLandmarkTransform.h"
 #include "vtkCylinderSource.h"
 
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 vtkCxxRevisionMacro(vtkSlicerIGTDemoLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerIGTDemoLogic);
@@ -110,7 +111,7 @@ void vtkSlicerIGTDemoLogic::SetNumberOfPoints(int no)
 void vtkSlicerIGTDemoLogic::Init(char *configfile)
 {
 
-#ifdef USE_OPENTRACKER
+#ifdef Slicer3_USE_OPENTRACKER
     fprintf(stderr,"config file: %s\n",configfile);
     this->context = new Context(1); 
     // get callback module from the context
@@ -132,7 +133,7 @@ void vtkSlicerIGTDemoLogic::Init(char *configfile)
 
 void vtkSlicerIGTDemoLogic::CloseConnection()
 {
-#ifdef USE_OPENTRACKER
+#ifdef Slicer3_USE_OPENTRACKER
     context->close();
 #endif
 
@@ -162,7 +163,7 @@ void vtkSlicerIGTDemoLogic::quaternion2xyz(float* orientation, float *normal, fl
 
 void vtkSlicerIGTDemoLogic::PollRealtime()
 {
-#ifdef USE_OPENTRACKER
+#ifdef Slicer3_USE_OPENTRACKER
     context->pushEvents();       // push event and
     context->pullEvents();       // pull event 
     context->stop();
@@ -170,7 +171,7 @@ void vtkSlicerIGTDemoLogic::PollRealtime()
 }
 
 
-#ifdef USE_OPENTRACKER
+#ifdef Slicer3_USE_OPENTRACKER
 void vtkSlicerIGTDemoLogic::callbackF(const Node&, const Event &event, void *data)
 {
     float position[3];

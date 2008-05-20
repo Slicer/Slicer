@@ -21,7 +21,9 @@ libraries.)
 
 */
 
-#ifdef USE_PYTHON
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
+#ifdef Slicer3_USE_PYTHON
 #ifdef _DEBUG
 #undef _DEBUG
 #include <Python.h>

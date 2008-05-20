@@ -64,7 +64,9 @@
 
 #include "vtkSlicerFiducialListWidget.h"
 
-#ifdef USE_PYTHON
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
+#ifdef Slicer3_USE_PYTHON
 #ifdef _DEBUG
 #undef _DEBUG
 #include <Python.h>
@@ -850,7 +852,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
             this->MainSlicerWindow->GetEditMenu()->SetItemAccelerator ( i, "space");
             this->MainSlicerWindow->GetEditMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
 
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
             i = this->MainSlicerWindow->GetWindowMenu()->AddCommand ( "Python console", NULL, "$::slicer3::ApplicationGUI PythonConsole" );
             this->MainSlicerWindow->GetWindowMenu()->SetItemAccelerator ( i, "Ctrl+P");
             this->MainSlicerWindow->GetWindowMenu()->SetBindingForItemAccelerator ( i, this->MainSlicerWindow);
@@ -1115,8 +1117,9 @@ void vtkSlicerApplicationGUI::InitializeViewControlGUI (  )
 void vtkSlicerApplicationGUI::PythonConsole (  )
 {
   
-#ifdef USE_PYTHON
-  PyObject* d = vtkSlicerApplication::GetInstance()->GetPythonDictionary();
+#ifdef Slicer3_USE_PYTHON
+  PyObject* d = 
+    (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary());
   if ( d == NULL )
     {
     vtkSlicerApplication::GetInstance()->RequestDisplayMessage ( "Error", "Failed to startup python interpreter: dictionary null" );

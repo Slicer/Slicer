@@ -38,6 +38,18 @@
 #include <queue>
 #include "vtkKWMessageDialog.h"
 
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
+#ifdef Slicer3_USE_PYTHON
+#ifdef _DEBUG
+#undef _DEBUG
+#include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
+#endif
+
 const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
 const char *vtkSlicerApplication::ModuleCachePathRegKey = "ModuleCachePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
@@ -277,6 +289,11 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     // Disable stereo render capability by default
     this->SetStereoEnabled(0);
+
+#ifdef Slicer3_USE_PYTHON
+    this->PythonModule = NULL; 
+    this->PythonDictionary = NULL; 
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -1533,4 +1550,23 @@ const char* vtkSlicerApplication::GetRemoteCacheDirectory() const
       }
     }
   return this->RemoteCacheDirectory;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::InitializePython(void* mod, void* dict)
+{ 
+  this->PythonModule = mod; 
+  this->PythonDictionary = dict; 
+}
+
+//----------------------------------------------------------------------------
+void* vtkSlicerApplication::GetPythonModule()
+{ 
+  return this->PythonModule; 
+}
+
+//----------------------------------------------------------------------------
+void* vtkSlicerApplication::GetPythonDictionary()
+{ 
+  return this->PythonDictionary; 
 }

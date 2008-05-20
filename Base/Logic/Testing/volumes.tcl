@@ -18,9 +18,7 @@ proc initMRML {} {
     # create the mrml scene
     set ::scene [vtkMRMLScene New]
 
-    set scenefile [file dirname [info script]]/../../../Libs/MRML/Testing/volScene3.xml
-    # ../../../slicer3/Base/Logic/Testing/volumes.tcl
-    #$::scene SetURL C:/pieper/bwh/slicer3/latest/Slicer3/Libs/MRML/Testing/volScene3.xml
+    set scenefile $::Slicer3_HOME/share/MRML/Testing/volScene3.xml
     $::scene SetURL $scenefile
     $::scene Connect
 }

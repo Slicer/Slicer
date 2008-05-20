@@ -480,7 +480,7 @@ int vtkSlicerMRMLSaveDataWidget::UpdateFromMRML()
     row++;
     }
   
-#if !defined(MESHING_DEBUG) && defined(BUILD_MODULES)  
+#if !defined(MESHING_DEBUG) && defined(Slicer3_BUILD_MODULES)  
   // *** add UnstructuredGrid types 
   // An additional datatype, MRMLUnstructuredGrid and its subclasses are 
   // also searched in the MRML tree.  This is done so instances of FiniteElement

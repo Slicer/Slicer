@@ -1188,7 +1188,7 @@ void vtkSlicerViewerWidget::UpdateModel(vtkMRMLDisplayableNode *model)
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::CheckModelHierarchies()
 {
-  if (this->MRMLScene == NULL)
+  if (this->MRMLScene == NULL || this->ModelHierarchyLogic == NULL)
     {
     return;
     }
