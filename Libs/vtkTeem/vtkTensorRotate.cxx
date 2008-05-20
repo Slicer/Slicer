@@ -270,8 +270,8 @@ static void vtkTensorRotateExecute(vtkTensorRotate *self, int outExt[6],
                        vtkImageData *inData,
                        vtkImageData *outData, D *outPtr, int id)
 {
-  int num0, num1, num2;
-  int idx0, idx1, idx2;
+//  int num0, num1, num2;
+//  int idx0, idx1, idx2;
   vtkIdType outInc0, outInc1, outInc2;
   unsigned long count = 0;
   unsigned long target;
@@ -318,7 +318,7 @@ static void vtkTensorRotateExecute(vtkTensorRotate *self, int outExt[6],
 
   // Get the full size of the output so we can mirror the Y axis
   int *outFullDims = outData->GetDimensions();
-  int ptIdOut;
+//  int ptIdOut;
 
   // Get information to march through data
   outData->GetContinuousIncrements(outExt, outInc0, outInc1, outInc2);
