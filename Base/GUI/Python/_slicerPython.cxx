@@ -1,14 +1,5 @@
 #include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
-#ifdef Slicer3_USE_PYTHON
-#ifdef _DEBUG
-#undef _DEBUG
-#include <Python.h>
-#define _DEBUG
-#else
-#include <Python.h>
-#endif
-
 #ifdef Slicer3_USE_NUMPY
 #include <libnumarray.h>
 #include <arrayobject.h>
@@ -17,6 +8,15 @@
 #include "vtkSystemIncludes.h"
 #include "vtkTclUtil.h"
 #include "vtkImageData.h"
+
+#ifdef Slicer3_USE_PYTHON
+#ifdef _DEBUG
+#undef _DEBUG
+#include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
 
 #ifdef Slicer3_USE_NUMPY
 // Should look like vtkImageDataToArray interp imagedata
