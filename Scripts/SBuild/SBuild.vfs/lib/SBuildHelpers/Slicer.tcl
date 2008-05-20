@@ -49,29 +49,29 @@ proc Slicer-Configure {} {
   eval ExecuteCommand $cmd
   if { 0 } {
     -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
-        -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
-        -DTEEM_DIR:FILEPATH=$SLICER_LIB/teem-build \
-        -DIGSTK_DIR:FILEPATH=$SLICER_LIB/IGSTK-build \
-        -DSandBox_DIR:FILEPATH=$SLICER_LIB/NAMICSandBox \
+        -DKWWidgets_DIR:FILEPATH=$Slicer3_LIB/KWWidgets-build \
+        -DTEEM_DIR:FILEPATH=$Slicer3_LIB/teem-build \
+        -DIGSTK_DIR:FILEPATH=$Slicer3_LIB/IGSTK-build \
+        -DSandBox_DIR:FILEPATH=$Slicer3_LIB/NAMICSandBox \
         -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
-        -DUSE_PYTHON=$BuildPython \
-        -DPYTHON_INCLUDE_PATH:PATH=$::SLICER_LIB/python-build/include/python2.5 \
-        -DPYTHON_LIBRARY:FILEPATH=$::SLICER_LIB/python-build/lib/libpython2.5$::GETBUILDTEST(shared-lib-extension) \
-        -DUSE_IGSTK=$::IGSTK \
+        -DSlicer3_USE_PYTHON=$BuildPython \
+        -DPYTHON_INCLUDE_PATH:PATH=$::Slicer3_LIB/python-build/include/python2.5 \
+        -DPYTHON_LIBRARY:FILEPATH=$::Slicer3_LIB/python-build/lib/libpython2.5$::GETBUILDTEST(shared-lib-extension) \
+        -DSlicer3_USE_IGSTK=$::IGSTK \
         -DUSE_OPENTRACKER=$::OPENTRACKER \
         -DOT_VERSION_13=$::OT_VERSION \
         -DOT_LIB_DIR:FILEPATH=$::OT_LIB_DIR \
         -DOT_INC_DIR:FILEPATH=$::OT_INC_DIR \
-        -DNAVITRACK_INCLUDE_DIR:FILEPATH=$SLICER_LIB/NaviTrack/include \
-        -DNAVITRACK_BINARY_DIR:FILEPATH=$SLICER_LIB/NaviTrack-build/$VTK_BUILD_SUBDIR/ \
-        -Ddcmtk_SOURCE_DIR:FILEPATH=$SLICER_LIB/dcmtk \
-        -DBatchMake_DIR:FILEPATH=$SLICER_LIB/BatchMake-build \
-        -DUSE_BatchMake=ON \
-        -DSLICERLIBCURL_DIR:FILEPATH=$SLICER_LIB/cmcurl-build \
-        -DUSE_MIDAS=ON \
-        $SLICER_HOME
+        -DNAVITRACK_INCLUDE_DIR:FILEPATH=$Slicer3_LIB/NaviTrack/include \
+        -DNAVITRACK_BINARY_DIR:FILEPATH=$Slicer3_LIB/NaviTrack-build/$VTK_BUILD_SUBDIR/ \
+        -Ddcmtk_SOURCE_DIR:FILEPATH=$Slicer3_LIB/dcmtk \
+        -DBatchMake_DIR:FILEPATH=$Slicer3_LIB/BatchMake-build \
+        -DSlicer3_USE_BatchMake=ON \
+        -DSLICERLIBCURL_DIR:FILEPATH=$Slicer3_LIB/cmcurl-build \
+        -DSlicer3_USE_MIDAS=ON \
+        $Slicer3_HOME
   }
 }
 
