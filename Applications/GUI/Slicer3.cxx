@@ -1356,7 +1356,7 @@ int Slicer3_main(int argc, char *argv[])
       }
 #endif
 
-#if !defined(CLIMODULES_DEBUG) && defined(Slicer3_BUILD_CLI)
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
     std::vector<std::string> moduleNames;
     std::vector<std::string>::const_iterator mit;
     if ( slicerApp->GetLoadCommandLineModules() && !NoModules )
@@ -1542,7 +1542,7 @@ int Slicer3_main(int argc, char *argv[])
     //   and then delete it at the end.
     slicerApp->Script ("namespace eval slicer3 set Broker [vtkEventBroker New]");
 
-#if !defined(CLIMODULES_DEBUG) && defined(Slicer3_BUILD_CLI)
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
     mit = moduleNames.begin();
     while ( mit != moduleNames.end() )
       {
@@ -1853,7 +1853,7 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->SetSliceGUICollection ( NULL );
 #endif
 
-#if !defined(CLIMODULES_DEBUG) && defined(Slicer3_BUILD_CLI)
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
     // remove the observers from the factory discovered modules
     // (as we remove the observers, cache the GUIs in a vector so we
     // can delete them later).
@@ -1990,7 +1990,7 @@ int Slicer3_main(int argc, char *argv[])
 //cout << "vtkSlicerApplicationGUI deleting app GUI\n";
 //   appGUI->Delete ();
 
-#if !defined(CLIMODULES_DEBUG) && defined(Slicer3_BUILD_CLI)
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
     // delete the factory discovered module GUIs (as we delete the
     // GUIs, cache the associated logic instances so we can delete
     std::vector<vtkSlicerModuleGUI*>::iterator git;
@@ -2068,7 +2068,7 @@ int Slicer3_main(int argc, char *argv[])
     appLogic->TerminateProcessingThread();
     appLogic->Delete ();
 
-#if !defined(CLIMODULES_DEBUG) && defined(Slicer3_BUILD_CLI)
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
     // delete the factory discovered module Logics
     std::vector<vtkSlicerModuleLogic*>::iterator lit;
     for (lit = moduleLogics.begin(); lit != moduleLogics.end(); ++lit)
