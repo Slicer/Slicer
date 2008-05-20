@@ -1,0 +1,47 @@
+/* 
+ * Here is where system computed values get stored.
+ * These values should only change when the target compile platform changes.
+ */
+
+#if defined(WIN32) && !defined(VTKSLICER_STATIC)
+#pragma warning ( disable : 4275 )
+#endif
+
+#cmakedefine CMAKE_WORDS_BIGENDIAN
+#ifdef CMAKE_WORDS_BIGENDIAN
+  #define WORDS_BIGENDIAN
+#else
+  #define WORDS_LITTLEENDIAN
+#endif
+
+#cmakedefine BUILD_SHARED_LIBS
+#ifndef BUILD_SHARED_LIBS
+#define VTKSLICER_STATIC
+#endif
+
+#cmakedefine Slicer3_USE_BatchMake
+#cmakedefine Slicer3_USE_IGSTK
+#cmakedefine Slicer3_USE_MIDAS
+#cmakedefine Slicer3_USE_NAVITRACK
+#cmakedefine Slicer3_USE_NUMPY
+#cmakedefine Slicer3_USE_PYTHON
+#cmakedefine Slicer3_USE_OPENTRACKER
+
+#define VTKSLICER_CONFIGURATION_TYPES "@CMAKE_CONFIGURATION_TYPES@"
+
+#define Slicer3_INSTALL_BIN_DIR "@Slicer3_INSTALL_BIN_DIR@"
+#define Slicer3_INSTALL_LIB_DIR "@Slicer3_INSTALL_LIB_DIR@"
+#define Slicer3_INSTALL_INCLUDE_DIR "@Slicer3_INSTALL_INCLUDE_DIR@"
+#define Slicer3_INSTALL_SHARE_DIR "@Slicer3_INSTALL_SHARE_DIR@"
+#define Slicer3_INSTALL_ITKFACTORIES_DIR "@Slicer3_INSTALL_ITKFACTORIES_DIR@"
+
+#define Slicer3_INSTALL_PLUGINS_BIN_DIR "@Slicer3_INSTALL_PLUGINS_BIN_DIR@"
+#define Slicer3_INSTALL_PLUGINS_LIB_DIR "@Slicer3_INSTALL_PLUGINS_LIB_DIR@"
+#define Slicer3_INSTALL_PLUGINS_INCLUDE_DIR "@Slicer3_INSTALL_PLUGINS_INCLUDE_DIR@"
+#define Slicer3_INSTALL_PLUGINS_SHARE_DIR "@Slicer3_INSTALL_PLUGINS_SHARE_DIR@"
+#define Slicer3_INSTALL_PLUGINS_CACHE_DIR "@Slicer3_INSTALL_PLUGINS_CACHE_DIR@"
+
+#define Slicer3_INSTALL_MODULES_BIN_DIR "@Slicer3_INSTALL_MODULES_BIN_DIR@"
+#define Slicer3_INSTALL_MODULES_LIB_DIR "@Slicer3_INSTALL_MODULES_LIB_DIR@"
+#define Slicer3_INSTALL_MODULES_INCLUDE_DIR "@Slicer3_INSTALL_MODULES_INCLUDE_DIR@"
+#define Slicer3_INSTALL_MODULES_SHARE_DIR "@Slicer3_INSTALL_MODULES_SHARE_DIR@"

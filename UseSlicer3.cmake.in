@@ -4,35 +4,51 @@
 # Slicer3 modules built against a Slicer3 build tree or a Slicer3 installation.
 #
 
-FIND_PACKAGE(GenerateCLP REQUIRED)
-IF(GenerateCLP_FOUND)
-  INCLUDE(${GenerateCLP_USE_FILE})
-ENDIF(GenerateCLP_FOUND)
+find_package(GenerateCLP REQUIRED)
+if(GenerateCLP_FOUND)
+  include(${GenerateCLP_USE_FILE})
+endif(GenerateCLP_FOUND)
 
-FIND_PACKAGE(KWWidgets)
-IF(KWWidgets_FOUND)
-  INCLUDE(${KWWidgets_USE_FILE})
-ENDIF(KWWidgets_FOUND)
+find_package(GenerateLM REQUIRED)
+if(GenerateLM_FOUND)
+  include(${GenerateLM_USE_FILE})
+endif(GenerateLM_FOUND)
 
-#IF(Slicer3_BUILD_SETTINGS_FILE)
-#  INCLUDE(${CMAKE_ROOT}/Modules/CMakeImportBuildSettings.cmake)
-#  CMAKE_IMPORT_BUILD_SETTINGS(${Slicer3_BUILD_SETTINGS_FILE})
-#ENDIF(Slicer3_BUILD_SETTINGS_FILE)
+find_package(KWWidgets REQUIRED)
+if(KWWidgets_FOUND)
+  include(${KWWidgets_USE_FILE})
+endif(KWWidgets_FOUND)
+
+find_package(TEEM REQUIRED)
+if(TEEM_FOUND)
+  include(${TEEM_USE_FILE})
+endif(TEEM_FOUND)
 
 # Add compiler flags needed to use Slicer3.
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${Slicer3_REQUIRED_C_FLAGS}")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Slicer3_REQUIRED_CXX_FLAGS}")
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${Slicer3_REQUIRED_LINK_FLAGS}")
-SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${Slicer3_REQUIRED_LINK_FLAGS}")
-SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${Slicer3_REQUIRED_LINK_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${Slicer3_REQUIRED_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Slicer3_REQUIRED_CXX_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${Slicer3_REQUIRED_LINK_FLAGS}")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${Slicer3_REQUIRED_LINK_FLAGS}")
+set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${Slicer3_REQUIRED_LINK_FLAGS}")
 
-IF(NOT DEFINED BUILD_SHARED_LIBS)
-  SET(BUILD_SHARED_LIBS ${Slicer3_BUILD_SHARED})
-ENDIF(NOT DEFINED BUILD_SHARED_LIBS)
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  set(BUILD_SHARED_LIBS ${Slicer3_BUILD_SHARED})
+endif(NOT DEFINED BUILD_SHARED_LIBS)
 
 # Add include directories needed to use Slicer3.
-INCLUDE_DIRECTORIES(BEFORE ${Slicer3_INCLUDE_DIRS})
+include_directories(BEFORE 
+  ${Slicer3_Libs_INCLUDE_DIRS} 
+  ${Slicer3_Base_INCLUDE_DIRS}
+  )
 
 # Add link directories needed to use Slicer3.
-LINK_DIRECTORIES(${Slicer3_LIBRARY_DIRS})
+link_directories(
+  ${Slicer3_Libs_LIBRARY_DIRS}
+  ${Slicer3_Base_LIBRARY_DIRS}
+  )
 
+# Add cmake module path.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${Slicer3_CMAKE_DIR}")
+include("${Slicer3_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
+include("${Slicer3_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
+include("${Slicer3_CMAKE_DIR}/Slicer3PluginsMacros.cmake")

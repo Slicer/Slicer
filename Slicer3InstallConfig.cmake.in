@@ -8,59 +8,132 @@
 #
 
 # The C and C++ flags added by Slicer3 to the cmake-configured flags.
-SET(Slicer3_REQUIRED_C_FLAGS "@Slicer3_REQUIRED_C_FLAGS@")
-SET(Slicer3_REQUIRED_CXX_FLAGS "@Slicer3_REQUIRED_CXX_FLAGS@")
-SET(Slicer3_REQUIRED_LINK_FLAGS "@Slicer3_REQUIRED_LINK_FLAGS@")
+set(Slicer3_REQUIRED_C_FLAGS "@Slicer3_REQUIRED_C_FLAGS@")
+set(Slicer3_REQUIRED_CXX_FLAGS "@Slicer3_REQUIRED_CXX_FLAGS@")
+set(Slicer3_REQUIRED_LINK_FLAGS "@Slicer3_REQUIRED_LINK_FLAGS@")
 
 # The Slicer3 version number
-SET(Slicer3_VERSION_MAJOR "@Slicer3_VERSION_MAJOR@")
-SET(Slicer3_VERSION_MINOR "@Slicer3_VERSION_MINOR@")
-SET(Slicer3_VERSION_PATCH "@Slicer3_VERSION_PATCH@")
+set(Slicer3_VERSION_MAJOR "@Slicer3_VERSION_MAJOR@")
+set(Slicer3_VERSION_MINOR "@Slicer3_VERSION_MINOR@")
+set(Slicer3_VERSION_PATCH "@Slicer3_VERSION_PATCH@")
+
+# Whether Slicer3 was built with modules and CLI support.
+set(Slicer3_BUILD_MODULES "@Slicer3_BUILD_MODULES@")
+set(Slicer3_BUILD_CLI "@Slicer3_BUILD_CLI@")
 
 # Whether Slicer3 was built with shared libraries.
-SET(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
+set(Slicer3_BUILD_SHARED "@BUILD_SHARED_LIBS@")
 
-# A list of all libraries for Slicer3.  Those listed here should
-# automatically pull in their dependencies.
-SET(Slicer3_LIBRARIES "@Slicer3_LIBRARIES@")
+# Slicer3 options
+set(Slicer3_USE_BatchMake "@Slicer3_USE_BatchMake@")
+set(Slicer3_USE_IGSTK "@Slicer3_USE_IGSTK@")
+set(Slicer3_USE_MIDAS "@Slicer3_USE_MIDAS@")
+set(Slicer3_USE_NAVITRACK "@Slicer3_USE_NAVITRACK@")
+set(Slicer3_USE_NUMPY "@Slicer3_USE_NUMPY@")
+set(Slicer3_USE_PYTHON "@Slicer3_USE_PYTHON@")
+set(Slicer3_USE_OPENTRACKER "@Slicer3_USE_OPENTRACKER@")
 
 # Slicer could be installed anywhere, so set all paths based on where 
 # this file was found (which should be the lib/Slicer3 directory of the 
 # installation)
-GET_FILENAME_COMPONENT(Slicer3_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(Slicer3_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
-# The Slicer3 include file directories.
-SET(Slicer3_INCLUDE_DIRS 
-  "${Slicer3_CONFIG_DIR}/../../include/Slicer3" 
-  "${Slicer3_CONFIG_DIR}/../../include/MRML"
-  "${Slicer3_CONFIG_DIR}/../../include/vtkITK"
-)
+# Slicer home (top of the tree)
+set(Slicer3_HOME "${Slicer3_CONFIG_DIR}/../..")
+get_filename_component(Slicer3_HOME ${Slicer3_HOME} ABSOLUTE)
 
-# The Slicer3 library directories.
-# ${Slicer3_CONFIG_DIR}/.. is needed for VTK and teem
-SET(Slicer3_LIBRARY_DIRS 
-  "${Slicer3_CONFIG_DIR}" 
-  "${Slicer3_CONFIG_DIR}/.." 
-  "${Slicer3_CONFIG_DIR}/../MRML"
-)
+# The CMake macros dir.
+set(Slicer3_CMAKE_DIR "${Slicer3_HOME}/@Slicer3_INSTALL_LIB_DIR@/CMake")
+
+# Slicer3 Libs libraries.  Those listed here should
+# automatically pull in their dependencies.
+set(Slicer3_Libs_LIBRARIES "@Slicer3_Libs_LIBRARIES@")
+
+# Slicer3 Libs library directories.
+set(Slicer3_Libs_LIBRARY_DIRS 
+  "${Slicer3_HOME}/lib/FreeSurfer"
+  "${Slicer3_HOME}/lib/IGT"
+  "${Slicer3_HOME}/lib/ITKCommandIO"
+  "${Slicer3_HOME}/lib/LoadableModule"
+  "${Slicer3_HOME}/lib/MGHImageIO"
+  "${Slicer3_HOME}/lib/MRML"
+  "${Slicer3_HOME}/lib/MRMLIDImageIO"
+  "${Slicer3_HOME}/lib/ModuleDescriptionParser"
+  "${Slicer3_HOME}/lib/Qdec"
+  "${Slicer3_HOME}/lib/RemoteIO"
+  "${Slicer3_HOME}/lib/SlicerIO"
+  "${Slicer3_HOME}/lib/tclap"
+  "${Slicer3_HOME}/lib/vtkITK"
+  "${Slicer3_HOME}/lib/vtkTeem"
+  )
+
+# Slicer3 Libs include file directories.
+set(Slicer3_Libs_INCLUDE_DIRS 
+  "${Slicer3_HOME}/include/FreeSurfer"
+  "${Slicer3_HOME}/include/IGT"
+  "${Slicer3_HOME}/include/ITKCommandIO"
+  "${Slicer3_HOME}/include/LoadableModule"
+  "${Slicer3_HOME}/include/MGHImageIO"
+  "${Slicer3_HOME}/include/MRML"
+  "${Slicer3_HOME}/include/MRMLIDImageIO"
+  "${Slicer3_HOME}/include/ModuleDescriptionParser"
+  "${Slicer3_HOME}/include/Qdec"
+  "${Slicer3_HOME}/include/RemoteIO"
+  "${Slicer3_HOME}/include/SlicerIO"
+  "${Slicer3_HOME}/include/tclap"
+  "${Slicer3_HOME}/include/vtkITK"
+  "${Slicer3_HOME}/include/vtkTeem"
+  )
+
+# Slicer3 Base libraries.  Those listed here should
+# automatically pull in their dependencies.
+set(Slicer3_Base_LIBRARIES "@Slicer3_Base_LIBRARIES@")
+
+# Slicer3 Base library directories.
+set(Slicer3_Base_LIBRARY_DIRS 
+  "${Slicer3_HOME}/@Slicer3_INSTALL_LIB_DIR@"
+  )
+
+# Slicer3 Base include file directories.
+set(Slicer3_Base_INCLUDE_DIRS 
+  "${Slicer3_HOME}/@Slicer3_INSTALL_INCLUDE_DIR@" 
+  "${Slicer3_HOME}/@Slicer3_INSTALL_INCLUDE_DIR@/SlicerBaseCLI" 
+  "${Slicer3_HOME}/@Slicer3_INSTALL_INCLUDE_DIR@/SlicerBaseGUI" 
+  "${Slicer3_HOME}/@Slicer3_INSTALL_INCLUDE_DIR@/SlicerBaseLogic" 
+  )
 
 # The location of the UseSlicer3.cmake file.
-SET(Slicer3_USE_FILE "${Slicer3_CONFIG_DIR}/UseSlicer3.cmake")
+set(Slicer3_USE_FILE "${Slicer3_CONFIG_DIR}/UseSlicer3.cmake")
 
 # The build settings file.
-SET(Slicer3_BUILD_SETTINGS_FILE 
+set(Slicer3_BUILD_SETTINGS_FILE 
   "${Slicer3_CONFIG_DIR}/Slicer3BuildSettings.cmake")
+
+# The Slicer3 relative install directories.
+set(Slicer3_INSTALL_BIN_DIR "@Slicer3_INSTALL_BIN_DIR@")
+set(Slicer3_INSTALL_LIB_DIR "@Slicer3_INSTALL_LIB_DIR@")
+set(Slicer3_INSTALL_INCLUDE_DIR "@Slicer3_INSTALL_INCLUDE_DIR@")
+set(Slicer3_INSTALL_SHARE_DIR "@Slicer3_INSTALL_SHARE_DIR@")
+set(Slicer3_INSTALL_ITKFACTORIES_DIR "@Slicer3_INSTALL_ITKFACTORIES_DIR@")
+
+set(Slicer3_INSTALL_PLUGINS_BIN_DIR "@Slicer3_INSTALL_PLUGINS_BIN_DIR@")
+set(Slicer3_INSTALL_PLUGINS_LIB_DIR "@Slicer3_INSTALL_PLUGINS_LIB_DIR@")
+set(Slicer3_INSTALL_PLUGINS_INCLUDE_DIR "@Slicer3_INSTALL_PLUGINS_INCLUDE_DIR@")
+set(Slicer3_INSTALL_PLUGINS_SHARE_DIR "@Slicer3_INSTALL_PLUGINS_SHARE_DIR@")
+set(Slicer3_INSTALL_PLUGINS_CACHE_DIR "@Slicer3_INSTALL_PLUGINS_CACHE_DIR@")
+
+set(Slicer3_INSTALL_MODULES_BIN_DIR "@Slicer3_INSTALL_MODULES_BIN_DIR@")
+set(Slicer3_INSTALL_MODULES_LIB_DIR "@Slicer3_INSTALL_MODULES_LIB_DIR@")
+set(Slicer3_INSTALL_MODULES_INCLUDE_DIR "@Slicer3_INSTALL_MODULES_INCLUDE_DIR@")
+set(Slicer3_INSTALL_MODULES_SHARE_DIR "@Slicer3_INSTALL_MODULES_SHARE_DIR@")
 
 # Components needed to build modules from outside a Slicer3 build tree or 
 # from outside a Slicer3 installation tree
-SET(TCLAP_DIR "${Slicer3_CONFIG_DIR}/../tclap")
-SET(ModuleDescriptionParser_DIR "${Slicer3_CONFIG_DIR}/../ModuleDescriptionParser")
-SET(GenerateCLP_DIR "${Slicer3_CONFIG_DIR}/../GenerateCLP")
-SET(GenerateCLP_USE_FILE "${GenerateCLP_DIR}/UseGenerateCLP.cmake")
-SET(GENERATECLP_EXE "${Slicer3_CONFIG_DIR}/../../bin/GenerateCLP")
-SET(ITK_DIR "${Slicer3_CONFIG_DIR}/../InsightToolkit")
-# VTK_DIR needs to be an absolute path for the VTKConfig.cmake file to work
-SET(VTK_DIR "${Slicer3_CONFIG_DIR}/../vtk-5.0")
-GET_FILENAME_COMPONENT(VTK_DIR ${VTK_DIR} ABSOLUTE)
-SET(KWWidgets_DIR "${Slicer3_CONFIG_DIR}/../KWWidgets")
-GET_FILENAME_COMPONENT(KWWidgets_DIR ${KWWidgets_DIR} ABSOLUTE)
+set(TCLAP_DIR "${Slicer3_HOME}/lib/tclap")
+set(ModuleDescriptionParser_DIR "${Slicer3_HOME}/lib/ModuleDescriptionParser")
+set(GenerateCLP_DIR "${Slicer3_HOME}/lib/GenerateCLP")
+set(GenerateLM_DIR "${Slicer3_HOME}/lib/GenerateLM")
+set(ITK_DIR "${Slicer3_HOME}/lib/InsightToolkit")
+set(VTK_DIR "${Slicer3_HOME}/lib/vtk-@VTK_MAJOR_VERSION@.@VTK_MINOR_VERSION@")
+set(KWWidgets_DIR "${Slicer3_HOME}/lib/KWWidgets")
+set(TEEM_DIR "${Slicer3_HOME}/lib/TEEM-@TEEM_VERSION_MAJOR@.@TEEM_VERSION_MINOR@")

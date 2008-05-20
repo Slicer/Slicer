@@ -12,18 +12,18 @@
 
 
 ## variables that are the same for all systems
-set ::SLICER_DATA_ROOT ""
+set ::Slicer3_DATA_ROOT ""
 
-if {[info exists ::env(SLICER_HOME)]} {
+if {[info exists ::env(Slicer3_HOME)]} {
     # already set by the launcher
-    set ::SLICER_HOME $::env(SLICER_HOME)
+    set ::Slicer3_HOME $::env(Slicer3_HOME)
 } else {
-    # if sourcing this into cmaker, SLICER_HOME may not be set
-    # set the SLICER_HOME directory to the one in which this script resides
+    # if sourcing this into cmaker, Slicer3_HOME may not be set
+    # set the Slicer3_HOME directory to the one in which this script resides
     set cwd [pwd]
     cd [file dirname [info script]]
-    set ::SLICER_HOME [pwd]
-    set ::env(SLICER_HOME) $::SLICER_HOME
+    set ::Slicer3_HOME [pwd]
+    set ::env(Slicer3_HOME) $::Slicer3_HOME
     cd $cwd
 }
 
@@ -57,12 +57,12 @@ switch $::tcl_platform(os) {
     }
     default {
         set ::env(BUILD) $::WINDOWS
-        set ::SLICER_HOME [file attributes $::SLICER_HOME -shortname]
-        set ::env(SLICER_HOME) $::SLICER_HOME
+        set ::Slicer3_HOME [file attributes $::Slicer3_HOME -shortname]
+        set ::env(Slicer3_HOME) $::Slicer3_HOME
     }
 }
 
-puts stderr "SLICER_HOME is $::SLICER_HOME"
+puts stderr "Slicer3_HOME is $::Slicer3_HOME"
 
 # Choose which library versions you want to compile against.  These
 # shouldn't be changed between releases except for testing purposes.
@@ -72,9 +72,9 @@ puts stderr "SLICER_HOME is $::SLICER_HOME"
 # changes in the "Files to test if library has already been built"
 # section below, or genlib will happily build the library again.
 
-#set ::SLICER_TAG "http://www.na-mic.org/svn/Slicer3/branches/Slicer3.0-PreAHMBeta"
-#set ::SLICER_TAG "http://www.na-mic.org/svn/Slicer3/branches/testing/sign_integration/Slicer3"
-set ::SLICER_TAG "http://www.na-mic.org/svn/Slicer3/trunk"
+#set ::Slicer3_TAG "http://www.na-mic.org/svn/Slicer3/branches/Slicer3.0-PreAHMBeta"
+#set ::Slicer3_TAG "http://www.na-mic.org/svn/Slicer3/branches/testing/sign_integration/Slicer3"
+set ::Slicer3_TAG "http://www.na-mic.org/svn/Slicer3/trunk"
 set ::CMAKE_TAG "CMake-2-4-2"
 #set ::TEEM_TAG "HEAD"
 set ::TEEM_TAG "Teem-1-9-0-patches"
@@ -100,26 +100,26 @@ set ::USE_SIGN 0
 
 # Set library, binary, etc. paths...
 
-# if SLICER_LIB and SLICER_BUILD haven't been set,
+# if Slicer3_LIB and Slicer3_BUILD haven't been set,
 # then assume they are in the 'standard' places next to the source tree
 # (as created by getbuildtest.tcl
-if { ![info exists ::SLICER_LIB] } {
+if { ![info exists ::Slicer3_LIB] } {
     set wd [pwd]
-    cd $::SLICER_HOME/../Slicer3-lib
-    set ::SLICER_LIB [pwd]
+    cd $::Slicer3_HOME/../Slicer3-lib
+    set ::Slicer3_LIB [pwd]
     cd $wd
 }
-if { ![info exists ::SLICER_BUILD] } {
+if { ![info exists ::Slicer3_BUILD] } {
     set wd [pwd]
-    cd $::SLICER_HOME/../Slicer3-build
-    set ::SLICER_BUILD [pwd]
+    cd $::Slicer3_HOME/../Slicer3-build
+    set ::Slicer3_BUILD [pwd]
     cd $wd
 }
 
-set ::TEEM_SRC_DIR  $::SLICER_LIB/teem
-set ::TEEM_BUILD_DIR  $::SLICER_LIB/teem-build
-set ::VTK_DIR  $::SLICER_LIB/VTK-build
-set ::VTK_SRC_DIR $::SLICER_LIB/VTK
+set ::TEEM_SRC_DIR  $::Slicer3_LIB/teem
+set ::TEEM_BUILD_DIR  $::Slicer3_LIB/teem-build
+set ::VTK_DIR  $::Slicer3_LIB/VTK-build
+set ::VTK_SRC_DIR $::Slicer3_LIB/VTK
 set ::CMAKE_CXX_FLAGS_DEBUG "-g"
 if { ![info exists ::VTK_BUILD_TYPE] } {
   # set a default if it hasn't already been specified
@@ -127,23 +127,23 @@ if { ![info exists ::VTK_BUILD_TYPE] } {
 }
 set ::VTK_BUILD_SUBDIR $::VTK_BUILD_TYPE 
 set ::env(VTK_BUILD_TYPE) $::VTK_BUILD_TYPE
-set ::KWWidgets_BUILD_DIR  $::SLICER_LIB/KWWidgets-build
-set ::KWWIDGETS_DIR  $::SLICER_LIB/KWWidgets
-set ::ITK_BINARY_PATH $::SLICER_LIB/Insight-build
-set ::SANDBOX_BIN_DIR $::SLICER_LIB/NAMICSandBox-build/bin
-set ::TCL_BIN_DIR $::SLICER_LIB/tcl-build/bin
-set ::TCL_LIB_DIR $::SLICER_LIB/tcl-build/lib
-set ::TCL_INCLUDE_DIR $::SLICER_LIB/tcl-build/include
-set ::CMAKE_PATH $::SLICER_LIB/CMake-build
+set ::KWWidgets_BUILD_DIR  $::Slicer3_LIB/KWWidgets-build
+set ::KWWIDGETS_DIR  $::Slicer3_LIB/KWWidgets
+set ::ITK_BINARY_PATH $::Slicer3_LIB/Insight-build
+set ::SANDBOX_BIN_DIR $::Slicer3_LIB/NAMICSandBox-build/bin
+set ::TCL_BIN_DIR $::Slicer3_LIB/tcl-build/bin
+set ::TCL_LIB_DIR $::Slicer3_LIB/tcl-build/lib
+set ::TCL_INCLUDE_DIR $::Slicer3_LIB/tcl-build/include
+set ::CMAKE_PATH $::Slicer3_LIB/CMake-build
 set ::SOV_BINARY_DIR ""
 set ::XVNC_EXECUTABLE " "
-set ::IGSTK_DIR $::SLICER_LIB/IGSTK-build
-set ::NaviTrack_DIR $::SLICER_LIB/NaviTrack-build
-set ::dcmtk_DIR $::SLICER_LIB/dcmtk-build
-set ::BatchMake_SRC_DIR $::SLICER_LIB/BatchMake
-set ::BatchMake_BUILD_DIR $::SLICER_LIB/BatchMake-build
-set ::SLICERLIBCURL_SRC_DIR $::SLICER_LIB/cmcurl
-set ::SLICERLIBCURL_BUILD_DIR $::SLICER_LIB/cmcurl-build
+set ::IGSTK_DIR $::Slicer3_LIB/IGSTK-build
+set ::NaviTrack_DIR $::Slicer3_LIB/NaviTrack-build
+set ::dcmtk_DIR $::Slicer3_LIB/dcmtk-build
+set ::BatchMake_SRC_DIR $::Slicer3_LIB/BatchMake
+set ::BatchMake_BUILD_DIR $::Slicer3_LIB/BatchMake-build
+set ::SLICERLIBCURL_SRC_DIR $::Slicer3_LIB/cmcurl
+set ::SLICERLIBCURL_BUILD_DIR $::Slicer3_LIB/cmcurl-build
 
 
 
@@ -192,9 +192,9 @@ switch $::tcl_platform(os) {
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitclstub3.2.a
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
-        set ::PYTHON_TEST_FILE $::SLICER_LIB/python-build/bin/python
-        set ::MATPLOTLIB_TEST_FILE $::SLICER_LIB/python-build/bin/bar
-        set ::NUMPY_TEST_FILE $::SLICER_LIB/python-build/lib/python2.5/site-packages/numpy/lib/_compiled_base.$shared_lib_ext
+        set ::PYTHON_TEST_FILE $::Slicer3_LIB/python-build/bin/python
+        set ::MATPLOTLIB_TEST_FILE $::Slicer3_LIB/python-build/bin/bar
+        set ::NUMPY_TEST_FILE $::Slicer3_LIB/python-build/lib/python2.5/site-packages/numpy/lib/_compiled_base.$shared_lib_ext
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.$shared_lib_ext
@@ -204,8 +204,8 @@ switch $::tcl_platform(os) {
         set ::VTK_TK_LIB $::TCL_LIB_DIR/libtk8.4.$shared_lib_ext
         set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh8.4
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/libITKCommon.$shared_lib_ext
-        set ::TK_EVENT_PATCH $::SLICER_HOME/tkEventPatch.diff
-        set ::BLT_PATCH $::SLICER_HOME/blt-patch.diff
+        set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
+        set ::BLT_PATCH $::Slicer3_HOME/blt-patch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.$shared_lib_ext
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/libNaviTrack.$shared_lib_ext
@@ -222,9 +222,9 @@ switch $::tcl_platform(os) {
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitclstub3.2.a
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
-        set ::PYTHON_TEST_FILE $::SLICER_LIB/python-build/bin/python
-        set ::MATPLOTLIB_TEST_FILE $::SLICER_LIB/python-build/bin/bar
-        set ::NUMPY_TEST_FILE $::SLICER_LIB/python-build/lib/python2.5/site-packages/numpy/lib/_compiled_base.so
+        set ::PYTHON_TEST_FILE $::Slicer3_LIB/python-build/bin/python
+        set ::MATPLOTLIB_TEST_FILE $::Slicer3_LIB/python-build/bin/bar
+        set ::NUMPY_TEST_FILE $::Slicer3_LIB/python-build/lib/python2.5/site-packages/numpy/lib/_compiled_base.so
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.so
@@ -234,8 +234,8 @@ switch $::tcl_platform(os) {
         set ::VTK_TK_LIB $::TCL_LIB_DIR/libtk8.4.$shared_lib_ext
         set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh8.4
         set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/libITKCommon.$shared_lib_ext
-        set ::TK_EVENT_PATCH $::SLICER_HOME/tkEventPatch.diff
-        set ::BLT_PATCH $::SLICER_HOME/blt-patch.diff
+        set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
+        set ::BLT_PATCH $::Slicer3_HOME/blt-patch.diff
         set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
         set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.so
         set ::NaviTrack_TEST_FILE $::NaviTrack_DIR/libNaviTrack.$shared_lib_ext
@@ -257,9 +257,9 @@ switch $::tcl_platform(os) {
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/itcl3.2/itcl32.dll
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.2/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/BLT24.dll
-        set ::PYTHON_TEST_FILE $::SLICER_LIB/python-build/bin/python
-        set ::MATPLOTLIB_TEST_FILE $::SLICER_LIB/python-build/bin/bar
-        set ::NUMPY_TEST_FILE $::SLICER_LIB/python-build/lib/python2.5/site-packages/numpy/lib/_compiled_base.dll
+        set ::PYTHON_TEST_FILE $::Slicer3_LIB/python-build/bin/python
+        set ::MATPLOTLIB_TEST_FILE $::Slicer3_LIB/python-build/bin/bar
+        set ::NUMPY_TEST_FILE $::Slicer3_LIB/python-build/lib/python2.5/site-packages/numpy/lib/_compiled_base.dll
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu.exe
         set ::VTK_TEST_FILE $::VTK_DIR/bin/$::VTK_BUILD_TYPE/vtk.exe
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/$::env(VTK_BUILD_SUBDIR)/KWWidgets.lib
@@ -286,8 +286,8 @@ switch $::tcl_platform(os) {
 
 switch $::tcl_platform(os) {
     "SunOS" {
-        set ::VTKSLICERBASE_BUILD_LIB $::SLICER_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBase.so
-        set ::VTKSLICERBASE_BUILD_TCL_LIB $::SLICER_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBaseTCL.so
+        set ::VTKSLICERBASE_BUILD_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBase.so
+        set ::VTKSLICERBASE_BUILD_TCL_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBaseTCL.so
         set ::GENERATOR "Unix Makefiles"
         set ::COMPILER_PATH "/local/os/bin"
         set ::COMPILER "g++"
@@ -296,8 +296,8 @@ switch $::tcl_platform(os) {
         set ::SERIAL_MAKE "gmake"
     }
     "Linux" {
-        set ::VTKSLICERBASE_BUILD_LIB $::SLICER_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBase.so
-        set ::VTKSLICERBASE_BUILD_TCL_LIB $::SLICER_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBaseTCL.so
+        set ::VTKSLICERBASE_BUILD_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBase.so
+        set ::VTKSLICERBASE_BUILD_TCL_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBaseTCL.so
         set ::GENERATOR "Unix Makefiles"
         set ::COMPILER_PATH "/usr/bin"
         set ::COMPILER "g++"
@@ -307,8 +307,8 @@ switch $::tcl_platform(os) {
         set ::SERIAL_MAKE "make"
     }
     "Darwin" {
-        set ::VTKSLICERBASE_BUILD_LIB $::SLICER_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBase.dylib
-        set ::VTKSLICERBASE_BUILD_TCL_LIB $::SLICER_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBaseTCL.dylib
+        set ::VTKSLICERBASE_BUILD_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBase.dylib
+        set ::VTKSLICERBASE_BUILD_TCL_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBaseTCL.dylib
         set ::GENERATOR "Unix Makefiles"
         set ::COMPILER_PATH "/usr/bin"
         set ::COMPILER "g++"
@@ -322,8 +322,8 @@ switch $::tcl_platform(os) {
         # (VC7 is Visual C++ 7.0, also known as the .NET version)
 
 
-        set ::VTKSLICERBASE_BUILD_LIB $::SLICER_HOME/Base/builds/$::env(BUILD)/bin/$::VTK_BUILD_TYPE/vtkSlicerBase.lib
-        set ::VTKSLICERBASE_BUILD_TCL_LIB $::SLICER_HOME/Base/builds/$::env(BUILD)/bin/$::VTK_BUILD_TYPE/vtkSlicerBaseTCL.lib
+        set ::VTKSLICERBASE_BUILD_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/$::VTK_BUILD_TYPE/vtkSlicerBase.lib
+        set ::VTKSLICERBASE_BUILD_TCL_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/$::VTK_BUILD_TYPE/vtkSlicerBaseTCL.lib
 
         set ::CMAKE $::CMAKE_PATH/bin/cmake.exe
 

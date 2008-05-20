@@ -23,13 +23,17 @@ SET(TCLAP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/tclap)
 SET(ModuleDescriptionParser_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/ModuleDescriptionParser)
 SET(LoadableModule_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/LoadableModule)
 SET(GenerateCLP_DIR_CONFIG ${Slicer3_BINARY_DIR}/Libs/GenerateCLP)
-SET(GenerateCLP_USE_FILE_CONFIG ${Slicer3_BINARY_DIR}/Libs/GenerateCLP/UseGenerateCLP.cmake)
-SET(Slicer3_INCLUDE_DIRS_CONFIG ${Slicer3_INCLUDE_DIRS})
-SET(Slicer3_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin)
+
+SET(Slicer3_Libs_INCLUDE_DIRS_CONFIG ${Slicer3_Libs_INCLUDE_DIRS})
+SET(Slicer3_Libs_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin)
+
+SET(Slicer3_Base_INCLUDE_DIRS_CONFIG ${Slicer3_Base_INCLUDE_DIRS})
+SET(Slicer3_Base_LIBRARY_DIRS_CONFIG ${Slicer3_BINARY_DIR}/bin)
 
 SET(ITK_DIR_CONFIG ${ITK_DIR})
 SET(VTK_DIR_CONFIG ${VTK_DIR})
 SET(KWWidgets_DIR_CONFIG ${KWWidgets_DIR})
+SET(TEEM_DIR_CONFIG ${TEEM_DIR})
 
 # Configure Slicer3Config.cmake for the install tree.
 CONFIGURE_FILE(

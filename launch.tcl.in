@@ -27,20 +27,20 @@
  
 
 #
-# SLICER_HOME: , find it relative to the location of this script
+# Slicer3_HOME: , find it relative to the location of this script
 # -- when run by the launcher, this variable will be set already
 # -- this environment variable can be relied on by slicer code to know "where it lives"
 #    e.g. the build or install dir, so resources and other files can be found
 #
 set wd [pwd]
-cd [file dirname [file dirname [info script]]]
-set ::SLICER_HOME [pwd]
+cd [file dirname [file dirname [file dirname [info script]]]]
+set ::Slicer3_HOME [pwd]
 cd $wd
-set ::env(SLICER_HOME) $::SLICER_HOME
+set ::env(Slicer3_HOME) $::Slicer3_HOME
 
 if { [string match -nocase "windows*" $::tcl_platform(os)] } {
-  set ::SLICER_HOME [file attributes $::SLICER_HOME -shortname]
-  set ::env(SLICER_HOME) $::SLICER_HOME
+  set ::Slicer3_HOME [file attributes $::Slicer3_HOME -shortname]
+  set ::env(Slicer3_HOME) $::Slicer3_HOME
 }
 
 #
@@ -88,77 +88,117 @@ if { [string match -nocase "windows*" $::tcl_platform(os)] } {
   set ext ".exe"
 }
 
-if { [file exists $::env(SLICER_HOME)/bin/vtk$ext] } {
+if { [file exists $::env(Slicer3_HOME)/bin/vtk$ext] } {
   set installed 1
-}
-
-# for windows builds there's an extra subdir like "Debug" or "RelWithDebInfo"
-# (it doesn't exist once the program has been installed)
-set ::BUILD_SUBDIR  ""
-if { !$installed && [string match -nocase "windows*" $::tcl_platform(os)] } {
-  set ::BUILD_SUBDIR  @CMAKE_BUILD_TYPE@
 }
 
 if { $installed } {
 
   # if installed, everything is in the local tree
-  set ::SLICER3_REAL $::SLICER_HOME/bin/Slicer3-real$ext
-  set ::env(VTK_DIR)           $::env(SLICER_HOME)/lib
-  set ::env(VTK_BIN_DIR)       $::env(SLICER_HOME)/bin
-  set ::env(KWWidgets_DIR)     $::env(SLICER_HOME)/lib/KWWidgets
-  set ::env(KWWidgets_LIB_DIR) $::env(SLICER_HOME)/lib/KWWidgets
-  set ::env(KWWidgets_BIN_DIR) $::env(SLICER_HOME)/bin
-  set ::env(ITK_BIN_DIR)       $::env(SLICER_HOME)/lib/InsightToolkit
-  set ::env(SANDBOX_BIN_DIR)   ""
-  set ::env(TCL_LIBRARY)       $::env(SLICER_HOME)/lib/Slicer3/tcl/lib
-  set ::env(TCL_DIR)           $::env(SLICER_HOME)/lib/Slicer3/tcl
-  set ::env(TEEM_DIR)          $::env(SLICER_HOME)/lib/TEEM-1-9
-  set ::env(MRML_DIR)          $::env(SLICER_HOME)/lib/MRML
-  set ::env(PARSER_DIR)        $::env(SLICER_HOME)/lib/ModuleDescriptionParser
-  set ::env(SLICER_LIB_DIR)    $::env(SLICER_HOME)/lib/Slicer3
+  set ::Slicer3_REAL $::Slicer3_HOME/bin/Slicer3-real$ext
 
-  set ::env(SLICER_BIN_DIR)    $::env(SLICER_HOME)/bin
+  set ::env(SANDBOX_BIN_DIR)   ""
+
+  # 3rd party toolkits
+
+  set ::env(VTK_DIR)            $::env(Slicer3_HOME)/lib/vtk-@VTK_MAJOR_VERSION@.@VTK_MINOR_VERSION@
+  set ::env(VTK_BIN_DIR)        $::env(Slicer3_HOME)/bin
+
+  set ::env(KWWidgets_DIR)      $::env(Slicer3_HOME)/lib/KWWidgets
+  set ::env(KWWidgets_LIB_DIR)  $::env(Slicer3_HOME)/lib/KWWidgets
+  set ::env(KWWidgets_BIN_DIR)  $::env(Slicer3_HOME)/bin
+
+  set ::env(ITK_BIN_DIR)        $::env(Slicer3_HOME)/lib/InsightToolkit
+
+  set ::env(TEEM_DIR)           $::env(Slicer3_HOME)/lib/TEEM-@TEEM_VERSION_MAJOR@.@TEEM_VERSION_MINOR@
+
+  set ::env(TCL_LIBRARY)        $::env(Slicer3_HOME)/lib/Slicer3/tcl/lib
+  set ::env(TCL_DIR)            $::env(Slicer3_HOME)/lib/Slicer3/tcl
+
+  # Slicer3 Libs
+
+  set ::env(FreeSurfer_DIR)     $::env(Slicer3_HOME)/lib/FreeSurfer
+  set ::env(IGT_DIR)            $::env(Slicer3_HOME)/lib/IGT
+  set ::env(ITKCommandIO_DIR)   $::env(Slicer3_HOME)/lib/ITKCommandIO
+  set ::env(LoadableModule_DIR) $::env(Slicer3_HOME)/lib/LoadableModule
+  set ::env(MGHImageIO_DIR)     $::env(Slicer3_HOME)/lib/MGHImageIO
+  set ::env(MRML_DIR)           $::env(Slicer3_HOME)/lib/MRML
+  set ::env(ModuleDescriptionParser_DIR)        $::env(Slicer3_HOME)/lib/ModuleDescriptionParser
+  set ::env(MRMLIDImageIO_DIR)  $::env(Slicer3_HOME)/lib/MRMLIDImageIO
+  set ::env(Qdec_DIR)           $::env(Slicer3_HOME)/lib/Qdec
+  set ::env(RemoteIO_DIR)       $::env(Slicer3_HOME)/lib/RemoteIO
+  set ::env(SlicerIO_DIR)       $::env(Slicer3_HOME)/lib/SlicerIO
+  set ::env(tclap_DIR)          $::env(Slicer3_HOME)/lib/tclap
+  set ::env(vtkITK_DIR)         $::env(Slicer3_HOME)/lib/vtkITK
+  set ::env(vtkTeem_DIR)        $::env(Slicer3_HOME)/lib/vtkTeem
+
+  # Slicer3 Base
+
+  set ::env(Slicer3_LIB_DIR)    $::env(Slicer3_HOME)/lib/Slicer3
+  set ::env(Slicer3_BIN_DIR)    $::env(Slicer3_HOME)/bin
+
+  set ::env(Slicer3_PLUGINS_DIR)  $::env(Slicer3_HOME)/@Slicer3_INSTALL_PLUGINS_LIB_DIR@
+  set ::env(Slicer3_MODULES_DIR)  $::env(Slicer3_HOME)/@Slicer3_INSTALL_MODULES_LIB_DIR@
 
 } else {
 
-  #
-  # not installed, 
-  # set variables using cmake configuration info
-  # - if CMAKE_BUILD_TYPE not set, look for build type
-  #
+  set ::BUILD_SUBDIR  ""
   if {$::env(BUILD) == $::WINDOWS} {
-    if { $::BUILD_SUBDIR != "" } {
-      set ::SLICER3_REAL $::SLICER_HOME/bin/$::BUILD_SUBDIR/Slicer3-real.exe
-    } else {
-      foreach buildType {Debug RelWithDebInfo Release MinSizeRel} {
-        set ::SLICER3_REAL $::SLICER_HOME/bin/$buildType/Slicer3-real.exe
-        if { [file exists $::SLICER3_REAL] } {
-          set ::BUILD_SUBDIR $buildType
-          break;
-        }
+    foreach buildType {"." Debug RelWithDebInfo Release MinSizeRel} {
+      set ::Slicer3_REAL $::Slicer3_HOME/bin/$buildType/Slicer3-real.exe
+      if { [file exists $::Slicer3_REAL] } {
+        set ::BUILD_SUBDIR $buildType
+        break;
       }
     }
   } else {
-    set ::SLICER3_REAL $::SLICER_HOME/bin/Slicer3-real
+    set ::Slicer3_REAL $::Slicer3_HOME/bin/Slicer3-real
   }
-  set ::env(VTK_DIR)           [file normalize "@VTK_DIR@"]
-  set ::env(VTK_BIN_DIR)       [file normalize "@VTK_DIR@/bin/$::BUILD_SUBDIR"]
-  set ::env(KWWidgets_DIR)     [file normalize "@KWWidgets_DIR@"]
-  set ::env(KWWidgets_LIB_DIR) [file normalize "@KWWidgets_DIR@/bin/$::BUILD_SUBDIR"]
-  set ::env(KWWidgets_BIN_DIR) [file normalize "@KWWidgets_DIR@/bin/$::BUILD_SUBDIR"]
-  set ::env(ITK_BIN_DIR)       [file normalize "@ITK_DIR@/bin/$::BUILD_SUBDIR"]
   set ::env(SANDBOX_BIN_DIR)   ""
-  set ::env(TCL_LIBRARY)       [file normalize "@TCL_LIBRARY@"]
-  set ::env(TCL_DIR)           [file normalize [file dirname [file dirname $::env(TCL_LIBRARY)]]]
-  set ::env(TEEM_DIR)          [file normalize "@TEEM_DIR@/bin/$::BUILD_SUBDIR"]
-  set ::env(SLICER_BIN_DIR)    [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
-  set ::env(SLICER_LIB_DIR)    [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
-  set ::env(MRML_DIR)          [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
-  set ::env(PARSER_DIR)        [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
 
+  # 3rd party toolkits
+
+  set ::env(VTK_DIR)            [file normalize "@VTK_DIR@"]
+  set ::env(VTK_BIN_DIR)        [file normalize "@VTK_DIR@/bin/$::BUILD_SUBDIR"]
+
+  set ::env(KWWidgets_DIR)      [file normalize "@KWWidgets_DIR@"]
+  set ::env(KWWidgets_LIB_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::BUILD_SUBDIR"]
+  set ::env(KWWidgets_BIN_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::BUILD_SUBDIR"]
+
+  set ::env(ITK_BIN_DIR)        [file normalize "@ITK_DIR@/bin/$::BUILD_SUBDIR"]
+
+  set ::env(TCL_LIBRARY)        [file normalize "@TCL_LIBRARY@"]
+  set ::env(TCL_DIR)            [file normalize [file dirname [file dirname $::env(TCL_LIBRARY)]]]
+
+  set ::env(TEEM_DIR)           [file normalize "@TEEM_DIR@/bin/$::BUILD_SUBDIR"]
+
+  # Slicer3 Libs
+
+  set ::env(FreeSurfer_DIR)     [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(IGT_DIR)            [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(ITKCommandIO_DIR)   [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(LoadableModule_DIR) [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(MGHImageIO_DIR)     [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(MRML_DIR)           [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(ModuleDescriptionParser_DIR)        [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(MRMLIDImageIO_DIR)  [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(Qdec_DIR)           [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(RemoteIO_DIR)       [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(SlicerIO_DIR)       [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(tclap_DIR)          [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(vtkITK_DIR)         [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(vtkTeem_DIR)        [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+
+  # Slicer3 Base
+
+  set ::env(Slicer3_BIN_DIR)    [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+  set ::env(Slicer3_LIB_DIR)    [file normalize "@LIBRARY_OUTPUT_PATH@/$::BUILD_SUBDIR"]
+
+  set ::env(Slicer3_PLUGINS_DIR) [file normalize "$::env(Slicer3_HOME)/@Slicer3_INSTALL_PLUGINS_LIB_DIR@/$::BUILD_SUBDIR"]
+  set ::env(Slicer3_MODULES_DIR) [file normalize "$::env(Slicer3_HOME)/@Slicer3_INSTALL_MODULES_LIB_DIR@/$::BUILD_SUBDIR"]
 }
 
-set ::env(SLICER_VERSION)    @Slicer3_VERSION_PATCH@
+set ::env(Slicer3_VERSION)    @Slicer3_VERSION_PATCH@
 
 
 proc launch_ParseArgs {argv} {
@@ -258,13 +298,28 @@ proc launch_SetPaths {} {
             set ::env(LD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(MRML_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(LD_LIBRARY_PATH) $::env(VTK_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(PARSER_DIR):$::env(LD_LIBRARY_PATH)
-            set ::env(LD_LIBRARY_PATH) $::env(SLICER_LIB_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(FreeSurfer_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(IGT_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(ITKCommandIO_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(LoadableModule_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(MGHImageIO_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(MRML_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(ModuleDescriptionParser_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(MRMLIDImageIO_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(Qdec_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(RemoteIO_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(SlicerIO_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(tclap_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(vtkITK_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(vtkTeem_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(Slicer3_LIB_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(Slicer3_PLUGINS_DIR):$::env(LD_LIBRARY_PATH)
+            set ::env(LD_LIBRARY_PATH) $::env(Slicer3_MODULES_DIR):$::env(LD_LIBRARY_PATH)
             set ::env(PATH) "$::env(PATH):$::env(TEEM_DIR)"
-            set ::env(PATH) "$::env(SLICER_BIN_DIR):$::env(PATH)"
-            set ::env(PATH) "$::SLICER_HOME/lib/Slicer3/Plugins:$::env(PATH)"
+            set ::env(PATH) "$::env(Slicer3_BIN_DIR):$::env(PATH)"
+            set ::env(PATH) "$::env(Slicer3_PLUGINS_DIR):$::env(PATH)"
+            set ::env(PATH) "$::env(Slicer3_MODULES_DIR):$::env(PATH)"
         } elseif {$::env(BUILD) ==  $::DARWIN || $::env(BUILD) == $::DARWIN_X86} { 
             # add vtk, slicer, and tcl bins
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
@@ -272,13 +327,28 @@ proc launch_SetPaths {} {
             set ::env(DYLD_LIBRARY_PATH) $::env(ITK_BIN_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TCL_DIR)/lib:$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(TEEM_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(MRML_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(DYLD_LIBRARY_PATH) $::env(VTK_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(PARSER_DIR):$::env(DYLD_LIBRARY_PATH)
-            set ::env(DYLD_LIBRARY_PATH) $::env(SLICER_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(FreeSurfer_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(IGT_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(ITKCommandIO_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(LoadableModule_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(MGHImageIO_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(MRML_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(ModuleDescriptionParser_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(MRMLIDImageIO_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(Qdec_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(RemoteIO_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(SlicerIO_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(tclap_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(vtkITK_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(vtkTeem_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_LIB_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_PLUGINS_DIR):$::env(DYLD_LIBRARY_PATH)
+            set ::env(DYLD_LIBRARY_PATH) $::env(Slicer3_MODULES_DIR):$::env(DYLD_LIBRARY_PATH)
             set ::env(PATH) $::env(PATH):$::env(TEEM_DIR)
-            set ::env(PATH) "$::env(SLICER_BIN_DIR):$::env(PATH)"
-            set ::env(PATH) "$::SLICER_HOME/lib/Slicer3/Plugins:$::env(PATH)"
+            set ::env(PATH) "$::env(Slicer3_BIN_DIR):$::env(PATH)"
+            set ::env(PATH) "$::env(Slicer3_PLUGINS_DIR):$::env(PATH)"
+            set ::env(PATH) "$::env(Slicer3_MODULES_DIR):$::env(PATH)"
         } elseif {$::env(BUILD) == $::WINDOWS} {
             # add vtk, slicer, and tcl bins
             set ::env(Path) $::env(VTK_BIN_DIR)\;$::env(Path)
@@ -286,11 +356,25 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(ITK_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(TCL_DIR)/bin\;$::env(Path)
             set ::env(Path) $::env(TEEM_DIR)\;$::env(Path)
-            set ::env(Path) $::env(MRML_DIR)\;$::env(Path)
             set ::env(Path) $::env(VTK_DIR)\;$::env(Path)
-            set ::env(Path) $::env(PARSER_DIR)\;$::env(Path)
-            set ::env(Path) $::env(SLICER_BIN_DIR)\;$::env(Path)
-            set ::env(Path) $::env(SLICER_LIB_DIR)\;$::env(Path)
+            set ::env(Path) $::env(FreeSurfer_DIR)\;$::env(Path)
+            set ::env(Path) $::env(IGT_DIR)\;$::env(Path)
+            set ::env(Path) $::env(ITKCommandIO_DIR)\;$::env(Path)
+            set ::env(Path) $::env(LoadableModule_DIR)\;$::env(Path)
+            set ::env(Path) $::env(MGHImageIO_DIR)\;$::env(Path)
+            set ::env(Path) $::env(MRML_DIR)\;$::env(Path)
+            set ::env(Path) $::env(ModuleDescriptionParser_DIR)\;$::env(Path)
+            set ::env(Path) $::env(MRMLIDImageIO_DIR)\;$::env(Path)
+            set ::env(Path) $::env(Qdec_DIR)\;$::env(Path)
+            set ::env(Path) $::env(RemoteIO_DIR)\;$::env(Path)
+            set ::env(Path) $::env(SlicerIO_DIR)\;$::env(Path)
+            set ::env(Path) $::env(tclap_DIR)\;$::env(Path)
+            set ::env(Path) $::env(vtkITK_DIR)\;$::env(Path)
+            set ::env(Path) $::env(vtkTeem_DIR)\;$::env(Path)
+            set ::env(Path) $::env(Slicer3_BIN_DIR)\;$::env(Path)
+            set ::env(Path) $::env(Slicer3_LIB_DIR)\;$::env(Path)
+            set ::env(Path) $::env(Slicer3_PLUGINS_DIR)\;$::env(Path)
+            set ::env(Path) $::env(Slicer3_MODULES_DIR)\;$::env(Path)
         } else {
             puts stderr "Libraries: unknown build $::env(BUILD)"
         }
@@ -304,7 +388,7 @@ proc launch_SetPaths {} {
     #
     set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
-    set ::env(TCLLIBPATH) "$::env(SLICER_HOME)/Base/Wrapping/Tcl/vtkSlicerBase $::env(TCLLIBPATH)"
+    set ::env(TCLLIBPATH) "$::env(Slicer3_HOME)/Base/Wrapping/Tcl/vtkSlicerBase $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itcl3.2 $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itk3.2 $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/iwidgets4.0.1 $::env(TCLLIBPATH)"
@@ -478,7 +562,7 @@ proc launch_RunProgram {} {
     # determine the correct arguments and executable for the platform
     #
     if { $::LAUNCH(launchCommand) == "" } {
-      set ::LAUNCH(launchCommand) $::SLICER3_REAL
+      set ::LAUNCH(launchCommand) $::Slicer3_REAL
     }
 
     set ::errorInfo ""  ;# reset error info so we are sure to get errors from the 
