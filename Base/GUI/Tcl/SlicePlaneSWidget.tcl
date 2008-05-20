@@ -65,6 +65,12 @@ itcl::body SlicePlaneSWidget::constructor {sliceGUI} {
 
   set o(plane) [vtkNew vtkImplicitPlaneWidget]
   set rwi [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindowInteractor]
+
+  # Update the size of the render window interactor to match that of the render window
+  set rw [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow]
+  $rwi UpdateSize [lindex [$rw GetSize] 0] [lindex [$rw GetSize] 1]
+  # the problem is that it gets reset, so there's another call in the visibility toggle
+
   $o(plane) SetInteractor $rwi
   $o(plane) SetDrawPlane 0
   $o(plane) PlaceWidget -100 100 -100 100 -100 100
@@ -117,6 +123,15 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
               $this updateWidgetFromNode $sliceNode $o(plane)
               set visible [$sliceNode GetWidgetVisible]
               $sliceNode SetWidgetVisible [expr !$visible]
+              if { [expr !$visible] } {
+                  set rwi [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindowInteractor]
+                  # Update the size of the render window interactor to match that of the render window
+                  set rw [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow]
+                  if {[$rw GetSize] != [$rwi GetSize]} { 
+                      # puts "Updating interactor size after making [$sliceNode GetName] plane widget visible, rw size = [$rw GetSize], rwi size is currently = [$rwi GetSize]"
+                      $rwi UpdateSize [lindex [$rw GetSize] 0] [lindex [$rw GetSize] 1]
+                  }
+              }
             }
           }
         }
