@@ -2154,7 +2154,7 @@ proc vtkFreeSurferReadersUncompressMGH {} {
     if {$vtkFreeSurferReaders(MGHDecompressorExec) == "" ||
         ![file executable $vtkFreeSurferReaders(MGHDecompressorExec)]} {
         set vtkFreeSurferReaders(MGHDecompressorExec) [tk_getOpenFile \
-                                                           -initialdir $::env(SLICER_HOME) \
+                                                           -initialdir $::env(Slicer3_HOME) \
                                                            -parent .tMain \
                                                            -title "A file that can gunzip:"]
     }

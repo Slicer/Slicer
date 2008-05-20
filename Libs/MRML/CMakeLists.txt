@@ -1,10 +1,39 @@
 project(MRML)
 
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
 # --------------------------------------------------------------------------
-# Special build configs (to handle linking on windows)
+# Include dirs
+
+set(include_dirs
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${vtkITK_SOURCE_DIR}
+  ${vtkITK_BINARY_DIR}
+  ${vtkTeem_SOURCE_DIR}
+  ${vtkTeem_BINARY_DIR}
+  ${FreeSurfer_SOURCE_DIR}
+  ${FreeSurfer_BINARY_DIR}
+  )
+
+include_directories(${include_dirs})
+
+slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
+slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
+
 configure_file(
-  ${MRML_SOURCE_DIR}/vtkMRMLConfigure.h.in 
-  ${MRML_BINARY_DIR}/vtkMRMLConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkMRMLConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkMRMLConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkMRMLConfigure.h"
+  DESTINATION include/${PROJECT_NAME} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -113,48 +142,20 @@ set_source_files_properties(
   )
 
 # --------------------------------------------------------------------------
-# Include dirs
-
-set(include_dirs
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${vtkTeem_SOURCE_DIR}
-  ${vtkTeem_BINARY_DIR}
-  ${FreeSurfer_SOURCE_DIR}
-  ${FreeSurfer_BINARY_DIR}
-  )
-
-include_directories(${include_dirs})
-
-GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
-SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
-
-# --------------------------------------------------------------------------
 # Wrapping
 
-include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-set(VTK_WRAP_HINTS ${MRML_SOURCE_DIR}/Wrapping/Tcl/hints)
+set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
 vtk_wrap_tcl3(MRML MRML_TCL_SRCS "${MRML_SRCS}" "")
 
-# Build the library
+# --------------------------------------------------------------------------
+# Build and install the library
 
-add_library(MRML 
-  ${MRML_SRCS} ${MRML_TCL_SRCS}
+set(lib_name MRML)
+add_library(${lib_name} 
+  ${MRML_SRCS} 
+  ${MRML_TCL_SRCS}
   )
-
-GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
-SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} MRML)
-
-if(BUILD_SHARED_LIBS)
-  install(TARGETS MRML
-    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-    LIBRARY DESTINATION lib/MRML COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION lib/MRML COMPONENT Development)
-endif(BUILD_SHARED_LIBS)
-
-target_link_libraries(MRML
+target_link_libraries(${lib_name}
   vtkITK
   vtkCommonTCL
   vtkImagingTCL
@@ -176,6 +177,15 @@ target_link_libraries(MRML
   vtkTeem
   )
 
+slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
+slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${lib_name})
+
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+  )
+
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
@@ -183,6 +193,34 @@ if(BUILD_TESTING)
   subdirs(Testing)
 endif(BUILD_TESTING)
 
-file(GLOB __files1 "${MRML_SOURCE_DIR}/*.h")
-install(FILES ${__files1} DESTINATION include/MRML COMPONENT Development)
-install(FILES ${MRML_BINARY_DIR}/vtkMRMLConfigure.h DESTINATION include/MRML COMPONENT Development)
+# Install the testing data
+
+file(GLOB_RECURSE MRMLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.mrml")
+file(GLOB_RECURSE TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.tcl")
+file(GLOB_RECURSE XMLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.xml")
+file(GLOB_RECURSE GZFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.gz")
+file(GLOB_RECURSE NHDRFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.nhdr")
+file(GLOB_RECURSE NRRDFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.nrrd")
+file(GLOB_RECURSE VTKFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.vtk")
+
+foreach(file 
+    ${MRMLFILES}
+    ${TCLFILES}
+    ${XMLFILES}
+    ${GZFILES}
+    ${NHDRFILES}
+    ${NRRDFILES}
+    ${VTKFILES}
+    )
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}/${file}
+    COPYONLY
+    )
+endforeach(file) 
+
+install(DIRECTORY
+  Testing
+  DESTINATION share/${PROJECT_NAME} COMPONENT Development
+  PATTERN ".svn" EXCLUDE
+  )

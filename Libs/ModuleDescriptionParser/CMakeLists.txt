@@ -1,15 +1,51 @@
 project(ModuleDescriptionParser)
 
 cmake_minimum_required(VERSION 2.4)
-
-configure_file(
-  ${ModuleDescriptionParser_SOURCE_DIR}/ModuleDescriptionParserConfigure.h.in 
-  ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfigure.h
-  )
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
 ## ITK is required for expat.h
+
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
+
+if(Slicer3_USE_PYTHON)
+  find_package(PythonLibs)
+endif(Slicer3_USE_PYTHON)
+
+# --------------------------------------------------------------------------
+# Include dirs
+
+set(include_dirs
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR} 
+  )
+
+if(Slicer3_USE_PYTHON)
+  # Python requires a pointer to the Slicer Application
+  set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH})
+endif(Slicer3_USE_PYTHON)
+
+include_directories(${include_dirs})
+
+slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
+slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/ModuleDescriptionParserConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/ModuleDescriptionParserConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/ModuleDescriptionParserConfigure.h"
+  DESTINATION include/${PROJECT_NAME} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
+# Sources
 
 set(ModuleDescriptionParser_SRCS
   ModuleParameter.cxx
@@ -31,8 +67,8 @@ if(USE_BFD)
       # make sure we can build with libbfd
       message(STATUS "Testing libbfd")
       try_compile(HAVE_BFD
-        ${ModuleDescriptionParser_BINARY_DIR}/CMake
-        ${ModuleDescriptionParser_SOURCE_DIR}/CMake
+        ${CMAKE_CURRENT_BINARY_DIR}/CMake
+        ${CMAKE_CURRENT_SOURCE_DIR}/CMake
         TestBFD
         CMAKE_FLAGS 
         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
@@ -54,76 +90,56 @@ if(USE_BFD)
   endif(NOT WIN32)
 endif(USE_BFD)
 
-set(include_dirs
-  ${ModuleDescriptionParser_BINARY_DIR}
-  ${ModuleDescriptionParser_SOURCE_DIR} 
-  )
+# --------------------------------------------------------------------------
+# Build and install the library
 
-if(USE_PYTHON)
-  find_package(PythonLibs)
-endif(USE_PYTHON)
+set(lib_name ModuleDescriptionParser)
+add_library(${lib_name} 
+  ${ModuleDescriptionParser_SRCS}
+)
 
-if(USE_PYTHON)
-  # Python requires a pointer to the Slicer Application
-  set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH})
-endif(USE_PYTHON)
-
-include_directories(${include_dirs})
-
-GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
-SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
-
-add_library(ModuleDescriptionParser ${ModuleDescriptionParser_SRCS})
-
-GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
-SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} ModuleDescriptionParser)
-
-if(USE_PYTHON)
-  add_definitions(-DUSE_PYTHON)
-endif(USE_PYTHON)
-
-if(NOT WIN32)
-  if(NOT APPLE)
-    target_link_libraries(ModuleDescriptionParser util)
-  endif(NOT APPLE)
-endif(NOT WIN32)
-
-target_link_libraries(ModuleDescriptionParser
+set(link_libs
   ITKEXPAT
   itksys
   )
-if(USE_PYTHON)
-  target_link_libraries(ModuleDescriptionParser
-    ${PYTHON_LIBRARIES}
-    )
-endif(USE_PYTHON)
+if(Slicer3_USE_PYTHON)
+  set(link_libs ${link_libs} ${PYTHON_LIBRARIES})
+endif(Slicer3_USE_PYTHON)
+if(NOT WIN32 AND NOT APPLE)
+  set(link_libs ${link_libs} util pthread)
+endif(NOT WIN32 AND NOT APPLE)
+if(NOT WIN32 AND HAVE_BFD)
+  set(link_libs ${link_libs} bfd iberty)
+endif(NOT WIN32 AND HAVE_BFD)
 
-if(NOT WIN32)
-  if(HAVE_BFD)
-    target_link_libraries(ModuleDescriptionParser bfd iberty)
-  endif(HAVE_BFD)
-endif(NOT WIN32)
+target_link_libraries(${lib_name} ${link_libs})
+
+slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
+slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${lib_name})
+
+install(TARGETS ${lib_name} 
+  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
+# Testing
 
 if(BUILD_TESTING)
   subdirs(Testing)
 endif(BUILD_TESTING)
 
+# --------------------------------------------------------------------------
+# Install support files
+
 include(GenerateModuleDescriptionParserConfig.cmake) 
 
-configure_file(${ModuleDescriptionParser_SOURCE_DIR}/UseModuleDescriptionParser.cmake.in
-  ${ModuleDescriptionParser_BINARY_DIR}/UseModuleDescriptionParser.cmake COPYONLY IMMEDIATE)
-
-
-install(TARGETS ModuleDescriptionParser 
-  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION lib/ModuleDescriptionParser COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/ModuleDescriptionParser COMPONENT Development)
-
-file(GLOB __files1 "${ModuleDescriptionParser_SOURCE_DIR}/*.h")
-install(FILES ${__files1} DESTINATION include/ModuleDescriptionParser COMPONENT Development)
-install(FILES ${ModuleDescriptionParser_BINARY_DIR}/ModuleDescriptionParserConfigure.h DESTINATION include/ModuleDescriptionParser COMPONENT Development)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UseModuleDescriptionParser.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake COPYONLY IMMEDIATE)
 
 install(FILES 
-  ${ModuleDescriptionParser_BINARY_DIR}/UseModuleDescriptionParser.cmake 
-  ${ModuleDescriptionParser_BINARY_DIR}/install/ModuleDescriptionParserConfig.cmake 
-  DESTINATION lib/ModuleDescriptionParser COMPONENT Development)
+  ${CMAKE_CURRENT_BINARY_DIR}/UseModuleDescriptionParser.cmake 
+  ${CMAKE_CURRENT_BINARY_DIR}/install/ModuleDescriptionParserConfig.cmake 
+  DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+  )

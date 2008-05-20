@@ -1,0 +1,15 @@
+# GenerateLM could be installed anywhere, so set all paths based on where 
+# this file was found (which should be the lib/GenerateLM directory of the 
+# installation)
+get_filename_component(GenerateLM_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+if(WIN32)
+  set(__EXE_EXT ".exe")
+endif(WIN32)
+
+set(GenerateLM_INCLUDE_DIRS "${GenerateLM_CONFIG_DIR}/../../include/GenerateLM")
+set(GenerateLM_LIBRARY_DIRS "${GenerateLM_CONFIG_DIR}")
+set(GenerateLM_USE_FILE "${GenerateLM_CONFIG_DIR}/UseGenerateLM.cmake")
+set(GENERATELM_EXE "${GenerateLM_CONFIG_DIR}/../../bin/GenerateLM${__EXE_EXT}")
+set(LoadableModule_DIR "${GenerateLM_CONFIG_DIR}/../LoadableModule")
+set(ITK_DIR "${GenerateLM_CONFIG_DIR}/../InsightToolkit")

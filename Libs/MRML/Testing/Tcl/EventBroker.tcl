@@ -8,7 +8,7 @@ proc EventBrokerTmpDir {} {
   if { [file isdirectory g:/tmp] } {
     return g:/tmp
   }
-  return $::env(SLICER_HOME)/Testing/Temporary
+  return $::env(Slicer3_HOME)/Testing/Temporary
 }
 
 proc EventBrokerPrint {} {
@@ -47,7 +47,7 @@ proc EventBrokerLogCommand { cmd {fileName brokercmd.log} } {
 
 proc EventBrokerLoadSampleScene { {sceneFileName ""} } {
   if { $sceneFileName == "" } {
-    set sceneFileName $::env(SLICER_HOME)/../Slicer3/Libs/MRML/Testing/vol_and_cube_camera.mrml
+    set sceneFileName $::env(Slicer3_HOME)/share/MRML/Testing/vol_and_cube_camera.mrml
   }
 
   $::slicer3::MRMLScene SetURL $sceneFileName

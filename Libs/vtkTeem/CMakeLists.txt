@@ -1,19 +1,40 @@
 project(vtkTeem)
-cmake_minimum_required(VERSION 2.4)
 
+cmake_minimum_required(VERSION 2.4)
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-# --------------------------------------------------------------------------
-# Sources
-
-# include a test for endianness (used to be done by default)
-include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
-test_big_endian(CMAKE_WORDS_BIGENDIAN)
-
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
+
+# --------------------------------------------------------------------------
+# Include dirs
+
+set(include_dirs
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
+include_directories(${include_dirs})
+
+slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
+slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkTeemConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkTeemConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkTeemConfigure.h"
+  DESTINATION include/${PROJECT_NAME} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
+# Sources
 
 set(vtkTeem_SRCS
   vtkNRRDReader.cxx
@@ -23,7 +44,6 @@ set(vtkTeem_SRCS
   vtkTeemEstimateDiffusionTensor.cxx
   vtkDiffusionTensorGlyph.cxx
   vtkPolyDataTensorToColor.cxx
-
   vtkBSplineInterpolateImageFunction.cxx
   vtkHyperPointandArray.cxx
   vtkHyperStreamlineDTMRI.cxx
@@ -53,19 +73,6 @@ set_source_files_properties(
   )
 
 # --------------------------------------------------------------------------
-# Include dirs
-
-set(include_dirs
-  ${vtkTeem_SOURCE_DIR}
-  ${vtkTeem_BINARY_DIR}
-  )
-
-include_directories(${include_dirs})
-
-GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
-SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
-
-# --------------------------------------------------------------------------
 # Wrapping
 
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
@@ -74,22 +81,11 @@ vtk_wrap_tcl3(vtkTeem vtkTeem_TCL_SRCS "${vtkTeem_SRCS}" "")
 # --------------------------------------------------------------------------
 # Build the library
 
-add_library(vtkTeem 
+set(lib_name vtkTeem)
+add_library(${lib_name} 
   ${vtkTeem_SRCS} 
   ${vtkTeem_TCL_SRCS} 
   )
-
-GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
-SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} vtkTeem)
-
-if(Slicer3_SOURCE_DIR)
-  if(BUILD_SHARED_LIBS)
-    install(TARGETS vtkTeem
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib COMPONENT Development)
-  endif(BUILD_SHARED_LIBS)
-endif(Slicer3_SOURCE_DIR)
 
 # after teem 1.9, all the teem libraries are groups in one big libteem.so
 if ( ${TEEM_VERSION_MAJOR} GREATER 1 )
@@ -102,13 +98,22 @@ else ( ${TEEM_VERSION_MAJOR} GREATER 1 )
   endif ( ${TEEM_VERSION_MINOR} LESS 10 )
 endif ( ${TEEM_VERSION_MAJOR} GREATER 1 )
 
-target_link_libraries(vtkTeem 
+target_link_libraries(${lib_name} 
   vtkCommon
   vtkFiltering
   vtkImagingTCL
   vtkIOTCL
   vtkGraphicsTCL
   ${TEEM_LIBRARIES}
+  )
+
+slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
+slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${lib_name})
+
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -118,12 +123,11 @@ if(BUILD_TESTING)
   subdirs(Testing)
 endif(BUILD_TESTING)
 
-configure_file(
-  ${vtkTeem_SOURCE_DIR}/vtkTeemConfigure.h.in 
-  ${vtkTeem_BINARY_DIR}/vtkTeemConfigure.h
-  )
+# --------------------------------------------------------------------------
+# Install support files
 
 configure_file(
-  ${vtkTeem_SOURCE_DIR}/vtkTeemConfig.cmake.in 
-  ${vtkTeem_BINARY_DIR}/vtkTeemConfig.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkTeemConfig.cmake.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkTeemConfig.cmake
   )
+

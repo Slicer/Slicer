@@ -1,8 +1,33 @@
 project(FreeSurfer)
 
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
+# --------------------------------------------------------------------------
+# Include dirs
+
+set(include_dirs
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
+include_directories(${include_dirs})
+
+slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
+slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
+
 configure_file(
-  ${FreeSurfer_SOURCE_DIR}/FreeSurferConfigure.h.in
-  ${FreeSurfer_BINARY_DIR}/FreeSurferConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/FreeSurferConfigure.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/FreeSurferConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(
+  FILES ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/FreeSurferConfigure.h" 
+  DESTINATION include/${PROJECT_NAME} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
@@ -18,73 +43,58 @@ set(FreeSurfer_SRCS
   vtkFSLookupTable.cxx
   )
 
-# Abstract/pure virtual classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-#  vtkFreeSurferNode.cxx 
-#  ABSTRACT
-#  )
-
-# --------------------------------------------------------------------------
-# Include dirs
-
-set(include_dirs
-  ${FreeSurfer_SOURCE_DIR}
-  ${FreeSurfer_BINARY_DIR}
-  )
-
-include_directories(${include_dirs})
-
-GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
-SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
-
 # --------------------------------------------------------------------------
 # Wrapping
 
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 vtk_wrap_tcl3(FreeSurfer FreeSurfer_TCL_SRCS "${FreeSurfer_SRCS}" "")
 
-# Build the library
+# --------------------------------------------------------------------------
+# Build and install the library
 
-add_library(FreeSurfer 
-  ${FreeSurfer_SRCS} ${FreeSurfer_TCL_SRCS}
+set(lib_name FreeSurfer)
+add_library(${lib_name} 
+  ${FreeSurfer_SRCS} 
+  ${FreeSurfer_TCL_SRCS}
   )
 
-if(BUILD_SHARED_LIBS)
-  install(TARGETS FreeSurfer
-    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-    LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-endif(BUILD_SHARED_LIBS)
-
-target_link_libraries(FreeSurfer 
+target_link_libraries(${lib_name} 
   vtkIO
   vtkCommonTCL
   vtkIOTCL
   )
 
-GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
-SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} FreeSurfer)
+slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
+slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${lib_name})
 
-# Copy the colour files to the build directory
-set(COLORFILES
-  FreeSurferColorLUT.txt
-  Simple_surface_labels2002.txt    
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
   )
 
-set(Color_DIR  ${SLICER_LIBRARIES_DIR}/Libs/FreeSurfer)
+# --------------------------------------------------------------------------
+# Install support files
 
-foreach(colorfile ${COLORFILES})
+# Should this location change, update Libs\MRML\vtkMRMLFreeSurferProceduralColorNode.cxx
+
+# Copy the resource files to the build directory
+
+set(RESFILES
+  FreeSurferColorLUT.txt
+  Simple_surface_labels2002.txt
+  )
+foreach(file ${RESFILES})
   configure_file(
-    ${FreeSurfer_SOURCE_DIR}/${colorfile}
-    ${Color_DIR}/${colorfile}
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${Slicer3_BINARY_DIR}/share/${PROJECT_NAME}/${file}
     COPYONLY
     )
-  install(
-    FILES ${Color_DIR}/${colorfile}
-    DESTINATION lib/Slicer3/Libs/FreeSurfer
-    )
-endforeach(colorfile)
+endforeach(file)
+install(
+  FILES ${RESFILES}
+  DESTINATION share/${PROJECT_NAME}
+  )
 
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
@@ -92,3 +102,29 @@ endforeach(colorfile)
 # IF(BUILD_TESTING)
 #  SUBDIRS(Testing)
 # ENDIF(BUILD_TESTING)
+
+# Install the testing data
+
+file(GLOB_RECURSE PNGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.png")
+file(GLOB_RECURSE TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.tcl")
+file(GLOB_RECURSE CURVFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.curv")
+file(GLOB_RECURSE ORIGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.orig")
+
+foreach(file 
+    ${PNGFILES}
+    ${TCLFILES}
+    ${CURVFILES}
+    ${ORIGFILES}
+    )
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}/${file}
+    COPYONLY
+    )
+endforeach(file) 
+
+install(DIRECTORY
+  Testing
+  DESTINATION share/${PROJECT_NAME} COMPONENT Development
+  PATTERN ".svn" EXCLUDE
+  )

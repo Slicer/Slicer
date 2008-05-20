@@ -1,34 +1,33 @@
-Project(ModuleDescriptionParserTesting)
+project(ModuleDescriptionParserTesting)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
-IF(COMMAND CMAKE_POLICY)
-  CMAKE_POLICY(SET CMP0003 NEW)
-ENDIF(COMMAND CMAKE_POLICY)
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND CMAKE_POLICY)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND CMAKE_POLICY)
 
+set(PARSER1TEST_SOURCE Parser1Test )
+add_executable(Parser1Test ${PARSER1TEST_SOURCE})
+target_link_libraries(Parser1Test ModuleDescriptionParser )
 
-SET ( PARSER1TEST_SOURCE Parser1Test )
-ADD_EXECUTABLE ( Parser1Test ${PARSER1TEST_SOURCE})
-TARGET_LINK_LIBRARIES ( Parser1Test ModuleDescriptionParser )
+set(ModuleFactoryTest_SOURCE ModuleFactoryTest )
+add_executable(ModuleFactoryTest ${ModuleFactoryTest_SOURCE})
+target_link_libraries(ModuleFactoryTest ModuleDescriptionParser )
 
-SET ( ModuleFactoryTest_SOURCE ModuleFactoryTest )
-ADD_EXECUTABLE ( ModuleFactoryTest ${ModuleFactoryTest_SOURCE})
-TARGET_LINK_LIBRARIES ( ModuleFactoryTest ModuleDescriptionParser )
-
-INCLUDE_DIRECTORIES(
+include_directories(
   ${ModuleDescriptionParser_SOURCE_DIR}
   )
 
-SET( EXE_PREFIX ${EXECUTABLE_OUTPUT_PATH} )
-IF (WIN32)
-  SET( EXE_PREFIX ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE})
-ENDIF (WIN32)
+set(EXE_PREFIX ${EXECUTABLE_OUTPUT_PATH} )
+if(WIN32)
+  set(EXE_PREFIX ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE})
+endif(WIN32)
 
-SET (TEST_DATA ${ModuleDescriptionParserTesting_SOURCE_DIR}/TestData)
-ADD_TEST(Parser1Test1 ${LAUNCH_EXE} ${EXE_PREFIX}/Parser1Test ${TEST_DATA}/ParserTest1.xml)
+set(TEST_DATA ${ModuleDescriptionParserTesting_SOURCE_DIR}/TestData)
+add_test(Parser1Test1 ${LAUNCH_EXE} ${EXE_PREFIX}/Parser1Test ${TEST_DATA}/ParserTest1.xml)
 
-ADD_TEST(Parser1Test2 ${LAUNCH_EXE} ${EXE_PREFIX}/Parser1Test ${TEST_DATA}/ParserTest2.xml)
+add_test(Parser1Test2 ${LAUNCH_EXE} ${EXE_PREFIX}/Parser1Test ${TEST_DATA}/ParserTest2.xml)
 
-IF(Slicer3_BINARY_DIR)
-ADD_TEST(ModuleFactoryTest ${LAUNCH_EXE} ${EXE_PREFIX}/ModuleFactoryTest ${Slicer3_BINARY_DIR}/${SLICER_INSTALL_LIBRARIES_DIR}/Plugins/)
-ENDIF(Slicer3_BINARY_DIR)
+if(Slicer3_BINARY_DIR)
+  add_test(ModuleFactoryTest ${LAUNCH_EXE} ${EXE_PREFIX}/ModuleFactoryTest ${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/)
+endif(Slicer3_BINARY_DIR)
 

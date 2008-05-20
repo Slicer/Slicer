@@ -1467,7 +1467,7 @@ set ::env(SLICER3HOME) "c:/pieper/bwh/slicer3/latest/Slicer3"
 #--- set some stuff
 set fipsDir $::env(FIPSHOME)
 set fsSubDir $::env(SUBJECTSDIR)
-set slicer3Dir $::env(SLICER3HOME)
+set slicer3Dir $::env(Slicer3_HOME)
 
 if { $fipsDir == "" } {
     puts "Please set your (FIPS) FIPSHOME environment variable and try again."
@@ -1485,7 +1485,7 @@ if { $fipsDir == "" } {
     puts "Mapping BIRN ID to FreeSurferID with $::fsbirnid_dat"
     set ::freesurfer_subjectsdir  $fsSubDir 
     puts "Using freesurfer subject dir: $::freesurfer_subjectsdir"
-    set ::fips2mrml_FScolors [ format "%s/%s" $slicer3Dir "Libs/FreeSurfer/Testing/FreeSurferColorLUT.txt" ]
+    set ::fips2mrml_FScolors [ format "%s/%s" $slicer3Dir "/share/FreeSurfer/FreeSurferColorLUT.txt" ]
     if { [ file exists $::fips2mrml_FScolors ] } {
         puts "Using freesurfer colors: $::fips2mrml_FScolors"
     } else {

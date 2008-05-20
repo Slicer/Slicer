@@ -1,22 +1,45 @@
 project(vtkITK)
-cmake_minimum_required(VERSION 2.4)
 
+cmake_minimum_required(VERSION 2.4)
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
-
-# --------------------------------------------------------------------------
-# Sources
-
-# include a test for endianness (used to be done by default)
-include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
-test_big_endian(CMAKE_WORDS_BIGENDIAN)
 
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
+
+# --------------------------------------------------------------------------
+# Include dirs
+
+set(include_dirs
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
+include_directories(${include_dirs})
+
+slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
+slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkITKConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkITKConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h") 
+file(GLOB templates "${CMAKE_CURRENT_SOURCE_DIR}/*.txx") 
+install(FILES 
+  ${headers} 
+  ${templates}
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkITKConfigure.h
+  DESTINATION include/${PROJECT_NAME} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
+# Sources
 
 set(vtkITK_SRCS
   vtkITKNumericTraits.cxx
@@ -55,36 +78,6 @@ set_source_files_properties(
   WRAP_EXCLUDE
   )
 
-configure_file(
-  ${vtkITK_SOURCE_DIR}/vtkITKConfigure.h.in 
-  ${vtkITK_BINARY_DIR}/vtkITKConfigure.h
-  )
-
-configure_file(
-  ${vtkITK_SOURCE_DIR}/vtkITKConfig.cmake.in 
-  ${vtkITK_BINARY_DIR}/vtkITKConfig.cmake
-  )
-
-# --------------------------------------------------------------------------
-# Include dirs
-
-set(include_dirs
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  )
-
-include_directories(${include_dirs})
-
-GET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS tmp)
-SET_PERSISTENT_PROPERTY(Slicer3_INCLUDE_DIRS ${tmp} ${include_dirs})
-
-file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/*.h") 
-install(FILES 
-  ${files}
-  ${vtkITK_BINARY_DIR}/vtkITKConfigure.h
-  DESTINATION include/vtkITK COMPONENT Development
-  )
-
 # --------------------------------------------------------------------------
 # Wrapping
 
@@ -94,24 +87,12 @@ vtk_wrap_tcl3(vtkITK vtkITK_TCL_SRCS "${vtkITK_SRCS}" "")
 # --------------------------------------------------------------------------
 # Build the library
 
-add_library(vtkITK 
+set(lib_name vtkITK)
+add_library(${lib_name} 
   ${vtkITK_SRCS} 
   ${vtkITK_TCL_SRCS} 
   )
-
-GET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES tmp)
-SET_PERSISTENT_PROPERTY(Slicer3_LIBRARIES ${tmp} vtkITK)
-
-if(Slicer3_SOURCE_DIR)
-  if(BUILD_SHARED_LIBS)
-    install(TARGETS vtkITK
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib COMPONENT Development)
-  endif(BUILD_SHARED_LIBS)
-endif(Slicer3_SOURCE_DIR)
-
-target_link_libraries(vtkITK 
+target_link_libraries(${lib_name} 
   vtkCommonTCL
   vtkFilteringTCL
   vtkImagingTCL
@@ -126,9 +107,27 @@ target_link_libraries(vtkITK
   ITKDICOMParser
   )
 
+slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
+slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${lib_name})
+
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+  )
+
 # --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 
 if(BUILD_TESTING)
   subdirs(Testing)
 endif(BUILD_TESTING)
+
+# --------------------------------------------------------------------------
+# Install support files
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkITKConfig.cmake.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkITKConfig.cmake
+  )
+

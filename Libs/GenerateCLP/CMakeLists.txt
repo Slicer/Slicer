@@ -34,15 +34,18 @@ if(BUILD_TESTING)
   subdirs(Testing)
 endif(BUILD_TESTING)
 
-
 include(GenerateGenerateCLPConfig.cmake)
 
-install(TARGETS GenerateCLP RUNTIME DESTINATION bin COMPONENT Development)
+install(TARGETS GenerateCLP RUNTIME 
+  DESTINATION bin COMPONENT Development
+  )
 install(FILES ${GenerateCLP_BINARY_DIR}/GenerateCLPConfig.cmake_install
   DESTINATION lib/GenerateCLP
   COMPONENT Development
-  RENAME GenerateCLPConfig.cmake)
+  RENAME GenerateCLPConfig.cmake
+  )
 install(FILES ${GenerateCLP_BINARY_DIR}/UseGenerateCLP.cmake_install
   DESTINATION lib/GenerateCLP
   COMPONENT Development
-  RENAME UseGenerateCLP.cmake)
+  RENAME UseGenerateCLP.cmake
+  )

@@ -1,36 +1,40 @@
 # Generate the GenerateLMConfig.cmake file in the build tree and configure 
 # one the installation tree.
 
+# Following the standard pattern, UseGenerateLM.cmake is a configured file
+#
+if(GenerateLM_EXE_PATH)
+  set(GENERATELM_EXE ${GenerateLM_EXE_PATH})
+else(GenerateLM_EXE_PATH)
+  if(Slicer3_BINARY_DIR)
+    set(USE_CONFIG_FILE_INSTALL_DIR ${Slicer3_BINARY_DIR}/bin)
+  else(Slicer3_BINARY_DIR)
+    set(USE_CONFIG_FILE_INSTALL_DIR ${GenerateLM_BINARY_DIR})
+  endif(Slicer3_BINARY_DIR)
+  set(GENERATELM_EXE ${USE_CONFIG_FILE_INSTALL_DIR}/${CMAKE_CFG_INTDIR}/GenerateLM)
+endif(GenerateLM_EXE_PATH)
+
 # Settings specific to build trees
 #
 #
-SET(GenerateLM_INCLUDE_DIRS_CONFIG ${GenerateLM_BINARY_DIR} ${GenerateLM_SOURCE_DIR})
-SET(GenerateLM_LIBRARY_DIRS_CONFIG ${GenerateLM_BINARY_DIR})
-SET(GenerateLM_USE_FILE_CONFIG ${GenerateLM_SOURCE_DIR}/UseGenerateLM.cmake)
-SET(GENERATELM_EXE_CONFIG ${GENERATELM_EXE})
-SET(TCLAP_DIR_CONFIG ${TCLAP_DIR})
-SET(LoadableModule_DIR_CONFIG ${LoadableModule_DIR})
-SET(ITK_DIR_CONFIG ${ITK_DIR})
+set(GenerateLM_USE_FILE_CONFIG ${GenerateLM_BINARY_DIR}/UseGenerateLM.cmake)
+configure_file(${GenerateLM_SOURCE_DIR}/UseGenerateLM.cmake.in
+  ${GenerateLM_USE_FILE_CONFIG}
+  @ONLY IMMEDIATE)
 
-
-# Configure GenerateLMConfig.cmake for the install tree.
-CONFIGURE_FILE(${GenerateLM_SOURCE_DIR}/GenerateLMConfig.cmake.in
-               ${GenerateLM_BINARY_DIR}/GenerateLMConfig.cmake @ONLY IMMEDIATE)
-
-
+set(GenerateLM_INCLUDE_DIRS_CONFIG ${GenerateLM_BINARY_DIR} ${GenerateLM_SOURCE_DIR})
+set(GenerateLM_LIBRARY_DIRS_CONFIG ${GenerateLM_BINARY_DIR})
+set(GENERATELM_EXE_CONFIG ${GENERATELM_EXE})
+set(ITK_DIR_CONFIG ${ITK_DIR})
+configure_file(${GenerateLM_SOURCE_DIR}/GenerateLMConfig.cmake.in
+  ${GenerateLM_BINARY_DIR}/GenerateLMConfig.cmake @ONLY IMMEDIATE)
 
 # Settings specific for installation trees
 #
 #
-SET(GenerateLM_INCLUDE_DIRS_CONFIG ${CMAKE_INSTALL_PREFIX}/include/GenerateLM)
-SET(GenerateLM_LIBRARY_DIRS_CONFIG ${CMAKE_INSTALL_PREFIX}/lib/GenerateLM)
-SET(GenerateLM_USE_FILE_CONFIG ${CMAKE_INSTALL_PREFIX}/lib/GenerateLM/UseGenerateLM.cmake)
-SET(GENERATELM_EXE_CONFIG ${CMAKE_INSTALL_PREFIX}/bin/GenerateLM)
-SET(LoadableModule_DIR_CONFIG ${CMAKE_INSTALL_PREFIX}/lib/LoadableModule)
-SET(ITK_DIR_CONFIG ${CMAKE_INSTALL_PREFIX}/lib/InsightToolkit)
+configure_file(${GenerateLM_SOURCE_DIR}/UseGenerateLM.cmake.in
+  ${GenerateLM_BINARY_DIR}/UseGenerateLM.cmake_install
+  @ONLY IMMEDIATE)
 
-
-
-# Configure GenerateLMConfig.cmake for the install tree.
-CONFIGURE_FILE(${GenerateLM_SOURCE_DIR}/GenerateLMConfig.cmake.in
-               ${GenerateLM_BINARY_DIR}/install/GenerateLMConfig.cmake @ONLY IMMEDIATE)
+configure_file(${GenerateLM_SOURCE_DIR}/GenerateLMInstallConfig.cmake.in
+  ${GenerateLM_BINARY_DIR}/GenerateLMConfig.cmake_install @ONLY IMMEDIATE)

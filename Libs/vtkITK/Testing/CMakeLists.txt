@@ -17,7 +17,7 @@ ENDIF ( ITK_FOUND )
 # The test is a stand-alone executable.  However, the Slicer3
 # launcher is needed to set up shared library paths correctly.
 ############################################################################ 
-SET( SLICER_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
+SET( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 
 SET( WRAPPED_EXE_PREFIX ${EXECUTABLE_OUTPUT_PATH})
 IF (WIN32)
@@ -29,7 +29,7 @@ ADD_EXECUTABLE (VTKITKVectorReader ${VTKITKTESTVECTORREADER_SOURCE})
 TARGET_LINK_LIBRARIES (VTKITKVectorReader 
   vtkITK ITKCommon)
 ADD_TEST (VTKITKVectorReader 
-  ${SLICER_EXE} --launch ${WRAPPED_EXE_PREFIX}/VTKITKVectorReader ${MRML_SOURCE_DIR}/Testing/TestData/fixed.nrrd)
+  ${Slicer3_EXE} --launch ${WRAPPED_EXE_PREFIX}/VTKITKVectorReader ${MRML_SOURCE_DIR}/Testing/TestData/fixed.nrrd)
 
 
 SET (VTKITKBSPLINETRANSFORM_SOURCE VTKITKBSplineTransform.cxx)
@@ -37,4 +37,4 @@ ADD_EXECUTABLE (VTKITKBSplineTransform ${VTKITKBSPLINETRANSFORM_SOURCE})
 TARGET_LINK_LIBRARIES (VTKITKBSplineTransform
   vtkITK ITKCommon)
 ADD_TEST (VTKITKBSplineTransform
-  ${SLICER_EXE} --launch ${WRAPPED_EXE_PREFIX}/VTKITKBSplineTransform)
+  ${Slicer3_EXE} --launch ${WRAPPED_EXE_PREFIX}/VTKITKBSplineTransform)

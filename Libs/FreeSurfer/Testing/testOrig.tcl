@@ -1,7 +1,7 @@
 # load up the surface
 catch "sReader Delete"
 vtkFSSurfaceReader sReader
-sReader SetFileName $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/Testing/TestData/lh.dart.orig
+sReader SetFileName $::Slicer3_HOME/share/FreeSurfer/Testing/TestData/lh.dart.orig
 
 catch "normals Delete"
 vtkPolyDataNormals normals

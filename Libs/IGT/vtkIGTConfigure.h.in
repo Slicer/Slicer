@@ -19,9 +19,9 @@
 #define VTKIGT_STATIC
 #endif
 
-#cmakedefine USE_NAVITRACK
-#cmakedefine USE_IGSTK
-#ifdef USE_IGSTK
+#cmakedefine Slicer3_USE_NAVITRACK
+#cmakedefine Slicer3_USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
 #define EXECUTABLE_OUTPUT_PATH "@EXECUTABLE_OUTPUT_PATH@"
 #endif
 

@@ -61,7 +61,7 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
 
   // get the home directory and the colour file in the freesurfer lib dir
   vtksys_stl::string slicerHome;
-  if (vtksys::SystemTools::GetEnv("SLICER_HOME") == NULL)
+  if (vtksys::SystemTools::GetEnv("Slicer3_HOME") == NULL)
     {
     if (vtksys::SystemTools::GetEnv("PWD") != NULL)
       {
@@ -74,18 +74,18 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
     }
   else
     {
-    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
+    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("Slicer3_HOME"));
     }
   // check to see if slicer home was set
   vtksys_stl::vector<vtksys_stl::string> filesVector;
   filesVector.push_back(""); // for relative path
   filesVector.push_back(slicerHome);
-  filesVector.push_back(vtksys_stl::string("lib/Slicer3/Libs/FreeSurfer/FreeSurferColorLUT.txt"));
+  filesVector.push_back(vtksys_stl::string("share/FreeSurfer/FreeSurferColorLUT.txt"));
   vtksys_stl::string colorFileName = vtksys::SystemTools::JoinPath(filesVector);
   this->SetLabelsFileName(colorFileName.c_str());
 
   filesVector.pop_back();
-  filesVector.push_back("lib/Slicer3/Libs/FreeSurfer/Simple_surface_labels2002.txt");
+  filesVector.push_back("share/FreeSurfer/Simple_surface_labels2002.txt");
   colorFileName = vtksys::SystemTools::JoinPath(filesVector);
   this->SetSurfaceLabelsFileName(colorFileName.c_str());
   

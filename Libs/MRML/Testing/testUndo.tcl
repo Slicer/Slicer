@@ -5,7 +5,7 @@ vtkMRMLScene sc
 catch "vs Delete"
 vtkMRMLVolumeArchetypeStorageNode vs
 
-sc SetURL $::SLICER_BUILD/../Slicer3/Libs/MRML/Testing/undo.xml
+sc SetURL $::Slicer3_HOME/share/MRML/Testing/undo.xml
 sc Connect
 
 set n [sc GetNthNodeByClass 0 vtkMRMLVolumeArchetypeStorageNode]

@@ -1,0 +1,63 @@
+find_package(GenerateCLP REQUIRED)
+if(GenerateCLP_FOUND)
+  include(${GenerateCLP_USE_FILE})
+endif(GenerateCLP_FOUND)
+ 
+find_package(LoadableModule REQUIRED)
+if(LoadableModule_FOUND)
+  include(${LoadableModule_USE_FILE})
+endif(LoadableModule_FOUND)
+
+find_package(ITK REQUIRED)
+if(ITK_FOUND)
+  include(${ITK_USE_FILE})
+endif(ITK_FOUND)
+
+if(NOT GENERATELM_EXE)
+  find_program(GENERATELM_EXE GenerateLM PATHS ${GenerateLM_BINARY_DIR} DOC "GenerateLM executable")
+  message(ERROR " Requires GenerateLM executable. Please specify its location.")
+  mark_as_advanced(GENERATELM_EXE)
+endif(NOT GENERATELM_EXE)
+
+# create the .lm files
+# usage: GENERATE_LM(foo_SRCS XML_FILE)
+macro(GENERATELM SOURCES)
+  # what is the filename without the extension
+  get_filename_component(TMP_FILENAME ${ARGV1} NAME_WE)
+  
+  # the input file might be full path so handle that
+  get_filename_component(TMP_FILEPATH ${ARGV1} PATH)
+
+  # compute the input filename
+  if (TMP_FILEPATH)
+    set(TMP_INPUT ${TMP_FILEPATH}/${TMP_FILENAME}.txt) 
+  else (TMP_FILEPATH)
+    set(TMP_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TMP_FILENAME}.txt)
+  endif (TMP_FILEPATH)
+
+  # add custom command to output
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h
+    DEPENDS ${GENERATELM_EXE} ${TMP_INPUT}
+    COMMAND ${GENERATELM_EXE}
+    ${TMP_INPUT} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx
+    )
+
+  # add custom command to output
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx
+    DEPENDS ${GENERATELM_EXE} ${TMP_INPUT}
+    COMMAND ${GENERATELM_EXE}
+    ${TMP_INPUT} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx
+    )
+
+  # mark the Lib.cxx file as a source file
+
+  # mark the Lib.h file as a header file
+  set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h PROPERTIES HEADER_FILE_ONLY TRUE)
+  set_source_files_properties(${TMP_FILENAME}Lib.cxx PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h)
+
+  set(${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h ${${SOURCES}}) 
+  set(${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx ${${SOURCES}}) 
+  include_directories(${CMAKE_CURRENT_BINARY_DIR})
+endmacro(GENERATELM)
