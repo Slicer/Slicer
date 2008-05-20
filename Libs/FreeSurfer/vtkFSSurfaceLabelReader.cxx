@@ -53,7 +53,6 @@ vtkFSSurfaceLabelReader::~vtkFSSurfaceLabelReader()
 int vtkFSSurfaceLabelReader::ReadLabel()
 {
   FILE* labelFile;
-  int magicNumber;
   int numValues = 0;
   int vIndex;
   int vIndexFromFile;
