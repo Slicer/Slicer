@@ -41,14 +41,14 @@
 #include "vtkSlicerApplicationSettingsInterface.h"
 
 
-#include "vtkSlicerConfigure.h" // for VTKSLICER_CONFIGURATION_TYPES
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 #include "ModuleFactory.h"
 
 #include "vtkSlicerROILogic.h"
 #include "vtkSlicerROIGUI.h"
 
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
 // If debug, Python wants pythonxx_d.lib, so fake it out
 #ifdef _DEBUG
 #undef _DEBUG
@@ -78,38 +78,39 @@ extern "C" {
 
 // uncomment these lines to disable a particular module (handy for debugging)
 //#define CLIMODULES_DEBUG
-//#define TCLMODULES_DEBUG
-//#define SLICES_DEBUG
-//#define MODELS_DEBUG
-//#define VOLUMES_DEBUG
 //#define COLORS_DEBUG
-//#define FIDUCIALS_DEBUG
-#define CAMERA_DEBUG
-//#define TRACTOGRAPHY_DEBUG
 //#define COMMANDLINE_DEBUG
-//#define DEAMON_DEBUG
+//#define DAEMON_DEBUG
+//#define FIDUCIALS_DEBUG
+//#define MODELS_DEBUG
 //#define REMOTEIO_DEBUG
+//#define SLICES_DEBUG
+//#define TCLMODULES_DEBUG
+//#define TRACTOGRAPHY_DEBUG
+//#define VOLUMES_DEBUG
+
+#define CAMERA_DEBUG
 
 #include <LoadableModuleFactory.h>
 
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
+#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
 #include "vtkSlicerFiberBundleLogic.h"
 #include "vtkSlicerTractographyDisplayLogic.h"
 #include "vtkSlicerTractographyDisplayGUI.h"
 #include "vtkSlicerTractographyFiducialSeedingGUI.h"
 #endif
 
-#if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
 #include "vtkScriptedModuleLogic.h"
 #include "vtkScriptedModuleGUI.h"
 #endif
 
-#if !defined(COMMANDLINE_DEBUG) && defined(BUILD_MODULES)
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
 #include "vtkCommandLineModuleLogic.h"
 #include "vtkCommandLineModuleGUI.h"
 #endif
 
-#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
 #include "vtkSlicerVolumesGUI.h"
 #endif
 
@@ -156,20 +157,20 @@ extern "C" int Vtkteem_Init(Tcl_Interp *interp);
 
 
 //TODO added temporary
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
+#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
 extern "C" int Slicertractographydisplay_Init(Tcl_Interp *interp);
 extern "C" int Slicertractographyfiducialseeding_Init(Tcl_Interp *interp);
 #endif
-#if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
+#if !defined(DAEMON_DEBUG) && defined(Slicer3_BUILD_MODULES)
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
 #endif
-#if !defined(COMMANDLINE_DEBUG) && defined(BUILD_MODULES)
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
 extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
 #endif
-#if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
 extern "C" int Scriptedmodule_Init(Tcl_Interp *interp);
 #endif
-#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
 extern "C" int Volumes_Init(Tcl_Interp *interp);
 #endif
 
@@ -318,7 +319,7 @@ void printAllInfo(int argc, char **argv)
   fprintf(stdout, "<library version=\"%d.%d.%d\">TCL</library>\n", major, minor, patchLevel);
   //fprintf(stdout, "<library version=\"%d.%d.%d\">TK</library>\n", major,
   //minor, patchLevel);
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
   fprintf(stdout, "<library version=\"%s\">Python</library>\n", PY_VERSION);
 #endif
   fprintf(stdout, "<Repository>$HeadURL$</Repository>\n");
@@ -383,7 +384,7 @@ int Slicer3_main(int argc, char *argv[])
   bool hasIntDir = false;
   std::string intDir = "";
   
-  std::string tmpName = slicerBinDir + "/../lib/Slicer3/SlicerBaseGUITcl/Loader.tcl";
+  std::string tmpName = slicerBinDir + "/../" + Slicer3_INSTALL_LIB_DIR + "/SlicerBaseGUI/Tcl/Loader.tcl";
   if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
     {
     // Handle Visual Studio IntDir
@@ -391,7 +392,7 @@ int Slicer3_main(int argc, char *argv[])
     vtksys::SystemTools::SplitPath(slicerBinDir.c_str(), pathComponents);
 
     slicerBinDir = slicerBinDir + "/..";
-    tmpName = slicerBinDir + "/../lib/Slicer3/SlicerBaseGUITcl/Loader.tcl";
+    tmpName = slicerBinDir + "/../" + Slicer3_INSTALL_LIB_DIR + "/SlicerBaseGUI/Tcl/Loader.tcl";
     if ( !vtksys::SystemTools::FileExists(tmpName.c_str()) )
       {
       slicerCerr("Error: Cannot find Slicer3 libraries" << endl);
@@ -405,24 +406,26 @@ int Slicer3_main(int argc, char *argv[])
       }
     }
 
-  // set the SLICER_HOME variable if it doesn't already exist from the launcher
+  slicerBinDir = vtksys::SystemTools::CollapseFullPath(slicerBinDir.c_str());
+
+  // set the Slicer3_HOME variable if it doesn't already exist from the launcher
   vtksys_stl::string slicerHome;
-  if ( !vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome) )
+  if ( !vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome) )
     {
-    std::string homeEnv = "SLICER_HOME=";
-    homeEnv += slicerBinDir + "/../";
+    slicerHome = slicerBinDir + "/..";
+    slicerHome = vtksys::SystemTools::CollapseFullPath(slicerHome.c_str());
+    std::string homeEnv = "Slicer3_HOME=" + slicerHome;
     cout << "Set environment: " << homeEnv.c_str() << endl;
     vtkKWApplication::PutEnv(const_cast <char *> (homeEnv.c_str()));
-    vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome);
     }
 
   std::string tclEnv = "TCL_LIBRARY=";
-  tclEnv += slicerBinDir + "/../lib/Slicer3/tcl/lib/tcl8.4";
+  tclEnv += slicerHome + "/" + Slicer3_INSTALL_LIB_DIR +  "/tcl/lib/tcl8.4";
   vtkKWApplication::PutEnv(const_cast <char *> (tclEnv.c_str()));
 
 
   std::string slicerITKFactoriesDir;
-  slicerITKFactoriesDir = slicerBinDir + "/../lib/Slicer3/ITKFactories";
+  slicerITKFactoriesDir = slicerHome + "/" + Slicer3_INSTALL_ITKFACTORIES_DIR;
   if (hasIntDir)
     {
     slicerITKFactoriesDir += "/" + intDir;
@@ -463,7 +466,7 @@ int Slicer3_main(int argc, char *argv[])
   //   
   vtkOpenGLRenderWindow::SetGlobalMaximumNumberOfMultiSamples(0);
 
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     // Initialize Python
     
     // Set up the search path
@@ -475,9 +478,8 @@ int Slicer3_main(int argc, char *argv[])
       pythonEnv += std::string ( existingPythonEnv ) + PathSep;
       }
 
-    pythonEnv += slicerBinDir + "/../../Slicer3/Base/GUI/Python" + PathSep;
-    pythonEnv += slicerBinDir + "/../lib/Slicer3/Plugins" + PathSep;
-    pythonEnv += slicerBinDir + "/../Base/GUI/Python";
+    pythonEnv += slicerHome + "/" + Slicer3_INSTALL_LIB_DIR + "/SlicerGUIPython/Python" + PathSep;
+    pythonEnv += slicerHome + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR + PathSep;
     vtkKWApplication::PutEnv(const_cast <char *> (pythonEnv.c_str()));
   
     Py_Initialize();
@@ -497,13 +499,10 @@ int Slicer3_main(int argc, char *argv[])
     std::string TkinitString = "import Tkinter, sys;"
       "tk = Tkinter.Tk();"
       "sys.path.append ( \""
-      + slicerBinDir + "/../../Slicer3/Base/GUI/Python"
+      + slicerHome + "/" + Slicer3_INSTALL_LIB_DIR + "/SlicerGUIPython/Python"
       + "\" );\n"
       "sys.path.append ( \""
-      + slicerBinDir + "/../Base/GUI/Python"
-      + "\" );\n";
-      "sys.path.append ( \""
-      + slicerBinDir + "/../lib/Slicer3/Plugins"
+      + slicerHome + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR
       + "\" );\n";
   
     v = PyRun_String( TkinitString.c_str(),
@@ -526,9 +525,12 @@ int Slicer3_main(int argc, char *argv[])
     // TODO: get rid of fixed size buffer
     char cmd[2048];
 
-    // Make sure SLICER_HOME is available
+    // Make sure Slicer3_HOME is available
 
-    sprintf(cmd, "set ::env(SLICER_HOME) {%s};", slicerHome.c_str());
+    sprintf(cmd, "set ::env(Slicer3_HOME) {%s};", slicerHome.c_str());
+    Slicer3_Tcl_Eval(interp, cmd);
+  
+    sprintf(cmd, "set ::Slicer3_HOME {%s};", slicerHome.c_str());
     Slicer3_Tcl_Eval(interp, cmd);
   
     // Tell KWWidgets to make names like .vtkKWPushButton10 instead of .10 
@@ -545,11 +547,11 @@ int Slicer3_main(int argc, char *argv[])
       one_up = "/..";
       }
     sprintf(cmd, "                                                   \
-      set ::SLICER_BIN [file dirname [info nameofexecutable]];       \
+      set ::Slicer3_BIN [file dirname [info nameofexecutable]];       \
       if { $::tcl_platform(platform) == \"windows\"} {               \
-        set ::SLICER_BUILD [file normalize $SLICER_BIN/..%s]         \
+        set ::Slicer3_BUILD [file normalize $Slicer3_BIN/..%s]         \
       } else {                                                       \
-        set ::SLICER_BUILD [file normalize $SLICER_BIN/..]           \
+        set ::Slicer3_BUILD [file normalize $Slicer3_BIN/..]           \
       };                                                             \
     ", one_up.c_str());
 
@@ -587,10 +589,8 @@ int Slicer3_main(int argc, char *argv[])
       int returnCode;
 
       // Pass arguments to the Tcl script
-      cmd =  "lappend auto_path \"" + slicerBinDir + "/../"
-        SLICER_INSTALL_LIBRARIES_DIR "\"; ";
-      cmd +=  "lappend auto_path \"" + slicerBinDir + "/../../"
-        SLICER_INSTALL_LIBRARIES_DIR "\"; ";
+      cmd =  "lappend auto_path \"" + slicerHome + "/"
+        Slicer3_INSTALL_LIB_DIR + "/SlicerBaseGUI/Tcl\"; ";
       //cmd += "puts $auto_path; ";
       cmd += "package require SlicerBaseGUITcl; ";
       returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
@@ -610,7 +610,7 @@ int Slicer3_main(int argc, char *argv[])
       std::string cmd;
       int returnCode;
 
-      cmd =  "wm iconbitmap . -default "+ slicerHome + "/lib/slicer3.ico";
+      cmd =  "wm iconbitmap . -default "+ slicerHome + "/" + Slicer3_INSTALL_SHARE_DIR + "/slicer3.ico";
       returnCode = Slicer3_Tcl_Eval( interp, cmd.c_str() );
       if ( returnCode )
         {
@@ -631,20 +631,20 @@ int Slicer3_main(int argc, char *argv[])
     Igt_Init(interp);
     Vtkteem_Init(interp);
 
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
+#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
     Slicertractographydisplay_Init(interp);
     Slicertractographyfiducialseeding_Init(interp);
 #endif
-#if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
+#if !defined(DAEMON_DEBUG) && defined(Slicer3_BUILD_MODULES)
     Slicerdaemon_Init(interp);
 #endif
-#if !defined(COMMANDLINE_DEBUG) && defined(BUILD_MODULES)
+#if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
     Commandlinemodule_Init(interp);
 #endif
-#if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
     Scriptedmodule_Init(interp);
 #endif
-#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
     Volumes_Init(interp);
 #endif
 
@@ -886,7 +886,7 @@ int Slicer3_main(int argc, char *argv[])
     std::string userCachePath;
 
     // define a default cache for module information
-    defaultCachePath = slicerBinDir + "/../lib/Slicer3/PluginsCache";
+    defaultCachePath = slicerHome + "/" + Slicer3_INSTALL_PLUGINS_CACHE_DIR;
     if (hasIntDir)
       {
         defaultCachePath += "/" + intDir;
@@ -978,12 +978,15 @@ int Slicer3_main(int argc, char *argv[])
 
     // LOADABLE MODULES
 
-    std::string slicerModulePath = slicerBinDir;
+    std::string slicerModulePath = slicerHome + "/" + Slicer3_INSTALL_MODULES_LIB_DIR;
 
+    // On Win32, *both* paths have to be there, since scripts are installed
+    // in the install location, and exec/libs are *automatically* installed
+    // in intDir.
     if (hasIntDir)
-    {
-      slicerModulePath += "/" + intDir;
-    }
+      {
+      slicerModulePath = slicerModulePath + PathSep + slicerHome + "/" + Slicer3_INSTALL_MODULES_LIB_DIR + "/" + intDir;
+      }
 
     LoadableModuleFactory loadableModuleFactory;
     loadableModuleFactory.SetName("Slicer");
@@ -1064,7 +1067,7 @@ int Slicer3_main(int argc, char *argv[])
     // (these require appGUI to be built):
     // --- Volumes module
 
-#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
     slicerApp->SplashMessage("Initializing Volumes Module...");
 
     vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New ( );
@@ -1276,7 +1279,7 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->InitializeViewControlGUI();
 //    appGUI->InitializeNavigationWidget();
 
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
+#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
     // --- Tractography Display module
     slicerApp->SplashMessage("Initializing Tractography Display Module...");
     vtkSlicerTractographyDisplayGUI *slicerTractographyDisplayGUI = vtkSlicerTractographyDisplayGUI::New ( );
@@ -1304,7 +1307,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerTractographyDisplayGUI->AddGUIObservers ( );
 #endif
 
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
+#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
     // --- Tractography Fiducail Seeding module
     slicerApp->SplashMessage("Initializing Tractography Fiducail Seeding Module...");
     vtkSlicerTractographyFiducialSeedingGUI *slicerTractographyFiducialSeedingGUI = vtkSlicerTractographyFiducialSeedingGUI::New ( );
@@ -1335,7 +1338,7 @@ int Slicer3_main(int argc, char *argv[])
     remoteIOGUI->Enter();
 #endif
 
-#if !defined(DAEMON_DEBUG) && defined(BUILD_MODULES)
+#if !defined(DAEMON_DEBUG) && defined(Slicer3_BUILD_MODULES)
     //
     // --- SlicerDaemon Module
     // need to source the slicerd.tcl script here
@@ -1347,13 +1350,13 @@ int Slicer3_main(int argc, char *argv[])
       {
       slicerApp->SplashMessage("Initializing Slicer Daemon...");
       std::string cmd;
-      cmd =  "source \"" + slicerBinDir + "/../"
-        SLICER_INSTALL_LIBRARIES_DIR "/slicerd.tcl\"; slicerd_start; ";
+      cmd =  "source \"" + slicerHome + "/"
+        Slicer3_INSTALL_MODULES_LIB_DIR "/SlicerDaemon/Tcl/slicerd.tcl\"; slicerd_start; ";
       Slicer3_Tcl_Eval(interp, cmd.c_str());
       }
 #endif
 
-#if !defined(CLIMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(CLIMODULES_DEBUG) && defined(Slicer3_BUILD_CLI)
     std::vector<std::string> moduleNames;
     std::vector<std::string>::const_iterator mit;
     if ( slicerApp->GetLoadCommandLineModules() && !NoModules )
@@ -1379,10 +1382,13 @@ int Slicer3_main(int argc, char *argv[])
 
       // define a default plugin path based on the slicer installation
       // or build tree
-      defaultPackageDir = slicerBinDir + "/../lib/Slicer3/Plugins";
+      // On Win32, *both* paths have to be there, since scripts are installed
+      // in the install location, and exec/libs are *automatically* installed
+      // in intDir.
+      defaultPackageDir = slicerHome + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR;
       if (hasIntDir)
         {
-        defaultPackageDir += "/" + intDir;
+        defaultPackageDir = defaultPackageDir + PathSep + slicerHome + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR + "/" + intDir;
         }
     
       // get the path that the user has configured
@@ -1497,7 +1503,7 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->Script ("namespace eval slicer3 set SlicesGUI %s", name);
 #endif
 
-#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
     name = volumesGUI->GetTclName();
     slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
 #endif
@@ -1536,7 +1542,7 @@ int Slicer3_main(int argc, char *argv[])
     //   and then delete it at the end.
     slicerApp->Script ("namespace eval slicer3 set Broker [vtkEventBroker New]");
 
-#if !defined(CLIMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(CLIMODULES_DEBUG) && defined(Slicer3_BUILD_CLI)
     mit = moduleNames.begin();
     while ( mit != moduleNames.end() )
       {
@@ -1556,7 +1562,7 @@ int Slicer3_main(int argc, char *argv[])
       }
 #endif
 
-#if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
     //
     // process any ScriptedModules
     // - scan for pkgIndex.tcl files 
@@ -1566,27 +1572,27 @@ int Slicer3_main(int argc, char *argv[])
     //
 
     slicerApp->SplashMessage("Initializing Scripted Modules...");
-    std::string tclCommand = "set ::SLICER_PACKAGES(list) {};";
-    tclCommand += "set dirs [glob \"" + slicerBinDir + "/../"
-      SLICER_INSTALL_LIBRARIES_DIR "/Modules/Packages/*\"]; ";
+    std::string tclCommand = "set ::Slicer3_PACKAGES(list) {};";
+    tclCommand += "set dirs [glob \"" + slicerHome + "/"
+      Slicer3_INSTALL_MODULES_LIB_DIR "/*\"]; ";
     tclCommand += "foreach d $dirs { ";
-    tclCommand += "  if { [file exists $d/pkgIndex.tcl] } {";
-    tclCommand += "    lappend ::SLICER_PACKAGES(list) [file tail $d];";
+    tclCommand += "  if { [file exists $d/Tcl/pkgIndex.tcl] } {";
+    tclCommand += "    lappend ::Slicer3_PACKAGES(list) [file tail $d];";
     tclCommand += "    lappend ::auto_path $d;";
     tclCommand += "  }";
     tclCommand += "} ";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 
     tclCommand = "";
-    tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
+    tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
     tclCommand += "  package require $package;";
-    tclCommand += "  set ::SLICER_PACKAGES($package,logic) [vtkScriptedModuleLogic New];";
-    tclCommand += "  set logic $::SLICER_PACKAGES($package,logic);";
+    tclCommand += "  set ::Slicer3_PACKAGES($package,logic) [vtkScriptedModuleLogic New];";
+    tclCommand += "  set logic $::Slicer3_PACKAGES($package,logic);";
     tclCommand += "  $logic SetModuleName $package;";
     tclCommand += "  $logic SetAndObserveMRMLScene $::slicer3::MRMLScene;";
     tclCommand += "  $logic SetApplicationLogic $::slicer3::ApplicationLogic;";
-    tclCommand += "  set ::SLICER_PACKAGES($package,gui) [vtkScriptedModuleGUI New];";
-    tclCommand += "  set gui $::SLICER_PACKAGES($package,gui);";
+    tclCommand += "  set ::Slicer3_PACKAGES($package,gui) [vtkScriptedModuleGUI New];";
+    tclCommand += "  set gui $::Slicer3_PACKAGES($package,gui);";
     tclCommand += "  $gui SetModuleName $package;";
     tclCommand += "  $gui SetLogic $logic;";
     tclCommand += "  $gui SetApplicationGUI $::slicer3::ApplicationGUI;";
@@ -1602,17 +1608,17 @@ int Slicer3_main(int argc, char *argv[])
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     slicerApp->SplashMessage("Initializing Python Scripted Modules...");
     std::string pythonCommand = "";
     pythonCommand += "import sys\n";
     pythonCommand += "import os\n";
-    pythonCommand += "modulePath = os.path.join('" + slicerBinDir + "','..','" + 
-      SLICER_INSTALL_LIBRARIES_DIR + "/Modules/Packages')\n";
+    pythonCommand += "modulePath = os.path.join('" + slicerHome + "','" + 
+      Slicer3_INSTALL_MODULES_LIB_DIR + "')\n";
     pythonCommand += "sys.path.append(modulePath)\n";
     pythonCommand += "packageNames = []\n";
     pythonCommand += "for packageName in os.listdir(modulePath):\n";
-    pythonCommand += "    if os.path.isfile(os.path.join(modulePath,packageName,'__init__.py')):\n";
+    pythonCommand += "    if os.path.isfile(os.path.join(modulePath,packageName,'Python','__init__.py')):\n";
     pythonCommand += "        packageNames.append(packageName)\n";
     pythonCommand += "import Slicer\n";
     pythonCommand += "slicer = Slicer.Slicer()\n";
@@ -1781,8 +1787,9 @@ int Slicer3_main(int argc, char *argv[])
       {
       appGUI->SelectModule("Data");
       }
-#ifdef USE_PYTHON
-    vtkSlicerApplication::GetInstance()->InitializePython ( PythonModule, PythonDictionary );
+#ifdef Slicer3_USE_PYTHON
+    vtkSlicerApplication::GetInstance()->InitializePython(
+      (void*)PythonModule, (void*)PythonDictionary);
 #endif    
 
     //
@@ -1806,11 +1813,11 @@ int Slicer3_main(int argc, char *argv[])
     lmit++;
   }
 
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
+#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
     slicerTractographyDisplayGUI->RemoveGUIObservers ( );
     slicerTractographyFiducialSeedingGUI->RemoveGUIObservers ( );
 #endif
-#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
 //    volumesGUI->RemoveGUIObservers ( );
     volumesGUI->TearDownGUI ( );
 #endif
@@ -1846,7 +1853,7 @@ int Slicer3_main(int argc, char *argv[])
     appGUI->SetSliceGUICollection ( NULL );
 #endif
 
-#if !defined(CLIMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(CLIMODULES_DEBUG) && defined(Slicer3_BUILD_CLI)
     // remove the observers from the factory discovered modules
     // (as we remove the observers, cache the GUIs in a vector so we
     // can delete them later).
@@ -1866,12 +1873,12 @@ int Slicer3_main(int argc, char *argv[])
       }
 #endif    
 
-#if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
     // remove the observers from the scripted modules
     tclCommand = "";
-    tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
-    tclCommand += "  $::SLICER_PACKAGES($package,gui) RemoveGUIObservers;";
-    tclCommand += "  $::SLICER_PACKAGES($package,gui) TearDownGUI;";
+    tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
+    tclCommand += "  $::Slicer3_PACKAGES($package,gui) RemoveGUIObservers;";
+    tclCommand += "  $::Slicer3_PACKAGES($package,gui) TearDownGUI;";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 #endif 
@@ -1936,12 +1943,12 @@ int Slicer3_main(int argc, char *argv[])
     lmit++;
   }
 
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
+#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
     slicerTractographyDisplayGUI->Delete ();
     slicerTractographyFiducialSeedingGUI->Delete ();
 #endif
 
-#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
     volumesGUI->Delete ();
 #endif
 #ifndef MODELS_DEBUG
@@ -1968,10 +1975,10 @@ int Slicer3_main(int argc, char *argv[])
     slicesGUI->Delete ();
 #endif
 
-#if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
     tclCommand = "";
-    tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
-    tclCommand += "  $::SLICER_PACKAGES($package,gui) Delete;";
+    tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
+    tclCommand += "  $::Slicer3_PACKAGES($package,gui) Delete;";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 #endif
@@ -1983,7 +1990,7 @@ int Slicer3_main(int argc, char *argv[])
 //cout << "vtkSlicerApplicationGUI deleting app GUI\n";
 //   appGUI->Delete ();
 
-#if !defined(CLIMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(CLIMODULES_DEBUG) && defined(Slicer3_BUILD_CLI)
     // delete the factory discovered module GUIs (as we delete the
     // GUIs, cache the associated logic instances so we can delete
     std::vector<vtkSlicerModuleGUI*>::iterator git;
@@ -2019,13 +2026,13 @@ int Slicer3_main(int argc, char *argv[])
     lmit++;
   }
 
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(BUILD_MODULES)
+#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
     slicerTractographyDisplayLogic->SetAndObserveMRMLScene ( NULL );
     slicerTractographyDisplayLogic->Delete ();
 #endif
         
 
-#if !defined(VOLUMES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
     volumesLogic->SetAndObserveMRMLScene ( NULL );
     volumesLogic->Delete();
 #endif
@@ -2061,7 +2068,7 @@ int Slicer3_main(int argc, char *argv[])
     appLogic->TerminateProcessingThread();
     appLogic->Delete ();
 
-#if !defined(CLIMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(CLIMODULES_DEBUG) && defined(Slicer3_BUILD_CLI)
     // delete the factory discovered module Logics
     std::vector<vtkSlicerModuleLogic*>::iterator lit;
     for (lit = moduleLogics.begin(); lit != moduleLogics.end(); ++lit)
@@ -2072,12 +2079,12 @@ int Slicer3_main(int argc, char *argv[])
     moduleLogics.clear();
 #endif
 
-#if !defined(TCLMODULES_DEBUG) && defined(BUILD_MODULES)
+#if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
     // delete the scripted logics
     tclCommand = "";
-    tclCommand += "foreach package $::SLICER_PACKAGES(list) { ";
-    tclCommand += "  $::SLICER_PACKAGES($package,logic) SetAndObserveMRMLScene {};";
-    tclCommand += "  $::SLICER_PACKAGES($package,logic) Delete;";
+    tclCommand += "foreach package $::Slicer3_PACKAGES(list) { ";
+    tclCommand += "  $::Slicer3_PACKAGES($package,logic) SetAndObserveMRMLScene {};";
+    tclCommand += "  $::Slicer3_PACKAGES($package,logic) Delete;";
     tclCommand += "}";
     Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 #endif
@@ -2095,7 +2102,7 @@ int Slicer3_main(int argc, char *argv[])
     //--- application last
     slicerApp->Delete ();
 
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     // Shutdown python interpreter
     Py_Finalize();
 #endif

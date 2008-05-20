@@ -1,43 +1,44 @@
-PROJECT (ExtractSkeleton)
+project (ExtractSkeleton)
 
 # Disable MSVC 8 warnings
-IF(WIN32)
-  OPTION(DISABLE_MSVC8_DEPRECATED_WARNINGS
-         "Disable Visual Studio 8 deprecated warnings" ON)
-  MARK_AS_ADVANCED(FORCE DISABLE_MSVC8_DEPRECATED_WARNINGS)  
-  IF(DISABLE_MSVC8_DEPRECATED_WARNINGS)
-    ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
-  ENDIF(DISABLE_MSVC8_DEPRECATED_WARNINGS)
-ENDIF(WIN32)
+if(WIN32)
+  option(DISABLE_MSVC8_DEPRECATED_WARNINGS
+    "Disable Visual Studio 8 deprecated warnings" ON)
+  mark_as_advanced(FORCE DISABLE_MSVC8_DEPRECATED_WARNINGS)  
+  if(DISABLE_MSVC8_DEPRECATED_WARNINGS)
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+  endif(DISABLE_MSVC8_DEPRECATED_WARNINGS)
+endif(WIN32)
 
-SET ( ExtractSkeleton_SOURCE 
-      ExtractSkeleton.cxx
-      SkelGraph.h
-      SkelGraph.cxx
-      tilg_iso_3D.h
-      tilg_iso_3D.cxx
-      coordTypes.h
-      misc.h
-      misc.cxx )
+set ( ExtractSkeleton_SOURCE 
+  ExtractSkeleton.cxx
+  SkelGraph.h
+  SkelGraph.cxx
+  tilg_iso_3D.h
+  tilg_iso_3D.cxx
+  coordTypes.h
+  misc.h
+  misc.cxx )
 
-GENERATECLP(ExtractSkeleton_SOURCE ExtractSkeleton.xml)
+generateclp(ExtractSkeleton_SOURCE ExtractSkeleton.xml)
 
-ADD_EXECUTABLE(ExtractSkeleton ${ExtractSkeleton_SOURCE})
-TARGET_LINK_LIBRARIES(ExtractSkeleton ITKIO)
+add_executable(ExtractSkeleton ${ExtractSkeleton_SOURCE})
+target_link_libraries(ExtractSkeleton ITKIO)
 
-ADD_LIBRARY(ExtractSkeletonModule SHARED ${ExtractSkeleton_SOURCE})
-SET_TARGET_PROPERTIES (ExtractSkeletonModule PROPERTIES
-                       COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-TARGET_LINK_LIBRARIES(ExtractSkeletonModule ITKIO)
+add_library(ExtractSkeletonModule SHARED ${ExtractSkeleton_SOURCE})
+set_target_properties (ExtractSkeletonModule PROPERTIES
+  COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+target_link_libraries(ExtractSkeletonModule ITKIO)
 
-IF (Slicer3_SOURCE_DIR)
+if (Slicer3_SOURCE_DIR)
 
-  SET(TARGET_MODULES ExtractSkeletonModule ExtractSkeleton)
+  set(TARGET_MODULES ExtractSkeletonModule ExtractSkeleton)
 
-  FOREACH(target ${TARGET_MODULES})
-    INSTALL(TARGETS ${target}
-            RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins
-            LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins)
-  ENDFOREACH(target)
+  foreach(target ${TARGET_MODULES})
+    install(TARGETS ${target}
+      RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
+      )
+  endforeach(target)
 
-ENDIF (Slicer3_SOURCE_DIR)
+endif (Slicer3_SOURCE_DIR)

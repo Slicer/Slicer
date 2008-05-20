@@ -23,11 +23,13 @@ generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h
 link_directories(${vtkITK_LIB_DIR})
 add_executable(${CLP} ${${CLP}_SOURCE})
 target_link_libraries(${CLP}
-  ${Slicer3_LIBRARIES}
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
   )
 
 include_directories(
-  ${Slicer3_INCLUDE_DIRS}
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
   )
 
 set(TEMP "${Slicer3_BINARY_DIR}/Testing/Temporary")

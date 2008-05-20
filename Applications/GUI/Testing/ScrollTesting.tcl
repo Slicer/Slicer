@@ -3,14 +3,14 @@
 
 update
 vtkMRMLScene s
-s SetURL $::SLICER_BUILD/../Slicer3/Libs/MRML/Testing/vol_and_cube_camera.mrml
+s SetURL $::Slicer3_HOME/share/MRML/Testing/vol_and_cube_camera.mrml
 s Connect
 s Delete
 update
 
 update
 
-$::slicer3::MRMLScene SetURL $::SLICER_BUILD/../Slicer3/Libs/MRML/Testing/vol_and_cube_camera.mrml
+$::slicer3::MRMLScene SetURL $::Slicer3_HOME/share/MRML/Testing/vol_and_cube_camera.mrml
 $::slicer3::MRMLScene Connect
 
 update

@@ -1,8 +1,8 @@
 project(Applications)
 
-if(BUILD_CLI)
+if(Slicer3_BUILD_CLI)
   subdirs(CLI)
-endif(BUILD_CLI)
+endif(Slicer3_BUILD_CLI)
 
 subdirs(
   GUI

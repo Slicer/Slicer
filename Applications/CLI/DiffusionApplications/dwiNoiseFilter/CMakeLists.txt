@@ -1,4 +1,4 @@
-PROJECT( dwiNoiseFilter )
+project( dwiNoiseFilter )
 
 # 
 # --------------------------------------------------------------------------
@@ -8,52 +8,50 @@ PROJECT( dwiNoiseFilter )
 #  Applications/CLI/Realign/vtkRealignConfigure.h
 #)
 
-FIND_PACKAGE(GenerateCLP REQUIRED)
-IF(GenerateCLP_FOUND)
-  INCLUDE(${GenerateCLP_USE_FILE})
-ENDIF(GenerateCLP_FOUND)
+find_package(GenerateCLP REQUIRED)
+if(GenerateCLP_FOUND)
+  include(${GenerateCLP_USE_FILE})
+endif(GenerateCLP_FOUND)
 
-LINK_DIRECTORIES(${ModuleDescriptionParser_BINARY_DIR})
+link_directories(${ModuleDescriptionParser_BINARY_DIR})
 
-FIND_PACKAGE(ITK REQUIRED)
-INCLUDE(${ITK_USE_FILE})
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
 
-IF (Slicer3_SOURCE_DIR)
-  SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-  SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-ENDIF (Slicer3_SOURCE_DIR)
+slicer3_set_default_plugins_output_path()
 
-INCLUDE_DIRECTORIES( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
+include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
 
 #####################
 
-SET (CLP dwiNoiseFilter)
+set (CLP dwiNoiseFilter)
 
-SET ( ${CLP}_SOURCE ${CLP}.cxx)
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
-ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES (${CLP}
-    ITKIO
-    ITKAlgorithms 
-    ITKBasicFilters 
-    ITKCommon
-    ModuleDescriptionParser
-    # MRML
-)
+set ( ${CLP}_SOURCE ${CLP}.cxx)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+add_executable(${CLP} ${${CLP}_SOURCE})
+target_link_libraries (${CLP}
+  ITKIO
+  ITKAlgorithms 
+  ITKBasicFilters 
+  ITKCommon
+  ModuleDescriptionParser
+  # MRML
+  )
 
 
-IF (Slicer3_SOURCE_DIR)
+if (Slicer3_SOURCE_DIR)
   # install each target in the production area (where it would appear in an 
   # installation) and install each target in the developer area (for running 
   # from a build)
-  SET(TARGETS        
-        dwiNoiseFilter
-  )
+  set(TARGETS        
+    dwiNoiseFilter
+    )
 
-  FOREACH(target ${TARGETS})
-    INSTALL(TARGETS ${target}
-      RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins
-      LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins)
-  ENDFOREACH(target)
+  foreach(target ${TARGETS})
+    install(TARGETS ${target}
+      RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
+      )
+  endforeach(target)
 
-ENDIF (Slicer3_SOURCE_DIR)
+endif (Slicer3_SOURCE_DIR)

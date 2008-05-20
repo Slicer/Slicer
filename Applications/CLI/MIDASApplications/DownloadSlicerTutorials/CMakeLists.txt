@@ -1,64 +1,65 @@
-PROJECT (DownloadSlicerTutorials)
+project (DownloadSlicerTutorials)
 
 #
 # Disable MSVC 8 warnings
-IF(WIN32)
-  OPTION(DISABLE_MSVC8_DEPRECATED_WARNINGS 
-         "Disable Visual Studio 8 deprecated warnings" ON)
-  MARK_AS_ADVANCED(FORCE DISABLE_MSVC8_DEPRECATED_WARNINGS)  
-  IF(DISABLE_MSVC8_DEPRECATED_WARNINGS)
-    ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
-  ENDIF(DISABLE_MSVC8_DEPRECATED_WARNINGS)
-ENDIF(WIN32)
+if(WIN32)
+  option(DISABLE_MSVC8_DEPRECATED_WARNINGS 
+    "Disable Visual Studio 8 deprecated warnings" ON)
+  mark_as_advanced(FORCE DISABLE_MSVC8_DEPRECATED_WARNINGS)  
+  if(DISABLE_MSVC8_DEPRECATED_WARNINGS)
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+  endif(DISABLE_MSVC8_DEPRECATED_WARNINGS)
+endif(WIN32)
 
 #
 # Find VTK
-FIND_PACKAGE(VTK REQUIRED)
-INCLUDE_DIRECTORIES(${VTK_SOURCE_DIR})
+find_package(VTK REQUIRED)
+include_directories(${VTK_SOURCE_DIR})
 
 #
 # Find SLICERLIBCURL (slicercurl)
-FIND_PACKAGE(SLICERLIBCURL REQUIRED)
-INCLUDE(${SLICERLIBCURL_USE_FILE})
+find_package(SLICERLIBCURL REQUIRED)
+include(${SLICERLIBCURL_USE_FILE})
 
 #
 # Find GenerateCLP
-FIND_PACKAGE(GenerateCLP REQUIRED)
-IF(GenerateCLP_FOUND)
-  INCLUDE(${GenerateCLP_USE_FILE})
-ENDIF(GenerateCLP_FOUND)
+find_package(GenerateCLP REQUIRED)
+if(GenerateCLP_FOUND)
+  include(${GenerateCLP_USE_FILE})
+endif(GenerateCLP_FOUND)
 
 #
 # Set and generate source
-SET(DownloadSlicerTutorials_SOURCE DownloadSlicerTutorials.cxx)
+set(DownloadSlicerTutorials_SOURCE DownloadSlicerTutorials.cxx)
 
-GENERATECLP(DownloadSlicerTutorials_SOURCE DownloadSlicerTutorials.xml)
+generateclp(DownloadSlicerTutorials_SOURCE DownloadSlicerTutorials.xml)
 
 #
 # Generate executable
-ADD_EXECUTABLE(DownloadSlicerTutorials ${DownloadSlicerTutorials_SOURCE})
-TARGET_LINK_LIBRARIES(DownloadSlicerTutorials 
-                      ${SLICERLIBCURL_LIBRARIES} ITKIO MRMLIDIO itkzlib)
+add_executable(DownloadSlicerTutorials ${DownloadSlicerTutorials_SOURCE})
+target_link_libraries(DownloadSlicerTutorials 
+  ${SLICERLIBCURL_LIBRARIES} ITKIO MRMLIDIO itkzlib)
 
 #
 # Generate shared loadable slicer module
-ADD_LIBRARY(DownloadSlicerTutorialsModule SHARED
-            ${DownloadSlicerTutorials_SOURCE})
-SET_TARGET_PROPERTIES (DownloadSlicerTutorialsModule PROPERTIES
-                       COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
-TARGET_LINK_LIBRARIES(DownloadSlicerTutorialsModule 
-                      ${SLICERLIBCURL_LIBRARIES} ITKIO MRMLIDIO itkzlib)
+add_library(DownloadSlicerTutorialsModule SHARED
+  ${DownloadSlicerTutorials_SOURCE})
+set_target_properties (DownloadSlicerTutorialsModule PROPERTIES
+  COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+target_link_libraries(DownloadSlicerTutorialsModule 
+  ${SLICERLIBCURL_LIBRARIES} ITKIO MRMLIDIO itkzlib)
 
 #
 # Move exec and module to where Slicer can find them
-IF (Slicer3_SOURCE_DIR)
+if (Slicer3_SOURCE_DIR)
 
-  SET(TARGET_MODULES DownloadSlicerTutorials DownloadSlicerTutorialsModule)
+  set(TARGET_MODULES DownloadSlicerTutorials DownloadSlicerTutorialsModule)
 
-  FOREACH(target ${TARGET_MODULES})
-    INSTALL(TARGETS ${target}
-            RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins
-            LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins)
-  ENDFOREACH(target)
+  foreach(target ${TARGET_MODULES})
+    install(TARGETS ${target}
+      RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
+      )
+  endforeach(target)
 
-ENDIF (Slicer3_SOURCE_DIR)
+endif (Slicer3_SOURCE_DIR)
