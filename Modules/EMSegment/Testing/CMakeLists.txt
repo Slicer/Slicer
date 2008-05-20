@@ -105,9 +105,13 @@ if(NOT DISABLE_CXX_TESTING)
   # launcher is needed to set up shared library paths correctly.
   # We create a prefix for the test executable that accomplishes this
   # wrapping.  
+  # WRAPPED_TEST_EXE_PREFIX: path to tests that only exist in build tree
+  # WRAPPED_EXE_PREFIX: path to command line utilities that install with
+  # slicer
   ############################################################################ 
   set(Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3)
-  set(WRAPPED_EXE_PREFIX --launch ${EXECUTABLE_OUTPUT_PATH})
+  set(WRAPPED_TEST_EXE_PREFIX --launch ${EXECUTABLE_OUTPUT_PATH})
+  set(WRAPPED_EXE_PREFIX --launch ${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR})
   if(WIN32)
     set(WRAPPED_EXE_PREFIX ${WRAPPED_EXE_PREFIX}/${CMAKE_BUILD_TYPE})
   endif(WIN32)
@@ -121,7 +125,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does the mrml manager's api function correctly?
   add_test(
     vtkEMSegmentMRMLManagerTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/vtkEMSegmentMRMLManagerTest
+    ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentMRMLManagerTest
     ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
     "EMSegment Tutorial Template"
     )
@@ -129,7 +133,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Does the preprocessing function correctly?
   add_test(
     vtkEMSegmentPreprocessingManagerTest
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/vtkEMSegmentPreprocessingManagerTest
+    ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentPreprocessingManagerTest
     ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small_normalizationOn.mrml
     "EMSegment Tutorial Template"
     )
@@ -138,7 +142,7 @@ if(NOT DISABLE_CXX_TESTING)
   # results.  This is a legacy test that should not be removed.
   add_test(
     vtkEMSegmentBlackBoxSegmentationTest_TutorialDataSmallRead
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/vtkEMSegmentBlackBoxSegmentationTest
+    ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentBlackBoxSegmentationTest
     ${EMSegment_TUTORIAL_DIR}/EMSegmentTutorialTemplate_small.mrml
     ${EMSegment_TUTORIAL_DIR}
     "EMSegment Tutorial Template"
@@ -148,7 +152,7 @@ if(NOT DISABLE_CXX_TESTING)
   # Build parameters from scratch and run the segmentation
   add_test(
     vtkEMSegmentBuildAndRunNewSegmentatationParameters001
-    ${Slicer3_EXE} ${WRAPPED_EXE_PREFIX}/vtkEMSegmentBuildAndRunNewSegmentatationParameters001
+    ${Slicer3_EXE} ${WRAPPED_TEST_EXE_PREFIX}/vtkEMSegmentBuildAndRunNewSegmentatationParameters001
     ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/R.mhd
     ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/G.mhd
     ${EMSegment_SOURCE_DIR}/Testing/TestData/MiscVolumeData/B.mhd
