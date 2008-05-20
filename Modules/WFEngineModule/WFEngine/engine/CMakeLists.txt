@@ -1,28 +1,34 @@
-PROJECT(WFEngine)
+project(WFEngine)
 
-SET(SRCS
-${WFENGINE_BASE_DIRECTORY}/engine/WFBaseEngine.cxx
-${WFENGINE_BASE_DIRECTORY}/engine/WFEngineOptions.cxx
-${WFENGINE_BASE_DIRECTORY}/engine/WFFactory.cxx
-${WFENGINE_BASE_DIRECTORY}/engine/WFWorkflowManager.cxx
-)
+set(SRCS
+  ${WFENGINE_BASE_DIRECTORY}/engine/WFBaseEngine.cxx
+  ${WFENGINE_BASE_DIRECTORY}/engine/WFEngineOptions.cxx
+  ${WFENGINE_BASE_DIRECTORY}/engine/WFFactory.cxx
+  ${WFENGINE_BASE_DIRECTORY}/engine/WFWorkflowManager.cxx
+  )
 
-#IF(LOKI_FOUND)
-#  SET(LINK_LIBS ${LINK_LIBS} ${LOKI_LIBRARY})
-#ENDIF(LOKI_FOUND)
+#if(LOKI_FOUND)
+#  set(LINK_LIBS ${LINK_LIBS} ${LOKI_LIBRARY})
+#endif(LOKI_FOUND)
 
-IF(BUILD_WFDIRECTINTERFACE)
-SET_SOURCE_FILES_PROPERTIES(
+if(BUILD_WFDIRECTINTERFACE)
+  set_source_files_properties(
     ${WFENGINE_BASE_DIRECTORY}/engine/WFBaseEngine.cxx
-    COMPILE_FLAGS -DWFDIRECTINTERFACE)
-    SET(LINK_LIBS WFXmlManager)
-    ADD_LIBRARY(WFDIBaseEngine ${SRCS})
-    TARGET_LINK_LIBRARIES(WFDIBaseEngine ${LINK_LIBS})
-ELSE(BUILD_WFDIRECTINTERFACE)
-    SET(LINK_LIBS WFNetworkInterface WFXmlManager)
-    ADD_LIBRARY(WFBaseEngine ${SRCS})
-    TARGET_LINK_LIBRARIES(WFBaseEngine ${LINK_LIBS})
-ENDIF(BUILD_WFDIRECTINTERFACE)
+    COMPILE_FLAGS -DWFDIRECTINTERFACE
+    )
+  set(LINK_LIBS 
+    WFXmlManager
+    )
+  add_library(WFDIBaseEngine ${SRCS})
+  target_link_libraries(WFDIBaseEngine ${LINK_LIBS})
+else(BUILD_WFDIRECTINTERFACE)
+  set(LINK_LIBS 
+    WFNetworkInterface 
+    WFXmlManager
+    )
+  add_library(WFBaseEngine ${SRCS})
+  target_link_libraries(WFBaseEngine ${LINK_LIBS})
+endif(BUILD_WFDIRECTINTERFACE)
 
 
 

@@ -6,7 +6,6 @@ See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $HeadURL: http://www.na-mic.org:8000/svn/Slicer3/trunk/Modules/ScriptedModule/vtkScriptedModuleGUI.cxx $
 Date:      $Date: 2006-07-31 22:32:34 -0400 (Mon, 31 Jul 2006) $
 Version:   $Revision: 979 $
 
@@ -22,6 +21,20 @@ Version:   $Revision: 979 $
 #include "vtkScriptedModuleGUI.h"
 
 #include "vtkSlicerApplication.h"
+
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
+#ifdef Slicer3_USE_PYTHON
+#ifdef _DEBUG
+#undef _DEBUG
+#include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
+#endif
 
 //------------------------------------------------------------------------------
 vtkScriptedModuleGUI* vtkScriptedModuleGUI::New()
@@ -60,7 +73,7 @@ vtkScriptedModuleGUI::~vtkScriptedModuleGUI()
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
     pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].Destructor('" << this->GetTclName() << "')\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
@@ -91,7 +104,7 @@ void vtkScriptedModuleGUI::RemoveMRMLNodeObservers()
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
     pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].RemoveMRMLNodeObservers('" << this->GetTclName() << "')\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
@@ -115,7 +128,7 @@ void vtkScriptedModuleGUI::RemoveLogicObservers()
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
     pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].RemoveLogicObservers('" << this->GetTclName() << "')\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
@@ -159,7 +172,7 @@ void vtkScriptedModuleGUI::AddGUIObservers ( )
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
     pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].AddGUIObservers('" << this->GetTclName() << "')\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
@@ -185,7 +198,7 @@ void vtkScriptedModuleGUI::RemoveGUIObservers ( )
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
     pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].RemoveGUIObservers('" << this->GetTclName() << "')\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
@@ -213,7 +226,7 @@ void vtkScriptedModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
     pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].ProcessGUIEvents('" << this->GetTclName() << "','" << kwObject->GetTclName() << "'," << event << ")\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
@@ -237,7 +250,7 @@ void vtkScriptedModuleGUI::UpdateMRML ()
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
     pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].UpdateMRML('" << this->GetTclName() << "')\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
@@ -261,7 +274,7 @@ void vtkScriptedModuleGUI::UpdateGUI ()
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
     pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].UpdateGUI('" << this->GetTclName() << "')\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
@@ -291,7 +304,7 @@ void vtkScriptedModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
     pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].ProcessMRMLEvents('" << this->GetTclName() << "','" << mrmlNode->GetID() << "'," << event << ")\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
@@ -324,7 +337,7 @@ void vtkScriptedModuleGUI::BuildGUI ( )
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
     pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].BuildGUI('" << this->GetTclName() << "')\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
@@ -348,7 +361,7 @@ void vtkScriptedModuleGUI::TearDownGUI ( )
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
-#ifdef USE_PYTHON
+#ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
     pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].TearDownGUI('" << this->GetTclName() << "')\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)

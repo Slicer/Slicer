@@ -43,6 +43,7 @@
 #include "vtkCylinderSource.h"
 #include "vtkMRMLLinearTransformNode.h"
 
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkNeuroNavGUI );
@@ -96,11 +97,11 @@ vtkNeuroNavGUI::vtkNeuroNavGUI ( )
     this->YellowSliceMenu = NULL;
     this->GreenSliceMenu = NULL;
 
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //    this->LoadConfigButton = NULL;
 //    this->ConfigFileEntry = NULL;
 //#endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
     this->DeviceMenuButton = NULL;
     this->PortNumberMenuButton = NULL;
     this->BaudRateMenuButton = NULL;
@@ -153,10 +154,10 @@ vtkNeuroNavGUI::vtkNeuroNavGUI ( )
     this->NeedOrientationUpdate2 = 0;
 
 
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //    this->OpenTrackerStream = vtkIGTOpenTrackerStream::New();
 //#endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
     this->IGSTKStream = vtkIGTIGSTKStream::New();
 #endif
 
@@ -166,13 +167,13 @@ vtkNeuroNavGUI::vtkNeuroNavGUI ( )
 //---------------------------------------------------------------------------
 vtkNeuroNavGUI::~vtkNeuroNavGUI ( )
 {
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //    if (this->OpenTrackerStream)
 //    {
 //        this->OpenTrackerStream->Delete();
 //    }
 //#endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
     if (this->IGSTKStream)
     {
         this->IGSTKStream->Delete();
@@ -341,7 +342,7 @@ vtkNeuroNavGUI::~vtkNeuroNavGUI ( )
         this->GreenSliceMenu->Delete ( );
     }
 
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //    if (this->LoadConfigButton)
 //    {
 //       this->LoadConfigButton->SetParent(NULL );
@@ -354,7 +355,7 @@ vtkNeuroNavGUI::~vtkNeuroNavGUI ( )
 //        this->ConfigFileEntry->Delete ( );
 //    }
 //#endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
     if (this->DeviceMenuButton) 
     {
         this->DeviceMenuButton->SetParent(NULL);
@@ -496,13 +497,13 @@ void vtkNeuroNavGUI::RemoveGUIObservers ( )
     appGUI->GetMainSliceGUI2()->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
 
 
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //    this->OpenTrackerStream->RemoveObservers( vtkCommand::ModifiedEvent, this->DataCallbackCommand );
 //    this->LoadConfigButton->GetWidget()->GetLoadSaveDialog()->RemoveObservers (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
 //#endif
 
 
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
     this->IGSTKStream->RemoveObservers( vtkCommand::ModifiedEvent, this->DataCallbackCommand );
     this->DeviceMenuButton->GetWidget()->RemoveObservers ( vtkKWPushButton::InvokedEvent,  (vtkCommand *)this->GUICallbackCommand );
 #endif
@@ -580,14 +581,14 @@ void vtkNeuroNavGUI::AddGUIObservers ( )
     this->UserModeCheckButton->AddObserver ( vtkKWCheckButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //    this->OpenTrackerStream->AddObserver( vtkCommand::ModifiedEvent, this->DataCallbackCommand );
 //    this->LoadConfigButton->GetWidget()->GetLoadSaveDialog()->AddObserver (vtkKWTopLevel::WithdrawEvent, (vtkCommand *)this->GUICallbackCommand );
 //#endif
 
 
 
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
     this->IGSTKStream->AddObserver( vtkCommand::ModifiedEvent, this->DataCallbackCommand );
     this->DeviceMenuButton->GetWidget()->AddObserver ( vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 #endif
@@ -679,16 +680,16 @@ void vtkNeuroNavGUI::ProcessGUIEvents ( vtkObject *caller,
         if (this->ConnectCheckButton == vtkKWCheckButton::SafeDownCast(caller) 
                 && event == vtkKWCheckButton::SelectedStateChangedEvent )
         {
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //            SetOpenTrackerConnectionParameters();
 //#endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
             SetIGSTKConnectionParameters();
 #endif
         }
 
 /*
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
         else if (this->LoadConfigButton->GetWidget()->GetLoadSaveDialog() == vtkKWLoadSaveDialog::SafeDownCast(caller) 
                 && event == vtkKWTopLevel::WithdrawEvent)
         {
@@ -807,10 +808,10 @@ void vtkNeuroNavGUI::ProcessGUIEvents ( vtkObject *caller,
                     return;
                 }
 
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //                this->OpenTrackerStream->SetRegMatrix(this->Pat2ImgReg->GetLandmarkTransformMatrix());
 //#endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
                 this->IGSTKStream->SetRegMatrix(this->Pat2ImgReg->GetLandmarkTransformMatrix());
 #endif
             }
@@ -818,10 +819,10 @@ void vtkNeuroNavGUI::ProcessGUIEvents ( vtkObject *caller,
         else if (this->ResetPushButton == vtkKWPushButton::SafeDownCast(caller) 
                 && event == vtkKWPushButton::InvokedEvent)
         {
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //            this->OpenTrackerStream->SetRegMatrix(NULL);
 //#endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
             this->IGSTKStream->SetRegMatrix(NULL);
 #endif
         }
@@ -1258,10 +1259,10 @@ void vtkNeuroNavGUI::BuildGUIForDeviceFrame ()
     valueLabel->Create();
     valueLabel->SetWidth(21);
     valueLabel->SetText("None        ");
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //    valueLabel->SetText("NaviTrack");
 //#endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
     valueLabel->SetText("IGSTK       ");
 #endif
 
@@ -1327,7 +1328,7 @@ void vtkNeuroNavGUI::BuildGUIForDeviceFrame ()
                   this->ExtraFrame->GetWidgetName());
 /*
 
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
     this->ConfigFileEntry = vtkKWEntry::New();
     this->ConfigFileEntry->SetParent(this->ExtraFrame);
     this->ConfigFileEntry->Create();
@@ -1350,7 +1351,7 @@ void vtkNeuroNavGUI::BuildGUIForDeviceFrame ()
 #endif
 */
 
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
     this->DeviceMenuButton = vtkKWMenuButtonWithLabel::New();
     this->DeviceMenuButton->SetParent(this->ExtraFrame);
     this->DeviceMenuButton->Create();
@@ -2000,10 +2001,10 @@ void vtkNeuroNavGUI::BuildGUIForHandPieceFrame ()
 void vtkNeuroNavGUI::UpdateAll()
 {
     this->LocatorMatrix = NULL;
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //    this->LocatorMatrix = this->OpenTrackerStream->GetLocatorMatrix();
 //#endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
     this->LocatorMatrix = this->IGSTKStream->GetLocatorMatrix();
 #endif
 
@@ -2055,11 +2056,11 @@ void vtkNeuroNavGUI::UpdateAll()
 void vtkNeuroNavGUI::UpdateLocator()
 {
     vtkTransform *transform = NULL;
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //    this->OpenTrackerStream->SetLocatorTransforms();
 //    transform = this->OpenTrackerStream->GetLocatorNormalTransform(); 
 //#endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
     this->IGSTKStream->SetLocatorTransforms();
     transform = this->IGSTKStream->GetLocatorNormalTransform(); 
 #endif
@@ -2138,7 +2139,7 @@ void vtkNeuroNavGUI::UpdateSliceDisplay(float nx, float ny, float nz,
 
 
 /*
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
 void vtkNeuroNavGUI::SetOpenTrackerConnectionParameters()
 {
     int checked = this->ConnectCheckButton->GetSelectedState(); 
@@ -2180,7 +2181,7 @@ void vtkNeuroNavGUI::SetOpenTrackerConnectionParameters()
 
 */
 
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
 void vtkNeuroNavGUI::SetIGSTKConnectionParameters()
 {
     int checked = this->ConnectCheckButton->GetSelectedState(); 

@@ -1,9 +1,42 @@
 project(GradientAnisotropicDiffusionFilter)
 
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
+# --------------------------------------------------------------------------
+# Find Slicer3
+
 if(NOT Slicer3_SOURCE_DIR)
   find_package(Slicer3 REQUIRED)
   include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
 endif(NOT Slicer3_SOURCE_DIR)
+
+slicer3_set_default_modules_output_path()
+
+# --------------------------------------------------------------------------
+# Include dirs
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
+  )
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkGradientAnisotropicDiffusionFilterConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkGradientAnisotropicDiffusionFilterConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkGradientAnisotropicDiffusionFilterConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
 
 # --------------------------------------------------------------------------
 # Sources
@@ -15,6 +48,7 @@ set(GradientAnisotropicDiffusionFilter_SRCS
   )
 
 # Abstract/pure virtual classes
+#${CMAKE_CFG_INTDIR}
 
 #SET_SOURCE_FILES_PROPERTIES(
 #vtkModule.cxx
@@ -31,18 +65,8 @@ set(GradientAnisotropicDiffusionFilter_SRCS
 #)
 
 # --------------------------------------------------------------------------
-# Include dirs
-
-include_directories(
-  ${GradientAnisotropicDiffusionFilter_SOURCE_DIR}
-  ${GradientAnisotropicDiffusionFilter_BINARY_DIR}
-  ${Slicer3_INCLUDE_DIRS}
-  )
-
-# --------------------------------------------------------------------------
 # Wrapping
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 vtk_wrap_tcl3(GradientAnisotropicDiffusionFilter 
   GradientAnisotropicDiffusionFilter_TCL_SRCS 
@@ -51,37 +75,34 @@ vtk_wrap_tcl3(GradientAnisotropicDiffusionFilter
 #---------------------------------------------------------------------------
 # Add Loadable Module support
 
-GENERATELM(GradientAnisotropicDiffusionFilter_SRCS GradientAnisotropicDiffusionFilter.txt)
+generatelm(GradientAnisotropicDiffusionFilter_SRCS 
+  GradientAnisotropicDiffusionFilter.txt)
 
 # --------------------------------------------------------------------------
-# Build the library
+# Build and install the library
 
-add_library(GradientAnisotropicDiffusionFilter
+set(lib_name GradientAnisotropicDiffusionFilter)
+add_library(${lib_name}
   ${GradientAnisotropicDiffusionFilter_SRCS}
   ${GradientAnisotropicDiffusionFilter_TCL_SRCS}
   )
 
-if(BUILD_SHARED_LIBS)
-  install(TARGETS GradientAnisotropicDiffusionFilter
-    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-    LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-endif(BUILD_SHARED_LIBS)
-
-target_link_libraries(GradientAnisotropicDiffusionFilter
-  ${Slicer3_LIBRARIES}
+target_link_libraries(${lib_name}
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
   ${ITK_LIBRARIES}
   )
 
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+  )
+
 # --------------------------------------------------------------------------
-# Testing (requires some of the examples)
+# Testing
 
 if(BUILD_TESTING)
-  subdirs(Testing)
+#  subdirs(Testing)
 endif(BUILD_TESTING)
-
-configure_file(
-  ${GradientAnisotropicDiffusionFilter_SOURCE_DIR}/vtkGradientAnisotropicDiffusionFilterConfigure.h.in 
-  ${GradientAnisotropicDiffusionFilter_BINARY_DIR}/vtkGradientAnisotropicDiffusionFilterConfigure.h
-  )

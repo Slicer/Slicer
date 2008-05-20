@@ -1,48 +1,53 @@
-PROJECT(BOUNDINGBOX)
+project(BoundingBox)
 
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
-# We define several classes in this example, and we want to be able to use
-# their C++ methods as callbacks for our user interface. To do so, we need to 
-# create a library and wrap it automatically for the Tcl language, which
-# is used as a bridge between C++ objects at run-time. Note that an
-# initialization function is automatically created in this library to allow
-# classes and C++ methods to be used as commands and callbacks inside the Tcl
-# interpreter; do *not* forget to call this function right after you 
-# initialize the Tcl interpreter in your application. The name of this 
-# function is built from the library name in lower-case (except for the first
-# letter) and suffixed with "_Init" (for example: 
-# KWR21ExampleLib => KwR21examplelib_Init)
-# This whole process is required to use C++ methods as callbacks; it is not
-# needed if you use VTK's C++ command/observer pattern directly, which is
-# demonstrated in KWWidgets's C++ 'Callbacks' example.
+# --------------------------------------------------------------------------
+# Find Slicer3
 
-# directories for vtkMIMX
-INCLUDE_DIRECTORIES( ${BOUNDINGBOX_SOURCE_DIR}/../Common ${BOUNDINGBOX_BINARY_DIR}/../Common ) 
-INCLUDE_DIRECTORIES( ${BOUNDINGBOX_SOURCE_DIR}/../Filter ${BOUNDINGBOX_BINARY_DIR}/../Filter ) 
-INCLUDE_DIRECTORIES( ${BOUNDINGBOX_SOURCE_DIR}/../Widgets ${BOUNDINGBOX_BINARY_DIR}/../Widgets ) 
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
+
+slicer3_set_default_modules_output_path()
 
 # --------------------------------------------------------------------------
 # Include dirs
-# MESSAGE(STATUS "QDecModle: Qdec binary dir = ${Qdec_BINARY_DIR}")
-INCLUDE_DIRECTORIES(
-  ${BOUNDINGBOX_SOURCE_DIR}
-  ${BOUNDINGBOX_BINARY_DIR}
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${MimxMeshing_SOURCE_DIR}/Common 
+  ${MimxMeshing_BINARY_DIR}/Common 
+  ${MimxMeshing_SOURCE_DIR}/Filter 
+  ${MimxMeshing_BINARY_DIR}/Filter 
+  ${MimxMeshing_SOURCE_DIR}/Widgets 
+  ${MimxMeshing_BINARY_DIR}/Widgets 
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
   )
 
-SET(LIB_NAME "BoundingBox")
-SET(LIB_SRCS 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkBoundingBoxConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkBoundingBoxConfigure.h
+)
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkBoundingBoxConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
+# Sources
+
+set(BoundingBox_SRCS 
   vtkKWMimxApplication.cxx
   vtkKWMimxFEMeshMenuGroup.cxx
   vtkKWMimxGroupBase.cxx
@@ -66,38 +71,32 @@ SET(LIB_SRCS
   vtkMimxAbaqusFileWriter.cxx
   )
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
-KWWidgets_WRAP_TCL(${LIB_NAME} LIB_TCL_SRCS "${LIB_SRCS}" "")
+# --------------------------------------------------------------------------
+# Wrapping
 
-# Create the library. The library is built in static mode for convenience. 
-# Check the 'Callbacks' example for more information about building it in
-# shared mode, i.e. without the STATIC keyword (Win32 compilers requires
-# an additional header file to setup DLL export symbols correctly).
+include("${KWWidgets_CMAKE_DIR}/KWWidgetsWrappingMacros.cmake")
+kwwidgets_wrap_tcl(BoundingBox 
+  BoundingBox_TCL_SRCS 
+  "${BoundingBox_SRCS}" "")
 
-ADD_LIBRARY(${LIB_NAME} ${LIB_TCL_SRCS} ${LIB_SRCS})
+# --------------------------------------------------------------------------
+# Build and install the library
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL_TARGETS(${SLICER3_LIB_INSTALL_DIR} ${LIB_NAME})
-ENDIF(BUILD_SHARED_LIBS)
+set(lib_name BoundingBox)
+add_library(${lib_name} 
+  ${BoundingBox_SRCS}
+  ${BoundingBox_TCL_SRCS} 
+)
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}
-  SlicerBaseLogic 
-  SlicerBaseGUI 
-  MRML
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  vtkWidgets
-  ${KWWidgets_LIBRARIES} 
-  mimxWidgets
-  mimxFilter
-  mimxCommon
+target_link_libraries(${lib_name}
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
+  ${KWWidgets_LIBRARIES}
+  ${ITK_LIBRARIES}
   )
 
-
-CONFIGURE_FILE(
-  ${BOUNDINGBOX_SOURCE_DIR}/vtkBoundingBoxConfigure.h.in 
-  ${BOUNDINGBOX_BINARY_DIR}/vtkBoundingBoxConfigure.h
-)
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+  )

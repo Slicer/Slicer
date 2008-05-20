@@ -51,16 +51,16 @@ vtkQdecModuleLogic::vtkQdecModuleLogic()
 
     this->PlotTclScript = NULL;
     vtksys_stl::string slicerHome;
-    if (!vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome))
+    if (!vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome))
       {
-      this->PlotTclScript = "../lib/Slicer3/Libs/Qdec/vtkFreeSurferReaders.tcl";
-      vtkDebugMacro("Can't find SLICER_HOME env var, using plot tcl script path = " << this->GetPlotTclScript());
+      this->PlotTclScript = "/lib/Qdec/Tcl/vtkFreeSurferReaders.tcl";
+      vtkDebugMacro("Can't find Slicer3_HOME env var, using plot tcl script path = " << this->GetPlotTclScript());
       }
     else
       {
-      std::string scriptPath = slicerHome + "/lib/Slicer3/Libs/Qdec/vtkFreeSurferReaders.tcl";
+      std::string scriptPath = slicerHome + "/lib/Qdec/Tcl/vtkFreeSurferReaders.tcl";
       this->SetPlotTclScript(const_cast <char *> (scriptPath.c_str()));
-      vtkDebugMacro("Found SLICER_HOME env var, using plot tcl script path = " << this->GetPlotTclScript());
+      vtkDebugMacro("Found Slicer3_HOME env var, using plot tcl script path = " << this->GetPlotTclScript());
       }
     this->TclScriptLoaded = 0;
     this->NumberOfQuestions = 0;

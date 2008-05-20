@@ -1,46 +1,46 @@
-PROJECT(WFEngine)
+project(WFEngine)
 
 # we don't need the network interface right now!
 # interfaces/network
 
-SET(WFENGINE_SOURCE_DIRS
-engine
-xmlManager
-interfaces/direct
-)
+set(WFENGINE_SOURCE_DIRS
+  engine
+  xmlManager
+  interfaces/direct
+  )
 
-SET(WFENGINE_LIBRARY ${LIBRARY_OUTPUT_PATH}/libWFDirectInterface.so)
+set(WFENGINE_LIBRARY ${LIBRARY_OUTPUT_PATH}/libWFDirectInterface.so)
 
-#OPTION(WFCONFIGEDITOR "Want you to build the WFConfigEditor?")
-#IF(WFCONFIGEDITOR)
-#  SET(SOURCE_DIRS ${SOURCE_DIRS} wfConfigEditor)
-#ENDIF(WFCONFIGEDITOR)
+#option(WFCONFIGEDITOR "Want you to build the WFConfigEditor?")
+#if(WFCONFIGEDITOR)
+#  set(SOURCE_DIRS ${SOURCE_DIRS} wfConfigEditor)
+#endif(WFCONFIGEDITOR)
 
-#OPTION(WFTESTCLIENTS "Want you to build the WFExamples or WFTools?")
-#IF(WFTESTCLIENTS)
-#  SET(WFENGINE_SOURCE_DIRS ${WFENGINE_SOURCE_DIRS} test)
-#ENDIF(WFTESTCLIENTS)
+#option(WFTESTCLIENTS "Want you to build the WFExamples or WFTools?")
+#if(WFTESTCLIENTS)
+#  set(WFENGINE_SOURCE_DIRS ${WFENGINE_SOURCE_DIRS} test)
+#endif(WFTESTCLIENTS)
 
 #we must depend on xerces!
-#INCLUDE(${CMAKE_SOURCE_DIR}/FindXercesC.cmake)
-IF(XERCESC_FOUND)
-  INCLUDE_DIRECTORIES(${XERCESC_INCLUDE_DIR})
-  SET(LINK_LIBS ${LINK_LIBS} ${XERCESC_LIBRARY})
-ENDIF(XERCESC_FOUND)
+#include(${CMAKE_SOURCE_DIR}/FindXercesC.cmake)
+if(XERCESC_FOUND)
+  include_directories(${XERCESC_INCLUDE_DIR})
+  set(LINK_LIBS ${LINK_LIBS} ${XERCESC_LIBRARY})
+endif(XERCESC_FOUND)
 
-SUBDIRS(interfaces/direct)
-INCLUDE_DIRECTORIES(${WFENGINE_SOURCE_DIRS})
+subdirs(interfaces/direct)
+include_directories(${WFENGINE_SOURCE_DIRS})
 
-#IF(LOKI_FOUND)
-#  INCLUDE_DIRECTORIES(${LOKI_INCLUDE_DIR})
-#  SET(LINK_LIBS ${LINK_LIBS} ${LOKI_LIBRARY})
-#ENDIF(LOKI_FOUND)
+#if(LOKI_FOUND)
+#  include_directories(${LOKI_INCLUDE_DIR})
+#  set(LINK_LIBS ${LINK_LIBS} ${LOKI_LIBRARY})
+#endif(LOKI_FOUND)
 
-#INCLUDE(${CMAKE_SOURCE_DIR}/FindAsio.cmake)
-#IF(ASIO_FOUND)
-#  INCLUDE_DIRECTORIES(${ASIO_INCLUDE_DIR})
-#ENDIF(ASIO_FOUND)
+#include(${CMAKE_SOURCE_DIR}/FindAsio.cmake)
+#if(ASIO_FOUND)
+#  include_directories(${ASIO_INCLUDE_DIR})
+#endif(ASIO_FOUND)
 
-#TARGET_LINK_LIBRARIES(WFBaseEngine ${KWWidgets_LIBRARIES}) 
-#ADD_EXECUTABLE(WFEngine WFEMain.cxx)
-#TARGET_LINK_LIBRARIES(WFEngine WFBaseEngine)
+#target_link_libraries(WFBaseEngine ${KWWidgets_LIBRARIES}) 
+#add_executable(WFEngine WFEMain.cxx)
+#target_link_libraries(WFEngine WFBaseEngine)

@@ -1,4 +1,3 @@
-
 PROJECT (SlicerDeamonTesting)
 
 #ADD_TEST(
@@ -6,7 +5,7 @@ PROJECT (SlicerDeamonTesting)
 #  ${Slicer3_BINARY_DIR}/Slicer3
 #  --daemon
 #  --script
-#  ${Slicer3_BINARY_DIR}/../Slicer3/Modules/SlicerDaemon/Testing/Tcl/testIfDaemonAlreadyRuns.tcl
+#  ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/SlicerDaemon/Testing/Tcl/testIfDaemonAlreadyRuns.tcl
 #)
 
 #ADD_TEST(
@@ -14,7 +13,7 @@ PROJECT (SlicerDeamonTesting)
 #  ${Slicer3_BINARY_DIR}/Slicer3
 #  --daemon
 #  --script
-#  ${Slicer3_BINARY_DIR}/../Slicer3/Modules/SlicerDaemon/Testing/Tcl/daemonTest_loadTensorScene.tcl
+#  ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/SlicerDaemon/Testing/Tcl/daemonTest_loadTensorScene.tcl
 #)
 
 #ADD_TEST(
@@ -22,7 +21,7 @@ PROJECT (SlicerDeamonTesting)
 #  ${Slicer3_BINARY_DIR}/Slicer3
 #  --daemon
 #  --script
-#  ${Slicer3_BINARY_DIR}/../Slicer3/Modules/SlicerDaemon/Testing/Tcl/daemonTest_pipeTensor.tcl
+#  ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/SlicerDaemon/Testing/Tcl/daemonTest_pipeTensor.tcl
 #)
 
 #ADD_TEST(
@@ -30,5 +29,5 @@ PROJECT (SlicerDeamonTesting)
 #  ${Slicer3_BINARY_DIR}/Slicer3
 #  --daemon
 #  --script
-#  ${Slicer3_BINARY_DIR}/../Slicer3/Modules/SlicerDaemon/Testing/Tcl/compare2Tensors.tcl
+#  ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/SlicerDaemon/Testing/Tcl/compare2Tensors.tcl
 #)

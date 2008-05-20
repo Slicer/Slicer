@@ -1,14 +1,17 @@
-PROJECT(WFEngine)
+project(WFEngine)
 
-SET(SRCS
-WFXmlManager.cxx DOMTreeErrorReporter.cxx
-WFXmlConfigManager.cxx WFXmlWriter.cxx
-WFXmlWorkflowManager.cxx WFStepObject.cxx
-)
+set(SRCS
+  WFXmlManager.cxx 
+  DOMTreeErrorReporter.cxx
+  WFXmlConfigManager.cxx 
+  WFXmlWriter.cxx
+  WFXmlWorkflowManager.cxx 
+  WFStepObject.cxx
+  )
 
-SET(LINK_LIBS
-${XERCESC_LIBRARY}
-)
+if(XERCESC_LIBRARY)
+  set(LINK_LIBS ${XERCESC_LIBRARY})
+endif(XERCESC_LIBRARY)
 
-ADD_LIBRARY(WFXmlManager ${SRCS})
-TARGET_LINK_LIBRARIES(WFXmlManager ${LINK_LIBS})
+add_library(WFXmlManager ${SRCS})
+target_link_libraries(WFXmlManager ${LINK_LIBS})

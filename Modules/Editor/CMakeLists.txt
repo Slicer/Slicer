@@ -1,98 +1,48 @@
-PROJECT(Editor)
+project(Editor)
 
-#
-# install the tcl package for the Module
-# - make the module packages build directory if needed
-# - make this module's package directory
-# - copy over the tcl package files to the build directory
-#
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
-SET (Package_DIR ${SLICER_LIBRARIES_DIR}/Modules/Packages)
-IF (NOT EXISTS ${Package_DIR})
-  FILE(MAKE_DIRECTORY ${Package_DIR})
-ENDIF (NOT EXISTS ${Package_DIR})
+# --------------------------------------------------------------------------
+# Find Slicer3
 
-SET(Editor_DIR ${Package_DIR}/Editor)
-SET(EditorImageData_DIR ${Package_DIR}/Editor/ImageData)
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
 
-#
-# copy over the tcl files
-#
-FILE(MAKE_DIRECTORY ${Editor_DIR})
-SET(TCLFILES
-  pkgIndex.tcl
-  Editor.tcl EditorNode.tcl EditorLogic.tcl EditorGUI.tcl
-  Box.tcl EditBox.tcl EditColor.tcl ColorBox.tcl
-  PaintEffect.tcl DrawEffect.tcl
-  MakeModelEffect.tcl
-  EffectSWidget.tcl Labeler.tcl
-  SaveIslandEffect.tcl ThresholdEffect.tcl RemoveIslandsEffect.tcl
-  LevelTracingEffect.tcl
-  ImplicitRectangleEffect.tcl
-  WandEffect.tcl
-  ChangeIslandEffect.tcl ChangeLabelEffect.tcl
-  ErodeLabelEffect.tcl DilateLabelEffect.tcl
-)
+slicer3_set_default_modules_output_path()
 
-FOREACH(tclfile ${TCLFILES})
-  CONFIGURE_FILE(
-    ${Slicer3_SOURCE_DIR}/Modules/Editor/${tclfile}
-    ${Editor_DIR}/${tclfile}
+# --------------------------------------------------------------------------
+# Install support files
+
+file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.tcl")
+foreach(file ${TCLFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/Tcl/${file}
     COPYONLY
+    )
+endforeach(file)
+
+install(
+  FILES ${TCLFILES}
+  DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/Tcl
   )
-ENDFOREACH(tclfile)
 
-#
-# copy over the ImageData
-#
-FILE(MAKE_DIRECTORY ${EditorImageData_DIR})
-SET(IMAGEFILES
-ChangeIsland.png ChangeIslandDisabled.png ChangeIslandSelected.png
-ChangeLabel.png ChangeLabelDisabled.png ChangeLabelSelected.png
-ChooseColor.png ChooseColorDisabled.png ChooseColorSelected.png
-ConnectedComponents.png ConnectedComponentsDisabled.png ConnectedComponentsSelected.png
-LevelTracing.png LevelTracingDisabled.png LevelTracingSelected.png
-Wand.png WandDisabled.png WandSelected.png
-DeleteFiducials.png DeleteFiducialsDisabled.png DeleteFiducialsSelected.png
-RemoveIslands.png RemoveIslandsDisabled.png RemoveIslandsSelected.png
-DilateLabel.png DilateLabelDisabled.png DilateLabelSelected.png
-EraseLabel.png EraseLabelDisabled.png EraseLabelSelected.png
-ErodeLabel.png ErodeLabelDisabled.png ErodeLabelSelected.png
-FiducialVisibilityOff.png FiducialVisibilityOffDisabled.png FiducialVisibilityOffSelected.png
-FiducialVisibilityOn.png FiducialVisibilityOnDisabled.png FiducialVisibilityOnSelected.png
-Draw.png DrawDisabled.png DrawSelected.png
-GoToEditorModule.png GoToEditorModuleDisabled.png GoToEditorModuleSelected.png
-IdentifyIslands.png IdentifyIslandsDisabled.png IdentifyIslandsSelected.png
-ImplicitCube.png ImplicitCubeDisabled.png ImplicitCubeSelected.png
-ImplicitEllipse.png ImplicitEllipseDisabled.png ImplicitEllipseSelected.png
-ImplicitRectangle.png ImplicitRectangleDisabled.png ImplicitRectangleSelected.png
-InterpolateLabels.png InterpolateLabelsDisabled.png InterpolateLabelsSelected.png
-LabelOpacity.png LabelOpacityDisabled.png LabelOpacitySelected.png
-LabelVisibilityOn.png LabelVisibilityOnDisabled.png LabelVisibilityOnSelected.png
-LabelVisibilityOff.png LabelVisibilityOffDisabled.png LabelVisibilityOffSelected.png
-MakeModel.png MakeModelDisabled.png MakeModelSelected.png
-NextFiducial.png NextFiducialDisabled.png NextFiducialSelected.png
-Paint.png PaintSelected.png PaintDisabled.png
-PinOpen.png PinOpenDisabled.png PinOpenSelected.png
-PreviousFiducial.png PreviousFiducialDisabled.png PreviousFiducialSelected.png
-SaveIsland.png SaveIslandDisabled.png SaveIslandSelected.png
-SlurpColor.png SlurpColorDisabled.png SlurpColorSelected.png
-SnapToGridOff.png SnapToGridOffDisabled.png SnapToGridOffSelected.png
-SnapToGridOn.png SnapToGridOnDisabled.png SnapToGridOnSelected.png
-Threshold.png ThresholdBucket.png ThresholdBucketDisabled.png
-ThresholdBucketSelected.png ThresholdDisabled.png ThresholdPaintLabel.png
-ThresholdPaintLabelDisabled.png ThresholdPaintLabelSelected.png ThresholdSelected.png
-ToggleLabelOutline.png ToggleLabelOutlineDisabled.png ToggleLabelOutlineSelected.png
-Watershed.png WatershedDisabled.png WatershedSelected.png
-ThresholdPaintLabel.png ThresholdPaintLabelDisabled.png ThresholdPaintLabelSelected.png
-ThresholdBucket.png ThresholdBucketDisabled.png ThresholdBucketSelected.png
-DefaultTool.png DefaultToolDisabled.png DefaultToolSelected.png
-)
-
-FOREACH(imagefile ${IMAGEFILES})
-  CONFIGURE_FILE(
-    ${Slicer3_SOURCE_DIR}/Modules/Editor/ImageData/${imagefile}
-    ${EditorImageData_DIR}/${imagefile}
+file(GLOB IMAGEFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "ImageData/*.png")
+foreach(file ${IMAGEFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
     COPYONLY
+    )
+endforeach(file)
+
+install(
+  FILES ${IMAGEFILES}
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/ImageData
   )
-ENDFOREACH(imagefile)

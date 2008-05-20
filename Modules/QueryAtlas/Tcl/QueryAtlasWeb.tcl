@@ -1207,7 +1207,7 @@ proc QueryAtlasMakeEntrezCountQuery { url } {
 
     package require http
 
-     set ::QA(entrezCountFileName) "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/tmp/QA.counts"
+     set ::QA(entrezCountFileName) "$::env(Slicer3_HOME)/lib/Slicer3/Modules/QueryAtlas/tmp/QA.counts"
     set ::QA(entrezCountFile) [ open $::QA(entrezCountFileName) w+ ]
     set token [ ::http::geturl $url -channel $::QA(entrezCountFile) ]
     close $::QA(entrezCountFile)
@@ -1343,7 +1343,7 @@ proc QueryAtlasTestFan { } {
     if { 0 } {
         #--- get the render widget and set the icon directory
         set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
-        set icondir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/ImageData
+        set icondir $::env(Slicer3_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData
 
         #--- create  a list of icon names
         set icons [lrange [glob $icondir/*.png] 0 4]

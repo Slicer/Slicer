@@ -1,5 +1,5 @@
 
-set sceneFileName $::env(SLICER_HOME)/../Slicer3/Libs/MRML/Testing/diffusionEditor.mrml
+set sceneFileName $::env(Slicer3_HOME)/share/MRML/Testing/diffusionEditor.mrml
 
 $::slicer3::MRMLScene SetURL $sceneFileName
 $::slicer3::MRMLScene Connect

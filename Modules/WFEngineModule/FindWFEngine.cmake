@@ -1,21 +1,36 @@
-FIND_PATH(WFENGINE_INCLUDE_DIR WFEMain.h /usr/include /usr/local/include)
+find_path(WFENGINE_INCLUDE_DIR WFEMain.h 
+  /usr/include 
+  /usr/local/include
+  )
+mark_as_advanced(WFENGINE_INCLUDE_DIR)
 
-FIND_LIBRARY(WFENGINE_LIBRARY NAMES WFDirectInterface PATH /usr/lib /usr/local/lib) 
+find_library(WFENGINE_LIBRARY 
+  NAMES WFDirectInterface 
+  PATH 
+  /usr/lib 
+  /usr/local/lib
+  )
 
-IF (WFENGINE_INCLUDE_DIR)
-   SET(WFENGINE_FOUND TRUE)
-   SET(WFENGINE_INCLUDE_DIR ${WFENGINE_INCLUDE_DIR} ${WFENGINE_INCLUDE_DIR}/engine
-                            ${WFENGINE_INCLUDE_DIR}/interfaces ${WFENGINE_INCLUDE_DIR}/interfaces/direct 
-                            ${WFENGINE_INCLUDE_DIR}/xmlManager)
-ENDIF (WFENGINE_INCLUDE_DIR)
+mark_as_advanced(WFENGINE_LIBRARY)
+
+if(WFENGINE_INCLUDE_DIR)
+  set(WFENGINE_FOUND TRUE)
+  set(WFENGINE_INCLUDE_DIR 
+    ${WFENGINE_INCLUDE_DIR} 
+    ${WFENGINE_INCLUDE_DIR}/engine
+    ${WFENGINE_INCLUDE_DIR}/interfaces 
+    ${WFENGINE_INCLUDE_DIR}/interfaces/direct 
+    ${WFENGINE_INCLUDE_DIR}/xmlManager
+    )
+endif(WFENGINE_INCLUDE_DIR)
 
 
-IF (WFENGINE_FOUND)
-   IF (NOT WFENGINE_FIND_QUIETLY)
-      MESSAGE(STATUS "Found WFENGINE: ${WFENGINE_INCLUDE_DIR}")
-   ENDIF (NOT WFENGINE_FIND_QUIETLY)
-ELSE (WFENGINE_FOUND)
-   IF (WFENGINE_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find WFEngine")
-   ENDIF (WFENGINE_FIND_REQUIRED)
-ENDIF (WFENGINE_FOUND)
+if(WFENGINE_FOUND)
+  if(NOT WFENGINE_FIND_QUIETLY)
+    message(STATUS "Found WFENGINE: ${WFENGINE_INCLUDE_DIR}")
+  endif(NOT WFENGINE_FIND_QUIETLY)
+else(WFENGINE_FOUND)
+  if(WFENGINE_FIND_REQUIRED)
+    message(FATAL_ERROR "Could not find WFEngine")
+  endif(WFENGINE_FIND_REQUIRED)
+endif(WFENGINE_FOUND)

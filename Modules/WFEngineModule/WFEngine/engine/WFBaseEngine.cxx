@@ -48,7 +48,7 @@ int WFBaseEngine::InitializeWFEngine(std::string wfConfigFile)
 {
   if(wfConfigFile == "")
   {
-    fstream fs_op("../Slicer3/Modules/WFEngineModule/wfConfig.xml",ios::in);
+    fstream fs_op("share/Slicer3/Modules/WFEngineModule/wfConfig.xml",ios::in);
     if(!fs_op)
     {
      cout<<"wfConfig.xml not found!"<<endl;
@@ -56,7 +56,7 @@ int WFBaseEngine::InitializeWFEngine(std::string wfConfigFile)
     else
     {
      cout<<"wfConfig.xml found!"<<endl;
-     wfConfigFile = "../Slicer3/Modules/WFEngineModule/wfConfig.xml";
+     wfConfigFile = "share/Slicer3/Modules/WFEngineModule/wfConfig.xml";
      configExists = true;
     }
     fs_op.close();

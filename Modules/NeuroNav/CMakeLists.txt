@@ -1,99 +1,80 @@
-PROJECT(NeuroNav)
+project(NeuroNav)
 
-IF(NOT USE_IGSTK)
- ADD_DEFINITIONS(-DIGSTK_OFF)
-ENDIF(NOT USE_IGSTK)
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
-#
+# --------------------------------------------------------------------------
+# Find Slicer3
+
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
+
+slicer3_set_default_modules_output_path()
+
+# --------------------------------------------------------------------------
+# Include dirs
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
+  )
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkNeuroNavConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkNeuroNavConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkNeuroNavConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
 # Sources
-#
-SET(NeuroNav_SRCS 
-  # module
+
+set(NeuroNav_SRCS 
   vtkNeuroNavLogic.cxx
   vtkNeuroNavGUI.cxx
   )
 
-#
-# Include dirs
-#
-INCLUDE_DIRECTORIES(
-  ${ModulesBaseClasses_SOURCE_DIR}
-  ${ModulesBaseClasses_BINARY_DIR}
-  ${NeuroNav_SOURCE_DIR}
-  ${NeuroNav_BINARY_DIR}
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIR}
-  ${VTK_INCLUDE_DIR}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
-  ${IGT_SOURCE_DIR}
-  ${IGT_BINARY_DIR}
-#  ${NAVITRACK_INC}
-  ${IGSTK_INCLUDE_DIRS}
-  )
-
-#
+# --------------------------------------------------------------------------
 # Wrapping
-#
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(NeuroNav NeuroNav_TCL_SRCS "${NeuroNav_SRCS}" "")
 
-#
-# Loadable Module
-#
-GENERATELM(NeuroNav_SRCS NeuroNav.txt)
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(NeuroNav NeuroNav_TCL_SRCS "${NeuroNav_SRCS}" "")
 
-#
-# Build the library
-#
-ADD_LIBRARY(NeuroNav
+#---------------------------------------------------------------------------
+# Add Loadable Module support
+
+generatelm(NeuroNav_SRCS NeuroNav.txt)
+
+# --------------------------------------------------------------------------
+# Build and install the library
+
+set(lib_name NeuroNav)
+add_library(${lib_name}
   ${NeuroNav_SRCS} 
   ${NeuroNav_TCL_SRCS}
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS NeuroNav
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
-
-TARGET_LINK_LIBRARIES(NeuroNav
-  SlicerBaseLogic 
-  SlicerBaseGUI 
-  MRML
-  vtkITK
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  ITKAlgorithms
-  ITKNumerics 
-  ITKCommon
-  ITKBasicFilters
-  ITKNumerics
-  ITKStatistics
-  ITKBasicFilters
-  ITKIO
-  ITKDICOMParser
-  ${KWWidgets_LIBRARIES} 
-  vtkHybridTCL
-  IGT
-  ${IGSTK_LIB}
+target_link_libraries(${lib_name}
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
+  ${KWWidgets_LIBRARIES}
+  ${ITK_LIBRARIES}
   )
 
-#
-# Configure include file
-#
-CONFIGURE_FILE(
-  ${NeuroNav_SOURCE_DIR}/vtkNeuroNavConfigure.h.in 
-  ${NeuroNav_BINARY_DIR}/vtkNeuroNavConfigure.h
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
   )

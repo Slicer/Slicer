@@ -1,50 +1,59 @@
+project(SlicerTractographyROISelect)
 
-PROJECT(SlicerTractographyROISelect)
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
-FIND_PACKAGE(GenerateCLP REQUIRED)
-IF(GenerateCLP_FOUND)
-  INCLUDE(${GenerateCLP_USE_FILE})
-ENDIF(GenerateCLP_FOUND)
-LINK_DIRECTORIES(${ModuleDescriptionParser_BINARY_DIR})
+# --------------------------------------------------------------------------
+# Find Slicer3
 
-FIND_PACKAGE(ITK REQUIRED)
-INCLUDE(${ITK_USE_FILE})
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
 
-FIND_PACKAGE(VTK REQUIRED)
-INCLUDE(${VTK_USE_FILE})
+slicer3_set_default_plugins_output_path()
 
-IF (Slicer3_SOURCE_DIR)
-  SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-  SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-ENDIF(Slicer3_SOURCE_DIR)
+# --------------------------------------------------------------------------
+# Include dirs
 
-INCLUDE_DIRECTORIES(${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR})
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR} 
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
+  )
 
+# --------------------------------------------------------------------------
+# Sources
 
-SET (CLP ROISelect)
-SET (${CLP}_SOURCE ${CLP}.cxx)
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
-ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES(${CLP}
-  vtkImaging vtkIO vtkCommon
-  ModuleDescriptionParser vtkTeem
-  ITKBasicFilters MRML 
+set(CLP ROISelect)
+set(${CLP}_SOURCE ${CLP}.cxx)
+
+generateclp(
+  ${CLP}_SOURCE 
+  ${CLP}.xml 
+  ${Slicer3_HOME}/${Slicer3_INSTALL_SHARE_DIR}/Resources/NAMICLogo.h
 )
-LINK_DIRECTORIES(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR} ${SLICER3_LIB_INSTALL_DIR})
-INCLUDE_DIRECTORIES( ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR}
-    ${vtkTeem_SOURCE_DIR} ${vtkTeem_BINARY_DIR} 
-    ${SlicerTractographyROISelect_SOURCE_DIR} ${SlicerTractographyROISelect_BINARY_DIR}
- )
 
-IF (Slicer3_SOURCE_DIR)
-  SET(TARGETS
-   ${CLP}
-   )
-  FOREACH (target ${TARGETS})
-    INSTALL (TARGETS ${target}
-    RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins
-    LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins)
-  ENDFOREACH(target)
+# --------------------------------------------------------------------------
+# Build and install the exe
 
-ENDIF (Slicer3_SOURCE_DIR) 
+add_executable(${CLP} ${${CLP}_SOURCE})
+target_link_libraries(${CLP}
+  ${Slicer3_Libs_LIBRARIES}
+  vtkIO
+  ${ITK_LIBRARIES}
+  )
 
+set(TARGETS
+  ${CLP}
+  )
+foreach(target ${TARGETS})
+  install(TARGETS ${target}
+    RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
+    )
+endforeach(target)

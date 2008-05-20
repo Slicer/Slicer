@@ -10,9 +10,9 @@ editor SetParent t
 editor SetAndObserveMRMLScene scene
 editor Create
 
-set grads $::env(SLICER_HOME)/../Slicer3/Modules/Volumes/Testing/gradients.txt
+set grads $::env(Slicer3_HOME)/share/Slicer3/Modules/Volumes/Testing/gradients.txt
 
-set grads2 $::env(SLICER_HOME)/../Slicer3/Modules/Volumes/Testing/gradients_bad.txt
+set grads2 $::env(Slicer3_HOME)/share/Slicer3/Modules/Volumes/Testing/gradients_bad.txt
 
 vtkDoubleArray newBValue
 vtkDoubleArray newGradients

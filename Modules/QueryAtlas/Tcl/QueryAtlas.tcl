@@ -465,7 +465,7 @@ proc QueryAtlasAddBIRNLogo {} {
   if { [info command vtkLogoWidget] != "" } {
 
     # Logo
-    set logoFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/Testing/birn-new-big.png
+    set logoFile $::Slicer3_HOME/share/FreeSurfer/Testing/birn-new-big.png
     set logoRep [vtkLogoRepresentation New]
     set reader [vtkPNGReader New]
     $reader SetFileName $logoFile
@@ -527,7 +527,7 @@ proc QueryAtlasAddBIRNLogo {} {
   #
   # birn logo specific
   #
-  set logoFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/Testing/birn-new-big.png
+  set logoFile $::Slicer3_HOME/share/FreeSurfer/Testing/birn-new-big.png
   set ::QA(logo,actor) $textureActor
 
   set viewer [$::slicer3::ApplicationGUI GetViewerWidget]
@@ -775,7 +775,7 @@ proc QueryAtlasAddAnnotations {LHAnnoFileName RHAnnoFileName } {
         #
         # read the freesurfer labels for the aseg+aparc
         #
-        set lutFile $::SLICER_BUILD/../Slicer3/Libs/FreeSurfer/FreeSurferColorLUT.txt
+        set lutFile $::Slicer3_HOME/share/FreeSurfer/FreeSurferColorLUT.txt
         if { [file exists $lutFile] } {
             set fp [open $lutFile "r"]
             while { ![eof $fp] } {
@@ -1985,7 +1985,7 @@ proc QueryAtlasSendOntologyCommand { term ontology } {
             #--- if wer get an error, try launching the ontology browser
             if { $errcheck != 0 } {
                 #--- launch the browser on windows or other platforms and get PID
-                set dir $::env(SLICER_HOME)/lib/Slicer3/Modules/Packages/QueryAtlas/OntologyViz
+                set dir $::env(Slicer3_HOME)/lib/Slicer3/Modules/QueryAtlas/OntologyViz
                 if { $::tcl_platform(platform) == "windows" } {
                     set ::QA(ontologyViewerPID) [ OntologyVizLaunch $dir 1 ]
                 } else {

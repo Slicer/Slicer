@@ -38,8 +38,9 @@
 #include "vtkPointData.h"
 #include "vtkSlicerColorLogic.h"
 
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
 #include "OpenTracker/OpenTracker.h"
 #include "OpenTracker/common/CallbackModule.h"
 
@@ -81,7 +82,7 @@ public:
     void CloseConnection();
     void PollRealtime();
 
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
     static void callbackF(const Node&, const Event &event, void *data);
 #endif
 
@@ -113,7 +114,7 @@ protected:
     vtkRealTimeImagingLogic(const vtkRealTimeImagingLogic&);
     void operator=(const vtkRealTimeImagingLogic&);
 
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
     Context *context;
 #endif
 

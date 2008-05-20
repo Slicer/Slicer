@@ -1,9 +1,60 @@
-PROJECT(EMSegment)
+project(EMSegment)
 
-#
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
+# --------------------------------------------------------------------------
+# Find Slicer3
+
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
+
+slicer3_set_default_modules_output_path()
+
+# --------------------------------------------------------------------------
+# Include dirs
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard
+  ${CMAKE_CURRENT_SOURCE_DIR}/MRML
+  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm
+  ${CMAKE_CURRENT_SOURCE_DIR}/Registration
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
+  ${Volumes_SOURCE_DIR}
+  ${Volumes_BINARY_DIR}
+  )
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkEMSegmentConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentConfigure.h
+  )
+
+file(GLOB headers 
+  "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Wizard/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/MRML/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.txx"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Registration/*.h"
+  )
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkEMSegmentConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
 # Sources
-#
-SET(EMSegment_SRCS 
+
+set(EMSegment_SRCS 
   # module
   vtkEMSegmentGUI.cxx
   vtkEMSegmentLogic.cxx 
@@ -53,14 +104,14 @@ SET(EMSegment_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkRigidRegistrator.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkBSplineRegistrator.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Registration/vtkITKTransformAdapter.cxx
-# not used in current implementation---used in slicer2 modules
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasClass.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSegmenter.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSuperClass.cxx
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMMarkov.cxx
+  # not used in current implementation---used in slicer2 modules
+  #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasClass.cxx
+  #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSegmenter.cxx
+  #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMAtlasSuperClass.cxx
+  #  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/vtkImageEMMarkov.cxx
   )
 
-SET_SOURCE_FILES_PROPERTIES(
+set_source_files_properties(
   # Algorithm sources (temporary exclusion)
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSNode.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML/vtkMRMLEMSSegmenterNode.cxx
@@ -96,94 +147,59 @@ SET_SOURCE_FILES_PROPERTIES(
   WRAP_EXCLUDE
   )
 
-#
-# Include dirs
-#
-INCLUDE_DIRECTORIES(
-  ${EMSegment_SOURCE_DIR}
-  ${EMSegment_BINARY_DIR}
-  ${EMSegment_SOURCE_DIR}/Wizard
-  ${EMSegment_SOURCE_DIR}/MRML
-  ${EMSegment_SOURCE_DIR}/Algorithm
-  ${EMSegment_SOURCE_DIR}/Registration
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIR}
-  ${VTK_INCLUDE_DIR}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
-  ${Volumes_SOURCE_DIR}
-  ${Volumes_BINARY_DIR}
-  )
-
-#
+# --------------------------------------------------------------------------
 # Wrapping
-#
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(EMSegment EMSegment_TCL_SRCS "${EMSegment_SRCS}" "")
 
-#GENERATELM(EMSegment_SRCS EMSegment.txt)
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(EMSegment 
+  EMSegment_TCL_SRCS 
+  "${EMSegment_SRCS}" "")
 
-#
-# Build the library
-#
-ADD_LIBRARY(EMSegment 
+#---------------------------------------------------------------------------
+# Add Loadable Module support
+
+generatelm(EMSegment_SRCS EMSegment.txt)
+
+# --------------------------------------------------------------------------
+# Build and install the library
+
+set(lib_name EMSegment)
+add_library(${lib_name} 
   ${EMSegment_SRCS} 
   ${EMSegment_TCL_SRCS}
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS EMSegment
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
-
-TARGET_LINK_LIBRARIES(EMSegment
-  SlicerBaseLogic 
-  SlicerBaseGUI
-  MRML
-  vtkITK
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  ITKAlgorithms
-  ITKNumerics 
-  ITKCommon
-  ITKBasicFilters
-  ITKNumerics
-  ITKStatistics
-  ITKBasicFilters
-  ITKIO
-  ITKDICOMParser
+target_link_libraries(${lib_name}
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES} 
+  ${ITK_LIBRARIES}
   Volumes
   )
 
-#
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
 # Testing
-#
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
 
-#
-# command line application
-#
-SUBDIRS(CommandLineApplication)
+if(BUILD_TESTING)
+  subdirs(Testing)
+endif(BUILD_TESTING)
 
-#
-# Configure include file
-#
-CONFIGURE_FILE(
-  ${EMSegment_SOURCE_DIR}/vtkEMSegmentConfigure.h.in 
-  ${EMSegment_BINARY_DIR}/vtkEMSegmentConfigure.h
+# --------------------------------------------------------------------------
+# Command line application
+
+subdirs(CommandLineApplication)
+
+# --------------------------------------------------------------------------
+# Install the testing data
+
+install(DIRECTORY
+  Testing/TestData
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
+  PATTERN ".svn" EXCLUDE
   )

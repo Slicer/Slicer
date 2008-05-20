@@ -1,10 +1,12 @@
-PROJECT(WFEngine)
-SET(SRCS
-WFBaseSocket.cxx
-WFServerConnection.cxx
-WFClientConnection.cxx
-WFSocketCollection.cxx)
+project(WFEngine)
 
-ADD_LIBRARY(WFNetworkInterface ${SRCS})
+set(SRCS
+  WFBaseSocket.cxx
+  WFServerConnection.cxx
+  WFClientConnection.cxx
+  WFSocketCollection.cxx
+  )
 
-TARGET_LINK_LIBRARIES(WFNetworkInterface)
+add_library(WFNetworkInterface ${SRCS})
+
+target_link_libraries(WFNetworkInterface)

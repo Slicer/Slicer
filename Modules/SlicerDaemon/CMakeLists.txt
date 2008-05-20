@@ -1,122 +1,164 @@
-PROJECT(SlicerDaemon)
+project(SlicerDaemon)
+
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
 # --------------------------------------------------------------------------
-# Sources
+# Find Slicer3
 
-SET(SlicerDaemon_SRCS
-  #vtkSlicerDaemonLogic.cxx
-  #vtkSlicerDaemonGUI.cxx
-  #vtkMRMLSlicerDaemonNode.cxx
-  vtkTclHelper.cxx
-)
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
 
-# Abstract/pure virtual classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #ABSTRACT "TRUE"
-  #)
-
-# Helper classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #WRAP_EXCLUDE "TRUE"
-  #)
+slicer3_set_default_modules_output_path()
 
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
-  ${SlicerDaemon_SOURCE_DIR}
-  ${SlicerDaemon_BINARY_DIR}
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${VTK_INCLUDE_DIR}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
   )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerDaemonConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerDaemonConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerDaemonConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
+# Sources
+
+set(SlicerDaemon_SRCS
+  #vtkSlicerDaemonLogic.cxx
+  #vtkSlicerDaemonGUI.cxx
+  #vtkMRMLSlicerDaemonNode.cxx
+  vtkTclHelper.cxx
+  )
 
 # --------------------------------------------------------------------------
 # Wrapping
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(SlicerDaemon SlicerDaemon_TCL_SRCS "${SlicerDaemon_SRCS}" "")
-
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(SlicerDaemon SlicerDaemon_TCL_SRCS "${SlicerDaemon_SRCS}" "")
 
 # --------------------------------------------------------------------------
-# Build the library
+# Build and install the library
 
-ADD_LIBRARY(SlicerDaemon
+set(lib_name SlicerDaemon)
+add_library(${lib_name}
   ${SlicerDaemon_SRCS}
   ${SlicerDaemon_TCL_SRCS}
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS SlicerDaemon
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
+target_link_libraries(${lib_name}
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
+  ${KWWidgets_LIBRARIES}
+  ${ITK_LIBRARIES}
+  )
 
-TARGET_LINK_LIBRARIES(SlicerDaemon
-  SlicerBaseLogic 
-  SlicerBaseGUI 
-  MRML
-  vtkCommonTCL
-  vtkImagingTCL
-  ${KWWidgets_LIBRARIES} )
-
-
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+  )
 
 # --------------------------------------------------------------------------
-# Testing (requires some of the examples)
+# Testing
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  subdirs(Testing)
+endif(BUILD_TESTING)
 
-#
-# configure files to drop in the build directory
-#
-CONFIGURE_FILE(
-  ${SlicerDaemon_SOURCE_DIR}/vtkSlicerDaemonConfigure.h.in 
-  ${SlicerDaemon_BINARY_DIR}/vtkSlicerDaemonConfigure.h
-)
+# --------------------------------------------------------------------------
+# Install support files
 
-CONFIGURE_FILE(
-  ${SlicerDaemon_SOURCE_DIR}/Tcl/slicerd.tcl
-  ${SLICER_LIBRARIES_DIR}/slicerd.tcl
-)
+# Matlab
 
-CONFIGURE_FILE(
-  ${SlicerDaemon_SOURCE_DIR}/Tcl/slicerget.tcl
-  ${SLICER_LIBRARIES_DIR}/slicerget.tcl
-)
+file(GLOB MFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Matlab/*.m")
+file(GLOB CFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Matlab/popen/*.c")
 
-CONFIGURE_FILE(
-  ${SlicerDaemon_SOURCE_DIR}/Tcl/slicerput.tcl
-  ${SLICER_LIBRARIES_DIR}/slicerput.tcl
-)
+foreach(file 
+    ${MFILES} 
+    ${CFILES}
+    )
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY)
+endforeach(file)
 
-INSTALL(FILES
-  "${SLICER_LIBRARIES_DIR}/slicerd.tcl"
-  DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR})
+install(DIRECTORY
+  Matlab
+  DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME} COMPONENT Development
+  PATTERN ".svn" EXCLUDE
+  )
 
-INSTALL(FILES
-  "${SLICER_LIBRARIES_DIR}/slicerput.tcl"
-  DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR})
+# Python
 
-INSTALL(FILES
-  "${SLICER_LIBRARIES_DIR}/slicerget.tcl"
-  DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR})
+file(GLOB PYTHONFILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "Python/*.py")
+foreach(pythonfile ${PYTHONFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${pythonfile}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${pythonfile}
+    COPYONLY)
+endforeach(pythonfile)
 
+install(
+  FILES ${PYTHONFILES}
+  DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/Python
+  )
 
+# Tcl
+
+file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/*.tcl")
+file(GLOB TRACKERFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/tracker/*.[mtv]*")
+foreach(file 
+    ${TCLFILES} 
+    ${TRACKERFILES}
+    )
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY)
+endforeach(file)
+
+install(DIRECTORY
+  Tcl
+  DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME} COMPONENT Development
+  PATTERN ".svn" EXCLUDE
+  )
+
+# Testing
+
+file(GLOB MRMLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.mrml")
+file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/Tcl/*.tcl")
+
+foreach(file 
+    ${TCLFILES} 
+    ${MRMLFILES}
+    )
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY)
+endforeach(file)
+
+install(DIRECTORY
+  Testing
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME} COMPONENT Development
+  PATTERN ".svn" EXCLUDE
+  )

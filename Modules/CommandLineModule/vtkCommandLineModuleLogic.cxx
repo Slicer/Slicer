@@ -47,6 +47,18 @@ Version:   $Revision: 1.2 $
 #include "itksys/SystemTools.hxx"
 #include "itksys/RegularExpression.hxx"
 
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
+#ifdef Slicer3_USE_PYTHON
+#ifdef _DEBUG
+#undef _DEBUG
+#include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
+#endif
+
 #include <algorithm>
 #include <set>
 
@@ -1497,13 +1509,14 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       "Module = __import__ ( ModuleName )\n"
       "reload ( Module )\n"
       "Module.Execute ( *PositionalArgs, **FlagArgs )\n";
-#ifdef USE_PYTHON    
+#ifdef Slicer3_USE_PYTHON    
     PyObject* v;
       
-    v = PyRun_String( ExecuteModuleString.c_str(),
-                      Py_file_input,
-                      vtkSlicerApplication::GetInstance()->GetPythonDictionary(),
-                      vtkSlicerApplication::GetInstance()->GetPythonDictionary() );
+    v = PyRun_String(
+      ExecuteModuleString.c_str(),
+      Py_file_input,
+      (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
+      (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
     if (v == NULL)
       {
       node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);

@@ -3929,6 +3929,10 @@ void
 vtkEMSegmentMRMLManager::
 RegisterMRMLNodesWithScene()
 {
+  if(!this->GetMRMLScene())
+    {
+    return;
+    } 
   vtkMRMLEMSNode* emsNode = 
     vtkMRMLEMSNode::New();
   this->GetMRMLScene()->RegisterNodeClass(emsNode);

@@ -1,87 +1,55 @@
-PROJECT(QueryAtlas)
+project(QueryAtlas)
 
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
-#
-# install the tcl package for the Module
-# - make the module packages build directory if needed
-# - make this module's package directory
-# - copy over the tcl package files to the build directory
-#
+# --------------------------------------------------------------------------
+# Find Slicer3
 
-SET (Package_DIR ${SLICER_LIBRARIES_DIR}/Modules/Packages)
-IF (NOT EXISTS ${Package_DIR})
-  FILE(MAKE_DIRECTORY ${Package_DIR})
-ENDIF (NOT EXISTS ${Package_DIR})
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
 
-SET(QueryAtlas_DIR ${Package_DIR}/QueryAtlas)
-#
-# copy over the tcl files
-#
-FILE(MAKE_DIRECTORY ${QueryAtlas_DIR})
-SET(TCLFILES
-  ./Tcl/pkgIndex.tcl
-  ./Tcl/Card.tcl ./Tcl/CardFan.tcl
-  ./Tcl/QueryAtlas.tcl
-  ./Tcl/QueryAtlasAnno.tcl
-  ./Tcl/QueryAtlasCSV.tcl
-  ./Tcl/QueryAtlasControlledVocabulary.tcl
-  ./Tcl/QueryAtlasWeb.tcl
-)
+slicer3_set_default_modules_output_path()
 
-FOREACH(tclfile ${TCLFILES})
-  CONFIGURE_FILE(
-    ${Slicer3_SOURCE_DIR}/Modules/QueryAtlas/${tclfile}
-    ${QueryAtlas_DIR}/${tclfile}
-    COPYONLY
+# --------------------------------------------------------------------------
+# Include dirs
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
+  ${QdecModule_SOURCE_DIR}
+  ${QdecModule_BINARY_DIR}
   )
-ENDFOREACH(tclfile)
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkQueryAtlasConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkQueryAtlasConfigure.h
+  )
 
-SET (CSVFILES
-  ./Resources/NN2002-2-synonyms.csv
-  ./Resources/controlledVocabulary.csv
-  ./Resources/Neurons_CellpropDB.csv
-  ./Resources/NN2002-3-BrainInfoURI.csv
-)
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkQueryAtlasConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
 
-FOREACH( csvfile ${CSVFILES})
-   CONFIGURE_FILE(
-      ${Slicer3_SOURCE_DIR}/Modules/QueryAtlas/${csvfile}
-      ${QueryAtlas_DIR}/${csvfile}
-      COPYONLY
-)
-ENDFOREACH(csvfile)
-
-
-SET (ONTOVIZFILES
-    ./OntologyViz/build.xml
-    ./OntologyViz/bin/birnlexvis-support.jar
-    ./OntologyViz/bin/birnlexvis.jar
-    ./OntologyViz/bin/birnlexvis.tcl
-    ./OntologyViz/bin/birnlexvisUnix.sh
-    ./OntologyViz/bin/birnlexvisWin.sh
-    ./OntologyViz/data/neuronames-v1.json
-    ./OntologyViz/data/birnlex-body-v1.json
-    ./OntologyViz/extjars/json.jar
-    ./OntologyViz/extjars/jython.jar
-    ./OntologyViz/extjars/prefuse.jar    
-)
-
-
-FOREACH( ovfile ${ONTOVIZFILES})
-   CONFIGURE_FILE(
-      ${Slicer3_SOURCE_DIR}/Modules/QueryAtlas/${ovfile}
-      ${QueryAtlas_DIR}/${ovfile}
-      COPYONLY
-)
-ENDFOREACH(ovfile)
-
-
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h")
+install(FILES 
+  ${headers} 
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  ) 
 
 # --------------------------------------------------------------------------
 # Sources
 
-SET(QueryAtlas_SRCS
+set(QueryAtlas_SRCS
   vtkQueryAtlasIcons.cxx        
   vtkQueryAtlasLogic.cxx
   vtkQueryAtlasGUI.cxx
@@ -105,114 +73,138 @@ SET(QueryAtlas_SRCS
   vtkTextureFontManager.cxx
   vtkTextureText.cxx
   vtkTextureTextPolys.cxx
-)
-
-# Abstract/pure virtual classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #ABSTRACT "TRUE"
-  #)
-
-# Helper classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #WRAP_EXCLUDE "TRUE"
-  #)
-
-# --------------------------------------------------------------------------
-# Include dirs
-
-INCLUDE_DIRECTORIES(
-  ${QueryAtlas_SOURCE_DIR}
-  ${QueryAtlas_BINARY_DIR}
-  ${QdecModule_SOURCE_DIR}
-  ${QdecModule_BINARY_DIR}
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
-  ${Qdec_SOURCE_DIR}
-  ${Qdec_BINARY_DIR}
   )
-
 
 # --------------------------------------------------------------------------
 # Wrapping
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(QueryAtlas QueryAtlas_TCL_SRCS "${QueryAtlas_SRCS}" "")
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(QueryAtlas QueryAtlas_TCL_SRCS "${QueryAtlas_SRCS}" "")
 
 # --------------------------------------------------------------------------
-# Add support for loadable modules, must be after TCL Wrapping
+# Add Loadable Module support
 
-GENERATELM(QueryAtlas_SRCS QueryAtlas.txt)
+generatelm(QueryAtlas_SRCS QueryAtlas.txt)
 
 # --------------------------------------------------------------------------
-# Build the library
+# Build and install the library
 
-LINK_DIRECTORIES(${Qdec_BINARY_DIR})
-
-ADD_LIBRARY(QueryAtlas
+set(lib_name QueryAtlas)
+add_library(${lib_name}
   ${QueryAtlas_SRCS}
   ${QueryAtlas_TCL_SRCS}
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS QueryAtlas
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
-
-TARGET_LINK_LIBRARIES(QueryAtlas
-  QdecModule        
-  SlicerBaseLogic 
-  SlicerBaseGUI 
-  MRML
-  vtkITK
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  ITKAlgorithms
-  ITKNumerics 
-  ITKCommon
-  ITKBasicFilters
-  ITKNumerics
-  ITKStatistics
-  ITKBasicFilters
-  ITKIO
-  ITKDICOMParser
+target_link_libraries(${lib_name}
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
-  Qdec
+  ${ITK_LIBRARIES}
+  QdecModule
   )
 
-
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+  )
 
 # --------------------------------------------------------------------------
-# Testing (requires some of the examples)
+# Testing
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
+if(BUILD_TESTING)
+  subdirs(Testing)
+endif(BUILD_TESTING)
 
-CONFIGURE_FILE(
-  ${QueryAtlas_SOURCE_DIR}/vtkQueryAtlasConfigure.h.in 
-  ${QueryAtlas_BINARY_DIR}/vtkQueryAtlasConfigure.h
+# --------------------------------------------------------------------------
+# Install support files
+
+# Should those paths change, make sure to update 
+#   - Tcl/QueryAtlas.tcl
+#   - Tcl/QueryAtlasControlledVocabulary.tcl
+#   - vtkQueryAtlasGUI.cxx
+
+# Tcl files
+
+# Question: I'm not quite sure if the Tcl scripts here are supposed to be a module loaded at run-time; since there is a pkgindex.tcl I assume it was a Tcl "module", one loaded by ScriptedModule, but said ScriptedModule does choke at run-time trying to call QueryAtlasBuildGUI or QueryAtlasAddGUIObservers (both methods created by appending "BuildGUI" or "AddGUIObservers" to the module name, none of them to be found in the scripts here). Until we find out, let's copy those support files to share/ instead of lib/.  vtkQueryAtlasGUI.cxx seems to add the path to these scripts manually by updating auto_path, so maybe they are just support scripts, but part of a standalone module.
+
+file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/*.tcl")
+
+foreach(file ${TCLFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY)
+endforeach(file)
+
+install(
+  FILES ${TCLFILES}
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Tcl
+  )
+
+# Resources (CSV, txt)
+
+file(GLOB CSVFILES "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.csv")
+file(GLOB RESFILES "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.txt")
+
+foreach(file 
+    ${CSVFILES} 
+    ${RESFILES}
 )
+  get_filename_component(filename "${file}" NAME)
+  configure_file(
+    ${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Resources/${filename}
+    COPYONLY)
+endforeach(file)
 
+install(FILES 
+  ${CSVFILES} 
+  ${RESFILES} 
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  ) 
 
+# ImageData
 
+file(GLOB IMAGEFILES "${CMAKE_CURRENT_SOURCE_DIR}/ImageData/*.png")
+
+foreach(file ${IMAGEFILES})
+  get_filename_component(filename "${file}" NAME)
+  configure_file(
+    ${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/ImageData/${filename}
+    COPYONLY)
+endforeach(file)
+
+install(FILES 
+  ${IMAGEFILES}
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/ImageData COMPONENT Development
+  ) 
+
+# Ontoviz
+
+set(ONTOVIZFILES
+  OntologyViz/bin/birnlexvis-support.jar
+  OntologyViz/bin/birnlexvis.jar
+  OntologyViz/bin/birnlexvis.tcl
+  OntologyViz/bin/birnlexvisUnix.sh
+  OntologyViz/bin/birnlexvisWin.sh
+  OntologyViz/build.xml
+  OntologyViz/data/birnlex-body-v1.json
+  OntologyViz/data/neuronames-v1.json
+  OntologyViz/extjars/json.jar
+  OntologyViz/extjars/jython.jar
+  OntologyViz/extjars/prefuse.jar    
+  )
+
+foreach(file ${ONTOVIZFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY)
+  get_filename_component(path "${file}" PATH)
+  install(FILES 
+    ${file} 
+    DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${path} COMPONENT Development
+    ) 
+endforeach(file)

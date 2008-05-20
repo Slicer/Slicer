@@ -4,7 +4,7 @@
 # Write tcl output to a file
 #
 
-#set outfile [open "$::env(SLICER_HOME)/Modules/SlicerDaemon/Testing/DaemonTest_loadTensor.txt" w]
+#set outfile [open "$::env(Slicer3_HOME)/share/Slicer3/Modules/SlicerDaemon/Testing/DaemonTest_loadTensor.txt" w]
 #puts  $outfile "This is a Slicer Daemon tensor test"
 #puts  $outfile "-------------------------------------\n"
 
@@ -27,7 +27,7 @@
 #close $outfile
 
 
-#$::slicer3::MRMLScene SetURL  $::env(SLICER_HOME)/../Slicer3/Modules/SlicerDaemon/Testing/slicerDaemonTensorTestData.mrml
+#$::slicer3::MRMLScene SetURL  $::env(Slicer3_HOME)/share/Slicer3/Modules/SlicerDaemon/Testing/slicerDaemonTensorTestData.mrml
 $::slicer3::MRMLScene SetURL  /projects/schiz/guest/kquintus/data/testVolumes/testscene.mrml
 $::slicer3::MRMLScene Connect
 #$::slicer3::MRMLScene SetErrorCode 0

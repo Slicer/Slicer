@@ -85,7 +85,7 @@ void* vtkImageEMLocalGenericClass::GetDataPtr(vtkImageData* ImageData,int Bounda
   int extent[6];
   ImageData->GetWholeExtent(extent);
   //vtkIndent indent;
-  //ImageData->PrintSelf(std::cerr, indent);
+  // ImageData->PrintSelf(std::cerr, indent);
   if (BoundaryType) {
     vtkIdType DataIncX, DataIncY, DataIncZ;
     ImageData->GetContinuousIncrements(extent, DataIncX, DataIncY, DataIncZ);

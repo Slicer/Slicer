@@ -799,7 +799,7 @@ proc fips2mrml_WriteMRML2File {  } {
 
 
     set cwd [ pwd ]
-    set ::fips2mrml_mrmlFilename [format "%s/%s%s%s" $::env(SLICER_DATA) $::fips2mrml_MRMLFile "_MRML2" ".xml" ]
+    set ::fips2mrml_mrmlFilename [format "%s/%s%s%s" $::env(Slicer3_DATA) $::fips2mrml_MRMLFile "_MRML2" ".xml" ]
     puts "Writing $::fips2mrml_mrmlFilename"
     fips2mrml_DisplayMessage "Writing $::fips2mrml_mrmlFilename"
     set fid [ open $::fips2mrml_mrmlFilename "w" ]
@@ -1316,7 +1316,7 @@ proc fips2mrml_WriteMRML3File { } {
 
     #--- open a new mrmlFile
     set cwd [ pwd ]
-    set ::fips2mrml_mrmlFilename [format "%s/%s%s%s" $::env(SLICER_DATA) $::fips2mrml_MRMLFile "_MRML3" ".mrml" ]
+    set ::fips2mrml_mrmlFilename [format "%s/%s%s%s" $::env(Slicer3_DATA) $::fips2mrml_MRMLFile "_MRML3" ".mrml" ]
     puts "Writing $::fips2mrml_mrmlFilename"
     fips2mrml_DisplayMessage "Writing $::fips2mrml_mrmlFilename"
     set fid [ open $::fips2mrml_mrmlFilename "w+" ]
@@ -1657,18 +1657,18 @@ proc QueryAtlasLaunchFips2Mrml { } {
         fips2mrml_DisplayMessage "Please set your (FreeSurfer) SUBJECTS_DIR environment variable and try again."
         exit
     }
-    if { [ info exists ::env(SLICER_DATA) ] } {
-        set dataDir $::env(SLICER_DATA)
+    if { [ info exists ::env(Slicer3_DATA) ] } {
+        set dataDir $::env(Slicer3_DATA)
     } else {
-        tk_messageBox -message "Please set your (Slicer data directory) SLICER_DATA environment variable and try again."
-        fips2mrml_DisplayMessage "Please set your (Slicer data directory) SLICER_DATA environment variable and try again."
+        tk_messageBox -message "Please set your (Slicer data directory) Slicer3_DATA environment variable and try again."
+        fips2mrml_DisplayMessage "Please set your (Slicer data directory) Slicer3_DATA environment variable and try again."
         exit
     }
-    if { [ info exists ::env(SLICER_HOME) ] } {
-        set slicer3Dir $::env(SLICER_HOME)
+    if { [ info exists ::env(Slicer3_HOME) ] } {
+        set slicer3Dir $::env(Slicer3_HOME)
     } else {
-        tk_messageBox -message "Please set your (Slicer3 home directory) SLICER_HOME environment variable and try again."
-        fips2mrml_DisplayMessage "Please set your (Slicer3 home directory) SLICER_HOME environment variable and try again."
+        tk_messageBox -message "Please set your (Slicer3 home directory) Slicer3_HOME environment variable and try again."
+        fips2mrml_DisplayMessage "Please set your (Slicer3 home directory) Slicer3_HOME environment variable and try again."
         exit
     }
     
@@ -1679,7 +1679,7 @@ proc QueryAtlasLaunchFips2Mrml { } {
     puts "Mapping BIRN ID to FreeSurferID with $::fsbirnid_dat"
     set ::freesurfer_subjectsdir  $fsSubDir 
     puts "Using freesurfer subject dir: $::freesurfer_subjectsdir"
-    set ::fips2mrml_FScolors [ format "%s%s" $slicer3Dir "/Libs/FreeSurfer/FreeSurferColorLUT.txt" ]
+    set ::fips2mrml_FScolors [ format "%s%s" $slicer3Dir "/share/FreeSurfer/FreeSurferColorLUT.txt" ]
     if { [ file exists $::fips2mrml_FScolors ] } {
         puts "Using freesurfer colors: $::fips2mrml_FScolors"
     } else {
@@ -1714,8 +1714,8 @@ proc QueryAtlasLaunchFips2Mrml { } {
 
     #--- create logo frame
     set nowframe $f.fLogo
-    if { [ file exists "$::env(SLICER_HOME)/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ] } {
-        set logo [ image create photo -file "$::env(SLICER_HOME)/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ]
+    if { [ file exists "$::env(Slicer3_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ] } {
+        set logo [ image create photo -file "$::env(Slicer3_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData/BIRNLogo.gif" ]
         label $nowframe.lLogo -image $logo
         pack $nowframe.lLogo -side top -anchor e -padx 4
     }

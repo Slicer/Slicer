@@ -1,72 +1,102 @@
-PROJECT (EMSegmentCommandLineExecutable)
+project(EMSegmentCommandLineExecutable)
 
-FIND_PACKAGE(GenerateCLP REQUIRED)
-IF(GenerateCLP_FOUND)
-  INCLUDE(${GenerateCLP_USE_FILE})
-ENDIF(GenerateCLP_FOUND)
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
-INCLUDE_DIRECTORIES ( 
+# --------------------------------------------------------------------------
+# Find Slicer3
+
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
+
+slicer3_set_default_plugins_output_path()
+
+# --------------------------------------------------------------------------
+# Include dirs
+
+include_directories(
   ${EMSegment_SOURCE_DIR}
   ${EMSegment_SOURCE_DIR}/MRML
   ${EMSegment_SOURCE_DIR}/Algorithm
   ${EMSegment_SOURCE_DIR}/CommandLineApplication
-  ${VTK_INCLUDE_DIR}
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
   )
 
-SET (CLP_MODULE EMSegmentCommandLine)
+# --------------------------------------------------------------------------
+# Sources
 
-SET ( ${CLP_MODULE}_SOURCE
+set(CLP_MODULE EMSegmentCommandLine)
+set(${CLP_MODULE}_SOURCE
   ${CLP_MODULE}.cxx
-)
+  )
+generateclp(
+  ${CLP_MODULE}_SOURCE 
+  ${CLP_MODULE}.xml)
 
-# generate command line parsing
-GENERATECLP( ${CLP_MODULE}_SOURCE ${CLP_MODULE}.xml )
+# --------------------------------------------------------------------------
+# Build and install the exe
 
-# build a stand-alone executable
-ADD_EXECUTABLE( ${CLP_MODULE} ${${CLP_MODULE}_SOURCE} )
-TARGET_LINK_LIBRARIES(
+add_executable(${CLP_MODULE} ${${CLP_MODULE}_SOURCE})
+target_link_libraries(
   ${CLP_MODULE}
   EMSegment
   vtkCommon
   )
 
-SET( EMSEG_GENERATE_CLGUI 1 )
+install(TARGETS ${CLP_MODULE}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
+  )
 
-IF ( EMSEG_GENERATE_CLGUI )
-  SET (CLP_MODULE_GUI EMSegmentCommandLine_GUIVersion)
+# --------------------------------------------------------------------------
+# CLGUI
 
-  SET ( ${CLP_MODULE_GUI}_SOURCE
+set(EMSEG_GENERATE_CLGUI 1)
+
+if(EMSEG_GENERATE_CLGUI)
+  set(CLP_MODULE_GUI EMSegmentCommandLine_GUIVersion)
+
+  set(${CLP_MODULE_GUI}_SOURCE
     ${CLP_MODULE_GUI}.cxx
     )
 
-  # generate command line parsing
-  GENERATECLP( ${CLP_MODULE_GUI}_SOURCE ${CLP_MODULE_GUI}.xml )
+  generateclp(
+    ${CLP_MODULE_GUI}_SOURCE 
+    ${CLP_MODULE_GUI}.xml
+    )
 
-  # output libs should to in Plugins
-  IF (Slicer3_SOURCE_DIR)
-    SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-    #  SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-  ENDIF (Slicer3_SOURCE_DIR)
-  
-  # executable (mainly for batchmake right now)
-  ADD_EXECUTABLE( ${CLP_MODULE_GUI} ${${CLP_MODULE_GUI}_SOURCE} )
-  SET_TARGET_PROPERTIES ( ${CLP_MODULE_GUI}
+  add_executable(${CLP_MODULE_GUI} ${${CLP_MODULE_GUI}_SOURCE})
+  set_target_properties(${CLP_MODULE_GUI}
     PROPERTIES COMPILE_FLAGS "-DEM_CL_GUI"
     )
-  TARGET_LINK_LIBRARIES(
+  target_link_libraries(
     ${CLP_MODULE_GUI}
     EMSegment
     vtkCommon
     )
 
-  # pluggable library
-  ADD_LIBRARY( ${CLP_MODULE_GUI}Lib SHARED ${${CLP_MODULE_GUI}_SOURCE} )
-  SET_TARGET_PROPERTIES ( ${CLP_MODULE_GUI}Lib 
+  install(TARGETS ${CLP_MODULE_GUI}
+    RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
+    )
+
+  add_library(${CLP_MODULE_GUI}Lib SHARED ${${CLP_MODULE_GUI}_SOURCE})
+  set_target_properties(${CLP_MODULE_GUI}Lib 
     PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint -DEM_CL_GUI"
     )
-  TARGET_LINK_LIBRARIES( 
+  target_link_libraries(
     ${CLP_MODULE_GUI}Lib
     EMSegment
     vtkCommon
     )
-ENDIF ( EMSEG_GENERATE_CLGUI )
+#  install(TARGETS ${CLP_MODULE_GUI}Lib
+#    RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+#    LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
+#    )
+endif(EMSEG_GENERATE_CLGUI)

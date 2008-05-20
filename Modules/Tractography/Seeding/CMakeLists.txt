@@ -1,137 +1,114 @@
-PROJECT(SlicerTractographySeeding)
+project(SlicerTractographySeeding)
+
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
 # --------------------------------------------------------------------------
-# Sources
+# Find Slicer3
 
-SET(SlicerTractographySeeding_SRCS
-# Seeding.cxx
-)  
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
 
-# Abstract/pure virtual classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #ABSTRACT "TRUE"
-  #)
-
-# Helper classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-#  PROPERTIES
-#  WRAP_EXCLUDE "TRUE"
-#  )
+slicer3_set_default_modules_output_path()
 
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
-  ${vtkTeem_SOURCE_DIR}
-  ${vtkTeem_BINARY_DIR}
-  ${SlicerTractographySeeding_SOURCE_DIR}
-  ${SlicerTractographySeeding_BINARY_DIR}
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
   )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerTractographySeedingConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerTractographySeedingConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerTractographySeedingConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
+# Sources
+
+set(SlicerTractographySeeding_SRCS
+  # Seeding.cxx
+  )  
 
 # --------------------------------------------------------------------------
 # Wrapping
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(SlicerTractographySeeding SlicerTractographySeeding_TCL_SRCS "${SlicerTractographySeeding_SRCS}" "")
-
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(SlicerTractographySeeding 
+  SlicerTractographySeeding_TCL_SRCS 
+  "${SlicerTractographySeeding_SRCS}" "")
 
 # --------------------------------------------------------------------------
-# Build the library
+# Build and install the library
 
-ADD_LIBRARY(SlicerTractographySeeding
+set(lib_name SlicerTractographySeeding)
+add_library(${lib_name}
   ${SlicerTractographySeeding_SRCS}
   ${SlicerTractographySeeding_TCL_SRCS}
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS SlicerTractographySeeding
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
-
-TARGET_LINK_LIBRARIES(SlicerTractographySeeding
-  SlicerBaseLogic 
-  SlicerBaseGUI 
-  MRML
-  vtkITK
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  vtkTeem
+target_link_libraries(${lib_name}
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
-   )
+  ${ITK_LIBRARIES}
+  )
+
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+  )
 
 # --------------------------------------------------------------------------
-# Testing (requires some of the examples)
+# CLP
 
-CONFIGURE_FILE(
-  ${SlicerTractographySeeding_SOURCE_DIR}/vtkSlicerTractographySeedingConfigure.h.in 
-  ${SlicerTractographySeeding_BINARY_DIR}/vtkSlicerTractographySeedingConfigure.h
+slicer3_set_default_plugins_output_path()
+
+# --------------------------------------------------------------------------
+# Sources
+
+set(CLP Seeding)
+set(${CLP}_SOURCE ${CLP}.cxx)
+
+generateclp(
+  ${CLP}_SOURCE 
+  ${CLP}.xml 
+  ${Slicer3_HOME}/${Slicer3_INSTALL_SHARE_DIR}/Resources/NAMICLogo.h
 )
 
-FIND_PACKAGE(GenerateCLP REQUIRED)
-IF(GenerateCLP_FOUND)
-  INCLUDE(${GenerateCLP_USE_FILE})
-ENDIF(GenerateCLP_FOUND)
-LINK_DIRECTORIES(${ModuleDescriptionParser_BINARY_DIR})
+# --------------------------------------------------------------------------
+# Build and install the exe
 
-FIND_PACKAGE(ITK REQUIRED)
-INCLUDE(${ITK_USE_FILE})
+add_executable(${CLP} ${${CLP}_SOURCE})
+target_link_libraries(${CLP}
+  ${Slicer3_Libs_LIBRARIES}
+  vtkIO
+  ${ITK_LIBRARIES}
+  ${lib_name}
+  )
 
-FIND_PACKAGE(VTK REQUIRED)
-INCLUDE(${VTK_USE_FILE})
-
-IF (Slicer3_SOURCE_DIR)
-  SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-  SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-ENDIF(Slicer3_SOURCE_DIR)
-
-INCLUDE_DIRECTORIES(${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR})
-
-SET (CLP Seeding)
-SET (${CLP}_SOURCE ${CLP}.cxx)
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
-ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES(${CLP}
-  vtkImaging vtkIO vtkCommon
-  ModuleDescriptionParser vtkTeem
-  ITKBasicFilters MRML
-  SlicerTractographySeeding
-)
-LINK_DIRECTORIES(${MRML_LIB_DIR} ${vtkTeem_LIB_DIR} ${SLICER3_LIB_INSTALL_DIR})
-INCLUDE_DIRECTORIES( ${MRML_SOURCE_DIR} ${MRML_BINARY_DIR}
-    ${vtkTeem_SOURCE_DIR} ${vtkTeem_BINARY_DIR} 
-    ${SlicerTractographySeeding_SOURCE_DIR} ${SlicerTractographySeeding_BINARY_DIR}
- )
-
-IF (Slicer3_SOURCE_DIR)
-  SET(TARGETS
-   ${CLP}
-)
-  FOREACH (target ${TARGETS})
-    INSTALL (TARGETS ${target}
-    RUNTIME DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins
-    LIBRARY DESTINATION ${SLICER_INSTALL_LIBRARIES_DIR}/Plugins)
-  ENDFOREACH(target)
-
-ENDIF (Slicer3_SOURCE_DIR) 
+set(TARGETS
+  ${CLP}
+  )
+foreach (target ${TARGETS})
+  install (TARGETS ${target}
+    RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
+    LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
+    )
+endforeach(target)

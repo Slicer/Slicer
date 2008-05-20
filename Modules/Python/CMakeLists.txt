@@ -1,25 +1,38 @@
-PROJECT ( PythonModules )
+project(PythonModules)
 
-SET (PYTHON_MODULES_SRCS
-  ExplodeVolumeTransform.py
-  GradientAnisotropicDiffusion.py
-  GaussianSmooth.py
-  ResliceAsVolume.py
-  ResampleVolume.py
-  SurfaceConnectivity.py
-  SurfaceICPRegistration.py
-  SurfaceToolbox.py
-  PythonScript.py
-)
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
-IF ( USE_PYTHON )
-  IF (Slicer3_SOURCE_DIR)
-    FOREACH (PYTHON_MODULE_SRC ${PYTHON_MODULES_SRCS})
-      CONFIGURE_FILE(
-        ${CMAKE_CURRENT_SOURCE_DIR}/${PYTHON_MODULE_SRC}
-        ${SLICER_LIBRARIES_DIR}/Plugins/${PYTHON_MODULE_SRC}
-        COPYONLY)
-    ENDFOREACH (PYTHON_MODULE_SRC)
-  ENDIF (Slicer3_SOURCE_DIR)
-ENDIF ( USE_PYTHON )
+# --------------------------------------------------------------------------
+# Find Slicer3
 
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
+
+slicer3_set_default_modules_output_path()
+
+# --------------------------------------------------------------------------
+# Copy over the Python files
+
+if(Slicer3_USE_PYTHON)
+
+  file(GLOB PYTHONFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.py")
+
+  foreach(file ${PYTHONFILES})
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${file}
+      COPYONLY)
+  endforeach(file)
+
+  install(
+    FILES ${PYTHONFILES}
+    DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR}
+    )
+
+endif(Slicer3_USE_PYTHON)

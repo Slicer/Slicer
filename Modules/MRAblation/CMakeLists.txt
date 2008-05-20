@@ -1,106 +1,92 @@
-PROJECT(MRAblation)
+project(MRAblation)
+
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
 # --------------------------------------------------------------------------
-# Sources
+# Find Slicer3
 
-SET(MRAblation_SRCS
-  vtkMRAblationLogic.cxx
-  vtkMRAblationGUI.cxx
-  vtkMRMLMRAblationNode.cxx
-  vtkImageThermalMap.cxx
-)
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
 
-# Abstract/pure virtual classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #ABSTRACT "TRUE"
-  #)
-
-# Helper classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #WRAP_EXCLUDE "TRUE"
-  #)
+slicer3_set_default_modules_output_path()
 
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
-  ${MRAblation_SOURCE_DIR}
-  ${MRAblation_BINARY_DIR}
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
+  ${Volumes_SOURCE_DIR}
+  ${Volumes_BINARY_DIR}
   )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkMRAblationConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkMRAblationConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkMRAblationConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
+# Sources
+
+set(MRAblation_SRCS
+  vtkMRAblationLogic.cxx
+  vtkMRAblationGUI.cxx
+  vtkMRMLMRAblationNode.cxx
+  vtkImageThermalMap.cxx
+  )
 
 # --------------------------------------------------------------------------
 # Wrapping
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(MRAblation MRAblation_TCL_SRCS "${MRAblation_SRCS}" "")
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(MRAblation MRAblation_TCL_SRCS "${MRAblation_SRCS}" "")
 
 # --------------------------------------------------------------------------
-# Loadable Module support, do after TCL Wrapping
+# Add Loadable Module support
 
-GENERATELM(MRAblation_SRCS MRAblation.txt)
+generatelm(MRAblation_SRCS MRAblation.txt)
 
 # --------------------------------------------------------------------------
-# Build the library
+# Build and install the library
 
-ADD_LIBRARY(MRAblation
+set(lib_name MRAblation)
+add_library(${lib_name}
   ${MRAblation_SRCS}
   ${MRAblation_TCL_SRCS}
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL_TARGETS(${SLICER3_LIB_INSTALL_DIR} MRAblation)
-ENDIF(BUILD_SHARED_LIBS)
+target_link_libraries(${lib_name}
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
+  ${KWWidgets_LIBRARIES}
+  ${ITK_LIBRARIES}
+  Volumes
+  )
 
-TARGET_LINK_LIBRARIES(MRAblation
-  SlicerBaseLogic 
-  SlicerBaseGUI 
-  MRML
-  vtkITK
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  ITKAlgorithms
-  ITKNumerics 
-  ITKCommon
-  ITKBasicFilters
-  ITKNumerics
-  ITKStatistics
-  ITKBasicFilters
-  ITKIO
-  ITKDICOMParser
-  ${KWWidgets_LIBRARIES} )
-
-
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+  )
 
 # --------------------------------------------------------------------------
-# Testing (requires some of the examples)
+# Testing
 
-IF(BUILD_TESTING)
-  SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
-
-CONFIGURE_FILE(
-  ${MRAblation_SOURCE_DIR}/vtkMRAblationConfigure.h.in 
-  ${MRAblation_BINARY_DIR}/vtkMRAblationConfigure.h
-)
+if(BUILD_TESTING)
+#  subdirs(Testing)
+endif(BUILD_TESTING)

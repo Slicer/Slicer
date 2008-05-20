@@ -523,7 +523,7 @@ void vtkVolumeRenderingModuleGUI::Enter(void)
 
         //GetPath
         vtksys_stl::string slicerHome;
-        if (vtksys::SystemTools::GetEnv("SLICER_HOME") == NULL)
+        if (vtksys::SystemTools::GetEnv("Slicer3_HOME") == NULL)
         {
             if (vtksys::SystemTools::GetEnv("PWD") != NULL)
             {
@@ -536,13 +536,13 @@ void vtkVolumeRenderingModuleGUI::Enter(void)
         }
         else
         {
-            slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
+            slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("Slicer3_HOME"));
         }
         // check to see if slicer home was set
         vtksys_stl::vector<vtksys_stl::string> filesVector;
         filesVector.push_back(""); // for relative path
         filesVector.push_back(slicerHome);
-        filesVector.push_back(vtksys_stl::string("lib/Slicer3/Modules/VolumeRendering/presets.xml"));
+        filesVector.push_back(vtksys_stl::string(Slicer3_INSTALL_MODULES_SHARE_DIR) + "/VolumeRenderingModule/presets.xml");
         vtksys_stl::string presetFileName = vtksys::SystemTools::JoinPath(filesVector);
         this->Presets->SetURL(presetFileName.c_str());
         this->Presets->Connect();

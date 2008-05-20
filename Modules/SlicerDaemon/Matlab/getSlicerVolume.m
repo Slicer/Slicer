@@ -5,11 +5,11 @@ function volume = getSlicerVolume( id_or_name, transformDT_flag, original_measur
 % running slicer daemon (start Slicer3 with option --daemon).
 % These steps have to be done to adapt the script to your environment:
 % - matlab extentions "popenr" and "popenw" have to be compiled for your
-%   machine: cd into $SLICER_HOME/Modules/SlicerDaemon/matlab/popen , and
+%   machine: cd into $Slicer3_HOME/lib/Slicer3/Modules/SlicerDaemon/Matlab/popen , and
 %   do "mex popenr.c" and "mex popenw.c" in matlab.
 % - make sure you add the path to popen
 % - make sure to add the path to the matlab scripts in 
-%   $SLICER_HOME/Modules/SlicerDaemon/Tcl
+%   $Slicer3_HOME/lib/Slice3/Modules/SlicerDaemon/Tcl
 %
 % Input: Name or ID of volume loaded in Slicer. For Tensor Data, you can
 %        optionally input the string 'transformDT'. If 'transformDT' is 

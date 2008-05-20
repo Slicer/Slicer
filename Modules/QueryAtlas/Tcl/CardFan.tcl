@@ -1,7 +1,7 @@
 
 proc TestFan {} {
   set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
-  set icondir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/ImageData
+  set icondir $::env(Slicer3_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData
   set icons [lrange [glob $icondir/*.png] 0 4]
   set cardFan [CardFan #auto [llength $icons]]
   foreach icon $icons card [$cardFan cards] {

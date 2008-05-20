@@ -1,25 +1,38 @@
-PROJECT(PythonGADScriptedModule)
+project(PythonGADScriptedModule)
 
-IF ( USE_PYTHON )
-  SET (Package_DIR ${SLICER_LIBRARIES_DIR}/Modules/Packages)
-  IF (NOT EXISTS ${Package_DIR})
-    FILE(MAKE_DIRECTORY ${Package_DIR})
-  ENDIF (NOT EXISTS ${Package_DIR})
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
-  SET(PythonGADScriptedModule_DIR ${Package_DIR}/PythonGADScriptedModule)
+# --------------------------------------------------------------------------
+# Find Slicer3
 
-  FILE(MAKE_DIRECTORY ${PythonGADScriptedModule_DIR})
-  SET(PYTHONFILES
-    __init__.py
-    PythonGADScriptedModuleGUI.py
-  )
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
 
-  FOREACH(pythonfile ${PYTHONFILES})
-    CONFIGURE_FILE(
-      ${Slicer3_SOURCE_DIR}/Modules/PythonGADScriptedModule/${pythonfile}
-      ${PythonGADScriptedModule_DIR}/${pythonfile}
-      COPYONLY
+slicer3_set_default_modules_output_path()
+
+# --------------------------------------------------------------------------
+# Copy over the Python files
+
+if(Slicer3_USE_PYTHON)
+
+  file(GLOB PYTHONFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.py")
+
+  foreach(file ${PYTHONFILES})
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/Python/${file}
+      COPYONLY)
+  endforeach(file)
+
+  install(
+    FILES ${PYTHONFILES}
+    DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/Python
     )
-  ENDFOREACH(pythonfile)
-ENDIF ( USE_PYTHON )
 
+endif(Slicer3_USE_PYTHON)

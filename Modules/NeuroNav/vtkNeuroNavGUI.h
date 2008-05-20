@@ -22,10 +22,12 @@
 
 #include <string>
 
-//#ifdef USE_NAVITRACK
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
+//#ifdef Slicer3_USE_NAVITRACK
 //#include "vtkIGTOpenTrackerStream.h"
 //#endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
 #include "vtkIGTIGSTKStream.h"
 #endif
 
@@ -141,11 +143,11 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
     vtkKWMenuButton *YellowSliceMenu;
     vtkKWMenuButton *GreenSliceMenu;
 
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
     vtkKWLoadSaveButtonWithLabel *LoadConfigButton;
     vtkKWEntry *ConfigFileEntry;
 #endif
-#ifdef USE_IGSTK
+#ifdef Slicer3_USE_IGSTK
     vtkKWMenuButtonWithLabel *DeviceMenuButton;
     vtkKWMenuButtonWithLabel *PortNumberMenuButton;
     vtkKWMenuButtonWithLabel *BaudRateMenuButton;
@@ -223,12 +225,12 @@ class VTK_NEURONAV_EXPORT vtkNeuroNavGUI : public vtkSlicerModuleGUI
     void TrackerLoop();
 
 
-//#ifdef USE_NAVITRACK
+//#ifdef Slicer3_USE_NAVITRACK
 //    vtkIGTOpenTrackerStream *OpenTrackerStream;
 //    void SetOpenTrackerConnectionParameters();
 //#endif
 
-#ifdef USE_IGSTK    
+#ifdef Slicer3_USE_IGSTK    
     vtkIGTIGSTKStream *IGSTKStream;
     void SetIGSTKConnectionParameters();
 #endif

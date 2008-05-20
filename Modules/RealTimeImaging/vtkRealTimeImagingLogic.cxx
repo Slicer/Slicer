@@ -25,6 +25,7 @@
 #include "vtkLandmarkTransform.h"
 #include "vtkCylinderSource.h"
 
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
 
 vtkCxxRevisionMacro(vtkRealTimeImagingLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkRealTimeImagingLogic);
@@ -56,7 +57,7 @@ vtkRealTimeImagingLogic::vtkRealTimeImagingLogic()
 
     this->LocatorNormalTransform = vtkTransform::New();
 
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
     Event::registerGenericTypeName((Image*)NULL,"MedScanImage");
     cout << "Using NaviTrack" << endl;
 #endif
@@ -177,7 +178,7 @@ void vtkRealTimeImagingLogic::SetNumberOfPoints(int no)
 void vtkRealTimeImagingLogic::Init(const char *configfile)
 {
 
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
     fprintf(stderr,"config file: %s\n",configfile);
     this->context = new Context(1); 
     // get callback module from the context
@@ -221,7 +222,7 @@ void vtkRealTimeImagingLogic::Init(const char *configfile)
 
 void vtkRealTimeImagingLogic::CloseConnection()
 {
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
     context->close();
 #endif
 
@@ -251,7 +252,7 @@ void vtkRealTimeImagingLogic::quaternion2xyz(float* orientation, float *normal, 
 
 void vtkRealTimeImagingLogic::PollRealtime()
 {
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
     context->pushEvents();       // push event and
     context->pullEvents();       // pull event 
     context->stop();
@@ -259,7 +260,7 @@ void vtkRealTimeImagingLogic::PollRealtime()
 }
 
 
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
 void vtkRealTimeImagingLogic::callbackF(const Node&, const Event &event, void *data)
 {
     float position[3];
@@ -315,7 +316,7 @@ void vtkRealTimeImagingLogic::callbackF(const Node&, const Event &event, void *d
 
     VOT->LocatorMatrix->SetElement(3,3,1);
 
-#ifdef USE_NAVITRACK
+#ifdef Slicer3_USE_NAVITRACK
     // Check for an image attribute
     if(event.hasAttribute("image"))
     {
@@ -603,6 +604,7 @@ void vtkRealTimeImagingLogic::PrintSelf(ostream& os, vtkIndent indent)
 
 }
 
+#ifdef Slicer3_USE_NAVITRACK
 //simond: Everything from here on down should be in Image.cxx.
 //simond: There were build errors with a separate file - need to figure out why.
  Image::Image(){
@@ -728,3 +730,4 @@ std::ostream& operator<<(std::ostream& os, const Image& object)
   return is;
 };
 
+#endif

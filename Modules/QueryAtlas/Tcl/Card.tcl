@@ -47,7 +47,9 @@ proc randRange {min max} {
 
 proc Slicer3TestCards {} {
   set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
-  #set icondir $::env(SLICER_HOME)/../Slicer3/Utilities/Launcher/3DSlicerLogoICOimages
+  # TODO this line below was commented, if it is used make sure the corresponding
+  # file is both configure'ed to the build dir and installed
+  #set icondir $::env(Slicer3_HOME)/../Slicer3/Utilities/Launcher/3DSlicerLogoICOimages
   set icon $icondir/3DSlicerLogo-DesktopIcon-48x48x256.png
   for { set i 0 } { $i < 20 } { incr i } {
     set card [Card #auto $renderWidget]
@@ -59,7 +61,7 @@ proc Slicer3TestCards {} {
 
 proc TestCards {} {
   set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
-  set icondir $::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/ImageData
+  set icondir $::env(Slicer3_HOME)/share/Slicer3/Modules/QueryAtlas/ImageData
   foreach icon [glob $icondir/*.png] {
     set card [Card #auto $renderWidget]
     set ras [list [randRange -200 200] [randRange -200 200] [randRange -200 200]]
@@ -118,7 +120,7 @@ if { [itcl::find class Card] == "" } {
     public variable text ""  ;# the text to display - can contain line breaks
     public variable follow 1  ;# make this a follower or not
     public variable font "default"  ;# what font to use (default means arial).
-    # public variable fontDir "$::env(SLICER_HOME)/../Slicer3/Modules/QueryAtlas/Fonts/"  ;# where to find the fonts
+    # public variable fontDir "$::env(Slicer3_HOME)/share/Slicer3/Modules/QueryAtlas/Fonts/"  ;# where to find the fonts
     public variable fontDir "c:/windows/fonts"  ;# where to find the fonts
     public variable ras "0 0 0"  ;# what font to use (default means arial).
     public variable anchor "0 0 0"  ;# where to draw the anchor line to 

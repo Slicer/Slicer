@@ -1,9 +1,53 @@
-PROJECT(SlicerTractographyDisplay)
+project(SlicerTractographyDisplay)
+
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
+# --------------------------------------------------------------------------
+# Find Slicer3
+
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
+
+slicer3_set_default_modules_output_path()
+
+# --------------------------------------------------------------------------
+# Include dirs
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
+  )
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkSlicerTractographyDisplayConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerTractographyDisplayConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(FILES 
+  ${headers} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerTractographyDisplayConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h")
+install(FILES 
+  ${headers} 
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
+  )
 
 # --------------------------------------------------------------------------
 # Sources
 
-SET(SlicerTractographyDisplay_SRCS
+set(SlicerTractographyDisplay_SRCS
   vtkSlicerTractographyDisplayGUI.cxx
   vtkSlicerAllFiberBundlesDisplayWidget.cxx
   vtkSlicerFiberBundleDisplayWidget.cxx
@@ -11,106 +55,39 @@ SET(SlicerTractographyDisplay_SRCS
   vtkSlicerFiberBundleLogic.cxx
   vtkSlicerDiffusionTensorIcons.cxx
   vtkSlicerTractographyDisplayLogic.cxx
-)
-
-# Abstract/pure virtual classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #ABSTRACT "TRUE"
-  #)
-
-# Helper classes
-
-#SET_SOURCE_FILES_PROPERTIES(
-  #vtkModule.cxx
-  #PROPERTIES
-  #WRAP_EXCLUDE "TRUE"
-  #)
-
-# --------------------------------------------------------------------------
-# Include dirs
-
-INCLUDE_DIRECTORIES(
-  ${vtkTeem_SOURCE_DIR}
-  ${vtkTeem_BINARY_DIR}
-  ${SlicerTractographyDisplay_SOURCE_DIR}
-  ${SlicerTractographyDisplay_BINARY_DIR}
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
   )
-
 
 # --------------------------------------------------------------------------
 # Wrapping
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(SlicerTractographyDisplay SlicerTractographyDisplay_TCL_SRCS "${SlicerTractographyDisplay_SRCS}" "")
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+vtk_wrap_tcl3(SlicerTractographyDisplay 
+  SlicerTractographyDisplay_TCL_SRCS 
+  "${SlicerTractographyDisplay_SRCS}" "")
+
+#---------------------------------------------------------------------------
+# Add Loadable Module support
+
+#generatelm(SlicerTractographyDisplay_SRCS SlicerTractographyDisplay.txt)
 
 # --------------------------------------------------------------------------
-# Loadable Module support, must be done after TCL Wrapping
+# Build and install the library
 
-#GENERATELM(SlicerTractographyDisplay_SRCS SlicerTractographyDisplay.txt)
-
-# --------------------------------------------------------------------------
-# Build the library
-
-ADD_LIBRARY(SlicerTractographyDisplay
+set(lib_name SlicerTractographyDisplay)
+add_library(${lib_name}
   ${SlicerTractographyDisplay_SRCS}
   ${SlicerTractographyDisplay_TCL_SRCS}
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS SlicerTractographyDisplay
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
-
-TARGET_LINK_LIBRARIES(SlicerTractographyDisplay
-  SlicerBaseLogic 
-  SlicerBaseGUI 
-  MRML
-  vtkITK
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  ITKAlgorithms
-  ITKNumerics 
-  ITKCommon
-  ITKBasicFilters
-  ITKNumerics
-  ITKStatistics
-  ITKBasicFilters
-  ITKIO
-  ITKDICOMParser
-  vtkTeem
+target_link_libraries(${lib_name}
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES}
-   )
+  ${ITK_LIBRARIES}
+  )
 
-IF (USE_PYTHON)
-  ADD_DEFINITIONS(-DUSE_PYTHON)
-  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-ENDIF(USE_PYTHON)
-
-
-# --------------------------------------------------------------------------
-# Testing (requires some of the examples)
-
-CONFIGURE_FILE(
-  ${SlicerTractographyDisplay_SOURCE_DIR}/vtkSlicerTractographyDisplayConfigure.h.in 
-  ${SlicerTractographyDisplay_BINARY_DIR}/vtkSlicerTractographyDisplayConfigure.h
-)
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
+  )

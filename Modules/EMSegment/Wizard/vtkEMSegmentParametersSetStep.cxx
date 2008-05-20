@@ -108,6 +108,10 @@ void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets(
     }
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if(!mrmlManager)
+    {
+    return;
+    }
 
   vtkKWMenu *menu = 
     this->ParameterSetMenuButton->GetWidget()->GetMenu();
@@ -139,6 +143,10 @@ void vtkEMSegmentParametersSetStep::UpdateLoadedParameterSets()
     }
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if(!mrmlManager)
+    {
+    return;
+    }
 
   vtkKWMenuButton *menuButton = this->ParameterSetMenuButton->GetWidget();
   vtksys_stl::string sel_value = "";

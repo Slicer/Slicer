@@ -20,7 +20,9 @@
 #include "vtkLandmarkTransform.h"
 #include "vtkCylinderSource.h"
 
-#ifndef IGSTK_OFF
+#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+
+#ifdef Slicer3_USE_IGSTK
 #include "igstkAuroraTracker.h"
 #endif
 
@@ -29,7 +31,7 @@ vtkStandardNewMacro(vtkNeuroNavLogic);
 
 vtkNeuroNavLogic::vtkNeuroNavLogic()
 {
-#ifndef IGSTK_OFF
+#ifdef Slicer3_USE_IGSTK
   igstk::RealTimeClock::Initialize();
 #endif
 }

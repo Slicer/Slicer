@@ -1,7 +1,7 @@
-PROJECT( MeshCommandLine )
+project(MeshCommandLine)
 
-SUBDIRS(
+subdirs(
   VoxelMeshingModule
-)
+  )
 
 

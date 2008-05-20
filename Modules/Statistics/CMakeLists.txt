@@ -1,9 +1,9 @@
-PROJECT( Statistics )
+project(Statistics)
 
-SUBDIRS(
- LabelStatistics        
-)
+subdirs(
+  LabelStatistics        
+  )
 
-IF (Slicer3_BUILD_TESTING)
-    SUBDIRS( Testing )
-ENDIF (Slicer3_BUILD_TESTING)
+if(Slicer3_BUILD_TESTING)
+  subdirs(Testing)
+endif(Slicer3_BUILD_TESTING)

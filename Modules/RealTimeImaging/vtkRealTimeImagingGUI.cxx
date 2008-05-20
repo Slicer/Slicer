@@ -775,7 +775,8 @@ void vtkRealTimeImagingGUI::MakeLocator()
     cylinder->SetRadius(1.5);
     cylinder->SetHeight(100);
     this->LocatorModelNode->SetAndObservePolyData(cylinder->GetOutput());
-    this->LocatorModelDisplayNode->SetPolyData(this->LocatorModelNode->GetPolydata());
+    // THIS API CALL IS INVALID
+    //this->LocatorModelDisplayNode->SetPolyData(this->LocatorModelNode->GetPolydata());
     this->Modified();  
 
     // modelNode->Delete();
@@ -817,7 +818,7 @@ void vtkRealTimeImagingGUI::UpdateLocator()
     vtkSlicerViewerWidget *viewerWidget = appGUI->GetViewerWidget();
 
     const char *id = this->LocatorModelNode->GetID();    
-    vtkActor *locatorActor = viewerWidget->GetActorByID(id);
+    vtkProp3D *locatorActor = viewerWidget->GetActorByID(id);
     if (locatorActor)
     {
         //locatorActor->GetProperty()->SetColor(1, 0, 0);

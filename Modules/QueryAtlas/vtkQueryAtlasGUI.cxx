@@ -2092,10 +2092,10 @@ void vtkQueryAtlasGUI::LoadTclPackage ( )
 {
     std::string qaTclCommand =  "set ::QA_PACKAGE {}; ";
                 qaTclCommand += "package forget QueryAtlas; ";
-                qaTclCommand += "set dir \"$::SLICER_BUILD/";
-                qaTclCommand += SLICER_INSTALL_LIBRARIES_DIR;
-                qaTclCommand += "/Modules/Packages/QueryAtlas/Tcl\" ; ";
-                qaTclCommand += "  if { [ file exists $dir/pkgIndex.tcl ] } { ";
+                qaTclCommand += "set dir \"$::Slicer3_HOME/";
+                qaTclCommand += Slicer3_INSTALL_MODULES_SHARE_DIR;
+                qaTclCommand += "/QueryAtlas\" ; ";
+                qaTclCommand += "  if { [ file exists $dir/Tcl/pkgIndex.tcl ] } { ";
                 qaTclCommand += "    lappend ::auto_path $dir; ";
                 qaTclCommand += "    package require QueryAtlas ";
                 qaTclCommand += "  }";

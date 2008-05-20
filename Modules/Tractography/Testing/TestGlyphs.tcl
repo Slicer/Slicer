@@ -39,7 +39,7 @@ proc SetupGlyphs {} {
 
   set ::logic [$::gui GetLogic]
 
-  set testData $::env(SLICER_HOME)/../Slicer3/Modules/Tractography/Testing/TestData/twoFibers.vtk
+  set testData $::env(Slicer3_HOME)/share/Slicer3/Modules/Tractography/Testing/TestData/twoFibers.vtk
   #set testData c:/data/tracts/Seeding1.vtp
 
   set ::fbNode [$::logic AddFiberBundle $testData]

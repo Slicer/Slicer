@@ -3,16 +3,7 @@
  * These values should only change when the target compile platform changes.
  */
 
-#if defined(WIN32) && !defined(VTKSLICER_STATIC)
-#pragma warning ( disable : 4275 )
-#endif
-
-/* #undef CMAKE_WORDS_BIGENDIAN */
-#ifdef CMAKE_WORDS_BIGENDIAN
-  #define WORDS_BIGENDIAN
-#else
-  #define WORDS_LITTLEENDIAN
-#endif
+#include "vtkSlicerConfigure.h"
 
 #define BUILD_SHARED_LIBS
 #ifndef BUILD_SHARED_LIBS

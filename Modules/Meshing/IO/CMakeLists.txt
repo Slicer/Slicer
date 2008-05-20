@@ -1,68 +1,76 @@
-PROJECT(MeshIO)
+project(MeshIO)
 
-#
-# Sources
-#
-SET(MeshIO_SRCS 
-  vtkAbaqusFileWriter.cxx
-)
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
+# --------------------------------------------------------------------------
+# Find Slicer3
+
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_modules_install_prefix()
+endif(NOT Slicer3_SOURCE_DIR)
+
+slicer3_set_default_modules_output_path()
+
+# --------------------------------------------------------------------------
 # Include dirs
-#
-INCLUDE_DIRECTORIES(
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIR}
-  ${VTK_INCLUDE_DIR}
-)
 
-#
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
+  )
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkMeshIOConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkMeshIOConfigure.h
+  )
+
+file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+file(GLOB templates "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
+install(FILES 
+  ${headers} 
+  ${templates} 
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkMeshIOConfigure.h"
+  DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
+  )
+
+# --------------------------------------------------------------------------
+# Sources
+
+set(MeshIO_SRCS 
+  vtkAbaqusFileWriter.cxx
+  )
+
+# --------------------------------------------------------------------------
 # Wrapping
-#
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${MeshIO_BINARY_DIR})
-INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-VTK_WRAP_TCL3(MeshIO MeshIO_TCL_SRCS "${MeshIO_SRCS}" "")
 
+#include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+#vtk_wrap_tcl3(MeshIO MeshIO_TCL_SRCS "${MeshIO_SRCS}" "")
 
-# Build the library
-#
-ADD_LIBRARY(MimxMeshIO
+# --------------------------------------------------------------------------
+# Build and install the library
+
+set(lib_name MimxMeshIO)
+add_library(${lib_name}
   ${MeshIO_SRCS} 
-#  ${MeshIO_TCL_SRCS}
+  #  ${MeshIO_TCL_SRCS}
   )
 
-TARGET_LINK_LIBRARIES( MimxMeshIO 
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  vtkWidgets
-  vtkRendering
+target_link_libraries(${lib_name} 
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
+  ${KWWidgets_LIBRARIES}
+  ${ITK_LIBRARIES}
   )
 
-IF(BUILD_SHARED_LIBS)
-  INSTALL(TARGETS MimxMeshIO
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-      LIBRARY DESTINATION lib/Slicer3 COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION lib/Slicer3 COMPONENT Development)
-ENDIF(BUILD_SHARED_LIBS)
-
-
-#
-# Configure include file
-#
-CONFIGURE_FILE(
-  ${MeshIO_SOURCE_DIR}/vtkMeshIOConfigure.h.in 
-  ${MeshIO_BINARY_DIR}/vtkMeshIOConfigure.h
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
+  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
   )
-
-FILE(GLOB __files1 "${MeshIO_SOURCE_DIR}/*.h")
-# FILE(GLOB __files2 "${MeshIO_SOURCE_DIR}/*.txx")
-# INSTALL(FILES ${__files1} {$__files2} DESTINATION include/MimxMesh/IO COMPONENT Development)
-INSTALL(FILES ${__files1} DESTINATION include/MimxMesh/IO COMPONENT Development)
