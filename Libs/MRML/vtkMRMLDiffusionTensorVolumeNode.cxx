@@ -178,14 +178,6 @@ std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> vtkMRMLDiffusionTens
       node->SetVisibility(0);
       if (this->GetScene())
         {
-        this->GetScene()->AddNode(node);
-        node->Delete();
-
-        node->SetAndObserveDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
-        node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
-
-        this->AddAndObserveDisplayNodeID(node->GetID());
-        
         if (i == 0) 
           {
           node->SetName("Red");
@@ -198,6 +190,15 @@ std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> vtkMRMLDiffusionTens
           {
           node->SetName("Green");
           }
+
+        this->GetScene()->AddNode(node);
+        node->Delete();
+
+        node->SetAndObserveDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
+        node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+
+        this->AddAndObserveDisplayNodeID(node->GetID());
+        
         
         nodes.push_back(node);
         }

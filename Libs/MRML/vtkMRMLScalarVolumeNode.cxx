@@ -341,29 +341,41 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDispl
     this->Accumulate->SetInput(imageDataScalar);
     this->Bimodal->SetInput(this->Accumulate->GetOutput());
     this->Bimodal->Update();
-
+    double range[2];
+    imageDataScalar->GetScalarRange(range);
     // Workaround for image data where all accumulate samples fall
     // within the same histogram bin
     if (this->Bimodal->GetWindow() == 0.0 && this->Bimodal->GetLevel() == 0.0 ||
-        imageDataScalar->GetScalarType() != VTK_INT) 
+        (imageDataScalar->GetScalarType() != VTK_INT && range[1]-range[0] < 1.00001) ) 
       {
-      double range[2];
-      imageDataScalar->GetScalarRange(range);
+ 
       double min = range[0];
       double max = range[1];
       //std::cout << "CalculateScalarAutoLevels: Window and Level are 0, or type is not int, using image scalar range, " << min << ", " << max << std::endl);
-      displayNode->SetWindow (max-min);
-      displayNode->SetLevel (0.5*(max+min));
-      displayNode->SetLowerThreshold (displayNode->GetLevel());
-      displayNode->SetUpperThreshold (range[1]);
+      if (displayNode->GetAutoWindowLevel())
+        {    
+        displayNode->SetWindow (max-min);
+        displayNode->SetLevel (0.5*(max+min));
+        }
+      if (displayNode->GetAutoThreshold())
+        {
+        displayNode->SetLowerThreshold (displayNode->GetLevel());
+        displayNode->SetUpperThreshold (range[1]);
+        }
       vtkDebugMacro("CalculateScalarAutoLevels: set display node window to " << displayNode->GetWindow() << ", level to " << displayNode->GetLevel() << ", lower threshold to " << displayNode->GetLowerThreshold() << ", upper threshold to " << displayNode->GetUpperThreshold() << " (scalar range " << range[0] << ", " << range[1] << "), displayNode id = " << displayNode->GetID());
       }
     else
       {
-      displayNode->SetWindow (this->Bimodal->GetWindow());
-      displayNode->SetLevel (this->Bimodal->GetLevel());
-      displayNode->SetLowerThreshold (this->Bimodal->GetThreshold());
-      displayNode->SetUpperThreshold (this->Bimodal->GetMax());
+      if (displayNode->GetAutoWindowLevel()) 
+        {
+        displayNode->SetWindow (this->Bimodal->GetWindow());
+        displayNode->SetLevel (this->Bimodal->GetLevel());
+        }
+      if (displayNode->GetAutoThreshold())
+        {
+        displayNode->SetLowerThreshold (this->Bimodal->GetThreshold());
+        displayNode->SetUpperThreshold (this->Bimodal->GetMax());
+        }
       vtkDebugMacro("CalculateScalarAutoLevels: set display node window to " << this->Bimodal->GetWindow() << ", level to " << this->Bimodal->GetLevel() << ", lower threshold to " << displayNode->GetLowerThreshold() << ", upper threshold to " << displayNode->GetUpperThreshold() << ", displayNode id = " << displayNode->GetID());
       }
     }
@@ -421,6 +433,8 @@ void vtkMRMLScalarVolumeNode::CalculateStatisticsAutoLevels(vtkMRMLScalarVolumeD
 
   if ( displayNode != NULL ) 
     {
+    displayNode->DisableModifiedEventOn();
+
     double win, level, upT, lowT;
     displayNode->SetAutoThreshold (0);
     displayNode->SetAutoWindowLevel (0);
@@ -465,6 +479,11 @@ void vtkMRMLScalarVolumeNode::CalculateStatisticsAutoLevels(vtkMRMLScalarVolumeD
     displayNode->SetApplyThreshold(1);
     displayNode->SetAutoThreshold( 0 );
     displayNode->SetAutoWindowLevel(0);
+    
     vtkDebugMacro("CalculateStatisticsAutoLevels: reset display node win/level/thresh! window = " << displayNode->GetWindow() << ", level = " << displayNode->GetLevel() << ", upper thresh = " << displayNode->GetUpperThreshold() << ", lower thresh = " << displayNode->GetLowerThreshold());
+    
+    displayNode->DisableModifiedEventOff();
+    displayNode->InvokePendingModifiedEvent();
     }
+
 }
