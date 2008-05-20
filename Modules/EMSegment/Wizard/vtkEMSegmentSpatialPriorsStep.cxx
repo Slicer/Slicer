@@ -59,7 +59,10 @@ void vtkEMSegmentSpatialPriorsStep::ShowUserInterface()
   anat_step->ShowAnatomicalStructureTree();
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-
+  if (!mrmlManager)
+    {
+    return;
+    }
   vtkIdType vol_id = mrmlManager->GetTreeRootNodeID();
   const char *root_node = 
     anat_step->GetAnatomicalStructureTree()->GetWidget()->FindNodeWithUserDataAsInt(
@@ -128,6 +131,10 @@ void vtkEMSegmentSpatialPriorsStep::DisplaySelectedNodeSpatialPriorsCallback()
   // Update the UI with the proper value, if there is a selection
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   vtkEMSegmentAnatomicalStructureStep *anat_step = 
     this->GetGUI()->GetAnatomicalStructureStep();
   vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
@@ -176,6 +183,10 @@ void vtkEMSegmentSpatialPriorsStep::SpatialPriorsVolumeCallback(
   // The spatial prior volume has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   mrmlManager->SetTreeNodeSpatialPriorVolumeID(sel_vol_id, vol_id);
 }
 

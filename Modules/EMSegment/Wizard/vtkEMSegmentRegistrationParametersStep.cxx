@@ -71,6 +71,10 @@ void vtkEMSegmentRegistrationParametersStep::ShowUserInterface()
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
+  if (!mrmlManager || !wizard_widget)
+    {
+    return;
+    }
   wizard_widget->GetCancelButton()->SetEnabled(0);
 
   vtkKWWidget *parent = wizard_widget->GetClientArea();
@@ -433,7 +437,10 @@ void vtkEMSegmentRegistrationParametersStep::RegistrationAtlasImageCallback(
   // The atlas image has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  mrmlManager->SetRegistrationAtlasVolumeID(volume_id);
+  if (mrmlManager)
+    {
+    mrmlManager->SetRegistrationAtlasVolumeID(volume_id);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -443,7 +450,10 @@ void vtkEMSegmentRegistrationParametersStep::RegistrationAffineCallback(
   // The affine registration type has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  mrmlManager->SetRegistrationAffineType(type);
+  if (mrmlManager)
+    {
+    mrmlManager->SetRegistrationAffineType(type);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -453,7 +463,10 @@ void vtkEMSegmentRegistrationParametersStep::RegistrationDeformableCallback(
   // The deformable registration type has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  mrmlManager->SetRegistrationDeformableType(type);
+  if (mrmlManager)
+    {
+    mrmlManager->SetRegistrationDeformableType(type);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -463,7 +476,10 @@ void vtkEMSegmentRegistrationParametersStep::RegistrationInterpolationCallback(
   // The interpolation type has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  mrmlManager->SetRegistrationInterpolationType(type);
+  if (mrmlManager)
+    {
+    mrmlManager->SetRegistrationInterpolationType(type);
+    }
 }
 
 //----------------------------------------------------------------------------

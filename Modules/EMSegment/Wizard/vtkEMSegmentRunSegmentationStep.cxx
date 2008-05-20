@@ -149,6 +149,10 @@ void vtkEMSegmentRunSegmentationStep::ShowUserInterface()
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
+  if (!mrmlManager || !wizard_widget)
+    {
+    return;
+    }
 
   vtkKWWidget *parent = wizard_widget->GetClientArea();;
   int enabled = parent->GetEnabled();
@@ -659,8 +663,11 @@ void vtkEMSegmentRunSegmentationStep::ProcessRunRegistrationOutputGUIEvents(
       this->RunSegmentationOutVolumeSelector->GetSelected() != NULL) 
     { 
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-    mrmlManager->SetOutputVolumeMRMLID(
-      this->RunSegmentationOutVolumeSelector->GetSelected()->GetID());
+    if (mrmlManager)
+      {
+      mrmlManager->SetOutputVolumeMRMLID(
+        this->RunSegmentationOutVolumeSelector->GetSelected()->GetID());
+      }
     }
 }
 
@@ -681,8 +688,14 @@ void vtkEMSegmentRunSegmentationStep::SelectTemplateFileCallback()
         this->RunSegmentationSaveTemplateButton->GetFileName();
       vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
       vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
-      mrmlManager->SetSaveTemplateFilename(filename.c_str());
-      logic->SaveTemplateNow();
+      if (mrmlManager)
+        {
+        mrmlManager->SetSaveTemplateFilename(filename.c_str());
+        }
+      if (logic)
+        {
+        logic->SaveTemplateNow();
+        }
       }
     }
 }
@@ -713,7 +726,10 @@ void vtkEMSegmentRunSegmentationStep::SelectDirectoryCallback()
         }
 
       vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-      mrmlManager->SetSaveWorkingDirectory(filename.c_str());
+      if (mrmlManager)
+        {
+        mrmlManager->SetSaveWorkingDirectory(filename.c_str());
+        }
       }
     }
 }
@@ -725,7 +741,10 @@ void vtkEMSegmentRunSegmentationStep::SaveAfterSegmentationCallback(
   // The save template checkbutton has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  mrmlManager->SetSaveTemplateAfterSegmentation(state);
+  if (mrmlManager)
+    {
+    mrmlManager->SetSaveTemplateAfterSegmentation(state);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -734,7 +753,10 @@ void vtkEMSegmentRunSegmentationStep::SaveIntermediateCallback(int state)
   // The save intermediate checkbutton has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  mrmlManager->SetSaveIntermediateResults(state);
+  if (mrmlManager)
+    {
+    mrmlManager->SetSaveIntermediateResults(state);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -744,7 +766,10 @@ void vtkEMSegmentRunSegmentationStep::GenerateSurfaceModelsCallback(
   // The save surface checkbutton has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  mrmlManager->SetSaveSurfaceModels(state);
+  if (mrmlManager)
+    {
+    mrmlManager->SetSaveSurfaceModels(state);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -753,6 +778,10 @@ void vtkEMSegmentRunSegmentationStep::RunSegmentationROIMaxChangedCallback(
 {
   int ijk[3] = {0, 0, 0};
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   mrmlManager->GetSegmentationBoundaryMax(ijk);
   ijk[col] = atoi(value);
   if (mrmlManager->HasGlobalParametersNode())
@@ -767,6 +796,10 @@ void vtkEMSegmentRunSegmentationStep::RunSegmentationROIMinChangedCallback(
 {
   int ijk[3] = {0, 0, 0};
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   mrmlManager->GetSegmentationBoundaryMin(ijk);
   ijk[col] = atoi(value);
   if (mrmlManager->HasGlobalParametersNode())
@@ -781,7 +814,10 @@ void vtkEMSegmentRunSegmentationStep::MultiThreadingCallback(int state)
   // The multithreading checkbutton has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  mrmlManager->SetEnableMultithreading(state);
+  if (mrmlManager)
+    {
+    mrmlManager->SetEnableMultithreading(state);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -789,6 +825,11 @@ void vtkEMSegmentRunSegmentationStep::StartSegmentationCallback()
 {
   vtkEMSegmentLogic *logic = this->GetGUI()->GetLogic();
   vtkEMSegmentMRMLManager* mrmlManager = this->GetGUI()->GetMRMLManager();
+
+  if (!mrmlManager || !logic)
+    {
+    return;
+    }
   
   // make sure that data types are the same
   if (!mrmlManager->DoTargetAndAtlasDataTypesMatch())
@@ -815,7 +856,10 @@ void vtkEMSegmentRunSegmentationStep::StartSegmentationCallback()
 void vtkEMSegmentRunSegmentationStep::CancelSegmentationCallback()
 {
   //vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  //mrmlManager->CancelSegmentation();
+  //if (mrmlManager)
+  //  {
+  //    mrmlManager->CancelSegmentation();
+  //  }
 }
 
 //----------------------------------------------------------------------------

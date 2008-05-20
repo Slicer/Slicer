@@ -94,6 +94,10 @@ void vtkEMSegmentIntensityDistributionsStep::ShowUserInterface()
   anat_step->ShowAnatomicalStructureTree();
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   vtkIdType vol_id = mrmlManager->GetTreeRootNodeID();
   const char *root_node = 
     anat_step->GetAnatomicalStructureTree()->GetWidget()->FindNodeWithUserDataAsInt(NULL, vol_id);
@@ -271,8 +275,16 @@ vtkEMSegmentIntensityDistributionsStep::DisplaySelectedNodeIntensityDistribution
   // Update the UI with the proper value, if there is a selection
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   vtkEMSegmentAnatomicalStructureStep *anat_step = 
     this->GetGUI()->GetAnatomicalStructureStep();
+  if (!anat_step)
+    {
+    return;
+    }
   vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
   vtksys_stl::string sel_node;
   vtkIdType sel_vol_id = 0;
@@ -488,6 +500,10 @@ void vtkEMSegmentIntensityDistributionsStep::IntensityDistributionSpecificationC
   // The distribution specification has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   if (type != mrmlManager->GetTreeNodeDistributionSpecificationMethod(sel_vol_id))
     {
     mrmlManager->SetTreeNodeDistributionSpecificationMethod(sel_vol_id, type);
@@ -502,6 +518,10 @@ void vtkEMSegmentIntensityDistributionsStep::IntensityDistributionMeanChangedCal
   // The distribution mean vector has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   mrmlManager->SetTreeNodeDistributionLogMean(sel_vol_id, col, atof(value));
 }
 
@@ -513,6 +533,10 @@ vtkEMSegmentIntensityDistributionsStep::IntensityDistributionCovarianceChangedCa
   // The distribution covariance matrix has changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   mrmlManager->SetTreeNodeDistributionLogCovariance(sel_vol_id, row,col,atof(value));
 }
 
@@ -533,8 +557,16 @@ void vtkEMSegmentIntensityDistributionsStep::AddIntensityDistributionSamplePoint
     }
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   vtkEMSegmentAnatomicalStructureStep *anat_step = 
     this->GetGUI()->GetAnatomicalStructureStep();
+  if (!anat_step)
+    {
+    return;
+    }
   vtkKWTree *tree = anat_step->GetAnatomicalStructureTree()->GetWidget();
   vtksys_stl::string sel_node;
   vtkIdType sel_vol_id;
@@ -618,8 +650,16 @@ vtkEMSegmentIntensityDistributionsStep::DeleteManualIntensitySampleCallback(
   if (sample_index >= 0)
     {
     vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+    if (!mrmlManager)
+      {
+      return;
+      }
     vtkKWMultiColumnList *list = 
       this->IntensityDistributionManualSamplingList->GetWidget()->GetWidget();
+    if (!list)
+      {
+      return;
+      }
     list->DeleteRow(sample_index);
     mrmlManager->RemoveTreeNodeDistributionSamplePoint(sel_vol_id, sample_index);
     this->DisplaySelectedNodeIntensityDistributionsCallback();
@@ -635,6 +675,10 @@ vtkEMSegmentIntensityDistributionsStep::DeleteAllManualIntensitySampleCallback(v
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWMultiColumnList *list = 
     this->IntensityDistributionManualSamplingList->GetWidget()->GetWidget();
+  if (!mrmlManager || !list)
+    {
+    return;
+    }
   list->DeleteAllRows();
   mrmlManager->RemoveAllTreeNodeDistributionSamplePoints(sel_vol_id);
   this->DisplaySelectedNodeIntensityDistributionsCallback();

@@ -68,6 +68,10 @@ void vtkEMSegmentStep::PopulateMenuWithLoadedVolumes(
   //
   // now populate menu with volumes loaded into slicer
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   int nb_of_volumes = mrmlManager->GetVolumeNumberOfChoices();
   for(int index=0; index < nb_of_volumes; index++)
     {
@@ -118,6 +122,10 @@ void vtkEMSegmentStep::PopulateMenuWithTargetVolumes(
   char buffer[256];
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   int nb_of_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
   for(int index = 0; index < nb_of_volumes; index++)
     {

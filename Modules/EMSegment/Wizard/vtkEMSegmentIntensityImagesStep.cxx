@@ -65,6 +65,10 @@ void vtkEMSegmentIntensityImagesStep::ShowUserInterface()
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
+  if (!mrmlManager || !wizard_widget)
+    {
+    return;
+    }
   wizard_widget->GetCancelButton()->SetEnabled(0);
 
   vtkKWWidget *parent = wizard_widget->GetClientArea();
@@ -177,6 +181,10 @@ void vtkEMSegmentIntensityImagesStep::PopulateIntensityImagesTargetVolumeSelecto
   bool found = false;
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   int nb_of_volumes = mrmlManager->GetVolumeNumberOfChoices();
   int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
   
@@ -238,7 +246,10 @@ AlignTargetImagesCallback(int state)
   // interaction
   
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  mrmlManager->SetEnableTargetToTargetRegistration(state);
+  if (mrmlManager)
+    {
+    mrmlManager->SetEnableTargetToTargetRegistration(state);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -248,7 +259,7 @@ void vtkEMSegmentIntensityImagesStep::Validate()
     this->GetGUI()->GetWizardWidget()->GetWizardWorkflow();
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
   
-  if (mrmlManager->GetTargetInputNode() != NULL)
+  if (mrmlManager && mrmlManager->GetTargetInputNode() != NULL)
     {
     // decide if the number of target volumes changed
     unsigned int nb_of_parameter_target_volumes = 

@@ -308,6 +308,10 @@ void vtkEMSegmentIntensityNormalizationStep::ShowUserInterface()
   this->NormalizationRelativeMaxVoxelScale->SetEnabled(0);
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   this->NormalizationTargetVolumeMenuButton->SetEnabled(
     mrmlManager->GetTargetNumberOfSelectedVolumes() ? parent->GetEnabled() : 0);
 
@@ -339,6 +343,10 @@ void vtkEMSegmentIntensityNormalizationStep::
   char buffer[256];
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   int nb_of_target_volumes = mrmlManager->GetTargetNumberOfSelectedVolumes();
   
   vtkKWMenu* menu = this->NormalizationTargetVolumeMenuButton->
@@ -368,6 +376,10 @@ void vtkEMSegmentIntensityNormalizationStep::
   // The target volumes have changed because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   
   char buffer[256];
   int parentEnabled = 
@@ -395,6 +407,10 @@ void vtkEMSegmentIntensityNormalizationStep::
   // because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   mrmlManager->SetTargetVolumeIntensityNormalizationEnabled(target_vol_id, 
     checked);
 
@@ -485,6 +501,10 @@ void vtkEMSegmentIntensityNormalizationStep::
   // because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   
   if (enumDefaultsetting == NormalizationDefaultT1SPGR)
     {
@@ -508,6 +528,10 @@ void vtkEMSegmentIntensityNormalizationStep::
   // because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
  
   mrmlManager->SetTargetVolumeIntensityNormalizationPrintInfo(
     target_vol_id, checked);
@@ -521,6 +545,10 @@ void vtkEMSegmentIntensityNormalizationStep::
   // The Norm-value entry has changed 
   // because of user interaction
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
  
   mrmlManager->
     SetTargetVolumeIntensityNormalizationNormValue(target_vol_id, dValue);
@@ -537,6 +565,10 @@ void vtkEMSegmentIntensityNormalizationStep::
   // because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
  
   mrmlManager->
     SetTargetVolumeIntensityNormalizationInitialHistogramSmoothingWidth(
@@ -553,6 +585,10 @@ void vtkEMSegmentIntensityNormalizationStep::
   // because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
  
   mrmlManager->SetTargetVolumeIntensityNormalizationMaxHistogramSmoothingWidth(
     target_vol_id, iValue);
@@ -568,6 +604,10 @@ void vtkEMSegmentIntensityNormalizationStep::
   // because of user interaction
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
  
   mrmlManager->SetTargetVolumeIntensityNormalizationRelativeMaxVoxelNum(
     target_vol_id, dValue);
@@ -578,6 +618,10 @@ void vtkEMSegmentIntensityNormalizationStep::ResetDefaultParameters(
   vtkIdType target_vol_id)
 {
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
+  if (!mrmlManager)
+    {
+    return;
+    }
   this->NormalizationDefaultsMenuButton->SetConfigurationOption(
     "-text", "Reset Defaults");
 
