@@ -192,15 +192,15 @@ switch $tcl_platform(os) {
 set cwd [pwd]
 cd [file dirname [info script]]
 cd ..
-set ::SLICER_HOME [pwd]
+set ::Slicer3_HOME [pwd]
 cd $cwd
 if { $isWindows } {
-  set ::SLICER_HOME [file attributes $::SLICER_HOME -shortname]
+  set ::Slicer3_HOME [file attributes $::Slicer3_HOME -shortname]
 }
-set ::SLICER_LIB $::SLICER_HOME/../Slicer3-lib
-set ::SLICER_BUILD $::SLICER_HOME/../Slicer3-build
+set ::Slicer3_LIB $::Slicer3_HOME/../Slicer3-lib
+set ::Slicer3_BUILD $::Slicer3_HOME/../Slicer3-build
 # use an environment variable so doxygen can use it
-set ::env(SLICER_DOC) $::SLICER_HOME/../Slicer3-doc
+set ::env(Slicer3_DOC) $::Slicer3_HOME/../Slicer3-doc
 
 
 #######
@@ -209,7 +209,7 @@ set ::env(SLICER_DOC) $::SLICER_HOME/../Slicer3-doc
 # - use it to set your local environment and then your change won't 
 #   be overwritten when this file is updated
 #
-set localvarsfile $SLICER_HOME/slicer_variables.tcl
+set localvarsfile $Slicer3_HOME/slicer_variables.tcl
 catch {set localvarsfile [file normalize $localvarsfile]}
 if { [file exists $localvarsfile] } {
     puts "Sourcing $localvarsfile"
@@ -223,38 +223,38 @@ puts "making with $::MAKE"
 
 
 #
-# Deletes both SLICER_LIB and SLICER_BUILD if clean option given
+# Deletes both Slicer3_LIB and Slicer3_BUILD if clean option given
 #
 # tcl file delete is broken on Darwin, so use rm -rf instead
 if { $::GETBUILDTEST(clean) } {
     puts "Deleting slicer lib files..."
     if { $isDarwin } {
-        runcmd rm -rf $SLICER_LIB
-        runcmd rm -rf $SLICER_BUILD
-        if { [file exists $SLICER_LIB/tcl/isPatched] } {
-            runcmd rm $SLICER_LIB/tcl/isPatched
+        runcmd rm -rf $Slicer3_LIB
+        runcmd rm -rf $Slicer3_BUILD
+        if { [file exists $Slicer3_LIB/tcl/isPatched] } {
+            runcmd rm $Slicer3_LIB/tcl/isPatched
         }
 
-        if { [file exists $SLICER_LIB/tcl/isPatchedBLT] } {
-            runcmd rm $SLICER_LIB/tcl/isPatchedBLT
+        if { [file exists $Slicer3_LIB/tcl/isPatchedBLT] } {
+            runcmd rm $Slicer3_LIB/tcl/isPatchedBLT
         }
     } else {
-        file delete -force $SLICER_LIB
-        file delete -force $SLICER_BUILD
+        file delete -force $Slicer3_LIB
+        file delete -force $Slicer3_BUILD
     }
 }
 
-if { ![file exists $SLICER_LIB] } {
-    file mkdir $SLICER_LIB
+if { ![file exists $Slicer3_LIB] } {
+    file mkdir $Slicer3_LIB
 }
 
-if { ![file exists $SLICER_BUILD] } {
-    file mkdir $SLICER_BUILD
+if { ![file exists $Slicer3_BUILD] } {
+    file mkdir $Slicer3_BUILD
 }
 
-if { $::GETBUILDTEST(doxy) && ![file exists $::env(SLICER_DOC)] } {
-    puts "Making documentation directory  $::env(SLICER_DOC)"
-    file mkdir $::env(SLICER_DOC)
+if { $::GETBUILDTEST(doxy) && ![file exists $::env(Slicer3_DOC)] } {
+    puts "Making documentation directory  $::env(Slicer3_DOC)"
+    file mkdir $::env(Slicer3_DOC)
 }
 
 
@@ -270,26 +270,26 @@ if { $::GETBUILDTEST(doxy) && ![file exists $::env(SLICER_DOC)] } {
 
 
 # svn checkout (does an update if it already exists)
-cd $::SLICER_HOME/..
+cd $::Slicer3_HOME/..
 if { [file exists Slicer3] } {
     cd Slicer3
-    runcmd svn switch $::SLICER_TAG
+    runcmd svn switch $::Slicer3_TAG
 } else {
-    runcmd svn checkout $::SLICER_TAG Slicer3
+    runcmd svn checkout $::Slicer3_TAG Slicer3
 }
 
 if { $::GETBUILDTEST(doxy) } {
     # just run doxygen and exit
-    puts "Creating documenation files in $::env(SLICER_DOC)"
-    set cmd "doxygen $::SLICER_HOME/Doxyfile"
+    puts "Creating documenation files in $::env(Slicer3_DOC)"
+    set cmd "doxygen $::Slicer3_HOME/Doxyfile"
     eval runcmd $cmd
     return
 }
 
 
 # build the lib with options
-cd $::SLICER_HOME
-set cmd "sh ./Scripts/genlib.tcl $SLICER_LIB"
+cd $::Slicer3_HOME
+set cmd "sh ./Scripts/genlib.tcl $Slicer3_LIB"
 if { $::GETBUILDTEST(release) != "" } {
    append cmd " $::GETBUILDTEST(release)"
 } 
@@ -337,28 +337,28 @@ if {$::GETBUILDTEST(verbose)} {
 }
 
 # build the slicer
-cd $::SLICER_BUILD
+cd $::Slicer3_BUILD
 runcmd $::CMAKE \
         -G$::GENERATOR \
         -DMAKECOMMAND:STRING=$::MAKE \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
-        -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
-        -DTEEM_DIR:FILEPATH=$SLICER_LIB/teem-build \
-        -DIGSTK_DIR:FILEPATH=$SLICER_LIB/IGSTK-build \
-        -DSandBox_DIR:FILEPATH=$SLICER_LIB/NAMICSandBox \
+        -DKWWidgets_DIR:FILEPATH=$Slicer3_LIB/KWWidgets-build \
+        -DTEEM_DIR:FILEPATH=$Slicer3_LIB/teem-build \
+        -DIGSTK_DIR:FILEPATH=$Slicer3_LIB/IGSTK-build \
+        -DSandBox_DIR:FILEPATH=$Slicer3_LIB/NAMICSandBox \
         -DCMAKE_BUILD_TYPE=$::VTK_BUILD_TYPE \
         -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
-        -DUSE_IGSTK=$::IGSTK \
-        -DUSE_NAVITRACK=$::NAVITRACK \
+        -DSlicer3_USE_IGSTK=$::IGSTK \
+        -DSlicer3_USE_NAVITRACK=$::NAVITRACK \
         -DNAVITRACK_LIB_DIR:FILEPATH=$::NAVITRACK_LIB_DIR \
         -DNAVITRACK_INC_DIR:FILEPATH=$::NAVITRACK_INC_DIR \
-        -DSLICERLIBCURL_DIR:FILEPATH=$SLICER_LIB/cmcurl-build \
+        -DSLICERLIBCURL_DIR:FILEPATH=$Slicer3_LIB/cmcurl-build \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=$::GETBUILDTEST(cmake-verbose) \
-        $SLICER_HOME
+        $Slicer3_HOME
 
 if { $isWindows } {
     if { $MSVC6 } {
@@ -369,7 +369,7 @@ if { $isWindows } {
     } else {
         # tell cmake explicitly what command line to run when doing the ctest builds
         set makeCmd "$::MAKE Slicer3.sln /build $::VTK_BUILD_TYPE /project ALL_BUILD"
-        runcmd $::CMAKE -DMAKECOMMAND:STRING=$makeCmd $SLICER_HOME
+        runcmd $::CMAKE -DMAKECOMMAND:STRING=$makeCmd $Slicer3_HOME
 
         if { $::GETBUILDTEST(test-type) == "" } {
             runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE
@@ -400,7 +400,7 @@ if {$::GETBUILDTEST(upload) == "true"} {
     set scpfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension)}"
     set namic_path "/clients/Slicer3/WWW/Downloads"
     if {$::GETBUILDTEST(pack) == "true" &&  
-        [file exists $::SLICER_BUILD/$scpfile] && 
+        [file exists $::Slicer3_BUILD/$scpfile] && 
         $::GETBUILDTEST(upload) == "true"} {
         puts "About to do a $::GETBUILDTEST(uploadFlag) upload with $scpfile"
     }

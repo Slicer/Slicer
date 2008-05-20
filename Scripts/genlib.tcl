@@ -65,7 +65,7 @@ proc Usage { {msg ""} } {
     global SLICER
     
     set msg "$msg\nusage: genlib \[options\] \[target\]"
-    set msg "$msg\n  \[target\] is the the SLICER_LIB directory"
+    set msg "$msg\n  \[target\] is the the Slicer3_LIB directory"
     set msg "$msg\n             and is determined automatically if not specified"
     set msg "$msg\n  \[options\] is one of the following:"
     set msg "$msg\n   --help : prints this message and exits"
@@ -121,16 +121,16 @@ set argv $strippedargs
 set argc [llength $argv]
 puts "Stripped args = $argv"
 
-set ::SLICER_LIB ""
+set ::Slicer3_LIB ""
 if {$argc > 1 } {
   #Usage
   #exit 1
-    # the stripped args list now has the SLICER_LIB first and then the list of packages to build
+    # the stripped args list now has the Slicer3_LIB first and then the list of packages to build
     set ::GENLIB(buildList) [lrange $strippedargs 1 end]
     set strippedargs [lindex $strippedargs 0]
 # puts "Got the list of package to build: '$::GENLIB(buildList)' , stripped args = $strippedargs"
 } 
-set ::SLICER_LIB $strippedargs
+set ::Slicer3_LIB $strippedargs
 
 
 ################################################################################
@@ -172,16 +172,16 @@ proc runcmd {args} {
 # 
 
 # hack to work around lack of normalize option in older tcl
-# set SLICER_HOME [file dirname [file dirname [file normalize [info script]]]]
+# set Slicer3_HOME [file dirname [file dirname [file normalize [info script]]]]
 set cwd [pwd]
 cd [file dirname [info script]]
 cd ..
-set SLICER_HOME [pwd]
+set Slicer3_HOME [pwd]
 cd $cwd
 
-if { $::SLICER_LIB == "" } {
-  set ::SLICER_LIB [file dirname $::SLICER_HOME]/Slicer3-lib
-  puts "SLICER_LIB is $::SLICER_LIB"
+if { $::Slicer3_LIB == "" } {
+  set ::Slicer3_LIB [file dirname $::Slicer3_HOME]/Slicer3-lib
+  puts "Slicer3_LIB is $::Slicer3_LIB"
 }
 
 #######
@@ -190,7 +190,7 @@ if { $::SLICER_LIB == "" } {
 # - use it to set your local environment and then your change won't 
 #   be overwritten when this file is updated
 #
-set localvarsfile $SLICER_HOME/slicer_variables.tcl
+set localvarsfile $Slicer3_HOME/slicer_variables.tcl
 catch {set localvarsfile [file normalize $localvarsfile]}
 if { [file exists $localvarsfile] } {
     puts "Sourcing $localvarsfile"
@@ -246,18 +246,18 @@ if ($isRelease) {
 if { $GENLIB(clean) } {
     puts "Deleting slicer lib files..."
     if { $isDarwin } {
-        runcmd rm -rf $SLICER_LIB
-        if { [file exists $SLICER_LIB/tcl/isPatched] } {
-            runcmd rm $SLICER_LIB/tcl/isPatched
+        runcmd rm -rf $Slicer3_LIB
+        if { [file exists $Slicer3_LIB/tcl/isPatched] } {
+            runcmd rm $Slicer3_LIB/tcl/isPatched
         }
 
     } else {
-        file delete -force $SLICER_LIB
+        file delete -force $Slicer3_LIB
     }
 }
 
-if { ![file exists $SLICER_LIB] } {
-    file mkdir $SLICER_LIB
+if { ![file exists $Slicer3_LIB] } {
+    file mkdir $Slicer3_LIB
 }
 
 
@@ -279,7 +279,7 @@ if {$isDarwin} {
 # set in slicer_vars
 if { [BuildThis $::CMAKE "cmake"] == 1 } {
     file mkdir $::CMAKE_PATH
-    cd $SLICER_LIB
+    cd $Slicer3_LIB
 
 
     if {$isWindows} {
@@ -292,9 +292,9 @@ if { [BuildThis $::CMAKE "cmake"] == 1 } {
           cd $::CMAKE_PATH
           if { $isSolaris } {
               # make sure to pick up curses.h in /local/os/include
-              runcmd $SLICER_LIB/CMake/bootstrap --init=$SLICER_HOME/Scripts/spl.cmake.init
+              runcmd $Slicer3_LIB/CMake/bootstrap --init=$Slicer3_HOME/Scripts/spl.cmake.init
           } else {
-              runcmd $SLICER_LIB/CMake/bootstrap
+              runcmd $Slicer3_LIB/CMake/bootstrap
           } 
           eval runcmd $::MAKE
        }
@@ -314,17 +314,17 @@ if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
       runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build tcl-build
     }
 
-    file mkdir $SLICER_LIB/tcl
-    cd $SLICER_LIB/tcl
+    file mkdir $Slicer3_LIB/tcl
+    cd $Slicer3_LIB/tcl
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/tcl tcl
     if {$::GENLIB(buildit)} {
       if {$isWindows} {
           # can't do windows
       } else {
-          cd $SLICER_LIB/tcl/tcl/unix
+          cd $Slicer3_LIB/tcl/tcl/unix
 
-          runcmd ./configure --prefix=$SLICER_LIB/tcl-build
+          runcmd ./configure --prefix=$Slicer3_LIB/tcl-build
           eval runcmd $::MAKE
           eval runcmd $::MAKE install
       }
@@ -332,7 +332,7 @@ if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
 }
 
 if { [BuildThis $::TK_TEST_FILE "tk"] == 1 } {
-    cd $SLICER_LIB/tcl
+    cd $Slicer3_LIB/tcl
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/tk tk
 
@@ -340,28 +340,28 @@ if { [BuildThis $::TK_TEST_FILE "tk"] == 1 } {
       if {$isWindows} {
          # ignore, already downloaded with tcl
       } else {
-         cd $SLICER_LIB/tcl/tk/unix
+         cd $Slicer3_LIB/tcl/tk/unix
          if { $isDarwin } {
-                  runcmd ./configure --with-tcl=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
+                  runcmd ./configure --with-tcl=$Slicer3_LIB/tcl-build/lib --prefix=$Slicer3_LIB/tcl-build --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x
                } else {
-                  runcmd ./configure --with-tcl=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build
+                  runcmd ./configure --with-tcl=$Slicer3_LIB/tcl-build/lib --prefix=$Slicer3_LIB/tcl-build
                }
          eval runcmd $::MAKE
          eval runcmd $::MAKE install
          
-         file copy -force $SLICER_LIB/tcl/tk/generic/default.h $SLICER_LIB/tcl-build/include
-         file copy -force $SLICER_LIB/tcl/tk/unix/tkUnixDefault.h $SLICER_LIB/tcl-build/include
+         file copy -force $Slicer3_LIB/tcl/tk/generic/default.h $Slicer3_LIB/tcl-build/include
+         file copy -force $Slicer3_LIB/tcl/tk/unix/tkUnixDefault.h $Slicer3_LIB/tcl-build/include
       }
    }
 }
 
 if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
 
-    cd $SLICER_LIB/tcl
+    cd $Slicer3_LIB/tcl
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/incrTcl incrTcl
 
-    cd $SLICER_LIB/tcl/incrTcl
+    cd $Slicer3_LIB/tcl/incrTcl
 
     exec chmod +x ../incrTcl/configure 
     if {$::GENLIB(buildit)} {
@@ -372,7 +372,7 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
           exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
           exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM | \\*\\.gnoc ) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure 
       }
-      runcmd ../incrTcl/configure --with-tcl=$SLICER_LIB/tcl-build/lib --with-tk=$SLICER_LIB/tcl-build/lib --prefix=$SLICER_LIB/tcl-build
+      runcmd ../incrTcl/configure --with-tcl=$Slicer3_LIB/tcl-build/lib --with-tk=$Slicer3_LIB/tcl-build/lib --prefix=$Slicer3_LIB/tcl-build
       if { $isDarwin } {
         # need to run ranlib separately on lib for Darwin
         # file is created and ranlib is needed inside make all
@@ -390,7 +390,7 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
 #
 
 if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
-    cd $SLICER_LIB
+    cd $Slicer3_LIB
 
     runcmd $::CVS -d :pserver:anonymous:vtk@public.kitware.com:/cvsroot/VTK login
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous@public.kitware.com:/cvsroot/VTK checkout -r $::VTK_TAG VTK"
@@ -398,12 +398,12 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
     # Andy's temporary hack to get around wrong permissions in VTK cvs repository
     # catch statement is to make file attributes work with RH 7.3
     if { !$isWindows } {
-        catch "file attributes $SLICER_LIB/VTK/VTKConfig.cmake.in -permissions a+rw"
+        catch "file attributes $Slicer3_LIB/VTK/VTKConfig.cmake.in -permissions a+rw"
     }
     if {$::GENLIB(buildit)} {
 
-      file mkdir $SLICER_LIB/VTK-build
-      cd $SLICER_LIB/VTK-build
+      file mkdir $Slicer3_LIB/VTK-build
+      cd $Slicer3_LIB/VTK-build
 
       set USE_VTK_ANSI_STDLIB ""
       if { $isWindows } {
@@ -509,26 +509,28 @@ if { [BuildThis $::VTK_TEST_FILE "vtk"] == 1 } {
 #
 
 if { [BuildThis $::KWWidgets_TEST_FILE "kwwidgets"] == 1 } {
-    cd $SLICER_LIB
+    cd $Slicer3_LIB
 
     runcmd $::CVS -d :pserver:anoncvs:@www.kwwidgets.org:/cvsroot/KWWidgets login
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anoncvs@www.kwwidgets.org:/cvsroot/KWWidgets checkout -r $::KWWidgets_TAG KWWidgets"
 
     if {$::GENLIB(buildit)} {
-      file mkdir $SLICER_LIB/KWWidgets-build
-      cd $SLICER_LIB/KWWidgets-build
+      file mkdir $Slicer3_LIB/KWWidgets-build
+      cd $Slicer3_LIB/KWWidgets-build
 
 
 
       runcmd $::CMAKE \
         -G$GENERATOR \
-        -DVTK_DIR:PATH=$SLICER_LIB/VTK-build \
+        -DVTK_DIR:PATH=$Slicer3_LIB/VTK-build \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
         -DBUILD_SHARED_LIBS:BOOL=ON \
         -DCMAKE_SKIP_RPATH:BOOL=ON \
-        -DBUILD_EXAMPLES:BOOL=ON \
-        -DBUILD_TESTING:BOOL=ON \
+        -DBUILD_EXAMPLES:BOOL=OFF \
+        -DKWWidgets_BUILD_EXAMPLES:BOOL=OFF \
+        -DBUILD_TESTING:BOOL=OFF \
+        -DKWWidgets_BUILD_TESTING:BOOL=OFF \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         ../KWWidgets
 
@@ -556,14 +558,14 @@ if { [BuildThis $::KWWidgets_TEST_FILE "kwwidgets"] == 1 } {
 #
 
 if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
-    cd $SLICER_LIB
+    cd $Slicer3_LIB
 
     runcmd $::CVS -d :pserver:anoncvs:@www.vtk.org:/cvsroot/Insight login
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anoncvs@www.vtk.org:/cvsroot/Insight checkout -r $::ITK_TAG Insight"
 
     if {$::GENLIB(buildit)} {
-      file mkdir $SLICER_LIB/Insight-build
-      cd $SLICER_LIB/Insight-build
+      file mkdir $Slicer3_LIB/Insight-build
+      cd $Slicer3_LIB/Insight-build
 
 
       if {$isDarwin} {
@@ -605,8 +607,8 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
     }
     puts "Patching ITK..."
 
-    set fp1 [open "$SLICER_LIB/Insight-build/Utilities/nifti/niftilib/cmake_install.cmake" r]
-    set fp2 [open "$SLICER_LIB/Insight-build/Utilities/nifti/znzlib/cmake_install.cmake" r]
+    set fp1 [open "$Slicer3_LIB/Insight-build/Utilities/nifti/niftilib/cmake_install.cmake" r]
+    set fp2 [open "$Slicer3_LIB/Insight-build/Utilities/nifti/znzlib/cmake_install.cmake" r]
     set data1 [read $fp1]
 #    puts "data1 is $data1"
     set data2 [read $fp2]
@@ -620,8 +622,8 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
     regsub -all /usr/local/lib $data2 \${CMAKE_INSTALL_PREFIX}/lib data2
     regsub -all /usr/local/include $data2 \${CMAKE_INSTALL_PREFIX}/include data2
 
-    set fw1 [open "$SLICER_LIB/Insight-build/Utilities/nifti/niftilib/cmake_install.cmake" w]
-    set fw2 [open "$SLICER_LIB/Insight-build/Utilities/nifti/znzlib/cmake_install.cmake" w]
+    set fw1 [open "$Slicer3_LIB/Insight-build/Utilities/nifti/niftilib/cmake_install.cmake" w]
+    set fw2 [open "$Slicer3_LIB/Insight-build/Utilities/nifti/znzlib/cmake_install.cmake" w]
 
     puts -nonewline $fw1 $data1
 #    puts "data1out is $data1"
@@ -640,14 +642,14 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
 #
 
 if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
-    cd $SLICER_LIB
+    cd $Slicer3_LIB
 
     runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login 
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TEEM_TAG teem"
 
     if {$::GENLIB(buildit)} {
-      file mkdir $SLICER_LIB/teem-build
-      cd $SLICER_LIB/teem-build
+      file mkdir $Slicer3_LIB/teem-build
+      cd $Slicer3_LIB/teem-build
 
       if { $isDarwin } {
         set C_FLAGS -DCMAKE_C_FLAGS:STRING=-fno-common \
@@ -683,13 +685,13 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
         -DTEEM_ZLIB:BOOL=ON \
         -DTEEM_PNG:BOOL=ON \
         -DTEEM_VTK_MANGLE:BOOL=ON \
-        -DTEEM_VTK_TOOLKITS_IPATH:FILEPATH=$::SLICER_LIB/VTK-build \
-        -DZLIB_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities/vtkzlib \
-        -DTEEM_ZLIB_DLLCONF_IPATH:PATH=$::SLICER_LIB/VTK-build/Utilities \
-        -DZLIB_LIBRARY:FILEPATH=$::SLICER_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$zlib \
-        -DPNG_PNG_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities/vtkpng \
-        -DTEEM_PNG_DLLCONF_IPATH:PATH=$::SLICER_LIB/VTK-build/Utilities \
-        -DPNG_LIBRARY:FILEPATH=$::SLICER_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
+        -DTEEM_VTK_TOOLKITS_IPATH:FILEPATH=$::Slicer3_LIB/VTK-build \
+        -DZLIB_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities/vtkzlib \
+        -DTEEM_ZLIB_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
+        -DZLIB_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$zlib \
+        -DPNG_PNG_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities/vtkpng \
+        -DTEEM_PNG_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
+        -DPNG_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
         ../teem
 
       if {$isWindows} {
@@ -711,14 +713,14 @@ if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
 #
 
 if { [BuildThis $::IGSTK_TEST_FILE "igstk"] == 1 } {
-    cd $SLICER_LIB
+    cd $Slicer3_LIB
 
     runcmd $::CVS -d:pserver:anonymous:igstk@public.kitware.com:/cvsroot/IGSTK login
     eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous@public.kitware.com:/cvsroot/IGSTK co -r IGSTK-2-0 IGSTK"
 
     if {$::GENLIB(buildit)} {
-      file mkdir $SLICER_LIB/IGSTK-build
-      cd $SLICER_LIB/IGSTK-build
+      file mkdir $Slicer3_LIB/IGSTK-build
+      cd $Slicer3_LIB/IGSTK-build
 
 
       if {$isDarwin} {
@@ -780,13 +782,13 @@ if { [BuildThis $::IGSTK_TEST_FILE "igstk"] == 1 } {
 #
 
 if { [BuildThis $::SLICERLIBCURL_TEST_FILE "libcurl"] == 1 } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/cmcurl cmcurl
     if {$::GENLIB(buildit)} {
 
-      file mkdir $::SLICER_LIB/cmcurl-build
-      cd $::SLICER_LIB/cmcurl-build
+      file mkdir $::Slicer3_LIB/cmcurl-build
+      cd $::Slicer3_LIB/cmcurl-build
 
       runcmd $::CMAKE \
         -G$GENERATOR \

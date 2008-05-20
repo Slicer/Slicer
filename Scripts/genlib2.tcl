@@ -44,7 +44,7 @@ proc Usage { {msg ""} } {
     global SLICER
 
     set msg "$msg\nusage: genlib \[options\] \[target\]"
-    set msg "$msg\n  \[target\] is the SLICER_LIB directory"
+    set msg "$msg\n  \[target\] is the Slicer3_LIB directory"
     set msg "$msg\n             and is determined automatically if not specified"
     set msg "$msg\n  \[options\] is one of the following:"
     set msg "$msg\n   --help : prints this message and exits"
@@ -90,12 +90,12 @@ for {set i 0} {$i < $argc} {incr i} {
 set argv $strippedargs
 set argc [llength $argv]
 
-set ::SLICER_LIB ""
+set ::Slicer3_LIB ""
 if {$argc > 1 } {
   Usage
   exit 1
 } else {
-  set ::SLICER_LIB $argv
+  set ::Slicer3_LIB $argv
 }
 
 
@@ -138,16 +138,16 @@ proc runcmd {args} {
 #
 
 # hack to work around lack of normalize option in older tcl
-# set SLICER_HOME [file dirname [file dirname [file normalize [info script]]]]
+# set Slicer3_HOME [file dirname [file dirname [file normalize [info script]]]]
 set cwd [pwd]
 cd [file dirname [info script]]
 cd ..
-set SLICER_HOME [pwd]
+set Slicer3_HOME [pwd]
 cd $cwd
 
-if { $::SLICER_LIB == "" } {
-  set ::SLICER_LIB [file dirname $::SLICER_HOME]/Slicer3-lib
-  puts "SLICER_LIB is $::SLICER_LIB"
+if { $::Slicer3_LIB == "" } {
+  set ::Slicer3_LIB [file dirname $::Slicer3_HOME]/Slicer3-lib
+  puts "Slicer3_LIB is $::Slicer3_LIB"
 }
 
 #######
@@ -156,7 +156,7 @@ if { $::SLICER_LIB == "" } {
 # - use it to set your local environment and then your change won't
 #   be overwritten when this file is updated
 #
-set localvarsfile $SLICER_HOME/slicer_variables2.tcl
+set localvarsfile $Slicer3_HOME/slicer_variables2.tcl
 catch {set localvarsfile [file normalize $localvarsfile]}
 if { [file exists $localvarsfile] } {
     puts "Sourcing $localvarsfile"
@@ -212,21 +212,21 @@ if ($isRelease) {
 if { $GENLIB(clean) } {
     puts "Deleting slicer lib files..."
     if { $isDarwin } {
-        runcmd rm -rf $::SLICER_LIB
-        if { [file exists $::SLICER_LIB/tcl/isPatched] } {
-            runcmd rm $::SLICER_LIB/tcl/isPatched
+        runcmd rm -rf $::Slicer3_LIB
+        if { [file exists $::Slicer3_LIB/tcl/isPatched] } {
+            runcmd rm $::Slicer3_LIB/tcl/isPatched
         }
 
-        if { [file exists $::SLICER_LIB/tcl/isPatchedBLT] } {
-            runcmd rm $::SLICER_LIB/tcl/isPatchedBLT
+        if { [file exists $::Slicer3_LIB/tcl/isPatchedBLT] } {
+            runcmd rm $::Slicer3_LIB/tcl/isPatchedBLT
         }
     } else {
-        file delete -force $::SLICER_LIB
+        file delete -force $::Slicer3_LIB
     }
 }
 
-if { ![file exists $::SLICER_LIB] } {
-    file mkdir $::SLICER_LIB
+if { ![file exists $::Slicer3_LIB] } {
+    file mkdir $::Slicer3_LIB
 }
 
 
@@ -236,7 +236,7 @@ if { ![file exists $::SLICER_LIB] } {
 
 # set in slicer_vars
 if { ![file exists $::CMAKE] || $::GENLIB(update) } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
     file mkdir $::CMAKE_PATH
 
     if {$isWindows} {
@@ -245,7 +245,7 @@ if { ![file exists $::CMAKE] || $::GENLIB(update) } {
         runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/CMake CMake
 
         cd $::CMAKE_PATH
-        runcmd $::SLICER_LIB/CMake/bootstrap
+        runcmd $::Slicer3_LIB/CMake/bootstrap
         eval runcmd $::MAKE
     }
 }
@@ -262,19 +262,19 @@ if { ![file exists $::TCL_TEST_FILE] || $::GENLIB(update) } {
       runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build tcl-build
     }
 
-    file mkdir $::SLICER_LIB/tcl
-    cd $::SLICER_LIB/tcl
+    file mkdir $::Slicer3_LIB/tcl
+    cd $::Slicer3_LIB/tcl
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/tcl tcl
 
     if {$isWindows} {
         # nothing to do for windows
     } else {
-        cd $::SLICER_LIB/tcl/tcl/unix
+        cd $::Slicer3_LIB/tcl/tcl/unix
         if { $isDarwin } {
-            runcmd ./configure --prefix=$::SLICER_LIB/tcl-build --disable-corefoundation
+            runcmd ./configure --prefix=$::Slicer3_LIB/tcl-build --disable-corefoundation
         } else {
-            runcmd ./configure --prefix=$::SLICER_LIB/tcl-build
+            runcmd ./configure --prefix=$::Slicer3_LIB/tcl-build
         }
         eval runcmd $::MAKE
         eval runcmd $::MAKE install
@@ -282,26 +282,26 @@ if { ![file exists $::TCL_TEST_FILE] || $::GENLIB(update) } {
 }
 
 if { ![file exists $::TK_TEST_FILE] || $::GENLIB(update) } {
-    cd $::SLICER_LIB/tcl
+    cd $::Slicer3_LIB/tcl
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/tk tk
 
     if {$isWindows} {
         # don't need to do windows
     } else {
-        cd $::SLICER_LIB/tcl/tk/unix
+        cd $::Slicer3_LIB/tcl/tk/unix
 
-        runcmd ./configure --with-tcl=$::SLICER_LIB/tcl-build/lib --prefix=$::SLICER_LIB/tcl-build --disable-corefoundation
+        runcmd ./configure --with-tcl=$::Slicer3_LIB/tcl-build/lib --prefix=$::Slicer3_LIB/tcl-build --disable-corefoundation
         eval runcmd $::MAKE
         eval runcmd $::MAKE install
 
-        file copy -force $::SLICER_LIB/tcl/tk/generic/default.h $::SLICER_LIB/tcl-build/include
-        file copy -force $::SLICER_LIB/tcl/tk/unix/tkUnixDefault.h $::SLICER_LIB/tcl-build/include
+        file copy -force $::Slicer3_LIB/tcl/tk/generic/default.h $::Slicer3_LIB/tcl-build/include
+        file copy -force $::Slicer3_LIB/tcl/tk/unix/tkUnixDefault.h $::Slicer3_LIB/tcl-build/include
     }
 }
 
 if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
-    cd $::SLICER_LIB/tcl
+    cd $::Slicer3_LIB/tcl
 
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/incrTcl incrTcl
@@ -309,13 +309,13 @@ if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
     if {$isWindows} {
         # can't do windows
     } else {
-        cd $::SLICER_LIB/tcl/incrTcl
+        cd $::Slicer3_LIB/tcl/incrTcl
         if {$isDarwin} {
             exec cp ../incrTcl/itcl/configure ../incrTcl/itcl/configure.orig
             exec sed -e "s/\\*\\.c | \\*\\.o | \\*\\.obj) ;;/\\*\\.c | \\*\\.o | \\*\\.obj | \\*\\.dSYM) ;;/" ../incrTcl/itcl/configure.orig > ../incrTcl/itcl/configure
         }
         exec chmod +x ../incrTcl/configure
-        runcmd ../incrTcl/configure --with-tcl=$::SLICER_LIB/tcl-build/lib --with-tk=$::SLICER_LIB/tcl-build/lib --prefix=$::SLICER_LIB/tcl-build
+        runcmd ../incrTcl/configure --with-tcl=$::Slicer3_LIB/tcl-build/lib --with-tk=$::Slicer3_LIB/tcl-build/lib --prefix=$::Slicer3_LIB/tcl-build
         if { $isDarwin } {
             # need to run ranlib separately on lib for Darwin
             # file is created and ranlib is needed inside make all
@@ -328,15 +328,15 @@ if { ![file exists $::ITCL_TEST_FILE] || $::GENLIB(update) } {
 }
 
 if { ![file exists $::IWIDGETS_TEST_FILE] || $::GENLIB(update) } {
-    cd $::SLICER_LIB/tcl
+    cd $::Slicer3_LIB/tcl
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/iwidgets iwidgets
 
     if {$isWindows} {
         # can't do windows
     } else {
-        cd $::SLICER_LIB/tcl/iwidgets
-        runcmd ../iwidgets/configure --with-tcl=$::SLICER_LIB/tcl-build/lib --with-tk=$::SLICER_LIB/tcl-build/lib --with-itcl=$::SLICER_LIB/tcl/incrTcl --prefix=$::SLICER_LIB/tcl-build
+        cd $::Slicer3_LIB/tcl/iwidgets
+        runcmd ../iwidgets/configure --with-tcl=$::Slicer3_LIB/tcl-build/lib --with-tk=$::Slicer3_LIB/tcl-build/lib --with-itcl=$::Slicer3_LIB/tcl/incrTcl --prefix=$::Slicer3_LIB/tcl-build
         # make all doesn't do anything...
         # iwidgets won't compile in parallel (with -j flag)
         eval runcmd $::SERIAL_MAKE all
@@ -350,7 +350,7 @@ if { ![file exists $::IWIDGETS_TEST_FILE] || $::GENLIB(update) } {
 #
 
 if { !$isDarwin  && (![file exists $::BLT_TEST_FILE] || $::GENLIB(update)) } {
-    cd $::SLICER_LIB/tcl
+    cd $::Slicer3_LIB/tcl
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/blt blt
 
@@ -358,14 +358,14 @@ if { !$isDarwin  && (![file exists $::BLT_TEST_FILE] || $::GENLIB(update)) } {
         # can't do Windows
     } elseif { $isDarwin } {
 
-        cd $::SLICER_LIB/tcl/blt
-        runcmd ./configure --with-tcl=$::SLICER_LIB/tcl/tcl/unix --with-tk=$::SLICER_LIB/tcl-build --prefix=$::SLICER_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --with-cflags=-fno-common
+        cd $::Slicer3_LIB/tcl/blt
+        runcmd ./configure --with-tcl=$::Slicer3_LIB/tcl/tcl/unix --with-tk=$::Slicer3_LIB/tcl-build --prefix=$::Slicer3_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --with-cflags=-fno-common
 
         eval runcmd $::SERIAL_MAKE
         eval runcmd $::SERIAL_MAKE install
     } else {
-        cd $::SLICER_LIB/tcl/blt
-        runcmd ./configure --with-tcl=$::SLICER_LIB/tcl/tcl/unix --with-tk=$::SLICER_LIB/tcl-build --prefix=$::SLICER_LIB/tcl-build
+        cd $::Slicer3_LIB/tcl/blt
+        runcmd ./configure --with-tcl=$::Slicer3_LIB/tcl/tcl/unix --with-tk=$::Slicer3_LIB/tcl-build --prefix=$::Slicer3_LIB/tcl-build
         eval runcmd $::SERIAL_MAKE
         eval runcmd $::SERIAL_MAKE install
     }
@@ -377,34 +377,34 @@ if { !$isDarwin  && (![file exists $::BLT_TEST_FILE] || $::GENLIB(update)) } {
 
 if {  ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
 
-    file mkdir $::SLICER_LIB/python
-    file mkdir $::SLICER_LIB/python-build
-    cd $::SLICER_LIB/python
+    file mkdir $::Slicer3_LIB/python
+    file mkdir $::Slicer3_LIB/python-build
+    cd $::Slicer3_LIB/python
 
     runcmd $::SVN co $::PYTHON_TAG
 
     if { $isWindows } {
         # can't do Windows
     } else {
-        cd $SLICER_LIB/python/release25-maint
+        cd $Slicer3_LIB/python/release25-maint
 
-        set ::env(LDFLAGS) -L$SLICER_LIB/tcl-build/lib
-        set ::env(CPPFLAGS) -I$SLICER_LIB/tcl-build/include
+        set ::env(LDFLAGS) -L$Slicer3_LIB/tcl-build/lib
+        set ::env(CPPFLAGS) -I$Slicer3_LIB/tcl-build/include
 
-        runcmd ./configure --prefix=$SLICER_LIB/python-build --with-tcl=$SLICER_LIB/tcl-build --enable-shared
+        runcmd ./configure --prefix=$Slicer3_LIB/python-build --with-tcl=$Slicer3_LIB/tcl-build --enable-shared
         eval runcmd $::MAKE
         puts [catch "eval runcmd $::SERIAL_MAKE install" res] ;# try twice - it probably fails first time...
         if { $isDarwin } {
             # Special Slicer hack to build and install the .dylib
-            file mkdir $::SLICER_LIB/python-build/lib/
-            file delete -force $::SLICER_LIB/python-build/lib/libpython2.5.dylib
+            file mkdir $::Slicer3_LIB/python-build/lib/
+            file delete -force $::Slicer3_LIB/python-build/lib/libpython2.5.dylib
             set fid [open environhack.c w]
             puts $fid "char **environ=0;"
             close $fid
             runcmd gcc -c -o environhack.o environhack.c
-            runcmd libtool -o $::SLICER_LIB/python-build/lib/libpython2.5.dylib -dynamic  \
+            runcmd libtool -o $::Slicer3_LIB/python-build/lib/libpython2.5.dylib -dynamic  \
                 -all_load libpython2.5.a environhack.o -single_module \
-                -install_name $::SLICER_LIB/python-build/lib/libpython2.5.dylib \
+                -install_name $::Slicer3_LIB/python-build/lib/libpython2.5.dylib \
                 -compatibility_version 2.5 \
                 -current_version 2.5 -lSystem -lSystemStubs
 
@@ -418,8 +418,8 @@ if {  ![file exists $::PYTHON_TEST_FILE] || $::GENLIB(update) } {
 
 if { ( ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) ) } {
 
-    set ::env(PYTHONHOME)        $::SLICER_LIB/python-build
-    cd $::SLICER_LIB/python
+    set ::env(PYTHONHOME)        $::Slicer3_LIB/python-build
+    cd $::Slicer3_LIB/python
 
     # do numpy
 
@@ -430,36 +430,36 @@ if { ( ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) ) } {
     } else {
         if { $isDarwin } {
             if { [info exists ::env(DYLD_LIBRARY_PATH)] } {
-              set ::env(DYLD_LIBRARY_PATH) $::SLICER_LIB/python-build/lib:$::env(DYLD_LIBRARY_PATH)
+              set ::env(DYLD_LIBRARY_PATH) $::Slicer3_LIB/python-build/lib:$::env(DYLD_LIBRARY_PATH)
             } else {
-              set ::env(DYLD_LIBRARY_PATH) $::SLICER_LIB/python-build/lib
+              set ::env(DYLD_LIBRARY_PATH) $::Slicer3_LIB/python-build/lib
             }
         } else {
             if { [info exists ::env(LD_LIBRARY_PATH)] } {
-                set ::env(LD_LIBRARY_PATH) $::SLICER_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
+                set ::env(LD_LIBRARY_PATH) $::Slicer3_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
             } else {
-                set ::env(LD_LIBRARY_PATH) $::SLICER_LIB/python-build/lib
+                set ::env(LD_LIBRARY_PATH) $::Slicer3_LIB/python-build/lib
             }
         }
-        cd $::SLICER_LIB/python/numpy
+        cd $::Slicer3_LIB/python/numpy
         set ::env(ATLAS) None
         set ::env(BLAS) None
         set ::env(LAPACK) None
-        runcmd $::SLICER_LIB/python-build/bin/python ./setup.py install
+        runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
 
         # do scipy
 
         if { 0 } {
           # TODO: need to have a way to build the blas library...
-          cd $::SLICER_LIB/python
+          cd $::Slicer3_LIB/python
           runcmd $::SVN co $::SCIPY_TAG scipy
           
-          cd $::SLICER_LIB/python/scipy
+          cd $::Slicer3_LIB/python/scipy
           set ::env(ATLAS) None
           set ::env(BLAS) None
           set ::env(LAPACK) None
           # skip scipy for now until we find a BLAS to link against
-          # runcmd $::SLICER_LIB/python-build/bin/python ./setup.py install
+          # runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
         }
     }
 
@@ -471,8 +471,8 @@ if { ( ![file exists $::NUMPY_TEST_FILE] || $::GENLIB(update) ) } {
 #
 if { 0 && (![file exists $::MATPLOTLIB_TEST_FILE] || $::GENLIB(update)) } {
 
-    set ::env(PYTHONHOME)        $SLICER_LIB/python-build
-    cd $SLICER_LIB/python
+    set ::env(PYTHONHOME)        $Slicer3_LIB/python-build
+    cd $Slicer3_LIB/python
 
     # do freetype
 
@@ -481,21 +481,21 @@ if { 0 && (![file exists $::MATPLOTLIB_TEST_FILE] || $::GENLIB(update)) } {
     if { $isWindows } {
         # can't do Windows
     } else {
-        cd $SLICER_LIB/python/freetype2
-        runcmd ./configure --prefix=$SLICER_LIB/python-build
+        cd $Slicer3_LIB/python/freetype2
+        runcmd ./configure --prefix=$Slicer3_LIB/python-build
         eval runcmd $::MAKE
         eval runcmd $::MAKE install
     }
 
     # Now matplotlib
-    cd $SLICER_LIB/python
+    cd $Slicer3_LIB/python
     runcmd $::SVN co http://matplotlib.svn.sourceforge.net/svnroot/matplotlib/trunk/matplotlib matplotlib
     if { $isWindows } {
         # Can't do Windows yet
     } else {
-        cd $SLICER_LIB/python/matplotlib
-        set ::env(FREETYPEDIR) $SLICER_LIB/python-build
-        runcmd $SLICER_LIB/python-build/bin/python ./setup.py build
+        cd $Slicer3_LIB/python/matplotlib
+        set ::env(FREETYPEDIR) $Slicer3_LIB/python-build
+        runcmd $Slicer3_LIB/python-build/bin/python ./setup.py build
     }
 }
         
@@ -506,12 +506,12 @@ if { 0 && (![file exists $::MATPLOTLIB_TEST_FILE] || $::GENLIB(update)) } {
 #
 
 if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/VTK VTK
 
-    file mkdir $::SLICER_LIB/VTK-build
-    cd $::SLICER_LIB/VTK-build
+    file mkdir $::Slicer3_LIB/VTK-build
+    cd $::Slicer3_LIB/VTK-build
 
     set USE_VTK_ANSI_STDLIB ""
     if { $isWindows } {
@@ -619,12 +619,12 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
 #
 
 if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/KWWidgets KWWidgets
 
-    file mkdir $::SLICER_LIB/KWWidgets-build
-    cd $::SLICER_LIB/KWWidgets-build
+    file mkdir $::Slicer3_LIB/KWWidgets-build
+    cd $::Slicer3_LIB/KWWidgets-build
 
 
     if {$isDarwin} {
@@ -637,13 +637,15 @@ if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
 
     runcmd $::CMAKE \
         -G$GENERATOR \
-        -DVTK_DIR:PATH=$::SLICER_LIB/VTK-build \
+        -DVTK_DIR:PATH=$::Slicer3_LIB/VTK-build \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
         -DBUILD_SHARED_LIBS:BOOL=ON \
         -DCMAKE_SKIP_RPATH:BOOL=ON \
-        -DBUILD_EXAMPLES:BOOL=ON \
-        -DBUILD_TESTING:BOOL=ON \
+        -DBUILD_EXAMPLES:BOOL=OFF \
+        -DKWWidgets_BUILD_EXAMPLES:BOOL=OFF \
+        -DBUILD_TESTING:BOOL=OFF \
+        -DKWWidgets_BUILD_TESTING:BOOL=OFF \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
         -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         $SharedLink $LinkFlags\
@@ -665,12 +667,12 @@ if { ![file exists $::KWWidgets_TEST_FILE] || $::GENLIB(update) } {
 #
 
 if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Insight Insight
 
-    file mkdir $::SLICER_LIB/Insight-build
-    cd $::SLICER_LIB/Insight-build
+    file mkdir $::Slicer3_LIB/Insight-build
+    cd $::Slicer3_LIB/Insight-build
 
 
     if {$isDarwin} {
@@ -723,12 +725,12 @@ if { ![file exists $::ITK_TEST_FILE] || $::GENLIB(update) } {
 #
 
 if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/teem teem
 
-    file mkdir $::SLICER_LIB/teem-build
-    cd $::SLICER_LIB/teem-build
+    file mkdir $::Slicer3_LIB/teem-build
+    cd $::Slicer3_LIB/teem-build
 
     if { $isDarwin } {
         set C_FLAGS -DCMAKE_C_FLAGS:STRING=-fno-common \
@@ -765,13 +767,13 @@ if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
         -DTEEM_ZLIB:BOOL=ON \
         -DTEEM_PNG:BOOL=ON \
         -DBUILD_VTK_CAPATIBLE_TEEM:BOOL=ON \
-        -DTEEM_VTK_TOOLKITS_IPATH:FILEPATH=$::SLICER_LIB/VTK-build \
-        -DZLIB_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities \
-        -DTEEM_ZLIB_DLLCONF_IPATH:PATH=$::SLICER_LIB/VTK-build/Utilities \
-        -DZLIB_LIBRARY:FILEPATH=$::SLICER_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$zlib \
-        -DPNG_PNG_INCLUDE_DIR:PATH=$::SLICER_LIB/VTK/Utilities/vtkpng \
-        -DTEEM_PNG_DLLCONF_IPATH:PATH=$::SLICER_LIB/VTK-build/Utilities \
-        -DPNG_LIBRARY:FILEPATH=$::SLICER_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
+        -DTEEM_VTK_TOOLKITS_IPATH:FILEPATH=$::Slicer3_LIB/VTK-build \
+        -DZLIB_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities \
+        -DTEEM_ZLIB_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
+        -DZLIB_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$zlib \
+        -DPNG_PNG_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities/vtkpng \
+        -DTEEM_PNG_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
+        -DPNG_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
         -DTEEM_SUBLIBRARIES:BOOL=TRUE \
         ../teem
 
@@ -793,12 +795,12 @@ if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
 
 # NOTE: disabled for now - nothing in the sandbox we actually need...
 if { 0 && ( ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_TEST_FILE] || $::GENLIB(update) ) } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
 
     runcmd $::SVN checkout $::SANDBOX_TAG NAMICSandBox
 
-    file mkdir $::SLICER_LIB/NAMICSandBox-build
-    cd $::SLICER_LIB/NAMICSandBox-build
+    file mkdir $::Slicer3_LIB/NAMICSandBox-build
+    cd $::Slicer3_LIB/NAMICSandBox-build
 
     if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
         # to build correctly, 64 bit linux requires shared libs for the sandbox
@@ -842,23 +844,23 @@ if { 0 && ( ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_
 
             # These two lines fail on windows because the .sln file has a problem.
             # Perhaps this is a cmake issue.
-            #cd $::SLICER_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation
+            #cd $::Slicer3_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation
             #runcmd $::MAKE SlicerClustering.SLN /build  $::VTK_BUILD_TYPE
 
             # Building within the subdirectory works
-            cd $::SLICER_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation/Code
+            cd $::Slicer3_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation/Code
             runcmd $::MAKE SlicerClustering.vcproj /build  $::VTK_BUILD_TYPE
-            cd $::SLICER_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation/Code
+            cd $::Slicer3_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation/Code
             runcmd $::MAKE SlicerClustering.vcproj /build  $::VTK_BUILD_TYPE
             # However then it doesn't pick up this needed library
-            cd $::SLICER_LIB/NAMICSandBox-build/SpectralClustering
+            cd $::Slicer3_LIB/NAMICSandBox-build/SpectralClustering
             runcmd $::MAKE SpectralClustering.SLN /build  $::VTK_BUILD_TYPE
             # this one is independent
             # TODO Distributions broken with ITK 3.0 f2c
-            #cd $::SLICER_LIB/NAMICSandBox-build/Distributions
+            #cd $::Slicer3_LIB/NAMICSandBox-build/Distributions
             #runcmd $::MAKE Distributions.SLN /build  $::VTK_BUILD_TYPE
             # this one is independent
-            cd $::SLICER_LIB/NAMICSandBox-build/MGHImageIOConverter
+            cd $::Slicer3_LIB/NAMICSandBox-build/MGHImageIOConverter
             runcmd $::MAKE MGHImageIOConverter.SLN /build $::VTK_BUILD_TYPE
         }
     } else {
@@ -871,14 +873,14 @@ if { 0 && ( ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_
         # vtkDTMRI links to SlicerClustering.
         # At some point in the future, the classes in these libraries
         # will become part of ITK and this will no longer be needed.
-        cd $::SLICER_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation
+        cd $::Slicer3_LIB/NAMICSandBox-build/SlicerTractClusteringImplementation
         eval runcmd $::MAKE
         # TODO Distributions broken with ITK 3.0 f2c
-        #cd $::SLICER_LIB/NAMICSandBox-build/Distributions
+        #cd $::Slicer3_LIB/NAMICSandBox-build/Distributions
         #eval runcmd $::MAKE
-        cd $::SLICER_LIB/NAMICSandBox-build/MGHImageIOConverter
+        cd $::Slicer3_LIB/NAMICSandBox-build/MGHImageIOConverter
         eval runcmd $::MAKE
-        cd $::SLICER_LIB/NAMICSandBox-build
+        cd $::Slicer3_LIB/NAMICSandBox-build
     }
 }
 
@@ -888,12 +890,12 @@ if { 0 && ( ![file exists $::SANDBOX_TEST_FILE] && ![file exists $::ALT_SANDBOX_
 #
 
 if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/IGSTK IGSTK
 
-    file mkdir $::SLICER_LIB/IGSTK-build
-    cd $::SLICER_LIB/IGSTK-build
+    file mkdir $::Slicer3_LIB/IGSTK-build
+    cd $::Slicer3_LIB/IGSTK-build
 
 
     if {$isDarwin} {
@@ -953,12 +955,12 @@ if { ![file exists $::IGSTK_TEST_FILE] || $::GENLIB(update) } {
 #
 
 if { 0 && (![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update)) } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
 
     runcmd echo t | $::SVN co https://ariser.uio.no/svn/navitrack/trunk NaviTrack
 
-    file mkdir $::SLICER_LIB/NaviTrack-build
-    cd $::SLICER_LIB/NaviTrack-build
+    file mkdir $::Slicer3_LIB/NaviTrack-build
+    cd $::Slicer3_LIB/NaviTrack-build
 
     runcmd $::CMAKE \
         -G$GENERATOR \
@@ -988,12 +990,12 @@ if { 0 && (![file exists $::NaviTrack_TEST_FILE] || $::GENLIB(update)) } {
 #
 
 if { $::USE_SIGN && (![file exists $::dcmtk_TEST_FILE] || $::GENLIB(update)) } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
 
     runcmd echo t | $::SVN --username ivs --password ivs co https://ariser.uio.no/svn/sign/trunk/libs/dcmtk-3.5.4 dcmtk
 
-    file mkdir $::SLICER_LIB/dcmtk-build
-    cd $::SLICER_LIB/dcmtk-build
+    file mkdir $::Slicer3_LIB/dcmtk-build
+    cd $::Slicer3_LIB/dcmtk-build
 
     runcmd $::CMAKE \
         -G$GENERATOR \
@@ -1002,7 +1004,7 @@ if { $::USE_SIGN && (![file exists $::dcmtk_TEST_FILE] || $::GENLIB(update)) } {
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
         -DBUILD_SHARED_LIBS:BOOL=ON \
         -DBUILD_TESTING:BOOL=OFF \
-        -DINSTALL_LIBDIR:PATH=$::SLICER_LIB/dcmtk-build/bin \
+        -DINSTALL_LIBDIR:PATH=$::Slicer3_LIB/dcmtk-build/bin \
         ../dcmtk
 
 
@@ -1024,12 +1026,12 @@ if { $::USE_SIGN && (![file exists $::dcmtk_TEST_FILE] || $::GENLIB(update)) } {
 #
 
 if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/BatchMake BatchMake
 
-    file mkdir $::SLICER_LIB/BatchMake-build
-    cd $::SLICER_LIB/BatchMake-build
+    file mkdir $::Slicer3_LIB/BatchMake-build
+    cd $::Slicer3_LIB/BatchMake-build
 
     runcmd $::CMAKE \
         -G$GENERATOR \
@@ -1067,12 +1069,12 @@ if { ![file exists $::BatchMake_TEST_FILE] || $::GENLIB(update) } {
 #
 
 if { ![file exists $::SLICERLIBCURL_TEST_FILE] || $::GENLIB(update) } {
-    cd $::SLICER_LIB
+    cd $::Slicer3_LIB
 
     runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/cmcurl cmcurl
 
-    file mkdir $::SLICER_LIB/cmcurl-build
-    cd $::SLICER_LIB/cmcurl-build
+    file mkdir $::Slicer3_LIB/cmcurl-build
+    cd $::Slicer3_LIB/cmcurl-build
 
     runcmd $::CMAKE \
         -G$GENERATOR \

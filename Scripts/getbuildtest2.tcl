@@ -177,17 +177,17 @@ proc runcmd {args} {
 
 set script [info script]
 catch {set script [file normalize $script]}
-set ::SLICER_HOME [file dirname [file dirname $script]]
+set ::Slicer3_HOME [file dirname [file dirname $script]]
 set cwd [pwd]
 cd [file dirname [info script]]
 cd ..
-set ::SLICER_HOME [pwd]
+set ::Slicer3_HOME [pwd]
 cd $cwd
 
-set ::SLICER_LIB $::SLICER_HOME/../Slicer3-lib
-set ::SLICER_BUILD $::SLICER_HOME/../Slicer3-build
+set ::Slicer3_LIB $::Slicer3_HOME/../Slicer3-lib
+set ::Slicer3_BUILD $::Slicer3_HOME/../Slicer3-build
 # use an environment variable so doxygen can use it
-set ::env(SLICER_DOC) $::SLICER_HOME/../Slicer3-doc
+set ::env(Slicer3_DOC) $::Slicer3_HOME/../Slicer3-doc
 
 
 
@@ -197,7 +197,7 @@ set ::env(SLICER_DOC) $::SLICER_HOME/../Slicer3-doc
 # - use it to set your local environment and then your change won't
 #   be overwritten when this file is updated
 #
-set localvarsfile $SLICER_HOME/slicer_variables2.tcl
+set localvarsfile $Slicer3_HOME/slicer_variables2.tcl
 catch {set localvarsfile [file normalize $localvarsfile]}
 if { [file exists $localvarsfile] } {
     puts "Sourcing $localvarsfile"
@@ -219,38 +219,38 @@ switch $tcl_platform(os) {
 }
 
 #
-# Deletes both SLICER_LIB and SLICER_BUILD if clean option given
+# Deletes both Slicer3_LIB and Slicer3_BUILD if clean option given
 #
 # tcl file delete is broken on Darwin, so use rm -rf instead
 if { $::GETBUILDTEST(clean) } {
     puts "Deleting slicer lib files..."
     if { $isDarwin } {
-        runcmd rm -rf $SLICER_LIB
-        runcmd rm -rf $SLICER_BUILD
-        if { [file exists $SLICER_LIB/tcl/isPatched] } {
-            runcmd rm $SLICER_LIB/tcl/isPatched
+        runcmd rm -rf $Slicer3_LIB
+        runcmd rm -rf $Slicer3_BUILD
+        if { [file exists $Slicer3_LIB/tcl/isPatched] } {
+            runcmd rm $Slicer3_LIB/tcl/isPatched
         }
 
-        if { [file exists $SLICER_LIB/tcl/isPatchedBLT] } {
-            runcmd rm $SLICER_LIB/tcl/isPatchedBLT
+        if { [file exists $Slicer3_LIB/tcl/isPatchedBLT] } {
+            runcmd rm $Slicer3_LIB/tcl/isPatchedBLT
         }
     } else {
-        file delete -force $SLICER_LIB
-        file delete -force $SLICER_BUILD
+        file delete -force $Slicer3_LIB
+        file delete -force $Slicer3_BUILD
     }
 }
 
-if { ![file exists $SLICER_LIB] } {
-    file mkdir $SLICER_LIB
+if { ![file exists $Slicer3_LIB] } {
+    file mkdir $Slicer3_LIB
 }
 
-if { ![file exists $SLICER_BUILD] } {
-    file mkdir $SLICER_BUILD
+if { ![file exists $Slicer3_BUILD] } {
+    file mkdir $Slicer3_BUILD
 }
 
-if { $::GETBUILDTEST(doxy) && ![file exists $::env(SLICER_DOC)] } {
-    puts "Making documentation directory  $::env(SLICER_DOC)"
-    file mkdir $::env(SLICER_DOC)
+if { $::GETBUILDTEST(doxy) && ![file exists $::env(Slicer3_DOC)] } {
+    puts "Making documentation directory  $::env(Slicer3_DOC)"
+    file mkdir $::env(Slicer3_DOC)
 }
 
 
@@ -268,12 +268,12 @@ if { $::GETBUILDTEST(doxy) && ![file exists $::env(SLICER_DOC)] } {
 # svn checkout (does an update if it already exists) 
 # NB: In order for "Continuous" tests to submit to the dashboard we must be sure not to update here.
 if { $::GETBUILDTEST(test-type) != "Continuous" } {
-  cd $::SLICER_HOME/..
+  cd $::Slicer3_HOME/..
   if { [file exists Slicer3] } {
     cd Slicer3
-    runcmd svn switch $::SLICER_TAG
+    runcmd svn switch $::Slicer3_TAG
   } else {
-    runcmd svn checkout $::SLICER_TAG Slicer3
+    runcmd svn checkout $::Slicer3_TAG Slicer3
   }
 } else {
     puts "Skipping update of Slicer3 until continuous test starts."
@@ -282,7 +282,7 @@ if { $::GETBUILDTEST(test-type) != "Continuous" } {
 
 # svn checkout of SIGN
 if { $::USE_SIGN } {
-  cd $::SLICER_HOME/Libs
+  cd $::Slicer3_HOME/Libs
   if { [file exists SIGN] } {
     cd SIGN
     runcmd echo t | svn --username ivs --password ivs switch $::SIGN_TAG
@@ -290,7 +290,7 @@ if { $::USE_SIGN } {
     runcmd echo t | svn --username ivs --password ivs checkout $::SIGN_TAG SIGN
   }
 
-  cd $::SLICER_HOME/Applications
+  cd $::Slicer3_HOME/Applications
   if { [file exists SIGN] } {
     cd SIGN
     runcmd echo t | svn --username ivs --password ivs switch $::SIGN_APP_TAG
@@ -302,8 +302,8 @@ if { $::USE_SIGN } {
 
 
 # build the lib with options
-cd $::SLICER_HOME
-set cmd "sh ./Scripts/genlib2.tcl $SLICER_LIB"
+cd $::Slicer3_HOME
+set cmd "sh ./Scripts/genlib2.tcl $Slicer3_LIB"
 if { $::GETBUILDTEST(release) != "" } {
    append cmd " $::GETBUILDTEST(release)"
 }
@@ -350,43 +350,43 @@ if {$isWindows} {
 }
 
 # build the slicer
-cd $::SLICER_BUILD
+cd $::Slicer3_BUILD
 runcmd $::CMAKE \
         -G$::GENERATOR \
         -DMAKECOMMAND:STRING=$::MAKE \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
         -DITK_DIR:FILEPATH=$ITK_BINARY_PATH \
-        -DKWWidgets_DIR:FILEPATH=$SLICER_LIB/KWWidgets-build \
-        -DTEEM_DIR:FILEPATH=$SLICER_LIB/teem-build \
-        -DIGSTK_DIR:FILEPATH=$SLICER_LIB/IGSTK-build \
-        -DSandBox_DIR:FILEPATH=$SLICER_LIB/NAMICSandBox \
+        -DKWWidgets_DIR:FILEPATH=$Slicer3_LIB/KWWidgets-build \
+        -DTEEM_DIR:FILEPATH=$Slicer3_LIB/teem-build \
+        -DIGSTK_DIR:FILEPATH=$Slicer3_LIB/IGSTK-build \
+        -DSandBox_DIR:FILEPATH=$Slicer3_LIB/NAMICSandBox \
         -DCMAKE_BUILD_TYPE=$::VTK_BUILD_TYPE \
         -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         -DSlicer3_VERSION_PATCH:STRING=$::GETBUILDTEST(version-patch) \
         -DCPACK_GENERATOR:STRING=$::GETBUILDTEST(cpack-generator) \
         -DCPACK_PACKAGE_FILE_NAME:STRING=$::GETBUILDTEST(binary-filename) \
-        -DUSE_PYTHON=$BuildPython \
-        -DPYTHON_INCLUDE_PATH:PATH=$::SLICER_LIB/python-build/include/python2.5 \
-        -DPYTHON_LIBRARY:FILEPATH=$::SLICER_LIB/python-build/lib/libpython2.5$::GETBUILDTEST(shared-lib-extension) \
-        -DUSE_IGSTK=$::IGSTK \
-        -DUSE_OPENTRACKER=$::OPENTRACKER \
+        -DSlicer3_USE_PYTHON=$BuildPython \
+        -DPYTHON_INCLUDE_PATH:PATH=$::Slicer3_LIB/python-build/include/python2.5 \
+        -DPYTHON_LIBRARY:FILEPATH=$::Slicer3_LIB/python-build/lib/libpython2.5$::GETBUILDTEST(shared-lib-extension) \
+        -DSlicer3_USE_IGSTK=$::IGSTK \
+        -DSlicer3_USE_OPENTRACKER=$::OPENTRACKER \
         -DOT_VERSION_13=$::OT_VERSION \
         -DOT_LIB_DIR:FILEPATH=$::OT_LIB_DIR \
         -DOT_INC_DIR:FILEPATH=$::OT_INC_DIR \
-        -DNAVITRACK_INCLUDE_DIR:FILEPATH=$SLICER_LIB/NaviTrack/include \
-        -DNAVITRACK_BINARY_DIR:FILEPATH=$SLICER_LIB/NaviTrack-build/$VTK_BUILD_SUBDIR/ \
-        -Ddcmtk_SOURCE_DIR:FILEPATH=$SLICER_LIB/dcmtk \
-        -DBatchMake_DIR:FILEPATH=$SLICER_LIB/BatchMake-build \
-        -DUSE_BatchMake=ON \
-        -DSLICERLIBCURL_DIR:FILEPATH=$SLICER_LIB/cmcurl-build \
-        -DUSE_MIDAS=ON \
-        $SLICER_HOME
+        -DNAVITRACK_INCLUDE_DIR:FILEPATH=$Slicer3_LIB/NaviTrack/include \
+        -DNAVITRACK_BINARY_DIR:FILEPATH=$Slicer3_LIB/NaviTrack-build/$VTK_BUILD_SUBDIR/ \
+        -Ddcmtk_SOURCE_DIR:FILEPATH=$Slicer3_LIB/dcmtk \
+        -DBatchMake_DIR:FILEPATH=$Slicer3_LIB/BatchMake-build \
+        -DSlicer3_USE_BatchMake=ON \
+        -DSLICERLIBCURL_DIR:FILEPATH=$Slicer3_LIB/cmcurl-build \
+        -DSlicer3_USE_MIDAS=ON \
+        $Slicer3_HOME
 
 if { $::GETBUILDTEST(doxy) } {
     # just run doxygen and exit
-    runcmd $::CMAKE -DBUILD_DOCUMENTATION=ON $SLICER_HOME
-    cd $::SLICER_BUILD/Utilities/Doxygen
+    runcmd $::CMAKE -DBUILD_DOCUMENTATION=ON $Slicer3_HOME
+    cd $::Slicer3_BUILD/Utilities/Doxygen
     eval runcmd make Slicer3DoxygenDoc
     return
 }
@@ -400,7 +400,7 @@ if { $isWindows } {
     } else {
         # tell cmake explicitly what command line to run when doing the ctest builds
         set makeCmd "$::MAKE Slicer3.sln /build $::VTK_BUILD_TYPE /project ALL_BUILD"
-        runcmd $::CMAKE -DMAKECOMMAND:STRING=$makeCmd $SLICER_HOME
+        runcmd $::CMAKE -DMAKECOMMAND:STRING=$makeCmd $Slicer3_HOME
 
         if { $::GETBUILDTEST(test-type) == "" } {
           runcmd $::MAKE Slicer3.SLN /build $::VTK_BUILD_TYPE
@@ -428,7 +428,7 @@ if { $isWindows } {
 # upload
 set curlfile "${::GETBUILDTEST(binary-filename)}${::GETBUILDTEST(cpack-extension)}"
 if {$::GETBUILDTEST(pack) == "true" &&
-    [file exists $::SLICER_BUILD/$curlfile] &&
+    [file exists $::Slicer3_BUILD/$curlfile] &&
     $::GETBUILDTEST(upload) == "true"} {
     puts "About to do a curl $::GETBUILDTEST(uploadFlag) upload with $curlfile"
     set namic_url "http://www.na-mic.org/Slicer/Upload.cgi"
