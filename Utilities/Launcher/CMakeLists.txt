@@ -1,55 +1,57 @@
+set(launcher_machine ${CMAKE_SYSTEM_PROCESSOR}) 
 
-SET (launcher_machine ${CMAKE_SYSTEM_PROCESSOR}) 
-
-IF (${launcher_machine} MATCHES "i386")
-  SET (launcher_machine "x86") 
-ENDIF (${launcher_machine} MATCHES "i386")
-
-
-IF(NOT DEFINED launcher_platform )
-  SET(launcher_platform  ${CMAKE_SYSTEM_NAME}-${launcher_machine})
-ENDIF(NOT DEFINED launcher_platform )
-IF(${launcher_platform} MATCHES Windows)
-  IF(CMAKE_CL_64)
-    SET(launcher_platform  win64)
-  ELSE(CMAKE_CL_64)
-    SET(launcher_platform  win32)
-  ENDIF(CMAKE_CL_64)
-ENDIF(${launcher_platform} MATCHES Windows)
-
-IF(${launcher_platform} MATCHES Linux)
-  EXEC_PROGRAM( uname ARGS -m OUTPUT_VARIABLE machine ) 
-  IF (${machine} MATCHES "i686")
-    SET (machine "x86") 
-  ENDIF (${machine} MATCHES "i686")
-  SET(launcher_platform  linux-${machine})
-ENDIF(${launcher_platform} MATCHES Linux)
-
-IF(${launcher_platform} MATCHES Darwin-powerpc)
-  SET(launcher_platform darwin-ppc)
-ENDIF(${launcher_platform} MATCHES Darwin-powerpc)
+if(${launcher_machine} MATCHES "i386")
+  set(launcher_machine "x86") 
+endif(${launcher_machine} MATCHES "i386")
 
 
-STRING ( TOLOWER "${launcher_platform}" launcher_platform )
-SET (launcher_name "Slicer3-${launcher_platform}${CMAKE_EXECUTABLE_SUFFIX}")
+if(NOT DEFINED launcher_platform)
+  set(launcher_platform  ${CMAKE_SYSTEM_NAME}-${launcher_machine})
+endif(NOT DEFINED launcher_platform)
+if(${launcher_platform} MATCHES Windows)
+  if(CMAKE_CL_64)
+    set(launcher_platform  win64)
+  else(CMAKE_CL_64)
+    set(launcher_platform  win32)
+  endif(CMAKE_CL_64)
+endif(${launcher_platform} MATCHES Windows)
 
-#MESSAGE ( "launcher_platform is ${launcher_platform}\nlauncher name is ${launcher_name}" )
+if(${launcher_platform} MATCHES Linux)
+  exec_program(uname ARGS -m OUTPUT_VARIABLE machine) 
+  if(${machine} MATCHES "i686")
+    set(machine "x86") 
+  endif(${machine} MATCHES "i686")
+  set(launcher_platform  linux-${machine})
+endif(${launcher_platform} MATCHES Linux)
 
-SET ( launcher_binary
-  "${Slicer3_BINARY_DIR}/Slicer3${CMAKE_EXECUTABLE_SUFFIX}" )
+if(${launcher_platform} MATCHES Darwin-powerpc)
+  set(launcher_platform darwin-ppc)
+endif(${launcher_platform} MATCHES Darwin-powerpc)
 
-CONFIGURE_FILE ( "${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Launchers/${launcher_name}"
-                 "${launcher_binary}"
-                 COPYONLY )
 
-INSTALL ( PROGRAMS "${launcher_binary}" DESTINATION "." )
+string(TOLOWER "${launcher_platform}" launcher_platform)
+set(launcher_name "Slicer3-${launcher_platform}${CMAKE_EXECUTABLE_SUFFIX}")
 
-CONFIGURE_FILE ( "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"
-                 "${Slicer3_BINARY_DIR}/lib"
-                 COPYONLY )
-INSTALL(
-  FILES ${Slicer3_BINARY_DIR}/lib/slicer3.ico
-  DESTINATION lib
-)
+#MESSAGE("launcher_platform is ${launcher_platform}\nlauncher name is ${launcher_name}")
+
+set(launcher_binary
+  "${Slicer3_BINARY_DIR}/Slicer3${CMAKE_EXECUTABLE_SUFFIX}")
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Launchers/${launcher_name}"
+  "${launcher_binary}"
+  COPYONLY)
+
+install(PROGRAMS "${launcher_binary}" DESTINATION ".")
+
+# Should this location change, change Application/GUI/Slicer3.cxx as well
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"
+  "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/slicer3.ico"
+  COPYONLY)
+install(
+  FILES "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/slicer3.ico"
+  DESTINATION ${Slicer3_INSTALL_SHARE_DIR}
+  )
 
 

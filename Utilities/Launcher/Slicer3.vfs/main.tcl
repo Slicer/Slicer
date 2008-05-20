@@ -6,10 +6,10 @@
 # which is STand Alone Runtime version of tcl.  (see www.equi4.com)
 #
 # The purpose is the this script to determine where the executable is located 
-# and set the environment variable SLICER_HOME accordingly; all other slicer
+# and set the environment variable Slicer3_HOME accordingly; all other slicer
 # files should be found relative to that dir.
 #
-# We then source the launch.tcl script from the lib directory of top level of SLICER_HOME 
+# We then source the launch.tcl script from the lib directory of top level of Slicer3_HOME 
 # which does the rest from there.
 #
 
@@ -21,7 +21,7 @@ while { [file type $cmdname] == "link" } {
     set cmdname [file readlink $cmdname]
 }
 
-set env(SLICER_HOME) [file dir $cmdname]
+set env(Slicer3_HOME) [file dir $cmdname]
 
-source $env(SLICER_HOME)/lib/launch.tcl
+source $env(Slicer3_HOME)/lib/Slicer3/launch.tcl
 
