@@ -59,6 +59,15 @@ proc TestFiducialAdd { {renameFlag 1} {visibilityFlag 1} {numToAdd 125} } {
     $fidList DisableModifiedEventOff
     $fidList Modified
     puts "Testing adding $numToAdd fiducials okay"
+    # clean up
+    if {[info exists ::slicer3::MRMLScene] == 1} {
+        $::slicer3::MRMLScene RemoveNode $fidList
+        $fidList Delete
+    } else {
+        sc RemoveNode $fidList
+        $fidList Delete
+        sc Delete
+    }
     return 0
 }
 
