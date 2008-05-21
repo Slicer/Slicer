@@ -42,7 +42,6 @@ endif(GenerateLM_FOUND)
 
 subdirs(
    CommandLineModule
-   EMSegment
    Editor
    GradientAnisotropicDiffusionFilter
    Meshing
@@ -59,6 +58,7 @@ subdirs(
 #  WFEngineModule  <- can't work with 2.6 and Win32??
 #  MRAblation <- not working either
    Volumes
+   EMSegment
   )
 
 if(Slicer3_USE_NAVITRACK)
