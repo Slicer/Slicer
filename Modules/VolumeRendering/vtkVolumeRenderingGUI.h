@@ -6,17 +6,17 @@ See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $RCSfile: vtkVolumeRenderingModuleGUI.h,v $
+Module:    $RCSfile: vtkVolumeRenderingGUI.h,v $
 Date:      $Date: 2006/03/19 17:12:29 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#ifndef __vtkVolumeRenderingModuleGUI_h
-#define __vtkVolumeRenderingModuleGUI_h
+#ifndef __vtkVolumeRenderingGUI_h
+#define __vtkVolumeRenderingGUI_h
 
 #include "vtkSlicerModuleGUI.h"
-#include "vtkVolumeRenderingModule.h"
-#include "vtkVolumeRenderingModuleLogic.h"
+#include "vtkVolumeRendering.h"
+#include "vtkVolumeRenderingLogic.h"
 
 #include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkSlicerNodeSelectorWidget.h"
@@ -33,18 +33,18 @@ class vtkSlicerVolumeTextureMapper3D;
 class vtkFixedPointVolumeRayCastMapper;
 class vtkSlicerVRHelper;
 class vtkSlicerVolumePropertyWidget;
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkVolumeRenderingModuleGUI :public vtkSlicerModuleGUI
+class VTK_VOLUMERENDERING_EXPORT vtkVolumeRenderingGUI :public vtkSlicerModuleGUI
 {
 public:
 
-    static vtkVolumeRenderingModuleGUI *New();
-    vtkTypeMacro(vtkVolumeRenderingModuleGUI,vtkSlicerModuleGUI);
+    static vtkVolumeRenderingGUI *New();
+    vtkTypeMacro(vtkVolumeRenderingGUI,vtkSlicerModuleGUI);
 
     void PrintSelf(ostream& os, vtkIndent indent);
 
     // Description: Get/Set module logic
-    vtkGetObjectMacro (Logic, vtkVolumeRenderingModuleLogic);
-    virtual void SetLogic(vtkVolumeRenderingModuleLogic *log)
+    vtkGetObjectMacro (Logic, vtkVolumeRenderingLogic);
+    virtual void SetLogic(vtkVolumeRenderingLogic *log)
     {
         this->Logic=log;
     }
@@ -52,10 +52,10 @@ public:
     // Description: Implements vtkSlicerModuleGUI::SetModuleLogic for this GUI
     virtual void SetModuleLogic(vtkSlicerLogic *logic)
     {
-      this->SetLogic( dynamic_cast<vtkVolumeRenderingModuleLogic*> (logic) );
+      this->SetLogic( dynamic_cast<vtkVolumeRenderingLogic*> (logic) );
     }
 
-    //vtkSetObjectMacro (Logic, vtkVolumeRenderingModuleLogic);
+    //vtkSetObjectMacro (Logic, vtkVolumeRenderingLogic);
     // Description:
     // Create widgets
     virtual void BuildGUI ( );
@@ -135,10 +135,10 @@ public:
 
 
 protected:
-    vtkVolumeRenderingModuleGUI();
-    ~vtkVolumeRenderingModuleGUI();
-    vtkVolumeRenderingModuleGUI(const vtkVolumeRenderingModuleGUI&);//not implemented
-    void operator=(const vtkVolumeRenderingModuleGUI&);//not implemented
+    vtkVolumeRenderingGUI();
+    ~vtkVolumeRenderingGUI();
+    vtkVolumeRenderingGUI(const vtkVolumeRenderingGUI&);//not implemented
+    void operator=(const vtkVolumeRenderingGUI&);//not implemented
 
     // Description:
     // Updates GUI widgets based on parameters values in MRML node
@@ -153,7 +153,7 @@ protected:
 
     // Description:
     // Pointer to the module's logic class
-    vtkVolumeRenderingModuleLogic *Logic;
+    vtkVolumeRenderingLogic *Logic;
 
     // Description:
     // A pointer back to the viewer widget, useful for picking

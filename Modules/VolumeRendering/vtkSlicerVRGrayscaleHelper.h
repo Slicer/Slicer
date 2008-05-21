@@ -6,7 +6,7 @@
 #ifndef __vtkSlicerVRGrayscaleHelper_h
 #define __vtkSlicerVRGrayscaleHelper_h
 
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRendering.h"
 #include "vtkSlicerVRHelper.h"
 #include <string>
 #include "vtkKWRange.h"
@@ -35,7 +35,7 @@ class vtkKWPushButtonWithLabel;
 class vtkSlicerVRMenuButtonColorMode;
 
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
+class VTK_VOLUMERENDERING_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
 public:
     //--------------------------------------------------------------------------
@@ -49,7 +49,7 @@ public:
     // Description:
     // Init the rendering process and the GUI.
     // Call this method before any other method.
-    virtual void Init(vtkVolumeRenderingModuleGUI *gui);
+    virtual void Init(vtkVolumeRenderingGUI *gui);
 
     // Description:
     // Update all GUI elements.

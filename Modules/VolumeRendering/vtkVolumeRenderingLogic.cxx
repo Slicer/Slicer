@@ -1,36 +1,36 @@
-#include "vtkVolumeRenderingModuleLogic.h"
+#include "vtkVolumeRenderingLogic.h"
 #include "vtkObjectFactory.h"
 #include "vtkObject.h"
 
 #include "vtkMRMLVolumeRenderingNode.h"
 
-bool vtkVolumeRenderingModuleLogic::First = true;
+bool vtkVolumeRenderingLogic::First = true;
 
-vtkVolumeRenderingModuleLogic::vtkVolumeRenderingModuleLogic(void)
+vtkVolumeRenderingLogic::vtkVolumeRenderingLogic(void)
 {
 }
 
-vtkVolumeRenderingModuleLogic::~vtkVolumeRenderingModuleLogic(void)
+vtkVolumeRenderingLogic::~vtkVolumeRenderingLogic(void)
 {
 }
-vtkVolumeRenderingModuleLogic* vtkVolumeRenderingModuleLogic::New()
+vtkVolumeRenderingLogic* vtkVolumeRenderingLogic::New()
 {
  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkVolumeRenderingModuleLogic");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkVolumeRenderingLogic");
   if(ret)
     {
-      return (vtkVolumeRenderingModuleLogic*)ret;
+      return (vtkVolumeRenderingLogic*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtkVolumeRenderingModuleLogic;
+  return new vtkVolumeRenderingLogic;
 }
-void vtkVolumeRenderingModuleLogic::PrintSelf(std::ostream &os, vtkIndent indent)
+void vtkVolumeRenderingLogic::PrintSelf(std::ostream &os, vtkIndent indent)
 {
     os<<indent<<"Print logic"<<endl;
 }
 
 
-void vtkVolumeRenderingModuleLogic::SetMRMLScene(vtkMRMLScene *scene)
+void vtkVolumeRenderingLogic::SetMRMLScene(vtkMRMLScene *scene)
 {
   vtkSlicerModuleLogic::SetMRMLScene(scene);
 

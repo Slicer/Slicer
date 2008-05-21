@@ -1,5 +1,5 @@
 #include "vtkSlicerVRHelper.h"
-#include "vtkVolumeRenderingModuleGUI.h"
+#include "vtkVolumeRenderingGUI.h"
 #include "vtkFixedPointVolumeRayCastMapper.h"
 #include "vtkVolume.h"
 #include "vtkSlicerVolumeTextureMapper3D.h"
@@ -82,7 +82,7 @@ void vtkSlicerVRHelper::UpdateGUIElements(void)
 void vtkSlicerVRHelper::ProcessVolumeRenderingEvents(vtkObject *caller, unsigned long eid, void *callData)
 {
 }
-void vtkSlicerVRHelper::Init(vtkVolumeRenderingModuleGUI *gui)
+void vtkSlicerVRHelper::Init(vtkVolumeRenderingGUI *gui)
 {
     this->Gui=gui;
     this->SetApplication(this->Gui->GetApplication());

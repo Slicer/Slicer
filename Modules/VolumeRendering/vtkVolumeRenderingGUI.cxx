@@ -1,4 +1,4 @@
-#include "vtkVolumeRenderingModuleGUI.h"
+#include "vtkVolumeRenderingGUI.h"
 
 #include <ostream>
 #include "vtkMRMLVolumeRenderingNode.h"
@@ -43,7 +43,7 @@
 
 extern "C" int Volumerenderingreplacements_Init(Tcl_Interp *interp);
 
-vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
+vtkVolumeRenderingGUI::vtkVolumeRenderingGUI(void)
 {
     //In Debug Mode
     this->DebugOff();
@@ -77,7 +77,7 @@ vtkVolumeRenderingModuleGUI::vtkVolumeRenderingModuleGUI(void)
 
 }
 
-vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
+vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
 {
 
     //Not Delete?!
@@ -156,28 +156,28 @@ vtkVolumeRenderingModuleGUI::~vtkVolumeRenderingModuleGUI(void)
     this->SetViewerWidget(NULL);
     this->SetInteractorStyle(NULL);
 }
-vtkVolumeRenderingModuleGUI* vtkVolumeRenderingModuleGUI::New() {
+vtkVolumeRenderingGUI* vtkVolumeRenderingGUI::New() {
     // First try to create the object from the vtkObjectFactory
-    vtkObject* ret = vtkObjectFactory::CreateInstance("vtkVolumeRenderingModuleGUI");
+    vtkObject* ret = vtkObjectFactory::CreateInstance("vtkVolumeRenderingGUI");
     if(ret)
     {
-        return (vtkVolumeRenderingModuleGUI*)ret;
+        return (vtkVolumeRenderingGUI*)ret;
     }
     // If the factory was unable to create the object, then create it here.
-    return new vtkVolumeRenderingModuleGUI;
+    return new vtkVolumeRenderingGUI;
 
 
 }
-void vtkVolumeRenderingModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
+void vtkVolumeRenderingGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
-    os<<indent<<"vtkVolumeRenderingModuleGUI"<<endl;
-    os<<indent<<"vtkVolumeRenderingModuleLogic"<<endl;
+    os<<indent<<"vtkVolumeRenderingGUI"<<endl;
+    os<<indent<<"vtkVolumeRenderingLogic"<<endl;
     if(this->GetLogic())
     {
         this->GetLogic()->PrintSelf(os,indent.GetNextIndent());
     }
 }
-void vtkVolumeRenderingModuleGUI::BuildGUI(void)
+void vtkVolumeRenderingGUI::BuildGUI(void)
 {
 
     int labelWidth=20;
@@ -284,7 +284,7 @@ void vtkVolumeRenderingModuleGUI::BuildGUI(void)
     this->Built=true;
 }
 
-void vtkVolumeRenderingModuleGUI::TearDownGUI(void)
+void vtkVolumeRenderingGUI::TearDownGUI(void)
 {
     this->Exit();
     if ( this->Built )
@@ -293,17 +293,17 @@ void vtkVolumeRenderingModuleGUI::TearDownGUI(void)
     }
 }
 
-void vtkVolumeRenderingModuleGUI::CreateModuleEventBindings(void)
+void vtkVolumeRenderingGUI::CreateModuleEventBindings(void)
 {
-    vtkDebugMacro("VolumeRenderingModule: CreateModuleEventBindings: No ModuleEventBindings yet");
+    vtkDebugMacro("VolumeRendering: CreateModuleEventBindings: No ModuleEventBindings yet");
 }
 
-void vtkVolumeRenderingModuleGUI::ReleaseModuleEventBindings(void)
+void vtkVolumeRenderingGUI::ReleaseModuleEventBindings(void)
 {
-    vtkDebugMacro("VolumeRenderingModule: ReleaseModuleEventBindings: No ModuleEventBindings to remove yet");
+    vtkDebugMacro("VolumeRendering: ReleaseModuleEventBindings: No ModuleEventBindings to remove yet");
 }
 
-void vtkVolumeRenderingModuleGUI::AddGUIObservers(void)
+void vtkVolumeRenderingGUI::AddGUIObservers(void)
 {
 
     this->NS_ImageData->AddObserver(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -314,7 +314,7 @@ void vtkVolumeRenderingModuleGUI::AddGUIObservers(void)
 
 
 }
-void vtkVolumeRenderingModuleGUI::RemoveGUIObservers(void)
+void vtkVolumeRenderingGUI::RemoveGUIObservers(void)
 {
     this->NS_ImageData->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
     this->NS_VolumeRenderingDataScene->RemoveObservers(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -322,17 +322,17 @@ void vtkVolumeRenderingModuleGUI::RemoveGUIObservers(void)
     this->PB_Testing->RemoveObservers (vtkKWPushButton::InvokedEvent,(vtkCommand *)this->GUICallbackCommand);
     this->PB_CreateNewVolumeRenderingNode->RemoveObservers(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
 }
-void vtkVolumeRenderingModuleGUI::RemoveMRMLNodeObservers(void)
+void vtkVolumeRenderingGUI::RemoveMRMLNodeObservers(void)
 {
 
 }
-void vtkVolumeRenderingModuleGUI::RemoveLogicObservers(void)
+void vtkVolumeRenderingGUI::RemoveLogicObservers(void)
 {
 }
 
-void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkVolumeRenderingGUI::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData)
 {
-    vtkDebugMacro("vtkVolumeRenderingModuleGUI::ProcessGUIEvents: event = " << event);
+    vtkDebugMacro("vtkVolumeRenderingGUI::ProcessGUIEvents: event = " << event);
 
 
     //
@@ -476,7 +476,7 @@ void vtkVolumeRenderingModuleGUI::ProcessGUIEvents(vtkObject *caller, unsigned l
     this->UpdateGUI();
 
 }
-void vtkVolumeRenderingModuleGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkVolumeRenderingGUI::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
 {
     if (event == vtkMRMLScene::SceneCloseEvent)
     {
@@ -503,7 +503,7 @@ void vtkVolumeRenderingModuleGUI::ProcessMRMLEvents(vtkObject *caller, unsigned 
     }
 }
 
-void vtkVolumeRenderingModuleGUI::Enter(void)
+void vtkVolumeRenderingGUI::Enter(void)
 {
 
 
@@ -542,7 +542,7 @@ void vtkVolumeRenderingModuleGUI::Enter(void)
         vtksys_stl::vector<vtksys_stl::string> filesVector;
         filesVector.push_back(""); // for relative path
         filesVector.push_back(slicerHome);
-        filesVector.push_back(vtksys_stl::string(Slicer3_INSTALL_MODULES_SHARE_DIR) + "/VolumeRenderingModule/presets.xml");
+        filesVector.push_back(vtksys_stl::string(Slicer3_INSTALL_MODULES_SHARE_DIR) + "/VolumeRendering/presets.xml");
         vtksys_stl::string presetFileName = vtksys::SystemTools::JoinPath(filesVector);
         this->Presets->SetURL(presetFileName.c_str());
         this->Presets->Connect();
@@ -559,13 +559,13 @@ void vtkVolumeRenderingModuleGUI::Enter(void)
     this->UpdateGUI();
 }
 
-void vtkVolumeRenderingModuleGUI::Exit(void)
+void vtkVolumeRenderingGUI::Exit(void)
 {
-    vtkDebugMacro("Exit: removeObservers for VolumeRenderingModule");
+    vtkDebugMacro("Exit: removeObservers for VolumeRendering");
     this->ReleaseModuleEventBindings();
 }
 
-void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
+void vtkVolumeRenderingGUI::UpdateGUI(void)
 {
 
     //First of all check if we have a MRML Scene
@@ -634,15 +634,15 @@ void vtkVolumeRenderingModuleGUI::UpdateGUI(void)
     //In Presets always "None" is selected
     this->NS_VolumeRenderingDataSlicer->SetSelected(NULL);
 }
-void vtkVolumeRenderingModuleGUI::SetViewerWidget(vtkSlicerViewerWidget *viewerWidget)
+void vtkVolumeRenderingGUI::SetViewerWidget(vtkSlicerViewerWidget *viewerWidget)
 {
 }
-void vtkVolumeRenderingModuleGUI::SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle)
+void vtkVolumeRenderingGUI::SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle)
 {
 }
 
 
-void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
+void vtkVolumeRenderingGUI::InitializePipelineFromMRMLScene()
 {
     
     vtkImageData* imageData=vtkMRMLScalarVolumeNode::SafeDownCast(this->NS_ImageData->GetSelected())->GetImageData();
@@ -650,12 +650,12 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineFromMRMLScene()
     this->Helper->UpdateRendering();
 }
 
-void vtkVolumeRenderingModuleGUI::PackSvpGUI()
+void vtkVolumeRenderingGUI::PackSvpGUI()
 {
     this->Helper=vtkSlicerVRGrayscaleHelper::New();
     this->Helper->Init(this);
 }
-void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
+void vtkVolumeRenderingGUI::UnpackSvpGUI()
 {
     if(this->Helper!=NULL)
     {
@@ -664,7 +664,7 @@ void vtkVolumeRenderingModuleGUI::UnpackSvpGUI()
     }
 }
 
-void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
+void vtkVolumeRenderingGUI::InitializePipelineNewCurrentNode()
 {
     //TODO move this part
     this->CurrentNode=vtkMRMLVolumeRenderingNode::New();
@@ -687,7 +687,7 @@ void vtkVolumeRenderingModuleGUI::InitializePipelineNewCurrentNode()
     //take care about references
 }
 
-void vtkVolumeRenderingModuleGUI::InitializePipelineFromImageData()
+void vtkVolumeRenderingGUI::InitializePipelineFromImageData()
 {
 
 

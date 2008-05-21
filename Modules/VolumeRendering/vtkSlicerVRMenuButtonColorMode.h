@@ -1,12 +1,12 @@
 #ifndef __vtkSlicerVRMenuButtonColorMode_h
 #define __vtkSlicerVRMenuButtonColorMode_h
 
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRendering.h"
 #include "vtkKWMenuButtonWithLabel.h"
 #include <vector>
 #include  "vtkColorTransferFunction.h"
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRMenuButtonColorMode :public vtkKWMenuButtonWithLabel
+class VTK_VOLUMERENDERING_EXPORT vtkSlicerVRMenuButtonColorMode :public vtkKWMenuButtonWithLabel
 {
 public:
     static vtkSlicerVRMenuButtonColorMode *New();

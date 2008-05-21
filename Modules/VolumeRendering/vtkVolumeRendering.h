@@ -28,4 +28,4 @@
 #define Slicer3_VTK5
 #endif
 
-#include "vtkVolumeRenderingModuleWin32Header.h"
+#include "vtkVolumeRenderingWin32Header.h"

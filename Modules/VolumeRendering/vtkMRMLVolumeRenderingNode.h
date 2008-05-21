@@ -8,7 +8,7 @@
 
 #include "vtkMRML.h"
 #include "vtkMRMLDisplayNode.h"
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRendering.h"
 #include "vtkVolumeProperty.h"
 #include "vtkPiecewiseFunction.h"
 #include "vtkColorTransferFunction.h"
@@ -18,7 +18,7 @@
 
 #define COUNT_CROPPING_REGION_PLANES 6
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkMRMLVolumeRenderingNode : public vtkMRMLNode
+class VTK_VOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingNode : public vtkMRMLNode
 {
 public:
     //--------------------------------------------------------------------------

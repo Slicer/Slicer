@@ -1,4 +1,4 @@
-project(VolumeRenderingModule)
+project(VolumeRendering)
 
 cmake_minimum_required(VERSION 2.4)
 if(COMMAND cmake_policy)
@@ -29,23 +29,23 @@ include_directories(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/vtkVolumeRenderingModuleConfigure.h.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/vtkVolumeRenderingModuleConfigure.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/vtkVolumeRenderingConfigure.h.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/vtkVolumeRenderingConfigure.h
   )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES 
   ${headers} 
-  "${CMAKE_CURRENT_BINARY_DIR}/vtkVolumeRenderingModuleConfigure.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/vtkVolumeRenderingConfigure.h"
   DESTINATION ${Slicer3_INSTALL_MODULES_INCLUDE_DIR}/${PROJECT_NAME} COMPONENT Development
   )
 
 # --------------------------------------------------------------------------
 # Sources
 
-set(VolumeRenderingModule_SRCS
-  vtkVolumeRenderingModuleGUI.cxx
-  vtkVolumeRenderingModuleLogic.cxx
+set(VolumeRendering_SRCS
+  vtkVolumeRenderingGUI.cxx
+  vtkVolumeRenderingLogic.cxx
   vtkMRMLVolumeRenderingNode.cxx
   vtkSlicerNodeSelectorVolumeRenderingWidget.cxx
   vtkSlicerVRHelper.cxx
@@ -66,21 +66,21 @@ set(VolumeRenderingModule_SRCS
 # Wrapping
 
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
-vtk_wrap_tcl3(VolumeRenderingModule
-  VolumeRenderingModule_TCL_SRCS 
-  "${VolumeRenderingModule_SRCS}" "")
+vtk_wrap_tcl3(VolumeRendering
+  VolumeRendering_TCL_SRCS 
+  "${VolumeRendering_SRCS}" "")
 
 # --------------------------------------------------------------------------
 # Add Loadable Module support
 
-generatelm(VolumeRenderingModule_SRCS VolumeRenderingModule.txt)
+generatelm(VolumeRendering_SRCS VolumeRendering.txt)
 
 # --------------------------------------------------------------------------
 # Build and install the library
 
 subdirs(VolumeRenderingReplacements)
 
-set(lib_name VolumeRenderingModule)
+set(lib_name VolumeRendering)
 add_library(${lib_name}
   ${${lib_name}_SRCS}
   ${${lib_name}_TCL_SRCS}

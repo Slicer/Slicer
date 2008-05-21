@@ -2,7 +2,7 @@
 #include "vtkSlicerVolumeTextureMapper3D.h"
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkSlicerVRGrayscaleHelper.h"
-#include "vtkVolumeRenderingModuleGUI.h"
+#include "vtkVolumeRenderingGUI.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerColorDisplayWidget.h"
 #include "vtkSlicerVolumePropertyWidget.h"
@@ -258,7 +258,7 @@ vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
     }
 
 }
-void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingModuleGUI *gui)
+void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
 {
     if(this->SVP_VolumeProperty!=NULL)
     {

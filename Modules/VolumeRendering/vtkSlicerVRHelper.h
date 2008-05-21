@@ -7,7 +7,7 @@
 #ifndef __vtkSlicerVRHelper_h
 #define __vtkSlicerVRHelper_h
 
-#include "vtkVolumeRenderingModule.h"
+#include "vtkVolumeRendering.h"
 #include "vtkKWObject.h"
 
 
@@ -20,13 +20,13 @@
     this->Script("puts \""message"\"",format);                                  \
     }                                                                           \
   }
-class vtkVolumeRenderingModuleGUI;
+class vtkVolumeRenderingGUI;
 class vtkCallbackCommand;
 class vtkVolume;
 class vtkMatrix4x4;
 class vtkKWProgressDialog;
 
-class VTK_VOLUMERENDERINGMODULE_EXPORT vtkSlicerVRHelper :public vtkKWObject
+class VTK_VOLUMERENDERING_EXPORT vtkSlicerVRHelper :public vtkKWObject
 {
 public:
     // Description:
@@ -40,7 +40,7 @@ public:
 
     // Description:
     // This method hast to be called directly after the widget is created and before any other method is called.
-    virtual void Init(vtkVolumeRenderingModuleGUI *gui);
+    virtual void Init(vtkVolumeRenderingGUI *gui);
 
     // Description:
     // Initialize the Rendering pipeline by creating an new vtkMRMLVolumeRenderingNode
@@ -82,8 +82,8 @@ protected:
     int TCLDebug;
 
     // Description:
-    // Reference to the VolumeRenderingModuleGUI. No delete!
-    vtkVolumeRenderingModuleGUI *Gui;
+    // Reference to the VolumeRenderingGUI. No delete!
+    vtkVolumeRenderingGUI *Gui;
 
     // Description:
     // Flag to avoid recursive callbacks
