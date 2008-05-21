@@ -21,6 +21,15 @@ if(ITK_FOUND)
   include(${ITK_USE_FILE})
 endif(ITK_FOUND)
 
+find_package(VTK REQUIRED)
+if(VTK_FOUND)
+  include(${VTK_USE_FILE})
+endif(VTK_FOUND)
+
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif(NOT DEFINED BUILD_SHARED_LIBS)
+ 
 set(GENERATELM_SOURCE GenerateLM.cxx)
 generateclp(GENERATELM_SOURCE GenerateLM.xml)
 add_executable(GenerateLM ${GENERATELM_SOURCE})

@@ -147,7 +147,7 @@ include(${KWWidgets_USE_FILE})
 ## Teem
 find_package(TEEM REQUIRED)
 if(NOT TEEM_FOUND)
-  message(FATAL_ERROR "Need TEEMK to build")
+  message(FATAL_ERROR "Need TEEM to build")
 endif(NOT TEEM_FOUND)
 include(${TEEM_USE_FILE})
 

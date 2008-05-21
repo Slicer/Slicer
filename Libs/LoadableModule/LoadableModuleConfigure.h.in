@@ -13,3 +13,4 @@
 #endif
 
 #cmakedefine HAVE_BFD
+#cmakedefine LoadableModule_USE_PYTHON

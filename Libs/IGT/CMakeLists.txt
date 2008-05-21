@@ -5,20 +5,44 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
+find_package(KWWidgets REQUIRED)
+include(${KWWidgets_USE_FILE})
+ 
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
+
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif(NOT DEFINED BUILD_SHARED_LIBS)
+ 
 # --------------------------------------------------------------------------
 # Include dirs
 
 set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
-  ${MRML_SOURCE_DIR}
   )
 
-include_directories(${include_dirs})
+foreach(package 
+    MRML
+    )
+  # This is mostly to test building this lib as standalone outside Slicer3
+  if(NOT DEFINED ${package}_SOURCE_DIR)
+    set(${package}_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../${package}")
+  endif(NOT DEFINED ${package}_SOURCE_DIR)
+  if(NOT DEFINED ${package}_BINARY_DIR)
+    string(REPLACE ${PROJECT_NAME} ${package} 
+      ${package}_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+    link_directories(${${package}_BINARY_DIR})
+  endif(NOT DEFINED ${package}_BINARY_DIR)
 
-slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
-slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
+  set(include_dirs ${include_dirs}
+    ${${package}_SOURCE_DIR}
+    ${${package}_BINARY_DIR}
+    )
+endforeach(package)
+
+include_directories(${include_dirs})
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkIGTConfigure.h.in 
@@ -46,7 +70,7 @@ set(TRACKING_INTERFACE_LIBRARY "")
 #--- NH took out the following section in an effot to remove Navitrak
 #--- 10/16/07
 
-#IF(Slicer3_USE_NAVITRACK)
+#IF(IGT_USE_NAVITRACK)
 #  SET(IGT_SRCS
 #    vtkIGTDataManager.cxx
 #    vtkIGTDataStream.cxx
@@ -60,9 +84,9 @@ set(TRACKING_INTERFACE_LIBRARY "")
 #  SET(TRACKING_INTERFACE_LIB  
 #    ${NAVITRACK_LIB}
 #  )
-#ENDIF(Slicer3_USE_NAVITRACK)
+#ENDIF(IGT_USE_NAVITRACK)
 
-if(Slicer3_USE_IGSTK)
+if(IGT_USE_IGSTK)
   set(IGT_SRCS
     vtkIGTDataManager.cxx
     vtkIGTDataStream.cxx
@@ -76,7 +100,7 @@ if(Slicer3_USE_IGSTK)
   set(TRACKING_INTERFACE_LIB  
     ${IGSTK_LIBRARIES}
     )
-endif(Slicer3_USE_IGSTK)
+endif(IGT_USE_IGSTK)
 
 # --------------------------------------------------------------------------
 # Wrapping
@@ -114,9 +138,6 @@ target_link_libraries(${lib_name}
   ${KWWidgets_LIBRARIES}
   ${TRACKING_INTERFACE_LIB}
   )
-
-slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
-slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${lib_name})
 
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 

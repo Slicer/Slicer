@@ -27,12 +27,17 @@ Version:   $Revision: 1.3 $
 #include "vtkImageAppend.h"
 #include "vtkImageFlip.h"
 
+#include "vtkMRMLConfigure.h" // MRML_USE*
+
 #include "vtkITKImageWriter.h"
 #include <itkArchetypeSeriesFileNames.h> 
 
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
+
+#ifdef MRML_USE_vtkTEEM
 #include "vtkMRMLVectorVolumeNode.h"
+#endif
 
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
 
@@ -350,10 +355,12 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
     }
+#ifdef MRML_USE_vtkTEEM
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
     {
     volNode = dynamic_cast <vtkMRMLVectorVolumeNode *> (refNode);
     }
+#endif
   if (volNode->GetImageData()) 
     {
     volNode->SetAndObserveImageData (NULL);

@@ -11,6 +11,10 @@ include(${VTK_USE_FILE})
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif(NOT DEFINED BUILD_SHARED_LIBS)
+ 
 # --------------------------------------------------------------------------
 # Include dirs
 
@@ -20,9 +24,6 @@ set(include_dirs
   )
 
 include_directories(${include_dirs})
-
-slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
-slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkITKConfigure.h.in 
@@ -106,9 +107,6 @@ target_link_libraries(${lib_name}
   ITKIO
   ITKDICOMParser
   )
-
-slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
-slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${lib_name})
 
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 

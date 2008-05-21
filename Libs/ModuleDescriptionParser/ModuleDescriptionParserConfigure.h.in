@@ -13,3 +13,4 @@
 #endif
 
 #cmakedefine HAVE_BFD
+#cmakedefine ModuleDescriptionParser_USE_PYTHON

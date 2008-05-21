@@ -21,6 +21,10 @@ if(ITK_FOUND)
   include(${ITK_USE_FILE})
 endif(ITK_FOUND)
 
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif(NOT DEFINED BUILD_SHARED_LIBS)
+ 
 set(GENERATECLP_SOURCE GenerateCLP.cxx)
 add_executable(GenerateCLP ${GENERATECLP_SOURCE})
 get_target_property(GenerateCLP_EXE_PATH GenerateCLP LOCATION)

@@ -5,6 +5,13 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
+
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif(NOT DEFINED BUILD_SHARED_LIBS)
+ 
 # --------------------------------------------------------------------------
 # Include dirs
 
@@ -14,9 +21,6 @@ set(include_dirs
   )
 
 include_directories(${include_dirs})
-
-slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
-slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/QdecConfigure.h.in
@@ -72,9 +76,6 @@ target_link_libraries(${lib_name}
   #  vtkIOTCL
   )
 
-slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
-slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${lib_name})
-
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
   LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
@@ -93,7 +94,7 @@ install(TARGETS ${lib_name}
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkFreeSurferReaders.tcl
-  ${Slicer3_BINARY_DIR}/lib/${PROJECT_NAME}/Tcl/vtkFreeSurferReaders.tcl
+  ${CMAKE_BINARY_DIR}/lib/${PROJECT_NAME}/Tcl/vtkFreeSurferReaders.tcl
   COPYONLY
   )
 

@@ -10,10 +10,17 @@ endif(COMMAND cmake_policy)
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 
-if(Slicer3_USE_PYTHON)
-  find_package(PythonLibs)
-endif(Slicer3_USE_PYTHON)
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
 
+if(LoadableModule_USE_PYTHON)
+  find_package(PythonLibs)
+endif(LoadableModule_USE_PYTHON)
+
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif(NOT DEFINED BUILD_SHARED_LIBS)
+ 
 # --------------------------------------------------------------------------
 # Include dirs
 
@@ -22,15 +29,12 @@ set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
-if(Slicer3_USE_PYTHON)
+if(LoadableModule_USE_PYTHON)
   # Python requires a pointer to the Slicer Application
   set(include_dirs ${include_dirs} ${PYTHON_INCLUDE_PATH})
-endif(Slicer3_USE_PYTHON)
+endif(LoadableModule_USE_PYTHON)
 
 include_directories(${include_dirs})
-
-slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
-slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/LoadableModuleConfigure.h.in 
@@ -97,9 +101,9 @@ set(link_libs
   ITKEXPAT
   itksys
   )
-if(Slicer3_USE_PYTHON)
+if(LoadableModule_USE_PYTHON)
   set(link_libs ${link_libs} ${PYTHON_LIBRARIES})
-endif(Slicer3_USE_PYTHON)
+endif(LoadableModule_USE_PYTHON)
 if(NOT WIN32 AND NOT APPLE)
   set(link_libs ${link_libs} util)
 endif(NOT WIN32 AND NOT APPLE)
@@ -108,9 +112,6 @@ if(NOT WIN32 AND HAVE_BFD)
 endif(NOT WIN32 AND HAVE_BFD)
 
 target_link_libraries(${lib_name} ${link_libs})
-
-slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
-slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${lib_name})
 
 install(TARGETS ${lib_name} 
   RUNTIME DESTINATION bin COMPONENT RuntimeLibraries

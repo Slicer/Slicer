@@ -33,9 +33,9 @@
 #include "BinaryFileDescriptor.h"
 #endif
 
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
+#include "ModuleDescriptionParserConfigure.h" /* ModuleDescriptionParser_USE_PYTHON */
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef ModuleDescriptionParser_USE_PYTHON
 // If debug, Python wants pythonxx_d.lib, so fake it out
 #ifdef _DEBUG
 #undef _DEBUG
@@ -357,7 +357,7 @@ ModuleFactory
   numberOfShared = this->ScanForSharedObjectModules();
   numberOfPeekedExecutables = this->ScanForCommandLineModulesByPeeking();
   numberOfExecutables = this->ScanForCommandLineModulesByExecuting();
-#ifdef Slicer3_USE_PYTHON
+#ifdef ModuleDescriptionParser_USE_PYTHON
   // Be sure that python is initialized
   Py_Initialize();
   numberOfPython = this->ScanForPythonModulesByLoading();
@@ -1695,7 +1695,7 @@ ModuleFactory
 {
   long numberFound = 0;
 
-#ifdef Slicer3_USE_PYTHON
+#ifdef ModuleDescriptionParser_USE_PYTHON
   long numberTested = 0;
 
   double t0, t1;

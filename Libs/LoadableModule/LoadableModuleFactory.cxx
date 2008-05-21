@@ -33,9 +33,7 @@
 #include "BinaryFileDescriptor.h"
 #endif
 
-#include "vtkSlicerConfigure.h" /* Slicer3_USE_* */
-
-#ifdef Slicer3_USE_PYTHON
+#ifdef LoadableModule_USE_PYTHON
 // If debug, Python wants pythonxx_d.lib, so fake it out
 #ifdef _DEBUG
 #undef _DEBUG

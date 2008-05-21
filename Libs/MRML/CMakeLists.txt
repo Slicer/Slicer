@@ -5,24 +5,64 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
+ 
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
+
+option(MRML_USE_TEEM "Build MRML with TEEM support." ON)
+mark_as_advanced(MRML_USE_TEEM)
+if(MRML_USE_TEEM)
+  find_package(TEEM REQUIRED)
+  include(${TEEM_USE_FILE})
+  option(MRML_USE_vtkTeem "Build MRML with vtkTeem support." ON)
+  mark_as_advanced(MRML_USE_vtkTeem)
+endif(MRML_USE_TEEM)
+
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif(NOT DEFINED BUILD_SHARED_LIBS)
+ 
 # --------------------------------------------------------------------------
 # Include dirs
 
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${vtkTeem_SOURCE_DIR}
-  ${vtkTeem_BINARY_DIR}
-  ${FreeSurfer_SOURCE_DIR}
-  ${FreeSurfer_BINARY_DIR}
   )
 
-include_directories(${include_dirs})
+set(packages
+  vtkITK 
+  FreeSurfer
+  )
 
-slicer3_get_persistent_property(Slicer3_Libs_INCLUDE_DIRS tmp)
-slicer3_set_persistent_property(Slicer3_Libs_INCLUDE_DIRS ${tmp} ${include_dirs})
+if(MRML_USE_TEEM)
+  set(packages ${packages} 
+    vtkTeem
+    )
+endif(MRML_USE_TEEM)
+  
+foreach(package 
+    ${packages}
+    )
+  # This is mostly to test building this lib as standalone outside Slicer3
+  if(NOT DEFINED ${package}_SOURCE_DIR)
+    set(${package}_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../${package}")
+  endif(NOT DEFINED ${package}_SOURCE_DIR)
+  if(NOT DEFINED ${package}_BINARY_DIR)
+    string(REPLACE ${PROJECT_NAME} ${package} 
+      ${package}_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+    link_directories(${${package}_BINARY_DIR})
+  endif(NOT DEFINED ${package}_BINARY_DIR)
+
+  set(include_dirs ${include_dirs}
+    ${${package}_SOURCE_DIR}
+    ${${package}_BINARY_DIR}
+    )
+endforeach(package)
+
+include_directories(${include_dirs})
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkMRMLConfigure.h.in 
@@ -40,94 +80,96 @@ install(FILES
 # Sources
 
 set(MRML_SRCS
-  vtkObserverManager.cxx
   vtkEventBroker.cxx
-  vtkObservation.cxx
-  vtkImageBimodalAnalysis.cxx
   vtkImageAccumulateDiscrete.cxx
-  vtkMRMLScene.cxx
-  vtkMRMLParser.cxx
-  vtkMRMLNode.cxx
-  vtkMRMLVolumeNode.cxx
-  vtkMRMLScalarVolumeNode.cxx        
-  vtkMRMLVectorVolumeNode.cxx        
-  vtkMRMLModelNode.cxx
-  vtkMRMLModelStorageNode.cxx
-  vtkMRMLFreeSurferModelStorageNode.cxx    
-  vtkMRMLFreeSurferModelOverlayStorageNode.cxx
-  vtkMRMLModelDisplayNode.cxx
-  vtkMRMLClipModelsNode.cxx
-  vtkMRMLStorageNode.cxx
-  vtkMRMLVolumeArchetypeStorageNode.cxx
-  vtkMRMLVolumeHeaderlessStorageNode.cxx
-  vtkMRMLVolumeDisplayNode.cxx
-  vtkMRMLScalarVolumeDisplayNode.cxx
-  vtkMRMLLabelMapVolumeDisplayNode.cxx
-  vtkMRMLVolumeGlyphDisplayNode.cxx
-  vtkMRMLTransformableNode.cxx
-  vtkMRMLTransformNode.cxx
-  vtkMRMLTransformStorageNode.cxx
-  vtkMRMLLinearTransformNode.cxx
-  vtkMRMLFiducial.cxx
-  vtkMRMLFiducialListNode.cxx
-  vtkMRMLSliceNode.cxx
-  vtkMRMLSliceCompositeNode.cxx
-  vtkMRMLSelectionNode.cxx
-  vtkMRMLInteractionNode.cxx
-  vtkMRMLColorNode.cxx
-  vtkMRMLColorTableStorageNode.cxx
-  vtkMRMLColorTableNode.cxx
-  vtkMRMLProceduralColorNode.cxx
-  vtkMRMLFreeSurferProceduralColorNode.cxx
+  vtkImageBimodalAnalysis.cxx
   vtkMRMLCameraNode.cxx
-  vtkMRMLViewNode.cxx
-  vtkMRMLTensorVolumeNode.cxx
-  vtkMRMLTimeSeriesVolumeNode.cxx
+  vtkMRMLClipModelsNode.cxx
+  vtkMRMLColorNode.cxx
+  vtkMRMLColorTableNode.cxx
+  vtkMRMLColorTableStorageNode.cxx
   vtkMRMLDiffusionTensorDisplayPropertiesNode.cxx
   vtkMRMLDiffusionWeightedVolumeDisplayNode.cxx
   vtkMRMLDiffusionWeightedVolumeNode.cxx
-  vtkMRMLDiffusionImageVolumeNode.cxx
-  vtkMRMLDiffusionTensorVolumeNode.cxx
-  vtkMRMLDiffusionTensorVolumeDisplayNode.cxx
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode.cxx
-  vtkMRMLVectorVolumeDisplayNode.cxx
-  vtkMRMLFiberBundleNode.cxx
-  vtkMRMLFiberBundleDisplayNode.cxx
-  vtkMRMLFiberBundleGlyphDisplayNode.cxx
-  vtkMRMLFiberBundleTubeDisplayNode.cxx
-  vtkMRMLFiberBundleLineDisplayNode.cxx
-  vtkMRMLFiberBundleStorageNode.cxx
-  vtkMRMLHierarchyNode.cxx
-  vtkMRMLModelHierarchyNode.cxx
-  vtkMRMLSceneSnapshotNode.cxx
-  vtkMRMLSnapshotClipNode.cxx
-  vtkMRMLROINode.cxx
-  vtkMRMLROIListNode.cxx
-  vtkMRMLUnstructuredGridNode.cxx
-  vtkMRMLUnstructuredGridDisplayNode.cxx
-  vtkMRMLUnstructuredGridStorageNode.cxx
   vtkMRMLDisplayNode.cxx
   vtkMRMLDisplayableNode.cxx
+  vtkMRMLFiberBundleDisplayNode.cxx
+  vtkMRMLFiducial.cxx
+  vtkMRMLFiducialListNode.cxx
+  vtkMRMLFreeSurferModelOverlayStorageNode.cxx
+  vtkMRMLFreeSurferModelStorageNode.cxx    
+  vtkMRMLFreeSurferProceduralColorNode.cxx
+  vtkMRMLHierarchyNode.cxx
+  vtkMRMLInteractionNode.cxx
+  vtkMRMLLabelMapVolumeDisplayNode.cxx
+  vtkMRMLLinearTransformNode.cxx
+  vtkMRMLModelDisplayNode.cxx
+  vtkMRMLModelHierarchyNode.cxx
+  vtkMRMLModelNode.cxx
+  vtkMRMLModelStorageNode.cxx
+  vtkMRMLNode.cxx
+  vtkMRMLParser.cxx
+  vtkMRMLProceduralColorNode.cxx
+  vtkMRMLROIListNode.cxx
+  vtkMRMLROINode.cxx
+  vtkMRMLScalarVolumeDisplayNode.cxx
+  vtkMRMLScalarVolumeNode.cxx        
+  vtkMRMLScene.cxx
+  vtkMRMLSceneSnapshotNode.cxx
+  vtkMRMLSelectionNode.cxx
+  vtkMRMLSliceCompositeNode.cxx
+  vtkMRMLSliceNode.cxx
+  vtkMRMLSnapshotClipNode.cxx
   vtkMRMLStorableNode.cxx
+  vtkMRMLStorageNode.cxx
+  vtkMRMLTimeSeriesVolumeNode.cxx
+  vtkMRMLTransformNode.cxx
+  vtkMRMLTransformStorageNode.cxx
+  vtkMRMLTransformableNode.cxx
+  vtkMRMLUnstructuredGridDisplayNode.cxx
+  vtkMRMLUnstructuredGridNode.cxx
+  vtkMRMLUnstructuredGridStorageNode.cxx
+  vtkMRMLVectorVolumeDisplayNode.cxx
+  vtkMRMLViewNode.cxx
+  vtkMRMLVolumeArchetypeStorageNode.cxx
+  vtkMRMLVolumeDisplayNode.cxx
+  vtkMRMLVolumeGlyphDisplayNode.cxx
+  vtkMRMLVolumeHeaderlessStorageNode.cxx
+  vtkMRMLVolumeNode.cxx
+  vtkObservation.cxx
+  vtkObserverManager.cxx
   # Classes for remote data handling:
+  vtkCacheManager.cxx
   vtkDataIOManager.cxx
   vtkDataTransfer.cxx
-  vtkURIHandler.cxx
-  vtkCacheManager.cxx
-  vtkPermissionPrompter.cxx
-  vtkMRMLNonlinearTransformNode.cxx
-  vtkMRMLGridTransformNode.cxx
   vtkMRMLBSplineTransformNode.cxx
+  vtkMRMLGridTransformNode.cxx
+  vtkMRMLNonlinearTransformNode.cxx
+  vtkPermissionPrompter.cxx
+  vtkURIHandler.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )
 
-if(TEEM_FOUND)
-  set(MRML_SRCS
-    ${MRML_SRCS}
-    vtkMRMLNRRDStorageNode.cxx
-    )
-endif(TEEM_FOUND)
+if(MRML_USE_TEEM)
+  if(MRML_USE_vtkTeem)
+    set(MRML_SRCS
+      ${MRML_SRCS}
+      vtkMRMLDiffusionImageVolumeNode.cxx
+      vtkMRMLDiffusionTensorVolumeDisplayNode.cxx
+      vtkMRMLDiffusionTensorVolumeNode.cxx
+      vtkMRMLDiffusionTensorVolumeSliceDisplayNode.cxx
+      vtkMRMLFiberBundleGlyphDisplayNode.cxx
+      vtkMRMLFiberBundleLineDisplayNode.cxx
+      vtkMRMLFiberBundleNode.cxx
+      vtkMRMLFiberBundleStorageNode.cxx
+      vtkMRMLFiberBundleTubeDisplayNode.cxx
+      vtkMRMLNRRDStorageNode.cxx
+      vtkMRMLTensorVolumeNode.cxx
+      vtkMRMLVectorVolumeNode.cxx        
+      )
+  endif(MRML_USE_vtkTeem)
+endif(MRML_USE_TEEM)
 
 # Abstract/pure virtual classes
 
@@ -144,6 +186,7 @@ set_source_files_properties(
 # --------------------------------------------------------------------------
 # Wrapping
 
+include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
 vtk_wrap_tcl3(MRML MRML_TCL_SRCS "${MRML_SRCS}" "")
 
@@ -174,11 +217,14 @@ target_link_libraries(${lib_name}
   ITKIO
   ITKDICOMParser
   FreeSurfer
-  vtkTeem
   )
 
-slicer3_get_persistent_property(Slicer3_Libs_LIBRARIES tmp)
-slicer3_set_persistent_property(Slicer3_Libs_LIBRARIES ${tmp} ${lib_name})
+if(MRML_USE_TEEM)
+  target_link_libraries(${lib_name} ${TEEM_LIBRARIES})
+  if(MRML_USE_vtkTeem)
+    target_link_libraries(${lib_name} vtkTeem)
+  endif(MRML_USE_vtkTeem)
+endif(MRML_USE_TEEM)
 
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 

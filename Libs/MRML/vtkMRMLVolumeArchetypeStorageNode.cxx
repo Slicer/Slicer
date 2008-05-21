@@ -16,13 +16,18 @@ Version:   $Revision: 1.6 $
 #include <iostream>
 #include <sstream>
 
+#include "vtkMRMLConfigure.h" // MRML_USE*
+
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include "vtkImageChangeInformation.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
+
+#ifdef MRML_USE_vtkTEEM
 #include "vtkMRMLVectorVolumeNode.h"
+#endif
 
 #include "vtkMatrix4x4.h"
 #include "vtkImageData.h"
@@ -187,6 +192,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     reader = vtkITKArchetypeImageSeriesScalarReader::New();  
     reader->SetSingleFile( this->GetSingleFile() );
     }
+#ifdef MRML_USE_vtkTEEM
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
     {
     volNode = dynamic_cast <vtkMRMLVectorVolumeNode *> (refNode);
@@ -230,8 +236,8 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
       reader->Delete();
       return 0;
       }
-
     }
+#endif
 
   reader->AddObserver( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
 

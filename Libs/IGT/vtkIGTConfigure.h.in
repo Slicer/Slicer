@@ -7,21 +7,14 @@
 #pragma warning ( disable : 4275 )
 #endif
 
-#cmakedefine CMAKE_WORDS_BIGENDIAN
-#ifdef CMAKE_WORDS_BIGENDIAN
-  #define WORDS_BIGENDIAN
-#else
-  #define WORDS_LITTLEENDIAN
-#endif
-
 #cmakedefine BUILD_SHARED_LIBS
 #ifndef BUILD_SHARED_LIBS
 #define VTKIGT_STATIC
 #endif
 
-#cmakedefine Slicer3_USE_NAVITRACK
-#cmakedefine Slicer3_USE_IGSTK
-#ifdef Slicer3_USE_IGSTK
+#cmakedefine IGT_USE_NAVITRACK
+#cmakedefine IGT_USE_IGSTK
+#ifdef IGT_USE_IGSTK
 #define EXECUTABLE_OUTPUT_PATH "@EXECUTABLE_OUTPUT_PATH@"
 #endif
 

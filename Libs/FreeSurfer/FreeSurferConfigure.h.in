@@ -7,13 +7,6 @@
 #pragma warning ( disable : 4275 )
 #endif
 
-#cmakedefine CMAKE_WORDS_BIGENDIAN
-#ifdef CMAKE_WORDS_BIGENDIAN
-  #define WORDS_BIGENDIAN
-#else
-  #define WORDS_LITTLEENDIAN
-#endif
-
 #cmakedefine BUILD_SHARED_LIBS
 #ifndef BUILD_SHARED_LIBS
 #define FreeSurfer_STATIC
