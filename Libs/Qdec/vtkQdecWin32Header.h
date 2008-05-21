@@ -32,3 +32,8 @@
 #endif
 
 #endif
+
+#if defined(WIN32)
+// disable the warning about non exported templates
+#pragma warning( disable: 4251 )
+#endif
