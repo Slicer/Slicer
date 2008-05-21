@@ -89,10 +89,6 @@ set(dir_list
   ${NeuroNav_BINARY_DIR}
   ${NeuroNav_Init_SOURCE_DIR}
   ${NeuroNav_Init_BINARY_DIR}
-  ${VolumeRenderingModule_SOURCE_DIR}
-  ${VolumeRenderingModule_BINARY_DIR}
-  ${VolumeRenderingModule_Init_SOURCE_DIR}
-  ${VolumeRenderingModule_Init_BINARY_DIR}
   ${LabelStatistics_SOURCE_DIR}       
   ${LabelStatistics_BINARY_DIR}
   ${LabelStatistics_Init_SOURCE_DIR}
@@ -161,13 +157,6 @@ else(WFENGINEMODULE)
   add_definitions(-DWFENGINE_DEBUG)
 endif(WFENGINEMODULE)
 
-# Option for VolumeRendering
-if(VOLUMERENDERINGMODULE)
-  set(VOLUMERENDERINGMODULE_LINK_LIB VolumeRenderingModule)
-else(VOLUMERENDERINGMODULE)
-  add_definitions(-DVOLUMERENDERINGMODULE_DEBUG)
-endif(VOLUMERENDERINGMODULE)
-
 # Option for LabelStatistics
 if(LABELSTATISTICS)
   set(LABELSTATISTICS_LINK_LIB LabelStatistics)
@@ -198,7 +187,6 @@ if(Slicer3_BUILD_MODULES)
     SlicerDaemon
     SlicerTractographyDisplay
     SlicerTractographyFiducialSeeding
-    VolumeRenderingModule
     )
 else(Slicer3_BUILD_MODULES)
   # if Slicer3_BUILD_CLI is ON, we still need at least the CommandLineModule

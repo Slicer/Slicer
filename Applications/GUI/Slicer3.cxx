@@ -1026,9 +1026,16 @@ int Slicer3_main(int argc, char *argv[])
         TclInit Tcl_Init = desc.GetTclInitFunction();
 
         if (Tcl_Init != 0)
-        {
+          {
           (*Tcl_Init)(interp);
-        }
+          }
+        else
+          {
+          std::string warning("Cannot get tcl init function for: ");
+          warning += desc.GetName(); 
+          warning += std::string("\n");
+          WarningMessage( warning.c_str() );
+          }
 
         vtkSlicerModuleGUI* gui = desc.GetGUIPtr();
         vtkSlicerModuleLogic* logic = desc.GetLogicPtr();
