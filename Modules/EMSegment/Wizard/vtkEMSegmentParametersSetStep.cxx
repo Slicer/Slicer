@@ -108,10 +108,6 @@ void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets(
     }
 
   vtkEMSegmentMRMLManager *mrmlManager = this->GetGUI()->GetMRMLManager();
-  if(!mrmlManager)
-    {
-    return;
-    }
 
   vtkKWMenu *menu = 
     this->ParameterSetMenuButton->GetWidget()->GetMenu();
@@ -121,6 +117,12 @@ void vtkEMSegmentParametersSetStep::PopulateLoadedParameterSets(
   sprintf(buffer, "%s %d", method, -1);
   menu->AddRadioButton("Create New Parameters", obj, buffer);
   
+  if(!mrmlManager)
+    {
+    vtkWarningMacro("PopulateLoadedParameterSets: returning, no mrml manager");
+    return;
+    }
+
   int nb_of_sets = mrmlManager->GetNumberOfParameterSets();
   for(int index = 0; index < nb_of_sets; index++)
     {
