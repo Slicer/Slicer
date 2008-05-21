@@ -9,7 +9,7 @@
 #include "vtkVolumeRendering.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 
-class VTK_VOLUMERENDERING_EXPORT vtkSlicerNodeSelectorVolumeRenderingWidget :public vtkSlicerNodeSelectorWidget
+class VTK_SLICERVOLUMERENDERING_EXPORT vtkSlicerNodeSelectorVolumeRenderingWidget :public vtkSlicerNodeSelectorWidget
 {
 public:
     // Description:

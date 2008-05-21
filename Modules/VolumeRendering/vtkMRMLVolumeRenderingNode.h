@@ -18,7 +18,7 @@
 
 #define COUNT_CROPPING_REGION_PLANES 6
 
-class VTK_VOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingNode : public vtkMRMLNode
+class VTK_SLICERVOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingNode : public vtkMRMLNode
 {
 public:
     //--------------------------------------------------------------------------

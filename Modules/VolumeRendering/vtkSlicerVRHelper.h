@@ -26,7 +26,7 @@ class vtkVolume;
 class vtkMatrix4x4;
 class vtkKWProgressDialog;
 
-class VTK_VOLUMERENDERING_EXPORT vtkSlicerVRHelper :public vtkKWObject
+class VTK_SLICERVOLUMERENDERING_EXPORT vtkSlicerVRHelper :public vtkKWObject
 {
 public:
     // Description:

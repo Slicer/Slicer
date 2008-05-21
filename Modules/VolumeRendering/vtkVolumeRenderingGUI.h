@@ -33,7 +33,7 @@ class vtkSlicerVolumeTextureMapper3D;
 class vtkFixedPointVolumeRayCastMapper;
 class vtkSlicerVRHelper;
 class vtkSlicerVolumePropertyWidget;
-class VTK_VOLUMERENDERING_EXPORT vtkVolumeRenderingGUI :public vtkSlicerModuleGUI
+class VTK_SLICERVOLUMERENDERING_EXPORT vtkVolumeRenderingGUI :public vtkSlicerModuleGUI
 {
 public:
 

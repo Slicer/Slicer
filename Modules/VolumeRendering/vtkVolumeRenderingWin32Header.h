@@ -5,11 +5,11 @@
 
         #if defined(WIN32) && !defined(VTKSLICER_STATIC)
                 #if defined(VolumeRendering_EXPORTS)
-                        #define VTK_VOLUMERENDERING_EXPORT __declspec( dllexport ) 
+                        #define VTK_SLICERVOLUMERENDERING_EXPORT __declspec( dllexport ) 
                 #else
-                        #define VTK_VOLUMERENDERING_EXPORT __declspec( dllimport ) 
+                        #define VTK_SLICERVOLUMERENDERING_EXPORT __declspec( dllimport ) 
                 #endif
         #else
-                #define VTK_VOLUMERENDERING_EXPORT 
+                #define VTK_SLICERVOLUMERENDERING_EXPORT 
         #endif
 #endif

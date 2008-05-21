@@ -35,7 +35,7 @@ class vtkKWPushButtonWithLabel;
 class vtkSlicerVRMenuButtonColorMode;
 
 
-class VTK_VOLUMERENDERING_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
+class VTK_SLICERVOLUMERENDERING_EXPORT vtkSlicerVRGrayscaleHelper :public vtkSlicerVRHelper
 {
 public:
     //--------------------------------------------------------------------------

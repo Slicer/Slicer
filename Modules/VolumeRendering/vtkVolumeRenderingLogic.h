@@ -3,7 +3,7 @@
 #include "vtkSlicerModuleLogic.h"
 #include "vtkVolumeRendering.h"
 
-class VTK_VOLUMERENDERING_EXPORT vtkVolumeRenderingLogic :public vtkSlicerModuleLogic
+class VTK_SLICERVOLUMERENDERING_EXPORT vtkVolumeRenderingLogic :public vtkSlicerModuleLogic
 {
 public:
   static vtkVolumeRenderingLogic *New();

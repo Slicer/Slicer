@@ -6,7 +6,7 @@
 #include <vector>
 #include  "vtkColorTransferFunction.h"
 
-class VTK_VOLUMERENDERING_EXPORT vtkSlicerVRMenuButtonColorMode :public vtkKWMenuButtonWithLabel
+class VTK_SLICERVOLUMERENDERING_EXPORT vtkSlicerVRMenuButtonColorMode :public vtkKWMenuButtonWithLabel
 {
 public:
     static vtkSlicerVRMenuButtonColorMode *New();
