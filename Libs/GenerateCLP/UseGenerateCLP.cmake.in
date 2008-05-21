@@ -36,8 +36,8 @@ macro(GENERATECLP SOURCES)
   if ("x${ARGV2}" STREQUAL "x")
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
-      DEPENDS ${GENERATECLP_EXE} ${TMP_INPUT}
-      COMMAND ${GENERATECLP_EXE}
+      DEPENDS "${GENERATECLP_EXE}" ${TMP_INPUT}
+      COMMAND "${GENERATECLP_EXE}"
       ${TMP_INPUT} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
       )
     # mark the .clp file as a header file
@@ -46,8 +46,8 @@ macro(GENERATECLP SOURCES)
   else ("x${ARGV2}" STREQUAL "x")
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
-      DEPENDS ${GENERATECLP_EXE} ${TMP_INPUT} ${ARGV2}
-      COMMAND ${GENERATECLP_EXE} --logoFiles ${ARGV2}
+      DEPENDS "${GENERATECLP_EXE}" ${TMP_INPUT} ${ARGV2}
+      COMMAND "${GENERATECLP_EXE}" --logoFiles ${ARGV2}
       ${TMP_INPUT} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
       )
     # mark the .clp file as a header file
