@@ -194,8 +194,11 @@ itcl::body SliceSWidget::resizeSliceNode {} {
        set fovz [expr $sliceStep * $nodeD]
     }
 
+    $_sliceNode DisableModifiedEventOn
     $_sliceNode SetDimensions $w $h $nodeD
     $_sliceNode SetFieldOfView $fovx $fovy $fovz
+    $_sliceNode DisableModifiedEventOff
+    $_sliceNode InvokePendingModifiedEvent
   }
 }
 
