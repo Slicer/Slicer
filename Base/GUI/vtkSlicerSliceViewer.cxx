@@ -35,11 +35,16 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
     // widgets comprising the SliceViewer
     //
     
+    //
+    // Revert back to KW superclass renderwidget to address
+    // window corruption on some linux boxes:
+    //this->RenderWidget = vtkSlicerRenderWidget::New ( );
+    this->RenderWidget = vtkKWRenderWidget::New ( );
+
     // tell the render widget not to respond to the Render() method
     // - this class turns on rendering explicitly when it's own
     //   Render() method is called.  This avoids redundant renders
     //   when, for example, the annotation is changed.
-    this->RenderWidget = vtkSlicerRenderWidget::New ( );
     this->RenderWidget->RenderStateOff();
 
     this->ImageMapper = vtkImageMapper::New();

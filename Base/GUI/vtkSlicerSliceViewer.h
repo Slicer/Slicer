@@ -36,7 +36,7 @@ public:
   vtkGetObjectMacro ( PolyDataCollection, vtkPolyDataCollection );
 
 
-  vtkGetObjectMacro ( RenderWidget, vtkSlicerRenderWidget );
+  vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
 
   // Description:
   // Used to set the PolyData/LookupTable pairs to show arbitrary object in the 2D slices
@@ -76,7 +76,7 @@ protected:
   virtual void CreateWidget( );
 
   // Slice viewer widgets
-  vtkSlicerRenderWidget *RenderWidget;
+  vtkKWRenderWidget *RenderWidget;
   vtkImageMapper *ImageMapper;
   vtkActor2D *Actor2D;
 

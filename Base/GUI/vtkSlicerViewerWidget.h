@@ -87,8 +87,8 @@ public:
   vtkGetObjectMacro (ApplicationLogic, vtkSlicerApplicationLogic );
   vtkSetObjectMacro (ApplicationLogic, vtkSlicerApplicationLogic );
 
-  vtkGetObjectMacro(MainViewer, vtkSlicerRenderWidget);
-  vtkSetObjectMacro(MainViewer, vtkSlicerRenderWidget);
+  vtkGetObjectMacro(MainViewer, vtkKWRenderWidget);
+  vtkSetObjectMacro(MainViewer, vtkKWRenderWidget);
   vtkGetObjectMacro (ViewerFrame, vtkKWFrame );
 
   // Description:
@@ -198,7 +198,7 @@ protected:
   void UpdateViewNode();
 
   vtkSlicerApplicationLogic *ApplicationLogic;
-  vtkSlicerRenderWidget *MainViewer;
+  vtkKWRenderWidget *MainViewer;
   vtkKWFrame *ViewerFrame;
   int RenderPending;
   int UpdateFromMRMLRequested;

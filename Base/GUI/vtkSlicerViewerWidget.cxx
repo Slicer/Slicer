@@ -871,7 +871,10 @@ void vtkSlicerViewerWidget::CreateWidget ( )
                                                    c[0], c[1], c[2]);
 
   
-  this->MainViewer = vtkSlicerRenderWidget::New ( );  
+  // Revert back to KW superclass renderwidget to address
+  // window corruption on some linux boxes:
+  //this->MainViewer = vtkSlicerRenderWidget::New ( );  
+  this->MainViewer = vtkKWRenderWidget::New ( );  
   this->MainViewer->SetParent (this->ViewerFrame );
   this->MainViewer->Create ( );
 
