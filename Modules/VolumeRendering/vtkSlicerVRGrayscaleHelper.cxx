@@ -1343,6 +1343,7 @@ void vtkSlicerVRGrayscaleHelper::CreateCropping()
         this->RA_Cropping[i]=vtkKWRange::New();
         this->RA_Cropping[i]->SetParent(croppingFrame->GetFrame());
         this->RA_Cropping[i]->Create();
+        this->RA_Cropping[i]->SetEnabled(0);
         this->RA_Cropping[i]->SetBalloonHelpString("Configure the clipping planes relative to the center of the volume. You can also use the clipping box to do this.");
         this->RA_Cropping[i]->SymmetricalInteractionOff();
         std::stringstream str;
