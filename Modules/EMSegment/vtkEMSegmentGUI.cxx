@@ -9,6 +9,7 @@
 #include "vtkKWProgressGauge.h"
 #include "vtkKWWizardWidget.h"
 #include "vtkKWWizardWorkflow.h"
+#include "vtkKWLabel.h"
 
 // For PopulateTestingData()
 #include "vtkSlicerVolumesGUI.h"
