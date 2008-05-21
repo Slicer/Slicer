@@ -294,6 +294,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   else
     {
     volNode->SetAndObserveImageData (ici->GetOutput());
+    volNode->ModifiedSinceReadOff();
     }
 
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
