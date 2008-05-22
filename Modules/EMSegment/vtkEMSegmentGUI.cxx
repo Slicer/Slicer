@@ -153,6 +153,8 @@ vtkEMSegmentGUI::~vtkEMSegmentGUI()
 void vtkEMSegmentGUI::SetModuleLogic(vtkSlicerLogic* logic)
 {
   this->SetLogic( dynamic_cast<vtkEMSegmentLogic*> (logic) );
+  this->GetLogic()->GetMRMLManager()->SetMRMLScene( this->GetMRMLScene() ); 
+  this->SetMRMLManager( this->GetLogic()->GetMRMLManager() );
 }
 
 //----------------------------------------------------------------------------
