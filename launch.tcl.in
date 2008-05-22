@@ -577,7 +577,7 @@ proc launch_RunProgram {} {
     if {$::env(BUILD) == $::WINDOWS} {
         set fp [open "| \"$::LAUNCH(launchCommand)\" $::argv" r]
     } else {
-        set fp [open "| sh -c \"$::LAUNCH(launchCommand) $::argv \" |& cat" r]
+        set fp [open "| sh -c \"'$::LAUNCH(launchCommand)' $::argv \" |& cat" r]
     }
 
     #
