@@ -2106,12 +2106,11 @@ void vtkQueryAtlasGUI::LoadTclPackage ( )
     {
     return;
     }
+  std::string dir(this->GetLogic()->GetModuleShareDirectory());
   std::string qaTclCommand =  "set ::QA_PACKAGE {}; ";
   qaTclCommand += "package forget QueryAtlas; ";
-  qaTclCommand += "set dir \"";
-  qaTclCommand += this->GetLogic()->GetModuleShareDirectory();
-  qaTclCommand += "\";";
-  qaTclCommand += "  if { [ file exists $dir/Tcl/pkgIndex.tcl ] } { ";
+  qaTclCommand += "  set dir \"" + dir + "\";";
+  qaTclCommand += "  if { [ file exists \"$dir/Tcl/pkgIndex.tcl\" ] } { ";
   qaTclCommand += "    lappend ::auto_path $dir; ";
   qaTclCommand += "    package require QueryAtlas ";
   qaTclCommand += "  }";

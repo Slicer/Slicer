@@ -57,6 +57,16 @@ const char* vtkSlicerModuleLogic::GetModuleShareDirectory()
       vtksys_stl::string module_name = 
         vtksys::SystemTools::GetFilenameWithoutExtension(
           library_location.c_str());
+#ifndef _WIN32
+      // If the module was a library, try to guess the module name from
+      // the library name, without the 'lib' prefix.
+      if (module_name.size() > 3 && 
+          !strncmp(module_name.c_str(), "lib", 3))
+        {
+        module_name.erase(0, 3);
+        }
+#endif
+
 #ifdef _WIN32
       vtksys_stl::string intdir = 
         vtksys::SystemTools::GetFilenameName(library_directory.c_str());
