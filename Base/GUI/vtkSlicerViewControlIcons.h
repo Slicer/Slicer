@@ -57,6 +57,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlIcons : public vtkSlicerIco
     vtkGetObjectMacro (VisibilityButtonIcon, vtkKWIcon );
     vtkGetObjectMacro (SelectCameraButtonIcon, vtkKWIcon );
 
+    vtkGetObjectMacro ( SceneSnapshotIcon, vtkKWIcon );
+    vtkGetObjectMacro ( SelectSceneSnapshotIcon, vtkKWIcon );
+
     vtkGetObjectMacro (NavZoomInIcon, vtkKWIcon);
     vtkGetObjectMacro (NavZoomOutIcon, vtkKWIcon);
 
@@ -101,6 +104,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlIcons : public vtkSlicerIco
     vtkKWIcon *RotateAroundOnButtonIcon;    
     vtkKWIcon *VisibilityButtonIcon;
     vtkKWIcon *SelectCameraButtonIcon;
+
+    vtkKWIcon *SceneSnapshotIcon;
+    vtkKWIcon *SelectSceneSnapshotIcon;
 
     vtkKWIcon *NavZoomInIcon;
     vtkKWIcon *NavZoomOutIcon;

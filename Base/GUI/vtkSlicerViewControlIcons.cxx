@@ -1,6 +1,7 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkSlicerViewControlIcons.h"
+#include "vtkSlicerFoundationIcons.h"
 #include "vtkKWIcon.h"
 #include "vtkKWResourceUtilities.h"
 
@@ -45,6 +46,9 @@ vtkSlicerViewControlIcons::vtkSlicerViewControlIcons ( )
     this->RotateAroundOnButtonIcon = vtkKWIcon::New ( );
     this->VisibilityButtonIcon = vtkKWIcon::New ( );
     this->SelectCameraButtonIcon = vtkKWIcon::New ( );
+
+    this->SceneSnapshotIcon = vtkKWIcon::New();
+    this->SelectSceneSnapshotIcon = vtkKWIcon::New();
     
     //--- "Zoom in and out icons
     this->NavZoomInIcon = vtkKWIcon::New();
@@ -198,6 +202,17 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
       {
       this->SelectCameraButtonIcon->Delete ( );
       this->SelectCameraButtonIcon = NULL;
+      }
+
+    if ( this->SceneSnapshotIcon )
+      {
+      this->SceneSnapshotIcon->Delete();
+      this->SceneSnapshotIcon = NULL;
+      }
+    if ( this->SelectSceneSnapshotIcon)
+      {
+      this->SelectSceneSnapshotIcon->Delete();
+      this->SelectSceneSnapshotIcon = NULL;
       }
 
     // zoom images
@@ -376,6 +391,17 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                            image_ViewCameraSelect_height,
                                            image_ViewCameraSelect_pixel_size,
                                            image_ViewCameraSelect_length, 0 );
+  this->SceneSnapshotIcon->SetImage ( image_SlicerCamera,
+                                      image_SlicerCamera_width,
+                                      image_SlicerCamera_height,
+                                      image_SlicerCamera_pixel_size,
+                                      image_SlicerCamera_length, 0);                                      
+  this->SelectSceneSnapshotIcon->SetImage ( image_ViewSelect,
+                                            image_ViewSelect_width,
+                                            image_ViewSelect_height,
+                                            image_ViewSelect_pixel_size,
+                                            image_ViewSelect_length, 0);                                            
+
     this->NavZoomInIcon->SetImage( image_NavZoomIn,
                                    image_NavZoomIn_width,
                                    image_NavZoomIn_height,
@@ -401,35 +427,37 @@ void vtkSlicerViewControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
 
     os << indent << "SlicerViewControlIcons: " << this->GetClassName ( ) << "\n";
 
-    os << indent << "ViewAxisAIconLO" << this->GetViewAxisAIconLO() << "\n";
-    os << indent << "ViewAxisAIconHI" << this->GetViewAxisAIconHI () << "\n";
-    os << indent << "ViewAxisPIconLO" << this->GetViewAxisPIconLO () << "\n";
-    os << indent << "ViewAxisPIconHI" << this->GetViewAxisPIconHI () << "\n";
-    os << indent << "ViewAxisRIconLO" << this->GetViewAxisRIconLO () << "\n";
-    os << indent << "ViewAxisRIconHI" << this->GetViewAxisRIconHI () << "\n";
-    os << indent << "ViewAxisLIconLO" << this->GetViewAxisLIconLO () << "\n";
-    os << indent << "ViewAxisLIconHI" << this->GetViewAxisLIconHI () << "\n";
-    os << indent << "ViewAxisSIconLO" << this->GetViewAxisSIconLO () << "\n";
-    os << indent << "ViewAxisSIconHI" << this->GetViewAxisSIconHI () << "\n";
-    os << indent << "ViewAxisIIconLO" << this->GetViewAxisIIconLO () << "\n";
-    os << indent << "ViewAxisIIconHI" << this->GetViewAxisIIconHI () << "\n";
-    os << indent << "ViewAxisTopCornerIcon" << this->GetViewAxisTopCornerIcon () << "\n";
-    os << indent << "ViewAxisBottomCornerIcon" << this->GetViewAxisBottomCornerIcon () << "\n";
-    os << indent << "ViewAxisCenterIcon" << this->GetViewAxisCenterIcon () << "\n";
-    os << indent << "SpinOffButtonIcon" << this->GetSpinOffButtonIcon () << "\n";
-    os << indent << "RockOffButtonIcon" << this->GetRockOffButtonIcon () << "\n";
-    os << indent << "SpinOnButtonIcon" << this->GetSpinOnButtonIcon () << "\n";
-    os << indent << "RockOnButtonIcon" << this->GetRockOnButtonIcon () << "\n";
-    os << indent << "OrthoButtonIcon" << this->GetOrthoButtonIcon () << "\n";
-    os << indent << "PerspectiveButtonIcon" << this->GetPerspectiveButtonIcon () << "\n";
-    os << indent << "CenterButtonIcon" << this->GetCenterButtonIcon () << "\n";
-    os << indent << "SelectViewButtonIcon" << this->GetSelectViewButtonIcon () << "\n";
-    os << indent << "StereoButtonIcon" << this->GetStereoButtonIcon () << "\n";
-    os << indent << "LookFromOffButtonIcon" << this->GetLookFromOffButtonIcon () << "\n";
-    os << indent << "RotateAroundOffButtonIcon" << this->GetRotateAroundOffButtonIcon () << "\n";
-    os << indent << "LookFromOnButtonIcon" << this->GetLookFromOnButtonIcon () << "\n";
-    os << indent << "RotateAroundOnButtonIcon" << this->GetRotateAroundOnButtonIcon () << "\n";
-    os << indent << "VisibilityButtonIcon" << this->GetVisibilityButtonIcon () << "\n";
-    os << indent << "SelectCameraButtonIcon" << this->GetSelectCameraButtonIcon () << "\n";
-    os << indent << "PercentZoomIcon" << this->GetPercentZoomIcon () << "\n";
+    os << indent << "ViewAxisAIconLO: " << this->GetViewAxisAIconLO() << "\n";
+    os << indent << "ViewAxisAIconHI: " << this->GetViewAxisAIconHI () << "\n";
+    os << indent << "ViewAxisPIconLO: " << this->GetViewAxisPIconLO () << "\n";
+    os << indent << "ViewAxisPIconHI: " << this->GetViewAxisPIconHI () << "\n";
+    os << indent << "ViewAxisRIconLO: " << this->GetViewAxisRIconLO () << "\n";
+    os << indent << "ViewAxisRIconHI: " << this->GetViewAxisRIconHI () << "\n";
+    os << indent << "ViewAxisLIconLO: " << this->GetViewAxisLIconLO () << "\n";
+    os << indent << "ViewAxisLIconHI: " << this->GetViewAxisLIconHI () << "\n";
+    os << indent << "ViewAxisSIconLO: " << this->GetViewAxisSIconLO () << "\n";
+    os << indent << "ViewAxisSIconHI: " << this->GetViewAxisSIconHI () << "\n";
+    os << indent << "ViewAxisIIconLO: " << this->GetViewAxisIIconLO () << "\n";
+    os << indent << "ViewAxisIIconHI: " << this->GetViewAxisIIconHI () << "\n";
+    os << indent << "ViewAxisTopCornerIcon: " << this->GetViewAxisTopCornerIcon () << "\n";
+    os << indent << "ViewAxisBottomCornerIcon: " << this->GetViewAxisBottomCornerIcon () << "\n";
+    os << indent << "ViewAxisCenterIcon: " << this->GetViewAxisCenterIcon () << "\n";
+    os << indent << "SpinOffButtonIcon: " << this->GetSpinOffButtonIcon () << "\n";
+    os << indent << "RockOffButtonIcon: " << this->GetRockOffButtonIcon () << "\n";
+    os << indent << "SpinOnButtonIcon: " << this->GetSpinOnButtonIcon () << "\n";
+    os << indent << "RockOnButtonIcon: " << this->GetRockOnButtonIcon () << "\n";
+    os << indent << "OrthoButtonIcon: " << this->GetOrthoButtonIcon () << "\n";
+    os << indent << "PerspectiveButtonIcon: " << this->GetPerspectiveButtonIcon () << "\n";
+    os << indent << "CenterButtonIcon: " << this->GetCenterButtonIcon () << "\n";
+    os << indent << "SelectViewButtonIcon: " << this->GetSelectViewButtonIcon () << "\n";
+    os << indent << "StereoButtonIcon: " << this->GetStereoButtonIcon () << "\n";
+    os << indent << "LookFromOffButtonIcon: " << this->GetLookFromOffButtonIcon () << "\n";
+    os << indent << "RotateAroundOffButtonIcon: " << this->GetRotateAroundOffButtonIcon () << "\n";
+    os << indent << "LookFromOnButtonIcon: " << this->GetLookFromOnButtonIcon () << "\n";
+    os << indent << "RotateAroundOnButtonIcon: " << this->GetRotateAroundOnButtonIcon () << "\n";
+    os << indent << "VisibilityButtonIcon: " << this->GetVisibilityButtonIcon () << "\n";
+    os << indent << "SelectCameraButtonIcon: " << this->GetSelectCameraButtonIcon () << "\n";
+    os << indent << "PercentZoomIcon: " << this->GetPercentZoomIcon () << "\n";
+    os << indent << "SelectSceneSnapshotIcon: " << this->GetSelectSceneSnapshotIcon ( ) << "\n";
+    os << indent << "SceneSnapshotIcon: " << this->GetSceneSnapshotIcon ( ) << "\n";
 }

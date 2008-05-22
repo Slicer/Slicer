@@ -28,6 +28,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlIcons : public vtkSlicerI
     vtkGetObjectMacro ( BgIcon, vtkKWIcon );
     vtkGetObjectMacro ( ToggleFgBgIcon, vtkKWIcon );
     vtkGetObjectMacro ( LabelOpacityIcon, vtkKWIcon );
+    vtkGetObjectMacro ( AllLabelOpacityIcon, vtkKWIcon );
     vtkGetObjectMacro ( LinkControlsIcon, vtkKWIcon );
     vtkGetObjectMacro ( UnlinkControlsIcon, vtkKWIcon );
     vtkGetObjectMacro ( InterpolationOnIcon, vtkKWIcon );
@@ -44,6 +45,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlIcons : public vtkSlicerI
     vtkGetObjectMacro ( FeaturesVisibleIcon, vtkKWIcon );
     vtkGetObjectMacro (WinLevThreshColIcon, vtkKWIcon);
     vtkGetObjectMacro (FieldOfViewIcon, vtkKWIcon );
+    vtkGetObjectMacro (SliceMoreOptionsIcon, vtkKWIcon );
+    vtkGetObjectMacro (SliceWidgetOnIcon, vtkKWIcon );
+    vtkGetObjectMacro ( SliceWidgetOffIcon, vtkKWIcon );
 
     // Description:
     // Method for setting images for widgets in Slicer's SlicesControlFrame
@@ -53,9 +57,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlIcons : public vtkSlicerI
     vtkSlicerSlicesControlIcons ( );
     virtual ~vtkSlicerSlicesControlIcons ( );
 
+    vtkKWIcon *SliceMoreOptionsIcon;
+    vtkKWIcon *SliceWidgetOnIcon;
+    vtkKWIcon *SliceWidgetOffIcon;    
     vtkKWIcon *FgIcon;
     vtkKWIcon *BgIcon;
     vtkKWIcon *ToggleFgBgIcon;
+    vtkKWIcon *AllLabelOpacityIcon;
     vtkKWIcon *LabelOpacityIcon;
     vtkKWIcon *LinkControlsIcon;
     vtkKWIcon *UnlinkControlsIcon;

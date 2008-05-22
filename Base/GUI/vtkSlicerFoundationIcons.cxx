@@ -9,6 +9,7 @@ vtkCxxRevisionMacro ( vtkSlicerFoundationIcons, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
 {
+  this->SlicerMoreOptionsIcon = vtkKWIcon::New();
   this->SlicerGoIcon = vtkKWIcon::New();
   this->SlicerGoing0Icon = vtkKWIcon::New();
   this->SlicerGoing1Icon = vtkKWIcon::New();
@@ -74,6 +75,11 @@ vtkSlicerFoundationIcons::vtkSlicerFoundationIcons ( )
 vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
 {
 
+  if ( this->SlicerMoreOptionsIcon )
+    {
+    this->SlicerMoreOptionsIcon->Delete();
+    this->SlicerMoreOptionsIcon = NULL;
+    }
   if ( this->SlicerGoIcon)
     {
     this->SlicerGoIcon->Delete();
@@ -361,6 +367,11 @@ vtkSlicerFoundationIcons::~vtkSlicerFoundationIcons ( )
 void vtkSlicerFoundationIcons::AssignImageDataToIcons ( )
 {
     // SliceVisibleIcon
+  this->SlicerMoreOptionsIcon->SetImage (image_SlicerMoreOptions,
+                                         image_SlicerMoreOptions_width,
+                                         image_SlicerMoreOptions_height,
+                                         image_SlicerMoreOptions_pixel_size,
+                                         image_SlicerMoreOptions_length, 0);
   this->SlicerGoIcon->SetImage ( image_SlicerGo,
                            image_SlicerGo_width,
                            image_SlicerGo_height,
@@ -652,6 +663,7 @@ void vtkSlicerFoundationIcons::PrintSelf ( ostream& os, vtkIndent indent )
     this->vtkObject::PrintSelf ( os, indent );
 
     os << indent << "SlicerFoundationIcons: " << this->GetClassName ( ) << "\n";
+    os << indent << "SlicerMoreOptionsIcon: " << this->GetSlicerMoreOptionsIcon() << "\n";
     os << indent << "SlicerGoIcon: " << this->GetSlicerGoIcon() << "\n";
     os << indent << "SlicerGoing0Icon: " << this->GetSlicerGoing0Icon() << "\n";
     os << indent << "SlicerGoing1Icon: " << this->GetSlicerGoing1Icon() << "\n";

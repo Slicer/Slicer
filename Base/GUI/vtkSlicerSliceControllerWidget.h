@@ -60,6 +60,11 @@ public:
   vtkGetObjectMacro ( ForegroundMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro ( BackgroundMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro ( LabelMenuButton, vtkKWMenuButton );
+  vtkGetObjectMacro ( MoreMenuButton, vtkKWMenuButton );
+  vtkGetMacro ( LightboxRows, int );
+  vtkSetMacro ( LightboxRows, int );
+  vtkGetMacro ( LightboxColumns, int );  
+  vtkSetMacro ( LightboxColumns, int );
 
   void RemoveWidgetObservers ( );
   void AddWidgetObservers ( );
@@ -116,6 +121,8 @@ public:
   virtual void UnlinkAllSlices();
   virtual int AllSlicesLinked ( );
   virtual void HideLabelOpacityScaleAndEntry ( );
+  virtual void HideLabelOpacityScaleAndEntry ( int link );
+  virtual void PopUpLabelOpacityScaleAndEntry ( int link );
   virtual void PopUpLabelOpacityScaleAndEntry ( );
   virtual void HideLightboxCustomLayoutFrame ( );
   virtual void PopUpLightboxCustomLayoutFrame ( );
@@ -131,6 +138,9 @@ public:
   virtual void UpdateLabelLayer ( int link );
   //virtual void RaiseVolumeDisplayPanel ( char *id );
   virtual void FitSliceToBackground ( int link );
+  virtual void FitSliceToBackground ( );
+  virtual void ToggleReformatWidget ( int link );
+  virtual void ToggleReformatWidget ( );
 
   //BTX
   enum 
@@ -188,7 +198,10 @@ protected:
   vtkKWEntry *LightboxRowsEntry;
   vtkKWEntry *LightboxColumnsEntry;
   vtkKWPushButton *LightboxApplyButton;
+  vtkKWMenuButton *MoreMenuButton;
 
+  int LightboxRows;
+  int LightboxColumns;
   //
   // Nodes
   //

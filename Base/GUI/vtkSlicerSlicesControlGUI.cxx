@@ -1651,7 +1651,7 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->LabelOpacityButton->SetParent (appF);
       this->LabelOpacityButton->Create ( );
       this->LabelOpacityButton->SetBorderWidth ( 0 );
-      this->LabelOpacityButton->SetImageToIcon ( this->SlicesControlIcons->GetLabelOpacityIcon() );
+      this->LabelOpacityButton->SetImageToIcon ( this->SlicesControlIcons->GetAllLabelOpacityIcon() );
       this->LabelOpacityButton->SetBalloonHelpString ( "Popup scale to adjust opacity of Label Layer in all Slice Viewers." );
 
 #ifndef FOV_ENTRIES_DEBUG

@@ -1012,3 +1012,21 @@ static const unsigned char image_SlicerCamera[] =
   "3TtPl8Pp1OJwRkZFl+NoAhJrGEDJLIG/X9fr9arRaLxesXLwSFQN/pPDJIIn/yy2AGNd9/"
   "Ahkk/+p/v4ZPtqoBKg==";
 
+/* 
+ * Resource generated for file:
+ *    SlicerMoreOptions.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerMoreOptions_width          = 21;
+static const unsigned int  image_SlicerMoreOptions_height         = 21;
+static const unsigned int  image_SlicerMoreOptions_pixel_size     = 3;
+static const unsigned long image_SlicerMoreOptions_length         = 412;
+static const unsigned long image_SlicerMoreOptions_decoded_length = 1323;
+
+static const unsigned char image_SlicerMoreOptions[] = 
+  "eNqlVLtqhUAQBe/1bcwVvUl6KzuxkXyAX2Fjo4W/YiEoCIKFXxCxEZtUARHEVCnTp0qVD0"
+  "gOLFxEUIi7THF2ds7O7tnZYRiWWdj5zIuioij3sqzyvAQPx4mSdIcpywpYPZ04+AVBJhgB"
+  "v0cHyUhDx9kO08HFTQ/ToQkNHQrTHB50iE9DXylfVZVlWXmeA3ddFwRB0zTA0zSlaToMwz"
+  "L4ctFX2V3XfXn9Mk0TOI7jt/dv3/eBi6L4+PxJkmQZrOsPKJ6lp65r27YRDNz3fRiGbdsC"
+  "z/OcZdk4jstgw3ikkU7TjFX2fw1V1baK1nGeYVEUEbCVHd9na3PHccqy9DxvKwB3x9fbOR"
+  "522Fm9Xp/26fsD704jHWXRIjV9tyEtDq0Mr4AqIgCawDAlnltnW9kfu2MH+w==";
+

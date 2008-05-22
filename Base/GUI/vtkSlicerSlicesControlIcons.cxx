@@ -13,9 +13,13 @@ vtkCxxRevisionMacro ( vtkSlicerSlicesControlIcons, "$Revision: 1.0 $");
 vtkSlicerSlicesControlIcons::vtkSlicerSlicesControlIcons ( )
 {
 
+  this->SliceMoreOptionsIcon = vtkKWIcon::New();
+  this->SliceWidgetOnIcon = vtkKWIcon::New();
+  this->SliceWidgetOffIcon = vtkKWIcon::New();
   this->FgIcon = vtkKWIcon::New ( );
   this->BgIcon = vtkKWIcon::New ( );
   this->ToggleFgBgIcon = vtkKWIcon::New ( );
+  this->AllLabelOpacityIcon = vtkKWIcon::New ( );
   this->LabelOpacityIcon = vtkKWIcon::New ( );
   this->LinkControlsIcon = vtkKWIcon::New ( );
   this->UnlinkControlsIcon = vtkKWIcon::New ( );
@@ -45,6 +49,21 @@ vtkSlicerSlicesControlIcons::vtkSlicerSlicesControlIcons ( )
 vtkSlicerSlicesControlIcons::~vtkSlicerSlicesControlIcons ( )
 {
 
+  if ( this->SliceMoreOptionsIcon)
+    {
+    this->SliceMoreOptionsIcon->Delete();
+    this->SliceMoreOptionsIcon = NULL;
+    }
+  if ( this->SliceWidgetOnIcon )
+    {
+    this->SliceWidgetOnIcon->Delete();
+    this->SliceWidgetOnIcon = NULL;
+    }
+  if (this->SliceWidgetOffIcon)
+    {
+    this->SliceWidgetOffIcon->Delete();
+    this->SliceWidgetOnIcon = NULL;
+    }
   if ( this->FgIcon )
     {
     this->FgIcon->Delete ( );
@@ -65,6 +84,12 @@ vtkSlicerSlicesControlIcons::~vtkSlicerSlicesControlIcons ( )
     this->LabelOpacityIcon->Delete ( );
     this->LabelOpacityIcon = NULL;
     }
+  if ( this->AllLabelOpacityIcon )
+    {
+    this->AllLabelOpacityIcon->Delete ( );
+    this->AllLabelOpacityIcon = NULL;
+    }
+
   if ( this->LinkControlsIcon )
     {
     this->LinkControlsIcon->Delete ( );
@@ -153,6 +178,21 @@ vtkSlicerSlicesControlIcons::~vtkSlicerSlicesControlIcons ( )
 void vtkSlicerSlicesControlIcons::AssignImageDataToIcons ( ) {
 
 
+  this->SliceMoreOptionsIcon->SetImage ( image_SliceMoreOptions,
+                                         image_SliceMoreOptions_width,
+                                         image_SliceMoreOptions_height,
+                                         image_SliceMoreOptions_pixel_size,
+                                         image_SliceMoreOptions_length, 0);
+  this->SliceWidgetOnIcon->SetImage ( image_SliceWidgetOn,
+                                      image_SliceWidgetOn_width,
+                                      image_SliceWidgetOn_height,
+                                      image_SliceWidgetOn_pixel_size,
+                                      image_SliceWidgetOn_length, 0);
+  this->SliceWidgetOffIcon->SetImage (image_SliceWidgetOff,
+                                      image_SliceWidgetOff_width,
+                                      image_SliceWidgetOff_height,
+                                      image_SliceWidgetOff_pixel_size,
+                                      image_SliceWidgetOff_length, 0);                                      
     this->FgIcon->SetImage ( image_SlicesFadeToFG,
                              image_SlicesFadeToFG_width,
                              image_SlicesFadeToFG_height,
@@ -168,7 +208,12 @@ void vtkSlicerSlicesControlIcons::AssignImageDataToIcons ( ) {
                              image_SlicesToggleFgBg_height,
                              image_SlicesToggleFgBg_pixel_size,
                              image_SlicesToggleFgBg_length, 0 );
-    this->LabelOpacityIcon->SetImage ( image_SlicesLabelOpacity,
+    this->LabelOpacityIcon->SetImage ( image_SliceLabelOpacity,
+                             image_SliceLabelOpacity_width,
+                             image_SliceLabelOpacity_height,
+                             image_SliceLabelOpacity_pixel_size,
+                             image_SliceLabelOpacity_length, 0 );
+    this->AllLabelOpacityIcon->SetImage ( image_SlicesLabelOpacity,
                              image_SlicesLabelOpacity_width,
                              image_SlicesLabelOpacity_height,
                              image_SlicesLabelOpacity_pixel_size,
@@ -264,10 +309,14 @@ void vtkSlicerSlicesControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     this->vtkObject::PrintSelf ( os, indent );
 
     os << indent << "SlicerSlicesControlIcons: " << this->GetClassName ( ) << "\n";
+    os << indent << "SliceMoreOptionsIcon: " << this->GetSliceMoreOptionsIcon() << "\n";
+    os << indent << "SliceWidgetOnIcon: " << this->GetSliceWidgetOnIcon() << "\n";
+    os << indent << "SliceWidgetOffIcon: " << this->GetSliceWidgetOffIcon() << "\n";
     os << indent << "FgIcon: " << this->GetFgIcon() << "\n";
     os << indent << "BgIcon: " << this->GetBgIcon() << "\n";
     os << indent << "ToggleFgBgIcon: " << this->GetToggleFgBgIcon() << "\n";
     os << indent << "LabelOpacityIcon: " << this->GetLabelOpacityIcon() << "\n";
+    os << indent << "AllLabelOpacityIcon: " << this->GetAllLabelOpacityIcon() << "\n";
     os << indent << "LinkControlsIcon: " << this->GetLinkControlsIcon() << "\n";
     os << indent << "UnlinkControlsIcon: " << this->GetUnlinkControlsIcon() << "\n";
     os << indent << "InterpolationOnIcon: " << this->GetInterpolationOnIcon() << "\n";
