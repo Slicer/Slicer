@@ -273,9 +273,9 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
   int c=0;
 
   if (this->NewNodeEnabled)
-  {
-    for (c=0; c < this->GetNumberOfNodeClasses(); c++)
     {
+    for (c=0; c < this->GetNumberOfNodeClasses(); c++)
+      {
       const char *name = this->GetNodeName(c);
       if (name == NULL || !strcmp(name, "") )
         {
@@ -283,19 +283,29 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
         }
 
       std::stringstream ss;
-      ss << "Create New " << this->MRMLScene->GetTagByClassName(this->GetNodeClass(c));
-
-      // Build the command.  Since node name can contain spaces, we
-      // need to quote the node name in the constructed Tcl command
-      std::stringstream sc;
-      sc << "ProcessNewNodeCommand " << this->GetNodeClass(c) << " \"" << name << "\"";
-
-      this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(ss.str().c_str());
-      this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str() );
-      this->GetWidget()->GetWidget()->SetValue(ss.str().c_str());
+      const char *node_class = this->GetNodeClass(c);
+      const char *tag = this->MRMLScene->GetTagByClassName(node_class);
+      if (!tag)
+        {
+        vtkWarningMacro("Call to this->MRMLScene->GetTagByClassName(\"" <<
+                        node_class << "\") failed (returned NULL)...");
+        }
+      else
+        {
+        ss << "Create New " << tag;
+        
+        // Build the command.  Since node name can contain spaces, we
+        // need to quote the node name in the constructed Tcl command
+        std::stringstream sc;
+        sc << "ProcessNewNodeCommand " << this->GetNodeClass(c) << " \"" << name << "\"";
+        
+        this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton(ss.str().c_str());
+        this->GetWidget()->GetWidget()->GetMenu()->SetItemCommand(count++, this, sc.str().c_str() );
+        this->GetWidget()->GetWidget()->SetValue(ss.str().c_str());
+        }
+      }
     }
-  }
-
+  
   if (this->NoneEnabled) 
     {
     this->GetWidget()->GetWidget()->GetMenu()->AddRadioButton("None");
