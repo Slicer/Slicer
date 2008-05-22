@@ -39,6 +39,7 @@ macro(GENERATECLP SOURCES)
       DEPENDS "${GENERATECLP_EXE}" ${TMP_INPUT}
       COMMAND "${GENERATECLP_EXE}"
       ${TMP_INPUT} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
+      VERBATIM
       )
     # mark the .clp file as a header file
     set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h PROPERTIES HEADER_FILE_ONLY TRUE)
@@ -49,6 +50,7 @@ macro(GENERATECLP SOURCES)
       DEPENDS "${GENERATECLP_EXE}" ${TMP_INPUT} ${ARGV2}
       COMMAND "${GENERATECLP_EXE}" --logoFiles ${ARGV2}
       ${TMP_INPUT} ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
+      VERBATIM
       )
     # mark the .clp file as a header file
     set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h PROPERTIES HEADER_FILE_ONLY TRUE)
