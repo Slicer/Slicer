@@ -61,7 +61,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
 #include "vtkURIHandler.h"
 
-#ifdef MRML_USE_vtkTEEM
+#ifdef MRML_USE_vtkTeem
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
@@ -181,7 +181,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass (dwvn);
   dwvn->Delete();
 
-#ifdef MRML_USE_vtkTEEM
+#ifdef MRML_USE_vtkTeem
   vtkMRMLDiffusionTensorVolumeNode *dtvn = vtkMRMLDiffusionTensorVolumeNode::New();
   this->RegisterNodeClass (dtvn);
   dtvn->Delete();

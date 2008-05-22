@@ -35,7 +35,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
-#ifdef MRML_USE_vtkTEEM
+#ifdef MRML_USE_vtkTeem
 #include "vtkMRMLVectorVolumeNode.h"
 #endif
 
@@ -355,7 +355,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
     {
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
     }
-#ifdef MRML_USE_vtkTEEM
+#ifdef MRML_USE_vtkTeem
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
     {
     volNode = dynamic_cast <vtkMRMLVectorVolumeNode *> (refNode);

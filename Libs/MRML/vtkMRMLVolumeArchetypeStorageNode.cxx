@@ -25,7 +25,7 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 
-#ifdef MRML_USE_vtkTEEM
+#ifdef MRML_USE_vtkTeem
 #include "vtkMRMLVectorVolumeNode.h"
 #endif
 
@@ -192,7 +192,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     reader = vtkITKArchetypeImageSeriesScalarReader::New();  
     reader->SetSingleFile( this->GetSingleFile() );
     }
-#ifdef MRML_USE_vtkTEEM
+#ifdef MRML_USE_vtkTeem
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
     {
     volNode = dynamic_cast <vtkMRMLVectorVolumeNode *> (refNode);
