@@ -16,11 +16,6 @@ if(GenerateLM_FOUND)
   include(${GenerateLM_USE_FILE})
 endif(GenerateLM_FOUND)
 
-find_package(SLICERLIBCURL REQUIRED)
-if(SLICERLIBCURL_FOUND)
-  include(${SLICERLIBCURL_USE_FILE})
-endif(SLICERLIBCURL_FOUND)
- 
 # Dependencies (to be untangled later, for now the whole directory has to
 # be built at the same time)
 #

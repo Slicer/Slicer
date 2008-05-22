@@ -151,6 +151,12 @@ if(NOT TEEM_FOUND)
 endif(NOT TEEM_FOUND)
 include(${TEEM_USE_FILE})
 
+## SlicerLibCurl
+find_package(SLICERLIBCURL REQUIRED)
+if(SLICERLIBCURL_FOUND)
+  include(${SLICERLIBCURL_USE_FILE})
+endif(SLICERLIBCURL_FOUND)
+ 
 ## BatchMake
 option(Slicer3_USE_BatchMake "Build Slicer3 with BatchMake support." OFF)
 if(Slicer3_USE_BatchMake)
