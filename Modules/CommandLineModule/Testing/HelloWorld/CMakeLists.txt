@@ -22,7 +22,7 @@ generateclp(${CLP}_SOURCE ${CLP}.xml)
 # Build it
 
 add_executable(${CLP} ${${CLP}_SOURCE})
-target_link_libraries(${CLP} ITKIO ITKBasicFilters ITKCommon)
+target_link_libraries(${CLP} ${ITK_LIBRARIES})
 
 # Install it
 
