@@ -16,22 +16,22 @@ This implementation based on Bill Lorensen's GenerateCLP utility.
       <name>InputTxt</name>
       <label>Input Text</label>
       <channel>input</channel>
-      <index>0</index>
       <description>Text file containing key:value description of module</description>
+      <longflag>--InputTxt</longflag>
     </file>
     <file>
       <name>OutputHeader</name>
       <label>Output Header</label>
       <channel>output</channel>
-      <index>1</index>
       <description>C++ header to declare loadable module entry points</description>
+      <longflag>--OutputHeader</longflag>
     </file>
     <file>
       <name>OutputCxx</name>
       <label>Output C++</label>
       <channel>output</channel>
-      <index>2</index>
       <description>C++ source to implement entry points required to dynamically load the module</description>
+      <longflag>--OutputCxx</longflag>
     </file>
   </parameters>
 </executable>
