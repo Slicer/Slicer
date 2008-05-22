@@ -45,7 +45,6 @@ subdirs(
    Editor
    GradientAnisotropicDiffusionFilter
    Meshing
-   NeuroNav
    Python
    PythonGADScriptedModule
    QdecModule
@@ -78,7 +77,6 @@ endif(Slicer3_USE_NAVITRACK)
 ## EMSEG_DEBUG
 ## REALTIMEIMAGING_DEBUG
 ## MRABLATION_DEBUG
-## NEURONAV_DEBUG
 ## TRACTOGRAPHY_DEBUG
 ## QDEC_DEBUG
 ## COMMANDLINE_DEBUG
