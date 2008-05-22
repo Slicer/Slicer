@@ -644,8 +644,7 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
 if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
     cd $Slicer3_LIB
 
-    runcmd $::CVS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer login 
-    eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous:bwhspl@cvs.spl.harvard.edu:/projects/cvs/slicer checkout -r $::TEEM_TAG teem"
+    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/teem teem
 
     if {$::GENLIB(buildit)} {
       file mkdir $Slicer3_LIB/teem-build
