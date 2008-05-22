@@ -114,6 +114,7 @@ if(NOT DISABLE_CXX_TESTING)
   set(WRAPPED_EXE_PREFIX --launch ${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR})
   if(WIN32)
     set(WRAPPED_EXE_PREFIX ${WRAPPED_EXE_PREFIX}/${CMAKE_BUILD_TYPE})
+    set(WRAPPED_TEST_EXE_PREFIX ${WRAPPED_TEST_EXE_PREFIX}/${CMAKE_BUILD_TYPE})
   endif(WIN32)
 
   ############################################################################
