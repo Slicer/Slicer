@@ -76,6 +76,8 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->RotateAroundButton = NULL;
   this->ZoomEntry = NULL;
   this->VisibilityButton = NULL;
+  this->SelectSceneSnapshotMenuButton = NULL;
+  this->SceneSnapshotButton = NULL;
 
   //--- ui for the ViewControlFrame
   this->ViewAxisAIconButton = NULL;
@@ -216,6 +218,19 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     this->VisibilityButton->Delete();
     this->VisibilityButton = NULL;
     }
+  if ( this->SelectSceneSnapshotMenuButton )
+    {
+    this->SelectSceneSnapshotMenuButton->SetParent ( NULL );
+    this->SelectSceneSnapshotMenuButton->Delete();
+    this->SelectSceneSnapshotMenuButton = NULL;
+    }
+  if ( this->SceneSnapshotButton )
+    {
+    this->SceneSnapshotButton->SetParent ( NULL );
+    this->SceneSnapshotButton->Delete();
+    this->SceneSnapshotButton = NULL;    
+    }
+
   if ( this->LookFromButton )
     {
     this->LookFromButton->SetParent (NULL );
@@ -419,6 +434,8 @@ void vtkSlicerViewControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "SelectViewButton: " << this->GetSelectViewButton(  ) << "\n";
   os << indent << "SelectCameraButton: " << this->GetSelectCameraButton(  ) << "\n";
   os << indent << "VisibilityButton: " << this->GetVisibilityButton(  ) << "\n";
+  os << indent << "SelectSceneSnapshotMenuButton: " << this->GetSelectSceneSnapshotMenuButton ( ) << "\n";
+  os << indent << "SceneSnapshotButton: " << this->GetSceneSnapshotButton() << "\n";
   os << indent << "ZoomEntry: " << this->GetZoomEntry(  ) << "\n";
   os << indent << "SlicerViewControlIcons: " << this->GetSlicerViewControlIcons(  ) << "\n";
   os << indent << "ApplicationGUI: " << this->GetApplicationGUI(  ) << "\n";
@@ -475,7 +492,8 @@ void vtkSlicerViewControlGUI::RemoveGUIObservers ( )
     this->SelectCameraButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ZoomEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
-
+    this->SelectSceneSnapshotMenuButton->GetMenu()->RemoveObservers ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SceneSnapshotButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -497,6 +515,8 @@ void vtkSlicerViewControlGUI::AddGUIObservers ( )
     this->SelectCameraButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ZoomEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SelectSceneSnapshotMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->SceneSnapshotButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 }
 
@@ -930,6 +950,16 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
           this->MainViewZoom ( val );
           }
         }
+
+      //--- restore or delete a scene snapshot
+      if ( m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+        {
+        }
+      //--- take a scene snapshot
+      if ( p == this->SceneSnapshotButton && event == vtkKWPushButton::InvokedEvent )
+        {
+        }
+
       // Make requested changes to the ViewNode      
       // save state for undo
       if ( m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
@@ -1034,6 +1064,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
               }
             }
 
+      
           //--- turn View Spin and Rocking on and off
           if ( (b == this->SpinButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) && vn )
             {
@@ -2329,6 +2360,12 @@ void vtkSlicerViewControlGUI::BuildCameraSelectMenu()
 }
   
 //---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::UpdateSceneSnapshotMenu( )
+{
+}
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::BuildVisibilityMenu ( )
 {
   this->VisibilityButton->GetMenu()->DeleteAllItems ( );
@@ -2942,6 +2979,8 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->RotateAroundButton = vtkKWRadioButton::New ( );
       this->ZoomEntry = vtkKWEntryWithLabel::New ( );
       this->VisibilityButton = vtkKWMenuButton::New ( );
+      this->SceneSnapshotButton = vtkKWPushButton::New();
+      this->SelectSceneSnapshotMenuButton = vtkKWMenuButton::New();
 
       //--- ui for the ViewControlFrame
       this->ViewAxisAIconButton = vtkKWLabel::New ( );
@@ -3093,7 +3132,16 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->SelectViewButton->SetBorderWidth ( 0 );
       this->SelectViewButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSelectViewButtonIcon() );
       this->SelectViewButton->IndicatorVisibilityOff ( );
-      this->SelectViewButton->SetBalloonHelpString ( "Save current or select among already saved 3D views.");
+      this->SelectViewButton->SetBalloonHelpString ( "Select among already saved 3D views.");
+      //--- MenuButton to select among saved scene snapshots
+      this->SelectSceneSnapshotMenuButton->SetParent ( f3);
+      this->SelectSceneSnapshotMenuButton->Create ( );
+      this->SelectSceneSnapshotMenuButton->SetReliefToFlat ( );
+      this->SelectSceneSnapshotMenuButton->SetBorderWidth ( 0 );
+      this->SelectSceneSnapshotMenuButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSelectSceneSnapshotIcon() );
+      this->SelectSceneSnapshotMenuButton->IndicatorVisibilityOff ( );
+      this->SelectSceneSnapshotMenuButton->SetBalloonHelpString ( "Restore or delete saved scene snapshots.");
+      
       //--- Menubutton to capture or select among saved 3D views.
       this->SelectCameraButton->SetParent ( f3);
       this->SelectCameraButton->Create ( );
@@ -3102,6 +3150,14 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->SelectCameraButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSelectCameraButtonIcon() );
       this->SelectCameraButton->IndicatorVisibilityOff ( );
       this->SelectCameraButton->SetBalloonHelpString ( "Save current or select among already saved cameras.");
+      //--- Pushbutton to take a scene snapshot.
+      this->SceneSnapshotButton->SetParent ( f3);
+      this->SceneSnapshotButton->Create();
+      this->SceneSnapshotButton->SetReliefToFlat();
+      this->SceneSnapshotButton->SetBorderWidth ( 0 );
+      this->SceneSnapshotButton->SetImageToIcon ( p->GetSlicerFoundationIcons()->GetSlicerCameraIcon () );
+      this->SceneSnapshotButton->SetBalloonHelpString ( "Capture and name a scene snapshot." );
+
 
       //--- Checkbutton to spin the view
       this->SpinButton->SetParent ( f3 );
@@ -3132,9 +3188,11 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->Script ("grid %s -row 0 -column 1 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->OrthoButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 1 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->StereoButton->GetWidgetName ( ));
       this->Script ("grid %s -row 0 -column 2 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->VisibilityButton->GetWidgetName ( ));      
-      this->Script ("grid %s -row 1 -column 2 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SelectCameraButton->GetWidgetName ( ));
+//      this->Script ("grid %s -row 1 -column 2 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SelectCameraButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 1 -column 2 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SceneSnapshotButton->GetWidgetName ( ));
       this->Script ("grid %s -row 0 -column 3 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->CenterButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 1 -column 3 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SelectViewButton->GetWidgetName ( ));      
+//      this->Script ("grid %s -row 1 -column 3 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SelectViewButton->GetWidgetName ( ));      
+      this->Script ("grid %s -row 1 -column 3 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SelectSceneSnapshotMenuButton->GetWidgetName ( ));      
       this->Script ("grid %s -row 0 -column 4 -sticky e -padx 4 -pady 0 -ipadx 0 -ipady 0", this->SpinButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 4 -sticky e -padx 4 -pady 0 -ipadx 0 -ipady 0", this->RockButton->GetWidgetName ( ));
 

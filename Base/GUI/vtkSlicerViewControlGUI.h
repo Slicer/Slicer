@@ -121,6 +121,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (SelectCameraButton, vtkKWMenuButton);
   vtkGetObjectMacro (StereoButton, vtkKWMenuButton);
   vtkGetObjectMacro (VisibilityButton, vtkKWMenuButton );
+  vtkGetObjectMacro ( SelectSceneSnapshotMenuButton, vtkKWMenuButton );
+  vtkGetObjectMacro ( SceneSnapshotButton, vtkKWPushButton );
 
 //  vtkGetObjectMacro (RedFOVEntry, vtkKWEntryWithLabel);
 //  vtkGetObjectMacro (YellowFOVEntry, vtkKWEntry);
@@ -375,6 +377,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   void BuildViewSelectMenu ( );
   void BuildStereoSelectMenu ( );
   void BuildVisibilityMenu ( );
+  void UpdateSceneSnapshotMenu ( );
 
   // Description:
   // Methods for unpacking and packing the
@@ -421,6 +424,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
 //  vtkKWEntry *YellowFOVEntry;
 //  vtkKWEntry *GreenFOVEntry;
   vtkKWEntryWithLabel *ZoomEntry;
+
+  vtkKWMenuButton *SelectSceneSnapshotMenuButton;
+  vtkKWPushButton *SceneSnapshotButton;
+
     
   // navzoom scale, navzoomin/outiconbutton tmpNavigationZoom, all the icon buttons.    
   // Description:
