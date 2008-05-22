@@ -6,7 +6,7 @@
 8    inferior_vena_cava    50     21    255    255
 9    colon_and_ileum    255    245    197    255
 10    gallbladder    0    255    127    255
-12    portal_vein_and_superior_mesenteric_vein
+12    portal_vein_and_superior_mesenteric_vein  41 166 255 255
 13    stomach_and_duodenum    255    235    210    255
 16    celiac_trunk    253    99    71    255
 17    splenic_artery    253    99    71    255
