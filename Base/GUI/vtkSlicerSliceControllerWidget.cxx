@@ -1739,7 +1739,8 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     vtkKWMenu *cmenu = this->MoreMenuButton->GetMenu()->GetItemCascade(cindex);
     int numItems = cmenu->GetNumberOfItems();
     int found = 0;
-    for ( int item=0; item < numItems; item++)
+    int item;
+    for ( item=0; item < numItems; item++)
       {
       if ( cmenu->GetItemSelectedState(item) )
         {
