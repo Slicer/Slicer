@@ -118,6 +118,7 @@ add_custom_command(TARGET CommandIOPlugin
   DEPENDS ${LIB_NAME}
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${LIBFULLNAME} ${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}/${CMAKE_CFG_INTDIR}/${LIBNAME}
+  VERBATIM
 )
 
 # Note CommandIO and CommandIOPlugin are installed in different locations
@@ -138,5 +139,6 @@ if(APPLE)
     COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}/libCommandIOPlugin.dylib
     ${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}/libCommandIOPlugin.so
+    VERBATIM
     )
 endif(APPLE)

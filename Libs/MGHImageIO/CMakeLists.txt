@@ -94,7 +94,9 @@ get_filename_component(LIBNAME ${LIBFULLNAME} NAME)
 add_custom_command(TARGET MGHIOPlugin
   DEPENDS ${LIB_NAME}
   POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${LIBFULLNAME} ${CMAKE_BINARY_DIR}/${MGHImageIO_INSTALL_ITKFACTORIES_DIR}/${CMAKE_CFG_INTDIR}/${LIBNAME})
+  COMMAND ${CMAKE_COMMAND} -E copy ${LIBFULLNAME} ${CMAKE_BINARY_DIR}/${MGHImageIO_INSTALL_ITKFACTORIES_DIR}/${CMAKE_CFG_INTDIR}/${LIBNAME}
+  VERBATIM
+  )
 
 # make a copy named '.so' for compatibility with the expectations
 # of the ITK Factory mechanism on macs
@@ -107,6 +109,7 @@ if(APPLE)
     COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_BINARY_DIR}/${MGHImageIO_INSTALL_ITKFACTORIES_DIR}/libMGHIOPlugin.dylib
     ${CMAKE_BINARY_DIR}/${MGHImageIO_INSTALL_ITKFACTORIES_DIR}/libMGHIOPlugin.so
+    VERBATIM
     )
 endif(APPLE)
 
