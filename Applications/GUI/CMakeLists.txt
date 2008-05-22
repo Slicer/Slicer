@@ -85,10 +85,6 @@ set(dir_list
   ${MRAblation_BINARY_DIR}
   ${MRAblation_Init_SOURCE_DIR}
   ${MRAblation_Init_BINARY_DIR}
-  ${NeuroNav_SOURCE_DIR}
-  ${NeuroNav_BINARY_DIR}
-  ${NeuroNav_Init_SOURCE_DIR}
-  ${NeuroNav_Init_BINARY_DIR}
   ${LabelStatistics_SOURCE_DIR}       
   ${LabelStatistics_BINARY_DIR}
   ${LabelStatistics_Init_SOURCE_DIR}
