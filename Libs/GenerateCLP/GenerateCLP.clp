@@ -28,14 +28,14 @@ std::cout << "    <file>" << std::endl;
 std::cout << "      <name>InputXML</name>" << std::endl;
 std::cout << "      <label>Input XML</label>" << std::endl;
 std::cout << "      <channel>input</channel>" << std::endl;
-std::cout << "      <index>0</index>" << std::endl;
+std::cout << "      <longflag>--InputXML</longflag>" << std::endl;
 std::cout << "      <description>XML description of interface</description>" << std::endl;
 std::cout << "    </file>" << std::endl;
 std::cout << "    <file>" << std::endl;
 std::cout << "      <name>OutputCxx</name>" << std::endl;
 std::cout << "      <label>Output C++</label>" << std::endl;
 std::cout << "      <channel>output</channel>" << std::endl;
-std::cout << "      <index>1</index>" << std::endl;
+std::cout << "      <longflag>--OutputCxx</longflag>" << std::endl;
 std::cout << "      <description>C++ Code to process command line arguments</description>" << std::endl;
 std::cout << "    </file>" << std::endl;
 std::cout << "  </parameters>" << std::endl;
@@ -59,9 +59,9 @@ try
     msg.str("");msg << "Generate TCLAP Code (default: " << UseTCLAP << ")";
     TCLAP::SwitchArg UseTCLAPArg("", "TCLAP", msg.str(), commandLine, 0);
 
-    msg.str("");msg << "XML description of interface";    TCLAP::UnlabeledValueArg<std::string> InputXMLArg("InputXML", msg.str(), 1, InputXML, "std::string", commandLine);
+    msg.str("");msg << "XML description of interface";    TCLAP::ValueArg<std::string> InputXMLArg("", "InputXML", msg.str(), 0, InputXML, "std::string", commandLine);
 
-    msg.str("");msg << "C++ Code to process command line arguments";    TCLAP::UnlabeledValueArg<std::string> OutputCxxArg("OutputCxx", msg.str(), 1, OutputCxx, "std::string", commandLine);
+    msg.str("");msg << "C++ Code to process command line arguments";    TCLAP::ValueArg<std::string> OutputCxxArg("", "OutputCxx", msg.str(), 0, OutputCxx, "std::string", commandLine);
 
     msg.str("");msg << "Echo the command line arguments (default: " << echoSwitch << ")";
     TCLAP::SwitchArg echoSwitchArg("", "echo", msg.str(), commandLine, 0);

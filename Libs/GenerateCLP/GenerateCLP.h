@@ -77,14 +77,14 @@ char *GetXMLModuleDescription()
   xml += "      <name>InputXML</name>\n";
   xml += "      <label>Input XML</label>\n";
   xml += "      <channel>input</channel>\n";
-  xml += "      <index>0</index>\n";
+  xml += "      <longflag>--InputXML</longflag>\n";
   xml += "      <description>XML description of interface</description>\n";
   xml += "    </file>\n";
   xml += "    <file>\n";
   xml += "      <name>OutputCxx</name>\n";
   xml += "      <label>Output C++</label>\n";
   xml += "      <channel>output</channel>\n";
-  xml += "      <index>1</index>\n";
+  xml += "      <longflag>--OutputCxx</longflag>\n";
   xml += "      <description>C++ Code to process command line arguments</description>\n";
   xml += "    </file>\n";
   xml += "  </parameters>\n";
@@ -124,9 +124,9 @@ try \
  \
     msg.str("");msg << "Logo files";    TCLAP::MultiArg<std::string > logoFilesArg("", "logoFiles", msg.str(), 0, "std::vector<std::string>", commandLine); \
  \
-    msg.str("");msg << "XML description of interface";    TCLAP::UnlabeledValueArg<std::string> InputXMLArg("InputXML", msg.str(), 1, InputXML, "std::string", commandLine); \
+    msg.str("");msg << "XML description of interface";    TCLAP::ValueArg<std::string> InputXMLArg("", "InputXML", msg.str(), 0, InputXML, "std::string", commandLine); \
  \
-    msg.str("");msg << "C++ Code to process command line arguments";    TCLAP::UnlabeledValueArg<std::string> OutputCxxArg("OutputCxx", msg.str(), 1, OutputCxx, "std::string", commandLine); \
+    msg.str("");msg << "C++ Code to process command line arguments";    TCLAP::ValueArg<std::string> OutputCxxArg("", "OutputCxx", msg.str(), 0, OutputCxx, "std::string", commandLine); \
  \
     msg.str("");msg << "Echo the command line arguments (default: " << echoSwitch << ")"; \
     TCLAP::SwitchArg echoSwitchArg("", "echo", msg.str(), commandLine, echoSwitch); \

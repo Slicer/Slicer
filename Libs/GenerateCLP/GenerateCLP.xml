@@ -32,14 +32,14 @@
       <name>InputXML</name>
       <label>Input XML</label>
       <channel>input</channel>
-      <index>0</index>
+      <longflag>--InputXML</longflag>
       <description>XML description of interface</description>
     </file>
     <file>
       <name>OutputCxx</name>
       <label>Output C++</label>
       <channel>output</channel>
-      <index>1</index>
+      <longflag>--OutputCxx</longflag>
       <description>C++ Code to process command line arguments</description>
     </file>
   </parameters>
