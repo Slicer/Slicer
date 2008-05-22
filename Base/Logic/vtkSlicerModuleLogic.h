@@ -41,6 +41,39 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkSlicerLogic
   vtkGetObjectMacro(ApplicationLogic, vtkSlicerApplicationLogic);
   vtkSetObjectMacro(ApplicationLogic, vtkSlicerApplicationLogic);
 
+  // Description: 
+  // The name of the Module
+  vtkGetStringMacro (ModuleName);
+  vtkSetStringMacro (ModuleName);
+  
+  // Description:
+  // Set/Get the location of this module (if it was loaded dynamically
+  // this could be the full path to the dynamic library, or the full path
+  // to the pkgIndex.tcl file if the module is a scripted module, etc).
+  vtkSetStringMacro(ModuleLocation);
+  vtkGetStringMacro(ModuleLocation);
+
+  // Description:
+  // Get the path to the module's resources directory.
+  // This is the location on disk where resources (data, support files)
+  // associated to this module can be found.
+  // The resources directory will be computed from ModuleLocation
+  // if it was set (i.e. if Slicer3 is loading this module from a
+  // user defined location outside or even inside Slicer3), or relative to
+  // Slicer3_HOME otherwise (i.e. if the module was built directory by
+  // Slicer3 and not dynamically loaded).
+  virtual const char* GetModuleShareDirectory();
+
+  // Description:
+  // Get the path to the module's library directory.
+  // This is the location on disk where the module library was found. 
+  // The lib directory will be computed from ModuleLocation
+  // if it was set (i.e. if Slicer3 is loading this module from a
+  // user defined location outside or even inside Slicer3), or relative to
+  // Slicer3_HOME otherwise (i.e. if the module was built directory by
+  // Slicer3 and not dynamically loaded).
+  virtual const char* GetModuleLibDirectory();
+
 protected:
   vtkSlicerModuleLogic();
   ~vtkSlicerModuleLogic();
@@ -48,7 +81,19 @@ protected:
   void operator=(const vtkSlicerModuleLogic&);
 
   vtkSlicerApplicationLogic *ApplicationLogic;
+  char *ModuleLocation;
+  char *ModuleName;
 
+  virtual int IsModuleShareDirectoryDefined();
+  virtual int IsModuleLibDirectoryDefined();
+
+  vtkSetStringMacro(ModuleShareDirectory);
+  vtkSetStringMacro(ModuleLibDirectory);
+
+private:
+
+  char *ModuleShareDirectory;
+  char *ModuleLibDirectory;
 };
 
 #endif

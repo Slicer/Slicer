@@ -332,9 +332,9 @@ LoadableModuleFactory
   //
   // self-describing shared object modules live in a prescribed path
   // and have a prescribed symbol.
-  if (this->SearchPath == "")
+  if (this->SearchPaths == "")
     {
-    this->WarningMessage( "Empty module search path." );
+    this->WarningMessage( "Empty module search paths." );
     return 0;
     }
   
@@ -344,7 +344,7 @@ LoadableModuleFactory
 #else
   std::string delim(":");
 #endif
-  splitString(this->SearchPath, delim, modulePaths);
+  splitString(this->SearchPaths, delim, modulePaths);
 
   std::vector<std::string>::const_iterator pit;
   long numberTested = 0;

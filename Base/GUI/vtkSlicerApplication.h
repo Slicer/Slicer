@@ -93,7 +93,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   // Some constants
   //BTX
   static const char *ConfirmDeleteRegKey;
-  static const char *ModulePathRegKey;
+  static const char *ModulePathsRegKey;
   static const char *ModuleCachePathRegKey;
   static const char *TemporaryDirectoryRegKey;
   static const char *WebBrowserRegKey;
@@ -101,6 +101,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   static const char *ZipRegKey;
   static const char *RmRegKey;
   static const char *HomeModuleRegKey;
+  static const char *LoadModulesRegKey;
   static const char *LoadCommandLineModulesRegKey;
   static const char *EnableDaemonRegKey;
   static const char *ApplicationFontFamilyRegKey;
@@ -134,9 +135,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   const char* GetConfirmDelete() const;
   
   // Description:
-  // Set/Get the search path for modules.
-  void SetModulePath(const char *path);
-  const char* GetModulePath() const;
+  // Set/Get the search paths for modules ( a list of ; or : separated paths).
+  void SetModulePaths(const char *paths);
+  const char* GetModulePaths() const;
 
   // Description:
   // Set/Get the cache path for modules.
@@ -197,7 +198,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   vtkSetMacro (ApplicationLayoutType, int );
 
   // Description:
-  // Set/Get if command line modules should be loaded
+  // Set/Get if modules should be loaded (i.e. loadable modules)
+  vtkSetMacro(LoadModules, int);
+  vtkGetMacro(LoadModules, int);
+  vtkBooleanMacro(LoadModules, int);
+
+  // Description:
+  // Set/Get if command line modules should be loaded (i.e. CLI plugins)
   vtkSetMacro(LoadCommandLineModules, int);
   vtkGetMacro(LoadCommandLineModules, int);
   vtkBooleanMacro(LoadCommandLineModules, int);
@@ -320,7 +327,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 
   
   char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
-  char ModulePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char ModulePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModuleCachePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char WebBrowser [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
   char Unzip [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
@@ -338,6 +345,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 
   char RegistryHolder [vtkKWRegistryHelper::RegistryKeyValueSizeMax];
 
+  int LoadModules;
   int LoadCommandLineModules;
   int EnableDaemon;
   void* PythonModule;

@@ -41,11 +41,11 @@ public:
   const std::string& GetName() const { return Name; }
   
   // Set the search path for modules (both command line modules and
-  // shared object modules).
-  void SetSearchPath(const std::string& path) { SearchPath = path; }
+  // shared object modules). A list of ':' or ';' separated paths.
+  void SetSearchPaths(const std::string& paths) { SearchPaths = paths; }
 
   // Get the module search path.
-  const std::string& GetSearchPath() const { return SearchPath; }
+  const std::string& GetSearchPaths() const { return SearchPaths; }
 
   // Set the cache path for modules (both command line modules and
   // shared object modules). The cache is an area where information on
@@ -144,7 +144,7 @@ protected:
 private:
 
   std::string Name;
-  std::string SearchPath;
+  std::string SearchPaths;
   std::string CachePath;
 
   CallbackFunctionType WarningMessageCallback;

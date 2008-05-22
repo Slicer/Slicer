@@ -60,7 +60,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerGradientsWidget : public vtkSlicerWidget
 
     // Description:
     // Sets the Logic to the current vtkSlicerDiffusionEditorLogic of the editor.
-    void SetLogic(vtkSlicerDiffusionEditorLogic *logic);
+    virtual void SetLogic(vtkSlicerDiffusionEditorLogic *logic);
 
     // Description:
     // Enables/Disables the whole widget, also collapses the widget.

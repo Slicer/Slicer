@@ -385,9 +385,9 @@ ModuleFactory
   
   // self-describing shared object modules live in a prescribed path
   // and have a prescribed symbol.
-  if (this->SearchPath == "")
+  if (this->SearchPaths == "")
     {
-    this->WarningMessage( "Empty module search path." );
+    this->WarningMessage( "Empty module search paths." );
     return 0;
     }
   
@@ -397,7 +397,7 @@ ModuleFactory
 #else
   std::string delim(":");
 #endif
-  splitString(this->SearchPath, delim, modulePaths);
+  splitString(this->SearchPaths, delim, modulePaths);
 
   std::vector<std::string>::const_iterator pit;
   long numberTested = 0;
@@ -475,9 +475,9 @@ ModuleFactory
   //
   // self-describing shared object modules live in a prescribed path
   // and have a prescribed symbol.
-  if (this->SearchPath == "")
+  if (this->SearchPaths == "")
     {
-    this->WarningMessage( "Empty module search path." );
+    this->WarningMessage( "Empty module search paths." );
     return 0;
     }
   
@@ -487,7 +487,7 @@ ModuleFactory
 #else
   std::string delim(":");
 #endif
-  splitString(this->SearchPath, delim, modulePaths);
+  splitString(this->SearchPaths, delim, modulePaths);
 
   std::vector<std::string>::const_iterator pit;
   long numberTested = 0;
@@ -796,9 +796,9 @@ ModuleFactory
   // self-describing command-line modules live in a prescribed
   // path and respond to a command line argument "--xml"
   //
-  if (this->SearchPath == "")
+  if (this->SearchPaths == "")
     {
-    this->WarningMessage( "Empty module search path." ); 
+    this->WarningMessage( "Empty module search paths." ); 
     return 0;
     }
   
@@ -808,7 +808,7 @@ ModuleFactory
 #else
   std::string delim(":");
 #endif
-  splitString(this->SearchPath, delim, modulePaths);
+  splitString(this->SearchPaths, delim, modulePaths);
 
   std::vector<std::string>::const_iterator pit;
   long numberTested = 0;
@@ -1080,9 +1080,9 @@ ModuleFactory
   // self-describing command-line modules live in a prescribed
   // path and respond to a command line argument "--xml"
   //
-  if (this->SearchPath == "")
+  if (this->SearchPaths == "")
     {
-    this->WarningMessage( "Empty module search path." ); 
+    this->WarningMessage( "Empty module search paths." ); 
     return 0;
     }
   
@@ -1092,7 +1092,7 @@ ModuleFactory
 #else
   std::string delim(":");
 #endif
-  splitString(this->SearchPath, delim, modulePaths);
+  splitString(this->SearchPaths, delim, modulePaths);
 
   std::vector<std::string>::const_iterator pit;
   long numberTested = 0;
@@ -1331,9 +1331,9 @@ ModuleFactory
   // self-describing command-line modules live in a prescribed
   // path and respond to a command line argument "--xml"
   //
-  if (this->SearchPath == "")
+  if (this->SearchPaths == "")
     {
-    this->WarningMessage( "Empty module search path." ); 
+    this->WarningMessage( "Empty module search paths." ); 
     return 0;
     }
   
@@ -1343,7 +1343,7 @@ ModuleFactory
 #else
   std::string delim(":");
 #endif
-  splitString(this->SearchPath, delim, modulePaths);
+  splitString(this->SearchPaths, delim, modulePaths);
 
   std::vector<std::string>::const_iterator pit;
   long numberTested = 0;
@@ -1700,9 +1700,9 @@ ModuleFactory
 
   double t0, t1;
   // add any of the self-describing Python modules available
-  if (this->SearchPath == "")
+  if (this->SearchPaths == "")
     {
-    this->WarningMessage( "Empty module search path." );
+    this->WarningMessage( "Empty module search paths." );
     return 0;
     }
 
@@ -1720,7 +1720,7 @@ ModuleFactory
 #else
   std::string delim(":");
 #endif
-  splitString(this->SearchPath, delim, modulePaths);
+  splitString(this->SearchPaths, delim, modulePaths);
 
   std::vector<std::string>::const_iterator pit;
   

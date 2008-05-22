@@ -50,7 +50,7 @@
 #endif
 #endif
 
-const char *vtkSlicerApplication::ModulePathRegKey = "ModulePath";
+const char *vtkSlicerApplication::ModulePathsRegKey = "ModulePaths";
 const char *vtkSlicerApplication::ModuleCachePathRegKey = "ModuleCachePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
 const char *vtkSlicerApplication::WebBrowserRegKey = "WebBrowser";
@@ -60,6 +60,7 @@ const char *vtkSlicerApplication::RmRegKey = "Rm";
 const char *vtkSlicerApplication::ConfirmDeleteRegKey = "ConfirmDelete";
 const char *vtkSlicerApplication::HomeModuleRegKey = "HomeModule";
 const char *vtkSlicerApplication::LoadCommandLineModulesRegKey = "LoadCommandLineModules";
+const char *vtkSlicerApplication::LoadModulesRegKey = "LoadModules";
 const char *vtkSlicerApplication::EnableDaemonRegKey = "EnableDaemon";
 const char *vtkSlicerApplication::ApplicationFontSizeRegKey = "ApplicationFontSize";
 const char *vtkSlicerApplication::ApplicationFontFamilyRegKey = "ApplicationFontFamily";
@@ -203,10 +204,11 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 
     strcpy(this->ConfirmDelete, "");
     
-    strcpy(this->ModulePath, "");
+    strcpy(this->ModulePaths, "");
     strcpy(this->ModuleCachePath, "");
     strcpy ( this->HomeModule, "");
     this->LoadCommandLineModules = 1;
+    this->LoadModules = 1;
     this->EnableDaemon = 0;
    
     this->MainLayout = vtkSlicerGUILayout::New ( );
@@ -607,11 +609,11 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     }
 
   if (this->HasRegistryValue(
-    2, "RunTime", vtkSlicerApplication::ModulePathRegKey))
+    2, "RunTime", vtkSlicerApplication::ModulePathsRegKey))
     {
     this->GetRegistryValue(
-      2, "RunTime", vtkSlicerApplication::ModulePathRegKey,
-      this->ModulePath);
+      2, "RunTime", vtkSlicerApplication::ModulePathsRegKey,
+      this->ModulePaths);
     }
 
   if (this->HasRegistryValue(
@@ -659,6 +661,13 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     {
     this->LoadCommandLineModules = this->GetIntRegistryValue(
       2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey);
+    }
+
+  if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::LoadModulesRegKey))
+    {
+    this->LoadModules = this->GetIntRegistryValue(
+      2, "RunTime", vtkSlicerApplication::LoadModulesRegKey);
     }
 
   if (this->HasRegistryValue(
@@ -805,8 +814,8 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
                            this->ApplicationFontSize);
 
   this->SetRegistryValue(
-    2, "RunTime", vtkSlicerApplication::ModulePathRegKey, "%s", 
-    this->ModulePath);
+    2, "RunTime", vtkSlicerApplication::ModulePathsRegKey, "%s", 
+    this->ModulePaths);
 
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModuleCachePathRegKey, "%s", 
@@ -833,6 +842,10 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::LoadCommandLineModulesRegKey, "%d", 
     this->LoadCommandLineModules);
+
+  this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::LoadModulesRegKey, "%d", 
+    this->LoadModules);
 
   this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::EnableDaemonRegKey, "%d", 
@@ -969,23 +982,23 @@ const char *vtkSlicerApplication::GetHomeModule () const
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplication::SetModulePath(const char* path)
+void vtkSlicerApplication::SetModulePaths(const char* paths)
 {
-  if (path)
+  if (paths)
     {
-    if (strcmp(this->ModulePath, path) != 0
-        && strlen(path) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+    if (strcmp(this->ModulePaths, paths) != 0
+        && strlen(paths) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
       {
-      strcpy(this->ModulePath, path);
+      strcpy(this->ModulePaths, paths);
       this->Modified();
       }
     }
 }
 
 //----------------------------------------------------------------------------
-const char* vtkSlicerApplication::GetModulePath() const
+const char* vtkSlicerApplication::GetModulePaths() const
 {
-  return this->ModulePath;
+  return this->ModulePaths;
 }
 
 //----------------------------------------------------------------------------

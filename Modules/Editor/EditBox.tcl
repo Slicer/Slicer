@@ -109,7 +109,8 @@ itcl::body EditBox::findEffects { {path ""} } {
   # for each effect
   # - look for implementation class of pattern *Effect
   # - get an icon  for the pushbutton
-  set iconDir $::env(Slicer3_HOME)/share/Slicer3/Modules/Editor/ImageData
+  set iconDir [file join [[$::Editor(singleton) GetLogic] GetModuleShareDirectory] "ImageData"]
+  
   set reader [vtkPNGReader New]
   foreach effect $_effects(list) {
     if { [info command ${effect}Effect] != "" } {
@@ -341,6 +342,7 @@ proc eeeee {} {
     error "editor not yet loaded"
   }
   set editor $::Editor(singleton)
+  set lib_tcl_dir [file join [[$editor GetLogic] GetModuleLibDirectory] "Tcl"]
 
   EditorTearDownGUI $::Editor(singleton)
 
@@ -354,16 +356,17 @@ proc eeeee {} {
   itcl::delete class Box
   itcl::delete class EffectSWidget
 
-  source $::env(Slicer3_HOME)/lib/Slicer3/Modules/Editor/Box.tcl
-  source $::env(Slicer3_HOME)/lib/Slicer3/Modules/Editor/EffectSWidget.tcl
-  source $::env(Slicer3_HOME)/lib/Slicer3/Modules/Editor/Labeler.tcl
-  foreach eff [glob $::env(Slicer3_HOME)/lib/Slicer3/Modules/Editor/*Effect.tcl] {
+
+  source $lib_tcl_dir/Box.tcl
+  source $lib_tcl_dir/EffectSWidget.tcl
+  source $lib_tcl_dir/Labeler.tcl
+  foreach eff [glob $lib_tcl_dir/*Effect.tcl] {
     source $eff
   }
-  foreach box [glob $::env(Slicer3_HOME)/lib/Slicer3/Modules/Editor/*Box.tcl] {
+  foreach box [glob $lib_tcl_dir/*Box.tcl] {
     source $box
   }
-  source $::env(Slicer3_HOME)/lib/Slicer3/Modules/Editor/EditColor.tcl
+  source $lib_tcl_dir/EditColor.tcl
 
   EditorBuildGUI $editor
 }

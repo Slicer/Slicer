@@ -45,7 +45,7 @@ int main (int argc, char *argv[])
     std::string searchPath(argv[1]);
     searchPath += myDir.GetFile(i);
     if (!itksys::SystemTools::FileIsDirectory(searchPath.c_str())) continue;
-    moduleFactory.SetSearchPath( searchPath );
+    moduleFactory.SetSearchPaths( searchPath );
     moduleFactory.SetWarningMessageCallback( WarningMessage );
     moduleFactory.SetErrorMessageCallback( ErrorMessage );
     moduleFactory.SetInformationMessageCallback( InformationMessage );

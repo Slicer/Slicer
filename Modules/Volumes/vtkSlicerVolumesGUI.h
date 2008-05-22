@@ -64,9 +64,9 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     // Description:
     // API for setting VolumeNode, VolumeLogic and
     // for both setting and observing them.
-    void SetModuleLogic ( vtkSlicerVolumesLogic *logic )
+    virtual void SetModuleLogic ( vtkSlicerVolumesLogic *logic )
         { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
-    void SetAndObserveModuleLogic ( vtkSlicerVolumesLogic *logic )
+    virtual void SetAndObserveModuleLogic ( vtkSlicerVolumesLogic *logic )
         { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
     vtkGetObjectMacro(DiffusionEditorWidget, vtkSlicerDiffusionEditorWidget);

@@ -40,12 +40,12 @@ public:
   // and in encoding entry points.
   const std::string& GetName() const { return Name; }
   
-  // Set the search path for modules (both command line modules and
-  // shared object modules).
-  void SetSearchPath(const std::string& path) { SearchPath = path; }
+  // Set the search paths for modules (both command line modules and
+  // shared object modules). A list of ':' or ';' separated paths.
+  void SetSearchPaths(const std::string& paths) { SearchPaths = paths; }
 
-  // Get the module search path.
-  const std::string& GetSearchPath() const { return SearchPath; }
+  // Get the module search paths.
+  const std::string& GetSearchPaths() const { return SearchPaths; }
 
   // Scan for modules in the module search path.  This will locate
   // command line modules as well as shared object modules.
@@ -99,7 +99,7 @@ protected:
 private:
 
   std::string Name;
-  std::string SearchPath;
+  std::string SearchPaths;
   std::string CachePath;
 
   CallbackFunctionType WarningMessageCallback;

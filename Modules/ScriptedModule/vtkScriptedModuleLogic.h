@@ -41,11 +41,18 @@ public:
     vtkSetAndObserveMRMLNodeMacro( this->ScriptedModuleNode, n);
     }
 
-  // Description: The name of the Module - this is used to 
-  // construct the proc invocations
-  vtkGetStringMacro (ModuleName);
-  vtkSetStringMacro (ModuleName);
-  
+  // Description:
+  // Get the path to the module's resources directory.
+  // Override the parent since the ModuleLocation is usually inside
+  // an extra Tcl/ or Python/ subdir (strip it).
+  virtual const char* GetModuleShareDirectory();
+
+  // Description:
+  // Get the path to the module's library directory.
+  // Override the parent since the ModuleLocation is usually inside
+  // an extra Tcl/ or Python/ subdir (strip it).
+  virtual const char* GetModuleLibDirectory();
+
 protected:
   
 private:
@@ -55,7 +62,6 @@ private:
   void operator=(const vtkScriptedModuleLogic&);
 
   vtkMRMLScriptedModuleNode* ScriptedModuleNode;
-  char *ModuleName;
 };
 
 #endif

@@ -55,7 +55,6 @@ vtkScriptedModuleGUI::vtkScriptedModuleGUI()
 {
   this->Logic = NULL;
   this->ScriptedModuleNode = NULL;
-  this->ModuleName = NULL;
   this->Language = vtkScriptedModuleGUI::Tcl;
 }
 
@@ -88,7 +87,6 @@ vtkScriptedModuleGUI::~vtkScriptedModuleGUI()
 
   this->SetLogic (NULL);
   this->SetScriptedModuleNode (NULL);
-  this->SetModuleName (NULL);
 }
 
 

@@ -45,10 +45,10 @@ public:
    // Description: Get/Set module logic
   vtkGetObjectMacro (Logic, vtkQdecModuleLogic);
   
-  void SetModuleLogic ( vtkQdecModuleLogic *logic )
+  virtual void SetModuleLogic ( vtkQdecModuleLogic *logic )
   { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
    
-  void SetAndObserveModuleLogic ( vtkQdecModuleLogic *logic )
+  virtual void SetAndObserveModuleLogic ( vtkQdecModuleLogic *logic )
   { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
   // override method in parent class

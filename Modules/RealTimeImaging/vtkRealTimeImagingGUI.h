@@ -42,9 +42,9 @@ class VTK_REALTIMEIMAGING_EXPORT vtkRealTimeImagingGUI : public vtkSlicerModuleG
     // Description:
     // API for setting VolumeNode, VolumeLogic and
     // for both setting and observing them.
-    void SetModuleLogic ( vtkRealTimeImagingLogic *logic )
+    virtual void SetModuleLogic ( vtkRealTimeImagingLogic *logic )
         { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
-    void SetAndObserveModuleLogic ( vtkRealTimeImagingLogic *logic )
+    virtual void SetAndObserveModuleLogic ( vtkRealTimeImagingLogic *logic )
         { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
     // Description:

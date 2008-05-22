@@ -64,7 +64,6 @@
 #define ONTOLOGY_FRAME
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkQueryAtlasGUI );
 vtkCxxRevisionMacro ( vtkQueryAtlasGUI, "$Revision: 1.0 $");
 
 
@@ -76,6 +75,19 @@ vtkCxxRevisionMacro ( vtkQueryAtlasGUI, "$Revision: 1.0 $");
 #define _fg 0.75
 #define _fb 0.75
 
+
+//------------------------------------------------------------------------------
+vtkQueryAtlasGUI* vtkQueryAtlasGUI::New()
+{
+  // First try to create the object from the vtkObjectFactory
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkQueryAtlasGUI");
+  if(ret)
+    {
+      return (vtkQueryAtlasGUI*)ret;
+    }
+  // If the factory was unable to create the object, then create it here.
+  return new vtkQueryAtlasGUI;
+}
 
 //---------------------------------------------------------------------------
 vtkQueryAtlasGUI::vtkQueryAtlasGUI ( )
@@ -2090,16 +2102,20 @@ vtkIntArray* vtkQueryAtlasGUI::NewObservableEvents()
 //---------------------------------------------------------------------------
 void vtkQueryAtlasGUI::LoadTclPackage ( )
 {
-    std::string qaTclCommand =  "set ::QA_PACKAGE {}; ";
-                qaTclCommand += "package forget QueryAtlas; ";
-                qaTclCommand += "set dir \"$::Slicer3_HOME/";
-                qaTclCommand += Slicer3_INSTALL_MODULES_SHARE_DIR;
-                qaTclCommand += "/QueryAtlas\" ; ";
-                qaTclCommand += "  if { [ file exists $dir/Tcl/pkgIndex.tcl ] } { ";
-                qaTclCommand += "    lappend ::auto_path $dir; ";
-                qaTclCommand += "    package require QueryAtlas ";
-                qaTclCommand += "  }";
-    this->Script ( qaTclCommand.c_str() ); 
+  if (!this->GetLogic())
+    {
+    return;
+    }
+  std::string qaTclCommand =  "set ::QA_PACKAGE {}; ";
+  qaTclCommand += "package forget QueryAtlas; ";
+  qaTclCommand += "set dir \"";
+  qaTclCommand += this->GetLogic()->GetModuleShareDirectory();
+  qaTclCommand += "\";";
+  qaTclCommand += "  if { [ file exists $dir/Tcl/pkgIndex.tcl ] } { ";
+  qaTclCommand += "    lappend ::auto_path $dir; ";
+  qaTclCommand += "    package require QueryAtlas ";
+  qaTclCommand += "  }";
+  this->Script ( qaTclCommand.c_str() ); 
 }
 
 //---------------------------------------------------------------------------

@@ -55,9 +55,9 @@ class VTK_WFENGINEMODULE_EXPORT vtkWFEngineModuleGUI : public vtkSlicerModuleGUI
     // Get methods on class members ( no Set methods required. )
     vtkGetObjectMacro ( Logic, vtkWFEngineModuleLogic);
         
-    void SetModuleLogic ( vtkWFEngineModuleLogic *logic )
+    virtual void SetModuleLogic ( vtkWFEngineModuleLogic *logic )
     { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
-    void SetAndObserveModuleLogic ( vtkWFEngineModuleLogic *logic )
+    virtual void SetAndObserveModuleLogic ( vtkWFEngineModuleLogic *logic )
     { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
 
     // Description:

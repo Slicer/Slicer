@@ -24,10 +24,8 @@ vtkSlicerModuleGUI::vtkSlicerModuleGUI ( ) {
     this->ApplicationGUI = NULL;
     this->Logo = 0;
     this->Built = false;
+    this->ModuleName = NULL;
 }
-
-
-
 
 //---------------------------------------------------------------------------
 vtkSlicerModuleGUI::~vtkSlicerModuleGUI ( ) {
@@ -76,6 +74,7 @@ vtkSlicerModuleGUI::~vtkSlicerModuleGUI ( ) {
     this->SetApplicationGUI( NULL );
     this->Logo = 0;
     this->Built = false;
+    this->SetModuleName (NULL);
 }
 
 
@@ -177,7 +176,11 @@ void vtkSlicerModuleGUI::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "Logo: " << this->GetLogo() << "\n";
 }
 
-
+//---------------------------------------------------------------------------
+void vtkSlicerModuleGUI::SetModuleLogic( vtkSlicerLogic * ) 
+{
+  vtkErrorMacro("vtkSlicerModuleGUI::SetModuleLogic was called! The " << (this->GetGUIName() ? this->GetGUIName() : "unknown") << " Module GUI object was probably not constructed properly otherwise its virtual SetModuleLogic function would have been called instead...");
+}
 
 //---------------------------------------------------------------------------
 vtkKWIcon *

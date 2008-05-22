@@ -171,11 +171,13 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
 
     vtkGetMacro (ProcessingMRMLEvent, int);
     
-    void SetModuleLogic ( vtkQueryAtlasLogic *logic )
-    { this->SetLogic ( vtkObjectPointer (&this->Logic), logic ); }
-    void SetAndObserveModuleLogic ( vtkQueryAtlasLogic *logic )
-    { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), logic ); }
-
+    virtual void SetModuleLogic ( vtkSlicerLogic *logic )
+    { this->SetLogic ( vtkObjectPointer (&this->Logic), 
+                       dynamic_cast<vtkQueryAtlasLogic*>(logic) ); }
+    virtual void SetAndObserveModuleLogic ( vtkSlicerLogic *logic )
+    { this->SetAndObserveLogic ( vtkObjectPointer (&this->Logic), 
+                                 dynamic_cast<vtkQueryAtlasLogic*>(logic));}
+    
     // Description:
     // This method builds the QueryAtlas module GUI
     virtual void BuildGUI ( ) ;
@@ -323,6 +325,8 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
  protected:
     vtkQueryAtlasGUI ( );
     virtual ~vtkQueryAtlasGUI ( );
+    vtkQueryAtlasGUI ( const vtkQueryAtlasGUI& ); // Not implemented.
+    void operator = ( const vtkQueryAtlasGUI& ); //Not implemented.
 
     // Module logic and mrml pointers
     vtkQueryAtlasLogic *Logic;
@@ -468,8 +472,6 @@ class VTK_QUERYATLAS_EXPORT vtkQueryAtlasGUI : public vtkSlicerModuleGUI
     //ETX
 
 private:
-    vtkQueryAtlasGUI ( const vtkQueryAtlasGUI& ); // Not implemented.
-    void operator = ( const vtkQueryAtlasGUI& ); //Not implemented.
 };
 
 

@@ -83,11 +83,6 @@ public:
   virtual void Enter ( ){};
   virtual void Exit ( ){};
 
-  // Description: The name of the Module - this is used to 
-  // construct the proc invocations
-  vtkGetStringMacro (ModuleName);
-  vtkSetStringMacro (ModuleName);
-
   // Description: set an observer by number (work around
   // limitation in kwwidgets tcl wrapping)
   unsigned long AddObserverByNumber (vtkObject *observee, unsigned long event);
@@ -123,7 +118,6 @@ private:
   
   vtkScriptedModuleLogic *Logic;
   vtkMRMLScriptedModuleNode* ScriptedModuleNode;
-  char *ModuleName;
 
   int Language;
 };

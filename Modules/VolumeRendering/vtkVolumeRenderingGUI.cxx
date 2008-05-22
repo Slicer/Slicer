@@ -511,7 +511,7 @@ void vtkVolumeRenderingGUI::Enter(void)
     //Load Presets
 
 
-    if(!this->Presets)
+    if(!this->Presets && this->GetLogic())
     {
             vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
         //Instance internal MRMLScene for Presets
@@ -520,30 +520,10 @@ void vtkVolumeRenderingGUI::Enter(void)
         this->Presets->RegisterNodeClass(vrNode);
         vrNode->Delete();
 
+        vtksys_stl::string presetFileName(
+          this->GetLogic()->GetModuleShareDirectory());
+        presetFileName += "/presets.xml";
 
-        //GetPath
-        vtksys_stl::string slicerHome;
-        if (vtksys::SystemTools::GetEnv("Slicer3_HOME") == NULL)
-        {
-            if (vtksys::SystemTools::GetEnv("PWD") != NULL)
-            {
-                slicerHome =  vtksys_stl::string(vtksys::SystemTools::GetEnv("PWD"));
-            }
-            else
-            {
-                slicerHome =  vtksys_stl::string("");
-            }
-        }
-        else
-        {
-            slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("Slicer3_HOME"));
-        }
-        // check to see if slicer home was set
-        vtksys_stl::vector<vtksys_stl::string> filesVector;
-        filesVector.push_back(""); // for relative path
-        filesVector.push_back(slicerHome);
-        filesVector.push_back(vtksys_stl::string(Slicer3_INSTALL_MODULES_SHARE_DIR) + "/VolumeRendering/presets.xml");
-        vtksys_stl::string presetFileName = vtksys::SystemTools::JoinPath(filesVector);
         this->Presets->SetURL(presetFileName.c_str());
         this->Presets->Connect();
         this->NS_VolumeRenderingDataSlicer->SetAdditionalMRMLScene(this->Presets);

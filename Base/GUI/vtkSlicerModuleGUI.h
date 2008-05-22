@@ -74,8 +74,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
 
   // Description:
   // Set the module logic
-  virtual void SetModuleLogic( vtkSlicerLogic *logic ) { }; 
+  virtual void SetModuleLogic( vtkSlicerLogic * ); 
   
+  // Description: 
+  // The name of the Module
+  vtkGetStringMacro (ModuleName);
+  vtkSetStringMacro (ModuleName);
+
   //Description:
   // Implemented module initialization if needed
   virtual void Init() { };
@@ -115,6 +120,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModuleGUI : public vtkSlicerComponentG
    };
 //ETX
  protected:
+
+  char *ModuleName;
 
     // Description:
     // This user interface panel is populated with the GUI's widgets,

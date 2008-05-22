@@ -40,13 +40,54 @@ vtkScriptedModuleLogic* vtkScriptedModuleLogic::New()
 vtkScriptedModuleLogic::vtkScriptedModuleLogic()
 {
   this->ScriptedModuleNode = NULL;
-  this->ModuleName = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkScriptedModuleLogic::~vtkScriptedModuleLogic()
 {
   this->SetScriptedModuleNode(NULL);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkScriptedModuleLogic::GetModuleShareDirectory()
+{
+  if (!this->IsModuleShareDirectoryDefined())
+    {
+    vtksys_stl::string share_directory(
+      this->Superclass::GetModuleShareDirectory());
+    vtksys_stl::string subdir = 
+      vtksys::SystemTools::GetFilenameName(share_directory.c_str());
+    if (!strcmp(subdir.c_str(), "Python") ||
+        !strcmp(subdir.c_str(), "Tcl"))
+      {
+      share_directory = 
+        vtksys::SystemTools::GetFilenamePath(share_directory.c_str());
+      }
+    this->SetModuleShareDirectory(share_directory.c_str());
+    }
+
+  return this->Superclass::GetModuleShareDirectory();
+}
+
+//----------------------------------------------------------------------------
+const char* vtkScriptedModuleLogic::GetModuleLibDirectory()
+{
+  if (!this->IsModuleLibDirectoryDefined())
+    {
+    vtksys_stl::string lib_directory(
+      this->Superclass::GetModuleLibDirectory());
+    vtksys_stl::string subdir = 
+      vtksys::SystemTools::GetFilenameName(lib_directory.c_str());
+    if (!strcmp(subdir.c_str(), "Python") ||
+        !strcmp(subdir.c_str(), "Tcl"))
+      {
+      lib_directory = 
+        vtksys::SystemTools::GetFilenamePath(lib_directory.c_str());
+      }
+    this->SetModuleLibDirectory(lib_directory.c_str());
+    }
+
+  return this->Superclass::GetModuleLibDirectory();
 }
 
 //----------------------------------------------------------------------------

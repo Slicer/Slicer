@@ -1,4 +1,12 @@
 
+# TODO: $::env(Slicer3_HOME)/share/Slicer3/Modules should be avoided, since
+# the module could have been loaded from the user module paths (see
+# vtkSlicerApplication::GetModulePaths), therefore its testing data are
+# not inside env(Slicer3_HOME). Fix this by using 
+# vtkSlicerModuleLogic::GetModuleShareDirectory (i.e. find the Volumes
+# module reference, its logic, and call this method to retrive the full
+# path to the share/ directory for this module)
+
 set sceneFileName $::env(Slicer3_HOME)/share/MRML/Testing/diffusionEditor.mrml
 
 $::slicer3::MRMLScene SetURL $sceneFileName
