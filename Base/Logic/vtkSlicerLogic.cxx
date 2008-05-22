@@ -23,6 +23,7 @@ vtkStandardNewMacro(vtkSlicerLogic);
 //----------------------------------------------------------------------------
 vtkSlicerLogic::vtkSlicerLogic()
 {
+  this->Name = NULL;
   this->MRMLScene = NULL;
   this->InMRMLCallbackFlag = 0;
   this->InLogicCallbackFlag = 0;
@@ -41,7 +42,8 @@ vtkSlicerLogic::vtkSlicerLogic()
 //----------------------------------------------------------------------------
 vtkSlicerLogic::~vtkSlicerLogic()
 {
-   
+  this->SetName(NULL);
+
   this->SetAndObserveMRMLScene (NULL);
 
   if (this->MRMLObserverManager)
