@@ -419,14 +419,15 @@ static const unsigned char image_ViewRockRadioOn[] =
 static const unsigned int  image_ViewSelect_width          = 21;
 static const unsigned int  image_ViewSelect_height         = 21;
 static const unsigned int  image_ViewSelect_pixel_size     = 3;
-static const unsigned long image_ViewSelect_length         = 236;
+static const unsigned long image_ViewSelect_length         = 320;
 static const unsigned long image_ViewSelect_decoded_length = 1323;
 
 static const unsigned char image_ViewSelect[] = 
-  "eNpjYKAU/CcXwLWTZziy9lWr/kNQa9tUOJsk7UZGlmBkBiRNTKwh2vG4AVP7g4dfNm3eAy"
-  "Th2vG4AVk70M1Ae4F6IcjExBwoAteO1Q1otgNthNsOdAmy7VjdgKbd2NgKjMyBpKGhBUQL"
-  "shvICHkibccFkN2ASzuci98NBLXjdwN+7QTdQKR2ItM/tXIcQQDJDmlpaRAGGbYbGRnNnD"
-  "nT1dWVbMcDTaC63ykBAL+tACg=";
+  "eNrFlD0OgkAQhbkSPxF/bkavN/ASlNpabsUJKN2CilZJSAj4hUk2YtxdFY2TyWYyO2/fy8"
+  "xAEMy14VP7IjzLMjlfCX7E3vd913Vt2zZNc50aGfLcPmWXJLeOJtd1zTsO8bxPJs8H8e1u"
+  "b2LyZVnyAjU2dhQKPIpWoy84k2Qj8KIoqqpyiEebgZ/15XA8cRq4Ukpr7RAvcDTDC1Y8SV"
+  "IyBk6Nlx1Gw44SL/sDPI7Xo6ecYbh8S7yt817x0nmbeTvPTJks86VSTY2MzN0hnq1DGzWw"
+  "6KmRka2jxv3FoUECWdH7wLbz//pdzLEbvLBNKw==";
 
 /* 
  * Resource generated for file:

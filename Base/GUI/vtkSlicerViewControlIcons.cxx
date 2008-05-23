@@ -38,7 +38,7 @@ vtkSlicerViewControlIcons::vtkSlicerViewControlIcons ( )
     this->OrthoButtonIcon = vtkKWIcon::New ( );
     this->PerspectiveButtonIcon = vtkKWIcon::New ( );
     this->CenterButtonIcon = vtkKWIcon::New ( );
-    this->SelectViewButtonIcon = vtkKWIcon::New ( );
+    this->ScreenGrabButtonIcon = vtkKWIcon::New ( );
     this->StereoButtonIcon = vtkKWIcon::New ( );
     this->LookFromOffButtonIcon = vtkKWIcon::New ( );
     this->LookFromOnButtonIcon = vtkKWIcon::New ( );
@@ -54,7 +54,11 @@ vtkSlicerViewControlIcons::vtkSlicerViewControlIcons ( )
     this->NavZoomInIcon = vtkKWIcon::New();
     this->NavZoomOutIcon = vtkKWIcon::New();
     this->PercentZoomIcon = vtkKWIcon::New();
-
+    this->PitchIcon = vtkKWIcon::New();
+    this->RollIcon = vtkKWIcon::New();
+    this->YawIcon = vtkKWIcon::New();
+    this->ZoomInIcon = vtkKWIcon::New();
+    this->ZoomOutIcon = vtkKWIcon::New();
 
     //--- read in image data and assign to Icons.
     this->AssignImageDataToIcons ( );
@@ -163,10 +167,10 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
       this->CenterButtonIcon->Delete ( );
       this->CenterButtonIcon = NULL;
       }
-    if ( this->SelectViewButtonIcon )
+    if ( this->ScreenGrabButtonIcon )
       {
-      this->SelectViewButtonIcon->Delete ( );
-      this->SelectViewButtonIcon = NULL;
+      this->ScreenGrabButtonIcon->Delete ( );
+      this->ScreenGrabButtonIcon = NULL;
       }
     if ( this->StereoButtonIcon )
       {
@@ -229,7 +233,31 @@ vtkSlicerViewControlIcons::~vtkSlicerViewControlIcons ( )
       this->PercentZoomIcon->Delete();
       this->PercentZoomIcon = NULL;
       }
-
+    if ( this->PitchIcon)
+      {
+      this->PitchIcon->Delete();
+      this->PitchIcon = NULL;
+      }
+    if ( this->RollIcon)
+      {
+      this->RollIcon->Delete();
+      this->RollIcon = NULL;
+      }
+    if ( this->YawIcon)
+      {
+      this->YawIcon->Delete();
+      this->YawIcon = NULL;
+      }
+    if ( this->ZoomInIcon)
+      {
+      this->ZoomInIcon->Delete();
+      this->ZoomInIcon = NULL;      
+      }
+    if ( this->ZoomOutIcon)
+      {
+      this->ZoomOutIcon->Delete();
+      this->ZoomOutIcon = NULL;      
+      }
 }
 
 
@@ -351,7 +379,7 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                    image_ViewCenter_height,
                                    image_ViewCenter_pixel_size,
                                    image_ViewCenter_length, 0 );                                   
-  this->SelectViewButtonIcon->SetImage ( image_ViewSelect,
+  this->ScreenGrabButtonIcon->SetImage ( image_ViewSelect,
                                    image_ViewSelect_width,
                                    image_ViewSelect_height,
                                    image_ViewSelect_pixel_size,
@@ -396,11 +424,11 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                       image_SlicerCamera_height,
                                       image_SlicerCamera_pixel_size,
                                       image_SlicerCamera_length, 0);                                      
-  this->SelectSceneSnapshotIcon->SetImage ( image_ViewSelect,
-                                            image_ViewSelect_width,
-                                            image_ViewSelect_height,
-                                            image_ViewSelect_pixel_size,
-                                            image_ViewSelect_length, 0);                                            
+  this->SelectSceneSnapshotIcon->SetImage ( image_ViewCameraSelect,
+                                            image_ViewCameraSelect_width,
+                                            image_ViewCameraSelect_height,
+                                            image_ViewCameraSelect_pixel_size,
+                                            image_ViewCameraSelect_length, 0);                                            
 
     this->NavZoomInIcon->SetImage( image_NavZoomIn,
                                    image_NavZoomIn_width,
@@ -415,6 +443,31 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                     image_PercentRelativeZoom_height,
                                     image_PercentRelativeZoom_pixel_size,
                                      image_PercentRelativeZoom_length, 0);
+    this->ZoomInIcon->SetImage( image_SlicerZoomIn,
+                                image_SlicerZoomIn_width,
+                                image_SlicerZoomIn_height,
+                                image_SlicerZoomIn_pixel_size,
+                                image_SlicerZoomIn_length, 0);
+    this->ZoomOutIcon->SetImage( image_SlicerZoomOut,
+                                 image_SlicerZoomOut_width,
+                                 image_SlicerZoomOut_height,
+                                 image_SlicerZoomOut_pixel_size,
+                                 image_SlicerZoomOut_length, 0);
+    this->PitchIcon->SetImage ( image_ViewPitch,
+                                image_ViewPitch_width,
+                                image_ViewPitch_height,
+                                image_ViewPitch_pixel_size,
+                                image_ViewPitch_length, 0);
+    this->RollIcon->SetImage ( image_ViewRoll,
+                                image_ViewRoll_width,
+                                image_ViewRoll_height,
+                                image_ViewRoll_pixel_size,
+                                image_ViewRoll_length, 0);
+    this->YawIcon->SetImage ( image_ViewYaw,
+                               image_ViewYaw_width,
+                               image_ViewYaw_height,
+                               image_ViewYaw_pixel_size,
+                               image_ViewYaw_length, 0);
     
 }
 
@@ -449,7 +502,7 @@ void vtkSlicerViewControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "OrthoButtonIcon: " << this->GetOrthoButtonIcon () << "\n";
     os << indent << "PerspectiveButtonIcon: " << this->GetPerspectiveButtonIcon () << "\n";
     os << indent << "CenterButtonIcon: " << this->GetCenterButtonIcon () << "\n";
-    os << indent << "SelectViewButtonIcon: " << this->GetSelectViewButtonIcon () << "\n";
+    os << indent << "ScreenGrabButtonIcon: " << this->GetScreenGrabButtonIcon () << "\n";
     os << indent << "StereoButtonIcon: " << this->GetStereoButtonIcon () << "\n";
     os << indent << "LookFromOffButtonIcon: " << this->GetLookFromOffButtonIcon () << "\n";
     os << indent << "RotateAroundOffButtonIcon: " << this->GetRotateAroundOffButtonIcon () << "\n";
@@ -460,4 +513,9 @@ void vtkSlicerViewControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "PercentZoomIcon: " << this->GetPercentZoomIcon () << "\n";
     os << indent << "SelectSceneSnapshotIcon: " << this->GetSelectSceneSnapshotIcon ( ) << "\n";
     os << indent << "SceneSnapshotIcon: " << this->GetSceneSnapshotIcon ( ) << "\n";
+    os << indent << "PitchIcon: " << this->GetPitchIcon() << "\n";
+    os << indent << "RollIcon: " << this->GetRollIcon() << "\n";
+    os << indent << "YawIcon: " << this->GetYawIcon() << "\n";
+    os << indent << "ZoomInIcon: " << this->GetZoomInIcon() << "\n";
+    os << indent << "ZoomOutIcon: " << this->GetZoomOutIcon() << "\n";    
 }

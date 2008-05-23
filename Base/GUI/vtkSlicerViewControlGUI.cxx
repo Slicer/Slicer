@@ -29,9 +29,12 @@
 #include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
 #include "vtkKWEntryWithLabel.h"
+#include "vtkKWSimpleEntryDialog.h"
 #include "vtkKWTkUtilities.h"
 #include "vtkKWRenderWidget.h"
 #include "vtkSlicerViewControlIcons.h"
+#include "vtkSlicerFoundationIcons.h"
+#include "vtkMRMLSceneSnapshotNode.h"
 
 // uncomment in order to stub out the NavZoom widget.
 //#define NAVZOOMWIDGET_DEBUG
@@ -59,6 +62,7 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->RockCount = 0;
   this->NavigationZoomWidgetWid = 150;
   this->NavigationZoomWidgetHit = 80;
+  this->MySnapshotName = "view";
 
   this->SliceMagnification = 10.0;
   this->SliceInteracting = 0;
@@ -68,9 +72,10 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
   this->RockButton = NULL;
   this->OrthoButton = NULL;
 
+  this->NameDialog = NULL;
   this->CenterButton = NULL;
   this->StereoButton = NULL;
-  this->SelectViewButton = NULL;
+  this->ScreenGrabButton = NULL;
   this->SelectCameraButton = NULL;
   this->LookFromButton = NULL;
   this->RotateAroundButton = NULL;
@@ -124,6 +129,7 @@ vtkSlicerViewControlGUI::vtkSlicerViewControlGUI ( )
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::TearDownGUI ( )
 {
+  this->SelectSceneSnapshotMenuButton->GetMenu()->DeleteAllItems();
   this->RemoveSliceEventObservers();
   this->RemoveMainViewerEventObservers();
   this->SetAndObserveMRMLScene ( NULL );
@@ -143,6 +149,12 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
   this->RockCount = 0;  
   this->SliceInteracting = 0;
 
+  if ( this->NameDialog )
+    {
+    this->NameDialog->SetParent ( NULL );
+    this->NameDialog->Delete();
+    this->NameDialog = NULL;
+    }
   if ( this->SliceMagnifier )
     {
     this->SliceMagnifier->Delete();
@@ -193,11 +205,11 @@ vtkSlicerViewControlGUI::~vtkSlicerViewControlGUI ( )
     this->CenterButton->Delete();
     this->CenterButton = NULL;
     }
-  if ( this->SelectViewButton ) 
+  if ( this->ScreenGrabButton ) 
     {
-    this->SelectViewButton->SetParent ( NULL );
-    this->SelectViewButton->Delete();
-    this->SelectViewButton = NULL;
+    this->ScreenGrabButton->SetParent ( NULL );
+    this->ScreenGrabButton->Delete();
+    this->ScreenGrabButton = NULL;
     }
   if ( this->SelectCameraButton ) 
     {
@@ -431,7 +443,7 @@ void vtkSlicerViewControlGUI::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "RotateAroundButton: " << this->GetRotateAroundButton(  ) << "\n";
   os << indent << "CenterButton: " << this->GetCenterButton(  ) << "\n";
   os << indent << "StereoButton: " << this->GetStereoButton(  ) << "\n";
-  os << indent << "SelectViewButton: " << this->GetSelectViewButton(  ) << "\n";
+  os << indent << "ScreenGrabButton: " << this->GetScreenGrabButton(  ) << "\n";
   os << indent << "SelectCameraButton: " << this->GetSelectCameraButton(  ) << "\n";
   os << indent << "VisibilityButton: " << this->GetVisibilityButton(  ) << "\n";
   os << indent << "SelectSceneSnapshotMenuButton: " << this->GetSelectSceneSnapshotMenuButton ( ) << "\n";
@@ -488,7 +500,7 @@ void vtkSlicerViewControlGUI::RemoveGUIObservers ( )
     this->OrthoButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->CenterButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->SelectViewButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ScreenGrabButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SelectCameraButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityButton->GetMenu()->RemoveObservers (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ZoomEntry->GetWidget()->RemoveObservers (vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -511,7 +523,7 @@ void vtkSlicerViewControlGUI::AddGUIObservers ( )
     this->OrthoButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->StereoButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->CenterButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-    this->SelectViewButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->ScreenGrabButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->SelectCameraButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->VisibilityButton->GetMenu()->AddObserver (vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand );
     this->ZoomEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -625,9 +637,111 @@ void vtkSlicerViewControlGUI::UpdateFromMRML()
 
   this->UpdateViewFromMRML();
   this->UpdateSlicesFromMRML();
+  this->UpdateSceneSnapshotsFromMRML();
   this->RequestNavigationRender ( );
 }
 
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::UpdateSceneSnapshotsFromMRML()
+{
+
+  if ( this->SceneClosing )
+    {
+    return;
+    }
+  
+  if (this->MRMLScene == NULL)
+    {
+    return;
+    }
+
+  vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
+  
+  //---- update the SelectSceneSnapshotMenu...
+  if (this->GetMRMLScene()!= NULL  && appGUI != NULL)
+    {
+
+    const char *name;
+    int item;
+    const char *imageName;
+
+    //--- count number of vtkMRMLSceneSnapshotNodes in the scene.
+    //--- if there are none, then make the GUI current
+    int num = this->GetMRMLScene()->GetNumberOfNodesByClass ( "vtkMRMLSceneSnapshotNode");
+    //--- refresh the menu.
+    this->GetSelectSceneSnapshotMenuButton()->GetMenu()->DeleteAllItems();
+
+    for (int i = 0; i < num; i++ )
+      {
+      name = this->GetMRMLScene()->GetNthNodeByClass ( i, "vtkMRMLSceneSnapshotNode")->GetName();
+      vtkKWMenu *m1 = vtkKWMenu::New();
+      m1->SetParent ( this->GetSelectSceneSnapshotMenuButton()->GetMenu());
+      m1->Create();
+      this->GetSelectSceneSnapshotMenuButton()->GetMenu()->AddCascade (name, m1);
+
+      std::string cmd;
+      cmd = "RestoreSceneSnapshot";
+      cmd += " ";
+      cmd += name;
+      item = m1->AddCommand ( "restore", this, cmd.c_str() );
+      imageName = "RestoreImage";
+      vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  appGUI->GetSlicerFoundationIcons()->GetSlicerGoIcon ( ));
+      m1->SetItemImage ( item, imageName);
+      m1->SetItemCompoundModeToLeft ( item );
+          
+      cmd = "DeleteSceneSnapshot";
+      cmd += " ";
+      cmd += name;
+      item = m1->AddCommand ( "delete", this, cmd.c_str() );
+      imageName = "DeleteImage";
+      vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  appGUI->GetSlicerFoundationIcons()->GetSlicerDeleteIcon ( ));
+      m1->SetItemImage ( item, imageName);
+      m1->SetItemCompoundModeToLeft ( item );
+
+      m1->AddSeparator ();
+      m1->AddCommand ( "close");
+      m1->Delete();
+      }
+    }
+}
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::RestoreSceneSnapshot( const char *nom )
+{
+ 
+  vtkCollection *col = this->MRMLScene->GetNodesByName ( nom );
+  col->InitTraversal();
+
+  //--- get the first one. Name checking should make it unique...
+  vtkMRMLSceneSnapshotNode *node =  vtkMRMLSceneSnapshotNode::SafeDownCast (col->GetNextItemAsObject() );
+  if (node)
+    {
+    this->MRMLScene->SaveStateForUndo();
+    node->RestoreScene();
+    }
+}
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::DeleteSceneSnapshot(const char *nom )
+{
+  vtkCollection *col = this->MRMLScene->GetNodesByName ( nom );
+  col->InitTraversal();
+
+  //--- get the first one. Name checking should make it unique...
+  vtkMRMLSceneSnapshotNode *node =  vtkMRMLSceneSnapshotNode::SafeDownCast (col->GetNextItemAsObject() );
+  if ( node)
+    {
+    this->MRMLScene->SaveStateForUndo();
+    this->MRMLScene->RemoveNode(node);
+    this->UpdateSceneSnapshotsFromMRML();
+    }
+}
 
 
 
@@ -886,6 +1000,65 @@ void vtkSlicerViewControlGUI::ResetNavigationCamera ( )
 
 
 
+//----------------------------------------------------------------------------
+const char* vtkSlicerViewControlGUI::CreateSceneSnapshotNode( const char *nodeName)
+{
+  vtkMRMLSceneSnapshotNode *node = NULL;
+  vtkMRMLSceneSnapshotNode *retNode = NULL;
+  const char *id;
+
+  node = vtkMRMLSceneSnapshotNode::SafeDownCast (this->MRMLScene->CreateNodeByClass( "vtkMRMLSceneSnapshotNode" ));
+  if (node == NULL)
+    {
+    return (NULL);
+    }
+
+  // Invoke a new node event giving an observer an opportunity to
+  // configure the node
+//  this->InvokeEvent(vtkSlicerNodeSelectorWidget::NewNodeEvent, node);
+
+  node->SetScene(this->MRMLScene);
+
+  std::stringstream ss;
+  const char *name;
+  if (nodeName == NULL || !strcmp(nodeName,"") )
+    {
+    name = this->MRMLScene->GetTagByClassName("vtkMRMLSceneSnapshotNode");
+    }
+  else
+    {
+    name = nodeName;
+    }
+
+  ss << this->MRMLScene->GetUniqueNameByString(name);
+  node->SetName(ss.str().c_str());
+  vtkDebugMacro("\tset the name to " << node->GetName() << endl);
+
+  // the ID is set in the call to AddNode
+  retNode = vtkMRMLSceneSnapshotNode::SafeDownCast (this->MRMLScene->AddNode(node));
+  id = node->GetID();
+  node->Delete();
+  return ( id );
+
+}
+
+
+//---------------------------------------------------------------------------
+int vtkSlicerViewControlGUI::InvokeNameDialog( const char *msg, const char *name)
+{
+  //--- now name the node...
+  vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+  this->NameDialog->SetText ( msg );
+  entry->GetWidget()->SetValue(name);
+  int result = this->NameDialog->Invoke();
+  if ( !result )
+    {
+    return 0;
+    }
+  return 1;
+}
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
@@ -951,24 +1124,16 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
           }
         }
 
-      //--- restore or delete a scene snapshot
-      if ( m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
-        {
-        }
-      //--- take a scene snapshot
-      if ( p == this->SceneSnapshotButton && event == vtkKWPushButton::InvokedEvent )
-        {
-        }
-
       // Make requested changes to the ViewNode      
       // save state for undo
       if ( m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
            m == this->VisibilityButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
            m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
-           m == this->SelectViewButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||           
+           m == this->ScreenGrabButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||           
            m == this->SelectCameraButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
            p == this->CenterButton && event == vtkKWPushButton::InvokedEvent ||                      
            p == this->OrthoButton && event == vtkKWPushButton::InvokedEvent ||                      
+           p == this->SceneSnapshotButton && event == vtkKWPushButton::InvokedEvent ||
            b == this->SpinButton && event == vtkKWCheckButton::SelectedStateChangedEvent ||                      
            b == this->RockButton && event == vtkKWCheckButton::SelectedStateChangedEvent ||                      
            r == this->RotateAroundButton && event == vtkKWCheckButton::SelectedStateChangedEvent ||                      
@@ -1038,7 +1203,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
               this->RequestNavigationRender();
               }            
             }
-          else if ( m == this->SelectViewButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+          else if ( m == this->ScreenGrabButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
             {
             }
           else if ( m == this->SelectCameraButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
@@ -1050,9 +1215,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
             this->MainViewResetFocalPoint ( );
             this->RequestNavigationRender();
             }
-
-          // toggle the Ortho/Perspective rendering state
-          if ( (p == this->OrthoButton) && (event == vtkKWPushButton::InvokedEvent ) && vn )
+          else if ( (p == this->OrthoButton) && (event == vtkKWPushButton::InvokedEvent ) && vn )
             {
             if ( vn->GetRenderMode() == vtkMRMLViewNode::Orthographic )
               {
@@ -1063,7 +1226,42 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
               vn->SetRenderMode(vtkMRMLViewNode::Orthographic );
               }
             }
+          else if ( p == this->SceneSnapshotButton  && event == vtkKWPushButton::InvokedEvent )
+            {
+            //--- create a new node...
+            const char *id =  this->CreateSceneSnapshotNode ( this->MySnapshotName);
+            vtkMRMLSceneSnapshotNode *snapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast (this->MRMLScene->GetNodeByID( id ));
 
+            if ( snapshotNode == NULL )
+              {
+              return;
+              }
+          
+            int result =this->InvokeNameDialog ("Type a name your snapshot.", snapshotNode->GetName() );
+            std::stringstream ss;
+            if (!result) 
+              {
+              this->MRMLScene->RemoveNode(snapshotNode);
+              this->UpdateSceneSnapshotsFromMRML();
+              snapshotNode = NULL;
+              }
+            else 
+              {
+              vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+              if ( strcmp ( entry->GetWidget()->GetValue() ,  this->MySnapshotName ) )
+                {
+//                this->MySnapshotName = entry->GetWidget()->GetValue();
+                }
+              ss <<  this->MRMLScene->GetUniqueNameByString(entry->GetWidget()->GetValue());
+              snapshotNode->SetName(ss.str().c_str());
+              this->UpdateSceneSnapshotsFromMRML();
+              }
+            if (snapshotNode)
+              {
+              snapshotNode->StoreScene();
+              //snapshotNode->Delete();
+              }
+            }
       
           //--- turn View Spin and Rocking on and off
           if ( (b == this->SpinButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) && vn )
@@ -2023,6 +2221,92 @@ void vtkSlicerViewControlGUI::MainViewSetProjection ( )
 
 
 
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewPitch ( )
+{
+  double deg, negdeg;
+  if ( this->ApplicationGUI && this->ViewNode )
+    {
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    deg = this->ViewNode->GetRotateDegrees ( );
+    negdeg = -deg;
+  
+    vtkMRMLCameraNode *cn = this->GetActiveCamera();
+    if ( cn != NULL )
+      {
+      vtkCamera *cam = cn->GetCamera();
+      cam->Elevation ( deg );
+      cam->OrthogonalizeViewUp();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render();
+      }
+    }
+}
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewRoll ( )
+{
+double deg, negdeg;
+  if ( this->ApplicationGUI && this->ViewNode )
+{
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    deg = this->ViewNode->GetRotateDegrees ( );
+    negdeg = -deg;
+  
+    vtkMRMLCameraNode *cn = this->GetActiveCamera();
+    if ( cn != NULL )
+      {
+      vtkCamera *cam = cn->GetCamera();
+      cam->Roll ( deg );
+      cam->OrthogonalizeViewUp();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render();
+      // this->NavZoomRender();        
+      }
+    }
+
+}
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewYaw ( )
+{
+  double deg, negdeg;
+  if ( this->ApplicationGUI && this->ViewNode )
+    {
+    vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));    
+    deg = this->ViewNode->GetRotateDegrees ( );
+    negdeg = -deg;
+  
+    vtkMRMLCameraNode *cn = this->GetActiveCamera();
+    if ( cn != NULL )
+      {
+      vtkCamera *cam = cn->GetCamera();
+      cam->Azimuth ( deg );
+      cam->OrthogonalizeViewUp();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->UpdateLightsGeometryToFollowCamera();
+      p->GetViewerWidget()->GetMainViewer()->GetRenderer()->Render();
+      // this->NavZoomRender();        
+      }
+    }
+
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewZoomIn ( )
+{
+  // percent
+  double zoomfactor = 105.0;
+  zoomfactor /= 100.0;
+  this->MainViewZoom ( zoomfactor );
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerViewControlGUI::MainViewZoomOut ( )
+{
+  // percent
+  double zoomfactor = 95.0;
+  zoomfactor /= 100.0;
+  this->MainViewZoom ( zoomfactor );
+}
+
 
 
 //---------------------------------------------------------------------------
@@ -2359,10 +2643,6 @@ void vtkSlicerViewControlGUI::BuildCameraSelectMenu()
 
 }
   
-//---------------------------------------------------------------------------
-void vtkSlicerViewControlGUI::UpdateSceneSnapshotMenu( )
-{
-}
 
 
 //---------------------------------------------------------------------------
@@ -2424,16 +2704,13 @@ void vtkSlicerViewControlGUI::BuildStereoSelectMenu ( )
 void vtkSlicerViewControlGUI::BuildViewSelectMenu ( )
 {
   
-  this->SelectViewButton->GetMenu( )->DeleteAllItems();
-  this->SelectViewButton->GetMenu()->AddRadioButton ("Save current view" );
-  this->SelectViewButton->GetMenu()->SetItemStateToDisabled ( "Save current view" );
-  this->SelectViewButton->GetMenu()->AddSeparator();
-  this->SelectViewButton->GetMenu()->AddSeparator();
-  this->SelectViewButton->GetMenu()->AddCommand ( "close" );
-  // save current option will save current view under a
-  // standard name like "View0...ViewN"; user can rename
-  // this view elsewhere, in the ViewModule.
-  // TODO: get existing MRMLViewNodes and add to menu
+  this->ScreenGrabButton->GetMenu( )->DeleteAllItems();
+  this->ScreenGrabButton->GetMenu()->AddRadioButton ("Capture a screenshot" );
+  this->ScreenGrabButton->GetMenu()->SetItemStateToDisabled ( "Capture a screenshot" );
+  this->ScreenGrabButton->GetMenu()->AddSeparator();
+  this->ScreenGrabButton->GetMenu()->AddSeparator();
+  this->ScreenGrabButton->GetMenu()->AddCommand ( "close" );
+
 
 }
 
@@ -2477,6 +2754,18 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
   vtkMRMLViewNode *vnode = vtkMRMLViewNode::SafeDownCast ( caller );
   vtkMRMLSelectionNode *snode = vtkMRMLSelectionNode::SafeDownCast ( caller );
   
+
+
+
+  vtkMRMLScene *scene = vtkMRMLScene::SafeDownCast ( caller );
+  if ( this->GetMRMLScene() == NULL )
+    {
+    vtkErrorWithObjectMacro ( this, << "*********MRMLCallback called recursively?" << endl);
+    return;
+    }
+
+
+
   // has a node been added or deleted?
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
        && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
@@ -2967,13 +3256,23 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       vtkSlicerGUILayout *layout = app->GetMainLayout ( );
 
       this->SlicerViewControlIcons = vtkSlicerViewControlIcons::New ( );
+      this->NameDialog  = vtkKWSimpleEntryDialog::New();
+      this->NameDialog->SetParent ( appF );
+      this->NameDialog->SetTitle("Scene Snapshot Name");
+      this->NameDialog->SetSize(400, 200);
+      this->NameDialog->SetStyleToOkCancel();
+      vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
+      entry->SetLabelText("Snapshot Name");
+      entry->GetWidget()->SetValue("");
+      this->NameDialog->Create ( );
+      
       this->SpinButton = vtkKWCheckButton::New ( );
       this->RockButton = vtkKWCheckButton::New ( );
       this->OrthoButton = vtkKWPushButton::New ( );
 
       this->CenterButton = vtkKWPushButton::New ( );
       this->StereoButton = vtkKWMenuButton::New ( );
-      this->SelectViewButton = vtkKWMenuButton::New ( );
+      this->ScreenGrabButton = vtkKWMenuButton::New ( );
       this->SelectCameraButton = vtkKWMenuButton::New ( );
       this->LookFromButton = vtkKWRadioButton::New ( );
       this->RotateAroundButton = vtkKWRadioButton::New ( );
@@ -3126,13 +3425,13 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->StereoButton->IndicatorVisibilityOff ( );
       this->StereoButton->SetBalloonHelpString ( "Select among stereo viewing options (3DSlicer must be started with stereo enabled to use these features).");
       //--- Menubutton to capture or select among saved 3D views.
-      this->SelectViewButton->SetParent ( f3);
-      this->SelectViewButton->Create ( );
-      this->SelectViewButton->SetReliefToFlat ( );
-      this->SelectViewButton->SetBorderWidth ( 0 );
-      this->SelectViewButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSelectViewButtonIcon() );
-      this->SelectViewButton->IndicatorVisibilityOff ( );
-      this->SelectViewButton->SetBalloonHelpString ( "Select among already saved 3D views.");
+      this->ScreenGrabButton->SetParent ( f3);
+      this->ScreenGrabButton->Create ( );
+      this->ScreenGrabButton->SetReliefToFlat ( );
+      this->ScreenGrabButton->SetBorderWidth ( 0 );
+      this->ScreenGrabButton->SetImageToIcon ( this->SlicerViewControlIcons->GetScreenGrabButtonIcon() );
+      this->ScreenGrabButton->IndicatorVisibilityOff ( );
+      this->ScreenGrabButton->SetBalloonHelpString ( "Capture screenshots of 3D view or 3D and Slice views.");
       //--- MenuButton to select among saved scene snapshots
       this->SelectSceneSnapshotMenuButton->SetParent ( f3);
       this->SelectSceneSnapshotMenuButton->Create ( );
@@ -3191,7 +3490,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
 //      this->Script ("grid %s -row 1 -column 2 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SelectCameraButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 2 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SceneSnapshotButton->GetWidgetName ( ));
       this->Script ("grid %s -row 0 -column 3 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->CenterButton->GetWidgetName ( ));
-//      this->Script ("grid %s -row 1 -column 3 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SelectViewButton->GetWidgetName ( ));      
+//      this->Script ("grid %s -row 1 -column 3 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->ScreenGrabButton->GetWidgetName ( ));      
       this->Script ("grid %s -row 1 -column 3 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->SelectSceneSnapshotMenuButton->GetWidgetName ( ));      
       this->Script ("grid %s -row 0 -column 4 -sticky e -padx 4 -pady 0 -ipadx 0 -ipady 0", this->SpinButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 4 -sticky e -padx 4 -pady 0 -ipadx 0 -ipady 0", this->RockButton->GetWidgetName ( ));
