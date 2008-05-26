@@ -1052,7 +1052,7 @@ void vtkSlicerApplication::SetPotentialModulePaths(const char* paths)
       vtkKWDirectoryPresetSelector::
         GetEnabledPresetDirectoriesFromPresetDirectories(
           &str, delim, this->PotentialModulePaths, '|');
-      strcpy(this->ModulePaths, str);
+      strcpy(this->ModulePaths, str ? str : "");
       delete [] str;
       this->Modified();
       }
