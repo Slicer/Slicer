@@ -26,7 +26,8 @@ Authors: Michael McKenna, David Small, Steve Pieper.
 #include <stdlib.h>
 #include "vtkFreetypeRasterizer.h"
 
-#include <ft2build.h>
+//#include <ft2build.h> // can't include that directly
+#include "vtk_freetype.h"
 //#include <FTFont.h>
 
 #include FT_FREETYPE_H

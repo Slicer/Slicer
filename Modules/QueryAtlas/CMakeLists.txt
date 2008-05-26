@@ -18,7 +18,6 @@ slicer3_set_default_modules_output_path()
 
 # --------------------------------------------------------------------------
 # Include dirs
-
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -27,6 +26,16 @@ include_directories(
   ${QdecModule_SOURCE_DIR}
   ${QdecModule_BINARY_DIR}
   )
+
+# This module use's FreeType, which is not quite exported correctly by an
+# installed VTK. It's not obvious either if this should be exposed 
+# directly by VTK, but this is an easy fix.
+
+if(VTK_INSTALL_PREFIX)
+  include_directories(
+    ${VTK_INSTALL_PREFIX}/${VTK_INSTALL_INCLUDE_DIR}/vtkfreetype/include
+    )
+endif(VTK_INSTALL_PREFIX)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkQueryAtlasConfigure.h.in 
@@ -103,11 +112,7 @@ target_link_libraries(${lib_name}
   QdecModule
   )
 
-install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
-  )
+slicer3_install_modules(${lib_name})
 
 # --------------------------------------------------------------------------
 # Testing
