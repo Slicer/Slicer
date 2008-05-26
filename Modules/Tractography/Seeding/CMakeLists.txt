@@ -69,11 +69,7 @@ target_link_libraries(${lib_name}
   ${ITK_LIBRARIES}
   )
 
-install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
-  )
+slicer3_install_modules(${lib_name})
 
 # --------------------------------------------------------------------------
 # CLP
@@ -103,12 +99,4 @@ target_link_libraries(${CLP}
   ${lib_name}
   )
 
-set(TARGETS
-  ${CLP}
-  )
-foreach (target ${TARGETS})
-  install (TARGETS ${target}
-    RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-    )
-endforeach(target)
+slicer3_install_plugins(${CLP})

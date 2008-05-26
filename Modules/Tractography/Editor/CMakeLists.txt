@@ -48,12 +48,4 @@ target_link_libraries(${CLP}
   ${ITK_LIBRARIES}
   )
 
-set(TARGETS
-  ${CLP}
-  )
-foreach(target ${TARGETS})
-  install(TARGETS ${target}
-    RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-    )
-endforeach(target)
+slicer3_install_plugins(${CLP})

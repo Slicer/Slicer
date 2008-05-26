@@ -76,8 +76,4 @@ target_link_libraries(${lib_name}
   ${NAVITRACK_LIB}
   )
 
-install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
-  )
+slicer3_install_modules(${lib_name})

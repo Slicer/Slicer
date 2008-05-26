@@ -53,10 +53,7 @@ target_link_libraries(VoxelMeshModule
   vtkCommon
 )
 
-install(TARGETS VoxelMeshModule
-  RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-  )
+slicer3_install_plugins(VoxelMeshModule)
 
 add_library(VoxelMeshModuleLib SHARED 
   ${VoxelMeshModule_SOURCE}
