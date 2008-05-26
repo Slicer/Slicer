@@ -1,23 +1,29 @@
-#SET(CPACK_INSTALLED_DIRECTORIES)
+# Find and install Tcl
 
-set(TCL_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/tcl-build")
-if(EXISTS "${TCL_DIR}/bin/tclsh8.4" OR EXISTS "${TCL_DIR}/bin/tclsh84.exe")
-else(EXISTS "${TCL_DIR}/bin/tclsh8.4" OR EXISTS "${TCL_DIR}/bin/tclsh84.exe")
-  message(STATUS "Not Packaging TCL (cannot found: ${TCL_DIR}/bin/tclsh8.4 or ${TCL_DIR}/bin/tclsh84.exe)")
+if(TCL_INCLUDE_PATH)
+  get_filename_component(TCL_DIR "${TCL_INCLUDE_PATH}" PATH)
+else(TCL_INCLUDE_PATH)
+  set(TCL_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/tcl-build")
+endif(TCL_INCLUDE_PATH)
+
+if(NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND 
+    NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
+  message(STATUS "Not Packaging TCL (cannot found: ${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT} or ${TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe)")
   set(TCL_DIR "")
-endif(EXISTS "${TCL_DIR}/bin/tclsh8.4" OR EXISTS "${TCL_DIR}/bin/tclsh84.exe")
+endif(NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND 
+  NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION}.exe")
 
 if(TCL_DIR)
-  #SET(CPACK_INSTALLED_DIRECTORIES ${CPACK_INSTALLED_DIRECTORIES}
-  #  "${TCL_DIR}" "/${Slicer3_INSTALL_LIB_DIR}/tcl")
-  install(CODE "EXECUTE_PROCESS\(COMMAND \"${CMAKE_COMMAND}\" -E copy_directory \"${TCL_DIR}\" \"\${CMAKE_INSTALL_PREFIX}/lib/Slicer3/tcl\"\)")
+  install(DIRECTORY
+    ${TCL_DIR}/
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/TclTk
+    )
 endif(TCL_DIR)
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.in"
   "${Slicer3_BINARY_DIR}/PackageLibraries/CMakeLists.txt"
   @ONLY)
-
 
 # If the cmake version includes cpack, use it
 include(InstallRequiredSystemLibraries)
