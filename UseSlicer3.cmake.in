@@ -4,6 +4,15 @@
 # Slicer3 modules built against a Slicer3 build tree or a Slicer3 installation.
 #
 
+# Relax some constraints related to the build settings file. This was
+# preventing people from using the same compiler but with a different generator,
+# or just the same compiler installed in a non-standard location.
+
+set(SKIP_KWWidgets_BUILD_SETTINGS_FILE 1)
+set(SKIP_VTK_BUILD_SETTINGS_FILE 1)
+set(SKIP_ITK_BUILD_SETTINGS_FILE 1)
+set(SKIP_TEEM_BUILD_SETTINGS_FILE 1)
+
 find_package(GenerateCLP REQUIRED)
 if(GenerateCLP_FOUND)
   include(${GenerateCLP_USE_FILE})
