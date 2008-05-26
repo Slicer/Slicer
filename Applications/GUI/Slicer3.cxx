@@ -422,7 +422,7 @@ int Slicer3_main(int argc, char *argv[])
     }
 
   std::string tclEnv = "TCL_LIBRARY=";
-  tclEnv += slicerHome + "/" + Slicer3_INSTALL_LIB_DIR +  "/tcl/lib/tcl8.4";
+  tclEnv += slicerHome + "/lib/TclTk/lib/tcl" + Slicer3_TCL_TK_MAJOR_VERSION + "." + Slicer3_TCL_TK_MINOR_VERSION;
   vtkKWApplication::PutEnv(const_cast <char *> (tclEnv.c_str()));
 
   // ITK factories dir
