@@ -27,13 +27,7 @@ target_link_libraries(RegisterImagesModule ITKIO ITKCommon ITKStatistics
 
 if (Slicer3_SOURCE_DIR)
 
-  set(TARGET_MODULES RegisterImagesModule RegisterImages)
-
-  foreach(target ${TARGET_MODULES})
-    install(TARGETS ${target}
-      RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-      LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-      )
-  endforeach(target)
+  set(TARGETS RegisterImagesModule RegisterImages)
+  slicer3_install_plugins(${TARGETS})
 
 endif (Slicer3_SOURCE_DIR)

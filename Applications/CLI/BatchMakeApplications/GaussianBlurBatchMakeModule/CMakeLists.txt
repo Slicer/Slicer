@@ -120,12 +120,7 @@ if(BatchMake_DIR)
     # installation) and install each target in the developer area (for running 
     # from a build)
     set(TARGETS ${Slicer3BatchModule})
-    foreach(target ${TARGETS})
-      install(TARGETS ${target}
-        RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-        LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-        )
-    endforeach(target)
+    slicer3_install_plugins(${TARGETS})
 
     set(RUNTIME_SUPPORT_FILES 
       "${CMAKE_CURRENT_SOURCE_DIR}/${Slicer3BatchModule}.xml"

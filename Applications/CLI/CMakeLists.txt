@@ -542,11 +542,7 @@ if (Slicer3_SOURCE_DIR)
     DiffusionTensorEstimation
     )
 
-
-  install(TARGETS ${TARGETS}
-        RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-        LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-        )
+  slicer3_install_plugins(${TARGETS})
 
 endif (Slicer3_SOURCE_DIR)
 

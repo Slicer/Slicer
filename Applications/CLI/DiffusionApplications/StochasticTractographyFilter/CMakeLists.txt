@@ -102,12 +102,6 @@ if (Slicer3_SOURCE_DIR)
     ROITractFilter
     CalculateVolumeStatistics
     )
-
-  foreach(target ${TARGETS})
-    install(TARGETS ${target}
-      RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-      LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-      )
-  endforeach(target)
+  slicer3_install_plugins(${TARGETS})
 
 endif (Slicer3_SOURCE_DIR)
