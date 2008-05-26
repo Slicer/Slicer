@@ -112,8 +112,8 @@ if { $installed } {
 
   set ::env(TEEM_DIR)           $::env(Slicer3_HOME)/lib/TEEM-@TEEM_VERSION_MAJOR@.@TEEM_VERSION_MINOR@
 
-  set ::env(TCL_LIBRARY)        $::env(Slicer3_HOME)/lib/Slicer3/tcl/lib
-  set ::env(TCL_DIR)            $::env(Slicer3_HOME)/lib/Slicer3/tcl
+  set ::env(TCL_DIR)            $::env(Slicer3_HOME)/lib/TclTk
+  set ::env(TCL_LIBRARY)        "$::env(TCL_DIR)/lib/tcl@TCL_TK_VERSION_DOT@"
 
   # Slicer3 Libs
 
@@ -143,12 +143,29 @@ if { $installed } {
 } else {
 
   set ::BUILD_SUBDIR  ""
+  set ::VTK_BUILD_SUBDIR  ""
+  set ::KWWidgets_BUILD_SUBDIR  ""
+  set ::ITK_BUILD_SUBDIR  ""
+  set ::TEEM_BUILD_SUBDIR  ""
+
   if {$::env(BUILD) == $::WINDOWS} {
     foreach buildType {"." Debug RelWithDebInfo Release MinSizeRel} {
-      set ::Slicer3_REAL $::Slicer3_HOME/bin/$buildType/Slicer3-real.exe
-      if { [file exists $::Slicer3_REAL] } {
+      set try "$::Slicer3_HOME/bin/$buildType/Slicer3-real.exe"
+      if { [file exists "$try"] } {
+        set ::Slicer3_REAL $try
         set ::BUILD_SUBDIR $buildType
-        break;
+      }
+      if { [file exists "@VTK_DIR@/bin/$buildType/vtk.exe"] } {
+        set ::VTK_BUILD_SUBDIR $buildType
+      }
+      if { [file exists "@KWWidgets_DIR@/bin/$buildType/KWWidgets.dll"] } {
+        set ::KWWidgets_BUILD_SUBDIR $buildType
+      }
+      if { [file exists "@ITK_DIR@/bin/$buildType/ITKCommon.dll"] } {
+        set ::ITK_BUILD_SUBDIR $buildType
+      }
+      if { [file exists "@TEEM_DIR@/bin/$buildType/air.dll"] } {
+        set ::TEEM_BUILD_SUBDIR $buildType
       }
     }
   } else {
@@ -159,18 +176,18 @@ if { $installed } {
   # 3rd party toolkits
 
   set ::env(VTK_DIR)            [file normalize "@VTK_DIR@"]
-  set ::env(VTK_BIN_DIR)        [file normalize "@VTK_DIR@/bin/$::BUILD_SUBDIR"]
+  set ::env(VTK_BIN_DIR)        [file normalize "@VTK_DIR@/bin/$::VTK_BUILD_SUBDIR"]
 
   set ::env(KWWidgets_DIR)      [file normalize "@KWWidgets_DIR@"]
-  set ::env(KWWidgets_LIB_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::BUILD_SUBDIR"]
-  set ::env(KWWidgets_BIN_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::BUILD_SUBDIR"]
+  set ::env(KWWidgets_LIB_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
+  set ::env(KWWidgets_BIN_DIR)  [file normalize "@KWWidgets_DIR@/bin/$::KWWidgets_BUILD_SUBDIR"]
 
-  set ::env(ITK_BIN_DIR)        [file normalize "@ITK_DIR@/bin/$::BUILD_SUBDIR"]
+  set ::env(ITK_BIN_DIR)        [file normalize "@ITK_DIR@/bin/$::ITK_BUILD_SUBDIR"]
 
-  set ::env(TCL_LIBRARY)        [file normalize "@TCL_LIBRARY@"]
-  set ::env(TCL_DIR)            [file normalize [file dirname [file dirname $::env(TCL_LIBRARY)]]]
+  set ::env(TCL_DIR)            [file normalize [file dirname [file dirname "@TCL_LIBRARY@"]]]
+  set ::env(TCL_LIBRARY)        "$::env(TCL_DIR)/lib/tcl@TCL_TK_VERSION_DOT@"
 
-  set ::env(TEEM_DIR)           [file normalize "@TEEM_DIR@/bin/$::BUILD_SUBDIR"]
+  set ::env(TEEM_DIR)           [file normalize "@TEEM_DIR@/bin/$::TEEM_BUILD_SUBDIR"]
 
   # Slicer3 Libs
 
@@ -355,6 +372,8 @@ proc launch_SetPaths {} {
             set ::env(Path) $::env(KWWidgets_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(ITK_BIN_DIR)\;$::env(Path)
             set ::env(Path) $::env(TCL_DIR)/bin\;$::env(Path)
+            set ::env(Path) $::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@\;$::env(Path)
+            set ::env(Path) $::env(TCL_DIR)/lib/itk@INCR_TCL_VERSION_DOT@\;$::env(Path)
             set ::env(Path) $::env(TEEM_DIR)\;$::env(Path)
             set ::env(Path) $::env(VTK_DIR)\;$::env(Path)
             set ::env(Path) $::env(FreeSurfer_DIR)\;$::env(Path)
@@ -380,8 +399,8 @@ proc launch_SetPaths {} {
         }
 
     # set the base tcl/tk library paths, using the previously defined TCL_LIB_DIR
-    set ::env(TCL_LIBRARY) $::env(TCL_DIR)/lib/tcl8.4
-    set ::env(TK_LIBRARY) $::env(TCL_DIR)/lib/tk8.4
+    set ::env(TCL_LIBRARY) "$::env(TCL_DIR)/lib/tcl@TCL_TK_VERSION_DOT@"
+    set ::env(TK_LIBRARY) "$::env(TCL_DIR)/lib/tk@TCL_TK_VERSION_DOT@"
 
     #
     # add the default search locations for tcl packages
@@ -389,8 +408,8 @@ proc launch_SetPaths {} {
     set ::env(TCLLIBPATH) "$::env(VTK_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(KWWidgets_DIR)/Wrapping/Tcl $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(Slicer3_HOME)/Base/Wrapping/Tcl/vtkSlicerBase $::env(TCLLIBPATH)"
-    set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itcl3.2 $::env(TCLLIBPATH)"
-    set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itk3.2 $::env(TCLLIBPATH)"
+    set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itcl@INCR_TCL_VERSION_DOT@ $::env(TCLLIBPATH)"
+    set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itk@INCR_TCL_VERSION_DOT@ $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/iwidgets4.0.1 $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/blt2.4 $::env(TCLLIBPATH)"
 }
