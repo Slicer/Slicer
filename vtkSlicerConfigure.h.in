@@ -45,3 +45,13 @@
 #define Slicer3_INSTALL_MODULES_LIB_DIR "@Slicer3_INSTALL_MODULES_LIB_DIR@"
 #define Slicer3_INSTALL_MODULES_INCLUDE_DIR "@Slicer3_INSTALL_MODULES_INCLUDE_DIR@"
 #define Slicer3_INSTALL_MODULES_SHARE_DIR "@Slicer3_INSTALL_MODULES_SHARE_DIR@"
+
+/* Do not use those variables unless you can not retrieve the Tcl/Tk version
+   at run-time using this code below:
+   int tcl_major, tcl_minor, tcl_patch_level;
+   Tcl_GetVersion(&tcl_major, &tcl_minor, &tcl_patch_level, NULL);
+*/
+#define Slicer3_TCL_TK_MAJOR_VERSION "@TCL_TK_MAJOR_VERSION@"
+#define Slicer3_TCL_TK_MINOR_VERSION "@TCL_TK_MINOR_VERSION@"
+#define Slicer3_INCR_TCL_MAJOR_VERSION "@INCR_TCL_MAJOR_VERSION@"
+#define Slicer3_INCR_TCL_MINOR_VERSION "@INCR_TCL_MINOR_VERSION@"
