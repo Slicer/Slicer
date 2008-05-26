@@ -16,7 +16,7 @@ if(BUILD_SHARED_LIBS)
       "\"../${Slicer3_INSTALL_LIB_DIR}/tcl/bin\"")
   else(WIN32)
     set(Slicer3_FORWARD_PATH_INSTALL
-      "\"../lib\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../${Slicer3_INSTALL_LIB_DIR}/tcl/lib\"")
+      "\"../lib\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"..//lib/TclTk\"")
   endif(WIN32)
 endif(BUILD_SHARED_LIBS)
 # Add main server executables.
@@ -214,30 +214,6 @@ if(Slicer3_USE_PYTHON AND PYTHON_LIBRARIES)
 endif(Slicer3_USE_PYTHON AND PYTHON_LIBRARIES)
 
 install_targets(/bin Slicer3${Slicer3_EXE_SUFFIX})
-
-# Generate a lightweight C launcher for a *specific* executable.
-# The launcher sets up all the environments variables (PATH, TCLLIBPATH,
-# LD_LIBRARY_PATH, etc.) required by this executable and some known external 
-# third-party dependencies like VTK, ITK, SOV, etc., before launching the
-# executable itself. Note that the paths to many of the external libraries are
-# hard-coded in the launcher: do not copy the launcher to your installation 
-# tree, if any (ultimately, all the DLLs needed by a project should/could be
-# stored together in the installation tree, and a launcher should not be
-# needed in that case).
-
-include("${KWWidgets_CMAKE_DIR}/KWWidgetsPathsMacros.cmake")
-set(extra_dirs
-  "${TEEM_DIR}/bin"
-  "${BatchMake_DIR}/bin"
-  "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}"
-  "${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_LIB_DIR}"
-  "${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}"
-  "${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_LIB_DIR}"
-  )
-kwwidgets_generate_setup_paths_launcher(
-  "${CMAKE_CURRENT_BINARY_DIR}" "Slicer3Launcher" "" "Slicer3-real" 
-  "${extra_dirs}"
-  )
 
 # If needed, copy the Tcl/Tk support files required at run-time 
 # to initialize Tcl/Tk. This is only triggered if VTK was built
