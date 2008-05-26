@@ -49,10 +49,7 @@ target_link_libraries(
   vtkCommon
   )
 
-install(TARGETS ${CLP_MODULE}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-  )
+slicer3_install_plugins(${CLP_MODULE})
 
 # --------------------------------------------------------------------------
 # CLGUI
@@ -81,10 +78,7 @@ if(EMSEG_GENERATE_CLGUI)
     vtkCommon
     )
 
-  install(TARGETS ${CLP_MODULE_GUI}
-    RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-    )
+  slicer3_install_plugins(${CLP_MODULE_GUI})
 
   add_library(${CLP_MODULE_GUI}Lib SHARED ${${CLP_MODULE_GUI}_SOURCE})
   set_target_properties(${CLP_MODULE_GUI}Lib 
@@ -95,8 +89,5 @@ if(EMSEG_GENERATE_CLGUI)
     EMSegment
     vtkCommon
     )
-#  install(TARGETS ${CLP_MODULE_GUI}Lib
-#    RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-#    LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-#    )
+  #slicer3_install_plugins(${CLP_MODULE_GUI}Lib)
 endif(EMSEG_GENERATE_CLGUI)
