@@ -1,0 +1,19 @@
+# LoadableModule could be installed anywhere, so set all paths based 
+# on where this file was found (which should be the lib/LoadableModule
+# directory of the installation)
+get_filename_component(LoadableModule_CONFIG_DIR 
+  "${CMAKE_CURRENT_LIST_FILE}" PATH
+  )
+
+# 
+set(LoadableModule_INCLUDE_DIRS 
+  "${LoadableModule_CONFIG_DIR}/../../include/LoadableModule"
+  )
+set(LoadableModule_LIBRARY_DIRS 
+  "${LoadableModule_CONFIG_DIR}"
+  )
+set(LoadableModule_USE_FILE 
+  "${LoadableModule_CONFIG_DIR}/UseLoadableModule.cmake"
+  )
+
+set(ITK_DIR "${LoadableModule_CONFIG_DIR}/../InsightToolkit")
