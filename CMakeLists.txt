@@ -124,6 +124,15 @@ endif(Slicer3_BUILD_TESTING)
 # - KWWidgets (pulls in VTK)
 #
 
+# Relax some constraints related to the build settings file. This was
+# preventing people from using the same compiler but with a different generator,
+# or just the same compiler installed in a non-standard location.
+
+set(SKIP_KWWidgets_BUILD_SETTINGS_FILE 1)
+set(SKIP_VTK_BUILD_SETTINGS_FILE 1)
+set(SKIP_ITK_BUILD_SETTINGS_FILE 1)
+set(SKIP_TEEM_BUILD_SETTINGS_FILE 1)
+ 
 ## Python
 option(Slicer3_USE_PYTHON "Integrate a python interpreter into Slicer." OFF)
 if(Slicer3_USE_PYTHON)
@@ -195,6 +204,19 @@ if(Slicer3_USE_IGSTK)
   find_package(IGSTK REQUIRED)
   include(${IGSTK_USE_FILE})
 endif(Slicer3_USE_IGSTK)
+
+#-----------------------------------------------------------------------------
+# Need some Tcl/Tk info
+
+include("${VTK_CMAKE_DIR}/vtkTclTkMacros.cmake")
+VTK_GET_TCL_TK_VERSION(TCL_TK_MAJOR_VERSION TCL_TK_MINOR_VERSION)
+set(TCL_TK_VERSION_DOT "${TCL_TK_MAJOR_VERSION}.${TCL_TK_MINOR_VERSION}")
+set(TCL_TK_VERSION "${TCL_TK_MAJOR_VERSION}${TCL_TK_MINOR_VERSION}")
+
+include("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
+incr_tcl_get_version(INCR_TCL_MAJOR_VERSION INCR_TCL_MINOR_VERSION)
+set(INCR_TCL_VERSION_DOT "${INCR_TCL_MAJOR_VERSION}.${INCR_TCL_MINOR_VERSION}")
+set(INCR_TCL_VERSION "${INCR_TCL_MAJOR_VERSION}${INCR_TCL_MINOR_VERSION}")
 
 #-----------------------------------------------------------------------------
 # Generate the default setup paths scripts.
