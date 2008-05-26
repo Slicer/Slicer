@@ -1,5 +1,12 @@
 # 
-SET(ModuleDescriptionParser_INCLUDE_DIRS "@ModuleDescriptionParser_INCLUDE_DIRS_CONFIG@")
-SET(ModuleDescriptionParser_LIBRARY_DIRS "@ModuleDescriptionParser_LIBRARY_DIRS_CONFIG@")
-SET(ModuleDescriptionParser_USE_FILE "@ModuleDescriptionParser_USE_FILE_CONFIG@")
-SET(ITK_DIR "@ITK_DIR_CONFIG@")
+set(ModuleDescriptionParser_INCLUDE_DIRS 
+  "@ModuleDescriptionParser_INCLUDE_DIRS_CONFIG@"
+  )
+set(ModuleDescriptionParser_LIBRARY_DIRS 
+  "@ModuleDescriptionParser_LIBRARY_DIRS_CONFIG@"
+  )
+set(ModuleDescriptionParser_USE_FILE 
+  "@ModuleDescriptionParser_USE_FILE_CONFIG@"
+  )
+
+set(ITK_DIR "@ITK_DIR_CONFIG@")
