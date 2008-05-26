@@ -10,7 +10,7 @@
 
 
 
-package require Tcl 8.4
+package require Tcl
 
 
 # Instantiate vars we need for this package
