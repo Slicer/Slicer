@@ -19,6 +19,18 @@ endif(ModuleDescriptionParser_FOUND)
 # create the .clp files
 # usage: GENERATE_CLP(foo_SRCS XML_FILE [LOGO_FILE])
 macro(GENERATECLP SOURCES)
+
+  # The shell into which nmake.exe executes the custom command has some issues
+  # with mixing quoted and unquoted arguments :( Let's help.
+
+  if(CMAKE_GENERATOR MATCHES "NMake Makefiles")
+    set(verbatim "")
+    set(quote "\"")
+  else(CMAKE_GENERATOR MATCHES "NMake Makefiles")
+    set(verbatim "VERBATIM")
+    set(quote "")
+  endif(CMAKE_GENERATOR MATCHES "NMake Makefiles")
+
   # what is the filename without the extension
   get_filename_component(TMP_FILENAME ${ARGV1} NAME_WE)
 
@@ -38,8 +50,9 @@ macro(GENERATECLP SOURCES)
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
       DEPENDS "${GENERATECLP_EXE}" ${TMP_INPUT}
       COMMAND "${GENERATECLP_EXE}"
-      --InputXML ${TMP_INPUT} --OutputCxx ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
-      VERBATIM
+      --InputXML "${quote}${TMP_INPUT}${quote}" 
+      --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h${quote}"
+      ${verbatim}
       )
     # mark the .clp file as a header file
     set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h PROPERTIES HEADER_FILE_ONLY TRUE)
@@ -48,9 +61,11 @@ macro(GENERATECLP SOURCES)
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
       DEPENDS "${GENERATECLP_EXE}" ${TMP_INPUT} ${ARGV2}
-      COMMAND "${GENERATECLP_EXE}" --logoFiles ${ARGV2}
-      --InputXML ${TMP_INPUT} --OutputCxx ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h
-      VERBATIM
+      COMMAND "${GENERATECLP_EXE}" 
+      --logoFiles "${quote}${ARGV2}${quote}"
+      --InputXML "${quote}${TMP_INPUT}${quote}" 
+      --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h${quote}"
+      ${verbatim}
       )
     # mark the .clp file as a header file
     set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h PROPERTIES HEADER_FILE_ONLY TRUE)
