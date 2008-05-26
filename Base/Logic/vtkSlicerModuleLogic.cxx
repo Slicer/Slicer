@@ -70,10 +70,10 @@ const char* vtkSlicerModuleLogic::GetModuleShareDirectory()
 #ifdef _WIN32
       vtksys_stl::string intdir = 
         vtksys::SystemTools::GetFilenameName(library_directory.c_str());
-      if (!strcmp(intdir.c_str(), "Debug") ||
-          !strcmp(intdir.c_str(), "Release") ||
-          !strcmp(intdir.c_str(), "RelWithDebInfo") ||
-          !strcmp(intdir.c_str(), "MinSizeRel"))
+      if (!vtksys::SystemTools::Strucmp(intdir.c_str(), "Debug") ||
+          !vtksys::SystemTools::Strucmp(intdir.c_str(), "Release") ||
+          !vtksys::SystemTools::Strucmp(intdir.c_str(), "RelWithDebInfo") ||
+          !vtksys::SystemTools::Strucmp(intdir.c_str(), "MinSizeRel"))
         {
         library_directory = 
           vtksys::SystemTools::GetFilenamePath(library_directory.c_str());
