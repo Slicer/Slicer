@@ -1030,12 +1030,13 @@ const char* vtkSlicerViewControlGUI::CreateSceneSnapshotNode( const char *nodeNa
     name = nodeName;
     }
 
-  ss << this->MRMLScene->GetUniqueNameByString(name);
+//  ss << this->MRMLScene->GetUniqueNameByString(name);
+  ss << nodeName;
   node->SetName(ss.str().c_str());
   vtkDebugMacro("\tset the name to " << node->GetName() << endl);
 
   // the ID is set in the call to AddNode
-  retNode = vtkMRMLSceneSnapshotNode::SafeDownCast (this->MRMLScene->AddNode(node));
+  this->MRMLScene->AddNode(node);
   id = node->GetID();
   node->Delete();
   return ( id );
@@ -1229,7 +1230,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
           else if ( p == this->SceneSnapshotButton  && event == vtkKWPushButton::InvokedEvent )
             {
             //--- create a new node...
-            const char *id =  this->CreateSceneSnapshotNode ( this->MySnapshotName);
+            const char *id =  this->CreateSceneSnapshotNode ( this->MySnapshotName );
             vtkMRMLSceneSnapshotNode *snapshotNode = vtkMRMLSceneSnapshotNode::SafeDownCast (this->MRMLScene->GetNodeByID( id ));
 
             if ( snapshotNode == NULL )
@@ -1237,8 +1238,8 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
               return;
               }
           
-            int result =this->InvokeNameDialog ("Type a name your snapshot.", snapshotNode->GetName() );
             std::stringstream ss;
+            int result =this->InvokeNameDialog ("Type a name your snapshot.", snapshotNode->GetName() );
             if (!result) 
               {
               this->MRMLScene->RemoveNode(snapshotNode);
@@ -1248,20 +1249,18 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
             else 
               {
               vtkKWEntryWithLabel *entry = this->NameDialog->GetEntry();
-              if ( strcmp ( entry->GetWidget()->GetValue() ,  this->MySnapshotName ) )
+              if ( strcmp (entry->GetWidget()->GetValue(), this->MySnapshotName ))
                 {
 //                this->MySnapshotName = entry->GetWidget()->GetValue();
                 }
               ss <<  this->MRMLScene->GetUniqueNameByString(entry->GetWidget()->GetValue());
               snapshotNode->SetName(ss.str().c_str());
+              snapshotNode->StoreScene();
               this->UpdateSceneSnapshotsFromMRML();
               }
-            if (snapshotNode)
-              {
-              snapshotNode->StoreScene();
-              //snapshotNode->Delete();
-              }
             }
+
+          
       
           //--- turn View Spin and Rocking on and off
           if ( (b == this->SpinButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) && vn )

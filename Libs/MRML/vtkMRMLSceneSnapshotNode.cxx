@@ -178,6 +178,9 @@ void vtkMRMLSceneSnapshotNode::StoreScene()
       vtkMRMLNode *newNode = node->CreateNodeInstance();
       newNode->CopyWithScene(node);
       this->Nodes->vtkCollection::AddItem((vtkObject *)newNode);
+      //--- Try deleting copy after collection has a reference to it,
+      //--- in order to eliminate debug leaks..
+      newNode->Delete();
       }
     }
 }
