@@ -1,27 +1,30 @@
-#include "vtkSlicerApplicationSettingsInterface.h"
-#include "vtkObjectFactory.h"
-#include "vtkKWWidget.h"
-#include "vtkKWFrame.h"
-#include "vtkKWMenu.h"
-#include "vtkKWFrameWithLabel.h"
-#include "vtkKWEntryWithLabel.h"
-#include "vtkKWSpinBoxWithLabel.h"
+#include "vtkKWCheckButton.h"
+#include "vtkKWDirectoryPresetSelector.h"
 #include "vtkKWEntry.h"
+#include "vtkKWEntryWithLabel.h"
+#include "vtkKWFrame.h"
+#include "vtkKWFrameWithLabel.h"
+#include "vtkKWFrameWithScrollbar.h"
 #include "vtkKWLabel.h"
-#include "vtkKWSpinBox.h"
-#include "vtkKWLoadSaveDialog.h"
 #include "vtkKWLoadSaveButton.h"
 #include "vtkKWLoadSaveButtonWithLabel.h"
-#include "vtkKWCheckButton.h"
+#include "vtkKWLoadSaveDialog.h"
+#include "vtkKWMenu.h"
 #include "vtkKWRadioButton.h"
 #include "vtkKWRadioButtonSet.h"
-#include "vtkKWFrameWithScrollbar.h"
+#include "vtkKWSpinBox.h"
+#include "vtkKWSpinBoxWithLabel.h"
+#include "vtkKWWidget.h"
+#include "vtkObjectFactory.h"
 #include "vtkSlicerApplication.h"
-#include "vtkSlicerTheme.h"
 #include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerApplicationSettingsInterface.h"
+#include "vtkSlicerFont.h"
+#include "vtkSlicerTheme.h"
 #include "vtkSlicerToolbarGUI.h"
 #include "vtkSlicerViewControlGUI.h"
-#include "vtkSlicerFont.h"
+
+#include "vtkSlicerConfigure.h" // Slicer3_INSTALL_* 
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerApplicationSettingsInterface );
@@ -35,7 +38,7 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
     
   this->FontSettingsFrame = NULL;
   this->ModuleSettingsFrame = NULL;
-  this->ModulePathsEntry = NULL;
+  this->ModulePathsPresetSelector = NULL;
   this->ModuleCachePathButton = NULL;
   this->HomeModuleEntry = NULL;
   this->TemporaryDirectoryButton = NULL;
@@ -96,10 +99,10 @@ vtkSlicerApplicationSettingsInterface::~vtkSlicerApplicationSettingsInterface()
     this->ModuleSettingsFrame = 0;
     }
 
-  if (this->ModulePathsEntry)
+  if (this->ModulePathsPresetSelector)
     {
-    this->ModulePathsEntry->Delete();
-    this->ModulePathsEntry = 0;
+    this->ModulePathsPresetSelector->Delete();
+    this->ModulePathsPresetSelector = 0;
     }
 
   if (this->ModuleCachePathButton)
@@ -224,14 +227,6 @@ void vtkSlicerApplicationSettingsInterface::Create()
   vtkKWFrame *frame;
 
   int label_width = 20;
-
-#ifdef _WIN32
-  std::string delim(";");
-#else
-  std::string delim(":");
-#endif
-
-  std::string help_str;
 
   // --------------------------------------------------------------
   // Add a "Preferences" page
@@ -588,26 +583,6 @@ void vtkSlicerApplicationSettingsInterface::Create()
          << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
 
   // --------------------------------------------------------------
-  // Module settings : User Module Paths
-
-  if (!this->ModulePathsEntry)
-    {
-    this->ModulePathsEntry = vtkKWEntryWithLabel::New();
-    }
-
-  this->ModulePathsEntry->SetParent(frame);
-  this->ModulePathsEntry->Create();
-  this->ModulePathsEntry->SetLabelText("User Module Paths:");
-  this->ModulePathsEntry->SetLabelWidth(label_width);
-  this->ModulePathsEntry->GetWidget()->SetCommand(this, "ModulePathsCallback");
-
-  help_str = "Search paths for user modules (a list of '" + delim + "' separated paths).";
-  this->ModulePathsEntry->SetBalloonHelpString(help_str.c_str());
-
-  tk_cmd << "pack " << this->ModulePathsEntry->GetWidgetName()
-         << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
-
-  // --------------------------------------------------------------
   // Module settings : Module CachePath
 
   if (!this->ModuleCachePathButton)
@@ -660,6 +635,39 @@ void vtkSlicerApplicationSettingsInterface::Create()
 
   tk_cmd << "pack " << this->TemporaryDirectoryButton->GetWidgetName()
          << "  -side top -anchor w -expand no -padx 2 -pady 2" << endl;
+
+  // --------------------------------------------------------------
+  // Module settings : User Module Paths
+
+  if (!this->ModulePathsPresetSelector)
+    {
+    this->ModulePathsPresetSelector = vtkKWDirectoryPresetSelector::New();
+    }
+
+  this->ModulePathsPresetSelector->SetParent(frame);
+  this->ModulePathsPresetSelector->Create();
+  this->ModulePathsPresetSelector->SetPresetAddCommand(
+    this, "ModulePathsAddCallback");
+  this->ModulePathsPresetSelector->SetPresetHasChangedCommand(
+    this, "ModulePathsHasChangedCallback");
+  this->ModulePathsPresetSelector->SetPresetRemovedCommand(
+    this, "ModulePathsRemovedCallback");
+
+  this->ModulePathsPresetSelector->SetBorderWidth(2);
+  this->ModulePathsPresetSelector->SetReliefToGroove();
+  this->ModulePathsPresetSelector->SetPadX(2);
+  this->ModulePathsPresetSelector->SetPadY(2);
+  this->ModulePathsPresetSelector->SetHelpLabelVisibility(1);
+  
+  this->ModulePathsPresetSelector->SetListHeight(6);
+  this->ModulePathsPresetSelector->UniqueDirectoriesOn();
+
+  std::string help_str;
+  help_str = help_str + "Click on the \"Add a preset\" button to add one or more new user module paths. A typical Module path ends with " + Slicer3_INSTALL_MODULES_LIB_DIR + ", whereas a Plugins/CLP path ends with " + Slicer3_INSTALL_PLUGINS_LIB_DIR + ".";
+  this->ModulePathsPresetSelector->SetHelpLabelText(help_str.c_str());
+
+  tk_cmd << "pack " << this->ModulePathsPresetSelector->GetWidgetName()
+         << "  -side top -anchor w -expand no -fill x -padx 2 -pady 2" << endl;
 
   // --------------------------------------------------------------
   // Remote Data Handling settings : main frame
@@ -957,15 +965,34 @@ void vtkSlicerApplicationSettingsInterface::HomeModuleCallback(char *name)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplicationSettingsInterface::ModulePathsCallback(char *path)
+int vtkSlicerApplicationSettingsInterface::ModulePathsAddCallback()
+{
+  int id = this->ModulePathsPresetSelector->AddDirectoryCallback();
+  this->ModulePathsRemovedCallback();
+  return id;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::ModulePathsHasChangedCallback(int)
+{
+  this->ModulePathsRemovedCallback();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplicationSettingsInterface::ModulePathsRemovedCallback()
 {
   vtkSlicerApplication *app
     = vtkSlicerApplication::SafeDownCast(this->GetApplication());
-
   if (app)
     {
     // Store the setting in the application object
-    app->SetModulePaths(path);
+    char *str;
+
+    str = NULL;
+    this->ModulePathsPresetSelector->GetPresetDirectoriesToDelimitedString(
+      &str, '|');
+    app->SetPotentialModulePaths(str);
+    delete [] str;
     }
 }
 
@@ -1230,9 +1257,10 @@ void vtkSlicerApplicationSettingsInterface::Update()
       {
       this->HomeModuleEntry->GetWidget()->SetValue(app->GetHomeModule());
       }
-    if (this->ModulePathsEntry)
+    if (this->ModulePathsPresetSelector)
       {
-      this->ModulePathsEntry->GetWidget()->SetValue(app->GetModulePaths());
+      this->ModulePathsPresetSelector->AddPresetDirectoriesFromDelimitedString(
+        app->GetPotentialModulePaths(), '|');
       }
     if (this->ModuleCachePathButton)
       {
