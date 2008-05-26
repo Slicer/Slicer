@@ -94,6 +94,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   //BTX
   static const char *ConfirmDeleteRegKey;
   static const char *ModulePathsRegKey;
+  static const char *PotentialModulePathsRegKey;
   static const char *ModuleCachePathRegKey;
   static const char *TemporaryDirectoryRegKey;
   static const char *WebBrowserRegKey;
@@ -135,9 +136,29 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   const char* GetConfirmDelete() const;
   
   // Description:
-  // Set/Get the search paths for modules ( a list of ; or : separated paths).
+  // Set/Get the search paths for modules.
+  // This is a list of paths delimited by a specific seperator: ';' on 
+  // Windows, ':' on Unix/MacOSX platforms.
   void SetModulePaths(const char *paths);
   const char* GetModulePaths() const;
+
+  // Description:
+  // Set/Get the potential search paths for modules.
+  // This is a list of directories that can be used as module paths. 
+  // Each item in this list is a directory and a boolean flag (0 or 1) 
+  // specifying if that directory is actually to be used as a module path
+  // (see ModulePaths, which is the subset of the paths in PotentialModulePaths
+  // that are enabled, with a different delimiter between each path). 
+  // This variable is used for GUI purposes, in that it lets people keep a
+  // list of directories and enable/disable them at will, without having
+  // to re-enter/re-pick them one by one using a file browser. It is used
+  // by the vtkSlicerApplicationSettingsInterface and computed with help its
+  // vtkKWDirectoryPresetSelector internal class. Each element is separated by
+  // a '|' delimiter (ex: "c:/temp|0|d:/foo/bar|1", where "c:/temp" is disabled
+  // and d:/foo/bar is enabled; at this point, the value of ModulePaths should
+  // actually be "d:/foo/bar").
+  void SetPotentialModulePaths(const char *paths);
+  const char* GetPotentialModulePaths() const;
 
   // Description:
   // Set/Get the cache path for modules.
@@ -328,6 +349,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   
   char ConfirmDelete[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModulePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
+  char PotentialModulePaths[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char ModuleCachePath[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   char WebBrowser [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];
   char Unzip [vtkKWRegistryHelper::RegistryKeyValueSizeMax ];

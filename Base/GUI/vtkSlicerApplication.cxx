@@ -15,6 +15,7 @@
 #include "vtkKWTclInteractor.h"
 #include "vtkKWSplashScreen.h"
 #include "vtkKWSplitFrame.h"
+#include "vtkKWDirectoryPresetSelector.h"
 
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWRegistryHelper.h"
@@ -51,6 +52,7 @@
 #endif
 
 const char *vtkSlicerApplication::ModulePathsRegKey = "ModulePaths";
+const char *vtkSlicerApplication::PotentialModulePathsRegKey = "PotentialModulePaths";
 const char *vtkSlicerApplication::ModuleCachePathRegKey = "ModuleCachePath";
 const char *vtkSlicerApplication::TemporaryDirectoryRegKey = "TemporaryDirectory";
 const char *vtkSlicerApplication::WebBrowserRegKey = "WebBrowser";
@@ -205,6 +207,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     strcpy(this->ConfirmDelete, "");
     
     strcpy(this->ModulePaths, "");
+    strcpy(this->PotentialModulePaths, "");
     strcpy(this->ModuleCachePath, "");
     strcpy ( this->HomeModule, "");
     this->LoadCommandLineModules = 1;
@@ -591,6 +594,7 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
 
   Superclass::RestoreApplicationSettingsFromRegistry();
   
+  char temp_reg_value[vtkKWRegistryHelper::RegistryKeyValueSizeMax];
   
   if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::ConfirmDeleteRegKey))
@@ -609,11 +613,21 @@ void vtkSlicerApplication::RestoreApplicationSettingsFromRegistry()
     }
 
   if (this->HasRegistryValue(
+    2, "RunTime", vtkSlicerApplication::PotentialModulePathsRegKey))
+    {
+    this->GetRegistryValue(
+      2, "RunTime", vtkSlicerApplication::PotentialModulePathsRegKey,
+      this->PotentialModulePaths);
+    }
+
+  if (this->HasRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModulePathsRegKey))
     {
     this->GetRegistryValue(
       2, "RunTime", vtkSlicerApplication::ModulePathsRegKey,
-      this->ModulePaths);
+      temp_reg_value);
+    // Use SetModulePaths so that PotentialModulePaths is updated too
+    this->SetModulePaths(temp_reg_value); 
     }
 
   if (this->HasRegistryValue(
@@ -814,6 +828,10 @@ void vtkSlicerApplication::SaveApplicationSettingsToRegistry()
                            this->ApplicationFontSize);
 
   this->SetRegistryValue(
+    2, "RunTime", vtkSlicerApplication::PotentialModulePathsRegKey, "%s", 
+    this->PotentialModulePaths);
+
+  this->SetRegistryValue(
     2, "RunTime", vtkSlicerApplication::ModulePathsRegKey, "%s", 
     this->ModulePaths);
 
@@ -984,12 +1002,27 @@ const char *vtkSlicerApplication::GetHomeModule () const
 //----------------------------------------------------------------------------
 void vtkSlicerApplication::SetModulePaths(const char* paths)
 {
+#if WIN32
+  const char delim = ';';
+#else
+  const char delim = ':';
+#endif
   if (paths)
     {
     if (strcmp(this->ModulePaths, paths) != 0
         && strlen(paths) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
       {
       strcpy(this->ModulePaths, paths);
+      char *str = new char [strlen(this->PotentialModulePaths) + 1];
+      strcpy(str, this->PotentialModulePaths);
+      int count = vtkKWDirectoryPresetSelector::
+        UpdatePresetDirectoriesFromEnabledPresetDirectories(
+          &str, '|', this->ModulePaths, delim);
+      if (count)
+        {
+        strcpy(this->PotentialModulePaths, str);
+        }
+      delete [] str;
       this->Modified();
       }
     }
@@ -999,6 +1032,37 @@ void vtkSlicerApplication::SetModulePaths(const char* paths)
 const char* vtkSlicerApplication::GetModulePaths() const
 {
   return this->ModulePaths;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerApplication::SetPotentialModulePaths(const char* paths)
+{
+#if WIN32
+  const char delim = ';';
+#else
+  const char delim = ':';
+#endif
+  if (paths)
+    {
+    if (strcmp(this->PotentialModulePaths, paths) != 0
+        && strlen(paths) < vtkKWRegistryHelper::RegistryKeyValueSizeMax)
+      {
+      strcpy(this->PotentialModulePaths, paths);
+      char *str = NULL;
+      vtkKWDirectoryPresetSelector::
+        GetEnabledPresetDirectoriesFromPresetDirectories(
+          &str, delim, this->PotentialModulePaths, '|');
+      strcpy(this->ModulePaths, str);
+      delete [] str;
+      this->Modified();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerApplication::GetPotentialModulePaths() const
+{
+  return this->PotentialModulePaths;
 }
 
 //----------------------------------------------------------------------------
