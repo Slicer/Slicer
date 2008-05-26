@@ -22,6 +22,18 @@ endif(NOT GENERATELM_EXE)
 # create the .lm files
 # usage: GENERATE_LM(foo_SRCS XML_FILE)
 macro(GENERATELM SOURCES)
+
+  # The shell into which nmake.exe executes the custom command has some issues
+  # with mixing quoted and unquoted arguments :( Let's help.
+
+  if(CMAKE_GENERATOR MATCHES "NMake Makefiles")
+    set(verbatim "")
+    set(quote "\"")
+  else(CMAKE_GENERATOR MATCHES "NMake Makefiles")
+    set(verbatim "VERBATIM")
+    set(quote "")
+  endif(CMAKE_GENERATOR MATCHES "NMake Makefiles")
+
   # what is the filename without the extension
   get_filename_component(TMP_FILENAME ${ARGV1} NAME_WE)
   
@@ -40,8 +52,10 @@ macro(GENERATELM SOURCES)
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h
     DEPENDS "${GENERATELM_EXE}" ${TMP_INPUT}
     COMMAND "${GENERATELM_EXE}"
-    --InputTxt ${TMP_INPUT} --OutputHeader ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h --OutputCxx ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx
-    VERBATIM
+    --InputTxt "${quote}${TMP_INPUT}${quote}" 
+    --OutputHeader "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h${quote}"
+    --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx${quote}"
+    ${verbatim}
     )
 
   # add custom command to output
@@ -49,8 +63,10 @@ macro(GENERATELM SOURCES)
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx
     DEPENDS "${GENERATELM_EXE}" ${TMP_INPUT}
     COMMAND "${GENERATELM_EXE}"
-    --InputTxt ${TMP_INPUT} --OutputHeader ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h --OutputCxx ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx
-    VERBATIM
+    --InputTxt "${quote}${TMP_INPUT}${quote}" 
+    --OutputHeader "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.h${quote}"
+    --OutputCxx "${quote}${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}Lib.cxx${quote}"
+    ${verbatim}
     )
 
   # mark the Lib.cxx file as a source file
