@@ -88,11 +88,12 @@ set(Slicer3_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
 
 # Components needed to build modules from outside a Slicer3 build tree or 
 # from outside a Slicer3 installation tree
-set(TCLAP_DIR "@TCLAP_DIR_CONFIG@")
-set(ModuleDescriptionParser_DIR "@ModuleDescriptionParser_DIR_CONFIG@")
 set(GenerateCLP_DIR "@GenerateCLP_DIR_CONFIG@")
 set(GenerateLM_DIR "@GenerateLM_DIR@")
 set(ITK_DIR "@ITK_DIR_CONFIG@")
-set(VTK_DIR "@VTK_DIR_CONFIG@")
 set(KWWidgets_DIR "@KWWidgets_DIR_CONFIG@")
+set(LoadableModule_DIR "@LoadableModule_DIR_CONFIG@")
+set(ModuleDescriptionParser_DIR "@ModuleDescriptionParser_DIR_CONFIG@")
+set(TCLAP_DIR "@TCLAP_DIR_CONFIG@")
 set(TEEM_DIR "@TEEM_DIR_CONFIG@")
+set(VTK_DIR "@VTK_DIR_CONFIG@")

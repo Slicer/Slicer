@@ -129,11 +129,12 @@ set(Slicer3_INSTALL_MODULES_SHARE_DIR "@Slicer3_INSTALL_MODULES_SHARE_DIR@")
 
 # Components needed to build modules from outside a Slicer3 build tree or 
 # from outside a Slicer3 installation tree
-set(TCLAP_DIR "${Slicer3_HOME}/lib/tclap")
-set(ModuleDescriptionParser_DIR "${Slicer3_HOME}/lib/ModuleDescriptionParser")
 set(GenerateCLP_DIR "${Slicer3_HOME}/lib/GenerateCLP")
 set(GenerateLM_DIR "${Slicer3_HOME}/lib/GenerateLM")
 set(ITK_DIR "${Slicer3_HOME}/lib/InsightToolkit")
-set(VTK_DIR "${Slicer3_HOME}/lib/vtk-@VTK_MAJOR_VERSION@.@VTK_MINOR_VERSION@")
 set(KWWidgets_DIR "${Slicer3_HOME}/lib/KWWidgets")
+set(LoadableModule_DIR "${Slicer3_HOME}/lib/LoadableModule")
+set(ModuleDescriptionParser_DIR "${Slicer3_HOME}/lib/ModuleDescriptionParser")
+set(TCLAP_DIR "${Slicer3_HOME}/lib/tclap")
 set(TEEM_DIR "${Slicer3_HOME}/lib/TEEM-@TEEM_VERSION_MAJOR@.@TEEM_VERSION_MINOR@")
+set(VTK_DIR "${Slicer3_HOME}/lib/vtk-@VTK_MAJOR_VERSION@.@VTK_MINOR_VERSION@")
