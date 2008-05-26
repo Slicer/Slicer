@@ -108,11 +108,7 @@ if(Slicer3_USE_PYTHON)
   endif(NOT WIN32)
 endif(Slicer3_USE_PYTHON)
 
-install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_MODULES_BIN_DIR} COMPONENT RuntimeLibraries 
-  LIBRARY DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR} COMPONENT Development
-    )
+slicer3_install_modules(${lib_name})
 
 # --------------------------------------------------------------------------
 # Testing

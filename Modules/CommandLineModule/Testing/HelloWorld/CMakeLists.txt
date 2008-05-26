@@ -26,10 +26,7 @@ target_link_libraries(${CLP} ${ITK_LIBRARIES})
 
 # Install it
 
-install(TARGETS ${CLP}
-  RUNTIME DESTINATION ${Slicer3_INSTALL_PLUGINS_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${Slicer3_INSTALL_PLUGINS_LIB_DIR} COMPONENT RuntimeLibraries
-  )
+slicer3_install_plugins(${CLP})
 
 # Test it
 
