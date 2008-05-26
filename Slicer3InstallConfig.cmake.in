@@ -65,6 +65,9 @@ set(Slicer3_Libs_LIBRARY_DIRS
   "${Slicer3_HOME}/lib/tclap"
   "${Slicer3_HOME}/lib/vtkITK"
   "${Slicer3_HOME}/lib/vtkTeem"
+  "${Slicer3_HOME}/lib/TclTk/lib"
+  "${Slicer3_HOME}/lib/TclTk/lib/itcl@INCR_TCL_VERSION_DOT@"
+  "${Slicer3_HOME}/lib/TclTk/lib/itk@INCR_TCL_VERSION_DOT@"
   )
 
 # Slicer3 Libs include file directories.
