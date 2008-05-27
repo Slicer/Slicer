@@ -83,8 +83,17 @@ install(TARGETS ${lib_name}
 # in a special directory to speed up the searching for ImageIO
 # factories (which improves the speed at which plugins run).
 
+if(NOT DEFINED ITKCommandIO_INSTALL_ITKFACTORIES_DIR)
+  set(ITKCommandIO_INSTALL_ITKFACTORIES_DIR lib/ITKFactories)
+endif(NOT DEFINED ITKCommandIO_INSTALL_ITKFACTORIES_DIR)
+
 add_library(CommandIOPlugin SHARED 
   itkCommandIOPlugin.cxx
+  )
+set_target_properties(CommandIOPlugin 
+  PROPERTIES 
+  RUNTIME_OUTPUT_DIRECTORY 
+  "${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}"
   )
 target_link_libraries(CommandIOPlugin 
   ${lib_name}  
@@ -101,27 +110,8 @@ target_link_libraries(CommandIOPlugin
   ITKNrrdIO
 )
 
-if(NOT DEFINED ITKCommandIO_INSTALL_ITKFACTORIES_DIR)
-  set(ITKCommandIO_INSTALL_ITKFACTORIES_DIR lib/ITKFactories)
-endif(NOT DEFINED ITKCommandIO_INSTALL_ITKFACTORIES_DIR)
-
-# We should switch to SET_TARGET_PROPERTIES() with LIBRARY_OUTPUT_DIRECTORY 
-# once CMake 2.6 is released.  Until then, we need to hack a solution with
-# ADD_CUSTOM_COMMAND()
-#SET_TARGET_PROPERTIES(CommandIOPlugin PROPERTIES 
-#              LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}")
-
-get_target_property(LIBFULLNAME CommandIOPlugin LOCATION)
-get_filename_component(LIBNAME ${LIBFULLNAME} NAME)
-
-add_custom_command(TARGET CommandIOPlugin
-  DEPENDS ${LIB_NAME}
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${LIBFULLNAME} ${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}/${CMAKE_CFG_INTDIR}/${LIBNAME}
-  VERBATIM
-)
-
 # Note CommandIO and CommandIOPlugin are installed in different locations
+
 install(TARGETS CommandIOPlugin
   RUNTIME DESTINATION ${ITKCommandIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${ITKCommandIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries

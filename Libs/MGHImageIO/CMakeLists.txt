@@ -71,31 +71,26 @@ install(TARGETS ${lib_name}
 # in a special directory to speed up the searching for ImageIO
 # factories (which improves the speed at which plugins run).
 
+if(NOT DEFINED MGHImageIO_INSTALL_ITKFACTORIES_DIR)
+  set(MGHImageIO_INSTALL_ITKFACTORIES_DIR lib/ITKFactories)
+endif(NOT DEFINED MGHImageIO_INSTALL_ITKFACTORIES_DIR)
+
 add_library(MGHIOPlugin SHARED 
   itkMGHIOPlugin.cxx
+  )
+set_target_properties(MGHIOPlugin
+  PROPERTIES 
+  RUNTIME_OUTPUT_DIRECTORY 
+  "${CMAKE_BINARY_DIR}/${MGHImageIO_INSTALL_ITKFACTORIES_DIR}"
   )
 target_link_libraries(MGHIOPlugin 
   ${lib_name}
 )
 
-if(NOT DEFINED MGHImageIO_INSTALL_ITKFACTORIES_DIR)
-  set(MGHImageIO_INSTALL_ITKFACTORIES_DIR lib/ITKFactories)
-endif(NOT DEFINED MGHImageIO_INSTALL_ITKFACTORIES_DIR)
-
-# We should switch to SET_TARGET_PROPERTIES() with LIBRARY_OUTPUT_DIRECTORY 
-# once CMake 2.6 is released.  Until then, we need to hack a solution with
-# ADD_CUSTOM_COMMAND()
-#SET_TARGET_PROPERTIES(MGHIOPlugin PROPERTIES 
-#              LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${MGHImageIO_INSTALL_ITKFACTORIES_DIR}")
-
-get_target_property(LIBFULLNAME MGHIOPlugin LOCATION)
-get_filename_component(LIBNAME ${LIBFULLNAME} NAME)
-
-add_custom_command(TARGET MGHIOPlugin
-  DEPENDS ${LIB_NAME}
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${LIBFULLNAME} ${CMAKE_BINARY_DIR}/${MGHImageIO_INSTALL_ITKFACTORIES_DIR}/${CMAKE_CFG_INTDIR}/${LIBNAME}
-  VERBATIM
+install(TARGETS MGHIOPlugin
+  RUNTIME DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
   )
 
 # make a copy named '.so' for compatibility with the expectations
@@ -112,9 +107,3 @@ if(APPLE)
     VERBATIM
     )
 endif(APPLE)
-
-install(TARGETS MGHIOPlugin
-  RUNTIME DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
-  )
