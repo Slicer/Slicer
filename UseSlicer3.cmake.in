@@ -61,6 +61,18 @@ link_directories(
   ${Slicer3_Base_LIBRARY_DIRS}
   )
 
+# Some people use Mesa instead of the default system OpenGL.
+# Try to help them a little.
+if(NOT WIN32)
+  foreach(dependency ${vtkftgl_LIB_DEPENDS})
+    get_filename_component(dependency_lib "${dependency}" NAME_WE)
+    if(dependency_lib STREQUAL "libGL")
+      get_filename_component(OPENGL_gl_LIBRARY_PATH "${dependency}" PATH)
+      link_directories("${OPENGL_gl_LIBRARY_PATH}")
+    endif(dependency_lib STREQUAL "libGL")
+  endforeach(dependency)
+endif(NOT WIN32)
+
 # Add cmake module path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${Slicer3_CMAKE_DIR}")
 include("${Slicer3_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
