@@ -1,7 +1,13 @@
 project(GUI)
 
-#########################################################################
+# --------------------------------------------------------------------------
 # Enable shared link forwarding support if needed.
+#
+get_filename_component(TCL_LIBRARY_PATH ${TCL_LIBRARY} PATH)
+get_filename_component(TCL_DIR ${TCL_LIBRARY_PATH} PATH)
+get_filename_component(INCR_TCL_LIBRARY_PATH ${INCR_TCL_LIBRARY} PATH)
+get_filename_component(INCR_TK_LIBRARY_PATH ${INCR_TK_LIBRARY} PATH)
+
 set(Slicer3_EXE_SUFFIX)
 set(Slicer3_EXE_INSTALL ${Slicer3_INSTALL_BIN_DIR})
 if(BUILD_SHARED_LIBS)
@@ -10,15 +16,17 @@ if(BUILD_SHARED_LIBS)
   set(Slicer3_EXE_INSTALL ".")
   set(Slicer3_FORWARD_DIR_BUILD "${EXECUTABLE_OUTPUT_PATH}")
   set(Slicer3_FORWARD_DIR_INSTALL "${Slicer3_EXE_INSTALL}")
-  set(Slicer3_FORWARD_PATH_BUILD "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${KWWidgets_RUNTIME_DIRS}\",\"${VTK_DIR}/bin\"")
   if(WIN32)
+    set(Slicer3_FORWARD_PATH_BUILD "\"${Slicer3_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST,\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST,\"${VTK_DIR}/bin\" CONFIG_DIR_POST,\"${KWWidgets_RUNTIME_DIRS}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST,\"${TEEM_DIR}/bin\" CONFIG_DIR_POST,\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\"")
     set(Slicer3_FORWARD_PATH_INSTALL
-      "\"../${Slicer3_INSTALL_LIB_DIR}/tcl/bin\"")
+      "\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"../lib/TclTk/bin\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
   else(WIN32)
+    set(Slicer3_FORWARD_PATH_BUILD "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${TEEM_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH }\"")
     set(Slicer3_FORWARD_PATH_INSTALL
-      "\"../lib\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"..//lib/TclTk\"")
+      "\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"../lib\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/TclTk\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
   endif(WIN32)
 endif(BUILD_SHARED_LIBS)
+
 # Add main server executables.
 set(Slicer3_EXE_LIST Slicer3)
 
@@ -34,24 +42,27 @@ if(Slicer3_NEED_SHARED_FORWARD)
       ${CMAKE_CURRENT_BINARY_DIR}/${slicer_exe}-forward.c)
     add_dependencies(${slicer_exe} ${slicer_exe}${Slicer3_EXE_SUFFIX})
     install(TARGETS ${slicer_exe}
-      DESTINATION bin
+      DESTINATION ${Slicer3_INSTALL_BIN_DIR}
       COMPONENT Runtime)
   endforeach(slicer_exe)
 endif(Slicer3_NEED_SHARED_FORWARD)
 
+# --------------------------------------------------------------------------
+# Sources
+#
 set(SRC
   Slicer3.cxx
   )
 
 # --------------------------------------------------------------------------
 # Find SLICERLIBCURL (slicercurl)
+#
 find_package(SLICERLIBCURL REQUIRED)
 include(${SLICERLIBCURL_USE_FILE})
 
 # --------------------------------------------------------------------------
 # Include dirs
-# MESSAGE(STATUS "Setting up dir_list, Qdec bin dir = ${Qdec_BINARY_DIR}, Qdec src dir = ${Qdec_SOURCE_DIR}")
-
+#
 set(dir_list
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
@@ -119,51 +130,49 @@ endif(Slicer3_USE_PYTHON AND PYTHON_INCLUDE_PATH)
 
 include_directories(${dir_list})
 
-# On Win32 platforms, let's configure the KWWidgets sample resource file
-# to get a nice application icon and some additional information.
-# This is *mandatory* for a static build otherwise the static Tk resources
-# won't be included and images like checkboxes will not appear.
-
-# NOTE: this is commented for now until we get rid of extra include directives.
-# We have 90 (!) at this point and rc.exe can *not* handle such number.
-
-#IF(WIN32 AND NOT BORLAND AND NOT CYGWIN)
-#  INCLUDE("${KWWidgets_CMAKE_DIR}/KWWidgetsResourceMacros.cmake")
-#  SET(RC_FILENAME "${CMAKE_CURRENT_BINARY_DIR}/Slicer3.rc")
-#  KWWidgets_CREATE_RC_FILE(
-#    RC_FILENAME "${RC_FILENAME}"
-#    RC_APPLICATION_NAME "Slicer3"
-#    RC_COMPANY_NAME "NA-MIC")
-#ENDIF(WIN32 AND NOT BORLAND AND NOT CYGWIN)
-
-#
+# --------------------------------------------------------------------------
 # with the WIN32_CONSOLE you can see diagnostic output on in a DOS-style
 # cmd window
 #
-option(Slicer3_BUILD_WIN32_CONSOLE "Build Slicer3 executable as a console app on windows (allows debug output)" OFF)
+option(Slicer3_BUILD_WIN32_CONSOLE 
+  "Build Slicer3 executable as a console app on windows (allows debug output)" 
+  OFF
+  )
+
 if(Slicer3_BUILD_WIN32_CONSOLE)
-  add_executable(Slicer3${Slicer3_EXE_SUFFIX} ${SRC} ${RC_FILENAME})
+  add_executable(Slicer3${Slicer3_EXE_SUFFIX} 
+    ${SRC} 
+    ${RC_FILENAME}
+    )
 else(Slicer3_BUILD_WIN32_CONSOLE)
-  add_executable(Slicer3${Slicer3_EXE_SUFFIX} WIN32 ${SRC} ${RC_FILENAME})
+  add_executable(
+    Slicer3${Slicer3_EXE_SUFFIX} WIN32 
+    ${SRC} 
+    ${RC_FILENAME}
+    )
 endif(Slicer3_BUILD_WIN32_CONSOLE)
 
+# --------------------------------------------------------------------------
+# Options
+#
 if(WFENGINEMODULE)
   set(WFENGINE_LINK_LIB ${WFENGINE_LINK_LIB} WFEngineModule)
 else(WFENGINEMODULE)
   add_definitions(-DWFENGINE_DEBUG)
 endif(WFENGINEMODULE)
 
-# Option for LabelStatistics
 if(LABELSTATISTICS)
   set(LABELSTATISTICS_LINK_LIB LabelStatistics)
 else(LABELSTATISTICS)
   add_definitions(-DLABELSTATISTICS_DEBUG)
 endif(LABELSTATISTICS)
 
+# --------------------------------------------------------------------------
+# Link
 # Important: remove RemoteIO when using CMake 2.6. Couldn't be part of 
 # Slicer3_LIBRARIES right now because of the Curl lib RemoteIO is using is
 # STATIC, but that's fixed in 2.6.
-
+#
 target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
   ${Slicer3_Libs_LIBRARIES}
   ${Slicer3_Base_LIBRARIES}
@@ -171,9 +180,6 @@ target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
   ${KWWidgets_LIBRARIES}
 #  ${SLICERLIBCURL_LIBRARIES}
   )
-
-# MESSAGE(STATUS "Slicer lib curl libs = ${SLICERLIBCURL_LIBRARIES}")
-# MESSAGE(STATUS "Slicer lib curl library dirs = ${SLICERLIBCURL_LIBRARY_DIRS}")
 
 if(Slicer3_BUILD_MODULES)
   target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
@@ -213,8 +219,14 @@ if(Slicer3_USE_PYTHON AND PYTHON_LIBRARIES)
   endif(NOT WIN32)
 endif(Slicer3_USE_PYTHON AND PYTHON_LIBRARIES)
 
-install_targets(/bin Slicer3${Slicer3_EXE_SUFFIX})
+# --------------------------------------------------------------------------
+# Install
+#
+install(TARGETS Slicer3${Slicer3_EXE_SUFFIX}
+  DESTINATION ${Slicer3_INSTALL_BIN_DIR}
+  COMPONENT Runtime)
 
+# --------------------------------------------------------------------------
 # If needed, copy the Tcl/Tk support files required at run-time 
 # to initialize Tcl/Tk. This is only triggered if VTK was built
 # against a Tcl/Tk static library.
@@ -223,8 +235,8 @@ include("${KWWidgets_CMAKE_DIR}/KWWidgetsTclTkMacros.cmake")
 kwwidgets_copy_tcl_tk_support_files("${Slicer3_BINARY_DIR}/lib")
 kwwidgets_install_tcl_tk_support_files("/lib")
 
-#
-# use the command line utilities
+# --------------------------------------------------------------------------
+# Use the command line utilities
 #
 find_package(GenerateCLP REQUIRED)
 if(GenerateCLP_FOUND)
@@ -233,10 +245,9 @@ endif(GenerateCLP_FOUND)
 
 generateclp(${SRC} Slicer3.xml)
 
-#
+# --------------------------------------------------------------------------
 # Command line parsing tests
 #
-
 add_test(Slicer3CLTest1 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --help)
 add_test(Slicer3CLTest2 ${Slicer3_BINARY_DIR}/Slicer3 --xml --test-mode)
 add_test(Slicer3CLTest3 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode -f ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/TestScript.tcl)
@@ -246,15 +257,14 @@ add_test(Slicer3CLTest6 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Sli
 add_test(Slicer3CLTest7 ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/LoadSceneTest.tcl)
 add_test(Slicer3ScrollTest ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --script ${Slicer3_SOURCE_DIR}/Applications/GUI/Testing/ScrollTesting.tcl)
 
-#
+# --------------------------------------------------------------------------
 # MRML Tests
 #
-
 add_test(Slicer3MRMLUndo ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer3_HOME}/share/MRML/Testing/testUndo.tcl)
 add_test(Slicer3MRMLVolume ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash -f ${Slicer3_HOME}/share/MRML/Testing/testVolume.tcl)
 
-#
-# make the testing
+# --------------------------------------------------------------------------
+# Testing
 #
 if(Slicer3_BUILD_TESTING)
   subdirs(Testing)

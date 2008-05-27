@@ -10,11 +10,7 @@
 #endif
 
 #define vtksys_SHARED_FORWARD_DIR_BUILD "@Slicer3_FORWARD_DIR_BUILD@"
-#if defined(_WIN32)
-#  define vtksys_SHARED_FORWARD_PATH_BUILD "." CONFIG_DIR_POST, "@KWWidgets_RUNTIME_DIRS@" CONFIG_DIR_POST, "@KWWidgets_VTK_DIR@/bin" CONFIG_DIR_POST, "@ITK_DIR@/bin" CONFIG_DIR_POST, "../../Slicer3-lib/tcl-build/bin"
-#else
-#  define vtksys_SHARED_FORWARD_PATH_BUILD @Slicer3_FORWARD_PATH_BUILD@
-#endif
+#define vtksys_SHARED_FORWARD_PATH_BUILD @Slicer3_FORWARD_PATH_BUILD@
 #define vtksys_SHARED_FORWARD_PATH_INSTALL @Slicer3_FORWARD_PATH_INSTALL@
 #if defined(_WIN32)
 #  define vtksys_SHARED_FORWARD_EXE_BUILD CONFIG_DIR_PRE "@Slicer3_FORWARD_EXE@"
@@ -139,7 +135,7 @@ int __stdcall WinMain(HINSTANCE h1, HINSTANCE h2, LPSTR lpCmdLine, int i1)
       }
     }
   ret = Launcher_main(argc, argv);
-  for (i = 0; i < argc; i++) { free( argv[i] ); }
+  for (i = 0; i < (size_t)argc; i++) { free( argv[i] ); }
   free( argv );
   return ret;
 }
