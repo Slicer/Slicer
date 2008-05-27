@@ -347,7 +347,9 @@ runcmd $::CMAKE \
         -DKWWidgets_DIR:FILEPATH=$Slicer3_LIB/KWWidgets-build \
         -DTEEM_DIR:FILEPATH=$Slicer3_LIB/teem-build \
         -DIGSTK_DIR:FILEPATH=$Slicer3_LIB/IGSTK-build \
-        -DSlicer3_USE_PYTHON=ON \
+        -DINCR_TCL_LIBRARY:FILEPATH=$::INCR_TCL_LIB \
+        -DINCR_TK_LIBRARY:FILEPATH=$::INCR_TK_LIB \
+        -DSlicer3_USE_PYTHON=OFF \
         -DPYTHON_INCLUDE_PATH:PATH=$::PYTHON_INCLUDE \
         -DPYTHON_LIBRARY:FILEPATH=$::PYTHON_LIB \
         -DSandBox_DIR:FILEPATH=$Slicer3_LIB/NAMICSandBox \
