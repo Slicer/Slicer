@@ -74,14 +74,16 @@ else(WIN32)
 endif(WIN32)
 set(GenerateCLP_FORWARD_EXE GenerateCLP)
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/GenerateCLPLauncher.c.in
-  ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLPLauncher.c
-  @ONLY IMMEDIATE)
-add_executable(GenerateCLPLauncher WIN32
-  ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLPLauncher.c)
-add_dependencies(GenerateCLPLauncher GenerateCLP)
+if(NOT WIN32)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/GenerateCLPLauncher.c.in
+    ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLPLauncher.c
+    @ONLY IMMEDIATE)
+  add_executable(GenerateCLPLauncher
+    ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLPLauncher.c)
+  add_dependencies(GenerateCLPLauncher GenerateCLP)
 
-install(TARGETS GenerateCLPLauncher RUNTIME 
-  DESTINATION bin COMPONENT Development
-  )
+  install(TARGETS GenerateCLPLauncher RUNTIME 
+    DESTINATION bin COMPONENT Development
+    )
+endif(NOT WIN32)
