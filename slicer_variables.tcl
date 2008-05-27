@@ -78,6 +78,7 @@ set ::TEEM_TAG "Teem-1-9-0-patches"
 set ::KWWidgets_TAG "HEAD"
 set ::VTK_TAG "VTK-5-2"
 set ::ITK_TAG ITK-3-6
+set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release25-maint"
 set ::SLICERLIBCURL_TAG "HEAD"
 
 # Set library, binary, etc. paths...
@@ -114,6 +115,7 @@ set ::ITK_BINARY_PATH $::Slicer3_LIB/Insight-build
 set ::TCL_BIN_DIR $::Slicer3_LIB/tcl-build/bin
 set ::TCL_LIB_DIR $::Slicer3_LIB/tcl-build/lib
 set ::TCL_INCLUDE_DIR $::Slicer3_LIB/tcl-build/include
+set ::PYTHON_BIN_DIR $::Slicer3_LIB/python-build
 set ::CMAKE_PATH $::Slicer3_LIB/CMake-build
 set ::SOV_BINARY_DIR ""
 set ::XVNC_EXECUTABLE " "
@@ -159,6 +161,9 @@ switch $::tcl_platform(os) {
 
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
+        set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython25.dylib
+        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python25
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.dylib
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
@@ -178,6 +183,9 @@ switch $::tcl_platform(os) {
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
 
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
+        set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython25.so
+        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python25
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.so
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
@@ -204,6 +212,9 @@ switch $::tcl_platform(os) {
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish84.exe
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/itclConfig.sh
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu.exe
+        set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python.exe
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/Libs/python25.lib
+        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include
         set ::VTK_TEST_FILE $::VTK_DIR/bin/$::VTK_BUILD_TYPE/vtk.exe
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/$::env(VTK_BUILD_SUBDIR)/KWWidgets.lib
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/tcl84.lib

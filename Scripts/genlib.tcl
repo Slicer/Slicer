@@ -386,6 +386,49 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
 }
 
 ################################################################################
+# Get and build python
+#
+
+if {  [BuildThis $::PYTHON_TEST_FILE "python"] == 1 } {
+
+    file mkdir $::Slicer3_LIB/python
+    file mkdir $::Slicer3_LIB/python-build
+    cd $::Slicer3_LIB
+
+    if { $isWindows } {
+      runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Binaries/Windows/python-build python-build
+    } else {
+        cd $Slicer3_LIB/python
+        runcmd $::SVN co $::PYTHON_TAG
+        cd $Slicer3_LIB/python/release25-maint
+
+        set ::env(LDFLAGS) -L$Slicer3_LIB/tcl-build/lib
+        set ::env(CPPFLAGS) -I$Slicer3_LIB/tcl-build/include
+
+        runcmd ./configure --prefix=$Slicer3_LIB/python-build --with-tcl=$Slicer3_LIB/tcl-build --enable-shared
+        eval runcmd $::MAKE
+        puts [catch "eval runcmd $::SERIAL_MAKE install" res] ;# try twice - it probably fails first time...
+        if { $isDarwin } {
+            # Special Slicer hack to build and install the .dylib
+            file mkdir $::Slicer3_LIB/python-build/lib/
+            file delete -force $::Slicer3_LIB/python-build/lib/libpython2.5.dylib
+            set fid [open environhack.c w]
+            puts $fid "char **environ=0;"
+            close $fid
+            runcmd gcc -c -o environhack.o environhack.c
+            runcmd libtool -o $::Slicer3_LIB/python-build/lib/libpython2.5.dylib -dynamic  \
+                -all_load libpython2.5.a environhack.o -single_module \
+                -install_name $::Slicer3_LIB/python-build/lib/libpython2.5.dylib \
+                -compatibility_version 2.5 \
+                -current_version 2.5 -lSystem -lSystemStubs
+
+        }
+    }
+}
+
+
+
+################################################################################
 # Get and build vtk
 #
 
@@ -550,7 +593,7 @@ if { [BuildThis $::KWWidgets_TEST_FILE "kwwidgets"] == 1 } {
       } else {
         eval runcmd $::MAKE 
       }
-  }
+  }<
 }
 
 ################################################################################
