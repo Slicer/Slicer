@@ -1817,7 +1817,7 @@ int Slicer3_main(int argc, char *argv[])
       else
         {
         // if we're not sure, assume it is data to load...
-        std::string cmd = "after idle {update; ::Loader::ShowDialog \"" + *argit + "\"}";
+        std::string cmd = "after idle {update; ::Loader::ShowDialog {" + *argit + "}}";
         res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
         }
       ++argit;
@@ -1830,7 +1830,7 @@ int Slicer3_main(int argc, char *argv[])
   if ( LoadDicomDir != "" )
     {    
     // load either a directory or an archetype
-    std::string cmd = "after idle {update; ::Loader::LoadArchetype \"" + LoadDicomDir + "\"}";
+    std::string cmd = "after idle {update; ::Loader::LoadArchetype {" + LoadDicomDir + "}}";
     res = Slicer3_Tcl_Eval( interp, cmd.c_str() );
     }
 
