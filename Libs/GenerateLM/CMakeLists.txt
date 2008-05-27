@@ -70,7 +70,7 @@ set(GenerateLM_FORWARD_DIR_INSTALL ".")
 if(WIN32)
   set(GenerateLM_FORWARD_PATH_BUILD 
     "\"${GenerateLM_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${VTK_DIR}/bin\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST")
-  set(GenerateLM_FORWARD_PATH_INSTALL "")
+  set(GenerateLM_FORWARD_PATH_INSTALL "\"\"")
 else(WIN32)
   set(GenerateLM_FORWARD_PATH_BUILD 
     "\"${GenerateLM_FORWARD_DIR_BUILD}\",\"${VTK_DIR}/bin\",\"${ITK_DIR}/bin\"")
