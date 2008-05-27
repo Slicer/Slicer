@@ -8,6 +8,18 @@ get_filename_component(TCL_DIR ${TCL_LIBRARY_PATH} PATH)
 get_filename_component(INCR_TCL_LIBRARY_PATH ${INCR_TCL_LIBRARY} PATH)
 get_filename_component(INCR_TK_LIBRARY_PATH ${INCR_TK_LIBRARY} PATH)
 
+# Some people use Mesa instead of the default system OpenGL.
+# Try to incorporate that in the launcher, but NOT for installation.
+
+if(NOT WIN32)
+  foreach(dependency ${vtkftgl_LIB_DEPENDS})
+    get_filename_component(dependency_lib "${dependency}" NAME_WE)
+    if(dependency_lib STREQUAL "libGL")
+      get_filename_component(OPENGL_gl_LIBRARY_PATH "${dependency}" PATH)
+    endif(dependency_lib STREQUAL "libGL")
+  endforeach(dependency)
+endif(NOT WIN32)
+
 set(Slicer3_EXE_SUFFIX)
 set(Slicer3_EXE_INSTALL ${Slicer3_INSTALL_BIN_DIR})
 if(BUILD_SHARED_LIBS)
@@ -21,9 +33,9 @@ if(BUILD_SHARED_LIBS)
     set(Slicer3_FORWARD_PATH_INSTALL
       "\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"../lib/TclTk/bin\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
   else(WIN32)
-    set(Slicer3_FORWARD_PATH_BUILD "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${TEEM_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\"")
+    set(Slicer3_FORWARD_PATH_BUILD "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${TEEM_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\",\"${OPENGL_gl_LIBRARY_PATH}\"")
     set(Slicer3_FORWARD_PATH_INSTALL
-      "\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"../lib\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/TclTk\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
+      "\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"../${Slicer3_INSTALL_LIB_DIR}\",\"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/TEEM-${TEEM_VERSION_MAJOR}.${TEEM_VERSION_MINOR}\",\"../lib/TclTk/lib\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\",\"../lib/FreeSurfer\",\"../lib/IGT\",\"../lib/ITKCommandIO\",\"../lib/LoadableModule\",\"../lib/MGHImageIO\",\"../lib/MRML\",\"../lib/ModuleDescriptionParser\",\"../lib/MRMLIDImageIO\",\"../lib/Qdec\",\"../lib/RemoteIO\",\"../lib/SlicerIO\",\"../lib/tclap\",\"../lib/vtkITK\",\"../lib/vtkTeem\"")
   endif(WIN32)
 endif(BUILD_SHARED_LIBS)
 
