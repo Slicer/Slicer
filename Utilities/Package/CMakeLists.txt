@@ -24,7 +24,7 @@ endif(NOT EXISTS "${TCL_DIR}/bin/tclsh${TCL_TK_VERSION_DOT}" AND
 if(TCL_DIR)
   install(DIRECTORY
     ${TCL_DIR}/
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/TclTk
+    DESTINATION lib/TclTk
     )
 endif(TCL_DIR)
 
