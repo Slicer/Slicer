@@ -79,15 +79,17 @@ else(WIN32)
 endif(WIN32)
 set(GenerateLM_FORWARD_EXE GenerateLM)
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/GenerateLMLauncher.c.in
-  ${CMAKE_CURRENT_BINARY_DIR}/GenerateLMLauncher.c
-  @ONLY IMMEDIATE)
-add_executable(GenerateLMLauncher WIN32
-  ${CMAKE_CURRENT_BINARY_DIR}/GenerateLMLauncher.c)
-add_dependencies(GenerateLMLauncher GenerateLM)
-
-install(TARGETS GenerateLMLauncher RUNTIME 
-  DESTINATION bin COMPONENT Development
-  )
+if(NOT WIN32)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/GenerateLMLauncher.c.in
+    ${CMAKE_CURRENT_BINARY_DIR}/GenerateLMLauncher.c
+    @ONLY IMMEDIATE)
+  add_executable(GenerateLMLauncher
+    ${CMAKE_CURRENT_BINARY_DIR}/GenerateLMLauncher.c)
+  add_dependencies(GenerateLMLauncher GenerateLM)
+  
+  install(TARGETS GenerateLMLauncher RUNTIME 
+    DESTINATION bin COMPONENT Development
+    )
+endif(NOT WIN32)
 
