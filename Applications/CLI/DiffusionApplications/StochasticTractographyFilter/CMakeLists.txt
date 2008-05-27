@@ -23,8 +23,6 @@ include(${ITK_USE_FILE})
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
-slicer3_set_default_plugins_output_path()
-
 include_directories( ${CLI_SOURCE_DIR} )
 
 #####################
@@ -34,6 +32,7 @@ set (CLP StochasticTractographyFilter)
 set ( ${CLP}_SOURCE ${CLP}.cxx)
 generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
+slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP}
   ITKIO
   ITKBasicFilters 
@@ -50,6 +49,7 @@ set (CLP GenerateConnectivityMap)
 set ( ${CLP}_SOURCE ${CLP}.cxx)
 generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
+slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP}
   ITKIO
   ITKBasicFilters 
@@ -65,6 +65,7 @@ set (CLP ROITractFilter)
 set ( ${CLP}_SOURCE ${CLP}.cxx)
 generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
+slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP}
   ITKIO
   ITKBasicFilters 
@@ -81,6 +82,7 @@ set (CLP CalculateVolumeStatistics)
 set ( ${CLP}_SOURCE ${CLP}.cxx)
 generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/MIT_NAMIC_PNL_Logo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
+slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP}
   ITKIO
   ITKBasicFilters 

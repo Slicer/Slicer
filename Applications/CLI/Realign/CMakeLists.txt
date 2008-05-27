@@ -10,8 +10,6 @@ link_directories(${ModuleDescriptionParser_BINARY_DIR} ${vtkTeem_LIB_DIR})
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
-slicer3_set_default_plugins_output_path()
-
 include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
 
 #####################
@@ -22,6 +20,7 @@ set ( ${CLP}_SOURCE ${CLP}.cxx )
 generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 
 add_executable(${CLP} ${${CLP}_SOURCE} vtkPrincipalAxesAlign.cxx)
+slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP}
   vtkImaging vtkGraphics vtkIO
   ModuleDescriptionParser vtkTeem
@@ -30,6 +29,7 @@ target_link_libraries (${CLP}
   )
 
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE} vtkPrincipalAxesAlign.cxx )
+slicer3_set_plugins_output_path(${CLP}Lib)
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 target_link_libraries (${CLP}Lib vtkImaging vtkGraphics vtkIO ModuleDescriptionParser vtkTeem MRML SlicerBaseCLI)
 

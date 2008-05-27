@@ -71,8 +71,6 @@ if(BatchMake_DIR)
       ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${CMAKE_BUILD_TYPE}
       ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_PLUGINS_BIN_DIR})
     
-    slicer3_set_default_plugins_output_path()
-
     set(BatchMake_WRAPPED_APPLICATION_DIR 
       ${EXECUTABLE_OUTPUT_PATH}/BatchMakeApplications)
 
@@ -109,6 +107,7 @@ if(BatchMake_DIR)
   endif(${Slicer3BatchModule_LOGO})
 
   add_executable(${Slicer3BatchModule} ${Slicer3BatchModule_SOURCE})
+  slicer3_set_plugins_output_path(${Slicer3BatchModule})
   target_link_libraries(${Slicer3BatchModule} BatchMakeLib BatchMakeUtilities ITKIO ITKCommon
     ITKStatistics ITKNumerics)
 

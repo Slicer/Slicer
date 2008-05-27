@@ -18,8 +18,6 @@ link_directories(${ModuleDescriptionParser_BINARY_DIR})
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 
-slicer3_set_default_plugins_output_path()
-
 include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
 
 #####################
@@ -29,6 +27,7 @@ set (CLP dwiNoiseFilter)
 set ( ${CLP}_SOURCE ${CLP}.cxx)
 generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
 add_executable(${CLP} ${${CLP}_SOURCE})
+slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP}
   ITKIO
   ITKAlgorithms 

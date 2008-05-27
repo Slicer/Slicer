@@ -11,10 +11,8 @@ endif(COMMAND cmake_policy)
 if(NOT Slicer3_SOURCE_DIR)
   find_package(Slicer3 REQUIRED)
   include(${Slicer3_USE_FILE})
-  slicer3_set_default_modules_install_prefix()
+  slicer3_set_default_install_prefix_for_external_projects()
 endif(NOT Slicer3_SOURCE_DIR)
-
-slicer3_set_default_plugins_output_path()
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -43,6 +41,7 @@ generateclp(
 # Build and install the exe
 
 add_executable(${CLP_MODULE} ${${CLP_MODULE}_SOURCE})
+slicer3_set_plugins_output_path(${CLP_MODULE})
 target_link_libraries(
   ${CLP_MODULE}
   EMSegment
@@ -69,6 +68,7 @@ if(EMSEG_GENERATE_CLGUI)
     )
 
   add_executable(${CLP_MODULE_GUI} ${${CLP_MODULE_GUI}_SOURCE})
+  slicer3_set_plugins_output_path(${CLP_MODULE_GUI})
   set_target_properties(${CLP_MODULE_GUI}
     PROPERTIES COMPILE_FLAGS "-DEM_CL_GUI"
     )
@@ -81,6 +81,7 @@ if(EMSEG_GENERATE_CLGUI)
   slicer3_install_plugins(${CLP_MODULE_GUI})
 
   add_library(${CLP_MODULE_GUI}Lib SHARED ${${CLP_MODULE_GUI}_SOURCE})
+  slicer3_set_plugins_output_path(${CLP_MODULE_GUI}Lib)
   set_target_properties(${CLP_MODULE_GUI}Lib 
     PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint -DEM_CL_GUI"
     )
