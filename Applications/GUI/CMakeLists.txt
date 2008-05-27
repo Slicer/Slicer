@@ -29,14 +29,40 @@ if(BUILD_SHARED_LIBS)
   set(Slicer3_FORWARD_DIR_BUILD "${EXECUTABLE_OUTPUT_PATH}")
   set(Slicer3_FORWARD_DIR_INSTALL "${Slicer3_EXE_INSTALL}")
   if(WIN32)
-    set(Slicer3_FORWARD_PATH_BUILD "\"${Slicer3_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST,\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST,\"${VTK_DIR}/bin\" CONFIG_DIR_POST,\"${KWWidgets_RUNTIME_DIRS}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST,\"${TEEM_DIR}/bin\" CONFIG_DIR_POST,\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\"")
+    set(Slicer3_FORWARD_PATH_BUILD 
+      "\"${Slicer3_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${VTK_DIR}/bin\" CONFIG_DIR_POST,\"${KWWidgets_RUNTIME_DIRS}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST,\"${TEEM_DIR}/bin\" CONFIG_DIR_POST,\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\"")
     set(Slicer3_FORWARD_PATH_INSTALL
-      "\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"../lib/TclTk/bin\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
+      "\"../lib/TclTk/bin\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
+    if(Slicer3_BUILD_MODULES)
+      set(Slicer3_FORWARD_PATH_BUILD 
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\" CONFIG_DIR_POST")
+    endif(Slicer3_BUILD_MODULES)
+    if(Slicer3_BUILD_CLI)
+      set(Slicer3_FORWARD_PATH_BUILD 
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\" CONFIG_DIR_POST")
+    endif(Slicer3_BUILD_CLI)
   else(WIN32)
-    set(Slicer3_FORWARD_PATH_BUILD "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${TEEM_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\",\"${OPENGL_gl_LIBRARY_PATH}\"")
+    set(Slicer3_FORWARD_PATH_BUILD 
+      "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${TEEM_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\",\"${OPENGL_gl_LIBRARY_PATH}\"")
     set(Slicer3_FORWARD_PATH_INSTALL
-      "\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"../${Slicer3_INSTALL_LIB_DIR}\",\"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/TEEM-${TEEM_VERSION_MAJOR}.${TEEM_VERSION_MINOR}\",\"../lib/TclTk/lib\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\",\"../lib/FreeSurfer\",\"../lib/IGT\",\"../lib/ITKCommandIO\",\"../lib/LoadableModule\",\"../lib/MGHImageIO\",\"../lib/MRML\",\"../lib/ModuleDescriptionParser\",\"../lib/MRMLIDImageIO\",\"../lib/Qdec\",\"../lib/RemoteIO\",\"../lib/SlicerIO\",\"../lib/tclap\",\"../lib/vtkITK\",\"../lib/vtkTeem\"")
+      "\"../${Slicer3_INSTALL_LIB_DIR}\",\"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/TEEM-${TEEM_VERSION_MAJOR}.${TEEM_VERSION_MINOR}\",\"../lib/TclTk/lib\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\",\"../lib/FreeSurfer\",\"../lib/IGT\",\"../lib/ITKCommandIO\",\"../lib/LoadableModule\",\"../lib/MGHImageIO\",\"../lib/MRML\",\"../lib/ModuleDescriptionParser\",\"../lib/MRMLIDImageIO\",\"../lib/Qdec\",\"../lib/RemoteIO\",\"../lib/SlicerIO\",\"../lib/tclap\",\"../lib/vtkITK\",\"../lib/vtkTeem\"")
+    if(Slicer3_BUILD_MODULES)
+      set(Slicer3_FORWARD_PATH_BUILD 
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\"")
+    endif(Slicer3_BUILD_MODULES)
+    if(Slicer3_BUILD_CLI)
+      set(Slicer3_FORWARD_PATH_BUILD 
+        "${Slicer3_FORWARD_PATH_BUILD},\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\"")
+    endif(Slicer3_BUILD_CLI)
   endif(WIN32)
+  if(Slicer3_BUILD_MODULES)
+    set(Slicer3_FORWARD_PATH_INSTALL
+      "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\"")
+  endif(Slicer3_BUILD_MODULES)
+  if(Slicer3_BUILD_CLI)
+    set(Slicer3_FORWARD_PATH_INSTALL
+      "${Slicer3_FORWARD_PATH_INSTALL},\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\"")
+  endif(Slicer3_BUILD_CLI)
 endif(BUILD_SHARED_LIBS)
 
 # Add main server executables.
