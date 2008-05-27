@@ -1,0 +1,159 @@
+#if defined(_WIN32)
+#  if defined(CMAKE_INTDIR)
+#   define itksys_SHARED_FORWARD_CONFIG_NAME CMAKE_INTDIR
+#    define CONFIG_DIR_PRE CMAKE_INTDIR "/"
+#    define CONFIG_DIR_POST "/" CMAKE_INTDIR
+#  else
+#    define CONFIG_DIR_PRE ""
+#    define CONFIG_DIR_POST ""
+#  endif
+#endif
+
+#define itksys_SHARED_FORWARD_DIR_BUILD "@GenerateCLP_FORWARD_DIR_BUILD@"
+#define itksys_SHARED_FORWARD_PATH_BUILD @GenerateCLP_FORWARD_PATH_BUILD@
+#define itksys_SHARED_FORWARD_PATH_INSTALL @GenerateCLP_FORWARD_PATH_INSTALL@
+#if defined(_WIN32)
+#  define itksys_SHARED_FORWARD_EXE_BUILD CONFIG_DIR_PRE "@GenerateCLP_FORWARD_EXE@"
+#else
+#  define itksys_SHARED_FORWARD_EXE_BUILD "@GenerateCLP_FORWARD_DIR_BUILD@/@GenerateCLP_FORWARD_EXE@"
+#endif
+#define itksys_SHARED_FORWARD_EXE_INSTALL "@GenerateCLP_FORWARD_DIR_INSTALL@/@GenerateCLP_FORWARD_EXE@"
+#define itksys_SHARED_FORWARD_OPTION_PRINT "--print"
+#define itksys_SHARED_FORWARD_OPTION_LDD "--ldd"
+
+#include <itksys/SharedForward.h>
+
+int Launcher_main(int argc, char** argv)
+{
+  return itksys_shared_forward_to_real(argc, argv);
+}
+
+#ifdef _WIN32
+#include <windows.h>
+int __stdcall WinMain(HINSTANCE h1, HINSTANCE h2, LPSTR lpCmdLine, int i1)
+{
+  int argc;
+  char **argv;
+  int ret;
+  size_t lpCmdLine_len;
+  size_t i;
+  int j;
+  size_t pos;
+  int argc_idx = 1;
+  if (!lpCmdLine)
+    {
+    return 1;
+    }
+
+  // A space delimites an argument except when it is inside a quote
+
+  argc = 1;
+
+  lpCmdLine_len = strlen(lpCmdLine);
+
+  for (i = 0; i < lpCmdLine_len; i++)
+    {
+    while (isspace(lpCmdLine[i]) && i < lpCmdLine_len)
+      {
+      i++;
+      }
+    if (i < lpCmdLine_len)
+      {
+      if (lpCmdLine[i] == '\"')
+        {
+        i++;
+        while (lpCmdLine[i] != '\"' && i < lpCmdLine_len)
+          {
+          i++;
+          }
+        argc++;
+        }
+      else
+        {
+        while (!isspace(lpCmdLine[i]) && i < lpCmdLine_len)
+          {
+          i++;
+          }
+        argc++;
+        }
+      }
+    }
+
+  argv = (char**)malloc(sizeof(char*) * (argc + 1));
+  argv[argc] = NULL;
+
+  // Set the first arg to be the exec name
+
+  argv[0] = (char*)malloc(sizeof(char)* 1024);
+#ifdef _WIN32
+  GetModuleFileName(0, argv[0], 1024);
+#else
+  argv[0][0] = '\0';
+#endif
+
+  // Allocate the others
+
+  for (j = 1; j < argc; j++)
+    {
+    argv[j] = (char*)malloc(sizeof(char)*(lpCmdLine_len + 10));
+    }
+
+  // Grab the args
+
+
+  for (i = 0; i < lpCmdLine_len; i++)
+    {
+    while (isspace(lpCmdLine[i]) && i < lpCmdLine_len)
+      {
+      i++;
+      }
+    if (i < lpCmdLine_len)
+      {
+      if (lpCmdLine[i] == '\"')
+        {
+        i++;
+        pos = i;
+        while (lpCmdLine[i] != '\"' && i < lpCmdLine_len)
+          {
+          i++;
+          }
+        memcpy(argv[argc_idx], &lpCmdLine[pos], i - pos);
+        argv[argc_idx][i - pos] = '\0';
+        argc_idx++;
+        }
+      else
+        {
+        pos = i;
+        while (!isspace(lpCmdLine[i]) && i < lpCmdLine_len)
+          {
+          i++;
+          }
+        memcpy(argv[argc_idx], &lpCmdLine[pos], i - pos);
+        argv[argc_idx][i - pos] = '\0';
+        argc_idx++;
+        }
+      }
+    }
+  ret = Launcher_main(argc, argv);
+  for (i = 0; i < (size_t)argc; i++) { free( argv[i] ); }
+  free( argv );
+  return ret;
+}
+
+int main(int argc, char *argv[])
+{
+    return Launcher_main(argc, argv);
+}
+
+#else
+int main(int argc, char *argv[])
+{
+    return Launcher_main(argc, argv);
+}
+#endif
+
+
+
+
+
+

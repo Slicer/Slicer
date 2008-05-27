@@ -58,3 +58,36 @@ install(FILES ${GenerateLM_BINARY_DIR}/UseGenerateLM.cmake_install
   COMPONENT Development
   RENAME UseGenerateLM.cmake
   )
+
+# --------------------------------------------------------------------------
+# Enable shared link forwarding support if needed.
+# This is required so that GenerateLM can be run from an installed tree,
+# where the binary is actually not in the same directory as the shared
+# libraries it depends on.
+#
+set(GenerateLM_FORWARD_DIR_BUILD "${EXECUTABLE_OUTPUT_PATH}")
+set(GenerateLM_FORWARD_DIR_INSTALL ".")
+if(WIN32)
+  set(GenerateLM_FORWARD_PATH_BUILD 
+    "\"${GenerateLM_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${VTK_DIR}/bin\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST")
+  set(GenerateLM_FORWARD_PATH_INSTALL "")
+else(WIN32)
+  set(GenerateLM_FORWARD_PATH_BUILD 
+    "\"${GenerateLM_FORWARD_DIR_BUILD}\",\"${VTK_DIR}/bin\",\"${ITK_DIR}/bin\"")
+  set(GenerateLM_FORWARD_PATH_INSTALL
+    "\"../lib/GenerateLM\",\"../lib/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}\",\"../lib/InsightToolkit\",\"../lib/LoadableModule\"")
+endif(WIN32)
+set(GenerateLM_FORWARD_EXE GenerateLM)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/GenerateLMLauncher.c.in
+  ${CMAKE_CURRENT_BINARY_DIR}/GenerateLMLauncher.c
+  @ONLY IMMEDIATE)
+add_executable(GenerateLMLauncher WIN32
+  ${CMAKE_CURRENT_BINARY_DIR}/GenerateLMLauncher.c)
+add_dependencies(GenerateLMLauncher GenerateLM)
+
+install(TARGETS GenerateLMLauncher RUNTIME 
+  DESTINATION bin COMPONENT Development
+  )
+

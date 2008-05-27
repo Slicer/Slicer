@@ -53,3 +53,35 @@ install(FILES ${GenerateCLP_BINARY_DIR}/UseGenerateCLP.cmake_install
   COMPONENT Development
   RENAME UseGenerateCLP.cmake
   )
+
+# --------------------------------------------------------------------------
+# Enable shared link forwarding support if needed.
+# This is required so that GenerateLM can be run from an installed tree,
+# where the binary is actually not in the same directory as the shared
+# libraries it depends on.
+#
+set(GenerateCLP_FORWARD_DIR_BUILD "${EXECUTABLE_OUTPUT_PATH}")
+set(GenerateCLP_FORWARD_DIR_INSTALL ".")
+if(WIN32)
+  set(GenerateCLP_FORWARD_PATH_BUILD 
+    "\"${GenerateCLP_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST")
+  set(GenerateCLP_FORWARD_PATH_INSTALL "")
+else(WIN32)
+  set(GenerateCLP_FORWARD_PATH_BUILD 
+    "\"${GenerateCLP_FORWARD_DIR_BUILD}\",\"${ITK_DIR}/bin\"")
+  set(GenerateCLP_FORWARD_PATH_INSTALL
+    "\"../lib/GenerateCLP\",\"../lib/InsightToolkit\",\"../lib/ModuleDescriptionParser\"")
+endif(WIN32)
+set(GenerateCLP_FORWARD_EXE GenerateCLP)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/GenerateCLPLauncher.c.in
+  ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLPLauncher.c
+  @ONLY IMMEDIATE)
+add_executable(GenerateCLPLauncher WIN32
+  ${CMAKE_CURRENT_BINARY_DIR}/GenerateCLPLauncher.c)
+add_dependencies(GenerateCLPLauncher GenerateCLP)
+
+install(TARGETS GenerateCLPLauncher RUNTIME 
+  DESTINATION bin COMPONENT Development
+  )
