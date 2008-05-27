@@ -3,10 +3,10 @@ project(GUI)
 # --------------------------------------------------------------------------
 # Enable shared link forwarding support if needed.
 #
-get_filename_component(TCL_LIBRARY_PATH ${TCL_LIBRARY} PATH)
-get_filename_component(TCL_DIR ${TCL_LIBRARY_PATH} PATH)
-get_filename_component(INCR_TCL_LIBRARY_PATH ${INCR_TCL_LIBRARY} PATH)
-get_filename_component(INCR_TK_LIBRARY_PATH ${INCR_TK_LIBRARY} PATH)
+get_filename_component(TCL_LIBRARY_PATH "${TCL_LIBRARY}" PATH)
+get_filename_component(TCL_DIR "${TCL_LIBRARY_PATH}" PATH)
+get_filename_component(INCR_TCL_LIBRARY_PATH "${INCR_TCL_LIBRARY}" PATH)
+get_filename_component(INCR_TK_LIBRARY_PATH "${INCR_TK_LIBRARY}" PATH)
 
 # Some people use Mesa instead of the default system OpenGL.
 # Try to incorporate that in the launcher, but NOT for installation.
