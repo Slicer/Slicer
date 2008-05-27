@@ -39,6 +39,8 @@ proc Usage { {msg ""} } {
     set msg "$msg\n            : snapshot (default), nightly, release"
     set msg "$msg\n   --doxy : just do an svn update on Slicer3 and run doxygen"
     set msg "$msg\n   --verbose : optional, print out lots of stuff, for debugging"
+    set msg "$msg\n   --rpm : optional, specify CPack RPM generator for packaging"
+    set msg "$msg\n   --deb : optional, specify CPack DEB generator for packaging"
     puts stderr $msg
 }
 
@@ -53,6 +55,7 @@ set ::GETBUILDTEST(uploadFlag) "nightly"
 set ::GETBUILDTEST(doxy) "false"
 set ::GETBUILDTEST(verbose) "false"
 set ::GETBUILDTEST(buildList) ""
+set ::GETBUILDTEST(cpack-generator) ""
 
 set strippedargs ""
 set argc [llength $argv]
@@ -114,6 +117,12 @@ for {set i 0} {$i < $argc} {incr i} {
         }
         "--verbose" {
             set ::GETBUILDTEST(verbose) "true"
+        }
+        "--rpm" {
+            set ::GETBUILDTEST(cpack-generator) "RPM"
+        }
+        "--deb" {
+            set ::GETBUILDTEST(cpack-generator) "DEB"
         }
         "--help" -
         "-h" {
@@ -313,16 +322,33 @@ set ::GETBUILDTEST(binary-filename) "Slicer3-3.0.$::GETBUILDTEST(version-patch)-
 if {$::GETBUILDTEST(verbose)} {
     puts "CPack will use $::::GETBUILDTEST(binary-filename)"
 }
+
 # set the cpack generator to determine the binary file extension
 if {$isLinux || $isDarwin} {
-    set ::GETBUILDTEST(cpack-generator) "TGZ"
-    set ::GETBUILDTEST(cpack-extension) ".tar.gz"
-    # if wish to have .sh, use generator = STGZ and extension = .sh / currently disabled due to Ubuntu bug
+    if { $::GETBUILDTEST(cpack-generator) == "" } {
+        # default generator is TGZ"
+        set ::GETBUILDTEST(cpack-generator) "TGZ"
+        set ::GETBUILDTEST(cpack-extension) ".tar.gz"
+        # if wish to have .sh, use generator = STGZ and extension = .sh / currently disabled due to Ubuntu bug
+    }
+    if {$::GETBUILDTEST(cpack-generator) == "RPM" || $::GETBUILDTEST(cpack-generator) == "DEB"} {
+        # RPMs cannot have dashes in the version names, so we use underscores instead
+        set ::GETBUILDTEST(version-patch) [clock format [clock seconds] -format %Y_%m_%d]
+
+        if { $::GETBUILDTEST(cpack-generator) == "RPM" } {
+            set ::GETBUILDTEST(cpack-extension) ".rpm"
+        }
+        if { $::GETBUILDTEST(cpack-generator) == "DEB" } {
+            set ::GETBUILDTEST(cpack-extension) ".deb"
+        }
+    } 
 }
+
 if {$isWindows} {
     set ::GETBUILDTEST(cpack-generator) "NSIS"
     set ::GETBUILDTEST(cpack-extension) ".exe"
 }
+
 # once dmg packaging is done
 if {0 && $isDarwin} {
    set ::GETBUILDTEST(cpack-generator) "OSXX11"
