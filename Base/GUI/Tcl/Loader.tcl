@@ -57,7 +57,7 @@ namespace eval Loader {
     }
 
     if { [file isdir $path] } {
-      set files [glob -nocomplain $path/*]
+      set files [glob -nocomplain -directory $path *]
       set archetype [lindex $files 0] 
     } else {
       set archetype $path
@@ -71,7 +71,7 @@ namespace eval Loader {
     ## set node [$volumeLogic AddArchetypeVolume $archetype $centered $labelMap $name]
     ## There is no need to provide single file loading option when "Add Data"
     set loadingOptions [expr $labelMap * 1 + $centered * 2]
-    set node [$volumeLogic AddArchetypeVolume $path $name $loadingOptions]
+    set node [$volumeLogic AddArchetypeVolume $archetype $name $loadingOptions]
     set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
 
     if { $node == "" } {
