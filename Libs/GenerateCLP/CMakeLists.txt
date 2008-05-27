@@ -65,7 +65,7 @@ set(GenerateCLP_FORWARD_DIR_INSTALL ".")
 if(WIN32)
   set(GenerateCLP_FORWARD_PATH_BUILD 
     "\"${GenerateCLP_FORWARD_DIR_BUILD}\" CONFIG_DIR_POST,\"${ITK_DIR}/bin\" CONFIG_DIR_POST")
-  set(GenerateCLP_FORWARD_PATH_INSTALL "")
+  set(GenerateCLP_FORWARD_PATH_INSTALL "\"\"")
 else(WIN32)
   set(GenerateCLP_FORWARD_PATH_BUILD 
     "\"${GenerateCLP_FORWARD_DIR_BUILD}\",\"${ITK_DIR}/bin\"")
