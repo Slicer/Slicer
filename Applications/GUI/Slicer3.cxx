@@ -664,8 +664,13 @@ int Slicer3_main(int argc, char *argv[])
     slicerApp->SetRegistryLevel(0);
     slicerApp->PromptBeforeExitOff();
     NoSplash = true;
+    slicerApp->Script ("namespace eval slicer3 set TEST_MODE 1");
     }
-  
+  else
+    {
+    slicerApp->Script ("namespace eval slicer3 set TEST_MODE 0");
+    }
+
   {
   std::string cmd, slicerAppName;
 
@@ -911,7 +916,7 @@ int Slicer3_main(int argc, char *argv[])
   modulePaths = userModulePaths + PathSep + defaultModulePaths;
 
   vtksys_stl::vector<vtksys_stl::string> modulePathsList;
-  vtksys::SystemTools::Split(modulePaths.c_str(), modulePathsList, ';');
+  vtksys::SystemTools::Split(modulePaths.c_str(), modulePathsList, PathSep[0]);
   vtksys_stl::vector<vtksys_stl::string>::iterator module_paths_it;
   vtksys_stl::vector<vtksys_stl::string>::iterator module_paths_end =
     modulePathsList.end();
@@ -937,7 +942,7 @@ int Slicer3_main(int argc, char *argv[])
   pluginsPaths = userModulePaths + PathSep + defaultPluginsPaths;
       
   vtksys_stl::vector<vtksys_stl::string> pluginsPathsList;
-  vtksys::SystemTools::Split(pluginsPaths.c_str(), pluginsPathsList, ';');
+  vtksys::SystemTools::Split(pluginsPaths.c_str(), pluginsPathsList, PathSep[0]);
   vtksys_stl::vector<vtksys_stl::string>::iterator plugins_paths_it;
   vtksys_stl::vector<vtksys_stl::string>::iterator plugins_paths_end =
     pluginsPathsList.end();
