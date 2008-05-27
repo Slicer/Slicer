@@ -94,6 +94,10 @@ set_target_properties(CommandIOPlugin
   PROPERTIES 
   RUNTIME_OUTPUT_DIRECTORY 
   "${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}"
+  LIBRARY_OUTPUT_DIRECTORY 
+  "${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}"
+  ARCHIVE_OUTPUT_DIRECTORY 
+  "${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}"
   )
 target_link_libraries(CommandIOPlugin 
   ${lib_name}  
@@ -124,11 +128,11 @@ install(TARGETS CommandIOPlugin
 if(APPLE)
   add_custom_command(
     TARGET CommandIOPlugin
-    DEPENDS ${CMAKE_BINARY_DIR}/bin/libCommandIOPlugin.dylib
+    DEPENDS "${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}/libCommandIOPlugin.dylib"
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}/libCommandIOPlugin.dylib
-    ${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}/libCommandIOPlugin.so
+    "${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}/libCommandIOPlugin.dylib"
+    "${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}/libCommandIOPlugin.so"
     VERBATIM
     )
 endif(APPLE)
