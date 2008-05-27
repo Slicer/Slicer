@@ -21,7 +21,7 @@ if(BUILD_SHARED_LIBS)
     set(Slicer3_FORWARD_PATH_INSTALL
       "\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"../lib/TclTk/bin\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
   else(WIN32)
-    set(Slicer3_FORWARD_PATH_BUILD "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${TEEM_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH }\"")
+    set(Slicer3_FORWARD_PATH_BUILD "\"${Slicer3_FORWARD_DIR_BUILD}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"${Slicer3_HOME}/${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"${VTK_DIR}/bin\",\"${KWWidgets_RUNTIME_DIRS}\",\"${ITK_DIR}/bin\",\"${TEEM_DIR}/bin\",\"${TCL_DIR}/bin\",\"${INCR_TCL_LIBRARY_PATH}\",\"${INCR_TK_LIBRARY_PATH}\"")
     set(Slicer3_FORWARD_PATH_INSTALL
       "\"../${Slicer3_INSTALL_PLUGINS_BIN_DIR}\",\"../${Slicer3_INSTALL_MODULES_BIN_DIR}\",\"../lib\",\"../lib/KWWidgets\",\"../lib/InsightToolkit\",\"../lib/TclTk\",\"../lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}\",\"../lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}\"")
   endif(WIN32)
