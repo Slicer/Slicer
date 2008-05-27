@@ -593,7 +593,7 @@ if { [BuildThis $::KWWidgets_TEST_FILE "kwwidgets"] == 1 } {
       } else {
         eval runcmd $::MAKE 
       }
-  }<
+  }
 }
 
 ################################################################################
