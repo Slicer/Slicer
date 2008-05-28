@@ -649,7 +649,7 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
     }
 
   // did the one ofthe display nodes change?
-  for (unsigned int i=0; i<this->GetNumberOfDisplayNodes(); i++)
+  for (int i=0; i<this->GetNumberOfDisplayNodes(); i++)
     {
     vtkMRMLDisplayNode *dnode = this->GetNthDisplayNode(i);
     if (dnode != NULL && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
