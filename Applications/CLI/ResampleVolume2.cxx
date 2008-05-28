@@ -602,7 +602,7 @@ template< class PixelType > int Rotate( parameters list )
           {
           for( int j = 0 ; j < 3 ; j++ )
             {
-            transformMatrix4x4[ i ][ j ] = ( double )list.transformMatrix[ i + j * 3 ] ;    
+            transformMatrix4x4[ i ][ j ] = ( double )list.transformMatrix[ i*3 + j  ] ;    
             }
           translation[ i ] = ( double )list.transformMatrix[ 9 + i ] ;
           }
