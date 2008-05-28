@@ -124,7 +124,6 @@ int vtkMimxSplitUnstructuredHexahedronGridCell::RequestData(
   // generate the connectivity to replace the original cell with
   //        the cell closest to the origin
 //  vtkIdType* pts_replace;
-  vtkIdType npts;
   if(edge_num ==1 || edge_num == 3 || edge_num == 5 || edge_num == 7)
   {
           i = 1;

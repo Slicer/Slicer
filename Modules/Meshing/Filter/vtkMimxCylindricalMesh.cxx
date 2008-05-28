@@ -1127,7 +1127,7 @@ void vtkMimxCylindricalMesh::DivideCurve(int CurveNum, vtkPolyData *PolyData, vt
         for(int i=startnodenum; i < startnodenum+4; i++)
         {
                 // cutting plane definition
-                double x[3], t;
+                //double x[3], t;
                 //if (CurveNum < 2) {
                 //        this->SuperiorDividingPoints->GetPoint(i,x);
                 //}

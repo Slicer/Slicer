@@ -151,7 +151,7 @@ int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, std::vector
     std::string sname = filename;
     if (!itksys::SystemTools::FileIsDirectory(filename))
       {
-      for (int s=0; s<suffix.size(); s++)
+      for (unsigned int s=0; s<suffix.size(); s++)
         {
         std::string ssuf = suffix[s];
         if ( sname.find(ssuf) != std::string::npos )

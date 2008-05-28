@@ -249,6 +249,9 @@ int vtkMimxEdgeToPlanarStructuredGrid::SetEdge(int EdgeNum)
                 //cout<<endl;
                 return 1;
         }
+        
+        vtkWarningMacro ("Cannot work with EdgeNum of " << EdgeNum);
+        return 0;
 }
 
 void vtkMimxEdgeToPlanarStructuredGrid::PrintSelf(ostream& os, vtkIndent indent)
