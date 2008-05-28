@@ -803,10 +803,16 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
 
   // create a volume node as copy of source volume
   vtkMRMLScalarVolumeNode *labelNode = vtkMRMLScalarVolumeNode::New();
+  
+  int modifiedSicneRead = volumeNode->GetModifiedSinceRead();
   labelNode->CopyWithScene(volumeNode);
+  
   labelNode->SetAndObserveStorageNodeID(NULL);
   labelNode->SetModifiedSinceRead(1);
   labelNode->SetLabelMap(1);
+  
+  // restore modifiedSicneRead value since copy cause Modify on image data.
+  volumeNode->SetModifiedSinceRead(modifiedSicneRead);
 
   // set the display node to have a label map lookup table
   labelDisplayNode->SetAndObserveColorNodeID ("vtkMRMLColorTableNodeLabels");
