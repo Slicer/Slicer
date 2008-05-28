@@ -3,9 +3,9 @@
   <category>
             Demonstration</category>
   <title>
-         Hello World</title>
+         Hello Slicer</title>
   <description>
-               Slicer Developers Testing version </description>
+               Slicer Developers debugging version, developed from HelloWorld tutorial</description>
   <version>
            1.0</version>
   <documentation-url></documentation-url>
@@ -18,7 +18,7 @@
     <label>Input/Output</label>
     <description>Input/output parameters</description>
     <image>
-      <name>helloWorldInputVolume</name>
+      <name>helloSlicerInputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
@@ -26,7 +26,7 @@
       <description>Input volume</description>
     </image>
     <image>
-      <name>helloWorldOutputVolume</name>
+      <name>helloSlicerOutputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>

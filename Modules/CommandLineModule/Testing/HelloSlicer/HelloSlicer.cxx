@@ -1,5 +1,5 @@
 #include <iostream>
-#include "HelloWorldCLP.h"
+#include "HelloSlicerCLP.h"
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -8,15 +8,15 @@
 int main(int argc, char * argv [])
 {
   PARSE_ARGS;
-  std::cout << "Hello World!" << std::endl;
+  std::cout << "Hello Slicer!" << std::endl;
   typedef itk::Image< short,  3 >   ImageType;
   typedef itk::ImageFileReader< ImageType  >  ReaderType;
   typedef itk::ImageFileWriter< ImageType >  WriterType;
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
 
-  reader->SetFileName( helloWorldInputVolume.c_str() );
-  writer->SetFileName (helloWorldOutputVolume.c_str());
+  reader->SetFileName( helloSlicerInputVolume.c_str() );
+  writer->SetFileName (helloSlicerOutputVolume.c_str());
 
   typedef itk::DiscreteGaussianImageFilter <ImageType, ImageType> FilterType;
   FilterType::Pointer filter = FilterType::New();

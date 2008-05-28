@@ -1,4 +1,4 @@
-project(HelloWorld)
+project(HelloSlicer)
 
 cmake_minimum_required(VERSION 2.6)
 
@@ -15,7 +15,7 @@ slicer3_set_default_plugins_output_path()
 
 # The Command Line Module
 
-set(CLP HelloWorld)
+set(CLP HelloSlicer)
 set(${CLP}_SOURCE ${CLP}.cxx)
 generateclp(${CLP}_SOURCE ${CLP}.xml)
 
@@ -34,5 +34,5 @@ enable_testing()
 include(CTest)
 set(UPDATE_TYPE svn)
 
-add_test(HelloWorldTest1 ${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${CLP} --help)
+add_test(HelloSlicerTest1 ${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${CLP} --help)
 
