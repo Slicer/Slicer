@@ -84,6 +84,7 @@ int vtkMimxMeshSeed::MeshSeedFromAverageElementLength(double ElLength)
         // initialize all the contents
         MeshSeedValues->Initialize();
         this->EstimateMeshSeedsBasedOnAverageElementLength(ElLength);
+        return 1;
 }
 
 void vtkMimxMeshSeed::BuildMeshSeedLinks()

@@ -294,6 +294,7 @@ int vtkMimxStructuredPlanarToStructuredSolidGrid::SetFace(int FaceNum, vtkPoints
                 }
                 return 1;
         }
+        return 0;
 }
 void vtkMimxStructuredPlanarToStructuredSolidGrid::PrintSelf(ostream& os, vtkIndent indent)
 {
