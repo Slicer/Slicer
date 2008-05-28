@@ -135,4 +135,8 @@ if(APPLE)
     "${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}/libCommandIOPlugin.so"
     VERBATIM
     )
+  install(FILES
+    "${CMAKE_BINARY_DIR}/${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}/libCommandIOPlugin.so"
+    DESTINATION ${ITKCommandIO_INSTALL_ITKFACTORIES_DIR}
+    )
 endif(APPLE)
