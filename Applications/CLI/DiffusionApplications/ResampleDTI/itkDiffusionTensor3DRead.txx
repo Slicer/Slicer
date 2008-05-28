@@ -89,6 +89,7 @@ DiffusionTensor3DRead< TData >
     std::cerr<< excep << std::endl ;
     return -1 ;
     }
+  return 0;
 }
 
 }//end namespace itk

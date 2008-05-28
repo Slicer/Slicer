@@ -47,7 +47,7 @@ class Coord3d
 public:
    inline double& operator[](int i) { return v[i]; };
    inline void conv(int * i) {i[0] = (int) v[0]; i[1] = (int) v[1]; i[2] = (int) v[2];};
-   inline void conv(float * i) {i[0] = v[0]; i[1] = v[1]; i[2] = v[2];};
+   inline void conv(float * i) {i[0] = static_cast<float>(v[0]); i[1] = static_cast<float>(v[1]); i[2] = static_cast<float>(v[2]);};
    inline void conv(double * i) {i[0] = v[0]; i[1] = v[1]; i[2] = v[2];};
 };
 
