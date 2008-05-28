@@ -81,6 +81,7 @@ DiffusionTensor3DRead< TData >
       }
     ++itr ;
     }
+    return 0;
   }
   catch( itk::ExceptionObject &excep )
     {

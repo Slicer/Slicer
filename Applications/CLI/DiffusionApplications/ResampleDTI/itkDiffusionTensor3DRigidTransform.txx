@@ -5,6 +5,13 @@
 
 namespace itk
 {
+
+template< class TData >
+DiffusionTensor3DRigidTransform< TData >
+::DiffusionTensor3DRigidTransform()
+{
+ m_PrecisionChecking = 1;
+}
     
 template< class TData >
 void
@@ -48,23 +55,26 @@ DiffusionTensor3DRigidTransform< TData >
   Matrix< double , 3 , 3 > result ;
   result = matrix * matrix.GetTranspose() ;
   bool ok = 1 ;
-  for( int i = 0 ; i < 3 ; i++ )
+  if(m_PrecisionChecking)
     {
-    for( int j = 0 ; j < 3 ; j++ )
+    for( int i = 0 ; i < 3 ; i++ )
       {
-      if( i != j && result[ i ][ j ] > PRECISION ) 
+      for( int j = 0 ; j < 3 ; j++ )
         {
-        ok = 0 ;
-        break ;
+        if( i != j && result[ i ][ j ] > PRECISION ) 
+          {
+          ok = 0 ;
+          break ;
+          }
+        else if( i == j && ( result[ i ][ j ]< 1.0 - PRECISION || result[ i ][ j ] > 1.0 + PRECISION ) )
+          {
+          ok = 0 ;
+          break ;
+          }
         }
-      else if( i == j && ( result[ i ][ j ]< 1.0 - PRECISION || result[ i ][ j ] > 1.0 + PRECISION ) )
-        {
-        ok = 0 ;
-        break ;
-        }
+      if( !ok ) break ;
       }
-    if( !ok ) break ;
-    }
+  }
   if( ok )
     {
     double det = this->GetDet( matrix ) ;

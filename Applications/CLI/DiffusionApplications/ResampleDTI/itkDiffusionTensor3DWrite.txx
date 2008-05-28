@@ -107,6 +107,7 @@ DiffusionTensor3DWrite< TData >
   try
     {
     nrrdWriter->Update() ;
+    return 0;
     }
   catch( itk::ExceptionObject excep )
     {

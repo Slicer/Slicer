@@ -187,18 +187,18 @@ SetTransform( parameters list ,
   typedef itk::DiffusionTensor3DPPDAffineTransform< PixelType >
                                                 PPDAffineTransformType ;
   typename NonRigidTransformType::TransformType::Pointer nonRigidFile ;
-
+  bool precisionChecking = 1 ;
   TransformTypePointer transform ;
   itk::Vector< double , 3 > vec ;
   itk::Matrix< double , 4 , 4 > transformMatrix4x4 ;
   transformMatrix4x4.SetIdentity() ;
-  int size = list.transformMatrix.size() ;
+  //int size = list.transformMatrix.size() ;
   //Get transformation matrix from the given file
   if( list.transformationFile.compare( "" ) )
     {
     list.transformMatrix.resize( 0 ) ;
     list.rotationPoint.resize( 0 ) ;
-    size=transformFile->GetTransformList()->front()->GetParameters().GetSize() ;
+    //size=transformFile->GetTransformList()->front()->GetParameters().GetSize() ;
     typename FSAffineTransformType::Superclass::AffineTransformType::Pointer
        affinetransform = dynamic_cast< 
          typename FSAffineTransformType::Superclass::AffineTransformType* >
@@ -206,6 +206,18 @@ SetTransform( parameters list ,
     if( affinetransform )//if affine transform
       {
       list.transformType.assign( "a" ) ;
+      for( int i = 0 ; i < 3 ; i++ )
+             {
+             for( int j = 0 ; j < 3 ; j++)
+                {
+                list.transformMatrix.push_back(affinetransform->GetMatrix()[i][j]);
+                }
+             }
+            for(int i = 0 ; i < 3 ; i++)
+               {
+               list.transformMatrix.push_back(affinetransform->GetTranslation()[i]) ;
+               list.rotationPoint.push_back( affinetransform->GetCenter()[i] );
+               }
       }
     else
       {
@@ -216,6 +228,19 @@ SetTransform( parameters list ,
       if( rigid3dtransform )//if rigid3D transform
         {
         list.transformType.assign( "rt" ) ;
+        precisionChecking = 0 ;
+        for( int i = 0 ; i < 3 ; i++ )
+             {
+             for( int j = 0 ; j < 3 ; j++)
+                {
+                list.transformMatrix.push_back(rigid3dtransform->GetMatrix()[i][j]);
+                }
+             }
+            for(int i = 0 ; i < 3 ; i++)
+               {
+               list.transformMatrix.push_back(rigid3dtransform->GetTranslation()[i]) ;
+               list.rotationPoint.push_back( rigid3dtransform->GetCenter()[i] );
+               }
         }
       else//if non-rigid
         {
@@ -236,7 +261,7 @@ SetTransform( parameters list ,
       }
     if( list.transformType.compare( "nr" ) ) //if rigid or affine transform
       {
-      //get transform matrix and translation vector
+      /*//get transform matrix and translation vector
       for( int i = 0 ; i < size ; i++ )
         { list.transformMatrix.push_back( 
               transformFile->GetTransformList()->front()->GetParameters().GetElement( i ) ) ; }
@@ -245,9 +270,9 @@ SetTransform( parameters list ,
            i < transformFile->GetTransformList()->front()->GetFixedParameters().GetSize() ;
            i++ )
         { list.rotationPoint.push_back( 
-             transformFile->GetTransformList()->front()->GetFixedParameters().GetElement( i ) ) ; }
+             transformFile->GetTransformList()->front()->GetFixedParameters().GetElement( i ) ) ; }*/
       //if problem in the number of parameters
-      if( size != 12 || list.rotationPoint.size() != 3 )
+      if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
         {
         std::cerr<< "Error in the file containing the transformation"
                  << std::endl ;
@@ -291,7 +316,7 @@ SetTransform( parameters list ,
       for( int j = 0 ; j< 3 ; j++ )
         {
         transformMatrix4x4[ i ][ j ]
-            = ( double ) list.transformMatrix[ i + j * 3 ] ;    
+            = ( double ) list.transformMatrix[ i*3 + j  ] ;    
         }
       translation[ i ] = ( double ) list.transformMatrix[ 9 + i ] ;
       }
@@ -327,6 +352,7 @@ SetTransform( parameters list ,
     if( !list.transformType.compare( "rt" ) )
       {    
       typename RigidTransformType::Pointer rotation = RigidTransformType::New() ;
+      rotation->SetPrecisionChecking( precisionChecking ) ;
       rotation->SetMatrix4x4( transformMatrix4x4 ) ;
       transform = rotation ;
       }
@@ -364,7 +390,6 @@ SetTransform( parameters list ,
     }
  return transform ;
 }
-
 
 
 
