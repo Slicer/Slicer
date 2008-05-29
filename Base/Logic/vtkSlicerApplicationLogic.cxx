@@ -1244,7 +1244,15 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     if (req.GetDeleteFile())
       {
       int removed;
-      removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
+      // is it a shared memory location?
+      if (req.GetFilename().find("slicer:0x") != std::string::npos)
+        {
+        removed = 1;
+        }
+      else
+        {
+        removed = itksys::SystemTools::RemoveFile( req.GetFilename().c_str() );
+        }
       if (!removed)
         {
         std::stringstream information;
