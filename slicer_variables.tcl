@@ -164,8 +164,8 @@ switch $::tcl_platform(os) {
         set ::INCR_TCL_LIB $::TCL_LIB_DIR/lib/libitcl3.2.dylib
         set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/libitk3.2.dylib
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
-        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython25.dylib
-        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python25
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.dylib
+        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.dylib
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
@@ -188,8 +188,8 @@ switch $::tcl_platform(os) {
         set ::INCR_TCL_LIB $::TCL_LIB_DIR/lib/libitcl3.2.so
         set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/libitk3.2.so
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
-        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython25.so
-        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python25
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.so
+        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.so
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
