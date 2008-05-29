@@ -487,74 +487,125 @@ itcl::body Labeler::rotateSliceToImage { } {
   $this queryLayers 0 0
 
   set ijkToRAS [vtkMatrix4x4 New]
-  set rotation [vtkMatrix4x4 New]
-  $rotation Identity
 
   set volumeNode $_layers(background,node)
   $volumeNode GetIJKToRASMatrix $ijkToRAS
 
-  set M(init) 1
+  # define major direction
+  set dir(directions) {R L A P S I}
+  set dir(R) {  1  0  0}
+  set dir(L) { -1  0  0}
+  set dir(A) {  0  1  0}
+  set dir(P) {  0 -1  0}
+  set dir(S) {  0  0  1}
+  set dir(I) {  0  0 -1}
 
-  for {set col 0} {$col < 3} {incr col} {
-    set M($col,mag) 0
-    for {set row 0} {$row < 3} {incr row} {
-      set M($row,$col) [$ijkToRAS GetElement $row $col]
-      set M($col,mag) [expr $M($row,$col) * $M($row,$col) + $M($col,mag)]
-    }
-    set M($col,mag) [expr sqrt($M($col,mag))]
-    set M($col,mag_inv) [expr 1. / $M($col,mag)]
-    for {set row 0} {$row < 3} {incr row} {
-      set M(norm,$row,$col) [expr $M($col,mag_inv) * $M($row,$col)]
-      $rotation SetElement $row $col $M(norm,$row,$col)
+  # get direction cosine vector for each index and its negation
+  set directionsMatrix [vtkMatrix4x4 New]
+  $volumeNode GetIJKToRASDirectionMatrix $directionsMatrix
+  foreach ijk {0 1 2} {
+    lappend iToRAS [$directionsMatrix GetElement $ijk 0]
+    lappend jToRAS [$directionsMatrix GetElement $ijk 1]
+    lappend kToRAS [$directionsMatrix GetElement $ijk 2]
+  }
+  foreach index {i j k} {
+    foreach element {0 1 2} {
+      lappend neg${index}ToRAS [expr -1. * [lindex [set ${index}ToRAS] $element]]
     }
   }
 
-  if { $_sliceNode == "" } { 
-    tk_messageBox -message "no slice node yet..."
+  # find the closest major direction for each index vector
+  set sqrt2over2 [expr sqrt(2.) / 2.]
+  foreach index {i j k} {
+    foreach direction $dir(directions) {
+      set dot 0
+      foreach comp0 [set ${index}ToRAS] comp1 $dir($direction) {
+        set dot [expr $dot + $comp0 * $comp1] 
+      }
+      set dir(dot,$index,$direction) $dot
+      if { $dot > $sqrt2over2 } {
+        set dir($index,closestAxis) $direction
+      }
+    }
   }
+
+  # define the index vector that is closest for each major direction
+  foreach index {i j k} {
+    switch $dir($index,closestAxis) {
+      "R" {
+        set dir(plane,R) [set ${index}ToRAS]
+        set dir(plane,L) [set neg${index}ToRAS]
+      }
+      "L" {
+        set dir(plane,R) [set neg${index}ToRAS]
+        set dir(plane,L) [set ${index}ToRAS]
+      }
+      "A" {
+        set dir(plane,A) [set ${index}ToRAS]
+        set dir(plane,P) [set neg${index}ToRAS]
+      }
+      "P" {
+        set dir(plane,A) [set neg${index}ToRAS]
+        set dir(plane,P) [set ${index}ToRAS]
+      }
+      "S" {
+        set dir(plane,S) [set ${index}ToRAS]
+        set dir(plane,I) [set neg${index}ToRAS]
+      }
+      "I" {
+        set dir(plane,S) [set neg${index}ToRAS]
+        set dir(plane,I) [set ${index}ToRAS]
+      }
+    }
+  }
+
+  #
+  # plug vectors into slice matrix to best approximate requested orientation
+  #
   set sliceToRAS [$_sliceNode GetSliceToRAS]
-
-  puts [parray M]
 
   switch [$_sliceNode GetOrientationString] {
     "Axial" {
-      $sliceToRAS SetElement 0 0 [expr  1.0 * $M(norm,0,0)]
-      $sliceToRAS SetElement 1 0 [expr  1.0 * $M(norm,1,0)]
-      $sliceToRAS SetElement 2 0 [expr  1.0 * $M(norm,2,0)]
-
-      $sliceToRAS SetElement 0 1 [expr -1.0 * $M(norm,0,1)]
-      $sliceToRAS SetElement 1 1 [expr -1.0 * $M(norm,1,1)]
-      $sliceToRAS SetElement 2 1 [expr -1.0 * $M(norm,2,1)]
-
-      $sliceToRAS SetElement 0 2 [expr  1.0 * $M(norm,0,2)]
-      $sliceToRAS SetElement 1 2 [expr  1.0 * $M(norm,1,2)]
-      $sliceToRAS SetElement 2 2 [expr  1.0 * $M(norm,2,2)]
+      # first column is 'Left'
+      foreach index {0 1 2} {
+        $sliceToRAS SetElement $index 0 [lindex $dir(plane,L) $index]
+      }
+      # second column is 'Anterior'
+      foreach index {0 1 2} {
+        $sliceToRAS SetElement $index 1 [lindex $dir(plane,A) $index]
+      }
+      # third column is 'Superior'
+      foreach index {0 1 2} {
+        $sliceToRAS SetElement $index 2 [lindex $dir(plane,S) $index]
+      }
     }
     "Sagittal" {
-      $sliceToRAS SetElement 0 0 [expr  1.0 * $M(norm,0,1)]
-      $sliceToRAS SetElement 1 0 [expr  1.0 * $M(norm,1,1)]
-      $sliceToRAS SetElement 2 0 [expr  1.0 * $M(norm,2,1)]
-
-      $sliceToRAS SetElement 0 1 [expr  1.0 * $M(norm,0,2)]
-      $sliceToRAS SetElement 1 1 [expr  1.0 * $M(norm,1,2)]
-      $sliceToRAS SetElement 2 1 [expr  1.0 * $M(norm,2,2)]
-
-      $sliceToRAS SetElement 0 2 [expr  1.0 * $M(norm,0,0)]
-      $sliceToRAS SetElement 1 2 [expr  1.0 * $M(norm,1,0)]
-      $sliceToRAS SetElement 2 2 [expr  1.0 * $M(norm,2,0)]
+      # first column is 'Posterior'
+      foreach index {0 1 2} {
+        $sliceToRAS SetElement $index 0 [lindex $dir(plane,P) $index]
+      }
+      # second column is 'Superior'
+      foreach index {0 1 2} {
+        $sliceToRAS SetElement $index 1 [lindex $dir(plane,S) $index]
+      }
+      # third column is 'Right'
+      foreach index {0 1 2} {
+        $sliceToRAS SetElement $index 2 [lindex $dir(plane,R) $index]
+      }
     }
     "Coronal" {
-      $sliceToRAS SetElement 0 0 [expr  1.0 * $M(norm,0,0)]
-      $sliceToRAS SetElement 1 0 [expr  1.0 * $M(norm,1,0)]
-      $sliceToRAS SetElement 2 0 [expr  1.0 * $M(norm,2,0)]
-
-      $sliceToRAS SetElement 0 1 [expr  1.0 * $M(norm,0,2)]
-      $sliceToRAS SetElement 1 1 [expr  1.0 * $M(norm,1,2)]
-      $sliceToRAS SetElement 2 1 [expr  1.0 * $M(norm,2,2)]
-
-      $sliceToRAS SetElement 0 2 [expr -1.0 * $M(norm,0,1)]
-      $sliceToRAS SetElement 1 2 [expr -1.0 * $M(norm,1,1)]
-      $sliceToRAS SetElement 2 2 [expr -1.0 * $M(norm,2,1)]
+      # first column is 'Left'
+      foreach index {0 1 2} {
+        $sliceToRAS SetElement $index 0 [lindex $dir(plane,L) $index]
+      }
+      # second column is 'Superior'
+      foreach index {0 1 2} {
+        $sliceToRAS SetElement $index 1 [lindex $dir(plane,S) $index]
+      }
+      # third column is 'Anterior'
+      foreach index {0 1 2} {
+        $sliceToRAS SetElement $index 2 [lindex $dir(plane,A) $index]
+      }
     }
   }
 
