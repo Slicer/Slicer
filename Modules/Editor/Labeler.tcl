@@ -17,6 +17,7 @@ if {0} { ;# comment
   DrawEffect
   PaintEffect
   LevelTracingEffect
+  ...
 
 
 
@@ -60,6 +61,7 @@ if { [itcl::find class Labeler] == "" } {
     method setMRMLDefaults {} {}
     method updateMRMLFromGUI {} {}
     method updateGUIFromMRML {} {}
+    method rotateSliceToImage {} {}
 
   }
 }
@@ -69,6 +71,7 @@ if { [itcl::find class Labeler] == "" } {
 # ------------------------------------------------------------------
 itcl::body Labeler::constructor {sliceGUI} {
   set o(painter) [vtkNew vtkImageSlicePaint]
+  $this rotateSliceToImage
 }
 
 itcl::body Labeler::destructor {} {
@@ -472,6 +475,91 @@ itcl::body Labeler::updateGUIFromMRML { } {
   }
 }
 
+#
+# rotateSliceToImage:
+# - adjusts the slice node to align with the 
+#   native space of the image data so that paint
+#   operations can happen cleanly between image
+#   space and screen space
+#
+itcl::body Labeler::rotateSliceToImage { } {
+
+  $this queryLayers 0 0
+
+  set ijkToRAS [vtkMatrix4x4 New]
+  set rotation [vtkMatrix4x4 New]
+  $rotation Identity
+
+  set volumeNode $_layers(background,node)
+  $volumeNode GetIJKToRASMatrix $ijkToRAS
+
+  set M(init) 1
+
+  for {set col 0} {$col < 3} {incr col} {
+    set M($col,mag) 0
+    for {set row 0} {$row < 3} {incr row} {
+      set M($row,$col) [$ijkToRAS GetElement $row $col]
+      set M($col,mag) [expr $M($row,$col) * $M($row,$col) + $M($col,mag)]
+    }
+    set M($col,mag) [expr sqrt($M($col,mag))]
+    set M($col,mag_inv) [expr 1. / $M($col,mag)]
+    for {set row 0} {$row < 3} {incr row} {
+      set M(norm,$row,$col) [expr $M($col,mag_inv) * $M($row,$col)]
+      $rotation SetElement $row $col $M(norm,$row,$col)
+    }
+  }
+
+  if { $_sliceNode == "" } { 
+    tk_messageBox -message "no slice node yet..."
+  }
+  set sliceToRAS [$_sliceNode GetSliceToRAS]
+
+  puts [parray M]
+
+  switch [$_sliceNode GetOrientationString] {
+    "Axial" {
+      $sliceToRAS SetElement 0 0 [expr  1.0 * $M(norm,0,0)]
+      $sliceToRAS SetElement 1 0 [expr  1.0 * $M(norm,1,0)]
+      $sliceToRAS SetElement 2 0 [expr  1.0 * $M(norm,2,0)]
+
+      $sliceToRAS SetElement 0 1 [expr -1.0 * $M(norm,0,1)]
+      $sliceToRAS SetElement 1 1 [expr -1.0 * $M(norm,1,1)]
+      $sliceToRAS SetElement 2 1 [expr -1.0 * $M(norm,2,1)]
+
+      $sliceToRAS SetElement 0 2 [expr  1.0 * $M(norm,0,2)]
+      $sliceToRAS SetElement 1 2 [expr  1.0 * $M(norm,1,2)]
+      $sliceToRAS SetElement 2 2 [expr  1.0 * $M(norm,2,2)]
+    }
+    "Sagittal" {
+      $sliceToRAS SetElement 0 0 [expr  1.0 * $M(norm,0,1)]
+      $sliceToRAS SetElement 1 0 [expr  1.0 * $M(norm,1,1)]
+      $sliceToRAS SetElement 2 0 [expr  1.0 * $M(norm,2,1)]
+
+      $sliceToRAS SetElement 0 1 [expr  1.0 * $M(norm,0,2)]
+      $sliceToRAS SetElement 1 1 [expr  1.0 * $M(norm,1,2)]
+      $sliceToRAS SetElement 2 1 [expr  1.0 * $M(norm,2,2)]
+
+      $sliceToRAS SetElement 0 2 [expr  1.0 * $M(norm,0,0)]
+      $sliceToRAS SetElement 1 2 [expr  1.0 * $M(norm,1,0)]
+      $sliceToRAS SetElement 2 2 [expr  1.0 * $M(norm,2,0)]
+    }
+    "Coronal" {
+      $sliceToRAS SetElement 0 0 [expr  1.0 * $M(norm,0,0)]
+      $sliceToRAS SetElement 1 0 [expr  1.0 * $M(norm,1,0)]
+      $sliceToRAS SetElement 2 0 [expr  1.0 * $M(norm,2,0)]
+
+      $sliceToRAS SetElement 0 1 [expr  1.0 * $M(norm,0,2)]
+      $sliceToRAS SetElement 1 1 [expr  1.0 * $M(norm,1,2)]
+      $sliceToRAS SetElement 2 1 [expr  1.0 * $M(norm,2,2)]
+
+      $sliceToRAS SetElement 0 2 [expr -1.0 * $M(norm,0,1)]
+      $sliceToRAS SetElement 1 2 [expr -1.0 * $M(norm,1,1)]
+      $sliceToRAS SetElement 2 2 [expr -1.0 * $M(norm,2,1)]
+    }
+  }
+
+  after idle $_sliceNode Modified
+}
 
 namespace eval Labler {
   proc SetPaintRange {min max} {
