@@ -75,8 +75,6 @@ add_subdirectory(CMake)
 set(CMAKE_MODULE_PATH "${VTK_CMAKE_DIR}" ${CMAKE_MODULE_PATH} "${Slicer3_CMAKE_DIR}")
 
 include("${Slicer3_CMAKE_DIR}/Slicer3PersistenceMacros.cmake")
-include("${Slicer3_CMAKE_DIR}/Slicer3PluginsMacros.cmake")
-include("${Slicer3_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
 
 #-----------------------------------------------------------------------------
 # Top level slicer3 configurations
@@ -318,6 +316,9 @@ slicer3_get_persistent_property(Slicer3_Base_INCLUDE_DIRS Slicer3_Base_INCLUDE_D
 #
 option(Slicer3_BUILD_CLI "Build Slicer3 CLI Plugins" ON)
 option(Slicer3_BUILD_MODULES "Build Slicer3 Modules" ON)
+
+include("${Slicer3_CMAKE_DIR}/Slicer3PluginsMacros.cmake")
+include("${Slicer3_CMAKE_DIR}/Slicer3ModulesMacros.cmake")
 
 if(Slicer3_BUILD_MODULES)
   add_subdirectory(Modules)
