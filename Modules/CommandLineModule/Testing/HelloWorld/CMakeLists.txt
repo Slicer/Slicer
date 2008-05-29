@@ -34,5 +34,4 @@ enable_testing()
 include(CTest)
 set(UPDATE_TYPE svn)
 
-add_test(HelloWorldTest1 ${Slicer3_INSTALL_PLUGINS_BIN_DIR}/${CLP} --help)
-
+slicer3_add_plugins_test(${CLP}Test1 ${CLP} --help)
