@@ -75,7 +75,7 @@ puts stderr "Slicer3_HOME is $::Slicer3_HOME"
 set ::Slicer3_TAG "http://www.na-mic.org/svn/Slicer3/trunk"
 set ::CMAKE_TAG "CMake-2-6"
 set ::TEEM_TAG "Teem-1-9-0-patches"
-set ::KWWidgets_TAG "HEAD"
+set ::KWWidgets_TAG "Slicer-3-2"
 set ::VTK_TAG "VTK-5-2"
 set ::ITK_TAG ITK-3-6
 set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release25-maint"
