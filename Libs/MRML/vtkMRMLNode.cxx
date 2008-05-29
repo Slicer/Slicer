@@ -115,6 +115,7 @@ vtkMRMLNode::~vtkMRMLNode()
   if (this->TempURLString)
     {
     delete [] this->TempURLString;
+    this->TempURLString = NULL;
     }
 }
 
@@ -342,6 +343,11 @@ const char * vtkMRMLNode::URLEncodeString(const char *inString)
     {
     return "(null)";
     }
+  if (strcmp(inString, "") == 0)
+    {
+    return "";
+    }
+  
   vtksys_stl::string kwInString = vtksys_stl::string(inString);
   // encode %
   itksys::SystemTools::ReplaceString(kwInString,
