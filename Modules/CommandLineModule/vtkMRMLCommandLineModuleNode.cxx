@@ -116,8 +116,11 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
 
     for (pit = pbeginit; pit != pendit; ++pit)
       {
-      of << " " << this->URLEncodeString ( (*pit).GetName().c_str() )
-         << "=\"" << this->URLEncodeString ( (*pit).GetDefault().c_str() ) << "\"";
+      // two calls, as the mrml node method saves the new string in a member
+      // variable and it was getting over written when used twice before the
+      // buffer was flushed.
+      of << " " << this->URLEncodeString ( (*pit).GetName().c_str() );
+      of  << "=\"" << this->URLEncodeString ( (*pit).GetDefault().c_str() ) << "\"";
       }
     }
   
