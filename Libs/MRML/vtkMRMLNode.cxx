@@ -379,6 +379,10 @@ const char * vtkMRMLNode::URLDecodeString(const char *inString)
     {
     return "(null)";
     }
+  if (strcmp(inString, "") == 0)
+    {
+    return "";
+    }
   vtksys_stl::string kwInString = vtksys_stl::string(inString);
 
   // decode in the opposite order they were encoded in
