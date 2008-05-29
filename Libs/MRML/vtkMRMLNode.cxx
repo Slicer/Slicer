@@ -112,7 +112,7 @@ vtkMRMLNode::~vtkMRMLNode()
     this->MRMLCallbackCommand = NULL;
     }
 
-  this->SetTempURLString(NULL);
+  //this->SetTempURLString(NULL);
 }
 
 //----------------------------------------------------------------------------
