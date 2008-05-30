@@ -368,7 +368,9 @@ const char * vtkMRMLNode::URLEncodeString(const char *inString)
   itksys::SystemTools::ReplaceString(kwInString,
                                      "\"", "%22");
 
+  this->DisableModifiedEventOn();
   this->SetTempURLString(kwInString.c_str());
+  this->DisableModifiedEventOff();
   return (this->GetTempURLString());
 }
 
@@ -406,7 +408,9 @@ const char * vtkMRMLNode::URLDecodeString(const char *inString)
   itksys::SystemTools::ReplaceString(kwInString,
                                      "%25", "%");
 
+  this->DisableModifiedEventOn();
   this->SetTempURLString(kwInString.c_str());
+  this->DisableModifiedEventOff();
   return (this->GetTempURLString());
 }
 
