@@ -1025,7 +1025,7 @@ void vtkSlicerSliceLogic::GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double 
     {
     vtkMatrix4x4 *rasToRAS = vtkMatrix4x4::New();
     transformNode->GetMatrixTransformToWorld(rasToRAS);
-    vtkMatrix4x4::Multiply4x4 (ijkToRAS, rasToRAS, ijkToRAS);
+    vtkMatrix4x4::Multiply4x4 (rasToRAS, ijkToRAS, ijkToRAS);
     rasToRAS->Delete();
     }
   ijkToRAS->MultiplyPoint( doubleDimensions, rasHDimensions );
@@ -1253,7 +1253,6 @@ void vtkSlicerSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int wi
   sliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS);
   sliceNode->UpdateMatrices( );
   sliceToRAS->Delete();
-
 }
 
 
