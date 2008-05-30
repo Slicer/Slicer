@@ -648,10 +648,6 @@ void vtkSlicerViewControlGUI::UpdateFromMRML()
 void vtkSlicerViewControlGUI::UpdateSceneSnapshotsFromMRML()
 {
 
-  if ( this->SceneClosing )
-    {
-    return;
-    }
   
   if (this->MRMLScene == NULL)
     {
@@ -1132,6 +1128,7 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
            m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
            m == this->ScreenGrabButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||           
            m == this->SelectCameraButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
+           m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
            p == this->CenterButton && event == vtkKWPushButton::InvokedEvent ||                      
            p == this->OrthoButton && event == vtkKWPushButton::InvokedEvent ||                      
            p == this->SceneSnapshotButton && event == vtkKWPushButton::InvokedEvent ||
@@ -1140,6 +1137,16 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
            r == this->RotateAroundButton && event == vtkKWCheckButton::SelectedStateChangedEvent ||                      
            r == this->LookFromButton && event == vtkKWCheckButton::SelectedStateChangedEvent)
         {
+        if ( m == this->ScreenGrabButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+          {
+          }
+        else if ( m == this->SelectCameraButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+          {
+          }
+        else if ( m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
+          {
+          }
+
         vtkMRMLViewNode *vn = this->GetActiveView();
         if ( vn != NULL )
           {
@@ -1203,12 +1210,6 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
               vn->SetBackgroundColor (app->GetSlicerTheme()->GetSlicerColors()->White );
               this->RequestNavigationRender();
               }            
-            }
-          else if ( m == this->ScreenGrabButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
-            {
-            }
-          else if ( m == this->SelectCameraButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
-            {
             }
       
           if ( (p == this->CenterButton) && (event == vtkKWPushButton::InvokedEvent ) )
@@ -2767,7 +2768,7 @@ void vtkSlicerViewControlGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   // has a node been added or deleted?
   if ( vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene 
-       && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ) )
+       && (event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent ))
     {
     this->UpdateFromMRML();
     this->UpdateNavigationWidgetViewActors ( );
@@ -3439,7 +3440,8 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->SelectSceneSnapshotMenuButton->SetImageToIcon ( this->SlicerViewControlIcons->GetSelectSceneSnapshotIcon() );
       this->SelectSceneSnapshotMenuButton->IndicatorVisibilityOff ( );
       this->SelectSceneSnapshotMenuButton->SetBalloonHelpString ( "Restore or delete saved scene snapshots.");
-      
+      this->SelectSceneSnapshotMenuButton->SetBinding ( "<Button-1>", this, "UpdateSceneSnapshotsFromMRML");
+
       //--- Menubutton to capture or select among saved 3D views.
       this->SelectCameraButton->SetParent ( f3);
       this->SelectCameraButton->Create ( );
@@ -3455,7 +3457,6 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->SceneSnapshotButton->SetBorderWidth ( 0 );
       this->SceneSnapshotButton->SetImageToIcon ( p->GetSlicerFoundationIcons()->GetSlicerCameraIcon () );
       this->SceneSnapshotButton->SetBalloonHelpString ( "Capture and name a scene snapshot." );
-
 
       //--- Checkbutton to spin the view
       this->SpinButton->SetParent ( f3 );
