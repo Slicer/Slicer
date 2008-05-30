@@ -53,7 +53,7 @@ endif(APPLE)
 # Slicer version number.
 #
 set(Slicer3_VERSION_MAJOR "3")
-set(Slicer3_VERSION_MINOR "0")
+set(Slicer3_VERSION_MINOR "3")
 if(NOT Slicer3_VERSION_PATCH)
   set(Slicer3_VERSION_PATCH "0")
 endif(NOT Slicer3_VERSION_PATCH)
