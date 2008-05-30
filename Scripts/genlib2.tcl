@@ -539,6 +539,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
             -DVTK_USE_PATENTED:BOOL=ON \
+            -DVTK_USE_PARALLEL:BOOL=ON \
             -DVTK_DEBUG_LEAKS:BOOL=$::VTK_DEBUG_LEAKS \
             -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
@@ -566,6 +567,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
             -DVTK_USE_PATENTED:BOOL=ON \
+            -DVTK_USE_PARALLEL:BOOL=ON \
             -DVTK_DEBUG_LEAKS:BOOL=$::VTK_DEBUG_LEAKS \
             -DOPENGL_INCLUDE_DIR:PATH=/usr/X11R6/include \
             -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
@@ -593,6 +595,7 @@ if { ![file exists $::VTK_TEST_FILE] || $::GENLIB(update) } {
             -DVTK_WRAP_TCL:BOOL=ON \
             -DVTK_USE_HYBRID:BOOL=ON \
             -DVTK_USE_PATENTED:BOOL=ON \
+            -DVTK_USE_PARALLEL:BOOL=ON \
             -DVTK_DEBUG_LEAKS:BOOL=$::VTK_DEBUG_LEAKS \
             -DTCL_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
             -DTK_INCLUDE_PATH:PATH=$TCL_INCLUDE_DIR \
