@@ -90,13 +90,19 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "fileName")) 
       {
+      // URLDeodeString returns a buffer that was created using new[].
+      // It is up to the client to delete it.
       const char* filename = vtkMRMLNode::URLDecodeString(attValue);
       this->SetFileName(filename);
+      //delete [] filename;
       }
     else if (!strcmp(attName, "uri"))
       {
+      // URLDeodeString returns a buffer that was created using new[].
+      // It is up to the client to delete it.
       const char* uri = vtkMRMLNode::URLDecodeString(attValue);
       this->SetURI(uri);
+      //delete [] uri;
       }
     else if (!strcmp(attName, "useCompression")) 
       {
