@@ -28,7 +28,7 @@ if { [itcl::find class ErodeLabelEffect] == "" } {
 
     inherit EffectSWidget
 
-    constructor {sliceGUI} {Labeler::constructor $sliceGUI} {}
+    constructor {sliceGUI} {EffectSWidget::constructor $sliceGUI} {}
     destructor {}
 
     # methods

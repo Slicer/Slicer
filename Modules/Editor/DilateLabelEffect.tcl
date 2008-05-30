@@ -28,7 +28,7 @@ if { [itcl::find class DilateLabelEffect] == "" } {
 
     inherit EffectSWidget
 
-    constructor {sliceGUI} {Labeler::constructor $sliceGUI} {}
+    constructor {sliceGUI} {EffectSWidget::constructor $sliceGUI} {}
     destructor {}
 
     # methods
