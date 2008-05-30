@@ -120,6 +120,10 @@ itcl::body DrawEffect::processEvent { {caller ""} {event ""} } {
         eval $this addPoint $_currentPosition
         $sliceGUI SetGUICommandAbortFlag 1
       }
+      "RightButtonReleaseEvent" {
+        $this apply
+        set _actionState ""
+      }
       "MouseMoveEvent" {
         switch $_actionState {
           "drawing" {

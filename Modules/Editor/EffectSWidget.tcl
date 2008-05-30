@@ -92,6 +92,7 @@ itcl::body EffectSWidget::constructor {sliceGUI} {
   lappend _observerRecords "$sliceGUI $tag"
   set events {
     LeftButtonPressEvent LeftButtonReleaseEvent 
+    RightButtonPressEvent RightButtonReleaseEvent 
     MouseMoveEvent KeyPressEvent EnterEvent LeaveEvent
   }
   foreach event $events {
