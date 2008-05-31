@@ -239,7 +239,7 @@ else(Slicer3_BUILD_MODULES)
 endif(Slicer3_BUILD_MODULES)
 
 if(Slicer3_USE_PYTHON AND PYTHON_LIBRARIES)
-  target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} SlicerGUIPython)
+  target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX} SlicerBaseGUIPython)
   if(WIN32 AND PYTHON_DEBUG_LIBRARIES)
     target_link_libraries(Slicer3${Slicer3_EXE_SUFFIX}
       debug ${PYTHON_DEBUG_LIBRARIES}

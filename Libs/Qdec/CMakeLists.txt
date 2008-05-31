@@ -92,13 +92,17 @@ install(TARGETS ${lib_name}
 # --------------------------------------------------------------------------
 # Install support files
 
+# Should the install location change (in both the install and/or build tree)
+# do update:
+# - vtkQdecModuleLogic.cxx
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkFreeSurferReaders.tcl
-  ${CMAKE_BINARY_DIR}/lib/${PROJECT_NAME}/Tcl/vtkFreeSurferReaders.tcl
+  ${CMAKE_BINARY_DIR}/lib/${PROJECT_NAME}/vtkFreeSurferReaders.tcl
   COPYONLY
   )
 
 install(
   FILES ${CMAKE_CURRENT_SOURCE_DIR}/vtkFreeSurferReaders.tcl
-  DESTINATION lib/${PROJECT_NAME}/Tcl
+  DESTINATION lib/${PROJECT_NAME}
   )

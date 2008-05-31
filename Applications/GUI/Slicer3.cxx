@@ -481,7 +481,7 @@ int Slicer3_main(int argc, char *argv[])
     pythonEnv += std::string ( existingPythonEnv ) + PathSep;
     }
 
-  pythonEnv += slicerHome + "/" + Slicer3_INSTALL_LIB_DIR + "/SlicerGUIPython/Python" + PathSep;
+  pythonEnv += slicerHome + "/" + Slicer3_INSTALL_LIB_DIR + "/SlicerBaseGUI/Python" + PathSep;
   pythonEnv += slicerHome + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR + PathSep;
   vtkKWApplication::PutEnv(const_cast <char *> (pythonEnv.c_str()));
   
@@ -502,7 +502,7 @@ int Slicer3_main(int argc, char *argv[])
   std::string TkinitString = "import Tkinter, sys;"
     "tk = Tkinter.Tk();"
     "sys.path.append ( \""
-    + slicerHome + "/" + Slicer3_INSTALL_LIB_DIR + "/SlicerGUIPython/Python"
+    + slicerHome + "/" + Slicer3_INSTALL_LIB_DIR + "/SlicerBaseGUI/Python"
     + "\" );\n"
     "sys.path.append ( \""
     + slicerHome + "/" + Slicer3_INSTALL_PLUGINS_BIN_DIR
@@ -1621,13 +1621,15 @@ int Slicer3_main(int argc, char *argv[])
       {
       tclCommand += "set dirs [glob \"" + module_path + "/*\"]; ";
       tclCommand += "foreach d $dirs { ";
-      tclCommand += "  set location \"$d/Tcl/pkgIndex.tcl\";";
-      tclCommand += "  if { [file exists $location] } {";
-      tclCommand += "    set package [file tail $d];";
-      tclCommand += "    if { [lsearch -exact $::Slicer3_PACKAGES(list) $package] == -1 } {";
-      tclCommand += "      set ::Slicer3_PACKAGES($package,location) $location;";
-      tclCommand += "      lappend ::Slicer3_PACKAGES(list) $package;";
-      tclCommand += "      lappend ::auto_path $d;";
+      tclCommand += "  foreach subdir {\".\" \"Tcl\"} {";
+      tclCommand += "    set location [file join [file join $d $subdir] pkgIndex.tcl];";
+      tclCommand += "    if { [file exists $location] } {";
+      tclCommand += "      set package [file tail $d];";
+      tclCommand += "      if { [lsearch -exact $::Slicer3_PACKAGES(list) $package] == -1 } {";
+      tclCommand += "        set ::Slicer3_PACKAGES($package,location) $location;";
+      tclCommand += "        lappend ::Slicer3_PACKAGES(list) $package;";
+      tclCommand += "        lappend ::auto_path $d;";
+      tclCommand += "      }";
       tclCommand += "    }";
       tclCommand += "  }";
       tclCommand += "}; ";
@@ -1679,7 +1681,7 @@ int Slicer3_main(int argc, char *argv[])
       pythonCommand += "modulePath = '" + module_path + "'\n";
       pythonCommand += "sys.path.append(modulePath)\n";
       pythonCommand += "for packageName in os.listdir(modulePath):\n";
-      pythonCommand += "    if os.path.isfile(os.path.join(modulePath,packageName,'Python','__init__.py')):\n";
+      pythonCommand += "    if os.path.isfile(os.path.join(modulePath,packageName,'__init__.py')):\n";
       pythonCommand += "        packageNames.append(packageName)\n";
       }
     }

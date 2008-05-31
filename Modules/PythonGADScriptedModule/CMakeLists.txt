@@ -24,13 +24,13 @@ if(Slicer3_USE_PYTHON)
   foreach(file ${PYTHONFILES})
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/Python/${file}
+      ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/${file}
       COPYONLY)
   endforeach(file)
 
   install(
     FILES ${PYTHONFILES}
-    DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}/Python
+    DESTINATION ${Slicer3_INSTALL_MODULES_LIB_DIR}/${PROJECT_NAME}
     )
 
 endif(Slicer3_USE_PYTHON)

@@ -1,4 +1,4 @@
-project(SlicerGUIPython)
+project(SlicerBaseGUIPython)
 
 cmake_minimum_required(VERSION 2.4)
 if(COMMAND cmake_policy)
@@ -51,7 +51,7 @@ endif(Slicer3_USE_NUMPY)
 # --------------------------------------------------------------------------
 # Sources
 
-set(SlicerGUIPython_SRCS 
+set(SlicerBaseGUIPython_SRCS 
   _mytkinter.c 
   _slicerPython.cxx
 )
@@ -59,9 +59,9 @@ set(SlicerGUIPython_SRCS
 # --------------------------------------------------------------------------
 # Build and install the library
 
-set(lib_name SlicerGUIPython)
+set(lib_name SlicerBaseGUIPython)
 add_library(${lib_name} 
-  ${SlicerGUIPython_SRCS}
+  ${SlicerBaseGUIPython_SRCS}
 )
 target_link_libraries(${lib_name} 
   SlicerBaseLogic
@@ -83,15 +83,22 @@ install(TARGETS ${lib_name}
 # --------------------------------------------------------------------------
 # Install support files
 
+# Even though the SlicerBaseGUIPython, let's put it in the parent's project
+# subdir, i.e. SlicerBaseGUI, with the other lib files
+
+# Should the install location change (in both the install and/or build tree)
+# do update:
+# - Applications/GUI: Slicer.cxx, CMakeLists.txt
+
 file(GLOB PYTHONFILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.py")
 foreach(pythonfile ${PYTHONFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${pythonfile}
-    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/${PROJECT_NAME}/Python/${pythonfile}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/SlicerBaseGUI/Python/${pythonfile}
     COPYONLY)
 endforeach(pythonfile)
 
 install(
   FILES ${PYTHONFILES}
-  DESTINATION ${Slicer3_INSTALL_LIB_DIR}/${PROJECT_NAME}/Python
+  DESTINATION ${Slicer3_INSTALL_LIB_DIR}/SlicerBaseGUI/Python
   )
