@@ -729,9 +729,9 @@ ForwardTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
   //                    [  0 -1  0 ]
   //                    [  0  0  1 ]
   //
-  // So, we compute negate the first two coordinates of the input
-  // point and compute J[f].  Then, we pre- and post- multiply the
-  // resulting matrix by the constant matrix above.  That produces the
+  // So, we negate the first two coordinates of the input point and
+  // compute J[f].  Then, we pre- and post- multiply the resulting
+  // matrix by the constant matrix above.  That produces the
   // transformed Jacobian.
 
   typedef itk::BSplineDeformableTransform<double, 3, O> BSplineType;
@@ -798,7 +798,7 @@ vtkITKBSplineTransformHelperImpl<O>
 
 template <class T, unsigned O>
 void
-InverseTransformPointHelper( typename itk::BSplineDeformableTransform<double, 3, O>::Pointer BSpline, 
+InverseTransformPointHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
                              const T in[3], T out[3] )
 {
   typedef itk::BSplineDeformableTransform<double, 3, O> BSplineType;
@@ -813,12 +813,22 @@ InverseTransformPointHelper( typename itk::BSplineDeformableTransform<double, 3,
   opt[0] = in[0];
   opt[1] = in[1];
   opt[2] = in[2];
+
+  // See the comments in ForwardTransformDerivativeHelper about the
+  // reasoning behind the switch coordinate system code.
+  if (helper->switchCoordSystems)
+    {
+    opt[0] = -opt[0];
+    opt[1] = -opt[1];
+    }
+
+
   ipt[0] = opt[0];
   ipt[1] = opt[1];
   ipt[2] = opt[2];
   for (int k = 0; k <= MaxIterationNumber; k++)
   {
-    OutputPointType optTrail = BSpline->TransformPoint( ipt );
+    OutputPointType optTrail = helper->BSpline->TransformPoint( ipt );
     ipt[0] = ipt[0] + (opt[0]-optTrail[0]);
     ipt[1] = ipt[1] + (opt[1]-optTrail[1]);
     ipt[2] = ipt[2] + (opt[2]-optTrail[2]);
@@ -832,6 +842,12 @@ InverseTransformPointHelper( typename itk::BSplineDeformableTransform<double, 3,
   out[0] = static_cast<T>(ipt[0]); 
   out[1] = static_cast<T>(ipt[1]); 
   out[2] = static_cast<T>(ipt[2]);
+
+  if (helper->switchCoordSystems)
+    {
+    out[0] = -out[0];
+    out[1] = -out[1];
+    }
 }
 
 template< unsigned O >
@@ -839,7 +855,7 @@ void
 vtkITKBSplineTransformHelperImpl<O>
 ::InverseTransformPoint( const float in[3], float out[3] )
 {
-  InverseTransformPointHelper<float, O>( BSpline, in, out );
+  InverseTransformPointHelper<float, O>( this, in, out );
 }
 
 template< unsigned O >
@@ -847,20 +863,20 @@ void
 vtkITKBSplineTransformHelperImpl<O>
 ::InverseTransformPoint( const double in[3], double out[3] )
 {
-  InverseTransformPointHelper<double, O>( BSpline, in, out );
+  InverseTransformPointHelper<double, O>( this, in, out );
 }
 
 
 template <class T, unsigned O>
 void
-InverseTransformDerivativeHelper( typename itk::BSplineDeformableTransform<double, 3, O>::Pointer BSpline, 
+InverseTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
                                   const T in[3], T out[3], T derivative[3][3] )
 {
   typedef itk::BSplineDeformableTransform<double, 3, O> BSplineType;
   typedef typename BSplineType::InputPointType InputPointType;
   typedef typename BSplineType::JacobianType JacobianType;
 
-  InverseTransformPointHelper<T,O>( BSpline, in, out );
+  InverseTransformPointHelper<T,O>( helper, in, out );
 
   InputPointType pt;
 
@@ -868,13 +884,29 @@ InverseTransformDerivativeHelper( typename itk::BSplineDeformableTransform<doubl
   pt[1] = out[1]; 
   pt[2] = out[2];
 
-  JacobianType const& jacobian = BSpline->GetJacobian( pt );
+  // See the comments in ForwardTransformDerivativeHelper about the
+  // reasoning behind the switch coordinate system code.
+  if (helper->switchCoordSystems)
+    {
+    pt[0] = -pt[0];
+    pt[1] = -pt[1];
+    }
+
+  JacobianType const& jacobian = helper->BSpline->GetJacobian( pt );
   for( unsigned i=0; i<3; ++i )
   {
     derivative[i][0] = static_cast<T>( jacobian( i, 0 ) );
     derivative[i][1] = static_cast<T>( jacobian( i, 1 ) );
     derivative[i][2] = static_cast<T>( jacobian( i, 2 ) );
   }  
+
+  if (helper->switchCoordSystems)
+    {
+    derivative[0][2] = -derivative[0][2];
+    derivative[1][2] = -derivative[1][2];
+    derivative[2][0] = -derivative[2][0];
+    derivative[2][1] = -derivative[2][1];
+    }
 }
 
 template< unsigned O >
@@ -883,7 +915,7 @@ vtkITKBSplineTransformHelperImpl<O>
 ::InverseTransformDerivative( const float in[3], float out[3],
                             float derivative[3][3] )
 {
-  InverseTransformDerivativeHelper<float, O>( BSpline, in, out, derivative );
+  InverseTransformDerivativeHelper<float, O>( this, in, out, derivative );
 }
 
 template< unsigned O >
@@ -892,5 +924,5 @@ vtkITKBSplineTransformHelperImpl<O>
 ::InverseTransformDerivative( const double in[3], double out[3],
                             double derivative[3][3] )
 {
-  InverseTransformDerivativeHelper<double, O>( BSpline, in, out, derivative );
+  InverseTransformDerivativeHelper<double, O>( this, in, out, derivative );
 }
