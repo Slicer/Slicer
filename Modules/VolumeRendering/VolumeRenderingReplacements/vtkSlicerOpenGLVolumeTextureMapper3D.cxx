@@ -33,19 +33,12 @@
 #include "vtkOpenGLExtensionManager.h"
 #include "vtkgl.h"
 #include "vtkCommand.h"
-#include "vtkVolumeTextureMapper3D_OneComponentNoShadeFP.cxx"
-#include "vtkVolumeTextureMapper3D_OneComponentShadeFP.cxx"
-#include "vtkVolumeTextureMapper3D_TwoDependentNoShadeFP.cxx"
-#include "vtkVolumeTextureMapper3D_TwoDependentShadeFP.cxx"
-#include "vtkVolumeTextureMapper3D_FourDependentNoShadeFP.cxx"
-#include "vtkVolumeTextureMapper3D_FourDependentShadeFP.cxx"
-
-extern const char* vtkVolumeTextureMapper3D_OneComponentShadeFP;
-extern const char* vtkVolumeTextureMapper3D_OneComponentNoShadeFP;
-extern const char* vtkVolumeTextureMapper3D_TwoDependentNoShadeFP;
-extern const char* vtkVolumeTextureMapper3D_TwoDependentShadeFP;
-extern const char* vtkVolumeTextureMapper3D_FourDependentNoShadeFP;
-extern const char* vtkVolumeTextureMapper3D_FourDependentShadeFP;
+#include "vtkVolumeTextureMapper3D_OneComponentNoShadeFP.h"
+#include "vtkVolumeTextureMapper3D_OneComponentShadeFP.h"
+#include "vtkVolumeTextureMapper3D_TwoDependentNoShadeFP.h"
+#include "vtkVolumeTextureMapper3D_TwoDependentShadeFP.h"
+#include "vtkVolumeTextureMapper3D_FourDependentNoShadeFP.h"
+#include "vtkVolumeTextureMapper3D_FourDependentShadeFP.h"
 
 #define PrintError(S)                                                           \
   {                                                                             \
