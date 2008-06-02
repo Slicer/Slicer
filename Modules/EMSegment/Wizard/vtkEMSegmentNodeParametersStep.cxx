@@ -1948,27 +1948,34 @@ void vtkEMSegmentNodeParametersStep::Validate()
 
   if (mrmlManager->GetTreeRootNode() != NULL)
     {
-      vtkIdType firstBadTreeID = 
-        mrmlManager->GetTreeNodeFirstIDWithChildProbabilityError();
-      if (firstBadTreeID >= 0)
-        {
-        std::string parentNodeName = 
-          mrmlManager->GetTreeNodeName(firstBadTreeID);
-        std::string errorMessage   = parentNodeName  + 
-          ": Child probabilities must sum to one!  " +
-          "Please fix before continuing.";
-        vtkKWMessageDialog::PopupMessage(this->GetApplication(),
-                                         NULL,
-                                         "Node Parameters Error",
-                                         errorMessage.c_str(),
-                                         vtkKWMessageDialog::ErrorIcon | 
-                                         vtkKWMessageDialog::InvokeAtPointer);
-        
-        // there was an error; stay on this step
-        wizard_workflow->
-          PushInput(vtkKWWizardStep::GetValidationFailedInput());
-        wizard_workflow->ProcessInputs();
-        }
+    vtkIdType firstBadTreeID = 
+      mrmlManager->GetTreeNodeFirstIDWithChildProbabilityError();
+    if (firstBadTreeID >= 0)
+      {
+      std::stringstream ss;
+      ss << "Child probabilities must sum to one for node "
+         << mrmlManager->GetTreeNodeName(firstBadTreeID)
+         << ", currently they sum to "
+         << mrmlManager->GetTreeNodeChildrenSumClassProbability(firstBadTreeID)
+         << ".  Please fix before continuing.";
+      
+      std::string parentNodeName = 
+        mrmlManager->GetTreeNodeName(firstBadTreeID);
+      std::string errorMessage   = parentNodeName  + 
+        ": Child probabilities must sum to one!  " +
+        "Please fix before continuing.";
+      vtkKWMessageDialog::PopupMessage(this->GetApplication(),
+                                       NULL,
+                                       "Node Parameters Error",
+                                       ss.str().c_str(),
+                                       vtkKWMessageDialog::ErrorIcon | 
+                                       vtkKWMessageDialog::InvokeAtPointer);
+      
+      // there was an error; stay on this step
+      wizard_workflow->
+        PushInput(vtkKWWizardStep::GetValidationFailedInput());
+      wizard_workflow->ProcessInputs();
+      }
     }
   this->Superclass::Validate();
 }
