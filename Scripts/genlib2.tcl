@@ -757,10 +757,9 @@ if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
         }
     }
 
-    runcmd $::CMAKE \
+      runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
-        -DCMAKE_CXX_FLAGS_DEBUG:STRING=$::CMAKE_CXX_FLAGS_DEBUG \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
         -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
         -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
@@ -769,15 +768,14 @@ if { ![file exists $::TEEM_TEST_FILE] || $::GENLIB(update) } {
         -DBUILD_TESTING:BOOL=OFF \
         -DTEEM_ZLIB:BOOL=ON \
         -DTEEM_PNG:BOOL=ON \
-        -DBUILD_VTK_CAPATIBLE_TEEM:BOOL=ON \
+        -DTEEM_VTK_MANGLE:BOOL=ON \
         -DTEEM_VTK_TOOLKITS_IPATH:FILEPATH=$::Slicer3_LIB/VTK-build \
-        -DZLIB_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities \
+        -DZLIB_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities/vtkzlib \
         -DTEEM_ZLIB_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
         -DZLIB_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$zlib \
         -DPNG_PNG_INCLUDE_DIR:PATH=$::Slicer3_LIB/VTK/Utilities/vtkpng \
         -DTEEM_PNG_DLLCONF_IPATH:PATH=$::Slicer3_LIB/VTK-build/Utilities \
         -DPNG_LIBRARY:FILEPATH=$::Slicer3_LIB/VTK-build/bin/$::VTK_BUILD_SUBDIR/$png \
-        -DTEEM_SUBLIBRARIES:BOOL=TRUE \
         ../teem
 
     if {$isWindows} {
