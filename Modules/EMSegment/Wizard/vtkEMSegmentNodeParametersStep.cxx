@@ -1955,9 +1955,12 @@ void vtkEMSegmentNodeParametersStep::Validate()
       std::stringstream ss;
       ss << "Child probabilities must sum to one for node "
          << mrmlManager->GetTreeNodeName(firstBadTreeID)
-         << ", currently they sum to "
+         << "; right now they sum to "
          << mrmlManager->GetTreeNodeChildrenSumClassProbability(firstBadTreeID)
-         << ".  Please fix before continuing.";
+         << ".  Please fix before continuing---"
+         << "you should edit the \"Global Prior\" fields for the"
+         << " children nodes of "
+         << mrmlManager->GetTreeNodeName(firstBadTreeID) << ".";
       
       std::string parentNodeName = 
         mrmlManager->GetTreeNodeName(firstBadTreeID);
