@@ -30,6 +30,8 @@ public:
     vtkIdType, double value);
   virtual void NodeParametersSpatialPriorWeightChangedCallback(
     vtkIdType, double value);
+  virtual void RightClickOnInputChannelWeightsListCallback(
+    int row, int col, int x, int y);
   virtual void NodeParametersInputChannelWeightChangedCallback(
     vtkIdType, int row, int col, const char *value);
   virtual void NodeParametersAlphaChangedCallback(vtkIdType, double value);
