@@ -303,7 +303,7 @@ void vtkMRMLSliceNode::SetSliceToRASByNTP (double Nx, double Ny, double Nz,
 void vtkMRMLSliceNode::UpdateMatrices()
 {
     double spacing[3];
-    unsigned int i;
+    unsigned int i, j;
     vtkMatrix4x4 *xyToSlice = vtkMatrix4x4::New();
     vtkMatrix4x4 *xyToRAS = vtkMatrix4x4::New();
 
@@ -335,7 +335,7 @@ void vtkMRMLSliceNode::UpdateMatrices()
     // RAS = XYToRAS * XY
     //
     vtkMatrix4x4::Multiply4x4(this->SliceToRAS, xyToSlice, xyToRAS);
-    
+
     // check to see if the matrix actually changed
     if ( !Matrix4x4AreEqual (xyToRAS, this->XYToRAS) )
       {
@@ -351,6 +351,48 @@ void vtkMRMLSliceNode::UpdateMatrices()
 
     xyToSlice->Delete();
     xyToRAS->Delete();
+
+    char *orientationString = "Reformat";
+    if ( this->SliceToRAS->GetElement(0, 0) == -1.0 &&
+         this->SliceToRAS->GetElement(1, 0) ==  0.0 &&
+         this->SliceToRAS->GetElement(2, 0) ==  0.0 &&
+         this->SliceToRAS->GetElement(0, 1) ==  0.0 &&
+         this->SliceToRAS->GetElement(1, 1) ==  1.0 &&
+         this->SliceToRAS->GetElement(2, 1) ==  0.0 &&
+         this->SliceToRAS->GetElement(0, 2) ==  0.0 &&
+         this->SliceToRAS->GetElement(1, 2) ==  0.0 &&
+         this->SliceToRAS->GetElement(2, 2) ==  1.0 )
+      {
+        orientationString = "Axial";
+      }
+
+    if ( this->SliceToRAS->GetElement(0, 0) ==  0.0 &&
+         this->SliceToRAS->GetElement(1, 0) == -1.0 &&
+         this->SliceToRAS->GetElement(2, 0) ==  0.0 &&
+         this->SliceToRAS->GetElement(0, 1) ==  0.0 &&
+         this->SliceToRAS->GetElement(1, 1) ==  0.0 &&
+         this->SliceToRAS->GetElement(2, 1) ==  1.0 &&
+         this->SliceToRAS->GetElement(0, 2) ==  1.0 &&
+         this->SliceToRAS->GetElement(1, 2) ==  0.0 &&
+         this->SliceToRAS->GetElement(2, 2) ==  0.0 )
+      {
+        orientationString = "Sagittal";
+      }
+
+    if ( this->SliceToRAS->GetElement(0, 0) == -1.0 &&
+         this->SliceToRAS->GetElement(1, 0) ==  0.0 &&
+         this->SliceToRAS->GetElement(2, 0) ==  0.0 &&
+         this->SliceToRAS->GetElement(0, 1) ==  0.0 &&
+         this->SliceToRAS->GetElement(1, 1) ==  0.0 &&
+         this->SliceToRAS->GetElement(2, 1) ==  1.0 &&
+         this->SliceToRAS->GetElement(0, 2) ==  0.0 &&
+         this->SliceToRAS->GetElement(1, 2) ==  1.0 &&
+         this->SliceToRAS->GetElement(2, 2) ==  0.0 )
+      {
+        orientationString = "Coronal";
+      }
+
+    this->SetOrientationString( orientationString );
 }
 
 
