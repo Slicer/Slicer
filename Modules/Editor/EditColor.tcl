@@ -77,6 +77,7 @@ itcl::body EditColor::create { } {
   $o(colorSpin) Create
   [$o(colorSpin) GetWidget] SetWidth 3
   [$o(colorSpin) GetWidget] SetValue [EditorGetPaintLabel]
+  $o(colorSpin) SetBalloonHelpString "Click colored patch at right to bring up color selection pop up window.  Use the 'c' key to bring up color popup menu."
 
   set o(colorOption) [vtkNew vtkKWMenuButton]
   $o(colorOption) SetParent $frame
