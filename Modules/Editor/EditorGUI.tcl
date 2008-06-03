@@ -199,7 +199,6 @@ proc EditorBuildGUI {this} {
 }
 
 proc EditorAddGUIObservers {this} {
-  puts "add observer $this"
   $this AddObserverByNumber $::Editor($this,volumesCreate) 10000 
     
 # $this DebugOn
