@@ -121,6 +121,7 @@ proc EditorBuildGUI {this} {
   $::Editor($this,volumeName) SetParent [$::Editor($this,volumesFrame) GetFrame]
   $::Editor($this,volumeName) Create
   $::Editor($this,volumeName) SetLabelText "Name for label map volume: "
+  [$::Editor($this,volumeName) GetWidget] SetValue "Working"
   $::Editor($this,volumeName) SetBalloonHelpString \
     "Leave blank for automatic label name based on input name."
   pack [$::Editor($this,volumeName) GetWidgetName] -side top -anchor e -padx 2 -pady 2 
@@ -198,6 +199,7 @@ proc EditorBuildGUI {this} {
 }
 
 proc EditorAddGUIObservers {this} {
+  puts "add observer $this"
   $this AddObserverByNumber $::Editor($this,volumesCreate) 10000 
     
 # $this DebugOn
@@ -463,6 +465,7 @@ proc EditorCreateLabelVolume {this} {
 
   set volumeNode [$::Editor($this,volumesSelect) GetSelected]
   if { $volumeNode == "" } {
+    EditorErrorDialog "Select Source Volume for Label Map"
     return;
   }
 
@@ -470,6 +473,7 @@ proc EditorCreateLabelVolume {this} {
   if { $name == "" } {
     set name "[$volumeNode GetName]-label"
   }
+
 
   set scene [[$this GetLogic] GetMRMLScene]
 
@@ -489,3 +493,13 @@ proc EditorCreateLabelVolume {this} {
   eval ::Labler::SetPaintRange $range
 }
 
+proc EditorErrorDialog {errorText} {
+  set dialog [vtkKWMessageDialog New]
+  $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  $dialog SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  $dialog SetStyleToMessage
+  $dialog SetText $errorText
+  $dialog Create
+  $dialog Invoke
+  $dialog Delete
+}

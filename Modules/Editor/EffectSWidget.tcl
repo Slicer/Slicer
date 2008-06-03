@@ -435,6 +435,7 @@ itcl::body EffectSWidget::apply {} {
 itcl::body EffectSWidget::errorDialog { errorText } {
   set dialog [vtkKWMessageDialog New]
   $dialog SetParent [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  $dialog SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
   $dialog SetStyleToMessage
   $dialog SetText $errorText
   $dialog Create
