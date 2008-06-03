@@ -107,6 +107,18 @@ itcl::body SaveIslandEffect::apply {} {
 itcl::body SaveIslandEffect::buildOptions {} {
 
   #
+  # a help button
+  #
+  set o(help) [vtkNew vtkSlicerPopUpHelpWidget]
+  $o(help) SetParent [$this getOptionsFrame]
+  $o(help) Create
+  $o(help) SetHelpTitle "Save Islands"
+  $o(help) SetHelpText "Click on an island you want to keep.  All voxels not connected to the island are set to zero."
+  $o(help) SetBalloonHelpString "Bring up help window."
+  pack [$o(help) GetWidgetName] \
+    -side right -anchor sw -padx 2 -pady 2 
+
+  #
   # a cancel button
   #
   set o(cancel) [vtkNew vtkKWPushButton]
@@ -130,7 +142,7 @@ itcl::body SaveIslandEffect::buildOptions {} {
 }
 
 itcl::body SaveIslandEffect::tearDownOptions { } {
-  foreach w "cancel" {
+  foreach w "help cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 

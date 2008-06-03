@@ -110,6 +110,18 @@ itcl::body ChangeIslandEffect::apply {} {
 itcl::body ChangeIslandEffect::buildOptions {} {
 
   #
+  # a help button
+  #
+  set o(help) [vtkNew vtkSlicerPopUpHelpWidget]
+  $o(help) SetParent [$this getOptionsFrame]
+  $o(help) Create
+  $o(help) SetHelpTitle "Change Island"
+  $o(help) SetHelpText "Use this tool change the label for a selected region to the current label value.  Every voxel connected to the point you click will change."
+  $o(help) SetBalloonHelpString "Bring up help window."
+  pack [$o(help) GetWidgetName] \
+    -side right -anchor sw -padx 2 -pady 2 
+
+  #
   # a cancel button
   #
   set o(cancel) [vtkNew vtkKWPushButton]
@@ -133,7 +145,7 @@ itcl::body ChangeIslandEffect::buildOptions {} {
 }
 
 itcl::body ChangeIslandEffect::tearDownOptions { } {
-  foreach w "cancel" {
+  foreach w "help cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 

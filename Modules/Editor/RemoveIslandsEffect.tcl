@@ -107,6 +107,18 @@ itcl::body RemoveIslandsEffect::apply {} {
 itcl::body RemoveIslandsEffect::buildOptions {} {
 
   #
+  # a help button
+  #
+  set o(help) [vtkNew vtkSlicerPopUpHelpWidget]
+  $o(help) SetParent [$this getOptionsFrame]
+  $o(help) Create
+  $o(help) SetHelpTitle "Remove Islands"
+  $o(help) SetHelpText "Click in the \"sea\" that contains islands (areas that are completely surrounded by the sea).  Islands will be converted to the sea color"
+  $o(help) SetBalloonHelpString "Bring up help window."
+  pack [$o(help) GetWidgetName] \
+    -side right -anchor sw -padx 2 -pady 2 
+
+  #
   # a cancel button
   #
   set o(cancel) [vtkNew vtkKWPushButton]
@@ -130,7 +142,7 @@ itcl::body RemoveIslandsEffect::buildOptions {} {
 }
 
 itcl::body RemoveIslandsEffect::tearDownOptions { } {
-  foreach w "cancel" {
+  foreach w "help cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 
