@@ -105,7 +105,12 @@ itcl::body MakeModelEffect::apply {} {
   $moduleNode SetName "Editor Make Model"
   $moduleNode SetModuleDescription "Model Maker"
 
-  $moduleNode SetParameterAsString "Name" "Quick Model"
+  set name [[$o(name) GetWidget] GetValue]
+  if { $name == "" } {
+    $moduleNode SetParameterAsString "Name" "Quick Model"
+  } else {
+    $moduleNode SetParameterAsString "Name" $name
+  }
   $moduleNode SetParameterAsString "FilterType" "Sinc"
   $moduleNode SetParameterAsBool "GenerateAll" "0"
   $moduleNode SetParameterAsString "Labels" [EditorGetPaintLabel]
@@ -179,12 +184,28 @@ itcl::body MakeModelEffect::buildOptions {} {
   pack [$o(goToModelMaker) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
 
+  #
+  # smooth
+  #
   set o(smooth) [vtkKWCheckButtonWithLabel New]
   $o(smooth) SetParent [$this getOptionsFrame]
   $o(smooth) Create
   $o(smooth) SetLabelText "Smooth Model: "
+  [$o(smooth) GetWidget] SetSelectedState 1
   $o(smooth) SetBalloonHelpString "When smoothed, the model will look better, but some details of the label map will not be visible on the model.  When not smoothed you will see individual voxel boundaries in the model.  Smoothing here corresponds to Decimation of 0.25 and Smooting iterations of 10."
   pack [$o(smooth) GetWidgetName] \
+    -side top -anchor e -fill x -padx 2 -pady 2 
+
+  #
+  # model name
+  #
+  set o(name) [vtkKWEntryWithLabel New]
+  $o(name) SetParent [$this getOptionsFrame]
+  $o(name) Create
+  $o(name) SetLabelText "Name: "
+  [$o(name) GetWidget] SetValue "Quick Model"
+  $o(name) SetBalloonHelpString "Select the name for the newly created model."
+  pack [$o(name) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
 
   #
@@ -245,7 +266,7 @@ itcl::body MakeModelEffect::tearDownOptions { } {
   # call superclass version of tearDownOptions
   chain
 
-  foreach w "smooth goToModelMaker help cancel apply" {
+  foreach w "smooth name goToModelMaker help cancel apply" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
       pack forget [$o($w) GetWidgetName] 
