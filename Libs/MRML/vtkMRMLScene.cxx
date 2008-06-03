@@ -1839,6 +1839,22 @@ int vtkMRMLScene::IsFilePathRelative(const char * filepath)
     vtkErrorMacro("IsFilePathRelative: file path is null");
     return 0;
     }
+
+  // check for shared memory objects
+  if (strncmp("slicer:", filepath, 7) == 0)
+    {
+    return 0;
+    }
+
+  // check for remote files, assume they're absolute paths
+  if (this->GetCacheManager() != NULL)
+    {
+    if (this->GetCacheManager()->IsRemoteReference(filepath))
+      {
+      return 0;
+      }
+    }
+  
   vtksys_stl::vector<vtksys_stl::string> components;
   vtksys::SystemTools::SplitPath((const char*)filepath, components);
   if (components[0] == "") 
