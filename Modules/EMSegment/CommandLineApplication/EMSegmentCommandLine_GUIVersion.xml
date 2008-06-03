@@ -48,16 +48,16 @@
       <label>MRML Scene</label>
     </file>    
 
-    <file>
+    <image type="label">
       <name>resultVolumeFileName</name>
       <longflag>resultVolumeFileName</longflag>
 
       <description>The file name that the segmentation result volume will be written to.</description>
       <label>Result Labelmap</label>
       <channel>output</channel>
-    </file>    
+    </image>    
 
-    <file>
+    <image>
       <name>targetVolumeFileName1</name>
       <longflag>targetVolumeFileName1</longflag>
 
@@ -65,9 +65,9 @@
 
       <label>Target Volume 1</label>      
       <channel>input</channel>
-    </file>
+    </image>
 
-    <file>
+    <image>
       <name>targetVolumeFileName2</name>
       <longflag>targetVolumeFileName2</longflag>
 
@@ -75,9 +75,9 @@
 
       <label>Target Volume 2</label>      
       <channel>input</channel>
-    </file>
+    </image>
 
-    <file>
+    <image>
       <name>targetVolumeFileName3</name>
       <longflag>targetVolumeFileName3</longflag>
 
@@ -85,9 +85,9 @@
 
       <label>Target Volume 3</label>      
       <channel>input</channel>
-    </file>
+    </image>
 
-    <file>
+    <image>
       <name>targetVolumeFileName4</name>
       <longflag>targetVolumeFileName4</longflag>
 
@@ -95,9 +95,9 @@
 
       <label>Target Volume 4</label>      
       <channel>input</channel>
-    </file>
+    </image>
 
-    <file>
+    <image>
       <name>targetVolumeFileName5</name>
       <longflag>targetVolumeFileName5</longflag>
 
@@ -105,7 +105,7 @@
 
       <label>Target Volume 5</label>      
       <channel>input</channel>
-    </file>
+    </image>
 
   </parameters>
 

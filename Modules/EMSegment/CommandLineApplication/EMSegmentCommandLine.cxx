@@ -395,7 +395,7 @@ int main(int argc, char** argv)
     {
     GenerateEmptyMRMLScene(generateEmptyMRMLSceneAndQuit.c_str());
     vtkEventBroker::GetInstance()->Delete(); 
-    exit(0);
+    return EXIT_SUCCESS;
     }
 
 #ifdef WIN32
@@ -416,7 +416,7 @@ int main(int argc, char** argv)
     {
     std::cerr << "Try --help for usage..." << std::endl;
     vtkEventBroker::GetInstance()->Delete(); 
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
     }
 
   //
@@ -428,7 +428,7 @@ int main(int argc, char** argv)
               << std::endl;
     std::cerr << intermediateResultsDirectory << std::endl;      
     vtkEventBroker::GetInstance()->Delete(); 
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
     }
 
   if (!vtksys::SystemTools::FileExists(mrmlSceneFileName.c_str()))
@@ -436,7 +436,7 @@ int main(int argc, char** argv)
     std::cerr << "Error: MRML scene file does not exist." << std::endl;
     std::cerr << mrmlSceneFileName << std::endl;      
     vtkEventBroker::GetInstance()->Delete(); 
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
     }
 
   if (!resultStandardVolumeFileName.empty() && 
@@ -446,9 +446,11 @@ int main(int argc, char** argv)
               << std::endl;
     std::cerr << resultStandardVolumeFileName << std::endl;      
     vtkEventBroker::GetInstance()->Delete(); 
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
     }
 
+#ifndef EM_CL_GUI
+  // the gui uses <image>, the command line uses actual files
   for (unsigned int i = 0; i < targetVolumeFileNames.size(); ++i)
     {
     if (!vtksys::SystemTools::
@@ -458,7 +460,7 @@ int main(int argc, char** argv)
                 << std::endl;
       std::cerr << targetVolumeFileNames[i] << std::endl;      
       vtkEventBroker::GetInstance()->Delete(); 
-      exit(EXIT_FAILURE);
+      return EXIT_FAILURE;
       }
     }
 
@@ -471,9 +473,10 @@ int main(int argc, char** argv)
                 << std::endl;
       std::cerr << atlasVolumeFileNames[i] << std::endl;      
       vtkEventBroker::GetInstance()->Delete(); 
-      exit(EXIT_FAILURE);
+      return EXIT_FAILURE;
       }
     }
+#endif
 
   progressReporter.ReportProgress("Loading Data...", 
                                    currentStep++ / totalSteps);
@@ -882,16 +885,19 @@ int main(int argc, char** argv)
         // create volume node
         if (verbose) std::cerr << "Creating output volume node...";
 
+        vtkstd::string absolutePath = resultVolumeFileName;
+#ifndef EM_CL_GUI
+        // the gui uses <image>, the command line uses actual files
         //
         // Set up the filename so that a relative filename will be
         // relative to the current directory, not relative to the mrml
         // scene's path.
-        vtkstd::string absolutePath = resultVolumeFileName;
         if (!vtksys::SystemTools::FileIsFullPath(resultVolumeFileName.c_str()))
           {
           absolutePath = vtksys::SystemTools::
             CollapseFullPath(resultVolumeFileName.c_str());
           }
+#endif
 
         vtkMRMLVolumeNode* outputNode = 
           AddNewScalarArchetypeVolume(mrmlScene,
