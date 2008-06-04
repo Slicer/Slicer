@@ -492,7 +492,7 @@ protected:
 
 
 
-
+   int UpdateingGUI;
 
 
 

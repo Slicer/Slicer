@@ -147,7 +147,7 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->VI_PauseResume=NULL;
 
 
-
+    this->UpdateingGUI = 0;
 }
 
 vtkSlicerVRGrayscaleHelper::~vtkSlicerVRGrayscaleHelper(void)
@@ -1144,6 +1144,21 @@ void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
         //{
         //    this->RA_Cropping[i]->SetRange(this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i+1]);
         //}
+        this->UpdateingGUI = 1;
+        double *croppingPlanes = this->Gui->GetCurrentNode()->GetCroppingRegionPlanes();
+        for(int i=0;i<3;i++)
+        {
+          if(croppingPlanes[2*i  ]< croppingPlanes[2*i+1])
+            {
+            this->RA_Cropping[i]->SetRange(croppingPlanes[2*i], croppingPlanes[2*i+1]);
+            }
+          else
+            {
+            this->RA_Cropping[i]->SetRange(croppingPlanes[2*i+1], croppingPlanes[2*i]);
+            }
+        }
+        this->UpdateingGUI = 0;
+
         this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetCurrentNode()->GetCroppingEnabled());
         this->ProcessEnableDisableCropping(this->Gui->GetCurrentNode()->GetCroppingEnabled());
     }
@@ -1156,10 +1171,19 @@ void vtkSlicerVRGrayscaleHelper::UpdateGUIElements(void)
 {
     Superclass::UpdateGUIElements();
     this->UpdateSVP();
+    double *croppingPlanes = this->Gui->GetCurrentNode()->GetCroppingRegionPlanes();
     for(int i=0;i<3;i++)
-    {
-        this->RA_Cropping[i]->SetRange(this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i+1]);    
-    }
+      {
+      if(croppingPlanes[2*i  ]< croppingPlanes[2*i+1])
+        {
+        this->RA_Cropping[i]->SetRange(croppingPlanes[2*i], croppingPlanes[2*i+1]);
+        }
+      else
+        {
+        this->RA_Cropping[i]->SetRange(croppingPlanes[2*i+1], croppingPlanes[2*i]);
+        }
+
+      }
     this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetCurrentNode()->GetCroppingEnabled());
     this->VRMB_ColorMode->SetColorTransferFunction(this->Gui->GetCurrentNode()->GetVolumeProperty()->GetRGBTransferFunction());
     this->VRMB_ColorMode->SetRange(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange());
@@ -1271,6 +1295,10 @@ void vtkSlicerVRGrayscaleHelper::UpdateQualityCheckBoxes(void)
 
 void vtkSlicerVRGrayscaleHelper::ProcessCropping(int index, double min,double max)
 {
+  if (this->UpdateingGUI)
+    {
+    return;
+    }
 
     if(this->MapperTexture==NULL||this->MapperRaycast==NULL)
     {
@@ -1278,11 +1306,17 @@ void vtkSlicerVRGrayscaleHelper::ProcessCropping(int index, double min,double ma
     }
     double pointA[3];
     double pointB[3];
+    double croppingPlanes[6];
     for(int i=0;i<3;i++)
     {
         pointA[i]=this->RA_Cropping[i]->GetRange()[0];
         pointB[i]=this->RA_Cropping[i]->GetRange()[1];
+        croppingPlanes[2*i  ] = this->RA_Cropping[i]->GetRange()[0];
+        croppingPlanes[2*i+1] = this->RA_Cropping[i]->GetRange()[1];
     }
+
+    this->Gui->GetCurrentNode()->SetCroppingRegionPlanes(croppingPlanes);
+
     this->ConvertBoxCoordinatesToWorld(pointA);
     this->ConvertBoxCoordinatesToWorld(pointB);
     this->BW_Clipping->PlaceWidget(pointA[0],pointB[0],pointA[1],pointB[1],pointA[2],pointB[2]);
