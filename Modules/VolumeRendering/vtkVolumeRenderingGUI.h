@@ -47,6 +47,7 @@ public:
     virtual void SetLogic(vtkVolumeRenderingLogic *log)
     {
         this->Logic=log;
+        this->Logic->RegisterNodes();
     }
 
     // Description: Implements vtkSlicerModuleGUI::SetModuleLogic for this GUI

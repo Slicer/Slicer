@@ -33,12 +33,15 @@ void vtkVolumeRenderingLogic::PrintSelf(std::ostream &os, vtkIndent indent)
 void vtkVolumeRenderingLogic::SetMRMLScene(vtkMRMLScene *scene)
 {
   vtkSlicerModuleLogic::SetMRMLScene(scene);
-
-  if (this->First)
+  this->RegisterNodes();
+}
+void vtkVolumeRenderingLogic::RegisterNodes()
+{
+  if (this->MRMLScene && this->First)
     {
       // :NOTE: 20050513 tgl: Guard this so it is only registered once.
       vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
-      scene->RegisterNodeClass(vrNode);
+      this->MRMLScene->RegisterNodeClass(vrNode);
       vrNode->Delete();
       this->First = false;
     }

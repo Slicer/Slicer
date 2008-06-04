@@ -19,6 +19,9 @@ public:
   // via LoadableModuleFactory
   virtual void SetMRMLScene(vtkMRMLScene *scene);
 
+  // Register local MRML nodes
+  virtual void RegisterNodes();
+
 protected:
   vtkVolumeRenderingLogic();
   ~vtkVolumeRenderingLogic();
