@@ -680,8 +680,9 @@ void vtkSlicerViewControlGUI::UpdateSceneSnapshotsFromMRML()
 
       std::string cmd;
       cmd = "RestoreSceneSnapshot";
-      cmd += " ";
+      cmd += " \"";
       cmd += name;
+      cmd += "\"";
       item = m1->AddCommand ( "restore", this, cmd.c_str() );
       imageName = "RestoreImage";
       vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  appGUI->GetSlicerFoundationIcons()->GetSlicerGoIcon ( ));
@@ -689,8 +690,9 @@ void vtkSlicerViewControlGUI::UpdateSceneSnapshotsFromMRML()
       m1->SetItemCompoundModeToLeft ( item );
           
       cmd = "DeleteSceneSnapshot";
-      cmd += " ";
+      cmd += " \"";
       cmd += name;
+      cmd += "\"";
       item = m1->AddCommand ( "delete", this, cmd.c_str() );
       imageName = "DeleteImage";
       vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  appGUI->GetSlicerFoundationIcons()->GetSlicerDeleteIcon ( ));
