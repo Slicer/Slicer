@@ -32,6 +32,7 @@ if { [itcl::find class FiducialsSWidget] == "" } {
     # a list of seeds - the callback info includes the mapping to list and index
     variable _seedSWidgets ""
     variable _fiducialListObserverTagPairs ""
+    variable _timeOfLastKeyEvent 0
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
@@ -156,22 +157,30 @@ itcl::body FiducialsSWidget::processEvent { {caller ""} {event ""} } {
               # add a fiducial to the current list
 
               #
-              # get the event position and make it relative to a renderer/viewport
+              # first check for key repeats (don't allow more than
+              # one fiducial per second)
               #
-              foreach {windowx windowy} [$_interactor GetEventPosition] {}
-              foreach {lastwindowx lastwindowy} [$_interactor GetLastEventPosition] {}
-              foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
+              set now [clock seconds]
+              if { [expr $now - $_timeOfLastKeyEvent] >= 1 } {
+                set _timeOfLastKeyEvent $now
+                #
+                # get the event position and make it relative to a renderer/viewport
+                #
+                foreach {windowx windowy} [$_interactor GetEventPosition] {}
+                foreach {lastwindowx lastwindowy} [$_interactor GetLastEventPosition] {}
+                foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
 
-              set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
-              set renderer0 [$_renderWidget GetRenderer]
+                set pokedRenderer [$_interactor FindPokedRenderer $windowx $windowy]
+                set renderer0 [$_renderWidget GetRenderer]
 
-              foreach {x y z} [$this dcToXYZ $windowx $windowy] {}
-              $this queryLayers $x $y $z
-              set xyToRAS [$_sliceNode GetXYToRAS]
-              set ras [$xyToRAS MultiplyPoint $x $y $z 1]
+                foreach {x y z} [$this dcToXYZ $windowx $windowy] {}
+                $this queryLayers $x $y $z
+                set xyToRAS [$_sliceNode GetXYToRAS]
+                set ras [$xyToRAS MultiplyPoint $x $y $z 1]
 
-              foreach {r a s t} $ras {}
-              FiducialsSWidget::AddFiducial $r $a $s
+                foreach {r a s t} $ras {}
+                FiducialsSWidget::AddFiducial $r $a $s
+              }
             }
           }
         }
