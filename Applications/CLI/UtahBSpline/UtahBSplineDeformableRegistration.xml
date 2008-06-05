@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Registration</category>
-  <title>[Utah] Deformable BSpline registration (Experimental)</title>
+  <title>_(Utah) Deformable BSpline registration (Experimental)</title>
   <description>Registers two images together using a normalized correlation metric and BSpline transform. This is an experimental module using a specialized BSpline method.</description>
   <version>0.1.0.$Revision: 5746 $(alpha)</version>
   <documentation-url></documentation-url>
