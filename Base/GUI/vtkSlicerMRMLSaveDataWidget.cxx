@@ -198,7 +198,9 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
         std::string fileName (this->MultiColumnList->GetWidget()->GetCellText(row, 4));
         const char *filePath = fileName.c_str();
         snode->SetFileName(filePath); 
-
+        // undo any URI
+        snode->SetURI(NULL);
+        
         //: ask override
         int  writeFile = 1;
         fstream fin;
@@ -596,6 +598,8 @@ void vtkSlicerMRMLSaveDataWidget::UpdateDataDirectory()
           sname += std::string(".vtk");
           }
         snode->SetFileName(sname.c_str());
+        // undo the URI if it's set
+        snode->SetURI(NULL);
         name = itksys::SystemTools::GetFilenameName(snode->GetFileName());
         }
       itksys_stl::string sname (this->DataDirectoryName);
