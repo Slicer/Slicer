@@ -148,7 +148,7 @@ vtkVolumeRenderingGUI::~vtkVolumeRenderingGUI(void)
     }
     if(this->CurrentNode)
     {
-        this->CurrentNode->Delete();
+        //this->CurrentNode->Delete();
         this->CurrentNode=NULL;
     }
 
@@ -653,7 +653,8 @@ void vtkVolumeRenderingGUI::InitializePipelineNewCurrentNode()
     //Add Node to Scene
     this->GetLogic()->GetMRMLScene()->AddNode(this->CurrentNode);
     this->CurrentNode->AddReference(this->NS_ImageData->GetSelected()->GetID());
-
+    this->CurrentNode->Delete();
+    
     //Update the menu
     this->PreviousNS_VolumeRenderingDataScene=this->CurrentNode->GetID();
     this->NS_VolumeRenderingDataScene->SetSelected(this->CurrentNode);
