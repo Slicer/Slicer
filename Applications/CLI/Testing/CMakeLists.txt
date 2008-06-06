@@ -86,6 +86,34 @@ add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO)
 
 #
+# LinearRegistration tests
+#
+add_test(LinearRegistrationTest00 ${Slicer3_EXE} --launch LinearRegistrationTest
+  LinearRegistrationTest
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest00.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest00Transform.txt 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
+set (CLP LinearRegistration)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP}Lib)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO ITKNumerics)
+
+if(SLICER_BRAINWEB_DATA_ROOT)
+add_test(LinearRegistrationTest1 ${Slicer3_EXE} --launch LinearRegistrationTest
+  LinearRegistrationTest
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest01.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest00Transform.txt 
+  ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
+  ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17Rot10Tx15.mha
+  )
+
+endif(SLICER_BRAINWEB_DATA_ROOT)
+
+
+#
 # BSplineDeformableRegistration tests
 #
 add_test(BSplineRegistrationTest00 ${Slicer3_EXE} --launch BSplineDeformableRegistrationTest
