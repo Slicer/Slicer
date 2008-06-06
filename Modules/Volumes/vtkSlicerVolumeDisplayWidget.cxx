@@ -106,6 +106,23 @@ void vtkSlicerVolumeDisplayWidget::TearDownWidget ()
   this->SetVolumeNode(NULL);
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerVolumeDisplayWidget::AddMRMLObservers ( )
+{
+  if (this->MRMLScene)
+    {
+    this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerVolumeDisplayWidget::RemoveMRMLObservers ( )
+{
+  if (this->MRMLScene)
+    {
+    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+    }
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerVolumeDisplayWidget::AddWidgetObservers ( ) 

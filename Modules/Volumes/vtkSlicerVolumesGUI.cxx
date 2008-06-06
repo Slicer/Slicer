@@ -148,21 +148,25 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     }
   if (this->labelVDW)
     {
+    this->labelVDW->RemoveMRMLObservers();
     this->labelVDW->SetParent(NULL );
     this->labelVDW->Delete ( );
     }
   if (this->scalarVDW)
     {
+    this->scalarVDW->RemoveMRMLObservers();
     this->scalarVDW->SetParent(NULL );
     this->scalarVDW->Delete ( );
     }
   if (this->dwiVDW)
     {
+    this->dwiVDW->RemoveMRMLObservers();
     this->dwiVDW->SetParent(NULL );
     this->dwiVDW->Delete ( );
     }
   if (this->dtiVDW) 
     {
+    this->dtiVDW->RemoveMRMLObservers();
     this->dtiVDW->SetParent(NULL );
     this->dtiVDW->Delete ( );
     }
@@ -758,6 +762,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
 
     // Unpack old VolumeDisplayWidget
     this->Script("pack forget %s", oldFrame->GetWidgetName());
+    //this->VolumeDisplayWidget->UpdateWidgetFromMRML();
     }
 
   // Update Volume Header and Display Widget
@@ -1072,6 +1077,7 @@ void vtkSlicerVolumesGUI::CreateScalarDisplayWidget ( )
     this->scalarVDW = vtkSlicerScalarVolumeDisplayWidget::New ( );
     this->scalarVDW->SetParent( this->ScalarDisplayFrame );
     this->scalarVDW->SetMRMLScene(this->GetMRMLScene());
+    //this->scalarVDW->AddMRMLObservers();
     this->scalarVDW->Create();
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
       scalarVDW->GetWidgetName(), this->ScalarDisplayFrame->GetWidgetName());
@@ -1091,6 +1097,7 @@ void vtkSlicerVolumesGUI::CreateLabelMapDisplayWidget ( )
     this->labelVDW = vtkSlicerLabelMapVolumeDisplayWidget::New ( );
     this->labelVDW->SetParent( this->LabelMapDisplayFrame );
     this->labelVDW->SetMRMLScene(this->GetMRMLScene());
+    //this->labelVDW->AddMRMLObservers();
     this->labelVDW->Create();
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
       labelVDW->GetWidgetName(), this->LabelMapDisplayFrame->GetWidgetName());
@@ -1105,6 +1112,7 @@ void vtkSlicerVolumesGUI::CreateDWIDisplayWidget ( )
     this->dwiVDW = vtkSlicerDiffusionWeightedVolumeDisplayWidget::New( );
     this->dwiVDW->SetParent( this->DWIDisplayFrame );
     this->dwiVDW->SetMRMLScene(this->GetMRMLScene());
+    //this->dwiVDW->AddMRMLObservers();
     this->dwiVDW->Create();
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
       dwiVDW->GetWidgetName(), this->DWIDisplayFrame->GetWidgetName());
@@ -1119,6 +1127,7 @@ void vtkSlicerVolumesGUI::CreateDTIDisplayWidget ( )
     this->dtiVDW = vtkSlicerDiffusionTensorVolumeDisplayWidget::New( );
     this->dtiVDW->SetParent( this->DTIDisplayFrame );
     this->dtiVDW->SetMRMLScene(this->GetMRMLScene());
+    //this->dtiVDW->AddMRMLObservers();
     this->dtiVDW->Create();
     this->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
       dtiVDW->GetWidgetName(), this->DTIDisplayFrame->GetWidgetName());    

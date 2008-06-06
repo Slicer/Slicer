@@ -301,12 +301,14 @@ void vtkSlicerScalarVolumeDisplayWidget::ProcessMRMLEvents ( vtkObject *caller,
       }
     }
 
-  if (event == vtkCommand::ModifiedEvent)
+  if (event == vtkCommand::ModifiedEvent || 
+      (event == vtkMRMLScene::NodeAddedEvent && 
+       (reinterpret_cast<vtkMRMLVolumeNode *>(callData) != NULL ||
+        reinterpret_cast<vtkMRMLVolumeDisplayNode *>(callData) != NULL) ) )
     {
     this->UpdateWidgetFromMRML();
-    this->UpdatingMRML = 0;
-    return;
     }
+  this->UpdatingMRML = 0;
 }
 
 //---------------------------------------------------------------------------

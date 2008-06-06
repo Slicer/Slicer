@@ -69,6 +69,14 @@ public:
   // Description:
   // removes observers on widgets in the class
   virtual void RemoveWidgetObservers ( );
+  
+  // Description:
+  // add observers on mrml scene
+  virtual void AddMRMLObservers ( );
+
+  // Description:
+  // removes observers on mrml scene
+  virtual void RemoveMRMLObservers ( );
 
   virtual void UpdateWidgetFromMRML();
 

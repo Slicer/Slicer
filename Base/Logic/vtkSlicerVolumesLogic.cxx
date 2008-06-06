@@ -599,8 +599,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     {
     dwiNode->SetAndObserveDisplayNodeID(NULL);
     dwiNode->SetAndObserveStorageNodeID(NULL);
-    this->GetMRMLScene()->RemoveNode(dwiNode);
-    this->GetMRMLScene()->RemoveNode(dwdisplayNode);
+    this->GetMRMLScene()->RemoveNodeNoNotify(dwdisplayNode);
+    this->GetMRMLScene()->RemoveNodeNoNotify(dwiNode);
     dwdisplayNode->Delete(); dwdisplayNode = NULL;
     dwiNode->Delete(); dwiNode = NULL;
     }
@@ -609,9 +609,9 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     tensorNode->SetAndObserveDisplayNodeID(NULL);
     tensorNode->SetAndObserveStorageNodeID(NULL);
     dtdisplayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL);
-    this->GetMRMLScene()->RemoveNode(tensorNode);
-    this->GetMRMLScene()->RemoveNode(displayPropertiesNode);
-    this->GetMRMLScene()->RemoveNode(dtdisplayNode);
+    this->GetMRMLScene()->RemoveNodeNoNotify(displayPropertiesNode);
+    this->GetMRMLScene()->RemoveNodeNoNotify(dtdisplayNode);
+    this->GetMRMLScene()->RemoveNodeNoNotify(tensorNode);
     tensorNode->Delete(); tensorNode = NULL;
     displayPropertiesNode->Delete(); displayPropertiesNode = NULL;
     dtdisplayNode->Delete(); dtdisplayNode = NULL;
@@ -620,8 +620,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     {
     vectorNode->SetAndObserveDisplayNodeID(NULL);
     vectorNode->SetAndObserveStorageNodeID(NULL);
-    this->GetMRMLScene()->RemoveNode(vectorNode);
-    this->GetMRMLScene()->RemoveNode(vdisplayNode);
+    this->GetMRMLScene()->RemoveNodeNoNotify(vdisplayNode);
+    this->GetMRMLScene()->RemoveNodeNoNotify(vectorNode);
     vectorNode->Delete(); vectorNode = NULL;
     vdisplayNode->Delete(); vdisplayNode = NULL;
     }
@@ -629,18 +629,25 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     {
     scalarNode->SetAndObserveDisplayNodeID(NULL);
     scalarNode->SetAndObserveStorageNodeID(NULL);
-    this->GetMRMLScene()->RemoveNode(scalarNode);
-    scalarNode->Delete(); scalarNode = NULL;
     if (labelMap)
       {
-      this->GetMRMLScene()->RemoveNode(lmdisplayNode);
+      this->GetMRMLScene()->RemoveNodeNoNotify(lmdisplayNode);
+      }
+    else
+      {
+      this->GetMRMLScene()->RemoveNodeNoNotify(sdisplayNode);
+      }
+
+    this->GetMRMLScene()->RemoveNodeNoNotify(scalarNode);
+    if (labelMap)
+      {
       lmdisplayNode->Delete(); lmdisplayNode = NULL;
       }
     else
       {
-      this->GetMRMLScene()->RemoveNode(sdisplayNode);
       sdisplayNode->Delete(); sdisplayNode = NULL;
-      }
+      }    
+    scalarNode->Delete(); scalarNode = NULL;
     }
   
   if (volumeNode != NULL)
