@@ -92,6 +92,11 @@ add_test(LinearRegistrationTest00 ${Slicer3_EXE} --launch LinearRegistrationTest
   LinearRegistrationTest
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest00.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest00Transform.txt 
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
   ${TEST_DATA}/CTHeadAxial.nhdr 
   ${TEST_DATA}/CTHeadAxial.nhdr 
   )
@@ -102,10 +107,28 @@ add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO ITKNumerics)
 
 if(SLICER_BRAINWEB_DATA_ROOT)
-add_test(LinearRegistrationTest1 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest01 ${Slicer3_EXE} --launch LinearRegistrationTest
   LinearRegistrationTest
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest01.nhdr
-  --outputtransform ${TEMP}/LinearRegistrationTest00Transform.txt 
+  --outputtransform ${TEMP}/LinearRegistrationTest01Transform.txt 
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
+  ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17Rot10Tx15.mha
+  )
+
+add_test(LinearRegistrationTest02 ${Slicer3_EXE} --launch LinearRegistrationTest
+  LinearRegistrationTest
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest02.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest02Transform.txt 
+  --spatialsamples 50000
+  --histogrambins 50
+  --iterations 100
+  --learningrate 0.01
+  --translationscale 100
   ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
   ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17Rot10Tx15.mha
   )
