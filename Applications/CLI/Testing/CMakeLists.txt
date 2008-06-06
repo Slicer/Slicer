@@ -92,6 +92,59 @@ add_test(LinearRegistrationTest00 ${Slicer3_EXE} --launch LinearRegistrationTest
   LinearRegistrationTest
   --resampledmovingfilename  ${TEMP}/LinearRegistrationTest00.nhdr
   --outputtransform ${TEMP}/LinearRegistrationTest00Transform.txt 
+  --initialtransform ${TEST_DATA}/itkAffineTransform00.txt
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
+add_test(LinearRegistrationTest01 ${Slicer3_EXE} --launch LinearRegistrationTest
+  LinearRegistrationTest
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest01.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest01Transform.txt 
+  --initialtransform ${TEST_DATA}/itkAffineTransform01.txt
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
+add_test(LinearRegistrationTest02 ${Slicer3_EXE} --launch LinearRegistrationTest
+  LinearRegistrationTest
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest02.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest02Transform.txt 
+  --initialtransform ${TEST_DATA}/itkAffineTransform02.txt
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
+add_test(LinearRegistrationTest03 ${Slicer3_EXE} --launch LinearRegistrationTest
+  LinearRegistrationTest
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest03.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest03Transform.txt 
+  --initialtransform ${TEST_DATA}/itkAffineTransform03.txt
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  ${TEST_DATA}/CTHeadAxial.nhdr 
+  )
+add_test(LinearRegistrationTest04 ${Slicer3_EXE} --launch LinearRegistrationTest
+  LinearRegistrationTest
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest04.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest04Transform.txt 
+  --initialtransform ${TEST_DATA}/itkAffineTransform04.txt
   --spatialsamples 10000
   --histogrambins 32
   --iterations 50
@@ -107,10 +160,10 @@ add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ITKIO ITKNumerics)
 
 if(SLICER_BRAINWEB_DATA_ROOT)
-add_test(LinearRegistrationTest01 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest05 ${Slicer3_EXE} --launch LinearRegistrationTest
   LinearRegistrationTest
-  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest01.nhdr
-  --outputtransform ${TEMP}/LinearRegistrationTest01Transform.txt 
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest05.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest05Transform.txt 
   --spatialsamples 10000
   --histogrambins 32
   --iterations 50
@@ -120,10 +173,10 @@ add_test(LinearRegistrationTest01 ${Slicer3_EXE} --launch LinearRegistrationTest
   ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17Rot10Tx15.mha
   )
 
-add_test(LinearRegistrationTest02 ${Slicer3_EXE} --launch LinearRegistrationTest
+add_test(LinearRegistrationTest06 ${Slicer3_EXE} --launch LinearRegistrationTest
   LinearRegistrationTest
-  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest02.nhdr
-  --outputtransform ${TEMP}/LinearRegistrationTest02Transform.txt 
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest06.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest06Transform.txt 
   --spatialsamples 50000
   --histogrambins 50
   --iterations 100
@@ -131,6 +184,48 @@ add_test(LinearRegistrationTest02 ${Slicer3_EXE} --launch LinearRegistrationTest
   --translationscale 100
   ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
   ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17Rot10Tx15.mha
+  )
+
+add_test(LinearRegistrationTest07 ${Slicer3_EXE} --launch LinearRegistrationTest
+  LinearRegistrationTest
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest07.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest07Transform.txt 
+  --initialtransform ${TEST_DATA}/itkAffineTransform01.txt
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
+  ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
+  )
+
+add_test(LinearRegistrationTest08 ${Slicer3_EXE} --launch LinearRegistrationTest
+  LinearRegistrationTest
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest08.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest08Transform.txt 
+  --initialtransform ${TEST_DATA}/itkAffineTransform02.txt
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
+  ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
+  )
+
+add_test(LinearRegistrationTest09 ${Slicer3_EXE} --launch LinearRegistrationTest
+  LinearRegistrationTest
+  --resampledmovingfilename  ${TEMP}/LinearRegistrationTest09.nhdr
+  --outputtransform ${TEMP}/LinearRegistrationTest09Transform.txt 
+  --initialtransform ${TEST_DATA}/itkAffineTransform03.txt
+  --spatialsamples 10000
+  --histogrambins 32
+  --iterations 50
+  --learningrate 0.01
+  --translationscale 100
+  ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
+  ${SLICER_BRAINWEB_DATA_ROOT}/brainweb165a10f17.mha
   )
 
 endif(SLICER_BRAINWEB_DATA_ROOT)
