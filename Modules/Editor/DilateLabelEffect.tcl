@@ -45,6 +45,7 @@ if { [itcl::find class DilateLabelEffect] == "" } {
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
 itcl::body DilateLabelEffect::constructor {sliceGUI} {
+  set _scopeOptions "all visible"
 }
 
 itcl::body DilateLabelEffect::destructor {} {
@@ -84,8 +85,6 @@ itcl::body DilateLabelEffect::apply {} {
     $this setProgressFilter $erode "Dilate ($i)"
     $erode Update
   }
-
-  $erode SetOutput [$this getOutputLabel]
 
   $erode Delete
 

@@ -345,6 +345,8 @@ itcl::body Labeler::undoLastApply { } {
 
 itcl::body Labeler::buildOptions { } {
 
+  chain
+
   $this setMRMLDefaults
 
   set o(paintOver) [vtkKWCheckButtonWithLabel New]
@@ -391,6 +393,7 @@ itcl::body Labeler::buildOptions { } {
 }
 
 itcl::body Labeler::tearDownOptions { } {
+  chain
   if { [info exists o(paintOver)] } {
     foreach w "paintOver paintThreshold paintRange" {
       if { [info exists o($w)] } {

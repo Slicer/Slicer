@@ -45,6 +45,7 @@ if { [itcl::find class ErodeLabelEffect] == "" } {
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
 itcl::body ErodeLabelEffect::constructor {sliceGUI} {
+  set _scopeOptions "all visible"
 }
 
 itcl::body ErodeLabelEffect::destructor {} {
@@ -69,7 +70,6 @@ itcl::body ErodeLabelEffect::apply {} {
     return
   }
 
-
   set erode [vtkImageErode New]
   $erode SetInput [$this getInputLabel]
   $erode SetOutput [$this getOutputLabel]
@@ -84,8 +84,6 @@ itcl::body ErodeLabelEffect::apply {} {
     $this setProgressFilter $erode "Erode ($i)"
     $erode Update
   }
-
-  $erode SetOutput [$this getOutputLabel]
 
   $erode Delete
 

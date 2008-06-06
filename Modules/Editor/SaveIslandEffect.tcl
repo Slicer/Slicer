@@ -44,7 +44,7 @@ if { [itcl::find class SaveIslandEffect] == "" } {
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
 itcl::body SaveIslandEffect::constructor {sliceGUI} {
-  # rely on superclass constructor
+  set _scopeOptions "all visible"
 }
 
 itcl::body SaveIslandEffect::destructor {} {
@@ -84,7 +84,6 @@ itcl::body SaveIslandEffect::processEvent { {caller ""} {event ""} } {
 itcl::body SaveIslandEffect::apply {} {
 
   foreach {x y} [$_interactor GetEventPosition] {}
-  $this queryLayers $x $y
 
   if { [$this getInputLabel] == "" || [$this getInputLabel] == "" } {
     $this flashCursor 3
@@ -93,9 +92,9 @@ itcl::body SaveIslandEffect::apply {} {
 
   set conn [vtkImageConnectivity New]
   $conn SetFunctionToSaveIsland
-  $conn SetSeed $_layers(label,i) $_layers(label,j) $_layers(label,k) 
   $conn SetInput [$this getInputLabel]
   $conn SetOutput [$this getOutputLabel]
+  eval $conn SetSeed [$this getLayerIJK label $x $y]
   $this setProgressFilter $conn "Save Island"
   [$this getOutputLabel] Update
   $conn Delete
@@ -105,6 +104,8 @@ itcl::body SaveIslandEffect::apply {} {
 
   
 itcl::body SaveIslandEffect::buildOptions {} {
+
+  chain
 
   #
   # a help button
@@ -142,6 +143,7 @@ itcl::body SaveIslandEffect::buildOptions {} {
 }
 
 itcl::body SaveIslandEffect::tearDownOptions { } {
+  chain
   foreach w "help cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""

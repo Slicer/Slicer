@@ -42,9 +42,13 @@ if { [itcl::find class EffectSWidget] == "" } {
     variable _currentPosition "0 0 0"
     variable _cursorActors ""
     variable _outputLabel ""
+    variable _extractedBackground ""
+    variable _extractedLabel ""
+    variable _Label ""
     variable _observerRecords "" ;# list of the observers so we can clean up
     variable _cursorAnimationTag ""
     variable _cursorAnimationState 0
+    variable _scopeOptions "all" ;# popup will appear if this is a list of options
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
@@ -55,6 +59,9 @@ if { [itcl::find class EffectSWidget] == "" } {
     method preview {} {}
     method apply {} {}
     method postApply {} {}
+    method getVisibleCorners { layer {slicePaint ""} } {}
+    method getLayerIJK { layer x y } {}
+    method getInputLayer { layer } {}
     method getInputBackground {} {}
     method getInputLabel {} {}
     method getOutputLabel {} {}
@@ -143,7 +150,7 @@ itcl::body EffectSWidget::destructor {} {
 }
 
 itcl::configbody EffectSWidget::scope {
-  if { [lsearch "all visible" $scope] == -1 } {
+  if { [lsearch $_scopeOptions $scope] == -1 } {
     set scope "all"
     error "invalid scope for EffectSWidget $this"
   }
@@ -196,11 +203,32 @@ itcl::body EffectSWidget::getOptionsFrame { } {
 }
 
 itcl::body EffectSWidget::buildOptions { } {
-  # default implementation, there is nothing
+  if { [llength $_scopeOptions] > 1 } {
+    set o(scopeOption) [vtkKWMenuButtonWithLabel New]
+    set menuButton [$o(scopeOption) GetWidget]
+    $o(scopeOption) SetParent [$this getOptionsFrame]
+    $o(scopeOption) Create
+    $o(scopeOption) SetLabelText "Scope: "
+    $o(scopeOption) SetBalloonHelpString "Choose the scope for applying this tool."
+    foreach s $_scopeOptions {
+      [$menuButton GetMenu] AddRadioButton $s
+    }
+    $menuButton SetValue $scope
+    pack [$o(scopeOption) GetWidgetName] \
+      -side top -anchor e -fill x -padx 2 -pady 2 
+
+    set tag [$menuButton AddObserver AnyEvent "::SWidget::ProtectedCallback $this processEvent $menuButton"]
+    lappend _observerRecords "$menuButton $tag"
+  }
 }
 
 itcl::body EffectSWidget::tearDownOptions { } {
-  # default implementation, there is nothing
+  foreach w "scopeOption" {
+    if { [info exists o($w)] } {
+      $o($w) SetParent ""
+      pack forget [$o($w) GetWidgetName] 
+    }
+  }
 }
 
 
@@ -295,6 +323,15 @@ itcl::body EffectSWidget::preProcessEvent { {caller ""} {event ""} } {
     return 1
   }
 
+  # propagate menu selection to all effects
+  if { [info exists o(scopeOption)] } {
+    set menuButton [$o(scopeOption) GetWidget]
+    if { $caller == $menuButton } {
+      set scope [$menuButton GetValue]
+      EffectSWidget::ConfigureAll EffectSWidget -scope $scope
+      return 1
+    }
+  }
 
   set event [$sliceGUI GetCurrentGUIEvent] 
 
@@ -328,34 +365,64 @@ itcl::body EffectSWidget::preProcessEvent { {caller ""} {event ""} } {
 #   the label layer using the postApply method
 # 
 
-itcl::body EffectSWidget::getInputBackground {} {
-  set logic [[$sliceGUI GetLogic]  GetBackgroundLayer]
+   
+# return the pixel index for the current layer at the given screen space location
+# taking into account the current scope
+itcl::body EffectSWidget::getLayerIJK { layer x y } {
+  set capLayer [string totitle $layer]
   switch $scope {
     "all" {
-      set node [$logic GetVolumeNode]
-      if { $node != "" } {
-        return [$node GetImageData]
-      }
+      $this queryLayers $x $y
+      return [list $_layers($layer,i) $_layers($layer,j) $_layers($layer,k)]
     }
     "visible" {
-      #return [$logic GetImageData]
-      return [[$logic GetReslice] GetOutput]
+      foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
+      set vdcX [expr (1.0 * $x) / $windoww]
+      set vdcY [expr (1.0 * $y) / $windowh]
+      set capLayer [string totitle $layer]
+      set imageData [set _extracted${capLayer}]
+      foreach dim {w h d} size [$imageData GetDimensions] {
+        set $dim [expr $size - 1]
+      }
+      set i [expr round($vdcX * $w)]
+      set j [expr round($vdcY * $h)]
+      return [list $i $j 0]
     }
   }
-  return ""
+}
+
+itcl::body EffectSWidget::getInputBackground {} {
+  return [$this getInputLayer background]
 }
 
 itcl::body EffectSWidget::getInputLabel {} {
-  set logic [[$sliceGUI GetLogic]  GetLabelLayer]
+  return [$this getInputLayer label]
+}
+
+itcl::body EffectSWidget::getInputLayer { layer } {
+  set capLayer [string totitle $layer]
+  set logic [[$sliceGUI GetLogic]  Get${capLayer}Layer]
+  set node [$logic GetVolumeNode]
+  if { $node == "" } {
+    return ""
+  }
+  set image${capLayer} [$node GetImageData]
   switch $scope {
     "all" {
-      set node [$logic GetVolumeNode]
-      if { $node != "" } {
-        return [$node GetImageData]
-      }
+      return [set image${capLayer}]
     }
     "visible" {
-      return [$logic GetImageData]
+      if { [set _extracted${capLayer}] == "" } {
+        set _extracted${capLayer} [vtkImageData New]
+      }
+      set slicePaint [vtkImageSlicePaint New]
+      $slicePaint SetWorkingImage [set image${capLayer}]
+      $slicePaint SetExtractImage [set _extracted${capLayer}]
+      $this getVisibleCorners $layer $slicePaint
+      $slicePaint Paint
+      $slicePaint Delete
+      #EffectSWidget::ViewVisible $layer [set _extracted${capLayer}]
+      return [set _extracted${capLayer}]
     }
   }
   return ""
@@ -368,25 +435,71 @@ itcl::body EffectSWidget::getOutputLabel {} {
   return $_outputLabel
 }
 
+
 itcl::body EffectSWidget::postApply {} {
   set logic [[$sliceGUI GetLogic]  GetLabelLayer]
+  set node [$logic GetVolumeNode]
+  set targetImage [$node GetImageData]
   switch $scope {
     "all" {
-      set node [$logic GetVolumeNode]
-      [$node GetImageData] DeepCopy $_outputLabel
-      $node SetModifiedSinceRead 1
-      $node Modified
+      $targetImage DeepCopy $_outputLabel
     }
     "visible" {
-      # TODO: need to use vtkImageSlicePaint to insert visible
-      # paint back into the label volume
-      error "not yet supported"
+      set slicePaint [vtkImageSlicePaint New]
+      $slicePaint SetWorkingImage $targetImage
+      $slicePaint SetReplaceImage $_outputLabel
+      $this getVisibleCorners label $slicePaint
+      $slicePaint Paint
+      $slicePaint Delete
+    }
+    default {
+      error "bad scope: should be all or visible, not $scope"
     }
   }
-  $_outputLabel Delete
-  set _outputLabel ""
+  $node SetModifiedSinceRead 1
+  $node Modified
+  foreach imageData {_outputLabel _extractedBackground _extractedLabel} {
+    if { [set $imageData] != "" } {
+      [set $imageData] Delete
+      set $imageData ""
+    }
+  }
 }
 
+itcl::body EffectSWidget::getVisibleCorners { layer {slicePaint ""} } {
+
+  #
+  # return a nested list of ijk coordinates representing
+  # the indices of the corners of the currently visible 
+  # slice view
+  # - optionally set those as the corners of a vtkImageSlicePaint
+  #
+
+  $this queryLayers 0 0 0
+  foreach {windoww windowh} [[$_interactor GetRenderWindow] GetSize] {}
+  set xyCorners [list [list 0 0] [list $windoww 0] \
+                  [list 0 $windowh] [list $windoww $windowh]]
+  set ijkCorners ""
+  foreach xy $xyCorners {
+    foreach {x y} $xy {}
+    set ijkl [$_layers($layer,xyToIJK) MultiplyPoint $x $y 0 1]
+    set intIJKL ""
+    foreach element $ijkl {
+      lappend intIJKL [expr round($element)]
+    }
+    lappend ijkCorners [lrange $intIJKL 0 2]
+  }
+
+
+  if { $slicePaint != "" } {
+    set corners {TopLeft TopRight BottomLeft BottomRight}
+    foreach corner $corners ijk $ijkCorners {
+      eval $slicePaint Set$corner $ijk
+    }
+  }
+
+  return $ijkCorners
+}
 
 #
 # default implementations of methods to be overridden by subclass
@@ -421,6 +534,7 @@ itcl::body EffectSWidget::processEvent { {caller ""} {event ""} } {
       $o(cursorActor) VisibilityOff
     }
   }
+
 
   $this positionCursor
   [$sliceGUI GetSliceViewer] RequestRender
@@ -508,7 +622,7 @@ proc EffectSWidget::Toggle {effect} {
 }
 
 proc EffectSWidget::ConfigureAll { effect args } {
-  foreach pw [itcl::find objects -class $effect] {
+  foreach pw [itcl::find objects -isa $effect] {
     eval $pw configure $args
   }
 }
@@ -518,4 +632,17 @@ proc EffectSWidget::SetCursorAll { effect imageData } {
   foreach ew [itcl::find objects -class $effect] {
     $ew setCursor $imageData
   }
+}
+
+# for debugging layer/scope image extraction
+proc EffectSWidget::ViewVisible { layer imageData } {
+
+  if { [info command viewer$layer] == "" } {
+    vtkImageViewer viewer$layer
+    viewer$layer SetColorWindow 2
+    viewer$layer SetColorLevel 1
+  }
+
+  viewer$layer SetInput $imageData
+  viewer$layer Render
 }

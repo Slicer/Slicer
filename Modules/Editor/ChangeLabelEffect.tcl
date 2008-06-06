@@ -47,7 +47,7 @@ if { [itcl::find class ChangeLabelEffect] == "" } {
 #                        CONSTRUCTOR/DESTRUCTOR
 # ------------------------------------------------------------------
 itcl::body ChangeLabelEffect::constructor {sliceGUI} {
-  # rely on superclass constructor
+  set _scopeOptions "all visible"
 }
 
 itcl::body ChangeLabelEffect::destructor {} {
@@ -97,6 +97,8 @@ itcl::body ChangeLabelEffect::apply {} {
 
   
 itcl::body ChangeLabelEffect::buildOptions {} {
+
+  chain
 
   #
   # a color button
@@ -156,6 +158,7 @@ itcl::body ChangeLabelEffect::buildOptions {} {
 }
 
 itcl::body ChangeLabelEffect::tearDownOptions { } {
+  chain
   foreach w "colorIn colorOut apply cancel" {
     if { [info exists o($w)] } {
       $o($w) SetParent ""
