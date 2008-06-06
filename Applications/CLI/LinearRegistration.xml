@@ -2,7 +2,7 @@
 <executable>
   <category>Registration</category>
   <title>Linear registration</title>
-  <description>Registers two images together using a rigid transform and MI</description>
+  <description>Registers two images together using a rigid transform and mutual information.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url></documentation-url>
   <license></license>
@@ -18,7 +18,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>HistogramBins</name>
       <flag>b</flag>
       <longflag>histogrambins</longflag>
-      <description>Number of histogram bins to use for Mattes Mutual Information</description>
+      <description>Number of histogram bins to use for Mattes Mutual Information. Reduce the number of bins if a registration fails. If the number of bins is too large, the estimated PDFs will be a field of impulses and will inhibit reliable registration estimation.</description>
       <label>Histogram Bins</label>
       <default>30</default>
       <constraints>
@@ -32,7 +32,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>SpatialSamples</name>
       <flag>s</flag>
       <longflag>spatialsamples</longflag>
-      <description>Number of spatial samples to use in estimating Mattes Mutual Information</description>
+      <description>Number of spatial samples to use in estimating Mattes Mutual Information. Larger values yield more accurate PDFs and improved registration quality.</description>
       <label>Spatial Samples</label>
       <default>10000</default>
       <constraints>
@@ -55,7 +55,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>LearningRate</name>
       <flag>l</flag>
       <longflag>learningrate</longflag>
-      <description>Comma separated list of learning rates. Must have the same number of elements as iterations.</description>
+      <description>Comma separated list of learning rates. Learning rate is a scale factor on the gradient of the registration objective function (gradient with respect to the parameters of the transformation) used to update the parameters of the transformation during optimization. Smaller values cause the optimizer to take smaller steps through the parameter space. Larger values are typically used early in the registration process to take large jumps in parameter space followed by smaller values to home in on the optimum value of the registration objective function. Default is: 0.01, 0.005, 0.0005, 0.0002. Must have the same number of elements as iterations.</description>
       <label>Learning Rates</label>
       <default>0.01,0.005,0.0005,0.0002</default>
     </double-vector>
@@ -64,7 +64,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>TranslationScale</name>
       <longflag>translationscale</longflag>
       <flag>t</flag>
-      <description>Relative scale of translations to rotations, i.e. a value of 100 means 10mm = 1 degree</description>
+      <description>Relative scale of translations to rotations, i.e. a value of 100 means 10mm = 1 degree. (Actual scale used 1/(TranslationScale^2)). This parameter is used to "weight" or "standardized" the transform parameters and their effect on the registration objective function.</description>
       <label>Translation scaling</label>
       <default>100.0</default>
       <constraints>
@@ -81,16 +81,9 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <transform fileExtensions=".txt">
       <name>InitialTransform</name>
       <longflag>initialtransform</longflag>
-      <description>Initial transform for aligning the fixed and moving image.</description>
+      <description>Initial transform for aligning the fixed and moving image. Maps positions in the fixed coordinate frame to positions in the moving coordinate frame. Optional.</description>
       <label>Initial transform</label>
       <channel>input</channel>
-    </transform>
-    <transform fileExtensions=".txt" reference="movingImageFileName">
-      <name>OutputTransform</name>
-      <longflag>outputtransform</longflag>
-      <description>Transform calculated that aligns the fixed and moving image.</description>
-      <label>Output transform</label>
-      <channel>output</channel>
     </transform>
     <image>
       <name>FixedImageFileName</name>
@@ -106,12 +99,19 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <index>1</index>
       <description>Moving image</description>
     </image>
+    <transform fileExtensions=".txt" reference="movingImageFileName">
+      <name>OutputTransform</name>
+      <longflag>outputtransform</longflag>
+      <description>Transform calculated that aligns the fixed and moving image. Maps positions in the fixed coordinate frame to the moving coordinate frame. Optional (specify an output transform or an output volume or both).</description>
+      <label>Output transform</label>
+      <channel>output</channel>
+    </transform>
     <image>
       <name>ResampledImageFileName</name>
       <longflag>resampledmovingfilename</longflag>
       <label>Output Volume</label>
       <channel>output</channel>
-      <description>Resampled Moving Image. Optional.</description>
+      <description>Resampled moving image to the fixed image coordinate frame. Optional (specify an output transform or an output volume or both).</description>
     </image>
   </parameters>
 

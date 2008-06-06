@@ -2,7 +2,7 @@
 <executable>
   <category>Registration</category>
   <title>Deformable BSpline registration</title>
-  <description>Registers two images together using a mutual information metric and BSpline transform</description>
+  <description>Registers two images together using BSpline transform and mutual information.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url></documentation-url>
   <license></license>
@@ -27,7 +27,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>gridSize</name>
       <flag>g</flag>
       <longflag>gridSize</longflag>
-      <description>Number of grid points on interior of image.</description>
+      <description>Number of grid points on interior of the fixed image. Larger grid sizes allow for finer registrations.</description>
       <label>Grid Size</label>
       <default>5</default>
       <constraints>
@@ -40,7 +40,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>HistogramBins</name>
       <flag>b</flag>
       <longflag>histogrambins</longflag>
-      <description>Number of histogram bins to use for Mattes Mutual Information</description>
+      <description>Number of histogram bins to use for Mattes Mutual Information. Reduce the number of bins if a deformable registration fails. If the number of bins is too large, the estimated PDFs will be a field of impulses and will inhibit reliable registration estimation.</description>
       <label>Histogram Bins</label>
       <default>100</default>
       <constraints>
@@ -54,7 +54,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>SpatialSamples</name>
       <flag>s</flag>
       <longflag>spatialsamples</longflag>
-      <description>Number of spatial samples to use in estimating Mattes Mutual Information</description>
+      <description>Number of spatial samples to use in estimating Mattes Mutual Information. Larger values yield more accurate PDFs and improved registration quality.</description>
       <label>Spatial Samples</label>
       <default>50000</default>
       <constraints>
@@ -85,7 +85,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <name>DefaultPixelValue</name>
       <flag>d</flag>
       <longflag>default</longflag>
-      <description>Default pixel value if resampled pixel is outside of volume.</description>
+      <description>Default pixel value used if resampling a pixel outside of the volume.</description>
       <label>Default Pixel Value</label>
       <default>0</default>
     </integer>
@@ -98,16 +98,9 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <transform fileExtensions=".txt" type="linear">
       <name>InitialTransform</name>
       <longflag>initialtransform</longflag>
-      <description>Initial transform for aligning the fixed and moving image. This transform should be an affine or rigid transform.  It is used an a bulk transform for the BSpline.</description>
+      <description>Initial transform for aligning the fixed and moving image. Maps positions in the fixed coordinate frame to positions in the moving coordinate frame. This transform should be an affine or rigid transform.  It is used an a bulk transform for the BSpline. Optional.</description>
       <label>Initial transform</label>
       <channel>input</channel>
-    </transform>
-    <transform fileExtensions=".txt" type="bspline" reference="movingImageFileName">
-      <name>OutputTransform</name>
-      <longflag>outputtransform</longflag>
-      <description>Transform calculated that aligns the fixed and moving image.</description>
-      <label>Output transform</label>
-      <channel>output</channel>
     </transform>
     <image>
       <name>FixedImageFileName</name>
@@ -123,12 +116,19 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <index>1</index>
       <description>Moving image</description>
     </image>
+    <transform fileExtensions=".txt" type="bspline" reference="movingImageFileName">
+      <name>OutputTransform</name>
+      <longflag>outputtransform</longflag>
+      <description>Transform calculated that aligns the fixed and moving image. Maps positions from the fixed coordinate frame to the moving coordinate frame. Optional (specify an output transform or an output volume or both).</description>
+      <label>Output transform</label>
+      <channel>output</channel>
+    </transform>
     <image>
       <name>ResampledImageFileName</name>
       <longflag>resampledmovingfilename</longflag>
       <label>Output Volume</label>
       <channel>output</channel>
-      <description>Resampled Moving Image. Optional.</description>
+      <description>Resampled moving image to fixed image coordinate frame. Optional (specify an output transform or an output volume or both).</description>
     </image>
   </parameters>
 
