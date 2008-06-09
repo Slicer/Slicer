@@ -329,3 +329,14 @@ add_test(BSplineRegistrationTest04 ${Slicer3_EXE} --launch BSplineDeformableRegi
 
 
 endif(SLICER_BRAINWEB_DATA_ROOT)
+
+# TestGridTransformRegistration tests
+add_test(TestGridTransformRegistrationTest ${Slicer3_EXE} --launch TestGridTransformRegistrationTest
+  )
+set (CLP TestGridTransformRegistration)
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP}Lib)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test ITKIO)
+
+
