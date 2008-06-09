@@ -331,7 +331,9 @@ add_test(BSplineRegistrationTest04 ${Slicer3_EXE} --launch BSplineDeformableRegi
 endif(SLICER_BRAINWEB_DATA_ROOT)
 
 # TestGridTransformRegistration tests
-add_test(TestGridTransformRegistrationTest ${Slicer3_EXE} --launch TestGridTransformRegistrationTest
+add_test(TestGridTransformRegistrationTest00 ${Slicer3_EXE} --launch TestGridTransformRegistrationTest
+  --gridSize 5 
+  --outputtransform ${TEMP}/TestGridTransformRegistrationTest00Transform.txt 
   )
 set (CLP TestGridTransformRegistration)
 add_executable(${CLP}Test ${CLP}Test.cxx)
