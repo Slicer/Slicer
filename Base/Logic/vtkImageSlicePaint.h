@@ -58,7 +58,7 @@ public:
 
 
   // Description:
-  // Sets/Gets the PaintRegion in IJK (pixel) coordinates
+  // Sets/Gets the PaintRegion in IJK (pixel) coordinates of the Working image
   vtkSetVector3Macro(TopLeft, int);
   vtkGetVector3Macro(TopLeft, int);
   vtkSetVector3Macro(TopRight, int);
@@ -90,7 +90,7 @@ public:
   vtkGetObjectMacro(BackgroundImage, vtkImageData);
 
   // Description:
-  // The place to store data pulled out
+  // Image data to be painted into
   vtkSetObjectMacro(WorkingImage, vtkImageData);
   vtkGetObjectMacro(WorkingImage, vtkImageData);
 

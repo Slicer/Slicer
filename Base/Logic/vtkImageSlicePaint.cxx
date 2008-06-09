@@ -40,7 +40,8 @@ vtkImageSlicePaint::vtkImageSlicePaint()
   this->BrushCenter[0] = this->BrushCenter[1] = this->BrushCenter[2] = 0.0;
   this->BrushRadius = 0;
 
-  this->BackgroundIJKToWorld = NULL;
+  this->BackgroundIJKToWorld = vtkMatrix4x4::New();
+  this->BackgroundIJKToWorld->Identity();
   this->WorkingIJKToWorld = NULL;
   this->MaskIJKToWorld = NULL;
 
@@ -195,10 +196,11 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
   double ijk[3], maskIJK[3];
   int intIJK[3], intMaskIJK[3];
   T *workingPtr;
-  T oldValue;
+  T oldValue = 0;
   int paintOver = self->GetPaintOver();
   int thresholdPaint = self->GetThresholdPaint();
   double *thresholdPaintRange = self->GetThresholdPaintRange();
+  const int *workingExtent = self->GetWorkingImage()->GetExtent();
 
   // row loop
   for (int row = 0; row <= maxRowDelta; row++)
@@ -223,7 +225,18 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
           }
         }
 
-      workingPtr = (T *)(self->GetWorkingImage()->GetScalarPointer(intIJK));
+      // check to see if we are inside working volume
+      if ( ijk[0] < workingExtent[0] || ijk[0] > workingExtent[1] || 
+           ijk[1] < workingExtent[2] || ijk[1] > workingExtent[3] || 
+           ijk[2] < workingExtent[4] || ijk[2] > workingExtent[5] )
+        {
+        workingPtr = NULL;
+        }
+      else
+        {
+        workingPtr = (T *)(self->GetWorkingImage()->GetScalarPointer(intIJK));
+        }
+
       if ( workingPtr ) 
         {
 
@@ -344,14 +357,6 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
             }
           }
         }
-      else  // working pointer was null
-        {
-        // TODO: this will leak matrices...
-        vtkErrorWithObjectMacro (self, 
-          << "can't get working image pointer for " 
-          << intIJK[0] << " " << intIJK[1] << " " << intIJK[2] << "\n");
-        return; // we got out of the region somehow and there will be error messages...
-        }
 
       if ( extracting )
         {
@@ -359,13 +364,6 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
         if ( extractPtr ) 
           {
           *extractPtr = oldValue;
-          }
-        else
-          {
-          // TODO: this will leak matrices...
-          vtkErrorWithObjectMacro (self, 
-            << "can't get extract image pointer for " << row << " " << column << "\n");
-          return; // we got out of the region somehow and there will be error messages...
           }
         }
 
