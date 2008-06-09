@@ -636,7 +636,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
                    gridImage->GetPixelContainer()->Size() * sizeof(double) );
 
       // We need to convert from LPS to RAS
-      int incX, incY, incZ;
+      vtkIdType incX, incY, incZ;
       vtkgridimage->GetIncrements( incX, incY, incZ );
       double* dataPtr = reinterpret_cast<double*>(vtkgridimage->GetScalarPointer());
       for( int k = 0; k < Nk; ++k, dataPtr += incZ )
