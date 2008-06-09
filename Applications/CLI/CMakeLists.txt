@@ -92,7 +92,7 @@ target_link_libraries (${CLP} ITKIO ITKBasicFilters ITKNumerics)
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
+target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters ITKNumerics)
 
 #####################
 set (CLP AffineRegistration)
@@ -115,7 +115,7 @@ target_link_libraries (${CLP} ITKStatistics ITKIO ITKBasicFilters ITKNumerics)
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
+target_link_libraries (${CLP}Lib ITKStatistics ITKIO ITKBasicFilters ITKNumerics)
 
 #####################
 set (CLP TestGridTransformRegistration)
@@ -128,7 +128,7 @@ target_link_libraries (${CLP} ITKStatistics ITKIO ITKBasicFilters ITKNumerics)
 add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
 set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
 slicer3_set_plugins_output_path(${CLP}Lib)
-target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters)
+target_link_libraries (${CLP}Lib ITKStatistics ITKIO ITKBasicFilters ITKNumerics)
 
 #####################
 set (CLP CheckerBoard)
