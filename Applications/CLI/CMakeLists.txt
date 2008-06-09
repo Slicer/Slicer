@@ -108,6 +108,14 @@ slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP} ITKStatistics ITKIO ITKBasicFilters ITKNumerics)
 
 #####################
+set (CLP TestGridTransformRegistration)
+
+set ( ${CLP}_SOURCE ${CLP}.cxx)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+add_executable(${CLP} ${${CLP}_SOURCE})
+target_link_libraries (${CLP} ITKStatistics ITKIO ITKBasicFilters ITKNumerics)
+
+#####################
 set (CLP CheckerBoard)
 
 set ( ${CLP}_SOURCE ${CLP}.cxx)
@@ -577,6 +585,7 @@ if (Slicer3_SOURCE_DIR)
     LinearRegistration
     AffineRegistration
     BSplineDeformableRegistration
+    TestGridTransformRegistration
     LabelMapSmoothing
     LabelMapSmoothingLib
     ImageLabelCombine

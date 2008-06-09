@@ -36,6 +36,7 @@ Version:   $Revision: 1.2 $
 
 #include "itkTransformFileWriter.h"
 #include "itkTransformFileReader.h"
+#include "itkImageFileReader.h"
 #include "itkAffineTransform.h"
 #include "itkIdentityTransform.h"
 #include "itkTranslationTransform.h"
@@ -160,55 +161,110 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
   ras2lps->Identity();
   (*ras2lps)[0][0] = (*ras2lps)[1][1] = -1.0;
 
-  
   typedef itk::TransformFileReader TransformReader;
   typedef TransformReader::TransformListType TransformListType;
   typedef TransformReader::TransformType TransformType;
-  TransformReader::Pointer reader = itk::TransformFileReader::New();
-  reader->SetFileName( fullName );
-  try
-    {
-    reader->Update();
-    }
-  catch (itk::ExceptionObject &exc)
-    {
-    vtkErrorMacro("ITK exception caught reading transform file: "
-                  << fullName.c_str() << "\n" << exc);
-
-    result = 0;
-    }
-  catch (...)
-    {
-    vtkErrorMacro("Unknown exception caught while writing transform file: "
-                  << fullName.c_str());
-    result = 0;
-    }
-
-
-  // For now, grab the first transform from the file.
-  TransformListType *transforms = reader->GetTransformList();
   TransformType::Pointer transform = 0;
-  if (transforms->size() != 0)
-    {
-    if (transforms->size() != 1)
-      {
-      vtkWarningMacro(<< "More than one transform in the file: "
-                    << fullName.c_str()
-                    << ". Using only the first transform.");
-      }
-    
-    TransformListType::iterator it = (*transforms).begin();
-    transform = (*it);
-    }
+  TransformType::Pointer transform2 = 0;
 
-  if (!transform)
+  typedef itk::VectorImage< double, 3 >   GridImageType;
+  GridImageType::Pointer gridImage = 0;
+
+  std::ofstream debug_str;
+
+  // A grid transform is not a itk::Transform.  It is instead
+  // transferred as an itk::VectorImage.  As such, we need special
+  // logic to parse it.  If we have something other than a grid
+  // transform, we read it through the itk::TransformFileReader (in
+  // the else part of this block).
+  //
+  if (refNode->IsA("vtkMRMLGridTransformNode"))
     {
-    vtkErrorMacro(<< "No transforms in the file: "
-                  << fullName.c_str()
-                  << ", (" << transforms->size() << ")");
-    result = 0;
+    vtkWarningMacro( "We have a grid transform node. Writing to c:/debuglog.txt" );
+    debug_str.open( "c:/debuglog.txt" );
+
+    typedef itk::ImageFileReader< GridImageType >  ReaderType;
+
+    ReaderType::Pointer reader = ReaderType::New();
+
+    reader->SetFileName( fullName );
+
+    try
+      {
+      reader->Update();
+      gridImage = reader->GetOutput();
+      debug_str << "Grid image (from " << fullName << ")\n";
+      gridImage->Print( debug_str );
+
+      if( gridImage->GetVectorLength() != 3 )
+        {
+        vtkErrorMacro( "The deformable vector field must contain 3-D vectors;"
+                       " instead, it contains " << gridImage->GetVectorLength()
+                       << "-D vectors\n" );
+        gridImage = 0;
+        result = 0;
+        }
+      }
+    catch (itk::ExceptionObject &exc)
+      {
+      vtkErrorMacro("ITK exception caught reading grid transform image file: "
+                    << fullName.c_str() << "\n" << exc);
+
+      result = 0;
+      }
+    catch (...)
+      {
+      vtkErrorMacro("Unknown exception caught while reading grid transform image file: "
+                    << fullName.c_str());
+      result = 0;
+      }
     }
-  
+  else
+    {
+    TransformReader::Pointer reader = itk::TransformFileReader::New();
+    reader->SetFileName( fullName );
+    try
+      {
+      reader->Update();
+      }
+    catch (itk::ExceptionObject &exc)
+      {
+      vtkErrorMacro("ITK exception caught reading transform file: "
+                    << fullName.c_str() << "\n" << exc);
+
+      result = 0;
+      }
+    catch (...)
+      {
+      vtkErrorMacro("Unknown exception caught while writing transform file: "
+                    << fullName.c_str());
+      result = 0;
+      }
+
+    // For now, grab the first transform from the file.
+    TransformListType *transforms = reader->GetTransformList();
+    if (transforms->size() != 0)
+      {
+      if (transforms->size() != 1)
+        {
+        vtkWarningMacro(<< "More than one transform in the file: "
+                        << fullName.c_str()
+                        << ". Using only the first transform.");
+        }
+    
+      TransformListType::iterator it = (*transforms).begin();
+      transform = (*it);
+      }
+
+    if (!transform)
+      {
+      vtkErrorMacro(<< "No transforms in the file: "
+                    << fullName.c_str()
+                    << ", (" << transforms->size() << ")");
+      result = 0;
+      }
+    }  
+
   // Convert the ITK transform to the appropriate type of VTK
   // transform
   if (transform)
@@ -478,15 +534,168 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         }
       
       }
-
-        
-    if (transformNode->GetTransformToParent() != NULL) 
-      {
-      transformNode->GetTransformToParent()->Modified();
-      }
-    transformNode->SetModifiedSinceRead(0);
     }
 
+
+  // Convert the grid image to the appropriate type of VTK
+  // transform
+  if (gridImage)
+    {
+    if (refNode->IsA("vtkMRMLGridTransformNode"))
+      {
+
+      debug_str << "--- Creating mrml node ---" << std::endl;
+
+      vtkMRMLGridTransformNode *gtn
+        = vtkMRMLGridTransformNode::SafeDownCast(refNode);
+      
+      vtkGridTransform* vtkgrid = vtkGridTransform::New();
+      vtkgrid->SetInterpolationModeToCubic();
+
+      GridImageType::SizeType imageSize = 
+        gridImage->GetLargestPossibleRegion().GetSize();
+      unsigned const int Ni = imageSize[0];
+      unsigned const int Nj = imageSize[1];
+      unsigned const int Nk = imageSize[2];
+      unsigned const int Nc = gridImage->GetVectorLength();
+
+      vtkImageData *vtkgridimage = vtkImageData::New();
+
+      // Convert from LPS (ITK) to RAS (Slicer)
+      //
+      // The conversion logic is as follows.
+      //
+      // The LPS to RAS (and back) conversion is the linear transform
+      // given by the matrix
+      //   C = [ -1 0 0; 0 -1 0; 0 0 1 ]
+      //
+      // Let o be the origin of the ITK grid transform, and s be the
+      // spacing of the ITK grid transform.  Then a pixel coordinate p
+      // on the ITK grid represents the physical point
+      //   x =  Diag(s) * p + o,
+      // where Diag(v) is the diagonal matrix with the vector v on the
+      // diagonal.  Since x is an ITK physical point, it is in the LPS
+      // coordinate system.  The corresponding point, y, in the RAS
+      // system is given by
+      //    y = C * x
+      // This gives
+      //    y = C * Diag(s) * p + C * o
+      //      = Diag(s2) * p + o2
+      // where
+      //    s2 = [ -s(1), -s(2), s(3) ]
+      //    o2 = [ -o(1), -o(2), o(3) ].
+      //
+      // Thus, by changing the origin and spacing, the pixel indexing
+      // does not need to change.
+      //
+      // However, the value at each grid point is a displacement in
+      // the LPS coordinate system, and needs to be converted too.
+      // E.g. a displacement d takes a physical point x1 to a physical
+      // point x2, so that
+      //      x2 = x1 + d
+      // We require the corresponding displacement d2 that takes
+      // y1 = C*x1 to y2 = C*x2, giving us
+      //      d2 = y2-y1 = C*(x2-x1) = C*d
+      // Thus
+      //     d2 = [ -d(1), -d(2), d(3) ]
+
+      vtkgridimage->SetOrigin( -gridImage->GetOrigin()[0],
+                               -gridImage->GetOrigin()[1],
+                                gridImage->GetOrigin()[2] );
+      vtkgridimage->SetSpacing( -gridImage->GetSpacing()[0],
+                                 gridImage->GetSpacing()[1],
+                                 gridImage->GetSpacing()[2]);
+
+      
+      if (! (gridImage->GetDirection()(0,0) == 1 &&
+             gridImage->GetDirection()(0,1) == 0 &&
+             gridImage->GetDirection()(0,2) == 0 &&
+             gridImage->GetDirection()(1,0) == 0 &&
+             gridImage->GetDirection()(1,1) == 1 &&
+             gridImage->GetDirection()(1,2) == 0 &&
+             gridImage->GetDirection()(2,0) == 0 &&
+             gridImage->GetDirection()(2,1) == 0 &&
+             gridImage->GetDirection()(2,2) == 1) )
+        {
+        vtkErrorMacro( "Grid transform with a non-identity orientation matrix is not yet implemented" );
+        result = 0;
+        }
+
+      vtkgridimage->SetDimensions( Ni, Nj, Nk );
+      vtkgridimage->SetNumberOfScalarComponents( Nc );
+      vtkgridimage->SetScalarTypeToDouble();
+      vtkgridimage->AllocateScalars();
+
+      // As far as I know, both the itk::VectorImage and the vtkImage
+      // both store the pixel data in contiguous memory, ordered the
+      // same way, so we can do this memcpy.  If they don't (I don't
+      // know of a way to check), we would need instead to do a loop
+      // (implemented but commented out below).
+      std::memcpy( vtkgridimage->GetScalarPointer(),
+                   gridImage->GetPixelContainer()->GetBufferPointer(),
+                   gridImage->GetPixelContainer()->Size() * sizeof(double) );
+
+      // We need to convert from LPS to RAS
+      int incX, incY, incZ;
+      vtkgridimage->GetIncrements( incX, incY, incZ );
+      double* dataPtr = reinterpret_cast<double*>(vtkgridimage->GetScalarPointer());
+      for( int k = 0; k < Nk; ++k, dataPtr += incZ )
+        {
+          for( int j = 0; j < Nj; ++j, dataPtr += incY )
+          {
+            for( int i = 0; i < Ni; ++i, dataPtr += incX )
+            {
+            // negate the first two components
+            dataPtr[0] = -dataPtr[0];
+            dataPtr[1] = -dataPtr[1];
+            dataPtr += 3;
+            }
+          }
+        }
+
+
+      //GridImageType::IndexType idx;
+      //for( int k = 0; k < Nk; ++k )
+      //  {
+      //  idx[2] = k;
+      //  for( int j = 0; j < Nj; ++j )
+      //    {
+      //    idx[1] = j;
+      //    for( int i = 0; i < Ni; ++i )
+      //      {
+      //      idx[0] = i;
+      //      GridImageType::PixelType const& v = gridImage->GetPixel(idx);
+      //      double *comp = reinterpret_cast<double*>(vtkgridImage->GetScalarPointer(i,j,k));
+      //      comp[0] = -v[0];
+      //      comp[1] = -v[1];
+      //      comp[2] =  v[2];
+      //      }
+      //    }
+      //  }
+      //}
+
+
+      debug_str << "\n\nvtkGridImage\n";
+      vtkgridimage->Print( debug_str );
+
+      vtkgrid->SetDisplacementGrid( vtkgridimage );
+      vtkgridimage->Delete();
+
+      // Set the matrix on the node
+      gtn->SetAndObserveWarpTransformToParent( vtkgrid );
+      debug_str << "\n\nvtkGridTransform\n";
+      vtkgrid->Print( debug_str );
+
+      vtkgrid->Delete();
+      }
+    }
+
+
+  if (transformNode->GetTransformToParent() != NULL) 
+    {
+    transformNode->GetTransformToParent()->Modified();
+    }
+  transformNode->SetModifiedSinceRead(0);
 
   lps2ras->Delete();
   ras2lps->Delete();

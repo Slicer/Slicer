@@ -69,6 +69,23 @@ vtkMRMLGridTransformNode::~vtkMRMLGridTransformNode()
 void vtkMRMLGridTransformNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
+  if (this->WarpTransformToParent != NULL)
+    {
+    // this transform should be a grid transform
+    vtkGridTransform *grid = dynamic_cast<vtkGridTransform*>(this->WarpTransformToParent);
+    if( grid == NULL )
+      {
+      vtkErrorMacro("Transform is not a GridTransform");
+      return;
+      }
+
+    of << " interpolationMode=\"" << grid->GetInterpolationMode() << "\" ";
+    of << " displacementScale=\"" << grid->GetDisplacementScale() << "\" ";
+    of << " displacementShift=\"" << grid->GetDisplacementShift() << "\" ";
+    of << grid->GetDisplacementGrid();
+    of << "\"";
+    }
 }
 
 //----------------------------------------------------------------------------

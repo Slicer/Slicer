@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration</category>
+  <title>Test GridTransform registration</title>
+  <description>Generates a GridTransform to test the communication facilities</description>
+  <version>0.1.0.$Revision: 6760 $(alpha)</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Yinglin Lee</contributor>
+<acknowledgements>
+This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+</acknowledgements>
+
+  <parameters>
+    <label>Registration Parameters</label>
+    <description>Parameters used for registration</description>
+    <integer>
+      <name>gridSize</name>
+      <flag>g</flag>
+      <longflag>gridSize</longflag>
+      <description>Number of grid points on interior of image.</description>
+      <label>Grid Size</label>
+      <default>5</default>
+      <constraints>
+        <minimum>3</minimum>
+        <maximum>20</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+
+  </parameters>
+
+  <parameters>
+    <label>IO</label>
+    <description>Input/output parameters</description>
+    <transform fileExtensions=".nrrd" type="nonlinear" reference="MovingImageFileName">
+      <name>OutputTransform</name>
+      <longflag>outputtransform</longflag>
+      <description>The grid transform (deformation vector field).</description>
+      <label>Output transform</label>
+      <channel>output</channel>
+    </transform>
+    <image>
+      <name>FixedImageFileName</name>
+      <label>Fixed Image</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Fixed image to which to register</description>
+    </image>
+    <image>
+      <name>MovingImageFileName</name>
+      <label>Moving Image</label>
+      <channel>input</channel>
+      <index>1</index>
+      <description>Moving image</description>
+    </image>
+  </parameters>
+
+</executable>

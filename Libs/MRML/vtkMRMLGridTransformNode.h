@@ -51,7 +51,6 @@ protected:
   ~vtkMRMLGridTransformNode();
   vtkMRMLGridTransformNode(const vtkMRMLGridTransformNode&);
   void operator=(const vtkMRMLGridTransformNode&);
-
 };
 
 #endif
