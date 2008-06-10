@@ -393,7 +393,7 @@ void vtkSlicerApplicationLogic::ProcessMRMLEvents(vtkObject * /*caller*/,
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::PropagateVolumeSelection()
+void vtkSlicerApplicationLogic::PropagateVolumeSelection(int fit)
 {
   if ( !this->SelectionNode || !this->MRMLScene )
     {
@@ -412,6 +412,8 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection()
     cnode->SetBackgroundVolumeID( ID );
     cnode->SetLabelVolumeID( labelID );
     }
+
+  if (!fit) return;
 
   int nitems = this->GetSlices()->GetNumberOfItems();
   for (i = 0; i < nitems; i++)
