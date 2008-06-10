@@ -170,8 +170,6 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
   typedef itk::VectorImage< double, 3 >   GridImageType;
   GridImageType::Pointer gridImage = 0;
 
-  std::ofstream debug_str;
-
   // A grid transform is not a itk::Transform.  It is instead
   // transferred as an itk::VectorImage.  As such, we need special
   // logic to parse it.  If we have something other than a grid
@@ -180,9 +178,6 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
   //
   if (refNode->IsA("vtkMRMLGridTransformNode"))
     {
-    vtkWarningMacro( "We have a grid transform node. Writing to c:/debuglog.txt" );
-    debug_str.open( "c:/debuglog.txt" );
-
     typedef itk::ImageFileReader< GridImageType >  ReaderType;
 
     ReaderType::Pointer reader = ReaderType::New();
@@ -193,8 +188,6 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       {
       reader->Update();
       gridImage = reader->GetOutput();
-      debug_str << "Grid image (from " << fullName << ")\n";
-      gridImage->Print( debug_str );
 
       if( gridImage->GetVectorLength() != 3 )
         {
@@ -544,8 +537,6 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
     if (refNode->IsA("vtkMRMLGridTransformNode"))
       {
 
-      debug_str << "--- Creating mrml node ---" << std::endl;
-
       vtkMRMLGridTransformNode *gtn
         = vtkMRMLGridTransformNode::SafeDownCast(refNode);
       
@@ -675,17 +666,11 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       //}
 
 
-      debug_str << "\n\nvtkGridImage\n";
-      vtkgridimage->Print( debug_str );
-
       vtkgrid->SetDisplacementGrid( vtkgridimage );
       vtkgridimage->Delete();
 
       // Set the matrix on the node
       gtn->SetAndObserveWarpTransformToParent( vtkgrid );
-      debug_str << "\n\nvtkGridTransform\n";
-      vtkgrid->Print( debug_str );
-
       vtkgrid->Delete();
       }
     }
