@@ -1,44 +1,57 @@
-PROJECT (TumorGrowthCommandLineExecutable)
+project(TumorGrowthCommandLineExecutable)
 
-FIND_PACKAGE(GenerateCLP REQUIRED)
-IF(GenerateCLP_FOUND)
-  INCLUDE(${GenerateCLP_USE_FILE})
-ENDIF(GenerateCLP_FOUND)
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
-FIND_PACKAGE(vtkITK REQUIRED)
+# --------------------------------------------------------------------------
+# Find Slicer3
 
-FIND_PACKAGE(ModuleDescriptionParser REQUIRED)
-LINK_DIRECTORIES(${ModuleDescriptionParser_BINARY_DIR}  ${vtkTeem_LIB_DIR} )
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_install_prefix_for_external_projects()
+endif(NOT Slicer3_SOURCE_DIR)
 
-FIND_PACKAGE(ITK REQUIRED)
-INCLUDE(${ITK_USE_FILE})
+# --------------------------------------------------------------------------
+# Include dirs
 
-FIND_PACKAGE(VTK REQUIRED)
-INCLUDE(${VTK_USE_FILE})
+include_directories(
+  ${TumorGrowth_SOURCE_DIR}
+  ${TumorGrowth_SOURCE_DIR}/CommandLineApplication
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
+  ${vtkTeem_SOURCE_DIR} 
+  ${vtkTeem_BINARY_DIR}
+  )
 
-# INCLUDE(${GenerateCLP_SOURCE_DIR}/UseGenerateCLP.cmake)
+# --------------------------------------------------------------------------
+# Sources
 
-IF (Slicer3_SOURCE_DIR)
-#  SET(LIBRARY_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-  SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
-ENDIF (Slicer3_SOURCE_DIR)
+set(CLP_MODULE TumorGrowthCommandLine)
+set(${CLP_MODULE}_SOURCE
+  ${CLP_MODULE}.cxx
+  )
+generateclp(
+  ${CLP_MODULE}_SOURCE 
+  ${CLP_MODULE}.xml)
 
-SET (CLP TumorGrowthCommandLine)
+# --------------------------------------------------------------------------
+# Build and install the exe
 
-SET ( ${CLP}_SOURCE ${CLP}.cxx)
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
+add_executable(${CLP_MODULE} ${${CLP_MODULE}_SOURCE})
+slicer3_set_plugins_output_path(${CLP_MODULE})
+target_link_libraries(
+  ${CLP_MODULE}
+  TumorGrowth
+  ITKIO 
+  ITKCommon 
+  vtkTeem
+  )
 
-ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
-TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKCommon TumorGrowth vtkTeem )
+slicer3_install_plugins(${CLP_MODULE})
 slicer3_set_plugins_output_path(${CLP})
 slicer3_install_plugins(${CLP})
 
-INCLUDE_DIRECTORIES (  ${TumorGrowth_SOURCE_DIR} ${TumorGrowth_SOURCE_DIR}/CommandLineApplication ${vtkTeem_SOURCE_DIR} ${vtkTeem_BINARY_DIR} )
-
-
-IF (WIN32) 
- ADD_TEST(TumorGrowthTest ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/${CLP} --help)
-ELSE(WIN32) 
-  ADD_TEST(TumorGrowthTest ${EXECUTABLE_OUTPUT_PATH}/${CLP} --help) 
-ENDIF (WIN32)
 

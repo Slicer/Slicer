@@ -18,22 +18,12 @@ endif(NOT Slicer3_SOURCE_DIR)
 # Include dirs
 
 INCLUDE_DIRECTORIES(
-  ${TumorGrowth_SOURCE_DIR}
-  ${TumorGrowth_BINARY_DIR}
-  ${TumorGrowth_SOURCE_DIR}/Wizard
-  ${TumorGrowth_SOURCE_DIR}/Filters
-  ${SlicerBase_SOURCE_DIR}
-  ${SlicerBase_BINARY_DIR}
-  ${SlicerBaseLogic_SOURCE_DIR}
-  ${SlicerBaseLogic_BINARY_DIR}
-  ${SlicerBaseGUI_SOURCE_DIR}
-  ${SlicerBaseGUI_BINARY_DIR}
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIR}
-  ${VTK_INCLUDE_DIR}
-  ${MRML_SOURCE_DIR}
-  ${MRML_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wizard
+  ${CMAKE_CURRENT_SOURCE_DIR}/Filters
+  ${Slicer3_Libs_INCLUDE_DIRS}
+  ${Slicer3_Base_INCLUDE_DIRS}
   ${EMSegment_SOURCE_DIR}/Registration
   ${EMSegment_SOURCE_DIR}
   ${EMSegment_BINARY_DIR}
@@ -41,6 +31,19 @@ INCLUDE_DIRECTORIES(
   ${vtkTeem_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
   ${Volumes_BINARY_DIR}
+
+#  ${SlicerBase_SOURCE_DIR}
+#  ${SlicerBase_BINARY_DIR}
+#  ${SlicerBaseLogic_SOURCE_DIR}
+#  ${SlicerBaseLogic_BINARY_DIR}
+#  ${SlicerBaseGUI_SOURCE_DIR}
+#  ${SlicerBaseGUI_BINARY_DIR}
+#  ${vtkITK_SOURCE_DIR}
+#  ${vtkITK_BINARY_DIR}
+#  ${ITK_INCLUDE_DIR}
+#  ${VTK_INCLUDE_DIR}
+#  ${MRML_SOURCE_DIR}
+#  ${MRML_BINARY_DIR}
 
   )
 
@@ -145,26 +148,31 @@ slicer3_set_modules_output_path(${lib_name})
 
 target_link_libraries(${lib_name}
   EMSegment
-  SlicerBaseLogic 
-  SlicerBaseGUI 
-  MRML
-  vtkITK
-  vtkCommonTCL
-  vtkImagingTCL
-  vtkFilteringTCL
-  vtkIOTCL
-  ITKAlgorithms
-  ITKNumerics 
-  ITKCommon
-  ITKBasicFilters
-  ITKNumerics
-  ITKStatistics
-  ITKBasicFilters
-  ITKIO
-  ITKDICOMParser
+  ${Slicer3_Libs_LIBRARIES}
+  ${Slicer3_Base_LIBRARIES}
+  ${KWWidgets_LIBRARIES} 
+  ${ITK_LIBRARIES}
+
+
+  # SlicerBaseLogic 
+  # SlicerBaseGUI 
+  # MRML
+  # vtkITK
+  # vtkCommonTCL
+  # vtkImagingTCL
+  # vtkFilteringTCL
+  # vtkIOTCL
+  # ITKAlgorithms
+  # ITKNumerics 
+  # ITKCommon
+  # ITKBasicFilters
+  # ITKNumerics
+  # ITKStatistics
+  # ITKBasicFilters
+  # ITKIO
+  # ITKDICOMParser
   vtkTeem 
   Volumes
-  ${KWWidgets_LIBRARIES} 
   )
 
 slicer3_install_modules(${lib_name})
