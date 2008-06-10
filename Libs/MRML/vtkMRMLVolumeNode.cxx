@@ -159,10 +159,25 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
       this->IJKToRASDirections[i][j] = node->IJKToRASDirections[i][j];
       }
     }
+  int modified = anode->GetModifiedSinceRead();
+
   if (node->ImageData != NULL)
     {
     this->SetAndObserveImageData(node->ImageData);
     }
+
+  // this is to work around the SetAndObserveImageData causing 
+  // ModifiedSinceRead become 1 on both nodes
+  int oldMode = this->GetDisableModifiedEvent();
+  this->DisableModifiedEventOn();
+  this->SetModifiedSinceRead (modified);
+  this->SetDisableModifiedEvent(oldMode);
+
+  oldMode = anode->GetDisableModifiedEvent();
+  anode->DisableModifiedEventOn();
+  anode->SetModifiedSinceRead (modified);
+  anode->SetDisableModifiedEvent(oldMode);
+
 }
 
 //----------------------------------------------------------------------------
