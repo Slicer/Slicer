@@ -551,8 +551,16 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
         return;
     }
     //Update mapper
-    this->MapperRaycast->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
-    this->MapperTexture->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+    vtkImageData *input= vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData();
+
+    if (this->MapperRaycast->GetInput() != input)
+      {
+      this->MapperRaycast->SetInput(input);
+      }
+    if (this->MapperTexture->GetInput() != input)
+      {
+      this->MapperTexture->SetInput(input);
+      }
     //Update Property
     this->Volume->SetProperty(this->Gui->GetCurrentNode()->GetVolumeProperty());
     //Update matrix

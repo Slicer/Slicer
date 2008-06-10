@@ -146,6 +146,10 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
 {
+  // don't modify the input node
+  int amode = anode->GetDisableModifiedEvent();
+  anode->DisableModifiedEventOn();
+
   Superclass::Copy(anode);
   vtkMRMLVolumeNode *node = (vtkMRMLVolumeNode *) anode;
 
@@ -160,6 +164,7 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
       }
     }
   int modified = anode->GetModifiedSinceRead();
+  unsigned long mtime = anode->GetMTime();
 
   if (node->ImageData != NULL)
     {
@@ -168,15 +173,13 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
 
   // this is to work around the SetAndObserveImageData causing 
   // ModifiedSinceRead become 1 on both nodes
-  int oldMode = this->GetDisableModifiedEvent();
+  int mode = this->GetDisableModifiedEvent();
   this->DisableModifiedEventOn();
   this->SetModifiedSinceRead (modified);
-  this->SetDisableModifiedEvent(oldMode);
+  this->SetDisableModifiedEvent(mode);
 
-  oldMode = anode->GetDisableModifiedEvent();
-  anode->DisableModifiedEventOn();
   anode->SetModifiedSinceRead (modified);
-  anode->SetDisableModifiedEvent(oldMode);
+  anode->SetDisableModifiedEvent(amode);
 
 }
 
@@ -614,7 +617,8 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
     {
     if (this->ImageData != NULL)
       {
-      this->ImageData->Modified();
+      //this->ImageData->Modified();
+      this->InvokeEvent(vtkCommand::ModifiedEvent);
       // calculating auto levels will be triggered by process mrml events
       //calling UpdateFromMRML
       }
