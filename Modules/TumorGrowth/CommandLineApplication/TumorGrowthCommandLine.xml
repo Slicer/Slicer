@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category> Filtering </category>
+  <title>TumorGrowth Command-line </title>
+  <description>
+  TumorGrowth command-line module description and help.
+  </description>
+  <contributor>Kilian Pohl</contributor>
+  <acknowledgements>Brain Science Foundation</acknowledgements>
+   <parameters>
+    <label>Inputs and Outputs</label>
+    <description>Altorithm input and output. </description>
+    <image> 
+      <name>tgScan1</name>
+      <label>Scan 1</label>
+      <channel>input</channel>
+      <longflag>scan1</longflag>
+      <description>First Scan</description> 
+      <default>None</default>
+    </image>
+    <image> 
+      <name>tgScan2</name>
+      <label>Scan 2</label>
+      <channel>input</channel>
+      <longflag>scan2</longflag>
+      <description>Second Scan</description> 
+      <default>None</default>
+    </image>
+  </parameters> 
+  <parameters> 
+    <label>Parameters</label>
+    <description>Algorithm Parameters</description>
+    <boolean>
+     <name>tgIntensityAnalysisFlag</name>
+     <longflag>intensity_analysis</longflag>
+     <label>Analyze Intensity Pattern</label>
+     <description>Growth Metric is based on changes in the the local intensity patterns</description> 
+     <default>true</default>
+    </boolean>  
+    <boolean>
+     <name>tgDeformableAnalysisFlag</name>
+     <longflag>deformable_analysis</longflag>
+     <label>Analyze Deformation Map</label>
+     <description>Growth Metric is based on deformation map between scan1 and scan2</description> 
+     <default>true</default>
+    </boolean>  
+    <integer-vector>
+     <name>tgROIMin</name>
+     <longflag>roi_min</longflag>
+     <description>Lower extent of region of interest</description> 
+     <label>ROI Min</label>
+     <default>1,1,1</default>
+    </integer-vector> 
+    <integer-vector>
+     <name>tgROIMax</name>
+     <longflag>roi_max</longflag>
+     <description>Upper extent of region of interest</description> 
+     <label>ROI Max</label>
+     <default>256,256,100</default>
+   </integer-vector> 
+   <integer-vector> 
+     <name>tgThreshold</name>
+     <longflag>threshold</longflag>
+     <description>Intensity threshold defining tumor in scan 1</description> 
+     <label>Threshold</label>
+     <default>100,200</default>
+   </integer-vector> 
+   <double>
+     <name>tgSensitivity</name>
+     <longflag>sensitivity</longflag>
+     <description>Sensitivity Parameter (between 0 and 1) - only relevant for 'Analyze Intensity Pattern'</description>
+     <label>Threshold</label>
+     <default>0.5</default>
+   </double> 
+    <boolean>
+     <name>tgSaveFlag</name>
+     <longflag>save_data</longflag>
+     <label>Save</label>
+     <description>Save all intermediate results</description> 
+     <default>true</default>
+   </boolean>
+  </parameters>
+</executable>
+
