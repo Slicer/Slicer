@@ -158,13 +158,13 @@ void tgWriteVolume(const char *fileName, vtkMatrix4x4 *export_matrix, vtkImageDa
 int tgSetSLICER_HOME(char** argv)  
 { 
   vtksys_stl::string slicerHome;
-  if ( !vtksys::SystemTools::GetEnv("SLICER_HOME", slicerHome) )
+  if ( !vtksys::SystemTools::GetEnv("Slicer3_HOME", slicerHome) )
   {
     std::string programPath;
     std::string errorMessage;
     if ( !vtksys::SystemTools::FindProgramPath(argv[0], programPath, errorMessage) ) return 1;
 
-    std::string homeEnv = "SLICER_HOME=";
+    std::string homeEnv = "Slicer3_HOME=";
     homeEnv += vtksys::SystemTools::GetFilenamePath(programPath.c_str()) + "/../../../";
    
     // cout << "Set environment: " << homeEnv.c_str() << endl;

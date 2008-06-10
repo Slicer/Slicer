@@ -363,15 +363,10 @@ vtkMRMLScalarVolumeNode* vtkTumorGrowthLogic::CreateSuperSample(int ScanNum) {
 
 void vtkTumorGrowthLogic::SourceAnalyzeTclScripts(vtkKWApplication *app) {
  char TCL_FILE[1024]; 
- // Kilian: Can we copy this over to the build directory
- // cout - later, when it works do it this way bc more 
- sprintf(TCL_FILE,"%s/Modules/TumorGrowth/tcl/TumorGrowthFct.tcl",vtksys::SystemTools::GetEnv("SLICER_HOME"));
- // sprintf(TCL_FILE,"%s/../Slicer3/Modules/TumorGrowth/tcl/TumorGrowthFct.tcl",vtksys::SystemTools::GetEnv("SLICER_HOME"));
+ sprintf(TCL_FILE,"%s/Modules/TumorGrowth/tcl/TumorGrowthFct.tcl",vtksys::SystemTools::GetEnv("Slicer3_HOME"));
 
  app->LoadScript(TCL_FILE); 
- // later do it this way 
- sprintf(TCL_FILE,"%s/Modules/TumorGrowth/tcl/TumorGrowthReg.tcl",vtksys::SystemTools::GetEnv("SLICER_HOME"));
- // sprintf(TCL_FILE,"%s/../Slicer3/Modules/TumorGrowth/tcl/TumorGrowthReg.tcl",vtksys::SystemTools::GetEnv("SLICER_HOME"));
+ sprintf(TCL_FILE,"%s/Modules/TumorGrowth/tcl/TumorGrowthReg.tcl",vtksys::SystemTools::GetEnv("Slicer3_HOME"));
  app->LoadScript(TCL_FILE); 
 }
 
