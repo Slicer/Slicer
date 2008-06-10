@@ -1865,7 +1865,8 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     // set an undo state when the scale starts being dragged
     this->MRMLScene->SaveStateForUndo( this->SliceNode );
     }
-  else if ( scale == this->LabelOpacityScale->GetWidget() && event == vtkKWScale::ScaleValueStartChangingEvent )
+  else if ( scale == this->LabelOpacityScale->GetWidget() 
+              && event == vtkKWScale::ScaleValueStartChangingEvent )
     {
     if ( link && sgui ) 
       {
@@ -1874,7 +1875,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         {
         // set an undo state when the scale starts being dragged
         cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-                                                this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceCompositeNode"));
+                  this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceCompositeNode"));
         this->MRMLScene->SaveStateForUndo( cnode );
         }
       }
@@ -1897,7 +1898,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       for ( i=0; i<nnodes; i++)
         {
         cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-                                                this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceCompositeNode"));
+                  this->GetMRMLScene()->GetNthNodeByClass (i, "vtkMRMLSliceCompositeNode"));
         cnode->SetLabelOpacity ( (double) this->LabelOpacityScale->GetValue() );
         }
       }
@@ -1907,10 +1908,33 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
 //      modified = 1;
       }
     }
-  if ( (double) this->OffsetScale->GetValue() != this->SliceLogic->GetSliceOffset() )
+
+  //
+  // Scales done moved or moving? update slice and snap to nearest integral slice location
+  // - works around bugs described here:
+  // http://www.na-mic.org/Bug/view.php?id=76
+  // and here:
+  // http://sourceforge.net/tracker/index.php?func=detail&aid=1899040&group_id=12997&atid=112997
+  //
+  if ( this->OffsetScale->GetWidget() == vtkKWScale::SafeDownCast( caller ) &&
+          (event == vtkKWScale::ScaleValueChangedEvent ||
+           event == vtkKWScale::ScaleValueChangingEvent) )
     {
-    this->SliceLogic->SetSliceOffset( (double) this->OffsetScale->GetValue() );
-    modified = 1;
+    vtkKWScale *scale = vtkKWScale::SafeDownCast( caller );
+    double min, value, offset, resolution, steps, newValue;
+
+    min = scale->GetRangeMin ();
+    value = scale->GetValue();
+    offset = value - min;
+    resolution = scale->GetResolution();
+    steps = offset / resolution;
+    newValue = min + (resolution * static_cast<int>(steps+0.5));
+
+    if ( value != newValue )
+      {
+      this->SliceLogic->SetSliceOffset( newValue );
+      modified = 1;
+      }
     }
 
   if ( modified )
