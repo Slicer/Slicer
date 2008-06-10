@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration</category>
+  <title>Diffeomorphic Demons Algorithm</title>
+  <description>Algorithm developed by Tom Vercauteren </description>
+  <version> 1.0</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor> Tom Vercauteren, Ender Konukoglu, Kilian Pohl </contributor>
+  <acknowledgements>INRIA rocks</acknowledgements>
+ <parameters>
+    <label>Input/Output</label>
+    <description>Input/output parameters</description>
+    <image> 
+      <name>demonsTargetVolume</name>
+      <label>Target Volume</label>
+      <channel>input</channel>
+      <flag>f</flag>
+      <longflag>fixed_image</longflag>
+      <description>Target Volume Number</description> 
+      <default>None</default>
+      <description>Target volume</description>
+    </image>
+    <image>
+      <name>demonsMovingVolume</name>
+      <flag>m</flag>
+      <label>Moving Volume</label>
+      <longflag>moving_image</longflag>
+      <channel>input</channel>
+      <default>None</default>
+      <description>Target volume</description>
+    </image>
+    <image>
+      <name>demonsDeformationVolume</name>
+      <flag>O</flag>
+      <longflag>output_field</longflag>
+      <label>Deformation Field</label>
+      <channel>output</channel>
+      <description>Deformation Field</description>
+    </image>
+    <image>
+      <name>demonsResampledVolume</name>
+      <label>Resample Volume</label>
+      <flag>o</flag>
+      <longflag>output_image</longflag>
+      <channel>output</channel>
+      <description>Resampled Volume</description>
+    </image>
+</parameters>
+<parameters>
+   <label>Registration Parameters </label>
+   <description>Parameters of the Diffeomorphic Algorithm </description>
+   <integer>
+     <name>levels</name>
+     <flag>n</flag>
+     <longflag>num_levels</longflag>
+     <description>Number of Hierarchical Levels</description> 
+     <label>Levels</label>
+     <default>3</default>
+   </integer>  
+   <string>
+     <name>iteration</name>
+     <flag>i</flag>
+     <longflag>num_iterations</longflag>
+     <description>Number of Iterations per Level</description> 
+     <label>Iteration</label>
+     <default>20x20x20</default>
+   </string>  
+   <double>
+     <name>smoothing</name>
+     <flag>s</flag>
+     <longflag>def_field_sigma</longflag>
+     <description>Variance of the smoothing (Sigma)</description> 
+     <label>Smoothing</label>
+     <default>1</default>
+   </double>  
+   <boolean>
+     <name>normalization</name>
+     <flag>e</flag>
+     <longflag>use_histogram_matching</longflag>
+     <description>Intensity Normalization</description> 
+     <label>Intensity Normalization</label>
+     <default>true</default>
+   </boolean>  
+   <boolean>
+     <name>turnOffDiffeomorph</name>
+     <flag>a</flag>
+     <longflag>use_vanilla_dem</longflag>
+     <description>Run vanilla demons algorithm</description> 
+     <label>Turn off Diffeomorphism</label>
+     <default>false</default>
+   </boolean>  
+   <boolean>
+     <name>verbose</name>
+     <flag>v</flag>
+     <longflag>verbose</longflag>
+     <description></description> 
+     <label>Verbose</label>
+     <default>true</default>
+   </boolean>  
+</parameters>
+</executable>

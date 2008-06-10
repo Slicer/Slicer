@@ -1,0 +1,8 @@
+ObjectType = Image
+NDims = 2
+BinaryData = True
+BinaryDataByteOrderMSB = False
+ElementSpacing = 1 1
+DimSize = 128 128
+ElementType = MET_UCHAR
+ElementDataFile = RatLungSlice2.raw
