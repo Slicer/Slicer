@@ -31,9 +31,6 @@ GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
 ADD_EXECUTABLE(${CLP} ${${CLP}_SOURCE})
 TARGET_LINK_LIBRARIES (${CLP} ITKIO ITKCommon TumorGrowth vtkTeem )
 
-SET (CLP_MODULE TumorGrowthCommandLine)
-ADD_EXECUTABLE( ${CLP_MODULE} ${CLP_MODULE}.cxx )
-
 INCLUDE_DIRECTORIES (  ${TumorGrowth_SOURCE_DIR} ${TumorGrowth_SOURCE_DIR}/CommandLineApplication ${vtkTeem_SOURCE_DIR} ${vtkTeem_BINARY_DIR} )
 
 

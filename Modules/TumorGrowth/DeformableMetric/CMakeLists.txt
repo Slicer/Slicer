@@ -1,26 +1,33 @@
-PROJECT(DetectingTumorGrowth)
+project(DetectingTumorGrowth)
 
-FIND_PACKAGE(ITK)
-IF(ITK_FOUND)
+if(NOT Slicer3_SOURCE_DIR)
+  find_package(Slicer3 REQUIRED)
+  include(${Slicer3_USE_FILE})
+  slicer3_set_default_install_prefix_for_external_projects()
+endif(NOT Slicer3_SOURCE_DIR)
+
+find_package(ITK)
+if(ITK_FOUND)
     INCLUDE(${ITK_USE_FILE})
-ELSE(ITK_FOUND)
+else(ITK_FOUND)
     MESSAGE(FATAL_ERROR
         "ITK not found. Please set ITK_DIR.")
-ENDIF(ITK_FOUND)
+endif(ITK_FOUND)
 
-SET(EXECUTABLE_OUTPUT_PATH "${SLICER_LIBRARIES_DIR}/Plugins")
+add_executable(DetectGrowth DetectGrowth.cxx)
+slicer3_set_plugins_output_path(DetectGrowth)
+target_link_libraries(DetectGrowth ITKCommon ITKIO)
+slicer3_install_plugins(DetectGrowth)
 
-ADD_EXECUTABLE(DetectGrowth DetectGrowth.cxx)
+add_executable(applyDeformationITK applyDeformationITK.cxx)
+slicer3_set_plugins_output_path(applyDeformationITK)
+target_link_libraries(applyDeformationITK ITKNumerics ITKIO)
+slicer3_install_plugins(applyDeformationITK)
 
-TARGET_LINK_LIBRARIES(DetectGrowth ITKCommon ITKIO)
-
-ADD_EXECUTABLE(applyDeformationITK applyDeformationITK.cxx)
-
-TARGET_LINK_LIBRARIES(applyDeformationITK ITKNumerics ITKIO)
-
-ADD_EXECUTABLE(DetectGrowthSegmentation DetectGrowthSegmentation.cxx)
-
-TARGET_LINK_LIBRARIES(DetectGrowthSegmentation ITKCommon ITKIO)
+add_executable(DetectGrowthSegmentation DetectGrowthSegmentation.cxx)
+slicer3_set_plugins_output_path(DetectGrowthSegmentation)
+target_link_libraries(DetectGrowthSegmentation ITKCommon ITKIO)
+slicer3_install_plugins(DetectGrowthSegmentation)
 
 
 
