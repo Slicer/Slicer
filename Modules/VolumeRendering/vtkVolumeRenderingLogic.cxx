@@ -43,6 +43,31 @@ void vtkVolumeRenderingLogic::RegisterNodes()
       vtkMRMLVolumeRenderingNode *vrNode=vtkMRMLVolumeRenderingNode::New();
       this->MRMLScene->RegisterNodeClass(vrNode);
       vrNode->Delete();
+      
+      vtkMRMLVolumeRenderingSelectionNode *vrsNode=vtkMRMLVolumeRenderingSelectionNode::New();
+      this->MRMLScene->RegisterNodeClass(vrsNode);
+      vrsNode->Delete();
+      
       this->First = false;
     }
+}
+
+vtkMRMLVolumeRenderingSelectionNode* vtkVolumeRenderingLogic::GetSelectionNode()
+{
+  vtkMRMLVolumeRenderingSelectionNode *node = NULL;
+  if (this->MRMLScene) 
+    {
+    node = vtkMRMLVolumeRenderingSelectionNode::SafeDownCast(this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLVolumeRenderingSelectionNode"));
+    if (node == NULL)
+      {
+      node = vtkMRMLVolumeRenderingSelectionNode::New();
+      vtkMRMLVolumeRenderingSelectionNode *snode = vtkMRMLVolumeRenderingSelectionNode::SafeDownCast(this->MRMLScene->AddNode(node));
+      if (snode == node)
+        {
+        node->Delete();
+        }
+      node = snode;
+      }
+    }
+  return node;
 }

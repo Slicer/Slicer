@@ -44,6 +44,8 @@ vtkMRMLVolumeRenderingNode::vtkMRMLVolumeRenderingNode(void)
     {
         this->CroppingRegionPlanes[i]=0;
     }
+    this->HideFromEditors = 1;
+
 }
 
 vtkMRMLVolumeRenderingNode::~vtkMRMLVolumeRenderingNode(void)
@@ -269,7 +271,19 @@ void vtkMRMLVolumeRenderingNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLVolumeRenderingNode::Copy(vtkMRMLNode *anode)
 {
     Superclass::Copy(anode);
+
+    this->DisableModifiedEventOn();
+
+    vtkMRMLVolumeRenderingNode *node = (vtkMRMLVolumeRenderingNode *) anode;
+    this->SetMapper(node->Mapper);
+    this->SetIsLabelMap ( node->IsLabelMap);
+    this->SetCroppingEnabled (node->CroppingEnabled);
+    this->SetCroppingRegionPlanes(node->CroppingRegionPlanes);
+    this->References = node->References;
     this->CopyParameterset(anode);
+    
+    this->DisableModifiedEventOff();
+    this->InvokePendingModifiedEvent();
 
 }
 void vtkMRMLVolumeRenderingNode::CopyParameterset(vtkMRMLNode *anode)

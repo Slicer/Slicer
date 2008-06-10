@@ -3,6 +3,8 @@
 #include "vtkSlicerModuleLogic.h"
 #include "vtkVolumeRendering.h"
 
+#include "vtkMRMLVolumeRenderingSelectionNode.h"
+
 class VTK_SLICERVOLUMERENDERING_EXPORT vtkVolumeRenderingLogic :public vtkSlicerModuleLogic
 {
 public:
@@ -21,6 +23,8 @@ public:
 
   // Register local MRML nodes
   virtual void RegisterNodes();
+  
+  vtkMRMLVolumeRenderingSelectionNode* GetSelectionNode();
 
 protected:
   vtkVolumeRenderingLogic();

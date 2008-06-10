@@ -26,6 +26,7 @@ Version:   $Revision: 1.3 $
 #include "vtkKWHistogram.h"
 #include "vtkKWEntryWithLabel.h"
 #include "vtkKWTkUtilities.h"
+#include "vtkMRMLVolumeRenderingSelectionNode.h"
 
 #include <string>
 
@@ -131,10 +132,6 @@ public:
     vtkGetObjectMacro (Presets, vtkMRMLScene);
     vtkGetObjectMacro (Helper, vtkSlicerVRHelper);
 
-
-
-
-
 protected:
     vtkVolumeRenderingGUI();
     ~vtkVolumeRenderingGUI();
@@ -155,6 +152,8 @@ protected:
     // Description:
     // Pointer to the module's logic class
     vtkVolumeRenderingLogic *Logic;
+
+    vtkMRMLVolumeRenderingSelectionNode *SelectionNode;
 
     // Description:
     // A pointer back to the viewer widget, useful for picking
@@ -191,8 +190,7 @@ protected:
 
     //Frame Details
     vtkSlicerModuleCollapsibleFrame *DetailsFrame;
-
-
+    
     //Other members
     vtkMRMLVolumeRenderingNode  *CurrentNode;
     vtkMRMLScene *Presets;
@@ -202,6 +200,10 @@ protected:
     vtkSlicerVRHelper *Helper;
     //0 means grayscale, 1 means LabelMap
     int HelperNumber;
+    
+    int UpdatingGUI;
+    int ProcessingGUIEvents;
+    int ProcessingMRMLEvents;
 };
 
 #endif

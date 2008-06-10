@@ -274,17 +274,19 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     //TODO: Move Pause Resume Button to another Place
     //Pause Resume Button
 
-    this->VI_PauseResume=vtkSlicerVisibilityIcons::New();
-    this->PB_PauseResume=vtkKWPushButtonWithLabel::New();
-    this->PB_PauseResume->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
-    this->PB_PauseResume->Create();
-    this->PB_PauseResume->SetBalloonHelpString("Toggle the visibility of volume rendering.");
-    this->PB_PauseResume->SetLabelText("Visiblity of Volume Rendering: ");
-    this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetVisibleIcon());
-    this->Script("pack %s -side top -anchor nw -padx 10 -pady 10",
-        this->PB_PauseResume->GetWidgetName());
-    this->PB_PauseResume->GetWidget()->SetCommand(this,"ProcessPauseResume");
-
+    if (this->Gui->GetDetailsFrame())
+      {
+      this->VI_PauseResume=vtkSlicerVisibilityIcons::New();
+      this->PB_PauseResume=vtkKWPushButtonWithLabel::New();
+      this->PB_PauseResume->SetParent(this->Gui->GetDetailsFrame()->GetFrame());
+      this->PB_PauseResume->Create();
+      this->PB_PauseResume->SetBalloonHelpString("Toggle the visibility of volume rendering.");
+      this->PB_PauseResume->SetLabelText("Visiblity of Volume Rendering: ");
+      this->PB_PauseResume->GetWidget()->SetImageToIcon(this->VI_PauseResume->GetVisibleIcon());
+      this->Script("pack %s -side top -anchor nw -padx 10 -pady 10",
+          this->PB_PauseResume->GetWidgetName());
+      this->PB_PauseResume->GetWidget()->SetCommand(this,"ProcessPauseResume");
+      }
 
     //Create a notebook
     this->NB_Details=vtkKWNotebook::New();
@@ -296,20 +298,37 @@ void vtkSlicerVRGrayscaleHelper::Init(vtkVolumeRenderingGUI *gui)
     this->NB_Details->AddPage("Advanced","Change mapping functions, shading, interpolation etc.");
     this->Script("pack %s -side top -anchor nw -fill both -expand y -padx 0 -pady 2", 
         this->NB_Details->GetWidgetName());
-
+    
+    vtkImageData *imageData = NULL;
+    vtkMRMLScalarVolumeNode *volume = NULL;
+    
+    if (this->Gui && this->Gui->GetNS_ImageData() && this->Gui->GetNS_ImageData()->GetSelected())
+      {
+      volume = vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected());
+      }
+      
+    if (volume)
+      {
+      imageData = volume->GetImageData();
+      }
+      
     this->SVP_VolumeProperty=vtkSlicerVolumePropertyWidget::New();
     this->SVP_VolumeProperty->SetParent(this->NB_Details->GetFrame("Advanced"));
     this->SVP_VolumeProperty->Create();
     this->SVP_VolumeProperty->ScalarOpacityUnitDistanceVisibilityOff ();
-    this->SVP_VolumeProperty->SetDataSet(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+    this->SVP_VolumeProperty->SetDataSet(imageData);
+    
     this->Histograms=vtkKWHistogramSet::New();
 
     //Add Histogram for image data
-    this->Histograms->AddHistograms(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars());
+    if (imageData && imageData->GetPointData())
+      {
+      this->Histograms->AddHistograms(imageData->GetPointData()->GetScalars());
+      }
     //Build the gradient histogram
     vtkImageGradientMagnitude *grad=vtkImageGradientMagnitude::New();
     grad->SetDimensionality(3);
-    grad->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData());
+    grad->SetInput(imageData);
     grad->Update();
     vtkKWHistogram *gradHisto=vtkKWHistogram::New();
     gradHisto->BuildHistogram(grad->GetOutput()->GetPointData()->GetScalars(),0);
@@ -549,7 +568,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
 {
 
     vtkSlicerBoxWidget *callerBox=vtkSlicerBoxWidget::SafeDownCast(caller);
-    if(caller==this->BW_Clipping&&eid==vtkCommand::InteractionEvent)
+    if(callerBox && caller==this->BW_Clipping&&eid==vtkCommand::InteractionEvent)
     {
         vtkPlanes *planes=vtkPlanes::New();
         callerBox->GetPlanes(planes);
@@ -557,7 +576,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
         this->MapperRaycast->SetClippingPlanes(planes);
         planes->Delete();
     }
-    if(caller==this->BW_Clipping&&eid==vtkCommand::EndInteractionEvent)
+    if(callerBox && caller==this->BW_Clipping&&eid==vtkCommand::EndInteractionEvent)
     {
         vtkPlanes *planes=vtkPlanes::New();
         callerBox->GetPlanes(planes);
@@ -1126,7 +1145,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
     }
     //First of all set New Property, Otherwise all Histograms will be overwritten
     //First check if we really need to update
-    if(this->SVP_VolumeProperty->GetVolumeProperty()==this->Gui->GetCurrentNode()->GetVolumeProperty())
+    if(this->Gui->GetCurrentNode() && this->SVP_VolumeProperty->GetVolumeProperty()==this->Gui->GetCurrentNode()->GetVolumeProperty())
     {
         this->AdjustMapping();
         this->SVP_VolumeProperty->Update();
@@ -1144,20 +1163,23 @@ void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
         //{
         //    this->RA_Cropping[i]->SetRange(this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i],this->Gui->GetCurrentNode()->GetCroppingRegionPlanes()[2*i+1]);
         //}
-        this->UpdateingGUI = 1;
-        double *croppingPlanes = this->Gui->GetCurrentNode()->GetCroppingRegionPlanes();
-        for(int i=0;i<3;i++)
-        {
-          if(croppingPlanes[2*i  ]< croppingPlanes[2*i+1])
+        if (this->Gui->GetCurrentNode())
+          this->UpdateingGUI = 1;
+          {
+          double *croppingPlanes = this->Gui->GetCurrentNode()->GetCroppingRegionPlanes();
+          for(int i=0;i<3;i++)
             {
-            this->RA_Cropping[i]->SetRange(croppingPlanes[2*i], croppingPlanes[2*i+1]);
+            if(croppingPlanes[2*i  ]< croppingPlanes[2*i+1])
+              {
+              this->RA_Cropping[i]->SetRange(croppingPlanes[2*i], croppingPlanes[2*i+1]);
+              }
+            else
+              {
+              this->RA_Cropping[i]->SetRange(croppingPlanes[2*i+1], croppingPlanes[2*i]);
+              }
             }
-          else
-            {
-            this->RA_Cropping[i]->SetRange(croppingPlanes[2*i+1], croppingPlanes[2*i]);
-            }
-        }
-        this->UpdateingGUI = 0;
+          this->UpdateingGUI = 0;
+          }
 
         this->CB_Cropping->GetWidget()->SetSelectedState(this->Gui->GetCurrentNode()->GetCroppingEnabled());
         this->ProcessEnableDisableCropping(this->Gui->GetCurrentNode()->GetCroppingEnabled());
@@ -1169,6 +1191,7 @@ void vtkSlicerVRGrayscaleHelper::UpdateSVP(void)
 
 void vtkSlicerVRGrayscaleHelper::UpdateGUIElements(void)
 {
+   this->UpdateingGUI = 1;
     Superclass::UpdateGUIElements();
     this->UpdateSVP();
     double *croppingPlanes = this->Gui->GetCurrentNode()->GetCroppingRegionPlanes();
@@ -1189,7 +1212,15 @@ void vtkSlicerVRGrayscaleHelper::UpdateGUIElements(void)
     this->VRMB_ColorMode->SetRange(vtkMRMLScalarVolumeNode::SafeDownCast(this->Gui->GetNS_ImageData()->GetSelected())->GetImageData()->GetPointData()->GetScalars()->GetRange());
     //this->ColorDisplay->SetMRMLScene(this->Gui->GetMRMLScene());
 
+    this->UpdateingGUI = 0;
+    this->ProcessCropping(0,0,0);
+    this->ProcessEnableDisableCropping(this->Gui->GetCurrentNode()->GetCroppingEnabled());
+    this->UpdateingGUI = 1;
+
+    //this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
+
     //Add update of gui here
+   this->UpdateingGUI = 0;
 }
 void vtkSlicerVRGrayscaleHelper::CheckAbort(void)
 {
@@ -1319,8 +1350,11 @@ void vtkSlicerVRGrayscaleHelper::ProcessCropping(int index, double min,double ma
 
     this->ConvertBoxCoordinatesToWorld(pointA);
     this->ConvertBoxCoordinatesToWorld(pointB);
-    this->BW_Clipping->PlaceWidget(pointA[0],pointB[0],pointA[1],pointB[1],pointA[2],pointB[2]);
-    this->BW_Clipping->SetTransform(this->AdditionalClippingTransform);
+    if (this->BW_Clipping)
+      {
+      this->BW_Clipping->PlaceWidget(pointA[0],pointB[0],pointA[1],pointB[1],pointA[2],pointB[2]);
+      this->BW_Clipping->SetTransform(this->AdditionalClippingTransform);
+      }
     this->NoSetRangeNeeded=1;
     this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::InteractionEvent,0);
     this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::EndInteractionEvent,0);

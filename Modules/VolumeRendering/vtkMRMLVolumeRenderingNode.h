@@ -73,6 +73,11 @@ public:
     void RemoveReference(std::string id);
     //ETX    
 
+    // Description:
+    // 0 means hardware accelerated 3D texture Mapper, 1 fixed raycastMapper 
+    vtkSetMacro(Mapper,int);
+    vtkGetMacro(Mapper,int);
+    vtkBooleanMacro(Mapper,int);
 
     // Description:
     // Set/Get if the Node saves data of a label map or a grayscale data set.
