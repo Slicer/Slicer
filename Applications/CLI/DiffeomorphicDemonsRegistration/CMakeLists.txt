@@ -1,52 +1,43 @@
-# INCLUDE(${CMAKE_SOURCE_DIR}/IJMacros.txt)
-
-#Change PROJECT_NAME to the name of your project
-PROJECT(DemonsRegistration)
-
-SET (CLP  DemonsRegistration)
-SET ( ${CLP}_SOURCE ${CLP}.cxx)
-GENERATECLP(${CLP}_SOURCE ${CLP}.xml)
-
-#The following lines are required to use Dart
-ENABLE_TESTING()
-INCLUDE(Dart)
-
-#Declare any external dependencies that your project may have here.
-#examples include: ITK, VTK, JPEG, PNG, OpenGL, ZLIB, Perl, Java
-#If you're not sure what name to use, look in the Modules directory of your
-#cmake install and check that a file named Find(Package).cmake exists
-FIND_PACKAGE(ITK REQUIRED)
-# SET(Required_Packages
-# ITK
-# )
-
-#this foreach loads all of the packages that you specified as required.
-#It shouldn't need to be modified.
-#FOREACH(Package ${Required_Packages})
-#  LOADPACKAGE(${Package})
-#ENDFOREACH(Package)
+project( DemonsRegistration )
 
 
-#Set any libraries that your project depends on.
-#examples: ITKCommon, VTKRendering, etc
-SET(Libraries
-    ITKCommon
-    ITKIO
-    ITKStatistics
-)
+find_package(GenerateCLP REQUIRED)
+if(GenerateCLP_FOUND)
+  include(${GenerateCLP_USE_FILE})
+endif(GenerateCLP_FOUND)
 
-#the following block of code is an example of how to build an executable in
-#cmake.  Unmodified, it will add an executable called "MyExe" to the project.
-#MyExe will be built using the files MyClass.h and MyClass.cxx, and it will
-#be linked to all the libraries you specified above. 
-#You can build more than one executable per project
-SET(CurrentExe "ImageCompare")
-ADD_EXECUTABLE(${CurrentExe} ImageCompare.cxx) 
-TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
+link_directories(${ModuleDescriptionParser_BINARY_DIR})
 
-SET(CurrentExe "DemonsRegistration")
-ADD_EXECUTABLE(${CurrentExe} DemonsRegistration.cxx) 
-TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
+
+include_directories( ${SlicerBaseCLI_BINARY_DIR} ${SlicerBaseCLI_SOURCE_DIR} )
+
+#####################
+
+set (CLP DemonsRegistration )
+
+set ( ${CLP}_SOURCE ${CLP}.cxx)
+generateclp(${CLP}_SOURCE ${CLP}.xml ${Slicer3_SOURCE_DIR}/Resources/NAMICLogo.h)
+add_executable(${CLP} ${${CLP}_SOURCE})
+slicer3_set_plugins_output_path(${CLP})
+target_link_libraries (${CLP}
+  ITKIO
+  ITKCommon
+  ITKStatistics
+  )
+
+
+if (Slicer3_SOURCE_DIR)
+  # install each target in the production area (where it would appear in an 
+  # installation) and install each target in the developer area (for running 
+  # from a build)
+  set(TARGETS        
+    DemonsRegistration
+    )
+  slicer3_install_plugins(${TARGETS})
+
+endif (Slicer3_SOURCE_DIR)
 
 #the following line is an example of how to add a test to your project.
 #Testname is the title for this particular test.  ExecutableToRun is the
@@ -54,11 +45,11 @@ TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 #project or an external executable.  After that list any args that are needed
 #for this test.  Include as many tests as you like.  If your project doesn't have
 #any tests you can comment out or delete the following line.
-IF (WIN32) 
- ADD_TEST(DemonsRegistrationTest1 ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/${CLP} --help)
-ELSE(WIN32) 
-  ADD_TEST(DemonsRegistrationTest1 ${EXECUTABLE_OUTPUT_PATH}/${CLP} --help) 
-ENDIF (WIN32)
+#IF (WIN32) 
+# ADD_TEST(DemonsRegistrationTest1 ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/${CLP} --help)
+#ELSE(WIN32) 
+#  ADD_TEST(DemonsRegistrationTest1 ${EXECUTABLE_OUTPUT_PATH}/${CLP} --help) 
+#ENDIF (WIN32)
 
 # IF (WIN32) 
 #  ADD_TEST(DemonsRegistrationTest2 ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/${CLP}  -f ${CMAKE_SOURCE_DIR}/RatLungSlice1.mha -m ${CMAKE_SOURCE_DIR}/RatLungSlice2.mha -v -s2 -g1 -i 20x20x20 )
