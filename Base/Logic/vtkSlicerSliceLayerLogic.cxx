@@ -235,16 +235,19 @@ void vtkSlicerSliceLayerLogic::SetSliceNode(vtkMRMLSliceNode *sliceNode)
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
 {
-  vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-  events->InsertNextValue(vtkCommand::ModifiedEvent);
-  vtkSetAndObserveMRMLNodeEventsMacro(this->VolumeNode, volumeNode, events );
-  events->Delete();
-
-  // Update the reslice transform to move this image into XY
-  if (this->VolumeNode)
+  if (this->VolumeNode != volumeNode)
     {
-    this->UpdateTransforms();
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+    events->InsertNextValue(vtkCommand::ModifiedEvent);
+    vtkSetAndObserveMRMLNodeEventsMacro(this->VolumeNode, volumeNode, events );
+    events->Delete();
+
+    // Update the reslice transform to move this image into XY
+    if (this->VolumeNode)
+      {
+      this->UpdateTransforms();
+      }
     }
 }
 
