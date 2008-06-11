@@ -14,6 +14,7 @@
 #include "vtkKWScale.h"
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWMessageDialog.h"
+#include "vtkKWProgressGauge.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkTumorGrowthTypeStep);
@@ -169,6 +170,7 @@ void vtkTumorGrowthTypeStep::ShowUserInterface()
       this->TypeIntensityCheckButton->SelectedStateOn();
     }
     this->TypeIntensityCheckButton->SetText("Analyze Intensity Patterns (fast)");
+    this->TypeIntensityCheckButton->SetBalloonHelpString("The tool fuses the second scan to the first. It then detects regions of growth as areas with unusual intensity patterns between the two scans.");
   }
 
   if (!this->TypeJacobianCheckButton) {
@@ -183,7 +185,8 @@ void vtkTumorGrowthTypeStep::ShowUserInterface()
     } else {
       this->TypeJacobianCheckButton->SelectedStateOff();
     }
-    this->TypeJacobianCheckButton->SetText("Analyze Deformation Map (slow) ");
+    this->TypeJacobianCheckButton->SetText("Analyze Deformation Map (slow)");
+    this->TypeJacobianCheckButton->SetBalloonHelpString("The fusion of the second to the first scan results in a deformation map. Unusual patterns in the map are flagged as region of growth.");
     // Currently not yet implemented
     this->TypeJacobianCheckButton->EnabledOn();
   }
@@ -207,7 +210,8 @@ void vtkTumorGrowthTypeStep::ShowUserInterface()
   // this->GetGUI()->GetSliceLogic()->GetSliceNode()->SetFieldOfView(250,250,1);
 
   // this->SliceLogicDefine(); 
-  this->GetGUI()->PropagateVolumeSelection(); 
+  this->GetGUI()->PropagateVolumeSelection();
+  this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(0); 
 }
 
 //----------------------------------------------------------------------------

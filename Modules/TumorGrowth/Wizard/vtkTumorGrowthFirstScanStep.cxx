@@ -12,6 +12,7 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerApplication.h" 
+#include "vtkKWProgressGauge.h"
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkTumorGrowthFirstScanStep);
 vtkCxxRevisionMacro(vtkTumorGrowthFirstScanStep, "$Revision: 1.0 $");
@@ -50,11 +51,15 @@ void vtkTumorGrowthFirstScanStep::UpdateMRML()
     char CMD[2024];
     vtkSlicerApplication *application   = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
     std::string FilePath = vtksys::SystemTools::GetParentDirectory(VolNode->GetStorageNode()->GetFileName()) + "-TG";
+
     // Check if it is a relative path !
     sprintf(CMD,"file pathtype %s",FilePath.c_str()); 
     if (strcmp(application->Script(CMD),"absolute")) {
       FilePath = vtksys::SystemTools::GetParentDirectory(VolNode->GetScene()->GetURL()) + FilePath;
     }
+
+    sprintf(CMD,"file normalize %s",FilePath.c_str()); 
+    FilePath = application->Script(CMD);
 
     sprintf(CMD,"file isdirectory %s",FilePath.c_str()); 
     if (!atoi(application->Script(CMD))) { 
@@ -157,14 +162,17 @@ void vtkTumorGrowthFirstScanStep::ShowUserInterface()
   }
   this->Script( "pack %s %s -side top -anchor nw -padx 2 -pady 2",  this->VolumeMenuButton->GetWidgetName(), this->SecondVolumeMenuButton->GetWidgetName());
 
+  this->AddGUIObservers();
+  this->UpdateGUI();
+
   {
     vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();  
     wizard_widget->BackButtonVisibilityOff();
-    wizard_widget->GetCancelButton()->EnabledOff();
+    if (!this->VolumeMenuButton->GetSelected() || !this->SecondVolumeMenuButton->GetSelected()) {
+      wizard_widget->GetCancelButton()->EnabledOff();
+    }
   }
-
-  this->AddGUIObservers();
-  this->UpdateGUI();
+  this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge()->SetValue(0);
 
   // this->TransitionCallback(0);
 }
@@ -196,6 +204,8 @@ void vtkTumorGrowthFirstScanStep::ProcessGUIEvents(vtkObject *caller, void *call
         // this->TransitionCallback(0);
         vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
         wizard_widget->GetCancelButton()->EnabledOn();
+    } else {
+      this->GetGUI()->GetWizardWidget()->GetCancelButton()->EnabledOff();
     }
 }
 
