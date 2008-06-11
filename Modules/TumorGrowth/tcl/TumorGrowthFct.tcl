@@ -508,9 +508,10 @@ namespace eval TumorGrowthTcl {
         set AnalysisFinal             [$LOGIC CreateAnalysis_Intensity_Final]
         set AnalysisROINegativeBin    [$LOGIC CreateAnalysis_Intensity_ROINegativeBin]
         set AnalysisROIPositiveBin    [$LOGIC CreateAnalysis_Intensity_ROIPositiveBin]
+        set AnalysisROIBinCombine     [$LOGIC CreateAnalysis_Intensity_ROIBinCombine]
         set AnalysisROIBinReal        [$LOGIC CreateAnalysis_Intensity_ROIBinReal]
         set AnalysisROIBinAdd         [$LOGIC CreateAnalysis_Intensity_ROIBinAdd]
-    set AnalysisROIBinDisplay     [$LOGIC CreateAnalysis_Intensity_ROIBinDisplay]
+        set AnalysisROIBinDisplay     [$LOGIC CreateAnalysis_Intensity_ROIBinDisplay]
         set AnalysisROITotal          [$LOGIC CreateAnalysis_Intensity_ROITotal]
        
 
@@ -519,7 +520,7 @@ namespace eval TumorGrowthTcl {
         # -------------------------------------
 
         set result "[Analysis_Intensity_Fct $SCAN1_ImageData $SCAN1_SegmData $SCAN2_ImageData $AnalysisSensitivity \
-                              $AnalysisFinal $AnalysisROINegativeBin $AnalysisROIPositiveBin $AnalysisROIBinReal $AnalysisROIBinAdd $AnalysisROIBinDisplay $AnalysisROITotal ]"
+                              $AnalysisFinal $AnalysisROINegativeBin $AnalysisROIPositiveBin $AnalysisROIBinCombine $AnalysisROIBinReal $AnalysisROIBinAdd $AnalysisROIBinDisplay $AnalysisROITotal ]"
 
         $LOGIC SetAnalysis_Intensity_Mean [lindex $result 0]
         $LOGIC SetAnalysis_Intensity_Variance [lindex $result 1]
@@ -527,7 +528,7 @@ namespace eval TumorGrowthTcl {
     }
 
 
-    proc Analysis_Intensity_Fct { Scan1Data Scan1Segment Scan2Data AnalysisSensitivity AnalysisFinal AnalysisROINegativeBin  AnalysisROIPositiveBin AnalysisROIBinReal  AnalysisROIBinAdd AnalysisROIBinDisplay  AnalysisROITotal } {
+    proc Analysis_Intensity_Fct { Scan1Data Scan1Segment Scan2Data AnalysisSensitivity AnalysisFinal AnalysisROINegativeBin  AnalysisROIPositiveBin AnalysisROIBinCombine AnalysisROIBinReal  AnalysisROIBinAdd AnalysisROIBinDisplay  AnalysisROITotal } {
        
        # Subtract consecutive scans from each other
        catch {TumorGrowth(FinalSubtract)  Delete } 
@@ -597,10 +598,16 @@ namespace eval TumorGrowthTcl {
        $AnalysisROIPositiveBin Update
 
        # vtkImageMathematics TumorGrowth(FinalROIBinReal) 
-         $AnalysisROIBinReal  SetInput 0 [$AnalysisROIPositiveBin GetOutput] 
-         $AnalysisROIBinReal  SetInput 1 [$AnalysisROINegativeBin GetOutput] 
-         $AnalysisROIBinReal  SetOperationToAdd 
-       $AnalysisROIBinReal Update
+         $AnalysisROIBinCombine  SetInput 0 [$AnalysisROIPositiveBin GetOutput] 
+         $AnalysisROIBinCombine  SetInput 1 [$AnalysisROINegativeBin GetOutput] 
+         $AnalysisROIBinCombine  SetOperationToAdd 
+       $AnalysisROIBinCombine Update
+
+       # Include small island removal
+         $AnalysisROIBinReal SetIslandMinSize 10
+         $AnalysisROIBinReal SetInput [$AnalysisROIBinCombine GetOutput]
+         $AnalysisROIBinReal SetNeighborhoodDim3D
+       $AnalysisROIBinReal Update 
 
        # vtkImageSumOverVoxels TumorGrowth(FinalROITotal) 
          $AnalysisROITotal  SetInput [$AnalysisROIBinReal GetOutput]
