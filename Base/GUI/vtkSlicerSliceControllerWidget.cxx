@@ -1930,7 +1930,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     steps = offset / resolution;
     newValue = min + (resolution * static_cast<int>(steps+0.5));
 
-    if ( value != newValue )
+    if ( value != newValue || event == vtkKWScale::ScaleValueChangingEvent)
       {
       this->SliceLogic->SetSliceOffset( newValue );
       modified = 1;
@@ -1943,7 +1943,6 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
     }
 
 }
-
 
 
 //---------------------------------------------------------------------------
