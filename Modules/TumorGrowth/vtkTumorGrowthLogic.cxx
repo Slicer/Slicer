@@ -17,6 +17,7 @@
 #include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkRigidRegistrator.h"
+#include "vtkKWProgressGauge.h"
 //#include "vtkSlicerApplication.h"
 
 #define ERROR_NODE_VTKID 0
@@ -57,6 +58,7 @@ vtkTumorGrowthLogic::vtkTumorGrowthLogic()
   this->Analysis_Intensity_Final          = NULL;
   this->Analysis_Intensity_ROINegativeBin = NULL;
   this->Analysis_Intensity_ROIPositiveBin = NULL;
+  this->Analysis_Intensity_ROIBinCombine  = NULL;
   this->Analysis_Intensity_ROIBinReal     = NULL;
   this->Analysis_Intensity_ROIBinAdd      = NULL;
   this->Analysis_Intensity_ROIBinDisplay  = NULL;
@@ -97,6 +99,11 @@ vtkTumorGrowthLogic::~vtkTumorGrowthLogic()
   if (this->Analysis_Intensity_ROIPositiveBin) {
     this->Analysis_Intensity_ROIPositiveBin->Delete();
     this->Analysis_Intensity_ROIPositiveBin = NULL;
+  }
+
+  if (this->Analysis_Intensity_ROIBinCombine) {
+    this->Analysis_Intensity_ROIBinCombine->Delete();
+    this->Analysis_Intensity_ROIBinCombine = NULL;
   }
 
   if (this->Analysis_Intensity_ROIBinReal) {
@@ -395,12 +402,18 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
   cout << "=== Start ANALYSIS ===" << endl;
 
   this->SourceAnalyzeTclScripts(app);
+  vtkKWProgressGauge *progressBar = app->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge();
   
   int debug =  0; 
+  double TimeLength = 0.55;
+  if (this->TumorGrowthNode->GetAnalysis_Intensity_Flag()) TimeLength += 0.25;
+  if (this->TumorGrowthNode->GetAnalysis_Deformable_Flag()) TimeLength += 0.60;
+
   if (!debug) { 
     cout << "=== 1 ===" << endl;
+    progressBar->SetValue(5.0/TimeLength);
     app->Script("::TumorGrowthTcl::Scan2ToScan1Registration_GUI Global");
-
+    progressBar->SetValue(25.0/TimeLength);
 
     //----------------------------------------------
     // Second step -> Save the outcome
@@ -412,13 +425,17 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     if (!outputNode) {return 0;} 
     this->TumorGrowthNode->SetScan2_SuperSampleRef(outputNode->GetID());
     this->SaveVolume(app,outputNode);
+    progressBar->SetValue(30.0/TimeLength);
+
 
     //----------------------------------------------
     // Kilian-Feb-08 you should first register and then normalize bc registration is not impacted by normalization 
     cout << "=== 3 ===" << endl;
     app->Script("::TumorGrowthTcl::Scan2ToScan1Registration_GUI Local"); 
+    progressBar->SetValue(50.0/TimeLength);
     cout << "=== 4 ===" << endl;
     app->Script("::TumorGrowthTcl::HistogramNormalization_GUI"); 
+    progressBar->SetValue(55.0/TimeLength);
   } else {
     cout << "DEBUGGING " << endl;
     if (!this->TumorGrowthNode->GetScan2_NormedRef() || !strcmp(this->TumorGrowthNode->GetScan2_NormedRef(),"")) { 
@@ -433,13 +450,17 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       }
     }
   }
+
   if (this->TumorGrowthNode->GetAnalysis_Intensity_Flag()) { 
     cout << "=== 5 ===" << endl;
     if (!atoi(app->Script("::TumorGrowthTcl::IntensityThresholding_GUI 1"))) return 0; 
+    progressBar->SetValue(60.0/TimeLength);
     cout << "=== 6 ===" << endl;
     if (!atoi(app->Script("::TumorGrowthTcl::IntensityThresholding_GUI 2"))) return 0; 
+    progressBar->SetValue(65.0/TimeLength);
     cout << "=== INTENSITY ANALYSIS ===" << endl;
     if (!atoi(app->Script("::TumorGrowthTcl::Analysis_Intensity_GUI"))) return 0; 
+    progressBar->SetValue(80.0/TimeLength);
   } 
   if (this->TumorGrowthNode->GetAnalysis_Deformable_Flag()) {
     if (debug) {
@@ -457,6 +478,7 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     } else {
       cout << "=== DEFORMABLE ANALYSIS ===" << endl;
       if (!atoi(app->Script("::TumorGrowthTcl::Analysis_Deformable_GUI"))) return 0; 
+      progressBar->SetValue(100);
     }
   }
   cout << "=== End ANALYSIS ===" << endl;
@@ -488,9 +510,15 @@ vtkImageThreshold* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIPositiveBin(
   return this->Analysis_Intensity_ROIPositiveBin;
 }
 
-vtkImageMathematics* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIBinReal() {
+vtkImageMathematics* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIBinCombine() {
+  if (this->Analysis_Intensity_ROIBinCombine) { this->Analysis_Intensity_ROIBinCombine->Delete(); }
+  this->Analysis_Intensity_ROIBinCombine = vtkImageMathematics::New();
+  return this->Analysis_Intensity_ROIBinCombine;
+}
+
+vtkImageIslandFilter* vtkTumorGrowthLogic::CreateAnalysis_Intensity_ROIBinReal() {
   if (this->Analysis_Intensity_ROIBinReal) { this->Analysis_Intensity_ROIBinReal->Delete(); }
-  this->Analysis_Intensity_ROIBinReal = vtkImageMathematics::New();
+  this->Analysis_Intensity_ROIBinReal = vtkImageIslandFilter::New();
   return this->Analysis_Intensity_ROIBinReal;
 }
 
