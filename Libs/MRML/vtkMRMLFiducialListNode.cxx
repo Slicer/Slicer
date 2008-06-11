@@ -584,20 +584,31 @@ vtkMRMLFiducial* vtkMRMLFiducialListNode::GetNthFiducial(int n)
 //----------------------------------------------------------------------------
 int vtkMRMLFiducialListNode::SetNthFiducialXYZ(int n, float x, float y, float z)
 {
-    vtkMRMLFiducial *node = this->GetNthFiducial(n);
-    if (node == NULL)
+  vtkMRMLFiducial *node = this->GetNthFiducial(n);
+  if (node == NULL)
     {
-        vtkErrorMacro("Unable to get fiducial number " << n);
-        return 1;
+    vtkErrorMacro("Unable to get fiducial number " << n);
+    return 1;
     }
+
+  float *oldXYZ = node->GetXYZ();
+  // only set and call modified if it's different
+  if (oldXYZ == NULL ||
+      (oldXYZ != NULL &&
+       (oldXYZ[0] != x ||
+        oldXYZ[1] != y ||
+        oldXYZ[2] != z)))
+    {
     node->SetXYZ(x,y,z);
     
     // the list contents have been modified
-    node = NULL;
     if (!this->GetDisableModifiedEvent())
       {
-      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+      std::string pointIDStr = node->GetID();
+      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
+    }
+    node = NULL;
     return 0;
 }
 
@@ -627,12 +638,13 @@ int vtkMRMLFiducialListNode::SetNthFiducialOrientation(int n, float w, float x, 
         return 1;
     }
     node->SetOrientationWXYZ(w, x, y, z);
-    node = NULL;
     if (!this->GetDisableModifiedEvent())
       {
       // the list contents have been modified
-      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+      std::string pointIDStr = node->GetID();
+      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
+    node = NULL;
     return 0;
 }
 
@@ -662,12 +674,13 @@ int vtkMRMLFiducialListNode::SetNthFiducialLabelText(int n, const char *text)
         return 1;
     }
     node->SetLabelText(text);
-    node = NULL;
     if (!this->GetDisableModifiedEvent())
       {
       // the list contents have been modified
-      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+      std::string pointIDStr = node->GetID();
+      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
+    node = NULL;
     return 0;
 }
 
@@ -697,12 +710,13 @@ int vtkMRMLFiducialListNode::SetNthFiducialSelected(int n, int flag)
         return 1;
     }
     node->SetSelected((flag == 0 ? false : true));
-    node = NULL;
     if (!this->GetDisableModifiedEvent())
       {
       // the list contents have been modified
-      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+      std::string pointIDStr = node->GetID();
+      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
+    node = NULL;
     return 0;
 }
 
@@ -764,12 +778,13 @@ int vtkMRMLFiducialListNode::SetNthFiducialVisibility(int n, int flag)
       return 1;
       }
     node->SetVisibility((flag == 0 ? false : true));
-    node = NULL;
     if (!this->GetDisableModifiedEvent())
       {
       // the list contents have been modified
-      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+      std::string pointIDStr = node->GetID();
+      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
+    node = NULL;
     return 0;
 }
 
@@ -831,12 +846,13 @@ int vtkMRMLFiducialListNode::SetNthFiducialID(int n, const char *id)
         return 1;
     }
     node->SetID(id);
-    node = NULL;
     if (!this->GetDisableModifiedEvent())
       {
       // the list contents have been modified
-      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
+      std::string pointIDStr = node->GetID();
+      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
+    node = NULL;
     return 0;
 }
 
@@ -970,22 +986,28 @@ void vtkMRMLFiducialListNode::AddFiducial(vtkMRMLFiducial *o)
 //----------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::RemoveFiducial(vtkMRMLFiducial *o)
 {
+  char *pointID = NULL;
+  std::string pointIDStr;
     if (o != NULL)
-    {
-        vtkDebugMacro("vtkMRMLFiducialListNode::RemoveFiducial: removing fiducial " << o->GetLabelText());
-    }
+      {
+      vtkDebugMacro("RemoveFiducial: list " << this->GetID() << ", removing fiducial id " << o->GetID() << ", label = " << o->GetLabelText());
+      pointIDStr = o->GetID();
+      }
     this->FiducialList->vtkCollection::RemoveItem(o);
     // let interested observers know that a fiducial was removed
-    this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, NULL);
+    this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, (void*)&pointIDStr);
     this->Modified();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::RemoveFiducial(int i)
 {
-    this->FiducialList->vtkCollection::RemoveItem(i);
-    this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, NULL);
-    this->Modified();
+  vtkMRMLFiducial *node = this->GetNthFiducial(i);
+  std::string pointIDStr = node->GetID();
+  this->FiducialList->vtkCollection::RemoveItem(i);
+  this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, (void*)&pointIDStr);
+  node = NULL;
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -997,15 +1019,17 @@ void vtkMRMLFiducialListNode::RemoveAllFiducials()
       // as remove them from the end of the list, the size of the list
       // will shrink as the iterator f reduces
       vtkMRMLFiducial *fid = vtkMRMLFiducial::SafeDownCast(this->FiducialList->vtkCollection::GetItemAsObject(f));
+      std::string pointIDStr = fid->GetID();
       this->FiducialList->vtkCollection::RemoveItem(f);
+      // need to throw a node removed event since the fiducial list widget is
+      // watching for them for each point
+      this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, (void*)&pointIDStr);
       if (fid != NULL)
         {
         //fid->Delete();
         fid = NULL;
         }
       }
-    // speed things up a bit by only giving the node removed event once done
-    this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, NULL);
     this->Modified();
 }
 
@@ -1300,4 +1324,34 @@ void vtkMRMLFiducialListNode::ApplyTransform(vtkAbstractTransform* transform)
     orientationOut[3] = orientationNormalOut[2];
     node->SetOrientationWXYZ(orientationOut);
     }
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::SetFiducialXYZ(std::string fiducialID, float x, float y, float z)
+{
+  // find the index that corresponds to this id
+  int n = this->GetFiducialIndex(fiducialID);
+  
+  if (n != -1)
+    {
+    vtkDebugMacro("SetFiducialXYZ: found id " << fiducialID.c_str() << " at index " << n << ", setting xyz");
+    return this->SetNthFiducialXYZ(n, x, y, z);
+    }
+  vtkErrorMacro("SetFiducialXYZ: unable to find a fiducial who's id matches " << fiducialID.c_str());
+  return 1;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLFiducialListNode::GetFiducialIndex(std::string fiducialID)
+{
+  int numPoints = this->GetNumberOfFiducials();
+  for (int n=0; n<numPoints; n++)
+    {
+    const char *thisID = this->GetNthFiducialID(n);
+    if (fiducialID.compare(thisID) == 0)
+      {
+      return n;
+      }
+    }
+  return -1;
 }

@@ -119,6 +119,18 @@ public:
   int SetNthFiducialID(int n, const char *id);
 
   // Description:
+  // Restrict access to the fiducial points, access the fiducial by id (used
+  // by the vtkSlicerFiducialListWidget). Returns 0 on success.
+  //BTX
+  int SetFiducialXYZ(std::string fiducialID, float x, float y, float z);
+  // Description:
+  // Look through the list of fiducials for fiducialID and return the current
+  // zero based index. Useful when delete fiducials from the list, as the
+  // index will change. Returns -1 if none found.
+  int GetFiducialIndex(std::string fiducialID);
+  //ETX
+  
+  // Description:
   // Set all fiducials selected state to flag
   int SetAllFiducialsSelected(int flag);
 

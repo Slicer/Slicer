@@ -118,6 +118,17 @@ public:
   vtkGetObjectMacro(InteractorStyle, vtkSlicerViewerInteractorStyle);
   virtual void SetInteractorStyle(vtkSlicerViewerInteractorStyle *interactorStyle);
 
+  // Description:
+  // Remove all the point widgets from the scene and memory
+  void RemovePointWidgets();
+
+  // Description:
+  // Remove the point widget associated with this id
+  void RemovePointWidget(const char *pointID);
+  
+  // Description:
+  // Remove all the point widgets for this list
+  void RemovePointWidgetsForList(vtkMRMLFiducialListNode *flist);
 protected:
   vtkSlicerFiducialListWidget();
   virtual ~vtkSlicerFiducialListWidget();
@@ -128,11 +139,18 @@ protected:
 
   // Description:
   // Update the properties of the text actor
+  // if have a text actor already in DisplayedTextFiducials
+  //   point the vector text output to the actor's mappers input
+  // else
+  //   create a new text mapper and actor, add to the main viewer and the DisplayedTextFiducials
+  // set the text
+  // set the dispaly properties on the text actor, calling SetFiducialDisplayProperty
+  // clean up vars allocated
   void UpdateTextActor(vtkMRMLFiducialListNode *flist, int f);
   
   // Description:
   // Update the properties of the point widget
-  void UpdatePointWidget(vtkMRMLFiducialListNode *flist, int f);
+  void UpdatePointWidget(vtkMRMLFiducialListNode *flist, const char *fidID); // int f);
 
   // Description:
   // Remove fiducial properties from the main viewer
@@ -145,21 +163,99 @@ protected:
 
   // Description:
   // Goes through the MRML scene and adds observers to fiducial lists, then
-  // updates the display properties from the mrml node
+  // updates the display properties from the mrml nodes. For each fiducial
+  // list node:
+  // Check if the current symbol is 2d or 3d
+  // if 3d:
+  //   if don't have the entries in the maps for this list
+  //     call AddList
+  //   else
+  //     check if need to add/remove stuff for a new # of points, resize the GlyphScalarsMap and GlyphPointsMap
+  //   set up the list level items:
+  //     set symbol type, colours, symbol scale
+  //   set up the per point items:
+  //     if we already have a glyph for this point?
+  //       if we already have an actor for this point
+  //         set the output of the glyph to the actor's mapper
+  //       else
+  //         create the actor, set it's mapper tothe list's, add it to the
+  //         main viewer and the list of points
+  //     get the transform to be applied to each point
+  //     for each point in the list
+  //       transform the fiducial xyz to world xyz
+  //       set the GlyphPointsMap point for this fiducial to the world xyz
+  //       set the GlyphScalarsMap tuple for this fiducial to 1 if selected, 0 if not
+  //       call UpdateTextActor for this point
+  //     update the GlyphPolyDataMap for this list with the new glyph points and scalars
+  //     update the symbol actor (skipping using the xyz, visib, as that's in for loop just above)
+  // else: (2d glyphs)
+  //   for each fiducial in the list
+  //     if we have an actor for this point
+  //       get it's mapper's output and set it as the glyph2d's output
+  //     else
+  //       make a new mapper, actor, add to viewer and the DisplayedFiducials vector
+  //     set the glyph2d type
+  //     set the glyph2d colour by selected state
+  //     update the text actor for the point
+  //     update the actor for this point
+  //     clean up
+  // point widgets: for each fiducial in the list
+  //   Get the fiducial position
+  //   if we don't already have a point widget for this point
+  //     disable modified on the fid list
+  //     make a new point widget
+  //     resize the interactor - to deal with a vtk bug
+  //     set up the point widget callback
+  //     place the point widget (sets bounds)
+  //     position the point widget
+  //     set the interactor
+  //     add observers to use my call back
+  //     Add it to the DisplayedPointWidgets
+  //  Update the point widget (sets visibility, position, enabled)
   void UpdateFiducialsFromMRML();
-
+  
   // Description:
-  // Sets actor properties for this list, position, scale, transforms, colour
+  // Sets actor properties for this point: transforms, position and scale and
+  // sel/unsel colour (if not a 3d glyph), visibility, material properties
   void SetFiducialDisplayProperty(vtkMRMLFiducialListNode *flist, int n,
                                   vtkActor *actor, vtkFollower *textActor);
 
   // Description:
-  // set up all the data structures needed to display glyphs for this list
+  // set up all the data structures needed to display glyphs for this list,
+  // and add them to the maps that have one entry per list, indexed by
+  // fiducial list id:
+  // glyphPoints to hold the RAS coordinates of each fiducial in the list,
+  // added to GlyphPointsMap
+  // glyphScalars to hold a 1/0 for each fiducial that says if it's selected
+  // or not, added to the GlyphScalarsMap
+  // glyphPolyData, whose points are glyphPoints, and point data is 
+  // glyphScalars, added to the GlyphPolyDataMap
+  // textTransform, a scale factor for the text, added to TextTransformMap
+  // symbolTransform, a scale factor for the symbol, added to
+  // SymbolTransformMap
+  // transformFilter, who's input is set to one of the 3d shapes,
+  // DiamondGlyphPolyData or SphereSource, and it's scaling is taken from
+  // the symbolTransform. Added to the TransformFilterMap
+  // glyph3D, who's source is the output of the transformFilter, it's input is
+  // the glyphPolyData, added to Glyph3DMap
+  // mapper, who's input is the output of the glyph3D, and who has two entries
+  // in it's look up table for the selected and unselected colours, added
+  // to the GlyphMapperMap
   void AddList(vtkMRMLFiducialListNode *flist);
   
   // Description:
-  // clear up all the data structures used to display glyphs for this list
+  // clear up all the data structures used to display glyphs for this list,
+  // removes the observers on the list
+  // calls RemoveFiducial for each point on the list, then clears the
+  // Displayed* structures out.
+  // deletes this lists entries in the DiamondTransformMap, GlyphPointsMap,
+  // GlyphScalarsMap, GlyphPolyDataMap, TextTransformMap, SymbolTransformMap,
+  // TransformFilterMap, Glyph3DMap, GlyphMapperMap
   void RemoveList(vtkMRMLFiducialListNode * flist);
+
+  // Description:
+  // For this fiducial, remove it's entries in the DisplayedFiducials,
+  // DisplayedTextFiducials, DisplayedPointWidgets vectors.
   void RemoveFiducial(const char *id);
 
   // Description:
