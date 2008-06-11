@@ -73,7 +73,7 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteData(vtkDataObject *ou
 #define vtkITKExecuteDataFromSeriesVector(typeN, type) \
     case typeN: \
     {\
-      typedef itk::Vector<type, 3>    VectorPixelType;\
+      typedef type    VectorPixelType;\
       typedef itk::VectorImage<VectorPixelType,3> image##typeN;\
       typedef itk::ImageSource<image##typeN> FilterType; \
       FilterType::Pointer filter; \
