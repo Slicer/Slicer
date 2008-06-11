@@ -26,8 +26,8 @@ vtkCxxRevisionMacro(vtkTumorGrowthROIStep, "$Revision: 1.2 $");
 //----------------------------------------------------------------------------
 vtkTumorGrowthROIStep::vtkTumorGrowthROIStep()
 {
-  this->SetName("2/4. Define Region of Interest"); 
-  this->SetDescription("Define ROI by clicking left mouse button\n around the tumor or moving sliders"); 
+  this->SetName("2/4. Define Volume of Interest"); 
+  this->SetDescription("Define VOI by clicking left mouse button\n around the tumor or moving sliders"); 
   this->WizardGUICallbackCommand->SetCallback(vtkTumorGrowthROIStep::WizardGUICallback);
 
   this->FrameButtons    = NULL;
@@ -218,7 +218,7 @@ void vtkTumorGrowthROIStep::ShowUserInterface()
     this->ButtonsShow->SetParent(this->FrameButtons);
     this->ButtonsShow->Create();
     this->ButtonsShow->SetWidth(TUMORGROWTH_MENU_BUTTON_WIDTH);
-    this->ButtonsShow->SetText("Show ROI");
+    this->ButtonsShow->SetText("Show VOI");
     this->ButtonsShow->SetBalloonHelpString("Show/hide ROI in image viewer"); 
   }
 
@@ -557,7 +557,7 @@ int vtkTumorGrowthROIStep::ROIMapShow() {
   // -----
   // Initialize
   if (!this->ROICheck()) {
-    vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),"Tumor Growth", "Please define ROI correctly before pressing button", vtkKWMessageDialog::ErrorIcon);
+    vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),"Tumor Growth", "Please define VOI correctly before pressing button", vtkKWMessageDialog::ErrorIcon);
     return 0;
   }
 
@@ -607,13 +607,13 @@ int vtkTumorGrowthROIStep::ROIMapShow() {
   oldSliceSetting[1] = double(applicationGUI->GetMainSliceGUI1()->GetSliceController()->GetOffsetScale()->GetValue());
   oldSliceSetting[2] = double(applicationGUI->GetMainSliceGUI2()->GetSliceController()->GetOffsetScale()->GetValue());
 
-  applicationGUI->GetMainSliceGUI0()->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
+  //applicationGUI->GetMainSliceGUI0()->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
   applicationGUI->GetMainSliceGUI0()->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
 
-  applicationGUI->GetMainSliceGUI1()->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
+  //applicationGUI->GetMainSliceGUI1()->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
   applicationGUI->GetMainSliceGUI1()->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
 
-  applicationGUI->GetMainSliceGUI2()->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
+  //applicationGUI->GetMainSliceGUI2()->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
   applicationGUI->GetMainSliceGUI2()->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
 
   applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue(0.6);
@@ -643,7 +643,7 @@ void vtkTumorGrowthROIStep::ROIMapRemove() {
 
   // Needs to be done otherwise when going backwards field is not correctly defined   
   if (this->ButtonsShow && this->ButtonsShow->IsCreated())  {
-    this->ButtonsShow->SetText("Show ROI");
+    this->ButtonsShow->SetText("Show VOI");
   }
 }
 
@@ -710,7 +710,7 @@ void vtkTumorGrowthROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long ev
     if (this->ButtonsShow && (button == this->ButtonsShow)) 
     { 
       if (this->ROILabelMapNode) {
-        this->ButtonsShow->SetText("Show ROI");
+        this->ButtonsShow->SetText("Show VOI");
         this->ROIMapRemove();
       } else { 
         if (this->ROIMapShow()) { 
