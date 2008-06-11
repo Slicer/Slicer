@@ -133,9 +133,13 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLVolumeGlyph
   // Gets ImageData converted from the real data in the node
   virtual vtkImageData* GetImageData() 
     {
-    this->UpdateImageDataPipeline();
-    this->AppendComponents->Update();
-    return this->AppendComponents->GetOutput();
+    if ( this->RGBToHSI->GetInput() != NULL )
+      {
+      this->UpdateImageDataPipeline();
+      this->AppendComponents->Update();
+      return this->AppendComponents->GetOutput();
+      }
+    return NULL;
     };
 
   virtual void UpdateImageDataPipeline();
