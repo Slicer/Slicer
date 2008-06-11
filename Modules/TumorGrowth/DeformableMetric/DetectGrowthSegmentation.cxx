@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
   FILE* fp = fopen( argv[3],"a" );
   /*fprintf( fp, "%lf\t %lf\t %lf\t %lf\t %lf\t %lf\n", perGrowth, perSumGrowth, 
     perThGrowth, perThGrowth2, (sumVox2 - sumVox1)*spacing[0]*spacing[1]*spacing[2],(numVox2 - numVox1)*spacing[0]*spacing[1]*spacing[2]);*/
-  fprintf( fp, "%f\t%f\n",(sumVox2 - sumVox1)*spacing[0]*spacing[1]*spacing[2], (sumVox2 - sumVox1)  );
+  fprintf( fp, "%f  %f\n",(sumVox2 - sumVox1)*spacing[0]*spacing[1]*spacing[2], (sumVox2 - sumVox1)  );
   fclose(fp);
 
   return(0);

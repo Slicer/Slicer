@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
   std::cout << "Growth in # of voxels: " << (jacDetSum - numVox) << std::endl;
   
   FILE* fp = fopen( argv[3],"a" );
-  fprintf( fp, "%lf\t %lf\n", (jacDetSum - numVox)*spacing[0]*spacing[1]*spacing[2],
+  fprintf( fp, "%lf  %lf\n", (jacDetSum - numVox)*spacing[0]*spacing[1]*spacing[2],
        (jacDetSum - numVox) );
   fclose(fp);
 
