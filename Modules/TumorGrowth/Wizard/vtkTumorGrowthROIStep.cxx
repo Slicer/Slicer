@@ -167,7 +167,7 @@ void vtkTumorGrowthROIStep::ShowUserInterface()
   // Create the frame
   // Needs to be check bc otherwise with wizrd can be created over again
 
-  this->Frame->SetLabelText("Define ROI");
+  this->Frame->SetLabelText("Define VOI");
   this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 2", this->Frame->GetWidgetName());
 
   if (!this->FrameButtons)
