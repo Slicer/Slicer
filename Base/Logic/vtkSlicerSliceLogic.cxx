@@ -860,7 +860,6 @@ void vtkSlicerSliceLogic::DeleteSliceModel()
 {
   if (this->SliceModelNode != NULL)
     {
-    this->MRMLScene->RemoveNode(this->SliceModelNode);
     this->SliceModelNode->SetAndObserveDisplayNodeID(NULL);
     this->SliceModelNode->SetAndObservePolyData(NULL);
     this->SliceModelNode->Delete();
@@ -868,14 +867,12 @@ void vtkSlicerSliceLogic::DeleteSliceModel()
     }
   if (this->SliceModelDisplayNode != NULL)
     {
-    this->MRMLScene->RemoveNode(this->SliceModelDisplayNode);
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(NULL);
     this->SliceModelDisplayNode->Delete();
     this->SliceModelDisplayNode = NULL;
     }
   if (this->SliceModelTransformNode != NULL)
     {
-    this->MRMLScene->RemoveNode(this->SliceModelTransformNode);
     this->SliceModelTransformNode->Delete();
     this->SliceModelTransformNode = NULL;
     }
