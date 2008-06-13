@@ -157,7 +157,13 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkErrorMacro("vtkMRMLFreeSurferModelStorageNode::ReadData: Reference node is null.");
     return 0;
     }
-  
+    
+  // do not read if if we are not in the scene (for example inside snapshot)
+  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
+    {
+    return 1;
+    }
+
   if (!refNode->IsA("vtkMRMLModelNode") ) 
     {
     vtkErrorMacro("Reference node is not a vtkMRMLModelNode");

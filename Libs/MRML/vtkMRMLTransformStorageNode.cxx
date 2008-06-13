@@ -121,6 +121,12 @@ void vtkMRMLTransformStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 //----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
 {
+  // do not read if if we are not in the scene (for example inside snapshot)
+  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
+    {
+    return 1;
+    }
+
   if (!refNode->IsA("vtkMRMLTransformNode") ) 
     {
     //vtkErrorMacro("Reference node is not a vtkMRMLTransformNode");

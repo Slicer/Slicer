@@ -330,6 +330,11 @@ void vtkMRMLVolumeHeaderlessStorageNode::ProcessParentNode(vtkMRMLNode *parentNo
 
 int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
 {
+  // do not read if if we are not in the scene (for example inside snapshot)
+  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
+    {
+    return 1;
+    }
 
   // test whether refNode is a valid node to hold a volume
   if ( !(refNode->IsA("vtkMRMLScalarVolumeNode")) || refNode->IsA("vtkMRMLVectorVolumeNode" ) )

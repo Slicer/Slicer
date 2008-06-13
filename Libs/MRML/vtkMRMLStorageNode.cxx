@@ -177,7 +177,13 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
     vtkDebugMacro("StageReadData: input mrml node is null, returning.");
     return;
     }
-  
+    
+  // do not read if if we are not in the scene (for example inside snapshot)
+  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
+    {
+    return;
+    }
+ 
   vtkCacheManager *cacheManager = this->Scene->GetCacheManager();
   const char *fname = NULL;
   if ( cacheManager != NULL )

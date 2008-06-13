@@ -113,6 +113,12 @@ void vtkMRMLColorTableStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
 //----------------------------------------------------------------------------
 int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
 {
+  // do not read if if we are not in the scene (for example inside snapshot)
+  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
+    {
+    return 1;
+    }
+
   vtkDebugMacro("Reading ColorTable data");
   // test whether refNode is a valid node to hold a color table
   if ( !( refNode->IsA("vtkMRMLColorTableNode"))
