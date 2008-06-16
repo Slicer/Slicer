@@ -102,6 +102,7 @@ vtkCommandLineModuleLogic::vtkCommandLineModuleLogic()
 {
   this->CommandLineModuleNode = NULL;
   this->DeleteTemporaryFiles = 1;
+  this->RedirectModuleStreams = 1;
 }
 
 //----------------------------------------------------------------------------
@@ -1404,9 +1405,12 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     std::streambuf* origcerrrdbuf = std::cerr.rdbuf();
     try
       {
-      // redirect the streams
-      std::cout.rdbuf( coutstringstream.rdbuf() );
-      std::cerr.rdbuf( cerrstringstream.rdbuf() );
+      if (this->RedirectModuleStreams)
+        {
+        // redirect the streams
+        std::cout.rdbuf( coutstringstream.rdbuf() );
+        std::cerr.rdbuf( cerrstringstream.rdbuf() );
+        }
 
       // run the module
       if ( entryPoint != NULL ) {
@@ -1429,10 +1433,12 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         vtkErrorMacro( << (tmp + cerrstringstream.str()).c_str() );
         }
 
-      // reset the streams
-      std::cout.rdbuf( origcoutrdbuf );
-      std::cerr.rdbuf( origcerrrdbuf );
-
+      if (this->RedirectModuleStreams)
+        {
+        // reset the streams
+        std::cout.rdbuf( origcoutrdbuf );
+        std::cerr.rdbuf( origcerrrdbuf );
+        }
       }
     catch (itk::ExceptionObject& exc)
       {

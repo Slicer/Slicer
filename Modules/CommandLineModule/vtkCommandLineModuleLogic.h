@@ -44,6 +44,11 @@ public:
   vtkBooleanMacro (DeleteTemporaryFiles, int);
   vtkSetMacro (DeleteTemporaryFiles, int);
   vtkGetMacro (DeleteTemporaryFiles, int);
+
+  // Description: For debugging, control redirection of cout and cerr
+  vtkBooleanMacro (RedirectModuleStreams, int);
+  vtkSetMacro (RedirectModuleStreams, int);
+  vtkGetMacro (RedirectModuleStreams, int);
   
   // The method that schedules the command line module to run
   void Apply();
@@ -81,6 +86,8 @@ private:
   void operator=(const vtkCommandLineModuleLogic&);
 
   int DeleteTemporaryFiles;
+
+  int RedirectModuleStreams;
 
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
 //BTX

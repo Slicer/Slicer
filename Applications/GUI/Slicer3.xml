@@ -38,6 +38,14 @@
       </boolean>
 
       <boolean>
+      <name>NoModuleStreamsRedirect</name>
+      <longflag>--no_module_stream_redirect</longflag>
+      <description>For debugging: disables stream redirection for Command Line Modules</description>
+      <default>false</default>
+      <label>Command Line Module stream redirection On/Off</label>
+      </boolean>
+
+      <boolean>
       <name>NoModules</name>
       <longflag>--no_modules</longflag>
       <description>Disables the loading of Command Line Modules</description>

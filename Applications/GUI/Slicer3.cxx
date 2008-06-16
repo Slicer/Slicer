@@ -1472,6 +1472,12 @@ int Slicer3_main(int argc, char *argv[])
       vtkCommandLineModuleLogic *commandLineModuleLogic
         = vtkCommandLineModuleLogic::New ( );
       
+      // set up stream redirection
+      if (NoModuleStreamsRedirect)
+        {
+        commandLineModuleLogic->RedirectModuleStreamsOff();
+        }
+
       // Set the ModuleDescripton on the gui
       commandLineModuleGUI
         ->SetModuleDescription( moduleFactory.GetModuleDescription(*mit) );
