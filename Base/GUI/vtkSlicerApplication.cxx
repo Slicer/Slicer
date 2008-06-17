@@ -20,6 +20,7 @@
 #include "vtkSlicerBaseGUIWin32Header.h"
 #include "vtkKWRegistryHelper.h"
 #include "vtkSlicerGUILayout.h"
+#include "vtkMRMLLayoutNode.h"
 #include "vtkSlicerGUICollection.h"
 #include "vtkSlicerTheme.h"
 #include "vtkSlicerFont.h"
@@ -214,14 +215,14 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->LoadModules = 1;
     this->EnableDaemon = 0;
    
-    this->MainLayout = vtkSlicerGUILayout::New ( );
+    this->DefaultGeometry = vtkSlicerGUILayout::New ( );
     // defaults
     strcpy (this->ApplicationFontSize, "small" );
     strcpy ( this->ApplicationFontFamily, "Arial" );
     this->ApplicationWindowWidth = 0;
     this->ApplicationWindowHeight = 0;
-    this->ApplicationLayoutType = vtkSlicerGUILayout::SlicerLayoutDefaultView;
-    this->ApplicationSlicesFrameHeight = this->MainLayout->GetDefaultSliceGUIFrameHeight();
+    this->ApplicationLayoutType = vtkMRMLLayoutNode::SlicerLayoutConventionalView;
+    this->ApplicationSlicesFrameHeight = this->DefaultGeometry->GetDefaultSliceGUIFrameHeight();
 
     // Remote data handling settings
     strcpy ( this->RemoteCacheDirectory, "");
@@ -243,7 +244,7 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
     this->RestoreApplicationSettingsFromRegistry ( );
     
     // FOR NOW!
-//    this->ApplicationLayoutType = vtkSlicerGUILayout::SlicerLayoutDefaultView;
+//    this->ApplicationLayoutType = vtkMRMLLayoutNode::SlicerLayoutConventionalView;
 
 
     this->SetHelpDialogStartingPage ( "http://www.slicer.org" );
@@ -304,10 +305,10 @@ vtkSlicerApplication::vtkSlicerApplication ( ) {
 //---------------------------------------------------------------------------
 vtkSlicerApplication::~vtkSlicerApplication ( ) {
 
-    if ( this->MainLayout )
+    if ( this->DefaultGeometry )
       {
-      this->MainLayout->Delete ( );
-      this->MainLayout = NULL;
+      this->DefaultGeometry->Delete ( );
+      this->DefaultGeometry = NULL;
       }
     if ( this->SlicerTheme )
       {
@@ -801,9 +802,9 @@ void vtkSlicerApplication::SaveApplicationWindowConfiguration()
       this->SetApplicationWindowWidth (this->ApplicationGUI->GetMainSlicerWindow()->GetWidth());
       this->SetApplicationWindowHeight (this->ApplicationGUI->GetMainSlicerWindow()->GetHeight());
       this->SetApplicationSlicesFrameHeight ( this->ApplicationGUI->GetMainSlicerWindow()->GetSecondarySplitFrame()->GetFrame1Size() );
-      if ( this->MainLayout)
+      if ( this->ApplicationGUI->GetGUILayoutNode() )
         {
-        this->SetApplicationLayoutType ( this->MainLayout->GetCurrentViewArrangement() );
+        this->SetApplicationLayoutType ( this->ApplicationGUI->GetGUILayoutNode()->GetViewArrangement() );
         }
       }
     }

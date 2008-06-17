@@ -81,7 +81,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     // Description:
     // Add/Remove observers on widgets in the GUI
     virtual void AddGUIObservers ( );
+    virtual void AddMRMLObservers ( );
     virtual void RemoveGUIObservers ( );
+    virtual void RemoveMRMLObservers ( );
 
     // Description:
     // Class's mediator methods for processing events invoked by
@@ -89,6 +91,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     virtual void ProcessLogicEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessGUIEvents ( vtkObject *caller, unsigned long event, void *callData );
     virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+    
+    // Description:
+    // Updates the pulldown menu of layouts.
+    virtual void UpdateLayoutMenu();
     
     // Description:
     // Describe the behavior at module enter and exit.
@@ -103,7 +109,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     virtual int StopViewRockOrSpin ( );
     virtual void ResumeViewRockOrSpin ( int mode );
     virtual void SetLayoutMenubuttonValueToCurrentLayout ();
-    const char* GetCurrentLayoutStringName ( );
+    virtual void SetLayoutMenubuttonValueToLayout (int layout);
     virtual void ReconfigureGUIFonts ( );
   
     // Description:
@@ -117,7 +123,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     {
     vtkSetAndObserveMRMLNodeMacro(this->InteractionNode, node);
     }
-    
+
  protected:
     vtkSlicerToolbarGUI ( );
     virtual ~vtkSlicerToolbarGUI ( );
@@ -164,6 +170,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     // interation mode
     char *InteractionNodeID;
     vtkMRMLInteractionNode *InteractionNode;
+    int ProcessingMRMLEvent;
     
  private:
     vtkSlicerToolbarGUI ( const vtkSlicerToolbarGUI& ); // Not implemented.

@@ -28,28 +28,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     
     vtkGetObjectMacro ( MainSlicerWindow, vtkKWWindow );
     vtkSetObjectMacro ( MainSlicerWindow, vtkKWWindow );
-    vtkGetMacro (CurrentViewArrangement, int );
-    vtkSetMacro (CurrentViewArrangement, int );
-
-    // Description:
-    // Main Slicer Window layout types
-
-    //BTX
-    enum
-        {
-            SlicerLayoutInitialView = 0,
-            SlicerLayoutDefaultView,
-            SlicerLayoutFourUpView,
-            SlicerLayoutOneUp3DView,
-            SlicerLayoutOneUpSliceView,
-            SlicerLayoutOneUpRedSliceView,
-            SlicerLayoutOneUpYellowSliceView,
-            SlicerLayoutOneUpGreenSliceView,
-            SlicerLayoutTabbed3DView,
-            SlicerLayoutTabbedSliceView,
-            SlicerLayoutLightboxView
-        };
-    //ETX
     
    // Description:
     // Get/Set Macros for protected vtkSlicerApplicationGUI dimensions
@@ -111,7 +89,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerGUILayout : public vtkKWObject
     // Pointer to Slicer's 3Dviewer and
     // Three main Slice viewers.
     vtkKWWindow *MainSlicerWindow;
-    int CurrentViewArrangement;
     
     // Description:
     // Dimensions for the Default Window & components

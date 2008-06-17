@@ -100,6 +100,12 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   vtkSetReferenceStringMacro ( ActiveViewID );
   void SetReferenceActiveViewID (char *id) { this->SetActiveViewID(id); };
   
+  // Description
+  // the ID of a MRMLLayoutNode
+  vtkGetStringMacro (ActiveLayoutID );
+  vtkSetReferenceStringMacro ( ActiveLayoutID );
+  void SetReferenceActiveLayoutID (char *id) { this->SetActiveLayoutID(id); };
+
 protected:
   vtkMRMLSelectionNode();
   ~vtkMRMLSelectionNode();
@@ -112,6 +118,8 @@ protected:
   char *ActiveROIListID;
   char *ActiveCameraID;
   char *ActiveViewID;
+  char *ActiveLayoutID;
+  
 };
 
 #endif

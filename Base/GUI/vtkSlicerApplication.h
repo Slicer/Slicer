@@ -48,7 +48,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
 
     // Description:
     // Get the layout, theme, GUI collection and main application GUI 
-    vtkGetObjectMacro ( MainLayout, vtkSlicerGUILayout );
+    vtkGetObjectMacro ( DefaultGeometry, vtkSlicerGUILayout );
     vtkGetObjectMacro ( SlicerTheme, vtkSlicerTheme );
     vtkGetObjectMacro ( ModuleGUICollection, vtkSlicerGUICollection );
     vtkGetObjectMacro ( ApplicationGUI, vtkSlicerApplicationGUI );
@@ -335,13 +335,15 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplication : public vtkKWApplication
   vtkSlicerApplication ( );
   virtual ~vtkSlicerApplication ( );
 
-  vtkSlicerGUILayout *MainLayout;
+  // Description:
+  // Contains the default geometry of the ApplicationGUI
+  vtkSlicerGUILayout *DefaultGeometry;
+  // Description:
+  // Contains the description for Slicer GUI's look and feel
   vtkSlicerTheme *SlicerTheme;
-  
   // Description:
   // The main application GUI.
   vtkSlicerApplicationGUI *ApplicationGUI;
-  
   // Description:
   // Collections of GUIs
   vtkSlicerGUICollection *ModuleGUICollection;

@@ -46,6 +46,7 @@
 
 #include "vtkCacheManager.h"
 #include "vtkDataIOManager.h"
+#include "vtkMRMLLayoutNode.h"
 
 class vtkObject;
 class vtkLogoWidget;
@@ -83,6 +84,20 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // The main 3D Viewer Widget
     vtkGetObjectMacro (ViewerWidget, vtkSlicerViewerWidget);
 
+    // Description:
+    // Get/Set the layout node
+    vtkMRMLLayoutNode *GetGUILayoutNode ( );
+    void SetAndObserveGUILayoutNode ( vtkMRMLLayoutNode *node )
+        {
+        vtkSetAndObserveMRMLNodeMacro ( this->GUILayoutNode, node);
+        }
+    const char* GetCurrentLayoutStringName ( );
+
+    vtkGetMacro (Built, bool);
+    vtkSetMacro (Built, bool);
+    vtkGetMacro (CurrentLayout, int);
+    vtkSetMacro (CurrentLayout, int);
+    
     // Description:
     // The Fiducial List Widget
     vtkGetObjectMacro (FiducialListWidget, vtkSlicerFiducialListWidget);
@@ -166,6 +181,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void ProcessAddVolumeCommand();
     void ProcessSaveSceneAsCommand();
     void ProcessCloseSceneCommand();
+    void UpdateLayout();
     
     // Description:
     // Methods describe behavior on startup and exit.
@@ -232,6 +248,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void UpdateFontSizeMenu();
     virtual void UpdateFontFamilyMenu();
 
+    
     // Description:
     // Methods invoked by making selections from Help menu
     // on the menu bar; give access to Slicer tutorials,
@@ -314,6 +331,10 @@ protected:
     // Fiducial List Widget
     vtkSlicerFiducialListWidget *FiducialListWidget;
     
+  // Description:
+  // Contains the state of the ApplicationGUI's layout
+  vtkMRMLLayoutNode *GUILayoutNode;
+
     // Description:
     // Main 3 Slice Viewers
     vtkSlicerSliceGUI *MainSliceGUI0;
@@ -342,7 +363,11 @@ protected:
     int ViewerPageTag;
 
     vtkSlicerMRMLSaveDataWidget *SaveDataWidget;
-    
+    int ProcessingMRMLEvent;
+    bool SceneClosing;
+    bool Built;
+    int CurrentLayout;
+      
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.
     void operator = ( const vtkSlicerApplicationGUI& ); //Not implemented.

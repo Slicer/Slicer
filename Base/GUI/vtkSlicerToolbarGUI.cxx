@@ -15,6 +15,7 @@
 
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLViewNode.h"
+#include "vtkMRMLLayoutNode.h"
 
 #include "vtkKWTkUtilities.h"
 #include "vtkKWWidget.h"
@@ -71,6 +72,7 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->ApplicationGUI = NULL;
   this->InteractionNodeID = NULL;
   this->InteractionNode = NULL;
+  this->ProcessingMRMLEvent = 0;
 }
 
 
@@ -275,7 +277,7 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
 
     this->SetApplicationGUI ( NULL );
     this->SetInteractionNodeID ( NULL );
-    vtkSetMRMLNodeMacro(this->InteractionNode, NULL);
+    vtkSetMRMLNodeMacro( this->InteractionNode, NULL);
 }
 
 
@@ -305,6 +307,16 @@ void vtkSlicerToolbarGUI::ReconfigureGUIFonts ( )
       this->GetModuleChooseGUI()->GetModulesSearchEntry()->SetFont ( app->GetSlicerTheme()->GetApplicationFont1() );
       }
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerToolbarGUI::RemoveMRMLObservers()
+{
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerToolbarGUI::AddMRMLObservers()
+{
 }
 
 
@@ -373,7 +385,6 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     vtkSlicerApplicationGUI *p = vtkSlicerApplicationGUI::SafeDownCast( this->GetApplicationGUI ( ));
     vtkSlicerModuleChooseGUI *mcGUI = this->ModuleChooseGUI;
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( p->GetApplication() );
-    vtkSlicerGUILayout *layout = app->GetMainLayout();
     vtkMRMLInteractionNode *interactionNode = NULL;
     
     if (p != NULL)
@@ -530,99 +541,117 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
 
         }
 
+
       // TODO: figure out why we can't resume view rock or spin.
-      int mode;
       if ( menu == this->ChooseLayoutIconMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
         {
-        const char *whichLayout = this->ChooseLayoutIconMenuButton->GetValue();
-        const char *currentLayout = this->GetCurrentLayoutStringName ( );
-        // if a different layout is chosen...
-        if ( strcmp ( whichLayout, currentLayout ) )
-          {
-          mode = this->StopViewRockOrSpin();
-          if ( !strcmp ( whichLayout, "Conventional layout"))
-            {
-            // First, check to see if view is spinning or rocking.
-            // If so, stop view Spin or Rock.
 
-            p->RepackMainViewer (vtkSlicerGUILayout::SlicerLayoutDefaultView, NULL );
-            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToNormal ( "Toggle bottom panel visibility" );
-//        this->ResumeViewRockOrSpin ( mode );
-            }
-          else if (!strcmp( whichLayout, "3D only layout" ))
+        vtkMRMLLayoutNode *layout;
+        if ( p->GetGUILayoutNode() == NULL )
+          {
+          //--- if there's no layout node yet, create it,
+          //--- add it to the scene, and make the
+          //--- applicationGUI observe it.
+          layout = vtkMRMLLayoutNode::New();
+          this->MRMLScene->AddNode(layout);
+          p->SetAndObserveGUILayoutNode ( layout );
+          //--- update MRML selection node.
+          if ( this->ApplicationLogic != NULL )
             {
-            // First, check to see if view is spinning or rocking.
-            // If so, stop view Spin or Rock.
-            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUp3DView, NULL);
-            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
-//        this->ResumeViewRockOrSpin ( mode );
+            if ( this->ApplicationLogic->GetSelectionNode() != NULL )
+              {
+              this->ApplicationLogic->GetSelectionNode()->SetActiveLayoutID( layout->GetID() );
+              }
             }
-          else if ( !strcmp ( whichLayout, "Four-up layout"))
+          layout->Delete();
+          }
+
+        layout = p->GetGUILayoutNode();
+        const char *whichLayout = this->ChooseLayoutIconMenuButton->GetValue();
+        if ( !strcmp ( whichLayout, "Conventional layout"))
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutConventionalView )
             {
-            // First, check to see if view is spinning or rocking.
-            // If so, stop view Spin or Rock.
-            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutFourUpView, NULL );
-            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
-//        this->ResumeViewRockOrSpin ( mode );
+            p->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutConventionalView);
             }
-          else if ( !strcmp (whichLayout, "Tabbed 3D layout") )
+          }
+        else if (!strcmp( whichLayout, "3D only layout" ))
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUp3DView )
             {
-            // First, check to see if view is spinning or rocking.
-            // If so, stop view Spin or Rock.
-            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbed3DView, NULL );
-            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
-//        this->ResumeViewRockOrSpin ( mode );
+            p->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
             }
-          else if (!strcmp ( whichLayout, "Tabbed slice layout"))
+          }
+        else if ( !strcmp ( whichLayout, "Four-up layout"))
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutFourUpView )
             {
-            // First, check to see if view is spinning or rocking.
-            // If so, stop view Spin or Rock.
-            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutTabbedSliceView, NULL );
-            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
-//        this->ResumeViewRockOrSpin ( mode );
+            p->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutFourUpView);
             }
-          else if ( !strcmp (whichLayout, "Red slice only layout") )
+          }
+        else if ( !strcmp (whichLayout, "Tabbed 3D layout") )
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutTabbed3DView )
             {
-            // First, check to see if view is spinning or rocking.
-            // If so, stop view Spin or Rock.
-            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Red");
-            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
-//        this->ResumeViewRockOrSpin ( mode );
+            p->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
             }
-          else if ( !strcmp (whichLayout, "Yellow slice only layout") )
+          }
+        else if (!strcmp ( whichLayout, "Tabbed slice layout"))
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView )
             {
-            // First, check to see if view is spinning or rocking.
-            // If so, stop view Spin or Rock.
-            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Yellow");
-            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
-//        this->ResumeViewRockOrSpin ( mode );
+            p->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView );
             }
-          else if ( !strcmp (whichLayout, "Green slice only layout") )
+          }
+        else if ( !strcmp (whichLayout, "Red slice only layout") )
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView )
             {
-            // First, check to see if view is spinning or rocking.
-            // If so, stop view Spin or Rock.
-            p->RepackMainViewer ( vtkSlicerGUILayout::SlicerLayoutOneUpSliceView, "Green");
-            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
-//        this->ResumeViewRockOrSpin ( mode );
+            p->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
             }
-          else if ( !strcmp ( whichLayout, "Toggle GUI panel visibility"))
+          }
+        else if ( !strcmp (whichLayout, "Yellow slice only layout") )
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView )
             {
-            int v = p->GetMainSlicerWindow()->GetMainPanelVisibility();
-            p->GetMainSlicerWindow()->SetMainPanelVisibility (!v );
-            this->SetLayoutMenubuttonValueToCurrentLayout ();
+            p->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
             }
-          else if ( !strcmp ( whichLayout, "Toggle bottom panel visibility"))
+          } 
+        else if ( !strcmp (whichLayout, "Green slice only layout") )
+          {
+          if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView )
             {
-            int v = p->GetMainSlicerWindow()->GetSecondaryPanelVisibility();
-            p->GetMainSlicerWindow()->SetSecondaryPanelVisibility (!v );
-            this->SetLayoutMenubuttonValueToCurrentLayout ();
+            p->GetMRMLScene()->SaveStateForUndo ( layout );
+            layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
             }
-          else if ( !strcmp ( whichLayout, "Toggle GUI panel L/R"))
-            {
-            int v = p->GetMainSlicerWindow()->GetViewPanelPosition();
-            p->GetMainSlicerWindow()->SetViewPanelPosition ( !v );
-            this->SetLayoutMenubuttonValueToCurrentLayout();
-            }
+          }
+        else if ( !strcmp ( whichLayout, "Toggle GUI panel visibility"))
+          {
+          int v = p->GetMainSlicerWindow()->GetMainPanelVisibility();
+          p->GetMainSlicerWindow()->SetMainPanelVisibility (!v );
+          layout->SetGUIPanelVisibility ( p->GetMainSlicerWindow()->GetMainPanelVisibility() );
+          this->SetLayoutMenubuttonValueToCurrentLayout ();
+          }
+        else if ( !strcmp ( whichLayout, "Toggle bottom panel visibility"))
+          {
+          int v = p->GetMainSlicerWindow()->GetSecondaryPanelVisibility();
+          p->GetMainSlicerWindow()->SetSecondaryPanelVisibility (!v );
+          layout->SetBottomPanelVisibility ( p->GetMainSlicerWindow()->GetSecondaryPanelVisibility() );
+          this->SetLayoutMenubuttonValueToCurrentLayout ();
+          }
+        else if ( !strcmp ( whichLayout, "Toggle GUI panel L/R"))
+          {
+          int v = p->GetMainSlicerWindow()->GetViewPanelPosition();
+          p->GetMainSlicerWindow()->SetViewPanelPosition ( !v );
+          layout->SetGUIPanelLR ( p->GetMainSlicerWindow()->GetViewPanelPosition() );
+          this->SetLayoutMenubuttonValueToCurrentLayout();
           }
         }
       else if ( menu == this->LoadSceneIconButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
@@ -660,64 +689,51 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
     }
 }
 
+
+
+
 //---------------------------------------------------------------------------
-const char* vtkSlicerToolbarGUI::GetCurrentLayoutStringName ( )
+void vtkSlicerToolbarGUI::SetLayoutMenubuttonValueToLayout (int layout)
 {
-  if ( this->GetApplication() != NULL )
+
+  //--- sets the layout dropdown menu selection to match layout value
+  if ( this->ChooseLayoutIconMenuButton->GetMenu() != NULL )
     {
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication ( ));
-    int layout = app->GetMainLayout()->GetCurrentViewArrangement ();
-    
-    if ( layout == vtkSlicerGUILayout::SlicerLayoutDefaultView)
+    switch ( layout )
       {
-        return ( "Conventional layout" );
+      case vtkMRMLLayoutNode::SlicerLayoutConventionalView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Conventional layout" );
+        break;
+      case vtkMRMLLayoutNode::SlicerLayoutFourUpView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Four-up layout" );
+        break;
+      case vtkMRMLLayoutNode::SlicerLayoutOneUp3DView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "3D only layout" );
+        break;
+      case vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Red slice only layout" );
+        break;
+      case vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Yellow slice only layout" );
+        break;
+      case vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Green slice only layout" );
+        break;
+      case vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Red slice only layout" );
+        break;
+      case vtkMRMLLayoutNode::SlicerLayoutTabbed3DView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Tabbed 3D layout" );
+        break;
+      case vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Tabbed slice layout" );
+        break;
+      default:
+        break;
       }
-    else if (layout == vtkSlicerGUILayout::SlicerLayoutFourUpView )
-      {
-        return ( "Four-up layout" );
-      }
-    else if ( layout == vtkSlicerGUILayout::SlicerLayoutOneUp3DView)
-      {
-      return ( "3D only layout" );
-      }
-    else if (layout == vtkSlicerGUILayout::SlicerLayoutOneUpRedSliceView)
-      {
-        return ( "Red slice only layout" );
-      }
-    else if ( layout == vtkSlicerGUILayout::SlicerLayoutOneUpYellowSliceView)
-      {
-      return ( "Yellow slice only layout" );
-      }
-    else if ( layout == vtkSlicerGUILayout::SlicerLayoutOneUpGreenSliceView )
-      {
-      return ( "Green slice only layout" );
-      }
-    else if ( layout == vtkSlicerGUILayout::SlicerLayoutOneUpSliceView )
-      {
-      return ( "Red slice only layout" );
-      }
-    else if ( layout == vtkSlicerGUILayout::SlicerLayoutTabbed3DView )
-      {
-      return ( "Tabbed 3D layout" );
-      }
-    else if ( layout == vtkSlicerGUILayout::SlicerLayoutTabbedSliceView )
-      {
-      return ( "Tabbed slice layout" );
-      }
-    else if (layout == vtkSlicerGUILayout::SlicerLayoutLightboxView )
-      {
-      return ( "Lightbox layout" );
-      }
-    else
-      {
-        return (NULL);
-      }
-    }
-  else
-    {
-    return ( NULL );
     }
 }
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::SetLayoutMenubuttonValueToCurrentLayout ()
@@ -725,41 +741,10 @@ void vtkSlicerToolbarGUI::SetLayoutMenubuttonValueToCurrentLayout ()
   if ( this->GetApplication() != NULL )
     {
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast( this->GetApplication ( ));
-    int layout = app->GetMainLayout()->GetCurrentViewArrangement ();
-    switch ( layout )
+    if ( this->GetApplicationGUI()->GetGUILayoutNode() != NULL )
       {
-      case vtkSlicerGUILayout::SlicerLayoutDefaultView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Conventional layout" );
-        break;
-      case vtkSlicerGUILayout::SlicerLayoutFourUpView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Four-up layout" );
-        break;
-      case vtkSlicerGUILayout::SlicerLayoutOneUp3DView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "3D only layout" );
-        break;
-      case vtkSlicerGUILayout::SlicerLayoutOneUpRedSliceView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Red slice only layout" );
-        break;
-      case vtkSlicerGUILayout::SlicerLayoutOneUpYellowSliceView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Yellow slice only layout" );
-        break;
-      case vtkSlicerGUILayout::SlicerLayoutOneUpGreenSliceView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Green slice only layout" );
-        break;
-      case vtkSlicerGUILayout::SlicerLayoutOneUpSliceView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Red slice only layout" );
-        break;
-      case vtkSlicerGUILayout::SlicerLayoutTabbed3DView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Tabbed 3D layout" );
-        break;
-      case vtkSlicerGUILayout::SlicerLayoutTabbedSliceView:
-        this->ChooseLayoutIconMenuButton->SetValue ( "Tabbed slice layout" );
-        break;
-      case vtkSlicerGUILayout::SlicerLayoutLightboxView:              
-        this->ChooseLayoutIconMenuButton->SetValue ( "Lightbox layout" );
-        break;
-      default:
-        break;
+      int layout = this->GetApplicationGUI()->GetGUILayoutNode()->GetViewArrangement ();
+      this->SetLayoutMenubuttonValueToLayout ( layout );
       }
     }
 }
@@ -814,6 +799,34 @@ void vtkSlicerToolbarGUI::ProcessLogicEvents ( vtkObject *caller,
     // Fill in}
 }
 
+
+
+
+//---------------------------------------------------------------------------
+void vtkSlicerToolbarGUI::UpdateLayoutMenu()
+{
+  if ( this->ApplicationGUI == NULL )
+    {
+    return;
+    }
+  vtkSlicerApplicationGUI *appGUI = vtkSlicerApplicationGUI::SafeDownCast ( this->GetApplicationGUI() );
+  
+  // has the layout changed? Make the GUI track
+  //--- gui's current layout
+  const char *newLayout = appGUI->GetCurrentLayoutStringName ( );
+  const char *guiLayout = this->ChooseLayoutIconMenuButton->GetValue();
+
+  if ( newLayout != NULL )
+    {
+    if ( (strcmp ( guiLayout, newLayout ) ) != 0 )
+      {
+      //--- set menu to match node
+      this->SetLayoutMenubuttonValueToCurrentLayout ();
+      }
+    }
+}
+
+
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, void *callData )
@@ -822,17 +835,17 @@ void vtkSlicerToolbarGUI::ProcessMRMLEvents ( vtkObject *caller,
 
   // check for a change on the selection node regarding the mouse interaction mode
   vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+
+  // has the interaction mode changed?
   if (interactionNode == NULL)
     {
-    std::cout << "vtkSlicerToolbarGUI::ProcessMRMLEvents: selection node is null\n";
+    std::cout << "vtkSlicerToolbarGUI::ProcessMRMLEvents: interaction node is null\n";
+    return;
     }
-  if (interactionNode != NULL
-        && vtkMRMLInteractionNode::SafeDownCast(caller) == interactionNode
-        && event == vtkCommand::ModifiedEvent)
+  if ( vtkMRMLInteractionNode::SafeDownCast(caller) == interactionNode && event == vtkCommand::ModifiedEvent)
     {
     std::cout << "The selection node changed\n";
     int mode = interactionNode->GetCurrentInteractionMode();
-    
     switch (mode)
       {
       case vtkMRMLInteractionNode::PickManipulate:
@@ -868,6 +881,11 @@ void vtkSlicerToolbarGUI::SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI )
 {
   this->ApplicationGUI = appGUI;
 }
+
+
+
+
+
 
 
 //---------------------------------------------------------------------------
@@ -1131,7 +1149,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetConventionalViewIcon(), 0 );
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
-//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ("Conventional layout", vtkSlicerGUILayout::SlicerLayoutDefaultView );
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ("Conventional layout", vtkMRMLLayoutNode::SlicerLayoutConventionalView );
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Four-up layout");
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Four-up layout");
@@ -1139,7 +1157,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetFourUpViewIcon(), 0 );
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
-//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Four-up layout", vtkSlicerGUILayout::SlicerLayoutFourUpView );
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Four-up layout", vtkMRMLLayoutNode::SlicerLayoutFourUpView );
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "3D only layout");
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "3D only layout");
@@ -1147,7 +1165,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUp3DViewIcon(), 0 );
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
-//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "3D only layout", vtkSlicerGUILayout::SlicerLayoutOneUp3DView );
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "3D only layout", vtkMRMLLayoutNode::SlicerLayoutOneUp3DView );
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Red slice only layout");
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Red slice only layout");
@@ -1155,7 +1173,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUpRedSliceViewIcon(), 0 );
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
-//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Red slice only layout", vtkSlicerGUILayout::SlicerLayoutOneUpRedSliceView);
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Red slice only layout", vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Yellow slice only layout");
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Yellow slice only layout");
@@ -1163,7 +1181,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUpYellowSliceViewIcon(), 0 );
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
-//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ("Yellow slice only layout", vtkSlicerGUILayout::SlicerLayoutOneUpYellowSliceView);
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ("Yellow slice only layout", vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Green slice only layout" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Green slice only layout");
@@ -1171,7 +1189,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetOneUpGreenSliceViewIcon(), 0 );
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
-//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Green slice only layout", vtkSlicerGUILayout::SlicerLayoutOneUpGreenSliceView);
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Green slice only layout", vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Tabbed 3D layout" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Tabbed 3D layout");
@@ -1179,7 +1197,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetTabbed3DViewIcon(), 0 );
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
-//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed 3D layout", vtkSlicerGUILayout::SlicerLayoutTabbed3DView);
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed 3D layout", vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Tabbed slice layout" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Tabbed slice layout");
@@ -1187,7 +1205,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetTabbedSliceViewIcon(), 0 );
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName);
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
-//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed slice layout", vtkSlicerGUILayout::SlicerLayoutTabbedSliceView);
+//  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed slice layout", vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView);
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ("Compare view layout");
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ("Compare view layout");
@@ -1202,6 +1220,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Toggle bottom panel visibility" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Toggle bottom panel visibility");
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemIndicatorVisibility ( index, 0 );
+
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Toggle GUI panel L/R" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Toggle GUI panel L/R");
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemIndicatorVisibility ( index, 0 );
@@ -1290,8 +1309,6 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->ReconfigureGUIFonts();
 
 }
-
-
 
 
 

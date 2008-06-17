@@ -211,8 +211,8 @@ void vtkSlicerSliceViewer::CreateWidget ( ) {
     //
     this->RenderWidget->SetParent ( this->GetParent( ) );
     this->RenderWidget->Create();
-    this->RenderWidget->SetWidth ( app->GetMainLayout()->GetSliceViewerMinDim() );
-    this->RenderWidget->SetHeight ( app->GetMainLayout()->GetSliceViewerMinDim() );
+    this->RenderWidget->SetWidth ( app->GetDefaultGeometry()->GetSliceViewerMinDim() );
+    this->RenderWidget->SetHeight ( app->GetDefaultGeometry()->GetSliceViewerMinDim() );
     this->RenderWidget->CornerAnnotationVisibilityOn();
     this->RenderWidget->SetBorderWidth(2);
     this->RenderWidget->SetReliefToGroove ( );

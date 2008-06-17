@@ -138,6 +138,7 @@ set(MRML_SRCS
   vtkMRMLVolumeNode.cxx
   vtkObservation.cxx
   vtkObserverManager.cxx
+  vtkMRMLLayoutNode.cxx
   # Classes for remote data handling:
   vtkCacheManager.cxx
   vtkDataIOManager.cxx
