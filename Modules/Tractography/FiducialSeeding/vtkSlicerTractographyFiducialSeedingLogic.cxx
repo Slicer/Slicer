@@ -28,6 +28,7 @@
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLFiberBundleNode.h"
+#include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLTransformNode.h"
 
 #include <sstream>
@@ -103,7 +104,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   double sp[3];
   double spold[3];
   volumeNode->GetSpacing(sp);
-  // putr spacing into image so that tractography knows about
+  // put spacing into image so that tractography knows about
   volumeNode->GetImageData()->GetSpacing(spold);
   volumeNode->GetImageData()->SetSpacing(sp);
 
@@ -217,11 +218,23 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
     dnode = fiberNode->AddGlyphDisplayNode();
     dnode->SetVisibility(0);
     }
+
+  if (fiberNode->GetStorageNode() == NULL) 
+    {
+    vtkMRMLFiberBundleStorageNode *storageNode = vtkMRMLFiberBundleStorageNode::New();
+    fiberNode->GetScene()->AddNodeNoNotify(storageNode);
+    fiberNode->SetAndObserveStorageNodeID(storageNode->GetID());
+    }
+
   // Restore the original spacing
   volumeNode->GetImageData()->SetSpacing(spold);
 
+
   fiberNode->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
   
+  volumeNode->SetModifiedSinceRead(0);
+  fiberNode->SetModifiedSinceRead(1);
+
   // Delete everything: Still trying to figure out what is going on
   outFibers->Delete();
   seed->Delete();

@@ -1818,7 +1818,7 @@ void vtkSlicerFiducialListWidget::RemovePointWidgets()
       pointIter->second->Delete();
       pointIter->second = NULL;
       }
-    this->DisplayedPointWidgets.erase(pointIter->first);
+    //this->DisplayedPointWidgets.erase(pointIter->first);
     }
   this->DisplayedPointWidgets.clear();
 }
