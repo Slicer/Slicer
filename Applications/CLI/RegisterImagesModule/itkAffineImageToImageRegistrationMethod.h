@@ -33,7 +33,7 @@ class AffineImageToImageRegistrationMethod
 
   public:
 
-    typedef AffineImageToImageRegistrationMethod                Self;
+    typedef AffineImageToImageRegistrationMethod               Self;
     typedef OptimizedImageToImageRegistrationMethod< TImage >  Superclass;
     typedef SmartPointer< Self >                               Pointer;
     typedef SmartPointer< const Self >                         ConstPointer;
@@ -53,8 +53,9 @@ class AffineImageToImageRegistrationMethod
 
     // Overrides the superclass' TransformType typedef
     typedef AffineTransform< double, itkGetStaticConstMacro( ImageDimension ) >
-                                                 AffineTransformType;
-    typedef AffineTransformType                  TransformType;
+                                                         AffineTransformType;
+    typedef typename AffineTransformType::Pointer        AffineTransformPointer;                                                  
+    typedef AffineTransformType                          TransformType;
 
     //
     // Custom Methods
@@ -67,13 +68,26 @@ class AffineImageToImageRegistrationMethod
      *   can be called without the caller having to do the casting. 
      **/
     TransformType * GetTypedTransform( void );
+    const TransformType * GetTypedTransform( void ) const;
 
     /**
-     * This function creates a new affine transforms that implements the 
-     *   current registration transform.   Provided to help with transform
-     *   composition
+     * This function creates a new affine transforms that implements the
+     * current registration transform.   Provided to help with transform
+     * composition. The transform is initialized with the current results
+     * available in the GetTypedTransform() method. The returned transform is
+     * not a member variable, and therefore, must be received into a
+     * SmartPointer to prevent it from being destroyed by depletion of its
+     * reference counting.
      **/
-    typename AffineTransformType::Pointer GetAffineTransform( void );
+    AffineTransformPointer GetAffineTransform( void ) const;
+
+    /** Initialize the transform parameters from an AffineTransform This method
+     * is intended as an alternative to calling SetInitialTransformParameters()
+     * and SetInitialTransformFixedParameters(). The method below facilitates to 
+     * use the AffineTransform returned by the InitialImageToImageRegistrationMethod 
+     * to directly initialize this rigid registration method. 
+     */
+    void SetInitialTransformParametersFromAffineTransform( const AffineTransformType * affine );
 
   protected:
 

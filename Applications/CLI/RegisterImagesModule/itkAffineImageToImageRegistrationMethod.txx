@@ -84,19 +84,40 @@ AffineImageToImageRegistrationMethod< TImage >
 }
 
 template< class TImage >
-typename AffineImageToImageRegistrationMethod< TImage >::AffineTransformType::Pointer
+const typename AffineImageToImageRegistrationMethod< TImage >::TransformType *
 AffineImageToImageRegistrationMethod< TImage >
-::GetAffineTransform( void )
+::GetTypedTransform( void ) const
+{
+  return static_cast< const TransformType  * >( Superclass::GetTransform() );
+}
+
+template< class TImage >
+typename AffineImageToImageRegistrationMethod< TImage >::AffineTransformPointer
+AffineImageToImageRegistrationMethod< TImage >
+::GetAffineTransform( void ) const
 {   
-  typename AffineTransformType::Pointer trans = AffineTransformType::New();
+  AffineTransformPointer trans = AffineTransformType::New();
+ 
+  const TransformType * typedTransform = this->GetTypedTransform();
 
   trans->SetIdentity();
-  trans->SetCenter( this->GetTypedTransform()->GetCenter() );
-  trans->SetMatrix( this->GetTypedTransform()->GetMatrix() );
-  trans->SetOffset( this->GetTypedTransform()->GetOffset() );
+  trans->SetCenter( typedTransform->GetCenter() );
+  trans->SetMatrix( typedTransform->GetMatrix() );
+  trans->SetOffset( typedTransform->GetOffset() );
 
   return trans;
 }   
+
+
+template< class TImage >
+void 
+AffineImageToImageRegistrationMethod< TImage >
+::SetInitialTransformParametersFromAffineTransform( const AffineTransformType * affine )
+{
+  this->SetInitialTransformFixedParameters( affine->GetFixedParameters() );
+  this->SetInitialTransformParameters( affine->GetParameters() );
+}
+
 
 template< class TImage >
 void

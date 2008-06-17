@@ -89,9 +89,6 @@ class ImageToImageRegistrationHelper : public Object
     typedef typename OptimizedRegistrationMethodType::InterpolationMethodEnumType
                                                    InterpolationMethodEnumType;
 
-    typedef typename OptimizedRegistrationMethodType::OptimizationMethodEnumType
-                                                   OptimizationMethodEnumType;
-
     enum InitialMethodEnumType { INIT_WITH_NONE,
                                  INIT_WITH_CURRENT_RESULTS,
                                  INIT_WITH_IMAGE_CENTERS,
@@ -137,18 +134,22 @@ class ImageToImageRegistrationHelper : public Object
     //
     itkSetMacro( UseFixedImageMaskObject, bool );
     itkGetConstMacro( UseFixedImageMaskObject, bool );
+    itkBooleanMacro( UseFixedImageMaskObject );
 
     void SetFixedImageMaskObject( typename MaskObjectType::ConstPointer & mask );
     itkGetConstObjectMacro( FixedImageMaskObject, MaskObjectType );
 
     itkSetMacro( UseMovingImageMaskObject, bool );
     itkGetConstMacro( UseMovingImageMaskObject, bool );
+    itkBooleanMacro( UseMovingImageMaskObject );
 
     void SetMovingImageMaskObject( typename MaskObjectType::ConstPointer & mask );
     itkGetConstObjectMacro( MovingImageMaskObject, MaskObjectType );
 
     void Initialize( void );
 
+    /** This class provides an Update() method to fit the appearance of a
+     * ProcessObject API, but it is not a ProcessObject.  */
     void Update( void );
 
     typename ImageType::ConstPointer  ResampleImage( 
@@ -166,18 +167,23 @@ class ImageToImageRegistrationHelper : public Object
     //
     itkSetMacro( EnableLoadedRegistration, bool );
     itkGetConstMacro( EnableLoadedRegistration, bool );
+    itkBooleanMacro( EnableLoadedRegistration );
 
     itkSetMacro( EnableInitialRegistration, bool );
     itkGetConstMacro( EnableInitialRegistration, bool );
+    itkBooleanMacro( EnableInitialRegistration );
 
     itkSetMacro( EnableRigidRegistration, bool );
     itkGetConstMacro( EnableRigidRegistration, bool );
+    itkBooleanMacro( EnableRigidRegistration );
 
     itkSetMacro( EnableAffineRegistration, bool );
     itkGetConstMacro( EnableAffineRegistration, bool );
+    itkBooleanMacro( EnableAffineRegistration );
 
     itkSetMacro( EnableBSplineRegistration, bool );
     itkGetConstMacro( EnableBSplineRegistration, bool );
+    itkBooleanMacro( EnableBSplineRegistration );
 
     //
     itkSetMacro( ExpectedOffsetPixelMagnitude, double );
@@ -219,12 +225,15 @@ class ImageToImageRegistrationHelper : public Object
 
     itkSetMacro( ReportProgress, bool );
     itkGetMacro( ReportProgress, bool );
+    itkBooleanMacro( ReportProgress );
 
     itkSetMacro( UseOverlapAsROI, bool );
     itkGetMacro( UseOverlapAsROI, bool );
+    itkBooleanMacro( UseOverlapAsROI );
 
     itkSetMacro( MinimizeMemory, bool );
     itkGetMacro( MinimizeMemory, bool );
+    itkBooleanMacro( MinimizeMemory );
 
     //
     // Loaded transforms
@@ -262,9 +271,6 @@ class ImageToImageRegistrationHelper : public Object
     itkSetMacro( RigidInterpolationMethodEnum, InterpolationMethodEnumType );
     itkGetConstMacro( RigidInterpolationMethodEnum, InterpolationMethodEnumType );
 
-    itkSetMacro( RigidOptimizationMethodEnum, OptimizationMethodEnumType );
-    itkGetConstMacro( RigidOptimizationMethodEnum, OptimizationMethodEnumType );
-
     itkGetConstObjectMacro( RigidTransform, RigidTransformType );
     itkGetMacro( RigidMetricValue, double );
 
@@ -285,9 +291,6 @@ class ImageToImageRegistrationHelper : public Object
 
     itkSetMacro( AffineInterpolationMethodEnum, InterpolationMethodEnumType );
     itkGetConstMacro( AffineInterpolationMethodEnum, InterpolationMethodEnumType );
-
-    itkSetMacro( AffineOptimizationMethodEnum, OptimizationMethodEnumType );
-    itkGetConstMacro( AffineOptimizationMethodEnum, OptimizationMethodEnumType );
 
     itkGetConstObjectMacro( AffineTransform, AffineTransformType );
     itkGetMacro( AffineMetricValue, double );
@@ -313,9 +316,6 @@ class ImageToImageRegistrationHelper : public Object
     itkSetMacro( BSplineInterpolationMethodEnum, InterpolationMethodEnumType );
     itkGetConstMacro( BSplineInterpolationMethodEnum, InterpolationMethodEnumType );
 
-    itkSetMacro( BSplineOptimizationMethodEnum, OptimizationMethodEnumType );
-    itkGetConstMacro( BSplineOptimizationMethodEnum, OptimizationMethodEnumType );
-
     itkGetConstObjectMacro( BSplineTransform, BSplineTransformType );
     itkGetMacro( BSplineMetricValue, double );
 
@@ -327,8 +327,7 @@ class ImageToImageRegistrationHelper : public Object
     void PrintSelfHelper( std::ostream & os, Indent indent,
                           const std::string basename,
                           MetricMethodEnumType metric,
-                          InterpolationMethodEnumType interpolation,
-                          OptimizationMethodEnumType optimization ) const;
+                          InterpolationMethodEnumType interpolation ) const;
     void PrintSelf( std::ostream & os, Indent indent ) const;
 
   private:
@@ -394,7 +393,6 @@ class ImageToImageRegistrationHelper : public Object
     typename RigidTransformType::Pointer    m_RigidTransform;
     MetricMethodEnumType                    m_RigidMetricMethodEnum;
     InterpolationMethodEnumType             m_RigidInterpolationMethodEnum;
-    OptimizationMethodEnumType              m_RigidOptimizationMethodEnum;
 
     double                                  m_RigidMetricValue;
 
@@ -406,7 +404,6 @@ class ImageToImageRegistrationHelper : public Object
     typename AffineTransformType::Pointer   m_AffineTransform;
     MetricMethodEnumType                    m_AffineMetricMethodEnum;
     InterpolationMethodEnumType             m_AffineInterpolationMethodEnum;
-    OptimizationMethodEnumType              m_AffineOptimizationMethodEnum;
 
     double                                  m_AffineMetricValue;
 
@@ -418,7 +415,6 @@ class ImageToImageRegistrationHelper : public Object
     typename BSplineTransformType::Pointer  m_BSplineTransform;
     MetricMethodEnumType                    m_BSplineMetricMethodEnum;
     InterpolationMethodEnumType             m_BSplineInterpolationMethodEnum;
-    OptimizationMethodEnumType              m_BSplineOptimizationMethodEnum;
 
     double                                  m_BSplineMetricValue;
 

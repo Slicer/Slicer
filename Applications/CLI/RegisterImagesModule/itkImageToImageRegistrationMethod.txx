@@ -29,25 +29,24 @@ ImageToImageRegistrationMethod< TImage >
 {
   this->SetNumberOfRequiredOutputs( 1 ); // the transform
 
-  m_Transform = 0;
+  this->m_Transform = 0;
   typename TransformOutputType::Pointer transformDecorator = 
                                       static_cast<  TransformOutputType * >
                                         ( this->MakeOutput(0).GetPointer() );
 
   this->ProcessObject::SetNthOutput( 0, transformDecorator.GetPointer() );
 
-  m_RegistrationNumberOfThreads = this->GetNumberOfThreads();
-  this->GetMultiThreader()->SetNumberOfThreads( m_RegistrationNumberOfThreads );
+  this->m_RegistrationNumberOfThreads = this->GetNumberOfThreads();
+  this->GetMultiThreader()->SetNumberOfThreads( this->m_RegistrationNumberOfThreads );
 
-  m_FixedImage = 0;
-  m_MovingImage = 0;
-  m_UseFixedImageMaskObject = false;
-  m_FixedImageMaskObject = 0;
-  m_UseMovingImageMaskObject = false;
-  m_MovingImageMaskObject = 0;
-  m_Observer = 0;
-
-  m_ReportProgress = false;
+  this->m_FixedImage = 0;
+  this->m_MovingImage = 0;
+  this->m_UseFixedImageMaskObject = false;
+  this->m_FixedImageMaskObject = 0;
+  this->m_UseMovingImageMaskObject = false;
+  this->m_MovingImageMaskObject = 0;
+  this->m_Observer = 0;
+  this->m_ReportProgress = false;
 
 }
 
@@ -60,14 +59,13 @@ ImageToImageRegistrationMethod< TImage >
 template< class TImage >
 void
 ImageToImageRegistrationMethod< TImage >
-::SetFixedImage( typename ImageType::ConstPointer & fixedImage )
+::SetFixedImage( const ImageType * fixedImage )
 {
-  if( this->m_FixedImage.GetPointer() != fixedImage.GetPointer() )
+  if( this->m_FixedImage.GetPointer() != fixedImage )
     {
     this->m_FixedImage = fixedImage;
 
-    this->ProcessObject::SetNthInput(0,
-                                     const_cast< ImageType * >( fixedImage.GetPointer() ) );
+    this->ProcessObject::SetNthInput(0, const_cast< ImageType * >( fixedImage ) );
     this->Modified();
     }
 }
@@ -75,14 +73,13 @@ ImageToImageRegistrationMethod< TImage >
 template< class TImage >
 void
 ImageToImageRegistrationMethod< TImage >
-::SetMovingImage( typename ImageType::ConstPointer & movingImage )
+::SetMovingImage( const ImageType * movingImage )
 {
-  if( this->m_MovingImage.GetPointer() != movingImage.GetPointer() )
+  if( this->m_MovingImage.GetPointer() != movingImage )
     {
     this->m_MovingImage = movingImage;
 
-    this->ProcessObject::SetNthInput(1,
-                                     const_cast< ImageType * >( movingImage.GetPointer() ) );
+    this->ProcessObject::SetNthInput(1, const_cast< ImageType * >( movingImage ) );
     this->Modified();
     }
 }
@@ -90,15 +87,15 @@ ImageToImageRegistrationMethod< TImage >
 template< class TImage >
 void
 ImageToImageRegistrationMethod< TImage >
-::SetFixedImageMaskObject( typename MaskObjectType::ConstPointer & maskObject )
+::SetFixedImageMaskObject( const MaskObjectType * maskObject )
 {
-  if( this->m_FixedImageMaskObject.GetPointer() != maskObject.GetPointer() )
+  if( this->m_FixedImageMaskObject.GetPointer() != maskObject )
     {
     this->m_FixedImageMaskObject = maskObject;
 
     this->Modified();
 
-    if( maskObject.IsNotNull() )
+    if( maskObject )
       {
       m_UseFixedImageMaskObject = true;
       }
@@ -112,15 +109,15 @@ ImageToImageRegistrationMethod< TImage >
 template< class TImage >
 void
 ImageToImageRegistrationMethod< TImage >
-::SetMovingImageMaskObject( typename MaskObjectType::ConstPointer & maskObject )
+::SetMovingImageMaskObject( const MaskObjectType * maskObject )
 {
-  if( this->m_MovingImageMaskObject.GetPointer() != maskObject.GetPointer() )
+  if( this->m_MovingImageMaskObject.GetPointer() != maskObject )
     {
     this->m_MovingImageMaskObject = maskObject;
 
     this->Modified();
 
-    if( maskObject.IsNotNull() )
+    if( maskObject )
       {
       m_UseMovingImageMaskObject = true;
       }
@@ -198,6 +195,7 @@ ImageToImageRegistrationMethod< TImage >
   return mtime;
 }
 
+
 template< class TImage >
 void
 ImageToImageRegistrationMethod< TImage >
@@ -224,6 +222,7 @@ ImageToImageRegistrationMethod< TImage >
     static_cast< TransformOutputType * >( this->ProcessObject::GetOutput( 0 ) );
 
   transformOutput->Set( m_Transform.GetPointer() );
+
 }
 
 template< class TImage >
@@ -241,47 +240,47 @@ ImageToImageRegistrationMethod< TImage >
 {
   Superclass::PrintSelf( os, indent );
 
-  os << indent << "Number of threads = " << m_RegistrationNumberOfThreads
+  os << indent << "Number of threads = " << this->m_RegistrationNumberOfThreads
      << std::endl;
-  if( m_Transform.IsNotNull() )
+  if( this->m_Transform.IsNotNull() )
     {
-    os << indent << "Transform = " << m_Transform << std::endl;
+    os << indent << "Transform = " << this->m_Transform << std::endl;
     }
   else
     {
     os << indent << "Transform = 0" << std::endl;
     }
 
-  if( m_Observer.IsNotNull() )
+  if( this->m_Observer.IsNotNull() )
     {
-    os << indent << "Observer = " << m_Observer << std::endl;
+    os << indent << "Observer = " << this->m_Observer << std::endl;
     }
   else
     {
     os << indent << "Observer = 0" << std::endl;
     }
 
-  if( m_FixedImage.IsNotNull() )
+  if( this->m_FixedImage.IsNotNull() )
     {
-    os << indent << "Fixed Image = " << m_FixedImage << std::endl;
+    os << indent << "Fixed Image = " << this->m_FixedImage << std::endl;
     }
   else
     {
     os << indent << "Fixed Image = 0" << std::endl;
     }
 
-  if( m_MovingImage.IsNotNull() )
+  if( this->m_MovingImage.IsNotNull() )
     {
-    os << indent << "Moving Image = " << m_FixedImage << std::endl;
+    os << indent << "Moving Image = " << this->m_FixedImage << std::endl;
     }
   else
     {
     os << indent << "Moving Image = 0" << std::endl;
     }
 
-  if( m_FixedImageMaskObject.IsNotNull() )
+  if( this->m_FixedImageMaskObject.IsNotNull() )
     {
-    os << indent << "Fixed Image Mask Object = " << m_FixedImageMaskObject 
+    os << indent << "Fixed Image Mask Object = " << this->m_FixedImageMaskObject 
                  << std::endl;
     }
   else
@@ -289,16 +288,17 @@ ImageToImageRegistrationMethod< TImage >
     os << indent << "Fixed image mask = 0" << std::endl;
     }
 
-  if( m_MovingImageMaskObject.IsNotNull() )
+  if( this->m_MovingImageMaskObject.IsNotNull() )
     {
-    os << indent << "Moving Image Mask Object = " << m_MovingImageMaskObject 
+    os << indent << "Moving Image Mask Object = " << this->m_MovingImageMaskObject 
                  << std::endl;
     }
   else
     {
     os << indent << "Moving image mask = 0" << std::endl;
     }
-  os << indent << "Report progress = " << m_ReportProgress << std::endl;
+
+  os << indent << "Report progress = " << this->m_ReportProgress << std::endl;
 
 }
 

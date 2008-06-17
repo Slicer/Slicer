@@ -18,16 +18,21 @@
 #ifndef __ImageToImageRegistrationMethod_h
 #define __ImageToImageRegistrationMethod_h
 
-#include "itkImage.h"
-#include "itkCommand.h"
-
 #include "itkSpatialObject.h"
-
 #include "itkImageRegistrationMethod.h"
 
 namespace itk
 {
 
+/** \class ImageToImageRegistrationMethod base class for the registration methods.
+ *
+ * This class has a separate hierarchy from the ImageRegistrationMethod defined
+ * in ITK.  The purpose of this class is to provide the common functionalities
+ * of a registration method in a context that is easy to use from the
+ * Registration Helper class that provides an even higher-level, user-friendly
+ * interface to a generic image registration problem.
+ *
+ */
 template< class TImage >
 class ImageToImageRegistrationMethod 
 : public ProcessObject
@@ -73,35 +78,30 @@ class ImageToImageRegistrationMethod
     itkSetObjectMacro( Observer, Command );
     itkGetObjectMacro( Observer, Command );
 
-    void SetFixedImage( typename ImageType::ConstPointer & fixedImage );
+    void SetFixedImage( const ImageType * fixedImage );
     itkGetConstObjectMacro( FixedImage, ImageType );
 
-    void SetMovingImage( typename ImageType::ConstPointer & movingImage );
+    void SetMovingImage( const ImageType * movingImage );
     itkGetConstObjectMacro( MovingImage, ImageType );
 
-    void SetFixedImageMaskObject( typename MaskObjectType::ConstPointer & maskObject );
+    void SetFixedImageMaskObject( const MaskObjectType * maskObject );
     itkGetConstObjectMacro( FixedImageMaskObject, MaskObjectType );
 
     itkSetMacro( UseFixedImageMaskObject, bool );
     itkGetMacro( UseFixedImageMaskObject, bool );
 
-    void SetMovingImageMaskObject( typename MaskObjectType::ConstPointer & maskObject );
+    void SetMovingImageMaskObject( const MaskObjectType * maskObject );
     itkGetConstObjectMacro( MovingImageMaskObject, MaskObjectType );
 
     itkSetMacro( UseMovingImageMaskObject, bool );
     itkGetMacro( UseMovingImageMaskObject, bool );
 
-    itkSetObjectMacro( Transform, TransformType );
-    itkGetObjectMacro( Transform, TransformType );
-
-    const TransformOutputType *     GetOutput( void ) const;
-
-    virtual DataObjectPointer       MakeOutput( unsigned int idx );
-
-    unsigned long                   GetMTime( void ) const;
-
     itkSetMacro( ReportProgress, bool );
     itkGetMacro( ReportProgress, bool );
+    itkBooleanMacro( ReportProgress );
+
+    /** Return the output of the registration process, which is a Transform */
+    const TransformOutputType * GetOutput( void ) const;
 
   protected:
 
@@ -110,9 +110,22 @@ class ImageToImageRegistrationMethod
 
     virtual void    Initialize( void );
 
+    /** Method that actually computes the registration. This method is intended
+     * to be overloaded by derived classes. Those overload, however, must
+     * invoke this method in the base class. */
     void GenerateData( void );
 
     void PrintSelf( std::ostream & os, Indent indent ) const;
+
+    /** Provide derived classes with access to the Transform member variable. */
+    itkSetObjectMacro( Transform, TransformType );
+    itkGetObjectMacro( Transform, TransformType );
+    itkGetConstObjectMacro( Transform, TransformType );
+
+    virtual DataObjectPointer       MakeOutput( unsigned int idx );
+
+    unsigned long                   GetMTime( void ) const;
+
 
   protected:
 

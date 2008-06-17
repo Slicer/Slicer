@@ -54,10 +54,8 @@ class InitialImageToImageRegistrationMethod
     typedef AffineTransform< double, itkGetStaticConstMacro( ImageDimension ) >
                                                       TransformType;
 
-    //
-    //  Methods from Superclass
-    //
-    void    Update();
+    typedef typename TransformType::Pointer           TransformPointer;
+
 
     //
     // Custom Methods
@@ -70,8 +68,14 @@ class InitialImageToImageRegistrationMethod
      *   can be called without the caller having to do the casting. 
      **/
     TransformType * GetTypedTransform( void );
+    const TransformType * GetTypedTransform( void ) const;
 
-    typename TransformType::Pointer GetAffineTransform( void );
+    /** This method creates, initializes and returns an Affine transform.  The
+     * transform is initialized with the current results available in the
+     * GetTypedTransform() method. The returned transform is not a member
+     * variable, and therefore, must be received into a SmartPointer to prevent
+     * it from being destroyed by depletion of its reference counting. */
+    TransformPointer GetAffineTransform( void ) const;
 
     itkSetMacro( NumberOfMoments, unsigned int );
     itkGetConstMacro( NumberOfMoments, unsigned int );
@@ -85,7 +89,14 @@ class InitialImageToImageRegistrationMethod
     virtual ~InitialImageToImageRegistrationMethod( void );
 
     void PrintSelf( std::ostream & os, Indent indent ) const;
-         
+
+    //
+    //  Methods from Superclass. Only the GenerateData() method should be
+    //  overloaded. The Update() method must not be overloaded.
+    //
+    void    GenerateData();
+
+   
   private:
 
     InitialImageToImageRegistrationMethod( const Self & );  // Purposely not implemented

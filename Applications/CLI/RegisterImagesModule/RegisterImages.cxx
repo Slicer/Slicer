@@ -14,6 +14,8 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
+#include "itkMultiThreader.h"
+
 #include "itkImageToImageRegistrationHelper.h"
 
 // Description:
@@ -60,6 +62,9 @@ int DoIt( int argc, char *argv[] )
 
   PARSE_ARGS;
 
+  enum VerboseLevelEnum {SILENT, STANDARD, VERBOSE};
+  VerboseLevelEnum verbosity = VERBOSE;
+
   typedef typename itk::OrientedImage<T, 3> ImageType;
 
   typedef typename itk::ImageToImageRegistrationHelper< ImageType >  RegerType;
@@ -68,38 +73,91 @@ int DoIt( int argc, char *argv[] )
 
   reger->SetReportProgress( true );
 
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### Loading fixed image...";
+    }
   reger->LoadFixedImage( fixedImage );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### DONE" << std::endl;
+    }
+
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### Loading moving image...";
+    }
   reger->LoadMovingImage( movingImage );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### DONE" << std::endl;
+    }
 
   if( loadParameters.size() > 1)
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Loading parameters...";
+      }
     reger->LoadParameters( loadParameters );
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### DONE" << std::endl;
+      }
     }
 
   if( loadTransform.size() > 1 )
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Loading transform...";
+      }
     reger->LoadTransform( loadTransform );
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### DONE" << std::endl;
+      }
     }
 
   if( initialization == "None" )
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Initialization: None" << std::endl;
+      }
     reger->SetInitialMethodEnum( RegerType::INIT_WITH_NONE );
     }
   else if( initialization == "ImageCenters")
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Initialization: ImageCenters" << std::endl;
+      }
     reger->SetInitialMethodEnum( RegerType::INIT_WITH_IMAGE_CENTERS );
     }
   else if( initialization == "SecondMoments")
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Initialization: SecondMoments" << std::endl;
+      }
     reger->SetInitialMethodEnum( RegerType::INIT_WITH_SECOND_MOMENTS );
     }
   else //if( initialization == "CentersOfMass")
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Initialization: CentersOfMass" << std::endl;
+      }
     reger->SetInitialMethodEnum( RegerType::INIT_WITH_CENTERS_OF_MASS );
     }
 
   if( registration == "None" )
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Registration: None" << std::endl;
+      }
     reger->SetEnableInitialRegistration( false );
     reger->SetEnableRigidRegistration( false );
     reger->SetEnableAffineRegistration( false );
@@ -107,6 +165,10 @@ int DoIt( int argc, char *argv[] )
     }
   else if( registration == "Initial" )
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Registration: Initial" << std::endl;
+      }
     reger->SetEnableInitialRegistration( true );
     reger->SetEnableRigidRegistration( false );
     reger->SetEnableAffineRegistration( false );
@@ -114,6 +176,10 @@ int DoIt( int argc, char *argv[] )
     }
   else if( registration == "Rigid" )
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Registration: Rigid" << std::endl;
+      }
     reger->SetEnableInitialRegistration( false );
     reger->SetEnableRigidRegistration( true );
     reger->SetEnableAffineRegistration( false );
@@ -121,6 +187,10 @@ int DoIt( int argc, char *argv[] )
     }
   else if( registration == "Affine" )
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Registration: Affine" << std::endl;
+      }
     reger->SetEnableInitialRegistration( false );
     reger->SetEnableRigidRegistration( false );
     reger->SetEnableAffineRegistration( true );
@@ -128,6 +198,10 @@ int DoIt( int argc, char *argv[] )
     }
   else if( registration == "BSpline" )
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Registration: BSpline" << std::endl;
+      }
     reger->SetEnableInitialRegistration( false );
     reger->SetEnableRigidRegistration( false );
     reger->SetEnableAffineRegistration( false );
@@ -135,6 +209,10 @@ int DoIt( int argc, char *argv[] )
     }
   else if( registration == "PipelineRigid" )
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Registration: PipelineRigid" << std::endl;
+      }
     reger->SetEnableInitialRegistration( true );
     reger->SetEnableRigidRegistration( true );
     reger->SetEnableAffineRegistration( false );
@@ -142,6 +220,10 @@ int DoIt( int argc, char *argv[] )
     }
   else if( registration == "PipelineAffine" )
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Registration: PipelineAffine" << std::endl;
+      }
     reger->SetEnableInitialRegistration( true );
     reger->SetEnableRigidRegistration( true );
     reger->SetEnableAffineRegistration( true );
@@ -149,6 +231,10 @@ int DoIt( int argc, char *argv[] )
     }
   else if( registration == "PipelineBSpline" )
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Registration: PipelineBSpline" << std::endl;
+      }
     reger->SetEnableInitialRegistration( true );
     reger->SetEnableRigidRegistration( true );
     reger->SetEnableAffineRegistration( true );
@@ -157,38 +243,121 @@ int DoIt( int argc, char *argv[] )
 
   if( metric == "NormCorr" )
     {
-    reger->SetRigidMetricMethodEnum( RegerType::OptimizedRegistrationMethodType::NORMALIZED_CORRELATION_METRIC );
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Metric: NormalizedCorrelation" << std::endl;
+      }
+    reger->SetRigidMetricMethodEnum
+      ( RegerType::OptimizedRegistrationMethodType::
+        NORMALIZED_CORRELATION_METRIC );
     }
   else if( metric == "MeanSqrd" )
     {
-    reger->SetRigidMetricMethodEnum( RegerType::OptimizedRegistrationMethodType::MEAN_SQUARED_ERROR_METRIC );
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Metric: MeanSquared" << std::endl;
+      }
+    reger->SetRigidMetricMethodEnum
+      ( RegerType::OptimizedRegistrationMethodType::MEAN_SQUARED_ERROR_METRIC );
     }
   else // if( metric == "MattesMI" )
     {
-    reger->SetRigidMetricMethodEnum( RegerType::OptimizedRegistrationMethodType::MATTES_MI_METRIC );
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Metric: MattesMutualInformation" << std::endl;
+      }
+    reger->SetRigidMetricMethodEnum
+      ( RegerType::OptimizedRegistrationMethodType::MATTES_MI_METRIC );
     }
 
   reger->SetUseOverlapAsROI( useOverlapAsROI );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### UseOverlapsAsROI: " << useOverlapAsROI << std::endl;
+    }
 
   reger->SetMinimizeMemory( minimizeMemory );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### MinimizeMemory: " << minimizeMemory << std::endl;
+    }
 
   reger->SetRigidMaxIterations( rigidMaxIterations );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### RigidMaxIterations: " << rigidMaxIterations << std::endl;
+    }
+
   reger->SetAffineMaxIterations( affineMaxIterations );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### AffineMaxIterations: " << affineMaxIterations << std::endl;
+    }
+
   reger->SetBSplineMaxIterations( bsplineMaxIterations );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### BSplineMaxIterations: " << bsplineMaxIterations << std::endl;
+    }
 
   reger->SetRigidSamplingRatio( rigidSamplingRatio );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### RigidSamplingRatio: " << rigidSamplingRatio << std::endl;
+    }
   reger->SetAffineSamplingRatio( affineSamplingRatio );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### AffineSamplingRatio: " << affineSamplingRatio << std::endl;
+    }
   reger->SetBSplineSamplingRatio( bsplineSamplingRatio );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### BSplineSamplingRatio: " << bsplineSamplingRatio << std::endl;
+    }
 
   reger->SetExpectedOffsetPixelMagnitude( expectedOffset );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### ExpectedOffsetPixelMagnitude: " << expectedOffset 
+              << std::endl;
+    }
+
   reger->SetExpectedRotationMagnitude( expectedRotation );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### ExpectedRotationMagnitude: " << expectedRotation 
+              << std::endl;
+    }
+
   reger->SetExpectedScaleMagnitude( expectedScale );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### ExpectedScaleMagnitude: " << expectedScale 
+              << std::endl;
+    }
+
   reger->SetExpectedSkewMagnitude( expectedSkew );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### ExpectedSkewMagnitude: " << expectedSkew 
+              << std::endl;
+    }
 
   reger->SetBSplineControlPointPixelSpacing( controlPointSpacing );
+  if (verbosity >= STANDARD)
+    {
+    std::cerr << "### ExpectedBSplineControlPointPixelSpacing: " 
+              << controlPointSpacing 
+              << std::endl;
+    }
 
   try
     {
+    if (verbosity >= STANDARD)
+      {
+      std::cerr << "### Starting registration..." << std::endl;
+      }
     reger->Update();
     }
   catch( itk::ExceptionObject &excep)
@@ -304,6 +473,9 @@ int main( int argc, char * argv[] )
   itk::ImageIOBase::IOPixelType pixelType;
   itk::ImageIOBase::IOComponentType componentType;
  
+  // tmp for debuging (maybe make this a command line parameter?
+  //itk::MultiThreader::SetGlobalDefaultNumberOfThreads(1);
+
   try
     {
     GetImageType (fixedImage, pixelType, componentType); 

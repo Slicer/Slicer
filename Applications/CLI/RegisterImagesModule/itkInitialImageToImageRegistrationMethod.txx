@@ -33,9 +33,9 @@ InitialImageToImageRegistrationMethod< TImage >
   this->SetTransform( TransformType::New() );
   this->GetTypedTransform()->SetIdentity();
 
-  m_NumberOfMoments = 0 ;
+  this->m_NumberOfMoments = 0 ;
 
-  m_ComputeCenterOfRotationOnly = false;
+  this->m_ComputeCenterOfRotationOnly = false;
 }
 
 template< class TImage >
@@ -44,12 +44,14 @@ InitialImageToImageRegistrationMethod< TImage >
 {
 }
 
+/** Only the GenerateData() method should be overloaded. The Update() method
+ * must not be overloaded */
 template< class TImage >
 void
 InitialImageToImageRegistrationMethod< TImage >
-::Update( void )
+::GenerateData( void )
 {
-  Superclass::Update();
+  Superclass::GenerateData();
 
   typedef ImageMomentsCalculator< TImage > MomentsCalculatorType;
 
@@ -57,7 +59,7 @@ InitialImageToImageRegistrationMethod< TImage >
   newTransform = MomentsCalculatorType::AffineTransformType::New();
   newTransform->SetIdentity();
 
-  if(m_ComputeCenterOfRotationOnly)
+  if( this->m_ComputeCenterOfRotationOnly )
     {
     typename TImage::SizeType    size;
 
@@ -76,7 +78,7 @@ InitialImageToImageRegistrationMethod< TImage >
 
     newTransform->SetCenter(movingCenterPoint);
     }
-  else if(m_NumberOfMoments == 0)
+  else if( this->m_NumberOfMoments == 0)
     {
     typename TImage::SizeType    size;
 
@@ -143,18 +145,19 @@ InitialImageToImageRegistrationMethod< TImage >
       return;
       }
 
-    typename MomentsCalculatorType::AffineTransformType::Pointer 
-          fixedImageAxesTransform;
-    fixedImageAxesTransform = 
-          momCalc->GetPhysicalAxesToPrincipalAxesTransform();
+    typename MomentsCalculatorType::AffineTransformType::Pointer fixedImageAxesTransform;
+
+    fixedImageAxesTransform = momCalc->GetPhysicalAxesToPrincipalAxesTransform();
 
     typename TransformType::InputPointType fixedImageCenterOfMass;
+
     for(unsigned int i=0; i<this->ImageDimension; i++)
       {
       fixedImageCenterOfMass[i] = momCalc->GetCenterOfGravity()[i];
       }
 
     momCalc->SetImage( this->GetMovingImage() );
+
     if( this->GetUseMovingImageMaskObject() )
       {
       if( this->GetMovingImageMaskObject() )
@@ -190,7 +193,7 @@ InitialImageToImageRegistrationMethod< TImage >
     typename TransformType::OffsetType offset;
     offset = movingImageCenterOfMass - fixedImageCenterOfMass;
     
-    if(m_NumberOfMoments == 1) // Centers of mass
+    if( this->m_NumberOfMoments == 1 ) // Centers of mass
       {
       newTransform->SetCenter(movingImageCenterOfMass);
       newTransform->SetOffset(offset);
@@ -216,16 +219,27 @@ InitialImageToImageRegistrationMethod< TImage >
 }
 
 template< class TImage >
-typename InitialImageToImageRegistrationMethod< TImage >::TransformType::Pointer
+const typename InitialImageToImageRegistrationMethod< TImage >::TransformType *
 InitialImageToImageRegistrationMethod< TImage >
-::GetAffineTransform( void )
+::GetTypedTransform( void ) const
+{
+  return static_cast< const TransformType  * >( this->Superclass::GetTransform() );
+}
+
+
+template< class TImage >
+typename InitialImageToImageRegistrationMethod< TImage >::TransformPointer
+InitialImageToImageRegistrationMethod< TImage >
+::GetAffineTransform( void ) const
 {   
   typename TransformType::Pointer trans = TransformType::New();
 
+  const TransformType * typededTransform = this->GetTypedTransform();
+
   trans->SetIdentity();
-  trans->SetCenter( this->GetTypedTransform()->GetCenter() );
-  trans->SetMatrix( this->GetTypedTransform()->GetMatrix() );
-  trans->SetOffset( this->GetTypedTransform()->GetOffset() );
+  trans->SetCenter( typededTransform->GetCenter() );
+  trans->SetMatrix( typededTransform->GetMatrix() );
+  trans->SetOffset( typededTransform->GetOffset() );
 
   return trans;
 }   
@@ -238,9 +252,9 @@ InitialImageToImageRegistrationMethod< TImage >
 {
   Superclass::PrintSelf( os, indent );
 
-  os << indent << "Number of moments = " << m_NumberOfMoments << std::endl;
+  os << indent << "Number of moments = " << this->m_NumberOfMoments << std::endl;
 
-  os << indent << "Compute Center Of Rotation Only = " << m_ComputeCenterOfRotationOnly << std::endl;
+  os << indent << "Compute Center Of Rotation Only = " << this->m_ComputeCenterOfRotationOnly << std::endl;
 }
 
 };

@@ -73,14 +73,10 @@ class OptimizedImageToImageRegistrationMethod
                                        BSPLINE_INTERPOLATION,
                                        SINC_INTERPOLATION };
 
-    enum OptimizationMethodEnumType { MULTIRESOLUTION_OPTIMIZATION,
-                                      EVOLUTIONARY_OPTIMIZATION,
-                                      GRADIENT_OPTIMIZATION };
-
     // 
     // Methods from Superclass
     //
-    void Update( void );
+    void GenerateData( void );
 
     //
     // Custom Methods
@@ -123,9 +119,6 @@ class OptimizedImageToImageRegistrationMethod
     itkSetMacro( InterpolationMethodEnum, InterpolationMethodEnumType );
     itkGetConstMacro( InterpolationMethodEnum, InterpolationMethodEnumType );
 
-    itkSetMacro( OptimizationMethodEnum, OptimizationMethodEnumType );
-    itkGetConstMacro( OptimizationMethodEnum, OptimizationMethodEnumType );
-
     itkGetMacro( FinalMetricValue, double );
 
   protected:
@@ -133,7 +126,15 @@ class OptimizedImageToImageRegistrationMethod
     OptimizedImageToImageRegistrationMethod( void );
     virtual ~OptimizedImageToImageRegistrationMethod( void );
 
+    itkSetMacro( FinalMetricValue, double );
+
     itkSetMacro( TransformMethodEnum, TransformMethodEnumType );
+
+    typedef InterpolateImageFunction< TImage, double >  InterpolatorType;
+    typedef ImageToImageMetric< TImage, TImage >        MetricType;
+
+    virtual void Optimize( MetricType * metric,
+                           InterpolatorType * interpolator );
 
     void PrintSelf( std::ostream & os, Indent indent ) const;
 
@@ -167,8 +168,6 @@ class OptimizedImageToImageRegistrationMethod
     MetricMethodEnumType                m_MetricMethodEnum;
 
     InterpolationMethodEnumType         m_InterpolationMethodEnum;
-
-    OptimizationMethodEnumType          m_OptimizationMethodEnum;
 
     double                              m_FinalMetricValue;
   };

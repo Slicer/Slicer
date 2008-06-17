@@ -96,7 +96,6 @@ ImageToImageRegistrationHelper< TImage >
   m_RigidTransform = 0;
   m_RigidMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_RigidInterpolationMethodEnum = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION;
-  m_RigidOptimizationMethodEnum = OptimizedRegistrationMethodType::EVOLUTIONARY_OPTIMIZATION;
   m_RigidMetricValue = 0;
 
 
@@ -107,7 +106,6 @@ ImageToImageRegistrationHelper< TImage >
   m_AffineTransform = 0;
   m_AffineMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_AffineInterpolationMethodEnum = OptimizedRegistrationMethodType::LINEAR_INTERPOLATION;
-  m_AffineOptimizationMethodEnum = OptimizedRegistrationMethodType::GRADIENT_OPTIMIZATION;
   m_AffineMetricValue = 0;
 
   
@@ -119,7 +117,6 @@ ImageToImageRegistrationHelper< TImage >
   m_BSplineTransform = 0;
   m_BSplineMetricMethodEnum = OptimizedRegistrationMethodType::MATTES_MI_METRIC;
   m_BSplineInterpolationMethodEnum = OptimizedRegistrationMethodType::BSPLINE_INTERPOLATION;
-  m_BSplineOptimizationMethodEnum = OptimizedRegistrationMethodType::MULTIRESOLUTION_OPTIMIZATION;
   m_BSplineMetricValue = 0;
 
 }
@@ -270,14 +267,16 @@ ImageToImageRegistrationHelper< TImage >
   m_BSplineTransformResampledImage = 0;
 }
 
+/** This class provides an Update() method to fit the appearance of a
+ * ProcessObject API, but it is not a ProcessObject.  */
 template< class TImage >
 void
 ImageToImageRegistrationHelper< TImage >
 ::Update( void )
 {
-  if( !m_CompletedInitialization )
+  if( !(this->m_CompletedInitialization) )
     {
-    Initialize();
+    this->Initialize();
     }
 
   if( m_EnableLoadedRegistration 
@@ -422,7 +421,6 @@ ImageToImageRegistrationHelper< TImage >
       }
     reg->SetMetricMethodEnum( m_RigidMetricMethodEnum );
     reg->SetInterpolationMethodEnum( m_RigidInterpolationMethodEnum );
-    reg->SetOptimizationMethodEnum( m_RigidOptimizationMethodEnum );
     typename RigidTransformType::ParametersType scales;
     if( ImageDimension == 2 )
       {
@@ -476,7 +474,10 @@ ImageToImageRegistrationHelper< TImage >
 
     m_RigidTransform = RigidTransformType::New();
     m_RigidTransform->SetFixedParameters(reg->GetTypedTransform()->GetFixedParameters() );
-    m_RigidTransform->SetParametersByValue(reg->GetTypedTransform()->GetParameters() );
+    // must call GetAffineTransform here because the typed transform
+    // is a versor and has only 6 parameters (in this code the type
+    // RigidTransform is a 12 parameter transform)
+    m_RigidTransform->SetParametersByValue(reg->GetAffineTransform()->GetParameters() );
     m_CurrentMatrixTransform = reg->GetAffineTransform();
     m_CurrentBSplineTransform = 0;
 
@@ -533,7 +534,6 @@ ImageToImageRegistrationHelper< TImage >
       }
     reg->SetMetricMethodEnum( m_AffineMetricMethodEnum );
     reg->SetInterpolationMethodEnum( m_AffineInterpolationMethodEnum );
-    reg->SetOptimizationMethodEnum( m_AffineOptimizationMethodEnum );
     typename AffineTransformType::ParametersType scales;
     scales.set_size( ImageDimension*ImageDimension + ImageDimension );
     unsigned int scaleNum = 0;
@@ -650,7 +650,6 @@ ImageToImageRegistrationHelper< TImage >
       }
     reg->SetMetricMethodEnum( m_BSplineMetricMethodEnum );
     reg->SetInterpolationMethodEnum( m_BSplineInterpolationMethodEnum );
-    reg->SetOptimizationMethodEnum( m_BSplineOptimizationMethodEnum );
     reg->SetNumberOfControlPoints( (int)(fixedImageSize[0] / m_BSplineControlPointPixelSpacing) );
 
     reg->Update();
@@ -1023,8 +1022,7 @@ ImageToImageRegistrationHelper< TImage >
 ::PrintSelfHelper( std::ostream & os, Indent indent,
                     const std::string basename,
                     MetricMethodEnumType metric,
-                    InterpolationMethodEnumType interpolation,
-                    OptimizationMethodEnumType optimization ) const
+                    InterpolationMethodEnumType interpolation ) const
 {
   switch( metric )
     {
@@ -1070,30 +1068,6 @@ ImageToImageRegistrationHelper< TImage >
     default:
       {
       os << indent << basename << " Interpolation Method = UNKNOWN" << std::endl;
-      break;
-      }
-    }
-  os << indent << std::endl;
-  switch( optimization )
-    {
-    case OptimizedRegistrationMethodType::MULTIRESOLUTION_OPTIMIZATION:
-      {
-      os << indent << basename << " Optimization Method = Multiresolution" << std::endl;
-      break;
-      }
-    case OptimizedRegistrationMethodType::EVOLUTIONARY_OPTIMIZATION:
-      {
-      os << indent << basename << " Optimization Method = EVOLUTIONARY_OPTIMIZATION" << std::endl;
-      break;
-      }
-    case OptimizedRegistrationMethodType::GRADIENT_OPTIMIZATION:
-      {
-      os << indent << basename << " Optimization Method = GRADIENT_OPTIMIZATION" << std::endl;
-      break;
-      }
-    default:
-      {
-      os << indent << basename << " Registration Optimization Method = UNKNOWN" << std::endl;
       break;
       }
     }
@@ -1262,8 +1236,7 @@ ImageToImageRegistrationHelper< TImage >
   os << indent << "Rigid Target Error = " << m_RigidTargetError << std::endl;
   os << indent << "Rigid Max Iterations = " << m_RigidMaxIterations << std::endl;
   PrintSelfHelper( os, indent, "Rigid", m_RigidMetricMethodEnum,
-                            m_RigidInterpolationMethodEnum,
-                            m_RigidOptimizationMethodEnum );
+                            m_RigidInterpolationMethodEnum );
   os << indent << std::endl;
   if( m_RigidTransform.IsNotNull() )
     {
@@ -1278,8 +1251,7 @@ ImageToImageRegistrationHelper< TImage >
   os << indent << "Affine Target Error = " << m_AffineTargetError << std::endl;
   os << indent << "Affine Max Iterations = " << m_AffineMaxIterations << std::endl;
   PrintSelfHelper( os, indent, "Affine", m_AffineMetricMethodEnum,
-                            m_AffineInterpolationMethodEnum,
-                            m_AffineOptimizationMethodEnum );
+                            m_AffineInterpolationMethodEnum );
   os << indent << std::endl;
   if( m_AffineTransform.IsNotNull() )
     {
@@ -1295,8 +1267,7 @@ ImageToImageRegistrationHelper< TImage >
   os << indent << "BSpline Max Iterations = " << m_BSplineMaxIterations << std::endl;
   os << indent << "BSpline Control Point Pixel Spacing = " << m_BSplineControlPointPixelSpacing << std::endl;
   PrintSelfHelper( os, indent, "BSpline", m_BSplineMetricMethodEnum,
-                            m_BSplineInterpolationMethodEnum,
-                            m_BSplineOptimizationMethodEnum );
+                            m_BSplineInterpolationMethodEnum );
   os << indent << std::endl;
   if( m_BSplineTransform.IsNotNull() )
     {

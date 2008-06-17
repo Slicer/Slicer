@@ -69,7 +69,9 @@ class RigidImageToImageRegistrationMethod
 
     typedef AffineTransform< double,
                              itkGetStaticConstMacro( ImageDimension ) >
-                                                 AffineTransformType;
+                                                        AffineTransformType;
+
+    typedef typename AffineTransformType::Pointer       AffineTransformPointer;                                                 
 
     //
     // Custom Methods
@@ -82,13 +84,31 @@ class RigidImageToImageRegistrationMethod
      *   can be called without the caller having to do the casting. 
      **/
     TransformType * GetTypedTransform( void );
+    const TransformType * GetTypedTransform( void ) const;
 
     /**
-     * This function creates a new affine transforms that implements the 
-     *   current registration transform.   Provided to help with transform
-     *   composition
+     * This function creates a new affine transforms that implements the
+     * current registration transform.   Provided to help with transform
+     * composition. The transform is initialized with the current results
+     * available in the GetTypedTransform() method. The returned transform is
+     * not a member variable, and therefore, must be received into a
+     * SmartPointer to prevent it from being destroyed by depletion of its
+     * reference counting.
      **/
-    typename AffineTransformType::Pointer GetAffineTransform( void );
+    AffineTransformPointer GetAffineTransform( void ) const;
+
+
+    /** Initialize the transform parameters from an AffineTransform This method
+     * is intended as an alternative to calling SetInitialTransformParameters()
+     * and SetInitialTransformFixedParameters(). These later methods require
+     * you to have a rigid transform at hand, and this is not always the case,
+     * specially when a transform initializer is being used. The method below
+     * facilitates to use the AffineTransform returned by the
+     * InitialImageToImageRegistrationMethod to directly initialize this rigid
+     * registration method. The received Affine transform will be approximated
+     * to its closest rigid transform by using Polar decomposition.
+     */
+    void SetInitialTransformParametersFromAffineTransform( const AffineTransformType * affine );
 
   protected:
 

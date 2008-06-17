@@ -21,7 +21,7 @@
 #include "itkImage.h"
 #include "itkBSplineDeformableTransform.h"
 
-#include "itkImageToImageRegistrationMethod.h"
+#include "itkOptimizedImageToImageRegistrationMethod.h"
 
 namespace itk
 {
@@ -46,6 +46,7 @@ class BSplineImageToImageRegistrationMethod
     //
     // Typedefs from Superclass
     //
+    typedef TImage                                             ImageType;
     itkStaticConstMacro( ImageDimension, unsigned int,
                          TImage::ImageDimension );
 
@@ -63,7 +64,7 @@ class BSplineImageToImageRegistrationMethod
     // Methods from Superclass
     //
 
-    void Update( void );
+    void GenerateData( void );
 
     //
     // Custom Methods
@@ -76,6 +77,7 @@ class BSplineImageToImageRegistrationMethod
      *   can be called without the caller having to do the casting. 
      **/
     TransformType * GetTypedTransform( void );
+    const TransformType * GetTypedTransform( void ) const;
 
     itkSetMacro( ExpectedDeformationMagnitude, double );
     itkGetConstMacro( ExpectedDeformationMagnitude, double );
@@ -83,7 +85,8 @@ class BSplineImageToImageRegistrationMethod
     itkSetClampMacro( NumberOfControlPoints, unsigned int, 2, 2000 );
     itkGetConstMacro( NumberOfControlPoints, unsigned int );
 
-    typename TransformType::Pointer GetBSplineTransform( void );
+    TransformType * GetBSplineTransform( void );
+    const TransformType * GetBSplineTransform( void ) const;
 
     void ComputeGridRegion( int numberOfControlPoints,
                  typename TransformType::RegionType::SizeType & regionSize,
@@ -91,23 +94,39 @@ class BSplineImageToImageRegistrationMethod
                  typename TransformType::OriginType & regionOrigin,
                  typename TransformType::DirectionType & regionDirection);
 
-    void ResampleControlGrid(int newNumberOfControlPoints,
-                             ParametersType & newParameters );
+    void ResampleControlGrid( int newNumberOfControlPoints,
+                              ParametersType & newParameters );
+
+    itkSetMacro( GradientOptimizeOnly, bool );
+    itkGetMacro( GradientOptimizeOnly, bool );
 
   protected:
 
     BSplineImageToImageRegistrationMethod( void );
     virtual ~BSplineImageToImageRegistrationMethod( void );
 
+    typedef InterpolateImageFunction< TImage, double >  InterpolatorType;
+    typedef ImageToImageMetric< TImage, TImage >        MetricType;
+
+    virtual void Optimize( MetricType * metric,
+                           InterpolatorType * interpolator );
+    virtual void GradientOptimize( MetricType * metric,
+                                   InterpolatorType * interpolator );
+    virtual void MultiResolutionOptimize( MetricType * metric,
+                                          InterpolatorType * interpolator );
+
     void PrintSelf( std::ostream & os, Indent indent ) const;
-         
+
   private:
 
     BSplineImageToImageRegistrationMethod( const Self & );  // Purposely not implemented
     void operator = ( const Self & );                     // Purposely not implemented
 
     double       m_ExpectedDeformationMagnitude;
+
     unsigned int m_NumberOfControlPoints;
+
+    bool         m_GradientOptimizeOnly;
 
 };
 

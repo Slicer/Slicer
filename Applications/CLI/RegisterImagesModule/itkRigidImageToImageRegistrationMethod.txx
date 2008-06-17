@@ -20,6 +20,7 @@
 #define __RigidImageToImageRegistrationMethod_txx
 
 #include "itkRigidImageToImageRegistrationMethod.h"
+#include "vnl/vnl_inverse.h"
 
 namespace itk
 {
@@ -94,13 +95,21 @@ typename RigidImageToImageRegistrationMethod< TImage >::TransformType *
 RigidImageToImageRegistrationMethod< TImage >
 ::GetTypedTransform( void )
 {
-  return static_cast< TransformType  * >( Superclass::GetTransform() );
+  return dynamic_cast< TransformType  * >( Superclass::GetTransform() );
 }
 
 template< class TImage >
-typename RigidImageToImageRegistrationMethod< TImage >::AffineTransformType::Pointer
+const typename RigidImageToImageRegistrationMethod< TImage >::TransformType *
 RigidImageToImageRegistrationMethod< TImage >
-::GetAffineTransform( void )
+::GetTypedTransform( void ) const
+{
+  return dynamic_cast< const TransformType  * >( Superclass::GetTransform() );
+}
+
+template< class TImage >
+typename RigidImageToImageRegistrationMethod< TImage >::AffineTransformPointer
+RigidImageToImageRegistrationMethod< TImage >
+::GetAffineTransform( void ) const
 {   
   typename AffineTransformType::Pointer trans = AffineTransformType::New();
 
@@ -113,11 +122,72 @@ RigidImageToImageRegistrationMethod< TImage >
 }   
 
 template< class TImage >
+void 
+RigidImageToImageRegistrationMethod< TImage >
+::SetInitialTransformParametersFromAffineTransform( const AffineTransformType * affine )
+{
+  RigidTransformType * rigidTransform = 
+    dynamic_cast< RigidTransformType* >( this->GetTransform() );
+
+  if( !rigidTransform )
+    {
+    itkExceptionMacro("GetTransform() didn't return a Rigid Transform");
+    }
+     
+
+  rigidTransform->SetCenter( affine->GetCenter() );
+  rigidTransform->SetTranslation( affine->GetTranslation() );
+
+  typedef vnl_matrix<double> VnlMatrixType;
+
+  VnlMatrixType M = affine->GetMatrix().GetVnlMatrix();
+
+  //
+  // Polar decomposition algorithm proposed by [Higham 86] 
+  // SIAM J. Sci. Stat. Comput. Vol. 7, Num. 4, October 1986.
+  // "Computing the Polar Decomposition - with Applications"
+  // by Nicholas Higham.
+  //
+  // recommended by
+  // Shoemake in the paper "Matrix Animation and Polar Decomposition".
+  //
+  VnlMatrixType PQ = M;
+  VnlMatrixType NQ = M;
+  VnlMatrixType PQNQDiff;
+
+  const unsigned int maximumIterations = 100;
+
+  for(unsigned int ni = 0; ni < maximumIterations; ni++ )
+    {
+    // Average current Qi with its inverse transpose
+    NQ = ( PQ + vnl_inverse_transpose( PQ ) ) / 2.0;
+    PQNQDiff = NQ - PQ;
+    if( PQNQDiff.frobenius_norm() < 1e-7 )
+      {
+      break;
+      }
+    else
+      {
+      PQ = NQ;
+      }
+    }
+  
+  typename AffineTransformType::MatrixType QMatrix;
+
+  QMatrix = NQ;
+  
+  rigidTransform->SetMatrix( QMatrix );
+
+  this->SetInitialTransformFixedParameters( rigidTransform->GetFixedParameters() );
+  this->SetInitialTransformParameters( rigidTransform->GetParameters() );
+}
+
+template< class TImage >
 void
 RigidImageToImageRegistrationMethod< TImage >
 ::PrintSelf( std::ostream & os, Indent indent ) const
 {
-  Superclass::PrintSelf(os, indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 };
