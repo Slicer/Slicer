@@ -1544,6 +1544,7 @@ proc QueryAtlasPickCallback {} {
         }
     }
 
+    #--- slice or model
     #--- which is best?
     if { $nearestModelRAS != "" && $nearestSliceRAS != "" } { 
         foreach {mx my mz} [eval QueryAtlasWorldToScreen $nearestModelRAS] {}
