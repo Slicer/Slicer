@@ -17,6 +17,12 @@ def TkCall(commandString):
 
 class SlicerWrapper:
     def ToArray (self):
+      if self.IsA("vtkDataArray"):
+        try:
+            return _slicer.vtkDataArrayToArray ( tk.tk.interpaddr(), str(self) )
+        except Exception, e:
+            print e
+      else:
         try:
             return _slicer.vtkImageDataToArray ( tk.tk.interpaddr(), str(self) )
         except Exception, e:
