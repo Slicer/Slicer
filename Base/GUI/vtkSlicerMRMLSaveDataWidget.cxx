@@ -211,7 +211,7 @@ void vtkSlicerMRMLSaveDataWidget::ProcessWidgetEvents ( vtkObject *caller,
           message->SetParent ( this->GetParent() );
           message->SetMasterWindow ( this->SaveDialog );
           message->SetStyleToYesNo();
-          std::string msg = "File " + fileName + " exists. Do you want to override it?";
+          std::string msg = "File " + fileName + " exists. Do you want to replace it?";
           message->SetText(msg.c_str());
           message->Create();
           writeFile = message->Invoke();
