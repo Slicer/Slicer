@@ -118,19 +118,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro (OrthoButton, vtkKWPushButton);
   vtkGetObjectMacro (CenterButton, vtkKWPushButton);
   vtkGetObjectMacro (ScreenGrabButton, vtkKWMenuButton);
-  vtkGetObjectMacro (SelectCameraButton, vtkKWMenuButton);
   vtkGetObjectMacro (StereoButton, vtkKWMenuButton);
   vtkGetObjectMacro (VisibilityButton, vtkKWMenuButton );
+  vtkGetObjectMacro (PitchButton, vtkKWPushButton);
+  vtkGetObjectMacro (YawButton, vtkKWPushButton);  
+  vtkGetObjectMacro (RollButton, vtkKWPushButton);
+  vtkGetObjectMacro (ZoomInButton, vtkKWPushButton);
+  vtkGetObjectMacro (ZoomOutButton, vtkKWPushButton);
   vtkGetObjectMacro ( SelectSceneSnapshotMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro ( SceneSnapshotButton, vtkKWPushButton );
 
-//  vtkGetObjectMacro (RedFOVEntry, vtkKWEntryWithLabel);
-//  vtkGetObjectMacro (YellowFOVEntry, vtkKWEntry);
-//  vtkGetObjectMacro (GreenFOVEntry, vtkKWEntry);
-  vtkGetObjectMacro (ZoomEntry, vtkKWEntryWithLabel);
-  vtkGetObjectMacro (LookFromButton, vtkKWRadioButton);
-  vtkGetObjectMacro (RotateAroundButton, vtkKWRadioButton );
-  
   // Description:
   // Get the Widgets that display the RotateAround rollover images
   // and the LookFrom rollover images in the ViewControlGUI
@@ -232,8 +229,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   virtual void UpdateFromMRML ( );
   virtual void UpdateSceneSnapshotsFromMRML ( );
 
-  virtual void RestoreSceneSnapshot( const char* name);
-  virtual void DeleteSceneSnapshot( const char* name);  
+  virtual void RestoreSceneSnapshot( const char *name);
+  virtual void DeleteSceneSnapshot( const char *name);  
   
   // Description:
   // Renders the Navigation/Zoom widget fresh
@@ -261,7 +258,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   // SliceControlGUI and FiducialsGUI
   virtual void SetMRMLFiducialPointVisibility ( int state);
   virtual void SetMRMLFiducialLabelVisibility ( int state);
-  virtual const char *CreateSceneSnapshotNode( const char *nodeName);
+  virtual const char *CreateSceneSnapshotNode ( const char *name );
   virtual int InvokeNameDialog( const char *msg, const char *name);
 
   // Description:
@@ -387,8 +384,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
 
   // Description:
   // Builds pulldown menus for GUI menubuttons
-  void BuildCameraSelectMenu ( );
-  void BuildViewSelectMenu ( );
+  void BuildScreenGrabMenu ( );
   void BuildStereoSelectMenu ( );
   void BuildVisibilityMenu ( );
 
@@ -426,17 +422,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWCheckButton *SpinButton;
   vtkKWCheckButton *RockButton;
   vtkKWPushButton *OrthoButton;
-  vtkKWRadioButton *LookFromButton;
-  vtkKWRadioButton *RotateAroundButton;
   vtkKWPushButton *CenterButton;
   vtkKWMenuButton *StereoButton;
   vtkKWMenuButton *ScreenGrabButton;
-  vtkKWMenuButton *SelectCameraButton;
   vtkKWMenuButton *VisibilityButton;
-//  vtkKWEntryWithLabel *RedFOVEntry;
-//  vtkKWEntry *YellowFOVEntry;
-//  vtkKWEntry *GreenFOVEntry;
-  vtkKWEntryWithLabel *ZoomEntry;
+  vtkKWPushButton *PitchButton;
+  vtkKWPushButton *YawButton;
+  vtkKWPushButton *RollButton;
+  vtkKWPushButton *ZoomInButton;
+  vtkKWPushButton *ZoomOutButton;
+
 
   vtkKWMenuButton *SelectSceneSnapshotMenuButton;
   vtkKWPushButton *SceneSnapshotButton;

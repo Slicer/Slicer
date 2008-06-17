@@ -1030,3 +1030,18 @@ static const unsigned char image_SlicerMoreOptions[] =
   "z/OcZdk4jstgw3ikkU7TjFX2fw1V1baK1nGeYVEUEbCVHd9na3PHccqy9DxvKwB3x9fbOR"
   "522Fm9Xp/26fsD704jHWXRIjV9tyEtDq0Mr4AqIgCawDAlnltnW9kfu2MH+w==";
 
+/* 
+ * Resource generated for file:
+ *    SlicerTable.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicerTable_width          = 21;
+static const unsigned int  image_SlicerTable_height         = 21;
+static const unsigned int  image_SlicerTable_pixel_size     = 3;
+static const unsigned long image_SlicerTable_length         = 228;
+static const unsigned long image_SlicerTable_decoded_length = 1323;
+
+static const unsigned char image_SlicerTable[] = 
+  "eNq9k9ENhCAMhnWmwkpwK7kCS7CAd0vwxgS8YWOjIVJtTy/3PZg/pp/8mHQYnlLv8ltd2T"
+  "bnXErh9anCXKe5AsDIZRyJMeIXWB0kcCaEkFJi9fcGTrJZ1CkbY/ZM+j5zob9WvPfOOXoe"
+  "UJan0/9c3m9Q+b6/sry1lr2Isjzp/UW+Kt//f/H0z0pbvs03yrf5WtdwpuMe4TYFibONwy"
+  "3G90nisO9PWADEltKU";

@@ -269,6 +269,7 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
     // on mouseover.
 
 
+/*
   this->ViewAxisAIconHI->SetImage( image_ViewAxisAHi,
                                    image_ViewAxisAHi_width,
                                    image_ViewAxisAHi_height,
@@ -344,6 +345,87 @@ void vtkSlicerViewControlIcons::AssignImageDataToIcons ( ) {
                                       image_ViewAxisMiddle_height,
                                       image_ViewAxisMiddle_pixel_size,
                                       image_ViewAxisMiddle_length, 0);
+*/
+
+
+
+    this->ViewAxisAIconHI->SetImage( image_ViewAxisAHi2,
+                                   image_ViewAxisAHi2_width,
+                                   image_ViewAxisAHi2_height,
+                                   image_ViewAxisAHi2_pixel_size,
+                                   image_ViewAxisAHi2_length, 0);
+  this->ViewAxisAIconLO->SetImage( image_ViewAxisALo2,
+                                   image_ViewAxisALo2_width,
+                                   image_ViewAxisALo2_height,
+                                   image_ViewAxisALo2_pixel_size,
+                                   image_ViewAxisALo2_length, 0);
+  this->ViewAxisPIconLO->SetImage( image_ViewAxisPLo2,
+                                   image_ViewAxisPLo2_width,
+                                   image_ViewAxisPLo2_height,
+                                   image_ViewAxisPLo2_pixel_size,
+                                   image_ViewAxisPLo2_length, 0);
+  this->ViewAxisPIconHI->SetImage( image_ViewAxisPHi2,
+                                   image_ViewAxisPHi2_width,
+                                   image_ViewAxisPHi2_height,
+                                   image_ViewAxisPHi2_pixel_size,
+                                   image_ViewAxisPHi2_length, 0);
+  this->ViewAxisRIconLO->SetImage( image_ViewAxisRLo2,
+                                   image_ViewAxisRLo2_width,
+                                   image_ViewAxisRLo2_height,
+                                   image_ViewAxisRLo2_pixel_size,
+                                   image_ViewAxisRLo2_length, 0);
+  this->ViewAxisRIconHI->SetImage( image_ViewAxisRHi2,
+                                   image_ViewAxisRHi2_width,
+                                   image_ViewAxisRHi2_height,
+                                   image_ViewAxisRHi2_pixel_size,
+                                   image_ViewAxisRHi2_length, 0);
+  this->ViewAxisLIconLO->SetImage( image_ViewAxisLLo2,
+                                   image_ViewAxisLLo2_width,
+                                   image_ViewAxisLLo2_height,
+                                   image_ViewAxisLLo2_pixel_size,
+                                   image_ViewAxisLLo2_length, 0);
+  this->ViewAxisLIconHI->SetImage( image_ViewAxisLHi2,
+                                   image_ViewAxisLHi2_width,
+                                   image_ViewAxisLHi2_height,
+                                   image_ViewAxisLHi2_pixel_size,
+                                   image_ViewAxisLHi2_length, 0);
+  this->ViewAxisSIconLO->SetImage( image_ViewAxisSLo2,
+                                   image_ViewAxisSLo2_width,
+                                   image_ViewAxisSLo2_height,
+                                   image_ViewAxisSLo2_pixel_size,
+                                   image_ViewAxisSLo2_length, 0);
+  this->ViewAxisSIconHI->SetImage( image_ViewAxisSHi2,
+                                   image_ViewAxisSHi2_width,
+                                   image_ViewAxisSHi2_height,
+                                   image_ViewAxisSHi2_pixel_size,
+                                   image_ViewAxisSHi2_length, 0);
+  this->ViewAxisIIconLO->SetImage( image_ViewAxisILo2,
+                                   image_ViewAxisILo2_width,
+                                   image_ViewAxisILo2_height,
+                                   image_ViewAxisILo2_pixel_size,
+                                   image_ViewAxisILo2_length, 0 );
+  this->ViewAxisIIconHI->SetImage( image_ViewAxisIHi2,
+                                   image_ViewAxisIHi2_width,
+                                   image_ViewAxisIHi2_height,
+                                   image_ViewAxisIHi2_pixel_size,
+                                   image_ViewAxisIHi2_length, 0);
+  this->ViewAxisBottomCornerIcon->SetImage( image_ViewAxisBottomCorner2,
+                                            image_ViewAxisBottomCorner2_width,
+                                            image_ViewAxisBottomCorner2_height,
+                                            image_ViewAxisBottomCorner2_pixel_size,
+                                            image_ViewAxisBottomCorner2_length, 0);
+  this->ViewAxisTopCornerIcon->SetImage( image_ViewAxisTopCorner2,
+                                         image_ViewAxisTopCorner2_width,
+                                         image_ViewAxisTopCorner2_height,
+                                         image_ViewAxisTopCorner2_pixel_size,
+                                         image_ViewAxisTopCorner2_length, 0);
+  this->ViewAxisCenterIcon->SetImage( image_ViewAxisCenter2,
+                                      image_ViewAxisCenter2_width,
+                                      image_ViewAxisCenter2_height,
+                                      image_ViewAxisCenter2_pixel_size,
+                                      image_ViewAxisCenter2_length, 0);
+
+
   this->SpinOffButtonIcon->SetImage ( image_ViewSpinRadioOff,
                                    image_ViewSpinRadioOff_width,
                                    image_ViewSpinRadioOff_height,
