@@ -21,7 +21,7 @@ vtkSlicerDataGUI::vtkSlicerDataGUI ( )
 {
   this->MRMLTreeWidget = vtkSlicerMRMLTreeWidget::New();
 //  this->SceneSnapshotWidget = vtkSlicerSceneSnapshotWidget::New();
-  this->RecordSnapshotWidget = vtkSlicerRecordSnapshotWidget::New();
+//  this->RecordSnapshotWidget = vtkSlicerRecordSnapshotWidget::New();
 
   NACLabel = NULL;
   NAMICLabel = NULL;
@@ -46,13 +46,14 @@ vtkSlicerDataGUI::~vtkSlicerDataGUI ( )
     this->SceneSnapshotWidget->SetParent (NULL );
     this->SceneSnapshotWidget->Delete ( );
     }
-*/
+
   if (this->RecordSnapshotWidget)
     {
     this->RecordSnapshotWidget->RemoveWidgetObservers ( );
     this->RecordSnapshotWidget->SetParent (NULL );
     this->RecordSnapshotWidget->Delete ( );
     }
+*/
   if ( this->NACLabel )
     {
     this->NACLabel->SetParent ( NULL );
