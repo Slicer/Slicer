@@ -421,7 +421,18 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
         if { $isWindows } { 
             # is present in the windows binary download
         } elseif { $isDarwin } {
-            # BLT is patched in the svn mirror
+            if { ![file exists $Slicer3_LIB/tcl/isPatchedBLT] } { 
+              puts "Patching..." 
+              runcmd curl -k -O https://share.spl.harvard.edu/share/birn/public/software/External/Patches/bltpatch 
+              cd $Slicer3_LIB/tcl/blt 
+              runcmd patch -p2 < ../bltpatch 
+
+              # create a file to make sure BLT isn't patched twice 
+              runcmd touch $Slicer3_LIB/tcl/isPatchedBLT 
+              file delete $Slicer3_LIB/tcl/bltpatch 
+            } else { 
+              puts "BLT already patched." 
+            }
             cd $Slicer3_LIB/tcl/blt
             runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common
             eval runcmd $::MAKE
