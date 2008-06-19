@@ -935,6 +935,12 @@ if { ![file exists $::TK_TEST_FILE] } {
 if { ![file exists $::ITCL_TEST_FILE] } {
     puts "incrTcl test file $::ITCL_TEST_FILE not found."
 }
+if { ![file exists $::IWIDGETS_TEST_FILE] } {
+    puts "iwidgets test file $::IWIDGETS_TEST_FILE not found."
+}
+if { ![file exists $::BLT_TEST_FILE] } {
+    puts "BLT test file $::BLT_TEST_FILE not found."
+}
 if { ![file exists $::VTK_TEST_FILE] } {
     puts "VTK test file $::VTK_TEST_FILE not found."
 }
@@ -948,6 +954,8 @@ if { ![file exists $::CMAKE] || \
          ![file exists $::TCL_TEST_FILE] || \
          ![file exists $::TK_TEST_FILE] || \
          ![file exists $::ITCL_TEST_FILE] || \
+         ![file exists $::IWIDGETS_TEST_FILE] || \
+         ![file exists $::BLT_TEST_FILE] || \
          ![file exists $::VTK_TEST_FILE] || \
          ![file exists $::ITK_TEST_FILE] } {
     puts "Not all packages compiled; check errors and run genlib.tcl again."
