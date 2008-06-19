@@ -80,4 +80,25 @@ slicer3_install_modules(${lib_name})
 
 if(BUILD_TESTING)
 #  subdirs(Testing)
+   add_test(QdecModuleLibs ${Slicer3_BINARY_DIR}/Slicer3 --test-mode --no-splash --script ${CMAKE_CURRENT_SOURCE_DIR}/Testing/QdecModuleLibs.tcl)
 endif(BUILD_TESTING)
+
+# Install test files
+file(GLOB_RECURSE TXTFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.txt")
+file(GLOB_RECURSE TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.tcl")
+foreach(file 
+    ${TXTFILES}
+    ${TCLFILES}
+    )
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY
+    )
+endforeach(file) 
+install(DIRECTORY
+  Testing
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME} COMPONENT Development
+  PATTERN ".svn" EXCLUDE
+  )
+
