@@ -167,6 +167,8 @@ switch $::tcl_platform(os) {
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.dylib
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.dylib
+        set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
+        set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
         set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.$shared_lib_ext
@@ -187,6 +189,8 @@ switch $::tcl_platform(os) {
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
         set ::INCR_TCL_LIB $::TCL_LIB_DIR/lib/libitcl3.2.so
         set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/libitk3.2.so
+        set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
+        set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.so
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
@@ -217,6 +221,8 @@ switch $::tcl_platform(os) {
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/itclConfig.sh
         set ::INCR_TCL_LIB $::TCL_LIB_DIR/lib/itcl3.2/itcl32.lib
         set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/itk3.2/itk32.lib
+        set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.2/iwidgets.tcl
+        set ::BLT_TEST_FILE $::TCL_BIN_DIR/BLT24.dll
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu.exe
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python.exe
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/Libs/python25.lib
