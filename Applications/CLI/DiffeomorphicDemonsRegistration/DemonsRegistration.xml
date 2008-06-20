@@ -32,7 +32,7 @@
     </image>
     <image>
       <name>demonsDeformationVolume</name>
-      <flag>0</flag>
+      <flag>O</flag>
       <longflag>output_field</longflag>
       <label>Deformation Field</label>
       <channel>output</channel>
