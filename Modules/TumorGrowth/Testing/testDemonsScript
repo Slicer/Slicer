@@ -1,0 +1,9 @@
+mkdir ../Testing-TGdem
+#../../../lib/Slicer3/Plugins/DemonsRegistration --fixed_image TG_scan2_norm.nhdr --moving_image TG_scan1_SuperSampled.nhdr --output_image ../Testing-TGdem/TG_Deformable_Scan1AlignedToScan2.nhdr --output_field ../Testing-TGdem/TG_Deformable_Deformation.mha --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose
+#../../../lib/Slicer3/Plugins/applyDeformationITK TG_scan1_Segment.nhdr ../Testing-TGdem/TG_Deformable_Deformation.mha ../Testing-TGdem/TG_Deformable_Scan1SegmentationAlignedToScan2.nhdr 1 1
+../../../lib/Slicer3/Plugins/DetectGrowthSegmentation TG_scan1_Segment.nhdr ../Testing-TGdem/TG_Deformable_Scan1SegmentationAlignedToScan2.nhdr ../Testing-TGdem/Analysis_Deformable_Sementation_Result.txt
+echo "========== Test Result =============="
+echo "Result:"
+more ../Testing-TGdem/Analysis_Deformable_Sementation_Result.txt
+echo "Should be: "
+echo "626.126377  11025.457009"
