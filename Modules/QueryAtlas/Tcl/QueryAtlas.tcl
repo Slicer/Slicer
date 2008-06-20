@@ -117,25 +117,16 @@ proc QueryAtlasDialog { msg } {
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasTearDownAnnoCursor { } {
 
-    if { [info exists ::QA(cursor,mapper)] } {
-        $::QA(cursor,mapper) Delete
-        unset -nocomplain ::QA(cursor,mapper)
-    }
 
     if { [info exists ::QA(cursor,actor)] } {
         $::QA(cursor,actor) Delete
-        puts "deleting cursor"
+#        puts "deleting cursor"
         unset -nocomplain ::QA(cursor,actor)
-    }
-    
-    if { [info exists ::QA(cursor,shmapper)] } {
-        $::QA(cursor,shmapper) Delete
-        unset -nocomplain ::QA(cursor,shmapper)
     }
     
     if { [info exists ::QA(cursor,shadow)] } {
         $::QA(cursor,shadow) Delete
-        puts "deleting shadow"
+#        puts "deleting shadow"
         unset -nocomplain ::QA(cursor,shadow)
     }
 
@@ -695,7 +686,7 @@ proc QueryAtlasAddAnnotations {LHAnnoFileName RHAnnoFileName } {
             #set actor [ $viewer GetActorByID [$modelNode GetID] ]
             set actor [ $viewer GetActorByID $displayNodeID ]
             if { $actor == "" } {
-                puts "can't find model as actor"
+#                puts "can't find model as actor"
                 return
             }
             set mapper [$actor GetMapper]
@@ -707,7 +698,7 @@ proc QueryAtlasAddAnnotations {LHAnnoFileName RHAnnoFileName } {
                 [$modelNode GetDisplayNode] SetScalarVisibility 1
 
                 if { $scalaridx == "-1" } {
-                    puts "couldn't find scalars -- adding"
+#                    puts "couldn't find scalars -- adding"
                     set scalars [vtkIntArray New]
                     $scalars SetName "labels"
                     [$polydata GetPointData] AddArray $scalars
@@ -1394,7 +1385,6 @@ proc QueryAtlasPickOnQuerySlice {x y renderer modelNode} {
 }
 
 proc QueryAtlasPickCallback {} {
-
     set _useMID ""
 
     if { ![info exists ::QA(windowToImage)] } {
@@ -1603,9 +1593,8 @@ proc QueryAtlasUpdateCursor {} {
   #--- of the vtkTextActor.
   if { ![info exists ::QA(cursor,actor)] } {
       set ::QA(cursor,shadow) [vtkTextActor New]
-      set ::QA(cursor,shmapper) [ vtkTextMapper New ]
       set ::QA(cursor,actor) [vtkTextActor New]
-      set ::QA(cursor,mapper) [vtkTextMapper New]
+
       #--- shadow
       $::QA(cursor,shadow) ScaledTextOff
       [$::QA(cursor,shadow) GetTextProperty ] ShadowOff
@@ -1618,22 +1607,20 @@ proc QueryAtlasUpdateCursor {} {
       [$::QA(cursor,actor) GetTextProperty] SetFontSize 20
       [$::QA(cursor,actor) GetTextProperty] SetFontFamilyToArial
       [$::QA(cursor,actor) GetTextProperty] SetColor 1.0 1.0 1.0
-      
-      $::QA(cursor,shadow) SetMapper $::QA(cursor,shmapper)
-      $::QA(cursor,actor) SetMapper $::QA(cursor,mapper)
-      $renderer AddViewProp $::QA(cursor,shadow)
-      $renderer AddViewProp $::QA(cursor,actor)
+
+      $renderer AddActor2D $::QA(cursor,shadow)
+      $renderer AddActor2D $::QA(cursor,actor)
   }
 
   # update the text actor, its shadow and render
-  if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] && [info exists ::QA(cursor,mapper)] } {
+  if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] } {
       $::QA(cursor,shadow) SetInput $::QA(lastLabels)
       $::QA(cursor,actor) SetInput $::QA(lastLabels) 
                                  
       #--- position the text label just higher than the cursor
       foreach {x y} $::QA(lastWindowXY) {}
       set y [expr $y + 15]
-      puts "$::QA(lastLabels) at $x $y"
+#      puts "$::QA(lastLabels) at $x $y"
       $::QA(cursor,shadow) SetPosition [expr $x+1] [expr $y-1]
       $::QA(cursor,actor) SetPosition $x $y
       $viewer Render

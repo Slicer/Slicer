@@ -41,6 +41,7 @@ proc QueryAtlasCullOldModelAnnotations { } {
         #--- MODELS
         #---
         #--- get new list of current scene models
+        set tmpNodeList ""
         set n [ $::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLModelNode" ]
         for { set i 0 } { $i < $n } { incr i } {
             set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLModelNode" ]            
@@ -114,6 +115,7 @@ proc QueryAtlasCullOldLabelMapAnnotations { } {
         #--- LABEL MAPS
         #---
         #--- get new list of current scene label maps
+        set tmpNodeList ""
         set n [ $::slicer3::MRMLScene GetNumberOfNodesByClass "vtkMRMLScalarVolumeNode" ]
         for { set i 0 } { $i < $n } { incr i } {
             set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLScalarVolumeNode" ]            
@@ -288,11 +290,14 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
         for { set i 0 } { $i < $n } { incr i } {
             set node [ $::slicer3::MRMLScene GetNthNodeByClass $i "vtkMRMLModelNode" ]            
             lappend tmpNodeList [$node GetID ]
+#            puts "models to anno: $tmpNodeList"
         }
 
         #--- progress feedback
         $prog SetValue 10
         #--- COMPARE new list with last list.
+        #--- Keep a list of all models that have been added since
+        #--- last time this annotation update was done.
         set addList ""
         set len [ llength $tmpNodeList ]
         if { $len > 0 } {
@@ -304,6 +309,7 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
                     #--- mark it for adding.
                     if { [ lsearch $::QA(annoModelNodeIDs) $id ] < 0 } {
                         lappend addList $id
+#                        puts "addlist = $addList"
                     }
                 }
             }
@@ -312,11 +318,11 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
         #---
         #--- get annotation for all new models we found
         #--- that don't already have them.
-        #--- for MODELS, check to see if an lh.aparc.annot
-        #--- or an rh.aparc.annot is loaded first -- if not,
+        #--- for FreeSurfer MODELS, check to see if an
+        #--- lh.aparc.annot  or an rh.aparc.annot is loaded first -- if not,
         #--- look in the modelAnnotation dir passed in.
+        #--- TODO: implement this for VTK models.
         #---
-
         set len [ llength $addList ]
         if {$len == 0 } {
             #--- progress feedback
@@ -330,6 +336,7 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
         set stprog 20.0
         set pinc [ expr ( 100.0-$stprog)/$len  ]
 
+        #--- look thru each model in the list.
         for { set i 0 } { $i < $len } { incr i } {
             
             set id [ lindex $addList $i ]
@@ -344,44 +351,45 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
             #--- append all models with either .lh or .rh
             if { ( [ string first "lh." $name ] >= 0 ) || ( [ string first "rh." $name ] >= 0 ) } {
 
-                #--- first try looking in the same directory as the model (xcede catalog format)
+                #--- first try looking in the same directory as the model
+                #--- (xcede catalog format)
                 set fname [[ $node GetStorageNode ] GetFileName ]
+                set annoFileName [ file dirname $fname ]
                 if { [string first "lh." $name] >= 0 } {
-                    set annoFileName [ file dirname $fname ]
                     append annoFileName "/lh.aparc.annot"
                 } elseif { [string first "rh." $name] >= 0 } {
-                    set annoFileName [ file dirname $fname ]
                     append annoFileName "/rh.aparc.annot"
                 }
 
+                
                 #--- if that doesn't work, try looking in the directory passed in (qdec format)
-                if { ! [ file exists $annoFileName ] } {
-                    if { $modelAnnotationDir != "" } {
-                        set dirName [ file join $modelAnnotationDir "fsaverage" ]
-                        if { [ file isdirectory $dirName ] } {
-                            set dirName [ file join $dirName "label" ]
-                            if { [ file isdirectory $dirName ] } {
-
-                                #--- left or right?
-                                if { [string first "lh." $name] >= 0 } {
-                                    set annoFileName [ file join $dirName "lh.aparc.annot" ]
-                                } elseif { [string first "rh." $name] >= 0 } {
-                                    set annoFileName [ file join $dirName "rh.aparc.annot" ]
-                                }
-                            }            
+                if { ! [ file exists $annoFileName]  } {
+#                    puts "annoFileName = $annoFileName"
+#                    puts "modelAnnotationDir = $modelAnnotationDir"
+                    set annoFileName $modelAnnotationDir
+                    if { $node != "" } {
+                        if { [string first "lh." $name] >= 0 } {
+                            append annoFileName "/lh.aparc.annot"
+                        } elseif { [string first "rh." $name] >= 0 } {
+                            append annoFileName "/rh.aparc.annot"
                         }
                     }
                 }
 
-                #--- if that didn't work eit.0her, just look for the next new model.
+                #--- if that didn't work either, just look for the next new model.
                 if { ! [ file exists $annoFileName ] } {
                     break
                 }
                 
-                #--- if we're still here, then search for annotations on the
+                #---
+                #--- First, if we're still here, it means we found an annotation file for
+                #--- the model. So,  search for annotations already added to the
                 #--- model and add them if they're not already there.
+                #---
+                #--- Then, add the model to a global var list of annotated models.
+                #---
                 $win SetStatusText "Adding annotation scalar for $name..."
-            set mlogic [ $::slicer3::ModelsGUI GetLogic ]
+                set mlogic [ $::slicer3::ModelsGUI GetLogic ]
                 if { $mlogic != "" } {
                     #--- progress feedback
                     set p [expr $progress + ( $pinc/9.0 ) ]
@@ -392,28 +400,13 @@ proc QueryAtlasAddNewModelAnnotations { modelAnnotationDir } {
                     set dnodeID [ $node GetDisplayNodeID ]
                     set dnode [ $node GetDisplayNode ]
                     set snode [ $node GetStorageNode ]
-                    # there are now more than one storage nodes on the model node, each overlay has it's own storage node. The annotations have been already added 
-                    if {0} {
-                    if { $snode != "" } {
-                        set numOverlays [expr [ $node GetNumberOfStorageNodes ] - 1]
-                        if { $numOverlays == 0 } {
-                                #--- add the scalar onto the node
-                                $mlogic AddScalar $annoFileName $node                                                        
-                            } else {
-                                for { set j 0 } { $j < $numOverlays } { incr j } {
-                                    set oname   [ $snode GetOverlayFileName $j ]
-                                    if { ( [ string first "lh.aparc.annot" $oname ] < 0 ) && ( [ string first "rh.aparc.annot" $oname] < 0 ) } {
-                                        #--- add the scalar onto the node
-                                        $mlogic AddScalar $annoFileName $node                            
-                                    }
-                                }
-                            }
-                    }
-                    }
+
                     #--- progress feedback
                     set p [expr $progress + ( $pinc/9.0 ) ]
                     $prog SetValue $p
                     
+                    #--- append the model id to the list of annotated models.
+                    #--- we use this when creating the picker.
                     lappend ::QA(annoModelNodeIDs) $id
                     lappend ::QA(annoModelDisplayNodeIDs) [ $node GetDisplayNodeID ]
 
@@ -661,6 +654,7 @@ proc QueryAtlasAddNewLabelMapAnnotations { } {
 
 
 
+
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 proc QueryAtlasUpdateAnnotations { modelAnnotationDir } {
@@ -673,15 +667,19 @@ proc QueryAtlasUpdateAnnotations { modelAnnotationDir } {
     if { ![ info exists ::QA(annoModelDisplayNodeIDs) ] } {
         set ::QA(annoModelDisplayNodeIDs) ""
     } 
+    #--- populate lists of annotated models
     QueryAtlasCullOldModelAnnotations
     QueryAtlasAddNewModelAnnotations $modelAnnotationDir 
-
+    
     #--- labelmaps:
     if { ![ info exists ::QA(annoLabelMapIDs) ] } {
         set ::QA(annoLabelMapIDs) ""
     }
+    #--- populate lists of annotated label maps.
     QueryAtlasCullOldLabelMapAnnotations
     QueryAtlasAddNewLabelMapAnnotations
+
+
 }
 
 
@@ -693,13 +691,14 @@ proc QueryAtlasInitialize { dataset annoPath } {
 
     set annotest 0
     # handle known datasets
+
     switch  $dataset {
         "Qdec" {
             QueryAtlasLoadQdecAnnotations $annoPath
             set annotest [ QueryAtlasConfirmFreeSurferAnnotations ]            
             if { $annotest } {
                 QueryAtlasInitializeGlobals
-                QueryAtlasUpdateAnnotations ""
+                QueryAtlasUpdateAnnotations $annoPath
                 QueryAtlasCreatePicker
                 QueryAtlasParseOntologyResources
                 $::slicer3::QueryAtlasGUI UpdateScalarOverlayMenu
@@ -728,6 +727,17 @@ proc QueryAtlasInitialize { dataset annoPath } {
             QueryAtlasRenderView
         }
     }
+    #--- make sure the render window and interactor window
+    #--- are the same size -- otherwise the annotations don't
+    #--- seem to show up.
+    set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
+    set renderWindow [ [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow ]
+    set renderWindowInteractor [ $renderWindow GetInteractor ]
+    set wsize [ $renderWindow GetSize ]
+    set sizeX [ lindex $wsize 0 ]
+    set sizeY [ lindex $wsize 1 ]
+    $renderWindowInteractor UpdateSize $sizeX $sizeY
+    
 }
 
 
