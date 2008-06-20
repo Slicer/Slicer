@@ -1436,3 +1436,30 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
     }
   return 0;
 }
+
+//----------------------------------------------------------------------------
+void vtkQdecModuleGUI::SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI )
+{
+  this->Superclass::SetApplicationGUI(appGUI);
+
+  if (appGUI == NULL)
+    {
+    return;
+    }
+  
+  // get the viewer widget
+  this->SetViewerWidget(appGUI->GetViewerWidget());
+
+  // get the interactor style, to set up plotting events
+  if (appGUI->GetViewerWidget() != NULL &&
+      appGUI->GetViewerWidget()->GetMainViewer() != NULL &&
+      appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor() != NULL &&
+      appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle() != NULL)
+    {
+    this->SetInteractorStyle(vtkSlicerViewerInteractorStyle::SafeDownCast(appGUI->GetViewerWidget()->GetMainViewer()->GetRenderWindowInteractor()->GetInteractorStyle()));
+    }
+  else
+    {
+    vtkErrorMacro("SetApplicationGUI: unable to get the interactor style, plotting will not work.");
+    }
+}

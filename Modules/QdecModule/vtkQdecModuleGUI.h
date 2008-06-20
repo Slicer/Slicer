@@ -126,7 +126,12 @@ public:
   // *.qdec project file, then call the Logic's method to load the results
   // into Slicer. Returns 0 on error, 1 on success
   int LoadProjectFile(const char *fileName);
-  
+
+  // Description:
+  // subclass setting the application gui, so can set the viewer widget and
+  // interactor style
+  virtual void SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI );
+
 protected:
   vtkQdecModuleGUI();
   ~vtkQdecModuleGUI();
