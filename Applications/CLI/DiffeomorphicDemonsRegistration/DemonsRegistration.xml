@@ -18,7 +18,6 @@
       <flag>f</flag>
       <longflag>fixed_image</longflag>
       <description>Target Volume Number</description> 
-      <default>None</default>
       <description>Target volume</description>
     </image>
     <image>
@@ -27,7 +26,6 @@
       <label>Moving Volume</label>
       <longflag>moving_image</longflag>
       <channel>input</channel>
-      <default>None</default>
       <description>Target volume</description>
     </image>
     <image>
@@ -72,7 +70,7 @@
      <longflag>def_field_sigma</longflag>
      <description>Variance of the smoothing (Sigma)</description> 
      <label>Smoothing</label>
-     <default>1</default>
+     <default>3.0</default>
    </double>  
    <double>
      <name>smoothingUp</name>
@@ -96,7 +94,7 @@
      <longflag>use_histogram_matching</longflag>
      <description>Intensity Normalization</description> 
      <label>Intensity Normalization</label>
-     <default>true</default>
+     <default>false</default>
    </boolean>  
    <boolean>
      <name>turnOffDiffeomorph</name>
@@ -123,7 +121,7 @@
      <longflag>verbose</longflag>
      <description></description> 
      <label>Verbose</label>
-     <default>true</default>
+     <default>false</default>
    </boolean>  
 </parameters>
 </executable>
