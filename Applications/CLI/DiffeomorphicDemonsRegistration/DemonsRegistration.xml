@@ -75,7 +75,7 @@
    <double>
      <name>smoothingUp</name>
      <flag>g</flag>
-     <longflag>smoothing_up</longflag>
+     <longflag>up_field_sigma</longflag>
      <description>Smoothing sigma for the update field at each iteration</description>
      <label>Update field smoothing</label>
      <default>0.0</default>
