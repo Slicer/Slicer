@@ -32,7 +32,7 @@
     </image>
     <image>
       <name>demonsDeformationVolume</name>
-      <flag>O</flag>
+      <flag>0</flag>
       <longflag>output_field</longflag>
       <label>Deformation Field</label>
       <channel>output</channel>
@@ -58,14 +58,14 @@
      <label>Levels</label>
      <default>3</default>
    </integer>  
-   <string>
+   <integer-vector>
      <name>iteration</name>
      <flag>i</flag>
      <longflag>num_iterations</longflag>
      <description>Number of Iterations per Level</description> 
      <label>Iteration</label>
-     <default>20x20x20</default>
-   </string>  
+     <default>20,20,20</default>
+   </integer-vector>  
    <double>
      <name>smoothing</name>
      <flag>s</flag>
@@ -74,6 +74,22 @@
      <label>Smoothing</label>
      <default>1</default>
    </double>  
+   <double>
+     <name>smoothingUp</name>
+     <flag>g</flag>
+     <longflag>smoothing_up</longflag>
+     <description>Smoothing sigma for the update field at each iteration</description>
+     <label>Update field smoothing</label>
+     <default>0.0</default>
+   </double>
+   <double>
+     <name>maxStepLength</name>
+     <flag>l</flag>
+     <longflag>max_step_length</longflag>
+     <description>Maximum length of an update vector (0: no restriction)</description>
+     <label>Max Step Length</label>
+     <default>2.0</default>
+     </double>
    <boolean>
      <name>normalization</name>
      <flag>e</flag>
@@ -90,6 +106,17 @@
      <label>Turn off Diffeomorphism</label>
      <default>false</default>
    </boolean>  
+   <integer-enumeration>
+     <name>gradientType</name>
+     <flag>t</flag>
+     <longflag>gradient_type</longflag>
+     <description>Type of gradient used for computing the demons force (0 is symmetrized, 1 is fixed image, 2 is moving image)</description>
+     <default>0</default>
+     <label>Gradient Type</label>
+     <element>0</element>
+     <element>1</element>
+     <element>2</element>
+   </integer-enumeration>
    <boolean>
      <name>verbose</name>
      <flag>v</flag>

@@ -22,7 +22,6 @@
 #include "itkHistogramMatchingImageFilter.h"
 #include "DemonsRegistrationCLP.h"
 
-#include <getopt.h>
 #include <iostream>
 
 struct arguments
@@ -102,27 +101,6 @@ struct arguments
    }
 };
 
-static const char *optString = "f:m:o:O:r:n:i:s:g:l:at:ev::h?";
-
-static const struct option longOpts[] = {
-   { "fixed_image", required_argument, NULL, 'f' },
-   { "moving_image", required_argument, NULL, 'm' },
-   { "output_image", required_argument, NULL, 'o' },
-   { "output_field", required_argument, NULL, 'O' },
-   { "true_field", required_argument, NULL, 'r' },
-   { "num_levels", required_argument, NULL, 'n' },
-   { "num_iterations", required_argument, NULL, 'i' },
-   { "def_field_sigma", required_argument, NULL, 's' },
-   { "up_field_sigma", required_argument, NULL, 'g' },
-   { "max_step_length", required_argument, NULL, 'l' },
-   { "use_vanilla_dem", no_argument, NULL, 'a' },
-   { "gradient_type", required_argument, NULL, 't' },
-   //{ "use_histogram_matching", no_argument, NULL, 'e' },
-   { "use_histogram_matching", no_argument, NULL, 'e' },
-   { "verbose", optional_argument, NULL, 'v' },
-   { "help", no_argument, NULL, 'h' },
-   { NULL, no_argument, NULL, 0 }
-};
 
 /* Display program usage, and exit.
  */
@@ -166,201 +144,6 @@ void display_usage( const std::string progname )
    
     exit( EXIT_FAILURE );
 }
-
-
-
-std::vector<unsigned int> parseUIntVector( const std::string & str)
-{
-   std::vector<unsigned int> vect;
-   
-   std::string::size_type crosspos = str.find('x',0);
-
-   if (crosspos == std::string::npos)
-   {
-      // only one uint
-      vect.push_back( static_cast<unsigned int>( atoi(str.c_str()) ));
-      return vect;
-   }
-
-   // first uint
-   vect.push_back( static_cast<unsigned int>(
-                      atoi( (str.substr(0,crosspos)).c_str()  ) ));
-
-   while(true)
-   {
-      std::string::size_type crossposfrom = crosspos;
-      crosspos =  str.find('x',crossposfrom+1);
-
-      if (crosspos == std::string::npos)
-      {
-         vect.push_back( static_cast<unsigned int>(
-                            atoi( (str.substr(crossposfrom+1,str.length()-crossposfrom-1)).c_str()  ) ));
-         return vect;
-      }
-
-      vect.push_back( static_cast<unsigned int>(
-                         atoi( (str.substr(crossposfrom+1,crosspos)).c_str()  ) ));
-   }
-}
-
-
-
-void parseOpts (int argc, char **argv, struct arguments & args)
-{
-  //itk::Systemfilesystem::path progpath(argv[0]);
-   const std::string progname( "DemonsRegistration" );
-   
-   // Default values.
-   args = arguments();
-
-   std::vector<unsigned int> defiter = args.numIterations;
-   args.numIterations.clear();
-
-   if (argc == 1)
-   {
-      display_usage(progname);
-   }
-   
-   int opt = 0; /* it's actually going to hold a char */
-   int longIndex = 0;
-   // argc = 2;
-   //for(int i=0;i<argc;i++)
-   //{
-   //   std::cout << argv[i] << std::endl;
-   // }
-   
-   
-   while ( (opt = getopt_long(argc, argv, optString, longOpts, &longIndex)) != -1 )
-   {
-      switch( opt ) {
-      case 'f':
-         if (! optarg) display_usage(progname);
-         args.fixedImageFile = optarg;
-         break;
-            
-      case 'm':
-         if (! optarg) display_usage(progname);
-         args.movingImageFile = optarg;
-         break;
-
-      case 'o':
-         if (! optarg) display_usage(progname);
-         args.outputImageFile = optarg;
-         break;
-
-      case 'O':
-         if (! optarg) args.outputFieldFile = "CHANGETHISSTRING";
-         else args.outputFieldFile = optarg;
-     std::cout << "gsfsf " <<  args.outputFieldFile.c_str() << std::endl;
-         break;
-
-      case 'r':
-         if (! optarg) display_usage(progname);
-         else args.trueFieldFile = optarg;
-         break;
-
-      case 'n':
-         if (! optarg) display_usage(progname);
-         args.numLevels = static_cast<unsigned int>( atoi(optarg) );
-         break;
-
-      case 'i':
-         if (! optarg) display_usage(progname);
-         args.numIterations = parseUIntVector(std::string(optarg));
-         break;
-         
-      case 's':
-         if (! optarg) display_usage(progname);
-         args.sigmaDef = atof(optarg);
-         if ( args.sigmaDef<0.5 and args.sigmaDef>0.0 )
-         {
-            std::cout<<"Sigma is too small (min=0.5). We set it to 0.0 (no smoothing)."
-                     <<std::endl<<std::endl;
-            args.sigmaDef = 0.0;
-         }
-         break;
-
-      case 'g':
-         if (! optarg) display_usage(progname);
-         args.sigmaUp = atof(optarg);
-         if ( args.sigmaUp<0.5 and args.sigmaUp>0.0 )
-         {
-             std::cout<<"Sigma is too small (min=0.5). We set it to 0.0 (no smoothing)."
-                 <<std::endl<<std::endl;
-             args.sigmaUp = 0.0;
-         }
-         break;
-
-      case 'l':
-         if (! optarg) display_usage(progname);
-         args.maxStepLength = atof(optarg);
-         break;
-
-      case 'a':
-         args.useVanillaDem = true;
-         break;
-
-      case 't':
-         if (! optarg) display_usage(progname);
-         args.gradientType = static_cast<unsigned int>( atoi(optarg) );
-         break;
-
-      case 'e':
-         args.useHistogramMatching = true;
-         break;
-            
-      case 'v':
-         if (! optarg) args.verbosity++;
-         else args.verbosity = static_cast<unsigned int>( atoi(optarg) );
-         break;
-            
-      case 'h':    /* fall-through is intentional */
-      case '?':   /* fall-through is intentional */
-      default:
-         display_usage(progname);
-         break;
-     }
-   }
-   if ( args.outputFieldFile=="CHANGETHISSTRING" )
-   {
-      
-      unsigned int pos = args.outputImageFile.find(".");
-      if ( pos < args.outputFieldFile.size() )
-      {
-         args.outputFieldFile = args.outputImageFile;
-         args.outputFieldFile.replace(pos, args.outputFieldFile.size(), "-field.mha");
-      }
-      else
-      {
-         args.outputFieldFile = args.outputImageFile + "-field.mha";
-      }
-         
-   }
-
-   if ( args.numLevels ==0)
-   {
-      std::cout<<"The number of levels should be at least one."<<std::endl;
-      display_usage(progname);
-   }
-   if ( args.numIterations.empty() )
-   {
-      // set a default number of iterations per level
-      args.numIterations = std::vector<unsigned int>(args.numLevels, defiter[0]);
-   }
-   else if ( args.numLevels != args.numIterations.size() )
-   {
-      std::cout<<"The number of levels and the number of iterations do not match."<<std::endl;
-      display_usage(progname);
-   }
-
-   if ( args.gradientType > 2 )
-   {
-      std::cout<<"The gradient type should be 0, 1 or 2."<<std::endl;
-      display_usage(progname);
-   }
-}
-
-
 
 //  The following section of code implements a Command observer
 //  that will monitor the evolution of the registration process.
@@ -1101,23 +884,37 @@ int main( int argc, char *argv[] )
 {  
    PARSE_ARGS;
 
-   struct arguments args;
-   std::cout << "blubbrt " << std::endl; 
-   parseOpts(argc, argv, args);
-
-   std::cout<<"Starting demons registration with the following arguments:"<<std::endl;
-   std::cout<<args<<std::endl<<std::endl;
-
    // FIXME uncomment for debug only
    // itk::MultiThreader::SetGlobalDefaultNumberOfThreads(1);
 
    // Get the image dimension
    
    itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(
-   args.fixedImageFile.c_str(), itk::ImageIOFactory::ReadMode);
-   imageIO->SetFileName(args.fixedImageFile.c_str());
+   demonsTargetVolume.c_str(), itk::ImageIOFactory::ReadMode);
+   imageIO->SetFileName(demonsTargetVolume.c_str());
    imageIO->ReadImageInformation();
 
+   // set up the args structure from the parsed input
+   arguments args;
+   args.fixedImageFile = demonsTargetVolume;
+   args.movingImageFile = demonsMovingVolume;
+   args.outputImageFile = demonsResampledVolume;
+   args.outputFieldFile = demonsDeformationVolume;
+   // not used
+//   args.trueFieldFile = ; 
+   args.numLevels = levels;
+   for (unsigned int i = 0; i < iteration.size(); i++)
+     {
+     args.numIterations.push_back(iteration[i]);
+     }
+   args.sigmaDef = smoothing;
+   args.sigmaUp = smoothingUp;
+   args.maxStepLength = maxStepLength;
+   args.useVanillaDem = turnOffDiffeomorph;
+   args.gradientType = gradientType;
+   args.useHistogramMatching = normalization;
+   args.verbosity = verbose;
+   
    switch ( imageIO->GetNumberOfDimensions() )
    {
    case 2:

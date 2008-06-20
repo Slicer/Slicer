@@ -550,7 +550,7 @@ subdirs( DiffusionApplications )
 subdirs( ExtractSkeleton )
 #SUBDIRS( RegisterImagesModule )
 subdirs( UtahBSpline )
-#subdirs( DiffeomorphicDemonsRegistration )
+subdirs( DiffeomorphicDemonsRegistration )
 
 if(Slicer3_USE_MIDAS)
   subdirs( MIDASApplications )
