@@ -245,8 +245,15 @@ SET(TESTFILES
   scan1.raw.gz
   scan2.nhdr
   scan2.raw.gz
+  TG_scan1_Segment.nhdr
+  TG_scan1_Segment.raw.gz 
+  TG_scan1_SuperSampled.nhdr 
+  TG_scan1_SuperSampled.raw.gz
+  TG_scan2_norm.nhdr
+  TG_scan2_norm.raw.gz
   test.mrml
   testScript
+  testDemonsScript
   GUI-AnalysisOutcome.log
   Script-AnalysisOutcome.log
 )

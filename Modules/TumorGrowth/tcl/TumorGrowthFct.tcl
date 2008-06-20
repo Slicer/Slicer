@@ -1015,9 +1015,9 @@ namespace eval TumorGrowthTcl {
     # registering the two images. 
     set EXE_DIR "$::env(Slicer3_HOME)/lib/Slicer3/Plugins"
 
-    # set CMD "$EXE_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20x20x20 --def_field_sigma 1 --use_histogram_matching --verbose"
+    # set CMD "$EXE_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
 
-    set CMD "$EXE_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20x20x20 --def_field_sigma 1 --use_histogram_matching --verbose"
+    set CMD "$EXE_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
 
     Print "=== Deformable Registration ==" 
     Print "$CMD"
@@ -1035,7 +1035,6 @@ namespace eval TumorGrowthTcl {
     set CMD "$EXE_DIR/applyDeformationITK $Scan1Segmentation $Scan1ToScan2Deformation $Scan1ToScan2Segmentation 1 1"
     Print "=== Deformable Segmentation Growth Metric ==" 
     Print "$CMD"
-    puts "$CMD"
     eval exec $CMD 
 
     #  ${scriptDirectory}/DetectGrowthSegmentation $SegmentationFilePrefix ${TumorGrowth(save,Dir)}/${TumorGrowth(deformation,Scan1SegmentationDeformed)}.nhdr ${TumorGrowth(save,Dir)}/deformation_analysis_results.txt    
