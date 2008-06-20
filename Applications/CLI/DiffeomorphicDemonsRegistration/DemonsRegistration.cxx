@@ -903,6 +903,10 @@ int main( int argc, char *argv[] )
    // not used
 //   args.trueFieldFile = ; 
    args.numLevels = levels;
+   if (iteration.size() > 0)
+     {
+     args.numIterations.clear();
+     }
    for (unsigned int i = 0; i < iteration.size(); i++)
      {
      args.numIterations.push_back(iteration[i]);
