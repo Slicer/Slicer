@@ -274,7 +274,7 @@ public:
             fieldDist = 0.0;
             fieldGradDist = 0.0;
             for ( currIter.GoToBegin(), trueIter.GoToBegin();
-                  not currIter.IsAtEnd(); ++currIter, ++trueIter )
+                  !currIter.IsAtEnd(); ++currIter, ++trueIter )
             {
                fieldDist += (currIter.Value() - trueIter.Value()).GetSquaredNorm();
 
@@ -362,7 +362,7 @@ public:
 
          if (this->m_Fid.is_open())
          {
-            if (not m_headerwritten)
+            if (!m_headerwritten)
             {
                this->m_Fid<<"Iteration"
                           <<", MSE before"
@@ -736,10 +736,10 @@ void DemonsRegistrationFunction( arguments args )
       {
          itk::Index<Dimension> index = itergrid.GetIndex();
 
-         if (Dimension==2 or Dimension==3)
+         if (Dimension==2 || Dimension==3)
          {
             // produce an xy grid for all z
-            if ( (index[0]%gridspacing)==0 or
+            if ( (index[0]%gridspacing)==0 ||
                  (index[1]%gridspacing)==0 )
             {
                itergrid.Set( itk::NumericTraits<unsigned char>::max() );

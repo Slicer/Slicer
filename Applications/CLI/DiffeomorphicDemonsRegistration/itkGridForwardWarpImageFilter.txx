@@ -139,7 +139,7 @@ GridForwardWarpImageFilter<TDeformationField,TOutputImage>
         for(unsigned int j = 0; j < ImageDimension; j++ )
         {
            contindex[j] = index[j] + displacement[j]/spacing[j];
-           if (contindex[j]<FirstIndex[j] or contindex[j]>(LastIndex[j]-1)) 
+           if (contindex[j]<FirstIndex[j] || contindex[j]>(LastIndex[j]-1)) 
            {
               inside = false;
               break;
@@ -166,7 +166,7 @@ GridForwardWarpImageFilter<TDeformationField,TOutputImage>
                  for(unsigned int j = 0; j < ImageDimension; j++ )
                  {
                     contindex[j] = targetIndex[j] + displacement[j]/spacing[j];
-                    if (contindex[j]<FirstIndex[j] or contindex[j]>(LastIndex[j]-1)) 
+                    if (contindex[j]<FirstIndex[j] || contindex[j]>(LastIndex[j]-1)) 
                     {
                        targetIn = false;
                        break;
