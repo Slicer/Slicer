@@ -914,6 +914,8 @@ int main( int argc, char *argv[] )
    args.gradientType = gradientType;
    args.useHistogramMatching = normalization;
    args.verbosity = verbose;
+
+   std::cout  << args << std::endl;
    
    switch ( imageIO->GetNumberOfDimensions() )
    {
