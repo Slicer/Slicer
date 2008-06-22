@@ -696,7 +696,7 @@ void vtkTumorGrowthROIStep::RetrieveInteractorIJKCoordinates(vtkSlicerSliceGUI *
     if (ijkPt[i] < 0 ) ijkPt[i] = 0;
     else if (ijkPt[i] >=  dimensions[i] ) ijkPt[i] = dimensions[i] -1;    
   }
-  coords[0] = int(round(ijkPt[0]));  coords[1] = int(round(ijkPt[1])); coords[2] = int(round(ijkPt[2])); 
+  coords[0] = int(0.5+(ijkPt[0]));  coords[1] = int(0.5+(ijkPt[1])); coords[2] = int(0.5+(ijkPt[2])); 
 
   //cout << "Sample:  " << rasPt[0] << " " <<  rasPt[1] << " " << rasPt[2] << " " << rasPt[3] << endl;
   //cout << "Coord: " << coords[0] << " " << coords[1] << " " << coords[2] << " " << coords[3] << endl;
