@@ -90,6 +90,19 @@ void vtkMRMLBSplineTransformNode::WriteXML(ostream& of, int nIndent)
     of << "\"";
     of << " switchCoord="
        << (spline->GetSwitchCoordinateSystem()?"\"true\"":"\"false\"");
+    double bulk_linear[3][3];
+    double bulk_offset[3];
+    spline->GetBulkTransform( bulk_linear, bulk_offset );
+    of << " bulk=\"";
+    for( unsigned i=0; i<3; ++i )
+      {
+      for( unsigned j=0; j<3; ++j )
+        {
+        of << " " << bulk_linear[i][j];
+        }
+      of << " " << bulk_offset[i];
+      }
+    of << "\"";
     of << " param=\"";
     unsigned Np = spline->GetNumberOfParameters();
     double const* p = spline->GetParameters();
@@ -173,6 +186,42 @@ void vtkMRMLBSplineTransformNode::ReadXMLAttributes(const char** atts)
         return;
         }
       spline->SetFixedParameters( &vals[0], vals.size() );
+      }
+    else if (!strcmp(attName, "bulk"))
+      {
+      if( spline == NULL )
+        {
+        vtkErrorMacro( "order attribute must be processed before parameter attributes" );
+        return;
+        }
+      std::stringstream ss;
+      double val;
+      ss << attValue;
+      std::vector<double> vals;
+      while( ss >> val )
+        {
+        vals.push_back( val );
+        }
+      if( vals.size() != 12 )
+        {
+        vtkErrorMacro( "Incorrect number of bulk parameters: expecting 12; got "
+                       << vals.size() );
+        return;
+        }
+      double linear[3][3];
+      double offset[3];
+      unsigned k=0;
+      for( unsigned i=0; i<3; ++i )
+        {
+        for( unsigned j=0; j<3; ++j )
+          {
+          linear[i][j] = vals[k];
+          ++k;
+          }
+        offset[i] = vals[k];
+        ++k;
+        }
+      spline->SetBulkTransform( linear, offset );
       }
     else if (!strcmp(attName, "param"))
       {

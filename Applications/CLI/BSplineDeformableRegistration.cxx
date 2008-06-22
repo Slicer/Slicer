@@ -429,6 +429,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
     outputTransformWriter= TransformWriterType::New();
     outputTransformWriter->SetFileName( OutputTransform );
     outputTransformWriter->SetInput( transform );
+    outputTransformWriter->AddTransform( transform->GetBulkTransform() );
     try
       {
       outputTransformWriter->Update();

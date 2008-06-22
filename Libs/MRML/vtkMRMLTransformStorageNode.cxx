@@ -244,7 +244,11 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
     TransformListType *transforms = reader->GetTransformList();
     if (transforms->size() != 0)
       {
-      if (transforms->size() != 1)
+      // If the transform is a BSplineTransform, it can have a second
+      // transform for the corresponding bulk transform
+      if (! (transforms->size() == 1 || 
+             (transforms->size() <= 2 && 
+              refNode->IsA("vtkMRMLBSplineTransformNode"))))
         {
         vtkWarningMacro(<< "More than one transform in the file: "
                         << fullName.c_str()
@@ -253,6 +257,11 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
     
       TransformListType::iterator it = (*transforms).begin();
       transform = (*it);
+      ++it;
+      if( it != (*transforms).end() )
+        {
+        transform2 = (*it);
+        }
       }
 
     if (!transform)
@@ -515,13 +524,37 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         SplineType::ParametersType const& param = bst->GetParameters();
         vtkBSpline->SetParameters( param.data_block() );
 
+        if( transform2 ) 
+          {
+          typedef vtkITKBSplineTransform::BulkTransformType BulkTransformType;          
+          BulkTransformType* bulk =
+            dynamic_cast<BulkTransformType*> (transform2.GetPointer());
+          if (bulk)
+            {
+            double linear[D][D];
+            double offset[D];
+            for (unsigned i=0; i < D; i++)
+              {
+              for (unsigned j=0; j < D; j++)
+                {
+                linear[i][j] = bulk->GetMatrix()[i][j];
+                }
+              offset[i] = bulk->GetOffset()[i];
+              }
+            vtkBSpline->SetBulkTransform( linear, offset );            
+            }
+          else
+            {
+            vtkWarningMacro( "The type of the 2nd transform in BSplineTransform is not correct." );
+            }
+          }
         // Convert from LPS (ITK) to RAS (Slicer)
         vtkBSpline->SetSwitchCoordinateSystem( true );
-
+        
         // Set the transform on the node
         btn->SetAndObserveWarpTransformToParent( vtkBSpline );
         vtkBSpline->Delete();
-        }
+      }
       }
 
       // B-spline transform of floats, dimension 3
@@ -726,23 +759,24 @@ int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
   // Get an ITK version of the transform and then use the TransformIO
   // fractory mechanism
   int result = 1;
+  static const int VTKDimension = 3;
   
-  vtkMatrix4x4 *lps2ras = vtkMatrix4x4::New();
-  lps2ras->Identity();
-  (*lps2ras)[0][0] = (*lps2ras)[1][1] = -1.0;
-    
-  vtkMatrix4x4 *ras2lps = vtkMatrix4x4::New();
-  ras2lps->Identity();
-  (*ras2lps)[0][0] = (*ras2lps)[1][1] = -1.0;
-
-
   vtkMRMLLinearTransformNode *ln
     = vtkMRMLLinearTransformNode::SafeDownCast(refNode);
+  vtkMRMLBSplineTransformNode *bs
+    = vtkMRMLBSplineTransformNode::SafeDownCast(refNode);
 
   if (ln != 0)
     {
     // Linear transform
-    static const int VTKDimension = 3;
+    vtkMatrix4x4 *lps2ras = vtkMatrix4x4::New();
+    lps2ras->Identity();
+    (*lps2ras)[0][0] = (*lps2ras)[1][1] = -1.0;
+    
+    vtkMatrix4x4 *ras2lps = vtkMatrix4x4::New();
+    ras2lps->Identity();
+    (*ras2lps)[0][0] = (*ras2lps)[1][1] = -1.0;
+
     typedef itk::AffineTransform<double, VTKDimension> AffineTransformType;
     AffineTransformType::Pointer affine = AffineTransformType::New();
 
@@ -796,10 +830,46 @@ int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
                     << fullName.c_str());
       result = 0;
       }
+    lps2ras->Delete();
+    ras2lps->Delete();
+    }
+  else if (bs != 0)
+    {
+    // BSpline transform
+
+    vtkITKBSplineTransform* vtkTrans = vtkITKBSplineTransform::SafeDownCast(bs->GetWarpTransformToParent());
+    
+    // get the itkBSplineDeformableTransform directly. No need to
+    // convert the coordinate from RAS to LPS.
+    typedef itk::Transform<double, VTKDimension, VTKDimension > ITKTransformType;
+    
+    ITKTransformType::Pointer itkTrans = vtkTrans->GetITKTransform();
+    vtkITKBSplineTransform::BulkTransformType const* bulk = vtkTrans->GetBulkTransform();
+    itk::TransformFileWriter::Pointer writer = itk::TransformFileWriter::New();
+    writer->SetInput( itkTrans );
+    if( bulk )
+      {
+      writer->AddTransform( bulk );
+      }
+    writer->SetFileName( fullName );
+    try
+      {
+      writer->Update();
+      }
+    catch (itk::ExceptionObject &exc)
+      {
+      vtkErrorMacro("ITK exception caught writing transform file: "
+                    << fullName.c_str() << "\n" << exc);
+      result = 0;
+      }
+    catch (...)
+      {
+      vtkErrorMacro("Unknown exception caught while writing transform file: "
+                    << fullName.c_str());
+      result = 0;
+      }
     }
 
-  lps2ras->Delete();
-  ras2lps->Delete();
 
   return result;
 }
