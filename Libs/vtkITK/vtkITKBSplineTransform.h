@@ -6,6 +6,7 @@
 #include "vtkDoubleArray.h"
 
 #include "itkBSplineDeformableTransform.h"
+#include "itkAffineTransform.h"
 
 #include "vtkITK.h"
 
@@ -19,6 +20,9 @@ class vtkITKBSplineTransformHelper;
 class VTK_ITK_EXPORT vtkITKBSplineTransform : public vtkWarpTransform
 {
 public:
+  //BTX
+  typedef itk::AffineTransform<double,3> BulkTransformType;
+  //ETX
   static vtkITKBSplineTransform *New();
   vtkTypeRevisionMacro( vtkITKBSplineTransform, vtkWarpTransform );
   virtual void PrintSelf( ostream& os, vtkIndent indent );
@@ -91,6 +95,13 @@ public:
   // This is a pointer to internal data; the class still owns it.
   const double* GetFixedParameters() const;
 
+  // BulkTransform should be in the ITK coordinate system, which is LPS.
+  void SetBulkTransform( const double linear[3][3], const double offset[3] );
+  void GetBulkTransform( double linear[3][3], double offset[3] );
+  //BTX
+  BulkTransformType const* GetBulkTransform() const;
+  //ETX
+
   // Sets whether a LPS->RAS conversion should be done.
   //
   // When the BSpline is created, it is assumed to be in an LPS
@@ -105,6 +116,10 @@ public:
   void SetSwitchCoordinateSystem( bool v );
 
   bool GetSwitchCoordinateSystem() const;
+
+  //BTX
+  itk::Transform<double,3,3>::Pointer GetITKTransform() const;
+  //ETX
 
 protected:
   vtkITKBSplineTransform();

@@ -1,12 +1,13 @@
 #include "vtkITKBSplineTransform.h"
-
 #include "vtkObjectFactory.h"
+
 
 // Helper classes to handle dynamic setting of spline orders
 class vtkITKBSplineTransformHelper
 {
 public:
-  typedef itk::Array< double > ParametersType;
+  typedef itk::Array<double> ParametersType;
+  typedef vtkITKBSplineTransform::BulkTransformType BulkTransformType;
   virtual unsigned GetOrder() const = 0;
   virtual unsigned int GetNumberOfParameters() const = 0;
   virtual void SetParameters( ParametersType const& ) = 0;
@@ -36,8 +37,13 @@ public:
 
   virtual void SetSwitchCoordinateSystem( bool v ) = 0;
   virtual bool GetSwitchCoordinateSystem() const = 0;
-};
 
+  virtual void SetBulkTransform( const double linear[3][3], const double offset[3] )=0;
+  virtual void GetBulkTransform( double linear[3][3], double offset[3] ) const=0;
+  virtual BulkTransformType const* GetBulkTransform() const=0;
+  
+  virtual itk::Transform<double,3,3>::Pointer GetITKTransform() const=0;
+};
 
 template<unsigned O>
 class vtkITKBSplineTransformHelperImpl : public vtkITKBSplineTransformHelper
@@ -93,6 +99,14 @@ public:
     return switchCoordSystems;
     }
 
+  virtual void SetBulkTransform( const double linear[3][3], const double offset[3] );
+  virtual void GetBulkTransform( double linear[3][3], double offset[3] ) const;
+  virtual BulkTransformType const* GetBulkTransform() const;
+
+  virtual itk::Transform<double,3,3>::Pointer GetITKTransform() const
+    {
+      return BSpline.GetPointer();
+    }
   // the data is also public to allow the helper templates to access
   // them.
   typename BSplineType::Pointer BSpline;
@@ -126,6 +140,16 @@ vtkITKBSplineTransform
     }
 }
 
+itk::Transform<double,3,3>::Pointer
+vtkITKBSplineTransform
+::GetITKTransform() const
+{
+  if( Helper )
+    {
+    return Helper->GetITKTransform();
+    }
+  return 0;
+}
 
 vtkAbstractTransform*
 vtkITKBSplineTransform
@@ -339,6 +363,48 @@ vtkITKBSplineTransform
   else
     {
     return NULL;
+    }
+}
+
+void
+vtkITKBSplineTransform
+::SetBulkTransform( const double linear[3][3], const double offset[3] )
+{
+  if( Helper != NULL )
+    {
+    Helper->SetBulkTransform( linear, offset );
+    }
+  else
+    {
+    vtkErrorMacro( "need to call SetSplineOrder before SetBulkTransform" );
+    }
+}
+
+void
+vtkITKBSplineTransform
+::GetBulkTransform( double linear[3][3], double offset[3] )
+{
+  if( Helper != NULL )
+    {
+    Helper->GetBulkTransform( linear, offset );
+    }
+  else
+    {
+    vtkErrorMacro( "need to call SetSplineOrder before GetBulkTransform" );
+    }
+}
+
+vtkITKBSplineTransform::BulkTransformType const*
+vtkITKBSplineTransform
+::GetBulkTransform() const
+{
+  if( Helper != NULL )
+    {
+    return Helper->GetBulkTransform();
+    }
+  else
+    {
+    return 0;
     }
 }
 
@@ -925,4 +991,54 @@ vtkITKBSplineTransformHelperImpl<O>
                             double derivative[3][3] )
 {
   InverseTransformDerivativeHelper<double, O>( this, in, out, derivative );
+}
+
+template< unsigned O >
+void
+vtkITKBSplineTransformHelperImpl<O>
+::SetBulkTransform( const double linear[3][3], const double offset[3] )
+{
+  static const int VTKDimension = 3;
+  BulkTransformType::MatrixType matrix;
+  BulkTransformType::OutputVectorType vector;
+  for (unsigned i=0; i<3; ++i)
+    {
+    for (unsigned j=0; j<3; ++j)
+      {
+      matrix[i][j] = linear[i][j];
+      }
+    vector[i] = offset[i];
+    }
+  BulkTransformType::Pointer bulk = BulkTransformType::New();
+  bulk->SetMatrix(matrix);
+  bulk->SetOffset(vector);
+  BSpline->SetBulkTransform(bulk);
+}
+
+template< unsigned O >
+void
+vtkITKBSplineTransformHelperImpl<O>
+::GetBulkTransform( double linear[3][3], double offset[3] ) const
+{
+  static const int VTKDimension = 3;
+  BulkTransformType const* bulk = dynamic_cast< BulkTransformType const*>(BSpline->GetBulkTransform());
+  BulkTransformType::MatrixType matrix = bulk->GetMatrix();
+  BulkTransformType::OutputVectorType vector = bulk->GetOffset();
+  for (unsigned i=0; i<3; ++i)
+    {
+    for (unsigned j=0; j<3; ++j)
+      {
+      linear[i][j] = matrix[i][j];
+      }
+     offset[i] = vector[i];
+    }
+}
+
+template< unsigned O >
+typename vtkITKBSplineTransformHelperImpl<O>::BulkTransformType const*
+vtkITKBSplineTransformHelperImpl<O>
+::GetBulkTransform() const
+{
+  static const int VTKDimension = 3;
+  return dynamic_cast< BulkTransformType const*>(BSpline->GetBulkTransform());
 }
