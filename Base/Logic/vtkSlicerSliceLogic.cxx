@@ -858,21 +858,43 @@ void vtkSlicerSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLogic::DeleteSliceModel()
 {
+  // Remove References
   if (this->SliceModelNode != NULL)
     {
     this->SliceModelNode->SetAndObserveDisplayNodeID(NULL);
+    this->SliceModelNode->SetAndObserveTransformNodeID(NULL);
     this->SliceModelNode->SetAndObservePolyData(NULL);
+    }
+  if (this->SliceModelDisplayNode != NULL)
+    {
+    this->SliceModelDisplayNode->SetAndObserveTextureImageData(NULL);
+    }
+
+  // Remove Nodes 
+  if (this->SliceModelNode != NULL)
+    {
+    if (this->MRMLScene)
+      {
+      this->MRMLScene->RemoveNode(this->SliceModelNode);
+      }
     this->SliceModelNode->Delete();
     this->SliceModelNode = NULL;
     }
   if (this->SliceModelDisplayNode != NULL)
     {
-    this->SliceModelDisplayNode->SetAndObserveTextureImageData(NULL);
+    if (this->MRMLScene)
+      {
+      this->MRMLScene->RemoveNode(this->SliceModelDisplayNode);
+      }
     this->SliceModelDisplayNode->Delete();
     this->SliceModelDisplayNode = NULL;
     }
   if (this->SliceModelTransformNode != NULL)
     {
+    if (this->MRMLScene)
+      {
+      this->MRMLScene->RemoveNode(this->SliceModelTransformNode);
+      }
     this->SliceModelTransformNode->Delete();
     this->SliceModelTransformNode = NULL;
     }
