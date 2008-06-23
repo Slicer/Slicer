@@ -26,7 +26,7 @@ template<>
 class RegistrationVoxelTypeTraits<unsigned char>
 {
 public:
-  typedef unsigned short RegistrationVoxelType;
+  typedef short RegistrationVoxelType;
 };
 
 template<>
@@ -47,7 +47,7 @@ template<>
 class RegistrationVoxelTypeTraits<unsigned short>
 {
 public:
-  typedef unsigned short RegistrationVoxelType;
+  typedef int RegistrationVoxelType;
 };
 
 template<>
