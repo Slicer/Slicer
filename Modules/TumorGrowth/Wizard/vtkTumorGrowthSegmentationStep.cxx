@@ -74,7 +74,7 @@ void vtkTumorGrowthSegmentationStep::ShowUserInterface()
   // ----------------------------------------
   // Display Super Sampled Volume 
   // ----------------------------------------
-  
+
   // cout << "vtkTumorGrowthSegmentationStep::ShowUserInterface()" << endl;
 
   vtkMRMLTumorGrowthNode* node = this->GetGUI()->GetNode();
@@ -99,6 +99,7 @@ void vtkTumorGrowthSegmentationStep::ShowUserInterface()
       intMin = 0;
       intMax = 0;      
   }
+
   //  cout << "What h" << endl;
   // ----------------------------------------
   // Build GUI 
@@ -148,7 +149,8 @@ void vtkTumorGrowthSegmentationStep::ShowUserInterface()
   this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->ThresholdLabel->GetWidgetName(),this->ThresholdRange->GetWidgetName());
 
   this->CreateGridButton(); 
-  this->CreateSliceButton(); 
+  this->CreateSliceButton();
+
   // this->CreateResetButton(); 
   // ----------------------------------------
   // Show segmentation 
@@ -262,6 +264,7 @@ void vtkTumorGrowthSegmentationStep::PreSegmentScan1Define() {
   // Show Segmentation through 3D Volume Rendering
   // ------------------------------------
   float color[3] = { 0.8, 0.8, 0.0 };
+
   this->CreateRender(volumeNode, 0);
   this->SetRender_BandPassFilter(range[0],range[1], color, color);
   

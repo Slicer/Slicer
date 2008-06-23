@@ -122,7 +122,18 @@ vtkTumorGrowthROIStep::~vtkTumorGrowthROIStep()
     this->LabelROIZ = NULL;
   }
 
+  if (this->ButtonsShow) {
+    this->ButtonsShow->Delete();
+    this->ButtonsShow= NULL;
+  }
+
+  if (this->ButtonsReset) {
+    this->ButtonsReset->Delete();
+    this->ButtonsReset= NULL;
+  }
+
   if (this->ROILabelMapNode || this->ROILabelMap) this->ROIMapRemove();
+
 }
 
 void vtkTumorGrowthROIStep::DeleteSuperSampleNode() 

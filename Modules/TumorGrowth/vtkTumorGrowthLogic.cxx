@@ -345,6 +345,7 @@ vtkMRMLScalarVolumeNode* vtkTumorGrowthLogic::CreateSuperSample(int ScanNum) {
   double newIJKOrigin[4] = {this->TumorGrowthNode->GetROIMin(0),this->TumorGrowthNode->GetROIMin(1), this->TumorGrowthNode->GetROIMin(2), 1.0 };
   double newRASOrigin[4];
   ijkToRAS->MultiplyPoint(newIJKOrigin,newRASOrigin);
+  ijkToRAS->Delete();
   VolumeOutputNode->SetOrigin(newRASOrigin[0],newRASOrigin[1],newRASOrigin[2]);
 
   ROISuperSampleExtent->Delete();

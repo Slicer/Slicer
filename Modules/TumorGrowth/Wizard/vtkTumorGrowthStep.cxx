@@ -89,13 +89,15 @@ vtkTumorGrowthStep::~vtkTumorGrowthStep()
 
 void vtkTumorGrowthStep::RenderRemove() { 
   if (this->Render_Volume) {
-    vtkSlicerApplicationGUI *applicationGUI = this->GetGUI()->GetApplicationGUI();
-    if (applicationGUI) {  
-      vtkSlicerViewerWidget *viewerWidget  = applicationGUI->GetViewerWidget();
-      if (viewerWidget) {
-        vtkKWRenderWidget* mainViewer = viewerWidget->GetMainViewer();
-        if (mainViewer) {
-           mainViewer->RemoveViewProp(this->Render_Volume);
+    if (this->GetGUI()) {
+      vtkSlicerApplicationGUI *applicationGUI = this->GetGUI()->GetApplicationGUI();
+      if (applicationGUI) {  
+        vtkSlicerViewerWidget *viewerWidget  = applicationGUI->GetViewerWidget();
+        if (viewerWidget) {
+          vtkKWRenderWidget* mainViewer = viewerWidget->GetMainViewer();
+          if (mainViewer) {
+            mainViewer->RemoveViewProp(this->Render_Volume);
+          }
         }
       }
     }
