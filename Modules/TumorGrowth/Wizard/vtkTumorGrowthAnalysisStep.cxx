@@ -36,8 +36,8 @@ vtkTumorGrowthAnalysisStep::vtkTumorGrowthAnalysisStep()
 
   this->GrowthLabel = NULL;
 
-  this->ButtonsWorkingDir;
-  this->ButtonsAnalysis;
+  this->ButtonsWorkingDir = NULL;
+  this->ButtonsAnalysis = NULL;
   this->ButtonsSave = NULL;
   this->FrameButtons = NULL;
   this->FrameButtonsFunctions = NULL;
