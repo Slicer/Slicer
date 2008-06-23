@@ -130,7 +130,7 @@ public:
   // Description:
   // subclass setting the application gui, so can set the viewer widget and
   // interactor style
-  virtual void SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI );
+  virtual void Init ( );
 
 protected:
   vtkQdecModuleGUI();

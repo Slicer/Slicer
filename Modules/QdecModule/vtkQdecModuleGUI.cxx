@@ -1438,9 +1438,9 @@ int vtkQdecModuleGUI::LoadProjectFile(const char *fileName)
 }
 
 //----------------------------------------------------------------------------
-void vtkQdecModuleGUI::SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI )
+void vtkQdecModuleGUI::Init(void)
 {
-  this->Superclass::SetApplicationGUI(appGUI);
+  vtkSlicerApplicationGUI *appGUI = this->GetApplicationGUI();
 
   if (appGUI == NULL)
     {
@@ -1460,6 +1460,6 @@ void vtkQdecModuleGUI::SetApplicationGUI ( vtkSlicerApplicationGUI *appGUI )
     }
   else
     {
-    vtkErrorMacro("SetApplicationGUI: unable to get the interactor style, plotting will not work.");
+    vtkErrorMacro("Init: unable to get the interactor style, plotting will not work.");
     }
 }
