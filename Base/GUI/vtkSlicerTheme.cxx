@@ -288,7 +288,13 @@ void vtkSlicerTheme::Install ( )
     
     // Slicer MultiColumnListsWithScrollbars
     // scroll bars
-    odb->AddEntryAsInt("vtkKWScrollbar", "SetWidth", 10);
+    // Win32 does not support resizing a scrollbar properly, it merely crops
+    // the arrow icon/buttons at each end of the scrollbar, which is 
+    // unsightly. 15 seems to be the smallest possible value, do not change
+    // it, or put it inside a #ifdef _WIN32 if you want to have slimmer
+    // scrollbar on Unix, at the cost of a slightly different look&feel with
+    // Win32.
+    odb->AddEntryAsInt("vtkKWScrollbar", "SetWidth", 15);
     odb->AddEntryAsDouble3("vtkKWScrollbar", "SetTroughColor", this->SlicerColors->RecessedColor);
     
 
