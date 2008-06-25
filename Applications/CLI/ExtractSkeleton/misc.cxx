@@ -8,7 +8,7 @@
 
 
 #include "misc.h"
-
+#include "string.h"
 
 void* ipAllocateData(const int size, const size_t elemsize)
 {
