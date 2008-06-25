@@ -1379,8 +1379,8 @@ int Slicer3_main(int argc, char *argv[])
 #endif
 
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  // --- Tractography Fiducail Seeding module
-  slicerApp->SplashMessage("Initializing Tractography Fiducail Seeding Module...");
+  // --- Tractography Fiducial Seeding module
+  slicerApp->SplashMessage("Initializing Tractography Fiducial Seeding Module...");
   vtkSlicerTractographyFiducialSeedingGUI *slicerTractographyFiducialSeedingGUI = vtkSlicerTractographyFiducialSeedingGUI::New ( );
 
 
