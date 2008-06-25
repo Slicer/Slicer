@@ -332,6 +332,20 @@ vtkMRMLScalarVolumeNode* vtkTumorGrowthLogic::CreateSuperSample(int ScanNum) {
      ROISuperSampleExtent->SetOutputSpacing(1,1,1);
   ROISuperSampleExtent->Update();
 
+  // We need to copy the result  bc ChangeInformation only has a pointer to the input data 
+  // - which is later deleted and therefore will cause errors 
+  vtkImageData *ROISuperSampleFinal = vtkImageData::New();
+     ROISuperSampleFinal->DeepCopy(ROISuperSampleExtent->GetOutput());
+
+  // Compute new origin
+  vtkMatrix4x4 *ijkToRAS=vtkMatrix4x4::New();
+  volumeNode->GetIJKToRASMatrix(ijkToRAS);
+  double newIJKOrigin[4] = {this->TumorGrowthNode->GetROIMin(0),this->TumorGrowthNode->GetROIMin(1), this->TumorGrowthNode->GetROIMin(2), 1.0 };
+  double newRASOrigin[4];
+  ijkToRAS->MultiplyPoint(newIJKOrigin,newRASOrigin);
+  ijkToRAS->Delete();
+
+
   // ---------------------------------
   // Now return results and clean up 
   char VolumeOutputName[1024];
@@ -339,24 +353,11 @@ vtkMRMLScalarVolumeNode* vtkTumorGrowthLogic::CreateSuperSample(int ScanNum) {
   else sprintf(VolumeOutputName, "TG_scan1_SuperSampled");
 
   vtkMRMLScalarVolumeNode *VolumeOutputNode = this->CreateVolumeNode(volumeNode,VolumeOutputName);
-  // VolumeOutputNode->SetAndObserveImageData(ROIExtent->GetOutput());
-  vtkImageData *img = vtkImageData::New();
-  img->DeepCopy(ROISuperSampleExtent->GetOutput());
-  VolumeOutputNode->SetAndObserveImageData(img);
-  img->Delete();
-  VolumeOutputNode->SetSpacing(SuperSampleSpacing,SuperSampleSpacing,SuperSampleSpacing); 
-
-  // Compute new rjk matrix 
-  // double IJKToRASDirections[3][3];
-  // Set new orgin
-  vtkMatrix4x4 *ijkToRAS=vtkMatrix4x4::New();
-  volumeNode->GetIJKToRASMatrix(ijkToRAS);
-  double newIJKOrigin[4] = {this->TumorGrowthNode->GetROIMin(0),this->TumorGrowthNode->GetROIMin(1), this->TumorGrowthNode->GetROIMin(2), 1.0 };
-  double newRASOrigin[4];
-  ijkToRAS->MultiplyPoint(newIJKOrigin,newRASOrigin);
-  ijkToRAS->Delete();
+  VolumeOutputNode->SetAndObserveImageData(ROISuperSampleFinal);
+  VolumeOutputNode->SetSpacing(SuperSampleSpacing,SuperSampleSpacing,SuperSampleSpacing);  
   VolumeOutputNode->SetOrigin(newRASOrigin[0],newRASOrigin[1],newRASOrigin[2]);
 
+  ROISuperSampleFinal->Delete();
   ROISuperSampleExtent->Delete();
   ROISuperSampleOutput->Delete();
   ROISuperSampleInput->Delete();
@@ -412,7 +413,7 @@ void vtkTumorGrowthLogic::DeleteAnalyzeOutput(vtkSlicerApplication *app) {
 
 int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
   // This is for testing how to start a tcl script 
-  cout << "=== Start ANALYSIS ===" << endl;
+  //cout << "=== Start ANALYSIS ===" << endl;
 
   this->SourceAnalyzeTclScripts(app);
   vtkKWProgressGauge *progressBar = app->GetApplicationGUI()->GetMainSlicerWindow()->GetProgressGauge();
@@ -423,7 +424,6 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
   if (this->TumorGrowthNode->GetAnalysis_Deformable_Flag()) TimeLength += 0.60;
 
   if (!debug) { 
-    cout << "=== 1 ===" << endl;
     progressBar->SetValue(5.0/TimeLength);
     app->Script("::TumorGrowthTcl::Scan2ToScan1Registration_GUI Global");
     progressBar->SetValue(25.0/TimeLength);
@@ -432,7 +432,6 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     // Second step -> Save the outcome
     if (!this->TumorGrowthNode) {return 0;}
   
-    cout << "=== 2 ===" << endl;
     this->DeleteSuperSample(2);
     vtkMRMLScalarVolumeNode *outputNode = this->CreateSuperSample(2);
     if (!outputNode) {return 0;} 
@@ -443,10 +442,8 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
 
     //----------------------------------------------
     // Kilian-Feb-08 you should first register and then normalize bc registration is not impacted by normalization 
-    cout << "=== 3 ===" << endl;
     app->Script("::TumorGrowthTcl::Scan2ToScan1Registration_GUI Local"); 
     progressBar->SetValue(50.0/TimeLength);
-    cout << "=== 4 ===" << endl;
     app->Script("::TumorGrowthTcl::HistogramNormalization_GUI"); 
     progressBar->SetValue(55.0/TimeLength);
   } else {
@@ -465,13 +462,10 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
   }
 
   if (this->TumorGrowthNode->GetAnalysis_Intensity_Flag()) { 
-    cout << "=== 5 ===" << endl;
     if (!atoi(app->Script("::TumorGrowthTcl::IntensityThresholding_GUI 1"))) return 0; 
     progressBar->SetValue(60.0/TimeLength);
-    cout << "=== 6 ===" << endl;
     if (!atoi(app->Script("::TumorGrowthTcl::IntensityThresholding_GUI 2"))) return 0; 
     progressBar->SetValue(65.0/TimeLength);
-    cout << "=== INTENSITY ANALYSIS ===" << endl;
     if (!atoi(app->Script("::TumorGrowthTcl::Analysis_Intensity_GUI"))) return 0; 
     progressBar->SetValue(80.0/TimeLength);
    } 
@@ -489,12 +483,11 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
         }
       }
     } else {
-      cout << "=== DEFORMABLE ANALYSIS ===" << endl;
       if (!atoi(app->Script("::TumorGrowthTcl::Analysis_Deformable_GUI"))) return 0; 
       progressBar->SetValue(100);
     }
   }
-  cout << "=== End ANALYSIS ===" << endl;
+  // cout << "=== End ANALYSIS ===" << endl;
 
   return 1;
 }

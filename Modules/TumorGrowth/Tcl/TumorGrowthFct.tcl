@@ -133,7 +133,7 @@ namespace eval TumorGrowthTcl {
        } else {
         set NormFactor [expr  double($TumorGrowth(Scan1,ROI_SUM_INTENS)) / double($TumorGrowth(Scan2,ROI_SUM_INTENS))]  
        }
-       Print "Intensity Normalization Factor:  $NormFactor"
+       # Print "Intensity Normalization Factor:  $NormFactor"
       
       catch {TumorGrowth(Scan2,ROISuperSampleNormalized) Delete}
       vtkImageMathematics TumorGrowth(Scan2,ROISuperSampleNormalized)
