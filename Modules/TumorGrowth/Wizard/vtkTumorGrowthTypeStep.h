@@ -33,7 +33,6 @@ protected:
   ~vtkTumorGrowthTypeStep();
 
   static void WizardGUICallback(vtkObject *caller, unsigned long event, void *clientData, void *callData );
-  void RemoveAnalysisOutput();
 
   vtkKWFrame*FrameTypeIntensity;
   vtkKWFrame*FrameTypeJacobian;

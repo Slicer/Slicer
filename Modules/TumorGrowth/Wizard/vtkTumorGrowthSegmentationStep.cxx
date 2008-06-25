@@ -171,7 +171,6 @@ void vtkTumorGrowthSegmentationStep::ShowUserInterface()
 
     // Necesary in order to transfere results from above lines  
     this->ThresholdRangeChangedCallback(min, max);
-    // this->TransitionCallback();   
   }
    
 
@@ -281,7 +280,7 @@ void vtkTumorGrowthSegmentationStep::SegmentScan1Remove() {
     }
   }
   if (this->SegmentNode) {
-    this->SegmentNode->Delete();
+    //this->SegmentNode->Delete();
     this->SegmentNode = NULL;
   }
 }
@@ -301,6 +300,9 @@ int vtkTumorGrowthSegmentationStep::SegmentScan1Define() {
   vtkSlicerVolumesLogic *volumesLogic         = (vtkSlicerVolumesGUI::SafeDownCast(vtkSlicerApplication::SafeDownCast(this->GetApplication())->GetModuleGUIByName("Volumes")))->GetLogic();
 
   this->SegmentNode = volumesLogic->CreateLabelVolume(Node->GetScene(),this->PreSegmentNode, "TG_scan1_Segment");
+
+  //return 1;
+
   this->SegmentNode->SetAndObserveImageData(RemoveIslands->GetOutput());
 
   RemoveIslands->Delete(); 
@@ -346,14 +348,11 @@ void vtkTumorGrowthSegmentationStep::ThresholdRangeChangedCallback(double min , 
 //----------------------------------------------------------------------------
 void vtkTumorGrowthSegmentationStep::TransitionCallback() 
 { 
-  // cout << "vtkTumorGrowthSegmentationStep::TransitionCallback()  " << endl;
   this->SegmentScan1Remove();
   if (!this->SegmentScan1Define()) return; 
   vtkSlicerApplication *application   = vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication());
   this->GetGUI()->GetLogic()->SaveVolume(application,this->SegmentNode); 
 
-  // this->GetGUI()->SliceLogicRemove();
- 
   // Proceed to next step 
   this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
 }

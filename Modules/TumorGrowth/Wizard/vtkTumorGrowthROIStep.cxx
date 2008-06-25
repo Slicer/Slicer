@@ -230,7 +230,7 @@ void vtkTumorGrowthROIStep::ShowUserInterface()
     this->ButtonsShow->Create();
     this->ButtonsShow->SetWidth(TUMORGROWTH_MENU_BUTTON_WIDTH);
     this->ButtonsShow->SetText("Show VOI");
-    this->ButtonsShow->SetBalloonHelpString("Show/hide ROI in image viewer"); 
+    this->ButtonsShow->SetBalloonHelpString("Show/hide VOI in image viewer"); 
   }
 
   if (!this->ButtonsReset) {
@@ -380,8 +380,6 @@ void vtkTumorGrowthROIStep::ShowUserInterface()
   // Keep seperate bc GUIObserver is also called from vtkTumorGrowthGUI ! 
   // You only want to add the observers below when the step is active 
   this->AddROISamplingGUIObservers();
-
-  // this->TransitionCallback();
 }
 
 //----------------------------------------------------------------------------
@@ -725,7 +723,7 @@ void vtkTumorGrowthROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long ev
         this->ROIMapRemove();
       } else { 
         if (this->ROIMapShow()) { 
-          this->ButtonsShow->SetText("Hide ROI");
+          this->ButtonsShow->SetText("Hide VOI");
         }
       }
     }
@@ -799,7 +797,7 @@ void vtkTumorGrowthROIStep::TransitionCallback()
      }
      // ---------------------------------
    } else {     
-     vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),"Tumor Growth", "Please define ROI correctly before proceeding", vtkKWMessageDialog::ErrorIcon);
+     vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),"Tumor Growth", "Please define VOI correctly before proceeding", vtkKWMessageDialog::ErrorIcon);
    }
 }
 

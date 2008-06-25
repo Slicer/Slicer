@@ -75,12 +75,6 @@ void vtkTumorGrowthTypeStep::WizardGUICallback(vtkObject *caller, unsigned long 
 
 }
 
-void vtkTumorGrowthTypeStep::RemoveAnalysisOutput() {
-  this->GetGUI()->GetLogic()->DeleteAnalyzeOutput(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication()));      
-}
-
-
-
 //----------------------------------------------------------------------------
 void vtkTumorGrowthTypeStep::ShowUserInterface()
 {
@@ -88,7 +82,7 @@ void vtkTumorGrowthTypeStep::ShowUserInterface()
   // ----------------------------------------
   // Display Super Sampled Volume 
   // ---------------------------------------- 
-  this->RemoveAnalysisOutput();
+  this->GetGUI()->GetLogic()->DeleteAnalyzeOutput(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication()));      
   vtkMRMLTumorGrowthNode* node = this->GetGUI()->GetNode();
   if (node) { 
     vtkMRMLVolumeNode *volumeSampleNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetScan1_SuperSampleRef()));
@@ -244,7 +238,7 @@ void vtkTumorGrowthTypeStep::TransitionCallback( )
   vtkTumorGrowthLogic* Logic = this->GetGUI()->GetLogic();
   if (!Logic->AnalyzeGrowth(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication()))) return;
 
-  this->RemoveResults(); 
+  this->RemoveResults();  
   wizard_workflow->AttemptToGoToNextStep();
 }
 
@@ -256,44 +250,7 @@ void vtkTumorGrowthTypeStep::PrintSelf(ostream& os, vtkIndent indent)
 
 
 void vtkTumorGrowthTypeStep::RemoveResults()  { 
-  // this->GetGUI()->SliceLogicRemove();
-    this->RenderRemove();
+  this->RenderRemove();
 }
-
-//----------------------------------------------------------------------------
-// This function is never called bc I did not initialized observers 
-// void vtkTumorGrowthTypeStep::ProcessGUIEvents(vtkObject *caller, unsigned long event, void *callData) {
-//   // I Disabled it bc not needed 
-//   if (event == vtkKWCheckButton::SelectedStateChangedEvent && 0) {
-//     if (this->TypeIntensityCheckButton == vtkKWCheckButton::SafeDownCast(caller)) {  
-//       if (this->TypeIntensityCheckButton->GetSelectedState()) {
-//          this->TypeJacobianCheckButton->SelectedStateOff();
-//       } else {
-//          // Turn it on again bc you cannot check it off 
-//         if (!this->TypeJacobianCheckButton->GetSelectedState()) {
-//            this->TypeIntensityCheckButton->SelectedStateOn();
-//         }
-//       }
-//       vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
-//       wizard_widget->GetCancelButton()->EnabledOn();
-// 
-//       return; 
-//     }
-// 
-//     if (this->TypeJacobianCheckButton == vtkKWCheckButton::SafeDownCast(caller)) {  
-//       if (this->TypeJacobianCheckButton->GetSelectedState()) {
-//         // turn off the other ones 
-//          this->TypeIntensityCheckButton->SelectedStateOff();
-//       } else {
-//         // Turn it on again bc you cannot check it off 
-//         if (!this->TypeIntensityCheckButton->GetSelectedState()) {
-//           this->TypeJacobianCheckButton->SelectedStateOn();
-//         }
-//       }
-//       vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
-//       wizard_widget->GetCancelButton()->EnabledOn();
-//     }
-//   }
-// }
 
 
