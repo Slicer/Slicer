@@ -3,7 +3,7 @@
 #include "vtkCommand.h"
 
 #include "vtkSlicerSlicesGUI.h"
-#include "vtkSlicerSliceGUICollection.h"
+//#include "vtkSlicerSliceGUICollection.h"
 #include "vtkSlicerSliceGUI.h"
 #include "vtkSlicerSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
@@ -14,6 +14,12 @@
 #include "vtkKWFrame.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 
+#include <map>
+
+// Private implementaton of an std::map
+class SliceGUIMap : public std::map<std::string, vtkSmartPointer<vtkSlicerSliceGUI> > {};
+
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerSlicesGUI);
 vtkCxxRevisionMacro(vtkSlicerSlicesGUI, "$Revision: 1.0 $");
@@ -22,113 +28,47 @@ vtkCxxRevisionMacro(vtkSlicerSlicesGUI, "$Revision: 1.0 $");
 //---------------------------------------------------------------------------
 vtkSlicerSlicesGUI::vtkSlicerSlicesGUI (  )
 {
-
-    this->SliceGUICollection = vtkSlicerSliceGUICollection::New ( );
+  this->InternalSliceGUIMap = new SliceGUIMap;
 }
 
 
 //---------------------------------------------------------------------------
 vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
 {
+  if (this->InternalSliceGUIMap)
+    {
+    delete this->InternalSliceGUIMap;
+    }
+}
 
-    vtkSlicerSliceGUI *s, *nexts;
+void vtkSlicerSlicesGUI::AddSliceGUI(char *layoutName, vtkSlicerSliceGUI *pSliceGUI)
+{
+  std::string sMRMLNodeLayoutName = layoutName;
+  (*this->InternalSliceGUIMap)[sMRMLNodeLayoutName] = pSliceGUI;
+}
 
+//---------------------------------------------------------------------------
+void vtkSlicerSlicesGUI::AddAndObserveSliceGUI ( char *layoutName, vtkSlicerSliceGUI *pSliceGUI )
+{
+  this->AddSliceGUI ( layoutName, pSliceGUI );
+  pSliceGUI->AddGUIObservers ( );
+}
+
+vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI(char *layoutName)
+{
+  if (this->InternalSliceGUIMap)
+    {
+    SliceGUIMap::const_iterator gend = (*this->InternalSliceGUIMap).end();
+    SliceGUIMap::const_iterator git =       (*this->InternalSliceGUIMap).find(layoutName);
     
-    // Remove observers, delete individual SliceGUIs and their collection
-    if ( this->SliceGUICollection ) {
-        this->SliceGUICollection->InitTraversal ( );
-        s = vtkSlicerSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
-        while ( s != NULL ) {
-            nexts = vtkSlicerSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
-            this->SliceGUICollection->RemoveItem ( s );
-            s->Delete ( );
-            s = NULL;
-            s = nexts;
-        }
-        this->SliceGUICollection->Delete ( );
-        this->SliceGUICollection = NULL;
+    if ( git != gend)
+      return (vtkSlicerSliceGUI::SafeDownCast((*git).second));
+    else
+      return NULL;
     }
+  else
+    return NULL;
 }
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::AddSliceGUI ( vtkSlicerSliceGUI *s )
-{
-
-    // Create if it doesn't exist already
-    if ( this->SliceGUICollection == NULL ) {
-        this->SliceGUICollection = vtkSlicerSliceGUICollection::New();
-    }
-    //Add new sliceGUI
-    this->SliceGUICollection->AddItem ( s );
-
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::AddAndObserveSliceGUI ( vtkSlicerSliceGUI *s )
-{
-
-    this->AddSliceGUI ( s );
-    s->AddGUIObservers ( );
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::RemoveSliceGUI ( vtkSlicerSliceGUI *s )
-{
-
-    // Remove observers, remove from collection and delete
-    if ( this->SliceGUICollection && s != NULL )
-        {
-            this->SliceGUICollection->InitTraversal ( );
-            vtkSlicerSliceGUI *g = vtkSlicerSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
-            while ( g != NULL ) {
-                if ( g == s )
-                    {
-                        g->RemoveGUIObservers ( );
-                        this->SliceGUICollection->RemoveItem ( g );
-                        g->Delete ( );
-                        break;
-                    }
-                g = vtkSlicerSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
-            }
-        }
-}
-
-
-//---------------------------------------------------------------------------
-vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI ( int SliceGUINum )
-    {
-    // get slicewidget 0, 1, 2
-    return ( (vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( SliceGUINum ) ) ) );
-}
-
-
-
-
-
-//---------------------------------------------------------------------------
-vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI ( char *SliceGUIColor )
-    {
-    // get slicewidget red, yellow, green
-    if ( SliceGUIColor == "r" || SliceGUIColor == "R" )
-        {
-            return ( vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 0 )));
-        } else if ( SliceGUIColor == "g" || SliceGUIColor == "G")
-            {
-                return ( vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 1 )));
-            } else if ( SliceGUIColor == "y" || SliceGUIColor == "Y" )
-                {
-                    return ( vtkSlicerSliceGUI::SafeDownCast(this->SliceGUICollection->GetItemAsObject( 2 )));
-                } else {
-                        return NULL;
-                }
-}
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::AddGUIObservers ( )
@@ -140,23 +80,91 @@ void vtkSlicerSlicesGUI::AddGUIObservers ( )
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::RemoveGUIObservers ( )
 {
-
-  // TODO: remove observers on all widgets in slicesGUIs UIpanel.
-      
-  // Remove any observers on any SliceGUIs in the collection
-  if ( this->SliceGUICollection )
-    {
-      this->SliceGUICollection->InitTraversal ( );
-      vtkSlicerSliceGUI *g = vtkSlicerSliceGUI::SafeDownCast ( this->SliceGUICollection->GetNextItemAsObject ( ) );
-      while ( g != NULL )
+        SliceGUIMap::const_iterator git;
+        for (git = this->InternalSliceGUIMap->begin();
+                git != this->InternalSliceGUIMap->end(); ++git)
         {
-          g->RemoveGUIObservers ( );
-          g = vtkSlicerSliceGUI::SafeDownCast (this->SliceGUICollection->GetNextItemAsObject ( ) );
+                vtkSlicerSliceGUI *g = vtkSlicerSliceGUI::SafeDownCast((*git).second);
+                g->RemoveGUIObservers();
         }
-    }
 }
 
+void vtkSlicerSlicesGUI::RemoveGUIMapObservers()
+{
+        SliceGUIMap::const_iterator git;
+        for (git = this->InternalSliceGUIMap->begin();
+                git != this->InternalSliceGUIMap->end(); ++git)
+        {
+                vtkSlicerSliceGUI *g = vtkSlicerSliceGUI::SafeDownCast((*git).second);
+                g->RemoveGUIObservers();
+        }
+}
 
+vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetFirstSliceGUI ()
+{
+        if (this->InternalSliceGUIMap)
+        {
+                SliceGUIMap::const_iterator git;
+                git = this->InternalSliceGUIMap->begin();
+                return (vtkSlicerSliceGUI::SafeDownCast((*git).second));
+        }
+        else
+                return NULL;
+}
+
+char* vtkSlicerSlicesGUI::GetFirstSliceGUILayoutName()
+{
+        if (this->InternalSliceGUIMap)
+        {
+                SliceGUIMap::const_iterator git;
+                git = this->InternalSliceGUIMap->begin();
+                return ((char *)(*git).first.c_str());
+        }
+        else
+                return NULL;
+}
+
+int vtkSlicerSlicesGUI::GetNumberOfSliceGUI()
+{ 
+        if (this->InternalSliceGUIMap)
+                return (this->InternalSliceGUIMap->size());
+        else
+                return -1;
+}
+
+vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetNextSliceGUI(char *layoutName)
+{
+        if (this->InternalSliceGUIMap)
+        {
+                SliceGUIMap::const_iterator gend = (*this->InternalSliceGUIMap).end();
+                SliceGUIMap::const_iterator git =       (*this->InternalSliceGUIMap).find(layoutName);
+                git++;
+
+                if ( git != gend)
+                        return (vtkSlicerSliceGUI::SafeDownCast((*git).second));
+                else
+                        return NULL;
+        }
+        else
+                return NULL;
+}
+
+char* vtkSlicerSlicesGUI::GetNextSliceGUILayoutName(char *layoutName)
+{
+        if (this->InternalSliceGUIMap)
+        {
+                SliceGUIMap::const_iterator gend = (*this->InternalSliceGUIMap).end();
+                SliceGUIMap::const_iterator git =       (*this->InternalSliceGUIMap).find(layoutName);
+                git++;
+
+                if ( git != gend)
+                        return ((char *)(*git).first.c_str());
+                else
+                        return NULL;
+        }
+        else
+                return NULL;
+}
 
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::ProcessGUIEvents ( vtkObject *caller,
@@ -198,7 +206,6 @@ void vtkSlicerSlicesGUI::Exit ( )
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesGUI::BuildGUI (  )
 {
-
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
     
     // ---
@@ -226,7 +233,6 @@ void vtkSlicerSlicesGUI::BuildGUI (  )
                   sliceDisplayFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Slices")->GetWidgetName());
 
     sliceDisplayFrame->Delete();
-
 }
 
 
@@ -235,6 +241,5 @@ void vtkSlicerSlicesGUI::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
   os << indent << "SlicerSlicesGUI:" << this->GetClassName ( ) << "\n";
-  os << indent << "SliceGUICollection: " << this->SliceGUICollection << endl;
+  os << indent << "SliceGUIMap: " << this->InternalSliceGUIMap << endl;
 }
-

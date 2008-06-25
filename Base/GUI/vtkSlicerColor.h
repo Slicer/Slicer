@@ -30,6 +30,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColor : public vtkObject
     double LightOchre [3];
     double DarkOrange [3];
     double MediumOrange [3];
+    double SliceOrange [3];
     double BrightOrange [3];
     double LightOrange [3];
     double LightestOrange [3];
@@ -95,6 +96,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerColor : public vtkObject
     double SliceGUIRed [3];
     double SliceGUIGreen [3];
     double SliceGUIYellow [3];
+    double SliceGUIOrange [3];
     double ViewerBlue [3];
     double ActiveTextColor[3];
     double DisabledTextColor[3];

@@ -1757,6 +1757,17 @@ void vtkSlicerViewerWidget::GridWidget ( vtkKWFrame *f, int row, int col )
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerViewerWidget::GridSpanWidget ( vtkKWFrame *f, int row, int col, int rowspan, int colspan )
+{
+  this->Script ( "grid configure %s -in %s -row %d -column %d -stick news -padx 0 -pady 0 -rowspan %d -columnspan %d",
+                 this->ViewerFrame->GetWidgetName(), f->GetWidgetName(), row, col, rowspan, colspan );
+//  this->Script  ("grid %s -row %d -column %d -sticky news -padx 0 -pady 0 -in %s",
+//                 this->ViewerFrame->GetWidgetName ( ), row, col, f->GetWidgetName()  );
+  this->Script  ("pack %s -side top -anchor c  -fill both -expand y -padx 0 -pady 0",
+                 this->MainViewer->GetWidgetName ( ) );
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UnpackWidget ( )
 {
   this->Script ( "pack forget %s ", this->MainViewer->GetWidgetName ( ) );

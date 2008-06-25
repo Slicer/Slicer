@@ -886,14 +886,35 @@ int Slicer3_main(int argc, char *argv[])
   xnatHandler->Delete();
 #endif
 
+
+#ifndef SLICES_DEBUG
+  vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
+    
   // build the application GUI
+  appGUI->SetSlicesGUI(slicesGUI);
+#endif
+
   appGUI->BuildGUI ( );
   appGUI->AddGUIObservers ( );
   slicerApp->SetApplicationGUI ( appGUI );
   slicerApp->ConfigureRemoteIOSettingsFromRegistry();
 
-  // get the module paths that the user has configured
+#ifndef SLICES_DEBUG
+  // set a pointer to vtkSlicerSlicesGUI in vtkSlicerApplicationGUI
+  slicesGUI->SetApplication ( slicerApp );
+  slicesGUI->SetApplicationGUI ( appGUI );
+  slicesGUI->SetAndObserveApplicationLogic ( appLogic );
+  slicesGUI->SetAndObserveMRMLScene ( scene );
+  slicesGUI->SetGUIName( "Slices" );
+  slicesGUI->GetUIPanel()->SetName ( slicesGUI->GetGUIName ( ) );
+  slicesGUI->GetUIPanel()->SetUserInterfaceManager ( appGUI->GetMainSlicerWindow( )->GetMainUserInterfaceManager( ) );
+  slicesGUI->GetUIPanel( )->Create( );
+  slicerApp->AddModuleGUI ( slicesGUI );
+  slicesGUI->BuildGUI ();
+  slicesGUI->AddGUIObservers ( );
+#endif
 
+  // get the module paths that the user has configured
   std::string userModulePaths;
   if (slicerApp->GetModulePaths())
     {
@@ -945,7 +966,8 @@ int Slicer3_main(int argc, char *argv[])
   // add the default plugins directory (based on the slicer
   // installation or build tree) to the user paths
   pluginsPaths = userModulePaths + PathSep + defaultPluginsPaths;
-      
+
+
   vtksys_stl::vector<vtksys_stl::string> pluginsPathsList;
   vtksys::SystemTools::Split(pluginsPaths.c_str(), pluginsPathsList, PathSep[0]);
   vtksys_stl::vector<vtksys_stl::string>::iterator plugins_paths_it;
@@ -1296,60 +1318,13 @@ int Slicer3_main(int argc, char *argv[])
 
   // --- Slices module
   slicerApp->SplashMessage("Initializing Slices Module...");
-  // - set up each of the slice logics (these initialize their
-  //   helper classes and nodes the first time the process MRML and
-  //   Logic events)
-  vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-
-  vtkSlicerSliceLogic *sliceLogic0 = vtkSlicerSliceLogic::New ( );
-  sliceLogic0->SetName("Red");
-  sliceLogic0->SetMRMLScene ( scene );
-  sliceLogic0->ProcessLogicEvents ();
-  sliceLogic0->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);
-  sliceLogic0->SetAndObserveMRMLSceneEvents ( scene, events );
-  vtkSlicerSliceLogic *sliceLogic1 = vtkSlicerSliceLogic::New ( );
-  sliceLogic1->SetName("Yellow");
-  sliceLogic1->SetMRMLScene ( scene );
-  sliceLogic1->ProcessLogicEvents ();
-  sliceLogic1->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);
-  sliceLogic1->SetAndObserveMRMLSceneEvents ( scene, events );
-  vtkSlicerSliceLogic *sliceLogic2 = vtkSlicerSliceLogic::New ( );
-  sliceLogic2->SetName("Green");
-  sliceLogic2->SetMRMLScene ( scene );
-  sliceLogic2->ProcessLogicEvents ();
-  sliceLogic2->ProcessMRMLEvents (scene, vtkCommand::ModifiedEvent, NULL);
-  sliceLogic2->SetAndObserveMRMLSceneEvents ( scene, events );
-  events->Delete();
-  if (appLogic->GetSlices())
-    {
-    appLogic->GetSlices()->AddItem(sliceLogic0);
-    appLogic->GetSlices()->AddItem(sliceLogic1);
-    appLogic->GetSlices()->AddItem(sliceLogic2);
-    }
-
-#ifndef SLICES_DEBUG
-  vtkSlicerSlicesGUI *slicesGUI = vtkSlicerSlicesGUI::New ();
-  slicesGUI->SetApplication ( slicerApp );
-  slicesGUI->SetApplicationGUI ( appGUI );
-  slicesGUI->SetAndObserveApplicationLogic ( appLogic );
-  slicesGUI->SetAndObserveMRMLScene ( scene );
-  slicesGUI->SetGUIName( "Slices" );
-  slicesGUI->GetUIPanel()->SetName ( slicesGUI->GetGUIName ( ) );
-  slicesGUI->GetUIPanel()->SetUserInterfaceManager ( appGUI->GetMainSlicerWindow( )->GetMainUserInterfaceManager( ) );
-  slicesGUI->GetUIPanel( )->Create( );
-  slicerApp->AddModuleGUI ( slicesGUI );
-  slicesGUI->BuildGUI ();
-  slicesGUI->AddGUIObservers ( );
-#endif
-
+  appLogic->CreateSliceLogics();
   appGUI->InitializeSlicesControlGUI();
   appGUI->InitializeViewControlGUI();
   //    appGUI->InitializeNavigationWidget();
 
+
+  
 #if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
   // --- Tractography Display module
   slicerApp->SplashMessage("Initializing Tractography Display Module...");
@@ -1358,7 +1333,7 @@ int Slicer3_main(int argc, char *argv[])
   //slicerTractographyDisplayLogic->DebugOn ( );
 
   // Observe scene events to handle display logic for new nodes or new scenes
-  events = vtkIntArray::New();
+  vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
   //events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   slicerTractographyDisplayLogic->SetAndObserveMRMLSceneEvents ( scene , events );
@@ -1734,9 +1709,7 @@ int Slicer3_main(int argc, char *argv[])
   slicerApp->SplashMessage("Configuring Slices and Modules...");
   appGUI->PopulateModuleChooseList ( );
 #ifndef SLICES_DEBUG
-  appGUI->SetSliceGUICollection ( slicesGUI->GetSliceGUICollection() );
-  appGUI->SetAndObserveMainSliceLogic ( sliceLogic0, sliceLogic1, sliceLogic2 );
-  appGUI->AddMainSliceViewersToCollection ( );
+  appGUI->SetAndObserveMainSliceLogic ( appLogic->GetSliceLogic("Red"), appLogic->GetSliceLogic("Yellow"), appLogic->GetSliceLogic("Green") );
   appGUI->ConfigureMainSliceViewers ( );
 #endif
     
@@ -1918,15 +1891,11 @@ int Slicer3_main(int argc, char *argv[])
   dataGUI->TearDownGUI ( );
     
 #ifndef SLICES_DEBUG
-  slicesGUI->RemoveGUIObservers ( );
+  //slicesGUI->RemoveGUIObservers ( );
 #endif
   appGUI->RemoveGUIObservers ( );
 #ifndef SLICES_DEBUG
   appGUI->SetAndObserveMainSliceLogic ( NULL, NULL, NULL );
-
-  // remove all from the slicesGUI collection of sliceGUIs
-  slicesGUI->GetSliceGUICollection()->RemoveAllItems ( );
-  appGUI->SetSliceGUICollection ( NULL );
 #endif
 
 #if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
@@ -2132,14 +2101,7 @@ int Slicer3_main(int argc, char *argv[])
   colorLogic->Delete();
 #endif
 
-#ifndef SLICES_DEBUG
-  sliceLogic2->SetAndObserveMRMLScene ( NULL );
-  sliceLogic2->Delete ();
-  sliceLogic1->SetAndObserveMRMLScene ( NULL );
-  sliceLogic1->Delete ();
-  sliceLogic0->SetAndObserveMRMLScene ( NULL );
-  sliceLogic0->Delete ();
-#endif
+  appLogic->DeleteSliceLogics();
   appLogic->SetAndObserveMRMLScene ( NULL );
   appLogic->TerminateProcessingThread();
   appLogic->Delete ();
@@ -2155,6 +2117,7 @@ int Slicer3_main(int argc, char *argv[])
   moduleLogics.clear();
 #endif
 
+
 #if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
   // delete the scripted logics
   tclCommand = "";
@@ -2164,6 +2127,9 @@ int Slicer3_main(int argc, char *argv[])
   tclCommand += "}";
   Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 #endif
+
+  //--- application last
+  slicerApp->Delete ();
 
   //--- scene next;
   scene->Clear(1);

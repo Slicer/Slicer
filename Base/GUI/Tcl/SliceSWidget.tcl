@@ -42,11 +42,13 @@ if { [itcl::find class SliceSWidget] == "" } {
     method resizeSliceNode {} {}
     method processEvent {{caller ""} {event ""}} {}
     method updateAnnotation {x y r a s} {}
+    method updateAnnotations {x y r a s} {}
     method incrementSlice {} {}
     method decrementSlice {} {}
     method moveSlice { delta } {}
     method jumpSlice { r a s } {}
     method jumpOtherSlices { r a s } {}
+    method getLinkedSliceLogics {} {}
   }
 }
 
@@ -111,7 +113,8 @@ itcl::body SliceSWidget::constructor {sliceGUI} {
 
   set node [[$sliceGUI GetLogic] GetSliceNode]
   $::slicer3::Broker AddObservation $node DeleteEvent "::SWidget::ProtectedDelete $this"
-  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
+#  $::slicer3::Broker AddObservation $node AnyEvent "::SWidget::ProtectedCallback $this processEvent $node AnyEvent"
+
 }
 
 
@@ -206,6 +209,7 @@ itcl::body SliceSWidget::resizeSliceNode {} {
 # handle interactor events
 #
 itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
+  # puts "$this $_sliceNode [$_sliceNode GetLayoutName] $caller $event"
 
   if { [info command $sliceGUI] == "" } {
     # the sliceGUI was deleted behind our back, so we need to 
@@ -300,6 +304,13 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
       # - first update the annotation
       # - then handle modifying the view
       #
+      set link [$_sliceCompositeNode GetLinkedControl]
+      if { $link == 1 } {
+        $this updateAnnotations $x $y $r $a $s
+      } else {
+        $this updateAnnotation $x $y $r $a $s
+      }
+
       if { [$_interactor GetShiftKey] } {
         $this jumpOtherSlices $r $a $s
         # need to render to show the annotation
@@ -323,15 +334,25 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
               set v [$o(scratchMatrix) GetElement $i 3]
               $o(scratchMatrix) SetElement $i 3 [expr $v - [set $d]]
             }
-            [$_sliceNode GetSliceToRAS] DeepCopy $o(scratchMatrix)
-            $_sliceNode UpdateMatrices
+
+            # get the linked logics (including self)
+            set sliceLogics [$this getLinkedSliceLogics]
+            # save state for undo
+            
+            # set the SliceToRAS on each slice node
+            foreach logic $sliceLogics {
+              set snode [$logic GetSliceNode]
+              [$snode GetSliceToRAS] DeepCopy $o(scratchMatrix)
+              $snode UpdateMatrices
+            }
+
             $sliceGUI SetGUICommandAbortFlag 1
             $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
           }
           "Zoom" {
             #
             # Zoom
-            # TODO: move calculation to vtkSlicerSliceLogic
+            # TODO: move calculation to vtkSslicerSliceLogic
             $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
             set deltay [expr $windowy - [lindex $_actionStartWindowXY 1]]
 
@@ -344,9 +365,16 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
               foreach f $_actionStartFOV factor "$percent $percent 1" {
                 lappend newFOV [expr $f * $factor]
               }
-              eval $_sliceNode SetFieldOfView $newFOV
 
-              $_sliceNode UpdateMatrices
+              # get the linked logics (including self)
+              set sliceLogics [$this getLinkedSliceLogics]
+              # save state for undo
+                
+              # set the field of view on each slice node
+              foreach logic $sliceLogics {
+                  set snode [$logic GetSliceNode]
+                  eval $snode SetFieldOfView $newFOV
+              }
             }
             $sliceGUI SetGUICommandAbortFlag 1
           }
@@ -373,10 +401,18 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
             $tfm RotateX $ry
             $tfm RotateY $rx
 
-            [$_sliceNode GetSliceToRAS] DeepCopy [$tfm GetMatrix]
+            # get the linked logics (including self)
+            set sliceLogics [$this getLinkedSliceLogics]
+            # save state for undo
+                
+            # set the SliceToRAS on each slice node
+            foreach logic $sliceLogics {
+              set snode [$logic GetSliceNode]
+              [$snode GetSliceToRAS] DeepCopy [$tfm GetMatrix]
+              $snode UpdateMatrices
+            }
             $tfm Delete
 
-            $_sliceNode UpdateMatrices
             $sliceGUI SetGUICommandAbortFlag 1
            }
           default {
@@ -474,8 +510,17 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
           }
           "r" {
             # use c++ version of calculation
-            [$sliceGUI GetLogic] FitSliceToBackground $w $h
-            $_sliceNode UpdateMatrices
+
+            # get the linked logics (including self)
+            set sliceLogics [$this getLinkedSliceLogics]
+            # save state for undo
+            
+            # fit the slice to the background for each logic/slice node
+            foreach logic $sliceLogics {
+              set snode [$logic GetSliceNode]
+              $logic FitSliceToBackground $w $h
+              $snode UpdateMatrices
+            }
           }
           "b" - "Left" - "Down" {
             $this decrementSlice
@@ -520,6 +565,81 @@ itcl::body SliceSWidget::processEvent { {caller ""} {event ""} } {
 
 }
 
+itcl::body SliceSWidget::updateAnnotations {x y r a s} {
+  set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+  set numsgui [$ssgui GetNumberOfSliceGUI]
+  for { set i 0 } { $i < $numsgui } { incr i } {
+    if { $i == 0} {
+      set sgui [$ssgui GetFirstSliceGUI]
+      set lname [$ssgui GetFirstSliceGUILayoutName]
+    } else {
+      set sgui [$ssgui GetNextSliceGUI $lname]
+      set lname [$ssgui GetFirstSliceGUILayoutName]
+    }
+    set logic [$sgui GetLogic]
+    set sliceCompositeNode [$logic GetSliceCompositeNode]
+
+  set colorName ""
+  if {[info command $_layers(label,node)] != "" && \
+      $_layers(label,node) != "" && \
+      $_layers(label,pixel) != "" && \
+      $_layers(label,pixel) != "Unknown" && \
+      $_layers(label,pixel) != "Out of Frame"} {
+      set labelDisplayNode [$_layers(label,node) GetDisplayNode]
+      if {$labelDisplayNode != "" && [$labelDisplayNode GetColorNodeID] != ""} {
+          set colorNode [$labelDisplayNode GetColorNode]
+          if {$colorNode != ""} {
+              if {[string is integer $_layers(label,pixel)]} {
+                  set colorName [$colorNode GetColorName $_layers(label,pixel)]
+              }
+          }
+      }
+  }
+  set labelText "Lb: $_layers(label,pixel) $colorName"
+  set voxelText "Fg: $_layers(foreground,pixel)\nBg: $_layers(background,pixel)"
+  set ijkText [format "Bg I: %d\nBg J: %d\nBg K: %d" \
+                $_layers(background,i) $_layers(background,j) $_layers(background,k)]
+  set xyText "X: $x\nY:$y"
+  set rasText [format "R: %.1f\nA: %.1f\nS: %.1f" $r $a $s]
+
+  set spaceText0 ""
+  set spaceText1 ""
+  switch [$sliceCompositeNode GetAnnotationSpace] {
+    "0" {set spaceText0 $xyText}
+    "1" {set spaceText0 $ijkText}
+    "2" {set spaceText0 $rasText}
+    "3" {set spaceText0 $rasText; set spaceText1 $ijkText}
+  }
+
+  switch [$sliceCompositeNode GetAnnotationMode] {
+    "0" {
+      $_annotation SetText 0 ""
+      $_annotation SetText 1 ""
+      $_annotation SetText 2 ""
+      $_annotation SetText 3 ""
+    }
+    "1" {
+      $_annotation SetText 0 "${labelText}\n${voxelText}"
+      $_annotation SetText 1 $spaceText0
+      $_annotation SetText 2 $spaceText1
+      $_annotation SetText 3 ""
+    }
+    "2" {
+      $_annotation SetText 0 "${labelText}"
+      $_annotation SetText 1 ""
+      $_annotation SetText 2 ""
+      $_annotation SetText 3 ""
+    }
+    "3" {
+      $_annotation SetText 0 "${labelText}\n${voxelText}"
+      $_annotation SetText 1 ""
+      $_annotation SetText 2 ""
+      $_annotation SetText 3 ""
+    }
+  }
+    
+  }
+}
 
 itcl::body SliceSWidget::updateAnnotation {x y r a s} {
 
@@ -598,10 +718,50 @@ itcl::body SliceSWidget::decrementSlice {} {
 }
 
 itcl::body SliceSWidget::moveSlice { delta } {
-  set logic [$sliceGUI GetLogic]
-  set offset [$logic GetSliceOffset]
-  $logic SetSliceOffset [expr $offset + $delta]
+    set logic [$sliceGUI GetLogic]
+    set sliceNode [$logic GetSliceNode]
+    set orientString [$sliceNode GetOrientationString]
+
+    set offset [$logic GetSliceOffset]
+
+    set logics ""
+    set link [$_sliceCompositeNode GetLinkedControl]
+    if { $link == 1 } {
+        set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+        set numsgui [$ssgui GetNumberOfSliceGUI]
+
+        for { set i 0 } { $i < $numsgui } { incr i } {
+            if { $i == 0} {
+                set sgui [$ssgui GetFirstSliceGUI]
+                set lname [$ssgui GetFirstSliceGUILayoutName]
+            } else {
+                set sgui [$ssgui GetNextSliceGUI $lname]
+                set lname [$ssgui GetNextSliceGUILayoutName $lname]
+            }
+            
+            if { [string compare $lname "Red"] == 0 || 
+             [string compare $lname "Yellow"] == 0 ||
+             [string compare $lname "Green"] == 0 } {
+                continue
+            }
+
+            set currSliceNode [$sgui GetSliceNode]
+            set currOrientString [$currSliceNode GetOrientationString]
+            if { [string compare $orientString $currOrientString] == 0 } {
+                lappend logics [$sgui GetLogic]
+            }
+        }
+    } else {
+        lappend logics [$sliceGUI GetLogic]
+    }
+
+    # set the slice offset for all slice logics
+    foreach logic $logics {
+        $logic SetSliceOffset [expr $offset + $delta]
+    }    
 }
+
+
 
 itcl::body SliceSWidget::jumpSlice { r a s } {
   set logic [$sliceGUI GetLogic]
@@ -615,3 +775,53 @@ itcl::body SliceSWidget::jumpOtherSlices { r a s } {
   $sliceNode JumpAllSlices $r $a $s
 }
 
+# Return the SliceLogics that are linked to the current 
+# SliceNode/SliceCompositeNode.  
+#
+# The list of linked logics either contains the current slice (because 
+# linking is off) or a list of logics (one for the current slice and others 
+# for linked slices).
+#
+itcl::body SliceSWidget::getLinkedSliceLogics { } {
+    set logic [$sliceGUI GetLogic]
+    set sliceNode [$logic GetSliceNode]
+    set orientString [$sliceNode GetOrientationString]
+
+    set logics ""
+    set link [$_sliceCompositeNode GetLinkedControl]
+    if { $link == 1 } {
+        set ssgui [[$::slicer3::ApplicationGUI GetApplication] GetModuleGUIByName "Slices"]
+        set layout [$::slicer3::ApplicationGUI GetGUILayoutNode]
+        set viewArrangement [$layout GetViewArrangement]
+
+        set numsgui [$ssgui GetNumberOfSliceGUI]
+
+        for { set i 0 } { $i < $numsgui } { incr i } {
+            if { $i == 0} {
+                set sgui [$ssgui GetFirstSliceGUI]
+                set lname [$ssgui GetFirstSliceGUILayoutName]
+            } else {
+                set sgui [$ssgui GetNextSliceGUI $lname]
+                set lname [$ssgui GetNextSliceGUILayoutName $lname]
+            }
+
+            if { $viewArrangement==12 } {
+                if { [string compare $lname "Red"] == 0 || 
+                     [string compare $lname "Yellow"] == 0 ||
+                     [string compare $lname "Green"] == 0 } {
+                    continue
+                }
+            }
+
+            set currSliceNode [$sgui GetSliceNode]
+            set currOrientString [$currSliceNode GetOrientationString]
+            if { [string compare $orientString $currOrientString] == 0 } {
+                lappend logics [$sgui GetLogic]
+            }
+        }
+    } else {
+        lappend logics [$sliceGUI GetLogic]
+    }
+
+  return $logics
+}

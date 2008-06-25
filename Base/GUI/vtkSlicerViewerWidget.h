@@ -134,6 +134,7 @@ public:
   virtual void PackWidget ( vtkKWFrame *f );
   virtual void UnpackWidget ( );
   virtual void GridWidget ( vtkKWFrame *f, int row, int col );
+  virtual void GridSpanWidget ( vtkKWFrame *f, int row, int col, int rowspan, int colspan );
   virtual void UngridWidget ( );
   void ColorAxisLabelActors ( double r, double g, double b);
   

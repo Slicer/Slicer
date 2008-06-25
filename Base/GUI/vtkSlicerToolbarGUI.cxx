@@ -72,7 +72,11 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
   this->ApplicationGUI = NULL;
   this->InteractionNodeID = NULL;
   this->InteractionNode = NULL;
+
   this->ProcessingMRMLEvent = 0;
+
+  this->CompareViewBoxTopLevel = NULL; //vtkKWTopLevel::New( );
+  this->CompareViewBoxApplyButton = NULL; //vtkKWPushButton::New( );
 }
 
 
@@ -275,6 +279,19 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->SlicerToolbarIcons = NULL;
     }
 
+  if ( this->CompareViewBoxApplyButton )
+    {
+    this->CompareViewBoxApplyButton->SetParent ( NULL );
+    this->CompareViewBoxApplyButton->Delete ( );
+    this->CompareViewBoxApplyButton = NULL;
+    }
+  if ( this->CompareViewBoxTopLevel )
+    {
+    this->CompareViewBoxTopLevel->SetParent(NULL);
+    this->CompareViewBoxTopLevel->Delete  ( );
+    this->CompareViewBoxTopLevel = NULL;
+    }
+
     this->SetApplicationGUI ( NULL );
     this->SetInteractionNodeID ( NULL );
     vtkSetMRMLNodeMacro( this->InteractionNode, NULL);
@@ -340,6 +357,7 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
   this->MousePickButton->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MousePlaceButton->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MouseTransformViewButton->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->CompareViewBoxApplyButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
       
   this->ModuleChooseGUI->RemoveGUIObservers();
 }
@@ -368,6 +386,7 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
   this->MousePickButton->AddObserver( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MousePlaceButton->AddObserver( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MouseTransformViewButton->AddObserver( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
+  this->CompareViewBoxApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->ModuleChooseGUI->AddGUIObservers();
 }
@@ -608,6 +627,10 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView );
             }
           }
+        else if (!strcmp ( whichLayout, "Compare layout"))
+          {
+          PopUpCompareViewCustomLayoutFrame();
+          }
         else if ( !strcmp (whichLayout, "Red slice only layout") )
           {
           if ( layout->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView )
@@ -630,6 +653,12 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             {
             p->GetMRMLScene()->SaveStateForUndo ( layout );
             layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
+            }
+          else if ( !strcmp ( whichLayout, "Toggle GUI panel L/R"))
+            {
+            int v = p->GetMainSlicerWindow()->GetViewPanelPosition();
+            p->GetMainSlicerWindow()->SetViewPanelPosition ( !v );
+            this->SetLayoutMenubuttonValueToCurrentLayout();
             }
           }
         else if ( !strcmp ( whichLayout, "Toggle GUI panel visibility"))
@@ -673,7 +702,17 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           this->LoadSceneIconButton->SetValue ("");
           }
         }
-      if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
+     if ((pushb == this->CompareViewBoxApplyButton) && (event == vtkKWPushButton::InvokedEvent))
+     {
+        p->SetNCompareViewRows( this->CompareViewBoxRowEntry->GetValueAsInt() );
+        //p->SetNCompareViewColumns( this->CompareViewBoxColumnEntry->GetValueAsInt() );
+//            // First, check to see if view is spinning or rocking.
+//            // If so, stop view Spin or Rock.
+            p->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutCompareView, NULL );
+            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
+//        this->ResumeViewRockOrSpin ( mode );
+     }
+     else if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
         {
         p->GetMRMLScene()->Undo();
         }
@@ -695,7 +734,6 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkSlicerToolbarGUI::SetLayoutMenubuttonValueToLayout (int layout)
 {
-
   //--- sets the layout dropdown menu selection to match layout value
   if ( this->ChooseLayoutIconMenuButton->GetMenu() != NULL )
     {
@@ -727,6 +765,12 @@ void vtkSlicerToolbarGUI::SetLayoutMenubuttonValueToLayout (int layout)
         break;
       case vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView:
         this->ChooseLayoutIconMenuButton->SetValue ( "Tabbed slice layout" );
+        break;
+      case vtkMRMLLayoutNode::SlicerLayoutCompareView:
+        this->ChooseLayoutIconMenuButton->SetValue ( "Compare layout" );
+        break;
+      case vtkMRMLLayoutNode::SlicerLayoutLightboxView:              
+        this->ChooseLayoutIconMenuButton->SetValue ( "Lightbox layout" );
         break;
       default:
         break;
@@ -1207,12 +1251,13 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
 //  this->ChooseLayoutIconMenuButton->GetMenu()->SetItemVariableValueAsInt ( "Tabbed slice layout", vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView);
 
-  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ("Compare view layout");
-  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ("Compare view layout");
+  this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ("Compare layout");
+  index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ("Compare layout");
   imageName = "SlicerCompareViewLayoutImage";
   vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName, this->SlicerToolbarIcons->GetCompareViewIcon(), 0);
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemImage ( index, imageName );
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+
 
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Toggle GUI panel visibility" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Toggle GUI panel visibility");
@@ -1221,6 +1266,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Toggle bottom panel visibility");
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemIndicatorVisibility ( index, 0 );
 
+
   this->ChooseLayoutIconMenuButton->GetMenu()->AddRadioButton ( "Toggle GUI panel L/R" );
   index = this->ChooseLayoutIconMenuButton->GetMenu()->GetIndexOfItem ( "Toggle GUI panel L/R");
   this->ChooseLayoutIconMenuButton->GetMenu()->SetItemIndicatorVisibility ( index, 0 );
@@ -1228,7 +1274,54 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
   this->ChooseLayoutIconMenuButton->GetMenu()->AddSeparator ( );
   this->ChooseLayoutIconMenuButton->GetMenu()->AddCommand ("close");  
   this->ChooseLayoutIconMenuButton->SetBinding ( "<Button-1>", this, "StopViewRockOrSpin" );
-  
+
+    ////--- Pop-up frame for custom NXM lightbox configuration
+    this->CompareViewBoxTopLevel = vtkKWTopLevel::New ( );
+    this->CompareViewBoxTopLevel->SetApplication ( app );
+    this->CompareViewBoxTopLevel->SetMasterWindow ( this->ChooseLayoutIconMenuButton );
+    this->CompareViewBoxTopLevel->Create ( );
+    this->CompareViewBoxTopLevel->HideDecorationOn ( );
+    this->CompareViewBoxTopLevel->Withdraw ( );
+    this->CompareViewBoxTopLevel->SetBorderWidth ( 2 );
+    this->CompareViewBoxTopLevel->SetReliefToGroove ( );
+    //--- create temporary pop-up frame to display when custom configuration is selected
+    vtkKWFrame *popUpFrame1 = vtkKWFrame::New ( );
+    popUpFrame1->SetParent( this->CompareViewBoxTopLevel );
+    popUpFrame1->Create ( );
+    popUpFrame1->SetBinding ( "<Leave>", this, "HideCompareViewCustomLayoutFrame" );
+    this->Script ( "pack %s -side left -anchor w -padx 2 -pady 2 -fill x -fill y -expand n", popUpFrame1->GetWidgetName ( ) );   
+    this->CompareViewBoxRowEntry = vtkKWEntry::New ( );
+    this->CompareViewBoxRowEntry->SetParent ( popUpFrame1 );
+    this->CompareViewBoxRowEntry->Create ( );
+    this->CompareViewBoxRowEntry->SetValueAsInt (1);
+    this->CompareViewBoxRowEntry->SetWidth ( 3 );
+    //this->CompareViewBoxColumnEntry = vtkKWEntry::New ( );
+    //this->CompareViewBoxColumnEntry->SetParent ( popUpFrame1 );
+    //this->CompareViewBoxColumnEntry->Create ( );
+    //this->CompareViewBoxColumnEntry->SetWidth ( 3 );
+    //this->CompareViewBoxColumnEntry->SetValueAsInt (1);
+    vtkKWLabel *rowsLabel = vtkKWLabel::New();
+    rowsLabel->SetParent ( popUpFrame1 );
+    rowsLabel->Create ( );
+    rowsLabel->SetText ( "Number of rows:" );
+    //vtkKWLabel *columnsLabel = vtkKWLabel::New();
+    //columnsLabel->SetParent ( popUpFrame1 );
+    //columnsLabel->Create ( );
+    //columnsLabel->SetText ( "Number of columns:" );
+    this->CompareViewBoxApplyButton = vtkKWPushButton::New ( );
+    this->CompareViewBoxApplyButton->SetParent ( popUpFrame1 );
+    this->CompareViewBoxApplyButton->Create ( );
+    this->CompareViewBoxApplyButton->SetText ("Apply");    
+    this->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 8", rowsLabel->GetWidgetName());
+    this->Script ( "grid %s -row 0 -column 1 -padx 6 -pady 8", this->CompareViewBoxRowEntry->GetWidgetName() );
+    //this->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 8", columnsLabel->GetWidgetName());
+    //this->Script ( "grid %s -row 1 -column 1 -padx 6 -pady 8", this->CompareViewBoxColumnEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 2 -column 0 -columnspan 2 -pady 8", this->CompareViewBoxApplyButton->GetWidgetName() );
+    // delete temporary stuff
+    rowsLabel->Delete();
+    //columnsLabel->Delete();
+    popUpFrame1->Delete();
+
   vtb->AddWidget (this->ChooseLayoutIconMenuButton );
 
   //---
@@ -1310,5 +1403,32 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
 
 }
 
+void vtkSlicerToolbarGUI::PopUpCompareViewCustomLayoutFrame()
+{
+  if ( !this->ChooseLayoutIconMenuButton || !this->ChooseLayoutIconMenuButton->IsCreated())
+    {
+    return;
+    }
+  // Get the position of the mouse, the position and size of the push button,
+  // the size of the scale.
 
+  int x, y, px, py, ph;
+  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast ( this->GetApplication());
+  
+  vtkKWTkUtilities::GetMousePointerCoordinates(this->ChooseLayoutIconMenuButton, &x, &y);
+  vtkKWTkUtilities::GetWidgetCoordinates(this->UndoIconButton, &px, &py);
+  vtkKWTkUtilities::GetWidgetSize(this->ChooseLayoutIconMenuButton, NULL, &ph);
+ 
+  this->CompareViewBoxTopLevel->SetPosition(px-ph, py+ph);
+  app->ProcessPendingEvents();
+  this->CompareViewBoxTopLevel->DeIconify();
+  this->CompareViewBoxTopLevel->Raise();
+}
 
+void vtkSlicerToolbarGUI::HideCompareViewCustomLayoutFrame()
+{
+    if ( !this->CompareViewBoxTopLevel )
+      return;
+
+    this->CompareViewBoxTopLevel->Withdraw();
+}

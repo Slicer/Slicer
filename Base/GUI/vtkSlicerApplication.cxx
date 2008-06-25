@@ -804,7 +804,13 @@ void vtkSlicerApplication::SaveApplicationWindowConfiguration()
       this->SetApplicationSlicesFrameHeight ( this->ApplicationGUI->GetMainSlicerWindow()->GetSecondarySplitFrame()->GetFrame1Size() );
       if ( this->ApplicationGUI->GetGUILayoutNode() )
         {
-        this->SetApplicationLayoutType ( this->ApplicationGUI->GetGUILayoutNode()->GetViewArrangement() );
+        // Compare View not supported as a saved layout yet (need to
+        // put the number of compare views into the Layout node
+        if (this->ApplicationGUI->GetGUILayoutNode()->GetViewArrangement()
+            != vtkMRMLLayoutNode::SlicerLayoutCompareView)
+          {
+          this->SetApplicationLayoutType ( this->ApplicationGUI->GetGUILayoutNode()->GetViewArrangement() );
+          }
         }
       }
     }

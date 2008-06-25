@@ -690,7 +690,7 @@ void vtkEMSegmentIntensityDistributionsStep::AddManualIntensitySamplingGUIObserv
   // Slice GUI 0
 
   vtkRenderWindowInteractor *rwi0 = vtkSlicerApplicationGUI::SafeDownCast(
-    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI0()->
+    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Red")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi0->GetInteractorStyle()->AddObserver(
@@ -699,7 +699,7 @@ void vtkEMSegmentIntensityDistributionsStep::AddManualIntensitySamplingGUIObserv
   // Slice GUI 1
 
   vtkRenderWindowInteractor *rwi1 = vtkSlicerApplicationGUI::SafeDownCast(
-    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI1()->
+    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Yellow")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi1->GetInteractorStyle()->AddObserver(
@@ -708,7 +708,7 @@ void vtkEMSegmentIntensityDistributionsStep::AddManualIntensitySamplingGUIObserv
   // Slice GUI 2
 
   vtkRenderWindowInteractor *rwi2 = vtkSlicerApplicationGUI::SafeDownCast(
-    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI2()->
+    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Green")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi2->GetInteractorStyle()->AddObserver(
@@ -721,7 +721,7 @@ void vtkEMSegmentIntensityDistributionsStep::RemoveManualIntensitySamplingGUIObs
   // Slice GUI 0
 
   vtkRenderWindowInteractor *rwi0 = vtkSlicerApplicationGUI::SafeDownCast(
-    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI0()->
+    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Red")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi0->GetInteractorStyle()->RemoveObservers(
@@ -730,7 +730,7 @@ void vtkEMSegmentIntensityDistributionsStep::RemoveManualIntensitySamplingGUIObs
   // Slice GUI 1
 
   vtkRenderWindowInteractor *rwi1 = vtkSlicerApplicationGUI::SafeDownCast(
-    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI1()->
+    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Yellow")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi1->GetInteractorStyle()->RemoveObservers(
@@ -739,7 +739,7 @@ void vtkEMSegmentIntensityDistributionsStep::RemoveManualIntensitySamplingGUIObs
   // Slice GUI 2
 
   vtkRenderWindowInteractor *rwi2 = vtkSlicerApplicationGUI::SafeDownCast(
-    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI2()->
+    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Green")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi2->GetInteractorStyle()->RemoveObservers(
@@ -761,7 +761,7 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessManualIntensitySamplingGUIEv
     // Slice GUI 0
 
     vtkSlicerSliceGUI *sliceGUI0 = vtkSlicerApplicationGUI::SafeDownCast(
-      this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI0();
+      this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Red");
 
     vtkRenderWindowInteractor *rwi0 = sliceGUI0->GetSliceViewer()->
       GetRenderWidget()->GetRenderWindowInteractor();
@@ -769,7 +769,7 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessManualIntensitySamplingGUIEv
     // Slice GUI 1
 
     vtkSlicerSliceGUI *sliceGUI1 = vtkSlicerApplicationGUI::SafeDownCast(
-      this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI1();
+      this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Yellow");
 
     vtkRenderWindowInteractor *rwi1 = sliceGUI1->GetSliceViewer()->
       GetRenderWidget()->GetRenderWindowInteractor();
@@ -777,7 +777,7 @@ void vtkEMSegmentIntensityDistributionsStep::ProcessManualIntensitySamplingGUIEv
     // Slice GUI 2
 
     vtkSlicerSliceGUI *sliceGUI2 = vtkSlicerApplicationGUI::SafeDownCast(
-      this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI2();
+      this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Green");
 
     vtkRenderWindowInteractor *rwi2 =  sliceGUI2->GetSliceViewer()->
       GetRenderWidget()->GetRenderWindowInteractor();

@@ -45,6 +45,7 @@ void vtkSlicerColor::DefineDefaultColorPalette ( ) {
     this->SetColor ( this->LightOchre, 0.956862745098, 0.913725490196, 0.498039215686);
     this->SetColor ( this->DarkOrange, 0.760784313725, 0.290196078431, 0.0941176470588);
     this->SetColor ( this->MediumOrange, 0.882352941176, 0.439215686275, 0.0705882352941);
+    this->SetColor ( this->SliceOrange, 0.882352941176, 0.439215686275, 0.0705882352941);
     this->SetColor ( this->BrightOrange, 0.956862745098, 0.509803921569, 0.078431372549);
     this->SetColor ( this->LightOrange, 0.952941176471, 0.721568627451, 0.274509803922);
     this->SetColor ( this->LightestOrange, 0.937254901961, 0.835294117647, 0.501960784314);
@@ -135,6 +136,7 @@ void vtkSlicerColor::DefineSlicerColorNames ( )
   this->SetColor(this->SliceGUIRed,  this->SliceRed );
   this->SetColor(this->SliceGUIYellow, this->SliceYellow );
   this->SetColor(this->SliceGUIGreen, this->SliceGreen );
+  this->SetColor(this->SliceGUIOrange, this->SliceOrange );
   this->SetColor (this->ViewerBlue, this->SlicerBlue );
   this->SetColor (this->ActiveTextColor, this->Black );
   this->SetColor (this->DisabledTextColor, this->MediumGrey );

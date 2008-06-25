@@ -528,7 +528,10 @@ void vtkTumorGrowthGUI::SliceLogicRemove() {
   if (this->SliceLogic) {
     // this->SliceLogic->GetSliceNode()->SetSliceVisible(0);
      vtkSlicerApplicationLogic *applicationLogic = this->GetLogic()->GetApplicationLogic();
-     if (applicationLogic && applicationLogic->GetSlices()) applicationLogic->GetSlices()->RemoveItem(this->SliceLogic);
+     if (applicationLogic)
+       {
+       applicationLogic->RemoveSliceLogic(this->SliceLogic->GetName());
+       }
      this->SliceLogic->Delete();
      this->SliceLogic = NULL;
   } 
@@ -552,10 +555,11 @@ void vtkTumorGrowthGUI::SliceLogicDefine() {
       events->Delete();
 
       vtkSlicerApplicationLogic *applicationLogic = this->GetLogic()->GetApplicationLogic();
-      if (applicationLogic->GetSlices())
-      {
-        applicationLogic->GetSlices()->AddItem(this->SliceLogic);
-      }
+      if (applicationLogic)
+        {
+        applicationLogic->AddSliceLogic(this->SliceLogic->GetName(),
+                                        this->SliceLogic);
+        }
     } 
 
     if (!this->SliceLogicCallbackCommand) {
@@ -567,7 +571,7 @@ void vtkTumorGrowthGUI::SliceLogicDefine() {
 
     // Link to slicer control pannel 
     if (!this->SliceController_OffsetScale) {
-      this->SliceController_OffsetScale =  this->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController()->GetOffsetScale();
+      this->SliceController_OffsetScale =  this->GetApplicationGUI()->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale();
       this->SliceController_OffsetScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, this->SliceLogicCallbackCommand);
       this->SliceController_OffsetScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangingEvent, this->SliceLogicCallbackCommand);
       this->SliceController_OffsetScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueStartChangingEvent, this->SliceLogicCallbackCommand);

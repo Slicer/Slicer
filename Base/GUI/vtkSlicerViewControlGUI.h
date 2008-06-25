@@ -128,6 +128,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkGetObjectMacro ( SelectSceneSnapshotMenuButton, vtkKWMenuButton );
   vtkGetObjectMacro ( SceneSnapshotButton, vtkKWPushButton );
 
+
   // Description:
   // Get the Widgets that display the RotateAround rollover images
   // and the LookFrom rollover images in the ViewControlGUI
@@ -436,7 +437,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerViewControlGUI : public vtkSlicerCompo
   vtkKWMenuButton *SelectSceneSnapshotMenuButton;
   vtkKWPushButton *SceneSnapshotButton;
 
-    
+
   // navzoom scale, navzoomin/outiconbutton tmpNavigationZoom, all the icon buttons.    
   // Description:
   // These widgets display icons that indicate

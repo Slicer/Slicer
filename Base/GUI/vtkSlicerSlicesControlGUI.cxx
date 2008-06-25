@@ -274,19 +274,19 @@ void vtkSlicerSlicesControlGUI::UpdateSliceGUIInteractorStyles ( )
     }
 
   // Find current SliceGUIs; if there are none, do nothing.
-  if ( ( this->GetApplicationGUI()->GetMainSliceGUI0() == NULL ) ||
-       ( this->GetApplicationGUI()->GetMainSliceGUI1() == NULL ) ||
-       ( this->GetApplicationGUI()->GetMainSliceGUI2() == NULL ))
+  if ( ( this->GetApplicationGUI()->GetMainSliceGUI("Red") == NULL ) ||
+       ( this->GetApplicationGUI()->GetMainSliceGUI("Yellow") == NULL ) ||
+       ( this->GetApplicationGUI()->GetMainSliceGUI("Green") == NULL ))
     {
     return;
     }
 
   // If the interactor and these references are out of sync...
-  if ( ( this->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceViewer()->
+  if ( ( this->GetApplicationGUI()->GetMainSliceGUI("Red")->GetSliceViewer()->
          GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle() != this->RedSliceEvents ) ||
-       ( this->GetApplicationGUI()->GetMainSliceGUI1()->GetSliceViewer()->
+       ( this->GetApplicationGUI()->GetMainSliceGUI("Yellow")->GetSliceViewer()->
          GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle() != this->YellowSliceEvents ) ||
-       ( this->GetApplicationGUI()->GetMainSliceGUI2()->GetSliceViewer()->
+       ( this->GetApplicationGUI()->GetMainSliceGUI("Green")->GetSliceViewer()->
          GetRenderWidget()->GetRenderWindowInteractor()->GetInteractorStyle() != this->GreenSliceEvents ) )
     {
     this->RemoveSliceEventObservers();
@@ -296,21 +296,21 @@ void vtkSlicerSlicesControlGUI::UpdateSliceGUIInteractorStyles ( )
 
     this->SetRedSliceEvents( vtkSlicerInteractorStyle::SafeDownCast(
                                                                  this->GetApplicationGUI()->
-                                                                 GetMainSliceGUI0()->
+                                                                 GetMainSliceGUI("Red")->
                                                                  GetSliceViewer()->
                                                                  GetRenderWidget()->
                                                                  GetRenderWindowInteractor()->
                                                                  GetInteractorStyle() ));
     this->SetYellowSliceEvents( vtkSlicerInteractorStyle::SafeDownCast(
                                                                  this->GetApplicationGUI()->
-                                                                 GetMainSliceGUI1()->
+                                                                 GetMainSliceGUI("Yellow")->
                                                                  GetSliceViewer()->
                                                                  GetRenderWidget()->
                                                                  GetRenderWindowInteractor()->
                                                                  GetInteractorStyle() ));
     this->SetGreenSliceEvents( vtkSlicerInteractorStyle::SafeDownCast(
                                                                  this->GetApplicationGUI()->
-                                                                 GetMainSliceGUI2()->
+                                                                 GetMainSliceGUI("Green")->
                                                                  GetSliceViewer()->
                                                                  GetRenderWidget()->
                                                                  GetRenderWindowInteractor()->
@@ -515,7 +515,7 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( e == this->RedFOVEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
         {
         val = this->RedFOVEntry->GetWidget()->GetValueAsDouble();
-        snode  = p->GetMainSliceGUI0()->GetSliceNode();
+        snode  = p->GetMainSliceGUI("Red")->GetSliceNode();
         p->GetMRMLScene()->SaveStateForUndo( snode );
         if ( val > 0 && snode && p )
           {
@@ -526,7 +526,7 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( e == this->YellowFOVEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
         {
         val = this->YellowFOVEntry->GetWidget()->GetValueAsDouble();
-        snode  = p->GetMainSliceGUI1()->GetSliceNode();
+        snode  = p->GetMainSliceGUI("Yellow")->GetSliceNode();
         p->GetMRMLScene()->SaveStateForUndo( snode );
         if ( val > 0 && snode && p )
           {   
@@ -537,7 +537,7 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( e == this->GreenFOVEntry->GetWidget() && event == vtkKWEntry::EntryValueChangedEvent )
         {
         val = this->GreenFOVEntry->GetWidget()->GetValueAsDouble();
-        snode  = p->GetMainSliceGUI2()->GetSliceNode();
+        snode  = p->GetMainSliceGUI("Green")->GetSliceNode();
         p->GetMRMLScene()->SaveStateForUndo( snode );
         if ( val > 0 && snode && p )
           {
@@ -686,7 +686,6 @@ void vtkSlicerSlicesControlGUI::RemoveSliceEventObservers()
 //---------------------------------------------------------------------------
 void vtkSlicerSlicesControlGUI::FitFOVToBackground( double fov, int viewer )
 {
-
   if ( viewer != 0 && viewer != 1 && viewer != 2 )
     {
     return;
@@ -706,23 +705,24 @@ void vtkSlicerSlicesControlGUI::FitFOVToBackground( double fov, int viewer )
       if ( viewer == 0 )
         {
         sliceNode = this->RedSliceNode;
-        compositeNode = appGUI->GetMainSliceLogic0()->GetSliceCompositeNode();
-        sgui = appGUI->GetMainSliceGUI0();
+        compositeNode = appGUI->GetApplicationLogic()->GetSliceLogic("Red")->GetSliceCompositeNode();
+        sgui = appGUI->GetMainSliceGUI("Red");
         }
       else if ( viewer == 1 )
         {
         sliceNode = this->YellowSliceNode;
-        compositeNode = appGUI->GetMainSliceLogic1()->GetSliceCompositeNode();
-        sgui = appGUI->GetMainSliceGUI1();
+        compositeNode = appGUI->GetApplicationLogic()->GetSliceLogic("Yellow")->GetSliceCompositeNode();
+        //compositeNode = appGUI->GetMainSliceLogic1()->GetSliceCompositeNode();
+        sgui = appGUI->GetMainSliceGUI("Yellow");
         }
       else if ( viewer == 2 )
         {
         sliceNode = this->GreenSliceNode;
-        compositeNode = appGUI->GetMainSliceLogic2()->GetSliceCompositeNode();
-        sgui = appGUI->GetMainSliceGUI2();
+        compositeNode = appGUI->GetApplicationLogic()->GetSliceLogic("Green")->GetSliceCompositeNode();
+        sgui = appGUI->GetMainSliceGUI("Green");
         }
       appGUI->GetMRMLScene()->SaveStateForUndo( sliceNode );
-
+      
       if ( !sgui )
         {
         return;
@@ -732,31 +732,31 @@ void vtkSlicerSlicesControlGUI::FitFOVToBackground( double fov, int viewer )
         {
         return;
         }
-  
+      
       // get viewer's width and height. we may be using a LightBox
       // display, so base width and height on renderer0 in the SliceViewer.
       int width, height;
-
+      
       vtkRenderer *ren=sgui->GetSliceViewer()->GetRenderWidget()->GetRenderer();
       width = ren->GetSize()[0];
       height = ren->GetSize()[1];
-
+      
       
       // get backgroundNode  and imagedata
       backgroundNode =
         vtkMRMLScalarVolumeNode::SafeDownCast (
-                                               appGUI->GetMRMLScene()->GetNodeByID( compositeNode->GetBackgroundVolumeID() ));
+          appGUI->GetMRMLScene()->GetNodeByID( compositeNode->GetBackgroundVolumeID() ));
       vtkImageData *backgroundImage;
       if ( !backgroundNode || ! (backgroundImage = backgroundNode->GetImageData()) )
         {
         return;
         }
-
+      
       int dimensions[3];
       double rasDimensions[4];
       double doubleDimensions[4];
       vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
-
+      
       // what are the actual dimensions of the imagedata?
       backgroundImage->GetDimensions(dimensions);
       doubleDimensions[0] = dimensions[0];
@@ -779,7 +779,7 @@ void vtkSlicerSlicesControlGUI::FitFOVToBackground( double fov, int viewer )
       rasToSlice->MultiplyPoint( rasDimensions, sliceDimensions );
       rasToSlice->Delete();
       rasToSlice = NULL;
-
+      
       double fovh, fovv;
       // which is bigger, slice viewer width or height?
       // assign user-specified fov to smaller slice window
@@ -1153,50 +1153,96 @@ void vtkSlicerSlicesControlGUI::FitSlicesToBackground ( )
     
   // find the sliceGUI for this controller
   if ( this->GetApplication() )
-    {
-    app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
-    ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
-    if ( ssgui != NULL )
-      {
-      // First save all SliceNodes for undo:
-      ssgui->GetSliceGUICollection()->InitTraversal();
-      sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
-      vtkCollection *nodes = vtkCollection::New();
-      while ( sgui != NULL )
-        {
-        nodes->AddItem ( sgui->GetSliceNode ( ) );
-        sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
-        }
-      this->MRMLScene->SaveStateForUndo ( nodes );
-      nodes->Delete ( );
+  {
+          app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
+          ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
+          if ( ssgui != NULL )
+          {
+                  // First save all SliceNodes for undo:
+                  char *layoutname = NULL;
+                  vtkCollection *nodes = vtkCollection::New();
+                  int nSliceGUI = ssgui->GetNumberOfSliceGUI();
+                  for (int i = 0; i < nSliceGUI; i++)
+                  {
+                          if (i == 0)
+                          {
+                                  sgui = ssgui->GetFirstSliceGUI();
+                                  layoutname = ssgui->GetFirstSliceGUILayoutName();
+                          }
+                          else
+                          {
+                                  sgui = ssgui->GetNextSliceGUI(layoutname);
+                                  layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+                          }
+                          nodes->AddItem ( sgui->GetSliceNode ( ) );
+                  }
+                  this->MRMLScene->SaveStateForUndo ( nodes );
+                  nodes->Delete ( );
 
-      // Now fit all Slices to background
-      ssgui->GetSliceGUICollection()->InitTraversal();
-      sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
-      int w, h;
-      while ( sgui != NULL )
-        {
-        //w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
-        //h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
-        sscanf(
-          this->Script("winfo width %s", 
-              sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
-          "%d", &w);
-        sscanf(
-          this->Script("winfo height %s", 
-              sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
-          "%d", &h);
-        sgui->GetLogic()->FitSliceToAll ( w, h );
-        sgui->GetSliceNode()->UpdateMatrices( );
-        this->RequestFOVEntriesUpdate();
-        sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
-        }
+                  // Now fit all Slices to background
+                  int w, h;
+                  for (int i = 0; i < nSliceGUI; i++)
+                  {
+                          if (i == 0)
+                          {
+                                  sgui = ssgui->GetFirstSliceGUI();
+                                  layoutname = ssgui->GetFirstSliceGUILayoutName();
+                          }
+                          else
+                          {
+                                  sgui = ssgui->GetNextSliceGUI(layoutname);
+                                  layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+                          }
+                          //w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
+                          //h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+                          sscanf(
+                                  this->Script("winfo width %s", 
+                                  sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+                                  "%d", &w);
+                          sscanf(
+                                  this->Script("winfo height %s", 
+                                  sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+                                  "%d", &h);
+                          sgui->GetLogic()->FitSliceToAll ( w, h );
+                          sgui->GetSliceNode()->UpdateMatrices( );
+                          this->RequestFOVEntriesUpdate();
+                  }
+
+                  //ssgui->GetSliceGUICollection()->InitTraversal();
+      //sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+      //vtkCollection *nodes = vtkCollection::New();
+      //while ( sgui != NULL )
+      //  {
+      //  nodes->AddItem ( sgui->GetSliceNode ( ) );
+      //  sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+      //  }
+      //this->MRMLScene->SaveStateForUndo ( nodes );
+      //nodes->Delete ( );
+
+      //// Now fit all Slices to background
+      //ssgui->GetSliceGUICollection()->InitTraversal();
+      //sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+      //int w, h;
+      //while ( sgui != NULL )
+      //  {
+      //  //w = sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidth();
+      //  //h = sgui->GetSliceViewer()->GetRenderWidget ( )->GetHeight();
+      //  sscanf(
+      //    this->Script("winfo width %s", 
+      //        sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+      //    "%d", &w);
+      //  sscanf(
+      //    this->Script("winfo height %s", 
+      //        sgui->GetSliceViewer()->GetRenderWidget ( )->GetWidgetName()), 
+      //    "%d", &h);
+      //  sgui->GetLogic()->FitSliceToAll ( w, h );
+      //  sgui->GetSliceNode()->UpdateMatrices( );
+      //  this->RequestFOVEntriesUpdate();
+      //  sgui = vtkSlicerSliceGUI::SafeDownCast ( ssgui->GetSliceGUICollection()->GetNextItemAsObject() );
+      //  }
       }
     }
 }
-
-
-
 
 
 //---------------------------------------------------------------------------

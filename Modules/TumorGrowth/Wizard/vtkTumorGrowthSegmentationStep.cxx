@@ -254,9 +254,9 @@ void vtkTumorGrowthSegmentationStep::PreSegmentScan1Define() {
   // ------------------------------
   this->PreSegmentNode = volumesLogic->CreateLabelVolume(Node->GetScene(),volumeNode, "TG_Scan1_PreSegment");
   this->PreSegmentNode->SetAndObserveImageData(this->PreSegment->GetOutput());
-  applicationGUI->GetMainSliceGUI0()->GetSliceController()->GetForegroundSelector()->SetSelected(this->PreSegmentNode);
-  applicationGUI->GetMainSliceGUI1()->GetSliceController()->GetForegroundSelector()->SetSelected(this->PreSegmentNode);
-  applicationGUI->GetMainSliceGUI2()->GetSliceController()->GetForegroundSelector()->SetSelected(this->PreSegmentNode);
+  applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetForegroundSelector()->SetSelected(this->PreSegmentNode);
+  applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetForegroundSelector()->SetSelected(this->PreSegmentNode);
+  applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetForegroundSelector()->SetSelected(this->PreSegmentNode);
   applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue(0.6);
   applicationLogic->PropagateVolumeSelection();
   // ------------------------------------

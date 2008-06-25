@@ -433,7 +433,7 @@ void vtkTumorGrowthROIStep::AddGUIObservers()
 
 void vtkTumorGrowthROIStep::AddROISamplingGUIObservers() {
   vtkRenderWindowInteractor *rwi0 = vtkSlicerApplicationGUI::SafeDownCast(
-    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI0()->
+    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Red")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi0->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent, this->WizardGUICallbackCommand);
@@ -441,7 +441,7 @@ void vtkTumorGrowthROIStep::AddROISamplingGUIObservers() {
   // Slice GUI 1
 
   vtkRenderWindowInteractor *rwi1 = vtkSlicerApplicationGUI::SafeDownCast(
-    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI1()->
+    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Yellow")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi1->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent,this->WizardGUICallbackCommand);
@@ -449,7 +449,7 @@ void vtkTumorGrowthROIStep::AddROISamplingGUIObservers() {
   // Slice GUI 2
 
   vtkRenderWindowInteractor *rwi2 = vtkSlicerApplicationGUI::SafeDownCast(
-    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI2()->
+    this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Green")->
     GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
 
   rwi2->GetInteractorStyle()->AddObserver(vtkCommand::LeftButtonPressEvent, this->WizardGUICallbackCommand);
@@ -477,9 +477,9 @@ void vtkTumorGrowthROIStep::RemoveROISamplingGUIObservers() {
   if (!ApplicationGUI) return; 
   for (int i = 0 ; i < 3 ; i ++ ) {
     vtkSlicerSliceGUI *MainGUI = NULL;
-    if (i == 0) MainGUI = ApplicationGUI->GetMainSliceGUI0();
-    if (i == 1) MainGUI = ApplicationGUI->GetMainSliceGUI1();
-    if (i == 2) MainGUI = ApplicationGUI->GetMainSliceGUI2();
+    if (i == 0) MainGUI = ApplicationGUI->GetMainSliceGUI("Red");
+    if (i == 1) MainGUI = ApplicationGUI->GetMainSliceGUI("Yellow");
+    if (i == 2) MainGUI = ApplicationGUI->GetMainSliceGUI("Green");
     if (!MainGUI) return;
     vtkRenderWindowInteractor *rwi = MainGUI->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
     rwi->GetInteractorStyle()->RemoveObservers(vtkCommand::LeftButtonPressEvent, this->WizardGUICallbackCommand);
@@ -612,26 +612,26 @@ int vtkTumorGrowthROIStep::ROIMapShow() {
  
   // Reset to original slice location 
   double oldSliceSetting[3];
-  oldSliceSetting[0] = double(applicationGUI->GetMainSliceGUI0()->GetSliceController()->GetOffsetScale()->GetValue());
-  oldSliceSetting[1] = double(applicationGUI->GetMainSliceGUI1()->GetSliceController()->GetOffsetScale()->GetValue());
-  oldSliceSetting[2] = double(applicationGUI->GetMainSliceGUI2()->GetSliceController()->GetOffsetScale()->GetValue());
+  oldSliceSetting[0] = double(applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->GetValue());
+  oldSliceSetting[1] = double(applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetOffsetScale()->GetValue());
+  oldSliceSetting[2] = double(applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetOffsetScale()->GetValue());
 
-  //applicationGUI->GetMainSliceGUI0()->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
-  applicationGUI->GetMainSliceGUI0()->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
+  //applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
+  applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
 
-  //applicationGUI->GetMainSliceGUI1()->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
-  applicationGUI->GetMainSliceGUI1()->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
+  //applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
+  applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
 
-  //applicationGUI->GetMainSliceGUI2()->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
-  applicationGUI->GetMainSliceGUI2()->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
+  //applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetBackgroundSelector()->SetSelected(volumeNode);
+  applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetForegroundSelector()->SetSelected(this->ROILabelMapNode);
 
   applicationGUI->GetSlicesControlGUI()->GetSliceFadeScale()->SetValue(0.6);
   applicationLogic->PropagateVolumeSelection();
 
   // Reset to original slice location 
-  applicationGUI->GetMainSliceGUI0()->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[0]);
-  applicationGUI->GetMainSliceGUI1()->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[1]);
-  applicationGUI->GetMainSliceGUI2()->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[2]);
+  applicationGUI->GetMainSliceGUI("Red")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[0]);
+  applicationGUI->GetMainSliceGUI("Yellow")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[1]);
+  applicationGUI->GetMainSliceGUI("Green")->GetSliceController()->GetOffsetScale()->SetValue(oldSliceSetting[2]);
 
   this->ROIMapUpdate();
 
@@ -740,15 +740,15 @@ void vtkTumorGrowthROIStep::ProcessGUIEvents(vtkObject *caller, unsigned long ev
     // Retrieve Coordinates and update ROI
     int index = 0; 
     vtkSlicerSliceGUI *sliceGUI = vtkSlicerApplicationGUI::SafeDownCast(
-      this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI0();
+      this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Red");
 
     vtkRenderWindowInteractor *rwi = sliceGUI->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
     while (index < 2 && (s != rwi->GetInteractorStyle())) {
         index ++;
         if (index == 1) {
-          sliceGUI = vtkSlicerApplicationGUI::SafeDownCast(this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI1();
+          sliceGUI = vtkSlicerApplicationGUI::SafeDownCast(this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Yellow");
         } else {
-          sliceGUI = vtkSlicerApplicationGUI::SafeDownCast(this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI2();
+          sliceGUI = vtkSlicerApplicationGUI::SafeDownCast(this->GetGUI()->GetApplicationGUI())->GetMainSliceGUI("Green");
         }
         rwi = sliceGUI->GetSliceViewer()->GetRenderWidget()->GetRenderWindowInteractor();
     }

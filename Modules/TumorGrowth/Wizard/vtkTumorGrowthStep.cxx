@@ -277,7 +277,7 @@ int vtkTumorGrowthStep::GridDefine() {
   vtkMRMLScalarVolumeNode *GridNode      = volumesLogic->CreateLabelVolume(mrmlScene,volumeNode, "TG_Grid");
   Node->SetGrid_Ref(GridNode->GetID());
 
-  vtkSlicerSliceControllerWidget *ControlWidget = this->GetGUI()->GetApplicationGUI()->GetMainSliceGUI0()->GetSliceController();
+  vtkSlicerSliceControllerWidget *ControlWidget = this->GetGUI()->GetApplicationGUI()->GetMainSliceGUI("Red")->GetSliceController();
   double oldOffset = ControlWidget->GetOffsetScale()->GetValue(); 
   vtkSlicerApplicationLogic *applicationLogic = this->GetGUI()->GetLogic()->GetApplicationLogic();
   applicationLogic->GetSelectionNode()->SetReferenceActiveLabelVolumeID(GridNode->GetID());

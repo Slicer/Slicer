@@ -135,7 +135,7 @@ itcl::body ColorBox::processEvent { {caller ""} {event ""} } {
 # get the color node for the label map in the Red slice
 #
 itcl::body ColorBox::getColorNode {} {
-  set logic [[$::slicer3::ApplicationGUI GetMainSliceLogic0] GetLabelLayer]
+  set logic [[$::slicer3::ApplicationLogic GetSliceLogic "Red"] GetLabelLayer]
   set volumeDisplayNode [$logic GetVolumeDisplayNode]
   if { $volumeDisplayNode == "" } {
     return ""

@@ -64,6 +64,11 @@
 
 #include <queue>
 
+#include <map>
+
+// Private implementaton of an std::map
+class SliceLogicMap : public std::map<std::string, vtkSmartPointer<vtkSlicerSliceLogic> > {};
+
 vtkCxxRevisionMacro(vtkSlicerApplicationLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerApplicationLogic);
 
@@ -231,7 +236,7 @@ class WriteDataQueue : public std::queue<WriteDataRequest> {} ;
 vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
 {
     this->Views = vtkCollection::New();
-    this->Slices = vtkCollection::New();
+    //this->Slices = vtkCollection::New();
     this->Modules = vtkCollection::New();
     this->ActiveSlice = NULL;
     this->SelectionNode = NULL;
@@ -258,6 +263,8 @@ vtkSlicerApplicationLogic::vtkSlicerApplicationLogic()
     this->InternalTaskQueue = new ProcessingTaskQueue;
     this->InternalModifiedQueue = new ModifiedQueue;
 
+    this->InternalSliceLogicMap = new SliceLogicMap;    
+
     this->InternalReadDataQueue = new ReadDataQueue;
     this->InternalWriteDataQueue = new WriteDataQueue;
     
@@ -271,11 +278,11 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
         this->Views->Delete();
         this->Views = NULL;
     }
-  if (this->Slices)
-    {
-        this->Slices->Delete();
-        this->Slices = NULL;
-    }
+  //if (this->Slices)
+  //  {
+  //      this->Slices->Delete();
+  //      this->Slices = NULL;
+  //  }
   if (this->Modules)
     {
         this->Modules->Delete();
@@ -310,6 +317,21 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
   delete this->InternalReadDataQueue;
   this->InternalReadDataQueue = 0;
 
+  //vtkSlicerSliceLogic *l;
+  //if (this->InternalSliceLogicMap)
+  //{
+         // SliceLogicMap::iterator lit;
+         // for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end();)
+         // {
+                //  l = vtkSlicerSliceLogic::SafeDownCast((*lit).second);
+                //  l->SetAndObserveMRMLScene(NULL);
+                //  l->Delete();
+                //  this->InternalSliceLogicMap->erase(lit++);  
+         // }
+  //}
+
+  delete this->InternalSliceLogicMap;
+
   delete this->InternalWriteDataQueue;
   this->InternalWriteDataQueue = 0;
 
@@ -322,9 +344,9 @@ void vtkSlicerApplicationLogic::ClearCollections ( ) {
     if ( this->Views) {
         this->Views->RemoveAllItems ( );
     }
-    if ( this->Slices ) {
-        this->Slices->RemoveAllItems ( );
-    }
+    //if ( this->Slices ) {
+    //    this->Slices->RemoveAllItems ( );
+    //}
     if ( this->Modules ) {
         this->Modules->RemoveAllItems ( );
     }
@@ -415,13 +437,17 @@ void vtkSlicerApplicationLogic::PropagateVolumeSelection(int fit)
 
   if (!fit) return;
 
-  int nitems = this->GetSlices()->GetNumberOfItems();
-  for (i = 0; i < nitems; i++)
+  if (this->InternalSliceLogicMap)
     {
-    vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::SafeDownCast(this->GetSlices()->GetItemAsObject(i));
-    vtkMRMLSliceNode *sliceNode = sliceLogic->GetSliceNode();
-    unsigned int *dims = sliceNode->GetDimensions();
-    sliceLogic->FitSliceToAll(dims[0], dims[1]);
+    SliceLogicMap::iterator lit;
+    for (lit = this->InternalSliceLogicMap->begin();
+         lit != this->InternalSliceLogicMap->end(); ++lit)
+      {
+      vtkSlicerSliceLogic *l = vtkSlicerSliceLogic::SafeDownCast((*lit).second);
+      vtkMRMLSliceNode *sliceNode = l->GetSliceNode();
+      unsigned int *dims = sliceNode->GetDimensions();
+      l->FitSliceToAll(dims[0], dims[1]);
+      }
     }
 }
 
@@ -445,6 +471,118 @@ void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "SlicerApplicationLogic:             " << this->GetClassName() << "\n"; 
 } 
+
+vtkSlicerSliceLogic* vtkSlicerApplicationLogic::GetSliceLogic(char *layoutName)
+{
+  if (this->InternalSliceLogicMap)
+    {
+    SliceLogicMap::const_iterator lend = (*this->InternalSliceLogicMap).end();
+    SliceLogicMap::const_iterator lit =     (*this->InternalSliceLogicMap).find(layoutName);
+    
+    if ( lit != lend)
+      return (vtkSlicerSliceLogic::SafeDownCast((*lit).second));
+    else
+      return NULL;
+    }
+  else
+    return NULL;
+}
+
+
+// this function can be further improved to check if this is a duplicate.
+void vtkSlicerApplicationLogic::AddSliceLogic(char *layoutName, vtkSlicerSliceLogic *sliceLogic)
+{
+  if (this->InternalSliceLogicMap)
+    {
+    (*this->InternalSliceLogicMap)[layoutName] = sliceLogic;
+    }
+}
+
+void vtkSlicerApplicationLogic::AddSliceLogic(vtkSlicerSliceLogic *sliceLogic)
+{
+  if (this->InternalSliceLogicMap)
+    {
+    (*this->InternalSliceLogicMap)[sliceLogic->GetName()] = sliceLogic;
+    }
+}
+
+void vtkSlicerApplicationLogic::RemoveSliceLogic(vtkSlicerSliceLogic *sliceLogic)
+{
+  SliceLogicMap::iterator mit;
+  for (mit = (*this->InternalSliceLogicMap).begin();
+       mit != (*this->InternalSliceLogicMap).end(); ++mit)
+    {
+    if ((*mit).second == sliceLogic)
+      {
+      // remove from the map
+      (*mit).second = 0;
+      (*this->InternalSliceLogicMap).erase(mit);
+      break;
+      }
+    }
+}
+
+void vtkSlicerApplicationLogic::RemoveSliceLogic(char *layoutName)
+{
+  SliceLogicMap::iterator mit;
+  mit = (*this->InternalSliceLogicMap).find(layoutName);
+  if (mit != (*this->InternalSliceLogicMap).end())
+    {
+    // remove from the map
+    (*mit).second = 0;
+    (*this->InternalSliceLogicMap).erase(mit);
+    }
+}
+  
+
+void vtkSlicerApplicationLogic::CreateSliceLogics()
+{
+        // insert slicelogic pointers to a map InternalSlicerSliceLogicMap
+    vtkIntArray *events = vtkIntArray::New();
+    events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+    events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+    events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+
+    vtkSlicerSliceLogic *sliceLogic = vtkSlicerSliceLogic::New ( );
+        this->AddSliceLogic("Red", sliceLogic);
+        sliceLogic->SetName("Red");
+        sliceLogic = vtkSlicerSliceLogic::New();
+        this->AddSliceLogic("Yellow", sliceLogic);
+        sliceLogic->SetName("Yellow");
+        sliceLogic = vtkSlicerSliceLogic::New();
+        this->AddSliceLogic("Green", sliceLogic);
+        sliceLogic->SetName("Green");
+
+        SliceLogicMap::iterator lit;
+        for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
+        {
+                sliceLogic = vtkSlicerSliceLogic::SafeDownCast((*lit).second);
+                sliceLogic->SetMRMLScene ( this->GetMRMLScene() );
+                sliceLogic->ProcessLogicEvents ();
+                sliceLogic->ProcessMRMLEvents (this->GetMRMLScene(), vtkCommand::ModifiedEvent, NULL);
+                sliceLogic->SetAndObserveMRMLSceneEvents ( this->GetMRMLScene(), events );
+                //if (this->Slices)
+                //      this->Slices->AddItem(sliceLogic);
+        }
+    
+    events->Delete();
+}
+
+void vtkSlicerApplicationLogic::DeleteSliceLogics()
+{
+  if (this->InternalSliceLogicMap)
+    {
+    vtkSlicerSliceLogic *sliceLogic;
+    SliceLogicMap::iterator lit;
+    for (lit = this->InternalSliceLogicMap->begin(); lit != this->InternalSliceLogicMap->end(); ++lit)
+      {
+      sliceLogic = vtkSlicerSliceLogic::SafeDownCast((*lit).second);
+      sliceLogic->SetAndObserveMRMLScene( NULL );
+      sliceLogic->Delete();
+      }
+    }
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::CreateProcessingThread()

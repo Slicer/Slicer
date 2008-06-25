@@ -67,7 +67,7 @@ proc EditorLabelCheckpoint {} {
   #
   # get the image data for the label layer
   #
-  set sliceLogic [$::slicer3::ApplicationGUI GetMainSliceLogic0]
+  set sliceLogic [$::slicer3::ApplicationLogic GetSliceLogic "Red"]
   set layerLogic [$sliceLogic GetLabelLayer]
   set volumeNode [$layerLogic GetVolumeNode]
   if { $volumeNode == "" } {

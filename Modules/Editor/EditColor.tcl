@@ -170,7 +170,7 @@ itcl::body EditColor::updateGUI {label} {
 # get the color node for the label map in the Red slice
 #
 itcl::body EditColor::getColorNode {} {
-  set sliceLogic [$::slicer3::ApplicationGUI GetMainSliceLogic0]
+  set sliceLogic [$::slicer3::ApplicationLogic GetSliceLogic "Red"]
   if { $sliceLogic != "" } {
     set logic [$sliceLogic GetLabelLayer]
     if { $logic != "" } {

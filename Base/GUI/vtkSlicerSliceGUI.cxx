@@ -470,6 +470,16 @@ void vtkSlicerSliceGUI::GridGUI ( vtkKWFrame *f, int row, int col )
     }
 }
 
+void vtkSlicerSliceGUI::GridSpanGUI(vtkKWFrame *f, int row, int col, int rowspan, int colspan)
+{
+        if (f)
+        {
+                this->Script("grid configure %s -in %s -sticky news -padx 0 -pady 0 -row %d -column %d -rowspan %d -columnspan %d", SliceGUIFrame->GetWidgetName(), f->GetWidgetName(), row, col, rowspan, colspan);
+                this->Script("pack %s -pady 0 -side top -expand false -fill x", SliceController->GetWidgetName());
+                this->Script("pack %s -anchor c -side top -expand true -fill both ", SliceViewer->GetRenderWidget()->GetWidgetName());
+        }
+}
+
 //---------------------------------------------------------------------------
 void vtkSlicerSliceGUI::UngridGUI ()
 {

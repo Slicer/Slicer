@@ -40,6 +40,7 @@ public:
   vtkGetObjectMacro ( BackgroundSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( LabelSelector, vtkSlicerNodeSelectorWidget );
   vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton );
+  vtkGetObjectMacro ( LoadDataButton, vtkKWPushButton );
   vtkGetObjectMacro ( LinkButton, vtkKWPushButton );
   vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons );
   vtkGetObjectMacro ( ViewConfigureIcons, vtkSlicerToolbarIcons );
@@ -142,6 +143,11 @@ public:
   virtual void ToggleReformatWidget ( int link );
   virtual void ToggleReformatWidget ( );
 
+  // Description:
+  // Configure the slice viewer layout in linked mode for all CompareX slice viewers
+  // This only works in CompareView layout mode
+  virtual void SliceViewerLayoutConfig(int nRows, int nColumns);
+
   //BTX
   enum 
   {
@@ -181,6 +187,7 @@ protected:
   vtkKWMenuButton *LabelMenuButton;
 
   vtkKWPushButton *VisibilityToggle;
+  vtkKWPushButton *LoadDataButton;
   vtkKWPushButton *LinkButton;
   vtkKWPushButton *LabelOpacityButton;
   vtkKWScaleWithEntry *LabelOpacityScale;
