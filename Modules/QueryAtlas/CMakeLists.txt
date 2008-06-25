@@ -146,14 +146,16 @@ install(
   DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Tcl
   )
 
-# Resources (CSV, txt)
+# Resources (CSV, txt, xls)
 
 file(GLOB CSVFILES "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.csv")
-file(GLOB RESFILES "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.txt")
+file(GLOB TXTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.txt")
+file(GLOB XLSFILES "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.xls")
 
 foreach(file 
     ${CSVFILES} 
-    ${RESFILES}
+    ${TXTFILES}
+    ${XLSFILES}
 )
   get_filename_component(filename "${file}" NAME)
   configure_file(
@@ -164,7 +166,8 @@ endforeach(file)
 
 install(FILES 
   ${CSVFILES} 
-  ${RESFILES} 
+  ${TXTFILES} 
+  ${XLSFILES}
   DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
   ) 
 
