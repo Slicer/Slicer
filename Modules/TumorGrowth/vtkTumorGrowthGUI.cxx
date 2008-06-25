@@ -78,6 +78,7 @@ vtkTumorGrowthGUI::~vtkTumorGrowthGUI()
 {
   this->RemoveMRMLNodeObservers();
   this->RemoveLogicObservers();
+  this->SliceLogicRemove();
 
   this->SetLogic(NULL);
   this->SetNode(NULL);
@@ -527,7 +528,7 @@ void vtkTumorGrowthGUI::SliceLogicRemove() {
   if (this->SliceLogic) {
     // this->SliceLogic->GetSliceNode()->SetSliceVisible(0);
      vtkSlicerApplicationLogic *applicationLogic = this->GetLogic()->GetApplicationLogic();
-     applicationLogic->GetSlices()->RemoveItem(this->SliceLogic);
+     if (applicationLogic && applicationLogic->GetSlices()) applicationLogic->GetSlices()->RemoveItem(this->SliceLogic);
      this->SliceLogic->Delete();
      this->SliceLogic = NULL;
   } 
