@@ -898,7 +898,10 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
       event == vtkCommand::ModifiedEvent )
     {
     //--- do we need to update the layout?
-    this->ApplicationToolbar->UpdateLayoutMenu();
+    if(this->ApplicationToolbar)
+      {
+      this->ApplicationToolbar->UpdateLayoutMenu();
+      }
     this->UpdateLayout();    
     }
   else if (scene != NULL &&
