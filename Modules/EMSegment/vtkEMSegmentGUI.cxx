@@ -31,6 +31,9 @@
 #include "CSAILLogo.h"
 #include "vtkKWIcon.h"
 
+#include <vtksys/stl/string>
+#include <vtksys/SystemTools.hxx>
+
 vtkCxxSetObjectMacro(vtkEMSegmentGUI,Node,vtkMRMLEMSNode);
 vtkCxxSetObjectMacro(vtkEMSegmentGUI,Logic,vtkEMSegmentLogic);
 vtkCxxSetObjectMacro(vtkEMSegmentGUI,MRMLManager,vtkEMSegmentMRMLManager);

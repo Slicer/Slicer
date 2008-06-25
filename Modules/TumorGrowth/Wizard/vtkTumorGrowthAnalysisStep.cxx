@@ -23,6 +23,9 @@
 #include "vtkImageAppend.h"
 #include "vtkImageConstantPad.h"
 #include "vtkKWLoadSaveButton.h"
+
+#include <vtksys/SystemTools.hxx>
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkTumorGrowthAnalysisStep);
 vtkCxxRevisionMacro(vtkTumorGrowthAnalysisStep, "$Revision: 1.2 $");

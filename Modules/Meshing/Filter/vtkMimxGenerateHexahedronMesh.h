@@ -34,7 +34,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vtkFilter.h"
 
 #include "vtkUnstructuredGridToUnstructuredGridFilter.h"
-#include <list>
 #include "mimxMatrixTemplate.h"
 #include "mimxLinkedList.h"
 

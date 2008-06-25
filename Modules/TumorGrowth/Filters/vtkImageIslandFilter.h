@@ -46,7 +46,6 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <stdio.h>
 #include <math.h>
 #include <ctype.h>
-#include <string.h>
 #include "assert.h"
  
 #include "vtkImageData.h"

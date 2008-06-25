@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "vtkMRMLScalarVolumeNode.h"
 
+#include <vtksys/stl/string>
+
 vtkMRMLEMSVolumeCollectionNode* 
 vtkMRMLEMSVolumeCollectionNode::
 New()

@@ -1,8 +1,6 @@
 #ifndef __vtkMRMLInteractionNode_h
 #define __vtkMRMLInteractionNode_h
 
-#include <string>
-
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 

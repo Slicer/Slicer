@@ -11,9 +11,6 @@
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerTask.h"
 
-#include <list>
-#include <string>
-
 #include "vtkDataTransfer.h"
 #include "vtkDataIOManager.h"
 #include "vtkMRMLNode.h"

@@ -3,6 +3,8 @@
 #include "vtkMRMLScene.h"
 #include <algorithm>
 
+#include <vtksys/ios/sstream>
+
 vtkMRMLEMSAtlasNode* 
 vtkMRMLEMSAtlasNode::
 New()

@@ -16,8 +16,6 @@
 #ifndef __vtkMRMLModelHierarchyNode_h
 #define __vtkMRMLModelHierarchyNode_h
 
-#include <string>
-
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"

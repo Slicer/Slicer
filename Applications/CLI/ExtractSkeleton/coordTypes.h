@@ -8,7 +8,6 @@
 #define COORD_TYPES_H
 
 #include "math.h"
-#include <vector>
 
 #include "misc.h"
 

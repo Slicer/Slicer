@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <iterator>
 
+#include <vtksys/stl/string>
+
 //-----------------------------------------------------------------------------
 vtkMRMLEMSGlobalParametersNode* 
 vtkMRMLEMSGlobalParametersNode::

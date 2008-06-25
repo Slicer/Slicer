@@ -35,8 +35,6 @@
 
 #include <deque>
 #include <vector>
-#include <map>
-#include <string>
 #include <fstream>
 
 class vtkCollection;

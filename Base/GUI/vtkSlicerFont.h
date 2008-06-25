@@ -1,11 +1,8 @@
 #ifndef __vtkSlicerFont_h
 #define __vtkSlicerFont_h
 
-#include <map>
 #include <vector>
 #include <string>
-#include <vtksys/SystemTools.hxx>
-#include <vtksys/hash_map.hxx>
 
 #include "vtkObject.h"
 #include "vtkSlicerBaseGUIWin32Header.h" 

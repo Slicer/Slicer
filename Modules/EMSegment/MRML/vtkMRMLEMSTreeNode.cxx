@@ -2,6 +2,8 @@
 #include "vtkMRMLScene.h"
 #include <sstream>
 
+#include <vtksys/ios/sstream>
+
 //-----------------------------------------------------------------------------
 vtkMRMLEMSTreeNode* 
 vtkMRMLEMSTreeNode::

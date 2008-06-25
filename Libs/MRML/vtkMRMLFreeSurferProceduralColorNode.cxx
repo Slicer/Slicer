@@ -14,6 +14,8 @@ Version:   $Revision: 1.0 $
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <vtksys/stl/string>
+#include <vtksys/SystemTools.hxx>
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"

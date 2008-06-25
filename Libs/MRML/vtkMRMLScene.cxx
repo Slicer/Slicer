@@ -74,6 +74,8 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLVectorVolumeNode.h"
 #endif
 
+#include <vtksys/SystemTools.hxx>
+
 //------------------------------------------------------------------------------
 vtkMRMLScene::vtkMRMLScene() 
 {

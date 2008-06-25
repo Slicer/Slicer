@@ -20,7 +20,6 @@
 #ifndef __vtkMRMLNode_h
 #define __vtkMRMLNode_h
 
-#include <vector>
 #include <string>
 #include <map>
 

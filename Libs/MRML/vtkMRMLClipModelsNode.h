@@ -20,8 +20,6 @@
 #ifndef __vtkMRMLClipModelsNode_h
 #define __vtkMRMLClipModelsNode_h
 
-#include <string>
-
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 

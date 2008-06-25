@@ -33,7 +33,6 @@
 #include "vtkImageImport.h"
 #include "itkVTKImageExport.h"
 #include <vector>
-#include <string>
 
 #include "vtkITK.h"
 #include "vtkITKUtility.h"

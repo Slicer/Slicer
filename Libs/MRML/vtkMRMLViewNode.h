@@ -18,8 +18,6 @@
 #ifndef __vtkMRMLViewNode_h
 #define __vtkMRMLViewNode_h
 
-#include <string>
-
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 

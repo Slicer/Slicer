@@ -104,7 +104,7 @@ int vtkHTTPHandler::CanHandleURI ( const char *uri )
       //--- we adopt the gwe "[filename.ext]:" prefix.
       prefix = prefix.substr ( index+2 );
       }
-    if ( prefix == "http" )
+    if ( !strcmp(prefix.c_str(), "http"))
       {
       vtkDebugMacro("vtkHTTPHandler: CanHandleURI: can handle this file: " << uriString.c_str());
       return (1);

@@ -32,9 +32,6 @@
 #include <QdecConfigure.h>
 #include "vtkQdecWin32Header.h"
 
-#include <string>
-#include <vector>
-
 #include "QdecGlmDesign.h"
 #include "QdecGlmFitResults.h"
 

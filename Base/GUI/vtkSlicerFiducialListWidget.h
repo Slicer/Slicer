@@ -24,7 +24,6 @@
 
 #include "vtkSlicerWidget.h"
 #include "vtkKWRenderWidget.h"
-#include <vector>
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkMapper.h"
 #include "vtkGlyph3D.h"

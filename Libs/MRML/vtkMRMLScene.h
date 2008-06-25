@@ -28,8 +28,6 @@ Version:   $Revision: 1.18 $
 #include <map>
 #include <vector>
 #include <string>
-#include <vtksys/SystemTools.hxx> 
-#include <vtksys/hash_map.hxx> 
 
 #include "vtkCollection.h"
 #include "vtkObjectFactory.h"
@@ -51,7 +49,7 @@ public:
   // Description:
   // Set URL (file name) of the scene
   void SetURL(const char *url) {
-    this->URL = vtksys_stl::string(url); 
+    this->URL = std::string(url); 
   };
   
   // Description:
@@ -63,7 +61,7 @@ public:
   // Description:
   // Set Root directory, where URL is pointing
   void SetRootDirectory(const char *dir) {
-    this->RootDirectory = vtksys_stl::string(dir); 
+    this->RootDirectory = std::string(dir); 
   };
   
   // Description:
@@ -411,12 +409,12 @@ protected:
   
 
   //BTX
-  vtksys_stl::string         URL;
+  std::string         URL;
   std::map< std::string, int> UniqueIDByClass;
   std::vector< std::string >  UniqueIDs;
   std::vector< vtkMRMLNode* > RegisteredNodeClasses;
   std::vector< std::string >  RegisteredNodeTags;
-  vtksys_stl::string          RootDirectory;
+  std::string          RootDirectory;
 
   std::vector< std::string > ReferencedIDs;
   std::vector< vtkMRMLNode* > ReferencingNodes;

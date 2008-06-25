@@ -18,8 +18,6 @@
 #ifndef __vtkMRMLCameraNode_h
 #define __vtkMRMLCameraNode_h
 
-#include <string>
-
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 

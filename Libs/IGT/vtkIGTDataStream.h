@@ -2,9 +2,6 @@
 #ifndef IGTDATASTREAM_H
 #define IGTDATASTREAM_H
 
-#include <string>
-#include <vector>
-
 #include "vtkIGTWin32Header.h" 
 #include "vtkObject.h"
 

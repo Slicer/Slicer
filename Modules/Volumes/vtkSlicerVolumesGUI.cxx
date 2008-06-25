@@ -30,6 +30,9 @@
 #include "vtkKWMessageDialog.h"
 #include "vtkKWProgressGauge.h"
 
+#include <vtksys/stl/string>
+#include <vtksys/SystemTools.hxx>
+
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerVolumesGUI );
 vtkCxxRevisionMacro (vtkSlicerVolumesGUI, "$Revision: 1.0 $");

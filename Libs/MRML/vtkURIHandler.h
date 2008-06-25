@@ -1,16 +1,9 @@
 #ifndef __vtkURIHandler_h
 #define __vtkURIHandler_h
 
-#include <vtksys/SystemTools.hxx>
-#include <vtksys/Process.h>
 #include "vtkObject.h"
 #include "vtkMRML.h"
 #include "vtkPermissionPrompter.h"
-
-#include <math.h>
-#include <iostream>
-#include <fstream>
-#include <vector>
 
 class VTK_MRML_EXPORT vtkURIHandler : public vtkObject 
 {

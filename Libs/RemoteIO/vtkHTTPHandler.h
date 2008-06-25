@@ -11,16 +11,9 @@
 #include "vtkRemoteIO.h"
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
-#include <vtksys/SystemTools.hxx>
-#include <vtksys/Process.h>
 
 //--- derived from libMRML class
 #include "vtkURIHandler.h"
-
-#include <math.h>
-#include <iostream>
-#include <fstream>
-#include <vector>
 
 class VTK_RemoteIO_EXPORT vtkHTTPHandler : public vtkURIHandler 
 {

@@ -19,6 +19,8 @@
 #include "vtkImageResample.h"
 #include "vtkImageConstantPad.h"
 
+#include <vtksys/SystemTools.hxx>
+
 // ./TumorGrowthCommandLine --sensitivity 0.5 --threshold 100,277 --roi_min 73,135,92 --roi_max 95,165,105 --intensity_analysis --deformable_analysis --scan1 /data/local/BrainScienceFoundation/Demo/07-INRIA/data/SILVA/2006-spgr.nhdr --scan2 /data/local/BrainScienceFoundation/Demo/07-INRIA/data/SILVA/2007-spgr-scan1.nhdr
 //
 //

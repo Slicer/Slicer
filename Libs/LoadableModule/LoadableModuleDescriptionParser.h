@@ -15,7 +15,6 @@
 #define __LoadableModuleDescriptionParser_h
 
 #include <string>
-#include <vector>
 
 #include "LoadableModuleWin32Header.h"
 

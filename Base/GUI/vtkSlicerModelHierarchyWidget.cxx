@@ -44,9 +44,7 @@ vtkSlicerModelHierarchyWidget::vtkSlicerModelHierarchyWidget ( )
   this->ModelDisplayNode = NULL;
   this->ModelHierarchyLogic = NULL;
   this->UpdatingTree = 0;
-
 }
-
 
 //---------------------------------------------------------------------------
 vtkSlicerModelHierarchyWidget::~vtkSlicerModelHierarchyWidget ( )
@@ -216,7 +214,7 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
           if (dnode)
             {
             int visibility = dnode->GetVisibility();
-            sprintf(command, "HierarchyVisibiltyCallback {%s}", (const char *)callData);
+            sprintf(command, "HierarchyVisibilityCallback {%s}", (const char *)callData);
             int tag = this->ContextMenu->AddCheckButton ("Visibility", this, command);
             if (visibility)
               {
@@ -244,7 +242,7 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
           if (dnode)
             {
             int visibility = dnode->GetVisibility();
-            sprintf(command, "ModelVisibiltyCallback {%s}", (const char *)callData);
+            sprintf(command, "ModelVisibilityCallback {%s}", (const char *)callData);
             int tag = this->ContextMenu->AddCheckButton ("Visibility", this, command);
             if (visibility)
               {
@@ -277,10 +275,10 @@ void vtkSlicerModelHierarchyWidget::ProcessWidgetEvents ( vtkObject *caller,
             }
           }
           
-        sprintf(command, "AllVisibiltyCallback 1");
+        sprintf(command, "AllVisibilityCallback 1");
         this->ContextMenu->AddCommand("Show All", this, command);
         
-        sprintf(command, "AllVisibiltyCallback 0");
+        sprintf(command, "AllVisibilityCallback 0");
         this->ContextMenu->AddCommand("Show None", this, command);
         
         sprintf(command, "SearchNodeCallback");
@@ -335,7 +333,7 @@ void vtkSlicerModelHierarchyWidget::ReparentCallback(const char *id)
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelHierarchyWidget::AllVisibiltyCallback(int visibility)
+void vtkSlicerModelHierarchyWidget::AllVisibilityCallback(int visibility)
 {
   std::vector<vtkMRMLNode *> hnodes;
   int nnodes = this->MRMLScene->GetNodesByClass("vtkMRMLModelHierarchyNode", hnodes);
@@ -387,7 +385,7 @@ void vtkSlicerModelHierarchyWidget::AllVisibiltyCallback(int visibility)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelHierarchyWidget::HierarchyVisibiltyCallback(const char *id)
+void vtkSlicerModelHierarchyWidget::HierarchyVisibilityCallback(const char *id)
 {
   int visibility = 0;
   for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
@@ -431,7 +429,7 @@ void vtkSlicerModelHierarchyWidget::HierarchyVisibiltyCallback(const char *id)
 
 
 //---------------------------------------------------------------------------
-void vtkSlicerModelHierarchyWidget::ModelVisibiltyCallback(const char *id)
+void vtkSlicerModelHierarchyWidget::ModelVisibilityCallback(const char *id)
 {
   for (unsigned int i=0; i<this->SelectedLeaves.size(); i++)
     {

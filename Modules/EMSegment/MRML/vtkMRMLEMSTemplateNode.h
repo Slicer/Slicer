@@ -1,8 +1,6 @@
 #ifndef __vtkMRMLEMSTemplateNode_h
 #define __vtkMRMLEMSTemplateNode_h
 
-#include <vector>
-
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkEMSegment.h"

@@ -30,6 +30,7 @@
 #include "vtkMRMLUnstructuredGridStorageNode.h"
 
 #include <vtksys/stl/string>
+#include <vtksys/SystemTools.hxx>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerMRMLSaveDataWidget );

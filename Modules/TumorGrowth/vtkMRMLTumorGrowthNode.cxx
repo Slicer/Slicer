@@ -21,6 +21,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLTumorGrowthNode.h"
 #include "vtkMRMLScene.h"
 
+#include <vtksys/ios/sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLTumorGrowthNode* vtkMRMLTumorGrowthNode::New()

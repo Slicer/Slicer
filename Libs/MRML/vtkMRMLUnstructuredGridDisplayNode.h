@@ -22,8 +22,6 @@
 #ifndef __vtkMRMLUnstructuredGridDisplayNode_h
 #define __vtkMRMLUnstructuredGridDisplayNode_h
 
-#include <string>
-
 #include "vtkPolyData.h"
 #include "vtkShrinkPolyData.h"
 #include "vtkGeometryFilter.h"

@@ -13,9 +13,6 @@
 #include "vtkObject.h"
 #include "vtkIGTDataStream.h"
 
-
-#include <string>
-
 #include "igstkSerialCommunication.h"
 #include "igstkAuroraTracker.h"
 #include "igstkPolarisTracker.h"

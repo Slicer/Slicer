@@ -21,9 +21,6 @@
 #ifndef __vtkMRMLProceduralColorNode_h
 #define __vtkMRMLProceduralColorNode_h
 
-#include <string>
-#include <vector>
-
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLColorNode.h"

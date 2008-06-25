@@ -3,8 +3,6 @@
 
 #include "vtkObject.h"
 #include "vtkSlicerBaseGUIWin32Header.h"
-#include <string.h>
-
 
 struct  ModuleNameEntry
 {

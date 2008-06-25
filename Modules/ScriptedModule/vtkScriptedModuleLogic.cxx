@@ -22,6 +22,8 @@ Version:   $Revision: 1.2 $
 #include "vtkScriptedModule.h"
 
 #include "vtkMRMLScene.h"
+#include <vtksys/stl/string>
+#include <vtksys/SystemTools.hxx>
 
 vtkScriptedModuleLogic* vtkScriptedModuleLogic::New()
 {

@@ -18,8 +18,6 @@
 
 #include "ModuleDescription.h"
 
-#include <vector>
-
 class ModuleDescriptionMap;
 class ModuleFileMap;
 class ModuleCache;

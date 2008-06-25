@@ -33,6 +33,9 @@
 #include <math.h>
 #include <exception>
 
+#include <vtksys/stl/string>
+#include <vtksys/SystemTools.hxx>
+
 #define ERROR_NODE_VTKID 0
 
 //----------------------------------------------------------------------------

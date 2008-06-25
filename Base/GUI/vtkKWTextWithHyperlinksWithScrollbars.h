@@ -1,9 +1,6 @@
 #include "vtkKWTextWithScrollbars.h"
 
-#include <string>
-
 #include "vtkSlicerBaseGUI.h"
-
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkKWTextWithHyperlinksWithScrollbars : public vtkKWTextWithScrollbars
 {

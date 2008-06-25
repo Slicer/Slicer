@@ -5,13 +5,10 @@
 #include "vtkObjectFactory.h"
 #include "vtkUnsignedLongArray.h"
 #include "vtkIntArray.h"
-#include "vtksys/SystemTools.hxx"
-#include "vtksys/RegularExpression.hxx"
 #include "vtkMRML.h"
 
 #include <string>
 #include <vector>
-#include <iterator>
 #include <map>
 
 class vtkCallbackCommand;

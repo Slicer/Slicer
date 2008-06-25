@@ -42,9 +42,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include <itkTimeProbesCollectorBase.h>
 #include <itkTransformFactory.h>
 
-#include <map>
-#include <string>
-
 namespace itk {
 
     /** \class RegisterVersorRigidFilter

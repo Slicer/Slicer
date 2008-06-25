@@ -21,6 +21,8 @@
 #include "vtkKWWizardWorkflow.h"
 #include "vtkSlicerNodeSelectorWidget.h"
 
+#include <vtksys/SystemTools.hxx>
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkEMSegmentRunSegmentationStep);
 vtkCxxRevisionMacro(vtkEMSegmentRunSegmentationStep, "$Revision: 1.2 $");

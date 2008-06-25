@@ -22,8 +22,6 @@
 #ifndef __vtkMRMLFiberBundleTubeDisplayNode_h
 #define __vtkMRMLFiberBundleTubeDisplayNode_h
 
-#include <string>
-
 #include "vtkPolyData.h"
 
 #include "vtkMRML.h"

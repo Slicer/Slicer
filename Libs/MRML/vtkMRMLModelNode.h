@@ -20,8 +20,6 @@
 #ifndef __vtkMRMLModelNode_h
 #define __vtkMRMLModelNode_h
 
-#include <string>
-
 #include "vtkPolyData.h" 
 
 #include "vtkMRML.h"

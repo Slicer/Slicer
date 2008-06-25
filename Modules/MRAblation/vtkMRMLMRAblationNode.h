@@ -14,8 +14,6 @@
 #ifndef __vtkMRMLMRAblationNode_h
 #define __vtkMRMLMRAblationNode_h
 
-#include <string>
-
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLStorageNode.h"

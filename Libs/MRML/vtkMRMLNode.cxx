@@ -20,6 +20,8 @@ Version:   $Revision: 1.11 $
 #include <sstream>
 
 #include "itksys/SystemTools.hxx"
+#include <vtksys/stl/string>
+
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLNode::New()
 {

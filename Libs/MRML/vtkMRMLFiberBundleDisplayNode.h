@@ -22,8 +22,6 @@
 #ifndef __vtkMRMLFiberBundleDisplayNode_h
 #define __vtkMRMLFiberBundleDisplayNode_h
 
-#include <string>
-
 #include "vtkMRML.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"

@@ -7,6 +7,8 @@
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLStorageNode.h"
 
+#include <vtksys/SystemTools.hxx>
+
 vtkStandardNewMacro ( vtkCacheManager );
 vtkCxxRevisionMacro ( vtkCacheManager, "$Revision: 1.0 $" );
 

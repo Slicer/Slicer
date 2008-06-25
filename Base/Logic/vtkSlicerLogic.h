@@ -32,8 +32,6 @@
 #include "vtkMRMLScene.h"
 #include "vtkObserverManager.h"
 
-#include <string>
-
 //BTX
 
 #ifndef vtkSetMRMLNodeMacro

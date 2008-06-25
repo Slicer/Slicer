@@ -16,7 +16,6 @@
 
 #include "ModuleDescriptionParserWin32Header.h"
 
-#include <map>
 #include <string>
 #include <vector>
 #include <iostream>

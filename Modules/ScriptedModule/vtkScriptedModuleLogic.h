@@ -20,8 +20,6 @@
 #include "vtkScriptedModule.h"
 #include "vtkMRMLScriptedModuleNode.h"
 
-#include <string>
-
 class VTK_SCRIPTED_EXPORT vtkScriptedModuleLogic : public vtkSlicerModuleLogic
 {
 public:

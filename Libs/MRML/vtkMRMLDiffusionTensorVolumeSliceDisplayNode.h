@@ -22,8 +22,6 @@
 #ifndef __vtkMRMLDiffusionTensorVolumeSliceDisplayNode_h
 #define __vtkMRMLDiffusionTensorVolumeSliceDisplayNode_h
 
-#include <string>
-
 #include "vtkPolyData.h"
 #include "vtkMatrix4x4.h"
 

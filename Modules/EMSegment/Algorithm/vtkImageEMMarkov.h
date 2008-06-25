@@ -24,8 +24,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <ctype.h>
-#include <string.h>
-
 
 // Error Definiton  
 // 1  = eveything correct

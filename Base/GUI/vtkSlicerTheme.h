@@ -1,12 +1,6 @@
 #ifndef __vtkSlicerTheme_h
 #define __vtkSlicerTheme_h
 
-#include <map>
-#include <vector>
-#include <string>
-#include <vtksys/SystemTools.hxx>
-#include <vtksys/hash_map.hxx>
-
 #include "vtkKWTheme.h"
 #include "vtkSlicerColor.h"
 #include "vtkSlicerFont.h"

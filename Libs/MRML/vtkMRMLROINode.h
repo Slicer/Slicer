@@ -1,14 +1,10 @@
 #ifndef __vtkMRMLROINode_h
 #define __vtkMRMLROINode_h
 
-#include <string> 
-
 #include "vtkMRML.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLTransformableNode.h"
-
-#include <string>
 
 // .NAME vtkMRMLROINode - MRML node to represent a 3D ROI.
 // .SECTION Description

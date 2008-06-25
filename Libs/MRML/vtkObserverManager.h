@@ -28,7 +28,6 @@
 #include "vtkMRML.h"
 
 #include <map>
-#include <string>
 
 class vtkCallbackCommand;
 

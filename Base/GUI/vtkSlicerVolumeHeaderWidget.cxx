@@ -11,6 +11,7 @@
 
 #include <itksys/SystemTools.hxx> 
 
+#include <vtksys/stl/string>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkSlicerVolumeHeaderWidget );

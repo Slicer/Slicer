@@ -3,9 +3,6 @@
 #ifndef IGTMATRIXSTATE_H
 #define IGTMATRIXSTATE_H
 
-#include <string>
-#include <vector>
-
 #include "vtkIGTWin32Header.h" 
 #include "vtkObject.h"
 #include "vtkMatrix4x4.h"

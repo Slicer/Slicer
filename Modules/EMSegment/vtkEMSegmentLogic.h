@@ -5,9 +5,6 @@
 #include "vtkEMSegment.h"
 #include "vtkEMSegmentMRMLManager.h"
 
-#include <string>
-#include <map>
-
 class vtkImageEMLocalSegmenter;
 class vtkImageEMLocalGenericClass;
 class vtkImageEMLocalSuperClass;

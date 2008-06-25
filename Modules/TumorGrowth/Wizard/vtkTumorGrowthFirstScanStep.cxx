@@ -13,6 +13,9 @@
 #include "vtkSlicerVolumesGUI.h"
 #include "vtkSlicerApplication.h" 
 #include "vtkKWProgressGauge.h"
+
+#include <vtksys/SystemTools.hxx>
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkTumorGrowthFirstScanStep);
 vtkCxxRevisionMacro(vtkTumorGrowthFirstScanStep, "$Revision: 1.0 $");

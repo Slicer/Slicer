@@ -15,7 +15,6 @@
 #define __ModuleDescriptionParser_h
 
 #include <string>
-#include <vector>
 
 #include "ModuleDescriptionParserWin32Header.h"
 

@@ -19,8 +19,6 @@
 #ifndef __vtkMRMLModelDisplayNode_h
 #define __vtkMRMLModelDisplayNode_h
 
-#include <string>
-
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"

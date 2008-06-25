@@ -29,8 +29,6 @@ class vtkKWApplication;
 class vtkKWFrame;
 
 
-#include <string>
-
 //BTX
 
 #ifndef vtkSetMRMLNodeMacro

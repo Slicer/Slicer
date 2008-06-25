@@ -7,7 +7,6 @@
 #include "vtkTransform.h"
 
 #include <string>
-#include <map>
 
 class vtkMRMLScene;
 class vtkMRMLScalarNode;

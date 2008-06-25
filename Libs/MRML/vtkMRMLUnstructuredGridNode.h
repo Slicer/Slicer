@@ -22,8 +22,6 @@
 #ifndef __vtkMRMLUnstructuredGridNode_h
 #define __vtkMRMLUnstructuredGridNode_h
 
-#include <string>
-
 #include "vtkPolyData.h" 
 #include "vtkUnstructuredGrid.h" 
 

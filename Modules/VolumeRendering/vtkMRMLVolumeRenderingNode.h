@@ -15,6 +15,7 @@
 
 #include <string>
 #include "vtkVolumeMapper.h"
+#include <vtksys/stl/vector>
 
 #define COUNT_CROPPING_REGION_PLANES 6
 

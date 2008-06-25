@@ -21,9 +21,6 @@
 #ifndef __vtkMRMLColorTableNode_h
 #define __vtkMRMLColorTableNode_h
 
-#include <string>
-#include <vector>
-
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLColorNode.h"

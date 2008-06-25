@@ -21,9 +21,6 @@
 #ifndef __vtkMRMLFreeSurferProceduralColorNode_h
 #define __vtkMRMLFreeSurferProceduralColorNode_h
 
-#include <string>
-#include <vector>
-
 #include "vtkMRML.h"
 #include "vtkMRMLNode.h"
 #include "vtkFSLookupTable.h"
