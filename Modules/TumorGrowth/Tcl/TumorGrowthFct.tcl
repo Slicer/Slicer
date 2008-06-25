@@ -227,39 +227,41 @@ namespace eval TumorGrowthTcl {
           # Currently we assume that the scanning order is the same across scans 
           # This has to be done bc for some reason otherwise the registration 
           # algorithm do not work if input and output do not have exactly the same dimensi
-        set SPACING [[$VOL1_input GetOutput] GetSpacing]
-        set VOL2_INPUT_RES [vtkImageResample New] 
-            $VOL2_INPUT_RES SetDimensionality 3
-            $VOL2_INPUT_RES SetInterpolationModeToLinear
-        $VOL2_INPUT_RES SetInput  [$VOL2_input GetOutput] 
-            $VOL2_INPUT_RES SetBackgroundLevel 0
-        $VOL2_INPUT_RES SetAxisOutputSpacing 0 [lindex $SPACING 0] 
-        $VOL2_INPUT_RES SetAxisOutputSpacing 1 [lindex $SPACING 1]
-            $VOL2_INPUT_RES SetAxisOutputSpacing 2 [lindex $SPACING 2]  
-        eval $VOL2_INPUT_RES SetOutputOrigin [[$VOL1_input GetOutput] GetOrigin ]
-            $VOL2_INPUT_RES ReleaseDataFlagOff
+          set SPACING [[$VOL1_input GetOutput] GetSpacing]
+          set VOL2_INPUT_RES [vtkImageResample New] 
+          $VOL2_INPUT_RES SetDimensionality 3
+          $VOL2_INPUT_RES SetInterpolationModeToLinear
+          $VOL2_INPUT_RES SetInput  [$VOL2_input GetOutput] 
+          $VOL2_INPUT_RES SetBackgroundLevel 0
+          $VOL2_INPUT_RES SetAxisOutputSpacing 0 [lindex $SPACING 0] 
+          $VOL2_INPUT_RES SetAxisOutputSpacing 1 [lindex $SPACING 1]
+          $VOL2_INPUT_RES SetAxisOutputSpacing 2 [lindex $SPACING 2]  
+          eval $VOL2_INPUT_RES SetOutputOrigin [[$VOL1_input GetOutput] GetOrigin ]
+          $VOL2_INPUT_RES ReleaseDataFlagOff
           $VOL2_INPUT_RES Update
 
-        set VOL2_INPUT_RES_PAD [vtkImageConstantPad New] 
-        $VOL2_INPUT_RES_PAD SetInput [$VOL2_INPUT_RES GetOutput]
-        eval $VOL2_INPUT_RES_PAD SetOutputWholeExtent [[$VOL1_input GetOutput] GetWholeExtent]
-            $VOL2_INPUT_RES_PAD SetConstant 0
+          set VOL2_INPUT_RES_PAD [vtkImageConstantPad New] 
+          $VOL2_INPUT_RES_PAD SetInput [$VOL2_INPUT_RES GetOutput]
+          eval $VOL2_INPUT_RES_PAD SetOutputWholeExtent [[$VOL1_input GetOutput] GetWholeExtent]
+          $VOL2_INPUT_RES_PAD SetConstant 0
           $VOL2_INPUT_RES_PAD Update
-          
+
           if {[::TumorGrowthReg::RegistrationAG [$VOL1_input GetOutput] $ScanOrder [$VOL2_INPUT_RES_PAD GetOutput] $ScanOrder 1 0 0 50 mono 3 $TRANSFORM ] == 0 }  {
-              puts "Error:  TumorGrowthScan2ToScan1Registration: $TYPE  could not perform registration"
-          VOL2_INPUT_RES_PAD Delete
+               puts "Error:  TumorGrowthScan2ToScan1Registration: $TYPE  could not perform registration"
+              VOL2_INPUT_RES_PAD Delete
               VOL2_INPUT_RES Delete 
               $VOL2_input Delete
               $VOL1_input Delete              
               return
-           }
+          }
+
             
           ::TumorGrowthReg::ResampleAG_GUI [$VOL2_INPUT_RES_PAD GetOutput]  [$VOL1_input GetOutput] $TRANSFORM $OUTPUT_VOL  
           $VOL2_INPUT_RES_PAD Delete
           $VOL2_INPUT_RES Delete 
           $VOL2_input Delete
           $VOL1_input Delete
+          ::TumorGrowthReg::DeleteTransformAG
 
           # ::TumorGrowthReg::WriteTransformationAG $TRANSFORM [$NODE GetWorkingDir] 
           # ::TumorGrowthReg::WriteTransformationAG $TRANSFORM ~/temp
@@ -278,7 +280,7 @@ namespace eval TumorGrowthTcl {
         # Alternatively - use itk rigid registration 
         #
         #  $LOGIC RigidRegistration $SCAN1_NODE $SCAN2_NODE $OUTPUT_NODE $TRANSFORM         #
-    } else {
+        } else {
             puts "Debugging - jump over registration $VOL1"
             $OUTPUT_VOL  DeepCopy $VOL1
 
@@ -326,8 +328,6 @@ namespace eval TumorGrowthTcl {
        # -------------------------------------
        # Delete output 
        # -------------------------------------
-       ::TumorGrowthReg::DeleteTransformAG
-
        set OUTPUT_NODE [$SCENE GetNodeByID [$NODE GetScan2_${TYPE}Ref]]
        if {$OUTPUT_NODE != "" } {  
            [$GUI GetMRMLScene] RemoveNode $OUTPUT_NODE 
@@ -489,7 +489,7 @@ namespace eval TumorGrowthTcl {
 
         set OUTPUT_NODE [$VOLUMES_LOGIC CreateLabelVolume $SCENE $SEGM_NODE "TG_Analysis_IntensityReal"]
   
-    set IMAGE_DATA [$LOGIC GetAnalysis_Intensity_ROIBinReal]
+        set IMAGE_DATA [$LOGIC GetAnalysis_Intensity_ROIBinReal]
         $OUTPUT_NODE SetAndObserveImageData [$LOGIC GetAnalysis_Intensity_ROIBinReal]
         $LOGIC SaveVolume $::slicer3::Application $OUTPUT_NODE
 
@@ -505,6 +505,7 @@ namespace eval TumorGrowthTcl {
   
     proc Analysis_Intensity_CMD {LOGIC SCAN1_ImageData SCAN1_SegmData SCAN2_ImageData AnalysisSensitivity } {
         # Print "Analysis_Intensity_CMD $LOGIC $SCAN1_ImageData $SCAN1_SegmData $SCAN2_ImageData $AnalysisSensitivity"
+        set AnalysisSubtractROI       [$LOGIC CreateAnalysis_Intensity_SubtractROI]
         set AnalysisFinal             [$LOGIC CreateAnalysis_Intensity_Final]
         set AnalysisROINegativeBin    [$LOGIC CreateAnalysis_Intensity_ROINegativeBin]
         set AnalysisROIPositiveBin    [$LOGIC CreateAnalysis_Intensity_ROIPositiveBin]
@@ -520,7 +521,8 @@ namespace eval TumorGrowthTcl {
         # -------------------------------------
 
         set result "[Analysis_Intensity_Fct $SCAN1_ImageData $SCAN1_SegmData $SCAN2_ImageData $AnalysisSensitivity \
-                              $AnalysisFinal $AnalysisROINegativeBin $AnalysisROIPositiveBin $AnalysisROIBinCombine $AnalysisROIBinReal $AnalysisROIBinAdd $AnalysisROIBinDisplay $AnalysisROITotal ]"
+                              $AnalysisSubtractROI $AnalysisFinal $AnalysisROINegativeBin $AnalysisROIPositiveBin $AnalysisROIBinCombine \
+                              $AnalysisROIBinReal $AnalysisROIBinAdd $AnalysisROIBinDisplay $AnalysisROITotal ]"
 
         $LOGIC SetAnalysis_Intensity_Mean [lindex $result 0]
         $LOGIC SetAnalysis_Intensity_Variance [lindex $result 1]
@@ -528,11 +530,14 @@ namespace eval TumorGrowthTcl {
     }
 
 
-    proc Analysis_Intensity_Fct { Scan1Data Scan1Segment Scan2Data AnalysisSensitivity AnalysisFinal AnalysisROINegativeBin  AnalysisROIPositiveBin AnalysisROIBinCombine AnalysisROIBinReal  AnalysisROIBinAdd AnalysisROIBinDisplay  AnalysisROITotal } {
+    proc Analysis_Intensity_Fct { Scan1Data Scan1Segment Scan2Data AnalysisSensitivity AnalysisSubtractROI AnalysisFinal AnalysisROINegativeBin  AnalysisROIPositiveBin AnalysisROIBinCombine AnalysisROIBinReal  AnalysisROIBinAdd AnalysisROIBinDisplay  AnalysisROITotal } {
        
+       # -----------------------------------------
+       # Part I: Does not change 
+       # ----------------------------------------
+
        # Subtract consecutive scans from each other
-       catch {TumorGrowth(FinalSubtract)  Delete } 
-         vtkImageMathematics TumorGrowth(FinalSubtract)
+       vtkImageMathematics TumorGrowth(FinalSubtract)
          TumorGrowth(FinalSubtract) SetInput1 $Scan2Data 
          TumorGrowth(FinalSubtract) SetInput2 $Scan1Data 
          TumorGrowth(FinalSubtract) SetOperationToSubtract  
@@ -541,7 +546,6 @@ namespace eval TumorGrowthTcl {
        # puts "    ScalarRange:     [[TumorGrowth(FinalSubtract) GetOutput] GetScalarRange]"
 
        # do a little bit of smoothing 
-       catch {TumorGrowth(FinalSubtractSmooth) Delete}
        vtkImageMedian3D TumorGrowth(FinalSubtractSmooth)
         TumorGrowth(FinalSubtractSmooth) SetInput [TumorGrowth(FinalSubtract) GetOutput]
         TumorGrowth(FinalSubtractSmooth) SetKernelSize 3 3 3
@@ -550,11 +554,11 @@ namespace eval TumorGrowthTcl {
 
        # puts "    ScalarRange:     [[TumorGrowth(FinalSubtractSmooth) GetOutput] GetScalarRange]"
 
+       # Compute intensity distribution of dormant tissue 
        set result [Analysis_Intensity_ComputeThreshold [TumorGrowth(FinalSubtractSmooth) GetOutput] $Scan1Segment $AnalysisSensitivity]
        set FinalThreshold [lindex $result 2]
 
        # Define ROI by assinging flipping binary map 
-       catch {TumorGrowth(FinalROI) Delete } 
        vtkImageThreshold TumorGrowth(FinalROI) 
          TumorGrowth(FinalROI)  SetInput $Scan1Segment 
          TumorGrowth(FinalROI)  SetInValue 1
@@ -564,15 +568,27 @@ namespace eval TumorGrowthTcl {
        TumorGrowth(FinalROI) Update
 
        # Define image of ROI
-       catch {TumorGrowth(FinalMultiply)  Delete } 
        vtkImageMathematics TumorGrowth(FinalMultiply)
          TumorGrowth(FinalMultiply) SetInput1 [TumorGrowth(FinalROI)       GetOutput] 
          TumorGrowth(FinalMultiply) SetInput2 [TumorGrowth(FinalSubtractSmooth)  GetOutput] 
          TumorGrowth(FinalMultiply) SetOperationToMultiply  
        TumorGrowth(FinalMultiply) Update
 
+       # Save part of Analysis that does not change
+
+       $AnalysisSubtractROI DeepCopy [TumorGrowth(FinalMultiply) GetOutput] 
+
+       TumorGrowth(FinalSubtract)  Delete 
+       TumorGrowth(FinalSubtractSmooth) Delete
+       TumorGrowth(FinalROI) Delete 
+       TumorGrowth(FinalMultiply)  Delete 
+
+       # -----------------------------------------
+       # Part II: modifies according to sensitivity parameter
+       # ----------------------------------------
+
         # puts "AnalysisFinal $AnalysisFinal "
-         $AnalysisFinal SetInput [TumorGrowth(FinalMultiply) GetOutput] 
+         $AnalysisFinal SetInput $AnalysisSubtractROI  
          $AnalysisFinal ReplaceInOff
          $AnalysisFinal SetOutValue 0
          $AnalysisFinal ThresholdByUpper  $FinalThreshold
@@ -581,7 +597,7 @@ namespace eval TumorGrowthTcl {
 
        # vtkImageThreshold TumorGrowth(FinalROINegativeBin) 
 
-         $AnalysisROINegativeBin SetInput [TumorGrowth(FinalMultiply) GetOutput] 
+         $AnalysisROINegativeBin SetInput $AnalysisSubtractROI   
          $AnalysisROINegativeBin SetInValue -1
          $AnalysisROINegativeBin SetOutValue 0
          $AnalysisROINegativeBin ThresholdByLower  -$FinalThreshold
@@ -590,7 +606,7 @@ namespace eval TumorGrowthTcl {
 
        # Initializing tumor growth prediction
        # catch { TumorGrowth(FinalROIBin) Delete}
-         $AnalysisROIPositiveBin  SetInput [TumorGrowth(FinalMultiply) GetOutput] 
+         $AnalysisROIPositiveBin  SetInput $AnalysisSubtractROI   
          $AnalysisROIPositiveBin  SetInValue 1
          $AnalysisROIPositiveBin  SetOutValue 0
          $AnalysisROIPositiveBin  ThresholdByUpper  $FinalThreshold
@@ -646,16 +662,7 @@ namespace eval TumorGrowthTcl {
            $SCENE RemoveNode $OUTPUT_NODE 
            $NODE SetAnalysis_Intensity_Ref ""
     }
-    Analysis_Intensity_DeleteOutput_FCT
     }
-
-   proc Analysis_Intensity_DeleteOutput_FCT { } {
-       catch {TumorGrowth(FinalSubtract)  Delete } 
-       catch {TumorGrowth(FinalSubtractSmooth) Delete}
-       catch {TumorGrowth(FinalROI) Delete }
-       catch {TumorGrowth(FinalMultiply)  Delete }
-   }
-
 
   proc Analysis_Intensity_UpdateThreshold_GUI { } {
         # -------------------------------------
