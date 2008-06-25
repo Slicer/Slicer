@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <iterator>
 
 #include "vtkObjectFactory.h"
 #include "vtkImageChangeInformation.h"
