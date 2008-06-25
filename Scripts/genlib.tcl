@@ -283,7 +283,7 @@ if { [BuildThis $::CMAKE "cmake"] == 1 } {
 
 
     if {$isWindows} {
-      runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Binaries/Windows/CMake-build CMake-build
+      runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/CMake-build CMake-build
     } else {
         runcmd $::CVS -d :pserver:anonymous:cmake@www.cmake.org:/cvsroot/CMake login
         eval "runcmd $::CVS $CVS_CO_FLAGS -d :pserver:anonymous@www.cmake.org:/cvsroot/CMake checkout -r $::CMAKE_TAG CMake"
@@ -311,13 +311,13 @@ if { [BuildThis $::CMAKE "cmake"] == 1 } {
 if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
 
     if {$isWindows} {
-      runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build tcl-build
+      runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build tcl-build
     }
 
     file mkdir $Slicer3_LIB/tcl
     cd $Slicer3_LIB/tcl
 
-    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/tcl tcl
+    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tcl tcl
     if {$::GENLIB(buildit)} {
       if {$isWindows} {
           # can't do windows
@@ -334,7 +334,7 @@ if { [BuildThis $::TCL_TEST_FILE "tcl"] == 1 } {
 if { [BuildThis $::TK_TEST_FILE "tk"] == 1 } {
     cd $Slicer3_LIB/tcl
 
-    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/tk tk
+    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk tk
 
     if {$::GENLIB(buildit)} {
       if {$isWindows} {
@@ -359,7 +359,7 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
 
     cd $Slicer3_LIB/tcl
 
-    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/incrTcl incrTcl
+    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl incrTcl
 
     cd $Slicer3_LIB/tcl/incrTcl
 
@@ -392,7 +392,7 @@ if { [BuildThis $::ITCL_TEST_FILE "itcl"] == 1 } {
 if { [BuildThis $::IWIDGETS_TEST_FILE "iwidgets"] == 1 } {
     cd $Slicer3_LIB/tcl
 
-    runcmd  $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/iwidgets iwidgets
+    runcmd  $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/iwidgets iwidgets
 
     if {$::GENLIB(buildit)} {
         if {$isWindows} {
@@ -415,7 +415,7 @@ if { [BuildThis $::IWIDGETS_TEST_FILE "iwidgets"] == 1 } {
 if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
     cd $Slicer3_LIB/tcl
 
-    runcmd  $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/tcl/blt blt
+    runcmd  $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/blt blt
 
     if {$::GENLIB(buildit)} {
         if { $isWindows } { 
@@ -457,7 +457,7 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] == 1 } {
     cd $::Slicer3_LIB
 
     if { $isWindows } {
-      runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/Binaries/Windows/python-build python-build
+      runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/python-build python-build
     } else {
         cd $Slicer3_LIB/python
         runcmd $::SVN co $::PYTHON_TAG
@@ -751,7 +751,7 @@ if { [BuildThis $::ITK_TEST_FILE "itk"] == 1 } {
 if { [BuildThis $::TEEM_TEST_FILE "teem"] == 1 } {
     cd $Slicer3_LIB
 
-    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/teem teem
+    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/teem teem
 
     if {$::GENLIB(buildit)} {
       file mkdir $Slicer3_LIB/teem-build
@@ -890,7 +890,7 @@ if { [BuildThis $::IGSTK_TEST_FILE "igstk"] == 1 } {
 if { [BuildThis $::SLICERLIBCURL_TEST_FILE "libcurl"] == 1 } {
     cd $::Slicer3_LIB
 
-    runcmd $::SVN co http://www.na-mic.org/svn/Slicer3-lib-mirrors/trunk/cmcurl cmcurl
+    runcmd $::SVN co http://svn.slicer.org/Slicer3-lib-mirrors/trunk/cmcurl cmcurl
     if {$::GENLIB(buildit)} {
 
       file mkdir $::Slicer3_LIB/cmcurl-build
