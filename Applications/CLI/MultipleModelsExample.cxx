@@ -29,6 +29,8 @@ Version:   $Revision: 5168 $
 #include "vtkSphereSource.h"
 #include "vtkPolyData.h"
 
+#include "vtksys/SystemTools.hxx"
+
 #include <fstream>
 #include <string>
 #include <map>

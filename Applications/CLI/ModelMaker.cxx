@@ -38,6 +38,8 @@ Version:   $Revision$
 
 #include "vtkPluginFilterWatcher.h"
 
+#include "vtksys/SystemTools.hxx"
+
 #include "vtkMRMLScene.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
