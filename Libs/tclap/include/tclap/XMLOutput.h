@@ -140,7 +140,7 @@ inline void XMLOutput::substituteSpecialChars( std::string& s,
              char r,
                            std::string& x )
 {
-  size_t p;
+  std::string::size_type p;
   while ( (p = s.find_first_of(r)) != std::string::npos )
   {
     s.erase(p,1);
@@ -150,7 +150,7 @@ inline void XMLOutput::substituteSpecialChars( std::string& s,
 
 inline void XMLOutput::removeChar( std::string& s, char r)
 {
-  size_t p;
+  std::string::size_type p;
   while ( (p = s.find_first_of(r)) != std::string::npos )
   {
     s.erase(p,1);

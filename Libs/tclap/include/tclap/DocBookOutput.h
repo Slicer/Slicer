@@ -154,7 +154,7 @@ inline void DocBookOutput::usage(CmdLineInterface& _cmd )
   for ( int i = 0; (unsigned int)i < xorList.size(); i++ )
     {
     std::cout << "<itemizedlist>" << std::endl;
-    size_t xlen = xorList.size() - 1;
+    const size_t xlen = xorList.size() - 1;
     size_t xcount = 0; 
     for ( ArgVectorIterator it = xorList[i].begin(); 
           it != xorList[i].end(); it++, xcount++ )
@@ -198,7 +198,7 @@ inline void DocBookOutput::substituteSpecialChars( std::string& s,
                                                    char r,
                                                    std::string& x )
 {
-  size_t p;
+  std::string::size_type p;
   while ( (p = s.find_first_of(r)) != std::string::npos )
     {
     s.erase(p,1);
@@ -208,7 +208,7 @@ inline void DocBookOutput::substituteSpecialChars( std::string& s,
 
 inline void DocBookOutput::removeChar( std::string& s, char r)
 {
-  size_t p;
+  std::string::size_type p;
   while ( (p = s.find_first_of(r)) != std::string::npos )
     {
     s.erase(p,1);

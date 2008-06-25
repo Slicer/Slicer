@@ -11,7 +11,7 @@
   Version:   $Revision$
 
 ==========================================================================*/
-#include "itksys/DynamicLoader.hxx" 
+#include "itksys/DynamicLoader.hxx"
 #include "itksys/Directory.hxx"
 #include "itksys/SystemTools.hxx"
 #include "itksys/Process.h"
@@ -51,13 +51,12 @@ splitString (std::string &text,
              std::string &separators,
              std::vector<std::string> &words)
 {
-  int n = text.length();
-  int start, stop;
-  start = text.find_first_not_of(separators);
-  while ((start >= 0) && (start < n))
+  const std::string::size_type n = text.length();
+  std::string::size_type start = text.find_first_not_of(separators);
+  while (start < n)
     {
-    stop = text.find_first_of(separators, start);
-    if ((stop < 0) || (stop > n)) stop = n;
+    std::string::size_type stop = text.find_first_of(separators, start);
+    if (stop > n) stop = n;
     words.push_back(text.substr(start, stop - start));
     start = text.find_first_not_of(separators, stop+1);
     }
@@ -170,7 +169,7 @@ NameIsExecutable(const char* name)
  */
 typedef char * (*XMLModuleDescriptionFunction)();
 typedef int (*ModuleEntryPoint)(int argc, char* argv[]);
-typedef unsigned char * (*ModuleLogoFunction)(int *width, int *height, int *pixel_size, unsigned long *bufferLength);
+typedef const char * (*ModuleLogoFunction)(int *width, int *height, int *pixel_size, unsigned long *bufferLength);
 
 
 // Private implementaton of an std::map
@@ -566,7 +565,7 @@ ModuleFactory
             ModuleEntryPoint entryPoint = 0;
 
             ModuleLogoFunction logoFunction = 0;
-            unsigned char *logoImage = 0;
+            char *logoImage = 0;
             int *logoWidth=0, *logoHeight=0, *logoPixelSize=0;
             unsigned long *logoLength=0;
             
@@ -584,7 +583,7 @@ ModuleFactory
               if (entryPoint)
                 {
                 // look for logo variables
-                logoImage = (unsigned char *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoImage");
+                logoImage = (char *)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleLogoImage");
                 
                 if (logoImage)
                   {
@@ -670,7 +669,7 @@ ModuleFactory
                     unsigned long bufferLength;
                     
                     // call the logo function to get the pixels and information
-                    unsigned char *logo = (*logoFunction)(&width, &height,
+                    const char *logo = (*logoFunction)(&width, &height,
                                                           &pixelSize,
                                                           &bufferLength);
                     
@@ -728,7 +727,8 @@ ModuleFactory
                   entry.LogoHeight = module.GetLogo().GetHeight();
                   entry.LogoPixelSize = module.GetLogo().GetPixelSize();
                   entry.LogoLength = module.GetLogo().GetBufferLength();
-                  entry.Logo = std::string((char *)module.GetLogo().GetLogo());
+                  //entry.Logo = std::string((const unsigned char *)module.GetLogo().GetLogo());
+                  entry.Logo = std::string(module.GetLogo().GetLogo());
                   }
                 else
                   {
@@ -1011,7 +1011,8 @@ ModuleFactory
                   entry.LogoHeight = module.GetLogo().GetHeight();
                   entry.LogoPixelSize = module.GetLogo().GetPixelSize();
                   entry.LogoLength = module.GetLogo().GetBufferLength();
-                  entry.Logo = std::string((char *)module.GetLogo().GetLogo());
+                  //entry.Logo = std::string((const unsigned char *)module.GetLogo().GetLogo());
+                  entry.Logo = std::string(module.GetLogo().GetLogo());
                   }
                 else
                   {
@@ -1660,7 +1661,8 @@ ModuleFactory
 
         // make a ModuleLogo and configure it
         ModuleLogo mLogo;
-        mLogo.SetLogo( (unsigned char *)logo.c_str(), width, height, pixelSize, bufferLength, 0);
+        //mLogo.SetLogo( (unsigned char *)logo.c_str(), width, height, pixelSize, bufferLength, 0);
+        mLogo.SetLogo( logo.c_str(), width, height, pixelSize, bufferLength, 0);
 
         // set the log on the module
         module.SetLogo(mLogo);
@@ -1973,8 +1975,7 @@ ModuleFactory
           entry.ModifiedTime = atoi(words[1].c_str());
           
           // trim the Type of leading whitespace
-          std::string::size_type pos;
-          pos = words[2].find_first_not_of(" \t\r\n");
+          std::string::size_type pos = words[2].find_first_not_of(" \t\r\n");
           if (pos != std::string::npos)
             {
             words[2].erase(0, pos);
@@ -2192,7 +2193,7 @@ ModuleFactory
         if ((*cit).second.Logo != "None")
           {
           ModuleLogo logo;
-          logo.SetLogo( (unsigned char *)
+          logo.SetLogo(
                         (*cit).second.Logo.c_str(),
                         (*cit).second.LogoWidth,
                         (*cit).second.LogoHeight,

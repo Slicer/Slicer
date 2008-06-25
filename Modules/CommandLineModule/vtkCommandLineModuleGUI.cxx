@@ -177,7 +177,7 @@ vtkCommandLineModuleGUI::SetModuleDescription(const ModuleDescription& descripti
   if (ModuleDescriptionObject.GetLogo().GetBufferLength() != 0)
     {
     vtkKWIcon* logo = vtkKWIcon::New();
-    logo->SetImage(ModuleDescriptionObject.GetLogo().GetLogo(),
+    logo->SetImage((const unsigned char *)ModuleDescriptionObject.GetLogo().GetLogo(),
                    ModuleDescriptionObject.GetLogo().GetWidth(),
                    ModuleDescriptionObject.GetLogo().GetHeight(),
                    ModuleDescriptionObject.GetLogo().GetPixelSize(),

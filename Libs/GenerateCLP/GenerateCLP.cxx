@@ -183,7 +183,7 @@ main(int argc, char *argv[])
 
   // Get the length of the file
   fin.seekg (0, std::ios::end);
-  size_t len = fin.tellg();
+  const size_t len = fin.tellg();
   fin.seekg (0, std::ios::beg);
   char * XML = new char[len+1];
   fin.read (XML, len);
@@ -274,13 +274,12 @@ void GenerateSplitString(std::ofstream &sout)
   sout << "             const std::string &separators," << std::endl;
   sout << "             std::vector<std::string> &words)" << std::endl;
   sout << "{" << std::endl;
-  sout << "  int n = text.length();" << std::endl;
-  sout << "  int start, stop;" << std::endl;
-  sout << "  start = text.find_first_not_of(separators);" << std::endl;
-  sout << "  while ((start >= 0) && (start < n))" << std::endl;
+  sout << "  const std::string::size_type n = text.length();" << std::endl;
+  sout << "  std::string::size_type start = text.find_first_not_of(separators);" << std::endl;
+  sout << "  while (start < n)" << std::endl;
   sout << "    {" << std::endl;
-  sout << "    stop = text.find_first_of(separators, start);" << std::endl;
-  sout << "    if ((stop < 0) || (stop > n)) stop = n;" << std::endl;
+  sout << "    std::string::size_type stop = text.find_first_of(separators, start);" << std::endl;
+  sout << "    if (stop > n) stop = n;" << std::endl;
   sout << "    words.push_back(text.substr(start, stop - start));" << std::endl;
   sout << "    start = text.find_first_not_of(separators, stop+1);" << std::endl;
   sout << "    }" << std::endl;
@@ -294,19 +293,18 @@ void GenerateSplitFilenames(std::ofstream &sout)
   sout << "splitFilenames (const std::string &text," << std::endl;
   sout << "                std::vector<std::string> &words)" << std::endl;
   sout << "{" << std::endl;
-  sout << "  size_t n = text.length();" << std::endl;
-  sout << "  size_t start, stop, startq, stopq;" << std::endl;
+  sout << "  const std::string::size_type n = text.length();" << std::endl;
   sout << "  bool quoted;" << std::endl;
   sout << "  std::string comma(\",\");" << std::endl;
   sout << "  std::string quote(\"\\\"\");" << std::endl;
-  sout << "  start = text.find_first_not_of(comma);" << std::endl;
-  sout << "  while ((start >= 0) && (start < n))" << std::endl;
+  sout << "  std::string::size_type start = text.find_first_not_of(comma);" << std::endl;
+  sout << "  while (start < n)" << std::endl;
   sout << "    {" << std::endl;
   sout << "    quoted = false;" << std::endl;
-  sout << "    startq = text.find_first_of(quote, start);" << std::endl;
-  sout << "    stopq = text.find_first_of(quote, startq+1);" << std::endl;
-  sout << "    stop = text.find_first_of(comma, start);" << std::endl;
-  sout << "    if ((stop < 0) || (stop > n)) stop = n;" << std::endl;
+  sout << "    std::string::size_type startq = text.find_first_of(quote, start);" << std::endl;
+  sout << "    std::string::size_type stopq = text.find_first_of(quote, startq+1);" << std::endl;
+  sout << "    std::string::size_type stop = text.find_first_of(comma, start);" << std::endl;
+  sout << "    if (stop > n) stop = n;" << std::endl;
   sout << "    if (startq != std::string::npos && stopq != std::string::npos)"
        << std::endl;
   sout << "      {" << std::endl;
@@ -314,7 +312,7 @@ void GenerateSplitFilenames(std::ofstream &sout)
   sout << "         {" << std::endl;
   sout << "         quoted = true;" << std::endl;
   sout << "         stop = text.find_first_of(comma, stop+1);" << std::endl;
-  sout << "         if ((stop < 0) || (stop > n)) stop = n;" << std::endl;
+  sout << "         if (stop > n) stop = n;" << std::endl;
   sout << "         }" << std::endl;
   sout << "      }" << std::endl;
   sout << "    if (!quoted)" << std::endl;
@@ -354,7 +352,7 @@ void GeneratePluginDataSymbols(std::ofstream &sout, std::vector<std::string>& lo
 
     // replace quotes with escaped quotes
     std::string cleanLine;
-    for (size_t j = 0; j < line.length(); j++)
+    for (std::string::size_type j = 0; j < line.length(); j++)
       {
       if (line[j] == '\"')
         {

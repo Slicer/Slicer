@@ -495,7 +495,7 @@ inline bool Arg::argMatches( const std::string& argFlag ) const
   std::string fixedFlag(argFlag);
   if ( argFlag.find_first_of(Arg::nameStartString()) == 0 )
     {
-    std::string::size_type nameStartLen = Arg::nameStartString().length(); 
+    const std::string::size_type nameStartLen = Arg::nameStartString().length(); 
     std::string::size_type dashIndex; 
     while ( (dashIndex = fixedFlag.find_first_of("-", nameStartLen)) != std::string::npos )
       {

@@ -24,17 +24,17 @@ public:
   ModuleLogo();
   ModuleLogo(const ModuleLogo &logo);
   virtual ~ModuleLogo();
-  
+
   void operator=(const ModuleLogo &logo);
 
-  void SetLogo(unsigned char* logo, int width, int height, int pixelSize, unsigned long bufferLength, int options);
+  void SetLogo(char const * logo, int width, int height, int pixelSize, unsigned long bufferLength, int options);
 
   int GetWidth() const;
   int GetHeight() const;
   int GetPixelSize() const;
   unsigned long GetBufferLength() const;
   int GetOptions() const;
-  const unsigned char* GetLogo() const;
+  const char* GetLogo() const;
 
 private:
   int Width;

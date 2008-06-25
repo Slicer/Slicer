@@ -47,14 +47,14 @@ ModuleLogo::~ModuleLogo()
 
 void
 ModuleLogo
-::SetLogo(unsigned char *logo, int width, int height, int pixelSize, unsigned long bufferLength, int options)
+::SetLogo(char const * logo, int width, int height, int pixelSize, unsigned long bufferLength, int options)
 {
   this->Width = width;
   this->Height = height;
   this->PixelSize = pixelSize;
   this->BufferLength = bufferLength;
   this->Options = options;
-  this->Logo = std::string((char *)logo, bufferLength);
+  this->Logo = std::string(logo, bufferLength);
 }
 
 int
@@ -92,9 +92,9 @@ ModuleLogo
   return this->Options;
 }
 
-const unsigned char *
+const char *
 ModuleLogo
 ::GetLogo() const
 {
-  return (const unsigned char *) this->Logo.c_str();
+  return this->Logo.c_str();
 }
