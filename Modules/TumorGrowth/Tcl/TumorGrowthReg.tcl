@@ -104,12 +104,12 @@ namespace eval TumorGrowthReg {
            $outResampled Update
 
        # Delete everything
-           ResampleSource Delete
+       ResampleSource Delete
        ResampleTarget Delete
        ResampleCast Delete
        ResampleCast_ Delete
        Reslicer Delete
-           return 1
+       return 1
   }
 
   proc DeleteTransformAG { } {
@@ -692,13 +692,16 @@ proc WriteTransformationAG {gt directory} {
         GCR SetTwoD 0
        
         # Do it!
-        GCR Update     
+        if {1} {
+          GCR Update     
 
-        # puts "======================"
-        # puts "[GCR Print]" 
+          # puts "======================"
+          # puts "[GCR Print]" 
 
-        $Transform Concatenate [[GCR GetGeneralTransform] GetConcatenatedTransform 1]
-  
+          $Transform Concatenate [[GCR GetGeneralTransform] GetConcatenatedTransform 1]
+        } else {
+        puts "Debug registration " 
+    }
 
       }
   
