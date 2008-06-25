@@ -3468,13 +3468,6 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->SceneSnapshotButton->SetBorderWidth ( 0 );
       this->SceneSnapshotButton->SetImageToIcon ( p->GetSlicerFoundationIcons()->GetSlicerCameraIcon () );
       this->SceneSnapshotButton->SetBalloonHelpString ( "Capture and name a scene snapshot." );
-      //--- Pushbutton to take a scene snapshot.
-      this->SceneSnapshotButton->SetParent ( frameM);
-      this->SceneSnapshotButton->Create();
-      this->SceneSnapshotButton->SetReliefToFlat();
-      this->SceneSnapshotButton->SetBorderWidth ( 0 );
-      this->SceneSnapshotButton->SetImageToIcon ( p->GetSlicerFoundationIcons()->GetSlicerCameraIcon () );
-      this->SceneSnapshotButton->SetBalloonHelpString ( "Capture and name a scene snapshot." );
 
       //--- Checkbutton to spin the view
       this->SpinButton->SetParent ( frameM );
