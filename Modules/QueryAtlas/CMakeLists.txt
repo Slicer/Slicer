@@ -151,13 +151,11 @@ install(
 file(GLOB CSVFILES "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.csv")
 file(GLOB TXTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.txt")
 file(GLOB XLSFILES "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.xls")
-file(GLOB HDRFILES "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*.h")
 
 foreach(file 
     ${CSVFILES} 
     ${TXTFILES}
     ${XLSFILES}
-    ${HDRFILES}
 )
   get_filename_component(filename "${file}" NAME)
   configure_file(
@@ -170,7 +168,6 @@ install(FILES
   ${CSVFILES} 
   ${TXTFILES} 
   ${XLSFILES}
-  ${HDRFILES}
   DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Resources COMPONENT Development
   ) 
 
