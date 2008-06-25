@@ -251,8 +251,8 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       vtkMesh->SetPoints(vpoints);
 
       vtkCellArray* cells = vtkCellArray::New();
-      floatMesh::CellsContainerConstIterator itCells = surfaceMesh->GetCells()->begin();
-      floatMesh::CellsContainerConstIterator itCellsEnd = surfaceMesh->GetCells()->end();
+      floatMesh::CellsContainerIterator itCells = surfaceMesh->GetCells()->begin();
+      floatMesh::CellsContainerIterator itCellsEnd = surfaceMesh->GetCells()->end();
       for ( ; itCells != itCellsEnd; ++itCells )
       {
         floatMesh::CellTraits::PointIdIterator itPt = itCells->Value()->PointIdsBegin();
