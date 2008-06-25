@@ -17,7 +17,7 @@ endif(NOT Slicer3_SOURCE_DIR)
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
+include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Wizard
@@ -31,27 +31,12 @@ INCLUDE_DIRECTORIES(
   ${vtkTeem_BINARY_DIR}
   ${Volumes_SOURCE_DIR}
   ${Volumes_BINARY_DIR}
-
-#  ${SlicerBase_SOURCE_DIR}
-#  ${SlicerBase_BINARY_DIR}
-#  ${SlicerBaseLogic_SOURCE_DIR}
-#  ${SlicerBaseLogic_BINARY_DIR}
-#  ${SlicerBaseGUI_SOURCE_DIR}
-#  ${SlicerBaseGUI_BINARY_DIR}
-#  ${vtkITK_SOURCE_DIR}
-#  ${vtkITK_BINARY_DIR}
-#  ${ITK_INCLUDE_DIR}
-#  ${VTK_INCLUDE_DIR}
-#  ${MRML_SOURCE_DIR}
-#  ${MRML_BINARY_DIR}
-
   )
 
-CONFIGURE_FILE(
+configure_file(
   ${TumorGrowth_SOURCE_DIR}/vtkTumorGrowthConfigure.h.in 
   ${TumorGrowth_BINARY_DIR}/vtkTumorGrowthConfigure.h
   )
-
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES 
@@ -63,7 +48,7 @@ install(FILES
 # --------------------------------------------------------------------------
 # Sources
 
-SET(TumorGrowth_SRCS 
+set(TumorGrowth_SRCS 
   # module
   vtkTumorGrowthGUI.cxx
   vtkTumorGrowthLogic.cxx 
@@ -88,8 +73,7 @@ SET(TumorGrowth_SRCS
 )
 
 # Enders work 
-SUBDIRS(DeformableMetric CommandLineApplication) 
-
+subdirs(DeformableMetric CommandLineApplication) 
 
 # Abstract/pure virtual classes
 
@@ -109,6 +93,7 @@ SUBDIRS(DeformableMetric CommandLineApplication)
 
 # --------------------------------------------------------------------------
 # Wrapping
+
 include("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 vtk_wrap_tcl3(TumorGrowth TumorGrowth_TCL_SRCS "${TumorGrowth_SRCS}" "")
 
@@ -121,30 +106,11 @@ generatelm(TumorGrowth_SRCS TumorGrowth.txt)
 # Build and install the library
 
 set(lib_name TumorGrowth)
-
-#
-# Build the library
-#
-
 add_library(${lib_name}
   ${TumorGrowth_SRCS}
   ${TumorGrowth_TCL_SRCS}
   )
 slicer3_set_modules_output_path(${lib_name})
-
-
-# From old Cmake file 
-# IF(BUILD_SHARED_LIBS)
-#  INSTALL(TARGETS TumorGrowth
-#      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries 
-#      LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
-#      ARCHIVE DESTINATION lib COMPONENT Development)
-# ENDIF(BUILD_SHARED_LIBS)
-
-
-
-
-
 
 target_link_libraries(${lib_name}
   EMSegment
@@ -152,25 +118,6 @@ target_link_libraries(${lib_name}
   ${Slicer3_Base_LIBRARIES}
   ${KWWidgets_LIBRARIES} 
   ${ITK_LIBRARIES}
-
-
-  # SlicerBaseLogic 
-  # SlicerBaseGUI 
-  # MRML
-  # vtkITK
-  # vtkCommonTCL
-  # vtkImagingTCL
-  # vtkFilteringTCL
-  # vtkIOTCL
-  # ITKAlgorithms
-  # ITKNumerics 
-  # ITKCommon
-  # ITKBasicFilters
-  # ITKNumerics
-  # ITKStatistics
-  # ITKBasicFilters
-  # ITKIO
-  # ITKDICOMParser
   vtkTeem 
   Volumes
   )
@@ -184,86 +131,89 @@ if(BUILD_TESTING)
    subdirs(Testing)
 endif(BUILD_TESTING)
 
-#
-# copy over the tcl files
-#
-SET (TCL_DIR ${TumorGrowth_BINARY_DIR}/tcl)
-IF (NOT EXISTS ${TCL_DIR})
-  FILE(MAKE_DIRECTORY ${TCL_DIR})
-ENDIF (NOT EXISTS ${TCL_DIR})
+# --------------------------------------------------------------------------
+# Install support files
 
-SET(TCLFILES
-  TumorGrowthFct.tcl 
-  TumorGrowthReg.tcl
-)
+# 
+# Copy over Tcl files 
+#
 
-FOREACH(tclfile ${TCLFILES})
-  CONFIGURE_FILE(
-    ${Slicer3_SOURCE_DIR}/Modules/TumorGrowth/tcl/${tclfile}
-    ${TCL_DIR}/${tclfile}
-    COPYONLY
+# Should those paths change, make sure to update 
+#   - vtkTumorGrowthLogic.cxx
+
+file(GLOB TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Tcl/*.tcl")
+
+foreach(file ${TCLFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/${file}
+    COPYONLY)
+endforeach(file)
+
+install(
+  FILES ${TCLFILES}
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Tcl
   )
-ENDFOREACH(tclfile)
 
 # 
 # Copy over Script files 
 #
 
-SET (SIMULATION_DIR ${TumorGrowth_BINARY_DIR}/Simulation)
+file(GLOB SHFILES "${CMAKE_CURRENT_SOURCE_DIR}/Simulation/*.sh")
+file(GLOB NHDRFILES "${CMAKE_CURRENT_SOURCE_DIR}/Simulation/*.nhdr")
+file(GLOB RAWGZFILES "${CMAKE_CURRENT_SOURCE_DIR}/Simulation/*.raw.gz")
+file(GLOB MHAFILES "${CMAKE_CURRENT_SOURCE_DIR}/Simulation/*.mha")
 
-IF (NOT EXISTS ${SIMULATION_DIR})
-  FILE(MAKE_DIRECTORY ${SIMULATION_DIR})
-ENDIF (NOT EXISTS ${SIMULATION_DIR})
+foreach(file 
+    ${SHFILES} 
+    ${NHDRFILES}
+    ${RAWGZFILES}
+    ${MHAFILES}
+    )
+  get_filename_component(filename "${file}" NAME)
+  configure_file(
+    ${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Simulation/${filename}
+    COPYONLY)
+endforeach(file)
 
-SET(SIMULATIONFILES
-  create_artificial_growth_deformation.sh
-  original.nhdr
-  original.raw.gz
-  copy-deformation_vectors_base.mha
-)
-
-FOREACH(simfile ${SIMULATIONFILES})
-
-CONFIGURE_FILE(
-    ${Slicer3_SOURCE_DIR}/Modules/TumorGrowth/Simulation/${simfile}
-    ${SIMULATION_DIR}/${simfile}
-    COPYONLY
-  )
-ENDFOREACH(simfile)
-
+install(FILES 
+  ${SHFILES} 
+  ${NHDRFILES} 
+  ${RAWGZFILES}
+  ${MHAFILES} 
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Simulation COMPONENT Development
+  ) 
 
 #
-# copy over test files
+# copy over Testing files
 #
-SET (TEST_DIR ${TumorGrowth_BINARY_DIR}/Testing)
-IF (NOT EXISTS ${TEST_DIR})
-  FILE(MAKE_DIRECTORY ${TEST_DIR})
-ENDIF (NOT EXISTS ${TEST_DIR})
 
-SET(TESTFILES
-  scan1.nhdr
-  scan1.raw.gz
-  scan2.nhdr
-  scan2.raw.gz
-  TG_scan1_Segment.nhdr
-  TG_scan1_Segment.raw.gz 
-  TG_scan1_SuperSampled.nhdr 
-  TG_scan1_SuperSampled.raw.gz
-  TG_scan2_norm.nhdr
-  TG_scan2_norm.raw.gz
-  test.mrml
-  testScript
-  testDemonsScript
-  GUI-AnalysisOutcome.log
-  Script-AnalysisOutcome.log
-)
+file(GLOB MRMLFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.mrml")
+file(GLOB NHDRFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.nhdr")
+file(GLOB RAWGZFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.raw.gz")
+file(GLOB LOGFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.log")
+file(GLOB TESTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/test*Script")
 
-FOREACH(testfile ${TESTFILES})
-  CONFIGURE_FILE(
-    ${Slicer3_SOURCE_DIR}/Modules/TumorGrowth/Testing/${testfile}
-    ${TEST_DIR}/${testfile}
-    COPYONLY
-  )
-ENDFOREACH(testfile)
+foreach(file 
+    ${MRMLFILES} 
+    ${NHDRFILES}
+    ${RAWGZFILES}
+    ${LOGFILES}
+    ${TESTFILES}
+    )
+  get_filename_component(filename "${file}" NAME)
+  configure_file(
+    ${file}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing/${filename}
+    COPYONLY)
+endforeach(file)
 
-
+install(FILES 
+  ${MRMLFILES} 
+  ${NHDRFILES} 
+  ${RAWGZFILES}
+  ${LOGFILES} 
+  ${TESTFILES}
+  DESTINATION ${Slicer3_INSTALL_MODULES_SHARE_DIR}/${PROJECT_NAME}/Testing COMPONENT Development
+  ) 

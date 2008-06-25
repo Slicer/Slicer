@@ -11,14 +11,6 @@ if(NOT Slicer3_SOURCE_DIR)
   slicer3_set_default_install_prefix_for_external_projects()
 endif(NOT Slicer3_SOURCE_DIR)
 
-find_package(ITK)
-if(ITK_FOUND)
-    INCLUDE(${ITK_USE_FILE})
-else(ITK_FOUND)
-    MESSAGE(FATAL_ERROR
-        "ITK not found. Please set ITK_DIR.")
-endif(ITK_FOUND)
-
 add_executable(DetectGrowth DetectGrowth.cxx)
 slicer3_set_plugins_output_path(DetectGrowth)
 target_link_libraries(DetectGrowth ITKCommon ITKIO)
@@ -33,7 +25,3 @@ add_executable(DetectGrowthSegmentation DetectGrowthSegmentation.cxx)
 slicer3_set_plugins_output_path(DetectGrowthSegmentation)
 target_link_libraries(DetectGrowthSegmentation ITKCommon ITKIO)
 slicer3_install_plugins(DetectGrowthSegmentation)
-
-
-
-                           

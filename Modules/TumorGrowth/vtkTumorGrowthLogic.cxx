@@ -371,10 +371,13 @@ vtkMRMLScalarVolumeNode* vtkTumorGrowthLogic::CreateSuperSample(int ScanNum) {
 
 void vtkTumorGrowthLogic::SourceAnalyzeTclScripts(vtkKWApplication *app) {
  char TCL_FILE[1024]; 
- sprintf(TCL_FILE,"%s/Modules/TumorGrowth/tcl/TumorGrowthFct.tcl",vtksys::SystemTools::GetEnv("Slicer3_HOME"));
 
+ sprintf(TCL_FILE,"%s/Tcl/TumorGrowthFct.tcl",
+         this->GetModuleShareDirectory());
  app->LoadScript(TCL_FILE); 
- sprintf(TCL_FILE,"%s/Modules/TumorGrowth/tcl/TumorGrowthReg.tcl",vtksys::SystemTools::GetEnv("Slicer3_HOME"));
+
+ sprintf(TCL_FILE,"%s/Tcl/TumorGrowthReg.tcl",
+         this->GetModuleShareDirectory());
  app->LoadScript(TCL_FILE); 
 }
 

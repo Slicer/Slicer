@@ -51,7 +51,5 @@ target_link_libraries(
   )
 
 slicer3_install_plugins(${CLP_MODULE})
-slicer3_set_plugins_output_path(${CLP})
-slicer3_install_plugins(${CLP})
 
 
