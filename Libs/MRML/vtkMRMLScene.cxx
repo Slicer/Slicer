@@ -60,6 +60,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkMRMLVolumeHeaderlessStorageNode.h"
 #include "vtkURIHandler.h"
+#include "vtkMRMLLayoutNode.h"
 
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLNRRDStorageNode.h"
@@ -70,7 +71,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
-#include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 #endif
 
