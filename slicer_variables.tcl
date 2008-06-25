@@ -72,7 +72,7 @@ puts stderr "Slicer3_HOME is $::Slicer3_HOME"
 # changes in the "Files to test if library has already been built"
 # section below, or genlib will happily build the library again.
 
-set ::Slicer3_TAG "http://www.na-mic.org/svn/Slicer3/trunk"
+set ::Slicer3_TAG "http://svn.slicer.org/Slicer3/trunk"
 set ::CMAKE_TAG "CMake-2-6"
 set ::TEEM_TAG "Teem-1-9-0-patches"
 set ::KWWidgets_TAG "Slicer-3-2"
