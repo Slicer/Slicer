@@ -55,6 +55,7 @@ vtkTumorGrowthLogic::vtkTumorGrowthLogic()
   this->Analysis_Intensity_Variance  = 0.0;
   this->Analysis_Intensity_Threshold = 0.0;
 
+  this->Analysis_Intensity_SubtractROI    = NULL;
   this->Analysis_Intensity_Final          = NULL;
   this->Analysis_Intensity_ROINegativeBin = NULL;
   this->Analysis_Intensity_ROIPositiveBin = NULL;
@@ -86,6 +87,11 @@ vtkTumorGrowthLogic::~vtkTumorGrowthLogic()
   //   this->GlobalTransform = NULL;
   // }
   
+  if (this->Analysis_Intensity_SubtractROI) {
+    this->Analysis_Intensity_SubtractROI->Delete();
+    this->Analysis_Intensity_SubtractROI= NULL;
+  }
+
   if (this->Analysis_Intensity_Final) {
     this->Analysis_Intensity_Final->Delete();
     this->Analysis_Intensity_Final= NULL;
@@ -181,6 +187,7 @@ vtkMRMLScalarVolumeNode* vtkTumorGrowthLogic::CreateVolumeNode(vtkMRMLVolumeNode
   // clone the volume node
   vtkMRMLScalarVolumeNode *clonedVolumeNode = vtkMRMLScalarVolumeNode::New();
   clonedVolumeNode->CopyWithScene(volumeNode);
+  clonedVolumeNode->SetAndObserveImageData(NULL);
   clonedVolumeNode->SetAndObserveStorageNodeID(NULL);
   clonedVolumeNode->SetName(name);
   clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
@@ -333,8 +340,10 @@ vtkMRMLScalarVolumeNode* vtkTumorGrowthLogic::CreateSuperSample(int ScanNum) {
 
   vtkMRMLScalarVolumeNode *VolumeOutputNode = this->CreateVolumeNode(volumeNode,VolumeOutputName);
   // VolumeOutputNode->SetAndObserveImageData(ROIExtent->GetOutput());
-
-  VolumeOutputNode->SetAndObserveImageData(ROISuperSampleExtent->GetOutput());
+  vtkImageData *img = vtkImageData::New();
+  img->DeepCopy(ROISuperSampleExtent->GetOutput());
+  VolumeOutputNode->SetAndObserveImageData(img);
+  img->Delete();
   VolumeOutputNode->SetSpacing(SuperSampleSpacing,SuperSampleSpacing,SuperSampleSpacing); 
 
   // Compute new rjk matrix 
@@ -465,7 +474,7 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     cout << "=== INTENSITY ANALYSIS ===" << endl;
     if (!atoi(app->Script("::TumorGrowthTcl::Analysis_Intensity_GUI"))) return 0; 
     progressBar->SetValue(80.0/TimeLength);
-  } 
+   } 
   if (this->TumorGrowthNode->GetAnalysis_Deformable_Flag()) {
     if (debug) {
       if (!this->TumorGrowthNode->GetAnalysis_Deformable_Ref() || !strcmp(this->TumorGrowthNode->GetAnalysis_Deformable_Ref(),"")) { 
@@ -494,6 +503,12 @@ void vtkTumorGrowthLogic::RegisterMRMLNodesWithScene() {
    vtkMRMLTumorGrowthNode* tmNode =  vtkMRMLTumorGrowthNode::New();
    this->GetMRMLScene()->RegisterNodeClass(tmNode);
    tmNode->Delete();
+}
+
+vtkImageData* vtkTumorGrowthLogic::CreateAnalysis_Intensity_SubtractROI() {
+  if (this->Analysis_Intensity_Final) { this->Analysis_Intensity_SubtractROI->Delete(); }
+  this->Analysis_Intensity_SubtractROI = vtkImageData::New();
+  return this->Analysis_Intensity_SubtractROI;
 }
 
 vtkImageThreshold* vtkTumorGrowthLogic::CreateAnalysis_Intensity_Final() {
