@@ -29,8 +29,8 @@ if { [itcl::find class SlicePlaneSWidget] == "" } {
     
     # methods
     method processEvent {{caller ""} {event ""}} {}
-    method updateWidgetFromNode {sliceNode planeWidget} {}
-    method updateNodeFromWidget {sliceNode planeWidget} {}
+    method updateWidgetFromNode {sliceNode planeRepresentation} {}
+    method updateNodeFromWidget {sliceNode planeRepresentation} {}
   }
 }
 
@@ -63,7 +63,11 @@ itcl::body SlicePlaneSWidget::constructor {sliceGUI} {
     $::slicer3::Broker AddObservation $sliceGUI $event "::SWidget::ProtectedCallback $this processEvent $sliceGUI $event"
   }
 
-  set o(plane) [vtkNew vtkImplicitPlaneWidget]
+  #set o(plane) [vtkNew vtkImplicitPlaneWidget]
+  set o(planeWidget) [vtkNew vtkImplicitPlaneWidget2]
+  set o(planeRepresentation) [vtkNew vtkImplicitPlaneRepresentation]
+  $o(planeWidget) SetRepresentation $o(planeRepresentation)
+  
   set rwi [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindowInteractor]
 
   # Update the size of the render window interactor to match that of the render window
@@ -71,11 +75,12 @@ itcl::body SlicePlaneSWidget::constructor {sliceGUI} {
   $rwi UpdateSize [lindex [$rw GetSize] 0] [lindex [$rw GetSize] 1]
   # the problem is that it gets reset, so there's another call in the visibility toggle
 
-  $o(plane) SetInteractor $rwi
-  $o(plane) SetDrawPlane 0
-  $o(plane) PlaceWidget -100 100 -100 100 -100 100
+  $o(planeWidget) SetInteractor $rwi
+  $o(planeRepresentation) SetDrawPlane 0
+  $o(planeRepresentation) PlaceWidget -100 100 -100 100 -100 100
 
-  $::slicer3::Broker AddObservation $o(plane) AnyEvent "::SWidget::ProtectedCallback $this processEvent $o(plane) AnyEvent"
+  $::slicer3::Broker AddObservation $o(planeWidget) AnyEvent "::SWidget::ProtectedCallback $this processEvent $o(planeWidget) AnyEvent"
+#  $::slicer3::Broker AddObservation $o(planeWidget) AnyEvent "$this processEvent $o(planeWidget) AnyEvent"
 
 }
 
@@ -114,15 +119,20 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
       "KeyPressEvent" { 
         set key [$_interactor GetKeySym]
         set activeKeys "o"
+        # puts "got key press event key = $key, active keys = $activeKeys"
         if { [lsearch $activeKeys $key] != -1 } {
           $sliceGUI SetCurrentGUIEvent "" ;# reset event so we don't respond again
           $sliceGUI SetGUICommandAbortFlag 1
           switch [$_interactor GetKeySym] {
             "o" {
+              # puts "Processing o key"
               # toggle widget on off
-              $this updateWidgetFromNode $sliceNode $o(plane)
+              $this updateWidgetFromNode $sliceNode $o(planeRepresentation)
               set visible [$sliceNode GetWidgetVisible]
+              # puts "Got the o key, visible is currently $visible, toggling"
               $sliceNode SetWidgetVisible [expr !$visible]
+              # puts "After toggled widget visible on sliceNode"
+              # $this updateWidgetFromNode $sliceNode $o(planeRepresentation)
               if { [expr !$visible] } {
                   set rwi [[[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindowInteractor]
                   # Update the size of the render window interactor to match that of the render window
@@ -152,26 +162,33 @@ itcl::body SlicePlaneSWidget::processEvent { {caller ""} {event ""} } {
   #
   # widget manipulated, so update the slice node to match
   #
-  if { $caller == $o(plane) } {
-    $this updateNodeFromWidget $sliceNode $o(plane)
+  if { $caller == $o(planeWidget) } {
+  # puts "Caller was plane widget,  calling update node from widget"
+    $this updateNodeFromWidget $sliceNode $o(planeRepresentation)
+    # puts "\tdone update node from widget....."
   }
 
   #
   # slice node modified, so update the widget to match
   #
   if { $caller == $sliceNode } {
+  # puts "Processing slice node, is it visible? [$sliceNode GetWidgetVisible]"
     if { [$sliceNode GetWidgetVisible] } {
-      $o(plane) On
+      $o(planeWidget) On
     } else {
-      $o(plane) Off
+      $o(planeWidget) Off
     }
-    $this updateWidgetFromNode $sliceNode $o(plane)
+    $this updateWidgetFromNode $sliceNode $o(planeRepresentation)
   }
 
 }
 
-itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeWidget} {
+#-------------------------------------------------------------------------------
+#- update the slice node from the representation (it holds the geometry)
 
+itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeRepresentation} {
+
+ # puts "updateNodeFromWidget, plane normal = [$planeRepresentation GetNormal]"
   set sliceToRAS [$sliceNode GetSliceToRAS]
 
   # zero out current translation
@@ -186,11 +203,22 @@ itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeWidget} {
     [$sliceToRAS GetElement 0 2] \
     [$sliceToRAS GetElement 1 2] \
     [$sliceToRAS GetElement 2 2] ]
-  set widgetNormal [$o(plane) GetNormal]
-
+  set widgetNormal [$planeRepresentation GetNormal]
+ 
   set radiansToDegrees 57.2957795131
   set xyz [SlicePlaneSWidget::Cross $sliceNormal $widgetNormal]
-  set w [expr  1. * $radiansToDegrees * acos([SlicePlaneSWidget::Dot $sliceNormal $widgetNormal])]
+  
+  set dotproduct [SlicePlaneSWidget::Dot $sliceNormal $widgetNormal]
+  # puts "slice normal = $sliceNormal, widget normal = $widgetNormal, dotproduct = $dotproduct"
+  if { $dotproduct < -1.0 || $dotproduct > 1.0 } {
+     # puts "Dot product $dotproduct out of range -1,1, clamping"
+     if { $dotproduct < -1.0 } {
+       set dotproduct -1.0
+     } else {
+       set dotproduct 1.0
+     }
+  }
+  set w [expr  1. * $radiansToDegrees * acos($dotproduct)]
 
   set transform [vtkTransform New]
   $transform PostMultiply
@@ -200,21 +228,22 @@ itcl::body SlicePlaneSWidget::updateNodeFromWidget {sliceNode planeWidget} {
   $transform Delete
 
   # insert widget translation
-  $sliceToRAS SetElement 0 3 [lindex [$o(plane) GetOrigin] 0]
-  $sliceToRAS SetElement 1 3 [lindex [$o(plane) GetOrigin] 1]
-  $sliceToRAS SetElement 2 3 [lindex [$o(plane) GetOrigin] 2]
-
+  $sliceToRAS SetElement 0 3 [lindex [$o(planeRepresentation) GetOrigin] 0]
+  $sliceToRAS SetElement 1 3 [lindex [$o(planeRepresentation) GetOrigin] 1]
+  $sliceToRAS SetElement 2 3 [lindex [$o(planeRepresentation) GetOrigin] 2]
   $sliceNode UpdateMatrices
 }
 
-itcl::body SlicePlaneSWidget::updateWidgetFromNode {sliceNode planeWidget} {
+#-------------------------------------------------------------------------------
+#- update the representation that holds the geometry from the slice node
 
+itcl::body SlicePlaneSWidget::updateWidgetFromNode {sliceNode planeRepresentation} {
   set sliceToRAS [$sliceNode GetSliceToRAS]
-  $planeWidget SetOrigin \
+  $planeRepresentation SetOrigin \
     [$sliceToRAS GetElement 0 3] \
     [$sliceToRAS GetElement 1 3] \
     [$sliceToRAS GetElement 2 3]
-  $planeWidget SetNormal \
+  $planeRepresentation SetNormal \
     [$sliceToRAS GetElement 0 2] \
     [$sliceToRAS GetElement 1 2] \
     [$sliceToRAS GetElement 2 2]
