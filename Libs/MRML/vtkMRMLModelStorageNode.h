@@ -22,11 +22,42 @@
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLModelNode.h" 
 
+#include "itkMesh.h"
+#include "itkTriangleCell.h"
+#include "itkQuadrilateralCell.h"
+#include "itkDefaultDynamicMeshTraits.h"
+#include "itkMeshSpatialObject.h"
+#include "itkSpatialObjectReader.h"
+#include "itkSpatialObjectWriter.h"
+
+typedef itk::DefaultDynamicMeshTraits< vtkFloatingPointType , 3, 3, double > MeshTrait;
+typedef itk::Mesh<vtkFloatingPointType,3,MeshTrait> floatMesh;
+
+/** Hold on to the type information specified by the template parameters. */
+typedef  floatMesh::Pointer             MeshPointer;
+typedef  MeshTrait::PointType           MeshPointType;
+typedef  MeshTrait::PixelType           MeshPixelType;  
+
+/** Some convenient typedefs. */
+typedef  floatMesh::Pointer              MeshPointer;
+typedef  floatMesh::CellTraits           CellTraits;
+typedef  floatMesh::PointsContainerPointer PointsContainerPointer;
+typedef  floatMesh::PointsContainer      PointsContainer;
+typedef  floatMesh::CellsContainerPointer CellsContainerPointer;
+typedef  floatMesh::CellsContainer       CellsContainer;
+typedef  floatMesh::PointType            PointType;
+typedef  floatMesh::CellType             CellType;
+typedef  itk::TriangleCell<CellType>   TriangleType;
+
+typedef itk::MeshSpatialObject<floatMesh> MeshSpatialObjectType;
+typedef itk::SpatialObjectReader<3,vtkFloatingPointType,MeshTrait> MeshReaderType;
+typedef itk::SpatialObjectWriter<3,vtkFloatingPointType,MeshTrait> MeshWriterType;
+
 class vtkImageData;
 
 class VTK_MRML_EXPORT vtkMRMLModelStorageNode : public vtkMRMLStorageNode
 {
-  public:
+public:
   static vtkMRMLModelStorageNode *New();
   vtkTypeMacro(vtkMRMLModelStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -37,11 +68,11 @@ class VTK_MRML_EXPORT vtkMRMLModelStorageNode : public vtkMRMLStorageNode
   // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-   // Description:
+  // Description:
   // Set dependencies between this node and the parent node
   // when parsing XML file
   virtual void ProcessParentNode(vtkMRMLNode *parentNode);
-  
+
   // Description:
   // Read data and set it in the referenced node
   // NOTE: Subclasses should implement this method
@@ -69,7 +100,7 @@ class VTK_MRML_EXPORT vtkMRMLModelStorageNode : public vtkMRMLStorageNode
   // string. If input string is null, check URI, then check FileName. 
   // Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
-  
+
 protected:
   vtkMRMLModelStorageNode();
   ~vtkMRMLModelStorageNode();
