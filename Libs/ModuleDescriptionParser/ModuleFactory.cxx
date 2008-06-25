@@ -1213,7 +1213,8 @@ ModuleFactory
                   {
                   // construct a module logo and set it on the module
                   ModuleLogo mLogo;
-                  mLogo.SetLogo( logoImage, *logoWidth, *logoHeight,
+                  mLogo.SetLogo( (const char *)logoImage, 
+                                 *logoWidth, *logoHeight,
                                  *logoPixelSize, *logoLength, 0);
                   module.SetLogo(mLogo);
                   }
