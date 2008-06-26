@@ -55,8 +55,10 @@ set(VolumeRenderingReplacements_SRCS
   vtkSlicerRayCastImageDisplayHelper.cxx
   vtkSlicerOpenGLRayCastImageDisplayHelper.cxx
   #GUI
-  vtkSlicerBoxWidget.cxx
+  #vtkSlicerBoxWidget.cxx
   vtkSlicerVolumePropertyWidget.cxx
+  vtkSlicerBoxWidget2.cxx
+  vtkSlicerBoxRepresentation.cxx
   )
 
 # --------------------------------------------------------------------------

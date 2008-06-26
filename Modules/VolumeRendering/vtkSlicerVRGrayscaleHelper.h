@@ -25,7 +25,8 @@ class vtkKWFrameWithLabel;
 class vtkKWNotebook;
 class vtkKWMenuButtonWithLabel;
 class vtkKWPushButton;
-class vtkSlicerBoxWidget;
+class vtkSlicerBoxWidget2;
+class vtkSlicerBoxRepresentation;
 class vtkSlicerColorDisplayWidget;
 class vtkSlicerNodeSelectorWidget;
 class vtkMRMLLinearTransformNode;
@@ -301,8 +302,11 @@ protected:
     vtkKWRange *RA_Cropping[3];
 
     // Description:
-    // The interactive clipping box.
-    vtkSlicerBoxWidget *BW_Clipping;
+    // The interactive clipping box widget
+    vtkSlicerBoxWidget2 *BW_Clipping_Widget;
+    // Description:
+    // The geometrical representation of the interactive clipping box widget
+    vtkSlicerBoxRepresentation *BW_Clipping_Representation;
 
     // Description:
     // Enable/Disable the interactive clipping box

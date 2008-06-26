@@ -8,7 +8,8 @@
 #include "vtkSlicerVolumePropertyWidget.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
-#include "vtkSlicerBoxWidget.h"
+#include "vtkSlicerBoxWidget2.h"
+#include "vtkSlicerBoxRepresentation.h"
 #include "vtkSlicerVisibilityIcons.h"
 #include "vtkSlicerVRMenuButtonColorMode.h"
 
@@ -112,7 +113,8 @@ vtkSlicerVRGrayscaleHelper::vtkSlicerVRGrayscaleHelper(void)
     this->PB_ThresholdZoomIn=NULL;
 
     //Clipping
-    this->BW_Clipping=NULL;
+    this->BW_Clipping_Widget=NULL;
+    this->BW_Clipping_Representation = NULL;
     this->AdditionalClippingTransform=NULL;
     this->InverseAdditionalClippingTransform=NULL;
 
@@ -575,19 +577,19 @@ void vtkSlicerVRGrayscaleHelper::UpdateRendering()
 void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,unsigned long eid,void *callData)
 {
 
-    vtkSlicerBoxWidget *callerBox=vtkSlicerBoxWidget::SafeDownCast(caller);
-    if(callerBox && caller==this->BW_Clipping&&eid==vtkCommand::InteractionEvent)
+    vtkSlicerBoxWidget2 *callerBox=vtkSlicerBoxWidget2::SafeDownCast(caller);
+    if(callerBox && caller==this->BW_Clipping_Widget && eid==vtkCommand::InteractionEvent)
     {
         vtkPlanes *planes=vtkPlanes::New();
-        callerBox->GetPlanes(planes);
+        this->BW_Clipping_Representation->GetPlanes(planes);
         this->MapperTexture->SetClippingPlanes(planes);
         this->MapperRaycast->SetClippingPlanes(planes);
         planes->Delete();
     }
-    if(callerBox && caller==this->BW_Clipping&&eid==vtkCommand::EndInteractionEvent)
+    if(callerBox && caller==this->BW_Clipping_Widget && eid==vtkCommand::EndInteractionEvent)
     {
         vtkPlanes *planes=vtkPlanes::New();
-        callerBox->GetPlanes(planes);
+        this->BW_Clipping_Representation->GetPlanes(planes);
         this->MapperTexture->SetClippingPlanes(planes);
         this->MapperRaycast->SetClippingPlanes(planes);
 
@@ -599,7 +601,7 @@ void vtkSlicerVRGrayscaleHelper::ProcessVolumeRenderingEvents(vtkObject *caller,
 
             vtkPolyData *vertices=vtkPolyData::New();
 
-            callerBox->GetPolyData(vertices);
+            this->BW_Clipping_Representation->GetPolyData(vertices);
             double pointA[3];
             double pointB[3];
             vertices->GetPoint(0,pointA);
@@ -1358,14 +1360,21 @@ void vtkSlicerVRGrayscaleHelper::ProcessCropping(int index, double min,double ma
 
     this->ConvertBoxCoordinatesToWorld(pointA);
     this->ConvertBoxCoordinatesToWorld(pointB);
-    if (this->BW_Clipping)
+    if (this->BW_Clipping_Widget)
       {
-      this->BW_Clipping->PlaceWidget(pointA[0],pointB[0],pointA[1],pointB[1],pointA[2],pointB[2]);
-      this->BW_Clipping->SetTransform(this->AdditionalClippingTransform);
+      double pointPlace[6];
+      pointPlace[0] = pointA[0];
+      pointPlace[1] = pointB[0];
+      pointPlace[2] = pointA[1];
+      pointPlace[3] = pointB[1];
+      pointPlace[4] = pointA[2];
+      pointPlace[5] = pointB[2];
+      this->BW_Clipping_Representation->PlaceWidget(pointPlace); //pointA[0],pointB[0],pointA[1],pointB[1],pointA[2],pointB[2]);
+      this->BW_Clipping_Representation->SetTransform(this->AdditionalClippingTransform);
       }
     this->NoSetRangeNeeded=1;
-    this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::InteractionEvent,0);
-    this->ProcessVolumeRenderingEvents(this->BW_Clipping,vtkCommand::EndInteractionEvent,0);
+    this->ProcessVolumeRenderingEvents(this->BW_Clipping_Widget,vtkCommand::InteractionEvent,0);
+    this->ProcessVolumeRenderingEvents(this->BW_Clipping_Widget,vtkCommand::EndInteractionEvent,0);
     this->NoSetRangeNeeded=0;
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
     this->CalculateBoxCoordinatesBoundaries();
@@ -1715,13 +1724,22 @@ void vtkSlicerVRGrayscaleHelper::ProcessEnableDisableCropping(int cbSelectedStat
 
 void vtkSlicerVRGrayscaleHelper::ProcessDisplayClippingBox(int clippingEnabled)
 {
-    if(this->BW_Clipping==NULL)
+    if(this->BW_Clipping_Widget==NULL)
     {
-        this->BW_Clipping=vtkSlicerBoxWidget::New();
+        this->BW_Clipping_Widget = vtkSlicerBoxWidget2::New();
+        this->BW_Clipping_Representation = vtkSlicerBoxRepresentation::New();
+        this->BW_Clipping_Widget->SetRepresentation(this->BW_Clipping_Representation);
         vtkRenderWindowInteractor *interactor=this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor();
-        this->BW_Clipping->SetInteractor(interactor);
-        this->BW_Clipping->SetPlaceFactor(1);
-        this->BW_Clipping->SetProp3D(this->Volume);
+        this->BW_Clipping_Widget->SetInteractor(interactor);
+
+        this->BW_Clipping_Representation->SetPlaceFactor(1);
+//      this->BW_Clipping_Widget->SetProp3D(this->Volume);
+        // get the bounding box of the volume
+        double *bounds = this->Volume->GetBounds();
+        if (bounds != NULL)
+          {
+          this->BW_Clipping_Representation->PlaceWidget(bounds);
+          }
         //data is saved in IJK->Convert to ras
 
         double pointA[3];
@@ -1745,26 +1763,33 @@ void vtkSlicerVRGrayscaleHelper::ProcessDisplayClippingBox(int clippingEnabled)
                 this->RA_Cropping[i]->SetRange(pointB[i],pointA[i]);
             }
         }
-        this->BW_Clipping->PlaceWidget(pointA[0],pointB[0],pointA[0],pointB[1],pointA[2],pointB[2]);
-        this->BW_Clipping->InsideOutOn();
-        this->BW_Clipping->RotationEnabledOff();
-        this->BW_Clipping->TranslationEnabledOn();
-        this->BW_Clipping->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
+        double pointPlace[6];
+        pointPlace[0] = pointA[0];
+        pointPlace[1] = pointB[0];
+        pointPlace[2] = pointA[0]; // is this correct?
+        pointPlace[3] = pointB[1];
+        pointPlace[4] = pointA[2];
+        pointPlace[5] = pointB[2];
+        this->BW_Clipping_Representation->PlaceWidget(pointPlace); //pointA[0],pointB[0],pointA[0],pointB[1],pointA[2],pointB[2]);
+        this->BW_Clipping_Representation->InsideOutOn();
+        this->BW_Clipping_Widget->RotationEnabledOff();
+        this->BW_Clipping_Widget->TranslationEnabledOn();
+        this->BW_Clipping_Representation->GetSelectedHandleProperty()->SetColor(0.2,0.6,0.15);
         this->NoSetRangeNeeded=0;
        
 
 
-        this->BW_Clipping->AddObserver(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
-        this->BW_Clipping->AddObserver(vtkCommand::EndInteractionEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->BW_Clipping_Widget->AddObserver(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+        this->BW_Clipping_Widget->AddObserver(vtkCommand::EndInteractionEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
         this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->GetRenderWindow()->GetInteractor()->ReInitialize();
     }
     if(clippingEnabled)
     {
-        this->BW_Clipping->On();
+        this->BW_Clipping_Widget->On();
     }
     else
     {
-        this->BW_Clipping->Off();
+        this->BW_Clipping_Widget->Off();
     }
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 }
@@ -1821,14 +1846,21 @@ void vtkSlicerVRGrayscaleHelper::ResetRenderingAlgorithm(void)
 void vtkSlicerVRGrayscaleHelper::DestroyCropping(void)
 {
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->RemoveBinding("<Configure>", this, "ProcessConfigureCallback");
-    if(this->BW_Clipping)
+    
+    if(this->BW_Clipping_Widget)
     {
-        this->BW_Clipping->RemoveObservers(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
-        this->BW_Clipping->RemoveObservers(vtkCommand::EndInteractionEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
-        this->BW_Clipping->Off();
-        this->BW_Clipping->Delete();
-        this->BW_Clipping=NULL;
+        this->BW_Clipping_Widget->RemoveObservers(vtkCommand::InteractionEvent,(vtkCommand*) this->VolumeRenderingCallbackCommand);
+        this->BW_Clipping_Widget->RemoveObservers(vtkCommand::EndInteractionEvent,(vtkCommand*)this->VolumeRenderingCallbackCommand);
+        this->BW_Clipping_Widget->Off();
+        this->BW_Clipping_Widget->SetRepresentation(NULL);
+        this->BW_Clipping_Widget->Delete();
+        this->BW_Clipping_Widget=NULL;
     }
+    if (this->BW_Clipping_Representation)
+      {
+        this->BW_Clipping_Representation->Delete();
+        this->BW_Clipping_Representation =  NULL;
+      }
     if(this->CB_Clipping)
     {
         this->CB_Clipping->SetParent(NULL);
@@ -2055,8 +2087,8 @@ void vtkSlicerVRGrayscaleHelper::ProcessClippingModified(void)
         this->AdditionalClippingTransform->Identity();
         this->InverseAdditionalClippingTransform->Identity();
     }
-    this->BW_Clipping->SetTransform(this->AdditionalClippingTransform);
-    this->BW_Clipping->InvokeEvent(vtkCommand::EndInteractionEvent);
+    this->BW_Clipping_Representation->SetTransform(this->AdditionalClippingTransform);
+    this->BW_Clipping_Widget->InvokeEvent(vtkCommand::EndInteractionEvent);
     this->Gui->GetApplicationGUI()->GetViewerWidget()->GetMainViewer()->Render();
 
 }
