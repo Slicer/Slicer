@@ -169,6 +169,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     void ProcessPublishToXnatCommand();
     void ProcessAddDataCommand();
     void ProcessAddVolumeCommand();
+    void ProcessAddTransformCommand();
     void ProcessSaveSceneAsCommand();
     void ProcessCloseSceneCommand();
     void UpdateLayout();

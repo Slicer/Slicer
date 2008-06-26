@@ -206,6 +206,8 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     catch (itk::ExceptionObject &exc)
       {
+      // File specified may not contain a grid image. Can we safely
+      // error out quitely?
       vtkErrorMacro("ITK exception caught reading grid transform image file: "
                     << fullName.c_str() << "\n" << exc);
 
@@ -284,6 +286,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       
       static const int D = 3;
       int i, j;
+
       
       typedef itk::MatrixOffsetTransformBase<double,D,D> DoubleLinearTransformType;
       typedef itk::MatrixOffsetTransformBase<float,D,D> FloatLinearTransformType;
@@ -302,6 +305,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         = dynamic_cast<DoubleLinearTransformType*>( transform.GetPointer() );
       if (dlt)
         {
+        result = 1;
         for (i=0; i < D; i++)
           {
           for (j=0; j < D; j++)
@@ -317,6 +321,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         = dynamic_cast<FloatLinearTransformType*>( transform.GetPointer() );
       if (flt)
         {
+        result = 1;
         for (i=0; i < D; i++)
           {
           for (j=0; j < D; j++)
@@ -333,6 +338,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       if (dit)
         {
         // nothing to do, matrix is already the identity
+        result = 1;
         }
 
       // Identity transform of floats, dimension 3
@@ -341,6 +347,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       if (fit)
         {
         // nothing to do, matrix is already the identity
+        result = 1;
         }
       
       // Scale transform of doubles, dimension 3
@@ -348,6 +355,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         = dynamic_cast<DoubleScaleTransformType*>( transform.GetPointer() );
       if (dst)
         {
+        result = 1;
         for (i=0; i < D; i++)
           {
           (*vtkmat)[i][i] = dst->GetScale()[i];
@@ -359,6 +367,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         = dynamic_cast<FloatScaleTransformType*>( transform.GetPointer() );
       if (fst)
         {
+        result = 1;
         for (i=0; i < D; i++)
           {
           (*vtkmat)[i][i] = fst->GetScale()[i];
@@ -370,6 +379,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         = dynamic_cast<DoubleTranslateTransformType*>( transform.GetPointer());
       if (dtt)
         {
+        result = 1;
         for (i=0; i < D; i++)
           {
           (*vtkmat)[i][D] = dtt->GetOffset()[i];
@@ -381,6 +391,7 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         = dynamic_cast<FloatTranslateTransformType*>( transform.GetPointer() );
       if (ftt)
         {
+        result = 1;
         for (i=0; i < D; i++)
           {
           (*vtkmat)[i][i] = ftt->GetOffset()[i];
@@ -400,95 +411,12 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     else if (refNode->IsA("vtkMRMLGridTransformNode"))
       {
-
-      vtkMRMLGridTransformNode *gtn
-        = vtkMRMLGridTransformNode::SafeDownCast(refNode);
-      
-      static const int D = 3;
-      typedef itk::BSplineDeformableTransform<double,D,D> DoubleBSplineTransformType;
-      typedef itk::BSplineDeformableTransform<float,D,D> FloatBSplineTransformType;
-
-      vtkGridTransform* vtkgrid = vtkGridTransform::New();
-      vtkgrid->SetInterpolationModeToCubic();
-
-      vtkImageData *vtkgridimage = vtkImageData::New();
-      
-      // B-spline transform of doubles, dimension 3
-      DoubleBSplineTransformType::Pointer dbt
-        = dynamic_cast<DoubleBSplineTransformType*>( transform.GetPointer() );
-      if (dbt)
-        {
-        DoubleBSplineTransformType::ImagePointer
-          *grids = dbt->GetCoefficientImage();
-
-        itk::ImageRegionIterator<DoubleBSplineTransformType::ImageType>
-          xit( grids[0], grids[0]->GetBufferedRegion() );
-        itk::ImageRegionIterator<DoubleBSplineTransformType::ImageType>
-          yit( grids[1], grids[0]->GetBufferedRegion() );
-        itk::ImageRegionIterator<DoubleBSplineTransformType::ImageType>
-          zit( grids[2], grids[0]->GetBufferedRegion() );
-        
-        vtkDoubleArray *values = vtkDoubleArray::New();
-        values->SetNumberOfComponents( 3 );
-        values->SetNumberOfTuples( grids[0]->GetBufferedRegion().GetNumberOfPixels() );
-
-        double in[4], out[4];
-        in[3] = out[3] = 1.0;
-        
-        for (vtkIdType id=0;
-             id < (vtkIdType)(grids[0]->GetBufferedRegion().GetNumberOfPixels()) ; ++id)
-          {
-          // convert each control point of the B-spline grid to RAS
-          in[0] = xit.Get();
-          in[1] = yit.Get();
-          in[2] = zit.Get();
-
-          lps2ras->MultiplyPoint(in, out);
-          
-          values->SetComponent(id, 0, out[0]);
-          values->SetComponent(id, 1, out[1]);
-          values->SetComponent(id, 2, out[2]);
-          
-          ++xit;
-          ++yit;
-          ++zit;
-          }
-
-        vtkgridimage->GetPointData()->SetScalars( values );
-        values->Delete();
-
-        vtkgridimage->SetOrigin( grids[0]->GetOrigin()[0],
-                                 grids[0]->GetOrigin()[1],
-                                 grids[0]->GetOrigin()[2] );
-        vtkgridimage->SetSpacing( grids[0]->GetSpacing()[0],
-                                  grids[0]->GetSpacing()[1],
-                                  grids[0]->GetSpacing()[2]);
-
-        DoubleBSplineTransformType::ImageType::IndexType index
-          = grids[0]->GetBufferedRegion().GetIndex();
-        DoubleBSplineTransformType::ImageType::SizeType size
-          = grids[0]->GetBufferedRegion().GetSize();
-        
-        vtkgridimage->SetExtent( index[0], index[0]+size[0]-1,
-                                 index[1], index[1]+size[1]-1,
-                                 index[2], index[2]+size[2]-1 );
-
-        vtkgrid->SetDisplacementGrid( vtkgridimage );
-
-        // Set the matrix on the node
-        gtn->SetAndObserveWarpTransformToParent( vtkgrid );
-        vtkgrid->Delete();
-
-        // What about the bulk transform?
-        }
-      
-      // B-spline transform of floats, dimension 3
-      FloatBSplineTransformType::Pointer fbt
-        = dynamic_cast<FloatBSplineTransformType*>( transform.GetPointer() );
-      if (fbt)
-        {
-        }
-      
+      // This use case is handled separately.  Grid transforms are not
+      // currently supported as ITK transforms but rather as vector
+      // images. This is subject to change whereby an ITK transform
+      // for displacement fields will provide a standard transform API
+      // but will reference a vector image to store the displacements.
+      result = 0;
       }
     else if (refNode->IsA("vtkMRMLBSplineTransformNode"))
       {
@@ -554,15 +482,22 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
         // Set the transform on the node
         btn->SetAndObserveWarpTransformToParent( vtkBSpline );
         vtkBSpline->Delete();
-      }
+
+        result = 1;
+        }
+      else
+        {
+        result = 0;
+        }
       }
 
       // B-spline transform of floats, dimension 3
       FloatBSplineTransformType::Pointer fbt
         = dynamic_cast<FloatBSplineTransformType*>( transform.GetPointer() );
-      if (fbt)
+      if (!result && fbt)
         {
-        vtkErrorMacro( "BSpline transform storage not yet implemented for float" )
+        vtkErrorMacro( "BSpline transform storage not yet implemented for float" );
+        result = 0;
         }
       
       }

@@ -444,6 +444,12 @@ void vtkSlicerApplicationGUI::ProcessAddVolumeCommand()
   this->GetApplication()->Script("::LoadVolume::ShowDialog");
 }
 
+//---------------------------------------------------------------------------
+void vtkSlicerApplicationGUI::ProcessAddTransformCommand()
+{
+  this->GetApplication()->Script("::LoadTransform::ShowDialog");
+}
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessCloseSceneCommand()
@@ -1127,6 +1133,9 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
                                                                  this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                                  "Add Volume...", this, "ProcessAddVolumeCommand");
+  i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (
+                                                                 this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
+                                                                 "Add Transform...", this, "ProcessAddTransformCommand");
 
   i = this->GetMainSlicerWindow()->GetFileMenu()->InsertCommand (this->GetMainSlicerWindow()->GetFileMenuInsertPosition(),
                                                                  "Save", this, "ProcessSaveSceneAsCommand");
