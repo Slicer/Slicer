@@ -183,8 +183,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // Description:
     // These methods configure and pack the Slicer Window
     virtual void PackFirstSliceViewerFrame ( );
-    virtual void SetApplicationFontSize ( );
-    virtual void SetApplicationFontFamily ( );
 
     // Description:
     // These methods configure the Main Viewer's layout
@@ -233,10 +231,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void Save3DViewConfig ( );
     virtual void Restore3DViewConfig ( );
 
-    virtual void UpdateFontSizeMenu();
-    virtual void UpdateFontFamilyMenu();
-
-    
     // Description:
     // Methods invoked by making selections from Help menu
     // on the menu bar; give access to Slicer tutorials,

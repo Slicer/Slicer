@@ -8,79 +8,79 @@
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerTheme : public vtkKWTheme
 {
- public:
-    // Description:
-    // Usual vtk functions
-    static vtkSlicerTheme* New ();
-    vtkTypeRevisionMacro ( vtkSlicerTheme, vtkKWTheme );
-    void PrintSelf ( ostream& os, vtkIndent indent );
+  public:
+  // Description:
+  // Usual vtk functions
+  static vtkSlicerTheme* New ();
+  vtkTypeRevisionMacro ( vtkSlicerTheme, vtkKWTheme );
+  void PrintSelf ( ostream& os, vtkIndent indent );
 
-    // Description:
-    // Get method for SlicerColor class
-    vtkGetObjectMacro ( SlicerColors, vtkSlicerColor );
-    vtkGetObjectMacro ( SlicerFonts, vtkSlicerFont );
-    vtkGetMacro (FontSize0, int );
-    vtkGetMacro (FontSize1, int );    
-    vtkGetMacro (FontSize2, int );
+  // Description:
+  // Get method for SlicerColor class
+  vtkGetObjectMacro ( SlicerColors, vtkSlicerColor );
+  vtkGetObjectMacro ( SlicerFonts, vtkSlicerFont );
+  vtkGetMacro (FontSize0, int );
+  vtkGetMacro (FontSize1, int );    
+  vtkGetMacro (FontSize2, int );
     
-    virtual const char *GetFontFamily ( )
-        {
-        return ( this->FontFamily );
-        }
-    virtual void SetFontFamily ( const char *font )
-        {
-        this->FontFamily = font;
-        }
-    virtual void SetApplicationFont0 ( const char *str )
-        {
-        this->ApplicationFont0 = str;
-        }
-    virtual void SetApplicationFont1 ( const char *str )
-        {
-        this->ApplicationFont1 = str;
-        }
-    virtual void SetApplicationFont2 ( const char *str )
-        {
-        this->ApplicationFont2 = str;
-        }
-    const char *GetApplicationFont0 ( )
-        {
-        return this->ApplicationFont0;
-        }
-    const char *GetApplicationFont1 ( )
-        {
-        return this->ApplicationFont1;
-        }
-    const char *GetApplicationFont2 ( )
-        {
-        return this->ApplicationFont2;
-        }
+  virtual const char *GetFontFamily ( )
+  {
+    return ( this->FontFamily );
+  }
+  virtual void SetFontFamily ( const char *font )
+  {
+    this->FontFamily = font;
+  }
+  virtual void SetApplicationFont0 ( const char *str )
+  {
+    this->ApplicationFont0 = str;
+  }
+  virtual void SetApplicationFont1 ( const char *str )
+  {
+    this->ApplicationFont1 = str;
+  }
+  virtual void SetApplicationFont2 ( const char *str )
+  {
+    this->ApplicationFont2 = str;
+  }
+  const char *GetApplicationFont0 ( )
+  {
+    return this->ApplicationFont0;
+  }
+  const char *GetApplicationFont1 ( )
+  {
+    return this->ApplicationFont1;
+  }
+  const char *GetApplicationFont2 ( )
+  {
+    return this->ApplicationFont2;
+  }
 
-    // Description:
-    // Ask the default Slicer theme to install itself
-    virtual void Install ( );
-    virtual void InstallFonts ( );
+  // Description:
+  // Ask the default Slicer theme to install itself
+  virtual void Install ( );
+  virtual void InstallFonts ( );
     
- protected:
-    vtkSlicerTheme ( );
-    virtual ~vtkSlicerTheme ( );
-    vtkSlicerColor *SlicerColors;
-    vtkSlicerFont *SlicerFonts;
+  protected:
+  vtkSlicerTheme ( );
+  virtual ~vtkSlicerTheme ( );
+  vtkSlicerColor *SlicerColors;
+  vtkSlicerFont *SlicerFonts;
     
-    const char *FontFamily;
-    int FontSize0;
-    int FontSize1;
-    int FontSize2;
+  const char *FontFamily;
+  int FontSize0;
+  int FontSize1;
+  int FontSize2;
 
-    const char *ApplicationFont0;
-    const char *ApplicationFont1;
-    const char *ApplicationFont2;
+  const char *ApplicationFont0;
+  const char *ApplicationFont1;
+  const char *ApplicationFont2;
     
-    vtkSlicerCheckRadioButtonIcons *CheckRadioIcons;
+  vtkSlicerCheckRadioButtonIcons *CheckRadioIcons;
     
- private:
-    vtkSlicerTheme (const vtkSlicerTheme& ); // Not implemented
-    void operator = (const vtkSlicerTheme& ); // Not implemented
+  private:
+  vtkSlicerTheme (const vtkSlicerTheme& ); // Not implemented
+  void operator = (const vtkSlicerTheme& ); // Not implemented
     
 };
 #endif

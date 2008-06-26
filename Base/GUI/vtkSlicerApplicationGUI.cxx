@@ -58,7 +58,6 @@ a
 #include "vtkSlicerModuleNavigator.h"
 #include "vtkSlicerGUILayout.h"
 #include "vtkSlicerTheme.h"
-#include "vtkSlicerFont.h"
 #include "vtkSlicerColor.h"
 #include "vtkSlicerMRMLSaveDataWidget.h"
 #include "vtkSlicerApplicationSettingsInterface.h"
@@ -1046,13 +1045,8 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   this->MainSlicerWindow->GetTclInteractor()->SetApplication(app);
   this->MainSlicerWindow->GetTclInteractor()->Create();
 
-  // TODO: it would be nice to make this a menu option on the tkcon itself,
-  // but for now just up the font size
-
   this->MainSlicerWindow->Create ( );        
             
-//            app->GetTclInteractor()->SetFont("Courier 12");
-
   // configure initial GUI layout
   geom->InitializeMainSlicerWindowSize ( );
   geom->ConfigureMainSlicerWindowPanels ( );
@@ -1194,47 +1188,6 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   // View Menu
   //
 
-  this->MainSlicerWindow->GetViewMenu()->InsertCascade( 2, "Font size",  this->MainSlicerWindow->GetFontSizeMenu());
-  int zz;
-  const char *size;
-  vtkSlicerFont *f = app->GetSlicerTheme()->GetSlicerFonts();
-  int rindex;
-  for ( zz = 0; zz < f->GetNumberOfFontSizes(); zz++ )
-    {
-    size = f->GetFontSize( zz );
-    this->MainSlicerWindow->GetFontSizeMenu()->AddRadioButton ( size, NULL, "$::slicer3::ApplicationGUI SetApplicationFontSize");
-    rindex = this->MainSlicerWindow->GetFontSizeMenu()->GetIndexOfItem ( size );
-    this->MainSlicerWindow->GetFontSizeMenu()->SetItemSelectedValue ( rindex, size );
-    //-- initialize interface to match application settings
-    if ( ! (strcmp (app->GetApplicationFontSize(), size )))
-      {
-      this->MainSlicerWindow->GetFontSizeMenu()->SetItemSelectedState ( rindex, 1 );
-      }
-    else
-      {
-      this->MainSlicerWindow->GetFontSizeMenu()->SetItemSelectedState ( rindex, 0 );
-      }
-    }
-            
-  this->MainSlicerWindow->GetViewMenu()->InsertCascade( 2, "Font family",  this->MainSlicerWindow->GetFontFamilyMenu());
-  const char *font;
-  for ( zz = 0; zz < f->GetNumberOfFontFamilies(); zz++ )
-    {
-    font = f->GetFontFamily ( zz );
-    this->MainSlicerWindow->GetFontFamilyMenu()->AddRadioButton ( font, NULL, "$::slicer3::ApplicationGUI SetApplicationFontFamily");
-    rindex = this->MainSlicerWindow->GetFontFamilyMenu()->GetIndexOfItem ( font );
-    this->MainSlicerWindow->GetFontFamilyMenu()->SetItemSelectedValue ( rindex, font );
-    //-- initialize interface to match application settings
-    if ( ! (strcmp (app->GetApplicationFontFamily( ), font )))
-      {
-      this->MainSlicerWindow->GetFontFamilyMenu()->SetItemSelectedState ( rindex, 1 );
-      }
-    else
-      {
-      this->MainSlicerWindow->GetFontFamilyMenu()->SetItemSelectedState ( rindex, 0 );
-      }
-    }
-
   this->GetMainSlicerWindow()->GetViewMenu()->InsertCommand (
                                                              this->GetMainSlicerWindow()->GetViewMenuInsertPosition(),
                                                              "Cache & Remote I/O Manager", NULL, "$::slicer3::RemoteIOGUI DisplayManagerWindow");
@@ -1274,144 +1227,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   }
 }
 
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::SetApplicationFontFamily ( )
-{
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
-  if ( app )
-    {
-    vtkSlicerTheme *theme = app->GetSlicerTheme();
-    if ( theme )
-      {
-      vtkSlicerFont *font = theme->GetSlicerFonts();
-      if ( font )
-        {
-        vtkKWMenu *m = this->GetMainSlicerWindow()->GetFontFamilyMenu();
-
-        const char *val;
-        // what's the selected family?
-        for ( int i=0; i < m->GetNumberOfItems(); i++ )
-          {
-          val = m->GetItemSelectedValue ( i );
-          if ( m->GetItemSelectedState ( i ))
-            {
-            // i guess we found it check to see if m has a valid value:        
-            if ( font->IsValidFontFamily ( val ) )
-              {
-              // save the change, and update the font
-              theme->SetFontFamily ( val );
-              app->SetApplicationFontFamily (val );
-              app->Script ( "font configure %s -family %s", theme->GetApplicationFont2(), val);
-              app->Script ( "font configure %s -family %s", theme->GetApplicationFont1(), val);
-              app->Script ( "font configure %s -family %s", theme->GetApplicationFont0(), val);
-              //--- and handle GUI widgets who aren't captured by the theme
-              this->GetApplicationToolbar()->ReconfigureGUIFonts();
-              this->GetViewControlGUI()->ReconfigureGUIFonts();
-              this->GetMainSlicerWindow()->GetApplicationSettingsInterface()->Update();
-              }
-            break;
-            }
-          }
-        
-        }
-      }
-    }
-}
-    
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::SetApplicationFontSize ( )
-{
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
-  if ( app )
-    {
-    vtkSlicerTheme *theme = app->GetSlicerTheme();
-    if (theme)
-      {
-      vtkSlicerFont *font = theme->GetSlicerFonts();
-      if ( font)
-        {
-        vtkKWMenu *m = this->GetMainSlicerWindow()->GetFontSizeMenu();
-        
-        const char *val;
-        int f2, f1, f0;
-        // what's the selected family?
-        for ( int i=0; i < m->GetNumberOfItems(); i++ )
-          {
-          val = m->GetItemSelectedValue( i );
-          if ( m->GetItemSelectedState ( i ))
-            {
-            // check to see if m has a valid value:
-            if ( font->IsValidFontSize ( val) )
-              {
-              f2 = font->GetFontSize2( val );
-              f1 = font->GetFontSize1( val );
-              f0 = font->GetFontSize0( val );
-              app->SetApplicationFontSize ( val );
-              app->Script ( "font configure %s -size %d", theme->GetApplicationFont2(), f2);
-              app->Script ( "font configure %s -size %d", theme->GetApplicationFont1(), f1);
-              app->Script ( "font configure %s -size %d", theme->GetApplicationFont0(), f0);
-              //--- and handle GUI widgets who aren't captured by the theme
-              this->GetApplicationToolbar()->ReconfigureGUIFonts();
-              this->GetViewControlGUI()->ReconfigureGUIFonts();
-              this->GetMainSlicerWindow()->GetApplicationSettingsInterface()->Update();
-              }
-            }
-          }
-        }
-      }
-    }
-}
-
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::UpdateFontSizeMenu()
-{
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
-  if ( app )
-    {
-    // check to see if menu matches the Application Settings interface.
-    // if so, do nothing.
-    // if not, update.
-    vtkKWMenu *m = this->GetMainSlicerWindow()->GetFontSizeMenu();
-    if ( m )
-      {
-      const char *size = app->GetApplicationFontSize ( );
-      if ( !( m->GetItemSelectedState ( size ) ))
-        {
-        m->SetItemSelectedState ( size, 1 );
-        }
-      }
-    }
-}
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::UpdateFontFamilyMenu()
-{
-  vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
-  if ( app )
-    {
-    // check to see if menu matches the Application Settings interface.
-    // if so, do nothing.
-    // if not, update.
-    vtkKWMenu *m = this->GetMainSlicerWindow()->GetFontFamilyMenu();
-    if ( m )
-      {
-      const char *font = app->GetApplicationFontFamily();
-      if (!( m->GetItemSelectedState ( font ) ))
-        {
-        m->SetItemSelectedState ( font, 1 );
-        }
-      }    
-    }
-}
-
-
+   
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::InitializeSlicesControlGUI (  )

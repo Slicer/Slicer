@@ -36,7 +36,6 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->SlicerSettingsFrame = NULL;
   this->ConfirmDeleteCheckButton = NULL;
     
-  this->FontSettingsFrame = NULL;
   this->ModuleSettingsFrame = NULL;
   this->ModulePathsPresetSelector = NULL;
   this->ModuleCachePathButton = NULL;
@@ -49,6 +48,8 @@ vtkSlicerApplicationSettingsInterface::vtkSlicerApplicationSettingsInterface()
   this->LoadModulesCheckButton = NULL;
   this->LoadCommandLineModulesCheckButton = NULL;
   this->EnableDaemonCheckButton = NULL;
+
+  this->FontSettingsFrame = NULL;
   this->FontSizeButtons = NULL;
   this->FontFamilyButtons = NULL;
 
@@ -226,7 +227,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   vtkKWWidget *page;
   vtkKWFrame *frame;
 
-  int label_width = 20;
+  int label_width = 25;
 
   // --------------------------------------------------------------
   // Add a "Preferences" page
@@ -295,7 +296,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   this->BrowserSelectButton->SetParent(frame);
   this->BrowserSelectButton->Create();
   this->BrowserSelectButton->SetLabelText("Set Firefox browser:");
-  this->BrowserSelectButton->SetLabelWidth(15);
+  this->BrowserSelectButton->SetLabelWidth(label_width);
   this->BrowserSelectButton->GetWidget()->TrimPathFromFileNameOff();
   this->BrowserSelectButton->GetWidget()
     ->SetCommand(this, "BrowserSelectCallback");
@@ -321,7 +322,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   this->ZipSelectButton->SetParent(frame);
   this->ZipSelectButton->Create();
   this->ZipSelectButton->SetLabelText("Set zip executable:");
-  this->ZipSelectButton->SetLabelWidth(20);
+  this->ZipSelectButton->SetLabelWidth(label_width);
   this->ZipSelectButton->GetWidget()->TrimPathFromFileNameOff();
   this->ZipSelectButton->GetWidget()
     ->SetCommand(this, "ZipSelectCallback");
@@ -347,7 +348,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   this->UnzipSelectButton->SetParent(frame);
   this->UnzipSelectButton->Create();
   this->UnzipSelectButton->SetLabelText("Set unzip executable:");
-  this->UnzipSelectButton->SetLabelWidth(20);
+  this->UnzipSelectButton->SetLabelWidth(label_width);
   this->UnzipSelectButton->GetWidget()->TrimPathFromFileNameOff();
   this->UnzipSelectButton->GetWidget()
     ->SetCommand(this, "UnzipSelectCallback");
@@ -373,7 +374,7 @@ void vtkSlicerApplicationSettingsInterface::Create()
   this->RmSelectButton->SetParent(frame);
   this->RmSelectButton->Create();
   this->RmSelectButton->SetLabelText("Set file remove executable:");
-  this->RmSelectButton->SetLabelWidth(20);
+  this->RmSelectButton->SetLabelWidth(label_width);
   this->RmSelectButton->GetWidget()->TrimPathFromFileNameOff();
   this->RmSelectButton->GetWidget()
     ->SetCommand(this, "RmSelectCallback");
@@ -404,8 +405,6 @@ void vtkSlicerApplicationSettingsInterface::Create()
          << " -side top -anchor nw -fill x -padx 2 -pady 2 " << " -in "
          << page->GetWidgetName() << endl;
   frame = this->FontSettingsFrame->GetFrame();
-
-
 
   // --------------------------------------------------------------
   // Slicer interface settings : Font size?
@@ -453,16 +452,14 @@ void vtkSlicerApplicationSettingsInterface::Create()
   button->SetCommand ( this, "SetFontSizeCallback");
   button->SetVariableName ( this->FontSizeButtons->GetWidget(0)->GetVariableName());
 
+  // --------------------------------------------------------------
+  // Slicer interface settings : Font family?
+  
   vtkKWLabel *fontFamilyLabel = vtkKWLabel::New();
   fontFamilyLabel->SetParent ( scrollframe->GetFrame());
   fontFamilyLabel->Create();
   fontFamilyLabel->SetText ("Font family:");
-  //--- set selected value from application
 
-
-  // --------------------------------------------------------------
-  // Slicer interface settings : Font family?
-  
   if ( !this->FontFamilyButtons)
     {
     this->FontFamilyButtons = vtkKWRadioButtonSet::New();
@@ -846,7 +843,6 @@ void vtkSlicerApplicationSettingsInterface::SetFontFamilyCallback (  )
       if ( appGUI )
         {
         vtkSlicerToolbarGUI *tGUI = appGUI->GetApplicationToolbar();
-        appGUI->UpdateFontFamilyMenu();
         if ( tGUI )
           {
           app->GetApplicationGUI()->GetApplicationToolbar()->ReconfigureGUIFonts();
@@ -890,7 +886,6 @@ void vtkSlicerApplicationSettingsInterface::SetFontSizeCallback ( )
           vtkSlicerApplicationGUI* appGUI = app->GetApplicationGUI();
           if ( appGUI )
             {
-            appGUI->UpdateFontSizeMenu();
             vtkSlicerToolbarGUI *tGUI = appGUI->GetApplicationToolbar();
             if ( tGUI )
               {

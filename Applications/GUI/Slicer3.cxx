@@ -826,15 +826,7 @@ int Slicer3_main(int argc, char *argv[])
   appGUI->SetAndObserveMRMLSceneEvents ( scene, appGUIEvents );
   appGUIEvents->Delete();
 
-  // set fonts from registry before building GUI...
-  /*
-    if ( appGUI->GetMainSlicerWindow()->GetApplicationSettingsInterface() )
-    {
-    slicerApp->GetSlicerTheme()->InstallFonts();
-    }
-  */
   slicerApp->SaveUserInterfaceGeometryOn();
-
 
   // Create Remote I/O and Cache handling mechanisms
   // and configure them using Application registry values

@@ -10,47 +10,34 @@ vtkCxxRevisionMacro ( vtkSlicerFont, "$Revision: 1.0 $" );
 //---------------------------------------------------------------------------
 vtkSlicerFont::vtkSlicerFont ( ) {
 
-    this->FontFamilies.push_back ( "Arial" );
-    this->FontFamilies.push_back ( "Helvetica" );
-    this->FontFamilies.push_back ( "Verdana" );
-    this->NumberOfFontFamilies = this->FontFamilies.size();;
+  this->FontFamilies.push_back ( "Arial" );
+  this->FontFamilies.push_back ( "Helvetica" );
+  this->FontFamilies.push_back ( "Verdana" );
     
-    this->FontSizes.push_back ("small");
-    this->FontSizes.push_back ("medium");
-    this->FontSizes.push_back ("large");
-    this->FontSizes.push_back("largest");
-    this->NumberOfFontSizes = this->FontSizes.size();
+  this->FontSizes.push_back ("small");
+  this->FontSizes.push_back ("medium");
+  this->FontSizes.push_back ("large");
+  this->FontSizes.push_back("largest");
 
-    //--- GUI uses three font sizes per category above.
-    //--- TODO: make this nicer 
-    this->FontSizeSmall0 = 5;
-    this->FontSizeSmall1 = 6;
-    this->FontSizeSmall2 = 8;
-    this->FontSizeMedium0 = 7;
-    this->FontSizeMedium1 = 8;
-    this->FontSizeMedium2 = 10;
-    this->FontSizeLarge0 = 9;
-    this->FontSizeLarge1 = 10;
-    this->FontSizeLarge2 = 12;
-    this->FontSizeLargest0 = 11;
-    this->FontSizeLargest1 = 12;
-    this->FontSizeLargest2 = 14;
-
-  // legacy...
-    this->AdobeHelvetica12 = "-Adobe-Helvetica-Bold-R-Normal-*-12-*-*-*-*-*-*-*";
-    this->AdobeHelvetica10 = "-Adobe-Helvetica-Bold-R-Normal-*-10-*-*-*-*-*-*-*";
-    this->AdobeHelvetica8 = "-Adobe-Helvetica-Bold-R-Normal-*-8-*-*-*-*-*-*-*";
-    this->JustifyLeft = "left";
-    this->JustifyRight = "right";
-    this->JustifyCenter = "center";
-    this->JustifyFull = "full";
+  //--- GUI uses three font sizes per category above.
+  //--- TODO: make this nicer 
+  this->FontSizeSmall0 = 5;
+  this->FontSizeSmall1 = 6;
+  this->FontSizeSmall2 = 8;
+  this->FontSizeMedium0 = 7;
+  this->FontSizeMedium1 = 8;
+  this->FontSizeMedium2 = 10;
+  this->FontSizeLarge0 = 9;
+  this->FontSizeLarge1 = 10;
+  this->FontSizeLarge2 = 12;
+  this->FontSizeLargest0 = 11;
+  this->FontSizeLargest1 = 12;
+  this->FontSizeLargest2 = 14;
 }
-
 
 //---------------------------------------------------------------------------
 int vtkSlicerFont::GetFontSize2 ( const char *size )
 {
-
   if ( !( strcmp (size, "small" ) ))
     {
     return ( this->FontSizeSmall2 );
@@ -128,20 +115,15 @@ int vtkSlicerFont::GetFontSize0 ( const char *size )
     }
 }
 
-
- 
 //---------------------------------------------------------------------------
 vtkSlicerFont::~vtkSlicerFont ( ) {
-    this->NumberOfFontFamilies = 0;
-    this->NumberOfFontSizes = 0;
 }
-
 
 //---------------------------------------------------------------------------
 int vtkSlicerFont::IsValidFontFamily( const char *str )
 {
   
-  for ( int i = 0; i < this->NumberOfFontFamilies; i++ )
+  for ( int i = 0; i < this->GetNumberOfFontFamilies(); i++ )
     {
     if ( !( strcmp (str, this->FontFamilies[i].c_str() ) ) )
       {
@@ -151,11 +133,10 @@ int vtkSlicerFont::IsValidFontFamily( const char *str )
   return 0;
 }
 
-
 //---------------------------------------------------------------------------
 int vtkSlicerFont::IsValidFontSize( const char *str )
 {
-  for ( int i = 0; i < this->NumberOfFontSizes; i++ )
+  for ( int i = 0; i < this->GetNumberOfFontSizes(); i++ )
     {
     if ( !( strcmp (str, this->FontSizes[i].c_str() ) ) )
       {
@@ -165,12 +146,23 @@ int vtkSlicerFont::IsValidFontSize( const char *str )
   return 0;
 }
 
-  
 //---------------------------------------------------------------------------
 char *vtkSlicerFont::GetFontAsFamily(char *fontstring)
 {
-    // parses out the font string and returns the css version of the family
-    return "Adobe,Helvetica,sans-serif";
+  // parses out the font string and returns the css version of the family
+  return "Adobe,Helvetica,sans-serif";
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerFont::GetNumberOfFontSizes()
+{
+  return this->FontSizes.size();
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerFont::GetNumberOfFontFamilies()
+{
+  return this->FontFamilies.size();
 }
 
 
