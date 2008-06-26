@@ -103,6 +103,11 @@ add_executable(${CLP} ${${CLP}_SOURCE})
 slicer3_set_plugins_output_path(${CLP})
 target_link_libraries (${CLP} ITKIO ITKBasicFilters ITKNumerics)
 
+add_library(${CLP}Lib SHARED ${${CLP}_SOURCE})
+set_target_properties (${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+slicer3_set_plugins_output_path(${CLP}Lib)
+target_link_libraries (${CLP}Lib ITKIO ITKBasicFilters ITKNumerics)
+
 #####################
 set (CLP BSplineDeformableRegistration)
 
