@@ -20,8 +20,6 @@
 #include "vtkKWPiecewiseFunctionEditor.h"
 #include "vtkKWProgressGauge.h"
 #include "vtkKWTkUtilities.h"
-#include "vtkKWTree.h"
-#include "vtkKWTreeWithScrollbars.h"
 #include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkMRMLVolumeRenderingNode.h"
 #include "vtkPiecewiseFunction.h"
