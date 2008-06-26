@@ -1586,6 +1586,25 @@ void vtkSlicerFiducialListWidget::RemoveFiducialObserversForList(vtkMRMLFiducial
     }
 
   vtkDebugMacro("Removing observers on fiducial list " << flist->GetID());
+  /*
+  vtkEventBroker *broker = vtkEventBroker::GetInstance();
+  if (broker == NULL)
+    {
+    vtkErrorMacro("RemoveFiducialObserversForList: can't get event broker to remove observations on " <<  (flist->GetName() == NULL ? "null" : flist->GetName()));
+    return;
+    }
+  
+  // watch for modified events from the list
+  broker->RemoveObservations(flist, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand);
+  // watch for a transform modified event from the list
+  broker->RemoveObservations(flist, vtkMRMLTransformableNode::TransformModifiedEvent, this, this->MRMLCallbackCommand);
+  // observe display changes so can update the representation
+  broker->RemoveObservations(flist, vtkMRMLFiducialListNode::DisplayModifiedEvent, this, this->MRMLCallbackCommand);
+  // fiducial point modified?
+  broker->RemoveObservations(flist, vtkMRMLFiducialListNode::FiducialModifiedEvent, this, this->MRMLCallbackCommand);
+  // fiducial list removed from scene?
+  broker->RemoveObservations(flist, vtkMRMLScene::NodeRemovedEvent, this, this->MRMLCallbackCommand);
+*/
   if (flist->HasObserver (vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 1)
     {
     flist->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
@@ -1886,6 +1905,24 @@ void vtkSlicerFiducialListWidget::AddObserversToFiducialList(vtkMRMLFiducialList
     vtkWarningMacro("AddObserversToFiducialList: null input list!");
     return;
     }
+  /*
+  vtkEventBroker *broker = vtkEventBroker::GetInstance();
+  if (broker == NULL)
+    {
+    vtkErrorMacro("AddObserversToFiducialList: can't get event broker to add observations on fiducial list named " << (flist->GetName() == NULL ? "null" : flist->GetName()));
+    return;
+    }
+  // watch for modified events from the list
+  broker->AddObservation(flist, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand);
+  // watch for a transform modified event from the list
+  broker->AddObservation(flist, vtkMRMLTransformableNode::TransformModifiedEvent, this, this->MRMLCallbackCommand);
+  // observe display changes so can update the representation
+  broker->AddObservation(flist, vtkMRMLFiducialListNode::DisplayModifiedEvent, this, this->MRMLCallbackCommand);
+  // fiducial point modified?
+  broker->AddObservation(flist, vtkMRMLFiducialListNode::FiducialModifiedEvent, this, this->MRMLCallbackCommand);
+  // fiducial list removed from scene?
+  broker->AddObservation(flist, vtkMRMLScene::NodeRemovedEvent, this, this->MRMLCallbackCommand);
+  */
   // watch for modified events from the list
   if (flist->HasObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand ) == 0)
     {
