@@ -671,7 +671,6 @@ void vtkSlicerViewControlGUI::UpdateFromMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::UpdateSceneSnapshotsFromMRML()
 {
-
   
   if (this->MRMLScene == NULL)
     {
@@ -1025,7 +1024,6 @@ void vtkSlicerViewControlGUI::ResetNavigationCamera ( )
 const char* vtkSlicerViewControlGUI::CreateSceneSnapshotNode( const char *nodeName)
 {
   vtkMRMLSceneSnapshotNode *node = NULL;
-  vtkMRMLSceneSnapshotNode *retNode = NULL;
   const char *id;
 
   node = vtkMRMLSceneSnapshotNode::SafeDownCast (this->MRMLScene->CreateNodeByClass( "vtkMRMLSceneSnapshotNode" ));
@@ -3491,8 +3489,14 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->VisibilityButton->SetImageToIcon ( this->SlicerViewControlIcons->GetVisibilityButtonIcon ( ) );
       this->VisibilityButton->SetBalloonHelpString ("Toggle visibility of elements in the 3D view." );
 
-      // TODO: why did i have to padx by 4 to get the grid to line up?
-      // this works on  win32; will it break on other platforms?
+      this->Script ("grid rowconfigure %s 0 -weight 0", frameM->GetWidgetName() );
+      this->Script ("grid rowconfigure %s 1 -weight 0", frameM->GetWidgetName() );
+      this->Script ("grid rowconfigure %s 2 -weight 0", frameM->GetWidgetName() );
+      this->Script ("grid columnconfigure %s 0 -weight 0", frameM->GetWidgetName() );
+      this->Script ("grid columnconfigure %s 1 -weight 0", frameM->GetWidgetName() );
+      this->Script ("grid columnconfigure %s 2 -weight 0", frameM->GetWidgetName() );
+      this->Script ("grid columnconfigure %s 3 -weight 0", frameM->GetWidgetName() );
+      this->Script ("grid columnconfigure %s 4 -weight 0", frameM->GetWidgetName() );
 
       this->Script ("grid %s -row 0 -column 0 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->PitchButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 0 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->RollButton->GetWidgetName ( ));
@@ -3508,7 +3512,7 @@ void vtkSlicerViewControlGUI::BuildGUI ( vtkKWFrame *appF )
 
       this->Script ("grid %s -row 0 -column 3 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->ZoomInButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 3 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->ZoomOutButton->GetWidgetName ( ));
-      this->Script ("grid %s -row 2 -column 3 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->StereoButton->GetWidgetName ( ));
+      this->Script ("grid %s -row 2 -column 3 -columnspan 2 -sticky w -padx 2 -pady 0 -ipadx 0 -ipady 0", this->StereoButton->GetWidgetName ( ));
       
       this->Script ("grid %s -row 0 -column 4 -sticky e -padx 4 -pady 0 -ipadx 0 -ipady 0", this->SpinButton->GetWidgetName ( ));
       this->Script ("grid %s -row 1 -column 4 -sticky e -padx 4 -pady 0 -ipadx 0 -ipady 0", this->RockButton->GetWidgetName ( ));
