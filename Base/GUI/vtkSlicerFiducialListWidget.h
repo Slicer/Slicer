@@ -161,9 +161,20 @@ protected:
   void RemoveFiducialObservers();
 
   // Description:
-  // Goes through the MRML scene and adds observers to fiducial lists, then
-  // updates the display properties from the mrml nodes. For each fiducial
-  // list node:
+  // Remove observers that this widget placed on the fiducial list
+  void RemoveFiducialObserversForList(vtkMRMLFiducialListNode *flist);
+
+  // Description:
+  // Add observers to a fiducial list
+  void AddObserversToFiducialList(vtkMRMLFiducialListNode *flist);
+
+  // Description:
+  // Goes through the MRML scene and for each fiducial
+  // list node, calls UpdateFiducialListFromMRML. Once done, requests a render.
+  void UpdateFiducialsFromMRML();
+
+  // Description:
+  // Adds observers to the fiducial list.
   // Check if the current symbol is 2d or 3d
   // if 3d:
   //   if don't have the entries in the maps for this list
@@ -211,7 +222,7 @@ protected:
   //     add observers to use my call back
   //     Add it to the DisplayedPointWidgets
   //  Update the point widget (sets visibility, position, enabled)
-  void UpdateFiducialsFromMRML();
+  void UpdateFiducialListFromMRML(vtkMRMLFiducialListNode *flist);
   
   // Description:
   // Sets actor properties for this point: transforms, position and scale and
