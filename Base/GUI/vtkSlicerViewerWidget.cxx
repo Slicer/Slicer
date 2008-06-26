@@ -697,8 +697,13 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         }
       if (updateModel) 
         {
+        //   this->Render();
         this->UpdateClipSlicesFormMRML();
+        //---WJPTEST
+        this->Render();
         this->UpdateModifiedModel(modelNode);
+        //---WJPTEST
+        this->Render();
         this->RequestRender( );
         }
       if (updateMRML)
@@ -1024,6 +1029,7 @@ void vtkSlicerViewerWidget::UpdateModelsFromMRML()
 //---------------------------------------------------------------------------
 void vtkSlicerViewerWidget::UpdateModifiedModel(vtkMRMLDisplayableNode *model)
 {
+
   this->UpdateModelHierarchyDisplay(model);
   this->UpdateModel(model);
   this->SetModelDisplayProperty(model);
@@ -1645,7 +1651,7 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
             }
           }
          //// }
-        actor->GetProperty()->SetBackfaceCulling(dnode->GetBackfaceCulling());
+//        actor->GetProperty()->SetBackfaceCulling(dnode->GetBackfaceCulling());
         actor->GetProperty()->SetColor(dnode->GetColor());
         actor->GetProperty()->SetOpacity(dnode->GetOpacity());
         actor->GetProperty()->SetAmbient(dnode->GetAmbient());
