@@ -1490,19 +1490,16 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   // --- Get a route to all SliceGUI's SliceNodes and SliceCompositeNodes in case of link
   //
   vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
-  vtkSlicerSlicesGUI *sgui;
-  vtkMRMLLayoutNode *layout;
+  vtkSlicerSlicesGUI *sgui = NULL;
+  vtkMRMLLayoutNode *layout = NULL;
   if (app)
     {
     sgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName("Slices"));
-    layout = app->GetApplicationGUI()->GetGUILayoutNode();
+    if (app->GetApplicationGUI())
+      {
+      layout = app->GetApplicationGUI()->GetGUILayoutNode();
+      }
     }
-  else
-    {
-    sgui = NULL;
-    layout = NULL;
-    }
-  
   
   //
   // --- Set the slice node to null if it no longer exists in the MRML scene.
