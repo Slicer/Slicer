@@ -1288,7 +1288,7 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     vtkKWFrame *popUpFrame1 = vtkKWFrame::New ( );
     popUpFrame1->SetParent( this->CompareViewBoxTopLevel );
     popUpFrame1->Create ( );
-    popUpFrame1->SetBinding ( "<Leave>", this, "HideCompareViewCustomLayoutFrame" );
+    //popUpFrame1->SetBinding ( "<Leave>", this, "HideCompareViewCustomLayoutFrame" );
     this->Script ( "pack %s -side left -anchor w -padx 2 -pady 2 -fill x -fill y -expand n", popUpFrame1->GetWidgetName ( ) );   
     this->CompareViewBoxRowEntry = vtkKWEntry::New ( );
     this->CompareViewBoxRowEntry->SetParent ( popUpFrame1 );
@@ -1308,16 +1308,28 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     //columnsLabel->SetParent ( popUpFrame1 );
     //columnsLabel->Create ( );
     //columnsLabel->SetText ( "Number of columns:" );
+
+    vtkKWFrame *f = vtkKWFrame::New();
+    f->SetParent ( popUpFrame1);
+    f->Create();
     this->CompareViewBoxApplyButton = vtkKWPushButton::New ( );
-    this->CompareViewBoxApplyButton->SetParent ( popUpFrame1 );
+    this->CompareViewBoxApplyButton->SetParent ( f );
     this->CompareViewBoxApplyButton->Create ( );
     this->CompareViewBoxApplyButton->SetText ("Apply");    
+    vtkKWPushButton *b = vtkKWPushButton::New();
+    b->SetParent ( f );
+    b->Create();
+    b->SetText ( "Cancel");
+    b->SetBinding ( "<Button-1>", this,  "HideCompareViewCustomLayoutFrame");
     this->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 8", rowsLabel->GetWidgetName());
     this->Script ( "grid %s -row 0 -column 1 -padx 6 -pady 8", this->CompareViewBoxRowEntry->GetWidgetName() );
     //this->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 8", columnsLabel->GetWidgetName());
     //this->Script ( "grid %s -row 1 -column 1 -padx 6 -pady 8", this->CompareViewBoxColumnEntry->GetWidgetName() );
-    this->Script ( "grid %s -row 2 -column 0 -columnspan 2 -pady 8", this->CompareViewBoxApplyButton->GetWidgetName() );
+    this->Script ( "grid %s -row 2 -column 0 -columnspan 2 -pady 8 -sticky ew", f->GetWidgetName() );
+    this->Script ( "pack %s %s -side left -padx 3 -anchor c", b->GetWidgetName(), this->CompareViewBoxApplyButton->GetWidgetName() );
     // delete temporary stuff
+    b->Delete();
+    f->Delete();
     rowsLabel->Delete();
     //columnsLabel->Delete();
     popUpFrame1->Delete();
