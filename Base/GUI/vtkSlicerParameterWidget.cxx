@@ -524,7 +524,6 @@ int vtkSlicerParameterWidget::CreateWidgets()
                 errorLabel->SetText(error.c_str());
                 errorLabel->SetBackgroundColor(1,0,0);
                 errorLabel->SetForegroundColor(1,1,1);
-                errorLabel->SetFont("times 8 bold");
                 app->Script( "pack %s -side top -anchor ne -padx 2 -pady 2",
                         errorLabel->GetWidgetName());
                 
