@@ -635,8 +635,18 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
 
   this->ProcessingMRMLEvent = event;
 
+  vtkMRMLFiducialListNode *callerList = vtkMRMLFiducialListNode::SafeDownCast(caller);
+  vtkMRMLFiducialListNode *callDataList =  NULL;
+  if (callData != NULL)
+    {
+    // safe down cast was causing a crash when moving a fiducial
+    //vtkMRMLFiducialListNode::SafeDownCast((vtkObjectBase *)callData);
+    callDataList = reinterpret_cast<vtkMRMLFiducialListNode *>(callData);
+    }
+  vtkMRMLScene *callScene = vtkMRMLScene::SafeDownCast(caller);
+
   // the scene was closed, don't get node removed events so clear up here
-  if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
+  if (callScene != NULL &&
       event == vtkMRMLScene::SceneCloseEvent)
     {
     vtkDebugMacro("ProcessMRMLEvents: got a scene close event");
@@ -649,18 +659,18 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
     }
 
   // if get a node remove event
-  else if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
+  else if (callScene != NULL &&
       event == vtkMRMLScene::NodeRemovedEvent &&
-      vtkMRMLFiducialListNode::SafeDownCast((vtkObjectBase *)callData) != NULL)
+      callDataList != NULL)
     {
-    vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast((vtkObjectBase *)callData);
+    vtkMRMLFiducialListNode *flist = callDataList;
     vtkDebugMacro("ProcessMRMLEvents: got a node removed event, fid list removed, size = " << flist->GetNumberOfFiducials());
     this->RemovePointWidgetsForList(flist);
     this->UpdateFromMRML();
     }
 
   // one fiducial was removed
-  else if (vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL &&
+  else if (callerList != NULL &&
       event == vtkMRMLScene::NodeRemovedEvent)
     {
     int pointNum = -1;
@@ -682,7 +692,7 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
     this->UpdateFromMRML();
     }
 
-  else if (vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL &&
+  else if (callerList != NULL &&
       event == vtkMRMLFiducialListNode::FiducialModifiedEvent)
     {
     vtkDebugMacro("ProcessMRMLEvents: got fiducial modified event");
@@ -699,9 +709,8 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
     if (pointID != NULL)
       {
       vtkDebugMacro("ProcessMRMLEvents: fiducial modified: calling update point widget with point id " << pointID << ", then update from mrml");
-      this->UpdatePointWidget(vtkMRMLFiducialListNode::SafeDownCast(caller), pointID);
-//      this->UpdateFiducialFromMRML(vtkMRMLFiducialListNode::SafeDownCast(caller),
-//      pointID);
+      this->UpdatePointWidget(callerList, pointID);
+//      this->UpdateFiducialFromMRML(callerList, pointID);
       this->UpdateFromMRML();
       }
     else
@@ -714,9 +723,9 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
   // if it's a general fid display or point modified event, or it's a modified
   // event on a fid list, update
   else if (event == vtkMRMLFiducialListNode::DisplayModifiedEvent ||
-      (vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL && event == vtkCommand::ModifiedEvent) ||
-      (vtkMRMLScene::SafeDownCast(caller) != NULL && 
-      (event == vtkMRMLScene::NodeAddedEvent && vtkMRMLFiducialListNode::SafeDownCast((vtkObjectBase *)callData) != NULL )) ) 
+      (callerList != NULL && event == vtkCommand::ModifiedEvent) ||
+      (callScene != NULL && 
+      (event == vtkMRMLScene::NodeAddedEvent && callDataList != NULL )) ) 
     {
     // could have finer grain control by calling remove fid props and then
     // update fids from mrml if necessary
@@ -726,7 +735,7 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
      
   // if the list transfrom was updated...
   else if (event == vtkMRMLTransformableNode::TransformModifiedEvent &&
-      (vtkMRMLFiducialListNode::SafeDownCast(caller) != NULL))
+      (callerList != NULL))
     {
     vtkDebugMacro("Got transform modified event, calling update from mrml");
     this->UpdateFromMRML();
