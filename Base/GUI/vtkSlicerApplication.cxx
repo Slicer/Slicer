@@ -1,4 +1,5 @@
 #include <sstream>
+#include <vtksys/stl/string>
 #include "vtkObjectFactory.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerGUICollection.h"
