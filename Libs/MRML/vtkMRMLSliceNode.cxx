@@ -303,7 +303,7 @@ void vtkMRMLSliceNode::SetSliceToRASByNTP (double Nx, double Ny, double Nz,
 void vtkMRMLSliceNode::UpdateMatrices()
 {
     double spacing[3];
-    unsigned int i, j;
+    unsigned int i;
     vtkMatrix4x4 *xyToSlice = vtkMatrix4x4::New();
     vtkMatrix4x4 *xyToRAS = vtkMatrix4x4::New();
 
