@@ -28,7 +28,7 @@ proc TestFiducialAdd { {renameFlag 1} {visibilityFlag 1} {numToAdd 20} } {
         # Note: May 16/08 w/o setting the visibility to 1 explictly, the 3d widgets don't show up, and this test runs much faster
         $fidList SetVisibility 1
     }
-    $fidList DisableModifiedEventOn
+    #$fidList DisableModifiedEventOn
     set r 0
     set a 0
     set s 0
@@ -63,8 +63,10 @@ proc TestFiducialAdd { {renameFlag 1} {visibilityFlag 1} {numToAdd 20} } {
         incr s
         set t1 $t2
     }
-    $fidList DisableModifiedEventOff
-    $fidList Modified
+    #$fidList DisableModifiedEventOff
+    #$fidList Modified
+    # changes have no one listening for a modified event, trigger a node added, but tcl doesn't expose the two arg invoke event
+    #$fidList InvokeEvent 66000 $fidList
 }
 time "TestFiducialAdd"
 

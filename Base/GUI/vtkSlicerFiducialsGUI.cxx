@@ -235,7 +235,7 @@ void vtkSlicerFiducialsGUI::RemoveGUIObservers ( )
     if (this->MRMLScene)
       {
       this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
-//    this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
+      this->MRMLScene->RemoveObservers(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
       this->MRMLScene->RemoveObservers(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
       }
 }
@@ -271,12 +271,10 @@ void vtkSlicerFiducialsGUI::AddGUIObservers ( )
         {
         this->MRMLScene->AddObserver(vtkMRMLScene::NodeRemovedEvent, (vtkCommand *)this->MRMLCallbackCommand);
         }
-      /*
       if (this->MRMLScene->HasObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
         {
         this->MRMLScene->AddObserver(vtkMRMLScene::NodeAddedEvent, (vtkCommand *)this->MRMLCallbackCommand);
         }
-      */
        if (this->MRMLScene->HasObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand) != 1)
         {
         this->MRMLScene->AddObserver(vtkMRMLScene::SceneCloseEvent, (vtkCommand *)this->MRMLCallbackCommand);
@@ -529,25 +527,7 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
         }
       }
     }
-  /*
-    // check for a node added event
-    if (vtkMRMLScene::SafeDownCast(caller) != NULL &&
-        vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
-        event == vtkMRMLScene::NodeAddedEvent)
-      {
-      vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessGUIEvents: got a node added event on scene");
-      // check to see if it was a fid node    
-      if (callData != NULL)
-        {
-        vtkMRMLNode *addNode = (vtkMRMLNode *)callData;
-        if (addNode != NULL &&
-            addNode->IsA("vtkMRMLFiducialListNode"))
-          {
-          vtkDebugMacro("A fid list node got added " << addNode->GetID());
-          }
-        }
-      }
-  */
+
     // did the selected node get modified?
     if (this->ApplicationLogic)
       {
@@ -574,12 +554,40 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
     vtkMRMLFiducialListNode *node = vtkMRMLFiducialListNode::SafeDownCast(caller);
     vtkMRMLFiducialListNode *activeFiducialListNode = (vtkMRMLFiducialListNode *)this->MRMLScene->GetNodeByID(this->GetFiducialListNodeID());
     
-    if (node == activeFiducialListNode && event == vtkCommand::ModifiedEvent)
+    // check for a node added event
+    if (//vtkMRMLScene::SafeDownCast(caller) != NULL &&
+        //vtkMRMLScene::SafeDownCast(caller) == this->MRMLScene &&
+        node != NULL &&
+        event == vtkMRMLScene::NodeAddedEvent)
       {
-      vtkDebugMacro("\tmodified event on the fiducial list node.\n");
-      if (node == NULL)
+      vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessGUIEvents: got a node added event on scene");
+      // check to see if it was a fid node    
+      if (callData != NULL)
         {
-        vtkDebugMacro("\tBUT: the node is null\n");
+        //vtkMRMLNode *addNode = (vtkMRMLNode *)callData;
+        vtkMRMLFiducialListNode *addNode = reinterpret_cast<vtkMRMLFiducialListNode*>(callData);
+        if (addNode != NULL &&
+            addNode->IsA("vtkMRMLFiducialListNode"))
+          {
+          vtkDebugMacro("Got a node added event on a fiducial list node " << addNode->GetID());
+          // is it the currently active one?
+          if (addNode == activeFiducialListNode)
+            {
+            SetGUIFromList(activeFiducialListNode);
+            return;
+            }
+          }
+        }
+      }
+
+    if (node == activeFiducialListNode)
+      {
+      if (event == vtkCommand::ModifiedEvent || event == vtkMRMLScene::NodeAddedEvent)
+        {
+        vtkDebugMacro("Modified or node added event on the fiducial list node.\n");
+         if (node == NULL)
+           {
+            vtkDebugMacro("\tBUT: the node is null\n");
         return;
         }
       vtkDebugMacro("ProcessMRMLEvents: \t\tUpdating the GUI\n");
@@ -587,7 +595,7 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
       SetGUIFromList(activeFiducialListNode);
       return;
       }
-    if (node == activeFiducialListNode && event == vtkMRMLFiducialListNode::FiducialModifiedEvent)
+    else if ( event == vtkMRMLFiducialListNode::FiducialModifiedEvent)
       {
       vtkDebugMacro("\tfiducial modified event on the active fiducial list.");
       if (node == NULL)
@@ -599,10 +607,12 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
       return;
       }
     
-    if (node == activeFiducialListNode && event == vtkMRMLFiducialListNode::DisplayModifiedEvent)
+      else if (event == vtkMRMLFiducialListNode::DisplayModifiedEvent)
       {
       vtkDebugMacro("vtkSlicerFiducialsGUI::ProcessMRMLEvents: DisplayModified event on the fiducial list node...\n");
       }
+      } // end of events on the active fiducial list node
+
     if (node == vtkMRMLFiducialListNode::SafeDownCast(this->FiducialListSelectorWidget->GetSelected()) && event == vtkCommand::ModifiedEvent)
       {
       vtkDebugMacro("\tmodified event on the fiducial list selected node.\n");
@@ -1444,6 +1454,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
       events->InsertNextValue(vtkCommand::ModifiedEvent);
       events->InsertNextValue(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       events->InsertNextValue(vtkMRMLFiducialListNode::FiducialModifiedEvent);
+      events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
       vtkSetAndObserveMRMLNodeEventsMacro(this->FiducialListNode, fidlist, events);
       events->Delete();
 
