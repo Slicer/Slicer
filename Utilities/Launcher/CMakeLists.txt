@@ -47,11 +47,9 @@ install(PROGRAMS "${launcher_binary}" DESTINATION ".")
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"
-  "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/slicer3.ico"
+  "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/Resources/slicer3.ico"
   COPYONLY)
 install(
-  FILES "${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/slicer3.ico"
-  DESTINATION ${Slicer3_INSTALL_SHARE_DIR}
+  FILES "${CMAKE_CURRENT_SOURCE_DIR}/3DSlicerLogoICOimages/slicer3.ico"
+  DESTINATION ${Slicer3_INSTALL_SHARE_DIR}/Resources
   )
-
-

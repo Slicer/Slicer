@@ -102,6 +102,8 @@ include(${SLICERLIBCURL_USE_FILE})
 # Include dirs
 #
 set(dir_list
+  ${Slicer3_SOURCE_DIR}
+  ${Slicer3_BINARY_DIR}
   ${Slicer3_Libs_INCLUDE_DIRS}
   ${Slicer3_Base_INCLUDE_DIRS}
   ${NAVITRACK_INC}
