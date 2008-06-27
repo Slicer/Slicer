@@ -3,26 +3,25 @@
 
 #include "vtkSlicerMRMLTreeWidget.h"
 
-#include "vtkKWFrameWithLabel.h"
-#include "vtkKWMenu.h"
 #include "vtkKWEntry.h"
-#include "vtkKWTree.h"
-#include "vtkKWMenuButton.h"
-#include "vtkKWLabel.h"
-#include "vtkKWIcon.h"
-#include "vtkKWTkUtilities.h"
 #include "vtkKWEntryWithLabel.h"
+#include "vtkKWFrameWithLabel.h"
+#include "vtkKWIcon.h"
+#include "vtkKWLabel.h"
 #include "vtkKWLabelWithLabel.h"
-
-#include "vtkMRMLTransformNode.h"
-#include "vtkMRMLLinearTransformNode.h"
-#include "vtkMRMLTransformableNode.h"
+#include "vtkKWMenu.h"
+#include "vtkKWMenuButton.h"
+#include "vtkKWTkUtilities.h"
+#include "vtkKWTree.h"
 #include "vtkKWTreeWithScrollbars.h"
 
-
 #include "vtkMRMLDisplayableNode.h"
+#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLTransformableNode.h"
 #include "vtkMRMLVolumeNode.h"
+
 #include "vtkMatrix4x4.h"
 
 //---------------------------------------------------------------------------
@@ -485,6 +484,7 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
   this->TreeWidget->SetParent ( frame->GetFrame() );
   this->TreeWidget->VerticalScrollbarVisibilityOn();
   this->TreeWidget->HorizontalScrollbarVisibilityOff();
+  this->TreeWidget->ResizeButtonsVisibilityOn();
   
   this->TreeWidget->Create ( );
   this->TreeWidget->SetBalloonHelpString("MRML Tree");
