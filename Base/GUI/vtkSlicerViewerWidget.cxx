@@ -700,10 +700,10 @@ void vtkSlicerViewerWidget::ProcessMRMLEvents ( vtkObject *caller,
         //   this->Render();
         this->UpdateClipSlicesFormMRML();
         //---WJPTEST
-        this->Render();
+//        this->Render();
         this->UpdateModifiedModel(modelNode);
         //---WJPTEST
-        this->Render();
+//        this->Render();
         this->RequestRender( );
         }
       if (updateMRML)
