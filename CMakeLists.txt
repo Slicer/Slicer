@@ -388,11 +388,15 @@ configure_file(${Slicer3_SOURCE_DIR}/CTestCustom.cmake.in
 #
 include(${Slicer3_SOURCE_DIR}/GenerateSlicer3Config.cmake)
 
+configure_file(${Slicer3_SOURCE_DIR}/CTestConfig.cmake
+  ${Slicer3_BINARY_DIR}/${Slicer3_INSTALL_LIB_DIR}/CTestConfig.cmake COPYONLY IMMEDIATE)
+
 configure_file(${Slicer3_SOURCE_DIR}/UseSlicer3.cmake.in
   ${Slicer3_BINARY_DIR}/UseSlicer3.cmake COPYONLY IMMEDIATE)
 
 install(FILES
   #   ${Slicer3_BINARY_DIR}/Slicer3BuildSettings.cmake
+  ${Slicer3_SOURCE_DIR}/CTestConfig.cmake
   ${Slicer3_BINARY_DIR}/UseSlicer3.cmake
   ${Slicer3_BINARY_DIR}/Utilities/Slicer3Config.cmake
   DESTINATION ${Slicer3_INSTALL_LIB_DIR}
