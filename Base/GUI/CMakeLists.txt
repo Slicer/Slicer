@@ -215,6 +215,20 @@ install(
   DESTINATION ${Slicer3_INSTALL_LIB_DIR}/${PROJECT_NAME}/Tcl
   )
 
+file(GLOB PNGFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Resources/*.png")
+foreach(pngfile ${PNGFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${pngfile}
+    ${CMAKE_BINARY_DIR}/${Slicer3_INSTALL_SHARE_DIR}/${PROJECT_NAME}/${pngfile}
+    COPYONLY
+    )
+endforeach(pngfile)
+
+install(
+  FILES ${PNGFILES}
+  DESTINATION ${Slicer3_INSTALL_SHARE_DIR}/${PROJECT_NAME}/Resources
+  )
+
 # --------------------------------------------------------------------------
 # Python support
 

@@ -739,28 +739,28 @@ int Slicer3_main(int argc, char *argv[])
   // copy the image from the header file into memory
 
   unsigned char *buffer = 
-    new unsigned char [image_S3SplashScreen_length];
+    new unsigned char [image_SlicerSplashScreen_length];
 
   unsigned int i;
   unsigned char *curPos = buffer;
-  for (i = 0; i < image_S3SplashScreen_nb_sections; i++)
+  for (i = 0; i < image_SlicerSplashScreen_nb_sections; i++)
     {
-    size_t len = strlen((const char*)image_S3SplashScreen_sections[i]);
-    memcpy(curPos, image_S3SplashScreen_sections[i], len);
+    size_t len = strlen((const char*)image_SlicerSplashScreen_sections[i]);
+    memcpy(curPos, image_SlicerSplashScreen_sections[i], len);
     curPos += len;
     }
 
   vtkKWTkUtilities::UpdatePhoto(
     slicerApp->GetMainInterp(),
-    "S3SplashScreen", 
+    "SlicerSplashScreen", 
     buffer, 
-    image_S3SplashScreen_width, 
-    image_S3SplashScreen_height,
-    image_S3SplashScreen_pixel_size,
-    image_S3SplashScreen_length);
+    image_SlicerSplashScreen_width, 
+    image_SlicerSplashScreen_height,
+    image_SlicerSplashScreen_pixel_size,
+    image_SlicerSplashScreen_length);
   delete [] buffer; 
 
-  slicerApp->GetSplashScreen()->SetImageName("S3SplashScreen");
+  slicerApp->GetSplashScreen()->SetImageName("SlicerSplashScreen");
   if ( NoSplash )
     {
     slicerApp->SetUseSplashScreen(0);

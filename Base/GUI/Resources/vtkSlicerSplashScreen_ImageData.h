@@ -1,14 +1,14 @@
 /* 
  * Resource generated for file:
- *    S3SplashScreen.png (zlib, base64) (image file)
+ *    SlicerSplashScreen.png (zlib, base64) (image file)
  */
-static const unsigned int  image_S3SplashScreen_width          = 595;
-static const unsigned int  image_S3SplashScreen_height         = 398;
-static const unsigned int  image_S3SplashScreen_pixel_size     = 4;
-static const unsigned long image_S3SplashScreen_length         = 43024;
-static const unsigned long image_S3SplashScreen_decoded_length = 947240;
+static const unsigned int  image_SlicerSplashScreen_width          = 595;
+static const unsigned int  image_SlicerSplashScreen_height         = 398;
+static const unsigned int  image_SlicerSplashScreen_pixel_size     = 4;
+static const unsigned long image_SlicerSplashScreen_length         = 43024;
+static const unsigned long image_SlicerSplashScreen_decoded_length = 947240;
 
-static const unsigned char image_S3SplashScreen_section_1[] = 
+static const unsigned char image_SlicerSplashScreen_section_1[] = 
   "eNrtvX+MpdlZ52dZ0axis39kyCYrCD8EBBEggoDkwWFh8QTGy2S8eFYDZrxOL6wnthl7xm"
   "jwmAA24scQkcaewE7H2CPTu9uRB6kNQ7ZjF3Lb9MbtUGQrq1q22a0/ykuzarGtqBElbSUp"
   "lF5NV+pzbj23nnvuOec976/7o+r7lR7dqnvf973vz3M+93me85zDQ0mSJEmSJEmSJEmSJE"
@@ -478,7 +478,7 @@ static const unsigned char image_S3SplashScreen_section_1[] =
   "cZRYSpLEUmKp1eCpMfOmuuaj33EsVaqPXp+T3i2PiuWY4445Y+AQ3iuN+fP1FCwGCINRz3"
   "PCU+m66lmLuIftGUdZflaWkypYKfY7peJ3xTjedj0/1fqi8rlRw+dHtc6RGnjcnsbuSZIk";
 
-static const unsigned char image_S3SplashScreen_section_2[] = 
+static const unsigned char image_SlicerSplashScreen_section_2[] = 
   "lpJ/aqxaCSmWKvFU95hfvr4nyzInyyQ/ajN8lsxPz3LVCU95/9R8zao6tjKOwszv1c968F"
   "PRD7XTmBOVyosqx/RqOerOUmsfLIqjxFKSJJYSS4mlmniK+yjPUkPH/OZ9VCxHnpHF0fi8"
   "lE+VG/dnzOH9U2wjxy6zfHUyPpDtnHDUdjvfVsRNJXYq5kG1jOO1z4tqkWM+QN2DVvU4Fd"
@@ -627,10 +627,10 @@ static const unsigned char image_S3SplashScreen_section_2[] =
   "Uc1ZWlPEfFPJXyUVn9BJlMJpPJZLJ1NovrTRmnA0v5vKmibyrmKcdVZrZPc/snk8lkMplM"
   "tiBL8VKSTQ7SJkmSJEmSJEmSJEmSJEnL1P8PGBbn9g==";
 
-static const unsigned char *image_S3SplashScreen_sections[2] = {
-  image_S3SplashScreen_section_1,
-  image_S3SplashScreen_section_2
+static const unsigned char *image_SlicerSplashScreen_sections[2] = {
+  image_SlicerSplashScreen_section_1,
+  image_SlicerSplashScreen_section_2
 };
 
-static const unsigned int image_S3SplashScreen_nb_sections = 2;
+static const unsigned int image_SlicerSplashScreen_nb_sections = 2;
 
