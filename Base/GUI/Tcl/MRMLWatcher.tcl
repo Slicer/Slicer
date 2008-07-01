@@ -104,9 +104,13 @@ itcl::body MRMLWatcher::refresh {} {
   set nNodes [$scene GetNumberOfNodes]
   for {set i 0} {$i < $nNodes} {incr i} {
     set node [$scene GetNthNode $i]
-    set id [$node GetID]
-    set name [$node GetName]
-    set ::${arrayName}(id,$id) $node
-    set ::${arrayName}($name) $node
+    if { ![catch "$node GetID" id] } {
+      # if the node has an id, set it in array
+      # (here we are catching the error where the node 
+      #  is not properly registered with the tcl interp)
+      set name [$node GetName]
+      set ::${arrayName}(id,$id) $node
+      set ::${arrayName}($name) $node
+    }
   }
 }
