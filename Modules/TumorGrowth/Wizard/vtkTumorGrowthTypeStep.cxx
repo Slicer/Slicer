@@ -15,6 +15,7 @@
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkKWProgressGauge.h"
+#include "vtkSlicerSlicesControlGUI.h"
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkTumorGrowthTypeStep);

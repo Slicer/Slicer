@@ -64,6 +64,7 @@ a
 #include "vtkSlicerSliceControllerWidget.h"
 #include "vtkSlicerViewerInteractorStyle.h"
 #include "vtkSlicerSlicesGUI.h"
+#include "vtkSlicerSlicesControlGUI.h"
 
 #include "vtkSlicerFiducialListWidget.h"
 #include "vtkMRMLScene.h"

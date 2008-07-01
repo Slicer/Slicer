@@ -10,6 +10,7 @@
 #include "vtkKWPushButton.h"
 #include "vtkKWLabel.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
+#include "vtkSlicerSlicesControlGUI.h"
 #include "vtkKWMessageDialog.h"
 #include "vtkImageRectangularSource.h"
 #include "vtkSlicerApplication.h"

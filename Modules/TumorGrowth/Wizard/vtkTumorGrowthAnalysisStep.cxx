@@ -14,6 +14,7 @@
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkTumorGrowthLogic.h"
 #include "vtkSlicerSliceControllerWidget.h"
+#include "vtkSlicerSlicesControlGUI.h"
 #include "vtkKWCheckButton.h"
 #include "vtkSlicerApplication.h"
 #include "vtkKWPushButton.h"

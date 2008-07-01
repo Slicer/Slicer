@@ -11,6 +11,7 @@
 #include "vtkKWEntry.h"
 #include "vtkTumorGrowthLogic.h"
 #include "vtkSlicerApplicationGUI.h"
+#include "vtkSlicerSlicesControlGUI.h"
 #include "vtkSlicerSliceControllerWidget.h"
 #include "vtkKWScale.h"
 #include "vtkImageAccumulate.h"
