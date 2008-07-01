@@ -358,6 +358,7 @@ void vtkMRMLScene::Clear(int removeSingletons)
   if (!removeSingletons)
     {
     this->RemoveAllNodesExceptSingletons();
+    this->ClearReferencedNodeID();
     this->InvokeEvent(this->SceneCloseEvent, NULL);
     this->ResetNodes();
     }
@@ -385,12 +386,17 @@ void vtkMRMLScene::RemoveAllNodesExceptSingletons()
   vtkMRMLNode *node;
   this->InitTraversal();
   std::vector<vtkMRMLNode *> removeNodes;
+  std::vector< vtkMRMLNode* > referencingNodes;
   node = this->GetNextNode();
   while(node)
     {
     if (node->GetSingletonTag() == NULL)
       {
       removeNodes.push_back(node);
+      }
+    else
+      {
+      referencingNodes.push_back(node);
       }
     node = this->GetNextNode();
     }
@@ -403,6 +409,8 @@ void vtkMRMLScene::RemoveAllNodesExceptSingletons()
       //this->InvokeEvent(this->NodeRemovedEvent,node);
       //node->UnRegister(this);
       }
+ 
+  this->ReferencingNodes = referencingNodes;
 }
 
 //------------------------------------------------------------------------------
@@ -598,7 +606,10 @@ int vtkMRMLScene::Import()
 
       node = (vtkMRMLNode *)scene->GetItemAsObject(n);
       nodesAddedByClass[std::string(node->GetClassName())] = node;
-      node->UpdateScene(this);
+      if (node->GetAddToScene())
+        {
+        node->UpdateScene(this);
+        }
       }
    
     // send one NodeAddedEvent event per class

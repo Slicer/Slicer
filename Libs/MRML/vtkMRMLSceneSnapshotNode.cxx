@@ -112,7 +112,7 @@ void vtkMRMLSceneSnapshotNode::ProcessChildNode(vtkMRMLNode *node)
   node->SetAddToScene(0);
   if (this->Nodes == NULL)
     {
-    this->Nodes = vtkCollection::New();
+    this->Nodes = vtkMRMLScene::New();
     }  
   this->Nodes->vtkCollection::AddItem((vtkObject *)node);
 }
@@ -127,7 +127,7 @@ void vtkMRMLSceneSnapshotNode::Copy(vtkMRMLNode *anode)
 
   if (this->Nodes == NULL)
     {
-    this->Nodes = vtkCollection::New();
+    this->Nodes = vtkMRMLScene::New();
     }
   else
     {
@@ -152,6 +152,35 @@ void vtkMRMLSceneSnapshotNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
+
+void vtkMRMLSceneSnapshotNode::UpdateSnapshotScene(vtkMRMLScene *)
+{
+  if (this->Scene == NULL)
+    {
+    return;
+    }
+
+  if (this->Nodes == NULL)
+    {
+    return;
+    }
+
+  unsigned int nnodesSanpshot = this->Nodes->GetNumberOfItems();
+  unsigned int n;
+  vtkMRMLNode *node = NULL;
+
+  // update nodes in the snapshot
+  for (n=0; n<nnodesSanpshot; n++) 
+    {
+    node  = dynamic_cast < vtkMRMLNode *>(this->Nodes->GetItemAsObject(n));
+    if (node) 
+      {
+      node->UpdateScene(this->Nodes);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSceneSnapshotNode::StoreScene()
 {
   if (this->Scene == NULL)
@@ -161,7 +190,7 @@ void vtkMRMLSceneSnapshotNode::StoreScene()
 
   if (this->Nodes == NULL)
     {
-    this->Nodes = vtkCollection::New();
+    this->Nodes = vtkMRMLScene::New();
     }
   else
     {
@@ -244,15 +273,37 @@ void vtkMRMLSceneSnapshotNode::RestoreScene()
         }
       else 
         {
-        node->SetAddToScene(1);
         this->Scene->AddNodeNoNotify(node);
         addedNodes.push_back(node);
         }
+      // to prevent reading data on UpdateScene()
+      node->SetAddToScene(0);
       }
     }
+
+  // update all nodes in the scene
+  nnodesScene = this->Scene->GetNumberOfNodes();
+  for (n=0; n<nnodesScene; n++) 
+    {
+    node = this->Scene->GetNthNode(n);
+    node->UpdateScene(this->Scene);
+    }
+ 
+  // reset AddToScene
+  for (n=0; n < nnodesSanpshot; n++) 
+    {
+    node = (vtkMRMLNode*)this->Nodes->GetItemAsObject(n);
+    if (node)
+      {
+      node->SetDisableModifiedEvent(1);
+      node->SetAddToScene(1);
+      node->SetDisableModifiedEvent(0);
+      }
+    }
+
   for(n=0; n<addedNodes.size(); n++)
     {
-    addedNodes[n]->UpdateScene(this->Scene);
+    //addedNodes[n]->UpdateScene(this->Scene);
     this->Scene->InvokeEvent(vtkMRMLScene::NodeAddedEvent, addedNodes[n] );
     }
 

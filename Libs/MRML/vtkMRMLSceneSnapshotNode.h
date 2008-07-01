@@ -51,6 +51,14 @@ class VTK_MRML_EXPORT vtkMRMLSceneSnapshotNode : public vtkMRMLNode
   virtual const char* GetNodeTagName() {return "SceneSnapshot";};
 
   // Description:
+  // Updates scene nodes 
+  virtual void UpdateScene(vtkMRMLScene *) {};
+
+  // Description:
+  // Updates internal nodes 
+  virtual void UpdateSnapshotScene(vtkMRMLScene *);
+
+  // Description:
   // Set dependencies between this node and a child node
   // when parsing XML file
   virtual void ProcessChildNode(vtkMRMLNode *node);
@@ -70,7 +78,7 @@ protected:
   void operator=(const vtkMRMLSceneSnapshotNode&);
 
 
-  vtkCollection* Nodes;
+  vtkMRMLScene* Nodes;
 
 };
 
