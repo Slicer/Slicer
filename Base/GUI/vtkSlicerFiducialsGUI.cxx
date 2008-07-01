@@ -582,9 +582,9 @@ void vtkSlicerFiducialsGUI::ProcessMRMLEvents ( vtkObject *caller,
 
     if (node == activeFiducialListNode)
       {
-      if (event == vtkCommand::ModifiedEvent || event == vtkMRMLScene::NodeAddedEvent)
+      if (event == vtkCommand::ModifiedEvent || event == vtkMRMLScene::NodeAddedEvent || event == vtkMRMLScene::NodeRemovedEvent)
         {
-        vtkDebugMacro("Modified or node added event on the fiducial list node.\n");
+        vtkDebugMacro("Modified or node added or removed event on the fiducial list node.\n");
          if (node == NULL)
            {
             vtkDebugMacro("\tBUT: the node is null\n");
@@ -1455,6 +1455,7 @@ void vtkSlicerFiducialsGUI::SetFiducialListNodeID (char * id)
       events->InsertNextValue(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       events->InsertNextValue(vtkMRMLFiducialListNode::FiducialModifiedEvent);
       events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+      events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
       vtkSetAndObserveMRMLNodeEventsMacro(this->FiducialListNode, fidlist, events);
       events->Delete();
 
