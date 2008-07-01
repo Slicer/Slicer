@@ -125,6 +125,9 @@ public:
   vtkGetObjectMacro(SliceController_OffsetScale, vtkKWScaleWithEntry); 
 
   void PropagateVolumeSelection();
+
+  void ResetPipeline();
+
 protected:
    static void SliceLogicCallback(vtkObject *caller, unsigned long event, void *clientData, void *callData );
 private:

@@ -700,8 +700,8 @@ proc WriteTransformationAG {gt directory} {
 
           $Transform Concatenate [[GCR GetGeneralTransform] GetConcatenatedTransform 1]
         } else {
-        puts "Debug registration " 
-    }
+           puts "Debug registration " 
+        }
 
       }
   

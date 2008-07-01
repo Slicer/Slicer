@@ -8,7 +8,7 @@ class vtkKWLabel;
 class vtkKWFrameWithLabel; 
 class vtkKWPushButton;
 class vtkKWFrame;
-class vtkKWLoadSaveButton;
+class vtkKWLoadSaveButtonWithLabel;
 
 class VTK_TUMORGROWTH_EXPORT vtkTumorGrowthAnalysisStep : public vtkTumorGrowthStep
 {
@@ -57,7 +57,7 @@ protected:
 
   vtkKWFrameWithLabel       *FrameButtons;
   vtkKWFrame                *FrameButtonsFunctions;
-  vtkKWLoadSaveButton       *ButtonsWorkingDir;
+  vtkKWLoadSaveButtonWithLabel *ButtonsWorkingDir;
   vtkKWPushButton           *ButtonsAnalysis;
   vtkKWPushButton           *ButtonsSnapshot;
   vtkKWPushButton           *ButtonsSave;

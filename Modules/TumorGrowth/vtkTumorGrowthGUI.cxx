@@ -142,20 +142,22 @@ void vtkTumorGrowthGUI::AddGUIObservers()
   vtkIntArray* events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  
   if (this->GetMRMLScene() != NULL)
     {
     this->SetAndObserveMRMLSceneEvents(this->GetMRMLScene(), events);
     }
-  
+  events->Delete();
+
   // Here nothing happens normally other bc the individual pannels are not created yet and the one for the first step is already created 
   // - add if clause so that same event is not added twice 
   // The wizrad creates them once they are shown on the gui for the first time - and does not delete them afterwards - strange 
   // Have to list them here so if they are all deleted and this function is called afterwards the missing ones are created again 
   if (this->FirstScanStep) this->FirstScanStep->AddGUIObservers();
-  if (this->ROIStep) this->ROIStep->AddGUIObservers();
-  if (this->TypeStep) this->TypeStep->AddGUIObservers();
-
-  events->Delete();
+  if (this->ROIStep)       this->ROIStep->AddGUIObservers();
+  if (this->TypeStep)      this->TypeStep->AddGUIObservers();
+  if (this->AnalysisStep)  this->AnalysisStep->AddGUIObservers();
 }
 
 //---------------------------------------------------------------------------
@@ -166,6 +168,7 @@ void vtkTumorGrowthGUI::RemoveGUIObservers()
   if (this->SegmentationStep) this->SegmentationStep->RemoveGUIObservers();
   if (this->TypeStep)   this->TypeStep->RemoveGUIObservers();
   if (this->AnalysisStep)     this->AnalysisStep->RemoveGUIObservers();
+
   this->SliceLogicRemoveGUIObserver(); 
 }
 
@@ -287,6 +290,11 @@ void vtkTumorGrowthGUI::ProcessMRMLEvents(vtkObject *caller,
 {
 
   // cout << "============ vtkTumorGrowthGUI::ProcessMRMLEvents Start ========== " << caller->GetClassName() << " " << event << endl;
+  if (event == vtkMRMLScene::SceneCloseEvent ) {
+    this->ResetPipeline();
+    return;
+  }
+   
   {
     vtkMRMLTumorGrowthNode* node = vtkMRMLTumorGrowthNode::SafeDownCast(caller);
     if (node != NULL && this->GetNode() == node)  
@@ -466,6 +474,24 @@ void vtkTumorGrowthGUI::BuildGUI()
   }
 
 }
+
+
+//----------------------------------------------------------------------------
+void vtkTumorGrowthGUI::ResetPipeline() 
+{
+   vtkKWWizardWorkflow *wizard_workflow = this->WizardWidget->GetWizardWorkflow();
+   if (!wizard_workflow) return;
+   vtkKWWizardStep  *currentState = NULL;
+   vtkKWWizardStep  *newState =  wizard_workflow->GetCurrentStep();
+   vtkKWWizardStep  *initialState =  wizard_workflow->GetInitialStep();
+   if (!initialState) return;
+   while ((newState != initialState) && (newState != currentState)) {
+      wizard_workflow->AttemptToGoToPreviousStep();
+      currentState = newState;
+      newState =  wizard_workflow->GetCurrentStep();
+   }
+}
+  
 
 //---------------------------------------------------------------------------
 void vtkTumorGrowthGUI::TearDownGUI() 

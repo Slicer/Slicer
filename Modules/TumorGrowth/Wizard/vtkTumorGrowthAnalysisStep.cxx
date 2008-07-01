@@ -22,6 +22,7 @@
 #include "vtkPNGWriter.h"
 #include "vtkImageAppend.h"
 #include "vtkImageConstantPad.h"
+#include "vtkKWLoadSaveButtonWithLabel.h"
 #include "vtkKWLoadSaveButton.h"
 
 #include <vtksys/SystemTools.hxx>
@@ -629,29 +630,6 @@ void vtkTumorGrowthAnalysisStep::ShowUserInterface()
 
   this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 0", this->FrameButtonsFunctions->GetWidgetName());
 
-  if (!this->ButtonsWorkingDir)
-    {
-    this->ButtonsWorkingDir = vtkKWLoadSaveButton::New();
-    }
-  if (!this->ButtonsWorkingDir->IsCreated())
-  {
-    this->ButtonsWorkingDir->SetParent(this->FrameButtonsFunctions);
-    this->ButtonsWorkingDir->Create();
-    this->ButtonsWorkingDir->SetImageToPredefinedIcon(vtkKWIcon::IconFolderOpen);
-    this->ButtonsWorkingDir->TrimPathFromFileNameOn();
-    this->ButtonsWorkingDir->SetBalloonHelpString("Define the working directory in which the results should be saved.");
-    this->ButtonsWorkingDir->SetCommand(this, "SelectDirectoryCallback");
-    this->ButtonsWorkingDir->GetLoadSaveDialog()->ChooseDirectoryOn();
-    this->ButtonsWorkingDir->SetText("Working Directory");
-
-    if (node) {
-      // set parth correctly 
-      vtksys_stl::string path = node->GetWorkingDir();
-      this->ButtonsWorkingDir->GetLoadSaveDialog()->GenerateLastPath(path.c_str());
-      this->ButtonsWorkingDir->GetLoadSaveDialog()->SetInitialFileName(path.c_str());
-    }
-  }
-
   if (!this->ButtonsSnapshot) {
     this->ButtonsSnapshot = vtkKWPushButton::New();
    }
@@ -688,10 +666,11 @@ void vtkTumorGrowthAnalysisStep::ShowUserInterface()
     this->ButtonsSave->SetBalloonHelpString("Save all intermediate results of the analysis to disk."); 
   }
 
-  this->Script("pack %s %s %s %s -side left -anchor nw -expand n -padx 2 -pady 2", 
-           this->ButtonsWorkingDir->GetWidgetName(), this->ButtonsSnapshot->GetWidgetName(),this->ButtonsAnalysis->GetWidgetName(), this->ButtonsSave->GetWidgetName());
+  this->Script("pack %s %s %s -side left -anchor nw -expand n -padx 2 -pady 2", 
+         this->ButtonsSnapshot->GetWidgetName(),this->ButtonsAnalysis->GetWidgetName(), this->ButtonsSave->GetWidgetName());
 
 
+  // Look at Qdec Module 
   if (!this->ButtonsInfo)
     {
     this->ButtonsInfo = vtkKWLabel::New();
@@ -700,11 +679,36 @@ void vtkTumorGrowthAnalysisStep::ShowUserInterface()
   {
     this->ButtonsInfo->SetParent(this->FrameButtons->GetFrame());
     this->ButtonsInfo->Create();
-    std::string ss("Results will be saved to\n");
-    if (this->GetGUI()->GetNode()) ss += this->GetGUI()->GetNode()->GetWorkingDir();
-    this->ButtonsInfo->SetText(ss.c_str());
+    this->ButtonsInfo->SetText("Results will be saved to directory:");
   }
-  this->Script( "pack %s -side top -anchor nw -padx 2 -pady 2", this->ButtonsInfo->GetWidgetName());
+
+  if (!this->ButtonsWorkingDir)
+    {
+    this->ButtonsWorkingDir = vtkKWLoadSaveButtonWithLabel::New();
+    }
+  if (!this->ButtonsWorkingDir->IsCreated())
+  {
+    this->ButtonsWorkingDir->SetParent(this->FrameButtons->GetFrame());
+    this->ButtonsWorkingDir->Create();
+    this->ButtonsWorkingDir->SetLabelText("");
+    if (node) {
+      // set parth correctly 
+      vtksys_stl::string path = node->GetWorkingDir();
+      this->ButtonsWorkingDir->GetWidget()->GetLoadSaveDialog()->GenerateLastPath(path.c_str());
+      this->ButtonsWorkingDir->GetWidget()->GetLoadSaveDialog()->SetInitialFileName(path.c_str());
+      this->ButtonsWorkingDir->GetWidget()->SetText(path.c_str());
+    } else {
+      this->ButtonsWorkingDir->GetWidget()->SetText("None");
+    }
+    this->ButtonsWorkingDir->SetBalloonHelpString("Define the working directory in which the results should be saved.");
+    this->ButtonsWorkingDir->GetWidget()->SetCommand(this, "SelectDirectoryCallback");
+
+    // this->ButtonsWorkingDir->SetImageToPredefinedIcon(vtkKWIcon::IconFolderOpen);
+    this->ButtonsWorkingDir->GetWidget()->TrimPathFromFileNameOn();
+    this->ButtonsWorkingDir->GetWidget()->GetLoadSaveDialog()->ChooseDirectoryOn();
+  }
+
+  this->Script( "pack %s %s -side top -anchor nw -padx 2 -pady 2", this->ButtonsInfo->GetWidgetName(), this->ButtonsWorkingDir->GetWidgetName());
 
   {
     vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
@@ -731,11 +735,11 @@ void vtkTumorGrowthAnalysisStep::SelectDirectoryCallback()
 
   if (this->ButtonsWorkingDir && this->ButtonsWorkingDir->IsCreated())
     {
-    if (this->ButtonsWorkingDir->GetLoadSaveDialog()-> GetStatus() == vtkKWDialog::StatusOK)
+      if (this->ButtonsWorkingDir->GetWidget()->GetLoadSaveDialog()-> GetStatus() == vtkKWDialog::StatusOK)
       {
-      this->ButtonsWorkingDir->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
-      vtksys_stl::string filename = this->ButtonsWorkingDir->GetFileName();
-      this->ButtonsWorkingDir->SetText("Working Directory");
+        this->ButtonsWorkingDir->GetWidget()->GetLoadSaveDialog()->SaveLastPathToRegistry("OpenPath");
+        vtksys_stl::string filename = this->ButtonsWorkingDir->GetWidget()->GetFileName();
+      // this->ButtonsWorkingDir->SetText("Working Directory");
 
       if(!vtksys::SystemTools::FileExists(filename.c_str()) ||
         !vtksys::SystemTools::FileIsDirectory(filename.c_str()))
@@ -749,14 +753,10 @@ void vtkTumorGrowthAnalysisStep::SelectDirectoryCallback()
 
         vtkMRMLTumorGrowthNode* node = this->GetGUI()->GetNode();
         if (node) {
-      node->SetWorkingDir(filename.c_str());
-      if (this->ButtonsInfo)
-      {
-        std::string ss("Results will be saved to\n");
-        if (this->GetGUI()->GetNode()) ss += node->GetWorkingDir();
-        this->ButtonsInfo->SetText(ss.c_str());
-      }
-    }
+          node->SetWorkingDir(filename.c_str());
+          if (this->ButtonsWorkingDir)
+            this->ButtonsWorkingDir->GetWidget()->SetText(filename.c_str());
+        }
       }
     }
 }
@@ -894,17 +894,8 @@ void vtkTumorGrowthAnalysisStep::TakeScreenshot() {
 }
 
 //----------------------------------------------------------------------------
-void vtkTumorGrowthAnalysisStep::ResetPipelineCallback() 
-{
-  // Sensitivity has changed because of user interaction 
-  vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
-  vtkKWWizardWorkflow *wizard_workflow = wizard_widget->GetWizardWorkflow();
-  // Go Back to the beginning - you can also make this more generale by first getting the number of states 
-  // and then doing a loop 
-  wizard_workflow->AttemptToGoToPreviousStep();
-  wizard_workflow->AttemptToGoToPreviousStep();
-  wizard_workflow->AttemptToGoToPreviousStep();
-  wizard_workflow->AttemptToGoToPreviousStep();
+void vtkTumorGrowthAnalysisStep::ResetPipelineCallback() {
+  if (this->GetGUI()) this->GetGUI()->ResetPipeline();
 }
 
 //----------------------------------------------------------------------------
