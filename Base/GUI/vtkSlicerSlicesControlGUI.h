@@ -21,6 +21,7 @@ class vtkKWTopLevel;
 class vtkKWFrame;
 class vtkKWEntry;
 class vtkKWEntryWithLabel;
+class vtkSlicerVisibilityIcons;
 
 // Description:
 // This class implements Slicer's SlicesControl Panel on Main GUI panel
@@ -42,6 +43,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkGetObjectMacro ( ToggleFgBgButton, vtkKWPushButton );
     vtkGetObjectMacro ( LabelOpacityButton, vtkKWPushButton );
     vtkGetObjectMacro ( LabelOpacityScale, vtkKWScaleWithEntry );
+    vtkGetObjectMacro ( LabelOpacityToggleButton, vtkKWPushButton);
     vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );
     vtkGetObjectMacro ( FieldOfViewTopLevel, vtkKWTopLevel );
 //    vtkGetObjectMacro ( GridButton, vtkKWMenuButton );
@@ -73,7 +75,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkSetMacro (EntryUpdatePending, int);
     vtkGetMacro ( SliceInteracting, int );
     vtkGetMacro (ProcessingMRMLEvent, int);
-    
+
+    vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons );
     
     // Description:
     // Get the main slicer toolbars.
@@ -134,6 +137,10 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
 
     vtkSlicerApplicationGUI *ApplicationGUI;
     vtkSlicerSlicesControlIcons *SlicesControlIcons;
+
+    // Description:
+    // visibility icons, for the label opacity toggle
+    vtkSlicerVisibilityIcons *VisibilityIcons;
     //Description:
     // Widgets for the SlicesControlFrame in the GUI
     vtkKWScale *SliceFadeScale;
@@ -142,6 +149,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     vtkKWPushButton *ToggleFgBgButton;
     vtkKWPushButton *LabelOpacityButton;
     vtkKWScaleWithEntry *LabelOpacityScale;
+    vtkKWPushButton *LabelOpacityToggleButton;
     vtkKWTopLevel *LabelOpacityTopLevel;
     vtkKWTopLevel *FieldOfViewTopLevel;
 //    vtkKWMenuButton *GridButton;

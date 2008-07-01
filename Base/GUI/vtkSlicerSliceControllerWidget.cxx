@@ -50,6 +50,7 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->LoadDataButton = NULL;
   this->LabelOpacityButton = NULL;
   this->LabelOpacityScale = NULL;
+  this->LabelOpacityToggleButton = NULL;
   this->LabelOpacityTopLevel = NULL;
   this->LightboxTopLevel = NULL;
   this->LinkButton = NULL;
@@ -173,6 +174,13 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
     this->LabelOpacityScale->Delete  ( );
     this->LabelOpacityScale = NULL;
     }
+  if ( this->LabelOpacityToggleButton )
+    {
+    this->LabelOpacityToggleButton->SetParent(NULL);
+    this->LabelOpacityToggleButton->Delete  ( );
+    this->LabelOpacityToggleButton = NULL;
+    }
+  
   if ( this->LabelOpacityTopLevel )
     {
     this->LabelOpacityTopLevel->SetParent(NULL);
@@ -290,7 +298,8 @@ void vtkSlicerSliceControllerWidget::AddWidgetObservers ( )
     this->LabelOpacityButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->LabelOpacityScale->GetScale ( )->AddObserver( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
     this->LabelOpacityScale->GetScale ( )->AddObserver( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
-    this->LabelOpacityScale->GetScale ( )->AddObserver( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );    
+    this->LabelOpacityScale->GetScale ( )->AddObserver( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
+    this->LabelOpacityToggleButton->AddObserver(vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->LinkButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->FitToWindowButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
@@ -318,7 +327,8 @@ void vtkSlicerSliceControllerWidget::RemoveWidgetObservers ( ) {
     this->LabelSelector->RemoveObservers ( vtkSlicerNodeSelectorWidget::NodeSelectedEvent, this->GUICallbackCommand);
     this->LabelOpacityScale->GetScale ( )->RemoveObservers( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
     this->LabelOpacityScale->GetScale ( )->RemoveObservers( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
-    this->LabelOpacityScale->GetScale ( )->RemoveObservers( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );    
+    this->LabelOpacityScale->GetScale ( )->RemoveObservers( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
+    this->LabelOpacityToggleButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
@@ -794,7 +804,16 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelOpacityScale->GetScale()->SetLabelText ( "" );
     this->LabelOpacityScale->GetScale()->ValueVisibilityOff ( );
     this->LabelOpacityScale->SetValue ( 1.0 );
+    // button to toggle between opacity 0 and 1
+    this->LabelOpacityToggleButton = vtkKWPushButton::New();
+    this->LabelOpacityToggleButton->SetParent ( popUpFrame2 );
+    this->LabelOpacityToggleButton->Create();
+    this->LabelOpacityToggleButton->SetBorderWidth(0);
+    // show the visible icon, sine default label opacity is 1.0
+    this->LabelOpacityToggleButton->SetImageToIcon(this->GetVisibilityIcons()->GetVisibleIcon ( ));
+    this->LabelOpacityToggleButton->SetBalloonHelpString( "Toggle Label opacity between 0 and 1 in the Slice Viewers" );
     this->Script ( "pack %s -side left -anchor w -padx 1 -pady 3 -expand n", this->LabelOpacityScale->GetWidgetName ( ) );
+    this->Script ( "pack %s -side left -anchor e -padx 2 -pady 3 -expand n", this->LabelOpacityToggleButton->GetWidgetName());
 
     this->LabelOpacityButton->Create ( );
     this->LabelOpacityButton->SetBorderWidth ( 0 );
@@ -1640,6 +1659,18 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   else if ( button == this->LabelOpacityButton && event == vtkKWPushButton::InvokedEvent )
     {
     this->PopUpLabelOpacityScaleAndEntry();
+    }
+  else if ( button == this->LabelOpacityToggleButton &&  event == vtkKWPushButton::InvokedEvent )
+    {
+    float s = this->LabelOpacityScale->GetValue();
+    if (s < 0.5)
+      {
+      this->LabelOpacityScale->SetValue(1.0);
+      }
+    else
+      {
+      this->LabelOpacityScale->SetValue(0.0);
+      }
     }
   else if ( button == this->FitToWindowButton && event == vtkKWPushButton::InvokedEvent )
     {
@@ -2650,6 +2681,18 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
                                                  this->GetVisibilityIcons()->GetInvisibleIcon ( ) );        
     }
 
+  //
+  // Update the label opacity toggle button to match the logic state
+  //
+  if (this->LabelOpacityScale->GetValue() > 0)
+    {
+    this->LabelOpacityToggleButton->SetImageToIcon(this->GetVisibilityIcons()->GetVisibleIcon ( ));
+    }
+  else
+    {
+    this->LabelOpacityToggleButton->SetImageToIcon(this->GetVisibilityIcons()->GetInvisibleIcon ( ));
+    }
+  
   //
   // Update the Linked Controls Icon in the SliceController to match logic state.
   //

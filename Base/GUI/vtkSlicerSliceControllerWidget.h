@@ -49,6 +49,7 @@ public:
   vtkGetObjectMacro ( IconFrame, vtkKWFrame );
   vtkGetObjectMacro ( LabelOpacityButton, vtkKWPushButton );
   vtkGetObjectMacro ( LabelOpacityScale, vtkKWScaleWithEntry );
+  vtkGetObjectMacro ( LabelOpacityToggleButton, vtkKWPushButton );
   vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );
   vtkGetObjectMacro ( LightboxTopLevel, vtkKWTopLevel );
   vtkGetObjectMacro ( FitToWindowButton, vtkKWPushButton );
@@ -191,6 +192,7 @@ protected:
   vtkKWPushButton *LinkButton;
   vtkKWPushButton *LabelOpacityButton;
   vtkKWScaleWithEntry *LabelOpacityScale;
+  vtkKWPushButton *LabelOpacityToggleButton;
   vtkKWTopLevel *LabelOpacityTopLevel;
   vtkKWTopLevel *LightboxTopLevel;
   vtkSlicerVisibilityIcons *VisibilityIcons;
