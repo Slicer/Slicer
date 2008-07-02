@@ -169,10 +169,10 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "dimension"))
       {
-      double val;
+      int val;
       std::stringstream ss;
       ss << attValue;
-      std::vector<double> vals;
+      std::vector<int> vals;
       while( ss >> val )
         {
         vals.push_back( val );
