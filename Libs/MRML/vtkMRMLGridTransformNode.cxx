@@ -20,6 +20,7 @@ Version:   $Revision: 1.14 $
 #include "vtkCallbackCommand.h"
 
 #include "vtkGridTransform.h"
+#include "vtkImageData.h"
 
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLScene.h"
@@ -83,8 +84,22 @@ void vtkMRMLGridTransformNode::WriteXML(ostream& of, int nIndent)
     of << " interpolationMode=\"" << grid->GetInterpolationMode() << "\" ";
     of << " displacementScale=\"" << grid->GetDisplacementScale() << "\" ";
     of << " displacementShift=\"" << grid->GetDisplacementShift() << "\" ";
-    of << grid->GetDisplacementGrid();
-    of << "\"";
+
+    vtkImageData * image = grid->GetDisplacementGrid();
+    int* N = image->GetDimensions();
+    of << " dimension=\"" << N[0] << " " << N[1] << " " << N[2] << "\" ";
+    double* spacing = image->GetSpacing();
+    of << " spacing=\"" << spacing[0] << " " << spacing[1] << " " << spacing[2] << "\" ";    
+    double* origin = image->GetOrigin();
+    of << " origin=\"" << origin[0] << " " << origin[1] << " " << origin[2] << "\" ";
+    of << " displacement=\"";
+    double* dataPtr = reinterpret_cast<double*>(image->GetScalarPointer());
+    int num = N[0] * N[1] * N[2] * 3;
+    for( int i = 0; i < num; ++i, ++dataPtr )
+      {
+      of << dataPtr[0] << " ";
+      }
+    of << "\" ";
     }
 }
 
@@ -93,6 +108,153 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
 {
 
   Superclass::ReadXMLAttributes(atts);
+
+  vtkGridTransform* vtkgrid = vtkGridTransform::New();
+  vtkImageData *image = vtkImageData::New();
+  image->Initialize();
+  image->SetNumberOfScalarComponents( 3 );
+  image->SetScalarTypeToDouble();
+  int num_of_displacement = 0;
+
+  const char* attName;
+  const char* attValue;
+  while (*atts != NULL) 
+    {
+    attName = *(atts++);
+    attValue = *(atts++);
+    if (!strcmp(attName, "interpolationMode"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      int val;
+      if( ss >> val )
+        {
+        vtkgrid->SetInterpolationMode(val);
+        }
+      else
+        {
+        vtkErrorMacro( "couldn't parse grid interpolationMode" );
+        return;
+        }
+      }
+    else if (!strcmp(attName, "displacementScale"))
+      {
+      double val;
+      std::stringstream ss;
+      ss << attValue;
+      if( ss >> val )
+        {
+        vtkgrid->SetDisplacementScale(val);
+        }
+      else
+        {
+        vtkErrorMacro( "couldn't parse grid displacementScale" );
+        return;
+        }
+      }
+    else if (!strcmp(attName, "displacementShift"))
+      {
+      double val;
+      std::stringstream ss;
+      ss << attValue;
+      if( ss >> val )
+        {
+        vtkgrid->SetDisplacementShift(val);
+        }
+      else
+        {
+        vtkErrorMacro( "couldn't parse grid displacementShift" );
+        return;
+        }
+      }
+    else if (!strcmp(attName, "dimension"))
+      {
+      double val;
+      std::stringstream ss;
+      ss << attValue;
+      std::vector<double> vals;
+      while( ss >> val )
+        {
+        vals.push_back( val );
+        }
+      if( vals.size() != 3 )
+        {
+        vtkErrorMacro( "Incorrect number of dimension: expecting 3; got "
+                       << vals.size() );
+        return;
+        }
+      num_of_displacement = vals[0] * vals[1] * vals[2] * 3;
+      image->SetDimensions( vals[0], vals[1], vals[2] );
+      image->AllocateScalars();
+      }
+    else if (!strcmp(attName, "spacing"))
+      {
+      double val;
+      std::stringstream ss;
+      ss << attValue;
+      std::vector<double> vals;
+      while( ss >> val )
+        {
+        vals.push_back( val );
+        }
+      if( vals.size() != 3 )
+        {
+        vtkErrorMacro( "Incorrect number of spacing: expecting 3; got "
+                       << vals.size() );
+        return;
+        }
+      image->SetSpacing( vals[0], vals[1], vals[2] );
+      }
+    else if (!strcmp(attName, "origin"))
+      {
+      double val;
+      std::stringstream ss;
+      ss << attValue;
+      std::vector<double> vals;
+      while (ss >> val)
+        {
+        vals.push_back( val );
+        }
+      if (vals.size() != 3)
+        {
+        vtkErrorMacro( "Incorrect number of origin: expecting 3; got "
+                       << vals.size() );
+        return;
+        }
+      image->SetOrigin( vals[0], vals[1], vals[2] );
+      }
+    else if (!strcmp(attName, "displacement"))
+      {
+      if (num_of_displacement == 0)
+        {
+        vtkErrorMacro( "dimension attribute must be processed before displacement attributes" );
+        return;
+        }
+      double val;
+      std::stringstream ss;
+      ss << attValue;
+      std::vector<double> vals;
+      while( ss >> val )
+        {
+        vals.push_back( val );
+        }
+      if (vals.size() !=  num_of_displacement)
+        {
+        vtkErrorMacro( "Incorrect number of origin: expecting " << num_of_displacement << "; got "
+                       << vals.size() );
+        return;
+        }
+      double* dataPtr = reinterpret_cast<double*>(image->GetScalarPointer());
+      std::vector<double>::const_iterator iter = vals.begin();
+      for (int i=0; i<num_of_displacement; ++i, iter++, ++dataPtr )
+        {
+        *dataPtr = *iter;
+        }
+      }
+    }
+  vtkgrid->SetDisplacementGrid( image );
+  this->SetAndObserveWarpTransformToParent( vtkgrid );
+  vtkgrid->Delete();
 }
 
 //----------------------------------------------------------------------------
