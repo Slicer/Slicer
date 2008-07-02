@@ -26,6 +26,19 @@ endmacro(slicer3_install_plugins)
 #-----------------------------------------------------------------------------
 # Enable plugin testing
 #
+# function to turn generator name into a version string
+# like vs7 vs71 vs8 vs9 
+# Lifted from CMake's CTest.cmake
+function(GET_VS_VERSION_STRING generator var)
+  string(REGEX REPLACE "Visual Studio ([0-9][0-9]?)($|.*)" "\\1" NUMBER "${generator}") 
+  if("${generator}" MATCHES "Visual Studio 7 .NET 2003")
+    set(ver_string "vs71")
+  else("${generator}" MATCHES "Visual Studio 7 .NET 2003")
+    set(ver_string "vs${NUMBER}")
+  endif("${generator}" MATCHES "Visual Studio 7 .NET 2003")
+  set(${var} ${ver_string} PARENT_SCOPE)
+endfunction(GET_VS_VERSION_STRING)
+
 macro(slicer3_enable_plugins_testing)
 
   # We need to use Slicer3's CTest variables so that plugins can submit
