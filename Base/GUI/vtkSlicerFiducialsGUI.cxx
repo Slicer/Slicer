@@ -1403,7 +1403,6 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->ListColorButton->SetParent( fiducialDisplayFrame->GetFrame() );
     this->ListColorButton->Create();
     this->ListColorButton->SetBorderWidth(0);
-    this->ListColorButton->SetColor ( 0.1, .8, .2 );
     this->ListColorButton->SetLabelOutsideButton(1);
     this->ListColorButton->GetLabel()->SetAnchorToEast();
     this->ListColorButton->SetLabelWidth ( 14 );
@@ -1415,7 +1414,6 @@ void vtkSlicerFiducialsGUI::BuildGUI ( )
     this->ListSelectedColorButton = vtkKWChangeColorButton::New();
     this->ListSelectedColorButton->SetParent( fiducialDisplayFrame->GetFrame() );
     this->ListSelectedColorButton->Create();
-    this->ListSelectedColorButton->SetColor ( 1.0, 1.0, 0.0 );
     this->ListSelectedColorButton->SetLabelOutsideButton(1);
     this->ListSelectedColorButton->SetBorderWidth(0);
     this->ListSelectedColorButton->GetLabel()->SetAnchorToEast();
