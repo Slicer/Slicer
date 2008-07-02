@@ -72,6 +72,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkGetObjectMacro ( SlicerInvisibleIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerRefreshIcon, vtkKWIcon );
     vtkGetObjectMacro ( SlicerVolumeIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerFiducialsAddNewIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerFiducialsDeleteAllIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerFiducialsDeleteLastClickedIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerFiducialsSelectAllIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerFiducialsSelectNoneIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerFiducialsSelectAllInListIcon, vtkKWIcon );
+    vtkGetObjectMacro (SlicerFiducialsSelectNoneInListIcon, vtkKWIcon );
 
     void AssignImageDataToIcons ( );
     
@@ -136,6 +143,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFoundationIcons : public vtkSlicerIcon
     vtkKWIcon *SlicerRefreshIcon;
     vtkKWIcon *SlicerVolumeIcon;
     vtkKWIcon *SlicerMoreOptionsIcon;
+    vtkKWIcon *SlicerFiducialsAddNewIcon;
+    vtkKWIcon *SlicerFiducialsDeleteAllIcon;
+    vtkKWIcon *SlicerFiducialsDeleteLastClickedIcon;
+    vtkKWIcon *SlicerFiducialsSelectAllIcon;
+    vtkKWIcon *SlicerFiducialsSelectNoneIcon;
+    vtkKWIcon *SlicerFiducialsSelectAllInListIcon;
+    vtkKWIcon *SlicerFiducialsSelectNoneInListIcon;
     
  private:
     vtkSlicerFoundationIcons ( const vtkSlicerFoundationIcons&); // Not implemented

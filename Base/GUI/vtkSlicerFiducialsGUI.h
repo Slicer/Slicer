@@ -16,6 +16,7 @@
 
 #include "vtkKWFrame.h"
 #include "vtkKWPushButton.h"
+#include "vtkKWPushButtonWithLabel.h"
 #include "vtkSlicerVisibilityIcons.h"
 #include "vtkKWChangeColorButton.h"
 
@@ -29,6 +30,7 @@
 //class vtkSlicerFiducialsDisplayWidget;
 class vtkKWMultiColumnListWithScrollbars;
 class vtkKWPushButton;
+class vtkKWPushButtonWithLabel;
 class vtkKWMessage;
 class vtkSlicerVisibilityIcons;
 class vtkKWChangeColorButton;
@@ -50,10 +52,13 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkGetObjectMacro ( MeasurementLabel, vtkKWLabel);
     vtkGetObjectMacro ( AddFiducialButton, vtkKWPushButton);
     vtkGetObjectMacro ( RemoveFiducialButton, vtkKWPushButton);
-    vtkGetObjectMacro ( RemoveFiducialsButton, vtkKWPushButton);
+    vtkGetObjectMacro ( RemoveAllFiducialsButton, vtkKWPushButton);
+    vtkGetObjectMacro ( RemoveFiducialsInListButton, vtkKWPushButton);
     vtkGetObjectMacro ( SelectAllFiducialsButton, vtkKWPushButton);
+    vtkGetObjectMacro ( SelectAllFiducialsInListButton, vtkKWPushButton);
     vtkGetObjectMacro ( DeselectAllFiducialsButton, vtkKWPushButton);
-    vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButton);
+    vtkGetObjectMacro ( DeselectAllFiducialsInListButton, vtkKWPushButton);
+    vtkGetObjectMacro ( VisibilityToggle, vtkKWPushButtonWithLabel);
     vtkGetObjectMacro ( VisibilityIcons, vtkSlicerVisibilityIcons);
     vtkGetObjectMacro ( ListColorButton, vtkKWChangeColorButton);
     vtkGetObjectMacro ( ListSelectedColorButton, vtkKWChangeColorButton);
@@ -184,17 +189,26 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerFiducialsGUI : public vtkSlicerModuleG
     vtkKWPushButton *RemoveFiducialButton;
     // Description:
     // remove all the fiducial points on this list
-    vtkKWPushButton *RemoveFiducialsButton;
+    vtkKWPushButton *RemoveFiducialsInListButton;
+    // Description:
+    // remove all fiducials on all lists
+    vtkKWPushButton *RemoveAllFiducialsButton;
     // Description:
     // select all fiducial points on this list
+    vtkKWPushButton *SelectAllFiducialsInListButton;
+    //Description:
+    // selects all fiducials points on all lists.
     vtkKWPushButton *SelectAllFiducialsButton;
     // Description:
     // deselect all fiducial points on this list
+    vtkKWPushButton *DeselectAllFiducialsInListButton;
+    // Description:
+    // deselects all fiducial point in all lists.
     vtkKWPushButton *DeselectAllFiducialsButton;
 
     // Description:
     // list visibility, overrides individual point visibility
-    vtkKWPushButton *VisibilityToggle;
+    vtkKWPushButtonWithLabel *VisibilityToggle;
     vtkSlicerVisibilityIcons *VisibilityIcons;
 
     // Description:
