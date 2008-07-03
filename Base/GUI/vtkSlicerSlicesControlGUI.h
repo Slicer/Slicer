@@ -172,7 +172,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesControlGUI : public vtkSlicerCom
     int ProcessingMRMLEvent;
     int EntryUpdatePending;
     bool SceneClosing;
-    
+    float LastLabelOpacity;
+
  private:
     vtkSlicerSlicesControlGUI ( const vtkSlicerSlicesControlGUI& ); // Not implemented.
     void operator = ( const vtkSlicerSlicesControlGUI& ); //Not implemented.

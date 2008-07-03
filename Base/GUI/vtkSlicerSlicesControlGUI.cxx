@@ -74,6 +74,8 @@ vtkSlicerSlicesControlGUI::vtkSlicerSlicesControlGUI ( )
   this->SliceInteracting = 0;
 
   this->VisibilityIcons = NULL;
+
+  this->LastLabelOpacity = 1.0;
 }
 
 
@@ -600,9 +602,14 @@ void vtkSlicerSlicesControlGUI::ProcessGUIEvents ( vtkObject *caller,
       if ( pushb ==  this->LabelOpacityToggleButton && event == vtkKWPushButton::InvokedEvent )
         {
         float s = this->LabelOpacityScale->GetValue();
-        if (s < 0.5)
+        if (s != 0.0)
           {
-          this->LabelOpacityScale->SetValue(1.0);
+          // save this opacity
+          this->LastLabelOpacity = s;
+          }
+        if (s == 0.0)
+          {
+          this->LabelOpacityScale->SetValue(this->LastLabelOpacity);
           }
         else
           {
@@ -1743,7 +1750,7 @@ void vtkSlicerSlicesControlGUI::BuildGUI ( vtkKWFrame *appF )
       this->LabelOpacityToggleButton->Create();
       this->LabelOpacityToggleButton->SetBorderWidth(0);
       this->LabelOpacityToggleButton->SetImageToIcon( this->GetVisibilityIcons()->GetVisibleIcon ( ) );
-      this->LabelOpacityToggleButton->SetBalloonHelpString( "Toggle Label opacity between 0 and 1 in the Slice Viewers" );
+      this->LabelOpacityToggleButton->SetBalloonHelpString( "Toggle Label opacity between 0 and last opacity in the Slice Viewers" );
 
       this->Script ( "pack %s -side left -anchor w -padx 1 -pady 3 -expand n", this->LabelOpacityScale->GetWidgetName ( ) );
       this->Script ( "pack %s -side left -anchor e -padx 2 -pady 3 -expand n", this->LabelOpacityToggleButton->GetWidgetName());

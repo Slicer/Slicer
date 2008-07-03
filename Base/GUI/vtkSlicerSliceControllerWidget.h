@@ -211,6 +211,9 @@ protected:
 
   int LightboxRows;
   int LightboxColumns;
+
+  float LastLabelOpacity;
+  
   //
   // Nodes
   //
