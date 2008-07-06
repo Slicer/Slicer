@@ -90,7 +90,7 @@ int vtkSlicerDiffusionEditorLogic::AddGradients (const char* filename, int numbe
         file.get(c);
         content<<c;
         }
-      return this->ParseGradients(content.str().c_str(), numberOfGradients, newBValue, newGradients);
+      return this->ParseGradientsBvaluesToArray(content.str().c_str(), numberOfGradients, newBValue, newGradients);
       }
     return 0;
     }
@@ -111,7 +111,7 @@ int vtkSlicerDiffusionEditorLogic::StringToDouble(const std::string &s, double &
   }
 
 //---------------------------------------------------------------------------
-int vtkSlicerDiffusionEditorLogic::ParseGradients(const char *oldGradients, int numberOfGradients,
+int vtkSlicerDiffusionEditorLogic::ParseGradientsBvaluesToArray(const char *oldGradients, int numberOfGradients,
                                                  vtkDoubleArray *newBValues, vtkDoubleArray *newGradients)
   {
   if (oldGradients == NULL || oldGradients == "")
@@ -177,7 +177,7 @@ int vtkSlicerDiffusionEditorLogic::ParseGradients(const char *oldGradients, int 
   }
 
 //---------------------------------------------------------------------------
-std::string vtkSlicerDiffusionEditorLogic::GetGradientsAsString(vtkDoubleArray *BValues, vtkDoubleArray *Gradients)
+std::string vtkSlicerDiffusionEditorLogic::ParseGradientsBvaluesToString(vtkDoubleArray *BValues, vtkDoubleArray *Gradients)
   {
   std::stringstream output;
   vtkDoubleArray *factor = vtkDoubleArray::New();

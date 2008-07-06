@@ -181,7 +181,7 @@ void vtkSlicerGradientsWidget::UpdateWidget(vtkMRMLDiffusionWeightedVolumeNode *
 //---------------------------------------------------------------------------
 void vtkSlicerGradientsWidget::UpdateGradients()
   {
-  std::string output = this->Logic->GetGradientsAsString(this->BValues, this->Gradients);
+  std::string output = this->Logic->ParseGradientsBvaluesToString(this->BValues, this->Gradients);
   // write it on GUI
   this->GradientsTextbox->GetWidget()->SetText(output.c_str());
   this->UpdateStatusLabel(1);
@@ -198,7 +198,7 @@ void vtkSlicerGradientsWidget::TextFieldModifiedCallback()
   int numberOfGradients = this->ActiveVolumeNode->GetNumberOfGradients();
 
   //parse new gradients and update status label
-  int status = this->Logic->ParseGradients(oldGradients, numberOfGradients, this->BValues, this->Gradients);
+  int status = this->Logic->ParseGradientsBvaluesToArray(oldGradients, numberOfGradients, this->BValues, this->Gradients);
   this->UpdateStatusLabel(status);
 
   //only if parsing was successful save gradients in activeVolumneNode
