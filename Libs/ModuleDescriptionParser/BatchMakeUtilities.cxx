@@ -2,6 +2,7 @@
 
 #include "ModuleParameterGroup.h"
 #include "ModuleParameter.h"
+#include <cstdlib>
 #include <sstream>
 #include <map>
 #include <vector>
