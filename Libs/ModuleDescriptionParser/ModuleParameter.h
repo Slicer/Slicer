@@ -128,6 +128,30 @@ public:
     return this->LongFlag;
   }
   
+  virtual void SetLongFlagAliasesAsString(const std::string &aliases);
+
+  virtual std::string GetLongFlagAliasesAsString() const
+  {
+    return this->LongFlagAliasesAsString;
+  }
+
+  virtual const std::vector<std::string> &GetLongFlagAliases() const
+  {
+    return this->LongFlagAliases;
+  }
+
+  virtual void SetDeprecatedLongFlagAliasesAsString(const std::string &aliases);
+
+  virtual std::string GetDeprecatedLongFlagAliasesAsString() const
+  {
+    return this->DeprecatedLongFlagAliasesAsString;
+  }
+  
+  virtual const std::vector<std::string> &GetDeprecatedLongFlagAliases() const
+  {
+    return this->DeprecatedLongFlagAliases;
+  }
+
   virtual void SetLabel(const std::string &label) 
   {
     this->Label = label;
@@ -228,6 +252,30 @@ public:
     return this->Flag;
   }
 
+  virtual void SetFlagAliasesAsString(const std::string &aliases);
+
+  virtual std::string GetFlagAliasesAsString() const
+  {
+    return this->FlagAliasesAsString;
+  }
+  
+  virtual const std::vector<std::string> &GetFlagAliases() const
+  {
+    return this->FlagAliases;
+  }
+
+  virtual void SetDeprecatedFlagAliasesAsString(const std::string &aliases);
+
+  virtual std::string GetDeprecatedFlagAliasesAsString() const
+  {
+    return this->DeprecatedFlagAliasesAsString;
+  }
+
+  virtual const std::vector<std::string> &GetDeprecatedFlagAliases() const
+  {
+    return this->DeprecatedFlagAliases;
+  }
+  
   virtual void SetMultiple(const std::string &multiple)
   {
     this->Multiple = multiple;
@@ -307,6 +355,14 @@ private:
   mutable std::vector<std::string> FileExtensions;
   std::string CoordinateSystem;
   std::vector<std::string> Elements;
+  std::string FlagAliasesAsString;
+  std::string DeprecatedFlagAliasesAsString;
+  std::string LongFlagAliasesAsString;
+  std::string DeprecatedLongFlagAliasesAsString;
+  std::vector<std::string> FlagAliases;
+  std::vector<std::string> DeprecatedFlagAliases;
+  std::vector<std::string> LongFlagAliases;
+  std::vector<std::string> DeprecatedLongFlagAliases;
 };
 
 ModuleDescriptionParser_EXPORT std::ostream & operator<<(std::ostream &os, const ModuleParameter &parameter);

@@ -259,6 +259,8 @@ void GeneratePre(std::ofstream &sout, ModuleDescription &module, int argc, char 
   sout << "#include <stdlib.h>" << std::endl;
   sout << "#include <iostream>" << std::endl;
   sout << "#include <string.h>" << std::endl;
+  sout << "#include <vector>" << std::endl;
+  sout << "#include <map>" << std::endl;
   sout << std::endl;
   sout << "#include <itksys/ios/sstream>" << std::endl;
   sout << std::endl;
@@ -949,7 +951,204 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
         }
       }
     }
-  sout << "    commandLine.parse ( argc, (char**) argv );" << EOL << std::endl;
+  // Remap any aliases in the flags or long flags
+  sout << "    /* Build a map of flag aliases to the true flag */" << EOL << std::endl;
+  sout << "    std::map<std::string,std::string> flagAliasMap;" << EOL << std::endl;
+  sout << "    std::map<std::string,std::string> deprecatedFlagAliasMap;" << EOL << std::endl;
+  sout << "    std::map<std::string,std::string> longFlagAliasMap;" << EOL << std::endl;
+  sout << "    std::map<std::string,std::string> deprecatedLongFlagAliasMap;" << EOL << std::endl;
+  for (git = module.GetParameterGroups().begin();
+       git != module.GetParameterGroups().end();
+       ++git)
+    {
+    for (pit = git->GetParameters().begin();
+         pit != git->GetParameters().end();
+         ++pit)
+      {
+      if (pit->GetFlagAliases().size() != 0)
+        {
+        std::vector<std::string>::const_iterator ait;
+        for (ait = pit->GetFlagAliases().begin();
+             ait != pit->GetFlagAliases().end(); ++ait)
+          {
+          sout << "    flagAliasMap[\"" << (*ait) << "\"] = \""
+               << pit->GetFlag() << "\";" << EOL << std::endl;
+          }
+        }
+      }
+    }
+  for (git = module.GetParameterGroups().begin();
+       git != module.GetParameterGroups().end();
+       ++git)
+    {
+    for (pit = git->GetParameters().begin();
+         pit != git->GetParameters().end();
+         ++pit)
+      {
+      if (pit->GetDeprecatedFlagAliases().size() != 0)
+        {
+        std::vector<std::string>::const_iterator ait;
+        for (ait = pit->GetDeprecatedFlagAliases().begin();
+             ait != pit->GetDeprecatedFlagAliases().end(); ++ait)
+          {
+          sout << "    deprecatedFlagAliasMap[\"" << (*ait) << "\"] = \""
+               << pit->GetFlag() << "\";" << EOL << std::endl;
+          }
+        }
+      }
+    }
+  for (git = module.GetParameterGroups().begin();
+       git != module.GetParameterGroups().end();
+       ++git)
+    {
+    for (pit = git->GetParameters().begin();
+         pit != git->GetParameters().end();
+         ++pit)
+      {
+      if (pit->GetLongFlagAliases().size() != 0)
+        {
+        std::vector<std::string>::const_iterator ait;
+        for (ait = pit->GetLongFlagAliases().begin();
+             ait != pit->GetLongFlagAliases().end(); ++ait)
+          {
+          sout << "    longFlagAliasMap[\"" << (*ait) << "\"] = \""
+               << pit->GetLongFlag() << "\";" << EOL << std::endl;
+          }
+        }
+      }
+    }
+  for (git = module.GetParameterGroups().begin();
+       git != module.GetParameterGroups().end();
+       ++git)
+    {
+    for (pit = git->GetParameters().begin();
+         pit != git->GetParameters().end();
+         ++pit)
+      {
+      if (pit->GetDeprecatedLongFlagAliases().size() != 0)
+        {
+        std::vector<std::string>::const_iterator ait;
+        for (ait = pit->GetDeprecatedLongFlagAliases().begin();
+             ait != pit->GetDeprecatedLongFlagAliases().end(); ++ait)
+          {
+          sout << "    deprecatedLongFlagAliasMap[\"" << (*ait) << "\"] = \""
+               << pit->GetLongFlag() << "\";" << EOL << std::endl;
+          }
+        }
+      }
+    }
+  sout << "    /* Remap flag aliases to the true flag */" << EOL << std::endl;
+  sout << "    std::vector<std::string> targs;" << EOL << std::endl;
+  sout << "    std::map<std::string,std::string>::iterator ait;" << EOL << std::endl;
+  sout << "    std::map<std::string,std::string>::iterator dait;" << EOL << std::endl;
+  sout << "    int ac;" << EOL << std::endl;
+  sout << "    for (ac=0; ac < argc; ++ac) " << EOL << std::endl;
+  sout << "       { " << EOL << std::endl;
+  sout << "       if (strlen(argv[ac]) == 2 && argv[ac][0]=='-')" << EOL << std::endl;
+  sout << "         {" << EOL << std::endl;
+  sout << "         /* short flag case */" << EOL << std::endl;
+  sout << "         std::string tflag(argv[ac], 1, strlen(argv[ac])-1);" << EOL << std::endl;
+  sout << "         ait = flagAliasMap.find(tflag);" << EOL << std::endl;
+  sout << "         dait = deprecatedFlagAliasMap.find(tflag);" << EOL << std::endl;
+  sout << "         if (ait != flagAliasMap.end() || dait != deprecatedFlagAliasMap.end())" << EOL << std::endl;
+  sout << "           {" << EOL << std::endl;
+  sout << "           if (ait != flagAliasMap.end())" << EOL << std::endl;
+  sout << "             {" << EOL << std::endl;
+  sout << "             /* remap the flag */" << EOL << std::endl;
+  sout << "             targs.push_back(\"-\" + (*ait).second);" << EOL << std::endl;
+  sout << "             }" << EOL << std::endl;
+  sout << "           else if (dait != deprecatedFlagAliasMap.end())" << EOL << std::endl;
+  sout << "             {" << EOL << std::endl;
+  sout << "             std::cout << \"Flag \\\"\" << argv[ac] << \"\\\" is deprecated. Please use flag \\\"-\" << (*dait).second << \"\\\" instead. \" << std::endl;" << EOL << std::endl;
+  sout << "             /* remap the flag */" << EOL << std::endl;
+  sout << "             targs.push_back(\"-\" + (*dait).second);" << EOL << std::endl;
+  sout << "             }" << EOL << std::endl;
+  sout << "           }" << EOL << std::endl;
+  sout << "         else" << EOL << std::endl;
+  sout << "           {" << EOL << std::endl;
+  sout << "           targs.push_back(argv[ac]);" << EOL << std::endl;
+  sout << "           }" << EOL << std::endl;
+  sout << "         }" << EOL << std::endl;
+  sout << "       else if (strlen(argv[ac]) > 2 && argv[ac][0]=='-' && argv[ac][1]=='-')" << EOL << std::endl;
+  sout << "         {" << EOL << std::endl;
+  sout << "         /* long flag case */" << EOL << std::endl;
+  sout << "         std::string tflag(argv[ac], 2, strlen(argv[ac])-2);" << EOL << std::endl;
+  sout << "         ait = longFlagAliasMap.find(tflag);" << EOL << std::endl;
+  sout << "         dait = deprecatedLongFlagAliasMap.find(tflag);" << EOL << std::endl;
+  sout << "         if (ait != longFlagAliasMap.end() || dait != deprecatedLongFlagAliasMap.end())" << EOL << std::endl;
+  sout << "           {" << EOL << std::endl;
+  sout << "           if (ait != longFlagAliasMap.end())" << EOL << std::endl;
+  sout << "             {" << EOL << std::endl;
+  sout << "             /* remap the flag */" << EOL << std::endl;
+  sout << "             targs.push_back(\"--\" + (*ait).second);" << EOL << std::endl;
+  sout << "             }" << EOL << std::endl;
+  sout << "           else if (dait != deprecatedLongFlagAliasMap.end())" << EOL << std::endl;
+  sout << "             {" << EOL << std::endl;
+  sout << "             std::cout << \"Long flag \\\"\" << argv[ac] << \"\\\" is deprecated. Please use long flag \\\"--\" << (*dait).second << \"\\\" instead. \" << std::endl;" << EOL << std::endl;
+  sout << "             /* remap the flag */" << EOL << std::endl;
+  sout << "             targs.push_back(\"--\" + (*dait).second);" << EOL << std::endl;
+  sout << "             }" << EOL << std::endl;
+  sout << "           }" << EOL << std::endl;
+  sout << "         else" << EOL << std::endl;
+  sout << "           {" << EOL << std::endl;
+  sout << "           targs.push_back(argv[ac]);" << EOL << std::endl;
+  sout << "           }" << EOL << std::endl;
+  sout << "         }" << EOL << std::endl;
+  sout << "       else if (strlen(argv[ac]) > 2 && argv[ac][0]=='-' && argv[ac][1]!='-')" << EOL << std::endl;
+  sout << "         {" << EOL << std::endl;
+  sout << "         /* short flag case where multiple flags are given at once ala */" << EOL << std::endl;
+  sout << "         /* \"ls -ltr\" */" << EOL << std::endl;
+  sout << "         std::string tflag(argv[ac], 1, strlen(argv[ac])-1);" << EOL << std::endl;
+  sout << "         std::string rflag(\"-\");" << EOL << std::endl;
+  sout << "         for (int fi=0; fi < tflag.size(); ++fi)" << EOL << std::endl;
+  sout << "           {" << EOL << std::endl;
+  sout << "           std::string tf(tflag, fi, 1);" << EOL << std::endl;
+  sout << "           ait = flagAliasMap.find(tf);" << EOL << std::endl;
+  sout << "           dait = deprecatedFlagAliasMap.find(tf);" << EOL << std::endl;
+  sout << "           if (ait != flagAliasMap.end() || dait != deprecatedFlagAliasMap.end())" << EOL << std::endl;
+  sout << "             {" << EOL << std::endl;
+  sout << "             if (ait != flagAliasMap.end())" << EOL << std::endl;
+  sout << "               {" << EOL << std::endl;
+  sout << "               /* remap the flag */" << EOL << std::endl;
+  sout << "               rflag += (*ait).second;" << EOL << std::endl;
+  sout << "               }" << EOL << std::endl;
+  sout << "             else if (dait != deprecatedFlagAliasMap.end())" << EOL << std::endl;
+  sout << "               {" << EOL << std::endl;
+  sout << "               std::cout << \"Flag \\\"-\" << tf << \"\\\" is deprecated. Please use flag \\\"-\" << (*dait).second << \"\\\" instead. \" << std::endl;" << EOL << std::endl;
+  sout << "               /* remap the flag */" << EOL << std::endl;
+  sout << "               rflag += (*dait).second;" << EOL << std::endl;
+  sout << "               }" << EOL << std::endl;
+  sout << "             }" << EOL << std::endl;
+  sout << "           else" << EOL << std::endl;
+  sout << "             {" << EOL << std::endl;
+  sout << "             rflag += tf;" << EOL << std::endl;
+  sout << "             }" << EOL << std::endl;
+  sout << "           }" << EOL << std::endl;
+  sout << "         targs.push_back(rflag);" << EOL << std::endl;
+  sout << "         }" << EOL << std::endl;
+  sout << "       else" << EOL << std::endl;
+  sout << "         {" << EOL << std::endl;
+  sout << "         /* skip the argument without remapping (this is the case for any */" << EOL << std::endl;
+  sout << "         /* arguments for flags */" << EOL << std::endl;
+  sout << "         targs.push_back(argv[ac]);" << EOL << std::endl;
+  sout << "         }" << EOL << std::endl;
+  sout << "       }" << EOL << std::endl;
+  sout << EOL << std::endl;
+
+
+   sout << "   /* Remap args to a structure that CmdLine::parse() can understand*/" << EOL << std::endl;
+   sout << "   std::vector<char*> vargs;" << EOL << std::endl;
+   sout << "   for (ac = 0; ac < targs.size(); ++ac)" << EOL << std::endl;
+   sout << "     { " << EOL << std::endl;
+   sout << "     vargs.push_back((char *)targs[ac].c_str());" << EOL << std::endl;
+   sout << "     }" << EOL << std::endl;
+
+   //sout << "std::cout << \"Remapped back command line\" << std::endl;" << EOL << std::endl;
+   //sout << "for(int ai=0; ai < argc; ++ai) std::cout << \"argv[\" << ai << \"]=\"<<vargs[ai] << std::endl;" << EOL << std::endl;
+   
+  // Generate the code to parse the command line
+  sout << "    commandLine.parse ( vargs.size(), (char**) &(vargs[0]) );" << EOL << std::endl;
+  //sout << "exit(0);" << EOL << std::endl;
   
   // Third pass generates access to arguments
   for (git = module.GetParameterGroups().begin();
@@ -973,7 +1172,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
       }
     }
 
-// Finally, for any arrays, split the strings into words
+  // Finally, for any arrays, split the strings into words
   for (git = module.GetParameterGroups().begin();
        git != module.GetParameterGroups().end();
        ++git)
@@ -1069,12 +1268,12 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
       }
     }
   // Wrapup the block and generate the catch block
-  sout << "      }" << EOL << std::endl;
+  sout << "  }" << EOL << std::endl;
   sout << "catch ( TCLAP::ArgException e )" << EOL << std::endl;
   sout << "  {" << EOL << std::endl;
   sout << "  std::cerr << \"error: \" << e.error() << \" for arg \" << e.argId() << std::endl;" << EOL << std::endl;
   sout << "  return ( EXIT_FAILURE );" << EOL << std::endl;
-  sout << "    }" << std::endl;
+  sout << "  }" << std::endl;
 }
 
 void GeneratePost(std::ofstream &sout)

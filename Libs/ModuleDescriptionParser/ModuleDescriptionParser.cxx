@@ -1141,6 +1141,42 @@ startElement(void *userData, const char *element, const char **attrs)
       }
     parameter->SetTag(name);
     }
+  else if (parameter && (name == "flag"))
+    {
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    if (attrCount > 0)
+      {
+      for (int i=0; i < attrCount/2; ++i)
+        {
+        if (strcmp(attrs[2*i], "alias") == 0)
+          {
+          parameter->SetFlagAliasesAsString(attrs[2*i+1]);
+          }
+        else if (strcmp(attrs[2*i], "deprecatedalias") == 0)
+          {
+          parameter->SetDeprecatedFlagAliasesAsString(attrs[2*i+1]);
+          }
+        }
+      }
+    }
+  else if (parameter && (name == "longflag"))
+    {
+    int attrCount = XML_GetSpecifiedAttributeCount(ps->Parser);
+    if (attrCount > 0)
+      {
+      for (int i=0; i < attrCount/2; ++i)
+        {
+        if (strcmp(attrs[2*i], "alias") == 0)
+          {
+          parameter->SetLongFlagAliasesAsString(attrs[2*i+1]);
+          }
+        else if (strcmp(attrs[2*i], "deprecatedalias") == 0)
+          {
+          parameter->SetDeprecatedLongFlagAliasesAsString(attrs[2*i+1]);
+          }
+        }
+      }
+    }
   ps->CurrentParameter = parameter;
   ps->CurrentGroup = group;
   ps->OpenTags.push(name);
