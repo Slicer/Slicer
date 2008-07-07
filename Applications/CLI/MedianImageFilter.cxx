@@ -125,5 +125,16 @@ int main( int argc, char * argv[] )
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
     }
+  catch( std::exception &excep)
+    {
+    std::cerr << "STD exception caught !" << std::endl;
+    std::cerr << excep.what() << std::endl;
+    return EXIT_FAILURE;
+    }
+  catch( ... )
+    {
+    std::cerr << "Unknown exception caught !" << std::endl;
+    return EXIT_FAILURE;
+    }
   return EXIT_SUCCESS;
 }
