@@ -37,13 +37,7 @@ Authors: Michael McKenna, David Small, Steve Pieper.
 
 #include "simpleVectors.h"
 
-#ifdef _WIN32 // WINDOWS
 #include <vector>
-#else // UNIX
-#include <vector.h>
-#endif
-
-
 
 vtkCxxRevisionMacro(vtkRectangle, "$Revision: 1.3 $");
 vtkStandardNewMacro(vtkRectangle);

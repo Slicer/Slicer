@@ -34,11 +34,8 @@ Authors: Michael McKenna, David Small, Steve Pieper.
 #include "vtkTextureTextPolys.h"
 #include "vtkFontParameters.h"
 
-#ifdef _WIN32 // WINDOWS
 #include <vector>
-#else // UNIX
-#include <vector.h>
-#endif
+#include <vector>
 
 
 class vtkRenderer;
