@@ -94,14 +94,11 @@ add_library(${lib_name}
 # after teem 1.9, all the teem libraries are groups in one big libteem.so
 if ( ${TEEM_VERSION_MAJOR} GREATER 1 )
   set(TEEM_LIBRARIES teem)
-  MESSAGE(FATAL "GREATER 1 ${TEEM_LIBRARIES}")
 else ( ${TEEM_VERSION_MAJOR} GREATER 1 )
   if ( ${TEEM_VERSION_MINOR} LESS 10 )
     set(TEEM_LIBRARIES air biff nrrd ten ell)
-  MESSAGE(FATAL "LESS 10 ${TEEM_LIBRARIES}")
   else ( ${TEEM_VERSION_MINOR} LESS 10 )
     set(TEEM_LIBRARIES teem)
-  MESSAGE(FATAL "NOT LESS 10 ${TEEM_LIBRARIES}")
   endif ( ${TEEM_VERSION_MINOR} LESS 10 )
 endif ( ${TEEM_VERSION_MAJOR} GREATER 1 )
 
