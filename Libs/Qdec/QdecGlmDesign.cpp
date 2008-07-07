@@ -32,6 +32,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 
+#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <sstream>

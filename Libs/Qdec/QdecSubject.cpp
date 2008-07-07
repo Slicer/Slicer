@@ -25,6 +25,7 @@
  *
  */
 
+#include <cstring>
 #include <stdexcept>
 
 #include "QdecSubject.h"

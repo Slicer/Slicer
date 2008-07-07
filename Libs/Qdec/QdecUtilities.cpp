@@ -28,6 +28,7 @@
 #include "QdecUtilities.h"
 
 #include <fstream>
+#include <cstring>
 #include <stdexcept>
 
 using namespace std;

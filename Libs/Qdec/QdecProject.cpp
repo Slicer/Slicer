@@ -27,6 +27,8 @@
  *
  */
 
+#include <cstdlib>
+#include <cstring>
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
