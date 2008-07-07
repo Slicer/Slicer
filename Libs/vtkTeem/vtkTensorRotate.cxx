@@ -204,7 +204,7 @@ void vtkTensorRotate::AllocateTensors(vtkImageData *data)
   vtkDataArray *tensors;
   
 
-  if (data != NULL)
+  if (data == NULL)
     {
     vtkErrorMacro("Input has not been assigned.");
     return;
