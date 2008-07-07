@@ -1041,8 +1041,8 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   sout << "    std::vector<std::string> targs;" << EOL << std::endl;
   sout << "    std::map<std::string,std::string>::iterator ait;" << EOL << std::endl;
   sout << "    std::map<std::string,std::string>::iterator dait;" << EOL << std::endl;
-  sout << "    int ac;" << EOL << std::endl;
-  sout << "    for (ac=0; ac < argc; ++ac) " << EOL << std::endl;
+  sout << "    size_t ac;" << EOL << std::endl;
+  sout << "    for (ac=0; ac < static_cast<size_t>(argc); ++ac) " << EOL << std::endl;
   sout << "       { " << EOL << std::endl;
   sout << "       if (strlen(argv[ac]) == 2 && argv[ac][0]=='-')" << EOL << std::endl;
   sout << "         {" << EOL << std::endl;
@@ -1100,7 +1100,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
   sout << "         /* \"ls -ltr\" */" << EOL << std::endl;
   sout << "         std::string tflag(argv[ac], 1, strlen(argv[ac])-1);" << EOL << std::endl;
   sout << "         std::string rflag(\"-\");" << EOL << std::endl;
-  sout << "         for (int fi=0; fi < tflag.size(); ++fi)" << EOL << std::endl;
+  sout << "         for (std::string::size_type fi=0; fi < tflag.size(); ++fi)" << EOL << std::endl;
   sout << "           {" << EOL << std::endl;
   sout << "           std::string tf(tflag, fi, 1);" << EOL << std::endl;
   sout << "           ait = flagAliasMap.find(tf);" << EOL << std::endl;
