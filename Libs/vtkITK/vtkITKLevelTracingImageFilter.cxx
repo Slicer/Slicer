@@ -157,33 +157,34 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *self, T* scalars,
   typename ImageType::IndexType chain3D;
 
   do
-  {
-    switch( plane )
     {
-    case 0:  //JK plane
-      chain3D[0] = seed[0];
-      chain3D[1] = chainTemp[0] ;
-      chain3D[2] = chainTemp[1] ;
-      break;
-    case 1:  //IK plane
-      chain3D[1] = seed[1];
-      chain3D[0] = chainTemp[0] ;
-      chain3D[2] = chainTemp[1] ;
-      break;
-    case 2:  //IJ plane
-      chain3D[2] = seed[2];
-      chain3D[0] = chainTemp[0] ;
-      chain3D[1] = chainTemp[1] ;
-      break;
-    }
-
+    switch( plane )
+      {
+      default:
+      case 0:  //JK plane
+        chain3D[0] = seed[0];
+        chain3D[1] = chainTemp[0] ;
+        chain3D[2] = chainTemp[1] ;
+        break;
+      case 1:  //IK plane
+        chain3D[1] = seed[1];
+        chain3D[0] = chainTemp[0] ;
+        chain3D[2] = chainTemp[1] ;
+        break;
+      case 2:  //IJ plane
+        chain3D[2] = seed[2];
+        chain3D[0] = chainTemp[0] ;
+        chain3D[1] = chainTemp[1] ;
+        break;
+      }
+  
     newPoints->InsertPoint(i, chain3D[0], chain3D[1], chain3D[2]);
     ptIds[i] = i;
     offset = chain->IncrementInput(i);
     chainTemp[0] = chainTemp[0] + offset[0];
     chainTemp[1] = chainTemp[1] + offset[1];
     //vtkGenericWarningMacro( << "Chain point: "  << chainTemp );  
-  }
+    }
   while( i < numberChain );
 
   newPolys->InsertNextCell( i, ptIds );

@@ -998,7 +998,7 @@ void
 vtkITKBSplineTransformHelperImpl<O>
 ::SetBulkTransform( const double linear[3][3], const double offset[3] )
 {
-  static const int VTKDimension = 3;
+  //static const int VTKDimension = 3;
   BulkTransformType::MatrixType matrix;
   BulkTransformType::OutputVectorType vector;
   for (unsigned i=0; i<3; ++i)
@@ -1020,7 +1020,7 @@ void
 vtkITKBSplineTransformHelperImpl<O>
 ::GetBulkTransform( double linear[3][3], double offset[3] ) const
 {
-  static const int VTKDimension = 3;
+  //static const int VTKDimension = 3;
   BulkTransformType const* bulk = dynamic_cast< BulkTransformType const*>(BSpline->GetBulkTransform());
   BulkTransformType::MatrixType matrix = bulk->GetMatrix();
   BulkTransformType::OutputVectorType vector = bulk->GetOffset();
@@ -1039,6 +1039,6 @@ typename vtkITKBSplineTransformHelperImpl<O>::BulkTransformType const*
 vtkITKBSplineTransformHelperImpl<O>
 ::GetBulkTransform() const
 {
-  static const int VTKDimension = 3;
+  //static const int VTKDimension = 3;
   return dynamic_cast< BulkTransformType const*>(BSpline->GetBulkTransform());
 }
