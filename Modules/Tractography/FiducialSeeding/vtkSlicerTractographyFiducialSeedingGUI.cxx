@@ -80,6 +80,8 @@ vtkSlicerTractographyFiducialSeedingGUI::vtkSlicerTractographyFiducialSeedingGUI
   this->StoppingValueScale = vtkKWScaleWithLabel::New();
   this->StoppingCurvatureScale = vtkKWScaleWithLabel::New();
   this->IntegrationStepLengthScale = vtkKWScaleWithLabel::New();
+  this->RegionSizeScale = vtkKWScaleWithLabel::New();
+  this->RegionSampleSizeScale = vtkKWScaleWithLabel::New();
 
   this->FiducialListNode = NULL;
   
@@ -145,6 +147,18 @@ vtkSlicerTractographyFiducialSeedingGUI::~vtkSlicerTractographyFiducialSeedingGU
     this->IntegrationStepLengthScale->Delete();
     this->IntegrationStepLengthScale = NULL;
   }
+    if ( this->RegionSizeScale ) 
+  {
+    this->RegionSizeScale->SetParent(NULL);
+    this->RegionSizeScale->Delete();
+    this->RegionSizeScale = NULL;
+  }
+    if ( this->RegionSampleSizeScale ) 
+  {
+    this->RegionSampleSizeScale->SetParent(NULL);
+    this->RegionSampleSizeScale->Delete();
+    this->RegionSampleSizeScale = NULL;
+  }
   
   vtkSetAndObserveMRMLNodeMacro(this->FiducialListNode, NULL);
   
@@ -176,6 +190,10 @@ void vtkSlicerTractographyFiducialSeedingGUI::AddGUIObservers ( )
   this->StoppingCurvatureScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->IntegrationStepLengthScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
+  this->RegionSizeScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
+  this->RegionSampleSizeScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 
 }
@@ -198,6 +216,10 @@ void vtkSlicerTractographyFiducialSeedingGUI::RemoveGUIObservers ( )
   this->StoppingCurvatureScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->IntegrationStepLengthScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+ 
+  this->RegionSizeScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  
+  this->RegionSampleSizeScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
 
 }
@@ -300,7 +322,9 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
                                                           stopingMode.c_str(),
                                                           this->StoppingValueScale->GetWidget()->GetValue(),
                                                           this->StoppingCurvatureScale->GetWidget()->GetValue(),
-                                                          this->IntegrationStepLengthScale->GetWidget()->GetValue() );  
+                                                          this->IntegrationStepLengthScale->GetWidget()->GetValue(),
+                                                          this->RegionSizeScale->GetWidget()->GetValue(),
+                                                          this->RegionSampleSizeScale->GetWidget()->GetValue());  
 }
 
 //---------------------------------------------------------------------------
@@ -405,6 +429,26 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->IntegrationStepLengthScale->SetBalloonHelpString("Integration step size.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->IntegrationStepLengthScale->GetWidgetName() );
+
+  this->RegionSizeScale->SetParent ( moduleFrame->GetFrame() );
+  this->RegionSizeScale->Create ( );
+  this->RegionSizeScale->SetLabelText("Seeding Region Size (mm)");
+  this->RegionSizeScale->GetWidget()->SetRange(0,10);
+  this->RegionSizeScale->GetWidget()->SetResolution(0.5);
+  this->RegionSizeScale->GetWidget()->SetValue(1.0);
+  this->RegionSizeScale->SetBalloonHelpString("The size of the seeding region.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->RegionSizeScale->GetWidgetName() );
+
+  this->RegionSampleSizeScale->SetParent ( moduleFrame->GetFrame() );
+  this->RegionSampleSizeScale->Create ( );
+  this->RegionSampleSizeScale->SetLabelText("Number of seeding samples");
+  this->RegionSampleSizeScale->GetWidget()->SetRange(1,10);
+  this->RegionSampleSizeScale->GetWidget()->SetResolution(1);
+  this->RegionSampleSizeScale->GetWidget()->SetValue(2);
+  this->RegionSampleSizeScale->SetBalloonHelpString("Number of seeding samples.");
+  this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
+                 this->RegionSampleSizeScale->GetWidgetName() );
 
   this->SeedButton->SetParent(moduleFrame->GetFrame());
   this->SeedButton->Create();

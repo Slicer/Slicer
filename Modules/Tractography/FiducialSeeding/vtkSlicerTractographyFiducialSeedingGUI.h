@@ -124,6 +124,9 @@ protected:
   vtkKWScaleWithLabel *StoppingValueScale;
   vtkKWScaleWithLabel *StoppingCurvatureScale;
   vtkKWScaleWithLabel *IntegrationStepLengthScale;
+
+  vtkKWScaleWithLabel *RegionSizeScale;
+  vtkKWScaleWithLabel *RegionSampleSizeScale;
   
   vtkKWCheckButton *SeedButton;
 
