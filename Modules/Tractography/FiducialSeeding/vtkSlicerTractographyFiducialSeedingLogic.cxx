@@ -186,9 +186,22 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   for (int f=0; f<nf; f++)
     {
     float *xyzf = fiducialListNode->GetNthFiducialXYZ(f);
-    float *xyz = transFiducial->TransformFloatPoint(xyzf);
-    //Run the thing
-    seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
+    for (float x = -3; x < 4; x+=2)
+      {
+      for (float y = -3; y < 4; y+=2)
+        {
+        for (float z = -3; z < 4; z+=2)
+          {
+          float newXYZ[3];
+          newXYZ[0] = xyzf[0] + x;
+          newXYZ[1] = xyzf[1] + y;
+          newXYZ[2] = xyzf[2] + z;
+          float *xyz = transFiducial->TransformFloatPoint(newXYZ);
+          //Run the thing
+          seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
+          }
+        }
+      }
     }
     
   //6. Extra5ct PolyData in RAS
