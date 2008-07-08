@@ -233,7 +233,7 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       vtkPolyData * vtkMesh = vtkPolyData::New();
       // Get the number of points in the mesh
       int numPoints = surfaceMesh->GetNumberOfPoints();
-      int numCells = surfaceMesh->GetNumberOfCells();
+      //int numCells = surfaceMesh->GetNumberOfCells();
 
       // Create the vtkPoints object and set the number of points
       vtkPoints* vpoints = vtkPoints::New();
