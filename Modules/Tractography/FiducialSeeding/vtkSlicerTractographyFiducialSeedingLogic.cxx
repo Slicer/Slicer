@@ -60,7 +60,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
                                                             double stoppingValue, 
                                                             double stoppingCurvature, 
                                                             double integrationStepLength,
-                                                            double resgionSize, int numSamples)
+                                                            double regionSize, int numSamples)
 {
   // 0. check inputs
   if (volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL ||
@@ -185,7 +185,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   double sampleStep = 1;
   if (numSamples > 1) 
     {
-    regionSize/(numSamples-1);
+    sampleStep = regionSize/(numSamples-1);
     }
   // loop over fiducials
   int nf = fiducialListNode->GetNumberOfFiducials();
