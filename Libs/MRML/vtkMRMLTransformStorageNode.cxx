@@ -462,9 +462,9 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
             {
             double linear[D][D];
             double offset[D];
-            for (unsigned i=0; i < D; i++)
+            for (int i=0; i < D; i++)
               {
-              for (unsigned j=0; j < D; j++)
+              for (int j=0; j < D; j++)
                 {
                 linear[i][j] = bulk->GetMatrix()[i][j];
                 }
@@ -605,13 +605,13 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
       // convert from LPS to RAS
       double* dataPtr = reinterpret_cast<double*>(vtkgridimage->GetScalarPointer());
       GridImageType::IndexType ijk;
-      for( int k = 0; k < Nk; ++k )
+      for( int k = 0; k < (int)Nk; ++k )
         {
         ijk[2] = k;
-        for( int j = 0; j < Nj; ++j )
+        for( int j = 0; j < (int)Nj; ++j )
           {
           ijk[1] = Nj -j - 1;
-          for( int i = 0; i < Ni; ++i, dataPtr += 3 )
+          for( int i = 0; i < (int)Ni; ++i, dataPtr += 3 )
             {
             ijk[0] = Ni -i - 1;
             GridImageType::PixelType pixel = gridImage->GetPixel( ijk );
