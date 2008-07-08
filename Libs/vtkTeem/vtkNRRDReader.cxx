@@ -871,7 +871,7 @@ void vtkNRRDReader::ExecuteData(vtkDataObject *output)
     vtkErrorMacro(<< "data is null.");
     return;
     }
-  void *ptr;
+  void *ptr = NULL;
   switch(PointDataType) {
     case SCALARS:
       data->GetPointData()->GetScalars()->SetName("NRRDImage");
