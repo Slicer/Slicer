@@ -82,7 +82,7 @@ void vtkMRMLTimeSeriesVolumeNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLTimeSeriesVolumeNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLTimeSeriesVolumeNode *node = (vtkMRMLTimeSeriesVolumeNode *) anode;
+  //vtkMRMLTimeSeriesVolumeNode *node = (vtkMRMLTimeSeriesVolumeNode *) anode;
 }
 
 //----------------------------------------------------------------------------
