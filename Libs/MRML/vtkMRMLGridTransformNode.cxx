@@ -238,7 +238,7 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
         {
         vals.push_back( val );
         }
-      if (vals.size() !=  num_of_displacement)
+      if ((int)(vals.size()) !=  num_of_displacement)
         {
         vtkErrorMacro( "Incorrect number of origin: expecting " << num_of_displacement << "; got "
                        << vals.size() );
