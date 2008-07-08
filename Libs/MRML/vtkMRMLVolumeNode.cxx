@@ -164,7 +164,7 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
       }
     }
   int modified = anode->GetModifiedSinceRead();
-  unsigned long mtime = anode->GetMTime();
+  //unsigned long mtime = anode->GetMTime(); UNUSED
 
   if (node->ImageData != NULL)
     {
