@@ -158,7 +158,7 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkDebugMacro("ReadData: read state is ready, URI = " << (this->GetURI() == NULL ? "null" : this->GetURI()) << ", filename = " << (this->GetFileName() == NULL ? "null" : this->GetFileName()));
     }
   
-  vtkMRMLVolumeNode *volNode;
+  vtkMRMLVolumeNode *volNode = NULL;
 
   vtkNRRDReader* reader;
 
@@ -351,7 +351,7 @@ int vtkMRMLNRRDStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;         
     }    
   
-  vtkMRMLVolumeNode *volNode;
+  vtkMRMLVolumeNode *volNode = NULL;
   //Store volume nodes attributes.
   vtkMatrix4x4 *mf = vtkMatrix4x4::New();
   vtkDoubleArray *grads = NULL;
