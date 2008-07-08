@@ -302,7 +302,7 @@ void TimeSeriesDatabase<TPixel>::GenerateData()
             std::cout << "Image Region: " << IR;
             std::cout << "First voxel: " << Buffer->data[0] << std::endl;
           }
-          int bx, by, bz, x, y, z;
+          unsigned int bx, by, bz, x, y, z;
           for ( z = 0; z < Count[2]; z++ ) {
             ImageIndex[2] = IR.GetIndex(2) + z;
             bz = BR.GetIndex(2) + z;
@@ -409,7 +409,7 @@ void TimeSeriesDatabase<TPixel>::CreateFromFileArchetype ( const char* TSDFilena
          || m_Dimensions[2] != region.GetSize()[2] ) {
 
       // close them all
-    for ( int idx = 0; idx < db.size(); idx++ )
+    for ( int idx = 0; idx < (int)(db.size()); idx++ )
       {
       db[idx]->close();
       }
