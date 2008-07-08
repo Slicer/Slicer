@@ -189,8 +189,8 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;
     }
   
-  vtkMRMLVolumeNode *volNode;
-  vtkITKArchetypeImageSeriesReader* reader;
+  vtkMRMLVolumeNode *volNode = NULL;
+  vtkITKArchetypeImageSeriesReader* reader = NULL;
   
   if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
