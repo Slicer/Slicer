@@ -150,7 +150,7 @@ int vtkFSSurfaceReader::RequestData(
   int numVertices = 0;
   int numFaces = 0;
   int vIndex, fIndex;
-  int numVerticesPerFace;
+  int numVerticesPerFace = 0;
   int tmpX, tmpY, tmpZ, tmpfIndex;
   float locations[3];
   int fvIndex;
@@ -219,19 +219,20 @@ int vtkFSSurfaceReader::RequestData(
 
   // Triangle files use normal ints to store their number of vertices
   // and faces, while quad files use three byte ints.
-  switch (magicNumber) {
-  case vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER: 
-  case vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER: 
-    vtkFSIO::ReadInt3 (surfaceFile, numVertices);
-    vtkFSIO::ReadInt3 (surfaceFile, numFaces);
-    break;
-  case vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER: 
-    fread (&numVertices, sizeof(int), 1, surfaceFile);
-    fread (&numFaces, sizeof(int), 1, surfaceFile);
-    vtkByteSwap::Swap4BE (&numVertices);
-    vtkByteSwap::Swap4BE (&numFaces);
-    break;
-  }
+  switch (magicNumber) 
+    {
+    case vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER: 
+    case vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER: 
+      vtkFSIO::ReadInt3 (surfaceFile, numVertices);
+      vtkFSIO::ReadInt3 (surfaceFile, numFaces);
+      break;
+    case vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER: 
+      fread (&numVertices, sizeof(int), 1, surfaceFile);
+      fread (&numFaces, sizeof(int), 1, surfaceFile);
+      vtkByteSwap::Swap4BE (&numVertices);
+      vtkByteSwap::Swap4BE (&numFaces);
+      break;
+    }
 
   // In quad files, we want to skip every other face but count twice
   // as many of them. This has to do with the way they are stored;
