@@ -335,7 +335,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     }
   
-  vtkMRMLVolumeNode *volNode;
+  vtkMRMLVolumeNode *volNode = NULL;
   
   if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
