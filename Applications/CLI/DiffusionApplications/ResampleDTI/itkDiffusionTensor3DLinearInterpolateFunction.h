@@ -23,13 +23,13 @@ public:
   typedef typename Superclass::ImageType ImageType ;
   typedef SmartPointer< Self > Pointer ;
   typedef SmartPointer< const Self > ConstPointer ;
-  typedef LinearInterpolateImageFunction< ImageType , double > LinearInterpolateImageFunction ;
+  typedef LinearInterpolateImageFunction< ImageType , double > LinearInterpolateImageFunctionType ;
   
   itkNewMacro(Self) ;
 
 protected:
   void AllocateInterpolator() ;
-  typename LinearInterpolateImageFunction::Pointer linearInterpolator[ 6 ] ;
+  typename LinearInterpolateImageFunctionType::Pointer linearInterpolator[ 6 ] ;
 };
 
 }//end namespace itk

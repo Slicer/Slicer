@@ -20,7 +20,7 @@ DiffusionTensor3DWindowedSincInterpolateImageFunction< TData ,
 {
   for( int i = 0 ; i < 6 ; i++ )
     {
-    windowedSincInterpolator[ i ] = WindowedSincInterpolateImageFunction::New() ;
+    windowedSincInterpolator[ i ] = WindowedSincInterpolateImageFunctionType::New() ;
     this->interpol[ i ] = windowedSincInterpolator[ i ] ;
     }
 }

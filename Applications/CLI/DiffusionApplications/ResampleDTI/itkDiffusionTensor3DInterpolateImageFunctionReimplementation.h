@@ -33,7 +33,7 @@ public :
   typedef SmartPointer< const Self > ConstPointer ;
   typedef typename itk::ImageRegionIterator< DiffusionImageType > IteratorDiffusionImageType ;
   typedef typename itk::ImageRegionIterator< ImageType > IteratorImageType ;
-  typedef InterpolateImageFunction< ImageType , double > InterpolateImageFunction ;
+  typedef InterpolateImageFunction< ImageType , double > InterpolateImageFunctionType ;
   /** Evaluate the interpolated tensor at a position
    */
   TensorDataType Evaluate( const PointType &point ) ;
@@ -42,7 +42,7 @@ protected:
   virtual void AllocateInterpolator() = 0 ;
   void PreCompute() ;  
  // DiffusionTensor3DInterpolateImageFunctionReimplementation();
-  typename InterpolateImageFunction::Pointer interpol[ 6 ] ;
+  typename InterpolateImageFunctionType::Pointer interpol[ 6 ] ;
   ImagePointer m_Image[ 6 ] ;
 
 };

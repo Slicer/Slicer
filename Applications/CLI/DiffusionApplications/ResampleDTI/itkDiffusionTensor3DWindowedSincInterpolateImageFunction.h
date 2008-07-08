@@ -28,13 +28,13 @@ public:
   typedef SmartPointer< const Self > ConstPointer ;
   typedef WindowedSincInterpolateImageFunction< ImageType ,
                                     VRadius , TWindowFunction,
-                                    TBoundaryCondition , double > WindowedSincInterpolateImageFunction ;
+                                    TBoundaryCondition , double > WindowedSincInterpolateImageFunctionType ;
   
   itkNewMacro(Self);
 
 protected:
   void AllocateInterpolator() ;
-  typename WindowedSincInterpolateImageFunction::Pointer windowedSincInterpolator[ 6 ] ;
+  typename WindowedSincInterpolateImageFunctionType::Pointer windowedSincInterpolator[ 6 ] ;
 };
 
 }//end namespace itk
