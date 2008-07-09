@@ -16,6 +16,7 @@
 #define __ModuleProcessInformation_h
 
 #include <ostream>
+#include <cstring>
 
 extern "C" {
   struct ModuleProcessInformation
