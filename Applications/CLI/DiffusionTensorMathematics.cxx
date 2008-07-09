@@ -91,5 +91,9 @@ int main( int argc, const char * argv[] )
   writer->SetIJKToRASMatrix( reader->GetRasToIjkMatrix() );
   writer->Write();
 
+  reader->Delete();
+  writer->Delete();
+  math->Delete();
+
   return EXIT_SUCCESS;
 }
