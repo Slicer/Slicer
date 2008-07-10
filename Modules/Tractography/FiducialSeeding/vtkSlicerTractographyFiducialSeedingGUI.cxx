@@ -442,11 +442,11 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
 
   this->RegionSampleSizeScale->SetParent ( moduleFrame->GetFrame() );
   this->RegionSampleSizeScale->Create ( );
-  this->RegionSampleSizeScale->SetLabelText("Number of seeding samples");
+  this->RegionSampleSizeScale->SetLabelText("Seeding Step Size (mm)");
   this->RegionSampleSizeScale->GetWidget()->SetRange(1,10);
-  this->RegionSampleSizeScale->GetWidget()->SetResolution(1);
-  this->RegionSampleSizeScale->GetWidget()->SetValue(2);
-  this->RegionSampleSizeScale->SetBalloonHelpString("Number of seeding samples.");
+  this->RegionSampleSizeScale->GetWidget()->SetResolution(0.5);
+  this->RegionSampleSizeScale->GetWidget()->SetValue(0.5);
+  this->RegionSampleSizeScale->SetBalloonHelpString("Step between seedin samples");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
                  this->RegionSampleSizeScale->GetWidgetName() );
 

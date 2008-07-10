@@ -46,7 +46,7 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingLogic : pub
                           vtkMRMLFiberBundleNode *fiberNode,
                           const char * stoppinMode,
                           double stoppingValue, double stoppingCurvature, double integrationStepLength,
-                          double resgionSize, int numSamples);
+                          double resgionSize, double samplingStep);
 protected:
   vtkSlicerTractographyFiducialSeedingLogic();
   ~vtkSlicerTractographyFiducialSeedingLogic();

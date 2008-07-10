@@ -60,7 +60,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
                                                             double stoppingValue, 
                                                             double stoppingCurvature, 
                                                             double integrationStepLength,
-                                                            double regionSize, int numSamples)
+                                                            double regionSize, double sampleStep)
 {
   // 0. check inputs
   if (volumeNode == NULL || fiducialListNode == NULL || fiberNode == NULL ||
@@ -182,11 +182,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   // Temp fix to provide a scalar
   seed->GetInputTensorField()->GetPointData()->SetScalars(volumeNode->GetImageData()->GetPointData()->GetScalars());
   
-  double sampleStep = 1;
-  if (numSamples > 1) 
-    {
-    sampleStep = regionSize/(numSamples-1);
-    }
+  
   // loop over fiducials
   int nf = fiducialListNode->GetNumberOfFiducials();
   for (int f=0; f<nf; f++)
