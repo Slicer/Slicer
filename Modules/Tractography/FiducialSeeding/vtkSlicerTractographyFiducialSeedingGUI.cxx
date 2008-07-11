@@ -175,6 +175,16 @@ void vtkSlicerTractographyFiducialSeedingGUI::PrintSelf(ostream& os, vtkIndent i
 }
 
 //---------------------------------------------------------------------------
+vtkIntArray* vtkSlicerTractographyFiducialSeedingGUI::NewObservableEvents()
+{
+  vtkIntArray* events = vtkIntArray::New();
+  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
+  //events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  return events;
+}
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingGUI::AddGUIObservers ( ) 
 {
   this->VolumeSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  

@@ -66,7 +66,7 @@ vtk_wrap_tcl3(SlicerTractographyDisplay
 #---------------------------------------------------------------------------
 # Add Loadable Module support
 
-#generatelm(SlicerTractographyDisplay_SRCS SlicerTractographyDisplay.txt)
+generatelm(SlicerTractographyDisplay_SRCS SlicerTractographyDisplay.txt)
 
 # --------------------------------------------------------------------------
 # Build and install the library

@@ -55,7 +55,7 @@ vtk_wrap_tcl3(SlicerTractographyFiducialSeeding
 # --------------------------------------------------------------------------
 # Add Loadable Module support
 
-#generatelm(SlicerTractographyFiducialSeeding_SRCS SlicerTractographyFiducialSeeding.txt)
+generatelm(SlicerTractographyFiducialSeeding_SRCS SlicerTractographyFiducialSeeding.txt)
 
 # --------------------------------------------------------------------------
 # Build and install the library

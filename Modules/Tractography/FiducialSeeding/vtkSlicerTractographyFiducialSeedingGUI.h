@@ -41,6 +41,10 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
         { return "Tractography.Seeding"; }
 
   // Description:
+  // Events that this module GUI will observe. CLIENT MUST DELETE!
+  virtual vtkIntArray* NewObservableEvents();
+
+  // Description:
   // Create widgets
   virtual void BuildGUI ( );
 
@@ -75,6 +79,11 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   virtual void Enter ( ){};
   virtual void Exit ( ){};
 
+  // Description:
+  // Override this method so that nothing will happen when called 
+  // by the LoadableModule code.
+   virtual void SetModuleLogic ( vtkSlicerLogic* ) { };
+  
   // Description:
   // Type of anisotropy used to stop tractography.
   vtkGetStringMacro(StoppingMode);

@@ -88,19 +88,11 @@ extern "C" {
 //#define REMOTEIO_DEBUG
 //#define SLICES_DEBUG
 //#define TCLMODULES_DEBUG
-//#define TRACTOGRAPHY_DEBUG
 //#define VOLUMES_DEBUG
 
 #define CAMERA_DEBUG
 
 #include <LoadableModuleFactory.h>
-
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
-#include "vtkSlicerFiberBundleLogic.h"
-#include "vtkSlicerTractographyDisplayLogic.h"
-#include "vtkSlicerTractographyDisplayGUI.h"
-#include "vtkSlicerTractographyFiducialSeedingGUI.h"
-#endif
 
 #if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
 #include "vtkScriptedModuleLogic.h"
@@ -159,10 +151,6 @@ extern "C" int Vtkteem_Init(Tcl_Interp *interp);
 
 
 //TODO added temporary
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
-extern "C" int Slicertractographydisplay_Init(Tcl_Interp *interp);
-extern "C" int Slicertractographyfiducialseeding_Init(Tcl_Interp *interp);
-#endif
 #if !defined(DAEMON_DEBUG) && defined(Slicer3_BUILD_MODULES)
 extern "C" int Slicerdaemon_Init(Tcl_Interp *interp);
 #endif
@@ -634,10 +622,6 @@ int Slicer3_main(int argc, char *argv[])
   Igt_Init(interp);
   Vtkteem_Init(interp);
 
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  Slicertractographydisplay_Init(interp);
-  Slicertractographyfiducialseeding_Init(interp);
-#endif
 #if !defined(DAEMON_DEBUG) && defined(Slicer3_BUILD_MODULES)
   Slicerdaemon_Init(interp);
 #endif
@@ -1316,55 +1300,6 @@ int Slicer3_main(int argc, char *argv[])
   //    appGUI->InitializeNavigationWidget();
 
 
-  
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  // --- Tractography Display module
-  slicerApp->SplashMessage("Initializing Tractography Display Module...");
-  vtkSlicerTractographyDisplayGUI *slicerTractographyDisplayGUI = vtkSlicerTractographyDisplayGUI::New ( );
-  vtkSlicerTractographyDisplayLogic *slicerTractographyDisplayLogic  = vtkSlicerTractographyDisplayLogic::New ( );
-  //slicerTractographyDisplayLogic->DebugOn ( );
-
-  // Observe scene events to handle display logic for new nodes or new scenes
-  vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-  //events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  slicerTractographyDisplayLogic->SetAndObserveMRMLSceneEvents ( scene , events );
-  events->Delete();
-
-  slicerTractographyDisplayLogic->SetApplicationLogic ( appLogic );
-  slicerTractographyDisplayGUI->SetLogic ( slicerTractographyDisplayLogic );
-  slicerTractographyDisplayGUI->SetApplication ( slicerApp );
-  slicerTractographyDisplayGUI->SetApplicationLogic ( appLogic );
-  slicerTractographyDisplayGUI->SetApplicationGUI ( appGUI );
-  slicerTractographyDisplayGUI->SetGUIName( "DisplayLoadSave" );
-  slicerTractographyDisplayGUI->GetUIPanel()->SetName ( slicerTractographyDisplayGUI->GetGUIName ( ) );
-  slicerTractographyDisplayGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-  slicerTractographyDisplayGUI->GetUIPanel()->Create ( );
-  slicerApp->AddModuleGUI ( slicerTractographyDisplayGUI );
-  slicerTractographyDisplayGUI->BuildGUI ( );
-  slicerTractographyDisplayGUI->AddGUIObservers ( );
-#endif
-
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  // --- Tractography Fiducial Seeding module
-  slicerApp->SplashMessage("Initializing Tractography Fiducial Seeding Module...");
-  vtkSlicerTractographyFiducialSeedingGUI *slicerTractographyFiducialSeedingGUI = vtkSlicerTractographyFiducialSeedingGUI::New ( );
-
-
-  slicerTractographyDisplayLogic->SetApplicationLogic ( appLogic );
-  slicerTractographyFiducialSeedingGUI->SetApplication ( slicerApp );
-  slicerTractographyFiducialSeedingGUI->SetApplicationLogic ( appLogic );
-  slicerTractographyFiducialSeedingGUI->SetApplicationGUI ( appGUI );
-  slicerTractographyFiducialSeedingGUI->SetGUIName( "FiducialSeeding" );
-  slicerTractographyFiducialSeedingGUI->GetUIPanel()->SetName ( slicerTractographyFiducialSeedingGUI->GetGUIName ( ) );
-  slicerTractographyFiducialSeedingGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-  slicerTractographyFiducialSeedingGUI->GetUIPanel()->Create ( );
-  slicerApp->AddModuleGUI ( slicerTractographyFiducialSeedingGUI );
-  slicerTractographyFiducialSeedingGUI->BuildGUI ( );
-  slicerTractographyFiducialSeedingGUI->AddGUIObservers ( );
-#endif
-
-
   //
   //--- Cache and RemoteIO ManagerGUI
   //
@@ -1854,10 +1789,6 @@ int Slicer3_main(int argc, char *argv[])
   lmit++;
   }
 
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  slicerTractographyDisplayGUI->RemoveGUIObservers ( );
-  slicerTractographyFiducialSeedingGUI->RemoveGUIObservers ( );
-#endif
 #if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
   //    volumesGUI->RemoveGUIObservers ( );
   volumesGUI->TearDownGUI ( );
@@ -1980,11 +1911,6 @@ int Slicer3_main(int argc, char *argv[])
   lmit++;
   }
 
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  slicerTractographyDisplayGUI->Delete ();
-  slicerTractographyFiducialSeedingGUI->Delete ();
-#endif
-
 #if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
   volumesGUI->Delete ();
 #endif
@@ -2062,12 +1988,6 @@ int Slicer3_main(int argc, char *argv[])
 
   lmit++;
   }
-
-#if !defined(TRACTOGRAPHY_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  slicerTractographyDisplayLogic->SetAndObserveMRMLScene ( NULL );
-  slicerTractographyDisplayLogic->Delete ();
-#endif
-        
 
 #if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
   volumesLogic->SetAndObserveMRMLScene ( NULL );
