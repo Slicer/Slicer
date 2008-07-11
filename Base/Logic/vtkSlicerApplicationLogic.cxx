@@ -1541,6 +1541,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         this->GetSelectionNode()
           ->SetActiveVolumeID( req.GetNode().c_str() );
         }
+      if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(svnd->GetDisplayNode()) != NULL)
+        {
+        // make sure win/level gets calculated
+        svnd->CalculateScalarAutoLevels(vtkMRMLScalarVolumeDisplayNode::SafeDownCast(svnd->GetDisplayNode()), svnd->GetImageData());
+        }
       this->PropagateVolumeSelection();
       }
     }
