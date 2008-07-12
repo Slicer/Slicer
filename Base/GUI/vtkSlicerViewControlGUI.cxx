@@ -2598,37 +2598,31 @@ void vtkSlicerViewControlGUI::MainViewLookFrom ( const char *dir )
           {
           cam->SetPosition ( fp[0]+widefov, fp[1], fp[2] );
           cam->SetViewUp ( 0, 0, 1);
-          cam->SetFocalPoint ( 0.0, 0.0, 0.0);
           }
         else if ( !strcmp (dir, "L"))
           {
           cam->SetPosition ( fp[0]-widefov, fp[1], fp[2]);
           cam->SetViewUp ( 0, 0, 1);        
-          cam->SetFocalPoint ( 0.0, 0.0, 0.0);
           }
         else if ( !strcmp (dir, "S"))
           {
           cam->SetPosition ( fp[0], fp[1], fp[2]+widefov );
           cam->SetViewUp ( 0, 1, 0);
-          cam->SetFocalPoint ( 0.0, 0.0, 0.0);
           }
         else if ( !strcmp (dir, "I"))
           {
           cam->SetPosition ( fp[0], fp[1], fp[2]-widefov );
           cam->SetViewUp ( 0, 1, 0);
-          cam->SetFocalPoint ( 0.0, 0.0, 0.0);
           }
         else if ( !strcmp (dir, "A"))
           {
           cam->SetPosition (fp[0], fp[1]+widefov, fp[2] );
           cam->SetViewUp ( 0, 0, 1 );
-          cam->SetFocalPoint ( 0.0, 0.0, 0.0);
           }
         else if ( !strcmp (dir, "P"))
           {
           cam->SetPosition (fp[0], fp[1]-widefov, fp[2] );
           cam->SetViewUp ( 0, 0, 1 );
-          cam->SetFocalPoint ( 0.0, 0.0, 0.0);
           }
         p->GetViewerWidget()->GetMainViewer()->GetRenderer()->ResetCameraClippingRange ( );
         cam->ComputeViewPlaneNormal();
