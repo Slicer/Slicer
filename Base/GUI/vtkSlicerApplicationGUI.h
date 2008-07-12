@@ -214,6 +214,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void CreateMain3DViewer ( int arrangementType );
     virtual void CreateMainSliceViewers ( int arrangementType );
 
+    virtual void TearDownViewers ( );
     virtual void DestroyMain3DViewer ( );
     virtual void DestroyMainSliceViewers ( );
 
