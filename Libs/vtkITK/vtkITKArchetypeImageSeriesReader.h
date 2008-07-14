@@ -703,6 +703,7 @@ protected:
   //BTX
   std::vector<std::string> AllFileNames;
   bool AnalyzeHeader;
+  bool IsOnlyFile;
 
   std::vector<std::string> SeriesInstanceUIDs;
   std::vector<std::string> ContentTime;

@@ -117,6 +117,8 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->AnalyzeHeader = true;
 
   this->GroupingByTags = false;
+  this->IsOnlyFile = false;
+
   this->SelectedUID = -1;
   this->SelectedContentTime = -1;
   this->SelectedTriggerTime = -1;
@@ -334,6 +336,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       {
       candidateFiles.push_back( this->Archetype );
       this->AllFileNames.push_back( this->Archetype );
+      this->IsOnlyFile = true;
       }
     else
       {
@@ -355,33 +358,20 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   }
 
   // Reduce the selection of filenames
-  if (!GroupingByTags)
+  if (this->IsOnlyFile)
   {
-    //unsigned int lastFile;
-    //if (this->FileNameSliceCount == 0)
-    //{
-    //  lastFile = candidateFiles.size();
-    //}
-    //else
-    //{
-    //  lastFile = this->FileNameSliceOffset + this->FileNameSliceCount - 1;
-    //  if (lastFile > candidateFiles.size())
-    //  {
-    //    lastFile = candidateFiles.size();      
-    //  }
-    //}
-    //this->FileNames.resize(0);
-    //for (unsigned int f = this->FileNameSliceOffset;
-    //  f < lastFile;
-    //  f += this->FileNameSliceSpacing)
-    //{
-    //  this->FileNames.push_back(candidateFiles[f]);
-    //}
-    AssembleNthVolume( 0 );
+    this->FileNames.push_back( this->Archetype );
   }
   else
   {
-    GroupFiles( SelectedUID, SelectedContentTime, SelectedTriggerTime, SelectedDiffusion, SelectedSlice, SelectedOrientation );
+    if ( !GroupingByTags )
+    {
+      AssembleNthVolume( 0 );
+    }
+    else 
+    {
+      GroupFiles( SelectedUID, SelectedContentTime, SelectedTriggerTime, SelectedDiffusion, SelectedSlice, SelectedOrientation );
+    }
   }
 
   if (RasToIjkMatrix)
