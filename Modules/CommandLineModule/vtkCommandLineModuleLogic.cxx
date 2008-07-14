@@ -1130,6 +1130,24 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     //
     // 
     
+    //
+    // first, remove ITK_AUTOLOAD_PATH to work around
+    // nvidia driver bug that causes the module to fail 
+    // on exit with undefined symbol
+    //
+    std::string saveITKAutoLoadPath;
+    vtksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", saveITKAutoLoadPath);
+    std::string emptyString("ITK_AUTOLOAD_PATH=");
+    int putSuccess = 
+      vtkKWApplication::PutEnv(const_cast <char *> (emptyString.c_str()));
+    if (!putSuccess)
+      {
+      vtkErrorMacro( "Unable to set ITK_AUTOLOAD_PATH. ");
+      }
+
+    //
+    // now run the process
+    //
     itksysProcess *process = itksysProcess_New();
     
     // setup the command
@@ -1143,6 +1161,17 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     // execute the command
     itksysProcess_Execute(process);
     
+
+    // restore the load path
+    std::string putEnvString = ("ITK_AUTOLOAD_PATH=");
+    putEnvString = putEnvString + saveITKAutoLoadPath;
+    putSuccess = 
+      vtkKWApplication::PutEnv(const_cast <char *> (putEnvString.c_str()));
+    if (!putSuccess)
+      {
+      vtkErrorMacro( "Unable to set ITK_AUTOLOAD_PATH. ");
+      }
+
     // Wait for the command to finish
     char *tbuffer;
     int length;
@@ -1388,7 +1417,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
         node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
         this->GetApplicationLogic()->RequestModified( node );
         }
-    
+
       // clean up
       itksysProcess_Delete(process);
       }
