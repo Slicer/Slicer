@@ -1136,7 +1136,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     // on exit with undefined symbol
     //
     std::string saveITKAutoLoadPath;
-    vtksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", saveITKAutoLoadPath);
+    itksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", saveITKAutoLoadPath);
     std::string emptyString("ITK_AUTOLOAD_PATH=");
     int putSuccess = 
       vtkKWApplication::PutEnv(const_cast <char *> (emptyString.c_str()));
