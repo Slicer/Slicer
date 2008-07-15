@@ -349,8 +349,11 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       {
         this->AllFileNames[f] = candidateFiles[f];
       }
-
-      if ( AnalyzeHeader )
+      if ( candidateFiles.size() == 1 )
+      {
+        this->IsOnlyFile = true;
+      }
+      else if ( AnalyzeHeader )
       {
         this->AnalyzeDicomHeaders();
       }
@@ -360,6 +363,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   // Reduce the selection of filenames
   if (this->IsOnlyFile)
   {
+    this->FileNames.resize( 0 );
     this->FileNames.push_back( this->Archetype );
   }
   else
