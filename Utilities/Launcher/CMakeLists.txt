@@ -34,14 +34,15 @@ set(launcher_name "Slicer3-${launcher_platform}${CMAKE_EXECUTABLE_SUFFIX}")
 
 #MESSAGE("launcher_platform is ${launcher_platform}\nlauncher name is ${launcher_name}")
 
+set(launcher_source
+  "${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Launchers/${launcher_name}")
 set(launcher_binary
   "${Slicer3_BINARY_DIR}/Slicer3${CMAKE_EXECUTABLE_SUFFIX}")
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Slicer3Launchers/${launcher_name}"
-  "${launcher_binary}"
-  COPYONLY)
-
-install(PROGRAMS "${launcher_binary}" DESTINATION ".")
+if(EXISTS "${launcher_source}")
+  configure_file("${launcher_source}" "${launcher_binary}" COPYONLY)
+  install(PROGRAMS "${launcher_binary}" DESTINATION ".")
+endif(EXISTS "${launcher_source}")
 
 # Should this location change, change Application/GUI/Slicer3.cxx as well
 
