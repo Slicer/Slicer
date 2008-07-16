@@ -106,6 +106,20 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
     this->InteractionModeToolbar->RemoveAllWidgets ( );
     }
 
+  if ( this->CompareViewBoxRowEntry )
+    {
+    this->CompareViewBoxRowEntry->SetParent ( NULL );
+    this->CompareViewBoxRowEntry->Delete();
+    this->CompareViewBoxRowEntry = NULL;
+    }
+
+//  if ( this->CompareViewBoxColumnEntry )
+//    {
+//    this->CompareViewBoxColumnEntry->SetParent ( NULL );
+//    this->CompareViewBoxColumnEntry->Delete();
+//    this->CompareViewBoxColumnEntry = NULL;
+//    }
+
   // Delete module choose gui
   if ( this->ModuleChooseGUI )
     {

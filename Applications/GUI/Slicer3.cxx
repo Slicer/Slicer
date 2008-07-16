@@ -2027,9 +2027,6 @@ int Slicer3_main(int argc, char *argv[])
   Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
 #endif
 
-  //--- application last
-  slicerApp->Delete ();
-
   //--- scene next;
   scene->Clear(1);
   scene->Delete ();
