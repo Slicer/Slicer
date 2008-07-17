@@ -237,6 +237,11 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   int extent[6];  
   std::string fileNameCollapsed = itksys::SystemTools::CollapseFullPath( this->Archetype);
 
+  if ( this->SingleFile )
+  {
+    this->AnalyzeHeader = false;
+  }
+
   // Since we only need origin, spacing and extents, we can use one
   // image type.
   typedef itk::Image<float,3> ImageType;
@@ -361,7 +366,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   }
 
   // Reduce the selection of filenames
-  if (this->IsOnlyFile)
+  if ( this->IsOnlyFile || this->SingleFile )
   {
     this->FileNames.resize( 0 );
     this->FileNames.push_back( this->Archetype );
@@ -728,6 +733,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
   AnalyzeTime.Start();
 
   int nFiles = this->AllFileNames.size();
+  typedef itk::Image<float,3> ImageType;
 
   this->IndexSeriesInstanceUIDs.resize( nFiles );
   this->IndexContentTime.resize( nFiles );
@@ -745,6 +751,50 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 
 
   itk::GDCMImageIO::Pointer gdcmIO = itk::GDCMImageIO::New();
+  gdcmIO->SetFileName( this->Archetype );
+  // if this->Archetype is not a DICOM file, we assume all files form a series and use them all.
+  try
+  {
+    gdcmIO->ReadImageInformation();
+  }
+  catch ( ... )
+  {
+    for (int f = 0; f < nFiles; f++)
+    {
+      itk::ImageFileReader<ImageType>::Pointer imageReader =
+        itk::ImageFileReader<ImageType>::New();
+      imageReader->SetFileName( this->AllFileNames[f] );
+      imageReader->UpdateOutputInformation();
+
+      // insert series 
+      int idx = InsertSeriesInstanceUIDs( "Non-Dicom Series" );
+      this->IndexSeriesInstanceUIDs[f] = idx;
+
+      // for now, assume ContentTime, TriggerTime, and DiffusionGradientOrientation do not exist
+      this->IndexContentTime[f] = -1;
+      this->IndexContentTime[f] = -1;
+      this->IndexDiffusionGradientOrientation[f] = -1;
+
+      // Slice Location
+      ImageType::PointType origin = imageReader->GetOutput()->GetOrigin();
+      idx = InsertSliceLocation( origin[2] );
+      this->IndexSliceLocation[f] = idx;    
+
+      // Orientation
+      ImageType::DirectionType orientation = imageReader->GetOutput()->GetDirection();
+      float a[6];
+      for (int k = 0; k < 3; k++)
+      {
+        a[k] = orientation[0][k];
+        a[k+3] = orientation[1][k];
+      }
+      idx = InsertImageOrientationPatient( a );
+      this->IndexImageOrientationPatient[f] = idx;    
+    }
+    return;
+  }
+
+  // if Archetype is a Dicom File
   for (int f = 0; f < nFiles; f++)
   {
     gdcmIO->SetFileName( this->AllFileNames[f] );

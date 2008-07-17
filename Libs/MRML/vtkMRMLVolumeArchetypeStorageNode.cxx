@@ -215,10 +215,13 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     readerSeries->SetSingleFile( this->GetSingleFile() );
 
     readerFile->SetArchetype(fullName.c_str());
+    readerFile->SetSingleFile( this->GetSingleFile() );
     readerSeries->SetArchetype(fullName.c_str());
+    readerSeries->SetSingleFile( this->GetSingleFile() );
+
     try 
       {
-      readerSeries->UpdateInformation();
+        readerSeries->UpdateInformation();
       }
     catch ( ... )
       {
