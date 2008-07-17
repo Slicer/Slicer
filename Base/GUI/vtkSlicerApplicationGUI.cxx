@@ -104,6 +104,7 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 
   this->MRMLScene = NULL;
   this->Built = false;
+  
     //---  
     // widgets used in the Slice module
     //---
@@ -169,22 +170,21 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
 
 
 
-
-  
 //---------------------------------------------------------------------------
 vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
 {
     if (this->SaveDataWidget)
       {
+      this->SaveDataWidget->SetAndObserveMRMLScene ( NULL );
       this->SaveDataWidget->SetParent(NULL);
       this->SaveDataWidget->Delete();
       this->SaveDataWidget=NULL;
       }
 
-  if ( this->GUILayoutNode )
-    {
-    this->SetAndObserveGUILayoutNode ( NULL );
-    }
+    if ( this->GUILayoutNode )
+      {
+      this->SetAndObserveGUILayoutNode ( NULL );
+      }
 
     // Delete frames
     if ( this->TopFrame )
@@ -240,12 +240,6 @@ vtkSlicerApplicationGUI::~vtkSlicerApplicationGUI ( )
       this->MainSlicerWindow = NULL;
       }
 
-    if (this->SaveDataWidget)
-      {
-      this->SaveDataWidget->SetParent ( NULL );
-      this->SaveDataWidget->Delete();
-      }
-    
     if ( this->SlicerFoundationIcons )
       {
       this->SlicerFoundationIcons->Delete();
@@ -316,10 +310,6 @@ void vtkSlicerApplicationGUI::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "MainSlicerWindow: " << this->GetMainSlicerWindow ( ) << "\n";
   // print widgets?
 }
-
-
-
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
@@ -441,6 +431,7 @@ void vtkSlicerApplicationGUI::ProcessAddVolumeCommand()
 {
   this->GetApplication()->Script("::LoadVolume::ShowDialog");
 }
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::ProcessAddTransformCommand()
@@ -965,9 +956,6 @@ void vtkSlicerApplicationGUI::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 
-
-
-
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::Enter ( )
 {
@@ -1044,7 +1032,12 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   this->MainSlicerWindow->GetTclInteractor()->SetApplication(app);
   this->MainSlicerWindow->GetTclInteractor()->Create();
 
-  this->MainSlicerWindow->Create ( );        
+  // TODO: it would be nice to make this a menu option on the tkcon itself,
+  // but for now just up the font size
+  
+  this->MainSlicerWindow->Create ( );
+
+//            app->GetTclInteractor()->SetFont("Courier 12");
             
   // configure initial GUI layout
   geom->InitializeMainSlicerWindowSize ( );
@@ -1537,6 +1530,9 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
     }
 }
 
+
+
+//---------------------------------------------------------------------------
 vtkSlicerSliceGUI* vtkSlicerApplicationGUI::GetMainSliceGUI(char *layoutName)
 {
   if (this->SlicesGUI)
@@ -1544,6 +1540,8 @@ vtkSlicerSliceGUI* vtkSlicerApplicationGUI::GetMainSliceGUI(char *layoutName)
   else
     return NULL;
 }
+
+
 
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::CreateMainSliceViewers ( int arrangementType )
@@ -1782,8 +1780,11 @@ void vtkSlicerApplicationGUI::UnpackMainSliceViewers (  )
           layoutname = this->SlicesGUI->GetNextSliceGUILayoutName(layoutname);
           }
         
-        if ( layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutFourUpView ||
-             layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView)
+        //--- check the previous layout (one we are dismantling.)
+        //--- take the layout apart the same way we put it together.
+        if ( layout->GetOldViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutFourUpView ||
+             layout->GetOldViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView ||
+             layout->GetOldViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutConventionalView )
           {
           g->UngridGUI();
           }
@@ -1818,7 +1819,7 @@ void vtkSlicerApplicationGUI::UnpackMain3DViewer (  )
     // 3D Viewer
     //
     this->MainSlicerWindow->GetViewNotebook()->RemovePagesMatchingTag ( this->ViewerPageTag );
-    if ( layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutFourUpView )
+    if ( layout->GetOldViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutFourUpView )
       {
       this->ViewerWidget->UngridWidget ( );
       }
@@ -1851,7 +1852,7 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
     this->MainSlicerWindow->SetSecondaryPanelVisibility ( 1 );
     this->ViewerWidget->PackWidget(this->MainSlicerWindow->GetViewFrame() );
     
-    if (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView)
+    if (layout->GetOldViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView)
       {
       // clear the 3D main viewer if some of the compare view slices
       // are visible
@@ -1988,6 +1989,7 @@ void vtkSlicerApplicationGUI::PackOneUp3DView ( )
     layout->SetViewArrangement ( vtkMRMLLayoutNode::SlicerLayoutOneUp3DView );
     }
 }
+
 
 
 //---------------------------------------------------------------------------
@@ -2150,6 +2152,12 @@ void vtkSlicerApplicationGUI::PackTabbedSliceView ( )
     vtkSlicerColor *color = app->GetSlicerTheme()->GetSlicerColors ( );
     vtkMRMLScene *scene = this->GetMRMLScene();
     vtkMRMLLayoutNode *layout = this->GetGUILayoutNode ( );
+    if ( layout == NULL )
+      {
+      return;
+      }
+    
+
     this->MainSlicerWindow->SetSecondaryPanelVisibility ( 0 );
     
     this->MainSlicerWindow->GetViewNotebook()->AddPage("Red slice", NULL, NULL, this->ViewerPageTag );
@@ -2528,6 +2536,7 @@ void vtkSlicerApplicationGUI::PackFirstSliceViewerFrame ( )
 //    this->Script ("pack %s -side left  -expand y -fill both -padx 0 -pady 0", 
 //    this->DefaultSlice0Frame->GetWidgetName( ) );
 }
+
 
 
 
