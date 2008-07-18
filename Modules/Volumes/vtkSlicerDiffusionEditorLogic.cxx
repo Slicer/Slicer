@@ -124,13 +124,14 @@ int vtkSlicerDiffusionEditorLogic::ParseGradientsBvaluesToArray(const char *oldG
   std::stringstream grad;
   grad << oldGradients;
 
-  // save all values in a vector
+  // save all gradient values in a vector
   std::vector<double> vec;
   while(!grad.eof())
     {
     std::string dummy = "";
     double newValue = -1;
     grad >> dummy;
+    // check if valid value
     if(StringToDouble(dummy, newValue))  vec.push_back(newValue);
     else
       {
@@ -140,39 +141,42 @@ int vtkSlicerDiffusionEditorLogic::ParseGradientsBvaluesToArray(const char *oldG
       }
     }
 
-  // exit if too many or to less values are input
+  // exit if not the necessary number of values are input
   if(vec.size() != numberOfGradients*3+1)
     {
     vtkWarningMacro("given values "<<vec.size()<<", needed "<<numberOfGradients*3+1);
     return 0;
     }
 
-  vtkDoubleArray *factor = vtkDoubleArray::New();
+  // set number of gradients to new arrays
   newGradients->SetNumberOfComponents(3);
   newGradients->SetNumberOfTuples(numberOfGradients);
   newBValues->SetNumberOfTuples(numberOfGradients);
 
-  // set gradients and factor values
+  // create for bValue calculation
+  vtkDoubleArray *gradientNormalized = vtkDoubleArray::New(); 
+  double gradientRange[2];
+
+  // set gradients and compute gradientNormalized values for bValue calculation
   for(unsigned int j = 1; j < vec.size(); j=j+3)
     {
     for(unsigned int i=j; i<j+3;i++)
       {
       newGradients->SetValue(i-1,vec[i]);
       }
-    factor->InsertNextValue(sqrt(vec[j]*vec[j]+vec[j+1]*vec[j+1]+vec[j+2]*vec[j+2]));
+    gradientNormalized->InsertNextValue(sqrt(vec[j]*vec[j]+vec[j+1]*vec[j+1]+vec[j+2]*vec[j+2]));
     }
 
-  // get range
-  double range[2];
-  factor->GetRange(range);
+  // get range for bValue calculation  
+  gradientNormalized->GetRange(gradientRange);
 
-  // set BValues
+  // compute bValues and set them
   for (int i=0; i<numberOfGradients;i++)
     {
-    newBValues->SetValue(i,vec[0]*factor->GetValue(i)/range[1]);
+    newBValues->SetValue(i,vec[0]*gradientNormalized->GetValue(i)/gradientRange[1]);
     }
 
-  factor->Delete();
+  gradientNormalized->Delete();
   return 1;
   }
 
@@ -180,26 +184,28 @@ int vtkSlicerDiffusionEditorLogic::ParseGradientsBvaluesToArray(const char *oldG
 std::string vtkSlicerDiffusionEditorLogic::ParseGradientsBvaluesToString(vtkDoubleArray *BValues, vtkDoubleArray *Gradients)
   {
   std::stringstream output;
-  vtkDoubleArray *factor = vtkDoubleArray::New();
-  double g[3];
+
+  // create for bValue calculation
+  double gradientRange[2];
+  vtkDoubleArray *gradientNormalized = vtkDoubleArray::New();
+  double g[3]; // single gradient
 
   // compute norm of each gradient 
   for(int i=0; i<Gradients->GetNumberOfTuples();i++)
     {
     Gradients->GetTuple(i,g);
-    factor->InsertNextValue(sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]));
+    gradientNormalized->InsertNextValue(sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]));
     }
 
-  // get range of norm array
-  double range[2];
-  factor->GetRange(range);
+  // get gradientRange of norm array
+  gradientNormalized->GetRange(gradientRange);
 
   // compute bValue
   double bValue = -1;
   for(int i = 0; i< BValues->GetSize(); i++)
     {
-    double numerator = BValues->GetValue(i)*range[1];
-    double denominator = factor->GetValue(i);
+    double numerator = BValues->GetValue(i)*gradientRange[1];
+    double denominator = gradientNormalized->GetValue(i);
     if(!numerator == 0 && !denominator == 0)
       {
       bValue = numerator/denominator;
@@ -221,8 +227,9 @@ std::string vtkSlicerDiffusionEditorLogic::ParseGradientsBvaluesToString(vtkDoub
       }
     output << "\n";        
     }
-  factor->Delete();
-  return output.str();
+
+  gradientNormalized->Delete();
+  return output.str(); // string with bValue and gradients
   }
 
 //---------------------------------------------------------------------------
