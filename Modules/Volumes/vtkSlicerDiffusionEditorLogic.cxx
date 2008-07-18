@@ -111,10 +111,10 @@ int vtkSlicerDiffusionEditorLogic::StringToDouble(const std::string &s, double &
   }
 
 //---------------------------------------------------------------------------
-int vtkSlicerDiffusionEditorLogic::ParseGradientsBvaluesToArray(const char *oldGradients, int numberOfGradients,
+int vtkSlicerDiffusionEditorLogic::ParseGradientsBvaluesToArray(const char *oldGradients, unsigned int numberOfGradients,
                                                  vtkDoubleArray *newBValues, vtkDoubleArray *newGradients)
   {
-  if (oldGradients == NULL || oldGradients == "")
+  if (oldGradients == NULL)
     {
     vtkErrorMacro(<< this->GetClassName() << ": oldGradients is NULL");
     return 0;
@@ -171,7 +171,7 @@ int vtkSlicerDiffusionEditorLogic::ParseGradientsBvaluesToArray(const char *oldG
   gradientNormalized->GetRange(gradientRange);
 
   // compute bValues and set them
-  for (int i=0; i<numberOfGradients;i++)
+  for (unsigned int i=0; i<numberOfGradients;i++)
     {
     newBValues->SetValue(i,vec[0]*gradientNormalized->GetValue(i)/gradientRange[1]);
     }

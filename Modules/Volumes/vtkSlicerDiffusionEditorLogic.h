@@ -35,7 +35,7 @@ class VTK_VOLUMES_EXPORT vtkSlicerDiffusionEditorLogic : public vtkSlicerLogic
     // Parses given ASCII gradients back into arrays of gradients and bValues.
     // Return value is 0 if given gradients can't be parsed or contain invalid/not enough
     // values; otherwise 1.
-    int ParseGradientsBvaluesToArray(const char  *gradients, int numberOfGradients, vtkDoubleArray *newBValues, 
+    int ParseGradientsBvaluesToArray(const char  *gradients, unsigned int numberOfGradients, vtkDoubleArray *newBValues, 
       vtkDoubleArray *newGradients);
 
     //BTX
