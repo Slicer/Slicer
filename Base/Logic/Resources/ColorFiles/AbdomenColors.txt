@@ -46,8 +46,8 @@
 231    left_psoas_muscle    230    125    125    255
 233    left_quadratus_lumborum_muscle    230    125    125    255
 235    left_external_oblique_muscle    230    125    125    255
-236    left_erector_spinae_muscle    230    125    125    255
-237    left_internal_oblique_muscle    230    125    125    255
+236    left_internal_oblique_muscle    230    125    125    255
+237    left_erector_spinae_muscle    230    125    125    255
 238    left_iliacus_muscle    230    125    125    255
 239    left_gluteus_minimus_muscle    230    125    125    255
 240    left_gluteus_medius_muscle    230    125    125    255
