@@ -221,6 +221,7 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void RepackMainViewer ( int arrangementType, const char *whichSlice );
     virtual void UnpackMain3DViewer (  );
     virtual void UnpackMainSliceViewers ( );
+    virtual void UngridCompareView();
 
     virtual void PopulateModuleChooseList ( );
     virtual void SetCurrentModuleToHome();
