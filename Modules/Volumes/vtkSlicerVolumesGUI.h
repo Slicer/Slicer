@@ -71,6 +71,11 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
 
     vtkGetObjectMacro(DiffusionEditorWidget, vtkSlicerDiffusionEditorWidget);
 
+    // Description
+    // Overloaded method for this modules' logic type
+    virtual void SetModuleLogic( vtkSlicerLogic *logic )
+        { this->SetModuleLogic (reinterpret_cast<vtkSlicerVolumesLogic*> (logic)); }
+  
     // Description:
     // This method builds the Volumes module GUI
     virtual void BuildGUI ( );

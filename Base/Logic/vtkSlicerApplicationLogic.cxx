@@ -18,7 +18,6 @@
 #include "vtkSlicerApplicationLogic.h"
 
 #include "vtkSlicerColorLogic.h"
-#include "vtkSlicerVolumesLogic.h"
 
 #include "vtkKWTkUtilities.h"
 #include "vtkKWApplication.h"

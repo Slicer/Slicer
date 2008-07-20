@@ -12,7 +12,6 @@
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerSliceLogic.h"
-#include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerModelsLogic.h"
 #include "vtkSlicerModelHierarchyLogic.h"
 #include "vtkSlicerFiducialsLogic.h"
@@ -87,7 +86,6 @@ extern "C" {
 //#define MODELS_DEBUG
 //#define REMOTEIO_DEBUG
 //#define TCLMODULES_DEBUG
-//#define VOLUMES_DEBUG
 
 #define CAMERA_DEBUG
 
@@ -101,10 +99,6 @@ extern "C" {
 #if !defined(COMMANDLINE_DEBUG) && (defined(Slicer3_BUILD_CLI) || defined(Slicer3_BUILD_MODULES))
 #include "vtkCommandLineModuleLogic.h"
 #include "vtkCommandLineModuleGUI.h"
-#endif
-
-#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
-#include "vtkSlicerVolumesGUI.h"
 #endif
 
 #if !defined(REMOTEIO_DEBUG)
@@ -158,9 +152,6 @@ extern "C" int Commandlinemodule_Init(Tcl_Interp *interp);
 #endif
 #if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
 extern "C" int Scriptedmodule_Init(Tcl_Interp *interp);
-#endif
-#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
-extern "C" int Volumes_Init(Tcl_Interp *interp);
 #endif
 
 struct SpacesToUnderscores
@@ -630,9 +621,7 @@ int Slicer3_main(int argc, char *argv[])
 #if !defined(SCRIPTEDMODULE_DEBUG) && defined(Slicer3_BUILD_MODULES)
   Scriptedmodule_Init(interp);
 #endif
-#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  Volumes_Init(interp);
-#endif
+
 
   // first call to GetInstance will create the Application
   // 
@@ -1129,25 +1118,6 @@ int Slicer3_main(int argc, char *argv[])
 
   // ADD INDIVIDUAL MODULES
   // (these require appGUI to be built):
-  // --- Volumes module
-
-#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  slicerApp->SplashMessage("Initializing Volumes Module...");
-
-  vtkSlicerVolumesLogic *volumesLogic = vtkSlicerVolumesLogic::New ( );
-  volumesLogic->SetAndObserveMRMLScene ( scene );
-  vtkSlicerVolumesGUI *volumesGUI = vtkSlicerVolumesGUI::New ( );
-  volumesGUI->SetApplication ( slicerApp );
-  volumesGUI->SetApplicationGUI ( appGUI );
-  volumesGUI->SetAndObserveApplicationLogic ( appLogic );
-  volumesGUI->SetAndObserveMRMLScene ( scene );
-  volumesGUI->SetModuleLogic ( volumesLogic );
-  volumesGUI->SetGUIName( "Volumes" );
-  volumesGUI->GetUIPanel()->SetName ( volumesGUI->GetGUIName ( ) );
-  volumesGUI->GetUIPanel()->SetUserInterfaceManager (appGUI->GetMainSlicerWindow()->GetMainUserInterfaceManager ( ) );
-  volumesGUI->GetUIPanel()->Create ( );
-  slicerApp->AddModuleGUI ( volumesGUI );
-#endif
 
 
 #ifndef MODELS_DEBUG
@@ -1446,10 +1416,7 @@ int Slicer3_main(int argc, char *argv[])
   name = slicesGUI->GetTclName();
   slicerApp->Script ("namespace eval slicer3 set SlicesGUI %s", name);
 
-#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  name = volumesGUI->GetTclName();
-  slicerApp->Script ("namespace eval slicer3 set VolumesGUI %s", name);
-#endif
+
 #ifndef MODELS_DEBUG
   name = modelsGUI->GetTclName();
   slicerApp->Script ("namespace eval slicer3 set ModelsGUI %s", name);
@@ -1780,10 +1747,7 @@ int Slicer3_main(int argc, char *argv[])
   lmit++;
   }
 
-#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  //    volumesGUI->RemoveGUIObservers ( );
-  volumesGUI->TearDownGUI ( );
-#endif
+
 #ifndef MODELS_DEBUG
   modelsGUI->TearDownGUI ( );
 #endif
@@ -1897,9 +1861,6 @@ int Slicer3_main(int argc, char *argv[])
   lmit++;
   }
 
-#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  volumesGUI->Delete ();
-#endif
 #ifndef MODELS_DEBUG
   modelsGUI->Delete ();
 #endif
@@ -1976,10 +1937,7 @@ int Slicer3_main(int argc, char *argv[])
   lmit++;
   }
 
-#if !defined(VOLUMES_DEBUG) && defined(Slicer3_BUILD_MODULES)
-  volumesLogic->SetAndObserveMRMLScene ( NULL );
-  volumesLogic->Delete();
-#endif
+
 #ifndef MODELS_DEBUG
   modelsLogic->SetAndObserveMRMLScene ( NULL );
   modelsLogic->Delete();

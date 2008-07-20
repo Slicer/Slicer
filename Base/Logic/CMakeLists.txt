@@ -51,7 +51,6 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerSliceLayerLogic.cxx
   vtkSlicerSliceGlyphLogic.cxx
   vtkSlicerGlyphLogic.cxx
-  vtkSlicerVolumesLogic.cxx 
   vtkSlicerModelsLogic.cxx 
   vtkSlicerModelHierarchyLogic.cxx
   vtkSlicerFiducialsLogic.cxx

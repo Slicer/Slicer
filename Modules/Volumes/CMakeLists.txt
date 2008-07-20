@@ -47,6 +47,7 @@ install(FILES
 
 set(Volumes_SRCS
   vtkSlicerVolumesGUI.cxx
+  vtkSlicerVolumesLogic.cxx
   #dwi/dti editor
   vtkSlicerDiffusionEditorWidget.cxx
   vtkSlicerMeasurementFrameWidget.cxx
@@ -74,7 +75,7 @@ vtk_wrap_tcl3(Volumes
 #---------------------------------------------------------------------------
 # Add Loadable Module support
 
-#generatelm(Volumes_SRC SlicerVolumes.txt)
+generatelm(Volumes_SRCS SlicerVolumes.txt)
 
 # --------------------------------------------------------------------------
 # Build and install the library
