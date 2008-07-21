@@ -3,7 +3,6 @@
 #include "vtkCommand.h"
 
 #include "vtkSlicerTransformsGUI.h"
-#include "vtkSlicerVolumesLogic.h"
 #include "vtkSlicerApplication.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
 #include "vtkKWFrameWithLabel.h"
