@@ -196,10 +196,23 @@ template <class T> void IslandMemory<T>::SetSize(int NewSize, IslandMemory<T>* S
   // Cannot be last element
   assert(Ptr);
   // cout << "ID " << SetID << endl;
-  if ((NewSize > SetSize) && (SetID > -1)) assert(Ptr->AddIsland(SetStartVoxel, NewSize, SetLabel, SetID,MaxSize) > -1);
-  else assert(this->AddIsland(SetStartVoxel, NewSize, SetLabel, SetID, MaxSize) > -1);
+  if ((NewSize > SetSize) && (SetID > -1)) {
+    int result = Ptr->AddIsland(SetStartVoxel, NewSize, SetLabel, SetID,MaxSize); 
+    assert(result > -1);
+  } else {
+    int result = this->AddIsland(SetStartVoxel, NewSize, SetLabel, SetID, MaxSize);
+    assert( result > -1);
+  }
 }
 //------------------------------------------------------------------------------
+template <class T> int IslandMemoryGroup<T>::GetSize() {
+  if (!this->List) {
+    cout << "ERROR: IslandMemoryGroup<T>::GetSize(): List is not defined" << endl;
+    exit(1);
+  }
+  return this->List->GetSize();
+}
+
 template <class T> int IslandMemoryGroup<T>::AddIsland(int NewStartVoxel, int NewSize, T NewLabel, int NewID) {
   // cout << "IslandMemoryGroup<T>::AddIsland " << NewID << endl;
   // always define newid
@@ -354,7 +367,7 @@ template <class T> void IslandMemoryGroup<T>::SetSize(int NewSize, IslandMemory<
 }
 
 template <class T> int IslandMemoryGroup<T>::PrintLine () {
-  cout << "---- IslandMemoryGroup Address: " << this << endl;
+  // cout << "---- IslandMemoryGroup Address: " << this << endl;
 
   if (this->Size == -1) { 
     cout << "No islands" << endl; return 0 ;
@@ -819,33 +832,45 @@ static void vtkImageIslandFilterExecute(vtkImageIslandFilter *self, T *inPtr, in
 
   EMStack<int> *VoxelStackMem = (IslandRemovalType == IMAGEISLANDFILTER_STATIC ? new EMStack<int> : NULL);
 
-  if (PrintInformation == IMAGEISLANDFILTER_PRINT_COMPREHENSIVE)  cout << "vtkImageIslandFilterExecute: Detect Islands in the image" << endl;
+  if (PrintInformation == IMAGEISLANDFILTER_PRINT_COMPREHENSIVE) {
+    cout << "vtkImageIslandFilterExecute: Detect Islands in the image" << endl;
+    cout << "vtkImageIslandFilterExecute: IslandRemovalType ";
+    if (IslandRemovalType == IMAGEISLANDFILTER_DYNAMIC) cout << "Dynamic" << endl;
+    else if (IslandRemovalType == IMAGEISLANDFILTER_STATIC) cout << "Static" << endl;
+    else cout << "Unknown" << endl;
+
+  }
+  
 
   while (index < SizeXYZ) {
     if (!Checked[index]) {
       switch (IslandRemovalType) {
-      case IMAGEISLANDFILTER_DYNAMIC: {
-      IslandCount ++;
-      int NewID = IslandCount; 
-      int IslandSize = vtkImageIslandFilter_DefineIsland(index, VoxelStackMem, Checked, inPtr, SizeX, SizeY, SizeXY, SizeZ, NewID);
-          // If it is not the same then island must be alread part of it 
-      assert(Mem->AddIsland(index,IslandSize,inPtr[index],IslandCount) == IslandCount);
-      break;
-      }
-      case IMAGEISLANDFILTER_STATIC: {
-      // Only delete it if it is a certain lable and if activated - touching the ROI
-    if ((IslandInputLabelFlag  && ((T(IslandInputLabelMin) >  inPtr[index]) || (T(IslandInputLabelMax) <  inPtr[index])))
+        case IMAGEISLANDFILTER_DYNAMIC: {
+          IslandCount ++;
+
+          int NewID = IslandCount; 
+          int IslandSize = vtkImageIslandFilter_DefineIsland(index, VoxelStackMem, Checked, inPtr, SizeX, SizeY, SizeXY, SizeZ, NewID);
+           // If it is not the same then island must be alread part of it 
+      // cout << "Mem->AddIsland(index,IslandSize,inPtr[index],IslandCount) " << index << " " << IslandSize << " " << inPtr[index] << " " << IslandCount << endl;
+          int currentIslandCount = Mem->AddIsland(index,IslandSize,inPtr[index],IslandCount);
+      assert(currentIslandCount == IslandCount);
+
+          break;
+        }
+        case IMAGEISLANDFILTER_STATIC: {
+           // Only delete it if it is a certain lable and if activated - touching the ROI
+           if ((IslandInputLabelFlag  && ((T(IslandInputLabelMin) >  inPtr[index]) || (T(IslandInputLabelMax) <  inPtr[index])))
                      || (IslandROIPtr && !*IslandROIPtr)) break;
 
-      IslandCount ++;
-      int IslandSize = vtkImageIslandFilter_DefineIsland(index, VoxelStackMem, Checked, inPtr, SizeX, SizeY, SizeXY, SizeZ, IslandCount);
-      int contIndex; 
-      // Relabel all of them  if true and otherwise do not do anything
-      if (IslandSize < IslandMinSize) {
-        DeletedIslands ++;
-        while (VoxelStackMem->Pop(contIndex))  outPtr[contIndex] = T(IslandOutputLabel);
-      } else while (VoxelStackMem->Pop(contIndex));
-      break;
+           IslandCount ++;
+           int IslandSize = vtkImageIslandFilter_DefineIsland(index, VoxelStackMem, Checked, inPtr, SizeX, SizeY, SizeXY, SizeZ, IslandCount);
+           int contIndex; 
+           // Relabel all of them  if true and otherwise do not do anything
+           if (IslandSize < IslandMinSize) {
+              DeletedIslands ++;
+              while (VoxelStackMem->Pop(contIndex))  outPtr[contIndex] = T(IslandOutputLabel);
+           } else while (VoxelStackMem->Pop(contIndex));
+            break;
       }
       default :
       cout << "Do not know type " << IslandRemovalType << endl;
@@ -880,11 +905,10 @@ static void vtkImageIslandFilterExecute(vtkImageIslandFilter *self, T *inPtr, in
   IslandMemoryGroup<T> *MemGroupPtr = Mem;
   int IslandCurrentSize = MemGroupPtr->GetSize();
 
-  
   // Do not delete largest group 
   while ((IslandCurrentSize < IslandMinSize) && MemGroupPtr->GetNextGroup()) {
     // All islands with the same size
-    // cout << "========================== Remove" << endl;
+    // cout << "========================== Remove " << IslandCurrentSize << endl;
    
     IslandMemory<T> *MemIslandPtr = MemGroupPtr->GetList();
     int GroupSize = MemGroupPtr->GetSize();

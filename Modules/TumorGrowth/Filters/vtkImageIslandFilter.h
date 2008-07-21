@@ -119,7 +119,7 @@ public:
   void SetMaxSize(int initMaxSize) {this->MaxSize = initMaxSize;}
 
   // Have to do it this way bc of MaxSize
-  int GetSize() {assert(this->List); return this->List->GetSize();}
+  int GetSize();
   void SetSize(int newSize, IslandMemory<T>* SetIsland);
 
   void SetLabel(T newLabel) {assert(this->List); this->List->SetLabel(newLabel);} 
@@ -159,6 +159,7 @@ protected:
   IslandMemoryGroup<T>* AddGroup(int NewSize);
 
   void CreateVariables () {this->Size = -1; this->List = NULL; this->Next = NULL; this->MaxSize = -1;}
+  // Minimum IslandSize current stored in stack 
   int   Size;
   int  MaxSize;
   IslandMemory<T>* List;
