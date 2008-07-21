@@ -983,7 +983,7 @@ int vtkMRMLFiducialListNode::AddFiducialWithXYZ(float x, float y, float z, int s
 //----------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::RemoveFiducial(vtkMRMLFiducial *o)
 {
-  char *pointID = NULL;
+  // char *pointID = NULL;
   std::string pointIDStr;
     if (o != NULL)
       {
