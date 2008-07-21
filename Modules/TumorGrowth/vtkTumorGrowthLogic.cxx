@@ -158,12 +158,18 @@ void vtkTumorGrowthLogic::PrintSelf(ostream& os, vtkIndent indent)
 // }
 
 int vtkTumorGrowthLogic::CheckROI(vtkMRMLVolumeNode* volumeNode) {
-  if (!volumeNode || !this->TumorGrowthNode) return 0;
+  if (!volumeNode || !this->TumorGrowthNode) {
+    cout << "vtkTumorGrowthLogic::CheckROI: No Volume Defined" << endl;
+    return 0;
+  }
 
   int* dimensions = volumeNode->GetImageData()->GetDimensions();
 
   for (int i = 0 ; i < 3 ; i++) {
-    if ((this->TumorGrowthNode->GetROIMax(i) < 0) || (this->TumorGrowthNode->GetROIMax(i) >= dimensions[i])) return 0 ;
+    if ((this->TumorGrowthNode->GetROIMax(i) < 0) || (this->TumorGrowthNode->GetROIMax(i) >= dimensions[i])) {
+      cout << "vtkTumorGrowthLogic::CheckROI: dimension["<<i<<"] = " << dimensions[i] << endl;
+      return 0 ;
+    }
     if ((this->TumorGrowthNode->GetROIMin(i) < 0) || (this->TumorGrowthNode->GetROIMin(i) >= dimensions[i])) return 0 ;
     if (this->TumorGrowthNode->GetROIMax(i) < this->TumorGrowthNode->GetROIMin(i)) return 0;
   }
@@ -287,18 +293,20 @@ vtkMRMLScalarVolumeNode* vtkTumorGrowthLogic::CreateSuperSample(int ScanNum) {
   if (!this->TumorGrowthNode)  return NULL;
 
   vtkMRMLVolumeNode* volumeNode = NULL;
-
   if (ScanNum > 1)  {
     volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->TumorGrowthNode->GetScene()->GetNodeByID(this->TumorGrowthNode->GetScan2_GlobalRef()));
   } else {
     volumeNode = vtkMRMLVolumeNode::SafeDownCast(this->TumorGrowthNode->GetScene()->GetNodeByID(this->TumorGrowthNode->GetScan1_Ref()));
   }
 
-  if (!this->CheckROI(volumeNode)) return NULL;
+  if (!this->CheckROI(volumeNode)) {
+    cout << "Warning: vtkTumorGrowthLogic::CreateSuperSample: Scan " << ScanNum << " failed CheckROI" << endl;
+    return NULL;
+
+  }
 
   // ---------------------------------
   // Perform Super Sampling 
-
   int ROIMin[3] = {this->TumorGrowthNode->GetROIMin(0), this->TumorGrowthNode->GetROIMin(1), this->TumorGrowthNode->GetROIMin(2)};
   int ROIMax[3] = {this->TumorGrowthNode->GetROIMax(0), this->TumorGrowthNode->GetROIMax(1), this->TumorGrowthNode->GetROIMax(2)};
 
@@ -351,7 +359,6 @@ vtkMRMLScalarVolumeNode* vtkTumorGrowthLogic::CreateSuperSample(int ScanNum) {
   char VolumeOutputName[1024];
   if (ScanNum > 1) sprintf(VolumeOutputName, "TG_scan2_Global_SuperSampled");
   else sprintf(VolumeOutputName, "TG_scan1_SuperSampled");
-
   vtkMRMLScalarVolumeNode *VolumeOutputNode = this->CreateVolumeNode(volumeNode,VolumeOutputName);
   VolumeOutputNode->SetAndObserveImageData(ROISuperSampleFinal);
   VolumeOutputNode->SetSpacing(SuperSampleSpacing,SuperSampleSpacing,SuperSampleSpacing);  
@@ -361,7 +368,6 @@ vtkMRMLScalarVolumeNode* vtkTumorGrowthLogic::CreateSuperSample(int ScanNum) {
   ROISuperSampleExtent->Delete();
   ROISuperSampleOutput->Delete();
   ROISuperSampleInput->Delete();
-
   return VolumeOutputNode;
 }
 
@@ -381,29 +387,34 @@ vtkMRMLScalarVolumeNode* vtkTumorGrowthLogic::CreateSuperSample(int ScanNum) {
 
 void vtkTumorGrowthLogic::SourceAnalyzeTclScripts(vtkKWApplication *app) {
  char TCL_FILE[1024]; 
-
  sprintf(TCL_FILE,"%s/Tcl/TumorGrowthFct.tcl",
          this->GetModuleShareDirectory());
+
  app->LoadScript(TCL_FILE); 
 
  sprintf(TCL_FILE,"%s/Tcl/TumorGrowthReg.tcl",
          this->GetModuleShareDirectory());
  app->LoadScript(TCL_FILE); 
+
+ //   cout << "SourceAnalyzeTclScripts: This is just for debugging right now" << endl;
+ //   sprintf(TCL_FILE,"/home/pohl/slicer3/Slicer3-build/share/Slicer3/Modules/TumorGrowth/Tcl/TumorGrowthFct.tcl");
+ //   app->LoadScript(TCL_FILE); 
+ // 
+ //   sprintf(TCL_FILE,"/home/pohl/slicer3/Slicer3-build/share/Slicer3/Modules/TumorGrowth/Tcl/TumorGrowthReg.tcl");
+ //   app->LoadScript(TCL_FILE); 
+ 
 }
 
 void vtkTumorGrowthLogic::DeleteAnalyzeOutput(vtkSlicerApplication *app) {
    // Delete old attached node first 
   if (!TumorGrowthNode) return;
   this->SourceAnalyzeTclScripts(app);
-
   app->Script("::TumorGrowthTcl::Scan2ToScan1Registration_DeleteOutput Global");
-
   vtkMRMLVolumeNode* currentNode =  vtkMRMLVolumeNode::SafeDownCast(this->TumorGrowthNode->GetScene()->GetNodeByID(this->TumorGrowthNode->GetScan2_SuperSampleRef()));
   if (currentNode) { 
     this->TumorGrowthNode->GetScene()->RemoveNode(currentNode); 
     this->TumorGrowthNode->SetScan2_SuperSampleRef(NULL);
   }
-
   app->Script("::TumorGrowthTcl::HistogramNormalization_DeleteOutput"); 
   app->Script("::TumorGrowthTcl::Scan2ToScan1Registration_DeleteOutput Local"); 
   app->Script("::TumorGrowthTcl::IntensityThresholding_DeleteOutput 1");
@@ -431,14 +442,12 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     //----------------------------------------------
     // Second step -> Save the outcome
     if (!this->TumorGrowthNode) {return 0;}
-  
     this->DeleteSuperSample(2);
     vtkMRMLScalarVolumeNode *outputNode = this->CreateSuperSample(2);
     if (!outputNode) {return 0;} 
     this->TumorGrowthNode->SetScan2_SuperSampleRef(outputNode->GetID());
     this->SaveVolume(app,outputNode);
     progressBar->SetValue(30.0/TimeLength);
-
 
     //----------------------------------------------
     // Kilian-Feb-08 you should first register and then normalize bc registration is not impacted by normalization 
@@ -683,6 +692,7 @@ void vtkTumorGrowthLogic::DefineSegment(vtkImageData *INPUT, vtkImageIslandFilte
   OUTPUT->SetIslandMinSize(1000);
   OUTPUT->SetInput(INPUT);
   OUTPUT->SetNeighborhoodDim3D();
+  // OUTPUT->SetPrintInformation(2); 
   OUTPUT->Update(); 
 }
 
