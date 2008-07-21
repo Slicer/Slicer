@@ -24,7 +24,7 @@ namespace eval TumorGrowthTcl {
       # -------------------------------------
       # Define Interface Parameters 
       # -------------------------------------
-      set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+      set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
       set NODE [$GUI  GetNode]
       if {$NODE == ""} {return }
 
@@ -150,7 +150,7 @@ namespace eval TumorGrowthTcl {
       # -------------------------------------
       # Define Interface Parameters 
       # -------------------------------------
-      set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+      set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
       set NODE [$GUI  GetNode]
       if {$NODE == ""} {return }
 
@@ -175,8 +175,9 @@ namespace eval TumorGrowthTcl {
         # -------------------------------------
         # Define Interfrace Parameters 
         # -------------------------------------
-        set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+        set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
         set NODE [$GUI  GetNode]
+
         if {$NODE == ""} {return $NODE}
     
         set SCENE [$NODE GetScene]
@@ -195,7 +196,10 @@ namespace eval TumorGrowthTcl {
             # you should first register and then normalize bc registration is not impacted by normalization 
             # set SCAN2_NODE [$SCENE GetNodeByID [$NODE GetScan2_NormedRef]]
         }
-        if {$SCAN1_NODE == "" || $SCAN2_NODE == ""} { return }
+        if {$SCAN1_NODE == "" || $SCAN2_NODE == ""} {
+            puts "Error: Scan2ToScan1Registration_GUI: Scan1 ($SCAN1_NODE) or Scan2 ($SCAN2_NODE) is not defined"  
+            return 
+        }
 
         Scan2ToScan1Registration_DeleteOutput $TYPE 
         set TRANSFORM [vtkGeneralTransform New] 
@@ -295,11 +299,10 @@ namespace eval TumorGrowthTcl {
 
         }
       
-        
          # -------------------------------------
         # Transfere output 
         # -------------------------------------
-        puts "========================= "
+        #puts "========================= "
        
         # ::TumorGrowthReg::TumorGrowthImageDataWriter [$OUTPUT_NODE  GetImageData] newresult
 
@@ -319,7 +322,7 @@ namespace eval TumorGrowthTcl {
        # -------------------------------------
        # Define Interfrace Parameters 
        # -------------------------------------
-       set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+       set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
        set NODE [$GUI  GetNode]
        if {$NODE == ""} {return $NODE}
        set SCENE [$NODE GetScene]
@@ -340,7 +343,7 @@ namespace eval TumorGrowthTcl {
         # -------------------------------------
         # Define Interface Parameters 
         # -------------------------------------
-        set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+        set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
         set NODE [$GUI  GetNode]
         if {$NODE == ""} {return }
 
@@ -438,7 +441,7 @@ namespace eval TumorGrowthTcl {
         # -------------------------------------
         # Define Interface Parameters 
         # -------------------------------------
-        set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+        set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
         set NODE [$GUI  GetNode]
         if {$NODE == ""} {return }
 
@@ -461,7 +464,7 @@ namespace eval TumorGrowthTcl {
         # -------------------------------------
         # Define Interfrace Parameters 
         # -------------------------------------
-        set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+        set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
         set NODE [$GUI  GetNode]
         if {$NODE == ""} {return 0}
 
@@ -648,7 +651,7 @@ namespace eval TumorGrowthTcl {
         # -------------------------------------
         # Define Interfrace Parameters 
         # -------------------------------------
-        set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+        set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
         set NODE [$GUI  GetNode]
         if {$NODE == ""} {return 0}
 
@@ -668,7 +671,7 @@ namespace eval TumorGrowthTcl {
         # -------------------------------------
         # Define Interface Parameters 
         # -------------------------------------
-        set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+        set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
         set NODE [$GUI  GetNode]
         if {$NODE == ""} {return $NODE}
 
@@ -857,7 +860,7 @@ namespace eval TumorGrowthTcl {
 
   # -------------------------------------------------------------
   proc SaveVolumeFileName {VolNode} {
-      set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+      set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
       set NODE [$GUI  GetNode]
       if {$NODE == ""} {return ""}
       set WORK_DIR [$NODE GetWorkingDir]
@@ -886,7 +889,7 @@ namespace eval TumorGrowthTcl {
        # -------------------------------------
        # Define Interfrace Parameters 
        # -------------------------------------
-       set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+       set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
        set NODE [$GUI  GetNode]
        if {$NODE == ""} {return 0}
  
@@ -1067,7 +1070,7 @@ namespace eval TumorGrowthTcl {
    # -------------------------------------
         # Define Interfrace Parameters 
         # -------------------------------------
-        set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+        set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
         set NODE [$GUI  GetNode]
         if {$NODE == ""} {return 0}
         set SCENE [$NODE GetScene]
@@ -1083,11 +1086,11 @@ namespace eval TumorGrowthTcl {
     }
 
   proc Print { TEXT } {
-      # set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"]
+      # set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"]
       # set LOGIC [$GUI GetLogic]
       # $LOGIC PrintText "$TEXT"
       # return
-      if { [catch { set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"] }] }  {
+      if { [catch { set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"] }] }  {
         puts "$TEXT" 
       } else {
         set LOGIC [$GUI GetLogic]
@@ -1097,7 +1100,7 @@ namespace eval TumorGrowthTcl {
 
   proc VolumeWriter {fileName Output } {
     
-    # if {[catch {set GUI  [$::slicer3::Application GetModuleGUIByName "TumorGrowth"] } ]} { return }
+    # if {[catch {set GUI  [$::slicer3::Application GetModuleGUIByName "ChangeTracker"] } ]} { return }
     # if {[catch {set NODE [$GUI  GetNode]}]} { return }
     # set DIR [$NODE GetWorkingDir] 
     set DIR /home/pohl/Slicer/Slicer3/Modules/TumorGrowth/Test-TGcmd
