@@ -145,6 +145,7 @@ void vtkTumorGrowthROIStep::DeleteSuperSampleNode()
 //----------------------------------------------------------------------------
 void vtkTumorGrowthROIStep::ShowUserInterface()
 {
+  // cout << "vtkTumorGrowthROIStep::ShowUserInterface() Start " << endl;
   // ----------------------------------------
   // Display Scan1, Delete Super Sampled and Grid  
   // ----------------------------------------
@@ -157,17 +158,22 @@ void vtkTumorGrowthROIStep::ShowUserInterface()
     if (volumeNode) {
       vtkSlicerApplicationLogic *applicationLogic = this->GetGUI()->GetLogic()->GetApplicationLogic();
       applicationLogic->GetSelectionNode()->SetActiveVolumeID(volumeNode->GetID());
-      applicationLogic->PropagateVolumeSelection();
+      applicationLogic->PropagateVolumeSelection(); 
+      if (!volumeNode->GetImageData()) {
+     vtkKWMessageDialog::PopupMessage(this->GetGUI()->GetApplication(), this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow(),"Tumor Growth", "No image data associated with Scan 1", vtkKWMessageDialog::ErrorIcon);
+     return;
+      }
       memcpy(dimensions,volumeNode->GetImageData()->GetDimensions(),sizeof(int)*3);
       // Load File 
+
       char fileName[1024];
       sprintf(fileName,"%s/TG_Analysis_Intensity.nhdr",node->GetWorkingDir());
-      
-      // vtkMRMLVolumeNode* tmp =  this->GetGUI()->GetLogic()->LoadVolume(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication()),fileName,1,"TG_analysis");
+       // vtkMRMLVolumeNode* tmp =  this->GetGUI()->GetLogic()->LoadVolume(vtkSlicerApplication::SafeDownCast(this->GetGUI()->GetApplication()),fileName,1,"TG_analysis");
     } 
   } else {
     cout << "no node "  << endl;
   }
+
   this->GridRemove();
 
   // ----------------------------------------
@@ -175,7 +181,6 @@ void vtkTumorGrowthROIStep::ShowUserInterface()
   // ----------------------------------------
 
   this->vtkTumorGrowthStep::ShowUserInterface();
-
   // Create the frame
   // Needs to be check bc otherwise with wizrd can be created over again
 
@@ -194,7 +199,6 @@ void vtkTumorGrowthROIStep::ShowUserInterface()
     // define buttons 
   }
   this->Script("pack %s -side top -anchor nw -fill x -padx 0 -pady 0", this->FrameButtons->GetWidgetName());
-
   if (!this->FrameBlank)
     {
     this->FrameBlank = vtkKWFrame::New();
@@ -368,7 +372,7 @@ void vtkTumorGrowthROIStep::ShowUserInterface()
   this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIX->GetWidgetName(),this->ROIX->GetWidgetName());
   this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIY->GetWidgetName(),this->ROIY->GetWidgetName());
   this->Script("pack %s %s -side left -anchor nw -padx 2 -pady 0",this->LabelROIZ->GetWidgetName(),this->ROIZ->GetWidgetName());
- 
+
   // Set it up so it has default value from MRML file 
   this->ROIUpdateWithNode();
   {
@@ -791,7 +795,7 @@ void vtkTumorGrowthROIStep::TransitionCallback()
 
        // Remove blue ROI screen 
        this->ROIMapRemove();
-       
+
        this->GUI->GetWizardWidget()->GetWizardWorkflow()->AttemptToGoToNextStep();
      } else {
        vtkKWMessageDialog::PopupMessage(this->GUI->GetApplication(), this->GUI->GetApplicationGUI()->GetMainSlicerWindow(),"Tumor Growth", "Could not proceed to next step - scan1 might have disappeared", vtkKWMessageDialog::ErrorIcon); 

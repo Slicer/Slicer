@@ -222,7 +222,24 @@ void vtkTumorGrowthFirstScanStep::TransitionCallback(int Flag)
    vtkKWWizardWidget *wizard_widget = this->GetGUI()->GetWizardWidget();
 
    if (this->VolumeMenuButton->GetSelected() && this->SecondVolumeMenuButton->GetSelected() ) { 
-     
+     // Check if image data is associated with them 
+     vtkMRMLTumorGrowthNode* node = this->GetGUI()->GetNode();
+     vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetScan1_Ref()));
+     if (!volumeNode->GetImageData()) {
+       if (Flag) {
+     vtkKWMessageDialog::PopupMessage(this->GetGUI()->GetApplication(), this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow(),"Tumor Growth", "No image data associated with Scan 1", vtkKWMessageDialog::ErrorIcon);
+       }
+       return;
+     }
+
+     volumeNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetScan2_Ref()));
+     if (!volumeNode->GetImageData()) {
+       if (Flag) {
+     vtkKWMessageDialog::PopupMessage(this->GetGUI()->GetApplication(), this->GetGUI()->GetApplicationGUI()->GetMainSlicerWindow(),"Tumor Growth", "No image data associated with Scan 2", vtkKWMessageDialog::ErrorIcon);
+       }
+       return;
+     }
+ 
      wizard_widget->GetCancelButton()->EnabledOn();
      wizard_widget->GetWizardWorkflow()->AttemptToGoToNextStep();
    } else {
