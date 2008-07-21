@@ -297,7 +297,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
           this->AllFileNames.push_back( seriesFileNames[f] );
         }
     }
-    int nFiles = this->AllFileNames.size();
+    //int nFiles = this->AllFileNames.size(); UNUSED
 
     // analysis dicom files and fill the Dicom Tag arrays
     if ( AnalyzeHeader )
@@ -350,7 +350,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       fit->SetArchetype (this->Archetype);
       candidateFiles = fit->GetFileNames();
       this->AllFileNames.resize( candidateFiles.size() );
-      for (int f = 0; f < candidateFiles.size(); f ++)
+      for (int f = 0; f < (int)(candidateFiles.size()); f ++)
       {
         this->AllFileNames[f] = candidateFiles[f];
       }
@@ -637,7 +637,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
 void vtkITKArchetypeImageSeriesReader::AssembleNthVolume ( int n )
 {
   this->FileNames.resize( 0 );
-  int nFiles = this->AllFileNames.size();
+  // int nFiles = this->AllFileNames.size(); UNUSED
 
   int nSlices = this->GetNumberOfSliceLocation();
 
@@ -883,7 +883,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 
   AnalyzeTime.Stop();
 
-  double timeelapsed = AnalyzeTime.GetMeanTime();
+  // double timeelapsed = AnalyzeTime.GetMeanTime(); UNUSED
   AnalyzeHeader = false;
   return;
 }
