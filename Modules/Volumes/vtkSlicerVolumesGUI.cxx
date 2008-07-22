@@ -819,6 +819,11 @@ void vtkSlicerVolumesGUI::TearDownGUI ( )
 void vtkSlicerVolumesGUI::BuildGUI ( )
   {
 
+  if (this->Built)
+    {
+    return;
+    }
+
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
   // ---
@@ -1069,6 +1074,8 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
 
   this->ProcessGUIEvents (this->VolumeSelectorWidget,
     vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
+
+  this->Built = true;
 
   }
 
