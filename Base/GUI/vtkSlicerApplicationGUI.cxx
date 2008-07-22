@@ -1195,7 +1195,7 @@ void vtkSlicerApplicationGUI::BuildGUI ( )
   //
   this->GetMainSlicerWindow()->GetHelpMenu()->InsertCommand (
                                                              this->GetMainSlicerWindow()->GetHelpMenuInsertPosition(),
-                                                             "Browse tutorials (not yet available)", NULL, "$::slicer3::ApplicationGUI OpenTutorialsLink");
+                                                             "Browse tutorials (www)", NULL, "$::slicer3::ApplicationGUI OpenTutorialsLink");
   //
   // Feedback Menu
   //
@@ -1320,7 +1320,7 @@ void vtkSlicerApplicationGUI::OpenTutorialsLink ()
   if ( this->GetApplication() != NULL )
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    //app->OpenLink ("" );
+    app->OpenLink ("http://wiki.na-mic.org/Wiki/index.php/Slicer3.2:Training" );
     }
 }
 //---------------------------------------------------------------------------
@@ -1357,7 +1357,7 @@ void vtkSlicerApplicationGUI::PostToVisualBlog ()
   if ( this->GetApplication() != NULL )
     {
     vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    app->OpenLink ("http://www.na-mic.org/Wiki/index.php/Slicer3:VisualBlog" );
+    app->OpenLink ("http://www.slicer.org/slicerWiki/index.php/Slicer3:VisualBlog" );
     }
 }
 
