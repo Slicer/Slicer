@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 
+#include "vtkVolumes.h"
 #include "vtkSlicerModuleLogic.h"
 
 #include "vtkMRML.h"
@@ -32,7 +33,7 @@ class vtkMRMLScalarVolumeNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLVolumeHeaderlessStorageNode;
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerVolumesLogic : public vtkSlicerModuleLogic 
+class VTK_VOLUMES_EXPORT vtkSlicerVolumesLogic : public vtkSlicerModuleLogic 
 {
   public:
   
