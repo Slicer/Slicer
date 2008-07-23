@@ -49,6 +49,12 @@ public:
   vtkGetMacro (GUIPanelLR, int );
   vtkSetMacro (GUIPanelLR, int );
 
+  // Description:
+  // CompareView configuration Get/Set methods
+  vtkGetMacro ( NumberOfCompareViewRows, int );
+  vtkSetMacro ( NumberOfCompareViewRows, int );  
+  vtkGetMacro ( NumberOfCompareViewColumns, int );
+  vtkSetMacro ( NumberOfCompareViewColumns, int );  
 
   // Description:
   // Get node XML tag name (like Volume, Model)
@@ -86,6 +92,8 @@ protected:
   int GUIPanelLR;
   int ViewArrangement;
   int OldViewArrangement;
+  int NumberOfCompareViewRows;
+  int NumberOfCompareViewColumns;
 };
 
 #endif

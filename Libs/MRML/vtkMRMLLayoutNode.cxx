@@ -46,7 +46,8 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->GUIPanelLR = 0;
   this->ViewArrangement = -1;
   this->OldViewArrangement = -1;
-
+  this->NumberOfCompareViewRows = 0;
+  this->NumberOfCompareViewColumns = 0;
   return;
 
 }
@@ -61,7 +62,7 @@ vtkMRMLLayoutNode::~vtkMRMLLayoutNode()
 void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes, since the parsing of the string is dependent on the
-  // order here
+  // order here. No need to save OldViewArrangment. Only save ViewArrangement.
   
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
@@ -69,7 +70,9 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
   of << indent << " currentViewArrangement=\"" << this->ViewArrangement << "\"";
   of << indent << " guiPanelVisibility=\"" << this->GUIPanelVisibility << "\"";
   of << indent << " bottomPanelVisiblity =\"" << this->BottomPanelVisibility << "\"";
-  of << indent << " guiPanelLR =\"" << this->GUIPanelLR << "\"";    
+  of << indent << " guiPanelLR=\"" << this->GUIPanelLR << "\"";
+  of << indent << " numberOfCompareViewRows=\"" << this->NumberOfCompareViewRows << "\"";
+  of << indent << " numberOfCompareViewColumns=\"" << this->NumberOfCompareViewColumns << "\"";
 }
 
 
@@ -90,7 +93,6 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->OldViewArrangement;
       ss >> this->ViewArrangement;
       }
     else if (!strcmp (attName, "guiPanelVisibility"))
@@ -111,7 +113,20 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->GUIPanelLR;
       }
+    else if ( !strcmp (attName, "numberOfCompareViewRows" ))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->NumberOfCompareViewRows;
+      }
+    else if ( !strcmp (attName, "numberOfCompareViewColumns" ))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->NumberOfCompareViewColumns;
+      }
     }
+
 }
     
 
@@ -141,11 +156,13 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
 {
 //  vtkObject::Copy(anode);
   vtkMRMLLayoutNode *node = (vtkMRMLLayoutNode *) anode;
-  this->SetViewArrangement (node->ViewArrangement);
-  this->SetOldViewArrangement (node->OldViewArrangement);
-  this->SetGUIPanelVisibility(node->GUIPanelVisibility) ;
-  this->SetBottomPanelVisibility (node->BottomPanelVisibility);
-  this->SetGUIPanelLR ( node->GUIPanelLR);
+  this->SetViewArrangement (node->GetViewArrangement() );
+  this->SetOldViewArrangement (node->GetOldViewArrangement());
+  this->SetGUIPanelVisibility(node->GetGUIPanelVisibility()) ;
+  this->SetBottomPanelVisibility (node->GetBottomPanelVisibility());
+  this->SetGUIPanelLR ( node->GetGUIPanelLR());
+  this->SetNumberOfCompareViewRows ( node->GetNumberOfCompareViewRows() );
+  this->SetNumberOfCompareViewColumns ( node->GetNumberOfCompareViewColumns() );
 }
 
 //----------------------------------------------------------------------------
@@ -155,11 +172,13 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
   
   // Layout:
-  os << indent << "ViewArrangement:" << this->ViewArrangement  << "\n";
-  os << indent << "OldViewArrangement:" << this->OldViewArrangement  << "\n";
-  os << indent << "GUIPanelVisibility:" << this->GUIPanelVisibility  << "\n";
-  os << indent << "GUIPanelLR:" << this->GUIPanelLR  << "\n";
-  os << indent << "BottomPanelVisibility:" << this->BottomPanelVisibility  << "\n";
+  os << indent << "ViewArrangement: " << this->ViewArrangement  << "\n";
+  os << indent << "OldViewArrangement: " << this->OldViewArrangement  << "\n";
+  os << indent << "GUIPanelVisibility: " << this->GUIPanelVisibility  << "\n";
+  os << indent << "GUIPanelLR: " << this->GUIPanelLR  << "\n";
+  os << indent << "BottomPanelVisibility: " << this->BottomPanelVisibility  << "\n";
+  os << indent << "NumberOfCompareViewRows: " << this->NumberOfCompareViewRows << "\n";
+  os << indent << "NumberOfCompareViewColumns: " << this->NumberOfCompareViewColumns << "\n";
 }
 
 

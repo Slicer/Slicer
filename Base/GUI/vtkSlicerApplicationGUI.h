@@ -97,8 +97,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     vtkGetMacro (Built, bool);
     vtkSetMacro (Built, bool);
-    vtkGetMacro (CurrentLayout, int);
-    vtkSetMacro (CurrentLayout, int);
     
     // Description:
     // The Fiducial List Widget
@@ -221,7 +219,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     virtual void RepackMainViewer ( int arrangementType, const char *whichSlice );
     virtual void UnpackMain3DViewer (  );
     virtual void UnpackMainSliceViewers ( );
-    virtual void UngridCompareView();
 
     virtual void PopulateModuleChooseList ( );
     virtual void SetCurrentModuleToHome();
@@ -272,9 +269,6 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     //--- and subsequent Application Settings changes for remoteio
     //--- through the ApplicationGUI to CacheManager.
     virtual void ConfigureRemoteIOSettings();
-
-    void SetNCompareViewRows( int nrows ) { this->NCompareViewRows = nrows; }
-    //void SetNCompareViewColumns( int ncolumns ) { this->NCompareViewColumns = ncolumns; }
 
 protected:
     vtkSlicerApplicationGUI ( );
@@ -336,16 +330,10 @@ protected:
     // arrangement of the main viewer.
     int ViewerPageTag;
 
-    // Description:
-    // Set number of CompareView slice viewers
-    int NCompareViewRows;
-//    int NCompareViewColumns;
-
     vtkSlicerMRMLSaveDataWidget *SaveDataWidget;
     int ProcessingMRMLEvent;
     bool SceneClosing;
     bool Built;
-    int CurrentLayout;
       
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.

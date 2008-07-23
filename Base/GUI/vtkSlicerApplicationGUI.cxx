@@ -162,8 +162,6 @@ vtkSlicerApplicationGUI::vtkSlicerApplicationGUI (  )
     //--- so that they can be identified and deleted when 
     //--- viewer is reformatted.
     this->ViewerPageTag = 1999;
-    this->NCompareViewRows = 2;
-//    this->NCompareViewColumns = 0;
     this->ProcessingMRMLEvent = 0;
     this->SceneClosing = false;
 }
@@ -474,6 +472,10 @@ const char* vtkSlicerApplicationGUI::GetCurrentLayoutStringName ( )
         {
         return ( "Conventional layout" );
         }
+      else if ( layout == vtkMRMLLayoutNode::SlicerLayoutCompareView)
+        {
+        return ( "Compare layout" );
+        }
       else if ( layout == vtkMRMLLayoutNode::SlicerLayoutInitialView )
         {
         return ( "Conventional layout" );
@@ -542,70 +544,68 @@ void vtkSlicerApplicationGUI::UpdateLayout ( )
   //--- stop spinning/rocking... and
   //--- repack the layout in main viewer if required.
   int target = this->GUILayoutNode->GetViewArrangement();
-
+  int current = this->GUILayoutNode->GetOldViewArrangement();
+  
   if ( target == vtkMRMLLayoutNode::SlicerLayoutConventionalView &&
-       this->GetCurrentLayout() != vtkMRMLLayoutNode::SlicerLayoutConventionalView )
+      current != vtkMRMLLayoutNode::SlicerLayoutConventionalView )
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer (vtkMRMLLayoutNode::SlicerLayoutConventionalView, NULL );
-    this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutConventionalView );
 //        this->ResumeViewRockOrSpin ( mode );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUp3DView &&
-            this->GetCurrentLayout() != vtkMRMLLayoutNode::SlicerLayoutOneUp3DView )
+            current != vtkMRMLLayoutNode::SlicerLayoutOneUp3DView )
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUp3DView, NULL);
-    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);
 //        this->ResumeViewRockOrSpin ( mode );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutFourUpView &&
-            this->GetCurrentLayout() != vtkMRMLLayoutNode::SlicerLayoutFourUpView)
+            current != vtkMRMLLayoutNode::SlicerLayoutFourUpView)
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutFourUpView, NULL );
-    this->SetCurrentLayout( vtkMRMLLayoutNode::SlicerLayoutFourUpView );
 //        this->ResumeViewRockOrSpin ( mode );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutTabbed3DView &&
-            this->GetCurrentLayout() != vtkMRMLLayoutNode::SlicerLayoutTabbed3DView )
+            current != vtkMRMLLayoutNode::SlicerLayoutTabbed3DView )
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutTabbed3DView, NULL );
-    this->SetCurrentLayout( vtkMRMLLayoutNode::SlicerLayoutTabbed3DView);
 //        this->ResumeViewRockOrSpin ( mode );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView &&
-            this->GetCurrentLayout() != vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView )
+            current != vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView )
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView, NULL );
-    this->SetCurrentLayout( vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView);    
 //        this->ResumeViewRockOrSpin ( mode );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView &&
-            this->GetCurrentLayout() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
+            current != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView, "Red");
-    this->SetCurrentLayout( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);    
 //        this->ResumeViewRockOrSpin ( mode );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView &&
-            this->GetCurrentLayout() != vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView)
+            current != vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView)
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView, "Yellow");
-    this->SetCurrentLayout( vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView);
 //        this->ResumeViewRockOrSpin ( mode );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView &&
-            this->GetCurrentLayout() != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView)
+            current != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView)
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView, "Green");
-    this->SetCurrentLayout( vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);    
 //        this->ResumeViewRockOrSpin ( mode );
+    }
+  else if ( (target == vtkMRMLLayoutNode::SlicerLayoutCompareView) )
+    {
+    mode = this->ApplicationToolbar->StopViewRockOrSpin();
+    this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutCompareView, NULL);
     }
 
 }
@@ -1666,66 +1666,42 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
       {
       case vtkMRMLLayoutNode::SlicerLayoutInitialView:
         this->PackConventionalView ( );
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutConventionalView );
         break;
       case vtkMRMLLayoutNode::SlicerLayoutConventionalView:
         this->PackConventionalView ( );
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutConventionalView );
         break;
       case vtkMRMLLayoutNode::SlicerLayoutFourUpView:
         this->PackFourUpView ( );
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutFourUpView );
         break;
       case vtkMRMLLayoutNode::SlicerLayoutOneUp3DView:
         this->PackOneUp3DView ( );
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutOneUp3DView );
         break;
       case vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView:
         this->PackOneUpSliceView ("Red");
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView );
         break;
       case vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView:
         this->PackOneUpSliceView ("Yellow");
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView );
         break;
       case vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView:
         this->PackOneUpSliceView ("Green");
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView );
         break;
       case vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView:
         this->PackOneUpSliceView ( whichSlice );
-        if (!strcmp(whichSlice, "Red"))
-          {
-          this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView );
-          }
-        else if (!strcmp (whichSlice, "Yellow"))
-          {
-          this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView );
-          }
-        else if ( !strcmp (whichSlice, "Green"))
-          {
-          this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView );
-          }
         break;
       case vtkMRMLLayoutNode::SlicerLayoutTabbed3DView:
         this->PackTabbed3DView ( );
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutTabbed3DView );
         break;
       case vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView:
         this->PackTabbedSliceView ( );
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView );
         break;
       case vtkMRMLLayoutNode::SlicerLayoutLightboxView:
         this->PackLightboxView ( );
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutLightboxView );
         break;
       case vtkMRMLLayoutNode::SlicerLayoutCompareView:
         this->PackCompareView();
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutCompareView );
         break;
       default:
         this->PackConventionalView ( );
-        this->SetCurrentLayout (vtkMRMLLayoutNode::SlicerLayoutConventionalView );
         break;
       }
     }
@@ -1735,17 +1711,8 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
 //---------------------------------------------------------------------------
 void vtkSlicerApplicationGUI::RepackMainViewer ( int arrangementType, const char *whichSlice )
 {
- if ( this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutCompareView )
-    {
-    //---TODO: when we add CompareView to the layout node,
-    //--- get rid of this special case.
-    UngridCompareView ( );
-    }
-  else
-    {
-    this->UnpackMainSliceViewers ( );
-    this->UnpackMain3DViewer ( );
-    }
+  this->UnpackMainSliceViewers ( );
+  this->UnpackMain3DViewer ( );
 
   // Since I can't find a way to re-title this main page titled "View",
   // we make sure it's visible, and then 'hide' it only when we want to
@@ -1753,69 +1720,6 @@ void vtkSlicerApplicationGUI::RepackMainViewer ( int arrangementType, const char
   this->MainSlicerWindow->GetViewNotebook()->ShowPage ( "View");
   this->PackMainViewer ( arrangementType, whichSlice );
 }
-
-
-//---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::UngridCompareView( )
-{
-  if ( this->GetApplication() != NULL )
-    {
-    vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
-    vtkMRMLLayoutNode *layout = this->GetGUILayoutNode();
-    if ( layout == NULL )
-      {
-      return;
-      }
-    if (this->SlicesGUI)
-      {
-      vtkSlicerSliceGUI *g = NULL;
-      char *layoutname = NULL;
-      int nSliceGUI = this->SlicesGUI->GetNumberOfSliceGUI();
-      for (int i = 0; i < nSliceGUI; i++)
-        {
-        if (i == 0)
-          {
-          g = this->SlicesGUI->GetFirstSliceGUI();
-          layoutname = this->SlicesGUI->GetFirstSliceGUILayoutName();
-          }
-        else
-          {
-          g = this->SlicesGUI->GetNextSliceGUI(layoutname);
-          layoutname = this->SlicesGUI->GetNextSliceGUILayoutName (layoutname );
-          }
-        
-        //--- check the previous layout (one we are dismantling.)
-        //--- take the layout apart the same way we put it together.
-        g->UngridGUI();
-        }
-      }
-
-    this->ViewerWidget->UngridWidget ( );
-    if ( this->GridFrame2 )
-      {
-      //--- TODO: figure out how to update the size of GridFrame2's
-      //--- grid after its slaves have been ungridded.
-      //--- For some reason, even tho all this master frame's slaves are
-      //--- being ungridded with the geometry management forgotten,
-      //--- the grid size still retains its old metrics. So if we used to
-      //--- have 3 compare view rows, and want only two the next time,
-      //--- these two will be packed into a 3x1 grid.
-      //--- So for now, we'll try to delete the frame, and create a fresh guy.
-      app->Script ("pack forget %s ", this->GridFrame2->GetWidgetName ( ) );
-      this->GridFrame2->SetParent ( NULL );
-      this->GridFrame2->Delete();
-      this->GridFrame2 = vtkKWFrame::New ( );
-      this->GridFrame2->SetParent ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ) );
-      this->GridFrame2->Create ( );            
-      }
-    if ( this->GridFrame1 )
-      {
-      app->Script ("pack forget %s ", this->GridFrame1->GetWidgetName ( ) );
-      }
-    }
-}
-
-
 
 
 //---------------------------------------------------------------------------
@@ -1898,6 +1802,23 @@ void vtkSlicerApplicationGUI::UnpackMain3DViewer (  )
       this->ViewerWidget->UnpackWidget ( );
       }
     //wjp test
+    if ( this->GridFrame2 )
+      {
+      //--- TODO: figure out how to update the size of GridFrame2's
+      //--- grid after its slaves have been ungridded.
+      //--- For some reason, even tho all this master frame's slaves are
+      //--- being ungridded with the geometry management forgotten,
+      //--- the grid size still retains its old metrics. So if we used to
+      //--- have 3 compare view rows, and want only two the next time,
+      //--- these two will be packed into a 3x1 grid.
+      //--- So for now, we'll try to delete the frame, and create a fresh guy.
+      app->Script ("pack forget %s ", this->GridFrame2->GetWidgetName ( ) );
+      this->GridFrame2->SetParent ( NULL );
+      this->GridFrame2->Delete();
+      this->GridFrame2 = vtkKWFrame::New ( );
+      this->GridFrame2->SetParent ( this->MainSlicerWindow->GetSecondaryPanelFrame ( ) );
+      this->GridFrame2->Create ( );            
+      }
     if ( this->GridFrame1 )
       {
       app->Script ( "pack forget %s", this->GridFrame1->GetWidgetName() );
@@ -1922,7 +1843,6 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
       return;
       }
 
-    double x, y, z;
     vtkSlicerSliceGUI *g = NULL;
     
     this->MainSlicerWindow->SetSecondaryPanelVisibility ( 1 );
@@ -1934,14 +1854,38 @@ void vtkSlicerApplicationGUI::PackConventionalView ( )
     this->Script ("grid columnconfigure %s 2 -weight 1", this->GridFrame2->GetWidgetName() );
     this->Script ("grid rowconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
       
+    //--- red slice viewer
     g = this->SlicesGUI->GetSliceGUI("Red");            
-    g->GridSpanGUI ( this->GetGridFrame2(), 0, 0, this->NCompareViewRows, 1);
+    if ( layout->GetNumberOfCompareViewRows() <= 0 )
+      {
+      g->GridSpanGUI ( this->GetGridFrame2(), 0, 0, 1, 1);
+      }
+    else
+      {
+      g->GridSpanGUI ( this->GetGridFrame2(), 0, 0, layout->GetNumberOfCompareViewRows(), 1);
+      }
 
+    //--- yellow slice viewer
     g = this->SlicesGUI->GetSliceGUI("Yellow");
-    g->GridSpanGUI ( this->GetGridFrame2(), 0, 1, this->NCompareViewRows, 1);
+    if ( layout->GetNumberOfCompareViewRows() <= 0 )
+      {
+      g->GridSpanGUI ( this->GetGridFrame2(), 0, 1, 1, 1);
+      }
+    else
+      {
+      g->GridSpanGUI ( this->GetGridFrame2(), 0, 1, layout->GetNumberOfCompareViewRows(), 1);
+      }
 
+    //--- green slice viewer
     g = this->SlicesGUI->GetSliceGUI("Green");
-    g->GridSpanGUI ( this->GetGridFrame2(), 0, 2, this->NCompareViewRows, 1);        
+    if ( layout->GetNumberOfCompareViewRows() <= 0 )
+      {
+      g->GridSpanGUI ( this->GetGridFrame2(), 0, 2, 1, 1);
+      }
+    else
+      {
+      g->GridSpanGUI ( this->GetGridFrame2(), 0, 2, layout->GetNumberOfCompareViewRows(), 1);
+      }
 
     this->GetSlicesControlGUI()->RequestFOVEntriesUpdate();
     this->MainSlicerWindow->GetViewNotebook()->SetAlwaysShowTabs ( 0 );
@@ -2232,7 +2176,7 @@ void vtkSlicerApplicationGUI::PackCompareView()
 
     // insert a number of new main slice viewers according to user's input
     char buf[20];
-    for ( int i = 0; i < this->NCompareViewRows; i++)
+    for ( int i = 0; i < layout->GetNumberOfCompareViewRows(); i++)
       {
       sprintf(buf, "Compare%d", i);
       this->AddMainSliceGUI(buf);
@@ -2274,7 +2218,7 @@ void vtkSlicerApplicationGUI::PackCompareView()
         //--- if more compare viewers were created previously,
         //--- but fewer are requested in this layout change,
         //--- then we display only a subset of those already created.
-        if ( ncount == this->NCompareViewRows )
+        if ( ncount == layout->GetNumberOfCompareViewRows() )
           {
           break;
           }

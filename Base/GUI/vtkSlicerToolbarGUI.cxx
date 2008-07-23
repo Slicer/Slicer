@@ -575,11 +575,10 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
         }
 
 
+      vtkMRMLLayoutNode *layout;
       // TODO: figure out why we can't resume view rock or spin.
       if ( menu == this->ChooseLayoutIconMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
         {
-
-        vtkMRMLLayoutNode *layout;
         if ( p->GetGUILayoutNode() == NULL )
           {
           //--- if there's no layout node yet, create it,
@@ -598,8 +597,8 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             }
           layout->Delete();
           }
-
         layout = p->GetGUILayoutNode();
+
         const char *whichLayout = this->ChooseLayoutIconMenuButton->GetValue();
         if ( !strcmp ( whichLayout, "Conventional layout"))
           {
@@ -644,7 +643,6 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
         else if (!strcmp ( whichLayout, "Compare layout"))
           {
           PopUpCompareViewCustomLayoutFrame();
-          //layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutCompareView);
           }
         else if ( !strcmp (whichLayout, "Red slice only layout") )
           {
@@ -717,16 +715,14 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           this->LoadSceneIconButton->SetValue ("");
           }
         }
-     if ((pushb == this->CompareViewBoxApplyButton) && (event == vtkKWPushButton::InvokedEvent))
-     {
-        p->SetNCompareViewRows( this->CompareViewBoxRowEntry->GetValueAsInt() );
-        //p->SetNCompareViewColumns( this->CompareViewBoxColumnEntry->GetValueAsInt() );
-//            // First, check to see if view is spinning or rocking.
-//            // If so, stop view Spin or Rock.
-            p->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutCompareView, NULL );
-            this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
-            this->HideCompareViewCustomLayoutFrame();
-//        this->ResumeViewRockOrSpin ( mode );
+      layout = p->GetGUILayoutNode();
+      if ((pushb == this->CompareViewBoxApplyButton) && (event == vtkKWPushButton::InvokedEvent))
+        {
+        layout->SetNumberOfCompareViewRows ( this->CompareViewBoxRowEntry->GetValueAsInt() );
+        layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutCompareView );
+//     layout->SetNumberOfCompareViewColumns ( this->CompareViewBoxColumnEntry->GetValueAsInt() );
+        this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
+        this->HideCompareViewCustomLayoutFrame();
      }
      else if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
         {
