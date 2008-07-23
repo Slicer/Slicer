@@ -268,6 +268,7 @@ int main(int argc, char** argv)
     vtkKWApplication *app   = vtkKWApplication::New();
 
     vtkTumorGrowthLogic  *logic = vtkTumorGrowthLogic::New();
+    logic->SetModuleName("TumorGrowth");
     std::string logicTcl = vtksys::SystemTools::DuplicateString(vtkKWTkUtilities::GetTclNameFromPointer(interp,logic));
     logic->SourceAnalyzeTclScripts(app);
  
