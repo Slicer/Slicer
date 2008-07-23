@@ -108,7 +108,7 @@ int AddImage(typename itk::VectorImage< PixelType, 3 >
       }
     out.Set( value ) ;
     }
-  return 0 ;
+  return EXIT_SUCCESS ;
 }
 
 //Separate the vector image into a vector of images
@@ -147,7 +147,7 @@ int SeparateImages(const typename itk::VectorImage< PixelType , 3 >
       ++out[ i ] ;
       }
     }
-  return 0 ;
+  return EXIT_SUCCESS ;
 }
 
 
@@ -538,7 +538,7 @@ template< class PixelType > int Rotate( parameters list )
               {
               std::cerr<< "Transformation type not yet implemented"
                    << std::endl ;
-              return -1 ;
+              return EXIT_FAILURE ;
               }
             }
           }     
@@ -562,7 +562,7 @@ template< class PixelType > int Rotate( parameters list )
             {
             std::cerr<< "Error in the file containing the matrix transformation"
                  << std::endl ;
-            return -1 ;
+            return EXIT_FAILURE ;
             }
           }
         transformFile->GetTransformList()->pop_front() ;
@@ -705,7 +705,7 @@ writer->SetImageIO( io ) ;
 writer->SetFileName( list.outputVolume.c_str() ) ;
 writer->UseCompressionOn() ;
 writer->Update() ;
-return 0 ;
+return EXIT_SUCCESS;
 }
 
 
@@ -734,7 +734,7 @@ int main( int argc , const char * argv[] )
   if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
     {
     std::cerr<<"Argument(s) having wrong size"<<std::endl ;
-    return -1 ;
+    return EXIT_FAILURE;
     }   
   itk::ImageIOBase::IOPixelType pixelType ;
   itk::ImageIOBase::IOComponentType componentType ;
@@ -777,7 +777,7 @@ int main( int argc , const char * argv[] )
       std::cout << "unknown component type" << std::endl ;
       break ;
     }
-  return 0 ;
+  return EXIT_FAILURE;
 }
 
 
