@@ -88,24 +88,24 @@ const char* vtkSlicerModuleLogic::GetModuleShareDirectory()
         library_directory + "/" + module_name;
       this->SetModuleShareDirectory(share_directory.c_str());
       }
-    }
-  else
-    {
-    const char *env = vtksys::SystemTools::GetEnv("Slicer3_HOME");
-    if (!env)
+    else
       {
-      env = vtksys::SystemTools::GetEnv("PWD");
-      }
-    if (env)
-      {
-      vtksys_stl::string directory(env);
-      vtksys::SystemTools::ConvertToUnixSlashes(directory);
-      directory = directory + '/' + Slicer3_INSTALL_MODULES_SHARE_DIR;
-      if (this->GetModuleName())
+      const char *env = vtksys::SystemTools::GetEnv("Slicer3_HOME");
+      if (!env)
         {
-        directory = directory + '/' + this->GetModuleName();
+        env = vtksys::SystemTools::GetEnv("PWD");
         }
-      this->SetModuleShareDirectory(directory.c_str());
+      if (env)
+        {
+        vtksys_stl::string directory(env);
+        vtksys::SystemTools::ConvertToUnixSlashes(directory);
+        directory = directory + '/' + Slicer3_INSTALL_MODULES_SHARE_DIR;
+        if (this->GetModuleName())
+          {
+          directory = directory + '/' + this->GetModuleName();
+          }
+        this->SetModuleShareDirectory(directory.c_str());
+        }
       }
     }
 
