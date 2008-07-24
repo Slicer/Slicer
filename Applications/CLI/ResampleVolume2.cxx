@@ -691,19 +691,21 @@ template< class PixelType > int Rotate( parameters list )
 }
 typename itk::VectorImage< PixelType, 3 >::Pointer outputImage = itk::VectorImage< PixelType , 3 >::New() ;
 AddImage< PixelType >( outputImage , vectorOutputImage ) ;
-typename itk::NrrdImageIO::Pointer io = itk::NrrdImageIO::New() ;
-io->SetFileTypeToBinary() ;
-io->SetMetaDataDictionary( dico ) ;
+//typename itk::NrrdImageIO::Pointer io = itk::NrrdImageIO::New() ;
+//io->SetFileTypeToBinary() ;
+//io->SetMetaDataDictionary( dico ) ;
 
 if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
   { RASLPS<PixelType>( outputImage); }
 typedef itk::ImageFileWriter< typename itk::VectorImage< PixelType, 3 > > WriterType ;
 typename WriterType::Pointer writer = WriterType::New() ;
 writer->UseInputMetaDataDictionaryOff() ;
+writer->SetMetaDataDictionary( dico ) ;
 writer->SetInput( outputImage ) ;
-writer->SetImageIO( io ) ;
+//writer->SetImageIO( io ) ;
 writer->SetFileName( list.outputVolume.c_str() ) ;
 writer->UseCompressionOn() ;
+
 writer->Update() ;
 return EXIT_SUCCESS;
 }

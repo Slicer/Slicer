@@ -10,6 +10,8 @@
    image spacing is properly set on the images involved. The interpolator
    is required since the mapping from one space to the other will often
    require evaluation of the intensity of the image at non-grid positions.
+   Warning: To resample DWMR Images, use nrrd input and output files.
+   Warning: Do not use to resample Diffusion Tensor Images.
   </description>
   <version>0.1</version>
   <documentation-url></documentation-url>
