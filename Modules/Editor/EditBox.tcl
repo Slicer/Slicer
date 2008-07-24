@@ -287,7 +287,7 @@ itcl::body EditBox::selectEffect { effect } {
       # create an instance of the effect for each of the active sliceGUIs
       # - have the effect reset the tool label when completed
       #
-      
+
       EffectSWidget::Add $_effects($effect,class)
       EffectSWidget::ConfigureAll $_effects($effect,class) -exitCommand "EditorSetActiveToolLabel DefaultTool"
 

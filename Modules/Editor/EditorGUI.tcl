@@ -453,6 +453,8 @@ proc EditorEnter {this} {
 }
 
 proc EditorExit {this} {
+
+  EffectSWidget::RemoveAll
   if {[$this GetDebug]} {
     puts "EditorExit: Removing mrml observer on selection node modified event"
   }

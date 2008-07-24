@@ -198,7 +198,6 @@ itcl::body EffectSWidget::positionCursor {} {
 }
 
 itcl::body EffectSWidget::getOptionsFrame { } {
-  EditorSelectModule
   return [EditorGetOptionsFrame $::Editor(singleton)]
 }
 

@@ -492,6 +492,9 @@ itcl::body Labeler::rotateSliceToImage { } {
   set ijkToRAS [vtkMatrix4x4 New]
 
   set volumeNode $_layers(background,node)
+  if { $volumeNode == "" } {
+    return
+  }
   $volumeNode GetIJKToRASMatrix $ijkToRAS
 
   # define major direction
