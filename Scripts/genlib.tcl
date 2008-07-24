@@ -437,6 +437,15 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
             runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common
             eval runcmd $::MAKE
             eval runcmd $::MAKE install
+        } elseif { $isSolaris } {
+
+            cd $Slicer3_LIB/tcl/blt
+#            runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --enable-shared --x-includes=/usr/X11R6/include --x-libraries=/usr/X11R6/lib --with-cflags=-fno-common
+            runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --disable-static --enable-shared 
+            eval runcmd $::SERIAL_MAKE
+            eval runcmd $::SERIAL_MAKE install
+# leaving here $::MAKE instead of $::SERIAL_MAKE can lead to funny things... :) 2008.06.25
+
         } else {
             cd $Slicer3_LIB/tcl/blt
             runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build
@@ -895,7 +904,17 @@ if { [BuildThis $::SLICERLIBCURL_TEST_FILE "libcurl"] == 1 } {
 
       file mkdir $::Slicer3_LIB/cmcurl-build
       cd $::Slicer3_LIB/cmcurl-build
-
+if {$isSolaris} {
+      runcmd $::CMAKE \
+        -G$GENERATOR \
+        -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
+        -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
+        -DCMAKE_CXX_COMPILER:STRING=$COMPILER_PATH/$COMPILER \
+        -DCMAKE_CXX_COMPILER_FULLPATH:FILEPATH=$COMPILER_PATH/$COMPILER \
+        -DBUILD_SHARED_LIBS:BOOL=ON \
+        -DBUILD_TESTING:BOOL=OFF \
+        ../cmcurl
+     } else {
       runcmd $::CMAKE \
         -G$GENERATOR \
         -DCMAKE_BUILD_TYPE:STRING=$::VTK_BUILD_TYPE \
@@ -905,7 +924,7 @@ if { [BuildThis $::SLICERLIBCURL_TEST_FILE "libcurl"] == 1 } {
         -DBUILD_SHARED_LIBS:BOOL=OFF \
         -DBUILD_TESTING:BOOL=OFF \
         ../cmcurl
-
+     }
       if {$isWindows} {
         if { $MSVC6 } {
             runcmd $::MAKE SLICERLIBCURL.dsw /MAKE "ALL_BUILD - $::VTK_BUILD_TYPE"

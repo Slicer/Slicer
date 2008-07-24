@@ -343,6 +343,10 @@ if {$isLinux || $isDarwin} {
         }
     } 
 }
+if {$isSolaris} {
+    set ::GETBUILDTEST(cpack-generator) "TGZ"
+    set ::GETBUILDTEST(cpack-extension) ".tar.gz"
+}
 
 if {$isWindows} {
     set ::GETBUILDTEST(cpack-generator) "NSIS"

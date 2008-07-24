@@ -139,7 +139,9 @@ set ::NAVITRACK_LIB_DIR ""
 set ::NAVITRACK_INC_DIR "" 
 
 switch $::tcl_platform(os) {
-    "SunOS" -
+    "SunOS" {
+        set shared_lib_ext "so"
+    }
     "Linux" {
         set shared_lib_ext "so"
     }
@@ -154,7 +156,33 @@ switch $::tcl_platform(os) {
 # TODO: identify files for each platform
 
 switch $::tcl_platform(os) {
-    "SunOS" -
+    "SunOS" {
+        set ::VTK_BUILD_SUBDIR ""
+        set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
+
+        set ::INCR_TCL_LIB $::TCL_LIB_DIR/lib/libitcl3.2.so
+        set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/libitk3.2.so
+
+        set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
+        set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
+        set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython25.so
+        set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python25
+        set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
+        set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.so
+        set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
+        set ::VTK_TEST_FILE $::VTK_DIR/bin/vtk
+        set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/libKWWidgets.so
+        set ::VTK_TCL_LIB $::TCL_LIB_DIR/libtcl8.4.$shared_lib_ext 
+        set ::VTK_TK_LIB $::TCL_LIB_DIR/libtk8.4.$shared_lib_ext
+        set ::VTK_TCLSH $::TCL_BIN_DIR/tclsh8.4
+        set ::ITK_TEST_FILE $::ITK_BINARY_PATH/bin/libITKCommon.$shared_lib_ext
+        set ::TK_EVENT_PATCH $::Slicer3_HOME/tkEventPatch.diff
+        set ::env(VTK_BUILD_SUBDIR) $::VTK_BUILD_SUBDIR
+        set ::IGSTK_TEST_FILE $::IGSTK_DIR/bin/libIGSTK.$shared_lib_ext
+        set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.$shared_lib_ext
+        set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
+        set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
+    }
     "Darwin" {
         set ::VTK_BUILD_SUBDIR ""
         set ::TEEM_BIN_DIR  $::TEEM_BUILD_DIR/bin
@@ -249,10 +277,11 @@ switch $::tcl_platform(os) {
         set ::VTKSLICERBASE_BUILD_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBase.so
         set ::VTKSLICERBASE_BUILD_TCL_LIB $::Slicer3_HOME/Base/builds/$::env(BUILD)/bin/vtkSlicerBaseTCL.so
         set ::GENERATOR "Unix Makefiles"
-        set ::COMPILER_PATH "/local/os/bin"
+        set ::COMPILER_PATH "/usr/sfw/bin"
         set ::COMPILER "g++"
         set ::CMAKE $::CMAKE_PATH/bin/cmake
-        set ::MAKE "gmake"
+        set numCPUs [lindex [exec /usr/sbin/psrinfo | grep on-line | wc -l | tr -d ''] 0]
+        set ::MAKE "gmake -j[expr $numCPUs]"        
         set ::SERIAL_MAKE "gmake"
     }
     "Linux" {

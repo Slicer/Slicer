@@ -44,6 +44,10 @@ puts "making darwin-x86..."
 exec tclkitsh tclkits/sdx.kit wrap Slicer3 -runtime tclkits/tclkit-darwin-x86
 file rename -force Slicer3 Slicer3Launchers/Slicer3-darwin-x86
 
+puts "making Solaris_x86..."
+exec tclkitsh tclkits/sdx.kit wrap Slicer3 -runtime tclkits/tclkit-solaris-x86
+file rename -force Slicer3 Slicer3Launchers/Slicer3-sunos-x86
+
 puts "making win32..."
 exec tclkitsh tclkits/sdx.kit wrap Slicer3 -runtime tclkits/tclkit-win32.exe
 file rename -force Slicer3 Slicer3Launchers/Slicer3-win32.exe
