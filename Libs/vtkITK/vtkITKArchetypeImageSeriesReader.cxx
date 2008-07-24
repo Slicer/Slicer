@@ -777,8 +777,21 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 
       // Slice Location
       ImageType::PointType origin = imageReader->GetOutput()->GetOrigin();
-      idx = InsertSliceLocation( origin[2] );
-      this->IndexSliceLocation[f] = idx;    
+      std::string IOType = imageReader->GetImageIO()->GetNameOfClass();
+      if( IOType.find("BPMImageIO") == std::string::npos ||
+          IOType.find("JPEGImageIO") == std::string::npos ||
+          IOType.find("PNGImageIO") == std::string::npos ||
+          IOType.find("TIFFImageIO") == std::string::npos ||
+          IOType.find("RawImageIO") == std::string::npos )
+      {
+        idx = InsertSliceLocation( static_cast<float>(f) );
+        this->IndexSliceLocation[f] = idx;    
+      }
+      else
+      {
+        idx = InsertSliceLocation( origin[2] );
+        this->IndexSliceLocation[f] = idx;    
+      }
 
       // Orientation
       ImageType::DirectionType orientation = imageReader->GetOutput()->GetDirection();
