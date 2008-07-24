@@ -65,6 +65,11 @@ const char* vtkScriptedModuleLogic::GetModuleShareDirectory()
       share_directory = 
         vtksys::SystemTools::GetFilenamePath(share_directory.c_str());
       }
+    if (!vtksys::SystemTools::FileIsDirectory(share_directory.c_str()))
+      {
+      share_directory = 
+        vtksys::SystemTools::GetParentDirectory(share_directory.c_str());
+      }
     this->SetModuleShareDirectory(share_directory.c_str());
     }
 
