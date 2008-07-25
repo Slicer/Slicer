@@ -203,7 +203,7 @@ itcl::body EffectSWidget::getOptionsFrame { } {
 
 itcl::body EffectSWidget::buildOptions { } {
   if { [llength $_scopeOptions] > 1 } {
-    set o(scopeOption) [vtkKWMenuButtonWithLabel New]
+    set o(scopeOption) [vtkNew vtkKWMenuButtonWithLabel]
     set menuButton [$o(scopeOption) GetWidget]
     $o(scopeOption) SetParent [$this getOptionsFrame]
     $o(scopeOption) Create

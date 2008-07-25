@@ -417,6 +417,7 @@ itcl::body PaintEffect::tearDownOptions { } {
     }
   }
 }
+
 itcl::body PaintEffect::paintFeedback {} {
 
   set renderer [$_renderWidget GetRenderer]
