@@ -26,7 +26,8 @@ update
 set outerloops 5
 set innerloops 5
 
-set sliceLogic [$::slicer3::ApplicationGUI GetMainSliceLogic0]
+set sliceGUI [$::slicer3::ApplicationGUI GetMainSliceGUI "Red"]
+set sliceLogic [$sliceGUI GetLogic]
 for {set j 0} {$j < $outerloops} {incr j} {
   for {set i 0} {$i < $innerloops} {incr i} {
     $sliceLogic SetSliceOffset $i
