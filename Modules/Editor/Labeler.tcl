@@ -50,6 +50,11 @@ if { [itcl::find class Labeler] == "" } {
     public variable paintOver 1
     public variable polygonDebugViewer 0
 
+    # keep track of first application of the label since the 
+    # class was instantiated - this is used to decide when to 
+    # make a copy of the label map for the Editor's Undo function
+    variable appliedSinceConstructed 0
+
     # methods
     method processEvent {{caller ""} {event ""}} {}
     method makeMaskImage {polyData} {}
@@ -240,6 +245,12 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   # version of the polygon and now needs to be added to the label
   # image
   #
+  
+  if { $appliedSinceConstructed == 0 } {
+    # first application, so save the old label volume
+    EditorStoreUndoVolume $_layers(label,node)
+    set appliedSinceConstructed 1
+  }
 
   #
   # get the brush bounding box in ijk coordinates
@@ -284,16 +295,18 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   # (use the maskToRAS calculated above)
   #
 
+
+  set backgroundIJKToRAS [vtkMatrix4x4 New]
+  set labelIJKToRAS [vtkMatrix4x4 New]
   foreach layer {background label} {
-    set ${layer}IJKToRAS [vtkMatrix4x4 New]
     set ijkToRAS ${layer}IJKToRAS
-    $_layers($layer,node) GetIJKToRASMatrix $ijkToRAS
+    $_layers($layer,node) GetIJKToRASMatrix [set $ijkToRAS]
     set transformNode [$_layers($layer,node) GetParentTransformNode]
     if { $transformNode != "" } {
       if { [$transformNode IsTransformToWorldLinear] } {
         set rasToRAS [vtkMatrix4x4 New]
         $transformNode GetMatrixTransformToWorld $rasToRAS
-        $rasToRAS Multiply4x4 $rasToRAS $ijkToRAS $ijkToRAS
+        $rasToRAS Multiply4x4 $rasToRAS [set $ijkToRAS] [set $ijkToRAS]
         $rasToRAS Delete
       } else {
         error "Cannot handle non-linear transforms"
@@ -336,8 +349,6 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   $maskIJKToRAS Delete
   $mask Delete
 
-  # TODO maybe just call $sliceGUI Render for faster update
-  # and call this on mouse up - more important for paint
   $_layers(label,node) Modified
 
   return

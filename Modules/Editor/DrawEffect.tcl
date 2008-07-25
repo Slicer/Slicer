@@ -203,7 +203,6 @@ itcl::body DrawEffect::apply {} {
 
   $this applyPolyMask $o(polyData)
   $this resetPolyData
-
 }
 
 itcl::body DrawEffect::createPolyData {} {

@@ -452,7 +452,10 @@ itcl::body PaintEffect::paintAddPoint {x y} {
 }
 
 itcl::body PaintEffect::paintApply {} {
-
+  if { $_paintCoordinates != "" } {
+    $this queryLayers 0 0 
+    EditorStoreUndoVolume $_layers(label,node)
+  }
   foreach xy $_paintCoordinates {
     eval $this paintBrush $xy
   }
@@ -492,8 +495,6 @@ itcl::body PaintEffect::paintBrush {x y} {
   set bottom [expr $y + [lindex $bounds 2]]
   set top [expr $y + [lindex $bounds 3]]
 
-#puts "x y bounds: $x  $y  $bounds"
-
   set xyToIJK [[$_layers(label,logic) GetXYToIJKTransform] GetMatrix]
   set tlIJK [$xyToIJK MultiplyPoint $left $top 0 1]
   set trIJK [$xyToIJK MultiplyPoint $right $top 0 1]
@@ -522,10 +523,6 @@ itcl::body PaintEffect::paintBrush {x y} {
     if { $br($v) >= $d } { set br($v) [expr $d - 1] }
   }
 
-foreach corner "tl tr bl br" {
-#  parray $corner
-}
-
   #
   # get the ijk to ras matrices 
   #
@@ -534,34 +531,10 @@ foreach corner "tl tr bl br" {
   set labelIJKToRAS [vtkMatrix4x4 New]
   $_layers(label,node) GetIJKToRASMatrix $labelIJKToRAS
 
-foreach one "background label" {
-#  puts $one
-#  puts [[set ${one}IJKToRAS] Print]
-}
 
-if {0} {
-  #
-  # get the brush center and radius in World
-  # - assume uniform scaling between XY and RAS
-  #
-  set xyToRAS [$_sliceNode GetXYToRAS]
-  set brushCenter [lrange [$xyToRAS MultiplyPoint $x $y 0 1] 0 2]
-  set worldScale [lrange [$xyToRAS MultiplyPoint 1 1 1 0] 0 2]
-  set scale 1
-  foreach c $worldScale {
-    if { $c != 1 } { 
-      set scale $c
-      break
-    }
-  }
-  set brushRadius [expr $scale * $radius]
-puts "worldScale is $worldScale"
-puts "brush radius is $brushRadius"
-} else {
   set xyToRAS [$_sliceNode GetXYToRAS]
   set brushCenter [lrange [$xyToRAS MultiplyPoint $x $y 0 1] 0 2]
   set brushRadius $radius
-}
 
   #
   # set up the painter class and let 'r rip!
@@ -588,7 +561,6 @@ puts "brush radius is $brushRadius"
   $painter Delete
   $labelIJKToRAS Delete
   $backgroundIJKToRAS Delete
-
 
   return
 }
