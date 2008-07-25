@@ -459,6 +459,9 @@ proc EditorExit {this} {
     puts "EditorExit: Removing mrml observer on selection node modified event"
   }
   $this RemoveMRMLObserverByNumber [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode] 31
+  # delete the current effect - users were getting confused that the editor was still
+  # active when the module wasn't visible
+  after idle ::EffectSWidget::RemoveAll
 }
 
 # TODO: there might be a better place to put this for general use...  

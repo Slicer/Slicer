@@ -153,6 +153,7 @@ itcl::body EditColor::processEvent { {caller ""} {event ""} } {
 #
 itcl::body EditColor::updateGUI {label} {
 
+  set label [expr int($label)]
   [$o(colorSpin) GetWidget] SetValue $label
 
 

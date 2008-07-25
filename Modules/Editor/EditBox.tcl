@@ -288,11 +288,15 @@ itcl::body EditBox::selectEffect { effect } {
       # - have the effect reset the tool label when completed
       #
 
-      EffectSWidget::Add $_effects($effect,class)
-      EffectSWidget::ConfigureAll $_effects($effect,class) -exitCommand "EditorSetActiveToolLabel DefaultTool"
+      set ret [catch "EffectSWidget::Add $_effects($effect,class)" res]
+      if { $ret } {
+        EditorErrorDialog $res
+      } else {
+        EffectSWidget::ConfigureAll $_effects($effect,class) -exitCommand "EditorSetActiveToolLabel DefaultTool"
 
-      if { $mouseTool } {
-        EffectSWidget::SetCursorAll $_effects($effect,class) $_effects($effect,imageData)
+        if { $mouseTool } {
+          EffectSWidget::SetCursorAll $_effects($effect,class) $_effects($effect,imageData)
+        }
       }
 
     }

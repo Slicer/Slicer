@@ -283,10 +283,24 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   # get the ijk to ras matrices 
   # (use the maskToRAS calculated above)
   #
-  set backgroundIJKToRAS [vtkMatrix4x4 New]
-  $_layers(background,node) GetIJKToRASMatrix $backgroundIJKToRAS
-  set labelIJKToRAS [vtkMatrix4x4 New]
-  $_layers(label,node) GetIJKToRASMatrix $labelIJKToRAS
+
+  foreach layer {background label} {
+    set ${layer}IJKToRAS [vtkMatrix4x4 New]
+    set ijkToRAS ${layer}IJKToRAS
+    $_layers($layer,node) GetIJKToRASMatrix $ijkToRAS
+    set transformNode [$_layers($layer,node) GetParentTransformNode]
+    if { $transformNode != "" } {
+      if { [$transformNode IsTransformToWorldLinear] } {
+        set rasToRAS [vtkMatrix4x4 New]
+        $transformNode GetMatrixTransformToWorld $rasToRAS
+        $rasToRAS Multiply4x4 $rasToRAS $ijkToRAS $ijkToRAS
+        $rasToRAS Delete
+      } else {
+        error "Cannot handle non-linear transforms"
+      }
+    }
+  }
+
 
   #
   # create an exract image for undo if it doesn't exist yet
@@ -489,6 +503,20 @@ itcl::body Labeler::rotateSliceToImage { } {
 
   $this queryLayers 0 0
 
+  if { [$_sliceNode GetOrientationString] == "Reformat" } {
+    error "All slice views must be Axial, Sagittal or Coronal."
+  } 
+
+  if { $_layers(background,node) == "" ||
+        [$_layers(background,node) GetParentTransformNode] != "" ||
+        $_layers(label,node) == "" ||
+        [$_layers(label,node) GetParentTransformNode] != "" } {
+    error "Background and Label Volumes must be selected and cannot be inside transforms."
+  } 
+
+
+
+
   set ijkToRAS [vtkMatrix4x4 New]
 
   set volumeNode $_layers(background,node)
@@ -497,28 +525,45 @@ itcl::body Labeler::rotateSliceToImage { } {
   }
   $volumeNode GetIJKToRASMatrix $ijkToRAS
 
-  # define major direction
-  set dir(directions) {R L A P S I}
-  set dir(R) {  1  0  0}
-  set dir(L) { -1  0  0}
-  set dir(A) {  0  1  0}
-  set dir(P) {  0 -1  0}
-  set dir(S) {  0  0  1}
-  set dir(I) {  0  0 -1}
-
-  # get direction cosine vector for each index and its negation
-  set directionsMatrix [vtkMatrix4x4 New]
-  $volumeNode GetIJKToRASDirectionMatrix $directionsMatrix
-  foreach ijk {0 1 2} {
-    lappend iToRAS [$directionsMatrix GetElement $ijk 0]
-    lappend jToRAS [$directionsMatrix GetElement $ijk 1]
-    lappend kToRAS [$directionsMatrix GetElement $ijk 2]
+  # apply the transform 
+  set transformNode [$volumeNode GetParentTransformNode]
+  if { $transformNode != "" } {
+    if { [$transformNode IsTransformToWorldLinear] } {
+      set rasToRAS [vtkMatrix4x4 New]
+      $transformNode GetMatrixTransformToWorld $rasToRAS
+      $rasToRAS Multiply4x4 $rasToRAS $ijkToRAS $ijkToRAS
+      $rasToRAS Delete
+    } else {
+      error "Cannot handle non-linear transforms"
+    }
   }
+
+  foreach col {0 1 2} ijk {i j k} {
+    set len$col 0
+    foreach row {0 1 2} {
+      set ele [$ijkToRAS GetElement $row $col]
+      set len$col [expr [set len$col] + $ele * $ele]
+    }
+    set len$col [expr [set len$col] / sqrt( [set len$col] )]
+    foreach row {0 1 2} {
+      lappend ${ijk}ToRAS [expr [$ijkToRAS GetElement $row $col] / [set len$col]]
+    }
+  }
+
   foreach index {i j k} {
     foreach element {0 1 2} {
       lappend neg${index}ToRAS [expr -1. * [lindex [set ${index}ToRAS] $element]]
     }
   }
+
+  # define major direction
+  set dir(directions) {R L A P S I}
+  set dir(R) {  1  0  0 }
+  set dir(L) { -1  0  0 }
+  set dir(A) {  0  1  0 }
+  set dir(P) {  0 -1  0 }
+  set dir(S) {  0  0  1 }
+  set dir(I) {  0  0 -1 }
 
   # find the closest major direction for each index vector
   set sqrt2over2 [expr sqrt(2.) / 2.]
