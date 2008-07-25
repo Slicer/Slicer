@@ -317,15 +317,16 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
   this->LoadSceneDialog->Invoke();
   // If a file has been selected for loading...
   const char *fileName = this->LoadSceneDialog->GetFileName();
+  vtkKWProgressDialog *progressDialog = vtkKWProgressDialog::New();
+  progressDialog->SetParent( this->MainSlicerWindow );
+  progressDialog->SetMasterWindow( this->MainSlicerWindow );
+  progressDialog->Create();
+
   if ( fileName ) 
     {
     std::string fl(fileName);
     if (this->GetMRMLScene() && fl.find(".mrml") != std::string::npos ) 
       {
-      vtkKWProgressDialog *progressDialog = vtkKWProgressDialog::New();
-      progressDialog->SetParent( this->MainSlicerWindow );
-      progressDialog->SetMasterWindow( this->MainSlicerWindow );
-      progressDialog->Create();
       std::string message("Loading Scene...\n");
       message += std::string(fileName);
       progressDialog->SetMessageText( message.c_str() );
@@ -336,19 +337,32 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
       progressDialog->Display();
       this->GetMRMLScene()->SetURL(fileName);
       this->GetMRMLScene()->Connect();
-      progressDialog->SetParent(NULL);
-      progressDialog->Delete();
       this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
       }
     else if (this->GetMRMLScene() && fl.find(".xml") != std::string::npos ) 
       {
+      std::string message("Loading Slicer2 Scene...\n");
+      message += std::string(fileName);
+      progressDialog->SetMessageText( message.c_str() );
+      progressDialog->Display();
       this->Script ( "ImportSlicer2Scene \"%s\"", fileName);
       this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
       }
     else if ( this->GetMRMLScene() && fl.find(".xcat") != std::string::npos )
       {
+      std::string message("Loading Catalog...\n");
+      message += std::string(fileName);
+      progressDialog->SetMessageText( message.c_str() );
+      progressDialog->Display();
+      //---
+      //--- perform some of the operations to clean out the scene
+      //--- usually done inside the MRMLScene->Connect method.
+      //---
+      bool undoFlag = this->GetMRMLScene()->GetUndoFlag();
+      this->GetMRMLScene()->Clear(false);
       this->Script ( "XcatalogImport \"%s\"", fileName);
       this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
+      this->GetMRMLScene()->SetUndoFlag ( undoFlag );
       }
 
     if (  this->GetMRMLScene()->GetErrorCode() != 0 ) 
@@ -363,6 +377,8 @@ void vtkSlicerApplicationGUI::ProcessLoadSceneCommand()
       dialog->Delete();
       }
     }
+  progressDialog->SetParent(NULL);
+  progressDialog->Delete();
   return;
 }
 
@@ -379,6 +395,11 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
 {
   this->LoadSceneDialog->RetrieveLastPathFromRegistry(
                                                       "OpenPath");
+
+  vtkKWProgressDialog *progressDialog = vtkKWProgressDialog::New();
+  progressDialog->SetParent( this->MainSlicerWindow );
+  progressDialog->SetMasterWindow( this->MainSlicerWindow );
+  progressDialog->Create();
 
   this->LoadSceneDialog->Invoke();
   // If a file has been selected for loading...
@@ -399,7 +420,7 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
       }
     else if ( this->GetMRMLScene() && fl.find(".xcat") != std::string::npos )
       {
-      this->Script ( "XCatalogImport %s", fileName);
+      this->Script ( "XcatalogImport %s", fileName);
       this->LoadSceneDialog->SaveLastPathToRegistry("OpenPath");
       }
 
@@ -415,6 +436,9 @@ void vtkSlicerApplicationGUI::ProcessImportSceneCommand()
       dialog->Delete();
       }
     }
+
+  progressDialog->SetParent(NULL);
+  progressDialog->Delete();
   return;
 }
 

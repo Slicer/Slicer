@@ -79,9 +79,18 @@ proc XcedeCatalogImport { xcedeFile } {
         #--- update main viewer and slice viewers.
         $::slicer3::MRMLScene Modified
         [$::slicer3::ApplicationGUI GetViewerWidget ] RequestRender
-        [ [$::slicer3::ApplicationGUI GetMainSliceGUI0 ] GetSliceViewer ]  RequestRender
-        [ [$::slicer3::ApplicationGUI GetMainSliceGUI1 ] GetSliceViewer ]  RequestRender
-        [ [$::slicer3::ApplicationGUI GetMainSliceGUI2 ] GetSliceViewer ]  RequestRender
+        set ns [[$::slicer3::ApplicationGUI GetSlicesGUI] GetNumberOfSliceGUI]
+
+        set slicesGUI [$::slicer3::ApplicationGUI GetSlicesGUI]
+        for { set ss 0 } { $ss < $ns } { incr ss } {
+            if { $ss == 0 } {
+                [[$slicesGUI GetFirstSliceGUI] GetSliceViewer ] RequestRender
+                set layoutname [$slicesGUI  GetFirstSliceGUILayoutName ]
+            } else {
+                [[$slicesGUI GetNextSliceGUI $layoutname] GetSliceViewer ] RequestRender
+                set layoutname [$slicesGUI  GetNextSliceGUILayoutName $layoutname ]
+            }
+        }
         
         #--- clean up.
         $parser Delete
