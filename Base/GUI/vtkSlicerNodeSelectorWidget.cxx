@@ -113,6 +113,7 @@ void vtkSlicerNodeSelectorWidget::SetMRMLScene( vtkMRMLScene *MRMLScene)
     this->MRMLScene->AddObserver( vtkMRMLScene::NodeRemovedEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::NewSceneEvent, this->MRMLCallbackCommand );
     this->MRMLScene->AddObserver( vtkMRMLScene::SceneCloseEvent, this->MRMLCallbackCommand );
+    this->SetBinding ( "<Map>", this, "UpdateMenu");
     }
 
   this->UpdateMenu();
@@ -255,6 +256,11 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
     }
 
   if (this->NodeClasses.size() == 0)
+    {
+    return;
+    }
+
+  if (this->IsMapped() == 0)
     {
     return;
     }
@@ -493,14 +499,14 @@ void vtkSlicerNodeSelectorWidget::SetSelected(vtkMRMLNode *node)
   if ( node != NULL) 
     {
     std::string name = this->FindEntryName(node);
+    this->SelectedID = std::string(node->GetID());
     if ( !strcmp ( m->GetValue(), name.c_str() ) )
       {
       return; // no change, don't propogate events
       }
+    m->SetValue(name.c_str());
 
     // new value, set it and notify observers
-    this->SelectedID = std::string(node->GetID());
-    m->SetValue(name.c_str());
     this->InvokeEvent(vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL);
     }
   else 
