@@ -494,7 +494,6 @@ int main(int argc, char** argv)
       cout << "Analysis Intensity Growth: " <<  Analysis_Intensity_Growth  << " Super sample " << SuperSampleVol << endl;
       printf("Intensity Metric: %.3f mm^3 (%d Voxels)\n",  Analysis_Intensity_Growth *SuperSampleVol,int( Analysis_Intensity_Growth *SuperSampleRatio));
 
-      app->Script("::TumorGrowthTcl::Analysis_Intensity_DeleteOutput_FCT");
     } 
 
     // 
