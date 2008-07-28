@@ -567,7 +567,7 @@ set( Slicer3_EXE ${Slicer3_BINARY_DIR}/Slicer3 )
 subdirs ( Realign )
 subdirs( DiffusionApplications )
 subdirs( ExtractSkeleton )
-#SUBDIRS( RegisterImagesModule )
+SUBDIRS( RegisterImagesModule )
 subdirs( UtahBSpline )
 subdirs( DiffeomorphicDemonsRegistration )
 
