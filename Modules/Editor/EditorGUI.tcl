@@ -6,9 +6,6 @@ proc EditorConstructor {this} {
 }
 
 proc EditorDestructor {this} {
-  if { [info exists ::Editor(undoImageData)] } {
-    $::Editor(undoImageData) Delete
-  }
 }
 
 proc EditorTearDownGUI {this} {
@@ -42,6 +39,11 @@ proc EditorTearDownGUI {this} {
   }
 
   unset ::Editor(singleton)
+
+  if { [info exists ::Editor(undoImageData)] } {
+    $::Editor(undoImageData) Delete
+    unset ::Editor(undoImageData)
+  }
 
 }
 
