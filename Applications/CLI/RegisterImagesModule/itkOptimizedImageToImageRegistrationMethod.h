@@ -76,7 +76,7 @@ class OptimizedImageToImageRegistrationMethod
     // 
     // Methods from Superclass
     //
-    void GenerateData( void );
+    virtual void GenerateData( void );
 
     //
     // Custom Methods
@@ -102,6 +102,9 @@ class OptimizedImageToImageRegistrationMethod
     itkSetMacro( MaxIterations, unsigned int );
     itkGetConstMacro( MaxIterations, unsigned int );
 
+    itkSetMacro( UseEvolutionaryOptimization, bool );
+    itkGetConstMacro( UseEvolutionaryOptimization, bool );
+
     itkSetMacro( NumberOfSamples, unsigned int );
     itkGetConstMacro( NumberOfSamples, unsigned int );
 
@@ -110,6 +113,9 @@ class OptimizedImageToImageRegistrationMethod
 
     itkSetMacro( TargetError, double );
     itkGetConstMacro( TargetError, double );
+
+    itkSetMacro( RandomNumberSeed, int );
+    itkGetConstMacro( RandomNumberSeed, int );
 
     itkGetConstMacro( TransformMethodEnum, TransformMethodEnumType );
 
@@ -136,7 +142,7 @@ class OptimizedImageToImageRegistrationMethod
     virtual void Optimize( MetricType * metric,
                            InterpolatorType * interpolator );
 
-    void PrintSelf( std::ostream & os, Indent indent ) const;
+    virtual void PrintSelf( std::ostream & os, Indent indent ) const;
 
   private:
 
@@ -157,11 +163,15 @@ class OptimizedImageToImageRegistrationMethod
 
     unsigned int                        m_MaxIterations;
 
+    bool                                m_UseEvolutionaryOptimization;
+
     unsigned int                        m_NumberOfSamples;
 
     PixelType                           m_FixedImageSamplesIntensityThreshold;
 
     double                              m_TargetError;
+
+    int                                 m_RandomNumberSeed;
 
     TransformMethodEnumType             m_TransformMethodEnum;
 

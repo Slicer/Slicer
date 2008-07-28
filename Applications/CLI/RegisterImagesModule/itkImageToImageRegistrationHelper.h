@@ -93,7 +93,8 @@ class ImageToImageRegistrationHelper : public Object
                                  INIT_WITH_CURRENT_RESULTS,
                                  INIT_WITH_IMAGE_CENTERS,
                                  INIT_WITH_CENTERS_OF_MASS,
-                                 INIT_WITH_SECOND_MOMENTS };
+                                 INIT_WITH_SECOND_MOMENTS,
+                                 INIT_WITH_LANDMARKS };
 
     enum RegistrationStageEnumType { PRE_STAGE,
                                      LOAD_STAGE,
@@ -104,6 +105,8 @@ class ImageToImageRegistrationHelper : public Object
 
     typedef typename InitialRegistrationMethodType::TransformType
                                                    InitialTransformType;
+
+    typedef std::vector< float >                   LandmarkVector;
 
     typedef typename RigidRegistrationMethodType::TransformType
                                                    RigidTransformType;
@@ -119,6 +122,12 @@ class ImageToImageRegistrationHelper : public Object
     // 
     // Custom Methods
     //
+    
+    //**************
+    //**************
+    //  Specify the fixed and moving images
+    //**************
+    //**************
     void LoadFixedImage( const std::string filename );
 
     itkSetConstObjectMacro( FixedImage, ImageType );
@@ -129,12 +138,26 @@ class ImageToImageRegistrationHelper : public Object
     itkSetConstObjectMacro( MovingImage, ImageType );
     itkGetConstObjectMacro( MovingImage, ImageType );
 
+    //**************
+    //  Generic file-save function
+    //**************
     void SaveImage( const std::string filename, const ImageType * image );
 
-    //
+    itkSetMacro( RandomNumberSeed, unsigned int );
+    itkGetMacro( RandomNumberSeed, unsigned int );
+
+    //**************
+    //**************
+    //  Specify how the fixed image should be sampled when computing the metric and
+    //    what ROI of the moving image is valid
+    //**************
+    //**************
     itkSetMacro( UseFixedImageMaskObject, bool );
     itkGetConstMacro( UseFixedImageMaskObject, bool );
     itkBooleanMacro( UseFixedImageMaskObject );
+
+    itkSetMacro( SamplingIntensityThreshold, double );
+    itkGetConstMacro( SamplingIntensityThreshold, double );
 
     void SetFixedImageMaskObject( typename MaskObjectType::ConstPointer & mask );
     itkGetConstObjectMacro( FixedImageMaskObject, MaskObjectType );
@@ -146,25 +169,79 @@ class ImageToImageRegistrationHelper : public Object
     void SetMovingImageMaskObject( typename MaskObjectType::ConstPointer & mask );
     itkGetConstObjectMacro( MovingImageMaskObject, MaskObjectType );
 
+    //**************
+    //  Initialize the moving image mask as the region of initial overlap
+    //  between the fixed and moving images
+    //**************
+    itkSetMacro( UseOverlapAsROI, bool );
+    itkGetMacro( UseOverlapAsROI, bool );
+    itkBooleanMacro( UseOverlapAsROI );
+
+
+    //**************
+    //**************
+    //  Update
+    //**************
+    //**************
     void Initialize( void );
 
     /** This class provides an Update() method to fit the appearance of a
      * ProcessObject API, but it is not a ProcessObject.  */
     void Update( void );
 
+    //**************
+    //**************
+    //  Resample
+    //**************
+    //**************
     typename ImageType::ConstPointer  ResampleImage( 
-                                    InterpolationMethodEnumType interp=OptimizedRegistrationMethodType::LINEAR_INTERPOLATION,
+                                    InterpolationMethodEnumType interp 
+                                      = OptimizedRegistrationMethodType
+                                        ::LINEAR_INTERPOLATION,
                                     const ImageType * movingImage=NULL,
                                     const MatrixTransformType * matrixTransform=NULL,
                                     const BSplineTransformType * bsplineTransform=NULL );
 
-    typename ImageType::ConstPointer  GetFinalMovingImage( InterpolationMethodEnumType interp=OptimizedRegistrationMethodType::LINEAR_INTERPOLATION );
+    // Returns the moving image resampled into the space of the fixed image
+    typename ImageType::ConstPointer  GetFinalMovingImage( 
+                                    InterpolationMethodEnumType interp
+                                     = OptimizedRegistrationMethodType
+                                       ::LINEAR_INTERPOLATION );
 
-    typename ImageType::ConstPointer  GetFixedToFinalMovingDifferenceImage( InterpolationMethodEnumType interp=OptimizedRegistrationMethodType::LINEAR_INTERPOLATION );
+    //**************
+    //**************
+    // Compute registration "accuracy" by comparing a resampled moving image
+    // with a baseline image.
+    //**************
+    //**************
 
-    //
+    // Specify the baseline image.   
+    void LoadBaselineImage( const std::string filename );
+    itkSetConstObjectMacro( BaselineImage, ImageType );
+
+    // Bound the required accuracy for the registration test to "pass"
+    itkSetMacro( BaselineNumberOfFailedPixelsTolerance,  unsigned int );
+    itkSetMacro( BaselineIntensityTolerance, PixelType );
+    itkSetMacro( BaselineRadiusTolerance, unsigned int );
+
+    // Must be called after setting the BaselineImage in order to resample
+    //   the moving image into the BaselineImage space, compute differences,
+    //   and determine if it passed the test within the specified tolerances
+    void ComputeBaselineDifference( void );
+    itkGetConstObjectMacro( BaselineDifferenceImage, ImageType );
+    itkGetConstObjectMacro( BaselineResampledMovingImage, ImageType );
+    itkGetMacro( BaselineNumberOfFailedPixels, unsigned int );
+    itkGetMacro( BaselineTestPassed, bool );
+
+    //**************
+    //**************
     // Process Control
-    //
+    //**************
+    //**************
+
+    //**************
+    // Control which steps of the registration pipeline are applied
+    //**************
     itkSetMacro( EnableLoadedRegistration, bool );
     itkGetConstMacro( EnableLoadedRegistration, bool );
     itkBooleanMacro( EnableLoadedRegistration );
@@ -185,7 +262,10 @@ class ImageToImageRegistrationHelper : public Object
     itkGetConstMacro( EnableBSplineRegistration, bool );
     itkBooleanMacro( EnableBSplineRegistration );
 
-    //
+    //**************
+    // Specify the expected magnitudes within the transform.  Used to
+    //   guide the operating space of the optimizers
+    //**************
     itkSetMacro( ExpectedOffsetPixelMagnitude, double );
     itkGetConstMacro( ExpectedOffsetPixelMagnitude, double );
 
@@ -198,12 +278,10 @@ class ImageToImageRegistrationHelper : public Object
     itkSetMacro( ExpectedSkewMagnitude, double );
     itkGetConstMacro( ExpectedSkewMagnitude, double );
 
-    itkSetMacro( SamplingIntensityThreshold, double );
-    itkGetConstMacro( SamplingIntensityThreshold, double );
 
-
-
-    //
+    //**************
+    //  Return the current product of the registration pipeline
+    //**************
     itkGetConstObjectMacro( CurrentMatrixTransform, MatrixTransformType );
     itkGetConstObjectMacro( CurrentBSplineTransform, BSplineTransformType );
 
@@ -218,25 +296,30 @@ class ImageToImageRegistrationHelper : public Object
     itkGetConstObjectMacro( MatrixTransformResampledImage, ImageType );
     itkGetConstObjectMacro( BSplineTransformResampledImage, ImageType );
 
+    //**************
+    //  Not implemented at this time :(
+    //**************
     void LoadParameters( const std::string filename );
     void SaveParameters( const std::string filename );
 
+    //**************
+    //  Final metric value after the pipeline has completed
+    //**************
     itkGetMacro( FinalMetricValue, double );
 
+    //**************
+    //  Determine if progress messages should be sent to cout
+    //**************
     itkSetMacro( ReportProgress, bool );
     itkGetMacro( ReportProgress, bool );
     itkBooleanMacro( ReportProgress );
-
-    itkSetMacro( UseOverlapAsROI, bool );
-    itkGetMacro( UseOverlapAsROI, bool );
-    itkBooleanMacro( UseOverlapAsROI );
 
     itkSetMacro( MinimizeMemory, bool );
     itkGetMacro( MinimizeMemory, bool );
     itkBooleanMacro( MinimizeMemory );
 
     //
-    // Loaded transforms
+    // Loaded transforms parameters
     //
     void LoadTransform( const std::string filename );
     void SaveTransform( const std::string filename );
@@ -252,6 +335,8 @@ class ImageToImageRegistrationHelper : public Object
     //
     itkSetMacro( InitialMethodEnum, InitialMethodEnumType );
     itkGetConstMacro( InitialMethodEnum, InitialMethodEnumType );
+    void SetFixedLandmarks ( const LandmarkVector &fixedLandmarks );
+    void SetMovingLandmarks ( const LandmarkVector &movingLandmarks );
 
     //
     // Rigid Parameters
@@ -328,9 +413,15 @@ class ImageToImageRegistrationHelper : public Object
                           const std::string basename,
                           MetricMethodEnumType metric,
                           InterpolationMethodEnumType interpolation ) const;
+
     void PrintSelf( std::ostream & os, Indent indent ) const;
 
   private:
+
+    typedef typename InitialRegistrationMethodType::LandmarkPointType
+                                                     LandmarkPointType;
+    typedef typename InitialRegistrationMethodType::LandmarkPointContainer
+                                                     LandmarkPointContainer;
 
     ImageToImageRegistrationHelper( const Self & ); // Purposely not implemented
     void operator = ( const Self & );               // Purposely not implemented
@@ -339,10 +430,13 @@ class ImageToImageRegistrationHelper : public Object
     typename ImageType::ConstPointer      m_FixedImage;
     typename ImageType::ConstPointer      m_MovingImage;
 
+    bool                                  m_UseOverlapAsROI;
     bool                                  m_UseFixedImageMaskObject;
     typename MaskObjectType::ConstPointer m_FixedImageMaskObject;
     bool                                  m_UseMovingImageMaskObject;
     typename MaskObjectType::ConstPointer m_MovingImageMaskObject;
+
+    unsigned int                          m_RandomNumberSeed;
 
     //  Process
     bool                                  m_EnableLoadedRegistration;
@@ -372,9 +466,16 @@ class ImageToImageRegistrationHelper : public Object
 
     double                                  m_FinalMetricValue;
 
-    bool                                    m_ReportProgress;
+    typename ImageType::ConstPointer        m_BaselineImage;
+    unsigned int                            m_BaselineNumberOfFailedPixelsTolerance;
+    PixelType                               m_BaselineIntensityTolerance;
+    unsigned int                            m_BaselineRadiusTolerance;
+    typename ImageType::ConstPointer        m_BaselineResampledMovingImage;
+    typename ImageType::ConstPointer        m_BaselineDifferenceImage;
+    unsigned int                            m_BaselineNumberOfFailedPixels;
+    bool                                    m_BaselineTestPassed;
 
-    bool                                    m_UseOverlapAsROI;
+    bool                                    m_ReportProgress;
 
     bool                                    m_MinimizeMemory;
 
@@ -385,6 +486,8 @@ class ImageToImageRegistrationHelper : public Object
     //  Initial Parameters
     InitialMethodEnumType                   m_InitialMethodEnum;
     typename InitialTransformType::Pointer  m_InitialTransform;
+    LandmarkPointContainer                  m_FixedLandmarks;
+    LandmarkPointContainer                  m_MovingLandmarks;
 
     //  Rigid Parameters
     double                                  m_RigidSamplingRatio;

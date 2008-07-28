@@ -36,6 +36,9 @@ InitialImageToImageRegistrationMethod< TImage >
   this->m_NumberOfMoments = 0 ;
 
   this->m_ComputeCenterOfRotationOnly = false;
+  
+  this->m_UseLandmarks = false;
+  
 }
 
 template< class TImage >
@@ -52,6 +55,70 @@ InitialImageToImageRegistrationMethod< TImage >
 ::GenerateData( void )
 {
   Superclass::GenerateData();
+  
+  if( this->m_UseLandmarks )
+    {
+    if ( TImage::ImageDimension == 3 )
+      {
+      typedef typename TransformType::ScalarType ScalarType;
+      typedef VersorRigid3DTransform< ScalarType >
+                                                LandmarkTransformType;
+      typedef LandmarkBasedTransformInitializer< LandmarkTransformType,
+                                                 TImage, TImage > 
+                                                LandmarkTransformCalculatorType;
+      typename LandmarkTransformCalculatorType::Pointer landmarkCalc;
+      landmarkCalc = LandmarkTransformCalculatorType::New();
+      landmarkCalc->SetFixedLandmarks( m_FixedLandmarks );
+      landmarkCalc->SetMovingLandmarks( m_MovingLandmarks );
+      typename LandmarkTransformType::Pointer newTransform; 
+      newTransform = LandmarkTransformType::New();
+      newTransform->SetIdentity();
+      landmarkCalc->SetTransform(newTransform);
+      landmarkCalc->InitializeTransform();
+      typename ImageRegistrationMethod<TImage,TImage>::TransformType* transform
+        = dynamic_cast< 
+          typename ImageRegistrationMethod<TImage,TImage>::TransformType *>
+            (newTransform.GetPointer() );
+      this->SetTransform(transform);
+      //transform->Delete();
+      //newTransform->Delete();
+      //landmarkCalc->Delete();
+      }
+    else if ( TImage::ImageDimension == 2 )
+      {
+      typedef Rigid2DTransform< typename TransformType::ScalarType > 
+                                           LandmarkTransformType;
+      typedef LandmarkBasedTransformInitializer< LandmarkTransformType,
+                                                       TImage, TImage > 
+                                                LandmarkTransformCalculatorType;
+      typename LandmarkTransformCalculatorType::Pointer landmarkCalc;
+      landmarkCalc = LandmarkTransformCalculatorType::New();
+      landmarkCalc->SetFixedLandmarks( m_FixedLandmarks );
+      landmarkCalc->SetMovingLandmarks( m_MovingLandmarks );
+      typename LandmarkTransformType::Pointer newTransform; 
+      newTransform = LandmarkTransformType::New();
+      newTransform->SetIdentity();
+      landmarkCalc->SetTransform(newTransform);
+      landmarkCalc->InitializeTransform();
+      typename ImageRegistrationMethod<TImage,TImage>::TransformType* transform 
+        = dynamic_cast<  
+            typename ImageRegistrationMethod<TImage,TImage>::TransformType *>(
+              newTransform.GetPointer() );
+      this->SetTransform(transform);
+      transform->Delete();
+      newTransform->Delete();
+      }
+    else
+      {
+      std::cout << "Image type must be 3 or 2." << std::endl;
+      std::cout << "Initialization returning identity." << std::endl;
+      typename TransformType::Pointer newTransform = TransformType::New();
+      newTransform->SetIdentity();
+      this->SetTransform(newTransform);
+      newTransform->Delete();
+      }
+    return;  
+    }
 
   typedef ImageMomentsCalculator< TImage > MomentsCalculatorType;
 
@@ -244,6 +311,23 @@ InitialImageToImageRegistrationMethod< TImage >
   return trans;
 }   
 
+template< class TImage >
+void 
+InitialImageToImageRegistrationMethod< TImage >
+::SetFixedLandmarks ( const LandmarkPointContainer& fixedLandmarks )
+{
+  m_FixedLandmarks = fixedLandmarks;
+  this->Modified();
+}
+
+template< class TImage >
+void 
+InitialImageToImageRegistrationMethod< TImage >
+::SetMovingLandmarks ( const LandmarkPointContainer& movingLandmarks )
+{
+  m_MovingLandmarks = movingLandmarks;
+  this->Modified();
+}
 
 template< class TImage >
 void
@@ -255,6 +339,8 @@ InitialImageToImageRegistrationMethod< TImage >
   os << indent << "Number of moments = " << this->m_NumberOfMoments << std::endl;
 
   os << indent << "Compute Center Of Rotation Only = " << this->m_ComputeCenterOfRotationOnly << std::endl;
+  
+  os << indent << "Use Landmarks = " << this->m_UseLandmarks << std::endl;
 }
 
 };

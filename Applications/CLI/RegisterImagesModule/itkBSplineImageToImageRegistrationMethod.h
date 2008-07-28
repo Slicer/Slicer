@@ -57,14 +57,17 @@ class BSplineImageToImageRegistrationMethod
                                         itkGetStaticConstMacro( ImageDimension ) >
                                                        BSplineTransformType;
 
+    typedef typename BSplineTransformType::Pointer     BSplineTransformPointer;
+
     typedef BSplineTransformType                           TransformType;
+
     typedef typename BSplineTransformType::ParametersType  ParametersType;
 
     //
     // Methods from Superclass
     //
 
-    void GenerateData( void );
+    virtual void GenerateData( void );
 
     //
     // Custom Methods
@@ -76,17 +79,19 @@ class BSplineImageToImageRegistrationMethod
      *   functions that exist only in specific transforms (e.g., SetIdentity)
      *   can be called without the caller having to do the casting. 
      **/
-    TransformType * GetTypedTransform( void );
-    const TransformType * GetTypedTransform( void ) const;
+    virtual TransformType * GetTypedTransform( void );
+    virtual const TransformType * GetTypedTransform( void ) const;
 
     itkSetMacro( ExpectedDeformationMagnitude, double );
     itkGetConstMacro( ExpectedDeformationMagnitude, double );
 
-    itkSetClampMacro( NumberOfControlPoints, unsigned int, 2, 2000 );
+    itkSetClampMacro( NumberOfControlPoints, unsigned int, 3, 2000 );
     itkGetConstMacro( NumberOfControlPoints, unsigned int );
 
-    TransformType * GetBSplineTransform( void );
-    const TransformType * GetBSplineTransform( void ) const;
+    itkSetClampMacro( NumberOfLevels, unsigned int, 1, 5 );
+    itkGetConstMacro( NumberOfLevels, unsigned int );
+
+    BSplineTransformPointer GetBSplineTransform( void ) const;
 
     void ComputeGridRegion( int numberOfControlPoints,
                  typename TransformType::RegionType::SizeType & regionSize,
@@ -115,7 +120,7 @@ class BSplineImageToImageRegistrationMethod
     virtual void MultiResolutionOptimize( MetricType * metric,
                                           InterpolatorType * interpolator );
 
-    void PrintSelf( std::ostream & os, Indent indent ) const;
+    virtual void PrintSelf( std::ostream & os, Indent indent ) const;
 
   private:
 
@@ -125,6 +130,8 @@ class BSplineImageToImageRegistrationMethod
     double       m_ExpectedDeformationMagnitude;
 
     unsigned int m_NumberOfControlPoints;
+
+    unsigned int m_NumberOfLevels;
 
     bool         m_GradientOptimizeOnly;
 

@@ -65,11 +65,30 @@ int DoIt( MetaCommand & command )
   initializer.SetMovingImageFileName( command.GetValueAsString("MovingImage").c_str() );
 
   typename InitializationMethodType::Pointer  initializationMethod = initializer.GetRegistrationMethod();
-  //initializationMethod->SetComputeCenterOfRotationOnly( true );
-  initializationMethod->SetNumberOfMoments( 1 );
+  if( command.GetOptionWasSet("InitCenterOfImages") )
+    {
+    initializationMethod->SetNumberOfMoments( 0 );
+    }
+  else if( command.GetOptionWasSet("InitCenterOfMass") )
+    {
+    initializationMethod->SetNumberOfMoments( 1 );
+    }
+  else
+    {
+    initializationMethod->SetComputeCenterOfRotationOnly( true );
+    }
 
   initializer.PrepareRegistration();
-  initializer.RunRegistration();
+  try
+    {
+    initializer.RunRegistration();
+    }
+  catch(...)
+    {
+    std::cerr << "Intialization failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   //  Setup the registration
   TestingHelperType  helper;
@@ -91,6 +110,7 @@ int DoIt( MetaCommand & command )
 
   typename RegistrationMethodType::Pointer  registrationMethod = helper.GetRegistrationMethod();
 
+  // Scales
   typedef typename RegistrationMethodType::TransformParametersScalesType    
                                               TransformParametersScalesType;
 
@@ -129,16 +149,49 @@ int DoIt( MetaCommand & command )
     optimizerScales[10] = offsetScale;
     optimizerScales[11] = offsetScale;
     }
-
   registrationMethod->SetTransformParametersScales( optimizerScales );
+
+  // Affine method parameters
+
+  // General optimizer parameters
+  registrationMethod->SetNumberOfSamples( command.GetValueAsInt("NumberOfSamples") );
+
+  registrationMethod->SetMaxIterations( command.GetValueAsInt("MaxIterations") );
+
+  registrationMethod->SetRandomNumberSeed( command.GetValueAsInt("RandomNumberSeed") );
 
   if( command.GetOptionWasSet("MeanSquares") )
     {
     registrationMethod->SetMetricMethodEnum( RegistrationMethodType::MEAN_SQUARED_ERROR_METRIC );
     }
-  if( command.GetOptionWasSet("NormallizedCorrelation") )
+  if( command.GetOptionWasSet("NormalizedCorrelation") )
     {
     registrationMethod->SetMetricMethodEnum( RegistrationMethodType::NORMALIZED_CORRELATION_METRIC );
+    }
+
+  // General parameters
+  if( command.GetOptionWasSet("Mode") )
+    {
+    if( command.GetValueAsString("Mode") == "DRAFT" )
+      {
+      registrationMethod->SetMaxIterations( (unsigned int)(0.5 * registrationMethod->GetMaxIterations()) );
+      registrationMethod->SetNumberOfSamples( (unsigned int)(0.5 * registrationMethod->GetNumberOfSamples()) );
+      }
+    else if( command.GetValueAsString("Mode") == "NORMAL" )
+      {
+      //registrationMethod->SetMaxIterations( registrationMethod->GetMaxIterations() );
+      //registrationMethod->SetNumberOfSamples( registrationMethod->GetNumberOfSamples() );
+      }
+    else if( command.GetValueAsString("Mode") == "PRECISE" )
+      {
+      registrationMethod->SetMaxIterations( (unsigned int)(1.25 * registrationMethod->GetMaxIterations()) );
+      registrationMethod->SetNumberOfSamples( (unsigned int)(1.25 * registrationMethod->GetNumberOfSamples()) );
+      }
+    else 
+      {
+      std::cerr << "Mode type " << command.GetValueAsString("Mode")
+                << " not recognized.  Using NORMAL." << std::endl;
+      }
     }
 
 
@@ -147,15 +200,23 @@ int DoIt( MetaCommand & command )
     initializer.GetRegistrationMethod()->GetTypedTransform() );
 
   // Run
-  helper.PrepareRegistration();
-  helper.SetNumberOfFailedPixelsTolerance( command.GetValueAsInt("FailurePixelTolerance") );
-  helper.SetIntensityTolerance( command.GetValueAsFloat("FailureIntensityTolerance") );
-  helper.SetRadiusTolerance( command.GetValueAsInt("FailureOffsetTolerance") );
-  helper.RunRegistration();
-  helper.PrintTest();
-  helper.ReportResults();
-  helper.ResampleOutputImage();
-  helper.PerformRegressionTest();
+  try
+    {
+    helper.PrepareRegistration();
+    helper.SetNumberOfFailedPixelsTolerance( command.GetValueAsInt("FailurePixelTolerance") );
+    helper.SetIntensityTolerance( command.GetValueAsFloat("FailureIntensityTolerance") );
+    helper.SetRadiusTolerance( command.GetValueAsInt("FailureOffsetTolerance") );
+    helper.RunRegistration();
+    //helper.PrintTest();
+    //helper.ReportResults();
+    helper.ResampleOutputImage();
+    helper.PerformRegressionTest();
+    }
+  catch(...)
+    {
+    std::cerr << "Registration class threw an exception" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   return helper.GetTestResult();
 }
@@ -163,6 +224,12 @@ int DoIt( MetaCommand & command )
 int main(int argc, char *argv[])
 {
   MetaCommand command;
+
+  command.SetOption("Mode", "M", false,
+                    "Registration mode: DRAFT, NORMAL, PRECISE");
+  command.SetOptionLongTag("Mode",
+                           "Mode");
+  command.AddOptionField("Mode", "Mode", MetaCommand::STRING, true);
 
   // Scales
   command.SetOption("ExpectedOffset", "o", false,
@@ -188,6 +255,34 @@ int main(int argc, char *argv[])
   command.SetOptionLongTag("ExpectedSkew", "ExpectedSkew");
   command.AddOptionField("ExpectedSkew", "ExpectedSkew",
                          MetaCommand::FLOAT, true, "0.02");
+
+  // General Optimizer Params
+  command.SetOption("NumberOfSamples", "s", false,
+                    "Number of samples from the fixed images for computing the metric");
+  command.SetOptionLongTag("NumberOfSamples", "NumberOfSamples");
+  command.AddOptionField("NumberOfSamples", "NumberOfSamples",
+                         MetaCommand::INT, true, "150000");
+
+  command.SetOption("MaxIterations", "s", false,
+                    "Maximum number of optimizer iterations");
+  command.SetOptionLongTag("MaxIterations", "MaxIterations");
+  command.AddOptionField("MaxIterations", "MaxIterations",
+                         MetaCommand::INT, true, "150");
+
+  command.SetOption("RandomNumberSeed", "u", false,
+                    "Seed used to generate random numbers (0 = random seed)");
+  command.SetOptionLongTag("RandomNumberSeed", "RandomNumberSeed");
+  command.AddOptionField("RandomNumberSeed", "RandomNumberSeed",
+                         MetaCommand::INT, true, "0");
+
+  // Affine optimizer params
+  command.SetOption("InitCenterOfMass", "m", false,
+                    "Use center of mass to initialize the registrations");
+  command.SetOptionLongTag("InitCenterOfMass", "InitCenterOfMass");
+
+  command.SetOption("InitCenterOfImages", "i", false,
+                    "Use center of images to initialize the registrations");
+  command.SetOptionLongTag("InitCenterOfImages", "InitCenterOfImages");
 
   // Metric
   command.SetOption("MeanSquares", "q", false,

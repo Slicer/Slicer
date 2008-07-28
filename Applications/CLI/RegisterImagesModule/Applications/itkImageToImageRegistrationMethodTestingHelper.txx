@@ -25,12 +25,11 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
 ::ImageToImageRegistrationMethodTestingHelper()
   {
   this->m_RegistrationMethod  = RegistrationMethodType::New();
-  this->m_FixedImageReader    = ImageReaderType::New();
-  this->m_MovingImageReader   = ImageReaderType::New();
-  this->m_MovingImageWriter   = ImageWriterType::New();
-  this->m_BaselineImageReader = ImageReaderType::New();
-  this->m_DifferenceImageWriter   = ImageWriterType::New();
-  this->m_WriteDifferenceImage = false;
+  this->m_FixedImageReader    = NULL; //ImageReaderType::New();
+  this->m_MovingImageReader   = NULL; //ImageReaderType::New();
+  this->m_MovingImageWriter   = NULL; //ImageWriterType::New();
+  this->m_BaselineImageReader = NULL; //ImageReaderType::New();
+  this->m_DifferenceImageWriter   = NULL; //ImageWriterType::New();
   this->m_ResampleFilter      = ResampleFilterType::New();
   this->m_DifferenceFilter    = DifferenceFilterType::New();
   this->m_NumberOfFailedPixelsTolerance = 100;
@@ -52,7 +51,15 @@ void
 ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
 ::SetFixedImageFileName( const char * filename )
   {
-  this->m_FixedImageReader->SetFileName( filename );
+  if( filename != NULL && strlen(filename) > 2 )
+    {
+    this->m_FixedImageReader    = ImageReaderType::New();
+    this->m_FixedImageReader->SetFileName( filename );
+    }
+  else
+    {
+    this->m_FixedImageReader    = NULL;
+    }
   }
 
 template< class TRegistrationMethod >
@@ -60,7 +67,15 @@ void
 ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
 ::SetMovingImageFileName( const char * filename )
   {
-  this->m_MovingImageReader->SetFileName( filename );
+  if( filename != NULL && strlen(filename) > 2 )
+    {
+    this->m_MovingImageReader    = ImageReaderType::New();
+    this->m_MovingImageReader->SetFileName( filename );
+    }
+  else
+    {
+    this->m_MovingImageReader    = NULL;
+    }
   }
 
 template< class TRegistrationMethod >
@@ -68,7 +83,16 @@ void
 ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
 ::SetResampledImageFileName( const char * filename )
   {
-  this->m_MovingImageWriter->SetFileName( filename );
+  if( filename != NULL && strlen(filename) > 2 )
+    {
+    this->m_MovingImageWriter    = ImageWriterType::New();
+    this->m_MovingImageWriter->SetFileName( filename );
+    this->m_MovingImageWriter->SetUseCompression( true );
+    }
+  else
+    {
+    this->m_MovingImageWriter    = NULL;
+    }
   }
 
 template< class TRegistrationMethod >
@@ -76,7 +100,15 @@ void
 ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
 ::SetBaselineImageFileName( const char * filename )
   {
-  this->m_BaselineImageReader->SetFileName( filename );
+  if( filename != NULL && strlen(filename) > 2 )
+    {
+    this->m_BaselineImageReader    = ImageReaderType::New();
+    this->m_BaselineImageReader->SetFileName( filename );
+    }
+  else
+    {
+    this->m_BaselineImageReader    = NULL;
+    }
   }
 
 template< class TRegistrationMethod >
@@ -84,14 +116,15 @@ void
 ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
 ::SetDifferenceImageFileName( const char * filename )
   {
-  if( filename != NULL )
+  if( filename != NULL && strlen(filename) > 2 )
     {
+    this->m_DifferenceImageWriter    = ImageWriterType::New();
     this->m_DifferenceImageWriter->SetFileName( filename );
-    this->m_WriteDifferenceImage = true;
+    this->m_DifferenceImageWriter->SetUseCompression( true );
     }
   else
     {
-    this->m_WriteDifferenceImage = false;
+    this->m_DifferenceImageWriter    = NULL;
     }
   }
 
@@ -101,13 +134,30 @@ void
 ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod > 
 ::PrepareRegistration()
   {
+  if(this->m_FixedImageReader.IsNull() )
+    {
+    std::cerr << "Error: Set fixed image filename first." << std::endl;
+    return;
+    }
+  if(this->m_MovingImageReader.IsNull() )
+    {
+    std::cerr << "Error: Set moving image filename first." << std::endl;
+    return;
+    }
+
   this->m_RegistrationMethod->SetFixedImage( this->m_FixedImageReader->GetOutput() );
   this->m_RegistrationMethod->SetMovingImage( this->m_MovingImageReader->GetOutput() );
   
   this->m_RegistrationMethod->ReportProgressOn();
 
-  this->m_ResampleFilter->SetInput( this->m_MovingImageReader->GetOutput() );
-  this->m_MovingImageWriter->SetInput( this->m_ResampleFilter->GetOutput() );
+  if( this->m_MovingImageReader.IsNotNull() )
+    {
+    this->m_ResampleFilter->SetInput( this->m_MovingImageReader->GetOutput() );
+    if( this->m_MovingImageWriter.IsNotNull() )
+      {
+      this->m_MovingImageWriter->SetInput( this->m_ResampleFilter->GetOutput() );
+      }
+    }
   }
 
 template< class TRegistrationMethod >
@@ -166,11 +216,25 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     return;
     }
 
-  std::cout << "Fixed Image " << std::endl;
-  this->m_FixedImageReader->GetOutput()->Print( std::cout );
+  if( this->m_FixedImageReader.IsNull() )
+    {
+    std::cout << "Fixed image is null" << std::endl;
+    }
+  else
+    {
+    std::cout << "Fixed Image " << std::endl;
+    this->m_FixedImageReader->GetOutput()->Print( std::cout );
+    }
 
-  std::cout << "Moving Image " << std::endl;
-  this->m_MovingImageReader->GetOutput()->Print( std::cout );
+  if( this->m_MovingImageReader.IsNull() )
+    {
+    std::cout << "Moving image is null" << std::endl;
+    }
+  else
+    {
+    std::cout << "Moving Image " << std::endl;
+    this->m_MovingImageReader->GetOutput()->Print( std::cout );
+    }
   }
 
 template< class TRegistrationMethod >
@@ -195,7 +259,7 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
   
   try
     {
-    this->m_MovingImageWriter->Update();
+    this->m_ResampleFilter->Update();
     }
   catch( itk::ExceptionObject & excp )
     {
@@ -206,6 +270,11 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     {
     std::cerr << "Unknown exception" << std::endl;
     this->m_ErrorState = true;
+    }
+
+  if( this->m_MovingImageWriter.IsNotNull() )
+    {
+    this->m_MovingImageWriter->Update();
     }
   }
 
@@ -245,12 +314,17 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     return;
     }
 
+  if( this->m_BaselineImageReader.IsNull() )
+    {
+    return;
+    }
+
   this->m_BaselineImageReader->Update();
 
   this->m_DifferenceFilter->SetValidInput( this->m_BaselineImageReader->GetOutput() );
   this->m_DifferenceFilter->SetTestInput(  this->m_ResampleFilter->GetOutput() );
 
-  this->m_DifferenceFilter->SetDifferenceThreshold( this->m_IntensityTolerance );
+  this->m_DifferenceFilter->SetDifferenceThreshold( static_cast< typename ImageType::PixelType >(this->m_IntensityTolerance) );
   this->m_DifferenceFilter->SetToleranceRadius( this->m_RadiusTolerance );
   this->m_DifferenceFilter->SetIgnoreBoundaryPixels( true );
 
@@ -271,7 +345,7 @@ ImageToImageRegistrationMethodTestingHelper< TRegistrationMethod >
     return;
     }
 
-  if(this->m_WriteDifferenceImage)
+  if( this->m_DifferenceImageWriter.IsNotNull() )
     {
     this->m_DifferenceImageWriter->SetInput( this->m_DifferenceFilter->GetOutput() );
     this->m_DifferenceImageWriter->Write();

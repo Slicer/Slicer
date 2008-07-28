@@ -74,6 +74,11 @@ class RigidImageToImageRegistrationMethod
     typedef typename AffineTransformType::Pointer       AffineTransformPointer;                                                 
 
     //
+    //  Superclass Methods
+    //
+    void GenerateData( void );
+
+    //
     // Custom Methods
     //
 

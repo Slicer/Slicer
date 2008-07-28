@@ -137,9 +137,8 @@ public:
     ImageWriterPointer             m_MovingImageWriter;
     ImageReaderPointer             m_BaselineImageReader;
     ImageWriterPointer             m_DifferenceImageWriter;
-    bool                           m_WriteDifferenceImage;
-    ResampleFilterPointer          m_ResampleFilter;
     DifferenceFilterPointer        m_DifferenceFilter;
+    ResampleFilterPointer          m_ResampleFilter;
     unsigned long                  m_NumberOfFailedPixelsTolerance;
     unsigned long                  m_RadiusTolerance;
     double                         m_IntensityTolerance;

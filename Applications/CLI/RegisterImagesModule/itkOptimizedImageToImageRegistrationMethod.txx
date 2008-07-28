@@ -146,14 +146,24 @@ OptimizedImageToImageRegistrationMethod< TImage >
   m_TransformParametersScales = TransformParametersScalesType(1);
   m_TransformParametersScales.Fill( 1.0f );
 
-  m_MaxIterations = 200;
+  // The following MaxIterations value is a good default for rigid 
+  //   registration.  Other derived registration methods should use
+  //   their own default.
+  m_MaxIterations = 100;
   m_UseOverlapAsROI = false;
   m_MinimizeMemory = false;
+
+  m_UseEvolutionaryOptimization = true;
   
-  m_NumberOfSamples = 20000;
+  // The following NumberOfSamples value is a good default for rigid 
+  //   registration.  Other derived registration methods should use
+  //   their own default.
+  m_NumberOfSamples = 100000;
   m_FixedImageSamplesIntensityThreshold = 0;
 
   m_TargetError = 0.00001;
+
+  m_RandomNumberSeed = 0;
 
   m_TransformMethodEnum = RIGID_TRANSFORM;
 
@@ -175,19 +185,13 @@ void
 OptimizedImageToImageRegistrationMethod< TImage >
 ::GenerateData( void )
 {
-  this->Initialize();
-
   if( this->GetReportProgress() )
     {
     std::cout << "UPDATE START" << std::endl;
     }
 
-  // should be ok to call SetFixedParams on any transform
-  if( m_TransformMethodEnum != BSPLINE_TRANSFORM )
-    {
-    this->GetTransform()
-        ->SetFixedParameters( this->GetInitialTransformFixedParameters() );
-    }
+  this->Initialize();
+
   this->GetTransform()
       ->SetParametersByValue( this->GetInitialTransformParameters() );
 
@@ -224,6 +228,14 @@ OptimizedImageToImageRegistrationMethod< TImage >
       metric = MeanSquaresImageToImageMetric< TImage, TImage >::New();
       break;
       }
+    }
+  if( m_RandomNumberSeed != 0 )
+    {
+    metric->ReinitializeSeed( m_RandomNumberSeed );
+    }
+  else
+    {
+    metric->ReinitializeSeed( );
     }
 
   typename ImageType::ConstPointer fixedImage = this->GetFixedImage();
@@ -320,17 +332,17 @@ OptimizedImageToImageRegistrationMethod< TImage >
   typename InterpolatorType::Pointer interpolator;
   switch( this->GetInterpolationMethodEnum() )
     {
-  case LINEAR_INTERPOLATION:
+    case LINEAR_INTERPOLATION:
       {
       interpolator = LinearInterpolateImageFunction< TImage, double >::New();
       break;
       }
-  case BSPLINE_INTERPOLATION:
+    case BSPLINE_INTERPOLATION:
       {
       interpolator = BSplineInterpolateImageFunction< TImage, double >::New();
       break;
       }
-  case SINC_INTERPOLATION:
+    case SINC_INTERPOLATION:
       {
       interpolator = WindowedSincInterpolateImageFunction< TImage, 
                    4,
@@ -342,7 +354,14 @@ OptimizedImageToImageRegistrationMethod< TImage >
     }
   interpolator->SetInputImage( this->GetMovingImage() );
 
-  this->Optimize(metric, interpolator);
+  try
+    {
+    this->Optimize(metric, interpolator);
+    }
+  catch( ... )
+    {
+    std::cerr << "Optimization threw an exception." << std::endl;
+    }
 
   if( this->GetReportProgress() )
     {
@@ -356,46 +375,118 @@ void
 OptimizedImageToImageRegistrationMethod< TImage >
 ::Optimize( MetricType * metric, InterpolatorType * interpolator )
 {
+  typedef ImageRegistrationMethod< TImage, TImage >  RegType;
+
+  if( m_UseEvolutionaryOptimization )
+    {
+    if( this->GetReportProgress() )
+      {
+      std::cout << "EVOLUTIONARY START" << std::endl;
+      }
+
+    typedef OnePlusOneEvolutionaryOptimizer            EvoOptimizerType;
+    EvoOptimizerType::Pointer evoOpt = EvoOptimizerType::New();
+
+    evoOpt->SetNormalVariateGenerator( Statistics::NormalVariateGenerator
+                                                 ::New() );
+    evoOpt->SetEpsilon( this->GetTargetError() );
+    evoOpt->Initialize( 0.1 );
+    EvoOptimizerType::ParametersType scales = 
+                                     this->GetTransformParametersScales();
+    for(unsigned int i=0; i<scales.size(); i++)
+      {
+      scales[i] = scales[i] * scales[i]; // OnePlusOne opt uses squared scales
+      }
+    evoOpt->SetScales( scales ); //this->GetTransformParametersScales() );
+    evoOpt->SetMaximumIteration( this->GetMaxIterations() );
+
+    if( this->GetObserver() )
+      {
+      evoOpt->AddObserver( IterationEvent(), this->GetObserver() );
+      }
+
+    if( this->GetReportProgress() )
+      {
+      typedef ImageRegistrationViewer ViewerCommandType;
+      typename ViewerCommandType::Pointer command = ViewerCommandType::New();
+      if( this->GetTransform()->GetNumberOfParameters() > 16)
+        {
+        command->SetDontShowParameters( true );
+        }
+      evoOpt->AddObserver( IterationEvent(), command );
+      }
+
+    typename RegType::Pointer reg = RegType::New();
+    typename ImageType::ConstPointer fixedImage = this->GetFixedImage();
+    typename ImageType::ConstPointer movingImage = this->GetMovingImage();
+    reg->SetFixedImage( fixedImage );
+    reg->SetMovingImage( movingImage );
+    reg->SetFixedImageRegion( this->GetFixedImage()
+                                  ->GetLargestPossibleRegion() );
+    reg->SetTransform( this->GetTransform() );
+    reg->SetInitialTransformParameters( 
+                             this->GetInitialTransformParameters() );
+    reg->SetMetric( metric );
+    reg->SetInterpolator( interpolator );
+    reg->SetOptimizer( evoOpt );
+  
+    try
+      {
+      reg->StartRegistration();
+      }
+    catch( itk::ExceptionObject & excep )
+      {
+      std::cout << "Exception caught in evolutionary registration." 
+                 << excep << std::endl;
+      std::cout << "Continuing using best values..." << std::endl;
+      std::cout << "  Pos = " << evoOpt->GetCurrentPosition() 
+                << std::endl << std::endl;
+      }
+    catch(...)
+      {
+      std::cout << "Exception caught in evolutionary registration." 
+                << std::endl;
+      std::cout << "Continuing using best values..." << std::endl;
+      std::cout << "  Pos = " << evoOpt->GetCurrentPosition() 
+                << std::endl << std::endl;
+      }
+
+    m_FinalMetricValue = reg->GetOptimizer()->GetValue( 
+                                         reg->GetLastTransformParameters() );
+
+    this->SetLastTransformParameters( reg->GetLastTransformParameters() );
+    this->GetTransform()->SetParametersByValue( 
+                                        this->GetLastTransformParameters() );
+  
+    if( this->GetReportProgress() )
+      {
+      std::cout << "EVOLUTIONARY END" << std::endl;
+      }
+    }
+  else
+    {
+    this->GetTransform()->SetParametersByValue( 
+                                    this->GetInitialTransformParameters() );
+    }
+
   if( this->GetReportProgress() )
     {
-    std::cout << "EVOLUTIONARY START" << std::endl;
+    std::cout << "GRADIENT START" << std::endl;
     }
 
-  typedef ImageRegistrationMethod< TImage, TImage >  RegType;
-  typedef OnePlusOneEvolutionaryOptimizer            EvoOptimizerType;
-  typedef SingleValuedNonLinearOptimizer             OptimizerType;
+  typedef FRPROptimizer GradOptimizerType;
+  GradOptimizerType::Pointer gradOpt = GradOptimizerType::New();
 
-  EvoOptimizerType::Pointer evoOpt = EvoOptimizerType::New();
-  evoOpt->SetNormalVariateGenerator( Statistics::NormalVariateGenerator
-                                               ::New() );
-  evoOpt->SetEpsilon( this->GetTargetError() );
-  evoOpt->Initialize( 0.1 );
-  EvoOptimizerType::ParametersType scales = 
-                                   this->GetTransformParametersScales();
-  for(unsigned int i=0; i<scales.size(); i++)
-    {
-    scales[i] = scales[i] * scales[i]; // OnePlusOne opt uses squared scales
-    }
-  evoOpt->SetScales( scales ); //this->GetTransformParametersScales() );
-  evoOpt->SetMaximumIteration( this->GetMaxIterations() );
-
-  OptimizerType::Pointer gradOpt;
-  typedef FRPROptimizer                  GradOptimizerType;
-
-  gradOpt = GradOptimizerType::New();
-  GradOptimizerType::Pointer tmpOpt = 
-               static_cast<GradOptimizerType *>( gradOpt.GetPointer() );
-
-  tmpOpt->SetMaximize( false );
-  tmpOpt->SetCatchGetValueException( true );
-  tmpOpt->SetMetricWorstPossibleValue( 0 );
-  tmpOpt->SetStepLength( 0.25 );
-  tmpOpt->SetStepTolerance( this->GetTargetError() );
-  tmpOpt->SetMaximumIteration( this->GetMaxIterations() );
-  tmpOpt->SetMaximumLineIteration( this->GetMaxIterations() );
-  tmpOpt->SetScales( this->GetTransformParametersScales() );
-  tmpOpt->SetUseUnitLengthGradient(true);
-  tmpOpt->SetToFletchReeves();
+  gradOpt->SetMaximize( false );
+  gradOpt->SetCatchGetValueException( true );
+  gradOpt->SetMetricWorstPossibleValue( 0 );
+  gradOpt->SetStepLength( 0.25 );
+  gradOpt->SetStepTolerance( this->GetTargetError() );
+  gradOpt->SetMaximumIteration( this->GetMaxIterations() );
+  gradOpt->SetMaximumLineIteration( this->GetMaxIterations() );
+  gradOpt->SetScales( this->GetTransformParametersScales() );
+  gradOpt->SetUseUnitLengthGradient(true);
+  gradOpt->SetToFletchReeves();
 
   if( this->GetReportProgress() )
     {
@@ -405,13 +496,10 @@ OptimizedImageToImageRegistrationMethod< TImage >
       {
       command->SetDontShowParameters( true );
       }
-    evoOpt->AddObserver( IterationEvent(), command );
     gradOpt->AddObserver( IterationEvent(), command );
     }
-
   if( this->GetObserver() )
     {
-    evoOpt->AddObserver( IterationEvent(), this->GetObserver() );
     gradOpt->AddObserver( IterationEvent(), this->GetObserver() );
     }
 
@@ -423,65 +511,65 @@ OptimizedImageToImageRegistrationMethod< TImage >
   reg->SetFixedImageRegion( this->GetFixedImage()
                                 ->GetLargestPossibleRegion() );
   reg->SetTransform( this->GetTransform() );
-  reg->SetInitialTransformParameters( 
-                           this->GetInitialTransformParameters() );
+  reg->SetInitialTransformParameters( this->GetTransform()->GetParameters() ); 
   reg->SetMetric( metric );
   reg->SetInterpolator( interpolator );
-  reg->SetOptimizer( evoOpt );
-
-  reg->StartRegistration();
-
-  m_FinalMetricValue = reg->GetOptimizer()->GetValue( 
-                                       reg->GetLastTransformParameters() );
-
-  this->SetLastTransformParameters( reg->GetLastTransformParameters() );
-  this->GetTransform()->SetParametersByValue( 
-                                      this->GetLastTransformParameters() );
-
-  gradOpt->SetCostFunction( metric );
-  gradOpt->SetInitialPosition( reg->GetLastTransformParameters() );
-
-  if( this->GetReportProgress() )
-    {
-    std::cout << "EVOLUTIONARY GRADIENT START" << std::endl;
-    }
-
+  reg->SetOptimizer( gradOpt );
+  
+  bool failure = false;
   try
     {
-    gradOpt->StartOptimization();
+    reg->StartRegistration();
     }
   catch( itk::ExceptionObject & excep )
     {
     std::cout << "Exception caught during gradient registration." 
                << excep << std::endl;
-    std::cout << "  Pos = " << gradOpt->GetCurrentPosition() 
+    std::cout << "Continuing using best values..." << std::endl;
+    std::cout << "  Pos = " << reg->GetLastTransformParameters()
               << std::endl << std::endl;
-    std::cout << "  Value = " 
-              << gradOpt->GetValue( gradOpt->GetCurrentPosition() ) 
-              << std::endl;
-    std::cout << "  Transform = ";
-    this->GetTransform()->Print( std::cout, 2 );
+    if( reg->GetLastTransformParameters().size() 
+        != reg->GetInitialTransformParameters().size() )
+      {
+      std::cout << "  Invalid position, using initial parameters." << std::endl;
+      failure = true;
+      }
     }
   catch(...)
     {
-    std::cout << "Exception caught...continuing using best values..." 
+    std::cout << "Exception caught in gradient registration." 
               << std::endl;
-    std::cout << "  Pos = " << gradOpt->GetCurrentPosition() 
+    std::cout << "Continuing using best values..." << std::endl;
+    std::cout << "  Pos = " << reg->GetLastTransformParameters()
               << std::endl << std::endl;
-    std::cout << "  Value = " 
-              << gradOpt->GetValue( gradOpt->GetCurrentPosition() ) 
-              << std::endl;;
+    if( reg->GetLastTransformParameters().size() 
+        != reg->GetInitialTransformParameters().size() )
+      {
+      std::cout << "  Invalid position, using initial parameters." << std::endl;
+      failure = true;
+      }
     }
-    
-  m_FinalMetricValue = gradOpt->GetValue( gradOpt->GetCurrentPosition() );
-
-  this->SetLastTransformParameters( gradOpt->GetCurrentPosition() );
-  this->GetTransform()
-      ->SetParametersByValue( this->GetLastTransformParameters() );
+  
+  if( failure )
+    {
+    m_FinalMetricValue = reg->GetOptimizer()->GetValue( 
+                                         reg->GetInitialTransformParameters() );
+    this->SetLastTransformParameters( reg->GetInitialTransformParameters() );
+    this->GetTransform()->SetParametersByValue( 
+                                         this->GetInitialTransformParameters() );
+    }
+  else
+    {
+    m_FinalMetricValue = reg->GetOptimizer()->GetValue( 
+                                         reg->GetLastTransformParameters() );
+    this->SetLastTransformParameters( reg->GetLastTransformParameters() );
+    this->GetTransform()->SetParametersByValue( 
+                                         this->GetLastTransformParameters() );
+    }
 
   if( this->GetReportProgress() )
     {
-    std::cout << "EVOLUTIONARY END" << std::endl;
+    std::cout << "GRADIENT END" << std::endl;
     }
 }
 
@@ -502,6 +590,8 @@ OptimizedImageToImageRegistrationMethod< TImage >
   os << indent << "Transform Parameter Scales = " << m_TransformParametersScales << std::endl;
 
   os << indent << "Max Iterations = " << m_MaxIterations << std::endl;
+
+  os << indent << "Use Evolutionary Optimization = " << m_UseEvolutionaryOptimization << std::endl;
 
   os << indent << "Use Overlap As ROI = " << m_UseOverlapAsROI << std::endl;
 

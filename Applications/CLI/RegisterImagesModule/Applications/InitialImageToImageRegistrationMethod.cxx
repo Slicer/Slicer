@@ -19,6 +19,10 @@
 
 #include "metaCommand.h"
 
+#ifdef BUILD_SLICER_MODULE
+#include "itkMRMLIDImageIOFactory.h"
+#endif
+
 // Description:
 // Get the PixelType and ComponentType from fileName
 void GetImageType (std::string fileName,
@@ -85,8 +89,8 @@ int DoIt( MetaCommand & command )
   helper.SetIntensityTolerance( command.GetValueAsFloat("FailedIntensityTolerance") );
   helper.SetRadiusTolerance( command.GetValueAsInt("FailedOffsetTolerance") );
   helper.RunRegistration();
-  helper.PrintTest();
-  helper.ReportResults();
+  //helper.PrintTest();
+  //helper.ReportResults();
   helper.ResampleOutputImage();
   helper.PerformRegressionTest();
 
@@ -95,8 +99,12 @@ int DoIt( MetaCommand & command )
 
 int main(int argc, char *argv[])
 {
-  MetaCommand command;
 
+#ifdef BUILD_SLICER_MODULE
+  itk::ObjectFactoryBase::RegisterFactory( itk::MRMLIDImageIOFactory::New() );
+#endif
+
+  MetaCommand command;
 
   command.SetOption("NumberOfMoments", "m", false,
                     "Number of images moments to use to align moving with fixed");

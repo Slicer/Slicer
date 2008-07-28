@@ -25,6 +25,9 @@
 
 #include "itkAffineTransform.h"
 
+#include "itkVersorRigid3DTransform.h"
+#include "itkLandmarkBasedTransformInitializer.h"
+
 namespace itk
 {
 
@@ -50,13 +53,27 @@ class InitialImageToImageRegistrationMethod
     //
     itkStaticConstMacro( ImageDimension, unsigned int,
                          TImage::ImageDimension );
-
+    
     typedef AffineTransform< double, itkGetStaticConstMacro( ImageDimension ) >
                                                       TransformType;
 
     typedef typename TransformType::Pointer           TransformPointer;
 
 
+    //
+    // Local Typedefs
+    //
+    /*
+    typedef typename VersorRigid3DTransform< typename TransformType::ScalarType > 
+                                                LandmarkTransformType;
+    typedef typename LandmarkBasedTransformInitializer< LandmarkTransformType,
+                                                        TImage, TImage > 
+                                                LandmarkTransformCalculatorType;
+    */
+    typedef Point< double, itkGetStaticConstMacro(ImageDimension) >
+                                                LandmarkPointType;
+    typedef std::vector< LandmarkPointType >    LandmarkPointContainer;
+    
     //
     // Custom Methods
     //
@@ -83,6 +100,12 @@ class InitialImageToImageRegistrationMethod
     itkSetMacro( ComputeCenterOfRotationOnly, bool );
     itkGetConstMacro( ComputeCenterOfRotationOnly, bool );
 
+    itkSetMacro( UseLandmarks, bool );
+    itkGetConstMacro( UseLandmarks, bool );
+    
+    void SetFixedLandmarks ( const LandmarkPointContainer& fixedLandmarks );
+    void SetMovingLandmarks ( const LandmarkPointContainer& movingLandmarks );
+
   protected:
 
     InitialImageToImageRegistrationMethod( void );
@@ -104,7 +127,9 @@ class InitialImageToImageRegistrationMethod
 
     unsigned int            m_NumberOfMoments;
     bool                    m_ComputeCenterOfRotationOnly;
-
+    bool                    m_UseLandmarks;
+    LandmarkPointContainer  m_FixedLandmarks;
+    LandmarkPointContainer  m_MovingLandmarks;
   };
 
 } // end namespace itk

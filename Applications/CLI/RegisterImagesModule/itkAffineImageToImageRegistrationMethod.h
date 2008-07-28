@@ -58,6 +58,12 @@ class AffineImageToImageRegistrationMethod
     typedef AffineTransformType                          TransformType;
 
     //
+    // Superclass Methods
+    //
+
+    void GenerateData( void );
+
+    //
     // Custom Methods
     //
 

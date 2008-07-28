@@ -67,12 +67,26 @@ AffineImageToImageRegistrationMethod< TImage >
   this->SetTransformParametersScales( scales );
 
   this->SetTransformMethodEnum( Superclass::AFFINE_TRANSFORM );
+
+  this->SetMaxIterations( 150 );
+  this->SetNumberOfSamples( 150000 );
 }
 
 template< class TImage >
 AffineImageToImageRegistrationMethod< TImage >
 ::~AffineImageToImageRegistrationMethod( void )
 {
+}
+
+template< class TImage >
+void
+AffineImageToImageRegistrationMethod< TImage >
+::GenerateData( void )
+{
+  // Set the center of rotation
+  this->GetTransform()->SetFixedParameters( this->GetInitialTransformFixedParameters() );
+
+  Superclass::GenerateData();
 }
 
 template< class TImage >

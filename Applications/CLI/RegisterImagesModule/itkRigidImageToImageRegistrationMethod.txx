@@ -185,6 +185,18 @@ RigidImageToImageRegistrationMethod< TImage >
 template< class TImage >
 void
 RigidImageToImageRegistrationMethod< TImage >
+::GenerateData( void )
+{
+  // Set the center of rotation
+  this->GetTransform()->SetFixedParameters( this->GetInitialTransformFixedParameters() );
+
+  Superclass::GenerateData();
+}
+
+
+template< class TImage >
+void
+RigidImageToImageRegistrationMethod< TImage >
 ::PrintSelf( std::ostream & os, Indent indent ) const
 {
   this->Superclass::PrintSelf(os, indent);
