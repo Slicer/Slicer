@@ -28,6 +28,23 @@ if(TCL_DIR)
     )
 endif(TCL_DIR)
 
+# Find and install python (follow the tcl example above)
+
+if(Slicer3_USE_PYTHON)
+  if(PYTHON_INCLUDE_PATH)
+    get_filename_component(PYTHON_DIR "${PYTHON_INCLUDE_PATH}" PATH)
+  else(PYTHON_INCLUDE_PATH)
+    set(PYTHON_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/python-build")
+  endif(PYTHON_INCLUDE_PATH)
+
+  if(PYTHON_DIR)
+    install(DIRECTORY
+      ${PYTHON_DIR}/
+      DESTINATION lib/Python
+      )
+  endif(PYTHON_DIR)
+endif(Slicer3_USE_PYTHON)
+
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt.in"
   "${Slicer3_BINARY_DIR}/PackageLibraries/CMakeLists.txt"
