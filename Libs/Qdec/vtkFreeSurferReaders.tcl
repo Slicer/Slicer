@@ -245,6 +245,7 @@ proc vtkFreeSurferReadersSetUMLSMapping {} {
 proc FreeSurferReadersFiducialsPointCreatedCallback {type fid pid} {
 
     if { [catch "package require Itcl"] } {
+        puts "PointCreatedCallback: Unable to find package Itcl"
         return
     }
 
@@ -374,7 +375,10 @@ proc vtkFreeSurferReadersGDFPlotBuildWindow { iID } {
     set owLegendMode  $wwTop.owLegendMode
     set fwClassConfig $wwTop.fwClassConfig
 
-    package require Iwidgets
+    if { [catch "package require Iwidgets"] } {
+        puts "Error: cannot find package Iwidgets"
+        return
+    }
 
     if {[info command $wwTop] != ""} {
         if {$::vtkFreeSurferReaders(verbose)} {
