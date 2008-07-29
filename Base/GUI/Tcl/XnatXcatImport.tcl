@@ -60,15 +60,15 @@ proc XnatXcatImport { xnatxcatFile } {
             set root [ $parser GetRootElement ]
             XnatXcatImportGetElement $root
 
-        #--- if the catalog includes a brain.mgz, example_func.nii and
-        #--- anat2exf.dat, we assume this is a FreeSurfer/FIPS catalog
-        #--- and convert FreeSurfer tkRegister2's registration matrix
-        #--- to a Slicer RAS2RAS registration matrix. 
-        XnatXcatImportComputeFIPS2SlicerTransformCorrection
+            #--- if the catalog includes a brain.mgz, example_func.nii and
+            #--- anat2exf.dat, we assume this is a FreeSurfer/FIPS catalog
+            #--- and convert FreeSurfer tkRegister2's registration matrix
+            #--- to a Slicer RAS2RAS registration matrix. 
+            XnatXcatImportComputeFIPS2SlicerTransformCorrection
 
-        #--- if the Correction transform node is created,
-        #--- place all statistics volumes inside that.
-        XnatXcatImportApplyFIPS2SlicerTransformCorrection
+            #--- if the Correction transform node is created,
+            #--- place all statistics volumes inside that.
+            XnatXcatImportApplyFIPS2SlicerTransformCorrection
         
             #--- reset feedback things
             $::XnatXcat_ProgressGauge SetValue 0
