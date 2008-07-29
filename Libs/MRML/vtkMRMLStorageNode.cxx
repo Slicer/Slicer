@@ -90,13 +90,13 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "fileName")) 
       {
-      const char* filename = vtkMRMLNode::URLDecodeString(attValue);
-      this->SetFileName(filename);
+      std::string filename = vtkMRMLNode::URLDecodeString(attValue);
+      this->SetFileName(filename.c_str());
       }
     else if (!strcmp(attName, "uri"))
       {
-      const char* uri = vtkMRMLNode::URLDecodeString(attValue);
-      this->SetURI(uri);
+      std::string uri = vtkMRMLNode::URLDecodeString(attValue);
+      this->SetURI(uri.c_str());
       }
     else if (!strcmp(attName, "useCompression")) 
       {

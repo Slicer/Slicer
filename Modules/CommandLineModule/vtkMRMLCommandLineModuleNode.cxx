@@ -196,12 +196,12 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
   tatts = atts;
   while (*tatts)
     {
-    attName = this->URLDecodeString(*(tatts++));
-    attValue = this->URLDecodeString(*(tatts++));
+    std::string sattName = std::string(this->URLDecodeString(*(tatts++)));
+    std::string sattValue = std::string(this->URLDecodeString(*(tatts++)));
 
     if (this->ModuleDescriptionObject.HasParameter(attName))
       {
-      this->ModuleDescriptionObject.SetParameterDefaultValue(attName,attValue);
+      this->ModuleDescriptionObject.SetParameterDefaultValue(sattName.c_str(),sattValue.c_str());
       }
     }
 }
