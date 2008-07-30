@@ -26,7 +26,7 @@ MRMLIDImageIOFactory::MRMLIDImageIOFactory()
 {
   this->RegisterOverride("itkImageIOBase",
                          "itkMRMLIDImageIO",
-                         "Command IO",
+                         "ImageIO to communicate directly with a MRML scene.",
                          1,
                          CreateObjectFunction<MRMLIDImageIO>::New());
 }
