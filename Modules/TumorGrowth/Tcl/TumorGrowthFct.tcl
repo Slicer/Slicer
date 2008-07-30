@@ -1017,9 +1017,25 @@ namespace eval TumorGrowthTcl {
 
 
   proc Analysis_Deformable_Fct {Scan1Image  Scan1Segmentation Scan2Image Scan1ToScan2Segmentation Scan1ToScan2Deformation Scan1ToScan2DeformationInverse Scan1ToScan2Image AnalysisSegmentFile AnalysisJaccobianFile} { 
+    global env
 
     Print "Run Deformable Analaysis with automatically computed segmentation"
 
+      #
+      # first, remove ITK_AUTOLOAD_PATH to work around
+      # nvidia driver bug that causes the module to fail 
+      # => necessary for eval cmd to work correctly 
+      # got this from vtkCommandLineModule
+      #
+      if {[info exists env(ITK_AUTOLOAD_PATH)] } {
+          set saveItkAutoLoadPath $env(ITK_AUTOLOAD_PATH)
+      } else {
+          set saveItkAutoLoadPath "" 
+      }
+      set env(ITK_AUTOLOAD_PATH) ""
+
+      Print "[eval exec env]" 
+ 
     ############################################
     ##I add the deformation analysis right HERE. WRITE THE WHOLE THING IN TCL TO PUT IT HERE.
     # registering the two images. 
@@ -1027,7 +1043,8 @@ namespace eval TumorGrowthTcl {
 
     # set CMD "$EXE_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
 
-    set CMD "$EXE_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
+      set CMD "$EXE_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
+
 
     Print "=== Deformable Registration ==" 
     Print "$CMD"
@@ -1064,6 +1081,13 @@ namespace eval TumorGrowthTcl {
     set CMD "$EXE_DIR/DetectGrowth $Scan1ToScan2DeformationInverse $Scan1Segmentation $AnalysisJaccobianFile"
     Print "$CMD"
     eval exec $CMD 
+
+
+    # Reset path 
+    if {$saveItkAutoLoadPath != ""} {
+        set env(ITK_AUTOLOAD_PATH) "$saveItkAutoLoadPath"
+    }
+
   }
  
   proc Analysis_Deformable_DeleteOutput { } {
