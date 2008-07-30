@@ -260,7 +260,7 @@ void vtkSlicerNodeSelectorWidget::UpdateMenu()
     return;
     }
 
-  if (this->IsMapped() == 0)
+  if (this->IsCreated() == 0 || this->IsMapped() == 0)
     {
     return;
     }
