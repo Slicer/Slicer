@@ -236,9 +236,17 @@ public:
   // Description:
   // Return the MetaDataDictionary from the ITK layer
   const itk::MetaDataDictionary &GetMetaDataDictionary() const;
+  std::vector<std::string> Tags;
+  std::vector<std::string> TagValues;
+  void ParseDictionary();
   //ETX
 
-    // set/get functions for grouping by tags
+  int GetNumberOfItemsInDictionary(); 
+  bool HasKey( char* tag );
+  const char* GetNthKey( int n );
+  const char* GetTagValue( char* tag );
+
+  // set/get functions for grouping by tags
   bool GetGroupingByTags()
   {
     return GroupingByTags;
@@ -642,7 +650,6 @@ public:
     int idxSliceLocation,
     int idxImageOrientationPatient,
     int n );
-
 
 protected:
   vtkITKArchetypeImageSeriesReader();

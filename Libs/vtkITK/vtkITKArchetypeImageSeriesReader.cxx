@@ -170,6 +170,7 @@ vtkITKArchetypeImageSeriesReader::~vtkITKArchetypeImageSeriesReader()
    RasToIjkMatrix->Delete();
    RasToIjkMatrix = NULL;
    }
+  
 }
 
 vtkMatrix4x4* vtkITKArchetypeImageSeriesReader::GetRasToIjkMatrix()
@@ -631,6 +632,8 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     {
     this->Dictionary = itk::MetaDataDictionary();
     }
+  ParseDictionary();
+
 }
 
 //----------------------------------------------------------------------------
@@ -916,3 +919,54 @@ vtkITKArchetypeImageSeriesReader
 {
   return this->Dictionary;
 }
+
+void vtkITKArchetypeImageSeriesReader::ParseDictionary()
+{
+  int nItems = this->Dictionary.GetKeys().size();
+  if (nItems == 0)
+  {
+    return;
+  }
+
+  std::vector<std::string> keys = this->Dictionary.GetKeys();
+  for (int k = 0; k < nItems; k++)
+  {
+    this->Tags.push_back( keys[k] );
+    std::string tagvalue;
+    itk::ExposeMetaData<std::string>(this->Dictionary, keys[k], tagvalue);
+    this->TagValues.push_back( tagvalue );
+  }
+}
+
+int vtkITKArchetypeImageSeriesReader::GetNumberOfItemsInDictionary()
+{
+  return this->Tags.size();
+}
+
+bool vtkITKArchetypeImageSeriesReader::HasKey( char* tag )
+{
+  return this->Dictionary.HasKey( tag ); 
+}
+
+const char* vtkITKArchetypeImageSeriesReader::GetNthKey( int n )
+{
+  if (n >= this->Tags.size())
+  {
+    return NULL;
+  }
+  return this->Tags[n].c_str();
+}
+
+const char* vtkITKArchetypeImageSeriesReader::GetTagValue( char* tag )
+{
+  std::string tagstr (tag);
+  for (int k = 0; k < this->Tags.size(); k++)
+  {
+    if (this->Tags[k] == tagstr)
+    {
+      return this->TagValues[k].c_str();
+    }
+  }
+  return NULL;
+}
+
