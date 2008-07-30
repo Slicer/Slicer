@@ -437,7 +437,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
     catch (itk::ExceptionObject &err)
       {
       std::cerr << err << std::endl;
-      exit( EXIT_FAILURE );
+      return EXIT_FAILURE ;
       }
     }
 

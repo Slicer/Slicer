@@ -362,11 +362,11 @@ template<class T> int DoIt( int argc, char * argv[], T )
     {
     std::cout << err << std::endl;
     std::cerr << err << std::endl;
-    exit ( EXIT_FAILURE );
+    return  EXIT_FAILURE ;
     } 
   catch ( ... )
     {
-    exit ( EXIT_FAILURE );
+    return  EXIT_FAILURE ;
     }
 
   transform->SetParameters ( registration->GetLastTransformParameters() );
@@ -386,7 +386,7 @@ template<class T> int DoIt( int argc, char * argv[], T )
     catch (itk::ExceptionObject &err)
       {
       std::cerr << err << std::endl;
-      exit( EXIT_FAILURE );
+      return  EXIT_FAILURE ;
       }
     }
   

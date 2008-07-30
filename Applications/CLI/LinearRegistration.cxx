@@ -220,7 +220,7 @@ int main ( int argc, char* argv[] )
     catch (itk::ExceptionObject &err)
       {
       std::cerr << err << std::endl;
-      exit( EXIT_FAILURE );
+      return EXIT_FAILURE ;
       }
     }
 
@@ -452,12 +452,12 @@ int main ( int argc, char* argv[] )
     msg.str("ITK exception caught during registration.\n"); msg << err;
     logger->Write ( itk::LoggerBase::CRITICAL, msg.str() );
 
-    exit ( EXIT_FAILURE );
+    return  EXIT_FAILURE ;
     } 
   catch ( ... )
     {
     logger->Write ( itk::LoggerBase::FATAL, "Unknown exception caught during registration.\n" );
-    exit ( EXIT_FAILURE );
+    return EXIT_FAILURE ;
     }
 
   transform->SetParameters ( registration->GetLastTransformParameters() );
@@ -480,7 +480,7 @@ int main ( int argc, char* argv[] )
     catch (itk::ExceptionObject &err)
       {
       std::cerr << err << std::endl;
-      exit( EXIT_FAILURE );
+      return EXIT_FAILURE ;
       }
     }
 
@@ -514,11 +514,11 @@ int main ( int argc, char* argv[] )
     catch( itk::ExceptionObject & err )
       { 
       std::cerr << err << std::endl;
-      exit ( EXIT_FAILURE );
+      return EXIT_FAILURE ;
       }
     }
 
   
-  exit ( EXIT_SUCCESS );
+  return EXIT_SUCCESS ;
 }
   
