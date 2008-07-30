@@ -566,13 +566,29 @@ int main( int argc, char * argv[] )
     itk::MultiThreader::SetGlobalDefaultNumberOfThreads(numberOfThreads);
     }
 
+  unsigned int fixedDimensions = 0;
+  itk::ImageIOBase::IOPixelType fixedPixelType;
+  itk::ImageIOBase::IOComponentType fixedComponentType;
+  unsigned int movingDimensions = 0;
+  itk::ImageIOBase::IOPixelType movingPixelType;
+  itk::ImageIOBase::IOComponentType movingComponentType;
   unsigned int dimensions = 0;
-  itk::ImageIOBase::IOPixelType pixelType;
   itk::ImageIOBase::IOComponentType componentType;
  
   try
     {
-    GetImageType( fixedImage, pixelType, componentType, dimensions ); 
+    GetImageType( movingImage, fixedPixelType, fixedComponentType, fixedDimensions ); 
+    GetImageType( movingImage, movingPixelType, movingComponentType, movingDimensions ); 
+    dimensions = fixedDimensions;
+    if( movingDimensions > dimensions )
+      {
+      dimensions = movingDimensions;
+      }
+    componentType = fixedComponentType;
+    if( movingComponentType > componentType )
+      {
+      componentType = movingComponentType;
+      }
     if( dimensions < 2 || dimensions > 3 )
       {
       std::cerr << "ERROR: Only 2 and 3 dimensional images supported."
@@ -600,7 +616,6 @@ int main( int argc, char * argv[] )
       case itk::ImageIOBase::ULONG:
       case itk::ImageIOBase::LONG:
       case itk::ImageIOBase::FLOAT:
-      case itk::ImageIOBase::DOUBLE:
         if(dimensions == 2)
           {
           return DoIt<2, float>( argc, argv );
@@ -608,6 +623,16 @@ int main( int argc, char * argv[] )
         else
           {
           return DoIt<3, float>( argc, argv );
+          }
+        break;
+      case itk::ImageIOBase::DOUBLE:
+        if(dimensions == 2)
+          {
+          return DoIt<2, double>( argc, argv );
+          }
+        else
+          {
+          return DoIt<3, double>( argc, argv );
           }
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
