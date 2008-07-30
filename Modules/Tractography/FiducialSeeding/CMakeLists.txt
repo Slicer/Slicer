@@ -42,6 +42,7 @@ install(FILES
 set(SlicerTractographyFiducialSeeding_SRCS
   vtkSlicerTractographyFiducialSeedingGUI.cxx
   vtkSlicerTractographyFiducialSeedingLogic.cxx
+  vtkMRMLTractographyFiducialSeedingNode.cxx
   )
 
 # --------------------------------------------------------------------------

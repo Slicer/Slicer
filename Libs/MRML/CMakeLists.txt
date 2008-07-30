@@ -133,7 +133,8 @@ set(MRML_SRCS
   vtkMRMLViewNode.cxx
   vtkMRMLVolumeArchetypeStorageNode.cxx
   vtkMRMLVolumeDisplayNode.cxx
-  vtkMRMLVolumeGlyphDisplayNode.cxx
+  vtkMRMLGlyphableVolumeDisplayNode.cxx
+  vtkMRMLGlyphableVolumeSliceDisplayNode.cxx
   vtkMRMLVolumeHeaderlessStorageNode.cxx
   vtkMRMLVolumeNode.cxx
   vtkObservation.cxx

@@ -178,13 +178,13 @@ void vtkSlicerAllFiberBundlesDisplayWidget::UpdateMRML()
 
         // get the diffusion tensor display props/colors nodes for each type of graphics
         lineDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(
-                      displayNode->GetFiberLineDTDisplayPropertiesNode ( ) );
+                      displayNode->GetFiberLineDiffusionTensorDisplayPropertiesNode ( ) );
 
         tubeDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(
-                      displayNode->GetFiberTubeDTDisplayPropertiesNode ( ) );
+                      displayNode->GetFiberTubeDiffusionTensorDisplayPropertiesNode ( ) );
 
         glyphDisplay = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(
-                      displayNode->GetFiberGlyphDTDisplayPropertiesNode ( ) );
+                      displayNode->GetFiberGlyphDiffusionTensorDisplayPropertiesNode ( ) );
 
         if ( ( lineDisplay != NULL ) && ( tubeDisplay != NULL )  && ( glyphDisplay != NULL ) )
           {

@@ -210,7 +210,7 @@ void vtkSlicerFiberBundleDisplayWidget::ProcessWidgetEvents ( vtkObject *caller,
   if (vtkKWMenu::SafeDownCast(caller) == this->GeometryColorMenu->GetWidget()->GetMenu() && 
         event == vtkKWMenu::MenuItemInvokedEvent)
     {
-    vtkMRMLDiffusionTensorDisplayPropertiesNode* propNode = this->GetCurrentDTDisplayPropertyNode();
+    vtkMRMLDiffusionTensorDisplayPropertiesNode* propNode = this->GetCurrentDiffusionTensorDisplayPropertyNode();
     if (propNode)
       {
       propNode->SetColorGlyphBy(this->GeometryColorMap[std::string(this->GeometryColorMenu->GetWidget()->GetValue())]);
@@ -333,7 +333,7 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateWidget()
 
   vtkMRMLFiberBundleDisplayNode* dnode = this->GetCurrentDisplayNode();
 
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* propNode = this->GetCurrentDTDisplayPropertyNode();
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* propNode = this->GetCurrentDiffusionTensorDisplayPropertyNode();
 
   if (propNode)
     {
@@ -377,7 +377,7 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateWidget()
     {
     // TODO props for glyps
     vtkMRMLDiffusionTensorDisplayPropertiesNode *dpnode = 
-      vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast( this->FiberBundleGlyphDisplayNode->GetDTDisplayPropertiesNode() );
+      vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast( this->FiberBundleGlyphDisplayNode->GetDiffusionTensorDisplayPropertiesNode() );
     this->GlyphDisplayWidget->SetDiffusionTensorDisplayPropertiesNode(dpnode);
 
     // TODO glyph widget
@@ -404,7 +404,7 @@ void vtkSlicerFiberBundleDisplayWidget::UpdateMRML()
 
   vtkMRMLFiberBundleDisplayNode* dnode = this->GetCurrentDisplayNode();
 
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* propNode = this->GetCurrentDTDisplayPropertyNode();
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* propNode = this->GetCurrentDiffusionTensorDisplayPropertyNode();
 
   if (propNode)
     {
@@ -675,13 +675,13 @@ vtkMRMLFiberBundleDisplayNode* vtkSlicerFiberBundleDisplayWidget::GetCurrentDisp
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkSlicerFiberBundleDisplayWidget::GetCurrentDTDisplayPropertyNode()
+vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkSlicerFiberBundleDisplayWidget::GetCurrentDiffusionTensorDisplayPropertyNode()
 {
   vtkMRMLDiffusionTensorDisplayPropertiesNode *dpnode = NULL;
   vtkMRMLFiberBundleDisplayNode *dnode = this->GetCurrentDisplayNode();
   if (dnode)
     {
-    dpnode = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast( dnode->GetDTDisplayPropertiesNode() );
+    dpnode = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast( dnode->GetDiffusionTensorDisplayPropertiesNode() );
     }
   return dpnode;
 }

@@ -21,6 +21,7 @@
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionImageVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
@@ -568,49 +569,53 @@ void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
 {
-  vtkMRMLDiffusionTensorVolumeNode *volumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast (this->VolumeNode);
-  if (volumeNode)
-    {
-    std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> dnodes  = volumeNode->GetSliceGlyphDisplayNodes();
-    for (unsigned int n=0; n<dnodes.size(); n++)
+  if ( this->VolumeNode )
+  {
+    vtkMRMLDiffusionImageVolumeNode *volumeNode = vtkMRMLDiffusionImageVolumeNode::SafeDownCast (this->VolumeNode);
+    vtkMRMLGlyphableVolumeDisplayNode *displayNode = vtkMRMLGlyphableVolumeDisplayNode::SafeDownCast( this->VolumeNode->GetDisplayNode() );
+    if (displayNode)
       {
-      vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dnode = dnodes[n];
-      if (!strcmp(this->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
+      std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> dnodes  = displayNode->GetSliceGlyphDisplayNodes( volumeNode );
+      for (unsigned int n=0; n<dnodes.size(); n++)
         {
-        dnode->SetSliceImage(sliceImage);
-
-        vtkMRMLTransformNode* tnode = volumeNode->GetParentTransformNode();
-        vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
-        transformToWorld->Identity();
-        if (tnode != NULL && tnode->IsLinear())
+        vtkMRMLGlyphableVolumeSliceDisplayNode* dnode = dnodes[n];
+        if (!strcmp(this->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
           {
-          vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-          lnode->GetMatrixTransformToWorld(transformToWorld);
-          }
-        transformToWorld->Invert();
+          dnode->SetSliceImage(sliceImage);
 
-        vtkMatrix4x4* xyToRas = this->SliceNode->GetXYToRAS();
-
-        vtkMatrix4x4::Multiply4x4(transformToWorld, xyToRas, transformToWorld); 
-
-        dnode->SetSlicePositionMatrix(transformToWorld);
-        double dirs[3][3];
-        volumeNode->GetIJKToRASDirections(dirs);
-        vtkMatrix4x4 *trot = vtkMatrix4x4::New();
-        trot->Identity();
-        for (int i=0; i<3; i++) 
-          {
-          for (int j=0; j<3; j++)
+          vtkMRMLTransformNode* tnode = volumeNode->GetParentTransformNode();
+          vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
+          transformToWorld->Identity();
+          if (tnode != NULL && tnode->IsLinear())
             {
-            trot->SetElement(i, j, dirs[i][j]);
+            vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+            lnode->GetMatrixTransformToWorld(transformToWorld);
             }
+          transformToWorld->Invert();
+
+          vtkMatrix4x4* xyToRas = this->SliceNode->GetXYToRAS();
+
+          vtkMatrix4x4::Multiply4x4(transformToWorld, xyToRas, transformToWorld); 
+
+          dnode->SetSlicePositionMatrix(transformToWorld);
+          double dirs[3][3];
+          volumeNode->GetIJKToRASDirections(dirs);
+          vtkMatrix4x4 *trot = vtkMatrix4x4::New();
+          trot->Identity();
+          for (int i=0; i<3; i++) 
+            {
+            for (int j=0; j<3; j++)
+              {
+              trot->SetElement(i, j, dirs[i][j]);
+              }
+            }
+          dnode->SetSliceGlyphRotationMatrix(trot);
+          trot->Delete();
+          transformToWorld->Delete();
           }
-        dnode->SetSliceTensorRotationMatrix(trot);
-        trot->Delete();
-        transformToWorld->Delete();
         }
       }
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

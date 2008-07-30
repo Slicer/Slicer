@@ -1631,11 +1631,11 @@ void vtkSlicerViewerWidget::SetModelDisplayProperty(vtkMRMLDisplayableNode *mode
             {
             // set the scalar range
             actor->GetMapper()->SetScalarRange(mdnode->GetScalarRange());
-            if (!(dnode->IsA("vtkMRMLFiberBundleDisplayNode")))
-              {
+            //if (!(dnode->IsA("vtkMRMLFiberBundleDisplayNode")))
+            //  {
               // WHY need this, does not show glyph colors otherwise
-              actor->GetMapper()->SetScalarModeToUsePointFieldData();
-              }
+              //actor->GetMapper()->SetScalarModeToUsePointFieldData();
+             // }
             actor->GetMapper()->SetColorModeToMapScalars();            
             }
           else

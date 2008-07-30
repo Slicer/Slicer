@@ -38,7 +38,6 @@
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkSlicerSliceLayerLogic.h"
-#include "vtkSlicerSliceGlyphLogic.h"
 #include "vtkMRMLModelNode.h"
 
 #include "vtkImageBlend.h"
@@ -82,18 +81,6 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
   // TODO: this will eventually be generalized to a list of layers
   vtkGetObjectMacro (ForegroundLayer, vtkSlicerSliceLayerLogic);
   void SetForegroundLayer (vtkSlicerSliceLayerLogic *ForegroundLayer);
-
-  // Description:
-  // The background slice glyph layer
-  // TODO: this will eventually be generalized to a list of layers
-  //vtkGetObjectMacro (BackgroundGlyphLayer, vtkSlicerSliceGlyphLogic);
-  //void SetBackgroundGlyphLayer (vtkSlicerSliceGlyphLogic *BackgroundLayer);
-
-  // Description:
-  // The forground slice layer
-  // TODO: this will eventually be generalized to a list of layers
-  //vtkGetObjectMacro (ForegroundGlyphLayer, vtkSlicerSliceGlyphLogic);
-  //void SetForegroundGlyphLayer (vtkSlicerSliceGlyphLogic *ForegroundGlyphLayer);
 
   // Description:
   // The Label slice layer
@@ -317,9 +304,6 @@ protected:
   vtkSlicerSliceLayerLogic *ForegroundLayer;
   vtkSlicerSliceLayerLogic *LabelLayer;
 
-  //vtkSlicerSliceGlyphLogic *ForegroundGlyphLayer;
-  //vtkSlicerSliceGlyphLogic *BackgroundGlyphLayer;
-
   double ForegroundOpacity;
   double LabelOpacity;
   vtkImageBlend *Blend;
@@ -334,7 +318,7 @@ protected:
   vtkMRMLLinearTransformNode *SliceModelTransformNode;
   double SliceSpacing[3];
   
-  void AddSLiceGlyphs(vtkSlicerSliceLayerLogic *layerLogic);
+  void AddSliceGlyphs(vtkSlicerSliceLayerLogic *layerLogic);
 
 };
 

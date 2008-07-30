@@ -28,7 +28,9 @@
 #include "vtkMRMLTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 
+
 class vtkDoubleArray;
+class vtkMRMLDiffusionTensorVolumeSliceDisplayNode;
 
 class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolumeNode
 {
@@ -105,7 +107,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-
 
 protected:
   vtkMRMLDiffusionImageVolumeNode();

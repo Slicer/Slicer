@@ -145,66 +145,6 @@ void vtkMRMLDiffusionTensorVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 }
 
-//----------------------------------------------------------------------------
-std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> vtkMRMLDiffusionTensorVolumeNode::GetSliceGlyphDisplayNodes()
-{
-  std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> nodes;
-  int nnodes = this->GetNumberOfDisplayNodes();
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = NULL;
-  for (int n=0; n<nnodes; n++)
-    {
-    node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
-    if (node) 
-      {
-      nodes.push_back(node);
-      }
-    }
-  return nodes;
-}
 
-//----------------------------------------------------------------------------
-std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> vtkMRMLDiffusionTensorVolumeNode::AddSliceGlyphDisplayNodes()
-{
-  std::vector< vtkMRMLDiffusionTensorVolumeSliceDisplayNode*> nodes = this->GetSliceGlyphDisplayNodes();
-  if (nodes.size() == 0)
-    {
-    vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
-    this->GetScene()->AddNode(glyphDTDPN);
-    glyphDTDPN->Delete();
-    
-    for (int i=0; i<3; i++)
-      {
-      vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New();
-      node->SetVisibility(0);
-      if (this->GetScene())
-        {
-        if (i == 0) 
-          {
-          node->SetName("Red");
-          }
-        else if (i == 1) 
-          {
-          node->SetName("Yellow");
-          }
-        else if (i == 2) 
-          {
-          node->SetName("Green");
-          }
-
-        this->GetScene()->AddNode(node);
-        node->Delete();
-
-        node->SetAndObserveDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
-        node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
-
-        this->AddAndObserveDisplayNodeID(node->GetID());
-        
-        
-        nodes.push_back(node);
-        }
-      }
-   }
-  return nodes;
-}
 
  

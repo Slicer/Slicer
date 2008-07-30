@@ -203,11 +203,11 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     displayGlyphNode->SetVisibility(0);
     
     this->GetMRMLScene()->AddNode(lineDTDPN);
-    displayLineNode->SetAndObserveDTDisplayPropertiesNodeID(lineDTDPN->GetID());
+    displayLineNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(lineDTDPN->GetID());
     this->GetMRMLScene()->AddNode(tubeDTDPN);
-    displayTubeNode->SetAndObserveDTDisplayPropertiesNodeID(tubeDTDPN->GetID());
+    displayTubeNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(tubeDTDPN->GetID());
     this->GetMRMLScene()->AddNode(glyphDTDPN);
-    displayGlyphNode->SetAndObserveDTDisplayPropertiesNodeID(glyphDTDPN->GetID());
+    displayGlyphNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(glyphDTDPN->GetID());
  
     this->GetMRMLScene()->AddNode(storageNode);  
     this->GetMRMLScene()->AddNode(displayLineNode);

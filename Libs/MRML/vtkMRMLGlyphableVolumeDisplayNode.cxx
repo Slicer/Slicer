@@ -6,7 +6,7 @@ See Doc/copyright/copyright.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $RCSfile: vtkMRMLVolumeGlyphDisplayNode.cxx,v $
+Module:    $RCSfile: vtkMRMLGlyphableVolumeDisplayNode.cxx,v $
 Date:      $Date: 2006/03/17 15:10:10 $
 Version:   $Revision: 1.2 $
 
@@ -19,7 +19,7 @@ Version:   $Revision: 1.2 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 
-#include "vtkMRMLVolumeGlyphDisplayNode.h"
+#include "vtkMRMLGlyphableVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
 // Initialize static member that controls resampling -- 
@@ -28,34 +28,34 @@ Version:   $Revision: 1.2 $
 
 
 //------------------------------------------------------------------------------
-vtkMRMLVolumeGlyphDisplayNode* vtkMRMLVolumeGlyphDisplayNode::New()
+vtkMRMLGlyphableVolumeDisplayNode* vtkMRMLGlyphableVolumeDisplayNode::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeGlyphDisplayNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLGlyphableVolumeDisplayNode");
   if(ret)
     {
-    return (vtkMRMLVolumeGlyphDisplayNode*)ret;
+    return (vtkMRMLGlyphableVolumeDisplayNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeGlyphDisplayNode;
+  return new vtkMRMLGlyphableVolumeDisplayNode;
 }
 
 //----------------------------------------------------------------------------
 
-vtkMRMLNode* vtkMRMLVolumeGlyphDisplayNode::CreateNodeInstance()
+vtkMRMLNode* vtkMRMLGlyphableVolumeDisplayNode::CreateNodeInstance()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLVolumeGlyphDisplayNode");
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLGlyphableVolumeDisplayNode");
   if(ret)
     {
-    return (vtkMRMLVolumeGlyphDisplayNode*)ret;
+    return (vtkMRMLGlyphableVolumeDisplayNode*)ret;
     }
   // If the factory was unable to create the object, then create it here.
-  return new vtkMRMLVolumeGlyphDisplayNode;
+  return new vtkMRMLGlyphableVolumeDisplayNode;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeGlyphDisplayNode::vtkMRMLVolumeGlyphDisplayNode()
+vtkMRMLGlyphableVolumeDisplayNode::vtkMRMLGlyphableVolumeDisplayNode()
 {
   // Strings
 
@@ -66,7 +66,7 @@ vtkMRMLVolumeGlyphDisplayNode::vtkMRMLVolumeGlyphDisplayNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeGlyphDisplayNode::SetDefaultColorMap(int isLabelMap)
+void vtkMRMLGlyphableVolumeDisplayNode::SetDefaultColorMap(int isLabelMap)
  {
   // set up a default color node
    // TODO: figure out if can use vtkSlicerColorLogic's helper methods
@@ -80,22 +80,22 @@ void vtkMRMLVolumeGlyphDisplayNode::SetDefaultColorMap(int isLabelMap)
      }
   if (this->GlyphColorNode == NULL)
     {
-    vtkDebugMacro("vtkMRMLVolumeGlyphDisplayNode: FAILED setting default  color node, it's still null\n")
+    vtkDebugMacro("vtkMRMLGlyphableVolumeDisplayNode: FAILED setting default  color node, it's still null\n")
     }
   else
     {
-    vtkDebugMacro("vtkMRMLVolumeGlyphDisplayNode: set up the default color node\n");
+    vtkDebugMacro("vtkMRMLGlyphableVolumeDisplayNode: set up the default color node\n");
     }
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeGlyphDisplayNode::~vtkMRMLVolumeGlyphDisplayNode()
+vtkMRMLGlyphableVolumeDisplayNode::~vtkMRMLGlyphableVolumeDisplayNode()
 {
   this->SetAndObserveGlyphColorNodeID( NULL);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeGlyphDisplayNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLGlyphableVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
@@ -114,7 +114,7 @@ void vtkMRMLVolumeGlyphDisplayNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeGlyphDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
+void vtkMRMLGlyphableVolumeDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   if (this->GlyphColorNodeID && !strcmp(oldID, this->GlyphColorNodeID))
     {
@@ -123,7 +123,7 @@ void vtkMRMLVolumeGlyphDisplayNode::UpdateReferenceID(const char *oldID, const c
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeGlyphDisplayNode::ReadXMLAttributes(const char** atts)
+void vtkMRMLGlyphableVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 {
 
   Superclass::ReadXMLAttributes(atts);
@@ -152,17 +152,17 @@ void vtkMRMLVolumeGlyphDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLVolumeGlyphDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLGlyphableVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLVolumeGlyphDisplayNode *node = (vtkMRMLVolumeGlyphDisplayNode *) anode;
+  vtkMRMLGlyphableVolumeDisplayNode *node = (vtkMRMLGlyphableVolumeDisplayNode *) anode;
 
  this->SetGlyphColorNodeID(node->GlyphColorNodeID);
 
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeGlyphDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLGlyphableVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   Superclass::PrintSelf(os,indent);
@@ -173,7 +173,7 @@ void vtkMRMLVolumeGlyphDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLVolumeGlyphDisplayNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLGlyphableVolumeDisplayNode::UpdateScene(vtkMRMLScene *scene)
 {
    Superclass::UpdateScene(scene);
 
@@ -181,7 +181,7 @@ void vtkMRMLVolumeGlyphDisplayNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLVolumeGlyphDisplayNode::UpdateReferences()
+void vtkMRMLGlyphableVolumeDisplayNode::UpdateReferences()
 {
    Superclass::UpdateReferences();
 
@@ -191,12 +191,12 @@ void vtkMRMLVolumeGlyphDisplayNode::UpdateReferences()
     }
 }
 //-----------------------------------------------------------
-vtkPolyData* vtkMRMLVolumeGlyphDisplayNode::ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* )
+vtkPolyData* vtkMRMLGlyphableVolumeDisplayNode::ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* )
 {
   return NULL;
 }
 //----------------------------------------------------------------------------
-vtkMRMLColorNode* vtkMRMLVolumeGlyphDisplayNode::GetGlyphColorNode()
+vtkMRMLColorNode* vtkMRMLGlyphableVolumeDisplayNode::GetGlyphColorNode()
 {
   vtkMRMLColorNode* node = NULL;
   if (this->GetScene() && this->GetGlyphColorNodeID() )
@@ -208,7 +208,7 @@ vtkMRMLColorNode* vtkMRMLVolumeGlyphDisplayNode::GetGlyphColorNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeGlyphDisplayNode::SetAndObserveGlyphColorNodeID(std::string glyphColorNodeID)
+void vtkMRMLGlyphableVolumeDisplayNode::SetAndObserveGlyphColorNodeID(std::string glyphColorNodeID)
 {
   vtkSetAndObserveMRMLObjectMacro(this->GlyphColorNode, NULL);
 
@@ -222,7 +222,7 @@ void vtkMRMLVolumeGlyphDisplayNode::SetAndObserveGlyphColorNodeID(std::string gl
 }
   
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeGlyphDisplayNode::SetAndObserveGlyphColorNodeID(const char *glyphColorNodeID)
+void vtkMRMLGlyphableVolumeDisplayNode::SetAndObserveGlyphColorNodeID(const char *glyphColorNodeID)
 {
   vtkSetAndObserveMRMLObjectMacro(this->GlyphColorNode, NULL);
 
@@ -236,7 +236,7 @@ void vtkMRMLVolumeGlyphDisplayNode::SetAndObserveGlyphColorNodeID(const char *gl
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeGlyphDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLGlyphableVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, 
                                            void *callData )
 {

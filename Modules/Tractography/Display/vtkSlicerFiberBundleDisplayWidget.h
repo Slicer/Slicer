@@ -114,7 +114,7 @@ public:
   vtkMRMLFiberBundleDisplayNode* FiberBundleGlyphDisplayNode;
 
   vtkMRMLFiberBundleDisplayNode* GetCurrentDisplayNode();
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetCurrentDTDisplayPropertyNode();
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetCurrentDiffusionTensorDisplayPropertyNode();
 
   vtkKWMenuButtonWithLabel *GeometryMenu;
   vtkKWFrameWithLabel *DisplayFrame;

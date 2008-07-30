@@ -6,17 +6,17 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLVolumeGlyphDisplayNode.h,v $
+  Module:    $RCSfile: vtkMRMLGlyphableVolumeDisplayNode.h,v $
   Date:      $Date: 2006/03/19 17:12:29 $
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLVolumeGlyphDisplayNode - MRML node for representing a volume display attributes
+// .NAME vtkMRMLGlyphableVolumeDisplayNode - MRML node for representing a volume display attributes
 // .SECTION Description
-// vtkMRMLVolumeGlyphDisplayNode nodes describe how volume is displayed.
+// vtkMRMLGlyphableVolumeDisplayNode nodes describe how volume is displayed.
 
-#ifndef __vtkMRMLVolumeGlyphDisplayNode_h
-#define __vtkMRMLVolumeGlyphDisplayNode_h
+#ifndef __vtkMRMLGlyphableVolumeDisplayNode_h
+#define __vtkMRMLGlyphableVolumeDisplayNode_h
 
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
@@ -31,12 +31,14 @@
 #include "vtkLookupTable.h"
 
 class vtkImageData;
+class vtkMRMLVolumeNode;
+class vtkMRMLGlyphableVolumeSliceDisplayNode;
 
-class VTK_MRML_EXPORT vtkMRMLVolumeGlyphDisplayNode : public vtkMRMLScalarVolumeDisplayNode
+class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVolumeDisplayNode
 {
   public:
-  static vtkMRMLVolumeGlyphDisplayNode *New();
-  vtkTypeMacro(vtkMRMLVolumeGlyphDisplayNode,vtkMRMLScalarVolumeDisplayNode);
+  static vtkMRMLGlyphableVolumeDisplayNode *New();
+  vtkTypeMacro(vtkMRMLGlyphableVolumeDisplayNode,vtkMRMLScalarVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -55,7 +57,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeGlyphDisplayNode : public vtkMRMLScalarVolume
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "VolumeGlyphDisplay";};
+  virtual const char* GetNodeTagName() {return "GlyphableVolumeDisplay";};
 
   // Description:
   // Update the stored reference to another node in the scene
@@ -129,11 +131,22 @@ class VTK_MRML_EXPORT vtkMRMLVolumeGlyphDisplayNode : public vtkMRMLScalarVolume
     {
     Superclass::UpdateImageDataPipeline();
     };
+//BTX
+  // Description:
+  // get associated slice glyph display node or NULL if not set
+  virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node ){ vtkErrorMacro("Shouldn't be calling this"); return std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>();  }
+
+
+  // Description:
+  // add slice glyph display nodes if not already present and return it
+  virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>  AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node ){vtkErrorMacro("Shouldn't be calling this");return std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>(); }
+//ETX
+
 protected:
-  vtkMRMLVolumeGlyphDisplayNode();
-  ~vtkMRMLVolumeGlyphDisplayNode();
-  vtkMRMLVolumeGlyphDisplayNode(const vtkMRMLVolumeGlyphDisplayNode&);
-  void operator=(const vtkMRMLVolumeGlyphDisplayNode&);
+  vtkMRMLGlyphableVolumeDisplayNode();
+  ~vtkMRMLGlyphableVolumeDisplayNode();
+  vtkMRMLGlyphableVolumeDisplayNode(const vtkMRMLGlyphableVolumeDisplayNode&);
+  void operator=(const vtkMRMLGlyphableVolumeDisplayNode&);
 
   char *GlyphColorNodeID;
 

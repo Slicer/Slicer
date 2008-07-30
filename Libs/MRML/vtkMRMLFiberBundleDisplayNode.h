@@ -151,15 +151,15 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
 
   // Description:
   // Get diffusion tensor display MRML object for fiber glyph.
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetDTDisplayPropertiesNode ( );
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetDiffusionTensorDisplayPropertiesNode ( );
 
   // Description:
   // Set diffusion tensor display MRML object for fiber glyph.
-  void SetAndObserveDTDisplayPropertiesNodeID ( const char *ID );
+  void SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *ID );
 
   // Description:
   // Get ID of diffusion tensor display MRML object for fiber glyph.
-  vtkGetStringMacro(DTDisplayPropertiesNodeID);
+  vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
  protected:
   vtkMRMLFiberBundleDisplayNode ( );
@@ -168,10 +168,10 @@ class VTK_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplay
   void operator= ( const vtkMRMLFiberBundleDisplayNode& );
 
   // ALL MRML nodes
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *DTDisplayPropertiesNode;
-  char *DTDisplayPropertiesNodeID;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
+  char *DiffusionTensorDisplayPropertiesNodeID;
 
-  vtkSetReferenceStringMacro(DTDisplayPropertiesNodeID);
+  vtkSetReferenceStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
   // Enumerated
   int ColorMode;

@@ -42,8 +42,8 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
   // Enumerated
   this->ColorMode = this->colorModeSolid;
 
-  this->DTDisplayPropertiesNode = NULL;
-  this->DTDisplayPropertiesNodeID = NULL;
+  this->DiffusionTensorDisplayPropertiesNode = NULL;
+  this->DiffusionTensorDisplayPropertiesNodeID = NULL;
 
 }
 
@@ -52,7 +52,7 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleDisplayNode::~vtkMRMLFiberBundleDisplayNode()
 {
-  this->SetAndObserveDTDisplayPropertiesNodeID(NULL);
+  this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -66,9 +66,9 @@ void vtkMRMLFiberBundleDisplayNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " colorMode =\"" << this->ColorMode << "\"";
 
-  if (this->DTDisplayPropertiesNodeID != NULL) 
+  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL) 
     {
-    of << indent << " DTDisplayPropertiesNodeRef=\"" << this->DTDisplayPropertiesNodeID << "\"";
+    of << indent << " DiffusionTensorDisplayPropertiesNodeRef=\"" << this->DiffusionTensorDisplayPropertiesNodeID << "\"";
     }
 }
 
@@ -94,10 +94,10 @@ void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> ColorMode;
       }
 
-    else if (!strcmp(attName, "DTDisplayPropertiesNodeRef")) 
+    else if (!strcmp(attName, "DiffusionTensorDisplayPropertiesNodeRef")) 
       {
-      this->SetDTDisplayPropertiesNodeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->FiberLineDTDisplayPropertiesNodeID, this);
+      this->SetDiffusionTensorDisplayPropertiesNodeID(attValue);
+      //this->Scene->AddReferencedNodeID(this->FiberLineDiffusionTensorDisplayPropertiesNodeID, this);
       }
     }  
 }
@@ -112,7 +112,7 @@ void vtkMRMLFiberBundleDisplayNode::Copy(vtkMRMLNode *anode)
   vtkMRMLFiberBundleDisplayNode *node = (vtkMRMLFiberBundleDisplayNode *) anode;
 
   this->SetColorMode(node->ColorMode);
-  this->SetDTDisplayPropertiesNodeID(node->DTDisplayPropertiesNodeID);
+  this->SetDiffusionTensorDisplayPropertiesNodeID(node->DiffusionTensorDisplayPropertiesNodeID);
 }
 
 //----------------------------------------------------------------------------
@@ -138,7 +138,7 @@ void vtkMRMLFiberBundleDisplayNode::UpdateScene(vtkMRMLScene *scene)
 {
    Superclass::UpdateScene(scene);
 
-   this->SetAndObserveDTDisplayPropertiesNodeID(this->GetDTDisplayPropertiesNodeID());
+   this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(this->GetDiffusionTensorDisplayPropertiesNodeID());
 }
 
 //-----------------------------------------------------------
@@ -146,9 +146,9 @@ void vtkMRMLFiberBundleDisplayNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
 
-  if (this->DTDisplayPropertiesNodeID != NULL && this->Scene->GetNodeByID(this->DTDisplayPropertiesNodeID) == NULL)
+  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL && this->Scene->GetNodeByID(this->DiffusionTensorDisplayPropertiesNodeID) == NULL)
     {
-    this->SetAndObserveDTDisplayPropertiesNodeID(NULL);
+    this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL);
     }
 }
 
@@ -156,23 +156,23 @@ void vtkMRMLFiberBundleDisplayNode::UpdateReferences()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
-  if (this->DTDisplayPropertiesNodeID && !strcmp(oldID, this->DTDisplayPropertiesNodeID))
+  if (this->DiffusionTensorDisplayPropertiesNodeID && !strcmp(oldID, this->DiffusionTensorDisplayPropertiesNodeID))
     {
-    this->SetDTDisplayPropertiesNodeID(newID);
+    this->SetDiffusionTensorDisplayPropertiesNodeID(newID);
     }
 }
 
 
 
 //----------------------------------------------------------------------------
-vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLFiberBundleDisplayNode::GetDTDisplayPropertiesNode ( )
+vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLFiberBundleDisplayNode::GetDiffusionTensorDisplayPropertiesNode ( )
 {
   vtkMRMLDiffusionTensorDisplayPropertiesNode* node = NULL;
 
   // Find the node corresponding to the ID we have saved.
-  if  ( this->GetScene ( ) && this->GetDTDisplayPropertiesNodeID ( ) )
+  if  ( this->GetScene ( ) && this->GetDiffusionTensorDisplayPropertiesNodeID ( ) )
     {
-    vtkMRMLNode* cnode = this->GetScene ( ) -> GetNodeByID ( this->DTDisplayPropertiesNodeID );
+    vtkMRMLNode* cnode = this->GetScene ( ) -> GetNodeByID ( this->DiffusionTensorDisplayPropertiesNodeID );
     node = vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast ( cnode );
     }
 
@@ -180,19 +180,19 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLFiberBundleDisplayNode::GetD
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFiberBundleDisplayNode::SetAndObserveDTDisplayPropertiesNodeID ( const char *ID )
+void vtkMRMLFiberBundleDisplayNode::SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *ID )
 {
   // Stop observing any old node
-  vtkSetAndObserveMRMLObjectMacro ( this->DTDisplayPropertiesNode, NULL );
+  vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode, NULL );
 
   // Set the ID. This is the "ground truth" reference to the node.
-  this->SetDTDisplayPropertiesNodeID ( ID );
+  this->SetDiffusionTensorDisplayPropertiesNodeID ( ID );
 
   // Get the node corresponding to the ID. This pointer is only to observe the object.
-  vtkMRMLNode *cnode = this->GetDTDisplayPropertiesNode ( );
+  vtkMRMLNode *cnode = this->GetDiffusionTensorDisplayPropertiesNode ( );
 
   // Observe the node using the pointer.
-  vtkSetAndObserveMRMLObjectMacro ( this->DTDisplayPropertiesNode , cnode );
+  vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode , cnode );
 
 }
 

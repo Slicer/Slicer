@@ -157,26 +157,26 @@ vtkPolyData* vtkMRMLFiberBundleGlyphDisplayNode::GetPolyData()
 void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline() 
 {
   // set display properties according to the tensor-specific display properties node for glyphs
-  vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = this->GetDTDisplayPropertiesNode( );
+  vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode = this->GetDiffusionTensorDisplayPropertiesNode( );
   
-  if (DTDisplayNode != NULL) {
+  if (DiffusionTensorDisplayNode != NULL) {
     // TO DO: need filter to calculate FA, average FA, etc. as requested
     
     // get tensors from the fiber bundle node and glyph them
     // TO DO: include superquadrics
     // if glyph type is other than superquadrics, get glyph source
-    if (DTDisplayNode->GetGlyphGeometry( ) != vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics) 
+    if (DiffusionTensorDisplayNode->GetGlyphGeometry( ) != vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics) 
       {
       this->DiffusionTensorGlyphFilter->ClampScalingOff();
       
       // TO DO: implement max # ellipsoids, random sampling features
-      this->DiffusionTensorGlyphFilter->SetResolution(DTDisplayNode->GetLineGlyphResolution());
+      this->DiffusionTensorGlyphFilter->SetResolution(DiffusionTensorDisplayNode->GetLineGlyphResolution());
       
-      this->DiffusionTensorGlyphFilter->SetScaleFactor( DTDisplayNode->GetGlyphScaleFactor( ) );
+      this->DiffusionTensorGlyphFilter->SetScaleFactor( DiffusionTensorDisplayNode->GetGlyphScaleFactor( ) );
       
-      this->DiffusionTensorGlyphFilter->SetSource( DTDisplayNode->GetGlyphSource( ) );
+      this->DiffusionTensorGlyphFilter->SetSource( DiffusionTensorDisplayNode->GetGlyphSource( ) );
       
-      vtkDebugMacro("setting glyph geometry" << DTDisplayNode->GetGlyphGeometry( ) );
+      vtkDebugMacro("setting glyph geometry" << DiffusionTensorDisplayNode->GetGlyphGeometry( ) );
       
       // set glyph coloring
       if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
@@ -189,7 +189,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
           {
           this->ScalarVisibilityOn( );
 
-          switch ( DTDisplayNode->GetColorGlyphBy( ))
+          switch ( DiffusionTensorDisplayNode->GetColorGlyphBy( ))
             {
             case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
               {

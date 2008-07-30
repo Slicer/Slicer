@@ -11,34 +11,33 @@
   Version:   $Revision: 1.6 $
 
   =========================================================================auto=*/
-// .NAME vtkMRMLDiffusionTensorVolumeSliceDisplayNode - MRML node to represent display properties for tractography.
+// .NAME vtkMRMLGlyphableVolumeSliceDisplayNode - MRML node to represent display properties for tractography.
 // .SECTION Description
-// vtkMRMLDiffusionTensorVolumeSliceDisplayNode nodes store display properties of trajectories 
+// vtkMRMLGlyphableVolumeSliceDisplayNode nodes store display properties of trajectories 
 // from tractography in diffusion MRI data, including color type (by bundle, by fiber, 
 // or by scalar invariants), display on/off for tensor glyphs and display of 
 // trajectory as a line or tube.
 //
 
-#ifndef __vtkMRMLDiffusionTensorVolumeSliceDisplayNode_h
-#define __vtkMRMLDiffusionTensorVolumeSliceDisplayNode_h
+#ifndef __vtkMRMLGlyphableVolumeSliceDisplayNode_h
+#define __vtkMRMLGlyphableVolumeSliceDisplayNode_h
+
+#include <string>
 
 #include "vtkPolyData.h"
 #include "vtkMatrix4x4.h"
 
 #include "vtkMRML.h"
-#include "vtkMRMLGlyphableVolumeSliceDisplayNode.h"
-//#include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
+#include "vtkMRMLFiberBundleDisplayNode.h"
 
-class vtkDiffusionTensorGlyph;
 class vtkTransform;
 class vtkTransformPolyDataFilter;
 
-class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkMRMLGlyphableVolumeSliceDisplayNode
+class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLModelDisplayNode
 {
  public:
-  static vtkMRMLDiffusionTensorVolumeSliceDisplayNode *New (  );
-  vtkTypeMacro ( vtkMRMLDiffusionTensorVolumeSliceDisplayNode,vtkMRMLGlyphableVolumeSliceDisplayNode );
+  static vtkMRMLGlyphableVolumeSliceDisplayNode *New (  );
+  vtkTypeMacro ( vtkMRMLGlyphableVolumeSliceDisplayNode,vtkMRMLModelDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent );
   
   //--------------------------------------------------------------------------
@@ -62,7 +61,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   
   // Description:
   // Get node XML tag name (like Volume, UnstructuredGrid)
-  virtual const char* GetNodeTagName ( ) {return "DiffusionTensorVolumeSliceDisplayNode";};
+  virtual const char* GetNodeTagName ( ) {return "GlyphableVolumeSliceDisplayNode";};
 
   // Description:
   // Updates this node if it depends on other nodes 
@@ -110,7 +109,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
 
   // Description:
   // Set slice to IJK transformation
-  virtual void SetSliceTensorRotationMatrix(vtkMatrix4x4 *matrix);
+  virtual void SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix);
 
   //--------------------------------------------------------------------------
   // Display Information: Geometry to display (not mutually exclusive)
@@ -182,35 +181,16 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   //--------------------------------------------------------------------------
   // MRML nodes that are observed
   //--------------------------------------------------------------------------
-  
- 
-  // Node reference to ALL DT nodes
-
-  // Description:
-  // Get diffusion tensor display MRML object for fiber glyph.
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* GetDiffusionTensorDisplayPropertiesNode ( );
-
-  // Description:
-  // Set diffusion tensor display MRML object for fiber glyph.
-  void SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *ID );
-
-  // Description:
-  // Get ID of diffusion tensor display MRML object for fiber glyph.
-  vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
-
  protected:
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( );
-  ~vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( );
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
-  void operator= ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
+  vtkMRMLGlyphableVolumeSliceDisplayNode ( );
+  ~vtkMRMLGlyphableVolumeSliceDisplayNode ( );
+  vtkMRMLGlyphableVolumeSliceDisplayNode ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
+  void operator= ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
 
-    vtkDiffusionTensorGlyph  *DiffusionTensorGlyphFilter;
+    vtkTransform             *SliceToXYTransform;
+    vtkTransformPolyDataFilter *SliceToXYTransformer;
+    vtkMatrix4x4             *SliceToXYMatrix;
 
-    // ALL MRML nodes
-    vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
-    char *DiffusionTensorDisplayPropertiesNodeID;
-
-    vtkSetReferenceStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
     // Enumerated
     int ColorMode;

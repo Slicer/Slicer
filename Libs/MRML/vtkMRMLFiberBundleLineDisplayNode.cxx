@@ -130,9 +130,9 @@ vtkPolyData* vtkMRMLFiberBundleLineDisplayNode::GetPolyData()
 void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline() 
 {
   // set display properties according to the tensor-specific display properties node for glyphs
-  vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = this->GetDTDisplayPropertiesNode( );
+  vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode = this->GetDiffusionTensorDisplayPropertiesNode( );
   
-  if (DTDisplayNode != NULL) {
+  if (DiffusionTensorDisplayNode != NULL) {
     // TO DO: need filter to calculate FA, average FA, etc. as requested
     
     
@@ -149,7 +149,7 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
         this->ScalarVisibilityOn( );
         this->TensorToColor->SetExtractScalar(1);
 
-        switch ( DTDisplayNode->GetColorGlyphBy( ))
+        switch ( DiffusionTensorDisplayNode->GetColorGlyphBy( ))
           {
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
             {

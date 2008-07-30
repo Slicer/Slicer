@@ -63,7 +63,7 @@ proc SetupGlyphs {} {
 proc TestProperties {} {
   $::tubeNode SetVisibility 1
   $::glyphNode SetVisibility 1
-  set ::dtNode [$::glyphNode GetDTDisplayPropertiesNode]
+  set ::dtNode [$::glyphNode GetDiffusionTensorDisplayPropertiesNode]
 
   bounceParam "$::tubeNode SetTubeRadius" 0.5 5.0 0.5
   foreach mode "Lines Tubes Ellipsoids" {
@@ -77,7 +77,7 @@ proc TestColor { color } {
   $::lineNode SetVisibility 1
   $::glyphNode SetVisibility 1
 
-  set ::glyphDTNode [$::glyphNode GetDTDisplayPropertiesNode]
+  set ::glyphDTNode [$::glyphNode GetDiffusionTensorDisplayPropertiesNode]
   $::glyphDTNode SetGlyphGeometryToEllipsoids
 
   $::lineNode SetAndObserveColorNodeID "vtkMRMLColorTableNode$color"

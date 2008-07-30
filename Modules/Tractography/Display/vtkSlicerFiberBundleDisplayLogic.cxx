@@ -297,7 +297,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateLineModel ( )
 
       //this->LineModelDisplayNode->GetColorModeForFiberLines();
       // set display properties according to the tensor-specific display properties node
-      vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetDTDisplayPropertiesNode( );
+      vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode = fiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode( );
 
       // TO DO: need filter to calculate FA, average FA, etc. as requested
 
@@ -387,9 +387,9 @@ void vtkSlicerFiberBundleDisplayLogic::CreateTubeModel ( )
       this->TubeModelDisplayNode->SetPolyData(this->TubeModelNode->GetPolyData());
       //this->TubeModelDisplayNode->GetColorModeForFiberTubes();
       // set display properties according to the tensor-specific display properties node
-      vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetDTDisplayPropertiesNode( );
+      vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode = fiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode( );
 
-      if (DTDisplayNode != NULL)
+      if (DiffusionTensorDisplayNode != NULL)
         {
         // TO DO: need filter to calculate FA, average FA, etc. as requested
         }
@@ -483,9 +483,9 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
       this->GlyphModelDisplayNode->SetAndObserveColorNodeID( fiberBundleDisplayNode->GetColorNodeID ( ) );
 
       // set display properties according to the tensor-specific display properties node for glyphs
-      vtkMRMLDiffusionTensorDisplayPropertiesNode * DTDisplayNode = fiberBundleDisplayNode->GetDTDisplayPropertiesNode( );
+      vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode = fiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode( );
 
-      if (DTDisplayNode != NULL)
+      if (DiffusionTensorDisplayNode != NULL)
         {
         // TO DO: need filter to calculate FA, average FA, etc. as requested
 
@@ -493,7 +493,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
         // get tensors from the fiber bundle node and glyph them
         // TO DO: include superquadrics
         // if glyph type is other than superquadrics, get glyph source
-        if (DTDisplayNode->GetGlyphGeometry( ) != vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics)
+        if (DiffusionTensorDisplayNode->GetGlyphGeometry( ) != vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics)
           {
 
           this->DiffusionTensorGlyphFilter->SetInput(this->FiberBundleNode->GetPolyData () );
@@ -502,11 +502,11 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
           // TO DO: implement max # ellipsoids, random sampling features
           this->DiffusionTensorGlyphFilter->SetResolution(2);
         
-          this->DiffusionTensorGlyphFilter->SetScaleFactor( DTDisplayNode->GetGlyphScaleFactor( ) );
+          this->DiffusionTensorGlyphFilter->SetScaleFactor( DiffusionTensorDisplayNode->GetGlyphScaleFactor( ) );
 
-          this->DiffusionTensorGlyphFilter->SetSource( DTDisplayNode->GetGlyphSource( ) );
+          this->DiffusionTensorGlyphFilter->SetSource( DiffusionTensorDisplayNode->GetGlyphSource( ) );
 
-          vtkErrorMacro("setting glyph geometry" << DTDisplayNode->GetGlyphGeometry( ) );
+          vtkErrorMacro("setting glyph geometry" << DiffusionTensorDisplayNode->GetGlyphGeometry( ) );
 
           // set glyph coloring
           if (fiberBundleDisplayNode->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
@@ -520,7 +520,7 @@ void vtkSlicerFiberBundleDisplayLogic::CreateGlyphModel ( )
 
               this->GlyphModelDisplayNode->ScalarVisibilityOn( );
 
-              switch ( DTDisplayNode->GetColorGlyphBy( ))
+              switch ( DiffusionTensorDisplayNode->GetColorGlyphBy( ))
                 {
                 case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
                   {

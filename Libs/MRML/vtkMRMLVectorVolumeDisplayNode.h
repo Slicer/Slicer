@@ -25,7 +25,7 @@
 #define __vtkMRMLVectorVolumeDisplayNode_h
 
 #include "vtkMRML.h"
-#include "vtkMRMLVolumeGlyphDisplayNode.h"
+#include "vtkMRMLGlyphableVolumeDisplayNode.h"
 #include "vtkMRMLColorNode.h"
 
 #include "vtkMatrix4x4.h"
@@ -38,11 +38,11 @@ class vtkImageShiftScale;
 class vtkImageExtractComponents;
 class vtkImageRGBToHSI;
 
-class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLVolumeGlyphDisplayNode
+class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVolumeDisplayNode
 {
   public:
   static vtkMRMLVectorVolumeDisplayNode *New();
-  vtkTypeMacro(vtkMRMLVectorVolumeDisplayNode,vtkMRMLVolumeGlyphDisplayNode);
+  vtkTypeMacro(vtkMRMLVectorVolumeDisplayNode,vtkMRMLGlyphableVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();

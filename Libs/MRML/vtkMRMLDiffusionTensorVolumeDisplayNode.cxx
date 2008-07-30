@@ -22,6 +22,8 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+#include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
+#include "vtkMRMLVolumeNode.h"
 #include "vtkDiffusionTensorGlyph.h"
 
 #include "vtkSphereSource.h"
@@ -295,4 +297,66 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
 
     }
   Superclass::UpdateImageDataPipeline();
+}
+
+//----------------------------------------------------------------------------
+std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> vtkMRMLDiffusionTensorVolumeDisplayNode::GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* volumeNode )
+{
+  std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> nodes;
+  int nnodes = volumeNode->GetNumberOfDisplayNodes();
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = NULL;
+  for (int n=0; n<nnodes; n++)
+    {
+    node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(n));
+    if (node) 
+      {
+      nodes.push_back(node);
+      }
+    }
+  return nodes;
+}
+
+//----------------------------------------------------------------------------
+std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* volumeNode )
+{
+  std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> nodes = this->GetSliceGlyphDisplayNodes( volumeNode );
+  if (nodes.size() == 0)
+    {
+    vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+    this->GetScene()->AddNode(glyphDTDPN);
+    glyphDTDPN->Delete();
+    
+    for (int i=0; i<3; i++)
+      {
+      vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New();
+      node->SetVisibility(0);
+      if (this->GetScene())
+        {
+        if (i == 0) 
+          {
+          node->SetName("Red");
+          }
+        else if (i == 1) 
+          {
+          node->SetName("Yellow");
+          }
+        else if (i == 2) 
+          {
+          node->SetName("Green");
+          }
+
+        this->GetScene()->AddNode(node);
+        node->Delete();
+
+        node->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(glyphDTDPN->GetID());
+        node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+
+        volumeNode->AddAndObserveDisplayNodeID(node->GetID());
+        
+        
+        nodes.push_back(node);
+        }
+      }
+   }
+  return nodes;
 }
