@@ -531,9 +531,10 @@ template< class PixelType > int Rotate( parameters list )
             nonRigidFile = dynamic_cast< TransformType* >
                ( transformFile->GetTransformList()->front().GetPointer() ) ;
             if( nonRigidFile )//if non rigid Transform loaded
-              {
-              list.transformType.assign( "nr" ) ;
-              }
+            {
+                list.transformType.assign( "nr" ) ;
+                transform = nonRigidFile ;
+            }
             else//something else
               {
               std::cerr<< "Transformation type not yet implemented"
@@ -544,19 +545,6 @@ template< class PixelType > int Rotate( parameters list )
           }     
         if( list.transformType.compare( "nr" ) ) //if rigid or affine transform
           {
-          //get transform matrix and translation vector
-          /*for( int i = 0 ; i < transformFile->GetTransformList()->front()->GetParameters().GetSize() ; i++ )
-            { 
-            list.transformMatrix.push_back( 
-                transformFile->GetTransformList()->front()->GetParameters().GetElement( i ) ) ;
-            }*/
-            //Get center of transform
-/*          for( int i = 0 ; 
-             i < transformFile->GetTransformList()->front()->GetFixedParameters().GetSize() ;
-             i++ )
-            { list.rotationPoint.push_back( 
-               transformFile->GetTransformList()->front()->GetFixedParameters().GetElement( i ) ) ;
-            }*/
             //if problem in the number of parameters
           if( list.transformMatrix.size() != 12 || list.rotationPoint.size() != 3 )
             {
@@ -665,15 +653,15 @@ template< class PixelType > int Rotate( parameters list )
       affine->SetTranslation( vec ) ;
       transform = affine ;
       }
-    else if( !list.transformType.compare( "nr" ) ) //non-rigid
-      {
-      nonRigidFile = dynamic_cast< TransformType* >
-        ( transformFile->GetTransformList()->front().GetPointer() ) ;
-      if( nonRigidFile )//if non rigid Transform loaded
-        {
-        transform = nonRigidFile ;
-        }
-      }
+    //else if( !list.transformType.compare( "nr" ) ) //non-rigid
+    //  {
+    //  nonRigidFile = dynamic_cast< TransformType* >
+    //    ( transformFile->GetTransformList()->front().GetPointer() ) ;
+    //  if( nonRigidFile )//if non rigid Transform loaded
+    //    {
+    //    transform = nonRigidFile ;
+    //    }
+    //  }
     /////////////////////////////////////
     if(list.numberOfThread)
       { resample->SetNumberOfThreads( list.numberOfThread ) ; }
