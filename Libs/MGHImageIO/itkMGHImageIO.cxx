@@ -579,22 +579,39 @@ namespace itk
     
     // spacing
     for(unsigned int ui=0; ui<3; ++ui)
+      {
       TWrite( ofs, (float)m_Spacing[ui]);
-         
+      }
+
     // get directions matrix
     std::vector<std::vector<double> > vvRas;
-    for(unsigned int ui=0; ui<3; ++ui) vvRas.push_back( GetDirection(ui) );
+    for(unsigned int ui=0; ui<3; ++ui)
+      {
+      vvRas.push_back( GetDirection(ui) );
+      }
     // transpose data before writing it
     std::vector<float> vBufRas;
     // transpose the matrix
-    for(unsigned int ui(0), count(0);
-  ui < 3; ++ui)
+    for(unsigned int ui(0), count(0); ui < 3; ++ui)
+      {
       for(unsigned int uj(0); uj<3; ++uj)
-  vBufRas.push_back( (float)vvRas[uj][ui] );
+        {
+        if (uj == 0 || uj == 1)
+          {
+          // convert the coordinates from LPS to RAS
+          vBufRas.push_back (-1.0 * (float)vvRas[uj][ui] );
+          }
+        else
+          {
+          vBufRas.push_back( (float)vvRas[uj][ui] );
+          }
+        }
+      }
     
-    for(std::vector<float>::const_iterator cit = vBufRas.begin();
-  cit != vBufRas.end(); ++cit )
+    for(std::vector<float>::const_iterator cit = vBufRas.begin(); cit != vBufRas.end(); ++cit )
+      {
       TWrite( ofs, *cit);
+      }
     
     // write c_r, c_a, c_s
     // defined as origin + DC x resolution x ( dim0/2 , dim1/2, dim2/2 )
@@ -603,8 +620,9 @@ namespace itk
       {
       crasBuf = m_Origin[ui];
       for(unsigned int uj=0; uj<3; ++uj)
+        {
         crasBuf += vvRas[ui][uj]*m_Spacing[uj]*(float)m_Dimensions[uj]/2.0f;
-      
+        }
       TWrite( ofs, crasBuf );
       } // next ui
     
