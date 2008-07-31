@@ -77,6 +77,11 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   vtkSetMacro(SingleFile, int);
 
   // Description:
+  // Whether to use orientation from file
+  vtkSetMacro(UseOrientationFromFile, int);
+  vtkGetMacro(UseOrientationFromFile, int);
+
+  // Description:
   // Check to see if this storage node can handle the file type in the input
   // string. If input string is null, check URI, then check FileName. 
   // Subclasses should implement this method.
@@ -92,6 +97,7 @@ protected:
 
   int CenterImage;
   int SingleFile;
+  int UseOrientationFromFile;
 
 };
 

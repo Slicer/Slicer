@@ -70,6 +70,7 @@ vtkSlicerVolumesGUI::vtkSlicerVolumesGUI ( )
 
   this->NameEntry = NULL;
   this->CenterImageMenu = NULL;
+  this->OrientImageMenu = NULL;
   this->LabelMapCheckButton = NULL;
   this->SingleFileCheckButton = NULL;
   this->UseCompressionCheckButton = NULL;
@@ -123,6 +124,11 @@ vtkSlicerVolumesGUI::~vtkSlicerVolumesGUI ( )
     {
     this->CenterImageMenu->SetParent(NULL );
     this->CenterImageMenu->Delete ( );
+    }
+  if (this->OrientImageMenu)
+    {
+    this->OrientImageMenu->SetParent(NULL );
+    this->OrientImageMenu->Delete ( );
     }
   if (this->LabelMapCheckButton)
     {
@@ -391,6 +397,12 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       loadingOptions += 4;
       }
 
+    vtkKWMenuButton *orientMB = this->OrientImageMenu->GetWidget();
+    if ( !strcmp (orientMB->GetValue(), "Use IJK") )
+      {
+      loadingOptions += 16;
+      }
+
     vtkSlicerVolumesLogic* volumeLogic = this->Logic;
     vtkMRMLVolumeHeaderlessStorageNode* snode = this->VolumeFileHeaderWidget->GetVolumeHeaderlessStorageNode();
 
@@ -437,6 +449,12 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
         {
         loadingOptions += 4;
         }
+
+      vtkKWMenuButton *orientMB = this->OrientImageMenu->GetWidget();
+      if ( !strcmp (orientMB->GetValue(), "Use IJK") )
+      {
+        loadingOptions += 16;
+      }
 
       std::string fileString(fileName);
       for (unsigned int i = 0; i < fileString.length(); i++)
@@ -909,6 +927,19 @@ void vtkSlicerVolumesGUI::BuildGUI ( )
   this->CenterImageMenu->GetWidget()->SetValue ( "From File" );
   this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
     this->CenterImageMenu->GetWidgetName());
+
+  // UseOrientationFromFile
+  this->OrientImageMenu = vtkKWMenuButtonWithLabel::New();
+  this->OrientImageMenu->SetParent(this->LoadFrame->GetFrame());
+  this->OrientImageMenu->Create();
+  this->OrientImageMenu->SetWidth(20);
+  this->OrientImageMenu->SetLabelWidth(12);
+  this->OrientImageMenu->SetLabelText("Image Orientation:");
+  this->OrientImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "Use IJK");
+  this->OrientImageMenu->GetWidget()->GetMenu()->AddRadioButton ( "From File");
+  this->OrientImageMenu->GetWidget()->SetValue ( "From File" );
+  this->Script("pack %s -side top -anchor nw -expand n -padx 2 -pady 2", 
+    this->OrientImageMenu->GetWidgetName());
 
   // label map button (is this a label map?)
   this->LabelMapCheckButton = vtkKWCheckButton::New();

@@ -173,6 +173,11 @@ itcl::body LoadVolume::constructor {} {
   $o(centered) SetText "Centered"
   $o(centered) Create
 
+  set o(orient) [vtkNew vtkKWCheckButton]
+  $o(orient) SetParent [$o(options) GetFrame]
+  $o(orient) SetText "Orientation from file"
+  $o(orient) Create
+
   set o(label) [vtkNew vtkKWCheckButton]
   $o(label) SetParent [$o(options) GetFrame]
   $o(label) SetText "Label Map"
@@ -189,6 +194,9 @@ itcl::body LoadVolume::constructor {} {
   $o(name) Create
 
   pack [$o(centered) GetWidgetName] \
+    -side left -anchor e -padx 2 -pady 2 -expand true -fill both
+
+  pack [$o(orient) GetWidgetName] \
     -side left -anchor e -padx 2 -pady 2 -expand true -fill both
 
   pack [$o(label) GetWidgetName] \
@@ -269,10 +277,11 @@ itcl::body LoadVolume::apply { } {
 
 
   set centered [$o(centered) GetSelectedState]
+  set oriented [$o(orient) GetSelectedState]
   set labelMap [$o(label) GetSelectedState]
   set singleFile [$o(singlefile) GetSelectedState]
 
-  set loadingOptions [expr $labelMap * 1 + $centered * 2 + $singleFile * 4]
+  set loadingOptions [expr $labelMap * 1 + $centered * 2 + $singleFile * 4 + $oriented * 16]
 
   set fileTable [$o(browser) GetFileListTable]
   set fileName [$fileTable GetNthSelectedFileName 0]

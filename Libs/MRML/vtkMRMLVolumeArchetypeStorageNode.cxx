@@ -71,6 +71,7 @@ vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
   this->CenterImage = 0;
   this->SingleFile  = 0;
+  this->UseOrientationFromFile = 1;
 }
 
 //----------------------------------------------------------------------------
@@ -91,6 +92,11 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
   std::stringstream ss;
   ss << this->SingleFile;
   of << indent << " singleFile=\"" << ss.str() << "\"";
+  }
+  {
+  std::stringstream ss;
+  ss << this->UseOrientationFromFile;
+  of << indent << " UseOrientationFromFile=\"" << ss.str() << "\"";
   }
 }
 
@@ -118,6 +124,12 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->SingleFile;
       }
+    if (!strcmp(attName, "UseOrientationFromFile")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->UseOrientationFromFile;
+      }
     }
 }
 
@@ -131,6 +143,7 @@ void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode *anode)
 
   this->SetCenterImage(node->CenterImage);
   this->SetSingleFile(node->SingleFile);
+  this->SetUseOrientationFromFile(node->UseOrientationFromFile);
 }
 
 //----------------------------------------------------------------------------
@@ -139,6 +152,7 @@ void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLStorageNode::PrintSelf(os,indent);
   os << indent << "CenterImage:   " << this->CenterImage << "\n";
   os << indent << "SingleFile:   " << this->SingleFile << "\n";
+  os << indent << "UseOrientationFromFile:   " << this->UseOrientationFromFile << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -197,6 +211,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
     reader = vtkITKArchetypeImageSeriesScalarReader::New();  
     reader->SetSingleFile( this->GetSingleFile() );
+    reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
     }
 #ifdef MRML_USE_vtkTeem
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
@@ -211,13 +226,13 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkITKArchetypeImageSeriesVectorReaderFile *readerFile = vtkITKArchetypeImageSeriesVectorReaderFile::New();
     vtkITKArchetypeImageSeriesVectorReaderSeries *readerSeries = vtkITKArchetypeImageSeriesVectorReaderSeries::New();
 
-    readerFile->SetSingleFile( this->GetSingleFile() );
-    readerSeries->SetSingleFile( this->GetSingleFile() );
-
     readerFile->SetArchetype(fullName.c_str());
     readerFile->SetSingleFile( this->GetSingleFile() );
+    readerFile->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
+
     readerSeries->SetArchetype(fullName.c_str());
     readerSeries->SetSingleFile( this->GetSingleFile() );
+    readerSeries->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
 
     try 
       {
@@ -280,6 +295,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     reader->Delete();
     return 0;
     }
+
   if (reader->GetOutput() == NULL 
       || reader->GetOutput()->GetPointData()->GetScalars()->GetNumberOfTuples() == 0) 
     {

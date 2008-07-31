@@ -132,6 +132,7 @@ protected:
     vtkKWLoadSaveButtonWithLabel *LoadVolumeButton;
     vtkKWEntryWithLabel  *NameEntry;
     vtkKWMenuButtonWithLabel *CenterImageMenu;
+    vtkKWMenuButtonWithLabel *OrientImageMenu;
     vtkKWCheckButton *LabelMapCheckButton;
     vtkKWCheckButton *SingleFileCheckButton;
     vtkKWCheckButton *UseCompressionCheckButton;

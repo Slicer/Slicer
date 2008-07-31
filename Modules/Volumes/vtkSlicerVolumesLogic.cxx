@@ -95,6 +95,8 @@ void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 // bit 0: label map
 // bit 1: centered
 // bit 2: loading signal file
+// bit 3: calculate window/level
+// bit 4: set image orientation as IJK, ie. discard image orientation from file
 // higher bits are reserved for future use
 vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename, const char* volname, 
                                                            vtkMRMLVolumeHeaderlessStorageNode *headerStorage,
@@ -104,6 +106,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
   int centerImage = 0;
   int labelMap = 0;
   int singleFile = 0;
+  int UseOrientationFromFile = 1;
+
   if ( loadingOptions & 1 )    // labelMap is true
   {
     labelMap = 1;
@@ -115,6 +119,10 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
   if ( loadingOptions & 4 )    // singleFile is true
   {
     singleFile = 1;
+  }
+  if ( loadingOptions & 16 )    // discard image orientation from file
+  {
+    UseOrientationFromFile = 0;
   }
 
   vtkMRMLVolumeNode *volumeNode = NULL;
@@ -239,6 +247,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   int centerImage = 0;
   int labelMap = 0;
   int singleFile = 0;
+  int UseOrientationFromFile = 1;
   int autoLevel = 0;
   int interpolate = 1;
   
@@ -262,6 +271,11 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
       autoLevel = 1;
       }
     }
+  if ( loadingOptions & 16 )    // discard image orientation from file
+  {
+    UseOrientationFromFile = 0;
+  }
+
   vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::New();
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
   vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
@@ -302,6 +316,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
 
   storageNode->SetCenterImage(centerImage);
   storageNode->SetSingleFile(singleFile);
+  storageNode->SetUseOrientationFromFile(UseOrientationFromFile);
   storageNode->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
   if (volname == NULL)
@@ -390,6 +405,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   int centerImage = 0;
   int labelMap = 0;
   int singleFile = 0;
+  int UseOrientationFromFile = 1;
   int autoLevel = 0;
   int interpolate = 1;
   if ( loadingOptions & 1 )    // labelMap is true
@@ -412,6 +428,10 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
       autoLevel = 1;
       }
     }
+  if ( loadingOptions & 16 )    // discard image orientation from file
+  {
+    UseOrientationFromFile = 0;
+  }
 
   vtkMRMLVolumeNode *volumeNode = NULL;
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
@@ -476,6 +496,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   
   storageNode2->SetCenterImage(centerImage);
   storageNode2->SetSingleFile(singleFile);
+  storageNode2->SetUseOrientationFromFile(UseOrientationFromFile);
   storageNode2->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
   this->GetMRMLScene()->SaveStateForUndo();
