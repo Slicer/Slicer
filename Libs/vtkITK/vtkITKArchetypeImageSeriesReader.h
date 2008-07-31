@@ -221,6 +221,11 @@ public:
   vtkGetMacro(SingleFile, int);
 
   // Description:
+  // Whether to use orientation from file
+  vtkSetMacro(UseOrientationFromFile, int);
+  vtkGetMacro(UseOrientationFromFile, int);
+
+  // Description:
   // Returns an IJK to RAS transformation matrix
   vtkMatrix4x4* GetRasToIjkMatrix();
 
@@ -657,6 +662,7 @@ protected:
 
   char *Archetype;
   int SingleFile;
+  int UseOrientationFromFile;
   int DataExtent[6];
 
   int OutputScalarType;

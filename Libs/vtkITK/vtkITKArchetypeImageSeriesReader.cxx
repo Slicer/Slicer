@@ -91,6 +91,7 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 {
   this->Archetype  = NULL;
   this->SingleFile = 1;
+  this->UseOrientationFromFile = 1;
   this->RasToIjkMatrix = NULL;
   this->SetDesiredCoordinateOrientationToAxial();
   this->UseNativeCoordinateOrientation = 0;
@@ -271,16 +272,16 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
 
   // Test whether the input file is a DICOM file
   bool isDicomFile = dicomIO->CanReadFile(this->Archetype);
-  if (isDicomFile)
-    {
+  if ( isDicomFile && !this->GetSingleFile() )
+  {
     typedef itk::GDCMSeriesFileNames DICOMNameGeneratorType;
     DICOMNameGeneratorType::Pointer inputImageFileGenerator = DICOMNameGeneratorType::New();
     std::string fileNameName = itksys::SystemTools::GetFilenameName( this->Archetype );
     std::string fileNamePath = itksys::SystemTools::GetFilenamePath( this->Archetype );
     if (fileNamePath == "")
-      {
+    {
       fileNamePath = ".";
-      }
+    }
     inputImageFileGenerator->SetDirectory( fileNamePath );
 
     // determine if the file is diffusion weighted MR file
@@ -290,13 +291,13 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
 
     // Find all dicom files in the directory 
     for (unsigned int s = 0; s < candidateSeries.size(); s++)
+    {
+      std::vector<std::string> seriesFileNames;
+      seriesFileNames = inputImageFileGenerator->GetFileNames( candidateSeries[s] ); 
+      for (unsigned int f = 0; f < seriesFileNames.size(); f++)
       {
-        std::vector<std::string> seriesFileNames;
-        seriesFileNames = inputImageFileGenerator->GetFileNames( candidateSeries[s] ); 
-        for (unsigned int f = 0; f < seriesFileNames.size(); f++)
-        {
-          this->AllFileNames.push_back( seriesFileNames[f] );
-        }
+        this->AllFileNames.push_back( seriesFileNames[f] );
+      }
     }
     //int nFiles = this->AllFileNames.size(); UNUSED
 
@@ -308,26 +309,20 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
 
     int found = 0;
     for (unsigned int s = 0; s < candidateSeries.size() && found == 0; s++)
-      {
+    {
       candidateFiles = inputImageFileGenerator->GetFileNames(candidateSeries[s]);
       for (unsigned int f = 0; f < candidateFiles.size(); f++)
-        {
+      {
         if (itksys::SystemTools::CollapseFullPath(candidateFiles[f].c_str()) ==
-            fileNameCollapsed)
-          {
+          fileNameCollapsed)
+        {
           found = 1;
           break;
-          }
         }
       }
-
-    if (candidateFiles.size() == 0 || this->GetSingleFile() == 1)
-      {
-      candidateFiles.resize(0);
-      candidateFiles.push_back(this->Archetype);
-      }
     }
-  else 
+  }
+  else if( !this->GetSingleFile() ) 
     { // not dicom
     // check the dimensions of the archetype - if there 
     // is more then one slice, use only the archetype
@@ -561,6 +556,15 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   output->SetOrigin(origin);
   RasToIjkMatrix->SetElement(3,3,1.0);
   IjkToLpsMatrix->Delete();
+
+  if ( !this->GetUseOrientationFromFile() )
+  {
+    RasToIjkMatrix->Identity();
+    for ( unsigned int j=0; j < 3; j++ )
+    {
+      RasToIjkMatrix->SetElement(j, j, 1.0/spacing[j]);
+    }
+  }
 
   output->SetWholeExtent(extent);
   if (this->UseNativeScalarType)
