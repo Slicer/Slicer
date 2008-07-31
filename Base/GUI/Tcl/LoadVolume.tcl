@@ -61,12 +61,16 @@ if { [itcl::find class LoadVolume] == "" } {
     variable _volumeExtensions ".hdr .nhdr .nrrd .mhd .mha .vti .mgz"
     variable _observerRecords ""
     variable _processingEvents 0
+    variable _DICOM ;# map from group/element to name
+    variable _dicomColumn ;# keep track of columns
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
     method apply {} {}
     method status { message } {}
     method errorDialog {errorText} {}
+    method loadDICOMDictionary {} {}
+    method populateDICOMTable {fileName} {}
 
     method objects {} {return [array get o]}
 
@@ -100,7 +104,7 @@ itcl::body LoadVolume::constructor {} {
   $o(toplevel) SetApplication $::slicer3::Application
   $o(toplevel) SetTitle "Add Volume"
   $o(toplevel) Create
-  $o(toplevel) SetGeometry 800x600
+  $o(toplevel) SetGeometry 800x800
 
   # delete this instance when the window is closed
   wm protocol [$o(toplevel) GetWidgetName] \
@@ -250,6 +254,45 @@ itcl::body LoadVolume::constructor {} {
     [$o(apply) GetWidgetName] \
     -side right -anchor w -padx 4 -pady 2
 
+  #
+  # the dicom frame
+  #
+  set o(dicom) [vtkNew vtkKWFrameWithLabel]
+  $o(dicom) SetParent $o(topFrame)
+  $o(dicom) SetLabelText "DICOM Information"
+  $o(dicom) Create
+
+  #
+  # the listbox of dicom info
+  #
+
+  set o(dicomList) [vtkNew vtkKWMultiColumnListWithScrollbars]
+  $o(dicomList) SetParent [$o(dicom) GetFrame]
+  $o(dicomList) Create
+  $o(dicomList) SetHeight 4
+  set w [$o(dicomList) GetWidget]
+  $w SetSelectionTypeToCell
+  $w MovableRowsOff
+  $w MovableColumnsOn 
+  $w SetPotentialCellColorsChangedCommand $w "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
+  $w SetColumnSortedCommand $w "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
+
+  set columns {Group/Element Description Value}
+  foreach column $columns {
+    set _dicomColumn($column) [$w AddColumn $column]
+  }
+
+  # configure the entries
+  set widths {15 45 50}
+  foreach column $columns width $widths {
+    $w SetColumnEditWindowToCheckButton $_dicomColumn($column)
+    $w ColumnEditableOn $_dicomColumn($column)
+    $w SetColumnWidth $_dicomColumn($column) $width
+  }
+
+  pack [$o(dicomList) GetWidgetName] -side top -anchor e -padx 2 -pady 2 -expand true -fill both
+
+  pack [$o(dicom) GetWidgetName] -side bottom -anchor e -padx 2 -pady 2 -expand false -fill x
   $o(toplevel) Display
 }
 
@@ -351,6 +394,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
       $this status "File Name: $fileName"
       set volName [file root [file tail $fileName]]
       [$o(name) GetWidget] SetValue $volName
+      $this populateDICOMTable $fileName
     }
     set _processingEvents 0
     return
@@ -384,5 +428,59 @@ itcl::body LoadVolume::errorDialog { errorText } {
 
 itcl::body LoadVolume::status { message } {
   $o(status) SetText $message
+}
+
+itcl::body LoadVolume::loadDICOMDictionary {} {
+  if { [info exists _DICOM(loaded)] } {
+    return
+  }
+
+  set fp [open $::env(ITK_BIN_DIR)/../Utilities/gdcm/Dicts/gdcm.dic]
+  while { ![eof $fp] } {
+    gets $fp line
+    set group [lindex $line 0]
+    set element [lindex $line 1]
+    set type [lindex $line 2]
+    set rep [lindex $line 3]
+    set description [lrange $line 4 end]
+    set _DICOM($group|$element) $description
+  }
+  close $fp
+  set _DICOM(loaded) 1
+
+}
+
+itcl::body LoadVolume::populateDICOMTable {fileName} {
+
+  if { $fileName == "" || ![file exists $fileName] } {
+    return
+  }
+
+  $this loadDICOMDictionary
+
+  set scrollState [[lindex [[[$o(dicomList) GetWidget] GetWidgetName] cget -yscrollcommand] 0] get]
+  [$o(dicomList) GetWidget] DeleteAllRows
+  set w [$o(dicomList) GetWidget] 
+
+  set reader [vtkITKArchetypeImageSeriesReader New]
+  $reader SetArchetype $fileName
+  $reader SetSingleFile 1
+  $reader UpdateInformation
+
+  set number [$reader GetNumberOfItemsInDictionary]
+  for {set n 0} {$n < $number} {incr n} {
+    set key [$reader GetNthKey $n]
+    set value [$reader GetTagValue $key]
+
+    if { [info exists _DICOM($key)] } {
+      set description $_DICOM($key)
+      $w InsertCellText $n $_dicomColumn(Group/Element) $key
+      $w InsertCellText $n $_dicomColumn(Description) $description
+      $w InsertCellText $n $_dicomColumn(Value) $value
+    } 
+  }
+  [[$o(dicomList) GetWidget] GetWidgetName] yview moveto [lindex $scrollState 0]
+
+  $reader Delete
 }
 
