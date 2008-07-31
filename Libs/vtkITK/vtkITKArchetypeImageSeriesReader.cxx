@@ -952,7 +952,7 @@ bool vtkITKArchetypeImageSeriesReader::HasKey( char* tag )
   return this->Dictionary.HasKey( tag ); 
 }
 
-const char* vtkITKArchetypeImageSeriesReader::GetNthKey( int n )
+const char* vtkITKArchetypeImageSeriesReader::GetNthKey( unsigned int n )
 {
   if (n >= this->Tags.size())
   {
@@ -964,7 +964,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthKey( int n )
 const char* vtkITKArchetypeImageSeriesReader::GetTagValue( char* tag )
 {
   std::string tagstr (tag);
-  for (int k = 0; k < this->Tags.size(); k++)
+  for (unsigned int k = 0; k < this->Tags.size(); k++)
   {
     if (this->Tags[k] == tagstr)
     {
