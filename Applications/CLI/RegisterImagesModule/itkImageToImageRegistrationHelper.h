@@ -156,9 +156,6 @@ class ImageToImageRegistrationHelper : public Object
     itkGetConstMacro( UseFixedImageMaskObject, bool );
     itkBooleanMacro( UseFixedImageMaskObject );
 
-    itkSetMacro( SamplingIntensityThreshold, double );
-    itkGetConstMacro( SamplingIntensityThreshold, double );
-
     void SetFixedImageMaskObject( typename MaskObjectType::ConstPointer & mask );
     itkGetConstObjectMacro( FixedImageMaskObject, MaskObjectType );
 
@@ -173,9 +170,13 @@ class ImageToImageRegistrationHelper : public Object
     //  Initialize the moving image mask as the region of initial overlap
     //  between the fixed and moving images
     //**************
-    itkSetMacro( UseOverlapAsROI, bool );
-    itkGetMacro( UseOverlapAsROI, bool );
-    itkBooleanMacro( UseOverlapAsROI );
+    itkSetMacro( SampleFromOverlap, bool );
+    itkGetMacro( SampleFromOverlap, bool );
+    itkBooleanMacro( SampleFromOverlap);
+
+    itkSetMacro( SampleIntensityPortion, double );
+    itkGetConstMacro( SampleIntensityPortion, double );
+
 
 
     //**************
@@ -430,7 +431,9 @@ class ImageToImageRegistrationHelper : public Object
     typename ImageType::ConstPointer      m_FixedImage;
     typename ImageType::ConstPointer      m_MovingImage;
 
-    bool                                  m_UseOverlapAsROI;
+    bool                                  m_SampleFromOverlap;
+    double                                m_SampleIntensityPortion;
+
     bool                                  m_UseFixedImageMaskObject;
     typename MaskObjectType::ConstPointer m_FixedImageMaskObject;
     bool                                  m_UseMovingImageMaskObject;
@@ -450,7 +453,6 @@ class ImageToImageRegistrationHelper : public Object
     double                                m_ExpectedScaleMagnitude;
     double                                m_ExpectedSkewMagnitude;
 
-    double                                m_SamplingIntensityThreshold;
 
     bool                                  m_CompletedInitialization;
     RegistrationStageEnumType             m_CompletedStage;

@@ -149,12 +149,19 @@
       <default>Standard</default>
     </string-enumeration>
     <boolean>
-      <name>useOverlapAsROI</name>
+      <name>sampleFromOverlap</name>
       <description>Limit metric evaluation to the fixed image region overlapped by the moving image</description>
-      <label>Use overlap as ROI</label>
-      <longflag>useOverlapAsROI</longflag>
+      <label>Sample from fixed/moving overlap</label>
+      <longflag>sampleFromOverlap</longflag>
       <default>false</default>
     </boolean>
+    <float>
+      <name>sampleIntensityPortion</name>
+      <description>Limit metric evaluation to the fixed image points at or above the threshold (as a percent of intensity range of the image)</description>
+      <label>Fixed image intensity percentage threshold</label>
+      <longflag>sampleIntensityPortion</longflag>
+      <default>0.0</default>
+    </float>
     <integer>
       <name>randomNumberSeed</name>
       <description>Seed to generate a consistent random number sequence</description>

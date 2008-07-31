@@ -269,10 +269,16 @@ int DoIt( int argc, char *argv[] )
                                        ::MATTES_MI_METRIC );
     }
 
-  reger->SetUseOverlapAsROI( useOverlapAsROI );
+  reger->SetSampleFromOverlap( sampleFromOverlap );
   if (verbosity >= STANDARD)
     {
-    std::cout << "### UseOverlapsAsROI: " << useOverlapAsROI << std::endl;
+    std::cout << "### sampleFromOverlap: " << sampleFromOverlap << std::endl;
+    }
+
+  reger->SetSampleIntensityPortion( sampleIntensityPortion );
+  if (verbosity >= STANDARD)
+    {
+    std::cout << "### sampleIntensityPortion: " << sampleIntensityPortion << std::endl;
     }
 
   reger->SetMinimizeMemory( minimizeMemory );

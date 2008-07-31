@@ -150,7 +150,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
   //   registration.  Other derived registration methods should use
   //   their own default.
   m_MaxIterations = 100;
-  m_UseOverlapAsROI = false;
+  m_SampleFromOverlap = false;
   m_MinimizeMemory = false;
 
   m_UseEvolutionaryOptimization = true;
@@ -160,6 +160,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
   //   their own default.
   m_NumberOfSamples = 100000;
   m_FixedImageSamplesIntensityThreshold = 0;
+  m_UseFixedImageSamplesIntensityThreshold = false;
 
   m_TargetError = 0.00001;
 
@@ -178,6 +179,15 @@ template< class TImage >
 OptimizedImageToImageRegistrationMethod< TImage >
 ::~OptimizedImageToImageRegistrationMethod( void )
 {
+}
+
+template< class TImage >
+void
+OptimizedImageToImageRegistrationMethod< TImage >
+::SetFixedImageSamplesIntensityThreshold( PixelType val )
+{
+  m_FixedImageSamplesIntensityThreshold = val;
+  m_UseFixedImageSamplesIntensityThreshold = true;
 }
 
 template< class TImage >
@@ -244,81 +254,6 @@ OptimizedImageToImageRegistrationMethod< TImage >
   metric->SetFixedImage( fixedImage );
   metric->SetMovingImage( movingImage );
 
-  if( this->GetUseFixedImageMaskObject() && !this->m_UseOverlapAsROI )
-    {
-    if( this->GetFixedImageMaskObject() )
-      {
-      metric->SetFixedImageMask( const_cast<itk::SpatialObject<ImageDimension> *>(this->GetFixedImageMaskObject()) );
-      }
-    }
-  else if( this->m_UseOverlapAsROI )
-    {
-    if( this->GetReportProgress() )
-      {
-      std::cout << "Creating mask from overlap" << std::endl;
-      }
-
-    typedef itk::OrientedImage<unsigned char, ImageDimension> MaskImageType;
-    typename MaskImageType::Pointer maskImage = MaskImageType::New();
-    typename ImageType::ConstPointer fixedImage = this->GetFixedImage();
-    typename ImageType::ConstPointer movingImage = this->GetMovingImage();
-    typename ImageType::SizeType fixedSize = fixedImage
-                                             ->GetLargestPossibleRegion()
-                                               .GetSize();
-    typename ImageType::IndexType index;
-    typename ImageType::PointType fixedPoint;
-    typename ImageType::PointType movingPoint;
-    maskImage->SetRegions( fixedSize );
-    maskImage->CopyInformation( fixedImage );
-    maskImage->Allocate();
-    itk::ImageRegionIteratorWithIndex< MaskImageType > iter( maskImage,
-                                    maskImage->GetLargestPossibleRegion() );
-    iter.GoToBegin();
-    while( !iter.IsAtEnd() )
-      {
-      index = iter.GetIndex();
-      fixedImage->TransformIndexToPhysicalPoint(index, fixedPoint);
-      movingPoint = this->GetTransform()->TransformPoint( fixedPoint );
-      if( movingImage->TransformPhysicalPointToIndex( movingPoint, index ) )
-        {
-        if( this->GetUseFixedImageMaskObject() 
-            && this->GetFixedImageMaskObject() )
-          {
-          if( this->GetFixedImageMaskObject()->IsInside( movingPoint ) )
-            {
-            iter.Set( 1 );
-            }
-           else
-            {
-            iter.Set( 0 );
-            }
-          }
-        else
-          {
-          iter.Set( 1 );
-          }
-        }
-      else
-        {
-        iter.Set( 0 );
-        }
-      ++iter;
-      }
-
-    typedef itk::ImageMaskSpatialObject< ImageDimension > MaskObjectType;
-    typename MaskObjectType::Pointer maskObject = MaskObjectType::New();
-    maskObject->SetImage( maskImage );
-    metric->SetFixedImageMask( maskObject );
-    }
-
-  if( this->GetUseMovingImageMaskObject() )
-    {
-    if( this->GetMovingImageMaskObject() )
-      {
-      metric->SetMovingImageMask( const_cast<itk::SpatialObject<ImageDimension> *>(this->GetMovingImageMaskObject()) );
-      }
-    }
-
   #ifdef ITK_USE_REVIEW 
     #ifdef ITK_USE_OPTIMIZED_REGISTRATION_METHODS
       metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
@@ -328,6 +263,151 @@ OptimizedImageToImageRegistrationMethod< TImage >
   #else
     itkWarningMacro(<< "ITK not compiled with ITK_USE_REVIEW. Performance will suffer.");
   #endif
+
+  if( this->GetSampleFromOverlap() ||
+      this->GetUseFixedImageSamplesIntensityThreshold() ||
+      this->GetUseFixedImageMaskObject() )
+    {
+    if( this->GetReportProgress() )
+      {
+      std::cout << "Creating fixed image samples" << std::endl;
+      }
+
+    itk::ImageRegionConstIteratorWithIndex< ImageType > iter( fixedImage,
+                                    fixedImage->GetLargestPossibleRegion() );
+    typename ImageType::IndexType index;
+    typename ImageType::IndexType movingIndex;
+    typename MetricType::InputPointType fixedPoint;
+    typename MetricType::InputPointType movingPoint;
+
+    iter.GoToBegin();
+    int count = 0;
+    for( iter.GoToBegin(); !iter.IsAtEnd(); ++iter )
+      {
+      index = iter.GetIndex();
+      fixedImage->TransformIndexToPhysicalPoint(index, fixedPoint);
+      movingPoint = this->GetTransform()->TransformPoint( fixedPoint );
+      if( this->GetSampleFromOverlap() )
+        {
+        if( !movingImage->TransformPhysicalPointToIndex( movingPoint, movingIndex ) )
+          {
+          continue;
+          }
+        }
+      if( this->GetUseFixedImageSamplesIntensityThreshold() )
+        {
+        if( iter.Get() < this->m_FixedImageSamplesIntensityThreshold )
+          {
+          continue;
+          }
+        }
+      if( this->GetUseFixedImageMaskObject() )
+        {
+        double val;
+        if( this->GetFixedImageMaskObject()->ValueAt( fixedPoint, val ) )
+          {
+          if( val == 0 )
+            {
+            continue;
+            }
+          }
+        }
+      ++count;
+      }
+    double samplingRate = (double)(m_NumberOfSamples+2) / (double)count;
+    if( this->GetReportProgress() )
+      {
+      std::cout << "...Second pass, sampling rate = " << samplingRate << std::endl;
+      }
+
+    if( samplingRate > 1 )
+      {
+      samplingRate = 1;
+      itkWarningMacro(<< "Adjusting the number of samples due to restrictive threshold/overlap criteria.");
+      this->SetNumberOfSamples( count );
+      #ifdef ITK_USE_REVIEW 
+        #ifdef ITK_USE_OPTIMIZED_REGISTRATION_METHODS
+          metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
+        #else
+          itkWarningMacro(<< "ITK not compiled with ITK_USE_OPTIMIZED_REGISTRATION_METHODS. Performance will suffer.");
+        #endif
+      #else
+        itkWarningMacro(<< "ITK not compiled with ITK_USE_REVIEW. Performance will suffer.");
+      #endif
+      }
+    double step = 0;
+    typename MetricType::FixedImageIndexContainer indexList;
+    indexList.clear();
+    for( iter.GoToBegin(); !iter.IsAtEnd(); ++iter )
+      {
+      index = iter.GetIndex();
+      fixedImage->TransformIndexToPhysicalPoint(index, fixedPoint);
+      movingPoint = this->GetTransform()->TransformPoint( fixedPoint );
+      if( this->GetSampleFromOverlap() )
+        {
+        if( !movingImage->TransformPhysicalPointToIndex( movingPoint, movingIndex ) )
+          {
+          continue;
+          }
+        }
+      if( this->GetUseFixedImageSamplesIntensityThreshold() )
+        {
+        if( iter.Get() < this->m_FixedImageSamplesIntensityThreshold )
+          {
+          continue;
+          }
+        }
+      if( this->GetUseFixedImageMaskObject() )
+        {
+        double val;
+        if( this->GetFixedImageMaskObject()->ValueAt( fixedPoint, val ) )
+          {
+          if( val == 0 )
+            {
+            continue;
+            }
+          }
+        }
+      step = step + samplingRate;
+      if( step > 1 )
+        {
+        indexList.push_back( index );
+        step -= 1;
+        while( step > 1 )
+          {
+          step -= 1;
+          }
+        if( indexList.size() == m_NumberOfSamples )
+          {
+          break;
+          }
+        }
+      }
+    if( indexList.size() != m_NumberOfSamples )
+      {
+      itkWarningMacro(<< "Full set of samples not collected. Collected " 
+                      << indexList.size() << " of " << m_NumberOfSamples );
+      this->SetNumberOfSamples( indexList.size() );
+      #ifdef ITK_USE_REVIEW 
+        #ifdef ITK_USE_OPTIMIZED_REGISTRATION_METHODS
+          metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
+        #else
+          itkWarningMacro(<< "ITK not compiled with ITK_USE_OPTIMIZED_REGISTRATION_METHODS. Performance will suffer.");
+        #endif
+      #else
+        itkWarningMacro(<< "ITK not compiled with ITK_USE_REVIEW. Performance will suffer.");
+      #endif
+      }
+    metric->SetFixedImageIndexes( indexList );
+    }
+
+  if( this->GetUseMovingImageMaskObject() )
+    {
+    if( this->GetMovingImageMaskObject() )
+      {
+      metric->SetMovingImageMask( const_cast<itk::SpatialObject<ImageDimension> *>(this->GetMovingImageMaskObject()) );
+      }
+    }
 
   typename InterpolatorType::Pointer interpolator;
   switch( this->GetInterpolationMethodEnum() )
@@ -593,7 +673,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
 
   os << indent << "Use Evolutionary Optimization = " << m_UseEvolutionaryOptimization << std::endl;
 
-  os << indent << "Use Overlap As ROI = " << m_UseOverlapAsROI << std::endl;
+  os << indent << "Sample From Overlap = " << m_SampleFromOverlap << std::endl;
 
   os << indent << "Minimize Memory = " << m_MinimizeMemory << std::endl;
 

@@ -52,9 +52,9 @@ ImageToImageRegistrationHelper< TImage >
   m_UseMovingImageMaskObject = false;
   m_MovingImageMaskObject = 0;
 
-  m_SamplingIntensityThreshold = 0.1;
+  m_SampleIntensityPortion = 0.0;
 
-  m_UseOverlapAsROI = false;
+  m_SampleFromOverlap = false;
 
   m_RandomNumberSeed = 0;
 
@@ -419,22 +419,7 @@ ImageToImageRegistrationHelper< TImage >
     reg->SetFixedImage( m_FixedImage );
     reg->SetNumberOfSamples( (unsigned int)( m_RigidSamplingRatio 
                                              * fixedImageNumPixels ) );
-    if( m_SamplingIntensityThreshold > 0 )
-      {
-      typedef MinimumMaximumImageCalculator< ImageType >  MinMaxCalcType;
-      typename MinMaxCalcType::Pointer calc = MinMaxCalcType::New();
-      calc->SetImage( m_FixedImage );
-      calc->Compute();
-      PixelType fixedImageMax = calc->GetMaximum();
-      PixelType fixedImageMin = calc->GetMinimum();
-
-      reg->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>( 
-                                          ( m_SamplingIntensityThreshold 
-                                            * (fixedImageMax - fixedImageMin) )
-                                          + fixedImageMin ) );
-      }
-
-    //reg->SetUseOverlapAsROI( m_UseOverlapAsROI );
+    reg->SetSampleFromOverlap( m_SampleFromOverlap );
     reg->SetMinimizeMemory( m_MinimizeMemory );
     reg->SetMaxIterations( m_RigidMaxIterations );
     reg->SetTargetError( m_RigidTargetError );
@@ -451,6 +436,20 @@ ImageToImageRegistrationHelper< TImage >
         {
         reg->SetMovingImageMaskObject( m_MovingImageMaskObject );
         }
+      }
+    if( m_SampleIntensityPortion > 0 )
+      {
+      typedef MinimumMaximumImageCalculator< ImageType >  MinMaxCalcType;
+      typename MinMaxCalcType::Pointer calc = MinMaxCalcType::New();
+      calc->SetImage( m_FixedImage );
+      calc->Compute();
+      PixelType fixedImageMax = calc->GetMaximum();
+      PixelType fixedImageMin = calc->GetMinimum();
+
+      reg->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>( 
+                                          ( m_SampleIntensityPortion 
+                                            * (fixedImageMax - fixedImageMin) )
+                                          + fixedImageMin ) );
       }
     reg->SetMetricMethodEnum( m_RigidMetricMethodEnum );
     reg->SetInterpolationMethodEnum( m_RigidInterpolationMethodEnum );
@@ -534,7 +533,7 @@ ImageToImageRegistrationHelper< TImage >
     reg->SetMovingImage( m_CurrentMovingImage );
     reg->SetFixedImage( m_FixedImage );
     reg->SetNumberOfSamples( (unsigned int)(m_AffineSamplingRatio * fixedImageNumPixels) );
-    //reg->SetUseOverlapAsROI( m_UseOverlapAsROI );
+    reg->SetSampleFromOverlap( m_SampleFromOverlap );
     reg->SetMinimizeMemory( m_MinimizeMemory );
     reg->SetMaxIterations( m_AffineMaxIterations );
     reg->SetTargetError( m_AffineTargetError );
@@ -557,7 +556,7 @@ ImageToImageRegistrationHelper< TImage >
         reg->SetMovingImageMaskObject( m_MovingImageMaskObject );
         }
       }
-    if( m_SamplingIntensityThreshold > 0 )
+    if( m_SampleIntensityPortion > 0 )
       {
       typedef MinimumMaximumImageCalculator< ImageType >  MinMaxCalcType;
       typename MinMaxCalcType::Pointer calc = MinMaxCalcType::New();
@@ -567,7 +566,7 @@ ImageToImageRegistrationHelper< TImage >
       PixelType fixedImageMin = calc->GetMinimum();
 
       reg->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>( 
-                                          ( m_SamplingIntensityThreshold 
+                                          ( m_SampleIntensityPortion 
                                             * (fixedImageMax - fixedImageMin) )
                                           + fixedImageMin ) );
       }
@@ -655,7 +654,7 @@ ImageToImageRegistrationHelper< TImage >
     reg->SetFixedImage( m_FixedImage );
     reg->SetMovingImage( m_CurrentMovingImage );
     reg->SetNumberOfSamples( (unsigned int)(m_BSplineSamplingRatio * fixedImageNumPixels) );
-    //reg->SetUseOverlapAsROI( m_UseOverlapAsROI );
+    reg->SetSampleFromOverlap( m_SampleFromOverlap );
     reg->SetMinimizeMemory( m_MinimizeMemory );
     reg->SetMaxIterations( m_BSplineMaxIterations );
     reg->SetTargetError( m_BSplineTargetError );
@@ -673,7 +672,7 @@ ImageToImageRegistrationHelper< TImage >
         reg->SetMovingImageMaskObject( m_MovingImageMaskObject );
         }
       }
-    if( m_SamplingIntensityThreshold > 0 )
+    if( m_SampleIntensityPortion > 0 )
       {
       typedef MinimumMaximumImageCalculator< ImageType >  MinMaxCalcType;
       typename MinMaxCalcType::Pointer calc = MinMaxCalcType::New();
@@ -683,7 +682,7 @@ ImageToImageRegistrationHelper< TImage >
       PixelType fixedImageMin = calc->GetMinimum();
 
       reg->SetFixedImageSamplesIntensityThreshold( static_cast<PixelType>( 
-                                          ( m_SamplingIntensityThreshold 
+                                          ( m_SampleIntensityPortion 
                                             * (fixedImageMax - fixedImageMin) )
                                           + fixedImageMin ) );
       }

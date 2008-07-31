@@ -93,8 +93,8 @@ class OptimizedImageToImageRegistrationMethod
     itkSetMacro( TransformParametersScales, TransformParametersScalesType );
     itkGetConstMacro( TransformParametersScales, TransformParametersScalesType );
 
-    itkSetMacro( UseOverlapAsROI, bool );
-    itkGetConstMacro( UseOverlapAsROI, bool );
+    itkSetMacro( SampleFromOverlap, bool );
+    itkGetConstMacro( SampleFromOverlap, bool );
 
     itkSetMacro( MinimizeMemory, bool );
     itkGetConstMacro( MinimizeMemory, bool );
@@ -108,7 +108,9 @@ class OptimizedImageToImageRegistrationMethod
     itkSetMacro( NumberOfSamples, unsigned int );
     itkGetConstMacro( NumberOfSamples, unsigned int );
 
-    itkSetMacro( FixedImageSamplesIntensityThreshold, PixelType );
+    itkSetMacro( UseFixedImageSamplesIntensityThreshold, bool );
+    itkGetConstMacro( UseFixedImageSamplesIntensityThreshold, bool );
+    void SetFixedImageSamplesIntensityThreshold( PixelType val );
     itkGetConstMacro( FixedImageSamplesIntensityThreshold, PixelType );
 
     itkSetMacro( TargetError, double );
@@ -157,7 +159,7 @@ class OptimizedImageToImageRegistrationMethod
 
     TransformParametersScalesType       m_TransformParametersScales;
 
-    bool                                m_UseOverlapAsROI;
+    bool                                m_SampleFromOverlap;
 
     bool                                m_MinimizeMemory;
 
@@ -167,6 +169,7 @@ class OptimizedImageToImageRegistrationMethod
 
     unsigned int                        m_NumberOfSamples;
 
+    bool                                m_UseFixedImageSamplesIntensityThreshold;
     PixelType                           m_FixedImageSamplesIntensityThreshold;
 
     double                              m_TargetError;

@@ -649,10 +649,12 @@ BSplineImageToImageRegistrationMethod< TImage >
     reg->SetExpectedDeformationMagnitude( levelDeformationMagnitude );
     reg->SetGradientOptimizeOnly( true );
     reg->SetTargetError( this->GetTargetError() );
-    reg->SetUseOverlapAsROI( this->GetUseOverlapAsROI() );
+    reg->SetSampleFromOverlap( this->GetSampleFromOverlap() );
+    reg->SetFixedImageSamplesIntensityThreshold( 
+         this->GetFixedImageSamplesIntensityThreshold() );
+    reg->SetUseFixedImageSamplesIntensityThreshold( 
+         this->GetUseFixedImageSamplesIntensityThreshold() );
     reg->SetMaxIterations( (unsigned int)(this->GetMaxIterations()/((level+1)/2.0)) );
-    reg->SetFixedImageSamplesIntensityThreshold(
-                     this->GetFixedImageSamplesIntensityThreshold() );
     reg->SetMetricMethodEnum( this->GetMetricMethodEnum() );
     reg->SetInterpolationMethodEnum( this->GetInterpolationMethodEnum() );
     reg->SetInitialTransformParameters( levelParameters );
