@@ -927,6 +927,9 @@ vtkITKArchetypeImageSeriesReader
 void vtkITKArchetypeImageSeriesReader::ParseDictionary()
 {
   int nItems = this->Dictionary.GetKeys().size();
+  this->Tags.resize(0);
+  this->TagValues.resize(0);
+
   if (nItems == 0)
   {
     return;
@@ -959,6 +962,16 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthKey( unsigned int n )
     return NULL;
   }
   return this->Tags[n].c_str();
+}
+
+
+const char* vtkITKArchetypeImageSeriesReader::GetNthValue( unsigned int n )
+{
+  if (n >= this->TagValues.size())
+  {
+    return NULL;
+  }
+  return this->TagValues[n].c_str();
 }
 
 const char* vtkITKArchetypeImageSeriesReader::GetTagValue( char* tag )

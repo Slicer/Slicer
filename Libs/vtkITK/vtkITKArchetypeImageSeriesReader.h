@@ -249,6 +249,7 @@ public:
   int GetNumberOfItemsInDictionary(); 
   bool HasKey( char* tag );
   const char* GetNthKey( unsigned int n );
+  const char* GetNthValue( unsigned int n );
   const char* GetTagValue( char* tag );
 
   // set/get functions for grouping by tags

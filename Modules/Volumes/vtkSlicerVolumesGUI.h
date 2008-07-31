@@ -21,6 +21,7 @@
 #include "vtkSlicerDiffusionEditorWidget.h"
 
 #include "vtkSlicerVolumeHeaderWidget.h"
+#include "vtkITKArchetypeImageSeriesReader.h"
 
 class vtkKWPushButton;
 class vtkKWLoadSaveButtonWithLabel;
@@ -114,6 +115,20 @@ class VTK_VOLUMES_EXPORT vtkSlicerVolumesGUI : public vtkSlicerModuleGUI
     void CreateLabelMapDisplayWidget ( );
     void CreateDWIDisplayWidget ( );
     void CreateDTIDisplayWidget ( );
+
+    //BTX
+    // Description:
+    // Return the MetaDataDictionary from the ITK layer
+    std::vector<std::string> Tags;
+    std::vector<std::string> TagValues;
+    void CopyTagAndValues( vtkITKArchetypeImageSeriesReader* reader );
+    //ETX
+
+    int GetNumberOfItemsInDictionary(); 
+    bool HasKey( char* tag );
+    const char* GetNthKey( unsigned int n );
+    const char* GetNthValue( unsigned int n );
+    const char* GetTagValue( char* tag );
 
 protected:
     vtkSlicerVolumesGUI ( );

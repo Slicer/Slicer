@@ -291,6 +291,16 @@ void vtkSlicerVolumesGUI::PrintSelf ( ostream& os, vtkIndent indent )
   os << indent << "DisplayFrame: " << this->GetDisplayFrame ( ) << "\n";    
   os << indent << "OptionFrame: " << this->GetOptionFrame ( ) << "\n";
   os << indent << "SaveFrame: " << this->GetSaveFrame ( ) << "\n";
+
+  if ( this->GetNumberOfItemsInDictionary() > 0 )
+  {
+    os << indent << "Items in meta data: " << this->GetNumberOfItemsInDictionary() << "\n"; 
+    for (unsigned int k = 0; k < this->GetNumberOfItemsInDictionary(); k++)
+    {
+      os << indent << indent << k << ": Key: " << this->GetNthKey(k); 
+      os << " -> Value: " << this->GetNthValue(k) << "\n"; 
+    }
+  }
   // print widgets?
   }
 
@@ -418,6 +428,12 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       const vtksys_stl::string fname(filename);
       vtksys_stl::string name = vtksys::SystemTools::GetFilenameName(fname);
       this->NameEntry->GetWidget()->SetValue(name.c_str());
+      // get dicom header (or meta data) from the selected file
+      vtkITKArchetypeImageSeriesReader* reader = vtkITKArchetypeImageSeriesReader::New();
+      reader->SetSingleFile( 1 );
+      reader->SetArchetype( filename );
+      reader->Update();
+      this->CopyTagAndValues( reader );
       }
     else
       {
@@ -1174,4 +1190,74 @@ void vtkSlicerVolumesGUI::CreateDTIDisplayWidget ( )
       dtiVDW->GetWidgetName(), this->DTIDisplayFrame->GetWidgetName());    
     }
   }
+
+
+void vtkSlicerVolumesGUI::CopyTagAndValues( vtkITKArchetypeImageSeriesReader* reader )
+{
+  int nItems = reader->GetNumberOfItemsInDictionary();
+  this->Tags.resize(0);
+  this->TagValues.resize(0);
+
+  if (nItems > 0)
+  {
+    for (unsigned int k = 0; k < nItems; k++)
+    {
+      this->Tags.push_back( reader->GetNthKey(k) );
+      this->TagValues.push_back( reader->GetNthValue(k) );
+    }
+  }
+
+  return;
+}
+
+
+int vtkSlicerVolumesGUI::GetNumberOfItemsInDictionary()
+{
+  return this->Tags.size();
+}
+
+bool vtkSlicerVolumesGUI::HasKey( char* tag )
+{
+  std::string tagstr( tag );
+  for (unsigned int k = 0; k < this->GetNumberOfItemsInDictionary(); k++)
+  {
+    std::string nthTag = this->GetNthKey( k );
+    if (nthTag == tagstr)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+const char* vtkSlicerVolumesGUI::GetNthKey( unsigned int n )
+{
+  if (n >= this->Tags.size())
+  {
+    return NULL;
+  }
+  return this->Tags[n].c_str();
+}
+
+const char* vtkSlicerVolumesGUI::GetNthValue( unsigned int n )
+{
+  if (n >= this->TagValues.size())
+  {
+    return NULL;
+  }
+  return this->TagValues[n].c_str();
+}
+
+const char* vtkSlicerVolumesGUI::GetTagValue( char* tag )
+{
+  std::string tagstr (tag);
+  for (unsigned int k = 0; k < this->Tags.size(); k++)
+  {
+    if (this->Tags[k] == tagstr)
+    {
+      return this->TagValues[k].c_str();
+    }
+  }
+  return NULL;
+}
 
