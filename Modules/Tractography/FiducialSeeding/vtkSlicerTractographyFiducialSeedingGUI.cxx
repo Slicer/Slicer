@@ -413,8 +413,8 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   this->StoppingValueScale->SetParent ( moduleFrame->GetFrame() );
   this->StoppingValueScale->Create ( );
   this->StoppingValueScale->SetLabelText("Stopping Value");
-  this->StoppingValueScale->GetWidget()->SetRange(0,1);
-  this->StoppingValueScale->GetWidget()->SetResolution(0.1);
+  this->StoppingValueScale->GetWidget()->SetRange(0.01,1);
+  this->StoppingValueScale->GetWidget()->SetResolution(0.01);
   this->StoppingValueScale->GetWidget()->SetValue(0.1);
   this->StoppingValueScale->SetBalloonHelpString("Tractography will stop when the stopping measurement drops below this value.");
   this->Script ( "pack %s -side top -anchor nw -expand y -fill x -padx 2 -pady 2",
