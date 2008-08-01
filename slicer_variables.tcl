@@ -395,6 +395,12 @@ switch $::tcl_platform(os) {
         
         }
 
+        if { [file exists "c:/Program Files/Microsoft Visual Studio 9.0/Common7/IDE/devenv.exe"] } {
+            set ::GENERATOR "Visual Studio 9 2008"
+            set ::MAKE "c:/Program Files/Microsoft Visual Studio 9.0/Common7/IDE/devenv.exe"
+            set ::COMPILER_PATH "c:/Program Files/Microsoft Visual Studio 9.0/VC/bin"
+        }
+
         set ::COMPILER "cl"
         set ::SERIAL_MAKE $::MAKE
     }
