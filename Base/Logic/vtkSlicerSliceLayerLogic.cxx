@@ -211,7 +211,9 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
       }
     else
       {      
-      vtkDebugMacro("vtkSlicerSliceLayerLogic::ProcessMRMLEvents: volume display node " << (this->VolumeDisplayNode == NULL ? " is null" : "is set, but") << ", not updating map to colors (color node may be null)\n");
+      vtkDebugMacro("vtkSlicerSliceLayerLogic::ProcessMRMLEvents: volume display node " \
+          << (this->VolumeDisplayNode == NULL ? " is null" : "is set, but") \
+          << ", not updating map to colors (color node may be null)\n");
       }
     }
   this->UpdateTransforms();
