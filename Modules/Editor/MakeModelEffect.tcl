@@ -101,7 +101,7 @@ itcl::body MakeModelEffect::apply {} {
   #
   # set up the model maker node
   #
-  set moduleNode [$::slicer3::MRMLScene CreateNodeByClass "vtkMRMLCommandLineModuleNode"]
+  set moduleNode [vtkMRMLCommandLineModuleNode New]
   $::slicer3::MRMLScene AddNode $moduleNode
   $moduleNode SetName "Editor Make Model"
   $moduleNode SetModuleDescription "Model Maker"
@@ -137,7 +137,7 @@ itcl::body MakeModelEffect::apply {} {
   #
   set outHierarchy [[$::slicer3::MRMLScene GetNodesByClassByName "vtkMRMLModelHierarchyNode" "Editor Models"] GetItemAsObject 0]
   if { $outHierarchy == "" } {
-    set outHierarchy [$::slicer3::MRMLScene CreateNodeByClass "vtkMRMLModelHierarchyNode"]
+    set outHierarchy [vtkMRMLModelHierarchyNode New]
     $outHierarchy SetScene $::slicer3::MRMLScene
     $outHierarchy SetName "Editor Models"
     $::slicer3::MRMLScene AddNode $outHierarchy
