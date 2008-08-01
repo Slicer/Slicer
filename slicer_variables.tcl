@@ -79,6 +79,8 @@ set ::KWWidgets_TAG "HEAD"
 set ::VTK_TAG "VTK-5-2"
 set ::ITK_TAG ITK-3-6
 set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release25-maint"
+set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/trunk"
+set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
 set ::SLICERLIBCURL_TAG "HEAD"
 
 # Set library, binary, etc. paths...
