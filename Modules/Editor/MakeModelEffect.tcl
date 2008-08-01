@@ -37,6 +37,7 @@ if { [itcl::find class MakeModelEffect] == "" } {
     method buildOptions {} {}
     method tearDownOptions {} {}
     method goToModelMaker {} {}
+    method getUniqueModelName { {baseName "Quick Model"} } {}
 
   }
 }
@@ -203,7 +204,7 @@ itcl::body MakeModelEffect::buildOptions {} {
   $o(name) SetParent [$this getOptionsFrame]
   $o(name) Create
   $o(name) SetLabelText "Name: "
-  [$o(name) GetWidget] SetValue "Quick Model"
+  [$o(name) GetWidget] SetValue [$this getUniqueModelName]
   $o(name) SetBalloonHelpString "Select the name for the newly created model."
   pack [$o(name) GetWidgetName] \
     -side top -anchor e -fill x -padx 2 -pady 2 
@@ -278,4 +279,21 @@ itcl::body MakeModelEffect::goToModelMaker { } {
   set toolbar [$::slicer3::ApplicationGUI GetApplicationToolbar]
   [$toolbar GetModuleChooseGUI] SelectModule "Model Maker"
   after idle ::EffectSWidget::RemoveAll
+}
+
+itcl::body MakeModelEffect::getUniqueModelName { {baseName "Quick Model"} } {
+  set names ""
+  set nNodes [$::slicer3::MRMLScene GetNumberOfNodes]
+  for {set i 0} {$i < $nNodes} {incr i} {
+    set node [$::slicer3::MRMLScene GetNthNode $i]
+    lappend names [$node GetName]
+  }
+
+  set name $baseName
+  set index 0
+  while { [lsearch $names $name] != -1 } { 
+    incr index
+    set name "$baseName $index"
+  }
+  return $name
 }
