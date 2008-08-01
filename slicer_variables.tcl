@@ -167,6 +167,8 @@ switch $::tcl_platform(os) {
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython25.so
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python25
+        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
+        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.so
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
@@ -194,6 +196,8 @@ switch $::tcl_platform(os) {
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.dylib
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
+        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
+        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.dylib
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
@@ -222,6 +226,8 @@ switch $::tcl_platform(os) {
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.so
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
+        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
+        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.so
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu
@@ -255,6 +261,8 @@ switch $::tcl_platform(os) {
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python.exe
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/Libs/python25.lib
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include
+        set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
+        set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::VTK_TEST_FILE $::VTK_DIR/bin/$::VTK_BUILD_TYPE/vtk.exe
         set ::KWWidgets_TEST_FILE $::KWWidgets_BUILD_DIR/bin/$::env(VTK_BUILD_SUBDIR)/KWWidgets.lib
         set ::VTK_TCL_LIB $::TCL_LIB_DIR/tcl84.lib
