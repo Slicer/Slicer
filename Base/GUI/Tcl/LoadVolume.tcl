@@ -179,7 +179,7 @@ itcl::body LoadVolume::constructor {} {
 
   set o(orient) [vtkNew vtkKWCheckButton]
   $o(orient) SetParent [$o(options) GetFrame]
-  $o(orient) SetText "Orientation from file"
+  $o(orient) SetText "Orientation From File"
   $o(orient) Create
 
   set o(label) [vtkNew vtkKWCheckButton]
@@ -314,10 +314,9 @@ itcl::body LoadVolume::destructor {} {
 
 #
 # load the items from the list box
-# into slicer 
+# into slicer return 0 on success, non-zero otherwise
 #
 itcl::body LoadVolume::apply { } {
-
 
   set centered [$o(centered) GetSelectedState]
   set oriented [$o(orient) GetSelectedState]
@@ -330,6 +329,7 @@ itcl::body LoadVolume::apply { } {
   set fileName [$fileTable GetNthSelectedFileName 0]
   if { $fileName == "" } {
     $this errorDialog "No file selected"
+    return 1
   }
   set name [[$o(name) GetWidget] GetValue]
   if { $name == "" } {
@@ -340,11 +340,12 @@ itcl::body LoadVolume::apply { } {
   set ret [catch [list $volumeLogic AddArchetypeVolume "$fileName" $name $loadingOptions] node]
   if { $ret } {
     $this errorDialog "Could not load $fileName as a volume\n\nError is:\n$node"
-    return
+    return 1
   }
   set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
   if { $node == "" } {
     $this errorDialog "Could not load $fileName as a volume"
+    return 1
   } else {
     if { $labelMap } {
       $selNode SetReferenceActiveLabelVolumeID [$node GetID]
@@ -355,6 +356,7 @@ itcl::body LoadVolume::apply { } {
 
     $::slicer3::Application SetRegistry "OpenPath" [file dirname $fileName]
   }
+  return 0
 }
 
 
@@ -369,8 +371,9 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
   }
 
   if { $caller == $o(apply) } {
-    $this apply
-    after idle "itcl::delete object $this"
+    if { [$this apply] == 0 } {
+      after idle "itcl::delete object $this"
+    }
     return
   }
 
@@ -423,7 +426,14 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
 }
 
 itcl::body LoadVolume::errorDialog { errorText } {
-  tk_messageBox -message $errorText
+  set dialog [vtkKWMessageDialog New]
+  $dialog SetParent $o(toplevel)
+  $dialog SetMasterWindow $o(toplevel)
+  $dialog SetStyleToMessage
+  $dialog SetText $errorText
+  $dialog Create
+  $dialog Invoke
+  $dialog Delete
 }
 
 itcl::body LoadVolume::status { message } {
