@@ -20,6 +20,7 @@ if(Slicer3_USE_NUMPY)
     ${PYTHON_NUMPY}
     ${PYTHON_NUMPY}/../
     ${PYTHON_NUMPY}/../../../numarray/numpy
+    ${PYTHON_NUMPY}/include/numpy
     )
 endif(Slicer3_USE_NUMPY)
 
