@@ -52,7 +52,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <description>Create more than one model at the same time, used for continuous ranges of labels.</description>
   <string>
      <name>Name</name>
-     <label>Model Prefix</label>
+     <label>Model Name</label>
      <flag>-n</flag>
      <longflag>--name</longflag>
      <description>Name to use for this model. If making multiple models, use this as a prefix to the label and color name</description>

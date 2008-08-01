@@ -208,14 +208,23 @@ int main(int argc, char * argv[])
     // figure out if we're making multiple models
     if (Labels.size() > 0)
       {
-      makeMultiple = true;
-      // sort the vector
-      std::sort(Labels.begin(), Labels.end()); 
-      labelsMin = Labels[0];
-      labelsMax = Labels[Labels.size()-1];
-      if (debug)
+      if (Labels.size() == 1)
         {
-        cout << "Set labels min to " << labelsMin << ", labels max = " << labelsMax << ", labels vector size = " << Labels.size() << endl;
+        // special case, only making one
+        labelsMin = Labels[0];
+        labelsMax = Labels[0];
+        }
+      else
+        {
+        makeMultiple = true;
+        // sort the vector
+        std::sort(Labels.begin(), Labels.end()); 
+        labelsMin = Labels[0];
+        labelsMax = Labels[Labels.size()-1];
+        if (debug)
+          {
+          cout << "Set labels min to " << labelsMin << ", labels max = " << labelsMax << ", labels vector size = " << Labels.size() << endl;
+          }
         }
       }    
     else if (GenerateAll)
@@ -225,7 +234,11 @@ int main(int argc, char * argv[])
       }
     else if (EndLabel >= StartLabel && (EndLabel != -1 && StartLabel != -1))
       {
-      makeMultiple = true;
+      // only say we're making multiple if they're not the same
+      if (EndLabel > StartLabel)
+        {
+        makeMultiple = true;
+        }
       useStartEnd = true;
       }
     
@@ -743,6 +756,8 @@ int main(int argc, char * argv[])
       else 
         {
         // just make one
+        labelName = Name;
+        /*
         if (colorNode != NULL)
           {
           if (colorNode->GetColorNameWithoutSpaces(i, "_").c_str() != NULL)
@@ -757,6 +772,7 @@ int main(int argc, char * argv[])
           {
           labelName = Name;
           }
+        */
         }
       
       // threshold
