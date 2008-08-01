@@ -60,37 +60,11 @@ bool WriteEncodedDoubleVector( std::ostream& out,
 EncodedTransformFileWriter
 ::EncodedTransformFileWriter()
 {
-  this->m_AppendMode = false;
 }
 
 EncodedTransformFileWriter
 ::~EncodedTransformFileWriter()
 {
-}
-
-/** Set the writer to append to the specified file */
-void EncodedTransformFileWriter::SetAppendOn( )
-{
-  this->m_AppendMode = true;
-}
-
-/** Set the writer to overwrite the specified file - This is the
- * default mode. */
-void EncodedTransformFileWriter::SetAppendOff( )
-{
-  this->m_AppendMode = false;
-}
-
-/** Set the writer mode (append/overwrite). */
-void EncodedTransformFileWriter::SetAppendMode( bool mode)
-{
-  this->m_AppendMode = mode;
-}
-
-/** Get the writer mode. */
-bool EncodedTransformFileWriter::GetAppendMode( )
-{
-  return ( this->m_AppendMode );
 }
 
 /** Set the input transform and reinitialize the list of transforms */
@@ -114,7 +88,7 @@ void EncodedTransformFileWriter
   vnl_vector<double> TempArray;
 #ifdef __sgi
   // Create the file. This is required on some older sgi's
-  if (this->m_AppendMode)
+  if (GetAppendMode())
     {
     std::ofstream tFile(m_FileName.c_str(),std::ios::out | std::ios::app);
     tFile.close();   
@@ -126,7 +100,7 @@ void EncodedTransformFileWriter
     }
 #endif
   std::ofstream out;
-  if (this->m_AppendMode)
+  if (GetAppendMode())
     {
     out.open(m_FileName.c_str(), std::ios::out | std::ios::app); 
     }

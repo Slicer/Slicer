@@ -41,12 +41,6 @@ public:
   typedef Superclass::TransformType          TransformType;
   typedef Superclass::TransformPointer TransformPointer;
 
-  /** Set/Get the write mode (append/overwrite) for the Filter */
-  void SetAppendOff( );
-  void SetAppendOn( );
-  void SetAppendMode(bool mode);
-  bool GetAppendMode( );
-
   /** Set/Get the input transform to write */
   void SetInput(const TransformType* transform);
   const TransformType * GetInput() {return *(m_TransformList.begin());}
@@ -66,7 +60,6 @@ protected:
 
 private:
   std::list<const TransformType*>  m_TransformList;
-  bool                             m_AppendMode;
 };
 
 } // namespace itk
