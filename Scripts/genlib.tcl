@@ -540,10 +540,7 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] == 1 } {
         set ::env(BLAS) None
         set ::env(LAPACK) None
         
-        # scipy should build fine on mac, but linux is tricky right now...
-        if { $isDarwin } {
-          runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
-        }
+        runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
     }
 }
 
