@@ -444,7 +444,9 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
             runcmd ./configure --with-tcl=$Slicer3_LIB/tcl/tcl/unix --with-tk=$Slicer3_LIB/tcl-build --prefix=$Slicer3_LIB/tcl-build --disable-static --enable-shared 
             eval runcmd $::SERIAL_MAKE
             eval runcmd $::SERIAL_MAKE install
-# leaving here $::MAKE instead of $::SERIAL_MAKE can lead to funny things... :) 2008.06.25
+            exec /usr/bin/ln -s $Slicer3_LIB/tcl/blt/src/shared/libBLT24.so $Slicer3_LIB/tcl/blt/src/libBLT.so
+            exec /usr/bin/ln -s $Slicer3_LIB/tcl-build/lib/libBLT24.so $Slicer3_LIB/tcl-build/lib/libBLT.so
+            # leaving here $::MAKE instead of $::SERIAL_MAKE can lead to funny things... :) 2008.06.25
 
         } else {
             cd $Slicer3_LIB/tcl/blt
@@ -474,6 +476,8 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] == 1 } {
 
         set ::env(LDFLAGS) -L$Slicer3_LIB/tcl-build/lib
         set ::env(CPPFLAGS) -I$Slicer3_LIB/tcl-build/include
+        if { ![info exists ::env(LD_LIBRARY_PATH)] } { set ::env(LD_LIBRARY_PATH) "" }
+        set ::env(LD_LIBRARY_PATH) $Slicer3_LIB/tcl-build/lib:$Slicer3_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
 
         runcmd ./configure --prefix=$Slicer3_LIB/python-build --with-tcl=$Slicer3_LIB/tcl-build --enable-shared
         eval runcmd $::MAKE
@@ -496,6 +500,48 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] == 1 } {
     }
 }
 
+################################################################################
+# Get and build numpy and scipy
+#
+
+if {  [BuildThis $::NUMPY_TEST_FILE "python"] == 1 } {
+
+    set ::env(PYTHONHOME) $::Slicer3_LIB/python-build
+    cd $::Slicer3_LIB/python
+
+    # do numpy
+
+    runcmd $::SVN co $::NUMPY_TAG numpy
+
+    if { $isWindows } {
+        # windows binary already checked out
+    } else {
+        if { $isDarwin } {
+            if { ![info exists ::env(DYLD_LIBRARY_PATH)] } { set ::env(DYLD_LIBRARY_PATH) "" }
+            set ::env(DYLD_LIBRARY_PATH) $::Slicer3_LIB/python-build/lib:$::env(DYLD_LIBRARY_PATH)
+        } else {
+            if { ![info exists ::env(DYLD_LIBRARY_PATH)] } { set ::env(DYLD_LIBRARY_PATH) "" }
+            set ::env(LD_LIBRARY_PATH) $::Slicer3_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
+        }
+        cd $::Slicer3_LIB/python/numpy
+        set ::env(ATLAS) None
+        set ::env(BLAS) None
+        set ::env(LAPACK) None
+        runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
+
+        # do scipy
+
+        # TODO: need to have a way to build the blas library...
+        cd $::Slicer3_LIB/python
+        runcmd $::SVN co $::SCIPY_TAG scipy
+        
+        cd $::Slicer3_LIB/python/scipy
+        set ::env(ATLAS) None
+        set ::env(BLAS) None
+        set ::env(LAPACK) None
+        runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
+    }
+}
 
 
 ################################################################################
