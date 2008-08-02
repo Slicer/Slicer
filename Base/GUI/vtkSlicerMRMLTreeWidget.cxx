@@ -206,7 +206,7 @@ void vtkSlicerMRMLTreeWidget::ProcessWidgetEvents ( vtkObject *caller,
         {
         node->SetName(entry->GetValue());
         this->UpdateTreeFromMRML();
-        this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent);
+        this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, node);
         }
       }
 
@@ -484,7 +484,7 @@ void vtkSlicerMRMLTreeWidget::CreateWidget ( )
   this->TreeWidget->SetParent ( frame->GetFrame() );
   this->TreeWidget->VerticalScrollbarVisibilityOn();
   this->TreeWidget->HorizontalScrollbarVisibilityOff();
-  this->TreeWidget->ResizeButtonsVisibilityOn();
+  //this->TreeWidget->ResizeButtonsVisibilityOn();
   
   this->TreeWidget->Create ( );
   this->TreeWidget->SetBalloonHelpString("MRML Tree");

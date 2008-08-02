@@ -823,7 +823,7 @@ void vtkSlicerModelHierarchyWidget::CreateWidget ( )
   this->TreeWidget->SetParent ( frame->GetFrame() );
   this->TreeWidget->VerticalScrollbarVisibilityOn();
   this->TreeWidget->HorizontalScrollbarVisibilityOff();
-  this->TreeWidget->ResizeButtonsVisibilityOn();
+  //this->TreeWidget->ResizeButtonsVisibilityOn();
   
   this->TreeWidget->Create ( );
   //this->TreeWidget->SetBalloonHelpString("MRML Tree");
