@@ -83,12 +83,20 @@ vtkSlicerTractographyFiducialSeedingGUI::vtkSlicerTractographyFiducialSeedingGUI
   this->RegionSizeScale = vtkKWScaleWithLabel::New();
   this->RegionSampleSizeScale = vtkKWScaleWithLabel::New();
 
+  this->TractographyFiducialSeedingNodeSelector = vtkSlicerNodeSelectorWidget::New();
+
   this->FiducialListNode = NULL;
   
   this->StoppingMode = NULL;
   this->StoppingThreshold=0.15;
   this->MaximumPropagationDistance = 600;
   this->OverwritePolyDataWarning =1;
+
+  this->RegisteredNode = 0;
+  this->TractographyFiducialSeedingNode = NULL;
+
+  UpdatingMRML = 0;
+  UpdatingGUI = 0;
 
 }
 
@@ -160,8 +168,17 @@ vtkSlicerTractographyFiducialSeedingGUI::~vtkSlicerTractographyFiducialSeedingGU
     this->RegionSampleSizeScale = NULL;
   }
   
+  if ( this->TractographyFiducialSeedingNodeSelector ) 
+  {
+    this->TractographyFiducialSeedingNodeSelector->SetParent(NULL);
+    this->TractographyFiducialSeedingNodeSelector->Delete();
+    this->TractographyFiducialSeedingNodeSelector = NULL;
+  }
+
   vtkSetAndObserveMRMLNodeMacro(this->FiducialListNode, NULL);
   
+  vtkSetMRMLNodeMacro(this->TractographyFiducialSeedingNode, NULL);
+
   if (this->StoppingMode)
     {
     delete [] this->StoppingMode;
@@ -205,6 +222,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::AddGUIObservers ( )
   
   this->RegionSampleSizeScale->GetWidget()->AddObserver(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+  this->TractographyFiducialSeedingNodeSelector->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
 }
 
@@ -231,6 +249,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::RemoveGUIObservers ( )
   
   this->RegionSampleSizeScale->GetWidget()->RemoveObservers(vtkKWScale::ScaleValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
 
+  this->TractographyFiducialSeedingNodeSelector->RemoveObservers (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, (vtkCommand *)this->GUICallbackCommand );  
 
 }
 
@@ -287,6 +306,15 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
 
     this->CreateTracts();
     }
+
+  if (selector == this->TractographyFiducialSeedingNodeSelector && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent  &&
+    this->TractographyFiducialSeedingNodeSelector->GetSelected() != NULL) 
+    { 
+    vtkMRMLTractographyFiducialSeedingNode* n = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(this->TractographyFiducialSeedingNodeSelector->GetSelected());
+    vtkSetAndObserveMRMLNodeMacro( this->TractographyFiducialSeedingNode, n);
+    this->UpdateGUI();
+    }
+
   else if ( this->SeedButton == vtkKWCheckButton::SafeDownCast(caller) &&
           event == vtkKWCheckButton::SelectedStateChangedEvent ) 
     {
@@ -300,10 +328,111 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessGUIEvents ( vtkObject *call
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingGUI::UpdateGUI ()
+{
+  if (this->UpdatingMRML)
+    {
+    return;
+    }
+  this->UpdatingGUI = 1;
+
+  vtkMRMLTractographyFiducialSeedingNode* n = this->GetTractographyFiducialSeedingNode();
+  if (n != NULL && this->GetMRMLScene() != NULL)
+    {
+    // set GUI widgest from parameter node
+    vtkMRMLNode *s = this->GetMRMLScene()->GetNodeByID(n->GetInputVolumeRef());
+    this->VolumeSelector->SetSelected(s);
+
+    s = this->GetMRMLScene()->GetNodeByID(n->GetInputFiducialRef());
+    this->FiducialSelector->SetSelected(s);
+
+    s = this->GetMRMLScene()->GetNodeByID(n->GetOutputFiberRef());
+    this->OutFiberSelector->SetSelected(s);
+    
+    if(n->GetStoppingMode() == 0)
+      {
+      this->StoppingModeMenu->GetWidget()->SetValue("Linear Measurement");
+      }
+    else
+      {
+      this->StoppingModeMenu->GetWidget()->SetValue ( "Fractional Anisotropy");
+      }
+    this->StoppingValueScale->GetWidget()->SetValue(n->GetStoppingValue());
+    this->StoppingCurvatureScale->GetWidget()->SetValue(n->GetStoppingCurvature());
+    this->IntegrationStepLengthScale->GetWidget()->SetValue(n->GetIntegrationStep());
+    this->RegionSizeScale->GetWidget()->SetValue(n->GetSeedingRegionSize());
+    this->RegionSampleSizeScale->GetWidget()->SetValue(n->GetSeedingRegionStep());
+    }
+
+  this->UpdatingGUI = 0;
+}
+//---------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingGUI::UpdateMRML ()
+{
+  if (this->UpdatingGUI)
+    {
+    return;
+    }
+  this->UpdatingMRML = 1;
+
+  vtkMRMLTractographyFiducialSeedingNode* n = this->GetTractographyFiducialSeedingNode();
+  if (n == NULL)
+    {
+    // no parameter node selected yet, create new
+    this->TractographyFiducialSeedingNodeSelector->SetSelectedNew("vtkMRMLTractographyFiducialSeedingNode");
+    this->TractographyFiducialSeedingNodeSelector->ProcessNewNodeCommand("vtkMRMLTractographyFiducialSeedingNode", "Parameters");
+    n = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(this->TractographyFiducialSeedingNodeSelector->GetSelected());
+
+    // set an observe new node
+    vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, n);
+   }
+  // save node parameters for Undo
+  this->GetMRMLScene()->SaveStateForUndo(n);
+
+  if (this->VolumeSelector->GetSelected())
+    {
+    n->SetInputVolumeRef(this->VolumeSelector->GetSelected()->GetID());
+    }
+  if (this->FiducialSelector->GetSelected())
+    {
+    n->SetInputFiducialRef(this->FiducialSelector->GetSelected()->GetID());
+    }
+  if (this->OutFiberSelector->GetSelected())
+    {
+    n->SetOutputFiberRef(this->OutFiberSelector->GetSelected()->GetID());
+    }
+    
+  if(!strcmp(this->StoppingModeMenu->GetWidget()->GetValue(), "Linear Measurement"))
+    {
+    n->SetStoppingMode(0);
+    }
+  else
+    if(!strcmp(this->StoppingModeMenu->GetWidget()->GetValue(), "Fractional Anisotropy"))
+    {
+    n->SetStoppingMode(1);
+    }
+  n->SetStoppingValue(this->StoppingValueScale->GetWidget()->GetValue() );
+  n->SetStoppingCurvature( this->StoppingCurvatureScale->GetWidget()->GetValue() );
+  n->SetIntegrationStep( this->IntegrationStepLengthScale->GetWidget()->GetValue() );
+  n->SetSeedingRegionSize( this->RegionSizeScale->GetWidget()->GetValue() );
+  n->SetSeedingRegionStep( this->RegionSampleSizeScale->GetWidget()->GetValue() );
+
+  this->UpdatingMRML = 0;
+
+ }
+
+//---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingGUI::ProcessMRMLEvents ( vtkObject *caller,
                                             unsigned long event,
                                             void *callData ) 
 {
+  // if parameter node has been changed externally, update GUI widgets with new values
+  vtkMRMLTractographyFiducialSeedingNode* snode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(caller);
+  if (snode != NULL && this->GetTractographyFiducialSeedingNode() == snode) 
+    {
+    this->UpdateGUI();
+    }
+
   // if parameter node has been changed externally, update GUI widgets with new values
   vtkMRMLFiducialListNode* node = vtkMRMLFiducialListNode::SafeDownCast(caller);
   if (node != NULL && this->FiducialListNode == node) 
@@ -315,6 +444,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessMRMLEvents ( vtkObject *cal
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
 {
+  this->UpdateMRML();
   if ( this->SeedButton->GetSelectedState() == 0) 
     {
     return;
@@ -338,8 +468,28 @@ void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingGUI::RegisterTractographyFiducialSeedingNode ( ) 
+{
+  if (this->RegisteredNode || this->GetMRMLScene() == NULL)
+    {
+    return;
+    }
+  vtkMRMLTractographyFiducialSeedingNode* gadNode = vtkMRMLTractographyFiducialSeedingNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(gadNode);
+  gadNode->Delete();
+  this->RegisteredNode = 1;
+}
+
+//---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( ) 
 {
+  if (this->Built)
+    {
+    return;
+    }
+
+  this->RegisterTractographyFiducialSeedingNode();
+
   vtkSlicerApplication *app = (vtkSlicerApplication *)this->GetApplication();
 
   this->UIPanel->AddPage ( "Tractography", "Tractography", NULL );
@@ -360,6 +510,22 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
                 moduleFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Tractography")->GetWidgetName());
   
+  this->TractographyFiducialSeedingNodeSelector->SetNodeClass("vtkMRMLTractographyFiducialSeedingNode", NULL, NULL, "Parameters");
+  this->TractographyFiducialSeedingNodeSelector->SetNewNodeEnabled(1);
+  this->TractographyFiducialSeedingNodeSelector->NoneEnabledOn();
+  this->TractographyFiducialSeedingNodeSelector->SetShowHidden(1);
+  this->TractographyFiducialSeedingNodeSelector->SetParent( moduleFrame->GetFrame() );
+  this->TractographyFiducialSeedingNodeSelector->Create();
+  this->TractographyFiducialSeedingNodeSelector->SetMRMLScene(this->GetMRMLScene());
+  this->TractographyFiducialSeedingNodeSelector->UpdateMenu();
+
+  this->TractographyFiducialSeedingNodeSelector->SetBorderWidth(2);
+  this->TractographyFiducialSeedingNodeSelector->SetLabelText( "Parameters");
+  this->TractographyFiducialSeedingNodeSelector->SetBalloonHelpString("select a parameter node from the current mrml scene.");
+  app->Script("pack %s -side top -anchor e -padx 20 -pady 4", 
+                this->TractographyFiducialSeedingNodeSelector->GetWidgetName());
+
+
   this->VolumeSelector->SetNodeClass("vtkMRMLDiffusionTensorVolumeNode", NULL, NULL, NULL);
   this->VolumeSelector->SetParent( moduleFrame->GetFrame() );
   this->VolumeSelector->Create();
@@ -470,7 +636,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
 
   moduleFrame->Delete();
 
-  
+  this->Built = 1;
 }
 
 void vtkSlicerTractographyFiducialSeedingGUI::SetVolumeSelector(vtkMRMLNode *node)

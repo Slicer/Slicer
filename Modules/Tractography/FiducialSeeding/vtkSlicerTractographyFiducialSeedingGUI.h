@@ -21,6 +21,7 @@
 #include "vtkMRMLFiducialListNode.h"
 
 #include "vtkSlicerTractographyFiducialSeeding.h"
+#include "vtkMRMLTractographyFiducialSeedingNode.h"
 
 class vtkKWFrame;
 class vtkSlicerNodeSelectorWidget;
@@ -112,12 +113,27 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   void SetVolumeSelector(vtkMRMLNode *node);
   void SetFiducialSelector(vtkMRMLNode *node);
   void SetOutFiberSelector(vtkMRMLNode *node);
+
+  // Description: Get/Set MRML node
+  vtkGetObjectMacro (TractographyFiducialSeedingNode, vtkMRMLTractographyFiducialSeedingNode);
+
   
 protected:
   vtkSlicerTractographyFiducialSeedingGUI();
   virtual ~vtkSlicerTractographyFiducialSeedingGUI();
   vtkSlicerTractographyFiducialSeedingGUI(const vtkSlicerTractographyFiducialSeedingGUI&);
   void operator=(const vtkSlicerTractographyFiducialSeedingGUI&);
+
+  // Description:
+  // Updates GUI widgets based on parameters values in MRML node
+  void UpdateGUI();
+
+  // Description:
+  // Updates parameters values in MRML node based on GUI widgets 
+  void UpdateMRML();
+
+  void RegisterTractographyFiducialSeedingNode();
+  int RegisteredNode;
 
   char* StoppingMode;
   vtkFloatingPointType StoppingThreshold;
@@ -139,10 +155,16 @@ protected:
   
   vtkKWCheckButton *SeedButton;
 
+  vtkSlicerNodeSelectorWidget* TractographyFiducialSeedingNodeSelector;
+
+
   void SetFiducialListNode(vtkMRMLFiducialListNode* FiducialListNode);
 
   vtkMRMLFiducialListNode* FiducialListNode;
+  vtkMRMLTractographyFiducialSeedingNode *TractographyFiducialSeedingNode;
 
+  int UpdatingMRML;
+  int UpdatingGUI;
 };
 
 #endif

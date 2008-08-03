@@ -51,23 +51,41 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkMRMLTractographyFiducialSeedingNode : public
 
   // Description:
   // Get unique node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "GADParameters";};
+  virtual const char* GetNodeTagName() {return "FiducialSeedingParameters";};
 
   // Description:
-  // Get/Set Number of iterations (module parameter)
-  vtkGetMacro(NumberOfIterations, int);
-  vtkSetMacro(NumberOfIterations, int);
+  // Get/Set Stopping Mode (module parameter)
+  // 0 - Linear Measure
+  // 1 - FA
+  vtkGetMacro(StoppingMode, int);
+  vtkSetMacro(StoppingMode, int);
 
   // Description:
-  // Get/Set Conductance (module parameter)
-  vtkGetMacro(Conductance, double);
-  vtkSetMacro(Conductance, double);
+  // Get/Set Stopping Value (module parameter)
+  vtkGetMacro(StoppingValue, double);
+  vtkSetMacro(StoppingValue, double);
 
   // Description:
-  // Get/Set time step (module parameter)
-  vtkGetMacro(TimeStep, double);
-  vtkSetMacro(TimeStep, double);
- 
+  // Get/Set Stopping Curvature (module parameter)
+  vtkGetMacro(StoppingCurvature, double);
+  vtkSetMacro(StoppingCurvature, double);
+  
+  // Description:
+  // Get/Set Integration Step (module parameter)
+  vtkGetMacro(IntegrationStep, double);
+  vtkSetMacro(IntegrationStep, double);
+
+    // Description:
+  // Get/Set Seeding Region Size  (module parameter)
+  vtkGetMacro(SeedingRegionSize, double);
+  vtkSetMacro(SeedingRegionSize, double);
+
+  // Description:
+  // Get/Set Seeding Region Step (module parameter)
+  vtkGetMacro(SeedingRegionStep, double);
+  vtkSetMacro(SeedingRegionStep, double);
+
+  
   // Description:
   // Get/Set input volume MRML Id
   vtkGetStringMacro(InputVolumeRef);
@@ -94,9 +112,13 @@ protected:
   vtkMRMLTractographyFiducialSeedingNode(const vtkMRMLTractographyFiducialSeedingNode&);
   void operator=(const vtkMRMLTractographyFiducialSeedingNode&);
 
-  double Conductance;
-  double TimeStep;
-  int NumberOfIterations;
+  int StoppingMode;
+  
+  double StoppingValue;
+  double StoppingCurvature;
+  double IntegrationStep;
+  double SeedingRegionSize;
+  double SeedingRegionStep;
   
   char* InputVolumeRef;
   char* InputFiducialRef;

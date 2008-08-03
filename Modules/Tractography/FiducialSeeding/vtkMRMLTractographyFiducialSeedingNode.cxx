@@ -52,9 +52,13 @@ vtkMRMLNode* vtkMRMLTractographyFiducialSeedingNode::CreateNodeInstance()
 //----------------------------------------------------------------------------
 vtkMRMLTractographyFiducialSeedingNode::vtkMRMLTractographyFiducialSeedingNode()
 {
-   this->Conductance = 1.0;
-   this->NumberOfIterations = 1;
-   this->TimeStep = 0.1;
+   this->StoppingValue = 1.0;
+   this->StoppingMode = 1;
+   this->StoppingValue = 0.1;
+   this->StoppingCurvature = 0.8;
+   this->IntegrationStep = 0.5;
+   this->SeedingRegionSize = 1.0;
+   this->SeedingRegionStep = 1.0;
    this->InputVolumeRef = NULL;
    this->InputFiducialRef = NULL;
    this->OutputFiberRef = NULL;
@@ -80,18 +84,33 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
 
   {
     std::stringstream ss;
-    ss << this->Conductance;
-    of << indent << " Conductance=\"" << ss.str() << "\"";
+    ss << this->StoppingValue;
+    of << indent << " StoppingValue=\"" << ss.str() << "\"";
   }
   {
     std::stringstream ss;
-    ss << this->NumberOfIterations;
-    of << indent << " NumberOfIterations=\"" << ss.str() << "\"";
+    ss << this->StoppingMode;
+    of << indent << " StoppingMode=\"" << ss.str() << "\"";
   }
   {
     std::stringstream ss;
-    ss << this->TimeStep;
-    of << indent << " TimeStep=\"" << ss.str() << "\"";
+    ss << this->StoppingCurvature;
+    of << indent << " StoppingCurvature=\"" << ss.str() << "\"";
+  }
+  {
+    std::stringstream ss;
+    ss << this->IntegrationStep;
+    of << indent << " IntegrationStep=\"" << ss.str() << "\"";
+  }
+  {
+    std::stringstream ss;
+    ss << this->SeedingRegionSize;
+    of << indent << " SeedingRegionSize=\"" << ss.str() << "\"";
+  }
+  {
+    std::stringstream ss;
+    ss << this->SeedingRegionStep;
+    of << indent << " SeedingRegionStep=\"" << ss.str() << "\"";
   }
   {
     std::stringstream ss;
@@ -131,23 +150,41 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "Conductance")) 
+    if (!strcmp(attName, "StoppingValue")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->Conductance;
+      ss >> this->StoppingValue;
       }
-    else if (!strcmp(attName, "NumberOfIterations")) 
+    else if (!strcmp(attName, "StoppingMode")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->NumberOfIterations;
+      ss >> this->StoppingMode;
       }
-    else if (!strcmp(attName, "TimeStep")) 
+    else if (!strcmp(attName, "StoppingCurvature")) 
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->TimeStep;
+      ss >> this->StoppingCurvature;
+      }
+    else if (!strcmp(attName, "IntegrationStep")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->IntegrationStep;
+      }
+    else if (!strcmp(attName, "SeedingRegionSize")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->SeedingRegionSize;
+      }
+    else if (!strcmp(attName, "SeedingRegionStep")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->SeedingRegionStep;
       }
     else if (!strcmp(attName, "InputVolumeRef"))
       {
@@ -175,9 +212,12 @@ void vtkMRMLTractographyFiducialSeedingNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLTractographyFiducialSeedingNode *node = (vtkMRMLTractographyFiducialSeedingNode *) anode;
 
-  this->SetConductance(node->Conductance);
-  this->SetNumberOfIterations(node->NumberOfIterations);
-  this->SetTimeStep(node->TimeStep);
+  this->SetStoppingValue(node->StoppingValue);
+  this->SetStoppingMode(node->StoppingMode);
+  this->SetStoppingCurvature(node->StoppingCurvature);
+  this->SetIntegrationStep(node->IntegrationStep);
+  this->SetSeedingRegionSize(node->SeedingRegionSize);
+  this->SetSeedingRegionStep(node->SeedingRegionStep);
   this->SetInputVolumeRef(node->InputVolumeRef);
   this->SetInputFiducialRef(node->InputFiducialRef);
   this->SetOutputFiberRef(node->OutputFiberRef);
@@ -189,9 +229,12 @@ void vtkMRMLTractographyFiducialSeedingNode::PrintSelf(ostream& os, vtkIndent in
   
   vtkMRMLNode::PrintSelf(os,indent);
 
-  os << indent << "Conductance:   " << this->Conductance << "\n";
-  os << indent << "NumberOfIterations:   " << this->NumberOfIterations << "\n";
-  os << indent << "TimeStep:   " << this->TimeStep << "\n";
+  os << indent << "StoppingValue:   " << this->StoppingValue << "\n";
+  os << indent << "StoppingMode:   " << this->StoppingMode << "\n";
+  os << indent << "StoppingCurvature:   " << this->StoppingCurvature << "\n";
+  os << indent << "IntegrationStep:   " << this->IntegrationStep << "\n";
+  os << indent << "SeedingRegionSize:   " << this->SeedingRegionSize << "\n";
+  os << indent << "SeedingRegionStep:   " << this->SeedingRegionStep << "\n";
   os << indent << "InputVolumeRef:   " << 
    (this->InputVolumeRef ? this->InputVolumeRef : "(none)") << "\n";
   os << indent << "InputFiducialRef:   " << 
