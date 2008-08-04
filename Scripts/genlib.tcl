@@ -540,7 +540,8 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] == 1 } {
         set ::env(BLAS) None
         set ::env(LAPACK) None
         
-        runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
+        # turn off scipy - not clear how to get it to build on all platforms
+        # runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
     }
 }
 
