@@ -63,14 +63,20 @@ if { [itcl::find class LoadVolume] == "" } {
     variable _processingEvents 0
     variable _DICOM ;# map from group/element to name
     variable _dicomColumn ;# keep track of columns
+    variable _dicomTree ;# currently loaded dicom directory
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
+    method selectArchetype {path name} {}
     method apply {} {}
     method status { message } {}
     method errorDialog {errorText} {}
     method loadDICOMDictionary {} {}
+    method parseDICOMHeader {fileName arrayName} {}
     method populateDICOMTable {fileName} {}
+    method parseDICOMDirectory {directoryName arrayName} {}
+    method populateDICOMTree {directoryName arrayName} {}
+    method safeNodeName {name} {}
 
     method objects {} {return [array get o]}
 
@@ -263,6 +269,20 @@ itcl::body LoadVolume::constructor {} {
   $o(dicom) Create
 
   #
+  # parse dicom button - initially disabled, but enabled when
+  # dicom file is selected
+  #
+  set o(dicomParse) [vtkNew vtkKWPushButton]
+  $o(dicomParse) SetParent [$o(dicom) GetFrame]
+  $o(dicomParse) Create
+  $o(dicomParse) SetText "Parse Directory"
+  $o(dicomParse) SetBalloonHelpString "Parse the current directory to select series to load as volume"
+  set tag [$o(dicomParse) AddObserver ModifiedEvent "$this processEvent $o(dicomParse)"]
+  lappend _observerRecords [list $o(dicomParse) $tag]
+  $o(dicomParse) SetCommand $o(dicomParse) Modified
+  $o(dicomParse) SetStateToDisabled
+
+  #
   # the listbox of dicom info
   #
 
@@ -290,9 +310,29 @@ itcl::body LoadVolume::constructor {} {
     $w SetColumnWidth $_dicomColumn($column) $width
   }
 
-  pack [$o(dicomList) GetWidgetName] -side top -anchor e -padx 2 -pady 2 -expand true -fill both
 
+  #
+  # SeriesSelection Tree
+  #
+  set o(dicomTree) [vtkNew vtkKWTreeWithScrollbars]
+  $o(dicomTree) SetParent [$o(dicom) GetFrame]
+  [$o(dicomTree) GetWidget] SetSelectionModeToSingle
+  $o(dicomTree) Create
+
+  set t [$o(dicomTree) GetWidget]
+  set tag [$t AddObserver DeleteEvent "itcl::delete $this"]
+  lappend _observerRecords [list $t $tag]
+  set tag [$t AddObserver AnyEvent "$this processEvent $t"]
+  lappend _observerRecords [list $t $tag]
+
+  pack [$o(dicomParse) GetWidgetName] -side top -anchor e -padx 2 -pady 2 -expand false -fill none
+  pack [$o(dicomTree) GetWidgetName] -side right -anchor e -padx 2 -pady 2 -expand true -fill both
+  pack [$o(dicomList) GetWidgetName] -side left -anchor e -padx 2 -pady 2 -expand true -fill both
   pack [$o(dicom) GetWidgetName] -side bottom -anchor e -padx 2 -pady 2 -expand false -fill x
+
+  #
+  # pop up the dialog
+  #
   $o(toplevel) Display
 }
 
@@ -335,6 +375,8 @@ itcl::body LoadVolume::apply { } {
   if { $name == "" } {
     set name [file root [file tail $fileName]]
   }
+
+  puts "loading with archetype $fileName as $name"
 
   set volumeLogic [$::slicer3::VolumesGUI GetLogic]
   set ret [catch [list $volumeLogic AddArchetypeVolume "$fileName" $name $loadingOptions] node]
@@ -383,47 +425,99 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
   }
 
   if { $caller == $o(browser) } {
-    set _processingEvents 1
     set fileTable [$o(browser) GetFileListTable]
     set fileName [$fileTable GetNthSelectedFileName 0]
-    if { $fileName == "" } {
-      set directoryExplorer [$o(browser) GetDirectoryExplorer]
-      set directory [$directoryExplorer GetSelectedDirectory]
-      [$o(path) GetWidget] SetValue $directory
-      $this status "Directory: $directory"
-      [$o(name) GetWidget] SetValue ""
-    } else {
-      [$o(path) GetWidget] SetValue $fileName
-      $this status "File Name: $fileName"
-      set volName [file root [file tail $fileName]]
-      [$o(name) GetWidget] SetValue $volName
-      $this populateDICOMTable $fileName
+    if { [file isdirectory $fileName] } {
+      set fileName [lindex [glob $fileName/*] 0]
     }
-    set _processingEvents 0
+    set name [file root [file tail $fileName]]
+    $this selectArchetype $fileName $name
     return
   }
 
   if { $caller == $o(path) } {
-    set _processingEvents 1
     set path [[$o(path) GetWidget] GetValue]
-    set fileTable [$o(browser) GetFileListTable]
-    set directoryExplorer [$o(browser) GetDirectoryExplorer]
+    set name [file tail $path]
+    $this selectArchetype $path $name
+    return
+  }
 
+  if { $caller == $o(dicomParse) } {
+    set path [[$o(path) GetWidget] GetValue]
     if { [file isdirectory $path] } {
       set dir $path
     } else {
       set dir [file dirname $path]
     }
+    $this populateDICOMTree $dir _dicomTree
+    return
+  }
 
-    $directoryExplorer SelectDirectory $dir
-    $fileTable ClearSelection
-    $fileTable SelectFileName $path
-    set _processingEvents 0
+  set t [$o(dicomTree) GetWidget]
+  if { $caller == $t } {
+    set selection [$t GetSelection]
+    set name [$t GetNodeText $selection]
+    switch -glob $selection {
+      patient* {
+        set patient $name
+        set study [lindex $_dicomTree($patient,studies) 0]
+        set series [lindex $_dicomTree($patient,$study,series) 0]
+        set seriesNode series-[$this safeNodeName $series]
+      }
+      study* {
+        set patientNode [$t GetNodeParent $selection]
+        set patient [$t GetNodeText $patientNode]
+        set study $name
+        set series [lindex $_dicomTree($patient,$study,series) 0]
+        set seriesNode series-[$this safeNodeName $series]
+      }
+      series* {
+        set seriesNode $selection
+      }
+      file* {
+        set seriesNode [$t GetNodeParent $selection]
+      }
+      default {
+        errorDialog "can't parse selection \"$selection\""
+      }
+    }
+
+    $t SelectSingleNode $seriesNode
+    $t SeeNode $seriesNode
+
+    set archetypeNode [lindex [$t GetNodeChildren $seriesNode] 0]
+    set archetype [$t GetNodeText $archetypeNode]
+    $this selectArchetype $archetype [$t GetNodeText $seriesNode]
+
     return
   }
   
   puts "unknown event from $caller"
 }
+
+itcl::body LoadVolume::selectArchetype { path name } {
+
+  set fileTable [$o(browser) GetFileListTable]
+  set directoryExplorer [$o(browser) GetDirectoryExplorer]
+
+  if { [file isdirectory $path] } {
+    set dir $path
+  } else {
+    set dir [file dirname $path]
+  }
+
+  set _processingEvents 1
+  $directoryExplorer SelectDirectory $dir
+  $fileTable ClearSelection
+  $fileTable SelectFileName $path
+  $fileTable ScrollToFile [file tail $path]
+
+  [$o(path) GetWidget] SetValue $path
+  [$o(name) GetWidget] SetValue $name
+  $this populateDICOMTable $path
+  set _processingEvents 0
+}
+
 
 itcl::body LoadVolume::errorDialog { errorText } {
   set dialog [vtkKWMessageDialog New]
@@ -445,7 +539,23 @@ itcl::body LoadVolume::loadDICOMDictionary {} {
     return
   }
 
-  set fp [open $::env(ITK_BIN_DIR)/../Utilities/gdcm/Dicts/gdcm.dic]
+  set dicomDict ""
+  set dicomDictCandidates [list \
+    $::env(ITK_BIN_DIR)/../Utilities/gdcm/Dicts/gdcm.dic \
+    $::env(ITK_BIN_DIR)/../../Utilities/gdcm/Dicts/gdcm.dic]
+  foreach dictFile $dicomDictCandidates {
+    if { [file exists $dictFile] } {
+      set dicomDict $dictFile
+    }
+  }
+
+  if { $dicomDict == "" } {
+    $this errorDialog "Cannot find dicom dictionary to load"
+  set _DICOM(loaded) "Fail"
+    return
+  }
+
+  set fp [open $dicomDict]
   while { ![eof $fp] } {
     gets $fp line
     set group [lindex $line 0]
@@ -456,41 +566,170 @@ itcl::body LoadVolume::loadDICOMDictionary {} {
     set _DICOM($group|$element) $description
   }
   close $fp
-  set _DICOM(loaded) 1
 
+  set _DICOM(loaded) "Success"
 }
 
 itcl::body LoadVolume::populateDICOMTable {fileName} {
 
-  if { $fileName == "" || ![file exists $fileName] } {
+  set scrollState [[lindex [[[$o(dicomList) GetWidget] GetWidgetName] cget -yscrollcommand] 0] get]
+  [$o(dicomList) GetWidget] DeleteAllRows
+
+  $this parseDICOMHeader $fileName header
+  if { $fileName == "" || ![file exists $fileName] || !$header(isDICOM) } {
+    $o(dicomParse) SetStateToDisabled
+    return
+  }
+  $o(dicomParse) SetStateToNormal
+
+  set w [$o(dicomList) GetWidget] 
+  for {set n 0} {$n < $header(numberOfKeys)} {incr n} {
+    set key $header($n,key)
+    set description $header($key,description)
+    set value $header($key,value)
+    $w InsertCellText $n $_dicomColumn(Group/Element) $key
+    $w InsertCellText $n $_dicomColumn(Description) $description
+    $w InsertCellText $n $_dicomColumn(Value) $value
+  }
+  [[$o(dicomList) GetWidget] GetWidgetName] yview moveto [lindex $scrollState 0]
+}
+
+itcl::body LoadVolume::parseDICOMHeader {fileName arrayName} {
+
+  upvar $arrayName header
+  set header(fileName $fileName)
+  set header(isDICOM) 0
+
+  if { $fileName == "" || ![file exists $fileName] || [file isdirectory $fileName] } {
     return
   }
 
   $this loadDICOMDictionary
-
-  set scrollState [[lindex [[[$o(dicomList) GetWidget] GetWidgetName] cget -yscrollcommand] 0] get]
-  [$o(dicomList) GetWidget] DeleteAllRows
-  set w [$o(dicomList) GetWidget] 
 
   set reader [vtkITKArchetypeImageSeriesReader New]
   $reader SetArchetype $fileName
   $reader SetSingleFile 1
   $reader UpdateInformation
 
-  set number [$reader GetNumberOfItemsInDictionary]
-  for {set n 0} {$n < $number} {incr n} {
+  set isDICOM 0
+  set header(numberOfKeys) [$reader GetNumberOfItemsInDictionary]
+  for {set n 0} {$n < $header(numberOfKeys)} {incr n} {
     set key [$reader GetNthKey $n]
     set value [$reader GetTagValue $key]
 
     if { [info exists _DICOM($key)] } {
       set description $_DICOM($key)
-      $w InsertCellText $n $_dicomColumn(Group/Element) $key
-      $w InsertCellText $n $_dicomColumn(Description) $description
-      $w InsertCellText $n $_dicomColumn(Value) $value
-    } 
+      set isDICOM 1
+    } else {
+      set description "Unknown key"
+    }
+    set header($n,key) $key
+    set header($key,description) $description
+    set header($key,value) $value
   }
-  [[$o(dicomList) GetWidget] GetWidgetName] yview moveto [lindex $scrollState 0]
+  set header(isDICOM) $isDICOM
 
   $reader Delete
 }
 
+itcl::body LoadVolume::safeNodeName {name} {
+  set newname ""
+  set len [string length $name]
+  for {set n 0} {$n < $len} {incr n} {
+    set c [string index $name $n]
+    if { ![string is alnum $c] } {
+      scan $c "%c" value
+      set c [format %%%02x $value]
+    }
+    set newname $newname$c
+  }
+  return $newname
+}
+
+itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
+
+  upvar $arrayName tree
+  $this parseDICOMDirectory $directoryName tree
+  set t [$o(dicomTree) GetWidget]
+  $t DeleteAllNodes
+
+  foreach patient $tree(patients) {
+    set patientNode patient-[$this safeNodeName $patient]
+    $t AddNode "" $patientNode $patient
+    $t OpenNode $patientNode
+    foreach study $tree($patient,studies) {
+      set studyNode study-[$this safeNodeName $study]
+      $t AddNode $patientNode $studyNode $study
+      $t OpenNode $studyNode
+      foreach series $tree($patient,$study,series) {
+        set seriesNode series-[$this safeNodeName $series]
+        $t AddNode $studyNode $seriesNode $series
+        foreach file $tree($patient,$study,$series,files) {
+          set fileNode file-[$this safeNodeName $file]
+          $t AddNode $seriesNode $fileNode $file
+        }
+      }
+    }
+  }
+}
+
+itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
+
+  upvar $arrayName tree
+
+  set progressDialog [vtkKWProgressDialog New]
+  $progressDialog SetParent $o(toplevel)
+  $progressDialog SetMasterWindow $o(toplevel)
+  $progressDialog SetTitle "Parsing DICOM Files in $directoryName..."
+  $progressDialog SetMessageText "Starting..."
+  $progressDialog SetDisplayPositionToMasterWindowCenter
+  $progressDialog Create
+  $progressDialog Display
+
+  set PATIENT "0010|0010"
+  set STUDY "0008|1030"
+  set SERIES "0008|103e"
+
+  set files [glob $directoryName/*]
+  set totalFiles [llength $files]
+  set fileCount 0
+
+  set tree(patients) ""
+  foreach f $files {
+
+    set ff [file tail $f]
+    incr fileCount
+    set progress [expr pow((1. * $fileCount) / $totalFiles,2)]
+    $progressDialog SetMessageText "Exaining $ff..."
+    $progressDialog UpdateProgress $progress
+    update
+
+    $this parseDICOMHeader $f header
+
+    foreach key "patient study series" {
+      set tag [set [string toupper $key]]
+      if { ![info exists header($tag,value)] } {
+        set $key "Unknown"
+      } else {
+        set $key $header($tag,value)
+      }
+    }
+
+    if { [lsearch $tree(patients) $patient] == -1 } {
+      lappend tree(patients) $patient
+      set tree($patient,studies) ""
+    }
+    if { [lsearch $tree($patient,studies) $study] == -1 } {
+      lappend tree($patient,studies) $study
+      set tree($patient,$study,series) ""
+    }
+    if { [lsearch $tree($patient,$study,series) $series] == -1 } {
+      lappend tree($patient,$study,series) $series
+    }
+    lappend tree($patient,$study,$series,files) $f
+  }
+
+  $progressDialog SetParent ""
+  $progressDialog SetMasterWindow ""
+  $progressDialog Delete
+}
