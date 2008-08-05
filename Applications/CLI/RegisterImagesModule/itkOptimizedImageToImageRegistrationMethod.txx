@@ -563,7 +563,7 @@ OptimizedImageToImageRegistrationMethod< TImage >
   gradOpt->SetStepLength( 0.25 );
   gradOpt->SetStepTolerance( this->GetTargetError() );
   gradOpt->SetMaximumIteration( this->GetMaxIterations() );
-  gradOpt->SetMaximumLineIteration( this->GetMaxIterations() );
+  gradOpt->SetMaximumLineIteration( 10 );
   gradOpt->SetScales( this->GetTransformParametersScales() );
   gradOpt->SetUseUnitLengthGradient(true);
   gradOpt->SetToFletchReeves();
