@@ -376,8 +376,6 @@ itcl::body LoadVolume::apply { } {
     set name [file root [file tail $fileName]]
   }
 
-  puts "loading with archetype $fileName as $name"
-
   set volumeLogic [$::slicer3::VolumesGUI GetLogic]
   set ret [catch [list $volumeLogic AddArchetypeVolume "$fileName" $name $loadingOptions] node]
   if { $ret } {
@@ -570,6 +568,14 @@ itcl::body LoadVolume::loadDICOMDictionary {} {
   set _DICOM(loaded) "Success"
 }
 
+#
+# fill the listbox with header values
+# - save the scroll position to restore (so user can browse files while
+#   looking at a particular tag)
+# - show the most useful keys first, then show all keys
+# - parse directory button is only enabled on valid-looking dicom files
+#
+
 itcl::body LoadVolume::populateDICOMTable {fileName} {
 
   set scrollState [[lindex [[[$o(dicomList) GetWidget] GetWidgetName] cget -yscrollcommand] 0] get]
@@ -581,15 +587,33 @@ itcl::body LoadVolume::populateDICOMTable {fileName} {
     return
   }
   $o(dicomParse) SetStateToNormal
-
   set w [$o(dicomList) GetWidget] 
+
+  set firstKeys { 
+    0010|0010 0010|0020 0008|0060 0008|0020 
+    0008|1030 0008|0080 
+    
+    0020|0011 0008|103e
+  }
+
+  set row 0
+  foreach key $firstKeys {
+    set description $header($key,description)
+    set value $header($key,value)
+    $w InsertCellText $row $_dicomColumn(Group/Element) $key
+    $w InsertCellText $row $_dicomColumn(Description) $description
+    $w InsertCellText $row $_dicomColumn(Value) $value
+    incr row
+  }
+
   for {set n 0} {$n < $header(numberOfKeys)} {incr n} {
     set key $header($n,key)
     set description $header($key,description)
     set value $header($key,value)
-    $w InsertCellText $n $_dicomColumn(Group/Element) $key
-    $w InsertCellText $n $_dicomColumn(Description) $description
-    $w InsertCellText $n $_dicomColumn(Value) $value
+    $w InsertCellText $row $_dicomColumn(Group/Element) $key
+    $w InsertCellText $row $_dicomColumn(Description) $description
+    $w InsertCellText $row $_dicomColumn(Value) $value
+    incr row
   }
   [[$o(dicomList) GetWidget] GetWidgetName] yview moveto [lindex $scrollState 0]
 }
