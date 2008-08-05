@@ -1427,6 +1427,15 @@ int main(int argc, char * argv[])
         std::cout << "Writing to model scene output file: " << ModelSceneFile[0].c_str();
         std::cout << ", to url: " << modelScene->GetURL() << std::endl;
         }
+      // take out the colour nodes first
+      if (colorStorageNode != NULL)
+        {
+        modelScene->RemoveNode(colorStorageNode);
+        }
+      if (colorNode != NULL)
+        {
+        modelScene->RemoveNode(colorNode);
+        }
       modelScene->Commit();
       }
     
