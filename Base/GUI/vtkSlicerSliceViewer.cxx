@@ -61,6 +61,7 @@ vtkSlicerSliceViewer::vtkSlicerSliceViewer ( ) {
 
     this->ActorCollection = vtkActor2DCollection::New();
     this->PolyDataCollection = vtkPolyDataCollection::New();
+    this->LookupTableCollection = vtkCollection::New();
 
     this->RenderPending = 0;
 }
@@ -104,6 +105,12 @@ vtkSlicerSliceViewer::~vtkSlicerSliceViewer ( ){
       this->PolyDataCollection->Delete ( );
       this->PolyDataCollection = NULL;
       }
+    if ( this->LookupTableCollection )
+      {
+      this->LookupTableCollection->RemoveAllItems();
+      this->LookupTableCollection->Delete ( );
+      this->LookupTableCollection = NULL;
+      }
     if ( this->ActorCollection )
       {
       this->ActorCollection->RemoveAllItems();
@@ -135,54 +142,58 @@ void vtkSlicerSliceViewer::SetCoordinatedPolyDataAndLookUpTableCollections( vtkP
       vtkActor2D* actor = vtkActor2D::SafeDownCast( this->ActorCollection->GetItemAsObject(i) );
       vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(actor->GetMapper());
       vtkPolyData* polyData = mapper->GetInput();
+      vtkScalarsToColors* lut = vtkScalarsToColors::SafeDownCast(this->LookupTableCollection->GetItemAsObject(i));
 
-      if ( !newPolyDataCollection->IsItemPresent(polyData) )
+      if ( !newPolyDataCollection->IsItemPresent(polyData) || !newLookupTableCollection->IsItemPresent(lut))
         {
         this->PolyDataCollection->RemoveItem( polyData );
+        this->LookupTableCollection->RemoveItem( lut );
         this->ActorCollection->RemoveItem( actor );
         this->RenderWidget->GetRenderer()->RemoveActor( actor );
         }
       } // for
 
-      //All the actors that contain PolyDatas NOT INCLUDED in the
-      //PolyDataCollection collection are added to the polyDataMapper, actor and renderer collections
-      for(int i=newPolyDataCollection->GetNumberOfItems()-1; i>=0 ; i-- )
+    //All the actors that contain PolyDatas NOT INCLUDED in the
+    //PolyDataCollection collection are added to the polyDataMapper, actor and renderer collections
+    for(int i=newPolyDataCollection->GetNumberOfItems()-1; i>=0 ; i-- )
+      {
+      vtkPolyData* polyData = vtkPolyData::SafeDownCast(newPolyDataCollection->GetItemAsObject(i));
+      if (polyData==NULL)
         {
-        vtkPolyData* polyData = vtkPolyData::SafeDownCast(newPolyDataCollection->GetItemAsObject(i));
-        if (polyData==NULL)
-          {
-            vtkErrorMacro("There's an element in the PolyDataCollection which is not a PolyData");
-          } 
-          
-        if ( !this->PolyDataCollection->IsItemPresent(polyData) )
-          {
+          vtkErrorMacro("There's an element in the PolyDataCollection which is not a PolyData");
+        } 
+        
+      vtkScalarsToColors* newLUT = vtkScalarsToColors::SafeDownCast(newLookupTableCollection->GetItemAsObject(i));
+      if ( !this->PolyDataCollection->IsItemPresent(polyData) )
+        {
 //        vtkPolyDataMapper* mapper = vtkPolyDataMapper::New();
-          vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::New();
+        vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::New();
 
-          mapper->SetInput( polyData );
-  
-          vtkScalarsToColors* lookupTable = vtkScalarsToColors::SafeDownCast(newLookupTableCollection->GetItemAsObject(i));
-          if ( lookupTable != NULL ) 
-            {
-            mapper->SetLookupTable( lookupTable );
-            } 
-          else 
-            {
-            vtkErrorMacro("There is an object which is not a lookupTable in the newLookupTable Collection")
-            }
+        mapper->SetInput( polyData );
 
-          this->PolyDataCollection->AddItem( polyData );
-          vtkActor2D* actor = vtkActor2D::New();
+        if ( newLUT != NULL ) 
+          {
+          mapper->SetLookupTable( newLUT );
+          } 
+        else 
+          {
+          vtkErrorMacro("There is an object which is not a lookupTable in the newLookupTable Collection")
+          }
+
+        this->PolyDataCollection->AddItem( polyData );
+        this->LookupTableCollection->AddItem( newLUT );
+
+        vtkActor2D* actor = vtkActor2D::New();
 
 //        vtkActor* actor = vtkActor::New();
-          actor->SetMapper( mapper );
-          this->ActorCollection->AddItem( actor );
+        actor->SetMapper( mapper );
+        this->ActorCollection->AddItem( actor );
 
-          this->RenderWidget->GetRenderer()->AddActor( actor );
-          mapper->Delete();
-          actor->Delete();
+        this->RenderWidget->GetRenderer()->AddActor( actor );
+        mapper->Delete();
+        actor->Delete();
         }
-      }
+      } // for
   
       //Due to the double inclusion principle at the end the PolyDataCollection, ActorCollection and Renderer include only the PolyDatas and LookUp tables in the new collections and The actors and rendered actors collections are finec
   

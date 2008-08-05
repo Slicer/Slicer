@@ -34,6 +34,7 @@ public:
   vtkGetObjectMacro ( Actor2D, vtkActor2D );
   vtkGetObjectMacro ( ActorCollection, vtkActor2DCollection );
   vtkGetObjectMacro ( PolyDataCollection, vtkPolyDataCollection );
+  vtkGetObjectMacro ( LookupTableCollection, vtkCollection );
 
 
   vtkGetObjectMacro ( RenderWidget, vtkKWRenderWidget );
@@ -90,6 +91,7 @@ protected:
 
   vtkActor2DCollection *ActorCollection;
   vtkPolyDataCollection* PolyDataCollection;
+  vtkCollection* LookupTableCollection;
 
   int RenderPending;
 
