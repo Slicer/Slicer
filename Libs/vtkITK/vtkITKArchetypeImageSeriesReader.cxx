@@ -503,7 +503,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       imageIO = seriesReader->GetImageIO();
       }
     }
-   catch (...)
+    catch (...)
     {
     IjkToLpsMatrix->Delete();
     throw 1;
@@ -758,13 +758,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 
 
   itk::GDCMImageIO::Pointer gdcmIO = itk::GDCMImageIO::New();
-  gdcmIO->SetFileName( this->Archetype );
-  // if this->Archetype is not a DICOM file, we assume all files form a series and use them all.
-  try
-  {
-    gdcmIO->ReadImageInformation();
-  }
-  catch ( ... )
+  if ( !gdcmIO->CanReadFile(this->Archetype) )
   {
     for (int f = 0; f < nFiles; f++)
     {
@@ -815,6 +809,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
   }
 
   // if Archetype is a Dicom File
+  gdcmIO->SetFileName( this->Archetype );
   for (int f = 0; f < nFiles; f++)
   {
     gdcmIO->SetFileName( this->AllFileNames[f] );
@@ -985,5 +980,12 @@ const char* vtkITKArchetypeImageSeriesReader::GetTagValue( char* tag )
     }
   }
   return NULL;
+}
+
+unsigned int vtkITKArchetypeImageSeriesReader::AddFileName( char* filename )
+{
+  std::string filenamestr (filename);
+  this->FileNames.push_back( filenamestr );
+  return this->FileNames.size();
 }
 
