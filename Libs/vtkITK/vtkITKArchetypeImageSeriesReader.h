@@ -690,6 +690,7 @@ protected:
   int SelectedSlice;
   int SelectedOrientation;
 
+  unsigned int AddFileName( char* filename );
   //BTX
   std::vector<std::string> FileNames;
   CoordinateOrientationCode DesiredCoordinateOrientation;
