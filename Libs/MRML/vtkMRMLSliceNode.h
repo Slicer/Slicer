@@ -75,6 +75,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkSetMacro ( WidgetVisible, int );
 
   // Description:
+  // Use the label outline filter on this slice?
+  vtkGetMacro ( UseLabelOutline, int );
+  vtkSetMacro ( UseLabelOutline, int );
+  vtkBooleanMacro ( UseLabelOutline, int );
+  
+  // Description:
   // 'standard' radiological convention views of patient space
   // these calls adjust the SliceToRAS matrix to position the slice
   // cutting plane 
@@ -177,6 +183,7 @@ protected:
 
   int SliceVisible;
   int WidgetVisible;
+  int UseLabelOutline;
   double FieldOfView[3];
   unsigned int Dimensions[3];
   char *OrientationString;

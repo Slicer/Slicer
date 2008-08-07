@@ -292,6 +292,34 @@ static const unsigned char image_SliceWidgetOn[] =
   "4zMA8Mhi0hkZifAJcZmCibtLh3Z+tcGZzS8tD+yuCUxpD+/2sjnjieMm6BOoVDTzA+RcR6"
   "2Wz2BUZqL/c=";
 
+/* 
+ * Resource generated for file:
+ *    SliceLabelOutlineOff.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SliceLabelOutlineOff_width          = 21;
+static const unsigned int  image_SliceLabelOutlineOff_height         = 21;
+static const unsigned int  image_SliceLabelOutlineOff_pixel_size     = 3;
+static const unsigned long image_SliceLabelOutlineOff_length         = 152;
+static const unsigned long image_SliceLabelOutlineOff_decoded_length = 1323;
+
+static const unsigned char image_SliceLabelOutlineOff[] = 
+  "eNpjYmJgogxtJhfg0c4wVQ0ZkaQdqD7kvxsywmoCfu3r1q2bNWsWkCReO9y1QC2zYACiHd"
+  "MXaNqR3bwODCC2QxyA6Qus2pF1oTGI0T4LN6CD7UPa8WRHHIXJhvJES5UsQ2GGpby4IFI7"
+  "hQAAE6qUlA==";
+
+/* 
+ * Resource generated for file:
+ *    SliceLabelOutlineOn.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SliceLabelOutlineOn_width          = 21;
+static const unsigned int  image_SliceLabelOutlineOn_height         = 21;
+static const unsigned int  image_SliceLabelOutlineOn_pixel_size     = 3;
+static const unsigned long image_SliceLabelOutlineOn_length         = 120;
+static const unsigned long image_SliceLabelOutlineOn_decoded_length = 1323;
+
+static const unsigned char image_SliceLabelOutlineOn[] = 
+  "eNpjYmJgogxtJhfg0c4wgRsZkaQdqH7J0yIgYljHC2VgM4Hq2qGuXceLBWH4Ak07FksxGU"
+  "gmUF07dmejemHU8VTXTmGyGfA0T5UMS3lxQaR2CgEA5w9g1A==";
 
 /* 
  * Resource generated for file:
@@ -331,7 +359,7 @@ static const unsigned char image_SliceLabelOpacity[] =
 /* 
  * Resource generated for file:
  *    SlicesLabelOpacity.png (zlib, base64) (image file)
- */
+
 static const unsigned int  image_SlicesLabelOpacity_width          = 21;
 static const unsigned int  image_SlicesLabelOpacity_height         = 21;
 static const unsigned int  image_SlicesLabelOpacity_pixel_size     = 3;
@@ -342,8 +370,21 @@ static const unsigned char image_SlicesLabelOpacity[] =
   "eNpjYKAUbCYX4NE++/js9gNdORsKAxeGm0+0JUn7wv0Lz1w+duneyfr9Date1Cx5WiTXrE"
   "oH7Qv2LgAioHYgmndiHlB7yb6ShM0JQO1csXycIZx4tAM1Hjl+BIgwbVfZqtd3N6jrlg+b"
   "BRvttBN0PE1tH7GOpzDZUCvNz987H6K96WAzGdqBYNKhSWRnWMqLC+K1UwIAwIO4gQ==";
+*/
+/* 
+ * Resource generated for file:
+ *    SlicesLabelOpacity.png (zlib, base64) (image file)
+ */
+static const unsigned int  image_SlicesLabelOpacity_width          = 21;
+static const unsigned int  image_SlicesLabelOpacity_height         = 21;
+static const unsigned int  image_SlicesLabelOpacity_pixel_size     = 3;
+static const unsigned long image_SlicesLabelOpacity_length         = 208;
+static const unsigned long image_SlicesLabelOpacity_decoded_length = 1323;
 
-
+static const unsigned char image_SlicesLabelOpacity[] = 
+  "eNpjYKAUbCYX4NE++/js9gNdORsKAxeGm0+0JUn7wv0Lz1w+duneyfr9Date1Cx5WiTXrE"
+  "oH7Qv2LgAioHYgmndiHlB7yb6ShM0JQO3SJYpAhEc7UOOR40eACNN2hnW8fXeDum75IJtA"
+  "de24HA/UDkE0tX3EOp7CZEOtND9/73yI9qaDzWRoB4JJhyaRnWEpLy6I104JAACj7rxD";
 
 /* 
  * Resource generated for file:

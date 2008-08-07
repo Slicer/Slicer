@@ -29,6 +29,8 @@
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 
+#include "vtkImageLabelOutline.h"
+
 #include "vtkPointData.h"
 
 #include "vtkDiffusionTensorMathematics.h"
@@ -47,8 +49,8 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
    
   this->XYToIJKTransform = vtkTransform::New();
 
-  this->UseReslice = 1;
-
+  this->IsLabelLayer = 0;
+  
   this->AssignAttributeTensorsFromScalars= vtkAssignAttribute::New();
   this->AssignAttributeScalarsFromTensors= vtkAssignAttribute::New();
   this->AssignAttributeTensorsFromScalars->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);  
@@ -63,10 +65,9 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
   this->ResliceExtractAlpha = vtkImageExtractComponents::New();
   this->ResliceAlphaCast = vtkImageCast::New();
   this->AlphaLogic = vtkImageLogic::New();
-  this->MapToColors = vtkImageMapToColors::New();
   this->Threshold = vtkImageThreshold::New();
+  this->LabelOutline = vtkImageLabelOutline::New();
   this->AppendComponents = vtkImageAppendComponents::New();
-  this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
 
   // Create the parts for the DWI layer pipeline
   this->DWIExtractComponent = vtkImageExtractComponents::New();
@@ -105,9 +106,6 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 
   this->AlphaLogic->SetOperationToAnd();
   this->AlphaLogic->SetOutputTrueValue(255);
-
-  this->MapToColors->SetOutputFormatToRGB();
-
 }
 
 //----------------------------------------------------------------------------
@@ -133,19 +131,17 @@ vtkSlicerSliceLayerLogic::~vtkSlicerSliceLayerLogic()
   this->Slice->SetInput( NULL );
   this->Reslice->SetInput( NULL );
   this->Threshold->SetInput( NULL );
+  this->LabelOutline->SetInput( NULL );
   this->AppendComponents->SetInput( NULL );
-  this->MapToWindowLevelColors->SetInput( NULL );
-  this->MapToColors->SetInput( NULL );
 
   this->Slice->Delete();
   this->Reslice->Delete();
   this->DTIReslice->Delete();
   this->DWIExtractComponent->Delete();
   this->DTIMathematics->Delete();
-  this->MapToColors->Delete();
   this->Threshold->Delete();
+  this->LabelOutline->Delete();
   this->AppendComponents->Delete();
-  this->MapToWindowLevelColors->Delete();
   this->ResliceThreshold->Delete();
   this->ResliceAppendComponents->Delete();
   this->ResliceExtractLuminance->Delete();
@@ -194,13 +190,6 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
         {
         this->VolumeDisplayNode->CopyWithoutModifiedEvent(this->VolumeDisplayNodeObserved);
         }
-    // reset the colour look up table
-    if (this->VolumeDisplayNodeObserved != NULL
-      && this->VolumeDisplayNodeObserved->GetColorNode() != NULL)
-      {
-      vtkDebugMacro("vtkSlicerSliceLayerLogic::ProcessMRMLEvents: got a volume display node modified event, updating the map to colors!\n");
-      this->MapToColors->SetLookupTable( this->VolumeDisplayNodeObserved->GetColorNode()->GetLookupTable());
-      }
     vtkMRMLDiffusionTensorVolumeDisplayNode *dtiVDN = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(caller);
     if (this->VolumeDisplayNode == dtiVDN && dtiVDN != NULL)
       {
@@ -213,7 +202,7 @@ void vtkSlicerSliceLayerLogic::ProcessMRMLEvents(vtkObject * caller,
       {      
       vtkDebugMacro("vtkSlicerSliceLayerLogic::ProcessMRMLEvents: volume display node " \
           << (this->VolumeDisplayNode == NULL ? " is null" : "is set, but") \
-          << ", not updating map to colors (color node may be null)\n");
+          << ", not updating (color node may be null)\n");
       }
     }
   this->UpdateTransforms();
@@ -362,8 +351,6 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::UpdateTransforms()
 {
-  //int labelMap = 0;  // keep track so label maps don't get interpolated
-
   // Ensure display node matches the one we are observing
   this->UpdateNodeReferences();
   
@@ -405,26 +392,7 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
     vtkMatrix4x4 *rasToIJK = vtkMatrix4x4::New();
     this->VolumeNode->GetRASToIJKMatrix(rasToIJK);
     vtkMatrix4x4::Multiply4x4(rasToIJK, xyToIJK, xyToIJK); 
-    rasToIJK->Delete();
-    
-    /***
-    if (this->VolumeNode->IsA("vtkMRMLScalarVolumeNode"))
-      {
-      this->ScalarVolumeNodeUpdateTransforms();
-      }
-    else if (this->VolumeNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
-      {
-      this->DiffusionWeightedVolumeNodeUpdateTransforms();
-      }
-    else if (this->VolumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
-      {
-      this->DiffusionTensorVolumeNodeUpdateTransforms();
-      }
-    else if (this->VolumeNode->IsA("vtkMRMLVectorVolumeNode"))
-      {
-      this->VectorVolumeNodeUpdateTransforms();
-      }
-      ***/
+    rasToIJK->Delete();    
   }
 
   this->XYToIJKTransform->SetMatrix( xyToIJK );
@@ -441,51 +409,6 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
   this->UpdateImageDisplay();
 
   this->Modified();
-}
-
-
-void vtkSlicerSliceLayerLogic::ScalarVolumeNodeUpdateTransforms()
-{
-  int labelMap = 0;
-  double window = 0;
-  double level = 0;
-  int interpolate = 0;
-  int applyThreshold = 0;
-  double lowerThreshold = 0;
-  double upperThreshold = 0;
-  vtkLookupTable *lookupTable = NULL;
-  vtkMRMLScalarVolumeNode *scalarVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast (this->VolumeNode);
-  if ( scalarVolumeNode && scalarVolumeNode->GetLabelMap() )
-    {
-    labelMap = 1;
-    }
-  else
-    {
-    labelMap = 0;
-    }
-
-  vtkMRMLVolumeDisplayNode *volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
-  if (volumeDisplayNode && volumeDisplayNode->GetColorNode())
-    {
-    lookupTable = volumeDisplayNode->GetColorNode()->GetLookupTable();
-    }
-
-  vtkMRMLScalarVolumeDisplayNode *scalarVolumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
-
-  if (scalarVolumeDisplayNode)
-    {
-    interpolate = scalarVolumeDisplayNode->GetInterpolate();
-    window = scalarVolumeDisplayNode->GetWindow();
-    level = scalarVolumeDisplayNode->GetLevel();
-    applyThreshold = scalarVolumeDisplayNode->GetApplyThreshold();
-    lowerThreshold = scalarVolumeDisplayNode->GetLowerThreshold();
-    upperThreshold = scalarVolumeDisplayNode->GetUpperThreshold();
-    }
-
-  this->ScalarSlicePipeline(scalarVolumeNode->GetImageData(), labelMap, window, level, interpolate, lookupTable, applyThreshold, lowerThreshold, upperThreshold);
-
-  this->Slice->SetSliceTransform( this->XYToIJKTransform ); 
-  this->Reslice->SetResliceTransform( this->XYToIJKTransform ); 
 }
 
 void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
@@ -544,7 +467,20 @@ void vtkSlicerSliceLayerLogic::UpdateImageDisplay()
   else if (volumeNode) 
     {
     this->Reslice->SetInput( volumeNode->GetImageData());
-    slicedImageData = this->Reslice->GetOutput();
+    // use the label outline if we have a label map volume, this is the label
+    // layer (turned on in slice logic when the label layer is instantiated)
+    // and the slice node is set to use it.
+    if (labelMapVolumeDisplayNode && this->GetIsLabelLayer() &&
+        this->GetSliceNode()->GetUseLabelOutline() )
+      {
+      vtkDebugMacro("UpdateImageDisplay: volume node (not diff tensor), using label outline");
+      this->LabelOutline->SetInput( this->Reslice->GetOutput() );
+      slicedImageData = this->LabelOutline->GetOutput();
+      }
+    else
+      {
+      slicedImageData = this->Reslice->GetOutput();
+      }
     }
 
   if (volumeDisplayNode)
@@ -621,357 +557,6 @@ void vtkSlicerSliceLayerLogic::UpdateGlyphs(vtkImageData *sliceImage)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::VectorVolumeNodeUpdateTransforms()
-{
-  //double window = 0;  UNUSED
-  //double level = 0;  UNUSED
-  int interpolate = 0;
-  //int applyThreshold = 0;  UNUSED
-  //double lowerThreshold = 0;  UNUSED
-  //double upperThreshold = 0;  UNUSED
-  //vtkLookupTable *lookupTable = NULL;  UNUSED
-  vtkMRMLVectorVolumeNode *vectorVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast (this->VolumeNode);
-
-  vtkMRMLVectorVolumeDisplayNode *vectorVolumeDisplayNode = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
-
-  if (vectorVolumeDisplayNode)
-    {
-    interpolate = vectorVolumeDisplayNode->GetInterpolate();
-    }
-
-  this->VectorSlicePipeline(vectorVolumeNode->GetImageData(), interpolate);
-
-  this->Slice->SetSliceTransform( this->XYToIJKTransform ); 
-  this->Reslice->SetResliceTransform( this->XYToIJKTransform );
-}
-
-//----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::DiffusionWeightedVolumeNodeUpdateTransforms()
-{
-  double window = 0;
-  double level = 0;
-  int interpolate = 0;
-  int applyThreshold = 0;
-  double lowerThreshold = 0;
-  double upperThreshold = 0;
-  vtkLookupTable *lookupTable = NULL;
-  vtkMRMLDiffusionWeightedVolumeNode *dwiVolumeNode = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast (this->VolumeNode);
-  if (dwiVolumeNode)
-    {
-     this->DWIExtractComponent->SetInput(dwiVolumeNode->GetImageData());
-    }
-  else
-    {
-    this->DWIExtractComponent->SetInput(NULL);
-    }
-
-  vtkMRMLDiffusionWeightedVolumeDisplayNode *dwiVolumeDisplayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
-
-  if (dwiVolumeDisplayNode)
-    {
-    this->DWIExtractComponent->SetComponents(dwiVolumeDisplayNode->GetDiffusionComponent());
-    interpolate = dwiVolumeDisplayNode->GetInterpolate();
-    if (dwiVolumeDisplayNode->GetColorNode())
-      {
-      lookupTable = dwiVolumeDisplayNode->GetColorNode()->GetLookupTable();
-      }
-    window = dwiVolumeDisplayNode->GetWindow();
-    level = dwiVolumeDisplayNode->GetLevel();
-    applyThreshold = dwiVolumeDisplayNode->GetApplyThreshold();
-    lowerThreshold = dwiVolumeDisplayNode->GetLowerThreshold();
-    upperThreshold = dwiVolumeDisplayNode->GetUpperThreshold();
-    }
-
-  this->ScalarSlicePipeline(this->DWIExtractComponent->GetOutput(),0,window,level,interpolate, lookupTable, applyThreshold,lowerThreshold,upperThreshold);
-
-  this->Slice->SetSliceTransform( this->XYToIJKTransform ); 
-  this->Reslice->SetResliceTransform( this->XYToIJKTransform ); 
-}
-
-
-//----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::DiffusionTensorVolumeNodeUpdateTransforms()
-{
-
-  double window = 0;
-  double level = 0;
-  int interpolate = 0;
-  int applyThreshold = 0;
-  double lowerThreshold = 0;
-  double upperThreshold = 0;
-  vtkLookupTable *lookupTable = NULL;
-  vtkImageData *inVol;
-
-  vtkMRMLDiffusionTensorVolumeNode *dtiVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast (this->VolumeNode);
-
-  if (dtiVolumeNode)
-    {
-     inVol = this->VolumeNode->GetImageData();
-     this->DTIMathematics->SetInput(0,inVol);
-     this->DTIMathematics->SetInput(1,inVol);
-    }
-  else
-    {
-    this->DTIMathematics->SetInput(0,NULL);
-    this->DTIMathematics->SetInput(1,NULL);
-    }
-
-  vtkMRMLDiffusionTensorVolumeDisplayNode *dtiVolumeDisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode);
-
-  if (dtiVolumeDisplayNode)
-    {
-    //this->DTIMathematics->SetOperation(dtiVolumeDisplayNode->GetScalarMode());
-    interpolate = dtiVolumeDisplayNode->GetInterpolate();
-    if (dtiVolumeDisplayNode->GetColorNode())
-      {
-      lookupTable = dtiVolumeDisplayNode->GetColorNode()->GetLookupTable();
-      }
-    window = dtiVolumeDisplayNode->GetWindow();
-    level = dtiVolumeDisplayNode->GetLevel();
-    applyThreshold = dtiVolumeDisplayNode->GetApplyThreshold();
-    lowerThreshold = dtiVolumeDisplayNode->GetLowerThreshold();
-    upperThreshold = dtiVolumeDisplayNode->GetUpperThreshold();
-
-    if (dtiVolumeDisplayNode->GetDiffusionTensorDisplayPropertiesNode())
-      {
-      this->DTIMathematics->SetOperation(dtiVolumeDisplayNode->GetDiffusionTensorDisplayPropertiesNode()->GetScalarInvariant());
-      }
-    }
-
-   //this->DTIMathematics->Update();
-   cout<<"DTIMathematics Number Scalar components: "<<this->DTIMathematics->GetOutput()->GetNumberOfScalarComponents()<<endl;
-  //this->DTIMathematics->GetOutput()->SetNumberOfScalarComponents(1);
-  this->ScalarSlicePipeline(this->DTIMathematics->GetOutput(),0,window,level,interpolate, lookupTable, applyThreshold,lowerThreshold,upperThreshold);
-
-  //Set the right transformations
-  this->DTIReslice->SetResliceTransform(this->XYToIJKTransform );
-  this->Slice->SetSliceTransform(this->XYToIJKTransform); 
-  this->Reslice->SetResliceTransform(this->XYToIJKTransform); 
-
-}
-
-#include <vtkInformation.h>
-//----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::ScalarSlicePipeline(vtkImageData *imageData, int labelMap, double window, double level, int interpolate, vtkLookupTable *lookupTable, int applyThreshold, double lowerThreshold, double upperThreshold)
-{
-
-  if ( imageData && labelMap )
-    {
-    this->Slice->SetInterpolationModeToNearestNeighbor();
-    this->Reslice->SetInterpolationModeToNearestNeighbor();
-    }
-  else
-    {
-    this->Slice->SetInterpolationModeToLinear();
-    this->Reslice->SetInterpolationModeToLinear();
-    }
-
-  this->Slice->SetInput( imageData ); 
-  this->Reslice->SetInput( imageData ); 
-
-  // Prime the imaging pipeline
-  // - add an alpha channel to the input data
-
-  if ( this->GetUseReslice() )
-    {
-    this->ResliceThreshold->SetInput( this->Reslice->GetOutput() ); 
-    }
-  else
-    {
-    this->ResliceThreshold->SetInput( this->Slice->GetOutput() );
-    }
-
-
-    //
-    // Configure the imaging pipeline
-    //
-    // - make an alpha channel for the image data from the node
-    // - perform the reslice 
-    // - extract the luminance and alpha for individual processing
-    // -- use the luminance to get a second alpha channel
-    // -- or the two alpha channels
-    // - run the luminance through the window level and color maps
-    // - append the alpha channel to the final RGB image
-    //
-
-  this->ResliceAlphaCast->SetInput( this->Reslice->GetBackgroundMask());//GetOutput() );//
-
-  if ( interpolate && !labelMap )
-    {
-    this->Slice->SetInterpolationModeToLinear();
-    this->Reslice->SetInterpolationModeToLinear();
-    }
-  else
-    {
-    this->Slice->SetInterpolationModeToNearestNeighbor();
-    this->Reslice->SetInterpolationModeToNearestNeighbor();
-    }
-
-  // update the lookup table
-  if (lookupTable)
-    {
-    if (lookupTable != this->MapToColors->GetLookupTable())
-      {
-      vtkDebugMacro("vtkSlicerSliceLayerLogic::UpdateTransforms: volume display node lut isn't the same as the map to colours lut, resetting the map to cols\n");
-      this->MapToColors->SetLookupTable(lookupTable);
-      }
-    }
-  else
-    {
-    vtkDebugMacro("vtkSlicerSliceLayerLogic::UpdateTransforms: volume display node doesn't have a color node, not updating the map to colours\n");
-    }
-  if ( labelMap ) 
-    {
-    // Don't put label maps through the window/level filter,
-    // because this will map them to unsigned char
-    if ( this->GetUseReslice() )
-      {
-      this->MapToColors->SetInput( this->Reslice->GetOutput() );
-      }
-    else
-      {
-      this->MapToColors->SetInput( this->Slice->GetOutput() );
-      }
-    } 
-  else
-    {
-    // a non-label map is windowed first, then mapped through lookup table
-    this->MapToWindowLevelColors->SetWindow(window);
-    this->MapToWindowLevelColors->SetLevel(level);
-    if ( this->GetUseReslice() )
-      {
-      this->MapToWindowLevelColors->SetInput( this->Reslice->GetOutput() );
-      }
-    else
-      {
-      this->MapToWindowLevelColors->SetInput( this->Slice->GetOutput() );
-      }
-    //this->MapToWindowLevelColors->SetInput( this->ResliceExtractLuminance->GetOutput() );
-    this->MapToWindowLevelColors->SetOutputFormatToLuminance();
-    this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
-    }
-
-  if ( this->GetUseReslice() )
-    {
-    this->Threshold->SetInput( this->Reslice->GetOutput() );
-    }
-  else
-    {
-    this->Threshold->SetInput( this->Slice->GetOutput() );
-    }  
-  this->Threshold->SetOutputScalarTypeToUnsignedChar();
-
-  if ( applyThreshold )
-    {
-    this->Threshold->ReplaceInOn();
-    this->Threshold->SetInValue(255);
-    this->Threshold->ReplaceOutOn();
-    this->Threshold->SetOutValue(0);
-    this->Threshold->ThresholdBetween( lowerThreshold, 
-                                         upperThreshold );
-    }
-  else
-    {
-    if ( labelMap ) // RSierra; caution!! If the labelmap exceeds 255 the alpha will go funny
-      {
-      // don't apply threshold - let it come from the label map
-      this->Threshold->ReplaceInOff();
-      this->Threshold->ReplaceOutOff();
-      } 
-    else
-      {
-      // don't apply threshold - alpha channel becomes 255 everywhere
-      this->Threshold->ThresholdBetween( 1, 0 ); 
-      this->Threshold->ReplaceInOn();
-      this->Threshold->SetInValue(255);
-      this->Threshold->ReplaceOutOn();
-      this->Threshold->SetOutValue(255);
-      }
-    }
-
-  this->AlphaLogic->SetInput1( this->ResliceAlphaCast->GetOutput() );
-  this->AlphaLogic->SetInput2( this->Threshold->GetOutput() );
-
-  this->AppendComponents->RemoveAllInputs();
-  this->AppendComponents->SetInputConnection(0, this->MapToColors->GetOutput()->GetProducerPort() );
-  this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutput()->GetProducerPort() );
-  }
-
-
-//----------------------------------------------------------------------------
-void vtkSlicerSliceLayerLogic::VectorSlicePipeline(vtkImageData *imageData, int interpolate)
-{
-
-  if ( imageData && interpolate )
-    {
-    this->Slice->SetInterpolationModeToNearestNeighbor();
-    this->Reslice->SetInterpolationModeToNearestNeighbor();
-    }
-  else
-    {
-    this->Slice->SetInterpolationModeToLinear();
-    this->Reslice->SetInterpolationModeToLinear();
-    }
-
-  this->Slice->SetInput( imageData );
-  this->Reslice->SetInput( imageData );
-
-    //
-    // Configure the imaging pipeline
-    //
-    // - make an alpha channel for the image data from the node
-    // - perform the reslice 
-    // - extract the luminance and alpha for individual processing
-    // -- use the luminance to get a second alpha channel
-    // -- or the two alpha channels
-    // - run the luminance through the window level and color maps
-    // - append the alpha channel to the final RGB image
-    //
-
-  if ( this->GetUseReslice() )
-    {
-    this->ResliceExtractLuminance->SetInput(this->Reslice->GetOutput() );
-    }
-  else 
-    {
-    this->ResliceExtractLuminance->SetInput(this->Slice->GetOutput() );
-    }
-  this->ResliceExtractLuminance->SetComponents(0);
-
-  if ( this->GetUseReslice() )
-    {
-    this->ResliceExtractAlpha->SetInput(this->Reslice->GetOutput() );
-    }
-  else
-    {
-    this->ResliceExtractAlpha->SetInput(this->Slice->GetOutput() );
-    }
-  this->ResliceExtractAlpha->SetComponents(1);
-  this->ResliceAlphaCast->SetInput( this->ResliceExtractAlpha->GetOutput() );
-
-  if ( interpolate )
-    {
-    this->Slice->SetInterpolationModeToLinear();
-    this->Reslice->SetInterpolationModeToLinear();
-    }
-  else
-    {
-    this->Slice->SetInterpolationModeToNearestNeighbor();
-    this->Reslice->SetInterpolationModeToNearestNeighbor();
-    }
-
-  this->AppendComponents->RemoveAllInputs();
-  if ( this->GetUseReslice() )
-    {
-    this->AppendComponents->SetInputConnection(0, this->Reslice->GetOutput()->GetProducerPort() );
-    }
-  else
-    {
-    this->AppendComponents->SetInputConnection(0, this->Slice->GetOutput()->GetProducerPort() );
-    }
-  }
-
-//----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
@@ -1016,23 +601,14 @@ void vtkSlicerSliceLayerLogic::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << " (NULL)\n";
     }
-  os << indent << "MapToColors:\n";
-  if (this->MapToColors)
+  os << indent << "IsLabelLayer: " << this->GetIsLabelLayer() << "\n";
+  os << indent << "LabelOutline:\n";
+  if (this->LabelOutline)
     {
-    this->MapToColors->PrintSelf(os, nextIndent);
-    }
-  else
-    {
-    os << indent << " (NULL)\n";
-    }
-  os << indent << "MapToWindowLevelColors:\n";
-  if (this->MapToWindowLevelColors)
-    {
-    this->MapToWindowLevelColors->PrintSelf(os, nextIndent);
+    this->LabelOutline->PrintSelf(os, nextIndent);
     }
   else
     {
     os << indent << " (NULL)\n";
     }
 }
-

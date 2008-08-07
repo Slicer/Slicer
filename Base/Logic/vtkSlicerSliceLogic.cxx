@@ -314,6 +314,8 @@ void vtkSlicerSliceLogic::ProcessLogicEvents()
   if ( this->LabelLayer == NULL )
     {
     vtkSlicerSliceLayerLogic *layer = vtkSlicerSliceLayerLogic::New();
+    // turn on using the label outline only in this layer
+    layer->IsLabelLayerOn();
     this->SetLabelLayer (layer);
     layer->Delete();
     }

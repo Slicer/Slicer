@@ -52,6 +52,7 @@ vtkSlicerSliceControllerWidget::vtkSlicerSliceControllerWidget ( ) {
   this->LabelOpacityScale = NULL;
   this->LabelOpacityToggleButton = NULL;
   this->LabelOpacityTopLevel = NULL;
+  this->LabelOutlineToggleButton = NULL;
   this->LightboxTopLevel = NULL;
   this->LinkButton = NULL;
   this->VisibilityIcons = NULL;
@@ -188,6 +189,12 @@ vtkSlicerSliceControllerWidget::~vtkSlicerSliceControllerWidget ( ){
     this->LabelOpacityTopLevel->Delete  ( );
     this->LabelOpacityTopLevel = NULL;
     }
+  if ( this->LabelOutlineToggleButton )
+    {
+    this->LabelOutlineToggleButton->SetParent(NULL);
+    this->LabelOutlineToggleButton->Delete  ( );
+    this->LabelOutlineToggleButton = NULL;
+    }
   if ( this->LightboxTopLevel )
     {
     this->LightboxTopLevel->SetParent(NULL);
@@ -301,6 +308,7 @@ void vtkSlicerSliceControllerWidget::AddWidgetObservers ( )
     this->LabelOpacityScale->GetScale ( )->AddObserver( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
     this->LabelOpacityScale->GetScale ( )->AddObserver( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
     this->LabelOpacityToggleButton->AddObserver(vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
+    this->LabelOutlineToggleButton->AddObserver(vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->LinkButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->FitToWindowButton->AddObserver (vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->MoreMenuButton->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand );
@@ -330,6 +338,7 @@ void vtkSlicerSliceControllerWidget::RemoveWidgetObservers ( ) {
     this->LabelOpacityScale->GetScale ( )->RemoveObservers( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
     this->LabelOpacityScale->GetScale ( )->RemoveObservers( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
     this->LabelOpacityToggleButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
+    this->LabelOutlineToggleButton->RemoveObservers ( vtkKWPushButton::InvokedEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangingEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueChangedEvent, this->GUICallbackCommand );
     this->OffsetScale->GetWidget()->RemoveObservers ( vtkKWScale::ScaleValueStartChangingEvent, this->GUICallbackCommand );
@@ -557,6 +566,8 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
         this->LoadDataButton->SetParent ( this->ContainerFrame );      
     this->FitToWindowButton = vtkKWPushButton::New ( );
     this->FitToWindowButton->SetParent ( this->ContainerFrame );
+    this->LabelOutlineToggleButton = vtkKWPushButton::New ( );
+    this->LabelOutlineToggleButton->SetParent ( this->ContainerFrame );
     this->VolumeDisplayMenuButton = vtkKWMenuButton::New ( );
     this->VolumeDisplayMenuButton->SetParent ( this->ContainerFrame );
     this->LightboxButton = vtkKWMenuButton::New();
@@ -600,6 +611,15 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->FitToWindowButton->SetImageToIcon ( this->SliceControlIcons->GetFitToWindowIcon ( ));    
     this->FitToWindowButton->SetBalloonHelpString ( "Adjusts the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).");
 
+    //
+    // Create a button to toggle the label outline view
+
+    this->LabelOutlineToggleButton->Create();
+    this->LabelOutlineToggleButton->SetReliefToFlat ( );
+    this->LabelOutlineToggleButton->SetOverReliefToNone ( );
+    this->LabelOutlineToggleButton->SetBorderWidth ( 0 );
+    this->LabelOutlineToggleButton->SetImageToIcon ( this->SliceControlIcons->GetSliceLabelOutlineOnIcon ( ));    
+    this->LabelOutlineToggleButton->SetBalloonHelpString ( "Adjusts the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).");
     //
     // Create a menubutton that navigates to Volumes->Display
     // 
@@ -719,6 +739,14 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  this->SliceControlIcons->GetAllLabelOpacityIcon ( ));
     this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
     this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+
+    this->MoreMenuButton->GetMenu()->AddCommand ("Show label volume outlines", this, "ToggleLabelOutline" );
+    index = this->MoreMenuButton->GetMenu()->GetIndexOfItem ( "Show label volume outlines");
+    imageName = "SliceLabelOutlineImage";
+    vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  this->SliceControlIcons->GetSliceLabelOutlineOnIcon ( ));
+    this->MoreMenuButton->GetMenu()->SetItemImage ( index, imageName);
+    this->MoreMenuButton->GetMenu()->SetItemCompoundModeToLeft ( index );
+    
 
     this->MoreMenuButton->GetMenu()->AddCommand ("Show reformat widget", this, "ToggleReformatWidget");
     index = this->MoreMenuButton->GetMenu()->GetIndexOfItem ( "Show reformat widget");
@@ -1203,6 +1231,145 @@ void vtkSlicerSliceControllerWidget::UpdateLabelLayer ( int link )
 //  vgui->GetDisplayFrame()->ExpandFrame();
 //}
 
+//----------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::ToggleLabelOutline()
+{
+  int link = 0;
+
+  //--- swallow the menu event
+  if ( this->GUICallbackCommand != NULL )
+    {
+    this->GUICallbackCommand->SetAbortFlag(1);
+    }
+
+  //
+  // --- Find out whether SliceViewers are linked or unlinked
+  // --- so we know how to handle control.
+  //
+  if ( this->SliceCompositeNode )
+    {
+    link = this->SliceCompositeNode->GetLinkedControl ( );
+    }
+
+  this->ToggleLabelOutline ( link );
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerSliceControllerWidget::ToggleLabelOutline( int link)
+{
+  vtkSlicerSlicesGUI *ssgui;
+  vtkSlicerSliceGUI *sgui;
+  vtkSlicerApplication *app;
+  vtkSlicerApplicationGUI *appGUI;
+  int found = 0;
+    
+  // find the sliceGUI for this controller
+  app = vtkSlicerApplication::SafeDownCast (this->GetApplication());
+  ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
+  appGUI = ssgui->GetApplicationGUI ( );
+
+
+  const char *imageName = "SliceLabelOutlineImage";
+  
+  if (ssgui)
+    {
+    char *layoutname = NULL;
+    int nSliceGUI = ssgui->GetNumberOfSliceGUI();
+    
+    for (int i = 0; i < nSliceGUI; i++)
+      {
+      if (i == 0)
+        {
+        sgui = ssgui->GetFirstSliceGUI();
+        layoutname = ssgui->GetFirstSliceGUILayoutName();
+        }
+      else
+        {
+        sgui = ssgui->GetNextSliceGUI(layoutname);
+        layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+        }
+      
+      if (sgui)
+        {
+        if (sgui->GetSliceController() == this )
+          {
+          found = 1;
+          break;
+          }
+        }
+      }
+    }
+  else
+    {
+    return;
+    }
+
+  if ( found )
+    {
+    if ( link )
+      {
+      
+      // First save all SliceNodes for undo: -- probably not necessary
+      vtkCollection *nodes = vtkCollection::New();
+      char *layoutname = NULL;
+      int nSliceGUI = ssgui->GetNumberOfSliceGUI();
+      for (int i = 0; i < nSliceGUI; i++)
+        {
+        if (i == 0)
+          {
+          sgui = ssgui->GetFirstSliceGUI();
+          layoutname = ssgui->GetFirstSliceGUILayoutName();
+          }
+        else
+          {
+          sgui = ssgui->GetNextSliceGUI(layoutname);
+          layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+          }
+        
+        if (sgui)
+          {
+          nodes->AddItem ( sgui->GetSliceNode ( ) );
+          }
+        }
+      
+      this->MRMLScene->SaveStateForUndo ( nodes );
+      nodes->Delete ( );
+
+      // Set all linked slice nodes' slice layer logic's  to be the toggled state of this one.
+      int val =  !this->SliceNode->GetUseLabelOutline(); 
+      for (int i = 0; i < nSliceGUI; i++)
+        {
+        if (i == 0)
+          {
+          sgui = ssgui->GetFirstSliceGUI();
+          layoutname = ssgui->GetFirstSliceGUILayoutName();
+          }
+        else
+          {
+          sgui = ssgui->GetNextSliceGUI(layoutname);
+          layoutname = ssgui->GetNextSliceGUILayoutName(layoutname);
+          }
+        
+        if (sgui)
+          {
+          vtkDebugMacro("Linked: using this slice node's label outline to toggle to: " << val);
+          sgui->GetSliceNode()->SetUseLabelOutline(val);
+          }
+        }
+      }
+    else
+      {
+      this->MRMLScene->SaveStateForUndo ( this->SliceNode );
+      // toggle the label map outline
+      if (sgui)
+        {
+        int val = !this->SliceNode->GetUseLabelOutline(); 
+        vtkDebugMacro("Not linked: using this slice node's label outline to toggle to: " << val);
+        this->SliceNode->SetUseLabelOutline(val);        
+        }
+      }
+    }
+}
 
 
 //----------------------------------------------------------------------------
@@ -1681,6 +1848,10 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   else if ( button == this->FitToWindowButton && event == vtkKWPushButton::InvokedEvent )
     {
     this->FitSliceToBackground ( link );
+    }
+  else if ( button == this->LabelOutlineToggleButton && event == vtkKWPushButton::InvokedEvent )
+    {
+    this->ToggleLabelOutline ( link );
     }
   
 
@@ -2777,12 +2948,11 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     const char *hide = "Hide reformat widget";
     showIndex = this->MoreMenuButton->GetMenu()->GetIndexOfItem ( show );
     hideIndex = this->MoreMenuButton->GetMenu()->GetIndexOfItem ( hide );
-
+    imageName = "ReformatImage";
     if ( hideIndex >= 0 && snode->GetWidgetVisible() == 0)
       {
       //--- if the GUI gives option to hide the widget, but widget is already invisible,
       //--- update the GUI to give the option to show the widget.
-      imageName = "ReformatImage";
       vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  this->SliceControlIcons->GetSliceWidgetOnIcon() );
       this->MoreMenuButton->GetMenu()->SetItemImage ( hideIndex, imageName);
       this->MoreMenuButton->GetMenu()->SetItemLabel ( hideIndex, show );
@@ -2791,12 +2961,29 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
       {
       //--- if the GUI gives option to show the widget, but widget is already visible,
       //--- update the GUI to give the option to hide the widget.
-      imageName = "ReformatImage";
       vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  this->SliceControlIcons->GetSliceWidgetOffIcon() );
       this->MoreMenuButton->GetMenu()->SetItemImage ( showIndex, imageName);
       this->MoreMenuButton->GetMenu()->SetItemLabel ( showIndex, hide );
       }
 
+    const char *labelOutlineOn = "Show label volume outlines";
+    const char *labelOutlineOff = "Don't show label volume outlines";
+    int onIndex = this->MoreMenuButton->GetMenu()->GetIndexOfItem ( labelOutlineOn );
+    int offIndex = this->MoreMenuButton->GetMenu()->GetIndexOfItem ( labelOutlineOff );
+    imageName = "SliceLabelOutlineImage";
+    if (offIndex >= 0 && snode->GetUseLabelOutline() == 0)
+      {
+      vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  this->SliceControlIcons->GetSliceLabelOutlineOnIcon() );
+      this->MoreMenuButton->GetMenu()->SetItemImage ( offIndex, imageName);
+      this->MoreMenuButton->GetMenu()->SetItemLabel ( offIndex, labelOutlineOn );
+      }
+    else if (onIndex >= 0 && snode->GetUseLabelOutline() == 1)
+      {
+      vtkKWTkUtilities::UpdatePhotoFromIcon ( this->GetApplication(), imageName,  this->SliceControlIcons->GetSliceLabelOutlineOffIcon() );
+      this->MoreMenuButton->GetMenu()->SetItemImage ( onIndex, imageName);
+      this->MoreMenuButton->GetMenu()->SetItemLabel ( onIndex, labelOutlineOff );
+      }
+    
     //--- update widgets that configure lightbox.
     int lbRows = snode->GetLayoutGridRows();
     int lbCols = snode->GetLayoutGridColumns ( );

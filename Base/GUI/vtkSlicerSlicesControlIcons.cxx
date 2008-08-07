@@ -16,6 +16,8 @@ vtkSlicerSlicesControlIcons::vtkSlicerSlicesControlIcons ( )
   this->SliceMoreOptionsIcon = vtkKWIcon::New();
   this->SliceWidgetOnIcon = vtkKWIcon::New();
   this->SliceWidgetOffIcon = vtkKWIcon::New();
+  this->SliceLabelOutlineOnIcon = vtkKWIcon::New();
+  this->SliceLabelOutlineOffIcon = vtkKWIcon::New();
   this->FgIcon = vtkKWIcon::New ( );
   this->BgIcon = vtkKWIcon::New ( );
   this->ToggleFgBgIcon = vtkKWIcon::New ( );
@@ -62,7 +64,17 @@ vtkSlicerSlicesControlIcons::~vtkSlicerSlicesControlIcons ( )
   if (this->SliceWidgetOffIcon)
     {
     this->SliceWidgetOffIcon->Delete();
-    this->SliceWidgetOnIcon = NULL;
+    this->SliceWidgetOffIcon = NULL;
+    }
+  if ( this->SliceLabelOutlineOnIcon )
+    {
+    this->SliceLabelOutlineOnIcon->Delete();
+    this->SliceLabelOutlineOnIcon = NULL;
+    }
+  if (this->SliceLabelOutlineOffIcon)
+    {
+    this->SliceLabelOutlineOffIcon->Delete();
+    this->SliceLabelOutlineOnIcon = NULL;
     }
   if ( this->FgIcon )
     {
@@ -192,7 +204,17 @@ void vtkSlicerSlicesControlIcons::AssignImageDataToIcons ( ) {
                                       image_SliceWidgetOff_width,
                                       image_SliceWidgetOff_height,
                                       image_SliceWidgetOff_pixel_size,
-                                      image_SliceWidgetOff_length, 0);                                      
+                                      image_SliceWidgetOff_length, 0);
+    this->SliceLabelOutlineOnIcon->SetImage ( image_SliceLabelOutlineOn,
+                                      image_SliceLabelOutlineOn_width,
+                                      image_SliceLabelOutlineOn_height,
+                                      image_SliceLabelOutlineOn_pixel_size,
+                                      image_SliceLabelOutlineOn_length, 0);
+  this->SliceLabelOutlineOffIcon->SetImage (image_SliceLabelOutlineOff,
+                                      image_SliceLabelOutlineOff_width,
+                                      image_SliceLabelOutlineOff_height,
+                                      image_SliceLabelOutlineOff_pixel_size,
+                                      image_SliceLabelOutlineOff_length, 0);   
     this->FgIcon->SetImage ( image_SlicesFadeToFG,
                              image_SlicesFadeToFG_width,
                              image_SlicesFadeToFG_height,
@@ -312,6 +334,8 @@ void vtkSlicerSlicesControlIcons::PrintSelf ( ostream& os, vtkIndent indent )
     os << indent << "SliceMoreOptionsIcon: " << this->GetSliceMoreOptionsIcon() << "\n";
     os << indent << "SliceWidgetOnIcon: " << this->GetSliceWidgetOnIcon() << "\n";
     os << indent << "SliceWidgetOffIcon: " << this->GetSliceWidgetOffIcon() << "\n";
+    os << indent << "SliceLabelOutlineOnIcon: " << this->GetSliceLabelOutlineOnIcon() << "\n";
+    os << indent << "SliceLabelOutlineOffIcon: " << this->GetSliceLabelOutlineOffIcon() << "\n";
     os << indent << "FgIcon: " << this->GetFgIcon() << "\n";
     os << indent << "BgIcon: " << this->GetBgIcon() << "\n";
     os << indent << "ToggleFgBgIcon: " << this->GetToggleFgBgIcon() << "\n";

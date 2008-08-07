@@ -44,7 +44,6 @@
 #include "vtkImageResliceMask.h"
 #include "vtkImageReslice.h"
 #include "vtkImageSlice.h"
-#include "vtkImageMapToColors.h"
 #include "vtkAssignAttribute.h"
 
 #include "vtkMRMLScalarVolumeNode.h"
@@ -62,7 +61,7 @@
 
 
 class vtkDiffusionTensorMathematics;
-
+class vtkImageLabelOutline;
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLogic 
 {
   public:
@@ -94,25 +93,20 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   vtkGetObjectMacro (Reslice, vtkImageResliceMask);
 
   // Description:
-  // Select the vtkImageResliceMask or slicer's own vtkImageSlice
-  vtkGetMacro (UseReslice, int);
-  vtkSetMacro (UseReslice, int);
-  vtkBooleanMacro(UseReslice, int);
+  // Select if this is a label layer or not (it currently determines if we use
+  // the label outline filter)
+  vtkGetMacro (IsLabelLayer, int);
+  vtkSetMacro (IsLabelLayer, int);
+  vtkBooleanMacro (IsLabelLayer, int);
 
-  // Description:
-  // The image map that applies the window/level
-  // this happens before the color map, so can't use the color map
-  // that's part of WindowLevelColors
-  vtkGetObjectMacro (MapToWindowLevelColors, vtkImageMapToWindowLevelColors);
-
-  // Description:
-  // The image map that applies the lookup table
-  vtkGetObjectMacro (MapToColors, vtkImageMapToColors);
-  
   // Description:
   // The filter that applies the threshold
   vtkGetObjectMacro (Threshold, vtkImageThreshold);
 
+  // Description:
+  // The filter that turns the label map into an outline
+  vtkGetObjectMacro (LabelOutline, vtkImageLabelOutline);
+  
   // Description:
   // The filter that applies the threshold to the input of the Reslice
   // so there's a fully opaque alpha channel within the image
@@ -175,15 +169,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLayerLogic : public vtkSlicerLo
   // Description:
   // set the Reslice transforms to reflect the current state
   // of the VolumeNode and the SliceNode
-  void UpdateTransforms(); 
-
-  void ScalarVolumeNodeUpdateTransforms();
-
-  void VectorVolumeNodeUpdateTransforms();
-
-  void DiffusionWeightedVolumeNodeUpdateTransforms();
-
-  void DiffusionTensorVolumeNodeUpdateTransforms();
+  void UpdateTransforms();
 
   void UpdateGlyphs(vtkImageData *sliceImage); 
 
@@ -220,10 +206,9 @@ protected:
   vtkImageLogic *AlphaLogic;
   vtkImageResliceMask *Reslice;
   vtkImageSlice *Slice;
-  vtkImageMapToColors *MapToColors;
   vtkImageThreshold *Threshold;
+  vtkImageLabelOutline *LabelOutline;
   vtkImageAppendComponents *AppendComponents;
-  vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
 
   // Description:
   // VTK class instances that implement the DWI logic operations
@@ -238,13 +223,7 @@ protected:
   // TODO: make this a vtkAbstractTransform for non-linear
   vtkTransform *XYToIJKTransform;
 
-  int UseReslice;
-
-  // Description:
-  // Generic pipeline for scalar slice logic
-  void ScalarSlicePipeline(vtkImageData *imageData, int labelMap, double window, double level, int interpolate, vtkLookupTable *lookupTable, int applyThreshold, double lowerThreshold, double upperThreshold);
-
-  void VectorSlicePipeline(vtkImageData *imageData, int interpolate);
+  int IsLabelLayer;
 };
 
 #endif

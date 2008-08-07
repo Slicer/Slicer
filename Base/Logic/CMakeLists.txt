@@ -65,6 +65,7 @@ set(SlicerBaseLogic_SRCS
   vtkImageLabelChange.cxx 
   vtkImageErode.cxx 
   vtkImageNeighborhoodFilter.cxx
+  vtkImageLabelOutline.cxx
   )
 
 # Abstract/pure virtual classes

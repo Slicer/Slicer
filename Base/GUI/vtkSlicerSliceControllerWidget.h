@@ -51,6 +51,7 @@ public:
   vtkGetObjectMacro ( LabelOpacityScale, vtkKWScaleWithEntry );
   vtkGetObjectMacro ( LabelOpacityToggleButton, vtkKWPushButton );
   vtkGetObjectMacro ( LabelOpacityTopLevel, vtkKWTopLevel );
+  vtkGetObjectMacro ( LabelOutlineToggleButton, vtkKWPushButton );
   vtkGetObjectMacro ( LightboxTopLevel, vtkKWTopLevel );
   vtkGetObjectMacro ( FitToWindowButton, vtkKWPushButton );
   vtkGetObjectMacro ( VolumeDisplayMenuButton, vtkKWMenuButton );
@@ -143,6 +144,8 @@ public:
   virtual void FitSliceToBackground ( );
   virtual void ToggleReformatWidget ( int link );
   virtual void ToggleReformatWidget ( );
+  virtual void ToggleLabelOutline ( int link );
+  virtual void ToggleLabelOutline ( );
 
   // Description:
   // Configure the slice viewer layout in linked mode for all CompareX slice viewers
@@ -194,6 +197,8 @@ protected:
   vtkKWScaleWithEntry *LabelOpacityScale;
   vtkKWPushButton *LabelOpacityToggleButton;
   vtkKWTopLevel *LabelOpacityTopLevel;
+  vtkKWPushButton *LabelOutlineToggleButton;
+
   vtkKWTopLevel *LightboxTopLevel;
   vtkSlicerVisibilityIcons *VisibilityIcons;
   vtkSlicerToolbarIcons *ViewConfigureIcons;
