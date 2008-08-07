@@ -72,12 +72,12 @@ This module uses the implementation given in vtkImageGaussianSmooth.
 def Execute (inputVolume, outputVolume, standardDeviations=[1.0,1.0,1.0], radiusFactors=[1.5,1.5,1.5], dimensionality=3):
 
     Slicer = __import__("Slicer")
-    slicer = Slicer.Slicer()
+    slicer = Slicer.slicer
     scene = slicer.MRMLScene
     inputVolume = scene.GetNodeByID(inputVolume)
     outputVolume = scene.GetNodeByID(outputVolume)
 
-    filter = slicer.vtkImageGaussianSmooth.New()
+    filter = slicer.vtkImageGaussianSmooth()
     filter.SetStandardDeviations(*standardDeviations)
     filter.SetRadiusFactors(*radiusFactors)
     filter.SetDimensionality(dimensionality)
@@ -85,12 +85,9 @@ def Execute (inputVolume, outputVolume, standardDeviations=[1.0,1.0,1.0], radius
     filter.Update()
 
     outputVolume.SetAndObserveImageData(filter.GetOutput())
-    matrix = slicer.vtkMatrix4x4.New()
+    matrix = slicer.vtkMatrix4x4()
     inputVolume.GetIJKToRASMatrix(matrix)
     outputVolume.SetIJKToRASMatrix(matrix)
-
-    filter.Delete()
-    matrix.Delete()
 
     return
 

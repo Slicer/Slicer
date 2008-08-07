@@ -46,7 +46,7 @@ subdirs(
    GradientAnisotropicDiffusionFilter
    Meshing
    Python
-   PythonGADScriptedModule
+#   PythonGADScriptedModule
    QdecModule
    QueryAtlas
    ScriptedModule

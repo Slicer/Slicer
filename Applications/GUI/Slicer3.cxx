@@ -1539,6 +1539,7 @@ int Slicer3_main(int argc, char *argv[])
 #ifdef Slicer3_USE_PYTHON
   slicerApp->SplashMessage("Initializing Python Scripted Modules...");
   std::string pythonCommand = "";
+
   pythonCommand += "import sys\n";
   pythonCommand += "import os\n";
   pythonCommand += "packageNames = []\n";
@@ -1558,28 +1559,12 @@ int Slicer3_main(int argc, char *argv[])
       pythonCommand += "        packageNames.append(packageName)\n";
       }
     }
+
   pythonCommand += "import Slicer\n";
-  pythonCommand += "slicer = Slicer.Slicer()\n";
-  pythonCommand += "PythonScriptedModuleDict = {}\n";
-  pythonCommand += "for packageName in packageNames:\n";
-  pythonCommand += "    PythonScriptedModuleDict[packageName] = __import__(packageName)\n";
-  pythonCommand += "    logic = slicer.vtkScriptedModuleLogic.New()\n";
-  pythonCommand += "    logic.SetModuleName(packageName)\n";
-  pythonCommand += "    logic.SetAndObserveMRMLScene(slicer.MRMLScene)\n";
-  pythonCommand += "    logic.SetApplicationLogic(slicer.ApplicationLogic)\n";
-  pythonCommand += "    gui = slicer.vtkScriptedModuleGUI.New()\n";
-  pythonCommand += "    gui.SetModuleName(packageName)\n";
-  pythonCommand += "    gui.SetLanguageToPython()\n";
-  pythonCommand += "    gui.SetLogic(logic)\n";
-  pythonCommand += "    gui.SetApplicationGUI(slicer.ApplicationGUI)\n";
-  pythonCommand += "    gui.SetApplication(slicer.Application)\n";
-  pythonCommand += "    gui.SetGUIName(packageName)\n";
-  pythonCommand += "    gui.GetUIPanel().SetName(packageName)\n";
-  pythonCommand += "    gui.GetUIPanel().SetUserInterfaceManager(slicer.ApplicationGUI.GetMainSlicerWindow().GetMainUserInterfaceManager())\n";
-  pythonCommand += "    gui.GetUIPanel().Create()\n";
-  pythonCommand += "    slicer.Application.AddModuleGUI(gui)\n";
-  pythonCommand += "    gui.BuildGUI()\n";
-  pythonCommand += "    gui.AddGUIObservers()\n";
+  pythonCommand += "import SlicerScriptedModule\n";
+  pythonCommand += "SlicerScriptedModuleInfo = SlicerScriptedModule.SlicerScriptedModuleImporter(packageNames)\n";
+  pythonCommand += "SlicerScriptedModuleInfo.ScanAndInitModules()\n";
+
   v = PyRun_String( pythonCommand.c_str(),
                     Py_file_input,
                     PythonDictionary,PythonDictionary);
@@ -1799,7 +1784,17 @@ int Slicer3_main(int argc, char *argv[])
   tclCommand += "  $::Slicer3_PACKAGES($package,gui) TearDownGUI;";
   tclCommand += "}";
   Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
-#endif 
+
+#if defined(Slicer3_USE_PYTHON)
+  v = PyRun_String( "SlicerScriptedModuleInfo.TearDownAllGUI();\n",
+                    Py_file_input,
+                    PythonDictionary,PythonDictionary);    
+  if (v == NULL)
+    {
+    PyErr_Print(); 
+    }
+#endif
+#endif
 
   // ------------------------------
   // Remove References to Module GUIs
@@ -1889,6 +1884,16 @@ int Slicer3_main(int argc, char *argv[])
   tclCommand += "  $::Slicer3_PACKAGES($package,gui) Delete;";
   tclCommand += "}";
   Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+
+#if defined(Slicer3_USE_PYTHON)
+  v = PyRun_String( "SlicerScriptedModuleInfo.DeleteAllGUI();\n",
+                    Py_file_input,
+                    PythonDictionary,PythonDictionary);
+  if (v == NULL)
+    {
+    PyErr_Print();
+    }
+#endif
 #endif
 
   // Release reference to applicaiton GUI
@@ -1983,6 +1988,21 @@ int Slicer3_main(int argc, char *argv[])
   tclCommand += "  $::Slicer3_PACKAGES($package,logic) Delete;";
   tclCommand += "}";
   Slicer3_Tcl_Eval( interp, tclCommand.c_str() );
+
+#if defined(Slicer3_USE_PYTHON)
+  v = PyRun_String( "SlicerScriptedModuleInfo.DeleteAllLogic();\n",
+                    Py_file_input,
+                    PythonDictionary,PythonDictionary);
+  if (v == NULL)
+    {
+    PyErr_Print();
+    }
+#endif
+#endif
+
+#ifdef Slicer3_USE_PYTHON
+// Shutdown python interpreter
+Py_Finalize();
 #endif
 
   //--- scene next;
@@ -1997,12 +2017,6 @@ int Slicer3_main(int argc, char *argv[])
 
   //--- application last
   slicerApp->Delete ();
-
-#ifdef Slicer3_USE_PYTHON
-  // Shutdown python interpreter
-  Py_Finalize();
-#endif
-
 
   return res;
 }

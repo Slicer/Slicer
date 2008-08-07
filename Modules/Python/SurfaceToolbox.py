@@ -181,7 +181,7 @@ def Execute (inputSurface, outputSurface, \
     cleanerEnabled=False):
 
     Slicer = __import__("Slicer")
-    slicer = Slicer.Slicer()
+    slicer = Slicer.slicer
     scene = slicer.MRMLScene
     inputSurface = scene.GetNodeByID(inputSurface)
     outputSurface = scene.GetNodeByID(outputSurface)
@@ -189,7 +189,7 @@ def Execute (inputSurface, outputSurface, \
     surface = inputSurface.GetPolyData()
 
     if decimationEnabled:
-        decimation = slicer.vtkDecimatePro.New()
+        decimation = slicer.vtkDecimatePro()
         decimation.SetInput(surface)
         decimation.SetTargetReduction(targetReduction)
         if boundaryDeletion:
@@ -202,7 +202,7 @@ def Execute (inputSurface, outputSurface, \
 
     if smoothingEnabled:
         if smoothingMethod == "Laplace":
-            smoothing = slicer.vtkSmoothPolyDataFilter.New()
+            smoothing = slicer.vtkSmoothPolyDataFilter()
             smoothing.SetInput(surface)
             if boundarySmoothing:
                 smoothing.BoundarySmoothingOn()
@@ -213,7 +213,7 @@ def Execute (inputSurface, outputSurface, \
             smoothing.Update()
             surface = smoothing.GetOutput()
         elif smoothingMethod == "Taubin":
-            smoothing = slicer.vtkWindowedSincPolyDataFilter.New()
+            smoothing = slicer.vtkWindowedSincPolyDataFilter()
             smoothing.SetInput(surface)
             if boundarySmoothing:
                 smoothing.BoundarySmoothingOn()
@@ -225,7 +225,7 @@ def Execute (inputSurface, outputSurface, \
             surface = smoothing.GetOutput()
 
     if normalsEnabled:
-        normals = slicer.vtkPolyDataNormals.New()
+        normals = slicer.vtkPolyDataNormals()
         normals.SetInput(surface)
         normals.AutoOrientNormalsOn()
         if flipNormals:
@@ -242,24 +242,12 @@ def Execute (inputSurface, outputSurface, \
         surface = normals.GetOutput()
 
     if cleanerEnabled:
-        cleaner = slicer.vtkCleanPolyData.New()
+        cleaner = slicer.vtkCleanPolyData()
         cleaner.SetInput(surface)
         cleaner.Update()
         surface = cleaner.GetOutput()
 
     outputSurface.SetAndObservePolyData(surface)
-
-    if decimationEnabled:
-        decimation.Delete()
-
-    if smoothingEnabled:
-        smoothing.Delete()
-
-    if normalsEnabled:
-        normals.Delete()
-
-    if cleanerEnabled:
-        cleaner.Delete()
 
     return
 

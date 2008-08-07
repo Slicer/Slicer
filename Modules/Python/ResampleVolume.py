@@ -66,13 +66,13 @@ Resample a volume based on user-specified parameters.
 def Execute (inputVolume, outputVolume, interpolation="linear", outputSpacing=[1.0,1.0,1.0]):
 
     Slicer = __import__("Slicer")
-    slicer = Slicer.Slicer()
+    slicer = Slicer.slicer
     scene = slicer.MRMLScene
 
     inputVolume = scene.GetNodeByID(inputVolume)
     outputVolume = scene.GetNodeByID(outputVolume)
 
-    ijkToRASMatrix = slicer.vtkMatrix4x4.New()
+    ijkToRASMatrix = slicer.vtkMatrix4x4()
     inputVolume.GetIJKToRASMatrix(ijkToRASMatrix)
 
     inputSpacing = inputVolume.GetSpacing()
@@ -80,7 +80,7 @@ def Execute (inputVolume, outputVolume, interpolation="linear", outputSpacing=[1
                     outputSpacing[1]/inputSpacing[1], 
                     outputSpacing[2]/inputSpacing[2]]
 
-    reslice = slicer.vtkImageReslice.New()
+    reslice = slicer.vtkImageReslice()
     reslice.SetInput(inputVolume.GetImageData())
     if interpolation == "nearest neighbor":
         reslice.SetInterpolationModeToNearestNeighbor()
@@ -92,7 +92,7 @@ def Execute (inputVolume, outputVolume, interpolation="linear", outputSpacing=[1
     reslice.Update()
 
     #FIXME: this one should be done in the context of vtkMRMLVolumeNode::SetImageData
-    changeInformation = slicer.vtkImageChangeInformation.New()
+    changeInformation = slicer.vtkImageChangeInformation()
     changeInformation.SetInput(reslice.GetOutput())
     changeInformation.SetOutputOrigin(0.0,0.0,0.0)
     changeInformation.SetOutputSpacing(1.0,1.0,1.0)
@@ -101,10 +101,6 @@ def Execute (inputVolume, outputVolume, interpolation="linear", outputSpacing=[1
     outputVolume.SetAndObserveImageData(changeInformation.GetOutput())
     outputVolume.SetIJKToRASMatrix(ijkToRASMatrix)
     outputVolume.SetSpacing(*outputSpacing)
-
-    ijkToRASMatrix.Delete()
-    reslice.Delete()
-    changeInformation.Delete()
 
     return
 

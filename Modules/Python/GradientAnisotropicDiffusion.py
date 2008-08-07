@@ -99,23 +99,20 @@ N-dimensions.
 
 def Execute ( inputVolume, outputVolume, conductance=1.0, timeStep=0.0625, iterations=1 ):
     Slicer = __import__ ( "Slicer" );
-    slicer = Slicer.Slicer()
+    slicer = Slicer.slicer
     scene = slicer.MRMLScene
-    inputVolume = scene.GetNodeByID ( inputVolume );
-    outputVolume = scene.GetNodeByID ( outputVolume );
+    inputVolume = scene.GetNodeByID(inputVolume)
+    outputVolume = scene.GetNodeByID(outputVolume)
 
-    filter = slicer.vtkITKGradientAnisotropicDiffusionImageFilter.New()
-    filter.SetConductanceParameter ( conductance )
-    filter.SetTimeStep ( timeStep )
-    filter.SetNumberOfIterations ( iterations )
-    filter.SetInput ( inputVolume.GetImageData() )
+    filter = slicer.vtkITKGradientAnisotropicDiffusionImageFilter()
+    filter.SetConductanceParameter(conductance)
+    filter.SetTimeStep(timeStep)
+    filter.SetNumberOfIterations(iterations)
+    filter.SetInput(inputVolume.GetImageData())
     filter.Update()
     outputVolume.SetAndObserveImageData(filter.GetOutput())
-    matrix = slicer.vtkMatrix4x4.New()
-    inputVolume.GetIJKToRASMatrix ( matrix )
-    outputVolume.SetIJKToRASMatrix ( matrix )
-
-    filter.Delete()
-    matrix.Delete()
+    matrix = slicer.vtkMatrix4x4()
+    inputVolume.GetIJKToRASMatrix(matrix)
+    outputVolume.SetIJKToRASMatrix(matrix)
 
     return

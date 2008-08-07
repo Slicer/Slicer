@@ -15,45 +15,47 @@ def StartConsole():
 def TkCall(commandString):
     tk.tk.call(*commandString.split())
 
-class SlicerWrapper:
+class SlicerWrapper(object):
+
+    def __init__ (self, obj):
+        self.obj = obj
+
+    def __repr__ ( self ):
+        return "<Slicer object: " + self.obj + ">"
+
+    def __str__ ( self ):
+        return self.__repr__()
+
     def ToArray (self):
       if self.IsA("vtkDataArray"):
         try:
-            return _slicer.vtkDataArrayToArray ( tk.tk.interpaddr(), str(self) )
+            return _slicer.vtkDataArrayToArray(tk.tk.interpaddr(), str(self))
         except Exception, e:
             print e
       else:
         try:
-            return _slicer.vtkImageDataToArray ( tk.tk.interpaddr(), str(self) )
+            return _slicer.vtkImageDataToArray(tk.tk.interpaddr(), str(self))
         except Exception, e:
             print e
-    def __repr__ ( self ):
-        return "<Slicer object: " + self.obj + ">"
-    def __str__ ( self ):
-        return self.__repr__ ()
-    def __init__ ( self, slicer, obj ):
-        self.obj = obj
-        self.slicer = slicer
-    def __convertString ( self, inString ):
-        # print "inString: ", inString
+
+    def __convertString (self, inString):
         outList = []
-        IsList = True
-        AreFloats = None
+        isList = True
+        areFloats = None
         try:
-            for ii in string.split ( inString ):
-                # print ii
-                foo = eval ( ii )
-                if type ( foo ) == int or type ( foo ) == float:
-                    if type ( foo ) == float:
-                        AreFloats = True
-                    outList.append ( foo )
+            for ii in inString.split():
+                foo = eval(ii)
+                if type(foo) == int or type(foo) == float:
+                    if type(foo) == float:
+                        areFloats = True
+                    outList.append(foo)
                 else:
-                    IsList = None
+                    isList = None
                     break
-            if IsList:
-                if AreFloats:
-                    outList = [float ( ii ) for ii in outList]
-                if len ( outList ) == 1:
+            if isList:
+                if areFloats:
+                    outList = [float(ii) for ii in outList]
+                if len(outList) == 1:
                     return outList[0]
                 return outList
             else:
@@ -61,107 +63,236 @@ class SlicerWrapper:
         except Exception:
             pass
         return inString
-    def __eval ( self, inString ):
-        # print "calling: ", inString
-        result = tk.tk.call ( *string.split ( inString ) )
-        return self.__convertString ( result )
-    def __callVTKmethod ( self, m, *a ):
+
+    def __eval (self, inString):
+        result = tk.tk.call(*string.split(inString))
+        return self.__convertString(result)
+
+    def __callVTKmethod (self, m, *a):
+        if m == 'New':
+            cstring = []
+            cstring.append(str(self.obj))
+            cstring.append(str(m))
+            value = tk.tk.call(*cstring)
+            if tk.tk.call('info','command',value):
+               return SlicerWrapper(value)
         cstring = []
-        cstring.append ( str(self.obj) )
-        cstring.append ( str(m) )
-        for idx in range(len(a)):
-            cstring.append ( str(a[idx]) )
-        value = tk.tk.call ( *cstring )
-        if tk.tk.call ( 'info', 'command', value ):
-            return SlicerWrapper ( self, value )
+        cstring.append(str(self.obj))
+        cstring.append(str(m))
+        for arg in a:
+            if arg == None:
+                arg = ""
+            cstring.append(str(arg))
+        value = tk.tk.call(*cstring)
+        if tk.tk.call('info','command',value):
+            if not eval(tk.tk.eval('catch "%s GetClassName" res' % value)):
+                return GetPythonWrapper(value)
+            else:
+                return self.__convertString(value)
         else:
-            return self.__convertString ( value )
-    def __repr__ ( self ):
-        return str ( self.obj )
-    def __getattr__ ( self, name ):
+            return self.__convertString(value)
+
+    def __repr__ (self):
+        return str(self.obj)
+
+    def __getattr__ (self, name):
         """Returns a function object suitable for calling the wrapped function"""
-        return lambda *a: self.__callVTKmethod ( str(name), *a )
-    def __eq__ ( self, other ):
-        """Allows for equality testing"""
-        if other is None:
-            return False
-        return (other.__class__ is self.__class__ and other.__dict__ == self.__dict__)
-    def __ne__ ( self, other ):
-        """Allows for equality testing"""
-        if other is None:
-            return True
-        return not (other.__class__ is self.__class__ and other.__dict__ == self.__dict__)
+        return lambda *a: self.__callVTKmethod(str(name),*a)
 
 
+from new import classobj
 
-class Slicer:
+def __init(self, tclName=None):
+    if self.__class__.__name__ != self.__class__.ClassName:
+        raise Exception, "Subclassing wrapped classes is not allowed."
+    if not tclName:
+        self.SlicerWrapper = SlicerWrapper(self.__class__.ClassName).New()
+        self.OwnWrapper = True
+    else:
+        self.SlicerWrapper = SlicerWrapper(tclName)
+        self.OwnWrapper = False
+
+def __repr(self):
+    return self.SlicerWrapper.Print()
+
+def __del(self):
+#   TODO: need to call superclass' __del__?
+    if self.OwnWrapper:
+        self.SlicerWrapper.Delete()
+
+def __getTclName(self):
+    return self.SlicerWrapper.obj
+
+def __convertArgumentList(self,a):
+    aTcl = []
+    for arg in a:
+        if hasattr(arg,'__dict__') and arg.__dict__.has_key('GetTclName') != -1:
+            arg = arg.GetTclName()
+        aTcl.append(arg)
+    return aTcl
+
+def __eq (self, other):
+    if other is None:
+        return False
+    eq = False
+    if self is other:
+        eq = True
+    if other.__class__ == self.__class__ and other.SlicerWrapper:
+        if self.SlicerWrapper.obj == other.SlicerWrapper.obj:
+            eq = True
+    return eq
+
+def __ne (self, other):
+    if other is None:
+        return True
+    eq = False
+    if self is other:
+        eq = True
+    if other.__class__ == self.__class__ and other.SlicerWrapper:
+        if self.SlicerWrapper.obj == other.SlicerWrapper.obj:
+            eq = True
+    return not eq
+
+def __listInstances(self):
+    tclInstances = (tk.tk.eval("%s ListInstances" % self.__name__)).split()
+    instances = []
+    for tclInstance in tclInstances:
+        instance = GetPythonWrapper(tclInstance)
+        instances.append(instance)
+    return instances
+
+def CreateClass(name):
+    if SlicerClassDict.has_key(name):
+        return SlicerClassDict[name]
+    fooName = 'foo'
+    i = 0
+    while tk.tk.eval('info exists %s%d' % (fooName,i)) == '1':
+        i += 1
+    fooName = '%s%d' % (fooName,i)
+    tk.tk.eval('set %s [%s New]' % (fooName,name))
+    methods = tk.tk.eval('$%s ListMethods' % fooName)
+    tk.tk.eval('$%s Delete' % fooName)
+    tk.tk.call(*string.split('unset %s' % fooName))
+    methodLines = methods.split('\n')
+    dirtyMethodNames = [classMethods.strip('\n').split('\n') for classMethods in methods.split('Methods from')][1:]
+    classNames = [className.split()[2][:-1] for className in methodLines if className.find('Methods from') != -1]
+    classDict = {}
+    for dirtyClassMethodNames in dirtyMethodNames:
+        methodNames = [dirtyMethodName.strip().split('\t')[0] for dirtyMethodName in dirtyClassMethodNames[1:]]
+        classDict[dirtyClassMethodNames[0][:-1].strip()] = methodNames
+    SuperClass = object
+    for className in classNames:
+        if SlicerClassDict.has_key(className):
+            SuperClass = SlicerClassDict[className]
+            continue
+        methodDict = {'__init__':__init, '__del__':__del, '__repr__':__repr, '__eq__':__eq, '__ne__':__ne, '__convertArgumentList': __convertArgumentList, 'GetTclName': __getTclName, 'ListInstances': __listInstances }
+        for methodName in classDict[className]:
+            if methodName in ['New','Delete']:
+                continue
+            ownWrapperLine = ''
+            if methodName in ['NewInstance','CreateNodeByClass','CreateInstance','CreateNodeInstance']:
+                ownWrapperLine = 'value.OwnWrapper = True;'
+            exec('def %s(self,*a): aTcl = self.__convertArgumentList(a); value = self.SlicerWrapper.__getattr__("%s")(*aTcl); %s return value' % (methodName,methodName,ownWrapperLine))
+            exec('methodDict["%s"] = %s' % (methodName,methodName))
+        global ClassObj
+        ClassObj = classobj(className,(SuperClass,),methodDict)
+        ClassObj.ClassName= className
+        ClassObj.ListInstances = classmethod(ClassObj.ListInstances.im_func)
+        SlicerClassDict[className] = ClassObj
+        SuperClass = ClassObj
+    return SuperClass
+
+def GetPythonWrapper(tclName):
+    className = tk.tk.eval("%s GetClassName" % tclName)
+    return CreateClass(className)(tclName)
+
+def Test():
+    a = slicer.vtkSmoothPolyDataFilter()
+    b = slicer.vtkPolyData()
+    print 'a ', a.SlicerWrapper.obj
+    print 'b ', b.SlicerWrapper.obj
+    a.SetInput(b)
+    print 'a.SetInput ', a.GetInput().SlicerWrapper.obj
+    print b == a.GetInput()
+
+SlicerClassDict = {}
+
+class Slicer(object):
     """Main slicer object, responsible for fetching things out of the ::slicer3 namespace in the Tcl interp"""
-    def __init__ ( self ):
+
+    def __init__ (self):
         self.callTk = tk.tk.call
         self.ns = "::slicer3"
-    def eval ( self, inString ):
-        return self.__eval ( inString )
-    def __eval ( self, inString ):
-        # print inString
-        return self.callTk ( *string.split ( inString ) )
-    def __getattr__ ( self, inName ):
+
+    def eval (self, inString):
+        return self.__eval(inString)
+
+    def __eval (self, inString):
+        return self.callTk(*string.split(inString))
+
+    def __getattr__ (self, inName):
         # Get the variable or command from the namespace
         qname = self.ns + "::" + inName
-        for name in ( inName, qname ):
+        for name in (inName, qname):
             # if it's a variable, find the value, and see if it's a command
-            if self.__eval ( 'info exists ' + name ):
-                # print "found name: ", name
-                cname = str ( self.__eval ( 'set ' + name ) )
-                # print "found cname: ", cname
-                if self.__eval ( 'info command ' + cname ):
-                    # print "Returning Wrapped object: ", cname
-                    return SlicerWrapper ( self, cname )
+            if self.__eval('info exists ' + name):
+                cname = str(self.__eval('set ' + name))
+                if self.__eval('info command ' + cname):
+                    if not eval(tk.tk.eval('catch "%s GetClassName" res' % cname)):
+                        return GetPythonWrapper(cname)
+                    else:
+                        return cname
                 else:
-                    # print "Returning object: ", cname
                     return cname
-            if self.__eval ( 'info command ' + name ):
-                # print "Returning Wrapped object, wo/lookup"
-                return SlicerWrapper ( self, name )
-        raise Exception ( "attribute " + qname + " does not exist" )
+            if self.__eval('info command '+name):
+                return CreateClass(name)
+        raise Exception("attribute " + qname + " does not exist")
 
-class Plugin:
+    @classmethod
+    def TkCall(self,commandString):
+        tk.tk.call(*commandString.split())
+
+slicer = Slicer()
+
+
+
+
+
+class Plugin(object):
     """Class to interface with Slicer3 plugins"""
-    def __init__ ( self, Name ):
-        idx = GetRegisteredPlugins().index ( Name )
-        self.slicer = Slicer()
-        self.name = Name
+    def __init__ (self, name):
+        idx = GetRegisteredPlugins().index(name)
+        self.name = name
     def Execute ( self, *args, **keywords ):
-        self.module = self.slicer.MRMLScene.CreateNodeByClass ( "vtkMRMLCommandLineModuleNode" );
-        self.module.SetModuleDescription ( self.name )
+        self.module = slicer.MRMLScene.CreateNodeByClass("vtkMRMLCommandLineModuleNode")
+        self.module.SetModuleDescription(self.name)
         pargs = self.__FindPositionalArguments()
         diff = len(pargs) - len(args)
         if diff < 0:
-            self.module.Delete();
+            self.module = None
             raise Exception ( "Plugin: " + self.name + " requires " + str(len(pargs)) + "arguments, " + str(len(args)) + " given" )
-
-        print diff
 
         arglen = len(args)
 
         # Set the positional arguments
-        for ii in range ( len(args) ):
+        for ii in range(len(args)):
             # Make sure we can lookup a MRML Node
-            n = self.slicer.MRMLScene.GetNodeByID ( args[ii] )
+            n = slicer.MRMLScene.GetNodeByID(args[ii])
             if n == []:
-                self.module.Delete();
-                raise Exception ( "Plugin: " + self.name + " requires a MRML Node as a positional arg: found " + str(args[ii]) + " instead" )
-            paramName = self.module.GetParameterName ( pargs[ii][0], pargs[ii][1] )
-            self.module.SetParameterAsString ( paramName, args[ii] )
+                self.module = None
+                raise Exception("Plugin: " + self.name + " requires a MRML Node as a positional arg: found " + str(args[ii]) + " instead")
+            paramName = self.module.GetParameterName(pargs[ii][0],pargs[ii][1])
+            self.module.SetParameterAsString(paramName,args[ii])
 
         # Append empty nodes to the end...
-        outputNodes = []
-        newargs = list ( args )
-        for ii in range ( diff ):
+        outputNodeIDs = []
+        newargs = list(args)
+        for ii in range(diff):
             # Check type
             idx = arglen + ii
-            t = self.module.GetParameterTag ( pargs[ii][0], pargs[ii][1] )
+            t = self.module.GetParameterTag(pargs[ii][0],pargs[ii][1])
             if t == "label":
-                c = "vtkMRMLScalarVolumeNode";
+                c = "vtkMRMLScalarVolumeNode"
             elif t == "vector":
                 c = "vtkMRMLVectorVolumeNode"
             elif t == "tensor":
@@ -170,45 +301,45 @@ class Plugin:
                 c = "vtkMRMLDiffusionWeightedVolumeNode"
             else:
                 c = "vtkMRMLScalarVolumeNode"
-            node = self.slicer.MRMLScene.CreateNodeByClass ( c )
-            node.SetScene ( self.slicer.MRMLScene )
-            node.SetName ( self.slicer.MRMLScene.GetUniqueNameByString ( c ) )
-            node = self.slicer.MRMLScene.AddNode ( node )
-            newargs.append ( node )
-            outputNodes.append ( node )
-            paramName = self.module.GetParameterName ( pargs[idx][0], pargs[idx][1] )
+            node = slicer.MRMLScene.CreateNodeByClass(c)
+            node.SetScene(slicer.MRMLScene)
+            node.SetName(slicer.MRMLScene.GetUniqueNameByString(c))
+            slicer.MRMLScene.AddNode(node)
+            newargs.append(node)
+            outputNodeIDs.append(node.GetID())
+            paramName = self.module.GetParameterName(pargs[idx][0],pargs[idx][1])
             print 'Setting: ' + paramName + ' to ' + node.GetName()
-            self.module.SetParameterAsString ( paramName, node.GetID() )
+            self.module.SetParameterAsString(paramName,node.GetID())
 
         # Now set the keyword args
         for key in keywords.keys():
             print 'Setting: ' + str(key) + ' = ' + str(keywords[key])
-            self.module.SetParameterAsString ( key, str(keywords[key]) )
+            self.module.SetParameterAsString(key,str(keywords[key]))
 
         # And finally, execute the plugin
-        logic = self.slicer.vtkCommandLineModuleLogic.New()
-        logic.SetAndObserveMRMLScene ( self.slicer.MRMLScene )
-        logic.SetApplicationLogic ( self.slicer.ApplicationGUI.GetApplicationLogic() )
-        logic.SetTemporaryDirectory ( self.slicer.Application.GetTemporaryDirectory() )
+        logic = slicer.vtkCommandLineModuleLogic()
+        logic.SetAndObserveMRMLScene(slicer.MRMLScene)
+        logic.SetApplicationLogic(slicer.ApplicationGUI.GetApplicationLogic())
+        logic.SetTemporaryDirectory(slicer.Application.GetTemporaryDirectory())
         print "Apply and Wait"
-        logic.ApplyAndWait ( self.module )
+        logic.ApplyAndWait(self.module)
 
         status = self.module.GetStatusString()
         if status != 'Completed':
             raise Exception ( "Plugin faild with status: " + status )
-        
+       
         # Else return sucessfully!
-        return outputNodes
+        return outputNodeIDs
 
     def __FindPositionalArguments ( self ):
         """Find and return a list of (group,arg) tuples of the positional arguments"""
         args = {}
-        for group in range ( self.module.GetNumberOfParameterGroups() ):
-            for arg in range ( self.module.GetNumberOfParametersInGroup ( group ) ):
-                print self.module.GetParameterIndex ( group, arg )
-                if self.module.GetParameterIndex ( group, arg ) != []:
-                    print self.module.GetParameterIndex ( group, arg )
-                    args[int(self.module.GetParameterIndex ( group, arg ))] = (group,arg)
+        for group in range(self.module.GetNumberOfParameterGroups()):
+            for arg in range(self.module.GetNumberOfParametersInGroup(group)):
+                print self.module.GetParameterIndex(group,arg)
+                if self.module.GetParameterIndex(group,arg) != []:
+                    print self.module.GetParameterIndex(group,arg)
+                    args[int(self.module.GetParameterIndex(group,arg))] = (group,arg)
         keys = args.keys()
         keys.sort()
         print keys
@@ -216,37 +347,31 @@ class Plugin:
         return args
 
 def TestPluginClass():
-    slicer = Slicer()
     p = Plugin ( 'Subtract Images' )
-    vn = ListVolumeNodes ()
-    if len ( vn ) > 0:
-        p.Execute ( vn[0].GetID(), vn[0].GetID() )
-
+    vn = ListVolumeNodes()
+    if len(vn) > 0:
+        name = vn.keys()[0]
+        p.Execute(vn[name].GetID(),vn[name].GetID())
 
 def GetRegisteredPlugins ():
-    slicer = Slicer();
-    n = slicer.MRMLScene.CreateNodeByClass ( "vtkMRMLCommandLineModuleNode" )
-    p = [];
-    for idx in range ( n.GetNumberOfRegisteredModules() ):
-        p.append ( n.GetRegisteredModuleNameByIndex ( idx ) )
-    n.Delete()
+    n = slicer.MRMLScene.CreateNodeByClass('vtkMRMLCommandLineModuleNode')
+    p = []
+    for idx in range(n.GetNumberOfRegisteredModules()):
+        p.append(n.GetRegisteredModuleNameByIndex(idx))
     return p
 
 
 def CallPlugin ( name, *args, **keywords ):
-    # get a slicer guy
-    slicer = Slicer();
     n = slicer.MRMLScene.CreateNodeByClass ( "vtkMRMLCommandLineModuleNode" )
     # Figure out if this is a valid plugin
     validname = None
-    for idx in range ( n.GetNumberOfRegisteredModules() ):
-        if n.GetRegisteredModuleNameByIndex ( idx ) == name:
-            validname = true
+    for idx in range(n.GetNumberOfRegisteredModules()):
+        if n.GetRegisteredModuleNameByIndex(idx) == name:
+            validname = True
             break
     if not validname:
-        n.Delete()
-        raise "Could not find a Command Line Module named: " + str ( name )
-    n.SetModuleDescription ( name )
+        raise "Could not find a Command Line Module named: " + str(name)
+    n.SetModuleDescription(name)
     
 
 
@@ -263,11 +388,12 @@ def ListVolumeNodes():
     """Returns a dictionary containing the index and
     vtkMRMLVolumeNodes currently loaded by Slicer"""
     nodes = {}
-    slicer = Slicer()
     scene = slicer.MRMLScene
-    count = scene.GetNumberOfNodesByClass ( 'vtkMRMLVolumeNode' )
-    for idx in range ( int ( count ) ):
-        nodes[idx] = scene.GetNthNodeByClass ( idx, 'vtkMRMLVolumeNode' )
+    count = scene.GetNumberOfNodesByClass ('vtkMRMLVolumeNode')
+    for idx in range (count):
+#        nodes[idx] = scene.GetNthNodeByClass(idx,'vtkMRMLVolumeNode')
+        node = scene.GetNthNodeByClass(idx,'vtkMRMLVolumeNode')
+        nodes[node.GetName()] = node
     return nodes
 
 def ParseArgs ( ModuleArgs, ArgTags, ArgFlags, ArgMultiples ):

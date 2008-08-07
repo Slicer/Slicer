@@ -128,13 +128,13 @@ def Execute (inputSurface, targetSurface, outputSurface, \
             startByMatchingCentroids=False, checkMeanDistance=False, maximumMeanDistance=0.01):
 
     Slicer = __import__("Slicer")
-    slicer = Slicer.Slicer()
+    slicer = Slicer.slicer
     scene = slicer.MRMLScene
     inputSurface = scene.GetNodeByID(inputSurface)
     targetSurface = scene.GetNodeByID(targetSurface)
     outputSurface = scene.GetNodeByID(outputSurface)
 
-    icpTransform = slicer.vtkIterativeClosestPointTransform.New()
+    icpTransform = slicer.vtkIterativeClosestPointTransform()
     icpTransform.SetSource(inputSurface.GetPolyData())
     icpTransform.SetTarget(targetSurface.GetPolyData())
     if landmarkTransformMode == "RigidBody":
@@ -153,15 +153,12 @@ def Execute (inputSurface, targetSurface, outputSurface, \
     icpTransform.SetCheckMeanDistance(int(checkMeanDistance))
     icpTransform.SetMaximumMeanDistance(maximumMeanDistance)
 
-    transformFilter = slicer.vtkTransformPolyDataFilter.New()
+    transformFilter = slicer.vtkTransformPolyDataFilter()
     transformFilter.SetInput(inputSurface.GetPolyData())
     transformFilter.SetTransform(icpTransform)        
     transformFilter.Update()
     
     outputSurface.SetAndObservePolyData(transformFilter.GetOutput())
-
-    icpTransform.Delete()
-    transformFilter.Delete()
 
     return
 

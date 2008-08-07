@@ -78,27 +78,27 @@ Reslice a volume based on the geometry of another volume.
 def Execute (inputVolume, referenceVolume, outputVolume, interpolation="linear", background=0.0, autoCrop=False):
 
     Slicer = __import__("Slicer")
-    slicer = Slicer.Slicer()
+    slicer = Slicer.slicer
     scene = slicer.MRMLScene
 
     inputVolume = scene.GetNodeByID(inputVolume)
     referenceVolume = scene.GetNodeByID(referenceVolume)
     outputVolume = scene.GetNodeByID(outputVolume)
 
-    inputIJKToRASMatrix = slicer.vtkMatrix4x4.New()
+    inputIJKToRASMatrix = slicer.vtkMatrix4x4()
     inputVolume.GetIJKToRASMatrix(inputIJKToRASMatrix)
     
-    referenceIJKToRASMatrix = slicer.vtkMatrix4x4.New()
+    referenceIJKToRASMatrix = slicer.vtkMatrix4x4()
     referenceVolume.GetIJKToRASMatrix(referenceIJKToRASMatrix)
 
-    resliceMatrix = slicer.vtkMatrix4x4.New()
+    resliceMatrix = slicer.vtkMatrix4x4()
     inputIJKToRASMatrix.Invert()
     resliceMatrix.Multiply4x4(inputIJKToRASMatrix,referenceIJKToRASMatrix,resliceMatrix)
 
-    resliceTransform = slicer.vtkTransform.New()
+    resliceTransform = slicer.vtkTransform()
     resliceTransform.SetMatrix(resliceMatrix)
 
-    reslice = slicer.vtkImageReslice.New()
+    reslice = slicer.vtkImageReslice()
     reslice.SetInput(inputVolume.GetImageData())
     reslice.SetResliceTransform(resliceTransform)
     if interpolation == "nearest neighbor":
@@ -115,22 +115,21 @@ def Execute (inputVolume, referenceVolume, outputVolume, interpolation="linear",
         reslice.SetOutputExtent(*referenceVolume.GetImageData().GetWholeExtent())
     reslice.Update()
  
-    outputIJKToRASMatrix = slicer.vtkMatrix4x4.New()
+    outputIJKToRASMatrix = slicer.vtkMatrix4x4()
 
     if autoCrop:
         resliceOrigin = reslice.GetOutput().GetOrigin()
-        originMatrix = slicer.vtkMatrix4x4.New()
+        originMatrix = slicer.vtkMatrix4x4()
         originMatrix.Identity()
         originMatrix.SetElement(0,3,resliceOrigin[0])
         originMatrix.SetElement(1,3,resliceOrigin[1])
         originMatrix.SetElement(2,3,resliceOrigin[2])
         outputIJKToRASMatrix.Multiply4x4(referenceIJKToRASMatrix,originMatrix,outputIJKToRASMatrix)
-        originMatrix.Delete()
     else:
         outputIJKToRASMatrix.DeepCopy(referenceIJKToRASMatrix)
 
     #FIXME: this one should be done in the context of vtkMRMLVolumeNode::SetImageData
-    changeInformation = slicer.vtkImageChangeInformation.New()
+    changeInformation = slicer.vtkImageChangeInformation()
     changeInformation.SetInput(reslice.GetOutput())
     changeInformation.SetOutputOrigin(0.0,0.0,0.0)
     changeInformation.SetOutputSpacing(1.0,1.0,1.0)
@@ -139,13 +138,4 @@ def Execute (inputVolume, referenceVolume, outputVolume, interpolation="linear",
     outputVolume.SetAndObserveImageData(changeInformation.GetOutput())
     outputVolume.SetIJKToRASMatrix(outputIJKToRASMatrix)
 
-    inputIJKToRASMatrix.Delete()
-    referenceIJKToRASMatrix.Delete()
-    resliceMatrix.Delete()
-    resliceTransform.Delete()
-    reslice.Delete()
-    outputIJKToRASMatrix.Delete()
-    changeInformation.Delete()
-
     return
-

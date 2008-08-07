@@ -51,6 +51,8 @@ public:
   // an extra Tcl/ or Python/ subdir (strip it).
   virtual const char* GetModuleLibDirectory();
 
+  virtual void Initialize() {}
+
 protected:
   
 private:

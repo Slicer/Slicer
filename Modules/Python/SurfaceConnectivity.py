@@ -70,12 +70,12 @@ Identify connected regions of a surface.
 def Execute (inputSurface, outputSurface, connectivityMode="AllRegions", enableOutputFiducials=False, seedPoint=[0.0,0.0,0.0]):
 
     Slicer = __import__("Slicer")
-    slicer = Slicer.Slicer()
+    slicer = Slicer.slicer
     scene = slicer.MRMLScene
     inputSurface = scene.GetNodeByID(inputSurface)
     outputSurface = scene.GetNodeByID(outputSurface)
 
-    connectivityFilter = slicer.vtkPolyDataConnectivityFilter.New()
+    connectivityFilter = slicer.vtkPolyDataConnectivityFilter()
     connectivityFilter.SetInput(inputSurface.GetPolyData())
     if connectivityMode == "AllRegions":
         connectivityFilter.SetExtractionModeToAllRegions()
@@ -89,7 +89,7 @@ def Execute (inputSurface, outputSurface, connectivityMode="AllRegions", enableO
         fiducialList = scene.CreateNodeByClass("vtkMRMLFiducialListNode")
         fiducialList.DisableModifiedEventOn()
         fiducialList.SetScene(scene)
-        thresholdPoints = slicer.vtkThresholdPoints.New()
+        thresholdPoints = slicer.vtkThresholdPoints()
         thresholdPoints.SetInput(connectivityFilter.GetOutput())
         numberOfRegions = connectivityFilter.GetNumberOfExtractedRegions()
         for i in range(numberOfRegions):
@@ -105,15 +105,12 @@ def Execute (inputSurface, outputSurface, connectivityMode="AllRegions", enableO
         fiducialList.InvokePendingModifiedEvent()
         fiducialList.DisableModifiedEventOff()
         scene.AddNode(fiducialList)
-        thresholdPoints.Delete()
 
     outputSurface.SetAndObservePolyData(connectivityFilter.GetOutput())
 
     inputSurface.GetDisplayNode().VisibilityOff()
 #FIXME: this is not possible because display node doesn't exist yet; should it exist instead?
 #    outputSurface.GetDisplayNode().ScalarVisibilityOn()
-
-    connectivityFilter.Delete()
 
     return
 

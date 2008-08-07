@@ -41,23 +41,23 @@ Explode the ijkToRASTransform from volume, generating a parent transform and a p
 def Execute (inputVolume, outputVolume):
 
     Slicer = __import__("Slicer")
-    slicer = Slicer.Slicer()
+    slicer = Slicer.slicer
     scene = slicer.MRMLScene
 
     inputVolume = scene.GetNodeByID(inputVolume)
     outputVolume = scene.GetNodeByID(outputVolume)
 
-    ijkToRASDirections = slicer.vtkMatrix4x4.New()
+    ijkToRASDirections = slicer.vtkMatrix4x4()
     inputVolume.GetIJKToRASDirectionMatrix(ijkToRASDirections)
 
-    ijkToRASMatrix = slicer.vtkMatrix4x4.New()
+    ijkToRASMatrix = slicer.vtkMatrix4x4()
     inputVolume.GetIJKToRASMatrix(ijkToRASMatrix)
 
-    ijkToLocalMatrix = slicer.vtkMatrix4x4.New()
+    ijkToLocalMatrix = slicer.vtkMatrix4x4()
     ijkToRASDirections.Invert()
     ijkToLocalMatrix.Multiply4x4(ijkToRASDirections,ijkToRASMatrix,ijkToLocalMatrix)
 
-    localToRASMatrix = slicer.vtkMatrix4x4.New()
+    localToRASMatrix = slicer.vtkMatrix4x4()
     ijkToRASMatrix.Invert()
     ijkToRASMatrix.Multiply4x4(ijkToLocalMatrix,ijkToRASMatrix,localToRASMatrix)
     localToRASMatrix.Invert()
@@ -65,18 +65,12 @@ def Execute (inputVolume, outputVolume):
     outputVolume.SetAndObserveImageData(inputVolume.GetImageData())
     outputVolume.SetIJKToRASMatrix(ijkToLocalMatrix)
 
-    outputTransformNode = slicer.vtkMRMLLinearTransformNode.New()
+    outputTransformNode = slicer.vtkMRMLLinearTransformNode()
     outputTransformNode.SetScene(scene)
     outputTransformNode.SetAndObserveMatrixTransformToParent(localToRASMatrix)
     scene.AddNodeNoNotify(outputTransformNode)
 
     outputVolume.SetAndObserveTransformNodeID(outputTransformNode.GetID())
-
-    ijkToRASDirections.Delete()
-    ijkToRASMatrix.Delete()
-    ijkToLocalMatrix.Delete()
-    localToRASMatrix.Delete()
-    outputTransformNode.Delete()
 
     return
 

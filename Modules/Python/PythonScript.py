@@ -69,7 +69,7 @@ Run external Python code on a surface or image.
 def Execute (scriptFileName="", inputSurface="", inputVolume="", outputSurface="", outputVolume=""):
 
     Slicer = __import__("Slicer")
-    slicer = Slicer.Slicer()
+    slicer = Slicer.slicer
     scene = slicer.MRMLScene
 
     if inputSurface:

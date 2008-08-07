@@ -61,7 +61,6 @@ vtkScriptedModuleGUI::vtkScriptedModuleGUI()
 //----------------------------------------------------------------------------
 vtkScriptedModuleGUI::~vtkScriptedModuleGUI()
 {
-
   if (this->Language == vtkScriptedModuleGUI::Tcl)
     {
     if (this->GetApplication())
@@ -69,24 +68,25 @@ vtkScriptedModuleGUI::~vtkScriptedModuleGUI()
       this->GetApplication()->Script("%sDestructor %s", 
         this->GetModuleName(), this->GetTclName());
       }
+
+    this->RemoveMRMLNodeObservers();
+    this->RemoveLogicObservers();
+
+    this->SetLogic (NULL);
+    this->SetScriptedModuleNode (NULL);
     }
   else if (this->Language == vtkScriptedModuleGUI::Python)
     {
 #ifdef Slicer3_USE_PYTHON
-    std::stringstream pythonCommand;
-    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].Destructor('" << this->GetTclName() << "')\n";
-    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
-      {
-      PyErr_Print();
-      }
+// NO NEED TO CALL THE DESTRUCTOR EXPLICITLY, THE PYTHON GARBAGE COLLECTOR WILL TAKE CARE OF IT
+//    std::stringstream pythonCommand;
+//    pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui'].Destructor()\n"; 
+//    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+//      {
+//      PyErr_Print();
+//      }
 #endif
     }
-
-  this->RemoveMRMLNodeObservers();
-  this->RemoveLogicObservers();
-
-  this->SetLogic (NULL);
-  this->SetScriptedModuleNode (NULL);
 }
 
 
@@ -104,7 +104,7 @@ void vtkScriptedModuleGUI::RemoveMRMLNodeObservers()
     {
 #ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
-    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].RemoveMRMLNodeObservers('" << this->GetTclName() << "')\n";
+    pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui'].RemoveMRMLNodeObservers()\n"; 
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
       {
       PyErr_Print();
@@ -128,7 +128,7 @@ void vtkScriptedModuleGUI::RemoveLogicObservers()
     {
 #ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
-    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].RemoveLogicObservers('" << this->GetTclName() << "')\n";
+    pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui'].RemoveLogicObservers()\n"; 
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
       {
       PyErr_Print();
@@ -172,7 +172,7 @@ void vtkScriptedModuleGUI::AddGUIObservers ( )
     {
 #ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
-    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].AddGUIObservers('" << this->GetTclName() << "')\n";
+    pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui'].AddGUIObservers()\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
       {
       PyErr_Print();
@@ -198,7 +198,7 @@ void vtkScriptedModuleGUI::RemoveGUIObservers ( )
     {
 #ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
-    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].RemoveGUIObservers('" << this->GetTclName() << "')\n";
+    pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui'].RemoveGUIObservers()\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
       {
       PyErr_Print();
@@ -226,7 +226,7 @@ void vtkScriptedModuleGUI::ProcessGUIEvents ( vtkObject *caller,
     {
 #ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
-    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].ProcessGUIEvents('" << this->GetTclName() << "','" << kwObject->GetTclName() << "'," << event << ")\n";
+    pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui'].ProcessGUIEvents(Slicer.GetPythonWrapper('" << kwObject->GetTclName() << "')," << event << ")\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
       {
       PyErr_Print();
@@ -250,7 +250,7 @@ void vtkScriptedModuleGUI::UpdateMRML ()
     {
 #ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
-    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].UpdateMRML('" << this->GetTclName() << "')\n";
+    pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui'].UpdateMRML()\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
       {
       PyErr_Print();
@@ -274,7 +274,7 @@ void vtkScriptedModuleGUI::UpdateGUI ()
     {
 #ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
-    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].UpdateGUI('" << this->GetTclName() << "')\n";
+    pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui'].UpdateGUI()\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
       {
       PyErr_Print();
@@ -304,7 +304,7 @@ void vtkScriptedModuleGUI::ProcessMRMLEvents ( vtkObject *caller,
     {
 #ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
-    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].ProcessMRMLEvents('" << this->GetTclName() << "','" << mrmlNode->GetID() << "'," << event << ")\n";
+    pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui'].ProcessMRMLEvents('" << mrmlNode->GetID() << "'," << event << ")\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
       {
       PyErr_Print();
@@ -337,7 +337,7 @@ void vtkScriptedModuleGUI::BuildGUI ( )
     {
 #ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
-    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].BuildGUI('" << this->GetTclName() << "')\n";
+    pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui'].BuildGUI()\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
       {
       PyErr_Print();
@@ -361,7 +361,7 @@ void vtkScriptedModuleGUI::TearDownGUI ( )
     {
 #ifdef Slicer3_USE_PYTHON
     std::stringstream pythonCommand;
-    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].TearDownGUI('" << this->GetTclName() << "')\n";
+    pythonCommand << "SlicerScriptedModuleInfo.Modules['" << this->GetModuleName() << "']['gui'].TearDownGUI()\n";
     if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
       {
       PyErr_Print();
