@@ -548,7 +548,8 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     catch (...)
     {
     IjkToLpsMatrix->Delete();
-    throw 1;
+    itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ".");
+    return;
     }
   // Transform from LPS to RAS
   vtkMatrix4x4* LpsToRasMatrix = vtkMatrix4x4::New();
