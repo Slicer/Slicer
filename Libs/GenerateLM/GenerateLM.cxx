@@ -76,7 +76,7 @@ main(int argc, char *argv[])
   fin.seekg (0, std::ios::beg);
   char * TXT = new char[len+1];
   fin.read (TXT, len);
-  TXT[len] = '\0';
+  TXT[len] = '\n';
 
   // Parse the module description
   std::cerr << "GenerateLM";
