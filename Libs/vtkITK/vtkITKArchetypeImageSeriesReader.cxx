@@ -267,97 +267,139 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       }
     }
 
+  this->AllFileNames.resize( 0 );
+
   // Some file types require special processing
   itk::GDCMImageIO::Pointer dicomIO = itk::GDCMImageIO::New();
 
   // Test whether the input file is a DICOM file
   bool isDicomFile = dicomIO->CanReadFile(this->Archetype);
-  if ( isDicomFile && !this->GetSingleFile() )
+
+  // if user already set up FileNames, we do not try to find candidate files
+  if ( this->GetNumberOfFileNames() > 0 )  
   {
-    typedef itk::GDCMSeriesFileNames DICOMNameGeneratorType;
-    DICOMNameGeneratorType::Pointer inputImageFileGenerator = DICOMNameGeneratorType::New();
-    std::string fileNameName = itksys::SystemTools::GetFilenameName( this->Archetype );
-    std::string fileNamePath = itksys::SystemTools::GetFilenamePath( this->Archetype );
-    if (fileNamePath == "")
+    unsigned int nFiles = this->GetNumberOfFileNames();
+    this->AllFileNames.resize( 0 );
+    for (unsigned int k = 0; k < nFiles; k++)
     {
-      fileNamePath = ".";
+      this->AllFileNames.push_back( this->FileNames[k] );
     }
-    inputImageFileGenerator->SetDirectory( fileNamePath );
-
-    // determine if the file is diffusion weighted MR file
-
-    // Find the series that contains the archetype
-    candidateSeries = inputImageFileGenerator->GetSeriesUIDs();
-
-    // Find all dicom files in the directory 
-    for (unsigned int s = 0; s < candidateSeries.size(); s++)
+    this->FileNames.resize( 0 );
+    
+    // if this is the only file set by user
+    if (nFiles == 1)
     {
-      std::vector<std::string> seriesFileNames;
-      seriesFileNames = inputImageFileGenerator->GetFileNames( candidateSeries[s] ); 
-      for (unsigned int f = 0; f < seriesFileNames.size(); f++)
-      {
-        this->AllFileNames.push_back( seriesFileNames[f] );
-      }
+      this->IsOnlyFile = true;
     }
-    //int nFiles = this->AllFileNames.size(); UNUSED
 
-    // analysis dicom files and fill the Dicom Tag arrays
+    // if we need to analyze the header
     if ( AnalyzeHeader )
     {
       this->AnalyzeDicomHeaders();
     }
-
-    int found = 0;
-    for (unsigned int s = 0; s < candidateSeries.size() && found == 0; s++)
+  }
+  else
+  {
+    if ( isDicomFile && !this->GetSingleFile() )
     {
-      candidateFiles = inputImageFileGenerator->GetFileNames(candidateSeries[s]);
-      for (unsigned int f = 0; f < candidateFiles.size(); f++)
+      typedef itk::GDCMSeriesFileNames DICOMNameGeneratorType;
+      DICOMNameGeneratorType::Pointer inputImageFileGenerator = DICOMNameGeneratorType::New();
+      std::string fileNameName = itksys::SystemTools::GetFilenameName( this->Archetype );
+      std::string fileNamePath = itksys::SystemTools::GetFilenamePath( this->Archetype );
+      if (fileNamePath == "")
       {
-        if (itksys::SystemTools::CollapseFullPath(candidateFiles[f].c_str()) ==
-          fileNameCollapsed)
+        fileNamePath = ".";
+      }
+      inputImageFileGenerator->SetDirectory( fileNamePath );
+
+      // determine if the file is diffusion weighted MR file
+
+      // Find the series that contains the archetype
+      candidateSeries = inputImageFileGenerator->GetSeriesUIDs();
+
+      // Find all dicom files in the directory 
+      for (unsigned int s = 0; s < candidateSeries.size(); s++)
+      {
+        std::vector<std::string> seriesFileNames;
+        seriesFileNames = inputImageFileGenerator->GetFileNames( candidateSeries[s] ); 
+        for (unsigned int f = 0; f < seriesFileNames.size(); f++)
         {
-          found = 1;
-          break;
+          this->AllFileNames.push_back( seriesFileNames[f] );
         }
       }
-    }
-  }
-  else if( !this->GetSingleFile() ) 
-    { // not dicom
-    // check the dimensions of the archetype - if there 
-    // is more then one slice, use only the archetype
-    // but if it is a single slice, try to generate a 
-    // series of filenames
-    itk::ImageFileReader<ImageType>::Pointer imageReader =
-      itk::ImageFileReader<ImageType>::New();
-    imageReader->SetFileName(this->Archetype);
-    imageReader->UpdateOutputInformation();
-    region = imageReader->GetOutput()->GetLargestPossibleRegion();
-    if ( region.GetSize()[2] > 1 )
+      //int nFiles = this->AllFileNames.size(); UNUSED
+
+      // analysis dicom files and fill the Dicom Tag arrays
+      if ( AnalyzeHeader )
       {
-      candidateFiles.push_back( this->Archetype );
-      this->AllFileNames.push_back( this->Archetype );
-      this->IsOnlyFile = true;
+        this->AnalyzeDicomHeaders();
       }
-    else
+
+      // the following for loop set up candidate files with same series number 
+      // that include the given Archetype;
+      int found = 0;
+      for (unsigned int s = 0; s < candidateSeries.size() && found == 0; s++)
       {
-      // Generate filenames from the Archetype
-      itk::ArchetypeSeriesFileNames::Pointer fit = itk::ArchetypeSeriesFileNames::New();
-      fit->SetArchetype (this->Archetype);
-      candidateFiles = fit->GetFileNames();
-      this->AllFileNames.resize( candidateFiles.size() );
-      for (int f = 0; f < (int)(candidateFiles.size()); f ++)
-      {
-        this->AllFileNames[f] = candidateFiles[f];
+        candidateFiles = inputImageFileGenerator->GetFileNames(candidateSeries[s]);
+        for (unsigned int f = 0; f < candidateFiles.size(); f++)
+        {
+          if (itksys::SystemTools::CollapseFullPath(candidateFiles[f].c_str()) ==
+            fileNameCollapsed)
+          {
+            found = 1;
+            break;
+          }
+        }
       }
+
+      // do we have just one candidate file
       if ( candidateFiles.size() == 1 )
       {
         this->IsOnlyFile = true;
       }
-      else if ( AnalyzeHeader )
+    }
+    else if( !this->GetSingleFile() ) 
+    { // not dicom
+      // check the dimensions of the archetype - if there 
+      // is more then one slice, use only the archetype
+      // but if it is a single slice, try to generate a 
+      // series of filenames
+      itk::ImageFileReader<ImageType>::Pointer imageReader =
+        itk::ImageFileReader<ImageType>::New();
+      imageReader->SetFileName(this->Archetype);
+      imageReader->UpdateOutputInformation();
+      region = imageReader->GetOutput()->GetLargestPossibleRegion();
+      if ( region.GetSize()[2] > 1 )
       {
-        this->AnalyzeDicomHeaders();
+        candidateFiles.push_back( this->Archetype );
+        this->AllFileNames.push_back( this->Archetype );
+        this->IsOnlyFile = true;
       }
+      else
+      {
+        // Generate filenames from the Archetype
+        itk::ArchetypeSeriesFileNames::Pointer fit = itk::ArchetypeSeriesFileNames::New();
+        fit->SetArchetype (this->Archetype);
+        candidateFiles = fit->GetFileNames();
+        this->AllFileNames.resize( candidateFiles.size() );
+        for (int f = 0; f < (int)(candidateFiles.size()); f ++)
+        {
+          this->AllFileNames[f] = candidateFiles[f];
+        }
+        if ( candidateFiles.size() == 1 )
+        {
+          this->IsOnlyFile = true;
+        }
+        else if ( AnalyzeHeader )
+        {
+          this->AnalyzeDicomHeaders();
+        }
+      }
+    }
+    else
+    {
+      this->AllFileNames.push_back( this->Archetype );
+      this->IsOnlyFile = true;
     }
   }
 
@@ -989,3 +1031,7 @@ unsigned int vtkITKArchetypeImageSeriesReader::AddFileName( char* filename )
   return this->FileNames.size();
 }
 
+void vtkITKArchetypeImageSeriesReader::ResetFileNames( )
+{
+  this->FileNames.resize( 0 );
+}

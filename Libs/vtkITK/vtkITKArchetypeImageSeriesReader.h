@@ -691,6 +691,7 @@ protected:
   int SelectedOrientation;
 
   unsigned int AddFileName( char* filename );
+  void ResetFileNames();
   //BTX
   std::vector<std::string> FileNames;
   CoordinateOrientationCode DesiredCoordinateOrientation;
