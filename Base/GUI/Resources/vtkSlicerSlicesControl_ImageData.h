@@ -303,8 +303,8 @@ static const unsigned long image_SliceLabelOutlineOff_length         = 120;
 static const unsigned long image_SliceLabelOutlineOff_decoded_length = 1323;
 
 static const unsigned char image_SliceLabelOutlineOff[] =
-  "eNpjYmJgogxtJhcga/+6gAETAcUZKv5hIjTtQJW///tCEBo74s9/CALqQmYPKu24EFa/Dz"
-  "bHU6Idj/eJ8TuaycSwB5V2UtGw8Tup3scsLsgrbSgEAG0/wdE=";
+  "eNpjYmJgogxtJhcga/+6gAETAcUZKv5hIjTtQJW///tCEDIbqDLiz38IQmMPKu1YEVaPw7"
+  "0/PPyOK36J9DseW4ixfcC1j1i/k+p9zOKCvNKGQgAAvWrAAA==";
 
 /* 
  * Resource generated for file:
@@ -317,9 +317,9 @@ static const unsigned long image_SliceLabelOutlineOn_length         = 168;
 static const unsigned long image_SliceLabelOutlineOn_decoded_length = 1323;
 
 static const unsigned char image_SliceLabelOutlineOn[] =
-  "eNpjYmJgogxtJhcga/8dyYCJgOIMyZcwEZp2oMqvz7GgN1E8ER//YyKICWjaw8PDgWw4Cd"
-  "eOJo5LO7IaIAnXjiY+LG3HFfIEbQcCoEqsiBjbgVys8QtBBG2HaEezBReJSzsxeoer7cQj"
-  "zHjHmq9xIczigrzShkIAANs0dhU=";
+  "eNpjYmJgogxtJhcga/8dyYCJgOIMyZcwEZp2oMqvz7EgoDhQccTH/2gIYgKa9vDwcCAbTi"
+  "JrRxbHpR1ZDZBE1o4sPixtxxPy+G3HFe9E2o41bcARQduxpg1kRNB2NDV4SFzaidE7aG0n"
+  "HmHGO/64w5/fyS5tKAQAfadwww==";
 
 /* 
  * Resource generated for file:
