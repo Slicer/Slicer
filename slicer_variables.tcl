@@ -77,7 +77,7 @@ set ::CMAKE_TAG "CMake-2-6"
 set ::TEEM_TAG "Teem-1-9-0-patches"
 set ::KWWidgets_TAG "HEAD"
 set ::VTK_TAG "VTK-5-2"
-set ::ITK_TAG ITK-3-6
+set ::ITK_TAG ITK-3-8
 set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release25-maint"
 set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/trunk"
 set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
