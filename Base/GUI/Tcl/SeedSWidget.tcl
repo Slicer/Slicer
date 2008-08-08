@@ -79,9 +79,11 @@ itcl::body SeedSWidget::constructor {sliceGUI} {
   $_renderer AddActor2D $o(actor)
   lappend _actors $o(actor)
 
-  set o(textActor) [vtkNew vtkTextActor]
+  set o(textActor) [vtkNew vtkActor2D]
+  set o(textMapper) [vtkNew vtkTextMapper]
+  $o(textActor) SetMapper $o(textMapper)
   $_renderer AddActor2D $o(textActor)
-  set textProperty [$o(textActor) GetTextProperty]
+  set textProperty [$o(textMapper) GetTextProperty]
   $textProperty ShadowOn
   lappend _actors $o(textActor)
 
@@ -163,12 +165,12 @@ itcl::configbody SeedSWidget::visibility {
 }
 
 itcl::configbody SeedSWidget::text {
-  $o(textActor) SetInput $text
+  $o(textMapper) SetInput $text
   [$sliceGUI GetSliceViewer] RequestRender
 }
 
 itcl::configbody SeedSWidget::textScale {
-  set textProperty [$o(textActor) GetTextProperty]
+  set textProperty [$o(textMapper) GetTextProperty]
   set fontSize [expr round(2.5 * $textScale)]
   $textProperty SetFontSize $fontSize
   $this positionActors
@@ -242,7 +244,7 @@ itcl::body SeedSWidget::positionActors { } {
 itcl::body SeedSWidget::highlight { } {
 
   set property [$o(actor) GetProperty]
-  set textProperty [$o(textActor) GetTextProperty]
+  set textProperty [$o(textMapper) GetTextProperty]
 
   $o(actor) SetVisibility $visibility
   $o(textActor) SetVisibility $visibility
