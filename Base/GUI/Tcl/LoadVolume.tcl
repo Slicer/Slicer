@@ -633,7 +633,11 @@ itcl::body LoadVolume::parseDICOMHeader {fileName arrayName} {
   set reader [vtkITKArchetypeImageSeriesReader New]
   $reader SetArchetype $fileName
   $reader SetSingleFile 1
-  $reader UpdateInformation
+  set ret [catch "$reader UpdateInformation" res]
+  if { $ret } {
+    # this isn't a file we can read
+    return
+  }
 
   set isDICOM 0
   set header(numberOfKeys) [$reader GetNumberOfItemsInDictionary]
