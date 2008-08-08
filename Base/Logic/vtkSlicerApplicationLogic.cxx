@@ -1605,7 +1605,20 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
 
     if (source && target)
       {
-      target->Copy(source);
+      // save old storage info (in case user has custom file name already
+      // defined for this node, don't use the one from the miniscene since it
+      // was only used to read/write the temp area).
+      vtkMRMLStorableNode *storableTarget = vtkMRMLStorableNode::SafeDownCast(target);
+      if ( storableTarget )
+        {
+        const char *oldStorageNodeID = storableTarget->GetStorageNodeID();
+        target->Copy(source);
+        storableTarget->SetAndObserveStorageNodeID(oldStorageNodeID);
+        }
+      else
+        {
+        target->Copy(source);
+        }
 
       // if the source node is a model hierachy node, then also copy
       // and remap any child nodes of the target that are not in the
@@ -1632,6 +1645,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
           vtkMRMLDisplayNode *sdnd = smnd->GetDisplayNode();
           
           vtkMRMLNode *tmodel = this->MRMLScene->CopyNode(smnd);
+          vtkMRMLStorableNode::SafeDownCast(tmodel)->SetAndObserveStorageNodeID(NULL);
           vtkMRMLModelNode *mnd = vtkMRMLModelNode::SafeDownCast( tmodel );
           tmhnd->SetModelNodeID( mnd->GetID() );
 
@@ -1688,6 +1702,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                   vtkMRMLDisplayNode *sdnd = smnd->GetDisplayNode();
 
                   vtkMRMLNode *tmodel = this->MRMLScene->CopyNode(smnd);
+                  vtkMRMLStorableNode::SafeDownCast(tmodel)->SetAndObserveStorageNodeID(NULL);
                   vtkMRMLModelNode *mnd =vtkMRMLModelNode::SafeDownCast(tmodel);
                   tcmhd->SetModelNodeID( mnd->GetID() );
 
