@@ -294,32 +294,32 @@ static const unsigned char image_SliceWidgetOn[] =
 
 /* 
  * Resource generated for file:
- *    SliceLabelOutlineOff.png (zlib, base64) (image file)
+ *    SliceLabelNoOutline.png (zlib, base64) (image file)
  */
 static const unsigned int  image_SliceLabelOutlineOff_width          = 21;
 static const unsigned int  image_SliceLabelOutlineOff_height         = 21;
 static const unsigned int  image_SliceLabelOutlineOff_pixel_size     = 3;
-static const unsigned long image_SliceLabelOutlineOff_length         = 152;
+static const unsigned long image_SliceLabelOutlineOff_length         = 120;
 static const unsigned long image_SliceLabelOutlineOff_decoded_length = 1323;
 
-static const unsigned char image_SliceLabelOutlineOff[] = 
-  "eNpjYmJgogxtJhfg0c4wVQ0ZkaQdqD7kvxsywmoCfu3r1q2bNWsWkCReO9y1QC2zYACiHd"
-  "MXaNqR3bwODCC2QxyA6Qus2pF1oTGI0T4LN6CD7UPa8WRHHIXJhvJES5UsQ2GGpby4IFI7"
-  "hQAAE6qUlA==";
+static const unsigned char image_SliceLabelOutlineOff[] =
+  "eNpjYmJgogxtJhcga/+6gAETAcUZKv5hIjTtQJW///tCEBo74s9/CALqQmYPKu24EFa/Dz"
+  "bHU6Idj/eJ8TuaycSwB5V2UtGw8Tup3scsLsgrbSgEAG0/wdE=";
 
 /* 
  * Resource generated for file:
- *    SliceLabelOutlineOn.png (zlib, base64) (image file)
+ *    SliceLabelOutline.png (zlib, base64) (image file)
  */
 static const unsigned int  image_SliceLabelOutlineOn_width          = 21;
 static const unsigned int  image_SliceLabelOutlineOn_height         = 21;
 static const unsigned int  image_SliceLabelOutlineOn_pixel_size     = 3;
-static const unsigned long image_SliceLabelOutlineOn_length         = 120;
+static const unsigned long image_SliceLabelOutlineOn_length         = 168;
 static const unsigned long image_SliceLabelOutlineOn_decoded_length = 1323;
 
-static const unsigned char image_SliceLabelOutlineOn[] = 
-  "eNpjYmJgogxtJhfg0c4wgRsZkaQdqH7J0yIgYljHC2VgM4Hq2qGuXceLBWH4Ak07FksxGU"
-  "gmUF07dmejemHU8VTXTmGyGfA0T5UMS3lxQaR2CgEA5w9g1A==";
+static const unsigned char image_SliceLabelOutlineOn[] =
+  "eNpjYmJgogxtJhcga/8dyYCJgOIMyZcwEZp2oMqvz7GgN1E8ER//YyKICWjaw8PDgWw4Cd"
+  "eOJo5LO7IaIAnXjiY+LG3HFfIEbQcCoEqsiBjbgVys8QtBBG2HaEezBReJSzsxeoer7cQj"
+  "zHjHmq9xIczigrzShkIAANs0dhU=";
 
 /* 
  * Resource generated for file:
