@@ -619,7 +619,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LabelOutlineToggleButton->SetOverReliefToNone ( );
     this->LabelOutlineToggleButton->SetBorderWidth ( 0 );
     this->LabelOutlineToggleButton->SetImageToIcon ( this->SliceControlIcons->GetSliceLabelOutlineOnIcon ( ));    
-    this->LabelOutlineToggleButton->SetBalloonHelpString ( "Adjusts the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).");
+    this->LabelOutlineToggleButton->SetBalloonHelpString ( "Toggle between showing label map volume with regions outlined or filled.");
     //
     // Create a menubutton that navigates to Volumes->Display
     // 
