@@ -405,7 +405,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
 
     vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication() );
     vtkSlicerApplicationGUI *appGUI;
-    vtkSlicerGUILayout *geom;
+    vtkSlicerGUILayout *geom = NULL;
     //
     // if screen resolution is below a certain threshold,
     // need to pack the slice controller differently so
@@ -1268,8 +1268,6 @@ void vtkSlicerSliceControllerWidget::ToggleLabelOutline( int link)
   ssgui = vtkSlicerSlicesGUI::SafeDownCast ( app->GetModuleGUIByName ("Slices") );
   appGUI = ssgui->GetApplicationGUI ( );
 
-
-  const char *imageName = "SliceLabelOutlineImage";
   
   if (ssgui)
     {
@@ -1762,7 +1760,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
   //
   vtkKWPushButton *button = vtkKWPushButton::SafeDownCast ( caller );
   vtkKWScale *scale = vtkKWScale::SafeDownCast (caller);
-  vtkKWEntry *entry = vtkKWEntry::SafeDownCast(caller);
+//  vtkKWEntry *entry = vtkKWEntry::SafeDownCast(caller);
   vtkKWMenu *menu = vtkKWMenu::SafeDownCast(caller);
   
   // Toggle the SliceNode's visibility.
