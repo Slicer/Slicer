@@ -415,8 +415,8 @@ proc XnatXcatImportEntryVolume {node} {
         return
     }
 #    puts "Calling volumes logic add archetype scalar volume with uri = $n(URI) and name = $n(name)"
-#    set volumeNode [$logic AddArchetypeVolume $n(URI) $n(name) $loadingOptions]
-    set volumeNode [$logic AddArchetypeScalarVolume $n(URI) $n(name) $loadingOptions]
+    set volumeNode [$logic AddArchetypeVolume $n(URI) $n(name) $loadingOptions]
+#    set volumeNode [$logic AddArchetypeScalarVolume $n(URI) $n(name) $loadingOptions]
     if { $volumeNode == "" } {
         puts "XnatXcatImportEntryVolume: Unable to add Volume Node for $n(URI)."
         return
