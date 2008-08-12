@@ -571,9 +571,7 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           //---
           app->Script ("::EditBox::ShowDialog");
           }
-
         }
-
 
       vtkMRMLLayoutNode *layout;
       // TODO: figure out why we can't resume view rock or spin.
@@ -585,6 +583,11 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
           //--- add it to the scene, and make the
           //--- applicationGUI observe it.
           layout = vtkMRMLLayoutNode::New();
+          if (layout == NULL)
+            {
+            vtkErrorMacro ( "ERROR: No layout node exists and cannot create a new one." );
+            return;
+            }
           this->MRMLScene->AddNode(layout);
           p->SetAndObserveGUILayoutNode ( layout );
           //--- update MRML selection node.
