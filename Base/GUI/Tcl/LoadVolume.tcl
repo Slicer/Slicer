@@ -54,6 +54,8 @@ if { [itcl::find class LoadVolume] == "" } {
       vtkDelete  
     }
 
+    public variable showGroupElement 0
+
     variable _vtkObjects ""
 
     variable o ;# array of the objects for this widget, for convenient access
@@ -110,7 +112,7 @@ itcl::body LoadVolume::constructor {} {
   $o(toplevel) SetApplication $::slicer3::Application
   $o(toplevel) SetTitle "Add Volume"
   $o(toplevel) Create
-  $o(toplevel) SetGeometry 800x800
+  #$o(toplevel) SetGeometry 800x800
 
   # delete this instance when the window is closed
   wm protocol [$o(toplevel) GetWidgetName] \
@@ -125,10 +127,19 @@ itcl::body LoadVolume::constructor {} {
   pack [$o(topFrame) GetWidgetName] -side top -anchor nw -fill x
 
   #
+  # table frame
+  # - for browser and dicom info
+  #
+  set o(tableFrame) [vtkNew vtkKWFrame]
+  $o(tableFrame) SetParent $o(topFrame)
+  $o(tableFrame) Create
+  pack [$o(tableFrame) GetWidgetName] -side top -anchor nw -fill x
+
+  #
   # the file browser widget
   #
   set o(browser) [vtkNew vtkKWFileBrowserWidget]
-  $o(browser) SetParent $o(topFrame)
+  $o(browser) SetParent $o(tableFrame)
   $o(browser) Create
 
   $::slicer3::Application RequestRegistry "OpenPath"
@@ -169,11 +180,25 @@ itcl::body LoadVolume::constructor {} {
   $o(options) SetLabelText "Volume Options"
   $o(options) Create
 
+  #
+  # the dicom frame
+  #
+  set o(dicom) [vtkNew vtkKWFrameWithLabel]
+  $o(dicom) SetParent $o(tableFrame)
+  $o(dicom) SetLabelText "DICOM Information"
+  $o(dicom) Create
+
   pack \
     [$o(browser) GetWidgetName] \
+    [$o(dicom) GetWidgetName] -side left -anchor w -padx 2 -pady 2 -expand true -fill both
+
+  pack \
+    [$o(tableFrame) GetWidgetName] \
     [$o(path) GetWidgetName] \
     [$o(options) GetWidgetName] \
     -side top -anchor e -padx 2 -pady 2 -expand true -fill both
+
+  $o(browser) SetWidth 800
 
   #
   # the options contents
@@ -229,6 +254,7 @@ itcl::body LoadVolume::constructor {} {
 
 
   #
+  # the recent files option menu and
   # the apply and cancel buttons
   #
 
@@ -236,6 +262,28 @@ itcl::body LoadVolume::constructor {} {
   $o(buttonFrame) SetParent $o(toplevel)
   $o(buttonFrame) Create
   pack [$o(buttonFrame) GetWidgetName] -side top -anchor nw -fill x
+
+  set o(recentMenu) [vtkNew vtkKWMenuButtonWithLabel]
+  $o(recentMenu) SetParent $o(buttonFrame)
+  $o(recentMenu) Create
+  $o(recentMenu) SetLabelText "Recent Volumes: "
+  $o(recentMenu) SetBalloonHelpString "Quick access to the most recently loaded files from this machine"
+
+  set menuButton [$o(recentMenu) GetWidget]
+  set menu [$menuButton GetMenu]
+  $::slicer3::Application RequestRegistry "RecentFiles"
+  set recentFiles [$::slicer3::Application GetRegistryHolder]
+  $menu AddRadioButton "-"
+  foreach fileRecord $recentFiles {
+    foreach {name file} $fileRecord {
+      $menu AddRadioButton "$name $file"
+    }
+  }
+  $menu SelectItem 0
+  set tag [$menuButton AddObserver ModifiedEvent "$this processEvent $menuButton"]
+  lappend _observerRecords [list $menuButton $tag]
+
+  pack [$o(recentMenu) GetWidgetName] -side left -anchor w -padx 4 -pady 2
 
   set o(apply) [vtkNew vtkKWPushButton]
   $o(apply) SetParent $o(buttonFrame)
@@ -260,13 +308,6 @@ itcl::body LoadVolume::constructor {} {
     [$o(apply) GetWidgetName] \
     -side right -anchor w -padx 4 -pady 2
 
-  #
-  # the dicom frame
-  #
-  set o(dicom) [vtkNew vtkKWFrameWithLabel]
-  $o(dicom) SetParent $o(topFrame)
-  $o(dicom) SetLabelText "DICOM Information"
-  $o(dicom) Create
 
   #
   # parse dicom button - initially disabled, but enabled when
@@ -297,13 +338,17 @@ itcl::body LoadVolume::constructor {} {
   $w SetPotentialCellColorsChangedCommand $w "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
   $w SetColumnSortedCommand $w "ScheduleRefreshColorsOfAllCellsWithWindowCommand"
 
-  set columns {Group/Element Description Value}
+  if { $showGroupElement } {
+    set columns {Group/Element Description Value}
+    set widths {12 30 30}
+  } else {
+    set columns {Description Value}
+    set widths {15 15}
+  }
   foreach column $columns {
     set _dicomColumn($column) [$w AddColumn $column]
   }
-
   # configure the entries
-  set widths {15 45 50}
   foreach column $columns width $widths {
     $w SetColumnEditWindowToCheckButton $_dicomColumn($column)
     $w ColumnEditableOn $_dicomColumn($column)
@@ -325,10 +370,9 @@ itcl::body LoadVolume::constructor {} {
   set tag [$t AddObserver AnyEvent "$this processEvent $t"]
   lappend _observerRecords [list $t $tag]
 
-  pack [$o(dicomParse) GetWidgetName] -side top -anchor e -padx 2 -pady 2 -expand false -fill none
-  pack [$o(dicomTree) GetWidgetName] -side right -anchor e -padx 2 -pady 2 -expand true -fill both
-  pack [$o(dicomList) GetWidgetName] -side left -anchor e -padx 2 -pady 2 -expand true -fill both
-  pack [$o(dicom) GetWidgetName] -side bottom -anchor e -padx 2 -pady 2 -expand false -fill x
+  pack [$o(dicomParse) GetWidgetName] -side top -anchor w -padx 2 -pady 2 -expand false -fill none
+  pack [$o(dicomTree) GetWidgetName] -side top -anchor e -padx 2 -pady 2 -expand true -fill both
+  pack [$o(dicomList) GetWidgetName] -side bottom -anchor e -padx 2 -pady 2 -expand true -fill both
 
   #
   # pop up the dialog
@@ -395,6 +439,14 @@ itcl::body LoadVolume::apply { } {
     $::slicer3::ApplicationLogic PropagateVolumeSelection
 
     $::slicer3::Application SetRegistry "OpenPath" [file dirname $fileName]
+
+    $::slicer3::Application RequestRegistry "RecentFiles"
+    set recentFiles [$::slicer3::Application GetRegistryHolder]
+    if { [llength $recentFiles] > 15 } {
+      set recentFiles [lrange $recentFiles 0 14]
+    }
+    set recentFiles [linsert $recentFiles 0 [list $name $fileName]]
+    $::slicer3::Application SetRegistry "RecentFiles" $recentFiles
   }
   return 0
 }
@@ -437,6 +489,21 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     }
     set name [file root [file tail $fileName]]
     $this selectArchetype $fileName $name
+    return
+  }
+
+  set menuButton [$o(recentMenu) GetWidget]
+  if { $caller == $menuButton } {
+    set menu [$menuButton GetMenu]
+    set selection [$menu GetIndexOfSelectedItem]
+    $::slicer3::Application RequestRegistry "RecentFiles"
+    set recentFiles [$::slicer3::Application GetRegistryHolder]
+    set fileRecord [lindex $recentFiles [expr $selection - 1]]
+    if { $fileRecord != "" } {
+      foreach {name fileName} $fileRecord {}
+      $this selectArchetype $fileName $name
+      after idle $menu SelectItem 0
+    }
     return
   }
 
@@ -630,7 +697,9 @@ itcl::body LoadVolume::populateDICOMTable {fileName} {
   foreach key $firstKeys {
     set description $header($key,description)
     set value $header($key,value)
-    $w InsertCellText $row $_dicomColumn(Group/Element) $key
+    if { $showGroupElement } {
+      $w InsertCellText $row $_dicomColumn(Group/Element) $key
+    }
     $w InsertCellText $row $_dicomColumn(Description) $description
     $w InsertCellText $row $_dicomColumn(Value) $value
     incr row
@@ -640,7 +709,9 @@ itcl::body LoadVolume::populateDICOMTable {fileName} {
     set key $header($n,key)
     set description $header($key,description)
     set value $header($key,value)
-    $w InsertCellText $row $_dicomColumn(Group/Element) $key
+    if { $showGroupElement } {
+      $w InsertCellText $row $_dicomColumn(Group/Element) $key
+    }
     $w InsertCellText $row $_dicomColumn(Description) $description
     $w InsertCellText $row $_dicomColumn(Value) $value
     incr row
