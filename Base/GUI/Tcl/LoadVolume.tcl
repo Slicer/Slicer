@@ -425,8 +425,15 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
   if { $caller == $o(browser) } {
     set fileTable [$o(browser) GetFileListTable]
     set fileName [$fileTable GetNthSelectedFileName 0]
+    if { $fileName == "" } {
+      set directoryExplorer [$o(browser) GetDirectoryExplorer]
+      set fileName [$directoryExplorer GetSelectedDirectory]
+    }
     if { [file isdirectory $fileName] } {
-      set fileName [lindex [glob $fileName/*] 0]
+      set pathName [lindex [glob -nocomplain $fileName/*] 0]
+      if { ![file isdirectory $pathName] } {
+        set fileName $pathName
+      }
     }
     set name [file root [file tail $fileName]]
     $this selectArchetype $fileName $name
@@ -447,6 +454,9 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     } else {
       set dir [file dirname $path]
     }
+    array unset _dicomTree
+    array set _dicomTree ""
+    $this parseDICOMDirectory $dir _dicomTree
     $this populateDICOMTree $dir _dicomTree
     return
   }
@@ -493,19 +503,26 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
   puts "unknown event from $caller"
 }
 
+#
+# single spot where a given path is selected and widgets are updated
+# - path can be either file or directory
+# - directory portion of path is checked for dicom
+# - default name for the selection is given
+#
 itcl::body LoadVolume::selectArchetype { path name } {
 
   set fileTable [$o(browser) GetFileListTable]
   set directoryExplorer [$o(browser) GetDirectoryExplorer]
 
   if { [file isdirectory $path] } {
-    set dir $path
+    set directoryName $path
   } else {
-    set dir [file dirname $path]
+    set directoryName [file dirname $path]
   }
 
   set _processingEvents 1
-  $directoryExplorer SelectDirectory $dir
+
+  $directoryExplorer SelectDirectory $directoryName
   $fileTable ClearSelection
   $fileTable SelectFileName $path
   $fileTable ScrollToFile [file tail $path]
@@ -513,6 +530,19 @@ itcl::body LoadVolume::selectArchetype { path name } {
   [$o(path) GetWidget] SetValue $path
   [$o(name) GetWidget] SetValue $name
   $this populateDICOMTable $path
+
+  # if this is a different directory than have loaded, then 
+  # try to restore from cache.  If can't, then wait until
+  # user clicks 'Parse Directory' button
+  if { ![info exists _dicomTree(directoryName)] || $_dicomTree(directoryName) != $directoryName } {
+    # get the dicom info for this directory if it exists
+    set dicomCache [DICOMCache #auto]
+    $dicomCache getTreeForDirectory $directoryName _dicomTree
+    itcl::delete object $dicomCache
+
+    $this populateDICOMTree $directoryName _dicomTree
+  }
+
   set _processingEvents 0
 }
 
@@ -636,6 +666,7 @@ itcl::body LoadVolume::parseDICOMHeader {fileName arrayName} {
   set ret [catch "$reader UpdateInformation" res]
   if { $ret } {
     # this isn't a file we can read
+    $reader Delete
     return
   }
 
@@ -677,9 +708,13 @@ itcl::body LoadVolume::safeNodeName {name} {
 itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
 
   upvar $arrayName tree
-  $this parseDICOMDirectory $directoryName tree
+
   set t [$o(dicomTree) GetWidget]
   $t DeleteAllNodes
+
+  if { ![info exists tree(patients)] } {
+    return
+  }
 
   foreach patient $tree(patients) {
     set patientNode patient-[$this safeNodeName $patient]
@@ -718,11 +753,12 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
   set STUDY "0008|1030"
   set SERIES "0008|103e"
 
-  set files [glob $directoryName/*]
+  set files [glob -nocomplain $directoryName/*]
   set totalFiles [llength $files]
   set fileCount 0
 
   set tree(patients) ""
+  set tree(directoryName) $directoryName
   foreach f $files {
 
     set ff [file tail $f]
@@ -760,4 +796,9 @@ itcl::body LoadVolume::parseDICOMDirectory {directoryName arrayName} {
   $progressDialog SetParent ""
   $progressDialog SetMasterWindow ""
   $progressDialog Delete
+
+  # save the tree for later access...
+  set dicomCache [DICOMCache #auto]
+  $dicomCache setTreeForDirectory $tree(directoryName) tree
+  itcl::delete object $dicomCache
 }
