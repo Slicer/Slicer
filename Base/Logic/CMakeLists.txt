@@ -134,8 +134,6 @@ endif(BUILD_TESTING)
 
 file(GLOB COLORFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Resources/ColorFiles/*.txt")
 
-message(${COLORFILES})
-
 foreach(colorfile ${COLORFILES})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${colorfile}
