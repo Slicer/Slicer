@@ -18,8 +18,8 @@
 
 #include "itkImageToImageRegistrationHelper.h"
 
-#include "itkObjectFactoryBase.h"
-#include "itkMRMLIDImageIOFactory.h"
+//#include "itkObjectFactoryBase.h"
+//#include "itkMRMLIDImageIOFactory.h"
 
 // Description:
 // Get the PixelType and ComponentType from fileName
@@ -586,7 +586,7 @@ int main( int argc, char * argv[] )
     itk::MultiThreader::SetGlobalDefaultNumberOfThreads(numberOfThreads);
     }
 
-  itk::ObjectFactoryBase::RegisterFactory( itk::MRMLIDImageIOFactory::New() );
+  //itk::ObjectFactoryBase::RegisterFactory( itk::MRMLIDImageIOFactory::New() );
 
   unsigned int fixedDimensions = 0;
   itk::ImageIOBase::IOPixelType fixedPixelType;
