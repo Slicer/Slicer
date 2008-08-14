@@ -403,6 +403,16 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     }
   }
 
+  // figure out the index of Archetype in AllFileNames
+  for (unsigned int k = 0; k < this->AllFileNames.size(); k++)
+  {
+    if (this->AllFileNames[k] == this->Archetype)
+    {
+      this->IndexArchetype = k;
+      break;
+    }
+  }
+
   // Reduce the selection of filenames
   if ( this->IsOnlyFile || this->SingleFile )
   {
@@ -413,7 +423,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   {
     if ( !GroupingByTags )
     {
-      AssembleNthVolume( 0 );
+      AssembleVolumeContainingArchetype();
     }
     else 
     {
@@ -1035,4 +1045,33 @@ unsigned int vtkITKArchetypeImageSeriesReader::AddFileName( char* filename )
 void vtkITKArchetypeImageSeriesReader::ResetFileNames( )
 {
   this->FileNames.resize( 0 );
+}
+
+int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
+{
+  this->FileNames.resize(0);
+
+  long int iArchetypeSeriesUID = this->IndexSeriesInstanceUIDs[this->IndexArchetype];
+  long int iArchetypeContentTime = this->IndexContentTime[this->IndexArchetype];
+  long int iArchetypeTriggerTime = this->IndexTriggerTime[this->IndexArchetype];
+  long int iArchetypeDiffusion = this->IndexDiffusionGradientOrientation[this->IndexArchetype];
+  long int iArchetypeOrientation =  this->IndexImageOrientationPatient[this->IndexArchetype];
+
+  for (unsigned int k = 0; k < this->AllFileNames.size(); k++)
+  {
+    if ( (this->IndexSeriesInstanceUIDs[k] != iArchetypeSeriesUID && this->IndexSeriesInstanceUIDs[k] >= 0 && iArchetypeSeriesUID >= 0) ||
+      (this->IndexContentTime[k] != iArchetypeContentTime && this->IndexContentTime[k] >= 0 && iArchetypeContentTime >= 0) ||
+      (this->IndexTriggerTime[k] != iArchetypeTriggerTime && this->IndexTriggerTime[k] >= 0 && iArchetypeTriggerTime >= 0) ||
+      (this->IndexDiffusionGradientOrientation[k] != iArchetypeDiffusion  && this->IndexDiffusionGradientOrientation[k] >= 0 && iArchetypeDiffusion >= 0) ||
+      (this->IndexImageOrientationPatient[k] != iArchetypeOrientation && this->IndexImageOrientationPatient[k] >= 0 && iArchetypeOrientation >= 0) )
+    {
+      continue;
+    }
+    else
+    {
+      this->FileNames.push_back( this->AllFileNames[k] );
+    }
+  }
+
+  return this->FileNames.size();
 }

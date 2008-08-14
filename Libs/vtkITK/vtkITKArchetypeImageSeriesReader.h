@@ -641,6 +641,7 @@ public:
   void AnalyzeDicomHeaders( );
 
   void AssembleNthVolume( int n );
+  int AssembleVolumeContainingArchetype();
 
   void GroupFiles ( int idxSeriesInstanceUID,
     int idxContentTime,
@@ -689,6 +690,8 @@ protected:
   int SelectedDiffusion;
   int SelectedSlice;
   int SelectedOrientation;
+
+  int IndexArchetype;
 
   unsigned int AddFileName( char* filename );
   void ResetFileNames();
