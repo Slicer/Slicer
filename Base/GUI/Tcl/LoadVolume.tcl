@@ -69,7 +69,7 @@ if { [itcl::find class LoadVolume] == "" } {
 
     # methods
     method processEvent {{caller ""} {event ""}} {}
-    method selectArchetype {path name} {}
+    method selectArchetype {path name {optionsName ""}} {}
     method apply {} {}
     method status { message } {}
     method errorDialog {errorText} {}
@@ -210,7 +210,7 @@ itcl::body LoadVolume::constructor {} {
 
   set o(orient) [vtkNew vtkKWCheckButton]
   $o(orient) SetParent [$o(options) GetFrame]
-  $o(orient) SetText "Orientation From File"
+  $o(orient) SetText "Ignore File Orientation"
   $o(orient) Create
 
   set o(label) [vtkNew vtkKWCheckButton]
@@ -218,10 +218,10 @@ itcl::body LoadVolume::constructor {} {
   $o(label) SetText "Label Map"
   $o(label) Create
 
-  set o(singlefile) [vtkNew vtkKWCheckButton]
-  $o(singlefile) SetParent [$o(options) GetFrame]
-  $o(singlefile) SetText "Single File"
-  $o(singlefile) Create
+  set o(singleFile) [vtkNew vtkKWCheckButton]
+  $o(singleFile) SetParent [$o(options) GetFrame]
+  $o(singleFile) SetText "Single File"
+  $o(singleFile) Create
 
   set o(name) [vtkNew vtkKWEntryWithLabel]
   $o(name) SetParent [$o(options) GetFrame]
@@ -236,7 +236,7 @@ itcl::body LoadVolume::constructor {} {
 
   pack [$o(label) GetWidgetName] \
     -side left -anchor e -padx 2 -pady 2 -expand true -fill both
-  pack [$o(singlefile) GetWidgetName] \
+  pack [$o(singleFile) GetWidgetName] \
     -side left -anchor e -padx 2 -pady 2 -expand true -fill both
 
   pack [$o(name) GetWidgetName] \
@@ -275,10 +275,12 @@ itcl::body LoadVolume::constructor {} {
   set recentFiles [$::slicer3::Application GetRegistryHolder]
   $menu AddRadioButton "-"
   foreach fileRecord $recentFiles {
-    foreach {name file} $fileRecord {
+    foreach {name file options} $fileRecord {
       $menu AddRadioButton "$name $file"
     }
   }
+  $menu AddSeparator
+  $menu AddRadioButton "Reset List"
   $menu SelectItem 0
   set tag [$menuButton AddObserver ModifiedEvent "$this processEvent $menuButton"]
   lappend _observerRecords [list $menuButton $tag]
@@ -403,11 +405,14 @@ itcl::body LoadVolume::destructor {} {
 itcl::body LoadVolume::apply { } {
 
   set centered [$o(centered) GetSelectedState]
-  set oriented [$o(orient) GetSelectedState]
-  set labelMap [$o(label) GetSelectedState]
-  set singleFile [$o(singlefile) GetSelectedState]
+  set orient [$o(orient) GetSelectedState]
+  set label [$o(label) GetSelectedState]
+  set singleFile [$o(singleFile) GetSelectedState]
+  foreach opt {centered orient label singleFile} {
+    set options($opt) [set $opt]
+  }
 
-  set loadingOptions [expr $labelMap * 1 + $centered * 2 + $singleFile * 4 + $oriented * 16]
+  set loadingOptions [expr $label * 1 + $centered * 2 + $singleFile * 4 + $orient * 16]
 
   set fileTable [$o(browser) GetFileListTable]
   set fileName [$fileTable GetNthSelectedFileName 0]
@@ -431,7 +436,7 @@ itcl::body LoadVolume::apply { } {
     $this errorDialog "Could not load $fileName as a volume"
     return 1
   } else {
-    if { $labelMap } {
+    if { $label } {
       $selNode SetReferenceActiveLabelVolumeID [$node GetID]
     } else {
       $selNode SetReferenceActiveVolumeID [$node GetID]
@@ -445,7 +450,7 @@ itcl::body LoadVolume::apply { } {
     if { [llength $recentFiles] > 15 } {
       set recentFiles [lrange $recentFiles 0 14]
     }
-    set recentFiles [linsert $recentFiles 0 [list $name $fileName]]
+    set recentFiles [linsert $recentFiles 0 [list $name $fileName [array get options]]]
     $::slicer3::Application SetRegistry "RecentFiles" $recentFiles
   }
   return 0
@@ -496,12 +501,23 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
   if { $caller == $menuButton } {
     set menu [$menuButton GetMenu]
     set selection [$menu GetIndexOfSelectedItem]
+    if { $selection == 0 } {
+      return ;# the '-' empty selection
+    }
+    if { $selection == [expr [$menu GetNumberOfItems] - 1] } {
+      # last menu item is the reset list option
+      $::slicer3::Application SetRegistry "RecentFiles" ""
+      $menu DeleteAllItems
+      after idle $menu SelectItem 0
+      return;
+    }
     $::slicer3::Application RequestRegistry "RecentFiles"
     set recentFiles [$::slicer3::Application GetRegistryHolder]
     set fileRecord [lindex $recentFiles [expr $selection - 1]]
     if { $fileRecord != "" } {
-      foreach {name fileName} $fileRecord {}
-      $this selectArchetype $fileName $name
+      foreach {name fileName optionsList} $fileRecord {}
+      array set options $optionsList
+      $this selectArchetype $fileName $name options
       after idle $menu SelectItem 0
     }
     return
@@ -576,8 +592,8 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
 # - directory portion of path is checked for dicom
 # - default name for the selection is given
 #
-itcl::body LoadVolume::selectArchetype { path name } {
-
+itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
+  
   set fileTable [$o(browser) GetFileListTable]
   set directoryExplorer [$o(browser) GetDirectoryExplorer]
 
@@ -589,6 +605,15 @@ itcl::body LoadVolume::selectArchetype { path name } {
 
   set _processingEvents 1
 
+  if { $optionsName != "" } {
+    upvar $optionsName options
+    foreach opt {centered orient label singleFile} {
+      if { [info exists options($opt)] } {
+        $o($opt) SetSelectedState $options($opt)
+      }
+    }
+  }
+  
   $directoryExplorer SelectDirectory $directoryName
   $fileTable ClearSelection
   $fileTable SelectFileName $path
