@@ -1153,10 +1153,14 @@ ImageToImageRegistrationHelper< TImage >
       {
       if ( i == end )
         {
-        // not enough float to create a landmark
-        break;
+        ExceptionObject e;
+        e.SetDescription("Insufficient number of arguments passed for landmarks");
+        e.SetLocation(__FILE__);
+        throw e;
         }
-      landmark[j++] = *(i++);
+      landmark[j] = *(i);
+      ++j;
+      ++i;
       }
     if ( j != ImageDimension )
       {
@@ -1183,10 +1187,14 @@ ImageToImageRegistrationHelper< TImage >
       {
       if ( i == end )
         {
-        // not enough float to create a landmark
-        break;
+        ExceptionObject e;
+        e.SetDescription("Insufficient number of arguments passed for landmarks");
+        e.SetLocation(__FILE__);
+        throw e;
         }
-      landmark[j++] = *(i++);
+      landmark[j] = *(i);
+      ++i;
+      ++j;
       }
     if ( j != ImageDimension )
       {

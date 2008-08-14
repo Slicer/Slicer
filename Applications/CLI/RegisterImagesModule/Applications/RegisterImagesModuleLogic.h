@@ -39,6 +39,10 @@ public:
   vtkSetMRMLNodeArgumentAsStringMacro(FixedVolumeNodeId, fixedImage)
   vtkSetMRMLNodeArgumentAsStringMacro(MovingVolumeNodeId, movingImage)
   vtkSetMRMLNodeArgumentAsStringMacro(ResampledVolumeNodeId, resampledImage)
+  
+  vtkGetMRMLNodeArgumentAsStringMacro(FixedVolumeNodeId, fixedImage)
+  vtkGetMRMLNodeArgumentAsStringMacro(MovingVolumeNodeId, movingImage)
+  vtkGetMRMLNodeArgumentAsStringMacro(ResampledVolumeNodeId, resampledImage)
 
   vtkSetMRMLNodeArgumentAsStringMacro(Registration, registration);
 
@@ -50,11 +54,12 @@ public:
   
   void SetLandmarks ( const std::vector<std::vector<float> > &fixed, 
                       const std::vector<std::vector<float> > &moving);
-  void AddLandmark ( const std::vector<float> &fixed, const std::vector<float> &moving);
+  int AddLandmark ( const std::vector<float> &fixed, const std::vector<float> &moving);
   /** create a landmark if it doesn't exists */
   void SetLandmark ( int landmark, 
                      const std::vector<float> &fixed, 
                      const std::vector<float> &moving);
+  void RemoveLandmark( int landmark );
   
 protected:
   vtkSetMRMLNodeArgumentAsStringMacro(FixedLandmarks, fixedLandmarks);

@@ -18,6 +18,9 @@
 
 #include "itkImageToImageRegistrationHelper.h"
 
+#include "itkObjectFactoryBase.h"
+#include "itkMRMLIDImageIOFactory.h"
+
 // Description:
 // Get the PixelType and ComponentType from fileName
 void GetImageType (std::string fileName,
@@ -109,13 +112,22 @@ int DoIt( int argc, char *argv[] )
       }
     }
 
-  if( initialization == "None" )
+  if( fixedLandmarks.size() > 1 || movingLandmarks.size() > 1 )
     {
-    if (verbosity >= STANDARD)
+    if( initialization != "Landmarks" )
       {
-      std::cout << "### Initialization: None" << std::endl;
+      std::cout << "WARNING: Landmarks specified, but initialization process "
+                << "was not told to use landmarks. " << std::endl;
+      std::cout << "Changing initialization to use landmarks." << std::endl;
+      reger->SetInitialMethodEnum( RegerType::INIT_WITH_LANDMARKS );
       }
-    reger->SetInitialMethodEnum( RegerType::INIT_WITH_NONE );
+    }
+
+  if( initialization == "Landmarks")
+    {
+    reger->SetInitialMethodEnum( RegerType::INIT_WITH_LANDMARKS );
+    reger->SetFixedLandmarks( fixedLandmarks );
+    reger->SetMovingLandmarks( movingLandmarks );
     }
   else if( initialization == "ImageCenters")
     {
@@ -141,11 +153,13 @@ int DoIt( int argc, char *argv[] )
       }
     reger->SetInitialMethodEnum( RegerType::INIT_WITH_CENTERS_OF_MASS );
     }
-  else // LANDMARKS
+  else // if( initialization == "None" )
     {
-    reger->SetInitialMethodEnum( RegerType::INIT_WITH_LANDMARKS );
-    reger->SetFixedLandmarks( fixedLandmarks );
-    reger->SetMovingLandmarks( movingLandmarks );
+    if (verbosity >= STANDARD)
+      {
+      std::cout << "### Initialization: None" << std::endl;
+      }
+    reger->SetInitialMethodEnum( RegerType::INIT_WITH_NONE );
     }
 
 
@@ -572,6 +586,8 @@ int main( int argc, char * argv[] )
     itk::MultiThreader::SetGlobalDefaultNumberOfThreads(numberOfThreads);
     }
 
+  itk::ObjectFactoryBase::RegisterFactory( itk::MRMLIDImageIOFactory::New() );
+
   unsigned int fixedDimensions = 0;
   itk::ImageIOBase::IOPixelType fixedPixelType;
   itk::ImageIOBase::IOComponentType fixedComponentType;
@@ -583,7 +599,7 @@ int main( int argc, char * argv[] )
  
   try
     {
-    GetImageType( movingImage, fixedPixelType, fixedComponentType, fixedDimensions ); 
+    GetImageType( fixedImage, fixedPixelType, fixedComponentType, fixedDimensions ); 
     GetImageType( movingImage, movingPixelType, movingComponentType, movingDimensions ); 
     dimensions = fixedDimensions;
     if( movingDimensions > dimensions )

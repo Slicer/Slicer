@@ -161,13 +161,13 @@ int main(int argc, char *argv[])
                     "Number of samples from the fixed images for computing the metric");
   command.SetOptionLongTag("NumberOfSamples", "NumberOfSamples");
   command.AddOptionField("NumberOfSamples", "NumberOfSamples",
-                         MetaCommand::INT, true, "800000");
+                         MetaCommand::INT, true, "400000");
 
   command.SetOption("MaxIterations", "s", false,
                     "Maximum number of optimizer iterations");
   command.SetOptionLongTag("MaxIterations", "MaxIterations");
   command.AddOptionField("MaxIterations", "MaxIterations",
-                         MetaCommand::INT, true, "40");
+                         MetaCommand::INT, true, "20");
 
   command.SetOption("RandomNumberSeed", "u", false,
                     "Seed used to generate random numbers (0 = random seed)");
@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
                     "Number of control points to align moving with fixed");
   command.SetOptionLongTag("NumberOfControlPoints", "NumberOfControlPoints");
   command.AddOptionField("NumberOfControlPoints", "NumberOfControlPoints",
-                         MetaCommand::INT, true, "10");
+                         MetaCommand::INT, true, "5");
 
   command.SetOption("NumberOfLevels", "l", false,
                     "Number of multi-resolution levels to use during optimization");

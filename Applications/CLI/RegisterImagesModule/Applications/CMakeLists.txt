@@ -66,7 +66,7 @@ PROJECT( RegisterImagesModuleApplications )
         ENDMACRO(MOVE_TO_TOP_BINARY NAME CACHE_VAR)
       ENDIF( COMMAND slicer3_set_plugins_output_path )
     ENDIF( NOT COMMAND MOVE_TO_TOP_BINARY )
-     
+
     IF( Maverick_SOURCE_DIR )
       ADD_LIBRARY( RegisterImagesModuleLogic RegisterImagesModuleLogic.cxx )
       TARGET_LINK_LIBRARIES( RegisterImagesModuleLogic
@@ -83,7 +83,8 @@ PROJECT( RegisterImagesModuleApplications )
       SET( RegisterImagesSlicer_SOURCE RegisterImagesSlicer.cxx )
       GENERATECLP( RegisterImagesSlicer_SOURCE RegisterImagesSlicer.xml
                    ${RegisterImagesModuleApplications_SOURCE_DIR}/logo.h )
-      ADD_LIBRARY( RegisterImagesModule SHARED ${RegisterImagesSlicer_SOURCE} )
+      ADD_LIBRARY( RegisterImagesModule SHARED ${RegisterImagesSlicer_SOURCE} 
+                                               RegisterImagesSlicer.xml )
       SET_TARGET_PROPERTIES( RegisterImagesModule PROPERTIES
                              COMPILE_FLAGS "-Dmain=ModuleEntryPoint" )
       TARGET_LINK_LIBRARIES( RegisterImagesModule ${ITK_LIBRARIES} MRMLIDIO )
@@ -93,14 +94,6 @@ PROJECT( RegisterImagesModuleApplications )
       MOVE_TO_TOP_BINARY( RegisterImages RegisterImages_EXE )
     ENDIF( GenerateCLP_USE_FILE )
 
-    #MOVE_TO_TOP_BINARY( InitialImageToImageRegistrationMethod
-                        #InitialImageToImageRegistrationMethod_EXE )
-    #MOVE_TO_TOP_BINARY( RigidImageToImageRegistrationMethod
-                        #RigidImageToImageRegistrationMethod_EXE )
-    #MOVE_TO_TOP_BINARY( AffineImageToImageRegistrationMethod
-                        #AffineImageToImageRegistrationMethod_EXE )
-    #MOVE_TO_TOP_BINARY( BSplineImageToImageRegistrationMethod
-                        #BSplineImageToImageRegistrationMethod_EXE )
   ENDIF( SLICER3_SOURCE_DIR )
   
   #
@@ -198,87 +191,123 @@ PROJECT( RegisterImagesModuleApplications )
     OPTION( BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING 
             "Build and download MRI data for testing the RegisterImagesModule" OFF )
     IF( BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING )
-       SET( msg "Warning: You have chosen to enable BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING." )
-       SET( msg "${msg} This module will download MRI data from Kitware's MIDAS server" )
-       SET( msg "${msg} and run test that may require several hours of computation time." )
-       MESSAGE( "${msg}" )
+      SET( msg "Warning: You have chosen to enable BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING." )
+      SET( msg "${msg} This module will download MRI data from Kitware's MIDAS server" )
+      SET( msg "${msg} and run test that may require several hours of computation time." )
+      MESSAGE( "${msg}" )
 
-       # 
-       # Fetch the data
-       # 
-       MACRO( DOWNLOAD_IJ_DATA PUBID DIRNAME FILENAME )
-         IF( NOT EXISTS "${REGISTER_IMAGES_TEST_DATA_ROOT}/${DIRNAME}/${FILENAME}" )
-           MAKE_DIRECTORY( "${REGISTER_IMAGES_TEST_DATA_ROOT}" )
-           MAKE_DIRECTORY( "${REGISTER_IMAGES_TEST_DATA_ROOT}/${DIRNAME}" )
-           IF( NOT SVNCOMMAND )
-             IF( Subversion_SVN_EXECUTABLE )
-               SET( SVNCOMMAND ${Subversion_SVN_EXECUTABLE} )
-             ELSE( Subversion_SVN_EXECUTABLE )
-               FIND_PACKAGE( Subversion REQUIRED )
-               IF( Subversion_FOUND )
-                 SET( SVNCOMMAND ${Subversion_SVN_EXECUTABLE} )
-               ELSE( Subversion_FOUND )
-                 MESSAGE( FATAL_ERROR "Subversion is required to download testing data." )
-               ENDIF( Subversion_FOUND )
-             ENDIF( Subversion_SVN_EXECUTABLE )
-           ENDIF( NOT SVNCOMMAND )
-           SET( svnUser "--username=aylward@unc.edu" )
-           SET( svnPassword "--password=testing" )
-           SET( svnCmd "export" )
-           SET( svnSite "http://www.insight-journal.org/svn/IJ/${PUBID}/${FILENAME}" )
-           SET( svnDir "${REGISTER_IMAGES_TEST_DATA_ROOT}/${DIRNAME}/${FILENAME}" )
-           MESSAGE( STATUS "Downloading ${FILENAME}" )
-           EXECUTE_PROCESS(
-                 COMMAND "${SVNCOMMAND}" ${svnUser} ${svnPassword} ${svnCmd} ${svnSite} ${svnDir} 
-                 OUTPUT_VARIABLE svnOutput
-                 ERROR_VARIABLE svnError
-                 RESULT_VARIABLE svnResult
-                 )
-           # Result should be 0 on success
-           IF(svnResult)
-             MESSAGE(FATAL_ERROR "SVN checkout of ${FILENAME} failed with error = ${svnError}")
-           ENDIF(svnResult)
-         ENDIF( NOT EXISTS "${REGISTER_IMAGES_TEST_DATA_ROOT}/${DIRNAME}/${FILENAME}" )
-       ENDMACRO( DOWNLOAD_IJ_DATA PUBID DIRNAME FILENAME )
-    
-       # Standard Inputs
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal002-T1-Flash.mha" )
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal002-T1-Flash-Stripped.mha" )
+      # 
+      # Fetch the data
+      # 
+      MACRO( DOWNLOAD_IJ_DATA PUBID DIRNAME FILENAME )
+        IF( NOT EXISTS "${REGISTER_IMAGES_TEST_DATA_ROOT}/${DIRNAME}/${FILENAME}" )
+          MAKE_DIRECTORY( "${REGISTER_IMAGES_TEST_DATA_ROOT}" )
+          MAKE_DIRECTORY( "${REGISTER_IMAGES_TEST_DATA_ROOT}/${DIRNAME}" )
+          IF( NOT SVNCOMMAND )
+            IF( Subversion_SVN_EXECUTABLE )
+              SET( SVNCOMMAND ${Subversion_SVN_EXECUTABLE} )
+            ELSE( Subversion_SVN_EXECUTABLE )
+              FIND_PACKAGE( Subversion REQUIRED )
+              IF( Subversion_FOUND )
+                SET( SVNCOMMAND ${Subversion_SVN_EXECUTABLE} )
+              ELSE( Subversion_FOUND )
+                MESSAGE( FATAL_ERROR "Subversion is required to download testing data." )
+              ENDIF( Subversion_FOUND )
+            ENDIF( Subversion_SVN_EXECUTABLE )
+          ENDIF( NOT SVNCOMMAND )
+          SET( svnUser "--username=aylward@unc.edu" )
+          SET( svnPassword "--password=testing" )
+          SET( svnCmd "export" )
+          SET( svnSite "http://www.insight-journal.org/svn/IJ/${PUBID}/${FILENAME}" )
+          SET( svnDir "${REGISTER_IMAGES_TEST_DATA_ROOT}/${DIRNAME}/${FILENAME}" )
+          MESSAGE( STATUS "Downloading ${FILENAME}" )
+          EXECUTE_PROCESS(
+                COMMAND "${SVNCOMMAND}" ${svnUser} ${svnPassword} ${svnCmd} ${svnSite} ${svnDir} 
+                OUTPUT_VARIABLE svnOutput
+                ERROR_VARIABLE svnError
+                RESULT_VARIABLE svnResult
+                )
+          # Result should be 0 on success
+          IF(svnResult)
+            MESSAGE(FATAL_ERROR "SVN checkout of ${FILENAME} failed with error = ${svnError}")
+          ENDIF(svnResult)
+        ENDIF( NOT EXISTS "${REGISTER_IMAGES_TEST_DATA_ROOT}/${DIRNAME}/${FILENAME}" )
+      ENDMACRO( DOWNLOAD_IJ_DATA PUBID DIRNAME FILENAME )
    
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal004-T1-Flash.mha" )
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal004-T1-Flash-Stripped.mha" )
-   
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal005-T1-Flash.mha" )
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal005-T1-Flash-Stripped.mha" )
-   
-       # Deformable Registration Inputs
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal002-Normal004-Affine.mha" )
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal002-Normal004-Stripped-Affine.mha" )
-   
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal002-Normal005-Affine.mha" )
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal002-Normal005-Stripped-Affine.mha" )
-   
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal004-Normal002-Affine.mha" )
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal004-Normal002-Stripped-Affine.mha" )
-   
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal004-Normal005-Affine.mha" )
-       DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
-                         "Normal004-Normal005-Stripped-Affine.mha" )
-   
+      # Standard Inputs
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal002-T1-Flash.mha" )
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal002-T1-Flash-Stripped.mha" )
   
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal004-T1-Flash.mha" )
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal004-T1-Flash-Stripped.mha" )
+  
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal005-T1-Flash.mha" )
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal005-T1-Flash-Stripped.mha" )
+  
+      # Deformable Registration Inputs
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal002-Normal004-Affine.mha" )
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal002-Normal004-Stripped-Affine.mha" )
+  
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal002-Normal005-Affine.mha" )
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal002-Normal005-Stripped-Affine.mha" )
+  
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal004-Normal002-Affine.mha" )
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal004-Normal002-Stripped-Affine.mha" )
+  
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal004-Normal005-Affine.mha" )
+      DOWNLOAD_IJ_DATA( 242 "UNCHealthyBrainMRI-Inputs"
+                        "Normal004-Normal005-Stripped-Affine.mha" )
+  
+ 
+      # Baselines
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                             "InitialUNC24.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "InitialUNC24Stripped.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "RigidUNC24.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "RigidUNC24Stripped.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "AffineUNC24.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "AffineUNC24Stripped.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "BSplineUNC24.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "BSplineUNC24StrippedC5.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "BSplineUNC24Stripped.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "BSplineUNC24StrippedC15.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "BSplineUNC24StrippedC20.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "BSplineUNC25.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "BSplineUNC25Stripped.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "BSplineUNC42.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "BSplineUNC42Stripped.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "BSplineUNC45.mha" )
+      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
+                            "BSplineUNC45Stripped.mha" )
+
       ###################
       ###################
       #
@@ -287,280 +316,468 @@ PROJECT( RegisterImagesModuleApplications )
       ###################
       ###################
       
-      ###################
-      # Initial
-      ###################
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "InitialUNC24.mha" )
-      ADD_TEST(InitialRegistrationTestUNC24
-        ${CXX_TEST_PATH}/InitialImageToImageRegistrationMethod 
-        --ResampledMovingImage ${TEST_TEMP}/InitialUNC24.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/InitialUNC24.mha
-        --DifferenceImage ${TEST_TEMP}/InitialUNC24_Diff.mha
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
-        ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "InitialUNC24Stripped.mha" )
-      ADD_TEST(InitialRegistrationTestUNC24Stripped
-        ${CXX_TEST_PATH}/InitialImageToImageRegistrationMethod 
-        --ResampledMovingImage ${TEST_TEMP}/InitialUNC24Stripped.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/InitialUNC24Stripped.mha
-        --DifferenceImage ${TEST_TEMP}/InitialUNC24Stripped_Diff.mha
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
-        ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
-        )
-      
-      ###################
-      # Rigid
-      ###################
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "RigidUNC24.mha" )
-      ADD_TEST(RigidRegistrationTestUNC24
-        ${CXX_TEST_PATH}/RigidImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/RigidUNC24.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/RigidUNC24.mha
-        --DifferenceImage ${TEST_TEMP}/RigidUNC24_Diff.mha
-        --FailureIntensityTolerance 30
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
-        ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "RigidUNC24Stripped.mha" )
-      ADD_TEST(RigidRegistrationTestUNC24Stripped
-        ${CXX_TEST_PATH}/RigidImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/RigidUNC24Stripped.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/RigidUNC24Stripped.mha
-        --DifferenceImage ${TEST_TEMP}/RigidUNC24Stripped_Diff.mha
-        --FailureIntensityTolerance 30
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
-        ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
-        )
-      
-      ###################
-      # Affine
-      ###################
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "AffineUNC24.mha" )
-      ADD_TEST(AffineRegistrationTestUNC24
-        ${CXX_TEST_PATH}/AffineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/AffineUNC24.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/AffineUNC24.mha
-        --DifferenceImage ${TEST_TEMP}/AffineUNC24_Diff.mha
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
-        ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "AffineUNC24Stripped.mha" )
-      ADD_TEST(AffineRegistrationTestUNC24Stripped
-        ${CXX_TEST_PATH}/AffineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/AffineUNC24Stripped.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/AffineUNC24Stripped.mha
-        --DifferenceImage ${TEST_TEMP}/AffineUNC24Stripped_Diff.mha
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
-        ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
-        )
-      
-      ###################
-      # BSpline
-      ###################
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "BSplineUNC24.mha" )
-      ADD_TEST(BSplineRegistrationTestUNC24
-        ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/BSplineUNC24.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24.mha
-        --DifferenceImage ${TEST_TEMP}/BSplineUNC24_Diff.mha
-        --MinimizeMemory
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
-        ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Affine.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "BSplineUNC24StrippedC5.mha" )
-      ADD_TEST(BSplineRegistrationTestUNC24StrippedC5
-        ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/BSplineUNC24StrippedC5.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24StrippedC5.mha
-        --DifferenceImage ${TEST_TEMP}/BSplineUNC24StrippedC5_Diff.mha
-        --MinimizeMemory
-        --NumberOfControlPoints 5
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
-        ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "BSplineUNC24Stripped.mha" )
-      ADD_TEST(BSplineRegistrationTestUNC24Stripped
-        ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/BSplineUNC24Stripped.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24Stripped.mha
-        --DifferenceImage ${TEST_TEMP}/BSplineUNC24Stripped_Diff.mha
-        --MinimizeMemory
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
-        ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "BSplineUNC24StrippedC15.mha" )
-      ADD_TEST(BSplineRegistrationTestUNC24StrippedC15
-        ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/BSplineUNC24StrippedC15.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24StrippedC15.mha
-        --DifferenceImage ${TEST_TEMP}/BSplineUNC24StrippedC15_Diff.mha
-        --MinimizeMemory
-        --NumberOfControlPoints 15
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
-        ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "BSplineUNC24StrippedC20.mha" )
-      ADD_TEST(BSplineRegistrationTestUNC24StrippedC20
-        ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/BSplineUNC24StrippedC20.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24StrippedC20.mha
-        --DifferenceImage ${TEST_TEMP}/BSplineUNC24StrippedC20_Diff.mha
-        --MinimizeMemory
-        --NumberOfControlPoints 20
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
-        ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "BSplineUNC25.mha" )
-      ADD_TEST(BSplineRegistrationTestUNC25
-        ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/BSplineUNC25.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC25.mha
-        --DifferenceImage ${TEST_TEMP}/BSplineUNC25_Diff.mha
-        --MinimizeMemory
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
-        ${UNC_TEST_INPUT_DIR}/Normal002-Normal005-Affine.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "BSplineUNC25Stripped.mha" )
-      ADD_TEST(BSplineRegistrationTestUNC25Stripped
-        ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/BSplineUNC25Stripped.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC25Stripped.mha
-        --DifferenceImage ${TEST_TEMP}/BSplineUNC25Stripped_Diff.mha
-        --MinimizeMemory
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
-        ${UNC_TEST_INPUT_DIR}/Normal002-Normal005-Stripped-Affine.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "BSplineUNC42.mha" )
-      ADD_TEST(BSplineRegistrationTestUNC42
-        ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/BSplineUNC42.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC42.mha
-        --DifferenceImage ${TEST_TEMP}/BSplineUNC42_Diff.mha
-        --MinimizeMemory
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
-        ${UNC_TEST_INPUT_DIR}/Normal004-Normal002-Affine.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "BSplineUNC42Stripped.mha" )
-      ADD_TEST(BSplineRegistrationTestUNC42Stripped
-        ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/BSplineUNC42Stripped.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC42Stripped.mha
-        --DifferenceImage ${TEST_TEMP}/BSplineUNC42Stripped_Diff.mha
-        --MinimizeMemory
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
-        ${UNC_TEST_INPUT_DIR}/Normal004-Normal002-Stripped-Affine.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "BSplineUNC45.mha" )
-      ADD_TEST(BSplineRegistrationTestUNC45
-        ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/BSplineUNC45.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC45.mha
-        --DifferenceImage ${TEST_TEMP}/BSplineUNC45_Diff.mha
-        --MinimizeMemory
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
-        ${UNC_TEST_INPUT_DIR}/Normal004-Normal005-Affine.mha
-        )
-      
-      DOWNLOAD_IJ_DATA( 247 "UNCHealthyBrainMRI-RegisterImagesModule" 
-                            "BSplineUNC45Stripped.mha" )
-      ADD_TEST(BSplineRegistrationTestUNC45Stripped
-        ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod
-        --Mode DRAFT
-        --ResampledMovingImage ${TEST_TEMP}/BSplineUNC45Stripped.mha
-        --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC45Stripped.mha
-        --DifferenceImage ${TEST_TEMP}/BSplineUNC45Stripped_Diff.mha
-        --MinimizeMemory
-        --FailureIntensityTolerance 40
-        --FailureOffsetTolerance 1
-        --RandomNumberSeed 121212
-        ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
-        ${UNC_TEST_INPUT_DIR}/Normal004-Normal005-Stripped-Affine.mha
-        )
-  
-    ENDIF( BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING )
+      IF( GenerateCLP_USE_FILE )
 
-  ENDIF( BUILD_TESTING )
+        ###################
+        # Initial
+        ###################
+        ADD_TEST(InitialRegistrationTestUNC24
+          ${CXX_TEST_PATH}/RegisterImages 
+          --registration Initial
+          --resampledImage ${TEST_TEMP}/InitialUNC24.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/InitialUNC24.mha
+          --baselineDifferenceImage ${TEST_TEMP}/InitialUNC24_Diff.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
+          )
+        
+        ADD_TEST(InitialRegistrationTestUNC24Stripped
+          ${CXX_TEST_PATH}/RegisterImages 
+          --registration Initial
+          --resampledImage ${TEST_TEMP}/InitialUNC24Stripped.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/InitialUNC24Stripped.mha
+          --baselineDifferenceImage ${TEST_TEMP}/InitialUNC24Stripped_Diff.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
+          )
+        
+        ###################
+        # Rigid
+        ###################
+        ADD_TEST(RigidRegistrationTestUNC24
+          ${CXX_TEST_PATH}/RegisterImages 
+          --registration Rigid
+          --resampledImage ${TEST_TEMP}/RigidUNC24.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/RigidUNC24.mha
+          --baselineDifferenceImage ${TEST_TEMP}/RigidUNC24_Diff.mha
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
+          )
+        
+        ADD_TEST(RigidRegistrationTestUNC24Stripped
+          ${CXX_TEST_PATH}/RegisterImages
+          --registration Rigid
+          --resampledImage ${TEST_TEMP}/RigidUNC24Stripped.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/RigidUNC24Stripped.mha
+          --baselineDifferenceImage ${TEST_TEMP}/RigidUNC24Stripped_Diff.mha
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
+          )
+        
+        ###################
+        # Affine
+        ###################
+        ADD_TEST(AffineRegistrationTestUNC24
+          ${CXX_TEST_PATH}/RegisterImages 
+          --registration Affine
+          --resampledImage ${TEST_TEMP}/AffineUNC24.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/AffineUNC24.mha
+          --baselineDifferenceImage ${TEST_TEMP}/AffineUNC24_Diff.mha
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
+          )
+        
+        ADD_TEST(AffineRegistrationTestUNC24Stripped
+          ${CXX_TEST_PATH}/RegisterImages
+          --resampledImage ${TEST_TEMP}/AffineUNC24Stripped.mha
+          --baselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/AffineUNC24Stripped.mha
+          --baselineDifferenceImage ${TEST_TEMP}/AffineUNC24Stripped_Diff.mha
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
+          )
+        
+        ###################
+        # BSpline
+        ###################
+        ADD_TEST(BSplineRegistrationTestUNC24
+          ${CXX_TEST_PATH}/RegisterImages 
+          --resampledImage ${TEST_TEMP}/BSplineUNC24.mha
+          --baselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24.mha
+          --baselineDifferenceImage ${TEST_TEMP}/BSplineUNC24_Diff.mha
+          --minimizeMemory
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC24StrippedC5
+          ${CXX_TEST_PATH}/RegisterImages 
+          --resampledImage ${TEST_TEMP}/BSplineUNC24StrippedC5.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24StrippedC5.mha
+          --baselineDifferenceImage ${TEST_TEMP}/BSplineUNC24StrippedC5_Diff.mha
+          --minimizeMemory
+          --controlPointSpacing 40
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC24StrippedC10
+          ${CXX_TEST_PATH}/RegisterImages 
+          --resampledImage ${TEST_TEMP}/BSplineUNC24StrippedC10.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24StrippedC10.mha
+          --baselineDifferenceImage ${TEST_TEMP}/BSplineUNC24StrippedC10_Diff.mha
+          --minimizeMemory
+          --controlPointSpacing 20
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC24StrippedC15
+          ${CXX_TEST_PATH}/RegisterImages 
+          --resampledImage ${TEST_TEMP}/BSplineUNC24StrippedC15.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24StrippedC15.mha
+          --baselineDifferenceImage ${TEST_TEMP}/BSplineUNC24StrippedC15_Diff.mha
+          --minimizeMemory
+          --controlPointSpacing 15
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC25
+          ${CXX_TEST_PATH}/RegisterImages 
+          --resampledImage ${TEST_TEMP}/BSplineUNC25.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC25.mha
+          --baselineDifferenceImage ${TEST_TEMP}/BSplineUNC25_Diff.mha
+          --minimizeMemory
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal005-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC25Stripped
+          ${CXX_TEST_PATH}/RegisterImages 
+          --resampledImage ${TEST_TEMP}/BSplineUNC25Stripped.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC25Stripped.mha
+          --baselineDifferenceImage ${TEST_TEMP}/BSplineUNC25Stripped_Diff.mha
+          --minimizeMemory
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal005-Stripped-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC42
+          ${CXX_TEST_PATH}/RegisterImages 
+          --resampledImage ${TEST_TEMP}/BSplineUNC42.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC42.mha
+          --baselineDifferenceImage ${TEST_TEMP}/BSplineUNC42_Diff.mha
+          --minimizeMemory
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-Normal002-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC42Stripped
+          ${CXX_TEST_PATH}/RegisterImages 
+          --resampledImage ${TEST_TEMP}/BSplineUNC42Stripped.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC42Stripped.mha
+          --baselineDifferenceImage ${TEST_TEMP}/BSplineUNC42Stripped_Diff.mha
+          --minimizeMemory
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-Normal002-Stripped-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC45
+          ${CXX_TEST_PATH}/RegisterImages
+          --resampledImage ${TEST_TEMP}/BSplineUNC45.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC45.mha
+          --baselineDifferenceImage ${TEST_TEMP}/BSplineUNC45_Diff.mha
+          --minimizeMemory
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-Normal005-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC45Stripped
+          ${CXX_TEST_PATH}/RegisterImages
+          --resampledImage ${TEST_TEMP}/BSplineUNC45Stripped.mha
+          --baselineImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC45Stripped.mha
+          --baselineDifferenceImage ${TEST_TEMP}/BSplineUNC45Stripped_Diff.mha
+          --minimizeMemory
+          --baselineIntensityTolerance 200
+          --baselineRadiusTolerance 1
+          --randomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-Normal005-Stripped-Affine.mha
+          )
+
+      ELSE( GenerateCLP_USE_FILE )
+
+        ###################
+        # Initial
+        ###################
+        ADD_TEST(InitialRegistrationTestUNC24
+          ${CXX_TEST_PATH}/InitialImageToImageRegistrationMethod 
+          --ResampledMovingImage ${TEST_TEMP}/InitialUNC24.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/InitialUNC24.mha
+          --DifferenceImage ${TEST_TEMP}/InitialUNC24_Diff.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
+          )
+        
+        ADD_TEST(InitialRegistrationTestUNC24Stripped
+          ${CXX_TEST_PATH}/InitialImageToImageRegistrationMethod 
+          --ResampledMovingImage ${TEST_TEMP}/InitialUNC24Stripped.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/InitialUNC24Stripped.mha
+          --DifferenceImage ${TEST_TEMP}/InitialUNC24Stripped_Diff.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
+          )
+        
+        ###################
+        # Rigid
+        ###################
+        ADD_TEST(RigidRegistrationTestUNC24
+          ${CXX_TEST_PATH}/RigidImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/RigidUNC24.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/RigidUNC24.mha
+          --DifferenceImage ${TEST_TEMP}/RigidUNC24_Diff.mha
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
+          )
+        
+        ADD_TEST(RigidRegistrationTestUNC24Stripped
+          ${CXX_TEST_PATH}/RigidImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/RigidUNC24Stripped.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/RigidUNC24Stripped.mha
+          --DifferenceImage ${TEST_TEMP}/RigidUNC24Stripped_Diff.mha
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
+          )
+        
+        ###################
+        # Affine
+        ###################
+        ADD_TEST(AffineRegistrationTestUNC24
+          ${CXX_TEST_PATH}/AffineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/AffineUNC24.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/AffineUNC24.mha
+          --DifferenceImage ${TEST_TEMP}/AffineUNC24_Diff.mha
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
+          )
+        
+        ADD_TEST(AffineRegistrationTestUNC24Stripped
+          ${CXX_TEST_PATH}/AffineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/AffineUNC24Stripped.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/AffineUNC24Stripped.mha
+          --DifferenceImage ${TEST_TEMP}/AffineUNC24Stripped_Diff.mha
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
+          )
+        
+        ###################
+        # BSpline
+        ###################
+        ADD_TEST(BSplineRegistrationTestUNC24
+          ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/BSplineUNC24.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24.mha
+          --DifferenceImage ${TEST_TEMP}/BSplineUNC24_Diff.mha
+          --MinimizeMemory
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC24StrippedC5
+          ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/BSplineUNC24StrippedC5.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24StrippedC5.mha
+          --DifferenceImage ${TEST_TEMP}/BSplineUNC24StrippedC5_Diff.mha
+          --MinimizeMemory
+          --NumberOfControlPoints 5
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC24Stripped
+          ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/BSplineUNC24Stripped.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24Stripped.mha
+          --DifferenceImage ${TEST_TEMP}/BSplineUNC24Stripped_Diff.mha
+          --MinimizeMemory
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC24StrippedC15
+          ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/BSplineUNC24StrippedC15.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24StrippedC15.mha
+          --DifferenceImage ${TEST_TEMP}/BSplineUNC24StrippedC15_Diff.mha
+          --MinimizeMemory
+          --NumberOfControlPoints 15
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC24StrippedC20
+          ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/BSplineUNC24StrippedC20.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC24StrippedC20.mha
+          --DifferenceImage ${TEST_TEMP}/BSplineUNC24StrippedC20_Diff.mha
+          --MinimizeMemory
+          --NumberOfControlPoints 20
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal004-Stripped-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC25
+          ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/BSplineUNC25.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC25.mha
+          --DifferenceImage ${TEST_TEMP}/BSplineUNC25_Diff.mha
+          --MinimizeMemory
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal005-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC25Stripped
+          ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/BSplineUNC25Stripped.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC25Stripped.mha
+          --DifferenceImage ${TEST_TEMP}/BSplineUNC25Stripped_Diff.mha
+          --MinimizeMemory
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal002-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal002-Normal005-Stripped-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC42
+          ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/BSplineUNC42.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC42.mha
+          --DifferenceImage ${TEST_TEMP}/BSplineUNC42_Diff.mha
+          --MinimizeMemory
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-Normal002-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC42Stripped
+          ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/BSplineUNC42Stripped.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC42Stripped.mha
+          --DifferenceImage ${TEST_TEMP}/BSplineUNC42Stripped_Diff.mha
+          --MinimizeMemory
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-Normal002-Stripped-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC45
+          ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod 
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/BSplineUNC45.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC45.mha
+          --DifferenceImage ${TEST_TEMP}/BSplineUNC45_Diff.mha
+          --MinimizeMemory
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-Normal005-Affine.mha
+          )
+        
+        ADD_TEST(BSplineRegistrationTestUNC45Stripped
+          ${CXX_TEST_PATH}/BSplineImageToImageRegistrationMethod
+          --Mode DRAFT
+          --ResampledMovingImage ${TEST_TEMP}/BSplineUNC45Stripped.mha
+          --BaselineResampledMovingImage ${UNC_TEST_BASELINE_DIR}/BSplineUNC45Stripped.mha
+          --DifferenceImage ${TEST_TEMP}/BSplineUNC45Stripped_Diff.mha
+          --MinimizeMemory
+          --FailureIntensityTolerance 200
+          --FailureOffsetTolerance 1
+          --RandomNumberSeed 121212
+          ${UNC_TEST_INPUT_DIR}/Normal004-T1-Flash-Stripped.mha
+          ${UNC_TEST_INPUT_DIR}/Normal004-Normal005-Stripped-Affine.mha
+          )
+
+      ENDIF( GenerateCLP_USE_FILE )
+
+    ENDIF( BUILD_REGISTER_IMAGES_REAL_WORLD_TESTING )
   
+  ENDIF( BUILD_TESTING )
+    

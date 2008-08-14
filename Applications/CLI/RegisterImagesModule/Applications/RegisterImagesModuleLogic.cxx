@@ -124,7 +124,7 @@ void RegisterImagesModuleLogic
   this->SetMovingLandmarks( strMovingValue.str().c_str() );
 }
 
-void RegisterImagesModuleLogic
+int RegisterImagesModuleLogic
 ::AddLandmark ( const std::vector<float> &fixed, 
                 const std::vector<float> &moving )
 {
@@ -132,6 +132,7 @@ void RegisterImagesModuleLogic
   m_MovingLandmarks.push_back(moving);
   
   this->SetLandmarks( m_FixedLandmarks, m_MovingLandmarks );
+  return m_FixedLandmarks.size()-1;
 }
 
 void RegisterImagesModuleLogic
@@ -157,3 +158,15 @@ void RegisterImagesModuleLogic
   
   this->SetLandmarks( m_FixedLandmarks, m_MovingLandmarks );
 }
+
+void RegisterImagesModuleLogic
+::RemoveLandmark ( int landmark )
+{
+  if ( landmark >= static_cast<int>( m_FixedLandmarks.size() ) )
+    {
+    return;
+    }
+  m_FixedLandmarks.erase ( m_FixedLandmarks.begin() + landmark );
+  m_MovingLandmarks.erase ( m_MovingLandmarks.begin() + landmark );
+  this->SetLandmarks( m_FixedLandmarks, m_MovingLandmarks );
+} 

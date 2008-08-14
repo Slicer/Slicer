@@ -58,65 +58,129 @@ InitialImageToImageRegistrationMethod< TImage >
   
   if( this->m_UseLandmarks )
     {
+    typename TransformType::Pointer newTransform;
+    newTransform = TransformType::New();
+    newTransform->SetIdentity();
+
+    typename TransformType::InputPointType center;
+    typename TransformType::MatrixType matrix;
+    typename TransformType::OffsetType offset;
+
     if ( TImage::ImageDimension == 3 )
       {
-      typedef typename TransformType::ScalarType ScalarType;
-      typedef VersorRigid3DTransform< ScalarType >
-                                                LandmarkTransformType;
+      typedef VersorRigid3DTransform< double >  LandmarkTransformType;
       typedef LandmarkBasedTransformInitializer< LandmarkTransformType,
                                                  TImage, TImage > 
                                                 LandmarkTransformCalculatorType;
+
       typename LandmarkTransformCalculatorType::Pointer landmarkCalc;
       landmarkCalc = LandmarkTransformCalculatorType::New();
       landmarkCalc->SetFixedLandmarks( m_FixedLandmarks );
       landmarkCalc->SetMovingLandmarks( m_MovingLandmarks );
-      typename LandmarkTransformType::Pointer newTransform; 
-      newTransform = LandmarkTransformType::New();
-      newTransform->SetIdentity();
-      landmarkCalc->SetTransform(newTransform);
+
+      typename LandmarkTransformType::Pointer landmarkTransform; 
+      landmarkTransform = LandmarkTransformType::New();
+      landmarkTransform->SetIdentity();
+      landmarkCalc->SetTransform(landmarkTransform);
       landmarkCalc->InitializeTransform();
-      typename ImageRegistrationMethod<TImage,TImage>::TransformType* transform
-        = dynamic_cast< 
-          typename ImageRegistrationMethod<TImage,TImage>::TransformType *>
-            (newTransform.GetPointer() );
-      this->SetTransform(transform);
-      //transform->Delete();
-      //newTransform->Delete();
-      //landmarkCalc->Delete();
+
+      for(int i=0; i<TImage::ImageDimension; i++)
+        {
+        center[i] = landmarkTransform->GetCenter()[i];
+        offset[i] = landmarkTransform->GetTranslation()[i];
+        for(int j=0; j<TImage::ImageDimension; j++)
+          {
+          matrix(i, j) = landmarkTransform->GetMatrix()(i, j);
+          }
+        }
+      double tf;
+      double sizeFixed = 0;
+      for(int i=1; i<(int)m_FixedLandmarks.size(); i++)
+        {
+        tf = (m_FixedLandmarks[i][0] - m_FixedLandmarks[i-1][0]);
+        sizeFixed += tf*tf;
+        tf = (m_FixedLandmarks[i][1] - m_FixedLandmarks[i-1][1]);
+        sizeFixed += tf*tf;
+        tf = (m_FixedLandmarks[i][2] - m_FixedLandmarks[i-1][2]);
+        sizeFixed += tf*tf;
+        }
+      sizeFixed = sqrt(sizeFixed);
+      double sizeMoving = 0;
+      for(int i=1; i<(int)m_MovingLandmarks.size(); i++)
+        {
+        tf = (m_MovingLandmarks[i][0] - m_MovingLandmarks[i-1][0]);
+        sizeMoving += tf*tf;
+        tf = (m_MovingLandmarks[i][1] - m_MovingLandmarks[i-1][1]);
+        sizeMoving += tf*tf;
+        tf = (m_MovingLandmarks[i][2] - m_MovingLandmarks[i-1][2]);
+        sizeMoving += tf*tf;
+        }
+      sizeMoving = sqrt(sizeMoving);
+      double scale = sizeMoving/sizeFixed;
+      std::cout << "scale = " << scale << std::endl;
+      //matrix *= scale;
       }
     else if ( TImage::ImageDimension == 2 )
       {
-      typedef Rigid2DTransform< typename TransformType::ScalarType > 
-                                           LandmarkTransformType;
+      typedef Rigid2DTransform< double >        LandmarkTransformType;
       typedef LandmarkBasedTransformInitializer< LandmarkTransformType,
-                                                       TImage, TImage > 
+                                                 TImage, TImage > 
                                                 LandmarkTransformCalculatorType;
+
       typename LandmarkTransformCalculatorType::Pointer landmarkCalc;
       landmarkCalc = LandmarkTransformCalculatorType::New();
       landmarkCalc->SetFixedLandmarks( m_FixedLandmarks );
       landmarkCalc->SetMovingLandmarks( m_MovingLandmarks );
-      typename LandmarkTransformType::Pointer newTransform; 
-      newTransform = LandmarkTransformType::New();
-      newTransform->SetIdentity();
-      landmarkCalc->SetTransform(newTransform);
+
+      typename LandmarkTransformType::Pointer landmarkTransform; 
+      landmarkTransform = LandmarkTransformType::New();
+      landmarkTransform->SetIdentity();
+      landmarkCalc->SetTransform(landmarkTransform);
       landmarkCalc->InitializeTransform();
-      typename ImageRegistrationMethod<TImage,TImage>::TransformType* transform 
-        = dynamic_cast<  
-            typename ImageRegistrationMethod<TImage,TImage>::TransformType *>(
-              newTransform.GetPointer() );
-      this->SetTransform(transform);
-      transform->Delete();
-      newTransform->Delete();
+
+      for(int i=0; i<TImage::ImageDimension; i++)
+        {
+        center[i] = landmarkTransform->GetCenter()[i];
+        offset[i] = landmarkTransform->GetTranslation()[i];
+        for(int j=0; j<TImage::ImageDimension; j++)
+          {
+          matrix(i, j) = landmarkTransform->GetMatrix()(i, j);
+          }
+        }
+      double tf;
+      double sizeFixed = 0;
+      for(int i=1; i<(int)m_FixedLandmarks.size(); i++)
+        {
+        tf = (m_FixedLandmarks[i][0] - m_FixedLandmarks[i-1][0]);
+        sizeFixed += tf*tf;
+        tf = (m_FixedLandmarks[i][1] - m_FixedLandmarks[i-1][1]);
+        sizeFixed += tf*tf;
+        }
+      sizeFixed = sqrt(sizeFixed);
+      double sizeMoving = 0;
+      for(int i=1; i<(int)m_MovingLandmarks.size(); i++)
+        {
+        tf = (m_MovingLandmarks[i][0] - m_MovingLandmarks[i-1][0]);
+        sizeMoving += tf*tf;
+        tf = (m_MovingLandmarks[i][1] - m_MovingLandmarks[i-1][1]);
+        sizeMoving += tf*tf;
+        }
+      sizeMoving = sqrt(sizeMoving);
+      double scale = sizeMoving/sizeFixed;
+      std::cout << "scale = " << scale << std::endl;
+      //matrix *= scale;
       }
     else
       {
       std::cout << "Image type must be 3 or 2." << std::endl;
       std::cout << "Initialization returning identity." << std::endl;
-      typename TransformType::Pointer newTransform = TransformType::New();
-      newTransform->SetIdentity();
-      this->SetTransform(newTransform);
-      newTransform->Delete();
       }
+
+    newTransform->SetCenter( center );
+    newTransform->SetMatrix( matrix );
+    newTransform->SetTranslation( offset );
+    this->SetTransform(newTransform);
+
     return;  
     }
 
