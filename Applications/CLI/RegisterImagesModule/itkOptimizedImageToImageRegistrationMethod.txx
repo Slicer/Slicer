@@ -471,8 +471,8 @@ OptimizedImageToImageRegistrationMethod< TImage >
                                                  ::New() );
     evoOpt->SetEpsilon( this->GetTargetError() );
     evoOpt->Initialize( 0.1 );
-    evoOpt->SetCatchGetValueException( true );
-    evoOpt->SetMetricWorstPossibleValue( 0 );
+    //evoOpt->SetCatchGetValueException( true );
+    //evoOpt->SetMetricWorstPossibleValue( 0 );
     EvoOptimizerType::ParametersType scales = 
                                      this->GetTransformParametersScales();
     for(unsigned int i=0; i<scales.size(); i++)
