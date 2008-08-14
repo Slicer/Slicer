@@ -26,17 +26,6 @@ class SlicerWrapper(object):
     def __str__ ( self ):
         return self.__repr__()
 
-    def ToArray (self):
-      if self.IsA("vtkDataArray"):
-        try:
-            return _slicer.vtkDataArrayToArray(tk.tk.interpaddr(), str(self))
-        except Exception, e:
-            print e
-      else:
-        try:
-            return _slicer.vtkImageDataToArray(tk.tk.interpaddr(), str(self))
-        except Exception, e:
-            print e
 
     def __convertString (self, inString):
         outList = []
@@ -97,7 +86,10 @@ class SlicerWrapper(object):
 
     def __getattr__ (self, name):
         """Returns a function object suitable for calling the wrapped function"""
-        return lambda *a: self.__callVTKmethod(str(name),*a)
+        if name=='ToArray':
+          return self.ToArray()
+        else:
+          return lambda *a: self.__callVTKmethod(str(name),*a)
 
 
 from new import classobj
@@ -161,6 +153,18 @@ def __listInstances(self):
         instances.append(instance)
     return instances
 
+def __ToArray (self):
+  if self.IsA("vtkDataArray"):
+    try:
+        return _slicer.vtkDataArrayToArray(tk.tk.interpaddr(), str(self.obj))
+    except Exception, e:
+        print e
+  else:
+    try:
+        return _slicer.vtkImageDataToArray(tk.tk.interpaddr(), str(self.obj))
+    except Exception, e:
+        print e
+
 def CreateClass(name):
     if SlicerClassDict.has_key(name):
         return SlicerClassDict[name]
@@ -185,7 +189,7 @@ def CreateClass(name):
         if SlicerClassDict.has_key(className):
             SuperClass = SlicerClassDict[className]
             continue
-        methodDict = {'__init__':__init, '__del__':__del, '__repr__':__repr, '__eq__':__eq, '__ne__':__ne, '__convertArgumentList': __convertArgumentList, 'GetTclName': __getTclName, 'ListInstances': __listInstances }
+        methodDict = {'__init__':__init, '__del__':__del, '__repr__':__repr, '__eq__':__eq, '__ne__':__ne, '__convertArgumentList': __convertArgumentList, 'GetTclName': __getTclName, 'ListInstances': __listInstances, 'ToArray':__ToArray }
         for methodName in classDict[className]:
             if methodName in ['New','Delete']:
                 continue
@@ -194,6 +198,7 @@ def CreateClass(name):
                 ownWrapperLine = 'value.OwnWrapper = True;'
             exec('def %s(self,*a): aTcl = self.__convertArgumentList(a); value = self.SlicerWrapper.__getattr__("%s")(*aTcl); %s return value' % (methodName,methodName,ownWrapperLine))
             exec('methodDict["%s"] = %s' % (methodName,methodName))
+
         global ClassObj
         ClassObj = classobj(className,(SuperClass,),methodDict)
         ClassObj.ClassName= className
