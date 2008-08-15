@@ -409,8 +409,11 @@ public:
    }
    
 protected:   
+     
+   // Kilian : Do not currently write results back to file  
+   //  m_Fid( "metricvalues.csv" ),
+
    CommandIterationUpdate() :
-      m_Fid( "metricvalues.csv" ),
       m_headerwritten(false)
    {
       m_JacobianFilter = JacobianFilterType::New();
@@ -763,23 +766,26 @@ void DemonsRegistrationFunction( arguments args )
       gridwarper->SetOutputOrigin( fixedImage->GetOrigin() );
       gridwarper->SetDeformationField( defField );
       
-      // Write warped grid to file
-      typedef itk::ImageFileWriter< GridImageType >  GridWriterType;
+      // Kilian: These files are currently not needed 
+      if (0) { 
+        // Write warped grid to file
+        typedef itk::ImageFileWriter< GridImageType >  GridWriterType;
    
-      typename GridWriterType::Pointer      gridwriter =  GridWriterType::New();
-      gridwriter->SetFileName( "WarpedGridImage.mha" );
-      gridwriter->SetInput( gridwarper->GetOutput()   );
-      gridwriter->SetUseCompression( true );
+        typename GridWriterType::Pointer      gridwriter =  GridWriterType::New();
+        gridwriter->SetFileName( "WarpedGridImage.mha" );
+        gridwriter->SetInput( gridwarper->GetOutput()   );
+        gridwriter->SetUseCompression( true );
    
-      try
-      {
-         gridwriter->Update();
-      }
-      catch( itk::ExceptionObject& err )
-      {
+        try
+        {
+          gridwriter->Update();
+        }
+        catch( itk::ExceptionObject& err )
+        {
          std::cout << "Unexpected error." << std::endl;
          std::cout << err << std::endl;
          exit( EXIT_FAILURE );
+        }
       }
    }
 
@@ -797,20 +803,23 @@ void DemonsRegistrationFunction( arguments args )
       // Write warped grid to file
       typedef itk::ImageFileWriter< GridImageType >  GridWriterType;
    
-      typename GridWriterType::Pointer      gridwriter =  GridWriterType::New();
-      gridwriter->SetFileName( "ForwardWarpedGridImage.mha" );
-      gridwriter->SetInput( fwWarper->GetOutput()   );
-      gridwriter->SetUseCompression( true );
+      // Kilian: These files are currently not needed 
+      if (0) {
+        typename GridWriterType::Pointer      gridwriter =  GridWriterType::New();
+        gridwriter->SetFileName( "ForwardWarpedGridImage.mha" );
+        gridwriter->SetInput( fwWarper->GetOutput()   );
+        gridwriter->SetUseCompression( true );
    
-      try
-      {
-         gridwriter->Update();
-      }
-      catch( itk::ExceptionObject& err )
-      {
-         std::cout << "Unexpected error." << std::endl;
-         std::cout << err << std::endl;
-         exit( EXIT_FAILURE );
+        try
+        {
+          gridwriter->Update();
+        }
+        catch( itk::ExceptionObject& err )
+        {
+          std::cout << "Unexpected error." << std::endl;
+          std::cout << err << std::endl;
+          exit( EXIT_FAILURE );
+        }
       }
    }
 
@@ -849,21 +858,24 @@ void DemonsRegistrationFunction( arguments args )
       typename JacobianFilterType::Pointer jacobianFilter = JacobianFilterType::New();
       jacobianFilter->SetInput( defField );
       jacobianFilter->SetUseImageSpacing( true );
-
-      writer->SetFileName( "TransformJacobianDeteminant.mha" );
       caster->SetInput( jacobianFilter->GetOutput() );
-      writer->SetInput( caster->GetOutput()   );
-      writer->SetUseCompression( true );
+
+      // Kilian: These files are currently not needed 
+      if (0) { 
+        writer->SetFileName( "TransformJacobianDeteminant.mha" );
+        writer->SetInput( caster->GetOutput()   );
+        writer->SetUseCompression( true );
       
-      try
-      {
-         writer->Update();
-      }
-      catch( itk::ExceptionObject& err )
-      {
+        try
+        {
+          writer->Update();
+        }
+        catch( itk::ExceptionObject& err )
+        {
          std::cout << "Unexpected error." << std::endl;
          std::cout << err << std::endl;
          exit( EXIT_FAILURE );
+       }
       }
 
       typedef itk::MinimumMaximumImageCalculator<ImageType> MinMaxFilterType;
