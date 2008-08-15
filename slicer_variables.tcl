@@ -130,6 +130,9 @@ set ::SLICERLIBCURL_BUILD_DIR $::Slicer3_LIB/cmcurl-build
 set ::IGSTK "OFF"
 set ::NAVITRACK "OFF"
 
+# Option for build using system Python
+set ::USE_SYSTEM_PYTHON 0
+
 # The absolute path and directory containing the navitrack library,
 # for instance on linux the libNaviTrack.so
 # set ::NAVITRACK_LIB_DIR /home/hliu/projects/navitrack/NaviTrack-build
@@ -166,6 +169,9 @@ switch $::tcl_platform(os) {
         set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/libitk3.2.so
 
         set ::TCL_TEST_FILE $::TCL_BIN_DIR/tclsh8.4
+        if { $::USE_SYSTEM_PYTHON } {
+          error "need to define system python path for $::tcl_platform(os)"
+        }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython25.so
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python25
@@ -195,6 +201,9 @@ switch $::tcl_platform(os) {
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
         set ::INCR_TCL_LIB $::TCL_LIB_DIR/lib/libitcl3.2.dylib
         set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/libitk3.2.dylib
+        if { $::USE_SYSTEM_PYTHON } {
+          set ::PYTHON_BIN_DIR /usr
+        }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.dylib
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
@@ -225,6 +234,9 @@ switch $::tcl_platform(os) {
         set ::INCR_TK_LIB $::TCL_LIB_DIR/lib/libitk3.2.so
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
+        if { $::USE_SYSTEM_PYTHON } {
+          error "need to define system python path for $::tcl_platform(os)"
+        }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.so
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
@@ -260,6 +272,9 @@ switch $::tcl_platform(os) {
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.2/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/BLT24.dll
         set ::TEEM_TEST_FILE $::TEEM_BIN_DIR/unu.exe
+        if { $::USE_SYSTEM_PYTHON } {
+          error "need to define system python path for $::tcl_platform(os)"
+        }
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python.exe
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/Libs/python25.lib
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include

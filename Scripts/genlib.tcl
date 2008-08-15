@@ -461,7 +461,7 @@ if { [BuildThis $::BLT_TEST_FILE "blt"] == 1 } {
 # Get and build python
 #
 
-if {  [BuildThis $::PYTHON_TEST_FILE "python"] == 1 } {
+if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON } {
 
     file mkdir $::Slicer3_LIB/python
     file mkdir $::Slicer3_LIB/python-build
@@ -504,7 +504,7 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] == 1 } {
 # Get and build numpy and scipy
 #
 
-if {  [BuildThis $::NUMPY_TEST_FILE "python"] == 1 } {
+if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON } {
 
     set ::env(PYTHONHOME) $::Slicer3_LIB/python-build
     cd $::Slicer3_LIB/python

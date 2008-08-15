@@ -58,6 +58,7 @@ proc BuildGUI {} {
   $mb add cascade -label File -menu $fm
   $fm add command -label "Print env" -command PrintEnv
   $fm add command -label "Save Preferences" -command SavePreferences
+  $fm add command -label "Quit" -command Quit
 
   set lm [menu .logmenu]
   $mb add cascade -label Log -menu $lm
