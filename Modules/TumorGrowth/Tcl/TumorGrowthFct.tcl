@@ -64,7 +64,7 @@ namespace eval TumorGrowthTcl {
     }
 
     proc HistogramNormalization_FCT {SCAN1 SCAN1_SEGMENT SCAN2 OUTPUT} {
-      puts "Match intensities of Scan2 to Scan1" 
+      # puts "Match intensities of Scan2 to Scan1" 
       # Just use pixels that are clearly inside the tumor => generate label map of inside tumor 
       # Kilian -we deviate here from slicer2 there SCAN1_SEGMENT =  [TumorGrowth(Scan1,PreSegment) GetOutput]
 
@@ -169,8 +169,8 @@ namespace eval TumorGrowthTcl {
 
    # -----------------------------------------------------------
     proc Scan2ToScan1Registration_GUI { TYPE } {
-        puts "=============================================="
-        puts "TumorGrowthScan2ToScan1Registration $TYPE Start" 
+        # puts "=============================================="
+        # puts "TumorGrowthScan2ToScan1Registration $TYPE Start" 
 
         # -------------------------------------
         # Define Interfrace Parameters 
@@ -314,8 +314,8 @@ namespace eval TumorGrowthTcl {
         # Clean up 
         # -------------------------------------
     
-        puts "TumorGrowthScan2ToScan1Registration $TYPE End"
-        puts "=============================================="
+        # puts "TumorGrowthScan2ToScan1Registration $TYPE End"
+        # puts "=============================================="
     }
 
     proc Scan2ToScan1Registration_DeleteOutput { TYPE } {
@@ -883,8 +883,8 @@ namespace eval TumorGrowthTcl {
   }
 
   proc Analysis_Deformable_GUI { } {
-      Print "=============================================="
-      Print "Analysis_Deformable Start" 
+      # Print "=============================================="
+      # Print "Analysis_Deformable Start" 
 
        # -------------------------------------
        # Define Interfrace Parameters 
@@ -946,11 +946,11 @@ namespace eval TumorGrowthTcl {
       # ======================================
       # Read Parameters and save to Node 
       set RESULT [lindex [ReadASCIIFile $ANALYSIS_SEGM_FILE ] 0] 
-      Print "Segmentation Result $RESULT"
+      # Print "Segmentation Result $RESULT"
       $NODE SetAnalysis_Deformable_SegmentationGrowth    $RESULT 
 
       set RESULT [lindex [ReadASCIIFile $ANALYSIS_JACOBIAN_FILE] 0] 
-      Print "Jacobian Result: $RESULT"
+      # Print "Jacobian Result: $RESULT"
       $NODE SetAnalysis_Deformable_JacobianGrowth  $RESULT
 
       # ======================================
@@ -1019,7 +1019,7 @@ namespace eval TumorGrowthTcl {
   proc Analysis_Deformable_Fct {Scan1Image  Scan1Segmentation Scan2Image Scan1ToScan2Segmentation Scan1ToScan2Deformation Scan1ToScan2DeformationInverse Scan1ToScan2Image AnalysisSegmentFile AnalysisJaccobianFile} { 
     global env
 
-    Print "Run Deformable Analaysis with automatically computed segmentation"
+    # Print "Run Deformable Analaysis with automatically computed segmentation"
 
       #
       # first, remove ITK_AUTOLOAD_PATH to work around
@@ -1034,7 +1034,7 @@ namespace eval TumorGrowthTcl {
       }
       set env(ITK_AUTOLOAD_PATH) ""
 
-      Print "[eval exec env]" 
+      # Print "[eval exec env]" 
  
     ############################################
     ##I add the deformation analysis right HERE. WRITE THE WHOLE THING IN TCL TO PUT IT HERE.
@@ -1046,8 +1046,8 @@ namespace eval TumorGrowthTcl {
       set CMD "$EXE_DIR/DemonsRegistration --fixed_image $Scan2Image --moving_image $Scan1Image --output_image $Scan1ToScan2Image --output_field $Scan1ToScan2Deformation --num_levels 3 --num_iterations 20,20,20 --def_field_sigma 1 --use_histogram_matching --verbose"
 
 
-    Print "=== Deformable Registration ==" 
-    Print "$CMD"
+    # Print "=== Deformable Registration ==" 
+    # Print "$CMD"
 
     if {1} { 
       eval exec $CMD 
@@ -1060,26 +1060,26 @@ namespace eval TumorGrowthTcl {
     # with the user given segmentation.
     # ${scriptDirectory}/applyDeformationITK $SegmentationFilePrefix ${TumorGrowth(save,Dir)}/${TumorGrowth(deformation,Field)}.mha ${TumorGrowth(save,Dir)}/${TumorGrowth(deformation,Scan1SegmentationDeformed)}.nhdr 1
     set CMD "$EXE_DIR/applyDeformationITK $Scan1Segmentation $Scan1ToScan2Deformation $Scan1ToScan2Segmentation 1 1"
-    Print "=== Deformable Segmentation Growth Metric ==" 
-    Print "$CMD"
+    # Print "=== Deformable Segmentation Growth Metric ==" 
+    # Print "$CMD"
     eval exec $CMD 
 
     #  ${scriptDirectory}/DetectGrowthSegmentation $SegmentationFilePrefix ${TumorGrowth(save,Dir)}/${TumorGrowth(deformation,Scan1SegmentationDeformed)}.nhdr ${TumorGrowth(save,Dir)}/deformation_analysis_results.txt    
     set CMD "$EXE_DIR/DetectGrowthSegmentation $Scan1Segmentation $Scan1ToScan2Segmentation $AnalysisSegmentFile"
-    Print "$CMD"
+    # Print "$CMD"
     eval exec $CMD 
 
     # ---------------------------------------------
     # JACOBIAN Metric
     #eval exec ${scriptDirectory}/applyDeformationITK $SegmentationFilePrefix ${TumorGrowth(save,Dir)}/${TumorGrowth(deformation,Field)}.mha ${TumorGrowth(save,Dir)}/${TumorGrowth(deformation,InverseField)}.mha 0
     set CMD "$EXE_DIR/applyDeformationITK $Scan1Segmentation $Scan1ToScan2Deformation $Scan1ToScan2DeformationInverse 0"
-    Print "=== Deformable Jacobian Growth Metric ==" 
-    Print "$CMD"
+    #Print "=== Deformable Jacobian Growth Metric ==" 
+    #Print "$CMD"
     eval exec $CMD 
 
     # ${scriptDirectory}/DetectGrowth ${TumorGrowth(save,Dir)}/${TumorGrowth(deformation,InverseField)}.mha $SegmentationFilePrefix
     set CMD "$EXE_DIR/DetectGrowth $Scan1ToScan2DeformationInverse $Scan1Segmentation $AnalysisJaccobianFile"
-    Print "$CMD"
+    # Print "$CMD"
     eval exec $CMD 
 
 

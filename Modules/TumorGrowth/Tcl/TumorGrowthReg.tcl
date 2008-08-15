@@ -74,7 +74,7 @@ namespace eval TumorGrowthReg {
        # Do it!
        Reslicer Update
   
-       if {1} {
+       if {0} {
            puts "-----------------------------------"
            puts "ResampleAG"
            puts -nonewline "  Resample Type: " 
@@ -205,7 +205,7 @@ proc WriteTransformationAG {gt directory} {
       set CurrentOutput $ResampledData  
   
       if {$InputMin  > $OutputMin} {
-        puts "AGThresholdedOutput: Change lower scalar value of data from $OutputMin to $InputMin"
+        # puts "AGThresholdedOutput: Change lower scalar value of data from $OutputMin to $InputMin"
         vtkImageThreshold lowerThr
          lowerThr SetInput $CurrentOutput 
          lowerThr ThresholdByLower $InputMin
@@ -216,7 +216,7 @@ proc WriteTransformationAG {gt directory} {
       }
   
       if {$InputMax  < $OutputMax} {
-        puts "AGThresholdedOutput: Change upper scalar value of data from $OutputMax to $InputMax"
+        # puts "AGThresholdedOutput: Change upper scalar value of data from $OutputMax to $InputMax"
         vtkImageThreshold upperThr
            upperThr SetInput $CurrentOutput 
            upperThr ThresholdByUpper $InputMax
@@ -427,7 +427,7 @@ proc WriteTransformationAG {gt directory} {
   
       $NormalizedSource SetUpdateExtentToWholeExtent
   
-      if {1} {
+      if {0} {
         puts "-----------------------------------"
         puts "NormalizeAG:"
         puts "  IJK matrix is:"
@@ -633,31 +633,33 @@ proc WriteTransformationAG {gt directory} {
               vtkTransform __dummy_transform
       }
   
-      puts "----------------------------------" 
-      puts "RegistrationAG: "
-      puts "  Linear: "
-      puts  -nonewline "    CostFunction: " 
-      switch $LinearCostFunctionType {
-      1 { puts "GCR-L1" }
-      2 { puts "GCR-L2" }
-      3 { puts "Correlation" }
-      4 { puts "MI" }
-      default {puts "Do not know cost function type $LinearCostFunctionType" ; return 0}
+      if { 0 } {
+        puts "----------------------------------" 
+        puts "RegistrationAG: "
+        puts "  Linear: "
+        puts  -nonewline "    CostFunction: " 
+        switch $LinearCostFunctionType {
+        1 { puts "GCR-L1" }
+        2 { puts "GCR-L2" }
+        3 { puts "Correlation" }
+        4 { puts "MI" }
+        default {puts "Do not know cost function type $LinearCostFunctionType" ; return 0}
+        }
+        puts  -nonewline "    Type:         "
+        switch  -- $LinearRegistrationType {
+        -2 { puts "disabled" }
+            -1 { puts "translation." }
+            0 { puts "rigid." }
+            1 { puts "similarity." }
+            2 { puts "affine." }
+            default {puts "Do not know type   $LinearRegistrationType" ; return 0}
+        }
+        if {$NonRigidRegistrationFlag} { 
+        puts "  Non-Linear: yes "
+        puts "    Max Iterations:      $MaxNumIteration"
+            puts "    Intensity Transform: $IntensityTransform " 
+        } else { puts "  Non-Linear: no" }
       }
-      puts  -nonewline "    Type:         "
-      switch  -- $LinearRegistrationType {
-      -2 { puts "disabled" }
-          -1 { puts "translation." }
-          0 { puts "rigid." }
-          1 { puts "similarity." }
-          2 { puts "affine." }
-          default {puts "Do not know type   $LinearRegistrationType" ; return 0}
-      }
-      if {$NonRigidRegistrationFlag} { 
-      puts "  Non-Linear: yes "
-      puts "    Max Iterations:      $MaxNumIteration"
-          puts "    Intensity Transform: $IntensityTransform " 
-      } else { puts "  Non-Linear: no" }
     
       if { $LinearRegistrationType > -1 } {  
          ###### Linear Tfm ######
