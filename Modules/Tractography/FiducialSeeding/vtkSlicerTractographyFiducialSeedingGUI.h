@@ -117,6 +117,7 @@ class VTK_FIDUCIALSEEDING_EXPORT vtkSlicerTractographyFiducialSeedingGUI : publi
   // Description: Get/Set MRML node
   vtkGetObjectMacro (TractographyFiducialSeedingNode, vtkMRMLTractographyFiducialSeedingNode);
 
+  void AddFiducialListNodeObserver(vtkMRMLFiducialListNode *n);
   
 protected:
   vtkSlicerTractographyFiducialSeedingGUI();

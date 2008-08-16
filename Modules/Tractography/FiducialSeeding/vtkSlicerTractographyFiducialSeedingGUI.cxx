@@ -196,7 +196,8 @@ vtkIntArray* vtkSlicerTractographyFiducialSeedingGUI::NewObservableEvents()
 {
   vtkIntArray* events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NewSceneEvent);
-  //events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  events->InsertNextValue(vtkMRMLScene::SceneCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   return events;
 }
 
@@ -426,11 +427,53 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessMRMLEvents ( vtkObject *cal
                                             unsigned long event,
                                             void *callData ) 
 {
+  if (event == vtkMRMLScene::SceneCloseEvent)
+    {
+    vtkSetAndObserveMRMLNodeMacro( this->TractographyFiducialSeedingNode, NULL);
+    this->AddFiducialListNodeObserver(NULL);
+    return;
+    }
+  // if parameter node has been added, update GUI widgets with new values
+  vtkMRMLTractographyFiducialSeedingNode* snode = reinterpret_cast<vtkMRMLTractographyFiducialSeedingNode*> (callData);
+  if (snode && event == vtkMRMLScene::NodeAddedEvent && snode->IsA("vtkMRMLTractographyFiducialSeedingNode") &&
+    this->GetTractographyFiducialSeedingNode() == NULL)
+    {
+    vtkSetAndObserveMRMLNodeMacro( this->TractographyFiducialSeedingNode, snode);
+   
+    vtkMRMLFiducialListNode *fn = NULL;
+    if (this->GetMRMLScene() && this->TractographyFiducialSeedingNode->GetInputFiducialRef())
+      {
+      fn = vtkMRMLFiducialListNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(
+          this->TractographyFiducialSeedingNode->GetInputFiducialRef()));
+    
+      }
+    if (fn)
+      {
+      this->AddFiducialListNodeObserver(fn);
+      }
+    this->UpdateGUI();
+    this->CreateTracts();
+    return;
+    }
+
   // if parameter node has been changed externally, update GUI widgets with new values
-  vtkMRMLTractographyFiducialSeedingNode* snode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(caller);
+  snode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(caller);
   if (snode != NULL && this->GetTractographyFiducialSeedingNode() == snode) 
     {
+    vtkMRMLFiducialListNode *fn = NULL;
+    if (this->GetMRMLScene() && this->TractographyFiducialSeedingNode->GetInputFiducialRef())
+      {
+      fn = vtkMRMLFiducialListNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(
+          this->TractographyFiducialSeedingNode->GetInputFiducialRef()));
+    
+      }
+    if (fn != this->FiducialListNode)
+      {
+      this->AddFiducialListNodeObserver(fn);
+      }
     this->UpdateGUI();
+    this->CreateTracts();
+    return;
     }
 
   // if parameter node has been changed externally, update GUI widgets with new values
@@ -440,6 +483,17 @@ void vtkSlicerTractographyFiducialSeedingGUI::ProcessMRMLEvents ( vtkObject *cal
     this->CreateTracts();
     }
 }
+
+//---------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingGUI::AddFiducialListNodeObserver(vtkMRMLFiducialListNode *n)
+{
+    vtkIntArray *events = vtkIntArray::New();
+    //events->InsertNextValue( vtkCommand::ModifiedEvent);
+    events->InsertNextValue( vtkMRMLFiducialListNode::FiducialModifiedEvent);
+    events->InsertNextValue( vtkMRMLTransformableNode::TransformModifiedEvent);
+    vtkSetAndObserveMRMLNodeEventsMacro(this->FiducialListNode, n, events);
+    events->Delete();
+  }
 
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingGUI:: CreateTracts()
@@ -512,7 +566,7 @@ void vtkSlicerTractographyFiducialSeedingGUI::BuildGUI ( )
   
   this->TractographyFiducialSeedingNodeSelector->SetNodeClass("vtkMRMLTractographyFiducialSeedingNode", NULL, NULL, "Parameters");
   this->TractographyFiducialSeedingNodeSelector->SetNewNodeEnabled(1);
-  this->TractographyFiducialSeedingNodeSelector->NoneEnabledOn();
+  this->TractographyFiducialSeedingNodeSelector->NoneEnabledOff();
   this->TractographyFiducialSeedingNodeSelector->SetShowHidden(1);
   this->TractographyFiducialSeedingNodeSelector->SetParent( moduleFrame->GetFrame() );
   this->TractographyFiducialSeedingNodeSelector->Create();
