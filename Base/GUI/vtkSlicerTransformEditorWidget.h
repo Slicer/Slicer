@@ -31,6 +31,7 @@ class vtkKWPushButton;
 class vtkKWMatrix4x4;
 class vtkKWScaleWithEntry;
 class vtkKWMenuButtonWithLabel;
+class vtkKWEntryWithLabel ;
 
 class vtkTransform;
 class vtkMatrix4x4;
@@ -97,6 +98,8 @@ public:
   vtkKWScaleWithEntry* RotationScalePA;
   vtkKWScaleWithEntry* RotationScaleIS;
   vtkKWMenuButtonWithLabel* RotationCoordinateSystemMenu;
+  vtkKWEntryWithLabel  *MinRangeEntry;
+  vtkKWEntryWithLabel  *MaxRangeEntry;
 
   bool ProcessingCallback;
 

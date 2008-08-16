@@ -7,8 +7,11 @@
 #include "vtkKWMenuButton.h"
 #include "vtkKWPushButton.h"
 #include "vtkKWMenu.h"
+#include "vtkKWScale.h"
 #include "vtkKWScaleWithEntry.h"
 #include "vtkKWMenuButtonWithLabel.h"
+#include "vtkKWEntry.h"
+#include "vtkKWEntryWithLabel.h"
 
 #include "vtkSlicerNodeSelectorWidget.h"
 #include "vtkKWMatrix4x4.h"
@@ -35,6 +38,9 @@ vtkSlicerTransformEditorWidget::vtkSlicerTransformEditorWidget ( )
   this->RotationScaleLR = NULL;
   this->RotationScalePA = NULL;
   this->RotationScaleIS = NULL;
+
+  this->MinRangeEntry = NULL;
+  this->MaxRangeEntry = NULL;
 
   this->RotationCoordinateSystemMenu = NULL;
 
@@ -121,6 +127,20 @@ vtkSlicerTransformEditorWidget::~vtkSlicerTransformEditorWidget ( )
     this->RotationCoordinateSystemMenu = NULL;
     }
 
+  if (this->MinRangeEntry)
+    {
+    this->MinRangeEntry->SetParent(NULL);
+    this->MinRangeEntry->Delete();
+    this->MinRangeEntry = NULL;
+    }
+
+  if (this->MaxRangeEntry)
+    {
+    this->MaxRangeEntry->SetParent(NULL);
+    this->MaxRangeEntry->Delete();
+    this->MaxRangeEntry = NULL;
+    }
+
   if (this->RotationMatrix)
     {
     this->RotationMatrix->Delete();
@@ -170,7 +190,20 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
 
   this->ProcessingCallback = true;
 
-  if ( ( this->TransformEditSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
+  if (this->MinRangeEntry->GetWidget() == vtkKWEntry::SafeDownCast(caller))
+    {
+    this->TranslationScaleLR->GetWidget()->SetRange(this->MinRangeEntry->GetWidget()->GetValueAsDouble() , this->TranslationScaleLR->GetWidget()->GetRange()[1]);
+    this->TranslationScalePA->GetWidget()->SetRange(this->MinRangeEntry->GetWidget()->GetValueAsDouble() , this->TranslationScaleLR->GetWidget()->GetRange()[1]);
+    this->TranslationScaleIS->GetWidget()->SetRange(this->MinRangeEntry->GetWidget()->GetValueAsDouble() , this->TranslationScaleLR->GetWidget()->GetRange()[1]);
+    }
+  else if (this->MaxRangeEntry->GetWidget() == vtkKWEntry::SafeDownCast(caller))
+    {
+    this->TranslationScaleLR->GetWidget()->SetRange(this->TranslationScaleLR->GetWidget()->GetRange()[0], this->MaxRangeEntry->GetWidget()->GetValueAsDouble() );
+    this->TranslationScalePA->GetWidget()->SetRange(this->TranslationScaleLR->GetWidget()->GetRange()[0], this->MaxRangeEntry->GetWidget()->GetValueAsDouble() );
+    this->TranslationScaleIS->GetWidget()->SetRange(this->TranslationScaleLR->GetWidget()->GetRange()[0], this->MaxRangeEntry->GetWidget()->GetValueAsDouble() );
+    }
+
+  else if ( ( this->TransformEditSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller)
          && event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent )
        || this->MatrixWidget->GetMatrix4x4() == NULL ) 
     {
@@ -227,7 +260,8 @@ void vtkSlicerTransformEditorWidget::ProcessWidgetEvents ( vtkObject *caller,
       }
     }
 
-    this->ProcessingCallback = false;
+
+  this->ProcessingCallback = false;
 } 
 
 
@@ -254,6 +288,9 @@ void vtkSlicerTransformEditorWidget::RemoveWidgetObservers ( ) {
     {
     this->MatrixWidget->GetMatrix4x4()->RemoveObservers (vtkCommand::ModifiedEvent, (vtkCommand *)this->GUICallbackCommand );
     }
+  this->MinRangeEntry->GetWidget()->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, this->GUICallbackCommand);
+  this->MaxRangeEntry->GetWidget()->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, this->GUICallbackCommand);
+
 }
 
 
@@ -355,6 +392,24 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
                   this->TranslationScaleIS->GetWidgetName());
 
+    this->MinRangeEntry = vtkKWEntryWithLabel::New();
+    this->MinRangeEntry->SetParent( transformFrame->GetFrame() );
+    this->MinRangeEntry->Create();
+    this->MinRangeEntry->SetLabelText("Min Translation Limit");
+    //this->MinRangeEntry->SetWidth ( 8 );
+    this->MinRangeEntry->GetWidget()->SetValueAsDouble(-200);
+    this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+                  this->MinRangeEntry->GetWidgetName());
+
+    this->MaxRangeEntry = vtkKWEntryWithLabel::New();
+    this->MaxRangeEntry->SetParent( transformFrame->GetFrame() );
+    this->MaxRangeEntry->Create();
+    this->MaxRangeEntry->SetLabelText("Max Translation Limit");
+    //this->MaxRangeEntry->SetWidth ( 8 );
+    this->MaxRangeEntry->GetWidget()->SetValueAsDouble(200);
+    this->Script("pack %s -side top -anchor e -padx 20 -pady 10", 
+                  this->MaxRangeEntry->GetWidgetName());
+
     // Rotation FRAME            
     vtkKWFrameWithLabel *rotateFrame = vtkKWFrameWithLabel::New ( );
     rotateFrame->SetParent ( transformFrame->GetFrame() );
@@ -434,6 +489,8 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->Script("pack %s -side left -anchor e -padx 5 -pady 10", 
                   this->InvertButton->GetWidgetName());
 
+
+
     this->TransformEditSelectorWidget->AddObserver (vtkSlicerNodeSelectorWidget::NodeSelectedEvent, 
                                            (vtkCommand *)this->GUICallbackCommand );  
     this->IdentityButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
@@ -441,6 +498,10 @@ void vtkSlicerTransformEditorWidget::CreateWidget ( )
     this->InvertButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
 
     this->RotationCoordinateSystemMenu->GetWidget()->GetMenu()->AddObserver ( vtkKWMenu::MenuItemInvokedEvent, this->GUICallbackCommand);
+
+    this->MinRangeEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, this->GUICallbackCommand);
+    this->MaxRangeEntry->GetWidget()->AddObserver ( vtkKWEntry::EntryValueChangedEvent, this->GUICallbackCommand);
+
 
     transformFrame->Delete();
     translateFrame->Delete();
