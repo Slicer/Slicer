@@ -99,7 +99,9 @@ PROJECT( RegisterImagesModuleApplications )
   #
   # Setup testing
   #
-  IF( BUILD_TESTING )
+  # Slicer places test executables somewhere different.  Therefore disabling
+  # tests
+  IF( BUG_IN_TESTING )
 
     SET( REGISTER_IMAGES_TEST_DATA_ROOT ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data 
          CACHE PATH "Location of registration testing data" )

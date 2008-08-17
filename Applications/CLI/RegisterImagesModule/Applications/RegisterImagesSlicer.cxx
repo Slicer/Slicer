@@ -252,37 +252,6 @@ int DoIt( int argc, char *argv[] )
     reger->SetEnableBSplineRegistration( true );
     }
 
-  if( metric == "NormCorr" )
-    {
-    if (verbosity >= STANDARD)
-      {
-      std::cout << "### Metric: NormalizedCorrelation" << std::endl;
-      }
-    reger->SetRigidMetricMethodEnum( RegerType
-                                       ::OptimizedRegistrationMethodType
-                                       ::NORMALIZED_CORRELATION_METRIC );
-    }
-  else if( metric == "MeanSqrd" )
-    {
-    if (verbosity >= STANDARD)
-      {
-      std::cout << "### Metric: MeanSquared" << std::endl;
-      }
-    reger->SetRigidMetricMethodEnum( RegerType
-                                       ::OptimizedRegistrationMethodType
-                                       ::MEAN_SQUARED_ERROR_METRIC );
-    }
-  else // if( metric == "MattesMI" )
-    {
-    if (verbosity >= STANDARD)
-      {
-      std::cout << "### Metric: MattesMutualInformation" << std::endl;
-      }
-    reger->SetRigidMetricMethodEnum( RegerType
-                                       ::OptimizedRegistrationMethodType
-                                       ::MATTES_MI_METRIC );
-    }
-
   reger->SetSampleFromOverlap( sampleFromOverlap );
   if (verbosity >= STANDARD)
     {

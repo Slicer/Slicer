@@ -96,16 +96,6 @@
       <element>PipelineBSpline</element>
       <default>Affine</default>
     </string-enumeration>
-    <string-enumeration>
-      <name>metric</name>
-      <description>Method to quantify image match</description>
-      <label>Metric</label>
-      <longflag>metric</longflag>
-      <element>MattesMI</element>
-      <element>NormCorr</element>
-      <element>MeanSqrd</element>
-      <default>MattesMI</default>
-    </string-enumeration>
     <float>
       <name>expectedOffset</name>
       <description>Expected misalignment after initialization</description>
