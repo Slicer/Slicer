@@ -534,6 +534,8 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
   return NULL;
 }
 
+
+
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Connect()
 {
@@ -541,7 +543,6 @@ int vtkMRMLScene::Connect()
   this->SetErrorMessage(std::string(""));
 
   bool undoFlag = this->GetUndoFlag();
-  
   this->SetUndoOff();
   
   this->RemoveAllNodesExceptSingletons();
@@ -552,10 +553,8 @@ int vtkMRMLScene::Connect()
   this->ClearUndoStack ( );
   this->ClearRedoStack ( );
   this->UniqueIDByClass.clear();
-  
+
   int res = this->Import();
-
-
   if (!res)
     {
     this->InvokeEvent(vtkMRMLScene::SceneLoadingErrorEvent);
@@ -973,16 +972,19 @@ void vtkMRMLScene::RemoveReferencedNodeID(const char *id, vtkMRMLNode *refrencin
   for( i=0; i<nnodes; i++)
     {
     vtkMRMLNode *node = this->ReferencingNodes[i];
-    if (node && node->GetID() && refrencingNode->GetID() && !strcmp(node->GetID(), refrencingNode->GetID())&&
-        id && this->ReferencedIDs[i].c_str() && !strcmp(id, this->ReferencedIDs[i].c_str()) )
+    if ( node  && refrencingNode )
       {
-      // need to remove do nothing
-      continue;
-      }
-    else 
-      {
-      referencedIDs.push_back(this->ReferencedIDs[i]);
-      referencingNodes.push_back(this->ReferencingNodes[i]);
+      if (node->GetID() && refrencingNode->GetID() && !strcmp(node->GetID(), refrencingNode->GetID())&&
+          id && this->ReferencedIDs[i].c_str() && !strcmp(id, this->ReferencedIDs[i].c_str()) )
+        {
+        // need to remove do nothing
+        continue;
+        }
+      else 
+        {
+        referencedIDs.push_back(this->ReferencedIDs[i]);
+        referencingNodes.push_back(this->ReferencingNodes[i]);
+        }
       }
     }
   this->ReferencedIDs = referencedIDs;
@@ -1007,10 +1009,13 @@ void vtkMRMLScene::RemoveNodeReferences(vtkMRMLNode *n)
   for( i=0; i<nnodes; i++)
     {
     vtkMRMLNode *node = this->ReferencingNodes[i];
-    if (node && node->GetID() && strcmp(node->GetID(), n->GetID())) 
+    if ( node && n )
       {
-      referencedIDs.push_back(this->ReferencedIDs[i]);
-      referencingNodes.push_back(this->ReferencingNodes[i]);
+      if (node->GetID() && strcmp(node->GetID(), n->GetID())) 
+        {
+        referencedIDs.push_back(this->ReferencedIDs[i]);
+        referencingNodes.push_back(this->ReferencingNodes[i]);
+        }
       }
     }
   this->ReferencedIDs = referencedIDs;
