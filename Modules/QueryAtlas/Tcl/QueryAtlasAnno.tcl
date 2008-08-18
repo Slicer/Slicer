@@ -33,7 +33,6 @@ proc QueryAtlasCullOldModelAnnotations { } {
     #--- progress feedback
     set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
     set prog [ $win GetProgressGauge ]
-    $win SetStatusText "Culling any old model annotations..."
     $prog SetValue 0
 
     if {[info exists ::QA(annoModelNodeIDs) ] } {
@@ -107,7 +106,6 @@ proc QueryAtlasCullOldLabelMapAnnotations { } {
     #--- progress feedback
     set win [ $::slicer3::ApplicationGUI GetMainSlicerWindow ]
     set prog [ $win GetProgressGauge ]
-    $win SetStatusText "Culling any old label map annotations..."
     $prog SetValue 0
 
     if { [info exists ::QA(annoLabelMapIDs) ] } {
@@ -731,13 +729,13 @@ proc QueryAtlasInitialize { dataset annoPath } {
     #--- are the same size -- otherwise the annotations don't
     #--- seem to show up.
     set renderWidget [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer]
-    set renderWindow [ [[$::slicer3::ApplicationGUI GetViewerWidget] GetMainViewer] GetRenderWindow ]
+    set renderWindow [ $renderWidget GetRenderWindow ]
     set renderWindowInteractor [ $renderWindow GetInteractor ]
     set wsize [ $renderWindow GetSize ]
     set sizeX [ lindex $wsize 0 ]
     set sizeY [ lindex $wsize 1 ]
     $renderWindowInteractor UpdateSize $sizeX $sizeY
-    
+
 }
 
 
