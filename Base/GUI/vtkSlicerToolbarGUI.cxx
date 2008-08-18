@@ -670,12 +670,6 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
             p->GetMRMLScene()->SaveStateForUndo ( layout );
             layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
             }
-          else if ( !strcmp ( whichLayout, "Toggle GUI panel L/R"))
-            {
-            int v = p->GetMainSlicerWindow()->GetViewPanelPosition();
-            p->GetMainSlicerWindow()->SetViewPanelPosition ( !v );
-            this->SetLayoutMenubuttonValueToCurrentLayout();
-            }
           }
         else if ( !strcmp ( whichLayout, "Toggle GUI panel visibility"))
           {

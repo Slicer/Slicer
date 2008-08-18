@@ -97,6 +97,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
 
     vtkGetMacro (Built, bool);
     vtkSetMacro (Built, bool);
+    vtkGetMacro (CurrentLayout, int);
+    vtkSetMacro (CurrentLayout, int);
     
     // Description:
     // The Fiducial List Widget
@@ -334,6 +336,7 @@ protected:
     int ProcessingMRMLEvent;
     bool SceneClosing;
     bool Built;
+    int CurrentLayout;
       
  private:
     vtkSlicerApplicationGUI ( const vtkSlicerApplicationGUI& ); // Not implemented.

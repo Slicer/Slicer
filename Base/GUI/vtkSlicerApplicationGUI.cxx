@@ -568,68 +568,82 @@ void vtkSlicerApplicationGUI::UpdateLayout ( )
   //--- stop spinning/rocking... and
   //--- repack the layout in main viewer if required.
   int target = this->GUILayoutNode->GetViewArrangement();
-  int current = this->GUILayoutNode->GetOldViewArrangement();
   
   if ( target == vtkMRMLLayoutNode::SlicerLayoutConventionalView &&
-      current != vtkMRMLLayoutNode::SlicerLayoutConventionalView )
+      this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutConventionalView )
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer (vtkMRMLLayoutNode::SlicerLayoutConventionalView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutConventionalView );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUp3DView &&
-            current != vtkMRMLLayoutNode::SlicerLayoutOneUp3DView )
+            this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUp3DView )
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUp3DView, NULL);
-//        this->ResumeViewRockOrSpin ( mode );
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUp3DView );
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutFourUpView &&
-            current != vtkMRMLLayoutNode::SlicerLayoutFourUpView)
+            this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutFourUpView)
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutFourUpView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutFourUpView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutTabbed3DView &&
-            current != vtkMRMLLayoutNode::SlicerLayoutTabbed3DView )
+            this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutTabbed3DView )
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutTabbed3DView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutTabbed3DView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView &&
-            current != vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView )
+            this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView )
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView, NULL );
-//        this->ResumeViewRockOrSpin ( mode );
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutTabbedSliceView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView &&
-            current != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
+            this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView, "Red");
-//        this->ResumeViewRockOrSpin ( mode );
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView &&
-            current != vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView)
+            this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView)
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView, "Yellow");
-//        this->ResumeViewRockOrSpin ( mode );
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView );    
     }
   else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView &&
-            current != vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView)
+            this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView)
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView, "Green");
-//        this->ResumeViewRockOrSpin ( mode );
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView );    
+    }
+  else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView &&
+             this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
+    {
+    mode = this->ApplicationToolbar->StopViewRockOrSpin();
+    this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView, "Red");
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView );    
+    }
+  else if ( target == vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView &&
+             this->GetCurrentLayout()!= vtkMRMLLayoutNode::SlicerLayoutOneUpSliceView)
+    {
+    mode = this->ApplicationToolbar->StopViewRockOrSpin();
+    this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView, "Red");
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView );    
     }
   else if ( (target == vtkMRMLLayoutNode::SlicerLayoutCompareView) )
     {
     mode = this->ApplicationToolbar->StopViewRockOrSpin();
     this->RepackMainViewer ( vtkMRMLLayoutNode::SlicerLayoutCompareView, NULL);
+    this->SetCurrentLayout ( vtkMRMLLayoutNode::SlicerLayoutCompareView );    
     }
 
 }
@@ -1702,7 +1716,7 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
           this->PackOneUp3DView ( );
           break;
         case vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView:
-          this->PackOneUpSliceView ("Red");
+            this->PackOneUpSliceView ("Red");
           break;
         case vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView:
           this->PackOneUpSliceView ("Yellow");
@@ -1714,8 +1728,8 @@ void vtkSlicerApplicationGUI::PackMainViewer ( int arrangmentType, const char *w
           if ( whichSlice == NULL )
             {
             whichSlice = "Red";
-            this->PackOneUpSliceView ( whichSlice );
             }
+            this->PackOneUpSliceView ( whichSlice );
           break;
         case vtkMRMLLayoutNode::SlicerLayoutTabbed3DView:
           this->PackTabbed3DView ( );
@@ -1786,9 +1800,9 @@ void vtkSlicerApplicationGUI::UnpackMainSliceViewers (  )
         
         //--- check the previous layout (one we are dismantling.)
         //--- take the layout apart the same way we put it together.
-        if ( layout->GetOldViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutFourUpView ||
-             layout->GetOldViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView ||
-             layout->GetOldViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutConventionalView )
+        if ( this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutFourUpView ||
+             this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutCompareView ||
+             this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutConventionalView )
           {
           g->UngridGUI();
           }
@@ -1822,7 +1836,7 @@ void vtkSlicerApplicationGUI::UnpackMain3DViewer (  )
     // 3D Viewer
     //
     this->MainSlicerWindow->GetViewNotebook()->RemovePagesMatchingTag ( this->ViewerPageTag );
-    if ( layout->GetOldViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutFourUpView )
+    if ( this->CurrentLayout == vtkMRMLLayoutNode::SlicerLayoutFourUpView )
       {
       this->ViewerWidget->UngridWidget ( );
       }
@@ -2219,7 +2233,6 @@ void vtkSlicerApplicationGUI::PackCompareView()
     g->GetSliceNode()->UpdateMatrices();
     
     //--TODO: when Compare view gets added into the vtkMRMLLayoutNode,
-    //--- modify this to check layout->GetOldViewArrangement instead of current arrangement.
     if (layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutFourUpView ||
         layout->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutConventionalView)
       {
