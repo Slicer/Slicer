@@ -728,20 +728,23 @@ void vtkSlicerViewControlGUI::UpdateSceneSnapshotsFromMRML()
 }
 
 
-
 //---------------------------------------------------------------------------
 void vtkSlicerViewControlGUI::RestoreSceneSnapshot( const char *nom )
 {
  
   vtkCollection *col = this->MRMLScene->GetNodesByName ( nom );
-  col->InitTraversal();
-
-  //--- get the first one. Name checking should make it unique...
-  vtkMRMLSceneSnapshotNode *node =  vtkMRMLSceneSnapshotNode::SafeDownCast (col->GetNextItemAsObject() );
-  if (node)
+  if ( col != NULL )
     {
-    this->MRMLScene->SaveStateForUndo();
-    node->RestoreScene();
+    col->InitTraversal();
+
+    //--- get the first one. Name checking should make it unique...
+    vtkMRMLSceneSnapshotNode *node =  vtkMRMLSceneSnapshotNode::SafeDownCast (col->GetNextItemAsObject() );
+    if (node)
+      {
+      this->MRMLScene->SaveStateForUndo();
+      node->RestoreScene();
+      }
+    col->Delete();
     }
 }
 
@@ -750,15 +753,19 @@ void vtkSlicerViewControlGUI::RestoreSceneSnapshot( const char *nom )
 void vtkSlicerViewControlGUI::DeleteSceneSnapshot(const char *nom )
 {
   vtkCollection *col = this->MRMLScene->GetNodesByName ( nom );
-  col->InitTraversal();
-
-  //--- get the first one. Name checking should make it unique...
-  vtkMRMLSceneSnapshotNode *node =  vtkMRMLSceneSnapshotNode::SafeDownCast (col->GetNextItemAsObject() );
-  if ( node)
+  if ( col != NULL )
     {
-    this->MRMLScene->SaveStateForUndo();
-    this->MRMLScene->RemoveNode(node);
-    this->UpdateSceneSnapshotsFromMRML();
+    col->InitTraversal();
+
+    //--- get the first one. Name checking should make it unique...
+    vtkMRMLSceneSnapshotNode *node =  vtkMRMLSceneSnapshotNode::SafeDownCast (col->GetNextItemAsObject() );
+    if ( node)
+      {
+      this->MRMLScene->SaveStateForUndo();
+      this->MRMLScene->RemoveNode(node);
+      this->UpdateSceneSnapshotsFromMRML();
+      }
+    col->Delete();
     }
 }
 
