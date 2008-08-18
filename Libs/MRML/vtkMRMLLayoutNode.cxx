@@ -45,7 +45,6 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->BottomPanelVisibility = 1;
   this->GUIPanelLR = 0;
   this->ViewArrangement = -1;
-  this->OldViewArrangement = -1;
   this->NumberOfCompareViewRows = 0;
   this->NumberOfCompareViewColumns = 0;
   return;
@@ -62,7 +61,7 @@ vtkMRMLLayoutNode::~vtkMRMLLayoutNode()
 void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes, since the parsing of the string is dependent on the
-  // order here. No need to save OldViewArrangment. Only save ViewArrangement.
+  // order here. 
   
   Superclass::WriteXML(of, nIndent);
   vtkIndent indent(nIndent);
@@ -134,16 +133,6 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
 {
-  int curr = this->ViewArrangement;
-
-  if ( curr < 0 )
-    {
-    this->OldViewArrangement = arrNew;
-    }
-  else
-    {
-    this->OldViewArrangement = curr;
-    }
   this->ViewArrangement = arrNew;
   this->Modified();
 }
@@ -157,7 +146,6 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
 //  vtkObject::Copy(anode);
   vtkMRMLLayoutNode *node = (vtkMRMLLayoutNode *) anode;
   this->SetViewArrangement (node->GetViewArrangement() );
-  this->SetOldViewArrangement (node->GetOldViewArrangement());
   this->SetGUIPanelVisibility(node->GetGUIPanelVisibility()) ;
   this->SetBottomPanelVisibility (node->GetBottomPanelVisibility());
   this->SetGUIPanelLR ( node->GetGUIPanelLR());
@@ -173,7 +161,6 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
   
   // Layout:
   os << indent << "ViewArrangement: " << this->ViewArrangement  << "\n";
-  os << indent << "OldViewArrangement: " << this->OldViewArrangement  << "\n";
   os << indent << "GUIPanelVisibility: " << this->GUIPanelVisibility  << "\n";
   os << indent << "GUIPanelLR: " << this->GUIPanelLR  << "\n";
   os << indent << "BottomPanelVisibility: " << this->BottomPanelVisibility  << "\n";

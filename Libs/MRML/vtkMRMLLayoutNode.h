@@ -35,10 +35,6 @@ public:
   vtkGetMacro (ViewArrangement, int );
   virtual void SetViewArrangement ( int );
 
-  // Get/Set for Previous layout
-  vtkGetMacro (OldViewArrangement, int );
-  vtkSetMacro (OldViewArrangement, int );
-  
   vtkGetMacro (GUIPanelVisibility, int);
   vtkSetMacro (GUIPanelVisibility, int);
   
@@ -91,7 +87,6 @@ protected:
   int BottomPanelVisibility;
   int GUIPanelLR;
   int ViewArrangement;
-  int OldViewArrangement;
   int NumberOfCompareViewRows;
   int NumberOfCompareViewColumns;
 };
