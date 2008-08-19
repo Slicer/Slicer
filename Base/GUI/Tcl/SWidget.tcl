@@ -259,6 +259,9 @@ itcl::body SWidget::getPixel { image i j k } {
       set pixel "Unknown"
     }
   }
+  if { $pixel == [expr int($pixel)] } {
+    set pixel [expr int($pixel)]
+  }
   return $pixel
 }
 
