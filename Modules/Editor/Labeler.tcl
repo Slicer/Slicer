@@ -240,6 +240,7 @@ itcl::body Labeler::applyPolyMask {polyData} {
 #
 itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
 
+  puts applyImageMask
   #
   # at this point, the mask vtkImageData contains a rasterized
   # version of the polygon and now needs to be added to the label
@@ -343,6 +344,8 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   $o(painter) SetThresholdPaintRange $paintThresholdMin $paintThresholdMax
 
   $o(painter) Paint
+
+  puts [$o(painter) Print]
 
   $labelIJKToRAS Delete
   $backgroundIJKToRAS Delete
@@ -515,7 +518,7 @@ itcl::body Labeler::rotateSliceToImage { } {
   $this queryLayers 0 0
 
   if { [$_sliceNode GetOrientationString] == "Reformat" } {
-    error "All slice views must be Axial, Sagittal or Coronal."
+    puts "Warning: All slice views must be Axial, Sagittal or Coronal."
   } 
 
   if { $_layers(background,node) == "" ||
@@ -524,9 +527,6 @@ itcl::body Labeler::rotateSliceToImage { } {
         [$_layers(label,node) GetParentTransformNode] != "" } {
     error "Background and Label Volumes must be selected and cannot be inside transforms."
   } 
-
-
-
 
   set ijkToRAS [vtkMatrix4x4 New]
 
