@@ -85,7 +85,7 @@ itcl::body ChangeIslandEffect::apply {} {
 
   foreach {x y} [$_interactor GetEventPosition] {}
 
-  if { [$this getInputLabel] == "" || [$this getInputLabel] == "" } {
+  if { [$this getInputLabel] == "" || [$this getOutputLabel] == "" } {
     $this flashCursor 3
     return
   }

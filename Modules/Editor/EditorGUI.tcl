@@ -285,7 +285,7 @@ proc EditorGetPaintLabel {} {
   if { [$node GetParameter "label"] == "" } {
     $node SetParameter "label" 1
   }
-  return [$node GetParameter "label"]
+  return [expr int([$node GetParameter "label"])]
 }
 
 proc EditorSetPaintLabel {index} {
