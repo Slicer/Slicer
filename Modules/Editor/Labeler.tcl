@@ -240,7 +240,6 @@ itcl::body Labeler::applyPolyMask {polyData} {
 #
 itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
 
-  puts applyImageMask
   #
   # at this point, the mask vtkImageData contains a rasterized
   # version of the polygon and now needs to be added to the label
@@ -344,8 +343,6 @@ itcl::body Labeler::applyImageMask { maskIJKToRAS mask bounds } {
   $o(painter) SetThresholdPaintRange $paintThresholdMin $paintThresholdMax
 
   $o(painter) Paint
-
-  puts [$o(painter) Print]
 
   $labelIJKToRAS Delete
   $backgroundIJKToRAS Delete
