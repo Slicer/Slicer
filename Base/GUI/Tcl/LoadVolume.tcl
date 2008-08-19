@@ -144,7 +144,9 @@ itcl::body LoadVolume::constructor {} {
 
   $::slicer3::Application RequestRegistry "OpenPath"
   set path [$::slicer3::Application GetRegistryHolder]
-  $o(browser) OpenDirectory $path
+  if { [file exists $path] } {
+    after idle $o(browser) OpenDirectory $path
+  }
 
   set fileTable [$o(browser) GetFileListTable]
   $fileTable SetSelectionModeToSingle
@@ -463,10 +465,17 @@ itcl::body LoadVolume::apply { } {
 #
 itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
 
+  #
+  # ignore events that occur while updating widgets that 
+  # have relate values
+  #
   if { $_processingEvents } {
     return
   }
 
+  #
+  # handle cancel and apply buttons
+  #
   if { $caller == $o(apply) } {
     if { [$this apply] == 0 } {
       after idle "itcl::delete object $this"
@@ -479,6 +488,9 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  #
+  # select archetype based on clicks in the file browser 
+  #
   if { $caller == $o(browser) } {
     set fileTable [$o(browser) GetFileListTable]
     set fileName [$fileTable GetNthSelectedFileName 0]
@@ -497,6 +509,9 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  #
+  # select archetype based on selection from recent files menu
+  #
   set menuButton [$o(recentMenu) GetWidget]
   if { $caller == $menuButton } {
     set menu [$menuButton GetMenu]
@@ -523,6 +538,9 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  #
+  # select archetype based values typed in entry field
+  #
   if { $caller == $o(path) } {
     set path [[$o(path) GetWidget] GetValue]
     set name [file tail $path]
@@ -530,6 +548,9 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  #
+  # parse the current directory for dicom files
+  #
   if { $caller == $o(dicomParse) } {
     set path [[$o(path) GetWidget] GetValue]
     if { [file isdirectory $path] } {
@@ -544,6 +565,12 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     return
   }
 
+  #
+  # select archetype based on clicks in the dicom tree
+  # - always select a series 
+  # -- click patient or study selects first series
+  # -- click file selects containing series
+  #
   set t [$o(dicomTree) GetWidget]
   if { $caller == $t } {
     set selection [$t GetSelection]
@@ -577,8 +604,22 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
     $t SeeNode $seriesNode
 
     set archetypeNode [lindex [$t GetNodeChildren $seriesNode] 0]
+    # - extract file name from node name
     set archetype [$t GetNodeText $archetypeNode]
-    $this selectArchetype $archetype [$t GetNodeText $seriesNode]
+    set openParen [string last ( $archetype]
+    set closeParen [string last ) $archetype]
+    if { $openParen != -1 && $closeParen != -1 } {
+      set archetype [string range $archetype [expr $openParen + 1] [expr $closeParen - 1]]
+    }
+
+
+    # - strip extra info from end of node text to get series name
+    set seriesName [$t GetNodeText $seriesNode]
+    set paren [string last ( $seriesName]
+    if { $paren != -1 } {
+      set seriesName [string range $seriesName 0 [expr $paren -1]]
+    }
+    $this selectArchetype $archetype $seriesName
 
     return
   }
@@ -593,7 +634,7 @@ itcl::body LoadVolume::processEvent { {caller ""} {event ""} } {
 # - default name for the selection is given
 #
 itcl::body LoadVolume::selectArchetype { path name {optionsName ""} } {
-  
+
   set fileTable [$o(browser) GetFileListTable]
   set directoryExplorer [$o(browser) GetDirectoryExplorer]
 
@@ -822,10 +863,12 @@ itcl::body LoadVolume::populateDICOMTree {directoryName arrayName} {
       $t OpenNode $studyNode
       foreach series $tree($patient,$study,series) {
         set seriesNode series-[$this safeNodeName $series]
-        $t AddNode $studyNode $seriesNode $series
+        set fileCount [llength $tree($patient,$study,$series,files)]
+        if { $fileCount == 1 } {set countString "file" } else { set countString "files" }
+        $t AddNode $studyNode $seriesNode "$series ($fileCount $countString)"
         foreach file $tree($patient,$study,$series,files) {
           set fileNode file-[$this safeNodeName $file]
-          $t AddNode $seriesNode $fileNode $file
+          $t AddNode $seriesNode $fileNode "[file tail $file]  ($file)"
         }
       }
     }
