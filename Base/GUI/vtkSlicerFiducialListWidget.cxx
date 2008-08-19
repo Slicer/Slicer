@@ -678,10 +678,15 @@ void vtkSlicerFiducialListWidget::ProcessMRMLEvents ( vtkObject *caller,
       event == vtkMRMLScene::NodeRemovedEvent &&
       callDataList != NULL)
     {
-    vtkMRMLFiducialListNode *flist = callDataList;
-    vtkDebugMacro("ProcessMRMLEvents: got a node removed event, fid list removed, size = " << flist->GetNumberOfFiducials());
-    this->RemovePointWidgetsForList(flist);
-    this->UpdateFromMRML();
+//    vtkMRMLFiducialListNode *flist = callDataList;
+    // relying on the reinterpret_cast method was causing the removal of other node types to sneak in here.
+    vtkMRMLFiducialListNode *flist = vtkMRMLFiducialListNode::SafeDownCast ( (vtkObjectBase *)callData );
+    if ( flist )
+     {
+     vtkDebugMacro("ProcessMRMLEvents: got a node removed event, fid list removed, size = " << flist->GetNumberOfFiducials());
+     this->RemovePointWidgetsForList(flist);
+     this->UpdateFromMRML();
+     }
     }
 
   // one fiducial was removed
