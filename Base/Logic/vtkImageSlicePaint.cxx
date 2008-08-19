@@ -342,10 +342,9 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *ptr)
                   intbgIJK[i] = 0;
                   }
                 }
-              // TODO: bg may not be of type T
-              T *bgPtr = (T *) background->GetScalarPointer(intbgIJK);
+              double bgValue = background->GetScalarComponentAsDouble(intbgIJK[0], intbgIJK[1], intbgIJK[2], 0);
 
-              if ( *bgPtr > thresholdPaintRange[0] && *bgPtr < thresholdPaintRange[1] )
+              if ( bgValue > thresholdPaintRange[0] && bgValue < thresholdPaintRange[1] )
                 {
                 *workingPtr = label; // TODO: need to work on multicomponent images
                 }
