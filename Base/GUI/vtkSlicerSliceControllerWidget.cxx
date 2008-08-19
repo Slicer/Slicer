@@ -646,12 +646,14 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LightboxButton->SetImageToIcon ( this->ViewConfigureIcons->GetLightBoxViewIcon ( ) );
     this->LightboxButton->SetBalloonHelpString ( "Configure the Slice viewer layout");
     this->LightboxButton->GetMenu()->AddRadioButton ("1x1 view");
-    this->LightboxButton->GetMenu()->AddRadioButton ("2x2 view");
-    this->LightboxButton->GetMenu()->AddRadioButton ("3x3 view");
-    this->LightboxButton->GetMenu()->AddRadioButton ( "6x6 view");    
     this->LightboxButton->GetMenu()->AddRadioButton ( "1x2 view");    
     this->LightboxButton->GetMenu()->AddRadioButton ( "1x3 view");    
     this->LightboxButton->GetMenu()->AddRadioButton ( "1x4 view");    
+    this->LightboxButton->GetMenu()->AddRadioButton ( "1x6 view");    
+    this->LightboxButton->GetMenu()->AddRadioButton ( "1x8 view");    
+    this->LightboxButton->GetMenu()->AddRadioButton ("2x2 view");
+    this->LightboxButton->GetMenu()->AddRadioButton ("3x3 view");
+    this->LightboxButton->GetMenu()->AddRadioButton ( "6x6 view");    
     this->LightboxButton->GetMenu()->AddRadioButton ( "customized view");    
     this->LightboxButton->GetMenu()->AddSeparator ( );
     this->LightboxButton->GetMenu()->AddCommand ("close");
@@ -699,7 +701,7 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     this->LightboxApplyButton = vtkKWPushButton::New ( );
     this->LightboxApplyButton->SetParent ( f );
     this->LightboxApplyButton->Create ( );
-    this->LightboxApplyButton->SetText ("Apply");    
+    this->LightboxApplyButton->SetText ("Apply");
     vtkKWPushButton *b = vtkKWPushButton::New();
     b->SetParent ( f );
     b->Create();
@@ -761,12 +763,14 @@ void vtkSlicerSliceControllerWidget::CreateWidget ( )
     m1->SetParent(this->MoreMenuButton->GetMenu());
     m1->Create();
     m1->AddRadioButton ( "1x1 view" );
-    m1->AddRadioButton ( "2x2 view" );
-    m1->AddRadioButton ( "3x3 view" );
-    m1->AddRadioButton ( "6x6 view" );
     m1->AddRadioButton ( "1x2 view");    
     m1->AddRadioButton ( "1x3 view");    
     m1->AddRadioButton ( "1x4 view");    
+    m1->AddRadioButton ( "1x6 view");    
+    m1->AddRadioButton ( "1x8 view");    
+    m1->AddRadioButton ( "2x2 view" );
+    m1->AddRadioButton ( "3x3 view" );
+    m1->AddRadioButton ( "6x6 view" );
     m1->AddRadioButton ( "customized view" );
     m1->AddSeparator();
     m1->AddCommand ( "close" );    
@@ -2151,6 +2155,34 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
           this->SliceNode->SetLayoutGrid(1, 4);
           }
         }
+      else if ( !strcmp ( lbstr, "1x6 view") )
+        {
+        if ( link && sgui )
+          {
+          // apply this reformat to all slice MRML
+          this->SliceViewerLayoutConfig(1, 6);
+          }
+        else
+          {
+          // apply this reformat to only this slice MRML
+          this->SliceNode->SetLayoutGrid(1, 6);
+          }
+        }
+      else if ( !strcmp ( lbstr, "1x8 view") )
+        {
+        if ( link && sgui )
+          {
+          // apply this reformat to all slice MRML
+          this->SliceViewerLayoutConfig(1, 8);
+          }
+        else
+          {
+          // apply this reformat to only this slice MRML
+          this->SliceNode->SetLayoutGrid(1, 8);
+          }
+        }
+
+
       else if ( !strcmp (lbstr, "customized view" ) )
         {
         this->PopUpLightboxCustomLayoutFrame();
@@ -2254,6 +2286,33 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
         this->SliceNode->SetLayoutGrid( 1, 4 );
         }
       }
+    else if ( !strcmp ( this->LightboxButton->GetValue (), "1x6 view") )
+      {
+      if ( link && sgui )
+        {
+        // apply this reformat to all CompareX slice MRMLs
+        this->SliceViewerLayoutConfig( 1, 6 );
+        }
+      else
+        {
+        // apply this reformat to only this slice MRML
+        this->SliceNode->SetLayoutGrid( 1, 6 );
+        }
+      }
+    else if ( !strcmp ( this->LightboxButton->GetValue (), "1x8 view") )
+      {
+      if ( link && sgui )
+        {
+        // apply this reformat to all CompareX slice MRMLs
+        this->SliceViewerLayoutConfig( 1, 8 );
+        }
+      else
+        {
+        // apply this reformat to only this slice MRML
+        this->SliceNode->SetLayoutGrid( 1, 8 );
+        }
+      }
+
     else if ( !strcmp ( this->LightboxButton->GetValue (), "customized view") )
       {
       // pop up a toplevel to specify NXM view
@@ -2276,6 +2335,7 @@ void vtkSlicerSliceControllerWidget::ProcessWidgetEvents ( vtkObject *caller, un
       this->HideLightboxCustomLayoutFrame();
       this->SliceNode->SetLayoutGrid( numRows, numColumns );
       }
+    this->HideLightboxCustomLayoutFrame();
     }
   
   //
@@ -3122,7 +3182,43 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
             cmenu->SelectItem ( item );
             }
           }
+        }
 
+      else if ( lbRows == 1 && lbCols == 6 )
+        {
+        // button
+        item = this->LightboxButton->GetMenu()->GetIndexOfItem ( "1x6 view");
+        if ( this->LightboxButton->GetMenu()->GetItemSelectedState ( item ) == 0 )
+          {
+          this->LightboxButton->GetMenu()->SelectItem ( item );
+          }
+        // more menu
+        if ( cmenu )
+          {
+          item = cmenu->GetIndexOfItem ( this->LightboxButton->GetValue() );
+          if ( cmenu->GetItemSelectedState ( item ) == 0 )
+            {
+            cmenu->SelectItem ( item );
+            }
+          }
+        }
+      else if ( lbRows == 1 && lbCols == 8 )
+        {
+        // button
+        item = this->LightboxButton->GetMenu()->GetIndexOfItem ( "1x8 view");
+        if ( this->LightboxButton->GetMenu()->GetItemSelectedState ( item ) == 0 )
+          {
+          this->LightboxButton->GetMenu()->SelectItem ( item );
+          }
+        // more menu
+        if ( cmenu )
+          {
+          item = cmenu->GetIndexOfItem ( this->LightboxButton->GetValue() );
+          if ( cmenu->GetItemSelectedState ( item ) == 0 )
+            {
+            cmenu->SelectItem ( item );
+            }
+          }
         }
       else
         {
@@ -3155,7 +3251,7 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
     {
     this->Modified();
     }
-}
+      }
 
 //----------------------------------------------------------------------------
 void vtkSlicerSliceControllerWidget::Shrink() 
