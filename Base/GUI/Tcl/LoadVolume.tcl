@@ -111,8 +111,10 @@ itcl::body LoadVolume::constructor {} {
   set o(toplevel) [vtkNew vtkKWTopLevel]
   $o(toplevel) SetApplication $::slicer3::Application
   $o(toplevel) SetTitle "Add Volume"
+  $o(toplevel) SetMasterWindow [$::slicer3::ApplicationGUI GetMainSlicerWindow]
+  $o(toplevel) SetDisplayPositionToMasterWindowCenter
+  $o(toplevel) ModalOn
   $o(toplevel) Create
-  #$o(toplevel) SetGeometry 800x800
 
   # delete this instance when the window is closed
   wm protocol [$o(toplevel) GetWidgetName] \
