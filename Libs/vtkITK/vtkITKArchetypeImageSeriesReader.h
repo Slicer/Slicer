@@ -64,8 +64,13 @@ public:
     return this->FileNames.size();
   };
 
+  // Description:
+  // Specify the file names to be used when looking for extra files
+  // that match the archetype in defining the volume to load (e.g.
+  // other canidate dicom files to look in for matching tags)
   unsigned int AddFileName( char* filename );
   const char* GetFileName( unsigned int n );
+  void ResetFileNames();
 
   // Description:
   // Set/Get the default spacing of the data in the file. This will be
@@ -661,6 +666,7 @@ public:
     int idxImageOrientationPatient,
     int n );
 
+
 protected:
   vtkITKArchetypeImageSeriesReader();
   ~vtkITKArchetypeImageSeriesReader();
@@ -696,7 +702,6 @@ protected:
 
   int IndexArchetype;
 
-  void ResetFileNames();
   //BTX
   std::vector<std::string> FileNames;
   CoordinateOrientationCode DesiredCoordinateOrientation;
