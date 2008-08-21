@@ -64,6 +64,9 @@ public:
     return this->FileNames.size();
   };
 
+  unsigned int AddFileName( char* filename );
+  const char* GetFileName( unsigned int n );
+
   // Description:
   // Set/Get the default spacing of the data in the file. This will be
   // used if the reader provided spacing is 1.0. (Default is 1.0)
@@ -692,9 +695,6 @@ protected:
   int SelectedOrientation;
 
   int IndexArchetype;
-
-  unsigned int AddFileName( char* filename );
-  const char* GetFileName( unsigned int n );
 
   void ResetFileNames();
   //BTX
