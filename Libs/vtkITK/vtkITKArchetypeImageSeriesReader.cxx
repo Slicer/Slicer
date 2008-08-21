@@ -1035,6 +1035,17 @@ const char* vtkITKArchetypeImageSeriesReader::GetTagValue( char* tag )
   return NULL;
 }
 
+const char* vtkITKArchetypeImageSeriesReader::GetFileName( unsigned int n )
+{
+  if ( n >= this->GetNumberOfFileNames() )
+  {
+    return NULL;
+  }
+
+  return this->FileNames[n].c_str();
+
+}
+
 unsigned int vtkITKArchetypeImageSeriesReader::AddFileName( char* filename )
 {
   std::string filenamestr (filename);

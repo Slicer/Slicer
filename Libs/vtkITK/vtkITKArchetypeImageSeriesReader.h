@@ -694,6 +694,8 @@ protected:
   int IndexArchetype;
 
   unsigned int AddFileName( char* filename );
+  const char* GetFileName( unsigned int n );
+
   void ResetFileNames();
   //BTX
   std::vector<std::string> FileNames;
