@@ -438,6 +438,12 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
 
   vtksys_stl::string kwInString = vtksys_stl::string(uri);
 
+  vtksys_stl::string::size_type loc = kwInString.find ( "?" );
+  if ( loc != kwInString.npos  )
+    {
+    kwInString = kwInString.substr (0, loc );
+    vtkWarningMacro ( "Stripping question mark and trailing characters from uri." << kwInString.c_str() );
+    }
   //--- First decode special characters
   // decode double quote
   vtksys::SystemTools::ReplaceString(kwInString,
