@@ -395,6 +395,30 @@ itcl::body EffectSWidget::getInputBackground {} {
 }
 
 itcl::body EffectSWidget::getInputLabel {} {
+
+  #
+  # check for 'short' label and change type if needed
+  # - required for compatibility with legacy tools
+  #
+  set logic [[$sliceGUI GetLogic]  GetLabelLayer]
+  set node [$logic GetVolumeNode]
+  if { $node == "" } {
+    return ""
+  }
+  set imageLabel [$node GetImageData]
+  if { [$imageLabel GetScalarTypeAsString] != "short" } {
+    $this errorDialog "Warning: label map is being converted to type 'short' for processing."  
+    set cast [vtkImageCast New]
+    $cast SetInput $imageLabel
+    $cast SetOutputScalarTypeToShort
+    $cast Update
+    $imageLabel DeepCopy [$cast GetOutput]
+    $cast Delete
+  }
+
+  #
+  # return full or subset of image for this layer
+  #
   return [$this getInputLayer label]
 }
 
