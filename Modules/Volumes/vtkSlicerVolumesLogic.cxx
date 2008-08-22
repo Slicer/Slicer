@@ -106,24 +106,24 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
   int centerImage = 0;
   int labelMap = 0;
   int singleFile = 0;
-  int UseOrientationFromFile = 1;
+  int useOrientationFromFile = 1;
 
   if ( loadingOptions & 1 )    // labelMap is true
-  {
+    {
     labelMap = 1;
-  }
+    }
   if ( loadingOptions & 2 )    // centerImage is true
-  {
+    {
     centerImage = 1;
-  }
+    }
   if ( loadingOptions & 4 )    // singleFile is true
-  {
+    {
     singleFile = 1;
-  }
+    }
   if ( loadingOptions & 16 )    // discard image orientation from file
-  {
-    UseOrientationFromFile = 0;
-  }
+    {
+    useOrientationFromFile = 0;
+    }
 
   vtkMRMLVolumeNode *volumeNode = NULL;
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
@@ -247,23 +247,23 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   int centerImage = 0;
   int labelMap = 0;
   int singleFile = 0;
-  int UseOrientationFromFile = 1;
+  int useOrientationFromFile = 1;
   int autoLevel = 0;
   int interpolate = 1;
   
   if ( loadingOptions & 1 )    // labelMap is true
-  {
+    {
     labelMap = 1;
     interpolate = 0;
-  }
+    }
   if ( loadingOptions & 2 )    // centerImage is true
-  {
+    {
     centerImage = 1;
-  }
+    }
   if ( loadingOptions & 4 )    // singleFile is true
-  {
+    {
     singleFile = 1;
-  }
+    }
   if ( loadingOptions & 8 ) // calculate window level automaticaly
     {
     if (!labelMap)
@@ -272,9 +272,9 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
       }
     }
   if ( loadingOptions & 16 )    // discard image orientation from file
-  {
-    UseOrientationFromFile = 0;
-  }
+    {
+    useOrientationFromFile = 0;
+    }
 
   vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::New();
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::New();
@@ -316,7 +316,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
 
   storageNode->SetCenterImage(centerImage);
   storageNode->SetSingleFile(singleFile);
-  storageNode->SetUseOrientationFromFile(UseOrientationFromFile);
+  storageNode->SetUseOrientationFromFile(useOrientationFromFile);
   storageNode->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
   if (volname == NULL)
@@ -381,10 +381,13 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   if (storageNode->GetReadState() == vtkMRMLStorageNode::TransferDone ||
       storageNode->GetReadState() == vtkMRMLStorageNode::Idle)
     {
-      vtkDebugMacro("AddArchetypeScalarVolume: setting active volume node " << scalarNode->GetName());
-      this->SetActiveVolumeNode(scalarNode);
+    vtkDebugMacro("AddArchetypeScalarVolume: setting active volume node " << scalarNode->GetName());
+    this->SetActiveVolumeNode(scalarNode);
     }
-  else {vtkDebugMacro("AddArchetypeScalarVollume: not setting this volume as the active node, dl not flagged as finished yet on node " << scalarNode->GetName() << ", read flag = " << storageNode->GetReadStateAsString()); }
+  else 
+    {
+    vtkDebugMacro("AddArchetypeScalarVollume: not setting this volume as the active node, dl not flagged as finished yet on node " << scalarNode->GetName() << ", read flag = " << storageNode->GetReadStateAsString()); 
+    }
   this->Modified();
 
   scalarNode->Delete();
@@ -399,28 +402,30 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
 // bit 0: label map
 // bit 1: centered
 // bit 2: loading single file
+// bit 3: auto calculate window/level
+// bit 4: discard image orientation
 // higher bits are reserved for future use
 vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions)
 {
   int centerImage = 0;
   int labelMap = 0;
   int singleFile = 0;
-  int UseOrientationFromFile = 1;
+  int useOrientationFromFile = 1;
   int autoLevel = 0;
   int interpolate = 1;
   if ( loadingOptions & 1 )    // labelMap is true
-  {
+    {
     labelMap = 1;
     interpolate = 0;
-  }
+    }
   if ( loadingOptions & 2 )    // centerImage is true
-  {
+    {
     centerImage = 1;
-  }
+    }
   if ( loadingOptions & 4 )    // singleFile is true
-  {
+    {
     singleFile = 1;
-  }
+    }
   if ( loadingOptions & 8 ) // calculate window level automaticaly
     {
     if (!labelMap)
@@ -429,9 +434,9 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
       }
     }
   if ( loadingOptions & 16 )    // discard image orientation from file
-  {
-    UseOrientationFromFile = 0;
-  }
+    {
+    useOrientationFromFile = 0;
+    }
 
   vtkMRMLVolumeNode *volumeNode = NULL;
   vtkMRMLVolumeDisplayNode *displayNode = NULL;
@@ -496,7 +501,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   
   storageNode2->SetCenterImage(centerImage);
   storageNode2->SetSingleFile(singleFile);
-  storageNode2->SetUseOrientationFromFile(UseOrientationFromFile);
+  storageNode2->SetUseOrientationFromFile(useOrientationFromFile);
   storageNode2->AddObserver(vtkCommand::ProgressEvent,  this->LogicCallbackCommand);
 
   this->GetMRMLScene()->SaveStateForUndo();
