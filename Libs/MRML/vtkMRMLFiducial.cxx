@@ -111,7 +111,7 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
     ss << keyValuePairs;
 
     std::string keyName;
-    
+   
     // get out the id
     ss >> keyName;
     if (keyName == std::string("id"))
@@ -137,11 +137,12 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
     
     // get the xyz key
     ss >> keyName;
-    while (keyName != std::string("xyz"))
+    while (keyName != std::string("xyz") &&
+           keyName != std::string(""))
       {
       // we're still getting parts of the labeltext
       std::string newLabel = std::string(this->GetLabelText()) + std::string(" ") + keyName;
-      vtkDebugMacro("ReadXMLString: adding to label text: " << newLabel.c_str());
+      vtkDebugMacro("ReadXMLString: adding to label text: '" << newLabel.c_str() << "'");
       this->SetLabelText(newLabel.c_str());
       ss >> keyName;
       }
