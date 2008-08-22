@@ -49,6 +49,8 @@ if { [itcl::find class EditColor] == "" } {
 
     public variable selectCommand ""
 
+    variable _observedParameterNode ""
+
     # methods
     method create {} {}
     method processEvent {{caller ""} {event ""}} {}
@@ -110,9 +112,11 @@ itcl::body EditColor::create { } {
   #
   # observe the scene to know when to get the parameter node
   #
+  $this updateParameterNode
   set scene $::slicer3::MRMLScene
   set tag [$scene AddObserver ModifiedEvent "$this updateParameterNode"]
   lappend _observerRecords [list $scene $tag]
+
 
   $this updateGUI [EditorGetPaintLabel]
 }
@@ -121,12 +125,16 @@ itcl::body EditColor::create { } {
 # update the parameter node when the scene changes
 #
 itcl::body EditColor::updateParameterNode { } {
+
   #
   # observe the scene to know when to get the parameter node
   #
   set node [EditorGetParameterNode]
-  set tag [$node AddObserver ModifiedEvent "::Box::ProtectedCallback $this processEvent $node"]
-  lappend _observerRecords [list $node $tag]
+  if { $node != $_observedParameterNode } {
+    set tag [$node AddObserver ModifiedEvent "::Box::ProtectedCallback $this processEvent $node"]
+    lappend _observerRecords [list $node $tag]
+    set _observedParameterNode $node
+  }
 }
 
 #
@@ -135,7 +143,6 @@ itcl::body EditColor::updateParameterNode { } {
 # - not used due to KWWidgets limitations
 #
 itcl::body EditColor::processEvent { {caller ""} {event ""} } {
-
   set node [EditorGetParameterNode]
   if { $caller == $node } {
     $this updateGUI [EditorGetPaintLabel]
@@ -143,7 +150,8 @@ itcl::body EditColor::processEvent { {caller ""} {event ""} } {
   }
 
   if { $caller == [$o(colorSpin) GetWidget] } {
-    EditorSetPaintLabel [[$o(colorSpin) GetWidget] GetValue]
+    set label [expr int([[$o(colorSpin) GetWidget] GetValue])]
+    EditorSetPaintLabel $label
   }
 
 }

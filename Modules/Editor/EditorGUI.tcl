@@ -290,6 +290,7 @@ proc EditorGetPaintLabel {} {
 
 proc EditorSetPaintLabel {index} {
   set node [EditorGetParameterNode]
+  set index [expr int($index)]
   $node SetParameter "label" $index
 }
 
