@@ -111,47 +111,77 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
     ss << keyValuePairs;
 
     std::string keyName;
-
+    
     // get out the id
     ss >> keyName;
-    //ss >> this->ID;
-    ss >> keyName;
-    this->SetID(keyName.c_str());
+    if (keyName == std::string("id"))
+      {
+      //ss >> this->ID;
+      ss >> keyName;
+      this->SetID(keyName.c_str());
 
-    vtkDebugMacro("ReadXMLString: got id " << this->ID);
+      vtkDebugMacro("ReadXMLString: got id " << this->ID);
+      }
     
     // now get out the labeltext key
     ss >> keyName;
-    // now get the label text value
-    ss >> keyName;
-    this->SetLabelText(keyName.c_str());
+    if (keyName == std::string("labeltext"))
+      {
+      // now get the label text value
+      ss >> keyName;
+      this->SetLabelText(keyName.c_str());
 
 
-    vtkDebugMacro("ReadXMLString: got label text " << this->LabelText);
-
+      vtkDebugMacro("ReadXMLString: got label text " << this->LabelText);
+      }
+    
     // get the xyz key
     ss >> keyName;
-    // now get the x, y, z values
-    ss >> this->XYZ[0];
-    ss >> this->XYZ[1];
-    ss >> this->XYZ[2];
+    while (keyName != std::string("xyz"))
+      {
+      // we're still getting parts of the labeltext
+      std::string newLabel = std::string(this->GetLabelText()) + std::string(" ") + keyName;
+      vtkDebugMacro("ReadXMLString: adding to label text: " << newLabel.c_str());
+      this->SetLabelText(newLabel.c_str());
+      ss >> keyName;
+      }
 
+    if (keyName == std::string("xyz"))
+      {
+      // now get the x, y, z values
+      ss >> this->XYZ[0];
+      ss >> this->XYZ[1];
+      ss >> this->XYZ[2];
+      vtkDebugMacro("ReadXMLString: got xyz: " <<  this->XYZ[0] << ", " << this->XYZ[1] << ", " <<  this->XYZ[2]);
+      }
+    
     // get the orientation key
     ss >> keyName;
-    // now get the w, x, y, z values
-    ss >> this->OrientationWXYZ[0];
-    ss >> this->OrientationWXYZ[1];
-    ss >> this->OrientationWXYZ[2];
-    ss >> this->OrientationWXYZ[3];
+    vtkDebugMacro("ReadXMLString: got keyname " << keyName.c_str());
 
+    if (keyName == std::string("orientationwxyz"))
+      {
+      // now get the w, x, y, z values
+      ss >> this->OrientationWXYZ[0];
+      ss >> this->OrientationWXYZ[1];
+      ss >> this->OrientationWXYZ[2];
+      ss >> this->OrientationWXYZ[3];
+      vtkDebugMacro("ReadXMLString: got wxyz: " <<  this->OrientationWXYZ[0] << ", " << this->OrientationWXYZ[1] << ", " <<  this->OrientationWXYZ[2] << ", " <<  this->OrientationWXYZ[3]);
+      }
+      
     // get the selected flag
     ss >> keyName;
-    ss >> this->Selected;
-
+    if (keyName == std::string("selected"))
+      {
+      ss >> this->Selected;
+      vtkDebugMacro("ReadXMLString: got keynamne = " << keyName.c_str() << ", selected = " << this->Selected );
+      }
+        
     // get the visibility flag
     ss >> keyName;
     if (keyName == std::string("visibility"))
       {
+      vtkDebugMacro("ReadXMLString: got keyName = " << keyName.c_str() << ", visibility " << this->Visibility);
       ss >> this->Visibility;
       }
 }
