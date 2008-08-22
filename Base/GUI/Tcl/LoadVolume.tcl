@@ -702,19 +702,28 @@ itcl::body LoadVolume::loadDICOMDictionary {} {
     return
   }
 
+  set itkBinDir ""
+  if { [info exists ::env(ITK_BIN_DIR)] } {
+    set itkBinDir $::env(ITK_BIN_DIR)
+  }
   set dicomDict ""
   set dicomDictCandidates [list \
-    $::env(ITK_BIN_DIR)/../Utilities/gdcm/Dicts/gdcm.dic \
-    $::env(ITK_BIN_DIR)/../../Utilities/gdcm/Dicts/gdcm.dic]
+    $::Slicer3_BUILD/include/InsightToolkit/gdcm/Dicts/gdcm.dic \
+    $itkBinDir/../../include/InsightToolkit/gdcm/Dicts/gdcm.dic \
+    $itkBinDir/../Utilities/gdcm/Dicts/gdcm.dic \
+    $itkBinDir/../../Utilities/gdcm/Dicts/gdcm.dic \
+    $::Slicer3_BUILD/../Slicer3-lib/Insight-build/Utilities/gdcm/Dicts/gdcm.dic \
+    ]
   foreach dictFile $dicomDictCandidates {
     if { [file exists $dictFile] } {
       set dicomDict $dictFile
+      break
     }
   }
 
   if { $dicomDict == "" } {
     $this errorDialog "Cannot find dicom dictionary to load"
-  set _DICOM(loaded) "Fail"
+    set _DICOM(loaded) "Fail"
     return
   }
 
