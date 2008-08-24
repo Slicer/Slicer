@@ -286,7 +286,9 @@ itcl::body MakeModelEffect::getUniqueModelName { {baseName "Quick Model"} } {
   set nNodes [$::slicer3::MRMLScene GetNumberOfNodes]
   for {set i 0} {$i < $nNodes} {incr i} {
     set node [$::slicer3::MRMLScene GetNthNode $i]
-    lappend names [$node GetName]
+    if { [$node IsA "vtkMRMLModelNode"] } {
+      lappend names [$node GetName]
+    }
   }
 
   set name $baseName
