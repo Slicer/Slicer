@@ -523,10 +523,13 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
             if { ![info exists ::env(LD_LIBRARY_PATH)] } { set ::env(LD_LIBRARY_PATH) "" }
             set ::env(LD_LIBRARY_PATH) $::Slicer3_LIB/python-build/lib:$::env(LD_LIBRARY_PATH)
         }
-        cd $::Slicer3_LIB/python/numpy
+
         set ::env(ATLAS) None
-        set ::env(BLAS) None
-        set ::env(LAPACK) None
+        set ::env(BLAS) $::Slicer3_LIB/netlib-build/lib/libbas.a
+        set ::env(BLAS_SRC) $::Slicer3_LIB/netlib/BLAS
+        set ::env(LAPACK) $::Slicer3_LIB/netlib-build/lib/libflapack.a
+
+        cd $::Slicer3_LIB/python/numpy
         runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
 
         # do scipy
@@ -536,12 +539,9 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
         runcmd $::SVN co $::SCIPY_TAG scipy
         
         cd $::Slicer3_LIB/python/scipy
-        set ::env(ATLAS) None
-        set ::env(BLAS) None
-        set ::env(LAPACK) None
         
         # turn off scipy - not clear how to get it to build on all platforms
-        # runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
+        runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install
     }
 }
 
