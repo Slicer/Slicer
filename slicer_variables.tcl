@@ -84,6 +84,9 @@ set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/branches/1.1.x"
 #set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
 set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/branches/0.6.x"
 set ::SLICERLIBCURL_TAG "HEAD"
+# set TCL_VERSION to "tcl" to get 8.4, otherwise use tcl85 get 8.5
+set ::TCL_VERSION tcl
+#set ::TCL_VERSION tcl85
 
 # Set library, binary, etc. paths...
 
@@ -196,6 +199,12 @@ switch $::tcl_platform(os) {
         set ::SLICERLIBCURL_TEST_FILE $::SLICERLIBCURL_BUILD_DIR/bin/libslicerlibcurl.$shared_lib_ext
         set ::IWIDGETS_TEST_FILE $::TCL_LIB_DIR/iwidgets4.0.1/iwidgets.tcl
         set ::BLT_TEST_FILE $::TCL_BIN_DIR/bltwish24
+
+        # We need a workaround here, because gcc does not pick up libraries in /lib
+        # on Solaris. 
+        # The bug, and it's resolution can be found here:
+        # http://bugs.opensolaris.org/view_bug.do?bug_id=6619485
+        set ::env(LDFLAGS) -L/lib
     }
     "Darwin" {
         set ::VTK_BUILD_SUBDIR ""
