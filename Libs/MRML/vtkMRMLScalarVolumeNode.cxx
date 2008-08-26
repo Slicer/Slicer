@@ -63,6 +63,7 @@ vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
 {
   this->Bimodal = vtkImageBimodalAnalysis::New();
   this->Accumulate = vtkImageAccumulateDiscrete::New();
+  this->CalculatingAutoLevels = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -320,7 +321,17 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDispl
     return;
     }
 
-   displayNode->DisableModifiedEventOn();
+
+  if (this->CalculatingAutoLevels) 
+    {
+    return;
+    }
+  else
+    {
+    this->CalculatingAutoLevels = 1;
+    }
+
+  displayNode->DisableModifiedEventOn();
 
   if (imageDataScalar && imageDataScalar->GetNumberOfScalarComponents() == 1) 
     {
@@ -381,7 +392,7 @@ void vtkMRMLScalarVolumeNode::CalculateScalarAutoLevels(vtkMRMLScalarVolumeDispl
     }
     displayNode->DisableModifiedEventOff();
     displayNode->InvokePendingModifiedEvent();
-
+    this->CalculatingAutoLevels = 0;
 }
 
 //---------------------------------------------------------------------------

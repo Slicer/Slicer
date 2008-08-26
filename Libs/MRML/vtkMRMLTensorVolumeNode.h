@@ -37,7 +37,7 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
 {
   public:
   static vtkMRMLTensorVolumeNode *New();
-  vtkTypeMacro(vtkMRMLTensorVolumeNode,vtkMRMLVolumeNode);
+  vtkTypeMacro(vtkMRMLTensorVolumeNode,vtkMRMLScalarVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -96,8 +96,8 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
   // Description:
   // Extract the component defined by the diffusion tensor dispaly properties
   // node, and pass it on to CalculateScalarAutoLevels.
-  virtual void CalculateAutoLevels(vtkMRMLVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL);
-  
+  virtual void CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL);
+ 
 protected:
   vtkMRMLTensorVolumeNode();
   ~vtkMRMLTensorVolumeNode();

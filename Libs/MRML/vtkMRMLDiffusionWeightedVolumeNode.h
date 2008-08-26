@@ -36,7 +36,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
 {
   public:
   static vtkMRMLDiffusionWeightedVolumeNode *New();
-  vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeNode,vtkMRMLVolumeNode);
+  vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeNode,vtkMRMLScalarVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();

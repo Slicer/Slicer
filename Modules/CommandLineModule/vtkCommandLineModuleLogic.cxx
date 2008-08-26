@@ -530,14 +530,28 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
     vtkMRMLNode *nd
       = this->MRMLScene->GetNodeByID( (*id2fn).first.c_str() );
     
-    vtkMRMLScalarVolumeNode *svnd
-      = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
-    vtkMRMLVectorVolumeNode *vvnd
-      = vtkMRMLVectorVolumeNode::SafeDownCast(nd);
-    vtkMRMLDiffusionTensorVolumeNode *dtvnd
-      = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(nd);
-    vtkMRMLDiffusionWeightedVolumeNode *dwvnd
-      = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
+    vtkMRMLDiffusionTensorVolumeNode *dtvnd = NULL;
+    vtkMRMLDiffusionWeightedVolumeNode *dwvnd = NULL;
+    vtkMRMLVectorVolumeNode *vvnd = NULL;
+    vtkMRMLScalarVolumeNode *svnd = NULL;
+
+    if (nd->IsA("vtkMRMLDiffusionTensorVolumeNode"))
+      {
+      dtvnd = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(nd);
+      }
+    else if (nd->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
+      {
+      dwvnd = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
+      }
+    else if (nd->IsA("vtkMRMLVectorVolumeNode"))
+      {
+      vvnd = vtkMRMLVectorVolumeNode::SafeDownCast(nd);
+      }
+    else if (nd->IsA("vtkMRMLScalarVolumeNode"))
+      {
+      svnd = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
+      }
+
     vtkMRMLModelNode *mnd
       = vtkMRMLModelNode::SafeDownCast(nd);
     vtkMRMLFiberBundleNode *fbnd

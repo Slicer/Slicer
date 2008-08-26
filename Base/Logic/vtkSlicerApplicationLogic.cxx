@@ -1165,11 +1165,27 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   nd = this->MRMLScene->GetNodeByID( req.GetNode().c_str() );
 
   vtkDebugMacro("ProcessReadNodeData: read data request node id = " << nd->GetID());
+
+  // volumes may inherit from each other, 
+  // should be in the reverse order of inheritance
+  if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd))
+    {
+    dwvnd = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
+    }
+  else if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(nd))
+    {
+     dtvnd = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(nd);
+    }
+  else if (vtkMRMLVectorVolumeNode::SafeDownCast(nd))
+    {
+    vvnd  = vtkMRMLVectorVolumeNode::SafeDownCast(nd);
+    }
+  else if (vtkMRMLScalarVolumeNode::SafeDownCast(nd))
+    {
+    svnd  = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
+    }
   
-  svnd  = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
-  vvnd  = vtkMRMLVectorVolumeNode::SafeDownCast(nd);
-  dtvnd = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(nd);
-  dwvnd = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
+
   mnd   = vtkMRMLModelNode::SafeDownCast(nd);
   ltnd  = vtkMRMLLinearTransformNode::SafeDownCast(nd);
   nltnd  = vtkMRMLNonlinearTransformNode::SafeDownCast(nd);
@@ -1528,6 +1544,14 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   // Tensors? Vectors?
   if (req.GetDisplayData())
     {
+    if (vtkMRMLScalarVolumeNode::SafeDownCast(nd) != NULL)
+      {
+      svnd = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
+      }
+    else 
+      {
+      svnd = NULL;
+      }
     if (svnd)
       {
       if (svnd->GetLabelMap())
@@ -1543,9 +1567,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(svnd->GetDisplayNode()) != NULL)
         {
         // make sure win/level gets calculated
-        svnd->CalculateScalarAutoLevels(vtkMRMLScalarVolumeDisplayNode::SafeDownCast(svnd->GetDisplayNode()), svnd->GetImageData());
+        svnd->CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode::SafeDownCast(svnd->GetDisplayNode()), svnd->GetImageData());
         }
-      this->PropagateVolumeSelection();
+      if (!strcmp(svnd->GetClassName(), "vtkMRMLScalarVolumeNode"))
+        {
+        this->PropagateVolumeSelection();
+        }
       }
     }
 }

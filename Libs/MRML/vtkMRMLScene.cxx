@@ -845,7 +845,11 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       oldID = n->GetID();
       }
     //n->SetID(this->GetUniqueIDByClass(n->GetClassName()));
+    int modifyStatus = n->GetDisableModifiedEvent();
+    n->SetDisableModifiedEvent(1);
     n->ConstructAndSetID(n->GetClassName(), this->GetUniqueIDIndexByClass(n->GetClassName()));
+    n->SetDisableModifiedEvent(modifyStatus);
+
     vtkDebugMacro("AddNodeNoNotify: got unique id for new " << n->GetClassName() << " node: " << n->GetID() << endl);
     std::string newID(n->GetID());
     if (oldID != newID)
@@ -854,6 +858,9 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       }
     }
 
+  int modifyStatus = n->GetDisableModifiedEvent();
+  n->SetDisableModifiedEvent(1);
+
   n->SetSceneRootDir(this->RootDirectory.c_str());
   if (n->GetName() == NULL|| n->GetName()[0] == '\0')
     {
@@ -861,6 +868,8 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
     }
   n->SetScene( this );
   this->CurrentScene->vtkCollection::AddItem((vtkObject *)n);
+
+  n->SetDisableModifiedEvent(modifyStatus);
   return n;
 }
 

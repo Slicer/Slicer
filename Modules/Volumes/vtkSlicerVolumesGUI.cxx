@@ -354,7 +354,7 @@ void vtkSlicerVolumesGUI::ProcessGUIEvents(vtkObject *caller, unsigned long even
       vtkMRMLVolumeNode::SafeDownCast(this->VolumeSelectorWidget->GetSelected());
     if (refNode != NULL)
       {
-      if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+      if ( !strcmp(refNode->GetClassName(), "vtkMRMLScalarVolumeNode") || !strcmp(refNode->GetClassName(), "vtkMRMLVectorVolumeNode")) 
         {
         // set UI widgets for Archetype storage node
         vtkMRMLVolumeArchetypeStorageNode *snode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
@@ -632,7 +632,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
   vtkKWFrame *frame = NULL;
   if (refNode != NULL)
     {
-    if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    if ( !strcmp(refNode->GetClassName(), "vtkMRMLScalarVolumeNode") || !strcmp(refNode->GetClassName(), "vtkMRMLVectorVolumeNode"))
       {
       // set UI widgets for Archetype storage node
       vtkMRMLVolumeArchetypeStorageNode *snode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
@@ -694,7 +694,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         }
       }
 
-    if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    if ( !strcmp(refNode->GetClassName(), "vtkMRMLScalarVolumeNode"))
       {
       vtkMRMLScalarVolumeNode *svol = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
       if (!svol->GetLabelMap() && (this->VolumeDisplayWidget == NULL || this->VolumeDisplayWidget != scalarVDW))
@@ -724,7 +724,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         this->LabelMapCheckButton->SetSelectedState(svol->GetLabelMap());
         }
       }
-    else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
+    else if ( !strcmp(refNode->GetClassName(), "vtkMRMLVectorVolumeNode"))
       {
       /* TODO: 
       if (this->VolumeDisplayWidget != vectorVDW)
@@ -740,7 +740,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
       }
       */
       }
-    else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
+    else if ( !strcmp(refNode->GetClassName(), "vtkMRMLDiffusionWeightedVolumeNode"))
       {
       if (this->VolumeDisplayWidget == NULL || this->VolumeDisplayWidget != dwiVDW)
         {
@@ -761,7 +761,7 @@ void vtkSlicerVolumesGUI::UpdateFramesFromMRML()
         vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(refNode);
       this->DiffusionEditorWidget->UpdateWidget(dwiNode);
       }
-    else if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
+    else if ( !strcmp(refNode->GetClassName(), "vtkMRMLDiffusionTensorVolumeNode") )
       { 
       if (this->VolumeDisplayWidget == NULL || this->VolumeDisplayWidget != dtiVDW)
         {

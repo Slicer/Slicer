@@ -81,8 +81,13 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   // Description:
   // Calculate good default viewing parameters, uses input image data if not
   // null, otherwise this node's image data
-  void CalculateScalarAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL,
-                                  vtkImageData *imageData = NULL);
+  virtual void CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode = NULL, vtkImageData *refData = NULL)
+    {
+    this->CalculateScalarAutoLevels(refNode, refData);
+    };
+
+  virtual void CalculateScalarAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL,
+                                         vtkImageData *imageData = NULL);
   // Descriptoin:
   // special case for statistics volumes
   void CalculateStatisticsAutoLevels( vtkMRMLScalarVolumeDisplayNode *refNode = NULL,
@@ -98,6 +103,8 @@ protected:
   // Used internally in CalculateScalarAutoLevels and CalculateStatisticsAutoLevels
   vtkImageAccumulateDiscrete *Accumulate;
   vtkImageBimodalAnalysis *Bimodal;
+
+  int CalculatingAutoLevels;
 };
 
 #endif

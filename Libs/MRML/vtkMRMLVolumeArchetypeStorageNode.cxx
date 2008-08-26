@@ -206,15 +206,8 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
   vtkMRMLVolumeNode *volNode = NULL;
   vtkITKArchetypeImageSeriesReader* reader = NULL;
   
-  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
-    {
-    volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
-    reader = vtkITKArchetypeImageSeriesScalarReader::New();  
-    reader->SetSingleFile( this->GetSingleFile() );
-    reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
-    }
 #ifdef MRML_USE_vtkTeem
-  else if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
+  if ( refNode->IsA("vtkMRMLVectorVolumeNode") ) 
     {
     volNode = dynamic_cast <vtkMRMLVectorVolumeNode *> (refNode);
     // 
@@ -261,7 +254,15 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
       return 0;
       }
     }
-#endif
+  else 
+    #endif
+    if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+    {
+    volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+    reader = vtkITKArchetypeImageSeriesScalarReader::New();  
+    reader->SetSingleFile( this->GetSingleFile() );
+    reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
+    }
 
   reader->AddObserver( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
 

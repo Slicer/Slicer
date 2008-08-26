@@ -256,7 +256,7 @@ void vtkMRMLTensorVolumeNode::UpdateFromMRML()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTensorVolumeNode::CalculateAutoLevels(vtkMRMLVolumeDisplayNode *refNode, vtkImageData *refData)
+void vtkMRMLTensorVolumeNode::CalculateAutoLevels(vtkMRMLScalarVolumeDisplayNode *refNode, vtkImageData *refData)
 {
   if (!refNode && !this->GetDisplayNode())
     {
