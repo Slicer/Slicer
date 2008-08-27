@@ -60,7 +60,7 @@ vtkSlicerSliceLogic::vtkSlicerSliceLogic()
   this->SliceModelTransformNode = NULL;
   this->Name = NULL;
   this->SliceModelDisplayNode = NULL;
-  this->ImageData = vtkImageData::New();
+  this->ImageData = NULL;
   this->SliceSpacing[0] = this->SliceSpacing[1] = this->SliceSpacing[2] = 1;
 }
 
@@ -681,6 +681,8 @@ void vtkSlicerSliceLogic::UpdatePipeline()
 
     //Models
 
+    this->UpdateImageData();
+
     if ( this->SliceModelNode && 
           this->SliceModelNode->GetModelDisplayNode() &&
             this->SliceNode ) 
@@ -689,15 +691,21 @@ void vtkSlicerSliceLogic::UpdatePipeline()
         {
         this->SliceModelNode->GetModelDisplayNode()->SetVisibility( this->SliceNode->GetSliceVisible() );
         }
-      if (this->SliceModelNode->GetModelDisplayNode()->GetTextureImageData() != this->ExtractModelTexture->GetOutput())
+
+      // upadte texture
+      this->ExtractModelTexture->Update();
+      if (!((this->GetBackgroundLayer() != NULL && this->GetBackgroundLayer()->GetImageData() != NULL) ||
+                 (this->GetForegroundLayer() != NULL && this->GetForegroundLayer()->GetImageData() != NULL) ||
+                 (this->GetLabelLayer() != NULL && this->GetLabelLayer()->GetImageData() != NULL) )  )
+        {
+        this->SliceModelNode->GetModelDisplayNode()->SetAndObserveTextureImageData(NULL);
+        }
+      else if (this->SliceModelNode->GetModelDisplayNode()->GetTextureImageData() != this->ExtractModelTexture->GetOutput())
         {
         this->SliceModelNode->GetModelDisplayNode()->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
         }
+       
       }
-
-    this->UpdateImageData();
-
-
 
     if ( modified )
       {

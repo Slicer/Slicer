@@ -158,11 +158,24 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerSliceLogic : public vtkSlicerLogic
         this->Blend->Update(); 
         }
       //this->ImageData = this->Blend->GetOutput();
-      if (this->Blend->GetOutput()->GetMTime() > this->ImageData->GetMTime())
+      if (this->ImageData== NULL || this->Blend->GetOutput()->GetMTime() > this->ImageData->GetMTime())
         {
+        if (this->ImageData== NULL)
+          {
+          this->ImageData = vtkImageData::New();
+          }
         this->ImageData->DeepCopy( this->Blend->GetOutput()); 
         this->ExtractModelTexture->SetInput( this->ImageData );
         }
+      }
+    else 
+      {
+      if (this->ImageData)
+        {
+        this->ImageData->Delete();
+        }
+      this->ImageData=NULL;
+      this->ExtractModelTexture->SetInput( this->ImageData );
       }
   };
 

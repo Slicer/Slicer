@@ -171,6 +171,26 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
     }
 }
 
+//-----------------------------------------------------------
+void vtkMRMLSliceCompositeNode::UpdateReferences()
+{
+   Superclass::UpdateReferences();
+
+  if (this->BackgroundVolumeID != NULL && this->Scene->GetNodeByID(this->BackgroundVolumeID) == NULL)
+    {
+    this->SetBackgroundVolumeID(NULL);
+    }
+  if (this->ForegroundVolumeID != NULL && this->Scene->GetNodeByID(this->ForegroundVolumeID) == NULL)
+    {
+    this->SetForegroundVolumeID(NULL);
+    }
+  if (this->LabelVolumeID != NULL && this->Scene->GetNodeByID(this->LabelVolumeID) == NULL)
+    {
+    this->SetLabelVolumeID(NULL);
+    }
+
+
+}
 //----------------------------------------------------------------------------
 void vtkMRMLSliceCompositeNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
