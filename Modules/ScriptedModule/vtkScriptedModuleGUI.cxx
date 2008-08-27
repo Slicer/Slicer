@@ -56,6 +56,8 @@ vtkScriptedModuleGUI::vtkScriptedModuleGUI()
   this->Logic = NULL;
   this->ScriptedModuleNode = NULL;
   this->Language = vtkScriptedModuleGUI::Tcl;
+  this->Category = NULL;
+  this->SetCategory("None");
 }
 
 //----------------------------------------------------------------------------
@@ -144,6 +146,7 @@ void vtkScriptedModuleGUI::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "ModuleName: " << (this->ModuleName ? this->ModuleName : "null") << endl;
+  os << indent << "Category: " << (this->Category ? this->Category : "null") << endl;
   os << indent << "Logic: " << endl;
   if (this->Logic)
     {
