@@ -130,7 +130,7 @@ proc ScriptedModuleExampleProcessGUIEvents {this caller event} {
   if { $caller == $::ScriptedModuleExample($this,run) } {
     switch $event {
       "10000" {
-        ScriptedModuleExampleCreateApply $this
+        ScriptedModuleExampleApply $this
       }
     }
   } 
