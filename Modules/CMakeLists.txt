@@ -50,6 +50,7 @@ subdirs(
    QdecModule
    QueryAtlas
    ScriptedModule
+   ScriptedModuleExample
    SlicerDaemon
    Statistics
    Tractography
