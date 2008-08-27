@@ -373,6 +373,54 @@ void vtkScriptedModuleGUI::TearDownGUI ( )
     } 
 }
 
+//---------------------------------------------------------------------------
+void vtkScriptedModuleGUI::Enter ( ) 
+{
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
+    {
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sEnter %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef Slicer3_USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].Enter('" << this->GetTclName() << "')\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkScriptedModuleGUI::Exit ( ) 
+{
+  if (this->Language == vtkScriptedModuleGUI::Tcl)
+    {
+    if (this->GetApplication())
+      {
+      this->GetApplication()->Script("%sExit %s", 
+        this->GetModuleName(), this->GetTclName());
+      }
+    }
+  else if (this->Language == vtkScriptedModuleGUI::Python)
+    {
+#ifdef Slicer3_USE_PYTHON
+    std::stringstream pythonCommand;
+    pythonCommand << "PythonScriptedModuleDict['" << this->GetModuleName() << "'].Exit('" << this->GetTclName() << "')\n";
+    if (PyRun_SimpleString( pythonCommand.str().c_str() ) != 0)
+      {
+      PyErr_Print();
+      }
+#endif
+    }
+}
+
 
 //---------------------------------------------------------------------------
 unsigned long vtkScriptedModuleGUI::AddObserverByNumber ( vtkObject *observee, unsigned long event ) {

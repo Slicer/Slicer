@@ -80,8 +80,8 @@ public:
                                   void *callData);
   // Description:
   // Describe behavior at module startup and exit.
-  virtual void Enter ( ){};
-  virtual void Exit ( ){};
+  virtual void Enter ( );
+  virtual void Exit ( );
 
   // Description: set an observer by number (work around
   // limitation in kwwidgets tcl wrapping)
