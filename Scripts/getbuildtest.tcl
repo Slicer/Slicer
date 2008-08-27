@@ -279,12 +279,16 @@ if { $::GETBUILDTEST(doxy) && ![file exists $::env(Slicer3_DOC)] } {
 
 
 # svn checkout (does an update if it already exists)
-cd $::Slicer3_HOME/..
-if { [file exists Slicer3] } {
+if { $::GETBUILDTEST(test-type) != "Continuous" } {
+  cd $::Slicer3_HOME/..
+  if { [file exists Slicer3] } {
     cd Slicer3
     runcmd svn switch $::Slicer3_TAG
-} else {
+  } else {
     runcmd svn checkout $::Slicer3_TAG Slicer3
+  }
+} else {
+  puts "Skipping update of Slicer3 until continuous test starts."
 }
 
 if { $::GETBUILDTEST(doxy) } {
