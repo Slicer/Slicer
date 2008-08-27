@@ -53,9 +53,15 @@ public:
   vtkSetMacro ( NumberOfCompareViewColumns, int );  
 
   // Description:
+  // configure each compare viewer in lightbox mode.
+  vtkGetMacro ( NumberOfCompareViewLightboxRows, int );
+  vtkSetMacro ( NumberOfCompareViewLightboxRows, int );  
+  vtkGetMacro ( NumberOfCompareViewLightboxColumns, int );
+  vtkSetMacro ( NumberOfCompareViewLightboxColumns, int );  
+
+  // Description:
   // Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Layout";};
-
 
   //BTX
   enum
@@ -89,6 +95,8 @@ protected:
   int ViewArrangement;
   int NumberOfCompareViewRows;
   int NumberOfCompareViewColumns;
+  int NumberOfCompareViewLightboxRows;
+  int NumberOfCompareViewLightboxColumns;
 };
 
 #endif

@@ -47,6 +47,8 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
   this->ViewArrangement = -1;
   this->NumberOfCompareViewRows = 0;
   this->NumberOfCompareViewColumns = 0;
+  this->NumberOfCompareViewLightboxRows = 1;
+  this->NumberOfCompareViewLightboxColumns = 1;
   return;
 
 }
@@ -72,6 +74,8 @@ void vtkMRMLLayoutNode::WriteXML(ostream& of, int nIndent)
   of << indent << " guiPanelLR=\"" << this->GUIPanelLR << "\"";
   of << indent << " numberOfCompareViewRows=\"" << this->NumberOfCompareViewRows << "\"";
   of << indent << " numberOfCompareViewColumns=\"" << this->NumberOfCompareViewColumns << "\"";
+  of << indent << " numberOfLightboxRows=\"" << this->NumberOfCompareViewLightboxRows << "\"";
+  of << indent << " numberOfLightboxColumns=\"" << this->NumberOfCompareViewLightboxColumns << "\"";
 }
 
 
@@ -124,6 +128,18 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->NumberOfCompareViewColumns;
       }
+    else if ( !strcmp (attName, "numberOfLightboxRows" ))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->NumberOfCompareViewLightboxRows;
+      }
+    else if ( !strcmp (attName, "numberOfLightboxColumns" ))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->NumberOfCompareViewLightboxColumns;
+      }
     }
 
 }
@@ -151,6 +167,8 @@ void vtkMRMLLayoutNode::Copy(vtkMRMLNode *anode)
   this->SetGUIPanelLR ( node->GetGUIPanelLR());
   this->SetNumberOfCompareViewRows ( node->GetNumberOfCompareViewRows() );
   this->SetNumberOfCompareViewColumns ( node->GetNumberOfCompareViewColumns() );
+  this->SetNumberOfCompareViewLightboxRows ( node->GetNumberOfCompareViewLightboxRows() );
+  this->SetNumberOfCompareViewLightboxColumns ( node->GetNumberOfCompareViewLightboxColumns() );
 }
 
 //----------------------------------------------------------------------------
@@ -166,6 +184,8 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BottomPanelVisibility: " << this->BottomPanelVisibility  << "\n";
   os << indent << "NumberOfCompareViewRows: " << this->NumberOfCompareViewRows << "\n";
   os << indent << "NumberOfCompareViewColumns: " << this->NumberOfCompareViewColumns << "\n";
+  os << indent << "NumberOfCompareViewLightboxRows: " << this->NumberOfCompareViewLightboxRows << "\n";
+  os << indent << "NumberOfCompareViewLightboxColumns: " << this->NumberOfCompareViewLightboxColumns << "\n";
 }
 
 
