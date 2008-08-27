@@ -89,6 +89,7 @@ proc ScriptedModuleExampleBuildGUI {this} {
   set ::ScriptedModuleExample($this,volumesOutputSelect) [vtkSlicerNodeSelectorWidget New]
   $::ScriptedModuleExample($this,volumesOutputSelect) SetParent [$::ScriptedModuleExample($this,volumesFrame) GetFrame]
   $::ScriptedModuleExample($this,volumesOutputSelect) Create
+  $::ScriptedModuleExample($this,volumesOutputSelect) NewNodeEnabledOn
   $::ScriptedModuleExample($this,volumesOutputSelect) SetNodeClass "vtkMRMLScalarVolumeNode" "" "" ""
   $::ScriptedModuleExample($this,volumesOutputSelect) SetMRMLScene [[$this GetLogic] GetMRMLScene]
   $::ScriptedModuleExample($this,volumesOutputSelect) UpdateMenu
