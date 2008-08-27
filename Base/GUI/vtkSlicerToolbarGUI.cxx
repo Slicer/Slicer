@@ -77,6 +77,9 @@ vtkSlicerToolbarGUI::vtkSlicerToolbarGUI ( )
 
   this->CompareViewBoxTopLevel = NULL; //vtkKWTopLevel::New( );
   this->CompareViewBoxApplyButton = NULL; //vtkKWPushButton::New( );
+  this->CompareViewLightboxRowEntry = NULL;
+  this->CompareViewLightboxColumnEntry = NULL;
+
 }
 
 
@@ -104,6 +107,19 @@ vtkSlicerToolbarGUI::~vtkSlicerToolbarGUI ( )
   if ( this->InteractionModeToolbar )
     {
     this->InteractionModeToolbar->RemoveAllWidgets ( );
+    }
+
+  if ( this->CompareViewLightboxRowEntry)
+    {
+    this->CompareViewLightboxRowEntry->SetParent ( NULL );
+    this->CompareViewLightboxRowEntry->Delete ( );
+    this->CompareViewLightboxRowEntry = NULL;    
+    }
+  if (this->CompareViewLightboxColumnEntry)
+    {
+    this->CompareViewLightboxColumnEntry->SetParent ( NULL );
+    this->CompareViewLightboxColumnEntry->Delete();
+    this->CompareViewLightboxColumnEntry = NULL;    
     }
 
   if ( this->CompareViewBoxRowEntry )
@@ -372,7 +388,11 @@ void vtkSlicerToolbarGUI::RemoveGUIObservers ( )
   this->MousePlaceButton->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MouseTransformViewButton->RemoveObservers( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->CompareViewBoxApplyButton->RemoveObservers (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
-      
+
+  this->CompareViewBoxRowEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CompareViewLightboxRowEntry->RemoveObservers ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->CompareViewLightboxColumnEntry->RemoveObservers  ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+
   this->ModuleChooseGUI->RemoveGUIObservers();
 }
 
@@ -401,6 +421,9 @@ void vtkSlicerToolbarGUI::AddGUIObservers ( )
   this->MousePlaceButton->AddObserver( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->MouseTransformViewButton->AddObserver( vtkKWRadioButton::SelectedStateChangedEvent, (vtkCommand *)this->GUICallbackCommand);
   this->CompareViewBoxApplyButton->AddObserver (vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CompareViewBoxRowEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+  this->CompareViewLightboxRowEntry->AddObserver ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
+    this->CompareViewLightboxColumnEntry->AddObserver  ( vtkKWEntry::EntryValueChangedEvent, (vtkCommand *)this->GUICallbackCommand );
   
   this->ModuleChooseGUI->AddGUIObservers();
 }
@@ -715,11 +738,12 @@ void vtkSlicerToolbarGUI::ProcessGUIEvents ( vtkObject *caller,
       layout = p->GetGUILayoutNode();
       if ((pushb == this->CompareViewBoxApplyButton) && (event == vtkKWPushButton::InvokedEvent))
         {
-        layout->SetNumberOfCompareViewRows ( this->CompareViewBoxRowEntry->GetValueAsInt() );
-        layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutCompareView );
-//     layout->SetNumberOfCompareViewColumns ( this->CompareViewBoxColumnEntry->GetValueAsInt() );
-        this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
         this->HideCompareViewCustomLayoutFrame();
+        this->ChooseLayoutIconMenuButton->GetMenu()->SetItemStateToDisabled ( "Toggle bottom panel visibility" );
+        layout->SetNumberOfCompareViewRows ( this->CompareViewBoxRowEntry->GetValueAsInt() );
+        layout->SetNumberOfCompareViewLightboxRows ( this->CompareViewLightboxRowEntry->GetValueAsInt () );
+        layout->SetNumberOfCompareViewLightboxColumns ( this->CompareViewLightboxColumnEntry->GetValueAsInt() );
+        layout->SetViewArrangement (vtkMRMLLayoutNode::SlicerLayoutCompareView );
      }
      else if ( pushb == this->UndoIconButton && event == vtkKWPushButton::InvokedEvent )
         {
@@ -1293,57 +1317,85 @@ void vtkSlicerToolbarGUI::BuildGUI ( )
     this->CompareViewBoxTopLevel->Withdraw ( );
     this->CompareViewBoxTopLevel->SetBorderWidth ( 2 );
     this->CompareViewBoxTopLevel->SetReliefToGroove ( );
-    //--- create temporary pop-up frame to display when custom configuration is selected
-    vtkKWFrame *popUpFrame1 = vtkKWFrame::New ( );
-    popUpFrame1->SetParent( this->CompareViewBoxTopLevel );
-    popUpFrame1->Create ( );
-    //popUpFrame1->SetBinding ( "<Leave>", this, "HideCompareViewCustomLayoutFrame" );
-    this->Script ( "pack %s -side left -anchor w -padx 2 -pady 2 -fill x -fill y -expand n", popUpFrame1->GetWidgetName ( ) );   
+
+    //--- create frames to display when compare viewer is selected
+    vtkKWFrameWithLabel *viewerConfigFrame = vtkKWFrameWithLabel::New ( );
+    viewerConfigFrame->SetParent( this->CompareViewBoxTopLevel );
+    viewerConfigFrame->Create ( );
+    viewerConfigFrame->SetLabelText ( "Compare viewer options" );
+    this->Script ( "pack %s -side top -anchor w -padx 4 -pady 2 -fill x -fill y -expand n", viewerConfigFrame->GetWidgetName ( ) );   
+    this->Script ( "grid columnconfigure %s 0 -weight 0", viewerConfigFrame->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 1 -weight 0", viewerConfigFrame->GetWidgetName() );
+
+    vtkKWFrame *applyCancelFrame = vtkKWFrame::New();
+    applyCancelFrame->SetParent ( this->CompareViewBoxTopLevel );
+    applyCancelFrame->Create();
+    this->Script ( "pack %s -side top -anchor w -padx 2 -pady 2 -fill x -fill y -expand n", applyCancelFrame->GetWidgetName ( ) );   
+    this->Script ( "grid columnconfigure %s 0 -weight 0", applyCancelFrame->GetWidgetName() );
+    this->Script ( "grid columnconfigure %s 1 -weight 0", applyCancelFrame->GetWidgetName() );
+
+    //--- choose how many compare viewers are arrayed horizontally and vertically
+    vtkKWLabel *rowsLabel = vtkKWLabel::New();
+    rowsLabel->SetParent ( viewerConfigFrame->GetFrame() );
+    rowsLabel->Create ( );
+    rowsLabel->SetText ( "Number of compare viewers:" );
     this->CompareViewBoxRowEntry = vtkKWEntry::New ( );
-    this->CompareViewBoxRowEntry->SetParent ( popUpFrame1 );
+    this->CompareViewBoxRowEntry->SetParent ( viewerConfigFrame->GetFrame() );
     this->CompareViewBoxRowEntry->Create ( );
     this->CompareViewBoxRowEntry->SetValueAsInt (1);
     this->CompareViewBoxRowEntry->SetWidth ( 3 );
-    //this->CompareViewBoxColumnEntry = vtkKWEntry::New ( );
-    //this->CompareViewBoxColumnEntry->SetParent ( popUpFrame1 );
-    //this->CompareViewBoxColumnEntry->Create ( );
-    //this->CompareViewBoxColumnEntry->SetWidth ( 3 );
-    //this->CompareViewBoxColumnEntry->SetValueAsInt (1);
-    vtkKWLabel *rowsLabel = vtkKWLabel::New();
-    rowsLabel->SetParent ( popUpFrame1 );
-    rowsLabel->Create ( );
-    rowsLabel->SetText ( "Number of rows:" );
-    //vtkKWLabel *columnsLabel = vtkKWLabel::New();
-    //columnsLabel->SetParent ( popUpFrame1 );
-    //columnsLabel->Create ( );
-    //columnsLabel->SetText ( "Number of columns:" );
+    //--- grid compare viewer configuration widgets
+    this->Script ( "grid %s -row 0 -column 0 -sticky e -padx 2 -pady 4", rowsLabel->GetWidgetName());
+    this->Script ( "grid %s -row 0 -column 1 -sticky w -padx 2 -pady 4", this->CompareViewBoxRowEntry->GetWidgetName() );
 
-    vtkKWFrame *f = vtkKWFrame::New();
-    f->SetParent ( popUpFrame1);
-    f->Create();
+    vtkKWLabel *l2 = vtkKWLabel::New();
+    l2->SetParent ( viewerConfigFrame->GetFrame() );
+    l2->Create ( );
+    l2->SetText ( "Lightbox rows in each viewer:" );
+    this->CompareViewLightboxRowEntry = vtkKWEntry::New();
+    this->CompareViewLightboxRowEntry->SetParent ( viewerConfigFrame->GetFrame() );
+    this->CompareViewLightboxRowEntry->Create();
+    this->CompareViewLightboxRowEntry->SetWidth ( 3 );
+    this->CompareViewLightboxRowEntry->SetValueAsInt ( 1 );
+    vtkKWLabel *l3 = vtkKWLabel::New();
+    l3->SetParent ( viewerConfigFrame->GetFrame() );
+    l3->Create ( );
+    l3->SetText ( "Lightbox columns in each viewer:" );
+    this->CompareViewLightboxColumnEntry = vtkKWEntry::New();
+    this->CompareViewLightboxColumnEntry->SetParent ( viewerConfigFrame->GetFrame() );
+    this->CompareViewLightboxColumnEntry->Create();    
+    this->CompareViewLightboxColumnEntry->SetWidth ( 3 );
+    this->CompareViewLightboxColumnEntry->SetValueAsInt ( 6 );
+    //--- grid up lightbox configuration
+    this->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 4 -sticky e", l2->GetWidgetName());
+    this->Script ( "grid %s -row 1 -column 1 -padx 2 -pady 4 -sticky w", this->CompareViewLightboxRowEntry->GetWidgetName() );
+    this->Script ( "grid %s -row 2 -column 0 -padx 2 -pady 4 -sticky e", l3->GetWidgetName());
+    this->Script ( "grid %s -row 2 -column 1 -padx 2 -pady 4 -sticky w", this->CompareViewLightboxColumnEntry->GetWidgetName() );
+
+    //--- apply or cancel the compare view configuration.
     this->CompareViewBoxApplyButton = vtkKWPushButton::New ( );
-    this->CompareViewBoxApplyButton->SetParent ( f );
+    this->CompareViewBoxApplyButton->SetParent ( applyCancelFrame);
     this->CompareViewBoxApplyButton->Create ( );
     this->CompareViewBoxApplyButton->SetText ("Apply");    
+    this->CompareViewBoxApplyButton->SetWidth ( 10 );
     vtkKWPushButton *b = vtkKWPushButton::New();
-    b->SetParent ( f );
+    b->SetParent ( applyCancelFrame );
     b->Create();
     b->SetText ( "Cancel");
+    b->SetWidth ( 10 );
     b->SetBinding ( "<Button-1>", this,  "HideCompareViewCustomLayoutFrame");
-    this->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 8", rowsLabel->GetWidgetName());
-    this->Script ( "grid %s -row 0 -column 1 -padx 6 -pady 8", this->CompareViewBoxRowEntry->GetWidgetName() );
-    //this->Script ( "grid %s -row 1 -column 0 -padx 2 -pady 8", columnsLabel->GetWidgetName());
-    //this->Script ( "grid %s -row 1 -column 1 -padx 6 -pady 8", this->CompareViewBoxColumnEntry->GetWidgetName() );
-    this->Script ( "grid %s -row 2 -column 0 -columnspan 2 -pady 8 -sticky ew", f->GetWidgetName() );
-    this->Script ( "pack %s %s -side left -padx 3 -anchor c", b->GetWidgetName(), this->CompareViewBoxApplyButton->GetWidgetName() );
-    // delete temporary stuff
-    b->Delete();
-    f->Delete();
-    rowsLabel->Delete();
-    //columnsLabel->Delete();
-    popUpFrame1->Delete();
+    this->Script ( "grid %s -row 0 -column 0 -padx 2 -pady 8 -sticky ew", b->GetWidgetName() );
+    this->Script ( "grid %s -row 0 -column 1 -padx 2 -pady 8 -sticky ew", this->CompareViewBoxApplyButton->GetWidgetName() );
 
-  vtb->AddWidget (this->ChooseLayoutIconMenuButton );
+    // delete temporary stuff
+    l2->Delete();
+    l3->Delete();
+    b->Delete();
+    applyCancelFrame->Delete();
+    rowsLabel->Delete();
+    viewerConfigFrame->Delete();
+
+    vtb->AddWidget (this->ChooseLayoutIconMenuButton );
 
   //---
   //--- Mouse mode toolbar

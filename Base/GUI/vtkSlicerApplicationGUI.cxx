@@ -2251,9 +2251,26 @@ void vtkSlicerApplicationGUI::PackCompareView()
       {
       sprintf(buf, "Compare%d", i);
       this->AddMainSliceGUI(buf);
+
+      //--- Configure the lightbox niside each viewer by
+      //--- and triggering the SliceControllerWidget's event path.
+      int numRows = layout->GetNumberOfCompareViewLightboxRows();
+      int numColumns = layout->GetNumberOfCompareViewLightboxColumns();
+      vtkSlicerSliceGUI *g = this->SlicesGUI->GetSliceGUI(buf);
+      if (g != NULL)
+        {
+        //--- go thru node to set lightbox rows and columns
+        if ( g->GetLogic() != NULL )
+          {
+          if ( g->GetLogic()->GetSliceNode() != NULL )
+            {
+            g->GetLogic()->GetSliceNode()->SetLayoutGrid ( numRows, numColumns );
+            }
+          }
+        }
       }
     
-    // configure the new layout
+  // configure the new layout
     this->Script ( "pack %s -side top -fill both -expand y -padx 0 -pady 0 ", this->GridFrame2->GetWidgetName ( ) );
     this->Script ("grid columnconfigure %s 0 -weight 1", this->GridFrame2->GetWidgetName() );
     
@@ -2312,6 +2329,9 @@ void vtkSlicerApplicationGUI::PackCompareView()
       {
       this->MainSlicerWindow->GetSecondarySplitFrame()->SetFrame1Size ( geom->GetStandardSliceGUIFrameHeight () );
       }
+
+
+
     }
 }
 
@@ -2329,6 +2349,8 @@ void vtkSlicerApplicationGUI::AddMainSliceGUI(char *layoutName)
       return;
       }
     // if get "compare0" is NULL, add it
+    //---wjpTEST >
+    //--- somehow GetSliceLogic isn't returning good value.
     vtkSlicerSliceLogic *sliceLogic = this->GetApplicationLogic()->GetSliceLogic(layoutName);
     if (sliceLogic == NULL)
       {

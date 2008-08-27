@@ -3222,11 +3222,19 @@ void vtkSlicerSliceControllerWidget::ProcessMRMLEvents ( vtkObject *caller, unsi
         }
       else
         {
-        // button
+        // custom lightbox and entry widgets that specify it
         item = this->LightboxButton->GetMenu()->GetIndexOfItem ( "customized view");
         if ( this->LightboxButton->GetMenu()->GetItemSelectedState ( item ) == 0 )
           {
           this->LightboxButton->GetMenu()->SelectItem ( item );
+          if ( this->LightboxRowsEntry->GetValueAsInt() != lbRows )
+            {
+            this->LightboxRowsEntry->SetValueAsInt ( lbRows);
+            }
+          if ( this->LightboxColumnsEntry->GetValueAsInt() != lbCols )
+            {
+            this->LightboxColumnsEntry->SetValueAsInt ( lbCols);
+            }
           }
         // more menu
         if ( cmenu )

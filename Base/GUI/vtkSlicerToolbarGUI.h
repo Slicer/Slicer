@@ -72,8 +72,9 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
     vtkGetObjectMacro (MousePlaceButton, vtkKWRadioButton);
     vtkGetObjectMacro (MouseTransformViewButton, vtkKWRadioButton);    
 
-
-
+    vtkGetObjectMacro (CompareViewLightboxRowEntry, vtkKWEntry );
+    vtkGetObjectMacro (CompareViewLightboxColumnEntry, vtkKWEntry );
+    
     // Description:
     // This method builds the Data module's GUI
     virtual void BuildGUI ( ) ;
@@ -169,6 +170,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerToolbarGUI : public vtkSlicerComponent
 //    vtkKWEntry *CompareViewBoxColumnEntry;
     vtkKWPushButton *CompareViewBoxApplyButton;
 
+    vtkKWEntry *CompareViewLightboxRowEntry;
+    vtkKWEntry *CompareViewLightboxColumnEntry;
 
     vtkKWRadioButton *MousePickButton;
     vtkKWRadioButton *MousePlaceButton;
