@@ -317,7 +317,7 @@ static void vtkTensorRotateExecute(vtkTensorRotate *self, int outExt[6],
         + (outExt[4] - inFullUpdateExt[4]) * inInc[2]);
 
   // Get the full size of the output so we can mirror the Y axis
-  int *outFullDims = outData->GetDimensions();
+//  int *outFullDims = outData->GetDimensions();
 //  int ptIdOut;
 
   // Get information to march through data

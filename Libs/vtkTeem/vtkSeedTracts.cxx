@@ -911,7 +911,7 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
   vtkIdType inIncX, inIncY, inIncZ;
   int inExt[6];
   double point[3], point2[3];
-  unsigned long count = 0;
+//  unsigned long count = 0;
   //unsigned long target;
   short *inPtr;
   vtkHyperStreamlineDTMRI *newStreamline;
