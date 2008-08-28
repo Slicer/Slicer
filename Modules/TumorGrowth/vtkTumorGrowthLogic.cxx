@@ -460,7 +460,8 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
     if (!this->TumorGrowthNode->GetScan2_NormedRef() || !strcmp(this->TumorGrowthNode->GetScan2_NormedRef(),"")) { 
       char fileName[1024];
       sprintf(fileName,"%s/TG_scan2_norm.nhdr",this->TumorGrowthNode->GetWorkingDir());
-      vtkMRMLVolumeNode* tmp = this->LoadVolume(app,fileName,0,"TG_scan2_norm");
+      char *volumeName = "TG_scan2_norm";
+      vtkMRMLVolumeNode* tmp = this->LoadVolume(app,fileName,0,volumeName);
       if (tmp) {
         this->TumorGrowthNode->SetScan2_NormedRef(tmp->GetID());
       } else {
@@ -483,7 +484,8 @@ int vtkTumorGrowthLogic::AnalyzeGrowth(vtkSlicerApplication *app) {
       if (!this->TumorGrowthNode->GetAnalysis_Deformable_Ref() || !strcmp(this->TumorGrowthNode->GetAnalysis_Deformable_Ref(),"")) { 
         char fileName[1024];
         sprintf(fileName,"%s/TG_Analysis_Deformable.nhdr",this->TumorGrowthNode->GetWorkingDir());
-        vtkMRMLVolumeNode* tmp = this->LoadVolume(app,fileName,1,"TG_Analysis_Deformable");
+        char *volumeName = "TG_Analysis_Deformable";
+        vtkMRMLVolumeNode* tmp = this->LoadVolume(app,fileName,1,volumeName);
         if (tmp) {
           this->TumorGrowthNode->SetAnalysis_Deformable_Ref(tmp->GetID());
         } else {

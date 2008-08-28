@@ -93,30 +93,30 @@ vtkTumorGrowthGUI::~vtkTumorGrowthGUI()
     {
     this->FirstScanStep->Delete();
     this->FirstScanStep = NULL;
-  }
+    }
 
   if (this->ROIStep)
     {
     this->ROIStep->Delete();
     this->ROIStep = NULL;
-  }
+    }
 
   if (this->SegmentationStep)
     {
     this->SegmentationStep->Delete();
     this->SegmentationStep = NULL;
-  }
+    }
 
   if (this->TypeStep)
     {
     this->TypeStep->Delete();
     this->TypeStep = NULL;
-  }
+    }
   if (this->AnalysisStep)
     {
     this->AnalysisStep->Delete();
     this->AnalysisStep = NULL;
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -308,9 +308,9 @@ void vtkTumorGrowthGUI::ProcessMRMLEvents(vtkObject *caller,
   // Make sure that if Scan*_ref are defined before volumes rae loaded then this proparly updates the GUIs after Volumes are loaded 
   // Should do the same for NodeRemoveEvent -> update References correctly - currently not done 
   if ((event == vtkMRMLScene::NodeAddedEvent)  && this->FirstScanStep) {
-    if (this->Node->GetScan1_Ref() && (this->Node->GetScan1_Ref() != "") && !this->FirstScanStep->GetFirstVolumeMenuButton()->GetSelected()) {
+    if (this->Node->GetScan1_Ref() && (strcmp(this->Node->GetScan1_Ref(),"") != 0) && !this->FirstScanStep->GetFirstVolumeMenuButton()->GetSelected()) {
       this->FirstScanStep->UpdateGUI();
-    } else if (this->Node->GetScan2_Ref() && (this->Node->GetScan2_Ref() != "") && !this->FirstScanStep->GetSecondVolumeMenuButton()->GetSelected()) {
+    } else if (this->Node->GetScan2_Ref() && (strcmp(this->Node->GetScan2_Ref(),"") != 0) && !this->FirstScanStep->GetSecondVolumeMenuButton()->GetSelected()) {
       this->FirstScanStep->UpdateGUI();
     }
   }
