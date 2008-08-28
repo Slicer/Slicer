@@ -96,13 +96,11 @@ void vtkSlicerPopUpHelpWidget::ProcessWidgetEvents ( vtkObject *caller,
   // process id changed events
   if (this->HelpButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent)
     {
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
     // pop up the help window
     this->DisplayHelpWindow();
     }
   if (this->CloseButton == vtkKWPushButton::SafeDownCast(caller)  && event == vtkKWPushButton::InvokedEvent)
     {
-    vtkSlicerApplication *app = vtkSlicerApplication::SafeDownCast(this->GetApplication());
     // close the help window
     this->WithdrawHelpWindow();
     }

@@ -60,7 +60,6 @@ void vtkSlicerWindow::CreateWidget()
 
   this->Superclass::CreateWidget();
 
-  vtkKWApplication *app = this->GetApplication();
   if (!this->FeedbackMenu)
     {
     this->FeedbackMenu = vtkKWMenu::New();
