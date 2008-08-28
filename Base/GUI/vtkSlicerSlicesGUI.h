@@ -32,8 +32,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
 
   // Description:
   // Add a Slice GUI with its layoutname to the SliceGUIMap
-  virtual void AddSliceGUI(char *layoutName, vtkSlicerSliceGUI *pSliceGUI);
-  virtual void AddAndObserveSliceGUI(char *layoutName, vtkSlicerSliceGUI *pSliceGUI);
+  virtual void AddSliceGUI(const char *layoutName, vtkSlicerSliceGUI *pSliceGUI);
+  virtual void AddAndObserveSliceGUI(const char *layoutName, vtkSlicerSliceGUI *pSliceGUI);
   
   // Description:
   // Return a pointer to the SliceGUIMap
@@ -42,16 +42,16 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerSlicesGUI : public vtkSlicerModuleGUI
   // Description:
   // Return a particular slice gui by name
   //BTX
-  vtkSlicerSliceGUI* GetSliceGUI(char *layoutName);
+  vtkSlicerSliceGUI* GetSliceGUI(const char *layoutName);
   //ETX
   
   // Description:
   // The following functions are used to provide an iterator to SliceGUIMap for looping through its items
   int GetNumberOfSliceGUI();
   vtkSlicerSliceGUI* GetFirstSliceGUI ();
-  vtkSlicerSliceGUI* GetNextSliceGUI(char *layoutName);
+  vtkSlicerSliceGUI* GetNextSliceGUI(const char *layoutName);
   char* GetFirstSliceGUILayoutName();
-  char* GetNextSliceGUILayoutName(char *layoutName);
+  char* GetNextSliceGUILayoutName(const char *layoutName);
   
   // Description:
   // Build the SlicesGUI's UIPanel and three main SliceGUIs 

@@ -41,20 +41,20 @@ vtkSlicerSlicesGUI::~vtkSlicerSlicesGUI ( )
     }
 }
 
-void vtkSlicerSlicesGUI::AddSliceGUI(char *layoutName, vtkSlicerSliceGUI *pSliceGUI)
+void vtkSlicerSlicesGUI::AddSliceGUI(const char *layoutName, vtkSlicerSliceGUI *pSliceGUI)
 {
   std::string sMRMLNodeLayoutName = layoutName;
   (*this->InternalSliceGUIMap)[sMRMLNodeLayoutName] = pSliceGUI;
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSlicesGUI::AddAndObserveSliceGUI ( char *layoutName, vtkSlicerSliceGUI *pSliceGUI )
+void vtkSlicerSlicesGUI::AddAndObserveSliceGUI ( const char *layoutName, vtkSlicerSliceGUI *pSliceGUI )
 {
   this->AddSliceGUI ( layoutName, pSliceGUI );
   pSliceGUI->AddGUIObservers ( );
 }
 
-vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI(char *layoutName)
+vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetSliceGUI(const char *layoutName)
 {
   if (this->InternalSliceGUIMap)
     {
@@ -132,7 +132,7 @@ int vtkSlicerSlicesGUI::GetNumberOfSliceGUI()
                 return -1;
 }
 
-vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetNextSliceGUI(char *layoutName)
+vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetNextSliceGUI(const char *layoutName)
 {
         if (this->InternalSliceGUIMap)
         {
@@ -149,7 +149,7 @@ vtkSlicerSliceGUI* vtkSlicerSlicesGUI::GetNextSliceGUI(char *layoutName)
                 return NULL;
 }
 
-char* vtkSlicerSlicesGUI::GetNextSliceGUILayoutName(char *layoutName)
+char* vtkSlicerSlicesGUI::GetNextSliceGUILayoutName(const char *layoutName)
 {
         if (this->InternalSliceGUIMap)
         {
