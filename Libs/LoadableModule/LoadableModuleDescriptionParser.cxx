@@ -35,11 +35,13 @@ startsWithValidVariableChar(std::string &s)
   return (s.find_first_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0);
 }
 
+/*
 static bool
 validVariable(std::string &s)
 {
   return (startsWithValidVariableChar(s) && s.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") == std::string::npos);
 }
+*/
 
 static void
 replaceSubWithSub(std::string& s, const char *o, const char  *n)
