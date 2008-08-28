@@ -858,15 +858,15 @@ proc XnatXcatImportFormatCheck { fname } {
 proc XnatXcatImportComputeFIPS2SlicerTransformCorrection { } {
 
     if { $::XnatXcat_MrmlID(anat2exf) == "" } {
-        puts "cant find anat2exf"
+        puts "No FIPS2SlicerTransformCorrection required (no anat2exf matrix in this catalog)."
         return
     }
     if { $::XnatXcat_MrmlID(FSBrain) == "" } {
-        puts "can't find FSBrain"
+        puts "(Note: No FreeSurfer brain.mgz in this catalog.)"
         return
     }
     if { $::XnatXcat_MrmlID(ExampleFunc) == "" } {
-        puts "can't find exampelFun"
+        puts "(Note: No FIPS example functional scan in this catalog.)"
         return
     }
 
