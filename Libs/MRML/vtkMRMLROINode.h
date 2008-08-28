@@ -84,12 +84,6 @@ public:
   vtkGetStringMacro(ID);
   vtkSetStringMacro(ID);
 
-  // Description:
-  // Get/Set for Selected
-  vtkGetMacro(Selected, int);
-  vtkSetMacro(Selected, int);
-  vtkBooleanMacro (Selected, int );
-
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
   vtkGetStringMacro(VolumeNodeID);
@@ -117,7 +111,6 @@ protected:
 
   char *ID;
   char *LabelText;
-  int Selected;
 
   // Description:
   // The ID of the volume associated with the ROI 
