@@ -1572,7 +1572,7 @@ void vtkSlicerApplicationGUI::BuildMainViewer ( int arrangementType)
 
 
 //---------------------------------------------------------------------------
-vtkSlicerSliceGUI* vtkSlicerApplicationGUI::GetMainSliceGUI(char *layoutName)
+vtkSlicerSliceGUI* vtkSlicerApplicationGUI::GetMainSliceGUI(const char *layoutName)
 {
   if (this->SlicesGUI)
     return this->SlicesGUI->GetSliceGUI(layoutName);
@@ -2336,7 +2336,7 @@ void vtkSlicerApplicationGUI::PackCompareView()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerApplicationGUI::AddMainSliceGUI(char *layoutName)
+void vtkSlicerApplicationGUI::AddMainSliceGUI(const char *layoutName)
 {
   if ( this->GetApplication() != NULL )
     {

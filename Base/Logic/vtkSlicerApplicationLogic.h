@@ -249,7 +249,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
 
   // Description:
   // Add slice logic to the STL::MAP
-  void AddSliceLogic(char *layoutName, vtkSlicerSliceLogic *sliceLogic);
+  void AddSliceLogic(const char *layoutName, vtkSlicerSliceLogic *sliceLogic);
 
   // Description:
   // Add slice logic to the STL::MAP using the slice logic's name for
@@ -258,7 +258,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic : public vtkSlicerL
 
   // Description:
   // Get the slice logic for a particular layout "Red", "Green", "Yellow"
-  vtkSlicerSliceLogic* GetSliceLogic(char *layoutName);
+  vtkSlicerSliceLogic* GetSliceLogic(const char *layoutName);
 
   // Description:
   // Remove a slice logic from the managed set

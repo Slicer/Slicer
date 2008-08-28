@@ -471,7 +471,7 @@ void vtkSlicerApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SlicerApplicationLogic:             " << this->GetClassName() << "\n"; 
 } 
 
-vtkSlicerSliceLogic* vtkSlicerApplicationLogic::GetSliceLogic(char *layoutName)
+vtkSlicerSliceLogic* vtkSlicerApplicationLogic::GetSliceLogic(const char *layoutName)
 {
   if (this->InternalSliceLogicMap)
     {
@@ -489,7 +489,7 @@ vtkSlicerSliceLogic* vtkSlicerApplicationLogic::GetSliceLogic(char *layoutName)
 
 
 // this function can be further improved to check if this is a duplicate.
-void vtkSlicerApplicationLogic::AddSliceLogic(char *layoutName, vtkSlicerSliceLogic *sliceLogic)
+void vtkSlicerApplicationLogic::AddSliceLogic(const char *layoutName, vtkSlicerSliceLogic *sliceLogic)
 {
   if (this->InternalSliceLogicMap)
     {

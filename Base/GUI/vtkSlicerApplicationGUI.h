@@ -149,8 +149,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerApplicationGUI : public vtkSlicerCompo
     // This method builds Slicer's main GUI
     virtual void BuildGUI ( );
 
-    vtkSlicerSliceGUI* GetMainSliceGUI(char *layoutName);
-    void AddMainSliceGUI(char *layoutName);
+    vtkSlicerSliceGUI* GetMainSliceGUI(const char *layoutName);
+    void AddMainSliceGUI(const char *layoutName);
 
     // Description:
     // Add/Remove observers on widgets in Slicer's main GUI

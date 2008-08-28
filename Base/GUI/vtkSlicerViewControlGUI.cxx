@@ -1139,22 +1139,22 @@ void vtkSlicerViewControlGUI::ProcessGUIEvents ( vtkObject *caller,
 
       // Make requested changes to the ViewNode      
       // save state for undo
-      if ( m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
-           m == this->VisibilityButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
-           m == this->StereoButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
-           m == this->ScreenGrabButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||           
-           m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
-           m == this->SelectSceneSnapshotMenuButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent ||
-           p == this->CenterButton && event == vtkKWPushButton::InvokedEvent ||                      
-           p == this->OrthoButton && event == vtkKWPushButton::InvokedEvent ||                      
-           p == this->PitchButton && event == vtkKWPushButton::InvokedEvent ||
-           p == this->RollButton && event == vtkKWPushButton::InvokedEvent ||
-           p == this->YawButton && event == vtkKWPushButton::InvokedEvent ||
-           p == this->SceneSnapshotButton && event == vtkKWPushButton::InvokedEvent ||
-           p == this->ZoomInButton && event == vtkKWPushButton::InvokedEvent ||
-           p == this->ZoomOutButton && event == vtkKWPushButton::InvokedEvent ||
-           b == this->SpinButton && event == vtkKWCheckButton::SelectedStateChangedEvent ||                      
-           b == this->RockButton && event == vtkKWCheckButton::SelectedStateChangedEvent )
+      if ( (m == this->StereoButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||
+           (m == this->VisibilityButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||
+           (m == this->StereoButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||
+           (m == this->ScreenGrabButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||           
+           (m == this->SelectSceneSnapshotMenuButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||
+           (m == this->SelectSceneSnapshotMenuButton->GetMenu()) && (event == vtkKWMenu::MenuItemInvokedEvent) ||
+           (p == this->CenterButton) && (event == vtkKWPushButton::InvokedEvent) ||                      
+           (p == this->OrthoButton) && (event == vtkKWPushButton::InvokedEvent) ||                      
+           (p == this->PitchButton) && (event == vtkKWPushButton::InvokedEvent) ||
+           (p == this->RollButton) && (event == vtkKWPushButton::InvokedEvent) ||
+           (p == this->YawButton) && (event == vtkKWPushButton::InvokedEvent) ||
+           (p == this->SceneSnapshotButton) && (event == vtkKWPushButton::InvokedEvent) ||
+           (p == this->ZoomInButton) && (event == vtkKWPushButton::InvokedEvent) ||
+           (p == this->ZoomOutButton) && (event == vtkKWPushButton::InvokedEvent) ||
+           (b == this->SpinButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent) ||                      
+           (b == this->RockButton) && (event == vtkKWCheckButton::SelectedStateChangedEvent ) )
         {
         if ( m == this->ScreenGrabButton->GetMenu() && event == vtkKWMenu::MenuItemInvokedEvent )
           {
