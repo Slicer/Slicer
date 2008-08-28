@@ -97,6 +97,15 @@ class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
   // Model's color (r,g,b)
   vtkSetVector3Macro(Color, double);
   vtkGetVector3Macro(Color, double);
+
+  // Descripton:
+  // Node's selected ambient color (r,g,b)
+  vtkSetVector3Macro(SelectedColor, double);
+  vtkGetVector3Macro(SelectedColor, double);
+  // Description:
+  // Node's selected ambient
+  vtkSetMacro(SelectedAmbient, double);
+  vtkGetMacro(SelectedAmbient, double);
   
   // Description:
   // Opacity of the surface expressed as a number from 0 to 1
@@ -227,7 +236,7 @@ protected:
   double Diffuse;
   double Specular;
   double Power;
-  
+  double SelectedAmbient;
 
   // Booleans
   int Visibility;
@@ -240,8 +249,9 @@ protected:
 
   // Arrays
   double ScalarRange[2];
-  double Color[3];  
-
+  double Color[3];
+  double SelectedColor[3];
+  
 };
 
 #endif

@@ -53,6 +53,11 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->ScalarRange[0] = 0;
   this->ScalarRange[1] = 100;
 
+  this->SelectedColor[0] = 1.0;
+  this->SelectedColor[1] = 0.0;
+  this->SelectedColor[2] = 0.0;
+  this->SelectedAmbient = 0.4;
+  
   this->TextureImageData = NULL;
   this->ColorNodeID = NULL;
   this->ColorNode = NULL;
@@ -89,6 +94,15 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
       << this->Color[2] << "\"";
     }
 
+  if (this->SelectedColor)
+    {
+    of << indent << " selectedColor=\"" << this->SelectedColor[0] << " "
+      << this->SelectedColor[1] << " "
+      << this->SelectedColor[2] << "\"";
+    }
+
+  of << indent << " selectedAmbient=\"" << this->SelectedAmbient << "\"";
+  
   of << indent << " ambient=\"" << this->Ambient << "\"";
 
   of << indent << " diffuse=\"" << this->Diffuse << "\"";
@@ -157,6 +171,20 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> Color[0];
       ss >> Color[1];
       ss >> Color[2];
+      }
+    else if (!strcmp(attName, "selectedColor")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> SelectedColor[0];
+      ss >> SelectedColor[1];
+      ss >> SelectedColor[2];
+      }
+    else if (!strcmp(attName, "selectedAmbient")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> SelectedAmbient;
       }
     else if (!strcmp(attName, "scalarRange")) 
       {
@@ -299,11 +327,13 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   // Strings
 
   this->SetColor(node->Color);
-
+  this->SetSelectedColor(node->SelectedColor);
+  
   // Vectors
   this->SetScalarRange(node->ScalarRange);
   
   // Numbers
+  this->SetSelectedAmbient(node->SelectedAmbient);
   this->SetOpacity(node->Opacity);
   this->SetAmbient(node->Ambient);
   this->SetDiffuse(node->Diffuse);
@@ -333,6 +363,8 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 
   os << indent << "Color:             " << this->Color << "\n";
+  os << indent << "SelectedColor:     " << this->SelectedColor << "\n";
+  os << indent << "SelectedAmbient:   " << this->SelectedAmbient << "\n";
   os << indent << "Opacity:           " << this->Opacity << "\n";
   os << indent << "Ambient:           " << this->Ambient << "\n";
   os << indent << "Diffuse:           " << this->Diffuse << "\n";
