@@ -57,7 +57,7 @@ int main( int argc, const char * argv[] )
     estim->SetBValues(bValues);
 
     // Compute Transformation that brings the gradients to ijk
-    double *sp = reader->GetOutput()->GetSpacing();
+    // double *sp = reader->GetOutput()->GetSpacing();
     vtkSmartPointer<vtkMatrix4x4> mf = vtkMatrix4x4::New();
     mf->DeepCopy(reader->GetMeasurementFrameMatrix());
     vtkSmartPointer<vtkMatrix4x4> rasToIjkRotation = vtkMatrix4x4::New();
