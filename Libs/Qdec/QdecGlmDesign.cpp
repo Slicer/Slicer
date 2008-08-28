@@ -1258,6 +1258,10 @@ int QdecGlmDesign::WriteYdataFile ( )
   fflush(stdout);fflush(stderr);
   int rRun = system( sCommand );
 
+  if (rRun == 0)
+    {
+    return 0;
+    }
   // =======================================================================
   // 6/27/07 RKT: This command will normally pass on Linux machines,
   // but will fail on Windows machines. For the NAMIC demo, we're
