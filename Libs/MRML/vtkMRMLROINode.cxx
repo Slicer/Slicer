@@ -56,7 +56,7 @@ vtkMRMLROINode::vtkMRMLROINode()
   this->SetLabelText(""); 
   this->ID = NULL;
   this->SetID("");
-  this->Selected = false;
+  this->Selected = 0;
   this->VolumeNodeID = NULL;
   return;
 }

@@ -86,8 +86,9 @@ public:
 
   // Description:
   // Get/Set for Selected
-  vtkGetMacro(Selected, bool);
-  vtkSetMacro(Selected, bool);
+  vtkGetMacro(Selected, int);
+  vtkSetMacro(Selected, int);
+  vtkBooleanMacro (Selected, int );
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
@@ -116,7 +117,7 @@ protected:
 
   char *ID;
   char *LabelText;
-  bool Selected;
+  int Selected;
 
   // Description:
   // The ID of the volume associated with the ROI 
