@@ -198,10 +198,20 @@ template <class T> void IslandMemory<T>::SetSize(int NewSize, IslandMemory<T>* S
   // cout << "ID " << SetID << endl;
   if ((NewSize > SetSize) && (SetID > -1)) {
     int result = Ptr->AddIsland(SetStartVoxel, NewSize, SetLabel, SetID,MaxSize); 
-    assert(result > -1);
+    //assert(result > -1);
+    if (!(result > -1))
+      {
+      cout << "Result " << result << " not > -1\n";
+      return;
+      } 
   } else {
     int result = this->AddIsland(SetStartVoxel, NewSize, SetLabel, SetID, MaxSize);
-    assert( result > -1);
+    //assert( result > -1);
+    if (!(result > -1))
+      {
+      cout << "Result " << result << " not > -1\n";
+      return;
+      }
   }
 }
 //------------------------------------------------------------------------------
@@ -853,7 +863,12 @@ static void vtkImageIslandFilterExecute(vtkImageIslandFilter *self, T *inPtr, in
            // If it is not the same then island must be alread part of it 
       // cout << "Mem->AddIsland(index,IslandSize,inPtr[index],IslandCount) " << index << " " << IslandSize << " " << inPtr[index] << " " << IslandCount << endl;
           int currentIslandCount = Mem->AddIsland(index,IslandSize,inPtr[index],IslandCount);
-      assert(currentIslandCount == IslandCount);
+      //assert(currentIslandCount == IslandCount);
+          if (currentIslandCount != IslandCount)
+            {
+            cout << "Current island count " << currentIslandCount << " is not equal to island count " << IslandCount << endl;
+            return;
+            }
 
           break;
         }
@@ -1017,7 +1032,7 @@ void vtkImageIslandFilter::ExecuteData(vtkDataObject *)
   }
   inData->GetContinuousIncrements(inExt, inInc[0], inInc[1], inInc[2]);
   outData->GetContinuousIncrements(outExt, outInc[0], outInc[1], outInc[2]);
-  if (!((inInc[0] == inInc[1] == inInc[2] == 0) && (outInc[0] == outInc[1] == outInc[2] == 0))) {
+  if (!((inInc[0] == 0) && (inInc[1] == 0) && (inInc[2] == 0) && (outInc[0] == 0) && (outInc[1] == 0) && (outInc[2] == 0))) {
      vtkErrorMacro(<< "Increments for input and output have to be 0!");
      return;
   }
