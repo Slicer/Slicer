@@ -548,7 +548,7 @@ void vtkCacheManager::DeleteFromCache( const char *target )
 
   if (this->FindCachedFile( target, this->GetRemoteCacheDirectory() ) == NULL)
     {
-    vtkErrorMacro("RemoveFromCache: can't find the target file " << target << ", so there's nothing to do, returning.");
+    vtkWarningMacro("RemoveFromCache: can't find the target file " << target << ", so there's nothing to do, returning.");
     return;
     }
 
