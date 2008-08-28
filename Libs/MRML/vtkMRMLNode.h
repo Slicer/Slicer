@@ -331,7 +331,12 @@ public:
   // one. Returns the string (null) if the input is null
   // Currently only works on %, space, ', ", <, >
   const char *URLDecodeString(const char *inString);
-  
+
+  // Get/Set for Selected
+  vtkGetMacro(Selected, int);
+  vtkSetMacro(Selected, int);
+  vtkBooleanMacro(Selected, int);
+
 protected:
   
   vtkMRMLNode();
@@ -364,6 +369,7 @@ protected:
   int Indent;
   int HideFromEditors;
   int Selectable;
+  int Selected;
   int AddToScene;
 
   int  ModifiedSinceRead;

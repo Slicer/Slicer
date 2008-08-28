@@ -58,7 +58,8 @@ vtkMRMLNode::vtkMRMLNode()
 
   this->HideFromEditors = 1;
   this->Selectable = 1;
-
+  this->Selected = 0;
+ 
   this->AddToScene = 1;
 
   this->DisableModifiedEvent = 0;
@@ -197,6 +198,8 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "ModifiedSinceRead: " << this->ModifiedSinceRead << "\n";
 
+  os << indent << "Selectable: " << this->Selectable << "\n";
+  os << indent << "Selected: " << this->Selected << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -218,6 +221,7 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
   of << indent << " hideFromEditors=\"" << (this->HideFromEditors ? "true" : "false") << "\"";
 
   of << indent << " selectable=\"" << (this->Selectable ? "true" : "false") << "\" ";
+  of << indent << " selected=\"" << (this->Selected ? "true" : "false") << "\" ";
 
 }
 
@@ -262,6 +266,17 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
       else
         {
         this->Selectable = 0;
+        }
+      }
+     else if (!strcmp(attName, "selected")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->Selected = 1;
+        }
+      else
+        {
+        this->Selected = 0;
         }
       }
     } 
