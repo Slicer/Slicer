@@ -32,11 +32,11 @@ vtkTumorGrowthFirstScanStep::vtkTumorGrowthFirstScanStep()
 //----------------------------------------------------------------------------
 vtkTumorGrowthFirstScanStep::~vtkTumorGrowthFirstScanStep() { 
  if (this->SecondVolumeMenuButton)
-  {
-    this->SecondVolumeMenuButton->Delete();
-    this->SecondVolumeMenuButton = NULL;
-  }
-
+   {
+   this->SecondVolumeMenuButton->SetParent(NULL);
+   this->SecondVolumeMenuButton->Delete();
+   this->SecondVolumeMenuButton = NULL;
+   }
 }
 
 void vtkTumorGrowthFirstScanStep::UpdateMRML() 
