@@ -136,7 +136,7 @@ void vtkImageSumOverVoxels::ExecuteData(vtkDataObject *) {
   inData->GetContinuousIncrements(inExt, inInc[0], inInc[1], inInc[2]);
 
   outData->GetContinuousIncrements(outExt, outInc[0], outInc[1], outInc[2]);
-  if (!((inInc[0] == inInc[1] == inInc[2] == 0) && (outInc[0] == outInc[1] == outInc[2] == 0))) {
+  if (!((inInc[0] == 0) && (inInc[1] == 0) && (inInc[2] == 0) && (outInc[0] == 0) && (outInc[1] == 0) && (outInc[2] == 0))) {
      vtkErrorMacro("Increments for input and output have to be 0!");
      return;
   }

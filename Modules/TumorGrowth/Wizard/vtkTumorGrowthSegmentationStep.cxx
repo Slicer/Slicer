@@ -238,8 +238,6 @@ void vtkTumorGrowthSegmentationStep::PreSegmentScan1Define() {
   vtkSlicerApplicationLogic *applicationLogic = this->GetGUI()->GetLogic()->GetApplicationLogic();
   vtkSlicerVolumesLogic     *volumesLogic      = (vtkSlicerVolumesGUI::SafeDownCast(application->GetModuleGUIByName("Volumes")))->GetLogic();
 
-  vtkMRMLScene *mrmlScene = this->GetGUI()->GetMRMLScene();
-
   if (this->PreSegment || this->PreSegmentNode) this->PreSegmentScan1Remove();
 
   // ---------------------------------

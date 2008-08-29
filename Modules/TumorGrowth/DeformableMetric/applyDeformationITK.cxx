@@ -21,7 +21,6 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-  const unsigned int Dimension=3;
   typedef itk::Image< float, 3> MovingImageType;
   typedef itk::Image< itk::Vector<double,3>,3 > DeformationFieldType;
   typedef itk::ImageFileReader< MovingImageType > mImageReaderType;

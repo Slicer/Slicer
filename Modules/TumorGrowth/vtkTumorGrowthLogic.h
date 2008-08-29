@@ -99,7 +99,7 @@ public:
 
   void SaveVolumeFileName(vtkMRMLVolumeNode *volNode, char* FileName);
 
-  vtkMRMLVolumeNode* LoadVolume(vtkSlicerApplication *app, char* fileName, int LabelMapFlag,char* volumeName);
+  vtkMRMLVolumeNode* LoadVolume(vtkSlicerApplication *app, char* fileName, int LabelMapFlag,const char* volumeName);
 
   void PrintResult(ostream& os, vtkSlicerApplication *app);
 

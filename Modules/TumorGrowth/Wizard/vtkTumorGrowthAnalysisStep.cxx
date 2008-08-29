@@ -366,7 +366,6 @@ void vtkTumorGrowthAnalysisStep::ShowUserInterface()
   if (node) { 
     vtkMRMLVolumeNode *volumeSampleNode = vtkMRMLVolumeNode::SafeDownCast(node->GetScene()->GetNodeByID(node->GetScan1_SuperSampleRef()));
     vtkMRMLVolumeNode *volumeAnalysisNode = NULL;
-    float colorMin[3] = {0, 0.0, 0.8 };
     float colorMax[3] = {0.0 , 0.0, 0.8 };
 
     if (node->GetAnalysis_Intensity_Flag()) {

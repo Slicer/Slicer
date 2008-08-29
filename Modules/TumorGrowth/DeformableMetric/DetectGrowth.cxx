@@ -65,9 +65,6 @@ int main(int argc, char *argv[])
 
   double jacDetSum = 0.0;
   double numVox = 0;
-  double numVoxBoundary = 0;
-  double jacDetSumBoundary = 0.0;
-  bool temp = false;
   
   SegImageType::SpacingType spacing = segImage->GetSpacing();  
   SegImageType::RegionType region = segImage->GetLargestPossibleRegion();
