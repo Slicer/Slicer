@@ -160,7 +160,7 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
   vtkFloatingPointType m0[3], m1[3], m2[3];
   vtkFloatingPointType v0[3], v1[3], v2[3];
   vtkDataArray *cellTensors;
-  vtkDataArray *cellScalars = NULL;
+  vtkDataArray *cellScalars;
   int pointCount;
   vtkTractographyPoint *sPrev, *sPrevPrev;
   vtkFloatingPointType kv1[3], kv2[3], ku1[3], ku2[3], kl1, kl2, kn[3], K;
@@ -378,7 +378,6 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
               ku1[i]=kv1[i]/kl1;
               }
             // compute curvature
-            K = 0;
             for (i=0; i<3; i++)
               {
               kn[i]=2*(ku2[i]-ku1[i])/(kl1+kl2);
@@ -512,12 +511,10 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
             break;
         default:
             vtkErrorMacro( << "Should not happen" );
-            stop = this->StoppingThreshold;
         }
 
         // test FA cutoff
         if (stop < this->StoppingThreshold)
-            K = 0;
           {
           keepIntegrating=0;
           }

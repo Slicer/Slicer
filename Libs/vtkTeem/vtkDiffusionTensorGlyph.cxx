@@ -877,7 +877,7 @@ void vtkDiffusionTensorGlyph::RGBToIndex(double R, double G,
   //   case 4: { R = frac;   G = 0;      B = 1;      break; }
   //   case 5: { R = 1;      G = 0;      B = 1-frac; break; }
   // }
-  int sextant = -1;
+  int sextant;
   if (maxIdx == 0 && minIdx == 2) sextant = 0;
   if (maxIdx == 1 && minIdx == 2) sextant = 1;
   if (maxIdx == 1 && minIdx == 0) sextant = 2;
