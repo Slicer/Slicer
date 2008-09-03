@@ -106,6 +106,8 @@ vtkSlicerSliceLayerLogic::vtkSlicerSliceLayerLogic()
 
   this->AlphaLogic->SetOperationToAnd();
   this->AlphaLogic->SetOutputTrueValue(255);
+
+  this->UpdatingTransforms = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -338,7 +340,7 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
       {
       if (this->VolumeDisplayNodeObserved)
         {
-        vtkSetAndObserveMRMLNodeMacro(this->VolumeDisplayNodeObserved, NULL);
+        vtkSetAndObserveNoModifyMRMLNodeMacro(this->VolumeDisplayNodeObserved, NULL);
         }
       if (this->VolumeDisplayNode)
         {
@@ -351,6 +353,13 @@ void vtkSlicerSliceLayerLogic::UpdateNodeReferences ()
 //----------------------------------------------------------------------------
 void vtkSlicerSliceLayerLogic::UpdateTransforms()
 {
+  if (this->UpdatingTransforms) 
+    {
+    return;
+    }
+  
+  this->UpdatingTransforms = 1;
+
   // Ensure display node matches the one we are observing
   this->UpdateNodeReferences();
   
@@ -408,7 +417,11 @@ void vtkSlicerSliceLayerLogic::UpdateTransforms()
 
   this->UpdateImageDisplay();
 
+  this->UpdatingTransforms = 0; 
+
   this->Modified();
+
+
 }
 
 void vtkSlicerSliceLayerLogic::UpdateImageDisplay()

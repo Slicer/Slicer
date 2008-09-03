@@ -224,6 +224,8 @@ protected:
   vtkTransform *XYToIJKTransform;
 
   int IsLabelLayer;
+
+  int UpdatingTransforms;
 };
 
 #endif

@@ -56,6 +56,13 @@
 };
 #endif
 
+#ifndef vtkSetAndObserveNoModifyMRMLNodeMacro
+#define vtkSetAndObserveNoModifyMRMLNodeMacro(node,value)  { \
+  vtkObject *oldNode = (node); \
+  this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node) ), (value) ); \
+};
+#endif
+
 #ifndef vtkSetAndObserveMRMLNodeEventsMacro
 #define vtkSetAndObserveMRMLNodeEventsMacro(node,value,events)  { \
   vtkObject *oldNode = (node); \
