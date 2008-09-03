@@ -10,6 +10,7 @@
 #include "vtkSlicerModelDisplayWidget.h"
 #include "vtkSlicerModelHierarchyWidget.h"
 #include "vtkSlicerModuleCollapsibleFrame.h"
+#include "vtkSlicerModelInfoWidget.h"
 
 #include "vtkKWFrameWithLabel.h"
 #include "vtkKWMenuButton.h"
@@ -44,6 +45,7 @@ vtkSlicerModelsGUI::vtkSlicerModelsGUI ( )
   this->ModelDisplaySelectorWidget = NULL;
   this->ModelHierarchyWidget = NULL;
   this->ModelDisplayFrame = NULL;
+  this->ModelInfoWidget = NULL;
 
   NACLabel = NULL;
   NAMICLabel =NULL;
@@ -65,6 +67,13 @@ vtkSlicerModelsGUI::~vtkSlicerModelsGUI ( )
     this->ModelDisplaySelectorWidget->SetParent(NULL);
     this->ModelDisplaySelectorWidget->Delete();
     this->ModelDisplaySelectorWidget = NULL;
+    }
+
+  if (this->ModelInfoWidget)
+    {
+    this->ModelInfoWidget->SetParent(NULL);
+    this->ModelInfoWidget->Delete();
+    this->ModelInfoWidget = NULL;
     }
 
   if (this->ModelHierarchyWidget)
@@ -579,6 +588,23 @@ void vtkSlicerModelsGUI::BuildGUI ( )
                   this->ClipModelsWidget->GetWidgetName(), 
                   clipFrame->GetFrame()->GetWidgetName());
 
+    // Info FRAME  
+    vtkSlicerModuleCollapsibleFrame *infoFrame = vtkSlicerModuleCollapsibleFrame::New ( );
+    infoFrame->SetParent ( this->UIPanel->GetPageWidget ( "Models" ) );
+    infoFrame->Create ( );
+    infoFrame->SetLabelText ("Info");
+    infoFrame->CollapseFrame ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  infoFrame->GetWidgetName(), this->UIPanel->GetPageWidget("Models")->GetWidgetName());
+
+    this->ModelInfoWidget = vtkSlicerModelInfoWidget::New ( );
+    this->ModelInfoWidget->SetAndObserveMRMLScene(this->GetMRMLScene() );
+    this->ModelInfoWidget->SetParent ( infoFrame->GetFrame() );
+    this->ModelInfoWidget->Create ( );
+    app->Script ( "pack %s -side top -anchor nw -fill x -padx 2 -pady 2 -in %s",
+                  this->ModelInfoWidget->GetWidgetName(), 
+                  infoFrame->GetFrame()->GetWidgetName());
+
     // ---
     // Save FRAME            
     vtkSlicerModuleCollapsibleFrame *modelSaveFrame = vtkSlicerModuleCollapsibleFrame::New ( );
@@ -623,7 +649,8 @@ void vtkSlicerModelsGUI::BuildGUI ( )
                           //vtkSlicerNodeSelectorWidget::NodeSelectedEvent, NULL );
 
     modLoadFrame->Delete ( );
-    clipFrame->Delete ( );
+    clipFrame->Delete ( );    
+    infoFrame->Delete ( );
     modelSaveFrame->Delete();
     //hierFrame->Delete ( );
 }

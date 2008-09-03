@@ -80,6 +80,7 @@ set(SlicerBaseGUI_SRCS
   vtkSlicerSliceViewer.cxx
   vtkSlicerSliceControllerWidget.cxx
   vtkSlicerSlicesGUI.cxx
+  vtkSlicerModelInfoWidget.cxx
   vtkSlicerModelsGUI.cxx
   vtkSlicerFiducialsGUI.cxx
   vtkSlicerColorGUI.cxx

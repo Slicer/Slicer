@@ -28,6 +28,7 @@
 //
 class vtkSlicerModelDisplayWidget;
 class vtkSlicerModelHierarchyWidget;
+class vtkSlicerModelInfoWidget;
 class vtkSlicerModuleCollapsibleFrame;
 
 class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
@@ -130,6 +131,8 @@ class VTK_SLICER_BASE_GUI_EXPORT vtkSlicerModelsGUI : public vtkSlicerModuleGUI
     vtkSlicerClipModelsWidget *ClipModelsWidget;
 
     vtkSlicerModelHierarchyWidget *ModelHierarchyWidget;
+
+    vtkSlicerModelInfoWidget *ModelInfoWidget;
 
     vtkSlicerModelsLogic *Logic;
     
