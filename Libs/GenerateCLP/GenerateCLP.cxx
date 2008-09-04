@@ -1140,7 +1140,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
    sout << "   std::vector<char*> vargs;" << EOL << std::endl;
    sout << "   for (ac = 0; ac < targs.size(); ++ac)" << EOL << std::endl;
    sout << "     { " << EOL << std::endl;
-   sout << "     vargs.push_back((char *)targs[ac].c_str());" << EOL << std::endl;
+   sout << "     vargs.push_back(const_cast<char *>(targs[ac].c_str()));" << EOL << std::endl;
    sout << "     }" << EOL << std::endl;
 
    //sout << "std::cout << \"Remapped back command line\" << std::endl;" << EOL << std::endl;
