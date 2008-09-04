@@ -1566,7 +1566,7 @@ void vtkCommandLineModuleLogic::ApplyTask(void *clientdata)
       Py_file_input,
       (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()),
       (PyObject*)(vtkSlicerApplication::GetInstance()->GetPythonDictionary()));
-    if (v == NULL)
+    if (v == NULL || PyErr_Occurred())
       {
       node->SetStatus(vtkMRMLCommandLineModuleNode::CompletedWithErrors, false);
       PyErr_Print();

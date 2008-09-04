@@ -26,7 +26,6 @@ class SlicerWrapper(object):
     def __str__ ( self ):
         return self.__repr__()
 
-
     def __convertString (self, inString):
         outList = []
         isList = True
@@ -86,10 +85,7 @@ class SlicerWrapper(object):
 
     def __getattr__ (self, name):
         """Returns a function object suitable for calling the wrapped function"""
-        if name=='ToArray':
-          return self.ToArray()
-        else:
-          return lambda *a: self.__callVTKmethod(str(name),*a)
+        return lambda *a: self.__callVTKmethod(str(name),*a)
 
 
 from new import classobj
@@ -153,17 +149,39 @@ def __listInstances(self):
         instances.append(instance)
     return instances
 
-def __ToArray (self):
-  if self.IsA("vtkDataArray"):
+def __vtkImageData_ToArray (self):
     try:
-        return _slicer.vtkDataArrayToArray(tk.tk.interpaddr(), str(self.obj))
+        return _slicer.vtkImageDataToArray(tk.tk.interpaddr(), self.GetTclName())
     except Exception, e:
         print e
-  else:
+        raise
+
+def __vtkImageData_FromArray (self,numpyArray,dimensionality=3):
     try:
-        return _slicer.vtkImageDataToArray(tk.tk.interpaddr(), str(self.obj))
+        return _slicer.ArrayTovtkImageData(tk.tk.interpaddr(), numpyArray, dimensionality, self.GetTclName())
     except Exception, e:
         print e
+        raise
+
+def __vtkImageData_FromArray2D (self,numpyArray):
+    return self.FromArray(numpyArray,2)
+
+def __vtkImageData_FromArray3D (self,numpyArray):
+    return self.FromArray(numpyArray,3)
+
+def __vtkDataArray_ToArray (self):
+    try:
+        return _slicer.vtkDataArrayToArray(tk.tk.interpaddr(), self.GetTclName())
+    except Exception, e:
+        print e
+        raise
+
+def __vtkDataArray_FromArray (self,numpyArray,dimensionality=3):
+    try:
+        return _slicer.ArrayTovtkDataArray(tk.tk.interpaddr(), numpyArray, self.GetTclName())
+    except Exception, e:
+        print e
+        raise
 
 def CreateClass(name):
     if SlicerClassDict.has_key(name):
@@ -189,16 +207,23 @@ def CreateClass(name):
         if SlicerClassDict.has_key(className):
             SuperClass = SlicerClassDict[className]
             continue
-        methodDict = {'__init__':__init, '__del__':__del, '__repr__':__repr, '__eq__':__eq, '__ne__':__ne, '__convertArgumentList': __convertArgumentList, 'GetTclName': __getTclName, 'ListInstances': __listInstances, 'ToArray':__ToArray }
+        methodDict = {'__init__':__init, '__del__':__del, '__repr__':__repr, '__eq__':__eq, '__ne__':__ne, '__convertArgumentList': __convertArgumentList, 'GetTclName': __getTclName, 'ListInstances': __listInstances }
+        if className == 'vtkImageData':
+            methodDict['ToArray'] = __vtkImageData_ToArray
+            methodDict['FromArray'] = __vtkImageData_FromArray
+            methodDict['FromArray2D'] = __vtkImageData_FromArray2D
+            methodDict['FromArray3D'] = __vtkImageData_FromArray3D
+        if className == 'vtkDataArray':
+            methodDict['ToArray'] = __vtkDataArray_ToArray
+            methodDict['FromArray'] = __vtkDataArray_FromArray
         for methodName in classDict[className]:
-            if methodName in ['New','Delete']:
+            if methodName in ('New','Delete'):
                 continue
             ownWrapperLine = ''
-            if methodName in ['NewInstance','CreateNodeByClass','CreateInstance','CreateNodeInstance']:
+            if methodName in ('NewInstance','CreateNodeByClass','CreateInstance','CreateNodeInstance'):
                 ownWrapperLine = 'value.OwnWrapper = True;'
             exec('def %s(self,*a): aTcl = self.__convertArgumentList(a); value = self.SlicerWrapper.__getattr__("%s")(*aTcl); %s return value' % (methodName,methodName,ownWrapperLine))
             exec('methodDict["%s"] = %s' % (methodName,methodName))
-
         global ClassObj
         ClassObj = classobj(className,(SuperClass,),methodDict)
         ClassObj.ClassName= className
@@ -256,6 +281,9 @@ class Slicer(object):
     @classmethod
     def TkCall(self,commandString):
         tk.tk.call(*commandString.split())
+
+    def ListVolumeNodes(self):
+        return ListVolumeNodes()
 
 slicer = Slicer()
 
@@ -396,7 +424,6 @@ def ListVolumeNodes():
     scene = slicer.MRMLScene
     count = scene.GetNumberOfNodesByClass ('vtkMRMLVolumeNode')
     for idx in range (count):
-#        nodes[idx] = scene.GetNthNodeByClass(idx,'vtkMRMLVolumeNode')
         node = scene.GetNthNodeByClass(idx,'vtkMRMLVolumeNode')
         nodes[node.GetName()] = node
     return nodes

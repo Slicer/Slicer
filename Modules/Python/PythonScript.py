@@ -84,10 +84,26 @@ def Execute (scriptFileName="", inputSurface="", inputVolume="", outputSurface="
     if outputVolume:
         outputVolume = scene.GetNodeByID(outputVolume)
 
+    d = {}
+    d['slicer'] = slicer
+    d['inputSurface'] = inputSurface
+    d['inputVolume'] = inputVolume
+    d['outputSurface'] = outputSurface
+    d['outputVolume'] = outputVolume
+
     try:
-        execfile(scriptFileName)
+        execfile(scriptFileName,d,d)
     except Exception, error:
-        slicer.Application.ErrorMessage("Python script error: %s" % error)
+        slicer.Application.ErrorMessage("Python script error: %s\n" % error)
+        raise
+
+    try:
+        outputSurface = d['outputSurface']
+        outputVolume = d['outputVolume']
+    except KeyError:
+        slicer.Application.ErrorMessage("Python script error: outputSurface or outputVolume have been deleted within the user script. Please avoid deleting these variables.\n")
+        raise
+
 
     return
 
