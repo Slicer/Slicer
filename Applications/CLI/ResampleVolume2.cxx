@@ -180,7 +180,23 @@ void SetOutputParameters(const parameters &list ,
     readerReference = FileReaderType::New() ;
     readerReference->SetFileName(list.referenceVolume.c_str() );
     readerReference->Update();
+    if( !list.space.compare( "RAS" ) && list.transformationFile.compare( "" ) )
+    {
+        typename ImageType::PointType originReference ;
+        typename ImageType::DirectionType directionReference ;
+        originReference = readerReference->GetOutput()->GetOrigin() ;
+        directionReference = readerReference->GetOutput()->GetDirection();
+        originReference[0]=-originReference[0];
+        originReference[1]=-originReference[1];
+        itk::Matrix< double , 3 , 3 > ras ;
+        ras.SetIdentity() ;
+        ras[ 0 ][ 0 ] = -1 ;
+        ras[ 1 ][ 1 ] = -1 ;
+        directionReference=ras*directionReference;
+        readerReference->GetOutput()->SetOrigin( originReference ) ;
+        readerReference->GetOutput()->SetDirection( directionReference ) ; 
     }
+  }
   resampler->SetOutputParametersFromImage( image ) ;
   typename ResamplerType::OutputImageType::SpacingType m_Spacing ;
   typename ResamplerType::OutputImageType::PointType m_Origin ;
