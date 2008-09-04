@@ -107,10 +107,10 @@ protected:
 inline void StdOutput::version(CmdLineInterface& _cmd) 
 {
   std::string progName = _cmd.getProgramName();
-  std::string version = _cmd.getVersion();
+  std::string lversion = _cmd.getVersion();
 
-  std::cout << std::endl << progName << "  version: " 
-            << version << std::endl << std::endl;
+  std::cout << std::endl << progName << "  lversion: " 
+            << lversion << std::endl << std::endl;
 }
 
 inline void StdOutput::usage(CmdLineInterface& _cmd ) 
