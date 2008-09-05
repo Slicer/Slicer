@@ -92,20 +92,28 @@ set ::TCL_VERSION tcl
 
 # Set library, binary, etc. paths...
 
-# if Slicer3_LIB and Slicer3_BUILD haven't been set, 
-# then assume they are in the 'standard' places next to the source tree
-# (as created by getbuildtest.tcl
+# if Slicer3_LIB and Slicer3_BUILD haven't been set, first check
+# enviornment variables, then assume they are in the 'standard' places
+# next to the source tree (as created by getbuildtest.tcl
 if { ![info exists ::Slicer3_LIB] } {
-    set wd [pwd]
-    cd $::Slicer3_HOME/../Slicer3-lib
-    set ::Slicer3_LIB [pwd]
-    cd $wd
+    if { [info exists ::env(Slicer3_LIB)] } {
+        set ::Slicer3_LIB $::env(Slicer3_LIB)
+    } else {
+        set wd [pwd]
+        cd $::Slicer3_HOME/../Slicer3-lib
+        set ::Slicer3_LIB [pwd]
+        cd $wd
+    }
 }
 if { ![info exists ::Slicer3_BUILD] } {
-    set wd [pwd]
-    cd $::Slicer3_HOME/../Slicer3-build
-    set ::Slicer3_BUILD [pwd]
-    cd $wd
+    if { [info exists ::env(Slicer3_BUILD)] } {
+        set ::Slicer3_LIB $::env(Slicer3_BUILD)
+    } else {
+        set wd [pwd]
+        cd $::Slicer3_HOME/../Slicer3-build
+        set ::Slicer3_BUILD [pwd]
+        cd $wd
+    }
 }
 
 set ::TEEM_SRC_DIR  $::Slicer3_LIB/teem
