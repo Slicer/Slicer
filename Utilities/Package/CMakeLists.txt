@@ -28,15 +28,10 @@ if(TCL_DIR)
     )
 endif(TCL_DIR)
 
-# Find and install python (follow the tcl example above)
+# Find and install python
 
 if(Slicer3_USE_PYTHON)
-  if(PYTHON_INCLUDE_PATH)
-    get_filename_component(PYTHON_DIR "${PYTHON_INCLUDE_PATH}" PATH)
-  else(PYTHON_INCLUDE_PATH)
-    set(PYTHON_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/python-build")
-  endif(PYTHON_INCLUDE_PATH)
-
+  set(PYTHON_DIR "${Slicer3_BINARY_DIR}/../Slicer3-lib/python-build")
   if(PYTHON_DIR)
     install(DIRECTORY
       ${PYTHON_DIR}/

@@ -501,6 +501,60 @@ if {  [BuildThis $::PYTHON_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [stri
 }
 
 ################################################################################
+# Get and build netlib (blas and lapack)
+#
+
+if { [BuildThis $::NETLIB_TEST_FILE "netlib"] && !$::USE_SYSTEM_PYTHON && [string tolower $::USE_PYTHON] == "on" } {
+
+    file mkdir $::Slicer3_LIB/netlib
+    file mkdir $::Slicer3_LIB/netlib-build
+    file mkdir $::Slicer3_LIB/netlib-build/BLAS-build
+    cd $::Slicer3_LIB/netlib
+
+    # do blas
+
+    runcmd $::SVN co $::BLAS_TAG BLAS
+
+    if { $isWindows } {
+        # windows binary already checked out
+    } else {
+
+        cd $::Slicer3_LIB/netlib-build/BLAS-build
+        set files [glob $::Slicer3_LIB/netlib/BLAS/*.f]
+        foreach f $files {
+              if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
+                runcmd g77 -O3 -fno-second-underscore -fPIC -m64 -c $f
+              } else {
+                runcmd g77 -fno-second-underscore -O2 -c $f
+              }
+          set ofile [file root [file tail $f]].o        
+          runcmd ar r libblas.a $ofile
+        }
+        runcmd ranlib libblas.a
+    }
+
+    # do lapack
+
+    file mkdir $::Slicer3_LIB/netlib-build/lapack-build
+    cd $::Slicer3_LIB/netlib
+    runcmd $::SVN co $::LAPACK_TAG lapack
+
+    if { $isWindows } {
+        # windows binary already checked out
+    } else {
+
+        cd $::Slicer3_LIB/netlib/lapack
+        if { $isLinux && $::tcl_platform(machine) == "x86_64" } {
+          file copy -force make.inc.LINUX64 make.inc
+        } else {
+          file copy -force make.inc.LINUX make.inc
+        }
+        runcmd make lapacklib
+        file copy lapack_LINUX.a $::Slicer3_LIB/netlib-build/lapack-build/liblapack.a
+    }
+}
+
+################################################################################
 # Get and build numpy and scipy
 #
 
@@ -525,9 +579,9 @@ if {  [BuildThis $::NUMPY_TEST_FILE "python"] && !$::USE_SYSTEM_PYTHON && [strin
         }
 
         set ::env(ATLAS) None
-        set ::env(BLAS) $::Slicer3_LIB/netlib-build/lib/libbas.a
+        set ::env(BLAS) $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
         set ::env(BLAS_SRC) $::Slicer3_LIB/netlib/BLAS
-        set ::env(LAPACK) $::Slicer3_LIB/netlib-build/lib/libflapack.a
+        set ::env(LAPACK) $::Slicer3_LIB/netlib-build/lapack-build/liblapack.a
 
         cd $::Slicer3_LIB/python/numpy
         runcmd $::Slicer3_LIB/python-build/bin/python ./setup.py install

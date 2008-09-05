@@ -188,7 +188,7 @@ if { $installed } {
   set ::env(TCL_DIR)            [file normalize [file dirname [file dirname "@TCL_LIBRARY@"]]]
   set ::env(TCL_LIBRARY)        "$::env(TCL_DIR)/lib/tcl@TCL_TK_VERSION_DOT@"
 
-  set ::env(PYTHON_DIR)         [file normalize [file dirname "@PYTHON_INCLUDE_PATH@"]]
+  set ::env(PYTHON_DIR)         [file normalize [file dirname [file dirname "@PYTHON_INCLUDE_PATH@"]]]
 
   set ::env(TEEM_DIR)           [file normalize "@TEEM_DIR@/bin/$::TEEM_BUILD_SUBDIR"]
 
@@ -292,7 +292,7 @@ proc launch_ParseArgs {argv} {
 
 proc launch_InitEnvironment {} {
 
-  foreach var {LD_LIBRARY_PATH TCLLIBPATH DYLD_LIBRARY_PATH PATH} {
+  foreach var {LD_LIBRARY_PATH TCLLIBPATH PYTHONPATH DYLD_LIBRARY_PATH PATH} {
     # if it is an empty string or doesn't exist, set the environment variable
     if { ![info exists ::env($var)] || $::env($var) == "" } {
         set ::env($var) " "
@@ -422,6 +422,15 @@ proc launch_SetPaths {} {
     set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/itk@INCR_TCL_VERSION_DOT@ $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/iwidgets4.0.1 $::env(TCLLIBPATH)"
     set ::env(TCLLIBPATH) "$::env(TCL_DIR)/lib/blt2.4 $::env(TCLLIBPATH)"
+
+    #
+    # add the default search locations for python packages
+    #
+    set ::env(PYTHONHOME) "$::env(PYTHON_DIR)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5:$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/site-packages:$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/lib-tk:$::env(PYTHONPATH)"
+    set ::env(PYTHONPATH) "$::env(PYTHON_DIR)/lib/python2.5/test:$::env(PYTHONPATH)"
 }
 
 #

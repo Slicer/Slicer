@@ -79,6 +79,8 @@ set ::KWWidgets_TAG "HEAD"
 set ::VTK_TAG "VTK-5-2"
 set ::ITK_TAG ITK-3-8
 set ::PYTHON_TAG "http://svn.python.org/projects/python/branches/release25-maint"
+set ::BLAS_TAG http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/BLAS
+set ::LAPACK_TAG http://svn.slicer.org/Slicer3-lib-mirrors/trunk/netlib/lapack-3.1.1
 #set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/trunk"
 set ::NUMPY_TAG "http://svn.scipy.org/svn/numpy/branches/1.1.x"
 #set ::SCIPY_TAG "http://svn.scipy.org/svn/scipy/trunk"
@@ -138,7 +140,7 @@ set ::NAVITRACK "OFF"
 # Option for build using system Python, should be "true" or "false"
 set ::USE_SYSTEM_PYTHON "false"
 # CMake option for Python, must be "off" on "on", default is "off"
-set ::USE_PYTHON "OFF"
+set ::USE_PYTHON "off"
 
 # The absolute path and directory containing the navitrack library,
 # for instance on linux the libNaviTrack.so
@@ -182,6 +184,7 @@ switch $::tcl_platform(os) {
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython25.so
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python25
+        set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
         set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
         set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
@@ -220,6 +223,7 @@ switch $::tcl_platform(os) {
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.dylib
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
+        set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
         set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
         set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::ITCL_TEST_FILE $::TCL_LIB_DIR/libitcl3.2.dylib
@@ -253,6 +257,7 @@ switch $::tcl_platform(os) {
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/lib/libpython2.5.so
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include/python2.5
+        set ::NETLIB_TEST_FILE $::Slicer3_LIB/netlib-build/BLAS-build/libblas.a
         set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
         set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::TK_TEST_FILE  $::TCL_BIN_DIR/wish8.4
@@ -291,6 +296,7 @@ switch $::tcl_platform(os) {
         set ::PYTHON_TEST_FILE $::PYTHON_BIN_DIR/bin/python.exe
         set ::PYTHON_LIB $::PYTHON_BIN_DIR/Libs/python25.lib
         set ::PYTHON_INCLUDE $::PYTHON_BIN_DIR/include
+        set ::NETLIB_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
         set ::NUMPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/numpy/core/numeric.pyc
         set ::SCIPY_TEST_FILE $::PYTHON_BIN_DIR/lib/python2.5/site-packages/scipy/version.pyc
         set ::VTK_TEST_FILE $::VTK_DIR/bin/$::VTK_BUILD_TYPE/vtk.exe
