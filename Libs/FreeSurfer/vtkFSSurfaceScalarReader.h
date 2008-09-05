@@ -41,7 +41,9 @@ public:
   void SetOutput(vtkFloatArray *output)
     {this->scalars = output; };
 
-  void ReadFSScalars();
+  // Description:
+  // Read the scalars from a file. Return 1 on success, 0 on failure
+  int ReadFSScalars();
 
   // file type magic numbers
   // const int FS_NEW_SCALAR_MAGIC_NUMBER = 16777215;

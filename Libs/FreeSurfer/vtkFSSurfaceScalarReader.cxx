@@ -41,8 +41,7 @@ vtkFSSurfaceScalarReader::~vtkFSSurfaceScalarReader()
 {
 }
 
-
-void vtkFSSurfaceScalarReader::ReadFSScalars()
+int vtkFSSurfaceScalarReader::ReadFSScalars()
 {
   FILE* scalarFile;
   int magicNumber;
@@ -58,13 +57,13 @@ void vtkFSSurfaceScalarReader::ReadFSScalars()
   if (output == NULL)
   {
       cerr << "ERROR vtkFSSurfaceScalarReader ReadFSScalars() : output is null" << endl;
-      return;
+      return 0;
   }
   vtkDebugMacro( << "vtkFSSurfaceScalarReader Execute() " << endl);
 
   if (!this->FileName) {
     vtkErrorMacro(<<"vtkFSSurfaceScalarReader Execute: FileName not specified.");
-    return;
+    return 0;
   }
 
   vtkDebugMacro(<<"Reading surface scalar data...");
@@ -73,7 +72,7 @@ void vtkFSSurfaceScalarReader::ReadFSScalars()
   scalarFile = fopen(this->FileName, "rb") ;
   if (!scalarFile) {
     vtkErrorMacro (<< "Could not open file " << this->FileName);
-    return;
+    return 0;
   }  
 
 
@@ -94,7 +93,7 @@ void vtkFSSurfaceScalarReader::ReadFSScalars()
     
     if (numValuesPerPoint != 1) {
       vtkErrorMacro (<< "vtkFSSurfaceScalarReader.cxx Execute: Number of values per point is not 1, can't process file.");
-      return;
+      return 0;
     }
 
   } else {
@@ -103,7 +102,7 @@ void vtkFSSurfaceScalarReader::ReadFSScalars()
 
   if (numValues < 0) {
     vtkErrorMacro (<< "vtkFSSurfaceScalarReader.cxx Execute: Number of vertices is 0 or negative, can't process file.");
-      return;
+      return 0;
   }
   
   // Make our float array.
@@ -116,7 +115,7 @@ void vtkFSSurfaceScalarReader::ReadFSScalars()
 
     if (feof(scalarFile)) {
       vtkErrorMacro (<< "vtkFSSurfaceScalarReader.cxx Execute: Unexpected EOF after " << vIndex << " values read.");
-      return;
+      return 0;
     }
 
     if (this->FS_NEW_SCALAR_MAGIC_NUMBER == magicNumber) {
@@ -146,6 +145,8 @@ void vtkFSSurfaceScalarReader::ReadFSScalars()
 
   // Set the array in our output.
   output->SetArray (scalars, numValues, 0);
+
+  return 1;
 }
 
 void vtkFSSurfaceScalarReader::PrintSelf(ostream& os, vtkIndent indent)
