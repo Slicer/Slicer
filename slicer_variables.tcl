@@ -107,7 +107,7 @@ if { ![info exists ::Slicer3_LIB] } {
 }
 if { ![info exists ::Slicer3_BUILD] } {
     if { [info exists ::env(Slicer3_BUILD)] } {
-        set ::Slicer3_LIB $::env(Slicer3_BUILD)
+        set ::Slicer3_BUILD $::env(Slicer3_BUILD)
     } else {
         set wd [pwd]
         cd $::Slicer3_HOME/../Slicer3-build
