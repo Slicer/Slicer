@@ -260,6 +260,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
   vtkDebugMacro("ReadData: extension = " << extension.c_str());
   // don't delete the polydata if reading in a scalar overlay
 
+  // reset this to 0 if have an error
   int result = 1;
   try
     {
@@ -306,8 +307,16 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
         floatArray->SetName(scalarName.c_str());
         reader->SetOutput(floatArray);
 
-        reader->ReadFSScalars();
-
+        if (reader->ReadFSScalars() == 0)
+          {
+          vtkDebugMacro("ReadData: error reading scalar overlay file " << fullName.c_str());
+          reader->SetOutput(NULL);
+          reader->Delete();
+          floatArray->Delete();
+          floatArray = NULL;
+          return 0;
+          }
+        
         vtkDebugMacro("Finished reading model overlay file " << fullName.c_str() << "\n\tscalars called " << scalarName.c_str() << ", adding point scalars to model node " << modelNode->GetName());;
         modelNode->AddPointScalars(floatArray);
         if (displayNode)
@@ -348,7 +357,8 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
           }
         colorNode->Delete();
         colorNode  = NULL;
-
+        
+        reader->SetOutput(NULL);
         reader->Delete();
         floatArray->Delete();
         floatArray = NULL;
@@ -387,6 +397,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
         result = retval;
         if (retval != 0)
           {
+          result = 0;
           vtkErrorMacro ("Error reading FreeSurfer W overlay file " << fullName.c_str() << ": ");
           if (retval == 1)
             {
@@ -479,6 +490,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
         result = retval;
         if (retval != 0)
           {
+          result = 0;
           vtkErrorMacro ("Error reading FreeSurfer label overlay file " << fullName.c_str() << ": ");
           if (retval == 1)
             {
@@ -569,42 +581,12 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
           reader->DebugOn();
           }
         int retval = reader->ReadFSAnnotation();
-        if (retval == 6)
+        if (retval != 0)
           {
-          vtkDebugMacro("No Internal Color Table in " << fullName.c_str() << ", trying the default colours");
-
-          // clear up the internal one
-          lutNode->Delete();
-          lutNode = NULL;
-          
-          // use the default annotation colours
-          // colorLogic->GetDefaultFreeSurferSurfaceLabelsColorNodeID()
-          
-          vtkCollection *labelNodes = this->Scene->GetNodesByName("FSLabels");
-          if (labelNodes->GetNumberOfItems() > 0)
-            {
-            labelNodes->InitTraversal();
-            vtkMRMLColorTableNode *cnode = vtkMRMLColorTableNode::SafeDownCast(labelNodes->GetNextItemAsObject());
-            if (cnode != NULL)
-              {
-              vtkWarningMacro("Could not find an internal colour table in " << fullName.c_str() << ", using default colour node " << cnode->GetName());
-              modelNode->GetModelDisplayNode()->SetAndObserveColorNodeID(cnode->GetID());
-              cnode = NULL;
-              }
-            }
-          else
-            {
-            vtkErrorMacro("Unable to find an internal nor an external colour look up table for " << fullName.c_str());
-            result = 6;
-            }
-          if (labelNodes)
-            {
-            labelNodes->RemoveAllItems();
-            labelNodes->Delete();
-            labelNodes = NULL;
-            }
+          result = 0;
           }
-        else
+        
+        if (retval == 0)
           {          
           // the color names are formatted as 'index {name} '
           char *colorNames = reader->GetColorTableNames();
@@ -638,6 +620,62 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
           this->Scene->AddNode(lutNode);
           modelNode->GetModelDisplayNode()->SetAndObserveColorNodeID(lutNode->GetID());
           }
+        else if (retval == 6)
+          {
+          vtkDebugMacro("No Internal Color Table in " << fullName.c_str() << ", trying the default colours");
+
+          // clear up the internal one
+          lutNode->Delete();
+          lutNode = NULL;
+          
+          // use the default annotation colours
+          // colorLogic->GetDefaultFreeSurferSurfaceLabelsColorNodeID()
+          
+          vtkCollection *labelNodes = this->Scene->GetNodesByName("FSLabels");
+          if (labelNodes->GetNumberOfItems() > 0)
+            {
+            labelNodes->InitTraversal();
+            vtkMRMLColorTableNode *cnode = vtkMRMLColorTableNode::SafeDownCast(labelNodes->GetNextItemAsObject());
+            if (cnode != NULL)
+              {
+              vtkWarningMacro("Could not find an internal colour table in " << fullName.c_str() << ", using default colour node " << cnode->GetName());
+              modelNode->GetModelDisplayNode()->SetAndObserveColorNodeID(cnode->GetID());
+              cnode = NULL;
+              // recovered, so no error condition
+              result = 1;
+              }              
+            }
+          else
+            {
+            vtkErrorMacro("Unable to find an internal nor an external colour look up table for " << fullName.c_str());
+            result = 0;
+            }
+          if (labelNodes)
+            {
+            labelNodes->RemoveAllItems();
+            labelNodes->Delete();
+            labelNodes = NULL;
+            }
+          } // no internal colour table
+        else
+          {
+          if (retval == -1)
+            {
+            vtkErrorMacro("ReadFSAnnotation: memory allocation error or file name not specified");
+            }
+          else if (retval == 1 || retval == 3)
+            {
+            vtkErrorMacro("ReadFSAnnotation: error loading or parsing color table.");
+            }
+          else if (retval == 2)
+            {
+            vtkErrorMacro("ReadFSAnnotation: error opening file " << fullName.c_str());
+            }
+          else if (retval == 4)
+            {
+            vtkErrorMacro("Error parsing the annotation file");
+            }
+          }
         if (lutNode)
           {
           lutNode->Delete();
@@ -659,18 +697,11 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
         reader->SetArchetype(fullName.c_str());
         reader->SetOutputScalarTypeToNative();
         reader->SetDesiredCoordinateOrientationToNative();
-        //int result = 1;
         try
           {
           reader->Update();
           }
         catch (...)
-          {
-          vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadData Cannot read scalar overlay volume file " << fullName.c_str());
-          reader->Delete();
-          return 0;
-          }
-        if (reader->GetOutput() == NULL) 
           {
           vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadData Cannot read scalar overlay volume file " << fullName.c_str());
           reader->Delete();
@@ -698,22 +729,22 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
         std::string::size_type ptr = name.find_last_of(std::string("/"));
         std::string scalarName;
         if (ptr != std::string::npos)
-        {
-            // find the dir name above
-            std::string::size_type ptrNext = ptr;
-            std::string::size_type dirptr = name.find_last_of(std::string("/"), --ptrNext);
-            if (dirptr != std::string::npos)
+          {
+          // find the dir name above
+          std::string::size_type ptrNext = ptr;
+          std::string::size_type dirptr = name.find_last_of(std::string("/"), --ptrNext);
+          if (dirptr != std::string::npos)
             {
-                scalarName = name.substr(++dirptr);
-                vtkDebugMacro("Using dir name in scalar name " << scalarName.c_str());
+            scalarName = name.substr(++dirptr);
+            vtkDebugMacro("Using dir name in scalar name " << scalarName.c_str());
             }
-            else
+          else
             {
-                scalarName = name.substr(++ptr);
-                vtkDebugMacro("Not using the dir name in the scalar name " << scalarName.c_str());
+            scalarName = name.substr(++ptr);
+            vtkDebugMacro("Not using the dir name in the scalar name " << scalarName.c_str());
             }
-
-        }
+          
+          }
         else
           {
           scalarName = name;
@@ -778,6 +809,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
   this->SetReadStateIdle();
   
   modelNode->SetModifiedSinceRead(0);
+  vtkDebugMacro("ReadData: Returning " << result);
   return result;
 }
 

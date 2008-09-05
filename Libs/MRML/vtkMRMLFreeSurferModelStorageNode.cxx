@@ -224,12 +224,30 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
         {
         stripper->SetInput( normals->GetOutput() );
         stripper->Update();
-        modelNode->SetAndObservePolyData(stripper->GetOutput());
+        if (stripper->GetOutput() == NULL ||
+            stripper->GetOutput()->GetNumberOfCells() == 0)
+          {
+          vtkDebugMacro("Surface file error: no output from triangle stripper.");
+          result = 0;
+          }
+        else
+          {
+          modelNode->SetAndObservePolyData(stripper->GetOutput());
+          }
         }
       else
         {
         normals->Update();
-        modelNode->SetAndObservePolyData(normals->GetOutput());
+        if (normals->GetOutput() == NULL ||
+            normals->GetOutput()->GetNumberOfCells() == 0)
+          {
+          vtkDebugMacro("Surface file error: no output from the normals");
+          result = 0;
+          }
+        else
+          {
+          modelNode->SetAndObservePolyData(normals->GetOutput());
+          }
         }
       
       reader->Delete();
